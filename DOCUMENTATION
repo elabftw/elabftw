@@ -1,0 +1,12 @@
+// HTML5
+// PHP5
+// PDO
+// jquery
+// vim
+
+// Licence Affero GPL v3
+
+// For PDF creation, we use fpdf http://www.fpdf.org
+// Accounts
+- Passwords are salted with a random salt, stored in SQL with the sha-512 hash.
+- Password forgotten => reset pass with password sent to email.

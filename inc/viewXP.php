@@ -1,0 +1,94 @@
+<?php
+/********************************************************************************
+*                                                                               *
+*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
+*   http://www.elabftw.net/                                                     *
+*                                                                               *
+********************************************************************************/
+
+/********************************************************************************
+*  This file is part of eLabFTW.                                                *
+*                                                                               *
+*    eLabFTW is free software: you can redistribute it and/or modify            *
+*    it under the terms of the GNU Affero General Public License as             *
+*    published by the Free Software Foundation, either version 3 of             *
+*    the License, or (at your option) any later version.                        *
+*                                                                               *
+*    eLabFTW is distributed in the hope that it will be useful,                 *
+*    but WITHOUT ANY WARRANTY; without even the implied                         *
+*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
+*    PURPOSE.  See the GNU Affero General Public License for more details.      *
+*                                                                               *
+*    You should have received a copy of the GNU Affero General Public           *
+*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
+*                                                                               *
+********************************************************************************/
+require_once('inc/functions.php');
+require_once('inc/connect.php');
+?>
+<script src="js/editinplace.js" type="text/javascript"></script>
+
+<h2>VIEW EXPERIMENT</h2>
+
+<?php
+// Here we don't check that the experiment id is owned by the viewer, so links can be shared :)
+// Check id is valid and assign it to $id
+if(filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+    $id = $_GET['id'];
+} else {
+    die("The id parameter in the URL isn't a valid experiment ID");
+}
+
+// SQL for viewXP
+$sql = "SELECT * FROM experiments WHERE id = ".$id;
+$req = $bdd->prepare($sql);
+$req->execute();
+$data = $req->fetch();
+
+// Display experiment
+?>
+<!-- click section to edit XP -->
+<section OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['id'];?>'" class="<?php echo $data['outcome'];?>">
+<a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>&type=exp' onClick="return confirm('Delete this experiment ?');"><img src='img/trash.png' title='delete' alt='delete' /></a>
+<?php
+echo "<span class='date'><img src='img/calendar.png' title='date' alt='Date :' />".$data['date']."</span><br />
+    <a href='experiments.php?mode=edit&id=".$data['id']."'><img src='img/edit.png' title='edit' alt='edit' /></a> 
+<a href='duplicateXP.php?id=".$data['id']."'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a> 
+<a href='make_pdf.php?id=".$data['id']."&type=exp'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a> 
+<a href='make_zip.php?id=".$data['id']."&type=exp'><img src='img/zip.gif' title='make a zip archive' alt='zip' /></a>";
+// TAGS
+$sql = "SELECT tag FROM experiments_tags WHERE item_id = ".$id;
+$req = $bdd->prepare($sql);
+$req->execute();
+echo "<span class='tags'><img src='img/tags.gif' alt='' /> ";
+while($tags = $req->fetch()){
+    echo "<a href='experiments.php?mode=show&tag=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
+}
+echo "</span>";
+// END TAGS
+?>
+<?php
+echo "<div class='title'>". stripslashes($data['title']) . "<span class='align_right' id='outcome'>(".$data['outcome'].")<span></div> ";
+// BODY (show only if not empty)
+if ($data['body'] != ''){
+echo "<p class='txt'>".nl2br(stripslashes($data['body']))."</p>";
+}
+// DISPLAY PROTOCOL
+if ($data['protocol'] != NULL) {
+    // SQL to get title
+    $sql = "SELECT id, title FROM protocols WHERE id = ".$data['protocol'];
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $protdata = $req->fetch();
+    echo "<span class='strong'>Protocol :</span> <a href='protocols.php?mode=view&id=".$protdata['id']."'>".$protdata['title']."</a>";
+}
+echo "</section>";
+
+// DISPLAY FILES
+require_once('inc/display_file.php');
+// KEYBOARD SHORTCUTS
+echo "<script type='text/javascript'>
+key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'experiments.php?mode=create'});
+key('".$_SESSION['prefs']['shortcuts']['edit']."', function(){location.href = 'experiments.php?mode=edit&id=".$id."'});
+</script>";
+?>

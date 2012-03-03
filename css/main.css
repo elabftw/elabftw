@@ -1,0 +1,393 @@
+/* CSS Document */
+/********************************************************************************
+*                                                                               *
+*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
+*   http://www.elabftw.net/                                                     *
+*                                                                               *
+********************************************************************************/
+
+/********************************************************************************
+*  This file is part of eLabFTW.                                                *
+*                                                                               *
+*    eLabFTW is free software: you can redistribute it and/or modify            *
+*    it under the terms of the GNU Affero General Public License as             *
+*    published by the Free Software Foundation, either version 3 of             *
+*    the License, or (at your option) any later version.                        *
+*                                                                               *
+*    eLabFTW is distributed in the hope that it will be useful,                 *
+*    but WITHOUT ANY WARRANTY; without even the implied                         *
+*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
+*    PURPOSE.  See the GNU Affero General Public License for more details.      *
+*                                                                               *
+*    You should have received a copy of the GNU Affero General Public           *
+*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
+*                                                                               *
+********************************************************************************/
+#container {
+    width:900px;
+    opacity:0.95;
+    margin:auto;
+    padding:10px 20px 10px 20px;
+    font:16px Verdana, Arial, Helvetica, sans-serif;
+    border-radius:20px;
+}
+/* LINKS */
+a {
+color: #000;
+}
+a:hover {
+color: red;
+}
+
+/* GENERAL */
+.center{
+    text-align:center;
+}
+
+.align_right{
+    float:right;
+}
+
+p{
+    font:16px Verdana, Arial, Helvetica, sans-serif;
+}
+
+p a{
+    font:16px Verdana, Arial, Helvetica, sans-serif;
+    text-decoration:none;
+}
+
+.strong {
+    font-weight:bold;
+}
+
+hr {
+    margin:20px 0 20px 0;
+}
+
+
+/* LOGO */
+#eblue {
+    font: 20px Helvetica, Verdana, Arial, sans-serif;
+}
+
+#lab{
+    font: 24px Verdana, Arial, Helvetica, sans-serif;
+}
+#ftw{
+    font: 30px Impact, Arial, Verdana, sans-serif;
+    /* no browser support
+    font-stretch:extra-expended;*/
+}
+
+/* TITLES */
+h1{
+    margin-top:-5px;
+    width:140px;
+    text-align:center;
+}
+h1 a {
+    text-decoration:none;
+}
+h2 {
+    font:24px Verdana, Arial, Helvetica, sans-serif;
+    text-align:center;
+    width:100%;
+    padding:10px 0 10px 0;
+    margin:0 0 20px 0;
+    border-bottom:1px dotted #CCC;
+}
+
+h3 {
+    width:100%;
+    margin:0 auto 10px auto;
+    text-align:center;
+    font:20px Verdana, Arial, Helvetica, sans-serif;
+}
+
+h4 {
+    display:inline;
+    font:18px Verdana, Arial, Helvetica, sans-serif;
+}
+
+/* MENU */
+nav{
+    text-align:center;
+}
+
+nav a{
+    font-size:20px;
+    text-decoration:none;
+    line-height:300%;
+    border-radius:20px;
+    padding:5px 10px 5px 10px;
+    margin:0 7px 0 7px;
+}
+
+nav a:hover {
+    color:#CCC
+}
+
+#logmenu {
+    width:100%;
+    float:right;
+    top:30px;
+    text-align:right;
+}
+
+#logmenu p{
+    font: 13px Verdana, Arial, Helvetica, sans-serif;
+    padding-bottom:7px;
+}
+#logmenu p a{
+    font: 13px Verdana, Arial, Helvetica, sans-serif;
+}
+/* submenu */
+#submenu {
+    display:inline;
+}
+
+#quicksearch {
+    float:right;
+    display:inline;
+}
+
+/**** SEARCH PAGE *******/
+#search_box{
+    margin-top:5px;
+    display:inline;
+}
+
+
+/******* SORTER *********/
+.sortresults{
+    text-align:right;
+}
+
+.sortresults p{
+    padding:0;
+    margin:0;
+    font-size:12px;
+}
+.sortresults span{
+    font:12px Verdana, Arial, Helvetica, sans-serif;
+}
+
+
+/* LOGIN */
+.login{
+    border:2px solid blue;
+    border-radius:20px;
+    padding:10px;
+    margin:10px 7px 10px 7px;
+
+}
+
+.innerdiv {
+    width:600px;
+    margin:auto;
+    text-align:center;
+    border-radius:20px;
+}
+.innerinnerdiv {
+    position:relative;
+    left:-30px;
+    text-align:right;
+    width:500px;
+    margin:auto;
+}
+
+/* END REGISTER */
+
+.attachFileDiv {
+    width:80%;
+    margin:0 auto 0 auto;
+    text-align:center;
+    border: 3px solid #CCC;
+    border-radius:20px;
+}
+
+.submitbutton{
+    border-radius:20px;
+    font-size:20px;
+}
+#submitDiv{
+    text-align:right;
+}
+
+/***********/
+textarea{
+    border: 3px solid #CCC;
+    padding: 5px;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+.editable{
+    background-color: #CCC;
+}
+
+/* comments for files */
+.addFileDiv {
+    margin:10px;
+}
+
+.filesdiv {
+    border-radius:20px;
+}
+.filesdiv p {
+    display:inline;
+}
+
+.com_file_field{
+    margin-top:10px;
+    margin-left:4px;
+}
+
+
+img {
+    position:relative;
+    top:3px;
+    border:none;
+}
+
+/* INFO BOX */
+.err {
+    font:14px Verdana, Arial;
+}
+.infos {
+    font:14px Verdana, Arial;
+}
+
+/* ITEMS */
+.item {
+    width:742px;
+    margin:10px auto 10px auto;
+    padding:10px;
+    border-radius:20px;
+}
+
+.simple_border {
+    padding:7px;
+    border-radius:20px;
+}
+
+.title {
+    width:650px;
+    border-radius:15px;
+    padding:5px;
+    font-size: 20px;
+    margin:5px;
+    line-height:120%;
+}
+
+.date{
+    font: 14px Verdana, Arial,sans-serif;
+}
+
+.tags {
+    width:600px;
+    border-radius:15px;
+    padding:5px;
+    font: 12px Courier,Arial,sans-serif;
+    margin:10px 0px 10px 5px;
+    line-height:200%;
+}
+.tags a{
+    text-decoration:none;
+}
+.tags_compact {
+    border-radius:15px;
+    padding:5px;
+    font: 12px Courier,Arial,sans-serif;
+    margin:10px 0px 10px 25px;
+    line-height:200%;
+}
+.tags_compact a{
+    text-decoration:none;
+}
+#tagdiv{
+    width:442px;
+    padding:5px;
+}
+
+.tag {
+    line-height:160%;
+    font:bold 13px Verdana, Arial, Helvetica, sans-serif;
+}
+.tag a {
+    padding:5px 5px 5px 5px;
+    text-decoration:none;
+}
+
+.smallgray{
+    font:12px Verdana, Arial, Helvetica, sans-serif;
+}
+
+#addtaginput {
+    margin-top:7px;
+}
+
+.txt {
+    padding:5px;
+    font-size:20px;
+}
+
+.running_compact, .success_compact, .redo_compact, .fail_compact {
+    width:742px;
+    margin:15px auto 15px auto;
+    padding: 5px;
+    border-radius:20px;
+}
+
+.running, .success, .redo, .fail {
+    width:742px;
+    margin:10px auto 10px auto;
+    padding: 10px;
+    border-radius:20px;
+}
+
+.filesdiv{
+    width:550px;
+    margin:10px auto 10px auto;
+    padding: 5px;
+    font:14px Verdana, Arial, Helvetica, sans-serif;
+}
+.filesdiv a{
+    font:14px Verdana, Arial, Helvetica, sans-serif;
+    text-decoration:none;
+}
+
+.file_item{
+    width:342px;
+    margin:10px auto 10px auto;
+    padding: 5px;
+    border-radius:20px;
+}
+
+.filesize{
+    font-size:10px;
+}
+
+/* PROFILE PAGE */
+#tagcloud {
+    text-align:center;
+}
+
+/* FOOTER */
+footer {
+    margin:15px 0 5px 0;
+    padding:5px 0 5px 0;
+    text-align:center;
+    font-size:11px;
+}
+footer p, footer p a {
+    line-height:20%;
+    text-align:center;
+    font-size:11px;
+}
+
+
+/* PAGINATION */
+.pagination{
+    text-align:center;
+}

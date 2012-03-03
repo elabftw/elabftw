@@ -1,0 +1,40 @@
+Thank you for choosing eLabFTW as a lab manager.
+
+Here is what you need in order to install it :
+
+- a server running GNU/Linux (although a Mac OS X or Windows server might work too, but I wouldn't recommand it)
+- with PHP5, MySQL5 (other relational database might work, as it uses PDO), Apache (other http servers might work)
+- basic knowledge of server administration, command line work
+- root access to the server ^^
+
+Have everything ?
+Now, let's begin :
+
+
+INSTALL
+*********************
+
+Connect to your server via SSH and fireup tmux (or screen).
+If you don't know what is SSH, maybe it's not a good idea to try and install eLabFTW.
+
+As root, cd to your public directory (/var/www generally) and enter these commands :
+
+PHP part
+*********
+
+(If you are behind a proxy :
+# export http_proxy=proxy-adress.company.org:3128
+)
+Get latest version
+# wget http://www.elabftw.net/downloads/latest.zip
+Extract it in the public folder
+# unzip latest.zip
+Now you have all the php files, we just need to add a library so the mails can be sent
+# pear channel-discover pear.swiftmailer.org
+# pear install swift/swift
+
+SQL part
+***********
+
+# mysql -uroot -ppassword < create_tables.sql
+

@@ -1,0 +1,4 @@
+AuthUserFile /Applications/MAMP/htdocs/admin/.htpasswd
+AuthName "Are you admin ?"
+AuthType Basic
+Require user admin

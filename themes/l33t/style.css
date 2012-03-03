@@ -1,0 +1,243 @@
+/* CSS Document */
+/********************************************************************************
+*                                                                               *
+*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
+*   http://www.elabftw.net/                                                     *
+*                                                                               *
+********************************************************************************/
+
+/********************************************************************************
+*  This file is part of eLabFTW.                                                *
+*                                                                               *
+*    eLabFTW is free software: you can redistribute it and/or modify            *
+*    it under the terms of the GNU Affero General Public License as             *
+*    published by the Free Software Foundation, either version 3 of             *
+*    the License, or (at your option) any later version.                        *
+*                                                                               *
+*    eLabFTW is distributed in the hope that it will be useful,                 *
+*    but WITHOUT ANY WARRANTY; without even the implied                         *
+*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
+*    PURPOSE.  See the GNU Affero General Public License for more details.      *
+*                                                                               *
+*    You should have received a copy of the GNU Affero General Public           *
+*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
+*                                                                               *
+********************************************************************************/
+body {
+    background-image:url('img/matrix_code.jpg');
+}
+
+#container {
+    background: black;
+    font:16px Verdana, Arial, Helvetica, sans-serif;
+}
+
+hr {
+    color: #00FF00;
+}
+hr.flourishes {
+    clear: both;
+    display: block;
+    height: 18px;
+    margin: 18px 0 0;
+    background: url('img/flourishes.png') no-repeat scroll center 0px transparent; /* -61px */
+    border: 0 none;
+    opacity: 0.8;
+    outline: 0 none;
+}
+
+hr.tinyflourishes {
+    clear: both;
+    display: block;
+    height: 18px;
+    margin: 18px 0 0;
+    background: url('img/flourishes.png') no-repeat scroll center -16px transparent; /* -61px */
+    border: 0 none;
+    opacity: 0.8;
+    outline: 0 none;
+}
+
+hr.rishes {
+    clear: both;
+    display: block;
+    height: 18px;
+    margin: 18px 0 0;
+    background: url('img/flourishes.png') no-repeat scroll center -36px transparent; /* -61px */
+    border: 0 none;
+    opacity: 0.8;
+    outline: 0 none;
+}
+/* LOGO */
+#eblue {
+    color:blue;
+}
+
+#lab{
+    color:#00FF00;
+}
+#ftw{
+    color:#00FF00;
+}
+/* LINKS */
+a {
+color: #FFF;
+}
+a:hover {
+color: green;
+}
+
+nav a {
+    border:1px solid #00FF00;
+    color:#00FF00;
+}
+#logmenu p{
+    color: #FFF;
+}
+#logmenu p a{
+    color: #00FF00;
+}
+
+p {
+    color:#00FF00
+}
+/* TITLES */
+h2 {
+    color:#00FF00;
+}
+h3 {
+    color:#00FF00;
+}
+h4 {
+    color:#00FF00;
+}
+
+/* SUBMIT */
+.submitbutton{
+    color:white;
+    background-color:green;
+}
+
+/* INFO BOX */
+.err {
+    font:14px Verdana, Arial;
+    color: red;
+}
+.infos {
+    font:14px Verdana, Arial;
+    color: #00FF00;
+}
+
+/* ITEMS */
+.item {
+    color:#00FF00;
+    background-color:#000;
+    border: 2px solid #CCC;
+}
+
+.simple_border {
+    border:2px solid #00FF00;
+}
+
+.running, .success, .redo, .fail {
+    background-color:black;
+}
+.running {
+    border:3px dotted blue;
+}
+.success{
+    border:3px solid green;
+}
+.redo{
+    border:3px solid grey;
+}
+.fail{
+    border:3px solid red;
+}
+
+.running_compact, .success_compact, .redo_compact, .fail_compact {
+    background-color:black;
+}
+.running_compact {
+    border:1px dotted blue;
+}
+.success_compact {
+    border:1px solid green;
+}
+.redo_compact{
+    border:1px solid grey;
+}
+.fail_compact{
+    border:1px solid red;
+}
+
+.date {
+    color:#00FF00
+}
+
+.title {
+    background-color:#000;
+    border:1px solid #CCC;
+    color:#00FF00;
+}
+
+/* TAGS */
+.tags {
+    background-color:#000;
+    border:1px solid #AAA;
+    color:#00FF00;
+}
+.tags a {
+    color:#00FF00;
+}
+
+.tags a:hover {
+    color:red;
+}
+.tags_compact {
+    background-color:white;
+    border:1px solid #AAA;
+    color:#00FF00;
+}
+
+
+.smallgray{
+    color:gray;
+}
+
+
+.txt {
+    border:1px solid #CCC;
+    background-color:#000;
+    color:#00FF00;
+}
+
+/* FILES */
+.filesdiv {
+    color:#00FF00;
+    border: 3px solid #CCC;
+}
+.filesdiv a{
+    color:white;
+}
+.filesdiv a:hover {
+    color:green;
+}
+.file_item{
+    border:1px solid #CCC;
+}
+.filesize{
+    color:grey;
+}
+.editable{
+    background-color: white;
+}
+
+.innerdiv{
+    border: 2px solid #00FF00;
+}
+
+/* FOOTER */
+footer {
+    border-top:solid 2px #00FF00;
+}
+

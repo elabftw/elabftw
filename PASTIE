@@ -1,0 +1,3 @@
+
+<!-- Redirect the user to the index after 2 secs -->
+<script>setTimeout('top.location = \'index.php\'', 2000);</script>

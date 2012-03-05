@@ -1,12 +1,12 @@
 /////// Priority
+* ditch scriptaculous and use only jquery (inline edit + show-hide)
 * search : selector should stay what it was
 * search : multiple critères( has file attached ?)
-* put images in themes
 * most used protocoles get first in selecta ! 
-* todo list on the side : with priorities (+/-)
 * templates for Exp (with blocks ?)
 * export by date range / tag
 * journal club : see past JC with papers
+* have a real useful index...
 
 ** register
 * ask admin to validate new accounts

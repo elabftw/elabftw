@@ -94,7 +94,14 @@ ul, li {
 
 /* MAIN MENU */
 nav a {
+    color:blue;
+    border:1px solid white;
+    border-radius:5px;
+}
+nav a:hover {
+    color:#1589FF;
     border:1px solid black;
+    border-radius:5px;
 }
 #logmenu p{
     color: #AAA;

@@ -1,0 +1,42 @@
+/* Changelog for eLabFTW */
+
+
+Version 0.5.1
+* Various FTW titles
+* Images are now in themes folders
+* TODO list added
+
+Version 0.5 Released on 120301
+* UCP
+** Themes
+** Keyboard Shortcuts
+** View modes
+* Admin Panel
+* Profile
+* Send zip by email
+* Better Tagcloud
+* Can attach protocol to experiment
+* User need validation after registration
+* Unique config.ini file
+
+Version 0.4
+* Tagcloud
+* Recover password
+* Make zip archive
+* Editable file comments
+
+Version 0.3
+* Tags on a separate table
+* Make pdf
+* Statistics
+* Comment on attached files
+* Quick tagsearch
+
+Version 0.2
+* Search page
+* Password storage using salted SHA-512
+* Attaching files
+
+Version 0.1
+* Register / Login
+* Show / view / edit / duplicate :: experiments / protocols

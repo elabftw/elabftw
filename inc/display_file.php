@@ -33,7 +33,7 @@ if($count > 0){
     while ($data = $req->fetch()){
         echo "<div class='filesdiv'>";
         ?>
-        <a class='align_right' href='delete_file.php?id=<?php echo $data['id'];?>&type=<?php echo $data['type'];?>&item_id=<?php echo $data['item_id'];?>' onClick="return confirm('Delete this file ?');"><img src='img/trash.png' title='delete' alt='delete' /></a>
+            <a class='align_right' href='delete_file.php?id=<?php echo $data['id'];?>&type=<?php echo $data['type'];?>&item_id=<?php echo $data['item_id'];?>' onClick="return confirm('Delete this file ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
         <?php
         // Get file extension to display thumbnail if it's an image
         $ext = get_ext($data['real_name']);
@@ -48,9 +48,9 @@ if($count > 0){
             echo "<div class='center'>";
             echo "<img src='".$thumbpath."' alt='' /></div>";
         }
-        echo "<img src='img/attached_file.png' alt='' /> <a href='download.php?id=".$data['id']."&f=".$data['long_name']."&name=".$data['real_name']."' target='_blank'>".$data['real_name']."</a>
+        echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='' /> <a href='download.php?id=".$data['id']."&f=".$data['long_name']."&name=".$data['real_name']."' target='_blank'>".$data['real_name']."</a>
         <span class='filesize'> (".format_bytes(filesize('uploads/'.$data['long_name'])).")</span><br />";
-        echo "<img src='img/comments.png' alt='comment' /> <p id='comment_".$data['id']."'>".stripslashes($data['comment'])."</p></div>";
+        echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/comments.png' alt='comment' /> <p id='comment_".$data['id']."'>".stripslashes($data['comment'])."</p></div>";
     } // end while
     echo "</section>";
 } // end if count > 0

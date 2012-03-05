@@ -89,8 +89,12 @@ echo "<link id='maincss' rel='stylesheet' media='all' href='themes/default/style
 }
 ?>
 <link rel="stylesheet" media="all" href="css/tagcloud.css" />
+<link rel="stylesheet" media="all" href="css/pageslide.css" />
+<!--
 <script src="js/prototype.js" type="text/javascript"></script>
 <script src="js/scriptaculous.js?load=effects" type="text/javascript"></script>
+-->
+<script src="js/jquery-1.7.1.min.js" type='text/javascript'></script>
 <script type='text/javascript' src='js/keymaster.js'></script>
 <link rel="icon" type="image/ico" href="img/favicon.ico" />
 </head>

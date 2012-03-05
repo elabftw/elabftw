@@ -119,13 +119,8 @@ nav a{
     font-size:20px;
     text-decoration:none;
     line-height:300%;
-    border-radius:20px;
     padding:5px 10px 5px 10px;
     margin:0 7px 0 7px;
-}
-
-nav a:hover {
-    color:#CCC
 }
 
 #logmenu {

@@ -29,7 +29,8 @@ require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 <h2>EXPERIMENTS</h2>
 <p id='submenu'><a href="experiments.php?mode=create"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Create experiment</a> | 
 <a href='search.php'><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/search.png' alt='' /> Search</a> | 
-<span style='font-size:10px;color:grey;'>FOR ALPHA TESTERS : <a href='populate.php'>Populate</a></span></p>
+<a href="todolist.php" class="todo">TODO</a><!-- | 
+<span style='font-size:10px;color:grey;'>FOR ALPHA TESTERS : <a href='populate.php'>Populate</a></span--></p>
 <!-- Quick Search Box (search tags) -->
 <form id='quicksearch' method='get' action='experiments.php'>
 <input type='search' name='tag' placeholder='Search tag' />
@@ -257,3 +258,7 @@ echo "<script type='text/javascript'>
 key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'experiments.php?mode=create'});
 </script>";
 ?>
+<script src="js/jquery.pageslide.min.js" type="text/javascript"></script>
+<script type='text/javascript'>
+    $("a.todo").pageslide();
+</script>

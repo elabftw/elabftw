@@ -28,7 +28,57 @@
 <html>
 <head>
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-<?php echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLabFTW</title>\n"?>
+<?php
+// Random title
+$ftw_arr = array();
+// Lots of 'For The World' so the other ones appear more rarely
+$ftw_arr[] = 'For The World'; $ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';$ftw_arr[] = 'For The World';
+$ftw_arr[] = 'For Those Wondering';
+$ftw_arr[] = 'For The Worms';
+$ftw_arr[] = 'Forever Two Wheels';
+$ftw_arr[] = 'Future Technology Workshop';
+$ftw_arr[] = 'Forward Towards Wing';
+$ftw_arr[] = 'Free The Wookies';
+$ftw_arr[] = 'Forward The Word';
+$ftw_arr[] = 'Full Throttle Workshop';
+$ftw_arr[] = 'Forever Together Whenever';
+$ftw_arr[] = 'Face The World';
+$ftw_arr[] = 'Forget The World';
+$ftw_arr[] = 'Free To Watch';
+$ftw_arr[] = 'Free Trade Wharf';
+$ftw_arr[] = 'Frequency Tuning Word';
+$ftw_arr[] = 'Feed The World';
+$ftw_arr[] = 'Feel The Wind';
+$ftw_arr[] = 'Feel The Wrath';
+$ftw_arr[] = 'Fight To Win';
+$ftw_arr[] = 'Find The Waldo';
+$ftw_arr[] = 'Finding The Way';
+$ftw_arr[] = 'Florida Tax Watch';
+$ftw_arr[] = 'Flying Training Wing';
+$ftw_arr[] = 'Follow The Way';
+$ftw_arr[] = 'For The Wii';
+$ftw_arr[] = 'For The Win';
+$ftw_arr[] = 'For The Wolf';
+$ftw_arr[] = 'Free The Weed';
+$ftw_arr[] = 'Free The Whales';
+$ftw_arr[] = 'From The Wilderness';
+$ftw_arr[] = 'Freedom To Work';
+$ftw_arr[] = 'Furious Truckstop Waitresses';
+$ftw_arr[] = 'Friggin Train Wreck';
+$ftw_arr[] = 'Full Throttle Wrestling';
+$ftw_arr[] = 'Full Tilt Warriors';
+$ftw_arr[] = 'For The Warriors';
+$ftw_arr[] = 'Full Time Workers';
+$ftw_arr[] = 'Fabricated To Win';
+$ftw_arr[] = 'Fresh Talent Warzone';
+$ftw_arr[] = 'Furiously Taunted Wookies';
+$ftw_arr[] = 'Frame Transfer Withdrawal';
+$ftw_arr[] = 'Flash The Watch';
+$ftw_arr[] = 'Funky Things on the Web';
+shuffle($ftw_arr);
+$ftw = $ftw_arr[0]; 
+
+echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."</title>"?>
 <meta name="author" content="Nicolas CARPi" />
 <link rel="stylesheet" media="all" href="css/main.css" />
 <?php

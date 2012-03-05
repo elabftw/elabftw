@@ -46,10 +46,10 @@ $data = $req->fetch();
 // BEGIN CONTENT
 ?>
 <section class='item'>
-<a class='align_right' href='delete_item.php?id=<?php echo $_SESSION['id'];?>&type=prot' onClick="return confirm('Delete this protocol ?');"><img src='img/trash.png' title='delete' alt='delete' /></a>
+<a class='align_right' href='delete_item.php?id=<?php echo $_SESSION['id'];?>&type=prot' onClick="return confirm('Delete this protocol ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <!-- ADD TAG FORM -->
 <form id="addtag" name="addtag" method="post" action="add_tag.php">
-<img src='img/tags.gif' alt='' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.gif' alt='' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
 <span class='tags'>
 <?php
 $sql = "SELECT id, tag FROM protocols_tags WHERE item_id = ".$id;
@@ -63,7 +63,7 @@ while($tags = $tagreq->fetch()){
 <input name='item_id' type='hidden' value='<? echo $id;?>' />
 <input name='type' type='hidden' value='prot' />
 <input id='addtaginput' name='tag' placeholder='Add one tag' />
-<a href="javascript: document.forms['addtag'].submit()"><img alt='add' src='img/plus.png' /></a>
+<a href="javascript: document.forms['addtag'].submit()"><img alt='add' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/plus.png' /></a>
 </span></span>
 </form><!-- END ADD TAG -->
 <br />
@@ -98,7 +98,7 @@ require_once('inc/display_file.php');
 <!-- SUBMIT BUTTON -->
 <div class='center' id='submitdiv'>
 <p>SUBMIT</p>
-<input type='image' src='img/submit.png' name='Submit' value='Submit' onClick="this.form.submit();" />
+<input type='image' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/submit.png' name='Submit' value='Submit' onClick="this.form.submit();" />
 </div>
 </form>
 </section>

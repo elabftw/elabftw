@@ -27,8 +27,8 @@ require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 ?>
 
 <h2>EXPERIMENTS</h2>
-<p id='submenu'><a href="experiments.php?mode=create"><img src="img/create.gif" alt="" /> Create experiment</a> | 
-<a href='search.php'><img src='img/search.png' alt='' /> Search</a> | 
+<p id='submenu'><a href="experiments.php?mode=create"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Create experiment</a> | 
+<a href='search.php'><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/search.png' alt='' /> Search</a> | 
 <span style='font-size:10px;color:grey;'>FOR ALPHA TESTERS : <a href='populate.php'>Populate</a></span></p>
 <!-- Quick Search Box (search tags) -->
 <form id='quicksearch' method='get' action='experiments.php'>
@@ -114,13 +114,13 @@ if(!isset($_GET['tag'])){
                 <section OnClick="document.location='experiments.php?mode=view&id=<?php echo $data['id'];?>'" class="<?php echo $data['outcome'];?>">
                 <?php
                 // DATE
-                echo "<span class='date'><img src='img/calendar.png' alt='' /> ".$data['date']."</span>";
+                echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' alt='' /> ".$data['date']."</span>";
                 // TAGS
                 $id = $data['id'];
                 $sql = "SELECT tag FROM experiments_tags WHERE item_id = ".$id;
                 $tagreq = $bdd->prepare($sql);
                 $tagreq->execute();
-                echo "<span class='tags'><img src='img/tags.gif' alt='' /> ";
+                echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
                 while($tags = $tagreq->fetch()){
                     echo "<a href='".$_SERVER['PHP_SELF']."?".$_SERVER['QUERY_STRING']."&tag=".stripslashes($tags['tag'])."&currentpage=0'>".stripslashes($tags['tag'])."</a> ";
                     }
@@ -158,13 +158,13 @@ if(!isset($_GET['tag'])){
             <section OnClick="document.location='experiments.php?mode=view&id=<?php echo $data['id'];?>'" class="<?php echo $data['outcome'];?>">
             <?php
             // DATE
-            echo "<span class='date'><img src='img/calendar.png' alt='' /> ".$data['date']."</span>";
+            echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' alt='' /> ".$data['date']."</span>";
             // TAGS
             $id = $data['id'];
             $sql = "SELECT tag FROM experiments_tags WHERE item_id = ".$id;
             $tagreq = $bdd->prepare($sql);
             $tagreq->execute();
-            echo "<span class='tags'><img src='img/tags.gif' alt='' /> ";
+            echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
             while($tags = $tagreq->fetch()){
                 echo "<a href='".$_SERVER['PHP_SELF']."?".$_SERVER['QUERY_STRING']."&tag=".stripslashes($tags['tag'])."&currentpage=0'>".stripslashes($tags['tag'])."</a> ";
             }

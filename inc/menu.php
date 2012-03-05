@@ -31,8 +31,8 @@ if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
     }
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     echo "Logged in as <a href='profile.php' title='Profile'>".$_SESSION['username']."</a> | 
-        <a href='ucp.php'><img src='img/pref.png' alt='Control panel' title='Control panel' /></a> | 
-        <a href='logout.php'><img src='img/logout.png' alt='' title='Logout' /></p>";
+        <a href='ucp.php'><img src='themes/".$_SESSION['prefs']['theme']."/img/pref.png' alt='Control panel' title='Control panel' /></a> | 
+        <a href='logout.php'><img src='themes/".$_SESSION['prefs']['theme']."/img/logout.png' alt='' title='Logout' /></p>";
 } else {
     echo "Not logged in | <a href='register.php'>Register</a></p>";
 }
@@ -46,3 +46,4 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 <a href="http://labcollector.curie.fr/144_Piel" target='_blank'>LabCollector</a>
 <a href="http://wiki-bio6.curie.fr" target='_blank'>Wiki</a>
 </nav>
+<?php // print_r($_SESSION); ?>

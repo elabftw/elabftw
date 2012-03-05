@@ -56,7 +56,7 @@ $running_p = round(($running / $total)*100);
 $total_p = ($success_p + $fail_p + $redo_p + $running_p);
 
 // BEGIN CONTENT
-echo "<img src='img/statistics.png' alt='' /> <h4>STATISTICS</h4>";
+echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/statistics.png' alt='' /> <h4>STATISTICS</h4>";
 ?>
 <script type='text/javascript' src='js/google-jsapi.js'></script>
 <script type='text/javascript'>

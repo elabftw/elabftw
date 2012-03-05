@@ -1,18 +1,12 @@
 /////// Priority
 * search : selector should stay what it was
 * search : multiple critères( has file attached ?)
-* $_SESSION['groups']
-    with array of groups ?
 * put images in themes
 * most used protocoles get first in selecta ! 
-http://www.acronymfinder.com/FTW.html
-ala minecraft :D
-* remove "experiment" in zip file from prot
 * todo list on the side : with priorities (+/-)
 * templates for Exp (with blocks ?)
 * export by date range / tag
 * journal club : see past JC with papers
-* offline version !!
 
 ** register
 * ask admin to validate new accounts
@@ -31,6 +25,7 @@ ala minecraft :D
 * journal club
 * when click on file div, change file (with ajax ?)
 * add real calendar
+* offline version 
 
 ///// Osef
 * It's impossible to make a date before 2010 or after 2099

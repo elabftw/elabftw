@@ -23,10 +23,9 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/auth.php');
+require_once('inc/common.php');
 require_once('inc/head.php');
 require_once('inc/menu.php');
-require_once('inc/connect.php');
 require_once('inc/info_box.php');
 // Check id is valid and assign it to $id
 if(isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
@@ -93,7 +92,7 @@ if ($res === TRUE) {
     $experiment ='Date : '.$date.'
 By : '.$firstname.' '.$lastname.'
 Title : '.$title.'
-Experiment : 
+Text : 
 '.$body.'
         
 ';

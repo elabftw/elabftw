@@ -23,13 +23,12 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once("inc/functions.php");
 ?>
 <h2>ADD NEW PROTOCOL</h2>
 <!-- begin createXP form -->
 <section class='item'>
 <form name="createPR" method="post" action="createPR-exec.php" enctype="multipart/form-data">
-<img src='img/tags.gif' alt='' />
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.gif' alt='' />
 <h4>Tags</h4><span class='smallgray'> (separated by spaces)</span><br />
       <textarea placeholder='immunofluorescence antibody actin microtubules' name='tags' id='tags' rows="1" cols="50"></textarea>
 <br />
@@ -49,7 +48,7 @@ require_once('inc/file_upload.php');
 </div>
 <!-- SUBMIT BUTTON -->
 <div class='center' id='submitdiv'>
-<input type='image' src='img/submit.png' name='Submit' value='Submit' onClick="this.form.submit();" />
+<input type='image' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/submit.png' name='Submit' value='Submit' onClick="this.form.submit();" />
 </div>
 </form>
 <!-- end createPR form -->

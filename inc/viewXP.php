@@ -23,8 +23,6 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/functions.php');
-require_once('inc/connect.php');
 ?>
 <script src="js/editinplace.js" type="text/javascript"></script>
 
@@ -49,18 +47,18 @@ $data = $req->fetch();
 ?>
 <!-- click section to edit XP -->
 <section OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['id'];?>'" class="<?php echo $data['outcome'];?>">
-<a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>&type=exp' onClick="return confirm('Delete this experiment ?');"><img src='img/trash.png' title='delete' alt='delete' /></a>
+<a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>&type=exp' onClick="return confirm('Delete this experiment ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <?php
-echo "<span class='date'><img src='img/calendar.png' title='date' alt='Date :' />".$data['date']."</span><br />
-    <a href='experiments.php?mode=edit&id=".$data['id']."'><img src='img/edit.png' title='edit' alt='edit' /></a> 
-<a href='duplicateXP.php?id=".$data['id']."'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a> 
-<a href='make_pdf.php?id=".$data['id']."&type=exp'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a> 
-<a href='make_zip.php?id=".$data['id']."&type=exp'><img src='img/zip.gif' title='make a zip archive' alt='zip' /></a>";
+echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' title='date' alt='Date :' />".$data['date']."</span><br />
+    <a href='experiments.php?mode=edit&id=".$data['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/edit.png' title='edit' alt='edit' /></a> 
+<a href='duplicateXP.php?id=".$data['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a> 
+<a href='make_pdf.php?id=".$data['id']."&type=exp'><img src='themes/".$_SESSION['prefs']['theme']."/img/pdf.png' title='make a pdf' alt='pdf' /></a> 
+<a href='make_zip.php?id=".$data['id']."&type=exp'><img src='themes/".$_SESSION['prefs']['theme']."/img/zip.gif' title='make a zip archive' alt='zip' /></a>";
 // TAGS
 $sql = "SELECT tag FROM experiments_tags WHERE item_id = ".$id;
 $req = $bdd->prepare($sql);
 $req->execute();
-echo "<span class='tags'><img src='img/tags.gif' alt='' /> ";
+echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
 while($tags = $req->fetch()){
     echo "<a href='experiments.php?mode=show&tag=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
 }

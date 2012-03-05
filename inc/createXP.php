@@ -28,13 +28,13 @@
 <!-- begin createXP form -->
 <section class='running'>
 <form id="createXP" name="createXP" method="post" action="createXP-exec.php" enctype="multipart/form-data">
-<img src='img/tags.gif' alt='' />
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.gif' alt='' />
 <h4>Tags<h4><span class='smallgray'> (separated by spaces)</span><br />
       <textarea placeholder='spinning4 hela lifeact nocodazole siRNA Arp2/3' name='tags' id='tags' rows="1" cols="50"></textarea>
 <br /><br />
 
 <h4>Date</h4><span class='smallgray'> (date format : YYMMDD)</span><br />
-<img src='img/calendar.png' title='date' alt='Date :' /><input name='date' size='6' type='text' value='<?php echo kdate();?>' />
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /><input name='date' size='6' type='text' value='<?php echo kdate();?>' />
 
 <br /><br />
 <h4>Title</h4><br />
@@ -76,7 +76,7 @@ require_once('inc/file_upload.php');
 <br />
 <!-- SUBMIT BUTTON -->
 <div class='center' id='submitdiv'>
-<input type='image' src='img/submit.png' name='Submit' value='Submit' onClick="this.form.submit();" />
+<input type='image' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/submit.png' name='Submit' value='Submit' onClick="this.form.submit();" />
 </div>
 </form>
 <!-- end createXP form -->

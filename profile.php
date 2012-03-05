@@ -23,12 +23,10 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/auth.php');
+require_once('inc/common.php');
 $page_title = 'Profile';
 require_once('inc/head.php');
 require_once('inc/menu.php');
-require_once('inc/connect.php');
-require_once('inc/functions.php');
 echo '<h2>PROFILE</h2>';
 
 // SQL to get number of experiments
@@ -51,7 +49,7 @@ if (daydiff(date("Y-m-d")) === 0){
 $exp_per_day = floor($count[0] / $days_since_reg);
 
 echo "<section class='item'>";
-echo "<img src='img/user.png' alt='' /> <h4>INFOS</h4>";
+echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/user.png' alt='' /> <h4>INFOS</h4>";
 echo "<div class='center'>
     <p>".$data['firstname']." ".$data['lastname']." (".$data['email'].")</p>
     <p>".$count[0]." experiments done since ".$data['register_date']." (".$exp_per_day." experiments/day)</p>";

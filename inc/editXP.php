@@ -56,10 +56,10 @@ $data = $req->fetch();
 // BEGIN CONTENT
 ?>
 <section class='<?php echo $data['outcome'];?>'>
-<a class='align_right' href='delete_item.php?id=<?php echo $id;?>&type=exp' onClick="return confirm('Delete this experiment ?');"><img src='img/trash.png' title='delete' alt='delete' /></a>
+<a class='align_right' href='delete_item.php?id=<?php echo $id;?>&type=exp' onClick="return confirm('Delete this experiment ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <!-- ADD TAG FORM -->
 <form id="addtag" name="addtag" method="post" action="add_tag.php">
-<img src='img/tags.gif' alt='' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.gif' alt='' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
 <span class='tags'>
 <?php
 $sql = "SELECT id, tag FROM experiments_tags WHERE item_id = ".$id;
@@ -73,7 +73,7 @@ while($tags = $tagreq->fetch()){
 <input name='item_id' type='hidden' value='<? echo $id;?>' />
 <input name='type' type='hidden' value='exp' />
 <input id='addtaginput' name='tag' placeholder='Add one tag' />
-<a href="javascript: document.forms['addtag'].submit()"><img alt='add' src='img/plus.png' /></a>
+<a href="javascript: document.forms['addtag'].submit()"><img alt='add' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/plus.png' /></a>
 </span></span>
 </form><!-- END ADD TAG -->
 <br />
@@ -85,7 +85,7 @@ while($tags = $tagreq->fetch()){
 <form id="editXP" name="editXP" method="post" action="editXP-exec.php" enctype='multipart/form-data'>
 <input name='item_id' type='hidden' value='<? echo $id;?>' />
 <h4>Date</h4><span class='smallgray'> (date format : YYMMDD)</span><br />
-<img src='img/calendar.png' title='date' alt='Date :' /><input name='date' size='6' type='text' value='<?php echo $data['date'];?>' /><br />
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /><input name='date' size='6' type='text' value='<?php echo $data['date'];?>' /><br />
 <br /><h4>Title</h4><br />
       <textarea id='title' name='title' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
           echo stripslashes($data['title']);
@@ -136,7 +136,7 @@ require_once('inc/display_file.php');
 <!-- SUBMIT BUTTON -->
 <div class='center' id='submitdiv'>
 <p>SUBMIT</p>
-<input type='image' src='img/submit.png' name='Submit' value='Submit' onClick="this.form.submit();" />
+<input type='image' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/submit.png' name='Submit' value='Submit' onClick="this.form.submit();" />
 </div>
 </form>
 </section>

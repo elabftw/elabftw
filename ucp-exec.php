@@ -147,6 +147,35 @@ if( ($result) && ($numrows === 1) ) {
         $errmsg_arr[] = 'Email missing';
         $errflag = true;
     }
+    // Check phone
+    if (isset($_POST['phone']) && !empty($_POST['phone'])) {
+        $phone = filter_var($_POST['phone'], FILTER_SANITIZE_STRING);
+    } else {
+        $phone = NULL;
+    }
+    // Check cellphone
+    if (isset($_POST['cellphone']) && !empty($_POST['cellphone'])) {
+        $cellphone = filter_var($_POST['cellphone'], FILTER_SANITIZE_STRING);
+    } else {
+        $cellphone = NULL;
+    }
+    // Check skype
+    if (isset($_POST['skype']) && !empty($_POST['skype'])) {
+        $skype = filter_var($_POST['skype'], FILTER_SANITIZE_STRING);
+    } else {
+        $skype = NULL;
+    }
+    // Check website
+    if (isset($_POST['website']) && !empty($_POST['website'])) {
+        if  (filter_var($_POST['website'], FILTER_VALIDATE_URL)) {
+            $website = $_POST['website'];
+        } else { // do not validate as url
+            $errmsg_arr[] = 'Please input a valid URL !';
+            $errflag = true;
+        }
+    } else {
+        $website = NULL;
+    }
 
     //If there are input validations, redirect back to the registration form
     if($errflag) {
@@ -162,7 +191,11 @@ if( ($result) && ($numrows === 1) ) {
         email = :email,
         username = :username,
         firstname = :firstname,
-        lastname = :lastname
+        lastname = :lastname,
+        phone = :phone,
+        cellphone = :cellphone,
+        skype = :skype,
+        website = :website
         WHERE userid = :userid";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
@@ -172,6 +205,10 @@ if( ($result) && ($numrows === 1) ) {
         'username' => $username,
         'firstname' => $firstname,
         'lastname' => $lastname,
+        'phone' => $phone,
+        'cellphone' => $cellphone,
+        'skype' => $skype,
+        'website' => $website,
         'userid' => $_SESSION['userid']));
     if($result){
         $infomsg_arr[] = 'Profile updated !';

@@ -23,8 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/auth.php');
-$ini_arr = parse_ini_file('admin/config.ini');
+require_once('inc/common.php');
 $page_title= $ini_arr['lab_name'];
 require_once('inc/head.php');
 require_once('inc/menu.php');
@@ -34,6 +33,34 @@ echo "<h2>".strtoupper($ini_arr['lab_name'])."</h2>";
 <h3>LABMEETINGS</h3>
 <p><a href='http://wiki-bio6.curie.fr/wiki/index.php/Piel_Lab_inner_working#Lab_meetings' target='_blank'>Relevant wiki link</a></p>
 <p class='center'><img src='img/labmeetings-2012.png' alt='labmeetings' title='labmeetings 2012' /></p>
+</section>
+
+<section class='item'>
+<h3>TEAM MEMBERS</h3>
+<?php // SQL to get members info
+$sql = "SELECT firstname, lastname, email, phone, cellphone, skype, website FROM users WHERE validated = 1";
+$req = $bdd->prepare($sql);
+$req->execute();
+echo "<ul>";
+while ($data = $req->fetch()) {
+    echo "<li><a href='mailto:".$data['email']."'>".$data['firstname']." ".$data['lastname']."</a>";
+        if (!empty($data['phone'])) { 
+        echo " <img src='themes/".$_SESSION['prefs']['theme']."/img/phone.png' alt='Phone :' title='phone' /> ".$data['phone'];
+        } 
+        if (!empty($data['cellphone'])) { 
+        echo " <img src='themes/".$_SESSION['prefs']['theme']."/img/cellphone.png' alt='Cellphone :' title='Cellphone' /> ".$data['cellphone']; 
+        }
+        if (!empty($data['website'])) { 
+        echo " <a href='".$data['website']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/website.png' alt='website :' title='website' /></a>"; 
+        }
+        if (!empty($data['skype'])) { 
+        echo " <img src='themes/".$_SESSION['prefs']['theme']."/img/skype.png' alt='skype :' title='skype' /> ".$data['skype'];
+        } 
+    echo "</li>";
+}
+echo "</ul>";
+
+?>
 </section>
 
 <?php

@@ -1,4 +1,5 @@
 /////// Priority
+* on team page, is admin, is pi, is jc resp or labmeeting resp
 * export by date range / tag
 * search : selector should stay what it was
 * search : multiple critères( has file attached ?)
@@ -8,9 +9,6 @@
 * labmeetings : resp can add room, date, name, cronjob that sends an email before the labmeeting
 * have a real useful index...
 
-** register
-* profile seeable by others
-* skype, tel, telperso, url
 
 ////// Features
 * dans ucp : tu choisis tes templates ! et tu choisis celle qui est créée par défaut, ensuite dans la page createXP, tu peux loader des templates

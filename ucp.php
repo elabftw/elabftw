@@ -23,17 +23,16 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/auth.php');
+require_once('inc/common.php');
 $page_title = 'User Control Panel';
 require_once('inc/head.php');
 require_once('inc/menu.php');
-require_once('inc/connect.php');
 require_once('inc/info_box.php');
 
 echo '<h2>USER CONTROL PANEL</h2>';
 
 // SQL for UCP
-$sql = "SELECT username, email, firstname, lastname FROM users WHERE userid = ".$_SESSION['userid'];
+$sql = "SELECT username, email, firstname, lastname, phone, cellphone, skype, website FROM users WHERE userid = ".$_SESSION['userid'];
 $req = $bdd->prepare($sql);
 $req->execute();
 $data = $req->fetch();
@@ -53,7 +52,11 @@ $data = $req->fetch();
       Change Email <input name="email" value='<?php echo $data['email'];?>' cols='20' rows='1' /><br />
       Username <input name="username" value='<?php echo $data['username'];?>' cols='20' rows='1' /><br />
       Firstname <input name="firstname" value='<?php echo $data['firstname'];?>' cols='20' rows='1' /><br />
-      Lastname <input name="lastname" value='<?php echo $data['lastname'];?>' cols='20' rows='1' /><br /></p>
+      Lastname <input name="lastname" value='<?php echo $data['lastname'];?>' cols='20' rows='1' /><br />
+      Phone <input name="phone" value='<?php echo $data['phone'];?>' cols='20' rows='1' /><br />
+      Cellphone <input name="cellphone" value='<?php echo $data['cellphone'];?>' cols='20' rows='1' /><br />
+      Skype <input name="skype" value='<?php echo $data['skype'];?>' cols='20' rows='1' /><br />
+      Website <input name="website" value='<?php echo $data['website'];?>' cols='20' rows='1' /><br /></p>
 <!-- SUBMIT BUTTON -->
 <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Update profile" /></div>
 </form>

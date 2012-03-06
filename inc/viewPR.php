@@ -45,17 +45,17 @@ $data = $req->fetch();
 ?>
 <!-- click section to edit PR -->
 <section OnClick="document.location='protocols.php?mode=edit&id=<?php echo $data['id'];?>'" class="item">
-<a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>&type=prot' onClick="return confirm('Delete this protocol ?');"><img src='img/trash.png' title='delete' alt='delete' /></a>
+<a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>&type=prot' onClick="return confirm('Delete this protocol ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <?php
-echo "<span class='date'><img src='img/calendar.png' title='date' alt='Date :' />".$data['date']."</span><br />
-    <a href='protocols.php?mode=edit&id=".$data['id']."'><img src='img/edit.png' title='edit' alt='edit' /></a> 
-<a href='make_pdf.php?id=".$data['id']."&type=prot'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a> 
-<a href='make_zip.php?id=".$data['id']."&type=prot'><img src='img/zip.gif' title='make a zip archive' alt='zip' /></a>";
+echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' title='date' alt='Date :' />".$data['date']."</span><br />
+    <a href='protocols.php?mode=edit&id=".$data['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/edit.png' title='edit' alt='edit' /></a> 
+<a href='make_pdf.php?id=".$data['id']."&type=prot'><img src='themes/".$_SESSION['prefs']['theme']."/img/pdf.png' title='make a pdf' alt='pdf' /></a> 
+<a href='make_zip.php?id=".$data['id']."&type=prot'><img src='themes/".$_SESSION['prefs']['theme']."/img/zip.gif' title='make a zip archive' alt='zip' /></a>";
 // TAGS
 $sql = "SELECT tag FROM protocols_tags WHERE item_id = ".$id;
 $req = $bdd->prepare($sql);
 $req->execute();
-echo "<span class='tags'><img src='img/tags.gif' alt='' /> ";
+echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
 while($tags = $req->fetch()){
     echo "<a href='protocols.php?mode=show&tag=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
 }

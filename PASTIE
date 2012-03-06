@@ -1,3 +1,14 @@
 
 <!-- Redirect the user to the index after 2 secs -->
 <script>setTimeout('top.location = \'index.php\'', 2000);</script>
+
+function init(){
+    // we need to loop through each comment_XX
+    // only search in filesdiv
+    var filesDiv = document.getElementById("filesdiv");
+    // the only p is the comment field
+    var elems = filesDiv.getElementsByTagName("p");
+    for (var i=0;i<elems.length;i++) {
+            makeEditable(elems[i]);
+        }
+}

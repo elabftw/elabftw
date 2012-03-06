@@ -1,5 +1,4 @@
 /////// Priority
-* ditch scriptaculous and use only jquery (inline edit + show-hide)
 * search : selector should stay what it was
 * search : multiple critères( has file attached ?)
 * most used protocoles get first in selecta ! 
@@ -12,19 +11,17 @@
 * ask admin to validate new accounts
 * profile seeable by others
 * skype, tel, telperso, url
-* list protocols in exp to link them
 
 ////// Features
 * dans ucp : tu choisis tes templates ! et tu choisis celle qui est créée par défaut, ensuite dans la page createXP, tu peux loader des templates
-* autosuggest on tags
 * announce birthday date of a team mb to other team mb
 * choose from tagcloud (need ajax for addtag, deltag)
 * statistics : make pie chart by tag
 * news feature, anyone can put a news up for evereybody to see
-* tree feature, tree in left pane, and manips related in right pane.
 * journal club
 * when click on file div, change file (with ajax ?)
 * add real calendar
+* autosuggest on tags (supplanted by browser form history)
 * offline version 
 
 ///// Osef

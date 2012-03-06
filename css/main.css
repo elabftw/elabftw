@@ -217,10 +217,6 @@ textarea{
     font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
-.editable{
-    background-color: #CCC;
-}
-
 /* comments for files */
 .addFileDiv {
     margin:10px;

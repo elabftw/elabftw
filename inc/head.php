@@ -81,6 +81,7 @@ $ftw = $ftw_arr[0];
 
 echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."</title>"?>
 <meta name="author" content="Nicolas CARPi" />
+<!-- CSS -->
 <link rel="stylesheet" media="all" href="css/main.css" />
 <?php
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1){
@@ -91,13 +92,14 @@ echo "<link id='maincss' rel='stylesheet' media='all' href='themes/default/style
 ?>
 <link rel="stylesheet" media="all" href="css/tagcloud.css" />
 <link rel="stylesheet" media="all" href="css/pageslide.css" />
-<!--
-<script src="js/prototype.js" type="text/javascript"></script>
-<script src="js/scriptaculous.js?load=effects" type="text/javascript"></script>
--->
+<!-- JAVASCRIPT -->
 <script src="js/jquery-1.7.1.min.js" type='text/javascript'></script>
 <script src="js/jquery-ui-1.8.18.custom.min.js"></script>
+<!-- for editable comments -->
+<script src="js/jquery.jeditable.min.js" type='text/javascript'></script>
+<!-- for todolist -->
 <script src="js/jquery.inlineedit.js"></script>
+<!-- for keyboard shortcuts -->
 <script src='js/keymaster.js' type='text/javascript'></script>
 </head>
 

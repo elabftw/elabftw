@@ -24,7 +24,9 @@
 *                                                                               *
 ********************************************************************************/
 ?>
+<!--
 <script src="js/editinplace.js" type="text/javascript"></script>
+-->
 
 <h2>VIEW EXPERIMENT</h2>
 

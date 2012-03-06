@@ -126,7 +126,7 @@ nav a:hover {
     color:white;
     background-color:green;
 }
-.editable{
+.editable:hover {
     background-color: #CCC;
 }
 

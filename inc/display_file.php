@@ -50,9 +50,22 @@ if($count > 0){
         }
         echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='' /> <a href='download.php?id=".$data['id']."&f=".$data['long_name']."&name=".$data['real_name']."' target='_blank'>".$data['real_name']."</a>
         <span class='filesize'> (".format_bytes(filesize('uploads/'.$data['long_name'])).")</span><br />";
-        echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/comments.png' alt='comment' /> <p id='comment_".$data['id']."'>".stripslashes($data['comment'])."</p></div>";
+        echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/comments.png' alt='comment' /> <p class='editable' id='comment_".$data['id']."'>".stripslashes($data['comment'])."</p></div>";
     } // end while
     echo "</section>";
 } // end if count > 0
 // END DISPLAY FILES
 ?>
+<!-- using jquery jeditable plugin -->
+<script type='text/javascript'>
+ $(document).ready(function() {
+     $('.editable').editable('editinplace.php', { 
+         tooltip : 'Click to edit',
+             indicator : 'Saving...',
+         id   : 'id',
+         submit : 'Save',
+         cancel : 'Cancel',
+         name : 'content'
+     });
+ });
+    </script>

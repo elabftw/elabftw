@@ -1,14 +1,14 @@
 /////// Priority
+* export by date range / tag
 * search : selector should stay what it was
 * search : multiple critères( has file attached ?)
 * most used protocoles get first in selecta ! 
 * templates for Exp (with blocks ?)
-* export by date range / tag
 * journal club : see past JC with papers
+* labmeetings : resp can add room, date, name, cronjob that sends an email before the labmeeting
 * have a real useful index...
 
 ** register
-* ask admin to validate new accounts
 * profile seeable by others
 * skype, tel, telperso, url
 
@@ -18,29 +18,20 @@
 * choose from tagcloud (need ajax for addtag, deltag)
 * statistics : make pie chart by tag
 * news feature, anyone can put a news up for evereybody to see
-* journal club
 * when click on file div, change file (with ajax ?)
 * add real calendar
-* autosuggest on tags (supplanted by browser form history)
-* offline version 
 
 ///// Osef
 * It's impossible to make a date before 2010 or after 2099
-* outcome is not kept if error
+* selected outcome is not kept if error on edit/create
 * if two file field and file is only on the second one (first is empty) no file uploaded
+
 ///// Longterm
-* un gestionnaire de musique à la ledjam
+* install.php
+* music manager à la ledjamradio
+* autosuggest on tags (supplanted by browser form history)
 * i18n
+* offline version 
 
 ///// SECURITY
 * check for flood register/login
-
-INSTALL
-put php files on server
-go to install.php
-asked for admin password
-admin password is generated and put inside sql file
-admin password for admin/.htpasswd
-sql create database
-import tables
-all running !

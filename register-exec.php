@@ -146,14 +146,13 @@ if($result) {
         ->setTo(array($email => $firstname))
         // Give it a body
         ->setBody('Congratulations ! You registered successfully to eLabFTW \o/');
-        $transport = Swift_SmtpTransport::newInstance('smtp.gmail.com', 587, 'tls')
-              ->setUsername('elabftw.net')
-                ->setPassword('OsefOsef');
+$transport = Swift_SmtpTransport::newInstance($ini_arr['smtp_address'], $ini_arr['smtp_port'], $ini_arr['smtp_encryption'])
+    ->setUsername($ini_arr['smtp_username'])
+    ->setPassword($ini_arr['smtp_password']);
         $mailer = Swift_Mailer::newInstance($transport);
         $result = $mailer->send($message);
     // Redirect
         $msg_arr = array();
-        $ini_arr = parse_ini_file('admin/config.ini');
         if ($ini_arr['admin_validate'] === '1'){
             $msg_arr[] = 'Registration successful :)<br />Your account must now be validated by an admin.<br />You will receive an email when it is done.';
         } else {

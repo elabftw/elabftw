@@ -154,13 +154,13 @@ Attached files :
         echo "</ol>";
     }
     echo "<hr>";
-    echo "<p>Download archive :<br /><img src='img/download.png' alt='' /> <a href='uploads/".$zipname.".zip'>".$zipname.".zip</a></p>";
+    echo "<p>Download archive :<br /><img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='' /> <a href='uploads/".$zipname.".zip'>".$zipname.".zip</a></p>";
     // SQL to get all users and emails
     $sql = "SELECT firstname, lastname, email, userid FROM users";
     $req = $bdd->prepare($sql);
     $req->execute();
     echo "<p>Send zip archive to :
-        <form style='margin-top:-15px' method='post' action='send_zip.php'><img src='img/mail.gif' alt='mail' /> <select name='userid'>";
+        <form style='margin-top:-15px' method='post' action='send_zip.php'><img src='themes/".$_SESSION['prefs']['theme']."/img/mail.gif' alt='mail' /> <select name='userid'>";
     while($data = $req->fetch()){
          echo "<option value='".$data['userid']."'>".$data['firstname']." ".$data['lastname']."</option>";
     }

@@ -75,7 +75,6 @@ Regards,
 $message->attach(Swift_Attachment::fromPath('uploads/'.$zipname.'.zip', 'archive/zip'));
 
 // SEND
-$ini_arr = parse_ini_file("admin/config.ini");
 $transport = Swift_SmtpTransport::newInstance($ini_arr['smtp_address'], $ini_arr['smtp_port'], $ini_arr['smtp_encryption'])
     ->setUsername($ini_arr['smtp_username'])
     ->setPassword($ini_arr['smtp_password']);

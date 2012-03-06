@@ -26,9 +26,9 @@ PHP part
 # export http_proxy=proxy-adress.company.org:3128
 )
 Get latest version
-# wget http://www.elabftw.net/downloads/latest.zip
+# wget http://www.elabftw.net/pub/latest.tar.gz
 Extract it in the public folder
-# unzip latest.zip
+# tar xzf latest.tar.gz
 Now you have all the php files, we just need to add a library so the mails can be sent
 # pear channel-discover pear.swiftmailer.org
 # pear install swift/swift
@@ -36,5 +36,20 @@ Now you have all the php files, we just need to add a library so the mails can b
 SQL part
 ***********
 
-# mysql -uroot -ppassword < create_tables.sql
+Connect :
+Command to connect with the user `root` and the password `secr3t`
+# mysql -uroot -psecr3t
+
+Create a database (at the mysql prompt)
+mysql> CREATE DATABASE `elabftw` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+Exit with Ctrl-d, and enter this if you are in the same directory as the sql file:
+# mysql -uroot -psecr3t elabftw < elabftw.sql
+
+Now register an account, and set it admin by modifying the `is_admin` column in `users` table :
+mysql> UPDATE users SET is_admin = 1 WHERE userid = 1
+
+You should be good to go. Email me in case of troubles : nicolas.carpi@gmail.com
+
+In the future, I hope to automate all this install part ^^
 

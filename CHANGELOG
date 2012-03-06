@@ -2,9 +2,11 @@
 
 
 Version 0.5.1
-* Various FTW titles
-* Images are now in themes folders
+* No more Scriptaculous/Prototype, only jQuery
 * TODO list added
+* Images are now in themes folders
+* Various FTW titles
+* Git repo @ gitorious
 
 Version 0.5 Released on 120301
 * UCP

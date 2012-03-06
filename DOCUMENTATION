@@ -1,12 +1,18 @@
-// HTML5
-// PHP5
-// PDO
-// jquery
-// vim
+This file is for developpers who want to help with the code, and also for me, as a reminder of stuff I did...
 
-// Licence Affero GPL v3
+eLabFTW uses :
+* PDO in order to deal with the MySQL database
+* jQuery + jQuery UI + various plugins for the eye-candy
+* php version > 5
+* mysql version > 5
 
-// For PDF creation, we use fpdf http://www.fpdf.org
+Use of git : https://gitorious.org/elabftw
+I know all the cool kids are on Github, but Github source code isn't available, unlike gitorious !
+Developped with vim, and 4 spaces indent.
+
+* Use of fpdf http://www.fpdf.org for the pdf creation
+* Use of Swiftmailer http://swiftmailer.org for sending email with SMTP
+
 // Accounts
 - Passwords are salted with a random salt, stored in SQL with the sha-512 hash.
 - Password forgotten => reset pass with password sent to email.

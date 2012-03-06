@@ -45,15 +45,17 @@ unset($_SESSION['username']);}?>' id="username" /></p>
       <input type="submit" name="Submit" value="Login" />
 </form>
 <!-- BEGIN PASSSWORD RESET FORM -->
-<script type='text/javascript'>
-   function AppearEffect(element){
-       new Effect.toggle(element, 'blind', {duration:0.5});
-   }
-</script>
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".toggle_container").hide();
+	$("span.trigger").click(function(){
+		$(this).toggleClass("active").next().slideToggle("slow");
+	});
+});
 </script>
 <hr>
-<span onclick="AppearEffect('toggle_container');"><em>Click here to reset password</em></span>
-<div style='display:none' id='toggle_container'>
+<span class='trigger'><em>Click here to reset password</em></span>
+<div class='toggle_container'>
 <br />
 <form name='resetPass' method='post' action='reset-pass.php'>
 <input placeholder='Enter your email address' name='email' />

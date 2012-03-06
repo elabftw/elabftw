@@ -1,15 +1,17 @@
 <!-- FILE UPLOAD -->
-<script type='text/javascript'>
-function AppearEffect(element){
-    new Effect.toggle(element, 'slide');
-}
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".toggle_container").hide();
+	$("h4.trigger").click(function(){
+		$(this).toggleClass("active").next().slideToggle("slow");
+	});
+});
 </script>
-
 <hr class='flourishes'>
 <br />
 <div class='attachFileDiv'>
-<h4 onclick="AppearEffect('toggle_container');">Click to attach a file</h4>
-<div style='display:none' id='toggle_container'>
+<h4 class='trigger'>Click to attach a file</h4>
+<div class='toggle_container'>
 <div class='addFileDiv'>
 <!-- max file size here to avoid waiting for uploading a too big file (can be fooled browser side) -->
 <input type='hidden' name='MAX_FILE_SIZE' value='200000000000000000000' />

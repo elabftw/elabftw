@@ -28,6 +28,7 @@
 <html>
 <head>
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+<link rel="icon" type="image/ico" href="img/favicon.ico" />
 <?php
 // Random title
 $ftw_arr = array();
@@ -95,8 +96,9 @@ echo "<link id='maincss' rel='stylesheet' media='all' href='themes/default/style
 <script src="js/scriptaculous.js?load=effects" type="text/javascript"></script>
 -->
 <script src="js/jquery-1.7.1.min.js" type='text/javascript'></script>
-<script type='text/javascript' src='js/keymaster.js'></script>
-<link rel="icon" type="image/ico" href="img/favicon.ico" />
+<script src="js/jquery-ui-1.8.18.custom.min.js"></script>
+<script src="js/jquery.inlineedit.js"></script>
+<script src='js/keymaster.js' type='text/javascript'></script>
 </head>
 
 <body>

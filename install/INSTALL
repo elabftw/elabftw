@@ -49,6 +49,8 @@ Exit with Ctrl-d, and enter this if you are in the same directory as the sql fil
 Now register an account, and set it admin by modifying the `is_admin` column in `users` table :
 mysql> UPDATE users SET is_admin = 1 WHERE userid = 1
 
+Now edit the `admin/config-example.ini` file and rename it to `config.ini`.
+
 You should be good to go. Email me in case of troubles : nicolas.carpi@gmail.com
 
 In the future, I hope to automate all this install part ^^

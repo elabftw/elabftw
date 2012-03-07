@@ -57,7 +57,7 @@ echo "Version : ".$version['version'];
 </section>
 <script src="js/jquery.pageslide.min.js" type="text/javascript"></script>
 <?php
-if (isset($_SESSION['auth'])){
+if (isset($_SESSION['prefs']['shortcuts']['todo'])){
 echo "<script type='text/javascript'>
 key('".$_SESSION['prefs']['shortcuts']['todo']."', function(){
     $.pageslide({href:'todolist.php'});

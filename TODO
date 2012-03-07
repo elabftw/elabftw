@@ -1,4 +1,5 @@
 /////// Priority
+*bugfix : when login through auth, no sc_todo set in session
 * custom menu
 * merge experiments_tags and protocols_tags
 * export by date range / tag

@@ -131,6 +131,7 @@ function setTmpTheme(theme){
 <span class='simple_border'>Create item : <input type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['create'];?>' name='create'></span>
 <span class='simple_border'>Edit item : <input type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['edit'];?>' name='edit'></span>
 <span class='simple_border'>Submit : <input type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['submit'];?>' name='submit'></span>
+<span class='simple_border'>Show TODOlist : <input type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['todo'];?>' name='todo'></span>
 <!-- SUBMIT BUTTON -->
 <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Change shortcuts" /></div>
 </form>

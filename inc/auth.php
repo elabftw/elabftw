@@ -50,7 +50,7 @@ if(!isset($_SESSION['auth'])){
             'order' => $data['order_by'], 
             'sort' => $data['sort_by'], 
             'limit' => $data['limit_nb'], 
-            'shortcuts' => array('create' => $data['sc_create'], 'edit' => $data['sc_edit'], 'submit' => $data['sc_submit']));
+            'shortcuts' => array('create' => $data['sc_create'], 'edit' => $data['sc_edit'], 'submit' => $data['sc_submit'], 'todo' => $data['sc_todo']));
         session_write_close();
         }else{ // no token found in database
             $msg_arr = array();

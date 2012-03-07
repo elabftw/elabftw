@@ -92,7 +92,7 @@ if ($result) {
             'order' => $data['order_by'], 
             'sort' => $data['sort_by'], 
             'limit' => $data['limit_nb'], 
-            'shortcuts' => array('create' => $data['sc_create'], 'edit' => $data['sc_edit'], 'submit' => $data['sc_submit']));
+            'shortcuts' => array('create' => $data['sc_create'], 'edit' => $data['sc_edit'], 'submit' => $data['sc_submit'], 'todo' => $data['sc_todo']));
         session_write_close();
         // Make a unique token and store it in sql AND cookie
         $token = md5(uniqid(rand(), TRUE));

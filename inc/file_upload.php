@@ -38,7 +38,7 @@ container.appendChild(br_field);
     <input size='35' placeholder='Enter a comment for the file' name='filescom[]' />
   </div>
 <br />
-<img src='img/attach_add.png' alt='' /> <a href="javascript:void(0);" onClick="add_file_field();">Add another file</a><br />
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/attach_add.png' alt='' /> <a href="javascript:void(0);" onClick="add_file_field();">Add another file</a><br />
 </div>
 </div><!-- end toggle container -->
 </div>

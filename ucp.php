@@ -133,6 +133,8 @@ function setTmpTheme(theme){
 <span class='simple_border'>Submit : <input type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['submit'];?>' name='submit'></span>
 <span class='simple_border'>Show TODOlist : <input type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['todo'];?>' name='todo'></span>
 <!-- SUBMIT BUTTON -->
+<br />
+<br />
 <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Change shortcuts" /></div>
 </form>
 </section>

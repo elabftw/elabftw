@@ -37,28 +37,27 @@ $tag = filter_var($_POST['tag'], FILTER_SANITIZE_STRING);
 
 // Tag for experiment or protocol ?
 if ($_POST['type'] == 'exp' ){
-
-// Check expid is owned by connected user
-$sql = "SELECT userid FROM experiments WHERE id = ".$item_id;
-$req = $bdd->prepare($sql);
-$req->execute();
-$data = $req->fetch();
-if ($data['userid'] == $_SESSION['userid']) {
-    // SQL for addtag
-    $sql = "INSERT INTO experiments_tags (tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
+    // Check expid is owned by connected user
+    $sql = "SELECT userid FROM experiments WHERE id = ".$item_id;
     $req = $bdd->prepare($sql);
-    $result = $req->execute(array(
-        'tag' => $tag,
-        'item_id' => $item_id,
-        'userid' => $_SESSION['userid']
-    ));
-    if ($result) {
-        header("location: experiments.php?mode=edit&id=$item_id&tagadded=1");
-    } else {
-        die('Something went wrong in the database query. Check the flux capacitor.');
+    $req->execute();
+    $data = $req->fetch();
+    if ($data['userid'] == $_SESSION['userid']) {
+        // SQL for addtag
+        $sql = "INSERT INTO experiments_tags (tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
+        $req = $bdd->prepare($sql);
+        $result = $req->execute(array(
+            'tag' => $tag,
+            'item_id' => $item_id,
+            'userid' => $_SESSION['userid']
+        ));
+        if ($result) {
+            header("location: experiments.php?mode=edit&id=$item_id&tagadded=1");
+        } else {
+            die('Something went wrong in the database query. Check the flux capacitor.');
+        }
     }
-}
-}elseif ($_POST['type'] == 'prot'){
+} elseif ($_POST['type'] == 'prot'){
     // SQL for add tag to protocol
     $sql = "INSERT INTO protocols_tags (tag, item_id) VALUES(:tag, :item_id)";
     $req = $bdd->prepare($sql);
@@ -70,6 +69,6 @@ if ($data['userid'] == $_SESSION['userid']) {
     } else {
         die('Something went wrong in the database query. Check the flux capacitor.');
     }
-}else{
+} else {
     die('taggle');
 }

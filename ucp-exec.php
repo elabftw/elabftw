@@ -354,7 +354,7 @@ if (isset($_POST['shortcuts'])) {
 
 // EXPORT EXPERIMENTS
 if (isset($_POST['export'])) {
-    echo "This functionality is not yet implemented.";
+    die("This functionality is not yet implemented.");
 }
 
 // INFO BOX

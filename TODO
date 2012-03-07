@@ -1,4 +1,5 @@
 /////// Priority
+* merge experiments_tags and protocols_tags
 * on team page, is admin, is pi, is jc resp or labmeeting resp
 * export by date range / tag
 * search : selector should stay what it was

@@ -23,9 +23,12 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-echo "<h2>EDIT EXPERIMENT</h2>";
-echo "<script src='js/editinplace.js' type='text/javascript'></script>";
-// ID
+?>
+<h2>EDIT EXPERIMENT</h2>
+<!-- to edit comments of attached files -->
+<script src='js/editinplace.js' type='text/javascript'></script>
+<?php
+// check ID is valid
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     $filter_options = array(
         'options' => array(
@@ -36,12 +39,10 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     die("The id parameter in the URL isn't a valid protocol ID.");
 }
 
-
 // Check id is owned by connected user
-$sql = "SELECT userid FROM experiments WHERE id = ?";
+$sql = "SELECT userid FROM experiments WHERE id = ".$id;
 $req = $bdd->prepare($sql);
-$data = array($id);
-$req->execute($data);
+$req->execute();
 $resultat = $req->fetchColumn();
 if ($resultat != $_SESSION['userid']) {
     die("You are trying to edit an experiment which is not yours.");

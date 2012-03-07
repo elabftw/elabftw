@@ -67,9 +67,8 @@ $data = $req->fetch();
 <h3>DISPLAY PREFERENCES</h3>
 <form action='ucp-exec.php' method='post'>
 <h4>View mode :</h4>
-<select name='display'><option value='default'>default</option>
-<option value='compact' <?php echo ($_SESSION['prefs']['display'] === 'compact') ? "selected" : "";?>>compact</option>
-</select>
+<input type='radio' name='display' value='default' <?php echo ($_SESSION['prefs']['display'] === 'default') ? "checked" : "";?> />Default
+<input type='radio' name='display' value='compact' <?php echo ($_SESSION['prefs']['display'] === 'compact') ? "checked" : "";?> />Compact
 <br /><br />
 <h4>Order by :</h4>
 <select name="order">

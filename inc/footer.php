@@ -57,11 +57,13 @@ echo "Version : ".$version['version'];
 </section>
 <script src="js/jquery.pageslide.min.js" type="text/javascript"></script>
 <?php
+if (isset($_SESSION['auth'])){
 echo "<script type='text/javascript'>
 key('".$_SESSION['prefs']['shortcuts']['todo']."', function(){
     $.pageslide({href:'todolist.php'});
-    });";
+});
+</script>";
+}
 ?>
-</script>
 </body>
 </html>

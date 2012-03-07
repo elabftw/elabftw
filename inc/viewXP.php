@@ -80,7 +80,7 @@ if ($data['protocol'] != NULL) {
     $req = $bdd->prepare($sql);
     $req->execute();
     $protdata = $req->fetch();
-    echo "<span class='strong'>Protocol :</span> <a href='protocols.php?mode=view&id=".$protdata['id']."'>".$protdata['title']."</a>";
+    echo "<p>Protocol :</p> <a href='protocols.php?mode=view&id=".$protdata['id']."'>".$protdata['title']."</a>";
 }
 echo "</section>";
 

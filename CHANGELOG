@@ -1,6 +1,7 @@
 /* Changelog for eLabFTW */
 
 Version 0.5.2
+* TODO list accessible via a keyboard shortcut ('t' by default)
 * Better profile
 * Better TEAM page
 

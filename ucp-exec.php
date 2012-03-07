@@ -331,18 +331,21 @@ if (isset($_POST['shortcuts'])) {
     $new_sc_create = substr($_POST['create'], 0, 1);
     $new_sc_edit = substr($_POST['edit'], 0, 1);
     $new_sc_submit = substr($_POST['submit'], 0, 1);
+    $new_sc_todo = substr($_POST['todo'], 0, 1);
     // SQL
-    $sql = "UPDATE users SET sc_create = :new_sc_create, sc_edit = :new_sc_edit, sc_submit = :new_sc_submit WHERE userid = ".$_SESSION['userid'];
+    $sql = "UPDATE users SET sc_create = :new_sc_create, sc_edit = :new_sc_edit, sc_submit = :new_sc_submit, sc_todo = :new_sc_todo WHERE userid = ".$_SESSION['userid'];
     $req = $bdd->prepare($sql);
     $req->execute(array(
         'new_sc_create' => $new_sc_create,
         'new_sc_edit' => $new_sc_edit,
-        'new_sc_submit' => $new_sc_submit
+        'new_sc_submit' => $new_sc_submit,
+        'new_sc_todo' => $new_sc_todo
     ));
     // put it in session
     $_SESSION['prefs']['shortcuts']['create'] = $new_sc_create;
     $_SESSION['prefs']['shortcuts']['edit'] = $new_sc_edit;
     $_SESSION['prefs']['shortcuts']['submit'] = $new_sc_submit;
+    $_SESSION['prefs']['shortcuts']['todo'] = $new_sc_todo;
     $infomsg_arr[] = 'Your shortcuts preferences have been updated.';
     $infoflag = true;
 }

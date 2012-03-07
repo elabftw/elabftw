@@ -258,6 +258,7 @@ echo "<script type='text/javascript'>
 key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'experiments.php?mode=create'});
 </script>";
 ?>
+<!-- TODOLIST -->
 <script src="js/jquery.pageslide.min.js" type="text/javascript"></script>
 <script type='text/javascript'>
     $("a.todo").pageslide();

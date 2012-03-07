@@ -23,15 +23,19 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+/* inc/connect.php - connect to the sql database - used when user isn't logged in and we
+ * can't use inc/common.php
+ */
+// SQL CONNECT
 try
 {
     $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-    $ini_arr = parse_ini_file("admin/config.ini");
+    $ini_arr = parse_ini_file('admin/config.ini');
     $bdd = new PDO('mysql:host='.$ini_arr['db_host'].';dbname='.$ini_arr['db_name'], $ini_arr['db_user'], $ini_arr['db_password'], $pdo_options);
 }
 catch(Exception $e)
 {
     die('Error : '.$e->getMessage());
 }
-
+// END SQL CONNECT
 ?>

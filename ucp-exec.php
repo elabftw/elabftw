@@ -23,8 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-session_start();
-require_once('inc/connect.php');
+require_once('inc/common.php');
 
 // INFO BOX
 $errmsg_arr = array();

@@ -35,7 +35,10 @@ function mouseOut3()
 </script>
 <p>
 <?php
+// because inc/common.php is not here whene not logged in
+if (!isset($_SESSION['auth'])) {
 $ini_arr = parse_ini_file('admin/config.ini');
+}
 echo $ini_arr['lab_name']." powered by <a href='http://www.elabftw.net'>eLabFTW</a> by <a href='http://www.elabftw.net'>Nicolas CARPi</a></p>
 <figure><a href='http://www.php.net'><img id='php' onmouseover='mouseOver()' onmouseout='mouseOut()' class='img' src='img/phpoff.gif' /></a>
 <a href='http://www.mysql.com'><img id='mysql' onmouseover='mouseOver2()' onmouseout='mouseOut2()' class='img' src='img/mysqloff.gif' /></a>
@@ -57,7 +60,7 @@ echo "Version : ".$version['version'];
 </section>
 <script src="js/jquery.pageslide.min.js" type="text/javascript"></script>
 <?php
-if (isset($_SESSION['prefs']['shortcuts']['todo'])){
+if (isset($_SESSION['auth'])){
 echo "<script type='text/javascript'>
 key('".$_SESSION['prefs']['shortcuts']['todo']."', function(){
     $.pageslide({href:'todolist.php'});

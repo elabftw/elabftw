@@ -25,7 +25,19 @@
 ********************************************************************************/
 /* auth + connect + functions*/
 session_start();
-require_once('inc/connect.php');
+$ini_arr = parse_ini_file('admin/config.ini');
+//$root_url = $ini_arr['root_url'];
+// SQL CONNECT
+try
+{
+    $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+    $bdd = new PDO('mysql:host='.$ini_arr['db_host'].';dbname='.$ini_arr['db_name'], $ini_arr['db_user'], $ini_arr['db_password'], $pdo_options);
+}
+catch(Exception $e)
+{
+    die('Error : '.$e->getMessage());
+}
+// END SQL CONNECT
 require_once('inc/functions.php');
 // if user is not auth
 if(!isset($_SESSION['auth'])){
@@ -52,7 +64,7 @@ if(!isset($_SESSION['auth'])){
             'order' => $data['order_by'], 
             'sort' => $data['sort_by'], 
             'limit' => $data['limit_nb'], 
-            'shortcuts' => array('create' => $data['sc_create'], 'edit' => $data['sc_edit'], 'submit' => $data['sc_submit']));
+            'shortcuts' => array('create' => $data['sc_create'], 'edit' => $data['sc_edit'], 'submit' => $data['sc_submit'], 'todo' => $data['sc_todo']));
         session_write_close();
         }else{ // no token found in database
             $msg_arr = array();

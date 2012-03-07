@@ -132,12 +132,24 @@ nav a:hover {
 
 /* INFO BOX */
 .err {
+    color: #b24040;
+    -webkit-box-shadow: 0px 1px 0px #cbe9c7 inset;
+    -moz-box-shadow: inset 0px 1px 0px #cbe9c7;
+    text-shadow: 0px 1px #f3f9fc;
+    background-color: #e8c5c9;
+    border: 1px solid #ab80c2;
+    padding:7px;
     font:14px Verdana, Arial;
-    color: red;
 }
 .infos {
+    color: #3f713a;
+    -webkit-box-shadow: 0px 1px 0px #cbe9c7 inset;
+    -moz-box-shadow: inset 0px 1px 0px #cbe9c7;
+    text-shadow: 0px 1px #f3f9fc;
+    background-color: #ace0a8;
+    border: 1px solid #96c17f;
+    padding:7px;
     font:14px Verdana, Arial;
-    color: green;
 }
 
 /* ITEMS */

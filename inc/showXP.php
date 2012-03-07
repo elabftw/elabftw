@@ -259,7 +259,6 @@ key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 
 </script>";
 ?>
 <!-- TODOLIST -->
-<script src="js/jquery.pageslide.min.js" type="text/javascript"></script>
 <script type='text/javascript'>
     $("a.todo").pageslide();
 </script>

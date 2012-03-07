@@ -17,7 +17,6 @@
 * statistics : make pie chart by tag
 * news feature, anyone can put a news up for evereybody to see
 * when click on file div, change file (with ajax ?)
-* todolist appear when $_SESSION['prefs']['shortcuts']['todo'] is pressed (code in inc/footer.php)
 * add real calendar
 
 ///// Osef

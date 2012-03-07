@@ -1,4 +1,6 @@
 /* Changelog for eLabFTW */
+Version 0.5.3
+* Added robots.txt file
 
 Version 0.5.2
 * TODO list accessible via a keyboard shortcut ('t' by default)

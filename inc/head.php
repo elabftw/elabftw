@@ -97,8 +97,6 @@ echo "<link id='maincss' rel='stylesheet' media='all' href='themes/default/style
 <script src="js/jquery-ui-1.8.18.custom.min.js"></script>
 <!-- for editable comments -->
 <script src="js/jquery.jeditable.min.js" type='text/javascript'></script>
-<!-- for todolist -->
-<script src="js/jquery.inlineedit.js"></script>
 <!-- for keyboard shortcuts -->
 <script src='js/keymaster.js' type='text/javascript'></script>
 </head>

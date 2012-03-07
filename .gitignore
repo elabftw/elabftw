@@ -1,8 +1,7 @@
 .DS_Store
 *~
 *.swp
-test.php
-test-exec.php
 admin/config.ini
 admin/.htpasswd
+testing/
 uploads/

@@ -38,12 +38,22 @@ echo "<h2>".strtoupper($ini_arr['lab_name'])."</h2>";
 <section class='item'>
 <h3>TEAM MEMBERS</h3>
 <?php // SQL to get members info
-$sql = "SELECT firstname, lastname, email, phone, cellphone, skype, website FROM users WHERE validated = 1";
+$sql = "SELECT * FROM users WHERE validated = 1";
 $req = $bdd->prepare($sql);
 $req->execute();
 echo "<ul>";
 while ($data = $req->fetch()) {
-    echo "<li><a href='mailto:".$data['email']."'>".$data['firstname']." ".$data['lastname']."</a>";
+    echo "<li>";
+    if ($data['is_admin'] == 1){
+        echo '# ';
+    } elseif ($data['is_pi'] == 1) {
+        echo '% ';
+    } elseif ($data['is_jc_resp'] == 1) {
+        echo '(jc) ';
+    } else {
+        echo '$ ';
+    }
+    echo "<a href='mailto:".$data['email']."'>".$data['firstname']." ".$data['lastname']."</a>";
         if (!empty($data['phone'])) { 
         echo " <img src='themes/".$_SESSION['prefs']['theme']."/img/phone.png' alt='Phone :' title='phone' /> ".$data['phone'];
         } 

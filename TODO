@@ -12,7 +12,7 @@
 
 ////// Features
 * dans ucp : tu choisis tes templates ! et tu choisis celle qui est créée par défaut, ensuite dans la page createXP, tu peux loader des templates
-* announce birthday date of a team mb to other team mb
+* announce birthday date of a team mb to other team mb (add birthday in profile)
 * choose from tagcloud (need ajax for addtag, deltag)
 * statistics : make pie chart by tag
 * news feature, anyone can put a news up for evereybody to see

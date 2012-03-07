@@ -1,5 +1,8 @@
 /* Changelog for eLabFTW */
 
+Version 0.5.2
+* Better profile
+* Better TEAM page
 
 Version 0.5.1
 * No more Scriptaculous/Prototype, only jQuery

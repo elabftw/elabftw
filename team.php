@@ -51,7 +51,7 @@ while ($data = $req->fetch()) {
         echo " <img src='themes/".$_SESSION['prefs']['theme']."/img/cellphone.png' alt='Cellphone :' title='Cellphone' /> ".$data['cellphone']; 
         }
         if (!empty($data['website'])) { 
-        echo " <a href='".$data['website']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/website.png' alt='website :' title='website' /></a>"; 
+        echo " <img src='themes/".$_SESSION['prefs']['theme']."/img/website.png' alt='website :' title='website' /> <a href='".$data['website']."'>www</a>"; 
         }
         if (!empty($data['skype'])) { 
         echo " <img src='themes/".$_SESSION['prefs']['theme']."/img/skype.png' alt='skype :' title='skype' /> ".$data['skype'];
@@ -59,7 +59,6 @@ while ($data = $req->fetch()) {
     echo "</li>";
 }
 echo "</ul>";
-
 ?>
 </section>
 

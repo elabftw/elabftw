@@ -41,12 +41,15 @@ $sql = "SELECT * FROM users WHERE userid = ".$_SESSION['userid'];
 $req = $bdd->prepare($sql);
 $req->execute();
 $data = $req->fetch();
+
+// Calculate number of experiments/day
 $days_since_reg = daydiff($data['register_date']);
 // if user registered today
 if (daydiff(date("Y-m-d")) === 0){
     $days_since_reg = 1;
 }
-$exp_per_day = floor($count[0] / $days_since_reg);
+$exp_per_day = ($count[0] / $days_since_reg);
+$exp_per_day = number_format($exp_per_day, 1, '.', ' ');
 
 echo "<section class='item'>";
 echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/user.png' alt='' /> <h4>INFOS</h4>";

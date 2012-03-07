@@ -24,8 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 /* addtag.php - for adding tags */
-require_once("inc/auth.php");
-require_once("inc/connect.php");
+require_once('inc/common.php');
 
 // Check expid is valid and assign it to $expid
 if (filter_var($_POST['item_id'], FILTER_VALIDATE_INT)) {

@@ -23,8 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/auth.php');
-require_once('inc/connect.php');
+require_once('inc/common.php');
 // Check id is valid and assign it to $id
 if(filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
     $id = $_GET['id'];

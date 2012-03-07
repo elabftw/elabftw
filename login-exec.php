@@ -24,6 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 session_start();
+require_once('inc/connect.php');
 
 //Array to store validation errors
 $errmsg_arr = array();
@@ -53,7 +54,6 @@ if($errflag) {
 }
 
 // SQL for verification + actual login with cookies
-require_once('inc/connect.php');
 // Get salt
 $sql = "SELECT salt FROM users WHERE username='$username'";
 $result = $bdd->prepare($sql);

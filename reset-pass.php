@@ -24,6 +24,9 @@
 *                                                                               *
 ********************************************************************************/
 session_start();
+require_once('inc/connect.php');
+require_once('inc/functions.php');
+require_once('swift_required.php');
 // // Get infos about the requester (will be sent in the mail afterwards)
 // Get IP
 if (!empty($_SERVER["HTTP_CLIENT_IP"])){
@@ -41,7 +44,6 @@ $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
 // Validate we were given a good email
 if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
         // Get associated userid
-        require_once('inc/connect.php');
         $sql = "SELECT userid,username FROM users WHERE email = :email";
         $result = $bdd->prepare($sql);
         $result->execute(array(
@@ -52,7 +54,6 @@ if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
         $numrows = $result->rowCount();
         // Check email exists
         if($numrows === 1){
-            require_once('inc/functions.php');
             // Generate password
             $password = createPassword(8);
             // Create salt
@@ -71,7 +72,6 @@ if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
                 'userid' => $userid));
             if($result){
                 // Send an email with the new password
-                require_once('swift_required.php');
                 // Create the message
                 $message = Swift_Message::newInstance()
                 // Give the message a subject

@@ -23,7 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once("inc/auth.php");
+require_once('inc/common.php');
 $page_title="Index";
 require_once("inc/head.php");
 require_once("inc/menu.php");

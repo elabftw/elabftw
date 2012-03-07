@@ -23,7 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/connect.php');
+require_once('inc/common.php');
 // TODO check comment is owned by user
 
 if (isset($_POST['id']) && !empty($_POST['id'])) {

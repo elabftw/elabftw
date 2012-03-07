@@ -1,4 +1,5 @@
-<?php require_once('inc/auth.php');
+<?php 
+require_once('inc/common.php');
 require_once('inc/head.php');
 require_once('inc/menu.php');
 ?>

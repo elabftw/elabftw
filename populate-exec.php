@@ -1,6 +1,5 @@
 <?php
-require_once('inc/auth.php');
-require_once('inc/connect.php');
+require_once('inc/common.php');
 
 // LOOP NB
 if( (isset($_POST['loop'])) && (!empty($_POST['loop'])) && (filter_var($_POST['loop'], FILTER_VALIDATE_INT))){

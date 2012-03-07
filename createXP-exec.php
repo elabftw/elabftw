@@ -23,9 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once("inc/auth.php");
-require_once("inc/functions.php");
-
+require_once('inc/common.php');
 //Array to store validation errors
 $errmsg_arr = array();
 //Validation error flag
@@ -57,7 +55,6 @@ if($errflag) {
 // END CHECK STUFF
 
 // SQL for createXP
-require_once("inc/connect.php");
 $sql = "INSERT INTO experiments(title, date, body, outcome, protocol, userid) VALUES(:title, :date, :body, :outcome, :protocol, :userid)";
 $req = $bdd->prepare($sql);
 $result = $req->execute(array(

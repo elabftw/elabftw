@@ -23,8 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once("inc/auth.php");
-require_once("inc/connect.php");
+require_once('inc/common.php');
 
 //////////////
 // This page increments the value of journal and last_jc for the $_SESSION['S_jcnb'] members

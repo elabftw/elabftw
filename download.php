@@ -23,8 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once("inc/auth.php");
-require_once('inc/functions.php');
+require_once('inc/common.php');
 
 // ID
 if (!isset($_GET['id']) || empty($_GET['id'])) {

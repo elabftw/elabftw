@@ -23,13 +23,12 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/auth.php');
-require_once('inc/connect.php');
+require_once('inc/common.php');
 // Check we got a valid userid
 if (isset($_POST['userid']) && !empty($_POST['userid']) && filter_var($_POST['userid'], FILTER_VALIDATE_INT)){
     $userid = $_POST['userid'];
 } else {
-    die('Wtf ?');
+    die('Bad userid motherfucker !');
 }
 
 if (isset($_POST['zipname']) && !empty($_POST['zipname'])) {

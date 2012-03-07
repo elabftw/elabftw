@@ -23,11 +23,10 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/auth.php');
+require_once('inc/common.php');
 $page_title='Search';
 require_once('inc/head.php');
 require_once('inc/menu.php');
-require_once('inc/connect.php');
 ?>
 <!-- Search page begin -->
 <h2>SEARCH</h2>

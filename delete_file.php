@@ -81,6 +81,26 @@ if($_GET['type'] == 'exp'){
     $_SESSION['infos'] = $msg_arr;
     $item_id = $data['item_id'];
     header("location: protocols.php?mode=view&id=$item_id");
+}elseif (($_GET['type'] === 'lm') || ($_GET['type'] === 'jc')) {
+    // Get realname
+    $sql = "SELECT real_name, long_name FROM uploads WHERE id = ".$id;
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $data = $req->fetch();
+    // Delete file
+    $filepath = 'uploads/'.$data['long_name'];
+    unlink($filepath);
+
+    // Delete SQL entry (and verify the type, to avoid someone deleting files saying it's prot whereas it's exp
+    $sql = "DELETE FROM uploads WHERE id = ".$id." AND type = ".$type;
+    $reqdel = $bdd->prepare($sql);
+    $reqdel->execute();
+
+    // Redirect to the team page
+    $msg_arr = array();
+    $msg_arr [] = 'File '.$data['real_name'].' deleted successfully';
+    $_SESSION['infos'] = $msg_arr;
+    header("location: team.php");
    } else {
         die("<div class='center'><img src='img/hal9000.png' alt='hal' /><br />I'm sorry, Dave. I'm afraid I can't do that.</div>");
    }

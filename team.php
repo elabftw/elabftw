@@ -29,14 +29,10 @@ require_once('inc/head.php');
 require_once('inc/menu.php');
 echo "<h2>".strtoupper($ini_arr['lab_name'])."</h2>";
 ?>
-<section class='item'>
-<h3>LABMEETINGS</h3>
-<p><a href='http://wiki-bio6.curie.fr/wiki/index.php/Piel_Lab_inner_working#Lab_meetings' target='_blank'>Relevant wiki link</a></p>
-<p class='center'><img src='img/labmeetings-2012.png' alt='labmeetings' title='labmeetings 2012' /></p>
-</section>
 
 <section class='item'>
-<h3>TEAM MEMBERS</h3>
+<h3 class='trigger'>TEAM MEMBERS</h3>
+<div class='toggle_container'>
 <?php // SQL to get members info
 $sql = "SELECT * FROM users WHERE validated = 1";
 $req = $bdd->prepare($sql);
@@ -70,7 +66,65 @@ while ($data = $req->fetch()) {
 }
 echo "</ul>";
 ?>
+</div>
 </section>
+<section class='item'>
+<h3 class='trigger'>LABMEETINGS</h3>
+<div class='toggle_container'>
+<h4>Past labmeetings :</h4><br />
+<?php
+// SQL to get past labmeetings files
+$sql = "SELECT * FROM uploads WHERE type = 'lm'";
+$req = $bdd->prepare($sql);
+$req->execute();
+while ($data = $req->fetch()) {
+        echo "<div class='filesdiv'>";
+        ?>
+            <a class='align_right' href='delete_file.php?id=<?php echo $data['id'];?>&type=<?php echo $data['type'];?>' onClick="return confirm('Delete this file ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
+        <?php
+        // Get file extension to display thumbnail if it's an image
+        $ext = get_ext($data['real_name']);
+        if ($ext === 'jpg' || $ext === 'jpeg' || $ext === 'JPG' || $ext === 'png' || $ext === 'gif'){
+            $filepath = 'uploads/'.$data['long_name'];
+            $filesize = filesize('uploads/'.$data['long_name']);
+            $thumbpath = 'uploads/'.$data['long_name'].'_th.'.$ext;
+            // Make thumbnail only if it isn't done already and if size < 2 Mbytes
+            if(!file_exists($thumbpath) && $filesize <= 2000000){
+                make_thumb($filepath,$ext,$thumbpath,150);
+            }
+            echo "<div class='center'>";
+            echo "<img src='".$thumbpath."' alt='' /></div>";
+        }
+        echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='' /> <a href='download.php?id=".$data['id']."&f=".$data['long_name']."&name=".$data['real_name']."' target='_blank'>".$data['real_name']."</a>
+        <span class='filesize'> (".format_bytes(filesize('uploads/'.$data['long_name'])).")</span><br />";
+        echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/comments.png' alt='comment' /> <p class='editable' id='comment_".$data['id']."'>".stripslashes($data['comment'])."</p></div>";
+} // end while
+// END DISPLAY FILES
+?>
+<!-- using jquery jeditable plugin -->
+<script type='text/javascript'>
+ $(document).ready(function() {
+     $('.editable').editable('editinplace.php', { 
+         tooltip : 'Click to edit',
+             indicator : 'Saving...',
+         id   : 'id',
+         submit : 'Save',
+         cancel : 'Cancel',
+         name : 'content'
+     });
+ });
+    </script>
+<form name="addLM" method="post" action="addLM-exec.php" enctype="multipart/form-data">
+<?php
+require('inc/file_upload_nojs.php');
+?>
+</form>
+
+<p><a href='http://wiki-bio6.curie.fr/wiki/index.php/Piel_Lab_inner_working#Lab_meetings' target='_blank'>Relevant wiki link</a></p>
+<p class='center'><img src='img/labmeetings-2012.png' alt='labmeetings' title='labmeetings 2012' /></p>
+</div>
+</section>
+
 
 <?php
 require_once('inc/journal_club.php');
@@ -78,3 +132,11 @@ require_once('inc/journal_club.php');
 <?php
 require_once('inc/footer.php');
 ?>
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".toggle_container").hide();
+	$("h3.trigger").click(function(){
+		$(this).toggleClass("active").next().slideToggle("slow");
+	});
+});
+</script>

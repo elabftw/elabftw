@@ -3,5 +3,8 @@
 *.swp
 admin/config.ini
 admin/.htpasswd
-testing/
+test.php
+test-exec.php
+populate.php
+populate-exec.php
 uploads/

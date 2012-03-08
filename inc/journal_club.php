@@ -25,9 +25,59 @@
 ********************************************************************************/
 ?>
 <a name='jc'></a><section class='item'>
-<h3>JOURNAL CLUB</h3>
+<h3 class='trigger'>JOURNAL CLUB</h3>
+<div class='toggle_container'>
+<h4>Past journal clubs :</h4><br />
+<?php
+// SQL to get past journal clubs
+$sql = "SELECT * FROM uploads WHERE type = 'jc'";
+$req = $bdd->prepare($sql);
+$req->execute();
+while ($data = $req->fetch()) {
+        echo "<div class='filesdiv'>";
+        ?>
+            <a class='align_right' href='delete_file.php?id=<?php echo $data['id'];?>&type=<?php echo $data['type'];?>' onClick="return confirm('Delete this file ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
+        <?php
+        // Get file extension to display thumbnail if it's an image
+        $ext = get_ext($data['real_name']);
+        if ($ext === 'jpg' || $ext === 'jpeg' || $ext === 'JPG' || $ext === 'png' || $ext === 'gif'){
+            $filepath = 'uploads/'.$data['long_name'];
+            $filesize = filesize('uploads/'.$data['long_name']);
+            $thumbpath = 'uploads/'.$data['long_name'].'_th.'.$ext;
+            // Make thumbnail only if it isn't done already and if size < 2 Mbytes
+            if(!file_exists($thumbpath) && $filesize <= 2000000){
+                make_thumb($filepath,$ext,$thumbpath,150);
+            }
+            echo "<div class='center'>";
+            echo "<img src='".$thumbpath."' alt='' /></div>";
+        }
+        echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='' /> <a href='download.php?id=".$data['id']."&f=".$data['long_name']."&name=".$data['real_name']."' target='_blank'>".$data['real_name']."</a>
+        <span class='filesize'> (".format_bytes(filesize('uploads/'.$data['long_name'])).")</span><br />";
+        echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/comments.png' alt='comment' /> <p class='editable' id='comment_".$data['id']."'>".stripslashes($data['comment'])."</p></div>";
+} // end while
+// END DISPLAY FILES
+?>
+<!-- using jquery jeditable plugin -->
+<script type='text/javascript'>
+ $(document).ready(function() {
+     $('.editable').editable('editinplace.php', { 
+         tooltip : 'Click to edit',
+             indicator : 'Saving...',
+         id   : 'id',
+         submit : 'Save',
+         cancel : 'Cancel',
+         name : 'content'
+     });
+ });
+    </script>
+<form name="addJC" method="post" action="addJC-exec.php" enctype="multipart/form-data">
+<?php
+require('inc/file_upload_nojs.php');
+?>
+</form>
 
 <?php
+/*
 //////////////////////////////////////////
 // List labmembers with journal points and last_jc
 ////////////////////////////////////////////
@@ -77,10 +127,37 @@ while ($datas = $req->fetch()) {
     echo "<li><span class='strong'>". $datas['username'] . "</span></li>";
 }
 echo "</ul>";
-$req->closeCursor();
-//////////////////////////////////////////
 // Link for incrementing journal values //
 echo "<p>This journal club has passed : <a href='jc-exec.php?inc=1'>increment</a></p>";
 }
-echo "</section>";
+ */
 ?>
+<h4>Rules :</h4><br />
+<p>
+Pick a recent paper (no more than 6 months old) somewhat close to your project or lab area of interest (for instance cell polarity,
+microfluidics or a development paper in C. elegans is OK, evolution of gold fish maybe not).  You should try to think what would be
+interesting for the group and what you want to share with the group --like some important advance relevant to your own project that
+would be good for the group.<br />
+
+Each presentation will be 8 minutes, with 3 minutes for questions, all of it controlled thoroughly with a timer!!<br />
+
+<br />
+It should include:<br />
+
+- Title, main authors, Location, Journal<br />
+
+
+- Background:  focus on the primary problem addressed.<br />
+
+What was not known before?  What is important about this paper? What is the question/or the new technique? Why did you pick it?<br />
+
+- Results:  focus on a couple of the most important findings/approaches<br />
+You won't have time to go through all the results.<br />
+To save time it is advised to prepare a ppt with 1-2 figures or movie but you may also draw on the board.<br />
+
+- Discussion:  your evaluation; was this a good, believable, significant paper?  any limitations? brought up new ideas for your
+project?
+</p>
+</div>
+</div>
+</section>

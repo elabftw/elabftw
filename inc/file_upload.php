@@ -10,7 +10,7 @@ $(document).ready(function(){
 <hr class='flourishes'>
 <br />
 <div class='attachFileDiv'>
-<h4 class='trigger'>Click to attach a file</h4>
+<h4 class='trigger'>Click to add a file</h4>
 <div class='toggle_container'>
 <div class='addFileDiv'>
 <!-- max file size here to avoid waiting for uploading a too big file (can be fooled browser side) -->
@@ -37,10 +37,23 @@ container.appendChild(br_field);
     <input name="files[]" type="file"  />
     <input size='35' placeholder='Enter a comment for the file' name='filescom[]' />
   </div>
+<?php 
+if (basename($_SERVER['REQUEST_URI']) != 'team.php') { ?>
 <br />
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/attach_add.png' alt='' /> <a href="javascript:void(0);" onClick="add_file_field();">Add another file</a><br />
+<?php } ?>
 </div>
+
+<?php
+// Show only a submit button on team page (for upload of labmeetings/journal clubs
+if (basename($_SERVER['REQUEST_URI']) == 'team.php') {
+?>
+<!-- SUBMIT BUTTON -->
+<div class='center' id='submitdiv'>
+<input type='submit' name='Submit' value='Submit' />
+</div>
+<?php
+} ?>
 </div><!-- end toggle container -->
 </div>
 <hr class='flourishes'><!-- END FILE UPLOAD -->
-

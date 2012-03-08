@@ -110,6 +110,9 @@ h4 {
     font:18px Verdana, Arial, Helvetica, sans-serif;
 }
 
+.inline {
+    display:inline;
+}
 /* MENU */
 nav{
     text-align:center;

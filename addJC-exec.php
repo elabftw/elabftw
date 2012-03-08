@@ -23,45 +23,50 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-?>
-<h2>ADD NEW PROTOCOL</h2>
-<!-- begin createXP form -->
-<section class='item'>
-<form name="createPR" method="post" action="createPR-exec.php" enctype="multipart/form-data">
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.gif' alt='' />
-<h4>Tags</h4><span class='smallgray'> (separated by spaces)</span><br />
-      <textarea placeholder='immunofluorescence antibody actin microtubules' name='tags' id='tags' rows="1" cols="50"></textarea>
-<br />
-<br />
-<h4>Title</h4><br />
-      <textarea id='title' name='title' rows="1" cols="80"><?php if(!empty($_SESSION['errors'])){echo $_SESSION['title'];} ?></textarea>
-<br />
-<br />
-<h4>Protocol</h4><br />
-      <textarea id='title' name='body' rows="15" cols="80"><?php if(!empty($_SESSION['errors'])){echo $_SESSION['body'];} ?></textarea>
-<?php
-// FILE UPLOAD
-require_once('inc/file_upload.php');
-?>
-</div>
+require_once('inc/common.php');
+//Array to store validation errors
+$errmsg_arr = array();
+//Validation error flag
+$errflag = false;
 
-</div>
-<!-- SUBMIT BUTTON -->
-<div class='center' id='submitdiv'>
-<input type='image' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/submit.png' name='Submit' value='Submit' onClick="this.form.submit();" />
-</div>
-</form>
-<!-- end createPR form -->
+require_once('inc/check_files.php'); // Check uploaded FILES
 
-<?php
-// KEYBOARD SHORTCUTS
-echo "<script type='text/javascript'>
-document.getElementById('tags').focus();
-key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['createXP'].submit()});
-</script>";
-
-// unset session variables
-unset($_SESSION['errors']);
-unset($_SESSION['title']);
-unset($_SESSION['body']);
-?>
+// If input errors, redirect back to the team page
+if($errflag) {
+    $_SESSION['errors'] = $errmsg_arr;
+    session_write_close();
+    header("location: team.php");
+    exit();
+}
+// END CHECK STUFF
+// FILES
+// If FILES are uploaded
+if (is_uploaded_file($_FILES['files']['tmp_name'][0])){
+        // Loop for each file
+        for ($i = 0; $i < $cnt; $i++) {
+        // Comments
+    $filecomments[] = filter_var($_POST['filescom'][$i], FILTER_SANITIZE_STRING);
+    if(strlen($filecomments[$i]) == 0){
+        $filecomments[$i] = 'No comment added';
+    }
+        // Move file
+            if (move_uploaded_file($_FILES['files']['tmp_name'][$i], $upload_directory . $long_filenames[$i])) {
+    //SQL for FILE uploads
+    $sql = "INSERT INTO uploads(real_name, long_name, comment, userid, type) VALUES(:real_name, :long_name, :comment, :userid, :type)";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute(array(
+        'real_name' => $real_filenames[$i],
+        'long_name' => $long_filenames[$i],
+        'comment' => $filecomments[$i],
+        'userid' => $_SESSION['userid'],
+        'type' => 'jc'
+    ));
+    $req->closeCursor();
+            } // end for each file loop
+        } // end if move uploaded
+    } // end is uploaded
+if($result) {
+    header('location: team.php');
+} else {
+    echo "Something went wrong in the database query. Check the flux capacitor.";
+}

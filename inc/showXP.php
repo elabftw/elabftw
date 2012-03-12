@@ -28,12 +28,13 @@ require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 
 <h2>EXPERIMENTS</h2>
 <p id='submenu'><a href="experiments.php?mode=create"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Create experiment</a> | 
-<a href='search.php'><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/search.png' alt='' /> Search</a></p>
+<a href='search.php'><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/search.png' alt='' /> Search</a>
 <!-- Quick Search Box (search tags) -->
 <form id='quicksearch' method='get' action='experiments.php'>
 <input type='search' name='tag' placeholder='Search tag' />
 </form><!-- end quick search -->
-<hr><!-- end submenu -->
+</p>
+<hr class='flourishes'><!-- end submenu -->
 <?php
 // VIEWING PREFS //
 $display = $_SESSION['prefs']['display'];

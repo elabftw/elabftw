@@ -32,7 +32,7 @@ require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 <form id='quicksearch' method='get' action='protocols.php'>
 <input type='search' name='tag' placeholder='Search tag' />
 </form><!-- end quick search -->
-<hr><!-- end submenu -->
+<hr class='flourishes'><!-- end submenu -->
 
 <?php
 // VIEWING PREFS //

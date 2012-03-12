@@ -39,8 +39,6 @@
 <br /><br />
 <h4>Title</h4><br />
       <textarea id='title' name='title' rows="1" cols="80"><?php if(!empty($_SESSION['errors'])){echo $_SESSION['title'];} ?></textarea>
-
-<br /><br />
 <br />
 <br />
 <h4>Experiment </h4>

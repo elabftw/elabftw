@@ -4,15 +4,10 @@
 * search : multiple critères( has file attached ?)
 * most used protocoles get first in selecta ! 
 * ucp > menu > page
-* merge delete_file with delete_item
 
 ////// Features
-* dans ucp : tu choisis tes templates ! et tu choisis celle qui est créée par défaut, ensuite dans la page createXP, tu peux loader des templates
 * announce birthday date of a team mb to other team mb (add birthday in profile)
 * labmeetings : resp can add room, date, name, cronjob that sends an email before the labmeeting
-* choose from tagcloud (need ajax for addtag, deltag)
-* statistics : make pie chart by tag
-* news feature, anyone can put a news up for evereybody to see
 * when click on file div, change file (with ajax ?)
 * add real calendar
 * custom menu

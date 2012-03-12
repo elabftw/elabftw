@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Mar 06, 2012 at 03:12 PM
+-- Generation Time: Mar 08, 2012 at 03:18 PM
 -- Server version: 5.5.9
 -- PHP Version: 5.3.6
 
@@ -18,7 +18,6 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 --
 -- Database: `elabftw`
 --
-CREATE DATABASE `elabftw` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 -- --------------------------------------------------------
 
@@ -35,7 +34,7 @@ CREATE TABLE `experiments` (
   `protocol` int(10) unsigned DEFAULT NULL,
   `userid` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=206 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=255 ;
 
 -- --------------------------------------------------------
 
@@ -49,7 +48,7 @@ CREATE TABLE `experiments_tags` (
   `item_id` int(10) unsigned NOT NULL,
   `userid` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1218 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1484 ;
 
 -- --------------------------------------------------------
 
@@ -64,7 +63,7 @@ CREATE TABLE `protocols` (
   `date` mediumint(255) NOT NULL,
   `userid` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=15 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=18 ;
 
 -- --------------------------------------------------------
 
@@ -77,7 +76,7 @@ CREATE TABLE `protocols_tags` (
   `tag` varchar(255) NOT NULL,
   `item_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2837 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2845 ;
 
 -- --------------------------------------------------------
 
@@ -90,11 +89,11 @@ CREATE TABLE `uploads` (
   `real_name` text NOT NULL,
   `long_name` text NOT NULL,
   `comment` text NOT NULL,
-  `item_id` int(10) unsigned NOT NULL,
+  `item_id` int(10) unsigned DEFAULT NULL,
   `userid` text NOT NULL,
   `type` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=31 ;
 
 -- --------------------------------------------------------
 
@@ -110,6 +109,10 @@ CREATE TABLE `users` (
   `firstname` varchar(255) NOT NULL,
   `lastname` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
+  `phone` varchar(127) DEFAULT NULL,
+  `cellphone` varchar(127) DEFAULT NULL,
+  `skype` varchar(255) DEFAULT NULL,
+  `website` varchar(255) DEFAULT NULL,
   `is_admin` tinyint(1) NOT NULL DEFAULT '0',
   `is_jc_resp` tinyint(1) NOT NULL DEFAULT '0',
   `is_pi` tinyint(1) NOT NULL DEFAULT '0',
@@ -126,6 +129,7 @@ CREATE TABLE `users` (
   `sc_create` varchar(1) NOT NULL DEFAULT 'c',
   `sc_edit` varchar(1) NOT NULL DEFAULT 'e',
   `sc_submit` varchar(1) NOT NULL DEFAULT 's',
+  `sc_todo` varchar(1) NOT NULL DEFAULT 't',
   `validated` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`userid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=76 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=78 ;

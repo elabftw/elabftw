@@ -45,7 +45,7 @@ $data = $req->fetch();
 // Calculate number of experiments/day
 $days_since_reg = daydiff($data['register_date']);
 // if user registered today
-if (daydiff(date("Y-m-d")) === 0){
+if (daydiff(date("Y-m-d")) == 0){
     $days_since_reg = 1;
 }
 $exp_per_day = ($count[0] / $days_since_reg);

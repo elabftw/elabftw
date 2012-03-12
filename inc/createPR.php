@@ -25,6 +25,7 @@
 ********************************************************************************/
 ?>
 <h2>ADD NEW PROTOCOL</h2>
+<hr class='flourishes'>
 <!-- begin createXP form -->
 <section class='item'>
 <form name="createPR" method="post" action="createPR-exec.php" enctype="multipart/form-data">

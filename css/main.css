@@ -62,7 +62,7 @@ p a{
 }
 
 hr {
-    margin:20px 0 20px 0;
+    margin:10px 0 10px 0;
 }
 
 
@@ -95,8 +95,12 @@ h2 {
     width:100%;
     padding:10px 0 10px 0;
     margin:0 0 20px 0;
+    /*
     border-bottom:1px dotted #CCC;
+    */
 }
+
+
 
 h3 {
     width:100%;
@@ -142,12 +146,13 @@ nav a{
 }
 /* submenu */
 #submenu {
-    display:inline;
+    border-bottom:1px dotted #CCC;
+    padding-bottom:25px;
+    margin-bottom:25px;
 }
 
 #quicksearch {
     float:right;
-    display:inline;
 }
 
 /**** SEARCH PAGE *******/

@@ -34,10 +34,12 @@ body {
 
 /* LINKS */
 a {
+    text-decoration:none;
     color: #585858;
 }
 a:hover {
-color: #CCC;
+    text-decoration:none;
+    color: #CCC;
 }
 /*
 hr {
@@ -49,11 +51,9 @@ hr.flourishes {
     clear: both;
     display: block;
     height: 18px;
-    margin: 18px 0 0;
     background: url('img/flourishes.png') no-repeat scroll center 0px transparent; /* -61px */
     border: 0 none;
     opacity: 0.8;
-    outline: 0 none;
 }
 
 hr.tinyflourishes {

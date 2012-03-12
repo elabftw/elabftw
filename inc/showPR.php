@@ -26,13 +26,15 @@
 require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 ?>
 <h2>PROTOCOLS</h2>
-<p id='submenu'><a href="protocols.php?mode=create"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Upload protocol</a> | 
-<a href='search.php?for=protocols'><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/search.png' alt='' /> Search</a></p>
+<hr class='flourishes'>
+<div id='submenu'><a href="protocols.php?mode=create"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Upload protocol</a> | 
+<a href='search.php?for=protocols'><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/search.png' alt='' /> Search</a>
 <!-- Quick Search Box (search tags) -->
 <form id='quicksearch' method='get' action='protocols.php'>
 <input type='search' name='tag' placeholder='Search tag' />
 </form><!-- end quick search -->
-<hr class='flourishes'><!-- end submenu -->
+</div>
+<!-- end submenu -->
 
 <?php
 // VIEWING PREFS //

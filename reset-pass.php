@@ -26,7 +26,7 @@
 session_start();
 require_once('inc/connect.php');
 require_once('inc/functions.php');
-require_once('swift_required.php');
+require_once('lib/swift_required.php');
 // // Get infos about the requester (will be sent in the mail afterwards)
 // Get IP
 if (!empty($_SERVER["HTTP_CLIENT_IP"])){

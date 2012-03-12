@@ -52,7 +52,7 @@ $data = $req->fetch();
 $sender_name = $data['firstname'];
 
 // EMAIL
-    require_once('swift_required.php');
+    require_once('lib/swift_required.php');
     // Create the message
     $message = Swift_Message::newInstance()
     // Give the message a subject

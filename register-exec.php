@@ -134,7 +134,7 @@ $result = $bdd->exec($sql);
 //Check whether the query was successful or not
 if($result) {
     // Send email
-        require_once('swift_required.php');
+        require_once('lib/swift_required.php');
         // Create the message
         $message = Swift_Message::newInstance()
         // Give the message a subject

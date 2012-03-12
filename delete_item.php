@@ -36,20 +36,20 @@ if ($_GET['type'] === 'exp'){
     $item_type = 'experiments';
 } elseif ($_GET['type'] === 'prot'){
     $item_type = 'protocols';
+} elseif ($_GET['type'] === 'tpl'){
+    $item_type = 'experiments_templates';
 } else {
     die('taggle');
 }
 
-if ($item_type === 'experiments'){
 // Check id is owned by connected user
-    $sql = "SELECT userid FROM experiments WHERE id = ?";
+if ($item_type === 'experiments' || $item_type === 'experiments_templates') {
+    $sql = "SELECT userid FROM $item_type WHERE id = ".$id;
     $req = $bdd->prepare($sql);
-    $data = array($id);
-    $req->execute($data);
+    $req->execute();
     $result = $req->fetchColumn();
-    $req->closeCursor();
     if($result != $_SESSION['userid']) {
-        die('You are trying to delete an experiemnt which is not yours !');
+        die('You are trying to delete an item which is not yours !');
     }
 }
 
@@ -58,6 +58,9 @@ if ($item_type === 'experiments'){
 $sql = "DELETE FROM ".$item_type." WHERE id=".$id;
 $req = $bdd->prepare($sql);
 $result = $req->execute();
+
+// Delete tags and files only for EXP and PROT
+if ($item_type === 'experiments' || $item_type === 'protocols') {
 // delete tags
 $sql = "DELETE FROM ".$item_type."_tags WHERE item_id = ".$id;
 $req = $bdd->prepare($sql);
@@ -66,17 +69,27 @@ $req->execute();
 $sql = "DELETE FROM uploads WHERE item_id = ".$id;
 $req = $bdd->prepare($sql);
 $req->execute();
+}
 
 // TODO check that the 3 sql went OK
 if ($result) {
     $msg_arr = array();
     if ($item_type === 'experiments'){
         $msg_arr[] = 'Experiment deleted successfully';
-    }else{
+    }elseif ($item_type === 'protocols'){
         $msg_arr[] = 'Protocol deleted successfully';
+    } elseif ($item_type === 'experiments_templates') {
+        $msg_arr[] = 'Template deleted successfully';
+    } else {
+        die('Bad type.');
     }
+
     $_SESSION['infos'] = $msg_arr;
-    header("location: $item_type.php");
+    if ($item_type === 'experiments' || $item_type === 'protocols') {
+        header("location: $item_type.php");
+    } else {
+        header("location: ucp.php");
+    }
 } else {
     die('Something went wrong in the database query. Check the flux capacitor.');
 }

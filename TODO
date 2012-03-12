@@ -1,27 +1,25 @@
 /////// Priority
-*bugfix : when login through auth, no sc_todo set in session
-* custom menu
-* merge experiments_tags and protocols_tags
 * export by date range / tag
 * search : selector should stay what it was
 * search : multiple critères( has file attached ?)
 * most used protocoles get first in selecta ! 
-* templates for Exp (with blocks ?)
-* journal club : see past JC with papers
-* labmeetings : resp can add room, date, name, cronjob that sends an email before the labmeeting
-* have a real useful index...
-
+* ucp > menu > page
+* merge delete_file with delete_item
 
 ////// Features
 * dans ucp : tu choisis tes templates ! et tu choisis celle qui est créée par défaut, ensuite dans la page createXP, tu peux loader des templates
 * announce birthday date of a team mb to other team mb (add birthday in profile)
+* labmeetings : resp can add room, date, name, cronjob that sends an email before the labmeeting
 * choose from tagcloud (need ajax for addtag, deltag)
 * statistics : make pie chart by tag
 * news feature, anyone can put a news up for evereybody to see
 * when click on file div, change file (with ajax ?)
 * add real calendar
+* custom menu
 
 ///// Osef
+* have a real useful index...
+* merge experiments_tags and protocols_tags
 * It's impossible to make a date before 2010 or after 2099
 * selected outcome is not kept if error on edit/create
 * if two file field and file is only on the second one (first is empty) no file uploaded

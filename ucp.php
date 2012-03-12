@@ -123,6 +123,42 @@ function setTmpTheme(theme){
 </div>
 
 <section class='item'>
+<h3>EXPERIMENTS TEMPLATES</h3>
+<h4>Existing templates :</h4><br />
+<form action='ucp-exec.php' method='post'>
+<input type='hidden' name='tpl_form' />
+<?php // SQL TO GET TEMPLATES
+$sql = "SELECT id, body, name FROM experiments_templates WHERE userid = ".$_SESSION['userid'];
+$req = $bdd->prepare($sql);
+$req->execute();
+while ($data = $req->fetch()) {
+    echo "<div class='sub_item'>";
+?>
+<a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>&type=tpl' onClick="return confirm('Delete this template ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
+<?php
+    echo "<input type='hidden' name='tpl_id[]' value='".$data['id']."' />";
+    echo "<input name='tpl_name[]' value='".$data['name']."' /><br />";
+    echo "<textarea name='tpl_body[]' rows='15' cols='60'>".$data['body']."</textarea><br />";
+    echo "</div>";
+}
+?>
+<div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Edit templates" /></div>
+</form>
+<hr class='flourishes'>
+<h4>Add a new template :</h4><br />
+<form action='ucp-exec.php' method='post'>
+<div class='sub_item'>
+<input type='hidden' name='new_tpl_form' />
+<input type='text' name='new_tpl_name' placeholder='Name for the template' /><br />
+<textarea name='new_tpl_body' placeholder='Insert here your template' rows='15' cols='60'></textarea>
+<div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Add template" /></div>
+</div>
+</form>
+</section>
+
+
+
+<section class='item'>
 <h3>KEYBOARD SHORTCUTS</h3>
 <br />
 <form action='ucp-exec.php' method='post'>

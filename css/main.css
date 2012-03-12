@@ -220,6 +220,11 @@ textarea{
     font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
+input {
+    border: 3px solid #CCC;
+    padding: 5px;
+    margin:5px 0 5px 0;
+}
 /* comments for files */
 .addFileDiv {
     margin:10px;
@@ -251,6 +256,12 @@ img {
     margin:10px auto 10px auto;
     padding:10px;
     border-radius:20px;
+}
+.sub_item {
+    width:642px;
+    margin:10px auto 10px auto;
+    padding:10px;
+    border-radius:7px;
 }
 
 .simple_border {

@@ -324,6 +324,49 @@ if (isset($_POST['limit']) && !empty($_POST['limit']) && $_POST['limit'] != $_SE
     $infoflag = true;
 }
 
+// EXPERIMENTS TEMPLATES
+// add new tpl
+if (isset($_POST['new_tpl_form'])) {
+    $tpl_name = filter_var($_POST['new_tpl_name'], FILTER_SANITIZE_STRING);
+    $tpl_body = filter_var($_POST['new_tpl_body'], FILTER_SANITIZE_STRING);
+    $sql = "INSERT INTO experiments_templates(name, body, userid) VALUES(:name, :body, :userid)";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute(array(
+        'name' => $tpl_name,
+        'body' => $tpl_body,
+        'userid' => $_SESSION['userid']
+    ));
+}
+
+// edit templates
+if (isset($_POST['tpl_form'])) {
+    $tpl_id = array();
+    foreach ($_POST['tpl_id'] as $id) {
+        $tpl_id[] = $id;
+    }
+    $new_tpl_body = array();
+    foreach ($_POST['tpl_body'] as $body) {
+        $new_tpl_body[] = $body;
+    }
+    $new_tpl_name = array();
+    foreach ($_POST['tpl_name'] as $name) {
+        $new_tpl_name[] = $name;
+    }
+    $new_tpl_body[] = filter_var($_POST['tpl_body'], FILTER_SANITIZE_STRING); 
+    $new_tpl_name[] = filter_var($_POST['tpl_name'], FILTER_SANITIZE_STRING); 
+    $sql = "UPDATE experiments_templates SET body = :body, name = :name WHERE userid = ".$_SESSION['userid']." AND id = :id";
+    $req = $bdd->prepare($sql);
+    for ($i = 0; $i < count($_POST['tpl_body']); $i++) {
+    $req->execute(array(
+        'id' => $tpl_id[$i],
+        'body' => $new_tpl_body[$i],
+        'name' => $new_tpl_name[$i]
+    ));
+    }
+}
+
+
+
 // KEYBOARD SHORTCUTS
 if (isset($_POST['shortcuts'])) {
     // check we got only one char

@@ -157,6 +157,9 @@ nav a:hover {
     background-color:#EEE;
     border: 2px solid #AAA;
 }
+.sub_item {
+    border: 2px solid #AAA;
+}
 
 .simple_border {
     border:2px solid #AAA;

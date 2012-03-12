@@ -41,8 +41,32 @@
       <textarea id='title' name='title' rows="1" cols="80"><?php if(!empty($_SESSION['errors'])){echo $_SESSION['title'];} ?></textarea>
 
 <br /><br />
-<h4>Experiment</h4><br />
-      <textarea id='body' name='body' rows="15" cols="80"><?php if(!empty($_SESSION['errors'])){echo $_SESSION['body'];} ?></textarea>
+<br />
+<br />
+<h4>Experiment </h4>
+<? // SQL to get user's templates
+$sql = "SELECT id, name FROM experiments_templates WHERE userid = ".$_SESSION['userid'];
+$req = $bdd->prepare($sql);
+$req->execute();
+echo "<select>";
+echo "<option>Choose template</option>";
+echo "<option disabled='disabled'>----------------</option>";
+while ($data = $req->fetch()) {
+    echo "<option class='template_link' id='".$data['id']."' value='".$data['name']."'>".$data['name']."</option>";
+}
+echo "</select>";
+?>
+<script type='text/javascript'>
+$(".template_link").click(function() {
+    $.get("load_tpl.php", {tpl_id: $(this).attr('id')}, 
+        function(data) {
+            $('#body_textarea').val(data);
+        });    
+    return false;
+});
+</script>
+
+      <textarea id='body_textarea' name='body' rows="15" cols="80"><?php if(!empty($_SESSION['errors'])){echo $_SESSION['body'];} ?></textarea>
 <br /><br />
 <h4>Outcome</h4>
 <select name="outcome">

@@ -29,9 +29,6 @@ Get latest version
 # wget http://www.elabftw.net/pub/latest-stable.tar.gz
 Extract it in the public folder
 # tar xzf latest.tar.gz
-Now you have all the php files, we just need to add a library so the mails can be sent
-# pear channel-discover pear.swiftmailer.org
-# pear install swift/swift
 
 SQL part
 ***********

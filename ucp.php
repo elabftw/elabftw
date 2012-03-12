@@ -40,7 +40,8 @@ $data = $req->fetch();
 // BEGIN UCP PAGE
 ?>
 <div class='item'>
-<h3>PERSONNAL INFORMATIONS</h3>
+<h3 class='trigger'>PERSONNAL INFORMATIONS</h3>
+<div class='toggle_container'>
 <div class='innerdiv'>
 <form name="profileForm" method="post" action="ucp-exec.php">
 <input type='hidden' name='main'>
@@ -60,11 +61,13 @@ $data = $req->fetch();
 <!-- SUBMIT BUTTON -->
 <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Update profile" /></div>
 </form>
-</div>
-</div>
+</div><!-- end innerdiv -->
+</div><!-- end toggle_container -->
+</div><!-- end item -->
 
-<div class='item'>
-<h3>DISPLAY PREFERENCES</h3>
+<section class='item'>
+<h3 class='trigger'>DISPLAY PREFERENCES</h3>
+<div class='toggle_container'>
 <form action='ucp-exec.php' method='post'>
 <h4>View mode :</h4>
 <input type='radio' name='display' value='default' <?php echo ($_SESSION['prefs']['display'] === 'default') ? "checked" : "";?> />Default
@@ -121,9 +124,11 @@ function setTmpTheme(theme){
 <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Set preferences" /></div>
 </form>
 </div>
+</section>
 
 <section class='item'>
-<h3>EXPERIMENTS TEMPLATES</h3>
+<h3 class='trigger'>EXPERIMENTS TEMPLATES</h3>
+<div class='toggle_container'>
 <h4>Existing templates :</h4><br />
 <form action='ucp-exec.php' method='post'>
 <input type='hidden' name='tpl_form' />
@@ -154,13 +159,12 @@ while ($data = $req->fetch()) {
 <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Add template" /></div>
 </div>
 </form>
+</div>
 </section>
 
-
-
 <section class='item'>
-<h3>KEYBOARD SHORTCUTS</h3>
-<br />
+<h3 class='trigger'>KEYBOARD SHORTCUTS</h3>
+<div class='toggle_container'>
 <form action='ucp-exec.php' method='post'>
 <input type='hidden' name='shortcuts'>
 <span class='simple_border'>Create item : <input type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['create'];?>' name='create'></span>
@@ -172,14 +176,18 @@ while ($data = $req->fetch()) {
 <br />
 <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Change shortcuts" /></div>
 </form>
+</div>
 </section>
 
 <section class='item'>
-<h3>EXPORT DATA</h3>
+<h3 class='trigger'>EXPORT DATA</h3>
+<div class='toggle_container'>
+
 <p>This will put all of your experiments + files in a .zip archive.</p>
 <form action='ucp-exec.php' method='post'>
 <input name='export' type='submit' value='DO IT'>
 </form>
+</div>
 </section>
 
 
@@ -188,3 +196,11 @@ require_once("inc/footer.php");
 // Give focus to password field
 echo "<script type='text/javascript'>document.getElementById('currpass').focus();</script>";
 ?>
+<script type="text/javascript"><!-- TOGGLE CONTAINER -->
+$(document).ready(function(){
+	$(".toggle_container").hide();
+	$("h3.trigger").click(function(){
+		$(this).toggleClass("active").next().slideToggle("slow");
+	});
+});
+</script>

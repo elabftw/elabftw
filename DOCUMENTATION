@@ -11,7 +11,7 @@ I know all the cool kids are on Github, but Github source code isn't available, 
 Developped with vim, and 4 spaces indent.
 
 * Use of fpdf http://www.fpdf.org for the pdf creation
-* Use of Swiftmailer http://swiftmailer.org for sending email with SMTP
+* Use of Swiftmailer http://swiftmailer.org for sending email with SMTP (GPLv3)
 
 // Accounts
 - Passwords are salted with a random salt, stored in SQL with the sha-512 hash.

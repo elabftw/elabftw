@@ -50,6 +50,7 @@ $data = $req->fetch();
 echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' title='date' alt='Date :' />".$data['date']."</span><br />
     <a href='protocols.php?mode=edit&id=".$data['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/edit.png' title='edit' alt='edit' /></a> 
 <a href='make_pdf.php?id=".$data['id']."&type=prot'><img src='themes/".$_SESSION['prefs']['theme']."/img/pdf.png' title='make a pdf' alt='pdf' /></a> 
+<a href='javascript:window.print()'><img src='themes/".$_SESSION['prefs']['theme']."/img/print.png' title='Print this page' alt='Print' /></a> 
 <a href='make_zip.php?id=".$data['id']."&type=prot'><img src='themes/".$_SESSION['prefs']['theme']."/img/zip.gif' title='make a zip archive' alt='zip' /></a>";
 // TAGS
 $sql = "SELECT tag FROM protocols_tags WHERE item_id = ".$id;

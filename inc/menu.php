@@ -24,6 +24,12 @@
 *                                                                               *
 ********************************************************************************/
 ?>
+<noscript><!-- show warning if javascript is disabled -->
+<ul class="err">
+<li><img src="img/info.png" alt="" />
+Javascript is disabled. Please enable Javascript to view this site in all it's glory. Thank You.</li>
+</ul>
+</noscript>
 <div id="logmenu"><p>
 <?php
 if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {

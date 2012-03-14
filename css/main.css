@@ -225,7 +225,7 @@ textarea{
     font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
-input {
+.input {
     border: 3px solid #CCC;
     padding: 5px;
     margin:5px 0 5px 0;

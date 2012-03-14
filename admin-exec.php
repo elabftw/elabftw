@@ -51,6 +51,16 @@ if (isset($_GET['deluser']) && filter_var($_GET['deluser'], FILTER_VALIDATE_INT)
     $sql = "DELETE FROM users WHERE userid = ".$userid;
     $req = $bdd->prepare($sql);
     $req->execute();
+    $sql = "DELETE FROM experiments_tags WHERE userid = ".$userid;
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $sql = "DELETE FROM experiments WHERE userid = ".$userid;
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $sql = "DELETE FROM uploads WHERE userid = ".$userid;
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    //TODO remove actual files
     $msg_arr[] = 'Deleted user with user ID : '.$userid;
     $_SESSION['infos'] = $msg_arr;
     header('Location: admin.php');

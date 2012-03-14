@@ -1,4 +1,6 @@
 /////// Priority
+users should be validated immeditely if config = 0
+* possibility to add several templates (block of templates)
 * export by date range / tag
 * search : selector should stay what it was
 * search : multiple critères( has file attached ?)

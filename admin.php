@@ -62,7 +62,9 @@ $req = $bdd->prepare($sql);
 $req->execute();
 echo "<form method='post' action='admin-exec.php'><ul>";
 while ($data = $req->fetch()) {
-    echo "<li>".$data['firstname']." ".$data['lastname']." (".$data['email'].") :: <a href='admin-exec.php?deluser=".$data['userid']."'>delete</a> <a href='admin-exec.php?edituser=".$data['userid']."'>edit</a></li>";
+    echo "<li>".$data['firstname']." ".$data['lastname']." (".$data['email'].") :: "; //switch to html because of JS ?>
+    <a href='admin-exec.php?deluser=<?php echo $data['userid'];?>' onClick="return confirm('Delete this user ?\n WARNING this will delete forever ALL the user\'s data, including files and experiments !!!!');">delete</a> 
+<?php echo "<a href='admin-exec.php?edituser=".$data['userid']."'>edit</a></li>";
 }
 echo "</section>";
 require_once('inc/footer.php') ?>

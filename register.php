@@ -18,8 +18,8 @@
 *
 ********************************************************************************/
 session_start();
-require_once("inc/head.php");
-require_once("inc/menu.php");
+require_once('inc/head.php');
+require_once('inc/menu.php');
 require_once('inc/info_box.php');
 ?>
 <h3>REGISTER</h3>
@@ -37,7 +37,7 @@ require_once('inc/info_box.php');
       Confirm Password <input name="cpassword" type="password" class="textfield" id="cpassword" /><br /><br />
 <div id='submitDiv'>
 <!-- js on submit button to avoid double requests -->
-      <input type="submit" name="Submit" id='submit' value="Register" onclick="this.form.submit(); this.disabled = 1;" />
+      <input type="submit" name="Submit" class='submit' value="Register" onclick="this.disabled = 1;" />
 </div>
 </div>
 </form>
@@ -47,5 +47,5 @@ require_once('inc/info_box.php');
 document.getElementById("username").focus();
 </script>
 </section>
-<? require_once("inc/footer.php"); ?>
+<? require_once('inc/footer.php'); ?>
 

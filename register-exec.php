@@ -119,7 +119,7 @@ if ((isset($_POST['cpassword'])) && (!empty($_POST['cpassword']))) {
 
 //If there are input validations, redirect back to the registration form
 if($errflag) {
-    $_SESSION['ERRMSG_ARR'] = $errmsg_arr;
+    $_SESSION['errors'] = $errmsg_arr;
     session_write_close();
     header("location: register.php");
     exit();
@@ -128,7 +128,12 @@ if($errflag) {
 // Get the date for the registration date :
 $register_date = date("Y-m-d");
 // If all is good => registration
-$sql = "INSERT INTO users(username, firstname, lastname, email, password, salt, register_date) VALUES('$username', '$firstname', '$lastname', '$email', '$passwordHash', '$salt', '$register_date')";
+if ($ini_arr['admin_validate'] === '1'){
+    $sql = "INSERT INTO users(username, firstname, lastname, email, password, salt, register_date) VALUES('$username', '$firstname', '$lastname', '$email', '$passwordHash', '$salt', '$register_date')";
+} else { // no admin validation in config file
+    $sql = "INSERT INTO users(username, firstname, lastname, email, password, salt, register_date, validated) VALUES('$username', '$firstname', '$lastname', '$email', '$passwordHash', '$salt', '$register_date', '1')";
+}
+
 $result = $bdd->exec($sql);
 
 //Check whether the query was successful or not

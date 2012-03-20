@@ -1,5 +1,6 @@
 /////// Priority
 * http://www.ssi.gouv.fr/fr/certification-qualification/cc/
+* limite new users to particular email domain
 * have real auth with LDAP etc... like here : http://docs.moodle.org/22/en/Authentication
 * possibility to add several templates (block of templates)
 * export by date range / tag
@@ -12,7 +13,7 @@
 * labmeetings : resp can add room, date, name, cronjob that sends an email before the labmeeting
 * when click on file div, change file (with ajax ?)
 * add real calendar
-* custom menu
+* custom menu in admin panel
 
 ///// Osef
 * have a real useful index...

@@ -65,6 +65,9 @@ hr {
     margin:10px 0 10px 0;
 }
 
+li {
+    display:inline;
+}
 
 /* LOGO */
 #eblue {

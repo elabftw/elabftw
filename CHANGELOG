@@ -1,4 +1,9 @@
 /* Changelog for eLabFTW */
+
+Version 0.5.4
+* Added modification «history» on protocols
+* Added dates on labmeeting and journal clubs uploads
+
 Version 0.5.3
 * Added templates for experiments
 * You can now upload past journal clubs, labmeetings

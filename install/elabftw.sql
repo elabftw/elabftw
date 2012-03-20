@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Mar 08, 2012 at 03:18 PM
+-- Generation Time: Mar 20, 2012 at 12:14 PM
 -- Server version: 5.5.9
 -- PHP Version: 5.3.6
 
@@ -34,7 +34,7 @@ CREATE TABLE `experiments` (
   `protocol` int(10) unsigned DEFAULT NULL,
   `userid` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=255 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=267 ;
 
 -- --------------------------------------------------------
 
@@ -48,7 +48,21 @@ CREATE TABLE `experiments_tags` (
   `item_id` int(10) unsigned NOT NULL,
   `userid` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1484 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1529 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `experiments_templates`
+--
+
+CREATE TABLE `experiments_templates` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `body` text,
+  `name` varchar(255) NOT NULL,
+  `userid` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
 
 -- --------------------------------------------------------
 
@@ -92,8 +106,9 @@ CREATE TABLE `uploads` (
   `item_id` int(10) unsigned DEFAULT NULL,
   `userid` text NOT NULL,
   `type` varchar(255) NOT NULL,
+  `date` date DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=31 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=33 ;
 
 -- --------------------------------------------------------
 
@@ -132,4 +147,4 @@ CREATE TABLE `users` (
   `sc_todo` varchar(1) NOT NULL DEFAULT 't',
   `validated` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`userid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=78 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=79 ;

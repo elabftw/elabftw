@@ -69,6 +69,12 @@ echo "<p class='title'>". stripslashes($data['title']) . "</p>";
 if ($data['body'] != ''){
 echo "<p class='txt'>".nl2br(stripslashes($data['body']))."</p>";
 }
+// Get userinfo
+$sql = "SELECT firstname, lastname FROM users WHERE userid = ".$data['userid'];
+$requser = $bdd->prepare($sql);
+$requser->execute();
+$datauser = $requser->fetch();
+echo "Last modified by ".$datauser['firstname']." ".$datauser['lastname']." on ".$data['date'];
 echo "</section>";
 // DISPLAY FILES
 require_once('inc/display_file.php');

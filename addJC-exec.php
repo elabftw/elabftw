@@ -52,14 +52,15 @@ if (is_uploaded_file($_FILES['files']['tmp_name'][0])){
         // Move file
             if (move_uploaded_file($_FILES['files']['tmp_name'][$i], $upload_directory . $long_filenames[$i])) {
     //SQL for FILE uploads
-    $sql = "INSERT INTO uploads(real_name, long_name, comment, userid, type) VALUES(:real_name, :long_name, :comment, :userid, :type)";
+    $sql = "INSERT INTO uploads(real_name, long_name, comment, userid, type, date) VALUES(:real_name, :long_name, :comment, :userid, :type, :date)";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
         'real_name' => $real_filenames[$i],
         'long_name' => $long_filenames[$i],
         'comment' => $filecomments[$i],
         'userid' => $_SESSION['userid'],
-        'type' => 'jc'
+        'type' => 'jc',
+        'date' => date('Y-m-d')
     ));
     $req->closeCursor();
             } // end for each file loop

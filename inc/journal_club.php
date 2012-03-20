@@ -30,7 +30,7 @@
 <h4>Past journal clubs :</h4><br />
 <?php
 // SQL to get past journal clubs
-$sql = "SELECT * FROM uploads WHERE type = 'jc'";
+$sql = "SELECT * FROM uploads WHERE type = 'jc' ORDER BY date DESC";
 $req = $bdd->prepare($sql);
 $req->execute();
 while ($data = $req->fetch()) {

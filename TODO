@@ -1,4 +1,6 @@
 /////// Priority
+* http://www.ssi.gouv.fr/fr/certification-qualification/cc/
+* have real auth with LDAP etc... like here : http://docs.moodle.org/22/en/Authentication
 * possibility to add several templates (block of templates)
 * export by date range / tag
 * search : selector should stay what it was

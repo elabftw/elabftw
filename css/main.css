@@ -65,7 +65,7 @@ hr {
     margin:10px 0 10px 0;
 }
 
-li {
+li.inline {
     display:inline;
 }
 
@@ -335,7 +335,7 @@ img {
 
 .txt {
     padding:5px;
-    font-size:20px;
+    font-size:16px;
 }
 
 .running_compact, .success_compact, .redo_compact, .fail_compact {

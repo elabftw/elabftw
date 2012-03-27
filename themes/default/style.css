@@ -100,6 +100,10 @@ nav a {
 }
 nav a:hover {
     color:#1589FF;
+    -moz-transition-duration: 1500ms;
+    -webkit-transition-duration: 1500ms;
+    -o-transition-duration: 1500ms;
+    -ms-transition-duration: 1500ms;
     border:1px solid black;
     border-radius:5px;
 }

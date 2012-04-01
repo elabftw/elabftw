@@ -1,18 +1,14 @@
 /////// Priority
-* on edititem, adding tags should make an ajax request
-* limit new users to particular email domain
-* have real auth with LDAP etc... like here : http://docs.moodle.org/22/en/Authentication
 * export by date range / tag
-* search : selector should stay what it was
-* search : multiple critères( has file attached ?)
-* most used protocoles get first in selecta ! 
+* SEARCH
 
 ////// Features
+* most used protocoles get first in selecta ! 
+* limit new users to particular email domain
+* have real auth with LDAP etc... like here : http://docs.moodle.org/22/en/Authentication
 * announce birthday date of a team mb to other team mb (add birthday in profile)
 * tools page with trucs pour calculer les concentrations, et les volumes pour les transfections, etc...
 * labmeetings : resp can add room, date, name, cronjob that sends an email before the labmeeting
-* when click on file div, change file (with ajax ?)
-* add real calendar
 
 ///// Osef
 * have a real useful index...

@@ -76,12 +76,16 @@ echo stripslashes($tags['tag']);?>
 <script type='text/javascript'>
 // DELETE TAG JS
     function delete_tag(tag_id,item_id){
+        var you_sure = confirm('Delete this tag ?');
+        if (you_sure == true) {
         var jqxhr = $.post('delete_tag.php', {
             id:tag_id,
             item_id:item_id,
             type:'exp'
         })
         .success(function() {$("#tags_div").load("experiments.php?mode=edit&id="+item_id+" #tags_div");})
+        }
+        return false;
     }
 </script>
 <script type="text/javascript">
@@ -106,11 +110,12 @@ function addTagOnEnter(e){ // the argument here is the event (needed to detect w
         // reload the tags list
         .success(function() {$("#tags_div").load("experiments.php?mode=edit&id=<?php echo $id;?> #tags_div");
     // clear input field
-$("#addtaginput").val("");})
-        } // end if key is enter
+    $("#addtaginput").val("");
+    return false;
+        })
+    } // end if key is enter
 }
 </script>
-
 <!-- END ADD TAG -->
 <br />
 <?php
@@ -142,20 +147,22 @@ while ($data = $req->fetch()) {
 echo "</select>";
 ?>
 <script type='text/javascript'>
+// load template JS
 $(".template_link").click(function() {
     $.get("load_tpl.php", {tpl_id: $(this).attr('id')}, 
         function(data) {
-            $('#body_textarea').val(data);
+            $('#body_textarea').append(data);
         });    
     return false;
 });
 </script>
-      <textarea id='body_textarea' name='body' rows="15" cols="80"><?php if(empty($_SESSION['errors'])){
-        echo stripslashes($data['body']);
+<textarea id='body_textarea' name='body' rows="15" cols="80"><?php if(empty($_SESSION['errors'])){
+    echo stripslashes($data['body']);
     } else {
-        echo stripslashes($_SESSION['new_body']);
-    } ?></textarea>
-      <br /><br /><h4>Outcome</h4>
+    echo stripslashes($_SESSION['new_body']);
+    } ?>
+</textarea>
+<br /><br /><h4>Outcome</h4>
 <!-- outcome get selected by default -->
       <select name="outcome">
 <option <?php echo ($data['outcome'] === "running") ? "selected" : "";?> value="running">Running</option>

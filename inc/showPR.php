@@ -247,6 +247,6 @@ $req->closeCursor();
 <?php
 // KEYBOARD SHORTCUTS
 echo "<script type='text/javascript'>
-key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'protocols.php?mode=create'});
+key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=prot'});
 </script>";
 ?>

@@ -254,6 +254,6 @@ if ($currentpage != $totalpages) {
 <?php
 // KEYBOARD SHORTCUTS
 echo "<script type='text/javascript'>
-key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'experiments.php?mode=create'});
+key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=exp'});
 </script>";
 ?>

@@ -20,18 +20,24 @@
 ?>
 <footer>
 <script type="text/javascript">
-function mouseOver()
-{document.php.src ="img/phpon.gif";}
-function mouseOut()
-{document.php.src ="img/phpoff.gif";}
-function mouseOver2()
-{document.mysql.src ="img/mysqlon.gif";}
-function mouseOut2()
-{document.mysql.src ="img/mysqloff.gif";}
-function mouseOver3()
-{document.css.src ="img/csson.gif";}
-function mouseOut3()
-{document.css.src ="img/cssoff.gif";}
+function mouseOverPhp(action){
+if (action == 'on') {
+    document.php.src ="img/phpon.gif";
+} else {
+document.php.src ="img/phpoff.gif";}
+}
+function mouseOverSql(action){
+if (action == 'on') {
+    document.mysql.src ="img/mysqlon.gif";
+} else {
+document.mysql.src ="img/mysqloff.gif";}
+}
+function mouseOverCss(action){
+if (action == 'on') {
+    document.css.src ="img/csson.gif";
+} else {
+document.css.src ="img/cssoff.gif";}
+}
 </script>
 <p>
 <?php
@@ -44,9 +50,9 @@ echo $ini_arr['lab_name']." powered by <a href='http://www.elabftw.net'>eLabFTW<
     <!--
     <div xmlns:foaf='http://xmlns.com/foaf/0.1/' xmlns:mc='http://movecommons.org/ns#' xmlns:skos='http://www.w3.org/2004/02/skos/core#' about='http://www.elabftw.net' typeof='mc:Collective'></div><div property='foaf:name' content='eLabFTW - Free open source electronic Lab notebook'></div><div rel='foaf:homepage' href='http://www.elabftw.net'></div><div rel='mc:moveCommonsType' resource='[mc:NonProfit]'></div><div rel='mc:moveCommonsType' resource='[mc:Reproducible]'></div><div rel='mc:moveCommonsType' resource='[mc:ReinforcesCommons]'></div><div rel='mc:moveCommonsType' resource='[mc:GrassRoots]'></div><div rel='mc:focusesIn' resource='[mc:Town]'></div><div about='#' typeof='skos:Concept'></div><a href='http://movecommons.org/en/np-rp-rc.to-gr/0.1/'><img src='http://movecommons.org/mc/0.1/images/np-rp-rc.to-gr-88x31-0.1.png' alt='Move Commons Non-Profit, Reproducible, Reinforcing the Town/community/society Commons, Grassroots' /></a></div>
     -->
-<figure><a href='http://www.php.net'><img id='php' onmouseover='mouseOver()' onmouseout='mouseOut()' class='img' src='img/phpoff.gif' /></a>
-<a href='http://www.mysql.com'><img id='mysql' onmouseover='mouseOver2()' onmouseout='mouseOut2()' class='img' src='img/mysqloff.gif' /></a>
-<a href='http://jigsaw.w3.org/css-validator/check/referer'><img id='css' onmouseover='mouseOver3()' onmouseout='mouseOut3()' class='img' src='img/cssoff.gif' /></a></figure>
+<figure><a href='http://www.php.net'><img id='php' onmouseover="mouseOverPhp('on')" onmouseout="mouseOverPhp('off')" class='img' src='img/phpoff.gif' /></a>
+<a href='http://www.mysql.com'><img id='mysql' onmouseover="mouseOverSql('on')" onmouseout="mouseOverSql('off')" class='img' src='img/mysqloff.gif' /></a>
+<a href='http://jigsaw.w3.org/css-validator/check/referer'><img id='css' onmouseover="mouseOverCss('on')" onmouseout="mouseOverCss('off')" class='img' src='img/cssoff.gif' /></a></figure>
 <?php
 $time = microtime();
 $time = explode(' ', $time);

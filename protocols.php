@@ -40,8 +40,6 @@ if(!isset($_GET['mode']) || ($_GET['mode'] === 'show')) {
     require_once('inc/deletePR.php');
 } elseif ($_GET['mode'] === 'delete2') {
     require_once('inc/deletePR2.php');
-} elseif ($_GET['mode'] === 'create') {
-    require_once('inc/createPR.php');
 } else {
     echo "What are you doing, Dave ?";
 }

@@ -16,4 +16,5 @@ if( isset($_SESSION['infos']) && is_array($_SESSION['infos']) && count($_SESSION
     echo "</ul>";
     unset($_SESSION['infos']);
 }
+$msg_arr = array();
 ?>

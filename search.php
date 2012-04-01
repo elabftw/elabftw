@@ -27,6 +27,7 @@ require_once('inc/common.php');
 $page_title='Search';
 require_once('inc/head.php');
 require_once('inc/menu.php');
+require_once('inc/info_box.php');
 ?>
 <!-- Search page begin -->
 <h2>SEARCH</h2>
@@ -91,7 +92,8 @@ if((isset($_POST['searching'])) && ($_POST['searching'] === 'yes')){
 if (isset($_POST['find']) && !empty($_POST['find'])) {
     $find = filter_var($_POST['find'], FILTER_SANITIZE_STRING);
 } else {
-    echo "<p>You need to search for something in order to find something...</p>";
+    $msg_arr[] = "<p>You need to search for something in order to find something...</p>";
+    $_SESSION['errors'] = $msg_arr;
     require_once('inc/footer.php');
     exit();
 }
@@ -117,7 +119,7 @@ if(filter_var($_POST['search_what'], FILTER_VALIDATE_INT)) {
     } elseif ($_POST['search_where'] === 'any'){
         $where = 'any field';
         $sql = "SELECT * FROM experiments WHERE userid = :userid 
-           AND title LIKE '%$find%' OR date LIKE '%$find%' OR body LIKE '%$find%'";
+           AND (title LIKE '%$find%' OR date LIKE '%$find%' OR body LIKE '%$find%')";
 }else{
     die('<p>What are you doing, Dave ?</p>');
 } //endif what = exp
@@ -146,7 +148,6 @@ echo "<p>Results for : <em>".stripslashes($find)."</em> in ".$what." ".$where.".
 $req = $bdd->prepare($sql);
 if($what === 'experiments'){$req->bindParam(':userid', $_SESSION['userid']);}
 $req->execute();
-
 // Display results
 while ($data = $req->fetch()) {
     if($what === 'experiments'){
@@ -158,7 +159,7 @@ while ($data = $req->fetch()) {
 <section OnClick="document.location='<?php echo $what;?>.php?mode=view&id=<?php echo $data['id'];?>'" class="<?php echo $outcome;?>">
 <?php
 // DATE
-echo "<span class='date'><img src='img/calendar.png' alt='' /> ".$data['date']."</span>";
+echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' alt='' /> ".$data['date']."</span>";
 // TAGS
 $id = $data['id'];
 $sql = "SELECT tag FROM experiments_tags WHERE item_id = ".$id;

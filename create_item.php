@@ -55,7 +55,7 @@ if ($type == 'protocols'){
 $sql = "INSERT INTO ".$type."(title, date, body, userid) VALUES(:title, :date, :body, :userid)";
 $req = $bdd->prepare($sql);
 $result = $req->execute(array(
-    'title' => '',
+    'title' => 'Untitled',
     'date' => kdate(),
     'body' => '',
     'userid' => $_SESSION['userid']));

@@ -117,7 +117,7 @@ if ((isset($_POST['cpassword'])) && (!empty($_POST['cpassword']))) {
     $errflag = true;
 }
 
-//If there are input validations, redirect back to the registration form
+// If there are input validations, redirect back to the registration form
 if($errflag) {
     $_SESSION['errors'] = $errmsg_arr;
     session_write_close();
@@ -125,8 +125,8 @@ if($errflag) {
     exit();
 }
 
-// Get the date for the registration date :
-$register_date = date("Y-m-d");
+// Registration date is stored in epoch
+$register_date = time();
 // If all is good => registration
 if ($ini_arr['admin_validate'] === '1'){
     $sql = "INSERT INTO users(username, firstname, lastname, email, password, salt, register_date) VALUES('$username', '$firstname', '$lastname', '$email', '$passwordHash', '$salt', '$register_date')";

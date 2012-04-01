@@ -42,20 +42,20 @@ $req = $bdd->prepare($sql);
 $req->execute();
 $data = $req->fetch();
 
-// Calculate number of experiments/day
-$days_since_reg = daydiff($data['register_date']);
-// if user registered today
-if (daydiff(date("Y-m-d")) == 0){
-    $days_since_reg = 1;
-}
-$exp_per_day = ($count[0] / $days_since_reg);
-$exp_per_day = number_format($exp_per_day, 1, '.', ' ');
+// Calculate number of experiments/day TODO take into account business days and holidays
+//$days_since_reg = daydiff($data['register_date']);
+//// if user registered today; avoid division by 0
+//if ($days_since_reg == 0){
+//    $days_since_reg = 1;
+//}
+//$exp_per_day = ($count[0] / $days_since_reg);
+//$exp_per_day = number_format($exp_per_day, 1, '.', ' ');
 
 echo "<section class='item'>";
 echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/user.png' alt='' /> <h4>INFOS</h4>";
 echo "<div class='center'>
     <p>".$data['firstname']." ".$data['lastname']." (".$data['email'].")</p>
-    <p>".$count[0]." experiments done since ".$data['register_date']." (".$exp_per_day." experiments/day)</p>";
+    <p>".$count[0]." experiments done since ".date("Y-m-d", $data['register_date']);
 if($data['group'] == 'admin') {echo "<p>You ARE admin \o/</p>";}
 if($data['group'] === 'journalclub') {echo "<p>You ARE responsible of the <a href='journal-club.php'>Journal Club</a> !</p>";}
 echo "</div>";

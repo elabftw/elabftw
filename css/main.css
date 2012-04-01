@@ -291,9 +291,9 @@ img {
 }
 
 .tags {
-    width:600px;
+    width:680px;
     border-radius:15px;
-    padding:5px;
+    padding:3px;
     font: 12px Courier,Arial,sans-serif;
     margin:10px 0px 10px 5px;
     line-height:200%;

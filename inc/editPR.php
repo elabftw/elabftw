@@ -23,9 +23,9 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-echo "<script src='js/editinplace.js' type='text/javascript'></script>";
-echo "<h2>EDIT PROTOCOL</h2>";
-
+?>
+<h2>EDIT PROTOCOL</h2>
+<?php
 // ID
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     $filter_options = array(
@@ -48,25 +48,23 @@ $data = $req->fetch();
 <section class='item'>
 <a class='align_right' href='delete_item.php?id=<?php echo $_SESSION['id'];?>&type=prot' onClick="return confirm('Delete this protocol ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <!-- ADD TAG FORM -->
-<form id="addtag" name="addtag" method="post" action="add_tag.php">
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.gif' alt='' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
-<span class='tags'>
+<div class='tags'>
+<span id='tags_div'>
 <?php
 $sql = "SELECT id, tag FROM protocols_tags WHERE item_id = ".$id;
 $tagreq = $bdd->prepare($sql);
 $tagreq->execute();
 // DISPLAY TAGS
 while($tags = $tagreq->fetch()){
-?>
-    <span class='tag'><a href='delete_tag.php?id=<?php echo $tags['id'];?>&item_id=<?php echo $id;?>&type=prot' onClick="return confirm('Delete this tag ?');">
-<?php echo stripslashes($tags['tag']);}?></a> 
-<input name='item_id' type='hidden' value='<? echo $id;?>' />
-<input name='type' type='hidden' value='prot' />
-<input id='addtaginput' name='tag' placeholder='Add one tag' />
-<a href="javascript: document.forms['addtag'].submit()"><img alt='add' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/plus.png' /></a>
-</span></span>
-</form><!-- END ADD TAG -->
-<br />
+echo "<span class='tag'><a onclick='delete_tag(".$tags['id'].",".$id.")'>";
+echo stripslashes($tags['tag']);?>
+</a></span>
+<?php } //end while tags ?>
+</span>
+<input type="text" name="tag" id="addtaginput" placeholder="Add a tag" />
+</div>
+<!-- END ADD TAG -->
 
 <!-- BEGIN 2ND FORM -->
 <form id="editPR" name="editPR" method="post" action="editPR-exec.php" enctype='multipart/form-data'>
@@ -104,15 +102,53 @@ require_once('inc/display_file.php');
 </section>
 <!-- end edit protocols form -->
 <?php
-    // unset session variables
+// unset session variables
 unset($_SESSION['errors']);
-
-// Give focus to add tag field if we just added a tag
-if(isset($_GET['tagadded'])){echo "
-<script type='text/javascript'>document.getElementById('addtaginput').focus();</script>";}
-// KEYBOARD SHORTCUTS
-echo "<script type='text/javascript'>
-key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'protocols.php?mode=create'});
-key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['editPR'].submit()});
-</script>";
 ?>
+<script type='text/javascript'>
+// JAVASCRIPT
+<?php
+// KEYBOARD SHORTCUTS
+echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'protocols.php?mode=create'});";
+echo "key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['editPR'].submit()});";
+?>
+// DELETE TAG JS
+function delete_tag(tag_id,item_id){
+    var you_sure = confirm('Delete this tag ?');
+    if (you_sure == true) {
+        var jqxhr = $.post('delete_tag.php', {
+        id:tag_id,
+        item_id:item_id,
+        type:'prot'
+        })
+        .success(function() {$("#tags_div").load("protocols.php?mode=edit&id="+item_id+" #tags_div");})
+    }
+    return false;
+}
+// ADD TAG JS
+// listen keypress, add tag when it's enter
+jQuery(document).keypress(function(e){
+    addTagOnEnter(e);
+});
+function addTagOnEnter(e){ // the argument here is the event (needed to detect which key is pressed)
+    var keynum;
+    if(e.which)
+        { keynum = e.which;}
+    if(keynum == 13){  // if the key that was pressed was Enter (ascii code 13)
+        // get tag
+    var tag = $('#addtaginput').attr('value');
+    // POST request
+        var jqxhr = $.post('add_tag.php', {
+            tag:tag,
+            item_id:<?php echo $id;?>,
+            type:'prot'
+        })
+        // reload the tags list
+        .success(function() {$("#tags_div").load("protocols.php?mode=edit&id=<?php echo $id;?> #tags_div");
+    // clear input field
+    $("#addtaginput").val("");
+    return false;
+        })
+    } // end if key is enter
+}
+</script>

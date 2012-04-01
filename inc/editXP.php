@@ -58,7 +58,7 @@ $data = $req->fetch();
 <a class='align_right' href='delete_item.php?id=<?php echo $id;?>&type=exp' onClick="return confirm('Delete this experiment ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <!-- ADD TAG FORM -->
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.gif' alt='' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
-<span class='tags'>
+<div class='tags'>
 <span id='tags_div'>
 <?php
 $sql = "SELECT id, tag FROM experiments_tags WHERE item_id = ".$id;
@@ -72,52 +72,8 @@ echo stripslashes($tags['tag']);?>
 <?php } //end while tags ?>
 </span>
 <input type="text" name="tag" id="addtaginput" placeholder="Add a tag" />
-</span>
-<script type='text/javascript'>
-// DELETE TAG JS
-    function delete_tag(tag_id,item_id){
-        var you_sure = confirm('Delete this tag ?');
-        if (you_sure == true) {
-        var jqxhr = $.post('delete_tag.php', {
-            id:tag_id,
-            item_id:item_id,
-            type:'exp'
-        })
-        .success(function() {$("#tags_div").load("experiments.php?mode=edit&id="+item_id+" #tags_div");})
-        }
-        return false;
-    }
-</script>
-<script type="text/javascript">
-// ADD TAG JS
-// we need this because there is no submit button on the add tag input (no form either)
-jQuery(document).keypress(function(e){
-    addTagOnEnter(e);
-});
-function addTagOnEnter(e){ // the argument here is the event (needed to detect which key is pressed)
-    var keynum;
-    if(e.which)
-        { keynum = e.which;}
-    if(keynum == 13){  // if the key that was pressed was Enter (ascii code 13)
-        // get tag
-    var tag = $('#addtaginput').attr('value');
-    // POST request
-        var jqxhr = $.post('add_tag.php', {
-            tag:tag,
-            item_id:<?php echo $id;?>,
-            type:'exp'
-        })
-        // reload the tags list
-        .success(function() {$("#tags_div").load("experiments.php?mode=edit&id=<?php echo $id;?> #tags_div");
-    // clear input field
-    $("#addtaginput").val("");
-    return false;
-        })
-    } // end if key is enter
-}
-</script>
+</div>
 <!-- END ADD TAG -->
-<br />
 <?php
 //echo "<p>or add from tagcloud</p>";
 //require_once('inc/tagcloud.php');
@@ -146,16 +102,6 @@ while ($data = $req->fetch()) {
 }
 echo "</select>";
 ?>
-<script type='text/javascript'>
-// load template JS
-$(".template_link").click(function() {
-    $.get("load_tpl.php", {tpl_id: $(this).attr('id')}, 
-        function(data) {
-            $('#body_textarea').append(data);
-        });    
-    return false;
-});
-</script>
 <textarea id='body_textarea' name='body' rows="15" cols="80"><?php if(empty($_SESSION['errors'])){
     echo stripslashes($data['body']);
     } else {
@@ -202,16 +148,61 @@ require_once('inc/display_file.php');
 <p>SUBMIT</p>
 <input type='image' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/submit.png' name='Submit' value='Submit' onClick="this.form.submit();" />
 </div>
-</form>
+</form><!-- end editXP form -->
 </section>
-<!-- end editXP form -->
+
+<script type='text/javascript'>
+// JAVASCRIPT
 <?php
-// Give focus to add tag field if we just added a tag
-if(isset($_GET['tagadded'])){echo "
-<script type='text/javascript'>document.getElementById('addtaginput').focus();</script>";}
 // KEYBOARD SHORTCUTS
-echo "<script type='text/javascript'>
-key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'experiments.php?mode=create'});
-key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['editXP'].submit()});
-</script>";
+echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'experiments.php?mode=create'});";
+echo "key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['editXP'].submit()});";
 ?>
+// DELETE TAG JS
+function delete_tag(tag_id,item_id){
+    var you_sure = confirm('Delete this tag ?');
+    if (you_sure == true) {
+        var jqxhr = $.post('delete_tag.php', {
+        id:tag_id,
+        item_id:item_id,
+        type:'exp'
+        })
+        .success(function() {$("#tags_div").load("experiments.php?mode=edit&id="+item_id+" #tags_div");})
+    }
+    return false;
+}
+// ADD TAG JS
+// listen keypress, add tag when it's enter
+jQuery(document).keypress(function(e){
+    addTagOnEnter(e);
+});
+function addTagOnEnter(e){ // the argument here is the event (needed to detect which key is pressed)
+    var keynum;
+    if(e.which)
+        { keynum = e.which;}
+    if(keynum == 13){  // if the key that was pressed was Enter (ascii code 13)
+        // get tag
+    var tag = $('#addtaginput').attr('value');
+    // POST request
+        var jqxhr = $.post('add_tag.php', {
+            tag:tag,
+            item_id:<?php echo $id;?>,
+            type:'exp'
+        })
+        // reload the tags list
+        .success(function() {$("#tags_div").load("experiments.php?mode=edit&id=<?php echo $id;?> #tags_div");
+    // clear input field
+    $("#addtaginput").val("");
+    return false;
+        })
+    } // end if key is enter
+}
+// LOAD TEMPLATE JS
+$(".template_link").click(function() {
+    $.get("load_tpl.php", {tpl_id: $(this).attr('id')}, 
+        function(data) {
+            $('#body_textarea').append(data);
+        });    
+    return false;
+});
+</script>

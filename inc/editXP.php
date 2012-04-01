@@ -25,8 +25,6 @@
 ********************************************************************************/
 ?>
 <h2>EDIT EXPERIMENT</h2>
-<!-- to edit comments of attached files -->
-<script src='js/editinplace.js' type='text/javascript'></script>
 <?php
 // check ID is valid
 if (isset($_GET['id']) && !empty($_GET['id'])) {
@@ -59,24 +57,48 @@ $data = $req->fetch();
 <section class='<?php echo $data['outcome'];?>'>
 <a class='align_right' href='delete_item.php?id=<?php echo $id;?>&type=exp' onClick="return confirm('Delete this experiment ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <!-- ADD TAG FORM -->
-<form id="addtag" name="addtag" method="post" action="add_tag.php">
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.gif' alt='' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
 <span class='tags'>
+<span id='tags_div'>
 <?php
 $sql = "SELECT id, tag FROM experiments_tags WHERE item_id = ".$id;
 $tagreq = $bdd->prepare($sql);
 $tagreq->execute();
 // DISPLAY TAGS
 while($tags = $tagreq->fetch()){
-?>
-    <span class='tag'><a href='delete_tag.php?id=<?php echo $tags['id'];?>&item_id=<?php echo $id;?>&type=exp' onClick="return confirm('Delete this tag ?');">
-<?php echo stripslashes($tags['tag']);}?></a> 
-<input name='item_id' type='hidden' value='<? echo $id;?>' />
-<input name='type' type='hidden' value='exp' />
-<input id='addtaginput' name='tag' placeholder='Add one tag' />
-<a href="javascript: document.forms['addtag'].submit()"><img alt='add' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/plus.png' /></a>
-</span></span>
-</form><!-- END ADD TAG -->
+echo "<span class='tag'><a onclick='delete_tag(".$tags['id'].",".$id.")'>";
+echo stripslashes($tags['tag']);?>
+</a></span>
+<?php } //end while tags ?>
+</span>
+</span>
+<script type='text/javascript'>
+    function delete_tag(tag_id,item_id){
+        var jqxhr = $.post('delete_tag.php', {
+            id:tag_id,
+            item_id:item_id,
+            type:'exp'
+        })
+        .success(function() {$("#tags_div").load("experiments.php?mode=edit&id="+item_id+" #tags_div");})
+    }
+</script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$('#addtagsubmit').click(function () {		
+    var tag = $('#addtaginput').attr('value');
+        var jqxhr = $.post('add_tag.php', {
+            tag:tag,
+            item_id:<?php echo $id;?>,
+            type:'exp'
+        })
+        .success(function() {$("#tags_div").load("experiments.php?mode=edit&id=<?php echo $id;?> #tags_div");})
+	});	
+});	
+</script>
+<input type="text" name="tag" id="addtaginput" />
+<input type="submit" id="addtagsubmit" />
+
+<!-- END ADD TAG -->
 <br />
 <?php
 //echo "<p>or add from tagcloud</p>";

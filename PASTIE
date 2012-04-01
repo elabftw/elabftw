@@ -12,3 +12,12 @@ function init(){
             makeEditable(elems[i]);
         }
 }
+<script type='text/javascript'>
+    function delete_tag(tag_id,item_id){
+        var jqxhr = $.post('delete_tag.php', {
+            id:tag_id,
+            item_id:item_id,
+            type:'exp'
+        })
+        .success(function() {$("#tags_div").load("experiments.php?mode=edit&id="+item_id+" #tags_div");})
+    }

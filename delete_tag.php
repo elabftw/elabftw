@@ -25,19 +25,19 @@
 ********************************************************************************/
 require_once('inc/common.php');
 // Check id is valid and assign it to $id
-if (isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
-    $id = $_GET['id'];
+if (isset($_POST['id']) && filter_var($_POST['id'], FILTER_VALIDATE_INT)) {
+    $id = $_POST['id'];
 } else {
     die("The id parameter in the URL isn't a valid tag ID");
 }
 // Check item_id is valid and assign it to $item_id
-if(filter_var($_GET['item_id'], FILTER_VALIDATE_INT)) {
-    $item_id = $_GET['item_id'];
+if(filter_var($_POST['item_id'], FILTER_VALIDATE_INT)) {
+    $item_id = $_POST['item_id'];
 } else {
     die("The item id parameter in the URL isn't valid !");
 }
 // Tag for experiment or protocol ?
-if ($_GET['type'] == 'exp' ){
+if ($_POST['type'] == 'exp' ){
 
 // Check item_id is owned by connected user
     $sql = "SELECT userid FROM experiments WHERE id = ".$item_id;
@@ -49,20 +49,16 @@ if ($_GET['type'] == 'exp' ){
         $sql = "DELETE FROM experiments_tags WHERE id=".$id;
         $req = $bdd->prepare($sql);
         $result = $req->execute();
-        if($result) {
-            header("location: experiments.php?mode=edit&id=$item_id");
-        } else {
+        if(!$result) {
             die('Something went wrong in the database query. Check the flux capacitor.');
         }
    }
-} elseif ($_GET['type'] == 'prot'){
+} elseif ($_POST['type'] == 'prot'){
     // SQL for delete tag of protocol
     $sql = "DELETE FROM protocols_tags WHERE id=".$id;
     $req = $bdd->prepare($sql);
     $result = $req->execute();
-    if ($result) {
-        header("location: protocols.php?mode=edit&id=$item_id");
-    } else {
+    if (!$result) {
         die('Something went wrong in the database query. Check the flux capacitor.');
     }
 } else {

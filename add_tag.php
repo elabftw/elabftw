@@ -51,9 +51,7 @@ if ($_POST['type'] == 'exp' ){
             'item_id' => $item_id,
             'userid' => $_SESSION['userid']
         ));
-        if ($result) {
-            header("location: experiments.php?mode=edit&id=$item_id&tagadded=1");
-        } else {
+        if (!$result) {
             die('Something went wrong in the database query. Check the flux capacitor.');
         }
     }
@@ -64,9 +62,7 @@ if ($_POST['type'] == 'exp' ){
     $result = $req->execute(array(
         'tag' => $tag,
         'item_id' => $item_id));
-    if ($result) {
-        header("location: protocols.php?mode=edit&id=$item_id&tagadded=1");
-    } else {
+    if (!$result) {
         die('Something went wrong in the database query. Check the flux capacitor.');
     }
 } else {

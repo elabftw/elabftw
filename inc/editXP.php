@@ -71,8 +71,10 @@ echo stripslashes($tags['tag']);?>
 </a></span>
 <?php } //end while tags ?>
 </span>
+<input type="text" name="tag" id="addtaginput" placeholder="Add a tag" />
 </span>
 <script type='text/javascript'>
+// DELETE TAG JS
     function delete_tag(tag_id,item_id){
         var jqxhr = $.post('delete_tag.php', {
             id:tag_id,
@@ -83,20 +85,31 @@ echo stripslashes($tags['tag']);?>
     }
 </script>
 <script type="text/javascript">
-$(document).ready(function() {
-	$('#addtagsubmit').click(function () {		
+// ADD TAG JS
+// we need this because there is no submit button on the add tag input (no form either)
+jQuery(document).keypress(function(e){
+    addTagOnEnter(e);
+});
+function addTagOnEnter(e){ // the argument here is the event (needed to detect which key is pressed)
+    var keynum;
+    if(e.which)
+        { keynum = e.which;}
+    if(keynum == 13){  // if the key that was pressed was Enter (ascii code 13)
+        // get tag
     var tag = $('#addtaginput').attr('value');
+    // POST request
         var jqxhr = $.post('add_tag.php', {
             tag:tag,
             item_id:<?php echo $id;?>,
             type:'exp'
         })
-        .success(function() {$("#tags_div").load("experiments.php?mode=edit&id=<?php echo $id;?> #tags_div");})
-	});	
-});	
+        // reload the tags list
+        .success(function() {$("#tags_div").load("experiments.php?mode=edit&id=<?php echo $id;?> #tags_div");
+    // clear input field
+$("#addtaginput").val("");})
+        } // end if key is enter
+}
 </script>
-<input type="text" name="tag" id="addtaginput" />
-<input type="submit" id="addtagsubmit" />
 
 <!-- END ADD TAG -->
 <br />

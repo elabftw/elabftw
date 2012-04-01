@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 require_once('inc/common.php');
-$msg_arr = array(); //info box
+$msg_arr = array();
 
 // What do we create ?
 if (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')){

@@ -46,7 +46,7 @@ $data = $req->fetch();
 // BEGIN CONTENT
 ?>
 <section class='item'>
-<a class='align_right' href='delete_item.php?id=<?php echo $_SESSION['id'];?>&type=prot' onClick="return confirm('Delete this protocol ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
+<a class='align_right' href='delete_item.php?id=<?php echo $id;?>&type=prot' onClick="return confirm('Delete this protocol ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <!-- ADD TAG FORM -->
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.gif' alt='' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
 <div class='tags'>

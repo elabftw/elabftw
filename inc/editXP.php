@@ -26,7 +26,7 @@
 ?>
 <h2>EDIT EXPERIMENT</h2>
 <?php
-// check ID is valid
+// ID
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     $filter_options = array(
         'options' => array(

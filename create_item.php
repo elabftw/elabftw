@@ -23,46 +23,58 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-?>
-<h2>ADD NEW PROTOCOL</h2>
-<hr class='flourishes'>
-<!-- begin createXP form -->
-<section class='item'>
-<form name="createPR" method="post" action="createPR-exec.php" enctype="multipart/form-data">
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.gif' alt='' />
-<h4>Tags</h4><span class='smallgray'> (separated by spaces)</span><br />
-      <textarea placeholder='immunofluorescence antibody actin microtubules' name='tags' id='tags' rows="1" cols="50"></textarea>
-<br />
-<br />
-<h4>Title</h4><br />
-      <textarea id='title' name='title' rows="1" cols="80"><?php if(!empty($_SESSION['errors'])){echo $_SESSION['title'];} ?></textarea>
-<br />
-<br />
-<h4>Protocol</h4><br />
-      <textarea id='title' name='body' rows="15" cols="80"><?php if(!empty($_SESSION['errors'])){echo $_SESSION['body'];} ?></textarea>
-<?php
-// FILE UPLOAD
-require_once('inc/file_upload.php');
-?>
-</div>
+require_once('inc/common.php');
+$msg_arr = array(); //info box
 
-</div>
-<!-- SUBMIT BUTTON -->
-<div class='center' id='submitdiv'>
-<input type='image' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/submit.png' name='Submit' value='Submit' onClick="this.form.submit();" />
-</div>
-</form>
-<!-- end createPR form -->
+// What do we create ?
+if (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')){
+    $type = 'experiments';
+} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'prot')){
+    $type = 'protocols';
+} else {
+    $msg_arr[] = 'Wrong item type !';
+    $_SESSION['infos'] = $msg_arr;
+    header('location: experiments.php');
+    exit();
+}
 
-<?php
-// KEYBOARD SHORTCUTS
-echo "<script type='text/javascript'>
-document.getElementById('tags').focus();
-key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['createXP'].submit()});
-</script>";
+if ($type == 'experiments'){
+// SQL for create experiments
+$sql = "INSERT INTO ".$type."(title, date, body, outcome, userid) VALUES(:title, :date, :body, :outcome, :userid)";
+$req = $bdd->prepare($sql);
+$result = $req->execute(array(
+    'title' => 'Untitled',
+    'date' => kdate(),
+    'body' => '<br />',
+    'outcome' => 'running',
+    'userid' => $_SESSION['userid']));
+}
 
-// unset session variables
-unset($_SESSION['errors']);
-unset($_SESSION['title']);
-unset($_SESSION['body']);
+if ($type == 'protocols'){
+// SQL for create experiments
+$sql = "INSERT INTO ".$type."(title, date, body, userid) VALUES(:title, :date, :body, :userid)";
+$req = $bdd->prepare($sql);
+$result = $req->execute(array(
+    'title' => '',
+    'date' => kdate(),
+    'body' => '',
+    'userid' => $_SESSION['userid']));
+}
+// Get what is the item id we just created
+$sql = "SELECT id FROM ".$type." WHERE userid = :userid ORDER BY id DESC LIMIT 0,1";
+$req = $bdd->prepare($sql);
+$req->bindParam(':userid', $_SESSION['userid']);
+$req->execute();
+$data = $req->fetch();
+$newid = $data['id'];
+
+// Check if insertion is successful and redirect to the newly created experiment in edit mode
+if($result) {
+// info box
+$msg_arr[] = 'New item successfully created.';
+$_SESSION['infos'] = $msg_arr;
+    header('location: '.$type.'.php?mode=edit&id='.$newid.'');
+} else {
+    die("Something went wrong in the database query. Check the flux capacitor.");
+}
 ?>

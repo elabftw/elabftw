@@ -142,8 +142,8 @@ while ($data = $req->fetch()) {
 <a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>&type=tpl' onClick="return confirm('Delete this template ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <?php
     echo "<input type='hidden' name='tpl_id[]' value='".$data['id']."' />";
-    echo "<input name='tpl_name[]' value='".$data['name']."' /><br />";
-    echo "<textarea name='tpl_body[]' rows='15' cols='60'>".$data['body']."</textarea><br />";
+    echo "<input name='tpl_name[]' value='".stripslashes($data['name'])."' /><br />";
+    echo "<textarea name='tpl_body[]' rows='15' cols='60'>".stripslashes($data['body'])."</textarea><br />";
     echo "</div>";
 }
 ?>

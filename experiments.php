@@ -31,8 +31,6 @@ require_once('inc/info_box.php');
 
 if(!isset($_GET['mode']) || ($_GET['mode'] === 'show')) {
     require_once('inc/showXP.php');
-} elseif ($_GET['mode'] === 'create') {
-    require_once('inc/createXP.php');
 } elseif ($_GET['mode'] === 'view') {
     require_once('inc/viewXP.php');
 } elseif ($_GET['mode'] === 'edit') {

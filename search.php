@@ -33,9 +33,13 @@ require_once('inc/info_box.php');
 <h2>SEARCH (and find)</h2>
 <section class='item'>
 <div class='center'>
-<form id='search_box' name="search" method="post" action="search.php">
+<form name="search" method="post" action="search.php">
+<input id="search" name='find' type="text" placeholder="Type here" <?php if(isset($_POST['searching'])){
+    echo "value='".$_POST['find']."'";}?>/>
+    <input id="submit" type="submit" value="Search" />
 <input type="hidden" name="searching" value="yes" />
-<span>Find </span>
+<span class='trigger'>+ Options...</span>
+<div class='toggle_container'>
 <span> in </span>
 <select name="search_what">
 <option value="experiments">Experiments</option>
@@ -47,9 +51,6 @@ require_once('inc/info_box.php');
 <option value="title">title</option>
 <option value="date">date</option>
 </select><br />
-<span>contains </span>
-<input type="text" name="find" />
-<br />
 <span>sort results by :</span>
 <select name="order">
 <option <?php
@@ -78,8 +79,8 @@ if((isset($_POST['limit']))
     }else{
         echo '15';}
 ?>' name='limit' size='2' maxlength='2'><span> results by page</span><br />
-<input type="submit" id='submit' name="Submit" value="Search" onclick="this.form.submit();" />
 </form>
+</div>
 </div>
 </section>
 
@@ -186,3 +187,12 @@ $req->closeCursor();
 
 // FOOTER
 require_once('inc/footer.php');
+?>
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".toggle_container").hide();
+	$("span.trigger").click(function(){
+		$(this).toggleClass("active").next().slideToggle("slow");
+	});
+});
+</script>

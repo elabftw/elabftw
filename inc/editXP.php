@@ -157,6 +157,21 @@ require_once('inc/display_file.php');
 echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'experiments.php?mode=create'});";
 echo "key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['editXP'].submit()});";
 ?>
+// TAGS AUTOCOMPLETE
+$(function() {
+		var availableTags = [
+<?php // get all user's tag for autocomplete
+$sql = "SELECT DISTINCT tag FROM experiments_tags WHERE userid = ".$_SESSION['userid']." LIMIT 50";
+$getalltags = $bdd->prepare($sql);
+$getalltags->execute();
+while ($tag = $getalltags->fetch()){
+    echo "'".$tag[0]."',";
+}?>
+		];
+		$( "#addtaginput" ).autocomplete({
+			source: availableTags
+		});
+	});
 // DELETE TAG JS
 function delete_tag(tag_id, item_id) {
     var you_sure = confirm('Delete this tag ?');

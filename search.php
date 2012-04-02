@@ -30,7 +30,9 @@ require_once('inc/menu.php');
 require_once('inc/info_box.php');
 ?>
 <!-- Search page begin -->
-<h2>SEARCH (and find)</h2>
+<h2>SEARCH</h2>
+<hr class='flourishes'>
+<br />
 <section class='item'>
 <div class='center'>
 <form name="search" method="post" action="search.php">
@@ -190,9 +192,11 @@ require_once('inc/footer.php');
 ?>
 <script type="text/javascript">
 $(document).ready(function(){
+    $("#search").focus();
 	$(".toggle_container").hide();
 	$("span.trigger").click(function(){
 		$(this).toggleClass("active").next().slideToggle("slow");
 	});
 });
+
 </script>

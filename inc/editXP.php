@@ -74,11 +74,7 @@ echo stripslashes($tags['tag']);?>
 <input type="text" name="tag" id="addtaginput" placeholder="Add a tag" />
 </div>
 <!-- END ADD TAG -->
-<?php
-//echo "<p>or add from tagcloud</p>";
-//require_once('inc/tagcloud.php');
-?>
-<!-- BEGIN 2ND FORM -->
+<!-- BEGIN EDITXP FORM -->
 <form id="editXP" name="editXP" method="post" action="editXP-exec.php" enctype='multipart/form-data'>
 <input name='item_id' type='hidden' value='<? echo $id;?>' />
 <h4>Date</h4><span class='smallgray'> (date format : YYMMDD)</span><br />

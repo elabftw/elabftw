@@ -29,7 +29,8 @@ require_once('inc/head.php');
 require_once('inc/menu.php');
 echo "<h2>".strtoupper($ini_arr['lab_name'])."</h2>";
 ?>
-
+<hr class='flourishes'>
+<br />
 <div id='accordion'>
 <h3><a href='#team'>TEAM MEMBERS</a></h3>
 <div>

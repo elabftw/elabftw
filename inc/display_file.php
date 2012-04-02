@@ -65,7 +65,9 @@ if($count > 0){
          id   : 'id',
          submit : 'Save',
          cancel : 'Cancel',
+         style : 'display:inline',
          name : 'content'
+
      });
  });
     </script>

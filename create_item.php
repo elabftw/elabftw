@@ -45,13 +45,13 @@ $req = $bdd->prepare($sql);
 $result = $req->execute(array(
     'title' => 'Untitled',
     'date' => kdate(),
-    'body' => '<br />',
+    'body' => '',
     'outcome' => 'running',
     'userid' => $_SESSION['userid']));
 }
 
 if ($type == 'protocols'){
-// SQL for create experiments
+// SQL for create protocols
 $sql = "INSERT INTO ".$type."(title, date, body, userid) VALUES(:title, :date, :body, :userid)";
 $req = $bdd->prepare($sql);
 $result = $req->execute(array(

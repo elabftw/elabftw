@@ -237,7 +237,7 @@ function loadTpl(id) {
     return false;
     });
 }
-// toggle div
+// TOGGLE DIV
 $(document).ready(function(){
 	$(".toggle_container").hide();
 	$("span.trigger").click(function(){

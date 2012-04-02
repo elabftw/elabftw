@@ -31,7 +31,7 @@ echo "<h2>".strtoupper($ini_arr['lab_name'])."</h2>";
 ?>
 
 <section class='item'>
-<h3 class='trigger'>TEAM MEMBERS</h3>
+<h3 class='trigger'><a href='#team'>TEAM MEMBERS</a></h3>
 <div class='toggle_container'>
 <?php // SQL to get members info
 $sql = "SELECT * FROM users WHERE validated = 1";
@@ -69,7 +69,7 @@ echo "</ul>";
 </div>
 </section>
 <section class='item'>
-<h3 class='trigger'>LABMEETINGS</h3>
+<h3 class='trigger'><a href='#labmeetings'>LABMEETINGS</a></h3>
 <div class='toggle_container'>
 <h4>Past labmeetings :</h4><br />
 <?php

@@ -40,7 +40,7 @@ $data = $req->fetch();
 // BEGIN UCP PAGE
 ?>
 <div class='item'>
-<h3 class='trigger'>PERSONNAL INFORMATIONS</h3>
+<h3 class='trigger'><a href='#infos'>PERSONNAL INFORMATIONS</a></h3>
 <div class='toggle_container'>
 <div class='innerdiv'>
 <form name="profileForm" method="post" action="ucp-exec.php">
@@ -66,7 +66,7 @@ $data = $req->fetch();
 </div><!-- end item -->
 
 <section class='item'>
-<h3 class='trigger'>DISPLAY PREFERENCES</h3>
+<h3 class='trigger'><a href='#display'>DISPLAY PREFERENCES</a></h3>
 <div class='toggle_container'>
 <form action='ucp-exec.php' method='post'>
 <h4>View mode :</h4>
@@ -127,7 +127,7 @@ function setTmpTheme(theme){
 </section>
 
 <section id='templates' class='item'>
-<h3 class='trigger'>EXPERIMENTS TEMPLATES</h3>
+<h3 class='trigger'><a href='#experiments'>EXPERIMENTS TEMPLATES</a></h3>
 <div class='toggle_container'>
 <h4>Existing templates :</h4><br />
 <form action='ucp-exec.php' method='post'>
@@ -163,9 +163,10 @@ while ($data = $req->fetch()) {
 </section>
 
 <section class='item'>
-<h3 class='trigger'>KEYBOARD SHORTCUTS</h3>
+<h3 class='trigger'><a href='#keyboard'>KEYBOARD SHORTCUTS</a></h3>
 <div class='toggle_container'>
 <form action='ucp-exec.php' method='post'>
+<br />
 <input type='hidden' name='shortcuts'>
 <span class='simple_border'>Create item : <input type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['create'];?>' name='create'></span>
 <span class='simple_border'>Edit item : <input type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['edit'];?>' name='edit'></span>
@@ -180,7 +181,7 @@ while ($data = $req->fetch()) {
 </section>
 
 <section id='export' class='item'>
-<h3 class='trigger'>EXPORT DATA</h3>
+<h3 class='trigger'><a href='#export'>EXPORT DATA</a></h3>
 <div class='toggle_container'>
 
 <p>This will put all of your experiments + files in a .zip archive.</p>
@@ -192,15 +193,16 @@ while ($data = $req->fetch()) {
 
 
 <?php
-require_once("inc/footer.php");
-// Give focus to password field
-echo "<script type='text/javascript'>document.getElementById('currpass').focus();</script>";
+require_once('inc/footer.php');
 ?>
-<script type="text/javascript"><!-- TOGGLE CONTAINER -->
+<script type="text/javascript">
+// TOGGLE CONTAINER
 $(document).ready(function(){
 	$(".toggle_container").hide();
 	$("h3.trigger").click(function(){
 		$(this).toggleClass("active").next().slideToggle("slow");
 	});
 });
+// Give focus to password field
+document.getElementById('currpass').focus();
 </script>

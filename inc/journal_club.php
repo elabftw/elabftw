@@ -25,7 +25,7 @@
 ********************************************************************************/
 ?>
 <a name='jc'></a><section class='item'>
-<h3 class='trigger'>JOURNAL CLUB</h3>
+<h3 class='trigger'><a href='#journal'>JOURNAL CLUB</a></h3>
 <div class='toggle_container'>
 <h4>Past journal clubs :</h4><br />
 <?php

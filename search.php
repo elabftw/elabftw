@@ -29,6 +29,16 @@ require_once('inc/head.php');
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
 ?>
+<!-- javascript is at the beginning otherwise if there is no input, exit() is called before JS is read -->
+<script type="text/javascript">
+$(document).ready(function(){
+    $("#search").focus();
+	$(".toggle_container").hide();
+	$("span.trigger").click(function(){
+        $(this).toggleClass("active").next().slideToggle("slow");
+	});
+});
+</script>
 <!-- Search page begin -->
 <h2>SEARCH</h2>
 <hr class='flourishes'>
@@ -190,13 +200,3 @@ $req->closeCursor();
 // FOOTER
 require_once('inc/footer.php');
 ?>
-<script type="text/javascript">
-$(document).ready(function(){
-    $("#search").focus();
-	$(".toggle_container").hide();
-	$("span.trigger").click(function(){
-		$(this).toggleClass("active").next().slideToggle("slow");
-	});
-});
-
-</script>

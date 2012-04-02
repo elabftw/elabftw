@@ -94,10 +94,10 @@ echo stripslashes($tags['tag']);?>
 <div class='toggle_container'><ul>
 <? // SQL to get user's templates
 $sql = "SELECT id, name FROM experiments_templates WHERE userid = ".$_SESSION['userid'];
-$req = $bdd->prepare($sql);
-$req->execute();
-while ($data = $req->fetch()) {
-    echo "<li class='inline'><span class='templates' onclick='loadTpl(".$data['id'].")'>".$data['name']."</span></li> ";
+$tplreq = $bdd->prepare($sql);
+$tplreq->execute();
+while ($tpl = $tplreq->fetch()) {
+    echo "<li class='inline'><span class='templates' onclick='loadTpl(".$tpl['id'].")'>".$tpl['name']."</span></li> ";
 }
 ?>
 </ul></div><br />

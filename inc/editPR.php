@@ -151,4 +151,8 @@ function addTagOnEnter(e){ // the argument here is the event (needed to detect w
         })
     } // end if key is enter
 }
+// DATEPICKER
+$(function() {
+    $( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
+});
 </script>

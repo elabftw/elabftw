@@ -82,7 +82,7 @@ echo stripslashes($tags['tag']);?>
 <form id="editXP" name="editXP" method="post" action="editXP-exec.php" enctype='multipart/form-data'>
 <input name='item_id' type='hidden' value='<? echo $id;?>' />
 <h4>Date</h4><span class='smallgray'> (date format : YYMMDD)</span><br />
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /><input name='date' size='6' type='text' value='<?php echo $data['date'];?>' /><br />
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /><input name='date' id='datepicker' size='6' type='text' value='<?php echo $data['date'];?>' /><br />
 <br /><h4>Title</h4><br />
       <textarea id='title' name='title' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
           echo stripslashes($data['title']);
@@ -90,7 +90,7 @@ echo stripslashes($tags['tag']);?>
           echo stripslashes($_SESSION['new_title']);
       } ?></textarea>
 <br /><br /><h4>Experiment</h4>
-<span class='trigger' id='showtpl'>(click here to show templates)</span>
+<span class='trigger smallgray'>(click here to show templates)</span>
 <div class='toggle_container'><ul>
 <? // SQL to get user's templates
 $sql = "SELECT id, name FROM experiments_templates WHERE userid = ".$_SESSION['userid'];
@@ -199,6 +199,10 @@ function addTagOnEnter(e) { // the argument here is the event (needed to detect 
         })
     } // end if key is enter
 }
+// DATEPICKER
+$(function() {
+    $( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
+});
 // LOAD TEMPLATE JS
 function loadTpl(id) {
     var request = $.ajax({

@@ -90,6 +90,7 @@ echo "<link id='maincss' rel='stylesheet' media='all' href='themes/".$_SESSION['
 echo "<link id='maincss' rel='stylesheet' media='all' href='themes/default/style.css' />";
 }
 ?>
+<link rel="stylesheet" media="all" href="css/jquery-ui.css" />
 <link rel="stylesheet" media="all" href="css/tagcloud.css" />
 <link rel="stylesheet" media="all" href="css/pageslide.css" />
 <!-- JAVASCRIPT -->

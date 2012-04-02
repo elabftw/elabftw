@@ -90,18 +90,17 @@ echo stripslashes($tags['tag']);?>
           echo stripslashes($_SESSION['new_title']);
       } ?></textarea>
 <br /><br /><h4>Experiment</h4>
+<span class='trigger' id='showtpl'>(click here to show templates)</span>
+<div class='toggle_container'><ul>
 <? // SQL to get user's templates
 $sql = "SELECT id, name FROM experiments_templates WHERE userid = ".$_SESSION['userid'];
 $req = $bdd->prepare($sql);
 $req->execute();
-echo "<select>";
-echo "<option>Choose template</option>";
-echo "<option disabled='disabled'>----------------</option>";
 while ($data = $req->fetch()) {
-    echo "<option class='template_link' id='".$data['id']."' value='".$data['name']."'>".$data['name']."</option>";
+    echo "<li class='inline'><span class='templates' onclick='loadTpl(".$data['id'].")'>".$data['name']."</span></li> ";
 }
-echo "</select>";
 ?>
+</ul></div><br />
 <textarea id='body_textarea' name='body' rows="15" cols="80"><?php if(empty($_SESSION['errors'])){
     echo stripslashes($data['body']);
     } else {
@@ -159,50 +158,71 @@ echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.h
 echo "key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['editXP'].submit()});";
 ?>
 // DELETE TAG JS
-function delete_tag(tag_id,item_id){
+function delete_tag(tag_id, item_id) {
     var you_sure = confirm('Delete this tag ?');
     if (you_sure == true) {
         var jqxhr = $.post('delete_tag.php', {
-        id:tag_id,
-        item_id:item_id,
-        type:'exp'
+            id: tag_id,
+            item_id: item_id,
+            type: 'exp'
+        }).done(function () {
+            $("#tags_div").load("experiments.php?mode=edit&id=" + item_id + " #tags_div");
         })
-        .success(function() {$("#tags_div").load("experiments.php?mode=edit&id="+item_id+" #tags_div");})
     }
     return false;
 }
 // ADD TAG JS
 // listen keypress, add tag when it's enter
-jQuery(document).keypress(function(e){
+jQuery('#addtaginput').keypress(function (e) {
     addTagOnEnter(e);
 });
-function addTagOnEnter(e){ // the argument here is the event (needed to detect which key is pressed)
+
+function addTagOnEnter(e) { // the argument here is the event (needed to detect which key is pressed)
     var keynum;
-    if(e.which)
-        { keynum = e.which;}
-    if(keynum == 13){  // if the key that was pressed was Enter (ascii code 13)
+    if (e.which) {
+        keynum = e.which;
+    }
+    if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
         // get tag
-    var tag = $('#addtaginput').attr('value');
-    // POST request
+        var tag = $('#addtaginput').attr('value');
+        // POST request
         var jqxhr = $.post('add_tag.php', {
-            tag:tag,
-            item_id:<?php echo $id;?>,
-            type:'exp'
+            tag: tag,
+            item_id: <?php echo $id; ?> , type: 'exp'
         })
         // reload the tags list
-        .success(function() {$("#tags_div").load("experiments.php?mode=edit&id=<?php echo $id;?> #tags_div");
-    // clear input field
-    $("#addtaginput").val("");
-    return false;
+        .done(function () {
+            $("#tags_div").load("experiments.php?mode=edit&id=<?php echo $id;?> #tags_div");
+            // clear input field
+            $("#addtaginput").val("");
+            return false;
         })
     } // end if key is enter
 }
 // LOAD TEMPLATE JS
-$(".template_link").click(function() {
-    $.get("load_tpl.php", {tpl_id: $(this).attr('id')}, 
-        function(data) {
-            $('#body_textarea').append(data);
-        });    
+function loadTpl(id) {
+    var request = $.ajax({
+        url: 'load_tpl.php',
+        type: "GET",
+        data: {
+            tpl_id: id
+        },
+        dataType: "text"
+    });
+    // add template in the body and stripslashes
+    request.done(function (data) {
+        $('#body_textarea').append(data.split("\\").join(""));
+    request.fail(function (data) {
+        alert('Template loading failed :/');
+    });
     return false;
+    });
+}
+// toggle div
+$(document).ready(function(){
+	$(".toggle_container").hide();
+	$("span.trigger").click(function(){
+		$(this).toggleClass("active").next().slideToggle("slow");
+	});
 });
 </script>

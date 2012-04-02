@@ -332,6 +332,15 @@ img {
 #addtaginput {
     margin-top:7px;
 }
+/* TEMPLATES */
+#showtpl {
+    font:12px Verdana, Arial, Helvetica, sans-serif;
+}
+.templates {
+    font:12px Verdana, Arial, Helvetica, sans-serif;
+    border-radius:20px;
+    padding:7px;
+}
 
 .txt {
     padding:5px;

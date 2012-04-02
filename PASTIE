@@ -1,3 +1,26 @@
+$(document).ready(function () {
+    $(".TTTTTTTTTtemplate_link").click(function() {
+        var request = $.ajax({
+            url: 'load_tpl.php',
+            type: "GET",
+            data: {
+                tpl_id: $(this).attr('id')
+            },
+            dataType: "text"
+        });
+        // add template in the body and stripslashes
+        request.done(function (data) {
+            $('#body_textarea').append(data.split("\\").join(""));
+        }).fail(function (data) {
+            alert('Template loading failed :/');
+        });
+        //        .always(function(data) { alert(data);});
+        request.fail(function (data) {
+            alert('ERROR');
+        });
+        return false;
+    });
+});
 
 <!-- Redirect the user to the index after 2 secs -->
 <script>setTimeout('top.location = \'index.php\'', 2000);</script>

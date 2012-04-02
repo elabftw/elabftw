@@ -126,7 +126,7 @@ function setTmpTheme(theme){
 </div>
 </section>
 
-<section class='item'>
+<section id='templates' class='item'>
 <h3 class='trigger'>EXPERIMENTS TEMPLATES</h3>
 <div class='toggle_container'>
 <h4>Existing templates :</h4><br />
@@ -179,7 +179,7 @@ while ($data = $req->fetch()) {
 </div>
 </section>
 
-<section class='item'>
+<section id='export' class='item'>
 <h3 class='trigger'>EXPORT DATA</h3>
 <div class='toggle_container'>
 

@@ -30,9 +30,9 @@ require_once('inc/menu.php');
 echo "<h2>".strtoupper($ini_arr['lab_name'])."</h2>";
 ?>
 
-<section class='item'>
-<h3 class='trigger'><a href='#team'>TEAM MEMBERS</a></h3>
-<div class='toggle_container'>
+<div id='accordion'>
+<h3><a href='#team'>TEAM MEMBERS</a></h3>
+<div>
 <?php // SQL to get members info
 $sql = "SELECT * FROM users WHERE validated = 1";
 $req = $bdd->prepare($sql);
@@ -67,10 +67,8 @@ while ($data = $req->fetch()) {
 echo "</ul>";
 ?>
 </div>
-</section>
-<section class='item'>
-<h3 class='trigger'><a href='#labmeetings'>LABMEETINGS</a></h3>
-<div class='toggle_container'>
+<h3><a href='#labmeetings'>LABMEETINGS</a></h3>
+<div>
 <h4>Past labmeetings :</h4><br />
 <?php
 // SQL to get past labmeetings files
@@ -123,20 +121,18 @@ require('inc/file_upload_nojs.php');
 <p><a href='http://wiki-bio6.curie.fr/wiki/index.php/Piel_Lab_inner_working#Lab_meetings' target='_blank'>Relevant wiki link</a></p>
 <p class='center'><img src='img/labmeetings-2012.png' alt='labmeetings' title='labmeetings 2012' /></p>
 </div>
-</section>
 
 
 <?php
 require_once('inc/journal_club.php');
 ?>
+</div>
 <?php
 require_once('inc/footer.php');
 ?>
 <script type="text/javascript">
-$(document).ready(function(){
-	$(".toggle_container").hide();
-	$("h3.trigger").click(function(){
-		$(this).toggleClass("active").next().slideToggle("slow");
+// ACCORDION
+$(function() {
+		$( "#accordion" ).accordion({ autoHeight: false });
 	});
-});
 </script>

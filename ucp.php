@@ -39,10 +39,10 @@ $data = $req->fetch();
 
 // BEGIN UCP PAGE
 ?>
-<div class='item'>
-<h3 class='trigger'><a href='#infos'>PERSONNAL INFORMATIONS</a></h3>
-<div class='toggle_container'>
-<div class='innerdiv'>
+<div id='accordion'>
+<h3><a href='#infos'>PERSONNAL INFORMATIONS</a></h3>
+<div>
+<div>
 <form name="profileForm" method="post" action="ucp-exec.php">
 <input type='hidden' name='main'>
       <p>Enter your current password to change personnal infos <input id='currpass' name="currpass" type="password" /></div>
@@ -58,16 +58,13 @@ $data = $req->fetch();
       Cellphone <input name="cellphone" value='<?php echo $data['cellphone'];?>' cols='20' rows='1' /><br />
       Skype <input name="skype" value='<?php echo $data['skype'];?>' cols='20' rows='1' /><br />
       Website <input name="website" value='<?php echo $data['website'];?>' cols='20' rows='1' /><br /></p>
-<!-- SUBMIT BUTTON -->
 <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Update profile" /></div>
 </form>
 </div><!-- end innerdiv -->
-</div><!-- end toggle_container -->
-</div><!-- end item -->
+</div>
 
-<section class='item'>
-<h3 class='trigger'><a href='#display'>DISPLAY PREFERENCES</a></h3>
-<div class='toggle_container'>
+<h3><a href='#display'>DISPLAY PREFERENCES</a></h3>
+<div>
 <form action='ucp-exec.php' method='post'>
 <h4>View mode :</h4>
 <input type='radio' name='display' value='default' <?php echo ($_SESSION['prefs']['display'] === 'default') ? "checked" : "";?> />Default
@@ -124,11 +121,9 @@ function setTmpTheme(theme){
 <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Set preferences" /></div>
 </form>
 </div>
-</section>
 
-<section id='templates' class='item'>
-<h3 class='trigger'><a href='#experiments'>EXPERIMENTS TEMPLATES</a></h3>
-<div class='toggle_container'>
+<h3><a href='#experiments'>EXPERIMENTS TEMPLATES</a></h3>
+<div>
 <h4>Existing templates :</h4><br />
 <form action='ucp-exec.php' method='post'>
 <input type='hidden' name='tpl_form' />
@@ -143,7 +138,7 @@ while ($data = $req->fetch()) {
 <?php
     echo "<input type='hidden' name='tpl_id[]' value='".$data['id']."' />";
     echo "<input name='tpl_name[]' value='".stripslashes($data['name'])."' /><br />";
-    echo "<textarea name='tpl_body[]' rows='15' cols='60'>".stripslashes($data['body'])."</textarea><br />";
+    echo "<textarea name='tpl_body[]' rows='10' cols='60'>".stripslashes($data['body'])."</textarea><br />";
     echo "</div>";
 }
 ?>
@@ -155,16 +150,15 @@ while ($data = $req->fetch()) {
 <div class='sub_item'>
 <input type='hidden' name='new_tpl_form' />
 <input type='text' name='new_tpl_name' placeholder='Name for the template' /><br />
-<textarea name='new_tpl_body' placeholder='Insert here your template' rows='15' cols='60'></textarea>
+<textarea name='new_tpl_body' placeholder='Insert here your template' rows='10' cols='60'></textarea>
 <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Add template" /></div>
 </div>
 </form>
 </div>
-</section>
 
-<section class='item'>
-<h3 class='trigger'><a href='#keyboard'>KEYBOARD SHORTCUTS</a></h3>
-<div class='toggle_container'>
+<h3><a href='#keyboard'>KEYBOARD SHORTCUTS</a></h3>
+
+<div>
 <form action='ucp-exec.php' method='post'>
 <br />
 <input type='hidden' name='shortcuts'>
@@ -178,18 +172,16 @@ while ($data = $req->fetch()) {
 <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Change shortcuts" /></div>
 </form>
 </div>
-</section>
 
-<section id='export' class='item'>
-<h3 class='trigger'><a href='#export'>EXPORT DATA</a></h3>
-<div class='toggle_container'>
-
+<h3><a href='#export'>EXPORT DATA</a></h3>
+<div>
 <p>This will put all of your experiments + files in a .zip archive.</p>
 <form action='ucp-exec.php' method='post'>
 <input name='export' type='submit' value='DO IT'>
 </form>
 </div>
-</section>
+
+</div>
 
 
 <?php
@@ -197,12 +189,9 @@ require_once('inc/footer.php');
 ?>
 <script type="text/javascript">
 // TOGGLE CONTAINER
-$(document).ready(function(){
-	$(".toggle_container").hide();
-	$("h3.trigger").click(function(){
-		$(this).toggleClass("active").next().slideToggle("slow");
+$(function() {
+		$( "#accordion" ).accordion({ autoHeight: false });
 	});
-});
 // Give focus to password field
 document.getElementById('currpass').focus();
 </script>

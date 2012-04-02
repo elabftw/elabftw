@@ -24,9 +24,8 @@
 *                                                                               *
 ********************************************************************************/
 ?>
-<a name='jc'></a><section class='item'>
-<h3 class='trigger'><a href='#journal'>JOURNAL CLUB</a></h3>
-<div class='toggle_container'>
+<h3><a href='#journal'>JOURNAL CLUB</a></h3>
+<div>
 <h4>Past journal clubs :</h4><br />
 <?php
 // SQL to get past journal clubs
@@ -136,7 +135,7 @@ echo "<p>This journal club has passed : <a href='jc-exec.php?inc=1'>increment</a
 <p>
 Pick a recent paper (no more than 6 months old) somewhat close to your project or lab area of interest (for instance cell polarity,
 microfluidics or a development paper in C. elegans is OK, evolution of gold fish maybe not).  You should try to think what would be
-interesting for the group and what you want to share with the group --like some important advance relevant to your own project that
+interesting for the group and what you want to share with the group -like some important advance relevant to your own project that
 would be good for the group.<br />
 
 Each presentation will be 8 minutes, with 3 minutes for questions, all of it controlled thoroughly with a timer!!<br />
@@ -160,4 +159,3 @@ project?
 </p>
 </div>
 </div>
-</section>

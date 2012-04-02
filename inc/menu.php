@@ -49,6 +49,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 <a href="protocols.php?mode=show">Protocols</a>
 <!--a href="journal-club.php">Journal Club</a-->
 <a href="team.php">Team</a>
+<a href="find.php">Find</a>
 <a href="http://labcollector.curie.fr/144_Piel" target='_blank'>LabCollector</a>
 <a href="http://wiki-bio6.curie.fr" target='_blank'>Wiki</a>
 </nav>

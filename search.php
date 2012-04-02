@@ -30,7 +30,7 @@ require_once('inc/menu.php');
 require_once('inc/info_box.php');
 ?>
 <!-- Search page begin -->
-<h2>SEARCH</h2>
+<h2>SEARCH (and find)</h2>
 <section class='item'>
 <div class='center'>
 <form id='search_box' name="search" method="post" action="search.php">

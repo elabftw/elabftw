@@ -188,10 +188,15 @@ while ($data = $req->fetch()) {
 require_once('inc/footer.php');
 ?>
 <script type="text/javascript">
-// TOGGLE CONTAINER
+// ACCORDION
 $(function() {
-		$( "#accordion" ).accordion({ autoHeight: false });
-	});
+    $( "#accordion" ).accordion({ 
+        autoHeight: false,
+        animated: 'bounceslide',
+        collapsible: true,
+        active: false
+    });
+});
 // Give focus to password field
 document.getElementById('currpass').focus();
 </script>

@@ -133,6 +133,11 @@ require_once('inc/footer.php');
 <script type="text/javascript">
 // ACCORDION
 $(function() {
-		$( "#accordion" ).accordion({ autoHeight: false });
-	});
+    $( "#accordion" ).accordion({ 
+        autoHeight: false,
+        animated: 'bounceslide',
+        collapsible: true,
+        active: false
+    });
+});
 </script>

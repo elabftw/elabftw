@@ -1,5 +1,9 @@
 /* Changelog for eLabFTW */
 
+Version 0.5.5
+* jQuery UI accordion, autocomplete, datepicker
+* Ajax for tags
+
 Version 0.5.4
 * Added modification «history» on protocols
 * Added dates on labmeeting and journal clubs uploads

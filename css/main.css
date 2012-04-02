@@ -338,6 +338,7 @@ img {
 }
 .templates {
     font:12px Verdana, Arial, Helvetica, sans-serif;
+    line-height:300%;
     padding:7px;
 }
 

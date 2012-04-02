@@ -92,9 +92,9 @@ if((isset($_POST['searching'])) && ($_POST['searching'] === 'yes')){
 if (isset($_POST['find']) && !empty($_POST['find'])) {
     $find = filter_var($_POST['find'], FILTER_SANITIZE_STRING);
 } else {
-    $msg_arr[] = "<p>You need to search for something in order to find something...</p>";
-    $_SESSION['errors'] = $msg_arr;
-    require_once('inc/footer.php');
+    echo "<ul class='err'><img src='img/error.png' alt='fail' /> ";
+    echo "<li class='inline'>You need to search for something in order to find something...</p>";
+    echo "</ul>";
     exit();
 }
 

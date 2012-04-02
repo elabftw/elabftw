@@ -141,6 +141,7 @@ nav a:hover {
     -moz-box-shadow: inset 0px 1px 0px #cbe9c7;
     text-shadow: 0px 1px #f3f9fc;
     background-color: #e8c5c9;
+    border-radius:5px;
     border: 1px solid #ab80c2;
     padding:7px;
     font:14px Verdana, Arial;
@@ -151,6 +152,7 @@ nav a:hover {
     -moz-box-shadow: inset 0px 1px 0px #cbe9c7;
     text-shadow: 0px 1px #f3f9fc;
     background-color: #ace0a8;
+    border-radius:5px;
     border: 1px solid #96c17f;
     padding:7px;
     font:14px Verdana, Arial;

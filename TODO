@@ -4,8 +4,6 @@
 
 ////// Features
 * most used protocoles get first in selecta ! 
-* limit new users to particular email domain
-* have real auth with LDAP etc... like here : http://docs.moodle.org/22/en/Authentication
 * announce birthday date of a team mb to other team mb (add birthday in profile)
 * tools page with trucs pour calculer les concentrations, et les volumes pour les transfections, etc...
 * labmeetings : resp can add room, date, name, cronjob that sends an email before the labmeeting
@@ -17,13 +15,14 @@
 * selected outcome is not kept if error on edit/create
 * if two file field and file is only on the second one (first is empty) no file uploaded
 
+///// SECURITY
+* limit new users to particular email domain
+* have real auth with LDAP etc... like here : http://docs.moodle.org/22/en/Authentication
+* check for flood register/login
+
 ///// Longterm
 * Once we reach v1.0 => http://www.ssi.gouv.fr/fr/certification-qualification/cc/
 * install.php
 * music manager à la ledjamradio
-* autosuggest on tags (supplanted by browser form history)
 * i18n
 * offline version 
-
-///// SECURITY
-* check for flood register/login

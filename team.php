@@ -37,16 +37,7 @@ $req = $bdd->prepare($sql);
 $req->execute();
 echo "<ul>";
 while ($data = $req->fetch()) {
-    echo "<li>";
-    if ($data['is_admin'] == 1){
-        echo '# ';
-    } elseif ($data['is_pi'] == 1) {
-        echo '% ';
-    } elseif ($data['is_jc_resp'] == 1) {
-        echo '(jc) ';
-    } else {
-        echo '$ ';
-    }
+    echo "<li><img src='img/profile.png' alt='' /> ";
     echo "<a href='mailto:".$data['email']."'>".$data['firstname']." ".$data['lastname']."</a>";
         if (!empty($data['phone'])) { 
         echo " <img src='themes/".$_SESSION['prefs']['theme']."/img/phone.png' alt='Phone :' title='phone' /> ".$data['phone'];
@@ -239,6 +230,7 @@ echo "<p>This journal club has passed : <a href='jc-exec.php?inc=1'>increment</a
 $(function() {
     $( "#accordion" ).accordion({ 
         autoHeight: false,
+        //animated: 'bounceslide',
         animated: 'slide',
         collapsible: true,
         active: false

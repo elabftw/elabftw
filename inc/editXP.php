@@ -23,9 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-?>
-<h2>EDIT EXPERIMENT</h2>
-<?php
+// inc/editXP.php
 // ID
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     $filter_options = array(
@@ -135,9 +133,7 @@ require_once('inc/file_upload.php');
 // DISPLAY FILES
 require_once('inc/display_file.php');
 ?>
-</div>
 
-</div>
 <!-- SUBMIT BUTTON -->
 <div class='center' id='submitdiv'>
 <p>SUBMIT</p>

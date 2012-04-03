@@ -23,9 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-?>
-<h2>EDIT PROTOCOL</h2>
-<?php
+// inc/editPR.php
 // ID
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     $filter_options = array(

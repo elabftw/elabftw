@@ -29,7 +29,6 @@ require_once('inc/head.php');
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
 ?>
-<div id='main_nav-1'>
 <?php
 if(!isset($_GET['mode']) || ($_GET['mode'] === 'show')) {
     require_once('inc/showXP.php');
@@ -45,7 +44,6 @@ if(!isset($_GET['mode']) || ($_GET['mode'] === 'show')) {
     echo "<p>What are you doing, Dave ?</p>";
 }
 ?>
-</div>
 <?php
 require_once("inc/footer.php");
 ?>

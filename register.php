@@ -19,11 +19,10 @@
 ********************************************************************************/
 session_start();
 require_once('inc/head.php');
+$page_title='REGISTER';
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
 ?>
-<h3>REGISTER</h3>
-
 <!-- Register form -->
 <section>
 <div class='item'>

@@ -24,11 +24,10 @@
 *                                                                               *
 ********************************************************************************/
 require_once('inc/common.php');
-$page_title='Index';
+$page_title='INDEX';
 require_once('inc/head.php');
 require_once('inc/menu.php');
 ?>
-<h2>INDEX</h2>
 <section class='item'>
 <p>Welcome to eLabFTW \o/<br />
 This webapplication will help you manage your experiments.<br />

@@ -23,42 +23,35 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+require_once('inc/common.php');
+$page_title='Journal Club Rules';
+require_once('inc/head.php');
 ?>
-<noscript><!-- show warning if javascript is disabled -->
-<ul class="err">
-<li><img src="img/info.png" alt="" />
-Javascript is disabled. Please enable Javascript to view this site in all it's glory. Thank You.</li>
-</ul>
-</noscript>
+<h2>RULES</h2>
+<p>
+Pick a recent paper (no more than 6 months old) somewhat close to your project or lab area of interest (for instance cell polarity,
+microfluidics or a development paper in C. elegans is OK, evolution of gold fish maybe not).  You should try to think what would be
+interesting for the group and what you want to share with the group -like some important advance relevant to your own project that
+would be good for the group.<br />
 
-<div id='logo'>
-<a href="index.php"><span id='eblue'>e</span><span id='lab'>Lab</span><span id='ftw'>FTW</span></a>
-</div>
+Each presentation will be 8 minutes, with 3 minutes for questions, all of it controlled thoroughly with a timer!!<br />
 
-<div id="logmenu"><p>
-<?php
-if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
-    echo "<a href='admin.php'>Admin Panel</a> | ";
-    }
-if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
-    echo "Logged in as <a href='profile.php' title='Profile'>".$_SESSION['username']."</a> | 
-        <a href='ucp.php'><img src='themes/".$_SESSION['prefs']['theme']."/img/pref.png' alt='Control panel' title='Control panel' /></a> | 
-        <a href='logout.php'><img src='themes/".$_SESSION['prefs']['theme']."/img/logout.png' alt='' title='Logout' /></a></p>";
-} else {
-    echo "Not logged in | <a href='register.php'>Register</a></p>";
-}
-?>
-</div>
+<br />
+It should include:<br />
 
-<nav><a href="experiments.php?mode=show">Experiments</a>
-<a href="protocols.php?mode=show">Protocols</a>
-<a href="search.php">Search</a>
-<a href="team.php">Team</a>
-<a href="http://labcollector.curie.fr/144_Piel" target='_blank'>LabCollector</a>
-<a href="http://wiki-bio6.curie.fr" target='_blank'>Wiki</a>
-</nav>
-<hr class='flourishes'>
-<div id='page_title'>
-<h2><?php echo $page_title;?></h2>
+- Title, main authors, Location, Journal<br />
+
+
+- Background:  focus on the primary problem addressed.<br />
+
+What was not known before?  What is important about this paper? What is the question/or the new technique? Why did you pick it?<br />
+
+- Results:  focus on a couple of the most important findings/approaches<br />
+You won't have time to go through all the results.<br />
+To save time it is advised to prepare a ppt with 1-2 figures or movie but you may also draw on the board.<br />
+
+- Discussion:  your evaluation; was this a good, believable, significant paper?  any limitations? brought up new ideas for your
+project?
+</p>
 </div>
-<?php // print_r($_SESSION); ?>
+</div>

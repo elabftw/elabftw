@@ -48,6 +48,9 @@ color: red;
     float:right;
 }
 
+.align_left{
+    text-align:left;
+}
 p{
     font:16px Verdana, Arial, Helvetica, sans-serif;
 }
@@ -69,7 +72,52 @@ li.inline {
     display:inline;
 }
 
-/* LOGO */
+/* HEAD */
+#logo {
+    float:left;
+}
+
+#page_title {
+    clear:both;
+    text-align:center;
+}
+
+nav{
+    clear:both;
+    margin:-10px;
+    text-align:center;
+}
+
+nav a{
+    font-size:20px;
+    text-decoration:none;
+    line-height:300%;
+    padding:5px 10px 5px 10px;
+}
+
+#logmenu {
+    float:right;
+    top:30px;
+}
+
+#logmenu p{
+    font: 13px Verdana, Arial, Helvetica, sans-serif;
+    padding-bottom:7px;
+}
+#logmenu p a{
+    font: 13px Verdana, Arial, Helvetica, sans-serif;
+}
+/* submenu */
+#submenu {
+    margin-top:-40px;
+    border-bottom:1px dotted #CCC;
+    padding-bottom:15px;
+    margin-bottom:15px;
+}
+
+#quicksearch {
+    float:right;
+}
 #eblue {
     font: 20px Helvetica, Verdana, Arial, sans-serif;
 }
@@ -96,11 +144,6 @@ h2 {
     font:24px Verdana, Arial, Helvetica, sans-serif;
     text-align:center;
     width:100%;
-    padding:10px 0 10px 0;
-    margin:0 0 20px 0;
-    /*
-    border-bottom:1px dotted #CCC;
-    */
 }
 
 
@@ -121,44 +164,12 @@ h4 {
     display:inline;
 }
 /* MENU */
-nav{
-    text-align:center;
-}
-
-nav a{
-    font-size:20px;
-    text-decoration:none;
-    line-height:300%;
-    padding:5px 10px 5px 10px;
-    margin:0 7px 0 7px;
-}
-
-#logmenu {
-    width:100%;
-    float:right;
-    top:30px;
-    text-align:right;
-}
-
-#logmenu p{
-    font: 13px Verdana, Arial, Helvetica, sans-serif;
-    padding-bottom:7px;
-}
-#logmenu p a{
-    font: 13px Verdana, Arial, Helvetica, sans-serif;
-}
-/* submenu */
-#submenu {
-    border-bottom:1px dotted #CCC;
-    padding-bottom:25px;
-    margin-bottom:25px;
-}
-
-#quicksearch {
-    float:right;
-}
 
 /**** SEARCH PAGE *******/
+#first_search_select {
+    margin-left:64px;
+}
+
 #searchbox
 {
 	background: #eaf8fc;

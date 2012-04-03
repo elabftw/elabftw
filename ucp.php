@@ -24,15 +24,10 @@
 *                                                                               *
 ********************************************************************************/
 require_once('inc/common.php');
-$page_title = 'User Control Panel';
+$page_title = 'USER CONTROL PANEL';
 require_once('inc/head.php');
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
-?>
-<h2>USER CONTROL PANEL</h2>
-<hr class='flourishes'>
-<br />
-<?php
 // SQL for UCP
 $sql = "SELECT username, email, firstname, lastname, phone, cellphone, skype, website FROM users WHERE userid = ".$_SESSION['userid'];
 $req = $bdd->prepare($sql);

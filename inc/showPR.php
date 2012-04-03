@@ -25,8 +25,6 @@
 ********************************************************************************/
 require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 ?>
-<h2>PROTOCOLS</h2>
-<hr class='flourishes'>
 <div id='submenu'><a href="create_item.php?type=prot"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Upload protocol</a>
 <!-- Quick Search Box (search tags) -->
 <form id='quicksearch' method='get' action='protocols.php'>

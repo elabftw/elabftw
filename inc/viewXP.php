@@ -24,8 +24,6 @@
 *                                                                               *
 ********************************************************************************/
 ?>
-<h2>VIEW EXPERIMENT</h2>
-
 <?php
 // Here we don't check that the experiment id is owned by the viewer, so links can be shared :)
 // Check id is valid and assign it to $id

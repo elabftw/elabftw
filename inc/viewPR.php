@@ -25,8 +25,6 @@
 ********************************************************************************/
 ?>
 <script src="js/editinplace.js" type="text/javascript"></script>
-<h2>VIEW PROTOCOL</h2>
-
 <?php
 // Check id is valid and assign it to $id
 if(filter_var($_GET['id'], FILTER_VALIDATE_INT)) {

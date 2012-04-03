@@ -24,14 +24,9 @@
 *                                                                               *
 ********************************************************************************/
 require_once('inc/common.php');
-$page_title = 'Profile';
+$page_title = 'PROFILE';
 require_once('inc/head.php');
 require_once('inc/menu.php');
-?>
-<h2>PROFILE</h2>
-<hr class='flourishes'>
-<br />
-<?php
 // SQL to get number of experiments
 $sql = "SELECT COUNT(*) FROM experiments WHERE userid = ".$_SESSION['userid'];
 $req = $bdd->prepare($sql);

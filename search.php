@@ -23,8 +23,9 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+// Search.php
 require_once('inc/common.php');
-$page_title='Search';
+$page_title='SEARCH';
 require_once('inc/head.php');
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
@@ -32,144 +33,143 @@ require_once('inc/info_box.php');
 <!-- javascript is at the beginning otherwise if there is no input, exit() is called before JS is read -->
 <script type="text/javascript">
 $(document).ready(function(){
-    $("#search").focus();
+    // give focus to search field
+    $("#search").focus().select();
+    // hide advanced search options
 	$(".toggle_container").hide();
-	$("span.trigger").click(function(){
+    // toggle advanced search options on click
+	$("p.trigger").click(function(){
         $(this).toggleClass("active").next().slideToggle("slow");
 	});
 });
+
 </script>
 <!-- Search page begin -->
-<h2>SEARCH</h2>
-<hr class='flourishes'>
-<br />
 <section class='item'>
 <div class='center'>
 <form name="search" method="post" action="search.php">
-<input id="search" name='find' type="text" placeholder="Type here" <?php if(isset($_POST['searching'])){
+<input id="search" name='find' type="text" placeholder="Type here" <?php if(isset($_POST['searching_simple'])){
     echo "value='".$_POST['find']."'";}?>/>
-    <input id="submit" type="submit" value="Search" />
-<input type="hidden" name="searching" value="yes" />
-<span class='trigger'>+ Options...</span>
-<div class='toggle_container'>
-<span> in </span>
-<select name="search_what">
-<option value="experiments">Experiments</option>
-<option <?php if(isset($_POST['for'])){echo ($_POST['for'] === 'protocols') ? "selected" : "";}?> value="protocols">Protocols</option><br />
-</select><br />
-<span>where </span>
-<select name="search_where">
-<option value="any">anything</option>
-<option value="title">title</option>
-<option value="date">date</option>
-</select><br />
-<span>sort results by :</span>
-<select name="order">
-<option <?php
-echo (isset($_POST['order']) === 'id') ? 'selected' : '';?>value="id">Experiment n°</option>
-<option <?php
-    if((isset($_POST['order']))&&($_POST['order'] === 'title')){
-        echo ' selected ';
-    } ?>value="title">Title</option>
-<option <?php
-    if((isset($_POST['order']))&&($_POST['order'] === 'date')){
-        echo ' selected ';
-    }?>value="date">Date</option>
-</select>
-      <select name="sort">
-      <option value="desc">DESC</option>
-<option <?php
-        if((isset($_POST['sort']))&&($_POST['sort'] === 'asc')){
-            echo ' selected ';
-        }?>value="asc">ASC</option>
-</select><br />
-<span>limit to </span><input value='<?php 
-if((isset($_POST['limit']))
-    &&(!empty($_POST['limit']))
-    &&(filter_var($_POST['limit'], FILTER_VALIDATE_INT))){
-        echo $_POST['limit'];
-    }else{
-        echo '15';}
-?>' name='limit' size='2' maxlength='2'><span> results by page</span><br />
+<input id='submit' type='submit' value='Search' />
+<input type='hidden' name='searching_simple' value='yes' />
 </form>
+<!-- ADVANCED SEARCH
+<p class='trigger'>↓ Advanced search ↓</p>
+<div class='toggle_container align_left'>
+<form name="search" method="post" action="search.php">
+
+<select id='first_search_select'>
+<option value='title' name='where[]'>Title</option>
+<option value='date' name='where[]'>Date</option>
+<option value='tags' name='where[]'>Tags</option>
+</select>
+<input name='what[]' type='text' size='42' />
+<br />
+<div class='adv_search_div'>
+<span class='adv_search_block'>
+<select>
+<option value='and' name='operator[]'>AND</option>
+<option value='or' name='operator[]'>OR</option>
+<option value='not' name='operator[]'>NOT</option>
+</select>
+<select>
+<option value='title' name='where[]'>Title</option>
+<option value='date' name='where[]'>Date</option>
+<option value='tags' name='where[]'>Tags</option>
+</select>
+<input name='what[]' type='text' size='42' />
+<a onClick='add_search_field();'>+</a>
+<a class='rm_link' onClick='rm_search_field();'>-</a>
+<br />
+</span>
 </div>
 </div>
+</form>
+</section>
+<script>
+// get what we want to act on -> second input
+    var adv_search_div = $('.adv_search_div').html();
+    adv_search_div_nb = 0;
+
+    // add a search block
+function add_search_field(){
+    $(adv_search_div).appendTo('.adv_search_div');
+    adv_search_div_nb++;
+    $('.adv_search_block').filter(":last").attr('id', 'block_' + adv_search_div_nb);
+}
+// remove the last search block
+function rm_search_field(){
+    $('.adv_search_block').filter(":last").remove();
+}
+</script>
+-->
 </section>
 
-<?php
-////////// SEARCH
-// If there is a search
-if((isset($_POST['searching'])) && ($_POST['searching'] === 'yes')){
 
+<?php
+// SIMPLE SEARCH
+if((isset($_POST['searching_simple'])) && ($_POST['searching_simple'] === 'yes')){
 // Is there a search term ?
 if (isset($_POST['find']) && !empty($_POST['find'])) {
-    $find = filter_var($_POST['find'], FILTER_SANITIZE_STRING);
-} else {
+    $find = strtoupper(filter_var($_POST['find'], FILTER_SANITIZE_STRING));
+} else { // no input
     echo "<ul class='err'><img src='img/error.png' alt='fail' /> ";
     echo "<li class='inline'>You need to search for something in order to find something...</p>";
     echo "</ul>";
     exit();
 }
-
-//We preform a bit of filtering
-$find = strtoupper($find);
-$find = strip_tags($find);
-$find = trim($find);
+// SIMPLE SEARCH SQL
+$sql = "SELECT * FROM experiments WHERE userid = ".$_SESSION['userid']." AND (title LIKE '%$find%' OR date LIKE '%$find%' OR body LIKE '%$find%')";
 
 // What do we search ?
-if($_POST['search_what'] === 'experiments'){
-    $what = 'experiments';
-    if($_POST['search_where'] === 'title'){
-        $where = 'title';
-        $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$find%'";
-    } elseif ($_POST['search_where'] === 'date'){
-if(filter_var($_POST['search_what'], FILTER_VALIDATE_INT)) {
-        $where = 'date';
-        $sql = "SELECT * FROM experiments WHERE userid = :userid AND date = $find";
-} else {
-    die('<p>You need to input a date in order to search for a date !</p>');
-}
-    } elseif ($_POST['search_where'] === 'any'){
-        $where = 'any field';
-        $sql = "SELECT * FROM experiments WHERE userid = :userid 
-           AND (title LIKE '%$find%' OR date LIKE '%$find%' OR body LIKE '%$find%')";
-}else{
-    die('<p>What are you doing, Dave ?</p>');
-} //endif what = exp
-
-// if what = protocol
-}elseif($_POST['search_what'] === 'protocols'){
-    $what = 'protocols';
-    if($_POST['search_where'] === 'title'){
-        $where = 'title';
-        $sql = "SELECT * FROM protocols WHERE title LIKE '%$find%'";
-    }elseif($_POST['search_where'] === 'any'){
-        $where = 'any field';
-        $sql = "SELECT * FROM protocols WHERE title LIKE '%$find%'";
-    }else{
-    die('<p>What are you doing, Dave ?</p>');
-    //endif what = protocols
-    }
-}else{
-    die('<p>What are you doing, Dave ?</p>');
-}
+//if($_POST['search_what'] === 'experiments'){
+//    $what = 'experiments';
+//    if($_POST['search_where'] === 'title'){
+//        $where = 'title';
+//        $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$find%'";
+//    } elseif ($_POST['search_where'] === 'date'){
+//if(filter_var($_POST['find'], FILTER_VALIDATE_INT)) {
+//        $where = 'date';
+//        $sql = "SELECT * FROM experiments WHERE userid = :userid AND date = $find";
+//} else {
+//    die('<p>You need to input a date in order to search for a date !</p>');
+//}
+//    } elseif ($_POST['search_where'] === 'any'){
+//        $where = 'any field';
+//        $sql = "SELECT * FROM experiments WHERE userid = :userid 
+//           AND (title LIKE '%$find%' OR date LIKE '%$find%' OR body LIKE '%$find%')";
+//}else{
+//    die('<p>What are you doing, Dave ?</p>');
+//} //endif what = exp
+//
+//// if what = protocol
+//}elseif($_POST['search_what'] === 'protocols'){
+//    $what = 'protocols';
+//    if($_POST['search_where'] === 'title'){
+//        $where = 'title';
+//        $sql = "SELECT * FROM protocols WHERE title LIKE '%$find%'";
+//    }elseif($_POST['search_where'] === 'any'){
+//        $where = 'any field';
+//        $sql = "SELECT * FROM protocols WHERE title LIKE '%$find%'";
+//    }else{
+//    die('<p>What are you doing, Dave ?</p>');
+//    //endif what = protocols
+//    }
+//}else{
+//    die('<p>What are you doing, Dave ?</p>');
+//}
 
 // BEGIN RESULTS
-echo "<p>Results for : <em>".stripslashes($find)."</em> in ".$what." ".$where.".</p>";
+//echo "<p>Results for : <em>".stripslashes($find)."</em> in ".$what." ".$where.".</p>";
 
 // SQL for search
 $req = $bdd->prepare($sql);
-if($what === 'experiments'){$req->bindParam(':userid', $_SESSION['userid']);}
 $req->execute();
 // Display results
 while ($data = $req->fetch()) {
-    if($what === 'experiments'){
         $outcome = $data['outcome'];
-    }else{
-        $outcome = 'item';
-    }
 ?>
-<section OnClick="document.location='<?php echo $what;?>.php?mode=view&id=<?php echo $data['id'];?>'" class="<?php echo $outcome;?>">
+<section OnClick="document.location='experiments.php?mode=view&id=<?php echo $data['id'];?>'" class="<?php echo $outcome;?>">
 <?php
 // DATE
 echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' alt='' /> ".$data['date']."</span>";

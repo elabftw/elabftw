@@ -93,6 +93,7 @@ ul, li {
 }
 
 /* MAIN MENU */
+
 nav a {
     color:blue;
     border:1px solid white;
@@ -114,10 +115,19 @@ nav a:hover {
     color: black;
 }
 #submenu a {
-    color:black;
+    color:blue;
+    border:1px solid white;
+    padding:7px;
+    border-radius:5px;
 }
 #submenu a:hover {
-    color:#CCC
+    color:#1589FF;
+    -moz-transition-duration: 1500ms;
+    -webkit-transition-duration: 1500ms;
+    -o-transition-duration: 1500ms;
+    -ms-transition-duration: 1500ms;
+    border:1px solid black;
+    border-radius:5px;
 }
 
 .sortresults p{

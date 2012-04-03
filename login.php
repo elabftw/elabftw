@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 session_start();
-$page_title = 'Login';
+$page_title = 'LOGIN';
 require_once('inc/head.php');
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
@@ -33,7 +33,6 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     die('You are already logged in !');
 }
 // Page begin
-echo "<h2>LOGIN</h2>";
 ?>
 <section class='center'>
 <form method="post" action="login-exec.php">

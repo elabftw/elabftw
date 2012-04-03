@@ -18,6 +18,7 @@
 *
 ********************************************************************************/
 ?>
+<div>
 <footer>
 <script type="text/javascript">
 function mouseOverPhp(action){

@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 require_once('inc/common.php');
-$page_title='Protocols';
+$page_title='PROTOCOLS';
 require_once('inc/head.php');
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
@@ -36,10 +36,6 @@ if(!isset($_GET['mode']) || ($_GET['mode'] === 'show')) {
     require_once('inc/viewPR.php');
 } elseif ($_GET['mode'] === 'edit') {
     require_once('inc/editPR.php');
-} elseif ($_GET['mode'] === 'delete') {
-    require_once('inc/deletePR.php');
-} elseif ($_GET['mode'] === 'delete2') {
-    require_once('inc/deletePR2.php');
 } else {
     echo "What are you doing, Dave ?";
 }

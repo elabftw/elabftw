@@ -25,9 +25,6 @@
 ********************************************************************************/
 require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 ?>
-
-<h2>EXPERIMENTS</h2>
-<hr class='flourishes'>
 <div id='submenu'><a href="create_item.php?type=exp"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Create experiment</a>
 <!-- Quick Search Box (search tags) -->
 <form id='quicksearch' method='get' action='experiments.php'>

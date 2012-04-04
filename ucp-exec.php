@@ -26,7 +26,7 @@
 require_once('inc/common.php');
 
 // INFO BOX
-$errmsg_arr = array();
+$msg_arr = array();
 $infomsg_arr =array();
 $errflag = false;
 $infoflag = false;
@@ -59,11 +59,11 @@ if( ($result) && ($numrows === 1) ) {
             $password = filter_var($_POST['newpass'], FILTER_SANITIZE_STRING);
             // Check for password length
             if (strlen($password) <= 3) {
-                $errmsg_arr[] = 'Password must contain at least 4 characters';
+                $msg_arr[] = 'Password must contain at least 4 characters';
                 $errflag = true;
             }
             if (strcmp($password, $cpassword) != 0 ) {
-                $errmsg_arr[] = 'Passwords do not match';
+                $msg_arr[] = 'Passwords do not match';
                 $errflag = true;
             }
             // Create salt
@@ -97,27 +97,27 @@ if( ($result) && ($numrows === 1) ) {
         if($result) {
             if($numrows > 0) {
                 if($data['userid'] != $_SESSION['userid']){
-                $errmsg_arr[] = 'Username already in use';
+                $msg_arr[] = 'Username already in use';
                 $errflag = true;
             }
         }
         }
     } else {
-        $errmsg_arr[] = 'Username missing ! What were you thinking about ?';
+        $msg_arr[] = 'Username missing ! What were you thinking about ?';
         $errflag = true;
     }
     // Check FIRSTNAME (sanitize only)
         if ((isset($_POST['firstname'])) && (!empty($_POST['firstname']))) {
         $firstname = filter_var($_POST['firstname'], FILTER_SANITIZE_STRING);
     } else {
-        $errmsg_arr[] = 'Please put your firstname.';
+        $msg_arr[] = 'Please put your firstname.';
         $errflag = true;
     }
     // Check LASTNAME (sanitize only)
         if ((isset($_POST['lastname'])) && (!empty($_POST['lastname']))) {
         $lastname = filter_var($_POST['lastname'], FILTER_SANITIZE_STRING);
     } else {
-        $errmsg_arr[] = 'Please put your lastname.';
+        $msg_arr[] = 'Please put your lastname.';
         $errflag = true;
     }
 
@@ -125,7 +125,7 @@ if( ($result) && ($numrows === 1) ) {
     if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
         $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errmsg_arr[] = 'Email seems to be invalid';
+            $msg_arr[] = 'Email seems to be invalid';
             $errflag = true;
         } else {
             // Check for duplicate email in DB
@@ -136,14 +136,14 @@ if( ($result) && ($numrows === 1) ) {
             if($result) {
                 if($numrows > 0) {
                     if($data['userid'] != $_SESSION['userid']){
-                    $errmsg_arr[] = 'Someone is already using that email address !';
+                    $msg_arr[] = 'Someone is already using that email address !';
                     $errflag = true;
                     }
                 }
             }
         }
     } else {
-        $errmsg_arr[] = 'Email missing';
+        $msg_arr[] = 'Email missing';
         $errflag = true;
     }
     // Check phone
@@ -169,7 +169,7 @@ if( ($result) && ($numrows === 1) ) {
         if  (filter_var($_POST['website'], FILTER_VALIDATE_URL)) {
             $website = $_POST['website'];
         } else { // do not validate as url
-            $errmsg_arr[] = 'Please input a valid URL !';
+            $msg_arr[] = 'Please input a valid URL !';
             $errflag = true;
         }
     } else {
@@ -178,7 +178,7 @@ if( ($result) && ($numrows === 1) ) {
 
     //If there are input validations, redirect back to the registration form
     if($errflag) {
-        $_SESSION['errors'] = $errmsg_arr;
+        $_SESSION['errors'] = $msg_arr;
         session_write_close();
         header("location: ucp.php");
         exit();
@@ -216,7 +216,7 @@ if( ($result) && ($numrows === 1) ) {
         die('SQL failed');
     }
 }else{ //end if result and numrow > 1
-    $errmsg_arr[] = 'Enter your password to edit anything !';
+    $msg_arr[] = 'Enter your password to edit anything !';
     $errflag = true;
 }
 }// end if first form submitted
@@ -401,7 +401,7 @@ if (isset($_POST['export'])) {
 
 // INFO BOX
 if($errflag) {
-    $_SESSION['errors'] = $errmsg_arr;
+    $_SESSION['errors'] = $msg_arr;
     session_write_close();
     header("location: ucp.php");
     exit();

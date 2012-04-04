@@ -27,7 +27,7 @@ session_start();
 require_once('inc/connect.php');
 
 //Array to store validation errors
-$errmsg_arr = array();
+$msg_arr = array();
 //Validation error flag
 $errflag = false;
 
@@ -35,19 +35,19 @@ $errflag = false;
     if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
 } else {
-    $errmsg_arr[] = 'Username missing ! What were you thinking about ?';
+    $msg_arr[] = 'Username missing ! What were you thinking about ?';
     $errflag = true;
 }
 
 // Check PASSWORD is sent
     if ((!isset($_POST['password'])) || (empty($_POST['password']))) {
-        $errmsg_arr[] = 'Password missing';
+        $msg_arr[] = 'Password missing';
         $errflag = true;
     }
 
 //If there are input validations, redirect back to the login form
 if($errflag) {
-    $_SESSION['errors'] = $errmsg_arr;
+    $_SESSION['errors'] = $msg_arr;
     session_write_close();
     header("location: login.php");
     exit();

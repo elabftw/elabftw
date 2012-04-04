@@ -22,7 +22,7 @@ if ((isset($_POST['title'])) && (!empty($_POST['title']))) {
     $title = filter_var($_POST['title'], FILTER_SANITIZE_STRING);
 } else {
     $title='';
-    $errmsg_arr[] = 'You need to put a title !';
+    $msg_arr[] = 'You need to put a title !';
     $errflag = true;
 }
 ?>

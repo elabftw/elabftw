@@ -103,25 +103,25 @@ $ini_arr = parse_ini_file("admin/config.ini");
                 $result = $mailer->send($message);
                 // Now redirect to login page
                 // Say it went well (by using the error msg array)
-                $errmsg_arr[] = 'New password sent. Check your emails.';
-                $_SESSION['infos'] = $errmsg_arr;
+                $msg_arr[] = 'New password sent. Check your emails.';
+                $_SESSION['infos'] = $msg_arr;
                 session_write_close();
                 header("location: login.php");
             }else{
-                $errmsg_arr[] = 'Something went wrong with the database query. Check the flux capacitor.';
-                $_SESSION['infos'] = $errmsg_arr;
+                $msg_arr[] = 'Something went wrong with the database query. Check the flux capacitor.';
+                $_SESSION['infos'] = $msg_arr;
                 session_write_close();
                 header("location: login.php");
             }
         }else{
-                $errmsg_arr[] = 'Email not found in database !';
-                $_SESSION['infos'] = $errmsg_arr;
+                $msg_arr[] = 'Email not found in database !';
+                $_SESSION['infos'] = $msg_arr;
                 session_write_close();
                 header("location: login.php");
         }
     }else{
-                $errmsg_arr[] = 'The email address you entered was invalid !';
-                $_SESSION['infos'] = $errmsg_arr;
+                $msg_arr[] = 'The email address you entered was invalid !';
+                $_SESSION['infos'] = $msg_arr;
                 session_write_close();
                 header("location: login.php");
     }

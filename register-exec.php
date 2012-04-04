@@ -27,7 +27,7 @@ session_start();
 require_once('inc/connect.php');
 
 //Array to store validation errors
-$errmsg_arr = array();
+$msg_arr = array();
 //Validation error flag
 $errflag = false;
 
@@ -40,13 +40,13 @@ $errflag = false;
     $numrows = $result->rowCount(); 
     if($result) {
         if($numrows > 0) {
-            $errmsg_arr[] = 'Username already in use';
+            $msg_arr[] = 'Username already in use';
             $errflag = true;
         }
         $result = NULL;
     }
 } else {
-    $errmsg_arr[] = 'Username missing';
+    $msg_arr[] = 'Username missing';
     $errflag = true;
 }
 // Check FIRSTNAME (sanitize, and make it look like Firstname)
@@ -54,14 +54,14 @@ $errflag = false;
     // Put everything lowercase and first letter uppercase
     $firstname = ucwords(strtolower(filter_var($_POST['firstname'], FILTER_SANITIZE_STRING)));
 } else {
-    $errmsg_arr[] = 'Firstname missing';
+    $msg_arr[] = 'Firstname missing';
     $errflag = true;
 }
 // Check LASTNAME (sanitize, and make it look like LASTNAME)
     if ((isset($_POST['lastname'])) && (!empty($_POST['lastname']))) {
     $lastname = strtoupper(filter_var($_POST['lastname'], FILTER_SANITIZE_STRING));
 } else {
-    $errmsg_arr[] = 'Lastname missing';
+    $msg_arr[] = 'Lastname missing';
     $errflag = true;
 }
 
@@ -69,7 +69,7 @@ $errflag = false;
 if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errmsg_arr[] = 'Email seems to be invalid';
+        $msg_arr[] = 'Email seems to be invalid';
         $errflag = true;
     } else {
     // Check for duplicate email in DB
@@ -78,14 +78,14 @@ if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
     $numrows = $result->rowCount(); 
     if($result) {
         if($numrows > 0) {
-            $errmsg_arr[] = 'Someone is already using that email address !';
+            $msg_arr[] = 'Someone is already using that email address !';
             $errflag = true;
         }
         $result= NULL;
     }
     }
 } else {
-    $errmsg_arr[] = 'Email missing';
+    $msg_arr[] = 'Email missing';
     $errflag = true;
 }
 
@@ -101,25 +101,25 @@ if ((isset($_POST['cpassword'])) && (!empty($_POST['cpassword']))) {
         $passwordHash = hash("sha512", $salt.$password);
         // Check for password length
         if (strlen($password) <= 3) {
-            $errmsg_arr[] = 'Password must contain at least 4 characters';
+            $msg_arr[] = 'Password must contain at least 4 characters';
             $errflag = true;
         }
         if (strcmp($password, $cpassword) != 0 ) {
-            $errmsg_arr[] = 'Passwords do not match';
+            $msg_arr[] = 'Passwords do not match';
             $errflag = true;
         }
     } else {
-        $errmsg_arr[] = 'Password missing';
+        $msg_arr[] = 'Password missing';
         $errflag = true;
     }
 } else {
-    $errmsg_arr[] = 'Confirmation password missing';
+    $msg_arr[] = 'Confirmation password missing';
     $errflag = true;
 }
 
 // If there are input validations, redirect back to the registration form
 if($errflag) {
-    $_SESSION['errors'] = $errmsg_arr;
+    $_SESSION['errors'] = $msg_arr;
     session_write_close();
     header("location: register.php");
     exit();

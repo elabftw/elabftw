@@ -38,12 +38,12 @@ if (is_uploaded_file($_FILES['files']['tmp_name'][0])){
             if ($_FILES['files']['name'][$i] != ''){ //check if file field empty or not
                 // Check file size
                 if ($_FILES["files"]["size"][$i] > 20000000) {
-                $errmsg_arr[] = "File is too big !";
+                $msg_arr[] = "File is too big !";
                 $errflag = true;
                 }
                 // Check for errors
                 if ($_FILES["files"]["error"][$i] > 0) {
-                $errmsg_arr[] = "Error in the file upload (<a href='http://www.php.net/manual/en/features.file-upload.errors.php'>error code : ".$_FILES['file']['error'][$i]."</a>)";
+                $msg_arr[] = "Error in the file upload (<a href='http://www.php.net/manual/en/features.file-upload.errors.php'>error code : ".$_FILES['file']['error'][$i]."</a>)";
                 $errflag = true;
                 $cnt--;
                 }

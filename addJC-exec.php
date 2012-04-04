@@ -25,7 +25,7 @@
 ********************************************************************************/
 require_once('inc/common.php');
 //Array to store validation errors
-$errmsg_arr = array();
+$msg_arr = array();
 //Validation error flag
 $errflag = false;
 
@@ -33,7 +33,7 @@ require_once('inc/check_files.php'); // Check uploaded FILES
 
 // If input errors, redirect back to the team page
 if($errflag) {
-    $_SESSION['errors'] = $errmsg_arr;
+    $_SESSION['errors'] = $msg_arr;
     session_write_close();
     header("location: team.php");
     exit();

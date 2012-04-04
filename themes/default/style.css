@@ -174,7 +174,7 @@ nav a:hover {
     -webkit-box-shadow: 2px 2px 2px 1px #CCC;
     -moz-box-shadow: 2px 2px 2px 1px #CCC;
     box-shadow: 3px 2px 2px 1px #CCC; 
-    border: 1px solid black;
+    border: 1px solid #CCC;
 }
 .sub_item {
     border: 2px solid #AAA;
@@ -224,6 +224,9 @@ nav a:hover {
 }
 
 .running_compact, .success_compact, .redo_compact, .fail_compact {
+    -webkit-box-shadow: 2px 2px 2px 2px #CCC;
+    -moz-box-shadow: 2px 2px 2px 2px #CCC;
+    box-shadow: 2px 2px 2px 2px #CCC; 
     background-color:#EEE;
 }
 .running_compact {
@@ -240,6 +243,9 @@ nav a:hover {
 }
 
 .running, .success, .redo, .fail {
+    -webkit-box-shadow: 2px 2px 2px 2px #CCC;
+    -moz-box-shadow: 2px 2px 2px 2px #CCC;
+    box-shadow: 2px 2px 2px 2px #CCC; 
     background-color:#EEE;
 }
 .running {
@@ -260,7 +266,7 @@ nav a:hover {
     -webkit-box-shadow: 2px 2px 2px 2px #CCC;
     -moz-box-shadow: 2px 2px 2px 2px #CCC;
     box-shadow: 2px 2px 2px 2px #CCC; 
-    border: 1px solid black;
+    border: 1px solid #CCC;
 }
 .file_item{
     border:1px solid #CCC;

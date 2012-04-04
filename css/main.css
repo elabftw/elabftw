@@ -260,6 +260,7 @@ h4 {
 {
        border: 0;  /* Small centering fix for Firefox */
 }		
+/* end search bar */
 
 .search_results_div {
     -moz-column-count: 2;
@@ -286,6 +287,15 @@ h4 {
 .search_result:hover {
     background:#FFF;
 }
+
+/* number of search results */
+#search_count {
+    clear:right;
+    text-shadow: 2px 2px 2px #AAA;
+    filter: dropshadow(color=#AAA, offx=2, offy=2); 
+}
+
+
 /* LOGIN */
 .login{
     border:2px solid blue;

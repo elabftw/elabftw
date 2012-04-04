@@ -125,10 +125,9 @@ $req->execute();
 // This counts the number or results - and if there wasn't any it gives them a little message explaining that 
 $count = $req->rowCount();
 if ($count === 0){
-    echo "<p>Sorry, I couldn't find anything :(</p>";
+    echo "<p>Sorry, I couldn't find anything :(</p><br />";
 }
-}
-echo $count." results for '".$find."'.";
+echo "<div id='search_count'>".$count." results for '".$find."'.</div>";
 // Display results
 while ($data = $req->fetch()) {
         $outcome = $data['outcome'];
@@ -141,6 +140,7 @@ echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/ca
 echo "<div class=''>". stripslashes($data['title']) . "</div></section>";
 } // end while
 // END CONTENT
+} // end if searching_simple
 echo "</div>";
 // What do we search ?
 //if($_POST['search_what'] === 'experiments'){

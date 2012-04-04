@@ -146,7 +146,7 @@ require_once('inc/display_file.php');
 // JAVASCRIPT
 <?php
 // KEYBOARD SHORTCUTS
-echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'experiments.php?mode=create'});";
+echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=exp'});";
 echo "key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['editXP'].submit()});";
 ?>
 // TAGS AUTOCOMPLETE

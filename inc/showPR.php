@@ -172,7 +172,7 @@ while ($data = $req->fetch()) {
 <?php
 // COUNT TOTAL NUMBER OF ITEMS
 if (!isset($_GET['tag']) || empty($_GET['tag'])){
-    $sql = "SELECT COUNT(id) FROM protocols WHERE userid = ".$_SESSION['userid'];
+    $sql = "SELECT COUNT(id) FROM protocols";
     $req = $bdd->prepare($sql);
     $req->execute();
     $full = $req->fetchAll();

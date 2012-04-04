@@ -33,7 +33,7 @@ if ((isset($_POST['date']))
             // SUCCESS on every test
     $date = $_POST['date'];
     } else {
-    $errmsg_arr[] = 'YYou need to put a date in the correct format (YYMMDD) !';
+    $errmsg_arr[] = 'You need to put a date in the correct format (YYMMDD) !';
     $date = kdate();
     $errflag = true;
     }

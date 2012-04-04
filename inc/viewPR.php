@@ -78,7 +78,7 @@ echo "</section>";
 require_once('inc/display_file.php');
 // KEYBOARD SHORTCUTS
 echo "<script type='text/javascript'>
-key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'protocols.php?mode=create'});
+key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=prot'});
 key('".$_SESSION['prefs']['shortcuts']['edit']."', function(){location.href = 'protocols.php?mode=edit&id=".$id."'});
 </script>";
 ?>

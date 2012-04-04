@@ -120,7 +120,39 @@ if (isset($_POST['find']) && !empty($_POST['find'])) {
 }
 // SIMPLE SEARCH SQL
 $sql = "SELECT * FROM experiments WHERE userid = ".$_SESSION['userid']." AND (title LIKE '%$find%' OR date LIKE '%$find%' OR body LIKE '%$find%')";
+$req = $bdd->prepare($sql);
+$req->execute();
+// Display results
+while ($data = $req->fetch()) {
+        $outcome = $data['outcome'];
+?>
+<section OnClick="document.location='experiments.php?mode=view&id=<?php echo $data['id'];?>'" class="<?php echo $outcome;?>">
+<?php
+// DATE
+echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' alt='' /> ".$data['date']."</span>";
+// TAGS
+$id = $data['id'];
+$sql = "SELECT tag FROM experiments_tags WHERE item_id = ".$id;
+$tagreq = $bdd->prepare($sql);
+$tagreq->execute();
+echo "<span class='tags'><img src='img/tags.gif' alt='' /> ";
+while($tags = $tagreq->fetch()){
+    echo "<a href='".$_SERVER['PHP_SELF']."?".$_SERVER['QUERY_STRING']."&tag=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
+    }
+// END TAGS
+echo    "</span>";
+// TITLE
+echo "<div class='title'>". stripslashes($data['title']) . "</div></section>";
+} // end while
+// END CONTENT
 
+// This counts the number or results - and if there wasn't any it gives them a little message explaining that 
+$count = $req->rowCount();
+if ($count === 0){
+    echo "<p>Sorry, I couldn't find anything :(</p>";
+}
+$req->closeCursor();
+}
 // What do we search ?
 //if($_POST['search_what'] === 'experiments'){
 //    $what = 'experiments';
@@ -162,40 +194,7 @@ $sql = "SELECT * FROM experiments WHERE userid = ".$_SESSION['userid']." AND (ti
 // BEGIN RESULTS
 //echo "<p>Results for : <em>".stripslashes($find)."</em> in ".$what." ".$where.".</p>";
 
-// SQL for search
-$req = $bdd->prepare($sql);
-$req->execute();
-// Display results
-while ($data = $req->fetch()) {
-        $outcome = $data['outcome'];
-?>
-<section OnClick="document.location='experiments.php?mode=view&id=<?php echo $data['id'];?>'" class="<?php echo $outcome;?>">
-<?php
-// DATE
-echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' alt='' /> ".$data['date']."</span>";
-// TAGS
-$id = $data['id'];
-$sql = "SELECT tag FROM experiments_tags WHERE item_id = ".$id;
-$tagreq = $bdd->prepare($sql);
-$tagreq->execute();
-echo "<span class='tags'><img src='img/tags.gif' alt='' /> ";
-while($tags = $tagreq->fetch()){
-    echo "<a href='".$_SERVER['PHP_SELF']."?".$_SERVER['QUERY_STRING']."&tag=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
-    }
-// END TAGS
-echo    "</span>";
-// TITLE
-echo "<div class='title'>". stripslashes($data['title']) . "</div></section>";
-} // end while
-// END CONTENT
 
-// This counts the number or results - and if there wasn't any it gives them a little message explaining that 
-$count = $req->rowCount();
-if ($count === 0){
-    echo "<p>Sorry, I couldn't find anything :(</p>";
-}
-$req->closeCursor();
-}
 
 // FOOTER
 require_once('inc/footer.php');

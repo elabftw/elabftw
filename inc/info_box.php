@@ -36,9 +36,19 @@ if( isset($_SESSION['infos']) && is_array($_SESSION['infos']) && count($_SESSION
     echo "<ul class='infos'><img src='img/ok.png' alt='ok' /> ";
     foreach($_SESSION['infos'] as $msg) {
         echo "<li class='inline'>".$msg."</li>"; 
+        echo "<a href='#' class='close_box'>X</a>";
     }
     echo "</ul>";
     unset($_SESSION['infos']);
+?>
+    <script type='text/javascript'>
+$(document).ready(function(){
+    $(".close_box").click(function(){
+        $('ul.infos, ul.err').hide('explode', 'slow');
+    });
+});
+    </script>
+<?php
 }
 $msg_arr = array();
 ?>

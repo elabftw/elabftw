@@ -107,7 +107,7 @@ unset($_SESSION['errors']);
 // JAVASCRIPT
 <?php
 // KEYBOARD SHORTCUTS
-echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'protocols.php?mode=create'});";
+echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=prot'});";
 echo "key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['editPR'].submit()});";
 ?>
 // TAGS AUTOCOMPLETE

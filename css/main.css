@@ -72,6 +72,12 @@ li.inline {
     display:inline;
 }
 
+/* info box */
+.close_box {
+    float:right;
+    padding-top:3px;
+}
+
 /* HEAD */
 #logo {
     float:left;

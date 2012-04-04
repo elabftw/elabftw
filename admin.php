@@ -26,13 +26,11 @@
 /* admin.php - for administration of the elab */
 require_once('inc/common.php');
 if ($_SESSION['is_admin'] != 1) {die('You are not admin !');}
-$title = 'Admin Panel';
+$page_title = 'Admin Panel';
 require_once('inc/head.php');
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
-?>
-<h2>ADMIN PANEL</h2>
-<?php
+
 // SQL to get all unvalidated users
 $sql = "SELECT userid, lastname, firstname, email FROM users WHERE validated = 0";
 $req = $bdd->prepare($sql);

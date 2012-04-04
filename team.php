@@ -28,9 +28,14 @@ $page_title= 'TEAM';
 require_once('inc/head.php');
 require_once('inc/menu.php');
 ?>
-<div id='accordion'>
-<h3><a href='#team'>TEAM MEMBERS</a></h3>
-<div>
+<div id='team'>
+<ul>
+<li><a href='#team-1'>MEMBERS</a></li>
+<li><a href='#team-2'>LABMEETINGS</a></li>
+<li><a href='#team-3'>JOURNAL CLUBS</a></li>
+</ul>
+<!-- *********************** -->
+<div id='team-1'>
 <?php // SQL to get members info
 $sql = "SELECT * FROM users WHERE validated = 1";
 $req = $bdd->prepare($sql);
@@ -56,8 +61,9 @@ while ($data = $req->fetch()) {
 echo "</ul>";
 ?>
 </div>
-<h3><a href='#labmeetings'>LABMEETINGS</a></h3>
-<div>
+<!-- *********************** -->
+<div id='team-2'>
+<a href='http://wiki-bio6.curie.fr/wiki/index.php/Piel_Lab_inner_working#Lab_meetings' target='_blank' class='show_rules'>Show rules</a><br />
 <h4>Past labmeetings :</h4><br />
 <?php
 // SQL to get past labmeetings files
@@ -107,13 +113,11 @@ require('inc/file_upload_nojs.php');
 ?>
 </form>
 
-<p><a href='http://wiki-bio6.curie.fr/wiki/index.php/Piel_Lab_inner_working#Lab_meetings' target='_blank'>Relevant wiki link</a></p>
 <p class='center'><img src='img/labmeetings-2012.png' alt='labmeetings' title='labmeetings 2012' /></p>
 </div>
 
-<h3><a href='#journal'>JOURNAL CLUB</a></h3>
-<div>
-<a href='#' onClick='window.open("jclub_rules.php", "window", "menubar=0,resizable=1,width=1000,height=460");' id='show_jc_rules'>Show rules</a><br />
+<div id='team-3'>
+<a href='#' onClick='window.open("jclub_rules.php", "window", "menubar=0,resizable=1,width=1000,height=460");' class='show_rules'>Show rules</a><br />
 <h4>Past journal clubs :</h4><br />
 <?php
 // SQL to get past journal clubs
@@ -235,5 +239,8 @@ $(function() {
         collapsible: true,
         active: false
     });
+});
+$(function() {
+    $( "#team" ).tabs({autoHeight: false});
 });
 </script>

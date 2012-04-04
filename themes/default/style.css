@@ -262,7 +262,7 @@ nav a:hover {
 }
 /* team.php */
 
-#show_jc_rules {
+.show_rules {
     float:right;
     border:1px solid #CCC;
     border-radius:5px;
@@ -270,7 +270,7 @@ nav a:hover {
     text-decoration:none;
     padding:5px 10px 5px 10px;
 }
-#show_jc_rules:hover {
+.show_rules:hover {
     color:#1589FF;
     -moz-transition-duration: 1500ms;
     -webkit-transition-duration: 1500ms;

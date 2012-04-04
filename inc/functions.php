@@ -89,3 +89,7 @@ function make_thumb($src,$ext,$dest,$desired_width){
     // create the physical thumbnail image to its destination (85% quality)
     imagejpeg($virtual_image,$dest, 85);
 }
+
+function loadClass($class) {
+    require_once('lib/classes/'.$class.'.class.php');
+}

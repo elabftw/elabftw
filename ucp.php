@@ -172,9 +172,15 @@ while ($data = $req->fetch()) {
 
 <h3><a href='#export'>EXPORT DATA</a></h3>
 <div>
-<p>This will put all of your experiments + files in a .zip archive.</p>
+<p>Choose over which period to do the export :</p>
 <form action='ucp-exec.php' method='post'>
-<input name='export' type='submit' value='DO IT'>
+<select>
+<option name='export_range' value='week'>Last week</option>
+<option name='export_range' value='month'>Last month</option>
+<option name='export_range' value='year'>Last year</option>
+<option name='export_range' selected='selected' value='all'>All</option>
+</select>
+<input name='export' type='submit' value='Export'>
 </form>
 </div>
 

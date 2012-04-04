@@ -261,21 +261,31 @@ h4 {
        border: 0;  /* Small centering fix for Firefox */
 }		
 
-/******* SORTER *********/
-.sortresults{
-    text-align:right;
+.search_results_div {
+    -moz-column-count: 2;
+    -moz-column-gap: 10px;
+    -webkit-column-count: 2;
+    -webkit-column-gap: 10px;
+    column-count: 2;
+    column-gap: 10px; 
 }
 
-.sortresults p{
-    padding:0;
-    margin:0;
-    font-size:12px;
-}
-.sortresults span{
-    font:12px Verdana, Arial, Helvetica, sans-serif;
+.search_result {
+    -webkit-box-shadow: 2px 2px 2px 2px #CCC;
+    -moz-box-shadow: 2px 2px 2px 2px #CCC;
+    box-shadow: 2px 2px 2px 2px #CCC; 
+    width:350px;
+    background:#EEE;
+    margin:7px auto 7px auto;
+    padding:10px;
+    border:1px solid black;
+    border-radius:20px;
+    overflow:hidden;
 }
 
-
+.search_result:hover {
+    background:#FFF;
+}
 /* LOGIN */
 .login{
     border:2px solid blue;

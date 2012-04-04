@@ -113,6 +113,7 @@ require('inc/file_upload_nojs.php');
 
 <h3><a href='#journal'>JOURNAL CLUB</a></h3>
 <div>
+<a href='#' onClick='window.open("jclub_rules.php", "window", "menubar=0,resizable=1,width=1000,height=460");' id='show_jc_rules'>Show rules</a><br />
 <h4>Past journal clubs :</h4><br />
 <?php
 // SQL to get past journal clubs
@@ -218,7 +219,6 @@ echo "<p>This journal club has passed : <a href='jc-exec.php?inc=1'>increment</a
 }
  */
 ?>
-<h4 onClick='window.open("jclub_rules.php", "window", "menubar=0,resizable=1,width=1000,height=460");'>Show rules</h4>
 </div>
 </div>
 </div>

@@ -171,7 +171,10 @@ nav a:hover {
 /* ITEMS */
 .item {
     background-color:#EEE;
-    border: 2px solid #AAA;
+    -webkit-box-shadow: 2px 2px 2px 1px #CCC;
+    -moz-box-shadow: 2px 2px 2px 1px #CCC;
+    box-shadow: 3px 2px 2px 1px #CCC; 
+    border: 1px solid black;
 }
 .sub_item {
     border: 2px solid #AAA;
@@ -254,7 +257,10 @@ nav a:hover {
 
 /* FILES */
 .filesdiv {
-    border: 3px solid #CCC;
+    -webkit-box-shadow: 2px 2px 2px 2px #CCC;
+    -moz-box-shadow: 2px 2px 2px 2px #CCC;
+    box-shadow: 2px 2px 2px 2px #CCC; 
+    border: 1px solid black;
 }
 .file_item{
     border:1px solid #CCC;

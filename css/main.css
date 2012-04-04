@@ -357,7 +357,7 @@ img {
 /* ITEMS */
 .item {
     width:742px;
-    margin:10px auto 10px auto;
+    margin:7px auto 7px auto;
     padding:10px;
     border-radius:20px;
 }
@@ -428,6 +428,11 @@ img {
 #addtaginput {
     margin-top:7px;
 }
+/* ucp.php */
+#currpass {
+    background-color:#FFABAB;
+}
+
 /* TEMPLATES */
 .templates {
     font:12px Verdana, Arial, Helvetica, sans-serif;

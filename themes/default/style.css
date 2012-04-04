@@ -263,11 +263,11 @@ nav a:hover {
 /* team.php */
 
 #show_jc_rules {
+    float:right;
     border:1px solid #CCC;
     border-radius:5px;
-    font-size:20px;
+    font-size:12px;
     text-decoration:none;
-    line-height:300%;
     padding:5px 10px 5px 10px;
 }
 #show_jc_rules:hover {

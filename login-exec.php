@@ -35,7 +35,7 @@ $errflag = false;
     if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
 } else {
-    $msg_arr[] = 'Username missing ! What were you thinking about ?';
+    $msg_arr[] = 'Username missing';
     $errflag = true;
 }
 

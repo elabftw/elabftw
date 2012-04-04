@@ -109,19 +109,19 @@ $ini_arr = parse_ini_file("admin/config.ini");
                 header("location: login.php");
             }else{
                 $msg_arr[] = 'Something went wrong with the database query. Check the flux capacitor.';
-                $_SESSION['infos'] = $msg_arr;
+                $_SESSION['errors'] = $msg_arr;
                 session_write_close();
                 header("location: login.php");
             }
         }else{
                 $msg_arr[] = 'Email not found in database !';
-                $_SESSION['infos'] = $msg_arr;
+                $_SESSION['errors'] = $msg_arr;
                 session_write_close();
                 header("location: login.php");
         }
     }else{
                 $msg_arr[] = 'The email address you entered was invalid !';
-                $_SESSION['infos'] = $msg_arr;
+                $_SESSION['errors'] = $msg_arr;
                 session_write_close();
                 header("location: login.php");
     }

@@ -103,21 +103,21 @@ if( ($result) && ($numrows === 1) ) {
         }
         }
     } else {
-        $msg_arr[] = 'Username missing ! What were you thinking about ?';
+        $msg_arr[] = 'Username missing !';
         $errflag = true;
     }
     // Check FIRSTNAME (sanitize only)
         if ((isset($_POST['firstname'])) && (!empty($_POST['firstname']))) {
         $firstname = filter_var($_POST['firstname'], FILTER_SANITIZE_STRING);
     } else {
-        $msg_arr[] = 'Please put your firstname.';
+        $msg_arr[] = 'Firstname missing';
         $errflag = true;
     }
     // Check LASTNAME (sanitize only)
         if ((isset($_POST['lastname'])) && (!empty($_POST['lastname']))) {
         $lastname = filter_var($_POST['lastname'], FILTER_SANITIZE_STRING);
     } else {
-        $msg_arr[] = 'Please put your lastname.';
+        $msg_arr[] = 'Lastname missing';
         $errflag = true;
     }
 

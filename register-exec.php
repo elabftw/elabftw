@@ -46,7 +46,7 @@ $errflag = false;
         $result = NULL;
     }
 } else {
-    $errmsg_arr[] = 'Username missing ! What were you thinking about ?';
+    $errmsg_arr[] = 'Username missing';
     $errflag = true;
 }
 // Check FIRSTNAME (sanitize, and make it look like Firstname)
@@ -54,14 +54,14 @@ $errflag = false;
     // Put everything lowercase and first letter uppercase
     $firstname = ucwords(strtolower(filter_var($_POST['firstname'], FILTER_SANITIZE_STRING)));
 } else {
-    $errmsg_arr[] = 'Please put your firstname.';
+    $errmsg_arr[] = 'Firstname missing';
     $errflag = true;
 }
 // Check LASTNAME (sanitize, and make it look like LASTNAME)
     if ((isset($_POST['lastname'])) && (!empty($_POST['lastname']))) {
     $lastname = strtoupper(filter_var($_POST['lastname'], FILTER_SANITIZE_STRING));
 } else {
-    $errmsg_arr[] = 'Please put your lastname.';
+    $errmsg_arr[] = 'Lastname missing';
     $errflag = true;
 }
 

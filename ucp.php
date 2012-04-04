@@ -160,7 +160,7 @@ while ($data = $req->fetch()) {
     echo "<input type='hidden' name='tpl_id[]' value='".$data['id']."' />";
     echo "<input name='tpl_name[]' value='".stripslashes($data['name'])."' /><br />";
     echo "<textarea name='tpl_body[]' rows='10' cols='60'>".stripslashes($data['body'])."</textarea><br />";
-    echo "<div id='submitDiv'><input type='submit' name='Submit' class='submitbutton' value='Edit templates' /></div>";
+    echo "<div id='submitDiv'><input type='submit' name='Submit' class='submitbutton' value='Edit template' /></div>";
     echo "</form>";
     echo "</div>";
     $i++;

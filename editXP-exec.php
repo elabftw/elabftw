@@ -25,7 +25,7 @@
 ********************************************************************************/
 require_once('inc/common.php');
 //Array to store validation errors
-$errmsg_arr = array();
+$msg_arr = array();
 //Validation error flag
 $errflag = false;
 
@@ -47,7 +47,7 @@ $_SESSION['new_outcome'] = $outcome;
 
 // If input errors, redirect back to the experiment form
 if($errflag) {
-    $_SESSION['errors'] = $errmsg_arr;
+    $_SESSION['errors'] = $msg_arr;
     session_write_close();
     header("location: experiments.php?mode=edit&id=$id");
     exit();

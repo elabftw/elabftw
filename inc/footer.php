@@ -46,8 +46,9 @@ document.css.src ="img/cssoff.gif";}
 if (!isset($_SESSION['auth'])) {
 $ini_arr = parse_ini_file('admin/config.ini');
 }
-echo $ini_arr['lab_name']." powered by <a href='http://www.elabftw.net'>eLabFTW</a> by <a href='http://www.elabftw.net'>Nicolas CARPi</a></p>";
+echo $ini_arr['lab_name']." powered by <a href='http://www.elabftw.net'>eLabFTW</a> by <a href='http://www.elabftw.net' onClick='cornify_add();return false;'>Nicolas CARPi</a></p>";
 ?>
+<script type="text/javascript" src="js/cornify.js"></script>
     <!--
     <div xmlns:foaf='http://xmlns.com/foaf/0.1/' xmlns:mc='http://movecommons.org/ns#' xmlns:skos='http://www.w3.org/2004/02/skos/core#' about='http://www.elabftw.net' typeof='mc:Collective'></div><div property='foaf:name' content='eLabFTW - Free open source electronic Lab notebook'></div><div rel='foaf:homepage' href='http://www.elabftw.net'></div><div rel='mc:moveCommonsType' resource='[mc:NonProfit]'></div><div rel='mc:moveCommonsType' resource='[mc:Reproducible]'></div><div rel='mc:moveCommonsType' resource='[mc:ReinforcesCommons]'></div><div rel='mc:moveCommonsType' resource='[mc:GrassRoots]'></div><div rel='mc:focusesIn' resource='[mc:Town]'></div><div about='#' typeof='skos:Concept'></div><a href='http://movecommons.org/en/np-rp-rc.to-gr/0.1/'><img src='http://movecommons.org/mc/0.1/images/np-rp-rc.to-gr-88x31-0.1.png' alt='Move Commons Non-Profit, Reproducible, Reinforcing the Town/community/society Commons, Grassroots' /></a></div>
     -->

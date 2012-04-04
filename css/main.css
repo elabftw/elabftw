@@ -72,7 +72,29 @@ li.inline {
     display:inline;
 }
 
-/* info box */
+/* INFO BOX */
+.errors {
+    color: #b24040;
+    -webkit-box-shadow: 0px 1px 0px #cbe9c7 inset;
+    -moz-box-shadow: inset 0px 1px 0px #cbe9c7;
+    text-shadow: 0px 1px #f3f9fc;
+    background-color: #e8c5c9;
+    border-radius:5px;
+    border: 1px solid #ab80c2;
+    padding:7px;
+    font:14px Verdana, Arial;
+}
+.infos {
+    color: #3f713a;
+    -webkit-box-shadow: 0px 1px 0px #cbe9c7 inset;
+    -moz-box-shadow: inset 0px 1px 0px #cbe9c7;
+    text-shadow: 0px 1px #f3f9fc;
+    background-color: #ace0a8;
+    border-radius:5px;
+    border: 1px solid #96c17f;
+    padding:7px;
+    font:14px Verdana, Arial;
+}
 .close_box {
     float:right;
     padding-top:3px;

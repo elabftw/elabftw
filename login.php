@@ -35,33 +35,32 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 // Page begin
 ?>
 <section class='center'>
-<form method="post" action="login-exec.php">
-<div class='item'>
-<p>Username <input name="username" type="text" class="textfield" value='<?php if(isset($_SESSION['username'])){
-    echo $_SESSION['username'];
-unset($_SESSION['username']);}?>' id="username" /></p>
-      <p>Password <input name="password" type="password" class="textfield" id="password" /></p>
-      <input type="submit" name="Submit" value="Login" />
-</form>
+    <form method="post" action="login-exec.php">
+    <div class='item'>
+    <p>Username <input name="username" type="text" class="textfield" value='<?php if(isset($_SESSION['username'])){
+        echo $_SESSION['username'];
+    unset($_SESSION['username']);}?>' id="username" /></p>
+          <p>Password <input name="password" type="password" class="textfield" id="password" /></p>
+          <input type="submit" name="Submit" value="Log in" />
+    </form>
+    <p>Note : you need cookies enabled to log in.<br />
+    Don't have an account ? <a href='register.php'>Register</a> now !<br />
+    Lost your password ? <a href='#' class='trigger'>Reset</a> it !</p>
+    <div class='toggle_container'>
+<hr>
+    <form name='resetPass' method='post' action='reset-pass.php'>
+    <input placeholder='Enter your email address' name='email' />
+    <input type="submit" name="Submit" value="Send new password" />
+    </form>
+    </div>
+</section>
+<? require_once("inc/footer.php"); ?>
 <!-- BEGIN PASSSWORD RESET FORM -->
 <script type="text/javascript">
 $(document).ready(function(){
 	$(".toggle_container").hide();
-	$("span.trigger").click(function(){
-		$(this).toggleClass("active").next().slideToggle("slow");
+	$("a.trigger").click(function(){
+		$('.toggle_container').slideToggle("slow");
 	});
 });
 </script>
-<hr>
-<span class='trigger'><em>Click here to reset password</em></span>
-<div class='toggle_container'>
-<br />
-<form name='resetPass' method='post' action='reset-pass.php'>
-<input placeholder='Enter your email address' name='email' />
-<input type="submit" name="Submit" value="Send me a new one !" />
-</form>
-</div>
-</section>
-<? require_once("inc/footer.php"); ?>
-</body>
-</html>

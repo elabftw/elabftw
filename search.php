@@ -117,17 +117,17 @@ if (isset($_POST['find']) && !empty($_POST['find'])) {
     echo "</ul>";
     exit();
 }
-echo "<div class='search_results_div'>";
 // SIMPLE SEARCH SQL
 $sql = "SELECT * FROM experiments WHERE userid = ".$_SESSION['userid']." AND (title LIKE '%$find%' OR date LIKE '%$find%' OR body LIKE '%$find%')";
 $req = $bdd->prepare($sql);
 $req->execute();
 // This counts the number or results - and if there wasn't any it gives them a little message explaining that 
 $count = $req->rowCount();
+echo "<div id='search_count'>".$count." results for '".$find."' :<br /><br /></div>";
+echo "<div class='search_results_div'>";
 if ($count === 0){
     echo "<p>Sorry, I couldn't find anything :(</p><br />";
 }
-echo "<div id='search_count'>".$count." results for '".$find."'.</div>";
 // Display results
 while ($data = $req->fetch()) {
         $outcome = $data['outcome'];

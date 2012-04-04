@@ -45,7 +45,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
         <a href='ucp.php'><img src='themes/".$_SESSION['prefs']['theme']."/img/pref.png' alt='Control panel' title='Control panel' /></a> | 
         <a href='logout.php'><img src='themes/".$_SESSION['prefs']['theme']."/img/logout.png' alt='' title='Logout' /></a></p>";
 } else {
-    echo "Not logged in | <a href='register.php'>Register</a></p>";
+    echo "<a href='login.php'>Not logged in !</a>";
 }
 ?>
 </div>

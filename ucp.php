@@ -121,36 +121,54 @@ function setTmpTheme(theme){
 
 <h3><a href='#experiments'>EXPERIMENTS TEMPLATES</a></h3>
 <div>
-<h4>Existing templates :</h4><br />
-<form action='ucp-exec.php' method='post'>
-<input type='hidden' name='tpl_form' />
+<div id='tpl'>
 <?php // SQL TO GET TEMPLATES
 $sql = "SELECT id, body, name FROM experiments_templates WHERE userid = ".$_SESSION['userid'];
 $req = $bdd->prepare($sql);
 $req->execute();
+echo "<ul>";
+// tabs titles
+echo "<li><a href='#tpl-0'>Create new</a></li>";
+$i = 2;
 while ($data = $req->fetch()) {
-    echo "<div class='sub_item'>";
+    echo "<li><a href='#tpl-".$i."'>".stripslashes($data['name'])."</a></li>";
+    $i++;
+}
+echo "</ul>";
 ?>
+<!-- create new tpl tab -->
+<div id="tpl-0">
+    <form action='ucp-exec.php' method='post'>
+    <div class='sub_item'>
+    <input type='hidden' name='new_tpl_form' />
+    <input type='text' name='new_tpl_name' placeholder='Name for the template' /><br />
+    <textarea name='new_tpl_body' placeholder='Insert here your template' rows='10' cols='60'></textarea>
+    <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Add template" /></div>
+    </form>
+    </div><!-- end subitem -->
+</div>
+
+<?php
+// tabs content
+$req->execute();
+$i=2;
+while ($data = $req->fetch()) {
+?>
+<div id='tpl-<?php echo $i;?>'>
 <a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>&type=tpl' onClick="return confirm('Delete this template ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
+<form action='ucp-exec.php' method='post'>
+<input type='hidden' name='tpl_form' />
 <?php
     echo "<input type='hidden' name='tpl_id[]' value='".$data['id']."' />";
     echo "<input name='tpl_name[]' value='".stripslashes($data['name'])."' /><br />";
     echo "<textarea name='tpl_body[]' rows='10' cols='60'>".stripslashes($data['body'])."</textarea><br />";
+    echo "<div id='submitDiv'><input type='submit' name='Submit' class='submitbutton' value='Edit templates' /></div>";
+    echo "</form>";
     echo "</div>";
+    $i++;
 }
 ?>
-<div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Edit templates" /></div>
-</form>
-<hr class='flourishes'>
-<h4>Add a new template :</h4><br />
-<form action='ucp-exec.php' method='post'>
-<div class='sub_item'>
-<input type='hidden' name='new_tpl_form' />
-<input type='text' name='new_tpl_name' placeholder='Name for the template' /><br />
-<textarea name='new_tpl_body' placeholder='Insert here your template' rows='10' cols='60'></textarea>
-<div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Add template" /></div>
-</div>
-</form>
+</div><!-- end #tpl -->
 </div>
 
 <h3><a href='#keyboard'>KEYBOARD SHORTCUTS</a></h3>
@@ -202,4 +220,7 @@ $(function() {
 });
 // Give focus to password field
 document.getElementById('currpass').focus();
+$(function() {
+    $( "#tpl" ).tabs();
+});
 </script>

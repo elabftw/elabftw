@@ -361,6 +361,14 @@ textarea{
     padding: 5px;
     font-family: Verdana, Arial, Helvetica, sans-serif;
 }
+/* BACKGROUND OF THE EDITOR */
+/* toolbar */
+.nicEdit-panel {
+    background-color: #fff;
+}
+.nicEdit-main {
+    background-color: #fff;
+}
 
 .input {
     border: 3px solid #CCC;

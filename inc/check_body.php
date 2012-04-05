@@ -19,7 +19,9 @@
 ********************************************************************************/
 // Check BODY (sanitize only)
 if ((isset($_POST['body'])) && (!empty($_POST['body']))) {
-    $body = filter_var($_POST['body'], FILTER_SANITIZE_STRING);
+    // removed because of the new nicEdit html body
+    //$body = filter_var($_POST['body'], FILTER_SANITIZE_STRING);
+    $body = $_POST['body'];
 } else {
     $body = '';
 }

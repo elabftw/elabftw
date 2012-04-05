@@ -66,7 +66,7 @@ echo "</span>";
 echo "<div class='title'>". stripslashes($data['title']) . "<span class='align_right' id='outcome'>(".$data['outcome'].")<span></div> ";
 // BODY (show only if not empty)
 if ($data['body'] != ''){
-echo "<p class='txt'>".nl2br(stripslashes($data['body']))."</p>";
+echo "<div class='txt'>".stripslashes($data['body'])."</div>";
 }
 // DISPLAY PROTOCOL
 if ($data['protocol'] != NULL) {

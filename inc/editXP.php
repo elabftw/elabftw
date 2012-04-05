@@ -146,8 +146,8 @@ require_once('inc/display_file.php');
 // JAVASCRIPT
 <?php
 // KEYBOARD SHORTCUTS
-echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=exp'});";
-echo "key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['editXP'].submit()});";
+//echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=exp'});";
+//echo "key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['editXP'].submit()});";
 ?>
 // TAGS AUTOCOMPLETE
 $(function() {
@@ -237,3 +237,10 @@ $(document).ready(function(){
 	});
 });
 </script>
+<script src="js/nicEdit.js" type="text/javascript"></script>
+    <script type="text/javascript">
+// WYSIWYG EDITOR
+    bkLib.onDomLoaded( function() {
+new nicEditor().panelInstance('body_textarea');
+    });
+    </script>

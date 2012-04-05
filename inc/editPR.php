@@ -76,7 +76,7 @@ echo stripslashes($tags['tag']);?>
       } ?></textarea>
  <br /><br />
 <h4>Protocol</h4><br />
-      <textarea id='body' name='body' rows="15" cols="80"><?php if(empty($_SESSION['errors'])){
+      <textarea id='body_textarea' name='body' rows="15" cols="80"><?php if(empty($_SESSION['errors'])){
         echo stripslashes($data['body']);
     } else {
         echo stripslashes($_SESSION['new_body']);
@@ -107,8 +107,8 @@ unset($_SESSION['errors']);
 // JAVASCRIPT
 <?php
 // KEYBOARD SHORTCUTS
-echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=prot'});";
-echo "key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['editPR'].submit()});";
+//echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=prot'});";
+//echo "key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['editPR'].submit()});";
 ?>
 // TAGS AUTOCOMPLETE
 $(function() {
@@ -140,7 +140,7 @@ function delete_tag(tag_id,item_id){
 }
 // ADD TAG JS
 // listen keypress, add tag when it's enter
-jQuery(document).keypress(function(e){
+jQuery('#addtaginput').keypress(function (e) {
     addTagOnEnter(e);
 });
 function addTagOnEnter(e){ // the argument here is the event (needed to detect which key is pressed)
@@ -165,3 +165,10 @@ function addTagOnEnter(e){ // the argument here is the event (needed to detect w
     } // end if key is enter
 }
 </script>
+<script src="js/nicEdit.js" type="text/javascript"></script>
+    <script type="text/javascript">
+// WYSIWYG EDITOR
+    bkLib.onDomLoaded( function() {
+new nicEditor().panelInstance('body_textarea');
+    });
+    </script>

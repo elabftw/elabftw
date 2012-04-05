@@ -65,7 +65,7 @@ echo "</span>";
 echo "<p class='title'>". stripslashes($data['title']) . "</p>";
 // BODY (show only if not empty)
 if ($data['body'] != ''){
-echo "<p class='txt'>".nl2br(stripslashes($data['body']))."</p>";
+echo "<div class='txt'>".stripslashes($data['body'])."</div>";
 }
 // Get userinfo
 $sql = "SELECT firstname, lastname FROM users WHERE userid = ".$data['userid'];

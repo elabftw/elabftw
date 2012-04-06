@@ -146,9 +146,9 @@ require_once('inc/display_file.php');
 <script type='text/javascript'>
 // JAVASCRIPT
 <?php
-// KEYBOARD SHORTCUTS removed because comflict with nicedit
-//echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=exp'});";
-//echo "key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['editXP'].submit()});";
+// KEYBOARD SHORTCUTS
+echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=exp'});";
+echo "key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['editXP'].submit()});";
 ?>
 // TAGS AUTOCOMPLETE
 $(function() {

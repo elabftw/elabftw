@@ -101,26 +101,23 @@ if ($res === TRUE) {
     $filenb = count($real_name);
     if ($filenb > 0){
         if ($filenb == 1){
-            $files = '~~~~<br />
+            $html .= '~~~~<br />
 Attached file :<br />
 ';
         } else {
-            $files = '~~~~<br />
+            $html .= '~~~~<br />
 Attached files :<br />
 ';
         }
         for ($i=0;$i<$filenb;$i++){
-            $files .= "<a href='".$real_name[$i]."'>".$real_name[$i]."</a> (".stripslashes(str_replace("&#39;", "'", utf8_decode($comment[$i]))).").<br />";
+            $html .= "<a href='".$real_name[$i]."'>".$real_name[$i]."</a> (".stripslashes(str_replace("&#39;", "'", utf8_decode($comment[$i]))).").<br />";
             // add files to archive
             $zip->addFile('uploads/'.$long_name[$i], $real_name[$i]);
         }
-    } else { // if no files attached
-        $files = '';
-    }
 
+    }
     // FOOTER
-    $html .= "
-~~~~<br />
+    $html .= "~~~~<br />
     File created with <strong>elabFTW</strong> -- Free open source lab manager<br />
     <a href='http://www.elabftw.net'>eLabFTW.net</a>";
     $html .= "</body></html>";

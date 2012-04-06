@@ -12,9 +12,7 @@
 
 ///// Osef
 * have a real useful index...
-* merge experiments_tags and protocols_tags
 * It's impossible to make a date before 2010 or after 2099
-* selected outcome is not kept if error on edit/create
 * if two file field and file is only on the second one (first is empty) no file uploaded
 
 ///// SECURITY

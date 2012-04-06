@@ -103,11 +103,19 @@ while ($tpl = $tplreq->fetch()) {
 </textarea>
 <br /><br /><h4>Outcome</h4>
 <!-- outcome get selected by default -->
+<?php
+        if (isset($_SESSION['new_outcome'])){
+            $outcome = $_SESSION['new_outcome'];
+            unset($_SESSION['new_outcome']);
+        } else {
+            $outcome = $data['outcome'];
+        }
+?>
       <select name="outcome">
-<option <?php echo ($data['outcome'] === "running") ? "selected" : "";?> value="running">Running</option>
-<option <?php echo ($data['outcome'] === "success") ? "selected" : "";?> value="success">Success</option>
-<option <?php echo ($data['outcome'] === "redo") ? "selected" : "";?> value="redo">Need to be redone</option>
-<option <?php echo ($data['outcome'] === "fail") ? "selected" : ""; ?> value="fail">Fail</option>
+<option <?php echo ($outcome === "running") ? "selected" : "";?> value="running">Running</option>
+<option <?php echo ($outcome === "success") ? "selected" : "";?> value="success">Success</option>
+<option <?php echo ($outcome === "redo") ? "selected" : "";?> value="redo">Need to be redone</option>
+<option <?php echo ($outcome === "fail") ? "selected" : ""; ?> value="fail">Fail</option>
 </select><br /><br />
 <h4>Link to protocol</h4>
 <select name="protocol">

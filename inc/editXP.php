@@ -24,6 +24,9 @@
 *                                                                               *
 ********************************************************************************/
 // inc/editXP.php
+?>
+<script src="js/nicEdit.js" type="text/javascript"></script>
+<?php
 // ID
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     $filter_options = array(
@@ -84,17 +87,7 @@ echo stripslashes($tags['tag']);?>
           echo stripslashes($_SESSION['new_title']);
       } ?></textarea>
 <br /><br /><h4>Experiment</h4>
-<span class='trigger smallgray'>(click here to show templates)</span>
-<div class='toggle_container'><ul>
-<? // SQL to get user's templates
-$sql = "SELECT id, name FROM experiments_templates WHERE userid = ".$_SESSION['userid'];
-$tplreq = $bdd->prepare($sql);
-$tplreq->execute();
-while ($tpl = $tplreq->fetch()) {
-    echo "<li class='inline'><span class='templates' onclick='loadTpl(".$tpl['id'].")'>".$tpl['name']."</span></li> ";
-}
-?>
-</ul></div><br />
+<br />
 <textarea id='body_textarea' name='body' rows="15" cols="80"><?php if(empty($_SESSION['errors'])){
     echo stripslashes($data['body']);
     } else {
@@ -153,7 +146,7 @@ require_once('inc/display_file.php');
 <script type='text/javascript'>
 // JAVASCRIPT
 <?php
-// KEYBOARD SHORTCUTS
+// KEYBOARD SHORTCUTS removed because comflict with nicedit
 //echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=exp'});";
 //echo "key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['editXP'].submit()});";
 ?>
@@ -237,16 +230,6 @@ function loadTpl(id) {
     return false;
     });
 }
-// TOGGLE DIV
-$(document).ready(function(){
-	$(".toggle_container").hide();
-	$("span.trigger").click(function(){
-		$(this).toggleClass("active").next().slideToggle("slow");
-	});
-});
-</script>
-<script src="js/nicEdit.js" type="text/javascript"></script>
-    <script type="text/javascript">
 // WYSIWYG EDITOR
     bkLib.onDomLoaded( function() {
 new nicEditor().panelInstance('body_textarea');

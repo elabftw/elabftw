@@ -29,6 +29,17 @@ $msg_arr = array();
 // What do we create ?
 if (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')){
     $type = 'experiments';
+    // Is there a template ?
+    if (isset($_GET['tpl']) && !empty($_GET['tpl']) && filter_var($_GET['tpl'], FILTER_VALIDATE_INT)) {
+        $tpl_id = $_GET['tpl'];
+        $sql = "SELECT body FROM experiments_templates WHERE id = ".$tpl_id;
+        $tplreq = $bdd->prepare($sql);
+        $tplreq->execute();
+        $data = $tplreq->fetch();
+        $body = $data['body'];
+    } else { // no template
+        $body = '';
+    }
 } elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'prot')){
     $type = 'protocols';
 } else {
@@ -38,6 +49,16 @@ if (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')){
     exit();
 }
 
+if (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')){
+    $type = 'experiments';
+} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'prot')){
+    $type = 'protocols';
+} else {
+    $msg_arr[] = 'Wrong item type !';
+    $_SESSION['infos'] = $msg_arr;
+    header('location: experiments.php');
+    exit();
+}
 if ($type == 'experiments'){
 // SQL for create experiments
 $sql = "INSERT INTO ".$type."(title, date, body, outcome, userid) VALUES(:title, :date, :body, :outcome, :userid)";
@@ -45,7 +66,7 @@ $req = $bdd->prepare($sql);
 $result = $req->execute(array(
     'title' => 'Untitled',
     'date' => kdate(),
-    'body' => '',
+    'body' => nl2br($body),
     'outcome' => 'running',
     'userid' => $_SESSION['userid']));
 }

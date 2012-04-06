@@ -25,12 +25,23 @@
 ********************************************************************************/
 require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 ?>
-<div id='submenu'><a href="create_item.php?type=exp"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Create experiment</a>
+<div id='submenu'><a href="create_item.php?type=exp"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Create experiment</a> | 
+<a href='#' class='trigger'><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/duplicate.png" alt="" /> Create from template</a>
 <!-- Quick Search Box (search tags) -->
 <form id='quicksearch' method='get' action='experiments.php'>
 <input type='search' name='tag' placeholder='Search tag' />
 </form><!-- end quick search -->
 </div><!-- end submenu -->
+<div class='toggle_container'><ul>
+<? // SQL to get user's templates
+$sql = "SELECT id, name FROM experiments_templates WHERE userid = ".$_SESSION['userid'];
+$tplreq = $bdd->prepare($sql);
+$tplreq->execute();
+while ($tpl = $tplreq->fetch()) {
+    echo "<li class='inline'><a href='create_item.php?type=exp&tpl=".$tpl['id']."' class='templates'>".$tpl['name']."</a></li> ";
+}
+?>
+</ul></div><br />
 <?php
 // VIEWING PREFS //
 $display = $_SESSION['prefs']['display'];
@@ -247,9 +258,16 @@ if ($currentpage != $totalpages) {
 /****** end build pagination links ******/
 ?>
 </section>
+<script type='text/javascript'>
 <?php
 // KEYBOARD SHORTCUTS
-echo "<script type='text/javascript'>
-key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=exp'});
-</script>";
+echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=exp'});";
 ?>
+// TOGGLE DIV
+$(document).ready(function(){
+	$(".toggle_container").hide();
+	$("a.trigger").click(function(){
+		$('div.toggle_container').slideToggle("slow");
+	});
+});
+</script>

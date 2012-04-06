@@ -25,6 +25,7 @@
 ********************************************************************************/
 require_once('inc/common.php');
 require_once('inc/head.php');
+$page_title='MAKE ZIP';
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
 // Check id is valid and assign it to $id
@@ -89,28 +90,24 @@ $zipname = $date.'-'.preg_replace('/[^A-Za-z0-9]/', '_', $title);
 $zip = new ZipArchive;
 $res = $zip->open('uploads/'.$zipname.'.zip' , ZipArchive::CREATE);
 if ($res === TRUE) {
-    $experiment ='Date : '.$date.'
-By : '.$firstname.' '.$lastname.'
-Title : '.$title.'
-Text : 
-'.$body.'
-        
-';
+    $experiment ="Date : ".$date."<br />
+<span style='text-align: right;'>By : ".$firstname." ".$lastname."<br />
+<div style='text-align: center;'><font size='10'>".$title."</font></span></div><br /><br />
+".$body."<br />";
     // files attached ?
     $filenb = count($real_name);
     if ($filenb > 0){
         if ($filenb == 1){
-            $files = '~~~~
-Attached file :
+            $files = '~~~~<br />
+Attached file :<br />
 ';
         } else {
-            $files = '~~~~
-Attached files :
+            $files = '~~~~<br />
+Attached files :<br />
 ';
         }
         for ($i=0;$i<$filenb;$i++){
-            $files .= $real_name[$i].' ('.stripslashes(str_replace("&#39;", "'", utf8_decode($comment[$i]))).')
-';
+            $files .= "<a href='".$real_name[$i]."'>".$real_name[$i]."</a> (".stripslashes(str_replace("&#39;", "'", utf8_decode($comment[$i]))).").<br />";
             // add files to archive
             $zip->addFile('uploads/'.$long_name[$i], $real_name[$i]);
         }
@@ -119,17 +116,17 @@ Attached files :
     }
 
     // FOOTER
-    $footer = '
-~~~~
-    File created with elabFTW -- Free open source lab manager
-    http://www.elabftw.net';
+    $footer = "
+~~~~<br />
+    File created with <strong>elabFTW</strong> -- Free open source lab manager<br />
+    <a href='http://www.elabftw.net'>eLabFTW.net</a>";
     // CREATE TXT FILE
     // fix bad encoding
     $files = utf8_encode($files);
     $experiment = utf8_encode($experiment);
     // add header for utf-8
     $content = "\xEF\xBB\xBF".$experiment.$files.$footer;
-    $txtfile = $zipname.'.txt';
+    $txtfile = $zipname.'.html';
     $tf = fopen($txtfile, 'w');
     fwrite($tf, $content);
     fclose($tf);
@@ -139,9 +136,8 @@ Attached files :
     unlink($txtfile);
 
     // PAGE BEGIN
-    echo "<h3>CREATE ZIP ARCHIVE</h3>";
     echo "<div class='item'>";
-    echo "<p>Adding text file :<br />".$zipname.".txt</p>";
+    echo "<p>Adding experiment file :<br />".$zipname.".html</p>";
     if ($filenb > 0){
         if ($filenb == 1){
             echo "Adding file :<br /><ol>";

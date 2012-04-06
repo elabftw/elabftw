@@ -75,7 +75,8 @@ var nicLinkButton=nicEditorAdvancedButton.extend({addPane:function(){this.ln=thi
 var nicColorOptions = {
 	buttons : {
 		'forecolor' : {name : __('Change Text Color'), type : 'nicEditorColorButton', noClose : true},
-		'bgcolor' : {name : __('Change Background Color'), type : 'nicEditorBgColorButton', noClose : true}
+        //	elabftw edit
+	//	'bgcolor' : {name : __('Change Background Color'), type : 'nicEditorBgColorButton', noClose : true}
 	}
 };
 
@@ -117,7 +118,8 @@ var nicBBCode=bkClass.extend({construct:function(A){this.ne=A;if(this.ne.options
 
 var nicUploadOptions = {
 	buttons : {
-		'upload' : {name : 'Upload Image', type : 'nicUploadButton'}
+        //	elabftw edit
+	//	'upload' : {name : 'Upload Image', type : 'nicUploadButton'}
 	}
 	
 };

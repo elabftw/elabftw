@@ -90,7 +90,10 @@ $zipname = $date.'-'.preg_replace('/[^A-Za-z0-9]/', '_', $title);
 $zip = new ZipArchive;
 $res = $zip->open('uploads/'.$zipname.'.zip' , ZipArchive::CREATE);
 if ($res === TRUE) {
-    $experiment ="Date : ".$date."<br />
+    $html = "<!DOCTYPE html><html><head><title>";
+    $html .= $title;
+    $html .= "</title></head><body>";
+    $html .= "Date : ".$date."<br />
 <span style='text-align: right;'>By : ".$firstname." ".$lastname."<br />
 <div style='text-align: center;'><font size='10'>".$title."</font></span></div><br /><br />
 ".$body."<br />";
@@ -116,19 +119,20 @@ Attached files :<br />
     }
 
     // FOOTER
-    $footer = "
+    $html .= "
 ~~~~<br />
     File created with <strong>elabFTW</strong> -- Free open source lab manager<br />
     <a href='http://www.elabftw.net'>eLabFTW.net</a>";
+    $html .= "</body></html>";
     // CREATE TXT FILE
     // fix bad encoding
-    $files = utf8_encode($files);
-    $experiment = utf8_encode($experiment);
+    //$files = utf8_encode($files);
+    $html = utf8_encode($html);
     // add header for utf-8
-    $content = "\xEF\xBB\xBF".$experiment.$files.$footer;
+    $html = "\xEF\xBB\xBF".$html;
     $txtfile = $zipname.'.html';
     $tf = fopen($txtfile, 'w');
-    fwrite($tf, $content);
+    fwrite($tf, $html);
     fclose($tf);
     $zip->addFile($txtfile);
     $zip->close();

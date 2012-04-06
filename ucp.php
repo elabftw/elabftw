@@ -36,6 +36,7 @@ $data = $req->fetch();
 
 // BEGIN UCP PAGE
 ?>
+<script type="text/javascript" src="js/tiny_mce/tiny_mce.js"></script>
 <div id='accordion'>
 <h3><a href='#infos'>PERSONNAL INFORMATIONS</a></h3>
 <div>
@@ -141,7 +142,7 @@ echo "</ul>";
     <form action='ucp-exec.php' method='post'>
     <input type='hidden' name='new_tpl_form' />
     <input type='text' name='new_tpl_name' placeholder='Name for the template' /><br />
-    <textarea name='new_tpl_body' placeholder='Insert here your template' rows='10' cols='60'></textarea>
+    <textarea name='new_tpl_body' class='mceditable' placeholder='Insert here your template' rows='10' cols='60'></textarea>
     <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Add template" /></div>
     </form>
 </div>
@@ -159,7 +160,7 @@ while ($data = $req->fetch()) {
 <?php
     echo "<input type='hidden' name='tpl_id[]' value='".$data['id']."' />";
     echo "<input name='tpl_name[]' value='".stripslashes($data['name'])."' /><br />";
-    echo "<textarea name='tpl_body[]' rows='10' cols='60'>".stripslashes($data['body'])."</textarea><br />";
+    echo "<textarea name='tpl_body[]' class='mceditable'>".stripslashes($data['body'])."</textarea><br />";
     echo "<div id='submitDiv'><input type='submit' name='Submit' class='submitbutton' value='Edit template' /></div>";
     echo "</form>";
     echo "</div>";
@@ -220,5 +221,10 @@ $(function() {
 document.getElementById('currpass').focus();
 $(function() {
     $( "#tpl" ).tabs();
+});
+tinyMCE.init({
+    theme : "advanced",
+    mode : "specific_textareas",
+    editor_selector : "mceditable"
 });
 </script>

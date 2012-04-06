@@ -66,7 +66,7 @@ $req = $bdd->prepare($sql);
 $result = $req->execute(array(
     'title' => 'Untitled',
     'date' => kdate(),
-    'body' => nl2br($body),
+    'body' => $body,
     'outcome' => 'running',
     'userid' => $_SESSION['userid']));
 }

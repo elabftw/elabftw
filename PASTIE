@@ -44,3 +44,26 @@ function init(){
         })
         .success(function() {$("#tags_div").load("experiments.php?mode=edit&id="+item_id+" #tags_div");})
     }
+// LOAD TEMPLATE JS
+function loadTpl(id) {
+    var request = $.ajax({
+        url: 'load_tpl.php',
+        type: "GET",
+        data: {
+            tpl_id: id
+        },
+        dataType: "text"
+    });
+    // add template in the body and stripslashes
+    request.done(function (data) {
+        $('#body_textarea').append(data.split("\\").join(""));
+    request.fail(function (data) {
+        alert('Template loading failed :/');
+    });
+    return false;
+    });
+}
+// WYSIWYG EDITOR
+    bkLib.onDomLoaded( function() {
+new nicEditor().panelInstance('body_textarea');
+    });

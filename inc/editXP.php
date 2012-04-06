@@ -25,7 +25,7 @@
 ********************************************************************************/
 // inc/editXP.php
 ?>
-<script src="js/nicEdit.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/tiny_mce/tiny_mce.js"></script>
 <?php
 // ID
 if (isset($_GET['id']) && !empty($_GET['id'])) {
@@ -88,7 +88,7 @@ echo stripslashes($tags['tag']);?>
       } ?></textarea>
 <br /><br /><h4>Experiment</h4>
 <br />
-<textarea id='body_textarea' name='body' rows="15" cols="80"><?php if(empty($_SESSION['errors'])){
+<textarea class='mceditable' name='body' rows="15" cols="80"><?php if(empty($_SESSION['errors'])){
     echo stripslashes($data['body']);
     } else {
     echo stripslashes($_SESSION['new_body']);
@@ -211,27 +211,9 @@ function addTagOnEnter(e) { // the argument here is the event (needed to detect 
 $(function() {
     $( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
 });
-// LOAD TEMPLATE JS
-function loadTpl(id) {
-    var request = $.ajax({
-        url: 'load_tpl.php',
-        type: "GET",
-        data: {
-            tpl_id: id
-        },
-        dataType: "text"
-    });
-    // add template in the body and stripslashes
-    request.done(function (data) {
-        $('#body_textarea').append(data.split("\\").join(""));
-    request.fail(function (data) {
-        alert('Template loading failed :/');
-    });
-    return false;
-    });
-}
-// WYSIWYG EDITOR
-    bkLib.onDomLoaded( function() {
-new nicEditor().panelInstance('body_textarea');
-    });
-    </script>
+tinyMCE.init({
+    theme : "advanced",
+    mode : "specific_textareas",
+    editor_selector : "mceditable"
+});
+</script>

@@ -24,6 +24,9 @@
 *                                                                               *
 ********************************************************************************/
 // inc/editPR.php
+?>
+<script type="text/javascript" src="js/tiny_mce/tiny_mce.js"></script>
+<?php
 // ID
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     $filter_options = array(
@@ -76,7 +79,7 @@ echo stripslashes($tags['tag']);?>
       } ?></textarea>
  <br /><br />
 <h4>Protocol</h4><br />
-      <textarea id='body_textarea' name='body' rows="15" cols="80"><?php if(empty($_SESSION['errors'])){
+      <textarea class='mceditable' name='body' rows="15" cols="80"><?php if(empty($_SESSION['errors'])){
         echo stripslashes($data['body']);
     } else {
         echo stripslashes($_SESSION['new_body']);
@@ -164,11 +167,9 @@ function addTagOnEnter(e){ // the argument here is the event (needed to detect w
         })
     } // end if key is enter
 }
+tinyMCE.init({
+    theme : "advanced",
+    mode : "specific_textareas",
+    editor_selector : "mceditable"
+});
 </script>
-<script src="js/nicEdit.js" type="text/javascript"></script>
-    <script type="text/javascript">
-// WYSIWYG EDITOR
-    bkLib.onDomLoaded( function() {
-new nicEditor().panelInstance('body_textarea');
-    });
-    </script>

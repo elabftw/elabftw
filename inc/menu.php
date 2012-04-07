@@ -25,9 +25,9 @@
 ********************************************************************************/
 ?>
 <noscript><!-- show warning if javascript is disabled -->
-<ul class="err">
+<ul class="errors">
 <li><img src="img/info.png" alt="" />
-Javascript is disabled. Please enable Javascript to view this site in all it's glory. Thank You.</li>
+Javascript is disabled. Please enable Javascript to view this site in all its glory. Thank You.</li>
 </ul>
 </noscript>
 

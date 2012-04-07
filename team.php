@@ -27,6 +27,7 @@ require_once('inc/common.php');
 $page_title= 'TEAM'; 
 require_once('inc/head.php');
 require_once('inc/menu.php');
+require_once('inc/info_box.php');
 ?>
 <div id='team'>
 <ul>

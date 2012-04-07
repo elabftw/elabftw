@@ -46,9 +46,11 @@ if (!isset($_SESSION['auth'])){
     if (isset($_COOKIE['token']) && (strlen($_COOKIE['token']) == 32)){
             $token = filter_var($_COOKIE['token'], FILTER_SANITIZE_STRING);
             // Get token from SQL
-            $sql = "SELECT * FROM users WHERE token = ".$token;
+            $sql = "SELECT * FROM users WHERE token = :token";
             $result = $bdd->prepare($sql);
-            $result->execute();
+            $result->execute(array(
+                'token' => $token
+            ));
             $data = $result->fetch();
             $numrows = $result->rowCount();
             if ($numrows == 1){

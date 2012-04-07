@@ -1,7 +1,18 @@
 /* Changelog for eLabFTW */
 
+Version 0.5.7
+* Publish button
+* TinyMCE for editing the body (text formatting)
+* Better info boxes
+* Better presentation of UCP
+* Better search
+
+Version 0.5.6
+* Various bugfixes
+
 Version 0.5.5
-* jQuery UI accordion, autocomplete, datepicker
+* Calendar on date
+* Autocomplete on tags
 * Ajax for tags
 
 Version 0.5.4

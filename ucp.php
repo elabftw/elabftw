@@ -100,18 +100,12 @@ if ($_SESSION['prefs']['sort'] === 'asc'){
 <br />
 <br />
 <h4>Theme (hover to preview) :</h4><br />
-<script type='text/javascript'>
-function setTmpTheme(theme){
-    document.getElementById('maincss').href = 'themes/'+theme+'/style.css';
-}
-</script>
-<div class='center'>
+<br />
+<div class='themes_div'>
 <input type='radio' name='theme' value='default' <?php if ($_SESSION['prefs']['theme'] === 'default'){ echo "checked='checked'";}?>>Default<br />
 <img onmouseover="setTmpTheme('default');" onmouseout="setTmpTheme('<?php echo $_SESSION['prefs']['theme'];?>')" src='themes/default/img/sample.png' alt='default theme'>
-</div>
 <br />
-<div class='center'>
-<input type='radio' name='theme' value='l33t' <?php if ($_SESSION['prefs']['theme'] === 'l33t'){ echo "checked='checked'";}?>>l33t<br />
+<input type='radio' name='theme' value='l33t' <?php if ($_SESSION['prefs']['theme'] === 'l33t'){ echo "checked='checked'";}?> class='inline'>l33t<br />
 <img onmouseover="setTmpTheme('l33t');" onmouseout="setTmpTheme('<?php echo $_SESSION['prefs']['theme'];?>')" src='themes/l33t/img/sample.png' alt='l33t theme'>
 </div>
 <br /><br />
@@ -217,6 +211,10 @@ $(function() {
         active: false
     });
 });
+// hover to choose theme
+function setTmpTheme(theme){
+    document.getElementById('maincss').href = 'themes/'+theme+'/style.css';
+}
 // Give focus to password field
 document.getElementById('currpass').focus();
 $(function() {

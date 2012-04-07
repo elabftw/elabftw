@@ -479,6 +479,15 @@ img {
     background-color:#FFABAB;
 }
 
+
+.themes_div {
+    -moz-column-count: 2;
+    -moz-column-gap: 10px;
+    -webkit-column-count: 2;
+    -webkit-column-gap: 10px;
+    column-count: 2;
+    column-gap: 10px; 
+}
 /* TEMPLATES */
 .templates {
     font:12px Verdana, Arial, Helvetica, sans-serif;

@@ -48,11 +48,21 @@ $(document).ready(function(){
 <section class='item'>
 <div class='center'>
 <form name="search" method="post" action="search.php">
-<input id="search" name='find' type="text" placeholder="Type here" <?php if(isset($_POST['searching_simple'])){
+<input id="search" name='find' size='63' type="text" placeholder="Type here" <?php if(isset($_POST['searching_simple'])){
     echo "value='".$_POST['find']."'";}?>/>
+<br />
 <input id='submit' type='submit' value='Search' />
+<a id='submitlucky' href='#' onClick='lucky()'>I'm Feeling Lucky</a>
 <input type='hidden' name='searching_simple' value='yes' />
 </form>
+<script type='text/javascript'>
+function lucky() {
+    // get input text
+    var search = $('#search').val();
+    // pass it to lucky.php; open tab
+    window.open('lucky.php?find=' + search, '_blank');
+    }
+    </script>
 <!-- ADVANCED SEARCH
 <p class='trigger'>↓ Advanced search ↓</p>
 <div class='toggle_container align_left'>
@@ -123,7 +133,7 @@ $req = $bdd->prepare($sql);
 $req->execute();
 // This counts the number or results - and if there wasn't any it gives them a little message explaining that 
 $count = $req->rowCount();
-echo "<div id='search_count'>".$count." results for '".$find."' :<br /><br /></div>";
+echo "<div id='search_count'>".$count." results for '".stripslashes($find)."' :<br /><br /></div>";
 echo "<div class='search_results_div'>";
 if ($count === 0){
     echo "<p>Sorry, I couldn't find anything :(</p><br />";

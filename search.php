@@ -59,9 +59,14 @@ $(document).ready(function(){
 function lucky() {
     // get input text
     var search = $('#search').val();
-    // pass it to lucky.php; open tab
-    window.open('lucky.php?find=' + search, '_blank');
+    // verify we have something inside
+    if (search.length > 0){
+        // pass it to lucky.php; open tab
+        window.open('lucky.php?find=' + search, '_blank');
+    } else {
+        alert('You may feel very lucky. But I still need something to search for...');
     }
+}
     </script>
 <!-- ADVANCED SEARCH
 <p class='trigger'>↓ Advanced search ↓</p>

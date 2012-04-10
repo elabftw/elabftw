@@ -37,8 +37,13 @@ require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 $sql = "SELECT id, name FROM experiments_templates WHERE userid = ".$_SESSION['userid'];
 $tplreq = $bdd->prepare($sql);
 $tplreq->execute();
-while ($tpl = $tplreq->fetch()) {
-    echo "<li class='inline'><a href='create_item.php?type=exp&tpl=".$tpl['id']."' class='templates'>".$tpl['name']."</a></li> ";
+$count_tpl = $tplreq->rowCount();
+if ($count_tpl > 0) {
+    while ($tpl = $tplreq->fetch()) {
+        echo "<li class='inline'><a href='create_item.php?type=exp&tpl=".$tpl['id']."' class='templates'>".$tpl['name']."</a></li> ";
+    }
+} else { // user has no templates
+    echo "You do not have any templates yet. Go to <a href='ucp.php'>your control panel</a> to make one !";
 }
 ?>
 </ul></div><br />

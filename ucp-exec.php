@@ -328,7 +328,7 @@ if (isset($_POST['limit']) && !empty($_POST['limit']) && $_POST['limit'] != $_SE
 // add new tpl
 if (isset($_POST['new_tpl_form'])) {
     $tpl_name = filter_var($_POST['new_tpl_name'], FILTER_SANITIZE_STRING);
-    $tpl_body = filter_var($_POST['new_tpl_body'], FILTER_SANITIZE_STRING);
+    $tpl_body = $_POST['new_tpl_body'];
     $sql = "INSERT INTO experiments_templates(name, body, userid) VALUES(:name, :body, :userid)";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(

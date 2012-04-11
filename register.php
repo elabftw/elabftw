@@ -19,7 +19,7 @@
 ********************************************************************************/
 session_start();
 require_once('inc/head.php');
-$page_title='REGISTER';
+$page_title='Register';
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
 ?>

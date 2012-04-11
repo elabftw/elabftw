@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 require_once('inc/common.php');
-$page_title = 'USER CONTROL PANEL';
+$page_title = 'User Control Panel';
 require_once('inc/head.php');
 require_once('inc/menu.php');
 require_once('inc/info_box.php');

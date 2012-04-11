@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 session_start();
-$page_title = 'LOGIN';
+$page_title = 'Login';
 require_once('inc/head.php');
 require_once('inc/menu.php');
 require_once('inc/info_box.php');

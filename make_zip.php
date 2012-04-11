@@ -25,7 +25,7 @@
 ********************************************************************************/
 require_once('inc/common.php');
 require_once('inc/head.php');
-$page_title='MAKE ZIP';
+$page_title='Make zip';
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
 // Check id is valid and assign it to $id

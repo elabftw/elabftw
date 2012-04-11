@@ -59,6 +59,6 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 </nav>
 <hr class='flourishes'>
 <div id='page_title'>
-<h2><?php echo $page_title;?></h2>
+<h2><?php echo strtoupper($page_title);?></h2>
 </div>
 <?php // print_r($_SESSION); ?>

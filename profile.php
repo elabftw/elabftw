@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 require_once('inc/common.php');
-$page_title = 'PROFILE';
+$page_title = 'Profile';
 require_once('inc/head.php');
 require_once('inc/menu.php');
 // SQL to get number of experiments

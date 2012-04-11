@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 require_once('inc/common.php');
-$page_title='INDEX';
+$page_title='Index';
 require_once('inc/head.php');
 require_once('inc/menu.php');
 ?>

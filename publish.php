@@ -24,7 +24,6 @@
 *                                                                               *
 ********************************************************************************/
 require_once('inc/common.php');
-$page_title='PUBLISH';
 // SQL to get firstname and email
 $sql = "SELECT firstname, lastname, email FROM users WHERE userid=".$_SESSION['userid'];
 $req = $bdd->prepare($sql);

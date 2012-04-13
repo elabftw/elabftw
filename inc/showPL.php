@@ -26,24 +26,24 @@
 require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 ?>
 <div id='submenu'><a href="create_item.php?type=pla"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add a plasmid</a>
-<!-- Quick Search Box (search tags) -->
+<!-- Quick Search Box (search tags)
 <form id='quicksearch' method='get' action='plasmids.php'>
 <input type='search' name='tag' placeholder='Search tag' />
-</form><!-- end quick search -->
+</form> end quick search -->
 </div><!-- end submenu -->
 <?php
-    $sql = "SELECT * 
-        FROM plasmids";
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    while ($data = $req->fetch()) {
+$sql = "SELECT * 
+    FROM plasmids";
+$req = $bdd->prepare($sql);
+$req->execute();
+while ($data = $req->fetch()) {
 ?>
-                <section onClick="document.location='plasmids.php?mode=view&id=<?php echo $data['id'];?>'" class='item'>
-                <?php
-                echo "<span class='redo_compact'>".$data['date']."</span> ";
-                echo stripslashes($data['name']);
-                echo "</section>";
-    }
+    <section onClick="document.location='plasmids.php?mode=view&id=<?php echo $data['id'];?>'" class='item'>
+    <?php
+    echo "<span class='redo_compact'>".$data['date']."</span> ";
+    echo stripslashes($data['title']);
+    echo "</section>";
+}
 ?>
 <script type='text/javascript'>
 <?php

@@ -76,19 +76,13 @@ $result = $req->execute(array(
 
 if ($type == 'plasmids'){
 // SQL for create plasmids
-    $sql = "INSERT INTO ".$type."(name, alias, priority, resistance, organism, tag, comment, date, results, userid) 
-        VALUES(:name, :alias, :priority, :resistance, :organism, :tag, :comment, :date, :results, :userid)";
+    $sql = "INSERT INTO ".$type."(title, date, body, userid) 
+        VALUES(:title, :date, :body, :userid)";
 $req = $bdd->prepare($sql);
 $result = $req->execute(array(
-    'name' => 'Untitled',
-    'alias' => '',
+    'title' => 'Untitled',
     'date' => kdate(),
-    'priority' => '',
-    'resistance' => '',
-    'organism' => '',
-    'tag' => '',
-    'comment' => '',
-    'results' => '',
+    'body' => '',
     'userid' => $_SESSION['userid']));
 }
 // Get what is the item id we just created

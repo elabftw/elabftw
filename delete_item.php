@@ -28,7 +28,7 @@ require_once('inc/common.php');
 if(filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
     $id = $_GET['id'];
 } else {
-    die("The id parameter in the URL isn't a valid experiment ID");
+    die("The id parameter in the URL isn't a valid item ID");
 }
 
 // Item switch
@@ -36,6 +36,8 @@ if ($_GET['type'] === 'exp'){
     $item_type = 'experiments';
 } elseif ($_GET['type'] === 'prot'){
     $item_type = 'protocols';
+} elseif ($_GET['type'] === 'pla'){
+    $item_type = 'plasmids';
 } elseif ($_GET['type'] === 'tpl'){
     $item_type = 'experiments_templates';
 } else {
@@ -65,10 +67,15 @@ if ($item_type === 'experiments' || $item_type === 'protocols') {
 $sql = "DELETE FROM ".$item_type."_tags WHERE item_id = ".$id;
 $req = $bdd->prepare($sql);
 $req->execute();
-// delete files
-$sql = "DELETE FROM uploads WHERE item_id = ".$id;
+}
+if ($item_type === 'experiments' || $item_type === 'protocols' || $item_type === 'plasmids') {
+// delete files (plasmids got no tags)
+$sql = "DELETE FROM uploads WHERE item_id = :id AND type = :type";
 $req = $bdd->prepare($sql);
-$req->execute();
+$req->execute(array(
+    'id' => $id,
+    'type' => $item_type
+));
 }
 
 // TODO check that the 3 sql went OK
@@ -78,6 +85,8 @@ if ($result) {
         $msg_arr[] = 'Experiment deleted successfully';
     }elseif ($item_type === 'protocols'){
         $msg_arr[] = 'Protocol deleted successfully';
+    }elseif ($item_type === 'plasmids'){
+        $msg_arr[] = 'Plasmid deleted successfully';
     } elseif ($item_type === 'experiments_templates') {
         $msg_arr[] = 'Template deleted successfully';
     } else {
@@ -85,7 +94,7 @@ if ($result) {
     }
 
     $_SESSION['infos'] = $msg_arr;
-    if ($item_type === 'experiments' || $item_type === 'protocols') {
+    if ($item_type === 'experiments' || $item_type === 'protocols' || $item_type === 'plasmids') {
         header("location: $item_type.php");
     } else {
         header("location: ucp.php");

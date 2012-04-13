@@ -30,7 +30,7 @@
 if(filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
     $id = $_GET['id'];
 } else {
-    die("The id parameter in the URL isn't a valid experiment ID");
+    die("The id parameter in the URL isn't a valid plasmid ID");
 }
 
 // SQL for viewPL
@@ -43,12 +43,13 @@ $data = $req->fetch();
 ?>
 <!-- click section to edit PL -->
 <section OnClick="document.location='plasmids.php?mode=edit&id=<?php echo $data['id'];?>'" class="item">
-<a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>&type=exp' onClick="return confirm('Delete this plasmid ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
+<a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>&type=pla' onClick="return confirm('Delete this plasmid ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <?php
 echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' title='date' alt='Date :' />".$data['date']."</span><br />
     <a href='plasmids.php?mode=edit&id=".$data['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/edit.png' title='edit' alt='edit' /></a> 
 <a href='javascript:window.print()'><img src='themes/".$_SESSION['prefs']['theme']."/img/print.png' title='Print this page' alt='Print' /></a>";
 echo "<div class='title'>". stripslashes($data['title']) . "</div>";
+echo "<div class='rating'></div>";
 // BODY (show only if not empty)
 if ($data['body'] != ''){
 echo "<div class='txt'>".stripslashes($data['body'])."</div>";

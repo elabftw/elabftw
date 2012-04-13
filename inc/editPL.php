@@ -23,7 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-// inc/editXP.php
+// inc/editPL.php
 ?>
 <script type="text/javascript" src="js/tiny_mce/tiny_mce.js"></script>
 <?php
@@ -35,7 +35,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         ));
     $id = filter_var($_GET['id'], FILTER_VALIDATE_INT, $filter_options);
 } else {
-    die("The id parameter in the URL isn't a valid protocol ID.");
+    die("The id parameter in the URL isn't a valid plasmid ID.");
 }
 
 
@@ -49,6 +49,17 @@ $data = $req->fetch();
 ?>
 <section class='item'>
 <a class='align_right' href='delete_item.php?id=<?php echo $id;?>&type=pla' onClick="return confirm('Delete this plasmid ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
+<!-- star rating -->
+<div id='rating'>
+<form name="stars" method="post" action="stars.php">
+<input name="star" type="radio" class="star" />
+<input name="star" type="radio" class="star" />
+<input name="star" type="radio" class="star" checked="checked"/>
+<input name="star" type="radio" class="star" />
+<input name="star" type="radio" class="star" />
+</form>
+</div>
+<br />
 <!-- BEGIN EDITXP FORM -->
 <form id="editPL" name="editPL" method="post" action="editPL-exec.php" enctype='multipart/form-data'>
 <input name='item_id' type='hidden' value='<? echo $id;?>' />
@@ -81,6 +92,8 @@ require_once('inc/display_file.php');
 <input type='image' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/submit.png' name='Submit' value='Submit' onClick="this.form.submit();" />
 </div>
 </form><!-- end editXP form -->
+
+
 </section>
 
 <script type='text/javascript'>
@@ -90,9 +103,10 @@ require_once('inc/display_file.php');
 echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=pla'});";
 echo "key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['editPL'].submit()});";
 ?>
-// DATEPICKER
+// DATEPICKER + STAR RATINGS
 $(function() {
     $( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
+    $('input.star').rating();
 });
 tinyMCE.init({
     theme : "advanced",

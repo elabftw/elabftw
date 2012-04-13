@@ -33,24 +33,15 @@ $errflag = false;
 // CHECKS
 require_once('inc/check_id.php'); // $id
 require_once('inc/check_date.php'); // $date
+require_once('inc/check_title.php'); // $title
+require_once('inc/check_body.php'); // $body
 require_once('inc/check_files.php'); // $real_filenames[] $long_filenames[]
 
-$name = $_POST['name'];
-$alias = $_POST['alias'];
-$priority = $_POST['priority'];
-$resistance = $_POST['resistance'];
-$organism = $_POST['organism'];
-$tag = $_POST['tag'];
-$comment = $_POST['comment'];
-$results = $_POST['results'];
 
-/*
 // Store stuff in Session to get it back if error input
 $_SESSION['new_title'] = $title;
 $_SESSION['new_date'] = $date;
 $_SESSION['new_body'] = $body;
-$_SESSION['new_outcome'] = $outcome;
- */
 
 // If input errors, redirect back to the experiment form
 if($errflag) {
@@ -62,30 +53,19 @@ if($errflag) {
 
 // SQL for editPL
     $sql = "UPDATE plasmids 
-        SET name = :name, 
+        SET title = :title, 
         date = :date, 
-        alias = :alias, 
-        priority = :priority, 
-        resistance = :resistance, 
-        organism = :organism,
-        tag = :tag,
-        comment = :comment,
-        results = :results
-        WHERE id = id";
+        body = :body,
+        userid = :userid
+        WHERE id = :id";
 $req = $bdd->prepare($sql);
 $result = $req->execute(array(
+        'title' => $title,
         'date' => $date, 
-        'alias' = $alias, 
-        'priority' = $priority, 
-        'resistance' = $resistance, 
-        'organism' = $organism,
-        'tag' = $tag,
-        'comment' = $comment,
-        'results' = $results,
+        'body' => $body,
         'userid' => $_SESSION['userid'],
         'id' => $id
 ));
-
 // If FILES are uploaded
 if (is_uploaded_file($_FILES['files']['tmp_name'][0])){
     // Assign the experiment id to $expid

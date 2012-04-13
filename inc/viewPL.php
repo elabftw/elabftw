@@ -33,7 +33,7 @@ if(filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
     die("The id parameter in the URL isn't a valid experiment ID");
 }
 
-// SQL for viewXP
+// SQL for viewPL
 $sql = "SELECT * FROM plasmids WHERE id = ".$id;
 $req = $bdd->prepare($sql);
 $req->execute();
@@ -41,42 +41,17 @@ $data = $req->fetch();
 
 // Display plasmid
 ?>
-<!-- click section to edit XP -->
-<section OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['id'];?>'" class="<?php echo $data['outcome'];?>">
-<a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>&type=exp' onClick="return confirm('Delete this experiment ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
+<!-- click section to edit PL -->
+<section OnClick="document.location='plasmids.php?mode=edit&id=<?php echo $data['id'];?>'" class="item">
+<a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>&type=exp' onClick="return confirm('Delete this plasmid ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <?php
 echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' title='date' alt='Date :' />".$data['date']."</span><br />
-    <a href='experiments.php?mode=edit&id=".$data['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/edit.png' title='edit' alt='edit' /></a> 
-<a href='duplicateXP.php?id=".$data['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a> 
-<a href='make_pdf.php?id=".$data['id']."&type=exp'><img src='themes/".$_SESSION['prefs']['theme']."/img/pdf.png' title='make a pdf' alt='pdf' /></a> 
-<a href='javascript:window.print()'><img src='themes/".$_SESSION['prefs']['theme']."/img/print.png' title='Print this page' alt='Print' /></a> 
-<a href='make_zip.php?id=".$data['id']."&type=exp'><img src='themes/".$_SESSION['prefs']['theme']."/img/zip.gif' title='make a zip archive' alt='zip' /></a>
-<a href='publish.php?id=".$data['id']."&type=exp'><img src='themes/".$_SESSION['prefs']['theme']."/img/publish.png' title='submit to a journal' alt='publish' /></a>";
-// TAGS
-$sql = "SELECT tag FROM experiments_tags WHERE item_id = ".$id;
-$req = $bdd->prepare($sql);
-$req->execute();
-echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
-while($tags = $req->fetch()){
-    echo "<a href='experiments.php?mode=show&tag=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
-}
-echo "</span>";
-// END TAGS
-?>
-<?php
-echo "<div class='title'>". stripslashes($data['title']) . "<span class='align_right' id='outcome'>(".$data['outcome'].")<span></div> ";
+    <a href='plasmids.php?mode=edit&id=".$data['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/edit.png' title='edit' alt='edit' /></a> 
+<a href='javascript:window.print()'><img src='themes/".$_SESSION['prefs']['theme']."/img/print.png' title='Print this page' alt='Print' /></a>";
+echo "<div class='title'>". stripslashes($data['title']) . "</div>";
 // BODY (show only if not empty)
 if ($data['body'] != ''){
 echo "<div class='txt'>".stripslashes($data['body'])."</div>";
-}
-// DISPLAY PROTOCOL
-if ($data['protocol'] != NULL) {
-    // SQL to get title
-    $sql = "SELECT id, title FROM protocols WHERE id = ".$data['protocol'];
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    $protdata = $req->fetch();
-    echo "<p>Protocol : <a href='protocols.php?mode=view&id=".$protdata['id']."'>".$protdata['title']."</a></p>";
 }
 echo "</section>";
 
@@ -85,6 +60,6 @@ require_once('inc/display_file.php');
 // KEYBOARD SHORTCUTS
 echo "<script type='text/javascript'>
 key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=exp'});
-key('".$_SESSION['prefs']['shortcuts']['edit']."', function(){location.href = 'experiments.php?mode=edit&id=".$id."'});
+key('".$_SESSION['prefs']['shortcuts']['edit']."', function(){location.href = 'plasmids.php?mode=edit&id=".$id."'});
 </script>";
 ?>

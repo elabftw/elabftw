@@ -47,7 +47,7 @@ $data = $req->fetch();
 
 // BEGIN CONTENT
 ?>
-<section>
+<section class='item'>
 <a class='align_right' href='delete_item.php?id=<?php echo $id;?>&type=pla' onClick="return confirm('Delete this plasmid ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <!-- BEGIN EDITXP FORM -->
 <form id="editPL" name="editPL" method="post" action="editPL-exec.php" enctype='multipart/form-data'>
@@ -55,57 +55,17 @@ $data = $req->fetch();
 <h4>Date</h4><span class='smallgray'> (date format : YYMMDD)</span><br />
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /><input name='date' id='datepicker' size='6' type='text' value='<?php echo $data['date'];?>' /><br />
 <br /><h4>Name</h4><br />
-      <textarea id='name' name='name' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
-          echo stripslashes($data['name']);
+      <textarea id='title' name='title' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
+          echo stripslashes($data['title']);
       } else {
-          echo stripslashes($_SESSION['new_name']);
+          echo stripslashes($_SESSION['new_title']);
       } ?></textarea>
-<br /><br /><h4>Alias</h4>
+<br /><br /><h4>Infos</h4>
 <br />
-<textarea name='priority' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
-    echo stripslashes($data['priority']);
+<textarea name='body' class='mceditable' rows="15" cols="80"><?php if(empty($_SESSION['errors'])){
+    echo stripslashes($data['body']);
     } else {
-    echo stripslashes($_SESSION['new_priority']);
-    } ?>
-</textarea>
-<br /><br /><h4>resistance</h4>
-<br />
-<textarea name='resistance' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
-    echo stripslashes($data['resistance']);
-    } else {
-    echo stripslashes($_SESSION['new_resistance']);
-    } ?>
-</textarea>
-<br /><br /><h4>organism</h4>
-<br />
-<textarea name='organism' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
-    echo stripslashes($data['organism']);
-    } else {
-    echo stripslashes($_SESSION['new_organism']);
-    } ?>
-</textarea>
-<br /><br /><h4>tag</h4>
-<br />
-<textarea name='tag' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
-    echo stripslashes($data['tag']);
-    } else {
-    echo stripslashes($_SESSION['new_tag']);
-    } ?>
-</textarea>
-<br /><br /><h4>comment</h4>
-<br />
-<textarea name='comment' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
-    echo stripslashes($data['comment']);
-    } else {
-    echo stripslashes($_SESSION['new_comment']);
-    } ?>
-</textarea>
-<br /><br /><h4>results</h4>
-<br />
-<textarea name='results' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
-    echo stripslashes($data['results']);
-    } else {
-    echo stripslashes($_SESSION['new_results']);
+    echo stripslashes($_SESSION['new_body']);
     } ?>
 </textarea>
 <?php
@@ -133,5 +93,13 @@ echo "key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.f
 // DATEPICKER
 $(function() {
     $( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
+});
+tinyMCE.init({
+    theme : "advanced",
+    mode : "specific_textareas",
+    editor_selector : "mceditable",
+    content_css : "css/tinymce.css",
+    theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
+    font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
 });
 </script>

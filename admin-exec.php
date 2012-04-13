@@ -25,11 +25,11 @@
 ********************************************************************************/
 /* admin-exec.php - for administration of the elab */
 require_once('inc/common.php');
-if ($_SESSION['is_admin'] != 1) {die('You are not admin !');}
+if ($_SESSION['is_admin'] != 1) {die('You are not admin !');} // only admin can use this
+$msg_arr = array();
 
 // VALIDATE USERS
 if (isset($_POST['validate'])) {
-    $msg_arr = array();
     $sql = "UPDATE users SET validated = 1 WHERE userid = :userid";
     $req = $bdd->prepare($sql);
     foreach ($_POST['validate'] as $user) {
@@ -65,4 +65,25 @@ if (isset($_GET['deluser']) && filter_var($_GET['deluser'], FILTER_VALIDATE_INT)
     $_SESSION['infos'] = $msg_arr;
     header('Location: admin.php');
     exit();
+}
+
+// New Plasmids template
+if (isset($_POST['pla_tpl'])) {
+    require_once('inc/check_body.php'); // outputs $body
+    $sql = "UPDATE plasmids_templates SET body = :body WHERE id = 1";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute(array(
+        'body' => $body
+    ));
+    if ($result){
+        $msg_arr[] = 'New plasmids template updated successfully.';
+        $_SESSION['infos'] = $msg_arr;
+        header('Location: admin.php');
+        exit();
+    } else { //sql fail
+        $msg_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $_SESSION['errors'] = $msg_arr;
+        header('Location: admin.php');
+        exit();
+    }
 }

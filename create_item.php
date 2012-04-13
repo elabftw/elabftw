@@ -75,6 +75,13 @@ $result = $req->execute(array(
 }
 
 if ($type == 'plasmids'){
+    // SQL to get plasmid template
+    $sql = "SELECT body FROM plasmids_templates WHERE id = 1";
+    $pla_tpl = $bdd->prepare($sql);
+    $pla_tpl->execute();
+    $pla_tpl_body = $pla_tpl->fetch();
+
+
 // SQL for create plasmids
     $sql = "INSERT INTO ".$type."(title, date, body, userid) 
         VALUES(:title, :date, :body, :userid)";
@@ -82,7 +89,7 @@ $req = $bdd->prepare($sql);
 $result = $req->execute(array(
     'title' => 'Untitled',
     'date' => kdate(),
-    'body' => '',
+    'body' => $pla_tpl_body['body'],
     'userid' => $_SESSION['userid']));
 }
 // Get what is the item id we just created

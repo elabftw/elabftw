@@ -30,6 +30,9 @@ $page_title = 'Admin Panel';
 require_once('inc/head.php');
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
+?>
+<script type="text/javascript" src="js/tiny_mce/tiny_mce.js"></script>
+<?php
 
 // SQL to get all unvalidated users
 $sql = "SELECT userid, lastname, firstname, email FROM users WHERE validated = 0";
@@ -65,4 +68,31 @@ while ($data = $req->fetch()) {
 <?php echo "<a href='admin-exec.php?edituser=".$data['userid']."'>edit</a></li>";
 }
 echo "</section>";
+?>
+<section class='item'>
+<h3>NEW PLASMIDS DEFAULT TEMPLATE</h3>
+<?php // SQL TO GET TEMPLATES
+$sql = "SELECT id, body FROM plasmids_templates WHERE id = 1";
+$req = $bdd->prepare($sql);
+$req->execute();
+$data = $req->fetch();
+?>
+    <form action='admin-exec.php' method='post'>
+    <input type='hidden' name='pla_tpl' />
+    <textarea class='mceditable' name='body' /><?php echo $data['body'];?></textarea>
+    <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Save changes" /></div>
+    </form>
+</section>
+
+<script type='text/javascript'>
+tinyMCE.init({
+    theme : "advanced",
+    mode : "specific_textareas",
+    editor_selector : "mceditable",
+    content_css : "css/tinymce.css",
+    theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
+    font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
+});
+</script>
+<?php
 require_once('inc/footer.php') ?>

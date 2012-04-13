@@ -24,46 +24,66 @@
 *                                                                               *
 ********************************************************************************/
 require_once('inc/common.php');
-
 //Array to store validation errors
 $msg_arr = array();
 //Validation error flag
 $errflag = false;
 
+
 // CHECKS
 require_once('inc/check_id.php'); // $id
-require_once('inc/check_title.php'); // $title
 require_once('inc/check_date.php'); // $date
-require_once('inc/check_body.php'); // $body
 require_once('inc/check_files.php'); // $real_filenames[] $long_filenames[]
 
+$name = $_POST['name'];
+$alias = $_POST['alias'];
+$priority = $_POST['priority'];
+$resistance = $_POST['resistance'];
+$organism = $_POST['organism'];
+$tag = $_POST['tag'];
+$comment = $_POST['comment'];
+$results = $_POST['results'];
+
+/*
 // Store stuff in Session to get it back if error input
 $_SESSION['new_title'] = $title;
 $_SESSION['new_date'] = $date;
 $_SESSION['new_body'] = $body;
+$_SESSION['new_outcome'] = $outcome;
+ */
 
 // If input errors, redirect back to the experiment form
 if($errflag) {
     $_SESSION['errors'] = $msg_arr;
     session_write_close();
-    header("location: protocols.php?mode=edit&id=$id");
+    header("location: plasmids.php?mode=edit&id=$id");
     exit();
 }
 
-// SQL for editXP
-    $sql = "UPDATE protocols 
-        SET title = :title, 
+// SQL for editPL
+    $sql = "UPDATE plasmids 
+        SET name = :name, 
         date = :date, 
-        body = :body, 
-        userid = :userid 
-        WHERE id = :id";
+        alias = :alias, 
+        priority = :priority, 
+        resistance = :resistance, 
+        organism = :organism,
+        tag = :tag,
+        comment = :comment,
+        results = :results
+        WHERE id = id";
 $req = $bdd->prepare($sql);
 $result = $req->execute(array(
-    'title' => $title,
-    'date' => $date,
-    'body' => $body,
-    'userid' => $_SESSION['userid'],
-    'id' => $id
+        'date' => $date, 
+        'alias' = $alias, 
+        'priority' = $priority, 
+        'resistance' = $resistance, 
+        'organism' = $organism,
+        'tag' = $tag,
+        'comment' = $comment,
+        'results' = $results,
+        'userid' => $_SESSION['userid'],
+        'id' => $id
 ));
 
 // If FILES are uploaded
@@ -88,7 +108,7 @@ if (is_uploaded_file($_FILES['files']['tmp_name'][0])){
         'comment' => $filecomments[$i],
         'item_id' => $item_id,
         'userid' => $_SESSION['userid'],
-        'type' => 'protocols'
+        'type' => 'plasmids'
     ));
     $req->closeCursor();
             } // end for each file loop
@@ -97,12 +117,12 @@ if (is_uploaded_file($_FILES['files']['tmp_name'][0])){
 
 // Check if insertion is successful
 if($result) {
-    // unset session variables
     unset($_SESSION['new_title']);
     unset($_SESSION['new_date']);
     unset($_SESSION['new_body']);
+    unset($_SESSION['outcome']);
     unset($_SESSION['errors']);
-    header("location: protocols.php?mode=view&id=$id");
+    header("location: plasmids.php?mode=view&id=$id");
 } else {
     die('Something went wrong in the database query. Check the flux capacitor.');
 }

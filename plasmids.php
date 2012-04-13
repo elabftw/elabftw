@@ -24,18 +24,18 @@
 *                                                                               *
 ********************************************************************************/
 require_once('inc/common.php');
-$page_title='Experiments';
+$page_title='Plasmids';
 require_once('inc/head.php');
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
 ?>
 <?php
 if(!isset($_GET['mode']) || ($_GET['mode'] === 'show')) {
-    require_once('inc/showXP.php');
+    require_once('inc/showPL.php');
 } elseif ($_GET['mode'] === 'view') {
-    require_once('inc/viewXP.php');
+    require_once('inc/viewPL.php');
 } elseif ($_GET['mode'] === 'edit') {
-    require_once('inc/editXP.php');
+    require_once('inc/editPL.php');
 } else {
     echo "<p>What are you doing, Dave ?</p>";
 }

@@ -42,6 +42,8 @@ if (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')){
     }
 } elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'prot')){
     $type = 'protocols';
+} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'pla')){
+    $type = 'plasmids';
 } else {
     $msg_arr[] = 'Wrong item type !';
     $_SESSION['infos'] = $msg_arr;
@@ -49,16 +51,6 @@ if (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')){
     exit();
 }
 
-if (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')){
-    $type = 'experiments';
-} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'prot')){
-    $type = 'protocols';
-} else {
-    $msg_arr[] = 'Wrong item type !';
-    $_SESSION['infos'] = $msg_arr;
-    header('location: experiments.php');
-    exit();
-}
 if ($type == 'experiments'){
 // SQL for create experiments
 $sql = "INSERT INTO ".$type."(title, date, body, outcome, userid) VALUES(:title, :date, :body, :outcome, :userid)";
@@ -79,6 +71,24 @@ $result = $req->execute(array(
     'title' => 'Untitled',
     'date' => kdate(),
     'body' => '',
+    'userid' => $_SESSION['userid']));
+}
+
+if ($type == 'plasmids'){
+// SQL for create plasmids
+    $sql = "INSERT INTO ".$type."(name, alias, priority, resistance, organism, tag, comment, date, results, userid) 
+        VALUES(:name, :alias, :priority, :resistance, :organism, :tag, :comment, :date, :results, :userid)";
+$req = $bdd->prepare($sql);
+$result = $req->execute(array(
+    'name' => 'Untitled',
+    'alias' => '',
+    'date' => kdate(),
+    'priority' => '',
+    'resistance' => '',
+    'organism' => '',
+    'tag' => '',
+    'comment' => '',
+    'results' => '',
     'userid' => $_SESSION['userid']));
 }
 // Get what is the item id we just created

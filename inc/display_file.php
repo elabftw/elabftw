@@ -23,10 +23,16 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+// What type of item we are displaying the files of ?
+$type_arr = explode('.', basename($_SERVER['PHP_SELF']));
+$type = $type_arr[0];
 // Check that the item we view has attached files
-$sql = "SELECT id, real_name, long_name, comment, item_id, userid, type FROM uploads WHERE item_id = ".$id;
+$sql = "SELECT id, real_name, long_name, comment, item_id, userid, type FROM uploads WHERE item_id = :id AND type = :type"; 
 $req = $bdd->prepare($sql);
-$req->execute();
+$req->execute(array(
+    'id' => $id,
+    'type' => $type
+));
 $count = $req->rowCount();
 if($count > 0){
     echo "<section id='filesdiv'><h3>ATTACHED FILES</h3>";

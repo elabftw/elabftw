@@ -23,42 +23,31 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 ?>
-<noscript><!-- show warning if javascript is disabled -->
-<ul class="errors">
-<li><img src="img/info.png" alt="" />
-Javascript is disabled. Please enable Javascript to view this site in all its glory. Thank You.</li>
-</ul>
-</noscript>
-
-<div id='logo'>
-<a href="index.php"><span id='eblue'>e</span><span id='lab'>Lab</span><span id='ftw'>FTW</span></a>
-</div>
-
-<div id="logmenu"><p>
+<div id='submenu'><a href="create_item.php?type=pla"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add a plasmid</a>
+<!-- Quick Search Box (search tags) -->
+<form id='quicksearch' method='get' action='plasmids.php'>
+<input type='search' name='tag' placeholder='Search tag' />
+</form><!-- end quick search -->
+</div><!-- end submenu -->
 <?php
-if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
-    echo "<a href='admin.php'>Admin Panel</a> | ";
-    }
-if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
-    echo "Logged in as <a href='profile.php' title='Profile'>".$_SESSION['username']."</a> | 
-        <a href='ucp.php'><img src='themes/".$_SESSION['prefs']['theme']."/img/pref.png' alt='Control panel' title='Control panel' /></a> | 
-        <a href='logout.php'><img src='themes/".$_SESSION['prefs']['theme']."/img/logout.png' alt='' title='Logout' /></a></p>";
-} else {
-    echo "<a href='login.php'>Not logged in !</a>";
-}
+    $sql = "SELECT * 
+        FROM plasmids";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    while ($data = $req->fetch()) {
 ?>
-</div>
-
-<nav><a href="experiments.php?mode=show">Experiments</a>
-<a href="protocols.php?mode=show">Protocols</a>
-<a href="plasmids.php?mode=show">Plasmids</a>
-<a href="search.php">Search</a>
-<a href="team.php">Team</a>
-<a href="http://wiki-bio6.curie.fr" target='_blank'>Wiki</a>
-</nav>
-<hr class='flourishes'>
-<div id='page_title'>
-<h2><?php echo strtoupper($page_title);?></h2>
-</div>
-<?php // print_r($_SESSION); ?>
+                <section onClick="document.location='plasmids.php?mode=view&id=<?php echo $data['id'];?>'" class='item'>
+                <?php
+                echo "<span class='redo_compact'>".$data['date']."</span> ";
+                echo stripslashes($data['name']);
+                echo "</section>";
+    }
+?>
+<script type='text/javascript'>
+<?php
+// KEYBOARD SHORTCUTS
+echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=pla'});";
+?>
+</script>

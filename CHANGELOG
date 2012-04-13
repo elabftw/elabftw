@@ -1,6 +1,7 @@
 /* Changelog for eLabFTW */
 
 Version 0.5.7
+* Plasmids
 * Publish button
 * TinyMCE for editing the body (text formatting)
 * Better info boxes

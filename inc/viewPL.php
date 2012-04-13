@@ -47,6 +47,7 @@ $data = $req->fetch();
 <?php
 echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' title='date' alt='Date :' />".$data['date']."</span><br />
     <a href='plasmids.php?mode=edit&id=".$data['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/edit.png' title='edit' alt='edit' /></a> 
+<a href='duplicate_item.php?id=".$data['id']."&type=pla'><img src='themes/".$_SESSION['prefs']['theme']."/img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a> 
 <a href='javascript:window.print()'><img src='themes/".$_SESSION['prefs']['theme']."/img/print.png' title='Print this page' alt='Print' /></a>";
 echo "<div class='title'>". stripslashes($data['title']) . "</div>";
 echo "<div class='rating'></div>";

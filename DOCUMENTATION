@@ -1,26 +1,48 @@
+eLabFTW DOCUMENTATION
+---------------------
+
 This file is for developpers who want to help with the code, and also for me, as a reminder of stuff I did...
 
+
 eLabFTW uses :
-* PDO in order to deal with the MySQL database
-* jQuery + jQuery UI + various plugins for the eye-candy
-* php version > 5
+* php version > 5 (with PDO)
 * mysql version > 5
 
 Code from others :
-* jQuery Star Rating Plugin v3.14 (2012-02-08)
-    http://www.fyneworks.com/jquery/star-rating/
-    Dual licence : MIT, GPLv2
+* jQuery v1.7.2
 
-* Cornify
-    http://www.cornify.com/
+* jQuery UI v1.8.18
+
+* jQuery plugins :
+    * Inline edit : https://github.com/codenothing/inline-edit
+    * Jeditable : http://www.appelsiini.net/projects/jeditable
+    * Pageslide : http://srobbin.com/jquery-plugins/pageslide/
+    * PubSub : https://github.com/tubalmartin/jquery-pubsub (GPL v3)
+    * Star Rating Plugin v3.14 (2012-02-08)
+        http://www.fyneworks.com/jquery/star-rating/
+        Dual licence : MIT, GPLv2
+
+* Keymaster (for keyboard shortcuts) : https://github.com/madrobby/keymaster (License MIT)
+
+* Todolist : http://web.koesbong.com/2011/01/24/sortable-and-editable-to-do-list-using-html5s-localstorage/
+
+* TinyMCE (html wysiwyg editor) http://www.tinymce.com/ (LGPL)
+
+* Cornify : http://www.cornify.com/
 
 * Google Chart Tools (for statistics on experiments on profile page) 
+
+* Fpdf : http://www.fpdf.org (GPL)
+
+* Swiftmailer : http://swiftmailer.org for sending email with SMTP (GPLv3)
+
+---------------------------
+---------------------------
+
 Use of git : https://gitorious.org/elabftw
 I know all the cool kids are on Github, but Github source code isn't available, unlike gitorious !
 Developped with vim, and 4 spaces indent.
 
-* Use of fpdf http://www.fpdf.org for the pdf creation
-* Use of Swiftmailer http://swiftmailer.org for sending email with SMTP (GPLv3)
 
 // Accounts
 - Passwords are salted with a random salt, stored in SQL with the sha-512 hash.

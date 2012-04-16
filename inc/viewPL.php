@@ -50,7 +50,23 @@ echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/ca
 <a href='duplicate_item.php?id=".$data['id']."&type=pla'><img src='themes/".$_SESSION['prefs']['theme']."/img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a> 
 <a href='javascript:window.print()'><img src='themes/".$_SESSION['prefs']['theme']."/img/print.png' title='Print this page' alt='Print' /></a>";
 echo "<div class='title'>". stripslashes($data['title']) . "</div>";
-echo "<div class='rating'></div>";
+?>
+<!-- STAR RATING read only (disabled='disabled') -->
+<div id='rating'>
+<?php // SQL to get current rating
+$sql = "SELECT rating FROM plasmids WHERE id = ".$id;
+$req = $bdd->prepare($sql);
+$req->execute();
+$rating = $req->fetch();
+?>
+<input id='star1' name="star" type="radio" class="star" value='1' disabled='disabled' <?php if ($rating['rating'] == 1){ echo "checked=checked ";}?>/>
+<input id='star2' name="star" type="radio" class="star" value='2' disabled='disabled' <?php if ($rating['rating'] == 2){ echo "checked=checked ";}?>/>
+<input id='star3' name="star" type="radio" class="star" value='3' disabled='disabled' <?php if ($rating['rating'] == 3){ echo "checked=checked ";}?>/>
+<input id='star4' name="star" type="radio" class="star" value='4' disabled='disabled' <?php if ($rating['rating'] == 4){ echo "checked=checked ";}?>/>
+<input id='star5' name="star" type="radio" class="star" value='5' disabled='disabled' <?php if ($rating['rating'] == 5){ echo "checked=checked ";}?>/>
+</div><!-- END STAR RATING -->
+<br />
+<?php
 // BODY (show only if not empty)
 if ($data['body'] != ''){
 echo "<div class='txt'>".stripslashes($data['body'])."</div>";
@@ -61,6 +77,9 @@ echo "</section>";
 require_once('inc/display_file.php');
 // KEYBOARD SHORTCUTS
 echo "<script type='text/javascript'>
+    $(function(){
+        $('input.star').rating();
+        });
 key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=exp'});
 key('".$_SESSION['prefs']['shortcuts']['edit']."', function(){location.href = 'plasmids.php?mode=edit&id=".$id."'});
 </script>";

@@ -68,7 +68,7 @@ function lucky() {
     }
 }
     </script>
-<!-- ADVANCED SEARCH
+<!-- ADVANCED SEARCH -->
 <p class='trigger'>↓ Advanced search ↓</p>
 <div class='toggle_container align_left'>
 <form name="search" method="post" action="search.php">
@@ -98,8 +98,8 @@ function lucky() {
 <br />
 </span>
 </div>
-</div>
 </form>
+</div>
 </section>
 <script>
 // get what we want to act on -> second input
@@ -117,8 +117,6 @@ function rm_search_field(){
     $('.adv_search_block').filter(":last").remove();
 }
 </script>
--->
-</section>
 
 <?php
 // SIMPLE SEARCH

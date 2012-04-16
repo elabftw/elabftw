@@ -1,7 +1,5 @@
 /////// Priority
-* rating sur plasmides, avec des petites étoiles en ajax à la imdb :D
 * add tag on templates
-* item_id can be the same for different stuff !!! you need to recode all the things !!!
 * export by date range / tag
 * SEARCH
 * when searching for tags on showXP, xp appear NOT in the right order

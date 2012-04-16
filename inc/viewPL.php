@@ -59,11 +59,11 @@ $req = $bdd->prepare($sql);
 $req->execute();
 $rating = $req->fetch();
 ?>
-<input id='star1' name="star" type="radio" class="star" value='1' disabled='disabled' <?php if ($rating['rating'] == 1){ echo "checked=checked ";}?>/>
-<input id='star2' name="star" type="radio" class="star" value='2' disabled='disabled' <?php if ($rating['rating'] == 2){ echo "checked=checked ";}?>/>
-<input id='star3' name="star" type="radio" class="star" value='3' disabled='disabled' <?php if ($rating['rating'] == 3){ echo "checked=checked ";}?>/>
-<input id='star4' name="star" type="radio" class="star" value='4' disabled='disabled' <?php if ($rating['rating'] == 4){ echo "checked=checked ";}?>/>
-<input id='star5' name="star" type="radio" class="star" value='5' disabled='disabled' <?php if ($rating['rating'] == 5){ echo "checked=checked ";}?>/>
+<input id='star1' name="star" type="radio" class="star" value='click to edit' disabled='disabled' <?php if ($rating['rating'] == 1){ echo "checked=checked ";}?>/>
+<input id='star2' name="star" type="radio" class="star" value='click to edit' disabled='disabled' <?php if ($rating['rating'] == 2){ echo "checked=checked ";}?>/>
+<input id='star3' name="star" type="radio" class="star" value='click to edit' disabled='disabled' <?php if ($rating['rating'] == 3){ echo "checked=checked ";}?>/>
+<input id='star4' name="star" type="radio" class="star" value='click to edit' disabled='disabled' <?php if ($rating['rating'] == 4){ echo "checked=checked ";}?>/>
+<input id='star5' name="star" type="radio" class="star" value='click to edit' disabled='disabled' <?php if ($rating['rating'] == 5){ echo "checked=checked ";}?>/>
 </div><!-- END STAR RATING -->
 <br />
 <?php

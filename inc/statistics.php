@@ -60,24 +60,26 @@ echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/statistics.png' alt='
 ?>
 <script type='text/javascript' src='js/google-jsapi.js'></script>
 <script type='text/javascript'>
-      google.load('visualization', '1', {packages:['imagepiechart']});
+      //google.load('visualization', '1', {packages:['imagepiechart']});
+      google.load('visualization', '1', {packages:['corechart']});
       google.setOnLoadCallback(drawChart);
       function drawChart() {
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Outcome');
         data.addColumn('number', 'Experiments number');
-        data.addRows(4);
-        data.setValue(0, 0, 'Need to be redone (<?php echo $redo_p;?>%)');
-        data.setValue(0, 1, <?php echo $redo_p;?>);
-        data.setValue(1, 0, 'Success (<?php echo $success_p;?>%)');
-        data.setValue(1, 1, <?php echo $success_p;?>);
-        data.setValue(2, 0, 'Fail (<?php echo $fail_p;?>%)');
-        data.setValue(2, 1, <?php echo $fail_p;?>);
-        data.setValue(3, 0, 'Running (<?php echo $running_p;?>%)');
-        data.setValue(3, 1, <?php echo $running_p;?>);
+        data.addRows([
+            ['Running', <?php echo $running_p;?>],
+            ['Fail',  <?php echo $fail_p;?>],
+            ['Need to be redone',    <?php echo $redo_p;?>],
+            ['Success',      <?php echo $success_p;?>],
+                      ]);
 
-        var chart = new google.visualization.ImagePieChart(document.getElementById('chart_div'));
-        chart.draw(data, {width: 430, height: 240, title: 'Experiments for <?php echo $_SESSION['username'];?>'});
+        var options = {
+            title: 'Experiments for <?php echo $_SESSION['username'];?>',
+            backgroundColor: '#EEE'
+        }
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
       }
     </script>
  <div id="chart_div" class='center'></div>

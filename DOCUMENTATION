@@ -6,6 +6,15 @@ eLabFTW uses :
 * php version > 5
 * mysql version > 5
 
+Code from others :
+* jQuery Star Rating Plugin v3.14 (2012-02-08)
+    http://www.fyneworks.com/jquery/star-rating/
+    Dual licence : MIT, GPLv2
+
+* Cornify
+    http://www.cornify.com/
+
+* Google Chart Tools (for statistics on experiments on profile page) 
 Use of git : https://gitorious.org/elabftw
 I know all the cool kids are on Github, but Github source code isn't available, unlike gitorious !
 Developped with vim, and 4 spaces indent.

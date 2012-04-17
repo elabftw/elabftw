@@ -22,7 +22,7 @@ abstract class Swift
   static $initPath;
   
   /** Swift Mailer Version number generated during dist release process */
-  const VERSION = '4.1.5';
+  const VERSION = '4.1.6';
   
   /**
    * Internal autoloader for spl_autoload_register().

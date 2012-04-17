@@ -32,9 +32,9 @@ Code from others :
 
 * Google Chart Tools (for statistics on experiments on profile page) 
 
-* Fpdf : http://www.fpdf.org (GPL)
+* Fpdf v1.7 : http://www.fpdf.org (GPL)
 
-* Swiftmailer : http://swiftmailer.org for sending email with SMTP (GPLv3)
+* Swiftmailer v4.1.6 : http://swiftmailer.org for sending email with SMTP (GPLv3)
 
 ---------------------------
 ---------------------------

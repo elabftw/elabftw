@@ -55,9 +55,9 @@ if ($_POST['type'] == 'exp' ){
             die('Something went wrong in the database query. Check the flux capacitor.');
         }
     }
-} elseif ($_POST['type'] == 'prot'){
-    // SQL for add tag to protocol
-    $sql = "INSERT INTO protocols_tags (tag, item_id) VALUES(:tag, :item_id)";
+} elseif ($_POST['type'] == 'item'){
+    // SQL for add tag to database item
+    $sql = "INSERT INTO items_tags (tag, item_id) VALUES(:tag, :item_id)";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
         'tag' => $tag,

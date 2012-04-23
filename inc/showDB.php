@@ -1,0 +1,177 @@
+<?php
+/********************************************************************************
+*                                                                               *
+*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
+*   http://www.elabftw.net/                                                     *
+*                                                                               *
+********************************************************************************/
+
+/********************************************************************************
+*  This file is part of eLabFTW.                                                *
+*                                                                               *
+*    eLabFTW is free software: you can redistribute it and/or modify            *
+*    it under the terms of the GNU Affero General Public License as             *
+*    published by the Free Software Foundation, either version 3 of             *
+*    the License, or (at your option) any later version.                        *
+*                                                                               *
+*    eLabFTW is distributed in the hope that it will be useful,                 *
+*    but WITHOUT ANY WARRANTY; without even the implied                         *
+*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
+*    PURPOSE.  See the GNU Affero General Public License for more details.      *
+*                                                                               *
+*    You should have received a copy of the GNU Affero General Public           *
+*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
+*                                                                               *
+********************************************************************************/
+require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
+?>
+<div id='submenu'>
+<form id='database_search' method='get' action='database.php'>
+<input type='search' name='q' size='50' placeholder='Type your search' />
+</form>
+<br />
+<a href="create_item.php?type=pro"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add a protocol</a> 
+<a href="create_item.php?type=pla"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add a plasmid</a>
+<a href="create_item.php?type=ant"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add an antibody</a>
+<!--
+<a href="create_item.php?type=sir"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add a siRNA</a>
+<a href="create_item.php?type=pap"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add a paper</a>
+<a href="create_item.php?type=lab"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add a labmeeting</a>
+-->
+</div>
+<!-- end submenu -->
+
+<?php
+// VIEWING PREFS //
+$display = $_SESSION['prefs']['display'];
+$limit = $_SESSION['prefs']['limit'];
+
+// Check TAG
+if ((isset($_GET['tag'])) && (!empty($_GET['tag']))) {
+    $tag = stripslashes(filter_var($_GET['tag'], FILTER_SANITIZE_STRING));
+} else {
+    $tag = "";
+}
+
+// OFFSET
+if ((!isset($_GET['offset'])) || (empty($_GET['offset']))) {
+    $offset = '0';
+} elseif (filter_var($_GET['offset'], FILTER_VALIDATE_INT)){
+    $offset = $_GET['offset'];
+} else {
+    die("<p>What are you doing, Dave ?</p>");
+}
+
+// Check CURRENTPAGE
+if ((!isset($_GET['currentpage'])) || (empty($_GET['currentpage']))) {
+    // $currentpage must start at 0 to have $offset = 0
+    $currentpage = '0';
+} elseif ((filter_var($_GET['currentpage'], FILTER_VALIDATE_INT) && ($_GET['currentpage'] > 0))){
+    $currentpage = $_GET['currentpage'];
+} else {
+    $currentpage = 0;
+}
+// for pagination
+$offset = $currentpage * $limit;
+
+// SQL for showDB
+// we show the last 10 uploads
+if(!isset($_GET['q'])){ // if there is no search
+    $sql = "SELECT * 
+        FROM items 
+        ORDER BY id DESC 
+        LIMIT 10";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+
+    while ($data = $req->fetch()) {
+        ?>
+        <section OnClick="document.location='database.php?mode=edit&id=<?php echo $data['id'];?>'" class="item">
+<?php
+        // TAGS
+        $sql = "SELECT tag FROM items_tags WHERE item_id = ".$data['id'];
+        $req = $bdd->prepare($sql);
+        $req->execute();
+        echo "<span class='redo_compact'>".$data['date']."</span> ";
+        echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
+        while($tags = $req->fetch()){
+            echo "<a href='database.php?mode=show&tag=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
+        }
+        echo "</span>";
+        // END TAGS
+        ?>
+        <?php
+        echo "<p class='title'>". stripslashes($data['title']) . "</p>";
+        echo "</section>";
+    } // end while
+} else { //there is a SEARCH
+    $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
+    // we make an array for the resulting ids
+    $results_arr = array();
+    // search in title date and body
+    $sql = "SELECT id FROM items 
+        WHERE (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%')";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    // put resulting ids in the results array
+    while ($data = $req->fetch()) {
+        $results_arr[] = $data['id'];
+    }
+    $req->closeCursor();
+    // now we search in tags, and append the found ids to our result array
+    $sql = "SELECT item_id FROM items_tags WHERE tag LIKE '%$query%'";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    while ($data = $req->fetch()) {
+        $results_arr[] = $data['item_id'];
+    }
+    $req->closeCursor();
+
+    // filter out duplicate ids
+    $results_arr = array_unique($results_arr);
+    // debug
+    print_r($results_arr);
+    echo "count : ".count($results_arr);
+    // TODO fix that shit
+    if (count($results_arr > 1)){
+        echo "Found ".count($results_arr)." results.";
+    } elseif (count($results_arr == 0)){
+        echo "Found 1 result.";
+    } else {
+        echo "Nothing found :(";
+    }
+
+    foreach($results_arr as $result_id) {
+        // SQL to get everything from selected id
+        $sql = "SELECT id, title, date, body FROM items WHERE id = :id";
+        $req = $bdd->prepare($sql);
+        $req->execute(array(
+            'id' => $result_id
+        ));
+        $final_query = $req->fetch();
+            ?>
+            <section OnClick="document.location='database.php?mode=edit&id=<?php echo $final_query['id'];?>'" class="item">
+        <?php
+            // TAGS
+            $tagsql = "SELECT tag FROM items_tags WHERE item_id = ".$final_query['id'];
+            $tagreq = $bdd->prepare($tagsql);
+            $tagreq->execute();
+            echo "<span class='redo_compact'>".$final_query['date']."</span> ";
+            echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
+            while($tags = $tagreq->fetch()){
+                echo "<a href='database.php?mode=show&tag=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
+            }
+            echo "</span>";
+            // END TAGS
+            ?>
+            <?php
+            echo "<p class='title'>". stripslashes($final_query['title']) . "</p>";
+            echo "</section>";
+    } // end foreach
+} // end if there is a search
+
+// KEYBOARD SHORTCUTS
+echo "<script type='text/javascript'>
+key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=prot'});
+</script>";
+?>

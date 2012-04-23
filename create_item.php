@@ -40,14 +40,22 @@ if (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')){
     } else { // no template
         $body = '';
     }
-} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'prot')){
+} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'pro')){
     $type = 'protocols';
 } elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'pla')){
     $type = 'plasmids';
+} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'ant')){
+    $type = 'antibody';
+} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'sir')){
+    $type = 'sirna';
+} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'pap')){
+    $type = 'papers';
+} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'lab')){
+    $type = 'labmeetings';
 } else {
     $msg_arr[] = 'Wrong item type !';
     $_SESSION['infos'] = $msg_arr;
-    header('location: experiments.php');
+    header('location: index.php');
     exit();
 }
 
@@ -65,7 +73,7 @@ $result = $req->execute(array(
 
 if ($type == 'protocols'){
 // SQL for create protocols
-$sql = "INSERT INTO ".$type."(title, date, body, userid) VALUES(:title, :date, :body, :userid)";
+$sql = "INSERT INTO items(title, date, body, userid) VALUES(:title, :date, :body, :userid)";
 $req = $bdd->prepare($sql);
 $result = $req->execute(array(
     'title' => 'Untitled',
@@ -83,7 +91,7 @@ if ($type == 'plasmids'){
 
 
 // SQL for create plasmids
-    $sql = "INSERT INTO ".$type."(title, date, body, userid) 
+    $sql = "INSERT INTO items(title, date, body, userid) 
         VALUES(:title, :date, :body, :userid)";
 $req = $bdd->prepare($sql);
 $result = $req->execute(array(
@@ -93,7 +101,11 @@ $result = $req->execute(array(
     'userid' => $_SESSION['userid']));
 }
 // Get what is the item id we just created
-$sql = "SELECT id FROM ".$type." WHERE userid = :userid ORDER BY id DESC LIMIT 0,1";
+if ($type === 'experiments') {
+    $sql = "SELECT id FROM experiments WHERE userid = :userid ORDER BY id DESC LIMIT 0,1";
+} else {
+    $sql = "SELECT id FROM items WHERE userid = :userid ORDER BY id DESC LIMIT 0,1";
+}
 $req = $bdd->prepare($sql);
 $req->bindParam(':userid', $_SESSION['userid']);
 $req->execute();
@@ -105,7 +117,7 @@ if($result) {
 // info box
 $msg_arr[] = 'New item successfully created.';
 $_SESSION['infos'] = $msg_arr;
-    header('location: '.$type.'.php?mode=edit&id='.$newid.'');
+    header('location: database.php?mode=edit&id='.$newid.'');
 } else {
     die("Something went wrong in the database query. Check the flux capacitor.");
 }

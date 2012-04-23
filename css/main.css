@@ -141,6 +141,12 @@ nav a{
 #quicksearch {
     float:right;
 }
+#database_search {
+    text-align:center;
+}
+#database_search input {
+    font: 20px Helvetica, Verdana, Arial, sans-serif;
+}
 #eblue {
     font: 20px Helvetica, Verdana, Arial, sans-serif;
 }

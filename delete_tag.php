@@ -53,9 +53,9 @@ if ($_POST['type'] == 'exp' ){
             die('Something went wrong in the database query. Check the flux capacitor.');
         }
    }
-} elseif ($_POST['type'] == 'prot'){
-    // SQL for delete tag of protocol
-    $sql = "DELETE FROM protocols_tags WHERE id=".$id;
+} elseif ($_POST['type'] === 'item'){
+    // SQL for delete tag of database
+    $sql = "DELETE FROM items_tags WHERE id=".$id;
     $req = $bdd->prepare($sql);
     $result = $req->execute();
     if (!$result) {

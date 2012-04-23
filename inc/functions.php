@@ -59,7 +59,12 @@ function createPassword($length) {
 function get_ext($filename){
     // Get file extension
     $path_info = pathinfo($filename);
-    return $path_info['extension'];
+    // if no extension
+    if (!empty($path_info['extension'])) {
+        return $path_info['extension'];
+    } else {
+        return false;
+    }
 }
 
 

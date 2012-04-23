@@ -64,15 +64,23 @@ function lucky() {
         // pass it to lucky.php; open tab
         window.open('lucky.php?find=' + search, '_blank');
     } else {
+        // no search query
         alert('You may feel very lucky. But I still need something to search for...');
     }
 }
-    </script>
+</script>
 <!-- ADVANCED SEARCH -->
 <p class='trigger'>↓ Advanced search ↓</p>
 <div class='toggle_container align_left'>
 <form name="search" method="post" action="search.php">
 
+Search in : 
+<select>
+<option value='experiments' name='type'>Experiments</option>
+<option value='protocols' name='type'>Protocols</option>
+<option value='plasmids' name='type'>Plasmids</option>
+</select>
+<br />
 <select id='first_search_select'>
 <option value='title' name='where[]'>Title</option>
 <option value='date' name='where[]'>Date</option>

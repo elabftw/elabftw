@@ -31,7 +31,7 @@ if(filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
     die("<div class='center'><img src='img/hal9000.png' alt='hal' /><br />I'm sorry, Dave. I'm afraid I can't do that.</div>");
 }
 
-if($_GET['type'] == 'exp'){
+if($_GET['type'] == 'experiments'){
 // Check file id is owned by connected user
     $sql = "SELECT userid, real_name, long_name, item_id FROM uploads WHERE id = :id";
     $req = $bdd->prepare($sql);
@@ -60,7 +60,7 @@ if($_GET['type'] == 'exp'){
    } else {
         die("<div class='center'><img src='img/hal9000.png' alt='hal' /><br />I'm sorry, Dave. I'm afraid I can't do that.</div>");
    }
-}elseif ($_GET['type'] === 'prot'){
+}elseif ($_GET['type'] === 'protocols'){
     // Get realname
     $sql = "SELECT real_name, long_name, item_id FROM uploads WHERE id = ".$id;
     $req = $bdd->prepare($sql);

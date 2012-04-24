@@ -147,6 +147,11 @@ nav a{
 #database_search input {
     font: 20px Helvetica, Verdana, Arial, sans-serif;
 }
+
+/* results on database search */
+.result {
+}
+
 #eblue {
     font: 20px Helvetica, Verdana, Arial, sans-serif;
 }
@@ -361,8 +366,25 @@ img {
     width:742px;
     margin:7px auto 7px auto;
     padding:10px;
-    border-radius:20px;
+    border-radius:5px;
+    background-color:#EEE;
+    -webkit-box-shadow: 2px 2px 2px 1px #CCC;
+    -moz-box-shadow: 2px 2px 2px 1px #CCC;
+    box-shadow: 3px 2px 2px 1px #CCC; 
+    border: 1px solid #CCC;
 }
+.pro {
+    width:742px;
+    margin:7px auto 7px auto;
+    padding:10px;
+    border-radius:5px;
+    background-color:#EEE;
+    -webkit-box-shadow: 2px 2px 2px 1px #CCC;
+    -moz-box-shadow: 2px 2px 2px 1px #CCC;
+    box-shadow: 3px 2px 2px 1px #CCC; 
+    border: 1px solid #CCC;
+}
+
 .sub_item {
     width:642px;
     margin:10px auto 10px auto;
@@ -460,7 +482,7 @@ img {
     width:742px;
     margin:15px auto 15px auto;
     padding: 5px;
-    border-radius:20px;
+    border-radius:5px;
 }
 
 .running, .success, .redo, .fail {

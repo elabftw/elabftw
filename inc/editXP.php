@@ -25,7 +25,7 @@
 ********************************************************************************/
 // inc/editXP.php
 ?>
-<script type="text/javascript" src="js/tiny_mce/tiny_mce.js"></script>
+<script src="js/tiny_mce/tiny_mce.js"></script>
 <?php
 // ID
 if (isset($_GET['id']) && !empty($_GET['id'])) {
@@ -143,7 +143,7 @@ require_once('inc/display_file.php');
 </form><!-- end editXP form -->
 </section>
 
-<script type='text/javascript'>
+<script>
 // JAVASCRIPT
 <?php
 // KEYBOARD SHORTCUTS

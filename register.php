@@ -42,7 +42,7 @@ require_once('inc/info_box.php');
 </form>
 <!-- end register form -->
 <!-- give focus to username field on page load -->
-<script type="text/javascript">
+<script>
 document.getElementById("username").focus();
 </script>
 </section>

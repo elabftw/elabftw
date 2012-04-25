@@ -56,7 +56,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 </section>
 <? require_once("inc/footer.php"); ?>
 <!-- BEGIN PASSSWORD RESET FORM -->
-<script type="text/javascript">
+<script>
 $(document).ready(function(){
 	$(".toggle_container").hide();
 	$("a.trigger").click(function(){

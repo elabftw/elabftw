@@ -63,7 +63,7 @@ if($count > 0){
 // END DISPLAY FILES
 ?>
 <!-- using jquery jeditable plugin -->
-<script type='text/javascript'>
+<script>
  $(document).ready(function() {
      $('.editable').editable('editinplace.php', { 
          tooltip : 'Click to edit',

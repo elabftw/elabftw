@@ -31,7 +31,7 @@ require_once('inc/menu.php');
 require_once('inc/info_box.php');
 ?>
 <!-- javascript is at the beginning otherwise if there is no input, exit() is called before JS is read -->
-<script type="text/javascript">
+<script>
 $(document).ready(function(){
     // give focus to search field
     $("#search").focus().select();
@@ -42,7 +42,6 @@ $(document).ready(function(){
         $(this).toggleClass("active").next().slideToggle("slow");
 	});
 });
-
 </script>
 <!-- Search page begin -->
 <section class='item'>
@@ -55,7 +54,7 @@ $(document).ready(function(){
 <a id='submitlucky' href='#' onClick='lucky()'>I'm Feeling Lucky</a>
 <input type='hidden' name='searching_simple' value='yes' />
 </form>
-<script type='text/javascript'>
+<script>
 function lucky() {
     // get input text
     var search = $('#search').val();

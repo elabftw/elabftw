@@ -95,14 +95,14 @@ echo "<link id='maincss' rel='stylesheet' media='all' href='themes/default/style
 <link rel="stylesheet" media="all" href="css/pageslide.css" />
 <link rel="stylesheet" media="all" href="css/jquery.rating.css" />
 <!-- JAVASCRIPT -->
-<script src="js/jquery-1.7.2.min.js" type='text/javascript'></script>
+<script src="js/jquery-1.7.2.min.js"></script>
 <script src="js/jquery-ui-1.8.18.custom.min.js"></script>
 <!-- for editable comments -->
-<script src="js/jquery.jeditable.min.js" type='text/javascript'></script>
+<script src="js/jquery.jeditable.min.js"></script>
 <!-- for keyboard shortcuts -->
-<script src='js/keymaster.js' type='text/javascript'></script>
+<script src='js/keymaster.js'></script>
 <!-- for stars rating -->
-<script src='js/jquery.rating.js' type='text/javascript'></script>
+<script src='js/jquery.rating.js'></script>
 </head>
 
 <body>

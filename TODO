@@ -1,10 +1,8 @@
 /////// Priority
-* et si on mergeait les plasmides, protocols, anticorps, etc... dans une seule base de données avec une searc efficace
-* plasmides show, mettre deux colonnes
+* make_pdf : user html2pdf lib
 * add tag on templates
 * export by date range / tag
 * SEARCH
-* when searching for tags on showXP, xp appear NOT in the right order
 
 ////// Features
 * show last searchs

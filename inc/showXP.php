@@ -144,6 +144,7 @@ if(!isset($_GET['tag'])){
 
     } // end while
 } else { // if we search for a tag
+    // TODO faire comme sur showDB
     // select all tags like 'tag'
     $sql = "SELECT * 
         FROM experiments_tags 
@@ -263,7 +264,7 @@ if ($currentpage != $totalpages) {
 /****** end build pagination links ******/
 ?>
 </section>
-<script type='text/javascript'>
+<script>
 <?php
 // KEYBOARD SHORTCUTS
 echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=exp'});";

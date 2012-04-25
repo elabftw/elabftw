@@ -31,7 +31,7 @@ require_once('inc/head.php');
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
 ?>
-<script type="text/javascript" src="js/tiny_mce/tiny_mce.js"></script>
+<script src="js/tiny_mce/tiny_mce.js"></script>
 <?php
 
 // SQL to get all unvalidated users
@@ -84,7 +84,7 @@ $data = $req->fetch();
     </form>
 </section>
 
-<script type='text/javascript'>
+<script>
 tinyMCE.init({
     theme : "advanced",
     mode : "specific_textareas",

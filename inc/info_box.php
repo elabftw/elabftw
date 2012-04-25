@@ -43,7 +43,7 @@ if (isset($_SESSION['infos']) && is_array($_SESSION['infos']) && count($_SESSION
 }
 ?>
 
-<script type='text/javascript'>
+<script>
 // box explode when user click on it
 $(document).ready(function(){
     $("ul.errors, ul.infos").click(function(){

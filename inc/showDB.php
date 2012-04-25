@@ -33,11 +33,6 @@ require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 <a href="create_item.php?type=pro"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add a protocol</a> 
 <a href="create_item.php?type=pla"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add a plasmid</a>
 <a href="create_item.php?type=ant"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add an antibody</a>
-<!--
-<a href="create_item.php?type=sir"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add a siRNA</a>
-<a href="create_item.php?type=pap"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add a paper</a>
-<a href="create_item.php?type=lab"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add a labmeeting</a>
--->
 </div>
 <!-- end submenu -->
 
@@ -144,7 +139,7 @@ if(!isset($_GET['q'])){ // if there is no search
 } // end if there is a search
 
 // KEYBOARD SHORTCUTS
-//echo "<script type='text/javascript'>
+//echo "<script>
 //key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=prot'});
 //</script>";
 ?>

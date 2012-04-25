@@ -58,8 +58,8 @@ $total_p = ($success_p + $fail_p + $redo_p + $running_p);
 // BEGIN CONTENT
 echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/statistics.png' alt='' /> <h4>STATISTICS</h4>";
 ?>
-<script type='text/javascript' src='js/google-jsapi.js'></script>
-<script type='text/javascript'>
+<script src='js/google-jsapi.js'></script>
+<script>
       //google.load('visualization', '1', {packages:['imagepiechart']});
       google.load('visualization', '1', {packages:['corechart']});
       google.setOnLoadCallback(drawChart);

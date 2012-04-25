@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 ?>
-<script src="js/editinplace.js" type="text/javascript"></script>
+<script src="js/editinplace.js"></script>
 <?php
 // ID
 if (isset($_GET['id']) && !empty($_GET['id'])) {
@@ -84,7 +84,7 @@ echo "</section>";
 // DISPLAY FILES
 require_once('inc/display_file.php');
 // KEYBOARD SHORTCUTS
-echo "<script type='text/javascript'>
+echo "<script>
 key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=prot'});
 key('".$_SESSION['prefs']['shortcuts']['edit']."', function(){location.href = 'protocols.php?mode=edit&id=".$id."'});
 </script>";

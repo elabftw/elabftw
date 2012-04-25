@@ -36,7 +36,7 @@ $data = $req->fetch();
 
 // BEGIN UCP PAGE
 ?>
-<script type="text/javascript" src="js/tiny_mce/tiny_mce.js"></script>
+<script src="js/tiny_mce/tiny_mce.js"></script>
 <div id='accordion'>
 <h3><a href='#infos'>PERSONNAL INFORMATIONS</a></h3>
 <div>
@@ -201,7 +201,7 @@ while ($data = $req->fetch()) {
 <?php
 require_once('inc/footer.php');
 ?>
-<script type="text/javascript">
+<script>
 // ACCORDION
 $(function() {
     $( "#accordion" ).accordion({ 

@@ -96,7 +96,7 @@ while ($data = $req->fetch()) {
 // END DISPLAY FILES
 ?>
 <!-- using jquery jeditable plugin -->
-<script type='text/javascript'>
+<script>
  $(document).ready(function() {
      $('.editable').editable('editinplace.php', { 
          tooltip : 'Click to edit',
@@ -150,7 +150,7 @@ while ($data = $req->fetch()) {
 // END DISPLAY FILES
 ?>
 <!-- using jquery jeditable plugin -->
-<script type='text/javascript'>
+<script>
  $(document).ready(function() {
      $('.editable').editable('editinplace.php', { 
          tooltip : 'Click to edit',
@@ -230,7 +230,7 @@ echo "<p>This journal club has passed : <a href='jc-exec.php?inc=1'>increment</a
 
 <?php require_once('inc/footer.php');?>
 
-<script type="text/javascript">
+<script>
 // ACCORDION
 $(function() {
     $( "#accordion" ).accordion({ 

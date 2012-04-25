@@ -1,21 +1,38 @@
+<?php
+/********************************************************************************
+*                                                                               *
+*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
+*   http://www.elabftw.net/                                                     *
+*                                                                               *
+********************************************************************************/
+
+/********************************************************************************
+*  This file is part of eLabFTW.                                                *
+*                                                                               *
+*    eLabFTW is free software: you can redistribute it and/or modify            *
+*    it under the terms of the GNU Affero General Public License as             *
+*    published by the Free Software Foundation, either version 3 of             *
+*    the License, or (at your option) any later version.                        *
+*                                                                               *
+*    eLabFTW is distributed in the hope that it will be useful,                 *
+*    but WITHOUT ANY WARRANTY; without even the implied                         *
+*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
+*    PURPOSE.  See the GNU Affero General Public License for more details.      *
+*                                                                               *
+*    You should have received a copy of the GNU Affero General Public           *
+*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
+*                                                                               *
+********************************************************************************/
+?>
 <!-- FILE UPLOAD -->
-<script type="text/javascript">
+<script>
 $(document).ready(function(){
 	$(".toggle_container").hide();
 	$("h4.trigger").click(function(){
 		$(this).toggleClass("active").next().slideToggle("slow");
 	});
 });
-</script>
-<hr class='flourishes'>
-<br />
-<div class='attachFileDiv'>
-<h4 class='trigger'>Click to add a file</h4>
-<div class='toggle_container'>
-<div class='addFileDiv'>
-<!-- max file size here to avoid waiting for uploading a too big file (can be fooled browser side) -->
-<input type='hidden' name='MAX_FILE_SIZE' value='200000000000000000000' />
-<script type='text/javascript'>
+// javascript to add an upload field
 function add_file_field(){
 var container=document.getElementById('file_container');
 var com_container=document.getElementById('filecomment_container');
@@ -33,6 +50,15 @@ var br_field=document.createElement('br');
 container.appendChild(br_field);
 }
 </script>
+
+<hr class='flourishes'>
+<br />
+<div class='attachFileDiv'>
+<h4 class='trigger'>Click to add a file</h4>
+<div class='toggle_container'>
+<div class='addFileDiv'>
+<!-- max file size here to avoid waiting for uploading a too big file (can be fooled browser side) -->
+<input type='hidden' name='MAX_FILE_SIZE' value='200000000000000000000' />
 <div id='file_container'>
     <input name="files[]" type="file"  />
     <input size='35' placeholder='Enter a comment for the file' name='filescom[]' />

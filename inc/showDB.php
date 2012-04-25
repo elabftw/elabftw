@@ -56,7 +56,7 @@ if(!isset($_GET['q'])){ // if there is no search
     $req->execute();
     while ($data = $req->fetch()) {
         ?>
-            <section OnClick="document.location='database.php?mode=edit&id=<?php echo $data['id'];?>'" class="<?php echo $data['type'];?>">
+            <section OnClick="document.location='database.php?mode=edit&id=<?php echo $data['id'];?>'" class="item <?php echo $data['type'];?>">
 <?php
         // TAGS
         $sql = "SELECT tag FROM items_tags WHERE item_id = ".$data['id'];
@@ -120,7 +120,7 @@ if(!isset($_GET['q'])){ // if there is no search
         ));
         $final_query = $req->fetch();
         ?>
-        <section OnClick="document.location='database.php?mode=view&id=<?php echo $final_query['id'];?>'" class="result <?php echo $final_query['type'];?>">
+        <section OnClick="document.location='database.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item <?php echo $final_query['type'];?>">
         <?php
         // TAGS
         $tagsql = "SELECT tag FROM items_tags WHERE item_id = ".$final_query['id'];

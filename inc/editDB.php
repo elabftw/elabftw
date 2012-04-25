@@ -39,7 +39,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 }
 
 // GET CONTENT
-$sql = "SELECT title, date, body, userid FROM items WHERE id = ".$id;
+$sql = "SELECT * FROM items WHERE id = ".$id;
 $req = $bdd->prepare($sql);
 $req->execute();
 $data = $req->fetch();
@@ -70,7 +70,8 @@ echo stripslashes($tags['tag']);?>
 <!-- BEGIN 2ND FORM -->
 <form method="post" action="editDB-exec.php" enctype='multipart/form-data'>
 <input name='item_id' type='hidden' value='<? echo $id;?>' />
-<input name='date' type='hidden' value='<?php echo kdate();?>'>
+<h4>Date</h4><span class='smallgray'> (date format : YYMMDD)</span><br />
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /><input name='date' id='datepicker' size='6' type='text' value='<?php echo $data['date'];?>' /><br />
 <h4>Title</h4><br />
       <textarea id='title' name='title' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
           echo stripslashes($data['title']);
@@ -78,6 +79,15 @@ echo stripslashes($tags['tag']);?>
           echo stripslashes($_SESSION['new_title']);
       } ?></textarea>
  <br /><br />
+<!-- STAR RATING via ajax request -->
+<div id='rating'>
+<input id='star1' name="star" type="radio" class="star" value='1' <?php if ($data['rating'] == 1){ echo "checked=checked ";}?>/>
+<input id='star2' name="star" type="radio" class="star" value='2' <?php if ($data['rating'] == 2){ echo "checked=checked ";}?>/>
+<input id='star3' name="star" type="radio" class="star" value='3' <?php if ($data['rating'] == 3){ echo "checked=checked ";}?>/>
+<input id='star4' name="star" type="radio" class="star" value='4' <?php if ($data['rating'] == 4){ echo "checked=checked ";}?>/>
+<input id='star5' name="star" type="radio" class="star" value='5' <?php if ($data['rating'] == 5){ echo "checked=checked ";}?>/>
+</div><!-- END STAR RATING -->
+<br />
 <h4>Infos</h4><br />
       <textarea class='mceditable' name='body' rows="15" cols="80"><?php if(empty($_SESSION['errors'])){
         echo stripslashes($data['body']);
@@ -166,6 +176,38 @@ function addTagOnEnter(e){ // the argument here is the event (needed to detect w
     return false;
         })
     } // end if key is enter
+}
+// DATEPICKER + STAR RATINGS
+$(function() {
+    $( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
+    $('input.star').rating();
+    $('#star1').click(function() {
+        updateRating(1);
+    });
+    $('#star2').click(function() {
+        updateRating(2);
+    });
+    $('#star3').click(function() {
+        updateRating(3);
+    });
+    $('#star4').click(function() {
+        updateRating(4);
+    });
+    $('#star5').click(function() {
+        updateRating(5);
+    });
+});
+function updateRating(rating) {
+        // POST request
+        var jqxhr = $.post('star-rating.php', {
+            star: rating,
+            item_id: <?php echo $id; ?>
+        })
+        // reload the div
+        .done(function () {
+            //$("#rating").load("plasmids.php?mode=edit&id=<?php echo $id;?> #rating");
+            return false;
+        })
 }
 tinyMCE.init({
     theme : "advanced",

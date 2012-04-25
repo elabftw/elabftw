@@ -23,12 +23,12 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-/* star-rating.php - for plasmids rating */
+/* star-rating.php - for items rating */
 require_once('inc/common.php');
 if (isset($_POST['star']) && is_numeric($_POST['star'])) {
     $rating = $_POST['star'];
     $id = $_POST['item_id'];
-    $sql = "UPDATE plasmids SET rating = :rating WHERE id = :id";
+    $sql = "UPDATE items SET rating = :rating WHERE id = :id";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
         'rating' => $rating,

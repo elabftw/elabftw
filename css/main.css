@@ -2,14 +2,14 @@
 /********************************************************************************
 *                                                                               *
 *   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
-*   http://www.elabftw.net/                                                     *
+*   http: //www.elabftw.net/                                                     *
 *                                                                               *
 ********************************************************************************/
 
 /********************************************************************************
 *  This file is part of eLabFTW.                                                *
 *                                                                               *
-*    eLabFTW is free software: you can redistribute it and/or modify            *
+*    eLabFTW is free software:  you can redistribute it and/or modify            *
 *    it under the terms of the GNU Affero General Public License as             *
 *    published by the Free Software Foundation, either version 3 of             *
 *    the License, or (at your option) any later version.                        *
@@ -20,132 +20,132 @@
 *    PURPOSE.  See the GNU Affero General Public License for more details.      *
 *                                                                               *
 *    You should have received a copy of the GNU Affero General Public           *
-*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
+*    License along with eLabFTW.  If not, see <http: //www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
 #container {
-    border-radius:20px;
-    font:16px Verdana, Arial, Helvetica, sans-serif;
-    margin:auto;
-    opacity:0.95;
-    padding:10px 20px 10px 20px;
-    width:900px;
+    border-radius: 20px;
+    font: 16px Verdana, Arial, Helvetica, sans-serif;
+    margin: auto;
+    opacity: 0.95;
+    padding: 10px 20px 10px 20px;
+    width: 900px;
 }
 /* LINKS */
 a {
-    color: #000;
+    color:  #000;
 }
-a:hover {
-    color: red;
+a: hover {
+    color:  red;
 }
 
 /* GENERAL */
 .center{
-    text-align:center;
+    text-align: center;
 }
 
 .align_right{
-    float:right;
+    float: right;
 }
 
 .align_left{
-    text-align:left;
+    text-align: left;
 }
 p{
-    font:16px Verdana, Arial, Helvetica, sans-serif;
+    font: 16px Verdana, Arial, Helvetica, sans-serif;
 }
 
 p a{
-    font:16px Verdana, Arial, Helvetica, sans-serif;
-    text-decoration:none;
+    font: 16px Verdana, Arial, Helvetica, sans-serif;
+    text-decoration: none;
 }
 
 .strong {
-    font-weight:bold;
+    font-weight: bold;
 }
 
 hr {
-    margin:10px 0 10px 0;
+    margin: 10px 0 10px 0;
 }
 
 li.inline {
-    display:inline;
+    display: inline;
 }
 
 /* INFO BOX */
 .errors {
-    background-color: #e8c5c9;
-    border: 1px solid #ab80c2;
-    border-radius:5px;
-    -webkit-box-shadow: 0px 1px 0px #cbe9c7 inset;
-    -moz-box-shadow: inset 0px 1px 0px #cbe9c7;
-    color: #b24040;
-    font:14px Verdana, Arial;
-    padding:7px;
-    text-shadow: 0px 1px #f3f9fc;
+    background-color:  #e8c5c9;
+    border:  1px solid #ab80c2;
+    border-radius: 5px;
+    -webkit-box-shadow:  0px 1px 0px #cbe9c7 inset;
+    -moz-box-shadow:  inset 0px 1px 0px #cbe9c7;
+    color:  #b24040;
+    font: 14px Verdana, Arial;
+    padding: 7px;
+    text-shadow:  0px 1px #f3f9fc;
 }
 .infos {
-    background-color: #ace0a8;
-    border: 1px solid #96c17f;
-    border-radius:5px;
-    -webkit-box-shadow: 1px 1px 0px #cbe9c7 inset;
-    -moz-box-shadow: inset 1px 1px 0px #cbe9c7;
-    color: #3f713a;
-    font:14px Verdana, Arial;
-    padding:7px;
-    text-shadow: 0px 1px #f3f9fc;
+    background-color:  #ace0a8;
+    border:  1px solid #96c17f;
+    border-radius: 5px;
+    -webkit-box-shadow:  1px 1px 0px #cbe9c7 inset;
+    -moz-box-shadow:  inset 1px 1px 0px #cbe9c7;
+    color:  #3f713a;
+    font: 14px Verdana, Arial;
+    padding: 7px;
+    text-shadow:  0px 1px #f3f9fc;
 }
 
 /* HEAD */
 #logo {
-    float:left;
+    float: left;
 }
 
 #page_title {
-    clear:both;
-    text-align:center;
+    clear: both;
+    text-align: center;
 }
 
 nav{
-    clear:both;
-    margin:-10px;
-    text-align:center;
+    clear: both;
+    margin: -10px;
+    text-align: center;
 }
 
 nav a{
-    font-size:20px;
-    line-height:300%;
-    padding:5px 10px 5px 10px;
-    text-decoration:none;
+    font-size: 20px;
+    line-height: 300%;
+    padding: 5px 10px 5px 10px;
+    text-decoration: none;
 }
 
 #logmenu {
-    float:right;
-    top:30px;
+    float: right;
+    top: 30px;
 }
 
 #logmenu p{
-    font: 13px Verdana, Arial, Helvetica, sans-serif;
-    padding-bottom:7px;
+    font:  13px Verdana, Arial, Helvetica, sans-serif;
+    padding-bottom: 7px;
 }
 #logmenu p a{
-    font: 13px Verdana, Arial, Helvetica, sans-serif;
+    font:  13px Verdana, Arial, Helvetica, sans-serif;
 }
 /* submenu */
 #submenu {
-    border-bottom:1px dotted #CCC;
-    margin-bottom:15px;
-    padding-bottom:15px;
+    border-bottom: 1px dotted #CCC;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
 }
 
 #quicksearch {
-    float:right;
+    float: right;
 }
 #database_search {
-    text-align:center;
+    text-align: center;
 }
 #database_search input {
-    font: 20px Helvetica, Verdana, Arial, sans-serif;
+    font:  20px Helvetica, Verdana, Arial, sans-serif;
 }
 
 /* results on database search */
@@ -153,354 +153,370 @@ nav a{
 }
 
 #eblue {
-    font: 20px Helvetica, Verdana, Arial, sans-serif;
+    font:  20px Helvetica, Verdana, Arial, sans-serif;
 }
 
 #lab{
-    font: 24px Verdana, Arial, Helvetica, sans-serif;
+    font:  24px Verdana, Arial, Helvetica, sans-serif;
 }
 #ftw{
-    font: 30px Impact, Arial, Verdana, sans-serif;
+    font:  30px Impact, Arial, Verdana, sans-serif;
     /* no browser support
-    font-stretch:extra-expended;*/
+    font-stretch: extra-expended;*/
 }
 
 /* TITLES */
 h1{
-    margin-top:-5px;
-    text-align:center;
-    width:140px;
+    margin-top: -5px;
+    text-align: center;
+    width: 140px;
 }
 h1 a {
-    text-decoration:none;
+    text-decoration: none;
 }
 h2 {
-    font:24px Verdana, Arial, Helvetica, sans-serif;
-    text-align:center;
-    width:100%;
+    font: 24px Verdana, Arial, Helvetica, sans-serif;
+    text-align: center;
+    width: 100%;
 }
 
 
 
 h3 {
-    font:20px Verdana, Arial, Helvetica, sans-serif;
-    margin:0 auto 10px auto;
-    text-align:center;
-    width:100%;
+    font: 20px Verdana, Arial, Helvetica, sans-serif;
+    margin: 0 auto 10px auto;
+    text-align: center;
+    width: 100%;
 }
 
 h4 {
-    display:inline;
-    font:18px Verdana, Arial, Helvetica, sans-serif;
+    display: inline;
+    font: 18px Verdana, Arial, Helvetica, sans-serif;
 }
 
 .inline {
-    display:inline;
+    display: inline;
 }
 /* MENU */
 
 /**** SEARCH PAGE *******/
 #first_search_select {
-    margin-left:64px;
+    margin-left: 64px;
 }
 
 #submitlucky, #submit
 {
-    border:1px solid black;
-	color: #23441e;
-	cursor: pointer;
-	font: bold 14px Arial, Helvetica;
-	margin: 20px 0 0 20px;
-    opacity:0.7;
-    padding: 7px;
-	text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+    border: 1px solid black;
+	color:  #23441e;
+	cursor:  pointer;
+	font:  bold 14px Arial, Helvetica;
+	margin:  20px 0 0 20px;
+    opacity: 0.7;
+    padding:  7px;
+	text-shadow:  0 1px 0 rgba(255,255,255,0.5);
 }
 
-#submit:hover, #submitlucky:hover
+#submit: hover, #submitlucky: hover
 {
-    opacity:1;
+    opacity: 1;
 }	
 
 /* end search bar */
 
 .search_results_div {
-    -moz-column-count: 2;
-    -moz-column-gap: 10px;
-    -webkit-column-count: 2;
-    -webkit-column-gap: 10px;
-    column-count: 2;
-    column-gap: 10px; 
+    -moz-column-count:  2;
+    -moz-column-gap:  10px;
+    -webkit-column-count:  2;
+    -webkit-column-gap:  10px;
+    column-count:  2;
+    column-gap:  10px; 
 }
 
 .search_result {
-    background:#EEE;
-    border:1px solid black;
-    border-radius:20px;
-    box-shadow: 2px 2px 2px 2px #CCC; 
-    -webkit-box-shadow: 2px 2px 2px 2px #CCC;
-    -moz-box-shadow: 2px 2px 2px 2px #CCC;
-    margin:7px auto 7px auto;
-    padding:10px;
-    overflow:hidden;
-    width:350px;
+    background: #EEE;
+    border: 1px solid black;
+    border-radius: 20px;
+    box-shadow:  2px 2px 2px 2px #CCC; 
+    -webkit-box-shadow:  2px 2px 2px 2px #CCC;
+    -moz-box-shadow:  2px 2px 2px 2px #CCC;
+    margin: 7px auto 7px auto;
+    padding: 10px;
+    overflow: hidden;
+    width: 350px;
 }
 
-.search_result:hover {
-    background:#FFF;
+.search_result: hover {
+    background: #FFF;
 }
 
 /* number of search results */
 #search_count {
-    clear:right;
-    filter: dropshadow(color=#AAA, offx=2, offy=2); 
-    text-shadow: 2px 2px 2px #AAA;
+    clear: right;
+    filter:  dropshadow(color=#AAA, offx=2, offy=2); 
+    text-shadow:  2px 2px 2px #AAA;
 }
 
 /* LOGIN */
 .login{
-    border:2px solid blue;
-    border-radius:20px;
-    padding:10px;
-    margin:10px 7px 10px 7px;
+    border: 2px solid blue;
+    border-radius: 20px;
+    padding: 10px;
+    margin: 10px 7px 10px 7px;
 
 }
 
 .innerdiv {
-    border-radius:20px;
-    margin:auto;
-    text-align:center;
-    width:600px;
+    border-radius: 20px;
+    margin: auto;
+    text-align: center;
+    width: 600px;
 }
 
 .innerinnerdiv {
-    left:-30px;
-    margin:auto;
-    position:relative;
-    text-align:right;
-    width:500px;
+    left: -30px;
+    margin: auto;
+    position: relative;
+    text-align: right;
+    width: 500px;
 }
 
 /* END REGISTER */
 
 .attachFileDiv {
-    border: 3px solid #CCC;
-    border-radius:20px;
-    margin:0 auto 0 auto;
-    text-align:center;
-    width:80%;
+    border:  3px solid #CCC;
+    border-radius: 20px;
+    margin: 0 auto 0 auto;
+    text-align: center;
+    width: 80%;
 }
 
 .submitbutton{
-    border-radius:10px;
-    font-size:20px;
+    border-radius: 10px;
+    font-size: 20px;
 }
 #submitDiv{
-    text-align:right;
+    text-align: right;
 }
 
 /***********/
 textarea{
-    border: 3px solid #CCC;
-    font-family: Verdana, Arial, Helvetica, sans-serif;
-    padding: 5px;
+    border:  3px solid #CCC;
+    font-family:  Verdana, Arial, Helvetica, sans-serif;
+    padding:  5px;
 }
 /* BACKGROUND OF THE EDITOR */
 /* toolbar */
 .nicEdit-panel {
-    background-color: #fff;
+    background-color:  #fff;
 }
 .nicEdit-main {
-    background-color: #fff;
+    background-color:  #fff;
 }
 
 .input {
-    border: 3px solid #CCC;
-    margin:5px 0 5px 0;
-    padding: 5px;
+    border:  3px solid #CCC;
+    margin: 5px 0 5px 0;
+    padding:  5px;
 }
 /* comments for files */
 .addFileDiv {
-    margin:10px;
+    margin: 10px;
 }
 
 .filesdiv {
-    border-radius:20px;
+    border-radius: 20px;
 }
 .filesdiv p {
-    display:inline;
+    display: inline;
 }
 
 .com_file_field{
-    margin:10px 0 0 4px;
+    margin: 10px 0 0 4px;
 }
 
 img {
-    border:none;
-    position:relative;
-    top:3px;
+    border: none;
+    position: relative;
+    top: 3px;
 }
 
 /* ITEMS */
 .item {
-    background-color:#EEE;
-    border: 1px solid #CCC;
-    border-radius:5px;
-    box-shadow: 3px 2px 2px 1px #CCC; 
-    -webkit-box-shadow: 2px 2px 2px 1px #CCC;
-    -moz-box-shadow: 2px 2px 2px 1px #CCC;
-    margin:7px auto 7px auto;
-    padding:10px;
-    width:742px;
+    background-color: #EEE;
+    border:  1px solid #CCC;
+    border-radius: 5px;
+    box-shadow:  3px 2px 2px 1px #CCC; 
+    -webkit-box-shadow:  2px 2px 2px 1px #CCC;
+    -moz-box-shadow:  2px 2px 2px 1px #CCC;
+    margin: 7px auto 7px auto;
+    padding: 10px;
+    width: 742px;
 }
 
-.sub_item {
-    border-radius:7px;
-    margin:10px auto 10px auto;
-    padding:10px;
-    width:642px;
+/* item style for experiments */
+.running {
+    border: 2px dotted blue !important;
+}
+
+.success {
+    border: 2px solid green !important;
+}
+
+.fail {
+    border: 2px solid red !important;
+}
+
+.redo {
+    border: 2px solid gray !important;
+}
+
+/* item style for database items */
+.pro {
+    background-color: red !important;
+}
+
+.pla {
+    background-color: green !important;
 }
 
 .simple_border {
-    border-radius:20px;
-    padding:10px;
+    border-radius: 20px;
+    padding: 10px;
 }
 
 .title {
-    border-radius:15px;
-    font-size: 20px;
-    line-height:120%;
-    margin:5px;
-    padding:5px;
-    width:650px;
+    border-radius: 15px;
+    font-size:  20px;
+    line-height: 120%;
+    margin: 5px;
+    padding: 5px;
+    width: 650px;
 }
 
-.date{
-    font: 14px Verdana, Arial,sans-serif;
+.date {
+    font:  14px Verdana, Arial,sans-serif;
+}
+
+#rating {
+    display: inline;
 }
 
 .tags {
-    border-radius:15px;
-    font: 12px Courier,Arial,sans-serif;
-    line-height:200%;
-    margin:10px 0px 10px 5px;
-    padding:3px;
-    width:680px;
+    border-radius: 15px;
+    font:  12px Courier,Arial,sans-serif;
+    line-height: 200%;
+    margin: 10px 0px 10px 5px;
+    padding: 3px;
+    width: 680px;
 }
 .tags a{
-    text-decoration:none;
+    text-decoration: none;
 }
 .tags_compact {
-    border-radius:15px;
-    font: 12px Courier,Arial,sans-serif;
-    line-height:200%;
-    padding:5px;
-    margin:10px 0px 10px 25px;
+    border-radius: 15px;
+    font:  12px Courier,Arial,sans-serif;
+    line-height: 200%;
+    padding: 5px;
+    margin: 10px 0px 10px 25px;
 }
 .tags_compact a{
-    text-decoration:none;
+    text-decoration: none;
 }
 #tagdiv{
-    padding:5px;
-    width:442px;
+    padding: 5px;
+    width: 442px;
 }
 
 .tag {
-    font:bold 13px Verdana, Arial, Helvetica, sans-serif;
-    line-height:160%;
+    font: bold 13px Verdana, Arial, Helvetica, sans-serif;
+    line-height: 160%;
 }
 .tag a {
-    padding:5px 5px 5px 5px;
-    text-decoration:none;
+    padding: 5px 5px 5px 5px;
+    text-decoration: none;
 }
 
 .smallgray{
-    font:12px Verdana, Arial, Helvetica, sans-serif;
+    font: 12px Verdana, Arial, Helvetica, sans-serif;
 }
 
 #addtaginput {
-    margin-top:7px;
+    margin-top: 7px;
 }
 /* ucp.php */
 #currpass {
-    background-color:#FFABAB;
+    background-color: #FFABAB;
 }
 
 
 .themes_div {
-    -moz-column-count: 2;
-    -moz-column-gap: 10px;
-    -webkit-column-count: 2;
-    -webkit-column-gap: 10px;
-    column-count: 2;
-    column-gap: 10px; 
+    -moz-column-count:  2;
+    -moz-column-gap:  10px;
+    -webkit-column-count:  2;
+    -webkit-column-gap:  10px;
+    column-count:  2;
+    column-gap:  10px; 
 }
 /* TEMPLATES */
 .templates {
-    font:12px Verdana, Arial, Helvetica, sans-serif;
-    line-height:300%;
-    padding:7px;
+    font: 12px Verdana, Arial, Helvetica, sans-serif;
+    line-height: 300%;
+    padding: 7px;
 }
 
 .txt {
-    font-size:16px;
-    padding:5px;
+    font-size: 16px;
+    padding: 5px;
 }
 
 .running_compact, .success_compact, .redo_compact, .fail_compact {
-    border-radius:5px;
-    margin:15px auto 15px auto;
-    padding: 5px;
-    width:742px;
-}
-
-.running, .success, .redo, .fail {
-    border-radius:20px;
-    margin:10px auto 10px auto;
-    padding: 10px;
-    width:742px;
+    border-radius: 5px;
+    margin: 15px auto 15px auto;
+    padding:  5px;
+    width: 742px;
 }
 
 .filesdiv{
-    font:14px Verdana, Arial, Helvetica, sans-serif;
-    margin:10px auto 10px auto;
+    font: 14px Verdana, Arial, Helvetica, sans-serif;
+    margin: 10px auto 10px auto;
     padding: 5px;
-    width:550px;
+    width: 550px;
 }
 .filesdiv a{
-    font:14px Verdana, Arial, Helvetica, sans-serif;
-    text-decoration:none;
+    font: 14px Verdana, Arial, Helvetica, sans-serif;
+    text-decoration: none;
 }
 
 .file_item{
-    border-radius:20px;
-    margin:10px auto 10px auto;
-    padding: 5px;
-    width:342px;
+    border-radius: 20px;
+    margin: 10px auto 10px auto;
+    padding:  5px;
+    width: 342px;
 }
 
 .filesize{
-    font-size:10px;
+    font-size: 10px;
 }
 
 /* PROFILE PAGE */
 #tagcloud {
-    text-align:center;
+    text-align: center;
 }
 
 /* FOOTER */
 footer {
-    font-size:11px;
-    margin:15px 0 5px 0;
-    padding:5px 0 5px 0;
-    text-align:center;
+    font-size: 11px;
+    margin: 15px 0 5px 0;
+    padding: 5px 0 5px 0;
+    text-align: center;
 }
 footer p, footer p a {
-    font-size:11px;
-    line-height:20%;
-    text-align:center;
+    font-size: 11px;
+    line-height: 20%;
+    text-align: center;
 }
 
 /* PAGINATION */
 .pagination{
-    text-align:center;
+    text-align: center;
 }

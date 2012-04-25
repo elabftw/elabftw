@@ -56,7 +56,7 @@ if(!isset($_GET['q'])){ // if there is no search
     $req->execute();
     while ($data = $req->fetch()) {
         ?>
-            <section OnClick="document.location='database.php?mode=edit&id=<?php echo $data['id'];?>'" class="item <?php echo $data['type'];?>">
+            <section OnClick="document.location='database.php?mode=view&id=<?php echo $data['id'];?>'" class="item <?php echo $data['type'];?>">
 <?php
         // TAGS
         $sql = "SELECT tag FROM items_tags WHERE item_id = ".$data['id'];
@@ -92,6 +92,13 @@ if(!isset($_GET['q'])){ // if there is no search
     $req->closeCursor();
     // now we search in tags, and append the found ids to our result array
     $sql = "SELECT item_id FROM items_tags WHERE tag LIKE '%$query%' LIMIT 100";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    while ($data = $req->fetch()) {
+        $results_arr[] = $data['item_id'];
+    }
+    // now we search in file comments and filenames
+    $sql = "SELECT item_id FROM uploads WHERE (comment LIKE '%$query%') OR (real_name LIKE '%$query%') LIMIT 100";
     $req = $bdd->prepare($sql);
     $req->execute();
     while ($data = $req->fetch()) {

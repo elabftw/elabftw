@@ -78,7 +78,7 @@ echo stripslashes($tags['tag']);?>
       } else {
           echo stripslashes($_SESSION['new_title']);
       } ?></textarea>
- <br /><br />
+<br />
 <!-- STAR RATING via ajax request -->
 <div id='rating'>
 <input id='star1' name="star" type="radio" class="star" value='1' <?php if ($data['rating'] == 1){ echo "checked=checked ";}?>/>

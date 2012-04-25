@@ -168,7 +168,7 @@ if(!isset($_GET['tag'])){
         while($data = $req->fetch()){
             ?>
             <!-- BEGIN CONTENT -->
-            <section OnClick="document.location='experiments.php?mode=view&id=<?php echo $data['id'];?>'" class="<?php echo $data['outcome'];?>">
+            <section OnClick="document.location='experiments.php?mode=view&id=<?php echo $data['id'];?>'" class="item <?php echo $data['outcome'];?>">
             <?php
             // DATE
             echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' alt='' /> ".$data['date']."</span>";

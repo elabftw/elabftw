@@ -70,7 +70,7 @@ if (isset($_GET['deluser']) && filter_var($_GET['deluser'], FILTER_VALIDATE_INT)
 // New Plasmids template
 if (isset($_POST['pla_tpl'])) {
     require_once('inc/check_body.php'); // outputs $body
-    $sql = "UPDATE plasmids_templates SET body = :body WHERE id = 1";
+    $sql = "UPDATE items_templates SET body = :body WHERE type = 'pla'";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
         'body' => $body

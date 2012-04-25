@@ -55,7 +55,7 @@ $data = $req->fetch();
 
 // BEGIN CONTENT
 ?>
-<section class='<?php echo $data['outcome'];?>'>
+<section class='item <?php echo $data['outcome'];?>'>
 <a class='align_right' href='delete_item.php?id=<?php echo $id;?>&type=exp' onClick="return confirm('Delete this experiment ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <!-- ADD TAG FORM -->
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.gif' alt='' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />

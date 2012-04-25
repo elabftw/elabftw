@@ -42,7 +42,7 @@ $data = $req->fetch();
 // Display experiment
 ?>
 <!-- click section to edit XP -->
-<section OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['id'];?>'" class="<?php echo $data['outcome'];?>">
+<section OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['id'];?>'" class="item <?php echo $data['outcome'];?>">
 <a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>&type=exp' onClick="return confirm('Delete this experiment ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <?php
 echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' title='date' alt='Date :' />".$data['date']."</span><br />

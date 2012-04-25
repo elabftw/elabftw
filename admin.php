@@ -72,7 +72,7 @@ echo "</section>";
 <section class='item'>
 <h3>NEW PLASMIDS DEFAULT TEMPLATE</h3>
 <?php // SQL TO GET TEMPLATES
-$sql = "SELECT id, body FROM plasmids_templates WHERE id = 1";
+$sql = "SELECT body FROM items_templates WHERE id = 1";
 $req = $bdd->prepare($sql);
 $req->execute();
 $data = $req->fetch();
@@ -95,4 +95,5 @@ tinyMCE.init({
 });
 </script>
 <?php
-require_once('inc/footer.php') ?>
+require_once('inc/footer.php');
+?>

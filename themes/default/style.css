@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 body {
-    background-image:url('img/metal.jpg');
+    background-image:url(img/metal.jpg);
 }
 
 #container {
@@ -34,46 +34,41 @@ body {
 
 /* LINKS */
 a {
-    text-decoration:none;
     color: #585858;
+    text-decoration:none;
 }
 a:hover {
+    color: #CCC;
     text-decoration:none;
-    color: #CCC;
 }
-/*
-hr {
-    color: #CCC;
-}
-    */
 
 hr.flourishes {
+    background: url('img/flourishes.png') no-repeat scroll center 0px transparent; /* -61px */
+    border: 0 none;
     clear: both;
     display: block;
     height: 18px;
-    background: url('img/flourishes.png') no-repeat scroll center 0px transparent; /* -61px */
-    border: 0 none;
     opacity: 0.8;
 }
 
 hr.tinyflourishes {
+    background: url('img/flourishes.png') no-repeat scroll center -16px transparent; /* -61px */
+    border: 0 none;
     clear: both;
     display: block;
     height: 18px;
     margin: 18px 0 0;
-    background: url('img/flourishes.png') no-repeat scroll center -16px transparent; /* -61px */
-    border: 0 none;
     opacity: 0.8;
     outline: 0 none;
 }
 
 hr.rishes {
+    background: url('img/flourishes.png') no-repeat scroll center -36px transparent; /* -61px */
+    border: 0 none;
     clear: both;
     display: block;
     height: 18px;
     margin: 18px 0 0;
-    background: url('img/flourishes.png') no-repeat scroll center -36px transparent; /* -61px */
-    border: 0 none;
     opacity: 0.8;
     outline: 0 none;
 }
@@ -95,18 +90,18 @@ ul, li {
 /* MAIN MENU */
 
 nav a {
-    color:blue;
     border:1px solid white;
     border-radius:5px;
+    color:blue;
 }
 nav a:hover {
+    border:1px solid black;
+    border-radius:5px;
     color:#1589FF;
     -moz-transition-duration: 1500ms;
     -webkit-transition-duration: 1500ms;
     -o-transition-duration: 1500ms;
     -ms-transition-duration: 1500ms;
-    border:1px solid black;
-    border-radius:5px;
 }
 #logmenu p{
     color: #AAA;
@@ -115,19 +110,19 @@ nav a:hover {
     color: black;
 }
 #submenu a {
-    color:blue;
     border:1px solid white;
-    padding:7px;
     border-radius:5px;
+    color:blue;
+    padding:7px;
 }
 #submenu a:hover {
+    border:1px solid black;
+    border-radius:5px;
     color:#1589FF;
     -moz-transition-duration: 1500ms;
     -webkit-transition-duration: 1500ms;
     -o-transition-duration: 1500ms;
     -ms-transition-duration: 1500ms;
-    border:1px solid black;
-    border-radius:5px;
 }
 
 .sortresults p{
@@ -137,8 +132,8 @@ nav a:hover {
     color:#AAA;
 }
 .submitbutton{
-    color:white;
     background-color:green;
+    color:white;
 }
 .editable:hover {
     background-color: #CCC;
@@ -148,10 +143,10 @@ nav a:hover {
 /* ITEMS */
 .item {
     background-color:#EEE;
+    border: 1px solid #CCC;
+    box-shadow: 3px 2px 2px 1px #CCC; 
     -webkit-box-shadow: 2px 2px 2px 1px #CCC;
     -moz-box-shadow: 2px 2px 2px 1px #CCC;
-    box-shadow: 3px 2px 2px 1px #CCC; 
-    border: 1px solid #CCC;
 }
 .sub_item {
     border: 2px solid #AAA;
@@ -179,10 +174,9 @@ nav a:hover {
     color:black;
 }
 #tagdiv{
-    border:3px solid #CCC;
     background-color:white;
+    border:3px solid #CCC;
 }
-
 
 .smallgray{
     color:gray;
@@ -192,19 +186,17 @@ nav a:hover {
     border:1px solid black;
 }
 
-
-
 .txt {
-    border:1px solid #CCC;
     background-color:white;
+    border:1px solid #CCC;
     color:black;
 }
 
 .running_compact, .success_compact, .redo_compact, .fail_compact {
+    background-color:#EEE;
+    box-shadow: 2px 2px 2px 2px #CCC; 
     -webkit-box-shadow: 2px 2px 2px 2px #CCC;
     -moz-box-shadow: 2px 2px 2px 2px #CCC;
-    box-shadow: 2px 2px 2px 2px #CCC; 
-    background-color:#EEE;
 }
 .running_compact {
     border:1px dotted blue;
@@ -220,10 +212,10 @@ nav a:hover {
 }
 
 .running, .success, .redo, .fail {
+    background-color:#EEE;
+    box-shadow: 2px 2px 2px 2px #CCC; 
     -webkit-box-shadow: 2px 2px 2px 2px #CCC;
     -moz-box-shadow: 2px 2px 2px 2px #CCC;
-    box-shadow: 2px 2px 2px 2px #CCC; 
-    background-color:#EEE;
 }
 .running {
     border:2px dotted blue;
@@ -238,30 +230,29 @@ nav a:hover {
     border:2px solid red;
 }
 /* team.php */
-
 .show_rules {
-    float:right;
     border:1px solid #CCC;
     border-radius:5px;
+    float:right;
     font-size:12px;
-    text-decoration:none;
     padding:5px 10px 5px 10px;
+    text-decoration:none;
 }
 .show_rules:hover {
+    border:1px solid black;
+    border-radius:5px;
     color:#1589FF;
     -moz-transition-duration: 1500ms;
     -webkit-transition-duration: 1500ms;
     -o-transition-duration: 1500ms;
     -ms-transition-duration: 1500ms;
-    border:1px solid black;
-    border-radius:5px;
 }
 /* FILES */
 .filesdiv {
+    border: 1px solid #CCC;
+    box-shadow: 2px 2px 2px 2px #CCC; 
     -webkit-box-shadow: 2px 2px 2px 2px #CCC;
     -moz-box-shadow: 2px 2px 2px 2px #CCC;
-    box-shadow: 2px 2px 2px 2px #CCC; 
-    border: 1px solid #CCC;
 }
 .file_item{
     border:1px solid #CCC;

@@ -24,19 +24,19 @@
 *                                                                               *
 ********************************************************************************/
 #container {
-    width:900px;
-    opacity:0.95;
-    margin:auto;
-    padding:10px 20px 10px 20px;
-    font:16px Verdana, Arial, Helvetica, sans-serif;
     border-radius:20px;
+    font:16px Verdana, Arial, Helvetica, sans-serif;
+    margin:auto;
+    opacity:0.95;
+    padding:10px 20px 10px 20px;
+    width:900px;
 }
 /* LINKS */
 a {
-color: #000;
+    color: #000;
 }
 a:hover {
-color: red;
+    color: red;
 }
 
 /* GENERAL */
@@ -74,26 +74,26 @@ li.inline {
 
 /* INFO BOX */
 .errors {
-    color: #b24040;
+    background-color: #e8c5c9;
+    border: 1px solid #ab80c2;
+    border-radius:5px;
     -webkit-box-shadow: 0px 1px 0px #cbe9c7 inset;
     -moz-box-shadow: inset 0px 1px 0px #cbe9c7;
-    text-shadow: 0px 1px #f3f9fc;
-    background-color: #e8c5c9;
-    border-radius:5px;
-    border: 1px solid #ab80c2;
-    padding:7px;
+    color: #b24040;
     font:14px Verdana, Arial;
+    padding:7px;
+    text-shadow: 0px 1px #f3f9fc;
 }
 .infos {
-    color: #3f713a;
+    background-color: #ace0a8;
+    border: 1px solid #96c17f;
+    border-radius:5px;
     -webkit-box-shadow: 1px 1px 0px #cbe9c7 inset;
     -moz-box-shadow: inset 1px 1px 0px #cbe9c7;
-    text-shadow: 0px 1px #f3f9fc;
-    background-color: #ace0a8;
-    border-radius:5px;
-    border: 1px solid #96c17f;
-    padding:7px;
+    color: #3f713a;
     font:14px Verdana, Arial;
+    padding:7px;
+    text-shadow: 0px 1px #f3f9fc;
 }
 
 /* HEAD */
@@ -114,9 +114,9 @@ nav{
 
 nav a{
     font-size:20px;
-    text-decoration:none;
     line-height:300%;
     padding:5px 10px 5px 10px;
+    text-decoration:none;
 }
 
 #logmenu {
@@ -134,8 +134,8 @@ nav a{
 /* submenu */
 #submenu {
     border-bottom:1px dotted #CCC;
-    padding-bottom:15px;
     margin-bottom:15px;
+    padding-bottom:15px;
 }
 
 #quicksearch {
@@ -168,8 +168,8 @@ nav a{
 /* TITLES */
 h1{
     margin-top:-5px;
-    width:140px;
     text-align:center;
+    width:140px;
 }
 h1 a {
     text-decoration:none;
@@ -183,10 +183,10 @@ h2 {
 
 
 h3 {
-    width:100%;
+    font:20px Verdana, Arial, Helvetica, sans-serif;
     margin:0 auto 10px auto;
     text-align:center;
-    font:20px Verdana, Arial, Helvetica, sans-serif;
+    width:100%;
 }
 
 h4 {
@@ -204,19 +204,15 @@ h4 {
     margin-left:64px;
 }
 
-
-/* ----------------------- */
-
 #submitlucky, #submit
 {
-    opacity:0.7;
     border:1px solid black;
-	margin: 20px 0 0 20px;
-    padding: 7px;
+	color: #23441e;
 	cursor: pointer;
 	font: bold 14px Arial, Helvetica;
-	color: #23441e;
-
+	margin: 20px 0 0 20px;
+    opacity:0.7;
+    padding: 7px;
 	text-shadow: 0 1px 0 rgba(255,255,255,0.5);
 }
 
@@ -225,20 +221,6 @@ h4 {
     opacity:1;
 }	
 
-#submit:active
-{
-	background: #CCC;
-	outline: none;
-
-	 -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) inset;
-	 -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) inset;
-	 box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) inset;
-}
-
-#submit::-moz-focus-inner
-{
-       border: 0;  /* Small centering fix for Firefox */
-}		
 /* end search bar */
 
 .search_results_div {
@@ -251,16 +233,16 @@ h4 {
 }
 
 .search_result {
-    -webkit-box-shadow: 2px 2px 2px 2px #CCC;
-    -moz-box-shadow: 2px 2px 2px 2px #CCC;
-    box-shadow: 2px 2px 2px 2px #CCC; 
-    width:350px;
     background:#EEE;
-    margin:7px auto 7px auto;
-    padding:10px;
     border:1px solid black;
     border-radius:20px;
+    box-shadow: 2px 2px 2px 2px #CCC; 
+    -webkit-box-shadow: 2px 2px 2px 2px #CCC;
+    -moz-box-shadow: 2px 2px 2px 2px #CCC;
+    margin:7px auto 7px auto;
+    padding:10px;
     overflow:hidden;
+    width:350px;
 }
 
 .search_result:hover {
@@ -270,10 +252,9 @@ h4 {
 /* number of search results */
 #search_count {
     clear:right;
-    text-shadow: 2px 2px 2px #AAA;
     filter: dropshadow(color=#AAA, offx=2, offy=2); 
+    text-shadow: 2px 2px 2px #AAA;
 }
-
 
 /* LOGIN */
 .login{
@@ -285,27 +266,28 @@ h4 {
 }
 
 .innerdiv {
-    width:600px;
+    border-radius:20px;
     margin:auto;
     text-align:center;
-    border-radius:20px;
+    width:600px;
 }
+
 .innerinnerdiv {
-    position:relative;
     left:-30px;
+    margin:auto;
+    position:relative;
     text-align:right;
     width:500px;
-    margin:auto;
 }
 
 /* END REGISTER */
 
 .attachFileDiv {
-    width:80%;
-    margin:0 auto 0 auto;
-    text-align:center;
     border: 3px solid #CCC;
     border-radius:20px;
+    margin:0 auto 0 auto;
+    text-align:center;
+    width:80%;
 }
 
 .submitbutton{
@@ -319,8 +301,8 @@ h4 {
 /***********/
 textarea{
     border: 3px solid #CCC;
-    padding: 5px;
     font-family: Verdana, Arial, Helvetica, sans-serif;
+    padding: 5px;
 }
 /* BACKGROUND OF THE EDITOR */
 /* toolbar */
@@ -333,8 +315,8 @@ textarea{
 
 .input {
     border: 3px solid #CCC;
-    padding: 5px;
     margin:5px 0 5px 0;
+    padding: 5px;
 }
 /* comments for files */
 .addFileDiv {
@@ -349,61 +331,47 @@ textarea{
 }
 
 .com_file_field{
-    margin-top:10px;
-    margin-left:4px;
+    margin:10px 0 0 4px;
 }
-
 
 img {
+    border:none;
     position:relative;
     top:3px;
-    border:none;
 }
-
 
 /* ITEMS */
 .item {
-    width:742px;
-    margin:7px auto 7px auto;
-    padding:10px;
-    border-radius:5px;
     background-color:#EEE;
+    border: 1px solid #CCC;
+    border-radius:5px;
+    box-shadow: 3px 2px 2px 1px #CCC; 
     -webkit-box-shadow: 2px 2px 2px 1px #CCC;
     -moz-box-shadow: 2px 2px 2px 1px #CCC;
-    box-shadow: 3px 2px 2px 1px #CCC; 
-    border: 1px solid #CCC;
-}
-.pro {
-    width:742px;
     margin:7px auto 7px auto;
     padding:10px;
-    border-radius:5px;
-    background-color:#EEE;
-    -webkit-box-shadow: 2px 2px 2px 1px #CCC;
-    -moz-box-shadow: 2px 2px 2px 1px #CCC;
-    box-shadow: 3px 2px 2px 1px #CCC; 
-    border: 1px solid #CCC;
+    width:742px;
 }
 
 .sub_item {
-    width:642px;
+    border-radius:7px;
     margin:10px auto 10px auto;
     padding:10px;
-    border-radius:7px;
+    width:642px;
 }
 
 .simple_border {
-    padding:10px;
     border-radius:20px;
+    padding:10px;
 }
 
 .title {
-    width:650px;
     border-radius:15px;
-    padding:5px;
     font-size: 20px;
-    margin:5px;
     line-height:120%;
+    margin:5px;
+    padding:5px;
+    width:650px;
 }
 
 .date{
@@ -411,34 +379,34 @@ img {
 }
 
 .tags {
-    width:680px;
     border-radius:15px;
-    padding:3px;
     font: 12px Courier,Arial,sans-serif;
-    margin:10px 0px 10px 5px;
     line-height:200%;
+    margin:10px 0px 10px 5px;
+    padding:3px;
+    width:680px;
 }
 .tags a{
     text-decoration:none;
 }
 .tags_compact {
     border-radius:15px;
-    padding:5px;
     font: 12px Courier,Arial,sans-serif;
-    margin:10px 0px 10px 25px;
     line-height:200%;
+    padding:5px;
+    margin:10px 0px 10px 25px;
 }
 .tags_compact a{
     text-decoration:none;
 }
 #tagdiv{
-    width:442px;
     padding:5px;
+    width:442px;
 }
 
 .tag {
-    line-height:160%;
     font:bold 13px Verdana, Arial, Helvetica, sans-serif;
+    line-height:160%;
 }
 .tag a {
     padding:5px 5px 5px 5px;
@@ -474,29 +442,29 @@ img {
 }
 
 .txt {
-    padding:5px;
     font-size:16px;
+    padding:5px;
 }
 
 .running_compact, .success_compact, .redo_compact, .fail_compact {
-    width:742px;
+    border-radius:5px;
     margin:15px auto 15px auto;
     padding: 5px;
-    border-radius:5px;
+    width:742px;
 }
 
 .running, .success, .redo, .fail {
-    width:742px;
+    border-radius:20px;
     margin:10px auto 10px auto;
     padding: 10px;
-    border-radius:20px;
+    width:742px;
 }
 
 .filesdiv{
-    width:550px;
+    font:14px Verdana, Arial, Helvetica, sans-serif;
     margin:10px auto 10px auto;
     padding: 5px;
-    font:14px Verdana, Arial, Helvetica, sans-serif;
+    width:550px;
 }
 .filesdiv a{
     font:14px Verdana, Arial, Helvetica, sans-serif;
@@ -504,10 +472,10 @@ img {
 }
 
 .file_item{
-    width:342px;
+    border-radius:20px;
     margin:10px auto 10px auto;
     padding: 5px;
-    border-radius:20px;
+    width:342px;
 }
 
 .filesize{
@@ -521,17 +489,16 @@ img {
 
 /* FOOTER */
 footer {
+    font-size:11px;
     margin:15px 0 5px 0;
     padding:5px 0 5px 0;
     text-align:center;
-    font-size:11px;
 }
 footer p, footer p a {
+    font-size:11px;
     line-height:20%;
     text-align:center;
-    font-size:11px;
 }
-
 
 /* PAGINATION */
 .pagination{

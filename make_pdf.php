@@ -33,8 +33,8 @@ if(filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
 
 if ($_GET['type'] === 'exp'){
     $table = 'experiments';
-}elseif ($_GET['type'] === 'prot'){
-    $table = 'protocols';
+}elseif ($_GET['type'] === 'db'){
+    $table = 'items';
 }else{
     die('bad type');
 }
@@ -47,7 +47,13 @@ $data = $req->fetch();
 // problem : fpdf is not utf-8 aware...
     $title = stripslashes(str_replace("&#39;", "'", utf8_decode($data['title'])));
     $date = $data['date'];
-    $body = stripslashes(str_replace("&#39;", "'", utf8_decode($data['body'])));
+    // with html in body, either we use html2fpdf but it sucks, or we remove html...
+    $body = filter_var(br2nl($data['body']), FILTER_SANITIZE_STRING);
+    $body = stripslashes(str_replace("&#39;", "'", utf8_decode($body)));
+    $body = str_replace('&nbsp;', '', $body);
+    $body = str_replace('&micro;', 'u', $body);
+    //echo $body;
+    //die();
 $req->closeCursor();
 
 // SQL to get firstname + lastname

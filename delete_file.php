@@ -80,7 +80,7 @@ if($_GET['type'] == 'experiments'){
     $msg_arr [] = 'File '.$data['real_name'].' deleted successfully';
     $_SESSION['infos'] = $msg_arr;
     $item_id = $data['item_id'];
-    header("location: protocols.php?mode=view&id=$item_id");
+    header("location: database.php?mode=view&id=$item_id");
 }elseif (($_GET['type'] === 'lm') || ($_GET['type'] === 'jc')) {
     // Get realname
     $sql = "SELECT real_name, long_name FROM uploads WHERE id = ".$id;

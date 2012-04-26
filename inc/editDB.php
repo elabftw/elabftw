@@ -198,16 +198,15 @@ $(function() {
     });
 });
 function updateRating(rating) {
-        // POST request
-        var jqxhr = $.post('star-rating.php', {
-            star: rating,
-            item_id: <?php echo $id; ?>
-        })
-        // reload the div
-        .done(function () {
-            //$("#rating").load("plasmids.php?mode=edit&id=<?php echo $id;?> #rating");
-            return false;
-        })
+    // POST request
+    var jqxhr = $.post('star-rating.php', {
+        star: rating,
+        item_id: <?php echo $id; ?>
+    })
+    // reload the div
+    .done(function () {
+        return false;
+    })
 }
 tinyMCE.init({
     theme : "advanced",

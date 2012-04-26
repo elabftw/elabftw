@@ -35,7 +35,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         ));
     $id = filter_var($_GET['id'], FILTER_VALIDATE_INT, $filter_options);
 } else {
-    die("The id parameter in the URL isn't a valid protocol ID.");
+    die("The id parameter in the URL isn't a valid experiment ID.");
 }
 
 // Check id is owned by connected user

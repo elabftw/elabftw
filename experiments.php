@@ -30,7 +30,7 @@ require_once('inc/menu.php');
 require_once('inc/info_box.php');
 ?>
 <?php
-if(!isset($_GET['mode']) || ($_GET['mode'] === 'show')) {
+if(!isset($_GET['mode']) || (empty($_GET['mode'])) || ($_GET['mode'] === 'show')) {
     require_once('inc/showXP.php');
 } elseif ($_GET['mode'] === 'view') {
     require_once('inc/viewXP.php');
@@ -41,5 +41,5 @@ if(!isset($_GET['mode']) || ($_GET['mode'] === 'show')) {
 }
 ?>
 <?php
-require_once("inc/footer.php");
+require_once('inc/footer.php');
 ?>

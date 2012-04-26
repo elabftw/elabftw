@@ -30,6 +30,16 @@ $req = $bdd->prepare($sql);
 $req->execute();
 $data = $req->fetch();
 
+$body_societyofscience = "Dear Dr. ".$data['lastname'].",
+
+The Strategy Committee and the Directorate of Society in Science - The Branco Weiss Fellowship have now had the opportunity to review the fellowship applications and to draw up the list of those applicants whom it would like to interview. Given the strong field of candidates, it is with great regret that I must inform you that the Committee has decided that it will not take your application forward. Please note that, given the large number of applications, we will not be able to provide individual feedback.
+
+Hoping that you can find alternative means to develop your research plans, I kindly thank you for applying to Society in Science.
+
+Sincerely yours,
+Prof. Dr. Peter Chen
+Society in Science - The Branco Weiss Fellowship";
+
 $body_pnas = "Dear Prof. ".$data['lastname'].",
 
     I regret to inform you that the Editorial Board has rejected your manuscript. 
@@ -132,6 +142,8 @@ if ($journal === 'pnas') {
     $body = $body_cell;
 } elseif ($journal === 'bioinformatics') {
     $body = $body_bioinformatics;
+} elseif ($journal === 'society') {
+    $body = $body_societyofscience;
 } else {
     die('Bad journal type.');
 }

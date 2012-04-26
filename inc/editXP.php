@@ -26,16 +26,6 @@
 // inc/editXP.php
 ?>
 <script src="js/tiny_mce/tiny_mce.js"></script>
-<script>
-tinyMCE.init({
-    theme : "advanced",
-    mode : "specific_textareas",
-    editor_selector : "mceditable",
-    content_css : "css/tinymce.css",
-    theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
-    font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
-});
-</script>
 <?php
 // ID
 if (isset($_GET['id']) && !empty($_GET['id'])) {
@@ -125,7 +115,7 @@ echo stripslashes($tags['tag']);?>
 <option value='None'>-- None --</option>
 <?php
 // SQL to get all protocols
-$sql = "SELECT id, title FROM protocols ORDER BY title";
+$sql = "SELECT id, title FROM items WHERE type = 'pro' ORDER BY title";
 $req = $bdd->prepare($sql);
 $req->execute();
 while ($protdata = $req->fetch()) {
@@ -220,5 +210,13 @@ function addTagOnEnter(e) { // the argument here is the event (needed to detect 
 // DATEPICKER
 $(function() {
     $( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
+});
+tinyMCE.init({
+    theme : "advanced",
+    mode : "specific_textareas",
+    editor_selector : "mceditable",
+    content_css : "css/tinymce.css",
+    theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
+    font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
 });
 </script>

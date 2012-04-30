@@ -37,7 +37,7 @@ require_once('inc/check_date.php'); // $date
 require_once('inc/check_body.php'); // $body
 require_once('inc/check_outcome.php'); // $outcome
 require_once('inc/check_files.php'); // $real_filenames[] $long_filenames[]
-require_once('inc/check_protocol.php'); // outputs $prot_id
+require_once('inc/check_item.php'); // outputs $linked_item_id
 
 // Store stuff in Session to get it back if error input
 $_SESSION['new_title'] = $title;
@@ -59,7 +59,7 @@ if($errflag) {
         date = :date, 
         body = :body, 
         outcome = :outcome, 
-        protocol = :protocol 
+        item = :item
         WHERE userid = :userid 
         AND id = :id";
 $req = $bdd->prepare($sql);
@@ -68,7 +68,7 @@ $result = $req->execute(array(
     'date' => $date,
     'body' => $body,
     'outcome' => $outcome,
-    'protocol' => $prot_id,
+    'item' => $linked_item_id,
     'userid' => $_SESSION['userid'],
     'id' => $id
 ));

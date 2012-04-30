@@ -45,7 +45,7 @@ if (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')){
 } elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'pla')){
     $type = 'plasmids';
 } elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'ant')){
-    $type = 'antibody';
+    $type = 'antibodies';
 } elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'sir')){
     $type = 'sirna';
 } elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'pap')){
@@ -71,7 +71,7 @@ $result = $req->execute(array(
     'userid' => $_SESSION['userid']));
 }
 
-if ($type == 'protocols'){
+if (($type == 'protocols') || ($type == 'antibodies')) {
 // SQL for create protocols
 $sql = "INSERT INTO items(title, date, body, userid, type) VALUES(:title, :date, :body, :userid, :type)";
 $req = $bdd->prepare($sql);
@@ -80,7 +80,7 @@ $result = $req->execute(array(
     'date' => kdate(),
     'body' => '',
     'userid' => $_SESSION['userid'],
-    'type' => 'pro'
+    'type' => substr($type, 0, 3)
     ));
 }
 
@@ -91,18 +91,17 @@ if ($type == 'plasmids'){
     $pla_tpl->execute();
     $pla_tpl_body = $pla_tpl->fetch();
 
-
-// SQL for create plasmids
+    // SQL for create plasmids
     $sql = "INSERT INTO items(title, date, body, userid, type) 
         VALUES(:title, :date, :body, :userid, :type)";
-$req = $bdd->prepare($sql);
-$result = $req->execute(array(
-    'title' => 'Untitled',
-    'date' => kdate(),
-    'body' => $pla_tpl_body['body'],
-    'userid' => $_SESSION['userid'],
-    'type' => 'pla'
-    ));
+    $req = $bdd->prepare($sql);
+    $result = $req->execute(array(
+        'title' => 'Untitled',
+        'date' => kdate(),
+        'body' => $pla_tpl_body['body'],
+        'userid' => $_SESSION['userid'],
+        'type' => 'pla'
+        ));
 }
 // Get what is the item id we just created
 if ($type === 'experiments') {

@@ -48,7 +48,7 @@ if ($resultat != $_SESSION['userid']) {
 }
 
 // SQL for editXP
-$sql = "SELECT title, date, body, outcome, protocol FROM experiments WHERE id = ".$id;
+$sql = "SELECT title, date, body, outcome, item FROM experiments WHERE id = ".$id;
 $req = $bdd->prepare($sql);
 $req->execute();
 $data = $req->fetch();
@@ -110,21 +110,22 @@ echo stripslashes($tags['tag']);?>
 <option <?php echo ($outcome === "redo") ? "selected" : "";?> value="redo">Need to be redone</option>
 <option <?php echo ($outcome === "fail") ? "selected" : ""; ?> value="fail">Fail</option>
 </select><br /><br />
-<h4>Link to protocol</h4>
-<select name="protocol">
+<h4>Link to database item</h4>
+<select name="item">
 <option value='None'>-- None --</option>
 <?php
-// SQL to get all protocols
-$sql = "SELECT id, title FROM items WHERE type = 'pro' ORDER BY title";
+// TODO faire une recherch ajax machin
+// SQL to get all items
+$sql = "SELECT id, title FROM items ORDER BY title";
 $req = $bdd->prepare($sql);
 $req->execute();
-while ($protdata = $req->fetch()) {
+while ($itemdata = $req->fetch()) {
     // we limit the title size so it's not too large
     echo "<option ";
-    if ($protdata['id'] === $data['protocol']) {
+    if ($itemdata['id'] === $data['item']) {
         echo "selected ";
     }
-    echo "value=".$protdata['id'].">".substr($protdata['title'], 0, 60)."</option>";
+    echo "value=".$itemdata['id'].">".substr($itemdata['title'], 0, 60)."</option>";
 }
 ?>
 </select><br /><br />

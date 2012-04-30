@@ -372,11 +372,14 @@ img {
 
 /* item style for database items */
 .pro {
-    background-color: red !important;
+    background-color: #FF9E9E !important;
 }
 
 .pla {
-    background-color: green !important;
+    background-color: #9EFFB4 !important;
+}
+.ant {
+    background-color: #9EACFF !important;
 }
 
 .simple_border {

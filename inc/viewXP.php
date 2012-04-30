@@ -70,13 +70,13 @@ if ($data['body'] != ''){
 echo "<div class='txt'>".stripslashes($data['body'])."</div>";
 }
 // DISPLAY PROTOCOL
-if ($data['protocol'] != NULL) {
+if ($data['item'] != NULL) {
     // SQL to get title
-    $sql = "SELECT id, title FROM protocols WHERE id = ".$data['protocol'];
+    $sql = "SELECT id, title FROM items WHERE id = ".$data['item'];
     $req = $bdd->prepare($sql);
     $req->execute();
-    $protdata = $req->fetch();
-    echo "<p>Protocol : <a href='database.php?mode=view&id=".$protdata['id']."'>".$protdata['title']."</a></p>";
+    $itemdata = $req->fetch();
+    echo "<p>Linked item : <a href='database.php?mode=view&id=".$itemdata['id']."'>".$itemdata['title']."</a></p>";
 }
 echo "</section>";
 

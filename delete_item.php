@@ -77,6 +77,7 @@ $req->execute(array(
     'type' => $item_type
 ));
 }
+// TODO set Null for exp with linked item
 
 // TODO check that the 3 sql went OK
 if ($result) {

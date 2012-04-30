@@ -1,10 +1,12 @@
 /////// Priority
-* add tag on templates
-* export by date range / tag
+* finir database
+* uplader une version stable sur le serveur
 * SEARCH
 
 ////// Features
+* export by date range / tag
 * show last searchs
+* add tag on templates
 * put search prefs in cookie
 * most used protocoles get first in selecta ! 
 * announce birthday date of a team mb to other team mb (add birthday in profile)

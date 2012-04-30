@@ -61,7 +61,7 @@ if (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')){
 
 if ($type == 'experiments'){
 // SQL for create experiments
-$sql = "INSERT INTO ".$type."(title, date, body, outcome, userid) VALUES(:title, :date, :body, :outcome, :userid)";
+$sql = "INSERT INTO experiments(title, date, body, outcome, userid) VALUES(:title, :date, :body, :outcome, :userid)";
 $req = $bdd->prepare($sql);
 $result = $req->execute(array(
     'title' => 'Untitled',
@@ -121,7 +121,11 @@ if($result) {
 // info box
 $msg_arr[] = 'New item successfully created.';
 $_SESSION['infos'] = $msg_arr;
+if ($type === 'experiments') {
     header('location: experiments.php?mode=edit&id='.$newid.'');
+} else {
+    header('location: database.php?mode=edit&id='.$newid.'');
+}
 } else {
     die("Something went wrong in the database query. Check the flux capacitor.");
 }

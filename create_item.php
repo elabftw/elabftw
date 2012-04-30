@@ -121,7 +121,7 @@ if($result) {
 // info box
 $msg_arr[] = 'New item successfully created.';
 $_SESSION['infos'] = $msg_arr;
-    header('location: database.php?mode=edit&id='.$newid.'');
+    header('location: experiments.php?mode=edit&id='.$newid.'');
 } else {
     die("Something went wrong in the database query. Check the flux capacitor.");
 }

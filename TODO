@@ -1,5 +1,4 @@
 /////// Priority
-* make_pdf : user html2pdf lib
 * add tag on templates
 * export by date range / tag
 * SEARCH
@@ -10,6 +9,7 @@
 * most used protocoles get first in selecta ! 
 * announce birthday date of a team mb to other team mb (add birthday in profile)
 * tools page with trucs pour calculer les concentrations, et les volumes pour les transfections, etc...
+* make_pdf : keep formatting (html2fpdf)
 * labmeetings : resp can add room, date, name, cronjob that sends an email before the labmeeting
 
 ///// Osef

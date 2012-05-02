@@ -32,16 +32,10 @@ if(filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
 }
 
 // Item switch
-if ($_GET['type'] === 'exp'){
+if (isset($_GET['type']) && ($_GET['type'] === 'exp')){
     $item_type = 'experiments';
-} elseif ($_GET['type'] === 'prot'){
-    $item_type = 'protocols';
-} elseif ($_GET['type'] === 'pla'){
-    $item_type = 'plasmids';
-} elseif ($_GET['type'] === 'tpl'){
-    $item_type = 'experiments_templates';
 } else {
-    die('taggle');
+    $item_type = 'items';
 }
 
 // Check id is owned by connected user
@@ -56,25 +50,29 @@ if ($item_type === 'experiments' || $item_type === 'experiments_templates') {
 }
 
 // TODO if we delete a protocol, update the experiments linked to it with NULL
-// SQL for delete_item.php
+// DELETE ITEM
 $sql = "DELETE FROM ".$item_type." WHERE id=".$id;
 $req = $bdd->prepare($sql);
 $result = $req->execute();
 
-// Delete tags and files only for EXP and PROT
-if ($item_type === 'experiments' || $item_type === 'protocols') {
-// delete tags
+// DELETE TAGS
 $sql = "DELETE FROM ".$item_type."_tags WHERE item_id = ".$id;
 $req = $bdd->prepare($sql);
 $req->execute();
-}
-if ($item_type === 'experiments' || $item_type === 'protocols' || $item_type === 'plasmids') {
-// delete files (plasmids got no tags)
+
+// DELETE FILES
 $sql = "DELETE FROM uploads WHERE item_id = :id AND type = :type";
 $req = $bdd->prepare($sql);
+if($item_type === 'experiments'){
 $req->execute(array(
     'id' => $id,
-    'type' => $item_type
+    'type' => 'exp' 
+));
+}
+if($item_type === 'items'){
+$req->execute(array(
+    'id' => $id,
+    'type' => 'database' 
 ));
 }
 // TODO set Null for exp with linked item
@@ -84,23 +82,19 @@ if ($result) {
     $msg_arr = array();
     if ($item_type === 'experiments'){
         $msg_arr[] = 'Experiment deleted successfully';
-    }elseif ($item_type === 'protocols'){
-        $msg_arr[] = 'Protocol deleted successfully';
-    }elseif ($item_type === 'plasmids'){
-        $msg_arr[] = 'Plasmid deleted successfully';
-    } elseif ($item_type === 'experiments_templates') {
-        $msg_arr[] = 'Template deleted successfully';
     } else {
-        die('Bad type.');
+        $msg_arr[] = 'Item deleted successfully';
     }
 
     $_SESSION['infos'] = $msg_arr;
-    if ($item_type === 'experiments' || $item_type === 'protocols' || $item_type === 'plasmids') {
-        header("location: $item_type.php");
+    if ($item_type === 'experiments') {
+        header("location: experiments.php");
+    } elseif ($item_type === 'items') {
+        header("location: database.php");
     } else {
         header("location: ucp.php");
     }
-} else {
+} else { // no $result
     die('Something went wrong in the database query. Check the flux capacitor.');
 }
 ?>

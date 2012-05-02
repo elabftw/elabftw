@@ -30,6 +30,11 @@ Get latest version
 Extract it in the public folder
 # tar xzf latest.tar.gz
 
+Or via git :
+git clone https://git.gitorious.org/elabftw/elabftw.git
+(this will create a folder `elabftw`)
+
+
 SQL part
 ***********
 

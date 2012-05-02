@@ -88,7 +88,7 @@ if (is_uploaded_file($_FILES['files']['tmp_name'][0])){
         'comment' => $filecomments[$i],
         'item_id' => $item_id,
         'userid' => $_SESSION['userid'],
-        'type' => 'item'
+        'type' => 'database'
     ));
     $req->closeCursor();
             } // end for each file loop

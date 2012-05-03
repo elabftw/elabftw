@@ -31,7 +31,7 @@ if(filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
     die("<div class='center'><img src='img/hal9000.png' alt='hal' /><br />I'm sorry, Dave. I'm afraid I can't do that.</div>");
 }
 
-if($_GET['type'] == 'experiments'){
+if($_GET['type'] === 'experiments'){
 // Check file id is owned by connected user
     $sql = "SELECT userid, real_name, long_name, item_id FROM uploads WHERE id = :id";
     $req = $bdd->prepare($sql);
@@ -60,7 +60,7 @@ if($_GET['type'] == 'experiments'){
    } else {
         die("<div class='center'><img src='img/hal9000.png' alt='hal' /><br />I'm sorry, Dave. I'm afraid I can't do that.</div>");
    }
-}elseif ($_GET['type'] === 'protocols'){
+}elseif ($_GET['type'] === 'database'){
     // Get realname
     $sql = "SELECT real_name, long_name, item_id FROM uploads WHERE id = ".$id;
     $req = $bdd->prepare($sql);
@@ -70,12 +70,12 @@ if($_GET['type'] == 'experiments'){
     $filepath = 'uploads/'.$data['long_name'];
     unlink($filepath);
 
-    // Delete SQL entry (and verify that the type is prot, to avoid someone deleting files saying it's prot whereas it's exp
-    $sql = "DELETE FROM uploads WHERE id = ".$id." AND type = 'prot'";
+    // Delete SQL entry (and verify that the type is prot, to avoid someone deleting files saying it's DB whereas it's exp
+    $sql = "DELETE FROM uploads WHERE id = ".$id." AND type = 'database'";
     $reqdel = $bdd->prepare($sql);
     $reqdel->execute();
 
-    // Redirect to the viewPR
+    // Redirect to the viewDB
     $msg_arr = array();
     $msg_arr [] = 'File '.$data['real_name'].' deleted successfully';
     $_SESSION['infos'] = $msg_arr;

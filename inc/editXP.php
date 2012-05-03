@@ -28,14 +28,10 @@
 <script src="js/tiny_mce/tiny_mce.js"></script>
 <?php
 // ID
-if (isset($_GET['id']) && !empty($_GET['id'])) {
-    $filter_options = array(
-        'options' => array(
-            'min_range' => 1
-        ));
-    $id = filter_var($_GET['id'], FILTER_VALIDATE_INT, $filter_options);
+if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
+    $id = $_GET['id'];
 } else {
-    die("The id parameter in the URL isn't a valid experiment ID.");
+    die("The id parameter in the URL isn't a valid item ID.");
 }
 
 // Check id is owned by connected user

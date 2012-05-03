@@ -31,7 +31,14 @@ $msg_arr = array();
 $errflag = false;
 
 // CHECKS
-require_once('inc/check_id.php'); // $id
+// ID
+if(is_pos_int($_POST['item_id'])){
+    $id = $_POST['item_id'];
+} else {
+    $id='';
+    $msg_arr[] = 'The id parameter is not valid !';
+    $errflag = true;
+}
 require_once('inc/check_title.php'); // $title
 require_once('inc/check_date.php'); // $date
 require_once('inc/check_body.php'); // $body

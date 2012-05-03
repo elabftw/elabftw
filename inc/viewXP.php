@@ -23,14 +23,13 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-?>
-<?php
+// inc/viewXP.php
 // Here we don't check that the experiment id is owned by the viewer, so links can be shared :)
-// Check id is valid and assign it to $id
-if(filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+// ID
+if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
     $id = $_GET['id'];
 } else {
-    die("The id parameter in the URL isn't a valid experiment ID");
+    die("The id parameter in the URL isn't a valid experiment ID.");
 }
 
 // SQL for viewXP

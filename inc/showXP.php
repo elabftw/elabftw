@@ -149,25 +149,31 @@ if(!isset($_GET['q'])){
     $results_arr = array();
     // search in title date and body
     $sql = "SELECT id FROM experiments 
-        WHERE (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
+        WHERE userid = :userid AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
     $req = $bdd->prepare($sql);
-    $req->execute();
+    $req->execute(array(
+        'userid' => $_SESSION['userid']
+    ));
     // put resulting ids in the results array
     while ($data = $req->fetch()) {
         $results_arr[] = $data['id'];
     }
     $req->closeCursor();
     // now we search in tags, and append the found ids to our result array
-    $sql = "SELECT item_id FROM experiments_tags WHERE tag LIKE '%$query%' LIMIT 100";
+    $sql = "SELECT item_id FROM experiments_tags WHERE userid = :userid AND tag LIKE '%$query%' LIMIT 100";
     $req = $bdd->prepare($sql);
-    $req->execute();
+    $req->execute(array(
+        'userid' => $_SESSION['userid']
+    ));
     while ($data = $req->fetch()) {
         $results_arr[] = $data['item_id'];
     }
     // now we search in file comments and filenames
-    $sql = "SELECT item_id FROM uploads WHERE (comment LIKE '%$query%') OR (real_name LIKE '%$query%') LIMIT 100";
+    $sql = "SELECT item_id FROM uploads WHERE userid = :userid AND (comment LIKE '%$query%' OR real_name LIKE '%$query%') LIMIT 100";
     $req = $bdd->prepare($sql);
-    $req->execute();
+    $req->execute(array(
+        'userid' => $_SESSION['userid']
+    ));
     while ($data = $req->fetch()) {
         $results_arr[] = $data['item_id'];
     }

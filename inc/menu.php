@@ -52,7 +52,6 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 
 <nav><a href="experiments.php?mode=show">Experiments</a>
 <a href="database.php?mode=show">Database</a>
-<a href="search.php">Search</a>
 <a href="team.php">Team</a>
 <a href="http://wiki-bio6.curie.fr" target='_blank'>Wiki</a>
 </nav>

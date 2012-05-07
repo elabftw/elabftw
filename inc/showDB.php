@@ -117,7 +117,6 @@ if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
     }
 
     // loop the results array and display results
-    print_r($results_arr);
     foreach($results_arr as $result_id) {
         // SQL to get everything from selected id
         $sql = "SELECT id, title, date, body, type FROM items WHERE id = :id";

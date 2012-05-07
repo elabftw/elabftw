@@ -25,6 +25,9 @@
 ********************************************************************************/
 session_start();
 require_once('inc/connect.php');
+if (!isset($_SESSION['auth'])) {
+$ini_arr = parse_ini_file('admin/config.ini');
+}
 
 //Array to store validation errors
 $msg_arr = array();
@@ -135,7 +138,6 @@ if ($ini_arr['admin_validate'] === '1'){
 }
 
 $result = $bdd->exec($sql);
-
 //Check whether the query was successful or not
 if($result) {
     // Send email

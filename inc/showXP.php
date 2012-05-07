@@ -54,27 +54,6 @@ $order = $_SESSION['prefs']['order'];
 $sort = $_SESSION['prefs']['sort'];
 $limit = $_SESSION['prefs']['limit'];
 
-// Check TAG
-if ((isset($_GET['tag'])) && (!empty($_GET['tag']))) {
-    $tag = stripslashes(filter_var($_GET['tag'], FILTER_SANITIZE_STRING));
-} else {
-    $tag = "";
-}
-
-// Check OUTCOME
-if ((isset($_GET['outcome'])) 
-    && (!empty($_GET['outcome']))){
-    if (($_GET['outcome'] === 'running')
-    || ($_GET['outcome'] === 'success')
-    || ($_GET['outcome'] === 'fail')
-    || ($_GET['outcome'] === 'redo')) {
-    $outcome = filter_var($_GET['outcome'], FILTER_SANITIZE_STRING);
-    echo "<p>List of your experiments with the outcome <em>".$outcome."</em> :</p>";
-    }
-} else {
-    $outcome = "";
-}
-
 // OFFSET
 if ((!isset($_GET['offset'])) || (empty($_GET['offset']))) {
     $offset = '0';
@@ -98,11 +77,10 @@ $offset = $currentpage * $limit;
 
 // SQL for showXP
 // reminder : order by and sort must be passed to the prepare(), not during execute()
-if(!isset($_GET['q'])){
+if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
     $sql = "SELECT * 
         FROM experiments 
         WHERE userid = :userid 
-        AND outcome LIKE'%$outcome%' 
         ORDER BY ".$order." ". $sort." 
         LIMIT ".$limit." 
         OFFSET ".$offset;
@@ -134,7 +112,7 @@ if(!isset($_GET['q'])){
                 $tagreq->execute();
                 echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
                 while($tags = $tagreq->fetch()){
-                    echo "<a href='".$_SERVER['PHP_SELF']."?".$_SERVER['QUERY_STRING']."&tag=".stripslashes($tags['tag'])."&currentpage=0'>".stripslashes($tags['tag'])."</a> ";
+                    echo "<a href='experiments.php?q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
                     }
                 // END TAGS
                 echo    "</span>";
@@ -158,7 +136,6 @@ if(!isset($_GET['q'])){
     while ($data = $req->fetch()) {
         $results_arr[] = $data['id'];
     }
-    $req->closeCursor();
     // now we search in tags, and append the found ids to our result array
     $sql = "SELECT item_id FROM experiments_tags WHERE userid = :userid AND tag LIKE '%$query%' LIMIT 100";
     $req = $bdd->prepare($sql);
@@ -218,27 +195,19 @@ if(!isset($_GET['q'])){
     } // end foreach
 } // end if there is a search
 // END CONTENT
-// only show pagination if there is no search
-if(!isset($_GET['q'])){
-    ?>
 
-    <!-- PAGINATION -->
+// PAGINATION
+//  only show pagination if there is no search
+if(!isset($_GET['q']) || empty($_GET['q']) ){
+    ?>
     <section class='pagination'>
     <?php
     // COUNT TOTAL NUMBER OF ITEMS
-    if (!isset($_GET['tag']) || empty($_GET['tag'])){
         $sql = "SELECT COUNT(id) FROM experiments WHERE userid = ".$_SESSION['userid'];
         $req = $bdd->prepare($sql);
         $req->execute();
         $full = $req->fetchAll();
         $numrows = $full[0][0];
-    } else { // if tag filter
-        $sql = "SELECT COUNT(id) AS total FROM experiments_tags WHERE userid = ".$_SESSION['userid']." AND tag LIKE '%$tag%' GROUP BY item_id ORDER BY total";
-        $req = $bdd->prepare($sql);
-        $req->execute();
-        $full = $req->fetchAll();
-        $numrows = count($full);
-    }
 
     // find out total pages
     $totalpages = (ceil($numrows / $limit) - 1);

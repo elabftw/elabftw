@@ -37,16 +37,9 @@ require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 <!-- end submenu -->
 
 <?php
-// Check TAG
-if ((isset($_GET['tag'])) && (!empty($_GET['tag']))) {
-    $tag = stripslashes(filter_var($_GET['tag'], FILTER_SANITIZE_STRING));
-} else {
-    $tag = "";
-}
-
 // SQL for showDB
 // we show the last 10 uploads
-if(!isset($_GET['q'])){ // if there is no search
+if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
     echo "<p>Showing last 10 uploads :</p>";
     $sql = "SELECT * 
         FROM items 
@@ -65,7 +58,7 @@ if(!isset($_GET['q'])){ // if there is no search
         echo "<span class='redo_compact'>".$data['date']."</span> ";
         echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
         while($tags = $tagreq->fetch()){
-            echo "<a href='database.php?mode=show&tag=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
+            echo "<a href='database.php?mode=show&q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
         }
         echo "</span>";
         // END TAGS
@@ -82,7 +75,7 @@ if(!isset($_GET['q'])){ // if there is no search
     $results_arr = array();
     // search in title date and body
     $sql = "SELECT id FROM items 
-        WHERE userid = :userid AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
+        WHERE (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
     $req = $bdd->prepare($sql);
     $req->execute(array(
         'userid' => $_SESSION['userid']
@@ -93,7 +86,7 @@ if(!isset($_GET['q'])){ // if there is no search
     }
     $req->closeCursor();
     // now we search in tags, and append the found ids to our result array
-    $sql = "SELECT item_id FROM items_tags WHERE tag LIKE '%$query%' AND userid = :userid LIMIT 100";
+    $sql = "SELECT item_id FROM items_tags WHERE tag LIKE '%$query%' LIMIT 100";
     $req = $bdd->prepare($sql);
     $req->execute(array(
         'userid' => $_SESSION['userid']
@@ -102,7 +95,7 @@ if(!isset($_GET['q'])){ // if there is no search
         $results_arr[] = $data['item_id'];
     }
     // now we search in file comments and filenames
-    $sql = "SELECT item_id FROM uploads WHERE (comment LIKE '%$query%' OR real_name LIKE '%$query%') AND userid = :userid LIMIT 100";
+    $sql = "SELECT item_id FROM uploads WHERE (comment LIKE '%$query%' OR real_name LIKE '%$query%') LIMIT 100";
     $req = $bdd->prepare($sql);
     $req->execute(array(
         'userid' => $_SESSION['userid']
@@ -124,6 +117,7 @@ if(!isset($_GET['q'])){ // if there is no search
     }
 
     // loop the results array and display results
+    print_r($results_arr);
     foreach($results_arr as $result_id) {
         // SQL to get everything from selected id
         $sql = "SELECT id, title, date, body, type FROM items WHERE id = :id";
@@ -152,7 +146,7 @@ if(!isset($_GET['q'])){ // if there is no search
 } // end if there is a search
 
 // KEYBOARD SHORTCUTS
-//echo "<script>
-//key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=prot'});
-//</script>";
+echo "<script>
+key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=prot'});
+</script>";
 ?>

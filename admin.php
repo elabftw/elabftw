@@ -84,6 +84,21 @@ $data = $req->fetch();
     </form>
 </section>
 
+<section class='item'>
+<h3>NEW ANTIBODIES DEFAULT TEMPLATE</h3>
+<?php // SQL TO GET TEMPLATES
+$sql = "SELECT body FROM items_templates WHERE id = 3";
+$req = $bdd->prepare($sql);
+$req->execute();
+$data = $req->fetch();
+?>
+    <form action='admin-exec.php' method='post'>
+    <input type='hidden' name='ant_tpl' />
+    <textarea class='mceditable' name='body' /><?php echo $data['body'];?></textarea>
+    <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Save changes" /></div>
+    </form>
+</section>
+
 <script>
 tinyMCE.init({
     theme : "advanced",

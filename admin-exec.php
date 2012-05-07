@@ -87,3 +87,23 @@ if (isset($_POST['pla_tpl'])) {
         exit();
     }
 }
+// New antibody template
+if (isset($_POST['ant_tpl'])) {
+    require_once('inc/check_body.php'); // outputs $body
+    $sql = "UPDATE items_templates SET body = :body WHERE type = 'ant'";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute(array(
+        'body' => $body
+    ));
+    if ($result){
+        $msg_arr[] = 'New antibodies template updated successfully.';
+        $_SESSION['infos'] = $msg_arr;
+        header('Location: admin.php');
+        exit();
+    } else { //sql fail
+        $msg_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $_SESSION['errors'] = $msg_arr;
+        header('Location: admin.php');
+        exit();
+    }
+}

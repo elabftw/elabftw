@@ -49,6 +49,7 @@ $running = $count_arr[3][0];
 // MAKE TOTAL
 $total = ($success + $fail + $redo + $running);
 // Make percentage
+// TODO fix division by zero
 $success_p = round(($success / $total)*100);
 $fail_p = round(($fail / $total)*100);
 $redo_p = round(($redo / $total)*100);

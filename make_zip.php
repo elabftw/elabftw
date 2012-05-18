@@ -37,8 +37,8 @@ if(isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
 // Switch exp/prot
 if ($_GET['type'] === 'exp'){
     $table = 'experiments';
-}elseif ($_GET['type'] === 'prot'){
-    $table = 'protocols';
+}elseif ($_GET['type'] === 'db'){
+    $table = 'items';
 }else{
     die('bad type');
 }

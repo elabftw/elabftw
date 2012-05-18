@@ -35,8 +35,7 @@ require_once('inc/info_box.php');
 <?php
 
 // SQL to get all unvalidated users
-$sql = "SELECT userid, lastname, firstname, email FROM users WHERE validated = 0";
-$req = $bdd->prepare($sql);
+$sql = "SELECT userid, lastname, firstname, email FROM users WHERE validated = 0"; $req = $bdd->prepare($sql);
 $req->execute();
 $count = $req->rowCount();
 // only show the frame if there is some users to validate
@@ -53,7 +52,7 @@ echo "</section>";
 }
 ?>
 
-<section class='item'>
+<section id='users' class='item'>
 <h3>TEAM MEMBERS</h3>
 <?php
 // TODO different colors for different groups
@@ -62,10 +61,10 @@ $sql = "SELECT userid, lastname, firstname, email FROM users WHERE validated = 1
 $req = $bdd->prepare($sql);
 $req->execute();
 echo "<form method='post' action='admin-exec.php'><ul>";
-while ($data = $req->fetch()) {
-    echo "<li>".$data['firstname']." ".$data['lastname']." (".$data['email'].") :: "; //switch to html because of JS ?>
-    <a href='admin-exec.php?deluser=<?php echo $data['userid'];?>' onClick="return confirm('Delete this user ?\n WARNING this will delete forever ALL the user\'s data, including files and experiments !!!!');">delete</a> 
-<?php echo "<a href='admin-exec.php?edituser=".$data['userid']."'>edit</a></li>";
+while ($users = $req->fetch()) {
+    echo "<li>".$users['firstname']." ".$users['lastname']." (".$users['email'].") :: "; //switch to html because of JS ?>
+    <a href='#' onClick="confirm_delete('<?php echo $users['userid']."', '".$users['lastname'];?>')">delete</a> 
+<?php echo "<a href='admin-exec.php?edituser=".$users['userid']."'>edit</a></li>";
 }
 echo "</section>";
 ?>
@@ -108,6 +107,22 @@ tinyMCE.init({
     theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
     font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
 });
+// confirm delete by writing full name
+var confirm_delete = function(id, lastname) {
+    var user_input = prompt('WARNING !\nAre you absolutely sure you want to delete this user ?\nThis will delete forever ALL the user\'s data, including files and experiments !!!!\nTo confirm type the LASTNAME of the user in capital letters :');
+    if(user_input != '' && user_input === lastname){
+    // POST request to delete user
+    var jqxhr = $.post('admin-exec.php', {
+        deluser: id
+    })
+    // reload page
+    .success(function() {location.reload()
+    });
+    }else{
+        return false;
+    }
+}
+
 </script>
 <?php
 require_once('inc/footer.php');

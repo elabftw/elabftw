@@ -44,8 +44,8 @@ if (isset($_POST['validate'])) {
 }
 
 // MANAGE USERS
-if (isset($_GET['deluser']) && filter_var($_GET['deluser'], FILTER_VALIDATE_INT)) {
-    $userid = $_GET['deluser'];
+if (isset($_POST['deluser']) && filter_var($_POST['deluser'], FILTER_VALIDATE_INT)) {
+    $userid = $_POST['deluser'];
     $msg_arr = array();
     // DELETE USER
     $sql = "DELETE FROM users WHERE userid = ".$userid;

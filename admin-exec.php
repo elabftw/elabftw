@@ -44,6 +44,7 @@ if (isset($_POST['validate'])) {
 }
 
 // MANAGE USERS
+// called from ajax
 if (isset($_POST['deluser']) && filter_var($_POST['deluser'], FILTER_VALIDATE_INT)) {
     $userid = $_POST['deluser'];
     $msg_arr = array();
@@ -57,14 +58,23 @@ if (isset($_POST['deluser']) && filter_var($_POST['deluser'], FILTER_VALIDATE_IN
     $sql = "DELETE FROM experiments WHERE userid = ".$userid;
     $req = $bdd->prepare($sql);
     $req->execute();
+    // get all filenames
+    $sql = "SELECT long_name FROM uploads WHERE userid = :userid AND type = :type";
+    $req = $bdd->prepare($sql);
+    $req->execute(array(
+        'userid' => $userid,
+        'type' => 'exp'
+    ));
+    while($uploads = $req->fetch()){
+        // Delete file
+        $filepath = 'uploads/'.$uploads['long_name'];
+        unlink($filepath);
+    }
     $sql = "DELETE FROM uploads WHERE userid = ".$userid;
     $req = $bdd->prepare($sql);
     $req->execute();
-    //TODO remove actual files
     $msg_arr[] = 'Deleted user with user ID : '.$userid;
     $_SESSION['infos'] = $msg_arr;
-    header('Location: admin.php');
-    exit();
 }
 
 // New Plasmids template

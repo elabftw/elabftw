@@ -68,7 +68,7 @@ while ($data = $req->fetch()) {
       else:
            $class = 'c10';
       endif;
-        echo "<a href='experiments.php?mode=show&tag=".$data[0]."' class='".$class."'>".stripslashes($data[0])."</a> ";
+        echo "<a href='experiments.php?mode=show&q=".$data[0]."' class='".$class."'>".stripslashes($data[0])."</a> ";
 }
 // TAGCLOUD
 echo "</div>";

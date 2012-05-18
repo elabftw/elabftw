@@ -77,51 +77,10 @@ $offset = $currentpage * $limit;
 
 // SQL for showXP
 // reminder : order by and sort must be passed to the prepare(), not during execute()
-if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
-    $sql = "SELECT * 
-        FROM experiments 
-        WHERE userid = :userid 
-        ORDER BY ".$order." ". $sort." 
-        LIMIT ".$limit." 
-        OFFSET ".$offset;
-    $req = $bdd->prepare($sql);
-    $req->bindParam(':userid', $_SESSION['userid']);
-    $req->execute();
-
-    while ($data = $req->fetch()) {
-        if ($display === 'compact') {
-                // COMPACT MODE //
-                ?>
-                <!-- BEGIN CONTENT -->
-                <section onClick="document.location='experiments.php?mode=view&id=<?php echo $data['id'];?>'" class='item'>
-                <?php
-                echo "<span class='".$data['outcome']."_compact'>".$data['date']."</span> ";
-                echo stripslashes($data['title']);
-                echo "</section>";
-        } else {
-                ?>
-                <!-- BEGIN CONTENT -->
-                <section OnClick="document.location='experiments.php?mode=view&id=<?php echo $data['id'];?>'" class="item <?php echo $data['outcome'];?>">
-                <?php
-                // DATE
-                echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' alt='' /> ".$data['date']."</span>";
-                // TAGS
-                $id = $data['id'];
-                $sql = "SELECT tag FROM experiments_tags WHERE item_id = ".$id;
-                $tagreq = $bdd->prepare($sql);
-                $tagreq->execute();
-                echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
-                while($tags = $tagreq->fetch()){
-                    echo "<a href='experiments.php?q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
-                    }
-                // END TAGS
-                echo    "</span>";
-                // TITLE
-                echo " <div class='title'>". stripslashes($data['title']) . "</div></section>";
-        }
-
-    } // end while
-} else { // if we search for a tag
+// /////////////////
+// SEARCH
+// /////////////////
+if (isset($_GET['q'])) { // if there is a query
     $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
     // we make an array for the resulting ids
     $results_arr = array();
@@ -193,12 +152,116 @@ if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
         echo "<p class='title'>". stripslashes($final_query['title']) . "</p>";
         echo "</section>";
     } // end foreach
-} // end if there is a search
+///////// END SEARCH
+// /////////////
+// RELATED
+// /////////////
+} elseif (isset($_GET['related'])){// search for related experiments to DB item id
+    $item_id = is_pos_int($_GET['related']);
+    // we make an array for the resulting ids
+    $results_arr = array();
+    // search in title date and body
+    $sql = "SELECT id FROM experiments 
+        WHERE item = :item_id LIMIT 100";
+    $req = $bdd->prepare($sql);
+    $req->execute(array(
+        'item_id' => $item_id
+    ));
+    // put resulting ids in the results array
+    while ($data = $req->fetch()) {
+        $results_arr[] = $data['id'];
+    }
+    $req->closeCursor();
+    // show number of results found
+    if (count($results_arr) > 1){
+        echo "Found ".count($results_arr)." results.";
+    } elseif (count($results_arr) == 1){
+        echo "Found 1 result.";
+    } else {
+        echo "Nothing found :(";
+    }
+
+    // loop the results array and display results
+    foreach($results_arr as $result_id) {
+        // SQL to get everything from selected id
+        $sql = "SELECT id, title, date, body, outcome  FROM experiments WHERE id = :id";
+        $req = $bdd->prepare($sql);
+        $req->execute(array(
+            'id' => $result_id
+        ));
+        $final_query = $req->fetch();
+        ?>
+        <section OnClick="document.location='experiments.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item <?php echo $final_query['outcome'];?>">
+        <?php
+        // TAGS
+        $tagsql = "SELECT tag FROM experiments_tags WHERE item_id = ".$final_query['id'];
+        $tagreq = $bdd->prepare($tagsql);
+        $tagreq->execute();
+        echo "<span class='redo_compact'>".$final_query['date']."</span> ";
+        echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
+        while($tags = $tagreq->fetch()){
+            echo "<a href='experiments.php?mode=show&q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
+        }
+        echo "</span>";
+        // END TAGS
+        echo "<p class='title'>". stripslashes($final_query['title']) . "</p>";
+        echo "</section>";
+    } // end foreach
+// /////////////////
+// DEFAULT VIEW
+// /////////////////
+}else{
+    $sql = "SELECT * 
+        FROM experiments 
+        WHERE userid = :userid 
+        ORDER BY ".$order." ". $sort." 
+        LIMIT ".$limit." 
+        OFFSET ".$offset;
+    $req = $bdd->prepare($sql);
+    $req->bindParam(':userid', $_SESSION['userid']);
+    $req->execute();
+
+    while ($data = $req->fetch()) {
+        if ($display === 'compact') {
+                // COMPACT MODE //
+                ?>
+                <!-- BEGIN CONTENT -->
+                <section onClick="document.location='experiments.php?mode=view&id=<?php echo $data['id'];?>'" class='item'>
+                <?php
+                echo "<span class='".$data['outcome']."_compact'>".$data['date']."</span> ";
+                echo stripslashes($data['title']);
+                echo "</section>";
+        } else {
+                ?>
+                <!-- BEGIN CONTENT -->
+                <section OnClick="document.location='experiments.php?mode=view&id=<?php echo $data['id'];?>'" class="item <?php echo $data['outcome'];?>">
+                <?php
+                // DATE
+                echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' alt='' /> ".$data['date']."</span>";
+                // TAGS
+                $id = $data['id'];
+                $sql = "SELECT tag FROM experiments_tags WHERE item_id = ".$id;
+                $tagreq = $bdd->prepare($sql);
+                $tagreq->execute();
+                echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
+                while($tags = $tagreq->fetch()){
+                    echo "<a href='experiments.php?q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
+                    }
+                // END TAGS
+                echo    "</span>";
+                // TITLE
+                echo " <div class='title'>". stripslashes($data['title']) . "</div></section>";
+        }
+
+    } // end while
+}
 // END CONTENT
 
 // PAGINATION
 //  only show pagination if there is no search
-if(!isset($_GET['q']) || empty($_GET['q']) ){
+if(isset($_GET['q']) || isset($_GET['related']) ){
+    // no pagination
+}else{
     ?>
     <section class='pagination'>
     <?php

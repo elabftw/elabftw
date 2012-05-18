@@ -173,9 +173,8 @@ function addTagOnEnter(e){ // the argument here is the event (needed to detect w
         })
     } // end if key is enter
 }
-// DATEPICKER + STAR RATINGS
+// STAR RATINGS
 $(function() {
-    $( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
     $('input.star').rating();
     $('#star1').click(function() {
         updateRating(1);
@@ -204,6 +203,13 @@ function updateRating(rating) {
         return false;
     })
 }
+// DATEPICKER
+$( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
+// SELECT ALL TXT WHEN FOCUS ON TITLE INPUT
+$("#title").focus(function(){
+    $("#title").select();
+});
+// EDITOR
 tinyMCE.init({
     theme : "advanced",
     mode : "specific_textareas",

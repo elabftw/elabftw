@@ -205,9 +205,12 @@ function addTagOnEnter(e) { // the argument here is the event (needed to detect 
     } // end if key is enter
 }
 // DATEPICKER
-$(function() {
-    $( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
+$( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
+// SELECT ALL TXT WHEN FOCUS ON TITLE INPUT
+$("#title").focus(function(){
+    $("#title").select();
 });
+// EDITOR
 tinyMCE.init({
     theme : "advanced",
     mode : "specific_textareas",

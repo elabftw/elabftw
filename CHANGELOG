@@ -1,5 +1,12 @@
 /* Changelog for eLabFTW */
 
+Version 0.6
+* Multiple bugfixes
+* Show linked experiments to a database item
+
+Version 0.5.8 and 0.5.9
+* I don't really care about version numbers, I do it for fun.
+
 Version 0.5.7
 * Database
 * Publish button

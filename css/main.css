@@ -71,7 +71,16 @@ hr {
 li.inline {
     display: inline;
 }
+/* fix the list in the body */
+div.txt ol li {
+    /* !important because there is a list-style-type:none in jquery-ui */
+    list-style-type:decimal !important;
+}
 
+div.txt li {
+    /* !important because there is a list-style-type:none in jquery-ui */
+    list-style-type:square !important;
+}
 /* INFO BOX */
 .errors {
     background-color:  #e8c5c9;

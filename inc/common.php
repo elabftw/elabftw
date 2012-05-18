@@ -24,9 +24,9 @@
 *                                                                               *
 ********************************************************************************/
 /* auth + connect + functions*/
+$ini_arr = parse_ini_file('admin/config.ini');
 session_start();
 require_once('inc/functions.php');
-$ini_arr = parse_ini_file('admin/config.ini');
 // SQL CONNECT
 try
 {

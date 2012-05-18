@@ -73,7 +73,7 @@ if (isset($_POST['deluser']) && filter_var($_POST['deluser'], FILTER_VALIDATE_IN
     $sql = "DELETE FROM uploads WHERE userid = ".$userid;
     $req = $bdd->prepare($sql);
     $req->execute();
-    $msg_arr[] = 'Deleted user with user ID : '.$userid;
+    $msg_arr[] = 'Everything was purged successfully.';
     $_SESSION['infos'] = $msg_arr;
 }
 

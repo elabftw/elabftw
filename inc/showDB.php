@@ -26,7 +26,7 @@
 require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 ?>
 <div id='submenu'>
-<form id='database_search' method='get' action='database.php'>
+<form id='big_search' method='get' action='database.php'>
 <input type='search' name='q' size='50' placeholder='Type your search' />
 </form>
 <br />

@@ -25,12 +25,13 @@
 ********************************************************************************/
 require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 ?>
-<div id='submenu'><a href="create_item.php?type=exp"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Create experiment</a> | 
+<div id='submenu'>
+<form id='big_search' method='get' action='experiments.php'>
+<input type='search' name='q' size='50' placeholder='Type your search' />
+</form>
+<br />
+<a href="create_item.php?type=exp"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Create experiment</a> | 
 <a href='#' class='trigger'><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/duplicate.png" alt="" /> Create from template</a>
-<!-- Quick Search Box (search tags) -->
-<form id='quicksearch' method='get' action='experiments.php'>
-<input type='search' name='q' placeholder='Search experiment' />
-</form><!-- end quick search -->
 </div><!-- end submenu -->
 <div class='toggle_container'><ul>
 <? // SQL to get user's templates

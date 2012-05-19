@@ -150,10 +150,10 @@ nav a{
 #quicksearch {
     float: right;
 }
-#database_search {
+#big_search {
     text-align: center;
 }
-#database_search input {
+#big_search input {
     font:  20px Helvetica, Verdana, Arial, sans-serif;
 }
 

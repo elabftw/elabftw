@@ -46,14 +46,16 @@ return round($a_bytes / 1208925819614629174706176, 2) .' YiB';
 }
 
 function createPassword($length) {
+    $password = "ChangeMe_";
     $chars = "1234567890abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     $i = 0;
-    $password = "k";
+    $random_part = "";
     while ($i < $length) {
-    $password .= $chars{mt_rand(0,strlen($chars))};
+    $random_part .= $chars{mt_rand(0,strlen($chars))};
     $i++;
     }
-    return $password;
+    $fullpassword = $password.$random_part;
+    return $fullpassword;
 }
 
 function get_ext($filename){

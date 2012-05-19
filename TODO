@@ -8,7 +8,7 @@ source : http://www.sitepoint.com/forums/showthread.php?474831-Scope-of-SESSION-
 * mettre LM et JC dans DB ?
 * export by date range / tag / search result
 * add tag on templates
-* most used protocoles get first in selecta ! 
+* add several link to db item, select type + keyword, a list appear with the results
 * announce birthday date of a team mb to other team mb (add birthday in profile)
 * tools page with trucs pour calculer les concentrations, et les volumes pour les transfections, etc...
 * make_pdf : keep formatting (html2fpdf)

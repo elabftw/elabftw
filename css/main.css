@@ -147,14 +147,14 @@ nav a{
     padding-bottom: 15px;
 }
 
-#quicksearch {
-    float: right;
-}
 #big_search {
     text-align: center;
 }
 #big_search input {
     font:  20px Helvetica, Verdana, Arial, sans-serif;
+}
+#export_menu {
+    float:right;
 }
 
 /* results on database search */

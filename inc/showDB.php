@@ -26,13 +26,16 @@
 require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 ?>
 <div id='submenu'>
-<form id='big_search' method='get' action='database.php'>
-<input type='search' name='q' size='50' placeholder='Type your search' />
-</form>
-<br />
-<a href="create_item.php?type=pro"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add a protocol</a> 
-<a href="create_item.php?type=pla"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add a plasmid</a>
-<a href="create_item.php?type=ant"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add an antibody</a>
+    <form id='big_search' method='get' action='database.php'>
+        <input type='search' name='q' size='50' placeholder='Type your search' />
+    </form>
+    <br />
+    <a href="create_item.php?type=pro"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add a protocol</a> 
+    <a href="create_item.php?type=pla"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add a plasmid</a>
+    <a href="create_item.php?type=ant"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add an antibody</a>
+<div id='export_menu'>
+    <a href='make_csv.php'><img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export in spreadsheet file' /></a>
+</div>
 </div>
 <!-- end submenu -->
 

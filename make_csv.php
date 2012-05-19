@@ -23,42 +23,19 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-$ini_arr = parse_ini_file('admin/config.ini');
-?>
-<noscript><!-- show warning if javascript is disabled -->
-<ul class="errors">
-<li><img src="img/info.png" alt="" />
-Javascript is disabled. Please enable Javascript to view this site in all its glory. Thank You.</li>
-</ul>
-</noscript>
+/* make_csv.php -- export database in spreadsheet file */
+require_once('inc/common.php');
+require_once('inc/head.php');
+$page_title='Make CSV';
+require_once('inc/menu.php');
+require_once('inc/info_box.php');
 
-<div id='logo'>
-<a href="index.php"><span id='eblue'>e</span><span id='lab'>Lab</span><span id='ftw'>FTW</span></a>
-</div>
+// SQL
+$sql = "SELECT * FROM items";
+$req = $bdd->prepare($sql);
+$req->execute();
+$items = $req->fetch();
+$req->closeCursor();
 
-<div id="logmenu"><p>
-<?php
-if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
-    echo "<a href='admin.php'>Admin Panel</a> | ";
-    }
-if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
-    echo "Logged in as <a href='profile.php' title='Profile'>".$_SESSION['username']."</a> | 
-        <a href='ucp.php'><img src='themes/".$_SESSION['prefs']['theme']."/img/pref.png' alt='Control panel' title='Control panel' /></a> | 
-        <a href='logout.php'><img src='themes/".$_SESSION['prefs']['theme']."/img/logout.png' alt='' title='Logout' /></a></p>";
-} else {
-    echo "<a href='login.php'>Not logged in !</a>";
-}
-?>
-</div>
-
-<nav><a href="experiments.php?mode=show">Experiments</a>
-<a href="database.php?mode=show">Database</a>
-<a href="team.php">Team</a>
-<a href="<?php echo $ini_arr['link_href'];?>" target='_blank'><?php echo $ini_arr['link_name'];?></a>
-</nav>
-<hr class='flourishes'>
-<!-- TITLE -->
-<div id='page_title'>
-<h2><?php echo strtoupper($page_title);?></h2>
-</div>
-<?php // print_r($_SESSION); ?>
+echo 'Not yet implemented.';
+require_once('inc/footer.php');

@@ -361,7 +361,10 @@ img {
     padding: 10px;
     width: 742px;
 }
-
+/* in admin.php for templates */
+.high {
+    height:450px;
+}
 /* item style for experiments */
 .running {
     border: 2px dotted blue !important;

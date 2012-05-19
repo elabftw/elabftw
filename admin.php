@@ -78,7 +78,7 @@ $data = $req->fetch();
 ?>
     <form action='admin-exec.php' method='post'>
     <input type='hidden' name='pla_tpl' />
-    <textarea class='mceditable' name='body' /><?php echo $data['body'];?></textarea>
+    <textarea class='mceditable high' name='body' /><?php echo $data['body'];?></textarea>
     <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Save changes" /></div>
     </form>
 </section>
@@ -93,7 +93,7 @@ $data = $req->fetch();
 ?>
     <form action='admin-exec.php' method='post'>
     <input type='hidden' name='ant_tpl' />
-    <textarea class='mceditable' name='body' /><?php echo $data['body'];?></textarea>
+    <textarea class='mceditable high' name='body' /><?php echo $data['body'];?></textarea>
     <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Save changes" /></div>
     </form>
 </section>

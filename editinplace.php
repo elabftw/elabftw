@@ -24,18 +24,19 @@
 *                                                                               *
 ********************************************************************************/
 require_once('inc/common.php');
-// TODO check comment is owned by user
 
+// Check ID 
 if (isset($_POST['id']) && !empty($_POST['id'])) {
-// post['id'] looks like comment_56
-$id_arr = explode('_', $_POST['id']);
-if (filter_var($id_arr[1], FILTER_VALIDATE_INT)) {
-    $id = $id_arr[1];
-}else{
-    die('diephrase');
+    // post['id'] looks like comment_56
+    $id_arr = explode('_', $_POST['id']);
+    if (is_pos_int($id_arr[1])){
+        $id = $id_arr[1];
+    }else{
+        die('ID not valid.');
+    }
 }
-}
-// TODO if user send multiple space, comment field disappear !
+
+// Update comment
 if (($_POST['content'] != '') && ($_POST['content'] != ' ')){
     $content = filter_var($_POST['content'], FILTER_SANITIZE_STRING);
     // SQL to update single file comment
@@ -50,7 +51,7 @@ if (($_POST['content'] != '') && ($_POST['content'] != ' ')){
     $sql = "SELECT comment FROM uploads WHERE id = ".$id;
     $req = $bdd->prepare($sql);
     $req->execute();
-    $data = $req->fetch();
-    echo stripslashes($data['comment']);
+    $comment = $req->fetch();
+    echo stripslashes($comment['comment']);
 }
 ?>

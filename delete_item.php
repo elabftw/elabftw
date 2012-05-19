@@ -48,37 +48,48 @@ if ($item_type === 'experiments' || $item_type === 'experiments_templates') {
         die('You are trying to delete an item which is not yours !');
     }
 }
-
-// TODO if we delete a protocol, update the experiments linked to it with NULL
+if ($item_type === 'items'){
+    // get all experiments with that item linked and set it to NULL
+    $sql = "SELECT id FROM experiments WHERE item = :item";
+    $req = $bdd->prepare($sql);
+    $req->execute(array(
+        'item' => $id
+    ));
+    while($experiments = $req->fetch()){
+        $sql = "UPDATE experiments SET item = NULL WHERE id = :id";
+        $set_null = $bdd->prepare($sql);
+        $set_null->execute(array(
+            'id' => $experiments['id']
+        ));
+    }
+}
 // DELETE ITEM
 $sql = "DELETE FROM ".$item_type." WHERE id=".$id;
 $req = $bdd->prepare($sql);
-$result = $req->execute();
+$result1 = $req->execute();
 
 // DELETE TAGS
 $sql = "DELETE FROM ".$item_type."_tags WHERE item_id = ".$id;
 $req = $bdd->prepare($sql);
-$req->execute();
+$result2 = $req->execute();
 
 // DELETE FILES
 $sql = "DELETE FROM uploads WHERE item_id = :id AND type = :type";
 $req = $bdd->prepare($sql);
 if($item_type === 'experiments'){
-$req->execute(array(
+$result3 = $req->execute(array(
     'id' => $id,
     'type' => 'exp' 
 ));
 }
 if($item_type === 'items'){
-$req->execute(array(
+$result3 = $req->execute(array(
     'id' => $id,
     'type' => 'database' 
 ));
 }
-// TODO set Null for exp with linked item
 
-// TODO check that the 3 sql went OK
-if ($result) {
+if ($result1 && $result2 && $result3) {
     $msg_arr = array();
     if ($item_type === 'experiments'){
         $msg_arr[] = 'Experiment deleted successfully';
@@ -94,7 +105,7 @@ if ($result) {
     } else {
         header("location: ucp.php");
     }
-} else { // no $result
+} else { // no $result{1, 2, 3}
     die('Something went wrong in the database query. Check the flux capacitor.');
 }
 ?>

@@ -49,38 +49,41 @@ $running = $count_arr[3][0];
 // MAKE TOTAL
 $total = ($success + $fail + $redo + $running);
 // Make percentage
-// TODO fix division by zero
-$success_p = round(($success / $total)*100);
-$fail_p = round(($fail / $total)*100);
-$redo_p = round(($redo / $total)*100);
-$running_p = round(($running / $total)*100);
-$total_p = ($success_p + $fail_p + $redo_p + $running_p);
+if ($total != 0) {
+    $success_p = round(($success / $total)*100);
+    $fail_p = round(($fail / $total)*100);
+    $redo_p = round(($redo / $total)*100);
+    $running_p = round(($running / $total)*100);
+    $total_p = ($success_p + $fail_p + $redo_p + $running_p);
 
-// BEGIN CONTENT
-echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/statistics.png' alt='' /> <h4>STATISTICS</h4>";
-?>
-<script src='js/google-jsapi.js'></script>
-<script>
-      //google.load('visualization', '1', {packages:['imagepiechart']});
-      google.load('visualization', '1', {packages:['corechart']});
-      google.setOnLoadCallback(drawChart);
-      function drawChart() {
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Outcome');
-        data.addColumn('number', 'Experiments number');
-        data.addRows([
-            ['Running', <?php echo $running_p;?>],
-            ['Fail',  <?php echo $fail_p;?>],
-            ['Need to be redone',    <?php echo $redo_p;?>],
-            ['Success',      <?php echo $success_p;?>],
-                      ]);
+    // BEGIN CONTENT
+    echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/statistics.png' alt='' /> <h4>STATISTICS</h4>";
+    ?>
+    <script src='js/google-jsapi.js'></script>
+    <script>
+          //google.load('visualization', '1', {packages:['imagepiechart']});
+          google.load('visualization', '1', {packages:['corechart']});
+          google.setOnLoadCallback(drawChart);
+          function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Outcome');
+            data.addColumn('number', 'Experiments number');
+            data.addRows([
+                ['Running', <?php echo $running_p;?>],
+                ['Fail',  <?php echo $fail_p;?>],
+                ['Need to be redone',    <?php echo $redo_p;?>],
+                ['Success',      <?php echo $success_p;?>],
+                          ]);
 
-        var options = {
-            title: 'Experiments for <?php echo $_SESSION['username'];?>',
-            backgroundColor: '#EEE'
-        }
-        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
-      }
-    </script>
- <div id="chart_div" class='center'></div>
+            var options = {
+                title: 'Experiments for <?php echo $_SESSION['username'];?>',
+                backgroundColor: '#EEE'
+            }
+            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+          }
+        </script>
+     <div id="chart_div" class='center'></div>
+<?php }else { //end fix division by zero
+    echo 'No statistics available yet.';
+}

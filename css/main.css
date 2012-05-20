@@ -35,7 +35,7 @@
 a {
     color:  #000;
 }
-a: hover {
+a :hover {
     color:  red;
 }
 
@@ -208,7 +208,8 @@ h4 {
 }
 /* MENU */
 
-/**** SEARCH PAGE *******/
+/* old 
+/**** SEARCH PAGE *******
 #first_search_select {
     margin-left: 64px;
 }
@@ -230,7 +231,7 @@ h4 {
     opacity: 1;
 }	
 
-/* end search bar */
+/* end search bar 
 
 .search_results_div {
     -moz-column-count:  2;
@@ -258,13 +259,13 @@ h4 {
     background: #FFF;
 }
 
-/* number of search results */
+/* number of search results 
 #search_count {
     clear: right;
     filter:  dropshadow(color=#AAA, offx=2, offy=2); 
     text-shadow:  2px 2px 2px #AAA;
 }
-
+*/
 /* LOGIN */
 .login{
     border: 2px solid blue;
@@ -355,8 +356,6 @@ img {
     border:  1px solid #CCC;
     border-radius: 5px;
     box-shadow:  3px 2px 2px 1px #CCC; 
-    -webkit-box-shadow:  2px 2px 2px 1px #CCC;
-    -moz-box-shadow:  2px 2px 2px 1px #CCC;
     margin: 7px auto 7px auto;
     padding: 10px;
     width: 742px;

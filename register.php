@@ -36,7 +36,7 @@ require_once('inc/info_box.php');
       Confirm Password <input name="cpassword" type="password" class="textfield" id="cpassword" /><br /><br />
 <div id='submitDiv'>
 <!-- js on submit button to avoid double requests -->
-      <input type="submit" name="Submit" class='submit' value="Register" onclick="this.disabled = 1;" />
+      <input type="submit" name="Submit" class='submit' value="Register" />
 </div>
 </div>
 </form>

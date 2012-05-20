@@ -103,6 +103,25 @@ if ($type == 'plasmids'){
         'type' => 'pla'
         ));
 }
+if ($type == 'antibodies'){
+    // SQL to get plasmid template
+    $sql = "SELECT body FROM items_templates WHERE type = 'ant'";
+    $ant_tpl = $bdd->prepare($sql);
+    $ant_tpl->execute();
+    $ant_tpl_body = $ant_tpl->fetch();
+
+    // SQL for create antsmids
+    $sql = "INSERT INTO items(title, date, body, userid, type) 
+        VALUES(:title, :date, :body, :userid, :type)";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute(array(
+        'title' => 'Untitled',
+        'date' => kdate(),
+        'body' => $ant_tpl_body['body'],
+        'userid' => $_SESSION['userid'],
+        'type' => 'ant'
+        ));
+}
 // Get what is the item id we just created
 if ($type === 'experiments') {
     $sql = "SELECT id FROM experiments WHERE userid = :userid ORDER BY id DESC LIMIT 0,1";
@@ -117,14 +136,14 @@ $newid = $data['id'];
 
 // Check if insertion is successful and redirect to the newly created experiment in edit mode
 if($result) {
-// info box
-$msg_arr[] = 'New item successfully created.';
-$_SESSION['infos'] = $msg_arr;
-if ($type === 'experiments') {
-    header('location: experiments.php?mode=edit&id='.$newid.'');
-} else {
-    header('location: database.php?mode=edit&id='.$newid.'');
-}
+    // info box
+    $msg_arr[] = 'New item successfully created.';
+    $_SESSION['infos'] = $msg_arr;
+    if ($type === 'experiments') {
+        header('location: experiments.php?mode=edit&id='.$newid.'');
+    } else {
+        header('location: database.php?mode=edit&id='.$newid.'');
+    }
 } else {
     die("Something went wrong in the database query. Check the flux capacitor.");
 }

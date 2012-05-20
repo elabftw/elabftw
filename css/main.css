@@ -64,8 +64,39 @@ p a{
     font-weight: bold;
 }
 
+/* hr */
 hr {
     margin: 10px 0 10px 0;
+}
+hr.flourishes {
+    background: url('img/flourishes.png') no-repeat scroll center 0px transparent; /* -61px */
+    border: 0 none;
+    clear: both;
+    display: block;
+    height: 18px;
+    opacity: 0.8;
+}
+
+hr.tinyflourishes {
+    background: url('img/flourishes.png') no-repeat scroll center -16px transparent; /* -61px */
+    border: 0 none;
+    clear: both;
+    display: block;
+    height: 18px;
+    margin: 18px 0 0;
+    opacity: 0.8;
+    outline: 0 none;
+}
+
+hr.rishes {
+    background: url('img/flourishes.png') no-repeat scroll center -36px transparent; /* -61px */
+    border: 0 none;
+    clear: both;
+    display: block;
+    height: 18px;
+    margin: 18px 0 0;
+    opacity: 0.8;
+    outline: 0 none;
 }
 
 li.inline {

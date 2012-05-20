@@ -23,21 +23,15 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-/* install/install.php to get an installation up and running */
+/* install/install-exec.php to get an installation up and running */
 require_once('../inc/head.php');
-?>
-<h2>Install eLabFTW</h2>
-<form action='install/install-exec.php' method='post'>
-Database location <input value='localhost' type='text' name='db_host' /><br />
-Database name <input value='elabftw' type='text' name='db_name' /><br />
-Database user <input placeholder='elabftw' type='text' name='db_user' /><br />
-Database password <input placeholder='secr3t' type='password' name='db_password' /><br />
-
-<hr>
-Admin account <input type='text' name='username' /><br />
-Admin password <input type='password' name='password' /><br />
-Confirm password <input type='password' name='cpassword' /><br />
-<br />
-<br />
-<input type='submit' value='INSTALL' />
-</form>
+// Create the uploads/ dir and set chmod 777
+if (!is_dir("../uploads")){
+   if  (mkdir("../uploads", 0777)){
+    echo "uploads/ directory successfully created.";
+    }else{
+        echo "Failed creating uploads directory. Do it manually and chmod 777 it.";
+    }
+}else{
+    echo 'Directory uploads/ already exists. Nothing to do.';
+}

@@ -1,30 +1,46 @@
-Thank you for choosing eLabFTW as a lab manager.
+                        _           _    ______ _____ _    _ 
+                       | |         | |   |  ___|_   _| |  | |
+                    ___| |     __ _| |__ | |_    | | | |  | |
+                   / _ \ |    / _` | '_ \|  _|   | | | |/\| |
+                  |  __/ |___| (_| | |_) | |     | | \  /\  /
+                   \___\_____/\__,_|_.__/\_|     \_/  \/  \/ 
+
+
+Thank you for choosing eLabFTW as a lab manager =)
+This file contains the instructions to install elabftw on a webserver.
+
+  _   _   _   _   _   _   _   _   _   _   _   _  
+ / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ 
+( R | E | Q | U | I | R | E | M | E | N | T | S )
+ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ \_/ 
 
 Here is what you need in order to install it :
 
-- a server running GNU/Linux (although a Mac OS X or Windows server might work too, but I wouldn't recommand it)
-- with PHP5, MySQL5 (other relational database might work, as it uses PDO), Apache (other http servers might work)
-- basic knowledge of server administration, command line work
-- root access to the server ^^
+- a webserver running an Unix-like OS
+- PHP version > 5.4.3
+- MySQL version > 5.1
+- basic knowledge of server administration
+- access to a MySQL database
+- authorization to upload files to a public folder 
 
 Have everything ?
 Now, let's begin :
 
+  _   _   _     _   _   _   _  
+ / \ / \ / \   / \ / \ / \ / \ 
+( P | H | P ) ( P | A | R | T )
+ \_/ \_/ \_/   \_/ \_/ \_/ \_/ 
 
-INSTALL
-*********************
+The first part is getting the files on the server.
 
-Connect to your server via SSH and fireup tmux (or screen).
-If you don't know what is SSH, maybe it's not a good idea to try and install eLabFTW.
-
+Command line interface :
+```````````````````````
 As root, cd to your public directory (/var/www generally) and enter these commands :
-
-PHP part
-*********
 
 (If you are behind a proxy :
 # export http_proxy=proxy-adress.company.org:3128
 )
+
 Get latest version
 # wget http://www.elabftw.net/pub/latest-stable.tar.gz
 Extract it in the public folder
@@ -34,10 +50,25 @@ Or via git :
 git clone https://git.gitorious.org/elabftw/elabftw.git
 (this will create a folder `elabftw`)
 
+Graphical user interface :
+`````````````````````````
+Download the latest stable release from the official website.
+Connect to your server via SFTP (or FTP if you don't mind your password being
+sent in clear over the network).
+Upload the decompressed folder to your public directory.
 
-SQL part
-***********
+  _   _   _     _   _   _   _  
+ / \ / \ / \   / \ / \ / \ / \ 
+( S | Q | L ) ( P | A | R | T )
+ \_/ \_/ \_/   \_/ \_/ \_/ \_/ 
 
+Use the install script :
+```````````````````````
+Now point your favorite browser to http://example.com/elabftw/install/install.php
+and follow the instructions on screen.
+
+Do it manually :
+```````````````
 Connect :
 Command to connect with the user `root` and the password `secr3t`
 # mysql -uroot -psecr3t
@@ -48,12 +79,9 @@ mysql> CREATE DATABASE `elabftw` DEFAULT CHARACTER SET utf8 COLLATE utf8_general
 Exit with Ctrl-d, and enter this if you are in the same directory as the sql file:
 # mysql -uroot -psecr3t elabftw < elabftw.sql
 
-Now register an account, and set it admin by modifying the `is_admin` column in `users` table :
+Now register an account on the web interface, and set it admin by modifying the `is_admin` column in `users` table :
 mysql> UPDATE users SET is_admin = 1 WHERE userid = 1
 
 Now edit the `admin/config-example.ini` file and rename it to `config.ini`.
 
-You should be good to go. Email me in case of troubles : nicolas.carpi@gmail.com
-
-In the future, I hope to automate all this install part ^^
-
+You should be good to go. Email me in case of troubles : nicolas.carpi gmail com

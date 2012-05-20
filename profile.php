@@ -53,7 +53,7 @@ echo "<section class='item'>";
 echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/user.png' alt='' /> <h4>INFOS</h4>";
 echo "<div class='center'>
     <p>".$data['firstname']." ".$data['lastname']." (".$data['email'].")</p>
-    <p>".$count[0]." experiments done since ".date("Y-m-d", $data['register_date']);
+    <p>".$count[0]." experiments done since ".date("l jS \of F Y", $data['register_date']);
 if($data['group'] == 'admin') {echo "<p>You ARE admin \o/</p>";}
 if($data['group'] === 'journalclub') {echo "<p>You ARE responsible of the <a href='journal-club.php'>Journal Club</a> !</p>";}
 echo "</div>";

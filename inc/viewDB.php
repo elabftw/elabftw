@@ -66,7 +66,7 @@ $req = $bdd->prepare($sql);
 $req->execute();
 echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
 while($tags = $req->fetch()){
-    echo "<a href='database.php?mode=show&tag=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
+    echo "<a href='database.php?mode=show&q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
 }
 echo "</span>";
 // END TAGS

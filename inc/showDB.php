@@ -138,7 +138,7 @@ if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
         echo "<span class='redo_compact'>".$final_query['date']."</span> ";
         echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
         while($tags = $tagreq->fetch()){
-            echo "<a href='database.php?mode=show&tag=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
+            echo "<a href='database.php?mode=show&q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
         }
         echo "</span>";
         // END TAGS

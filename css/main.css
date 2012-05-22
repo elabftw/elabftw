@@ -69,7 +69,7 @@ hr {
     margin: 10px 0 10px 0;
 }
 hr.flourishes {
-    background: url('img/flourishes.png') no-repeat scroll center 0px transparent; /* -61px */
+    background: url('../img/flourishes.png') no-repeat scroll center 0px transparent; /* -61px */
     border: 0 none;
     clear: both;
     display: block;
@@ -78,7 +78,7 @@ hr.flourishes {
 }
 
 hr.tinyflourishes {
-    background: url('img/flourishes.png') no-repeat scroll center -16px transparent; /* -61px */
+    background: url('../img/flourishes.png') no-repeat scroll center -16px transparent; /* -61px */
     border: 0 none;
     clear: both;
     display: block;
@@ -89,7 +89,7 @@ hr.tinyflourishes {
 }
 
 hr.rishes {
-    background: url('img/flourishes.png') no-repeat scroll center -36px transparent; /* -61px */
+    background: url('../img/flourishes.png') no-repeat scroll center -36px transparent; /* -61px */
     border: 0 none;
     clear: both;
     display: block;

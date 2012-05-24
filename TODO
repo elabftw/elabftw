@@ -1,5 +1,5 @@
 /////// Priority
-* fix flourishes
+* search results do not appear in right display order
 * cookies domain only
 1) Change session.cookie_path to the relevant directory path (you've already done this).
 2) Add a variable to your session (e.g. $_SESSION['path']) and set that equal to the path as well. Then verify that value before granting access.

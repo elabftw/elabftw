@@ -67,7 +67,7 @@ if (is_uploaded_file($_FILES['files']['tmp_name'][0])){
         } // end if move uploaded
     } // end is uploaded
 if($result) {
-    header('location: team.php');
+    header('location: team.php#team-2');
 } else {
     echo "Something went wrong in the database query. Check the flux capacitor.";
 }

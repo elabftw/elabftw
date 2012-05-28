@@ -64,7 +64,7 @@ echo "</ul>";
 </div>
 <!-- *********************** -->
 <div id='team-2'>
-<a href='http://wiki-bio6.curie.fr/wiki/index.php/Piel_Lab_inner_working#Lab_meetings' target='_blank' class='show_rules'>Show rules</a><br />
+<a href='#' onClick='window.open("lm_rules.php", "window", "menubar=0,resizable=1,width=1000,height=460");' class='show_rules'>Show rules</a><br />
 <h4>Past labmeetings :</h4><br />
 <?php
 // SQL to get past labmeetings files
@@ -114,11 +114,13 @@ require('inc/file_upload_nojs.php');
 ?>
 </form>
 
+<!--
 <p class='center'><img src='img/labmeetings-2012.png' alt='labmeetings' title='labmeetings 2012' /></p>
+-->
 </div>
 
 <div id='team-3'>
-<a href='#' onClick='window.open("jclub_rules.php", "window", "menubar=0,resizable=1,width=1000,height=460");' class='show_rules'>Show rules</a><br />
+<a href='#' onClick='window.open("jc_rules.php", "window", "menubar=0,resizable=1,width=1000,height=460");' class='show_rules'>Show rules</a><br />
 <h4>Past journal clubs :</h4><br />
 <?php
 // SQL to get past journal clubs

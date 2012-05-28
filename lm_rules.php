@@ -24,50 +24,12 @@
 *                                                                               *
 ********************************************************************************/
 require_once('inc/common.php');
-//Array to store validation errors
-$msg_arr = array();
-//Validation error flag
-$errflag = false;
-
-require_once('inc/check_files.php'); // Check uploaded FILES
-
-// If input errors, redirect back to the team page
-if($errflag) {
-    $_SESSION['errors'] = $msg_arr;
-    session_write_close();
-    header("location: team.php");
-    exit();
-}
-// END CHECK STUFF
-// FILES
-// If FILES are uploaded
-if (is_uploaded_file($_FILES['files']['tmp_name'][0])){
-        // Loop for each file
-        for ($i = 0; $i < $cnt; $i++) {
-        // Comments
-    $filecomments[] = filter_var($_POST['filescom'][$i], FILTER_SANITIZE_STRING);
-    if(strlen($filecomments[$i]) == 0){
-        $filecomments[$i] = 'No comment added';
-    }
-        // Move file
-            if (move_uploaded_file($_FILES['files']['tmp_name'][$i], $upload_directory . $long_filenames[$i])) {
-    //SQL for FILE uploads
-    $sql = "INSERT INTO uploads(real_name, long_name, comment, userid, type, date) VALUES(:real_name, :long_name, :comment, :userid, :type, :date)";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute(array(
-        'real_name' => $real_filenames[$i],
-        'long_name' => $long_filenames[$i],
-        'comment' => $filecomments[$i],
-        'userid' => $_SESSION['userid'],
-        'type' => 'jc',
-        'date' => date('Y-m-d')
-    ));
-    $req->closeCursor();
-            } // end for each file loop
-        } // end if move uploaded
-    } // end is uploaded
-if($result) {
-    header('location: team.php#team-3');
-} else {
-    echo "Something went wrong in the database query. Check the flux capacitor.";
-}
+$page_title='Lab Meetings Rules';
+require_once('inc/head.php');
+?>
+<h2>RULES</h2>
+<p>
+TODO : editable lm_rules.
+</p>
+</div>
+</div>

@@ -25,7 +25,7 @@
 ********************************************************************************/
 require_once('inc/common.php');
 // Check id is valid and assign it to $id
-if(filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+if(isset($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
     die("The id parameter in the URL isn't a valid item ID");

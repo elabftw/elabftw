@@ -22,7 +22,7 @@ require_once('inc/functions.php');
 if ((isset($_POST['date'])) 
     && (!empty($_POST['date'])) 
     && ((strlen($_POST['date']) == "6")) 
-    && filter_var($_POST['date'], FILTER_VALIDATE_INT)) {
+    && is_pos_int($_POST['date'])) {
     // Check if day/month are good
     $datemonth = substr($_POST['date'],2,2);
     $dateday = substr($_POST['date'],4,2);

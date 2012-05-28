@@ -29,7 +29,7 @@ $page_title='Make zip';
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
 // Check id is valid and assign it to $id
-if(isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+if(isset($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
     die("The id parameter in the URL isn't a valid experiment ID");

@@ -25,12 +25,8 @@
 ********************************************************************************/
 require_once('inc/common.php');
 // Check ID
-if (isset($_GET['id']) && !empty($_GET['id'])) {
-    $filter_options = array(
-        'options' => array(
-            'min_range' => 1
-        ));
-    $id = filter_var($_GET['id'], FILTER_VALIDATE_INT, $filter_options);
+if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
+    $id = $_GET['id'];
 }
 
 if ($_GET['type'] === 'exp'){

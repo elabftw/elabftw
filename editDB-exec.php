@@ -32,7 +32,7 @@ $errflag = false;
 
 // CHECKS
 // ID
-if(is_pos_int($_POST['item_id'])){
+if (is_pos_int($_POST['item_id'])){
     $id = $_POST['item_id'];
 } else {
     $id='';

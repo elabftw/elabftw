@@ -45,7 +45,7 @@ if (isset($_POST['validate'])) {
 
 // MANAGE USERS
 // called from ajax
-if (isset($_POST['deluser']) && filter_var($_POST['deluser'], FILTER_VALIDATE_INT)) {
+if (isset($_POST['deluser']) && is_pos_int($_POST['deluser'])) {
     $userid = $_POST['deluser'];
     $msg_arr = array();
     // DELETE USER

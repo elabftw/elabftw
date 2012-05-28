@@ -30,7 +30,7 @@ $msg_arr = array();
 if (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')){
     $type = 'experiments';
     // Is there a template ?
-    if (isset($_GET['tpl']) && !empty($_GET['tpl']) && filter_var($_GET['tpl'], FILTER_VALIDATE_INT)) {
+    if (isset($_GET['tpl']) && !empty($_GET['tpl']) && is_pos_int($_GET['tpl'])) {
         $tpl_id = $_GET['tpl'];
         $sql = "SELECT body FROM experiments_templates WHERE id = ".$tpl_id;
         $tplreq = $bdd->prepare($sql);

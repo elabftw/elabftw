@@ -25,11 +25,11 @@
 ********************************************************************************/
 require_once('inc/common.php');
 
-// ID
-if (!isset($_GET['id']) || empty($_GET['id'])) {
-    die('I need a file ID !');
+// Check ID
+if (isset($_GET['id']) && is_pos_int($_GET['id'])) {
+    $id = $_GET['id'];
 } else {
-    $id = filter_var($_GET['id'], FILTER_VALIDATE_INT);
+    die('I need a file ID !');
 }
 
 // LONG_NAME
@@ -37,7 +37,7 @@ if (!isset($_GET['f']) || empty($_GET['f'])) {
   die('What are you doing, Dave ?');
 }
 // Nullbyte hack fix
-if (strpos($_GET['f'], "\0") !== FALSE) die('What are you doing, Dave ?');
+if (strpos($_GET['f'], "\0") != FALSE) die('What are you doing, Dave ?');
 // Remove any path info to avoid hacking by adding relative path, etc.
 $long_filename = basename($_GET['f']);
 

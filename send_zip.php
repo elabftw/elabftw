@@ -25,7 +25,7 @@
 ********************************************************************************/
 require_once('inc/common.php');
 // Check we got a valid userid
-if (isset($_POST['userid']) && !empty($_POST['userid']) && filter_var($_POST['userid'], FILTER_VALIDATE_INT)){
+if (isset($_POST['userid']) && !empty($_POST['userid']) && is_pos_int($_POST['userid'])) {
     $userid = $_POST['userid'];
 } else {
     die('Bad userid motherfucker !');

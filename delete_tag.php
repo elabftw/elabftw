@@ -25,13 +25,13 @@
 ********************************************************************************/
 require_once('inc/common.php');
 // Check id is valid and assign it to $id
-if (isset($_POST['id']) && filter_var($_POST['id'], FILTER_VALIDATE_INT)) {
+if (isset($_POST['id']) && is_pos_int($_POST['id'])) {
     $id = $_POST['id'];
 } else {
     die("The id parameter in the URL isn't a valid tag ID");
 }
 // Check item_id is valid and assign it to $item_id
-if(filter_var($_POST['item_id'], FILTER_VALIDATE_INT)) {
+if(isset($_POST['item_id']) && is_pos_int($_POST['item_id'])) {
     $item_id = $_POST['item_id'];
 } else {
     die("The item id parameter in the URL isn't valid !");

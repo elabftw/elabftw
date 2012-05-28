@@ -27,7 +27,7 @@
 require_once('inc/common.php');
 
 // Check expid is valid and assign it to $expid
-if (filter_var($_POST['item_id'], FILTER_VALIDATE_INT)) {
+if (isset($_POST['item_id']) && is_pos_int($_POST['item_id'])) {
     $item_id = $_POST['item_id'];
 } else {
     die("The experiment id parameter in the URL isn't a valid experiment ID");

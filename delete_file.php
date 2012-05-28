@@ -82,6 +82,7 @@ if($_GET['type'] === 'experiments'){
     $item_id = $data['item_id'];
     header("location: database.php?mode=view&id=$item_id");
 }elseif (($_GET['type'] === 'lm') || ($_GET['type'] === 'jc')) {
+    $type = $_GET['type'];
     // Get realname
     $sql = "SELECT real_name, long_name FROM uploads WHERE id = ".$id;
     $req = $bdd->prepare($sql);
@@ -91,18 +92,24 @@ if($_GET['type'] === 'experiments'){
     $filepath = 'uploads/'.$data['long_name'];
     unlink($filepath);
 
-    // Delete SQL entry (and verify the type, to avoid someone deleting files saying it's prot whereas it's exp
-    $sql = "DELETE FROM uploads WHERE id = ".$id." AND type = ".$type;
+    // Delete SQL entry (and verify the type, to avoid someone deleting files saying it's DB whereas it's XP
+    $sql = "DELETE FROM uploads WHERE id = :id AND type = :type";
     $reqdel = $bdd->prepare($sql);
-    $reqdel->execute();
+    $reqdel->execute(array(
+        'id' => $id,
+        'type' => $type
+    ));
 
     // Redirect to the team page
     $msg_arr = array();
     $msg_arr [] = 'File '.$data['real_name'].' deleted successfully';
     $_SESSION['infos'] = $msg_arr;
-    header("location: team.php");
-   } else {
+    if ($type === 'lm') {
+        header("location: team.php#team-2");
+    } elseif ($type === 'jc') {
+        header("location: team.php#team-3");
+    }
+} else {
         die("<div class='center'><img src='img/hal9000.png' alt='hal' /><br />I'm sorry, Dave. I'm afraid I can't do that.</div>");
-   }
-
+}
 ?>

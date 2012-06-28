@@ -140,9 +140,11 @@ if (isset($_GET['q'])) { // if there is a query
         <section OnClick="document.location='experiments.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item <?php echo $final_query['outcome'];?>">
         <?php
         // TAGS
-        $tagsql = "SELECT tag FROM experiments_tags WHERE item_id = ".$final_query['id'];
+        $tagsql = "SELECT tag FROM experiments_tags WHERE item_id = :id";
         $tagreq = $bdd->prepare($tagsql);
-        $tagreq->execute();
+        $tagreq->execute(array(
+            'id' => $final_query['id']
+        ));
         echo "<span class='redo_compact'>".$final_query['date']."</span> ";
         echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
         while($tags = $tagreq->fetch()){

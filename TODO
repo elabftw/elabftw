@@ -1,4 +1,7 @@
 /////// Priority
+* on result page, template div showin
+* on login page, whene user don't input email adress but clicks send password, tell them to put email address
+* when duplicate, duplicate linked item too
 * pb de dl du .zip
 * search results do not appear in right display order
 * cookies domain only
@@ -7,7 +10,8 @@
 source : http://www.sitepoint.com/forums/showthread.php?474831-Scope-of-SESSION-data-across-different-folders
 
 ////// Features
-* mettre LM et JC dans DB ?
+* https://code.google.com/p/bcryptnet/
+* autosave in ajax on editXP
 * export by date range / tag / search result
 * add tag on templates
 * add several link to db item, select type + keyword, a list appear with the results

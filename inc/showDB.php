@@ -55,18 +55,18 @@ if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
             <section OnClick="document.location='database.php?mode=view&id=<?php echo $data['id'];?>'" class="item <?php echo $data['type'];?>">
 <?php
         // TAGS
-        $sql = "SELECT tag FROM items_tags WHERE item_id = ".$data['id'];
-        $tagreq = $bdd->prepare($sql);
-        $tagreq->execute();
+        $tagsql = "SELECT tag FROM items_tags WHERE item_id = :id";
+        $tagreq = $bdd->prepare($tagsql);
+        $tagreq->execute(array(
+            'id' => $data['id']
+        ));
         echo "<span class='redo_compact'>".$data['date']."</span> ";
         echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
         while($tags = $tagreq->fetch()){
-            echo "<a href='database.php?mode=show&q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
+            echo "<a href='experiments.php?mode=show&q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
         }
         echo "</span>";
         // END TAGS
-        ?>
-        <?php
         echo "<p class='title'>". stripslashes($data['title']) . "</p>";
         echo "</section>";
     } // end while
@@ -98,12 +98,11 @@ if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
         $results_arr[] = $data['item_id'];
     }
     // now we search in file comments and filenames
-    $sql = "SELECT item_id FROM uploads WHERE (comment LIKE '%$query%' OR real_name LIKE '%$query%') LIMIT 100";
+    $sql = "SELECT item_id FROM uploads WHERE (comment LIKE '%$query%' OR real_name LIKE '%$query%') AND type = 'database' LIMIT 100";
     $req = $bdd->prepare($sql);
-    $req->execute(array(
-        'userid' => $_SESSION['userid']
-    ));
+    $req->execute();
     while ($data = $req->fetch()) {
+        echo 'files';
         $results_arr[] = $data['item_id'];
     }
     $req->closeCursor();
@@ -120,6 +119,7 @@ if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
     }
 
     // loop the results array and display results
+    print_r($results_arr);
     foreach($results_arr as $result_id) {
         // SQL to get everything from selected id
         $sql = "SELECT id, title, date, body, type FROM items WHERE id = :id";

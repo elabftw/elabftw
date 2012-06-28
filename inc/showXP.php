@@ -106,7 +106,7 @@ if (isset($_GET['q'])) { // if there is a query
         $results_arr[] = $data['item_id'];
     }
     // now we search in file comments and filenames
-    $sql = "SELECT item_id FROM uploads WHERE userid = :userid AND (comment LIKE '%$query%' OR real_name LIKE '%$query%') LIMIT 100";
+    $sql = "SELECT item_id FROM uploads WHERE userid = :userid AND (comment LIKE '%$query%' OR real_name LIKE '%$query%') AND type = 'experiment' LIMIT 100";
     $req = $bdd->prepare($sql);
     $req->execute(array(
         'userid' => $_SESSION['userid']

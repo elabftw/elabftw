@@ -102,7 +102,6 @@ if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
     $req = $bdd->prepare($sql);
     $req->execute();
     while ($data = $req->fetch()) {
-        echo 'files';
         $results_arr[] = $data['item_id'];
     }
     $req->closeCursor();

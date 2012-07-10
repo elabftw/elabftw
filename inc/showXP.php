@@ -116,8 +116,10 @@ if (isset($_GET['q'])) { // if there is a query
     }
     $req->closeCursor();
 
-    // filter out duplicate ids
-    $results_arr = array_unique($results_arr);
+    // filter out duplicate ids and reverse the order; XP should be sorted by date
+    $results_arr = array_reverse(array_unique($results_arr));
+    // DEBUG
+    // print_r($results_arr);
     // show number of results found
     if (count($results_arr) > 1){
         echo "Found ".count($results_arr)." results.";
@@ -139,6 +141,8 @@ if (isset($_GET['q'])) { // if there is a query
         ?>
         <section OnClick="document.location='experiments.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item <?php echo $final_query['outcome'];?>">
         <?php
+        // DEBUG
+        // echo $final_query['id'];
         // TAGS
         $tagsql = "SELECT tag FROM experiments_tags WHERE item_id = :id";
         $tagreq = $bdd->prepare($tagsql);

@@ -106,8 +106,10 @@ if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
     }
     $req->closeCursor();
 
-    // filter out duplicate ids
-    $results_arr = array_unique($results_arr);
+    // filter out duplicate ids and reverse the order; items should be sorted by date
+    $results_arr = array_reverse(array_unique($results_arr));
+    // DEBUG
+     print_r($results_arr);
     // show number of results found
     if (count($results_arr) > 1){
         echo "Found ".count($results_arr)." results.";
@@ -130,9 +132,11 @@ if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
         <section OnClick="document.location='database.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item <?php echo $final_query['type'];?>">
         <?php
         // TAGS
-        $tagsql = "SELECT tag FROM items_tags WHERE item_id = ".$final_query['id'];
+        $tagsql = "SELECT tag FROM items_tags WHERE item_id = :id";
         $tagreq = $bdd->prepare($tagsql);
-        $tagreq->execute();
+        $tagreq->execute(array(
+            'id' => $final_query['id']
+        ));
         echo "<span class='redo_compact'>".$final_query['date']."</span> ";
         echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
         while($tags = $tagreq->fetch()){

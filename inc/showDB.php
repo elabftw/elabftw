@@ -80,9 +80,7 @@ if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
     $sql = "SELECT id FROM items 
         WHERE (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
     $req = $bdd->prepare($sql);
-    $req->execute(array(
-        'userid' => $_SESSION['userid']
-    ));
+    $req->execute();
     // put resulting ids in the results array
     while ($data = $req->fetch()) {
         $results_arr[] = $data['id'];

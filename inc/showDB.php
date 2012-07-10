@@ -109,7 +109,7 @@ if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
     // filter out duplicate ids and reverse the order; items should be sorted by date
     $results_arr = array_reverse(array_unique($results_arr));
     // DEBUG
-     print_r($results_arr);
+    // print_r($results_arr);
     // show number of results found
     if (count($results_arr) > 1){
         echo "Found ".count($results_arr)." results.";

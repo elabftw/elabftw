@@ -1,8 +1,4 @@
 /////// Priority
-* on result page, template div showin
-* on login page, whene user don't input email adress but clicks send password, tell them to put email address
-* when duplicate, duplicate linked item too
-* pb de dl du .zip
 * search results do not appear in right display order
 * cookies domain only
 1) Change session.cookie_path to the relevant directory path (you've already done this).

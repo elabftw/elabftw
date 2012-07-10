@@ -39,19 +39,20 @@ if ($_GET['type'] === 'exp'){
 
 if ($type === 'experiments') {
     // SQL to get data from the experiment we duplicate
-    $sql = "SELECT title, body FROM experiments WHERE id = ".$id;
+    $sql = "SELECT title, body, item FROM experiments WHERE id = ".$id;
     $req = $bdd->prepare($sql);
     $req->execute();
     $data = $req->fetch();
 
     // SQL for duplicateXP
-    $sql = "INSERT INTO experiments(title, date, body, outcome, userid) VALUES(:title, :date, :body, :outcome, :userid)";
+    $sql = "INSERT INTO experiments(title, date, body, item, outcome, userid) VALUES(:title, :date, :body, :item, :outcome, :userid)";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
         'title' => $data['title'],
         'date' => kdate(),
         'body' => $data['body'],
         'outcome' => 'running',
+        'item' => $data['item'],
         'userid' => $_SESSION['userid']));
     // END SQL main
 }

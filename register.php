@@ -23,28 +23,43 @@ $page_title='Register';
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
 ?>
-<!-- Register form -->
+<!-- Password complexity visualizer -->
+<script src="js/jquery.complexify.min.js"></script>
+
 <section>
-<div class='item'>
-<div id='innerdiv'>
-<form name="regForm" method="post" action="register-exec.php" class='innerinnerdiv'>
-      <p>Username <input name="username" type="text" class="textfield" id="username" /><br />
-      Firstname <input name="firstname" type="text" class="textfield" id="firstname" /><br />
-      Lastname <input name="lastname" type="text" class="textfield" id="lastname" /><br />
-      Email <input name="email" type="text" class="textfield" id="email" /><br />
-      Password <input name="password" type="password" class="textfield" id="password" /><br />
-      Confirm Password <input name="cpassword" type="password" class="textfield" id="cpassword" /><br /><br />
-<div id='submitDiv'>
-<!-- js on submit button to avoid double requests -->
-      <input type="submit" name="Submit" class='submit' value="Register" />
-</div>
-</div>
-</form>
-<!-- end register form -->
-<!-- give focus to username field on page load -->
+    <div class='item'>
+        <div id='innerdiv'>
+        <!-- Register form -->
+            <form name="regForm" method="post" action="register-exec.php" class='innerinnerdiv'>
+                  <p>Username <input name="username" type="text" class="textfield" id="username" /><br />
+                  Firstname <input name="firstname" type="text" class="textfield" id="firstname" /><br />
+                  Lastname <input name="lastname" type="text" class="textfield" id="lastname" /><br />
+                  Email <input name="email" type="text" class="textfield" id="email" /><br />
+                  Password <input name="password" type="password" class="textfield" id="password" /><br />
+                  Confirm Password <input name="cpassword" type="password" class="textfield" id="cpassword" /><br />
+Password complexity : <span id="complexity">0%</span><br />
+            <div id='submitDiv'>
+                <input type="submit" name="Submit" class='submit' value="Register" />
+            </div>
+            </form>
+        </div>
+    <!-- end register form -->
 <script>
+// give focus to username field on page load
 document.getElementById("username").focus();
+</script>
+<script>
+// password complexity
+$(function () {
+    $("#password").complexify({}, function (valid, complexity){
+        if (complexity < 30) {
+            $('#complexity').css({'color':'red'});
+        } else {
+            $('#complexity').css({'color':'green'});
+        }
+        $("#complexity").html(Math.round(complexity) + '%');
+    });
+});
 </script>
 </section>
 <? require_once('inc/footer.php'); ?>
-

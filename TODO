@@ -21,6 +21,7 @@ source : http://www.sitepoint.com/forums/showthread.php?474831-Scope-of-SESSION-
 * if two file field and file is only on the second one (first is empty) no file uploaded
 
 ///// SECURITY
+* use bcrypt instead of salted sha512
 * limit new users to particular email domain
 * have real auth with LDAP etc... like here : http://docs.moodle.org/22/en/Authentication
 * check for flood register/login

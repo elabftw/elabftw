@@ -57,6 +57,8 @@ Connect to your server via SFTP (or FTP if you don't mind your password being
 sent in clear over the network).
 Upload the decompressed folder to your public directory.
 
+It's a good idea to use a php optimizer to increase speed. I recommand installing XCache.
+
   _   _   _     _   _   _   _  
  / \ / \ / \   / \ / \ / \ / \ 
 ( S | Q | L ) ( P | A | R | T )

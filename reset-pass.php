@@ -57,7 +57,7 @@ if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
             // Generate password
             $password = createPassword(8);
             // Create salt
-            $salt = hash("sha512", uniqid(rand(), TRUE));
+            $salt = hash("sha512", uniqid(rand(), true));
             // Create hash
             $passwordHash = hash("sha512", $salt.$password);
             // Replace new password in database

@@ -65,7 +65,7 @@ $lastname = $data['lastname'];
 $sql = "SELECT tag FROM ".$table."_tags WHERE item_id = $id";
 $req = $bdd->prepare($sql);
 $req->execute();
-$tags = NULL;
+$tags = null;
 while($data = $req->fetch()){
     $tags .= stripslashes(str_replace("&#39;", "'", utf8_decode($data['tag']))).' ';
 }
@@ -89,7 +89,7 @@ while ($data = $req->fetch()) {
 $zipname = $date.'-'.preg_replace('/[^A-Za-z0-9]/', '_', $title);
 $zip = new ZipArchive;
 $res = $zip->open('uploads/'.$zipname.'.zip' , ZipArchive::CREATE);
-if ($res === TRUE) {
+if ($res === true) {
     $html = "<!DOCTYPE html><html><head><title>";
     $html .= $title;
     $html .= "</title></head><body>";

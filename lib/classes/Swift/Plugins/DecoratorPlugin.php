@@ -156,7 +156,7 @@ class Swift_Plugins_DecoratorPlugin
    * delegated to it.  Otherwise, it will attempt to find the replacements
    * from the array provided in the constructor.
    * 
-   * If no replacements can be found, an empty value (NULL) is returned.
+   * If no replacements can be found, an empty value (null) is returned.
    * 
    * @param string $address
    * 

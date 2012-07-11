@@ -69,7 +69,7 @@ if ($data['body'] != ''){
 echo "<div class='txt'>".stripslashes($data['body'])."</div>";
 }
 // DISPLAY PROTOCOL
-if ($data['item'] != NULL) {
+if ($data['item'] != null) {
     // SQL to get title
     $sql = "SELECT id, title FROM items WHERE id = ".$data['item'];
     $req = $bdd->prepare($sql);

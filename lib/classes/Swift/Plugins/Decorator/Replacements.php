@@ -24,7 +24,7 @@ interface Swift_Plugins_Decorator_Replacements
    * 
    * This method is invoked once for every single recipient of a message.
    * 
-   * If no replacements can be found, an empty value (NULL) should be returned
+   * If no replacements can be found, an empty value (null) should be returned
    * and no replacements will then be made on the message.
    * 
    * @param string $address

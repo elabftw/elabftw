@@ -99,7 +99,7 @@ interface Swift_Mime_HeaderSet extends Swift_Mime_CharsetObserver
   /**
    * Get the header with the given $name.
    * If multiple headers match, the actual one may be specified by $index.
-   * Returns NULL if none present.
+   * Returns null if none present.
    * 
    * @param string $name
    * @param int $index

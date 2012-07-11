@@ -95,7 +95,7 @@ if ($result) {
             'shortcuts' => array('create' => $data['sc_create'], 'edit' => $data['sc_edit'], 'submit' => $data['sc_submit'], 'todo' => $data['sc_todo']));
         session_write_close();
         // Make a unique token and store it in sql AND cookie
-        $token = md5(uniqid(rand(), TRUE));
+        $token = md5(uniqid(rand(), true));
         // Cookie validity = 1 month
         setcookie('token', $token, time() + 60*60*24*30);
         $sql = "UPDATE users SET token = :token WHERE userid = :userid";

@@ -46,7 +46,7 @@ $errflag = false;
             $msg_arr[] = 'Username already in use';
             $errflag = true;
         }
-        $result = NULL;
+        $result = null;
     }
 } else {
     $msg_arr[] = 'Username missing';
@@ -84,7 +84,7 @@ if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
             $msg_arr[] = 'Someone is already using that email address !';
             $errflag = true;
         }
-        $result= NULL;
+        $result= null;
     }
     }
 } else {
@@ -99,7 +99,7 @@ if ((isset($_POST['cpassword'])) && (!empty($_POST['cpassword']))) {
         // Good to go
         $password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);
         // Create salt
-        $salt = hash("sha512", uniqid(rand(), TRUE));
+        $salt = hash("sha512", uniqid(rand(), true));
         // Create hash
         $passwordHash = hash("sha512", $salt.$password);
         // Check for password length

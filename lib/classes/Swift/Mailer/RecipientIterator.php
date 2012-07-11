@@ -26,7 +26,7 @@ interface Swift_Mailer_RecipientIterator
   /**
    * Returns an array where the keys are the addresses of recipients and the
    * values are the names.
-   * e.g. ('foo@bar' => 'Foo') or ('foo@bar' => NULL)
+   * e.g. ('foo@bar' => 'Foo') or ('foo@bar' => null)
    * @return array
    */
   public function nextRecipient();

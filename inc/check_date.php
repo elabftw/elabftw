@@ -18,7 +18,7 @@
 *
 ********************************************************************************/
 require_once('inc/functions.php');
-// Check DATE (is != NULL ? is 6 in length ? is int ? is valable ?)
+// Check DATE (is != null ? is 6 in length ? is int ? is valable ?)
 if ((isset($_POST['date'])) 
     && (!empty($_POST['date'])) 
     && ((strlen($_POST['date']) == "6")) 

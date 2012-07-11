@@ -37,7 +37,7 @@ if (!isset($_GET['f']) || empty($_GET['f'])) {
   die('What are you doing, Dave ?');
 }
 // Nullbyte hack fix
-if (strpos($_GET['f'], "\0") != FALSE) die('What are you doing, Dave ?');
+if (strpos($_GET['f'], "\0") != false) die('What are you doing, Dave ?');
 // Remove any path info to avoid hacking by adding relative path, etc.
 $long_filename = basename($_GET['f']);
 

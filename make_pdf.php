@@ -69,7 +69,7 @@ $req->closeCursor();
 $sql = "SELECT tag FROM ".$table."_tags WHERE item_id = $id";
 $req = $bdd->prepare($sql);
 $req->execute();
-$tags = NULL;
+$tags = null;
 while($data = $req->fetch()){
     $tags .= stripslashes(str_replace("&#39;", "'", utf8_decode($data['tag']))).' ';
 }

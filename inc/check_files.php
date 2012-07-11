@@ -50,7 +50,7 @@ if (is_uploaded_file($_FILES['files']['tmp_name'][0])){
                 // Create a clean filename : remplace all non letters/numbers by '.' (this way we don't lose the file extension)
                 $real_filenames[] = preg_replace('/[^A-Za-z0-9]/', '.', $_FILES['files']['name'][$i]);
                 // Create a unique long filename
-                $long_filenames[] = hash("sha512", uniqid(rand(), TRUE));
+                $long_filenames[] = hash("sha512", uniqid(rand(), true));
             }
         } // end for each file loop
 } // end if files are uploaded

@@ -67,3 +67,6 @@ function loadTpl(id) {
     bkLib.onDomLoaded( function() {
 new nicEditor().panelInstance('body_textarea');
     });
+
+# search and replace on mac os x
+find ./* -name '*.php' -print | xargs sed -i "" 's/NULL/null/g'

@@ -49,14 +49,14 @@ if ($item_type === 'experiments' || $item_type === 'experiments_templates') {
     }
 }
 if ($item_type === 'items'){
-    // get all experiments with that item linked and set it to NULL
+    // get all experiments with that item linked and set it to null
     $sql = "SELECT id FROM experiments WHERE item = :item";
     $req = $bdd->prepare($sql);
     $req->execute(array(
         'item' => $id
     ));
     while($experiments = $req->fetch()){
-        $sql = "UPDATE experiments SET item = NULL WHERE id = :id";
+        $sql = "UPDATE experiments SET item = null WHERE id = :id";
         $set_null = $bdd->prepare($sql);
         $set_null->execute(array(
             'id' => $experiments['id']

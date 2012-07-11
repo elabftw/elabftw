@@ -24,9 +24,9 @@
 *                                                                               *
 ********************************************************************************/
 // inc/check_item.php
-// Check if linked DB item to XP is valid, otherwise, output NULL
+// Check if linked DB item to XP is valid, otherwise, output null
 if (isset($_POST['item']) && is_pos_int($_POST['item'])) {
     $linked_item_id = $_POST['item'];
 } else {
-    $linked_item_id = NULL;
+    $linked_item_id = null;
 }

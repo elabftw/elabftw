@@ -67,7 +67,7 @@ if( ($result) && ($numrows === 1) ) {
                 $errflag = true;
             }
             // Create salt
-            $salt = hash("sha512", uniqid(rand(), TRUE));
+            $salt = hash("sha512", uniqid(rand(), true));
             // Create hash
             $passwordHash = hash("sha512", $salt.$password);
             $sql = "UPDATE users SET salt = :salt, 
@@ -150,19 +150,19 @@ if( ($result) && ($numrows === 1) ) {
     if (isset($_POST['phone']) && !empty($_POST['phone'])) {
         $phone = filter_var($_POST['phone'], FILTER_SANITIZE_STRING);
     } else {
-        $phone = NULL;
+        $phone = null;
     }
     // Check cellphone
     if (isset($_POST['cellphone']) && !empty($_POST['cellphone'])) {
         $cellphone = filter_var($_POST['cellphone'], FILTER_SANITIZE_STRING);
     } else {
-        $cellphone = NULL;
+        $cellphone = null;
     }
     // Check skype
     if (isset($_POST['skype']) && !empty($_POST['skype'])) {
         $skype = filter_var($_POST['skype'], FILTER_SANITIZE_STRING);
     } else {
-        $skype = NULL;
+        $skype = null;
     }
     // Check website
     if (isset($_POST['website']) && !empty($_POST['website'])) {
@@ -173,7 +173,7 @@ if( ($result) && ($numrows === 1) ) {
             $errflag = true;
         }
     } else {
-        $website = NULL;
+        $website = null;
     }
 
     //If there are input validations, redirect back to the registration form

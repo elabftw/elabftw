@@ -174,7 +174,7 @@ class Swift_Mime_SimpleHeaderSet implements Swift_Mime_HeaderSet
    * Get the header with the given $name.
    * 
    * If multiple headers match, the actual one may be specified by $index.
-   * Returns NULL if none present.
+   * Returns null if none present.
    * 
    * @param string $name
    * @param int $index

@@ -5,10 +5,8 @@
 source : http://www.sitepoint.com/forums/showthread.php?474831-Scope-of-SESSION-data-across-different-folders
 
 ////// Features
-* ctrl-s send back to edit.php
 * uploade more than 20 Mo
 * add calendar
-* show only running experiments
 * possibility to comment on a no owned XP
 * replace outcome by status
 * https://code.google.com/p/bcryptnet/

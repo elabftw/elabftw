@@ -116,7 +116,7 @@ if($result) {
     unset($_SESSION['new_body']);
     unset($_SESSION['outcome']);
     unset($_SESSION['errors']);
-    header("location: experiments.php?mode=view&id=$id");
+    header("location: experiments.php?mode=edit&id=$id");
 } else {
     die('Something went wrong in the database query. Check the flux capacitor.');
 }

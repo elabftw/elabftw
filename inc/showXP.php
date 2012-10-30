@@ -31,7 +31,8 @@ require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 </form>
 <br />
 <a href="create_item.php?type=exp"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Create experiment</a> | 
-<a href='#' class='trigger'><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/duplicate.png" alt="" /> Create from template</a>
+<a href='#' class='trigger'><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/duplicate.png" alt="" /> Create from template</a> |
+<a onmouseover="changeSrc('<?php echo $_SESSION['prefs']['theme'];?>')" onmouseout="stopAnim('<?php echo $_SESSION['prefs']['theme'];?>')" href='experiments.php?mode=show&q=runningonly'><img id='runningimg' src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/running.fix.png" alt="running" /> Show running experiments</a>
 </div><!-- end submenu -->
 <div class='toggle_container'><ul>
 <? // SQL to get user's templates
@@ -83,43 +84,24 @@ $offset = $currentpage * $limit;
 // /////////////////
 if (isset($_GET['q'])) { // if there is a query
     $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
-    // we make an array for the resulting ids
-    $results_arr = array();
-    // search in title date and body
-    $sql = "SELECT id FROM experiments 
-        WHERE userid = :userid AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
-    $req = $bdd->prepare($sql);
-    $req->execute(array(
-        'userid' => $_SESSION['userid']
-    ));
-    // put resulting ids in the results array
-    while ($data = $req->fetch()) {
-        $results_arr[] = $data['id'];
+    if ($query === 'runningonly') {
+        $results_arr = array();
+        // show only running XP
+        $sql = "SELECT id FROM experiments 
+        WHERE userid = :userid AND outcome = 'running' LIMIT 100";
+        $req = $bdd->prepare($sql);
+        $req->execute(array(
+            'userid' => $_SESSION['userid']
+        ));
+        // put resulting ids in the results array
+        while ($data = $req->fetch()) {
+            $results_arr[] = $data['id'];
+        }
+    } else {
+        // normal search
+        $results_arr = searchXP($query, $_SESSION['userid']);
     }
-    // now we search in tags, and append the found ids to our result array
-    $sql = "SELECT item_id FROM experiments_tags WHERE userid = :userid AND tag LIKE '%$query%' LIMIT 100";
-    $req = $bdd->prepare($sql);
-    $req->execute(array(
-        'userid' => $_SESSION['userid']
-    ));
-    while ($data = $req->fetch()) {
-        $results_arr[] = $data['item_id'];
-    }
-    // now we search in file comments and filenames
-    $sql = "SELECT item_id FROM uploads WHERE userid = :userid AND (comment LIKE '%$query%' OR real_name LIKE '%$query%') AND type = 'experiment' LIMIT 100";
-    $req = $bdd->prepare($sql);
-    $req->execute(array(
-        'userid' => $_SESSION['userid']
-    ));
-    while ($data = $req->fetch()) {
-        $results_arr[] = $data['item_id'];
-    }
-    $req->closeCursor();
 
-    // filter out duplicate ids and reverse the order; XP should be sorted by date
-    $results_arr = array_reverse(array_unique($results_arr));
-    // DEBUG
-    // print_r($results_arr);
     // show number of results found
     if (count($results_arr) > 1){
         echo "Found ".count($results_arr)." results.";
@@ -131,35 +113,11 @@ if (isset($_GET['q'])) { // if there is a query
 
     // loop the results array and display results
     foreach($results_arr as $result_id) {
-        // SQL to get everything from selected id
-        $sql = "SELECT id, title, date, body, outcome  FROM experiments WHERE id = :id";
-        $req = $bdd->prepare($sql);
-        $req->execute(array(
-            'id' => $result_id
-        ));
-        $final_query = $req->fetch();
-        ?>
-        <section OnClick="document.location='experiments.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item <?php echo $final_query['outcome'];?>">
-        <?php
-        // DEBUG
-        // echo $final_query['id'];
-        // TAGS
-        $tagsql = "SELECT tag FROM experiments_tags WHERE item_id = :id";
-        $tagreq = $bdd->prepare($tagsql);
-        $tagreq->execute(array(
-            'id' => $final_query['id']
-        ));
-        echo "<span class='redo_compact'>".$final_query['date']."</span> ";
-        echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
-        while($tags = $tagreq->fetch()){
-            echo "<a href='experiments.php?mode=show&q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
-        }
-        echo "</span>";
-        // END TAGS
-        echo "<p class='title'>". stripslashes($final_query['title']) . "</p>";
-        echo "</section>";
+        showXP($result_id, $display);
     } // end foreach
 ///////// END SEARCH
+
+
 // /////////////
 // RELATED
 // /////////////
@@ -348,4 +306,11 @@ $(document).ready(function(){
 		$('div.toggle_container').slideToggle("slow");
 	});
 });
+// ANIMATE RUNNING ICON
+function changeSrc(theme){
+    document.getElementById('runningimg').src = 'themes/'+theme+'/img/running.png';
+}
+function stopAnim(theme){
+    document.getElementById('runningimg').src = 'themes/'+theme+'/img/running.fix.png';
+}
 </script>

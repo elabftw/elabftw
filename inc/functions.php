@@ -115,3 +115,82 @@ function is_pos_int($int) {
         ));
     return filter_var($int, FILTER_VALIDATE_INT, $filter_options);
 }
+// Search XP
+function searchXP($query, $userid) {
+    global $bdd;
+    // we make an array for the resulting ids
+    $results_arr = array();
+    // search in title date and body
+    $sql = "SELECT id FROM experiments 
+        WHERE userid = :userid AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
+    $req = $bdd->prepare($sql);
+    $req->execute(array(
+        'userid' => $userid
+    ));
+    // put resulting ids in the results array
+    while ($data = $req->fetch()) {
+        $results_arr[] = $data['id'];
+    }
+    // now we search in tags, and append the found ids to our result array
+    $sql = "SELECT item_id FROM experiments_tags WHERE userid = :userid AND tag LIKE '%$query%' LIMIT 100";
+    $req = $bdd->prepare($sql);
+    $req->execute(array(
+        'userid' => $userid
+    ));
+    while ($data = $req->fetch()) {
+        $results_arr[] = $data['item_id'];
+    }
+    // now we search in file comments and filenames
+    $sql = "SELECT item_id FROM uploads WHERE userid = :userid AND (comment LIKE '%$query%' OR real_name LIKE '%$query%') AND type = 'experiment' LIMIT 100";
+    $req = $bdd->prepare($sql);
+    $req->execute(array(
+        'userid' => $userid
+    ));
+    while ($data = $req->fetch()) {
+        $results_arr[] = $data['item_id'];
+    }
+    $req->closeCursor();
+
+    // filter out duplicate ids and reverse the order; XP should be sorted by date
+    return $results_arr = array_reverse(array_unique($results_arr));
+}
+function showXP($id, $display) {
+// Show unique XP
+    global $bdd;
+    // SQL to get everything from selected id
+    $sql = "SELECT id, title, date, body, outcome  FROM experiments WHERE id = :id";
+    $req = $bdd->prepare($sql);
+    $req->execute(array(
+        'id' => $id
+    ));
+    $final_query = $req->fetch();
+        if ($display === 'compact') {
+            // COMPACT MODE //
+            ?>
+            <!-- BEGIN CONTENT -->
+            <section onClick="document.location='experiments.php?mode=view&id=<?php echo $final_query['id'];?>'" class='item'>
+            <?php
+            echo "<span class='".$final_query['outcome']."_compact'>".$final_query['date']."</span> ";
+            echo stripslashes($final_query['title']);
+            echo "</section>";
+        } else {
+?>
+    <section OnClick="document.location='experiments.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item <?php echo $final_query['outcome'];?>">
+    <?php
+    // TAGS
+    $tagsql = "SELECT tag FROM experiments_tags WHERE item_id = :id";
+    $tagreq = $bdd->prepare($tagsql);
+    $tagreq->execute(array(
+        'id' => $final_query['id']
+    ));
+    echo "<span class='redo_compact'>".$final_query['date']."</span> ";
+    echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
+    while($tags = $tagreq->fetch()){
+        echo "<a href='experiments.php?mode=show&q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
+    }
+    echo "</span>";
+    // END TAGS
+    echo "<p class='title'>". stripslashes($final_query['title']) . "</p>";
+    echo "</section>";
+        }
+}

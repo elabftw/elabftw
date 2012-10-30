@@ -76,38 +76,9 @@ if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
     $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
     // we make an array for the resulting ids
     $results_arr = array();
-    // search in title date and body
-    $sql = "SELECT id FROM items 
-        WHERE (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    // put resulting ids in the results array
-    while ($data = $req->fetch()) {
-        $results_arr[] = $data['id'];
-    }
-    $req->closeCursor();
-    // now we search in tags, and append the found ids to our result array
-    $sql = "SELECT item_id FROM items_tags WHERE tag LIKE '%$query%' LIMIT 100";
-    $req = $bdd->prepare($sql);
-    $req->execute(array(
-        'userid' => $_SESSION['userid']
-    ));
-    while ($data = $req->fetch()) {
-        $results_arr[] = $data['item_id'];
-    }
-    // now we search in file comments and filenames
-    $sql = "SELECT item_id FROM uploads WHERE (comment LIKE '%$query%' OR real_name LIKE '%$query%') AND type = 'database' LIMIT 100";
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    while ($data = $req->fetch()) {
-        $results_arr[] = $data['item_id'];
-    }
-    $req->closeCursor();
-
+    $results_arr = search_item('db', $query, $_SESSION['userid']);
     // filter out duplicate ids and reverse the order; items should be sorted by date
     $results_arr = array_reverse(array_unique($results_arr));
-    // DEBUG
-    // print_r($results_arr);
     // show number of results found
     if (count($results_arr) > 1){
         echo "Found ".count($results_arr)." results.";

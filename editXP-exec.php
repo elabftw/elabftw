@@ -56,7 +56,7 @@ $_SESSION['new_outcome'] = $outcome;
 if($errflag) {
     $_SESSION['errors'] = $msg_arr;
     session_write_close();
-    header("location: experiments.php?mode=edit&id=$id");
+    header("location: experiments.php?mode=show&id=$id");
     exit();
 }
 

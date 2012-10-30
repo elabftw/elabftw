@@ -68,16 +68,28 @@ echo "<div class='title'>". stripslashes($data['title']) . "<span class='align_r
 if ($data['body'] != ''){
 echo "<div class='txt'>".stripslashes($data['body'])."</div>";
 }
-// DISPLAY PROTOCOL
-if ($data['item'] != null) {
-    // SQL to get title
-    $sql = "SELECT id, title FROM items WHERE id = ".$data['item'];
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    $itemdata = $req->fetch();
-    echo "<p>Linked item : <a href='database.php?mode=view&id=".$itemdata['id']."'>".$itemdata['title']."</a></p>";
+// DISPLAY LINKED ITEMS
+$sql = "SELECT link_id, id FROM experiments_links WHERE item_id = ".$id;
+$req = $bdd->prepare($sql);
+$req->execute();
+// Check there is at least one link to display
+if ($req->rowcount() != 0) {
+    echo "<br /><h4>Linked items</h4>";
+    echo "<ul>";
+    while ($links = $req->fetch()) {
+        // SQL to get title
+        $linksql = "SELECT id, title FROM items WHERE id = :link_id";
+        $linkreq = $bdd->prepare($linksql);
+        $linkreq->execute(array(
+            'link_id' => $links['link_id']
+        ));
+        $linkdata = $linkreq->fetch();
+        echo "<li>- <a href='database.php?mode=view&id=".$linkdata['id']."'>".$linkdata['title']."</a></li>";
+    } // end while
+    echo "</ul>";
+} else { // end if link exist
+    echo "<br />";
 }
-echo "</section>";
 
 // DISPLAY FILES
 require_once('inc/display_file.php');

@@ -23,7 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-/* addtag.php - for adding tags */
+/* addlink.php - for adding links */
 require_once('inc/common.php');
 
 // Check expid is valid and assign it to $item_id
@@ -32,39 +32,32 @@ if (isset($_POST['item_id']) && is_pos_int($_POST['item_id'])) {
 } else {
     die("The experiment id parameter in the URL isn't a valid experiment ID");
 }
-// Sanitize tag
-$tag = filter_var($_POST['tag'], FILTER_SANITIZE_STRING);
+// Sanitize link
+$link = filter_var($_POST['link'], FILTER_SANITIZE_STRING);
+// Get the ID of this link item
+$sql = "SELECT id FROM items WHERE title LIKE '$link'";
+$req = $bdd->prepare($sql);
+$req->execute();
+$data = $req->fetch();
+if($req->rowcount() > 1){ die('I found several ID for this item title !'); }
+if($req->rowcount() == 0){ die('Nope.'); }
+print_r($data);
+$link_id = $data['id'];
 
-// Tag for experiment or protocol ?
-if ($_POST['type'] == 'exp' ){
-    // Check expid is owned by connected user
-    $sql = "SELECT userid FROM experiments WHERE id = ".$item_id;
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    $data = $req->fetch();
-    if ($data['userid'] == $_SESSION['userid']) {
-        // SQL for addtag
-        $sql = "INSERT INTO experiments_tags (tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
-        $req = $bdd->prepare($sql);
-        $result = $req->execute(array(
-            'tag' => $tag,
-            'item_id' => $item_id,
-            'userid' => $_SESSION['userid']
-        ));
-        if (!$result) {
-            die('Something went wrong in the database query. Check the flux capacitor.');
-        }
-    }
-} elseif ($_POST['type'] == 'item'){
-    // SQL for add tag to database item
-    $sql = "INSERT INTO items_tags (tag, item_id) VALUES(:tag, :item_id)";
+// Check expid is owned by connected user
+$sql = "SELECT userid FROM experiments WHERE id = ".$item_id;
+$req = $bdd->prepare($sql);
+$req->execute();
+$data = $req->fetch();
+if ($data['userid'] == $_SESSION['userid']) {
+    // SQL for addlink
+    $sql = "INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
-        'tag' => $tag,
-        'item_id' => $item_id));
+        'item_id' => $item_id,
+        'link_id' => $link_id
+    ));
     if (!$result) {
         die('Something went wrong in the database query. Check the flux capacitor.');
     }
-} else {
-    die('taggle');
 }

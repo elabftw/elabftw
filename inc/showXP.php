@@ -99,7 +99,7 @@ if (isset($_GET['q'])) { // if there is a query
         }
     } else {
         // normal search
-        $results_arr = searchXP($query, $_SESSION['userid']);
+        $results_arr = search_item('xp', $query, $_SESSION['userid']);
     }
 
     // show number of results found

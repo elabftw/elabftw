@@ -8,12 +8,10 @@ source : http://www.sitepoint.com/forums/showthread.php?474831-Scope-of-SESSION-
 * uploade more than 20 Mo
 * add calendar
 * possibility to comment on a no owned XP
-* replace outcome by status
 * https://code.google.com/p/bcryptnet/
 * autosave in ajax on editXP
 * export by date range / tag / search result
 * add tag on templates
-* add several link to db item, select type + keyword, a list appear with the results
 * announce birthday date of a team mb to other team mb (add birthday in profile)
 * tools page with trucs pour calculer les concentrations, et les volumes pour les transfections, etc...
 * make_pdf : keep formatting (html2fpdf)

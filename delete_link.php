@@ -23,48 +23,32 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-/* addtag.php - for adding tags */
 require_once('inc/common.php');
-
-// Check expid is valid and assign it to $item_id
-if (isset($_POST['item_id']) && is_pos_int($_POST['item_id'])) {
+// Check id is valid and assign it to $id
+if (isset($_POST['id']) && is_pos_int($_POST['id'])) {
+    $id = $_POST['id'];
+} else {
+    die("The id parameter in the URL isn't a valid link ID");
+}
+// Check item_id is valid and assign it to $item_id
+if(isset($_POST['item_id']) && is_pos_int($_POST['item_id'])) {
     $item_id = $_POST['item_id'];
 } else {
-    die("The experiment id parameter in the URL isn't a valid experiment ID");
+    die("The item id parameter in the URL isn't valid !");
 }
-// Sanitize tag
-$tag = filter_var($_POST['tag'], FILTER_SANITIZE_STRING);
 
-// Tag for experiment or protocol ?
-if ($_POST['type'] == 'exp' ){
-    // Check expid is owned by connected user
-    $sql = "SELECT userid FROM experiments WHERE id = ".$item_id;
+// Check item_id is owned by connected user
+$sql = "SELECT userid FROM experiments WHERE id = ".$item_id;
+$req = $bdd->prepare($sql);
+$req->execute();
+$data = $req->fetch();
+if ($data['userid'] == $_SESSION['userid']){
+   // SQL for DELETE TAG
+    $sql = "DELETE FROM experiments_links WHERE id=".$id;
     $req = $bdd->prepare($sql);
-    $req->execute();
-    $data = $req->fetch();
-    if ($data['userid'] == $_SESSION['userid']) {
-        // SQL for addtag
-        $sql = "INSERT INTO experiments_tags (tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
-        $req = $bdd->prepare($sql);
-        $result = $req->execute(array(
-            'tag' => $tag,
-            'item_id' => $item_id,
-            'userid' => $_SESSION['userid']
-        ));
-        if (!$result) {
-            die('Something went wrong in the database query. Check the flux capacitor.');
-        }
-    }
-} elseif ($_POST['type'] == 'item'){
-    // SQL for add tag to database item
-    $sql = "INSERT INTO items_tags (tag, item_id) VALUES(:tag, :item_id)";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute(array(
-        'tag' => $tag,
-        'item_id' => $item_id));
-    if (!$result) {
+    $result = $req->execute();
+    if(!$result) {
         die('Something went wrong in the database query. Check the flux capacitor.');
     }
-} else {
-    die('taggle');
+    header("Location: experiments.php?mode=edit&id='.$item_id.'");
 }

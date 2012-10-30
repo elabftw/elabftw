@@ -44,7 +44,7 @@ if ($resultat != $_SESSION['userid']) {
 }
 
 // SQL for editXP
-$sql = "SELECT title, date, body, outcome, item FROM experiments WHERE id = ".$id;
+$sql = "SELECT title, date, body, outcome, links FROM experiments WHERE id = ".$id;
 $req = $bdd->prepare($sql);
 $req->execute();
 $data = $req->fetch();
@@ -75,14 +75,35 @@ echo stripslashes($tags['tag']);?>
 <form id="editXP" name="editXP" method="post" action="editXP-exec.php" enctype='multipart/form-data'>
 <input name='item_id' type='hidden' value='<? echo $id;?>' />
 <h4>Date</h4><span class='smallgray'> (date format : YYMMDD)</span><br />
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /><input name='date' id='datepicker' size='6' type='text' value='<?php echo $data['date'];?>' /><br />
-<br /><h4>Title</h4><br />
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /><input name='date' id='datepicker' size='6' type='text' value='<?php echo $data['date'];?>' />
+<span class='align_right'>
+<h4>Status</h4>
+<!-- Status get selected by default -->
+<?php
+        if (isset($_SESSION['new_outcome'])){
+            $status = $_SESSION['new_outcome'];
+            unset($_SESSION['new_outcome']);
+        } else {
+            $status = $data['outcome'];
+        }
+?>
+      <select name="status">
+<option <?php echo ($status === "running") ? "selected" : "";?> value="running">Running</option>
+<option <?php echo ($status === "success") ? "selected" : "";?> value="success">Success</option>
+<option <?php echo ($status === "redo") ? "selected" : "";?> value="redo">Need to be redone</option>
+<option <?php echo ($status === "fail") ? "selected" : ""; ?> value="fail">Fail</option>
+</select>
+</span>
+<br />
+<br />
+
+<h4>Title</h4><br />
       <textarea id='title' name='title' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
           echo stripslashes($data['title']);
       } else {
           echo stripslashes($_SESSION['new_title']);
       } ?></textarea>
-<br /><br /><h4>Experiment</h4>
+<h4>Experiment</h4>
 <br />
 <textarea class='mceditable' name='body' rows="15" cols="80"><?php if(empty($_SESSION['errors'])){
     echo stripslashes($data['body']);
@@ -90,41 +111,7 @@ echo stripslashes($tags['tag']);?>
     echo stripslashes($_SESSION['new_body']);
     } ?>
 </textarea>
-<br /><br /><h4>Outcome</h4>
-<!-- outcome get selected by default -->
-<?php
-        if (isset($_SESSION['new_outcome'])){
-            $outcome = $_SESSION['new_outcome'];
-            unset($_SESSION['new_outcome']);
-        } else {
-            $outcome = $data['outcome'];
-        }
-?>
-      <select name="outcome">
-<option <?php echo ($outcome === "running") ? "selected" : "";?> value="running">Running</option>
-<option <?php echo ($outcome === "success") ? "selected" : "";?> value="success">Success</option>
-<option <?php echo ($outcome === "redo") ? "selected" : "";?> value="redo">Need to be redone</option>
-<option <?php echo ($outcome === "fail") ? "selected" : ""; ?> value="fail">Fail</option>
-</select><br /><br />
-<h4>Link to database item</h4>
-<select name="item">
-<option value='None'>-- None --</option>
-<?php
-// TODO faire une recherch ajax machin
-// SQL to get all items
-$sql = "SELECT id, title FROM items ORDER BY title";
-$req = $bdd->prepare($sql);
-$req->execute();
-while ($itemdata = $req->fetch()) {
-    // we limit the title size so it's not too large
-    echo "<option ";
-    if ($itemdata['id'] === $data['item']) {
-        echo "selected ";
-    }
-    echo "value=".$itemdata['id'].">".substr($itemdata['title'], 0, 60)."</option>";
-}
-?>
-</select><br /><br />
+
 <?php
 // FILE UPLOAD
 require_once('inc/file_upload.php');
@@ -138,6 +125,36 @@ require_once('inc/display_file.php');
 <input type='image' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/submit.png' name='Submit' value='Submit' onClick="this.form.submit();" />
 </div>
 </form><!-- end editXP form -->
+<h4>Linked items</h4>
+<div id='links_div'>
+<?php
+// DISPLAY LINKED ITEMS
+$sql = "SELECT link_id, id FROM experiments_links WHERE item_id = ".$id;
+$req = $bdd->prepare($sql);
+$req->execute();
+// Check there is at least one link to display
+if ($req->rowcount() != 0) {
+    echo "<ul>";
+    while ($links = $req->fetch()) {
+        // SQL to get title
+        $linksql = "SELECT id, title FROM items WHERE id = :link_id";
+        $linkreq = $bdd->prepare($linksql);
+        $linkreq->execute(array(
+            'link_id' => $links['link_id']
+        ));
+        $linkdata = $linkreq->fetch();
+        echo "<li>- <a href='database.php?mode=view&id=".$linkdata['id']."'>".$linkdata['title']."</a>";
+echo "<a onclick='delete_link(".$links['id'].", ".$id.")'>
+<img src='themes/".$_SESSION['prefs']['theme']."/img/trash.png' title='delete' alt='delete' /></a></li>";
+    } // end while
+    echo "</ul>";
+} // end if link exist
+
+?>
+</div>
+<p class='inline'>Add a link</p>
+<input id='linkinput' size='60' type="text" name="link" placeholder="from the database" />
+
 </section>
 
 <script>
@@ -200,6 +217,62 @@ function addTagOnEnter(e) { // the argument here is the event (needed to detect 
             $("#tags_div").load("experiments.php?mode=edit&id=<?php echo $id;?> #tags_div");
             // clear input field
             $("#addtaginput").val("");
+            return false;
+        })
+    } // end if key is enter
+}
+// LINKS AUTOCOMPLETE
+$(function() {
+		var availableLinks = [
+<?php // get all user's links for autocomplete
+$sql = "SELECT title, id FROM items";
+$getalllinks = $bdd->prepare($sql);
+$getalllinks->execute();
+while ($link = $getalllinks->fetch()){
+    echo "'".substr($link[0], 0, 60)."',";
+}?>
+		];
+		$( "#linkinput" ).autocomplete({
+			source: availableLinks
+		});
+	});
+// DELETE LINK JS
+function delete_link(id, item_id) {
+    var you_sure = confirm('Delete this link ?');
+    if (you_sure == true) {
+        var jqxhr = $.post('delete_link.php', {
+            id: id,
+            item_id : item_id
+        }).done(function () {
+            $("#links_div").load("experiments.php?mode=edit&id=" + item_id + " #links_div");
+        })
+    }
+    return false;
+}
+// ADD LINK JS
+// listen keypress, add link when it's enter
+jQuery('#linkinput').keypress(function (e) {
+    addLinkOnEnter(e);
+});
+
+function addLinkOnEnter(e) { // the argument here is the event (needed to detect which key is pressed)
+    var keynum;
+    if (e.which) {
+        keynum = e.which;
+    }
+    if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
+        // get link
+        var link = $('#linkinput').attr('value');
+        // POST request
+        var jqxhr = $.post('add_link.php', {
+            link: link,
+            item_id: <?php echo $id; ?>
+        })
+        // reload the link list
+        .done(function () {
+            $("#links_div").load("experiments.php?mode=edit&id=<?php echo $id;?> #links_div");
+            // clear input field
+            $("#linkinput").val("");
             return false;
         })
     } // end if key is enter

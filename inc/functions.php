@@ -115,11 +115,12 @@ function is_pos_int($int) {
         ));
     return filter_var($int, FILTER_VALIDATE_INT, $filter_options);
 }
-// Search XP
-function searchXP($query, $userid) {
+// Search item
+function search_item($type, $query, $userid) {
     global $bdd;
     // we make an array for the resulting ids
     $results_arr = array();
+    if($type === 'xp') {
     // search in title date and body
     $sql = "SELECT id FROM experiments 
         WHERE userid = :userid AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
@@ -151,6 +152,37 @@ function searchXP($query, $userid) {
     }
     $req->closeCursor();
 
+    } elseif ($type === 'db') {
+    // search in title date and body
+    $sql = "SELECT id FROM items 
+        WHERE (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    // put resulting ids in the results array
+    while ($data = $req->fetch()) {
+        $results_arr[] = $data['id'];
+    }
+    $req->closeCursor();
+    // now we search in tags, and append the found ids to our result array
+    $sql = "SELECT item_id FROM items_tags WHERE tag LIKE '%$query%' LIMIT 100";
+    $req = $bdd->prepare($sql);
+    $req->execute(array(
+        'userid' => $_SESSION['userid']
+    ));
+    while ($data = $req->fetch()) {
+        $results_arr[] = $data['item_id'];
+    }
+    // now we search in file comments and filenames
+    $sql = "SELECT item_id FROM uploads WHERE (comment LIKE '%$query%' OR real_name LIKE '%$query%') AND type = 'database' LIMIT 100";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    while ($data = $req->fetch()) {
+        $results_arr[] = $data['item_id'];
+    }
+    $req->closeCursor();
+    } else {
+        die('bad type : must be db or xp');
+    }
     // filter out duplicate ids and reverse the order; XP should be sorted by date
     return $results_arr = array_reverse(array_unique($results_arr));
 }

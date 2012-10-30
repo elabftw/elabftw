@@ -32,6 +32,13 @@ if (isset($_GET['id']) && is_pos_int($_GET['id'])) {
     die('I need a file ID !');
 }
 
+// Check type
+if (isset($_GET['type']) && $_GET['type'] == 'zip') {
+    $type = 'zip';
+} else {
+    $type = '';
+}
+
 // LONG_NAME
 if (!isset($_GET['f']) || empty($_GET['f'])) {
   die('What are you doing, Dave ?');
@@ -53,73 +60,23 @@ if (!isset($_GET['name']) || empty($_GET['name'])) {
 }
 
 // FILE PATH
-$file_path = 'uploads/'.$long_filename;
+if ($type == 'zip') {
+    $file_path = '/tmp/'.$long_filename;
+} else {
+    $file_path = 'uploads/'.$long_filename;
+}
 
-
-//// Allowed extensions list in format 'extension' => 'mime type'
-//// If myme type is set to empty string then script will try to detect mime type 
-//// itself, which would only work if you have Mimetype or Fileinfo extensions
-//// installed on server.
-//$allowed_ext = array (
-//
-//  // archives
-//  'zip' => 'application/zip',
-//
-//  // documents
-//  'pdf' => 'application/pdf',
-//  'doc' => 'application/msword',
-//  'xls' => 'application/vnd.ms-excel',
-//  'ppt' => 'application/vnd.ms-powerpoint',
-//
-//  // executables
-//  'exe' => 'application/octet-stream',
-//
-//  // images
-//  'gif' => 'image/gif',
-//  'png' => 'image/png',
-//  'jpg' => 'image/jpeg',
-//  'jpeg' => 'image/jpeg',
-//  'tif' => 'image/tiff',
-//  'tiff' => 'image/tiff',
-//
-//  // audio
-//  'mp3' => 'audio/mpeg',
-//  'wav' => 'audio/x-wav',
-//
-//  // video
-//  'mpeg' => 'video/mpeg',
-//  'mpg' => 'video/mpeg',
-//  'mpe' => 'video/mpeg',
-//  'mov' => 'video/quicktime',
-//  'avi' => 'video/x-msvideo'
-//);
-
-// file extension
-//$ext = get_ext($filename);
-
-// check if allowed extension
-//if (!array_key_exists($ext, $allowed_ext)) {
-//  die("Not an allowed file type.");
-//}
-
-// get mime type
-//if ($allowed_ext[$ext] == '') {
-//  $mtype = '';
-  // mime type is not set, get from server settings
-  if (function_exists('mime_content_type')) {
+// MIME
+if (function_exists('mime_content_type')) {
     $mtype = mime_content_type($file_path);
-  }
-  else if (function_exists('finfo_file')) {
+} else if (function_exists('finfo_file')) {
     $finfo = finfo_open(FILEINFO_MIME); // return mime type
     $mtype = finfo_file($finfo, $file_path);
     finfo_close($finfo);
-  }
-  if ($mtype == '') {
+}
+if ($mtype == '') {
     $mtype = "application/force-download";
-  }// else {
-  // get mime type defined by admin
-  //$mtype = $allowed_ext[$ext];
-//}
+}
 
 // Make sure program execution doesn't time out
 // Set maximum script execution time in seconds (0 means no limit)

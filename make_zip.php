@@ -86,9 +86,13 @@ while ($data = $req->fetch()) {
 
 
 // BEGIN ZIP
+// name of the downloadable file
 $zipname = $date.'-'.preg_replace('/[^A-Za-z0-9]/', '_', $title);
+// name of the real file on the system, in /tmp to avoid clugging up uploads/
+$zipfile = "/tmp/".$zipname."-".hash("sha512", uniqid(rand(), true)).".zip";
+
 $zip = new ZipArchive;
-$res = $zip->open('uploads/'.$zipname.'.zip' , ZipArchive::CREATE);
+$res = $zip->open($zipfile, ZipArchive::CREATE);
 if ($res === true) {
     $html = "<!DOCTYPE html><html><head><title>";
     $html .= $title;
@@ -151,19 +155,28 @@ Attached files :<br />
         echo "</ol>";
     }
     echo "<hr>";
-    echo "<p>Download archive :<br /><img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='' /> <a href='uploads/".$zipname.".zip'>".$zipname.".zip</a></p>";
-    // SQL to get all users and emails
-    $sql = "SELECT firstname, lastname, email, userid FROM users";
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    echo "<p>Send zip archive to :
-        <form style='margin-top:-15px' method='post' action='send_zip.php'><img src='themes/".$_SESSION['prefs']['theme']."/img/mail.gif' alt='mail' /> <select name='userid'>";
-    while($data = $req->fetch()){
-         echo "<option value='".$data['userid']."'>".$data['firstname']." ".$data['lastname']."</option>";
+    // Get zip size
+    $zipsize = filesize($zipfile);
+    // Display download link (with attribute type=zip for download.php)
+    echo "<p>Download archive <span class='filesize'>(".format_bytes($zipsize).")</span> :<br />
+        <img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='' /> <a href='download.php?id=".$id."&f=".$zipfile."&name=".$zipname.".zip&type=zip' target='_blank'>".$zipname.".zip</a></p>";
+    // Check if zip is < 10 Mo, display send by email dialog
+    if ($zipsize < 10485760) {
+        // SQL to get all users and emails
+        $sql = "SELECT firstname, lastname, email, userid FROM users";
+        $req = $bdd->prepare($sql);
+        $req->execute();
+        echo "<p>Send zip archive to :
+            <form style='margin-top:-15px' method='post' action='send_zip.php'><img src='themes/".$_SESSION['prefs']['theme']."/img/mail.gif' alt='mail' /> <select name='userid'>";
+        while($data = $req->fetch()){
+             echo "<option value='".$data['userid']."'>".$data['firstname']." ".$data['lastname']."</option>";
+        }
+        echo "</select> <input type=submit value='send' />
+            <input type='hidden' name='zipname' value='".$zipname."'>
+            </form></p></div>";
+    } else {
+        echo "<p>Zip archive is too big to be sent by email.</p>";
     }
-    echo "</select> <input type=submit value='send' />
-        <input type='hidden' name='zipname' value='".$zipname."'>
-        </form></p></div>";
 } else {
         echo 'Archive creation failed :(';
 }

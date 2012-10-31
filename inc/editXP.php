@@ -149,8 +149,9 @@ echo "<a onclick='delete_link(".$links['id'].", ".$id.")'>
 <img src='themes/".$_SESSION['prefs']['theme']."/img/trash.png' title='delete' alt='delete' /></a></li>";
     } // end while
     echo "</ul>";
-} // end if link exist
-
+} else { // end if link exist
+    echo "<br />";
+}
 ?>
 </div>
 <p class='inline'>Add a link</p>

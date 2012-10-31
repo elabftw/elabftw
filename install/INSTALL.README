@@ -50,6 +50,12 @@ Or via git :
 git clone https://git.gitorious.org/elabftw/elabftw.git
 (this will create a folder `elabftw`)
 
+# Create the uploads folder :
+cd elabftw/
+mkdir uploads
+# Allow the server to write there
+chmod 777 uploads
+
 Graphical user interface :
 `````````````````````````
 Download the latest stable release from the official website.
@@ -66,6 +72,7 @@ It's a good idea to use a php optimizer to increase speed. I recommand installin
 
 Use the install script :
 ```````````````````````
+NOT READY YET !
 Now point your favorite browser to http://example.com/elabftw/install/install.php
 and follow the instructions on screen.
 
@@ -81,7 +88,7 @@ mysql> CREATE DATABASE `elabftw` DEFAULT CHARACTER SET utf8 COLLATE utf8_general
 Exit with Ctrl-d, and enter this if you are in the same directory as the sql file:
 # mysql -uroot -psecr3t elabftw < elabftw.sql
 
-Now register an account on the web interface, and set it admin by modifying the `is_admin` column in `users` table :
+Now register an account on the web interface of elabftw, and set it admin by modifying the `is_admin` column in `users` table :
 mysql> UPDATE users SET is_admin = 1 WHERE userid = 1
 
 Now edit the `admin/config-example.ini` file and rename it to `config.ini`.

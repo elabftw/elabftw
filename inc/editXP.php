@@ -87,7 +87,7 @@ echo stripslashes($tags['tag']);?>
             $status = $data['outcome'];
         }
 ?>
-      <select name="status">
+      <select name="outcome">
 <option <?php echo ($status === "running") ? "selected" : "";?> value="running">Running</option>
 <option <?php echo ($status === "success") ? "selected" : "";?> value="success">Success</option>
 <option <?php echo ($status === "redo") ? "selected" : "";?> value="redo">Need to be redone</option>
@@ -125,6 +125,7 @@ require_once('inc/display_file.php');
 <input type='image' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/submit.png' name='Submit' value='Submit' onClick="this.form.submit();" />
 </div>
 </form><!-- end editXP form -->
+
 <h4>Linked items</h4>
 <div id='links_div'>
 <?php

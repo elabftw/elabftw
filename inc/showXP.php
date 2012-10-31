@@ -62,7 +62,7 @@ if ((!isset($_GET['offset'])) || (empty($_GET['offset']))) {
 } elseif (is_pos_int($_GET['offset'])){
     $offset = $_GET['offset'];
 } else {
-    die("<p>What are you doing, Dave ?</p>");
+    die("<p>Bad offset value</p>");
 }
 
 // Check CURRENTPAGE

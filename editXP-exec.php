@@ -44,7 +44,6 @@ require_once('inc/check_date.php'); // $date
 require_once('inc/check_body.php'); // $body
 require_once('inc/check_outcome.php'); // $outcome
 require_once('inc/check_files.php'); // $real_filenames[] $long_filenames[]
-require_once('inc/check_item.php'); // outputs $linked_item_id
 
 // Store stuff in Session to get it back if error input
 $_SESSION['new_title'] = $title;
@@ -65,8 +64,7 @@ if($errflag) {
         SET title = :title, 
         date = :date, 
         body = :body, 
-        outcome = :outcome, 
-        item = :item
+        outcome = :outcome
         WHERE userid = :userid 
         AND id = :id";
 $req = $bdd->prepare($sql);
@@ -75,7 +73,6 @@ $result = $req->execute(array(
     'date' => $date,
     'body' => $body,
     'outcome' => $outcome,
-    'item' => $linked_item_id,
     'userid' => $_SESSION['userid'],
     'id' => $id
 ));
@@ -116,7 +113,7 @@ if($result) {
     unset($_SESSION['new_body']);
     unset($_SESSION['outcome']);
     unset($_SESSION['errors']);
-    header("location: experiments.php?mode=edit&id=$id");
+    header("location: experiments.php?mode=view&id=$id");
 } else {
     die('Something went wrong in the database query. Check the flux capacitor.');
 }

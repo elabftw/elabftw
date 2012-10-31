@@ -98,4 +98,6 @@ echo "<script>
 key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=exp'});
 key('".$_SESSION['prefs']['shortcuts']['edit']."', function(){location.href = 'experiments.php?mode=edit&id=".$id."'});
 </script>";
+echo "</section>";
 ?>
+

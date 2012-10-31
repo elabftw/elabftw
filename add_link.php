@@ -34,7 +34,7 @@ if (isset($_POST['item_id']) && is_pos_int($_POST['item_id'])) {
 }
 // Sanitize link
 $link = filter_var($_POST['link'], FILTER_SANITIZE_STRING);
-// Get the ID of this link item
+// Get the ID of this link item from title
 $sql = "SELECT id FROM items WHERE title LIKE '$link'";
 $req = $bdd->prepare($sql);
 $req->execute();

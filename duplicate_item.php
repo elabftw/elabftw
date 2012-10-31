@@ -39,22 +39,22 @@ if ($_GET['type'] === 'exp'){
 
 if ($type === 'experiments') {
     // SQL to get data from the experiment we duplicate
-    $sql = "SELECT title, body, item FROM experiments WHERE id = ".$id;
+    $sql = "SELECT title, body FROM experiments WHERE id = ".$id;
     $req = $bdd->prepare($sql);
     $req->execute();
     $data = $req->fetch();
-
     // SQL for duplicateXP
-    $sql = "INSERT INTO experiments(title, date, body, item, outcome, userid) VALUES(:title, :date, :body, :item, :outcome, :userid)";
+    $sql = "INSERT INTO experiments(title, date, body, outcome, userid) VALUES(:title, :date, :body, :outcome, :userid)";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
         'title' => $data['title'],
         'date' => kdate(),
         'body' => $data['body'],
         'outcome' => 'running',
-        'item' => $data['item'],
         'userid' => $_SESSION['userid']));
     // END SQL main
+
+
 }
 
 if ($type === 'plasmids') {
@@ -98,6 +98,18 @@ if ($type === 'experiments') {
             'tag' => $tags['tag'],
             'item_id' => $newid,
             'userid' => $_SESSION['userid']
+        ));
+    }
+    // LINKS
+    $linksql = "SELECT link_id FROM experiments_links WHERE item_id = ".$id;
+    $linkreq = $bdd->prepare($linksql);
+    $linkreq->execute();
+    while($links = $linkreq->fetch()) {
+        $sql = "INSERT INTO experiments_links (link_id, item_id) VALUES(:link_id, :item_id)";
+        $req = $bdd->prepare($sql);
+        $result = $req->execute(array(
+            'link_id' => $links['link_id'],
+            'item_id' => $newid
         ));
     }
 }

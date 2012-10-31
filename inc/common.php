@@ -40,15 +40,14 @@ catch(Exception $e)
 // END SQL CONNECT
 
 // AUTH
-// if user is auth, we check the cookie
-if (isset($_SESSION['auth'])){
-    if (isset($_COOKIE['path']) && ($_COOKIE['path'] != $ini_arr['path'])) { // no cookie for this domain
+if (isset($_SESSION['auth'])){ // if user is auth, we check the cookie
+    if (!isset($_COOKIE['path']) || ($_COOKIE['path'] != $ini_arr['path'])) { // no cookie for this domain
         session_destroy(); // kill session
         $msg_arr = array();
         $msg_arr[] = 'You are not logged in !';
         $_SESSION['errors'] = $msg_arr;
         header('Location: login.php');
-    }
+    } 
 } else { // user is not auth with php sessions 
     if (isset($_COOKIE['token']) && (strlen($_COOKIE['token']) == 32)) {
     // If user has a cookie; check cookie is valid

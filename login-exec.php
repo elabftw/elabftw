@@ -81,6 +81,7 @@ if ($result) {
         // Store userid and permissions in $_SESSION
         session_regenerate_id();
         $_SESSION['auth'] = 1;
+        $_SESSION['path'] = $ini_arr['path'];
         $_SESSION['userid'] = $data['userid'];
         // Used in the menu
         $_SESSION['username'] = $data['username'];

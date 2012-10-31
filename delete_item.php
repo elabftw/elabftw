@@ -50,17 +50,15 @@ if ($item_type === 'experiments' || $item_type === 'experiments_templates') {
 }
 if ($item_type === 'items'){
     // get all experiments with that item linked and set it to null
-    $sql = "SELECT id FROM experiments WHERE item = :item";
+    $sql = "SELECT id FROM experiments_links WHERE link_id = :link_id";
     $req = $bdd->prepare($sql);
     $req->execute(array(
-        'item' => $id
+        'link_id' => $id
     ));
-    while($experiments = $req->fetch()){
-        $sql = "UPDATE experiments SET item = null WHERE id = :id";
-        $set_null = $bdd->prepare($sql);
-        $set_null->execute(array(
-            'id' => $experiments['id']
-        ));
+    while ($links = $req->fetch()) {
+        $delete_sql = "DELETE FROM experiments_links WHERE id=".$links['id'];
+        $delete_req = $bdd->prepare($delete_sql);
+        $result = $delete_req->execute();
     }
 }
 // DELETE ITEM

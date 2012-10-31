@@ -126,15 +126,15 @@ if (isset($_GET['q'])) { // if there is a query
     // we make an array for the resulting ids
     $results_arr = array();
     // search in title date and body
-    $sql = "SELECT id FROM experiments 
-        WHERE item = :item_id LIMIT 100";
+    $sql = "SELECT item_id FROM experiments_links 
+        WHERE link_id = :link_id LIMIT 100";
     $req = $bdd->prepare($sql);
     $req->execute(array(
-        'item_id' => $item_id
+        'link_id' => $item_id
     ));
     // put resulting ids in the results array
     while ($data = $req->fetch()) {
-        $results_arr[] = $data['id'];
+        $results_arr[] = $data['item_id'];
     }
     $req->closeCursor();
     // show number of results found
@@ -148,29 +148,7 @@ if (isset($_GET['q'])) { // if there is a query
 
     // loop the results array and display results
     foreach($results_arr as $result_id) {
-        // SQL to get everything from selected id
-        $sql = "SELECT id, title, date, body, outcome  FROM experiments WHERE id = :id";
-        $req = $bdd->prepare($sql);
-        $req->execute(array(
-            'id' => $result_id
-        ));
-        $final_query = $req->fetch();
-        ?>
-        <section OnClick="document.location='experiments.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item <?php echo $final_query['outcome'];?>">
-        <?php
-        // TAGS
-        $tagsql = "SELECT tag FROM experiments_tags WHERE item_id = ".$final_query['id'];
-        $tagreq = $bdd->prepare($tagsql);
-        $tagreq->execute();
-        echo "<span class='redo_compact'>".$final_query['date']."</span> ";
-        echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
-        while($tags = $tagreq->fetch()){
-            echo "<a href='experiments.php?mode=show&q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
-        }
-        echo "</span>";
-        // END TAGS
-        echo "<p class='title'>". stripslashes($final_query['title']) . "</p>";
-        echo "</section>";
+        showXP($result_id, $display);
     } // end foreach
 // /////////////////
 // DEFAULT VIEW

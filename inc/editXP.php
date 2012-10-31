@@ -44,7 +44,7 @@ if ($resultat != $_SESSION['userid']) {
 }
 
 // SQL for editXP
-$sql = "SELECT title, date, body, outcome, links FROM experiments WHERE id = ".$id;
+$sql = "SELECT title, date, body, outcome FROM experiments WHERE id = ".$id;
 $req = $bdd->prepare($sql);
 $req->execute();
 $data = $req->fetch();

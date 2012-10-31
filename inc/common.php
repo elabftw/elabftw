@@ -42,7 +42,7 @@ catch(Exception $e)
 // AUTH
 // if user is auth, we check the cookie
 if (isset($_SESSION['auth'])){
-    if (!isset($_COOKIE['path'])) { // no cookie for this domain
+    if (!isset($_COOKIE['path']) || ($_COOKIE['path'] != $ini_arr['path'])) { // no cookie for this domain
         session_destroy(); // kill session
         $msg_arr = array();
         $msg_arr[] = 'You are not logged in !';

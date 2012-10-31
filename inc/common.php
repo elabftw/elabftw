@@ -49,7 +49,8 @@ if (isset($_SESSION['auth'])){
         $_SESSION['errors'] = $msg_arr;
         header('Location: login.php');
     }
-} elseif (isset($_COOKIE['token']) && (strlen($_COOKIE['token']) == 32)) {
+} else { // user is not auth with php sessions 
+    if (isset($_COOKIE['token']) && (strlen($_COOKIE['token']) == 32)) {
     // If user has a cookie; check cookie is valid
     $token = filter_var($_COOKIE['token'], FILTER_SANITIZE_STRING);
     // Get token from SQL
@@ -85,10 +86,11 @@ if (isset($_SESSION['auth'])){
         $_SESSION['errors'] = $msg_arr;
         header("location: login.php");
     }
-} else { // no cookie
-    $msg_arr = array();
-    $msg_arr[] = 'You are not logged in !';
-    $_SESSION['errors'] = $msg_arr;
-    header("location: login.php");
+    } else { // no cookie
+        $msg_arr = array();
+        $msg_arr[] = 'You are not logged in !';
+        $_SESSION['errors'] = $msg_arr;
+        header("location: login.php");
+    }
 }
 ?>

@@ -77,7 +77,6 @@ $numrows = $req->rowCount();
 if ($result) {
     if ($numrows === 1) {
         //Login Successful
-        //$req->setFetchMode(PDO::FETCH_ASSOC);
         $data = $req->fetch();
         // Store userid and permissions in $_SESSION
         session_regenerate_id();
@@ -98,6 +97,8 @@ if ($result) {
         $token = md5(uniqid(rand(), true));
         // Cookie validity = 1 month
         setcookie('token', $token, time() + 60*60*24*30);
+        $path = dirname(__FILE__);
+        setcookie('path', $path, time() + 60*60*24*30);
         $sql = "UPDATE users SET token = :token WHERE userid = :userid";
         $req = $bdd->prepare($sql);
         $req->execute(array(

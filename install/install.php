@@ -25,6 +25,7 @@
 ********************************************************************************/
 /* install/install.php to get an installation up and running */
 require_once('../inc/head.php');
+// TODO check that it's not already installed (check for .ini file)
 ?>
 <h2>Install eLabFTW</h2>
 <form action='install/install-exec.php' method='post'>

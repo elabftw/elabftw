@@ -61,4 +61,10 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 <div id='page_title'>
 <h2><?php echo strtoupper($page_title);?></h2>
 </div>
-<?php // print_r($_SESSION); ?>
+<?php
+if ($ini_arr['debug'] == 1) {
+    echo "Session array : ";
+    print_r($_SESSION);
+    echo "<br />";
+}
+?>

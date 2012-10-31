@@ -53,10 +53,13 @@ if (!isset($_SESSION['auth'])){
             ));
             $data = $result->fetch();
             $numrows = $result->rowCount();
-            if ($numrows == 1){
+            // Check cookie path vs. real install path
+            if (($numrows == 1) && (dirname(__FILE__) == $_COOKIE['path'])) { // token is valid
                 // Store userid in $_SESSION
                 session_regenerate_id();
                 $_SESSION['auth'] = 1;
+                // fix for cookies problem
+                $_SESSION['path'] = $ini_arr['path'];
                 $_SESSION['userid'] = $data['userid'];
                 // Used in the menu
                 $_SESSION['username'] = $data['username'];
@@ -80,6 +83,16 @@ if (!isset($_SESSION['auth'])){
         $msg_arr[] = 'You are not logged in !';
         $_SESSION['errors'] = $msg_arr;
         header("location: login.php");
+    }
+} else { // user is auth but we check for path
+    if (isset($_COOKIE['path'])) {
+        // two dirname because we are in /inc
+        if (dirname(dirname(__FILE__)) != $_COOKIE['path']) {
+            die('bad path'.dirname(dirname(__FILE__)));
+        }
+    } else { // auth = 1 but no cookies => we kill session
+        session_destroy();
+        header('Location: login.php');
     }
 }
 ?>

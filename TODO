@@ -1,8 +1,4 @@
 /////// Priority
-* cookies domain only
-1) Change session.cookie_path to the relevant directory path (you've already done this).
-2) Add a variable to your session (e.g. $_SESSION['path']) and set that equal to the path as well. Then verify that value before granting access.
-source : http://www.sitepoint.com/forums/showthread.php?474831-Scope-of-SESSION-data-across-different-folders
 
 ////// Features
 * upload bigger files

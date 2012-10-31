@@ -40,59 +40,55 @@ catch(Exception $e)
 // END SQL CONNECT
 
 // AUTH
-// if user is not auth
-if (!isset($_SESSION['auth'])){
+// if user is auth, we check the cookie
+if (isset($_SESSION['auth'])){
+    if (!isset($_COOKIE['path'])) { // no cookie for this domain
+        session_destroy(); // kill session
+        $msg_arr = array();
+        $msg_arr[] = 'You are not logged in !';
+        $_SESSION['errors'] = $msg_arr;
+        header('Location: login.php');
+    }
+} elseif (isset($_COOKIE['token']) && (strlen($_COOKIE['token']) == 32)) {
     // If user has a cookie; check cookie is valid
-    if (isset($_COOKIE['token']) && (strlen($_COOKIE['token']) == 32)){
-            $token = filter_var($_COOKIE['token'], FILTER_SANITIZE_STRING);
-            // Get token from SQL
-            $sql = "SELECT * FROM users WHERE token = :token";
-            $result = $bdd->prepare($sql);
-            $result->execute(array(
-                'token' => $token
-            ));
-            $data = $result->fetch();
-            $numrows = $result->rowCount();
-            // Check cookie path vs. real install path
-            if (($numrows == 1) && (dirname(__FILE__) == $_COOKIE['path'])) { // token is valid
-                // Store userid in $_SESSION
-                session_regenerate_id();
-                $_SESSION['auth'] = 1;
-                // fix for cookies problem
-                $_SESSION['path'] = $ini_arr['path'];
-                $_SESSION['userid'] = $data['userid'];
-                // Used in the menu
-                $_SESSION['username'] = $data['username'];
-                $_SESSION['is_admin'] = $data['is_admin'];
-                // PREFS
-                $_SESSION['prefs'] = array('theme' => $data['theme'], 
-                    'display' => $data['display'], 
-                    'order' => $data['order_by'], 
-                    'sort' => $data['sort_by'], 
-                    'limit' => $data['limit_nb'], 
-                    'shortcuts' => array('create' => $data['sc_create'], 'edit' => $data['sc_edit'], 'submit' => $data['sc_submit'], 'todo' => $data['sc_todo']));
-                session_write_close();
-                }else{ // no token found in database
-                    $msg_arr = array();
-                    $msg_arr[] = 'You are not logged in !';
-                    $_SESSION['errors'] = $msg_arr;
-                    header("location: login.php");
-                }
-    }else{ // no cookie
+    $token = filter_var($_COOKIE['token'], FILTER_SANITIZE_STRING);
+    // Get token from SQL
+    $sql = "SELECT * FROM users WHERE token = :token";
+    $result = $bdd->prepare($sql);
+    $result->execute(array(
+    'token' => $token
+    ));
+    $data = $result->fetch();
+    $numrows = $result->rowCount();
+    // Check cookie path vs. real install path
+    if (($numrows == 1) && (dirname(__FILE__) == $_COOKIE['path'])) { // token is valid
+        // Store userid in $_SESSION
+        session_regenerate_id();
+        $_SESSION['auth'] = 1;
+        // fix for cookies problem
+        $_SESSION['path'] = $ini_arr['path'];
+        $_SESSION['userid'] = $data['userid'];
+        // Used in the menu
+        $_SESSION['username'] = $data['username'];
+        $_SESSION['is_admin'] = $data['is_admin'];
+        // PREFS
+        $_SESSION['prefs'] = array('theme' => $data['theme'], 
+        'display' => $data['display'], 
+        'order' => $data['order_by'], 
+        'sort' => $data['sort_by'], 
+        'limit' => $data['limit_nb'], 
+        'shortcuts' => array('create' => $data['sc_create'], 'edit' => $data['sc_edit'], 'submit' => $data['sc_submit'], 'todo' => $data['sc_todo']));
+        session_write_close();
+    } else { // no token found in database
         $msg_arr = array();
         $msg_arr[] = 'You are not logged in !';
         $_SESSION['errors'] = $msg_arr;
         header("location: login.php");
     }
-} else { // user is auth but we check for path
-    if (isset($_COOKIE['path'])) {
-        // two dirname because we are in /inc
-        if (dirname(dirname(__FILE__)) != $_COOKIE['path']) {
-            die('bad path'.dirname(dirname(__FILE__)));
-        }
-    } else { // auth = 1 but no cookies => we kill session
-        session_destroy();
-        header('Location: login.php');
-    }
+} else { // no cookie
+    $msg_arr = array();
+    $msg_arr[] = 'You are not logged in !';
+    $_SESSION['errors'] = $msg_arr;
+    header("location: login.php");
 }
 ?>

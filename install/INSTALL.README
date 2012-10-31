@@ -88,9 +88,9 @@ mysql> CREATE DATABASE `elabftw` DEFAULT CHARACTER SET utf8 COLLATE utf8_general
 Exit with Ctrl-d, and enter this if you are in the same directory as the sql file:
 # mysql -uroot -psecr3t elabftw < elabftw.sql
 
-Now register an account on the web interface of elabftw, and set it admin by modifying the `is_admin` column in `users` table :
-mysql> UPDATE users SET is_admin = 1 WHERE userid = 1
+You can now login with the user `root`, and the password `toor`. You should change your password asap.
 
-Now edit the `admin/config-example.ini` file and rename it to `config.ini`.
+Rename the file `admin/config-exemple.ini` in `admin/config.ini` and edit it.
+Check that this file isn't served by your webserver (point to it in a browser), if you allow the use of .htaccess files, it should be good; otherwise, make the necessary changes in Apache config.
 
 You should be good to go. Email me in case of troubles : nicolas.carpi gmail com

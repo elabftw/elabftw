@@ -1,10 +1,14 @@
 /////// Priority
 
-////// Features
+////// Fix/improve
 * upload bigger files
+* autosave in ajax on editXP
+* template txt is in another color
+
+////// New Features
+* possibility to draw
 * add calendar
 * possibility to comment on a no owned XP
-* autosave in ajax on editXP
 * export by date range / tag / search result
 * add tag on templates
 * announce birthday date of a team mb to other team mb (add birthday in profile)

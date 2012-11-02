@@ -23,7 +23,9 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+if(isset($_SESSION['prefs']['theme']) {
 require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
+}
 ?>
 <div id='submenu'>
     <form id='big_search' method='get' action='database.php'>

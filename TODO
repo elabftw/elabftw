@@ -1,6 +1,8 @@
 /////// Priority
+* if isset session pref, or default
 
 ////// Fix/improve
+* read .ini files and if default values are here, do nothing
 * upload bigger files
 * autosave in ajax on editXP
 * template txt is in another color

@@ -38,9 +38,11 @@ require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 </div><!-- end submenu -->
 <div class='toggle_container'><ul>
 <? // SQL to get user's templates
-$sql = "SELECT id, name FROM experiments_templates WHERE userid = ".$_SESSION['userid'];
+$sql = "SELECT id, name FROM experiments_templates WHERE userid = :userid";
 $tplreq = $bdd->prepare($sql);
-$tplreq->execute();
+$tplreq->execute(array(
+    'userid' => $_SESSION['userid']
+));
 $count_tpl = $tplreq->rowCount();
 if ($count_tpl > 0) {
     while ($tpl = $tplreq->fetch()) {

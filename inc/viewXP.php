@@ -93,6 +93,10 @@ if ($req->rowcount() != 0) {
 
 // DISPLAY FILES
 require_once('inc/display_file.php');
+
+// DISPLAY eLabID
+echo "<p class='elabid'>Unique eLabID : ".$data['elabid']."</p>";
+
 // KEYBOARD SHORTCUTS
 echo "<script>
 key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=exp'});

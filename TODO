@@ -1,5 +1,6 @@
 /////// Priority
 * if isset session pref, or default
+* delete_item.php message if result == false
 
 ////// Fix/improve
 * read .ini files and if default values are here, do nothing

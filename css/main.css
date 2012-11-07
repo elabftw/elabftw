@@ -539,6 +539,12 @@ img {
     font-size: 10px;
 }
 
+/* elabid */
+.elabid {
+    text-align:right;
+    font-size: 11px;
+}
+
 /* PROFILE PAGE */
 #tagcloud {
     text-align: center;

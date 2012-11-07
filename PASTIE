@@ -1,3 +1,7 @@
+ajout elabid :
+ALTER TABLE `experiments` ADD `elabid` VARCHAR( 255 ) NOT NULL 
+
+
 $(document).ready(function () {
     $(".TTTTTTTTTtemplate_link").click(function() {
         var request = $.ajax({

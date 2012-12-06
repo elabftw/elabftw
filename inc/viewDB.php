@@ -40,7 +40,7 @@ $req->execute(array(
 $data = $req->fetch();
 
 ?>
-<section OnClick="document.location='database.php?mode=edit&id=<?php echo $data['id'];?>'" class="item">
+<section class="item">
 <a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>' onClick="return confirm('Delete this item ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <?php
 echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' title='date' alt='Date :' />".$data['date']."</span><br />";
@@ -70,12 +70,17 @@ while($tags = $req->fetch()){
 }
 echo "</span>";
 // END TAGS
+// TITLE : click on it to go to edit mode
 ?>
+<div OnClick="document.location='database.php?mode=edit&id=<?php echo $data['id'];?>'" class='title'>
+    <?php echo stripslashes($data['title']);?>
+</div>
 <?php
-echo "<p class='title'>". stripslashes($data['title']) . "</p>";
 // BODY (show only if not empty)
 if ($data['body'] != ''){
-echo "<div class='txt'>".stripslashes($data['body'])."</div>";
+    ?>
+    <div OnClick="document.location='database.php?mode=edit&id=<?php echo $data['id'];?>'" class='txt'><?php echo stripslashes($data['body'])?></div>
+<?php
 }
 // Get userinfo
 $sql = "SELECT firstname, lastname FROM users WHERE userid = :userid";

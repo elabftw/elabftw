@@ -123,7 +123,7 @@ unset($_SESSION['errors']);
 $(function() {
 		var availableTags = [
 <?php // get all user's tag for autocomplete
-$sql = "SELECT DISTINCT tag FROM items_tags LIMIT 50";
+$sql = "SELECT DISTINCT tag FROM items_tags ORDER BY id DESC LIMIT 500";
 $getalltags = $bdd->prepare($sql);
 $getalltags->execute();
 while ($tag = $getalltags->fetch()){

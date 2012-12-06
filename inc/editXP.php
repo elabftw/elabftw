@@ -170,9 +170,11 @@ echo "key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.f
 $(function() {
 		var availableTags = [
 <?php // get all user's tag for autocomplete
-$sql = "SELECT DISTINCT tag FROM experiments_tags WHERE userid = ".$_SESSION['userid']." LIMIT 50";
+$sql = "SELECT DISTINCT tag FROM experiments_tags WHERE userid = :userid ORDER BY id DESC LIMIT 500";
 $getalltags = $bdd->prepare($sql);
-$getalltags->execute();
+$getalltags->execute(array(
+    'userid' => $_SESSION['userid']
+));
 while ($tag = $getalltags->fetch()){
     echo "'".$tag[0]."',";
 }?>

@@ -40,8 +40,7 @@ $data = $req->fetch();
 
 // Display experiment
 ?>
-<!-- click section to edit XP -->
-<section OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['id'];?>'" class="item <?php echo $data['outcome'];?>">
+<section class="item <?php echo $data['outcome'];?>">
 <a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>&type=exp' onClick="return confirm('Delete this experiment ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <?php
 echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' title='date' alt='Date :' />".$data['date']."</span><br />
@@ -61,12 +60,18 @@ while($tags = $req->fetch()){
 }
 echo "</span>";
 // END TAGS
+// TITLE : click on it to go to edit mode
 ?>
+<div OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['id'];?>'" class='title'>
+    <?php echo stripslashes($data['title']);?>
+    <span class='align_right' id='outcome'>(<?php echo $data['outcome'];?>)<span>
+</div>
 <?php
-echo "<div class='title'>". stripslashes($data['title']) . "<span class='align_right' id='outcome'>(".$data['outcome'].")<span></div> ";
-// BODY (show only if not empty)
+// BODY (show only if not empty, click on it to edit
 if ($data['body'] != ''){
-echo "<div class='txt'>".stripslashes($data['body'])."</div>";
+    ?>
+    <div OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['id'];?>'" class='txt'><?php echo stripslashes($data['body']);?></div>
+<?php
 }
 // DISPLAY LINKED ITEMS
 $sql = "SELECT link_id, id FROM experiments_links WHERE item_id = ".$id;

@@ -1,12 +1,14 @@
 /////// Priority
 * if isset session pref, or default
-* delete_item.php message if result == false
+* AUTOSAVE IN AJAX ON EDITXP
 
 ////// Fix/improve
-* read .ini files and if default values are here, do nothing
+* password reset : http://www.troyhunt.com/2012/05/everything-you-ever-wanted-to-know.html
+* install : read .ini files and if default values are here, do nothing
 * upload bigger files
-* autosave in ajax on editXP
 * template txt is in another color
+* drag and drop images to embed in text
+* make pdf...
 
 ////// New Features
 * possibility to draw
@@ -16,8 +18,9 @@
 * add tag on templates
 * announce birthday date of a team mb to other team mb (add birthday in profile)
 * tools page with trucs pour calculer les concentrations, et les volumes pour les transfections, etc...
-* make_pdf : keep formatting (html2fpdf)
+* make_pdf : keep formatting (html2fpdf) https://code.google.com/p/wkhtmltopdf/
 * merge noforget
+* better text editing https://github.com/xing/wysihtml5/wiki/Getting-Started
 
 ///// Osef
 * have a real useful index...

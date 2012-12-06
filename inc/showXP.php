@@ -112,7 +112,7 @@ if (isset($_GET['q'])) { // if there is a query
     } elseif (count($results_arr) == 1){
         echo "Found 1 result.";
     } else {
-        echo "Nothing found :(";
+        echo "No experiments were found.";
     }
 
     // loop the results array and display results
@@ -147,7 +147,7 @@ if (isset($_GET['q'])) { // if there is a query
     } elseif (count($results_arr) == 1){
         echo "Found 1 result.";
     } else {
-        echo "Nothing found :(";
+        echo "No experiments were found.";
     }
 
     // loop the results array and display results

@@ -1,5 +1,4 @@
 /////// Priority
-* if isset session pref, or default
 * AUTOSAVE IN AJAX ON EDITXP
 
 ////// Fix/improve
@@ -28,8 +27,7 @@
 * if two file field and file is only on the second one (first is empty) no file uploaded
 
 ///// SECURITY
-* use bcrypt instead of salted sha512
-* https://code.google.com/p/bcryptnet/
+* use bcrypt instead of salted sha512 https://code.google.com/p/bcryptnet/
 * limit new users to particular email domain
 * have real auth with LDAP etc... like here : http://docs.moodle.org/22/en/Authentication
 * check for flood register/login
@@ -38,4 +36,3 @@
 * Once we reach v1.0 => http://www.ssi.gouv.fr/fr/certification-qualification/cc/
 * install.php
 * i18n
-* offline version 

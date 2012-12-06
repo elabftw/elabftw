@@ -7,7 +7,9 @@
 
 
 Thank you for choosing eLabFTW as a lab manager =)
-This file contains the instructions to install elabftw on a webserver.
+This file contains the instructions to install elabftw on a webserver but these instructions can also apply if you are installing it locally (with MAMP/WAMP).
+Keep in mind that this software is in beta (meaning it's not finished), so you are encouraged to tell me the bugs you might find or the improvements you would
+like to see in the next version.
 
   _   _   _   _   _   _   _   _   _   _   _   _  
  / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ 
@@ -21,7 +23,6 @@ Here is what you need in order to install it :
 - MySQL version > 5.1
 - basic knowledge of server administration
 - access to a MySQL database
-- authorization to upload files to a public folder 
 
 Have everything ?
 Now, let's begin :
@@ -35,18 +36,14 @@ The first part is getting the files on the server.
 
 Command line interface :
 ```````````````````````
-As root, cd to your public directory (/var/www generally) and enter these commands :
+SSH to the server, and cd to the public directory where you want eLabFTW to be installed (can be /var/www, /var/www/elabftw or ~/public_html)
+and enter these commands :
 
 (If you are behind a proxy :
-# export http_proxy=proxy-adress.company.org:3128
+export http_proxy=proxy-adress.company.org:3128
 )
 
-Get latest version
-# wget http://www.elabftw.net/pub/latest-stable.tar.gz
-Extract it in the public folder
-# tar xzf latest.tar.gz
-
-Or via git :
+Get latest stable version via git :
 git clone https://git.gitorious.org/elabftw/elabftw.git
 (this will create a folder `elabftw`)
 
@@ -55,6 +52,8 @@ cd elabftw/
 mkdir uploads
 # Allow the server to write there
 chmod 777 uploads
+OR, a more clean and secure way :
+chown www-data: uploads && chmod 700 uploads
 
 Graphical user interface :
 `````````````````````````
@@ -70,13 +69,13 @@ It's a good idea to use a php optimizer to increase speed. I recommand installin
 ( S | Q | L ) ( P | A | R | T )
  \_/ \_/ \_/   \_/ \_/ \_/ \_/ 
 
-Use the install script :
+Using the install script :
 ```````````````````````
 NOT READY YET !
 Now point your favorite browser to http://example.com/elabftw/install/install.php
 and follow the instructions on screen.
 
-Do it manually :
+Manually :
 ```````````````
 Connect :
 Command to connect with the user `root` and the password `secr3t`

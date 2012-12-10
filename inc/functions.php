@@ -241,7 +241,7 @@ function showDB($id, $display) {
             ?>
             <!-- BEGIN CONTENT -->
             <section onClick="document.location='database.php?mode=view&id=<?php echo $final_query['id'];?>'" class='item'>
-            <span class='date'><?php echo $final_query['date'];?></span>
+            <span class='date date_compact'><?php echo $final_query['date'];?></span>
             <span><?php echo stripslashes($final_query['title']);?>
             <!-- STAR RATING read only -->
             <div id='rating'>

@@ -517,6 +517,14 @@ img {
     width: 742px;
 }
 
+.date_compact {
+    border: 1px black solid;
+    border-radius: 5px;
+    margin: 15px auto 15px auto;
+    padding:  5px;
+    width: 742px;
+}
+
 .filesdiv{
     font: 14px Verdana, Arial, Helvetica, sans-serif;
     margin: 10px auto 10px auto;

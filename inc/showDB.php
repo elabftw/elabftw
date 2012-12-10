@@ -26,6 +26,11 @@
 if(isset($_SESSION['prefs']['theme'])) {
 require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 }
+if(isset($_SESSION['prefs']['display'])) {
+    $display = $_SESSION['prefs']['display'];
+} else {
+    $display = 'default';
+}
 ?>
 <div id='submenu'>
     <form id='big_search' method='get' action='database.php'>
@@ -43,36 +48,21 @@ require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 
 <?php
 // SQL for showDB
-// we show the last 10 uploads
 if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
-    echo "<p>Showing last 10 uploads :</p>";
-    $sql = "SELECT * 
-        FROM items 
-        ORDER BY id DESC 
-        LIMIT 10";
+    // we show the last 10 uploads
+    // get the last id
+    $sql = "SELECT * FROM items ORDER BY id DESC";
     $req = $bdd->prepare($sql);
     $req->execute();
-    while ($data = $req->fetch()) {
-        ?>
-            <section OnClick="document.location='database.php?mode=view&id=<?php echo $data['id'];?>'" class="item <?php echo $data['type'];?>">
-<?php
-        // TAGS
-        $tagsql = "SELECT tag FROM items_tags WHERE item_id = :id";
-        $tagreq = $bdd->prepare($tagsql);
-        $tagreq->execute(array(
-            'id' => $data['id']
-        ));
-        echo "<span class='redo_compact'>".$data['date']."</span> ";
-        echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
-        while($tags = $tagreq->fetch()){
-            echo "<a href='experiments.php?mode=show&q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
-        }
-        echo "</span>";
-        // END TAGS
-        echo "<p class='title'>". stripslashes($data['title']) . "</p>";
-        echo "</section>";
-    } // end while
-
+    $results_arr = array();
+    while($final_query = $req->fetch()) {
+        $results_arr[] = $final_query['id'];
+    }
+    // loop the results array and display results
+    echo "<p>Showing last 10 uploads :</p>";
+    foreach($results_arr as $result_id) {
+        showDB($result_id, $display);
+    }
 
 } else { //there is a SEARCH
     $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
@@ -92,32 +82,8 @@ if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
 
     // loop the results array and display results
     foreach($results_arr as $result_id) {
-        // SQL to get everything from selected id
-        $sql = "SELECT id, title, date, body, type FROM items WHERE id = :id";
-        $req = $bdd->prepare($sql);
-        $req->execute(array(
-            'id' => $result_id
-        ));
-        $final_query = $req->fetch();
-        ?>
-        <section OnClick="document.location='database.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item <?php echo $final_query['type'];?>">
-        <?php
-        // TAGS
-        $tagsql = "SELECT tag FROM items_tags WHERE item_id = :id";
-        $tagreq = $bdd->prepare($tagsql);
-        $tagreq->execute(array(
-            'id' => $final_query['id']
-        ));
-        echo "<span class='redo_compact'>".$final_query['date']."</span> ";
-        echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
-        while($tags = $tagreq->fetch()){
-            echo "<a href='database.php?mode=show&q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
-        }
-        echo "</span>";
-        // END TAGS
-        echo "<p class='title'>". stripslashes($final_query['title']) . "</p>";
-        echo "</section>";
-    } // end foreach
+        showDB($result_id, $display);
+    }
 } // end if there is a search
 
 // KEYBOARD SHORTCUTS

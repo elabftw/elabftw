@@ -74,8 +74,10 @@ echo stripslashes($tags['tag']);?>
 <!-- BEGIN EDITXP FORM -->
 <form id="editXP" name="editXP" method="post" action="editXP-exec.php" enctype='multipart/form-data'>
 <input name='item_id' type='hidden' value='<? echo $id;?>' />
+
 <h4>Date</h4><span class='smallgray'> (date format : YYMMDD)</span><br />
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /><input name='date' id='datepicker' size='6' type='text' value='<?php echo $data['date'];?>' />
+
 <span class='align_right'>
 <h4>Status</h4>
 <!-- Status get selected by default -->
@@ -103,14 +105,13 @@ echo stripslashes($tags['tag']);?>
       } else {
           echo stripslashes($_SESSION['new_title']);
       } ?></textarea>
+
 <h4>Experiment</h4>
 <br />
-<textarea class='mceditable' name='body' rows="15" cols="80"><?php if(empty($_SESSION['errors'])){
-    echo stripslashes($data['body']);
-    } else {
-    echo stripslashes($_SESSION['new_body']);
-    } ?>
+<textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">
+    <?php echo stripslashes($data['body']);?>
 </textarea>
+
 
 <?php
 // FILE UPLOAD
@@ -298,4 +299,21 @@ tinyMCE.init({
     theme_advanced_buttons3_add : "tablecontrols",
     font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
 });
+</script>
+<script>
+// AUTOSAVE EVERY 5 SECONDS
+function autoSave() {
+    setInterval(function(){
+        $.ajax({
+            type: "POST",
+            url: "editXP-autosave.php",
+            data: {
+            id : <?php echo $id;?>,
+            // we need this to get the updated content
+            body : tinyMCE.activeEditor.getContent()
+            }
+        });
+    }, 1000);
+}
+autoSave();
 </script>

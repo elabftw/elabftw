@@ -85,11 +85,9 @@ echo stripslashes($tags['tag']);?>
 </div><!-- END STAR RATING -->
 <br />
 <h4>Infos</h4><br />
-      <textarea class='mceditable' name='body' rows="15" cols="80"><?php if(empty($_SESSION['errors'])){
-        echo stripslashes($data['body']);
-    } else {
-        echo stripslashes($_SESSION['new_body']);
-    } ?></textarea>
+<textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">
+    <?php echo stripslashes($data['body']);?>
+</textarea>
 <br /><br />
 <?php
 // FILE UPLOAD
@@ -216,6 +214,25 @@ tinyMCE.init({
     editor_selector : "mceditable",
     content_css : "css/tinymce.css",
     theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
+    plugins : "table",
+    theme_advanced_buttons3_add : "tablecontrols",
     font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
 });
+</script>
+<script>
+// AUTOSAVE EVERY 5 SECONDS
+function autoSave() {
+    setInterval(function(){
+        $.ajax({
+            type: "POST",
+            url: "editDB-autosave.php",
+            data: {
+            id : <?php echo $id;?>,
+            // we need this to get the updated content
+            body : tinyMCE.activeEditor.getContent()
+            }
+        });
+    }, 1000);
+}
+autoSave();
 </script>

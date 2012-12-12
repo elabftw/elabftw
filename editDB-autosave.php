@@ -17,11 +17,25 @@
 *    along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.
 *
 ********************************************************************************/
-// Check BODY (sanitize only)
-if ((isset($_POST['body'])) && (!empty($_POST['body']))) {
-    // we white list the allowed html tags
-    $body = strip_tags($_POST['body'], "<br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol><blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td>");
+// get $body from $_POST['body']
+require_once('inc/check_body.php');
+require_once('inc/common.php');
+
+// get $id from $_POST['id']
+if(is_pos_int($_POST['id'])){
+    $id = $_POST['id'];
 } else {
-    $body = '';
+    die('Bad id value.');
 }
-?>
+
+// SQL for editDB autosave
+    $sql = "UPDATE items
+        SET body = :body 
+        WHERE userid = :userid 
+        AND id = :id";
+$req = $bdd->prepare($sql);
+$result = $req->execute(array(
+    'body' => $body,
+    'userid' => $_SESSION['userid'],
+    'id' => $id
+));

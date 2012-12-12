@@ -1,6 +1,7 @@
 /* Changelog for eLabFTW */
 
 Version 0.6
+* Autosave every second on edit
 * Improvements in .zip creation
 * Multiple bugfixes
 * Show linked experiments to a database item

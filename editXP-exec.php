@@ -48,7 +48,6 @@ require_once('inc/check_files.php'); // $real_filenames[] $long_filenames[]
 // Store stuff in Session to get it back if error input
 $_SESSION['new_title'] = $title;
 $_SESSION['new_date'] = $date;
-$_SESSION['new_body'] = $body;
 $_SESSION['new_outcome'] = $outcome;
 
 // If input errors, redirect back to the experiment form
@@ -110,7 +109,6 @@ if (is_uploaded_file($_FILES['files']['tmp_name'][0])){
 if($result) {
     unset($_SESSION['new_title']);
     unset($_SESSION['new_date']);
-    unset($_SESSION['new_body']);
     unset($_SESSION['outcome']);
     unset($_SESSION['errors']);
     header("location: experiments.php?mode=view&id=$id");

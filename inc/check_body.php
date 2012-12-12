@@ -20,7 +20,7 @@
 // Check BODY (sanitize only)
 if ((isset($_POST['body'])) && (!empty($_POST['body']))) {
     // we white list the allowed html tags
-    $body = strip_tags($_POST['body'], "<br><br /><p><sub><img><sup><strong><b><i><u><a><s><font><span><ul><li><ol><blockquote><h1><h2><h3><h4><h5><h6><hr>");
+    $body = strip_tags($_POST['body'], "<br><br /><p><sub><img><sup><strong><b><i><u><a><s><font><span><ul><li><ol><blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td>");
 } else {
     $body = '';
 }

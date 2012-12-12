@@ -61,8 +61,7 @@ if (isset($_SESSION['auth'])){ // if user is auth, we check the cookie
     $data = $result->fetch();
     $numrows = $result->rowCount();
     // Check cookie path vs. real install path
-    if (($numrows == 1) && (dirname(__FILE__) == $_COOKIE['path'])) { // token is valid
-        // Store userid in $_SESSION
+    if (($numrows == 1) && ($ini_arr['path'] == $_COOKIE['path'])) { // token is valid
         session_regenerate_id();
         $_SESSION['auth'] = 1;
         // fix for cookies problem

@@ -284,3 +284,14 @@ function showDB($id, $display) {
         echo "</section>";
         }
 }
+
+function check_body($input) {
+// Check BODY (sanitize only);
+    if ((isset($input)) && (!empty($input))) {
+        // we white list the allowed html tags
+        return strip_tags($input, "<br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol><blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td>");
+    } else {
+        return false;
+    }
+}
+?>

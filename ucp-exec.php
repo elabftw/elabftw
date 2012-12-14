@@ -328,7 +328,9 @@ if (isset($_POST['limit']) && !empty($_POST['limit']) && $_POST['limit'] != $_SE
 // add new tpl
 if (isset($_POST['new_tpl_form'])) {
     $tpl_name = filter_var($_POST['new_tpl_name'], FILTER_SANITIZE_STRING);
-    $tpl_body = $_POST['new_tpl_body'];
+    $tpl_body = check_body($_POST['new_tpl_body']);
+    // put template in grey
+    //$tpl_body = "<span style='color: #808080;'>".$tpl_body."</span>";
     $sql = "INSERT INTO experiments_templates(name, body, userid) VALUES(:name, :body, :userid)";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(

@@ -18,7 +18,7 @@
 *
 ********************************************************************************/
 // get $body from $_POST['body']
-require_once('inc/check_body.php');
+$body = check_body($_POST['body']);
 require_once('inc/common.php');
 
 // get $id from $_POST['id']

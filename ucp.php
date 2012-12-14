@@ -223,6 +223,12 @@ $(function() {
 tinyMCE.init({
     theme : "advanced",
     mode : "specific_textareas",
-    editor_selector : "mceditable"
+    editor_selector : "mceditable",
+    content_css : "css/tinymce.css",
+    theme_advanced_toolbar_location : "top",
+    theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
+    plugins : "table",
+    theme_advanced_buttons3_add : "forecolor, backcolor, tablecontrols",
+    font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
 });
 </script>

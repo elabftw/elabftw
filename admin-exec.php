@@ -79,7 +79,7 @@ if (isset($_POST['deluser']) && is_pos_int($_POST['deluser'])) {
 
 // New Plasmids template
 if (isset($_POST['pla_tpl'])) {
-    require_once('inc/check_body.php'); // outputs $body
+    $body = check_body($_POST['body']);
     $sql = "UPDATE items_templates SET body = :body WHERE type = 'pla'";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
@@ -99,7 +99,7 @@ if (isset($_POST['pla_tpl'])) {
 }
 // New antibody template
 if (isset($_POST['ant_tpl'])) {
-    require_once('inc/check_body.php'); // outputs $body
+    $body = check_body($_POST['body']);
     $sql = "UPDATE items_templates SET body = :body WHERE type = 'ant'";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(

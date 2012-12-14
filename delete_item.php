@@ -34,6 +34,8 @@ if(isset($_GET['id']) && is_pos_int($_GET['id'])) {
 // Item switch
 if (isset($_GET['type']) && ($_GET['type'] === 'exp')){
     $item_type = 'experiments';
+} elseif (isset($_GET['type']) && ($_GET['type'] === 'tpl')) {
+    $item_type = 'experiments_templates';
 } else {
     $item_type = 'items';
 }
@@ -67,27 +69,31 @@ $req = $bdd->prepare($sql);
 $result1 = $req->execute();
 
 // DELETE TAGS
-$sql = "DELETE FROM ".$item_type."_tags WHERE item_id = ".$id;
-$req = $bdd->prepare($sql);
-$result2 = $req->execute();
+if ($item_type === 'experiments' || $item_type === 'items') {
+    $sql = "DELETE FROM ".$item_type."_tags WHERE item_id = ".$id;
+    $req = $bdd->prepare($sql);
+    $result2 = $req->execute();
 
-// DELETE FILES
-$sql = "DELETE FROM uploads WHERE item_id = :id AND type = :type";
-$req = $bdd->prepare($sql);
-if($item_type === 'experiments'){
-$result3 = $req->execute(array(
-    'id' => $id,
-    'type' => 'exp' 
-));
-}
-if($item_type === 'items'){
-$result3 = $req->execute(array(
-    'id' => $id,
-    'type' => 'database' 
-));
+    // DELETE FILES
+    $sql = "DELETE FROM uploads WHERE item_id = :id AND type = :type";
+    $req = $bdd->prepare($sql);
+    if($item_type === 'experiments'){
+    $result3 = $req->execute(array(
+        'id' => $id,
+        'type' => 'exp' 
+    ));
+    }
+    if($item_type === 'items'){
+    $result3 = $req->execute(array(
+        'id' => $id,
+        'type' => 'database' 
+    ));
+    }
+
 }
 
-if ($result1 && $result2 && $result3) {
+// TODO improve results
+if ($result1) {
     $msg_arr = array();
     if ($item_type === 'experiments'){
         $msg_arr[] = 'Experiment deleted successfully';

@@ -41,7 +41,7 @@ if(is_pos_int($_POST['item_id'])){
 }
 require_once('inc/check_title.php'); // $title
 require_once('inc/check_date.php'); // $date
-require_once('inc/check_body.php'); // $body
+$body = check_body($_POST['body']);
 require_once('inc/check_outcome.php'); // $outcome
 require_once('inc/check_files.php'); // $real_filenames[] $long_filenames[]
 

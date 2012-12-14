@@ -169,37 +169,13 @@ if (isset($_GET['q'])) { // if there is a query
     $req->execute();
 
     while ($data = $req->fetch()) {
-        if ($display === 'compact') {
-            // COMPACT MODE //
-            ?>
-            <!-- BEGIN CONTENT -->
-            <section onClick="document.location='experiments.php?mode=view&id=<?php echo $data['id'];?>'" class='item'>
-            <?php
-            echo "<span class='".$data['outcome']."_compact'>".$data['date']."</span> ";
-            echo stripslashes($data['title']);
-            echo "</section>";
-        } else {
-            ?>
-            <!-- BEGIN CONTENT -->
-            <section OnClick="document.location='experiments.php?mode=view&id=<?php echo $data['id'];?>'" class="item <?php echo $data['outcome'];?>">
-            <?php
-            // DATE
-            echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' alt='' /> ".$data['date']."</span>";
-            // TAGS
-            $id = $data['id'];
-            $sql = "SELECT tag FROM experiments_tags WHERE item_id = ".$id;
-            $tagreq = $bdd->prepare($sql);
-            $tagreq->execute();
-            echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
-            while($tags = $tagreq->fetch()){
-                echo "<a href='experiments.php?q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
-            }
-            // END TAGS
-            echo    "</span>";
-            // TITLE
-            echo " <div class='title'>". stripslashes($data['title']) . "</div></section>";
-        } // end data display switch
-    } // end while
+        $results_arr[] = $data['id'];
+    }
+    $req->closeCursor();
+    // loop the results array and display results
+    foreach($results_arr as $result_id) {
+        showXP($result_id, $display);
+    } // end foreach
 } // END CONTENT
 
 // PAGINATION

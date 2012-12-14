@@ -51,7 +51,7 @@ if(isset($_SESSION['prefs']['display'])) {
 if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
     // we show the last 10 uploads
     // get the last id
-    $sql = "SELECT * FROM items ORDER BY id DESC";
+    $sql = "SELECT * FROM items ORDER BY id DESC LIMIT 10";
     $req = $bdd->prepare($sql);
     $req->execute();
     $results_arr = array();

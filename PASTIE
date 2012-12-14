@@ -74,3 +74,4 @@ new nicEditor().panelInstance('body_textarea');
 
 # search and replace on mac os x
 find ./* -name '*.php' -print | xargs sed -i "" 's/NULL/null/g'
+git push git@github.com:NicolasCARPi/elabftw.git HEAD:master

@@ -1,6 +1,9 @@
 /* Changelog for eLabFTW */
 
 Version 0.6
+* eLabID is a unique ID bound to each experiment (useful for tracking raw
+data)
+* Star ratings are shown on DB show mode
 * Autosave every second on edit
 * Improvements in .zip creation
 * Multiple bugfixes

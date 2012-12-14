@@ -54,6 +54,7 @@ if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
         $numrows = $result->rowCount();
         // Check email exists
         if($numrows === 1){
+            // TODO don't send password but send a link to change it
             // Generate password
             $password = createPassword(8);
             // Create salt

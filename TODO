@@ -3,7 +3,7 @@
 ////// Fix/improve
 * upload bigger files; make a Worker() to upload big files asynchronously 
 * install : read .ini files and if default values are here, do nothing
-* template txt is in another color
+* template txt is in another color : can be done manually atm
 * drag and drop images to embed in text
 * make pdf...
 * have a bigger thumbnail when you hover an attached file
@@ -11,7 +11,6 @@
 * install.php
 
 ////// New Features
-* possiblitiy to lock a past experiment, autolock when you duplicate ?
 * possibility to draw
 * add calendar
 * possibility to comment on a no owned XP

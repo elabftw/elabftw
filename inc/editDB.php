@@ -67,14 +67,7 @@ echo stripslashes($tags['tag']);?>
 <form method="post" action="editDB-exec.php" enctype='multipart/form-data'>
 <input name='item_id' type='hidden' value='<? echo $id;?>' />
 <h4>Date</h4><span class='smallgray'> (date format : YYMMDD)</span><br />
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /><input name='date' id='datepicker' size='6' type='text' value='<?php echo $data['date'];?>' /><br />
-<h4>Title</h4><br />
-      <textarea id='title' name='title' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
-          echo stripslashes($data['title']);
-      } else {
-          echo stripslashes($_SESSION['new_title']);
-      } ?></textarea>
-<br />
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /><input name='date' id='datepicker' size='6' type='text' value='<?php echo $data['date'];?>' />
 <!-- STAR RATING via ajax request -->
 <div id='rating'>
 <input id='star1' name="star" type="radio" class="star" value='1' <?php if ($data['rating'] == 1){ echo "checked=checked ";}?>/>
@@ -83,6 +76,14 @@ echo stripslashes($tags['tag']);?>
 <input id='star4' name="star" type="radio" class="star" value='4' <?php if ($data['rating'] == 4){ echo "checked=checked ";}?>/>
 <input id='star5' name="star" type="radio" class="star" value='5' <?php if ($data['rating'] == 5){ echo "checked=checked ";}?>/>
 </div><!-- END STAR RATING -->
+<br />
+<h4>Title</h4><br />
+      <textarea id='title' name='title' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
+          echo stripslashes($data['title']);
+      } else {
+          echo stripslashes($_SESSION['new_title']);
+      } ?></textarea>
+<br />
 <br />
 <h4>Infos</h4><br />
 <textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">

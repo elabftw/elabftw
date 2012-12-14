@@ -19,5 +19,18 @@ if(isset($test['elabid'])) {
     }
 }
 
-
+// ADD locked in experiments table
+if(isset($test['locked'])) {
+    echo 'Nothing to update. Please delete this file from your server.';
+} else {
+    echo 'Creating field...';
+    $sql = "ALTER TABLE `experiments` ADD `locked` TINYINT( 1 ) UNSIGNED NOT NULL DEFAULT '0'";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute();
+    if($result) {
+        echo 'Database successfully updated, you can now delete this file.';
+    } else {
+        echo 'There was a problem in the database update :/';
+    }
+}
 ?>

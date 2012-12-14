@@ -330,6 +330,7 @@ if (isset($_POST['new_tpl_form'])) {
     $tpl_name = filter_var($_POST['new_tpl_name'], FILTER_SANITIZE_STRING);
     $tpl_body = check_body($_POST['new_tpl_body']);
     // put template in grey
+    // TODO we need to put that between the <p> tags
     //$tpl_body = "<span style='color: #808080;'>".$tpl_body."</span>";
     $sql = "INSERT INTO experiments_templates(name, body, userid) VALUES(:name, :body, :userid)";
     $req = $bdd->prepare($sql);
@@ -368,7 +369,6 @@ if (isset($_POST['tpl_form'])) {
 }
 
 
-
 // KEYBOARD SHORTCUTS
 if (isset($_POST['shortcuts'])) {
     // check we got only one char
@@ -393,7 +393,6 @@ if (isset($_POST['shortcuts'])) {
     $infomsg_arr[] = 'Your shortcuts preferences have been updated.';
     $infoflag = true;
 }
-
 
 
 // EXPORT EXPERIMENTS

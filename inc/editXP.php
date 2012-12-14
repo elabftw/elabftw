@@ -34,20 +34,21 @@ if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
     die("The id parameter in the URL isn't a valid item ID.");
 }
 
-// Check id is owned by connected user
-$sql = "SELECT userid FROM experiments WHERE id = ".$id;
-$req = $bdd->prepare($sql);
-$req->execute();
-$resultat = $req->fetchColumn();
-if ($resultat != $_SESSION['userid']) {
-    die("You are trying to edit an experiment which is not yours.");
-}
-
 // SQL for editXP
-$sql = "SELECT title, date, body, outcome FROM experiments WHERE id = ".$id;
+$sql = "SELECT * FROM experiments WHERE id = ".$id;
 $req = $bdd->prepare($sql);
 $req->execute();
 $data = $req->fetch();
+
+// Check id is owned by connected user
+if ($data['userid'] != $_SESSION['userid']) {
+    die("You are trying to edit an experiment which is not yours.");
+}
+
+// Check for lock
+if ($data['locked'] == 1) {
+    die("Item is locked. Can't edit.");
+}
 
 // BEGIN CONTENT
 ?>

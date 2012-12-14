@@ -17,10 +17,9 @@
 *    along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.
 *
 ********************************************************************************/
+require_once('inc/common.php');
 // get $body from $_POST['body']
 $body = check_body($_POST['body']);
-require_once('inc/common.php');
-
 // get $id from $_POST['id']
 if(is_pos_int($_POST['id'])){
     $id = $_POST['id'];

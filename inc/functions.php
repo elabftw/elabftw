@@ -226,6 +226,31 @@ function showXP($id, $display) {
     echo "</section>";
         }
 }
+function show_stars($rating) {
+// a function to display the star ratings read only
+// show_stars(3)
+            echo "<div id='rating'>";
+            if ($rating == 1) {
+                echo "<img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";
+            }
+            if ($rating == 2) {
+                echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";
+            }
+            if ($rating == 3) {
+                echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";
+            }
+            if ($rating == 4) {
+                echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";
+            }
+            if ($rating == 5) {
+                echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' />";
+            }
+            echo "</div>";
+}
+
+/************************************
+*************************************/
+
 function showDB($id, $display) {
 // Show unique DB item
     global $bdd;
@@ -243,13 +268,7 @@ function showDB($id, $display) {
             <span class='date date_compact'><?php echo $final_query['date'];?></span>
             <span><?php echo stripslashes($final_query['title']);?>
             <!-- STAR RATING read only -->
-            <div id='rating'>
-            <?php if ($final_query['rating'] == 1){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";}?>
-            <?php if ($final_query['rating'] == 2){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";}?>
-            <?php if ($final_query['rating'] == 3){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";}?>
-            <?php if ($final_query['rating'] == 4){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";}?>
-            <?php if ($final_query['rating'] == 5){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' />";}?>
-            </div><!-- END STAR RATING -->
+            <?php show_stars($final_query['rating']) ?>
             </section>
 <?php
         } else {
@@ -269,16 +288,7 @@ function showDB($id, $display) {
         }
         echo "</span>";
         // END TAGS
-?>
-<!-- STAR RATING read only -->
-<div id='rating'>
-<?php if ($final_query['rating'] == 1){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";}?>
-<?php if ($final_query['rating'] == 2){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";}?>
-<?php if ($final_query['rating'] == 3){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";}?>
-<?php if ($final_query['rating'] == 4){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";}?>
-<?php if ($final_query['rating'] == 5){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' />";}?>
-</div><!-- END STAR RATING -->
-<?php
+        show_stars($final_query['rating']);
         echo "<p class='title'>". stripslashes($final_query['title']) . "</p>";
         echo "</section>";
         }
@@ -293,4 +303,5 @@ function check_body($input) {
         return false;
     }
 }
+
 ?>

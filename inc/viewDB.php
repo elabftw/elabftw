@@ -44,17 +44,8 @@ $data = $req->fetch();
 <a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>' onClick="return confirm('Delete this item ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <?php
 echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' title='date' alt='Date :' />".$data['date']."</span><br />";
-?>
-<!-- STAR RATING read only (disabled='disabled') -->
-<div id='rating'>
-<input id='star1' name="star" type="radio" class="star" value='click to edit' disabled='disabled' <?php if ($data['rating'] == 1){ echo "checked=checked ";}?>/>
-<input id='star2' name="star" type="radio" class="star" value='click to edit' disabled='disabled' <?php if ($data['rating'] == 2){ echo "checked=checked ";}?>/>
-<input id='star3' name="star" type="radio" class="star" value='click to edit' disabled='disabled' <?php if ($data['rating'] == 3){ echo "checked=checked ";}?>/>
-<input id='star4' name="star" type="radio" class="star" value='click to edit' disabled='disabled' <?php if ($data['rating'] == 4){ echo "checked=checked ";}?>/>
-<input id='star5' name="star" type="radio" class="star" value='click to edit' disabled='disabled' <?php if ($data['rating'] == 5){ echo "checked=checked ";}?>/>
-</div><!-- END STAR RATING -->
-<br />
-<?php
+show_stars($data['rating']);
+// buttons
 echo "<a href='database.php?mode=edit&id=".$data['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/edit.png' title='edit' alt='edit' /></a> 
 <a href='make_pdf.php?id=".$data['id']."&type=db'><img src='themes/".$_SESSION['prefs']['theme']."/img/pdf.png' title='make a pdf' alt='pdf' /></a> 
 <a href='javascript:window.print()'><img src='themes/".$_SESSION['prefs']['theme']."/img/print.png' title='Print this page' alt='Print' /></a> 

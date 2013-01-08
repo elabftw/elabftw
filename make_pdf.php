@@ -67,7 +67,7 @@ $req = $bdd->prepare($sql);
 $req->execute();
 $tags = null;
 while($data = $req->fetch()){
-    $tags .= $data['tag'];
+    $tags .= $data['tag'].' ';
 }
 $req->closeCursor();
 
@@ -89,6 +89,7 @@ try
     $html2pdf->pdf->SetKeywords($tags);
     $html2pdf->setDefaultFont('Arial');
     $html2pdf->writeHTML($content);
+    // we give the elabid as filename for experiments
     if ($table == 'experiments') {
         $html2pdf->Output($elabid.'.pdf');
     } else {

@@ -295,7 +295,7 @@ function showDB($id, $display) {
 }
 
 function check_body($input) {
-// Check BODY (sanitize only);
+    // Check BODY (sanitize only);
     if ((isset($input)) && (!empty($input))) {
         // we white list the allowed html tags
         return strip_tags($input, "<br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol><blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td>");
@@ -304,4 +304,83 @@ function check_body($input) {
     }
 }
 
+function make_pdf($id, $type, $out = 'browser') {
+    // make a pdf
+    // $type can be 'experiments' or 'items'
+    // $out is the output directory, 'browser' => pdf is downloaded (default), else it's written in the specified dir
+    global $bdd;
+
+    // SQL to get title, body and date
+    $sql = "SELECT * FROM $type WHERE id = $id";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $data = $req->fetch();
+    $title = $data['title'];
+    $date = $data['date'];
+    $body = $data['body'];
+    if ($type == 'experiments') {
+        $elabid = $data['elabid'];
+    }
+    $req->closeCursor();
+
+    // SQL to get firstname + lastname
+    $sql = "SELECT firstname,lastname FROM users WHERE userid = ".$data['userid'];
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $data = $req->fetch();
+    $firstname = $data['firstname'];
+    $lastname = $data['lastname'];
+    $req->closeCursor();
+
+    // SQL to get tags
+    $sql = "SELECT tag FROM ".$type."_tags WHERE item_id = $id";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $tags = null;
+    while($data = $req->fetch()){
+        $tags .= $data['tag'].' ';
+    }
+    $req->closeCursor();
+
+    // build content of page
+    $content = "<h1>".$title."</h1><br />
+        Date : ".$date."<br />
+        <em>Keywords : ".$tags."</em><br />
+        <hr>".$body."<br /><br />
+        <hr>Made by : ".$firstname." ".$lastname;
+
+    // convert in PDF with html2pdf
+    require_once('lib/html2pdf/html2pdf.class.php');
+    try
+    {
+        $html2pdf = new HTML2PDF('P', 'A4', 'fr');
+        $html2pdf->pdf->SetAuthor($firstname.' '.$lastname);
+        $html2pdf->pdf->SetTitle($title);
+        $html2pdf->pdf->SetSubject('eLabFTW pdf');
+        $html2pdf->pdf->SetKeywords($tags);
+        $html2pdf->setDefaultFont('Arial');
+        $html2pdf->writeHTML($content);
+        // we give the elabid as filename for experiments
+        if ($type == 'experiments') {
+            if ($out != 'browser') {
+            return $elabid.'.pdf';
+            $html2pdf->Output($out.'/'.$elabid.'.pdf', 'F');
+            } else {
+            $html2pdf->Output($elabid.'.pdf');
+            }
+        } else {
+            if ($out != 'browser') {
+            $html2pdf->Output($out.'/item.pdf', 'F');
+            return 'item.pdf';
+            } else {
+            $html2pdf->Output('item.pdf');
+            }
+        }
+    }
+
+    catch(HTML2PDF_exception $e) {
+        echo $e;
+        exit;
+    }
+}
 ?>

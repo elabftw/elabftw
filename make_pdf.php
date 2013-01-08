@@ -40,20 +40,16 @@ if ($_GET['type'] === 'exp'){
 }
 
 // SQL to get title, body and date
-$sql = "SELECT title, body, date, userid FROM ".$table." WHERE id = $id";
+$sql = "SELECT * FROM ".$table." WHERE id = $id";
 $req = $bdd->prepare($sql);
 $req->execute();
 $data = $req->fetch();
-// problem : fpdf is not utf-8 aware...
     $title = stripslashes(str_replace("&#39;", "'", utf8_decode($data['title'])));
     $date = $data['date'];
-    // with html in body, either we use html2fpdf but it sucks, or we remove html...
-    $body = filter_var(br2nl($data['body']), FILTER_SANITIZE_STRING);
-    $body = stripslashes(str_replace("&#39;", "'", utf8_decode($body)));
-    $body = str_replace('&nbsp;', '', $body);
-    $body = str_replace('&micro;', 'u', $body);
-    //echo $body;
-    //die();
+    $body = $data['body'];
+    if ($table == 'experiments') {
+        $elabid = $data['elabid'];
+    }
 $req->closeCursor();
 
 // SQL to get firstname + lastname
@@ -71,63 +67,37 @@ $req = $bdd->prepare($sql);
 $req->execute();
 $tags = null;
 while($data = $req->fetch()){
-    $tags .= stripslashes(str_replace("&#39;", "'", utf8_decode($data['tag']))).' ';
+    $tags .= $data['tag'];
 }
 $req->closeCursor();
 
+// build content of page
+$content = "<h1>".$title."</h1><br />
+    Date : ".$date."<br />
+    <em>Keywords : ".$tags."</em><br />
+    <hr>".$body."<br /><br />
+    <hr>Made by : ".$firstname." ".$lastname;
 
-// PDF creation
-require_once('lib/fpdf.php');
-class PDF extends FPDF
+// convert in PDF with html2pdf
+require_once('lib/html2pdf/html2pdf.class.php');
+try
 {
-// Page header
-function Header()
-{
-    global $title;
-// Logo
-$this->Image('img/institut_curie.jpg',10,6,30);
-// Arial bold 15
-$this->SetFont('Arial','B',15);
-// Width of title
-$w = $this->GetStringWidth($title)+6;
-$this->SetX((210-$w)/2);
-// Colors of frame, background and text
-$this->SetDrawColor(0,80,180);
-$this->SetFillColor(230,230,0);
-$this->SetTextColor(220,50,50);
-// Title
-$this->Cell(100,10,$title);
-// Line break
-$this->Ln(20);
+    $html2pdf = new HTML2PDF('P', 'A4', 'fr');
+    $html2pdf->pdf->SetAuthor($firstname.' '.$lastname);
+    $html2pdf->pdf->SetTitle($title);
+    $html2pdf->pdf->SetSubject('eLabFTW pdf');
+    $html2pdf->pdf->SetKeywords($tags);
+    $html2pdf->setDefaultFont('Arial');
+    $html2pdf->writeHTML($content);
+    if ($table == 'experiments') {
+        $html2pdf->Output($elabid.'.pdf');
+    } else {
+        $html2pdf->Output('item.pdf');
+    }
 }
 
-
-// Page footer
-function Footer()
-{
-// Position at 1.5 cm from bottom
-$this->SetY(-15);
-// Arial italic 8
-$this->SetFont('Arial','I',8);
-// Page number
-$this->Cell(0,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+catch(HTML2PDF_exception $e) {
+    echo $e;
+    exit;
 }
-}
-
-// Instanciation of inherited class
-$pdf = new PDF();
-$pdf->AliasNbPages();
-$pdf->AddPage();
-// user + date
-$pdf->SetFont('Times','B',12);
-$pdf->Cell(190,10,'Made by '.$firstname.' '.$lastname.' on '.$date);
-$pdf->Ln();
-// tags
-$pdf->SetFont('Times','I',12);
-$tags = "Keywords : ".$tags;
-$pdf->Cell(190,10,$tags);
-$pdf->Ln();
-// body
-$pdf->SetFont('Times','',14);
-$pdf->MultiCell(190,5,$body,'J');
-$pdf->Output();
+?>

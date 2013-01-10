@@ -146,6 +146,7 @@ Attached files :<br />
     // PAGE BEGIN
     echo "<div class='item'>";
     echo "<p>Adding experiment file :<br />".$zipname.".html</p>";
+    echo "<p>Adding experiment file :<br />".$pdfname."</p>";
     if ($filenb > 0){
         if ($filenb == 1){
             echo "Adding file :<br /><ol>";

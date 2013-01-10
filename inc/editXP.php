@@ -107,6 +107,7 @@ echo stripslashes($tags['tag']);?>
           echo stripslashes($_SESSION['new_title']);
       } ?></textarea>
 
+<br />
 <h4>Experiment</h4>
 <br />
 <textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">

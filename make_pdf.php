@@ -24,6 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 require_once('inc/common.php');
+
 // Check id is valid and assign it to $id
 if(isset($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
@@ -31,103 +32,11 @@ if(isset($_GET['id']) && is_pos_int($_GET['id'])) {
     die("The id parameter in the URL isn't a valid experiment ID");
 }
 
-if ($_GET['type'] === 'exp'){
-    $table = 'experiments';
-}elseif ($_GET['type'] === 'db'){
-    $table = 'items';
-}else{
-    die('bad type');
+// check the type
+if ( ($_GET['type'] === 'experiments') || ($_GET['type'] === 'items') ) {
+    $type = $_GET['type'];
 }
 
-// SQL to get title, body and date
-$sql = "SELECT title, body, date, userid FROM ".$table." WHERE id = $id";
-$req = $bdd->prepare($sql);
-$req->execute();
-$data = $req->fetch();
-// problem : fpdf is not utf-8 aware...
-    $title = stripslashes(str_replace("&#39;", "'", utf8_decode($data['title'])));
-    $date = $data['date'];
-    // with html in body, either we use html2fpdf but it sucks, or we remove html...
-    $body = filter_var(br2nl($data['body']), FILTER_SANITIZE_STRING);
-    $body = stripslashes(str_replace("&#39;", "'", utf8_decode($body)));
-    $body = str_replace('&nbsp;', '', $body);
-    $body = str_replace('&micro;', 'u', $body);
-    //echo $body;
-    //die();
-$req->closeCursor();
-
-// SQL to get firstname + lastname
-$sql = "SELECT firstname,lastname FROM users WHERE userid = ".$data['userid'];
-$req = $bdd->prepare($sql);
-$req->execute();
-$data = $req->fetch();
-$firstname = $data['firstname'];
-$lastname = $data['lastname'];
-$req->closeCursor();
-
-// SQL to get tags
-$sql = "SELECT tag FROM ".$table."_tags WHERE item_id = $id";
-$req = $bdd->prepare($sql);
-$req->execute();
-$tags = null;
-while($data = $req->fetch()){
-    $tags .= stripslashes(str_replace("&#39;", "'", utf8_decode($data['tag']))).' ';
-}
-$req->closeCursor();
-
-
-// PDF creation
-require_once('lib/fpdf.php');
-class PDF extends FPDF
-{
-// Page header
-function Header()
-{
-    global $title;
-// Logo
-$this->Image('img/institut_curie.jpg',10,6,30);
-// Arial bold 15
-$this->SetFont('Arial','B',15);
-// Width of title
-$w = $this->GetStringWidth($title)+6;
-$this->SetX((210-$w)/2);
-// Colors of frame, background and text
-$this->SetDrawColor(0,80,180);
-$this->SetFillColor(230,230,0);
-$this->SetTextColor(220,50,50);
-// Title
-$this->Cell(100,10,$title);
-// Line break
-$this->Ln(20);
-}
-
-
-// Page footer
-function Footer()
-{
-// Position at 1.5 cm from bottom
-$this->SetY(-15);
-// Arial italic 8
-$this->SetFont('Arial','I',8);
-// Page number
-$this->Cell(0,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
-}
-}
-
-// Instanciation of inherited class
-$pdf = new PDF();
-$pdf->AliasNbPages();
-$pdf->AddPage();
-// user + date
-$pdf->SetFont('Times','B',12);
-$pdf->Cell(190,10,'Made by '.$firstname.' '.$lastname.' on '.$date);
-$pdf->Ln();
-// tags
-$pdf->SetFont('Times','I',12);
-$tags = "Keywords : ".$tags;
-$pdf->Cell(190,10,$tags);
-$pdf->Ln();
-// body
-$pdf->SetFont('Times','',14);
-$pdf->MultiCell(190,5,$body,'J');
-$pdf->Output();
+// do the pdf
+make_pdf($id, $type);
+?>

@@ -3,9 +3,7 @@
 ////// Fix/improve
 * upload bigger files; make a Worker() to upload big files asynchronously 
 * install : read .ini files and if default values are here, do nothing
-* template txt is in another color : can be done manually atm
 * drag and drop images to embed in text
-* make pdf...
 * have a bigger thumbnail when you hover an attached file
 * password reset : http://www.troyhunt.com/2012/05/everything-you-ever-wanted-to-know.html
 * install.php
@@ -18,7 +16,6 @@
 * add tag on templates
 * announce birthday date of a team mb to other team mb (add birthday in profile)
 * tools page with trucs pour calculer les concentrations, et les volumes pour les transfections, etc...
-* make_pdf : keep formatting (html2fpdf) https://code.google.com/p/wkhtmltopdf/
 * merge noforget
 * better text editing https://github.com/xing/wysihtml5/wiki/Getting-Started
 

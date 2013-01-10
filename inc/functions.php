@@ -226,6 +226,31 @@ function showXP($id, $display) {
     echo "</section>";
         }
 }
+function show_stars($rating) {
+// a function to display the star ratings read only
+// show_stars(3)
+            echo "<div id='rating'>";
+            if ($rating == 1) {
+                echo "<img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";
+            }
+            if ($rating == 2) {
+                echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";
+            }
+            if ($rating == 3) {
+                echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";
+            }
+            if ($rating == 4) {
+                echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";
+            }
+            if ($rating == 5) {
+                echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' />";
+            }
+            echo "</div>";
+}
+
+/************************************
+*************************************/
+
 function showDB($id, $display) {
 // Show unique DB item
     global $bdd;
@@ -243,13 +268,7 @@ function showDB($id, $display) {
             <span class='date date_compact'><?php echo $final_query['date'];?></span>
             <span><?php echo stripslashes($final_query['title']);?>
             <!-- STAR RATING read only -->
-            <div id='rating'>
-            <?php if ($final_query['rating'] == 1){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";}?>
-            <?php if ($final_query['rating'] == 2){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";}?>
-            <?php if ($final_query['rating'] == 3){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";}?>
-            <?php if ($final_query['rating'] == 4){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";}?>
-            <?php if ($final_query['rating'] == 5){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' />";}?>
-            </div><!-- END STAR RATING -->
+            <?php show_stars($final_query['rating']) ?>
             </section>
 <?php
         } else {
@@ -269,28 +288,99 @@ function showDB($id, $display) {
         }
         echo "</span>";
         // END TAGS
-?>
-<!-- STAR RATING read only -->
-<div id='rating'>
-<?php if ($final_query['rating'] == 1){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";}?>
-<?php if ($final_query['rating'] == 2){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";}?>
-<?php if ($final_query['rating'] == 3){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";}?>
-<?php if ($final_query['rating'] == 4){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";}?>
-<?php if ($final_query['rating'] == 5){ echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' />";}?>
-</div><!-- END STAR RATING -->
-<?php
+        show_stars($final_query['rating']);
         echo "<p class='title'>". stripslashes($final_query['title']) . "</p>";
         echo "</section>";
         }
 }
 
 function check_body($input) {
-// Check BODY (sanitize only);
+    // Check BODY (sanitize only);
     if ((isset($input)) && (!empty($input))) {
         // we white list the allowed html tags
         return strip_tags($input, "<br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol><blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td>");
     } else {
         return false;
+    }
+}
+
+function make_pdf($id, $type, $out = 'browser') {
+    // make a pdf
+    // $type can be 'experiments' or 'items'
+    // $out is the output directory, 'browser' => pdf is downloaded (default), else it's written in the specified dir
+    global $bdd;
+
+    // SQL to get title, body and date
+    $sql = "SELECT * FROM $type WHERE id = $id";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $data = $req->fetch();
+    $title = $data['title'];
+    $date = $data['date'];
+    $body = $data['body'];
+    if ($type == 'experiments') {
+        $elabid = $data['elabid'];
+    }
+    $req->closeCursor();
+
+    // SQL to get firstname + lastname
+    $sql = "SELECT firstname,lastname FROM users WHERE userid = ".$data['userid'];
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $data = $req->fetch();
+    $firstname = $data['firstname'];
+    $lastname = $data['lastname'];
+    $req->closeCursor();
+
+    // SQL to get tags
+    $sql = "SELECT tag FROM ".$type."_tags WHERE item_id = $id";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $tags = null;
+    while($data = $req->fetch()){
+        $tags .= $data['tag'].' ';
+    }
+    $req->closeCursor();
+
+    // build content of page
+    $content = "<h1>".$title."</h1><br />
+        Date : ".$date."<br />
+        <em>Keywords : ".$tags."</em><br />
+        <hr>".$body."<br /><br />
+        <hr>Made by : ".$firstname." ".$lastname;
+
+    // convert in PDF with html2pdf
+    require_once('lib/html2pdf/html2pdf.class.php');
+    try
+    {
+        $html2pdf = new HTML2PDF('P', 'A4', 'fr');
+        $html2pdf->pdf->SetAuthor($firstname.' '.$lastname);
+        $html2pdf->pdf->SetTitle($title);
+        $html2pdf->pdf->SetSubject('eLabFTW pdf');
+        $html2pdf->pdf->SetKeywords($tags);
+        $html2pdf->setDefaultFont('Arial');
+        $html2pdf->writeHTML($content);
+        // we give the elabid as filename for experiments
+        if ($type == 'experiments') {
+            if ($out != 'browser') {
+            return $elabid.'.pdf';
+            $html2pdf->Output($out.'/'.$elabid.'.pdf', 'F');
+            } else {
+            $html2pdf->Output($elabid.'.pdf');
+            }
+        } else {
+            if ($out != 'browser') {
+            $html2pdf->Output($out.'/item.pdf', 'F');
+            return 'item.pdf';
+            } else {
+            $html2pdf->Output('item.pdf');
+            }
+        }
+    }
+
+    catch(HTML2PDF_exception $e) {
+        echo $e;
+        exit;
     }
 }
 ?>

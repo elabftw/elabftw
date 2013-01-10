@@ -98,7 +98,7 @@ if ($res === true) {
     $html .= $title;
     $html .= "</title></head><body>";
     $html .= "Date : ".$date."<br />
-<span style='text-align: right;'>By : ".$firstname." ".$lastname."<br />
+<span style='text-align: right;'>By : ".$firstname." ".$lastname."</span><br />
 <div style='text-align: center;'><font size='10'>".$title."</font></span></div><br /><br />
 ".$body."<br />";
     // files attached ?
@@ -136,6 +136,9 @@ Attached files :<br />
     fwrite($tf, $html);
     fclose($tf);
     $zip->addFile($txtfile);
+    // add a pdf, too
+    $pdfname = make_pdf($id, 'experiments', '/tmp');
+    $zip->addFile('/tmp/'.$pdfname, $pdfname);
     $zip->close();
     // delete txt file
     unlink($txtfile);

@@ -5,7 +5,6 @@
 * install : read .ini files and if default values are here, do nothing
 * drag and drop images to embed in text
 * have a bigger thumbnail when you hover an attached file
-* password reset : http://www.troyhunt.com/2012/05/everything-you-ever-wanted-to-know.html
 * install.php
 
 ////// New Features

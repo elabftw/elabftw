@@ -136,7 +136,7 @@ echo "</ul>";
     <form action='ucp-exec.php' method='post'>
     <input type='hidden' name='new_tpl_form' />
     <input type='text' name='new_tpl_name' placeholder='Name for the template' /><br />
-    <textarea name='new_tpl_body' class='mceditable' placeholder='Insert here your template' rows='10' cols='60'></textarea>
+    <textarea name='new_tpl_body' id='new_tpl_txt' class='mceditable' placeholder='Insert here your template' rows='10' cols='60'></textarea>
     <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Add template" /></div>
     </form>
 </div>
@@ -228,6 +228,7 @@ tinyMCE.init({
     theme_advanced_toolbar_location : "top",
     theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
     plugins : "table",
+    height : "700",
     theme_advanced_buttons3_add : "forecolor, backcolor, tablecontrols",
     font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
 });

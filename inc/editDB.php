@@ -65,7 +65,7 @@ echo stripslashes($tags['tag']);?>
 
 <!-- BEGIN 2ND FORM -->
 <form method="post" action="editDB-exec.php" enctype='multipart/form-data'>
-<input name='item_id' type='hidden' value='<? echo $id;?>' />
+<input name='item_id' type='hidden' value='<?php echo $id;?>' />
 <h4>Date</h4><span class='smallgray'> (date format : YYMMDD)</span><br />
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /><input name='date' id='datepicker' size='6' type='text' value='<?php echo $data['date'];?>' />
 <!-- STAR RATING via ajax request -->
@@ -78,7 +78,7 @@ echo stripslashes($tags['tag']);?>
 </div><!-- END STAR RATING -->
 <br />
 <h4>Title</h4><br />
-      <textarea id='title' name='title' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
+      <textarea id='title_txtarea' name='title' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
           echo stripslashes($data['title']);
       } else {
           echo stripslashes($_SESSION['new_title']);

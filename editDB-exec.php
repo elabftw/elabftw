@@ -48,7 +48,7 @@ require_once('inc/check_files.php'); // $real_filenames[] $long_filenames[]
 $_SESSION['new_title'] = $title;
 $_SESSION['new_date'] = $date;
 
-// If input errors, redirect back to the experiment form
+// If input errors, redirect back to the edit form
 if($errflag) {
     $_SESSION['errors'] = $msg_arr;
     session_write_close();

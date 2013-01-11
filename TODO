@@ -3,7 +3,6 @@
 * advanced search
 * install : read .ini files and if default values are here, do nothing
 * install.php
-<? test
 
 ////// Fix/improve
 * upload bigger files; make a Worker() to upload big files asynchronously 

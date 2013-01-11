@@ -76,7 +76,7 @@ $result = $req->execute(array(
     'userid' => $_SESSION['userid']));
 }
 
-if (($type == 'protocols') || ($type == 'antibodies')) {
+if ($type == 'protocols') {
 // SQL for create protocols
 $sql = "INSERT INTO items(title, date, body, userid, type) VALUES(:title, :date, :body, :userid, :type)";
 $req = $bdd->prepare($sql);

@@ -235,26 +235,24 @@ h4 {
 }
 /* MENU */
 
-/* old 
-/**** SEARCH PAGE *******
+/**** SEARCH PAGE ********/
 #first_search_select {
     margin-left: 64px;
 }
 
-#submitlucky, #submit
-{
+#submitlucky, #submit_on_search_page {
     border: 1px solid black;
 	color:  #23441e;
 	cursor:  pointer;
 	font:  bold 14px Arial, Helvetica;
 	margin:  20px 0 0 20px;
     opacity: 0.7;
+    display: inline;
     padding:  7px;
 	text-shadow:  0 1px 0 rgba(255,255,255,0.5);
 }
 
-#submit: hover, #submitlucky: hover
-{
+#submit_on_search_page: hover, #submitlucky: hover {
     opacity: 1;
 }	
 

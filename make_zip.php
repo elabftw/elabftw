@@ -126,13 +126,10 @@ Attached files :<br />
     <a href='http://www.elabftw.net'>eLabFTW.net</a>";
     $html .= "</body></html>";
     // CREATE TXT FILE
-    // fix bad encoding
-    //$files = utf8_encode($files);
-    $html = utf8_encode($html);
     // add header for utf-8
-    $html = "\xEF\xBB\xBF".$html;
-    $txtfile = $zipname.'.html';
-    $tf = fopen($txtfile, 'w');
+    //$html = "\xEF\xBB\xBF".$html;
+    $txtfile = '/tmp/'.$zipname.'.html';
+    $tf = fopen($txtfile, 'w+');
     fwrite($tf, $html);
     fclose($tf);
     $zip->addFile($txtfile);

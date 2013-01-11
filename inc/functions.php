@@ -371,14 +371,16 @@ function make_pdf($id, $type, $out = 'browser') {
         // we give the elabid as filename for experiments
         if ($type == 'experiments') {
             if ($out != 'browser') {
-            return $elabid.'.pdf';
             $html2pdf->Output($out.'/'.$elabid.'.pdf', 'F');
+            // the name of the pdf is needed in make_zip
+            return $elabid.'.pdf';
             } else {
             $html2pdf->Output($elabid.'.pdf');
             }
         } else {
             if ($out != 'browser') {
             $html2pdf->Output($out.'/item.pdf', 'F');
+            // the name of the pdf is needed in make_zip
             return 'item.pdf';
             } else {
             $html2pdf->Output('item.pdf');

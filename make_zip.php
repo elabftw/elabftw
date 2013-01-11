@@ -126,8 +126,10 @@ Attached files :<br />
     <a href='http://www.elabftw.net'>eLabFTW.net</a>";
     $html .= "</body></html>";
     // CREATE TXT FILE
+    // utf8 ftw
+    $html = utf8_encode($html);
     // add header for utf-8
-    //$html = "\xEF\xBB\xBF".$html;
+    $html = "\xEF\xBB\xBF".$html;
     $txtfile = '/tmp/'.$zipname.'.html';
     $tf = fopen($txtfile, 'w+');
     fwrite($tf, $html);
@@ -137,8 +139,9 @@ Attached files :<br />
     $pdfname = make_pdf($id, $table, '/tmp');
     $zip->addFile('/tmp/'.$pdfname, $pdfname);
     $zip->close();
-    // delete txt file
-    unlink($txtfile);
+    // delete files
+    //unlink($txtfile);
+    //unlink('/tmp/'.$pdfname);
 
     // PAGE BEGIN
     echo "<div class='item'>";

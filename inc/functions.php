@@ -324,9 +324,11 @@ function make_pdf($id, $type, $out = 'browser') {
     $req->closeCursor();
 
     // SQL to get firstname + lastname
-    $sql = "SELECT firstname,lastname FROM users WHERE userid = ".$data['userid'];
+    $sql = "SELECT firstname,lastname FROM users WHERE userid = :userid";
     $req = $bdd->prepare($sql);
-    $req->execute();
+    $req->execute(array(
+        'userid' => $data['userid']
+    ));
     $data = $req->fetch();
     $firstname = $data['firstname'];
     $lastname = $data['lastname'];
@@ -347,7 +349,13 @@ function make_pdf($id, $type, $out = 'browser') {
         Date : ".$date."<br />
         <em>Keywords : ".$tags."</em><br />
         <hr>".$body."<br /><br />
-        <hr>Made by : ".$firstname." ".$lastname;
+        <hr>Made by : ".$firstname." ".$lastname."<br /><br />";
+    if ($type == 'experiments') {
+        $content .= "<qrcode value='".$elabid."' ec='H' style='width: 50mm; background-color: white; color: black;'></qrcode>";
+    } else {
+        $content .= "<qrcode value='".$id."' ec='H' style='width: 50mm; background-color: white; color: black;'></qrcode>";
+    }
+
 
     // convert in PDF with html2pdf
     require_once('lib/html2pdf/html2pdf.class.php');

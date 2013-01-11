@@ -48,10 +48,9 @@ $sql = "SELECT title, body, date, userid FROM ".$table." WHERE id = $id";
 $req = $bdd->prepare($sql);
 $req->execute();
 $data = $req->fetch();
-// problem : fpdf is not utf-8 aware...
-    $title = stripslashes(str_replace("&#39;", "'", utf8_decode($data['title'])));
+    $title = stripslashes($data['title']);
     $date = $data['date'];
-    $body = stripslashes(str_replace("&#39;", "'", utf8_decode($data['body'])));
+    $body = stripslashes($data['body']);
 $req->closeCursor();
 
 // SQL to get firstname + lastname
@@ -59,15 +58,15 @@ $sql = "SELECT firstname,lastname FROM users WHERE userid = ".$_SESSION['userid'
 $req = $bdd->prepare($sql);
 $req->execute();
 $data = $req->fetch();
-$firstname = $data['firstname'];
-$lastname = $data['lastname'];
+    $firstname = $data['firstname'];
+    $lastname = $data['lastname'];
 // SQL to get tags
 $sql = "SELECT tag FROM ".$table."_tags WHERE item_id = $id";
 $req = $bdd->prepare($sql);
 $req->execute();
 $tags = null;
 while($data = $req->fetch()){
-    $tags .= stripslashes(str_replace("&#39;", "'", utf8_decode($data['tag']))).' ';
+    $tags .= stripslashes($data['tag']).' ';
 }
 
 
@@ -94,7 +93,7 @@ $zipfile = "/tmp/".$zipname."-".hash("sha512", uniqid(rand(), true)).".zip";
 $zip = new ZipArchive;
 $res = $zip->open($zipfile, ZipArchive::CREATE);
 if ($res === true) {
-    $html = "<!DOCTYPE html><html><head><title>";
+    $html = "<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html'; charset='utf-8'><title>";
     $html .= $title;
     $html .= "</title></head><body>";
     $html .= "Date : ".$date."<br />
@@ -137,7 +136,7 @@ Attached files :<br />
     fclose($tf);
     $zip->addFile($txtfile);
     // add a pdf, too
-    $pdfname = make_pdf($id, 'experiments', '/tmp');
+    $pdfname = make_pdf($id, $table, '/tmp');
     $zip->addFile('/tmp/'.$pdfname, $pdfname);
     $zip->close();
     // delete txt file

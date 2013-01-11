@@ -50,8 +50,8 @@ $(document).ready(function(){
 <input id="search" name='find' size='63' type="text" placeholder="Type here" <?php if(isset($_POST['searching_simple'])){
     echo "value='".$_POST['find']."'";}?>/>
 <br />
-<input id='submit' type='submit' value='Search' />
-<a id='submitlucky' href='#' onClick='lucky()'>I'm Feeling Lucky</a>
+<input id='submit_on_search_page' type='submit' value='Search' />
+<div id='submitlucky' onClick='lucky()'>I'm Feeling Lucky</div>
 <input type='hidden' name='searching_simple' value='yes' />
 </form>
 <script>
@@ -127,41 +127,32 @@ function rm_search_field(){
 
 <?php
 // SIMPLE SEARCH
-if((isset($_POST['searching_simple'])) && ($_POST['searching_simple'] === 'yes')){
-// Is there a search term ?
-if (isset($_POST['find']) && !empty($_POST['find'])) {
-    $find = strtoupper(filter_var($_POST['find'], FILTER_SANITIZE_STRING));
-} else { // no input
-    echo "<ul class='err'><img src='img/error.png' alt='fail' /> ";
-    echo "<li class='inline'>You need to search for something in order to find something...</p>";
-    echo "</ul>";
-    exit();
+if (isset($_POST['searching_simple']) && ($_POST['searching_simple'] === 'yes')){
+    // Is there a search term ?
+    if (isset($_POST['find']) && !empty($_POST['find'])) {
+        $find = strtoupper(filter_var($_POST['find'], FILTER_SANITIZE_STRING));
+    } else { // no input
+        echo "<ul class='err'><img src='img/error.png' alt='fail' /> ";
+        echo "<li class='inline'>You need to search for something in order to find something...</p>";
+        echo "</ul>";
+        exit();
+    }
+    // SIMPLE SEARCH SQL
+    $sql = "SELECT * FROM experiments WHERE userid = ".$_SESSION['userid']." AND (title LIKE '%$find%' OR date LIKE '%$find%' OR body LIKE '%$find%')";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    // This counts the number or results - and if there wasn't any it gives them a little message explaining that 
+    $count = $req->rowCount();
+    echo "<div id='search_count'>".$count." results for '".stripslashes($find)."' :<br /><br /></div>";
+    echo "<div class='search_results_div'>";
+    if ($count === 0) {
+        echo "<p>Sorry, I couldn't find anything :(</p><br />";
+    }
+    // Display results
+    while ($data = $req->fetch()) {
+        showXP($data['id'], $_SESSION['prefs']['display']);
+    }
 }
-// SIMPLE SEARCH SQL
-$sql = "SELECT * FROM experiments WHERE userid = ".$_SESSION['userid']." AND (title LIKE '%$find%' OR date LIKE '%$find%' OR body LIKE '%$find%')";
-$req = $bdd->prepare($sql);
-$req->execute();
-// This counts the number or results - and if there wasn't any it gives them a little message explaining that 
-$count = $req->rowCount();
-echo "<div id='search_count'>".$count." results for '".stripslashes($find)."' :<br /><br /></div>";
-echo "<div class='search_results_div'>";
-if ($count === 0){
-    echo "<p>Sorry, I couldn't find anything :(</p><br />";
-}
-// Display results
-while ($data = $req->fetch()) {
-        $outcome = $data['outcome'];
-?>
-<section OnClick="window.open('experiments.php?mode=view&id=<?php echo $data['id'];?>', '_blank');" class="search_result">
-<?php
-// DATE
-echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' alt='' /> ".$data['date']."</span>";
-// TITLE
-echo "<div class=''>". stripslashes($data['title']) . "</div></section>";
-} // end while
-// END CONTENT
-} // end if searching_simple
-echo "</div>";
 // What do we search ?
 //if($_POST['search_what'] === 'experiments'){
 //    $what = 'experiments';

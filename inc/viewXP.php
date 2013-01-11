@@ -96,7 +96,7 @@ if ($req->rowcount() != 0) {
             'link_id' => $links['link_id']
         ));
         $linkdata = $linkreq->fetch();
-        echo "<li>- <a href='database.php?mode=view&id=".$linkdata['id']."'>".$linkdata['title']."</a></li>";
+        echo "<li>- <a href='database.php?mode=view&id=".$linkdata['id']."'>".stripslashes($linkdata['title'])."</a></li>";
     } // end while
     echo "</ul>";
 } else { // end if link exist

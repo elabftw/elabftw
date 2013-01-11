@@ -33,16 +33,7 @@ if (isset($_POST['item_id']) && is_pos_int($_POST['item_id'])) {
     die("The experiment id parameter in the URL isn't a valid experiment ID");
 }
 // Sanitize link
-$link = filter_var($_POST['link'], FILTER_SANITIZE_STRING);
-// Get the ID of this link item from title
-$sql = "SELECT id FROM items WHERE title LIKE '$link'";
-$req = $bdd->prepare($sql);
-$req->execute();
-$data = $req->fetch();
-if($req->rowcount() > 1){ die('I found several ID for this item title !'); }
-if($req->rowcount() == 0){ die('Nope.'); }
-print_r($data);
-$link_id = $data['id'];
+$link_id = filter_var($_POST['link_id'], FILTER_VALIDATE_INT);
 
 // Check expid is owned by connected user
 $sql = "SELECT userid FROM experiments WHERE id = ".$item_id;

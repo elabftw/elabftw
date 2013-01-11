@@ -147,7 +147,7 @@ if ($req->rowcount() != 0) {
             'link_id' => $links['link_id']
         ));
         $linkdata = $linkreq->fetch();
-        echo "<li>- <a href='database.php?mode=view&id=".$linkdata['id']."'>".$linkdata['title']."</a>";
+        echo "<li>- <a href='database.php?mode=view&id=".$linkdata['id']."'>".stripslashes($linkdata['title'])."</a>";
 echo "<a onclick='delete_link(".$links['id'].", ".$id.")'>
 <img src='themes/".$_SESSION['prefs']['theme']."/img/trash.png' title='delete' alt='delete' /></a></li>";
     } // end while
@@ -236,7 +236,8 @@ $sql = "SELECT title, id FROM items";
 $getalllinks = $bdd->prepare($sql);
 $getalllinks->execute();
 while ($link = $getalllinks->fetch()){
-    echo "'".substr($link[0], 0, 60)."',";
+    // html_entity_decode is needed to convert the quotes
+    echo "'".$link['id']." - ".html_entity_decode(substr($link[0], 0, 60), ENT_QUOTES)."',";
 }?>
 		];
 		$( "#linkinput" ).autocomplete({
@@ -269,10 +270,12 @@ function addLinkOnEnter(e) { // the argument here is the event (needed to detect
     }
     if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
         // get link
-        var link = $('#linkinput').attr('value');
+        var link_id = decodeURIComponent($('#linkinput').attr('value'));
+        // parseint will get the id, and not the rest (if there is number in title)
+        link_id = parseInt(link_id, 10);
         // POST request
         var jqxhr = $.post('add_link.php', {
-            link: link,
+            link_id: link_id,
             item_id: <?php echo $id; ?>
         })
         // reload the link list
@@ -302,11 +305,22 @@ tinyMCE.init({
     theme_advanced_buttons3_add : "forecolor, backcolor, tablecontrols",
     font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
 });
-</script>
-<script>
-// AUTOSAVE EVERY 5 SECONDS
+
+// AUTOSAVE EVERY 2 SECONDS only when window is on focus
+// we need to wait for mcedit to load (and the user to make a modification)
+function wait_a_bit() {
+    // just wait for 2 secs
+    setTimeout("startCheck()", 2000)
+}
+function startCheck() {
+    // check every 2 secs if tab has focus
+    setInterval("focusCheck()", 2000);
+}
+function focusCheck () {
+    if (document.hasFocus())
+        autoSave();
+}
 function autoSave() {
-    setInterval(function(){
         $.ajax({
             type: "POST",
             url: "editXP-autosave.php",
@@ -316,7 +330,7 @@ function autoSave() {
             body : tinyMCE.activeEditor.getContent()
             }
         });
-    }, 1000);
 }
-autoSave();
+
+wait_a_bit();
 </script>

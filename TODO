@@ -1,12 +1,12 @@
-/////// Priority
+////// Priority
 * advanced search
+* install : read .ini files and if default values are here, do nothing
+* install.php
 
 ////// Fix/improve
 * upload bigger files; make a Worker() to upload big files asynchronously 
-* install : read .ini files and if default values are here, do nothing
 * drag and drop images to embed in text
 * have a bigger thumbnail when you hover an attached file
-* install.php
 * add tag on templates
 * make pdf : colors, indentation fix
 

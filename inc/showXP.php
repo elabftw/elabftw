@@ -37,7 +37,7 @@ require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 <a onmouseover="changeSrc('<?php echo $_SESSION['prefs']['theme'];?>')" onmouseout="stopAnim('<?php echo $_SESSION['prefs']['theme'];?>')" href='experiments.php?mode=show&q=runningonly'><img id='runningimg' src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/running.fix.png" alt="running" /> Show running experiments</a>
 </div><!-- end submenu -->
 <div class='toggle_container'><ul>
-<? // SQL to get user's templates
+<?php // SQL to get user's templates
 $sql = "SELECT id, name FROM experiments_templates WHERE userid = :userid";
 $tplreq = $bdd->prepare($sql);
 $tplreq->execute(array(

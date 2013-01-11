@@ -132,7 +132,7 @@ Attached files :<br />
     $tf = fopen($txtfile, 'w+');
     fwrite($tf, $html);
     fclose($tf);
-    $zip->addFile($txtfile);
+    $zip->addFile($txtfile, basename($txtfile));
     // add a pdf, too
     $pdfname = make_pdf($id, $table, '/tmp');
     $zip->addFile('/tmp/'.$pdfname, $pdfname);

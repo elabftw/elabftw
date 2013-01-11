@@ -93,6 +93,7 @@ $zipfile = "/tmp/".$zipname."-".hash("sha512", uniqid(rand(), true)).".zip";
 $zip = new ZipArchive;
 $res = $zip->open($zipfile, ZipArchive::CREATE);
 if ($res === true) {
+    // create an html page
     $html = "<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html'; charset='utf-8'><title>";
     $html .= $title;
     $html .= "</title></head><body>";
@@ -175,7 +176,7 @@ Attached files :<br />
              echo "<option value='".$data['userid']."'>".$data['firstname']." ".$data['lastname']."</option>";
         }
         echo "</select> <input type=submit value='send' />
-            <input type='hidden' name='zipname' value='".$zipname."'>
+            <input type='hidden' name='zipfile' value='".$zipfile."'>
             </form></p></div>";
     } else {
         echo "<p>Zip archive is too big to be sent by email.</p>";

@@ -71,7 +71,9 @@ Regards,
 * This email was sent from elabFTW *');
 
 // Attach zip file
-$message->attach(Swift_Attachment::fromPath('uploads/'.$zipname.'.zip', 'archive/zip'));
+// Get zipfile filename
+$zipfile = basename($_POST['zipfile']);
+$message->attach(Swift_Attachment::fromPath('/tmp/'.$zipfile, 'archive/zip')->setFilename('experiment.zip'));
 
 // SEND
 $transport = Swift_SmtpTransport::newInstance($ini_arr['smtp_address'], $ini_arr['smtp_port'], $ini_arr['smtp_encryption'])

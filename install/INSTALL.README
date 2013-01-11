@@ -8,8 +8,7 @@
 
 Thank you for choosing eLabFTW as a lab manager =)
 This file contains the instructions to install elabftw on a webserver but these instructions can also apply if you are installing it locally (with MAMP/WAMP).
-Keep in mind that this software is in beta (meaning it's not finished), so you are encouraged to tell me the bugs you might find or the improvements you would
-like to see in the next version.
+Keep in mind that this software is in beta (meaning it's not finished), so you are encouraged to tell me the bugs you might find or the improvements you would like to see in the next version.
 
   _   _   _   _   _   _   _   _   _   _   _   _  
  / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ 
@@ -78,18 +77,21 @@ and follow the instructions on screen.
 Manually :
 ```````````````
 Connect :
-Command to connect with the user `root` and the password `secr3t`
-# mysql -uroot -psecr3t
+Command to connect with the user `root`
+# mysql -u root -p
 
 Create a database (at the mysql prompt)
 mysql> CREATE DATABASE `elabftw` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+Be mindful of the final ";" !
 
-Exit with Ctrl-d, and enter this if you are in the same directory as the sql file:
-# mysql -uroot -psecr3t elabftw < elabftw.sql
+Exit with Ctrl-d, and enter this :
+# mysql -u root -p elabftw < install/elabftw.sql
 
-You can now login with the user `root`, and the password `toor`. You should change your password asap.
 
+Now the last step :
 Rename the file `admin/config-exemple.ini` in `admin/config.ini` and edit it.
-Check that this file isn't served by your webserver (point to it in a browser), if you allow the use of .htaccess files, it should be good; otherwise, make the necessary changes in Apache config.
+Check that this file isn't served by your webserver (point to it in a browser). If you see a 403 Error, all is good. If you see the config file be sure to edit AllowOverride in your <Directory "/var/www/elabftw"> and set it to All.
+
+You can now login with the user `root`, and the password `toor`. You MUST change your password asap.
 
 You should be good to go. Email me in case of troubles : nicolas.carpi gmail com

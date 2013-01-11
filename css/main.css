@@ -548,7 +548,13 @@ img {
 
 /* bigger space to enter experiment */
 .mceditable {
+    width:700px;
     height:700px;
+}
+
+/* title on editXP -- fix for firefox */
+#title_txtarea {
+    width:700px;
 }
 
 /* elabid */

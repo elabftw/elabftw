@@ -74,7 +74,7 @@ echo stripslashes($tags['tag']);?>
 <!-- END ADD TAG -->
 <!-- BEGIN EDITXP FORM -->
 <form id="editXP" name="editXP" method="post" action="editXP-exec.php" enctype='multipart/form-data'>
-<input name='item_id' type='hidden' value='<? echo $id;?>' />
+<input name='item_id' type='hidden' value='<?php echo $id;?>' />
 
 <h4>Date</h4><span class='smallgray'> (date format : YYMMDD)</span><br />
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /><input name='date' id='datepicker' size='6' type='text' value='<?php echo $data['date'];?>' />
@@ -101,7 +101,7 @@ echo stripslashes($tags['tag']);?>
 <br />
 
 <h4>Title</h4><br />
-      <textarea id='title' name='title' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
+      <textarea id='title_txtarea' name='title' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
           echo stripslashes($data['title']);
       } else {
           echo stripslashes($_SESSION['new_title']);

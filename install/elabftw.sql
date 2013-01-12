@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 3.3.9.2
+-- version 3.5.5
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Oct 31, 2012 at 10:54 AM
--- Server version: 5.5.9
--- PHP Version: 5.3.6
+-- Generation Time: Jan 12, 2013 at 12:25 AM
+-- Server version: 5.5.29-log
+-- PHP Version: 5.4.10
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -16,7 +17,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `elabumr144`
+-- Database: `elabftw`
 --
 
 -- --------------------------------------------------------
@@ -25,7 +26,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- Table structure for table `experiments`
 --
 
-CREATE TABLE `experiments` (
+CREATE TABLE IF NOT EXISTS `experiments` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
   `date` int(10) unsigned NOT NULL,
@@ -33,8 +34,10 @@ CREATE TABLE `experiments` (
   `outcome` varchar(255) NOT NULL,
   `links` varchar(255) DEFAULT NULL,
   `userid` int(10) unsigned NOT NULL,
+  `elabid` varchar(255) NOT NULL,
+  `locked` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=469 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -42,12 +45,12 @@ CREATE TABLE `experiments` (
 -- Table structure for table `experiments_links`
 --
 
-CREATE TABLE `experiments_links` (
+CREATE TABLE IF NOT EXISTS `experiments_links` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `item_id` int(10) unsigned NOT NULL,
   `link_id` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=29 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -55,13 +58,13 @@ CREATE TABLE `experiments_links` (
 -- Table structure for table `experiments_tags`
 --
 
-CREATE TABLE `experiments_tags` (
+CREATE TABLE IF NOT EXISTS `experiments_tags` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `tag` varchar(255) NOT NULL,
   `item_id` int(10) unsigned NOT NULL,
   `userid` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2254 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -69,13 +72,13 @@ CREATE TABLE `experiments_tags` (
 -- Table structure for table `experiments_templates`
 --
 
-CREATE TABLE `experiments_templates` (
+CREATE TABLE IF NOT EXISTS `experiments_templates` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `body` text,
   `name` varchar(255) NOT NULL,
   `userid` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=17 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -83,7 +86,7 @@ CREATE TABLE `experiments_templates` (
 -- Table structure for table `items`
 --
 
-CREATE TABLE `items` (
+CREATE TABLE IF NOT EXISTS `items` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(255) DEFAULT NULL,
   `date` int(10) unsigned NOT NULL,
@@ -92,7 +95,7 @@ CREATE TABLE `items` (
   `type` varchar(255) DEFAULT 'item',
   `userid` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=41 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -100,12 +103,12 @@ CREATE TABLE `items` (
 -- Table structure for table `items_tags`
 --
 
-CREATE TABLE `items_tags` (
+CREATE TABLE IF NOT EXISTS `items_tags` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `tag` varchar(255) NOT NULL,
   `item_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=100 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -113,7 +116,7 @@ CREATE TABLE `items_tags` (
 -- Table structure for table `items_templates`
 --
 
-CREATE TABLE `items_templates` (
+CREATE TABLE IF NOT EXISTS `items_templates` (
   `id` int(10) unsigned NOT NULL,
   `type` varchar(255) DEFAULT NULL,
   `body` text,
@@ -121,20 +124,18 @@ CREATE TABLE `items_templates` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Dumping data for table `items_templates`
---
-
+-- --------- elabftw --------------
 INSERT INTO `items_templates` VALUES(1, 'pla', '<p>Backbone :</p>\r\n<p>Concentration :</p>\r\n<p>Resistances :</p>', 'plasmid');
 INSERT INTO `items_templates` VALUES(2, 'pro', 'Source :', 'protocol');
 INSERT INTO `items_templates` VALUES(3, 'ant', '<p>Target :</p>\r\n<p>Concentration :</p>\r\n<p>Isotype :</p>\r\n<p>Host :</p>\r\n<p>Type :</p>\r\n<p>WB dilution :</p>\r\n<p>IF dilution :</p>\r\n<p>IP dilution :</p>\r\n<p>Comments :</p>', NULL);
+
+-- --------------------------------------------------------
+
 --
 -- Table structure for table `uploads`
 --
 
-CREATE TABLE `uploads` (
+CREATE TABLE IF NOT EXISTS `uploads` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `real_name` text NOT NULL,
   `long_name` text NOT NULL,
@@ -144,7 +145,7 @@ CREATE TABLE `uploads` (
   `type` varchar(255) NOT NULL,
   `date` date DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=117 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -152,7 +153,7 @@ CREATE TABLE `uploads` (
 -- Table structure for table `users`
 --
 
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `userid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(255) NOT NULL,
   `salt` varchar(255) NOT NULL,
@@ -183,7 +184,7 @@ CREATE TABLE `users` (
   `sc_todo` varchar(1) NOT NULL DEFAULT 't',
   `validated` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`userid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=90 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- create root user with password toor and admin rights
-INSERT INTO `users` VALUES(90, 'root', 'f69483d4a0edb8cc81092a0412b7b276e2fda6fda3a16cb61d16626cb6cd39b235721093e74eb93e23c2021afb3b6056aedb1a45b5bd767baf42d592f99b4c89', '8c744dc6b145df85c03655a678657bf3096ed7b6acd76d2bb27914069f544b07ad164ddf759db02d6bd6542fa4041a04b16060431cbc55d6814f12b048f43240', 'Admin', 'ROOT', 'noreply@nodomain.net', NULL, NULL, NULL, NULL, 1, 0, 0, 0, 0, 1351677553, NULL, 'user', 'default', 'default', 'date', 'desc', 15, 'c', 'e', 's', 't', 1);
+INSERT INTO `users` VALUES(1, 'root', 'f69483d4a0edb8cc81092a0412b7b276e2fda6fda3a16cb61d16626cb6cd39b235721093e74eb93e23c2021afb3b6056aedb1a45b5bd767baf42d592f99b4c89', '8c744dc6b145df85c03655a678657bf3096ed7b6acd76d2bb27914069f544b07ad164ddf759db02d6bd6542fa4041a04b16060431cbc55d6814f12b048f43240', 'Admin', 'ROOT', 'noreply@nodomain.net', NULL, NULL, NULL, NULL, 1, 0, 0, 0, 0, 1351677553, NULL, 'user', 'default', 'default', 'date', 'desc', 15, 'c', 'e', 's', 't', 1);

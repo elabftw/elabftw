@@ -28,6 +28,11 @@ require_once('inc/head.php');
 $page_title='Make zip';
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
+// Test if there is zip
+if(!class_exists('ZipArchive')) {
+    die("<p>You are missing the ZipArchive class in php. Uncomment the line extension=zip.so in /etc/php/php.ini.</p>");
+}
+
 // Check id is valid and assign it to $id
 if(isset($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];

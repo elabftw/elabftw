@@ -393,4 +393,11 @@ function make_pdf($id, $type, $out = 'browser') {
         exit;
     }
 }
+
+function generate_elabid() {
+// Generate unique elabID
+    $date = kdate();
+    return $date."-".sha1(uniqid($date, TRUE));
+}
+
 ?>

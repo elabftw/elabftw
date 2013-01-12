@@ -60,9 +60,7 @@ if (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')){
 }
 
 if ($type == 'experiments'){
-// Generate unique elabID
-$date = kdate();
-$elabid = $date."-".sha1(uniqid($date, TRUE));
+    $elabid = generate_elabid();
 
 // SQL for create experiments
 $sql = "INSERT INTO experiments(title, date, body, outcome, elabid, userid) VALUES(:title, :date, :body, :outcome, :elabid, :userid)";

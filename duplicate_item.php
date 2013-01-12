@@ -38,19 +38,21 @@ if ($_GET['type'] === 'exp'){
 }
 
 if ($type === 'experiments') {
+    $elabid = generate_elabid();
     // SQL to get data from the experiment we duplicate
     $sql = "SELECT title, body FROM experiments WHERE id = ".$id;
     $req = $bdd->prepare($sql);
     $req->execute();
     $data = $req->fetch();
     // SQL for duplicateXP
-    $sql = "INSERT INTO experiments(title, date, body, outcome, userid) VALUES(:title, :date, :body, :outcome, :userid)";
+    $sql = "INSERT INTO experiments(title, date, body, outcome, elabid, userid) VALUES(:title, :date, :body, :outcome, :elabid, :userid)";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
         'title' => $data['title'],
         'date' => kdate(),
         'body' => $data['body'],
         'outcome' => 'running',
+        'elabid' => $elabid,
         'userid' => $_SESSION['userid']));
     // END SQL main
 

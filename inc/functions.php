@@ -200,14 +200,14 @@ function showXP($id, $display) {
             // COMPACT MODE //
             ?>
             <!-- BEGIN CONTENT -->
-        <section onClick="window.open('experiments.php?mode=view&id=<?php echo $final_query['id'];?>', '_blank')" class="item">
+        <section onClick="document.location='experiments.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item">
             <?php
             echo "<span class='".$final_query['outcome']."_compact'>".$final_query['date']."</span> ";
             echo stripslashes($final_query['title']);
             echo "</section>";
         } else {
 ?>
-        <section onClick="window.open('experiments.php?mode=view&id=<?php echo $final_query['id'];?>', '_blank')" class="item <?php echo $final_query['outcome'];?>">
+        <section onClick="document.location='experiments.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item <?php echo $final_query['outcome'];?>">
     <?php
     // TAGS
     $tagsql = "SELECT tag FROM experiments_tags WHERE item_id = :id";
@@ -264,7 +264,7 @@ function showDB($id, $display) {
         if ($display === 'compact') {
             // COMPACT MODE //
             ?>
-            <section onClick="window.open('database.php?mode=view&id=<?php echo $final_query['id'];?>', '_blank')" class='item'>
+            <section onClick="document.location='database.php?mode=view&id=<?php echo $final_query['id'];?>'" class='item'>
             <span class='date date_compact'><?php echo $final_query['date'];?></span>
             <span><?php echo stripslashes($final_query['title']);?>
             <!-- STAR RATING read only -->
@@ -273,7 +273,7 @@ function showDB($id, $display) {
 <?php
         } else {
 ?>
-        <section onClick="window.open('database.php?mode=view&id=<?php echo $final_query['id'];?>', '_blank')" class="item <?php echo $final_query['type'];?>">
+        <section onClick="document.location='database.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item <?php echo $final_query['type'];?>">
         <?php
         // TAGS
         $tagsql = "SELECT tag FROM items_tags WHERE item_id = :id";

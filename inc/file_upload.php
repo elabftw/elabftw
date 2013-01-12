@@ -57,8 +57,6 @@ container.appendChild(br_field);
 <h4 class='trigger'>Click to add a file</h4>
 <div class='toggle_container'>
 <div class='addFileDiv'>
-<!-- max file size here to avoid waiting for uploading a too big file (can be fooled browser side) -->
-<input type='hidden' name='MAX_FILE_SIZE' value='1000000000000000000000' />
 <div id='file_container'>
     <input name="files[]" type="file"  />
     <input size='35' placeholder='Enter a comment for the file' name='filescom[]' />

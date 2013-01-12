@@ -220,21 +220,32 @@ tinyMCE.init({
     theme_advanced_buttons3_add : "forecolor, backcolor, tablecontrols",
     font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
 });
-</script>
-<script>
-// AUTOSAVE EVERY 5 SECONDS
+
+// AUTOSAVE EVERY 2 SECONDS only when window is on focus
+// we need to wait for mcedit to load (and the user to make a modification)
+function wait_a_bit() {
+    // just wait for 2 secs
+    setTimeout("startCheck()", 2000)
+}
+function startCheck() {
+    // check every 2 secs if tab has focus
+    setInterval("focusCheck()", 2000);
+}
+function focusCheck () {
+    if (document.hasFocus())
+        autoSave();
+}
 function autoSave() {
-    setInterval(function(){
         $.ajax({
             type: "POST",
-            url: "editDB-autosave.php",
+            url: "editXP-autosave.php",
             data: {
             id : <?php echo $id;?>,
             // we need this to get the updated content
             body : tinyMCE.activeEditor.getContent()
             }
         });
-    }, 1000);
 }
-autoSave();
+
+wait_a_bit();
 </script>

@@ -90,3 +90,9 @@ key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 
 key('".$_SESSION['prefs']['shortcuts']['edit']."', function(){location.href = 'database.php?mode=edit&id=".$id."'});
 </script>";
 ?>
+<script>
+// change title
+$(document).ready(function() {
+    document.title = "<?php echo $data['title']; ?>";
+});
+</script>

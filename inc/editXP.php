@@ -333,4 +333,8 @@ function autoSave() {
 }
 
 wait_a_bit();
+// change title
+$(document).ready(function() {
+    document.title = "<?php echo $data['title']; ?>";
+});
 </script>

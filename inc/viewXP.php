@@ -116,4 +116,10 @@ key('".$_SESSION['prefs']['shortcuts']['edit']."', function(){location.href = 'e
 </script>";
 echo "</section>";
 ?>
+<script>
+// change title
+$(document).ready(function() {
+    document.title = "<?php echo $data['title']; ?>";
+});
+</script>
 

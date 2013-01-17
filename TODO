@@ -1,5 +1,6 @@
 ////// Priority
-* export the new database sql
+* let the user choose db type and bg color
+* let the user choose for newtab click on item
 * advanced search
 * install : read .ini files and if default values are here, do nothing
 * install.php

@@ -332,9 +332,9 @@ function autoSave() {
         });
 }
 
-wait_a_bit();
-// change title
+// change title and start autosave
 $(document).ready(function() {
     document.title = "<?php echo $data['title']; ?>";
+    wait_a_bit();
 });
 </script>

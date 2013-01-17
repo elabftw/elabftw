@@ -119,7 +119,9 @@ echo "</section>";
 <script>
 // change title
 $(document).ready(function() {
-    document.title = "<?php echo $data['title']; ?>";
+    // fix for the ' and "
+    title = "<?php echo $data['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
+    document.title = title;
 });
 </script>
 

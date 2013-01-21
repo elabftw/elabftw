@@ -69,12 +69,18 @@ if(isset($test['locked'])) {
     }
 }
 // items_type :
-$sql = "SELECT * from items_types";
+$sql = "SHOW TABLES";
 $req = $bdd->prepare($sql);
 $req->execute();
 $test = $req->fetch();
-if ($test) {
-    echo "Table items_types exists already, nothing to do.";
+$test_arr = array();
+while ($row = $req->fetch()) {
+        $test_arr[] = $row[0];
+}
+
+if(in_array('items_types',$test_arr)) {
+      echo 'Table exists';
+      die();
 } else {
 
 

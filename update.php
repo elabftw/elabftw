@@ -8,14 +8,15 @@ $test = $req->fetch();
 if(isset($test['elabid'])) {
     echo "Column 'elabid' already exists. Nothing to do.<br />";
 } else {
-    echo 'Creating field...';
+    echo "Creating field <strong>elabid</strong>...<br />";
     $sql = "ALTER TABLE `experiments` ADD `elabid` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL";
     $req = $bdd->prepare($sql);
     $result = $req->execute();
     if($result) {
-        echo 'Database successfully updated, you can now delete this file.';
+        echo 'Field <strong>elabid</strong> successfully added :) <br />';
     } else {
-        echo 'There was a problem in the database update :/';
+        echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
+        die();
     }
 }
 
@@ -50,7 +51,8 @@ foreach($id_arr as $id) {
     if ($result) {
         echo "Experiment id ".$id." updated.<br />";
     } else {
-        echo "SQL update failed.";
+        echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
+        die();
     }
 }
 
@@ -63,9 +65,10 @@ if(isset($test['locked'])) {
     $req = $bdd->prepare($sql);
     $result = $req->execute();
     if($result) {
-        echo 'Database successfully updated.';
+        echo 'Field <strong>locked</strong> successfully added :) <br />';
     } else {
-        echo 'There was a problem in the database update :/';
+        echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
+        die();
     }
 }
 // items_type :
@@ -79,7 +82,7 @@ while ($row = $req->fetch()) {
 }
 
 if(in_array('items_types',$test_arr)) {
-      echo 'Table exists';
+      echo 'Table items_types already exists. Nothing to do.<br />';
       die();
 } else {
 
@@ -95,15 +98,97 @@ $create_sql = "CREATE TABLE `items_types` (
     $req = $bdd->prepare($create_sql);
     $result = $req->execute();
     if($result) {
-        echo 'Database successfully updated.';
+        echo 'Table items_types successfully created.<br />';
+    } else {
+        echo 'There was a problem in the database update :/';
+        die();
+    }
+
+    // Transform all ant => 1, pla => 2, pro => 3
+    // get id of items type ant
+    $sql = "SELECT id from items WHERE type LIKE 'ant'";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    // array to store the id
+    $id_arr = array();
+    while ($get_id = $req->fetch()) {
+        $id_arr[] = $get_id['id']." ";
+    }
+    foreach($id_arr as $id) {
+        // change value
+        $sql = "UPDATE items SET type=:type WHERE id=:current_id";
+        $req = $bdd->prepare($sql);
+        $result = $req->execute(array(
+            'type' => '1',
+            'current_id' => $id
+        ));
+        if ($result) {
+            echo "Item id ".$id." updated.<br />";
+        } else {
+            echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
+            die();
+        }
+    }
+    // get id of items type pla
+    $sql = "SELECT id from items WHERE type LIKE 'pla'";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    // array to store the id
+    $id_arr = array();
+    while ($get_id = $req->fetch()) {
+        $id_arr[] = $get_id['id']." ";
+    }
+    foreach($id_arr as $id) {
+        // change value
+        $sql = "UPDATE items SET type=:type WHERE id=:current_id";
+        $req = $bdd->prepare($sql);
+        $result = $req->execute(array(
+            'type' => '2',
+            'current_id' => $id
+        ));
+        if ($result) {
+            echo "Item id ".$id." updated.<br />";
+        } else {
+            echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
+            die();
+        }
+    }
+    // get id of items type pro
+    $sql = "SELECT id from items WHERE type LIKE 'pro'";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    // array to store the id
+    $id_arr = array();
+    while ($get_id = $req->fetch()) {
+        $id_arr[] = $get_id['id']." ";
+    }
+    foreach($id_arr as $id) {
+        // change value
+        $sql = "UPDATE items SET type=:type WHERE id=:current_id";
+        $req = $bdd->prepare($sql);
+        $result = $req->execute(array(
+            'type' => '3',
+            'current_id' => $id
+        ));
+        if ($result) {
+            echo "Item id ".$id." updated.<br />";
+        } else {
+            echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
+            die();
+        }
+    }
+    $sql = "";
+
+    // Change type of type (string => int) in items table and fill table items_types
+    $sql = "ALTER TABLE `items` CHANGE `type` `type` INT UNSIGNED NOT NULL;INSERT INTO `items_types` (`id`, `name`, `bgcolor`, `template`, `tags`) VALUES (NULL, 'Antibody', '2cff00', NULL, NULL);INSERT INTO `items_types` (`id`, `name`, `bgcolor`, `template`, `tags`) VALUES (NULL, 'Plasmid', '004bff', NULL, NULL);INSERT INTO `items_types` (`id`, `name`, `bgcolor`, `template`, `tags`) VALUES (NULL, 'Protocol', 'ff0000', NULL, NULL);";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute();
+    if($result) {
+        echo 'Database successfully updated with default values.<br />';
     } else {
         echo 'There was a problem in the database update :/';
     }
 
-// Change type of type (string => int) in items table
-$sql ="ALTER TABLE `items` CHANGE `type` `type` INT UNSIGNED NOT NULL;";
-$req = $bdd->prepare($sql);
-$req->execute();
 
 }
 ?>

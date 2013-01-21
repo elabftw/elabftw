@@ -39,7 +39,8 @@ if (isset($_GET['type']) && !empty($_GET['type']) && is_pos_int($_GET['type'])) 
     exit();
 }
 
-if ($type == 'experiments'){
+
+if ($type === 'experiments'){
     $elabid = generate_elabid();
 
     // SQL for create experiments
@@ -48,11 +49,14 @@ if ($type == 'experiments'){
     $result = $req->execute(array(
         'title' => 'Untitled',
         'date' => kdate(),
-        'body' => $body,
+        'body' => '',
         'outcome' => 'running',
         'elabid' => $elabid,
         'userid' => $_SESSION['userid']
     ));
+    if($result){
+        echo 'ok';
+    }
 } else { // create item for DB
     // SQL to get template
     $sql = "SELECT template FROM items_types WHERE id = :id";

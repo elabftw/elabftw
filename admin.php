@@ -92,7 +92,7 @@ while ($items_types = $req->fetch()) {
 
 <input type='text' name='item_type_bgcolor' value='#<?php echo $items_types['bgcolor'];?>'/></div><br /><br />
  
-<textarea class='mceditable high' name='item_type_template' /><?php echo stripslashes($items_types['template']);?></textarea><br />
+<textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']);?></textarea><br />
 
 <input type='submit' class='submitbutton' value='Edit <?php echo stripslashes($items_types['name']);?>' /><br />
 </form></div>

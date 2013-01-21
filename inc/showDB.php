@@ -42,7 +42,7 @@ $sql = "SELECT * FROM items_types";
 $req = $bdd->prepare($sql);
 $req->execute();
 while ($items_types = $req->fetch()) {
-    echo "<a href='create_item.php?type=".$items_types['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/create.gif' alt='' />Add ".$items_types['name']."</a>";
+    echo "<a style='line-height:170%;' href='create_item.php?type=".$items_types['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/create.gif' alt='' /> ".$items_types['name']."</a>";
 }
 ?>
 <div id='export_menu'>

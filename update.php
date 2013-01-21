@@ -68,4 +68,36 @@ if(isset($test['locked'])) {
         echo 'There was a problem in the database update :/';
     }
 }
+// items_type :
+$sql = "SELECT * from items_types";
+$req = $bdd->prepare($sql);
+$req->execute();
+$test = $req->fetch();
+if ($test) {
+    echo "Table items_types exists already, nothing to do.";
+} else {
+
+
+$create_sql = "CREATE TABLE `items_types` (
+        `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+        `name` TEXT NOT NULL ,
+        `bgcolor` VARCHAR( 6 ) DEFAULT '000000',
+        `template` TEXT NULL,
+        `tags` TEXT NULL,
+        PRIMARY KEY ( `id` )
+    ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;"
+    $req = $bdd->prepare($create_sql);
+    $result = $req->execute();
+    if($result) {
+        echo 'Database successfully updated.';
+    } else {
+        echo 'There was a problem in the database update :/';
+    }
+
+// Change type of type (string => int) in items table
+$sql ="ALTER TABLE `items` CHANGE `type` `type` INT UNSIGNED NOT NULL;";
+$req = $bdd->prepare($sql);
+$req->execute();
+
+}
 ?>

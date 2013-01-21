@@ -77,18 +77,28 @@ if (isset($_POST['deluser']) && is_pos_int($_POST['deluser'])) {
     $_SESSION['infos'] = $msg_arr;
 }
 
-// New Plasmids template
-if (isset($_POST['pla_tpl'])) {
-    $body = check_body($_POST['body']);
-    $sql = "UPDATE items_templates SET body = :body WHERE type = 'pla'";
+// ITEMS TYPES
+if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
+    $item_type_id = $_POST['item_type_id'];
+    $item_type_name = filter_var($_POST['item_type_name'], FILTER_SANITIZE_STRING); 
+    // we remove the # of the hexacode and sanitize string
+    $item_type_bgcolor = filter_var(substr($_POST['item_type_bgcolor'], 1, 6), FILTER_SANITIZE_STRING);
+    $item_type_template = check_body($_POST['item_type_template']);
+    //TODO
+    $item_type_tags = '';
+    $sql = "UPDATE items_types SET name = :name, bgcolor = :bgcolor , template = :template, tags = :tags WHERE id = :id";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
-        'body' => $body
+        'name' => $item_type_name,
+        'bgcolor' => $item_type_bgcolor,
+        'template' => $item_type_template,
+        'tags' => $item_type_tags,
+        'id' => $item_type_id
     ));
     if ($result){
-        $msg_arr[] = 'New plasmids template updated successfully.';
+        $msg_arr[] = 'New item category updated successfully.';
         $_SESSION['infos'] = $msg_arr;
-        header('Location: admin.php');
+        header('Location: admin.php#items_types');
         exit();
     } else { //sql fail
         $msg_arr[] = 'There was a problem in the SQL request. Report a bug !';
@@ -97,23 +107,5 @@ if (isset($_POST['pla_tpl'])) {
         exit();
     }
 }
-// New antibody template
-if (isset($_POST['ant_tpl'])) {
-    $body = check_body($_POST['body']);
-    $sql = "UPDATE items_templates SET body = :body WHERE type = 'ant'";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute(array(
-        'body' => $body
-    ));
-    if ($result){
-        $msg_arr[] = 'New antibodies template updated successfully.';
-        $_SESSION['infos'] = $msg_arr;
-        header('Location: admin.php');
-        exit();
-    } else { //sql fail
-        $msg_arr[] = 'There was a problem in the SQL request. Report a bug !';
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: admin.php');
-        exit();
-    }
-}
+?>
+

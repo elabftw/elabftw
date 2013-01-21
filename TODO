@@ -1,11 +1,12 @@
 ////// Priority
-* let the user choose db type and bg color
 * let the user choose for newtab click on item
 * advanced search
 * install : read .ini files and if default values are here, do nothing
 * install.php
 
 ////// Fix/improve
+* google chrome audit
+* put todolist in sql not in cookie
 * upload bigger files; make a Worker() to upload big files asynchronously 
 * drag and drop images to embed in text
 * have a bigger thumbnail when you hover an attached file

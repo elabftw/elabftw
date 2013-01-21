@@ -32,6 +32,8 @@ require_once('inc/menu.php');
 require_once('inc/info_box.php');
 ?>
 <script src="js/tiny_mce/tiny_mce.js"></script>
+<script src="js/raphael.js"></script>
+<script src="js/colorwheel.js"></script>
 <?php
 
 // SQL to get all unvalidated users
@@ -55,7 +57,6 @@ echo "</section>";
 <section id='users' class='item'>
 <h3>TEAM MEMBERS</h3>
 <?php
-// TODO different colors for different groups
 // SQL to get all users
 $sql = "SELECT userid, lastname, firstname, email FROM users WHERE validated = 1";
 $req = $bdd->prepare($sql);
@@ -68,43 +69,50 @@ while ($users = $req->fetch()) {
 }
 echo "</section>";
 ?>
-<section class='item'>
-<h3>NEW PLASMIDS DEFAULT TEMPLATE</h3>
-<?php // SQL TO GET TEMPLATES
-$sql = "SELECT body FROM items_templates WHERE id = 1";
-$req = $bdd->prepare($sql);
-$req->execute();
-$data = $req->fetch();
-?>
-    <form action='admin-exec.php' method='post'>
-    <input type='hidden' name='pla_tpl' />
-    <textarea class='mceditable high' name='body' /><?php echo $data['body'];?></textarea>
-    <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Save changes" /></div>
-    </form>
-</section>
 
 <section class='item'>
-<h3>NEW ANTIBODIES DEFAULT TEMPLATE</h3>
-<?php // SQL TO GET TEMPLATES
-$sql = "SELECT body FROM items_templates WHERE id = 3";
+<a id='items_types'></a>
+<h3>DATABASE ITEMS TYPE</h3>
+<?php
+// SQL to get all items type
+$sql = "SELECT * from items_types";
 $req = $bdd->prepare($sql);
 $req->execute();
-$data = $req->fetch();
+while ($items_types = $req->fetch()) {
+    echo "<div class='simple_border'><form action='admin-exec.php' method='post'>";
+    echo "<input type='text' class='biginput' name='item_type_name' value='".$items_types['name']."' />";
+    echo "<input type='hidden' name='item_type_id' value='".$items_types['id']."' />";
+    echo "<div id='colorwheel_div_".$items_types['id']."'>";
+    echo "<div class='colorwheel inline'></div>";
+    echo "<input type='text' name='item_type_bgcolor' value='#".$items_types['bgcolor']."'/></div><br /><br />";
+    echo "<textarea class='mceditable high' name='item_type_template' />".$items_types['template']."</textarea>";
+    echo "<br /><input type='submit' class='submitbutton' value='Edit ".$items_types['name']."' /><br />";
+    echo "</form></div>";
+    echo "<script>$(document).ready(function() {
+        color_wheel('#colorwheel_div_".$items_types['id']."')
+});</script>";
+}
 ?>
-    <form action='admin-exec.php' method='post'>
-    <input type='hidden' name='ant_tpl' />
-    <textarea class='mceditable high' name='body' /><?php echo $data['body'];?></textarea>
-    <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Save changes" /></div>
-    </form>
+
 </section>
 
 <script>
+// color wheel
+function color_wheel(div_name) {
+        var cw = Raphael.colorwheel($(div_name)[0], 80);
+            cw.input($(div_name+" input" )[0]);
+}
+$(document).ready(function() {
+// EDITOR
 tinyMCE.init({
     theme : "advanced",
     mode : "specific_textareas",
     editor_selector : "mceditable",
     content_css : "css/tinymce.css",
+    theme_advanced_toolbar_location : "top",
     theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
+    plugins : "table",
+    theme_advanced_buttons3_add : "forecolor, backcolor, tablecontrols",
     font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
 });
 // confirm delete by writing full name
@@ -123,6 +131,7 @@ var confirm_delete = function(id, lastname) {
     }
 }
 
+});
 </script>
 <?php
 require_once('inc/footer.php');

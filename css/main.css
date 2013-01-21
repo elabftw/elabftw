@@ -180,6 +180,17 @@ nav a{
 #big_search input {
     font:  20px Helvetica, Verdana, Arial, sans-serif;
 }
+
+/* on admin.php for items types */
+.biginput {
+    font: 30px Helvetica, Verdana, Arial, sans-serif;
+    text-align:center;
+    margin-left:auto;
+    display:block;
+    margin-right:auto;
+    height: 40px;
+}
+
 #export_menu {
     float:right;
 }
@@ -421,6 +432,7 @@ img {
 .simple_border {
     border-radius: 20px;
     padding: 10px;
+    margin:5px;
 }
 
 .title {

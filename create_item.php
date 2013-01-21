@@ -27,31 +27,11 @@ require_once('inc/common.php');
 $msg_arr = array();
 
 // What do we create ?
-if (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')){
+if (isset($_GET['type']) && !empty($_GET['type']) && is_pos_int($_GET['type'])) {
+    // $type is int here
+    $type = $_GET['type'];
+} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')){
     $type = 'experiments';
-    // Is there a template ?
-    if (isset($_GET['tpl']) && !empty($_GET['tpl']) && is_pos_int($_GET['tpl'])) {
-        $tpl_id = $_GET['tpl'];
-        $sql = "SELECT body FROM experiments_templates WHERE id = ".$tpl_id;
-        $tplreq = $bdd->prepare($sql);
-        $tplreq->execute();
-        $data = $tplreq->fetch();
-        $body = $data['body'];
-    } else { // no template
-        $body = '';
-    }
-} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'pro')){
-    $type = 'protocols';
-} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'pla')){
-    $type = 'plasmids';
-} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'ant')){
-    $type = 'antibodies';
-} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'sir')){
-    $type = 'sirna';
-} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'pap')){
-    $type = 'papers';
-} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'lab')){
-    $type = 'labmeetings';
 } else {
     $msg_arr[] = 'Wrong item type !';
     $_SESSION['infos'] = $msg_arr;
@@ -62,69 +42,38 @@ if (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')){
 if ($type == 'experiments'){
     $elabid = generate_elabid();
 
-// SQL for create experiments
-$sql = "INSERT INTO experiments(title, date, body, outcome, elabid, userid) VALUES(:title, :date, :body, :outcome, :elabid, :userid)";
-$req = $bdd->prepare($sql);
-$result = $req->execute(array(
-    'title' => 'Untitled',
-    'date' => kdate(),
-    'body' => $body,
-    'outcome' => 'running',
-    'elabid' => $elabid,
-    'userid' => $_SESSION['userid']));
-}
+    // SQL for create experiments
+    $sql = "INSERT INTO experiments(title, date, body, outcome, elabid, userid) VALUES(:title, :date, :body, :outcome, :elabid, :userid)";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute(array(
+        'title' => 'Untitled',
+        'date' => kdate(),
+        'body' => $body,
+        'outcome' => 'running',
+        'elabid' => $elabid,
+        'userid' => $_SESSION['userid']
+    ));
+} else { // create item for DB
+    // SQL to get template
+    $sql = "SELECT template FROM items_types WHERE id = :id";
+    $get_tpl = $bdd->prepare($sql);
+    $get_tpl->execute(array(
+        'id' => $type
+    ));
+    $get_tpl_body = $get_tpl->fetch();
 
-if ($type == 'protocols') {
-// SQL for create protocols
-$sql = "INSERT INTO items(title, date, body, userid, type) VALUES(:title, :date, :body, :userid, :type)";
-$req = $bdd->prepare($sql);
-$result = $req->execute(array(
-    'title' => 'Untitled',
-    'date' => kdate(),
-    'body' => '',
-    'userid' => $_SESSION['userid'],
-    'type' => substr($type, 0, 3)
+    // SQL for create DB item
+    $sql = "INSERT INTO items(title, date, body, userid, type) VALUES(:title, :date, :body, :userid, :type)";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute(array(
+        'title' => 'Untitled',
+        'date' => kdate(),
+        'body' => $get_tpl_body['template'],
+        'userid' => $_SESSION['userid'],
+        'type' => $type
     ));
 }
 
-if ($type == 'plasmids'){
-    // SQL to get plasmid template
-    $sql = "SELECT body FROM items_templates WHERE type = 'pla'";
-    $pla_tpl = $bdd->prepare($sql);
-    $pla_tpl->execute();
-    $pla_tpl_body = $pla_tpl->fetch();
-
-    // SQL for create plasmids
-    $sql = "INSERT INTO items(title, date, body, userid, type) 
-        VALUES(:title, :date, :body, :userid, :type)";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute(array(
-        'title' => 'Untitled',
-        'date' => kdate(),
-        'body' => $pla_tpl_body['body'],
-        'userid' => $_SESSION['userid'],
-        'type' => 'pla'
-        ));
-}
-if ($type == 'antibodies'){
-    // SQL to get plasmid template
-    $sql = "SELECT body FROM items_templates WHERE type = 'ant'";
-    $ant_tpl = $bdd->prepare($sql);
-    $ant_tpl->execute();
-    $ant_tpl_body = $ant_tpl->fetch();
-
-    // SQL for create antsmids
-    $sql = "INSERT INTO items(title, date, body, userid, type) 
-        VALUES(:title, :date, :body, :userid, :type)";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute(array(
-        'title' => 'Untitled',
-        'date' => kdate(),
-        'body' => $ant_tpl_body['body'],
-        'userid' => $_SESSION['userid'],
-        'type' => 'ant'
-        ));
-}
 // Get what is the item id we just created
 if ($type === 'experiments') {
     $sql = "SELECT id FROM experiments WHERE userid = :userid ORDER BY id DESC LIMIT 0,1";

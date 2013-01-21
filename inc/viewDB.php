@@ -38,7 +38,6 @@ $req->execute(array(
     'id' => $id
 ));
 $data = $req->fetch();
-
 ?>
 <section class="item">
 <a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>' onClick="return confirm('Delete this item ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>

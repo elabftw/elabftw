@@ -37,6 +37,10 @@ Code from others :
 
 * Swiftmailer v4.1.6 : http://swiftmailer.org for sending email with SMTP (GPLv3)
 
+* Raphael (used by colorpicker) : http://raphaeljs.com/ (MIT)
+
+* Colorwheel : http://jweir.github.com/colorwheel/ (MIT)
+
 ---------------------------
 ---------------------------
 

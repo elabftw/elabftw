@@ -37,9 +37,14 @@ if(isset($_SESSION['prefs']['display'])) {
         <input type='search' name='q' size='50' placeholder='Type your search' />
     </form>
     <br />
-    <a href="create_item.php?type=pro"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add a protocol</a> 
-    <a href="create_item.php?type=pla"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add a plasmid</a>
-    <a href="create_item.php?type=ant"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Add an antibody</a>
+<?php // SQL to get items names
+$sql = "SELECT * FROM items_types";
+$req = $bdd->prepare($sql);
+$req->execute();
+while ($items_types = $req->fetch()) {
+    echo "<a href='create_item.php?type=".$items_types['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/create.gif' alt='' />Add ".$items_types['name']."</a>";
+}
+?>
 <div id='export_menu'>
     <a href='make_csv.php'><img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export in spreadsheet file' /></a>
 </div>

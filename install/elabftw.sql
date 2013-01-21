@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS `items` (
   `date` int(10) unsigned NOT NULL,
   `body` text,
   `rating` tinyint(10) DEFAULT '0',
-  `type` varchar(255) DEFAULT 'item',
+  `type` int(10) UNSIGNED NOT NULL,
   `userid` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
@@ -112,23 +112,16 @@ CREATE TABLE IF NOT EXISTS `items_tags` (
 
 -- --------------------------------------------------------
 
---
--- Table structure for table `items_templates`
---
 
-CREATE TABLE IF NOT EXISTS `items_templates` (
-  `id` int(10) unsigned NOT NULL,
-  `type` varchar(255) DEFAULT NULL,
-  `body` text,
-  `tags` text,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------- elabftw --------------
-INSERT INTO `items_templates` VALUES(1, 'pla', '<p>Backbone :</p>\r\n<p>Concentration :</p>\r\n<p>Resistances :</p>', 'plasmid');
-INSERT INTO `items_templates` VALUES(2, 'pro', 'Source :', 'protocol');
-INSERT INTO `items_templates` VALUES(3, 'ant', '<p>Target :</p>\r\n<p>Concentration :</p>\r\n<p>Isotype :</p>\r\n<p>Host :</p>\r\n<p>Type :</p>\r\n<p>WB dilution :</p>\r\n<p>IF dilution :</p>\r\n<p>IP dilution :</p>\r\n<p>Comments :</p>', NULL);
-
+-- elabftw 
+CREATE TABLE `items_types` (
+        `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+        `name` TEXT NOT NULL ,
+        `bgcolor` VARCHAR( 6 ) DEFAULT '000000',
+        `template` TEXT NULL,
+        `tags` TEXT NULL,
+        PRIMARY KEY ( `id` )
+    ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;
 -- --------------------------------------------------------
 
 --

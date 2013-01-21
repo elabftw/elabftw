@@ -96,6 +96,22 @@ while ($items_types = $req->fetch()) {
 
 </section>
 
+<section class='item'>
+<h3>ADD NEW ITEM TYPE</h3>
+<div class='simple_border'><form action='admin-exec.php' method='post'>
+<input type='text' class='biginput' name='new_item_type_name' />
+<input type='hidden' name='new_item_type' value='1' />
+<div id='colorwheel_div_new'>
+<div class='colorwheel inline'></div>
+<input type='text' name='new_item_type_bgcolor' value='#000000' /></div><br /><br />
+<textarea class='mceditable' name='new_item_type_template' /></textarea><br />
+<input type='submit' class='submitbutton' value='Add new item type' /></form></div>
+<script>
+$(document).ready(function() {
+    color_wheel('#colorwheel_div_new')
+});
+</script>
+
 <script>
 // color wheel
 function color_wheel(div_name) {

@@ -410,9 +410,9 @@ function make_pdf($id, $type, $out = 'browser') {
         <hr>".$body."<br /><br />
         <hr>Made by : ".$firstname." ".$lastname."<br /><br />";
     if ($type == 'experiments') {
-        $content .= "<qrcode value='".$elabid."' ec='H' style='width: 50mm; background-color: white; color: black;'></qrcode>";
+        $content .= "<qrcode value='".$elabid."' ec='H' style='width: 42mm; background-color: white; color: black;'></qrcode>";
     } else {
-        $content .= "<qrcode value='".$id."' ec='H' style='width: 50mm; background-color: white; color: black;'></qrcode>";
+        $content .= "<qrcode value='".$id."' ec='H' style='width: 42mm; background-color: white; color: black;'></qrcode>";
     }
 
 

@@ -36,6 +36,8 @@ if (isset($_GET['type']) && ($_GET['type'] === 'exp')){
     $item_type = 'experiments';
 } elseif (isset($_GET['type']) && ($_GET['type'] === 'tpl')) {
     $item_type = 'experiments_templates';
+} elseif (isset($_GET['type']) && ($_GET['type'] === 'item_type')) {
+    $item_type = 'items_types';
 } else {
     $item_type = 'items';
 }
@@ -92,6 +94,7 @@ if ($item_type === 'experiments' || $item_type === 'items') {
 
 }
 
+
 // TODO improve results
 if ($result1) {
     $msg_arr = array();
@@ -108,6 +111,8 @@ if ($result1) {
         header("location: experiments.php");
     } elseif ($item_type === 'items') {
         header("location: database.php");
+    } elseif ($item_type === 'items_types') {
+        header("location: admin.php");
     } else {
         header("location: ucp.php");
     }

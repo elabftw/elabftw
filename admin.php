@@ -79,18 +79,27 @@ $sql = "SELECT * from items_types";
 $req = $bdd->prepare($sql);
 $req->execute();
 while ($items_types = $req->fetch()) {
-    echo "<div class='simple_border'><form action='admin-exec.php' method='post'>";
-    echo "<input type='text' class='biginput' name='item_type_name' value='".$items_types['name']."' />";
-    echo "<input type='hidden' name='item_type_id' value='".$items_types['id']."' />";
-    echo "<div id='colorwheel_div_".$items_types['id']."'>";
-    echo "<div class='colorwheel inline'></div>";
-    echo "<input type='text' name='item_type_bgcolor' value='#".$items_types['bgcolor']."'/></div><br /><br />";
-    echo "<textarea class='mceditable high' name='item_type_template' />".$items_types['template']."</textarea>";
-    echo "<br /><input type='submit' class='submitbutton' value='Edit ".$items_types['name']."' /><br />";
-    echo "</form></div>";
-    echo "<script>$(document).ready(function() {
-        color_wheel('#colorwheel_div_".$items_types['id']."')
-});</script>";
+?>
+<div class='simple_border'>
+<a class='align_right' href='delete_item.php?id=<?php echo $items_types['id'];?>&type=item_type' onClick="return confirm('Delete this item type ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
+
+<form action='admin-exec.php' method='post'>
+<input type='text' class='biginput' name='item_type_name' value='<?php echo stripslashes($items_types['name']);?>' />
+<input type='hidden' name='item_type_id' value='<?php echo $items_types['id'];?>' />
+
+<div id='colorwheel_div_<?php echo $items_types['id'];?>'>
+<div class='colorwheel inline'></div>
+
+<input type='text' name='item_type_bgcolor' value='#<?php echo $items_types['bgcolor'];?>'/></div><br /><br />
+ 
+<textarea class='mceditable high' name='item_type_template' /><?php echo stripslashes($items_types['template']);?></textarea><br />
+
+<input type='submit' class='submitbutton' value='Edit <?php echo stripslashes($items_types['name']);?>' /><br />
+</form></div>
+<script>$(document).ready(function() {
+    color_wheel('#colorwheel_div_<?php echo $items_types['id'];?>')
+});</script>
+<?php
 }
 ?>
 

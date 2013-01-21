@@ -271,20 +271,26 @@ function addLinkOnEnter(e) { // the argument here is the event (needed to detect
     if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
         // get link
         var link_id = decodeURIComponent($('#linkinput').attr('value'));
-        // parseint will get the id, and not the rest (if there is number in title)
-        link_id = parseInt(link_id, 10);
-        // POST request
-        var jqxhr = $.post('add_link.php', {
-            link_id: link_id,
-            item_id: <?php echo $id; ?>
-        })
-        // reload the link list
-        .done(function () {
-            $("#links_div").load("experiments.php?mode=edit&id=<?php echo $id;?> #links_div");
-            // clear input field
-            $("#linkinput").val("");
-            return false;
-        })
+        // fix for user pressing enter with no input
+        if (link_id.length > 0) {
+            // parseint will get the id, and not the rest (in case there is number in title)
+            link_id = parseInt(link_id, 10);
+            console.log(isNaN(link_id));
+            if (isNaN(link_id) != true) {
+                // POST request
+                var jqxhr = $.post('add_link.php', {
+                    link_id: link_id,
+                    item_id: <?php echo $id; ?>
+                })
+                // reload the link list
+                .done(function () {
+                    $("#links_div").load("experiments.php?mode=edit&id=<?php echo $id;?> #links_div");
+                    // clear input field
+                    $("#linkinput").val("");
+                    return false;
+                })
+            } // end if input is bad
+        } // end if input < 0
     } // end if key is enter
 }
 // DATEPICKER

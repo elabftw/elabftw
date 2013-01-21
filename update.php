@@ -85,7 +85,7 @@ $create_sql = "CREATE TABLE `items_types` (
         `template` TEXT NULL,
         `tags` TEXT NULL,
         PRIMARY KEY ( `id` )
-    ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;"
+    ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
     $req = $bdd->prepare($create_sql);
     $result = $req->execute();
     if($result) {

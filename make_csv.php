@@ -37,5 +37,5 @@ $req->execute();
 $items = $req->fetch();
 $req->closeCursor();
 
-echo 'Not yet implemented.';
+echo "Not yet implemented. But thanks for trying. If you want to see this feature ASAP, please <a href='http://www.elabftw.net/faq.php#donate'>donate</a>.";
 require_once('inc/footer.php');

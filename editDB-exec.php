@@ -39,8 +39,8 @@ if (is_pos_int($_POST['item_id'])){
     $msg_arr[] = 'The id parameter is not valid !';
     $errflag = true;
 }
-require_once('inc/check_title.php'); // $title
-require_once('inc/check_date.php'); // $date
+$title = check_title($_POST['title']);
+$date = check_date($_POST['date']);
 $body = check_body($_POST['body']);
 require_once('inc/check_files.php'); // $real_filenames[] $long_filenames[]
 

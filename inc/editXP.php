@@ -200,12 +200,8 @@ function delete_tag(tag_id, item_id) {
     }
     return false;
 }
-// ADD TAG JS
-// listen keypress, add tag when it's enter
-jQuery('#addtaginput').keypress(function (e) {
-    addTagOnEnter(e);
-});
 
+// ADD TAG
 function addTagOnEnter(e) { // the argument here is the event (needed to detect which key is pressed)
     var keynum;
     if (e.which) {
@@ -257,11 +253,6 @@ function delete_link(id, item_id) {
     }
     return false;
 }
-// ADD LINK JS
-// listen keypress, add link when it's enter
-jQuery('#linkinput').keypress(function (e) {
-    addLinkOnEnter(e);
-});
 
 function addLinkOnEnter(e) { // the argument here is the event (needed to detect which key is pressed)
     var keynum;
@@ -293,24 +284,6 @@ function addLinkOnEnter(e) { // the argument here is the event (needed to detect
         } // end if input < 0
     } // end if key is enter
 }
-// DATEPICKER
-$( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
-// SELECT ALL TXT WHEN FOCUS ON TITLE INPUT
-$("#title").focus(function(){
-    $("#title").select();
-});
-// EDITOR
-tinyMCE.init({
-    theme : "advanced",
-    mode : "specific_textareas",
-    editor_selector : "mceditable",
-    content_css : "css/tinymce.css",
-    theme_advanced_toolbar_location : "top",
-    theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
-    plugins : "table",
-    theme_advanced_buttons3_add : "forecolor, backcolor, tablecontrols",
-    font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
-});
 
 // AUTOSAVE EVERY 2 SECONDS only when window is on focus
 // we need to wait for mcedit to load (and the user to make a modification)
@@ -338,11 +311,39 @@ function autoSave() {
         });
 }
 
-// change title and start autosave
+// READY ? GO !!
 $(document).ready(function() {
     // fix for the ' and "
     title = "<?php echo $data['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
     document.title = title;
     wait_a_bit();
+    // DATEPICKER
+    $( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
+    // SELECT ALL TXT WHEN FOCUS ON TITLE INPUT
+    $("#title").focus(function(){
+        $("#title").select();
+    });
+    // EDITOR
+    tinyMCE.init({
+        theme : "advanced",
+        mode : "specific_textareas",
+        editor_selector : "mceditable",
+        content_css : "css/tinymce.css",
+        theme_advanced_toolbar_location : "top",
+        theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
+        plugins : "table",
+        theme_advanced_buttons3_add : "forecolor, backcolor, tablecontrols",
+        font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
+    });
+    // ADD TAG JS
+    // listen keypress, add tag when it's enter
+    jQuery('#addtaginput').keypress(function (e) {
+        addTagOnEnter(e);
+    });
+    // ADD LINK JS
+    // listen keypress, add link when it's enter
+    jQuery('#linkinput').keypress(function (e) {
+        addLinkOnEnter(e);
+    });
 });
 </script>

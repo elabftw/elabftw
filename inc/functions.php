@@ -294,15 +294,65 @@ function showDB($id, $display) {
         }
 }
 
+function check_title($input) {
+    // Check TITLE, what else ?
+    if ((isset($input)) && (!empty($input))) {
+        $title = filter_var($input, FILTER_SANITIZE_STRING);
+        // remove linebreak to avoid problem in javascript link list generation on editXP
+        return str_replace(array("\r\n", "\n", "\r"), ' ', $title);
+    } else {
+        return '';
+    }
+}
+
+function check_date($input) {
+    // Check DATE (is != null ? is 6 in length ? is int ? is valable ?)
+    if ((isset($input)) 
+        && (!empty($input)) 
+        && ((strlen($input) == "6")) 
+        && is_pos_int($input)) {
+        // Check if day/month are good
+        $datemonth = substr($input,2,2);
+        $dateday = substr($input,4,2);
+        if(($datemonth <= "12") 
+            && ($dateday <= "31") 
+            && ($datemonth > "0") 
+            && ($dateday > "0")){
+                // SUCCESS on every test
+        return $input;
+        } else {
+        return kdate();
+        }
+    } else {
+        return kdate();
+    }
+}
+
 function check_body($input) {
     // Check BODY (sanitize only);
     if ((isset($input)) && (!empty($input))) {
         // we white list the allowed html tags
         return strip_tags($input, "<br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol><blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td>");
     } else {
-        return false;
+        return '';
     }
 }
+
+function check_outcome($input) {
+    // Check OUTCOME
+    if ((isset($input)) 
+        && (!empty($input))){
+        if (($input === 'running')
+        || ($input === 'success')
+        || ($input === 'fail')
+        || ($input === 'redo')) {
+        return $input;
+        }
+    } else {
+        return NULL;
+    }
+}
+
 
 function make_pdf($id, $type, $out = 'browser') {
     // make a pdf

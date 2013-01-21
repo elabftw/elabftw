@@ -168,7 +168,8 @@ Attached files :<br />
     $zipsize = filesize($zipfile);
     // Display download link (with attribute type=zip for download.php)
     echo "<p>Download archive <span class='filesize'>(".format_bytes($zipsize).")</span> :<br />
-        <img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='' /> <a href='download.php?id=".$id."&f=".$zipfile."&name=".$zipname.".zip&type=zip' target='_blank'>".$zipname.".zip</a></p>";
+        <img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='' /> 
+        <a href='download.php?f=".$zipfile."&name=".$zipname.".zip&type=zip' target='_blank'>".$zipname.".zip</a></p>";
     // Check if zip is < 10 Mo, display send by email dialog
     if ($zipsize < 10485760) {
         // SQL to get all users and emails

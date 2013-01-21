@@ -30,12 +30,29 @@ $page_title='Make CSV';
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
 
+$list = array();
+$list[] = array('id', 'date', 'type', 'title', 'content', 'rating');
 // SQL
 $sql = "SELECT * FROM items";
 $req = $bdd->prepare($sql);
 $req->execute();
-$items = $req->fetch();
-$req->closeCursor();
 
-echo "Not yet implemented. But thanks for trying. If you want to see this feature ASAP, please <a href='http://www.elabftw.net/faq.php#donate'>donate</a>.";
+while ($items = $req->fetch()) {
+    $list[] = array($items['id'], $items['date'], $items['type'], $items['title'], $items['body'], $items['rating']);
+}
+
+$fp = fopen('uploads/database-export.csv', 'w+');
+// utf8 headers
+fwrite($fp,"\xEF\xBB\xBF");
+
+foreach ($list as $fields) {
+        fputcsv($fp, $fields);
+}
+
+fclose($fp);
+
+    // Get zip size
+    $filesize = filesize('uploads/database-export.csv');
+    echo "<p>Download CSV file <span class='filesize'>(".format_bytes($filesize).")</span> :<br />
+        <img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='' /> <a href='download.php?f=database-export.csv&name=osef.csv' target='_blank'>osef.csv</a></p>";
 require_once('inc/footer.php');

@@ -25,13 +25,6 @@
 ********************************************************************************/
 require_once('inc/common.php');
 
-// Check ID
-if (isset($_GET['id']) && is_pos_int($_GET['id'])) {
-    $id = $_GET['id'];
-} else {
-    die('I need a file ID !');
-}
-
 // Check type
 if (isset($_GET['type']) && $_GET['type'] == 'zip') {
     $type = 'zip';

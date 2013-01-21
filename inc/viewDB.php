@@ -41,6 +41,7 @@ $data = $req->fetch();
 ?>
 <section class="item">
 <a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>' onClick="return confirm('Delete this item ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
+<h3><?php echo get_item_name_from_id($data['type']);?> </h3>
 <?php
 echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' title='date' alt='Date :' />".$data['date']."</span><br />";
 show_stars($data['rating']);

@@ -250,6 +250,14 @@ function show_stars($rating) {
 
 /************************************
 *************************************/
+function get_item_name_from_id($id) {
+    global $bdd;
+    $sql = "SELECT name FROM items_types WHERE id = $id";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $data = $req->fetch();
+    return $data['name'];
+}
 
 function showDB($id, $display) {
 // Show unique DB item
@@ -271,10 +279,11 @@ function showDB($id, $display) {
             <?php show_stars($final_query['rating']) ?>
             </section>
 <?php
-        } else {
+        } else { // NOT COMPACT
 ?>
         <section onClick="document.location='database.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item <?php echo $final_query['type'];?>">
         <?php
+        echo "<h4>".get_item_name_from_id($final_query['type'])." </h4>";
         // TAGS
         $tagsql = "SELECT tag FROM items_tags WHERE item_id = :id";
         $tagreq = $bdd->prepare($tagsql);
@@ -449,5 +458,6 @@ function generate_elabid() {
     $date = kdate();
     return $date."-".sha1(uniqid($date, TRUE));
 }
+
 
 ?>

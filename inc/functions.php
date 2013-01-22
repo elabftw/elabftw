@@ -276,13 +276,13 @@ function show_stars($rating) {
 
 /************************************
 *************************************/
-function get_item_name_from_id($id) {
+function get_item_info_from_id($id, $info) {
     global $bdd;
-    $sql = "SELECT name FROM items_types WHERE id = $id";
+    $sql = "SELECT * FROM items_types WHERE id = $id";
     $req = $bdd->prepare($sql);
     $req->execute();
     $data = $req->fetch();
-    return $data['name'];
+    return $data[$info];
 }
 
 function showDB($id, $display) {
@@ -307,9 +307,9 @@ function showDB($id, $display) {
 <?php
         } else { // NOT COMPACT
 ?>
-        <section onClick="document.location='database.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item <?php echo $final_query['type'];?>">
+        <section onClick="document.location='database.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item">
         <?php
-        echo "<h4>".get_item_name_from_id($final_query['type'])." </h4>";
+        echo "<h4 style='color:#".get_item_info_from_id($final_query['type'], 'bgcolor')."'>".get_item_info_from_id($final_query['type'], 'name')." </h4>";
         // TAGS
         $tagsql = "SELECT tag FROM items_tags WHERE item_id = :id";
         $tagreq = $bdd->prepare($tagsql);

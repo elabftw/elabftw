@@ -207,7 +207,7 @@ function showXP($id, $display) {
             echo "</section>";
         } else { // NOT COMPACT
 ?>
-        <section onClick="window.open('experiments.php?mode=view&id=<?php echo $final_query['id'];?>')" class="item <?php echo $final_query['outcome'];?>">
+        <section onClick="document.location='experiments.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item <?php echo $final_query['outcome'];?>">
     <?php
     // TAGS
     $tagsql = "SELECT tag FROM experiments_tags WHERE item_id = :id";

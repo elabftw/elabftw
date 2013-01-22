@@ -42,6 +42,19 @@ if (isset($_GET['type']) && !empty($_GET['type']) && is_pos_int($_GET['type'])) 
 
 if ($type === 'experiments'){
     $elabid = generate_elabid();
+    // do we want template ?
+    if(isset($_GET['tpl']) && is_pos_int($_GET['tpl'])) {
+        // SQL to get template
+        $sql = "SELECT body FROM experiments_templates WHERE id = :id";
+        $get_tpl = $bdd->prepare($sql);
+        $get_tpl->execute(array(
+            'id' => $_GET['tpl']
+        ));
+        $get_tpl_body = $get_tpl->fetch();
+        $body = $get_tpl_body['body'];
+    } else {
+        $body = '';
+    }
 
     // SQL for create experiments
     $sql = "INSERT INTO experiments(title, date, body, outcome, elabid, userid) VALUES(:title, :date, :body, :outcome, :elabid, :userid)";
@@ -49,14 +62,11 @@ if ($type === 'experiments'){
     $result = $req->execute(array(
         'title' => 'Untitled',
         'date' => kdate(),
-        'body' => '',
+        'body' => $body,
         'outcome' => 'running',
         'elabid' => $elabid,
         'userid' => $_SESSION['userid']
     ));
-    if($result){
-        echo 'ok';
-    }
 } else { // create item for DB
     // SQL to get template
     $sql = "SELECT template FROM items_types WHERE id = :id";

@@ -31,14 +31,14 @@ require_once('inc/menu.php');
 require_once('inc/info_box.php');
 
 $list = array();
-$list[] = array('id', 'date', 'type', 'title', 'content', 'rating');
+$list[] = array('id', 'date', 'type', 'title', 'rating');
 // SQL
 $sql = "SELECT * FROM items";
 $req = $bdd->prepare($sql);
 $req->execute();
 
 while ($items = $req->fetch()) {
-    $list[] = array($items['id'], $items['date'], $items['type'], $items['title'], $items['body'], $items['rating']);
+    $list[] = array($items['id'], $items['date'], $items['type'], $items['title'], $items['rating']);
 }
 
 $fp = fopen('uploads/database-export.csv', 'w+');

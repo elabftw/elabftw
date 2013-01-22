@@ -190,7 +190,7 @@ function showXP($id, $display) {
 // Show unique XP
     global $bdd;
     // SQL to get everything from selected id
-    $sql = "SELECT id, title, date, body, outcome  FROM experiments WHERE id = :id";
+    $sql = "SELECT id, title, date, body, outcome, locked  FROM experiments WHERE id = :id";
     $req = $bdd->prepare($sql);
     $req->execute(array(
         'id' => $id
@@ -205,7 +205,7 @@ function showXP($id, $display) {
             echo "<span class='".$final_query['outcome']."_compact'>".$final_query['date']."</span> ";
             echo stripslashes($final_query['title']);
             echo "</section>";
-        } else {
+        } else { // NOT COMPACT
 ?>
         <section onClick="window.open('experiments.php?mode=view&id=<?php echo $final_query['id'];?>')" class="item <?php echo $final_query['outcome'];?>">
     <?php
@@ -222,6 +222,10 @@ function showXP($id, $display) {
     }
     echo "</span>";
     // END TAGS
+    // show lock if item is locked on viewXP
+    if ($final_query['locked'] == 1) {
+    echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' alt='lock' />";
+    }
     echo "<p class='title'>". stripslashes($final_query['title']) . "</p>";
     echo "</section>";
         }

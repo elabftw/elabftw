@@ -100,13 +100,13 @@ function make_thumb($src,$ext,$dest,$desired_width){
 function loadClass($class) {
     require_once('lib/classes/'.$class.'.class.php');
 }
- */
 
 // replace br tags by new lines
 function br2nl( $input ) {
      return preg_replace('/<br(\s+)?\/?>/i', "\n", $input);
 }
 
+*/
 // check if $int is a positive integer
 function is_pos_int($int) {
     $filter_options = array(

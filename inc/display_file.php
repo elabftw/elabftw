@@ -41,8 +41,6 @@ if($count > 0){
         ?>
             <a class='align_right' href='delete_file.php?id=<?php echo $uploads_data['id'];?>&type=<?php echo $uploads_data['type'];?>&item_id=<?php echo $uploads_data['item_id'];?>' onClick="return confirm('Delete this file ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
         <?php
-        // Check if ImageMagick is dispo
-        if (class_exists('Imagick')) {
             // Get file extension to display thumbnail if it's an image
             $ext = get_ext($uploads_data['real_name']);
             if ($ext === 'jpg' || $ext === 'jpeg' || $ext === 'JPG' || $ext === 'png' || $ext === 'gif'){
@@ -56,7 +54,6 @@ if($count > 0){
                 echo "<div class='center'>";
                 echo "<img src='".$thumbpath."' alt='' /></div>";
             }
-        } //end thumb
         echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='' /> <a href='download.php?id=".$uploads_data['id']."&f=".$uploads_data['long_name']."&name=".$uploads_data['real_name']."' target='_blank'>".$uploads_data['real_name']."</a>
         <span class='filesize'> (".format_bytes(filesize('uploads/'.$uploads_data['long_name'])).")</span><br />";
         echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/comments.png' alt='comment' /> <p class='editable' id='comment_".$uploads_data['id']."'>".stripslashes($uploads_data['comment'])."</p></div>";

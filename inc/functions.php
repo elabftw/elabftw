@@ -115,6 +115,24 @@ function is_pos_int($int) {
         ));
     return filter_var($int, FILTER_VALIDATE_INT, $filter_options);
 }
+
+function has_attachement($id) {
+    // Check if an item has a file attached
+    global $bdd;
+    $sql = "SELECT id FROM uploads 
+        WHERE item_id = :item_id";
+    $req = $bdd->prepare($sql);
+    $req->execute(array(
+        'item_id' => $id
+    ));
+    if ($req->rowCount() > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
 // Search item
 function search_item($type, $query, $userid) {
     global $bdd;
@@ -222,9 +240,13 @@ function showXP($id, $display) {
     }
     echo "</span>";
     // END TAGS
+    // show attached if there is a file attached
+    if (has_attachement($final_query['id'])) {
+        echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='file attached' />";
+    }
     // show lock if item is locked on viewXP
     if ($final_query['locked'] == 1) {
-    echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' alt='lock' />";
+        echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' alt='lock' />";
     }
     echo "<p class='title'>". stripslashes($final_query['title']) . "</p>";
     echo "</section>";
@@ -302,6 +324,11 @@ function showDB($id, $display) {
         echo "</span>";
         // END TAGS
         show_stars($final_query['rating']);
+        echo "<br />";
+        // show attached if there is a file attached
+        if (has_attachement($final_query['id'])) {
+            echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='file attached' />";
+        }
         echo "<p class='title'>". stripslashes($final_query['title']) . "</p>";
         echo "</section>";
         }

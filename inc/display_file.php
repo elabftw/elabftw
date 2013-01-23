@@ -41,7 +41,10 @@ if($count > 0){
         ?>
             <a class='align_right' href='delete_file.php?id=<?php echo $uploads_data['id'];?>&type=<?php echo $uploads_data['type'];?>&item_id=<?php echo $uploads_data['item_id'];?>' onClick="return confirm('Delete this file ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
         <?php
-            // Get file extension to display thumbnail if it's an image
+        // THUMBNAIL GENERATION
+        // check first for the GD extension
+        if (extension_loaded('gd')) {
+            // Get file extension to display thumbnail if it's a valid extension
             $ext = get_ext($uploads_data['real_name']);
             if ($ext === 'jpg' || $ext === 'jpeg' || $ext === 'JPG' || $ext === 'png' || $ext === 'gif'){
                 $filepath = 'uploads/'.$uploads_data['long_name'];
@@ -49,11 +52,13 @@ if($count > 0){
                 $thumbpath = 'uploads/'.$uploads_data['long_name'].'_th.'.$ext;
                 // Make thumbnail only if it isn't done already and if size < 2 Mbytes
                 if(!file_exists($thumbpath) && $filesize <= 2000000){
-                    make_thumb($filepath,$ext,$thumbpath,150);
+                make_thumb($filepath,$ext,$thumbpath,150);
                 }
                 echo "<div class='center'>";
-                echo "<img src='".$thumbpath."' alt='' /></div>";
-            }
+                echo "<a href='uploads/".$uploads_data['long_name']."' class='lightbox'><img src='".$thumbpath."' width='150' alt='' /></a></div>";
+            } // end if extension is valid
+        } // end gd here
+        // END THUMBNAIL GENERATION
         echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='' /> <a href='download.php?id=".$uploads_data['id']."&f=".$uploads_data['long_name']."&name=".$uploads_data['real_name']."' target='_blank'>".$uploads_data['real_name']."</a>
         <span class='filesize'> (".format_bytes(filesize('uploads/'.$uploads_data['long_name'])).")</span><br />";
         echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/comments.png' alt='comment' /> <p class='editable' id='comment_".$uploads_data['id']."'>".stripslashes($uploads_data['comment'])."</p></div>";
@@ -62,9 +67,14 @@ if($count > 0){
 } // end if count > 0
 // END DISPLAY FILES
 ?>
-<!-- to edit file comments using jquery jeditable plugin -->
+
+<script src='js/jquery.lightbox-0.5.js'></script>
 <script>
  $(document).ready(function() {
+     // click thumbnail to show full size http://leandrovieira.com/projects/jquery/lightbox/
+     $('a.lightbox').lightBox({
+        txtImage: '<?php echo $uploads_data['real_name'];?>'
+     });
      $('.editable').editable('editinplace.php', { 
          tooltip : 'Click to edit',
              indicator : 'Saving...',
@@ -76,4 +86,4 @@ if($count > 0){
 
      });
  });
-    </script>
+</script>

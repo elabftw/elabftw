@@ -42,6 +42,7 @@ Code from others :
 * Colorwheel : http://jweir.github.com/colorwheel/ (MIT)
 
 ---------------------------
+On Archlinux server, you need to uncomment ;extension=gd.so in /etc/php.ini for image thumbnail generation and install the package php-gd.
 ---------------------------
 
 Use of git : https://gitorious.org/elabftw

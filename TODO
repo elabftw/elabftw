@@ -6,6 +6,7 @@
 * install.php
 
 ////// Fix/improve
+* admin.php: list items types, edit button, slide div with edit form function, same for users
 * google chrome audit
 * put todolist in sql not in cookie
 * upload bigger files; make a Worker() to upload big files asynchronously 

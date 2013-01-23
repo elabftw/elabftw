@@ -148,8 +148,8 @@ if ($req->rowcount() != 0) {
         ));
         $linkdata = $linkreq->fetch();
         echo "<li>- <a href='database.php?mode=view&id=".$linkdata['id']."'>".stripslashes($linkdata['title'])."</a>";
-echo "<a onclick='delete_link(".$links['id'].", ".$id.")'>
-<img src='themes/".$_SESSION['prefs']['theme']."/img/trash.png' title='delete' alt='delete' /></a></li>";
+        echo "<a onclick='delete_link(".$links['id'].", ".$id.")'>
+        <img src='themes/".$_SESSION['prefs']['theme']."/img/trash.png' title='delete' alt='delete' /></a></li>";
     } // end while
     echo "</ul>";
 } else { // end if link exist

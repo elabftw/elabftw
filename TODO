@@ -6,7 +6,6 @@
 * install.php
 
 ////// Fix/improve
-* google chrome audit
 * put todolist in sql not in cookie
 * upload bigger files; make a Worker() to upload big files asynchronously 
 * drag and drop images to embed in text

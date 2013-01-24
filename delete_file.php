@@ -44,12 +44,12 @@ if($_GET['type'] === 'experiments'){
     $reqdel = $bdd->prepare($sql);
     $reqdel->execute();
     $reqdel->closeCursor();
-    $filepath = 'uploads/'.$data['long_name'];
+    $filepath = $ini_arr['upload_dir'].$data['long_name'];
     unlink($filepath);
     // remove thumbnail
     $ext = get_ext($data['real_name']);
-    if (file_exists('uploads/'.$data['long_name'].'_th.'.$ext)) {
-        unlink('uploads/'.$data['long_name'].'_th.'.$ext);
+    if (file_exists($ini_arr['upload_dir'].$data['long_name'].'_th.'.$ext)) {
+        unlink($ini_arr['upload_dir'].$data['long_name'].'_th.'.$ext);
     }
     // Redirect to the viewXP
     $expid = $data['item_id'];
@@ -67,7 +67,7 @@ if($_GET['type'] === 'experiments'){
     $req->execute();
     $data = $req->fetch();
     // Delete file
-    $filepath = 'uploads/'.$data['long_name'];
+    $filepath = $ini_arr['upload_dir'].$data['long_name'];
     unlink($filepath);
 
     // Delete SQL entry (and verify that the type is prot, to avoid someone deleting files saying it's DB whereas it's exp
@@ -89,7 +89,7 @@ if($_GET['type'] === 'experiments'){
     $req->execute();
     $data = $req->fetch();
     // Delete file
-    $filepath = 'uploads/'.$data['long_name'];
+    $filepath = $ini_arr['upload_dir'].$data['long_name'];
     unlink($filepath);
 
     // Delete SQL entry (and verify the type, to avoid someone deleting files saying it's DB whereas it's XP

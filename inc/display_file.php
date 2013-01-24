@@ -47,20 +47,20 @@ if($count > 0){
             // Get file extension to display thumbnail if it's a valid extension
             $ext = get_ext($uploads_data['real_name']);
             if ($ext === 'jpg' || $ext === 'jpeg' || $ext === 'JPG' || $ext === 'png' || $ext === 'gif'){
-                $filepath = 'uploads/'.$uploads_data['long_name'];
-                $filesize = filesize('uploads/'.$uploads_data['long_name']);
-                $thumbpath = 'uploads/'.$uploads_data['long_name'].'_th.'.$ext;
+                $filepath = $ini_arr['upload_dir'].$uploads_data['long_name'];
+                $filesize = filesize($ini_arr['upload_dir'].$uploads_data['long_name']);
+                $thumbpath = $ini_arr['upload_dir'].$uploads_data['long_name'].'_th.'.$ext;
                 // Make thumbnail only if it isn't done already and if size < 2 Mbytes
                 if(!file_exists($thumbpath) && $filesize <= 2000000){
                 make_thumb($filepath,$ext,$thumbpath,150);
                 }
                 echo "<div class='center'>";
-                echo "<a href='uploads/".$uploads_data['long_name']."' class='lightbox'><img src='".$thumbpath."' width='150' alt='' /></a></div>";
+                echo "<a href=".$ini_arr['upload_dir'].$uploads_data['long_name']."' class='lightbox'><img src='".$thumbpath."' width='150' alt='' /></a></div>";
             } // end if extension is valid
         } // end gd here
         // END THUMBNAIL GENERATION
         echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='' /> <a href='download.php?id=".$uploads_data['id']."&f=".$uploads_data['long_name']."&name=".$uploads_data['real_name']."' target='_blank'>".$uploads_data['real_name']."</a>
-        <span class='filesize'> (".format_bytes(filesize('uploads/'.$uploads_data['long_name'])).")</span><br />";
+        <span class='filesize'> (".format_bytes(filesize($ini_arr['upload_dir'].$uploads_data['long_name'])).")</span><br />";
         echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/comments.png' alt='comment' /> <p class='editable' id='comment_".$uploads_data['id']."'>".stripslashes($uploads_data['comment'])."</p></div>";
     } // end while
     echo "</section>";

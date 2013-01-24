@@ -73,7 +73,11 @@ if($count > 0){
  $(document).ready(function() {
      // click thumbnail to show full size http://leandrovieira.com/projects/jquery/lightbox/
      $('a.lightbox').lightBox({
-        txtImage: '<?php echo $uploads_data['real_name'];?>'
+        txtImage: '<?php if(!empty($uploads_data['real_name'])) {
+            echo $uploads_data['real_name'];
+        } else {
+            echo '';
+        };?>'
      });
      $('.editable').editable('editinplace.php', { 
          tooltip : 'Click to edit',

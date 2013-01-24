@@ -57,6 +57,7 @@ echo "</section>";
 <section id='users' class='item'>
 <h3>TEAM MEMBERS</h3>
 <?php
+// TODO put edit form in sliding div
 // SQL to get all users
 $sql = "SELECT userid, lastname, firstname, email FROM users WHERE validated = 1";
 $req = $bdd->prepare($sql);

@@ -55,7 +55,7 @@ if($count > 0){
                 make_thumb($filepath,$ext,$thumbpath,150);
                 }
                 echo "<div class='center'>";
-                echo "<a href=".$ini_arr['upload_dir'].$uploads_data['long_name']."' class='lightbox'><img src='".$thumbpath."' width='150' alt='' /></a></div>";
+                echo "<a href='".$ini_arr['upload_dir'].$uploads_data['long_name']."' class='lightbox'><img src='".$thumbpath."' width='150' alt='' /></a></div>";
             } // end if extension is valid
         } // end gd here
         // END THUMBNAIL GENERATION

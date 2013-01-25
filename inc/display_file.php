@@ -47,15 +47,15 @@ if($count > 0){
             // Get file extension to display thumbnail if it's a valid extension
             $ext = get_ext($uploads_data['real_name']);
             if ($ext === 'jpg' || $ext === 'jpeg' || $ext === 'JPG' || $ext === 'png' || $ext === 'gif'){
-                $filepath = 'uploads/'.$uploads_data['long_name'];
-                $filesize = filesize('uploads/'.$uploads_data['long_name']);
-                $thumbpath = 'uploads/'.$uploads_data['long_name'].'_th.'.$ext;
+                $filepath = $ini_arr['upload_dir'].$uploads_data['long_name'];
+                $filesize = filesize($ini_arr['upload_dir'].$uploads_data['long_name']);
+                $thumbpath = $ini_arr['upload_dir'].$uploads_data['long_name'].'_th.'.$ext;
                 // Make thumbnail only if it isn't done already and if size < 2 Mbytes
                 if(!file_exists($thumbpath) && $filesize <= 2000000){
                 make_thumb($filepath,$ext,$thumbpath,150);
                 }
                 echo "<div class='center'>";
-                echo "<a href='uploads/".$uploads_data['long_name']."' class='lightbox'><img src='".$thumbpath."' width='150' alt='' /></a></div>";
+                echo "<a href=".$ini_arr['upload_dir'].$uploads_data['long_name']."' class='lightbox'><img src='".$thumbpath."' width='150' alt='' /></a></div>";
             } // end if extension is valid
         } // end gd here
         // END THUMBNAIL GENERATION
@@ -73,7 +73,11 @@ if($count > 0){
  $(document).ready(function() {
      // click thumbnail to show full size http://leandrovieira.com/projects/jquery/lightbox/
      $('a.lightbox').lightBox({
-        txtImage: '<?php echo $uploads_data['real_name'];?>'
+        txtImage: '<?php if(!empty($uploads_data['real_name'])) {
+            echo $uploads_data['real_name'];
+        } else {
+            echo '';
+        };?>'
      });
      $('.editable').editable('editinplace.php', { 
          tooltip : 'Click to edit',

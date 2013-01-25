@@ -41,7 +41,7 @@ while ($items = $req->fetch()) {
     $list[] = array($items['id'], $items['date'], $items['type'], $items['title'], $items['rating']);
 }
 
-$fp = fopen('uploads/database-export.csv', 'w+');
+$fp = fopen($ini_arr['upload_dir'].'database-export.csv', 'w+');
 // utf8 headers
 fwrite($fp,"\xEF\xBB\xBF");
 
@@ -52,7 +52,7 @@ foreach ($list as $fields) {
 fclose($fp);
 
     // Get zip size
-    $filesize = filesize('uploads/database-export.csv');
+    $filesize = filesize($ini_arr['upload_dir'].'database-export.csv');
     echo "<p>Download CSV file <span class='filesize'>(".format_bytes($filesize).")</span> :<br />
         <img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='' /> <a href='download.php?f=database-export.csv&name=osef.csv' target='_blank'>osef.csv</a></p>";
 require_once('inc/footer.php');

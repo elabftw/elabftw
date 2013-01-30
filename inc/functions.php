@@ -405,9 +405,9 @@ function make_pdf($id, $type, $out = 'browser') {
     $req = $bdd->prepare($sql);
     $req->execute();
     $data = $req->fetch();
-    $title = $data['title'];
+    $title = stripslashes($data['title']);
     $date = $data['date'];
-    $body = $data['body'];
+    $body = stripslashes($data['body']);
     if ($type == 'experiments') {
         $elabid = $data['elabid'];
     }

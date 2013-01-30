@@ -6,6 +6,7 @@
 * install.php
 
 ////// Fix/improve
+* for printing : http://stackoverflow.com/questions/2255291/print-the-contents-of-a-div
 * put todolist in sql not in cookie
 * upload bigger files; make a Worker() to upload big files asynchronously 
 * drag and drop images to embed in text

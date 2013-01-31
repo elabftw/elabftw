@@ -1,5 +1,4 @@
 ////// Priority
-* fix browser caching selector (outcome on XP)
 * let the user choose for newtab click on item
 * advanced search, when you click in search box, options appear in sliding div ?
 * install : read .ini files and if default values are here, do nothing

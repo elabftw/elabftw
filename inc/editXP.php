@@ -81,20 +81,15 @@ echo stripslashes($tags['tag']);?>
 
 <span class='align_right'>
 <h4>Status</h4>
-<!-- Status get selected by default -->
+<!-- Status get selected by default  (status == outcome) -->
 <?php
-        if (isset($_SESSION['new_outcome'])){
-            $status = $_SESSION['new_outcome'];
-            unset($_SESSION['new_outcome']);
-        } else {
-            $status = $data['outcome'];
-        }
+$status = $data['outcome'];
 ?>
-      <select name="outcome">
-<option <?php echo ($status === "running") ? "selected" : "";?> value="running">Running</option>
-<option <?php echo ($status === "success") ? "selected" : "";?> value="success">Success</option>
-<option <?php echo ($status === "redo") ? "selected" : "";?> value="redo">Need to be redone</option>
-<option <?php echo ($status === "fail") ? "selected" : ""; ?> value="fail">Fail</option>
+      <select id="outcome_form" name="outcome">
+<option id='option_running' value="running">Running</option>
+<option id='option_success' value="success">Success</option>
+<option id='option_redo' value="redo">Need to be redone</option>
+<option id='option_fail' value="fail">Fail</option>
 </select>
 </span>
 <br />
@@ -313,6 +308,25 @@ function autoSave() {
 
 // READY ? GO !!
 $(document).ready(function() {
+    // javascript to put the selected on status option, because with php, browser cache the value of previous edited XP
+    var status = "<?php echo $status;?>";
+    switch(status) {
+    case 'running' :
+        $("#option_running").attr('selected', true);
+        break;
+    case 'success' :
+        $("#option_success").attr('selected', true);
+        break;
+    case 'redo' :
+        $("#option_redo").attr('selected', true);
+        break;
+    case 'fail' :
+        $("#option_fail").attr('selected', true);
+        break;
+    default :
+        $("#option_running").attr('selected', true);
+    }
+
     // fix for the ' and "
     title = "<?php echo $data['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
     document.title = title;

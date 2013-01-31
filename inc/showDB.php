@@ -34,7 +34,13 @@ if(isset($_SESSION['prefs']['display'])) {
 ?>
 <div id='submenu'>
     <form id='big_search' method='get' action='database.php'>
-        <input type='search' name='q' size='50' placeholder='Type your search' />
+        <div id='advanced_search_div'>
+        <span class='search_buttons' onClick="go('advanced')">Go to advanced search page</span>
+        <span class='search_buttons' onClick="go('lucky')">I'm Feeling Lucky</span>
+        <br />
+        <br />
+        </div>
+        <input id='big_search_input' type='search' name='q' size='50' placeholder='Type your search' />
     </form>
     <br />
 <?php // SQL to get items names
@@ -96,3 +102,29 @@ echo "<script>
 key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=prot'});
 </script>";
 ?>
+<script>
+// TOGGLE SEARCH DIV
+$(document).ready(function(){
+    $('#advanced_search_div').hide();
+    $("#big_search_input").click(function(){
+		$('#advanced_search_div').slideToggle("slow");
+    });
+});
+// for search buttons
+function go(where) {
+    // get input text
+    var search = $('#big_search_input').val();
+    if(where == 'advanced') {
+        window.open('search.php?q=' + search, '_blank');
+    } else { // where = lucky
+        // verify we have something inside
+        if (search.length > 0){
+            // pass it to lucky.php; open tab
+            window.open('lucky.php?find=' + search, '_blank');
+        } else {
+            // no search query
+            alert('You may feel very lucky. But I still need something to search for...');
+        }
+    }
+}
+</script>

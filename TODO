@@ -1,5 +1,4 @@
 ////// Priority
-* let the user choose for newtab click on item
 * advanced search, when you click in search box, options appear in sliding div ?
 * install : read .ini files and if default values are here, do nothing
 * install.php
@@ -12,6 +11,7 @@
 * have a bigger thumbnail when you hover an attached file
 * add tag on templates
 * make pdf : colors, indentation fix
+* let the user choose for newtab click on item
 
 ////// New Features
 * possibility to draw

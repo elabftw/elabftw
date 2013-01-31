@@ -36,7 +36,7 @@ $(document).ready(function(){
     // give focus to search field
     $("#search").focus().select();
     // hide advanced search options
-	$(".toggle_container").hide();
+	//$(".toggle_container").hide();
     // toggle advanced search options on click
 	$("p.trigger").click(function(){
         $(this).toggleClass("active").next().slideToggle("slow");
@@ -44,40 +44,27 @@ $(document).ready(function(){
 });
 </script>
 <!-- Search page begin -->
-<section class='item'>
-<div class='center'>
-<form name="search" method="post" action="search.php">
-<input id="search" name='find' size='63' type="text" placeholder="Type here" <?php if(isset($_POST['searching_simple'])){
-    echo "value='".$_POST['find']."'";}?>/>
-<br />
-<input id='submit_on_search_page' type='submit' value='Search' />
-<div id='submitlucky' onClick='lucky()'>I'm Feeling Lucky</div>
-<input type='hidden' name='searching_simple' value='yes' />
+<div id='submenu'>
+<form id='big_search' name="search" method="post" action="search.php">
+<input id="big_search_input" name='find' size='50' type="search" placeholder="Type here" <?php if(isset($_GET['q'])){
+    echo "value='".$_GET['q']."'";}?>/>
 </form>
-<script>
-function lucky() {
-    // get input text
-    var search = $('#search').val();
-    // verify we have something inside
-    if (search.length > 0){
-        // pass it to lucky.php; open tab
-        window.open('lucky.php?find=' + search, '_blank');
-    } else {
-        // no search query
-        alert('You may feel very lucky. But I still need something to search for...');
-    }
-}
-</script>
 <!-- ADVANCED SEARCH -->
-<p class='trigger'>↓ Advanced search ↓</p>
-<div class='toggle_container align_left'>
+<div class='center item'>
+<div class='advanced_search_div align_left'>
 <form name="search" method="post" action="search.php">
 
 Search in : 
 <select>
 <option value='experiments' name='type'>Experiments</option>
-<option value='protocols' name='type'>Protocols</option>
-<option value='plasmids' name='type'>Plasmids</option>
+<?php // SQL to get items names
+$sql = "SELECT * FROM items_types";
+$req = $bdd->prepare($sql);
+$req->execute();
+while ($items_types = $req->fetch()) {
+    echo "<option value='".$items_types['id']."' name='type'>".$items_types['name']."</option>";
+}
+?>
 </select>
 <br />
 <select id='first_search_select'>
@@ -105,9 +92,9 @@ Search in :
 <br />
 </span>
 </div>
+</div>
 </form>
 </div>
-</section>
 <script>
 // get what we want to act on -> second input
     var adv_search_div = $('.adv_search_div').html();

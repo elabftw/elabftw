@@ -251,7 +251,7 @@ h4 {
     margin-left: 64px;
 }
 
-#submitlucky, #submit_on_search_page {
+.search_buttons, #submit_on_search_page {
     border: 1px solid black;
 	color:  #23441e;
 	cursor:  pointer;
@@ -263,7 +263,7 @@ h4 {
 	text-shadow:  0 1px 0 rgba(255,255,255,0.5);
 }
 
-#submit_on_search_page: hover, #submitlucky: hover {
+#submit_on_search_page: hover, .search_buttons: hover {
     opacity: 1;
 }	
 

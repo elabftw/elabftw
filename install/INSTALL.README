@@ -43,7 +43,7 @@ export http_proxy=proxy-adress.company.org:3128
 )
 
 Get latest stable version via git :
-git clone https://git.gitorious.org/elabftw/elabftw.git
+git clone git@github.com:NicolasCARPi/elabftw.git
 (this will create a folder `elabftw`)
 
 # Create the uploads folder :

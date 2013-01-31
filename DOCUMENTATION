@@ -45,11 +45,6 @@ Code from others :
 On Archlinux server, you need to uncomment ;extension=gd.so in /etc/php.ini for image thumbnail generation and install the package php-gd.
 ---------------------------
 
-Use of git : https://gitorious.org/elabftw
-I know all the cool kids are on Github, but Github source code isn't available, unlike gitorious !
+Use of git : https://github.com/NicolasCARPi
 Developped with vim, and 4 spaces indent.
 
-
-// Accounts
-- Passwords are salted with a random salt, stored in SQL with the sha-512 hash.
-- Password forgotten => reset pass with password sent to email.

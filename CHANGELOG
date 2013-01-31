@@ -1,6 +1,8 @@
 /* Changelog for eLabFTW */
 
 Version 0.6
+* Swith repo from gitorious to github (because it has wiki, bug tracker, and
+bigger community)
 * Items in DB can now be everything, and you can edit them
 * Improvement on reset password strategy
 * eLabID is a unique ID bound to each experiment (useful for tracking raw

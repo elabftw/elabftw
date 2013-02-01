@@ -1,5 +1,4 @@
 ////// Priority
-* on search page, add interval for date, in sql $datefrom < $date < $dateto
 * install.php
 
 ////// Fix/improve

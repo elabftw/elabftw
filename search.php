@@ -59,13 +59,19 @@ require_once('inc/info_box.php');
             <br />
             <br />
             <div id='search_inputs_div'>
-            <p class='inline'>Date</p><input name='date' type='text' size='6' id='datepicker' class='search_inputs' value='<?php
-                if(isset($_GET['date']) && !empty($_GET['date'])) {
-                    echo check_date($_GET['date']);
+            <p class='inline'>Where date is between :</p><input name='from' type='text' size='6' class='search_inputs datepicker' value='<?php
+                if(isset($_GET['from']) && !empty($_GET['from'])) {
+                    echo check_date($_GET['from']);
                 }
 ?>'/><br />
 <br />
-<p class='inline'>Title</p><input name='title' type='text' class='search_inputs' value='<?php
+            <p class='inline'>and :</p><input name='to' type='text' size='6' class='search_inputs datepicker' value='<?php
+                if(isset($_GET['to']) && !empty($_GET['to'])) {
+                    echo check_date($_GET['to']);
+                }
+?>'/><br />
+<br />
+<p class='inline'>And title contains </p><input name='title' type='text' class='search_inputs' value='<?php
                 if(isset($_GET['title']) && !empty($_GET['title'])) {
                     echo check_title($_GET['title']);
                 }
@@ -75,13 +81,13 @@ require_once('inc/info_box.php');
                 <p class='inline'>Tags</p><input name='tags' type='text' class='search_inputs'/><br />
 <br />
 -->
-<p class='inline'>Body</p><input name='body' type='text' class='search_inputs' value='<?php
+<p class='inline'>And body contains </p><input name='body' type='text' class='search_inputs' value='<?php
                 if(isset($_GET['body']) && !empty($_GET['body'])) {
                     echo check_body($_GET['body']);
                 }
 ?>'/><br />
 <br />
-                <p class='inline'>Status</p><select name='status' class='search_inputs'>
+                <p class='inline'>And status is </p><select name='status' class='search_inputs'>
 <option value='' name='status'>select status</option>
 <option value='running' name='status'<?php
                     if($_GET && ($_GET['status'] == 'running')) {
@@ -109,7 +115,7 @@ require_once('inc/info_box.php');
 >Fail</option>
 </select>
 <br />
-<br /> <p class='inline'>Rating</p><select name='rating' class='search_inputs'>
+<br /> <p class='inline'>And rating is </p><select name='rating' class='search_inputs'>
 <option value='' name='rating'>select number of stars</option>
 <option value='no' name='rating'>Unrated</option>
 <?php
@@ -140,10 +146,15 @@ if (isset($_GET['title']) && !empty($_GET['title'])) {
 } else {
     $title = '';
 }
-if (isset($_GET['date']) && !empty($_GET['date'])) {
-    $date = check_date($_GET['date']);
+if (isset($_GET['from']) && !empty($_GET['from'])) {
+    $from = check_date($_GET['from']);
 } else {
-    $date = '';
+    $from = '';
+}
+if (isset($_GET['to']) && !empty($_GET['to'])) {
+    $to = check_date($_GET['to']);
+} else {
+    $to = '';
 }
 if (isset($_GET['tags']) && !empty($_GET['tags'])) {
     $tags = filter_var($_GET['tags'], FILTER_SANITIZE_STRING);
@@ -176,7 +187,7 @@ if (isset($_GET)) {
     // EXPERIMENT ADVANCED SEARCH
     if(isset($_GET['type'])) {
         if($_GET['type'] === 'experiments') {
-            $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND date LIKE '%$date%' AND body LIKE '%$body%' AND status LIKE '%$status%'";
+            $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%' AND date BETWEEN '$from' AND '$to'";
             $req = $bdd->prepare($sql);
             $req->execute(array(
                 'userid' => $_SESSION['userid']
@@ -276,6 +287,6 @@ require_once('inc/footer.php');
 <script>
 $(document).ready(function(){
     // DATEPICKER
-    $( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
+    $( ".datepicker" ).datepicker({dateFormat: 'ymmdd'});
 });
 </script>

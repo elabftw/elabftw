@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.5.5
+-- version 3.5.6
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 12, 2013 at 12:25 AM
+-- Generation Time: Feb 01, 2013 at 10:45 PM
 -- Server version: 5.5.29-log
--- PHP Version: 5.4.10
+-- PHP Version: 5.4.11
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `elabftw`
+-- Database: `elabftwtest`
 --
 
 -- --------------------------------------------------------
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `experiments` (
   `elabid` varchar(255) NOT NULL,
   `locked` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=36 ;
 
 -- --------------------------------------------------------
 
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `experiments_links` (
   `item_id` int(10) unsigned NOT NULL,
   `link_id` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=18 ;
 
 -- --------------------------------------------------------
 
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `experiments_tags` (
   `item_id` int(10) unsigned NOT NULL,
   `userid` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=92 ;
 
 -- --------------------------------------------------------
 
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS `experiments_templates` (
   `name` varchar(255) NOT NULL,
   `userid` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
 
 -- --------------------------------------------------------
 
@@ -92,10 +92,10 @@ CREATE TABLE IF NOT EXISTS `items` (
   `date` int(10) unsigned NOT NULL,
   `body` text,
   `rating` tinyint(10) DEFAULT '0',
-  `type` int(10) UNSIGNED NOT NULL,
+  `type` int(10) unsigned NOT NULL,
   `userid` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=26 ;
 
 -- --------------------------------------------------------
 
@@ -108,20 +108,37 @@ CREATE TABLE IF NOT EXISTS `items_tags` (
   `tag` varchar(255) NOT NULL,
   `item_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=62 ;
 
 -- --------------------------------------------------------
 
+--
+-- Table structure for table `items_templates`
+--
 
--- elabftw 
-CREATE TABLE `items_types` (
-        `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-        `name` TEXT NOT NULL ,
-        `bgcolor` VARCHAR( 6 ) DEFAULT '000000',
-        `template` TEXT NULL,
-        `tags` TEXT NULL,
-        PRIMARY KEY ( `id` )
-    ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE TABLE IF NOT EXISTS `items_templates` (
+  `id` int(10) unsigned NOT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `body` text,
+  `tags` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `items_types`
+--
+
+CREATE TABLE IF NOT EXISTS `items_types` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` text NOT NULL,
+  `bgcolor` varchar(6) DEFAULT '000000',
+  `template` text,
+  `tags` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=11 ;
+
 -- --------------------------------------------------------
 
 --
@@ -138,7 +155,7 @@ CREATE TABLE IF NOT EXISTS `uploads` (
   `type` varchar(255) NOT NULL,
   `date` date DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=29 ;
 
 -- --------------------------------------------------------
 
@@ -177,7 +194,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `sc_todo` varchar(1) NOT NULL DEFAULT 't',
   `validated` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`userid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
+-- ELABFTW
 -- create root user with password toor and admin rights
 INSERT INTO `users` VALUES(1, 'root', 'f69483d4a0edb8cc81092a0412b7b276e2fda6fda3a16cb61d16626cb6cd39b235721093e74eb93e23c2021afb3b6056aedb1a45b5bd767baf42d592f99b4c89', '8c744dc6b145df85c03655a678657bf3096ed7b6acd76d2bb27914069f544b07ad164ddf759db02d6bd6542fa4041a04b16060431cbc55d6814f12b048f43240', 'Admin', 'ROOT', 'noreply@nodomain.net', NULL, NULL, NULL, NULL, 1, 0, 0, 0, 0, 1351677553, NULL, 'user', 'default', 'default', 'date', 'desc', 15, 'c', 'e', 's', 't', 1);

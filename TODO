@@ -1,5 +1,4 @@
 ////// Priority
-* finish serialize  and makecsv, do also make pdf
 * on search page, add interval for date, in sql $datefrom < $date < $dateto
 * install : read .ini files and if default values are here, do nothing
 * install.php

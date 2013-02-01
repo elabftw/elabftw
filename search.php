@@ -59,31 +59,69 @@ require_once('inc/info_box.php');
             <br />
             <br />
             <div id='search_inputs_div'>
-                <p class='inline'>Date</p><input name='date' type='text' size='6' id='datepicker' class='search_inputs'/><br />
+            <p class='inline'>Date</p><input name='date' type='text' size='6' id='datepicker' class='search_inputs' value='<?php
+                if(isset($_GET['date']) && !empty($_GET['date'])) {
+                    echo check_date($_GET['date']);
+                }
+?>'/><br />
 <br />
-                <p class='inline'>Title</p><input name='title' type='text' class='search_inputs'/><br />
+<p class='inline'>Title</p><input name='title' type='text' class='search_inputs' value='<?php
+                if(isset($_GET['title']) && !empty($_GET['title'])) {
+                    echo check_title($_GET['title']);
+                }
+?>'/><br />
 <br />
+<!--
                 <p class='inline'>Tags</p><input name='tags' type='text' class='search_inputs'/><br />
 <br />
-                <p class='inline'>Body</p><input name='body' type='text' class='search_inputs' /><br />
+-->
+<p class='inline'>Body</p><input name='body' type='text' class='search_inputs' value='<?php
+                if(isset($_GET['body']) && !empty($_GET['body'])) {
+                    echo check_body($_GET['body']);
+                }
+?>'/><br />
 <br />
                 <p class='inline'>Status</p><select name='status' class='search_inputs'>
 <option value='' name='status'>select status</option>
-<option value='running' name='status'>Running</option>
-<option value='success' name='status'>Success</option>
-<option value='redo' name='status'>Redo</option>
-<option value='fail' name='status'>Fail</option>
+<option value='running' name='status'<?php
+                    if($_GET && ($_GET['status'] == 'running')) {
+                        echo " selected='selected'";
+                    }
+?>
+>Running</option>
+<option value='success' name='status'<?php
+                    if($_GET && ($_GET['status'] == 'success')) {
+                        echo " selected='selected'";
+                    }
+?>
+>Success</option>
+<option value='redo' name='status'<?php
+                    if($_GET && ($_GET['status'] == 'redo')) {
+                        echo " selected='selected'";
+                    }
+?>
+>Redo</option>
+<option value='fail' name='status'<?php
+                    if($_GET && ($_GET['status'] == 'fail')) {
+                        echo " selected='selected'";
+                    }
+?>
+>Fail</option>
 </select>
 <br />
-<br />
-                <p class='inline'>Rating</p><select name='rating' class='search_inputs'>
+<br /> <p class='inline'>Rating</p><select name='rating' class='search_inputs'>
 <option value='' name='rating'>select number of stars</option>
-<option value='0' name='rating'>0</option>
-<option value='1' name='rating'>1</option>
-<option value='2' name='rating'>2</option>
-<option value='3' name='rating'>3</option>
-<option value='4' name='rating'>4</option>
-<option value='5' name='rating'>5</option>
+<option value='no' name='rating'>Unrated</option>
+<?php
+for($i=1; $i<=5; $i++) {
+    echo "<option value='".$i."' name='rating'";
+        // item get selected if it is in the search url
+    if($_GET && ($_GET['rating'] == $i)) {
+        echo " selected='selected'";
+    }
+    echo ">".$i."</option>";
+}
+?>
 </select>
 <br />
             </div>
@@ -122,8 +160,12 @@ if (isset($_GET['status']) && !empty($_GET['status'])) {
 } else {
     $status = '';
 }
-if (isset($_GET['rating']) && !empty($_GET['rating']) && is_pos_int($_GET['rating'])) {
-    $rating = $_GET['rating'];
+if (isset($_GET['rating']) && !empty($_GET['rating'])) {;
+    if($_GET['rating'] === 'no') {
+        $rating = '0';
+    } else {
+    $rating = intval($_GET['rating']);
+    }
 } else {
     $rating = '';
 }
@@ -134,7 +176,7 @@ if (isset($_GET)) {
     // EXPERIMENT ADVANCED SEARCH
     if(isset($_GET['type'])) {
         if($_GET['type'] === 'experiments') {
-            $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND date LIKE '%$date%' AND body LIKE '%$tags%' AND status LIKE '%$status%'";
+            $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND date LIKE '%$date%' AND body LIKE '%$body%' AND status LIKE '%$status%'";
             $req = $bdd->prepare($sql);
             $req->execute(array(
                 'userid' => $_SESSION['userid']

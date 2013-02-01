@@ -134,7 +134,7 @@ if (isset($_GET)) {
     // EXPERIMENT ADVANCED SEARCH
     if(isset($_GET['type'])) {
         if($_GET['type'] === 'experiments') {
-            $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND date LIKE '%$date%' AND body LIKE '%$tags%' AND outcome LIKE '%$status%'";
+            $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND date LIKE '%$date%' AND body LIKE '%$tags%' AND status LIKE '%$status%'";
             $req = $bdd->prepare($sql);
             $req->execute(array(
                 'userid' => $_SESSION['userid']

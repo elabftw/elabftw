@@ -208,7 +208,7 @@ function showXP($id, $display) {
 // Show unique XP
     global $bdd;
     // SQL to get everything from selected id
-    $sql = "SELECT id, title, date, body, outcome, locked  FROM experiments WHERE id = :id";
+    $sql = "SELECT id, title, date, body, status, locked  FROM experiments WHERE id = :id";
     $req = $bdd->prepare($sql);
     $req->execute(array(
         'id' => $id
@@ -220,12 +220,12 @@ function showXP($id, $display) {
             <!-- BEGIN CONTENT -->
         <section onClick="document.location='experiments.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item">
             <?php
-            echo "<span class='".$final_query['outcome']."_compact'>".$final_query['date']."</span> ";
+            echo "<span class='".$final_query['status']."_compact'>".$final_query['date']."</span> ";
             echo stripslashes($final_query['title']);
             echo "</section>";
         } else { // NOT COMPACT
 ?>
-        <section onClick="document.location='experiments.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item <?php echo $final_query['outcome'];?>">
+        <section onClick="document.location='experiments.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item <?php echo $final_query['status'];?>">
     <?php
     // TAGS
     $tagsql = "SELECT tag FROM experiments_tags WHERE item_id = :id";

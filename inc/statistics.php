@@ -23,19 +23,19 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-// Count number of experiments for each case of outcome
+// Count number of experiments for each status
 // SUCCESS
-$outcome_arr = array();
+$status_arr = array();
 $count_arr = array();
-$outcome_arr[] = 'success';
-$outcome_arr[] = 'fail';
-$outcome_arr[] = 'redo';
-$outcome_arr[] = 'running';
-foreach ($outcome_arr as $outcome){
+$status_arr[] = 'success';
+$status_arr[] = 'fail';
+$status_arr[] = 'redo';
+$status_arr[] = 'running';
+foreach ($status_arr as $status){
 $sql = "SELECT COUNT(id)
     FROM experiments 
     WHERE userid = :userid 
-    AND outcome LIKE'".$outcome."'";
+    AND status LIKE'".$status."'";
 $req = $bdd->prepare($sql);
 $req->bindParam(':userid', $_SESSION['userid']);
 $req->execute();
@@ -66,7 +66,7 @@ if ($total != 0) {
           google.setOnLoadCallback(drawChart);
           function drawChart() {
             var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Outcome');
+            data.addColumn('string', 'status');
             data.addColumn('number', 'Experiments number');
             data.addRows([
                 ['Running', <?php echo $running_p;?>],

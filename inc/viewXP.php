@@ -40,7 +40,7 @@ $data = $req->fetch();
 
 // Display experiment
 ?>
-<section class="item <?php echo $data['outcome'];?>">
+<section class="item <?php echo $data['status'];?>">
 <a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>&type=exp' onClick="return confirm('Delete this experiment ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <?php
 echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' title='date' alt='Date :' />".$data['date']."</span><br />
@@ -71,7 +71,7 @@ echo "</span>";
 ?>
 <div OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['id'];?>'" class='title'>
     <?php echo stripslashes($data['title']);?>
-    <span class='align_right' id='outcome'>(<?php echo $data['outcome'];?>)<span>
+    <span class='align_right' id='status'>(<?php echo $data['status'];?>)<span>
 </div>
 <?php
 // BODY (show only if not empty, click on it to edit

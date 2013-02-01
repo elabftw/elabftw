@@ -92,7 +92,7 @@ if (isset($_GET['q'])) { // if there is a query
         $results_arr = array();
         // show only running XP
         $sql = "SELECT id FROM experiments 
-        WHERE userid = :userid AND outcome = 'running' LIMIT 100";
+        WHERE userid = :userid AND status = 'running' LIMIT 100";
         $req = $bdd->prepare($sql);
         $req->execute(array(
             'userid' => $_SESSION['userid']

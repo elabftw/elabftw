@@ -34,14 +34,14 @@ require_once('inc/info_box.php');
 if ($_GET['type'] === 'exp'){
     // begin to build the list of rows with titles 
     $list = array();
-    $list[] = array('id', 'date', 'type', 'title', 'outcome');
+    $list[] = array('id', 'date', 'type', 'title', 'status');
     // SQL
     $sql = "SELECT * FROM experiments";
     $req = $bdd->prepare($sql);
     $req->execute();
 
     while ($experiments = $req->fetch()) {
-        $list[] = array($experiments['id'], $experiments['date'], $experiments['type'], $experiments['title'], $experiments['outcome']);
+        $list[] = array($experiments['id'], $experiments['date'], $experiments['type'], $experiments['title'], $experiments['status']);
     }
 }elseif ($_GET['type'] === 'items'){
     // begin to build the list of rows with titles 

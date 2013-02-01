@@ -191,4 +191,15 @@ $create_sql = "CREATE TABLE `items_types` (
 
 
 }
+
+
+// change outcome in status
+$sql = "ALTER TABLE `experiments` CHANGE `outcome` `status` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL";
+$req = $bdd->prepare($sql);
+$result = $req->execute();
+if($result) {
+    echo 'Outcome is now status.<br />';
+} else {
+    echo 'There was a problem in the database update :/';
+}
 ?>

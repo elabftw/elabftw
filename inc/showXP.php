@@ -261,7 +261,7 @@ echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.h
 $(document).ready(function(){
 	$(".toggle_container").hide();
 	$("a.trigger").click(function(){
-		$('div.toggle_container').slideToggle("slow");
+		$('div.toggle_container').slideToggle(1);
 	});
 });
 // ANIMATE RUNNING ICON

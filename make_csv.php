@@ -35,7 +35,7 @@ $list = array();
 
 // Switch exp/items
 if ($_GET['type'] === 'exp') {
-    $list[] = array('id', 'date', 'title', 'status');
+    $list[] = array('id', 'date', 'title', 'status', 'elabid');
     $table = 'experiments';
 } elseif ($_GET['type'] === 'items') {
     $list[] = array('id', 'date', 'type', 'title', 'rating');
@@ -63,7 +63,7 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
         $csv_data = $req->fetch();
 
         if ($table === 'experiments') {
-                $list[] = array($csv_data['id'], $csv_data['date'], $csv_data['title'], $csv_data['status']);
+                $list[] = array($csv_data['id'], $csv_data['date'], $csv_data['title'], $csv_data['status'], $csv_data['elabid']);
         } else { // items
                 $list[] = array($csv_data['id'], $csv_data['date'], $csv_data['type'], $csv_data['title'], $csv_data['rating']);
         }

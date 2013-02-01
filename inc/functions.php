@@ -299,6 +299,7 @@ function showDB($id, $display) {
             // COMPACT MODE //
             ?>
             <section onClick="document.location='database.php?mode=view&id=<?php echo $final_query['id'];?>'" class='item'>
+            <h4 style='color:#<?php echo get_item_info_from_id($final_query['type'], 'bgcolor');?>'><?php echo get_item_info_from_id($final_query['type'], 'name');?> </h4>
             <span class='date date_compact'><?php echo $final_query['date'];?></span>
             <span><?php echo stripslashes($final_query['title']);?>
             <!-- STAR RATING read only -->

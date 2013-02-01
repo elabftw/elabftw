@@ -33,43 +33,75 @@ Now, let's begin :
  \_/ \_/ \_/   \_/ \_/ \_/ \_/ 
 
 The first part is getting the files on the server.
-
-```````````````````````
-SSH to the server, and cd to the public directory where you want eLabFTW to be installed (can be /var/www, /var/www/elabftw, ~/public_html, or any folder you'd like)
-If you didn't understand this sentence, ask your local geek.
-
 All commands begin with ">".
 
-(If you are behind a proxy :
-> export http_proxy=proxy-adress.company.org:3128
-)
 
-Get latest stable version via git :
-git clone git://github.com/NicolasCARPi/elabftw.git
+============================================================================================
+
+1. Connect to your server with SSH
+If you didn't understand this sentence, ask your local geek.
+
+2. Cd to the public directory where you want eLabFTW to be installed
+(can be /var/www, ~/public_html, or any folder you'd like)
+
+3. Get latest stable version via git :
+> git clone git://github.com/NicolasCARPi/elabftw.git
+OR you can also try this one :
+> git clone https://github.com/NicolasCARPi/elabftw.git
 (this will create a folder `elabftw`)
+If you cannot connect, try exporting your proxy settings in your shell.
 
 
 
-  _   _   _     _   _   _   _  
  / \ / \ / \   / \ / \ / \ / \ 
 ( S | Q | L ) ( P | A | R | T )
  \_/ \_/ \_/   \_/ \_/ \_/ \_/ 
 
+The second part is putting the database in place.
+
+
+============================================================================================
+
 First, you need to create create a user `elabftw` with all rights on the database `elabftw`.
-I recommand using phpmyadmin for that.
-This procedure won't be described here.
+I recommend using phpmyadmin for that.
+This procedure won't be described here, but :
 Here is the doc : http://wiki.phpmyadmin.net/pma/user_management
+Here is the SQL : 
+--
+CREATE USER 'elabftw'@'localhost' IDENTIFIED BY '***';
+
+GRANT USAGE ON * . * TO 'elabftw'@'localhost' IDENTIFIED BY '***' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0 ;
+
+CREATE DATABASE IF NOT EXISTS `elabftw` ;
+
+GRANT ALL PRIVILEGES ON `elabftw` . * TO 'elabftw'@'localhost';
+--
+Here is your friend : http://www.google.com
+
+
+============================================================================================
 
 Next, we will import the database structure :
 (cd in the `elabftw` directory first)
-# mysql -u elabftw -p elabftw < install/elabftw.sql
+> mysql -u elabftw -p elabftw < install/elabftw.sql
 You will be prompted with the password you entered when creating the `elabftw` user in step 1.
+
+
+============================================================================================
 
 Rename the file `admin/config-example.ini` in `admin/config.ini` and edit it.
 Check that this file isn't served by your webserver (point to it in a browser). If you see a 403 Error, all is good. If you see the config file be sure to edit AllowOverride in your <Directory "/var/www/elabftw"> and set it to All.
 
-Finally, point your browser to the install folder (install/) and read onscreen instructions.
 
+============================================================================================
+
+Finally, point your browser to the install folder (install/) and read onscreen instructions.
 You can now login with the user `root`, and the password `toor`. You MUST change your password asap.
 
+
+============================================================================================
+
 It's a good idea to use a php optimizer to increase speed. I recommand installing XCache.
+
+
+~Thank you for using eLabFTW :)

@@ -14,14 +14,6 @@ function kdate(){
     return $year.$month.$day;
 }
 
-//function daydiff($date){
-//// returns the number of days between now and a $date in epoch format
-//$currtime =  time();
-//$timediff = $currtime - $date;
-//$daydiff = floor((($timediff / 60) /60) / 24);
-//return $daydiff;
-//}
-
 function format_bytes($a_bytes){
     // nice display of filesize
 if ($a_bytes < 1024) {

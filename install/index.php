@@ -23,19 +23,65 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-/* install/install-exec.php to get an installation up and running */
-require_once('../inc/head.php');
-// Create the uploads/ dir and set chmod 777
-if (!is_dir("../uploads")){
-   if  (mkdir("../uploads", 0777)){
-    echo "uploads/ directory successfully created.";
-    }else{
-        echo "Failed creating uploads directory. Do it manually and chmod 777 it.";
+/* install/index.php to get an installation up and running */
+session_start();
+
+$ok = "<span style='color:green'>OK</span>";
+$fail = "<span style='color:red'>FAIL</span>";
+
+echo "<html><body><h1>Welcome the the install of eLabFTW</h1>";
+// INI
+echo "[°] Check for admin/config.ini file...";
+if(file_exists('../admin/config.ini')) {
+    $ini_arr = parse_ini_file('../admin/config.ini');
+    if ($ini_arr['lab_name'] == 'YOURLABNAME') {
+        die($fail." : Please edit admin/config.ini");
     }
-}else{
-    echo 'Directory uploads/ already exists. Nothing to do.';
+    echo $ok;
+} else {
+        die($fail." : Please copy admin/config-example.ini to admin/config.ini and edit it.");
 }
 
-// set database name
-ini_get('db_host');
-ini_set('db_host', $_POST['db_host']);
+echo "<br />";
+
+// UPLOADS DIR
+echo "[°] Create uploads/ directory...";
+if (!is_dir("../uploads")){
+   if  (mkdir("../uploads", 0777)){
+    echo $ok;
+    }else{
+        // TODO link to the FAQ
+        die($fail." : Failed creating <em>uploads/</em> directory. Do it manually and chmod 777 it.");
+    }
+}else{
+    echo $ok;
+}
+
+echo "<br />";
+
+// TRY TO CONNECT TO DATABASE
+echo "[°] Connection to database...";
+try
+{
+$pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+$bdd = new PDO('mysql:host='.$ini_arr['db_host'].';dbname='.$ini_arr['db_name'], $ini_arr['db_user'], $ini_arr['db_password'], $pdo_options);
+}
+catch(Exception $e)
+{
+    die($fail." : Could not connect to the database. ERROR : ".$e);
+}
+$sql = "SELECT * FROM users WHERE userid = 1";
+$req = $bdd->prepare($sql);
+$req->execute();
+$test = $req->fetch();
+if($test['userid'] == 1) {
+    echo $ok;
+} else {
+    die($fail);
+}
+// END SQL CONNECT
+
+?>
+<h2>All good !</h2>
+<p><a href='../index.php'>Start working !</a></p>
+</body></html>

@@ -24,16 +24,8 @@
 *                                                                               *
 ********************************************************************************/
 /* auth + connect + functions*/
-/* check the install and load ini */
-if(file_exists('admin/config.ini')) {
-    $ini_arr = parse_ini_file('admin/config.ini');
-    if ($ini_arr['lab_name'] == 'YOURLABNAME') {
-        die('Please edit admin/config.ini');
-    }
-} else {
-        die('Please copy admin/config-example.ini to admin/config.ini and edit it.');
-}
 session_start();
+$ini_arr = parse_ini_file('admin/config.ini');
 require_once('inc/functions.php');
 // SQL CONNECT
 try

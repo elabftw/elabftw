@@ -8,7 +8,8 @@
 
 Thank you for choosing eLabFTW as a lab manager =)
 This file contains the instructions to install elabftw on a webserver but these instructions can also apply if you are installing it locally (with MAMP/WAMP).
-Keep in mind that this software is in beta (meaning it's not finished), so you are encouraged to tell me the bugs you might find or the improvements you would like to see in the next version.
+Please report bugs to : https://github.com/NicolasCARPi/elabftw/issues (you need a github.com account).
+You can also email me : nicolas.carpi <REPLACE BY @> gmail <REPLACE BY .> com
 
   _   _   _   _   _   _   _   _   _   _   _   _  
  / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ 
@@ -33,65 +34,42 @@ Now, let's begin :
 
 The first part is getting the files on the server.
 
-Command line interface :
 ```````````````````````
-SSH to the server, and cd to the public directory where you want eLabFTW to be installed (can be /var/www, /var/www/elabftw or ~/public_html)
-and enter these commands :
+SSH to the server, and cd to the public directory where you want eLabFTW to be installed (can be /var/www, /var/www/elabftw, ~/public_html, or any folder you'd like)
+If you didn't understand this sentence, ask your local geek.
+
+All commands begin with ">".
 
 (If you are behind a proxy :
-export http_proxy=proxy-adress.company.org:3128
+> export http_proxy=proxy-adress.company.org:3128
 )
 
 Get latest stable version via git :
-git clone git@github.com:NicolasCARPi/elabftw.git
+git clone git://github.com/NicolasCARPi/elabftw.git
 (this will create a folder `elabftw`)
 
-# Create the uploads folder :
-cd elabftw/
-mkdir uploads
-# Allow the server to write there
-chmod 777 uploads
-OR, a more clean and secure way :
-chown www-data: uploads && chmod 700 uploads
 
-Graphical user interface :
-`````````````````````````
-Download the latest stable release from the official website.
-Connect to your server via SFTP (or FTP if you don't mind your password being
-sent in clear over the network).
-Upload the decompressed folder to your public directory.
-
-It's a good idea to use a php optimizer to increase speed. I recommand installing XCache.
 
   _   _   _     _   _   _   _  
  / \ / \ / \   / \ / \ / \ / \ 
 ( S | Q | L ) ( P | A | R | T )
  \_/ \_/ \_/   \_/ \_/ \_/ \_/ 
 
-Using the install script :
-```````````````````````
-NOT READY YET !
-Now point your favorite browser to http://example.com/elabftw/install/install.php
-and follow the instructions on screen.
+First, you need to create create a user `elabftw` with all rights on the database `elabftw`.
+I recommand using phpmyadmin for that.
+This procedure won't be described here.
+Here is the doc : http://wiki.phpmyadmin.net/pma/user_management
 
-Manually :
-```````````````
-Connect :
-Command to connect with the user `root`
-# mysql -u root -p
+Next, we will import the database structure :
+(cd in the `elabftw` directory first)
+# mysql -u elabftw -p elabftw < install/elabftw.sql
+You will be prompted with the password you entered when creating the `elabftw` user in step 1.
 
-Create a database (at the mysql prompt)
-mysql> CREATE DATABASE `elabftw` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-Be mindful of the final ";" !
-
-Exit with Ctrl-d, and enter this :
-# mysql -u root -p elabftw < install/elabftw.sql
-
-
-Now the last step :
-Rename the file `admin/config-exemple.ini` in `admin/config.ini` and edit it.
+Rename the file `admin/config-example.ini` in `admin/config.ini` and edit it.
 Check that this file isn't served by your webserver (point to it in a browser). If you see a 403 Error, all is good. If you see the config file be sure to edit AllowOverride in your <Directory "/var/www/elabftw"> and set it to All.
+
+Finally, point your browser to the install folder (install/) and read onscreen instructions.
 
 You can now login with the user `root`, and the password `toor`. You MUST change your password asap.
 
-You should be good to go. Email me in case of troubles : nicolas.carpi gmail com
+It's a good idea to use a php optimizer to increase speed. I recommand installing XCache.

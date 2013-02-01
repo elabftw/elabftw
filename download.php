@@ -56,7 +56,7 @@ if (!isset($_GET['name']) || empty($_GET['name'])) {
 if ($type == 'zip') {
     $file_path = '/tmp/'.$long_filename;
 } else {
-    $file_path = $ini_arr['upload_dir'].$long_filename;
+    $file_path = 'uploads/'.$long_filename;
 }
 
 // MIME

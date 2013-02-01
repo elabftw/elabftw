@@ -125,7 +125,7 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
                     for ($i=0;$i<$filenb;$i++){
                         $html .= "<a href='".$real_name[$i]."'>".$real_name[$i]."</a> (".stripslashes(str_replace("&#39;", "'", utf8_decode($comment[$i]))).").<br />";
                         // add files to archive
-                        $zip->addFile($ini_arr['upload_dir'].$long_name[$i], $folder."/".$real_name[$i]);
+                        $zip->addFile('uploads/'.$long_name[$i], $folder."/".$real_name[$i]);
                     }
 
                 }

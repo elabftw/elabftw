@@ -30,38 +30,54 @@ $page_title='Make CSV';
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
 
+// this is the lines in the csv file
+$list = array();
+
 // Switch exp/items
-if ($_GET['type'] === 'exp'){
-    // begin to build the list of rows with titles 
-    $list = array();
-    $list[] = array('id', 'date', 'type', 'title', 'status');
-    // SQL
-    $sql = "SELECT * FROM experiments";
-    $req = $bdd->prepare($sql);
-    $req->execute();
-
-    while ($experiments = $req->fetch()) {
-        $list[] = array($experiments['id'], $experiments['date'], $experiments['type'], $experiments['title'], $experiments['status']);
-    }
-}elseif ($_GET['type'] === 'items'){
-    // begin to build the list of rows with titles 
-    $list = array();
+if ($_GET['type'] === 'exp') {
+    $list[] = array('id', 'date', 'title', 'status');
+    $table = 'experiments';
+} elseif ($_GET['type'] === 'items') {
     $list[] = array('id', 'date', 'type', 'title', 'rating');
-    // SQL
-    $sql = "SELECT * FROM items";
-    $req = $bdd->prepare($sql);
-    $req->execute();
-
-    while ($items = $req->fetch()) {
-        $list[] = array($items['id'], $items['date'], $items['type'], $items['title'], $items['rating']);
-    }
-}else{
+    $table = 'items';
+} else {
     die('bad type');
 }
+// Check id is valid and assign it to $id
+if(isset($_GET['id']) && !empty($_GET['id'])) {
+    $id_arr = explode(" ", $_GET['id']);
+    foreach($id_arr as $id) {
+        // MAIN LOOP
+        ////////////////
+        // SQL
+        //$sql = "SELECT * FROM :table WHERE id = :id";
+        $sql = "SELECT * FROM $table WHERE id = $id";
+        $req = $bdd->prepare($sql);
+        $req->execute();
+        /*
+        $req->execute(array(
+            'table' => $table,
+            'id' => $id
+        ));
+         */
+        $csv_data = $req->fetch();
+
+        if ($table === 'experiments') {
+                $list[] = array($csv_data['id'], $csv_data['date'], $csv_data['title'], $csv_data['status']);
+        } else { // items
+                $list[] = array($csv_data['id'], $csv_data['date'], $csv_data['type'], $csv_data['title'], $csv_data['rating']);
+        }
+    }
+} else {
+    die('No id to export :/');
+}
+
 
 // make CSV file
+$filename = hash("sha512", uniqid(rand(), true));
+$filepath = 'uploads/'.$filename;
 
-$fp = fopen($ini_arr['upload_dir'].'database-export.csv', 'w+');
+$fp = fopen($filepath, 'w+');
 // utf8 headers
 fwrite($fp,"\xEF\xBB\xBF");
 
@@ -72,7 +88,7 @@ foreach ($list as $fields) {
 fclose($fp);
 
     // Get zip size
-    $filesize = filesize($ini_arr['upload_dir'].'database-export.csv');
+    $filesize = filesize($filepath);
     echo "<p>Download CSV file <span class='filesize'>(".format_bytes($filesize).")</span> :<br />
-        <img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='' /> <a href='download.php?f=database-export.csv&name=osef.csv' target='_blank'>osef.csv</a></p>";
+        <img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='' /> <a href='download.php?f=".$filepath."&name=elabftw-export.csv' target='_blank'>elabftw-export.csv</a></p>";
 require_once('inc/footer.php');

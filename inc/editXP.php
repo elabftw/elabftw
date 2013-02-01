@@ -85,7 +85,7 @@ echo stripslashes($tags['tag']);?>
 <?php
 $status = $data['outcome'];
 ?>
-      <select id="outcome_form" name="outcome">
+      <select id="outcome_form" name="status">
 <option id='option_running' value="running">Running</option>
 <option id='option_success' value="success">Success</option>
 <option id='option_redo' value="redo">Need to be redone</option>

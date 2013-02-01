@@ -49,9 +49,9 @@ require_once('inc/info_box.php');
                 while ($items_types = $req->fetch()) {
                     echo "<option value='".$items_types['id']."' name='type'";
                     // item get selected if it is in the search url
-                    if($items_types['id'] == $_GET['type']) {
+                    if($_GET && ($items_types['id'] == $_GET['type'])) {
                         echo " selected='selected'";
-                    }
+                    } 
                     echo ">".$items_types['name']."</option>";
                 }
                 ?>
@@ -66,6 +66,26 @@ require_once('inc/info_box.php');
                 <p class='inline'>Tags</p><input name='tags' type='text' class='search_inputs'/><br />
 <br />
                 <p class='inline'>Body</p><input name='body' type='text' class='search_inputs' /><br />
+<br />
+                <p class='inline'>Status</p><select name='status' class='search_inputs'>
+<option value='' name='status'>select status</option>
+<option value='running' name='status'>Running</option>
+<option value='success' name='status'>Success</option>
+<option value='redo' name='status'>Redo</option>
+<option value='fail' name='status'>Fail</option>
+</select>
+<br />
+<br />
+                <p class='inline'>Rating</p><select name='rating' class='search_inputs'>
+<option value='' name='rating'>select number of stars</option>
+<option value='0' name='rating'>0</option>
+<option value='1' name='rating'>1</option>
+<option value='2' name='rating'>2</option>
+<option value='3' name='rating'>3</option>
+<option value='4' name='rating'>4</option>
+<option value='5' name='rating'>5</option>
+</select>
+<br />
             </div>
 
             </div>
@@ -79,69 +99,89 @@ require_once('inc/info_box.php');
 // assign varaibles from get
 if (isset($_GET['title']) && !empty($_GET['title'])) {
     $title =  filter_var($_GET['title'], FILTER_SANITIZE_STRING);
+} else {
+    $title = '';
 }
 if (isset($_GET['date']) && !empty($_GET['date'])) {
     $date = check_date($_GET['date']);
+} else {
+    $date = '';
 }
 if (isset($_GET['tags']) && !empty($_GET['tags'])) {
     $tags = filter_var($_GET['tags'], FILTER_SANITIZE_STRING);
+} else {
+    $tags = '';
 }
 if (isset($_GET['body']) && !empty($_GET['body'])) {
     $body = check_body($_GET['body']);
+} else {
+    $body = '';
+}
+if (isset($_GET['status']) && !empty($_GET['status'])) {
+    $status = check_status($_GET['status']);
+} else {
+    $status = '';
+}
+if (isset($_GET['rating']) && !empty($_GET['rating']) && is_pos_int($_GET['rating'])) {
+    $rating = $_GET['rating'];
+} else {
+    $rating = '';
 }
 
 // Is there a search ?
 if (isset($_GET)) {
 
     // EXPERIMENT ADVANCED SEARCH
-    if($_GET['type'] === 'experiments') {
-        $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND date LIKE '%$date%' AND body LIKE '%$tags%'";
-        $req = $bdd->prepare($sql);
-        $req->execute(array(
-            'userid' => $_SESSION['userid']
-        ));
-        // This counts the number or results - and if there wasn't any it gives them a little message explaining that 
-        $count = $req->rowCount();
-        if ($count > 0) {
-            // make array of results id
-            $results_id = array();
-            while ($get_id = $req->fetch()) {
-                $results_id[] = $get_id['id'];
-            }
-            // construct string for links to export results
-            foreach($results_id as $id) {
-                $results_id_str .= $id."+";
-            }
-            // remove last +
-            $results_id_str = substr($results_id_str, 0, -1);
-?>
+    if(isset($_GET['type'])) {
+        if($_GET['type'] === 'experiments') {
+            $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND date LIKE '%$date%' AND body LIKE '%$tags%' AND outcome LIKE '%$status%'";
+            $req = $bdd->prepare($sql);
+            $req->execute(array(
+                'userid' => $_SESSION['userid']
+            ));
+            // This counts the number or results - and if there wasn't any it gives them a little message explaining that 
+            $count = $req->rowCount();
+            if ($count > 0) {
+                // make array of results id
+                $results_id = array();
+                while ($get_id = $req->fetch()) {
+                    $results_id[] = $get_id['id'];
+                }
+                // construct string for links to export results
+                $results_id_str = "";
+                foreach($results_id as $id) {
+                    $results_id_str .= $id."+";
+                }
+                // remove last +
+                $results_id_str = substr($results_id_str, 0, -1);
+    ?>
 
-            <div id='export_menu'>
-            <p class='inline'>Export this result : </p>
-            <a href='make_zip.php?id=<?php echo $results_id_str;?>&type=exp'>
-            <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/zip.gif' title='make a zip archive' alt='zip' /></a>
+                <div id='export_menu'>
+                <p class='inline'>Export this result : </p>
+                <a href='make_zip.php?id=<?php echo $results_id_str;?>&type=exp'>
+                <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/zip.gif' title='make a zip archive' alt='zip' /></a>
 
-                <a href='make_csv.php?id=<?php echo $results_id_str;?>&type=exp'><img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export in spreadsheet file' /></a>
-            </div>
-<?php
-            if ($count == 1) {
-            echo "<div id='search_count'>".$count." result</div>";
-            } else {
-            echo "<div id='search_count'>".$count." results</div>";
+                    <a href='make_csv.php?id=<?php echo $results_id_str;?>&type=exp'><img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export in spreadsheet file' /></a>
+                </div>
+    <?php
+                if ($count == 1) {
+                echo "<div id='search_count'>".$count." result</div>";
+                } else {
+                echo "<div id='search_count'>".$count." results</div>";
+                }
+                echo "<div class='search_results_div'>";
+                // Display results
+                echo "<hr>";
+                foreach ($results_id as $id) {
+                    showXP($id, $_SESSION['prefs']['display']);
+                }
+            } else { // no results
+                echo "<p>Sorry, I couldn't find anything :(</p><br />";
             }
-            echo "<div class='search_results_div'>";
-            // Display results
-            echo "<hr>";
-            foreach ($results_id as $id) {
-                showXP($id, $_SESSION['prefs']['display']);
-            }
-        } else { // no results
-            echo "<p>Sorry, I couldn't find anything :(</p><br />";
-        }
 
     // DATABASE ADVANCED SEARCH
     } elseif (is_pos_int($_GET['type'])) {
-        $sql = "SELECT * FROM items WHERE type = :type AND title LIKE '%$title%' AND date LIKE '%$date%' AND body LIKE '%$tags%'";
+        $sql = "SELECT * FROM items WHERE type = :type AND title LIKE '%$title%' AND date LIKE '%$date%' AND body LIKE '%$body%' AND rating LIKE '%$rating%'";
         $req = $bdd->prepare($sql);
         $req->execute(array(
             'type' => $_GET['type']
@@ -154,6 +194,7 @@ if (isset($_GET)) {
                 $results_id[] = $get_id['id'];
             }
             // construct string for links to export results
+            $results_id_str = "";
             foreach($results_id as $id) {
                 $results_id_str .= $id."+";
             }
@@ -183,6 +224,7 @@ if (isset($_GET)) {
         } else { // no results
             echo "<p>Sorry, I couldn't find anything :(</p><br />";
         }
+    }
     }
 }
 

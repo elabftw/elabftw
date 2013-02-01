@@ -378,8 +378,8 @@ function check_body($input) {
     }
 }
 
-function check_outcome($input) {
-    // Check OUTCOME
+function check_status($input) {
+    // Check STATUS
     if ((isset($input)) 
         && (!empty($input))){
         if (($input === 'running')

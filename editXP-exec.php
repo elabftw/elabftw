@@ -42,13 +42,13 @@ if(is_pos_int($_POST['item_id'])){
 $title = check_title($_POST['title']);
 $date = check_date($_POST['date']);
 $body = check_body($_POST['body']);
-$outcome = check_outcome($_POST['outcome']);
+$status = check_status($_POST['status']);
 require_once('inc/check_files.php'); // $real_filenames[] $long_filenames[]
 
 // Store stuff in Session to get it back if error input
 $_SESSION['new_title'] = $title;
 $_SESSION['new_date'] = $date;
-$_SESSION['new_outcome'] = $outcome;
+$_SESSION['new_status'] = $status;
 
 // If input errors, redirect back to the experiment form
 if($errflag) {
@@ -71,7 +71,7 @@ $result = $req->execute(array(
     'title' => $title,
     'date' => $date,
     'body' => $body,
-    'outcome' => $outcome,
+    'outcome' => $status,
     'userid' => $_SESSION['userid'],
     'id' => $id
 ));
@@ -109,7 +109,7 @@ if (is_uploaded_file($_FILES['files']['tmp_name'][0])){
 if($result) {
     unset($_SESSION['new_title']);
     unset($_SESSION['new_date']);
-    unset($_SESSION['outcome']);
+    unset($_SESSION['status']);
     unset($_SESSION['errors']);
     header("location: experiments.php?mode=view&id=$id");
 } else {

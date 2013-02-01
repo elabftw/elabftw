@@ -45,13 +45,13 @@ if ($type === 'experiments') {
     $req->execute();
     $data = $req->fetch();
     // SQL for duplicateXP
-    $sql = "INSERT INTO experiments(title, date, body, outcome, elabid, userid) VALUES(:title, :date, :body, :outcome, :elabid, :userid)";
+    $sql = "INSERT INTO experiments(title, date, body, status, elabid, userid) VALUES(:title, :date, :body, :status, :elabid, :userid)";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
         'title' => $data['title'],
         'date' => kdate(),
         'body' => $data['body'],
-        'outcome' => 'running',
+        'status' => 'running',
         'elabid' => $elabid,
         'userid' => $_SESSION['userid']));
     // END SQL main

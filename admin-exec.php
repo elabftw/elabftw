@@ -67,7 +67,7 @@ if (isset($_POST['deluser']) && is_pos_int($_POST['deluser'])) {
     ));
     while($uploads = $req->fetch()){
         // Delete file
-        $filepath = $ini_arr['upload_dir'].$uploads['long_name'];
+        $filepath = 'uploads/'.$uploads['long_name'];
         unlink($filepath);
     }
     $sql = "DELETE FROM uploads WHERE userid = ".$userid;

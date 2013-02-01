@@ -52,7 +52,7 @@ if ($data['locked'] == 1) {
 
 // BEGIN CONTENT
 ?>
-<section class='item <?php echo $data['outcome'];?>'>
+<section class='item <?php echo $data['status'];?>'>
 <a class='align_right' href='delete_item.php?id=<?php echo $id;?>&type=exp' onClick="return confirm('Delete this experiment ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <!-- ADD TAG FORM -->
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.gif' alt='' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
@@ -81,11 +81,11 @@ echo stripslashes($tags['tag']);?>
 
 <span class='align_right'>
 <h4>Status</h4>
-<!-- Status get selected by default  (status == outcome) -->
+<!-- Status get selected by default -->
 <?php
-$status = $data['outcome'];
+$status = $data['status'];
 ?>
-      <select id="outcome_form" name="status">
+      <select id="status_form" name="status">
 <option id='option_running' value="running">Running</option>
 <option id='option_success' value="success">Success</option>
 <option id='option_redo' value="redo">Need to be redone</option>

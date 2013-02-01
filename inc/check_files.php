@@ -26,8 +26,7 @@
 if (is_uploaded_file($_FILES['files']['tmp_name'][0])){
         $real_filenames = array();
         $long_filenames = array();
-        // TODO check there is a trailing /
-        $upload_directory = $ini_arr['upload_dir']; //set upload directory from config.ini
+        $upload_directory = 'uploads/';
         // count files uploaded
         $cnt = 0;
         for ($i = 0; $i < count($_FILES['files']['tmp_name']); $i++) {

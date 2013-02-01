@@ -63,7 +63,7 @@ if($errflag) {
         SET title = :title, 
         date = :date, 
         body = :body, 
-        outcome = :outcome
+        status = :status
         WHERE userid = :userid 
         AND id = :id";
 $req = $bdd->prepare($sql);
@@ -71,7 +71,7 @@ $result = $req->execute(array(
     'title' => $title,
     'date' => $date,
     'body' => $body,
-    'outcome' => $status,
+    'status' => $status,
     'userid' => $_SESSION['userid'],
     'id' => $id
 ));

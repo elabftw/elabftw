@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `experiments` (
   `title` varchar(255) NOT NULL,
   `date` int(10) unsigned NOT NULL,
   `body` text NOT NULL,
-  `outcome` varchar(255) NOT NULL,
+  `status` varchar(255) NOT NULL,
   `links` varchar(255) DEFAULT NULL,
   `userid` int(10) unsigned NOT NULL,
   `elabid` varchar(255) NOT NULL,

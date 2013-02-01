@@ -29,12 +29,6 @@ require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 ?>
 <div id='submenu'>
     <form id='big_search' method='get' action='experiments.php'>
-        <div id='advanced_search_div'>
-            <span class='search_buttons' onClick="go('advanced')">Go to advanced search page</span>
-            <span class='search_buttons' onClick="go('lucky')">I'm Feeling Lucky</span>
-            <br />
-            <br />
-        </div>
         <input id='big_search_input' type='search' name='q' size='50' placeholder='Type your search' />
     </form>
     <br />
@@ -265,10 +259,6 @@ echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.h
 ?>
 // TOGGLE DIV
 $(document).ready(function(){
-    $('#advanced_search_div').hide();
-    $("#big_search_input").click(function(){
-		$('#advanced_search_div').slideToggle("slow");
-    });
 	$(".toggle_container").hide();
 	$("a.trigger").click(function(){
 		$('div.toggle_container').slideToggle("slow");
@@ -280,22 +270,5 @@ function changeSrc(theme){
 }
 function stopAnim(theme){
     document.getElementById('runningimg').src = 'themes/'+theme+'/img/running.fix.png';
-}
-// for search buttons
-function go(where) {
-    // get input text
-    var search = $('#big_search_input').val();
-    if(where == 'advanced') {
-        window.open('search.php?q=' + search, '_blank');
-    } else { // where = lucky
-        // verify we have something inside
-        if (search.length > 0){
-            // pass it to lucky.php; open tab
-            window.open('lucky.php?find=' + search, '_blank');
-        } else {
-            // no search query
-            alert('You may feel very lucky. But I still need something to search for...');
-        }
-    }
 }
 </script>

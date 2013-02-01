@@ -32,39 +32,43 @@ if (isset($_POST['item_id']) && is_pos_int($_POST['item_id'])) {
 } else {
     die("The experiment id parameter in the URL isn't a valid experiment ID");
 }
-// Sanitize tag
-$tag = filter_var($_POST['tag'], FILTER_SANITIZE_STRING);
+// Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
+$tag = str_replace('\\', '', filter_var($_POST['tag'], FILTER_SANITIZE_STRING));
 
-// Tag for experiment or protocol ?
-if ($_POST['type'] == 'exp' ){
-    // Check expid is owned by connected user
-    $sql = "SELECT userid FROM experiments WHERE id = ".$item_id;
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    $data = $req->fetch();
-    if ($data['userid'] == $_SESSION['userid']) {
-        // SQL for addtag
-        $sql = "INSERT INTO experiments_tags (tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
+// do not add if tag contains only illegal stuff
+if (strlen($tag) > 0) {
+
+    // Tag for experiment or protocol ?
+    if ($_POST['type'] == 'exp' ){
+        // Check expid is owned by connected user
+        $sql = "SELECT userid FROM experiments WHERE id = ".$item_id;
+        $req = $bdd->prepare($sql);
+        $req->execute();
+        $data = $req->fetch();
+        if ($data['userid'] == $_SESSION['userid']) {
+            // SQL for addtag
+            $sql = "INSERT INTO experiments_tags (tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
+            $req = $bdd->prepare($sql);
+            $result = $req->execute(array(
+                'tag' => $tag,
+                'item_id' => $item_id,
+                'userid' => $_SESSION['userid']
+            ));
+            if (!$result) {
+                die('Something went wrong in the database query. Check the flux capacitor.');
+            }
+        }
+    } elseif ($_POST['type'] == 'item'){
+        // SQL for add tag to database item
+        $sql = "INSERT INTO items_tags (tag, item_id) VALUES(:tag, :item_id)";
         $req = $bdd->prepare($sql);
         $result = $req->execute(array(
             'tag' => $tag,
-            'item_id' => $item_id,
-            'userid' => $_SESSION['userid']
-        ));
+            'item_id' => $item_id));
         if (!$result) {
             die('Something went wrong in the database query. Check the flux capacitor.');
         }
+    } else {
+        die('taggle');
     }
-} elseif ($_POST['type'] == 'item'){
-    // SQL for add tag to database item
-    $sql = "INSERT INTO items_tags (tag, item_id) VALUES(:tag, :item_id)";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute(array(
-        'tag' => $tag,
-        'item_id' => $item_id));
-    if (!$result) {
-        die('Something went wrong in the database query. Check the flux capacitor.');
-    }
-} else {
-    die('taggle');
 }

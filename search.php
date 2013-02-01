@@ -30,159 +30,168 @@ require_once('inc/head.php');
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
 ?>
-<!-- javascript is at the beginning otherwise if there is no input, exit() is called before JS is read -->
-<script>
-$(document).ready(function(){
-    // give focus to search field
-    $("#search").focus().select();
-    // hide advanced search options
-	//$(".toggle_container").hide();
-    // toggle advanced search options on click
-	$("p.trigger").click(function(){
-        $(this).toggleClass("active").next().slideToggle("slow");
-	});
-});
-</script>
-<!-- Search page begin -->
-<div id='submenu'>
-<form id='big_search' name="search" method="post" action="search.php">
-<input id="big_search_input" name='find' size='50' type="search" placeholder="Type here" <?php if(isset($_GET['q'])){
-    echo "value='".$_GET['q']."'";}?>/>
-</form>
-<!-- ADVANCED SEARCH -->
+<!-- Advanced Search page begin -->
 <div class='center item'>
-<div class='advanced_search_div align_left'>
-<form name="search" method="post" action="search.php">
+    <div class='advanced_search_div align_left'>
+        <form name="search" method="get" action="search.php">
+            <!-- SUBMIT BUTTON -->
+            <button class='submit_search_button' type='submit'>
+                <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/submit.png' name='Submit' value='Submit' />
+                <p>FIND</p>
+            </button>
+            <p class='inline'>Search in : </p>
+            <select name='type'>
+                <option value='experiments'>Experiments</option>
+                <?php // Database items types
+                $sql = "SELECT * FROM items_types";
+                $req = $bdd->prepare($sql);
+                $req->execute();
+                while ($items_types = $req->fetch()) {
+                    echo "<option value='".$items_types['id']."' name='type'";
+                    // item get selected if it is in the search url
+                    if($items_types['id'] == $_GET['type']) {
+                        echo " selected='selected'";
+                    }
+                    echo ">".$items_types['name']."</option>";
+                }
+                ?>
+            </select>
+            <br />
+            <br />
+            <div id='search_inputs_div'>
+                <p class='inline'>Date</p><input name='date' type='text' size='6' id='datepicker' class='search_inputs'/><br />
+<br />
+                <p class='inline'>Title</p><input name='title' type='text' class='search_inputs'/><br />
+<br />
+                <p class='inline'>Tags</p><input name='tags' type='text' class='search_inputs'/><br />
+<br />
+                <p class='inline'>Body</p><input name='body' type='text' class='search_inputs' /><br />
+            </div>
 
-Search in : 
-<select>
-<option value='experiments' name='type'>Experiments</option>
-<?php // SQL to get items names
-$sql = "SELECT * FROM items_types";
-$req = $bdd->prepare($sql);
-$req->execute();
-while ($items_types = $req->fetch()) {
-    echo "<option value='".$items_types['id']."' name='type'>".$items_types['name']."</option>";
-}
-?>
-</select>
-<br />
-<select id='first_search_select'>
-<option value='title' name='where[]'>Title</option>
-<option value='date' name='where[]'>Date</option>
-<option value='tags' name='where[]'>Tags</option>
-</select>
-<input name='what[]' type='text' size='42' />
-<br />
-<div class='adv_search_div'>
-<span class='adv_search_block'>
-<select>
-<option value='and' name='operator[]'>AND</option>
-<option value='or' name='operator[]'>OR</option>
-<option value='not' name='operator[]'>NOT</option>
-</select>
-<select>
-<option value='title' name='where[]'>Title</option>
-<option value='date' name='where[]'>Date</option>
-<option value='tags' name='where[]'>Tags</option>
-</select>
-<input name='what[]' type='text' size='42' />
-<a onClick='add_search_field();'>+</a>
-<a class='rm_link' onClick='rm_search_field();'>-</a>
-<br />
-</span>
-</div>
-</div>
-</form>
-</div>
-<script>
-// get what we want to act on -> second input
-    var adv_search_div = $('.adv_search_div').html();
-    adv_search_div_nb = 0;
+            </div>
+            </div>
 
-    // add a search block
-function add_search_field(){
-    $(adv_search_div).appendTo('.adv_search_div');
-    adv_search_div_nb++;
-    $('.adv_search_block').filter(":last").attr('id', 'block_' + adv_search_div_nb);
-}
-// remove the last search block
-function rm_search_field(){
-    $('.adv_search_block').filter(":last").remove();
-}
-</script>
+        </form>
+    </div>
+</div>
 
 <?php
-// SIMPLE SEARCH
-if (isset($_POST['searching_simple']) && ($_POST['searching_simple'] === 'yes')){
-    // Is there a search term ?
-    if (isset($_POST['find']) && !empty($_POST['find'])) {
-        $find = strtoupper(filter_var($_POST['find'], FILTER_SANITIZE_STRING));
-    } else { // no input
-        echo "<ul class='err'><img src='img/error.png' alt='fail' /> ";
-        echo "<li class='inline'>You need to search for something in order to find something...</p>";
-        echo "</ul>";
-        exit();
-    }
-    // SIMPLE SEARCH SQL
-    $sql = "SELECT * FROM experiments WHERE userid = ".$_SESSION['userid']." AND (title LIKE '%$find%' OR date LIKE '%$find%' OR body LIKE '%$find%')";
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    // This counts the number or results - and if there wasn't any it gives them a little message explaining that 
-    $count = $req->rowCount();
-    echo "<div id='search_count'>".$count." results for '".stripslashes($find)."' :<br /><br /></div>";
-    echo "<div class='search_results_div'>";
-    if ($count === 0) {
-        echo "<p>Sorry, I couldn't find anything :(</p><br />";
-    }
-    // Display results
-    while ($data = $req->fetch()) {
-        showXP($data['id'], $_SESSION['prefs']['display']);
+// assign varaibles from get
+if (isset($_GET['title']) && !empty($_GET['title'])) {
+    $title =  filter_var($_GET['title'], FILTER_SANITIZE_STRING);
+}
+if (isset($_GET['date']) && !empty($_GET['date'])) {
+    $date = check_date($_GET['date']);
+}
+if (isset($_GET['tags']) && !empty($_GET['tags'])) {
+    $tags = filter_var($_GET['tags'], FILTER_SANITIZE_STRING);
+}
+if (isset($_GET['body']) && !empty($_GET['body'])) {
+    $body = check_body($_GET['body']);
+}
+
+// Is there a search ?
+if (isset($_GET)) {
+
+    // EXPERIMENT ADVANCED SEARCH
+    if($_GET['type'] === 'experiments') {
+        $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND date LIKE '%$date%' AND body LIKE '%$tags%'";
+        $req = $bdd->prepare($sql);
+        $req->execute(array(
+            'userid' => $_SESSION['userid']
+        ));
+        // This counts the number or results - and if there wasn't any it gives them a little message explaining that 
+        $count = $req->rowCount();
+        if ($count > 0) {
+            // make array of results id
+            $results_id = array();
+            while ($get_id = $req->fetch()) {
+                $results_id[] = $get_id['id'];
+            }
+            // construct string for links to export results
+            foreach($results_id as $id) {
+                $results_id_str .= $id."+";
+            }
+            // remove last +
+            $results_id_str = substr($results_id_str, 0, -1);
+?>
+
+            <div id='export_menu'>
+            <p class='inline'>Export this result : </p>
+            <a href='make_zip.php?id=<?php echo $results_id_str;?>&type=exp'>
+            <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/zip.gif' title='make a zip archive' alt='zip' /></a>
+
+                <a href='make_csv.php?id=<?php echo $results_id_str;?>&type=exp'><img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export in spreadsheet file' /></a>
+            </div>
+<?php
+            if ($count == 1) {
+            echo "<div id='search_count'>".$count." result</div>";
+            } else {
+            echo "<div id='search_count'>".$count." results</div>";
+            }
+            echo "<div class='search_results_div'>";
+            // Display results
+            echo "<hr>";
+            foreach ($results_id as $id) {
+                showXP($id, $_SESSION['prefs']['display']);
+            }
+        } else { // no results
+            echo "<p>Sorry, I couldn't find anything :(</p><br />";
+        }
+
+    // DATABASE ADVANCED SEARCH
+    } elseif (is_pos_int($_GET['type'])) {
+        $sql = "SELECT * FROM items WHERE type = :type AND title LIKE '%$title%' AND date LIKE '%$date%' AND body LIKE '%$tags%'";
+        $req = $bdd->prepare($sql);
+        $req->execute(array(
+            'type' => $_GET['type']
+        ));
+        $count = $req->rowCount();
+        if ($count > 0) {
+            // make array of results id
+            $results_id = array();
+            while ($get_id = $req->fetch()) {
+                $results_id[] = $get_id['id'];
+            }
+            // construct string for links to export results
+            foreach($results_id as $id) {
+                $results_id_str .= $id."+";
+            }
+            // remove last +
+            $results_id_str = substr($results_id_str, 0, -1);
+?>
+
+            <div id='export_menu'>
+            <p class='inline'>Export this result : </p>
+            <a href='make_zip.php?id=<?php echo $results_id_str;?>&type=items'>
+            <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/zip.gif' title='make a zip archive' alt='zip' /></a>
+
+                <a href='make_csv.php?id=<?php echo $results_id_str;?>&type=items'><img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export in spreadsheet file' /></a>
+            </div>
+<?php
+            if ($count == 1) {
+            echo "<div id='search_count'>".$count." result</div>";
+            } else {
+            echo "<div id='search_count'>".$count." results</div>";
+            }
+            echo "<div class='search_results_div'>";
+            // Display results
+            echo "<hr>";
+            foreach ($results_id as $id) {
+                showDB($id, $_SESSION['prefs']['display']);
+            }
+        } else { // no results
+            echo "<p>Sorry, I couldn't find anything :(</p><br />";
+        }
     }
 }
-// What do we search ?
-//if($_POST['search_what'] === 'experiments'){
-//    $what = 'experiments';
-//    if($_POST['search_where'] === 'title'){
-//        $where = 'title';
-//        $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$find%'";
-//    } elseif ($_POST['search_where'] === 'date'){
-//if(filter_var($_POST['find'], FILTER_VALIDATE_INT)) {
-//        $where = 'date';
-//        $sql = "SELECT * FROM experiments WHERE userid = :userid AND date = $find";
-//} else {
-//    die('<p>You need to input a date in order to search for a date !</p>');
-//}
-//    } elseif ($_POST['search_where'] === 'any'){
-//        $where = 'any field';
-//        $sql = "SELECT * FROM experiments WHERE userid = :userid 
-//           AND (title LIKE '%$find%' OR date LIKE '%$find%' OR body LIKE '%$find%')";
-//}else{
-//    die('<p>What are you doing, Dave ?</p>');
-//} //endif what = exp
-//
-//// if what = protocol
-//}elseif($_POST['search_what'] === 'protocols'){
-//    $what = 'protocols';
-//    if($_POST['search_where'] === 'title'){
-//        $where = 'title';
-//        $sql = "SELECT * FROM protocols WHERE title LIKE '%$find%'";
-//    }elseif($_POST['search_where'] === 'any'){
-//        $where = 'any field';
-//        $sql = "SELECT * FROM protocols WHERE title LIKE '%$find%'";
-//    }else{
-//    die('<p>What are you doing, Dave ?</p>');
-//    //endif what = protocols
-//    }
-//}else{
-//    die('<p>What are you doing, Dave ?</p>');
-//}
-
-// BEGIN RESULTS
-//echo "<p>Results for : <em>".stripslashes($find)."</em> in ".$what." ".$where.".</p>";
-
-
 
 // FOOTER
 require_once('inc/footer.php');
 ?>
+<script>
+$(document).ready(function(){
+    // DATEPICKER
+    $( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
+});
+</script>

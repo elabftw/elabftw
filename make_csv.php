@@ -30,16 +30,36 @@ $page_title='Make CSV';
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
 
-$list = array();
-$list[] = array('id', 'date', 'type', 'title', 'rating');
-// SQL
-$sql = "SELECT * FROM items";
-$req = $bdd->prepare($sql);
-$req->execute();
+// Switch exp/items
+if ($_GET['type'] === 'exp'){
+    // begin to build the list of rows with titles 
+    $list = array();
+    $list[] = array('id', 'date', 'type', 'title', 'outcome');
+    // SQL
+    $sql = "SELECT * FROM experiments";
+    $req = $bdd->prepare($sql);
+    $req->execute();
 
-while ($items = $req->fetch()) {
-    $list[] = array($items['id'], $items['date'], $items['type'], $items['title'], $items['rating']);
+    while ($experiments = $req->fetch()) {
+        $list[] = array($experiments['id'], $experiments['date'], $experiments['type'], $experiments['title'], $experiments['outcome']);
+    }
+}elseif ($_GET['type'] === 'items'){
+    // begin to build the list of rows with titles 
+    $list = array();
+    $list[] = array('id', 'date', 'type', 'title', 'rating');
+    // SQL
+    $sql = "SELECT * FROM items";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+
+    while ($items = $req->fetch()) {
+        $list[] = array($items['id'], $items['date'], $items['type'], $items['title'], $items['rating']);
+    }
+}else{
+    die('bad type');
 }
+
+// make CSV file
 
 $fp = fopen($ini_arr['upload_dir'].'database-export.csv', 'w+');
 // utf8 headers

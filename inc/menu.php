@@ -54,6 +54,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 <nav><a href="experiments.php?mode=show">Experiments</a>
 <a href="database.php?mode=show">Database</a>
 <a href="team.php">Team</a>
+<a href="search.php">Search</a>
 <a href="<?php echo $ini_arr['link_href'];?>" target='_blank'><?php echo $ini_arr['link_name'];?></a>
 </nav>
 <hr class='flourishes'>

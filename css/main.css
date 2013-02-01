@@ -174,12 +174,6 @@ nav a{
     padding-bottom: 15px;
 }
 
-#big_search {
-    text-align: center;
-}
-#big_search input {
-    font:  20px Helvetica, Verdana, Arial, sans-serif;
-}
 
 /* on admin.php for items types */
 .biginput {
@@ -247,25 +241,32 @@ h4 {
 /* MENU */
 
 /**** SEARCH PAGE ********/
-#first_search_select {
-    margin-left: 64px;
-}
 
-.search_buttons, #submit_on_search_page {
-    border: 1px solid black;
-	color:  #23441e;
+.search_buttons {
+	color:  blue;
 	cursor:  pointer;
-	font:  bold 14px Arial, Helvetica;
-	margin:  20px 0 0 20px;
-    opacity: 0.7;
-    display: inline;
-    padding:  7px;
-	text-shadow:  0 1px 0 rgba(255,255,255,0.5);
+	font:  bold 10px Arial, Helvetica;
+    text-align:right;
 }
 
-#submit_on_search_page: hover, .search_buttons: hover {
-    opacity: 1;
-}	
+#search_inputs_div {
+    width:250px;
+}
+.search_inputs {
+    float:right;
+}
+
+.submit_search_button{
+    float:right;
+}
+/* search bar */
+#big_search {
+    text-align: center;
+}
+#big_search input {
+    font:  20px Helvetica, Verdana, Arial, sans-serif;
+    margin-bottom: 10px;
+}
 
 /* end search bar 
 
@@ -336,12 +337,11 @@ h4 {
     width: 80%;
 }
 
-.submitbutton{
-    border-radius: 10px;
-    font-size: 20px;
-}
 #submitDiv{
     text-align: right;
+}
+#submitDiv input{
+    border-radius: 20px;
 }
 
 /***********/

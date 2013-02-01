@@ -181,20 +181,6 @@ while ($data = $req->fetch()) {
 </form>
 </div>
 
-<h3><a href='#export'>EXPORT DATA</a></h3>
-<div>
-<p>Choose over which period to do the export :</p>
-<form action='ucp-exec.php' method='post'>
-<select>
-<option name='export_range' value='week'>Last week</option>
-<option name='export_range' value='month'>Last month</option>
-<option name='export_range' value='year'>Last year</option>
-<option name='export_range' selected='selected' value='all'>All</option>
-</select>
-<input name='export' type='submit' value='Export'>
-</form>
-</div>
-
 </div>
 
 

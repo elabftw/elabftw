@@ -33,12 +33,12 @@ if(!class_exists('ZipArchive')) {
     die("<p>You are missing the ZipArchive class in php. Uncomment the line extension=zip.so in /etc/php/php.ini.</p>");
 }
 
-// Switch exp/items
-if ($_GET['type'] === 'exp'){
+// Switch exp/items just for the table to search in sql requests
+if ($_GET['type'] === 'exp') {
     $table = 'experiments';
-}elseif ($_GET['type'] === 'items'){
+} elseif ($_GET['type'] === 'items') {
     $table = 'items';
-}else{
+} else {
     die('bad type');
 }
 // Check id is valid and assign it to $id
@@ -46,7 +46,7 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
     $id_arr = explode(" ", $_GET['id']);
     // BEGIN ZIP
     // name of the downloadable file
-    $zipname = kdate()."-zip_export-elabftw";
+    $zipname = kdate().".export.elabftw";
     // name of the real file on the system, in /tmp to avoid clugging up uploads/
     $zipfile = "/tmp/".$zipname."-".hash("sha512", uniqid(rand(), true)).".zip";
 
@@ -63,7 +63,11 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
             $req->execute();
             $data = $req->fetch();
                 $title = stripslashes($data['title']);
+                // make a title without special char for folder inside .zip
+                $clean_title = preg_replace('/[^A-Za-z0-9]/', '_', $title);
                 $date = $data['date'];
+                // name of the folder
+                $folder = $date."-".$clean_title;
                 $body = stripslashes($data['body']);
             $req->closeCursor();
 
@@ -121,7 +125,7 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
                     for ($i=0;$i<$filenb;$i++){
                         $html .= "<a href='".$real_name[$i]."'>".$real_name[$i]."</a> (".stripslashes(str_replace("&#39;", "'", utf8_decode($comment[$i]))).").<br />";
                         // add files to archive
-                        $zip->addFile($ini_arr['upload_dir'].$long_name[$i], $real_name[$i]);
+                        $zip->addFile($ini_arr['upload_dir'].$long_name[$i], $folder."/".$real_name[$i]);
                     }
 
                 }
@@ -135,14 +139,15 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
                 $html = utf8_encode($html);
                 // add header for utf-8
                 $html = "\xEF\xBB\xBF".$html;
-                $txtfile = '/tmp/'.$zipname."-".uniqid().'.html';
+                $txtfile = '/tmp/elabftw-'.uniqid();
                 $tf = fopen($txtfile, 'w+');
                 fwrite($tf, $html);
                 fclose($tf);
-                $zip->addFile($txtfile, basename($txtfile));
-                // add a pdf, too
+                // add html file
+                $zip->addFile($txtfile, $folder."/".$clean_title.".html");
+                // add a PDF, too
                 $pdfname = make_pdf($id, $table, '/tmp');
-                $zip->addFile('/tmp/'.$pdfname, $pdfname);
+                $zip->addFile('/tmp/'.$pdfname, $folder."/".$pdfname);
                 // delete files
                 //unlink($txtfile);
                 //unlink('/tmp/'.$pdfname);

@@ -406,6 +406,8 @@ function make_pdf($id, $type, $out = 'browser') {
     $req->execute();
     $data = $req->fetch();
     $title = stripslashes($data['title']);
+    // the name of the pdf is needed in make_zip
+    $clean_title = preg_replace('/[^A-Za-z0-9]/', '_', $title);
     $date = $data['date'];
     $body = stripslashes($data['body']);
     if ($type == 'experiments') {
@@ -442,6 +444,7 @@ function make_pdf($id, $type, $out = 'browser') {
         <hr>Made by : ".$firstname." ".$lastname."<br /><br />";
     if ($type == 'experiments') {
         $content .= "<qrcode value='".$elabid."' ec='H' style='width: 42mm; background-color: white; color: black;'></qrcode>";
+        $content .= "<br /><p>elabid : ".$elabid."</p>";
     } else {
         $content .= "<qrcode value='".$id."' ec='H' style='width: 42mm; background-color: white; color: black;'></qrcode>";
     }
@@ -458,22 +461,22 @@ function make_pdf($id, $type, $out = 'browser') {
         $html2pdf->pdf->SetKeywords($tags);
         $html2pdf->setDefaultFont('Arial');
         $html2pdf->writeHTML($content);
-        // we give the elabid as filename for experiments
+
         if ($type == 'experiments') {
+            // used by make_zip
             if ($out != 'browser') {
-            $html2pdf->Output($out.'/'.$elabid.'.pdf', 'F');
-            // the name of the pdf is needed in make_zip
-            return $elabid.'.pdf';
+            $html2pdf->Output($out.'/'.$clean_title.'.pdf', 'F');
+            return $clean_title.'.pdf';
             } else {
-            $html2pdf->Output($elabid.'.pdf');
+            $html2pdf->Output($clean_title.'.pdf');
             }
-        } else {
+        } else { // database item(s)
+            // used by make_zip
             if ($out != 'browser') {
-            $html2pdf->Output($out.'/item.pdf', 'F');
-            // the name of the pdf is needed in make_zip
-            return 'item.pdf';
+            $html2pdf->Output($out.'/'.$clean_title.'.pdf', 'F');
+            return $clean_title.'.pdf';
             } else {
-            $html2pdf->Output('item.pdf');
+            $html2pdf->Output($clean_title.'.pdf');
             }
         }
     }

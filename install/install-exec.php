@@ -35,3 +35,7 @@ if (!is_dir("../uploads")){
 }else{
     echo 'Directory uploads/ already exists. Nothing to do.';
 }
+
+// set database name
+ini_get('db_host');
+ini_set('db_host', $_POST['db_host']);

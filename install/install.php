@@ -25,11 +25,10 @@
 ********************************************************************************/
 /* install/install.php to get an installation up and running */
 require_once('../inc/head.php');
-// TODO check that it's not already installed (check for .ini file)
 ?>
 <h2>Install eLabFTW</h2>
-<form action='install/install-exec.php' method='post'>
-Database location <input value='localhost' type='text' name='db_host' /><br />
+<form action='install-exec.php' method='post'>
+Database location <input value='localhost1' type='text' name='db_host' /><br />
 Database name <input value='elabftw' type='text' name='db_name' /><br />
 Database user <input placeholder='elabftw' type='text' name='db_user' /><br />
 Database password <input placeholder='secr3t' type='password' name='db_password' /><br />

@@ -225,12 +225,13 @@ function addTagOnEnter(e) { // the argument here is the event (needed to detect 
 $(function() {
 		var availableLinks = [
 <?php // get all user's links for autocomplete
-$sql = "SELECT title, id FROM items";
+$sql = "SELECT title, id, type FROM items";
 $getalllinks = $bdd->prepare($sql);
 $getalllinks->execute();
 while ($link = $getalllinks->fetch()){
     // html_entity_decode is needed to convert the quotes
-    echo "'".$link['id']." - ".html_entity_decode(substr($link[0], 0, 60), ENT_QUOTES)."',";
+    $name = get_item_info_from_id($link['type'], 'name');
+    echo "'".$link['id']." - ".$name." - ".html_entity_decode(substr($link[0], 0, 60), ENT_QUOTES)."',";
 }?>
 		];
 		$( "#linkinput" ).autocomplete({

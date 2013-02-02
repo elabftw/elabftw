@@ -70,11 +70,11 @@ catch(Exception $e)
 {
     die($fail." : Could not connect to the database. ERROR : ".$e);
 }
-$sql = "SELECT * FROM users WHERE userid = 1";
+$sql = "SELECT * FROM users";
 $req = $bdd->prepare($sql);
 $req->execute();
 $test = $req->fetch();
-if($test['userid'] == 1) {
+if($test['userid']) {
     echo $ok;
 } else {
     die($fail);

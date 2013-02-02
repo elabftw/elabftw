@@ -68,7 +68,7 @@ while ($users = $req->fetch()) {
     <div class='toggle_users_<?php echo $users['userid'];?>'>
         <a class='align_right' href='delete_item.php?id=<?php echo $users['userid'];?>&type=item_type' onClick="confirm_delete('<?php echo $users['useruserid']."', '".$users['lastname'];?>')"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <br />
-        <form method='post' name='edit_ user' action='admin-exec.php'>
+        <form method='post' action='admin-exec.php'>
             <input type='hidden' value='<?php echo $users['userid'];?>' name='userid' />
             <input type='text' value='<?php echo $users['firstname'];?>' name='firstname' />
             <input type='text' value='<?php echo $users['lastname'];?>' name='lastname' />

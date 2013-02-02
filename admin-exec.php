@@ -78,25 +78,36 @@ if (isset($_POST['deluser']) && is_pos_int($_POST['deluser'])) {
     $_SESSION['infos'] = $msg_arr;
 }
 // EDIT USER
-if (isset($_POST['edit_user']) && is_pos_int($_POST['userid'])) {
+if (isset($_POST['userid']) && is_pos_int($_POST['userid'])) {
     $userid = $_POST['userid'];
-    $item_type_name = filter_var($_POST['item_type_name'], FILTER_SANITIZE_STRING); 
-    // we remove the # of the hexacode and sanitize string
-    $item_type_bgcolor = filter_var(substr($_POST['item_type_bgcolor'], 1, 6), FILTER_SANITIZE_STRING);
-    $item_type_template = check_body($_POST['item_type_template']);
-    $sql = "UPDATE items_types SET name = :name, bgcolor = :bgcolor , template = :template, tags = :tags WHERE id = :id";
+    $firstname = filter_var($_POST['firstname'], FILTER_SANITIZE_STRING); 
+    $lastname = filter_var($_POST['lastname'], FILTER_SANITIZE_STRING); 
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    if($_POST['is_admin'] == 1) {
+        $is_admin = 1;
+    } else { 
+        $is_admin = 0;
+    }
+    if($_POST['validated'] == 1) {
+        $validated = 1;
+    } else { 
+        $validated = 0;
+    }
+
+    $sql = "UPDATE users SET firstname = :firstname, lastname = :lastname, email = :email , is_admin = :is_admin, validated = :validated WHERE userid = :userid";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
-        'name' => $item_type_name,
-        'bgcolor' => $item_type_bgcolor,
-        'template' => $item_type_template,
-        'tags' => $item_type_tags,
-        'id' => $userid
+        'firstname' => $firstname,
+        'lastname' => $lastname,
+        'email' => $email,
+        'is_admin' => $is_admin,
+        'validated' => $validated,
+        'userid' => $userid
     ));
     if ($result){
-        $msg_arr[] = 'New item category updated successfully.';
+        $msg_arr[] = 'User updated successfully.';
         $_SESSION['infos'] = $msg_arr;
-        header('Location: admin.php#items_types');
+        header('Location: admin.php');
         exit();
     } else { //sql fail
         $msg_arr[] = 'There was a problem in the SQL request. Report a bug !';

@@ -55,16 +55,21 @@ if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
     $sql = "SELECT * FROM items ORDER BY id DESC LIMIT 10";
     $req = $bdd->prepare($sql);
     $req->execute();
-    $results_arr = array();
-    while($final_query = $req->fetch()) {
-        $results_arr[] = $final_query['id'];
+    $count = $req->rowCount();
+    if($count == 0) {
+        echo "<p>Welcome to elabftw :)<br />
+            You don't have any item in your database yet.</p>";
+    } else {
+        $results_arr = array();
+        while($final_query = $req->fetch()) {
+            $results_arr[] = $final_query['id'];
+        }
+        // loop the results array and display results
+        echo "<p>Showing last 10 uploads :</p>";
+        foreach($results_arr as $result_id) {
+            showDB($result_id, $display);
+        }
     }
-    // loop the results array and display results
-    echo "<p>Showing last 10 uploads :</p>";
-    foreach($results_arr as $result_id) {
-        showDB($result_id, $display);
-    }
-
 } else { //there is a SEARCH
     $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
     // we make an array for the resulting ids

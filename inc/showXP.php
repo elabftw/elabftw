@@ -167,15 +167,20 @@ if (isset($_GET['q'])) { // if there is a query
     $req = $bdd->prepare($sql);
     $req->bindParam(':userid', $_SESSION['userid']);
     $req->execute();
-
-    while ($data = $req->fetch()) {
-        $results_arr[] = $data['id'];
+    $count = $req->rowCount();
+    if($count == 0) {
+        echo '<p>Welcome to elabftw :)<br />
+            Click the «Create experiment» button to get started.</p>';
+    } else {
+        while ($data = $req->fetch()) {
+            $results_arr[] = $data['id'];
+        }
+        $req->closeCursor();
+        // loop the results array and display results
+        foreach($results_arr as $result_id) {
+            showXP($result_id, $display);
+        } // end foreach
     }
-    $req->closeCursor();
-    // loop the results array and display results
-    foreach($results_arr as $result_id) {
-        showXP($result_id, $display);
-    } // end foreach
 } // END CONTENT
 
 // PAGINATION

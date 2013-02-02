@@ -54,20 +54,70 @@ echo "</section>";
 }
 ?>
 
-<section id='users' class='item'>
+<section class='item'>
 <h3>TEAM MEMBERS</h3>
 <?php
-// TODO put edit form in sliding div
 // SQL to get all users
-$sql = "SELECT userid, lastname, firstname, email FROM users WHERE validated = 1";
+$sql = "SELECT * FROM users";
 $req = $bdd->prepare($sql);
 $req->execute();
-echo "<form method='post' action='admin-exec.php'><ul>";
 while ($users = $req->fetch()) {
-    echo "<li>".$users['firstname']." ".$users['lastname']." (".$users['email'].") :: "; //switch to html because of JS ?>
-    <a href='#' onClick="confirm_delete('<?php echo $users['userid']."', '".$users['lastname'];?>')">delete</a> 
-<?php echo "<a href='admin-exec.php?edituser=".$users['userid']."'>edit</a></li>";
+    ?>
+    <div class='simple_border'>
+    <a class='trigger_users_<?php echo $users['userid'];?>'><img src='img/profile.png' alt='' /> <?php echo $users['firstname'];?></a>
+    <div class='toggle_users_<?php echo $users['userid'];?>'>
+        <a class='align_right' href='delete_item.php?id=<?php echo $users['userid'];?>&type=item_type' onClick="confirm_delete('<?php echo $users['useruserid']."', '".$users['lastname'];?>')"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
+<br />
+        <form method='post' name='edit_ user' action='admin-exec.php'>
+            <input type='hidden' value='<?php echo $users['userid'];?>' name='userid' />
+            <input type='text' value='<?php echo $users['firstname'];?>' name='firstname' />
+            <input type='text' value='<?php echo $users['lastname'];?>' name='lastname' />
+            <input type='text' value='<?php echo $users['email'];?>' name='email' /><br />
+            Has admin rights ?<select name='is_admin'>
+            <option value='1'<?php
+                    if($users['is_admin'] == 1) {
+                        echo " selected='selected'";
+                    }
+?>
+    >yes</option>
+    <option value='0'<?php
+                    if($users['is_admin'] == 0) {
+                        echo " selected='selected'";
+                    }
+?>
+                    >no</option>
+            </select>
+<br />
+            Has an active account ?<select name='validated'>
+            <option value='1'<?php
+                    if($users['validated'] == 1) {
+                        echo " selected='selected'";
+                    }
+?>
+    >yes</option>
+    <option value='0'<?php
+                    if($users['validated'] == 0) {
+                        echo " selected='selected'";
+                    }
+?>
+                    >no</option>
+            </select>
+<br />
+    <input type='submit' class='submitbutton' value='Edit this user' /><br />
+        </form>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $(".toggle_users_<?php echo $users['userid'];?>").hide();
+            $("a.trigger_users_<?php echo $users['userid'];?>").click(function(){
+                $('div.toggle_users_<?php echo $users['userid'];?>').slideToggle(1);
+            });
+        });
+    </script>
+    </div>
+    <?php
 }
+echo "</div>";
 echo "</section>";
 ?>
 
@@ -80,35 +130,41 @@ $sql = "SELECT * from items_types";
 $req = $bdd->prepare($sql);
 $req->execute();
 while ($items_types = $req->fetch()) {
-?>
-<div class='simple_border'>
-<a class='align_right' href='delete_item.php?id=<?php echo $items_types['id'];?>&type=item_type' onClick="return confirm('Delete this item type ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
+    ?>
+    <div class='simple_border'>
+    <a class='trigger_<?php echo $items_types['id'];?>'>Edit <?php echo $items_types['name'];?></a>
+    <div class='toggle_container_<?php echo $items_types['id'];?>'>
+    <a class='align_right' href='delete_item.php?id=<?php echo $items_types['id'];?>&type=item_type' onClick="return confirm('Delete this item type ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 
-<form action='admin-exec.php' method='post'>
-<input type='text' class='biginput' name='item_type_name' value='<?php echo stripslashes($items_types['name']);?>' />
-<input type='hidden' name='item_type_id' value='<?php echo $items_types['id'];?>' />
+    <form action='admin-exec.php' method='post'>
+    <input type='text' class='biginput' name='item_type_name' value='<?php echo stripslashes($items_types['name']);?>' />
+    <input type='hidden' name='item_type_id' value='<?php echo $items_types['id'];?>' />
 
-<div id='colorwheel_div_<?php echo $items_types['id'];?>'>
-<div class='colorwheel inline'></div>
+    <div id='colorwheel_div_<?php echo $items_types['id'];?>'>
+    <div class='colorwheel inline'></div>
 
-<input type='text' name='item_type_bgcolor' value='#<?php echo $items_types['bgcolor'];?>'/></div><br /><br />
- 
-<textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']);?></textarea><br />
+    <input type='text' name='item_type_bgcolor' value='#<?php echo $items_types['bgcolor'];?>'/></div><br /><br />
+     
+    <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']);?></textarea><br />
 
-<input type='submit' class='submitbutton' value='Edit <?php echo stripslashes($items_types['name']);?>' /><br />
-</form></div>
-<script>$(document).ready(function() {
-    color_wheel('#colorwheel_div_<?php echo $items_types['id'];?>')
-});</script>
-<?php
+    <input type='submit' class='submitbutton' value='Edit <?php echo stripslashes($items_types['name']);?>' /><br />
+    </form></div>
+    <script>$(document).ready(function() {
+        $(".toggle_container_<?php echo $items_types['id'];?>").hide();
+        $("a.trigger_<?php echo $items_types['id'];?>").click(function(){
+            $('div.toggle_container_<?php echo $items_types['id'];?>').slideToggle(1);
+        });
+        color_wheel('#colorwheel_div_<?php echo $items_types['id'];?>')
+    });</script></div>
+    <?php
 }
 ?>
 
 </section>
 
 <section class='item'>
-<h3>ADD NEW ITEM TYPE</h3>
-<div class='simple_border'><form action='admin-exec.php' method='post'>
+<a class='trigger_add_new_item'><h3>ADD NEW KIND OF DATABASE ITEM</h3></a>
+<div class='simple_border toggle_add_new_item'><form action='admin-exec.php' method='post'>
 <input type='text' class='biginput' name='new_item_type_name' />
 <input type='hidden' name='new_item_type' value='1' />
 <div id='colorwheel_div_new'>
@@ -116,11 +172,7 @@ while ($items_types = $req->fetch()) {
 <input type='text' name='new_item_type_bgcolor' value='#000000' /></div><br /><br />
 <textarea class='mceditable' name='new_item_type_template' /></textarea><br />
 <input type='submit' class='submitbutton' value='Add new item type' /></form></div>
-<script>
-$(document).ready(function() {
-    color_wheel('#colorwheel_div_new')
-});
-</script>
+</section>
 
 <script>
 // color wheel
@@ -129,33 +181,38 @@ function color_wheel(div_name) {
             cw.input($(div_name+" input" )[0]);
 }
 $(document).ready(function() {
-// EDITOR
-tinyMCE.init({
-    theme : "advanced",
-    mode : "specific_textareas",
-    editor_selector : "mceditable",
-    content_css : "css/tinymce.css",
-    theme_advanced_toolbar_location : "top",
-    theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
-    plugins : "table",
-    theme_advanced_buttons3_add : "forecolor, backcolor, tablecontrols",
-    font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
-});
-// confirm delete by writing full name
-var confirm_delete = function(id, lastname) {
-    var user_input = prompt('WARNING !\nAre you absolutely sure you want to delete this user ?\nThis will delete forever ALL the user\'s data, including files and experiments !!!!\nTo confirm type the LASTNAME of the user in capital letters :');
-    if(user_input != '' && user_input === lastname){
-    // POST request to delete user
-    var jqxhr = $.post('admin-exec.php', {
-        deluser: id
-    })
-    // reload page
-    .success(function() {location.reload()
+    $(".toggle_add_new_item").hide();
+	$("a.trigger_add_new_item").click(function(){
+        $('div.toggle_add_new_item').slideToggle(1);
+	});
+    color_wheel('#colorwheel_div_new')
+    // EDITOR
+    tinyMCE.init({
+        theme : "advanced",
+        mode : "specific_textareas",
+        editor_selector : "mceditable",
+        content_css : "css/tinymce.css",
+        theme_advanced_toolbar_location : "top",
+        theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
+        plugins : "table",
+        theme_advanced_buttons3_add : "forecolor, backcolor, tablecontrols",
+        font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
     });
-    }else{
-        return false;
+    // confirm delete by writing full name
+    var confirm_delete = function(id, lastname) {
+        var user_input = prompt('WARNING !\nAre you absolutely sure you want to delete this user ?\nThis will delete forever ALL the user\'s data, including files and experiments !!!!\nTo confirm type the LASTNAME of the user in capital letters :');
+        if(user_input != '' && user_input === lastname){
+        // POST request to delete user
+        var jqxhr = $.post('admin-exec.php', {
+            deluser: id
+        })
+        // reload page
+        .success(function() {location.reload()
+        });
+        }else{
+            return false;
+        }
     }
-}
 
 });
 </script>

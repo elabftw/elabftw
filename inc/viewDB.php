@@ -52,15 +52,7 @@ echo "<a href='database.php?mode=edit&id=".$data['id']."'><img src='themes/".$_S
 <a href='make_zip.php?id=".$data['id']."&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/zip.gif' title='make a zip archive' alt='zip' /></a>
 <a href='experiments.php?mode=show&related=".$data['id']."'><img src='img/related.png' alt='Linked experiments' title='Linked experiments' /></a>";
 // TAGS
-$sql = "SELECT tag FROM items_tags WHERE item_id = ".$id;
-$req = $bdd->prepare($sql);
-$req->execute();
-echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
-while($tags = $req->fetch()){
-    echo "<a href='database.php?mode=show&q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
-}
-echo "</span>";
-// END TAGS
+echo show_tags($id, 'items_tags');
 // TITLE : click on it to go to edit mode
 ?>
 <div OnClick="document.location='database.php?mode=edit&id=<?php echo $data['id'];?>'" class='title'>

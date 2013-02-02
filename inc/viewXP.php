@@ -58,15 +58,7 @@ if($data['locked'] == 0) {
 
 // <a href='publish.php?id=".$data['id']."&type=exp'><img src='themes/".$_SESSION['prefs']['theme']."/img/publish.png' title='submit to a journal' alt='publish' /></a>";
 // TAGS
-$sql = "SELECT tag FROM experiments_tags WHERE item_id = ".$id;
-$req = $bdd->prepare($sql);
-$req->execute();
-echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
-while($tags = $req->fetch()){
-    echo "<a href='experiments.php?mode=show&q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
-}
-echo "</span>";
-// END TAGS
+echo show_tags($id, 'experiments_tags');
 // TITLE : click on it to go to edit mode
 ?>
 <div OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['id'];?>'" class='title'>

@@ -196,6 +196,24 @@ function search_item($type, $query, $userid) {
     // filter out duplicate ids and reverse the order; XP should be sorted by date
     return $results_arr = array_reverse(array_unique($results_arr));
 }
+function show_tags($item_id, $table) {
+    // $table can be experiments_tags or items_tags
+    global $bdd;
+    // DISPLAY TAGS
+    $sql = "SELECT tag FROM $table WHERE item_id = $item_id";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $tagcount = $req->rowCount();
+    if ($tagcount > 0) {
+        echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
+        while($tags = $req->fetch()) {
+            echo "<a href='experiments.php?mode=show&q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
+        }
+        echo "</span>";
+    }
+}
+
+// END TAGS
 function showXP($id, $display) {
 // Show unique XP
     global $bdd;
@@ -219,19 +237,10 @@ function showXP($id, $display) {
 ?>
         <section onClick="document.location='experiments.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item <?php echo $final_query['status'];?>">
     <?php
-    // TAGS
-    $tagsql = "SELECT tag FROM experiments_tags WHERE item_id = :id";
-    $tagreq = $bdd->prepare($tagsql);
-    $tagreq->execute(array(
-        'id' => $final_query['id']
-    ));
+    // DATE
     echo "<span class='redo_compact'>".$final_query['date']."</span> ";
-    echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
-    while($tags = $tagreq->fetch()){
-        echo "<a href='experiments.php?mode=show&q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
-    }
-    echo "</span>";
-    // END TAGS
+    // TAGS
+    echo show_tags($id, 'experiments_tags');
     // show attached if there is a file attached
     if (has_attachement($final_query['id'])) {
         echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='file attached' />";
@@ -304,18 +313,8 @@ function showDB($id, $display) {
         <?php
         echo "<h4 style='color:#".get_item_info_from_id($final_query['type'], 'bgcolor')."'>".get_item_info_from_id($final_query['type'], 'name')." </h4>";
         // TAGS
-        $tagsql = "SELECT tag FROM items_tags WHERE item_id = :id";
-        $tagreq = $bdd->prepare($tagsql);
-        $tagreq->execute(array(
-            'id' => $final_query['id']
-        ));
-        echo "<span class='redo_compact'>".$final_query['date']."</span> ";
-        echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
-        while($tags = $tagreq->fetch()){
-            echo "<a href='database.php?mode=show&q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
-        }
-        echo "</span>";
-        // END TAGS
+        echo show_tags($id, 'items_tags');
+        // STARS
         show_stars($final_query['rating']);
         echo "<br />";
         // show attached if there is a file attached

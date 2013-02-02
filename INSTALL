@@ -7,9 +7,9 @@
 
 
 Thank you for choosing eLabFTW as a lab manager =)
-This file contains the instructions to install elabftw on a webserver but these instructions can also apply if you are installing it locally (with MAMP/WAMP).
+This file contains the instructions to install elabftw on a webserver,
+but these instructions can also apply if you are installing it locally (with MAMP/WAMP).
 Please report bugs to : https://github.com/NicolasCARPi/elabftw/issues (you need a github.com account).
-You can also email me : nicolas.carpi <REPLACE BY @> gmail <REPLACE BY .> com
 
   _   _   _   _   _   _   _   _   _   _   _   _  
  / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ / \ 
@@ -18,11 +18,14 @@ You can also email me : nicolas.carpi <REPLACE BY @> gmail <REPLACE BY .> com
 
 Here is what you need in order to install it :
 
-- a webserver running an Unix-like OS
+- a computer running Mac OS X, Windows, or any UNIX-like operating system
+- a webserver (apache, cherokee, nginx, lighttpd)
 - PHP version > 5.4.3
 - MySQL version > 5.1
-- basic knowledge of server administration
-- access to a MySQL database
+
+On Mac OS X, you can install MAMP : www.mamp.info
+On Windows, WAMP : www.wampserver.com
+On GNU/Linux, well, you know what to do.
 
 Have everything ?
 Now, let's begin :

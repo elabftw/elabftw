@@ -5,16 +5,12 @@
 * website : screens for installing on a mac
 * upload bigger files; make a Worker() to upload big files asynchronously 
 * add tag on templates
-* make pdf : indentation bug in html2pdf 
+* make pdf : indentation bug in html2pdf > http://www.yaronet.com/posts.php?s=154084
 
 ////// New Features
-* possibility to draw
-* announce birthday date of a team mb to other team mb (add birthday in profile)
 * tools page with trucs pour calculer les concentrations, et les volumes pour les transfections, etc...
-* merge noforget
 
 ///// Osef
-* have a real useful index...
 * It's impossible to make a date before 2010 or after 2099
 * if two file field and file is only on the second one (first is empty) no file uploaded
 

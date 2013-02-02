@@ -23,21 +23,21 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+header('Location: experiments.php');
+/*
 require_once('inc/common.php');
 $page_title='Index';
 require_once('inc/head.php');
 require_once('inc/menu.php');
+// SQL for index
+$sql = "SELECT firstname FROM users WHERE userid = ".$_SESSION['userid'];
+$req = $bdd->prepare($sql);
+$req->execute();
+$data = $req->fetch();
 ?>
 <section class='item'>
-    <p>Welcome to eLabFTW \o/<br />
-    This webapplication will help you manage your experiments.<br />
-    Here is what you can do with it :
-    <ul>
-        <li>Organize your experiments like a real database (you can search, sort and edit them)</li>
-        <li>Associate an experiment with a protocol, plasmid, DNA sequence…</li>
-        <li>Add images and files to your experiments</li>
-        <li>Manage Journal Clubs and Lab Meetings easily</li>
-    </ul>
-    </p>
+
+<p>Welcome <?php echo $data['firstname'];?>.</p>
 </section>
 <?php require_once('inc/footer.php'); ?>
+ */

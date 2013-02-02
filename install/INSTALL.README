@@ -82,8 +82,7 @@ Here is your friend : http://www.google.com
 ============================================================================================
 
 Next, we will import the database structure :
-(cd in the `elabftw` directory first)
-> mysql -u elabftw -p elabftw < install/elabftw.sql
+> mysql -u elabftw -p elabftw < elabftw/install/elabftw.sql
 You will be prompted with the password you entered when creating the `elabftw` user in step 1.
 
 
@@ -100,6 +99,10 @@ You can now login with the user `root`, and the password `toor`. You MUST change
 
 
 ============================================================================================
+
+To update, just cd in the `elabftw` folder and do :
+> git pull
+> php update.php
 
 It's a good idea to use a php optimizer to increase speed. I recommand installing XCache.
 

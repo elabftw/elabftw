@@ -1,4 +1,10 @@
 <?php
+// elabftw update file. Run it after each git pull.
+//
+// check if it's run from cli (cron) or webserver; do nothing if it's from webserver
+if(php_sapi_name() != 'cli' || !empty($_SERVER['REMOTE_ADDR'])) {
+    die("<p>Thank you for using eLabFTW. <br />To update your database, run this file only from the command line.</p>");
+}
 require_once('inc/connect.php');
 // ADD elabid in experiments table
 $sql = "SELECT * from experiments";
@@ -6,14 +12,14 @@ $req = $bdd->prepare($sql);
 $req->execute();
 $test = $req->fetch();
 if(isset($test['elabid'])) {
-    echo "Column 'elabid' already exists. Nothing to do.<br />";
+    echo "Column 'elabid' already exists. Nothing to do.\n";
 } else {
-    echo "Creating field <strong>elabid</strong>...<br />";
+    echo "Creating field <strong>elabid</strong>...\n";
     $sql = "ALTER TABLE `experiments` ADD `elabid` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL";
     $req = $bdd->prepare($sql);
     $result = $req->execute();
     if($result) {
-        echo 'Field <strong>elabid</strong> successfully added :) <br />';
+        echo 'Field <strong>elabid</strong> successfully added :) \n';
     } else {
         echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
         die();
@@ -49,7 +55,7 @@ foreach($id_arr as $id) {
         'current_id' => $id
     ));
     if ($result) {
-        echo "Experiment id ".$id." updated.<br />";
+        echo "Experiment id ".$id." updated.\n";
     } else {
         echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
         die();
@@ -58,14 +64,14 @@ foreach($id_arr as $id) {
 
 // ADD locked in experiments table
 if(isset($test['locked'])) {
-    echo "Column 'locked' already exists. Nothing to do.<br />";
+    echo "Column 'locked' already exists. Nothing to do.\n";
 } else {
     echo 'Creating field...';
     $sql = "ALTER TABLE `experiments` ADD `locked` TINYINT( 1 ) UNSIGNED NOT NULL DEFAULT '0'";
     $req = $bdd->prepare($sql);
     $result = $req->execute();
     if($result) {
-        echo 'Field <strong>locked</strong> successfully added :) <br />';
+        echo 'Field <strong>locked</strong> successfully added :) \n';
     } else {
         echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
         die();
@@ -82,7 +88,7 @@ while ($row = $req->fetch()) {
 }
 
 if(in_array('items_types',$test_arr)) {
-      echo 'Table items_types already exists. Nothing to do.<br />';
+      echo 'Table items_types already exists. Nothing to do.\n';
       die();
 } else {
 
@@ -98,7 +104,7 @@ $create_sql = "CREATE TABLE `items_types` (
     $req = $bdd->prepare($create_sql);
     $result = $req->execute();
     if($result) {
-        echo 'Table items_types successfully created.<br />';
+        echo 'Table items_types successfully created.\n';
     } else {
         echo 'There was a problem in the database update :/';
         die();
@@ -123,7 +129,7 @@ $create_sql = "CREATE TABLE `items_types` (
             'current_id' => $id
         ));
         if ($result) {
-            echo "Item id ".$id." updated.<br />";
+            echo "Item id ".$id." updated.\n";
         } else {
             echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
             die();
@@ -147,7 +153,7 @@ $create_sql = "CREATE TABLE `items_types` (
             'current_id' => $id
         ));
         if ($result) {
-            echo "Item id ".$id." updated.<br />";
+            echo "Item id ".$id." updated.\n";
         } else {
             echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
             die();
@@ -171,7 +177,7 @@ $create_sql = "CREATE TABLE `items_types` (
             'current_id' => $id
         ));
         if ($result) {
-            echo "Item id ".$id." updated.<br />";
+            echo "Item id ".$id." updated.\n";
         } else {
             echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
             die();
@@ -184,7 +190,7 @@ $create_sql = "CREATE TABLE `items_types` (
     $req = $bdd->prepare($sql);
     $result = $req->execute();
     if($result) {
-        echo 'Database successfully updated with default values.<br />';
+        echo 'Database successfully updated with default values.\n';
     } else {
         echo 'There was a problem in the database update :/';
     }
@@ -198,7 +204,7 @@ $sql = "ALTER TABLE `experiments` CHANGE `outcome` `status` VARCHAR( 255 ) CHARA
 $req = $bdd->prepare($sql);
 $result = $req->execute();
 if($result) {
-    echo 'Outcome is now status.<br />';
+    echo 'Outcome is now status.\n';
 } else {
     echo 'There was a problem in the database update :/';
 }

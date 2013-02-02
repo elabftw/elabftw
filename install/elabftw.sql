@@ -113,20 +113,6 @@ CREATE TABLE IF NOT EXISTS `items_tags` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `items_templates`
---
-
-CREATE TABLE IF NOT EXISTS `items_templates` (
-  `id` int(10) unsigned NOT NULL,
-  `type` varchar(255) DEFAULT NULL,
-  `body` text,
-  `tags` text,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `items_types`
 --
 

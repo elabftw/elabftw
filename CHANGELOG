@@ -1,5 +1,14 @@
 /* Changelog for eLabFTW */
 
+Version 0.7
+* Multiple bugfixes
+* Real search page
+* Possiblity to export in zip or spreadsheet
+* Thumbnails are clickable
+* Better pdf generation
+* Better html generation
+* Install is now easier
+
 Version 0.6
 * Swith repo from gitorious to github (because it has wiki, bug tracker, and
 bigger community)

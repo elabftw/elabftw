@@ -18,7 +18,6 @@
 * use bcrypt instead of salted sha512 https://code.google.com/p/bcryptnet/
 * limit new users to particular email domain
 * have real auth with LDAP etc... like here : http://docs.moodle.org/22/en/Authentication
-* check for flood register/login
 
 ///// Longterm
 * Once we reach v1.0 => http://www.ssi.gouv.fr/fr/certification-qualification/cc/

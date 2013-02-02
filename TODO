@@ -6,15 +6,9 @@
 * upload bigger files; make a Worker() to upload big files asynchronously 
 * add tag on templates
 * make pdf : indentation bug in html2pdf 
-* let the user choose for newtab click on item
 
 ////// New Features
 * possibility to draw
-* add calendar
-* possibility to comment on a no owned XP
-    if you don't own XP id: show textarea
-    create external_comment field for XP
-* export by date range / tag / search result
 * announce birthday date of a team mb to other team mb (add birthday in profile)
 * tools page with trucs pour calculer les concentrations, et les volumes pour les transfections, etc...
 * merge noforget

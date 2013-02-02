@@ -24,19 +24,23 @@
 *                                                                               *
 ********************************************************************************/
 // inc/viewXP.php
-// Here we don't check that the experiment id is owned by the viewer, so links can be shared :)
 // ID
 if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
     $id = $_GET['id'];
 } else {
     die("The id parameter in the URL isn't a valid experiment ID.");
 }
-
 // SQL for viewXP
 $sql = "SELECT * FROM experiments WHERE id = ".$id;
 $req = $bdd->prepare($sql);
 $req->execute();
 $data = $req->fetch();
+
+// Check id is owned by connected user to present comment div if not
+if ($data['userid'] != $_SESSION['userid']) {
+    echo "<ul class='infos'>Read-only mode. Not your experiment.</ul>";
+}
+
 
 // Display experiment
 ?>

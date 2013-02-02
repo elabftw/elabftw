@@ -42,7 +42,9 @@ $data = $req->fetch();
 
 // Check id is owned by connected user
 if ($data['userid'] != $_SESSION['userid']) {
-    die("You are trying to edit an experiment which is not yours.");
+    echo ("<ul class='errors'>You are trying to edit an experiment which is not yours.</ul>");
+    require_once('inc/footer.php');
+    exit();
 }
 
 // Check for lock

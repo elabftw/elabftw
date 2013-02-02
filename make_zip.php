@@ -67,7 +67,8 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
                 $clean_title = preg_replace('/[^A-Za-z0-9]/', ' ', $title);
                 $date = $data['date'];
                 // name of the folder
-                if($type == 'experiments') {
+                // folder begin with date for experiments
+                if($table == 'experiments') {
                     $folder = $date."-".$clean_title;
                 } else {
                    $folder = $clean_title;

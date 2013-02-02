@@ -101,9 +101,9 @@ require_once('inc/display_file.php');
 </div>
 <!-- SUBMIT BUTTON -->
 <div class='center' id='submitdiv'>
-    <p>SUBMIT</p>
     <button type='submit'>
         <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/submit.png' name='Submit' value='Submit' />
+    <p>SUBMIT</p>
     </button>
 </div>
 </form>

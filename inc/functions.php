@@ -485,6 +485,4 @@ function generate_elabid() {
     $date = kdate();
     return $date."-".sha1(uniqid($date, TRUE));
 }
-
-
 ?>

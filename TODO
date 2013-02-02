@@ -3,12 +3,9 @@
 ////// Fix/improve
 * website : faq with common caveheats (see install file)
 * website : screens for installing on a mac
-* put todolist in sql not in cookie
 * upload bigger files; make a Worker() to upload big files asynchronously 
-* drag and drop images to embed in text
-* have a bigger thumbnail when you hover an attached file
 * add tag on templates
-* make pdf : colors, indentation fix
+* make pdf : indentation bug in html2pdf 
 * let the user choose for newtab click on item
 
 ////// New Features

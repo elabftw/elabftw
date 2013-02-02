@@ -88,12 +88,11 @@ while ($row = $req->fetch()) {
 }
 
 if(in_array('items_types',$test_arr)) {
-      echo 'Table items_types already exists. Nothing to do.\n';
-      die();
+      echo "Table 'items_types' already exists. Nothing to do.\n";
 } else {
 
 
-$create_sql = "CREATE TABLE `items_types` (
+    $create_sql = "CREATE TABLE `items_types` (
         `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
         `name` TEXT NOT NULL ,
         `bgcolor` VARCHAR( 6 ) DEFAULT '000000',
@@ -198,13 +197,31 @@ $create_sql = "CREATE TABLE `items_types` (
 
 }
 
-
 // change outcome in status
-$sql = "ALTER TABLE `experiments` CHANGE `outcome` `status` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL";
+// check if it exists first
+$sql = "SELECT * from experiments";
+$req = $bdd->prepare($sql);
+$req->execute();
+$test = $req->fetch();
+if(isset($test['status'])) {
+    echo "Column 'status' already exists. Nothing to do.\n";
+} else {
+    $sql = "ALTER TABLE `experiments` CHANGE `outcome` `status` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute();
+    if($result) {
+        echo 'Outcome is now status.\n';
+    } else {
+        echo 'There was a problem in the database update :/';
+    }
+}
+
+// remove unused items_templates table
+$sql = "DROP TABLE IF EXISTS `items_templates`";
 $req = $bdd->prepare($sql);
 $result = $req->execute();
 if($result) {
-    echo 'Outcome is now status.\n';
+    echo 'Removed items_templates table.\n';
 } else {
     echo 'There was a problem in the database update :/';
 }

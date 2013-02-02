@@ -135,7 +135,7 @@ echo "</ul>";
 <div id="tpl-0">
     <form action='ucp-exec.php' method='post'>
     <input type='hidden' name='new_tpl_form' />
-    <input type='text' name='new_tpl_name' placeholder='Name for the template' /><br />
+    <input type='text' name='new_tpl_name' placeholder='Name of the template' /><br />
     <textarea name='new_tpl_body' id='new_tpl_txt' class='mceditable' placeholder='Insert here your template' rows='10' cols='60'></textarea>
     <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Add template" /></div>
     </form>

@@ -562,3 +562,22 @@ footer p, footer p a {
 .pagination{
     text-align: center;
 }
+
+/* print only the main div */
+@media print {
+    section.item {
+        background-color: white;
+        height: 100%;
+        width: 900px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        margin: 0;
+        padding: 15px;
+        font-size: 14px;
+        line-height: 18px;
+    }
+    footer {
+        visibility:hidden;
+    }
+}

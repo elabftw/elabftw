@@ -110,7 +110,21 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
                 $html = "<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html'; charset='utf-8'><title>";
                 $html .= $title;
                 $html .= "</title></head><body>";
-                $html .= "Date : ".$date."<br />
+                $html .="<style type='text/css'>
+                    html{
+                        background-color:#CCC;
+        }
+        #container{
+        width:793px;
+        margin:auto;
+        padding:20px;
+        border: 2px solid green;
+        }
+        footer{
+            font-size:10px;
+        }
+        </style>";
+                $html .= "<section id='container'>Date : ".$date."<br />
             <span style='text-align: right;'>By : ".$firstname." ".$lastname."</span><br />
             <div style='text-align: center;'><font size='10'>".$title."</font></span></div><br /><br />
             ".$body."<br />";
@@ -135,9 +149,11 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
                 }
                 // FOOTER
                 $html .= "~~~~<br />
+                    <footer>
                 File created with <strong>elabFTW</strong> -- Free open source lab manager<br />
-                <a href='http://www.elabftw.net'>eLabFTW.net</a>";
-                $html .= "</body></html>";
+                <a href='http://www.elabftw.net'>eLabFTW.net</a>
+                    </footer>";
+                $html .= "</section></body></html>";
                 // CREATE TXT FILE
                 // utf8 ftw
                 $html = utf8_encode($html);

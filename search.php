@@ -187,7 +187,16 @@ if (isset($_GET)) {
     // EXPERIMENT ADVANCED SEARCH
     if(isset($_GET['type'])) {
         if($_GET['type'] === 'experiments') {
+            // SQL
+            // the BETWEEN stuff makes the date mandatory, so we switch the $sql with/without date
+            if(isset($_GET['to']) && !empty($_GET['to'])) {
             $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%' AND date BETWEEN '$from' AND '$to'";
+            } elseif(isset($_GET['from']) && !empty($_GET['from'])) {
+            $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%' AND date BETWEEN '$from' AND '991212'";
+            } else { // no date input
+            $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%'";
+            }
+
             $req = $bdd->prepare($sql);
             $req->execute(array(
                 'userid' => $_SESSION['userid']

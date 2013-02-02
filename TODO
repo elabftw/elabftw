@@ -1,7 +1,8 @@
 ////// Priority
-* install.php
 
 ////// Fix/improve
+* website : faq with common caveheats (see install file)
+* website : screens for installing on a mac
 * for printing : http://stackoverflow.com/questions/2255291/print-the-contents-of-a-div
 * put todolist in sql not in cookie
 * upload bigger files; make a Worker() to upload big files asynchronously 

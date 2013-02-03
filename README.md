@@ -1,5 +1,5 @@
 # About
-eLaFTW (electronic lab for the world)
+[eLaFTW (electronic lab for the world)](http://www.elabftw.net)
 is a free and open-source experiments and database manager.
 You can store your experiments (like an lab notebook, but better).
 You can have a database of whatever objects (antibodies, siRNA, horses, plasmids, etc…).
@@ -90,7 +90,12 @@ $ php update.php
 ~~~
 
 ## Bonus stage
-It's a good idea to use a php optimizer to increase speed. I recommand installing XCache.
+* It's a good idea to use a php optimizer to increase speed. I recommand installing XCache.
+* You can show a TODOlist by pressing 't'.
+* You can duplicate an experiment in one click.
+* You can export in a .zip, a .pdf or a spreadsheet.
+* You can share an experiment by just sending the URL of the page to someone else.
+
 
 
 ~Thank you for using eLabFTW :)

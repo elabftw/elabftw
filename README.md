@@ -89,14 +89,14 @@ You can now login with the user `root`, and the password `toor`.
 If you cannot login, check the value of `path` in `admin/config.ini`.
 
 
-## Updating
+# Updating
 To update, just cd in the `elabftw` folder and do :
 ~~~ sh
 $ git pull
 $ php update.php
 ~~~
 
-## Bonus stage
+# Bonus stage
 * It's a good idea to use a php optimizer to increase speed. I recommand installing XCache.
 * You can show a TODOlist by pressing 't'.
 * You can duplicate an experiment in one click.

@@ -54,26 +54,31 @@ If you cannot connect, try exporting your proxy settings in your shell.
 ## SQL part
 The second part is putting the database in place.
 
-### First, you need to create create a user `elabftw` with all rights on the database `elabftw`
-I recommend using phpmyadmin for that.
-This procedure won't be described here, but :
-Here is the doc : http://wiki.phpmyadmin.net/pma/user\_management
+### 1 create a user `elabftw` with all rights on the database `elabftw`
+I recommend using phpmyadmin for that. Here is the [doc](http://wiki.phpmyadmin.net/pma/user_management).
 
 
-### Next, we will import the database structure :
+### 2 import the database structure :
 `$ mysql -u elabftw -p elabftw < elabftw/install/elabftw.sql`
+
 You will be prompted with the password you entered when creating the `elabftw` user in step 1.
 
 
 ## Config file
-Rename the file `admin/config-example.ini` in `admin/config.ini` and edit it.
+Rename the file `admin/config-example.ini` to `admin/config.ini` and edit it.
+
 Check that this file isn't served by your webserver (point to it in a browser).
+
 If you see a 403 Error, all is good.
+
 If you see the config file be sure to edit AllowOverride in your <Directory "/var/www/elabftw"> and set it to All.
 
 ## Final step
 Finally, point your browser to the install folder (install/) and read onscreen instructions.
-You can now login with the user `root`, and the password `toor`. You MUST change your password asap.
+You can now login with the user `root`, and the password `toor`.
+
+**You MUST change your password asap.**
+
 If you cannot login, check the value of `path` in `admin/config.ini`.
 
 

@@ -213,7 +213,6 @@ function show_tags($item_id, $table) {
     }
 }
 
-// END TAGS
 function showXP($id, $display) {
 // Show unique XP
     global $bdd;

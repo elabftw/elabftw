@@ -41,10 +41,6 @@ If you didn't understand this sentence, ask your local geek.
 
 3. Get latest stable version via git :
 ~~~ sh
-$ git clone git://github.com/NicolasCARPi/elabftw.git
-~~~
-OR you can also try this one :
-~~~ sh
 $ git clone https://github.com/NicolasCARPi/elabftw.git
 ~~~
 (this will create a folder `elabftw`)

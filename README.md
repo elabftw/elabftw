@@ -54,11 +54,11 @@ If you cannot connect, try exporting your proxy settings in your shell.
 ## SQL part
 The second part is putting the database in place.
 
-### 1 create a user `elabftw` with all rights on the database `elabftw`
+### 1) create a user `elabftw` with all rights on the database `elabftw`
 I recommend using phpmyadmin for that. Here is the [doc](http://wiki.phpmyadmin.net/pma/user_management).
 
 
-### 2 import the database structure :
+### 2) import the database structure :
 ~~~ sh
 $ cd elabftw
 $ mysql -u elabftw -p elabftw < install/elabftw.sql

@@ -59,13 +59,20 @@ I recommend using phpmyadmin for that. Here is the [doc](http://wiki.phpmyadmin.
 
 
 ### 2 import the database structure :
-`$ mysql -u elabftw -p elabftw < elabftw/install/elabftw.sql`
+~~~ sh
+$ cd elabftw
+$ mysql -u elabftw -p elabftw < install/elabftw.sql
+~~~
 
 You will be prompted with the password you entered when creating the `elabftw` user in step 1.
 
 
 ## Config file
-Rename the file `admin/config-example.ini` to `admin/config.ini` and edit it.
+Copy the file `admin/config-example.ini` to `admin/config.ini` and edit it.
+~~~ sh
+$ cp admin/config-example.ini admin/config.ini
+$ $EDITOR admin/config.ini
+~~~
 
 Check that this file isn't served by your webserver (point to it in a browser).
 

@@ -1,4 +1,4 @@
-# About
+# Description
 [eLaFTW (electronic lab for the world)](http://www.elabftw.net)
 is a free and open-source experiments and database manager.
 You can store your experiments (like an lab notebook, but better).

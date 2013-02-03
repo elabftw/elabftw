@@ -1,8 +1,9 @@
 ////// Priority
 
 ////// Fix/improve
+* on install/index.php, ask for db root info + admin login info, and do everything automatically
 * website : faq with common caveheats (see install file)
-* website : screens for installing on a mac
+* website : screens for installing on a mac + rpi
 * upload bigger files; make a Worker() to upload big files asynchronously 
 * add tag on templates
 

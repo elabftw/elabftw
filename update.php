@@ -1,5 +1,7 @@
 <?php
 // elabftw update file. Run it after each git pull.
+// php update.php on normal server
+// /Applications/MAMP/bin/php/php5.3.6/bin/php update.php for MAMP install
 //
 // check if it's run from cli (cron) or webserver; do nothing if it's from webserver
 if(php_sapi_name() != 'cli' || !empty($_SERVER['REMOTE_ADDR'])) {

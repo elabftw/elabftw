@@ -243,10 +243,20 @@ if (isset($_GET)) {
 
     // DATABASE ADVANCED SEARCH
     } elseif (is_pos_int($_GET['type'])) {
-        $sql = "SELECT * FROM items WHERE type = :type AND title LIKE '%$title%' AND date LIKE '%$date%' AND body LIKE '%$body%' AND rating LIKE '%$rating%'";
+            // SQL
+            // the BETWEEN stuff makes the date mandatory, so we switch the $sql with/without date
+            if(isset($_GET['to']) && !empty($_GET['to'])) {
+            $sql = "SELECT * FROM items WHERE userid = :userid AND type = :type AND title LIKE '%$title%' AND body LIKE '%$body%' AND rating LIKE '%$rating%' AND date BETWEEN '$from' AND '$to'";
+            } elseif(isset($_GET['from']) && !empty($_GET['from'])) {
+            $sql = "SELECT * FROM items WHERE userid = :userid AND type = :type AND title LIKE '%$title%' AND body LIKE '%$body%' AND rating LIKE '%$rating%' AND date BETWEEN '$from' AND '991212'";
+            } else { // no date input
+            $sql = "SELECT * FROM items WHERE userid = :userid AND type = :type AND title LIKE '%$title%' AND body LIKE '%$body%' AND rating LIKE '%$rating%'";
+            }
+
         $req = $bdd->prepare($sql);
         $req->execute(array(
-            'type' => $_GET['type']
+            'type' => $_GET['type'],
+            'userid' => $_SESSION['userid']
         ));
         $count = $req->rowCount();
         if ($count > 0) {

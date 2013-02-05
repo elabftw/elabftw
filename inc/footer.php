@@ -74,7 +74,7 @@ echo "Version : ".$version['version'];
 if (isset($_SESSION['auth'])){
 echo "<script>
 key('".$_SESSION['prefs']['shortcuts']['todo']."', function(){
-    $.pageslide({href:'todolist.php'});
+    $.pageslide({href:'inc/todolist.php'});
 });
 </script>";
 }

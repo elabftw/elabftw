@@ -31,8 +31,8 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
 
 if ($_GET['type'] === 'exp'){
     $type = 'experiments';
-} elseif ($_GET['type'] === 'pla') {
-    $type = 'plasmids';
+} elseif ($_GET['type'] === 'db') {
+    $type = 'items';
 } else {
     die('Bad type.');
 }
@@ -59,21 +59,23 @@ if ($type === 'experiments') {
 
 }
 
-if ($type === 'plasmids') {
-    // SQL to get data from the plasmid we duplicate
-    $sql = "SELECT * FROM plasmids WHERE id = ".$id;
+if ($type === 'items') {
+    // SQL to get data from the item we duplicate
+    $sql = "SELECT * FROM items WHERE id = ".$id;
     $req = $bdd->prepare($sql);
     $req->execute();
     $data = $req->fetch();
 
-    // SQL for duplicatePL
-    $sql = "INSERT INTO plasmids(title, date, body, userid) VALUES(:title, :date, :body, :userid)";
+    // SQL for duplicateDB
+    $sql = "INSERT INTO items(title, date, body, userid, type) VALUES(:title, :date, :body, :userid, :type)";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
         'title' => $data['title'],
         'date' => kdate(),
         'body' => $data['body'],
-        'userid' => $_SESSION['userid']));
+        'userid' => $_SESSION['userid'],
+        'type' => $data['type']
+    ));
     // END SQL main
 }
 
@@ -88,7 +90,6 @@ $newid = $data['id'];
 
 if ($type === 'experiments') {
     // TAGS
-    // Get the tags. here $id is the expid we duplicated
     $sql = "SELECT tag FROM experiments_tags WHERE item_id = ".$id;
     $req = $bdd->prepare($sql);
     $req->execute();
@@ -114,20 +115,36 @@ if ($type === 'experiments') {
             'item_id' => $newid
         ));
     }
+} else { // DB
+    // TAGS
+    $sql = "SELECT tag FROM items_tags WHERE item_id = ".$id;
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    while($tags = $req->fetch()){
+        // Put them in the new one. here $newid is the new exp created
+        $sql = "INSERT INTO items_tags(tag, item_id) VALUES(:tag, :item_id)";
+        $reqtag = $bdd->prepare($sql);
+        $reqtag->execute(array(
+            'tag' => $tags['tag'],
+            'item_id' => $newid
+        ));
+    }
 }
 
-// Check if insertion is successful and redirect to the newly created experiment in edit mode
+// Check if insertion is successful and redirect to the newly created item in edit mode
 if($result) {
-// info box
-$msg_arr = array();
-if ($type === 'experiments') {
-    $msg_arr[] = 'Experiment successfully duplicated';
-}
-if ($type === 'plasmids') {
-    $msg_arr[] = 'Plasmid successfully duplicated';
-}
-$_SESSION['infos'] = $msg_arr;
-    header('location: '.$type.'.php?mode=edit&id='.$newid.'');
+    // info box
+    $msg_arr = array();
+    if ($type === 'experiments') {
+        $msg_arr[] = 'Experiment successfully duplicated';
+        $_SESSION['infos'] = $msg_arr;
+        header('location: experiments.php?mode=edit&id='.$newid.'');
+    }
+    if ($type === 'items') {
+        $msg_arr[] = 'Successfully duplicated';
+        $_SESSION['infos'] = $msg_arr;
+        header('location: database.php?mode=edit&id='.$newid.'');
+    }
 } else {
     echo "Something went wrong in the database query. Check the flux capacitor.";
 }

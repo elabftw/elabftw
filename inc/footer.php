@@ -18,7 +18,6 @@
 *
 ********************************************************************************/
 ?>
-<div>
 <footer>
 <script>
 function mouseOverPhp(action){
@@ -68,7 +67,6 @@ echo "Version : ".$version['version'];
 ?>
 </section>
 </footer>
-</section>
 <script src="js/jquery.pageslide.min.js"></script>
 <?php
 if (isset($_SESSION['auth'])){

@@ -31,12 +31,12 @@ require_once('inc/info_box.php');
         <div id='innerdiv'>
         <!-- Register form -->
             <form name="regForm" method="post" action="register-exec.php" class='innerinnerdiv'>
-                  <p>Username <input name="username" type="text" class="textfield" id="username" /><br />
-                  Firstname <input name="firstname" type="text" class="textfield" id="firstname" /><br />
-                  Lastname <input name="lastname" type="text" class="textfield" id="lastname" /><br />
-                  Email <input name="email" type="text" class="textfield" id="email" /><br />
-                  Password <input name="password" type="password" class="textfield" id="password" /><br />
-                  Confirm Password <input name="cpassword" type="password" class="textfield" id="cpassword" /><br />
+                  <p>Username <input name="username" type="text" id="username" /><br />
+                  Firstname <input name="firstname" type="text" id="firstname" /><br />
+                  Lastname <input name="lastname" type="text" id="lastname" /><br />
+                  Email <input name="email" type="text"  id="email" /><br />
+                  Password <input name="password" type="password" id="password" /><br />
+                  Confirm Password <input name="cpassword" type="password" id="cpassword" /><br />
 Password complexity : <span id="complexity">0%</span><br />
             <div id='submitDiv'>
                 <input type="submit" name="Submit" class='submit' value="Register" />
@@ -44,13 +44,12 @@ Password complexity : <span id="complexity">0%</span><br />
             </form>
         </div>
     <!-- end register form -->
+</section>
 <script>
-// give focus to username field on page load
-document.getElementById("username").focus();
-</script>
-<script>
-// password complexity
-$(function () {
+$(document).ready(function() {
+    // give focus to username field on page load
+    document.getElementById("username").focus();
+    // password complexity
     $("#password").complexify({}, function (valid, complexity){
         if (complexity < 30) {
             $('#complexity').css({'color':'red'});
@@ -61,5 +60,4 @@ $(function () {
     });
 });
 </script>
-</section>
-<? require_once('inc/footer.php'); ?>
+<?php require_once('inc/footer.php'); ?>

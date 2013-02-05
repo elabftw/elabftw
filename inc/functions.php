@@ -483,4 +483,32 @@ function generate_elabid() {
     $date = kdate();
     return $date."-".sha1(uniqid($date, TRUE));
 }
+
+function feeling_lucky($q, $type) {
+    // get query, search and return to viewitem page with first result
+    global $bdd;
+    $q = filter_var($q, FILTER_SANITIZE_STRING);
+    if ($type == 'experiments') {
+        $sql = "SELECT * FROM experiments WHERE userid = :userid AND (title LIKE '%$q%' OR date LIKE '%$q%' OR body LIKE '%$q%') LIMIT 1";
+        $req = $bdd->prepare($sql);
+        $req->execute(array(
+            'userid' => $_SESSION['userid']
+        ));
+    } else {
+        $sql = "SELECT * FROM items WHERE (title LIKE '%$q%' OR date LIKE '%$q%' OR body LIKE '%$q%') LIMIT 1";
+        $req = $bdd->prepare($sql);
+        $req->execute();
+    }
+    $count = $req->rowCount();
+    if ($count > 0) {
+        $data = $req->fetch();
+        header('Location: experiments.php?mode=view&id='.$data['id']);
+    } else {
+        $msg_arr = array();
+        $msg_arr[] = "Nothing found with this query :/";
+        $_SESSION['infos'] = $msg_arr;
+        header('Location: search.php');
+    }
+}
+
 ?>

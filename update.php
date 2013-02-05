@@ -3,7 +3,8 @@
 // php update.php on normal server
 // /Applications/MAMP/bin/php/php5.3.6/bin/php update.php for MAMP install
 //
-// check if it's run from cli (cron) or webserver; do nothing if it's from webserver
+$die_msg = "There was a problem in the database update :/ Please report a bug : https://github.com/NicolasCARPi/elabftw/issues?state=open";
+// check if it's run from cli or web; do nothing if it's from web
 if(php_sapi_name() != 'cli' || !empty($_SERVER['REMOTE_ADDR'])) {
     die("<p>Thank you for using eLabFTW. <br />To update your database, run this file only from the command line.</p>");
 }
@@ -23,8 +24,7 @@ if(isset($test['elabid'])) {
     if($result) {
         echo 'Field <strong>elabid</strong> successfully added :) \n';
     } else {
-        echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
-        die();
+        die($die_msg);
     }
 }
 
@@ -59,8 +59,8 @@ foreach($id_arr as $id) {
     if ($result) {
         echo "Experiment id ".$id." updated.\n";
     } else {
-        echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
-        die();
+        echo "There was a problem in the database update :/ Please report a bug on <a href='https://github.com/NicolasCARPi/elabftw/issues?state=open'>github</a>.";
+        die($die_msg);
     }
 }
 
@@ -75,8 +75,8 @@ if(isset($test['locked'])) {
     if($result) {
         echo 'Field <strong>locked</strong> successfully added :) \n';
     } else {
-        echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
-        die();
+        echo "There was a problem in the database update :/ Please report a bug on <a href='https://github.com/NicolasCARPi/elabftw/issues?state=open'>github</a>.";
+        die($die_msg);
     }
 }
 // items_type :
@@ -108,7 +108,7 @@ if(in_array('items_types',$test_arr)) {
         echo 'Table items_types successfully created.\n';
     } else {
         echo 'There was a problem in the database update :/';
-        die();
+        die($die_msg);
     }
 
     // Transform all ant => 1, pla => 2, pro => 3
@@ -133,7 +133,7 @@ if(in_array('items_types',$test_arr)) {
             echo "Item id ".$id." updated.\n";
         } else {
             echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
-            die();
+        die($die_msg);
         }
     }
     // get id of items type pla
@@ -157,7 +157,7 @@ if(in_array('items_types',$test_arr)) {
             echo "Item id ".$id." updated.\n";
         } else {
             echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
-            die();
+        die($die_msg);
         }
     }
     // get id of items type pro
@@ -181,7 +181,7 @@ if(in_array('items_types',$test_arr)) {
             echo "Item id ".$id." updated.\n";
         } else {
             echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
-            die();
+        die($die_msg);
         }
     }
     $sql = "";

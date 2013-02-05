@@ -30,6 +30,7 @@ if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
 } else {
     die("The id parameter in the URL isn't a valid experiment ID.");
 }
+
 // SQL for viewXP
 $sql = "SELECT * FROM experiments WHERE id = ".$id;
 $req = $bdd->prepare($sql);

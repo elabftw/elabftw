@@ -37,110 +37,14 @@ if ($_GET['type'] === 'exp'){
     die('Bad type.');
 }
 
-if ($type === 'experiments') {
-    $elabid = generate_elabid();
-    // SQL to get data from the experiment we duplicate
-    $sql = "SELECT title, body FROM experiments WHERE id = ".$id;
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    $data = $req->fetch();
-    // SQL for duplicateXP
-    $sql = "INSERT INTO experiments(title, date, body, status, elabid, userid) VALUES(:title, :date, :body, :status, :elabid, :userid)";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute(array(
-        'title' => $data['title'],
-        'date' => kdate(),
-        'body' => $data['body'],
-        'status' => 'running',
-        'elabid' => $elabid,
-        'userid' => $_SESSION['userid']));
-    // END SQL main
+$newid = duplicate_item($id, $type);
 
-
-}
-
-if ($type === 'items') {
-    // SQL to get data from the item we duplicate
-    $sql = "SELECT * FROM items WHERE id = ".$id;
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    $data = $req->fetch();
-
-    // SQL for duplicateDB
-    $sql = "INSERT INTO items(title, date, body, userid, type) VALUES(:title, :date, :body, :userid, :type)";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute(array(
-        'title' => $data['title'],
-        'date' => kdate(),
-        'body' => $data['body'],
-        'userid' => $_SESSION['userid'],
-        'type' => $data['type']
-    ));
-    // END SQL main
-}
-
-// Get what is the experiment id we just created
-$sql = "SELECT id FROM ".$type." WHERE userid = :userid ORDER BY id DESC LIMIT 0,1";
-$req = $bdd->prepare($sql);
-$req->bindParam(':userid', $_SESSION['userid']);
-$req->execute();
-$data = $req->fetch();
-$newid = $data['id'];
-
-
-if ($type === 'experiments') {
-    // TAGS
-    $sql = "SELECT tag FROM experiments_tags WHERE item_id = ".$id;
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    while($tags = $req->fetch()){
-        // Put them in the new one. here $newid is the new exp created
-        $sql = "INSERT INTO experiments_tags(tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
-        $reqtag = $bdd->prepare($sql);
-        $reqtag->execute(array(
-            'tag' => $tags['tag'],
-            'item_id' => $newid,
-            'userid' => $_SESSION['userid']
-        ));
-    }
-    // LINKS
-    $linksql = "SELECT link_id FROM experiments_links WHERE item_id = ".$id;
-    $linkreq = $bdd->prepare($linksql);
-    $linkreq->execute();
-    while($links = $linkreq->fetch()) {
-        $sql = "INSERT INTO experiments_links (link_id, item_id) VALUES(:link_id, :item_id)";
-        $req = $bdd->prepare($sql);
-        $result = $req->execute(array(
-            'link_id' => $links['link_id'],
-            'item_id' => $newid
-        ));
-    }
-} else { // DB
-    // TAGS
-    $sql = "SELECT tag FROM items_tags WHERE item_id = ".$id;
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    while($tags = $req->fetch()){
-        // Put them in the new one. here $newid is the new exp created
-        $sql = "INSERT INTO items_tags(tag, item_id) VALUES(:tag, :item_id)";
-        $reqtag = $bdd->prepare($sql);
-        $reqtag->execute(array(
-            'tag' => $tags['tag'],
-            'item_id' => $newid
-        ));
-    }
-}
-
-// Check if insertion is successful and redirect to the newly created item in edit mode
-if($result) {
-    // info box
-    $msg_arr = array();
+if ($newid) {
     if ($type === 'experiments') {
         $msg_arr[] = 'Experiment successfully duplicated';
         $_SESSION['infos'] = $msg_arr;
         header('location: experiments.php?mode=edit&id='.$newid.'');
-    }
-    if ($type === 'items') {
+    } else {
         $msg_arr[] = 'Successfully duplicated';
         $_SESSION['infos'] = $msg_arr;
         header('location: database.php?mode=edit&id='.$newid.'');
@@ -148,5 +52,4 @@ if($result) {
 } else {
     echo "Something went wrong in the database query. Check the flux capacitor.";
 }
-
 ?>

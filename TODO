@@ -1,4 +1,5 @@
 ////// Priority
+* remove unused fields in user database
 
 ////// Fix/improve
 * on install/index.php, ask for db root info + admin login info, and do everything automatically

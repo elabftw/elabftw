@@ -1,8 +1,7 @@
 ////// Priority
-* remove unused fields in user database
 
 ////// Fix/improve
-* on install/index.php, ask for db root info + admin login info, and do everything automatically
+* web : gifs 
 * website : faq with common caveheats (see install file)
 * website : screens for installing on a mac + rpi
 * upload bigger files; make a Worker() to upload big files asynchronously 

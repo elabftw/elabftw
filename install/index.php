@@ -150,6 +150,7 @@ if($test['userid']) {
 }
 // END SQL CONNECT
 ?>
+<!-- WIP
 
 <br />
 [°] Ability to send emails...
@@ -169,7 +170,9 @@ if($test['userid']) {
     complexity : <span id="complexity">0%</span><br />
         <input type="submit" name="Submit" value="Set password" />
 </form>
+-->
 <?php
+/*
 $sql = "SELECT * FROM users WHERE username = 'root'";
 $req = $bdd->prepare($sql);
 $req->execute();
@@ -180,6 +183,9 @@ if($test['password'] == '8c744dc6b145df85c03655a678657bf3096ed7b6acd76d2bb279140
 } else {
     echo "Please set root password";
 }
+ */
+    echo "<h2>All good :)</h2>";
+    echo "<h2><a href='../index.php'>Start working !</a></h2>";
 ?>
 </section>
 <script src="../js/jquery.complexify.min.js"></script>

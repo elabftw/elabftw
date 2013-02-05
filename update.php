@@ -227,4 +227,21 @@ if($result) {
 } else {
     echo 'There was a problem in the database update :/';
 }
+// remove unused users table
+$sql = "SELECT * from users";
+$req = $bdd->prepare($sql);
+$req->execute();
+$test = $req->fetch();
+if(isset($test['is_jc_resp'])) {
+    $sql = "ALTER TABLE `users` DROP `is_jc_resp`,DROP `is_pi`, DROP `journal`, DROP `last_jc`";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute();
+    if($result) {
+        echo '\n Removed unused fields in users table.\n';
+    } else {
+        echo 'There was a problem in the database update :/';
+    }
+} else {
+    echo "\n Nothing to do.\n";
+}
 ?>

@@ -96,7 +96,6 @@ $status = $data['status'];
 </span>
 <br />
 <br />
-
 <h4>Title</h4><br />
       <textarea id='title_txtarea' name='title' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
           echo stripslashes($data['title']);

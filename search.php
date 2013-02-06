@@ -209,6 +209,9 @@ if (isset($_GET)) {
                 while ($get_id = $req->fetch()) {
                     $results_id[] = $get_id['id'];
                 }
+                // sort by id, biggest (newer item) comes first
+                $results_id = array_reverse($results_id);
+                
                 // construct string for links to export results
                 $results_id_str = "";
                 foreach($results_id as $id) {
@@ -265,6 +268,9 @@ if (isset($_GET)) {
             while ($get_id = $req->fetch()) {
                 $results_id[] = $get_id['id'];
             }
+            // sort by id, biggest (newer item) comes first
+            $results_id = array_reverse($results_id);
+            
             // construct string for links to export results
             $results_id_str = "";
             foreach($results_id as $id) {

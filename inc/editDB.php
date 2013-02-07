@@ -115,12 +115,7 @@ unset($_SESSION['errors']);
 ?>
 <script>
 // JAVASCRIPT
-<?php
-// KEYBOARD SHORTCUTS
-//echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=prot'});";
-//echo "key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['editPR'].submit()});";
-?>
-// TAGS AUTOCOMPLETE
+// TAGS AUTOCOMPLETE LIST
 $(function() {
 		var availableTags = [
 <?php // get all user's tag for autocomplete
@@ -135,7 +130,7 @@ while ($tag = $getalltags->fetch()){
 			source: availableTags
 		});
 	});
-// DELETE TAG JS
+// DELETE TAG
 function delete_tag(tag_id,item_id){
     var you_sure = confirm('Delete this tag ?');
     if (you_sure == true) {
@@ -148,11 +143,7 @@ function delete_tag(tag_id,item_id){
     }
     return false;
 }
-// ADD TAG JS
-// listen keypress, add tag when it's enter
-jQuery('#addtaginput').keypress(function (e) {
-    addTagOnEnter(e);
-});
+// ADD TAG
 function addTagOnEnter(e){ // the argument here is the event (needed to detect which key is pressed)
     var keynum;
     if(e.which)
@@ -175,24 +166,6 @@ function addTagOnEnter(e){ // the argument here is the event (needed to detect w
     } // end if key is enter
 }
 // STAR RATINGS
-$(function() {
-    $('input.star').rating();
-    $('#star1').click(function() {
-        updateRating(1);
-    });
-    $('#star2').click(function() {
-        updateRating(2);
-    });
-    $('#star3').click(function() {
-        updateRating(3);
-    });
-    $('#star4').click(function() {
-        updateRating(4);
-    });
-    $('#star5').click(function() {
-        updateRating(5);
-    });
-});
 function updateRating(rating) {
     // POST request
     var jqxhr = $.post('star-rating.php', {
@@ -204,24 +177,6 @@ function updateRating(rating) {
         return false;
     })
 }
-// DATEPICKER
-$( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
-// SELECT ALL TXT WHEN FOCUS ON TITLE INPUT
-$("#title").focus(function(){
-    $("#title").select();
-});
-// EDITOR
-tinyMCE.init({
-    theme : "advanced",
-    mode : "specific_textareas",
-    editor_selector : "mceditable",
-    content_css : "css/tinymce.css",
-    theme_advanced_toolbar_location : "top",
-    theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
-    plugins : "table",
-    theme_advanced_buttons3_add : "forecolor, backcolor, tablecontrols",
-    font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
-});
 
 // AUTOSAVE EVERY 2 SECONDS only when window is on focus
 // we need to wait for mcedit to load (and the user to make a modification)
@@ -249,8 +204,48 @@ function autoSave() {
         });
 }
 
-// change title and start autosave
+// READY ? GO !
 $(document).ready(function() {
+    // ADD TAG JS
+    // listen keypress, add tag when it's enter
+    $('#addtaginput').keypress(function (e) {
+        addTagOnEnter(e);
+    });
+    // EDITOR
+    tinyMCE.init({
+        theme : "advanced",
+        mode : "specific_textareas",
+        editor_selector : "mceditable",
+        content_css : "css/tinymce.css",
+        theme_advanced_toolbar_location : "top",
+        theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
+        plugins : "table",
+        theme_advanced_buttons3_add : "forecolor, backcolor, tablecontrols",
+        font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
+    });
+    // DATEPICKER
+    $( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
+    // STARS
+    $('input.star').rating();
+    $('#star1').click(function() {
+        updateRating(1);
+    });
+    $('#star2').click(function() {
+        updateRating(2);
+    });
+    $('#star3').click(function() {
+        updateRating(3);
+    });
+    $('#star4').click(function() {
+        updateRating(4);
+    });
+    $('#star5').click(function() {
+        updateRating(5);
+    });
+    // SELECT ALL TXT WHEN FOCUS ON TITLE INPUT
+    $("#title").focus(function(){
+        $("#title").select();
+    });
     // fix for the ' and "
     title = "<?php echo $data['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
     document.title = title;

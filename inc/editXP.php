@@ -184,7 +184,7 @@ while ($tag = $getalltags->fetch()){
 			source: availableTags
 		});
 	});
-// DELETE TAG JS
+// DELETE TAG
 function delete_tag(tag_id, item_id) {
     var you_sure = confirm('Delete this tag ?');
     if (you_sure == true) {
@@ -239,7 +239,7 @@ while ($link = $getalllinks->fetch()){
 			source: availableLinks
 		});
 	});
-// DELETE LINK JS
+// DELETE LINK
 function delete_link(id, item_id) {
     var you_sure = confirm('Delete this link ?');
     if (you_sure == true) {

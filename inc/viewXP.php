@@ -87,13 +87,14 @@ if ($req->rowcount() != 0) {
     echo "<ul>";
     while ($links = $req->fetch()) {
         // SQL to get title
-        $linksql = "SELECT id, title FROM items WHERE id = :link_id";
+        $linksql = "SELECT id, title, type FROM items WHERE id = :link_id";
         $linkreq = $bdd->prepare($linksql);
         $linkreq->execute(array(
             'link_id' => $links['link_id']
         ));
         $linkdata = $linkreq->fetch();
-        echo "<li>- <a href='database.php?mode=view&id=".$linkdata['id']."'>".stripslashes($linkdata['title'])."</a></li>";
+        $name = get_item_info_from_id($linkdata['type'], 'name');
+        echo "<li>[".$name."] - <a href='database.php?mode=view&id=".$linkdata['id']."'>".stripslashes($linkdata['title'])."</a></li>";
     } // end while
     echo "</ul>";
 } else { // end if link exist

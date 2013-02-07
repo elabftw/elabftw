@@ -1,4 +1,5 @@
 ////// Priority
+* get html from linked items on html export
 
 ////// Fix/improve
 * web : gifs 
@@ -8,6 +9,8 @@
 * add tag on templates
 
 ////// New Features
+* web : install on Rpi
+* make iso img of fresh install with wiki for Rpi
 * use feeling_lucky()
 * tools page with trucs pour calculer les concentrations, et les volumes pour les transfections, etc...
 * limit new users to particular email domain

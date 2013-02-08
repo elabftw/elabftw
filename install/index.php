@@ -149,6 +149,8 @@ if($test['userid']) {
     die($fail);
 }
 // END SQL CONNECT
+
+// TODO check if path is correct
 ?>
 <!-- WIP
 
@@ -202,4 +204,7 @@ $(document).ready(function() {
     });
 });
 </script>
-<?php require_once('inc/footer.php'); ?>
+<footer>
+</footer>
+</body>
+</html>

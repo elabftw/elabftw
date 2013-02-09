@@ -545,6 +545,10 @@ img {
     text-align: center;
 }
 
+.cursor {
+    cursor:pointer;
+}
+
 /* FOOTER */
 footer {
     font-size: 11px;

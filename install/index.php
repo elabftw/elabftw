@@ -204,6 +204,8 @@ $(document).ready(function() {
     });
 });
 </script>
+<?php phpinfo(); ?>
+<?php require_once('inc/fooe.php');?>
 <footer>
 </footer>
 </body>

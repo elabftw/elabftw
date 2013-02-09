@@ -54,7 +54,7 @@ container.appendChild(br_field);
 <hr class='flourishes'>
 <br />
 <div class='attachFileDiv'>
-<h4 class='trigger'>Click to add a file</h4>
+<h4 class='cursor trigger'>Click to add a file</h4>
 <div class='toggle_container'>
 <div class='addFileDiv'>
 <div id='file_container'>

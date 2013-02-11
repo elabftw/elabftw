@@ -111,9 +111,9 @@ if(file_exists('../admin/config.ini')) {
         die($fail." : Please copy admin/config-example.ini to admin/config.ini and edit it.");
 }
 
-echo "<br />";
 
 // UPLOADS DIR
+echo "<br />";
 echo "[°] Create uploads/ directory...";
 if (!is_dir("../uploads")){
    if  (mkdir("../uploads", 0777)){
@@ -126,9 +126,9 @@ if (!is_dir("../uploads")){
     echo $ok;
 }
 
-echo "<br />";
 
 // TRY TO CONNECT TO DATABASE
+echo "<br />";
 echo "[°] Connection to database...";
 try
 {
@@ -150,7 +150,28 @@ if($test['userid']) {
 }
 // END SQL CONNECT
 
-// TODO check if path is correct
+// CHECK PATH
+echo "<br />";
+echo "[°] Checking the path...";
+// remove /install/index.php from the path
+$should_be_path = substr(realpath(__FILE__), 0, -18);
+if($ini_arr['path'] != $should_be_path) {
+    die($fail." : Path is not the same ! Change its value in admin/config.ini to ".$should_be_path);
+} else {
+    echo $ok;
+}
+// END PATH CHECK
+
+// CHECK ssl extension
+echo "<br />";
+echo "[°] Checking for ssl extension (to send emails)...";
+if (!extension_loaded("openssl")) {
+    die($fail." : Edit the php config file to enable this extension.");
+} else {
+    echo $ok;
+}
+
+
 ?>
 <!-- WIP
 
@@ -186,9 +207,12 @@ if($test['password'] == '8c744dc6b145df85c03655a678657bf3096ed7b6acd76d2bb279140
     echo "Please set root password";
 }
  */
-    echo "<h2>All good :)</h2>";
-    echo "<h2><a href='../index.php'>Start working !</a></h2>";
 ?>
+
+
+<h2>All good :)</h2>
+<h2><a href='../index.php'>Start working !</a></h2>
+<h3>(login with user : root and password : toor)</h3>
 </section>
 <script src="../js/jquery.complexify.min.js"></script>
 <script>
@@ -204,8 +228,6 @@ $(document).ready(function() {
     });
 });
 </script>
-<?php phpinfo(); ?>
-<?php require_once('inc/fooe.php');?>
 <footer>
 </footer>
 </body>

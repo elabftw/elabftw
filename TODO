@@ -1,5 +1,4 @@
 ////// Priority
-* delete users
 
 ////// Fix/improve
 * web : gifs 
@@ -9,6 +8,7 @@
 * add tag on templates
 
 ////// New Features
+* delete users
 * web : install on Rpi
 * make iso img of fresh install with wiki for Rpi
 * use feeling_lucky()

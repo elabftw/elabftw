@@ -79,12 +79,6 @@ If you see the config file be sure to edit AllowOverride in your <Directory "/va
 
 ## Final step
 Finally, point your browser to the install folder (install/) and read onscreen instructions.
-You can now login with the user `root`, and the password `toor`.
-
-**You MUST change your password asap.**
-
-If you cannot login, check the value of `path` in `admin/config.ini`.
-
 
 # Updating
 To update, just cd in the `elabftw` folder and do :

@@ -433,11 +433,32 @@ function make_pdf($id, $type, $out = 'browser') {
         <em>Keywords : ".$tags."</em><br />
         <hr>".$body."<br /><br />
         <hr>Made by : ".$firstname." ".$lastname."<br /><br />";
-    if ($type == 'experiments') {
-        $content .= "<qrcode value='".$elabid."' ec='H' style='width: 42mm; background-color: white; color: black;'></qrcode>";
-        $content .= "<br /><p>elabid : ".$elabid."</p>";
+    // QR CODE
+    if (!empty($_SERVER['HTTPS'])) {
+        $protocol = 'https://';
     } else {
-        $content .= "<qrcode value='".$id."' ec='H' style='width: 42mm; background-color: white; color: black;'></qrcode>";
+        $protocol = 'http://';
+    }
+    $url = $protocol.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+    if ($type == 'experiments') {
+        if ($out === 'browser') { 
+        $url = str_replace('make_pdf.php', 'experiments.php', $url);
+        } else { // call from make_zip
+        $url = str_replace('make_zip.php', 'experiments.php', $url);
+        }
+        $full_url = $url."?mode=view&id=".$id;
+        $content .= "<qrcode value='".$full_url."' ec='H' style='width: 42mm; background-color: white; color: black;'></qrcode>";
+        $content .= "<br /><p>elabid : ".$elabid."</p>";
+        $content .= "<p>URL : <a href='".$full_url."'>".$full_url."</a></p>";
+    } else {
+        if ($out === 'browser') { 
+        $url = str_replace('make_pdf.php', 'database.php', $url);
+        } else { // call from make_zip
+        $url = str_replace('make_zip.php', 'database.php', $url);
+        }
+        $full_url = $url."?mode=view&id=".$id;
+        $content .= "<qrcode value='".$full_url."' ec='H' style='width: 42mm; background-color: white; color: black;'></qrcode>";
+        $content .= "<p>URL : <a href='".$full_url."'>".$full_url."</a></p>";
     }
 
 

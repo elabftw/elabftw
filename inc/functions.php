@@ -397,9 +397,9 @@ function make_pdf($id, $type, $out = 'browser') {
     $req->execute();
     $data = $req->fetch();
     $title = stripslashes($data['title']);
-    // the name of the pdf is needed in make_zip
-    $clean_title = preg_replace('/[^A-Za-z0-9]/', ' ', $title);
     $date = $data['date'];
+    // the name of the pdf is needed in make_zip
+    $clean_title = $date."-".preg_replace('/[^A-Za-z0-9]/', ' ', $title);
     $body = stripslashes($data['body']);
     if ($type == 'experiments') {
         $elabid = $data['elabid'];

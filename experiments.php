@@ -28,8 +28,8 @@ $page_title='Experiments';
 require_once('inc/head.php');
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
-?>
-<?php
+
+// MAIN SWITCH
 if(!isset($_GET['mode']) || (empty($_GET['mode'])) || ($_GET['mode'] === 'show')) {
     require_once('inc/showXP.php');
 } elseif ($_GET['mode'] === 'view') {
@@ -39,7 +39,5 @@ if(!isset($_GET['mode']) || (empty($_GET['mode'])) || ($_GET['mode'] === 'show')
 } else {
     echo "<p>What are you doing, Dave ?</p>";
 }
-?>
-<?php
 require_once('inc/footer.php');
 ?>

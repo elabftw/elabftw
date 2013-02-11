@@ -139,14 +139,24 @@ catch(Exception $e)
 {
     die($fail." : Could not connect to the database. ERROR : ".$e);
 }
-$sql = "SELECT * FROM users";
+// check if user imported the structure
+$sql = "SHOW TABLES LIKE 'users'";
 $req = $bdd->prepare($sql);
 $req->execute();
-$test = $req->fetch();
-if($test['userid']) {
-    echo $ok;
-} else {
-    die($fail);
+$res = $req->rowCount();
+// users table is here
+if ($res) {
+    $sql = "SELECT * FROM users";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute();
+    $test = $req->fetch();
+    if($test['userid']) {
+        echo $ok;
+    } else {
+        die($fail);
+    }
+} else { // no structure here
+    die($fail. " You need to import the file install/elabftw.sql in your database !");
 }
 // END SQL CONNECT
 
@@ -172,50 +182,47 @@ if (!extension_loaded("openssl")) {
 }
 
 
-?>
-<!-- WIP
-
-<br />
-[°] Ability to send emails...
-<br />
-<form name="setRootPassword" method="post" action="install-exec.php">
-<input type='text' placeholder='enter email address' name='install_email' />
-<input type='submit' value='send email' />
-</form>
-
-
-[°] Set root (administrator) password...
-<form name="setRootPassword" method="post" action="install-exec.php">
-    <input name="password" type="password" id="password" /><br />
-    confirm
-    <br />
-    <input name="cpassword" type="password" id="cpassword" /><br />
-    complexity : <span id="complexity">0%</span><br />
-        <input type="submit" name="Submit" value="Set password" />
-</form>
--->
-<?php
-/*
+// Check if root password need to be set (should be yes after fresh install)
+echo "<span id='set_pass_div'>";
 $sql = "SELECT * FROM users WHERE username = 'root'";
 $req = $bdd->prepare($sql);
 $req->execute();
 $test = $req->fetch();
-if($test['password'] == '8c744dc6b145df85c03655a678657bf3096ed7b6acd76d2bb27914069f544b07ad164ddf759db02d6bd6542fa4041a04b16060431cbc55d6814f12b048f43240') {
+if($test['password'] != '8c744dc6b145df85c03655a678657bf3096ed7b6acd76d2bb27914069f544b07ad164ddf759db02d6bd6542fa4041a04b16060431cbc55d6814f12b048f43240') {
     echo "<h2>All good !</h2>";
-    echo "<p><a href='../index.php'>Start working !</a></p>";
+    echo "<h2><a href='../index.php'>Start working !</a></h2>";
 } else {
-    echo "Please set root password";
+?>
+    <!-- SET ROOT PASSWORD -->
+    <br />
+    [°] Set root (administrator) password...<br />
+    [-] Password : 
+    <input name="password" type="password" id="password" /><br />
+    [-] Confirm : 
+    <input name="cpassword" type="password" id="cpassword" class='inline' /><br />
+    [-] Complexity : <span id="complexity">0%</span><br />
+    [°] <a href='#' onClick="setRootPassword()">Set root password</a>
+<?php
 }
- */
+echo "</span>";
 ?>
 
-
-<h2>All good :)</h2>
-<h2><a href='../index.php'>Start working !</a></h2>
-<h3>(login with user : root and password : toor)</h3>
 </section>
 <script src="../js/jquery.complexify.min.js"></script>
 <script>
+function setRootPassword(){
+    var pass = $('#password').attr('value');
+    // POST request
+        var jqxhr = $.post('install.php', {
+            pass:pass
+        })
+        // reload the tags list
+        .success(function() {$("#set_pass_div").load("index.php #set_pass_div");
+    // clear input field
+    $("#password").val("");
+    return false;
+        })
+}
 $(document).ready(function() {
     // password complexity
     $("#password").complexify({}, function (valid, complexity){

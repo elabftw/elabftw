@@ -41,6 +41,15 @@ if ($_GET['type'] === 'exp') {
 } else {
     die('bad type');
 }
+
+// CREATE URL
+if (!empty($_SERVER['HTTPS'])) {
+    $protocol = 'https://';
+} else {
+    $protocol = 'http://';
+}
+$url = $protocol.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+
 // Check id is valid and assign it to $id
 if(isset($_GET['id']) && !empty($_GET['id'])) {
     $id_arr = explode(" ", $_GET['id']);
@@ -94,7 +103,7 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
 
 
             // SQL to get filesattached
-            $sql = "SELECT real_name, long_name, comment FROM uploads WHERE item_id = ".$id;
+            $sql = "SELECT * FROM uploads WHERE item_id = ".$id;
             $req = $bdd->prepare($sql);
             $req->execute();
             $real_name = array();
@@ -132,22 +141,62 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
                 // files attached ?
                 $filenb = count($real_name);
                 if ($filenb > 0){
+                    $html .= "<section>";
                     if ($filenb == 1){
-                        $html .= '~~~~<br />
-            Attached file :<br />
-            ';
+                        $html .= '
+                            <h3>Attached file :</h3>';
                     } else {
-                        $html .= '~~~~<br />
-            Attached files :<br />
-            ';
+                        $html .= '<h3>Attached files :</h3>';
                     }
+                    $html .= "<ul>";
                     for ($i=0;$i<$filenb;$i++){
-                        $html .= "<a href='".$real_name[$i]."'>".$real_name[$i]."</a> (".stripslashes(str_replace("&#39;", "'", utf8_decode($comment[$i]))).").<br />";
+                        $html .= "<li><a href='".$real_name[$i]."'>".$real_name[$i]."</a> (".stripslashes(str_replace("&#39;", "'", utf8_decode($comment[$i]))).").</li>";
                         // add files to archive
                         $zip->addFile('uploads/'.$long_name[$i], $folder."/".$real_name[$i]);
                     }
+                    $html .= "
+                        </ul>
+                        </section>";
 
                 }
+                // GET LINKS
+                // are we an experiment ?
+                if ($table === 'experiments') {
+                    // has links ?
+                    $link_sql = "SELECT * FROM experiments_links WHERE item_id = ".$id;
+                    $link_req = $bdd->prepare($link_sql);
+                    $link_req->execute();
+                    while ($link_data = $link_req->fetch()) {
+                        $link_id[] = $link_data['id'];
+                    }
+                    $linknb = $link_req->rowCount();
+                    if ($linknb > 0) {
+                        $html .= "
+                            <section>
+                            <h3>Linked items :</h3>
+                            <ul>";
+                        // create url for database
+                        $url = str_replace('make_zip.php', 'database.php', $url);
+                        // put links in list with link to the url of item
+                        for ($j=0;$j<$linknb;$j++){
+                            // get title of the item linked
+                            $sql = "SELECT * FROM items WHERE id = :id";
+                            $req = $bdd->prepare($sql);
+                            $req->execute(array(
+                                'id' => $link_id[$j]
+                            ));
+                            $item_infos = $req->fetch();
+                            $link_title = $item_infos['title'];
+                            $link_type = get_item_info_from_id($item_infos['type'], 'name');
+                            $html .= "<li>[".$link_type."] - <a href='".$url."?mode=view&id=".$link_id[$j]."'>".$link_title."</a></li>";
+                        }
+                        $html .= "
+                            </ul>
+                            </section>";
+                    }
+                }
+
+
                 // FOOTER
                 $html .= "~~~~<br />
                     <footer>

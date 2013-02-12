@@ -46,8 +46,6 @@ if($test['password'] != '8c744dc6b145df85c03655a678657bf3096ed7b6acd76d2bb279140
         'password' => $passwordHash,
         'salt' => $salt
     ));
-    echo "salt : ".$salt;
-    echo "sql res : ".$result;
 }
 ?>
 

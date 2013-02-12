@@ -30,6 +30,7 @@ db_user = "elabftw"
 db_password = "YOURPASSWORD"
 
 [mailer]
+; It is recommended to use a free gmail account for this, but you can also use your company's SMTP server.
 ; SMTP server address
 smtp_address = smtp.gmail.com
 ; Port

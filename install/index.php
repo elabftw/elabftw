@@ -181,6 +181,30 @@ if (!extension_loaded("openssl")) {
     echo $ok;
 }
 
+// CHECK ssl extension
+echo "<br />";
+echo "[°] Sending test email to test@yopmail.com...";
+require_once('../lib/swift_required.php');
+$message = Swift_Message::newInstance()
+// Give the message a subject
+->setSubject('[eLabFTW] Email test successful !')
+// Set the From address with an associative array
+->setFrom(array('elabftw.net@gmail.com' => 'eLabFTW.net'))
+// Set the To addresses with an associative array
+->setTo(array('test@yopmail.com' => 'Dori'))
+// Give it a body
+->setBody('\o/');
+$transport = Swift_SmtpTransport::newInstance($ini_arr['smtp_address'], $ini_arr['smtp_port'], $ini_arr['smtp_encryption'])
+->setUsername($ini_arr['smtp_username'])
+->setPassword($ini_arr['smtp_password']);
+$mailer = Swift_Mailer::newInstance($transport);
+$result = $mailer->send($message);
+if ($result) {
+    echo $ok;
+} else {
+    echo $fail." : Couldn't send email. Check your SMTP settings !";
+}
+
 
 // Check if root password need to be set (should be yes after fresh install)
 echo "<span id='set_pass_div'>";

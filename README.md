@@ -15,21 +15,22 @@ but these instructions can also apply if you are installing it locally (with MAM
 Please report bugs on [github](https://github.com/NicolasCARPi/elabftw/issues).
 
 ## Requirements
-Here is what you need in order to install it :
+Here is what you need in order to install elabftw :
 
-* a computer
+* [git](http://git-scm.com/)
 
-Have everything ?
+Git is installed ?
 Now, let's begin :
 
 ## Install the server
+You can skip these instructions if you already have a running http server.
 
 ### Install on Mac OS
 Please [follow the instructions on the wiki](https://github.com/NicolasCARPi/elabftw/wiki/installmac).
 ### Install on Windows
 Please [follow the instructions on the wiki](https://github.com/NicolasCARPi/elabftw/wiki/installwin).
 ### Install on Unix
-Please [follow the instructions on the wiki](https://github.com/NicolasCARPi/elabftw/wiki/installwin).
+Please [follow the instructions on the wiki](https://github.com/NicolasCARPi/elabftw/wiki/installnix).
 
 ## Php part
 The first part is getting the files on the server.
@@ -65,9 +66,9 @@ You will be prompted with the password you entered when creating the `elabftw` u
 
 
 ## Config file
-Copy the file `admin/config-example.ini` to `admin/config.ini` and edit it.
+Copy the file `admin/config.ini-EXAMPLE` to `admin/config.ini` and edit it.
 ~~~ sh
-$ cp admin/config-example.ini admin/config.ini
+$ cp admin/config.ini-EXAMPLE admin/config.ini
 $ $EDITOR admin/config.ini
 ~~~
 

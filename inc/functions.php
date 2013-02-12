@@ -315,7 +315,6 @@ function showDB($id, $display) {
         echo show_tags($id, 'items_tags');
         // STARS
         show_stars($final_query['rating']);
-        echo "<br />";
         // show attached if there is a file attached
         if (has_attachement($final_query['id'])) {
             echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='file attached' />";

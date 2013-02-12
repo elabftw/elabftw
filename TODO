@@ -1,4 +1,5 @@
 ////// Priority
+* rename config-example in config.ini-example to get tab completion, beware doc
 
 ////// Fix/improve
 * web : gifs 

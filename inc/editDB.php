@@ -195,7 +195,7 @@ function focusCheck () {
 function autoSave() {
         $.ajax({
             type: "POST",
-            url: "editXP-autosave.php",
+            url: "editDB-autosave.php",
             data: {
             id : <?php echo $id;?>,
             // we need this to get the updated content

@@ -10,19 +10,9 @@ Just try it, you'll love it :)
 
 # Installation
 Thank you for choosing eLabFTW as a lab manager =)
-This file contains the instructions to install elabftw on a webserver,
-but these instructions can also apply if you are installing it locally (with MAMP/XAMPP).
 Please report bugs on [github](https://github.com/NicolasCARPi/elabftw/issues).
 
-## Requirements
-Here is what you need in order to install elabftw :
-
-* [git](http://git-scm.com/)
-
-Git is installed ?
-Now, let's begin :
-
-eLabFTW was designed to be installed on a server, and people would just log into it from their browser.
+eLabFTW was designed to be installed on a server, and people from the team would just log into it from their browser.
 
 But you can also install it locally and use it for yourself only. Here is how :
 
@@ -36,11 +26,11 @@ Please refer to your distribution's documentation to install :
 * a webserver (Apache, nginx, cherokee, lighttpd)
 * php5
 * mysql
+* git
 
 ## Getting the files
 
 1. Connect to your server with SSH
-If you didn't understand this sentence, ask your local geek.
 
 2. Cd to the public directory where you want eLabFTW to be installed
 (can be /var/www, ~/public\_html, or any folder you'd like)

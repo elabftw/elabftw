@@ -23,17 +23,19 @@ Git is installed ?
 Now, let's begin :
 
 ## Install the server
-You can skip these instructions if you already have a running http server.
 
-### Install on Mac OS
+### Install locally on Mac OS
 Please [follow the instructions on the wiki](https://github.com/NicolasCARPi/elabftw/wiki/installmac).
-### Install on Windows
+### Install locally on Windows
 Please [follow the instructions on the wiki](https://github.com/NicolasCARPi/elabftw/wiki/installwin).
-### Install on Unix
-Please [follow the instructions on the wiki](https://github.com/NicolasCARPi/elabftw/wiki/installnix).
+### Install on Unix-like OS
+You can skip these instructions if you already have a running http server.
+Please refer to your distribution's documentation to install :
+* a webserver (Apache, nginx, cherokee, lighttpd)
+* php5
+* mysql
 
-## Php part
-The first part is getting the files on the server.
+## Getting the files
 
 1. Connect to your server with SSH
 If you didn't understand this sentence, ask your local geek.

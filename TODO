@@ -1,4 +1,5 @@
 ////// Priority
+* windows : fix upload of excel files (extension must fail)
 
 ////// Fix/improve
 * web : gifs 

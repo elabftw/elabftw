@@ -57,10 +57,17 @@ If you cannot connect, try exporting your proxy settings in your shell.
 The second part is putting the database in place.
 
 ### 1) create a user `elabftw` with all rights on the database `elabftw`
-I recommend using phpmyadmin for that. Here is the [doc](http://wiki.phpmyadmin.net/pma/user_management).
+I recommend using phpmyadmin for that.
+
+Login with the root user on PhpMyAdmin panel, click the `privileges` tab and click Add new user.
+
+Do like this :
+
+![phpmyadmin add user](http://i.imgur.com/kE1gtT1.png)
 
 
 ### 2) import the database structure :
+#### Command line way
 ~~~ sh
 $ cd elabftw
 $ mysql -u elabftw -p elabftw < install/elabftw.sql
@@ -68,6 +75,11 @@ $ mysql -u elabftw -p elabftw < install/elabftw.sql
 
 You will be prompted with the password you entered when creating the `elabftw` user in step 1.
 
+#### Graphical way (in PhpMyAdmin)
+* On the menu on the left, select the newly created database `elabftw`
+* Click the Import tab
+* Select the file /path/to/elabftw/install/elabftw.sql
+* Click Go
 
 ## Config file
 Copy the file `admin/config.ini-EXAMPLE` to `admin/config.ini` and edit it.

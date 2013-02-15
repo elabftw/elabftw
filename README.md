@@ -22,6 +22,7 @@ Please [follow the instructions on the wiki](https://github.com/NicolasCARPi/ela
 Please [follow the instructions on the wiki](https://github.com/NicolasCARPi/elabftw/wiki/installwin).
 ## Install on Unix-like OS (GNU/Linux, BSD, Solaris, etc…)
 You can skip these instructions if you already have a running http server.
+
 Please refer to your distribution's documentation to install :
 * a webserver (Apache, nginx, cherokee, lighttpd)
 * php5

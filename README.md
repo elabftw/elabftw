@@ -106,3 +106,5 @@ $ php update.php
 ~Thank you for using eLabFTW :)
 
 http://www.elabftw.net
+
+\o/

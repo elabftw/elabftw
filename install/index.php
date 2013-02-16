@@ -32,44 +32,7 @@ session_start();
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
 <link rel="icon" type="image/ico" href="img/favicon.ico" />
 <?php
-// Random title
-$ftw_arr = array();
-// Lots of 'For The World' so the other ones appear more rarely
-for($i=0; $i<200;$i++){
-$ftw_arr[] = 'For The World';
-}
-// Now the fun ones
-$ftw_arr[] = 'For Those Wondering';
-$ftw_arr[] = 'For The Worms';
-$ftw_arr[] = 'Forever Two Wheels';
-$ftw_arr[] = 'Free The Wookies';
-$ftw_arr[] = 'Forward The Word';
-$ftw_arr[] = 'Forever Together Whenever';
-$ftw_arr[] = 'Face The World';
-$ftw_arr[] = 'Forget The World';
-$ftw_arr[] = 'Free To Watch';
-$ftw_arr[] = 'Feed The World';
-$ftw_arr[] = 'Feel The Wind';
-$ftw_arr[] = 'Feel The Wrath';
-$ftw_arr[] = 'Fight To Win';
-$ftw_arr[] = 'Find The Waldo';
-$ftw_arr[] = 'Finding The Way';
-$ftw_arr[] = 'Flying Training Wing';
-$ftw_arr[] = 'Follow The Way';
-$ftw_arr[] = 'For The Wii';
-$ftw_arr[] = 'For The Win';
-$ftw_arr[] = 'For The Wolf';
-$ftw_arr[] = 'Free The Weed';
-$ftw_arr[] = 'Free The Whales';
-$ftw_arr[] = 'From The Wilderness';
-$ftw_arr[] = 'Freedom To Work';
-$ftw_arr[] = 'For The Warriors';
-$ftw_arr[] = 'Full Time Workers';
-$ftw_arr[] = 'Fabricated To Win';
-$ftw_arr[] = 'Furiously Taunted Wookies';
-$ftw_arr[] = 'Flash The Watch';
-shuffle($ftw_arr);
-$ftw = $ftw_arr[0]; 
+$ftw = 'INSTALL - eLabFTW'; 
 
 echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."</title>"?>
 <meta name="author" content="Nicolas CARPi" />

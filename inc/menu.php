@@ -33,7 +33,7 @@ Javascript is disabled. Please enable Javascript to view this site in all its gl
 </noscript>
 
 <div id='logo'>
-<a href="index.php"><span id='eblue'>e</span><span id='lab'>Lab</span><span id='ftw'>FTW</span></a>
+<img src='img/logo-169.png' alt='elabftw' />
 </div>
 
 <div id="logmenu"><p>

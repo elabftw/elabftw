@@ -103,7 +103,6 @@ $ php update.php
 * You can share an experiment by just sending the URL of the page to someone else.
 
 
-
 ~Thank you for using eLabFTW :)
 
 http://www.elabftw.net

@@ -1,12 +1,5 @@
 # Description
-[eLaFTW (electronic lab for the world)](http://www.elabftw.net)
-is a free and open-source experiments and database manager.
-You can store your experiments (like an lab notebook, but better).
-You can have a database of whatever objects (antibodies, siRNA, horses, plasmids, etc…).
-You can search efficiently, export your results in a .zip archive or in a spreadsheet.
-It was made by researchers, for researchers, with usability in mind.
-
-Just try it, you'll love it :)
+[Please visite official website to see screensshots and use demo :) http://www.elabftw.net](http://www.elabftw.net)
 
 # Installation
 Thank you for choosing eLabFTW as a lab manager =)

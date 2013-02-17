@@ -1,5 +1,8 @@
+![osef](http://i.imgur.com/hq6SAZf.png)
+
+
 # Description
-[Please visite official website to see screensshots and use demo :) http://www.elabftw.net](http://www.elabftw.net)
+Please visit the [official website](http://www.elabftw.net) to see some screenshots and use a demo :)
 
 # Installation
 Thank you for choosing eLabFTW as a lab manager =)

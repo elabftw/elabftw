@@ -185,26 +185,11 @@ nav a{
     height: 40px;
 }
 
+/* on search.php */
 #export_menu {
     float:right;
 }
 
-/* results on database search */
-.result {
-}
-
-#eblue {
-    font:  20px Helvetica, Verdana, Arial, sans-serif;
-}
-
-#lab{
-    font:  24px Verdana, Arial, Helvetica, sans-serif;
-}
-#ftw{
-    font:  30px Impact, Arial, Verdana, sans-serif;
-    /* no browser support
-    font-stretch: extra-expended;*/
-}
 
 /* TITLES */
 h1{
@@ -240,7 +225,39 @@ h4 {
 }
 /* MENU */
 
-/**** SEARCH PAGE ********/
+/* BUTTONS */
+
+.button {
+    border:1px solid #b7b7b7;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    font-family:arial, helvetica, sans-serif;
+    padding: 10px 10px 10px 10px;
+    text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
+    font-weight:bold;
+    text-align: center;
+    color: #FFFFFF;
+    background-color: #d3d3d3;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #d3d3d3), color-stop(100%, #707070));
+    background-image: -webkit-linear-gradient(top, #d3d3d3, #707070);
+    background-image: -moz-linear-gradient(top, #d3d3d3, #707070);
+    background-image: -ms-linear-gradient(top, #d3d3d3, #707070);
+    background-image: -o-linear-gradient(top, #d3d3d3, #707070);
+    background-image: linear-gradient(top, #d3d3d3, #707070);
+      }
+
+.button:hover{
+    border:1px solid #a0a0a0; background-color: #bababa;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#bababa), color-stop(100%, #585858));
+    background-image: -webkit-linear-gradient(top, #bababa, #585858);
+    background-image: -moz-linear-gradient(top, #bababa, #585858);
+    background-image: -ms-linear-gradient(top, #bababa, #585858);
+    background-image: -o-linear-gradient(top, #bababa, #585858);
+    background-image: linear-gradient(top, #bababa, #585858);
+}
+
+/* SEARCH */
 
 .search_buttons {
 	color:  blue;

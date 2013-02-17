@@ -34,40 +34,28 @@ body {
 
 /* LINKS */
 a {
-    color: #585858;
+    color: #606264;
     text-decoration:none;
 }
 a:hover {
-    color: #CCC;
+    color:#29AEB9;
     text-decoration:none;
 }
 
 ul, li {
     list-style-type:none;
 }
-/* LOGO */
-#eblue {
-    color:blue;
-}
-
-#lab{
-    color:black;
-}
-#ftw{
-    color:black;
-}
-
 /* MAIN MENU */
 
 nav a {
     border:1px solid white;
     border-radius:5px;
-    color:blue;
+    color:#606264;
 }
 nav a:hover {
     border:1px solid black;
     border-radius:5px;
-    color:#1589FF;
+    color:#29AEB9;
     -moz-transition-duration: 1500ms;
     -webkit-transition-duration: 1500ms;
     -o-transition-duration: 1500ms;
@@ -79,6 +67,9 @@ nav a:hover {
 #logmenu p a{
     color: black;
 }
+#logmenu p a:hover {
+    color: #29AEB9;
+}
 #submenu a {
     border:1px solid white;
     border-radius:5px;
@@ -88,7 +79,7 @@ nav a:hover {
 #submenu a:hover {
     border:1px solid black;
     border-radius:5px;
-    color:#1589FF;
+    color: #29AEB9;
     -moz-transition-duration: 1500ms;
     -webkit-transition-duration: 1500ms;
     -o-transition-duration: 1500ms;
@@ -199,24 +190,6 @@ nav a:hover {
 .fail{
     border:2px solid red;
 }
-/* team.php */
-.show_rules {
-    border:1px solid #CCC;
-    border-radius:5px;
-    float:right;
-    font-size:12px;
-    padding:5px 10px 5px 10px;
-    text-decoration:none;
-}
-.show_rules:hover {
-    border:1px solid black;
-    border-radius:5px;
-    color:#1589FF;
-    -moz-transition-duration: 1500ms;
-    -webkit-transition-duration: 1500ms;
-    -o-transition-duration: 1500ms;
-    -ms-transition-duration: 1500ms;
-}
 /* FILES */
 .filesdiv {
     border: 1px solid #CCC;
@@ -239,4 +212,13 @@ nav a:hover {
 /* FOOTER */
 footer {
     border-top:solid 2px #CCC;
+}
+footer p{
+    color: #AAA;
+}
+footer p a{
+    color: black;
+}
+footer p a:hover {
+    color: #29AEB9;
 }

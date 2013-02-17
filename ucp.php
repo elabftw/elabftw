@@ -56,7 +56,7 @@ $data = $req->fetch();
       Cellphone <input name="cellphone" value='<?php echo $data['cellphone'];?>' cols='20' rows='1' /><br />
       Skype <input name="skype" value='<?php echo $data['skype'];?>' cols='20' rows='1' /><br />
       Website <input name="website" value='<?php echo $data['website'];?>' cols='20' rows='1' /><br /></p>
-<div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Update profile" /></div>
+<div id='submitDiv'><input type="submit" name="Submit" class='button' value="Update profile" /></div>
 </form>
 </div><!-- end innerdiv -->
 </div>
@@ -110,7 +110,7 @@ if ($_SESSION['prefs']['sort'] === 'asc'){
 </div>
 <br /><br />
 <!-- SUBMIT BUTTON -->
-<div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Set preferences" /></div>
+<div id='submitDiv'><input type="submit" name="Submit" class='button' value="Set preferences" /></div>
 </form>
 </div>
 
@@ -137,7 +137,7 @@ echo "</ul>";
     <input type='hidden' name='new_tpl_form' />
     <input type='text' name='new_tpl_name' placeholder='Name of the template' /><br />
     <textarea name='new_tpl_body' id='new_tpl_txt' class='mceditable' placeholder='Insert here your template' rows='10' cols='60'></textarea>
-    <div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Add template" /></div>
+    <div id='submitDiv'><input type="submit" name="Submit" class='button' value="Add template" /></div>
     </form>
 </div>
 
@@ -155,7 +155,7 @@ while ($data = $req->fetch()) {
     echo "<input type='hidden' name='tpl_id[]' value='".$data['id']."' />";
     echo "<input name='tpl_name[]' value='".stripslashes($data['name'])."' /><br />";
     echo "<textarea name='tpl_body[]' class='mceditable'>".stripslashes($data['body'])."</textarea><br />";
-    echo "<div id='submitDiv'><input type='submit' name='Submit' class='submitbutton' value='Edit template' /></div>";
+    echo "<div id='submitDiv'><input type='submit' name='Submit' class='button' value='Edit template' /></div>";
     echo "</form>";
     echo "</div>";
     $i++;
@@ -177,10 +177,9 @@ while ($data = $req->fetch()) {
 <!-- SUBMIT BUTTON -->
 <br />
 <br />
-<div id='submitDiv'><input type="submit" name="Submit" class='submitbutton' value="Change shortcuts" /></div>
+<div id='submitDiv'><input type="submit" name="Submit" class='button' value="Change shortcuts" /></div>
 </form>
 </div>
-
 </div>
 
 

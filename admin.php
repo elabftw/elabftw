@@ -103,7 +103,7 @@ while ($users = $req->fetch()) {
                     >no</option>
             </select>
 <br />
-    <input type='submit' class='submitbutton' value='Edit this user' /><br />
+    <input type='submit' class='button' value='Edit this user' /><br />
         </form>
     </div>
     <script>
@@ -147,7 +147,7 @@ while ($items_types = $req->fetch()) {
      
     <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']);?></textarea><br />
 
-    <input type='submit' class='submitbutton' value='Edit <?php echo stripslashes($items_types['name']);?>' /><br />
+    <input type='submit' class='button' value='Edit <?php echo stripslashes($items_types['name']);?>' /><br />
     </form></div>
     <script>$(document).ready(function() {
         $(".toggle_container_<?php echo $items_types['id'];?>").hide();
@@ -171,7 +171,7 @@ while ($items_types = $req->fetch()) {
 <div class='colorwheel inline'></div>
 <input type='text' name='new_item_type_bgcolor' value='#000000' /></div><br /><br />
 <textarea class='mceditable' name='new_item_type_template' /></textarea><br />
-<input type='submit' class='submitbutton' value='Add new item type' /></form></div>
+<input type='submit' class='button' value='Add new item type' /></form></div>
 </section>
 
 <script>

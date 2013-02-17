@@ -139,13 +139,14 @@ if ($req->rowcount() != 0) {
     echo "<ul>";
     while ($links = $req->fetch()) {
         // SQL to get title
-        $linksql = "SELECT id, title FROM items WHERE id = :link_id";
+        $linksql = "SELECT id, title, type FROM items WHERE id = :link_id";
         $linkreq = $bdd->prepare($linksql);
         $linkreq->execute(array(
             'link_id' => $links['link_id']
         ));
         $linkdata = $linkreq->fetch();
-        echo "<li>- <a href='database.php?mode=view&id=".$linkdata['id']."'>".stripslashes($linkdata['title'])."</a>";
+        $name = get_item_info_from_id($linkdata['type'], 'name');
+        echo "<li>- [".$name."] - <a href='database.php?mode=view&id=".$linkdata['id']."'>".stripslashes($linkdata['title'])."</a>";
         echo "<a onclick='delete_link(".$links['id'].", ".$id.")'>
         <img src='themes/".$_SESSION['prefs']['theme']."/img/trash.png' title='delete' alt='delete' /></a></li>";
     } // end while
@@ -225,7 +226,7 @@ function addTagOnEnter(e) { // the argument here is the event (needed to detect 
 // LINKS AUTOCOMPLETE
 $(function() {
 		var availableLinks = [
-<?php // get all user's links for autocomplete
+<?php // get all links for autocomplete
 $sql = "SELECT title, id, type FROM items";
 $getalllinks = $bdd->prepare($sql);
 $getalllinks->execute();

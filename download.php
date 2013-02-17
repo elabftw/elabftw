@@ -54,7 +54,7 @@ if (!isset($_GET['name']) || empty($_GET['name'])) {
 
 // FILE PATH
 if ($type == 'zip') {
-    $file_path = get_export_path().$long_filename;
+    $file_path = 'uploads/export/'.$long_filename;
 } else {
     $file_path = 'uploads/'.$long_filename;
 }

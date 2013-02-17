@@ -637,4 +637,12 @@ function duplicate_item($id, $type) {
         }
     }
 }
+function get_export_path() {
+    // are we on windows ?
+    if (PHP_OS == 'Windows' || PHP_OS == 'WIN32' || PHP_OS == 'WINNT') {
+        return "uploads\export\\";
+    } else {
+        return "uploads/export/";
+    }
+}
 ?>

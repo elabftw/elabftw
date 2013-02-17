@@ -56,8 +56,15 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
     // BEGIN ZIP
     // name of the downloadable file
     $zipname = kdate().".export.elabftw";
-    // name of the real file on the system, in /tmp to avoid clugging up uploads/
-    $zipfile = "/tmp/".$zipname."-".hash("sha512", uniqid(rand(), true)).".zip";
+
+    // name of the real file on the system
+    // are we on windows ?
+    if (PHP_OS == 'Windows' || PHP_OS == 'WIN32' || PHP_OS == 'WINNT') {
+        $export_path = "uploads\export\\";
+    } else {
+        $export_path = "uploads/export/";
+    }
+    $zipfile = get_export_path().$zipname."-".hash("sha512", uniqid(rand(), true)).".zip";
 
     $zip = new ZipArchive;
     $res = $zip->open($zipfile, ZipArchive::CREATE);
@@ -209,15 +216,15 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
                 $html = utf8_encode($html);
                 // add header for utf-8
                 $html = "\xEF\xBB\xBF".$html;
-                $txtfile = '/tmp/elabftw-'.uniqid();
+                $txtfile = get_export_path().'elabftw-'.uniqid();
                 $tf = fopen($txtfile, 'w+');
                 fwrite($tf, $html);
                 fclose($tf);
                 // add html file
                 $zip->addFile($txtfile, $folder."/".$clean_title.".html");
                 // add a PDF, too
-                $pdfname = make_pdf($id, $table, '/tmp');
-                $zip->addFile('/tmp/'.$pdfname, $folder."/".$pdfname);
+                $pdfname = make_pdf($id, $table, get_export_path());
+                $zip->addFile(get_export_path().$pdfname, $folder."/".$pdfname);
                 // delete files
                 //unlink($txtfile);
                 //unlink('/tmp/'.$pdfname);

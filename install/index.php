@@ -89,6 +89,19 @@ if (!is_dir("../uploads")){
     echo $ok;
 }
 
+// EXPORT DIR
+echo "<br />";
+echo "[°] Create uploads/export directory...";
+if (!is_dir("../uploads/export")){
+   if  (mkdir("../uploads/export", 0777)){
+    echo $ok;
+    }else{
+        // TODO link to the FAQ
+        die($fail." : Failed creating <em>uploads/export</em> directory. Do it manually and chmod 777 it.");
+    }
+}else{
+    echo $ok;
+}
 
 // TRY TO CONNECT TO DATABASE
 echo "<br />";

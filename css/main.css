@@ -36,7 +36,7 @@ a {
     color:  #000;
 }
 a :hover {
-    color:  red;
+    color:  #29AEB9;
 }
 
 /* GENERAL */
@@ -176,6 +176,10 @@ nav a{
 
 
 /* on admin.php for items types */
+section.item a.trigger_add_new_item:hover {
+    cursor:pointer;
+}
+
 .biginput {
     font: 30px Helvetica, Verdana, Arial, sans-serif;
     text-align:center;

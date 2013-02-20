@@ -81,6 +81,9 @@ If you see a 403 Error, all is good.
 
 If you see the config file be sure to edit AllowOverride in your <Directory "/var/www/elabftw"> and set it to All.
 
+## Configure upload size
+By default, the size might be too small, change the value of `upload_max_filesize` in the `/etc/php/php.ini` file.
+
 ## Final step
 Finally, point your browser to the install folder (install/) and read onscreen instructions.
 

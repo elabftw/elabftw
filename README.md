@@ -46,7 +46,7 @@ The second part is putting the database in place.
 ### 1) create a user `elabftw` with all rights on the database `elabftw`
 I recommend using phpmyadmin for that.
 
-Login with the root user on PhpMyAdmin panel, click the `privileges` tab and click Add new user.
+Login with the root user on PhpMyAdmin panel, click the `Users` tab and click Add new user.
 
 Do like this :
 

@@ -1,5 +1,7 @@
 ////// Priority
 
+* register.php check if user is logged in and propose to log out first
+
 ////// Fix/improve
 * web : gifs 
 * website : faq with common caveheats (see install file)

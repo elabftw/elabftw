@@ -3,6 +3,11 @@
 * register.php check if user is logged in and propose to log out first
 
 ////// Fix/improve
+* s/submit/save
+* possibility to change outcomes (edit/add/delete)
+* possibility to delete an item type
+* documentation : how to backup
+* on install : ask for main user, create it and put it admin, remove root user
 * web : gifs 
 * website : faq with common caveheats (see install file)
 * website : screens for installing on a mac + rpi

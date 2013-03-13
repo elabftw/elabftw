@@ -94,6 +94,10 @@ $ git pull
 $ php update.php
 ~~~
 
+# Backup
+It is important to backup your files to somewhere else, in case anything bad happens.
+Please refer to the [wiki](https://github.com/NicolasCARPi/elabftw/wiki/backup).
+
 # Bonus stage
 * It's a good idea to use a php optimizer to increase speed. I recommand installing XCache.
 * You can show a TODOlist by pressing 't'.

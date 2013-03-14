@@ -1,22 +1,15 @@
 ////// Priority
 
-* register.php check if user is logged in and propose to log out first
-
 ////// Fix/improve
-* s/submit/save
 * possibility to change outcomes (edit/add/delete)
 * possibility to delete an item type
-* documentation : how to backup
 * on install : ask for main user, create it and put it admin, remove root user
 * web : gifs 
-* website : faq with common caveheats (see install file)
-* website : screens for installing on a mac + rpi
 * upload bigger files; make a Worker() to upload big files asynchronously 
 * add tag on templates
 
 ////// New Features
 * delete users
-* web : install on Rpi
 * make iso img of fresh install with wiki for Rpi
 * use feeling_lucky()
 * tools page with trucs pour calculer les concentrations, et les volumes pour les transfections, etc...

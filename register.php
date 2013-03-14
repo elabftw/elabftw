@@ -22,9 +22,16 @@ require_once('inc/head.php');
 $page_title='Register';
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
+// Check if we're logged in
+if ($_SESSION['auth'] == 1) {
+    die("<ul>
+        <li>Please <a href='logout.php'>logout</a> before you register another account.</li>
+        </ul>");
+}
 ?>
 <!-- Password complexity visualizer -->
 <script src="js/jquery.complexify.min.js"></script>
+
 
 <section>
     <div class='item'>
@@ -37,13 +44,14 @@ require_once('inc/info_box.php');
                   Email <input name="email" type="text"  id="email" /><br />
                   Password <input name="password" type="password" id="password" /><br />
                   Confirm Password <input name="cpassword" type="password" id="cpassword" /><br />
-Password complexity : <span id="complexity">0%</span><br />
+                  Password complexity : <span id="complexity">0%</span><br />
             <div id='submitDiv'>
                 <input type="submit" name="Submit" class='submit' value="Register" />
             </div>
             </form>
         </div>
     <!-- end register form -->
+    </div>
 </section>
 <script>
 $(document).ready(function() {

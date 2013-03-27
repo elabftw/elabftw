@@ -8,22 +8,21 @@
  * file that was distributed with this source code.
  */
 
-
 /**
  * RFC Compliance Exception class.
+ *
  * @package Swift
- * @author Chris Corbyn
+ * @author  Chris Corbyn
  */
 class Swift_RfcComplianceException extends Swift_SwiftException
 {
-  
-  /**
-   * Create a new RfcComplianceException with $message.
-   * @param string $message
-   */
-  public function __construct($message)
-  {
-    parent::__construct($message);
-  }
-  
+    /**
+     * Create a new RfcComplianceException with $message.
+     *
+     * @param string $message
+     */
+    public function __construct($message)
+    {
+        parent::__construct($message);
+    }
 }

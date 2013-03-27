@@ -182,7 +182,7 @@ if ($result) {
 }
 
 
-// Check if root password need to be set (should be yes after fresh install)
+// Make an admin user
 echo "<span id='set_pass_div'>";
 $sql = "SELECT * FROM users WHERE username = 'root'";
 $req = $bdd->prepare($sql);

@@ -1,6 +1,8 @@
 ////// Priority
+* when you follow a link and you're not logged in, you want to be redirected to the target page after login
 
 ////// Fix/improve
+* upload : https://github.com/sthielen/BigUpload
 * possibility to change outcomes (edit/add/delete)
 * possibility to delete an item type
 * on install : ask for main user, create it and put it admin, remove root user

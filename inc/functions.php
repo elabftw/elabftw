@@ -278,9 +278,11 @@ function show_stars($rating) {
 *************************************/
 function get_item_info_from_id($id, $info) {
     global $bdd;
-    $sql = "SELECT * FROM items_types WHERE id = $id";
+    $sql = "SELECT * FROM items_types WHERE id = :id";
     $req = $bdd->prepare($sql);
-    $req->execute();
+    $req->execute(array(
+        'id' => $id
+    ));
     $data = $req->fetch();
     return $data[$info];
 }

@@ -183,25 +183,36 @@ if ($result) {
 
 
 // Make an admin user
+// Check that there is NO user on the database
 echo "<span id='set_pass_div'>";
-$sql = "SELECT * FROM users WHERE username = 'root'";
+$sql = "SELECT COUNT(*) FROM users WHERE is_admin = 1";
 $req = $bdd->prepare($sql);
 $req->execute();
 $test = $req->fetch();
-if($test['password'] != '8c744dc6b145df85c03655a678657bf3096ed7b6acd76d2bb27914069f544b07ad164ddf759db02d6bd6542fa4041a04b16060431cbc55d6814f12b048f43240') {
-    echo "<h2>All good !</h2>";
-    echo "<h2><a href='../index.php'>Start working !</a></h2>";
+// make account if there is no admin user already
+if ($test[0] != 0) {
+    echo "<h2>There is already an admin user !</h2>";
 } else {
-?>
-    <!-- SET ROOT PASSWORD -->
-    <br />
-    [°] Set root (administrator) password...<br />
-    [-] Password : 
-    <input name="password" type="password" id="password" /><br />
-    [-] Confirm : 
-    <input name="cpassword" type="password" id="cpassword" class='inline' /><br />
-    [-] Complexity : <span id="complexity">0%</span><br />
-    [°] <a href='#' onClick="setRootPassword()">Set root password</a>
+    // register an account
+    ?>
+            <div id='innerdiv'>
+            <!-- Register form -->
+<br />
+<h3>Create your account (it will have admin rights)</h3>
+                <form name="regForm" method="post" action="../register-exec.php" class='innerinnerdiv'>
+                      <p>Username <input name="username" type="text" id="username" /><br />
+                      Firstname <input name="firstname" type="text" id="firstname" /><br />
+                      Lastname <input name="lastname" type="text" id="lastname" /><br />
+                      Email <input name="email" type="text"  id="email" /><br />
+                      Password <input name="password" type="password" id="password" /><br />
+                      Confirm Password <input name="cpassword" type="password" id="cpassword" /><br />
+                      Password complexity : <span id="complexity">0%</span><br />
+                <div id='submitDiv'>
+                    <input type="submit" name="Submit" class='submit' value="Register" />
+                </div>
+                </form>
+            </div>
+        <!-- end register form -->
 <?php
 }
 echo "</span>";
@@ -210,7 +221,7 @@ echo "</span>";
 </section>
 <script src="../js/jquery.complexify.min.js"></script>
 <script>
-function setRootPassword(){
+function createAccount(){
     var pass = $('#password').attr('value');
     // POST request
         var jqxhr = $.post('install.php', {

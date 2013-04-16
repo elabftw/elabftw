@@ -122,15 +122,7 @@ $req->execute();
 $res = $req->rowCount();
 // users table is here
 if ($res) {
-    $sql = "SELECT * FROM users";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute();
-    $test = $req->fetch();
-    if($test['userid']) {
-        echo $ok;
-    } else {
-        die($fail);
-    }
+    echo $ok;
 } else { // no structure here
     die($fail. " You need to import the file install/elabftw.sql in your database !");
 }

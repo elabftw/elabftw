@@ -31,8 +31,8 @@ require_once('inc/menu.php');
 require_once('inc/info_box.php');
 ?>
 <!-- Advanced Search page begin -->
-<div class='center item'>
-    <div class='advanced_search_div align_left'>
+<div class='item'>
+    <div class='align_left'>
         <form name="search" method="get" action="search.php">
             <!-- SUBMIT BUTTON -->
             <button class='submit_search_button' type='submit'>
@@ -81,7 +81,7 @@ require_once('inc/info_box.php');
                 <p class='inline'>Tags</p><input name='tags' type='text' class='search_inputs'/><br />
 <br />
 -->
-<p class='inline'>And body contains </p><input name='body' type='text' class='search_inputs' value='<?php
+<p class='inline'>And body contains</p><input name='body' type='text' class='search_inputs' value='<?php
                 if(isset($_GET['body']) && !empty($_GET['body'])) {
                     echo check_body($_GET['body']);
                 }

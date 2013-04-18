@@ -161,7 +161,7 @@ if (isset($_GET['q'])) { // if there is a query
 } elseif (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
         $results_arr = array();
-        $sql = "SELECT id FROM experiments_tags
+        $sql = "SELECT item_id FROM experiments_tags
         WHERE tag LIKE :tag";
         $req = $bdd->prepare($sql);
         $req->execute(array(
@@ -169,7 +169,7 @@ if (isset($_GET['q'])) { // if there is a query
         ));
         // put resulting ids in the results array
         while ($data = $req->fetch()) {
-            $results_arr[] = $data['id'];
+            $results_arr[] = $data['item_id'];
         }
 
     // show number of results found

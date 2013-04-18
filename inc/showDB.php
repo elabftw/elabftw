@@ -49,7 +49,62 @@ while ($items_types = $req->fetch()) {
 
 <?php
 // SQL for showDB
-if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
+///////////////
+// TAG SEARCH
+///////////////
+if (isset($_GET['tag']) && !empty($_GET['tag'])) {
+    $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
+        $results_arr = array();
+        $sql = "SELECT item_id FROM items_tags 
+        WHERE tag LIKE :tag";
+        $req = $bdd->prepare($sql);
+        $req->execute(array(
+            'tag' => $tag
+        ));
+        // put resulting ids in the results array
+        while ($data = $req->fetch()) {
+            $results_arr[] = $data['item_id'];
+        }
+
+    // show number of results found
+    if (count($results_arr) > 1){
+        echo "Found ".count($results_arr)." results.";
+    } elseif (count($results_arr) == 1){
+        echo "Found 1 result.";
+    } else {
+        echo "No items were found.";
+    }
+
+    // clean duplicates
+    $results_arr = array_unique($results_arr);
+    // loop the results array and display results
+    foreach($results_arr as $result_id) {
+        showDB($result_id, $display);
+    } // end foreach
+
+// NORMAL SEARCH
+} elseif (isset($_GET['q']) && !empty($_GET['q'])) {
+    $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
+    // we make an array for the resulting ids
+    $results_arr = array();
+    $results_arr = search_item('db', $query, $_SESSION['userid']);
+    // filter out duplicate ids and reverse the order; items should be sorted by date
+    $results_arr = array_reverse(array_unique($results_arr));
+    // show number of results found
+    if (count($results_arr) > 1){
+        echo "Found ".count($results_arr)." results.";
+    } elseif (count($results_arr) == 1){
+        echo "Found 1 result.";
+    } else {
+        echo "Nothing found :(";
+    }
+
+    // loop the results array and display results
+    foreach($results_arr as $result_id) {
+        showDB($result_id, $display);
+    }
+// end if there is a search
+} else { // there is no search
     // we show the last 10 uploads
     // get the last id
     $sql = "SELECT * FROM items ORDER BY id DESC LIMIT 10";
@@ -70,27 +125,8 @@ if(!isset($_GET['q']) || empty($_GET['q'])){ // if there is no search
             showDB($result_id, $display);
         }
     }
-} else { //there is a SEARCH
-    $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
-    // we make an array for the resulting ids
-    $results_arr = array();
-    $results_arr = search_item('db', $query, $_SESSION['userid']);
-    // filter out duplicate ids and reverse the order; items should be sorted by date
-    $results_arr = array_reverse(array_unique($results_arr));
-    // show number of results found
-    if (count($results_arr) > 1){
-        echo "Found ".count($results_arr)." results.";
-    } elseif (count($results_arr) == 1){
-        echo "Found 1 result.";
-    } else {
-        echo "Nothing found :(";
-    }
+}
 
-    // loop the results array and display results
-    foreach($results_arr as $result_id) {
-        showDB($result_id, $display);
-    }
-} // end if there is a search
 
 // KEYBOARD SHORTCUTS
 echo "<script>

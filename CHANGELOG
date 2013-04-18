@@ -1,5 +1,12 @@
 /* Changelog for eLabFTW */
 
+Version 0.7.3.2
+* No more root user, admin user is made on install
+* Force https
+* Fix bugs
+* Upgrade the mail library (swift)
+* Documentation for backup
+
 Version 0.7
 * Multiple bugfixes
 * Real search page

@@ -592,7 +592,6 @@ footer p, footer p a {
 @media print {
     section.item {
         background-color: white;
-        height: 100%;
         width: 900px;
         position: fixed;
         top: 0;

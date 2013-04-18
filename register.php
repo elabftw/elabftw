@@ -23,7 +23,7 @@ $page_title='Register';
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
 // Check if we're logged in
-if ($_SESSION['auth'] == 1) {
+if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
     die("<ul>
         <li>Please <a href='logout.php'>logout</a> before you register another account.</li>
         </ul>");

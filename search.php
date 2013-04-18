@@ -139,8 +139,9 @@ for($i=1; $i<=5; $i++) {
     </div>
 </div>
 
+
 <?php
-// assign varaibles from get
+// assign variables from get
 if (isset($_GET['title']) && !empty($_GET['title'])) {
     $title =  filter_var($_GET['title'], FILTER_SANITIZE_STRING);
 } else {

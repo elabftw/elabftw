@@ -1,10 +1,8 @@
 ////// Priority
 * upload : https://github.com/sthielen/BigUpload
-* tag click should search only in tags
-* when you follow a link and you're not logged in, you want to be redirected to the target page after login
-* web : dnsprefetch in head for twitter
 
 ////// Fix/improve
+* when you follow a link and you're not logged in, you want to be redirected to the target page after login
 * possibility to change outcomes (edit/add/delete)
 * possibility to delete an item type
 * on install : ask for main user, create it and put it admin, remove root user

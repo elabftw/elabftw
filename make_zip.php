@@ -230,26 +230,10 @@ echo "<div class='item'>";
 // Get zip size
 $zipsize = filesize($zipfile);
 // Display download link (with attribute type=zip for download.php)
-echo "<p>Download archive <span class='filesize'>(".format_bytes($zipsize).")</span> :<br />
+echo "<p>Your zip archive is ready, click to download <span class='filesize'>(".format_bytes($zipsize).")</span> :<br />
     <img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='' /> 
     <a href='download.php?f=".$zipfile."&name=".$zipname.".zip&type=zip' target='_blank'>".$zipname.".zip</a></p>";
-// Check if zip is < 10 Mo, display send by email dialog
-if ($zipsize < 10485760) {
-    // SQL to get all users and emails
-    $sql = "SELECT firstname, lastname, email, userid FROM users";
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    echo "<p>Send zip archive to :
-        <form style='margin-top:-15px' method='post' action='send_zip.php'><img src='themes/".$_SESSION['prefs']['theme']."/img/mail.gif' alt='mail' /> <select name='userid'>";
-    while($data = $req->fetch()){
-         echo "<option value='".$data['userid']."'>".$data['firstname']." ".$data['lastname']."</option>";
-    }
-    echo "</select> <input type=submit value='send' />
-        <input type='hidden' name='zipfile' value='".$zipfile."'>
-        </form></p></div>";
-} else {
-    echo "<p>Zip archive is too big to be sent by email.</p>";
-}
+echo "</div>";
 } else {
     echo 'Archive creation failed :(';
 }

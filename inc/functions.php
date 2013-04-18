@@ -208,9 +208,9 @@ function show_tags($item_id, $table) {
         echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
         while($tags = $req->fetch()) {
             if ($table === 'experiments_tags') {
-            echo "<a href='experiments.php?mode=show&tag=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
+            echo "<a href='experiments.php?mode=show&tag=".urlencode(stripslashes($tags['tag']))."'>".stripslashes($tags['tag'])."</a> ";
             } else { // table is items_tags
-            echo "<a href='database.php?mode=show&tag=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
+            echo "<a href='database.php?mode=show&tag=".urlencode(stripslashes($tags['tag']))."'>".stripslashes($tags['tag'])."</a> ";
             }
         }
         echo "</span>";

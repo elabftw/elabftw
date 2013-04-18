@@ -154,6 +154,40 @@ if (isset($_GET['q'])) { // if there is a query
     foreach($results_arr as $result_id) {
         showXP($result_id, $display);
     } // end foreach
+
+///////////////
+// TAG SEARCH
+///////////////
+} elseif (isset($_GET['tag']) && !empty($_GET['tag'])) {
+    $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
+        $results_arr = array();
+        $sql = "SELECT id FROM experiments_tags
+        WHERE tag LIKE :tag";
+        $req = $bdd->prepare($sql);
+        $req->execute(array(
+            'tag' => $tag
+        ));
+        // put resulting ids in the results array
+        while ($data = $req->fetch()) {
+            $results_arr[] = $data['id'];
+        }
+
+    // show number of results found
+    if (count($results_arr) > 1){
+        echo "Found ".count($results_arr)." results.";
+    } elseif (count($results_arr) == 1){
+        echo "Found 1 result.";
+    } else {
+        echo "No experiments were found.";
+    }
+
+    // clean duplicates
+    $results_arr = array_unique($results_arr);
+    // loop the results array and display results
+    foreach($results_arr as $result_id) {
+        showXP($result_id, $display);
+    } // end foreach
+
 // /////////////////
 // DEFAULT VIEW
 // /////////////////

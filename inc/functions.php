@@ -207,7 +207,7 @@ function show_tags($item_id, $table) {
     if ($tagcount > 0) {
         echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
         while($tags = $req->fetch()) {
-            echo "<a href='experiments.php?mode=show&q=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
+            echo "<a href='experiments.php?mode=show&tag=".stripslashes($tags['tag'])."'>".stripslashes($tags['tag'])."</a> ";
         }
         echo "</span>";
     }
@@ -225,21 +225,24 @@ function showXP($id, $display) {
     $final_query = $req->fetch();
         if ($display === 'compact') {
             // COMPACT MODE //
-            ?>
-            <!-- BEGIN CONTENT -->
-        <section onClick="document.location='experiments.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item">
-            <?php
+            echo "<section class='item'>";
             echo "<span class='".$final_query['status']."_compact'>".$final_query['date']."</span> ";
             echo stripslashes($final_query['title']);
+            // view link
+            echo "<a href='experiments.php?mode=view&id=".$final_query['id']."'>
+                <img class='align_right' src='img/view_compact.png' alt='view' title='view experiment' /></a>";
             echo "</section>";
         } else { // NOT COMPACT
 ?>
-        <section onClick="document.location='experiments.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item <?php echo $final_query['status'];?>">
+        <section class="item <?php echo $final_query['status'];?>">
     <?php
     // DATE
     echo "<span class='redo_compact'>".$final_query['date']."</span> ";
     // TAGS
     echo show_tags($id, 'experiments_tags');
+    // view link
+    echo "<a href='experiments.php?mode=view&id=".$final_query['id']."'>
+        <img class='align_right' style='margin-left:5px;' src='img/view.png' alt='view' title='view experiment' /></a>";
     // show attached if there is a file attached
     if (has_attachement($final_query['id'])) {
         echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='file attached' />";
@@ -300,21 +303,27 @@ function showDB($id, $display) {
         if ($display === 'compact') {
             // COMPACT MODE //
             ?>
-            <section onClick="document.location='database.php?mode=view&id=<?php echo $final_query['id'];?>'" class='item'>
+            <section class='item'>
             <h4 style='color:#<?php echo get_item_info_from_id($final_query['type'], 'bgcolor');?>'><?php echo get_item_info_from_id($final_query['type'], 'name');?> </h4>
             <span class='date date_compact'><?php echo $final_query['date'];?></span>
             <span><?php echo stripslashes($final_query['title']);?>
-            <!-- STAR RATING read only -->
-            <?php show_stars($final_query['rating']) ?>
-            </section>
 <?php
+        // view link
+    echo "<a href='database.php?mode=view&id=".$final_query['id']."'>
+        <img class='align_right' style='margin-left:5px;' src='img/view_compact.png' alt='view' title='view item' /></a>";
+        // STAR RATING read only
+        show_stars($final_query['rating']);
+        echo "</section>";
+
         } else { // NOT COMPACT
-?>
-        <section onClick="document.location='database.php?mode=view&id=<?php echo $final_query['id'];?>'" class="item">
-        <?php
+
+        echo "<section class='item'>";
         echo "<h4 style='color:#".get_item_info_from_id($final_query['type'], 'bgcolor')."'>".get_item_info_from_id($final_query['type'], 'name')." </h4>";
         // TAGS
         echo show_tags($id, 'items_tags');
+        // view link
+        echo "<a href='database.php?mode=view&id=".$final_query['id']."'>
+        <img class='align_right' style='margin-left:5px;' src='img/view.png' alt='view' title='view item' /></a>";
         // STARS
         show_stars($final_query['rating']);
         // show attached if there is a file attached

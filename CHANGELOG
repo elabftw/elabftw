@@ -1,6 +1,8 @@
 /* Changelog for eLabFTW */
 
 Version 0.7.3.2
+* Apparition of the view arrow to fix the tab opening behavior
+* Clicking a tag will now make a search in the tags only
 * No more root user, admin user is made on install
 * Force https
 * Fix bugs

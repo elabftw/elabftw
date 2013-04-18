@@ -73,7 +73,7 @@ Regards,
 // Attach zip file
 // Get zipfile filename
 $zipfile = basename($_POST['zipfile']);
-$message->attach(Swift_Attachment::fromPath('/tmp/'.$zipfile, 'archive/zip')->setFilename('experiment.zip'));
+$message->attach(Swift_Attachment::fromPath('uploads/export/'.$zipfile, 'archive/zip')->setFilename('experiment.zip'));
 
 // SEND
 $transport = Swift_SmtpTransport::newInstance($ini_arr['smtp_address'], $ini_arr['smtp_port'], $ini_arr['smtp_encryption'])

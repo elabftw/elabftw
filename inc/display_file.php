@@ -46,7 +46,7 @@ if($count > 0){
         if (extension_loaded('gd')) {
             // Get file extension to display thumbnail if it's a valid extension
             $ext = get_ext($uploads_data['real_name']);
-            if ($ext === 'jpg' || $ext === 'jpeg' || $ext === 'JPG' || $ext === 'png' || $ext === 'gif'){
+            if ($ext === 'jpg' || $ext === 'jpeg' || $ext === 'JPG' || $ext === 'JPEG' || $ext === 'png' || $ext === 'gif'){
                 $filepath = 'uploads/'.$uploads_data['long_name'];
                 $filesize = filesize('uploads/'.$uploads_data['long_name']);
                 $thumbpath = 'uploads/'.$uploads_data['long_name'].'_th.'.$ext;

@@ -64,7 +64,7 @@ function get_ext($filename){
 
 function make_thumb($src,$ext,$dest,$desired_width){
     // Create thumbnail from jpg, png or gif
-    if($ext === 'jpg' || $ext === 'jpeg'){
+    if($ext === 'jpg' || $ext === 'JPEG' || $ext === 'JPG' || $ext === 'jpeg'){
         $source_image = imagecreatefromjpeg($src);
     }
     elseif($ext === 'png'){

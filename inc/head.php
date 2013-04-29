@@ -91,7 +91,7 @@ echo "<link id='maincss' rel='stylesheet' media='all' href='themes/default/style
 <!-- for editable comments -->
 <script src="js/jquery.jeditable.min.js"></script>
 <!-- for keyboard shortcuts -->
-<script src='js/keymaster.js'></script>
+<script src='js/keymaster.min.js'></script>
 <!-- for stars rating -->
 <script src='js/jquery.rating.js'></script>
 </head>

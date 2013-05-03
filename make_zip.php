@@ -216,7 +216,7 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
                 // add html file
                 $zip->addFile($txtfile, $folder."/".$clean_title.".html");
                 // add a PDF, too
-                $pdfname = make_pdf($id, $table, 'uploads/export/');
+                $pdfname = make_pdf($id, $table, 'uploads/export');
                 $zip->addFile('uploads/export/'.$pdfname, $folder."/".$pdfname);
                 // delete files
                 //unlink($txtfile);

@@ -37,7 +37,11 @@ Please refer to your distribution's documentation to install :
 $ git clone https://github.com/NicolasCARPi/elabftw.git
 ~~~
 (this will create a folder `elabftw`)
-If you cannot connect, try exporting your proxy settings in your shell.
+If you cannot connect, try exporting your proxy settings in your shell like so :
+~~~ sh
+$ export http\_proxy="http://proxy.example.com:3128"
+~~~
+
 
 
 ## SQL part

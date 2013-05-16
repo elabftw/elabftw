@@ -3,19 +3,13 @@
 * upload : https://github.com/sthielen/BigUpload
 
 ////// Fix/improve
-* possiblité d'utiliser ' dans les titres des database items sans que ça casse le js
 * when you follow a link and you're not logged in, you want to be redirected to the target page after login
-* possibility to change outcomes (edit/add/delete)
-* possibility to delete an item type
-* on install : ask for main user, create it and put it admin, remove root user
 * web : gifs 
-* upload bigger files; make a Worker() to upload big files asynchronously 
 * add tag on templates
 
 ////// New Features
 * delete users
-* make iso img of fresh install with wiki for Rpi
-* use feeling_lucky()
+* make iso img of fresh install with wiki for Rpi https://github.com/asb/spindle
 * tools page with trucs pour calculer les concentrations, et les volumes pour les transfections, etc...
 * limit new users to particular email domain
 * have real auth with LDAP etc... like here : http://docs.moodle.org/22/en/Authentication

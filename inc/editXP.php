@@ -232,8 +232,9 @@ $getalllinks = $bdd->prepare($sql);
 $getalllinks->execute();
 while ($link = $getalllinks->fetch()){
     // html_entity_decode is needed to convert the quotes
+    // str_replace to remove ' because it messes everything up
     $name = get_item_info_from_id($link['type'], 'name');
-    echo "'".$link['id']." - ".$name." - ".html_entity_decode(substr($link[0], 0, 60), ENT_QUOTES)."',";
+    echo "'".$link['id']." - ".$name." - ".str_replace("'", "", html_entity_decode(substr($link[0], 0, 60), ENT_QUOTES))."',";
 }?>
 		];
 		$( "#linkinput" ).autocomplete({

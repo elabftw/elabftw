@@ -77,13 +77,18 @@ if ($data['body'] != ''){
     <div OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['id'];?>'" class='txt'><?php echo stripslashes($data['body']);?></div>
 <?php
 }
+echo "<br />";
+
+// DISPLAY FILES
+require_once('inc/display_file.php');
+
 // DISPLAY LINKED ITEMS
 $sql = "SELECT link_id, id FROM experiments_links WHERE item_id = ".$id;
 $req = $bdd->prepare($sql);
 $req->execute();
 // Check there is at least one link to display
 if ($req->rowcount() != 0) {
-    echo "<br /><h4>Linked items</h4>";
+    echo "<h4>Linked items</h4>";
     echo "<ul>";
     while ($links = $req->fetch()) {
         // SQL to get title
@@ -100,9 +105,6 @@ if ($req->rowcount() != 0) {
 } else { // end if link exist
     echo "<br />";
 }
-
-// DISPLAY FILES
-require_once('inc/display_file.php');
 
 // DISPLAY eLabID
 echo "<p class='elabid'>Unique eLabID : ".$data['elabid']."</p>";

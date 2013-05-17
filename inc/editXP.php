@@ -111,7 +111,7 @@ $status = $data['status'];
 </textarea>
 
 <!-- SUBMIT BUTTON -->
-<div class='center' id='submitdiv'>
+<div class='center' id='saveButton'>
     <button type='submit'>
         <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/submit.png' name='Submit' value='Submit' />
     <p>SAVE</p>

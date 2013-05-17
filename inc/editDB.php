@@ -89,7 +89,15 @@ echo stripslashes($tags['tag']);?>
 <textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">
     <?php echo stripslashes($data['body']);?>
 </textarea>
-<br /><br />
+<!-- SUBMIT BUTTON -->
+<div class='center' id='saveButton'>
+    <button type='submit'>
+        <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/submit.png' name='Submit' value='Submit' />
+    <p>SAVE</p>
+    </button>
+</div>
+</form>
+<!-- end edit items form -->
 <?php
 // FILE UPLOAD
 require_once('inc/file_upload.php');
@@ -99,16 +107,7 @@ require_once('inc/display_file.php');
 </div>
 
 </div>
-<!-- SUBMIT BUTTON -->
-<div class='center' id='submitdiv'>
-    <button type='submit'>
-        <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/submit.png' name='Submit' value='Submit' />
-    <p>SAVE</p>
-    </button>
-</div>
-</form>
 </section>
-<!-- end edit items form -->
 <?php
 // unset session variables
 unset($_SESSION['errors']);

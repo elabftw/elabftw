@@ -372,6 +372,11 @@ img {
     top: 3px;
 }
 
+/* submit button */
+#saveButton {
+    margin-top:10px;
+}
+
 /* ITEMS */
 .item {
     background-color: #EEE;

@@ -8,7 +8,7 @@ eLabFTW uses :
 * php version > 5 (with PDO)
 * mysql version > 5
 
-Code from others :
+Code from others (a big thanks to them for making their code available !) :
 * jQuery v1.7.2
 
 * jQuery UI v1.8.18
@@ -37,9 +37,11 @@ Code from others :
 
 * Swiftmailer v4.3.0 : http://swiftmailer.org for sending email with SMTP (GPLv3)
 
-* Raphael (used by colorpicker) : http://raphaeljs.com/ (MIT)
+* Raphael (used by colorwheel) : http://raphaeljs.com/ (MIT)
 
 * Colorwheel : http://jweir.github.com/colorwheel/ (MIT)
+
+* File upload : https://github.com/sthielen/BigUpload
 
 ---------------------------
 

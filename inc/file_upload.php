@@ -25,59 +25,29 @@
 ********************************************************************************/
 ?>
 <!-- FILE UPLOAD -->
+<script src="js/bigUpload.js"></script>
 <script>
-$(document).ready(function(){
-	$(".toggle_container").hide();
-	$("h4.trigger").click(function(){
-		$(this).toggleClass("active").next().slideToggle("slow");
-	});
-});
-// javascript to add an upload field
-function add_file_field(){
-var container=document.getElementById('file_container');
-var com_container=document.getElementById('filecomment_container');
-var file_field=document.createElement('input');
-var com_file_field=document.createElement('input');
-file_field.name='files[]';
-com_file_field.name='filescom[]';
-com_file_field.setAttribute('size', '35');
-com_file_field.setAttribute('placeholder', 'Enter a comment for the file');
-com_file_field.setAttribute('class', 'com_file_field');
-file_field.type='file';
-container.appendChild(file_field);
-container.appendChild(com_file_field);
-var br_field=document.createElement('br');
-container.appendChild(br_field);
+bigUpload = new bigUpload();
+function upload() {
+    bigUpload.fire();
+}
+function abort() {
+    bigUpload.abortFileUpload();
 }
 </script>
-
-<hr class='flourishes'>
-<br />
-<div class='attachFileDiv'>
-<h4 class='cursor trigger'>Click to add a file</h4>
-<div class='toggle_container'>
-<div class='addFileDiv'>
-<div id='file_container'>
-    <input name="files[]" type="file"  />
-    <input size='35' placeholder='Enter a comment for the file' name='filescom[]' />
-  </div>
-<?php 
-if (basename($_SERVER['REQUEST_URI']) != 'team.php') { ?>
-<br />
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/attach_add.png' alt='' /> <a href="javascript:void(0);" onClick="add_file_field();">Add another file</a><br />
-<?php } ?>
-</div>
-
-<?php
-// Show only a submit button on team page (for upload of labmeetings/journal clubs
-if (basename($_SERVER['REQUEST_URI']) == 'team.php') {
-?>
-<!-- SUBMIT BUTTON -->
-<div class='center' id='submitdiv'>
-<input type='submit' name='Submit' value='Submit' />
-</div>
-<?php
-} ?>
-</div><!-- end toggle container -->
-</div>
-<hr class='flourishes'><!-- END FILE UPLOAD -->
+<hr class='flourishes'><div class="bigUpload inline">
+    <div class="bigUploadContainer">
+        <h3>Attach a file</h3>
+        <form action="inc/bigUpload.php?action=post-unsupported" method="post" enctype="multipart/form-data" id="bigUploadForm">
+            <input type="file" id="bigUploadFile" name="bigUploadFile" />
+            <input type="button" class="bigUploadButton" value="Start Upload" id="bigUploadSubmit" onclick="upload()" />
+            <input type="button" class="bigUploadButton bigUploadAbort" value="Cancel" onclick="abort()" />
+        </form>
+        <div id="bigUploadProgressBarContainer">
+            <div id="bigUploadProgressBarFilled">
+            </div>
+        </div>
+        <div id="bigUploadTimeRemaining"></div>
+        <div id="bigUploadResponse"></div>
+    </div>
+</div><!-- END FILE UPLOAD -->

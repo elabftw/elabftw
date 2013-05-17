@@ -56,10 +56,12 @@ if($_GET['type'] === 'experiments'){
     $msg_arr = array();
     $msg_arr [] = 'File '.$data['real_name'].' deleted successfully';
     $_SESSION['infos'] = $msg_arr;
-    header("location: experiments.php?mode=view&id=$expid");
+    header("location: experiments.php?mode=edit&id=$expid");
    } else {
         die("<div class='center'><img src='img/hal9000.png' alt='hal' /><br />I'm sorry, Dave. I'm afraid I can't do that.</div>");
    }
+
+// DATABASE ITEM
 }elseif ($_GET['type'] === 'database'){
     // Get realname
     $sql = "SELECT real_name, long_name, item_id FROM uploads WHERE id = ".$id;
@@ -80,7 +82,9 @@ if($_GET['type'] === 'experiments'){
     $msg_arr [] = 'File '.$data['real_name'].' deleted successfully';
     $_SESSION['infos'] = $msg_arr;
     $item_id = $data['item_id'];
-    header("location: database.php?mode=view&id=$item_id");
+    header("location: database.php?mode=edit&id=$item_id");
+
+    // LM OR JC
 }elseif (($_GET['type'] === 'lm') || ($_GET['type'] === 'jc')) {
     $type = $_GET['type'];
     // Get realname

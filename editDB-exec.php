@@ -42,7 +42,6 @@ if (is_pos_int($_POST['item_id'])){
 $title = check_title($_POST['title']);
 $date = check_date($_POST['date']);
 $body = check_body($_POST['body']);
-require_once('inc/check_files.php'); // $real_filenames[] $long_filenames[]
 
 // Store stuff in Session to get it back if error input
 $_SESSION['new_title'] = $title;
@@ -72,34 +71,6 @@ $result = $req->execute(array(
     'id' => $id
 ));
 
-// If FILES are uploaded
-if (is_uploaded_file($_FILES['files']['tmp_name'][0])){
-    // Assign the experiment id to $expid
-        $item_id = $id;
-        // Loop for each file
-        for ($i = 0; $i < $cnt; $i++) {
-        // Comments
-    $filecomments[] = filter_var($_POST['filescom'][$i], FILTER_SANITIZE_STRING);
-    if(strlen($filecomments[$i]) == 0){
-        $filecomments[$i] = 'No comment added';
-    }
-        // Move file
-            if (move_uploaded_file($_FILES['files']['tmp_name'][$i], $upload_directory . $long_filenames[$i])) {
-    //SQL for FILE uploads
-    $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type)";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute(array(
-        'real_name' => $real_filenames[$i],
-        'long_name' => $long_filenames[$i],
-        'comment' => $filecomments[$i],
-        'item_id' => $item_id,
-        'userid' => $_SESSION['userid'],
-        'type' => 'database'
-    ));
-    $req->closeCursor();
-            } // end for each file loop
-        } // end if move uploaded
-    } // end is uploaded
 
 // Check if insertion is successful
 if($result) {

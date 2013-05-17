@@ -1,6 +1,6 @@
 ////// Priority
 * editable list of status
-* upload : https://github.com/sthielen/BigUpload
+* fix bug in editable comment after upload
 
 ////// Fix/improve
 * when you follow a link and you're not logged in, you want to be redirected to the target page after login

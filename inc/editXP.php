@@ -110,14 +110,6 @@ $status = $data['status'];
     <?php echo stripslashes($data['body']);?>
 </textarea>
 
-
-<?php
-// FILE UPLOAD
-require_once('inc/file_upload.php');
-// DISPLAY FILES
-require_once('inc/display_file.php');
-?>
-
 <!-- SUBMIT BUTTON -->
 <div class='center' id='submitdiv'>
     <button type='submit'>
@@ -126,6 +118,14 @@ require_once('inc/display_file.php');
     </button>
 </div>
 </form><!-- end editXP form -->
+
+<?php
+// FILE UPLOAD
+require_once('inc/file_upload.php');
+// DISPLAY FILES
+require_once('inc/display_file.php');
+?>
+
 
 <h4>Linked items</h4>
 <div id='links_div'>

@@ -88,17 +88,7 @@ function make_thumb($src,$ext,$dest,$desired_width){
     // create the physical thumbnail image to its destination (85% quality)
     imagejpeg($virtual_image,$dest, 85);
 }
-/* unused
-function loadClass($class) {
-    require_once('lib/classes/'.$class.'.class.php');
-}
 
-// replace br tags by new lines
-function br2nl( $input ) {
-     return preg_replace('/<br(\s+)?\/?>/i', "\n", $input);
-}
-
-*/
 // check if $int is a positive integer
 function is_pos_int($int) {
     $filter_options = array(
@@ -625,14 +615,4 @@ function duplicate_item($id, $type) {
         }
     }
 }
-/*
-function get_export_path() {
-    // are we on windows ?
-    if (PHP_OS == 'Windows' || PHP_OS == 'WIN32' || PHP_OS == 'WINNT') {
-        return "uploads\\export\\";
-    } else {
-        return "uploads/export/";
-    }
-}
- */
 ?>

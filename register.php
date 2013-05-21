@@ -31,32 +31,63 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
 ?>
 <!-- Password complexity visualizer -->
 <script src="js/jquery.complexify.min.js"></script>
+<!-- Form validation client-side -->
+<script src="js/parsley.min.js"></script>
 
 
 <section>
-    <div class='item'>
-        <div id='innerdiv'>
-        <!-- Register form -->
-            <form name="regForm" method="post" action="register-exec.php" class='innerinnerdiv'>
-                  <p>Username <input name="username" type="text" id="username" /><br />
-                  Firstname <input name="firstname" type="text" id="firstname" /><br />
-                  Lastname <input name="lastname" type="text" id="lastname" /><br />
-                  Email <input name="email" type="text"  id="email" /><br />
-                  Password <input name="password" type="password" id="password" /><br />
-                  Confirm Password <input name="cpassword" type="password" id="cpassword" /><br />
-                  Password complexity : <span id="complexity">0%</span><br />
-            <div id='submitDiv'>
+    <!-- Register form -->
+    <form name="regForm" data-validate="parsley" novalidate id="regForm" method="post" action="register-exec.php" class='innerinnerdiv'>
+        <fieldset>
+            <legend>Create your account :</legend>
+                <p>
+                    <label for="firstname">Firstname</label>
+                    <input name="firstname" type="text" id="firstname" data-trigger="change" data-required="true" />
+                </p>
+                <p>
+                    <label for="lastname">Lastname</label>
+                    <input name="lastname" type="text" id="lastname" data-trigger="change" data-required="true" />
+                </p>
+                <p>
+                    <label for="username">Username</label>
+                    <input name="username" type="text" id="username" data-trigger="change" data-required="true" />
+                </p>
+                <p>
+                    <label for="email">Email</label>
+                    <input name="email" type="email" id="email" data-trigger="change" data-required="true" data-type="email" />
+                </p>
+                <p>
+                    <label for="password">Password</label>
+                    <input name="password" type="password" id="password" data-trigger="change" data-minlength="4" />
+                </p>
+                <p>
+                    <label for="cpassword">Confirm password</label>
+                    <input name="cpassword" type="password" id="cpassword" data-trigger="change" data-equalto="#password" data-error-message="The passwords do not match !" />
+                </p>
+                Password complexity (for your information) : <span id="complexity">0%</span><br /><br />
+                <div id='submitDiv'>
                 <input type="submit" name="Submit" class='submit' value="Register" />
-            </div>
-            </form>
-        </div>
+                </div>
+        </fieldset>
+    </form>
     <!-- end register form -->
-    </div>
 </section>
+
+<style>
+.parsley-error {
+    color:red;
+    background-color:yellow;
+}
+.parsley-error-list {
+    color:red;
+    font-weight:bold;
+}
+</style>
+
 <script>
 $(document).ready(function() {
-    // give focus to username field on page load
-    document.getElementById("username").focus();
+    // give focus to the first field on page load
+    document.getElementById("firstname").focus();
     // password complexity
     $("#password").complexify({}, function (valid, complexity){
         if (complexity < 30) {
@@ -66,6 +97,14 @@ $(document).ready(function() {
         }
         $("#complexity").html(Math.round(complexity) + '%');
     });
+	// propose username by combining firstname's first letter and lastname
+	$("#username").focus(function() {
+		var firstname = $("#firstname").val();
+		var lastname = $("#lastname").val();
+		if(firstname && lastname && !this.value) {
+			this.value = firstname.charAt(0) + lastname;
+		}
+	});
 });
 </script>
 <?php require_once('inc/footer.php'); ?>

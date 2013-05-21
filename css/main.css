@@ -313,15 +313,6 @@ h4 {
     width: 500px;
 }
 
-/* END REGISTER */
-
-.attachFileDiv {
-    border:  3px solid #CCC;
-    border-radius: 20px;
-    margin: 0 auto 0 auto;
-    text-align: center;
-    width: 80%;
-}
 
 #submitDiv{
     text-align: right;

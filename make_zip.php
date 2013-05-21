@@ -167,7 +167,7 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
                     $link_req = $bdd->prepare($link_sql);
                     $link_req->execute();
                     while ($link_data = $link_req->fetch()) {
-                        $link_id[] = $link_data['id'];
+                        $link_id[] = $link_data['link_id'];
                     }
                     $linknb = $link_req->rowCount();
                     if ($linknb > 0) {
@@ -179,15 +179,17 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
                         $url = str_replace('make_zip.php', 'database.php', $url);
                         // put links in list with link to the url of item
                         for ($j=0;$j<$linknb;$j++){
-                            // get title of the item linked
+                            // get title and type of the item linked
                             $sql = "SELECT * FROM items WHERE id = :id";
                             $req = $bdd->prepare($sql);
                             $req->execute(array(
                                 'id' => $link_id[$j]
                             ));
                             $item_infos = $req->fetch();
+
                             $link_title = $item_infos['title'];
                             $link_type = get_item_info_from_id($item_infos['type'], 'name');
+
                             $html .= "<li>[".$link_type."] - <a href='".$url."?mode=view&id=".$link_id[$j]."'>".$link_title."</a></li>";
                         }
                         $html .= "

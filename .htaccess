@@ -1,8 +1,8 @@
 # .htacsses for elabftw
 # FORCE HTTPS
-RewriteEngine On
-RewriteCond %{HTTPS} !=on
-RewriteRule .* https://%{SERVER_NAME}%{REQUEST_URI} [R=301,L]
+#RewriteEngine On
+#RewriteCond %{HTTPS} !=on
+#RewriteRule .* https://%{SERVER_NAME}%{REQUEST_URI} [R=301,L]
 # FORBID SERVING SOME FILES
 <FilesMatch "\.(htaccess|htpasswd|ini|log|sh|inc|bak)$">
 Order Allow,Deny

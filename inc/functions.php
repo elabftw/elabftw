@@ -564,18 +564,25 @@ function duplicate_item($id, $type) {
 
     if ($type === 'experiments') {
         // TAGS
-        $sql = "SELECT tag FROM experiments_tags WHERE item_id = ".$id;
+        $sql = "SELECT tag FROM experiments_tags WHERE item_id = :id";
         $req = $bdd->prepare($sql);
-        $req->execute();
-        while($tags = $req->fetch()){
-            // Put them in the new one. here $newid is the new exp created
-            $sql = "INSERT INTO experiments_tags(tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
-            $reqtag = $bdd->prepare($sql);
-            $result_tags = $reqtag->execute(array(
-                'tag' => $tags['tag'],
-                'item_id' => $newid,
-                'userid' => $_SESSION['userid']
-            ));
+        $req->execute(array(
+            'id' => $id
+        ));
+        $tag_number = $req->rowCount();
+        if($tag_number > 1) {
+            while($tags = $req->fetch()){
+                // Put them in the new one. here $newid is the new exp created
+                $sql = "INSERT INTO experiments_tags(tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
+                $reqtag = $bdd->prepare($sql);
+                $result_tags = $reqtag->execute(array(
+                    'tag' => $tags['tag'],
+                    'item_id' => $newid,
+                    'userid' => $_SESSION['userid']
+                ));
+            }
+        } else { //no tag
+            $result_tags = true;
         }
         // LINKS
         $linksql = "SELECT link_id FROM experiments_links WHERE item_id = ".$id;
@@ -589,6 +596,7 @@ function duplicate_item($id, $type) {
                 'item_id' => $newid
             ));
         }
+
         if($result && $result_tags && $result_links) {
             return $newid;
         } else {

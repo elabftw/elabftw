@@ -229,6 +229,10 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
 echo "<div class='item'>";
 // Get zip size
 $zipsize = filesize($zipfile);
+// Get the title if there is only one experiment in the zip
+if (count($id_arr) === 1) {
+    $zipname = $date."-".$clean_title;
+}
 // Display download link (with attribute type=zip for download.php)
 echo "<p>Your zip archive is ready, click to download <span class='filesize'>(".format_bytes($zipsize).")</span> :<br />
     <img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='' /> 

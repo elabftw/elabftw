@@ -244,4 +244,16 @@ if(isset($test['is_jc_resp'])) {
 } else {
     echo "\n Nothing to do.\n";
 }
+// TMP upload dir
+echo "\n Create uploads/tmp directory...\n";
+if (!is_dir("uploads/tmp")){
+   if  (mkdir("uploads/tmp", 0777)){
+    echo "Directory created";
+    }else{
+        // TODO link to the FAQ
+        die("Failed creating <em>uploads/tmp</em> directory. Do it manually and chmod 777 it.");
+    }
+}else{
+    echo "\n Nothing to do.\n";
+}
 ?>

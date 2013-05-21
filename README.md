@@ -83,7 +83,11 @@ Check that this file isn't served by your webserver (point to it in a browser).
 
 If you see a 403 Error, all is good.
 
-If you see the config file be sure to edit AllowOverride in your <Directory "/var/www/elabftw"> and set it to All.
+If you see the config file be sure to edit AllowOverride in your 
+~~~ sh
+<Directory "/var/www/elabftw">
+~~~ 
+and set it to All.
 
 ## Final step
 Finally, point your browser to the install folder (install/) and read onscreen instructions.

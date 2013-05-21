@@ -1,5 +1,12 @@
 /* Changelog for eLabFTW */
 
+Version 0.8
+* You can upload big files now
+* Better register form
+* Fix in html zip export
+* Better name of zip files when there is only one experiment
+* Bug fixes and improvements
+
 Version 0.7.3.2
 * Apparition of the view arrow to fix the tab opening behavior
 * Clicking a tag will now make a search in the tags only

@@ -68,14 +68,14 @@ if($count > 0){
         <span class='filesize'> (".format_bytes(filesize('uploads/'.$uploads_data['long_name'])).")</span><br />";
         echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/comments.png' alt='comment' /> <p class='editable' id='comment_".$uploads_data['id']."'>".stripslashes($uploads_data['comment'])."</p></div>";
     } // end while
-    echo "<hr class='flourishes'>";
 } // end if count > 0
 // END DISPLAY FILES
 ?>
+</section>
 
 <script src='js/jquery.lightbox-0.5.js'></script>
 <script>
- $(document).ready(function() {
+$(document).ready(function() {
      // click thumbnail to show full size http://leandrovieira.com/projects/jquery/lightbox/
      $('a.lightbox').lightBox({
         txtImage: '<?php if(!empty($uploads_data['real_name'])) {
@@ -84,16 +84,19 @@ if($count > 0){
             echo '';
         };?>'
      });
-     $('.editable').editable('editinplace.php', { 
-         tooltip : 'Click to edit',
-             indicator : 'Saving...',
-         id   : 'id',
-         submit : 'Save',
-         cancel : 'Cancel',
-         style : 'display:inline',
-         name : 'content'
+     // make the comment div editable after partial reload (jquery delegated event)
+     $('section#filesdiv').on("mouseover", ".editable", function(){
+         $('.editable').editable('editinplace.php', { 
+             tooltip : 'Click to edit',
+                 indicator : 'Saving...',
+             id   : 'id',
+             submit : 'Save',
+             cancel : 'Cancel',
+             style : 'display:inline',
+             name : 'content'
 
+         });
      });
+
  });
 </script>
-</section>

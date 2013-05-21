@@ -126,6 +126,7 @@ require_once('inc/file_upload.php');
 require_once('inc/display_file.php');
 ?>
 
+<hr class='flourishes'>
 
 <h4>Linked items</h4>
 <div id='links_div'>

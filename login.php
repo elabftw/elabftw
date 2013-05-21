@@ -35,13 +35,23 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 // Page begin
 ?>
 <section class='center'>
+    <!-- Login form -->
     <form method="post" action="login-exec.php">
-    <div class='item'>
-    <p>Username <input name="username" type="text" class="textfield" value='<?php if(isset($_SESSION['username'])){
-        echo $_SESSION['username'];
-    unset($_SESSION['username']);}?>' id="username" /></p>
-          <p>Password <input name="password" type="password" class="textfield" id="password" /></p>
+        <fieldset>
+            <legend>Login :</legend>
+                <p>
+                    <label for="username">Username</label>
+                    <input name="username" type="text" id="username" value="<?php if(isset($_SESSION['username'])){
+                        echo $_SESSION['username'];
+                        unset($_SESSION['username']);
+                    }?>" />
+                </p>
+                <p>
+                    <label for="password">Password</label>
+                    <input name="password" type="password" id="password" />
+                </p>
           <input type="submit" name="Submit" value="Log in" />
+        </fieldset>
     </form>
     <p>Note : you need cookies enabled to log in.<br />
     Don't have an account ? <a href='register.php'>Register</a> now !<br />

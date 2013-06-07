@@ -103,6 +103,19 @@ if (!is_dir("../uploads/export")){
     echo $ok;
 }
 
+// TMP DIR
+echo "<br />";
+echo "[°] Create uploads/tmp directory...";
+if (!is_dir("../uploads/tmp")){
+   if  (mkdir("../uploads/tmp", 0777)){
+    echo $ok;
+    }else{
+        // TODO link to the FAQ
+        die($fail." : Failed creating <em>uploads/tmp</em> directory. Do it manually and chmod 777 it.");
+    }
+}else{
+    echo $ok;
+}
 // TRY TO CONNECT TO DATABASE
 echo "<br />";
 echo "[°] Connection to database...";

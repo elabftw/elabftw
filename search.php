@@ -250,17 +250,16 @@ if (isset($_GET)) {
             // SQL
             // the BETWEEN stuff makes the date mandatory, so we switch the $sql with/without date
             if(isset($_GET['to']) && !empty($_GET['to'])) {
-            $sql = "SELECT * FROM items WHERE userid = :userid AND type = :type AND title LIKE '%$title%' AND body LIKE '%$body%' AND rating LIKE '%$rating%' AND date BETWEEN '$from' AND '$to'";
+            $sql = "SELECT * FROM items WHERE type = :type AND title LIKE '%$title%' AND body LIKE '%$body%' AND rating LIKE '%$rating%' AND date BETWEEN '$from' AND '$to'";
             } elseif(isset($_GET['from']) && !empty($_GET['from'])) {
-            $sql = "SELECT * FROM items WHERE userid = :userid AND type = :type AND title LIKE '%$title%' AND body LIKE '%$body%' AND rating LIKE '%$rating%' AND date BETWEEN '$from' AND '991212'";
+            $sql = "SELECT * FROM items WHERE type = :type AND title LIKE '%$title%' AND body LIKE '%$body%' AND rating LIKE '%$rating%' AND date BETWEEN '$from' AND '991212'";
             } else { // no date input
-            $sql = "SELECT * FROM items WHERE userid = :userid AND type = :type AND title LIKE '%$title%' AND body LIKE '%$body%' AND rating LIKE '%$rating%'";
+            $sql = "SELECT * FROM items WHERE type = :type AND title LIKE '%$title%' AND body LIKE '%$body%' AND rating LIKE '%$rating%'";
             }
 
         $req = $bdd->prepare($sql);
         $req->execute(array(
-            'type' => $_GET['type'],
-            'userid' => $_SESSION['userid']
+            'type' => $_GET['type']
         ));
         $count = $req->rowCount();
         if ($count > 0) {

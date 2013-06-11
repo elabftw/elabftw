@@ -42,7 +42,18 @@ If you cannot connect, try exporting your proxy settings in your shell like so :
 $ export http_proxy="http://proxy.example.com:3128"
 ~~~
 
+If you get a permissions denied, it's because your user can't write in the folder.
+Try this :
+~~~ sh
+$ sudo chown `whoami`:`whoami` /path/to/folder
+~~~
+You'll then be able to create the elabftw folder.
 
+4.  Creating the uploads folders and fixing the permissions
+~~~ sh
+$ mkdir -p uploads/{tmp,export}
+$ chmod -R 777 uploads
+~~~
 
 ## SQL part
 The second part is putting the database in place.

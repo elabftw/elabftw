@@ -196,7 +196,7 @@ if (isset($_GET['q'])) { // if there is a query
         FROM experiments 
         WHERE userid = :userid 
         ORDER BY ".$order." ". $sort." 
-        LIMIT ".$limit." 
+        LIMIT ".$limit."
         OFFSET ".$offset;
     $req = $bdd->prepare($sql);
     $req->bindParam(':userid', $_SESSION['userid']);

@@ -192,6 +192,12 @@ function focusCheck () {
         autoSave();
 }
 function autoSave() {
+    // we first need to check if the content we will send is bigger than the saved content.
+    // this will limit the problem of having an 'old' tab open, working on another tab of the same ID, and giving the focus back to the 'old' tab that will erase what you did.
+    var currentBody = tinyMCE.activeEditor.getContent();
+    var storedBodyLength = <?php echo strlen($data['body']);?>;
+
+    if (currentBody.length > storedBodyLength) {
         $.ajax({
             type: "POST",
             url: "editDB-autosave.php",
@@ -201,6 +207,7 @@ function autoSave() {
             body : tinyMCE.activeEditor.getContent()
             }
         });
+    }
 }
 
 // READY ? GO !

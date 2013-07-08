@@ -92,21 +92,20 @@ if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
     $errflag = true;
 }
 
-// Check PASSWORDS (sanitize and validate)
+// Check PASSWORDS
 if ((isset($_POST['cpassword'])) && (!empty($_POST['cpassword']))) {
-    $cpassword = filter_var($_POST['cpassword'], FILTER_SANITIZE_STRING);
     if ((isset($_POST['password'])) && (!empty($_POST['password']))) {
-        // Good to go
         // Create salt
         $salt = hash("sha512", uniqid(rand(), true));
         // Create hash
         $passwordHash = hash("sha512", $salt.$_POST['password']);
         // Check for password length
-        if (strlen($password) <= 3) {
+        if (strlen($_POST['password']) <= 3) {
             $msg_arr[] = 'Password must contain at least 4 characters';
             $errflag = true;
         }
-        if (strcmp($password, $cpassword) != 0 ) {
+        // Check confirm password is same as password
+        if (strcmp($_POST['password'], $_POST['cpassword']) != 0 ) {
             $msg_arr[] = 'Passwords do not match';
             $errflag = true;
         }

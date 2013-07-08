@@ -49,6 +49,12 @@ $ sudo chown `whoami`:`whoami` /path/to/folder
 ~~~
 You'll then be able to create the elabftw folder.
 
+If you can't install git or don't manage to get the files, you can download a zip archive :
+
+https://github.com/NicolasCARPi/elabftw/archive/master.zip
+
+But it's better to use git, it will allow easier updates.
+
 4.  Creating the uploads folders and fixing the permissions
 
 ~~~ sh

@@ -306,6 +306,8 @@ function autoSave() {
     // this will limit the problem of having an 'old' tab open, working on another tab of the same ID, and giving the focus back to the 'old' tab that will erase what you did.
     var currentBody = tinyMCE.activeEditor.getContent();
     var storedBodyLength = <?php echo strlen($data['body']);?>;
+    //console.log("current : " + currentBody.length);
+    //console.log("stored : " + storedBodyLength);
 
     if (currentBody.length > storedBodyLength) {
         $.ajax({

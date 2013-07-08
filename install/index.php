@@ -82,8 +82,7 @@ if (!is_dir("../uploads")){
    if  (mkdir("../uploads", 0777)){
     echo $ok;
     }else{
-        // TODO link to the FAQ
-        die($fail." : Failed creating <em>uploads/</em> directory. Do it manually and chmod 777 it.");
+        die($fail." : Failed creating <em>uploads/</em> directory. <a href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting'>Read the wiki to fix this.</a>");
     }
 }else{
     echo $ok;
@@ -96,8 +95,7 @@ if (!is_dir("../uploads/export")){
    if  (mkdir("../uploads/export", 0777)){
     echo $ok;
     }else{
-        // TODO link to the FAQ
-        die($fail." : Failed creating <em>uploads/export</em> directory. Do it manually and chmod 777 it.");
+        die($fail." : Failed creating <em>uploads/export</em> directory.  <a href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting'>Read the wiki to fix this.</a>");
     }
 }else{
     echo $ok;
@@ -110,8 +108,7 @@ if (!is_dir("../uploads/tmp")){
    if  (mkdir("../uploads/tmp", 0777)){
     echo $ok;
     }else{
-        // TODO link to the FAQ
-        die($fail." : Failed creating <em>uploads/tmp</em> directory. Do it manually and chmod 777 it.");
+        die($fail." : Failed creating <em>uploads/tmp</em> directory.  <a href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting'>Read the wiki to fix this.</a>");
     }
 }else{
     echo $ok;

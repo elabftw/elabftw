@@ -190,7 +190,6 @@ class BigUpload
                 'userid' => $_SESSION['userid'],
                 'type' => $type
             ));
-            // TODO refresh the file list
 			return json_encode(array('errorStatus' => 0));
 		}
 		else {

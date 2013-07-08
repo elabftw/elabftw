@@ -103,7 +103,7 @@ Raphael.colorwheel = function(target, color_wheel_size, no_segments){
 
     e.preventDefault(); // prevents scrolling on touch
 
-    page = e.originalEvent.touches ? e.originalEvent : e;
+    page = e.originalEvent.touches ? e.originalEvent.touches[0] : e;
 
     x = page.pageX - (parent.offset().left + center);
     y = page.pageY - (parent.offset().top + center);
@@ -123,6 +123,8 @@ Raphael.colorwheel = function(target, color_wheel_size, no_segments){
   }
 
   function start_drag(event, target){
+    event.preventDefault(); // prevents scrolling on touch
+
     $(document).on('mouseup touchend',stop_drag);
     $(document).on('mousemove touchmove',drag);
     drag_target = target;
@@ -130,7 +132,9 @@ Raphael.colorwheel = function(target, color_wheel_size, no_segments){
     drag_callbacks[0](current_color);
   }
 
-  function stop_drag(){
+  function stop_drag(event){
+    event.preventDefault(); // prevents scrolling on touch
+
     $(document).off("mouseup touchend",stop_drag);
     $(document).off("mousemove touchmove",drag);
     drag_callbacks[1](current_color);
@@ -158,10 +162,10 @@ Raphael.colorwheel = function(target, color_wheel_size, no_segments){
   function set_bs_cursor(x,y){
     x = x+center;
     y = y+center;
-    if(x < sdim.x) x = sdim.x;
-    if(x > sdim.x+sdim.l) x = sdim.x+sdim.l;
-    if(y < sdim.y) y = sdim.y;
-    if(y > sdim.y+sdim.l) y = sdim.y + sdim.l;
+    if(x < sdim.x){x = sdim.x}
+    if(x > sdim.x+sdim.l){x = sdim.x+sdim.l}
+    if(y < sdim.y){y = sdim.y}
+    if(y > sdim.y+sdim.l){y = sdim.y + sdim.l}
 
     bs_square.cursor.attr({cx:x, cy:y}).transform("t0,0");
   }
@@ -210,7 +214,7 @@ Raphael.colorwheel = function(target, color_wheel_size, no_segments){
 
     if(input_target){
       var c = current_color.hex;
-      if(dont_replace_input_value != true) { input_target.value = c;}
+      if(dont_replace_input_value !== true) { input_target.value = c;}
        if(hsb.b < 0.5){
         $(input_target).css("color", "#FFF");
       } else {
@@ -303,7 +307,7 @@ Raphael.colorwheel = function(target, color_wheel_size, no_segments){
   }
 
   function run_onchange_event(){
-	if (change_callback != undefined){
+    if (({}).toString.call(change_callback).match(/function/i)){
       change_callback(current_color);
     }
   }

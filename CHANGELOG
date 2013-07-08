@@ -1,5 +1,9 @@
 /* Changelog for eLabFTW */
 
+Version 0.8.1
+* Admin can reset password
+* You can search in everyone's experiments if you want
+
 Version 0.8
 * You can upload big files now
 * Better register form

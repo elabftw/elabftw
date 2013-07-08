@@ -26,7 +26,10 @@
 /* admin-exec.php - for administration of the elab */
 require_once('inc/common.php');
 if ($_SESSION['is_admin'] != 1) {die('You are not admin !');} // only admin can use this
-$msg_arr = array();
+// for success messages
+$infos_arr = array();
+// for error messages
+$errors_arr = array();
 
 // VALIDATE USERS
 if (isset($_POST['validate'])) {
@@ -36,19 +39,20 @@ if (isset($_POST['validate'])) {
         $req->execute(array(
             'userid' => $user
         ));
-            $msg_arr[] = 'Validated user with user ID : '.$user;
+            $infos_arr[] = 'Validated user with user ID : '.$user;
     }
-    $_SESSION['infos'] = $msg_arr;
+    $_SESSION['infos'] = $infos_arr;
     header('Location: admin.php');
     exit();
 }
 
 // MANAGE USERS
-// called from ajax
+// ////////////
+
 // DELETE USER
+// called from ajax with the javascript function confirm_delete of admin.php
 if (isset($_POST['deluser']) && is_pos_int($_POST['deluser'])) {
     $userid = $_POST['deluser'];
-    $msg_arr = array();
     // DELETE USER
     $sql = "DELETE FROM users WHERE userid = ".$userid;
     $req = $bdd->prepare($sql);
@@ -74,9 +78,12 @@ if (isset($_POST['deluser']) && is_pos_int($_POST['deluser'])) {
     $sql = "DELETE FROM uploads WHERE userid = ".$userid;
     $req = $bdd->prepare($sql);
     $req->execute();
-    $msg_arr[] = 'Everything was purged successfully.';
-    $_SESSION['infos'] = $msg_arr;
+    $infos_arr[] = 'Everything was purged successfully.';
+    $_SESSION['infos'] = $infos_arr;
+    header('Location: admin.php');
+    exit();
 }
+
 // EDIT USER
 if (isset($_POST['userid']) && is_pos_int($_POST['userid'])) {
     $userid = $_POST['userid'];
@@ -93,6 +100,36 @@ if (isset($_POST['userid']) && is_pos_int($_POST['userid'])) {
     } else { 
         $validated = 0;
     }
+    // reset password
+    if (isset($_POST['new_password']) && !empty($_POST['new_password']) && isset($_POST['confirm_new_password'])) {
+        // check if passwords match
+        if ($_POST['new_password'] == $_POST['confirm_new_password']) {
+        // Good to go
+        // Create salt
+        $salt = hash("sha512", uniqid(rand(), true));
+        // Create hash
+        $passwordHash = hash("sha512", $salt.$_POST['new_password']);
+
+        $sql = "UPDATE users SET password = :password, salt = :salt WHERE userid = :userid";
+        $req = $bdd->prepare($sql);
+        $result = $req->execute(array(
+            'userid' => $userid,
+            'password' => $passwordHash,
+            'salt' => $salt
+        ));
+        if($result) {
+            $infos_arr[] = 'User password updated successfully.';
+            $_SESSION['infos'] = $infos_arr;
+        } else {
+            $errors_arr[] = 'There was a problem in the SQL update of the password.';
+            $_SESSION['errors'] = $errors_arr;
+        }
+
+        } else { // passwords do not match
+            $errors_arr[] = 'Passwords do not match !';
+            $_SESSION['errors'] = $errors_arr;
+        }
+    }
 
     $sql = "UPDATE users SET firstname = :firstname, lastname = :lastname, email = :email , is_admin = :is_admin, validated = :validated WHERE userid = :userid";
     $req = $bdd->prepare($sql);
@@ -105,13 +142,17 @@ if (isset($_POST['userid']) && is_pos_int($_POST['userid'])) {
         'userid' => $userid
     ));
     if ($result){
-        $msg_arr[] = 'User updated successfully.';
-        $_SESSION['infos'] = $msg_arr;
-        header('Location: admin.php');
-        exit();
+        if(empty($errors_arr)) {
+            $infos_arr[] = 'User infos updated successfully.';
+            $_SESSION['infos'] = $infos_arr;
+            header('Location: admin.php');
+            exit();
+        } else {
+            header('Location: admin.php');
+        }
     } else { //sql fail
-        $msg_arr[] = 'There was a problem in the SQL request. Report a bug !';
-        $_SESSION['errors'] = $msg_arr;
+        $errors_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $_SESSION['errors'] = $errors_arr;
         header('Location: admin.php');
         exit();
     }
@@ -136,13 +177,13 @@ if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
         'id' => $item_type_id
     ));
     if ($result){
-        $msg_arr[] = 'New item category updated successfully.';
-        $_SESSION['infos'] = $msg_arr;
+        $infos_arr[] = 'New item category updated successfully.';
+        $_SESSION['infos'] = $infos_arr;
         header('Location: admin.php#items_types');
         exit();
     } else { //sql fail
-        $msg_arr[] = 'There was a problem in the SQL request. Report a bug !';
-        $_SESSION['errors'] = $msg_arr;
+        $infos_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $_SESSION['errors'] = $infos_arr;
         header('Location: admin.php');
         exit();
     }
@@ -164,13 +205,13 @@ if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
         'tags' => $item_type_tags
     ));
     if ($result){
-        $msg_arr[] = 'New item category added successfully.';
-        $_SESSION['infos'] = $msg_arr;
+        $infos_arr[] = 'New item category added successfully.';
+        $_SESSION['infos'] = $infos_arr;
         header('Location: admin.php#items_types');
         exit();
     } else { //sql fail
-        $msg_arr[] = 'There was a problem in the SQL request. Report a bug !';
-        $_SESSION['errors'] = $msg_arr;
+        $infos_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $_SESSION['errors'] = $infos_arr;
         header('Location: admin.php');
         exit();
     }

@@ -66,7 +66,8 @@ while ($users = $req->fetch()) {
     <div class='simple_border'>
     <a class='trigger_users_<?php echo $users['userid'];?>'><img src='img/profile.png' alt='' /> <?php echo "Edit ".$users['firstname'];?></a>
     <div class='toggle_users_<?php echo $users['userid'];?>'>
-        <a class='align_right' href='delete_item.php?id=<?php echo $users['userid'];?>&type=item_type' onClick="confirm_delete('<?php echo $users['userid']."', '".$users['lastname'];?>')"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
+        <a class='align_right' href='' onClick="confirm_delete('<?php echo $users['userid']."', '".$users['lastname'];?>')"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
+<p onclick="confirm_delete('3, caca')">test</p>
 <br />
         <form method='post' action='admin-exec.php'>
             <input type='hidden' value='<?php echo $users['userid'];?>' name='userid' />
@@ -103,16 +104,19 @@ while ($users = $req->fetch()) {
                     >no</option>
             </select>
 <br />
+Reset user password : <input type='password' value='' name='new_password' />
+<br />
+Repeat new password : <input type='password' value='' name='confirm_new_password' />
+<br />
+<br />
     <input type='submit' class='button' value='Edit this user' /><br />
         </form>
     </div>
     <script>
-        $(document).ready(function() {
             $(".toggle_users_<?php echo $users['userid'];?>").hide();
             $("a.trigger_users_<?php echo $users['userid'];?>").click(function(){
                 $('div.toggle_users_<?php echo $users['userid'];?>').slideToggle(1);
             });
-        });
     </script>
     </div>
     <?php
@@ -175,12 +179,31 @@ while ($items_types = $req->fetch()) {
 </section>
 
 <script>
+// confirm delete by writing full name
+function confirm_delete(id, lastname) {
+    var user_input = prompt('WARNING !\nAre you absolutely sure you want to delete this user ?\nThis will delete forever ALL the user\'s data, including files and experiments !!!!\nTo confirm type the LASTNAME of the user in capital letters :');
+    if(user_input != '' && user_input === lastname){
+    // POST request to delete user
+    var jqxhr = $.post('admin-exec.php', {
+        deluser: id
+    })
+    // reload page
+    .success(function() {location.reload()
+    });
+    }else{
+        return false;
+    }
+}
 // color wheel
 function color_wheel(div_name) {
         var cw = Raphael.colorwheel($(div_name)[0], 80);
             cw.input($(div_name+" input" )[0]);
 }
 $(document).ready(function() {
+    $(".toggle_users_<?php echo $users['userid'];?>").hide();
+    $("a.trigger_users_<?php echo $users['userid'];?>").click(function(){
+        $('div.toggle_users_<?php echo $users['userid'];?>').slideToggle(1);
+    });
     $(".toggle_add_new_item").hide();
 	$("a.trigger_add_new_item").click(function(){
         $('div.toggle_add_new_item').slideToggle(1);
@@ -198,22 +221,6 @@ $(document).ready(function() {
         theme_advanced_buttons3_add : "forecolor, backcolor, tablecontrols",
         font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
     });
-    // confirm delete by writing full name
-    var confirm_delete = function(id, lastname) {
-        var user_input = prompt('WARNING !\nAre you absolutely sure you want to delete this user ?\nThis will delete forever ALL the user\'s data, including files and experiments !!!!\nTo confirm type the LASTNAME of the user in capital letters :');
-        if(user_input != '' && user_input === lastname){
-        // POST request to delete user
-        var jqxhr = $.post('admin-exec.php', {
-            deluser: id
-        })
-        // reload page
-        .success(function() {location.reload()
-        });
-        }else{
-            return false;
-        }
-    }
-
 });
 </script>
 <?php

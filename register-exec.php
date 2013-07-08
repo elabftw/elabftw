@@ -97,11 +97,10 @@ if ((isset($_POST['cpassword'])) && (!empty($_POST['cpassword']))) {
     $cpassword = filter_var($_POST['cpassword'], FILTER_SANITIZE_STRING);
     if ((isset($_POST['password'])) && (!empty($_POST['password']))) {
         // Good to go
-        $password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);
         // Create salt
         $salt = hash("sha512", uniqid(rand(), true));
         // Create hash
-        $passwordHash = hash("sha512", $salt.$password);
+        $passwordHash = hash("sha512", $salt.$_POST['password']);
         // Check for password length
         if (strlen($password) <= 3) {
             $msg_arr[] = 'Password must contain at least 4 characters';

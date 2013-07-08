@@ -56,6 +56,12 @@ require_once('inc/info_box.php');
                 }
                 ?>
             </select>
+           <!-- search everyone box --> 
+            (search in everyone's experiments <input name="all" value="y" type="checkbox" <?php
+                // keep the box checked if it was checked
+                if(isset($_GET['all'])){
+                    echo "checked=checked";
+                }?>>)
             <br />
             <br />
             <div id='search_inputs_div'>
@@ -191,11 +197,30 @@ if (isset($_GET)) {
             // SQL
             // the BETWEEN stuff makes the date mandatory, so we switch the $sql with/without date
             if(isset($_GET['to']) && !empty($_GET['to'])) {
+
+                if(isset($_GET['all']) && !empty($_GET['all'])) {
+            $sql = "SELECT * FROM experiments WHERE title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%' AND date BETWEEN '$from' AND '$to'";
+                } else { //search only in your experiments
             $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%' AND date BETWEEN '$from' AND '$to'";
+                }
+
+
             } elseif(isset($_GET['from']) && !empty($_GET['from'])) {
+                if(isset($_GET['all']) && !empty($_GET['all'])) {
+            $sql = "SELECT * FROM experiments WHERE title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%' AND date BETWEEN '$from' AND '991212'";
+                } else { //search only in your experiments
             $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%' AND date BETWEEN '$from' AND '991212'";
+                }
+
+
             } else { // no date input
+                if(isset($_GET['all']) && !empty($_GET['all'])) {
+            $sql = "SELECT * FROM experiments WHERE title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%'";
+                } else { //search only in your experiments
             $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%'";
+                }
+
+
             }
 
             $req = $bdd->prepare($sql);

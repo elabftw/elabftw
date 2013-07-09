@@ -67,7 +67,6 @@ while ($users = $req->fetch()) {
     <a class='trigger_users_<?php echo $users['userid'];?>'><img src='img/profile.png' alt='' /> <?php echo "Edit ".$users['firstname'];?></a>
     <div class='toggle_users_<?php echo $users['userid'];?>'>
         <a class='align_right' href='' onClick="confirm_delete('<?php echo $users['userid']."', '".$users['lastname'];?>')"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
-<p onclick="confirm_delete('3, caca')">test</p>
 <br />
         <form method='post' action='admin-exec.php'>
             <input type='hidden' value='<?php echo $users['userid'];?>' name='userid' />

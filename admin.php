@@ -72,7 +72,7 @@ while ($users = $req->fetch()) {
             <input type='hidden' value='<?php echo $users['userid'];?>' name='userid' />
             <input type='text' value='<?php echo $users['firstname'];?>' name='firstname' />
             <input type='text' value='<?php echo $users['lastname'];?>' name='lastname' />
-            <input type='text' value='<?php echo $users['email'];?>' name='email' /><br />
+            <input type='email' value='<?php echo $users['email'];?>' name='email' /><br />
             Has admin rights ?<select name='is_admin'>
             <option value='1'<?php
                     if($users['is_admin'] == 1) {
@@ -146,7 +146,7 @@ while ($items_types = $req->fetch()) {
     <div id='colorwheel_div_<?php echo $items_types['id'];?>'>
     <div class='colorwheel inline'></div>
 
-    <input type='text' name='item_type_bgcolor' value='#<?php echo $items_types['bgcolor'];?>'/></div><br /><br />
+    <input type='color' name='item_type_bgcolor' value='#<?php echo $items_types['bgcolor'];?>'/></div><br /><br />
      
     <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']);?></textarea><br />
 

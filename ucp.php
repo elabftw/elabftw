@@ -48,14 +48,14 @@ $data = $req->fetch();
 <div class='innerinnerdiv'>
       New password <input name="newpass" type="password" /><br />
       Confirm new password <input name="cnewpass" type="password" /><br />
-      Change Email <input name="email" value='<?php echo $data['email'];?>' cols='20' rows='1' /><br />
+      Change Email <input name="email" type="email" value='<?php echo $data['email'];?>' cols='20' rows='1' /><br />
       Username <input name="username" value='<?php echo $data['username'];?>' cols='20' rows='1' /><br />
       Firstname <input name="firstname" value='<?php echo $data['firstname'];?>' cols='20' rows='1' /><br />
       Lastname <input name="lastname" value='<?php echo $data['lastname'];?>' cols='20' rows='1' /><br />
       Phone <input name="phone" value='<?php echo $data['phone'];?>' cols='20' rows='1' /><br />
       Cellphone <input name="cellphone" value='<?php echo $data['cellphone'];?>' cols='20' rows='1' /><br />
       Skype <input name="skype" value='<?php echo $data['skype'];?>' cols='20' rows='1' /><br />
-      Website <input name="website" value='<?php echo $data['website'];?>' cols='20' rows='1' /><br /></p>
+      Website <input name="website" type="url" value='<?php echo $data['website'];?>' cols='20' rows='1' /><br /></p>
 <div id='submitDiv'><input type="submit" name="Submit" class='button' value="Update profile" /></div>
 </form>
 </div><!-- end innerdiv -->

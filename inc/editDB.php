@@ -67,6 +67,7 @@ echo stripslashes($tags['tag']);?>
 <form method="post" action="editDB-exec.php" enctype='multipart/form-data'>
 <input name='item_id' type='hidden' value='<?php echo $id;?>' />
 <h4>Date</h4><span class='smallgray'> (date format : YYMMDD)</span><br />
+<!-- TODO if firefox has support for it: type = date -->
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /><input name='date' id='datepicker' size='6' type='text' value='<?php echo $data['date'];?>' />
 <!-- STAR RATING via ajax request -->
 <div id='rating'>

@@ -1,6 +1,7 @@
 ////// Priority
 
 ////// Fix/improve
+* automagical update or at least notification of update
 * when you follow a link and you're not logged in, you want to be redirected to the target page after login
 * gpg sig for database
 * on install, be included on a mailing list.

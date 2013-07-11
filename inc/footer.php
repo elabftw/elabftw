@@ -61,10 +61,6 @@ $total_time = round(($finish - $start), 4);
 echo "Page generated in ".$total_time." seconds.<br />";
 ?>
 <section class='align_right'>
-<?php
-$version = parse_ini_file('admin/version.ini');
-echo "Version : ".$version['version'];
-?>
 </section>
 </footer>
 <script src="js/jquery.pageslide.min.js"></script>

@@ -623,4 +623,8 @@ function duplicate_item($id, $type) {
         }
     }
 }
+
+function check_executable($cmd) {
+    return shell_exec("which $cmd");
+}
 ?>

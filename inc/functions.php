@@ -674,7 +674,8 @@ function check_for_updates() {
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 
     // set a timeout of 500 millisecond
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, 500);
+    //curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, 500);
+    // removed because we don't actually need it and it might lead to fail
 
     // get the json data and put in an array
     $result = json_decode(curl_exec($ch), true);

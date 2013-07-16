@@ -7,29 +7,38 @@
 [general]
 ; Name of the lab
 lab_name = "YOURLABNAME"
+
 ; if set to 1, user account will need admin validation before being able to login
 admin_validate = 0
+
 ; the name of the custom link in menu
 link_name = Wiki
-; the URL of the custom link
-;link_href = http://www.example.com/wiki
+
+; the URL of the custom link (change to whatever you'd like)
 link_href = http://github.com/NicolasCARPi/elabftw/wiki
+
 ; the path of the install (absolute path) WITHOUT TRAILING SLASH
 ; change the value if you installed it elsewhere
-path = /var/www/elabftw
 ; For Windows change to : "C:\xampp\htdocs\elabftw"
 ; For Mac (with MAMP) : "/Applications/MAMP/htdocs/elabftw"
+path = /var/www/elabftw
 
 ; activate debug mode or not (on/off)
 debug = off
 
+; proxy setting (change it to proxy.company.com:3128 or leave blank if you're not behind a proxy)
+proxy =
+
 [database]
 ; Host (generally localhost)
 db_host = localhost
+
 ; Name of the database
 db_name = "elabftw"
+
 ; Username
 db_user = "elabftw"
+
 ; Password
 db_password = "YOURPASSWORD"
 
@@ -37,12 +46,16 @@ db_password = "YOURPASSWORD"
 ; It is recommended to use a free gmail account for this, but you can also use your company's SMTP server.
 ; SMTP server address
 smtp_address = smtp.gmail.com
+
 ; Port
 smtp_port = 587
+
 ; Can be 'tls' or 'ssl'
 smtp_encryption = tls
+
 ; Username
 smtp_username = "GMAILUSERNAME"
+
 ; Password
 smtp_password = "GMAILPASSWORD"
 

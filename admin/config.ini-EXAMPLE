@@ -12,7 +12,8 @@ admin_validate = 0
 ; the name of the custom link in menu
 link_name = Wiki
 ; the URL of the custom link
-link_href = http://www.example.com/wiki
+;link_href = http://www.example.com/wiki
+link_href = http://github.com/NicolasCARPi/elabftw/wiki
 ; the path of the install (absolute path) WITHOUT TRAILING SLASH
 ; change the value if you installed it elsewhere
 path = /var/www/elabftw

@@ -25,7 +25,7 @@
 ********************************************************************************/
 // inc/editDB.php
 ?>
-<script src="js/tiny_mce/tiny_mce.js"></script>
+<script src="js/tinymce/tinymce.min.js"></script>
 <?php
 // ID
 if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
@@ -178,39 +178,6 @@ function updateRating(rating) {
     })
 }
 
-// AUTOSAVE EVERY 2 SECONDS only when window is on focus
-// we need to wait for mcedit to load (and the user to make a modification)
-function wait_a_bit() {
-    // just wait for 2 secs
-    setTimeout("startCheck()", 2000)
-}
-function startCheck() {
-    // check every 2 secs if tab has focus
-    setInterval("focusCheck()", 2000);
-}
-function focusCheck () {
-    if (document.hasFocus())
-        autoSave();
-}
-function autoSave() {
-    // we first need to check if the content we will send is bigger than the saved content.
-    // this will limit the problem of having an 'old' tab open, working on another tab of the same ID, and giving the focus back to the 'old' tab that will erase what you did.
-    var currentBody = tinyMCE.activeEditor.getContent();
-    var storedBodyLength = <?php echo strlen($data['body']);?>;
-
-    if (currentBody.length > storedBodyLength) {
-        $.ajax({
-            type: "POST",
-            url: "editDB-autosave.php",
-            data: {
-            id : <?php echo $id;?>,
-            // we need this to get the updated content
-            body : tinyMCE.activeEditor.getContent()
-            }
-        });
-    }
-}
-
 // READY ? GO !
 $(document).ready(function() {
     // ADD TAG JS
@@ -219,16 +186,25 @@ $(document).ready(function() {
         addTagOnEnter(e);
     });
     // EDITOR
-    tinyMCE.init({
-        theme : "advanced",
+    tinymce.init({
         mode : "specific_textareas",
         editor_selector : "mceditable",
         content_css : "css/tinymce.css",
-        theme_advanced_toolbar_location : "top",
-        theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
-        plugins : "table",
-        theme_advanced_buttons3_add : "forecolor, backcolor, tablecontrols",
-        font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
+        plugins : "table textcolor searchreplace code fullscreen insertdatetime paste charmap save",
+        toolbar1: "undo redo | bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | save",
+        removed_menuitems : "newdocument",
+        // save button :
+        save_onsavecallback: function() {
+            $.ajax({
+                type: "POST",
+                url: "editDB-autosave.php",
+                data: {
+                id : <?php echo $id;?>,
+                // we need this to get the updated content
+                body : tinymce.activeEditor.getContent()
+                }
+            });
+        }
     });
     // DATEPICKER
     $( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
@@ -256,6 +232,5 @@ $(document).ready(function() {
     // fix for the ' and "
     title = "<?php echo $data['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
     document.title = title;
-    wait_a_bit();
 });
 </script>

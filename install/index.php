@@ -43,6 +43,8 @@ echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."<
 <!-- JAVASCRIPT -->
 <script src="../js/jquery-1.7.2.min.js"></script>
 <script src="../js/jquery-ui-1.8.18.custom.min.js"></script>
+<!-- Form validation client-side -->
+<script src="../js/parsley.min.js"></script>
 </head>
 
 <body>
@@ -201,21 +203,53 @@ if ($test[0] != 0) {
             <div id='innerdiv'>
             <!-- Register form -->
 <br />
-<h3>Create your account (it will have admin rights)</h3>
-                <form name="regForm" method="post" action="../register-exec.php" class='innerinnerdiv'>
-                      <p>Username <input name="username" type="text" id="username" /><br />
-                      Firstname <input name="firstname" type="text" id="firstname" /><br />
-                      Lastname <input name="lastname" type="text" id="lastname" /><br />
-                      Email <input name="email" type="text"  id="email" /><br />
-                      Password <input name="password" type="password" id="password" /><br />
-                      Confirm Password <input name="cpassword" type="password" id="cpassword" /><br />
-                      Password complexity : <span id="complexity">0%</span><br />
+<section>
+    <!-- Register form -->
+    <form name="regForm" data-validate="parsley" id="regForm" method="post" action="../register-exec.php" class='innerinnerdiv'>
+        <fieldset>
+            <legend>Create your account (with admin rights) :</legend>
+                <p>
+                    <label for="firstname">Firstname</label>
+                    <input name="firstname" type="text" id="firstname" data-trigger="change" data-required="true" />
+                </p>
+                <p>
+                    <label for="lastname">Lastname</label>
+                    <input name="lastname" type="text" id="lastname" data-trigger="change" data-required="true" />
+                </p>
+                <p>
+                    <label for="username">Username</label>
+                    <input name="username" type="text" id="username" data-trigger="change" data-required="true" />
+                </p>
+                <p>
+                    <label for="email">Email</label>
+                    <input name="email" type="email" id="email" data-trigger="change" data-required="true" data-type="email" />
+                </p>
+                <p>
+                    <label for="password">Password</label>
+                    <input name="password" type="password" id="password" data-trigger="change" data-minlength="4" />
+                </p>
+                <p>
+                    <label for="cpassword">Confirm password</label>
+                    <input name="cpassword" type="password" id="cpassword" data-trigger="change" data-equalto="#password" data-error-message="The passwords do not match !" />
+                </p>
+                Password complexity (for your information) : <span id="complexity">0%</span><br /><br />
                 <div id='submitDiv'>
-                    <input type="submit" name="Submit" class='submit' value="Register" />
+                <input type="submit" name="Submit" class='submit' value="Register" />
                 </div>
-                </form>
-            </div>
-        <!-- end register form -->
+        </fieldset>
+    </form>
+    <!-- end register form -->
+<style>
+.parsley-error {
+    color:red;
+    background-color:yellow;
+}
+.parsley-error-list {
+    color:red;
+    font-weight:bold;
+}
+</style>
+</section>
 <?php
 }
 echo "</span>";

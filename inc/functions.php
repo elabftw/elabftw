@@ -625,4 +625,3 @@ function duplicate_item($id, $type) {
 }
 
 ?>
-

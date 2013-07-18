@@ -159,6 +159,7 @@ if (!extension_loaded("openssl")) {
     echo $ok;
 }
 
+/*
 // CHECK ssl extension
 echo "<br />";
 echo "[°] Sending test email to test@yopmail.com...";
@@ -182,6 +183,7 @@ if ($result) {
 } else {
     echo $fail." : Couldn't send email. Check your SMTP settings !";
 }
+ */
 
 // Make an admin user
 // Check that there is NO user on the database

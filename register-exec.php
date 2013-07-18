@@ -151,6 +151,7 @@ if ($ini_arr['admin_validate'] === '1'){
 $result = $bdd->exec($sql);
 //Check whether the query was successful or not
 if($result) {
+    /*
     // Send email
         require_once('lib/swift_required.php');
         // Create the message
@@ -169,6 +170,7 @@ $transport = Swift_SmtpTransport::newInstance($ini_arr['smtp_address'], $ini_arr
     ->setPassword($ini_arr['smtp_password']);
         $mailer = Swift_Mailer::newInstance($transport);
         $result = $mailer->send($message);
+     */
     // Redirect
         $msg_arr = array();
         if ($ini_arr['admin_validate'] === '1'){

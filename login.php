@@ -59,7 +59,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     <div class='toggle_container'>
 <hr>
     <form name='resetPass' method='post' action='reset-pass.php'>
-    <input placeholder='Enter your email address' name='email' />
+    <input placeholder='Enter your email address' name='email' type='email' />
     <input type="submit" name="Submit" value="Send new password" />
     </form>
     </div>

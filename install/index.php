@@ -143,10 +143,15 @@ if ($res) {
 // CHECK PATH
 echo "<br />";
 echo "[°] Checking the path...";
+// first check if the user uncommented a path setting
+if (!isset($ini_arr['path'])) {
+    die($fail." : Path is not set. Please uncomment the corresponding line in admin/config.ini.");
+}
+
 // remove /install/index.php from the path
 $should_be_path = substr(realpath(__FILE__), 0, -18);
 if($ini_arr['path'] != $should_be_path) {
-    die($fail." : Path is not the same ! Change its value in admin/config.ini to ".$should_be_path);
+    die($fail." : Path is not the same ! Change its value in admin/config.ini to <strong>".$should_be_path."</strong>");
 } else {
     echo $ok;
 }
@@ -284,6 +289,7 @@ $(document).ready(function() {
 });
 </script>
 <footer>
+<p>Thanks for using eLabFTW :)</p>
 </footer>
 </body>
 </html>

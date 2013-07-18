@@ -19,9 +19,12 @@ link_href = http://github.com/NicolasCARPi/elabftw/wiki
 
 ; the path of the install (absolute path) WITHOUT TRAILING SLASH
 ; change the value if you installed it elsewhere
-; For Windows change to : "C:\xampp\htdocs\elabftw"
-; For Mac (with MAMP) : "/Applications/MAMP/htdocs/elabftw"
-path = /var/www/elabftw
+; For Windows uncomment this line :
+;path = "C:\xampp\htdocs\elabftw"
+; For Mac (with MAMP) uncomment this line :
+;path= "/Applications/MAMP/htdocs/elabftw"
+; For Unix uncomment this line (or modify it if needed)
+;path = /var/www/elabftw
 
 ; activate debug mode or not (on/off)
 debug = off
@@ -43,6 +46,7 @@ db_user = "elabftw"
 db_password = "YOURPASSWORD"
 
 [mailer]
+; You can leave these settings for later, because for the moment, they are only use when someone requests a new password.
 ; It is recommended to use a free gmail account for this, but you can also use your company's SMTP server.
 ; SMTP server address
 smtp_address = smtp.gmail.com

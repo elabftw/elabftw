@@ -39,10 +39,17 @@ Javascript is disabled. Please enable Javascript to view this site in all its gl
 <div id="logmenu"><p>
 <?php
 if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
-    // check for updates on github
-    echo check_for_updates();
-    // show admin panel link
-    echo "<a href='admin.php'>Admin Panel</a> | ";
+?>
+    <!-- ADMIN MENU --> 
+<a id='check_for_updates' href='#'>Check for updates</a> | <a href='admin.php'>Admin Panel</a> | 
+<script>
+$('#check_for_updates').click(function() {
+    var jqxhr = $.post('check_for_updates.php', function(answer) {
+        alert(answer);
+    });
+});
+</script>
+<?php
     }
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     echo "Logged in as <a href='profile.php' title='Profile'>".$_SESSION['username']."</a> | 

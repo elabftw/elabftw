@@ -63,6 +63,7 @@ $ok = "<span style='color:green'>OK</span>";
 $fail = "<span style='color:red'>FAIL</span>";
 
 echo "<section class='item'>";
+echo "<center><img src='../img/logo.png' alt='elabftw' title='elabftw' /></center>";
 echo "<h2>Welcome the the install of eLabFTW</h2>";
 // INI
 echo "[°] Check for admin/config.ini file...";

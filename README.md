@@ -82,9 +82,7 @@ $ chmod -R 777 uploads
 
 ## SQL part
 The second part is putting the database in place.
-### Command line
-The quickest way is to do it via the command line (read below for the graphical way with phpmyadmin) :
-
+### Command line way (graphical way below)
 ~~~ sh
 # first we connect to mysql
 $ mysql -u root -p
@@ -98,6 +96,8 @@ mysql> exit
 # now we import the database structure
 $ mysql -u elabftw -p elabftw < install/elabftw.sql
 ~~~
+
+*** <- Ignore this (it's to fix a markdown syntax highlighting problem)
 
 
 ### Graphical way with phpmyadmin

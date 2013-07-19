@@ -330,11 +330,15 @@ $(document).ready(function() {
         save_onsavecallback: function() {
             $.ajax({
                 type: "POST",
-                url: "editXP-autosave.php",
+                url: "quicksave.php",
                 data: {
                 id : <?php echo $id;?>,
+                type : 'experiments',
                 // we need this to get the updated content
+                title : document.getElementById('title_txtarea').value,
+                date : document.getElementById('datepicker').value,
                 body : tinymce.activeEditor.getContent()
+                
                 }
             });
         }

@@ -18,9 +18,6 @@
 *
 ********************************************************************************/
 require_once('inc/common.php');
-// get $body from $_POST['body']
-$body = check_body($_POST['body']);
-
 // get $id from $_POST['id']
 if(is_pos_int($_POST['id'])){
     $id = $_POST['id'];
@@ -28,14 +25,41 @@ if(is_pos_int($_POST['id'])){
     die('Bad id value.');
 }
 
-// SQL for editXP autosave
+// get $title from $_POST['title']
+$title = check_title($_POST['title']);
+
+// get $body from $_POST['body']
+$body = check_body($_POST['body']);
+
+// get $date from $_POST['date']
+$date = check_date($_POST['date']);
+
+// SQL for quicksave
+// we do a usercheck for experiments
+if ($_POST['type'] == 'experiments') {
     $sql = "UPDATE experiments 
-        SET body = :body 
+        SET title = :title, date = :date, body = :body
         WHERE userid = :userid 
         AND id = :id";
 $req = $bdd->prepare($sql);
 $result = $req->execute(array(
+    'title' => $title,
+    'date' => $date,
     'body' => $body,
     'userid' => $_SESSION['userid'],
     'id' => $id
 ));
+
+} elseif ($_POST['type'] == 'items') {
+    $sql = "UPDATE items 
+        SET title = :title, date = :date, body = :body
+        WHERE id = :id";
+$req = $bdd->prepare($sql);
+$result = $req->execute(array(
+    'title' => $title,
+    'date' => $date,
+    'body' => $body,
+    'id' => $id
+));
+}
+?>

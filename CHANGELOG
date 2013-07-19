@@ -1,5 +1,10 @@
 /* Changelog for eLabFTW */
 
+Version 0.8.2
+* Added check for updates button
+* TinyMCE 4
+* Editor'save button saves date, title and body
+
 Version 0.8.1
 * Admin can reset password
 * You can search in everyone's experiments if you want

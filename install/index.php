@@ -167,6 +167,14 @@ if (!extension_loaded("openssl")) {
     echo $ok;
 }
 
+// CHECK gd extension
+echo "<br />";
+echo "[°] Checking for gd extension (to display thumbnails)...";
+if (!extension_loaded("gd")) {
+    die($fail." : Edit the php.ini config file to enable this extension and/or install the package php-gd.");
+} else {
+    echo $ok;
+}
 /*
 // CHECK ssl extension
 echo "<br />";

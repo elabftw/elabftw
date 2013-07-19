@@ -10,20 +10,35 @@ Please report bugs on [github](https://github.com/NicolasCARPi/elabftw/issues).
 
 eLabFTW was designed to be installed on a server, and people from the team would just log into it from their browser.
 
+Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM and an old CPU, it's more than enough. Just install a recent GNU/Linux distribution on it.
+
+Don't have an old computer ? That's okay, you can install eLabFTW on a Raspberry Pi (you can buy one on [Radiospares](http://www.rs-components.com/index.html)). It's a 30€ computer on which you can install GNU/Linux and run a server in no time ! That's what we use in our lab.
+
 But you can also install it locally and use it for yourself only. Here is how :
 
 ### Install locally on Mac OS
 Please [follow the instructions on the wiki](https://github.com/NicolasCARPi/elabftw/wiki/installmac).
 ### Install locally on Windows
 Please [follow the instructions on the wiki](https://github.com/NicolasCARPi/elabftw/wiki/installwin).
-## Install on Unix-like OS (GNU/Linux, BSD, Solaris, etc…)
-You can skip these instructions if you already have a running http server.
-
+## Install on Unix-like OS (GNU/Linux, BSD, Solaris, etc…) (the recommended way !)
 Please refer to your distribution's documentation to install :
-* a webserver (Apache, nginx, cherokee, lighttpd)
+* a webserver (Apache2 is recommended)
 * php5
 * mysql
 * git
+
+The quick way to do that on a Debian/Ubuntu setup :
+~~~ sh 
+$ sudo su -
+# apt-get update && apt-get upgrade
+# apt-get install mysql-server mysql-client apache2 php5 php5-mysql libapache2-mod-php5 phpmyadmin
+~~~
+
+Make sure to put a root password on your mysql installation :
+~~~ sh
+$ sudo /usr/bin/mysql_secure_installation
+~~~
+
 
 ## Getting the files
 
@@ -41,12 +56,19 @@ If you cannot connect, try exporting your proxy settings in your shell like so :
 ~~~ sh
 $ export https_proxy="proxy.example.com:3128"
 ~~~
+If you still cannot connect, tell git your proxy :
+~~~ sh
+$ git config --global http.proxy http://proxy.example.com:8080
+~~~
+
+
 
 If you get a permissions denied, it's because your user can't write in the folder.
 Try this :
 ~~~ sh
-$ sudo chown `whoami`:`whoami` /path/to/folder
+$ sudo chown `whoami`:`whoami` .
 ~~~
+Note the `.` at the end that means `current folder`.
 You'll then be able to create the elabftw folder.
 
 If you can't install git or don't manage to get the files, you can download a zip archive :
@@ -58,16 +80,33 @@ But it's better to use git, it will allow easier updates.
 4.  Creating the uploads folders and fixing the permissions
 
 ~~~ sh
+$ cd elabftw
 $ mkdir -p uploads/{tmp,export}
 $ chmod -R 777 uploads
 ~~~
 
 ## SQL part
 The second part is putting the database in place.
+### Command line
+The quickest way is to do it via the command line (read below for the graphical way with phpmyadmin) :
 
-### 1) create a user `elabftw` with all rights on the database `elabftw`
-I recommend using phpmyadmin for that.
+~~~ sh
+# first we connect to mysql
+$ mysql -u root -p
+# we create the database
+mysql> create database elabftw;
+# we create the user that will connect to the database.
+mysql> grant usage on *.* to elabftw@localhost identified by 'YOUR_PASSWORD';
+# we give all rights to this user on this database
+mysql> grant all privileges on elabftw.* to elabftw@localhost;
+mysql> exit
+# now we import the database structure
+$ mysql -u elabftw -p elabftw < install/elabftw.sql
+~~~
 
+
+### Graphical way with phpmyadmin
+#### 1) create a user `elabftw` with all rights on the database `elabftw`
 Login with the root user on PhpMyAdmin panel, click the `Users` tab and click Add new user.
 
 Do like this :
@@ -75,26 +114,16 @@ Do like this :
 ![phpmyadmin add user](http://i.imgur.com/kE1gtT1.png)
 
 
-### 2) import the database structure :
-#### Command line way
-~~~ sh
-$ cd elabftw
-$ mysql -u elabftw -p elabftw < install/elabftw.sql
-~~~
-
-You will be prompted with the password you entered when creating the `elabftw` user in step 1.
-
-#### Graphical way (in PhpMyAdmin)
+#### 2) import the database structure :
 * On the menu on the left, select the newly created database `elabftw`
 * Click the Import tab
 * Select the file /path/to/elabftw/install/elabftw.sql
 * Click Go
 
 ## Config file
-Copy the file `admin/config.ini-EXAMPLE` to `admin/config.ini` and edit it.
+Copy the file `admin/config.ini-EXAMPLE` to `admin/config.ini`.
 ~~~ sh
 $ cp admin/config.ini-EXAMPLE admin/config.ini
-$ $EDITOR admin/config.ini
 ~~~
 
 Check that this file isn't served by your webserver (point to it in a browser).
@@ -106,6 +135,17 @@ If you see the config file be sure to edit AllowOverride in your
 <Directory "/var/www/elabftw">
 ~~~ 
 and set it to All.
+Reload the webserver :
+~~~ sh
+# on Debian/Ubuntu
+$ sudo service apache2 reload 
+# on Archlinux
+$ sudo systemctl reload httpd.service
+~~~
+Now edit this file with your favorite text editor.
+~~~ sh
+$ $EDITOR admin/config.ini
+~~~
 
 ## Final step
 Finally, point your browser to the install folder (install/) and read onscreen instructions.

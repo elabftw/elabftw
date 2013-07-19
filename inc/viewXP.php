@@ -56,9 +56,9 @@ echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/ca
 <a href='make_zip.php?id=".$data['id']."&type=exp'><img src='themes/".$_SESSION['prefs']['theme']."/img/zip.gif' title='make a zip archive' alt='zip' /></a> ";
 // lock
 if($data['locked'] == 0) {
-    echo "<a href='lock-exec.php?id=".$data['id']."&action=lock'><img src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' title='lock experiment' alt='lock' /></a>";
+    echo "<a href='lock-exec.php?id=".$data['id']."&action=lock'><img src='themes/".$_SESSION['prefs']['theme']."/img/unlock.png' title='lock experiment' alt='lock' /></a>";
 } else { // experiment is locked
-    echo "<a href='lock-exec.php?id=".$data['id']."&action=unlock'><img src='themes/".$_SESSION['prefs']['theme']."/img/unlock.png' title='unlock experiment' alt='unlock' /></a>";
+    echo "<a href='lock-exec.php?id=".$data['id']."&action=unlock'><img src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' title='unlock experiment' alt='unlock' /></a>";
 }
 
 // <a href='publish.php?id=".$data['id']."&type=exp'><img src='themes/".$_SESSION['prefs']['theme']."/img/publish.png' title='submit to a journal' alt='publish' /></a>";

@@ -105,7 +105,7 @@ if (isset($_POST)) {
         exit();
     } 
     // sha1 are the same
-    echo "You are running the latest stable version of eLabFTW !";
+    echo "Congratulations ! You are running the latest stable version of eLabFTW :)";
 }
 ?>
 

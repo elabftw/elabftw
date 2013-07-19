@@ -113,10 +113,7 @@ $status = $data['status'];
 
 <!-- SUBMIT BUTTON -->
 <div class='center' id='saveButton'>
-    <button type='submit'>
-        <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/submit.png' name='Submit' value='Submit' />
-    <p>SAVE</p>
-    </button>
+    <input type="submit" name="Submit" class='button' value="Save and go back" />
 </div>
 </form><!-- end editXP form -->
 

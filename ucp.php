@@ -36,7 +36,7 @@ $data = $req->fetch();
 
 // BEGIN UCP PAGE
 ?>
-<script src="js/tiny_mce/tiny_mce.js"></script>
+<script src="js/tinymce/tinymce.min.js"></script>
 <div id='accordion'>
 <h3><a href='#infos'>PERSONNAL INFORMATIONS</a></h3>
 <div>
@@ -137,6 +137,7 @@ echo "</ul>";
     <input type='hidden' name='new_tpl_form' />
     <input type='text' name='new_tpl_name' placeholder='Name of the template' /><br />
     <textarea name='new_tpl_body' id='new_tpl_txt' class='mceditable' placeholder='Insert here your template' rows='10' cols='60'></textarea>
+<br />
     <div id='submitDiv'><input type="submit" name="Submit" class='button' value="Add template" /></div>
     </form>
 </div>
@@ -205,16 +206,13 @@ document.getElementById('currpass').focus();
 $(function() {
     $( "#tpl" ).tabs();
 });
-tinyMCE.init({
-    theme : "advanced",
-    mode : "specific_textareas",
-    editor_selector : "mceditable",
-    content_css : "css/tinymce.css",
-    theme_advanced_toolbar_location : "top",
-    theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
-    plugins : "table",
-    height : "700",
-    theme_advanced_buttons3_add : "forecolor, backcolor, tablecontrols",
-    font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
-});
+    // EDITOR
+    tinymce.init({
+        mode : "specific_textareas",
+        editor_selector : "mceditable",
+        content_css : "css/tinymce.css",
+        plugins : "table textcolor searchreplace code fullscreen insertdatetime paste charmap save",
+        toolbar1: "undo redo | bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap",
+        removed_menuitems : "newdocument",
+    });
 </script>

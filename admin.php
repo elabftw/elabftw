@@ -31,7 +31,7 @@ require_once('inc/head.php');
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
 ?>
-<script src="js/tiny_mce/tiny_mce.js"></script>
+<script src="js/tinymce/tinymce.min.js"></script>
 <script src="js/raphael.js"></script>
 <script src="js/colorwheel.js"></script>
 <?php
@@ -209,16 +209,13 @@ $(document).ready(function() {
 	});
     color_wheel('#colorwheel_div_new')
     // EDITOR
-    tinyMCE.init({
-        theme : "advanced",
+    tinymce.init({
         mode : "specific_textareas",
         editor_selector : "mceditable",
         content_css : "css/tinymce.css",
-        theme_advanced_toolbar_location : "top",
-        theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
-        plugins : "table",
-        theme_advanced_buttons3_add : "forecolor, backcolor, tablecontrols",
-        font_size_style_values : "10px,12px,13px,14px,16px,18px,20px"
+        plugins : "table textcolor searchreplace code fullscreen insertdatetime paste charmap save",
+        toolbar1: "undo redo | bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap",
+        removed_menuitems : "newdocument",
     });
 });
 </script>

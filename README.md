@@ -29,9 +29,9 @@ Please refer to your distribution's documentation to install :
 
 The quick way to do that on a Debian/Ubuntu setup :
 ~~~ sh 
-$ sudo su -
-# apt-get update && apt-get upgrade
-# apt-get install mysql-server mysql-client apache2 php5 php5-mysql libapache2-mod-php5 phpmyadmin
+$ sudo apt-get update
+$ sudo apt-get upgrade
+$ sudo apt-get install mysql-server mysql-client apache2 php5 php5-mysql libapache2-mod-php5 phpmyadmin
 ~~~
 
 Make sure to put a root password on your mysql installation :
@@ -42,16 +42,26 @@ $ sudo /usr/bin/mysql_secure_installation
 
 ## Getting the files
 
-1. Connect to your server with SSH
+### Connect to your server with SSH
+~~~ sh
+ssh user@12.34.56.78
+~~~
 
-2. Cd to the public directory where you want eLabFTW to be installed
+### Cd to the public directory where you want eLabFTW to be installed
 (can be /var/www, ~/public\_html, or any folder you'd like)
+~~~ sh
+$ cd /var/www
+# make the directory writable by your user
+$ sudo chown `whoami`:`whoami` .
+~~~
+Note the `.` at the end that means `current folder`.
 
-3. Get latest stable version via git :
+### Get latest stable version via git :
 ~~~ sh
 $ git clone https://github.com/NicolasCARPi/elabftw.git
 ~~~
 (this will create a folder `elabftw`)
+
 If you cannot connect, try exporting your proxy settings in your shell like so :
 ~~~ sh
 $ export https_proxy="proxy.example.com:3128"
@@ -61,24 +71,9 @@ If you still cannot connect, tell git your proxy :
 $ git config --global http.proxy http://proxy.example.com:8080
 ~~~
 
+If you can't install git or don't manage to get the files, you can [download a zip archive](https://github.com/NicolasCARPi/elabftw/archive/master.zip). But it's better to use git, it will allow easier updates.
 
-
-If you get a permissions denied, it's because your user can't write in the folder.
-Try this :
-~~~ sh
-$ sudo chown `whoami`:`whoami` .
-~~~
-Note the `.` at the end that means `current folder`.
-You'll then be able to create the elabftw folder.
-
-If you can't install git or don't manage to get the files, you can download a zip archive :
-
-https://github.com/NicolasCARPi/elabftw/archive/master.zip
-
-But it's better to use git, it will allow easier updates.
-
-4.  Creating the uploads folders and fixing the permissions
-
+### Create the uploads folders and fix the permissions
 ~~~ sh
 $ cd elabftw
 $ mkdir -p uploads/{tmp,export}
@@ -93,7 +88,7 @@ The quickest way is to do it via the command line (read below for the graphical 
 ~~~ sh
 # first we connect to mysql
 $ mysql -u root -p
-# we create the database
+# we create the database (note the ; at the end !)
 mysql> create database elabftw;
 # we create the user that will connect to the database.
 mysql> grant usage on *.* to elabftw@localhost identified by 'YOUR_PASSWORD';
@@ -134,7 +129,8 @@ If you see the config file be sure to edit AllowOverride in your
 ~~~ sh
 <Directory "/var/www/elabftw">
 ~~~ 
-and set it to All.
+in the file `/etc/apache2/conf/httpd.conf` and set it to All.
+
 Reload the webserver :
 ~~~ sh
 # on Debian/Ubuntu
@@ -142,9 +138,9 @@ $ sudo service apache2 reload
 # on Archlinux
 $ sudo systemctl reload httpd.service
 ~~~
-Now edit this file with your favorite text editor.
+Now edit this file with nano, a simple text editor. (Use vim/emacs at will, of course !)
 ~~~ sh
-$ $EDITOR admin/config.ini
+$ nano admin/config.ini
 ~~~
 
 ## Final step

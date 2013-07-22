@@ -61,7 +61,7 @@ if (isset($_POST)) {
     // we use curl and not git ls-remote to be able to input proxy settings
     $ch = curl_init();
     // get what is the current branch
-    $current_branch = shell_exec('git rev-parse --abbrev-ref HEAD');
+    $current_branch = shell_exec('git symbolic-ref --short -q HEAD');
     if ($current_branch == 'master') {
     // for branch master
     curl_setopt($ch, CURLOPT_URL, "https://api.github.com/repos/NicolasCARPi/elabftw/git/refs/heads/master");

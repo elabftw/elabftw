@@ -54,7 +54,7 @@ if ($data['locked'] == 1) {
 
 // BEGIN CONTENT
 ?>
-<section class='item <?php echo $data['status'];?>'>
+<section id='view_xp_item' class='item <?php echo $data['status'];?>'>
 <a class='align_right' href='delete_item.php?id=<?php echo $id;?>&type=exp' onClick="return confirm('Delete this experiment ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <!-- ADD TAG FORM -->
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.gif' alt='' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
@@ -88,7 +88,7 @@ echo stripslashes($tags['tag']);?>
 <?php
 $status = $data['status'];
 ?>
-      <select id="status_form" name="status">
+    <select id="status_form" name="status" onchange="update_status(this.value)">
 <option id='option_running' value="running">Running</option>
 <option id='option_success' value="success">Success</option>
 <option id='option_redo' value="redo">Need to be redone</option>
@@ -283,6 +283,23 @@ function addLinkOnEnter(e) { // the argument here is the event (needed to detect
             } // end if input is bad
         } // end if input < 0
     } // end if key is enter
+}
+
+function update_status(status) {
+            var jqxhr = $.ajax({
+                type: "POST",
+                url: "quicksave.php",
+                data: {
+                id : <?php echo $id;?>,
+                status : status,
+                }
+                // change the color of the item border
+            }).done(function() { 
+                // we first remove any status class
+                $("#view_xp_item").removeClass('running success redo fail');
+                // and we add our new status class
+                $("#view_xp_item").toggleClass(status);
+            });
 }
 
 // READY ? GO !!

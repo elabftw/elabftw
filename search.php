@@ -96,25 +96,25 @@ require_once('inc/info_box.php');
                 <p class='inline'>And status is </p><select name='status' class='search_inputs'>
 <option value='' name='status'>select status</option>
 <option value='running' name='status'<?php
-                    if($_GET && ($_GET['status'] == 'running')) {
+                    if(isset($_GET['status']) && ($_GET['status'] == 'running')) {
                         echo " selected='selected'";
                     }
 ?>
 >Running</option>
 <option value='success' name='status'<?php
-                    if($_GET && ($_GET['status'] == 'success')) {
+                    if(isset($_GET['status']) && ($_GET['status'] == 'success')) {
                         echo " selected='selected'";
                     }
 ?>
 >Success</option>
 <option value='redo' name='status'<?php
-                    if($_GET && ($_GET['status'] == 'redo')) {
+                    if(isset($_GET['status']) && ($_GET['status'] == 'redo')) {
                         echo " selected='selected'";
                     }
 ?>
 >Redo</option>
 <option value='fail' name='status'<?php
-                    if($_GET && ($_GET['status'] == 'fail')) {
+                    if(isset($_GET['status']) && ($_GET['status'] == 'fail')) {
                         echo " selected='selected'";
                     }
 ?>
@@ -128,7 +128,7 @@ require_once('inc/info_box.php');
 for($i=1; $i<=5; $i++) {
     echo "<option value='".$i."' name='rating'";
         // item get selected if it is in the search url
-    if($_GET && ($_GET['rating'] == $i)) {
+    if(isset($_GET['rating']) && ($_GET['rating'] == $i)) {
         echo " selected='selected'";
     }
     echo ">".$i."</option>";

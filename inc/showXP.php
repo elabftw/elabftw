@@ -88,6 +88,9 @@ $offset = $currentpage * $limit;
 // /////////////////
 if (isset($_GET['q'])) { // if there is a query
     $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
+
+    // RUNNING ONLY
+
     if ($query === 'runningonly') {
         $results_arr = array();
         // show only running XP
@@ -101,6 +104,7 @@ if (isset($_GET['q'])) { // if there is a query
         while ($data = $req->fetch()) {
             $results_arr[] = $data['id'];
         }
+
     } else {
         // normal search
         $results_arr = search_item('xp', $query, $_SESSION['userid']);

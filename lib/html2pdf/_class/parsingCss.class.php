@@ -330,6 +330,9 @@ class HTML2PDF_parsingCss
         elseif($family=='symbol' || $family=='zapfdingbats')
             $style='';
 
+        // patch elabftw
+        $family = str_replace(array('"', "'"), "", $family);
+
         // complete style
         $style.= $u.$d.$o;
 

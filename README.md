@@ -31,7 +31,7 @@ The quick way to do that on a Debian/Ubuntu setup :
 ~~~ sh 
 $ sudo apt-get update
 $ sudo apt-get upgrade
-$ sudo apt-get install mysql-server mysql-client apache2 php5 php5-mysql libapache2-mod-php5 phpmyadmin
+$ sudo apt-get install mysql-server mysql-client apache2 php5 php5-mysql libapache2-mod-php5 phpmyadmin git
 ~~~
 
 Make sure to put a root password on your mysql installation :

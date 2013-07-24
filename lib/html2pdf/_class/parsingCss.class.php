@@ -304,6 +304,8 @@ class HTML2PDF_parsingCss
     public function fontSet()
     {
         $family = strtolower($this->value['font-family']);
+        // patch elabftw
+        $family = str_replace(array('"', "'"), "", $family);
 
         $b = ($this->value['font-bold']        ? 'B' : '');
         $i = ($this->value['font-italic']      ? 'I' : '');
@@ -330,8 +332,6 @@ class HTML2PDF_parsingCss
         elseif($family=='symbol' || $family=='zapfdingbats')
             $style='';
 
-        // patch elabftw
-        $family = str_replace(array('"', "'"), "", $family);
 
         // complete style
         $style.= $u.$d.$o;

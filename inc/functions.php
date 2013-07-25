@@ -475,7 +475,8 @@ function make_pdf($id, $type, $out = 'browser') {
         $html2pdf->pdf->SetTitle($title);
         $html2pdf->pdf->SetSubject('eLabFTW pdf');
         $html2pdf->pdf->SetKeywords($tags);
-        $html2pdf->setDefaultFont('Arial');
+        // $html2pdf->setDefaultFont('Arial');
+        $html2pdf->setDefaultFont('DejavuSans');
         $html2pdf->writeHTML($content);
 
         if ($type == 'experiments') {

@@ -97,11 +97,10 @@ mysql> exit
 $ mysql -u elabftw -p elabftw < install/elabftw.sql
 ~~~
 
-*** <- Ignore this (it's to fix a markdown syntax highlighting problem)
+*<- Ignore this (it's to fix a markdown syntax highlighting problem)
 
 
 ### Graphical way with phpmyadmin
-#### 1) create a user `elabftw` with all rights on the database `elabftw`
 You need to install the package `phpmyadmin` if it's not already done.
 
 ~~~sh
@@ -113,6 +112,7 @@ Now you will connect to the phpmyadmin panel from your browser on your computer.
 Example : http://12.34.56.78/phpmyadmin
 
 Login with the root user on PhpMyAdmin panel (use the password you setup for mysql root user).
+#### 1) create a user `elabftw` with all rights on the database `elabftw`
 
 Now click the `Users` tab and click Add new user.
 

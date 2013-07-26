@@ -102,7 +102,19 @@ $ mysql -u elabftw -p elabftw < install/elabftw.sql
 
 ### Graphical way with phpmyadmin
 #### 1) create a user `elabftw` with all rights on the database `elabftw`
-Login with the root user on PhpMyAdmin panel, click the `Users` tab and click Add new user.
+You need to install the package `phpmyadmin` if it's not already done.
+
+~~~sh
+$ sudo apt-get install phpmyadmin
+~~~
+
+Now you will connect to the phpmyadmin panel from your browser on your computer. Type the IP address of the server followed by /phpmyadmin.
+
+Example : http://12.34.56.78/phpmyadmin
+
+Login with the root user on PhpMyAdmin panel (use the password you setup for mysql root user).
+
+Now click the `Users` tab and click Add new user.
 
 Do like this :
 

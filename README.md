@@ -96,6 +96,7 @@ mysql> exit
 # now we import the database structure
 $ mysql -u elabftw -p elabftw < install/elabftw.sql
 ~~~
+You will be asked for the password you put after `identified by` three lines above.
 
 *<- Ignore this (it's to fix a markdown syntax highlighting problem)
 

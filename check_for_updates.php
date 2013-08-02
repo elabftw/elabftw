@@ -108,8 +108,11 @@ if (isset($_POST)) {
         echo "A new update is available !";
         exit();
     } 
+    if ($latest_version == $current_version) {
     // sha1 are the same
     echo "Congratulations ! You are running the latest stable version of eLabFTW :)";
+    exit();
+    }
 }
 ?>
 

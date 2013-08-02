@@ -2,6 +2,7 @@
 * gpg sig for database
 
 ////// Fix/improve
+* on search.php, make a search with filter on owner
 * when you follow a link and you're not logged in, you want to be redirected to the target page after login
 * get config file path in .ini to be able to store it elsewhere
 * editable list of status

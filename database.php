@@ -41,4 +41,4 @@ if(!isset($_GET['mode']) || (empty($_GET['mode'])) || ($_GET['mode'] === 'show')
 }
 
 require_once('inc/footer.php');
-?>
+

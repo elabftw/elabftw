@@ -252,4 +252,4 @@ switch($_GET['action']) {
 		print $bigUpload->postUnsupported();
 		break;
 }
-?>
+

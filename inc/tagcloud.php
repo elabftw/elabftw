@@ -77,4 +77,4 @@ if ($count > 10) {
 } else {
     echo 'Not enough tags to make a tagcloud.';
 }// end fix division by zero
-?>
+

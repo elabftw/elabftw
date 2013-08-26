@@ -48,7 +48,7 @@ foreach($id_arr as $id) {
     $elabid_fill = $req->fetch();
     $date = $elabid_fill['date'];
     // Generate unique elabID
-    $elabid = $date."-".sha1(uniqid($date, TRUE));
+    $elabid = $date."-".sha1(uniqid($date, true));
     // add elabid
     $sql = "UPDATE experiments SET elabid=:elabid WHERE id=:current_id";
     $req = $bdd->prepare($sql);
@@ -256,4 +256,4 @@ if (!is_dir("uploads/tmp")){
 }else{
     echo "\n Nothing to do.\n";
 }
-?>
+

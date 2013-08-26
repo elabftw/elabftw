@@ -82,4 +82,4 @@ if($result) {
 } else {
     die('Something went wrong in the database query. Check the flux capacitor.');
 }
-?>
+

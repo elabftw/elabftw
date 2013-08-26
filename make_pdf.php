@@ -39,4 +39,4 @@ if ( ($_GET['type'] === 'experiments') || ($_GET['type'] === 'items') ) {
 
 // do the pdf
 make_pdf($id, $type);
-?>
+

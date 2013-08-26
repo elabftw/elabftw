@@ -40,15 +40,6 @@ $req = $bdd->prepare($sql);
 $req->execute();
 $data = $req->fetch();
 
-// Calculate number of experiments/day TODO take into account business days and holidays
-//$days_since_reg = daydiff($data['register_date']);
-//// if user registered today; avoid division by 0
-//if ($days_since_reg == 0){
-//    $days_since_reg = 1;
-//}
-//$exp_per_day = ($count[0] / $days_since_reg);
-//$exp_per_day = number_format($exp_per_day, 1, '.', ' ');
-
 echo "<section class='item'>";
 echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/user.png' alt='' /> <h4>INFOS</h4>";
 echo "<div class='center'>
@@ -66,4 +57,4 @@ require_once('inc/tagcloud.php');
 echo "</section>";
 
 require_once('inc/footer.php');
-?>
+

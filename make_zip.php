@@ -248,3 +248,4 @@ require_once('inc/footer.php');
 } else {
     die("The id parameter in the URL isn't a valid experiment ID");
 }
+

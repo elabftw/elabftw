@@ -75,3 +75,4 @@ key('".$_SESSION['prefs']['shortcuts']['todo']."', function(){
 ?>
 </body>
 </html>
+

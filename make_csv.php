@@ -92,3 +92,4 @@ fclose($fp);
     echo "<p>Download CSV file <span class='filesize'>(".format_bytes($filesize).")</span> :<br />
         <img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='' /> <a href='download.php?f=".$filepath."&name=elabftw-export.csv' target='_blank'>elabftw-export.csv</a></p>";
 require_once('inc/footer.php');
+

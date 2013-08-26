@@ -91,4 +91,4 @@ if (isset($_SESSION['auth'])){ // if user is auth, we check the cookie
         header("location: login.php");
     }
 }
-?>
+

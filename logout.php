@@ -28,4 +28,4 @@ session_destroy();
 setcookie('token', '', time() -3600);
 setcookie('path', '', time() -3600);
 header('Location: login.php');
-?>
+

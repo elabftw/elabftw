@@ -121,3 +121,4 @@ Free open-source Lab Manager');
             header("location: login.php");
     }
 }
+

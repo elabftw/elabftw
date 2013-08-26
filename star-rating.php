@@ -37,3 +37,4 @@ if (isset($_POST['star']) && is_numeric($_POST['star'])) {
         die('Error in SQL request. Contact admin');
     }
 }
+

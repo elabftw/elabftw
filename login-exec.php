@@ -117,4 +117,4 @@ if ($result) {
 }else {
     die("Query failed");
 }
-?>
+

@@ -144,6 +144,10 @@ If you see the config file be sure to edit AllowOverride in your
 ~~~ 
 in the file `/etc/apache2/conf/httpd.conf` and set it to All.
 
+It can also be in `/etc/apache2/sites-available/000-default`.
+
+It is really important that you do that, otherwise your all config will be accessible to anyone !
+
 Reload the webserver :
 ~~~ sh
 # on Debian/Ubuntu

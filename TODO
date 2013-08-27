@@ -9,6 +9,7 @@
 * add tag on templates
 
 ////// New Features
+* use this http://closure-compiler.appspot.com/home to compile js
 * read only status for past members
 * have real auth with LDAP etc... like here : http://docs.moodle.org/22/en/Authentication
 * have a visibility status for experiments : hidden (only you), team, public (don't need account to read it)

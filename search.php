@@ -57,7 +57,8 @@ require_once('inc/info_box.php');
                 ?>
             </select>
            <!-- search everyone box --> 
-            (search in everyone's experiments <input name="all" value="y" type="checkbox" <?php
+            <label for='all_experiments_chkbx'>(search in everyone's experiment </label>
+            <input name="all" id='all_experiments_chkbx' value="y" type="checkbox" <?php
                 // keep the box checked if it was checked
                 if(isset($_GET['all'])){
                     echo "checked=checked";

@@ -43,10 +43,11 @@ function createPassword($length) {
     $i = 0;
     $random_part = "";
     while ($i < $length) {
-    $random_part .= $chars{mt_rand(0,strlen($chars))};
-    $i++;
+        $random_part .= $chars{mt_rand(0,strlen($chars))};
+        $i++;
     }
     $fullpassword = $password.$random_part;
+
     return $fullpassword;
 }
 
@@ -56,9 +57,9 @@ function get_ext($filename){
     // if no extension
     if (!empty($path_info['extension'])) {
         return $path_info['extension'];
-    } else {
-        return false;
     }
+
+    return false;
 }
 
 
@@ -109,9 +110,9 @@ function has_attachement($id) {
     ));
     if ($req->rowCount() > 0) {
         return true;
-    } else {
-        return false;
     }
+
+    return false;
 }
 
 
@@ -600,9 +601,10 @@ function duplicate_item($id, $type) {
 
         if($result && $result_tags && $result_links) {
             return $newid;
-        } else {
-            return false;
         }
+
+        return false;
+
     } else { // DB
         // TAGS
         $sql = "SELECT tag FROM items_tags WHERE item_id = ".$id;
@@ -619,9 +621,9 @@ function duplicate_item($id, $type) {
         }
         if($result && $result_tags) {
             return $newid;
-        } else {
-            return false;
         }
+
+        return false;
     }
 }
 

@@ -160,6 +160,7 @@ if ($req->rowcount() != 0) {
 
 </section>
 
+<script src="js/common.js"></script>
 <script>
 // JAVASCRIPT
 <?php
@@ -302,6 +303,7 @@ function update_status(status) {
             });
 }
 
+
 // READY ? GO !!
 $(document).ready(function() {
     // javascript to put the selected on status option, because with php, browser cache the value of previous edited XP
@@ -355,8 +357,13 @@ $(document).ready(function() {
                 
                 }
             });
+        },
+        // keyboard shortcut to insert today's date at cursor in editor
+        setup : function(editor) {
+            editor.addShortcut("ctrl+shift+d", "add date at cursor", function() { addDateOnCursor(); });
         }
     });
+
     // ADD TAG JS
     // listen keypress, add tag when it's enter
     jQuery('#addtaginput').keypress(function (e) {
@@ -369,3 +376,4 @@ $(document).ready(function() {
     });
 });
 </script>
+

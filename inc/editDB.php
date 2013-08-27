@@ -110,6 +110,9 @@ require_once('inc/display_file.php');
 // unset session variables
 unset($_SESSION['errors']);
 ?>
+
+
+<script src="js/common.js"></script>
 <script>
 // JAVASCRIPT
 // TAGS AUTOCOMPLETE LIST
@@ -204,6 +207,10 @@ $(document).ready(function() {
                 body : tinymce.activeEditor.getContent()
                 }
             });
+        },
+        // keyboard shortcut to insert today's date at cursor in editor
+        setup : function(editor) {
+            editor.addShortcut("ctrl+shift+d", "add date at cursor", function() { addDateOnCursor(); });
         }
     });
     // DATEPICKER

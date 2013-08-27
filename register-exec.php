@@ -184,4 +184,4 @@ $transport = Swift_SmtpTransport::newInstance($ini_arr['smtp_address'], $ini_arr
 }else {
     die("Query failed");
 }
-?>
+

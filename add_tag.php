@@ -72,3 +72,4 @@ if (strlen($tag) > 0) {
         die('taggle');
     }
 }
+

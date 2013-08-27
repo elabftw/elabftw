@@ -119,4 +119,4 @@ if ($result1) {
 } else { // no $result{1, 2, 3}
     die('Something went wrong in the database query. Check the flux capacitor.');
 }
-?>
+

@@ -52,4 +52,4 @@ if ($newid) {
 } else {
     echo "Something went wrong in the database query. Check the flux capacitor.";
 }
-?>
+

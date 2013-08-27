@@ -237,6 +237,7 @@ function bigUpload () {
         }
         var item_id = getURLParameter('id');
         var url = document.URL;
+        // the uploaded file need to be labelled «experiments» or «database» in the SQL DB for check on delete
         var type = url.match(/experiments/);
         if (type != 'experiments') {
             type = 'database';

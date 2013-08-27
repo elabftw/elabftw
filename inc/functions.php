@@ -507,7 +507,7 @@ function make_pdf($id, $type, $out = 'browser') {
 function generate_elabid() {
 // Generate unique elabID
     $date = kdate();
-    return $date."-".sha1(uniqid($date, TRUE));
+    return $date."-".sha1(uniqid($date, true));
 }
 
 function duplicate_item($id, $type) {
@@ -625,4 +625,3 @@ function duplicate_item($id, $type) {
     }
 }
 
-?>

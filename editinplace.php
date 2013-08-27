@@ -54,4 +54,4 @@ if (($_POST['content'] != '') && ($_POST['content'] != ' ')){
     $comment = $req->fetch();
     echo stripslashes($comment['comment']);
 }
-?>
+

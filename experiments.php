@@ -49,4 +49,4 @@ if(!isset($_GET['mode']) || (empty($_GET['mode'])) || ($_GET['mode'] === 'show')
     echo "<p>What are you doing, Dave ?</p>";
 }
 require_once('inc/footer.php');
-?>
+

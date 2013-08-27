@@ -87,3 +87,5 @@ if ($total != 0) {
 <?php }else { //end fix division by zero
     echo 'No statistics available yet.';
 }
+?>
+

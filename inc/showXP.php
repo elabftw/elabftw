@@ -315,3 +315,4 @@ function stopAnim(theme){
     document.getElementById('runningimg').src = 'themes/'+theme+'/img/running.fix.png';
 }
 </script>
+

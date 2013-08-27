@@ -87,8 +87,13 @@ foreach ($list as $fields) {
 
 fclose($fp);
 
+// PAGE BEGIN
+echo "<div class='item'>";
     // Get zip size
     $filesize = filesize($filepath);
     echo "<p>Download CSV file <span class='filesize'>(".format_bytes($filesize).")</span> :<br />
-        <img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='' /> <a href='download.php?f=".$filepath."&name=elabftw-export.csv' target='_blank'>elabftw-export.csv</a></p>";
+        <img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='' /> 
+        <a href='download.php?f=".$filepath."&name=elabftw-export.csv' target='_blank'>elabftw-export.csv</a></p>";
+echo "</div>";
 require_once('inc/footer.php');
+

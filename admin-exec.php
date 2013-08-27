@@ -216,5 +216,4 @@ if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
         exit();
     }
 }
-?>
 

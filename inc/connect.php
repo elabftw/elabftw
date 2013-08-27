@@ -38,4 +38,4 @@ catch(Exception $e)
     die('Error : '.$e->getMessage());
 }
 // END SQL CONNECT
-?>
+

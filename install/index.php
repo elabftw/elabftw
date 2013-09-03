@@ -39,10 +39,10 @@ echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."<
 <!-- CSS -->
 <link rel="stylesheet" media="all" href="../css/main.css" />
 <link id='maincss' rel='stylesheet' media='all' href='../themes/default/style.css' />
-<link rel="stylesheet" media="all" href="../css/jquery-ui.css" />
+<link rel="stylesheet" media="all" href="../css/jquery-ui-1.10.3.custom.min.css" />
 <!-- JAVASCRIPT -->
-<script src="../js/jquery-1.7.2.min.js"></script>
-<script src="../js/jquery-ui-1.8.18.custom.min.js"></script>
+<script src="../js/jquery-2.0.3.min.js"></script>
+<script src="js/jquery-ui-1.10.3.custom.min.js"></script>
 <!-- Form validation client-side -->
 <script src="../js/parsley.min.js"></script>
 </head>
@@ -50,8 +50,6 @@ echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."<
 <body>
 <section id="container">
 <!-- JAVASCRIPT -->
-<script src="../js/jquery-1.7.2.min.js"></script>
-<script src="../js/jquery-ui-1.8.18.custom.min.js"></script>
 <?php // Page generation time
 $time = microtime();
 $time = explode(' ', $time);

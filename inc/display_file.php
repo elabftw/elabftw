@@ -73,7 +73,7 @@ if($count > 0){
 ?>
 </section>
 
-<script src='js/jquery.lightbox-0.5.js'></script>
+<script src='js/jquery.lightbox-0.5.min.js'></script>
 <script>
 $(document).ready(function() {
      // click thumbnail to show full size http://leandrovieira.com/projects/jquery/lightbox/

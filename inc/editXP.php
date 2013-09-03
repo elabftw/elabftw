@@ -160,7 +160,7 @@ if ($req->rowcount() != 0) {
 
 </section>
 
-<script src="js/common.js"></script>
+<script src="js/common.min.js"></script>
 <script>
 // JAVASCRIPT
 <?php
@@ -310,19 +310,19 @@ $(document).ready(function() {
     var status = "<?php echo $status;?>";
     switch(status) {
     case 'running' :
-        $("#option_running").attr('selected', true);
+        $("#option_running").prop('selected', true);
         break;
     case 'success' :
-        $("#option_success").attr('selected', true);
+        $("#option_success").prop('selected', true);
         break;
     case 'redo' :
-        $("#option_redo").attr('selected', true);
+        $("#option_redo").prop('selected', true);
         break;
     case 'fail' :
-        $("#option_fail").attr('selected', true);
+        $("#option_fail").prop('selected', true);
         break;
     default :
-        $("#option_running").attr('selected', true);
+        $("#option_running").prop('selected', true);
     }
 
     // fix for the ' and "

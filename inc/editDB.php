@@ -112,7 +112,7 @@ unset($_SESSION['errors']);
 ?>
 
 
-<script src="js/common.js"></script>
+<script src="js/common.min.js"></script>
 <script>
 // JAVASCRIPT
 // TAGS AUTOCOMPLETE LIST

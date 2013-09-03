@@ -25,7 +25,7 @@
 ********************************************************************************/
 ?>
 <!-- FILE UPLOAD -->
-<script src="js/bigUpload.js"></script>
+<script src="js/bigUpload.min.js"></script>
 <script>
 bigUpload = new bigUpload();
 function upload() {

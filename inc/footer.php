@@ -39,7 +39,7 @@ if (action == 'on') {
 document.css.src ="img/cssoff.gif";}
 }
 </script>
-<script src="js/cornify.js"></script>
+<script src="js/cornify.min.js"></script>
 
 <p>
 <?php

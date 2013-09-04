@@ -111,8 +111,6 @@ require_once('inc/display_file.php');
 unset($_SESSION['errors']);
 ?>
 
-
-<script src="js/common.min.js"></script>
 <script>
 // JAVASCRIPT
 // TAGS AUTOCOMPLETE LIST

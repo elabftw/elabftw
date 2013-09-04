@@ -160,7 +160,6 @@ if ($req->rowcount() != 0) {
 
 </section>
 
-<script src="js/common.min.js"></script>
 <script>
 // JAVASCRIPT
 <?php

@@ -19,31 +19,14 @@
 ********************************************************************************/
 ?>
 <footer>
-<script>
-function mouseOverPhp(action){
-if (action == 'on') {
-    document.php.src ="img/phpon.gif";
-} else {
-document.php.src ="img/phpoff.gif";}
-}
-function mouseOverSql(action){
-if (action == 'on') {
-    document.mysql.src ="img/mysqlon.gif";
-} else {
-document.mysql.src ="img/mysqloff.gif";}
-}
-function mouseOverCss(action){
-if (action == 'on') {
-    document.css.src ="img/csson.gif";
-} else {
-document.css.src ="img/cssoff.gif";}
-}
-</script>
+<!-- common stuff -->
+<script src="js/common.min.js"></script>
+<!-- konami code and unicorns -->
 <script src="js/cornify.min.js"></script>
 
 <p>
 <?php
-// because inc/common.php is not here whene not logged in
+// because inc/common.php is not here when not logged in
 if (!isset($_SESSION['auth'])) {
 $ini_arr = parse_ini_file('admin/config.ini');
 }

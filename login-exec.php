@@ -64,8 +64,7 @@ $salt = $data['salt'];
 $passwordHash = hash("sha512", $salt.$_POST['password']);
 
 // admin validated ?
-$ini_arr = parse_ini_file('admin/config.ini');
-if ($ini_arr['admin_validate'] === '1'){
+if (ADMIN_VALIDATE === 1){
 $sql = "SELECT * FROM users WHERE username='$username' AND password='$passwordHash' AND validated= 1";
 } else {
 $sql = "SELECT * FROM users WHERE username='$username' AND password='$passwordHash'";
@@ -81,7 +80,7 @@ if ($result) {
         // Store userid and permissions in $_SESSION
         session_regenerate_id();
         $_SESSION['auth'] = 1;
-        $_SESSION['path'] = $ini_arr['path'];
+        $_SESSION['path'] = PATH;
         $_SESSION['userid'] = $data['userid'];
         // Used in the menu
         $_SESSION['username'] = $data['username'];

@@ -168,12 +168,15 @@ class BigUpload
         $longname = hash("sha512", uniqid(rand(), true)).".".$ext;
         // Try to move the file to its final place
 		if(rename($this->getTempDirectory() . $this->getTempName(), $this->getMainDirectory() . $longname)) {
-            // sql to put file in uploads table
+
+            // SQL TO PUT FILE IN UPLOADS TABLE
+            // we don't use inc/connect.php because it requires the config file but there is a path problem
+            // so the config is put here directly
+            require_once('../admin/config.php');
             try
             {
                 $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-                $ini_arr = parse_ini_file('../admin/config.ini');
-                $bdd = new PDO('mysql:host='.$ini_arr['db_host'].';dbname='.$ini_arr['db_name'], $ini_arr['db_user'], $ini_arr['db_password'], $pdo_options);
+                $bdd = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
             }
             catch(Exception $e)
             {

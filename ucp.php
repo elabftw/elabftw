@@ -199,7 +199,7 @@ function setTmpTheme(theme){
 // READY ? GO !!
 $(document).ready(function() {
     // ACCORDION
-    $( "#accordion" ).accordion({ 
+    $( "#accordion" ).accordion({
         heightStyle: 'content',
         animate: 'easeOutExpo',
         collapsible: true,

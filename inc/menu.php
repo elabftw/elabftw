@@ -26,10 +26,10 @@
 $ini_arr = parse_ini_file('admin/config.ini');
 ?>
 <noscript><!-- show warning if javascript is disabled -->
-<ul class="errors">
-<li><img src="img/info.png" alt="" />
-Javascript is disabled. Please enable Javascript to view this site in all its glory. Thank You.</li>
-</ul>
+<div class="ui-state-error ui-corner-all">
+<p><span class='ui-icon ui-icon-alert' style='float:left; margin-right: .3em;'></span>
+<strong>Javascript is disabled.</strong> Please enable Javascript to view this site in all its glory. Thank You.</p>
+</div>
 </noscript>
 
 <div id='logo'>

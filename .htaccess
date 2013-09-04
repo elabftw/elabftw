@@ -6,11 +6,5 @@
 #RewriteCond %{HTTPS} !=on
 #RewriteRule .* https://%{SERVER_NAME}%{REQUEST_URI} [R=301,L]
 
-# FORBID SERVING THE CONFIG FILE
-<Files "*.ini">
-order deny,allow
-deny from all
-</Files>
-
 # DO NOT SHOW DIRECTORIES
 Options -Indexes

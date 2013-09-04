@@ -37,6 +37,8 @@ $data = $req->fetch();
 // BEGIN UCP PAGE
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
+
+<div id='accordion-wrapper'>
 <div id='accordion'>
 <h3><a href='#infos'>PERSONNAL INFORMATIONS</a></h3>
 <div>
@@ -182,38 +184,40 @@ while ($data = $req->fetch()) {
 </form>
 </div>
 </div>
+</div>
+
 
 
 <?php
 require_once('inc/footer.php');
 ?>
 <script>
-// ACCORDION
-$(function() {
-    $( "#accordion" ).accordion({ 
-        autoHeight: false,
-        animated: 'bounceslide',
-        collapsible: true,
-        active: false
-    });
-});
 // hover to choose theme
 function setTmpTheme(theme){
     document.getElementById('maincss').href = 'themes/'+theme+'/style.css';
 }
-// Give focus to password field
-document.getElementById('currpass').focus();
-$(function() {
+// READY ? GO !!
+$(document).ready(function() {
+    // ACCORDION
+    $( "#accordion" ).accordion({ 
+        heightStyle: 'content',
+        animate: 'easeOutExpo',
+        collapsible: true,
+        active: false
+    });
+    // Give focus to password field
+    document.getElementById('currpass').focus();
+    // add tabs to templates
     $( "#tpl" ).tabs();
-});
-    // EDITOR
+    // TinyMCE
     tinymce.init({
         mode : "specific_textareas",
         editor_selector : "mceditable",
         content_css : "css/tinymce.css",
         plugins : "table textcolor searchreplace code fullscreen insertdatetime paste charmap save",
         toolbar1: "undo redo | bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap",
-        removed_menuitems : "newdocument",
+        removed_menuitems : "newdocument"
     });
+});
 </script>
 

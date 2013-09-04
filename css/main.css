@@ -216,7 +216,6 @@ h3 {
     font: 20px Verdana, Arial, Helvetica, sans-serif;
     margin: 0 auto 10px auto;
     text-align: center;
-    width: 100%;
 }
 
 h4 {
@@ -481,6 +480,11 @@ img {
 /* ucp.php */
 #currpass {
     background-color: #FFABAB;
+}
+
+#accordion-wrapper {
+    width:90%;
+    margin:auto;
 }
 
 

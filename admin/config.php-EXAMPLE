@@ -30,7 +30,7 @@
  */
 
 // The name of the lab (shown in the footer)
-define('LAB_NAME', 'My Lab Name');
+define('LAB_NAME', 'YOURLABNAME');
 
 // if set to 1, user account will need admin validation before being able to login
 define('ADMIN_VALIDATE', 0);
@@ -88,8 +88,8 @@ define('SMTP_PORT', '587');
 define('SMTP_ENCRYPTION', 'tls');
 
 // Username
-define('SMTP_USERNAME', 'myaddress@gmail.com');
+define('SMTP_USERNAME', 'YOURADDRESS@gmail.com');
 
 // Password
-define('SMTP_PASSWORD', 'mypassword');
+define('SMTP_PASSWORD', 'YOURPASSWORD');
 

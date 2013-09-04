@@ -20,6 +20,7 @@ if (!file_exists('admin/config.php')) {
     I copied for you the file admin/config.php-EXAMPLE to admin/config.php.
     Now you need to edit the values in admin/config.php. 
     Just copy the values from the admin/config.ini file to the config.php file
+    After that, you can delete admin/config.ini.
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     ";
     echo $config_msg;

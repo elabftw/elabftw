@@ -25,9 +25,6 @@
 ********************************************************************************/
 session_start();
 require_once('inc/connect.php');
-if (!isset($_SESSION['auth'])) {
-$ini_arr = parse_ini_file('admin/config.ini');
-}
 
 //Array to store validation errors
 $msg_arr = array();
@@ -142,7 +139,7 @@ if ($test[0] == 0) {
 }
 
 // If all is good => registration
-if ($ini_arr['admin_validate'] === '1'){
+if (ADMIN_VALIDATE === 1){
     $sql = "INSERT INTO users(username, firstname, lastname, email, password, salt, register_date, is_admin) VALUES('$username', '$firstname', '$lastname', '$email', '$passwordHash', '$salt', '$register_date', '$is_admin')";
 } else { // no admin validation in config file
     $sql = "INSERT INTO users(username, firstname, lastname, email, password, salt, register_date, validated, is_admin) VALUES('$username', '$firstname', '$lastname', '$email', '$passwordHash', '$salt', '$register_date', '1', '$is_admin')";
@@ -173,7 +170,7 @@ $transport = Swift_SmtpTransport::newInstance($ini_arr['smtp_address'], $ini_arr
      */
     // Redirect
         $msg_arr = array();
-        if ($ini_arr['admin_validate'] === '1'){
+        if (ADMIN_VALIDATE === 1){
             $msg_arr[] = 'Registration successful :)<br />Your account must now be validated by an admin.<br />You will receive an email when it is done.';
         } else {
             $msg_arr[] = 'Registration successful :)<br />Welcome to eLabFTW \o/';

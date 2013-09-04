@@ -28,9 +28,9 @@
 <?php
 // because inc/common.php is not here when not logged in
 if (!isset($_SESSION['auth'])) {
-$ini_arr = parse_ini_file('admin/config.ini');
+    require_once('admin/config.php');
 }
-echo $ini_arr['lab_name']." powered by <a href='http://www.elabftw.net'>eLabFTW</a> by <a href='http://www.elabftw.net' onClick='cornify_add();return false;'>Nicolas CARPi</a></p>";
+echo LAB_NAME." powered by <a href='http://www.elabftw.net'>eLabFTW</a> by <a href='http://www.elabftw.net' onClick='cornify_add();return false;'>Nicolas CARPi</a></p>";
 ?>
 <figure><a href='http://www.php.net'><img id='php' onmouseover="mouseOverPhp('on')" onmouseout="mouseOverPhp('off')" class='img' src='img/phpoff.gif' /></a>
 <a href='http://www.mysql.com'><img id='mysql' onmouseover="mouseOverSql('on')" onmouseout="mouseOverSql('off')" class='img' src='img/mysqloff.gif' /></a>

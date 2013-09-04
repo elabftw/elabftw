@@ -42,14 +42,22 @@ $data = $req->fetch();
 
 // Check id is owned by connected user
 if ($data['userid'] != $_SESSION['userid']) {
-    echo ("<ul class='errors'>You are trying to edit an experiment which is not yours.</ul>");
+    echo ("<div class='ui-state-error ui-corner-all'>
+        <p><span class='ui-icon ui-icon-alert' style='float:left; margin-right: .3em;'></span>
+        <strong>Cannot edit :</strong> This experiment is not yours !</p>
+        </div>");
     require_once('inc/footer.php');
     exit();
 }
 
 // Check for lock
 if ($data['locked'] == 1) {
-    die("Item is locked. Can't edit.");
+    echo "<div class='ui-state-error ui-corner-all'>
+    <p><span class='ui-icon ui-icon-alert' style='float:left; margin-right: .3em;'></span>
+    <strong>Item is locked.</strong> You cannot edit it.</p>
+    </div>";
+    require_once('inc/footer.php');
+    exit();
 }
 
 // BEGIN CONTENT
@@ -207,7 +215,7 @@ function addTagOnEnter(e) { // the argument here is the event (needed to detect 
     }
     if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
         // get tag
-        var tag = $('#addtaginput').attr('value');
+        var tag = $('#addtaginput').val();
         // POST request
         var jqxhr = $.post('add_tag.php', {
             tag: tag,
@@ -261,7 +269,7 @@ function addLinkOnEnter(e) { // the argument here is the event (needed to detect
     }
     if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
         // get link
-        var link_id = decodeURIComponent($('#linkinput').attr('value'));
+        var link_id = decodeURIComponent($('#linkinput').val());
         // fix for user pressing enter with no input
         if (link_id.length > 0) {
             // parseint will get the id, and not the rest (in case there is number in title)

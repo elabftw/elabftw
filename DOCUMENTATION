@@ -9,9 +9,9 @@ eLabFTW uses :
 * mysql version > 5
 
 Code from others (a big thanks to them for making their code available !) :
-* jQuery v1.7.2
+* jQuery
 
-* jQuery UI v1.8.18
+* jQuery UI
 
 * jQuery plugins :
     * Inline edit : https://github.com/codenothing/inline-edit

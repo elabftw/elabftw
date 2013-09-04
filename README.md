@@ -129,36 +129,16 @@ Do like this :
 * Click Go
 
 ## Config file
-Copy the file `admin/config.ini-EXAMPLE` to `admin/config.ini`.
+Copy the file `admin/config.php-EXAMPLE` to `admin/config.php`.
 ~~~ sh
-$ cp admin/config.ini-EXAMPLE admin/config.ini
+$ cp admin/config.php-EXAMPLE admin/config.php
 ~~~
 
-Check that this file isn't served by your webserver (point to it in a browser).
-
-If you see a 403 Error, all is good.
-
-If you see the config file be sure to edit AllowOverride in your 
-~~~ sh
-<Directory "/var/www/elabftw">
-~~~ 
-in the file `/etc/apache2/conf/httpd.conf` and set it to All.
-
-It can also be in `/etc/apache2/sites-available/000-default`.
-
-It is really important that you do that, otherwise your all config will be accessible to anyone !
-
-Reload the webserver :
-~~~ sh
-# on Debian/Ubuntu
-$ sudo service apache2 reload 
-# on Archlinux
-$ sudo systemctl reload httpd.service
-~~~
 Now edit this file with nano, a simple text editor. (Use vim/emacs at will, of course !)
 ~~~ sh
-$ nano admin/config.ini
+$ nano admin/config.php
 ~~~
+I would recommend using an advanced text editor like (g)vim (GNU), notepad++ (Win) or TextWrangler (Mac) to benefit from syntax highlighting.
 
 ## Final step
 Finally, point your browser to the install folder (install/) and read onscreen instructions.

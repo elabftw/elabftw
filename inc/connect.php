@@ -27,11 +27,11 @@
  * can't use inc/common.php
  */
 // SQL CONNECT
+require_once('admin/config.php');
 try
 {
     $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-    $ini_arr = parse_ini_file('admin/config.ini');
-    $bdd = new PDO('mysql:host='.$ini_arr['db_host'].';dbname='.$ini_arr['db_name'], $ini_arr['db_user'], $ini_arr['db_password'], $pdo_options);
+    $bdd = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
 }
 catch(Exception $e)
 {

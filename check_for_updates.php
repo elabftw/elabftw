@@ -24,6 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 // this file is called with ajax post javascript from "Check for updates" link in Admin menu in inc/menu.php
+require_once('admin/config.php');
 
 function check_executable($cmd) {
     return shell_exec("which $cmd");
@@ -50,9 +51,8 @@ if (isset($_POST)) {
         exit();
     }
     // check if the proxy settings exists
-    $ini_arr = parse_ini_file('admin/config.ini');
-    if (!isset($ini_arr['proxy'])) {
-        echo "Proxy setting not present. Check the wiki on github to solve this.";
+    if (PROXY == 'proxy.example.com:3128' ) {
+        echo "You didn't edit the proxy setting. Leave it blank if you are not behind a proxy.";
         exit();
     }
 
@@ -72,13 +72,13 @@ if (isset($_POST)) {
     // this is to get content
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     // add proxy if there is one
-    if (strlen($ini_arr['proxy']) > 0) {
-        curl_setopt($ch, CURLOPT_PROXY, $ini_arr['proxy']);
+    if (strlen(PROXY) > 0) {
+        curl_setopt($ch, CURLOPT_PROXY, PROXY);
     }
     // options to verify the github certificate
     // set to false by default, set it to true if you're paranoid
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_CAPATH, $ini_arr['path']."ca_github.com.pem");
+    curl_setopt($ch, CURLOPT_CAPATH, PATH."/ca_github.com.pem");
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 
     // set a timeout of 500 millisecond

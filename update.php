@@ -8,6 +8,26 @@ $die_msg = "There was a problem in the database update :/ Please report a bug : 
 if(php_sapi_name() != 'cli' || !empty($_SERVER['REMOTE_ADDR'])) {
     die("<p>Thank you for using eLabFTW. <br />To update your database, run this file only from the command line.</p>");
 }
+
+
+// Switching from ini_arr to config.php constants
+if (!file_exists('admin/config.php')) {
+    // copy the example config
+    copy('admin/config.php-EXAMPLE', 'admin/config.php');
+    $config_msg = "
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    The config file is now admin/config.php
+    I copied for you the file admin/config.php-EXAMPLE to admin/config.php.
+    Now you need to edit the values in admin/config.php. 
+    Just copy the values from the admin/config.ini file to the config.php file
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    ";
+    echo $config_msg;
+    echo "Exiting now...";
+    exit();
+}
+
+
 require_once('inc/connect.php');
 // ADD elabid in experiments table
 $sql = "SELECT * from experiments";
@@ -212,7 +232,7 @@ if(isset($test['status'])) {
     $req = $bdd->prepare($sql);
     $result = $req->execute();
     if($result) {
-        echo 'Outcome is now status.\n';
+        echo "Outcome is now status.\n";
     } else {
         echo 'There was a problem in the database update :/';
     }
@@ -223,7 +243,7 @@ $sql = "DROP TABLE IF EXISTS `items_templates`";
 $req = $bdd->prepare($sql);
 $result = $req->execute();
 if($result) {
-    echo 'Removed items_templates table.\n';
+    echo "Removed items_templates table.\n";
 } else {
     echo 'There was a problem in the database update :/';
 }
@@ -237,15 +257,15 @@ if(isset($test['is_jc_resp'])) {
     $req = $bdd->prepare($sql);
     $result = $req->execute();
     if($result) {
-        echo '\n Removed unused fields in users table.\n';
+        echo "Removed unused fields in users table.\n";
     } else {
         echo 'There was a problem in the database update :/';
     }
 } else {
-    echo "\n Nothing to do.\n";
+    echo "Nothing to do.\n";
 }
 // TMP upload dir
-echo "\n Create uploads/tmp directory...\n";
+echo "Create uploads/tmp directory...\n";
 if (!is_dir("uploads/tmp")){
    if  (mkdir("uploads/tmp", 0777)){
     echo "Directory created";
@@ -254,6 +274,7 @@ if (!is_dir("uploads/tmp")){
         die("Failed creating <em>uploads/tmp</em> directory. Do it manually and chmod 777 it.");
     }
 }else{
-    echo "\n Nothing to do.\n";
+    echo "Nothing to do.\n";
 }
+
 

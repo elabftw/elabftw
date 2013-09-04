@@ -2,6 +2,7 @@
 *~
 *.swp
 admin/config.php
+admin/config.ini
 admin/.htpasswd
 test.php
 test-exec.php

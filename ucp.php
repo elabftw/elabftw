@@ -162,7 +162,7 @@ $users = $req->fetch();
             <form action='ucp-exec.php' method='post'>
                 <input type='hidden' name='new_tpl_form' />
                 <input type='text' name='new_tpl_name' placeholder='Name of the template' /><br />
-                <textarea name='new_tpl_body' id='new_tpl_txt' class='mceditable' placeholder='Insert here your template' rows='10' cols='60'></textarea>
+                <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='mceditable' rows='50' cols='60'></textarea>
             <br />
                 <div class='center'>
                     <input type="submit" name="Submit" class='button' value="Add template" />
@@ -183,7 +183,7 @@ $users = $req->fetch();
         <?php
             echo "<input type='hidden' name='tpl_id[]' value='".$users['id']."' />";
             echo "<input name='tpl_name[]' value='".stripslashes($users['name'])."' /><br />";
-            echo "<textarea name='tpl_body[]' class='mceditable'>".stripslashes($users['body'])."</textarea><br />";
+            echo "<textarea name='tpl_body[]' class='mceditable' style='height:500px;'>".stripslashes($users['body'])."</textarea><br />";
             echo "<div class='center'>";
             echo "<input type='submit' name='Submit' class='button' value='Edit template' />";
             echo "</div>";

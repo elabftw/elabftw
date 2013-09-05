@@ -25,6 +25,15 @@
 ********************************************************************************/
 /* auth + connect + functions*/
 session_start();
+// TODO delete this block in a few updates
+if (file_exists('admin/config.ini')) {
+    $ini_arr = parse_ini_file('admin/config.ini');
+    die("Please run the update script ! (it will transfer info from admin/config.ini to admin/config.php and delete the ini file)<br />
+        <strong>cd ".$ini_arr['path']." && php update.php</strong><br />
+        If you are on a mac, instead of 'php', do /Applications/MAMP/bin/php/php5.4.4/bin/php.<br />
+            Otherwise it might not work.");
+}
+
 require_once('admin/config.php');
 require_once('inc/functions.php');
 // SQL CONNECT

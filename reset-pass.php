@@ -30,7 +30,7 @@ require_once('lib/swift_required.php');
 // we receive email in post
 if (isset($_POST['email'])) {
     // Check that we can actually send emails :
-    if ($ini_arr['smtp_username'] == 'GMAILUSERNAME') {
+    if (SMTP_USERNAME == 'YOURUSERNAME') {
             $msg_arr[] = 'Emails are not configured ! Configure an SMTP server first !';
             $_SESSION['errors'] = $msg_arr;
             session_write_close();
@@ -96,10 +96,9 @@ Follow this link to change your password :
 Email sent by eLabFTW
 http://www.elabftw.net
 Free open-source Lab Manager');
-            $ini_arr = parse_ini_file("admin/config.ini");
-            $transport = Swift_SmtpTransport::newInstance($ini_arr['smtp_address'], $ini_arr['smtp_port'], $ini_arr['smtp_encryption'])
-            ->setUsername($ini_arr['smtp_username'])
-            ->setPassword($ini_arr['smtp_password']);
+            $transport = Swift_SmtpTransport::newInstance(SMTP_ADDRESS, SMTP_PORT, SMTP_ENCRYPTION)
+            ->setUsername(SMTP_USERNAME)
+            ->setPassword(SMTP_PASSWORD);
             $mailer = Swift_Mailer::newInstance($transport);
             $result = $mailer->send($message);
             // Now redirect to login page

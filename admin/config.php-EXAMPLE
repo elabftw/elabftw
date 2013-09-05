@@ -88,7 +88,7 @@ define('SMTP_PORT', '587');
 define('SMTP_ENCRYPTION', 'tls');
 
 // Username
-define('SMTP_USERNAME', 'YOURADDRESS@gmail.com');
+define('SMTP_USERNAME', 'YOURUSERNAME');
 
 // Password
 define('SMTP_PASSWORD', 'YOURPASSWORD');

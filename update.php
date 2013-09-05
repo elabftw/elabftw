@@ -12,20 +12,133 @@ if(php_sapi_name() != 'cli' || !empty($_SERVER['REMOTE_ADDR'])) {
 
 // Switching from ini_arr to config.php constants
 if (!file_exists('admin/config.php')) {
-    // copy the example config
-    copy('admin/config.php-EXAMPLE', 'admin/config.php');
     $config_msg = "
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     The config file is now admin/config.php
-    I copied for you the file admin/config.php-EXAMPLE to admin/config.php.
-    Now you need to edit the values in admin/config.php. 
-    Just copy the values from the admin/config.ini file to the config.php file
-    After that, you can delete admin/config.ini.
+    I will now write the new file for you, and delete the old file.
+    If you want to do it manually, exit now (Ctrl-c).
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     ";
     echo $config_msg;
-    echo "Exiting now...";
-    exit();
+    sleep(10);
+    echo "Writing config file...\n";
+    // get old config
+    $ini_arr = parse_ini_file('admin/config.ini');
+    // the new file to write to
+    $config_file = 'admin/config.php';
+    // what we will write
+    $config = "<?php
+/********************************************************************************
+*                                                                               *
+*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
+*   http://www.elabftw.net/                                                     *
+*                                                                               *
+********************************************************************************/
+
+/********************************************************************************
+*  This file is part of eLabFTW.                                                *
+*                                                                               *
+*    eLabFTW is free software: you can redistribute it and/or modify            *
+*    it under the terms of the GNU Affero General Public License as             *
+*    published by the Free Software Foundation, either version 3 of             *
+*    the License, or (at your option) any later version.                        *
+*                                                                               *
+*    eLabFTW is distributed in the hope that it will be useful,                 *
+*    but WITHOUT ANY WARRANTY; without even the implied                         *
+*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
+*    PURPOSE.  See the GNU Affero General Public License for more details.      *
+*                                                                               *
+*    You should have received a copy of the GNU Affero General Public           *
+*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
+*                                                                               *
+********************************************************************************/
+// admin/config.php -- main configuration file for eLabFTW
+
+/*
+ * General settings
+ */
+
+// The name of the lab (shown in the footer)
+define('LAB_NAME', '".$ini_arr['lab_name']."');
+
+// if set to 1, user account will need admin validation before being able to login
+define('ADMIN_VALIDATE', ".$ini_arr['admin_validate'].");
+
+// the name of the custom link in menu
+define('LINK_NAME', '".$ini_arr['link_name']."');
+
+// the URL of the custom link
+define('LINK_HREF', '".$ini_arr['link_href']."');
+
+// the path of the install (absolute path) WITHOUT TRAILING SLASH
+// on Windows it should be : 'C:<antislash>xampp<antislash>htdocs<antislash>elabftw'
+// on GNU/Linux it might be : '/var/www/elabftw'
+// on Mac OS X it might be : '/Applications/MAMP/htdocs'
+define('PATH', '".$ini_arr['path']."');
+
+// change to true to activate debug mode
+define('DEBUG', false);
+
+// proxy setting (to get updates)
+define('PROXY', '".$ini_arr['proxy']."');
+
+
+/*
+ * Database settings
+ */
+
+// Host (generally localhost)
+define('DB_HOST', '".$ini_arr['db_host']."');
+
+// Name of the database
+define('DB_NAME', '".$ini_arr['db_name']."');
+
+// SQL username
+define('DB_USER', '".$ini_arr['db_user']."');
+
+// SQL Password (the one you chose in phpmyadmin)
+define('DB_PASSWORD', '".$ini_arr['db_password']."');
+
+
+/*
+ * Email settings
+ * You can leave these settings for later, because for the moment, 
+ * they are only use when someone requests a new password.
+ * You can use a free gmail account for this, but you can also use your company's SMTP server.
+ */
+
+// SMTP server address
+define('SMTP_ADDRESS', '".$ini_arr['smtp_address']."');
+
+// Port
+define('SMTP_PORT', '".$ini_arr['smtp_port']."');
+
+// Can be 'tls' or 'ssl'
+define('SMTP_ENCRYPTION', '".$ini_arr['smtp_encryption']."');
+
+// Username
+define('SMTP_USERNAME', '".$ini_arr['smtp_username']."');
+
+// Password
+define('SMTP_PASSWORD', '".$ini_arr['smtp_password']."');
+
+";
+
+    // write content to file
+    $result = file_put_contents($config_file, $config);
+    if ($result) {
+        echo "File written successfully. I will now delete the file admin/config.ini.\n";
+        // remove old config file
+        $unlink_result = unlink('admin/config.ini');
+        if ($unlink_result) {
+            echo "File admin/config.ini deleted.\n";
+        } else {
+            echo "There was a problem deleting the file admin/config.ini, please do it manually.\n";
+        }
+    } else {
+        echo "There was a problem writing the new file admin/config.php. Please do it manually.\n";
+        echo "Copy admin/config.php-EXAMPLE to admin/config.php and replace the values.\n";
+    }
 }
 
 

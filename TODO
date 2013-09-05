@@ -1,6 +1,7 @@
 ////// Priority
 
 ////// Fix/improve
+* on ucp, block template creation if title is empty
 * on search.php, make a search with filter on owner
 * when you follow a link and you're not logged in, you want to be redirected to the target page after login
 * editable list of status

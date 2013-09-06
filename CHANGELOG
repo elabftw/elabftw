@@ -1,5 +1,8 @@
 /* Changelog for eLabFTW */
 
+Version 0.9.1
+* Possibility to limit the visibility of an experiment to yourself only
+
 Version 0.9
 * Newer versions of JQuery and JQuery UI
 * config.ini is now config.php

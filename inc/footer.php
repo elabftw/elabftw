@@ -30,7 +30,7 @@
 if (!isset($_SESSION['auth'])) {
     require_once('admin/config.php');
 }
-echo LAB_NAME." powered by <a href='http://www.elabftw.net'>eLabFTW</a> by <a href='http://www.elabftw.net' onClick='cornify_add();return false;'>Nicolas CARPi</a></p>";
+echo "<p>".LAB_NAME." powered by <a href='http://www.elabftw.net'>eLabFTW</a> by <a href='http://www.elabftw.net' onClick='cornify_add();return false;'>Nicolas CARPi</a></p>";
 ?>
 <figure><a href='http://www.php.net'><img id='php' onmouseover="mouseOverPhp('on')" onmouseout="mouseOverPhp('off')" class='img' src='img/phpoff.gif' /></a>
 <a href='http://www.mysql.com'><img id='mysql' onmouseover="mouseOverSql('on')" onmouseout="mouseOverSql('off')" class='img' src='img/mysqloff.gif' /></a>

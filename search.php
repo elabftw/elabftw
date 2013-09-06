@@ -361,7 +361,8 @@ if (isset($_GET)) {
                 showDB($id, $_SESSION['prefs']['display']);
             }
         } else { // no results
-            echo "<p>Sorry, I couldn't find anything :(</p><br />";
+            $message = "Sorry, I couldn't find anything :(";
+            echo display_message('error', $message);
         }
     }
     }

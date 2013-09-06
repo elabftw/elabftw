@@ -148,8 +148,8 @@ function addTagOnEnter(e){ // the argument here is the event (needed to detect w
         { keynum = e.which;}
     if(keynum == 13){  // if the key that was pressed was Enter (ascii code 13)
         // get tag
-    var tag = $('#addtaginput').attr('value');
-    // POST request
+        var tag = $('#addtaginput').val();
+        // POST request
         var jqxhr = $.post('add_tag.php', {
             tag:tag,
             item_id:<?php echo $id;?>,

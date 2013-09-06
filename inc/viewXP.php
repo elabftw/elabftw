@@ -44,7 +44,7 @@ $data = $req->fetch();
 if ($data['userid'] != $_SESSION['userid']) {
     // Can the user see this experiment which is not his ?
     if ($data['visibility'] == 'user') {
-        $message = "<strong>You don't have enough rights to see this experiment.";
+        $message = "<strong>Access forbidden:</strong> the visibility setting of this experiment is set to 'owner only'.";
         echo display_message('error', $message);
         require_once('inc/footer.php');
         exit();

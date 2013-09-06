@@ -6,7 +6,6 @@
 ////// New Features
 * editable list of status
 * add tag on templates
-* have a visibility status for experiments : hidden (only you), team, public (don't need account to read it)
 * use password_hash
 * read only status for past members
 * have real auth with LDAP etc... like here : http://docs.moodle.org/22/en/Authentication

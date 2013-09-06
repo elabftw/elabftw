@@ -47,9 +47,9 @@ require_once('inc/info_box.php');
                 $req = $bdd->prepare($sql);
                 $req->execute();
                 while ($items_types = $req->fetch()) {
-                    echo "<option value='".$items_types['id']."' name='type'";
+                    echo "<option value='".$items_types['id']."'";
                     // item get selected if it is in the search url
-                    if($_GET && ($items_types['id'] == $_GET['type'])) {
+                    if(isset($_GET['type']) && ($items_types['id'] == $_GET['type'])) {
                         echo " selected='selected'";
                     } 
                     echo ">".$items_types['name']."</option>";
@@ -63,6 +63,24 @@ require_once('inc/info_box.php');
                 if(isset($_GET['all'])){
                     echo "checked=checked";
                 }?>>)
+            <br />
+            <br />
+            Search only in experiments owned by : <select name='owner'>
+            <option value=''>Select a member</option>
+            <?php
+            $users_sql = "SELECT userid, firstname, lastname FROM users";
+            $users_req = $bdd->prepare($users_sql);
+            $users_req->execute();
+            while ($users = $users_req->fetch()) {
+                echo "<option value='".$users['userid']."'";
+                    // item get selected if it is in the search url
+                    if(isset($_GET['owner']) && ($users['userid'] == $_GET['owner'])) {
+                        echo " selected='selected'";
+                    } 
+                    echo ">".$users['firstname']." ".$users['lastname']."</option>";
+                }
+                ?>
+            </select>
             <br />
             <br />
             <div id='search_inputs_div'>
@@ -148,49 +166,58 @@ for($i=1; $i<=5; $i++) {
 
 
 <?php
-// assign variables from get
-if (isset($_GET['title']) && !empty($_GET['title'])) {
-    $title =  filter_var($_GET['title'], FILTER_SANITIZE_STRING);
-} else {
-    $title = '';
-}
-if (isset($_GET['from']) && !empty($_GET['from'])) {
-    $from = check_date($_GET['from']);
-} else {
-    $from = '';
-}
-if (isset($_GET['to']) && !empty($_GET['to'])) {
-    $to = check_date($_GET['to']);
-} else {
-    $to = '';
-}
-if (isset($_GET['tags']) && !empty($_GET['tags'])) {
-    $tags = filter_var($_GET['tags'], FILTER_SANITIZE_STRING);
-} else {
-    $tags = '';
-}
-if (isset($_GET['body']) && !empty($_GET['body'])) {
-    $body = check_body($_GET['body']);
-} else {
-    $body = '';
-}
-if (isset($_GET['status']) && !empty($_GET['status'])) {
-    $status = check_status($_GET['status']);
-} else {
-    $status = '';
-}
-if (isset($_GET['rating']) && !empty($_GET['rating'])) {;
-    if($_GET['rating'] === 'no') {
-        $rating = '0';
-    } else {
-    $rating = intval($_GET['rating']);
-    }
-} else {
-    $rating = '';
-}
+/*
+ * Here the search begins
+ */
 
-// Is there a search ?
+// If there is a search, there will be get parameters, so this is our main switch
 if (isset($_GET)) {
+    // assign variables from get
+    if (isset($_GET['title']) && !empty($_GET['title'])) {
+        $title =  filter_var($_GET['title'], FILTER_SANITIZE_STRING);
+    } else {
+        $title = '';
+    }
+    if (isset($_GET['from']) && !empty($_GET['from'])) {
+        $from = check_date($_GET['from']);
+    } else {
+        $from = '';
+    }
+    if (isset($_GET['to']) && !empty($_GET['to'])) {
+        $to = check_date($_GET['to']);
+    } else {
+        $to = '';
+    }
+    if (isset($_GET['tags']) && !empty($_GET['tags'])) {
+        $tags = filter_var($_GET['tags'], FILTER_SANITIZE_STRING);
+    } else {
+        $tags = '';
+    }
+    if (isset($_GET['body']) && !empty($_GET['body'])) {
+        $body = check_body($_GET['body']);
+    } else {
+        $body = '';
+    }
+    if (isset($_GET['status']) && !empty($_GET['status'])) {
+        $status = check_status($_GET['status']);
+    } else {
+        $status = '';
+    }
+    if (isset($_GET['rating']) && !empty($_GET['rating'])) {
+        if($_GET['rating'] === 'no') {
+            $rating = '0';
+        } else {
+        $rating = intval($_GET['rating']);
+        }
+    } else {
+        $rating = '';
+    }
+    if (isset($_GET['owner']) && !empty($_GET['owner']) && is_pos_int($_GET['owner'])) {
+        $owner_search = true;
+        $owner = $_GET['owner'];
+    } else {
+        $owner_search = false;
+    }
 
     // EXPERIMENT ADVANCED SEARCH
     if(isset($_GET['type'])) {
@@ -225,9 +252,16 @@ if (isset($_GET)) {
             }
 
             $req = $bdd->prepare($sql);
+            // if there is a selection on 'owned by', we use the owner id as parameter
+            if ($owner_search) {
+                $req->execute(array(
+                    'userid' => $owner
+                ));
+            } else {
             $req->execute(array(
                 'userid' => $_SESSION['userid']
             ));
+            }
             // This counts the number or results - and if there wasn't any it gives them a little message explaining that 
             $count = $req->rowCount();
             if ($count > 0) {
@@ -331,14 +365,14 @@ if (isset($_GET)) {
     }
     }
 }
-
-// FOOTER
-require_once('inc/footer.php');
 ?>
+
 <script>
 $(document).ready(function(){
     // DATEPICKER
     $( ".datepicker" ).datepicker({dateFormat: 'ymmdd'});
 });
 </script>
+
+<?php require_once('inc/footer.php');?>
 

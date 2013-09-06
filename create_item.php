@@ -111,6 +111,6 @@ if($result) {
         header('location: database.php?mode=edit&id='.$newid.'');
     }
 } else {
-    die("Something went wrong in the database query. Check the flux capacitor.");
+    die();
 }
 

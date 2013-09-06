@@ -28,13 +28,13 @@ require_once('inc/common.php');
 if (isset($_POST['id']) && is_pos_int($_POST['id'])) {
     $id = $_POST['id'];
 } else {
-    die("The id parameter in the URL isn't a valid tag ID");
+    die();
 }
 // Check item_id is valid and assign it to $item_id
 if(isset($_POST['item_id']) && is_pos_int($_POST['item_id'])) {
     $item_id = $_POST['item_id'];
 } else {
-    die("The item id parameter in the URL isn't valid !");
+    die();
 }
 // Tag for experiment or protocol ?
 if ($_POST['type'] == 'exp' ){
@@ -50,7 +50,7 @@ if ($_POST['type'] == 'exp' ){
         $req = $bdd->prepare($sql);
         $result = $req->execute();
         if(!$result) {
-            die('Something went wrong in the database query. Check the flux capacitor.');
+            die();
         }
    }
 } elseif ($_POST['type'] === 'item'){
@@ -59,9 +59,9 @@ if ($_POST['type'] == 'exp' ){
     $req = $bdd->prepare($sql);
     $result = $req->execute();
     if (!$result) {
-        die('Something went wrong in the database query. Check the flux capacitor.');
+        die();
     }
 } else {
-    die('taggle');
+    die();
 }
 

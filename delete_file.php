@@ -28,7 +28,7 @@ require_once('inc/common.php');
 if(isset($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    die("<div class='center'><img src='img/hal9000.png' alt='hal' /><br />I'm sorry, Dave. I'm afraid I can't do that.</div>");
+    die();
 }
 
 if($_GET['type'] === 'experiments'){
@@ -58,7 +58,7 @@ if($_GET['type'] === 'experiments'){
     $_SESSION['infos'] = $msg_arr;
     header("location: experiments.php?mode=edit&id=$expid");
    } else {
-        die("<div class='center'><img src='img/hal9000.png' alt='hal' /><br />I'm sorry, Dave. I'm afraid I can't do that.</div>");
+       die();
    }
 
 // DATABASE ITEM
@@ -85,6 +85,6 @@ if($_GET['type'] === 'experiments'){
     header("location: database.php?mode=edit&id=$item_id");
 
 } else {
-        die("<div class='center'><img src='img/hal9000.png' alt='hal' /><br />I'm sorry, Dave. I'm afraid I can't do that.</div>");
+    die();
 }
 

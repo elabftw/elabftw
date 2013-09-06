@@ -402,11 +402,6 @@ if (isset($_POST['shortcuts'])) {
 }
 
 
-// EXPORT EXPERIMENTS
-if (isset($_POST['export'])) {
-    die("This functionality is not yet implemented. But thanks for trying :)");
-}
-
 // INFO BOX
 if($errflag) {
     $_SESSION['errors'] = $msg_arr;

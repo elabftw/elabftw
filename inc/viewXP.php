@@ -28,7 +28,10 @@
 if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
     $id = $_GET['id'];
 } else {
-    die("The id parameter in the URL isn't a valid experiment ID.");
+    $message = "The id parameter in the URL isn't a valid experiment ID.";
+    echo display_message('error', $message);
+    require_once('inc/footer.php');
+    die();
 }
 
 // SQL for viewXP

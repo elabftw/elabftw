@@ -30,7 +30,7 @@ require_once('inc/common.php');
 if (isset($_POST['item_id']) && is_pos_int($_POST['item_id'])) {
     $item_id = $_POST['item_id'];
 } else {
-    die("The experiment id parameter in the URL isn't a valid experiment ID");
+    die();
 }
 // Sanitize link
 $link_id = filter_var($_POST['link_id'], FILTER_VALIDATE_INT);
@@ -49,7 +49,7 @@ if ($data['userid'] == $_SESSION['userid']) {
         'link_id' => $link_id
     ));
     if (!$result) {
-        die('Something went wrong in the database query. Check the flux capacitor.');
+        die();
     }
 }
 

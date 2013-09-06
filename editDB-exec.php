@@ -80,6 +80,6 @@ if($result) {
     unset($_SESSION['errors']);
     header("location: database.php?mode=view&id=$id");
 } else {
-    die('Something went wrong in the database query. Check the flux capacitor.');
+    die();
 }
 

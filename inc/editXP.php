@@ -171,7 +171,6 @@ $visibility = $data['visibility'];
     <select id="visibility_form" name="visibility" onchange="update_visibility(this.value)">
 <option id='option_team' value="team">Only the team</option>
 <option id='option_user' value="user">Only me</option>
-<option id='option_public' value="public">Everyone</option>
 </select>
 <span id='visibility_msg_div'>Updated !</span>
 
@@ -373,9 +372,6 @@ $(document).ready(function() {
         break;
     case 'user' :
         $("#option_user").prop('selected', true);
-        break;
-    case 'public' :
-        $("#option_public").prop('selected', true);
         break;
     default :
         $("#option_team").prop('selected', true);

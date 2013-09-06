@@ -121,6 +121,7 @@ if ($req->rowcount() != 0) {
 
 // DISPLAY eLabID
 echo "<p class='elabid'>Unique eLabID : ".$data['elabid']."</p>";
+// DISPLAY visibility
 echo "<p class='elabid'>Visibility : ".$data['visibility']."</p>";
 
 // KEYBOARD SHORTCUTS

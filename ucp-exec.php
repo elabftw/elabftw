@@ -327,17 +327,23 @@ if (isset($_POST['limit']) && !empty($_POST['limit']) && $_POST['limit'] != $_SE
 // EXPERIMENTS TEMPLATES
 // add new tpl
 if (isset($_POST['new_tpl_form'])) {
-    $tpl_name = filter_var($_POST['new_tpl_name'], FILTER_SANITIZE_STRING);
-    $tpl_body = check_body($_POST['new_tpl_body']);
-    $sql = "INSERT INTO experiments_templates(name, body, userid) VALUES(:name, :body, :userid)";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute(array(
-        'name' => $tpl_name,
-        'body' => $tpl_body,
-        'userid' => $_SESSION['userid']
-    ));
-    $infomsg_arr[] = 'Experiment template successfully added.';
-    $infoflag = true;
+    // do nothing if the template name is empty
+    if (empty($_POST['new_tpl_name'])) {
+        $msg_arr[] = 'You need to specify a name for the template !';
+        $errflag = true;
+    } else {
+        $tpl_name = filter_var($_POST['new_tpl_name'], FILTER_SANITIZE_STRING);
+        $tpl_body = check_body($_POST['new_tpl_body']);
+        $sql = "INSERT INTO experiments_templates(name, body, userid) VALUES(:name, :body, :userid)";
+        $req = $bdd->prepare($sql);
+        $result = $req->execute(array(
+            'name' => $tpl_name,
+            'body' => $tpl_body,
+            'userid' => $_SESSION['userid']
+        ));
+        $infomsg_arr[] = 'Experiment template successfully added.';
+        $infoflag = true;
+    }
 }
 
 // edit templates

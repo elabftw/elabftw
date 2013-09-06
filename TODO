@@ -1,14 +1,12 @@
 ////// Priority
 
 ////// Fix/improve
-* on ucp, block template creation if title is empty
-* on search.php, make a search with filter on owner
 * when you follow a link and you're not logged in, you want to be redirected to the target page after login
+
+////// New Features
 * editable list of status
 * add tag on templates
 * have a visibility status for experiments : hidden (only you), team, public (don't need account to read it)
-
-////// New Features
 * use password_hash
 * read only status for past members
 * have real auth with LDAP etc... like here : http://docs.moodle.org/22/en/Authentication

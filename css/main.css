@@ -112,25 +112,6 @@ div.txt li {
     /* !important because there is a list-style-type:none in jquery-ui */
     list-style-type:square !important;
 }
-/* INFO BOX */
-.errors {
-    background-color:  #e8c5c9;
-    border:  1px solid #ab80c2;
-    border-radius: 5px;
-    color:  #b24040;
-    font: 14px Verdana, Arial;
-    padding: 7px;
-    text-shadow:  0px 1px #f3f9fc;
-}
-.infos {
-    background-color:  #ace0a8;
-    border:  1px solid #96c17f;
-    border-radius: 5px;
-    color:  #3f713a;
-    font: 14px Verdana, Arial;
-    padding: 7px;
-    text-shadow:  0px 1px #f3f9fc;
-}
 
 /* HEAD */
 #logo {

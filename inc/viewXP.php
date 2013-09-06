@@ -39,7 +39,8 @@ $data = $req->fetch();
 
 // Check id is owned by connected user to present comment div if not
 if ($data['userid'] != $_SESSION['userid']) {
-    echo "<ul class='infos'>Read-only mode. Not your experiment.</ul>";
+    $message = "<strong>Read-only mode:</strong> this is not your experiment.";
+    echo display_message('info', $message);
 }
 
 

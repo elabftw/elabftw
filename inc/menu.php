@@ -27,7 +27,7 @@ require_once('admin/config.php');
 ?>
 <noscript><!-- show warning if javascript is disabled -->
 <div class="ui-state-error ui-corner-all">
-<p><span class='ui-icon ui-icon-alert' style='float:left; margin-right: .3em;'></span>
+<p><span class='ui-icon ui-icon-alert' style='float:left; margin: 0 5px 0 5px;'></span>
 <strong>Javascript is disabled.</strong> Please enable Javascript to view this site in all its glory. Thank You.</p>
 </div>
 </noscript>

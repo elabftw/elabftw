@@ -5,6 +5,8 @@ Version 0.8.3
 * config.ini is now config.php
 * Cosmetic changes
 * Ctrl-Shift-D will add the date in the editor
+* Possibility to search experiments owned by a unique user
+* Conformation to coding standard PSR-2
 
 Version 0.8.2
 * Added check for updates button

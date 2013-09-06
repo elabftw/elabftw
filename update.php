@@ -352,6 +352,30 @@ if(isset($test['status'])) {
     }
 }
 
+
+// add visibility field in experiments table
+// check if it exists first
+$sql = "SELECT * from experiments";
+$req = $bdd->prepare($sql);
+$req->execute();
+$test = $req->fetch();
+if(isset($test['visibility'])) {
+    echo "Column 'visibility' already exists. Nothing to do.\n";
+} else {
+    $sql = "ALTER TABLE `experiments` ADD `visibility` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ;";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    // put visibility = team everywhere
+    $sql = "UPDATE `experiments` SET `visibility` = 'team'";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute();
+    if($result) {
+        echo "Visibility added.\n";
+    } else {
+        echo 'There was a problem in the database update :/';
+    }
+}
+
 // remove unused items_templates table
 $sql = "DROP TABLE IF EXISTS `items_templates`";
 $req = $bdd->prepare($sql);

@@ -385,10 +385,25 @@ function check_status($input) {
         return $input;
         }
     } else {
-        return NULL;
+        // default is running
+        return 'running';
     }
 }
 
+function check_visibility($input) {
+    // Check VISIBILITY
+    if ((isset($input)) 
+        && (!empty($input))){
+        if (($input === 'team')
+        || ($input === 'user')
+        || ($input === 'public')) {
+        return $input;
+        }
+    } else {
+        // default is team
+        return 'team';
+    }
+}
 
 function make_pdf($id, $type, $out = 'browser') {
     // make a pdf

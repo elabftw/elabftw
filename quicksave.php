@@ -40,6 +40,21 @@ if (isset($_POST['status'])) {
         'id' => $id
     ));
 
+// we only update visibility
+} elseif (isset($_POST['visibility'])) {
+    // will return 'team' in case of wrong visibility
+    $visibility = check_visibility($_POST['visibility']);
+    $sql = "UPDATE experiments 
+        SET visibility = :visibility 
+        WHERE userid = :userid 
+        AND id = :id";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute(array(
+        'visibility' => $visibility,
+        'userid' => $_SESSION['userid'],
+        'id' => $id
+    ));
+
 
 // or we update date, title, and body
 } else {

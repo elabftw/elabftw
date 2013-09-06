@@ -42,9 +42,18 @@ $data = $req->fetch();
 
 // Check id is owned by connected user to present comment div if not
 if ($data['userid'] != $_SESSION['userid']) {
-    $message = "<strong>Read-only mode:</strong> this is not your experiment.";
-    echo display_message('info', $message);
+    // Can the user see this experiment which is not his ?
+    if ($data['visibility'] == 'user') {
+        $message = "<strong>You don't have enough rights to see this experiment.";
+        echo display_message('error', $message);
+        require_once('inc/footer.php');
+        exit();
+    } else {
+        $message = "<strong>Read-only mode:</strong> this is not your experiment.";
+        echo display_message('info', $message);
+    }
 }
+
 
 
 // Display experiment
@@ -112,6 +121,7 @@ if ($req->rowcount() != 0) {
 
 // DISPLAY eLabID
 echo "<p class='elabid'>Unique eLabID : ".$data['elabid']."</p>";
+echo "<p class='elabid'>Visibility : ".$data['visibility']."</p>";
 
 // KEYBOARD SHORTCUTS
 echo "<script>

@@ -395,8 +395,7 @@ function check_visibility($input) {
     if ((isset($input)) 
         && (!empty($input))){
         if (($input === 'team')
-        || ($input === 'user')
-        || ($input === 'public')) {
+        || ($input === 'user')) {
         return $input;
         }
     } else {

@@ -627,3 +627,23 @@ function duplicate_item($id, $type) {
     }
 }
 
+// for displaying messages using jquery ui highlight/error messages
+// call with echo display_message('info|error', $message);
+function display_message($type, $message) {
+    if ($type === 'info') {
+
+        return "<div class='ui-state-highlight ui-corner-all'>
+        <p><span class='ui-icon ui-icon-info' style='float: left; margin: 0 5px 0 5px;'></span>
+        $message</p></div>";
+
+    } elseif ($type === 'error') {
+
+    return "<div class='ui-state-error ui-corner-all'>
+        <p><span class='ui-icon ui-icon-alert' style='float:left; margin: 0 5px 0 5px;'></span>
+        $message</p></div>";
+    }
+
+    return false;
+}
+
+

@@ -1,6 +1,6 @@
 /* Changelog for eLabFTW */
 
-Version 0.8.3
+Version 0.9
 * Newer versions of JQuery and JQuery UI
 * config.ini is now config.php
 * Cosmetic changes

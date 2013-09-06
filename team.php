@@ -31,9 +31,9 @@ require_once('inc/info_box.php');
 ?>
 <div id='team'>
 <ul>
-<li><a href='#team-1'>MEMBERS</a></li>
-<li><a href='#team-2'>Nothing here</a></li>
-<li><a href='#team-3'>Here neither</a></li>
+<li><a href='#team-1'>Members</a></li>
+<li><a href='#team-2'>Statistics</a></li>
+<li><a href='#team-3'>Nothing here</a></li>
 </ul>
 <!-- *********************** -->
 <div id='team-1'>
@@ -64,6 +64,19 @@ echo "</ul>";
 </div>
 <!-- *********************** -->
 <div id='team-2'>
+<?php
+// show stats about eLabFTW
+// number of experiments total
+$sql_exp_total = 'SELECT * FROM experiments';
+$req_exp_total = $bdd->prepare($sql_exp_total);
+$req_exp_total->execute();
+// number of items total
+$sql_db_total = 'SELECT * FROM items';
+$req_db_total = $bdd->prepare($sql_db_total);
+$req_db_total->execute();
+?>
+    <p>There is a total of <?php echo $req_exp_total->rowCount() ;?> experiments.</p>
+    <p>There is a total of <?php echo $req_db_total->rowCount() ;?> items in the database.</p>
 </div>
 
 <div id='team-3'>
@@ -73,18 +86,11 @@ echo "</ul>";
 <?php require_once('inc/footer.php');?>
 
 <script>
-// ACCORDION
-$(function() {
-    $( "#accordion" ).accordion({ 
-        autoHeight: false,
-        //animated: 'bounceslide',
-        animated: 'slide',
-        collapsible: true,
-        active: false
+$(document).ready(function() {
+    // TABS
+    $( "#team" ).tabs({
+        autoHeight: false
     });
-});
-$(function() {
-    $( "#team" ).tabs({autoHeight: false});
 });
 </script>
 

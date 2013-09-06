@@ -30,7 +30,7 @@ require_once('inc/common.php');
 if (isset($_POST['item_id']) && is_pos_int($_POST['item_id'])) {
     $item_id = $_POST['item_id'];
 } else {
-    die("The experiment id parameter in the URL isn't a valid experiment ID");
+    die();
 }
 // Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
 $tag = str_replace('\\', '', filter_var($_POST['tag'], FILTER_SANITIZE_STRING));
@@ -55,7 +55,7 @@ if (strlen($tag) > 0) {
                 'userid' => $_SESSION['userid']
             ));
             if (!$result) {
-                die('Something went wrong in the database query. Check the flux capacitor.');
+                die();
             }
         }
     } elseif ($_POST['type'] == 'item'){
@@ -66,10 +66,10 @@ if (strlen($tag) > 0) {
             'tag' => $tag,
             'item_id' => $item_id));
         if (!$result) {
-            die('Something went wrong in the database query. Check the flux capacitor.');
+            die();
         }
-    } else {
-        die('taggle');
+    } else { // type isn't exp or item
+        die();
     }
 }
 

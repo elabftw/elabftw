@@ -28,7 +28,7 @@ require_once('inc/common.php');
 if(isset($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    die("The id parameter in the URL isn't a valid item ID");
+    die();
 }
 
 // Item switch
@@ -117,6 +117,6 @@ if ($result1) {
         header("location: ucp.php");
     }
 } else { // no $result{1, 2, 3}
-    die('Something went wrong in the database query. Check the flux capacitor.');
+    die();
 }
 

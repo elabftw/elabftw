@@ -302,7 +302,8 @@ if (isset($_GET)) {
                     showXP($id, $_SESSION['prefs']['display']);
                 }
             } else { // no results
-                echo "<p>Sorry, I couldn't find anything :(</p><br />";
+                $message = "Sorry, I couldn't find anything :(";
+                echo display_message('error', $message);
             }
 
     // DATABASE ADVANCED SEARCH

@@ -39,7 +39,7 @@ define('ADMIN_VALIDATE', 0);
 define('LINK_NAME', 'Wiki');
 
 // the URL of the custom link
-define('LINK_HREF', 'http://example.com/wiki');
+define('LINK_HREF', 'https://github.com/NicolasCARPi/elabftw/wiki');
 
 // the path of the install (absolute path) WITHOUT TRAILING SLASH
 // on Windows it should be : 'C:\xampp\htdocs\elabftw'

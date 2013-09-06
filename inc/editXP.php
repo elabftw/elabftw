@@ -162,6 +162,19 @@ if ($req->rowcount() != 0) {
 <p class='inline'>Add a link</p>
 <input id='linkinput' size='60' type="text" name="link" placeholder="from the database" />
 
+<br /><br />
+<h4>Visibility</h4>
+<!-- visibility get selected by default -->
+<?php
+$visibility = $data['visibility'];
+?>
+    <select id="visibility_form" name="visibility" onchange="update_visibility(this.value)">
+<option id='option_team' value="team">Only the team</option>
+<option id='option_user' value="user">Only me</option>
+<option id='option_public' value="public">Everyone</option>
+</select>
+<span id='visibility_msg_div'>Updated !</span>
+
 </section>
 
 <script>
@@ -289,6 +302,7 @@ function addLinkOnEnter(e) { // the argument here is the event (needed to detect
     } // end if key is enter
 }
 
+// This function is activated with the select element and send a post request to quicksave.php
 function update_status(status) {
             var jqxhr = $.ajax({
                 type: "POST",
@@ -306,9 +320,33 @@ function update_status(status) {
             });
 }
 
+// This function is activated with the select element and send a post request to quicksave.php
+function update_visibility(visibility) {
+            var jqxhr = $.ajax({
+                type: "POST",
+                url: "quicksave.php",
+                data: {
+                id : <?php echo $id;?>,
+                visibility : visibility,
+                }
+            }).done(function() {
+                // once it's update we show a message for some time before making it disappear
+                $("#visibility_msg_div").show(0, function() {
+                    setTimeout(
+                        function() {
+                            $("#visibility_msg_div").hide(500);
+                        }, 1500)
+
+                });
+            });
+}
+
 
 // READY ? GO !!
 $(document).ready(function() {
+    // hide the little 'Updated !' message
+    $('#visibility_msg_div').hide();
+
     // javascript to put the selected on status option, because with php, browser cache the value of previous edited XP
     var status = "<?php echo $status;?>";
     switch(status) {
@@ -326,6 +364,21 @@ $(document).ready(function() {
         break;
     default :
         $("#option_running").prop('selected', true);
+    }
+    // javascript to put the selected on visibility option, because with php, browser cache the value of previous edited XP
+    var visibility = "<?php echo $visibility;?>";
+    switch(visibility) {
+    case 'team' :
+        $("#option_team").prop('selected', true);
+        break;
+    case 'user' :
+        $("#option_user").prop('selected', true);
+        break;
+    case 'public' :
+        $("#option_public").prop('selected', true);
+        break;
+    default :
+        $("#option_team").prop('selected', true);
     }
 
     // fix for the ' and "

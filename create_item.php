@@ -57,7 +57,7 @@ if ($type === 'experiments'){
     }
 
     // SQL for create experiments
-    $sql = "INSERT INTO experiments(title, date, body, status, elabid, userid) VALUES(:title, :date, :body, :status, :elabid, :userid)";
+    $sql = "INSERT INTO experiments(title, date, body, status, elabid, visibility, userid) VALUES(:title, :date, :body, :status, :elabid, :visibility, :userid)";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
         'title' => 'Untitled',
@@ -65,6 +65,7 @@ if ($type === 'experiments'){
         'body' => $body,
         'status' => 'running',
         'elabid' => $elabid,
+        'visibility' => 'team',
         'userid' => $_SESSION['userid']
     ));
 } else { // create item for DB

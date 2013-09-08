@@ -140,8 +140,12 @@ $ nano admin/config.php
 ~~~
 I would recommend using an advanced text editor like (g)vim (GNU), notepad++ (Win) or TextWrangler (Mac) to benefit from syntax highlighting.
 
+You need to edit the part between the quotes.
+
 ## Final step
 Finally, point your browser to the install folder (install/) and read onscreen instructions.
+
+For example : http://12.34.56.78/elabftw/install
 
 # Updating
 To update, just cd in the `elabftw` folder and do :

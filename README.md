@@ -147,6 +147,8 @@ Finally, point your browser to the install folder (install/) and read onscreen i
 
 For example : http://12.34.56.78/elabftw/install
 
+******
+
 # Updating
 To update, just cd in the `elabftw` folder and do :
 ~~~ sh
@@ -157,6 +159,14 @@ $ php update.php
 # Backup
 It is important to backup your files to somewhere else, in case anything bad happens.
 Please refer to the [wiki](https://github.com/NicolasCARPi/elabftw/wiki/backup).
+
+# HTTPS
+If you want to enable HTTPS (and you should), uncomment (remove the # at the beginning) these lines in the file .htaccess. 
+~~~sh
+#RewriteEngine On
+#RewriteCond %{HTTPS} !=on
+#RewriteRule .* https://%{SERVER_NAME}%{REQUEST_URI} [R=301,L]
+~~~
 
 # Bonus stage
 * It's a good idea to use a php optimizer to increase speed. I recommand installing XCache.

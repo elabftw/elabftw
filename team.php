@@ -33,7 +33,7 @@ require_once('inc/info_box.php');
 <ul>
 <li><a href='#team-1'>Members</a></li>
 <li><a href='#team-2'>Statistics</a></li>
-<li><a href='#team-3'>Nothing here</a></li>
+<li><a href='#team-3'>Tips and tricks</a></li>
 </ul>
 <!-- *********************** -->
 <div id='team-1'>
@@ -80,6 +80,14 @@ $req_db_total->execute();
 </div>
 
 <div id='team-3'>
+    <p>
+        <ul>
+            <li>- You can use a TODOlist by pressing 't'</li>
+            <li>- You can have templates (edit them in your User Control Panel</li>
+            <li>- If you press Ctrl Shift D in the editor, the date will appear under the cursor</li>
+            <li>- You can duplicate experiments in one click</li>
+        </ul>
+    </p>
 </div>
 
 </div>

@@ -168,6 +168,14 @@ If you want to enable HTTPS (and you should), uncomment (remove the # at the beg
 #RewriteRule .* https://%{SERVER_NAME}%{REQUEST_URI} [R=301,L]
 ~~~
 
+You will need the modules "rewrite" and "ssl" enabled, the package ssl-cert installed and the ssl site enabled.
+~~~sh
+$ sudo apt-get install ssl-cert
+$ sudo a2enmod rewrite
+$ sudo a2enmod ssl
+$ sudo a2ensite default-ssl
+~~~
+
 # Bonus stage
 * It's a good idea to use a php optimizer to increase speed. I recommand installing XCache.
 * You can show a TODOlist by pressing 't'.

@@ -52,8 +52,7 @@ if ($password == $cpassword) {
     if($result){
         // LOGIN THE USER
         // admin validated ?
-        $ini_arr = parse_ini_file('admin/config.ini');
-        if ($ini_arr['admin_validate'] === '1'){
+        if (ADMIN_VALIDATE === 1){
         $sql = "SELECT * FROM users WHERE userid='$userid' AND password='$passwordHash' AND validated= 1";
         } else {
         $sql = "SELECT * FROM users WHERE userid='$userid' AND password='$passwordHash'";
@@ -68,7 +67,7 @@ if ($password == $cpassword) {
                 // Store userid and permissions in $_SESSION
                 session_regenerate_id();
                 $_SESSION['auth'] = 1;
-                $_SESSION['path'] = $ini_arr['path'];
+                $_SESSION['path'] = PATH;
                 $_SESSION['userid'] = $data['userid'];
                 // Used in the menu
                 $_SESSION['username'] = $data['username'];

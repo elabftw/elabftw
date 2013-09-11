@@ -41,15 +41,18 @@ require_once('admin/config.php');
 if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
 ?>
     <!-- ADMIN MENU --> 
-<a id='check_for_updates' href='#'>Check for updates</a> | <a href='admin.php'>Admin Panel</a> | 
-<script>
-$('#check_for_updates').click(function() {
-    var jqxhr = $.post('check_for_updates.php', function(answer) {
-        alert(answer);
+    <a href='https://twitter.com/elabftw'>
+        <img src='img/twitter-bird-16x16.png' alt='twitter' title='Follow eLabFTW on Twitter !'>
+    </a> | 
+    <a id='check_for_updates' href='#'>Check for updates</a> | <a href='admin.php'>Admin Panel</a> | 
+    <script>
+    $('#check_for_updates').click(function() {
+        var jqxhr = $.post('check_for_updates.php', function(answer) {
+            alert(answer);
+        });
     });
-});
-</script>
-<?php
+    </script>
+    <?php
     }
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     echo "Logged in as <a href='profile.php' title='Profile'>".$_SESSION['username']."</a> | 

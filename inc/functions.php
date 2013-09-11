@@ -530,12 +530,12 @@ function duplicate_item($id, $type) {
     if ($type === 'experiments') {
         $elabid = generate_elabid();
         // SQL to get data from the experiment we duplicate
-        $sql = "SELECT title, body FROM experiments WHERE id = ".$id;
+        $sql = "SELECT title, body, visibility FROM experiments WHERE id = ".$id;
         $req = $bdd->prepare($sql);
         $req->execute();
         $data = $req->fetch();
         // SQL for duplicateXP
-        $sql = "INSERT INTO experiments(title, date, body, status, elabid, userid) VALUES(:title, :date, :body, :status, :elabid, :userid)";
+        $sql = "INSERT INTO experiments(title, date, body, status, elabid, visibility, userid) VALUES(:title, :date, :body, :status, :elabid, :visibility, :userid)";
         $req = $bdd->prepare($sql);
         $result = $req->execute(array(
             'title' => $data['title'],
@@ -543,6 +543,7 @@ function duplicate_item($id, $type) {
             'body' => $data['body'],
             'status' => 'running',
             'elabid' => $elabid,
+            'visibility' => $data['visibility'],
             'userid' => $_SESSION['userid']));
         // END SQL main
 

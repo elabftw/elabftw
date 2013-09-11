@@ -31,14 +31,9 @@ require_once('inc/menu.php');
 require_once('inc/info_box.php');
 ?>
 <!-- Advanced Search page begin -->
-<div class='item'>
-    <div class='align_left'>
+<div class='item' style='padding-bottom:16px;'>
+    <div style='width:500px; margin:auto'>
         <form name="search" method="get" action="search.php">
-            <!-- SUBMIT BUTTON -->
-            <button class='submit_search_button' type='submit'>
-                <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/submit.png' name='Submit' value='Submit' />
-                <p>FIND</p>
-            </button>
             <p class='inline'>Search in : </p>
             <select name='type'>
                 <option value='experiments'>Experiments</option>
@@ -56,7 +51,7 @@ require_once('inc/info_box.php');
                 }
                 ?>
             </select>
-           <!-- search everyone box --> 
+            <!-- search everyone box --> 
             <label for='all_experiments_chkbx'>(search in everyone's experiment </label>
             <input name="all" id='all_experiments_chkbx' value="y" type="checkbox" <?php
                 // keep the box checked if it was checked
@@ -65,6 +60,7 @@ require_once('inc/info_box.php');
                 }?>>)
             <br />
             <br />
+
             Search only in experiments owned by : <select name='owner'>
             <option value=''>Select a member</option>
             <?php
@@ -83,83 +79,86 @@ require_once('inc/info_box.php');
             </select>
             <br />
             <br />
+
             <div id='search_inputs_div'>
-            <p class='inline'>Where date is between :</p><input name='from' type='text' size='6' class='search_inputs datepicker' value='<?php
-                if(isset($_GET['from']) && !empty($_GET['from'])) {
+                <p class='inline'>Where date is between :</p><input name='from' type='text' size='6' class='search_inputs datepicker' value='<?php
+                if (isset($_GET['from']) && !empty($_GET['from'])) {
                     echo check_date($_GET['from']);
                 }
-?>'/><br />
-<br />
-            <p class='inline'>and :</p><input name='to' type='text' size='6' class='search_inputs datepicker' value='<?php
+                ?>'/><br />
+                <br />
+                <p class='inline'>and :</p><input name='to' type='text' size='6' class='search_inputs datepicker' value='<?php
                 if(isset($_GET['to']) && !empty($_GET['to'])) {
                     echo check_date($_GET['to']);
                 }
-?>'/><br />
-<br />
-<p class='inline'>And title contains </p><input name='title' type='text' class='search_inputs' value='<?php
+                ?>'/><br />
+                <br />
+                <p class='inline'>And title contains </p><input name='title' type='text' class='search_inputs' value='<?php
                 if(isset($_GET['title']) && !empty($_GET['title'])) {
                     echo check_title($_GET['title']);
                 }
-?>'/><br />
-<br />
-<!--
-                <p class='inline'>Tags</p><input name='tags' type='text' class='search_inputs'/><br />
-<br />
--->
-<p class='inline'>And body contains</p><input name='body' type='text' class='search_inputs' value='<?php
+                ?>'/><br />
+                <br />
+        <!--
+                    <p class='inline'>Tags</p><input name='tags' type='text' class='search_inputs'/><br />
+        <br />
+        -->
+                <p class='inline'>And body contains</p><input name='body' type='text' class='search_inputs' value='<?php
                 if(isset($_GET['body']) && !empty($_GET['body'])) {
                     echo check_body($_GET['body']);
                 }
-?>'/><br />
-<br />
-                <p class='inline'>And status is </p><select name='status' class='search_inputs'>
-<option value='' name='status'>select status</option>
-<option value='running' name='status'<?php
-                    if(isset($_GET['status']) && ($_GET['status'] == 'running')) {
-                        echo " selected='selected'";
-                    }
-?>
->Running</option>
-<option value='success' name='status'<?php
-                    if(isset($_GET['status']) && ($_GET['status'] == 'success')) {
-                        echo " selected='selected'";
-                    }
-?>
->Success</option>
-<option value='redo' name='status'<?php
-                    if(isset($_GET['status']) && ($_GET['status'] == 'redo')) {
-                        echo " selected='selected'";
-                    }
-?>
->Redo</option>
-<option value='fail' name='status'<?php
-                    if(isset($_GET['status']) && ($_GET['status'] == 'fail')) {
-                        echo " selected='selected'";
-                    }
-?>
->Fail</option>
-</select>
-<br />
-<br /> <p class='inline'>And rating is </p><select name='rating' class='search_inputs'>
-<option value='' name='rating'>select number of stars</option>
-<option value='no' name='rating'>Unrated</option>
-<?php
-for($i=1; $i<=5; $i++) {
-    echo "<option value='".$i."' name='rating'";
-        // item get selected if it is in the search url
-    if(isset($_GET['rating']) && ($_GET['rating'] == $i)) {
-        echo " selected='selected'";
-    }
-    echo ">".$i."</option>";
-}
-?>
-</select>
-<br />
-            </div>
+                ?>'/><br />
+                <br />
+                <p class='inline'>And status is </p>
+                    <select name='status' class='search_inputs'>
+                        <option value='' name='status'>select status</option>
+                        <option value='running' name='status'<?php
+                            if(isset($_GET['status']) && ($_GET['status'] == 'running')) {
+                                echo " selected='selected'";
+                            }?>
+                            >Running</option>
+                        <option value='success' name='status'<?php
+                            if(isset($_GET['status']) && ($_GET['status'] == 'success')) {
+                                echo " selected='selected'";
+                            }?>
+                            >Success</option>
+                        <option value='redo' name='status'<?php
+                            if(isset($_GET['status']) && ($_GET['status'] == 'redo')) {
+                                echo " selected='selected'";
+                            }?>
+                            >Redo</option>
+                        <option value='fail' name='status'<?php
+                            if(isset($_GET['status']) && ($_GET['status'] == 'fail')) {
+                                echo " selected='selected'";
+                            }?>
+                            >Fail</option>
+                    </select>
+                <br />
+                <br />
 
+                <p class='inline'>And rating is </p>
+                    <select name='rating' class='search_inputs'>
+                        <option value='' name='rating'>select number of stars</option>
+                        <option value='no' name='rating'>Unrated</option>
+                        <?php
+                        for($i=1; $i<=5; $i++) {
+                        echo "<option value='".$i."' name='rating'";
+                            // item get selected if it is in the search url
+                        if (isset($_GET['rating']) && ($_GET['rating'] == $i)) {
+                            echo " selected='selected'";
+                        }
+                        echo ">".$i."</option>";
+                        }?>
+                    </select>
+                    <br />
+                </div>
             </div>
-            </div>
-
+        </div>
+        <div class='center' style='margin-top:16px;'>
+                <button class='button' value='Submit' type='submit'>
+                Launch search
+                </button>
+        </div>
         </form>
     </div>
 </div>

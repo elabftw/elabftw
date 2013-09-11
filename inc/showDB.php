@@ -127,8 +127,9 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $req->execute();
     $count = $req->rowCount();
     if($count == 0) {
-        echo "<p>Welcome to elabftw :)<br />
-            You don't have any item in your database yet.</p>";
+        $message = "<strong>Welcome to eLabFTW.</strong> 
+            Select an item in the «Create new» list to begin filling your database."; 
+        echo display_message('info', $message);
     } else {
         $results_arr = array();
         while($final_query = $req->fetch()) {
@@ -141,13 +142,8 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
         }
     }
 }
-
-
-// KEYBOARD SHORTCUTS
-echo "<script>
-key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=prot'});
-</script>";
 ?>
+
 <script>
 function go_url(x) {
     if(x == '') {

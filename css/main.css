@@ -529,6 +529,13 @@ img {
     font-size: 11px;
 }
 
+/* results number and time */
+.results_and_time {
+    display: inline;
+    font-size: 12px;
+    color: gray;
+}
+
 /* PROFILE PAGE */
 #tagcloud {
     text-align: center;

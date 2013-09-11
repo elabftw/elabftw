@@ -52,7 +52,8 @@ if ($item_type === 'experiments' || $item_type === 'experiments_templates') {
         die('You are trying to delete an item which is not yours !');
     }
 }
-if ($item_type === 'experiments'){
+// DELETE LINKS
+if ($item_type === 'experiments' || $item_type === 'items') {
     // get all experiments with that item linked and set it to null
     $sql = "SELECT id FROM experiments_links WHERE link_id = :link_id";
     $req = $bdd->prepare($sql);
@@ -99,9 +100,9 @@ if ($item_type === 'experiments' || $item_type === 'items') {
 if ($result1) {
     $msg_arr = array();
     if ($item_type === 'experiments'){
-        $msg_arr[] = 'Experiment deleted successfully';
+        $msg_arr[] = 'Experiment deleted successfully.';
     } else {
-        $msg_arr[] = 'Item deleted successfully';
+        $msg_arr[] = 'Item deleted successfully.';
     }
 
     // put message in infobox

@@ -121,19 +121,19 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
                 $html .= $title;
                 $html .= "</title></head><body>";
                 $html .="<style type='text/css'>
-                    html{
-                        background-color:#CCC;
-        }
-        #container{
-        width:793px;
-        margin:auto;
-        padding:20px;
-        border: 2px solid green;
-        }
-        footer{
-            font-size:10px;
-        }
-        </style>";
+                    html {
+                        background-color:#fff;
+                    }
+                    #container {
+                        width:793px;
+                        margin:auto;
+                        padding:20px;
+                        border: 2px solid green;
+                    }
+                    footer{
+                        font-size:10px;
+                    }
+                </style>";
                 $html .= "<section id='container'>Date : ".$date."<br />
             <span style='text-align: right;'>By : ".$firstname." ".$lastname."</span><br />
             <div style='text-align: center;'><font size='10'>".$title."</font></span></div><br /><br />

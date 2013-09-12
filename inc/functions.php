@@ -196,7 +196,7 @@ function show_tags($item_id, $table) {
     $req->execute();
     $tagcount = $req->rowCount();
     if ($tagcount > 0) {
-        echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='' /> ";
+        echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='tags' /> ";
         while($tags = $req->fetch()) {
             if ($table === 'experiments_tags') {
             echo "<a href='experiments.php?mode=show&tag=".urlencode(stripslashes($tags['tag']))."'>".stripslashes($tags['tag'])."</a> ";

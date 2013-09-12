@@ -237,7 +237,7 @@ if (count($id_arr) === 1) {
 }
 // Display download link (with attribute type=zip for download.php)
 echo "<p>Your zip archive is ready, click to download <span class='filesize'>(".format_bytes($zipsize).")</span> :<br />
-    <img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='' /> 
+    <img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='download' /> 
     <a href='download.php?f=".$zipfile."&name=".$zipname.".zip&type=zip' target='_blank'>".$zipname.".zip</a></p>";
 echo "</div>";
 } else {

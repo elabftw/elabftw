@@ -60,7 +60,7 @@ if($count > 0){
                 make_thumb($filepath,$ext,$thumbpath,150);
                 }
                 echo "<div class='center'>";
-                echo "<a href='uploads/".$uploads_data['long_name']."' class='lightbox'><img src='".$thumbpath."' width='150' alt='' /></a></div>";
+                echo "<a href='uploads/".$uploads_data['long_name']."' class='lightbox'><img src='".$thumbpath."' width='150' alt='thumbnail' /></a></div>";
             } // end if extension is valid
         } // end gd here
         // END THUMBNAIL GENERATION

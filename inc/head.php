@@ -28,6 +28,7 @@
 <html>
 <head>
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+<meta name="author" content="Nicolas CARPi" />
 <link rel="icon" type="image/ico" href="img/favicon.ico" />
 <?php
 // Random title
@@ -70,14 +71,13 @@ shuffle($ftw_arr);
 $ftw = $ftw_arr[0]; 
 
 echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."</title>"?>
-<meta name="author" content="Nicolas CARPi" />
 <!-- CSS -->
 <link rel="stylesheet" media="all" href="css/main.css" />
 <?php
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1){
-echo "<link id='maincss' rel='stylesheet' media='all' href='themes/".$_SESSION['prefs']['theme']."/style.css' />";
+    echo "<link id='maincss' rel='stylesheet' media='all' href='themes/".$_SESSION['prefs']['theme']."/style.css' />";
 } else {
-echo "<link id='maincss' rel='stylesheet' media='all' href='themes/default/style.css' />";
+    echo "<link id='maincss' rel='stylesheet' media='all' href='themes/default/style.css' />";
 }
 ?>
 <link rel="stylesheet" media="all" href="css/jquery-ui-1.10.3.custom.min.css" />
@@ -87,10 +87,6 @@ echo "<link id='maincss' rel='stylesheet' media='all' href='themes/default/style
 <link rel="stylesheet" media="all" href="css/jquery.lightbox-0.5.css" />
 <!-- JAVASCRIPT -->
 <script src="js/jquery-2.0.3.min.js"></script>
-<!-- 
-for the migration 
-<script src="js/jquery-migrate-1.2.1.js"></script>
--->
 <script src="js/jquery-ui-1.10.3.custom.min.js"></script>
 <!-- for editable comments -->
 <script src="js/jquery.jeditable.min.js"></script>

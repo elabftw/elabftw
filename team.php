@@ -43,7 +43,7 @@ $req = $bdd->prepare($sql);
 $req->execute();
 echo "<ul>";
 while ($data = $req->fetch()) {
-    echo "<li><img src='img/profile.png' alt='' /> ";
+    echo "<li><img src='img/profile.png' alt='profile' /> ";
     echo "<a href='mailto:".$data['email']."'>".$data['firstname']." ".$data['lastname']."</a>";
         if (!empty($data['phone'])) { 
         echo " <img src='themes/".$_SESSION['prefs']['theme']."/img/phone.png' alt='Phone :' title='phone' /> ".$data['phone'];

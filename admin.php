@@ -64,7 +64,7 @@ $req->execute();
 while ($users = $req->fetch()) {
     ?>
     <div class='simple_border'>
-    <a class='trigger_users_<?php echo $users['userid'];?>'><img src='img/profile.png' alt='' /> <?php echo "Edit ".$users['firstname'];?></a>
+    <a class='trigger_users_<?php echo $users['userid'];?>'><img src='img/profile.png' alt='profile' /> <?php echo "Edit ".$users['firstname'];?></a>
     <div class='toggle_users_<?php echo $users['userid'];?>'>
         <a class='align_right' href='' onClick="confirm_delete('<?php echo $users['userid']."', '".$users['lastname'];?>')"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <br />

@@ -265,19 +265,6 @@ echo "</span>";
 </section>
 <script src="../js/jquery.complexify.min.js"></script>
 <script>
-function createAccount(){
-    var pass = $('#password').attr('value');
-    // POST request
-        var jqxhr = $.post('install.php', {
-            pass:pass
-        })
-        // reload the tags list
-        .success(function() {$("#set_pass_div").load("index.php #set_pass_div");
-    // clear input field
-    $("#password").val("");
-    return false;
-        })
-}
 $(document).ready(function() {
     // password complexity
     $("#password").complexify({}, function (valid, complexity){

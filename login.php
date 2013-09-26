@@ -36,7 +36,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 ?>
 <section class='center'>
     <!-- Login form -->
-    <form method="post" action="login-exec.php">
+    <form method="post" action="login-exec.php" autocomplete="off">
         <fieldset>
             <legend>Login :</legend>
                 <p>

@@ -37,7 +37,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
 
 <section>
     <!-- Register form -->
-    <form name="regForm" data-validate="parsley" id="regForm" method="post" action="register-exec.php" class='innerinnerdiv'>
+    <form name="regForm" data-validate="parsley" id="regForm" method="post" autocomplete="off" action="register-exec.php" class='innerinnerdiv'>
         <fieldset>
             <legend>Create your account :</legend>
                 <p>

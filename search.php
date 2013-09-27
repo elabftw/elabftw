@@ -194,6 +194,8 @@ if (isset($_GET)) {
     }
     if (isset($_GET['body']) && !empty($_GET['body'])) {
         $body = check_body($_GET['body']);
+        // TODO filter sanitize to test xss
+        // $body = filter_var($body, FILTER_SANITIZE_STRING);
     } else {
         $body = '';
     }

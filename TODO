@@ -4,6 +4,7 @@
 * when you follow a link and you're not logged in, you want to be redirected to the target page after login
 
 ////// New Features
+* add groups, add visitor with only read permission on the database
 * editable list of status
 * add tag on templates
 * use password_hash

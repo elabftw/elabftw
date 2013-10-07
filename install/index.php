@@ -170,6 +170,7 @@ if (!extension_loaded("gd")) {
 }
 /*
 // CHECK ssl extension
+    // TODO check if the emails work
 echo "<br />";
 echo "[°] Sending test email to test@yopmail.com...";
 require_once('../lib/swift_required.php');

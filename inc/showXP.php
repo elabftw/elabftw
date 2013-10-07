@@ -54,7 +54,7 @@ if ($count_tpl > 0) {
     }
 } else { // user has no templates
     $message = "<strong>You do not have any templates yet.</strong> Go to <a style='color:blue;' href='ucp.php'>your control panel</a> to make one !";
-    echo display_message('info', $message);
+    display_message('info', $message);
 }
 ?>
 </ul></div><br />
@@ -111,7 +111,7 @@ if (isset($_GET['q'])) { // if there is a query
         echo "<p class='results_and_time'>1 result ($total_time $unit)</p>";
     } else {
         $message = 'No experiments were found.';
-        echo display_message('error', $message);
+        display_message('error', $message);
     }
 
     // loop the results array and display results
@@ -160,7 +160,7 @@ if (isset($_GET['q'])) { // if there is a query
         echo "<p class='results_and_time'>1 result ($total_time $unit)</p>";
     } else {
         $message = 'No experiments are linked with this item.';
-        echo display_message('error', $message);
+        display_message('error', $message);
     }
 
     // loop the results array and display results
@@ -207,7 +207,7 @@ if (isset($_GET['q'])) { // if there is a query
         echo "<p class='results_and_time'>1 result ($total_time $unit)</p>";
     } else {
         $message = 'No experiments were found.';
-        echo display_message('error', $message);
+        display_message('error', $message);
     }
 
     // clean duplicates
@@ -241,7 +241,7 @@ if (isset($_GET['q'])) { // if there is a query
             Click the <a style='color:blue;' href='create_item.php?type=exp'>
             <img src='themes/".$_SESSION['prefs']['theme']."/img/create.gif' alt='Create experiment' />
             Create experiment</a> button to get started."; 
-        echo display_message('info', $message);
+        display_message('info', $message);
     } else {
         while ($experiments = $req->fetch()) {
             $results_arr[] = $experiments['id'];

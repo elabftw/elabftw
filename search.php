@@ -304,7 +304,7 @@ if (isset($_GET)) {
                 }
             } else { // no results
                 $message = "Sorry, I couldn't find anything :(";
-                echo display_message('error', $message);
+                display_message('error', $message);
             }
 
     // DATABASE ADVANCED SEARCH
@@ -363,7 +363,7 @@ if (isset($_GET)) {
             }
         } else { // no results
             $message = "Sorry, I couldn't find anything :(";
-            echo display_message('error', $message);
+            display_message('error', $message);
         }
     }
     }

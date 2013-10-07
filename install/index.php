@@ -25,6 +25,7 @@
 ********************************************************************************/
 /* install/index.php to get an installation up and running */
 session_start();
+require_once('../inc/functions.php');
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -40,6 +41,24 @@ echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."<
 <link rel="stylesheet" media="all" href="../css/main.css" />
 <link id='maincss' rel='stylesheet' media='all' href='../themes/default/style.css' />
 <link rel="stylesheet" media="all" href="../css/jquery-ui-1.10.3.custom.min.css" />
+<style>
+/* little gray text */
+.install_hint {
+    color:gray;
+    font-size:12px;
+    display:inline;
+}
+/* form validation */
+.parsley-error {
+    color:red;
+    background-color:yellow;
+}
+.parsley-error-list {
+    color:red;
+    font-weight:bold;
+}
+</style>
+
 <!-- JAVASCRIPT -->
 <script src="../js/jquery-2.0.3.min.js"></script>
 <script src="js/jquery-ui-1.10.3.custom.min.js"></script>
@@ -60,60 +79,187 @@ $page_title='Install';
 $ok = "<span style='color:green'>OK</span>";
 $fail = "<span style='color:red'>FAIL</span>";
 
-echo "<section class='item'>";
-echo "<center><img src='../img/logo.png' alt='elabftw' title='elabftw' /></center>";
-echo "<h2>Welcome the the install of eLabFTW</h2>";
-// Config file
-echo "[°] Check for admin/config.php file...";
+function custom_die() {
+    echo "
+    <br />
+    <br />
+    </section>
+    <br />
+    <br />
+    <footer>
+    <p>Thanks for using eLabFTW :)</p>
+    </footer>
+    </body>
+    </html>";
+    die();
+}
+?>
+
+<section class='item'>
+<center><img src='../img/logo.png' alt='elabftw' title='elabftw' /></center>
+<h2>Welcome the the install of eLabFTW</h2>
+
+<?php
+// Check if there is already a config file, die if yes.
+
 if(file_exists('../admin/config.php')) {
-    require_once('../admin/config.php');
-    if (LAB_NAME == 'YOURLABNAME') {
-        die($fail." : Please edit admin/config.php");
-    }
-    echo $ok;
-} else {
-        die($fail." : Please copy admin/config.php-EXAMPLE to admin/config.php and edit it.");
+    $message = 'It looks like eLabFTW is already installed. Delete the config file if you wish to reinstall it.';
+    display_message('error', $message);
+    custom_die();
 }
+?>
 
-
+<h4>Preliminary checks :</h4>
+<br />
+<br />
+<?php
 // UPLOADS DIR
-echo "<br />";
-echo "[°] Create uploads/ directory...";
-if (!is_dir("../uploads")){
-   if  (mkdir("../uploads", 0777)){
-    echo $ok;
-    }else{
-        die($fail." : Failed creating <em>uploads/</em> directory. <a href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting'>Read the wiki to fix this.</a>");
+if (is_writable('../uploads') && is_writable('../uploads/export') && is_writable('../uploads/tmp')) {
+    $message = 'The <em>uploads/</em> folder and its subdirectories are here and I can write to it.';
+    display_message('info', $message);
+} else {
+    // create the folders
+    mkdir('../uploads');
+    mkdir('../uploads/export');
+    mkdir('../uploads/tmp');
+    // check the folders
+    if (is_writable('../uploads') && is_writable('../uploads/export') && is_writable('../uploads/tmp')) {
+        $message = "The <em>uploads/</em> folder and its subdirectories were created successfully.";
+        display_message('info', $message);
+    } else { // failed at creating the folder
+        $message = "Faild creating <em>uploads/</em> directory. 
+            You need to do it manually. 
+            <a style='color:blue; font-style:underline;' href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting#failed-creating-uploads-directory-'>Click here to discover how.</a>";
+        display_message('error', $message);
+        custom_die();
     }
-}else{
-    echo $ok;
 }
 
-// EXPORT DIR
-echo "<br />";
-echo "[°] Create uploads/export directory...";
-if (!is_dir("../uploads/export")){
-   if  (mkdir("../uploads/export", 0777)){
-    echo $ok;
-    }else{
-        die($fail." : Failed creating <em>uploads/export</em> directory.  <a href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting'>Read the wiki to fix this.</a>");
-    }
-}else{
-    echo $ok;
+// CHECK ssl extension
+if (extension_loaded("openssl")) {
+    $message = 'The <em>openssl</em> extension is loaded.';
+    display_message('info', $message);
+} else {
+    $message = "The <em>openssl</em> extension is <strong>NOT</strong> loaded.
+            <a style='color:blue; font-style:underline;' href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting#the-openssl-extension-is-not-loaded'>Click here to read how to fix this.</a>";
+    display_message('error', $message);
+    custom_die();
 }
 
-// TMP DIR
-echo "<br />";
-echo "[°] Create uploads/tmp directory...";
-if (!is_dir("../uploads/tmp")){
-   if  (mkdir("../uploads/tmp", 0777)){
-    echo $ok;
-    }else{
-        die($fail." : Failed creating <em>uploads/tmp</em> directory.  <a href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting'>Read the wiki to fix this.</a>");
-    }
-}else{
-    echo $ok;
+// CHECK gd extension
+if (extension_loaded("gd")) {
+    $message = 'The <em>gd</em> extension is loaded.';
+    display_message('info', $message);
+} else {
+    $message = "The <em>gd</em> extension is <strong>NOT</strong> loaded.
+            <a style='color:blue; font-style:underline;' href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting#the-gd-extension-is-not-loaded'>Click here to read how to fix this.</a>";
+    display_message('error', $message);
+    custom_die();
 }
+?>
+
+<br />
+<br />
+<h4>Configuration :</h4>
+<br />
+<br />
+
+<!-- MAIN FORM -->
+<form data-validate='parsley' action='install-exec.php' method='post'>
+<fieldset>
+<legend><strong>Generalities</strong></legend>
+<label for='lab_name'>The name of your lab:</label><br />
+<input id='lab_name' name='lab_name' type='text' />
+<br /><br />
+
+<label for='admin_validate'>Disable new accounts:</label><br />
+<input id='admin_validate' name='admin_validate' type='checkbox' checked='checked' />
+<p class='install_hint'>(the admin can validate new users in the admin panel)</p>
+<br /><br />
+</fieldset>
+<br />
+
+<fieldset>
+<legend><strong>MySQL</strong></legend>
+
+<label for='db_host'>The host for mysql database:</label><br />
+<input id='db_host' name='db_host' type='text' value='localhost' />
+<p class='install_hint'>(you can safely leave 'localhost' here)</p>
+<br /><br />
+
+<label for='db_name'>The name of the database:</label><br />
+<input id='db_name' name='db_name' type='text' value='elabftw' />
+<p class='install_hint'>(should be 'elabftw' if you followed the README file)</p>
+<br /><br />
+
+<label for='db_user'>The username that will connect to the MySQL server:</label><br />
+<input id='db_user' name='db_user' type='text' value='elabftw' />
+<p class='install_hint'>(should be 'elabftw' if you followed the README file)</p>
+<br /><br />
+
+<label for='db_password'>The password associated</label><br />
+<input id='db_password' name='db_password' type='password' />
+<p class='install_hint'>(should be a very complicated one that you won't have to remember)</p>
+<br /><br />
+</fieldset>
+<br />
+
+
+<fieldset>
+<legend><strong>Admin user creation</strong></legend>
+<p>
+<label for="firstname">Firstname:</label><br />
+<input name="firstname" type="text" id="firstname" data-trigger="change" data-required="true" />
+</p>
+<p>
+<label for="lastname">Lastname:</label><br />
+<input name="lastname" type="text" id="lastname" data-trigger="change" data-required="true" />
+</p>
+<p>
+<label for="username">Username:</label><br />
+<input name="username" type="text" id="username" data-trigger="change" data-required="true" />
+</p>
+<p>
+<label for="email">Email:</label><br />
+<input name="email" type="email" id="email" data-trigger="change" data-required="true" data-type="email" />
+</p>
+<p>
+<label for="password">Password:</label><br />
+<input name="password" type="password" id="password" data-trigger="change" data-minlength="4" />
+</p>
+<p>
+<label for="cpassword">Confirm password:</label><br />
+<input name="cpassword" type="password" id="cpassword" data-trigger="change" data-equalto="#password" data-error-message="The passwords do not match !" />
+</p>
+Password complexity (for your information) : <span id="complexity">0%</span><br /><br />
+<input type="submit" name="Submit" class='submit' value="Install eLabFTW" />
+</fieldset>
+</form>
+</section>
+<!-- end register form -->
+<script src="../js/jquery.complexify.min.js"></script>
+<script>
+$(document).ready(function() {
+    // password complexity
+    $("#password").complexify({}, function (valid, complexity){
+        if (complexity < 30) {
+            $('#complexity').css({'color':'red'});
+        } else {
+            $('#complexity').css({'color':'green'});
+        }
+        $("#complexity").html(Math.round(complexity) + '%');
+    });
+});
+</script>
+<footer>
+<p>Thanks for using eLabFTW :)</p>
+</footer>
+</section>
+</body>
+</html>
+
+<?php
+/*
 // TRY TO CONNECT TO DATABASE
 echo "<br />";
 echo "[°] Connection to database...";
@@ -137,7 +283,7 @@ if ($res) {
 } else { // no structure here
     die($fail. " You need to import the file install/elabftw.sql in your database !");
 }
-// END SQL CONNECT
+// END SQL CONNECT 
 
 // CHECK PATH
 echo "<br />";
@@ -151,23 +297,6 @@ if(PATH != $should_be_path) {
 }
 // END PATH CHECK
 
-// CHECK ssl extension
-echo "<br />";
-echo "[°] Checking for ssl extension (to send emails)...";
-if (!extension_loaded("openssl")) {
-    die($fail." : Edit the php config file to enable this extension.");
-} else {
-    echo $ok;
-}
-
-// CHECK gd extension
-echo "<br />";
-echo "[°] Checking for gd extension (to display thumbnails)...";
-if (!extension_loaded("gd")) {
-    die($fail." : Edit the php.ini config file to enable this extension and/or install the package php-gd.");
-} else {
-    echo $ok;
-}
 /*
 // CHECK ssl extension
     // TODO check if the emails work
@@ -196,91 +325,4 @@ if ($result) {
  */
 
 // Make an admin user
-// Check that there is NO user on the database
-echo "<span id='set_pass_div'>";
-$sql = "SELECT COUNT(*) FROM users WHERE is_admin = 1";
-$req = $bdd->prepare($sql);
-$req->execute();
-$test = $req->fetch();
-// make account if there is no admin user already
-if ($test[0] != 0) {
-    echo "<h2>There is already an admin user !</h2>";
-} else {
-    // register an account
-    ?>
-            <div id='innerdiv'>
-            <!-- Register form -->
-<br />
-<section>
-    <!-- Register form -->
-    <form name="regForm" data-validate="parsley" id="regForm" method="post" action="../register-exec.php" class='innerinnerdiv'>
-        <fieldset>
-            <legend>Create your account (with admin rights) :</legend>
-                <p>
-                    <label for="firstname">Firstname</label>
-                    <input name="firstname" type="text" id="firstname" data-trigger="change" data-required="true" />
-                </p>
-                <p>
-                    <label for="lastname">Lastname</label>
-                    <input name="lastname" type="text" id="lastname" data-trigger="change" data-required="true" />
-                </p>
-                <p>
-                    <label for="username">Username</label>
-                    <input name="username" type="text" id="username" data-trigger="change" data-required="true" />
-                </p>
-                <p>
-                    <label for="email">Email</label>
-                    <input name="email" type="email" id="email" data-trigger="change" data-required="true" data-type="email" />
-                </p>
-                <p>
-                    <label for="password">Password</label>
-                    <input name="password" type="password" id="password" data-trigger="change" data-minlength="4" />
-                </p>
-                <p>
-                    <label for="cpassword">Confirm password</label>
-                    <input name="cpassword" type="password" id="cpassword" data-trigger="change" data-equalto="#password" data-error-message="The passwords do not match !" />
-                </p>
-                Password complexity (for your information) : <span id="complexity">0%</span><br /><br />
-                <div id='submitDiv'>
-                <input type="submit" name="Submit" class='submit' value="Register" />
-                </div>
-        </fieldset>
-    </form>
-    <!-- end register form -->
-<style>
-.parsley-error {
-    color:red;
-    background-color:yellow;
-}
-.parsley-error-list {
-    color:red;
-    font-weight:bold;
-}
-</style>
-</section>
-<?php
-}
-echo "</span>";
 ?>
-
-</section>
-<script src="../js/jquery.complexify.min.js"></script>
-<script>
-$(document).ready(function() {
-    // password complexity
-    $("#password").complexify({}, function (valid, complexity){
-        if (complexity < 30) {
-            $('#complexity').css({'color':'red'});
-        } else {
-            $('#complexity').css({'color':'green'});
-        }
-        $("#complexity").html(Math.round(complexity) + '%');
-    });
-});
-</script>
-<footer>
-<p>Thanks for using eLabFTW :)</p>
-</footer>
-</body>
-</html>
-

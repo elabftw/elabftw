@@ -29,7 +29,7 @@ if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
     $id = $_GET['id'];
 } else {
     $message = "The id parameter in the URL isn't a valid experiment ID.";
-    echo display_message('error', $message);
+    display_message('error', $message);
     require_once('inc/footer.php');
     die();
 }
@@ -45,12 +45,12 @@ if ($data['userid'] != $_SESSION['userid']) {
     // Can the user see this experiment which is not his ?
     if ($data['visibility'] == 'user') {
         $message = "<strong>Access forbidden:</strong> the visibility setting of this experiment is set to 'owner only'.";
-        echo display_message('error', $message);
+        display_message('error', $message);
         require_once('inc/footer.php');
         exit();
     } else {
         $message = "<strong>Read-only mode:</strong> this is not your experiment.";
-        echo display_message('info', $message);
+        display_message('info', $message);
     }
 }
 

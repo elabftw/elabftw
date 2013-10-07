@@ -43,7 +43,7 @@ $data = $req->fetch();
 // Check id is owned by connected user
 if ($data['userid'] != $_SESSION['userid']) {
     $message = "<strong>Cannot edit:</strong> this experiment is not yours !";
-    echo display_message('error', $message);
+    display_message('error', $message);
     require_once('inc/footer.php');
     exit();
 }
@@ -51,7 +51,7 @@ if ($data['userid'] != $_SESSION['userid']) {
 // Check for lock
 if ($data['locked'] == 1) {
     $message = "<strong>This item is locked.</strong> You cannot edit it.";
-    echo display_message('error', $message);
+    display_message('error', $message);
     require_once('inc/footer.php');
     exit();
 }

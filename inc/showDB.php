@@ -129,7 +129,7 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     if($count == 0) {
         $message = "<strong>Welcome to eLabFTW.</strong> 
             Select an item in the «Create new» list to begin filling your database."; 
-        echo display_message('info', $message);
+        display_message('info', $message);
     } else {
         $results_arr = array();
         while($final_query = $req->fetch()) {

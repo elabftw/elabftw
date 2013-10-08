@@ -647,13 +647,13 @@ function duplicate_item($id, $type) {
 function display_message($type, $message) {
     if ($type === 'info') {
 
-        echo "<div class='ui-state-highlight ui-corner-all'>
+        echo "<div class='ui-state-highlight ui-corner-all' style='margin:5px'>
         <p><span class='ui-icon ui-icon-info' style='float: left; margin: 0 5px 0 5px;'></span>
         $message</p></div>";
 
     } elseif ($type === 'error') {
 
-        echo "<div class='ui-state-error ui-corner-all'>
+        echo "<div class='ui-state-error ui-corner-all' style='margin:5px'>
         <p><span class='ui-icon ui-icon-alert' style='float:left; margin: 0 5px 0 5px;'></span>
         $message</p></div>";
     }

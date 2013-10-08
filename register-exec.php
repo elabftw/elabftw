@@ -125,7 +125,7 @@ if($errflag) {
 
 // Registration date is stored in epoch
 $register_date = time();
-// If it's the first user, make him admin (call from install/index.php)
+// If it's the first user, make him admin (just after the install process usually)
 $sql = "SELECT COUNT(*) FROM users WHERE is_admin = 1";
 $req = $bdd->prepare($sql);
 $req->execute();
@@ -148,26 +148,6 @@ if (ADMIN_VALIDATE === 1){
 $result = $bdd->exec($sql);
 //Check whether the query was successful or not
 if($result) {
-    /*
-    // Send email
-        require_once('lib/swift_required.php');
-        // Create the message
-        $message = Swift_Message::newInstance()
-        // Give the message a subject
-        ->setSubject('Welcome to eLabFTW !')
-        // Set the From address with an associative array
-        //->setFrom(array('nicolas.carpi@curie.fr' => 'Nicolas CARPi'))
-        ->setFrom(array('elabftw.net@gmail.com' => 'eLabFTW.net'))
-        // Set the To addresses with an associative array
-        ->setTo(array($email => $firstname))
-        // Give it a body
-        ->setBody('Congratulations ! You registered successfully to eLabFTW \o/');
-$transport = Swift_SmtpTransport::newInstance($ini_arr['smtp_address'], $ini_arr['smtp_port'], $ini_arr['smtp_encryption'])
-    ->setUsername($ini_arr['smtp_username'])
-    ->setPassword($ini_arr['smtp_password']);
-        $mailer = Swift_Mailer::newInstance($transport);
-        $result = $mailer->send($message);
-     */
     // Redirect
         $msg_arr = array();
         if (ADMIN_VALIDATE === 1){

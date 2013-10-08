@@ -31,11 +31,8 @@ require_once('../inc/functions.php');
 <html>
 <head>
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-<link rel="icon" type="image/ico" href="img/favicon.ico" />
-<?php
-$ftw = 'INSTALL - eLabFTW'; 
-
-echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."</title>"?>
+<link rel="icon" type="image/ico" href="../img/favicon.ico" />
+<title>eLabFTW - INSTALL</title>
 <meta name="author" content="Nicolas CARPi" />
 <!-- CSS -->
 <link rel="stylesheet" media="all" href="../css/main.css" />
@@ -61,24 +58,14 @@ echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."<
 
 <!-- JAVASCRIPT -->
 <script src="../js/jquery-2.0.3.min.js"></script>
-<script src="js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="../js/jquery-ui-1.10.3.custom.min.js"></script>
 <!-- Form validation client-side -->
 <script src="../js/parsley.min.js"></script>
 </head>
 
 <body>
 <section id="container">
-<!-- JAVASCRIPT -->
-<?php // Page generation time
-$time = microtime();
-$time = explode(' ', $time);
-$time = $time[1] + $time[0];
-$start = $time;
-$page_title='Install';
-
-$ok = "<span style='color:green'>OK</span>";
-$fail = "<span style='color:red'>FAIL</span>";
-
+<?php
 function custom_die() {
     echo "
     <br />
@@ -97,7 +84,7 @@ function custom_die() {
 
 <section class='item'>
 <center><img src='../img/logo.png' alt='elabftw' title='elabftw' /></center>
-<h2>Welcome the the install of eLabFTW</h2>
+<h2>Welcome to the install of eLabFTW</h2>
 
 <?php
 // Check if there is already a config file, die if yes.
@@ -109,10 +96,20 @@ if(file_exists('../admin/config.php')) {
 }
 ?>
 
-<h4>Preliminary checks :</h4>
+<h4>Preliminary checks</h4>
 <br />
 <br />
 <?php
+// CHECK PHP version
+if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.3', '<')) {
+    $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.3";
+    display_message('error', $message);
+    custom_die();
+} else {
+    $message = "Your version of PHP is recent enough.";
+    display_message('info', $message);
+}
+
 // UPLOADS DIR
 if (is_writable('../uploads') && is_writable('../uploads/export') && is_writable('../uploads/tmp')) {
     $message = 'The <em>uploads/</em> folder and its subdirectories are here and I can write to it.';
@@ -156,173 +153,195 @@ if (extension_loaded("gd")) {
     display_message('error', $message);
     custom_die();
 }
+
 ?>
 
 <br />
 <br />
-<h4>Configuration :</h4>
+<h4>Configuration</h4>
 <br />
 <br />
 
 <!-- MAIN FORM -->
-<form data-validate='parsley' action='install-exec.php' method='post'>
+<form data-validate='parsley' action='install.php' method='post'>
 <fieldset>
 <legend><strong>Generalities</strong></legend>
+<p>This part deals with some configuration aspects of your eLabFTW installation.</p>
+
+<p>
 <label for='lab_name'>The name of your lab:</label><br />
 <input id='lab_name' name='lab_name' type='text' />
-<br /><br />
+<span class='install_hint'>(will be visible in the footer)</span>
+</p>
 
-<label for='admin_validate'>Disable new accounts:</label><br />
+<p>
+<label for='admin_validate'>New accounts need validation:</label><br />
 <input id='admin_validate' name='admin_validate' type='checkbox' checked='checked' />
-<p class='install_hint'>(the admin can validate new users in the admin panel)</p>
-<br /><br />
+<span class='install_hint'>(the admin can validate new users in the admin panel)</span>
+</p>
+
+<p>
+<label for='link_name'>Name of the custom link in the menu:</label><br />
+<input id='link_name' name='link_name' type='text' value='Wiki' />
+<span class='install_hint'>(this link is visible in the main menu, it can be anything)</span>
+</p>
+
+<p>
+<label for='link_href'>URL of the custom link:</label><br />
+<input id='link_href' name='link_href' type='text' value='https://github.com/NicolasCARPi/elabftw/wiki' />
+<span class='install_hint'>(the default URL is the wiki of eLabFTW, but you should put your own wiki)</span>
+</p>
+
+<p>
+<label for='proxy'>Proxy settings:</label><br />
+<input id='proxy' name='proxy' type='text' />
+<span class='install_hint'>(if you are behind a proxy, write it like this : http://proxy.example.com:3128)</span>
+</p>
+
 </fieldset>
+
 <br />
 
+<!-- MYSQL -->
 <fieldset>
 <legend><strong>MySQL</strong></legend>
+<p>MySQL is the database that will store everything. eLabFTW need to connect to it with a username/password. This is <strong>NOT</strong> your account with which you'll use eLabFTW. If you followed the README you should have created a database <em>elabftw</em> with a user <em>elabftw</em> that have all the rights on it.</p>
 
-<label for='db_host'>The host for mysql database:</label><br />
+<p>
+<label for='db_host'>Host for mysql database:</label><br />
 <input id='db_host' name='db_host' type='text' value='localhost' />
-<p class='install_hint'>(you can safely leave 'localhost' here)</p>
-<br /><br />
+<span class='install_hint'>(you can safely leave 'localhost' here)</span>
+</p>
 
-<label for='db_name'>The name of the database:</label><br />
+<p>
+<label for='db_name'>Name of the database:</label><br />
 <input id='db_name' name='db_name' type='text' value='elabftw' />
-<p class='install_hint'>(should be 'elabftw' if you followed the README file)</p>
-<br /><br />
+<span class='install_hint'>(should be 'elabftw' if you followed the README file)</span>
+</p>
 
-<label for='db_user'>The username that will connect to the MySQL server:</label><br />
+<p>
+<label for='db_user'>Username to connect to the MySQL server:</label><br />
 <input id='db_user' name='db_user' type='text' value='elabftw' />
-<p class='install_hint'>(should be 'elabftw' if you followed the README file)</p>
-<br /><br />
+<span class='install_hint'>(should be 'elabftw' if you followed the README file)</span>
+</p>
 
-<label for='db_password'>The password associated</label><br />
+<p>
+<label for='db_password'>Password:</label><br />
 <input id='db_password' name='db_password' type='password' />
-<p class='install_hint'>(should be a very complicated one that you won't have to remember)</p>
-<br /><br />
+<span class='install_hint'>(should be a very complicated one that you won't have to remember)</span>
+</p>
+
+<div class='center' style='margin-top:8px'>
+<button type='button' id='test_sql_button' class='button'>Test MySQL connection</button>
+</div>
+
 </fieldset>
+
+<br />
+
+<!-- EMAIL -->
+<fieldset>
+<legend><strong>Email settings</strong></legend>
+<p>This part is about the SMTP settings. eLabFTW will need to be able to send out emails for password resets. You can ignore this part and deal with it later, just keep in mind that users won't be able to reset their passwords (and users tend to forget passwords !).</p>
+
+<p>
+<label for='smtp_address'>Address of the smtp server:</label><br />
+<input id='smtp_address' name='smtp_address' type='text' value='smtp.gmail.com' />
+<span class='install_hint'>(you can use your company's SMTP server here)</span>
+</p>
+
+<p>
+<label for='smtp_port'>SMTP port:</label><br />
+<input id='smtp_port' name='smtp_port' type='text' value='587' />
+<span class='install_hint'>(587 is the default port)</span>
+</p>
+
+<p>
+<label for='smtp_encryption'>SMTP encryption:</label><br />
+<input id='smtp_encryption' name='smtp_encryption' type='text' value='tls' />
+<span class='install_hint'>(can be 'tls' or 'ssl', leave 'tls' if unsure)</span>
+</p>
+
+<p>
+<label for='smtp_username'>Username to connect to the SMTP server:</label><br />
+<input id='smtp_username' name='smtp_username' type='text' value='username@gmail.com' />
+<span class='install_hint'>(you need to keep the @gmail.com if you use gmail's smtp)</span>
+</p>
+
+<p>
+<label for='smtp_password'>Password:</label><br />
+<input id='smtp_password' name='smtp_password' type='password' />
+<span class='install_hint'>(this is the password for the SMTP account)</span>
+</p>
+
+<div class='center' style='margin-top:8px'>
+<button type='button' id='test_email_button' class='button'>Test email parameters</button>
+</div>
+
+</fieldset>
+
 <br />
 
 
-<fieldset>
-<legend><strong>Admin user creation</strong></legend>
-<p>
-<label for="firstname">Firstname:</label><br />
-<input name="firstname" type="text" id="firstname" data-trigger="change" data-required="true" />
-</p>
-<p>
-<label for="lastname">Lastname:</label><br />
-<input name="lastname" type="text" id="lastname" data-trigger="change" data-required="true" />
-</p>
-<p>
-<label for="username">Username:</label><br />
-<input name="username" type="text" id="username" data-trigger="change" data-required="true" />
-</p>
-<p>
-<label for="email">Email:</label><br />
-<input name="email" type="email" id="email" data-trigger="change" data-required="true" data-type="email" />
-</p>
-<p>
-<label for="password">Password:</label><br />
-<input name="password" type="password" id="password" data-trigger="change" data-minlength="4" />
-</p>
-<p>
-<label for="cpassword">Confirm password:</label><br />
-<input name="cpassword" type="password" id="cpassword" data-trigger="change" data-equalto="#password" data-error-message="The passwords do not match !" />
-</p>
-Password complexity (for your information) : <span id="complexity">0%</span><br /><br />
-<input type="submit" name="Submit" class='submit' value="Install eLabFTW" />
-</fieldset>
+<p>When you click the button below, it will create the file <em>admin/config.php</em>. If you want to modify some parameters afterwards, just edit this file directly.</p>
+
+<div class='center' style='margin-top:8px'>
+    <input type="submit" name="Submit" class='button' value="INSTALL eLabFTW" />
+</div>
+
 </form>
+
 </section>
-<!-- end register form -->
-<script src="../js/jquery.complexify.min.js"></script>
-<script>
-$(document).ready(function() {
-    // password complexity
-    $("#password").complexify({}, function (valid, complexity){
-        if (complexity < 30) {
-            $('#complexity').css({'color':'red'});
-        } else {
-            $('#complexity').css({'color':'green'});
-        }
-        $("#complexity").html(Math.round(complexity) + '%');
-    });
-});
-</script>
+
 <footer>
 <p>Thanks for using eLabFTW :)</p>
 </footer>
 </section>
+<script>
+$('#test_sql_button').click(function() {
+    var mysql_host = $('#db_host').val();
+    var mysql_name = $('#db_name').val();
+    var mysql_user = $('#db_user').val();
+    var mysql_password = $('#db_password').val();
+
+    $.post('test.php', {
+        mysql: 1,
+        db_host: mysql_host,
+        db_name: mysql_name,
+        db_user: mysql_user,
+        db_password: mysql_password
+    }).done(function(test_result) {
+        if (test_result == 1) {
+            alert('MySQL connection was successful ! :)');
+        } else {
+            alert('The connection failed with this error : ' + test_result);
+        }
+    });
+});
+
+$('#test_email_button').click(function() {
+    var email_address = $('#smtp_address').val();
+    var email_port = $('#smtp_port').val();
+    var email_encryption = $('#smtp_encryption').val();
+    var email_username = $('#smtp_username').val();
+    var email_password = $('#smtp_password').val();
+
+    $.post('test.php', {
+        email: 1,
+        smtp_address: email_address,
+        smtp_port: email_port,
+        smtp_encryption: email_encryption,
+        smtp_username: email_username,
+        smtp_password: email_password
+    }).done(function(test_result) {
+        if (test_result == 1) {
+            alert('Email was sent successfully (to elabftw-test@yopmail.com) :)');
+        } else {
+            alert('The connection failed :/');
+        }
+    });
+});
+</script>
 </body>
 </html>
 
-<?php
-/*
-// TRY TO CONNECT TO DATABASE
-echo "<br />";
-echo "[°] Connection to database...";
-try
-{
-    $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-    $bdd = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
-}
-catch(Exception $e)
-{
-    die('Error : '.$e->getMessage());
-}
-// check if user imported the structure
-$sql = "SHOW TABLES LIKE 'users'";
-$req = $bdd->prepare($sql);
-$req->execute();
-$res = $req->rowCount();
-// users table is here
-if ($res) {
-    echo $ok;
-} else { // no structure here
-    die($fail. " You need to import the file install/elabftw.sql in your database !");
-}
-// END SQL CONNECT 
-
-// CHECK PATH
-echo "<br />";
-echo "[°] Checking the path...";
-// remove /install/index.php from the path
-$should_be_path = substr(realpath(__FILE__), 0, -18);
-if(PATH != $should_be_path) {
-    die($fail." : Path is not the same ! Change its value in admin/config.php to <strong>".$should_be_path."</strong>");
-} else {
-    echo $ok;
-}
-// END PATH CHECK
-
-/*
-// CHECK ssl extension
-    // TODO check if the emails work
-echo "<br />";
-echo "[°] Sending test email to test@yopmail.com...";
-require_once('../lib/swift_required.php');
-$message = Swift_Message::newInstance()
-// Give the message a subject
-->setSubject('[eLabFTW] Email test successful !')
-// Set the From address with an associative array
-->setFrom(array('elabftw.net@gmail.com' => 'eLabFTW.net'))
-// Set the To addresses with an associative array
-->setTo(array('test@yopmail.com' => 'Dori'))
-// Give it a body
-->setBody('\o/');
-$transport = Swift_SmtpTransport::newInstance($ini_arr['smtp_address'], $ini_arr['smtp_port'], $ini_arr['smtp_encryption'])
-->setUsername($ini_arr['smtp_username'])
-->setPassword($ini_arr['smtp_password']);
-$mailer = Swift_Mailer::newInstance($transport);
-$result = $mailer->send($message);
-if ($result) {
-    echo $ok;
-} else {
-    echo $fail." : Couldn't send email. Check your SMTP settings !";
-}
- */
-
-// Make an admin user
-?>

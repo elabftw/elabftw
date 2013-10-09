@@ -73,13 +73,6 @@ $ git config --global http.proxy http://proxy.example.com:8080
 
 If you can't install git or don't manage to get the files, you can [download a zip archive](https://github.com/NicolasCARPi/elabftw/archive/master.zip). But it's better to use git, it will allow easier updates.
 
-### Create the uploads folders and fix the permissions
-~~~ sh
-$ cd elabftw
-$ mkdir -p uploads/{tmp,export}
-$ chmod -R 777 uploads
-~~~
-
 ## SQL part
 The second part is putting the database in place.
 ### Command line way (graphical way below)
@@ -127,20 +120,6 @@ Do like this :
 * Click the Import tab
 * Select the file /path/to/elabftw/install/elabftw.sql
 * Click Go
-
-## Config file
-Copy the file `admin/config.php-EXAMPLE` to `admin/config.php`.
-~~~ sh
-$ cp admin/config.php-EXAMPLE admin/config.php
-~~~
-
-Now edit this file with nano, a simple text editor. (Use vim/emacs at will, of course !)
-~~~ sh
-$ nano admin/config.php
-~~~
-I would recommend using an advanced text editor like (g)vim (GNU), notepad++ (Win) or TextWrangler (Mac) to benefit from syntax highlighting.
-
-You need to edit the part between the quotes.
 
 ## Final step
 Finally, point your browser to the install folder (install/) and read onscreen instructions.

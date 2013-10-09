@@ -37,7 +37,7 @@ $errflag = false;
     // Check for duplicate username in DB
     $sql = "SELECT * FROM users WHERE username='$username'";
     $result = $bdd->query($sql);
-    $numrows = $result->rowCount(); 
+    $numrows = $result->rowCount();
     if($result) {
         if($numrows > 0) {
             $msg_arr[] = 'Username already in use';
@@ -75,7 +75,7 @@ if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
     // Check for duplicate email in DB
     $sql = "SELECT * FROM users WHERE email='$email'";
     $result = $bdd->query($sql);
-    $numrows = $result->rowCount(); 
+    $numrows = $result->rowCount();
     if($result) {
         if($numrows > 0) {
             $msg_arr[] = 'Someone is already using that email address !';
@@ -139,9 +139,10 @@ if ($test[0] == 0) {
 }
 
 // If all is good => registration
-if (ADMIN_VALIDATE === 1){
+// we don't want admin validation if it's the first time we register an admin account
+if (ADMIN_VALIDATE === 1 && $is_admin == 0) {
     $sql = "INSERT INTO users(username, firstname, lastname, email, password, salt, register_date, is_admin) VALUES('$username', '$firstname', '$lastname', '$email', '$passwordHash', '$salt', '$register_date', '$is_admin')";
-} else { // no admin validation in config file
+} else { // no admin validation in config file or it's the first account created
     $sql = "INSERT INTO users(username, firstname, lastname, email, password, salt, register_date, validated, is_admin) VALUES('$username', '$firstname', '$lastname', '$email', '$passwordHash', '$salt', '$register_date', '1', '$is_admin')";
 }
 

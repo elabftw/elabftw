@@ -151,7 +151,7 @@ $result = $bdd->exec($sql);
 if($result) {
     // Redirect
         $msg_arr = array();
-        if (ADMIN_VALIDATE === 1){
+        if (ADMIN_VALIDATE === 1 && $is_admin == 0){
             $msg_arr[] = 'Registration successful :)<br />Your account must now be validated by an admin.<br />You will receive an email when it is done.';
         } else {
             $msg_arr[] = 'Registration successful :)<br />Welcome to eLabFTW \o/';

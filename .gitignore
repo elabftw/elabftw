@@ -5,10 +5,6 @@ admin/config.php
 admin/config.php.bak
 admin/config.ini
 admin/.htpasswd
-test.php
-test-exec.php
-populate.php
-populate-exec.php
 PASTIE
 uploads/
 

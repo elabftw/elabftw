@@ -86,7 +86,7 @@ mysql> grant usage on *.* to elabftw@localhost identified by 'YOUR_PASSWORD';
 mysql> grant all privileges on elabftw.* to elabftw@localhost;
 mysql> exit
 # now we import the database structure
-$ mysql -u elabftw -p elabftw < install/elabftw.sql
+$ mysql -u elabftw -p elabftw < elabftw/install/elabftw.sql
 ~~~
 You will be asked for the password you put after `identified by` three lines above.
 

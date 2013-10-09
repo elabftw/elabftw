@@ -32,44 +32,20 @@ if (file_exists('../admin/config.php')) {
     header('Location: ../install/index.php');
     die();
 }
-?>
-
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-<link rel="icon" type="image/ico" href="../img/favicon.ico" />
-<title>eLabFTW INSTALL</title>
-<meta name="author" content="Nicolas CARPi" />
-<!-- CSS -->
-<link rel="stylesheet" media="all" href="../css/main.css" />
-<link id='maincss' rel='stylesheet' media='all' href='../themes/default/style.css' />
-<link rel="stylesheet" media="all" href="../css/jquery-ui-1.10.3.custom.min.css" />
-
-<!-- JAVASCRIPT -->
-<script src="../js/jquery-2.0.3.min.js"></script>
-<script src="../js/jquery-ui-1.10.3.custom.min.js"></script>
-<!-- Form validation client-side -->
-<script src="../js/parsley.min.js"></script>
-</head>
-
-<body>
-<section id="container">
-
-<section class='item'>
-<center><img src='../img/logo.png' alt='elabftw' title='elabftw' /></center>
-<h2>Welcome to the install of eLabFTW</h2>
-
-<?php
-
 
 if (isset($_POST['lab_name']) && !empty($_POST['lab_name'])) {
     // we need to remove double quotes
     $lab_name = str_replace('"', '', $_POST['lab_name']);
+} else {
+    $lab_name = 'elab';
 }
 
 if (isset($_POST['admin_validate']) && !empty($_POST['admin_validate'])) {
-    $admin_validate = 1;
+    if ($_POST['admin_validate'] == 'on') {
+        $admin_validate = 1;
+    } else {
+        $admin_validate = 0;
+    }
 }
 
 if (isset($_POST['link_name']) && !empty($_POST['link_name'])) {
@@ -231,12 +207,12 @@ define('SMTP_PASSWORD', '".$smtp_password."');
 ";
 
 // we try to write content to file and propose the file for download if we can't write to it
-$result = file_put_contents($config_file, $config);
 
-if ($result) {
-    $message = 'Congratulations ! You finished the install of eLabFTW.';
-    display_message('info', $message);
-    echo "<p>You can now begin using it.</p>";
+if (file_put_contents($config_file, $config)) {
+    $infos_arr = array();
+    $infos_arr[] = 'Congratulations, you successfully installed eLabFTW, now you need to <strong>register</strong> your account (you will have admin rights).';
+    $_SESSION['infos'] = $infos_arr;
+    header('Location: ../register.php');
 
 } else {
 	header('Content-Type: text/x-delimtext; name="config.php"');

@@ -232,7 +232,7 @@ if (extension_loaded("gd")) {
 </p>
 
 <div class='center' style='margin-top:8px'>
-<button type='button' id='test_sql_button' class='button'>Test MySQL connection</button>
+<button type='button' id='test_sql_button' class='button'>Test MySQL connection to continue</button>
 </div>
 
 </fieldset>
@@ -240,9 +240,10 @@ if (extension_loaded("gd")) {
 <br />
 
 <!-- EMAIL -->
+<section id='email_section'>
 <fieldset>
 <legend><strong>Email settings</strong></legend>
-<p>This part is about the SMTP settings. eLabFTW will need to be able to send out emails for password resets. You can ignore this part and deal with it later, just keep in mind that users won't be able to reset their passwords (and users tend to forget passwords !).</p>
+<p>This part is about the SMTP settings. eLabFTW will need to be able to send out emails for password resets.</p>
 
 <p>
 <label for='smtp_address'>Address of the smtp server:</label><br />
@@ -275,19 +276,21 @@ if (extension_loaded("gd")) {
 </p>
 
 <div class='center' style='margin-top:8px'>
-<button type='button' id='test_email_button' class='button'>Test email parameters</button>
+<button type='button' id='test_email_button' class='button'>Test email parameters to continue</button>
 </div>
 
 </fieldset>
+</section>
 
 <br />
 
-
-<p>When you click the button below, it will create the file <em>admin/config.php</em>. If you want to modify some parameters afterwards, just edit this file directly.</p>
+<section id='final_section'>
+<p>When you click the button below, it will create the file <em>admin/config.php</em>. If it cannot create it (because the server doesn't have write permission to this folder), your browser will download it and you will need to put it in the folder <em>admin</em>. If you want to modify some parameters afterwards, just edit this file directly.</p>
 
 <div class='center' style='margin-top:8px'>
     <input type="submit" name="Submit" class='button' value="INSTALL eLabFTW" />
 </div>
+</section>
 
 </form>
 
@@ -298,47 +301,60 @@ if (extension_loaded("gd")) {
 </footer>
 </section>
 <script>
-$('#test_sql_button').click(function() {
-    var mysql_host = $('#db_host').val();
-    var mysql_name = $('#db_name').val();
-    var mysql_user = $('#db_user').val();
-    var mysql_password = $('#db_password').val();
+$(document).ready(function() {
+    // hide the email part
+    $('#email_section').hide();
+    // hide the install button
+    $('#final_section').hide();
 
-    $.post('test.php', {
-        mysql: 1,
-        db_host: mysql_host,
-        db_name: mysql_name,
-        db_user: mysql_user,
-        db_password: mysql_password
-    }).done(function(test_result) {
-        if (test_result == 1) {
-            alert('MySQL connection was successful ! :)');
-        } else {
-            alert('The connection failed with this error : ' + test_result);
-        }
+    // sql test button
+    $('#test_sql_button').click(function() {
+        var mysql_host = $('#db_host').val();
+        var mysql_name = $('#db_name').val();
+        var mysql_user = $('#db_user').val();
+        var mysql_password = $('#db_password').val();
+
+        $.post('test.php', {
+            mysql: 1,
+            db_host: mysql_host,
+            db_name: mysql_name,
+            db_user: mysql_user,
+            db_password: mysql_password
+        }).done(function(test_result) {
+            if (test_result == 1) {
+                alert('MySQL connection was successful ! :)');
+                $('#email_section').show();
+                $('#test_sql_button').hide();
+            } else {
+                alert('The connection failed with this error : ' + test_result);
+            }
+        });
     });
-});
 
-$('#test_email_button').click(function() {
-    var email_address = $('#smtp_address').val();
-    var email_port = $('#smtp_port').val();
-    var email_encryption = $('#smtp_encryption').val();
-    var email_username = $('#smtp_username').val();
-    var email_password = $('#smtp_password').val();
+    // email test button
+    $('#test_email_button').click(function() {
+        var email_address = $('#smtp_address').val();
+        var email_port = $('#smtp_port').val();
+        var email_encryption = $('#smtp_encryption').val();
+        var email_username = $('#smtp_username').val();
+        var email_password = $('#smtp_password').val();
 
-    $.post('test.php', {
-        email: 1,
-        smtp_address: email_address,
-        smtp_port: email_port,
-        smtp_encryption: email_encryption,
-        smtp_username: email_username,
-        smtp_password: email_password
-    }).done(function(test_result) {
-        if (test_result == 1) {
-            alert('Email was sent successfully (to elabftw-test@yopmail.com) :)');
-        } else {
-            alert('The connection failed :/');
-        }
+        $.post('test.php', {
+            email: 1,
+            smtp_address: email_address,
+            smtp_port: email_port,
+            smtp_encryption: email_encryption,
+            smtp_username: email_username,
+            smtp_password: email_password
+        }).done(function(test_result) {
+            if (test_result == 1) {
+                alert('Email was sent successfully (to elabftw-test@yopmail.com) :)');
+                $('#final_section').show();
+                $('#test_email_button').hide();
+            } else {
+                alert('The connection failed :/');
+            }
+        });
     });
 });
 </script>

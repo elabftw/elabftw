@@ -16,10 +16,9 @@ Don't have an old computer ? That's okay, you can install eLabFTW on a Raspberry
 
 But you can also install it locally and use it for yourself only. Here is how :
 
-### Install locally on Mac OS
-Please [follow the instructions on the wiki](https://github.com/NicolasCARPi/elabftw/wiki/installmac).
-### Install locally on Windows
-Please [follow the instructions on the wiki](https://github.com/NicolasCARPi/elabftw/wiki/installwin).
+* [Install locally on Mac](https://github.com/NicolasCARPi/elabftw/wiki/installmac).
+* [Install locally on Windows](https://github.com/NicolasCARPi/elabftw/wiki/installwin).
+
 ## Install on Unix-like OS (GNU/Linux, BSD, Solaris, etc…) (the recommended way !)
 Please refer to your distribution's documentation to install :
 * a webserver (Apache2 is recommended)

@@ -110,6 +110,14 @@ if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.3', '
     display_message('info', $message);
 }
 
+// Check for hash function
+if (!function_exists('hash')) {
+    $message = "You don't have the hash function. On Freebsd it's in /usr/ports/security/php5-hash.";
+    display_message('error', $message);
+    custom_die();
+}
+
+
 // UPLOADS DIR
 if (is_writable('../uploads') && is_writable('../uploads/export') && is_writable('../uploads/tmp')) {
     $message = 'The <em>uploads/</em> folder and its subdirectories are here and I can write to it.';

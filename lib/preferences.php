@@ -6,8 +6,10 @@
 /*                                                                          */
 /****************************************************************************/
 
+$preferences = Swift_Preferences::getInstance();
+
 // Sets the default charset so that setCharset() is not needed elsewhere
-Swift_Preferences::getInstance()->setCharset('utf-8');
+$preferences->setCharset('utf-8');
 
 // Without these lines the default caching mechanism is "array" but this uses a lot of memory.
 // If possible, use a disk cache to enable attaching large attachments etc.
@@ -17,13 +19,17 @@ Swift_Preferences::getInstance()->setCharset('utf-8');
 // when using open_basedir
 $tmp = getenv('TMPDIR');
 if ($tmp && @is_writable($tmp)) {
-    Swift_Preferences::getInstance()
+    $preferences
         ->setTempDir($tmp)
         ->setCacheType('disk');
 } elseif (function_exists('sys_get_temp_dir') && @is_writable(sys_get_temp_dir())) {
-    Swift_Preferences::getInstance()
+    $preferences
         ->setTempDir(sys_get_temp_dir())
         ->setCacheType('disk');
 }
 
-Swift_Preferences::getInstance()->setQPDotEscape(false);
+// this should only be done when Swiftmailer won't use the native QP content encoder
+// see mime_deps.php
+if (version_compare(phpversion(), '5.4.7', '<')) {
+    $preferences->setQPDotEscape(false);
+}

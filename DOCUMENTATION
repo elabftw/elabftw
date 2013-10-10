@@ -35,7 +35,7 @@ Code from others (a big thanks to them for making their code available !) :
 
 * HTML2PDF : http://html2pdf.fr/ (LGPL)
 
-* Swiftmailer v4.3.0 : http://swiftmailer.org for sending email with SMTP (GPLv3)
+* Swiftmailer v5.0.1 : http://swiftmailer.org for sending email with SMTP (GPLv3)
 
 * Raphael (used by colorwheel) : http://raphaeljs.com/ (MIT)
 

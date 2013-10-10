@@ -2,7 +2,10 @@
 
 
 # Description
-Please visit the [official website](http://www.elabftw.net) to see some screenshots and use a demo :)
+eLabFTW is an electronic lab notebook manager for research teams. It also features a database where you can store any kind of objects.
+
+* [Official website](http://www.elabftw.net)
+* [Live demo](http://www.flood.fr/elabftw-demo)
 
 # Installation
 Thank you for choosing eLabFTW as a lab manager =)

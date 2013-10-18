@@ -42,15 +42,14 @@ $req->execute();
 $count = $req->rowCount();
 // only show the frame if there is some users to validate
 if ($count > 0) {
-    echo "
-<section class='fail'>
-<h3>USERS WAITING FOR VALIDATION</h3>";
-echo "<form method='post' action='admin-exec.php'><ul>";
+    $message = "There are users waiting for validation of their account :";
+    $message .= "<form method='post' action='admin-exec.php'><ul>";
 while ($data = $req->fetch()) {
-    echo "<li><input type='checkbox' name='validate[]' value='".$data['userid']."'> ".$data['firstname']." ".$data['lastname']." (".$data['email'].")</li>";
+    $message .= "<li><input type='checkbox' name='validate[]' value='".$data['userid']."'> ".$data['firstname']." ".$data['lastname']." (".$data['email'].")</li>";
 }
-echo "</ul><input type='submit' name='submit' value='Validate users' /></form>";
-echo "</section>";
+$message .= "</ul><div class='center'>
+    <input class='button' type='submit' name='submit' value='Validate users' /></div></form>";
+    display_message('error', $message);
 }
 ?>
 

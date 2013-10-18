@@ -110,7 +110,7 @@ Example : http://12.34.56.78/phpmyadmin
 Login with the root user on PhpMyAdmin panel (use the password you setup for mysql root user).
 #### 1) create a user `elabftw` with all rights on the database `elabftw`
 
-Now click the `Users` tab and click Add new user.
+Now click the `Privileges` tab and click Add new user.
 
 Do like this :
 
@@ -120,7 +120,8 @@ Do like this :
 #### 2) import the database structure :
 * On the menu on the left, select the newly created database `elabftw`
 * Click the Import tab
-* Select the file /path/to/elabftw/install/elabftw.sql
+* Download [this file](https://raw.github.com/NicolasCARPi/elabftw/master/install/elabftw.sql)
+* Click Browse... and select the file you just downloaded
 * Click Go
 
 ## Final step

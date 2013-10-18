@@ -64,6 +64,14 @@ p a{
     font-weight: bold;
 }
 
+.code {
+    font:14px Courrier, sans-serif;
+    background-color:white;
+    border:1px dotted #ccc;
+    margin:10px;
+    padding:7px;
+}
+
 /* hr */
 hr {
     margin: 10px 0 10px 0;

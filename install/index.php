@@ -87,12 +87,33 @@ function custom_die() {
 <h2>Welcome to the install of eLabFTW</h2>
 
 <?php
-// Check if there is already a config file, die if yes.
+// Check if there is already a config file
 
 if(file_exists('../admin/config.php')) {
-    $message = 'It looks like eLabFTW is already installed. Delete the config file if you wish to reinstall it.';
-    display_message('error', $message);
-    custom_die();
+    // ok there is a config file, but maybe it's a fresh install, so redirect to the register page
+    // check if there are users registered
+    require_once('../admin/config.php');
+    try
+    {
+        $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+        $bdd = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
+    }
+    catch(Exception $e)
+    {
+        die('Error : '.$e->getMessage());
+    }
+    $sql = "SELECT * FROM users";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $users_count = $req->rowCount();
+    // redirect to register page if no users are in the database
+    if ($users_count === 0) {
+        header('Location: ../register.php');
+    } else {
+        $message = 'It looks like eLabFTW is already installed. Delete the config file if you wish to reinstall it.';
+        display_message('error', $message);
+        custom_die();
+    }
 }
 ?>
 
@@ -293,11 +314,17 @@ if (extension_loaded("gd")) {
 <br />
 
 <section id='final_section'>
-<p>When you click the button below, it will create the file <em>admin/config.php</em>. If it cannot create it (because the server doesn't have write permission to this folder), your browser will download it and you will need to put it in the folder <em>admin</em>. If you want to modify some parameters afterwards, just edit this file directly.</p>
+<p>When you click the button below, it will create the file <em>admin/config.php</em>. If it cannot create it (because the server doesn't have write permission to this folder), your browser will download it and you will need to put it in the folder <em>admin</em>.</p>
+<p>To put this file on the server, you can use scp (don't write the '$') :</p>
+<p class='code'>$ scp /path/to/config.php pi@12.34.56.78:/var/www/elabftw/admin</p>
+<p>If you want to modify some parameters afterwards, just edit this file directly.</p>
 
 <div class='center' style='margin-top:8px'>
     <input type="submit" name="Submit" class='button' value="INSTALL eLabFTW" />
 </div>
+
+<p>If the config.php file is in place, <button onclick='window.location.reload()'>reload this page</button></p>
+<p>You will be redirected to the registration page, where you can get your admin account :)</p>
 </section>
 
 </form>

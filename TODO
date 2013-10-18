@@ -1,6 +1,8 @@
 ////// Priority
+* there might be a permission problem with the config.php file when it's downloaded and reuploaded
 
 ////// Fix/improve
+* when a user register, send email to admin
 * when you follow a link and you're not logged in, you want to be redirected to the target page after login
 * possibility to share a database item between two labs
 

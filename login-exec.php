@@ -95,10 +95,17 @@ if ($result) {
         session_write_close();
         // Make a unique token and store it in sql AND cookie
         $token = md5(uniqid(rand(), true));
-        // Cookie validity = 1 month
-        setcookie('token', $token, time() + 60*60*24*30);
-        $path = dirname(__FILE__);
-        setcookie('path', $path, time() + 60*60*24*30);
+        // Cookie validity = 1 month, works only in https
+        if (!isset($_SERVER['HTTPS'])) {
+            die("eLabFTW works only in HTTPS. Please enable HTTPS on your server. <a href='https://httpd.apache.org/docs/current/ssl/ssl_howto.html'>See documentation</a>.");
+        }
+
+        // Set the two cookies : token and path
+        // setcookie( $name, $value, $expire, $path, $domain, $secure, $httponly )
+        setcookie('token', $token, time() + 60*60*24*30, null, null, true, true);
+        //setcookie('token', $token, time() + 60*60*24*30, dirname(__FILE__), null, true, true);
+        setcookie('path', dirname(__FILE__), time() + 60*60*24*30, null, null, true, true);
+        // Update the token in SQL
         $sql = "UPDATE users SET token = :token WHERE userid = :userid";
         $req = $bdd->prepare($sql);
         $req->execute(array(

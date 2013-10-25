@@ -121,6 +121,13 @@ if(file_exists('../admin/config.php')) {
 <br />
 <br />
 <?php
+// CHECK WE ARE WITH HTTPS
+if (!isset($_SERVER['HTTPS'])) {
+    $message = "Please enable HTTPS on the server and access eLabFTW through HTTPS.";
+    display_message('error', $message);
+    custom_die();
+}
+
 // CHECK PHP version
 if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.3', '<')) {
     $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.3";

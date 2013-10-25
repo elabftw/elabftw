@@ -106,14 +106,14 @@ if ($result) {
             'userid' => $data['userid']
         ));
         header("location: experiments.php");
-    }else {
+    } else {
         //Login failed
         $msg_arr = array();
         $msg_arr[] = "Login failed. Either you mistyped your password, or your account isn't activated yet.";
         $_SESSION['errors'] = $msg_arr;
         header("location: login.php");
     }
-}else {
+} else {
     die("Query failed");
 }
 

@@ -80,6 +80,11 @@ if (DEBUG) {
     echo "Session array : ";
     print_r($_SESSION);
     echo "<br />";
+    echo "Cookie : ";
+    print_r($_COOKIE);
+    echo "<br />";
+    echo "PATH : ".PATH;
+
 }
 ?>
 

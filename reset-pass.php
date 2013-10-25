@@ -29,15 +29,6 @@ require_once('inc/functions.php');
 require_once('lib/swift_required.php');
 // we receive email in post
 if (isset($_POST['email'])) {
-    // Check that we can actually send emails :
-    if (SMTP_USERNAME == 'YOURUSERNAME') {
-            $msg_arr[] = 'Emails are not configured ! Configure an SMTP server first !';
-            $_SESSION['errors'] = $msg_arr;
-            session_write_close();
-            header("location: login.php");
-            die();
-    }
-
     // // Get infos about the requester (will be sent in the mail afterwards)
     // Get IP
     if (!empty($_SERVER["HTTP_CLIENT_IP"])){

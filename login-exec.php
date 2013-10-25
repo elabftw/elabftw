@@ -97,7 +97,7 @@ if ($result) {
         $token = md5(uniqid(rand(), true));
         // Cookie validity = 1 month, works only in https
         if (!isset($_SERVER['HTTPS'])) {
-            die("eLabFTW works only in HTTPS. Please enable HTTPS on your server. <a href='https://httpd.apache.org/docs/current/ssl/ssl_howto.html'>See documentation</a>.");
+            die("eLabFTW works only in HTTPS. Please enable HTTPS on your server (<a href='https://httpd.apache.org/docs/current/ssl/ssl_howto.html'>see documentation</a>). Or retry with https:// in front of the address.");
         }
 
         // Set the two cookies : token and path

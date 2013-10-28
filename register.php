@@ -58,7 +58,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
                 </p>
                 <p>
                     <label for="password">Password</label>
-                    <input name="password" type="password" id="password" data-trigger="change" data-minlength="4" />
+                    <input name="password" type="password" id="password" data-trigger="change" data-minlength="8" />
                 </p>
                 <p>
                     <label for="cpassword">Confirm password</label>

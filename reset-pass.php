@@ -57,6 +57,7 @@ if (isset($_POST['email'])) {
         // Check email exists
         if($numrows === 1){
             // Get info to build the URL
+            // TODO remove as we use only https
             // HTTP or HTTPS ?
             if (!empty($_SERVER['HTTPS'])) {
                 $protocol = 'https://';
@@ -110,5 +111,7 @@ Free open-source Lab Manager');
             session_write_close();
             header("location: login.php");
     }
+} else { // this page isn't called with POST
+    header('Location: experiments.php');
 }
 

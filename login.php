@@ -30,7 +30,10 @@ require_once('inc/menu.php');
 require_once('inc/info_box.php');
 // Check if already logged in
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
-    die('You are already logged in !');
+    $message ='You are already logged in !';
+    display_message('error', $message);
+    require_once('inc/footer.php');
+    die();
 }
 // Page begin
 ?>

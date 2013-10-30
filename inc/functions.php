@@ -452,7 +452,8 @@ function make_pdf($id, $type, $out = 'browser') {
         <em>Keywords : ".$tags."</em><br />
         <hr>".$body."<br /><br />
         <hr>Made by : ".$firstname." ".$lastname."<br /><br />";
-    // QR CODE
+    // QR CODE (commented out as it's not possible with mpdf)
+    // TODO remove as it's only https now
     if (!empty($_SERVER['HTTPS'])) {
         $protocol = 'https://';
     } else {
@@ -466,7 +467,7 @@ function make_pdf($id, $type, $out = 'browser') {
         $url = str_replace('make_zip.php', 'experiments.php', $url);
         }
         $full_url = $url."?mode=view&id=".$id;
-        $content .= "<qrcode value='".$full_url."' ec='H' style='width: 42mm; background-color: white; color: black;'></qrcode>";
+        //$content .= "<qrcode value='".$full_url."' ec='H' style='width: 42mm; background-color: white; color: black;'></qrcode>";
         $content .= "<br /><p>elabid : ".$elabid."</p>";
         $content .= "<p>URL : <a href='".$full_url."'>".$full_url."</a></p>";
     } else {
@@ -476,48 +477,40 @@ function make_pdf($id, $type, $out = 'browser') {
         $url = str_replace('make_zip.php', 'database.php', $url);
         }
         $full_url = $url."?mode=view&id=".$id;
-        $content .= "<qrcode value='".$full_url."' ec='H' style='width: 42mm; background-color: white; color: black;'></qrcode>";
+        //$content .= "<qrcode value='".$full_url."' ec='H' style='width: 42mm; background-color: white; color: black;'></qrcode>";
         $content .= "<p>URL : <a href='".$full_url."'>".$full_url."</a></p>";
     }
 
 
-    // convert in PDF with html2pdf
-    require_once('lib/html2pdf/html2pdf.class.php');
-    try
-    {
-        $html2pdf = new HTML2PDF('P', 'A4', 'fr');
-        $html2pdf->pdf->SetAuthor($firstname.' '.$lastname);
-        $html2pdf->pdf->SetTitle($title);
-        $html2pdf->pdf->SetSubject('eLabFTW pdf');
-        $html2pdf->pdf->SetKeywords($tags);
-        // $html2pdf->setDefaultFont('Arial');
-        $html2pdf->setDefaultFont('DejavuSans');
-        $html2pdf->writeHTML($content);
+    // Generate pdf with mpdf
+    require_once('lib/mpdf/mpdf.php');
+    $mpdf = new mPDF();
+
+    $mpdf->SetAuthor($firstname.' '.$lastname);
+    $mpdf->SetTitle($title);
+    $mpdf->SetSubject('eLabFTW pdf');
+    $mpdf->SetKeywords($tags);
+    $mpdf->WriteHTML($content);
 
         if ($type == 'experiments') {
             // used by make_zip
             if ($out != 'browser') {
-            $html2pdf->Output($out.'/'.$clean_title.'.pdf', 'F');
+            $mpdf->Output($out.'/'.$clean_title.'.pdf', 'F');
             return $clean_title.'.pdf';
             } else {
-            $html2pdf->Output($clean_title.'.pdf');
+            $mpdf->Output($clean_title.'.pdf', 'I');
             }
         } else { // database item(s)
             // used by make_zip
             if ($out != 'browser') {
-            $html2pdf->Output($out.'/'.$clean_title.'.pdf', 'F');
+            $mpdf->Output($out.'/'.$clean_title.'.pdf', 'F');
             return $clean_title.'.pdf';
             } else {
-            $html2pdf->Output($clean_title.'.pdf');
+            $mpdf->Output($clean_title.'.pdf', 'I');
             }
         }
-    }
-
-    catch(HTML2PDF_exception $e) {
-        echo $e;
-        exit;
-    }
 }
+
 
 function generate_elabid() {
 // Generate unique elabID

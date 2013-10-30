@@ -33,13 +33,50 @@ $errors_arr = array();
 
 // VALIDATE USERS
 if (isset($_POST['validate'])) {
+    // sql to validate users
     $sql = "UPDATE users SET validated = 1 WHERE userid = :userid";
     $req = $bdd->prepare($sql);
+    // sql to get email of the user
+    $sql_email = "SELECT email FROM users WHERE userid = :userid";
+    $req_email = $bdd->prepare($sql_email);
     foreach ($_POST['validate'] as $user) {
         $req->execute(array(
             'userid' => $user
         ));
             $infos_arr[] = 'Validated user with user ID : '.$user;
+        $req_email->execute(array(
+            'userid' => $user
+        ));
+        $user = $req_email->fetch();
+        // now let's get the URL so we can have a nice link in the email
+        $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+        $url = str_replace('admin-exec.php', 'login.php', $url);
+        // we send an email to each validated new user
+        require_once('lib/swift_required.php');
+        // Create the message
+        $message = Swift_Message::newInstance()
+        // Give the message a subject
+        ->setSubject('[eLabFTW] New user registred')
+        // Set the From address with an associative array
+        ->setFrom(array('elabftw.net@gmail.com' => 'eLabFTW'))
+        // Set the To addresses with an associative array
+        ->setTo(array($user['email'] => 'Your account has been activated.'))
+        // Give it a body
+        ->setBody('Hi,
+Your account on eLabFTW has been activated. You can now login:
+'.$url.'
+
+Thanks for using eLabFTW :)
+
+~~
+Email sent by eLabFTW
+http://www.elabftw.net
+Free open-source Lab Manager');
+        $transport = Swift_SmtpTransport::newInstance(SMTP_ADDRESS, SMTP_PORT, SMTP_ENCRYPTION)
+        ->setUsername(SMTP_USERNAME)
+        ->setPassword(SMTP_PASSWORD);
+        $mailer = Swift_Mailer::newInstance($transport);
+        $mailer->send($message);
     }
     $_SESSION['infos'] = $infos_arr;
     header('Location: admin.php');

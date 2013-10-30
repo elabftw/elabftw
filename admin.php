@@ -45,7 +45,7 @@ if ($count > 0) {
     $message = "There are users waiting for validation of their account :";
     $message .= "<form method='post' action='admin-exec.php'><ul>";
 while ($data = $req->fetch()) {
-    $message .= "<li><input type='checkbox' name='validate[]' value='".$data['userid']."'> ".$data['firstname']." ".$data['lastname']." (".$data['email'].")</li>";
+    $message .= "<li><label><input type='checkbox' name='validate[]' value='".$data['userid']."'> ".$data['firstname']." ".$data['lastname']." (".$data['email'].")</label></li>";
 }
 $message .= "</ul><div class='center'>
     <input class='button' type='submit' name='submit' value='Validate users' /></div></form>";

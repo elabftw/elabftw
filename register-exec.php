@@ -149,9 +149,37 @@ if (ADMIN_VALIDATE === 1 && $is_admin == 0) {
 $result = $bdd->exec($sql);
 //Check whether the query was successful or not
 if($result) {
-    // Redirect
         $msg_arr = array();
         if (ADMIN_VALIDATE === 1 && $is_admin == 0){
+            // we send an email to the admin so he can validate the user
+            require_once('lib/swift_required.php');
+            // get email of the admin (there might be several admins, but we send only to the first one we find)
+            $sql = "SELECT email FROM users WHERE is_admin = 1 LIMIT 1";
+            $req = $bdd->prepare($sql);
+            $req->execute();
+            $admin = $req->fetch();
+            // Create the message
+            $message = Swift_Message::newInstance()
+            // Give the message a subject
+            ->setSubject('[eLabFTW] New user registred')
+            // Set the From address with an associative array
+            ->setFrom(array('elabftw.net@gmail.com' => 'eLabFTW'))
+            // Set the To addresses with an associative array
+            ->setTo(array($admin['email'] => 'Admin eLabFTW'))
+            // Give it a body
+            ->setBody('Hi,
+Someone registered a new account on eLabFTW. Head to the admin panel to activate the account !
+
+~~
+Email sent by eLabFTW
+http://www.elabftw.net
+Free open-source Lab Manager');
+            require_once('admin/config.php');
+            $transport = Swift_SmtpTransport::newInstance(SMTP_ADDRESS, SMTP_PORT, SMTP_ENCRYPTION)
+            ->setUsername(SMTP_USERNAME)
+            ->setPassword(SMTP_PASSWORD);
+            $mailer = Swift_Mailer::newInstance($transport);
+            $result = $mailer->send($message);
             $msg_arr[] = 'Registration successful :)<br />Your account must now be validated by an admin.<br />You will receive an email when it is done.';
         } else {
             $msg_arr[] = 'Registration successful :)<br />Welcome to eLabFTW \o/';

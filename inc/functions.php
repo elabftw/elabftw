@@ -482,46 +482,6 @@ function make_pdf($id, $type, $out = 'browser') {
     }
 
 
-    /*
-    // convert in PDF with html2pdf
-    require_once('lib/html2pdf/html2pdf.class.php');
-    try
-    {
-        $html2pdf = new HTML2PDF('P', 'A4', 'fr');
-        $html2pdf->pdf->SetAuthor($firstname.' '.$lastname);
-        $html2pdf->pdf->SetTitle($title);
-        $html2pdf->pdf->SetSubject('eLabFTW pdf');
-        $html2pdf->pdf->SetKeywords($tags);
-        // $html2pdf->setDefaultFont('Arial');
-        $html2pdf->setDefaultFont('DejavuSans');
-        $html2pdf->writeHTML($content);
-
-        if ($type == 'experiments') {
-            // used by make_zip
-            if ($out != 'browser') {
-            $html2pdf->Output($out.'/'.$clean_title.'.pdf', 'F');
-            return $clean_title.'.pdf';
-            } else {
-            $html2pdf->Output($clean_title.'.pdf');
-            }
-        } else { // database item(s)
-            // used by make_zip
-            if ($out != 'browser') {
-            $html2pdf->Output($out.'/'.$clean_title.'.pdf', 'F');
-            return $clean_title.'.pdf';
-            } else {
-            $html2pdf->Output($clean_title.'.pdf');
-            }
-        }
-    }
-
-    catch(HTML2PDF_exception $e) {
-        echo $e;
-        exit;
-    }
-}
-     */
-
     // Generate pdf with mpdf
     require_once('lib/mpdf/mpdf.php');
     $mpdf = new mPDF();

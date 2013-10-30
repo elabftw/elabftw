@@ -25,6 +25,8 @@
 ********************************************************************************/
 /* auth + connect + functions*/
 session_start();
+
+
 // TODO delete this block in a few updates
 if (file_exists('admin/config.ini')) {
     $ini_arr = parse_ini_file('admin/config.ini');
@@ -34,6 +36,14 @@ if (file_exists('admin/config.ini')) {
             Otherwise it might not work.");
 }
 
+// check that the config file is here and readable
+if (!is_readable('admin/config.php')) {
+    die("No readable config file found. Make sure the server has permissions to read it. Try :<br />
+        <hr>
+        chmod 644 admin/config.php
+        <hr>
+        Or if eLabFTW is not yet installed, head to the <a href='install'>install folder</a>");
+}
 require_once('admin/config.php');
 require_once('inc/functions.php');
 // SQL CONNECT

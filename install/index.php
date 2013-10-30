@@ -91,6 +91,14 @@ function custom_die() {
 
 if(file_exists('../admin/config.php')) {
     // ok there is a config file, but maybe it's a fresh install, so redirect to the register page
+    // check that the config file is here and readable
+    if (!is_readable('admin/config.php')) {
+        $message = "No readable config file found. Make sure the server has permissions to read it. Try :<br />
+            chmod 644 admin/config.php<br />";
+        display_message('error', $message);
+        custom_die();
+    }
+
     // check if there are users registered
     require_once('../admin/config.php');
     try

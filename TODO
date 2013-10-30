@@ -1,5 +1,4 @@
 ////// Priority
-* there might be a permission problem with the config.php file when it's downloaded and reuploaded
 
 ////// Fix/improve
 * when a user register, send email to admin

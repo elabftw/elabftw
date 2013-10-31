@@ -12,6 +12,7 @@
 * use password_hash
 * read only status for past members
 * have real auth with LDAP etc... like here : http://docs.moodle.org/22/en/Authentication
+* add url of item in csv export
 
 // security improvements
 * Un utilisateur donné (login unique) ne peut ouvrir qu’une seule session à la fois sur une application donnée. Toute tentative d’ouverture d’une nouvelle session doit mettre fin à la précédente. La fermeture de session s’accompagne d’un message indiquant qu’une autre session a été ouverte et l’ouverture de session s’accompagne d’un message indiquant qu’une autre session a été fermée. Le message doit spécifier que cela peut être le signe d’une tentative d’intrusion.

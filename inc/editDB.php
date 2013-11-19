@@ -40,6 +40,14 @@ $req = $bdd->prepare($sql);
 $req->execute();
 $data = $req->fetch();
 
+// Check for lock
+if ($data['locked'] == 1) {
+    $message = "<strong>This item is locked.</strong> You cannot edit it.";
+    display_message('error', $message);
+    require_once('inc/footer.php');
+    exit();
+}
+
 // BEGIN CONTENT
 ?>
 <section class='item'>

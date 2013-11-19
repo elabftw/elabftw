@@ -377,15 +377,17 @@ if(isset($test['visibility'])) {
 }
 
 // remove unused items_templates table
+echo "Table items_templates...";
 $sql = "DROP TABLE IF EXISTS `items_templates`";
 $req = $bdd->prepare($sql);
 $result = $req->execute();
 if($result) {
-    echo "Removed items_templates table.\n";
+    echo "Nothing to do.\n";
 } else {
     echo 'There was a problem in the database update :/';
 }
 // remove unused users table
+echo "Unused users columns...";
 $sql = "SELECT * from users";
 $req = $bdd->prepare($sql);
 $req->execute();
@@ -403,7 +405,7 @@ if(isset($test['is_jc_resp'])) {
     echo "Nothing to do.\n";
 }
 // TMP upload dir
-echo "Create uploads/tmp directory...\n";
+echo "Create uploads/tmp directory...";
 if (!is_dir("uploads/tmp")){
    if  (mkdir("uploads/tmp", 0777)){
     echo "Directory created";
@@ -415,4 +417,22 @@ if (!is_dir("uploads/tmp")){
     echo "Nothing to do.\n";
 }
 
+
+// ADD LOCK TO ITEMS SQL TABLE
+$add_locked_items = false;
+try {
+    $sql = "SELECT locked from items";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+} catch (Exception $e) {
+    $add_locked_items = true;
+    $sql = "ALTER TABLE `items` ADD `locked` TINYINT UNSIGNED NULL DEFAULT NULL AFTER `type` ;";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+}
+if ($add_locked_items) {
+    echo ">>> Database items can now be locked !\n";
+} else {
+    echo "Column 'locked' already exists. Nothing to do.\n";
+}
 

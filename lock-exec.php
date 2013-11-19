@@ -26,32 +26,44 @@
 // lock-exec.php
 require_once('inc/common.php');
 // Check id is valid and assign it to $id
-if(isset($_GET['id']) && is_pos_int($_GET['id'])) {
+if (isset($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    die("The id parameter in the URL isn't a valid experiment ID");
+    die("The id parameter in the URL isn't a valid ID");
 }
 
 // what do we do ? lock or unlock ?
-if(isset($_GET['action']) && ($_GET['action'] == 'lock')) {
+if (isset($_GET['action']) && ($_GET['action'] == 'lock')) {
     $action = 1; // lock
 } else {
     $action = 0; // unlock
 }
 
-$sql = "UPDATE experiments SET locked = :action WHERE id = :id AND userid = :userid";
-$req = $bdd->prepare($sql);
-$result = $req->execute(array(
-    'action' => $action,
-    'id' => $id,
-    'userid' => $_SESSION['userid']
-));
-
-if($result){
-    $infomsg_arr[] = 'Experiment locked !';
-    $infoflag = true;
-    header("Location: experiments.php?mode=view&id=$id");
-} else {
-    die('SQL failed');
+// is it an experiment or a database item ?
+if (isset($_GET['type']) && ($_GET['type'] == 'experiments')) {
+    $sql = "UPDATE experiments SET locked = :action WHERE id = :id AND userid = :userid";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute(array(
+        'action' => $action,
+        'id' => $id,
+        'userid' => $_SESSION['userid']
+    ));
+    if ($result) {
+        header("Location: experiments.php?mode=view&id=$id");
+    } else {
+        die('SQL failed');
+    }
+} else { // we are updating a database item (no userid here)
+    $sql = "UPDATE items SET locked = :action WHERE id = :id";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute(array(
+        'action' => $action,
+        'id' => $id
+    ));
+    if ($result) {
+        header("Location: database.php?mode=view&id=$id");
+    } else {
+        die('SQL failed');
+    }
 }
 

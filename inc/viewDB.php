@@ -51,7 +51,13 @@ echo "<a href='database.php?mode=edit&id=".$data['id']."'><img src='themes/".$_S
 <a href='make_pdf.php?id=".$data['id']."&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/pdf.png' title='make a pdf' alt='pdf' /></a> 
 <a href='javascript:window.print()'><img src='themes/".$_SESSION['prefs']['theme']."/img/print.png' title='Print this page' alt='Print' /></a> 
 <a href='make_zip.php?id=".$data['id']."&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/zip.gif' title='make a zip archive' alt='zip' /></a>
-<a href='experiments.php?mode=show&related=".$data['id']."'><img src='img/related.png' alt='Linked experiments' title='Linked experiments' /></a>";
+<a href='experiments.php?mode=show&related=".$data['id']."'><img src='img/related.png' alt='Linked experiments' title='Linked experiments' /></a> ";
+// lock
+if($data['locked'] == 0) {
+    echo "<a href='lock-exec.php?id=".$data['id']."&action=lock&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/unlock.png' title='lock experiment' alt='lock' /></a>";
+} else { // experiment is locked
+    echo "<a href='lock-exec.php?id=".$data['id']."&action=unlock&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' title='unlock experiment' alt='unlock' /></a>";
+}
 // TAGS
 echo show_tags($id, 'items_tags');
 // TITLE : click on it to go to edit mode

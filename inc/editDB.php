@@ -237,6 +237,12 @@ $(document).ready(function() {
     // fix for the ' and "
     title = "<?php echo $data['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
     document.title = title;
+
+    // ask the user if he really wants to navigate out of the page
+    window.onbeforeunload = function (e) {
+          e = e || window.event;
+          return 'Do you want to navigate away from this page ? Unsaved changes will be lost !';
+    };
 });
 </script>
 

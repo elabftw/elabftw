@@ -42,7 +42,7 @@ if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
 ?>
     <!-- ADMIN MENU --> 
     <a href='https://twitter.com/elabftw'>
-        <img src='img/twitter-bird-16x16.png' alt='twitter' title='Follow eLabFTW on Twitter !'>
+        <img src='img/twitter.png' alt='twitter' title='Follow eLabFTW on Twitter !'>
     </a> | 
     <a id='check_for_updates' href='#'>Check for updates</a> | <a href='admin.php'>Admin Panel</a> | 
     <script>

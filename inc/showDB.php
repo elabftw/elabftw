@@ -42,7 +42,7 @@ $req = $bdd->prepare($sql);
 $req->execute();
 
 // 'Create new' dropdown menu
-echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/create.gif' alt='create' /> Create new <select onchange=go_url(this.value)><option value=''>--------</option>";
+echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/notepad_add.png' alt='create' /> Create new <select onchange=go_url(this.value)><option value=''>--------</option>";
 while ($items_types = $req->fetch()) {
     echo "<option value='create_item.php?type=".$items_types['id']."' name='type' ";
     echo ">".$items_types['name']."</option>";

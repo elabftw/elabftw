@@ -36,7 +36,7 @@ require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
         <input id='big_search_input' type='search' name='q' size='50' placeholder='Type your search' />
     </form>
     <br />
-    <a href="create_item.php?type=exp"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/create.gif" alt="" /> Create experiment</a> | 
+    <a href="create_item.php?type=exp"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/notepad_add.png" alt="" /> Create experiment</a> | 
     <a href='#' class='trigger'><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/duplicate.png" alt="" /> Create from template</a> |
     <a onmouseover="changeSrc('<?php echo $_SESSION['prefs']['theme'];?>')" onmouseout="stopAnim('<?php echo $_SESSION['prefs']['theme'];?>')" href='experiments.php?mode=show&q=runningonly'><img id='runningimg' src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/running.fix.png" alt="running" /> Show running experiments</a>
 </div><!-- end submenu -->
@@ -239,7 +239,7 @@ if (isset($_GET['q'])) { // if there is a query
     if ($count == 0) {
         $message = "<strong>Welcome to eLabFTW.</strong> 
             Click the <a style='color:blue;' href='create_item.php?type=exp'>
-            <img src='themes/".$_SESSION['prefs']['theme']."/img/create.gif' alt='Create experiment' />
+            <img src='themes/".$_SESSION['prefs']['theme']."/img/notepad_add.png' alt='Create experiment' />
             Create experiment</a> button to get started."; 
         display_message('info', $message);
     } else {

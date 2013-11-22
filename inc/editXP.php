@@ -61,7 +61,7 @@ if ($data['locked'] == 1) {
 <section id='view_xp_item' class='item <?php echo $data['status'];?>'>
 <a class='align_right' href='delete_item.php?id=<?php echo $id;?>&type=exp' onClick="return confirm('Delete this experiment ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <!-- ADD TAG FORM -->
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.gif' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
 <div class='tags'>
 <span id='tags_div'>
 <?php
@@ -84,7 +84,7 @@ echo stripslashes($tags['tag']);?>
 
 <h4>Date</h4><span class='smallgray'> (date format : YYMMDD)</span><br />
 <!-- TODO if firefox has support for it: type = date -->
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /><input name='date' id='datepicker' size='6' type='text' value='<?php echo $data['date'];?>' />
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /> <input name='date' id='datepicker' size='6' type='text' value='<?php echo $data['date'];?>' />
 
 <span class='align_right'>
 <h4>Status</h4>
@@ -130,7 +130,7 @@ require_once('inc/display_file.php');
 
 <hr class='flourishes'>
 
-<h4>Linked items</h4>
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/link.png'> <h4 style='display:inline'>Linked items</h4>
 <div id='links_div'>
 <?php
 // DISPLAY LINKED ITEMS
@@ -163,7 +163,7 @@ if ($req->rowcount() != 0) {
 <input id='linkinput' size='60' type="text" name="link" placeholder="from the database" />
 
 <br /><br />
-<h4>Visibility</h4>
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/visibility.png'> <h4 style='display:inline'>Visibility</h4>
 <!-- visibility get selected by default -->
 <?php
 $visibility = $data['visibility'];
@@ -426,12 +426,16 @@ $(document).ready(function() {
     jQuery('#linkinput').keypress(function (e) {
         addLinkOnEnter(e);
     });
+    /*
+     * commented out because it should only ask when the user didn't save
+     *
 
     // ask the user if he really wants to navigate out of the page
     window.onbeforeunload = function (e) {
           e = e || window.event;
           return 'Do you want to navigate away from this page ? Unsaved changes will be lost !';
     };
+    */
 });
 </script>
 

@@ -40,18 +40,21 @@ $req->execute(array(
 $data = $req->fetch();
 ?>
 <section class="item">
+
 <a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>' onClick="return confirm('Delete this item ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
+
+<span class='date'><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /> <?php echo $data['date'];?></span><br />
+
 <h3 style='color:#<?php echo get_item_info_from_id($data['type'], 'bgcolor');?>'><?php echo get_item_info_from_id($data['type'], 'name');?> </h3>
 <?php
-echo "<span class='date'><img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' title='date' alt='Date :' />".$data['date']."</span><br />";
 show_stars($data['rating']);
 // buttons
 echo "<a href='database.php?mode=edit&id=".$data['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/edit.png' title='edit' alt='edit' /></a> 
 <a href='duplicate_item.php?id=".$data['id']."&type=db'><img src='themes/".$_SESSION['prefs']['theme']."/img/duplicate.png' title='duplicate item' alt='duplicate' /></a> 
 <a href='make_pdf.php?id=".$data['id']."&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/pdf.png' title='make a pdf' alt='pdf' /></a> 
 <a href='javascript:window.print()'><img src='themes/".$_SESSION['prefs']['theme']."/img/print.png' title='Print this page' alt='Print' /></a> 
-<a href='make_zip.php?id=".$data['id']."&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/zip.gif' title='make a zip archive' alt='zip' /></a>
-<a href='experiments.php?mode=show&related=".$data['id']."'><img src='img/related.png' alt='Linked experiments' title='Linked experiments' /></a> ";
+<a href='make_zip.php?id=".$data['id']."&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/zip.png' title='make a zip archive' alt='zip' /></a>
+<a href='experiments.php?mode=show&related=".$data['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/link.png' alt='Linked experiments' title='Linked experiments' /></a> ";
 // lock
 if($data['locked'] == 0) {
     echo "<a href='lock-exec.php?id=".$data['id']."&action=lock&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/unlock.png' title='lock experiment' alt='lock' /></a>";

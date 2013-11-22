@@ -53,7 +53,7 @@ if ($data['locked'] == 1) {
 <section class='item'>
 <a class='align_right' href='delete_item.php?id=<?php echo $id;?>' onClick="return confirm('Delete this item ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <!-- ADD TAG FORM -->
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.gif' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
 <div class='tags'>
 <span id='tags_div'>
 <?php
@@ -76,7 +76,7 @@ echo stripslashes($tags['tag']);?>
 <input name='item_id' type='hidden' value='<?php echo $id;?>' />
 <h4>Date</h4><span class='smallgray'> (date format : YYMMDD)</span><br />
 <!-- TODO if firefox has support for it: type = date -->
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /><input name='date' id='datepicker' size='6' type='text' value='<?php echo $data['date'];?>' />
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /> <input name='date' id='datepicker' size='6' type='text' value='<?php echo $data['date'];?>' />
 <!-- STAR RATING via ajax request -->
 <div id='rating'>
 <input id='star1' name="star" type="radio" class="star" value='1' <?php if ($data['rating'] == 1){ echo "checked=checked ";}?>/>
@@ -246,11 +246,15 @@ $(document).ready(function() {
     title = "<?php echo $data['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
     document.title = title;
 
+    /*
+     * commented out because it should only ask when the user didn't save
+     *
     // ask the user if he really wants to navigate out of the page
     window.onbeforeunload = function (e) {
           e = e || window.event;
           return 'Do you want to navigate away from this page ? Unsaved changes will be lost !';
     };
+    */
 });
 </script>
 

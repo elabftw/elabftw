@@ -408,7 +408,7 @@ img {
 }
 
 .date {
-    font:  14px Verdana, Arial,sans-serif;
+    font:  16px Verdana, Arial,sans-serif !important;
 }
 
 #rating {

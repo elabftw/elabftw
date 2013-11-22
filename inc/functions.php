@@ -196,7 +196,7 @@ function show_tags($item_id, $table) {
     $req->execute();
     $tagcount = $req->rowCount();
     if ($tagcount > 0) {
-        echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.gif' alt='tags' /> ";
+        echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.png' alt='tags' /> ";
         while($tags = $req->fetch()) {
             if ($table === 'experiments_tags') {
             echo "<a href='experiments.php?mode=show&tag=".urlencode(stripslashes($tags['tag']))."'>".stripslashes($tags['tag'])."</a> ";
@@ -237,7 +237,7 @@ function showXP($id, $display) {
     echo show_tags($id, 'experiments_tags');
     // view link
     echo "<a href='experiments.php?mode=view&id=".$final_query['id']."'>
-        <img class='align_right' style='margin-left:5px;' src='img/view.png' alt='view' title='view experiment' /></a>";
+        <img class='align_right' style='margin-left:5px;' src='img/arrow_right.png' alt='view' title='view experiment' /></a>";
     // show attached if there is a file attached
     if (has_attachement($final_query['id'])) {
         echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='file attached' />";
@@ -318,7 +318,7 @@ function showDB($id, $display) {
         echo show_tags($id, 'items_tags');
         // view link
         echo "<a href='database.php?mode=view&id=".$final_query['id']."'>
-        <img class='align_right' style='margin-left:5px;' src='img/view.png' alt='view' title='view item' /></a>";
+        <img class='align_right' style='margin-left:5px;' src='img/arrow_right.png' alt='view' title='view item' /></a>";
         // STARS
         show_stars($final_query['rating']);
         // show attached if there is a file attached

@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 body {
-    background-image:url(img/metal.jpg);
+    background-image:url(img/background.jpg);
 }
 
 #container {
@@ -49,7 +49,6 @@ ul, li {
 
 nav a {
     border:1px solid white;
-    border-radius:5px;
     color:#606264;
 }
 nav a:hover {
@@ -91,10 +90,6 @@ nav a:hover {
 }
 .sortresults span{
     color:#AAA;
-}
-.submitbutton{
-    background-color:green;
-    color:white;
 }
 .editable:hover {
     background-color: #CCC;

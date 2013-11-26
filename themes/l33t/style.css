@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 body {
-    background-image:url('img/matrix_code.jpg');
+    background-image:url('img/background.jpg');
 }
 
 #container {
@@ -35,71 +35,39 @@ body {
 hr {
     color: #00FF00;
 }
-hr.flourishes {
-    clear: both;
-    display: block;
-    height: 18px;
-    margin: 18px 0 0;
-    background: url('img/flourishes.png') no-repeat scroll center 0px transparent; /* -61px */
-    border: 0 none;
-    opacity: 0.8;
-    outline: 0 none;
-}
 
-hr.tinyflourishes {
-    clear: both;
-    display: block;
-    height: 18px;
-    margin: 18px 0 0;
-    background: url('img/flourishes.png') no-repeat scroll center -16px transparent; /* -61px */
-    border: 0 none;
-    opacity: 0.8;
-    outline: 0 none;
-}
-
-hr.rishes {
-    clear: both;
-    display: block;
-    height: 18px;
-    margin: 18px 0 0;
-    background: url('img/flourishes.png') no-repeat scroll center -36px transparent; /* -61px */
-    border: 0 none;
-    opacity: 0.8;
-    outline: 0 none;
-}
-/* LOGO */
-#eblue {
-    color:blue;
-}
-
-#lab{
-    color:#00FF00;
-}
-#ftw{
-    color:#00FF00;
-}
 /* LINKS */
 a {
-color: #FFF;
+color: #00FF00;
 }
 a:hover {
-color: green;
+color: white;
 }
 
 nav a {
     border:1px solid #00FF00;
     color:#00FF00;
 }
-#logmenu p{
+#logmenu p {
     color: #FFF;
 }
-#logmenu p a{
+#logmenu p a {
     color: #00FF00;
+}
+
+#logmenu p a:hover {
+    color:white;
 }
 
 p {
     color:#00FF00
 }
+
+/* in search page */
+#submenu {
+    color:#00FF00
+}
+
 /* TITLES */
 h2 {
     color:#00FF00;
@@ -109,12 +77,6 @@ h3 {
 }
 h4 {
     color:#00FF00;
-}
-
-/* SUBMIT */
-.submitbutton{
-    color:white;
-    background-color:green;
 }
 
 /* INFO BOX */
@@ -129,7 +91,7 @@ h4 {
 
 /* ITEMS */
 .item {
-    color:#00FF00;
+    color:black;
     background-color:#000;
     border: 2px solid #CCC;
 }
@@ -139,7 +101,7 @@ h4 {
 }
 
 .running, .success, .redo, .fail {
-    background-color:black;
+    background-color:grey;
 }
 .running {
     border:3px dotted blue;
@@ -155,7 +117,7 @@ h4 {
 }
 
 .running_compact, .success_compact, .redo_compact, .fail_compact {
-    background-color:black;
+    background-color:grey;
 }
 .running_compact {
     border:1px dotted blue;
@@ -171,7 +133,7 @@ h4 {
 }
 
 .date {
-    color:#00FF00
+    color:black
 }
 
 .title {
@@ -182,7 +144,7 @@ h4 {
 
 /* TAGS */
 .tags {
-    background-color:#000;
+    background-color:grey;
     border:1px solid #AAA;
     color:#00FF00;
 }

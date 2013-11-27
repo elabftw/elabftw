@@ -1,4 +1,4 @@
-![osef](http://i.imgur.com/hq6SAZf.png)
+![elabftw logo](http://i.imgur.com/hq6SAZf.png)
 
 
 # Description

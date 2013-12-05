@@ -50,10 +50,10 @@ ssh user@12.34.56.78
 ~~~
 
 ### Cd to the public directory where you want eLabFTW to be installed
-(can be /var/www, ~/public\_html, or any folder you'd like)
+(can be /var/www, ~/public\_html, or any folder you'd like, as long as Apache is configured properly, in doubt use /var/www)
 ~~~ sh
 $ cd /var/www
-# make the directory writable by your user
+# make the directory writable by your user (if it's not already the case)
 $ sudo chown `whoami`:`whoami` .
 ~~~
 Note the `.` at the end that means `current folder`.

@@ -43,16 +43,20 @@ if (isset($_GET['type']) && !empty($_GET['type']) && is_pos_int($_GET['type'])) 
 if ($type === 'experiments'){
     $elabid = generate_elabid();
     // do we want template ?
-    if(isset($_GET['tpl']) && is_pos_int($_GET['tpl'])) {
+    if (isset($_GET['tpl']) && is_pos_int($_GET['tpl'])) {
         // SQL to get template
-        $sql = "SELECT body FROM experiments_templates WHERE id = :id";
+        $sql = "SELECT name, body FROM experiments_templates WHERE id = :id";
         $get_tpl = $bdd->prepare($sql);
         $get_tpl->execute(array(
             'id' => $_GET['tpl']
         ));
-        $get_tpl_body = $get_tpl->fetch();
-        $body = $get_tpl_body['body'];
+        $get_tpl_info = $get_tpl->fetch();
+        // the title is the name of the template
+        $title = $get_tpl_info['name'];
+        $body = $get_tpl_info['body'];
     } else {
+        // if there is no template, title is 'Untitled' and there is nothing in the body
+        $title = 'Untitled';
         $body = '';
     }
 
@@ -60,7 +64,7 @@ if ($type === 'experiments'){
     $sql = "INSERT INTO experiments(title, date, body, status, elabid, visibility, userid) VALUES(:title, :date, :body, :status, :elabid, :visibility, :userid)";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
-        'title' => 'Untitled',
+        'title' => $title,
         'date' => kdate(),
         'body' => $body,
         'status' => 'running',

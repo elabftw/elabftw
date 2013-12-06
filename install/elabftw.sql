@@ -94,6 +94,7 @@ CREATE TABLE IF NOT EXISTS `items` (
   `body` text,
   `rating` tinyint(10) DEFAULT '0',
   `type` int(10) unsigned NOT NULL,
+  `locked` tinyint(3) unsigned DEFAULT NULL,
   `userid` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;

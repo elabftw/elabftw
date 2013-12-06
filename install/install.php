@@ -43,9 +43,9 @@ if (isset($_POST['lab_name']) && !empty($_POST['lab_name'])) {
 if (isset($_POST['admin_validate']) && !empty($_POST['admin_validate'])) {
     if ($_POST['admin_validate'] == 'on') {
         $admin_validate = 1;
-    } else {
-        $admin_validate = 0;
     }
+} else {
+        $admin_validate = 0;
 }
 
 if (isset($_POST['link_name']) && !empty($_POST['link_name'])) {

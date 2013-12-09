@@ -68,9 +68,12 @@ if (isset($_POST)) {
     if ($current_branch == 'master') {
     // for branch master
     curl_setopt($ch, CURLOPT_URL, "https://api.github.com/repos/NicolasCARPi/elabftw/git/refs/heads/master");
-    } else {
+    } elseif ($current_branch == 'next') {
     // for branch next
     curl_setopt($ch, CURLOPT_URL, "https://api.github.com/repos/NicolasCARPi/elabftw/git/refs/heads/next");
+    } else {
+        echo "Unknown branch.";
+        exit();
     }
     // this is to get content
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -87,6 +90,10 @@ if (isset($_POST)) {
     // set a timeout of 500 millisecond
     //curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, 500);
     // removed because we don't actually need it and it might lead to fail
+    //
+    // add user agent
+    // http://developer.github.com/v3/#user-agent-required
+    curl_setopt($ch, CURLOPT_USERAGENT, "elabftw");
 
     // get the json data and put in an array
     $result = json_decode(curl_exec($ch), true);
@@ -113,8 +120,14 @@ if (isset($_POST)) {
     } 
     if ($latest_version == $current_version) {
     // sha1 are the same
-    echo "Congratulations ! You are running the latest stable version of eLabFTW :)";
-    exit();
+        if ($current_branch == 'master') {
+            echo "Congratulations ! You are running the latest stable version of eLabFTW :)";
+            exit();
+        } else { // for branch next
+            echo "Congratulations ! You are running the latest developement version of eLabFTW :)";
+            exit();
+        }
     }
+            
 }
 

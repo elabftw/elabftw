@@ -66,32 +66,33 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
             // MAIN LOOP
             ////////////////
 
-            // SQL to get title, body and date
-            $sql = "SELECT title, body, date, userid FROM ".$table." WHERE id = $id";
+            // SQL to get info on the item we are zipping
+            $sql = "SELECT * FROM $table WHERE id = $id LIMIT 1";
             $req = $bdd->prepare($sql);
             $req->execute();
-            $data = $req->fetch();
-                $title = stripslashes($data['title']);
+            $zipped = $req->fetch();
+                $title = stripslashes($zipped['title']);
                 // make a title without special char for folder inside .zip
                 $clean_title = preg_replace('/[^A-Za-z0-9]/', ' ', $title);
-                $date = $data['date'];
+                $date = $zipped['date'];
                 // name of the folder
                 // folder begin with date for experiments
                 if($table == 'experiments') {
                     $folder = $date."-".$clean_title;
-                } else {
-                   $folder = $clean_title;
+                } else { // items
+                   $type = get_item_info_from_id($zipped['type'], 'name');
+                   $folder = $type." - ".$clean_title;
                 }
-                $body = stripslashes($data['body']);
+                $body = stripslashes($zipped['body']);
             $req->closeCursor();
 
             // SQL to get firstname + lastname
             $sql = "SELECT firstname,lastname FROM users WHERE userid = ".$_SESSION['userid'];
             $req = $bdd->prepare($sql);
             $req->execute();
-            $data = $req->fetch();
-                $firstname = $data['firstname'];
-                $lastname = $data['lastname'];
+            $users = $req->fetch();
+                $firstname = $users['firstname'];
+                $lastname = $users['lastname'];
             // SQL to get tags
             $sql = "SELECT tag FROM ".$table."_tags WHERE item_id = $id";
             $req = $bdd->prepare($sql);
@@ -109,10 +110,10 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
             $real_name = array();
             $long_name = array();
             $comment = array();
-            while ($data = $req->fetch()) {
-                $real_name[] = $data['real_name'];
-                $long_name[] = $data['long_name'];
-                $comment[] = $data['comment'];
+            while ($uploads = $req->fetch()) {
+                $real_name[] = $uploads['real_name'];
+                $long_name[] = $uploads['long_name'];
+                $comment[] = $uploads['comment'];
             }
 
 

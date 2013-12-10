@@ -38,6 +38,15 @@ if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
 $sql = "SELECT * FROM experiments WHERE id = ".$id;
 $req = $bdd->prepare($sql);
 $req->execute();
+// got results ?
+$row_count = $req->rowCount();
+if ($row_count === 0) {
+    $message = 'Nothing to show with this ID.';
+    display_message('error', $message);
+    require_once('inc/footer.php');
+    die();
+}
+
 $data = $req->fetch();
 
 // Check id is owned by connected user to present comment div if not

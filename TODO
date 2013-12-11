@@ -6,6 +6,7 @@
 
 ////// New Features
 * possibility to share a database item between two labs
+* rewrite showXP/showDB code to allow better search possibilities
 * add groups, add visitor with only read permission on the database
 * editable list of status
 * add tag on templates

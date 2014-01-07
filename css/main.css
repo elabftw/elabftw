@@ -321,6 +321,24 @@ textarea{
     margin: 5px 0 5px 0;
     padding:  5px;
 }
+
+/* overlay to say it's saved */
+.overlay {
+    background-color: #000;
+    position: fixed;
+    opacity: 0.8;
+    top: 10px;
+    width: 100%;
+    height: 20px;
+    z-index: 10;
+}
+
+.overlay p {
+    color:#fff;
+    display:inline;
+}
+
+
 /* comments for files */
 .addFileDiv {
     margin: 10px;

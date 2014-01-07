@@ -213,6 +213,7 @@ $(document).ready(function() {
                 body : tinymce.activeEditor.getContent()
                 }
             });
+            showSaved();
         },
         // keyboard shortcut to insert today's date at cursor in editor
         setup : function(editor) {

@@ -20,6 +20,24 @@ function addDateOnCursor() {
     tinyMCE.activeEditor.execCommand('mceInsertContent', false, year + "-" + month + "-" + day + " ");
 }
 
+// show and remove 'Saved !'
+function showSaved() {
+    var text = '<center><p>Saved !</p></center>';
+    var overlay = document.createElement('div');
+       overlay.setAttribute('id','overlay');
+       overlay.setAttribute('class', 'overlay');
+       // show the overlay
+       document.body.appendChild(overlay);
+       // add text inside
+       document.getElementById('overlay').innerHTML = text;
+       // wait a bit and make it disappear
+       window.setTimeout(removeSaved, 2000);
+}
+
+function removeSaved() {
+       document.body.removeChild(document.getElementById('overlay'));
+}
+
 // for the footer
 function mouseOverPhp(action){
 if (action == 'on') {

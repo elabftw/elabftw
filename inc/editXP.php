@@ -406,9 +406,9 @@ $(document).ready(function() {
                 title : document.getElementById('title_txtarea').value,
                 date : document.getElementById('datepicker').value,
                 body : tinymce.activeEditor.getContent()
-                
                 }
             });
+            showSaved();
         },
         // keyboard shortcut to insert today's date at cursor in editor
         setup : function(editor) {

@@ -32,7 +32,7 @@ require_once('inc/menu.php');
 require_once('inc/info_box.php');
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
-<script src="js/raphael.min.js"></script>
+<script src="js/raphael-2.1.0.min.js"></script>
 <script src="js/colorwheel.min.js"></script>
 <?php
 

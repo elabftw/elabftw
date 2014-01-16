@@ -1,17 +1,18 @@
 <?php
 function kdate(){
-    // returns today's date as YYMMDD format
+    // returns today's date as YYYYMMDD format
     $today = getdate();
-    $year = substr($today['year'], -2);
     $month = $today['mon'];
+    // add 0 in front of month if needed
     if (strlen($month) === 1){
-        $month = "0".$month;
+        $month = '0'.$month;
     }
     $day = $today['mday'];
+    // add 0 in front of day if needed
     if (strlen($day) === 1){
-        $day = "0".$day;
+        $day = '0'.$day;
     }
-    return $year.$month.$day;
+    return $today['year'].$month.$day;
 }
 
 function format_bytes($a_bytes){
@@ -342,22 +343,22 @@ function check_title($input) {
 }
 
 function check_date($input) {
-    // Check DATE (is != null ? is 6 in length ? is int ? is valable ?)
+    // Check DATE (is != null ? is 8 in length ? is int ? is valable ?)
     if ((isset($input)) 
         && (!empty($input)) 
-        && ((strlen($input) == "6")) 
+        && ((strlen($input) == '8'))
         && is_pos_int($input)) {
         // Check if day/month are good
-        $datemonth = substr($input,2,2);
-        $dateday = substr($input,4,2);
-        if(($datemonth <= "12") 
-            && ($dateday <= "31") 
-            && ($datemonth > "0") 
-            && ($dateday > "0")){
+        $datemonth = substr($input,4,2);
+        $dateday = substr($input,6,2);
+        if(($datemonth <= '12') 
+            && ($dateday <= '31') 
+            && ($datemonth > '0') 
+            && ($dateday > '0')) {
                 // SUCCESS on every test
         return $input;
         } else {
-        return kdate();
+            return kdate();
         }
     } else {
         return kdate();

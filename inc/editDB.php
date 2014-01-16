@@ -74,9 +74,9 @@ echo stripslashes($tags['tag']);?>
 <!-- BEGIN 2ND FORM -->
 <form method="post" action="editDB-exec.php" enctype='multipart/form-data'>
 <input name='item_id' type='hidden' value='<?php echo $id;?>' />
-<h4>Date</h4><span class='smallgray'> (date format : YYMMDD)</span><br />
+<h4>Date</h4><span class='smallgray'> (date format : YYYYMMDD)</span><br />
 <!-- TODO if firefox has support for it: type = date -->
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /> <input name='date' id='datepicker' size='6' type='text' value='<?php echo $data['date'];?>' />
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /> <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date'];?>' />
 <!-- STAR RATING via ajax request -->
 <div id='rating'>
 <input id='star1' name="star" type="radio" class="star" value='1' <?php if ($data['rating'] == 1){ echo "checked=checked ";}?>/>
@@ -220,7 +220,7 @@ $(document).ready(function() {
         }
     });
     // DATEPICKER
-    $( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
+    $( "#datepicker" ).datepicker({dateFormat: 'yymmdd'});
     // STARS
     $('input.star').rating();
     $('#star1').click(function() {

@@ -436,3 +436,35 @@ if ($add_locked_items) {
     echo "Column 'locked' already exists. Nothing to do.\n";
 }
 
+
+// TRANSFORM DATES IN NEW FORMAT
+// first we check if we need to do it
+$sql = "SELECT `date` FROM `experiments` WHERE CHAR_LENGTH(`date`) < 8";
+$req = $bdd->prepare($sql);
+$req->execute();
+// if some dates are less than 8 char we make the update
+if ($req->rowCount() > 0) {
+    $sql = "UPDATE `experiments` SET date = date + 20000000 WHERE CHAR_LENGTH(`date`) = 6";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+
+    echo ">>> Dates are now YYYYMMDD in experiments.\n";
+} else {
+    echo "Dates are YYYYMMDD in experiments. Nothing to do.\n";
+}
+
+
+// same for items
+$sql = "SELECT `date` FROM `items` WHERE CHAR_LENGTH(`date`) < 8";
+$req = $bdd->prepare($sql);
+$req->execute();
+if ($req->rowCount() > 0) {
+    $sql = "UPDATE `items` SET date = date + 20000000 WHERE CHAR_LENGTH(`date`) = 6";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    echo ">>> Dates are now YYYYMMDD in the database.\n";
+
+} else {
+    echo "Dates are YYYYMMDD. Nothing to do.\n";
+}
+

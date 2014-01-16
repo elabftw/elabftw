@@ -82,9 +82,9 @@ echo stripslashes($tags['tag']);?>
 <form id="editXP" name="editXP" method="post" action="editXP-exec.php" enctype='multipart/form-data'>
 <input name='item_id' type='hidden' value='<?php echo $id;?>' />
 
-<h4>Date</h4><span class='smallgray'> (date format : YYMMDD)</span><br />
+<h4>Date</h4><span class='smallgray'> (date format : YYYYMMDD)</span><br />
 <!-- TODO if firefox has support for it: type = date -->
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /> <input name='date' id='datepicker' size='6' type='text' value='<?php echo $data['date'];?>' />
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /> <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date'];?>' />
 
 <span class='align_right'>
 <h4>Status</h4>
@@ -381,7 +381,7 @@ $(document).ready(function() {
     title = "<?php echo $data['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
     document.title = title;
     // DATEPICKER
-    $( "#datepicker" ).datepicker({dateFormat: 'ymmdd'});
+    $( "#datepicker" ).datepicker({dateFormat: 'yymmdd'});
     // SELECT ALL TXT WHEN FOCUS ON TITLE INPUT
     $("#title").focus(function(){
         $("#title").select();

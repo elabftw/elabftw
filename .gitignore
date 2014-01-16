@@ -7,4 +7,5 @@ admin/config.ini
 admin/.htpasswd
 PASTIE
 uploads/
+test.php
 

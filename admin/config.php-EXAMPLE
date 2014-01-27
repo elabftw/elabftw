@@ -35,6 +35,9 @@ define('LAB_NAME', 'YOURLABNAME');
 // if set to 1, user account will need admin validation before being able to login
 define('ADMIN_VALIDATE', 0);
 
+// set to 0 if you don't want users to be able to delete experiments
+define('DELETABLE_XP', 1);
+
 // the name of the custom link in menu
 define('LINK_NAME', 'Wiki');
 

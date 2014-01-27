@@ -381,7 +381,7 @@ echo "Table items_templates...";
 $sql = "DROP TABLE IF EXISTS `items_templates`";
 $req = $bdd->prepare($sql);
 $result = $req->execute();
-if($result) {
+if ($result) {
     echo "Nothing to do.\n";
 } else {
     echo 'There was a problem in the database update :/';
@@ -466,5 +466,21 @@ if ($req->rowCount() > 0) {
 
 } else {
     echo "Dates are YYYYMMDD. Nothing to do.\n";
+}
+
+// ADD DELETABLE_XP CONFIG
+// check if we need to add it
+
+if (defined('DELETABLE_XP'))  {
+    echo "DELETABLE_XP already set. Nothing to do.\n";
+} else {
+    $deletable_xp_line = "\n\n// set to 0 if you don't want users to be able to delete experiments\ndefine('DELETABLE_XP', 1);\n";
+    $file = 'admin/config.php';
+    $result = file_put_contents($file, $deletable_xp_line, FILE_APPEND | LOCK_EX);
+    if ($result) {
+        echo ">>> Added the deletable experiments option in config file\n";
+    } else {
+        echo "Couldn't add the DELETEABLE_XP option in config file, add it manually (see the config.php-EXAMPLE file).\n";
+    }
 }
 

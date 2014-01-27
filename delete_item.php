@@ -67,32 +67,43 @@ if ($item_type === 'experiments' || $item_type === 'items') {
     }
 }
 // DELETE ITEM
-$sql = "DELETE FROM ".$item_type." WHERE id=".$id;
-$req = $bdd->prepare($sql);
-$result1 = $req->execute();
+// check if we can delete experiments
+if ($item_type === 'experiments' && !DELETABLE_XP && !$_SESSION['is_admin'] ) {
 
-// DELETE TAGS
-if ($item_type === 'experiments' || $item_type === 'items') {
-    $sql = "DELETE FROM ".$item_type."_tags WHERE item_id = ".$id;
+    $errors_arr[] = 'You cannot delete experiments ! Change DELETABLE_XP to 1 in the config file to modify this behavior.';
+    $_SESSION['errors'] = $errors_arr;
+    $result1 = false;
+
+} else {
+
+    // actually delete the stuff
+    $sql = "DELETE FROM ".$item_type." WHERE id=".$id;
     $req = $bdd->prepare($sql);
-    $result2 = $req->execute();
+    $result1 = $req->execute();
 
-    // DELETE FILES
-    $sql = "DELETE FROM uploads WHERE item_id = :id AND type = :type";
-    $req = $bdd->prepare($sql);
-    if($item_type === 'experiments'){
-    $result3 = $req->execute(array(
-        'id' => $id,
-        'type' => 'exp' 
-    ));
-    }
-    if($item_type === 'items'){
-    $result3 = $req->execute(array(
-        'id' => $id,
-        'type' => 'database' 
-    ));
-    }
+    // DELETE TAGS
+    if ($item_type === 'experiments' || $item_type === 'items') {
+        $sql = "DELETE FROM ".$item_type."_tags WHERE item_id = ".$id;
+        $req = $bdd->prepare($sql);
+        $result2 = $req->execute();
 
+        // DELETE FILES
+        $sql = "DELETE FROM uploads WHERE item_id = :id AND type = :type";
+        $req = $bdd->prepare($sql);
+        if($item_type === 'experiments'){
+        $result3 = $req->execute(array(
+            'id' => $id,
+            'type' => 'exp' 
+        ));
+        }
+        if($item_type === 'items'){
+        $result3 = $req->execute(array(
+            'id' => $id,
+            'type' => 'database' 
+        ));
+        }
+
+    }
 }
 
 
@@ -118,6 +129,7 @@ if ($result1) {
         header("location: ucp.php");
     }
 } else { // no $result{1, 2, 3}
-    die();
+    // this block is only executed if someone wants to delete an experiment but DELETABLE_XP is set to false
+    header("location: experiments.php");
 }
 

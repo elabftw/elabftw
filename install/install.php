@@ -48,6 +48,14 @@ if (isset($_POST['admin_validate']) && !empty($_POST['admin_validate'])) {
         $admin_validate = 0;
 }
 
+if (isset($_POST['deletable_xp']) && !empty($_POST['deletable_xp'])) {
+    if ($_POST['deletable_xp'] == 'on') {
+        $deletable_xp = 1;
+    }
+} else {
+        $deletable_xp = 0;
+}
+
 if (isset($_POST['link_name']) && !empty($_POST['link_name'])) {
     $link_name = $_POST['link_name'];
 }
@@ -158,6 +166,9 @@ define('LAB_NAME', \"".$lab_name."\");
 
 // if set to 1, user account will need admin validation before being able to login
 define('ADMIN_VALIDATE', ".$admin_validate.");
+
+// set to 0 if you don't want users to be able to delete experiments
+define('DELETABLE_XP', ".$deletable_xp.");
 
 // the name of the custom link in menu
 define('LINK_NAME', '".$link_name."');

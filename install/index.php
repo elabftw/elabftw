@@ -225,6 +225,11 @@ if (extension_loaded("gd")) {
 </p>
 
 <p>
+<label for='deletable_xp'>Experiments can be deleted:</label><br />
+<input id='deletable_xp' name='deletable_xp' type='checkbox' checked='checked' />
+<span class='install_hint'>(uncheck to deny users the right to delete experiments)</span>
+</p>
+<p>
 <label for='link_name'>Name of the custom link in the menu:</label><br />
 <input id='link_name' name='link_name' type='text' value='Wiki' />
 <span class='install_hint'>(this link is visible in the main menu, it can be anything)</span>

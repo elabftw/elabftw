@@ -83,7 +83,7 @@ $req_db_total->execute();
     <p>
         <ul>
             <li>- You can use a TODOlist by pressing 't'</li>
-            <li>- You can have templates (edit them in your User Control Panel</li>
+            <li>- You can have templates (edit them in your User Control Panel)</li>
             <li>- If you press Ctrl Shift D in the editor, the date will appear under the cursor</li>
             <li>- You can duplicate experiments in one click</li>
             <li>- Click a tag to list all items with this tag</li>

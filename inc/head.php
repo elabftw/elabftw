@@ -86,7 +86,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1){
 <link rel="stylesheet" media="all" href="css/jquery.rating.css" />
 <link rel="stylesheet" media="all" href="css/jquery.lightbox-0.5.css" />
 <!-- JAVASCRIPT -->
-<script src="js/jquery-2.0.3.min.js"></script>
+<script src="js/jquery-2.1.0.min.js"></script>
 <script src="js/jquery-ui-1.10.3.custom.min.js"></script>
 <!-- for editable comments -->
 <script src="js/jquery.jeditable.min.js"></script>

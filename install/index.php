@@ -57,7 +57,7 @@ require_once('../inc/functions.php');
 </style>
 
 <!-- JAVASCRIPT -->
-<script src="../js/jquery-2.0.3.min.js"></script>
+<script src="../js/jquery-2.1.0.min.js"></script>
 <script src="../js/jquery-ui-1.10.3.custom.min.js"></script>
 <!-- Form validation client-side -->
 <script src="../js/parsley.min.js"></script>

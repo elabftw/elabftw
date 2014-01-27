@@ -39,7 +39,7 @@
             <ul id="show-items"></ul>
             <a href="#" id="clear-all">Clear All</a>
         </div>
-        <script src="../js/jquery-2.0.3.min.js"></script>
+        <script src="../js/jquery-2.1.0.min.js"></script>
         <script src="../js/jquery-ui-1.10.3.custom.min.js"></script>
         <script src="../js/jquery.inlineedit.js"></script>
         <script src="../js/pubsub.min.js"></script>

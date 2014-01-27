@@ -392,7 +392,7 @@ $(document).ready(function() {
         editor_selector : "mceditable",
         content_css : "css/tinymce.css",
         plugins : "table textcolor searchreplace code fullscreen insertdatetime paste charmap save",
-        toolbar1: "undo redo | bold italic underline | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | save",
+        toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | save",
         removed_menuitems : "newdocument",
         // save button :
         save_onsavecallback: function() {

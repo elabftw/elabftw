@@ -78,24 +78,37 @@ if (isset($_POST['db_password']) && !empty($_POST['db_password'])) {
     $db_password = $_POST['db_password'];
 }
 
+// email settings can be skipped
+// if user left the default value of fields, only password should be blank
+// but we provide a blank case anyway, because that's how we rule.
 if (isset($_POST['smtp_address']) && !empty($_POST['smtp_address'])) {
     $smtp_address = $_POST['smtp_address'];
+} else {
+    $smtp_address = 'smtp.example.com';
 }
 
 if (isset($_POST['smtp_port']) && !empty($_POST['smtp_port'])) {
     $smtp_port = $_POST['smtp_port'];
+} else {
+    $smtp_port = '587';
 }
 
 if (isset($_POST['smtp_encryption']) && !empty($_POST['smtp_encryption'])) {
     $smtp_encryption = $_POST['smtp_encryption'];
+} else {
+    $smtp_encryption = 'tls';
 }
 
 if (isset($_POST['smtp_username']) && !empty($_POST['smtp_username'])) {
     $smtp_username = $_POST['smtp_username'];
+} else {
+    $smtp_username = 'username@gmail.com';
 }
 
 if (isset($_POST['smtp_password']) && !empty($_POST['smtp_password'])) {
     $smtp_password = $_POST['smtp_password'];
+} else {
+    $smtp_password = 'SMTP_NOT_CONFIGURED';
 }
 
 // PATH

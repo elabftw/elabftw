@@ -40,8 +40,12 @@ a :hover {
 }
 
 /* GENERAL */
-.center{
+.center {
     text-align: center;
+}
+
+.hidden {
+    display:none;
 }
 
 .align_right{

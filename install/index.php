@@ -320,7 +320,12 @@ if (extension_loaded("gd")) {
 </p>
 
 <div class='center' style='margin-top:8px'>
-<button type='button' id='test_email_button' class='button'>Test email parameters to continue</button>
+<button type='button' id='test_email_button' class='button'>Test email parameters</button>
+</div>
+
+<div class='center' style='margin-top:8px'>
+or 
+<button type='button' id='skip_email_button' class='button'>Skip this step</button>
 </div>
 
 </fieldset>
@@ -328,6 +333,7 @@ if (extension_loaded("gd")) {
 
 <br />
 
+<!-- FINAL SECTION -->
 <section id='final_section'>
 <p>When you click the button below, it will create the file <em>admin/config.php</em>. If it cannot create it (because the server doesn't have write permission to this folder), your browser will download it and you will need to put it in the folder <em>admin</em>.</p>
 <p>To put this file on the server, you can use scp (don't write the '$') :</p>
@@ -347,9 +353,10 @@ if (extension_loaded("gd")) {
 </section>
 
 <footer>
-<p>Thanks for using eLabFTW :)</p>
+    <p>Thanks for using eLabFTW :)</p>
 </footer>
 </section>
+
 <script>
 $(document).ready(function() {
     // hide the email part
@@ -405,6 +412,24 @@ $(document).ready(function() {
                 alert('The connection failed :/');
             }
         });
+    });
+    // skip email button
+    $('#skip_email_button').click(function() {
+        // show warning about resetting passwords not working without SMTP configured
+        /* Not using the .dialog of jquery UI for now.
+        $('#dialog_skip_email').dialog({
+            buttons: [ { text: "Got it, I'll do it later.", click: function() { $( this ).dialog( "close" ); } } ],
+            draggable: true,
+            height: 500,
+            modal: true
+        });
+         */
+        alert('Resetting passwords functionnality won\'t be available until you configure correctly the email settings.');
+
+        // we hide email because it was skipped
+        $('#email_section').hide();
+        // show last section
+        $('#final_section').show();
     });
 });
 </script>

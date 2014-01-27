@@ -1,5 +1,11 @@
 /* Changelog for eLabFTW */
 
+Version 0.9.4
+* Date is now YYYYMMDD
+* Email setup is no more mandatory on install
+* Updated some js libraries
+* Add a 'Saved' notification upon saving with the Save button of TinyMCE
+
 Version 0.9.3
 * Add item type to folder of zip export
 * Add useragent on github API request (checkforupdates)

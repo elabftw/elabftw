@@ -132,13 +132,30 @@ if ($req->rowcount() != 0) {
 echo "<p class='elabid'>Unique eLabID : ".$data['elabid'];
 // DISPLAY visibility
 echo "<br />Visibility : ".$data['visibility']."</p>";
+echo "</section>";
+// DISPLAY comment box
+// check if there is something to display first
+// get all comments, and infos on the commenter associated with this experiment
+$sql = "SELECT * FROM experiments_comments LEFT JOIN users ON (experiments_comments.userid = users.userid) WHERE exp_id = :id";
+$req = $bdd->prepare($sql);
+$req->execute(array(
+    'id' => $id
+));
+if ($req->rowCount() > 0) {
+    echo "<section class='item'><h3>Comments</h3>";
+    while ($comments = $req->fetch()) {
+        echo "<span class='smallgray'>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :</span><br />";
+        echo "<p>".$comments['comment']."</p";
+    }
+    echo "</section></section>";
+}
+
 
 // KEYBOARD SHORTCUTS
 echo "<script>
 key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=exp'});
 key('".$_SESSION['prefs']['shortcuts']['edit']."', function(){location.href = 'experiments.php?mode=edit&id=".$id."'});
 </script>";
-echo "</section>";
 ?>
 <script>
 // change title

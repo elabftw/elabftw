@@ -43,13 +43,13 @@ $req = $bdd->prepare($sql);
 $req->execute();
 $data = $req->fetch();
 if ($data['userid'] == $_SESSION['userid']){
-   // SQL for DELETE TAG
-    $sql = "DELETE FROM experiments_links WHERE id=".$id;
+   // SQL for DELETE LINKS
+    $sql = "DELETE FROM experiments_links WHERE id=$id";
     $req = $bdd->prepare($sql);
     $result = $req->execute();
     if(!$result) {
         die('Something went wrong in the database query. Check the flux capacitor.');
     }
-    header("Location: experiments.php?mode=edit&id='.$item_id.'");
+    header("Location: experiments.php?mode=edit&id=$item_id");
 }
 

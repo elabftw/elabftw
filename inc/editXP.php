@@ -134,23 +134,19 @@ require_once('inc/display_file.php');
 <div id='links_div'>
 <?php
 // DISPLAY LINKED ITEMS
-$sql = "SELECT link_id, id FROM experiments_links WHERE item_id = ".$id;
+$sql = "SELECT * FROM experiments_links LEFT JOIN items ON (experiments_links.link_id = items.id) 
+    WHERE experiments_links.item_id = :id";
 $req = $bdd->prepare($sql);
-$req->execute();
+$req->execute(array(
+    'id' => $id
+));
 // Check there is at least one link to display
-if ($req->rowcount() != 0) {
+if ($req->rowcount() > 0) {
     echo "<ul>";
     while ($links = $req->fetch()) {
-        // SQL to get title
-        $linksql = "SELECT id, title, type FROM items WHERE id = :link_id";
-        $linkreq = $bdd->prepare($linksql);
-        $linkreq->execute(array(
-            'link_id' => $links['link_id']
-        ));
-        $linkdata = $linkreq->fetch();
-        $name = get_item_info_from_id($linkdata['type'], 'name');
-        echo "<li>- [".$name."] - <a href='database.php?mode=view&id=".$linkdata['id']."'>".stripslashes($linkdata['title'])."</a>";
-        echo "<a onclick='delete_link(".$links['id'].", ".$id.")'>
+        $type = get_item_info_from_id($links['type'], 'name');
+        echo "<li>- [".$type."] - <a href='database.php?mode=view&id=".$links['id']."'>".stripslashes($links['title'])."</a>";
+        echo "<a onclick='delete_link(".$links[0].", ".$id.")'>
         <img src='themes/".$_SESSION['prefs']['theme']."/img/trash.png' title='delete' alt='delete' /></a></li>";
     } // end while
     echo "</ul>";

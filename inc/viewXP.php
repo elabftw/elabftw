@@ -105,13 +105,17 @@ echo "<br />";
 require_once('inc/display_file.php');
 
 // DISPLAY LINKED ITEMS
-$sql = "SELECT link_id, id FROM experiments_links WHERE item_id = ".$id;
+$sql = "SELECT * FROM experiments_links LEFT JOIN items ON (experiments_links.link_id = items.id) 
+    WHERE experiments_links.item_id = :id";
 $req = $bdd->prepare($sql);
-$req->execute();
+$req->execute(array(
+    'id' => $id
+));
 // Check there is at least one link to display
-if ($req->rowcount() != 0) {
-    echo "<h4>Linked items</h4>";
-    echo "<ul>";
+if ($req->rowcount() > 0) {
+    echo "<hr class='flourishes'>";
+    echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/link.png'> <h4 style='display:inline'>Linked items</h4>
+<div id='links_div'><ul>";
     while ($links = $req->fetch()) {
         // SQL to get title
         $linksql = "SELECT id, title, type FROM items WHERE id = :link_id";

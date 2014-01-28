@@ -59,7 +59,6 @@
 #lightbox-nav-btnPrev, #lightbox-nav-btnNext {
 	width: 49%;
 	height: 100%;
-	zoom: 1;
 	display: block;
 }
 #lightbox-nav-btnPrev { 

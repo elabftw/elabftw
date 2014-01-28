@@ -32,8 +32,6 @@ if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
 }
 
 // SQL for viewDB
-//$sql = "SELECT * FROM items WHERE EXISTS (
-//    SELECT id FROM items WHERE id = :id);";
 $sql = "SELECT * FROM items WHERE id = :id";
 $req = $bdd->prepare($sql);
 $req->execute(array(

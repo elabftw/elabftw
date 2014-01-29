@@ -141,7 +141,7 @@ echo "</section>";
 ?>
 <!-- we need to add a container here so the reload function in the callback of .editable() doesn't mess things up -->
 <section id='expcomment_container'>
-<section id='expcomment' class='item'>
+<div id='expcomment' class='item'>
     <h3>Comments</h3>
     <p class='editable newexpcomment' id='newexpcomment_<?php echo $id;?>'>Click to add a comment.</p>
 <?php
@@ -161,7 +161,10 @@ if ($req->rowCount() > 0) {
      echo "<span class='smallgray'>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :</span><br />";
         echo "<p class='editable' id='expcomment_".$comments['id']."'>".$comments['comment']."</p></div>";
     }
-    echo "</section></section>";
+    echo "</section>";
+
+} else {
+    echo "</div>";
 }
 ?>
 
@@ -192,8 +195,8 @@ $(document).ready(function() {
     key('<?php echo $_SESSION['prefs']['shortcuts']['create'];?>', function(){location.href = 'create_item.php?type=exp'});
     key('<?php echo $_SESSION['prefs']['shortcuts']['edit'];?>', function(){location.href = 'experiments.php?mode=edit&id=<?php echo $id;?>'});
     // Experiment comment is editable
-    $('section#expcomment').on("mouseover", ".editable", function(){
-        $('section#expcomment p.editable').editable('editinplace.php', {
+    $('div#expcomment').on("mouseover", ".editable", function(){
+        $('div#expcomment p.editable').editable('editinplace.php', {
          tooltip : 'Click to edit',
          indicator : 'Saving...',
          id   : 'id',
@@ -203,7 +206,7 @@ $(document).ready(function() {
          style : 'display:inline',
          callback : function() {
              // now we reload the comments part to show the comment we just submitted
-             $('#expcomment_container').load("experiments.php?mode=view&id=<?php echo $id;?> #expcomment").fadeIn();
+             $('#expcomment_container').load("experiments.php?mode=view&id=<?php echo $id;?> #expcomment");
          }
         })
     });

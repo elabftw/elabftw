@@ -161,12 +161,10 @@ if ($req->rowCount() > 0) {
      echo "<span class='smallgray'>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :</span><br />";
         echo "<p class='editable' id='expcomment_".$comments['id']."'>".$comments['comment']."</p></div>";
     }
-    echo "</section>";
-
-} else {
-    echo "</div>";
 }
 ?>
+</div>
+</section>
 
 <script>
 // DELETE EXP COMMENT

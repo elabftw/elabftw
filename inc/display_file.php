@@ -86,7 +86,7 @@ $(document).ready(function() {
      });
      // make the comment div editable after partial reload (jquery delegated event)
      $('section#filesdiv').on("mouseover", ".editable", function(){
-         $('.editable').editable('editinplace.php', { 
+         $('section#filesdiv.editable').editable('editinplace.php', { 
              tooltip : 'Click to edit',
              indicator : 'Saving...',
              id   : 'id',

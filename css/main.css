@@ -403,16 +403,24 @@ img {
     border: 2px solid gray !important;
 }
 
-/* item style for database items */
-.pro {
-    background-color: #BDE1FF !important;
+/* comments for experiments comments box */
+.newexpcomment {
+    background-color:white;
+    border:solid 1px #CCC;
+    border-radius: 7px;
+    margin:2px;
+    padding: 2px;
 }
 
-.pla {
-    background-color: #9EFFB4 !important;
+.expcomment_box {
+    border:solid 1px #CCC;
+    border-radius: 7px;
+    margin:2px;
+    padding: 2px;
 }
-.ant {
-    background-color: #9EACFF !important;
+
+.expcomment_box p {
+    margin:0;
 }
 
 .simple_border {

@@ -27,7 +27,7 @@ require_once('inc/common.php');
 
 if (isset($_POST['filecomment'])) {
     // we are editing a comment for a file
-    // Check ID 
+    // there is never a New comment to INSERT because by default there is 'Click to add a comment' shown
     if (isset($_POST['id']) && !empty($_POST['id'])) {
         // post['id'] looks like comment_56
         $id_arr = explode('_', $_POST['id']);
@@ -60,35 +60,56 @@ if (isset($_POST['filecomment'])) {
 // we are editing a comment on an xp
     // Check ID 
     if (isset($_POST['id']) && !empty($_POST['id'])) {
-        // post['id'] looks like comment_56
+        // either we have something that looks like comment_56 and we need to UPDATE
+        // or we have new_expcomment and we need to INSERT
         $id_arr = explode('_', $_POST['id']);
-        if (is_pos_int($id_arr[1])){
+        // NEW COMMENT FOR EXPERIMENT
+        if ($id_arr[0] === 'newexpcomment' && is_pos_int($id_arr[1])) {
+            // the $id here is the one of the experiment, not the comment.
             $id = $id_arr[1];
-            // Update comment
-            if (($_POST['expcomment'] != '') && ($_POST['expcomment'] != ' ')){
-                $expcomment = filter_var($_POST['expcomment'], FILTER_SANITIZE_STRING);
-                // SQL to update single exp comment
-                $sql = "UPDATE experiments_comments SET 
-                    comment = :new_comment, 
-                    datetime = :now 
-                    WHERE id = :id";
-                $req = $bdd->prepare($sql);
-                $req->execute(array(
-                    'new_comment' => $expcomment,
-                    'now' => date("Y-m-d H:i:s"),
-                    'id' => $id
-                ));
-                // show comment
-                echo stripslashes($expcomment);
-            } else { // Submitted comment is empty
-                // Get old comment
-                $sql = "SELECT comment FROM experiments_comments WHERE id = :id";
-                $req = $bdd->prepare($sql);
-                $req->execute(array(
-                    'id' => $id
-                ));
-                $comment = $req->fetch();
-                echo stripslashes($comment['comment']);
+            $expcomment = filter_var($_POST['expcomment'], FILTER_SANITIZE_STRING);
+            // SQL to insert expcomment
+            $sql = "INSERT INTO experiments_comments(datetime, exp_id, comment, userid) 
+                VALUES(:datetime, :exp_id, :comment, :userid)";
+            $req = $bdd->prepare($sql);
+            $req->execute(array(
+                'datetime' => date("Y-m-d H:i:s"),
+                'exp_id' => $id, // the $id here is the one of the experiment
+                'comment' => $expcomment,
+                'userid' => $_SESSION['userid']
+            ));
+            // show comment
+            //echo stripslashes($expcomment);
+        } else {
+            // UPDATE OF EXISTING COMMENT
+            if ($id_arr[0] === 'expcomment' && is_pos_int($id_arr[1])){
+                $id = $id_arr[1];
+                // Update comment
+                if (($_POST['expcomment'] != '') && ($_POST['expcomment'] != ' ')){
+                    $expcomment = filter_var($_POST['expcomment'], FILTER_SANITIZE_STRING);
+                    // SQL to update single exp comment
+                    $sql = "UPDATE experiments_comments SET 
+                        comment = :new_comment, 
+                        datetime = :now 
+                        WHERE id = :id";
+                    $req = $bdd->prepare($sql);
+                    $req->execute(array(
+                        'new_comment' => $expcomment,
+                        'now' => date("Y-m-d H:i:s"),
+                        'id' => $id
+                    ));
+                    // show comment
+                    echo stripslashes($expcomment);
+                } else { // Submitted comment is empty
+                    // Get old comment
+                    $sql = "SELECT comment FROM experiments_comments WHERE id = :id";
+                    $req = $bdd->prepare($sql);
+                    $req->execute(array(
+                        'id' => $id
+                    ));
+                    $comment = $req->fetch();
+                    echo stripslashes($comment['comment']);
+                }
             }
         }
     }

@@ -137,54 +137,57 @@ echo "<p class='elabid'>Unique eLabID : ".$data['elabid'];
 // DISPLAY visibility
 echo "<br />Visibility : ".$data['visibility']."</p>";
 echo "</section>";
-// DISPLAY comment box
+// COMMENT BOX
+?>
+<!-- we need to add a container here so the reload function in the callback of .editable() doesn't mess things up -->
+<section id='expcomment_container'>
+<section id='expcomment' class='item'>
+    <h3>Comments</h3>
+    <p class='editable newexpcomment' id='newexpcomment_<?php echo $id;?>'>Click to add a comment.</p>
+<?php
+
 // check if there is something to display first
 // get all comments, and infos on the commenter associated with this experiment
-$sql = "SELECT * FROM experiments_comments LEFT JOIN users ON (experiments_comments.userid = users.userid) WHERE exp_id = :id";
+$sql = "SELECT * FROM experiments_comments LEFT JOIN users ON (experiments_comments.userid = users.userid) WHERE exp_id = :id ORDER BY experiments_comments.datetime DESC";
 $req = $bdd->prepare($sql);
 $req->execute(array(
     'id' => $id
 ));
 if ($req->rowCount() > 0) {
-    echo "<section id='expcomment' class='item'><h3>Comments</h3>";
     while ($comments = $req->fetch()) {
-        echo "<span class='smallgray'>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :</span><br />";
-        echo "<p class='editable' id='expcomment_".$comments['id']."'>".$comments['comment']."</p";
+        echo "<div class='expcomment_box'><span class='smallgray'>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :</span><br />";
+        echo "<p class='editable' id='expcomment_".$comments['id']."'>".$comments['comment']."</p></div>";
     }
     echo "</section></section>";
 }
 ?>
-<script>
-// make the comment div editable after partial reload (jquery delegated event)
-$('section#expcomment').on("mouseover", ".editable", function(){
-    $('section#expcomment p.editable').editable('editinplace.php', {
-     tooltip : 'Click to edit',
-     indicator : 'Saving...',
-     id   : 'id',
-     name : 'expcomment',
-     submit : 'Save',
-     cancel : 'Cancel',
-     style : 'display:inline'
+</section>
 
-    });
-});
-</script>
-<?php
-
-
-
-// KEYBOARD SHORTCUTS
-echo "<script>
-key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=exp'});
-key('".$_SESSION['prefs']['shortcuts']['edit']."', function(){location.href = 'experiments.php?mode=edit&id=".$id."'});
-</script>";
-?>
 <script>
 // change title
 $(document).ready(function() {
     // fix for the ' and "
     title = "<?php echo $data['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
     document.title = title;
+    // Keyboard shortcuts
+    key('<?php echo $_SESSION['prefs']['shortcuts']['create'];?>', function(){location.href = 'create_item.php?type=exp'});
+    key('<?php echo $_SESSION['prefs']['shortcuts']['edit'];?>', function(){location.href = 'experiments.php?mode=edit&id=<?php echo $id;?>'});
+    // Experiment comment is editable
+    $('section#expcomment').on("mouseover", ".editable", function(){
+        $('section#expcomment p.editable').editable('editinplace.php', {
+         tooltip : 'Click to edit',
+         indicator : 'Saving...',
+         id   : 'id',
+         name : 'expcomment',
+         submit : 'Save',
+         cancel : 'Cancel',
+         style : 'display:inline',
+         callback : function() {
+             // now we reload the comments part to show the comment we just submitted
+             $('#expcomment_container').load("experiments.php?mode=view&id=<?php echo $id;?> #expcomment").fadeIn();
+         }
+        })
+    });
 });
 </script>
 

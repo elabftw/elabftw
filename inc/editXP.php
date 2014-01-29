@@ -266,6 +266,7 @@ function delete_link(id, item_id) {
     return false;
 }
 
+// ADD LINK
 function addLinkOnEnter(e) { // the argument here is the event (needed to detect which key is pressed)
     var keynum;
     if (e.which) {

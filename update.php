@@ -484,3 +484,36 @@ if (defined('DELETABLE_XP'))  {
     }
 }
 
+// ADD experiments_comments table
+$sql = "SHOW TABLES";
+$req = $bdd->prepare($sql);
+$req->execute();
+$test = $req->fetch();
+$test_arr = array();
+while ($row = $req->fetch()) {
+        $test_arr[] = $row[0];
+}
+
+if(in_array('experiments_comments',$test_arr)) {
+      echo "Table 'experiments_comments' already exists. Nothing to do.\n";
+} else {
+
+    $create_sql = "
+    CREATE TABLE IF NOT EXISTS `experiments_comments` (
+      `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+      `datetime` datetime NOT NULL,
+      `exp_id` int(11) NOT NULL,
+      `comment` text NOT NULL,
+      `userid` int(11) NOT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;";
+    $req = $bdd->prepare($create_sql);
+    $result = $req->execute();
+    if($result) {
+        echo ">>> You can now leave a comment on an experiment !\n";
+    } else {
+        echo 'There was a problem in the database update :/';
+        die($die_msg);
+    }
+}
+

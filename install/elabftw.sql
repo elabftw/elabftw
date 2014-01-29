@@ -180,6 +180,16 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
+-- experiments_comments table
+CREATE TABLE IF NOT EXISTS `experiments_comments` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `datetime` datetime NOT NULL,
+  `exp_id` int(11) NOT NULL,
+  `comment` text NOT NULL,
+  `userid` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
 -- ELABFTW
 INSERT INTO `items_types` (`id`, `name`, `bgcolor`, `template`, `tags`) VALUES
 (1, 'Antibody', '31a700', '<p><strong>Host :</strong></p>\r\n<p><strong>Target :</strong></p>\r\n<p><strong>Dilution to use :</strong></p>\r\n<p>Don''t forget to add the datasheet !</p>', ''),

@@ -146,13 +146,31 @@ $req->execute(array(
     'id' => $id
 ));
 if ($req->rowCount() > 0) {
-    echo "<section class='item'><h3>Comments</h3>";
+    echo "<section id='expcomment' class='item'><h3>Comments</h3>";
     while ($comments = $req->fetch()) {
         echo "<span class='smallgray'>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :</span><br />";
-        echo "<p>".$comments['comment']."</p";
+        echo "<p class='editable' id='expcomment_".$comments['id']."'>".$comments['comment']."</p";
     }
     echo "</section></section>";
 }
+?>
+<script>
+// make the comment div editable after partial reload (jquery delegated event)
+$('section#expcomment').on("mouseover", ".editable", function(){
+    $('.editable').editable('editinplace.php', { 
+     tooltip : 'Click to edit',
+     indicator : 'Saving...',
+     id   : 'id',
+     name : 'expcomment',
+     submit : 'Save',
+     cancel : 'Cancel',
+     style : 'display:inline'
+
+    });
+});
+</script>
+<?php
+
 
 
 // KEYBOARD SHORTCUTS

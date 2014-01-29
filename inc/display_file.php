@@ -66,7 +66,7 @@ if($count > 0){
         // END THUMBNAIL GENERATION
         echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='' /> <a href='download.php?f=".$uploads_data['long_name']."&name=".$uploads_data['real_name']."' target='_blank'>".$uploads_data['real_name']."</a>
         <span class='filesize'> (".format_bytes(filesize('uploads/'.$uploads_data['long_name'])).")</span><br />";
-        echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/comments.png' alt='comment' /> <p class='editable' id='comment_".$uploads_data['id']."'>".stripslashes($uploads_data['comment'])."</p></div>";
+        echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/comments.png' alt='comment' /> <p class='editable' id='filecomment_".$uploads_data['id']."'>".stripslashes($uploads_data['comment'])."</p></div>";
     } // end while
 } // end if count > 0
 // END DISPLAY FILES
@@ -88,12 +88,12 @@ $(document).ready(function() {
      $('section#filesdiv').on("mouseover", ".editable", function(){
          $('.editable').editable('editinplace.php', { 
              tooltip : 'Click to edit',
-                 indicator : 'Saving...',
+             indicator : 'Saving...',
              id   : 'id',
+             name : 'filecomment',
              submit : 'Save',
              cancel : 'Cancel',
-             style : 'display:inline',
-             name : 'content'
+             style : 'display:inline'
 
          });
      });

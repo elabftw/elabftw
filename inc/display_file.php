@@ -66,38 +66,46 @@ if($count > 0){
         // END THUMBNAIL GENERATION
         echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='' /> <a href='download.php?f=".$uploads_data['long_name']."&name=".$uploads_data['real_name']."' target='_blank'>".$uploads_data['real_name']."</a>
         <span class='filesize'> (".format_bytes(filesize('uploads/'.$uploads_data['long_name'])).")</span><br />";
-        echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/comments.png' alt='comment' /> <p class='editable' id='filecomment_".$uploads_data['id']."'>".stripslashes($uploads_data['comment'])."</p></div>";
+        echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/comments.png' alt='comment' /> <p ";
+        // only add editable class if we're in edit mode (so we don't have hover effect on it in view mode)
+        if ($_GET['mode'] === 'edit') { echo "class='editable '";}
+        echo "id='filecomment_".$uploads_data['id']."'>".stripslashes($uploads_data['comment'])."</p></div>";
     } // end while
 } // end if count > 0
 // END DISPLAY FILES
 ?>
 </section>
 
+<?php
+// we only want the file comment div to be editable on edit mode, not view mode
+if ($_GET['mode'] === 'edit') {
+?>
+<script>
+$('section#filesdiv').on("mouseover", ".editable", function(){
+    $('section#filesdiv p.editable').editable('editinplace.php', {
+     tooltip : 'Click to edit',
+     indicator : 'Saving...',
+     id   : 'id',
+     name : 'filecomment',
+     submit : 'Save',
+     cancel : 'Cancel',
+     style : 'display:inline'
+
+    });
+});
+</script>
+<?php } ?>
 <script src='js/jquery.lightbox-0.5.min.js'></script>
 <script>
 $(document).ready(function() {
      // click thumbnail to show full size http://leandrovieira.com/projects/jquery/lightbox/
-     $('a.lightbox').lightBox({
-        txtImage: '<?php if(!empty($uploads_data['real_name'])) {
-            echo $uploads_data['real_name'];
-        } else {
-            echo '';
-        };?>'
-     });
-     // make the comment div editable after partial reload (jquery delegated event)
-     $('section#filesdiv').on("mouseover", ".editable", function(){
-         $('section#filesdiv.editable').editable('editinplace.php', { 
-             tooltip : 'Click to edit',
-             indicator : 'Saving...',
-             id   : 'id',
-             name : 'filecomment',
-             submit : 'Save',
-             cancel : 'Cancel',
-             style : 'display:inline'
-
-         });
-     });
-
- });
+    $('a.lightbox').lightBox({
+       txtImage: '<?php if(!empty($uploads_data['real_name'])) {
+           echo $uploads_data['real_name'];
+       } else {
+           echo '';
+       };?>'
+    });
+});
 </script>
 

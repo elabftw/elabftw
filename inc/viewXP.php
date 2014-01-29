@@ -157,7 +157,7 @@ if ($req->rowCount() > 0) {
 <script>
 // make the comment div editable after partial reload (jquery delegated event)
 $('section#expcomment').on("mouseover", ".editable", function(){
-    $('section#expcomment.editable').editable('editinplace.php', { 
+    $('section#expcomment p.editable').editable('editinplace.php', {
      tooltip : 'Click to edit',
      indicator : 'Saving...',
      id   : 'id',

@@ -27,8 +27,6 @@ require_once('inc/common.php');
 // Check id is valid and assign it to $id
 if(isset($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
-} else {
-    die();
 }
 
 // Item switch
@@ -38,6 +36,8 @@ if (isset($_GET['type']) && ($_GET['type'] === 'exp')){
     $item_type = 'experiments_templates';
 } elseif (isset($_GET['type']) && ($_GET['type'] === 'item_type')) {
     $item_type = 'items_types';
+} elseif (isset($_POST['type']) && ($_POST['type'] === 'expcomment')) {
+    $item_type = 'expcomment';
 } else {
     $item_type = 'items';
 }
@@ -66,6 +66,17 @@ if ($item_type === 'experiments' || $item_type === 'items') {
         $result = $delete_req->execute();
     }
 }
+
+// DELETE EXPERIMENT COMMENT
+if ($item_type === 'expcomment' && is_pos_int($_POST['id'])) {
+    $delete_sql = "DELETE FROM experiments_comments WHERE id = :id";
+    $delete_req = $bdd->prepare($delete_sql);
+    $result = $delete_req->execute(array(
+        'id' => $_POST['id']
+    ));
+}
+
+
 // DELETE ITEM
 // check if we can delete experiments
 if ($item_type === 'experiments' && !DELETABLE_XP && !$_SESSION['is_admin'] ) {

@@ -154,18 +154,37 @@ $req->execute(array(
     'id' => $id
 ));
 if ($req->rowCount() > 0) {
+    // there is comments to display
     while ($comments = $req->fetch()) {
-        echo "<div class='expcomment_box'><span class='smallgray'>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :</span><br />";
+    echo "<div class='expcomment_box'>
+    <img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/trash.png' title='delete' alt='delete' onClick=\"deleteItem(".$comments['id'].",'expcomment')\" />";
+     echo "<span class='smallgray'>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :</span><br />";
         echo "<p class='editable' id='expcomment_".$comments['id']."'>".$comments['comment']."</p></div>";
     }
     echo "</section></section>";
 }
 ?>
-</section>
 
 <script>
-// change title
+// DELETE EXP COMMENT
+function deleteItem(id, type) {
+    var you_sure = confirm('Delete this ?');
+    if (you_sure == true) {
+        $.post('delete_item.php', {
+            id:id,
+            type:type
+        })
+        // on success we reload the block
+        .success(function() {
+             $('#expcomment_container').load("experiments.php?mode=view&id=<?php echo $id;?> #expcomment");
+        });
+    } else {
+        return false;
+    }
+}
+// READY ? GO !!
 $(document).ready(function() {
+    // change title
     // fix for the ' and "
     title = "<?php echo $data['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
     document.title = title;

@@ -343,7 +343,7 @@ function update_visibility(visibility) {
 $(document).ready(function() {
     // KEYBOARD SHORTCUTS
     key('<?php echo $_SESSION['prefs']['shortcuts']['create'];?>', function(){location.href = 'create_item.php?type=exp'});
-    key('<?php echo $_SESSION['prefs']['shortcuts']['submit'];?>', function(){document.forms['editXP'].submit()});";
+    key('<?php echo $_SESSION['prefs']['shortcuts']['submit'];?>', function(){document.forms['editXP'].submit()});
     // hide the little 'Updated !' message
     $('#visibility_msg_div').hide();
 

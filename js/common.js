@@ -2,13 +2,31 @@
  * Common functions used by eLabFTW
  */
 // Check for cookies
-function check_cookies_enabled() {
+function checkCookiesEnabled() {
     var cookieEnabled = (navigator.cookieEnabled) ? true : false;
     if (typeof navigator.cookieEnabled == "undefined" && !cookieEnabled) { 
         document.cookie="testcookie";
         cookieEnabled = (document.cookie.indexOf("testcookie") != -1) ? true : false;
     }
 return (cookieEnabled);
+}
+
+// The main function to delete stuff
+// id of the item you want to delete, its type, the message info you want to say, the url you want to redirect to
+function deleteThis(id, type, info, redirect) {
+    var you_sure = confirm('Delete this ?');
+    if (you_sure === true) {
+        $.post('delete.php', {
+            id:id,
+            type:type
+        })
+        .success(function() {
+            document.cookie = info;
+            window.location = redirect;
+        });
+    } else {
+        return false;
+    }
 }
 
 // for editXP/DB, ctrl-shift-D will add the date

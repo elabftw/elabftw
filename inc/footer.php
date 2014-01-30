@@ -19,8 +19,6 @@
 ********************************************************************************/
 ?>
 <footer>
-<!-- common stuff -->
-<script src="js/common.min.js"></script>
 <!-- konami code and unicorns -->
 <script src="js/cornify.min.js"></script>
 

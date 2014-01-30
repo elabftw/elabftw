@@ -94,6 +94,8 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1){
 <script src='js/keymaster.min.js'></script>
 <!-- for stars rating -->
 <script src='js/jquery.rating.min.js'></script>
+<!-- common stuff -->
+<script src="js/common.min.js"></script>
 </head>
 
 <body>

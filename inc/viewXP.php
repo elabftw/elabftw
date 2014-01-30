@@ -156,7 +156,7 @@ if ($req->rowCount() > 0) {
     // there is comments to display
     while ($comments = $req->fetch()) {
     echo "<div class='expcomment_box'>
-    <img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/trash.png' title='delete' alt='delete' onClick=\"deleteThis(".$comments['id'].",'expcomment')\" />";
+    <img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/trash.png' title='delete' alt='delete' onClick=\"deleteThisAndReload(".$comments['id'].",'expcomment')\" />";
      echo "<span class='smallgray'>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :</span><br />";
         echo "<p class='editable' id='expcomment_".$comments['id']."'>".$comments['comment']."</p></div>";
     }
@@ -167,7 +167,7 @@ if ($req->rowCount() > 0) {
 
 <script>
 // DELETE EXP COMMENT
-function deleteThis(id, type) {
+function deleteThisAndReload(id, type) {
     var you_sure = confirm('Delete this ?');
     if (you_sure == true) {
         $.post('delete.php', {

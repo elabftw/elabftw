@@ -39,7 +39,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 
 <script>
 // Check if user accepts cookies
-if (!check_cookies_enabled()) {
+if (!checkCookiesEnabled()) {
     var cookie_alert = "<div class='ui-state-error ui-corner-all' style='margin:5px'><p><span class='ui-icon ui-icon-alert' style='float:left; margin: 0 5px 0 5px;'></span>Please enable cookies in your navigator to continue.</p></div>";
     document.write(cookie_alert);
 }

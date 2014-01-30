@@ -62,7 +62,7 @@ if ($data['locked'] == 1) {
 // BEGIN CONTENT
 ?>
 <section id='view_xp_item' class='item <?php echo $data['status'];?>'>
-<img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','exp')" />
+<img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','exp', 'info=Experiment deleted successfully !', 'experiments.php')" />
 <!-- ADD TAG FORM -->
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
 <div class='tags'>
@@ -177,27 +177,6 @@ $visibility = $data['visibility'];
 
 <script>
 // JAVASCRIPT
-function deleteThis(id, type) {
-    var you_sure = confirm('Delete this ?');
-    if (you_sure == true) {
-        $.post('delete.php', {
-            id:id,
-            type:type
-        })
-        // on success we go to experiments page
-        .success(function() {
-            document.cookie = 'info=Experiment deleted successfully !';
-            window.location = "experiments.php";
-        });
-    } else {
-        return false;
-    }
-}
-<?php
-// KEYBOARD SHORTCUTS
-echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=exp'});";
-echo "key('".$_SESSION['prefs']['shortcuts']['submit']."', function(){document.forms['editXP'].submit()});";
-?>
 // TAGS AUTOCOMPLETE
 $(function() {
 		var availableTags = [
@@ -362,6 +341,9 @@ function update_visibility(visibility) {
 
 // READY ? GO !!
 $(document).ready(function() {
+    // KEYBOARD SHORTCUTS
+    key('<?php echo $_SESSION['prefs']['shortcuts']['create'];?>', function(){location.href = 'create_item.php?type=exp'});
+    key('<?php echo $_SESSION['prefs']['shortcuts']['submit'];?>', function(){document.forms['editXP'].submit()});";
     // hide the little 'Updated !' message
     $('#visibility_msg_div').hide();
 

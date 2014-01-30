@@ -136,7 +136,7 @@ while ($items_types = $req->fetch()) {
     <div class='simple_border'>
     <a class='trigger_<?php echo $items_types['id'];?>'>Edit <?php echo $items_types['name'];?></a>
     <div class='toggle_container_<?php echo $items_types['id'];?>'>
-<img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $items_types['id'];?>','item_type')" />
+<img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $items_types['id'];?>','item_type', 'info=Item type deleted successfully', 'admin.php')" />
 
     <form action='admin-exec.php' method='post'>
     <input type='text' class='biginput' name='item_type_name' value='<?php echo stripslashes($items_types['name']);?>' />
@@ -177,22 +177,6 @@ while ($items_types = $req->fetch()) {
 </section>
 
 <script>
-function deleteThis(id, type) {
-    var you_sure = confirm('Delete this ?');
-    if (you_sure == true) {
-        $.post('delete.php', {
-            id:id,
-            type:type
-        })
-        // on success we go to experiments page
-        .success(function() {
-            document.cookie = 'info=Item type deleted successfully !';
-            window.location = "admin.php";
-        });
-    } else {
-        return false;
-    }
-}
 // confirm delete by writing full name
 function confirm_delete(id, lastname) {
     var user_input = prompt('WARNING !\nAre you absolutely sure you want to delete this user ?\nThis will delete forever ALL the user\'s data, including files and experiments !!!!\nTo confirm type the LASTNAME of the user in capital letters :');

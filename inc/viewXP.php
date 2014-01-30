@@ -183,15 +183,7 @@ function deleteThis(id, type) {
     }
 }
 
-// READY ? GO !!
-$(document).ready(function() {
-    // change title
-    // fix for the ' and "
-    title = "<?php echo $data['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
-    document.title = title;
-    // Keyboard shortcuts
-    key('<?php echo $_SESSION['prefs']['shortcuts']['create'];?>', function(){location.href = 'create_item.php?type=exp'});
-    key('<?php echo $_SESSION['prefs']['shortcuts']['edit'];?>', function(){location.href = 'experiments.php?mode=edit&id=<?php echo $id;?>'});
+function makeEditable() {
     // Experiment comment is editable
     $('div#expcomment').on("mouseover", ".editable", function(){
         $('div#expcomment p.editable').editable('editinplace.php', {
@@ -205,9 +197,25 @@ $(document).ready(function() {
             callback : function() {
                 // now we reload the comments part to show the comment we just submitted
                 $('#expcomment_container').load("experiments.php?mode=view&id=<?php echo $id;?> #expcomment");
+                // we reload the function so editable zones are editable again
+                makeEditable();
             }
         })
     });
+}
+
+
+// READY ? GO !!
+$(document).ready(function() {
+    // change title
+    // fix for the ' and "
+    title = "<?php echo $data['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
+    document.title = title;
+    // Keyboard shortcuts
+    key('<?php echo $_SESSION['prefs']['shortcuts']['create'];?>', function(){location.href = 'create_item.php?type=exp'});
+    key('<?php echo $_SESSION['prefs']['shortcuts']['edit'];?>', function(){location.href = 'experiments.php?mode=edit&id=<?php echo $id;?>'});
+    // make editable
+    setInterval(makeEditable, 50);
 });
 </script>
 

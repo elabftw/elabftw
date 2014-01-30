@@ -34,23 +34,6 @@ if (isset($_POST['id']) && is_pos_int($_POST['id'])) {
     die();
 }
 
-
-// DELETE LINKS
-function delete_links ($id) {
-    global $bdd;
-    // get all experiments with that item linked
-    $sql = "SELECT id FROM experiments_links WHERE link_id = :link_id";
-    $req = $bdd->prepare($sql);
-    $req->execute(array(
-        'link_id' => $id
-    ));
-    while ($links = $req->fetch()) {
-        $delete_sql = "DELETE FROM experiments_links WHERE id=".$links['id'];
-        $delete_req = $bdd->prepare($delete_sql);
-        $result = $delete_req->execute();
-    }
-}
-
 // Item switch
 if (isset($_POST['type']) && !empty($_POST['type'])) {
     switch ($_POST['type']) {
@@ -85,8 +68,20 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             'type' => 'exp' 
         ));
 
-        // delete links
-        delete_links($id);
+        // delete associated links
+        $delete_sql = "DELETE FROM experiments_links WHERE item_id = :item_id";
+        $delete_req = $bdd->prepare($delete_sql);
+        $result = $delete_req->execute(array(
+            'item_id' => $id
+        ));
+
+        // delete associated experiments comments
+        $sql = "DELETE FROM experiments_comments WHERE exp_id = :id";
+        $req = $bdd->prepare($sql);
+        $req->execute(array(
+            'id' => $id
+        ));
+
     }
 
         break;
@@ -134,8 +129,18 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
         'type' => 'database' 
     ));
 
-    // delete links
-    delete_links($id);
+    // delete links of this item in experiments with this item linked
+    // get all experiments with that item linked
+    $sql = "SELECT id FROM experiments_links WHERE link_id = :link_id";
+    $req = $bdd->prepare($sql);
+    $req->execute(array(
+        'link_id' => $id
+    ));
+    while ($links = $req->fetch()) {
+        $delete_sql = "DELETE FROM experiments_links WHERE id=".$links['id'];
+        $delete_req = $bdd->prepare($delete_sql);
+        $result = $delete_req->execute();
+    }
 
     break;
 

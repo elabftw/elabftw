@@ -655,3 +655,18 @@ function display_message($type, $message) {
     return false;
 }
 
+// to check if something is owned by a user before we add/delete/edit
+function is_owned_by_user($id, $table, $userid) {
+    global $bdd;
+    // type can be experiments or experiments_templates
+    $sql = "SELECT userid FROM $table WHERE id = $id";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $result = $req->fetchColumn();
+
+    if ($result === $userid) {
+        return true;
+    } else {
+        return false;
+    }
+}

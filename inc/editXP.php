@@ -31,7 +31,10 @@
 if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
     $id = $_GET['id'];
 } else {
-    die("The id parameter in the URL isn't a valid item ID.");
+    $message = "<strong>Cannot edit:</strong> the id parameter is not valid !";
+    display_message('error', $message);
+    require_once('inc/footer.php');
+    exit();
 }
 
 // SQL for editXP
@@ -237,12 +240,13 @@ function addTagOnEnter(e) { // the argument here is the event (needed to detect 
         // get tag
         var tag = $('#addtaginput').val();
         // POST request
-        var jqxhr = $.post('add_tag.php', {
+        $.post('add.php', {
             tag: tag,
-            item_id: <?php echo $id; ?> , type: 'exp'
+            item_id: <?php echo $id; ?>,
+            type: 'exptag'
         })
         // reload the tags list
-        .done(function () {
+        .success(function () {
             $("#tags_div").load("experiments.php?mode=edit&id=<?php echo $id;?> #tags_div");
             // clear input field
             $("#addtaginput").val("");
@@ -269,13 +273,15 @@ while ($link = $getalllinks->fetch()){
 		});
 	});
 // DELETE LINK
+// TODO put in deleteThis()
 function delete_link(id, item_id) {
     var you_sure = confirm('Delete this link ?');
     if (you_sure == true) {
-        var jqxhr = $.post('delete_link.php', {
+        $.post('delete.php', {
+            type: 'link',
             id: id,
             item_id : item_id
-        }).done(function () {
+        }).success(function () {
             $("#links_div").load("experiments.php?mode=edit&id=" + item_id + " #links_div");
         })
     }
@@ -295,10 +301,10 @@ function addLinkOnEnter(e) { // the argument here is the event (needed to detect
         if (link_id.length > 0) {
             // parseint will get the id, and not the rest (in case there is number in title)
             link_id = parseInt(link_id, 10);
-            console.log(isNaN(link_id));
             if (isNaN(link_id) != true) {
                 // POST request
-                var jqxhr = $.post('add_link.php', {
+                $.post('add.php', {
+                    type: 'link',
                     link_id: link_id,
                     item_id: <?php echo $id; ?>
                 })

@@ -23,26 +23,17 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+// delete.php
+// This page is called with POST requests containing an id and a type.
+
 require_once('inc/common.php');
 // Check id is valid and assign it to $id
 if (isset($_POST['id']) && is_pos_int($_POST['id'])) {
     $id = $_POST['id'];
+} else {
+    die();
 }
 
-function is_owned_by_user($id, $table, $userid) {
-    global $bdd;
-    // type can be experiments or experiments_templates
-    $sql = "SELECT userid FROM $table WHERE id = $id";
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    $result = $req->fetchColumn();
-
-    if ($result === $userid) {
-        return true;
-    } else {
-        return false;
-    }
-}
 
 // DELETE LINKS
 function delete_links ($id) {
@@ -158,6 +149,16 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
     ));
 
     break;
+
+    case 'link':
+        if (is_owned_by_user($id, 'experiments', $_SESSION['userid']) ) {
+
+        $delete_sql = "DELETE FROM experiments_links WHERE id= :id";
+        $delete_req = $bdd->prepare($delete_sql);
+        $result = $delete_req->execute(array(
+            'id' => $id
+        ));
+        }
 
     default:
         $err_flag = true;

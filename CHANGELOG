@@ -1,6 +1,8 @@
 /* Changelog for eLabFTW */
 
 Version 0.9.4
+* Clearer code
+* You can add comments on experiments
 * Date is now YYYYMMDD
 * Email setup is no more mandatory on install
 * Updated some js libraries

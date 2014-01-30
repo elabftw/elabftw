@@ -453,13 +453,8 @@ function make_pdf($id, $type, $out = 'browser') {
         <em>Keywords : ".$tags."</em><br />
         <hr>".$body."<br /><br />
         <hr>Made by : ".$firstname." ".$lastname."<br /><br />";
-    // QR CODE (commented out as it's not possible with mpdf)
-    // TODO remove as it's only https now
-    if (!empty($_SERVER['HTTPS'])) {
-        $protocol = 'https://';
-    } else {
-        $protocol = 'http://';
-    }
+    // eLabFTW is only HTTPS
+    $protocol = 'https://';
     $url = $protocol.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
     if ($type == 'experiments') {
         if ($out === 'browser') { 
@@ -468,6 +463,7 @@ function make_pdf($id, $type, $out = 'browser') {
         $url = str_replace('make_zip.php', 'experiments.php', $url);
         }
         $full_url = $url."?mode=view&id=".$id;
+    // QR CODE (commented out as it's not possible with mpdf)
         //$content .= "<qrcode value='".$full_url."' ec='H' style='width: 42mm; background-color: white; color: black;'></qrcode>";
         $content .= "<br /><p>elabid : ".$elabid."</p>";
         $content .= "<p>URL : <a href='".$full_url."'>".$full_url."</a></p>";

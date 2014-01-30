@@ -596,9 +596,11 @@ function duplicate_item($id, $type) {
             $result_tags = true;
         }
         // LINKS
-        $linksql = "SELECT link_id FROM experiments_links WHERE item_id = ".$id;
+        $linksql = "SELECT link_id FROM experiments_links WHERE item_id = :id";
         $linkreq = $bdd->prepare($linksql);
-        $result_links = $linkreq->execute();
+        $result_links = $linkreq->execute(array(
+            'id' => $id
+        ));
         while($links = $linkreq->fetch()) {
             $sql = "INSERT INTO experiments_links (link_id, item_id) VALUES(:link_id, :item_id)";
             $req = $bdd->prepare($sql);

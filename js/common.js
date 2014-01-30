@@ -1,6 +1,16 @@
 /* 
  * Common functions used by eLabFTW
  */
+// Check for cookies
+function check_cookies_enabled() {
+    var cookieEnabled = (navigator.cookieEnabled) ? true : false;
+    if (typeof navigator.cookieEnabled == "undefined" && !cookieEnabled) { 
+        document.cookie="testcookie";
+        cookieEnabled = (document.cookie.indexOf("testcookie") != -1) ? true : false;
+    }
+return (cookieEnabled);
+}
+
 // for editXP/DB, ctrl-shift-D will add the date
 function addDateOnCursor() {
     var todayDate = new Date();

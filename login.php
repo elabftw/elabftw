@@ -35,8 +35,16 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     require_once('inc/footer.php');
     die();
 }
-// Page begin
 ?>
+
+<script>
+// Check if user accepts cookies
+if (!check_cookies_enabled()) {
+    var cookie_alert = "<div class='ui-state-error ui-corner-all' style='margin:5px'><p><span class='ui-icon ui-icon-alert' style='float:left; margin: 0 5px 0 5px;'></span>Please enable cookies in your navigator to continue.</p></div>";
+    document.write(cookie_alert);
+}
+</script>
+
 <section class='center'>
     <!-- Login form -->
     <form method="post" action="login-exec.php" autocomplete="off">
@@ -44,10 +52,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
             <legend>Login :</legend>
                 <p>
                     <label for="username">Username</label>
-                    <input name="username" type="text" id="username" value="<?php if(isset($_SESSION['username'])){
-                        echo $_SESSION['username'];
-                        unset($_SESSION['username']);
-                    }?>" />
+                    <input name="username" type="text" id="username" />
                 </p>
                 <p>
                     <label for="password">Password</label>

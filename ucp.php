@@ -177,7 +177,7 @@ $users = $req->fetch();
         while ($users = $req->fetch()) {
         ?>
         <div id='tpl-<?php echo $i;?>'>
-        <a class='align_right' href='delete_item.php?id=<?php echo $users['id'];?>&type=tpl' onClick="return confirm('Delete this template ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
+<img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $users['id'];?>','tpl')" />
         <form action='ucp-exec.php' method='post'>
         <input type='hidden' name='tpl_form' />
         <?php
@@ -224,6 +224,22 @@ $users = $req->fetch();
 <?php require_once('inc/footer.php');?>
 
 <script>
+function deleteThis(id, type) {
+    var you_sure = confirm('Delete this ?');
+    if (you_sure == true) {
+        $.post('delete.php', {
+            id:id,
+            type:type
+        })
+        // on success we go to ucp page
+        .success(function() {
+            document.cookie = 'info=Experiment template deleted successfully !';
+            window.location = "ucp.php";
+        });
+    } else {
+        return false;
+    }
+}
 // hover to choose theme
 function setTmpTheme(theme){
     document.getElementById('maincss').href = 'themes/'+theme+'/style.css';

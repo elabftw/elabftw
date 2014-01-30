@@ -68,7 +68,6 @@ if ($data['userid'] != $_SESSION['userid']) {
 // Display experiment
 ?>
 <section class="item <?php echo $data['status'];?>">
-<a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>&type=exp' onClick="return confirm('Delete this experiment ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <?php
 echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' title='date' alt='Date :' /><span class='date'> ".$data['date']."</span><br />
     <a href='experiments.php?mode=edit&id=".$data['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/edit.png' title='edit' alt='edit' /></a> 
@@ -157,7 +156,7 @@ if ($req->rowCount() > 0) {
     // there is comments to display
     while ($comments = $req->fetch()) {
     echo "<div class='expcomment_box'>
-    <img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/trash.png' title='delete' alt='delete' onClick=\"deleteItem(".$comments['id'].",'expcomment')\" />";
+    <img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/trash.png' title='delete' alt='delete' onClick=\"deleteThis(".$comments['id'].",'expcomment')\" />";
      echo "<span class='smallgray'>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :</span><br />";
         echo "<p class='editable' id='expcomment_".$comments['id']."'>".$comments['comment']."</p></div>";
     }
@@ -168,10 +167,10 @@ if ($req->rowCount() > 0) {
 
 <script>
 // DELETE EXP COMMENT
-function deleteItem(id, type) {
+function deleteThis(id, type) {
     var you_sure = confirm('Delete this ?');
     if (you_sure == true) {
-        $.post('delete_item.php', {
+        $.post('delete.php', {
             id:id,
             type:type
         })
@@ -183,6 +182,7 @@ function deleteItem(id, type) {
         return false;
     }
 }
+
 // READY ? GO !!
 $(document).ready(function() {
     // change title
@@ -195,17 +195,17 @@ $(document).ready(function() {
     // Experiment comment is editable
     $('div#expcomment').on("mouseover", ".editable", function(){
         $('div#expcomment p.editable').editable('editinplace.php', {
-         tooltip : 'Click to edit',
-         indicator : 'Saving...',
-         id   : 'id',
-         name : 'expcomment',
-         submit : 'Save',
-         cancel : 'Cancel',
-         style : 'display:inline',
-         callback : function() {
-             // now we reload the comments part to show the comment we just submitted
-             $('#expcomment_container').load("experiments.php?mode=view&id=<?php echo $id;?> #expcomment");
-         }
+            tooltip : 'Click to edit',
+            indicator : 'Saving...',
+            id   : 'id',
+            name : 'expcomment',
+            submit : 'Save',
+            cancel : 'Cancel',
+            style : 'display:inline',
+            callback : function() {
+                // now we reload the comments part to show the comment we just submitted
+                $('#expcomment_container').load("experiments.php?mode=view&id=<?php echo $id;?> #expcomment");
+            }
         })
     });
 });

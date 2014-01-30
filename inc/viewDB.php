@@ -52,8 +52,6 @@ $data = $req->fetch();
 ?>
 <section class="item">
 
-<a class='align_right' href='delete_item.php?id=<?php echo $data['id'];?>' onClick="return confirm('Delete this item ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
-
 <span class='date'><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /> <?php echo $data['date'];?></span><br />
 
 <h3 style='color:#<?php echo get_item_info_from_id($data['type'], 'bgcolor');?>'><?php echo get_item_info_from_id($data['type'], 'name');?> </h3>

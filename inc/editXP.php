@@ -59,7 +59,7 @@ if ($data['locked'] == 1) {
 // BEGIN CONTENT
 ?>
 <section id='view_xp_item' class='item <?php echo $data['status'];?>'>
-<a class='align_right' href='delete_item.php?id=<?php echo $id;?>&type=exp' onClick="return confirm('Delete this experiment ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
+<img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','exp')" />
 <!-- ADD TAG FORM -->
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
 <div class='tags'>
@@ -174,6 +174,22 @@ $visibility = $data['visibility'];
 
 <script>
 // JAVASCRIPT
+function deleteThis(id, type) {
+    var you_sure = confirm('Delete this ?');
+    if (you_sure == true) {
+        $.post('delete.php', {
+            id:id,
+            type:type
+        })
+        // on success we go to experiments page
+        .success(function() {
+            document.cookie = 'info=Experiment deleted successfully !';
+            //window.location = "experiments.php";
+        });
+    } else {
+        return false;
+    }
+}
 <?php
 // KEYBOARD SHORTCUTS
 echo "key('".$_SESSION['prefs']['shortcuts']['create']."', function(){location.href = 'create_item.php?type=exp'});";

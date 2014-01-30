@@ -1,12 +1,13 @@
 /* Changelog for eLabFTW */
 
 Version 0.9.4
-* Clearer code
+* You can now forbid users to delete an experiment with a setting in the conf file
 * You can add comments on experiments
 * Date is now YYYYMMDD
 * Email setup is no more mandatory on install
 * Updated some js libraries
 * Add a 'Saved' notification upon saving with the Save button of TinyMCE
+* Clearer code
 
 Version 0.9.3
 * Add item type to folder of zip export

@@ -219,11 +219,11 @@ while ($tag = $getalltags->fetch()){
 function delete_tag(tag_id, item_id) {
     var you_sure = confirm('Delete this tag ?');
     if (you_sure == true) {
-        var jqxhr = $.post('delete_tag.php', {
+        $.post('delete.php', {
             id: tag_id,
             item_id: item_id,
-            type: 'exp'
-        }).done(function () {
+            type: 'exptag'
+        }).success(function () {
             $("#tags_div").load("experiments.php?mode=edit&id=" + item_id + " #tags_div");
         })
     }

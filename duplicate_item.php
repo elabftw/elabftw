@@ -37,9 +37,11 @@ if ($_GET['type'] === 'exp'){
     die('Bad type.');
 }
 
+// this function will return the ID of the new experiment
+// or false if it failed somewhere
 $newid = duplicate_item($id, $type);
 
-if ($newid) {
+if (is_pos_int($newid)) {
     if ($type === 'experiments') {
         $msg_arr[] = 'Experiment successfully duplicated';
         $_SESSION['infos'] = $msg_arr;

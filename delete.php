@@ -150,6 +150,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
 
     break;
 
+    // DELETE LINKS
     case 'link':
         if (is_owned_by_user($id, 'experiments', $_SESSION['userid']) ) {
 
@@ -159,7 +160,33 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             'id' => $id
         ));
         }
+        break;
 
+    // DELETE TAGS
+    case 'exptag':
+        if (is_pos_int($_POST['item_id'])) {
+            $item_id = $_POST['item_id'];
+        } else { die(); }
+
+        if (is_owned_by_user($item_id, 'experiments', $_SESSION['userid']) ) {
+
+            $delete_sql = "DELETE FROM experiments_tags WHERE id = :id";
+            $delete_req = $bdd->prepare($delete_sql);
+            $result = $delete_req->execute(array(
+                'id' => $id
+            ));
+        }
+        break;
+
+    case 'itemtag':
+        $delete_sql = "DELETE FROM items_tags WHERE id = :id";
+        $delete_req = $bdd->prepare($delete_sql);
+        $result = $delete_req->execute(array(
+            'id' => $id
+        ));
+        break;
+
+    // END
     default:
         $err_flag = true;
     }

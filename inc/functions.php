@@ -564,8 +564,8 @@ function duplicate_item($id, $type) {
         // END SQL main
     }
 
-    // Get what is the experiment id we just created
-    $sql = "SELECT id FROM ".$type." WHERE userid = :userid ORDER BY id DESC LIMIT 0,1";
+    // Get what is the id we just created
+    $sql = "SELECT id FROM $type WHERE userid = :userid ORDER BY id DESC LIMIT 0,1";
     $req = $bdd->prepare($sql);
     $req->bindParam(':userid', $_SESSION['userid']);
     $req->execute();

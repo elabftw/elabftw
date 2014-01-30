@@ -187,7 +187,7 @@ function deleteThis(id, type) {
         // on success we go to experiments page
         .success(function() {
             document.cookie = 'info=Experiment deleted successfully !';
-            //window.location = "experiments.php";
+            window.location = "experiments.php";
         });
     } else {
         return false;

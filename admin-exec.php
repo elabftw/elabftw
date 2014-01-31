@@ -124,8 +124,10 @@ if (isset($_POST['deluser']) && is_pos_int($_POST['deluser'])) {
 // EDIT USER
 if (isset($_POST['userid']) && is_pos_int($_POST['userid'])) {
     $userid = $_POST['userid'];
-    $firstname = filter_var($_POST['firstname'], FILTER_SANITIZE_STRING); 
-    $lastname = filter_var($_POST['lastname'], FILTER_SANITIZE_STRING); 
+    // Put everything lowercase and first letter uppercase
+    $firstname = ucwords(strtolower(filter_var($_POST['firstname'], FILTER_SANITIZE_STRING)));
+    // Lastname in uppercase
+    $lastname = strtoupper(filter_var($_POST['lastname'], FILTER_SANITIZE_STRING));
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
     if($_POST['is_admin'] == 1) {
         $is_admin = 1;

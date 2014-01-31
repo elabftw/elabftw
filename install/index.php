@@ -59,8 +59,6 @@ require_once('../inc/functions.php');
 <!-- JAVASCRIPT -->
 <script src="../js/jquery-2.1.0.min.js"></script>
 <script src="../js/jquery-ui-1.10.3.custom.min.js"></script>
-<!-- Form validation client-side -->
-<script src="../js/parsley.min.js"></script>
 </head>
 
 <body>
@@ -206,52 +204,8 @@ if (extension_loaded("gd")) {
 <br />
 <br />
 
-<!-- MAIN FORM -->
-<form data-validate='parsley' action='install.php' method='post'>
-<fieldset>
-<legend><strong>Generalities</strong></legend>
-<p>This part deals with some configuration aspects of your eLabFTW installation.</p>
-
-<p>
-<label for='lab_name'>The name of your lab:</label><br />
-<input id='lab_name' name='lab_name' type='text' />
-<span class='install_hint'>(will be visible in the footer)</span>
-</p>
-
-<p>
-<label for='admin_validate'>New accounts need validation:</label><br />
-<input id='admin_validate' name='admin_validate' type='checkbox' checked='checked' />
-<span class='install_hint'>(the admin can validate new users in the admin panel)</span>
-</p>
-
-<p>
-<label for='deletable_xp'>Experiments can be deleted:</label><br />
-<input id='deletable_xp' name='deletable_xp' type='checkbox' checked='checked' />
-<span class='install_hint'>(uncheck to deny users the right to delete experiments)</span>
-</p>
-<p>
-<label for='link_name'>Name of the custom link in the menu:</label><br />
-<input id='link_name' name='link_name' type='text' value='Wiki' />
-<span class='install_hint'>(this link is visible in the main menu, it can be anything)</span>
-</p>
-
-<p>
-<label for='link_href'>URL of the custom link:</label><br />
-<input id='link_href' name='link_href' type='text' value='https://github.com/NicolasCARPi/elabftw/wiki' />
-<span class='install_hint'>(the default URL is the wiki of eLabFTW, but you should put your own wiki)</span>
-</p>
-
-<p>
-<label for='proxy'>Proxy settings:</label><br />
-<input id='proxy' name='proxy' type='text' />
-<span class='install_hint'>(if you are behind a proxy, write it like this : http://proxy.example.com:3128)</span>
-</p>
-
-</fieldset>
-
-<br />
-
 <!-- MYSQL -->
+<form action='install.php' method='post'>
 <fieldset>
 <legend><strong>MySQL</strong></legend>
 <p>MySQL is the database that will store everything. eLabFTW need to connect to it with a username/password. This is <strong>NOT</strong> your account with which you'll use eLabFTW. If you followed the README you should have created a database <em>elabftw</em> with a user <em>elabftw</em> that have all the rights on it.</p>
@@ -288,56 +242,6 @@ if (extension_loaded("gd")) {
 
 <br />
 
-<!-- EMAIL -->
-<section id='email_section'>
-<fieldset>
-<legend><strong>Email settings</strong></legend>
-<p>This part is about the SMTP settings. eLabFTW will need to be able to send out emails for password resets.</p>
-
-<p>
-<label for='smtp_address'>Address of the smtp server:</label><br />
-<input id='smtp_address' name='smtp_address' type='text' value='smtp.gmail.com' />
-<span class='install_hint'>(you can use your company's SMTP server here)</span>
-</p>
-
-<p>
-<label for='smtp_port'>SMTP port:</label><br />
-<input id='smtp_port' name='smtp_port' type='text' value='587' />
-<span class='install_hint'>(587 is the default port)</span>
-</p>
-
-<p>
-<label for='smtp_encryption'>SMTP encryption:</label><br />
-<input id='smtp_encryption' name='smtp_encryption' type='text' value='tls' />
-<span class='install_hint'>(can be 'tls' or 'ssl', leave 'tls' if unsure)</span>
-</p>
-
-<p>
-<label for='smtp_username'>Username to connect to the SMTP server:</label><br />
-<input id='smtp_username' name='smtp_username' type='text' value='username@gmail.com' />
-<span class='install_hint'>(you need to keep the @gmail.com if you use gmail's smtp)</span>
-</p>
-
-<p>
-<label for='smtp_password'>Password:</label><br />
-<input id='smtp_password' name='smtp_password' type='password' />
-<span class='install_hint'>(this is the password for the SMTP account)</span>
-</p>
-
-<div class='center' style='margin-top:8px'>
-<button type='button' id='test_email_button' class='button'>Test email parameters</button>
-</div>
-
-<div class='center' style='margin-top:8px'>
-or 
-<button type='button' id='skip_email_button' class='button'>Skip this step</button>
-</div>
-
-</fieldset>
-</section>
-
-<br />
-
 <!-- FINAL SECTION -->
 <section id='final_section'>
 <p>When you click the button below, it will create the file <em>admin/config.php</em>. If it cannot create it (because the server doesn't have write permission to this folder), your browser will download it and you will need to put it in the folder <em>admin</em>.</p>
@@ -364,8 +268,6 @@ or
 
 <script>
 $(document).ready(function() {
-    // hide the email part
-    $('#email_section').hide();
     // hide the install button
     $('#final_section').hide();
 
@@ -385,14 +287,16 @@ $(document).ready(function() {
         }).done(function(test_result) {
             if (test_result == 1) {
                 alert('MySQL connection was successful ! :)');
-                $('#email_section').show();
                 $('#test_sql_button').hide();
+                $('#final_section').show();
             } else {
                 alert('The connection failed with this error : ' + test_result);
             }
         });
     });
 
+    /*
+        * TODO put in admin.php when the config part is done
     // email test button
     $('#test_email_button').click(function() {
         var email_address = $('#smtp_address').val();
@@ -428,7 +332,6 @@ $(document).ready(function() {
             height: 500,
             modal: true
         });
-         */
         alert('Resetting passwords functionnality won\'t be available until you configure correctly the email settings.');
 
         // we hide email because it was skipped
@@ -436,6 +339,7 @@ $(document).ready(function() {
         // show last section
         $('#final_section').show();
     });
+     */
 });
 </script>
 </body>

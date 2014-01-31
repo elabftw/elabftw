@@ -562,9 +562,11 @@ while ($show = $req->fetch()) {
 }
 
 if (!$table_is_here) {
+    $path = substr(realpath(__FILE__), 0, -20);
     $create_sql = "CREATE TABLE IF NOT EXISTS `config` (
       `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
       `lab_name` VARCHAR(255) NOT NULL DEFAULT 'labname',
+      `path` VARCHAR(255) NOT NULL DEFAULT $path,
       `admin_validate` tinyint(1) NOT NULL DEFAULT '0',
       `link_name` VARCHAR(255) NOT NULL DEFAULT 'Wiki',
       `link_href` VARCHAR(255) NOT NULL DEFAULT 'https://github.com/NicolasCARPi/elabftw/wiki',

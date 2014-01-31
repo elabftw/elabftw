@@ -33,43 +33,7 @@ if (file_exists('../admin/config.php')) {
     die();
 }
 
-if (isset($_POST['lab_name']) && !empty($_POST['lab_name'])) {
-    // we need to remove double quotes
-    $lab_name = str_replace('"', '', $_POST['lab_name']);
-} else {
-    $lab_name = 'elab';
-}
-
-if (isset($_POST['admin_validate']) && !empty($_POST['admin_validate'])) {
-    if ($_POST['admin_validate'] == 'on') {
-        $admin_validate = 1;
-    }
-} else {
-        $admin_validate = 0;
-}
-
-if (isset($_POST['deletable_xp']) && !empty($_POST['deletable_xp'])) {
-    if ($_POST['deletable_xp'] == 'on') {
-        $deletable_xp = 1;
-    }
-} else {
-        $deletable_xp = 0;
-}
-
-if (isset($_POST['link_name']) && !empty($_POST['link_name'])) {
-    $link_name = $_POST['link_name'];
-}
-
-if (isset($_POST['link_href']) && !empty($_POST['link_href'])) {
-    $link_href = $_POST['link_href'];
-}
-
-if (isset($_POST['proxy']) && !empty($_POST['proxy'])) {
-    $proxy = $_POST['proxy'];
-} else {
-    $proxy = '';
-}
-
+// POST data
 if (isset($_POST['db_host']) && !empty($_POST['db_host'])) {
     $db_host = $_POST['db_host'];
 }
@@ -85,45 +49,6 @@ if (isset($_POST['db_user']) && !empty($_POST['db_user'])) {
 if (isset($_POST['db_password']) && !empty($_POST['db_password'])) {
     $db_password = $_POST['db_password'];
 }
-
-// email settings can be skipped
-// if user left the default value of fields, only password should be blank
-// but we provide a blank case anyway, because that's how we rule.
-if (isset($_POST['smtp_address']) && !empty($_POST['smtp_address'])) {
-    $smtp_address = $_POST['smtp_address'];
-} else {
-    $smtp_address = 'smtp.example.com';
-}
-
-if (isset($_POST['smtp_port']) && !empty($_POST['smtp_port'])) {
-    $smtp_port = $_POST['smtp_port'];
-} else {
-    $smtp_port = '587';
-}
-
-if (isset($_POST['smtp_encryption']) && !empty($_POST['smtp_encryption'])) {
-    $smtp_encryption = $_POST['smtp_encryption'];
-} else {
-    $smtp_encryption = 'tls';
-}
-
-if (isset($_POST['smtp_username']) && !empty($_POST['smtp_username'])) {
-    $smtp_username = $_POST['smtp_username'];
-} else {
-    $smtp_username = 'username@gmail.com';
-}
-
-if (isset($_POST['smtp_password']) && !empty($_POST['smtp_password'])) {
-    $smtp_password = $_POST['smtp_password'];
-} else {
-    $smtp_password = 'SMTP_NOT_CONFIGURED';
-}
-
-// PATH
-// the path is needed for the cookies
-// remove /install/install.php from the path
-$path = substr(realpath(__FILE__), 0, -20);
-
 
 // BUILD CONFIG FILE
 
@@ -158,38 +83,6 @@ $config = "<?php
 // admin/config.php -- main configuration file for eLabFTW
 
 /*
-* General settings
-*/
-
-// The name of the lab (shown in the footer)
-define('LAB_NAME', \"".$lab_name."\");
-
-// if set to 1, user account will need admin validation before being able to login
-define('ADMIN_VALIDATE', ".$admin_validate.");
-
-// set to 0 if you don't want users to be able to delete experiments
-define('DELETABLE_XP', ".$deletable_xp.");
-
-// the name of the custom link in menu
-define('LINK_NAME', '".$link_name."');
-
-// the URL of the custom link
-define('LINK_HREF', '".$link_href."');
-
-// the path of the install (absolute path) WITHOUT TRAILING SLASH
-// on Windows it should be : 'C:<antislash>xampp<antislash>htdocs<antislash>elabftw'
-// on GNU/Linux it might be : '/var/www/elabftw'
-// on Mac OS X it might be : '/Applications/MAMP/htdocs'
-define('PATH', '".$path."');
-
-// change to true to activate debug mode
-define('DEBUG', false);
-
-// proxy setting (to get updates)
-define('PROXY', '".$proxy."');
-
-
-/*
 * Database settings
 */
 
@@ -204,29 +97,6 @@ define('DB_USER', '".$db_user."');
 
 // SQL Password (the one you chose in phpmyadmin)
 define('DB_PASSWORD', '".$db_password."');
-
-
-/*
-* Email settings
-* You can leave these settings for later, because for the moment, 
-* they are only use when someone requests a new password.
-* You can use a free gmail account for this, but you can also use your company's SMTP server.
-*/
-
-// SMTP server address
-define('SMTP_ADDRESS', '".$smtp_address."');
-
-// Port
-define('SMTP_PORT', '".$smtp_port."');
-
-// Can be 'tls' or 'ssl'
-define('SMTP_ENCRYPTION', '".$smtp_encryption."');
-
-// Username
-define('SMTP_USERNAME', '".$smtp_username."');
-
-// Password
-define('SMTP_PASSWORD', '".$smtp_password."');
 
 ";
 

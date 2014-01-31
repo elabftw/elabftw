@@ -32,27 +32,6 @@ require_once('inc/info_box.php');
 require_once('lib/classes/formkey.class.php');
 $formKey = new formKey();
 
-// anti flood stuff
-// if there was less than 5 seconds between the last request and this one
-if (isset($_SESSION['last_request_time']) && $_SESSION['last_request_time'] > (time() - 5)) {
-    // add a counter if it's not here
-    if (!isset($_SESSION['last_request_count'])) {
-       $_SESSION['last_request_count'] = 1;
-    // otherwise add 1 to the counter if it's less than 5
-    } elseif($_SESSION['last_request_count'] < 5) {
-       $_SESSION['last_request_count'] += 1;
-    } else {
-       $message = 'Flood detected !';
-       display_message('error', $message);
-       require_once('inc/footer.php');
-       die();
-    }
-} else {
-   $_SESSION['last_request_count'] = 1;
-}
-
-$_SESSION['last_request_time'] = time();
-
 // Check if already logged in
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     $message ='You are already logged in !';

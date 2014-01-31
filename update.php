@@ -584,3 +584,29 @@ if (!$column_is_here) {
     echo "Column 'can_lock' already exists. Nothing to do.\n";
 }
 
+
+// remove unused tag column of items_types
+// first test if it's here already
+$sql = "SHOW COLUMNS FROM `items_types`";
+$req = $bdd->prepare($sql);
+$req->execute();
+$column_is_here = false;
+while ($show = $req->fetch()) {
+    if (in_array('tags', $show)) {
+        $column_is_here = true;
+    }
+}
+if ($column_is_here) {
+    $sql = "ALTER TABLE `items_types` DROP `tags`";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute();
+
+    if($result) {
+        echo ">>> Dropped unused tags column in items_types table.";
+    } else {
+         die($die_msg);
+    }
+} else {
+    echo "Tags column is not here. Nothing to do.\n";
+}
+

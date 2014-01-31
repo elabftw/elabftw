@@ -1,13 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 3.5.6
+-- version 4.1.5
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Feb 01, 2013 at 10:45 PM
--- Server version: 5.5.29-log
--- PHP Version: 5.4.11
+-- Generation Time: Jan 31, 2014 at 02:34 PM
+-- Server version: 5.5.34-MariaDB-log
+-- PHP Version: 5.5.8
 
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `elabftwtest`
+-- Database: `elabftw2`
 --
 
 -- --------------------------------------------------------
@@ -36,7 +36,23 @@ CREATE TABLE IF NOT EXISTS `experiments` (
   `userid` int(10) unsigned NOT NULL,
   `elabid` varchar(255) NOT NULL,
   `locked` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `visibility` varchar(255) NOT NULL,
+  `lockedby` int(11) DEFAULT NULL,
+  `visibility` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `experiments_comments`
+--
+
+CREATE TABLE IF NOT EXISTS `experiments_comments` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `datetime` datetime NOT NULL,
+  `exp_id` int(11) NOT NULL,
+  `comment` text NOT NULL,
+  `userid` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
@@ -122,8 +138,7 @@ CREATE TABLE IF NOT EXISTS `items_types` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` text NOT NULL,
   `bgcolor` varchar(6) DEFAULT '000000',
-  `template` text,
-  `tags` text,
+  `template` text
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
@@ -164,6 +179,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `skype` varchar(255) DEFAULT NULL,
   `website` varchar(255) DEFAULT NULL,
   `is_admin` tinyint(1) NOT NULL DEFAULT '0',
+  `can_lock` int(1) NOT NULL DEFAULT '0',
   `register_date` bigint(20) unsigned NOT NULL,
   `token` varchar(255) DEFAULT NULL,
   `group` varchar(255) NOT NULL DEFAULT 'user',
@@ -180,19 +196,13 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
--- experiments_comments table
-CREATE TABLE IF NOT EXISTS `experiments_comments` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `datetime` datetime NOT NULL,
-  `exp_id` int(11) NOT NULL,
-  `comment` text NOT NULL,
-  `userid` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 -- ELABFTW
-INSERT INTO `items_types` (`id`, `name`, `bgcolor`, `template`, `tags`) VALUES
-(1, 'Antibody', '31a700', '<p><strong>Host :</strong></p>\r\n<p><strong>Target :</strong></p>\r\n<p><strong>Dilution to use :</strong></p>\r\n<p>Don''t forget to add the datasheet !</p>', ''),
-(2, 'Plasmid', '29AEB9', '<p><strong>Concentration : </strong></p>\r\n<p><strong>Resistances : </strong></p>\r\n<p><strong>Backbone :</strong></p>\r\n<p><strong><br /></strong></p>', ''),
-(3, 'siRNA', '0064ff', '<p><strong>Sequence :</strong></p>\r\n<p><strong>Target :</strong></p>\r\n<p><strong>Concentration :</strong></p>\r\n<p><strong>Buffer :</strong></p>', ''),
+INSERT INTO `items_types` (`id`, `name`, `bgcolor`, `template`) VALUES
+(1, 'Antibody', '31a700', '<p><strong>Host :</strong></p>\r\n<p><strong>Target :</strong></p>\r\n<p><strong>Dilution to use :</strong></p>\r\n<p>Don''t forget to add the datasheet !</p>'),
+(2, 'Plasmid', '29AEB9', '<p><strong>Concentration : </strong></p>\r\n<p><strong>Resistances : </strong></p>\r\n<p><strong>Backbone :</strong></p>\r\n<p><strong><br /></strong></p>'),
+(3, 'siRNA', '0064ff', '<p><strong>Sequence :</strong></p>\r\n<p><strong>Target :</strong></p>\r\n<p><strong>Concentration :</strong></p>\r\n<p><strong>Buffer :</strong></p>'),
 (4, 'Drugs', 'fd00fe', '<p><strong>Action :</strong> &nbsp;<strong> </strong></p>\r\n<p><strong>Concentration :</strong>&nbsp;</p>\r\n<p><strong>Use at :</strong>&nbsp;</p>\r\n<p><strong>Buffer :</strong> </p>', '');
+(5, 'Crystal', '84ff00', '');

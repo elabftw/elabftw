@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 31, 2014 at 09:38 PM
+-- Generation Time: Jan 31, 2014 at 11:54 PM
 -- Server version: 5.5.34-MariaDB-log
 -- PHP Version: 5.5.8
 
@@ -40,20 +40,9 @@ CREATE TABLE IF NOT EXISTS `banned_users` (
 --
 
 CREATE TABLE IF NOT EXISTS `config` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `lab_name` varchar(255) NOT NULL DEFAULT 'labname',
-  `admin_validate` tinyint(1) NOT NULL DEFAULT '0',
-  `link_name` varchar(255) NOT NULL DEFAULT 'Wiki',
-  `link_href` varchar(255) NOT NULL DEFAULT 'https://github.com/NicolasCARPi/elabftw/wiki',
-  `smtp_address` varchar(255) DEFAULT NULL,
-  `smtp_port` varchar(255) DEFAULT NULL,
-  `smtp_encryption` varchar(255) DEFAULT NULL,
-  `smtp_username` varchar(255) DEFAULT NULL,
-  `smtp_password` varchar(255) DEFAULT NULL,
-  `proxy` varchar(255) DEFAULT NULL,
-  `debug` tinyint(1) NOT NULL DEFAULT '0',
-  `deletable_xp` int(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  `conf_name` varchar(255) NOT NULL,
+  `conf_value` text,
+  PRIMARY KEY (`conf_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------

@@ -52,6 +52,32 @@ $message .= "</ul><div class='center'>
     display_message('error', $message);
 }
 ?>
+<section class='item'>
+<h3>CONFIGURATION</h3>
+<?php
+// SQL to get all config
+$sql = "SELECT * FROM config";
+$req = $bdd->prepare($sql);
+$req->execute();
+$config = $req->fetchAll(PDO::FETCH_COLUMN|PDO::FETCH_GROUP);
+?>
+<form method='post' action='admin-exec.php'>
+    <label for='lab_name'>Name of the lab :</label>
+    <input type='text' value='<?php echo $config['lab_name'][0];?>' name='lab_name' id='lab_name' />
+<br />
+    <label for='admin_validate'>Users need validation by admin after registration :</label>
+    <select name='admin_validate' id='admin_validate'>
+        <option value='1'<?php
+            if ($config['admin_validate'][0] == 1) { echo " selected='selected'"; } ?>
+        >yes</option>
+        <option value='0'<?php
+                if ($config['admin_validate'][0] == 0) { echo " selected='selected'"; } ?>
+        >no</option>
+    </select>
+<br />
+</form>
+
+</section>
 
 <section class='item'>
 <h3>TEAM MEMBERS</h3>

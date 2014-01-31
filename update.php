@@ -562,31 +562,39 @@ while ($show = $req->fetch()) {
 }
 
 if (!$table_is_here) {
-    $path = substr(realpath(__FILE__), 0, -20);
     $create_sql = "CREATE TABLE IF NOT EXISTS `config` (
-      `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-      `lab_name` VARCHAR(255) NOT NULL DEFAULT 'labname',
-      `path` VARCHAR(255) NOT NULL DEFAULT $path,
-      `admin_validate` tinyint(1) NOT NULL DEFAULT '0',
-      `link_name` VARCHAR(255) NOT NULL DEFAULT 'Wiki',
-      `link_href` VARCHAR(255) NOT NULL DEFAULT 'https://github.com/NicolasCARPi/elabftw/wiki',
-      `smtp_address` VARCHAR(255) NULL,
-      `smtp_port` VARCHAR(255) NULL,
-      `smtp_encryption` VARCHAR(255) NULL,
-      `smtp_username` VARCHAR(255) NULL,
-      `smtp_password` VARCHAR(255) NULL,
-      `proxy` VARCHAR(255) NULL,
-      `debug` tinyint(1) NOT NULL DEFAULT '0',
-      `deletable_xp` int(1) NOT NULL DEFAULT '0',
-      PRIMARY KEY (`id`)
+        `conf_name` VARCHAR(255) NOT NULL,
+        `conf_value` TEXT NULL,
+      PRIMARY KEY (`conf_name`)
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
     $req = $bdd->prepare($create_sql);
-    $result = $req->execute();
-    if($result) {
-        echo "Table 'config' successfully created.\n";
+    $result1 = $req->execute();
+
+    // Populate config table
+    $sql = "INSERT INTO config (conf_name, conf_value) VALUES
+        ('lab_name', '".LAB_NAME."'),
+        ('path', '".PATH."'),
+        ('admin_validate', '".ADMIN_VALIDATE."'),
+        ('link_name', '".LINK_NAME."'),
+        ('link_href', '".LINK_HREF."'),
+        ('smtp_address', '".SMTP_ADDRESS."'),
+        ('smtp_port', '".SMTP_PORT."'),
+        ('smtp_encryption', '".SMTP_ENCRYPTION."'),
+        ('smtp_username', '".SMTP_USERNAME."'),
+        ('smtp_password', '".SMTP_PASSWORD."'),
+        ('proxy', '".PROXY."'),
+        ('debug', '0'),
+        ('deletable_xp', '".DELETABLE_XP."');";
+    $req = $bdd->prepare($sql);
+    $result2 = $req->execute();
+
+    if($result && $result2) {
+        echo "Table 'config' successfully created and populated.\n";
     } else {
         die($die_msg);
     }
+
+
 } else {
     echo "Table 'config' already exists. Nothing to do.\n";
 }

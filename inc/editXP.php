@@ -24,6 +24,9 @@
 *                                                                               *
 ********************************************************************************/
 // inc/editXP.php
+// formkey stuff
+require_once('lib/classes/formkey.class.php');
+$formKey = new formKey();
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
 <?php
@@ -83,6 +86,8 @@ echo stripslashes($tags['tag']);?>
 <!-- END ADD TAG -->
 <!-- BEGIN EDITXP FORM -->
 <form id="editXP" name="editXP" method="post" action="editXP-exec.php" enctype='multipart/form-data'>
+<!-- form key -->
+<?php $formKey->output_formkey(); ?>
 <input name='item_id' type='hidden' value='<?php echo $id;?>' />
 
 <h4>Date</h4><span class='smallgray'> (date format : YYYYMMDD)</span><br />

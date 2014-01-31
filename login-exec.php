@@ -25,14 +25,25 @@
 ********************************************************************************/
 session_start();
 require_once('inc/connect.php');
+// formkey stuff
+require_once('lib/classes/formkey.class.php');
+$formKey = new formKey();
 
 //Array to store validation errors
 $msg_arr = array();
 //Validation error flag
 $errflag = false;
 
+// Check the form_key
+if (!isset($_POST['form_key']) || !$formKey->validate()) {
+    // form key is invalid
+    $msg_arr[] = 'The form key is invalid !';
+    $errflag = true;
+}
+
+
 // Check USERNAME (sanitize and validate)
-    if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
+if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
 } else {
     $msg_arr[] = 'Username missing';

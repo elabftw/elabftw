@@ -28,6 +28,10 @@ $page_title = 'Login';
 require_once('inc/head.php');
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
+// formkey stuff
+require_once('lib/classes/formkey.class.php');
+$formKey = new formKey();
+
 // Check if already logged in
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     $message ='You are already logged in !';
@@ -48,6 +52,8 @@ if (!checkCookiesEnabled()) {
 <section class='center'>
     <!-- Login form -->
     <form method="post" action="login-exec.php" autocomplete="off">
+        <!-- form key -->
+        <?php $formKey->output_formkey(); ?>
         <fieldset>
             <legend>Login :</legend>
                 <p>

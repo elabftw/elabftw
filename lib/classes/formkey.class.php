@@ -23,76 +23,52 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/common.php');
-// formkey stuff
-require_once('lib/classes/formkey.class.php');
-$formKey = new formKey();
+class formKey {
+    // here we store the generated form key
+    private $formkey;
 
-//Array to store validation errors
-$msg_arr = array();
-//Validation error flag
-$errflag = false;
+    // here we store the old form key
+    private $old_formkey;
 
-// CHECKS
-// Check the form_key
-if (!isset($_POST['form_key']) || !$formKey->validate()) {
-    // form key is invalid
-    $msg_arr[] = 'The form key is invalid !';
-    $errflag = true;
+    // function to generate the form key
+    private function generate_formkey() {
+        // get ip of user
+        $ip = $_SERVER['REMOTE_ADDR'];
+
+        // add randomness (mt_rand() is better than rand())
+        $uniqid = uniqid(mt_rand(), true);
+
+        // return a md5 hash of all that
+        return md5($ip.$uniqid);
+
+    }
+
+    public function output_formkey() {
+        // generate the key and store it inside the class
+        $this->formKey = $this->generate_formkey();
+        // store the form key in the session
+        $_SESSION['form_key'] = $this->formKey;
+        // output the form key
+        echo "<input type='hidden' name='form_key' id='form_key' value='".$this->formKey."' />";
+    }
+
+      //The constructor stores the form key (if one exists) in our class variable.  
+        function __construct()  {  
+        //We need the previous key so we store it  
+        if (isset($_SESSION['form_key'])) {  
+            $this->old_formKey = $_SESSION['form_key'];  
+        }  
+        }
+
+        public function validate() {
+            // we use the old formKey and not the new generated one
+            if ($_POST['form_key'] == $this->old_formKey) {
+                // the key is valid
+                return true;
+            } else {
+                // the key is not valid
+                return false;
+            }
+        }
 }
-// ID
-if(is_pos_int($_POST['item_id'])){
-    $id = $_POST['item_id'];
-} else {
-    $id='';
-    $msg_arr[] = 'The id parameter is not valid !';
-    $errflag = true;
-}
-$title = check_title($_POST['title']);
-$date = check_date($_POST['date']);
-$body = check_body($_POST['body']);
-$status = check_status($_POST['status']);
-
-// Store stuff in Session to get it back if error input
-$_SESSION['new_title'] = $title;
-$_SESSION['new_date'] = $date;
-$_SESSION['new_status'] = $status;
-
-// If input errors, redirect back to the experiment form
-if($errflag) {
-    $_SESSION['errors'] = $msg_arr;
-    session_write_close();
-    header("location: experiments.php?mode=show&id=$id");
-    exit();
-}
-
-// SQL for editXP
-    $sql = "UPDATE experiments 
-        SET title = :title, 
-        date = :date, 
-        body = :body, 
-        status = :status
-        WHERE userid = :userid 
-        AND id = :id";
-$req = $bdd->prepare($sql);
-$result = $req->execute(array(
-    'title' => $title,
-    'date' => $date,
-    'body' => $body,
-    'status' => $status,
-    'userid' => $_SESSION['userid'],
-    'id' => $id
-));
-
-
-// Check if insertion is successful
-if($result) {
-    unset($_SESSION['new_title']);
-    unset($_SESSION['new_date']);
-    unset($_SESSION['status']);
-    unset($_SESSION['errors']);
-    header("location: experiments.php?mode=view&id=$id");
-} else {
-    die('Something went wrong in the database query. Check the flux capacitor.');
-}
-
+?>

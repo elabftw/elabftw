@@ -1,6 +1,8 @@
 /* Changelog for eLabFTW */
 
 Version 0.9.4
+* You can only unlock a lock experiment if you are the locker.
+* Only a user with locking rights can lock an experiment of someone else.
 * You can now forbid users to delete an experiment with a setting in the conf file
 * You can add comments on experiments
 * Date is now YYYYMMDD

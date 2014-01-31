@@ -3,6 +3,35 @@
 // php update.php on normal server
 // /Applications/MAMP/bin/php/php5.3.6/bin/php update.php for MAMP install
 //
+
+function add_field($table, $field, $params, $added, $not_added) {
+    global $bdd;
+    // first test if it's here already
+    $sql = "SHOW COLUMNS FROM $table";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $field_is_here = false;
+    while ($show = $req->fetch()) {
+        if (in_array($field, $show)) {
+            $field_is_here = true;
+        }
+    }
+    // add field if it's not here
+    if (!$field_is_here) {
+        $sql = "ALTER TABLE $table ADD $field $params";
+        $req = $bdd->prepare($sql);
+        $result = $req->execute();
+
+        if($result) {
+            $added;
+        } else {
+             die($die_msg);
+        }
+    } else {
+        $not_added;
+    }
+}
+
 $die_msg = "There was a problem in the database update :/ Please report a bug : https://github.com/NicolasCARPi/elabftw/issues?state=open";
 // check if it's run from cli or web; do nothing if it's from web
 if(php_sapi_name() != 'cli' || !empty($_SERVER['REMOTE_ADDR'])) {
@@ -143,24 +172,9 @@ define('SMTP_PASSWORD', '".$ini_arr['smtp_password']."');
 
 
 require_once('inc/connect.php');
-// ADD elabid in experiments table
-$sql = "SELECT * from experiments";
-$req = $bdd->prepare($sql);
-$req->execute();
-$test = $req->fetch();
-if(isset($test['elabid'])) {
-    echo "Column 'elabid' already exists. Nothing to do.\n";
-} else {
-    echo "Creating field <strong>elabid</strong>...\n";
-    $sql = "ALTER TABLE `experiments` ADD `elabid` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute();
-    if($result) {
-        echo 'Field <strong>elabid</strong> successfully added :) \n';
-    } else {
-        die($die_msg);
-    }
-}
+
+// add elabid field in experiments table
+add_field('experiments', 'elabid', 'VARCHAR(255) NOT NULL', ">>> Experiments now have unique elabid number.\n", "Column 'elabid' already exists. Nothing to do.\n");
 
 // ADD elabid for experiments without it
 // get id of experiments with empty elabid
@@ -193,26 +207,13 @@ foreach($id_arr as $id) {
     if ($result) {
         echo "Experiment id ".$id." updated.\n";
     } else {
-        echo "There was a problem in the database update :/ Please report a bug on <a href='https://github.com/NicolasCARPi/elabftw/issues?state=open'>github</a>.";
         die($die_msg);
     }
 }
 
-// ADD locked in experiments table
-if(isset($test['locked'])) {
-    echo "Column 'locked' already exists. Nothing to do.\n";
-} else {
-    echo 'Creating field...';
-    $sql = "ALTER TABLE `experiments` ADD `locked` TINYINT( 1 ) UNSIGNED NOT NULL DEFAULT '0'";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute();
-    if($result) {
-        echo 'Field <strong>locked</strong> successfully added :) \n';
-    } else {
-        echo "There was a problem in the database update :/ Please report a bug on <a href='https://github.com/NicolasCARPi/elabftw/issues?state=open'>github</a>.";
-        die($die_msg);
-    }
-}
+// ADD locked field in experiments table
+add_field('experiments', 'locked', "TINYINT(1) UNSIGNED NOT NULL DEFAULT '0'", ">>> Experiments can now be locked.\n", "Column 'locked' already exists. Nothing to do.\n");
+
 // items_type :
 $sql = "SHOW TABLES";
 $req = $bdd->prepare($sql);
@@ -241,7 +242,6 @@ if(in_array('items_types',$test_arr)) {
     if($result) {
         echo 'Table items_types successfully created.\n';
     } else {
-        echo 'There was a problem in the database update :/';
         die($die_msg);
     }
 
@@ -266,7 +266,6 @@ if(in_array('items_types',$test_arr)) {
         if ($result) {
             echo "Item id ".$id." updated.\n";
         } else {
-            echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
         die($die_msg);
         }
     }
@@ -290,8 +289,7 @@ if(in_array('items_types',$test_arr)) {
         if ($result) {
             echo "Item id ".$id." updated.\n";
         } else {
-            echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
-        die($die_msg);
+            die($die_msg);
         }
     }
     // get id of items type pro
@@ -314,8 +312,7 @@ if(in_array('items_types',$test_arr)) {
         if ($result) {
             echo "Item id ".$id." updated.\n";
         } else {
-            echo 'There was a problem in the database update :/ Please report a bug to nicolas.carpi@gmail.com';
-        die($die_msg);
+            die($die_msg);
         }
     }
     $sql = "";
@@ -325,9 +322,9 @@ if(in_array('items_types',$test_arr)) {
     $req = $bdd->prepare($sql);
     $result = $req->execute();
     if($result) {
-        echo 'Database successfully updated with default values.\n';
+        echo "Database successfully updated with default values.\n";
     } else {
-        echo 'There was a problem in the database update :/';
+        die($die_msg);
     }
 
 
@@ -348,33 +345,18 @@ if(isset($test['status'])) {
     if($result) {
         echo "Outcome is now status.\n";
     } else {
-        echo 'There was a problem in the database update :/';
+        die($die_msg);
     }
 }
 
 
-// add visibility field in experiments table
-// check if it exists first
-$sql = "SELECT * from experiments";
+// ADD visibility field in experiments table
+add_field('experiments', 'visibility', "VARCHAR(255) NOT NULL", ">>> Experiments now have a visibility switch.\n", "Column 'visibility' already exists. Nothing to do.\n");
+// put visibility = team everywhere
+$sql = "UPDATE `experiments` SET `visibility` = 'team'";
 $req = $bdd->prepare($sql);
-$req->execute();
-$test = $req->fetch();
-if(isset($test['visibility'])) {
-    echo "Column 'visibility' already exists. Nothing to do.\n";
-} else {
-    $sql = "ALTER TABLE `experiments` ADD `visibility` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ;";
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    // put visibility = team everywhere
-    $sql = "UPDATE `experiments` SET `visibility` = 'team'";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute();
-    if($result) {
-        echo "Visibility added.\n";
-    } else {
-        echo 'There was a problem in the database update :/';
-    }
-}
+$result = $req->execute();
+
 
 // remove unused items_templates table
 echo "Table items_templates...";
@@ -384,7 +366,7 @@ $result = $req->execute();
 if ($result) {
     echo "Nothing to do.\n";
 } else {
-    echo 'There was a problem in the database update :/';
+    die($die_msg);
 }
 // remove unused users table
 echo "Unused users columns...";
@@ -399,7 +381,7 @@ if(isset($test['is_jc_resp'])) {
     if($result) {
         echo "Removed unused fields in users table.\n";
     } else {
-        echo 'There was a problem in the database update :/';
+        die($die_msg);
     }
 } else {
     echo "Nothing to do.\n";
@@ -411,30 +393,15 @@ if (!is_dir("uploads/tmp")){
     echo "Directory created";
     }else{
         // TODO link to the FAQ
-        die("Failed creating <em>uploads/tmp</em> directory. Do it manually and chmod 777 it.");
+        die("Failed creating uploads/tmp directory. Do it manually and chmod 777 it.");
     }
 }else{
     echo "Nothing to do.\n";
 }
 
 
-// ADD LOCK TO ITEMS SQL TABLE
-$add_locked_items = false;
-try {
-    $sql = "SELECT locked from items";
-    $req = $bdd->prepare($sql);
-    $req->execute();
-} catch (Exception $e) {
-    $add_locked_items = true;
-    $sql = "ALTER TABLE `items` ADD `locked` TINYINT UNSIGNED NULL DEFAULT NULL AFTER `type` ;";
-    $req = $bdd->prepare($sql);
-    $req->execute();
-}
-if ($add_locked_items) {
-    echo ">>> Database items can now be locked !\n";
-} else {
-    echo "Column 'locked' already exists. Nothing to do.\n";
-}
+// ADD locked field in items table
+add_field('items', 'locked', "TINYINT(1) UNSIGNED NOT NULL DEFAULT '0'", ">>> Items can now be locked.\n", "Column 'locked' already exists. Nothing to do.\n");
 
 
 // TRANSFORM DATES IN NEW FORMAT
@@ -512,78 +479,17 @@ if(in_array('experiments_comments',$test_arr)) {
     if($result) {
         echo ">>> You can now leave a comment on an experiment !\n";
     } else {
-        echo 'There was a problem in the database update :/';
         die($die_msg);
     }
 }
 
-// ADD lockedby field in experiments table :
-// first test if it's here already
-$sql = "SHOW COLUMNS FROM `experiments`";
-$req = $bdd->prepare($sql);
-$req->execute();
-$column_is_here = false;
-while ($show = $req->fetch()) {
-    if (in_array('lockedby', $show)) {
-        $column_is_here = true;
-    }
-}
-if (!$column_is_here) {
-    $sql = "ALTER TABLE `experiments` ADD `lockedby` INT NULL AFTER `locked`";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute();
-
-    // Put the userid of the owner of the experiments for already locked experiments
-    $sql = "SELECT userid, id from experiments WHERE locked = 1";
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    while ($experiments = $req->fetch()) {
-        $update_sql = "UPDATE experiments SET lockedby =  :userid WHERE id = :id";
-        $update_req = $bdd->prepare($update_sql);
-        $update_req->execute(array(
-            'userid' => $experiments['userid'],
-            'id' => $experiments['id']
-        ));
-    }
-
-    if($result) {
-        echo ">>> Now only the locker of an experiment can unlock it\n";
-    } else {
-         die($die_msg);
-    }
-} else {
-    echo "Column 'lockedby' already exists. Nothing to do.\n";
-}
+// ADD lockedby field in experiments table
+add_field('experiments', 'lockedby', "INT UNSIGNED NULL AFTER locked", ">>> Now only the locker of an experiment can unlock it.\n", "Column 'lockedby' already exists. Nothing to do.\n");
 
 
 
-
-
-// ADD can_lock field in users table :
-// first test if it's here already
-$sql = "SHOW COLUMNS FROM `users`";
-$req = $bdd->prepare($sql);
-$req->execute();
-$column_is_here = false;
-while ($show = $req->fetch()) {
-    if (in_array('can_lock', $show)) {
-        $column_is_here = true;
-    }
-}
-if (!$column_is_here) {
-    $sql = "ALTER TABLE `users` ADD `can_lock` INT(1) NOT NULL DEFAULT '0' AFTER `is_admin`";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute();
-
-    if($result) {
-        echo ">>> A user needs to have locking rights to lock experiments of others.\n";
-    } else {
-         die($die_msg);
-    }
-} else {
-    echo "Column 'can_lock' already exists. Nothing to do.\n";
-}
-
+// ADD can_lock field in users table
+add_field ('users', 'can_lock', "INT(1) NOT NULL DEFAULT '0' AFTER is_admin", ">>> A user needs to have locking rights to lock experiments of others.\n", "Column 'can_lock' already exists. Nothing to do.\n");
 
 // remove unused tag column of items_types
 // first test if it's here already
@@ -608,5 +514,10 @@ if ($column_is_here) {
     }
 } else {
     echo "Tags column is not here. Nothing to do.\n";
+}
+
+// remove TODO file
+if (file_exists('TODO')) {
+    unlink('TODO');
 }
 

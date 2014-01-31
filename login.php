@@ -26,11 +26,15 @@
 if (!isset($_SESSION)) { session_start(); }
 $page_title = 'Login';
 require_once('inc/head.php');
+require_once('inc/connect.php');
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
 // formkey stuff
 require_once('lib/classes/formkey.class.php');
 $formKey = new formKey();
+
+// DEBUG
+// print_r($_SESSION);
 
 // Check if already logged in
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
@@ -39,10 +43,59 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     require_once('inc/footer.php');
     die();
 }
+
+// Check if we are banned after too much failed login attempts
+$sql = "SELECT user_infos FROM security WHERE time > :an_hour_from_now";
+$req = $bdd->prepare($sql);
+$req->execute(array(
+    ':an_hour_from_now' => date("Y-m-d H:i:s", strtotime('-1 hour'))
+));
+$banned_users_arr = array();
+while ($banned_users = $req->fetch()) {
+    $banned_users_arr[] = $banned_users['user_infos'];
+}
+if (in_array(md5($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']), $banned_users_arr)) {
+    $message ='You cannot login now because of too much failed login attempts.';
+    display_message('error', $message);
+    require_once('inc/footer.php');
+    die();
+}
+
+// show message if there is a failed_attempt
+if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] < 3) {
+    $number_of_tries_left = 3 - $_SESSION['failed_attempt'];
+    $message = "Number of login attempt left before being banned for 1 hour : $number_of_tries_left.";
+    display_message('error', $message);
+}
+
+// disable login if too much failed_attempts
+        if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] > 2) {
+            // get user infos
+            $user_infos = md5($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']);
+            // add the user to the banned list
+            $sql = "INSERT INTO security (user_infos) VALUES (:user_infos)";
+            $req = $bdd->prepare($sql);
+            $req->execute(array(
+                'user_infos' => $user_infos
+            ));
+            unset($_SESSION['failed_attempt']);
+            $message ='Too much failed login attempts. Login is disabled for 1 hour.';
+            display_message('error', $message);
+            require_once('inc/footer.php');
+            die();
+        }
 ?>
 
 <script>
-// Check if user accepts cookies
+// Check for cookies
+function checkCookiesEnabled() {
+    var cookieEnabled = (navigator.cookieEnabled) ? true : false;
+    if (typeof navigator.cookieEnabled == "undefined" && !cookieEnabled) {
+        document.cookie="testcookie";
+        cookieEnabled = (document.cookie.indexOf("testcookie") != -1) ? true : false;
+    }
+return (cookieEnabled);
+}
 if (!checkCookiesEnabled()) {
     var cookie_alert = "<div class='ui-state-error ui-corner-all' style='margin:5px'><p><span class='ui-icon ui-icon-alert' style='float:left; margin: 0 5px 0 5px;'></span>Please enable cookies in your navigator to continue.</p></div>";
     document.write(cookie_alert);

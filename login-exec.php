@@ -23,7 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-session_start();
+if (!isset($_SESSION)) { session_start(); }
 require_once('inc/connect.php');
 // formkey stuff
 require_once('lib/classes/formkey.class.php');
@@ -128,6 +128,12 @@ if ($result) {
         //Login failed
         $msg_arr = array();
         $msg_arr[] = "Login failed. Either you mistyped your password, or your account isn't activated yet.";
+        if (!isset($_SESSION['failed_attempt'])) {
+            $_SESSION['failed_attempt'] = 1;
+        } else {
+            $_SESSION['failed_attempt'] += 1;
+        }
+
         $_SESSION['errors'] = $msg_arr;
         header("location: login.php");
     }

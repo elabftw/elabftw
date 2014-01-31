@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 31, 2014 at 02:34 PM
+-- Generation Time: Jan 31, 2014 at 09:38 PM
 -- Server version: 5.5.34-MariaDB-log
 -- PHP Version: 5.5.8
 
@@ -19,6 +19,42 @@ SET time_zone = "+00:00";
 --
 -- Database: `elabftw2`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `banned_users`
+--
+
+CREATE TABLE IF NOT EXISTS `banned_users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_infos` text NOT NULL,
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `config`
+--
+
+CREATE TABLE IF NOT EXISTS `config` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `lab_name` varchar(255) NOT NULL DEFAULT 'labname',
+  `admin_validate` tinyint(1) NOT NULL DEFAULT '0',
+  `link_name` varchar(255) NOT NULL DEFAULT 'Wiki',
+  `link_href` varchar(255) NOT NULL DEFAULT 'https://github.com/NicolasCARPi/elabftw/wiki',
+  `smtp_address` varchar(255) DEFAULT NULL,
+  `smtp_port` varchar(255) DEFAULT NULL,
+  `smtp_encryption` varchar(255) DEFAULT NULL,
+  `smtp_username` varchar(255) DEFAULT NULL,
+  `smtp_password` varchar(255) DEFAULT NULL,
+  `proxy` varchar(255) DEFAULT NULL,
+  `debug` tinyint(1) NOT NULL DEFAULT '0',
+  `deletable_xp` int(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -206,3 +242,4 @@ INSERT INTO `items_types` (`id`, `name`, `bgcolor`, `template`) VALUES
 (3, 'siRNA', '0064ff', '<p><strong>Sequence :</strong></p>\r\n<p><strong>Target :</strong></p>\r\n<p><strong>Concentration :</strong></p>\r\n<p><strong>Buffer :</strong></p>'),
 (4, 'Drugs', 'fd00fe', '<p><strong>Action :</strong> &nbsp;<strong> </strong></p>\r\n<p><strong>Concentration :</strong>&nbsp;</p>\r\n<p><strong>Use at :</strong>&nbsp;</p>\r\n<p><strong>Buffer :</strong> </p>'),
 (5, 'Crystal', '84ff00', '<p>Edit me</p>');
+

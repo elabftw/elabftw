@@ -45,7 +45,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 }
 
 // Check if we are banned after too much failed login attempts
-$sql = "SELECT user_infos FROM security WHERE time > :an_hour_from_now";
+$sql = "SELECT user_infos FROM banned_users WHERE time > :an_hour_from_now";
 $req = $bdd->prepare($sql);
 $req->execute(array(
     ':an_hour_from_now' => date("Y-m-d H:i:s", strtotime('-1 hour'))
@@ -62,18 +62,18 @@ if (in_array(md5($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']), $banned_u
 }
 
 // show message if there is a failed_attempt
-if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] < 3) {
-    $number_of_tries_left = 3 - $_SESSION['failed_attempt'];
+if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] < 5) {
+    $number_of_tries_left = 5 - $_SESSION['failed_attempt'];
     $message = "Number of login attempt left before being banned for 1 hour : $number_of_tries_left.";
     display_message('error', $message);
 }
 
 // disable login if too much failed_attempts
-        if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] > 2) {
+        if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] > 4) {
             // get user infos
             $user_infos = md5($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']);
             // add the user to the banned list
-            $sql = "INSERT INTO security (user_infos) VALUES (:user_infos)";
+            $sql = "INSERT INTO banned_users (user_infos) VALUES (:user_infos)";
             $req = $bdd->prepare($sql);
             $req->execute(array(
                 'user_infos' => $user_infos

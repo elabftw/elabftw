@@ -521,3 +521,71 @@ if (file_exists('TODO')) {
     unlink('TODO');
 }
 
+// CREATE table banned_users
+$sql = "SHOW TABLES";
+$req = $bdd->prepare($sql);
+$req->execute();
+$table_is_here = false;
+while ($show = $req->fetch()) {
+    if (in_array('banned_users', $show)) {
+        $table_is_here = true;
+    }
+}
+
+if (!$table_is_here) {
+    $create_sql = "CREATE TABLE IF NOT EXISTS `banned_users` (
+      `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+      `user_infos` text NOT NULL,
+      `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+    $req = $bdd->prepare($create_sql);
+    $result = $req->execute();
+    if($result) {
+        echo "Table 'banned_users' successfully created.\n";
+    } else {
+        die($die_msg);
+    }
+} else {
+    echo "Table 'banned_users' already exists. Nothing to do.\n";
+}
+
+// CREATE table config
+$sql = "SHOW TABLES";
+$req = $bdd->prepare($sql);
+$req->execute();
+$table_is_here = false;
+while ($show = $req->fetch()) {
+    if (in_array('config', $show)) {
+        $table_is_here = true;
+    }
+}
+
+if (!$table_is_here) {
+    $create_sql = "CREATE TABLE IF NOT EXISTS `config` (
+      `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+      `lab_name` VARCHAR(255) NOT NULL DEFAULT 'labname',
+      `admin_validate` tinyint(1) NOT NULL DEFAULT '0',
+      `link_name` VARCHAR(255) NOT NULL DEFAULT 'Wiki',
+      `link_href` VARCHAR(255) NOT NULL DEFAULT 'https://github.com/NicolasCARPi/elabftw/wiki',
+      `smtp_address` VARCHAR(255) NULL,
+      `smtp_port` VARCHAR(255) NULL,
+      `smtp_encryption` VARCHAR(255) NULL,
+      `smtp_username` VARCHAR(255) NULL,
+      `smtp_password` VARCHAR(255) NULL,
+      `proxy` VARCHAR(255) NULL,
+      `debug` tinyint(1) NOT NULL DEFAULT '0',
+      `deletable_xp` int(1) NOT NULL DEFAULT '0',
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+    $req = $bdd->prepare($create_sql);
+    $result = $req->execute();
+    if($result) {
+        echo "Table 'config' successfully created.\n";
+    } else {
+        die($die_msg);
+    }
+} else {
+    echo "Table 'config' already exists. Nothing to do.\n";
+}
+

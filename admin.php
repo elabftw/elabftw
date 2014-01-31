@@ -87,6 +87,15 @@ while ($users = $req->fetch()) {
                     >no</option>
             </select>
 <br />
+            Can lock experiments of others ?<select name='can_lock'>
+            <option value='1'<?php
+                    if ($users['can_lock'] == 1) { echo " selected='selected'"; } ?>
+    >yes</option>
+    <option value='0'<?php
+                    if ($users['can_lock'] == 0) { echo " selected='selected'"; } ?>
+                    >no</option>
+            </select>
+<br />
             Has an active account ?<select name='validated'>
             <option value='1'<?php
                     if($users['validated'] == 1) {

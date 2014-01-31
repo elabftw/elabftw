@@ -517,3 +517,70 @@ if(in_array('experiments_comments',$test_arr)) {
     }
 }
 
+// ADD lockedby field in experiments table :
+// first test if it's here already
+$sql = "SHOW COLUMNS FROM `experiments`";
+$req = $bdd->prepare($sql);
+$req->execute();
+$column_is_here = false;
+while ($show = $req->fetch()) {
+    if (in_array('lockedby', $show)) {
+        $column_is_here = true;
+    }
+}
+if (!$column_is_here) {
+    $sql = "ALTER TABLE `experiments` ADD `lockedby` INT NULL AFTER `locked`";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute();
+
+    // Put the userid of the owner of the experiments for already locked experiments
+    $sql = "SELECT userid, id from experiments WHERE locked = 1";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    while ($experiments = $req->fetch()) {
+        $update_sql = "UPDATE experiments SET lockedby =  :userid WHERE id = :id";
+        $update_req = $bdd->prepare($update_sql);
+        $update_req->execute(array(
+            'userid' => $experiments['userid'],
+            'id' => $experiments['id']
+        ));
+    }
+
+    if($result) {
+        echo ">>> Now only the locker of an experiment can unlock it\n";
+    } else {
+         die($die_msg);
+    }
+} else {
+    echo "Column 'lockedby' already exists. Nothing to do.\n";
+}
+
+
+
+
+
+// ADD can_lock field in users table :
+// first test if it's here already
+$sql = "SHOW COLUMNS FROM `users`";
+$req = $bdd->prepare($sql);
+$req->execute();
+$column_is_here = false;
+while ($show = $req->fetch()) {
+    if (in_array('can_lock', $show)) {
+        $column_is_here = true;
+    }
+}
+if (!$column_is_here) {
+    $sql = "ALTER TABLE `users` ADD `can_lock` INT(1) NOT NULL DEFAULT '0' AFTER `is_admin`";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute();
+
+    if($result) {
+        echo ">>> A user needs to have locking rights to lock experiments of others.\n";
+    } else {
+         die($die_msg);
+    }
+} else {
+    echo "Column 'can_lock' already exists. Nothing to do.\n";
+}
+

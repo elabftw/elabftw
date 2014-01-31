@@ -132,6 +132,11 @@ if (isset($_POST['userid']) && is_pos_int($_POST['userid'])) {
     } else { 
         $is_admin = 0;
     }
+    if($_POST['can_lock'] == 1) {
+        $can_lock = 1;
+    } else {
+        $can_lock = 0;
+    }
     if($_POST['validated'] == 1) {
         $validated = 1;
     } else { 
@@ -168,13 +173,14 @@ if (isset($_POST['userid']) && is_pos_int($_POST['userid'])) {
         }
     }
 
-    $sql = "UPDATE users SET firstname = :firstname, lastname = :lastname, email = :email , is_admin = :is_admin, validated = :validated WHERE userid = :userid";
+    $sql = "UPDATE users SET firstname = :firstname, lastname = :lastname, email = :email , is_admin = :is_admin, can_lock = :can_lock, validated = :validated WHERE userid = :userid";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
         'firstname' => $firstname,
         'lastname' => $lastname,
         'email' => $email,
         'is_admin' => $is_admin,
+        'can_lock' => $can_lock,
         'validated' => $validated,
         'userid' => $userid
     ));

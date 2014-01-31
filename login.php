@@ -32,7 +32,6 @@ require_once('inc/info_box.php');
 require_once('lib/classes/formkey.class.php');
 $formKey = new formKey();
 
-print_r($_SESSION);
 // anti flood stuff
 // if there was less than 5 seconds between the last request and this one
 if (isset($_SESSION['last_request_time']) && $_SESSION['last_request_time'] > (time() - 5)) {

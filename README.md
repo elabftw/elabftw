@@ -13,9 +13,9 @@ Please report bugs on [github](https://github.com/NicolasCARPi/elabftw/issues).
 
 eLabFTW was designed to be installed on a server, and people from the team would just log into it from their browser.
 
-Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM and an old CPU, it's more than enough. Just install a recent GNU/Linux distribution on it.
+Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM and an old CPU, it's more than enough. Just install a recent GNU/Linux distribution on it and plug it to the intranet.
 
-Don't have an old computer ? That's okay, you can install eLabFTW on a Raspberry Pi (you can buy one on [Radiospares](http://www.rs-components.com/index.html)). It's a 30€ computer on which you can install GNU/Linux and run a server in no time ! That's what we use in our lab.
+Don't have an old computer ? That's okay, you can install eLabFTW on a Raspberry Pi (you can buy one on [Radiospares](http://www.rs-components.com/index.html)). It's a 30€ computer on which you can install GNU/Linux and run a server in no time ! That's what we use in our lab. Check out the [wiki](https://github.com/NicolasCARPi/elabftw/wiki/raspberrypi) to know more.
 
 But you can also install it locally and use it for yourself only. Here is how :
 
@@ -24,9 +24,9 @@ But you can also install it locally and use it for yourself only. Here is how :
 
 ## Install on Unix-like OS (GNU/Linux, BSD, Solaris, etc…) (the recommended way !)
 Please refer to your distribution's documentation to install :
-* a webserver (Apache2 is recommended)
-* php5
-* mysql
+* a webserver (like Apache, nginx, lighttpd or cherokee)
+* php version > 5
+* mysql version > 5
 * git
 
 The quick way to do that on a Debian/Ubuntu setup :
@@ -50,7 +50,7 @@ ssh user@12.34.56.78
 ~~~
 
 ### Cd to the public directory where you want eLabFTW to be installed
-(can be /var/www, ~/public\_html, or any folder you'd like, as long as Apache is configured properly, in doubt use /var/www)
+(can be /var/www, ~/public\_html, or any folder you'd like, as long as the webserver is configured properly, in doubt use /var/www)
 ~~~ sh
 $ cd /var/www
 # make the directory writable by your user (if it's not already the case)
@@ -73,7 +73,7 @@ If you still cannot connect, tell git your proxy :
 $ git config --global http.proxy http://proxy.example.com:8080
 ~~~
 
-If you can't install git or don't manage to get the files, you can [download a zip archive](https://github.com/NicolasCARPi/elabftw/archive/master.zip). But it's better to use git, it will allow easier updates.
+If you can't install git or don't manage to get the files, you can [download a zip archive](https://github.com/NicolasCARPi/elabftw/archive/master.zip). But it's better to use git, it will allow easier updates (and they are frequent !).
 
 ## SQL part
 The second part is putting the database in place.
@@ -110,7 +110,7 @@ Example : http://12.34.56.78/phpmyadmin
 Login with the root user on PhpMyAdmin panel (use the password you setup for mysql root user).
 #### 1) create a user `elabftw` with all rights on the database `elabftw`
 
-Now click the `Privileges` tab and click Add new user.
+Now click the `Users` tab and click ![add user](http://i.imgur.com/SJmdg0Z.png).
 
 Do like this :
 
@@ -137,6 +137,8 @@ To update, just cd in the `elabftw` folder and do :
 $ git pull
 $ php update.php
 ~~~
+
+![bad time](http://i.imgur.com/aUzNvIg.jpg)
 
 # Backup
 It is important to backup your files to somewhere else, in case anything bad happens.

@@ -30,6 +30,9 @@ $page_title = 'Admin Panel';
 require_once('inc/head.php');
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
+// formkey stuff
+require_once('lib/classes/formkey.class.php');
+$formKey = new formKey();
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
 <script src="js/raphael-2.1.0.min.js"></script>
@@ -159,7 +162,6 @@ while ($users = $req->fetch()) {
     <div class='simple_border'>
     <a class='trigger_users_<?php echo $users['userid'];?>'><img src='img/profile.png' alt='profile' /> <?php echo "Edit ".$users['firstname'];?></a>
     <div class='toggle_users_<?php echo $users['userid'];?>'>
-        <a class='align_right' href='' onClick="confirm_delete('<?php echo $users['userid']."', '".$users['lastname'];?>')"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <br />
         <form method='post' action='admin-exec.php' id='admin_user_form'>
             <input type='hidden' value='<?php echo $users['userid'];?>' name='userid' />
@@ -276,22 +278,24 @@ while ($items_types = $req->fetch()) {
 <input type='submit' class='button' value='Add new item type' /></form></div>
 </section>
 
+<section class='item' style='background-color:#FF8080'>
+<h3>DANGER ZONE</h3>
+<h4>Delete a user</h4>
+<p>
+<form action='admin-exec.php' method='post'>
+    <!-- form key -->
+    <?php $formKey->output_formkey(); ?>
+    <label for'delete_user'>Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever.</label>
+    <input type='email' name='delete_user' id='delete_user' /><br />
+<br />
+<div class='center'>
+    <input type='submit' class='button' value='Delete this user !' />
+</div>
+</form>
+
+
+</section>
 <script>
-// confirm delete by writing full name
-function confirm_delete(id, lastname) {
-    var user_input = prompt('WARNING !\nAre you absolutely sure you want to delete this user ?\nThis will delete forever ALL the user\'s data, including files and experiments !!!!\nTo confirm type the LASTNAME of the user in capital letters :');
-    if(user_input != '' && user_input === lastname){
-    // POST request to delete user
-    var jqxhr = $.post('admin-exec.php', {
-        deluser: id
-    })
-    // reload page
-    .success(function() {location.reload()
-    });
-    }else{
-        return false;
-    }
-}
 // color wheel
 function color_wheel(div_name) {
         var cw = Raphael.colorwheel($(div_name)[0], 80);
@@ -318,7 +322,5 @@ $(document).ready(function() {
     });
 });
 </script>
-<?php
-require_once('inc/footer.php');
-?>
+<?php require_once('inc/footer.php'); ?>
 

@@ -26,10 +26,14 @@
 /* admin-exec.php - for administration of the elab */
 require_once('inc/common.php');
 if ($_SESSION['is_admin'] != 1) {die('You are not admin !');} // only admin can use this
+// formkey stuff
+require_once('lib/classes/formkey.class.php');
+$formKey = new formKey();
 // for success messages
 $infos_arr = array();
 // for error messages
 $errors_arr = array();
+$errflag = false;
 
 // VALIDATE USERS
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
@@ -170,10 +174,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['lab_name'])) {
 // ////////////
 
 // DELETE USER
-// called from ajax with the javascript function confirm_delete of admin.php
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deluser'])) {
-    if (is_pos_int($_POST['deluser'])) {
-    $userid = $_POST['deluser'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
+    // Check the form_key
+    if (!isset($_POST['form_key']) || !$formKey->validate()) {
+        // form key is invalid
+        $msg_arr[] = 'The form key is invalid !';
+        $errflag = true;
+    }
+    if (filter_var($_POST['delete_user'], FILTER_VALIDATE_EMAIL)) {
+        $email = $_POST['delete_user'];
+    } else {
+        $msg_arr[] = 'Email is not valid';
+        $errflag = true;
+    }
+    if ($errflag) {
+        $_SESSION['errors'] = $msg_arr;
+        header("location: admin.php");
+        die();
+    }
+    // look which user has this email address
+    $sql = "SELECT userid FROM users WHERE email LIKE :email";
+    $req = $bdd->prepare($sql);
+    $req->execute(array(
+        'email' => $email
+    ));
+    $user = $req->fetch();
+    $userid = $user['userid'];
+
     // DELETE USER
     $sql = "DELETE FROM users WHERE userid = ".$userid;
     $req = $bdd->prepare($sql);
@@ -203,7 +230,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deluser'])) {
     $_SESSION['infos'] = $infos_arr;
     header('Location: admin.php');
     exit();
-    }
 }
 
 // EDIT USER

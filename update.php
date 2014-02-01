@@ -584,7 +584,9 @@ if (!$table_is_here) {
         ('smtp_password', '".SMTP_PASSWORD."'),
         ('proxy', '".PROXY."'),
         ('debug', '0'),
-        ('deletable_xp', '".DELETABLE_XP."');";
+        ('deletable_xp', '".DELETABLE_XP."'),
+        ('login_tries', '5'),
+        ('ban_time', '60');";
     $req = $bdd->prepare($sql);
     $result2 = $req->execute();
 

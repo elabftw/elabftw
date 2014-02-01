@@ -138,6 +138,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['lab_name'])) {
     if (isset($_POST['smtp_password'])) {
         $smtp_password = filter_var($_POST['smtp_password'], FILTER_SANITIZE_STRING);
     }
+    if (isset($_POST['login_tries'])) {
+        $login_tries = filter_var($_POST['login_tries'], FILTER_SANITIZE_STRING);
+    }
+    if (isset($_POST['ban_time'])) {
+        $ban_time = filter_var($_POST['ban_time'], FILTER_SANITIZE_STRING);
+    }
 
     // build request array
     $updates = array(
@@ -153,7 +159,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['lab_name'])) {
         'smtp_encryption' => $smtp_encryption,
         'smtp_port' => $smtp_port,
         'smtp_username' => $smtp_username,
-        'smtp_password' => $smtp_password
+        'smtp_password' => $smtp_password,
+        'login_tries' => $login_tries,
+        'ban_time' => $ban_time
     );
     $values = array();
     foreach ($updates as $name => $value) {

@@ -27,6 +27,7 @@ if (!isset($_SESSION)) { session_start(); }
 $page_title = 'Login';
 require_once('inc/head.php');
 require_once('inc/connect.php');
+require_once('inc/functions.php');
 require_once('inc/menu.php');
 require_once('inc/info_box.php');
 // formkey stuff
@@ -42,10 +43,10 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 }
 
 // Check if we are banned after too much failed login attempts
-$sql = "SELECT user_infos FROM banned_users WHERE time > :an_hour_from_now";
+$sql = "SELECT user_infos FROM banned_users WHERE time > :ban_time";
 $req = $bdd->prepare($sql);
 $req->execute(array(
-    ':an_hour_from_now' => date("Y-m-d H:i:s", strtotime('-1 hour'))
+    ':ban_time' => date("Y-m-d H:i:s", strtotime('-'.get_config('ban_time').' minutes'))
 ));
 $banned_users_arr = array();
 while ($banned_users = $req->fetch()) {
@@ -59,14 +60,14 @@ if (in_array(md5($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']), $banned_u
 }
 
 // show message if there is a failed_attempt
-if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] < 5) {
-    $number_of_tries_left = 5 - $_SESSION['failed_attempt'];
-    $message = "Number of login attempt left before being banned for 1 hour : $number_of_tries_left.";
+if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] < get_config('login_tries')) {
+    $number_of_tries_left = get_config('login_tries') - $_SESSION['failed_attempt'];
+    $message = "Number of login attempt left before being banned for ".get_config('ban_time')." minutes : $number_of_tries_left.";
     display_message('error', $message);
 }
 
 // disable login if too much failed_attempts
-        if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] > 4) {
+        if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] >= get_config('login_tries')) {
             // get user infos
             $user_infos = md5($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']);
             // add the user to the banned list
@@ -76,7 +77,7 @@ if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] < 5) {
                 'user_infos' => $user_infos
             ));
             unset($_SESSION['failed_attempt']);
-            $message ='Too much failed login attempts. Login is disabled for 1 hour.';
+            $message ='Too much failed login attempts. Login is disabled for '.get_config('ban_time').' minutes.';
             display_message('error', $message);
             require_once('inc/footer.php');
             die();

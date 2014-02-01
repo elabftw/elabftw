@@ -59,26 +59,19 @@ while ($data = $req->fetch()) {
 <!-- CONFIGURATION FORM -->
 <section class='item'>
 <h3>CONFIGURATION</h3>
-<?php
-// SQL to get all config
-$sql = "SELECT * FROM config";
-$req = $bdd->prepare($sql);
-$req->execute();
-$config = $req->fetchAll(PDO::FETCH_COLUMN|PDO::FETCH_GROUP);
-?>
 <form method='post' action='admin-exec.php'>
 <div id='config_form'>
     <label for='lab_name'>Name of the lab :</label>
-    <input type='text' value='<?php echo $config['lab_name'][0];?>' name='lab_name' id='lab_name' />
+    <input type='text' value='<?php echo get_config('lab_name');?>' name='lab_name' id='lab_name' />
 <br />
 <br />
     <label for='admin_validate'>Users need validation by admin after registration :</label>
     <select name='admin_validate' id='admin_validate'>
         <option value='1'<?php
-            if ($config['admin_validate'][0] == 1) { echo " selected='selected'"; } ?>
+            if (get_config('admin_validate') == 1) { echo " selected='selected'"; } ?>
         >yes</option>
         <option value='0'<?php
-                if ($config['admin_validate'][0] == 0) { echo " selected='selected'"; } ?>
+                if (get_config('admin_validate') == 0) { echo " selected='selected'"; } ?>
         >no</option>
     </select>
 <br />
@@ -86,10 +79,10 @@ $config = $req->fetchAll(PDO::FETCH_COLUMN|PDO::FETCH_GROUP);
     <label for='deletable_xp'>Users can delete experiments :</label>
     <select name='deletable_xp' id='deletable_xp'>
         <option value='1'<?php
-            if ($config['deletable_xp'][0] == 1) { echo " selected='selected'"; } ?>
+            if (get_config('deletable_xp') == 1) { echo " selected='selected'"; } ?>
         >yes</option>
         <option value='0'<?php
-                if ($config['deletable_xp'][0] == 0) { echo " selected='selected'"; } ?>
+                if (get_config('deletable_xp') == 0) { echo " selected='selected'"; } ?>
         >no, only the admin can</option>
     </select>
 <br />
@@ -97,48 +90,56 @@ $config = $req->fetchAll(PDO::FETCH_COLUMN|PDO::FETCH_GROUP);
     <label for='debug'>Activate debug mode :</label>
     <select name='debug' id='debug'>
         <option value='1'<?php
-            if ($config['debug'][0] == 1) { echo " selected='selected'"; } ?>
+            if (get_config('debug') == 1) { echo " selected='selected'"; } ?>
         >yes</option>
         <option value='0'<?php
-                if ($config['debug'][0] == 0) { echo " selected='selected'"; } ?>
+                if (get_config('debug') == 0) { echo " selected='selected'"; } ?>
         >no</option>
     </select>
 <br />
 <br />
     <label for='link_name'>Name of the link in the main menu :</label>
-    <input type='text' value='<?php echo $config['link_name'][0];?>' name='link_name' id='link_name' />
+    <input type='text' value='<?php echo get_config('link_name');?>' name='link_name' id='link_name' />
 <br />
 <br />
     <label for='link_href'>Address where this link should point :</label>
-    <input type='url' value='<?php echo $config['link_href'][0];?>' name='link_href' id='link_href' />
+    <input type='url' value='<?php echo get_config('link_href');?>' name='link_href' id='link_href' />
 <br />
 <br />
     <label for='path'>Full path to the install folder :</label>
-    <input type='text' value='<?php echo $config['path'][0];?>' name='path' id='path' />
+    <input type='text' value='<?php echo get_config('path');?>' name='path' id='path' />
 <br />
 <br />
     <label for='proxy'>Address of the proxy :</label>
-    <input type='text' value='<?php echo $config['proxy'][0];?>' name='proxy' id='proxy' />
+    <input type='text' value='<?php echo get_config('proxy');?>' name='proxy' id='proxy' />
 <br />
 <br />
     <label for='smtp_address'>Address of the SMTP server :</label>
-    <input type='text' value='<?php echo $config['smtp_address'][0];?>' name='smtp_address' id='smtp_address' />
+    <input type='text' value='<?php echo get_config('smtp_address');?>' name='smtp_address' id='smtp_address' />
 <br />
 <br />
     <label for='smtp_encryption'>SMTP encryption (can be TLS or STARTSSL):</label>
-    <input type='text' value='<?php echo $config['smtp_encryption'][0];?>' name='smtp_encryption' id='smtp_encryption' />
+    <input type='text' value='<?php echo get_config('smtp_encryption');?>' name='smtp_encryption' id='smtp_encryption' />
 <br />
 <br />
     <label for='smtp_port'>SMTP port :</label>
-    <input type='text' value='<?php echo $config['smtp_port'][0];?>' name='smtp_port' id='smtp_port' />
+    <input type='text' value='<?php echo get_config('smtp_port');?>' name='smtp_port' id='smtp_port' />
 <br />
 <br />
     <label for='smtp_username'>SMTP username :</label>
-    <input type='text' value='<?php echo $config['smtp_username'][0];?>' name='smtp_username' id='smtp_username' />
+    <input type='text' value='<?php echo get_config('smtp_username');?>' name='smtp_username' id='smtp_username' />
 <br />
 <br />
     <label for='smtp_password'>SMTP password :</label>
-    <input type='password' value='<?php echo $config['smtp_password'][0];?>' name='smtp_password' id='smtp_password' />
+    <input type='password' value='<?php echo get_config('smtp_password');?>' name='smtp_password' id='smtp_password' />
+<br />
+<br />
+    <label for='login_tries'>Number of allowed login attempts :</label>
+    <input type='text' value='<?php echo get_config('login_tries');?>' name='login_tries' id='login_tries' />
+<br />
+<br />
+    <label for='ban_time'>Time of the ban after failed login attempts (in minutes) :</label>
+    <input type='text' value='<?php echo get_config('ban_time');?>' name='ban_time' id='ban_time' />
 <br />
 <br />
 </div>

@@ -83,6 +83,86 @@ Free open-source Lab Manager');
     exit();
 }
 
+// MAIN CONFIGURATION FORM
+if (isset($_POST['lab_name'])) {
+    $lab_name = filter_var($_POST['lab_name'], FILTER_SANITIZE_STRING);
+}
+if($_POST['admin_validate'] == 1) {
+    $admin_validate = 1;
+} else {
+    $admin_validate = 0;
+}
+if($_POST['deletable_xp'] == 1) {
+    $deletable_xp = 1;
+} else {
+    $deletable_xp = 0;
+}
+if($_POST['debug'] == 1) {
+    $debug = 1;
+} else {
+    $debug = 0;
+}
+if (isset($_POST['link_name'])) {
+    $link_name = filter_var($_POST['link_name'], FILTER_SANITIZE_STRING);
+}
+if (isset($_POST['link_href'])) {
+    $link_href = filter_var($_POST['link_href'], FILTER_SANITIZE_STRING);
+}
+if (isset($_POST['path'])) {
+    $path = filter_var($_POST['path'], FILTER_SANITIZE_STRING);
+}
+if (isset($_POST['proxy'])) {
+    $proxy = filter_var($_POST['proxy'], FILTER_SANITIZE_STRING);
+}
+if (isset($_POST['smtp_address'])) {
+    $smtp_address = filter_var($_POST['smtp_address'], FILTER_SANITIZE_STRING);
+}
+if (isset($_POST['smtp_encryption'])) {
+    $smtp_encryption = filter_var($_POST['smtp_encryption'], FILTER_SANITIZE_STRING);
+}
+if (isset($_POST['smtp_port']) && is_pos_int($_POST['smtp_port'])) {
+    $smtp_port = $_POST['smtp_port'];
+}
+if (isset($_POST['smtp_username'])) {
+    $smtp_username = filter_var($_POST['smtp_username'], FILTER_SANITIZE_STRING);
+}
+if (isset($_POST['smtp_password'])) {
+    $smtp_password = filter_var($_POST['smtp_password'], FILTER_SANITIZE_STRING);
+}
+
+// build request array
+$updates = array(
+    'lab_name' => $lab_name,
+    'admin_validate' => $admin_validate,
+    'deletable_xp' => $deletable_xp,
+    'debug' => $debug,
+    'link_name' => $link_name,
+    'link_href' => $link_href,
+    'path' => $path,
+    'proxy' => $proxy,
+    'smtp_address' => $smtp_address,
+    'smtp_encryption' => $smtp_encryption,
+    'smtp_port' => $smtp_port,
+    'smtp_username' => $smtp_username,
+    'smtp_password' => $smtp_password
+);
+$values = array();
+foreach ($updates as $name => $value) {
+    $sql = "UPDATE config SET conf_value = '".$value."' WHERE conf_name = '".$name."';";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute();
+}
+if ($result){
+    $infos_arr[] = 'Configuration updated successfully.';
+    $_SESSION['infos'] = $infos_arr;
+    header('Location: admin.php');
+    exit();
+} else {
+    $errors_arr[] = 'There was a problem in the SQL request. Report a bug !';
+    $_SESSION['errors'] = $errors_arr;
+    header('Location: admin.php');
+}
+
 // MANAGE USERS
 // ////////////
 

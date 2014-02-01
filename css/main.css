@@ -382,6 +382,14 @@ img {
     padding: 10px;
     width: 742px;
 }
+/* admin.php */
+#config_form input, #config_form select {
+    float:right;
+}
+
+#config_form label {
+    float:left;
+}
 /* in admin.php for templates */
 .high {
     height:450px;

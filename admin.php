@@ -62,8 +62,10 @@ $req->execute();
 $config = $req->fetchAll(PDO::FETCH_COLUMN|PDO::FETCH_GROUP);
 ?>
 <form method='post' action='admin-exec.php'>
+<div id='config_form'>
     <label for='lab_name'>Name of the lab :</label>
     <input type='text' value='<?php echo $config['lab_name'][0];?>' name='lab_name' id='lab_name' />
+<br />
 <br />
     <label for='admin_validate'>Users need validation by admin after registration :</label>
     <select name='admin_validate' id='admin_validate'>
@@ -75,6 +77,69 @@ $config = $req->fetchAll(PDO::FETCH_COLUMN|PDO::FETCH_GROUP);
         >no</option>
     </select>
 <br />
+<br />
+    <label for='deletable_xp'>Users can delete experiments :</label>
+    <select name='deletable_xp' id='deletable_xp'>
+        <option value='1'<?php
+            if ($config['deletable_xp'][0] == 1) { echo " selected='selected'"; } ?>
+        >yes</option>
+        <option value='0'<?php
+                if ($config['deletable_xp'][0] == 0) { echo " selected='selected'"; } ?>
+        >no, only the admin can</option>
+    </select>
+<br />
+<br />
+    <label for='debug'>Activate debug mode :</label>
+    <select name='debug' id='debug'>
+        <option value='1'<?php
+            if ($config['debug'][0] == 1) { echo " selected='selected'"; } ?>
+        >yes</option>
+        <option value='0'<?php
+                if ($config['debug'][0] == 0) { echo " selected='selected'"; } ?>
+        >no</option>
+    </select>
+<br />
+<br />
+    <label for='link_name'>Name of the link in the main menu :</label>
+    <input type='text' value='<?php echo $config['link_name'][0];?>' name='link_name' id='link_name' />
+<br />
+<br />
+    <label for='link_href'>Address where this link should point :</label>
+    <input type='url' value='<?php echo $config['link_href'][0];?>' name='link_href' id='link_href' />
+<br />
+<br />
+    <label for='path'>Full path to the install folder :</label>
+    <input type='text' value='<?php echo $config['path'][0];?>' name='path' id='path' />
+<br />
+<br />
+    <label for='proxy'>Address of the proxy :</label>
+    <input type='text' value='<?php echo $config['proxy'][0];?>' name='proxy' id='proxy' />
+<br />
+<br />
+    <label for='smtp_address'>Address of the SMTP server :</label>
+    <input type='text' value='<?php echo $config['smtp_address'][0];?>' name='smtp_address' id='smtp_address' />
+<br />
+<br />
+    <label for='smtp_encryption'>SMTP encryption (can be TLS or STARTSSL):</label>
+    <input type='text' value='<?php echo $config['smtp_encryption'][0];?>' name='smtp_encryption' id='smtp_encryption' />
+<br />
+<br />
+    <label for='smtp_port'>SMTP port :</label>
+    <input type='text' value='<?php echo $config['smtp_port'][0];?>' name='smtp_port' id='smtp_port' />
+<br />
+<br />
+    <label for='smtp_username'>SMTP username :</label>
+    <input type='text' value='<?php echo $config['smtp_username'][0];?>' name='smtp_username' id='smtp_username' />
+<br />
+<br />
+    <label for='smtp_password'>SMTP password :</label>
+    <input type='password' value='<?php echo $config['smtp_password'][0];?>' name='smtp_password' id='smtp_password' />
+<br />
+<br />
+</div>
+<div class='center'>
+    <input type='submit' class='button' value='Edit config' /><br />
+</div>
 </form>
 
 </section>
@@ -93,7 +158,7 @@ while ($users = $req->fetch()) {
     <div class='toggle_users_<?php echo $users['userid'];?>'>
         <a class='align_right' href='' onClick="confirm_delete('<?php echo $users['userid']."', '".$users['lastname'];?>')"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
 <br />
-        <form method='post' action='admin-exec.php'>
+        <form method='post' action='admin-exec.php' id='admin_user_form'>
             <input type='hidden' value='<?php echo $users['userid'];?>' name='userid' />
             <input type='text' value='<?php echo $users['firstname'];?>' name='firstname' />
             <input type='text' value='<?php echo $users['lastname'];?>' name='lastname' />
@@ -122,27 +187,24 @@ while ($users = $req->fetch()) {
                     >no</option>
             </select>
 <br />
-            Has an active account ?<select name='validated'>
-            <option value='1'<?php
-                    if($users['validated'] == 1) {
-                        echo " selected='selected'";
-                    }
-?>
+<label for'validated'>Has an active account ?</label>
+<select name='validated' id='validated'>
+    <option value='1'<?php
+            if($users['validated'] == 1) { echo " selected='selected'"; } ?>
     >yes</option>
     <option value='0'<?php
-                    if($users['validated'] == 0) {
-                        echo " selected='selected'";
-                    }
-?>
-                    >no</option>
-            </select>
+        if($users['validated'] == 0) { echo " selected='selected'"; } ?>
+    >no</option>
+</select>
 <br />
 Reset user password : <input type='password' value='' name='new_password' />
 <br />
 Repeat new password : <input type='password' value='' name='confirm_new_password' />
 <br />
 <br />
-    <input type='submit' class='button' value='Edit this user' /><br />
+<div class='center'>
+    <input type='submit' class='button' value='Edit this user' />
+</div>
         </form>
     </div>
     <script>

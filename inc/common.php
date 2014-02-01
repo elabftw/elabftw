@@ -24,17 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 /* auth + connect + functions*/
-session_start();
-
-
-// TODO delete this block in a few updates
-if (file_exists('admin/config.ini')) {
-    $ini_arr = parse_ini_file('admin/config.ini');
-    die("Please run the update script ! (it will transfer info from admin/config.ini to admin/config.php and delete the ini file)<br />
-        <strong>cd ".$ini_arr['path']." && php update.php</strong><br />
-        If you are on a mac, instead of 'php', do /Applications/MAMP/bin/php/php5.4.4/bin/php.<br />
-            Otherwise it might not work.");
-}
+if (!isset($_SESSION)) { session_start(); }
 
 // check that the config file is here and readable
 if (!is_readable('admin/config.php')) {
@@ -60,7 +50,7 @@ catch(Exception $e)
 
 // AUTH
 if (isset($_SESSION['auth'])){ // if user is auth, we check the cookie
-    if (!isset($_COOKIE['path']) || ($_COOKIE['path'] != PATH) || ($_SESSION['path'] != PATH)) { // no cookie for this domain
+    if (!isset($_COOKIE['path']) || ($_COOKIE['path'] != get_config('path')) || ($_SESSION['path'] != get_config('path'))) { // no cookie for this domain
         session_destroy(); // kill session
         $msg_arr = array();
         $msg_arr[] = 'You are not logged in !';
@@ -80,11 +70,11 @@ if (isset($_SESSION['auth'])){ // if user is auth, we check the cookie
     $data = $result->fetch();
     $numrows = $result->rowCount();
     // Check cookie path vs. real install path
-    if (($numrows == 1) && (PATH == $_COOKIE['path'])) { // token is valid
+    if (($numrows == 1) && (get_config('path') == $_COOKIE['path'])) { // token is valid
         session_regenerate_id();
         $_SESSION['auth'] = 1;
         // fix for cookies problem
-        $_SESSION['path'] = PATH;
+        $_SESSION['path'] = get_config('path');
         $_SESSION['userid'] = $data['userid'];
         // Used in the menu
         $_SESSION['username'] = $data['username'];

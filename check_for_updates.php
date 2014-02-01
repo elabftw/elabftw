@@ -24,7 +24,8 @@
 *                                                                               *
 ********************************************************************************/
 // this file is called with ajax post javascript from "Check for updates" link in Admin menu in inc/menu.php
-require_once('admin/config.php');
+require_once('inc/connect.php');
+require_once('inc/functions.php');
 
 function check_executable($cmd) {
     return shell_exec("which $cmd");
@@ -78,13 +79,13 @@ if (isset($_POST)) {
     // this is to get content
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     // add proxy if there is one
-    if (strlen(PROXY) > 0) {
-        curl_setopt($ch, CURLOPT_PROXY, PROXY);
+    if (strlen(get_config('proxy')) > 0) {
+        curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
     }
     // options to verify the github certificate
     // set to false by default, set it to true if you're paranoid
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_CAPATH, PATH."/ca_github.com.pem");
+    curl_setopt($ch, CURLOPT_CAPATH, get_config('path')."/ca_github.com.pem");
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 
     // set a timeout of 500 millisecond

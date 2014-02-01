@@ -251,8 +251,9 @@ while ($items_types = $req->fetch()) {
     <input type='color' name='item_type_bgcolor' value='#<?php echo $items_types['bgcolor'];?>'/></div><br /><br />
      
     <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']);?></textarea><br />
-
+    <div class='center'>
     <input type='submit' class='button' value='Edit <?php echo stripslashes($items_types['name']);?>' /><br />
+    </div>
     </form></div>
     <script>$(document).ready(function() {
         $(".toggle_container_<?php echo $items_types['id'];?>").hide();
@@ -277,7 +278,9 @@ while ($items_types = $req->fetch()) {
     <div class='colorwheel inline'></div>
     <input type='text' name='new_item_type_bgcolor' value='#000000' /></div><br /><br />
     <textarea class='mceditable' name='new_item_type_template' /></textarea><br />
+    <div class='center'>
     <input type='submit' class='button' value='Add new item type' />
+    </div>
 </form></div>
 </section>
 

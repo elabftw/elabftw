@@ -1,6 +1,9 @@
 /* Changelog for eLabFTW */
 
 Version 0.9.4
+* Security improvements against CSRF
+* Config is now stored in the database and editable on admin page
+* Add detection of login attempts, and configurable ban time and number of tries
 * You can only unlock a lock experiment if you are the locker.
 * Only a user with locking rights can lock an experiment of someone else.
 * You can now forbid users to delete an experiment with a setting in the conf file

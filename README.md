@@ -144,9 +144,6 @@ $ php update.php
 It is important to backup your files to somewhere else, in case anything bad happens.
 Please refer to the [wiki](https://github.com/NicolasCARPi/elabftw/wiki/backup).
 
-# HTTPS
-eLabFTW MUST be used on a HTTPS enabled server. If you don't know how to enable HTTPS on your server, you can ask google, he'll know.
-
 # Bonus stage
 * It's a good idea to use a php optimizer to increase speed. I recommand installing XCache.
 * You can show a TODOlist by pressing 't'.
@@ -157,6 +154,7 @@ eLabFTW MUST be used on a HTTPS enabled server. If you don't know how to enable 
 
 
 ~Thank you for using eLabFTW :)
+Please open a github issue if you have any problem (or send me an email !).
 
 http://www.elabftw.net
 

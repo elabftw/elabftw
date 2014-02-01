@@ -49,6 +49,39 @@ if (isset($_POST['db_user']) && !empty($_POST['db_user'])) {
 if (isset($_POST['db_password']) && !empty($_POST['db_password'])) {
     $db_password = $_POST['db_password'];
 }
+// connect to DB
+try
+{
+    $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+    $bdd = new PDO('mysql:host='.$db_host.';dbname='.$db_name, $db_user, $db_password, $pdo_options);
+}
+catch(Exception $e)
+{
+    die('Error : '.$e->getMessage());
+}
+// Populate config table with default values
+
+// remove /install/install.php from path
+$path = substr(realpath(__FILE__), 0, -20);
+
+$sql = "INSERT INTO config (conf_name, conf_value) VALUES
+    ('lab_name', 'eLab'),
+    ('path', '$path'),
+    ('admin_validate', '0'),
+    ('link_name', 'Wiki'),
+    ('link_href', 'https://github.com/NicolasCARPi/elabftw/wiki'),
+    ('smtp_address', '173.194.66.108'),
+    ('smtp_port', '587'),
+    ('smtp_encryption', 'tls'),
+    ('smtp_username', 'username@gmail.com'),
+    ('smtp_password', 'gmail password'),
+    ('proxy', ''),
+    ('debug', '0'),
+    ('deletable_xp', '1'),
+    ('login_tries', '5'),
+    ('ban_time', '60');";
+$req = $bdd->prepare($sql);
+$req->execute();
 
 // BUILD CONFIG FILE
 

@@ -25,6 +25,7 @@
 ********************************************************************************/
 session_start();
 require_once('inc/connect.php');
+require_once('inc/functions.php');
 
 //Array to store validation errors
 $msg_arr = array();
@@ -174,10 +175,12 @@ Someone registered a new account on eLabFTW. Head to the admin panel to activate
 Email sent by eLabFTW
 http://www.elabftw.net
 Free open-source Lab Manager');
-            require_once('admin/config.php');
-            $transport = Swift_SmtpTransport::newInstance(SMTP_ADDRESS, SMTP_PORT, SMTP_ENCRYPTION)
-            ->setUsername(SMTP_USERNAME)
-            ->setPassword(SMTP_PASSWORD);
+            $transport = Swift_SmtpTransport::newInstance(
+                get_config('smtp_address'),
+                get_config('smtp_port'),
+                get_config('smtp_encryption'))
+            ->setUsername(get_config('smtp_username'))
+            ->setPassword(get_config('smtp_password'));
             $mailer = Swift_Mailer::newInstance($transport);
             $result = $mailer->send($message);
             $msg_arr[] = 'Registration successful :)<br />Your account must now be validated by an admin.<br />You will receive an email when it is done.';

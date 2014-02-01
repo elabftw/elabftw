@@ -76,11 +76,14 @@ Thanks for using eLabFTW :)
 Email sent by eLabFTW
 http://www.elabftw.net
 Free open-source Lab Manager');
-        $transport = Swift_SmtpTransport::newInstance(SMTP_ADDRESS, SMTP_PORT, SMTP_ENCRYPTION)
-        ->setUsername(SMTP_USERNAME)
-        ->setPassword(SMTP_PASSWORD);
-        $mailer = Swift_Mailer::newInstance($transport);
-        $mailer->send($message);
+    $transport = Swift_SmtpTransport::newInstance(
+        get_config('smtp_address'),
+        get_config('smtp_port'),
+        get_config('smtp_encryption'))
+        ->setUsername(get_config('smtp_username'))
+        ->setPassword(get_config('smtp_password'));
+    $mailer = Swift_Mailer::newInstance($transport);
+    $mailer->send($message);
     }
     $_SESSION['infos'] = $infos_arr;
     header('Location: admin.php');

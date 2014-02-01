@@ -57,13 +57,7 @@ if (isset($_POST['email'])) {
         // Check email exists
         if($numrows === 1){
             // Get info to build the URL
-            // TODO remove as we use only https
-            // HTTP or HTTPS ?
-            if (!empty($_SERVER['HTTPS'])) {
-                $protocol = 'https://';
-            } else {
-                $protocol = 'http://';
-            }
+            $protocol = 'https://';
             $reset_url = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
             // Generate unique link
             $reset_link = $protocol.str_replace('reset-pass', 'change-pass', $reset_url).'?key='.hash("sha256", uniqid(rand(), true)).'&userid='.$userid;
@@ -88,9 +82,12 @@ Follow this link to change your password :
 Email sent by eLabFTW
 http://www.elabftw.net
 Free open-source Lab Manager');
-            $transport = Swift_SmtpTransport::newInstance(SMTP_ADDRESS, SMTP_PORT, SMTP_ENCRYPTION)
-            ->setUsername(SMTP_USERNAME)
-            ->setPassword(SMTP_PASSWORD);
+        $transport = Swift_SmtpTransport::newInstance(
+            get_config('smtp_address'),
+            get_config('smtp_port'),
+            get_config('smtp_encryption'))
+            ->setUsername(get_config('smtp_username'))
+            ->setPassword(get_config('smtp_password'));
             $mailer = Swift_Mailer::newInstance($transport);
             $result = $mailer->send($message);
             // Now redirect to login page

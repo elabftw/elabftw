@@ -145,20 +145,7 @@ It is important to backup your files to somewhere else, in case anything bad hap
 Please refer to the [wiki](https://github.com/NicolasCARPi/elabftw/wiki/backup).
 
 # HTTPS
-If you want to enable HTTPS (and you should), uncomment (remove the # at the beginning) these lines in the file .htaccess. 
-~~~sh
-#RewriteEngine On
-#RewriteCond %{HTTPS} !=on
-#RewriteRule .* https://%{SERVER_NAME}%{REQUEST_URI} [R=301,L]
-~~~
-
-You will need the modules "rewrite" and "ssl" enabled, the package ssl-cert installed and the ssl site enabled.
-~~~sh
-$ sudo apt-get install ssl-cert
-$ sudo a2enmod rewrite
-$ sudo a2enmod ssl
-$ sudo a2ensite default-ssl
-~~~
+eLabFTW MUST be used on a HTTPS enabled server. If you don't know how to enable HTTPS on your server, you can ask google, he'll know.
 
 # Bonus stage
 * It's a good idea to use a php optimizer to increase speed. I recommand installing XCache.
@@ -166,6 +153,7 @@ $ sudo a2ensite default-ssl
 * You can duplicate an experiment in one click.
 * You can export in a .zip, a .pdf or a spreadsheet.
 * You can share an experiment by just sending the URL of the page to someone else.
+* Experiments can be locked by your PI
 
 
 ~Thank you for using eLabFTW :)

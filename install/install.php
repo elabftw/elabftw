@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 /* install/install.php to get an installation up and running */
-session_start();
+if (!isset($_SESSION)) { session_start(); }
 require_once('../inc/functions.php');
 
 // Check if there is already a config file, redirect to index if yes.
@@ -89,46 +89,9 @@ $req->execute();
 $config_file = '../admin/config.php';
 // what we will write
 $config = "<?php
-/********************************************************************************
-*                                                                               *
-*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
-*   http://www.elabftw.net/                                                     *
-*                                                                               *
-********************************************************************************/
-
-/********************************************************************************
-*  This file is part of eLabFTW.                                                *
-*                                                                               *
-*    eLabFTW is free software: you can redistribute it and/or modify            *
-*    it under the terms of the GNU Affero General Public License as             *
-*    published by the Free Software Foundation, either version 3 of             *
-*    the License, or (at your option) any later version.                        *
-*                                                                               *
-*    eLabFTW is distributed in the hope that it will be useful,                 *
-*    but WITHOUT ANY WARRANTY; without even the implied                         *
-*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
-*    PURPOSE.  See the GNU Affero General Public License for more details.      *
-*                                                                               *
-*    You should have received a copy of the GNU Affero General Public           *
-*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
-*                                                                               *
-********************************************************************************/
-// admin/config.php -- main configuration file for eLabFTW
-
-/*
-* Database settings
-*/
-
-// Host (generally localhost)
 define('DB_HOST', '".$db_host."');
-
-// Name of the database
 define('DB_NAME', '".$db_name."');
-
-// SQL username
 define('DB_USER', '".$db_user."');
-
-// SQL Password (the one you chose in phpmyadmin)
 define('DB_PASSWORD', '".$db_password."');
 
 ";

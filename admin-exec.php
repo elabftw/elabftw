@@ -25,6 +25,7 @@
 ********************************************************************************/
 /* admin-exec.php - for administration of the elab */
 require_once('inc/common.php');
+
 if ($_SESSION['is_admin'] != 1) {die('You are not admin !');} // only admin can use this
 // formkey stuff
 require_once('lib/classes/formkey.class.php');
@@ -40,6 +41,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
     // sql to validate users
     $sql = "UPDATE users SET validated = 1 WHERE userid = :userid";
     $req = $bdd->prepare($sql);
+    // check we only have int in validate array
+    if(!filter_var_array($_POST['validate'], FILTER_VALIDATE_INT)) {
+        die();
+    }
     // sql to get email of the user
     $sql_email = "SELECT email FROM users WHERE userid = :userid";
     $req_email = $bdd->prepare($sql_email);
@@ -47,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
         $req->execute(array(
             'userid' => $user
         ));
-            $infos_arr[] = 'Validated user with user ID : '.$user;
+        $infos_arr[] = 'Validated user with user ID : '.$user;
         $req_email->execute(array(
             'userid' => $user
         ));

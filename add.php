@@ -24,7 +24,6 @@
 *                                                                               *
 ********************************************************************************/
 // add.php -- called with POST containing data, type and id.
-
 require_once('inc/common.php');
 
 // Check expid is valid and assign it to $id

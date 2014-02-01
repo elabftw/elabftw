@@ -177,7 +177,7 @@ $users = $req->fetch();
         while ($users = $req->fetch()) {
         ?>
         <div id='tpl-<?php echo $i;?>'>
-<img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $users['id'];?>','tpl', 'info=Experiment template deleted successfully !', 'ucp.php')" />
+<img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $users['id'];?>','tpl', 'ucp.php')" />
         <form action='ucp-exec.php' method='post'>
         <input type='hidden' name='tpl_form' />
         <?php

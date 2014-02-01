@@ -4,7 +4,7 @@
 
 // The main function to delete stuff
 // id of the item you want to delete, its type, the message info you want to say, the url you want to redirect to
-function deleteThis(id, type, info, redirect) {
+function deleteThis(id, type, redirect) {
     var you_sure = confirm('Delete this ?');
     if (you_sure === true) {
         $.post('delete.php', {
@@ -12,7 +12,7 @@ function deleteThis(id, type, info, redirect) {
             type:type
         })
         .success(function() {
-            document.cookie = info;
+            // document.cookie = info;
             window.location = redirect;
         });
     } else {

@@ -25,8 +25,8 @@
 ********************************************************************************/
 // inc/editXP.php
 // formkey stuff
-require_once('lib/classes/formkey.class.php');
-$formKey = new formKey();
+//require_once('lib/classes/formkey.class.php');
+//$formKey = new formKey();
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
 <?php
@@ -65,7 +65,7 @@ if ($data['locked'] == 1) {
 // BEGIN CONTENT
 ?>
 <section id='view_xp_item' class='item <?php echo $data['status'];?>'>
-<img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','exp', 'info=Experiment deleted successfully !', 'experiments.php')" />
+<img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','exp', 'experiments.php')" />
 <!-- ADD TAG FORM -->
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
 <div class='tags'>
@@ -87,7 +87,7 @@ echo stripslashes($tags['tag']);?>
 <!-- BEGIN EDITXP FORM -->
 <form id="editXP" name="editXP" method="post" action="editXP-exec.php" enctype='multipart/form-data'>
 <!-- form key -->
-<?php $formKey->output_formkey(); ?>
+<?php // $formKey->output_formkey(); ?>
 <input name='item_id' type='hidden' value='<?php echo $id;?>' />
 
 <h4>Date</h4><span class='smallgray'> (date format : YYYYMMDD)</span><br />

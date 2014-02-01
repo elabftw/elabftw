@@ -298,15 +298,12 @@ if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
     // we remove the # of the hexacode and sanitize string
     $item_type_bgcolor = filter_var(substr($_POST['new_item_type_bgcolor'], 1, 6), FILTER_SANITIZE_STRING);
     $item_type_template = check_body($_POST['new_item_type_template']);
-    //TODO
-    $item_type_tags = '';
-    $sql = "INSERT INTO items_types(name, bgcolor, template, tags) VALUES(:name, :bgcolor, :template, :tags)";
+    $sql = "INSERT INTO items_types(name, bgcolor, template) VALUES(:name, :bgcolor, :template)";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
         'name' => $item_type_name,
         'bgcolor' => $item_type_bgcolor,
-        'template' => $item_type_template,
-        'tags' => $item_type_tags
+        'template' => $item_type_template
     ));
     if ($result){
         $infos_arr[] = 'New item category added successfully.';

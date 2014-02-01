@@ -25,8 +25,8 @@
 ********************************************************************************/
 // inc/editDB.php
 // formkey stuff
-require_once('lib/classes/formkey.class.php');
-$formKey = new formKey();
+//require_once('lib/classes/formkey.class.php');
+//$formKey = new formKey();
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
 <?php
@@ -57,7 +57,7 @@ if ($data['locked'] == 1) {
 // BEGIN CONTENT
 ?>
 <section class='item'>
-<img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','item', 'info=Database item deleted successfully !', 'database.php')" />
+<img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','item', 'database.php')" />
 <!-- ADD TAG FORM -->
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
 <div class='tags'>
@@ -80,7 +80,7 @@ echo stripslashes($tags['tag']);?>
 <!-- BEGIN 2ND FORM -->
 <form method="post" action="editDB-exec.php" enctype='multipart/form-data'>
 <!-- form key -->
-<?php $formKey->output_formkey(); ?>
+<?php // $formKey->output_formkey(); ?>
 <input name='item_id' type='hidden' value='<?php echo $id;?>' />
 <h4>Date</h4><span class='smallgray'> (date format : YYYYMMDD)</span><br />
 <!-- TODO if firefox has support for it: type = date -->

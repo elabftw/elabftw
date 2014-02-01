@@ -39,11 +39,6 @@ if (isset($_SESSION['infos']) && is_array($_SESSION['infos']) && count($_SESSION
     }
     unset($_SESSION['infos']);
 }
-
-if (isset($_COOKIE['info'])) {
-    display_message('info', $_COOKIE['info']);
-    setcookie('info', '', time() -3600);
-}
 ?>
 
 <script>

@@ -140,7 +140,7 @@ if ($test[0] == 0) {
 
 // If all is good => registration
 // we don't want admin validation if it's the first time we register an admin account
-if (ADMIN_VALIDATE === 1 && $is_admin == 0) {
+if (get_config('admin_validate')  == 1 && $is_admin == 0) {
     $sql = "INSERT INTO users(username, firstname, lastname, email, password, salt, register_date, is_admin) VALUES('$username', '$firstname', '$lastname', '$email', '$passwordHash', '$salt', '$register_date', '$is_admin')";
 } else { // no admin validation in config file or it's the first account created
     $sql = "INSERT INTO users(username, firstname, lastname, email, password, salt, register_date, validated, is_admin) VALUES('$username', '$firstname', '$lastname', '$email', '$passwordHash', '$salt', '$register_date', '1', '$is_admin')";
@@ -150,7 +150,7 @@ $result = $bdd->exec($sql);
 //Check whether the query was successful or not
 if($result) {
         $msg_arr = array();
-        if (ADMIN_VALIDATE === 1 && $is_admin == 0){
+        if (get_config('admin_validate') == 1 && $is_admin == 0){
             // we send an email to the admin so he can validate the user
             require_once('lib/swift_required.php');
             // get email of the admin (there might be several admins, but we send only to the first one we find)

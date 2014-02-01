@@ -69,7 +69,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 <a href="database.php?mode=show">Database</a>
 <a href="team.php">Team</a>
 <a href="search.php">Search</a>
-<a href="<?php echo LINK_HREF;?>" target='_blank'><?php echo LINK_NAME;?></a>
+<a href="<?php echo get_config('link_href');?>" target='_blank'><?php echo get_config('link_name')?></a>
 </nav>
 <hr class='flourishes'>
 <!-- TITLE -->

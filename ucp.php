@@ -200,16 +200,27 @@ $users = $req->fetch();
     <div>
         <div class='align_left'>
             <form action='ucp-exec.php' method='post'>
+            <div id='ucp_keyboard'>
                 <br />
                 <input type='hidden' name='shortcuts'>
-                Create item : <span style='margin-left:59px'><input type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['create'];?>' name='create' /></span>
+                <label for='create'>Create item :</label>
+                <input id='create' type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['create'];?>' name='create' />
 
                 <br />
-                Edit item : <span style='margin-left:84px'><input type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['edit'];?>' name='edit' /></span>
                 <br />
-                Submit : <span style='margin-left:102px'><input type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['submit'];?>' name='submit' /></span>
+                <label for'edit'>Edit item :</label>
+                <input id='edit' type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['edit'];?>' name='edit' />
+
                 <br />
-                Show TODOlist : <span style='margin-left:30px'><input type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['todo'];?>' name='todo' /></span>
+                <br />
+                <label for='key_submit'>Submit :</label>
+                <input id='key_submit' type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['submit'];?>' name='submit' />
+
+                <br />
+                <br />
+                <label for='todolist'>Show TODOlist :</label>
+                <input id='todolist' type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['todo'];?>' name='todo' />
+                </div>
                 <!-- SUBMIT BUTTON -->
                 <br />
                 <br />

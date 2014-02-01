@@ -497,8 +497,16 @@ img {
     margin-top: 7px;
 }
 /* ucp.php */
+
+#ucp_keyboard input {
+    float:right;
+}
+
+#ucp_keyboard label {
+    float:left;
+}
 #currpass {
-    background-color: #FFABAB;
+    background-color: #FF8080;
 }
 
 .themes_div {

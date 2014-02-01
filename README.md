@@ -44,6 +44,8 @@ $ sudo /usr/bin/mysql_secure_installation
 
 ## Getting the files
 
+The first part is to get the files on your server, with git.
+
 ### Connect to your server with SSH
 ~~~ sh
 ssh user@12.34.56.78

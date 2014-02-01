@@ -47,11 +47,13 @@ if ($count > 0) {
 while ($data = $req->fetch()) {
     $message .= "<li><label><input type='checkbox' name='validate[]' value='".$data['userid']."'> ".$data['firstname']." ".$data['lastname']." (".$data['email'].")</label></li>";
 }
-$message .= "</ul><div class='center'>
-    <input class='button' type='submit' name='submit' value='Validate users' /></div></form>";
+    $message .= "</ul><div class='center'>
+    <input class='button' type='submit' value='Validate users' /></div></form>";
     display_message('error', $message);
 }
 ?>
+
+<!-- CONFIGURATION FORM -->
 <section class='item'>
 <h3>CONFIGURATION</h3>
 <?php
@@ -138,12 +140,13 @@ $config = $req->fetchAll(PDO::FETCH_COLUMN|PDO::FETCH_GROUP);
 <br />
 </div>
 <div class='center'>
-    <input type='submit' class='button' value='Edit config' /><br />
+    <input type='submit' name='submit_config' class='button' value='Edit config' /><br />
 </div>
 </form>
 
 </section>
 
+<!-- TEAM MEMBERS -->
 <section class='item'>
 <h3>TEAM MEMBERS</h3>
 <?php
@@ -216,9 +219,9 @@ Repeat new password : <input type='password' value='' name='confirm_new_password
     </div>
     <?php
 }
-echo "</div>";
-echo "</section>";
 ?>
+</div>
+</section>
 
 <section class='item'>
 <a id='items_types'></a>

@@ -25,6 +25,7 @@
 ********************************************************************************/
 if (!isset($_SESSION)) { session_start(); }
 require_once('inc/connect.php');
+require_once('inc/functions.php');
 // formkey stuff
 require_once('lib/classes/formkey.class.php');
 $formKey = new formKey();
@@ -75,10 +76,10 @@ $salt = $data['salt'];
 $passwordHash = hash("sha512", $salt.$_POST['password']);
 
 // admin validated ?
-if (ADMIN_VALIDATE === 1){
-$sql = "SELECT * FROM users WHERE username='$username' AND password='$passwordHash' AND validated= 1";
+if (get_config('admin_validate') == 1){
+    $sql = "SELECT * FROM users WHERE username='$username' AND password='$passwordHash' AND validated= 1";
 } else {
-$sql = "SELECT * FROM users WHERE username='$username' AND password='$passwordHash'";
+    $sql = "SELECT * FROM users WHERE username='$username' AND password='$passwordHash'";
 }
 $req = $bdd->prepare($sql);
 $result = $req->execute();

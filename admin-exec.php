@@ -32,7 +32,7 @@ $infos_arr = array();
 $errors_arr = array();
 
 // VALIDATE USERS
-if (isset($_POST['validate'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
     // sql to validate users
     $sql = "UPDATE users SET validated = 1 WHERE userid = :userid";
     $req = $bdd->prepare($sql);
@@ -83,84 +83,87 @@ Free open-source Lab Manager');
     exit();
 }
 
-// MAIN CONFIGURATION FORM
-if (isset($_POST['lab_name'])) {
-    $lab_name = filter_var($_POST['lab_name'], FILTER_SANITIZE_STRING);
-}
-if($_POST['admin_validate'] == 1) {
-    $admin_validate = 1;
-} else {
-    $admin_validate = 0;
-}
-if($_POST['deletable_xp'] == 1) {
-    $deletable_xp = 1;
-} else {
-    $deletable_xp = 0;
-}
-if($_POST['debug'] == 1) {
-    $debug = 1;
-} else {
-    $debug = 0;
-}
-if (isset($_POST['link_name'])) {
-    $link_name = filter_var($_POST['link_name'], FILTER_SANITIZE_STRING);
-}
-if (isset($_POST['link_href'])) {
-    $link_href = filter_var($_POST['link_href'], FILTER_SANITIZE_STRING);
-}
-if (isset($_POST['path'])) {
-    $path = filter_var($_POST['path'], FILTER_SANITIZE_STRING);
-}
-if (isset($_POST['proxy'])) {
-    $proxy = filter_var($_POST['proxy'], FILTER_SANITIZE_STRING);
-}
-if (isset($_POST['smtp_address'])) {
-    $smtp_address = filter_var($_POST['smtp_address'], FILTER_SANITIZE_STRING);
-}
-if (isset($_POST['smtp_encryption'])) {
-    $smtp_encryption = filter_var($_POST['smtp_encryption'], FILTER_SANITIZE_STRING);
-}
-if (isset($_POST['smtp_port']) && is_pos_int($_POST['smtp_port'])) {
-    $smtp_port = $_POST['smtp_port'];
-}
-if (isset($_POST['smtp_username'])) {
-    $smtp_username = filter_var($_POST['smtp_username'], FILTER_SANITIZE_STRING);
-}
-if (isset($_POST['smtp_password'])) {
-    $smtp_password = filter_var($_POST['smtp_password'], FILTER_SANITIZE_STRING);
-}
 
-// build request array
-$updates = array(
-    'lab_name' => $lab_name,
-    'admin_validate' => $admin_validate,
-    'deletable_xp' => $deletable_xp,
-    'debug' => $debug,
-    'link_name' => $link_name,
-    'link_href' => $link_href,
-    'path' => $path,
-    'proxy' => $proxy,
-    'smtp_address' => $smtp_address,
-    'smtp_encryption' => $smtp_encryption,
-    'smtp_port' => $smtp_port,
-    'smtp_username' => $smtp_username,
-    'smtp_password' => $smtp_password
-);
-$values = array();
-foreach ($updates as $name => $value) {
-    $sql = "UPDATE config SET conf_value = '".$value."' WHERE conf_name = '".$name."';";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute();
-}
-if ($result){
-    $infos_arr[] = 'Configuration updated successfully.';
-    $_SESSION['infos'] = $infos_arr;
-    header('Location: admin.php');
-    exit();
-} else {
-    $errors_arr[] = 'There was a problem in the SQL request. Report a bug !';
-    $_SESSION['errors'] = $errors_arr;
-    header('Location: admin.php');
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['lab_name'])) {
+    // MAIN CONFIGURATION FORM
+    if (isset($_POST['lab_name'])) {
+        $lab_name = filter_var($_POST['lab_name'], FILTER_SANITIZE_STRING);
+    }
+    if($_POST['admin_validate'] == 1) {
+        $admin_validate = 1;
+    } else {
+        $admin_validate = 0;
+    }
+    if($_POST['deletable_xp'] == 1) {
+        $deletable_xp = 1;
+    } else {
+        $deletable_xp = 0;
+    }
+    if($_POST['debug'] == 1) {
+        $debug = 1;
+    } else {
+        $debug = 0;
+    }
+    if (isset($_POST['link_name'])) {
+        $link_name = filter_var($_POST['link_name'], FILTER_SANITIZE_STRING);
+    }
+    if (isset($_POST['link_href'])) {
+        $link_href = filter_var($_POST['link_href'], FILTER_SANITIZE_STRING);
+    }
+    if (isset($_POST['path'])) {
+        $path = filter_var($_POST['path'], FILTER_SANITIZE_STRING);
+    }
+    if (isset($_POST['proxy'])) {
+        $proxy = filter_var($_POST['proxy'], FILTER_SANITIZE_STRING);
+    }
+    if (isset($_POST['smtp_address'])) {
+        $smtp_address = filter_var($_POST['smtp_address'], FILTER_SANITIZE_STRING);
+    }
+    if (isset($_POST['smtp_encryption'])) {
+        $smtp_encryption = filter_var($_POST['smtp_encryption'], FILTER_SANITIZE_STRING);
+    }
+    if (isset($_POST['smtp_port']) && is_pos_int($_POST['smtp_port'])) {
+        $smtp_port = $_POST['smtp_port'];
+    }
+    if (isset($_POST['smtp_username'])) {
+        $smtp_username = filter_var($_POST['smtp_username'], FILTER_SANITIZE_STRING);
+    }
+    if (isset($_POST['smtp_password'])) {
+        $smtp_password = filter_var($_POST['smtp_password'], FILTER_SANITIZE_STRING);
+    }
+
+    // build request array
+    $updates = array(
+        'lab_name' => $lab_name,
+        'admin_validate' => $admin_validate,
+        'deletable_xp' => $deletable_xp,
+        'debug' => $debug,
+        'link_name' => $link_name,
+        'link_href' => $link_href,
+        'path' => $path,
+        'proxy' => $proxy,
+        'smtp_address' => $smtp_address,
+        'smtp_encryption' => $smtp_encryption,
+        'smtp_port' => $smtp_port,
+        'smtp_username' => $smtp_username,
+        'smtp_password' => $smtp_password
+    );
+    $values = array();
+    foreach ($updates as $name => $value) {
+        $sql = "UPDATE config SET conf_value = '".$value."' WHERE conf_name = '".$name."';";
+        $req = $bdd->prepare($sql);
+        $result = $req->execute();
+    }
+    if ($result){
+        $infos_arr[] = 'Configuration updated successfully.';
+        $_SESSION['infos'] = $infos_arr;
+        header('Location: admin.php');
+        exit();
+    } else {
+        $errors_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $_SESSION['errors'] = $errors_arr;
+        header('Location: admin.php');
+    }
 }
 
 // MANAGE USERS
@@ -168,7 +171,8 @@ if ($result){
 
 // DELETE USER
 // called from ajax with the javascript function confirm_delete of admin.php
-if (isset($_POST['deluser']) && is_pos_int($_POST['deluser'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deluser'])) {
+    if (is_pos_int($_POST['deluser'])) {
     $userid = $_POST['deluser'];
     // DELETE USER
     $sql = "DELETE FROM users WHERE userid = ".$userid;
@@ -199,87 +203,90 @@ if (isset($_POST['deluser']) && is_pos_int($_POST['deluser'])) {
     $_SESSION['infos'] = $infos_arr;
     header('Location: admin.php');
     exit();
+    }
 }
 
 // EDIT USER
-if (isset($_POST['userid']) && is_pos_int($_POST['userid'])) {
-    $userid = $_POST['userid'];
-    // Put everything lowercase and first letter uppercase
-    $firstname = ucwords(strtolower(filter_var($_POST['firstname'], FILTER_SANITIZE_STRING)));
-    // Lastname in uppercase
-    $lastname = strtoupper(filter_var($_POST['lastname'], FILTER_SANITIZE_STRING));
-    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-    if($_POST['is_admin'] == 1) {
-        $is_admin = 1;
-    } else { 
-        $is_admin = 0;
-    }
-    if($_POST['can_lock'] == 1) {
-        $can_lock = 1;
-    } else {
-        $can_lock = 0;
-    }
-    if($_POST['validated'] == 1) {
-        $validated = 1;
-    } else { 
-        $validated = 0;
-    }
-    // reset password
-    if (isset($_POST['new_password']) && !empty($_POST['new_password']) && isset($_POST['confirm_new_password'])) {
-        // check if passwords match
-        if ($_POST['new_password'] == $_POST['confirm_new_password']) {
-        // Good to go
-        // Create salt
-        $salt = hash("sha512", uniqid(rand(), true));
-        // Create hash
-        $passwordHash = hash("sha512", $salt.$_POST['new_password']);
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
+    if (is_pos_int($_POST['userid'])) {
+        $userid = $_POST['userid'];
+        // Put everything lowercase and first letter uppercase
+        $firstname = ucwords(strtolower(filter_var($_POST['firstname'], FILTER_SANITIZE_STRING)));
+        // Lastname in uppercase
+        $lastname = strtoupper(filter_var($_POST['lastname'], FILTER_SANITIZE_STRING));
+        $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+        if($_POST['is_admin'] == 1) {
+            $is_admin = 1;
+        } else {
+            $is_admin = 0;
+        }
+        if($_POST['can_lock'] == 1) {
+            $can_lock = 1;
+        } else {
+            $can_lock = 0;
+        }
+        if($_POST['validated'] == 1) {
+            $validated = 1;
+        } else { 
+            $validated = 0;
+        }
+        // reset password
+        if (isset($_POST['new_password']) && !empty($_POST['new_password']) && isset($_POST['confirm_new_password'])) {
+            // check if passwords match
+            if ($_POST['new_password'] == $_POST['confirm_new_password']) {
+            // Good to go
+            // Create salt
+            $salt = hash("sha512", uniqid(rand(), true));
+            // Create hash
+            $passwordHash = hash("sha512", $salt.$_POST['new_password']);
 
-        $sql = "UPDATE users SET password = :password, salt = :salt WHERE userid = :userid";
+            $sql = "UPDATE users SET password = :password, salt = :salt WHERE userid = :userid";
+            $req = $bdd->prepare($sql);
+            $result = $req->execute(array(
+                'userid' => $userid,
+                'password' => $passwordHash,
+                'salt' => $salt
+            ));
+            if($result) {
+                $infos_arr[] = 'User password updated successfully.';
+                $_SESSION['infos'] = $infos_arr;
+            } else {
+                $errors_arr[] = 'There was a problem in the SQL update of the password.';
+                $_SESSION['errors'] = $errors_arr;
+            }
+
+            } else { // passwords do not match
+                $errors_arr[] = 'Passwords do not match !';
+                $_SESSION['errors'] = $errors_arr;
+            }
+        }
+
+        $sql = "UPDATE users SET firstname = :firstname, lastname = :lastname, email = :email , is_admin = :is_admin, can_lock = :can_lock, validated = :validated WHERE userid = :userid";
         $req = $bdd->prepare($sql);
         $result = $req->execute(array(
-            'userid' => $userid,
-            'password' => $passwordHash,
-            'salt' => $salt
+            'firstname' => $firstname,
+            'lastname' => $lastname,
+            'email' => $email,
+            'is_admin' => $is_admin,
+            'can_lock' => $can_lock,
+            'validated' => $validated,
+            'userid' => $userid
         ));
-        if($result) {
-            $infos_arr[] = 'User password updated successfully.';
-            $_SESSION['infos'] = $infos_arr;
-        } else {
-            $errors_arr[] = 'There was a problem in the SQL update of the password.';
+        if ($result){
+            if(empty($errors_arr)) {
+                $infos_arr[] = 'User infos updated successfully.';
+                $_SESSION['infos'] = $infos_arr;
+                header('Location: admin.php');
+                exit();
+            } else {
+                header('Location: admin.php');
+            }
+        } else { //sql fail
+            $errors_arr[] = 'There was a problem in the SQL request. Report a bug !';
             $_SESSION['errors'] = $errors_arr;
-        }
-
-        } else { // passwords do not match
-            $errors_arr[] = 'Passwords do not match !';
-            $_SESSION['errors'] = $errors_arr;
-        }
-    }
-
-    $sql = "UPDATE users SET firstname = :firstname, lastname = :lastname, email = :email , is_admin = :is_admin, can_lock = :can_lock, validated = :validated WHERE userid = :userid";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute(array(
-        'firstname' => $firstname,
-        'lastname' => $lastname,
-        'email' => $email,
-        'is_admin' => $is_admin,
-        'can_lock' => $can_lock,
-        'validated' => $validated,
-        'userid' => $userid
-    ));
-    if ($result){
-        if(empty($errors_arr)) {
-            $infos_arr[] = 'User infos updated successfully.';
-            $_SESSION['infos'] = $infos_arr;
             header('Location: admin.php');
             exit();
-        } else {
-            header('Location: admin.php');
         }
-    } else { //sql fail
-        $errors_arr[] = 'There was a problem in the SQL request. Report a bug !';
-        $_SESSION['errors'] = $errors_arr;
-        header('Location: admin.php');
-        exit();
     }
 }
 

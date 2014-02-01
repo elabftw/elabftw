@@ -668,3 +668,15 @@ function is_owned_by_user($id, $table, $userid) {
         return false;
     }
 }
+
+// return conf_value of asked conf_name
+function get_config($conf_name) {
+    global $bdd;
+
+    $sql = "SELECT * FROM config";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $config = $req->fetchAll(PDO::FETCH_COLUMN|PDO::FETCH_GROUP);
+    return $config[$conf_name][0];
+}
+

@@ -131,7 +131,7 @@ if (!checkCookiesEnabled()) {
     </form>
     </div>
 </section>
-<? require_once("inc/footer.php"); ?>
+<?php require_once('inc/footer.php'); ?>
 <!-- BEGIN PASSSWORD RESET FORM -->
 <script>
 $(document).ready(function(){

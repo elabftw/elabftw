@@ -170,21 +170,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['lab_name'])) {
     }
 }
 
-// MANAGE USERS
-// ////////////
-
-// DELETE USER
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
-    // Check the form_key
-    if (!isset($_POST['form_key']) || !$formKey->validate()) {
-        // form key is invalid
-        $msg_arr[] = 'The form key is invalid !';
-        $errflag = true;
-    }
-    if (filter_var($_POST['delete_user'], FILTER_VALIDATE_EMAIL)) {
-        $email = $_POST['delete_user'];
-    } else {
-        $msg_arr[] = 'Email is not valid';
+// EDIT USER
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
+    if (!is_pos_int($_POST['userid'])) {
+        $msg_arr[] = 'Userid is not valid.';
         $errflag = true;
     }
     if ($errflag) {
@@ -192,127 +181,84 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
         header("location: admin.php");
         die();
     }
-    // look which user has this email address
-    $sql = "SELECT userid FROM users WHERE email LIKE :email";
-    $req = $bdd->prepare($sql);
-    $req->execute(array(
-        'email' => $email
-    ));
-    $user = $req->fetch();
-    $userid = $user['userid'];
 
-    // DELETE USER
-    $sql = "DELETE FROM users WHERE userid = ".$userid;
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    $sql = "DELETE FROM experiments_tags WHERE userid = ".$userid;
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    $sql = "DELETE FROM experiments WHERE userid = ".$userid;
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    // get all filenames
-    $sql = "SELECT long_name FROM uploads WHERE userid = :userid AND type = :type";
-    $req = $bdd->prepare($sql);
-    $req->execute(array(
-        'userid' => $userid,
-        'type' => 'exp'
-    ));
-    while($uploads = $req->fetch()){
-        // Delete file
-        $filepath = 'uploads/'.$uploads['long_name'];
-        unlink($filepath);
+    $userid = $_POST['userid'];
+    // Put everything lowercase and first letter uppercase
+    $firstname = ucwords(strtolower(filter_var($_POST['firstname'], FILTER_SANITIZE_STRING)));
+    // Lastname in uppercase
+    $lastname = strtoupper(filter_var($_POST['lastname'], FILTER_SANITIZE_STRING));
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    if($_POST['is_admin'] == 1) {
+        $is_admin = 1;
+    } else {
+        $is_admin = 0;
     }
-    $sql = "DELETE FROM uploads WHERE userid = ".$userid;
-    $req = $bdd->prepare($sql);
-    $req->execute();
-    $infos_arr[] = 'Everything was purged successfully.';
-    $_SESSION['infos'] = $infos_arr;
-    header('Location: admin.php');
-    exit();
-}
+    if($_POST['can_lock'] == 1) {
+        $can_lock = 1;
+    } else {
+        $can_lock = 0;
+    }
+    if($_POST['validated'] == 1) {
+        $validated = 1;
+    } else {
+        $validated = 0;
+    }
+    // reset password
+    if (isset($_POST['new_password']) && !empty($_POST['new_password']) && isset($_POST['confirm_new_password'])) {
+        // check if passwords match
+        if ($_POST['new_password'] == $_POST['confirm_new_password']) {
+        // Good to go
+        // Create salt
+        $salt = hash("sha512", uniqid(rand(), true));
+        // Create hash
+        $passwordHash = hash("sha512", $salt.$_POST['new_password']);
 
-// EDIT USER
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
-    if (is_pos_int($_POST['userid'])) {
-        $userid = $_POST['userid'];
-        // Put everything lowercase and first letter uppercase
-        $firstname = ucwords(strtolower(filter_var($_POST['firstname'], FILTER_SANITIZE_STRING)));
-        // Lastname in uppercase
-        $lastname = strtoupper(filter_var($_POST['lastname'], FILTER_SANITIZE_STRING));
-        $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-        if($_POST['is_admin'] == 1) {
-            $is_admin = 1;
-        } else {
-            $is_admin = 0;
-        }
-        if($_POST['can_lock'] == 1) {
-            $can_lock = 1;
-        } else {
-            $can_lock = 0;
-        }
-        if($_POST['validated'] == 1) {
-            $validated = 1;
-        } else { 
-            $validated = 0;
-        }
-        // reset password
-        if (isset($_POST['new_password']) && !empty($_POST['new_password']) && isset($_POST['confirm_new_password'])) {
-            // check if passwords match
-            if ($_POST['new_password'] == $_POST['confirm_new_password']) {
-            // Good to go
-            // Create salt
-            $salt = hash("sha512", uniqid(rand(), true));
-            // Create hash
-            $passwordHash = hash("sha512", $salt.$_POST['new_password']);
-
-            $sql = "UPDATE users SET password = :password, salt = :salt WHERE userid = :userid";
-            $req = $bdd->prepare($sql);
-            $result = $req->execute(array(
-                'userid' => $userid,
-                'password' => $passwordHash,
-                'salt' => $salt
-            ));
-            if($result) {
-                $infos_arr[] = 'User password updated successfully.';
-                $_SESSION['infos'] = $infos_arr;
-            } else {
-                $errors_arr[] = 'There was a problem in the SQL update of the password.';
-                $_SESSION['errors'] = $errors_arr;
-            }
-
-            } else { // passwords do not match
-                $errors_arr[] = 'Passwords do not match !';
-                $_SESSION['errors'] = $errors_arr;
-            }
-        }
-
-        $sql = "UPDATE users SET firstname = :firstname, lastname = :lastname, email = :email , is_admin = :is_admin, can_lock = :can_lock, validated = :validated WHERE userid = :userid";
+        $sql = "UPDATE users SET password = :password, salt = :salt WHERE userid = :userid";
         $req = $bdd->prepare($sql);
         $result = $req->execute(array(
-            'firstname' => $firstname,
-            'lastname' => $lastname,
-            'email' => $email,
-            'is_admin' => $is_admin,
-            'can_lock' => $can_lock,
-            'validated' => $validated,
-            'userid' => $userid
+            'userid' => $userid,
+            'password' => $passwordHash,
+            'salt' => $salt
         ));
-        if ($result){
-            if(empty($errors_arr)) {
-                $infos_arr[] = 'User infos updated successfully.';
-                $_SESSION['infos'] = $infos_arr;
-                header('Location: admin.php');
-                exit();
-            } else {
-                header('Location: admin.php');
-            }
-        } else { //sql fail
-            $errors_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        if($result) {
+            $infos_arr[] = 'User password updated successfully.';
+            $_SESSION['infos'] = $infos_arr;
+        } else {
+            $errors_arr[] = 'There was a problem in the SQL update of the password.';
             $_SESSION['errors'] = $errors_arr;
+        }
+
+        } else { // passwords do not match
+            $errors_arr[] = 'Passwords do not match !';
+            $_SESSION['errors'] = $errors_arr;
+        }
+    }
+
+    $sql = "UPDATE users SET firstname = :firstname, lastname = :lastname, email = :email , is_admin = :is_admin, can_lock = :can_lock, validated = :validated WHERE userid = :userid";
+    $req = $bdd->prepare($sql);
+    $result = $req->execute(array(
+        'firstname' => $firstname,
+        'lastname' => $lastname,
+        'email' => $email,
+        'is_admin' => $is_admin,
+        'can_lock' => $can_lock,
+        'validated' => $validated,
+        'userid' => $userid
+    ));
+    if ($result){
+        if(empty($errors_arr)) {
+            $infos_arr[] = 'User infos updated successfully.';
+            $_SESSION['infos'] = $infos_arr;
             header('Location: admin.php');
             exit();
+        } else {
+            header('Location: admin.php');
         }
+    } else { //sql fail
+        $errors_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $_SESSION['errors'] = $errors_arr;
+        header('Location: admin.php');
+        exit();
     }
 }
 
@@ -375,3 +321,61 @@ if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
     }
 }
 
+// DELETE USER
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
+    // Check the form_key
+    if (!isset($_POST['form_key']) || !$formKey->validate()) {
+        // form key is invalid
+        $msg_arr[] = 'The form key is invalid !';
+        $errflag = true;
+    }
+    if (filter_var($_POST['delete_user'], FILTER_VALIDATE_EMAIL)) {
+        $email = $_POST['delete_user'];
+    } else {
+        $msg_arr[] = 'Email is not valid';
+        $errflag = true;
+    }
+    if ($errflag) {
+        $_SESSION['errors'] = $msg_arr;
+        header("location: admin.php");
+        die();
+    }
+    // look which user has this email address
+    $sql = "SELECT userid FROM users WHERE email LIKE :email";
+    $req = $bdd->prepare($sql);
+    $req->execute(array(
+        'email' => $email
+    ));
+    $user = $req->fetch();
+    $userid = $user['userid'];
+
+    // DELETE USER
+    $sql = "DELETE FROM users WHERE userid = ".$userid;
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $sql = "DELETE FROM experiments_tags WHERE userid = ".$userid;
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $sql = "DELETE FROM experiments WHERE userid = ".$userid;
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    // get all filenames
+    $sql = "SELECT long_name FROM uploads WHERE userid = :userid AND type = :type";
+    $req = $bdd->prepare($sql);
+    $req->execute(array(
+        'userid' => $userid,
+        'type' => 'exp'
+    ));
+    while($uploads = $req->fetch()){
+        // Delete file
+        $filepath = 'uploads/'.$uploads['long_name'];
+        unlink($filepath);
+    }
+    $sql = "DELETE FROM uploads WHERE userid = ".$userid;
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $infos_arr[] = 'Everything was purged successfully.';
+    $_SESSION['infos'] = $infos_arr;
+    header('Location: admin.php');
+    exit();
+}

@@ -268,14 +268,16 @@ while ($items_types = $req->fetch()) {
 
 <section class='item'>
 <a class='trigger_add_new_item'><h3>ADD NEW KIND OF DATABASE ITEM</h3></a>
-<div class='simple_border toggle_add_new_item'><form action='admin-exec.php' method='post'>
-<input type='text' class='biginput' name='new_item_type_name' />
-<input type='hidden' name='new_item_type' value='1' />
-<div id='colorwheel_div_new'>
-<div class='colorwheel inline'></div>
-<input type='text' name='new_item_type_bgcolor' value='#000000' /></div><br /><br />
-<textarea class='mceditable' name='new_item_type_template' /></textarea><br />
-<input type='submit' class='button' value='Add new item type' /></form></div>
+<div class='simple_border toggle_add_new_item'>
+<form action='admin-exec.php' method='post'>
+    <input type='text' class='biginput' name='new_item_type_name' />
+    <input type='hidden' name='new_item_type' value='1' />
+    <div id='colorwheel_div_new'>
+    <div class='colorwheel inline'></div>
+    <input type='text' name='new_item_type_bgcolor' value='#000000' /></div><br /><br />
+    <textarea class='mceditable' name='new_item_type_template' /></textarea><br />
+    <input type='submit' class='button' value='Add new item type' />
+</form></div>
 </section>
 
 <section class='item' style='background-color:#FF8080'>

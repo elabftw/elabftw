@@ -62,9 +62,10 @@ Note the `.` at the end that means `current folder`.
 
 ### Get latest stable version via git :
 ~~~ sh
-$ git clone https://github.com/NicolasCARPi/elabftw.git
+$ git clone --depth 1 https://github.com/NicolasCARPi/elabftw.git
 ~~~
 (this will create a folder `elabftw`)
+The `--depth 1` option is to avoid downloading the whole history.
 
 If you cannot connect, try exporting your proxy settings in your shell like so :
 ~~~ sh

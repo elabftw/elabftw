@@ -155,6 +155,9 @@ $req->execute(array(
 if ($req->rowCount() > 0) {
     // there is comments to display
     while ($comments = $req->fetch()) {
+        if(empty($comments['firstname'])) {
+            $comments['firstname'] = '[deleted]';
+        }
     echo "<div class='expcomment_box'>
     <img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/trash.png' title='delete' alt='delete' onClick=\"deleteThisAndReload(".$comments['id'].",'expcomment')\" />";
      echo "<span class='smallgray'>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :</span><br />";

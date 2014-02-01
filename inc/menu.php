@@ -23,7 +23,8 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('admin/config.php');
+require_once('inc/connect.php');
+require_once('inc/functions.php');
 ?>
 <noscript><!-- show warning if javascript is disabled -->
 <div class="ui-state-error ui-corner-all">
@@ -76,15 +77,13 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 <h2><?php echo strtoupper($page_title);?></h2>
 </div>
 <?php
-if (DEBUG) {
+if (get_config('debug') == 1) {
     echo "Session array : ";
     print_r($_SESSION);
     echo "<br />";
     echo "Cookie : ";
     print_r($_COOKIE);
     echo "<br />";
-    echo "PATH : ".PATH;
-
 }
 ?>
 

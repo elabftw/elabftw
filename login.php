@@ -33,9 +33,6 @@ require_once('inc/info_box.php');
 require_once('lib/classes/formkey.class.php');
 $formKey = new formKey();
 
-// DEBUG
-// print_r($_SESSION);
-
 // Check if already logged in
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     $message ='You are already logged in !';

@@ -484,7 +484,35 @@ if(in_array('experiments_comments',$test_arr)) {
 }
 
 // ADD lockedby field in experiments table
-add_field('experiments', 'lockedby', "INT UNSIGNED NULL AFTER locked", ">>> Now only the locker of an experiment can unlock it.\n", "Column 'lockedby' already exists. Nothing to do.\n");
+    // first test if it's here already
+    $sql = "SHOW COLUMNS FROM experiments";
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $field_is_here = false;
+    while ($show = $req->fetch()) {
+        if (in_array('lockedby', $show)) {
+            $field_is_here = true;
+        }
+    }
+    // add field if it's not here
+    if (!$field_is_here) {
+        $sql = "ALTER TABLE experiments ADD lockedby INT UNSIGNED NULL AFTER locked";
+        $req = $bdd->prepare($sql);
+        $result = $req->execute();
+        // update the lockedby field and put userid of experiment
+        // to avoid users with already locked experiments being locked out
+        $sql = "UPDATE experiments SET lockedby = userid WHERE locked = 1";
+        $req = $bdd->prepare($sql);
+        $req->execute();
+
+        if($result) {
+            echo ">>> Now only the locker of an experiment can unlock it.\n";
+        } else {
+             die($die_msg);
+        }
+    } else {
+        echo "Column 'lockedby' already exists. Nothing to do.\n";
+    }
 
 
 
@@ -600,4 +628,5 @@ if (!$table_is_here) {
 } else {
     echo "Table 'config' already exists. Nothing to do.\n";
 }
+
 

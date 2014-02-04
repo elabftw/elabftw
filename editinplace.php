@@ -23,7 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/common.php');
+require_once 'inc/common.php';
 
 if (isset($_POST['filecomment'])) {
     // we are editing a comment for a file

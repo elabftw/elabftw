@@ -25,11 +25,11 @@
 ********************************************************************************/
 if (!isset($_SESSION)) { session_start(); }
 $page_title = 'Login';
-require_once('inc/head.php');
-require_once('inc/connect.php');
-require_once('inc/functions.php');
-require_once('inc/menu.php');
-require_once('inc/info_box.php');
+require_once 'inc/head.php';
+require_once 'inc/connect.php';
+require_once 'inc/functions.php';
+require_once 'inc/menu.php';
+require_once 'inc/info_box.php';
 // formkey stuff
 require_once('lib/classes/formkey.class.php');
 $formKey = new formKey();
@@ -38,7 +38,7 @@ $formKey = new formKey();
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     $message ='You are already logged in !';
     display_message('error', $message);
-    require_once('inc/footer.php');
+    require_once 'inc/footer.php';
     die();
 }
 
@@ -55,7 +55,7 @@ while ($banned_users = $req->fetch()) {
 if (in_array(md5($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']), $banned_users_arr)) {
     $message ='You cannot login now because of too much failed login attempts.';
     display_message('error', $message);
-    require_once('inc/footer.php');
+    require_once 'inc/footer.php';
     die();
 }
 
@@ -79,7 +79,7 @@ if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] < get_conf
             unset($_SESSION['failed_attempt']);
             $message ='Too much failed login attempts. Login is disabled for '.get_config('ban_time').' minutes.';
             display_message('error', $message);
-            require_once('inc/footer.php');
+            require_once 'inc/footer.php';
             die();
         }
 ?>
@@ -129,7 +129,7 @@ if (!checkCookiesEnabled()) {
     </form>
     </div>
 </section>
-<?php require_once('inc/footer.php'); ?>
+<?php require_once 'inc/footer.php'; ?>
 <!-- BEGIN PASSSWORD RESET FORM -->
 <script>
 $(document).ready(function(){

@@ -24,11 +24,14 @@
 *                                                                               *
 ********************************************************************************/
 /* admin-exec.php - for administration of the elab */
-require_once('inc/common.php');
+require_once 'inc/common.php';
 
-if ($_SESSION['is_admin'] != 1) {die('You are not admin !');} // only admin can use this
+// only admin can use this
+if ($_SESSION['is_admin'] != 1) {
+    die('You are not admin !');
+}
 // formkey stuff
-require_once('lib/classes/formkey.class.php');
+require_once 'lib/classes/formkey.class.php';
 $formKey = new formKey();
 // for success messages
 $infos_arr = array();
@@ -42,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
     $sql = "UPDATE users SET validated = 1 WHERE userid = :userid";
     $req = $bdd->prepare($sql);
     // check we only have int in validate array
-    if(!filter_var_array($_POST['validate'], FILTER_VALIDATE_INT)) {
+    if (!filter_var_array($_POST['validate'], FILTER_VALIDATE_INT)) {
         die();
     }
     // sql to get email of the user
@@ -61,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
         $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
         $url = str_replace('admin-exec.php', 'login.php', $url);
         // we send an email to each validated new user
-        require_once('lib/swift_required.php');
+        require_once 'lib/swift_required.php';
         // Create the message
         $message = Swift_Message::newInstance()
         // Give the message a subject
@@ -71,24 +74,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
         // Set the To addresses with an associative array
         ->setTo(array($user['email'] => 'Your account has been activated.'))
         // Give it a body
-        ->setBody('Hi,
-Your account on eLabFTW has been activated. You can now login:
-'.$url.'
+        ->setBody(
+            'Hi,
+            Your account on eLabFTW has been activated. You can now login:
+            '.$url.'
 
-Thanks for using eLabFTW :)
+            Thanks for using eLabFTW :)
 
-~~
-Email sent by eLabFTW
-http://www.elabftw.net
-Free open-source Lab Manager');
-    $transport = Swift_SmtpTransport::newInstance(
-        get_config('smtp_address'),
-        get_config('smtp_port'),
-        get_config('smtp_encryption'))
-        ->setUsername(get_config('smtp_username'))
-        ->setPassword(get_config('smtp_password'));
-    $mailer = Swift_Mailer::newInstance($transport);
-    $mailer->send($message);
+            ~~
+            Email sent by eLabFTW
+            http://www.elabftw.net
+            Free open-source Lab Manager'
+        );
+        $transport = Swift_SmtpTransport::newInstance(
+            get_config('smtp_address'),
+            get_config('smtp_port'),
+            get_config('smtp_encryption')
+        )
+            ->setUsername(get_config('smtp_username'))
+            ->setPassword(get_config('smtp_password'));
+        $mailer = Swift_Mailer::newInstance($transport);
+        $mailer->send($message);
     }
     $_SESSION['infos'] = $infos_arr;
     header('Location: admin.php');
@@ -101,17 +107,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['lab_name'])) {
     if (isset($_POST['lab_name'])) {
         $lab_name = filter_var($_POST['lab_name'], FILTER_SANITIZE_STRING);
     }
-    if($_POST['admin_validate'] == 1) {
+    if ($_POST['admin_validate'] == 1) {
         $admin_validate = 1;
     } else {
         $admin_validate = 0;
     }
-    if($_POST['deletable_xp'] == 1) {
+    if ($_POST['deletable_xp'] == 1) {
         $deletable_xp = 1;
     } else {
         $deletable_xp = 0;
     }
-    if($_POST['debug'] == 1) {
+    if ($_POST['debug'] == 1) {
         $debug = 1;
     } else {
         $debug = 0;
@@ -174,7 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['lab_name'])) {
         $req = $bdd->prepare($sql);
         $result = $req->execute();
     }
-    if ($result){
+    if ($result) {
         $infos_arr[] = 'Configuration updated successfully.';
         $_SESSION['infos'] = $infos_arr;
         header('Location: admin.php');
@@ -204,17 +210,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
     // Lastname in uppercase
     $lastname = strtoupper(filter_var($_POST['lastname'], FILTER_SANITIZE_STRING));
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-    if($_POST['is_admin'] == 1) {
+    if ($_POST['is_admin'] == 1) {
         $is_admin = 1;
     } else {
         $is_admin = 0;
     }
-    if($_POST['can_lock'] == 1) {
+    if ($_POST['can_lock'] == 1) {
         $can_lock = 1;
     } else {
         $can_lock = 0;
     }
-    if($_POST['validated'] == 1) {
+    if ($_POST['validated'] == 1) {
         $validated = 1;
     } else {
         $validated = 0;
@@ -223,34 +229,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
     if (isset($_POST['new_password']) && !empty($_POST['new_password']) && isset($_POST['confirm_new_password'])) {
         // check if passwords match
         if ($_POST['new_password'] == $_POST['confirm_new_password']) {
-        // Good to go
-        // Create salt
-        $salt = hash("sha512", uniqid(rand(), true));
-        // Create hash
-        $passwordHash = hash("sha512", $salt.$_POST['new_password']);
+            // Good to go
+            // Create salt
+            $salt = hash("sha512", uniqid(rand(), true));
+            // Create hash
+            $passwordHash = hash("sha512", $salt.$_POST['new_password']);
 
-        $sql = "UPDATE users SET password = :password, salt = :salt WHERE userid = :userid";
-        $req = $bdd->prepare($sql);
-        $result = $req->execute(array(
-            'userid' => $userid,
-            'password' => $passwordHash,
-            'salt' => $salt
-        ));
-        if($result) {
-            $infos_arr[] = 'User password updated successfully.';
-            $_SESSION['infos'] = $infos_arr;
-        } else {
-            $errors_arr[] = 'There was a problem in the SQL update of the password.';
-            $_SESSION['errors'] = $errors_arr;
-        }
-
+            $sql = "UPDATE users SET password = :password, salt = :salt WHERE userid = :userid";
+            $req = $bdd->prepare($sql);
+            $result = $req->execute(array(
+                'userid' => $userid,
+                'password' => $passwordHash,
+                'salt' => $salt
+            ));
+            if ($result) {
+                $infos_arr[] = 'User password updated successfully.';
+                $_SESSION['infos'] = $infos_arr;
+            } else {
+                $errors_arr[] = 'There was a problem in the SQL update of the password.';
+                $_SESSION['errors'] = $errors_arr;
+            }
         } else { // passwords do not match
             $errors_arr[] = 'Passwords do not match !';
             $_SESSION['errors'] = $errors_arr;
         }
     }
 
-    $sql = "UPDATE users SET firstname = :firstname, lastname = :lastname, email = :email , is_admin = :is_admin, can_lock = :can_lock, validated = :validated WHERE userid = :userid";
+    $sql = "UPDATE users SET
+        firstname = :firstname,
+        lastname = :lastname,
+        email = :email,
+        is_admin = :is_admin,
+        can_lock = :can_lock,
+        validated = :validated
+        WHERE userid = :userid";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
         'firstname' => $firstname,
@@ -261,8 +273,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
         'validated' => $validated,
         'userid' => $userid
     ));
-    if ($result){
-        if(empty($errors_arr)) {
+    if ($result) {
+        if (empty($errors_arr)) {
             $infos_arr[] = 'User infos updated successfully.';
             $_SESSION['infos'] = $infos_arr;
             header('Location: admin.php');
@@ -281,22 +293,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
 // ITEMS TYPES
 if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
     $item_type_id = $_POST['item_type_id'];
-    $item_type_name = filter_var($_POST['item_type_name'], FILTER_SANITIZE_STRING); 
+    $item_type_name = filter_var($_POST['item_type_name'], FILTER_SANITIZE_STRING);
     // we remove the # of the hexacode and sanitize string
     $item_type_bgcolor = filter_var(substr($_POST['item_type_bgcolor'], 1, 6), FILTER_SANITIZE_STRING);
     $item_type_template = check_body($_POST['item_type_template']);
-    //TODO
-    $item_type_tags = '';
-    $sql = "UPDATE items_types SET name = :name, bgcolor = :bgcolor , template = :template, tags = :tags WHERE id = :id";
+    $sql = "UPDATE items_types SET
+        name = :name,
+        bgcolor = :bgcolor,
+        template = :template
+        WHERE id = :id";
     $req = $bdd->prepare($sql);
     $result = $req->execute(array(
         'name' => $item_type_name,
         'bgcolor' => $item_type_bgcolor,
         'template' => $item_type_template,
-        'tags' => $item_type_tags,
         'id' => $item_type_id
     ));
-    if ($result){
+    if ($result) {
         $infos_arr[] = 'New item category updated successfully.';
         $_SESSION['infos'] = $infos_arr;
         header('Location: admin.php#items_types');
@@ -310,7 +323,7 @@ if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
 }
 // add new item type
 if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
-    $item_type_name = filter_var($_POST['new_item_type_name'], FILTER_SANITIZE_STRING); 
+    $item_type_name = filter_var($_POST['new_item_type_name'], FILTER_SANITIZE_STRING);
     // we remove the # of the hexacode and sanitize string
     $item_type_bgcolor = filter_var(substr($_POST['new_item_type_bgcolor'], 1, 6), FILTER_SANITIZE_STRING);
     $item_type_template = check_body($_POST['new_item_type_template']);
@@ -321,7 +334,7 @@ if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
         'bgcolor' => $item_type_bgcolor,
         'template' => $item_type_template
     ));
-    if ($result){
+    if ($result) {
         $infos_arr[] = 'New item category added successfully.';
         $_SESSION['infos'] = $infos_arr;
         header('Location: admin.php#items_types');
@@ -379,7 +392,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
         'userid' => $userid,
         'type' => 'exp'
     ));
-    while($uploads = $req->fetch()){
+    while ($uploads = $req->fetch()) {
         // Delete file
         $filepath = 'uploads/'.$uploads['long_name'];
         unlink($filepath);

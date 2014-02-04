@@ -48,7 +48,7 @@ if (isset($_POST['mysql'])) {
 
 // EMAIL
 if (isset($_POST['email'])) {
-    require_once('../lib/swift_required.php');
+    require_once '../lib/swift_required.php';
     // Create the message
     $message = Swift_Message::newInstance()
     // Give the message a subject

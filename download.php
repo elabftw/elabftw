@@ -23,7 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/common.php');
+require_once 'inc/common.php';
 
 // Check type
 if (isset($_GET['type']) && $_GET['type'] == 'zip') {

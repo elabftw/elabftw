@@ -23,22 +23,22 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/common.php');
-$page_title='Database';
-require_once('inc/head.php');
-require_once('inc/menu.php');
-require_once('inc/info_box.php');
+require_once 'inc/common.php';
+$page_title = 'Database';
+require_once 'inc/head.php';
+require_once 'inc/menu.php';
+require_once 'inc/info_box.php';
 
 // Page begin
 if(!isset($_GET['mode']) || (empty($_GET['mode'])) || ($_GET['mode'] === 'show')) {
-    require_once('inc/showDB.php');
+    require_once 'inc/showDB.php';
 } elseif ($_GET['mode'] === 'view') {
-    require_once('inc/viewDB.php');
+    require_once 'inc/viewDB.php';
 } elseif ($_GET['mode'] === 'edit') {
-    require_once('inc/editDB.php');
+    require_once 'inc/editDB.php';
 } else {
     echo "What are you doing, Dave ?";
 }
 
-require_once('inc/footer.php');
+require_once 'inc/footer.php';
 

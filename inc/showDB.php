@@ -23,10 +23,10 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-if(isset($_SESSION['prefs']['theme'])) {
-require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
+if (isset($_SESSION['prefs']['theme'])) {
+require_once "themes/".$_SESSION['prefs']['theme']."/highlight.css";
 }
-if(isset($_SESSION['prefs']['display'])) {
+if (isset($_SESSION['prefs']['display'])) {
     $display = $_SESSION['prefs']['display'];
 } else {
     $display = 'default';

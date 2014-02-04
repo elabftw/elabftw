@@ -23,7 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/functions.php');
+require_once 'inc/functions.php';
 // INFO BOX
 
 if (isset($_SESSION['errors']) && is_array($_SESSION['errors']) && count($_SESSION['errors']) >0 ) {

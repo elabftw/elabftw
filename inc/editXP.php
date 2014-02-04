@@ -36,7 +36,7 @@ if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
 } else {
     $message = "<strong>Cannot edit:</strong> the id parameter is not valid !";
     display_message('error', $message);
-    require_once('inc/footer.php');
+    require_once 'inc/footer.php';
     exit();
 }
 
@@ -131,9 +131,9 @@ $status = $data['status'];
 
 <?php
 // FILE UPLOAD
-require_once('inc/file_upload.php');
+require_once 'inc/file_upload.php';
 // DISPLAY FILES
-require_once('inc/display_file.php');
+require_once 'inc/display_file.php';
 ?>
 
 <hr class='flourishes'>

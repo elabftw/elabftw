@@ -24,11 +24,11 @@
 *                                                                               *
 ********************************************************************************/
 /* make_csv.php -- export database in spreadsheet file */
-require_once('inc/common.php');
-require_once('inc/head.php');
+require_once 'inc/common.php';
+require_once 'inc/head.php';
 $page_title='Make CSV';
-require_once('inc/menu.php');
-require_once('inc/info_box.php');
+require_once 'inc/menu.php';
+require_once 'inc/info_box.php';
 
 // this is the lines in the csv file
 $list = array();
@@ -95,5 +95,5 @@ echo "<div class='item'>";
         <img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='download' /> 
         <a href='download.php?f=".$filepath."&name=elabftw-export.csv' target='_blank'>elabftw-export.csv</a></p>";
 echo "</div>";
-require_once('inc/footer.php');
+require_once 'inc/footer.php';
 

@@ -24,32 +24,37 @@
 *                                                                               *
 ********************************************************************************/
 /* admin.php - for administration of the elab */
-require_once('inc/common.php');
-if ($_SESSION['is_admin'] != 1) {die('You are not admin !');}
+require_once 'inc/common.php';
+if ($_SESSION['is_admin'] != 1) {
+    die('You are not admin !');
+}
 $page_title = 'Admin Panel';
-require_once('inc/head.php');
-require_once('inc/menu.php');
-require_once('inc/info_box.php');
+require_once 'inc/head.php';
+require_once 'inc/menu.php';
+require_once 'inc/info_box.php';
 // formkey stuff
-require_once('lib/classes/formkey.class.php');
+require_once 'lib/classes/formkey.class.php';
 $formKey = new formKey();
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
 <script src="js/raphael-2.1.0.min.js"></script>
 <script src="js/colorwheel.min.js"></script>
 <?php
-
 // SQL to get all unvalidated users
-$sql = "SELECT userid, lastname, firstname, email FROM users WHERE validated = 0"; $req = $bdd->prepare($sql);
+$sql = "SELECT userid, lastname, firstname, email FROM users WHERE validated = 0";
+$req = $bdd->prepare($sql);
 $req->execute();
 $count = $req->rowCount();
 // only show the frame if there is some users to validate
 if ($count > 0) {
     $message = "There are users waiting for validation of their account :";
     $message .= "<form method='post' action='admin-exec.php'><ul>";
-while ($data = $req->fetch()) {
-    $message .= "<li><label><input type='checkbox' name='validate[]' value='".$data['userid']."'> ".$data['firstname']." ".$data['lastname']." (".$data['email'].")</label></li>";
-}
+    while ($data = $req->fetch()) {
+        $message .= "<li><label>
+            <input type='checkbox' name='validate[]' 
+            value='".$data['userid']."'> ".$data['firstname']." ".$data['lastname']." (".$data['email'].")
+            </label></li>";
+    }
     $message .= "</ul><div class='center'>
     <input class='button' type='submit' value='Validate users' /></div></form>";
     display_message('error', $message);
@@ -177,7 +182,7 @@ while ($users = $req->fetch()) {
 ?>
     >yes</option>
     <option value='0'<?php
-                    if($users['is_admin'] == 0) {
+                    if ($users['is_admin'] == 0) {
                         echo " selected='selected'";
                     }
 ?>
@@ -199,7 +204,7 @@ while ($users = $req->fetch()) {
             if($users['validated'] == 1) { echo " selected='selected'"; } ?>
     >yes</option>
     <option value='0'<?php
-        if($users['validated'] == 0) { echo " selected='selected'"; } ?>
+        if ($users['validated'] == 0) { echo " selected='selected'"; } ?>
     >no</option>
 </select>
 <br />
@@ -328,5 +333,5 @@ $(document).ready(function() {
     });
 });
 </script>
-<?php require_once('inc/footer.php'); ?>
+<?php require_once 'inc/footer.php';
 

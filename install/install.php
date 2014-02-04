@@ -25,7 +25,7 @@
 ********************************************************************************/
 /* install/install.php to get an installation up and running */
 if (!isset($_SESSION)) { session_start(); }
-require_once('../inc/functions.php');
+require_once '../inc/functions.php';
 
 // Check if there is already a config file, redirect to index if yes.
 if (file_exists('../admin/config.php')) {

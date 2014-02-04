@@ -480,7 +480,7 @@ function make_pdf($id, $type, $out = 'browser') {
 
 
     // Generate pdf with mpdf
-    require_once('lib/mpdf/mpdf.php');
+    require_once 'lib/mpdf/mpdf.php';
     $mpdf = new mPDF();
 
     $mpdf->SetAuthor($firstname.' '.$lastname);

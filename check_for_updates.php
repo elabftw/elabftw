@@ -24,8 +24,8 @@
 *                                                                               *
 ********************************************************************************/
 // this file is called with ajax post javascript from "Check for updates" link in Admin menu in inc/menu.php
-require_once('inc/connect.php');
-require_once('inc/functions.php');
+require_once 'inc/connect.php';
+require_once 'inc/functions.php';
 
 function check_executable($cmd) {
     return shell_exec("which $cmd");

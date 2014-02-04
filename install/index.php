@@ -25,7 +25,7 @@
 ********************************************************************************/
 /* install/index.php to get an installation up and running */
 session_start();
-require_once('../inc/functions.php');
+require_once '../inc/functions.php';
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -98,7 +98,7 @@ if(file_exists('../admin/config.php')) {
     }
 
     // check if there are users registered
-    require_once('../admin/config.php');
+    require_once '../admin/config.php';
     try
     {
         $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
@@ -294,52 +294,6 @@ $(document).ready(function() {
             }
         });
     });
-
-    /*
-        * TODO put in admin.php when the config part is done
-    // email test button
-    $('#test_email_button').click(function() {
-        var email_address = $('#smtp_address').val();
-        var email_port = $('#smtp_port').val();
-        var email_encryption = $('#smtp_encryption').val();
-        var email_username = $('#smtp_username').val();
-        var email_password = $('#smtp_password').val();
-
-        $.post('test.php', {
-            email: 1,
-            smtp_address: email_address,
-            smtp_port: email_port,
-            smtp_encryption: email_encryption,
-            smtp_username: email_username,
-            smtp_password: email_password
-        }).done(function(test_result) {
-            if (test_result == 1) {
-                alert('Email was sent successfully (to elabftw-test@yopmail.com) :)');
-                $('#final_section').show();
-                $('#test_email_button').hide();
-            } else {
-                alert('The connection failed :/');
-            }
-        });
-    });
-    // skip email button
-    $('#skip_email_button').click(function() {
-        // show warning about resetting passwords not working without SMTP configured
-        /* Not using the .dialog of jquery UI for now.
-        $('#dialog_skip_email').dialog({
-            buttons: [ { text: "Got it, I'll do it later.", click: function() { $( this ).dialog( "close" ); } } ],
-            draggable: true,
-            height: 500,
-            modal: true
-        });
-        alert('Resetting passwords functionnality won\'t be available until you configure correctly the email settings.');
-
-        // we hide email because it was skipped
-        $('#email_section').hide();
-        // show last section
-        $('#final_section').show();
-    });
-     */
 });
 </script>
 </body>

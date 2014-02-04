@@ -172,7 +172,7 @@ class BigUpload
             // SQL TO PUT FILE IN UPLOADS TABLE
             // we don't use inc/connect.php because it requires the config file but there is a path problem
             // so the config is put here directly
-            require_once('../admin/config.php');
+            require_once '../admin/config.php';
             try
             {
                 $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;

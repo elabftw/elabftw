@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 // add.php -- called with POST containing data, type and id.
-require_once('inc/common.php');
+require_once 'inc/common.php';
 
 // Check expid is valid and assign it to $id
 if (isset($_POST['item_id']) && is_pos_int($_POST['item_id'])) {
@@ -43,7 +43,7 @@ switch ($_POST['type']) {
         $tag = str_replace('\\', '', filter_var($_POST['tag'], FILTER_SANITIZE_STRING));
 
         // check for string length and if user owns the experiment
-        if (strlen($tag) > 0 && is_owned_by_user($id, 'experiments', $_SESSION['userid']) ) {
+        if (strlen($tag) > 0 && is_owned_by_user($id, 'experiments', $_SESSION['userid'])) {
                 // SQL for addtag
                 $sql = "INSERT INTO experiments_tags (tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
                 $req = $bdd->prepare($sql);
@@ -54,9 +54,9 @@ switch ($_POST['type']) {
                 ));
         }
 
-    break;
+        break;
 
-    // TAG FOR ITEMS 
+    // TAG FOR ITEMS
     case 'itemtag':
         // Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
         $tag = str_replace('\\', '', filter_var($_POST['tag'], FILTER_SANITIZE_STRING));
@@ -77,7 +77,7 @@ switch ($_POST['type']) {
     // ADD A LINK TO AN EXPERIMENT
     case 'link':
         // check link is int and experiment is owned by user
-        if (filter_var($_POST['link_id'], FILTER_VALIDATE_INT) && 
+        if (filter_var($_POST['link_id'], FILTER_VALIDATE_INT) &&
             is_owned_by_user($id, 'experiments', $_SESSION['userid']) ) {
 
                 // SQL for addlink
@@ -87,7 +87,8 @@ switch ($_POST['type']) {
                     'item_id' => $id,
                     'link_id' => $_POST['link_id'] // value is sanitized
                 ));
-            }
+        }
+        break;
 
     default:
         die();

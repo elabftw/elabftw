@@ -23,9 +23,9 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/common.php');
+require_once 'inc/common.php';
 // formkey stuff
-//require_once('lib/classes/formkey.class.php');
+//require_once 'lib/classes/formkey.class.php';
 //$formKey = new formKey();
 
 //Array to store validation errors

@@ -24,10 +24,10 @@
 *                                                                               *
 ********************************************************************************/
 if (!isset($_SESSION)) { session_start(); }
-require_once('inc/connect.php');
-require_once('inc/functions.php');
+require_once 'inc/connect.php';
+require_once 'inc/functions.php';
 // formkey stuff
-require_once('lib/classes/formkey.class.php');
+require_once 'lib/classes/formkey.class.php';
 $formKey = new formKey();
 
 //Array to store validation errors

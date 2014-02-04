@@ -23,8 +23,8 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/connect.php');
-require_once('inc/functions.php');
+require_once 'inc/connect.php';
+require_once 'inc/functions.php';
 ?>
 <noscript><!-- show warning if javascript is disabled -->
 <div class="ui-state-error ui-corner-all">

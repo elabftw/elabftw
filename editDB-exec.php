@@ -23,9 +23,9 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/common.php');
+require_once 'inc/common.php';
 // formkey stuff
-//require_once('lib/classes/formkey.class.php');
+//require_once 'lib/classes/formkey.class.php';
 //$formKey = new formKey();
 
 //Array to store validation errors
@@ -43,7 +43,7 @@ if (!isset($_POST['form_key']) || !$formKey->validate()) {
 }
  */
 // ID
-if (is_pos_int($_POST['item_id'])){
+if (is_pos_int($_POST['item_id'])) {
     $id = $_POST['item_id'];
 } else {
     $id='';
@@ -59,7 +59,7 @@ $_SESSION['new_title'] = $title;
 $_SESSION['new_date'] = $date;
 
 // If input errors, redirect back to the edit form
-if($errflag) {
+if ($errflag) {
     $_SESSION['errors'] = $msg_arr;
     session_write_close();
     header("location: database.php?mode=edit&id=$id");
@@ -84,7 +84,7 @@ $result = $req->execute(array(
 
 
 // Check if insertion is successful
-if($result) {
+if ($result) {
     // unset session variables
     unset($_SESSION['new_title']);
     unset($_SESSION['new_date']);

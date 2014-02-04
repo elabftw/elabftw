@@ -27,7 +27,7 @@
  * can't use inc/common.php
  */
 // SQL CONNECT
-require_once('admin/config.php');
+require_once 'admin/config.php';
 try
 {
     $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;

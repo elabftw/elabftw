@@ -23,11 +23,11 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/common.php');
-require_once('inc/head.php');
-$page_title='Make zip';
-require_once('inc/menu.php');
-require_once('inc/info_box.php');
+require_once 'inc/common.php';
+require_once 'inc/head.php';
+$page_title = 'Make zip';
+require_once 'inc/menu.php';
+require_once 'inc/info_box.php';
 // Test if there is zip
 if(!class_exists('ZipArchive')) {
     die("<p>You are missing the ZipArchive class in php. Uncomment the line extension=zip.so in /etc/php/php.ini.</p>");

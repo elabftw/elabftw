@@ -42,7 +42,7 @@ $row_count = $req->rowCount();
 if ($row_count === 0) {
     $message = 'Nothing to show with this ID.';
     display_message('error', $message);
-    require_once('inc/footer.php');
+    require_once 'inc/footer.php';
     die();
 }
 
@@ -94,7 +94,7 @@ $datauser = $requser->fetch();
 echo "Last modified by ".$datauser['firstname']." ".$datauser['lastname']." on ".$data['date'];
 echo "</section>";
 // DISPLAY FILES
-require_once('inc/display_file.php');
+require_once 'inc/display_file.php';
 ?>
 <script>
 // change title

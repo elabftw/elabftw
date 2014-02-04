@@ -26,7 +26,7 @@
 // delete.php
 // This page is called with POST requests containing an id and a type.
 
-require_once('inc/common.php');
+require_once 'inc/common.php';
 
 
 // Check id is valid and assign it to $id

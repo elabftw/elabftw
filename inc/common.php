@@ -34,8 +34,8 @@ if (!is_readable('admin/config.php')) {
         <hr>
         Or if eLabFTW is not yet installed, head to the <a href='install'>install folder</a>");
 }
-require_once('admin/config.php');
-require_once('inc/functions.php');
+require_once 'admin/config.php';
+require_once 'inc/functions.php';
 // SQL CONNECT
 try
 {

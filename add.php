@@ -93,4 +93,3 @@ switch ($_POST['type']) {
     default:
         die();
 }
-

@@ -29,7 +29,7 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 }
 
-if ($_GET['type'] === 'exp'){
+if ($_GET['type'] === 'exp') {
     $type = 'experiments';
 } elseif ($_GET['type'] === 'db') {
     $type = 'items';
@@ -54,4 +54,3 @@ if (is_pos_int($newid)) {
 } else {
     echo "Something went wrong in the database query. Check the flux capacitor.";
 }
-

@@ -24,16 +24,16 @@
 *                                                                               *
 ********************************************************************************/
 session_start();
-require_once('inc/connect.php');
-require_once('inc/functions.php');
-require_once('lib/swift_required.php');
+require_once 'inc/connect.php';
+require_once 'inc/functions.php';
+require_once 'lib/swift_required.php';
 // we receive email in post
 if (isset($_POST['email'])) {
     // // Get infos about the requester (will be sent in the mail afterwards)
     // Get IP
-    if (!empty($_SERVER["HTTP_CLIENT_IP"])){
+    if (!empty($_SERVER["HTTP_CLIENT_IP"])) {
         $ip = $_SERVER["HTTP_CLIENT_IP"];
-    } elseif (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])){
+    } elseif (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])) {
         $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
     } else {
         $ip = $_SERVER["REMOTE_ADDR"];
@@ -55,7 +55,7 @@ if (isset($_POST['email'])) {
         $username = $data['username'];
         $numrows = $result->rowCount();
         // Check email exists
-        if($numrows === 1){
+        if ($numrows === 1) {
             // Get info to build the URL
             $protocol = 'https://';
             $reset_url = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
@@ -71,21 +71,24 @@ if (isset($_POST['email'])) {
             // Set the To addresses with an associative array
             ->setTo(array($email => 'Dori'))
             // Give it a body
-            ->setBody('Hi,
-Someone (probably you) with the IP Adress : '.$ip.' and the user agent : '.$u_agent.'
-requested a new password on eLabFTW.
+            ->setBody(
+                'Hi,
+                Someone (probably you) with the IP Adress : '.$ip.' and the user agent : '.$u_agent.'
+                requested a new password on eLabFTW.
 
-Follow this link to change your password :
-'.$reset_link.'
+                Follow this link to change your password :
+                '.$reset_link.'
 
-~~
-Email sent by eLabFTW
-http://www.elabftw.net
-Free open-source Lab Manager');
-        $transport = Swift_SmtpTransport::newInstance(
-            get_config('smtp_address'),
-            get_config('smtp_port'),
-            get_config('smtp_encryption'))
+                ~~
+                Email sent by eLabFTW
+                http://www.elabftw.net
+                Free open-source Lab Manager'
+            );
+            $transport = Swift_SmtpTransport::newInstance(
+                get_config('smtp_address'),
+                get_config('smtp_port'),
+                get_config('smtp_encryption')
+            )
             ->setUsername(get_config('smtp_username'))
             ->setPassword(get_config('smtp_password'));
             $mailer = Swift_Mailer::newInstance($transport);
@@ -111,4 +114,3 @@ Free open-source Lab Manager');
 } else { // this page isn't called with POST
     header('Location: experiments.php');
 }
-

@@ -44,9 +44,9 @@ if ($_GET['type'] === 'exp') {
     die('bad type');
 }
 // Check id is valid and assign it to $id
-if(isset($_GET['id']) && !empty($_GET['id'])) {
+if (isset($_GET['id']) && !empty($_GET['id'])) {
     $id_arr = explode(" ", $_GET['id']);
-    foreach($id_arr as $id) {
+    foreach ($id_arr as $id) {
         // MAIN LOOP
         ////////////////
         // SQL
@@ -63,9 +63,9 @@ if(isset($_GET['id']) && !empty($_GET['id'])) {
         $csv_data = $req->fetch();
 
         if ($table === 'experiments') {
-                $list[] = array($csv_data['id'], $csv_data['date'], $csv_data['title'], $csv_data['status'], $csv_data['elabid']);
+            $list[] = array($csv_data['id'], $csv_data['date'], $csv_data['title'], $csv_data['status'], $csv_data['elabid']);
         } else { // items
-                $list[] = array($csv_data['id'], $csv_data['date'], $csv_data['type'], $csv_data['title'], $csv_data['rating']);
+            $list[] = array($csv_data['id'], $csv_data['date'], $csv_data['type'], $csv_data['title'], $csv_data['rating']);
         }
     }
 } else {
@@ -79,7 +79,7 @@ $filepath = 'uploads/'.$filename;
 
 $fp = fopen($filepath, 'w+');
 // utf8 headers
-fwrite($fp,"\xEF\xBB\xBF");
+fwrite($fp, "\xEF\xBB\xBF");
 
 foreach ($list as $fields) {
         fputcsv($fp, $fields);
@@ -96,4 +96,3 @@ echo "<div class='item'>";
         <a href='download.php?f=".$filepath."&name=elabftw-export.csv' target='_blank'>elabftw-export.csv</a></p>";
 echo "</div>";
 require_once 'inc/footer.php';
-

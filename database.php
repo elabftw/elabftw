@@ -30,7 +30,7 @@ require_once 'inc/menu.php';
 require_once 'inc/info_box.php';
 
 // Page begin
-if(!isset($_GET['mode']) || (empty($_GET['mode'])) || ($_GET['mode'] === 'show')) {
+if (!isset($_GET['mode']) || (empty($_GET['mode'])) || ($_GET['mode'] === 'show')) {
     require_once 'inc/showDB.php';
 } elseif ($_GET['mode'] === 'view') {
     require_once 'inc/viewDB.php';

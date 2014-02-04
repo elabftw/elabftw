@@ -30,7 +30,7 @@ $msg_arr = array();
 if (isset($_GET['type']) && !empty($_GET['type']) && is_pos_int($_GET['type'])) {
     // $type is int here
     $type = $_GET['type'];
-} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')){
+} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')) {
     $type = 'experiments';
 } else {
     $msg_arr[] = 'Wrong item type !';
@@ -40,7 +40,7 @@ if (isset($_GET['type']) && !empty($_GET['type']) && is_pos_int($_GET['type'])) 
 }
 
 
-if ($type === 'experiments'){
+if ($type === 'experiments') {
     $elabid = generate_elabid();
     // do we want template ?
     if (isset($_GET['tpl']) && is_pos_int($_GET['tpl'])) {
@@ -106,7 +106,7 @@ $data = $req->fetch();
 $newid = $data['id'];
 
 // Check if insertion is successful and redirect to the newly created experiment in edit mode
-if($result) {
+if ($result) {
     // info box
     $msg_arr[] = 'New item successfully created.';
     $_SESSION['infos'] = $msg_arr;

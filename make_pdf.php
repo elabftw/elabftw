@@ -26,17 +26,16 @@
 require_once 'inc/common.php';
 
 // Check id is valid and assign it to $id
-if(isset($_GET['id']) && is_pos_int($_GET['id'])) {
+if (isset($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
     die("The id parameter in the URL isn't a valid experiment ID");
 }
 
 // check the type
-if ( ($_GET['type'] === 'experiments') || ($_GET['type'] === 'items') ) {
+if (($_GET['type'] === 'experiments') || ($_GET['type'] === 'items')) {
     $type = $_GET['type'];
 }
 
 // do the pdf
 make_pdf($id, $type);
-

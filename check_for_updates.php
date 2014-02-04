@@ -23,24 +23,19 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-// this file is called with ajax post javascript from "Check for updates" link in Admin menu in inc/menu.php
+/* this file is called with ajax post javascript from "Check for updates" link in 
+ * Admin menu in inc/menu.php. It will return a string with the error/status.
+ */
+
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
 
-function check_executable($cmd) {
-    return shell_exec("which $cmd");
-}
-
-if (isset($_POST)) {
-    // check if a new update is available
-    // return a string with an error/info message
-
-    // before we do the check, we need to make sure :
-    // 1. git exists on the system
-    // 2. curl extension is installed
-    // 3. proxy setting exists
-
-    // check if git exists on the system 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    /* before we do the check, we need to make sure :
+     * 1. git exists on the system
+     * 2. curl extension is installed
+     */
+    // check if git exists on the system
     if (!check_executable('git')) {
         echo "Install git to check for updates.";
         exit();
@@ -51,11 +46,6 @@ if (isset($_POST)) {
         echo "You need to install the curl extension for php.";
         exit();
     }
-    // check if the proxy settings exists
-    if (PROXY == 'proxy.example.com:3128' ) {
-        echo "You didn't edit the proxy setting. Leave it blank if you are not behind a proxy.";
-        exit();
-    }
 
     // all is good, go !
     // get what is the latest commit on master branch
@@ -64,14 +54,14 @@ if (isset($_POST)) {
     // get what is the current branch
     $current_branch = shell_exec('git symbolic-ref --short -q HEAD');
     // we remove the end of the line character
-    $current_branch = preg_replace( "/\r|\n/", "", $current_branch );
+    $current_branch = preg_replace("/\r|\n/", "", $current_branch);
 
     if ($current_branch == 'master') {
-    // for branch master
-    curl_setopt($ch, CURLOPT_URL, "https://api.github.com/repos/NicolasCARPi/elabftw/git/refs/heads/master");
+        // for branch master
+        curl_setopt($ch, CURLOPT_URL, "https://api.github.com/repos/NicolasCARPi/elabftw/git/refs/heads/master");
     } elseif ($current_branch == 'next') {
-    // for branch next
-    curl_setopt($ch, CURLOPT_URL, "https://api.github.com/repos/NicolasCARPi/elabftw/git/refs/heads/next");
+        // for branch next
+        curl_setopt($ch, CURLOPT_URL, "https://api.github.com/repos/NicolasCARPi/elabftw/git/refs/heads/next");
     } else {
         echo "Unknown branch.";
         exit();
@@ -105,10 +95,10 @@ if (isset($_POST)) {
     $latest_version = $result['object']['sha'];
     // get curent version from local system
     $current_version = exec("git log -1 --format='%H'");
-    /*
-    echo "latest : ".$latest_version."<br />";
-    echo "current : ".$current_version;
-     */
+    if (get_config('debug') == 1) {
+        echo "latest : ".$latest_version."\n";
+        echo "current : ".$current_version."\n";
+    }
     // do the check and display message if both versions differ
     // we check also the size of latest version, or we get the message if it couldn't connect
     if (strlen($latest_version) != 40) { // couldn't connect
@@ -118,7 +108,7 @@ if (isset($_POST)) {
     if ($latest_version != $current_version) {
         echo "A new update is available !";
         exit();
-    } 
+    }
     if ($latest_version == $current_version) {
     // sha1 are the same
         if ($current_branch == 'master') {
@@ -129,6 +119,4 @@ if (isset($_POST)) {
             exit();
         }
     }
-            
 }
-

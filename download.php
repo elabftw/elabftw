@@ -34,10 +34,12 @@ if (isset($_GET['type']) && $_GET['type'] == 'zip') {
 
 // LONG_NAME
 if (!isset($_GET['f']) || empty($_GET['f'])) {
-  die('What are you doing, Dave ?');
+    die('What are you doing, Dave ?');
 }
 // Nullbyte hack fix
-if (strpos($_GET['f'], "\0") != false) die('What are you doing, Dave ?');
+if (strpos($_GET['f'], "\0") != false) {
+    die('What are you doing, Dave ?');
+}
 // Remove any path info to avoid hacking by adding relative path, etc.
 $long_filename = basename($_GET['f']);
 
@@ -62,7 +64,7 @@ if ($type == 'zip') {
 // MIME
 if (function_exists('mime_content_type')) {
     $mtype = mime_content_type($file_path);
-} else if (function_exists('finfo_file')) {
+} elseif (function_exists('finfo_file')) {
     $finfo = finfo_open(FILEINFO_MIME); // return mime type
     $mtype = finfo_file($finfo, $file_path);
     finfo_close($finfo);
@@ -91,16 +93,15 @@ header("Content-Length: " . $fsize);
 
 // DOWNLOAD
 // @readfile($file_path);
-$file = @fopen($file_path,"rb");
+$file = @fopen($file_path, "rb");
 if ($file) {
-  while(!feof($file)) {
-    print(fread($file, 1024*8));
-    flush();
-    if (connection_status()!=0) {
-      @fclose($file);
-      die();
+    while (!feof($file)) {
+        print(fread($file, 1024*8));
+        flush();
+        if (connection_status()!=0) {
+            @fclose($file);
+            die();
+        }
     }
-  }
-  @fclose($file);
+    @fclose($file);
 }
-

@@ -25,4 +25,3 @@
 ********************************************************************************/
 // As there is nothing to show on the index page, we go to the experiments page directly
 header('Location: experiments.php');
-

@@ -45,10 +45,7 @@ echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/user.png' alt='user' 
 echo "<div class='center'>
     <p>".$data['firstname']." ".$data['lastname']." (".$data['email'].")</p>
     <p>".$count[0]." experiments done since ".date("l jS \of F Y", $data['register_date']);
-if($data['group'] == 'admin') {echo "<p>You ARE admin \o/</p>";}
-if($data['group'] === 'journalclub') {echo "<p>You ARE responsible of the <a href='journal-club.php'>Journal Club</a> !</p>";}
 echo "</div>";
-
 echo "<hr>";
 require_once('inc/statistics.php');
 echo "<hr>";
@@ -57,4 +54,3 @@ require_once('inc/tagcloud.php');
 echo "</section>";
 
 require_once('inc/footer.php');
-

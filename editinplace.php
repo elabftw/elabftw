@@ -34,7 +34,7 @@ if (isset($_POST['filecomment'])) {
         if (is_pos_int($id_arr[1])) {
             $id = $id_arr[1];
             // Update comment
-            if (($_POST['filecomment'] != '') && ($_POST['filecomment'] != ' ')){
+            if (($_POST['filecomment'] != '') && ($_POST['filecomment'] != ' ')) {
                 $filecomment = filter_var($_POST['filecomment'], FILTER_SANITIZE_STRING);
                 // SQL to update single file comment
                 $sql = "UPDATE uploads SET comment = :new_comment WHERE id = :id";
@@ -58,7 +58,7 @@ if (isset($_POST['filecomment'])) {
 
 } elseif (isset($_POST['expcomment'])) {
 // we are editing a comment on an xp
-    // Check ID 
+    // Check ID
     if (isset($_POST['id']) && !empty($_POST['id'])) {
         // either we have something that looks like comment_56 and we need to UPDATE
         // or we have new_expcomment and we need to INSERT
@@ -82,10 +82,10 @@ if (isset($_POST['filecomment'])) {
             //echo stripslashes($expcomment);
         } else {
             // UPDATE OF EXISTING COMMENT
-            if ($id_arr[0] === 'expcomment' && is_pos_int($id_arr[1])){
+            if ($id_arr[0] === 'expcomment' && is_pos_int($id_arr[1])) {
                 $id = $id_arr[1];
                 // Update comment
-                if (($_POST['expcomment'] != '') && ($_POST['expcomment'] != ' ')){
+                if (($_POST['expcomment'] != '') && ($_POST['expcomment'] != ' ')) {
                     $expcomment = filter_var($_POST['expcomment'], FILTER_SANITIZE_STRING);
                     // SQL to update single exp comment
                     $sql = "UPDATE experiments_comments SET 
@@ -116,4 +116,3 @@ if (isset($_POST['filecomment'])) {
 } else {
     die('Wrong comment_type');
 }
-

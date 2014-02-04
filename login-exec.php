@@ -23,7 +23,9 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-if (!isset($_SESSION)) { session_start(); }
+if (!isset($_SESSION)) {
+    session_start();
+}
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
 // formkey stuff
@@ -52,13 +54,13 @@ if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
 }
 
 // Check PASSWORD is sent
-    if ((!isset($_POST['password'])) || (empty($_POST['password']))) {
-        $msg_arr[] = 'Password missing';
-        $errflag = true;
-    }
+if ((!isset($_POST['password'])) || (empty($_POST['password']))) {
+    $msg_arr[] = 'Password missing';
+    $errflag = true;
+}
 
 //If there are input validations, redirect back to the login form
-if($errflag) {
+if ($errflag) {
     $_SESSION['errors'] = $msg_arr;
     session_write_close();
     header("location: login.php");
@@ -76,7 +78,7 @@ $salt = $data['salt'];
 $passwordHash = hash("sha512", $salt.$_POST['password']);
 
 // admin validated ?
-if (get_config('admin_validate') == 1){
+if (get_config('admin_validate') == 1) {
     $sql = "SELECT * FROM users WHERE username='$username' AND password='$passwordHash' AND validated= 1";
 } else {
     $sql = "SELECT * FROM users WHERE username='$username' AND password='$passwordHash'";
@@ -98,11 +100,11 @@ if ($result) {
         $_SESSION['username'] = $data['username'];
         $_SESSION['is_admin'] = $data['is_admin'];
         // PREFS
-        $_SESSION['prefs'] = array('theme' => $data['theme'], 
-            'display' => $data['display'], 
-            'order' => $data['order_by'], 
-            'sort' => $data['sort_by'], 
-            'limit' => $data['limit_nb'], 
+        $_SESSION['prefs'] = array('theme' => $data['theme'],
+            'display' => $data['display'],
+            'order' => $data['order_by'],
+            'sort' => $data['sort_by'],
+            'limit' => $data['limit_nb'],
             'shortcuts' => array('create' => $data['sc_create'], 'edit' => $data['sc_edit'], 'submit' => $data['sc_submit'], 'todo' => $data['sc_todo']));
         session_write_close();
         // Make a unique token and store it in sql AND cookie
@@ -141,4 +143,3 @@ if ($result) {
 } else {
     die("Query failed");
 }
-

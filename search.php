@@ -376,5 +376,4 @@ $(document).ready(function(){
 });
 </script>
 
-<?php require_once('inc/footer.php');?>
-
+<?php require_once('inc/footer.php');

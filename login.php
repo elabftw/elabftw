@@ -23,7 +23,9 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-if (!isset($_SESSION)) { session_start(); }
+if (!isset($_SESSION)) {
+    session_start();
+}
 $page_title = 'Login';
 require_once 'inc/head.php';
 require_once 'inc/connect.php';
@@ -67,21 +69,21 @@ if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] < get_conf
 }
 
 // disable login if too much failed_attempts
-        if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] >= get_config('login_tries')) {
-            // get user infos
-            $user_infos = md5($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']);
-            // add the user to the banned list
-            $sql = "INSERT INTO banned_users (user_infos) VALUES (:user_infos)";
-            $req = $bdd->prepare($sql);
-            $req->execute(array(
-                'user_infos' => $user_infos
-            ));
-            unset($_SESSION['failed_attempt']);
-            $message ='Too much failed login attempts. Login is disabled for '.get_config('ban_time').' minutes.';
-            display_message('error', $message);
-            require_once 'inc/footer.php';
-            die();
-        }
+if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] >= get_config('login_tries')) {
+    // get user infos
+    $user_infos = md5($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']);
+    // add the user to the banned list
+    $sql = "INSERT INTO banned_users (user_infos) VALUES (:user_infos)";
+    $req = $bdd->prepare($sql);
+    $req->execute(array(
+        'user_infos' => $user_infos
+    ));
+    unset($_SESSION['failed_attempt']);
+    $message ='Too much failed login attempts. Login is disabled for '.get_config('ban_time').' minutes.';
+    display_message('error', $message);
+    require_once 'inc/footer.php';
+    die();
+}
 ?>
 
 <script>

@@ -93,4 +93,3 @@ if ($result) {
 } else {
     die();
 }
-

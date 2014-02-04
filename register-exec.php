@@ -33,14 +33,14 @@ $msg_arr = array();
 $errflag = false;
 
 // Check USERNAME (sanitize and validate)
-    if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
+if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
     // Check for duplicate username in DB
     $sql = "SELECT * FROM users WHERE username='$username'";
     $result = $bdd->query($sql);
     $numrows = $result->rowCount();
-    if($result) {
-        if($numrows > 0) {
+    if ($result) {
+        if ($numrows > 0) {
             $msg_arr[] = 'Username already in use';
             $errflag = true;
         }
@@ -51,7 +51,7 @@ $errflag = false;
     $errflag = true;
 }
 // Check FIRSTNAME (sanitize, and make it look like Firstname)
-    if ((isset($_POST['firstname'])) && (!empty($_POST['firstname']))) {
+if ((isset($_POST['firstname'])) && (!empty($_POST['firstname']))) {
     // Put everything lowercase and first letter uppercase
     $firstname = ucwords(strtolower(filter_var($_POST['firstname'], FILTER_SANITIZE_STRING)));
 } else {
@@ -59,7 +59,7 @@ $errflag = false;
     $errflag = true;
 }
 // Check LASTNAME (sanitize, and make it look like LASTNAME)
-    if ((isset($_POST['lastname'])) && (!empty($_POST['lastname']))) {
+if ((isset($_POST['lastname'])) && (!empty($_POST['lastname']))) {
     $lastname = strtoupper(filter_var($_POST['lastname'], FILTER_SANITIZE_STRING));
 } else {
     $msg_arr[] = 'Lastname missing';
@@ -73,17 +73,17 @@ if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
         $msg_arr[] = 'Email seems to be invalid';
         $errflag = true;
     } else {
-    // Check for duplicate email in DB
-    $sql = "SELECT * FROM users WHERE email='$email'";
-    $result = $bdd->query($sql);
-    $numrows = $result->rowCount();
-    if($result) {
-        if($numrows > 0) {
-            $msg_arr[] = 'Someone is already using that email address !';
-            $errflag = true;
+        // Check for duplicate email in DB
+        $sql = "SELECT * FROM users WHERE email='$email'";
+        $result = $bdd->query($sql);
+        $numrows = $result->rowCount();
+        if ($result) {
+            if ($numrows > 0) {
+                $msg_arr[] = 'Someone is already using that email address !';
+                $errflag = true;
+            }
+            $result= null;
         }
-        $result= null;
-    }
     }
 } else {
     $msg_arr[] = 'Email missing';
@@ -103,7 +103,7 @@ if ((isset($_POST['cpassword'])) && (!empty($_POST['cpassword']))) {
             $errflag = true;
         }
         // Check confirm password is same as password
-        if (strcmp($_POST['password'], $_POST['cpassword']) != 0 ) {
+        if (strcmp($_POST['password'], $_POST['cpassword']) != 0) {
             $msg_arr[] = 'Passwords do not match';
             $errflag = true;
         }
@@ -117,7 +117,7 @@ if ((isset($_POST['cpassword'])) && (!empty($_POST['cpassword']))) {
 }
 
 // If there are input validations, redirect back to the registration form
-if($errflag) {
+if ($errflag) {
     $_SESSION['errors'] = $msg_arr;
     session_write_close();
     header("location: register.php");
@@ -149,48 +149,50 @@ if (get_config('admin_validate')  == 1 && $is_admin == 0) {
 
 $result = $bdd->exec($sql);
 //Check whether the query was successful or not
-if($result) {
-        $msg_arr = array();
-        if (get_config('admin_validate') == 1 && $is_admin == 0){
-            // we send an email to the admin so he can validate the user
-            require_once('lib/swift_required.php');
-            // get email of the admin (there might be several admins, but we send only to the first one we find)
-            $sql = "SELECT email FROM users WHERE is_admin = 1 LIMIT 1";
-            $req = $bdd->prepare($sql);
-            $req->execute();
-            $admin = $req->fetch();
-            // Create the message
-            $message = Swift_Message::newInstance()
-            // Give the message a subject
-            ->setSubject('[eLabFTW] New user registred')
-            // Set the From address with an associative array
-            ->setFrom(array('elabftw.net@gmail.com' => 'eLabFTW'))
-            // Set the To addresses with an associative array
-            ->setTo(array($admin['email'] => 'Admin eLabFTW'))
-            // Give it a body
-            ->setBody('Hi,
-Someone registered a new account on eLabFTW. Head to the admin panel to activate the account !
+if ($result) {
+    $msg_arr = array();
+    if (get_config('admin_validate') == 1 && $is_admin == 0) {
+        // we send an email to the admin so he can validate the user
+        require_once('lib/swift_required.php');
+        // get email of the admin (there might be several admins, but we send only to the first one we find)
+        $sql = "SELECT email FROM users WHERE is_admin = 1 LIMIT 1";
+        $req = $bdd->prepare($sql);
+        $req->execute();
+        $admin = $req->fetch();
+        // Create the message
+        $message = Swift_Message::newInstance()
+        // Give the message a subject
+        ->setSubject('[eLabFTW] New user registred')
+        // Set the From address with an associative array
+        ->setFrom(array('elabftw.net@gmail.com' => 'eLabFTW'))
+        // Set the To addresses with an associative array
+        ->setTo(array($admin['email'] => 'Admin eLabFTW'))
+        // Give it a body
+        ->setBody(
+            'Hi,
+            Someone registered a new account on eLabFTW. Head to the admin panel to activate the account !
 
-~~
-Email sent by eLabFTW
-http://www.elabftw.net
-Free open-source Lab Manager');
-            $transport = Swift_SmtpTransport::newInstance(
-                get_config('smtp_address'),
-                get_config('smtp_port'),
-                get_config('smtp_encryption'))
-            ->setUsername(get_config('smtp_username'))
-            ->setPassword(get_config('smtp_password'));
-            $mailer = Swift_Mailer::newInstance($transport);
-            $result = $mailer->send($message);
-            $msg_arr[] = 'Registration successful :)<br />Your account must now be validated by an admin.<br />You will receive an email when it is done.';
-        } else {
-            $msg_arr[] = 'Registration successful :)<br />Welcome to eLabFTW \o/';
-        }
-        $_SESSION['infos'] = $msg_arr;
-        $_SESSION['username'] = $username;
-        header("location: login.php");
-}else {
+            ~~
+            Email sent by eLabFTW
+            http://www.elabftw.net
+            Free open-source Lab Manager'
+        );
+        $transport = Swift_SmtpTransport::newInstance(
+            get_config('smtp_address'),
+            get_config('smtp_port'),
+            get_config('smtp_encryption')
+        )
+        ->setUsername(get_config('smtp_username'))
+        ->setPassword(get_config('smtp_password'));
+        $mailer = Swift_Mailer::newInstance($transport);
+        $result = $mailer->send($message);
+        $msg_arr[] = 'Registration successful :)<br />Your account must now be validated by an admin.<br />You will receive an email when it is done.';
+    } else {
+        $msg_arr[] = 'Registration successful :)<br />Welcome to eLabFTW \o/';
+    }
+    $_SESSION['infos'] = $msg_arr;
+    $_SESSION['username'] = $username;
+    header("location: login.php");
+} else {
     die("Query failed");
 }
-

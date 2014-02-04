@@ -94,36 +94,38 @@ if ($action === 0) {
 
 switch($_GET['type']) {
 
-// Locking experiment
-case 'experiments':
+    // Locking experiment
+    case 'experiments':
 
-    $sql = "UPDATE experiments SET locked = :action, lockedby = :lockedby WHERE id = :id";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute(array(
-        'action' => $action,
-        'lockedby' => $_SESSION['userid'],
-        'id' => $id
-    ));
-    if ($result) {
-        header("Location: experiments.php?mode=view&id=$id");
-    } else {
-        die('SQL failed');
-    }
-    break;
+        $sql = "UPDATE experiments SET locked = :action, lockedby = :lockedby WHERE id = :id";
+        $req = $bdd->prepare($sql);
+        $result = $req->execute(array(
+            'action' => $action,
+            'lockedby' => $_SESSION['userid'],
+            'id' => $id
+        ));
+        if ($result) {
+            header("Location: experiments.php?mode=view&id=$id");
+        } else {
+            die('SQL failed');
+        }
+        break;
 
-// Locking item
-case 'items':
+    // Locking item
+    case 'items':
 
-    $sql = "UPDATE items SET locked = :action WHERE id = :id";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute(array(
-        'action' => $action,
-        'id' => $id
-    ));
-    if ($result) {
-        header("Location: database.php?mode=view&id=$id");
-    } else {
-        die('SQL failed');
-    }
+        $sql = "UPDATE items SET locked = :action WHERE id = :id";
+        $req = $bdd->prepare($sql);
+        $result = $req->execute(array(
+            'action' => $action,
+            'id' => $id
+        ));
+        if ($result) {
+            header("Location: database.php?mode=view&id=$id");
+        } else {
+            die('SQL failed');
+        }
+        break;
+    default:
+        die();
 }
-

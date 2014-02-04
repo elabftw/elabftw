@@ -166,56 +166,56 @@ $req->execute();
 while ($users = $req->fetch()) {
     ?>
     <div class='simple_border'>
-    <a class='trigger_users_<?php echo $users['userid'];?>'><img src='img/profile.png' alt='profile' /> <?php echo "Edit ".$users['firstname'];?></a>
-    <div class='toggle_users_<?php echo $users['userid'];?>'>
-<br />
-        <form method='post' action='admin-exec.php' id='admin_user_form'>
-            <input type='hidden' value='<?php echo $users['userid'];?>' name='userid' />
-            <input type='text' value='<?php echo $users['firstname'];?>' name='firstname' />
-            <input type='text' value='<?php echo $users['lastname'];?>' name='lastname' />
-            <input type='email' value='<?php echo $users['email'];?>' name='email' /><br />
-            Has admin rights ?<select name='is_admin'>
-            <option value='1'<?php
-                    if($users['is_admin'] == 1) {
-                        echo " selected='selected'";
-                    }
-?>
-    >yes</option>
-    <option value='0'<?php
-                    if ($users['is_admin'] == 0) {
-                        echo " selected='selected'";
-                    }
-?>
-                    >no</option>
-            </select>
-<br />
-            Can lock experiments of others ?<select name='can_lock'>
-            <option value='1'<?php
-                    if ($users['can_lock'] == 1) { echo " selected='selected'"; } ?>
-    >yes</option>
-    <option value='0'<?php
-                    if ($users['can_lock'] == 0) { echo " selected='selected'"; } ?>
-                    >no</option>
-            </select>
-<br />
-<label for'validated'>Has an active account ?</label>
-<select name='validated' id='validated'>
-    <option value='1'<?php
-            if($users['validated'] == 1) { echo " selected='selected'"; } ?>
-    >yes</option>
-    <option value='0'<?php
-        if ($users['validated'] == 0) { echo " selected='selected'"; } ?>
-    >no</option>
-</select>
-<br />
-Reset user password : <input type='password' value='' name='new_password' />
-<br />
-Repeat new password : <input type='password' value='' name='confirm_new_password' />
-<br />
-<br />
-<div class='center'>
-    <input type='submit' class='button' value='Edit this user' />
-</div>
+        <a class='trigger_users_<?php echo $users['userid'];?>'><img src='img/profile.png' alt='profile' /> <?php echo "Edit ".$users['firstname'];?></a>
+        <div class='toggle_users_<?php echo $users['userid'];?>'>
+    <br />
+            <form method='post' action='admin-exec.php' id='admin_user_form'>
+                <input type='hidden' value='<?php echo $users['userid'];?>' name='userid' />
+                <input type='text' value='<?php echo $users['firstname'];?>' name='firstname' />
+                <input type='text' value='<?php echo $users['lastname'];?>' name='lastname' />
+                <input type='email' value='<?php echo $users['email'];?>' name='email' /><br />
+                Has admin rights ?<select name='is_admin'>
+                <option value='1'<?php
+                        if($users['is_admin'] == 1) {
+                            echo " selected='selected'";
+                        }
+    ?>
+        >yes</option>
+        <option value='0'<?php
+                        if ($users['is_admin'] == 0) {
+                            echo " selected='selected'";
+                        }
+    ?>
+                        >no</option>
+                </select>
+    <br />
+                Can lock experiments of others ?<select name='can_lock'>
+                <option value='1'<?php
+                        if ($users['can_lock'] == 1) { echo " selected='selected'"; } ?>
+        >yes</option>
+        <option value='0'<?php
+                        if ($users['can_lock'] == 0) { echo " selected='selected'"; } ?>
+                        >no</option>
+                </select>
+    <br />
+    <label for'validated'>Has an active account ?</label>
+    <select name='validated' id='validated'>
+        <option value='1'<?php
+                if ($users['validated'] == 1) { echo " selected='selected'"; } ?>
+        >yes</option>
+        <option value='0'<?php
+            if ($users['validated'] == 0) { echo " selected='selected'"; } ?>
+        >no</option>
+    </select>
+    <br />
+    Reset user password : <input type='password' value='' name='new_password' />
+    <br />
+    Repeat new password : <input type='password' value='' name='confirm_new_password' />
+    <br />
+    <br />
+    <div class='center'>
+        <input type='submit' class='button' value='Edit this user' />
+    </div>
         </form>
     </div>
     <script>
@@ -244,7 +244,7 @@ while ($items_types = $req->fetch()) {
     <div class='simple_border'>
     <a class='trigger_<?php echo $items_types['id'];?>'>Edit <?php echo $items_types['name'];?></a>
     <div class='toggle_container_<?php echo $items_types['id'];?>'>
-<img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $items_types['id'];?>','item_type', 'admin.php')" />
+    <img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $items_types['id'];?>','item_type', 'admin.php')" />
 
     <form action='admin-exec.php' method='post'>
     <input type='text' class='biginput' name='item_type_name' value='<?php echo stripslashes($items_types['name']);?>' />

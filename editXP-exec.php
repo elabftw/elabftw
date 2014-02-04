@@ -43,7 +43,7 @@ if (!isset($_POST['form_key']) || !$formKey->validate()) {
 }
  */
 // ID
-if(is_pos_int($_POST['item_id'])){
+if (is_pos_int($_POST['item_id'])) {
     $id = $_POST['item_id'];
 } else {
     $id='';
@@ -61,7 +61,7 @@ $_SESSION['new_date'] = $date;
 $_SESSION['new_status'] = $status;
 
 // If input errors, redirect back to the experiment form
-if($errflag) {
+if ($errflag) {
     $_SESSION['errors'] = $msg_arr;
     session_write_close();
     header("location: experiments.php?mode=show&id=$id");
@@ -88,7 +88,7 @@ $result = $req->execute(array(
 
 
 // Check if insertion is successful
-if($result) {
+if ($result) {
     unset($_SESSION['new_title']);
     unset($_SESSION['new_date']);
     unset($_SESSION['status']);
@@ -97,4 +97,3 @@ if($result) {
 } else {
     die('Something went wrong in the database query. Check the flux capacitor.');
 }
-

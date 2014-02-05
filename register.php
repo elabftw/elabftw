@@ -103,10 +103,10 @@ $(document).ready(function() {
 		var firstname = $("#firstname").val();
 		var lastname = $("#lastname").val();
 		if(firstname && lastname && !this.value) {
-			this.value = firstname.charAt(0) + lastname;
+			var username = firstname.charAt(0) + lastname;
+			this.value = username.toLowerCase();
 		}
 	});
 });
 </script>
-<?php require_once('inc/footer.php'); ?>
-
+<?php require_once 'inc/footer.php';

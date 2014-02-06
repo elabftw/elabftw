@@ -727,3 +727,19 @@ function check_executable($cmd)
 {
     return shell_exec("which $cmd");
 }
+
+function custom_die()
+{
+    echo "
+    <br />
+    <br />
+    </section>
+    <br />
+    <br />
+    <footer>
+    <p>Thanks for using eLabFTW :)</p>
+    </footer>
+    </body>
+    </html>";
+    die();
+}

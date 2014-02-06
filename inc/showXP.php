@@ -232,7 +232,7 @@ if (isset($_GET['q'])) { // if there is a query
         ORDER BY $order $sort 
         LIMIT 100";
     $req = $pdo->prepare($sql);
-    $req->bindParam(':userid', $_SESSION['userid']);
+    $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
     $req->execute();
     $count = $req->rowCount();
     // If there are no experiments, display a little message

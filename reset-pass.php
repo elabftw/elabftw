@@ -27,16 +27,19 @@ session_start();
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
 require_once 'lib/swift_required.php';
+
+$errflag = false;
+
 // we receive email in post
-if (isset($_POST['email'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
     // // Get infos about the requester (will be sent in the mail afterwards)
     // Get IP
-    if (!empty($_SERVER["HTTP_CLIENT_IP"])) {
-        $ip = $_SERVER["HTTP_CLIENT_IP"];
-    } elseif (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])) {
-        $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        $ip = $_SERVER['HTTP_CLIENT_IP'];
+    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
     } else {
-        $ip = $_SERVER["REMOTE_ADDR"];
+        $ip = $_SERVER['REMOTE_ADDR'];
     }
     // Get user agent
     $u_agent = $_SERVER['HTTP_USER_AGENT'];
@@ -92,23 +95,33 @@ if (isset($_POST['email'])) {
             ->setUsername(get_config('smtp_username'))
             ->setPassword(get_config('smtp_password'));
             $mailer = Swift_Mailer::newInstance($transport);
-            $result = $mailer->send($message);
-            // Now redirect to login page
-            // Say it went well (by using the error msg array)
-            $msg_arr[] = 'Email sent. Check your INBOX.';
-            $_SESSION['infos'] = $msg_arr;
-            session_write_close();
-            header("location: login.php");
+            // now we try to send the email
+            try {
+                $mailer->send($message);
+            } catch (Exception $e) {
+                // log the error
+                $logline = date('Y-m-d H:i:s')  . ' - ' . $e->getMessage() . PHP_EOL;
+                file_put_contents('errors.log', $logline, FILE_APPEND);
+                $errflag = true;
+            }
+            if ($errflag) {
+                // problem
+                $msg_arr[] = 'There was a problem sending the email. Error was logged.';
+                $_SESSION['errors'] = $msg_arr;
+                header('location: login.php');
+            } else { // no problem
+                $msg_arr[] = 'Email sent. Check your INBOX.';
+                $_SESSION['infos'] = $msg_arr;
+                header("location: login.php");
+            }
         } else {
             $msg_arr[] = 'Email not found in database !';
             $_SESSION['errors'] = $msg_arr;
-            session_write_close();
             header("location: login.php");
         }
     } else {
             $msg_arr[] = 'The email address you entered was invalid !';
             $_SESSION['errors'] = $msg_arr;
-            session_write_close();
             header("location: login.php");
     }
 } else { // this page isn't called with POST

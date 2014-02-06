@@ -51,14 +51,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
     // sql to get email of the user
     $sql_email = "SELECT email FROM users WHERE userid = :userid";
     $req_email = $pdo->prepare($sql_email);
+    // we loop the validate array
     foreach ($_POST['validate'] as $user) {
-        $req->execute(array(
-            'userid' => $user
-        ));
+        // bind parameters of the user
+        $req_email->bindParam(':userid', $user, PDO::PARAM_INT);
+        $req->bindParam(':userid', $user, PDO::PARAM_INT);
+
+        // validate the user
+        $req->execute();
         $infos_arr[] = 'Validated user with user ID : '.$user;
-        $req_email->execute(array(
-            'userid' => $user
-        ));
+
+        // get email
+        $req_email->execute();
         $user = $req_email->fetch();
         // now let's get the URL so we can have a nice link in the email
         $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
@@ -94,7 +98,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
             ->setUsername(get_config('smtp_username'))
             ->setPassword(get_config('smtp_password'));
         $mailer = Swift_Mailer::newInstance($transport);
-        $mailer->send($message);
+        // now we try to send the email
+        try {
+            $mailer->send($message);
+        } catch (Exception $e) {
+            // log the error
+            $logline = date('Y-m-d H:i:s')  . ' - ' . $e->getMessage() . PHP_EOL;
+            file_put_contents('errors.log', $logline, FILE_APPEND);
+            $errflag = true;
+        }
+        if ($errflag) {
+            $msg_arr[] = 'There was a problem sending the email. Error was logged.';
+            $_SESSION['errors'] = $msg_arr;
+            header('location: admin.php');
+            exit();
+        }
     }
     $_SESSION['infos'] = $infos_arr;
     header('Location: admin.php');

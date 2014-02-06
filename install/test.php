@@ -31,50 +31,13 @@ if(file_exists('../admin/config.php')) {
 }
 
 // MYSQL
-if (isset($_POST['mysql'])) {
-    try
-    {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['mysql'])) {
+    try {
         $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
         $pdo = new PDO('mysql:host='.$_POST['db_host'].';dbname='.$_POST['db_name'], $_POST['db_user'], $_POST['db_password'], $pdo_options);
-    }
-    catch(Exception $e)
-    {
+    } catch(Exception $e) {
         echo $e->getMessage();
         exit();
     }
     echo 1;
 }
-
-
-// EMAIL
-if (isset($_POST['email'])) {
-    require_once '../lib/swift_required.php';
-    // Create the message
-    $message = Swift_Message::newInstance()
-    // Give the message a subject
-    ->setSubject('[eLabFTW] Test email')
-    // Set the From address with an associative array
-    ->setFrom(array('elabftw.net@gmail.com' => 'eLabFTW.net'))
-    // Set the To addresses with an associative array
-    ->setTo(array('elabftw-test@yopmail.com' => 'Test'))
-    // Give it a body
-    ->setBody('If you are reading this, then you correctly configured the email settings of your eLabFTW install :).
-
-    ~~
-    Email sent by eLabFTW
-    http://www.elabftw.net
-    Free open-source Lab Manager');
-    $transport = Swift_SmtpTransport::newInstance($_POST['smtp_address'], $_POST['smtp_port'], $_POST['smtp_encryption'])
-    ->setUsername($_POST['smtp_username'])
-    ->setPassword($_POST['smtp_password']);
-    $mailer = Swift_Mailer::newInstance($transport);
-    $result = $mailer->send($message);
-
-    // TODO catch exception to show it
-    if ($result) {
-        echo 1;
-    } else {
-        echo 0;
-    }
-}
-

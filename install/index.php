@@ -63,23 +63,6 @@ require_once '../inc/functions.php';
 
 <body>
 <section id="container">
-<?php
-function custom_die() {
-    echo "
-    <br />
-    <br />
-    </section>
-    <br />
-    <br />
-    <footer>
-    <p>Thanks for using eLabFTW :)</p>
-    </footer>
-    </body>
-    </html>";
-    die();
-}
-?>
-
 <section class='item'>
 <center><img src='../img/logo.png' alt='elabftw' title='elabftw' /></center>
 <h2>Welcome to the install of eLabFTW</h2>
@@ -87,7 +70,7 @@ function custom_die() {
 <?php
 // Check if there is already a config file
 
-if(file_exists('../admin/config.php')) {
+if (file_exists('../admin/config.php')) {
     // ok there is a config file, but maybe it's a fresh install, so redirect to the register page
     // check that the config file is here and readable
     if (!is_readable('../admin/config.php')) {
@@ -99,13 +82,10 @@ if(file_exists('../admin/config.php')) {
 
     // check if there are users registered
     require_once '../admin/config.php';
-    try
-    {
+    try {
         $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
         $pdo = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
-    }
-    catch(Exception $e)
-    {
+    } catch (Exception $e) {
         die('Error : '.$e->getMessage());
     }
     $sql = "SELECT * FROM users";

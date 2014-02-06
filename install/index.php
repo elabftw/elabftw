@@ -102,14 +102,14 @@ if(file_exists('../admin/config.php')) {
     try
     {
         $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-        $bdd = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
+        $pdo = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
     }
     catch(Exception $e)
     {
         die('Error : '.$e->getMessage());
     }
     $sql = "SELECT * FROM users";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
     $users_count = $req->rowCount();
     // redirect to register page if no users are in the database

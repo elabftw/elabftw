@@ -38,7 +38,7 @@ if (isset($_SESSION['prefs']['display'])) {
     </form>
 <?php // SQL to get items names
 $sql = "SELECT * FROM items_types";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 
 // 'Create new' dropdown menu
@@ -72,7 +72,7 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
         $results_arr = array();
         $sql = "SELECT item_id FROM items_tags 
         WHERE tag LIKE :tag";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute(array(
             'tag' => $tag
         ));
@@ -123,7 +123,7 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     // we show the last 10 uploads
     // get the last id
     $sql = "SELECT * FROM items ORDER BY id DESC LIMIT 10";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
     $count = $req->rowCount();
     if($count == 0) {

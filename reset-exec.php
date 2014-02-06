@@ -44,7 +44,7 @@ if ($password == $cpassword) {
             SET password = :password, 
             salt = :salt 
             WHERE userid = :userid";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $result = $req->execute(array(
         'password' => $passwordHash,
         'salt' => $salt,
@@ -57,7 +57,7 @@ if ($password == $cpassword) {
         } else {
         $sql = "SELECT * FROM users WHERE userid='$userid' AND password='$passwordHash'";
         }
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $result = $req->execute();
         $numrows = $req->rowCount();
         //Check whether the query was successful or not
@@ -86,7 +86,7 @@ if ($password == $cpassword) {
                 $path = dirname(__FILE__);
                 setcookie('path', $path, time() + 60*60*24*30);
                 $sql = "UPDATE users SET token = :token WHERE userid = :userid";
-                $req = $bdd->prepare($sql);
+                $req = $pdo->prepare($sql);
                 $req->execute(array(
                     'token' => $token,
                     'userid' => $data['userid']

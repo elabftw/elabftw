@@ -40,7 +40,8 @@ require_once 'inc/functions.php';
 try
 {
     $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-    $bdd = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
+    $pdo_options[PDO::ATTR_PERSISTENT] = true;
+    $pdo = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
 }
 catch(Exception $e)
 {
@@ -63,7 +64,7 @@ if (isset($_SESSION['auth'])){ // if user is auth, we check the cookie
     $token = filter_var($_COOKIE['token'], FILTER_SANITIZE_STRING);
     // Get token from SQL
     $sql = "SELECT * FROM users WHERE token = :token";
-    $result = $bdd->prepare($sql);
+    $result = $pdo->prepare($sql);
     $result->execute(array(
     'token' => $token
     ));

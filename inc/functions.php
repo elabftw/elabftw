@@ -131,10 +131,10 @@ function is_pos_int($int)
 function has_attachement($id)
 {
     // Check if an item has a file attached
-    global $bdd;
+    global $pdo;
     $sql = "SELECT id FROM uploads 
         WHERE item_id = :item_id";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute(array(
         'item_id' => $id
     ));
@@ -149,14 +149,14 @@ function has_attachement($id)
 // Search item
 function search_item($type, $query, $userid)
 {
-    global $bdd;
+    global $pdo;
     // we make an array for the resulting ids
     $results_arr = array();
     if ($type === 'xp') {
         // search in title date and body
         $sql = "SELECT id FROM experiments 
             WHERE userid = :userid AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute(array(
             'userid' => $userid
         ));
@@ -166,7 +166,7 @@ function search_item($type, $query, $userid)
         }
         // now we search in tags, and append the found ids to our result array
         $sql = "SELECT item_id FROM experiments_tags WHERE userid = :userid AND tag LIKE '%$query%' LIMIT 100";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute(array(
             'userid' => $userid
         ));
@@ -175,7 +175,7 @@ function search_item($type, $query, $userid)
         }
         // now we search in file comments and filenames
         $sql = "SELECT item_id FROM uploads WHERE userid = :userid AND (comment LIKE '%$query%' OR real_name LIKE '%$query%') AND type = 'experiment' LIMIT 100";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute(array(
             'userid' => $userid
         ));
@@ -188,7 +188,7 @@ function search_item($type, $query, $userid)
         // search in title date and body
         $sql = "SELECT id FROM items 
             WHERE (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute();
         // put resulting ids in the results array
         while ($data = $req->fetch()) {
@@ -197,7 +197,7 @@ function search_item($type, $query, $userid)
         $req->closeCursor();
         // now we search in tags, and append the found ids to our result array
         $sql = "SELECT item_id FROM items_tags WHERE tag LIKE '%$query%' LIMIT 100";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute(array(
             'userid' => $_SESSION['userid']
         ));
@@ -206,7 +206,7 @@ function search_item($type, $query, $userid)
         }
         // now we search in file comments and filenames
         $sql = "SELECT item_id FROM uploads WHERE (comment LIKE '%$query%' OR real_name LIKE '%$query%') AND type = 'database' LIMIT 100";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute();
         while ($data = $req->fetch()) {
             $results_arr[] = $data['item_id'];
@@ -222,10 +222,10 @@ function search_item($type, $query, $userid)
 function show_tags($item_id, $table)
 {
     // $table can be experiments_tags or items_tags
-    global $bdd;
+    global $pdo;
     // DISPLAY TAGS
     $sql = "SELECT tag FROM $table WHERE item_id = $item_id";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
     $tagcount = $req->rowCount();
     if ($tagcount > 0) {
@@ -244,10 +244,10 @@ function show_tags($item_id, $table)
 function showXP($id, $display)
 {
 // Show unique XP
-    global $bdd;
+    global $pdo;
     // SQL to get everything from selected id
     $sql = "SELECT id, title, date, body, status, locked  FROM experiments WHERE id = :id";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute(array(
         'id' => $id
     ));
@@ -309,9 +309,9 @@ function show_stars($rating)
 
 function get_item_info_from_id($id, $info)
 {
-    global $bdd;
+    global $pdo;
     $sql = "SELECT * FROM items_types WHERE id = :id";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute(array(
         'id' => $id
     ));
@@ -322,10 +322,10 @@ function get_item_info_from_id($id, $info)
 function showDB($id, $display)
 {
 // Show unique DB item
-    global $bdd;
+    global $pdo;
     // SQL to get everything from selected id
     $sql = "SELECT * FROM items WHERE id = :id";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute(array(
         'id' => $id
     ));
@@ -447,11 +447,11 @@ function make_pdf($id, $type, $out = 'browser')
     // make a pdf
     // $type can be 'experiments' or 'items'
     // $out is the output directory, 'browser' => pdf is downloaded (default), else it's written in the specified dir
-    global $bdd;
+    global $pdo;
 
     // SQL to get title, body and date
     $sql = "SELECT * FROM $type WHERE id = $id";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
     $data = $req->fetch();
     $title = stripslashes($data['title']);
@@ -466,7 +466,7 @@ function make_pdf($id, $type, $out = 'browser')
 
     // SQL to get firstname + lastname
     $sql = "SELECT firstname,lastname FROM users WHERE userid = :userid";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute(array(
         'userid' => $data['userid']
     ));
@@ -477,7 +477,7 @@ function make_pdf($id, $type, $out = 'browser')
 
     // SQL to get tags
     $sql = "SELECT tag FROM ".$type."_tags WHERE item_id = $id";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
     $tags = null;
     while ($data = $req->fetch()) {
@@ -556,17 +556,17 @@ function generate_elabid()
 
 function duplicate_item($id, $type)
 {
-    global $bdd;
+    global $pdo;
     if ($type === 'experiments') {
         $elabid = generate_elabid();
         // SQL to get data from the experiment we duplicate
         $sql = "SELECT title, body, visibility FROM experiments WHERE id = ".$id;
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute();
         $data = $req->fetch();
         // SQL for duplicateXP
         $sql = "INSERT INTO experiments(title, date, body, status, elabid, visibility, userid) VALUES(:title, :date, :body, :status, :elabid, :visibility, :userid)";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $result = $req->execute(array(
             'title' => $data['title'],
             'date' => kdate(),
@@ -583,13 +583,13 @@ function duplicate_item($id, $type)
     if ($type === 'items') {
         // SQL to get data from the item we duplicate
         $sql = "SELECT * FROM items WHERE id = ".$id;
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute();
         $data = $req->fetch();
 
         // SQL for duplicateDB
         $sql = "INSERT INTO items(title, date, body, userid, type) VALUES(:title, :date, :body, :userid, :type)";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $result = $req->execute(array(
             'title' => $data['title'],
             'date' => kdate(),
@@ -602,7 +602,7 @@ function duplicate_item($id, $type)
 
     // Get what is the id we just created
     $sql = "SELECT id FROM $type WHERE userid = :userid ORDER BY id DESC LIMIT 0,1";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->bindParam(':userid', $_SESSION['userid']);
     $req->execute();
     $data = $req->fetch();
@@ -612,7 +612,7 @@ function duplicate_item($id, $type)
     if ($type === 'experiments') {
         // TAGS
         $sql = "SELECT tag FROM experiments_tags WHERE item_id = :id";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute(array(
             'id' => $id
         ));
@@ -621,7 +621,7 @@ function duplicate_item($id, $type)
             while ($tags = $req->fetch()) {
                 // Put them in the new one. here $newid is the new exp created
                 $sql = "INSERT INTO experiments_tags(tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
-                $reqtag = $bdd->prepare($sql);
+                $reqtag = $pdo->prepare($sql);
                 $result_tags = $reqtag->execute(array(
                     'tag' => $tags['tag'],
                     'item_id' => $newid,
@@ -633,13 +633,13 @@ function duplicate_item($id, $type)
         }
         // LINKS
         $linksql = "SELECT link_id FROM experiments_links WHERE item_id = :id";
-        $linkreq = $bdd->prepare($linksql);
+        $linkreq = $pdo->prepare($linksql);
         $result_links = $linkreq->execute(array(
             'id' => $id
         ));
         while ($links = $linkreq->fetch()) {
             $sql = "INSERT INTO experiments_links (link_id, item_id) VALUES(:link_id, :item_id)";
-            $req = $bdd->prepare($sql);
+            $req = $pdo->prepare($sql);
             $result_links = $req->execute(array(
                 'link_id' => $links['link_id'],
                 'item_id' => $newid
@@ -655,12 +655,12 @@ function duplicate_item($id, $type)
     } else { // DB
         // TAGS
         $sql = "SELECT tag FROM items_tags WHERE item_id = ".$id;
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute();
         while ($tags = $req->fetch()) {
             // Put them in the new one. here $newid is the new exp created
             $sql = "INSERT INTO items_tags(tag, item_id) VALUES(:tag, :item_id)";
-            $reqtag = $bdd->prepare($sql);
+            $reqtag = $pdo->prepare($sql);
             $result_tags = $reqtag->execute(array(
                 'tag' => $tags['tag'],
                 'item_id' => $newid
@@ -697,10 +697,10 @@ function display_message($type, $message)
 // to check if something is owned by a user before we add/delete/edit
 function is_owned_by_user($id, $table, $userid)
 {
-    global $bdd;
+    global $pdo;
     // type can be experiments or experiments_templates
     $sql = "SELECT userid FROM $table WHERE id = $id";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
     $result = $req->fetchColumn();
 
@@ -714,10 +714,10 @@ function is_owned_by_user($id, $table, $userid)
 // return conf_value of asked conf_name
 function get_config($conf_name)
 {
-    global $bdd;
+    global $pdo;
 
     $sql = "SELECT * FROM config";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
     $config = $req->fetchAll(PDO::FETCH_COLUMN|PDO::FETCH_GROUP);
     return $config[$conf_name][0];

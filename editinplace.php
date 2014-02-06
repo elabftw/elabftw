@@ -38,7 +38,7 @@ if (isset($_POST['filecomment'])) {
                 $filecomment = filter_var($_POST['filecomment'], FILTER_SANITIZE_STRING);
                 // SQL to update single file comment
                 $sql = "UPDATE uploads SET comment = :new_comment WHERE id = :id";
-                $req = $bdd->prepare($sql);
+                $req = $pdo->prepare($sql);
                 $req->execute(array(
                     'new_comment' => $filecomment,
                     'id' => $id));
@@ -46,7 +46,7 @@ if (isset($_POST['filecomment'])) {
             } else { // Submitted comment is empty
                 // Get old comment
                 $sql = "SELECT comment FROM uploads WHERE id = ".$id;
-                $req = $bdd->prepare($sql);
+                $req = $pdo->prepare($sql);
                 $req->execute();
                 $filecomment = $req->fetch();
                 echo stripslashes($filecomment['comment']);
@@ -71,7 +71,7 @@ if (isset($_POST['filecomment'])) {
             // SQL to insert expcomment
             $sql = "INSERT INTO experiments_comments(datetime, exp_id, comment, userid) 
                 VALUES(:datetime, :exp_id, :comment, :userid)";
-            $req = $bdd->prepare($sql);
+            $req = $pdo->prepare($sql);
             $req->execute(array(
                 'datetime' => date("Y-m-d H:i:s"),
                 'exp_id' => $id, // the $id here is the one of the experiment
@@ -92,7 +92,7 @@ if (isset($_POST['filecomment'])) {
                         comment = :new_comment, 
                         datetime = :now 
                         WHERE id = :id";
-                    $req = $bdd->prepare($sql);
+                    $req = $pdo->prepare($sql);
                     $req->execute(array(
                         'new_comment' => $expcomment,
                         'now' => date("Y-m-d H:i:s"),
@@ -103,7 +103,7 @@ if (isset($_POST['filecomment'])) {
                 } else { // Submitted comment is empty
                     // Get old comment
                     $sql = "SELECT comment FROM experiments_comments WHERE id = :id";
-                    $req = $bdd->prepare($sql);
+                    $req = $pdo->prepare($sql);
                     $req->execute(array(
                         'id' => $id
                     ));

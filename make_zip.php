@@ -68,7 +68,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
             // SQL to get info on the item we are zipping
             $sql = "SELECT * FROM $table WHERE id = $id LIMIT 1";
-            $req = $bdd->prepare($sql);
+            $req = $pdo->prepare($sql);
             $req->execute();
             $zipped = $req->fetch();
             $title = stripslashes($zipped['title']);
@@ -88,14 +88,14 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
             // SQL to get firstname + lastname
             $sql = "SELECT firstname,lastname FROM users WHERE userid = ".$_SESSION['userid'];
-            $req = $bdd->prepare($sql);
+            $req = $pdo->prepare($sql);
             $req->execute();
             $users = $req->fetch();
                 $firstname = $users['firstname'];
                 $lastname = $users['lastname'];
             // SQL to get tags
             $sql = "SELECT tag FROM ".$table."_tags WHERE item_id = $id";
-            $req = $bdd->prepare($sql);
+            $req = $pdo->prepare($sql);
             $req->execute();
             $tags = null;
             while ($data = $req->fetch()) {
@@ -104,7 +104,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
             // SQL to get filesattached
             $sql = "SELECT * FROM uploads WHERE item_id = ".$id;
-            $req = $bdd->prepare($sql);
+            $req = $pdo->prepare($sql);
             $req->execute();
             $real_name = array();
             $long_name = array();
@@ -163,7 +163,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             if ($table === 'experiments') {
                 // has links ?
                 $link_sql = "SELECT * FROM experiments_links WHERE item_id = ".$id;
-                $link_req = $bdd->prepare($link_sql);
+                $link_req = $pdo->prepare($link_sql);
                 $link_req->execute();
                 while ($link_data = $link_req->fetch()) {
                     $link_id[] = $link_data['link_id'];
@@ -180,7 +180,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                     for ($j=0; $j<$linknb; $j++) {
                         // get title and type of the item linked
                         $sql = "SELECT * FROM items WHERE id = :id";
-                        $req = $bdd->prepare($sql);
+                        $req = $pdo->prepare($sql);
                         $req->execute(array(
                             'id' => $link_id[$j]
                         ));

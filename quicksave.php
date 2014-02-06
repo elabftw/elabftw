@@ -33,7 +33,7 @@ if (isset($_POST['status'])) {
         SET status = :status 
         WHERE userid = :userid 
         AND id = :id";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $result = $req->execute(array(
         'status' => $status,
         'userid' => $_SESSION['userid'],
@@ -48,7 +48,7 @@ if (isset($_POST['status'])) {
         SET visibility = :visibility 
         WHERE userid = :userid 
         AND id = :id";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $result = $req->execute(array(
         'visibility' => $visibility,
         'userid' => $_SESSION['userid'],
@@ -73,7 +73,7 @@ if (isset($_POST['status'])) {
             SET title = :title, date = :date, body = :body
             WHERE userid = :userid 
             AND id = :id";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $result = $req->execute(array(
         'title' => $title,
         'date' => $date,
@@ -86,7 +86,7 @@ if (isset($_POST['status'])) {
         $sql = "UPDATE items 
             SET title = :title, date = :date, body = :body
             WHERE id = :id";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $result = $req->execute(array(
             'title' => $title,
             'date' => $date,

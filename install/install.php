@@ -53,7 +53,7 @@ if (isset($_POST['db_password']) && !empty($_POST['db_password'])) {
 try
 {
     $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-    $bdd = new PDO('mysql:host='.$db_host.';dbname='.$db_name, $db_user, $db_password, $pdo_options);
+    $pdo = new PDO('mysql:host='.$db_host.';dbname='.$db_name, $db_user, $db_password, $pdo_options);
 }
 catch(Exception $e)
 {
@@ -80,7 +80,7 @@ $sql = "INSERT INTO config (conf_name, conf_value) VALUES
     ('deletable_xp', '1'),
     ('login_tries', '5'),
     ('ban_time', '60');";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 
 // BUILD CONFIG FILE

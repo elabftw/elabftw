@@ -52,7 +52,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         // SQL
         //$sql = "SELECT * FROM :table WHERE id = :id";
         $sql = "SELECT * FROM $table WHERE id = $id";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute();
         /*
         $req->execute(array(

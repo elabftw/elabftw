@@ -35,7 +35,7 @@ if (isset($_POST['star']) &&
     is_pos_int($_POST['item_id'])) {
 
     $sql = 'UPDATE items SET rating = :rating WHERE id = :id';
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->bindParam(':rating', $_POST['star'], PDO::PARAM_INT);
     $req->bindParam(':id', $_POST['item_id'], PDO::PARAM_INT);
     $req->execute();

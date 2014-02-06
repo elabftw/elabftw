@@ -73,7 +73,7 @@ if ($errflag) {
         body = :body, 
         userid = :userid 
         WHERE id = :id";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $result = $req->execute(array(
     'title' => $title,
     'date' => $date,

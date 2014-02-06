@@ -43,7 +43,7 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
 
 // Do we have can_lock set to 1 ?
 $sql = "SELECT can_lock FROM users WHERE userid = :userid";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute(array(
     'userid' => $_SESSION['userid']
 ));
@@ -53,7 +53,7 @@ $can_lock = $req->fetchColumn(); // can be 0 or 1
 if ($can_lock === 0 && $action === 1) {
     // Is it his own XP ?
     $sql = "SELECT userid FROM experiments WHERE id = :id";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute(array(
         'id' => $id
     ));
@@ -71,7 +71,7 @@ if ($can_lock === 0 && $action === 1) {
 // check who locked it for unlock purpose
 if ($action === 0) {
     $sql = "SELECT lockedby FROM experiments WHERE id = :id";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute(array(
         'id' => $id
     ));
@@ -79,7 +79,7 @@ if ($action === 0) {
     if ($lockedby != $_SESSION['userid']) {
         // Get the first name of the locker to show in error message
         $sql = "SELECT firstname FROM users WHERE userid = :userid";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute(array(
             'userid' => $lockedby
         ));
@@ -98,7 +98,7 @@ switch($_GET['type']) {
     case 'experiments':
 
         $sql = "UPDATE experiments SET locked = :action, lockedby = :lockedby WHERE id = :id";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $result = $req->execute(array(
             'action' => $action,
             'lockedby' => $_SESSION['userid'],
@@ -115,7 +115,7 @@ switch($_GET['type']) {
     case 'items':
 
         $sql = "UPDATE items SET locked = :action WHERE id = :id";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $result = $req->execute(array(
             'action' => $action,
             'id' => $id

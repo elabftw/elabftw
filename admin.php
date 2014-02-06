@@ -42,7 +42,7 @@ $formKey = new formKey();
 <?php
 // SQL to get all unvalidated users
 $sql = "SELECT userid, lastname, firstname, email FROM users WHERE validated = 0";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 $count = $req->rowCount();
 // only show the frame if there is some users to validate
@@ -161,7 +161,7 @@ if ($count > 0) {
 <?php
 // SQL to get all users
 $sql = "SELECT * FROM users";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 while ($users = $req->fetch()) {
     ?>
@@ -237,7 +237,7 @@ while ($users = $req->fetch()) {
 <?php
 // SQL to get all items type
 $sql = "SELECT * from items_types";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 while ($items_types = $req->fetch()) {
     ?>

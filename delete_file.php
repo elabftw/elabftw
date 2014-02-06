@@ -34,14 +34,14 @@ if (isset($_GET['id']) && is_pos_int($_GET['id'])) {
 if ($_GET['type'] === 'experiments') {
 // Check file id is owned by connected user
     $sql = "SELECT userid, real_name, long_name, item_id FROM uploads WHERE id = :id";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute(array(
         'id' => $id));
     $data = $req->fetch();
     if ($data['userid'] == $_SESSION['userid']) {
         // Good to go -> DELETE FILE
         $sql = "DELETE FROM uploads WHERE id = ".$id;
-        $reqdel = $bdd->prepare($sql);
+        $reqdel = $pdo->prepare($sql);
         $reqdel->execute();
         $reqdel->closeCursor();
         $filepath = 'uploads/'.$data['long_name'];
@@ -65,7 +65,7 @@ if ($_GET['type'] === 'experiments') {
 } elseif ($_GET['type'] === 'database') {
     // Get realname
     $sql = "SELECT real_name, long_name, item_id FROM uploads WHERE id = ".$id;
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
     $data = $req->fetch();
     // Delete file
@@ -75,7 +75,7 @@ if ($_GET['type'] === 'experiments') {
     // Delete SQL entry (and verify that the type is database),
     // to avoid someone deleting files saying it's DB whereas it's exp
     $sql = "DELETE FROM uploads WHERE id = ".$id." AND type = 'database'";
-    $reqdel = $bdd->prepare($sql);
+    $reqdel = $pdo->prepare($sql);
     $reqdel->execute();
 
     // Redirect to the viewDB

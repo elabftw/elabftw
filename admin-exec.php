@@ -43,14 +43,14 @@ $errflag = false;
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
     // sql to validate users
     $sql = "UPDATE users SET validated = 1 WHERE userid = :userid";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     // check we only have int in validate array
     if (!filter_var_array($_POST['validate'], FILTER_VALIDATE_INT)) {
         die();
     }
     // sql to get email of the user
     $sql_email = "SELECT email FROM users WHERE userid = :userid";
-    $req_email = $bdd->prepare($sql_email);
+    $req_email = $pdo->prepare($sql_email);
     foreach ($_POST['validate'] as $user) {
         $req->execute(array(
             'userid' => $user
@@ -177,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['lab_name'])) {
     $values = array();
     foreach ($updates as $name => $value) {
         $sql = "UPDATE config SET conf_value = '".$value."' WHERE conf_name = '".$name."';";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $result = $req->execute();
     }
     if ($result) {
@@ -236,7 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
             $passwordHash = hash("sha512", $salt.$_POST['new_password']);
 
             $sql = "UPDATE users SET password = :password, salt = :salt WHERE userid = :userid";
-            $req = $bdd->prepare($sql);
+            $req = $pdo->prepare($sql);
             $result = $req->execute(array(
                 'userid' => $userid,
                 'password' => $passwordHash,
@@ -263,7 +263,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
         can_lock = :can_lock,
         validated = :validated
         WHERE userid = :userid";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $result = $req->execute(array(
         'firstname' => $firstname,
         'lastname' => $lastname,
@@ -302,7 +302,7 @@ if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
         bgcolor = :bgcolor,
         template = :template
         WHERE id = :id";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $result = $req->execute(array(
         'name' => $item_type_name,
         'bgcolor' => $item_type_bgcolor,
@@ -328,7 +328,7 @@ if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
     $item_type_bgcolor = filter_var(substr($_POST['new_item_type_bgcolor'], 1, 6), FILTER_SANITIZE_STRING);
     $item_type_template = check_body($_POST['new_item_type_template']);
     $sql = "INSERT INTO items_types(name, bgcolor, template) VALUES(:name, :bgcolor, :template)";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $result = $req->execute(array(
         'name' => $item_type_name,
         'bgcolor' => $item_type_bgcolor,
@@ -368,7 +368,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     }
     // look which user has this email address
     $sql = "SELECT userid FROM users WHERE email LIKE :email";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute(array(
         'email' => $email
     ));
@@ -377,17 +377,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
 
     // DELETE USER
     $sql = "DELETE FROM users WHERE userid = ".$userid;
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
     $sql = "DELETE FROM experiments_tags WHERE userid = ".$userid;
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
     $sql = "DELETE FROM experiments WHERE userid = ".$userid;
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
     // get all filenames
     $sql = "SELECT long_name FROM uploads WHERE userid = :userid AND type = :type";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute(array(
         'userid' => $userid,
         'type' => 'exp'
@@ -398,7 +398,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
         unlink($filepath);
     }
     $sql = "DELETE FROM uploads WHERE userid = ".$userid;
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
     $infos_arr[] = 'Everything was purged successfully.';
     $_SESSION['infos'] = $infos_arr;

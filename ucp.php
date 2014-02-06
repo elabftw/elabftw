@@ -30,7 +30,7 @@ require_once('inc/menu.php');
 require_once('inc/info_box.php');
 // SQL for UCP
 $sql = "SELECT username, email, firstname, lastname, phone, cellphone, skype, website FROM users WHERE userid = ".$_SESSION['userid'];
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 $users = $req->fetch();
 
@@ -145,7 +145,7 @@ $users = $req->fetch();
         <div id='tpl'>
         <?php // SQL TO GET TEMPLATES
         $sql = "SELECT id, body, name FROM experiments_templates WHERE userid = ".$_SESSION['userid'];
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute();
         echo "<ul>";
         // tabs titles

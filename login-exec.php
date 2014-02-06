@@ -70,7 +70,7 @@ if ($errflag) {
 // SQL for verification + actual login with cookies
 // Get salt
 $sql = "SELECT salt FROM users WHERE username='$username'";
-$result = $bdd->prepare($sql);
+$result = $pdo->prepare($sql);
 $result->execute();
 $data = $result->fetch();
 $salt = $data['salt'];
@@ -83,7 +83,7 @@ if (get_config('admin_validate') == 1) {
 } else {
     $sql = "SELECT * FROM users WHERE username='$username' AND password='$passwordHash'";
 }
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $result = $req->execute();
 $numrows = $req->rowCount();
 //Check whether the query was successful or not
@@ -121,7 +121,7 @@ if ($result) {
         setcookie('path', dirname(__FILE__), time() + 60*60*24*30, null, null, true, true);
         // Update the token in SQL
         $sql = "UPDATE users SET token = :token WHERE userid = :userid";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute(array(
             'token' => $token,
             'userid' => $data['userid']

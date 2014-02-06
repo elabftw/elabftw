@@ -47,7 +47,7 @@ if (isset($_POST['email'])) {
     if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
         // Get associated userid
         $sql = "SELECT userid,username FROM users WHERE email = :email";
-        $result = $bdd->prepare($sql);
+        $result = $pdo->prepare($sql);
         $result->execute(array(
         'email' => $email));
         $data = $result->fetch();

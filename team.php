@@ -39,7 +39,7 @@ require_once('inc/info_box.php');
 <div id='team-1'>
 <?php // SQL to get members info
 $sql = "SELECT * FROM users WHERE validated = 1";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 echo "<ul>";
 while ($data = $req->fetch()) {
@@ -68,11 +68,11 @@ echo "</ul>";
 // show stats about eLabFTW
 // number of experiments total
 $sql_exp_total = 'SELECT * FROM experiments';
-$req_exp_total = $bdd->prepare($sql_exp_total);
+$req_exp_total = $pdo->prepare($sql_exp_total);
 $req_exp_total->execute();
 // number of items total
 $sql_db_total = 'SELECT * FROM items';
-$req_db_total = $bdd->prepare($sql_db_total);
+$req_db_total = $pdo->prepare($sql_db_total);
 $req_db_total->execute();
 ?>
     <p>There is a total of <?php echo $req_exp_total->rowCount() ;?> experiments.</p>

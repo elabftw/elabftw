@@ -46,7 +46,7 @@ if ($type === 'experiments') {
     if (isset($_GET['tpl']) && is_pos_int($_GET['tpl'])) {
         // SQL to get template
         $sql = "SELECT name, body FROM experiments_templates WHERE id = :id";
-        $get_tpl = $bdd->prepare($sql);
+        $get_tpl = $pdo->prepare($sql);
         $get_tpl->execute(array(
             'id' => $_GET['tpl']
         ));
@@ -62,7 +62,7 @@ if ($type === 'experiments') {
 
     // SQL for create experiments
     $sql = "INSERT INTO experiments(title, date, body, status, elabid, visibility, userid) VALUES(:title, :date, :body, :status, :elabid, :visibility, :userid)";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $result = $req->execute(array(
         'title' => $title,
         'date' => kdate(),
@@ -75,7 +75,7 @@ if ($type === 'experiments') {
 } else { // create item for DB
     // SQL to get template
     $sql = "SELECT template FROM items_types WHERE id = :id";
-    $get_tpl = $bdd->prepare($sql);
+    $get_tpl = $pdo->prepare($sql);
     $get_tpl->execute(array(
         'id' => $type
     ));
@@ -83,7 +83,7 @@ if ($type === 'experiments') {
 
     // SQL for create DB item
     $sql = "INSERT INTO items(title, date, body, userid, type) VALUES(:title, :date, :body, :userid, :type)";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $result = $req->execute(array(
         'title' => 'Untitled',
         'date' => kdate(),
@@ -99,7 +99,7 @@ if ($type === 'experiments') {
 } else {
     $sql = "SELECT id FROM items WHERE userid = :userid ORDER BY id DESC LIMIT 0,1";
 }
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->bindParam(':userid', $_SESSION['userid']);
 $req->execute();
 $data = $req->fetch();

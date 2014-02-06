@@ -5,10 +5,10 @@
 //
 
 function add_field($table, $field, $params, $added, $not_added) {
-    global $bdd;
+    global $pdo;
     // first test if it's here already
     $sql = "SHOW COLUMNS FROM $table";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
     $field_is_here = false;
     while ($show = $req->fetch()) {
@@ -19,7 +19,7 @@ function add_field($table, $field, $params, $added, $not_added) {
     // add field if it's not here
     if (!$field_is_here) {
         $sql = "ALTER TABLE $table ADD $field $params";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $result = $req->execute();
 
         if($result) {
@@ -52,7 +52,7 @@ add_field('experiments', 'elabid', 'VARCHAR(255) NOT NULL', ">>> Experiments no
 // ADD elabid for experiments without it
 // get id of experiments with empty elabid
 $sql = "SELECT id from experiments WHERE elabid LIKE ''";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 // array to store the id
 $id_arr = array();
@@ -62,7 +62,7 @@ while ($get_id = $req->fetch()) {
 foreach($id_arr as $id) {
     // get date
     $sql = "SELECT date from experiments WHERE id = :id";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute(array(
         'id' => $id
     ));
@@ -72,7 +72,7 @@ foreach($id_arr as $id) {
     $elabid = $date."-".sha1(uniqid($date, true));
     // add elabid
     $sql = "UPDATE experiments SET elabid=:elabid WHERE id=:current_id";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $result = $req->execute(array(
         'elabid' => $elabid,
         'current_id' => $id
@@ -89,7 +89,7 @@ add_field('experiments', 'locked', "TINYINT(1) UNSIGNED NOT NULL DEFAULT '0'", "
 
 // items_type :
 $sql = "SHOW TABLES";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 $test = $req->fetch();
 $test_arr = array();
@@ -110,7 +110,7 @@ if(in_array('items_types',$test_arr)) {
         `tags` TEXT NULL,
         PRIMARY KEY ( `id` )
     ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
-    $req = $bdd->prepare($create_sql);
+    $req = $pdo->prepare($create_sql);
     $result = $req->execute();
     if($result) {
         echo 'Table items_types successfully created.\n';
@@ -121,7 +121,7 @@ if(in_array('items_types',$test_arr)) {
     // Transform all ant => 1, pla => 2, pro => 3
     // get id of items type ant
     $sql = "SELECT id from items WHERE type LIKE 'ant'";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
     // array to store the id
     $id_arr = array();
@@ -131,7 +131,7 @@ if(in_array('items_types',$test_arr)) {
     foreach($id_arr as $id) {
         // change value
         $sql = "UPDATE items SET type=:type WHERE id=:current_id";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $result = $req->execute(array(
             'type' => '1',
             'current_id' => $id
@@ -144,7 +144,7 @@ if(in_array('items_types',$test_arr)) {
     }
     // get id of items type pla
     $sql = "SELECT id from items WHERE type LIKE 'pla'";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
     // array to store the id
     $id_arr = array();
@@ -154,7 +154,7 @@ if(in_array('items_types',$test_arr)) {
     foreach($id_arr as $id) {
         // change value
         $sql = "UPDATE items SET type=:type WHERE id=:current_id";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $result = $req->execute(array(
             'type' => '2',
             'current_id' => $id
@@ -167,7 +167,7 @@ if(in_array('items_types',$test_arr)) {
     }
     // get id of items type pro
     $sql = "SELECT id from items WHERE type LIKE 'pro'";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
     // array to store the id
     $id_arr = array();
@@ -177,7 +177,7 @@ if(in_array('items_types',$test_arr)) {
     foreach($id_arr as $id) {
         // change value
         $sql = "UPDATE items SET type=:type WHERE id=:current_id";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $result = $req->execute(array(
             'type' => '3',
             'current_id' => $id
@@ -192,7 +192,7 @@ if(in_array('items_types',$test_arr)) {
 
     // Change type of type (string => int) in items table and fill table items_types
     $sql = "ALTER TABLE `items` CHANGE `type` `type` INT UNSIGNED NOT NULL;INSERT INTO `items_types` (`id`, `name`, `bgcolor`, `template`, `tags`) VALUES (NULL, 'Antibody', '2cff00', NULL, NULL);INSERT INTO `items_types` (`id`, `name`, `bgcolor`, `template`, `tags`) VALUES (NULL, 'Plasmid', '004bff', NULL, NULL);INSERT INTO `items_types` (`id`, `name`, `bgcolor`, `template`, `tags`) VALUES (NULL, 'Protocol', 'ff0000', NULL, NULL);";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $result = $req->execute();
     if($result) {
         echo "Database successfully updated with default values.\n";
@@ -206,14 +206,14 @@ if(in_array('items_types',$test_arr)) {
 // change outcome in status
 // check if it exists first
 $sql = "SELECT * from experiments";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 $test = $req->fetch();
 if(isset($test['status'])) {
     echo "Column 'status' already exists. Nothing to do.\n";
 } else {
     $sql = "ALTER TABLE `experiments` CHANGE `outcome` `status` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $result = $req->execute();
     if($result) {
         echo "Outcome is now status.\n";
@@ -227,14 +227,14 @@ if(isset($test['status'])) {
 add_field('experiments', 'visibility', "VARCHAR(255) NOT NULL", ">>> Experiments now have a visibility switch.\n", "Column 'visibility' already exists. Nothing to do.\n");
 // put visibility = team everywhere
 $sql = "UPDATE `experiments` SET `visibility` = 'team'";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $result = $req->execute();
 
 
 // remove unused items_templates table
 echo "Table items_templates...";
 $sql = "DROP TABLE IF EXISTS `items_templates`";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $result = $req->execute();
 if ($result) {
     echo "Nothing to do.\n";
@@ -244,12 +244,12 @@ if ($result) {
 // remove unused users table
 echo "Unused users columns...";
 $sql = "SELECT * from users";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 $test = $req->fetch();
 if(isset($test['is_jc_resp'])) {
     $sql = "ALTER TABLE `users` DROP `is_jc_resp`,DROP `is_pi`, DROP `journal`, DROP `last_jc`";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $result = $req->execute();
     if($result) {
         echo "Removed unused fields in users table.\n";
@@ -280,12 +280,12 @@ add_field('items', 'locked', "TINYINT(1) UNSIGNED NOT NULL DEFAULT '0'", ">>> It
 // TRANSFORM DATES IN NEW FORMAT
 // first we check if we need to do it
 $sql = "SELECT `date` FROM `experiments` WHERE CHAR_LENGTH(`date`) < 8";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 // if some dates are less than 8 char we make the update
 if ($req->rowCount() > 0) {
     $sql = "UPDATE `experiments` SET date = date + 20000000 WHERE CHAR_LENGTH(`date`) = 6";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
 
     echo ">>> Dates are now YYYYMMDD in experiments.\n";
@@ -296,11 +296,11 @@ if ($req->rowCount() > 0) {
 
 // same for items
 $sql = "SELECT `date` FROM `items` WHERE CHAR_LENGTH(`date`) < 8";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 if ($req->rowCount() > 0) {
     $sql = "UPDATE `items` SET date = date + 20000000 WHERE CHAR_LENGTH(`date`) = 6";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
     echo ">>> Dates are now YYYYMMDD in the database.\n";
 
@@ -326,7 +326,7 @@ if (defined('DELETABLE_XP'))  {
 
 // ADD experiments_comments table
 $sql = "SHOW TABLES";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 $test = $req->fetch();
 $test_arr = array();
@@ -347,7 +347,7 @@ if(in_array('experiments_comments',$test_arr)) {
       `userid` int(11) NOT NULL,
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;";
-    $req = $bdd->prepare($create_sql);
+    $req = $pdo->prepare($create_sql);
     $result = $req->execute();
     if($result) {
         echo ">>> You can now leave a comment on an experiment !\n";
@@ -359,7 +359,7 @@ if(in_array('experiments_comments',$test_arr)) {
 // ADD lockedby field in experiments table
     // first test if it's here already
     $sql = "SHOW COLUMNS FROM experiments";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
     $field_is_here = false;
     while ($show = $req->fetch()) {
@@ -370,12 +370,12 @@ if(in_array('experiments_comments',$test_arr)) {
     // add field if it's not here
     if (!$field_is_here) {
         $sql = "ALTER TABLE experiments ADD lockedby INT UNSIGNED NULL AFTER locked";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $result = $req->execute();
         // update the lockedby field and put userid of experiment
         // to avoid users with already locked experiments being locked out
         $sql = "UPDATE experiments SET lockedby = userid WHERE locked = 1";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute();
 
         if($result) {
@@ -395,7 +395,7 @@ add_field ('users', 'can_lock', "INT(1) NOT NULL DEFAULT '0' AFTER is_admin", ">
 // remove unused tag column of items_types
 // first test if it's here already
 $sql = "SHOW COLUMNS FROM `items_types`";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 $column_is_here = false;
 while ($show = $req->fetch()) {
@@ -405,7 +405,7 @@ while ($show = $req->fetch()) {
 }
 if ($column_is_here) {
     $sql = "ALTER TABLE `items_types` DROP `tags`";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $result = $req->execute();
 
     if($result) {
@@ -424,7 +424,7 @@ if (file_exists('TODO')) {
 
 // CREATE table banned_users
 $sql = "SHOW TABLES";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 $table_is_here = false;
 while ($show = $req->fetch()) {
@@ -440,7 +440,7 @@ if (!$table_is_here) {
       `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
-    $req = $bdd->prepare($create_sql);
+    $req = $pdo->prepare($create_sql);
     $result = $req->execute();
     if($result) {
         echo "Table 'banned_users' successfully created.\n";
@@ -453,7 +453,7 @@ if (!$table_is_here) {
 
 // CREATE table config
 $sql = "SHOW TABLES";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 $table_is_here = false;
 while ($show = $req->fetch()) {
@@ -468,7 +468,7 @@ if (!$table_is_here) {
         `conf_value` TEXT NULL,
       PRIMARY KEY (`conf_name`)
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
-    $req = $bdd->prepare($create_sql);
+    $req = $pdo->prepare($create_sql);
     $result1 = $req->execute();
 
     // Populate config table
@@ -488,7 +488,7 @@ if (!$table_is_here) {
         ('deletable_xp', '".DELETABLE_XP."'),
         ('login_tries', '5'),
         ('ban_time', '60');";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $result2 = $req->execute();
 
     if($result && $result2) {

@@ -42,7 +42,7 @@ if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
 
 // SQL for editXP
 $sql = "SELECT * FROM experiments WHERE id = ".$id;
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 $data = $req->fetch();
 
@@ -72,7 +72,7 @@ if ($data['locked'] == 1) {
 <span id='tags_div'>
 <?php
 $sql = "SELECT id, tag FROM experiments_tags WHERE item_id = ".$id;
-$tagreq = $bdd->prepare($sql);
+$tagreq = $pdo->prepare($sql);
 $tagreq->execute();
 // DISPLAY TAGS
 while($tags = $tagreq->fetch()){
@@ -144,7 +144,7 @@ require_once 'inc/display_file.php';
 // DISPLAY LINKED ITEMS
 $sql = "SELECT * FROM experiments_links LEFT JOIN items ON (experiments_links.link_id = items.id) 
     WHERE experiments_links.item_id = :id";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute(array(
     'id' => $id
 ));
@@ -187,7 +187,7 @@ $(function() {
 		var availableTags = [
 <?php // get all user's tag for autocomplete
 $sql = "SELECT DISTINCT tag FROM experiments_tags WHERE userid = :userid ORDER BY id DESC LIMIT 500";
-$getalltags = $bdd->prepare($sql);
+$getalltags = $pdo->prepare($sql);
 $getalltags->execute(array(
     'userid' => $_SESSION['userid']
 ));
@@ -243,7 +243,7 @@ $(function() {
 		var availableLinks = [
 <?php // get all links for autocomplete
 $sql = "SELECT title, id, type FROM items";
-$getalllinks = $bdd->prepare($sql);
+$getalllinks = $pdo->prepare($sql);
 $getalllinks->execute();
 while ($link = $getalllinks->fetch()){
     // html_entity_decode is needed to convert the quotes

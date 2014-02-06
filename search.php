@@ -39,7 +39,7 @@ require_once('inc/info_box.php');
                 <option value='experiments'>Experiments</option>
                 <?php // Database items types
                 $sql = "SELECT * FROM items_types";
-                $req = $bdd->prepare($sql);
+                $req = $pdo->prepare($sql);
                 $req->execute();
                 while ($items_types = $req->fetch()) {
                     echo "<option value='".$items_types['id']."'";
@@ -66,7 +66,7 @@ require_once('inc/info_box.php');
             <option value=''>Select a member</option>
             <?php
             $users_sql = "SELECT userid, firstname, lastname FROM users";
-            $users_req = $bdd->prepare($users_sql);
+            $users_req = $pdo->prepare($users_sql);
             $users_req->execute();
             while ($users = $users_req->fetch()) {
                 echo "<option value='".$users['userid']."'";
@@ -251,7 +251,7 @@ if (isset($_GET)) {
 
             }
 
-            $req = $bdd->prepare($sql);
+            $req = $pdo->prepare($sql);
             // if there is a selection on 'owned by', we use the owner id as parameter
             if ($owner_search) {
                 $req->execute(array(
@@ -318,7 +318,7 @@ if (isset($_GET)) {
             $sql = "SELECT * FROM items WHERE type = :type AND title LIKE '%$title%' AND body LIKE '%$body%' AND rating LIKE '%$rating%'";
             }
 
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute(array(
             'type' => $_GET['type']
         ));

@@ -36,7 +36,7 @@ if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
 
 // SQL for viewXP
 $sql = "SELECT * FROM experiments WHERE id = ".$id;
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 // got results ?
 $row_count = $req->rowCount();
@@ -105,7 +105,7 @@ require_once 'inc/display_file.php';
 // DISPLAY LINKED ITEMS
 $sql = "SELECT * FROM experiments_links LEFT JOIN items ON (experiments_links.link_id = items.id) 
     WHERE experiments_links.item_id = :id";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute(array(
     'id' => $id
 ));
@@ -117,7 +117,7 @@ if ($req->rowcount() > 0) {
     while ($links = $req->fetch()) {
         // SQL to get title
         $linksql = "SELECT id, title, type FROM items WHERE id = :link_id";
-        $linkreq = $bdd->prepare($linksql);
+        $linkreq = $pdo->prepare($linksql);
         $linkreq->execute(array(
             'link_id' => $links['link_id']
         ));
@@ -147,7 +147,7 @@ echo "</section>";
 // check if there is something to display first
 // get all comments, and infos on the commenter associated with this experiment
 $sql = "SELECT * FROM experiments_comments LEFT JOIN users ON (experiments_comments.userid = users.userid) WHERE exp_id = :id ORDER BY experiments_comments.datetime DESC";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute(array(
     'id' => $id
 ));

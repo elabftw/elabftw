@@ -76,7 +76,7 @@ if ($errflag) {
         status = :status
         WHERE userid = :userid 
         AND id = :id";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $result = $req->execute(array(
     'title' => $title,
     'date' => $date,

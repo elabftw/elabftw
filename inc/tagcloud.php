@@ -27,7 +27,7 @@ echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/cloud.png' alt='' /> 
 echo "<div id='tagcloud'>";
 // 1. Create an array with tag -> count
 $sql = "SELECT tag, COUNT(id) AS total FROM experiments_tags WHERE userid = ".$_SESSION['userid']." GROUP BY tag ORDER BY total DESC";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 $full = $req->fetchAll();
 $count = count($full);
@@ -40,7 +40,7 @@ if ($count > 10) {
 
     // 2nd SQL to get the tags unsorted
     $sql = "SELECT tag, COUNT(id) AS total FROM experiments_tags WHERE userid = ".$_SESSION['userid']." GROUP BY tag";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute();
     $spread = $maxoccur - $minoccur;
     if ($spread === 0){

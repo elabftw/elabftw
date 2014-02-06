@@ -33,7 +33,7 @@ if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
 
 // SQL for viewDB
 $sql = "SELECT * FROM items WHERE id = :id";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute(array(
     'id' => $id
 ));
@@ -86,7 +86,7 @@ if ($data['body'] != ''){
 }
 // Get userinfo
 $sql = "SELECT firstname, lastname FROM users WHERE userid = :userid";
-$requser = $bdd->prepare($sql);
+$requser = $pdo->prepare($sql);
 $requser->execute(array(
     'userid' => $data['userid']
 ));

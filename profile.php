@@ -29,14 +29,14 @@ require_once 'inc/head.php';
 require_once 'inc/menu.php';
 // SQL to get number of experiments
 $sql = "SELECT COUNT(*) FROM experiments WHERE userid = ".$_SESSION['userid'];
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 
 $count = $req->fetch();
 
 // SQL for profile
 $sql = "SELECT * FROM users WHERE userid = ".$_SESSION['userid'];
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 $data = $req->fetch();
 

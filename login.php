@@ -46,7 +46,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 
 // Check if we are banned after too much failed login attempts
 $sql = "SELECT user_infos FROM banned_users WHERE time > :ban_time";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute(array(
     ':ban_time' => date("Y-m-d H:i:s", strtotime('-'.get_config('ban_time').' minutes'))
 ));
@@ -74,7 +74,7 @@ if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] >= get_con
     $user_infos = md5($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']);
     // add the user to the banned list
     $sql = "INSERT INTO banned_users (user_infos) VALUES (:user_infos)";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute(array(
         'user_infos' => $user_infos
     ));

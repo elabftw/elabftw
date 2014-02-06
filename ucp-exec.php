@@ -36,14 +36,14 @@ if (isset($_POST['main'])){
 // 1. Check that we were given a good password
 // Get salt
 $sql = "SELECT salt FROM users WHERE userid=".$_SESSION['userid'];
-$result = $bdd->prepare($sql);
+$result = $pdo->prepare($sql);
 $result->execute();
 $data = $result->fetch();
 $salt = $data['salt'];
 // Create hash
 $passwordHash = hash("sha512", $salt.$_POST['currpass']);
 $sql = "SELECT * FROM users WHERE userid = :userid AND password = :password";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $result = $req->execute(array(
     'userid' => $_SESSION['userid'],
     'password' => $passwordHash));
@@ -73,7 +73,7 @@ if( ($result) && ($numrows === 1) ) {
             $sql = "UPDATE users SET salt = :salt, 
                 password = :password 
                 WHERE userid = :userid";
-            $req = $bdd->prepare($sql);
+            $req = $pdo->prepare($sql);
             $result = $req->execute(array(
                 'salt' => $salt,
                 'password' => $passwordHash,
@@ -91,7 +91,7 @@ if( ($result) && ($numrows === 1) ) {
         $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
         // Check for duplicate username in DB
         $sql = "SELECT * FROM users WHERE username='$username'";
-        $result = $bdd->query($sql);
+        $result = $pdo->query($sql);
         $numrows = $result->rowCount();
         $data = $result->fetch();
         if($result) {
@@ -130,7 +130,7 @@ if( ($result) && ($numrows === 1) ) {
         } else {
             // Check for duplicate email in DB
             $sql = "SELECT * FROM users WHERE email='$email'";
-            $result = $bdd->query($sql);
+            $result = $pdo->query($sql);
             $numrows = $result->rowCount(); 
             $data = $result->fetch();
             if($result) {
@@ -196,7 +196,7 @@ if( ($result) && ($numrows === 1) ) {
         skype = :skype,
         website = :website
         WHERE userid = :userid";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $result = $req->execute(array(
         'salt' => $salt,
         'password' => $passwordHash,
@@ -232,7 +232,7 @@ if (isset($_POST['theme']) && $_POST['theme'] != $_SESSION['prefs']['theme']) {
     }
     // SQL to update theme 
     $sql = "UPDATE users SET theme = :new_theme WHERE userid = ".$_SESSION['userid'];
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute(array(
         'new_theme' => $new_theme
     ));
@@ -253,7 +253,7 @@ if (isset($_POST['display']) && $_POST['display'] != $_SESSION['prefs']['display
     }
     // SQL to update display mode
     $sql = "UPDATE users SET display = :new_display WHERE userid = ".$_SESSION['userid'];
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute(array(
         'new_display' => $new_display
     ));
@@ -272,7 +272,7 @@ if (isset($_POST['order']) && $_POST['order'] != $_SESSION['prefs']['order']) {
     }
     // SQL to update order
     $sql = "UPDATE users SET order_by = :new_order WHERE userid = ".$_SESSION['userid'];
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute(array(
         'new_order' => $new_order
     ));
@@ -294,7 +294,7 @@ if (isset($_POST['sort']) && $_POST['sort'] != $_SESSION['prefs']['sort']) {
     }
     // SQL to update sort
     $sql = "UPDATE users SET sort_by = :new_sort WHERE userid = ".$_SESSION['userid'];
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute(array(
         'new_sort' => $new_sort
     ));
@@ -314,7 +314,7 @@ if (isset($_POST['limit']) && !empty($_POST['limit']) && $_POST['limit'] != $_SE
     $new_limit = filter_var($_POST['limit'], FILTER_VALIDATE_INT, $filter_options);
     // SQL to update limit
     $sql = "UPDATE users SET limit_nb = :new_limit WHERE userid = ".$_SESSION['userid'];
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute(array(
         'new_limit' => $new_limit
     ));
@@ -335,7 +335,7 @@ if (isset($_POST['new_tpl_form'])) {
         $tpl_name = filter_var($_POST['new_tpl_name'], FILTER_SANITIZE_STRING);
         $tpl_body = check_body($_POST['new_tpl_body']);
         $sql = "INSERT INTO experiments_templates(name, body, userid) VALUES(:name, :body, :userid)";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $result = $req->execute(array(
             'name' => $tpl_name,
             'body' => $tpl_body,
@@ -363,7 +363,7 @@ if (isset($_POST['tpl_form'])) {
     $new_tpl_body[] = filter_var($_POST['tpl_body'], FILTER_SANITIZE_STRING); 
     $new_tpl_name[] = filter_var($_POST['tpl_name'], FILTER_SANITIZE_STRING); 
     $sql = "UPDATE experiments_templates SET body = :body, name = :name WHERE userid = ".$_SESSION['userid']." AND id = :id";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     for ($i = 0; $i < count($_POST['tpl_body']); $i++) {
     $req->execute(array(
         'id' => $tpl_id[$i],
@@ -385,7 +385,7 @@ if (isset($_POST['shortcuts'])) {
     $new_sc_todo = substr($_POST['todo'], 0, 1);
     // SQL
     $sql = "UPDATE users SET sc_create = :new_sc_create, sc_edit = :new_sc_edit, sc_submit = :new_sc_submit, sc_todo = :new_sc_todo WHERE userid = ".$_SESSION['userid'];
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute(array(
         'new_sc_create' => $new_sc_create,
         'new_sc_edit' => $new_sc_edit,

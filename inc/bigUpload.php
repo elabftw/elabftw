@@ -176,14 +176,14 @@ class BigUpload
             try
             {
                 $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-                $bdd = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
+                $pdo = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
             }
             catch(Exception $e)
             {
                 die('Error : '.$e->getMessage());
             }
             $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type)";
-            $req = $bdd->prepare($sql);
+            $req = $pdo->prepare($sql);
             $result = $req->execute(array(
                 'real_name' => $realname,
                 'long_name' => $longname,

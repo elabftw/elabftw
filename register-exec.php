@@ -37,7 +37,7 @@ if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
     // Check for duplicate username in DB
     $sql = "SELECT * FROM users WHERE username='$username'";
-    $result = $bdd->query($sql);
+    $result = $pdo->query($sql);
     $numrows = $result->rowCount();
     if ($result) {
         if ($numrows > 0) {
@@ -75,7 +75,7 @@ if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
     } else {
         // Check for duplicate email in DB
         $sql = "SELECT * FROM users WHERE email='$email'";
-        $result = $bdd->query($sql);
+        $result = $pdo->query($sql);
         $numrows = $result->rowCount();
         if ($result) {
             if ($numrows > 0) {
@@ -128,7 +128,7 @@ if ($errflag) {
 $register_date = time();
 // If it's the first user, make him admin (just after the install process usually)
 $sql = "SELECT COUNT(*) FROM users WHERE is_admin = 1";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 $test = $req->fetch();
 // if there is no admin
@@ -147,7 +147,7 @@ if (get_config('admin_validate')  == 1 && $is_admin == 0) {
     $sql = "INSERT INTO users(username, firstname, lastname, email, password, salt, register_date, validated, is_admin) VALUES('$username', '$firstname', '$lastname', '$email', '$passwordHash', '$salt', '$register_date', '1', '$is_admin')";
 }
 
-$result = $bdd->exec($sql);
+$result = $pdo->exec($sql);
 //Check whether the query was successful or not
 if ($result) {
     $msg_arr = array();
@@ -156,7 +156,7 @@ if ($result) {
         require_once('lib/swift_required.php');
         // get email of the admin (there might be several admins, but we send only to the first one we find)
         $sql = "SELECT email FROM users WHERE is_admin = 1 LIMIT 1";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute();
         $admin = $req->fetch();
         // Create the message

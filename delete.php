@@ -54,21 +54,21 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
 
                 // delete the experiment
                 $sql = "DELETE FROM experiments WHERE id = :id";
-                $req = $bdd->prepare($sql);
+                $req = $pdo->prepare($sql);
                 $req->execute(array(
                     'id' => $id
                 ));
 
                 // delete associated tags
                 $sql = "DELETE FROM experiments_tags WHERE item_id = :id";
-                $req = $bdd->prepare($sql);
+                $req = $pdo->prepare($sql);
                 $req->execute(array(
                     'id' => $id
                 ));
 
                 // delete associated files
                 $sql = "DELETE FROM uploads WHERE item_id = :id AND type = :type";
-                $req = $bdd->prepare($sql);
+                $req = $pdo->prepare($sql);
                 $req->execute(array(
                     'id' => $id,
                     'type' => 'exp'
@@ -76,14 +76,14 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
 
                 // delete associated links
                 $delete_sql = "DELETE FROM experiments_links WHERE item_id = :item_id";
-                $delete_req = $bdd->prepare($delete_sql);
+                $delete_req = $pdo->prepare($delete_sql);
                 $result = $delete_req->execute(array(
                     'item_id' => $id
                 ));
 
                 // delete associated experiments comments
                 $sql = "DELETE FROM experiments_comments WHERE exp_id = :id";
-                $req = $bdd->prepare($sql);
+                $req = $pdo->prepare($sql);
                 $req->execute(array(
                     'id' => $id
                 ));
@@ -99,7 +99,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
         // DELETE EXPERIMENTS TEMPLATES
         case 'tpl':
             $delete_sql = "DELETE FROM experiments_templates WHERE id = :id";
-            $delete_req = $bdd->prepare($delete_sql);
+            $delete_req = $pdo->prepare($delete_sql);
             $result = $delete_req->execute(array(
                 'id' => $id
             ));
@@ -114,7 +114,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             // this is called by deleteThisAndReload
             // it reloads part of the page, so no need to put session['infos']
             $delete_sql = "DELETE FROM experiments_comments WHERE id = :id";
-            $delete_req = $bdd->prepare($delete_sql);
+            $delete_req = $pdo->prepare($delete_sql);
             $result = $delete_req->execute(array(
                 'id' => $id
             ));
@@ -127,21 +127,21 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
 
             // delete the database item
             $sql = "DELETE FROM items WHERE id = :id";
-            $req = $bdd->prepare($sql);
+            $req = $pdo->prepare($sql);
             $result[] = $req->execute(array(
                 'id' => $id
             ));
 
             // delete associated tags
             $sql = "DELETE FROM items_tags WHERE item_id = :id";
-            $req = $bdd->prepare($sql);
+            $req = $pdo->prepare($sql);
             $result[] = $req->execute(array(
                 'id' => $id
             ));
 
             // delete associated files
             $sql = "DELETE FROM uploads WHERE item_id = :id AND type = :type";
-            $req = $bdd->prepare($sql);
+            $req = $pdo->prepare($sql);
             $result[] = $req->execute(array(
                 'id' => $id,
                 'type' => 'database'
@@ -150,13 +150,13 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             // delete links of this item in experiments with this item linked
             // get all experiments with that item linked
             $sql = "SELECT id FROM experiments_links WHERE link_id = :link_id";
-            $req = $bdd->prepare($sql);
+            $req = $pdo->prepare($sql);
             $result[] = $req->execute(array(
                 'link_id' => $id
             ));
             while ($links = $req->fetch()) {
                 $delete_sql = "DELETE FROM experiments_links WHERE id=".$links['id'];
-                $delete_req = $bdd->prepare($delete_sql);
+                $delete_req = $pdo->prepare($delete_sql);
                 $result[] = $delete_req->execute();
             }
 
@@ -176,7 +176,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
         case 'item_type':
 
             $sql = "DELETE FROM items_types WHERE id = :id";
-            $req = $bdd->prepare($sql);
+            $req = $pdo->prepare($sql);
             $result = $req->execute(array(
                 'id' => $id
             ));
@@ -193,7 +193,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
         case 'link':
             if (is_owned_by_user($id, 'experiments', $_SESSION['userid'])) {
                 $delete_sql = "DELETE FROM experiments_links WHERE id= :id";
-                $delete_req = $bdd->prepare($delete_sql);
+                $delete_req = $pdo->prepare($delete_sql);
                 $result = $delete_req->execute(array(
                     'id' => $id
                 ));
@@ -215,7 +215,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             if (is_owned_by_user($item_id, 'experiments', $_SESSION['userid'])) {
 
                 $delete_sql = "DELETE FROM experiments_tags WHERE id = :id";
-                $delete_req = $bdd->prepare($delete_sql);
+                $delete_req = $pdo->prepare($delete_sql);
                 $delete_req->execute(array(
                     'id' => $id
                 ));
@@ -224,7 +224,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
 
         case 'itemtag':
             $delete_sql = "DELETE FROM items_tags WHERE id = :id";
-            $delete_req = $bdd->prepare($delete_sql);
+            $delete_req = $pdo->prepare($delete_sql);
             $delete_req->execute(array(
                 'id' => $id
             ));

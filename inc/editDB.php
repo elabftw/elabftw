@@ -42,7 +42,7 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
 
 // GET CONTENT
 $sql = "SELECT * FROM items WHERE id = ".$id;
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute();
 $data = $req->fetch();
 
@@ -64,7 +64,7 @@ if ($data['locked'] == 1) {
 <span id='tags_div'>
 <?php
 $sql = "SELECT id, tag FROM items_tags WHERE item_id = ".$id;
-$tagreq = $bdd->prepare($sql);
+$tagreq = $pdo->prepare($sql);
 $tagreq->execute();
 // DISPLAY TAGS
 while($tags = $tagreq->fetch()){
@@ -134,7 +134,7 @@ $(function() {
 		var availableTags = [
 <?php // get all user's tag for autocomplete
 $sql = "SELECT DISTINCT tag FROM items_tags ORDER BY id DESC LIMIT 500";
-$getalltags = $bdd->prepare($sql);
+$getalltags = $pdo->prepare($sql);
 $getalltags->execute();
 while ($tag = $getalltags->fetch()){
     echo "'".$tag[0]."',";

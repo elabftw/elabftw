@@ -36,7 +36,7 @@ $sql = "SELECT COUNT(id)
     FROM experiments 
     WHERE userid = :userid 
     AND status LIKE'".$status."'";
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->bindParam(':userid', $_SESSION['userid']);
 $req->execute();
 $count_arr[] = $req->fetch();

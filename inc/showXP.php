@@ -43,7 +43,7 @@ require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 <div class='toggle_container'><ul>
 <?php // SQL to get user's templates
 $sql = "SELECT id, name FROM experiments_templates WHERE userid = :userid";
-$tplreq = $bdd->prepare($sql);
+$tplreq = $pdo->prepare($sql);
 $tplreq->execute(array(
     'userid' => $_SESSION['userid']
 ));
@@ -80,7 +80,7 @@ if (isset($_GET['q'])) { // if there is a query
         // show only running XP
         $sql = "SELECT id FROM experiments 
         WHERE userid = :userid AND status = 'running' LIMIT 100";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute(array(
             'userid' => $_SESSION['userid']
         ));
@@ -134,7 +134,7 @@ if (isset($_GET['q'])) { // if there is a query
     // search in title date and body
     $sql = "SELECT item_id FROM experiments_links 
         WHERE link_id = :link_id LIMIT 100";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->execute(array(
         'link_id' => $item_id
     ));
@@ -181,7 +181,7 @@ if (isset($_GET['q'])) { // if there is a query
         $results_arr = array();
         $sql = "SELECT item_id FROM experiments_tags
         WHERE tag LIKE :tag";
-        $req = $bdd->prepare($sql);
+        $req = $pdo->prepare($sql);
         $req->execute(array(
             'tag' => $tag
         ));
@@ -231,7 +231,7 @@ if (isset($_GET['q'])) { // if there is a query
         WHERE userid = :userid 
         ORDER BY $order $sort 
         LIMIT 100";
-    $req = $bdd->prepare($sql);
+    $req = $pdo->prepare($sql);
     $req->bindParam(':userid', $_SESSION['userid']);
     $req->execute();
     $count = $req->rowCount();

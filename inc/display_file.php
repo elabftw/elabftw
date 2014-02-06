@@ -29,7 +29,7 @@ $type_arr = explode('.', basename($_SERVER['PHP_SELF']));
 $type = $type_arr[0];
 // Check that the item we view has attached files
 $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type"; 
-$req = $bdd->prepare($sql);
+$req = $pdo->prepare($sql);
 $req->execute(array(
     'id' => $id,
     'type' => $type

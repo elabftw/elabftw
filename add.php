@@ -46,12 +46,11 @@ switch ($_POST['type']) {
         if (strlen($tag) > 0 && is_owned_by_user($id, 'experiments', $_SESSION['userid'])) {
                 // SQL for addtag
                 $sql = "INSERT INTO experiments_tags (tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
-                $req = $bdd->prepare($sql);
-                $req->execute(array(
-                    'tag' => $tag,
-                    'item_id' => $id,
-                    'userid' => $_SESSION['userid']
-                ));
+                $req = $pdo->prepare($sql);
+                $req->bindParam(':tag', $tag, PDO::PARAM_STR);
+                $req->bindParam(':item_id', $_POST['item_id'], PDO::PARAM_INT);
+                $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
+                $req->execute();
         }
 
         break;
@@ -65,11 +64,10 @@ switch ($_POST['type']) {
         if (strlen($tag) > 0) {
             // SQL for add tag to database item
             $sql = "INSERT INTO items_tags (tag, item_id) VALUES(:tag, :item_id)";
-            $req = $bdd->prepare($sql);
-            $req->execute(array(
-                'tag' => $tag,
-                'item_id' => $id
-            ));
+            $req = $pdo->prepare($sql);
+            $req->bindParam(':tag', $tag, PDO::PARAM_STR);
+            $req->bindParam(':item_id', $_POST['item_id'], PDO::PARAM_INT);
+            $req->execute();
         }
 
         break;
@@ -82,11 +80,10 @@ switch ($_POST['type']) {
 
                 // SQL for addlink
                 $sql = "INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)";
-                $req = $bdd->prepare($sql);
-                $result = $req->execute(array(
-                    'item_id' => $id,
-                    'link_id' => $_POST['link_id'] // value is sanitized
-                ));
+                $req = $pdo->prepare($sql);
+                $req->bindParam(':item_id', $_POST['item_id'], PDO::PARAM_INT);
+                $req->bindParam(':link_id', $_POST['link_id'], PDO::PARAM_INT);
+                $result = $req->execute();
         }
         break;
 

@@ -79,11 +79,9 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 <?php
 if (get_config('debug') == 1) {
     echo "Session array : ";
-    print_r($_SESSION);
+    echo '<pre>'.var_dump($_SESSION).'</pre>';
     echo "<br />";
     echo "Cookie : ";
-    print_r($_COOKIE);
+    echo '<pre>'.var_dump($_COOKIE).'</pre>';
     echo "<br />";
 }
-?>
-

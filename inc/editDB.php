@@ -182,12 +182,12 @@ function addTagOnEnter(e){ // the argument here is the event (needed to detect w
 // STAR RATINGS
 function updateRating(rating) {
     // POST request
-    var jqxhr = $.post('star-rating.php', {
+    $.post('star-rating.php', {
         star: rating,
         item_id: <?php echo $id; ?>
     })
     // reload the div
-    .done(function () {
+    .success(function () {
         return false;
     })
 }

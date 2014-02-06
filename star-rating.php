@@ -23,18 +23,20 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-/* star-rating.php - for items rating */
-require_once('inc/common.php');
-if (isset($_POST['star']) && is_numeric($_POST['star'])) {
-    $rating = $_POST['star'];
-    $id = $_POST['item_id'];
-    $sql = "UPDATE items SET rating = :rating WHERE id = :id";
-    $req = $bdd->prepare($sql);
-    $result = $req->execute(array(
-        'rating' => $rating,
-        'id' => $id));
-    if(!$result) {
-        die('Error in SQL request. Contact admin');
-    }
-}
+/* star-rating.php - for items rating
+ * called from post request from editDB
+ */
 
+require_once 'inc/common.php';
+
+if (isset($_POST['star']) &&
+    isset($_POST['item_id']) &&
+    is_pos_int($_POST['star']) &&
+    is_pos_int($_POST['item_id'])) {
+
+    $sql = 'UPDATE items SET rating = :rating WHERE id = :id';
+    $req = $bdd->prepare($sql);
+    $req->bindParam(':rating', $_POST['star'], PDO::PARAM_INT);
+    $req->bindParam(':id', $_POST['item_id'], PDO::PARAM_INT);
+    $req->execute();
+}

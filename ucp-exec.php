@@ -331,6 +331,10 @@ if (isset($_POST['new_tpl_form'])) {
     if (empty($_POST['new_tpl_name'])) {
         $msg_arr[] = 'You need to specify a name for the template !';
         $errflag = true;
+    // template name must be 3 chars at least
+    } elseif (strlen($_POST['new_tpl_name']) < 3) {
+        $msg_arr[] = 'The template name must be 3 characters long.';
+        $errflag = true;
     } else {
         $tpl_name = filter_var($_POST['new_tpl_name'], FILTER_SANITIZE_STRING);
         $tpl_body = check_body($_POST['new_tpl_body']);

@@ -24,7 +24,9 @@
 *                                                                               *
 ********************************************************************************/
 /* auth + connect + functions*/
-if (!isset($_SESSION)) { session_start(); }
+if (!isset($_SESSION)) {
+    session_start();
+}
 
 // check that the config file is here and readable
 if (!is_readable('admin/config.php')) {
@@ -41,61 +43,67 @@ try {
     $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
     $pdo_options[PDO::ATTR_PERSISTENT] = true;
     $pdo = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
-} catch(Exception $e) {
+} catch (Exception $e) {
     die('Error : '.$e->getMessage());
 }
 // END SQL CONNECT
 
 // AUTH
-if (isset($_SESSION['auth'])){ // if user is auth, we check the cookie
-    if (!isset($_COOKIE['path']) || ($_COOKIE['path'] != get_config('path')) || ($_SESSION['path'] != get_config('path'))) { // no cookie for this domain
+if (isset($_SESSION['auth'])) { // if user is auth, we check the cookie
+    if (!isset($_COOKIE['path']) ||
+        ($_COOKIE['path'] != get_config('path')) ||
+        ($_SESSION['path'] != get_config('path'))) { // no cookie for this domain
         session_destroy(); // kill session
         $msg_arr = array();
         $msg_arr[] = 'You are not logged in !';
         $_SESSION['errors'] = $msg_arr;
         header('Location: login.php');
-    } 
-} else { // user is not auth with php sessions 
-    if (isset($_COOKIE['token']) && (strlen($_COOKIE['token']) == 32)) {
-    // If user has a cookie; check cookie is valid
-    $token = filter_var($_COOKIE['token'], FILTER_SANITIZE_STRING);
-    // Get token from SQL
-    $sql = "SELECT * FROM users WHERE token = :token";
-    $result = $pdo->prepare($sql);
-    $result->execute(array(
-    'token' => $token
-    ));
-    $data = $result->fetch();
-    $numrows = $result->rowCount();
-    // Check cookie path vs. real install path
-    if (($numrows == 1) && (get_config('path') == $_COOKIE['path'])) { // token is valid
-        session_regenerate_id();
-        $_SESSION['auth'] = 1;
-        // fix for cookies problem
-        $_SESSION['path'] = get_config('path');
-        $_SESSION['userid'] = $data['userid'];
-        // Used in the menu
-        $_SESSION['username'] = $data['username'];
-        $_SESSION['is_admin'] = $data['is_admin'];
-        // PREFS
-        $_SESSION['prefs'] = array('theme' => $data['theme'], 
-        'display' => $data['display'], 
-        'order' => $data['order_by'], 
-        'sort' => $data['sort_by'], 
-        'limit' => $data['limit_nb'], 
-        'shortcuts' => array('create' => $data['sc_create'], 'edit' => $data['sc_edit'], 'submit' => $data['sc_submit'], 'todo' => $data['sc_todo']));
-        session_write_close();
-    } else { // no token found in database
-        $msg_arr = array();
-        $msg_arr[] = 'You are not logged in !';
-        $_SESSION['errors'] = $msg_arr;
-        header("location: login.php");
     }
+} else { // user is not auth with php sessions
+    if (isset($_COOKIE['token']) && (strlen($_COOKIE['token']) == 32)) {
+        // If user has a cookie; check cookie is valid
+        $token = filter_var($_COOKIE['token'], FILTER_SANITIZE_STRING);
+        // Get token from SQL
+        $sql = "SELECT * FROM users WHERE token = :token";
+        $result = $pdo->prepare($sql);
+        $result->execute(array(
+        'token' => $token
+        ));
+        $data = $result->fetch();
+        $numrows = $result->rowCount();
+        // Check cookie path vs. real install path
+        if (($numrows == 1) && (get_config('path') == $_COOKIE['path'])) { // token is valid
+            session_regenerate_id();
+            $_SESSION['auth'] = 1;
+            // fix for cookies problem
+            $_SESSION['path'] = get_config('path');
+            $_SESSION['userid'] = $data['userid'];
+            // Used in the menu
+            $_SESSION['username'] = $data['username'];
+            $_SESSION['is_admin'] = $data['is_admin'];
+            // PREFS
+            $_SESSION['prefs'] = array('theme' => $data['theme'],
+            'display' => $data['display'],
+            'order' => $data['order_by'],
+            'sort' => $data['sort_by'],
+            'limit' => $data['limit_nb'],
+            'shortcuts' => array(
+                'create' => $data['sc_create'],
+                'edit' => $data['sc_edit'],
+                'submit' => $data['sc_submit'],
+                'todo' => $data['sc_todo']
+            ));
+            session_write_close();
+        } else { // no token found in database
+            $msg_arr = array();
+            $msg_arr[] = 'You are not logged in !';
+            $_SESSION['errors'] = $msg_arr;
+            header("location: login.php");
+        }
     } else { // no cookie
         $msg_arr = array();
         $msg_arr[] = 'You are not logged in !';
         $_SESSION['errors'] = $msg_arr;
-        header("location: login.php");
+        header('location: login.php');
     }
 }
-

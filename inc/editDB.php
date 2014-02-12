@@ -28,10 +28,10 @@
 //require_once('lib/classes/formkey.class.php');
 //$formKey = new formKey();
 ?>
-<script src="js/tinymce/tinymce.min.js"></script>
+<script src='js/tinymce/tinymce.min.js'></script>
 <?php
 // ID
-if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
+if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
     $message = "<strong>Cannot edit:</strong> the id parameter is not valid !";

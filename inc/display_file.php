@@ -28,36 +28,41 @@ echo "<section id='filesdiv'>";
 $type_arr = explode('.', basename($_SERVER['PHP_SELF']));
 $type = $type_arr[0];
 // Check that the item we view has attached files
-$sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type"; 
+$sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
 $req = $pdo->prepare($sql);
 $req->execute(array(
     'id' => $id,
     'type' => $type
 ));
 $count = $req->rowCount();
-if($count > 0){
+if ($count > 0) {
     echo "<h3>ATTACHED FILES</h3>";
-    while ($uploads_data = $req->fetch()){
+    while ($uploads_data = $req->fetch()) {
         echo "<div class='filesdiv'>";
         // show the delete button only in edit mode, not in view mode
-            if ($_GET['mode'] === 'edit') {
-?>
-<a class='align_right' href='delete_file.php?id=<?php echo $uploads_data['id'];?>&type=<?php echo $uploads_data['type'];?>&item_id=<?php echo $uploads_data['item_id'];?>' onClick="return confirm('Delete this file ?');"><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' /></a>
-        <?php
-            } // end if it is in edit mode
+        if ($_GET['mode'] === 'edit') {
+            echo "<a class='align_right' href='delete_file.php?id=".$uploads_data['id']."&type=".$uploads_data['type']."&item_id=".$uploads_data['item_id']."' onClick=\"return confirm('Delete this file ?');\">";
+            echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/trash.png' title='delete' alt='delete' /></a>";
+        } // end if it is in edit mode
 
         // THUMBNAIL GENERATION
         // check first for the GD extension
         if (extension_loaded('gd')) {
             // Get file extension to display thumbnail if it's a valid extension
             $ext = get_ext($uploads_data['real_name']);
-            if ($ext === 'jpg' || $ext === 'jpeg' || $ext === 'JPG' || $ext === 'JPEG' || $ext === 'png' || $ext === 'gif'){
+            if ($ext === 'jpg' ||
+                $ext === 'jpeg' ||
+                $ext === 'JPG' ||
+                $ext === 'JPEG' ||
+                $ext === 'png' ||
+                $ext === 'gif') {
+
                 $filepath = 'uploads/'.$uploads_data['long_name'];
                 $filesize = filesize('uploads/'.$uploads_data['long_name']);
                 $thumbpath = 'uploads/'.$uploads_data['long_name'].'_th.'.$ext;
                 // Make thumbnail only if it isn't done already and if size < 2 Mbytes
-                if(!file_exists($thumbpath) && $filesize <= 2000000){
-                make_thumb($filepath,$ext,$thumbpath,150);
+                if (!file_exists($thumbpath) && $filesize <= 2000000) {
+                    make_thumb($filepath, $ext, $thumbpath, 150);
                 }
                 echo "<div class='center'>";
                 echo "<a href='uploads/".$uploads_data['long_name']."' class='lightbox'><img src='".$thumbpath."' width='150' alt='thumbnail' /></a></div>";
@@ -68,7 +73,9 @@ if($count > 0){
         <span class='filesize'> (".format_bytes(filesize('uploads/'.$uploads_data['long_name'])).")</span><br />";
         echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/comments.png' alt='comment' /> <p ";
         // only add editable class if we're in edit mode (so we don't have hover effect on it in view mode)
-        if ($_GET['mode'] === 'edit') { echo "class='editable '";}
+        if ($_GET['mode'] === 'edit') {
+            echo "class='editable '";
+        }
         echo "id='filecomment_".$uploads_data['id']."'>".stripslashes($uploads_data['comment'])."</p></div>";
     } // end while
 } // end if count > 0
@@ -79,32 +86,35 @@ if($count > 0){
 <?php
 // we only want the file comment div to be editable on edit mode, not view mode
 if ($_GET['mode'] === 'edit') {
-?>
-<script>
-$('section#filesdiv').on("mouseover", ".editable", function(){
-    $('section#filesdiv p.editable').editable('editinplace.php', {
-     tooltip : 'Click to edit',
-     indicator : 'Saving...',
-     id   : 'id',
-     name : 'filecomment',
-     submit : 'Save',
-     cancel : 'Cancel',
-     style : 'display:inline'
+    ?>
+    <script>
+    $('section#filesdiv').on("mouseover", ".editable", function(){
+        $('section#filesdiv p.editable').editable('editinplace.php', {
+         tooltip : 'Click to edit',
+         indicator : 'Saving...',
+         id   : 'id',
+         name : 'filecomment',
+         submit : 'Save',
+         cancel : 'Cancel',
+         style : 'display:inline'
 
+        });
     });
-});
-</script>
-<?php } ?>
+    </script>
+    <?php
+}
+?>
 <script src='js/jquery.lightbox-0.5.min.js'></script>
 <script>
 $(document).ready(function() {
      // click thumbnail to show full size http://leandrovieira.com/projects/jquery/lightbox/
     $('a.lightbox').lightBox({
-       txtImage: '<?php if(!empty($uploads_data['real_name'])) {
+        txtImage: '<?php
+        if (!empty($uploads_data['real_name'])) {
            echo $uploads_data['real_name'];
-       } else {
+        } else {
            echo '';
-       };?>'
+        };?>'
     });
 });
 </script>

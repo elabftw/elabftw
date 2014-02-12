@@ -34,8 +34,8 @@
 // Random title
 $ftw_arr = array();
 // Lots of 'For The World' so the other ones appear more rarely
-for($i=0; $i<200;$i++){
-$ftw_arr[] = 'For The World';
+for ($i=0; $i<200; $i++) {
+    $ftw_arr[] = 'For The World';
 }
 // Now the fun ones
 $ftw_arr[] = 'For Those Wondering';
@@ -68,13 +68,13 @@ $ftw_arr[] = 'Fabricated To Win';
 $ftw_arr[] = 'Furiously Taunted Wookies';
 $ftw_arr[] = 'Flash The Watch';
 shuffle($ftw_arr);
-$ftw = $ftw_arr[0]; 
+$ftw = $ftw_arr[0];
 
 echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."</title>"?>
 <!-- CSS -->
 <link rel="stylesheet" media="all" href="css/main.css" />
 <?php
-if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1){
+if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     echo "<link id='maincss' rel='stylesheet' media='all' href='themes/".$_SESSION['prefs']['theme']."/style.css' />";
 } else {
     echo "<link id='maincss' rel='stylesheet' media='all' href='themes/default/style.css' />";

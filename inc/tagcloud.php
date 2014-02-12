@@ -26,8 +26,12 @@
 echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/cloud.png' alt='' /> <h4>TAG CLOUD</h4>";
 echo "<div id='tagcloud'>";
 // 1. Create an array with tag -> count
-$sql = "SELECT tag, COUNT(id) AS total FROM experiments_tags WHERE userid = ".$_SESSION['userid']." GROUP BY tag ORDER BY total DESC";
+$sql = "SELECT tag, COUNT(id) AS total
+    FROM experiments_tags
+    WHERE userid = :userid
+    GROUP BY tag ORDER BY total DESC";
 $req = $pdo->prepare($sql);
+$req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
 $req->execute();
 $full = $req->fetchAll();
 $count = count($full);
@@ -43,38 +47,37 @@ if ($count > 10) {
     $req = $pdo->prepare($sql);
     $req->execute();
     $spread = $maxoccur - $minoccur;
-    if ($spread === 0){
+    if ($spread === 0) {
         $spread = 1;
     }
     while ($data = $req->fetch()) {
         // Calculate ratio
         $ratio = floor((($data[1] - $minoccur) / $spread)*100);
-         if ($ratio < 10):
-                $class = 'c1';
-          elseif ($ratio >= 10 and $ratio < 20):
-                 $class = 'c2';
-          elseif ($ratio >= 20 and $ratio < 30):
-                 $class = 'c3';
-          elseif ($ratio >= 30 and $ratio < 40):
-                 $class = 'c4';
-          elseif ($ratio >= 40 and $ratio < 50):
-                 $class = 'c5';
-          elseif ($ratio >= 50 and $ratio < 60):
-                 $class = 'c6';
-          elseif ($ratio >= 60 and $ratio < 70):
-                 $class = 'c7';
-          elseif ($ratio >= 70 and $ratio < 80):
-                 $class = 'c8';
-          elseif ($ratio >= 80 and $ratio < 90):
-                 $class = 'c9';
-          else:
-               $class = 'c10';
-          endif;
-            echo "<a href='experiments.php?mode=show&q=".$data[0]."' class='".$class."'>".stripslashes($data[0])."</a> ";
+        if ($ratio < 10) {
+            $class = 'c1';
+        } elseif ($ratio >= 10 and $ratio < 20) {
+            $class = 'c2';
+        } elseif ($ratio >= 20 and $ratio < 30) {
+            $class = 'c3';
+        } elseif ($ratio >= 30 and $ratio < 40) {
+            $class = 'c4';
+        } elseif ($ratio >= 40 and $ratio < 50) {
+            $class = 'c5';
+        } elseif ($ratio >= 50 and $ratio < 60) {
+            $class = 'c6';
+        } elseif ($ratio >= 60 and $ratio < 70) {
+            $class = 'c7';
+        } elseif ($ratio >= 70 and $ratio < 80) {
+            $class = 'c8';
+        } elseif ($ratio >= 80 and $ratio < 90) {
+            $class = 'c9';
+        } else {
+            $class = 'c10';
+        }
+        echo "<a href='experiments.php?mode=show&q=".$data[0]."' class='".$class."'>".stripslashes($data[0])."</a> ";
     }
     // TAGCLOUD
     echo "</div>";
 } else {
     echo 'Not enough tags to make a tagcloud.';
 }// end fix division by zero
-

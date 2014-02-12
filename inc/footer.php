@@ -42,12 +42,12 @@ echo "Page generated in ".$total_time." seconds.<br />";
 </footer>
 <script src="js/jquery.pageslide.min.js"></script>
 <?php
-if (isset($_SESSION['auth'])){
-echo "<script>
-key('".$_SESSION['prefs']['shortcuts']['todo']."', function(){
-    $.pageslide({href:'inc/todolist.php'});
-});
-</script>";
+if (isset($_SESSION['auth'])) {
+    echo "<script>
+    key('".$_SESSION['prefs']['shortcuts']['todo']."', function(){
+        $.pageslide({href:'inc/todolist.php'});
+    });
+    </script>";
 }
 ?>
 </body>

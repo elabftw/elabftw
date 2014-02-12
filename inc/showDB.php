@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 if (isset($_SESSION['prefs']['theme'])) {
-require_once "themes/".$_SESSION['prefs']['theme']."/highlight.css";
+    require_once "themes/".$_SESSION['prefs']['theme']."/highlight.css";
 }
 if (isset($_SESSION['prefs']['display'])) {
     $display = $_SESSION['prefs']['display'];
@@ -69,22 +69,22 @@ while ($items_types = $req->fetch()) {
 ///////////////
 if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
-        $results_arr = array();
-        $sql = "SELECT item_id FROM items_tags 
-        WHERE tag LIKE :tag";
-        $req = $pdo->prepare($sql);
-        $req->execute(array(
-            'tag' => $tag
-        ));
-        // put resulting ids in the results array
-        while ($data = $req->fetch()) {
-            $results_arr[] = $data['item_id'];
-        }
+    $results_arr = array();
+    $sql = "SELECT item_id FROM items_tags
+    WHERE tag LIKE :tag";
+    $req = $pdo->prepare($sql);
+    $req->execute(array(
+        'tag' => $tag
+    ));
+    // put resulting ids in the results array
+    while ($data = $req->fetch()) {
+        $results_arr[] = $data['item_id'];
+    }
 
     // show number of results found
-    if (count($results_arr) > 1){
+    if (count($results_arr) > 1) {
         echo "Found ".count($results_arr)." results.";
-    } elseif (count($results_arr) == 1){
+    } elseif (count($results_arr) == 1) {
         echo "Found 1 result.";
     } else {
         echo "No items were found.";
@@ -93,7 +93,7 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     // clean duplicates
     $results_arr = array_unique($results_arr);
     // loop the results array and display results
-    foreach($results_arr as $result_id) {
+    foreach ($results_arr as $result_id) {
         showDB($result_id, $display);
     } // end foreach
 
@@ -106,16 +106,16 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     // filter out duplicate ids and reverse the order; items should be sorted by date
     $results_arr = array_reverse(array_unique($results_arr));
     // show number of results found
-    if (count($results_arr) > 1){
+    if (count($results_arr) > 1) {
         echo "Found ".count($results_arr)." results.";
-    } elseif (count($results_arr) == 1){
+    } elseif (count($results_arr) == 1) {
         echo "Found 1 result.";
     } else {
         echo "Nothing found :(";
     }
 
     // loop the results array and display results
-    foreach($results_arr as $result_id) {
+    foreach ($results_arr as $result_id) {
         showDB($result_id, $display);
     }
 // end if there is a search
@@ -126,18 +126,18 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $req = $pdo->prepare($sql);
     $req->execute();
     $count = $req->rowCount();
-    if($count == 0) {
+    if ($count == 0) {
         $message = "<strong>Welcome to eLabFTW.</strong> 
-            Select an item in the «Create new» list to begin filling your database."; 
+            Select an item in the «Create new» list to begin filling your database.";
         display_message('info', $message);
     } else {
         $results_arr = array();
-        while($final_query = $req->fetch()) {
+        while ($final_query = $req->fetch()) {
             $results_arr[] = $final_query['id'];
         }
         // loop the results array and display results
         echo "<p>Showing last 10 uploads :</p>";
-        foreach($results_arr as $result_id) {
+        foreach ($results_arr as $result_id) {
             showDB($result_id, $display);
         }
     }

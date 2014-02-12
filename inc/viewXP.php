@@ -25,7 +25,7 @@
 ********************************************************************************/
 // inc/viewXP.php
 // ID
-if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
+if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
     $message = "The id parameter in the URL isn't a valid experiment ID.";
@@ -35,8 +35,9 @@ if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
 }
 
 // SQL for viewXP
-$sql = "SELECT * FROM experiments WHERE id = ".$id;
+$sql = "SELECT * FROM experiments WHERE id = :id";
 $req = $pdo->prepare($sql);
+$req->bindParam(':id', $id, PDO::PARAM_INT);
 $req->execute();
 // got results ?
 $row_count = $req->rowCount();
@@ -76,7 +77,7 @@ echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' title='
 <a href='javascript:window.print()'><img src='themes/".$_SESSION['prefs']['theme']."/img/print.png' title='Print this page' alt='Print' /></a> 
 <a href='make_zip.php?id=".$data['id']."&type=exp'><img src='themes/".$_SESSION['prefs']['theme']."/img/zip.png' title='make a zip archive' alt='zip' /></a> ";
 // lock
-if($data['locked'] == 0) {
+if ($data['locked'] == 0) {
     echo "<a href='lock.php?id=".$data['id']."&action=lock&type=experiments'><img src='themes/".$_SESSION['prefs']['theme']."/img/unlock.png' title='lock experiment' alt='lock' /></a>";
 } else { // experiment is locked
     echo "<a href='lock.php?id=".$data['id']."&action=unlock&type=experiments'><img src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' title='unlock experiment' alt='unlock' /></a>";
@@ -92,10 +93,10 @@ echo show_tags($id, 'experiments_tags');
 </div>
 <?php
 // BODY (show only if not empty, click on it to edit
-if ($data['body'] != ''){
+if ($data['body'] != '') {
     ?>
     <div OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['id'];?>'" class='txt'><?php echo stripslashes($data['body']);?></div>
-<?php
+    <?php
 }
 echo "<br />";
 
@@ -154,7 +155,7 @@ $req->execute(array(
 if ($req->rowCount() > 0) {
     // there is comments to display
     while ($comments = $req->fetch()) {
-        if(empty($comments['firstname'])) {
+        if (empty($comments['firstname'])) {
             $comments['firstname'] = '[deleted]';
         }
     echo "<div class='expcomment_box'>

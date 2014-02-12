@@ -31,7 +31,7 @@
 <script src="js/tinymce/tinymce.min.js"></script>
 <?php
 // ID
-if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
+if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
     $message = "<strong>Cannot edit:</strong> the id parameter is not valid !";
@@ -41,30 +41,31 @@ if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
 }
 
 // SQL for editXP
-$sql = "SELECT * FROM experiments WHERE id = ".$id;
+$sql = "SELECT * FROM experiments WHERE id = :id";
 $req = $pdo->prepare($sql);
+$req->bindParam(':id', $id, PDO::PARAM_INT);
 $req->execute();
-$data = $req->fetch();
+$experiment = $req->fetch();
 
 // Check id is owned by connected user
-if ($data['userid'] != $_SESSION['userid']) {
+if ($experiment['userid'] != $_SESSION['userid']) {
     $message = "<strong>Cannot edit:</strong> this experiment is not yours !";
     display_message('error', $message);
-    require_once('inc/footer.php');
+    require_once 'inc/footer.php';
     exit();
 }
 
 // Check for lock
-if ($data['locked'] == 1) {
+if ($experiment['locked'] == 1) {
     $message = "<strong>This item is locked.</strong> You cannot edit it.";
     display_message('error', $message);
-    require_once('inc/footer.php');
+    require_once 'inc/footer.php';
     exit();
 }
 
 // BEGIN CONTENT
 ?>
-<section id='view_xp_item' class='item <?php echo $data['status'];?>'>
+<section id='view_xp_item' class='item <?php echo $experiment['status'];?>'>
 <img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','exp', 'experiments.php')" />
 <!-- ADD TAG FORM -->
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
@@ -75,11 +76,11 @@ $sql = "SELECT id, tag FROM experiments_tags WHERE item_id = ".$id;
 $tagreq = $pdo->prepare($sql);
 $tagreq->execute();
 // DISPLAY TAGS
-while($tags = $tagreq->fetch()){
-echo "<span class='tag'><a onclick='delete_tag(".$tags['id'].",".$id.")'>";
-echo stripslashes($tags['tag']);?>
-</a></span>
-<?php } //end while tags ?>
+while ($tags = $tagreq->fetch()) {
+    echo "<span class='tag'><a onclick='delete_tag(".$tags['id'].",".$id.")'>";
+    echo stripslashes($tags['tag'])."</a></span>";
+} //end while tags
+?>
 </span>
 <input type="text" name="tag" id="addtaginput" placeholder="Add a tag" />
 </div>
@@ -92,13 +93,13 @@ echo stripslashes($tags['tag']);?>
 
 <h4>Date</h4><span class='smallgray'> (date format : YYYYMMDD)</span><br />
 <!-- TODO if firefox has support for it: type = date -->
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /> <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date'];?>' />
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /> <input name='date' id='datepicker' size='8' type='text' value='<?php echo $experiment['date'];?>' />
 
 <span class='align_right'>
 <h4>Status</h4>
 <!-- Status get selected by default -->
 <?php
-$status = $data['status'];
+$status = $experiment['status'];
 ?>
     <select id="status_form" name="status" onchange="update_status(this.value)">
 <option id='option_running' value="running">Running</option>
@@ -110,17 +111,21 @@ $status = $data['status'];
 <br />
 <br />
 <h4>Title</h4><br />
-      <textarea id='title_txtarea' name='title' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
-          echo stripslashes($data['title']);
-      } else {
-          echo stripslashes($_SESSION['new_title']);
-      } ?></textarea>
+<textarea id='title_txtarea' name='title' rows="1" cols="80">
+<?php
+if (empty($_SESSION['errors'])) {
+    echo stripslashes($experiment['title']);
+} else {
+    echo stripslashes($_SESSION['new_title']);
+}
+?>
+</textarea>
 
 <br />
 <h4>Experiment</h4>
 <br />
 <textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">
-    <?php echo stripslashes($data['body']);?>
+    <?php echo stripslashes($experiment['body']);?>
 </textarea>
 
 <!-- SUBMIT BUTTON -->
@@ -170,7 +175,7 @@ if ($req->rowcount() > 0) {
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/visibility.png'> <h4 style='display:inline'>Visibility</h4>
 <!-- visibility get selected by default -->
 <?php
-$visibility = $data['visibility'];
+$visibility = $experiment['visibility'];
 ?>
     <select id="visibility_form" name="visibility" onchange="update_visibility(this.value)">
 <option id='option_team' value="team">Only the team</option>
@@ -191,7 +196,7 @@ $getalltags = $pdo->prepare($sql);
 $getalltags->execute(array(
     'userid' => $_SESSION['userid']
 ));
-while ($tag = $getalltags->fetch()){
+while ($tag = $getalltags->fetch()) {
     echo "'".$tag[0]."',";
 }?>
 		];
@@ -245,7 +250,7 @@ $(function() {
 $sql = "SELECT title, id, type FROM items";
 $getalllinks = $pdo->prepare($sql);
 $getalllinks->execute();
-while ($link = $getalllinks->fetch()){
+while ($link = $getalllinks->fetch()) {
     // html_entity_decode is needed to convert the quotes
     // str_replace to remove ' because it messes everything up
     $name = get_item_info_from_id($link['type'], 'name');
@@ -257,7 +262,6 @@ while ($link = $getalllinks->fetch()){
 		});
 	});
 // DELETE LINK
-// TODO put in deleteThis()
 function delete_link(id, item_id) {
     var you_sure = confirm('Delete this link ?');
     if (you_sure == true) {
@@ -384,7 +388,7 @@ $(document).ready(function() {
     }
 
     // fix for the ' and "
-    title = "<?php echo $data['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
+    title = "<?php echo $experiment['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
     document.title = title;
     // DATEPICKER
     $( "#datepicker" ).datepicker({dateFormat: 'yymmdd'});

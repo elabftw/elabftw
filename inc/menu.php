@@ -40,7 +40,7 @@ require_once 'inc/functions.php';
 <div id="logmenu"><p>
 <?php
 if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
-?>
+    ?>
     <!-- ADMIN MENU --> 
     <a href='https://twitter.com/elabftw'>
     <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/twitter.png' alt='twitter' title='Follow eLabFTW on Twitter !'>
@@ -54,7 +54,7 @@ if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
     });
     </script>
     <?php
-    }
+}
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     echo "Logged in as <a href='profile.php' title='Profile'>".$_SESSION['username']."</a> | 
         <a href='ucp.php'><img src='themes/".$_SESSION['prefs']['theme']."/img/pref.png' alt='Control panel' title='Control panel' /></a> | 

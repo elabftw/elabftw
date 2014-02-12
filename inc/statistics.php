@@ -31,15 +31,15 @@ $status_arr[] = 'success';
 $status_arr[] = 'fail';
 $status_arr[] = 'redo';
 $status_arr[] = 'running';
-foreach ($status_arr as $status){
-$sql = "SELECT COUNT(id)
-    FROM experiments 
-    WHERE userid = :userid 
-    AND status LIKE'".$status."'";
-$req = $pdo->prepare($sql);
-$req->bindParam(':userid', $_SESSION['userid']);
-$req->execute();
-$count_arr[] = $req->fetch();
+foreach ($status_arr as $status) {
+    $sql = "SELECT COUNT(id)
+        FROM experiments
+        WHERE userid = :userid
+        AND status LIKE'".$status."'";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':userid', $_SESSION['userid']);
+    $req->execute();
+    $count_arr[] = $req->fetch();
 }
 
 $success = $count_arr[0][0];
@@ -84,8 +84,7 @@ if ($total != 0) {
           }
         </script>
      <div id="chart_div" class='center'></div>
-<?php }else { //end fix division by zero
+    <?php
+} else { //end fix division by zero
     echo 'No statistics available yet.';
 }
-?>
-

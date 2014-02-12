@@ -67,11 +67,11 @@ $sql = "SELECT id, tag FROM items_tags WHERE item_id = ".$id;
 $tagreq = $pdo->prepare($sql);
 $tagreq->execute();
 // DISPLAY TAGS
-while($tags = $tagreq->fetch()){
-echo "<span class='tag'><a onclick='delete_tag(".$tags['id'].",".$id.")'>";
-echo stripslashes($tags['tag']);?>
-</a></span>
-<?php } //end while tags ?>
+while ($tags = $tagreq->fetch()) {
+    echo "<span class='tag'><a onclick='delete_tag(".$tags['id'].",".$id.")'>";
+    echo stripslashes($tags['tag'])."</a></span>";
+} //end while tags
+?>
 </span>
 <input type="text" name="tag" id="addtaginput" placeholder="Add a tag" />
 </div>
@@ -87,15 +87,15 @@ echo stripslashes($tags['tag']);?>
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /> <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date'];?>' />
 <!-- STAR RATING via ajax request -->
 <div id='rating'>
-<input id='star1' name="star" type="radio" class="star" value='1' <?php if ($data['rating'] == 1){ echo "checked=checked ";}?>/>
-<input id='star2' name="star" type="radio" class="star" value='2' <?php if ($data['rating'] == 2){ echo "checked=checked ";}?>/>
-<input id='star3' name="star" type="radio" class="star" value='3' <?php if ($data['rating'] == 3){ echo "checked=checked ";}?>/>
-<input id='star4' name="star" type="radio" class="star" value='4' <?php if ($data['rating'] == 4){ echo "checked=checked ";}?>/>
-<input id='star5' name="star" type="radio" class="star" value='5' <?php if ($data['rating'] == 5){ echo "checked=checked ";}?>/>
+<input id='star1' name="star" type="radio" class="star" value='1' <?php if ($data['rating'] == 1) { echo "checked=checked ";}?>/>
+<input id='star2' name="star" type="radio" class="star" value='2' <?php if ($data['rating'] == 2) { echo "checked=checked ";}?>/>
+<input id='star3' name="star" type="radio" class="star" value='3' <?php if ($data['rating'] == 3) { echo "checked=checked ";}?>/>
+<input id='star4' name="star" type="radio" class="star" value='4' <?php if ($data['rating'] == 4) { echo "checked=checked ";}?>/>
+<input id='star5' name="star" type="radio" class="star" value='5' <?php if ($data['rating'] == 5) { echo "checked=checked ";}?>/>
 </div><!-- END STAR RATING -->
 <br />
 <h4>Title</h4><br />
-      <textarea id='title_txtarea' name='title' rows="1" cols="80"><?php if(empty($_SESSION['errors'])){
+      <textarea id='title_txtarea' name='title' rows="1" cols="80"><?php if (empty($_SESSION['errors'])) {
           echo stripslashes($data['title']);
       } else {
           echo stripslashes($_SESSION['new_title']);
@@ -136,7 +136,7 @@ $(function() {
 $sql = "SELECT DISTINCT tag FROM items_tags ORDER BY id DESC LIMIT 500";
 $getalltags = $pdo->prepare($sql);
 $getalltags->execute();
-while ($tag = $getalltags->fetch()){
+while ($tag = $getalltags->fetch()) {
     echo "'".$tag[0]."',";
 }?>
 		];

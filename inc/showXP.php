@@ -27,8 +27,8 @@ $load_more_button = "<div class='center'>
         <button class='button' id='loadButton'>Load more</button>
         </div>";
 
-if(isset($_SESSION['prefs']['theme'])) {
-require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
+if (isset($_SESSION['prefs']['theme'])) {
+    require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
 }
 ?>
 <div id='submenu'>
@@ -105,9 +105,9 @@ if (isset($_GET['q'])) { // if there is a query
         $total_time = $total_time * 1000;
         $unit = 'milliseconds';
     }
-    if (count($results_arr) > 1){
+    if (count($results_arr) > 1) {
         echo "<p class='results_and_time'>".count($results_arr)." results ($total_time $unit)</p>";
-    } elseif (count($results_arr) == 1){
+    } elseif (count($results_arr) == 1) {
         echo "<p class='results_and_time'>1 result ($total_time $unit)</p>";
     } else {
         $message = 'No experiments were found.';
@@ -115,7 +115,7 @@ if (isset($_GET['q'])) { // if there is a query
     }
 
     // loop the results array and display results
-    foreach($results_arr as $result_id) {
+    foreach ($results_arr as $result_id) {
         showXP($result_id, $display);
     }
 
@@ -154,9 +154,9 @@ if (isset($_GET['q'])) { // if there is a query
         $total_time = $total_time * 1000;
         $unit = 'milliseconds';
     }
-    if (count($results_arr) > 1){
+    if (count($results_arr) > 1) {
         echo "<p class='results_and_time'>".count($results_arr)." results ($total_time $unit)</p>";
-    } elseif (count($results_arr) == 1){
+    } elseif (count($results_arr) == 1) {
         echo "<p class='results_and_time'>1 result ($total_time $unit)</p>";
     } else {
         $message = 'No experiments are linked with this item.';
@@ -164,7 +164,7 @@ if (isset($_GET['q'])) { // if there is a query
     }
 
     // loop the results array and display results
-    foreach($results_arr as $result_id) {
+    foreach ($results_arr as $result_id) {
         showXP($result_id, $display);
     } // end foreach
 
@@ -178,17 +178,17 @@ if (isset($_GET['q'])) { // if there is a query
 ///////////////
 } elseif (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
-        $results_arr = array();
-        $sql = "SELECT item_id FROM experiments_tags
-        WHERE tag LIKE :tag";
-        $req = $pdo->prepare($sql);
-        $req->execute(array(
-            'tag' => $tag
-        ));
-        // put resulting ids in the results array
-        while ($data = $req->fetch()) {
-            $results_arr[] = $data['item_id'];
-        }
+    $results_arr = array();
+    $sql = "SELECT item_id FROM experiments_tags
+    WHERE tag LIKE :tag";
+    $req = $pdo->prepare($sql);
+    $req->execute(array(
+        'tag' => $tag
+    ));
+    // put resulting ids in the results array
+    while ($data = $req->fetch()) {
+        $results_arr[] = $data['item_id'];
+    }
 
     // show number of results found
     $time = microtime();
@@ -201,9 +201,9 @@ if (isset($_GET['q'])) { // if there is a query
         $total_time = $total_time * 1000;
         $unit = 'milliseconds';
     }
-    if (count($results_arr) > 1){
+    if (count($results_arr) > 1) {
         echo "<p class='results_and_time'>".count($results_arr)." results ($total_time $unit)</p>";
-    } elseif (count($results_arr) == 1){
+    } elseif (count($results_arr) == 1) {
         echo "<p class='results_and_time'>1 result ($total_time $unit)</p>";
     } else {
         $message = 'No experiments were found.';
@@ -213,7 +213,7 @@ if (isset($_GET['q'])) { // if there is a query
     // clean duplicates
     $results_arr = array_unique($results_arr);
     // loop the results array and display results
-    foreach($results_arr as $result_id) {
+    foreach ($results_arr as $result_id) {
         showXP($result_id, $display);
     } // end foreach
 
@@ -240,7 +240,7 @@ if (isset($_GET['q'])) { // if there is a query
         $message = "<strong>Welcome to eLabFTW.</strong> 
             Click the <a style='color:blue;' href='create_item.php?type=exp'>
             <img src='themes/".$_SESSION['prefs']['theme']."/img/notepad_add.png' alt='Create experiment' />
-            Create experiment</a> button to get started."; 
+            Create experiment</a> button to get started.";
         display_message('info', $message);
     } else {
         while ($experiments = $req->fetch()) {
@@ -248,7 +248,7 @@ if (isset($_GET['q'])) { // if there is a query
         }
         $req->closeCursor();
         // loop the results array and display results
-        foreach($results_arr as $result_id) {
+        foreach ($results_arr as $result_id) {
             showXP($result_id, $display);
         } // end foreach
 

@@ -25,18 +25,20 @@
 ********************************************************************************/
 // inc/viewDB.php
 // ID
-if(isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])){
+if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    die("The id parameter in the URL isn't a valid item ID.");
+    $message = "The id parameter in the URL isn't a valid item ID.";
+    display_message('error', $message);
+    require_once 'inc/footer.php';
+    die();
 }
 
 // SQL for viewDB
 $sql = "SELECT * FROM items WHERE id = :id";
 $req = $pdo->prepare($sql);
-$req->execute(array(
-    'id' => $id
-));
+$req->bindParam(':id', $id, PDO::PARAM_INT);
+$req->execute();
 // got results ?
 $row_count = $req->rowCount();
 if ($row_count === 0) {
@@ -65,7 +67,7 @@ echo "<a href='database.php?mode=edit&id=".$data['id']."'><img src='themes/".$_S
 <a href='make_zip.php?id=".$data['id']."&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/zip.png' title='make a zip archive' alt='zip' /></a>
 <a href='experiments.php?mode=show&related=".$data['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/link.png' alt='Linked experiments' title='Linked experiments' /></a> ";
 // lock
-if($data['locked'] == 0) {
+if ($data['locked'] == 0) {
     echo "<a href='lock.php?id=".$data['id']."&action=lock&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/unlock.png' title='lock experiment' alt='lock' /></a>";
 } else { // experiment is locked
     echo "<a href='lock.php?id=".$data['id']."&action=unlock&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' title='unlock experiment' alt='unlock' /></a>";
@@ -79,10 +81,10 @@ echo show_tags($id, 'items_tags');
 </div>
 <?php
 // BODY (show only if not empty)
-if ($data['body'] != ''){
+if ($data['body'] != '') {
     ?>
     <div OnClick="document.location='database.php?mode=edit&id=<?php echo $data['id'];?>'" class='txt'><?php echo stripslashes($data['body'])?></div>
-<?php
+    <?php
 }
 // Get userinfo
 $sql = "SELECT firstname, lastname FROM users WHERE userid = :userid";

@@ -38,7 +38,11 @@ function abort() {
 <hr class='flourishes'><div class="bigUpload inline">
     <div class="bigUploadContainer">
     <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/upload.png'> <h3 style='display:inline'>Attach a file</h3>
-        <form action="inc/bigUpload.php?action=post-unsupported" method="post" enctype="multipart/form-data" id="bigUploadForm">
+        <form action="inc/bigUpload.php?action=post-unsupported"
+            method="post"
+            enctype="multipart/form-data"
+            id="bigUploadForm">
+
             <input type="file" id="bigUploadFile" name="bigUploadFile" />
             <input type="button" class="bigUploadButton" value="Start Upload" id="bigUploadSubmit" onclick="upload()" />
             <input type="button" class="bigUploadButton bigUploadAbort" value="Cancel" onclick="abort()" />

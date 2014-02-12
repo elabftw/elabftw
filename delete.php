@@ -191,7 +191,13 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
 
         // DELETE LINKS
         case 'link':
-            if (is_owned_by_user($id, 'experiments', $_SESSION['userid'])) {
+            $result = false;
+            if (is_pos_int($_POST['item_id'])) {
+                $item_id = $_POST['item_id'];
+            } else {
+                die();
+            }
+            if (is_owned_by_user($item_id, 'experiments', $_SESSION['userid'])) {
                 $delete_sql = "DELETE FROM experiments_links WHERE id= :id";
                 $delete_req = $pdo->prepare($delete_sql);
                 $result = $delete_req->execute(array(

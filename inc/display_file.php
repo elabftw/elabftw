@@ -71,12 +71,27 @@ if ($count > 0) {
         // END THUMBNAIL GENERATION
         echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='' /> <a href='download.php?f=".$uploads_data['long_name']."&name=".$uploads_data['real_name']."' target='_blank'>".$uploads_data['real_name']."</a>
         <span class='filesize'> (".format_bytes(filesize('uploads/'.$uploads_data['long_name'])).")</span><br />";
-        echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/comments.png' alt='comment' /> <p ";
-        // only add editable class if we're in edit mode (so we don't have hover effect on it in view mode)
-        if ($_GET['mode'] === 'edit') {
-            echo "class='editable '";
+        // if we are in view mode, we don't show the comment
+        // this is to avoid showing 'Click to add a comment' where in fact you can't click to add a comment because
+        // your are in view mode
+        switch ($_GET['mode']) {
+        case 'view':
+            if ($uploads_data['comment'] != 'Click to add a comment') {
+                // show non editable comment
+                echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/comments.png' alt='comment' />
+                    <p id='filecomment_".$uploads_data['id']."'>".stripslashes($uploads_data['comment'])."</p>";
+            }
+            break;
+        case 'edit':
+            // show editable comment whatever is the comment
+            echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/comments.png' alt='comment' />
+                <p class='editable' id='filecomment_".$uploads_data['id']."'>".
+                stripslashes($uploads_data['comment'])."</p>";
+            break;
+        default:
+            die();
         }
-        echo "id='filecomment_".$uploads_data['id']."'>".stripslashes($uploads_data['comment'])."</p></div>";
+        echo "</div>";
     } // end while
 } // end if count > 0
 // END DISPLAY FILES

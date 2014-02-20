@@ -34,8 +34,19 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     die();
 }
 
-// SQL for viewDB
-$sql = "SELECT * FROM items WHERE id = :id";
+// SQL FOR VIEWDB
+$sql = "SELECT items.id AS itemid,
+    experiments_links.id AS linkid,
+    experiments_links.*,
+    items.*,
+    items_types.*,
+    users.lastname,
+    users.firstname
+    FROM items
+    LEFT JOIN experiments_links ON (experiments_links.link_id = items.id)
+    LEFT JOIN items_types ON (items.type = items_types.id)
+    LEFT JOIN users ON (items.userid = users.userid)
+    WHERE items.id = :id";
 $req = $pdo->prepare($sql);
 $req->bindParam(':id', $id, PDO::PARAM_INT);
 $req->execute();
@@ -56,44 +67,38 @@ $data = $req->fetch();
 
 <span class='date'><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /> <?php echo $data['date'];?></span><br />
 
-<h3 style='color:#<?php echo get_item_info_from_id($data['type'], 'bgcolor');?>'><?php echo get_item_info_from_id($data['type'], 'name');?> </h3>
+<h3 style='color:#<?php echo $data['bgcolor'];?>'><?php echo $data['name'];?> </h3>
 <?php
 show_stars($data['rating']);
 // buttons
-echo "<a href='database.php?mode=edit&id=".$data['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/edit.png' title='edit' alt='edit' /></a> 
-<a href='duplicate_item.php?id=".$data['id']."&type=db'><img src='themes/".$_SESSION['prefs']['theme']."/img/duplicate.png' title='duplicate item' alt='duplicate' /></a> 
-<a href='make_pdf.php?id=".$data['id']."&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/pdf.png' title='make a pdf' alt='pdf' /></a> 
+echo "<a href='database.php?mode=edit&id=".$data['itemid']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/edit.png' title='edit' alt='edit' /></a> 
+<a href='duplicate_item.php?id=".$data['itemid']."&type=db'><img src='themes/".$_SESSION['prefs']['theme']."/img/duplicate.png' title='duplicate item' alt='duplicate' /></a> 
+<a href='make_pdf.php?id=".$data['itemid']."&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/pdf.png' title='make a pdf' alt='pdf' /></a> 
 <a href='javascript:window.print()'><img src='themes/".$_SESSION['prefs']['theme']."/img/print.png' title='Print this page' alt='Print' /></a> 
-<a href='make_zip.php?id=".$data['id']."&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/zip.png' title='make a zip archive' alt='zip' /></a>
-<a href='experiments.php?mode=show&related=".$data['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/link.png' alt='Linked experiments' title='Linked experiments' /></a> ";
+<a href='make_zip.php?id=".$data['itemid']."&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/zip.png' title='make a zip archive' alt='zip' /></a>
+<a href='experiments.php?mode=show&related=".$data['itemid']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/link.png' alt='Linked experiments' title='Linked experiments' /></a> ";
 // lock
 if ($data['locked'] == 0) {
-    echo "<a href='lock.php?id=".$data['id']."&action=lock&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/unlock.png' title='lock experiment' alt='lock' /></a>";
+    echo "<a href='lock.php?id=".$data['itemid']."&action=lock&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/unlock.png' title='lock experiment' alt='lock' /></a>";
 } else { // experiment is locked
-    echo "<a href='lock.php?id=".$data['id']."&action=unlock&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' title='unlock experiment' alt='unlock' /></a>";
+    echo "<a href='lock.php?id=".$data['itemid']."&action=unlock&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' title='unlock experiment' alt='unlock' /></a>";
 }
 // TAGS
 echo show_tags($id, 'items_tags');
 // TITLE : click on it to go to edit mode
 ?>
-<div OnClick="document.location='database.php?mode=edit&id=<?php echo $data['id'];?>'" class='title'>
+<div OnClick="document.location='database.php?mode=edit&id=<?php echo $data['itemid'];?>'" class='title'>
     <?php echo stripslashes($data['title']);?>
 </div>
 <?php
 // BODY (show only if not empty)
 if ($data['body'] != '') {
     ?>
-    <div OnClick="document.location='database.php?mode=edit&id=<?php echo $data['id'];?>'" class='txt'><?php echo stripslashes($data['body'])?></div>
+    <div OnClick="document.location='database.php?mode=edit&id=<?php echo $data['itemid'];?>'" class='txt'><?php echo stripslashes($data['body'])?></div>
     <?php
 }
-// Get userinfo
-$sql = "SELECT firstname, lastname FROM users WHERE userid = :userid";
-$requser = $pdo->prepare($sql);
-$requser->execute(array(
-    'userid' => $data['userid']
-));
-$datauser = $requser->fetch();
-echo "Last modified by ".$datauser['firstname']." ".$datauser['lastname']." on ".$data['date'];
+// SHOW USER
+echo "Last modified by ".$data['firstname']." ".$data['lastname']." on ".$data['date'];
 echo "</section>";
 // DISPLAY FILES
 require_once 'inc/display_file.php';

@@ -121,16 +121,16 @@ while ($status = $req->fetch()) {
 }
 ?>
 <select id="status_form" name="status" onchange="updateStatus(this.value)">
-    <?php
-    // now display all possible values of status in select menu
-    foreach ($status_arr as $key => $value) {
-        echo "<option ";
-        if ($experiment['status'] == $key) {
-            echo "selected ";
-        }
-        echo "value='$key'>$value</option>";
+<?php
+// now display all possible values of status in select menu
+foreach ($status_arr as $key => $value) {
+    echo "<option ";
+    if ($experiment['status'] == $key) {
+        echo "selected ";
     }
-    ?>
+    echo "value='$key'>$value</option>";
+}
+?>
 </select>
 </span>
 <br />
@@ -172,19 +172,25 @@ require_once 'inc/display_file.php';
 <div id='links_div'>
 <?php
 // DISPLAY LINKED ITEMS
-$sql = "SELECT * FROM experiments_links LEFT JOIN items ON (experiments_links.link_id = items.id) 
+$sql = "SELECT items.id AS itemid,
+    experiments_links.id AS linkid,
+    experiments_links.*,
+    items.*,
+    items_types.*
+    FROM experiments_links
+    LEFT JOIN items ON (experiments_links.link_id = items.id)
+    LEFT JOIN items_types ON (items.type = items_types.id)
     WHERE experiments_links.item_id = :id";
 $req = $pdo->prepare($sql);
-$req->execute(array(
-    'id' => $id
-));
+$req->bindParam(':id', $id, PDO::PARAM_INT);
+$req->execute();
 // Check there is at least one link to display
 if ($req->rowcount() > 0) {
     echo "<ul>";
     while ($links = $req->fetch()) {
-        $type = get_item_info_from_id($links['type'], 'name');
-        echo "<li>- [".$type."] - <a href='database.php?mode=view&id=".$links['id']."'>".stripslashes($links['title'])."</a>";
-        echo "<a onclick='delete_link(".$links[0].", ".$id.")'>
+        echo "<li>- [".$links['name']."] - <a href='database.php?mode=view&id=".$links['itemid']."'>".
+            stripslashes($links['title'])."</a>";
+        echo "<a onclick='delete_link(".$links['linkid'].", ".$id.")'>
         <img src='themes/".$_SESSION['prefs']['theme']."/img/trash.png' title='delete' alt='delete' /></a></li>";
     } // end while
     echo "</ul>";
@@ -272,14 +278,18 @@ function addTagOnEnter(e) { // the argument here is the event (needed to detect 
 $(function() {
 		var availableLinks = [
 <?php // get all links for autocomplete
-$sql = "SELECT title, id, type FROM items";
+$sql = "SELECT items_types.name,
+items.id AS itemid,
+items.* FROM items
+LEFT JOIN items_types
+ON (items.type = items_types.id)";
 $getalllinks = $pdo->prepare($sql);
 $getalllinks->execute();
 while ($link = $getalllinks->fetch()) {
     // html_entity_decode is needed to convert the quotes
     // str_replace to remove ' because it messes everything up
-    $name = get_item_info_from_id($link['type'], 'name');
-    echo "'".$link['id']." - ".$name." - ".str_replace("'", "", html_entity_decode(substr($link[0], 0, 60), ENT_QUOTES))."',";
+    $name = $link['name'];
+    echo "'".$link['itemid']." - ".$name." - ".str_replace("'", "", html_entity_decode(substr($link['title'], 0, 60), ENT_QUOTES))."',";
 }?>
 		];
 		$( "#linkinput" ).autocomplete({

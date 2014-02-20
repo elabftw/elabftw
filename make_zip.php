@@ -43,11 +43,7 @@ if ($_GET['type'] === 'exp') {
 }
 
 // CREATE URL
-if (!empty($_SERVER['HTTPS'])) {
-    $protocol = 'https://';
-} else {
-    $protocol = 'http://';
-}
+$protocol = 'https://';
 $url = $protocol.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
 
 // Check id is valid and assign it to $id
@@ -67,8 +63,17 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             ////////////////
 
             // SQL to get info on the item we are zipping
-            $sql = "SELECT * FROM $table WHERE id = $id LIMIT 1";
+            if ($table == 'experiments') {
+                $sql = "SELECT * FROM experiments WHERE id = :id LIMIT 1";
+            } else {
+                $sql = "SELECT items.*,
+                    items_types.name AS items_typesname
+                    FROM items
+                    LEFT JOIN items_types ON (items.type = items_types.id)
+                    WHERE items.id = :id LIMIT 1";
+            }
             $req = $pdo->prepare($sql);
+            $req->bindParam(':id', $id, PDO::PARAM_INT);
             $req->execute();
             $zipped = $req->fetch();
             $title = stripslashes($zipped['title']);
@@ -80,7 +85,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             if ($table == 'experiments') {
                 $folder = $date."-".$clean_title;
             } else { // items
-                $type = get_item_info_from_id($zipped['type'], 'name');
+                $type = $zipped['items_typesname'];
                 $folder = $type." - ".$clean_title;
             }
             $body = stripslashes($zipped['body']);
@@ -179,15 +184,19 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                     // put links in list with link to the url of item
                     for ($j=0; $j<$linknb; $j++) {
                         // get title and type of the item linked
-                        $sql = "SELECT * FROM items WHERE id = :id";
-                        $req = $pdo->prepare($sql);
-                        $req->execute(array(
+                        $sql = "SELECT items.*,
+                            items_types.name AS items_typesname
+                            FROM items
+                            LEFT JOIN items_types ON (items.type = items_types.id)
+                            WHERE items.id = :id";
+                        $item_req = $pdo->prepare($sql);
+                        $item_req->execute(array(
                             'id' => $link_id[$j]
                         ));
-                        $item_infos = $req->fetch();
+                        $item_infos = $item_req->fetch();
 
                         $link_title = $item_infos['title'];
-                        $link_type = get_item_info_from_id($item_infos['type'], 'name');
+                        $link_type = $item_infos['items_typesname'];
 
                         $html .= "<li>[".$link_type."] - <a href='".$url."?mode=view&id=".$link_id[$j]."'>".$link_title."</a></li>";
                     }
@@ -205,7 +214,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             <a href='http://www.elabftw.net'>eLabFTW.net</a>
                 </footer>";
             $html .= "</section></body></html>";
-            // CREATE TXT FILE
+            // CREATE HTML FILE
             // utf8 ftw
             $html = utf8_encode($html);
             // add header for utf-8

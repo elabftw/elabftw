@@ -35,7 +35,12 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
 }
 
 // SQL for viewXP
-$sql = "SELECT experiments.*, status.color, status.name FROM experiments LEFT JOIN status ON (experiments.status = status.id)
+$sql = "SELECT experiments.id AS expid,
+    experiments.*,
+    status.color,
+    status.name
+    FROM experiments
+    LEFT JOIN status ON (experiments.status = status.id)
     WHERE experiments.id = :id";
 $req = $pdo->prepare($sql);
 $req->bindParam(':id', $id, PDO::PARAM_INT);
@@ -72,23 +77,23 @@ if ($data['userid'] != $_SESSION['userid']) {
     <section class="item" style='border: 1px solid #<?php echo $data['color'];?>'>
 <?php
 echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' title='date' alt='Date :' /><span class='date'> ".$data['date']."</span><br />
-    <a href='experiments.php?mode=edit&id=".$data['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/edit.png' title='edit' alt='edit' /></a> 
-<a href='duplicate_item.php?id=".$data['id']."&type=exp'><img src='themes/".$_SESSION['prefs']['theme']."/img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a> 
-<a href='make_pdf.php?id=".$data['id']."&type=experiments'><img src='themes/".$_SESSION['prefs']['theme']."/img/pdf.png' title='make a pdf' alt='pdf' /></a> 
+    <a href='experiments.php?mode=edit&id=".$data['expid']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/edit.png' title='edit' alt='edit' /></a> 
+<a href='duplicate_item.php?id=".$data['expid']."&type=exp'><img src='themes/".$_SESSION['prefs']['theme']."/img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a> 
+<a href='make_pdf.php?id=".$data['expid']."&type=experiments'><img src='themes/".$_SESSION['prefs']['theme']."/img/pdf.png' title='make a pdf' alt='pdf' /></a> 
 <a href='javascript:window.print()'><img src='themes/".$_SESSION['prefs']['theme']."/img/print.png' title='Print this page' alt='Print' /></a> 
-<a href='make_zip.php?id=".$data['id']."&type=exp'><img src='themes/".$_SESSION['prefs']['theme']."/img/zip.png' title='make a zip archive' alt='zip' /></a> ";
+<a href='make_zip.php?id=".$data['expid']."&type=exp'><img src='themes/".$_SESSION['prefs']['theme']."/img/zip.png' title='make a zip archive' alt='zip' /></a> ";
 // lock
 if ($data['locked'] == 0) {
-    echo "<a href='lock.php?id=".$data['id']."&action=lock&type=experiments'><img src='themes/".$_SESSION['prefs']['theme']."/img/unlock.png' title='lock experiment' alt='lock' /></a>";
+    echo "<a href='lock.php?id=".$data['expid']."&action=lock&type=experiments'><img src='themes/".$_SESSION['prefs']['theme']."/img/unlock.png' title='lock experiment' alt='lock' /></a>";
 } else { // experiment is locked
-    echo "<a href='lock.php?id=".$data['id']."&action=unlock&type=experiments'><img src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' title='unlock experiment' alt='unlock' /></a>";
+    echo "<a href='lock.php?id=".$data['expid']."&action=unlock&type=experiments'><img src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' title='unlock experiment' alt='unlock' /></a>";
 }
 
 // TAGS
 echo show_tags($id, 'experiments_tags');
 // TITLE : click on it to go to edit mode
 ?>
-<div OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['id'];?>'" class='title'>
+<div OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['expid'];?>'" class='title'>
     <?php echo stripslashes($data['title']);?>
     <span class='align_right' id='status'>(<?php echo $data['name'];?>)<span>
 </div>
@@ -96,7 +101,7 @@ echo show_tags($id, 'experiments_tags');
 // BODY (show only if not empty, click on it to edit
 if ($data['body'] != '') {
     ?>
-    <div OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['id'];?>'" class='txt'><?php echo stripslashes($data['body']);?></div>
+    <div OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['expid'];?>'" class='txt'><?php echo stripslashes($data['body']);?></div>
     <?php
 }
 echo "<br />";
@@ -105,7 +110,14 @@ echo "<br />";
 require_once 'inc/display_file.php';
 
 // DISPLAY LINKED ITEMS
-$sql = "SELECT * FROM experiments_links LEFT JOIN items ON (experiments_links.link_id = items.id) 
+$sql = "SELECT items.id AS itemid,
+    experiments_links.id AS linkid,
+    experiments_links.*,
+    items.*,
+    items_types.*
+    FROM experiments_links
+    LEFT JOIN items ON (experiments_links.link_id = items.id)
+    LEFT JOIN items_types ON (items.type = items_types.id)
     WHERE experiments_links.item_id = :id";
 $req = $pdo->prepare($sql);
 $req->execute(array(
@@ -116,16 +128,10 @@ if ($req->rowcount() > 0) {
     echo "<hr class='flourishes'>";
     echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/link.png'> <h4 style='display:inline'>Linked items</h4>
 <div id='links_div'><ul>";
-    while ($links = $req->fetch()) {
+    while ($link = $req->fetch()) {
         // SQL to get title
-        $linksql = "SELECT id, title, type FROM items WHERE id = :link_id";
-        $linkreq = $pdo->prepare($linksql);
-        $linkreq->execute(array(
-            'link_id' => $links['link_id']
-        ));
-        $linkdata = $linkreq->fetch();
-        $name = get_item_info_from_id($linkdata['type'], 'name');
-        echo "<li>[".$name."] - <a href='database.php?mode=view&id=".$linkdata['id']."'>".stripslashes($linkdata['title'])."</a></li>";
+        echo "<li>[".$link['name']."] - <a href='database.php?mode=view&id=".$link['itemid']."'>".
+            stripslashes($link['title'])."</a></li>";
     } // end while
     echo "</ul>";
 } else { // end if link exist

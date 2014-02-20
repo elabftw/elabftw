@@ -311,24 +311,15 @@ function show_stars($rating)
     echo "</div>";
 }
 
-function get_item_info_from_id($id, $info)
-{
-    global $pdo;
-    $sql = "SELECT * FROM items_types WHERE id = :id";
-    $req = $pdo->prepare($sql);
-    $req->execute(array(
-        'id' => $id
-    ));
-    $data = $req->fetch();
-    return $data[$info];
-}
-
 function showDB($id, $display)
 {
 // Show unique DB item
     global $pdo;
     // SQL to get everything from selected id
-    $sql = "SELECT items.*, items_types.bgcolor, items_types.name FROM items 
+    $sql = "SELECT items.*,
+        items_types.bgcolor,
+        items_types.name
+        FROM items
         LEFT JOIN items_types ON (items.type = items_types.id)
         WHERE items.id = :id";
     $req = $pdo->prepare($sql);
@@ -354,7 +345,7 @@ function showDB($id, $display)
     } else { // NOT COMPACT
 
         echo "<section class='item'>";
-        echo "<h4 style='color:#".get_item_info_from_id($item['type'], 'bgcolor')."'>".get_item_info_from_id($item['type'], 'name')." </h4>";
+        echo "<h4 style='color:#".$item['bgcolor']."'>".$item['name']." </h4>";
         // TAGS
         echo show_tags($id, 'items_tags');
         // view link

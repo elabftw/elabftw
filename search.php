@@ -111,28 +111,30 @@ require_once('inc/info_box.php');
                 ?>'/><br />
                 <br />
                 <p class='inline'>And status is </p>
-                    <select name='status' class='search_inputs'>
+                    <?php
+                    // put all available status in array
+                    $status_arr = array();
+                    // SQL TO GET ALL STATUS INFO
+                    $sql = 'SELECT id, name, color FROM status';
+                    $req = $pdo->prepare($sql);
+                    $req->execute();
+
+                    while ($status = $req->fetch()) {
+                        $status_arr[$status['id']] = $status['name'];
+                    }
+                    ?>
+                    <select name="status" class='search_inputs'>
                         <option value='' name='status'>select status</option>
-                        <option value='running' name='status'<?php
-                            if(isset($_GET['status']) && ($_GET['status'] == 'running')) {
-                                echo " selected='selected'";
-                            }?>
-                            >Running</option>
-                        <option value='success' name='status'<?php
-                            if(isset($_GET['status']) && ($_GET['status'] == 'success')) {
-                                echo " selected='selected'";
-                            }?>
-                            >Success</option>
-                        <option value='redo' name='status'<?php
-                            if(isset($_GET['status']) && ($_GET['status'] == 'redo')) {
-                                echo " selected='selected'";
-                            }?>
-                            >Redo</option>
-                        <option value='fail' name='status'<?php
-                            if(isset($_GET['status']) && ($_GET['status'] == 'fail')) {
-                                echo " selected='selected'";
-                            }?>
-                            >Fail</option>
+                        <?php
+                        // now display all possible values of status in select menu
+                        foreach ($status_arr as $key => $value) {
+                            echo "<option ";
+                            if (isset($_GET['status']) && $_GET['status'] == $key) {
+                                echo "selected ";
+                            }
+                            echo "value='$key'>$value</option>";
+                        }
+                        ?>
                     </select>
                 <br />
                 <br />
@@ -198,8 +200,8 @@ if (isset($_GET)) {
     } else {
         $body = '';
     }
-    if (isset($_GET['status']) && !empty($_GET['status'])) {
-        $status = check_status($_GET['status']);
+    if (isset($_GET['status']) && !empty($_GET['status']) && is_pos_int($_GET['status'])) {
+        $status = $_GET['status'];
     } else {
         $status = '';
     }

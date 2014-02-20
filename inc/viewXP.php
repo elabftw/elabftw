@@ -35,7 +35,8 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
 }
 
 // SQL for viewXP
-$sql = "SELECT * FROM experiments WHERE id = :id";
+$sql = "SELECT experiments.*, status.color, status.name FROM experiments LEFT JOIN status ON (experiments.status = status.id)
+    WHERE experiments.id = :id";
 $req = $pdo->prepare($sql);
 $req->bindParam(':id', $id, PDO::PARAM_INT);
 $req->execute();
@@ -68,7 +69,7 @@ if ($data['userid'] != $_SESSION['userid']) {
 
 // Display experiment
 ?>
-<section class="item <?php echo $data['status'];?>">
+    <section class="item" style='border: 1px solid #<?php echo $data['color'];?>'>
 <?php
 echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' title='date' alt='Date :' /><span class='date'> ".$data['date']."</span><br />
     <a href='experiments.php?mode=edit&id=".$data['id']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/edit.png' title='edit' alt='edit' /></a> 
@@ -89,7 +90,7 @@ echo show_tags($id, 'experiments_tags');
 ?>
 <div OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['id'];?>'" class='title'>
     <?php echo stripslashes($data['title']);?>
-    <span class='align_right' id='status'>(<?php echo $data['status'];?>)<span>
+    <span class='align_right' id='status'>(<?php echo $data['name'];?>)<span>
 </div>
 <?php
 // BODY (show only if not empty, click on it to edit

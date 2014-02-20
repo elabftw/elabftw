@@ -1,5 +1,9 @@
 /* Changelog for eLabFTW */
 
+Version 0.9.4.1
+* Status are now fully editable
+* Bugfixes
+
 Version 0.9.4
 * Security improvements against CSRF
 * Config is now stored in the database and editable on admin page

@@ -28,7 +28,7 @@ $msg_arr = array();
 
 // What do we create ?
 if (isset($_GET['type']) && !empty($_GET['type']) && is_pos_int($_GET['type'])) {
-    // $type is int here
+    // $type is int for DB items
     $type = $_GET['type'];
 } elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')) {
     $type = 'experiments';
@@ -60,6 +60,24 @@ if ($type === 'experiments') {
         $body = '';
     }
 
+    // what will be the status ?
+    // go pick what is the default status upon creating experiment
+    // there should be only one because upon making a status default,
+    // all the others are made not default
+    $sql = 'SELECT id FROM status WHERE is_default = true LIMIT 1';
+    $req = $pdo->prepare($sql);
+    $req->execute();
+    $status = $req->fetchColumn();
+
+    // if there is no is_default status
+    // we take the first status that come
+    if (!$status) {
+        $sql = 'SELECT id FROM status LIMIT 1';
+        $req = $pdo->prepare($sql);
+        $req->execute();
+        $status = $req->fetchColumn();
+    }
+
     // SQL for create experiments
     $sql = "INSERT INTO experiments(title, date, body, status, elabid, visibility, userid) VALUES(:title, :date, :body, :status, :elabid, :visibility, :userid)";
     $req = $pdo->prepare($sql);
@@ -67,7 +85,7 @@ if ($type === 'experiments') {
         'title' => $title,
         'date' => kdate(),
         'body' => $body,
-        'status' => 'running',
+        'status' => $status,
         'elabid' => $elabid,
         'visibility' => 'team',
         'userid' => $_SESSION['userid']

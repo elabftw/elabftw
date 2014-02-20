@@ -166,6 +166,7 @@ nav a{
     border-bottom: 1px dotted #CCC;
     margin-bottom: 15px;
     padding-bottom: 15px;
+    text-align:center;
 }
 
 
@@ -274,12 +275,12 @@ h4 {
     float:right;
 }
 /* search bar */
-#big_search {
-    text-align: center;
+form#big_search {
+    display: inline;
+
 }
-#big_search input {
-    font:  20px Helvetica, Verdana, Arial, sans-serif;
-    margin-bottom: 10px;
+form#big_search input {
+    width:30%;
 }
 
 /* LOGIN */
@@ -394,22 +395,6 @@ img {
 .high {
     height:450px;
 }
-/* item style for experiments */
-.running {
-    border: 2px dotted blue !important;
-}
-
-.success {
-    border: 2px solid green !important;
-}
-
-.fail {
-    border: 2px solid red !important;
-}
-
-.redo {
-    border: 2px solid gray !important;
-}
 
 /* comments for experiments comments box */
 .newexpcomment {
@@ -446,9 +431,16 @@ img {
     width: 650px;
 }
 
-.date {
-    font:  16px Verdana, Arial,sans-serif !important;
+.date, .date_compact {
+    color: #5d5d5d;
+    margin:15px auto;
+    padding:5px;
 }
+
+.date_compact {
+    border-right:1px dotted #ccd;
+}
+
 
 #rating {
     float:right;
@@ -530,20 +522,6 @@ img {
     padding: 5px;
 }
 
-.running_compact, .success_compact, .redo_compact, .fail_compact {
-    border-radius: 5px;
-    margin: 15px auto 15px auto;
-    padding:  5px;
-    width: 742px;
-}
-
-.date_compact {
-    border: 1px black solid;
-    border-radius: 5px;
-    margin: 15px auto 15px auto;
-    padding:  5px;
-    width: 742px;
-}
 
 .filesdiv{
     font: 14px Verdana, Arial, Helvetica, sans-serif;

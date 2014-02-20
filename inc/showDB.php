@@ -33,9 +33,6 @@ if (isset($_SESSION['prefs']['display'])) {
 }
 ?>
 <div id='submenu'>
-    <form id='big_search' method='get' action='database.php'>
-        <input id='big_search_input' type='search' name='q' size='50' placeholder='Type your search' />
-    </form>
 <?php // SQL to get items names
 $sql = "SELECT * FROM items_types";
 $req = $pdo->prepare($sql);
@@ -52,13 +49,16 @@ echo "</select>";
 // 'List all' dropdown menu
 // we do the request again to get the list again
 $req->execute();
-echo "<span class='align_right'><img src='themes/".$_SESSION['prefs']['theme']."/img/search.png' alt='search' /> List all <select onchange=go_url(this.value)><option value=''>--------</option>";
+echo " | <img src='themes/".$_SESSION['prefs']['theme']."/img/search.png' alt='search' /> List all <select onchange=go_url(this.value)><option value=''>--------</option>";
 while ($items_types = $req->fetch()) {
     echo "<option value='search.php?type=".$items_types['id']."' name='type' ";
     echo ">".$items_types['name']."</option>";
 }
 ?>
-</select></span>
+</select> | 
+    <form id='big_search' method='get' action='database.php'>
+        <input id='big_search_input' type='search' name='q' size='50' placeholder='Type your search' />
+    </form>
 </div>
 <!-- end submenu -->
 

@@ -155,6 +155,73 @@ if ($count > 0) {
 
 </section>
 
+<!-- STATUS -->
+<section class='item'>
+<h3>STATUS</h3>
+<?php
+// SQL to get all status
+$sql = "SELECT * from status";
+$req = $pdo->prepare($sql);
+$req->execute();
+while ($status = $req->fetch()) {
+    ?>
+    <div class='simple_border'>
+    <a class='trigger_status_<?php echo $status['id'];?>'>Edit <?php echo $status['name'];?></a>
+    <div class='toggle_container_status_<?php echo $status['id'];?>'>
+    <img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $status['id'];?>','status', 'admin.php')" />
+
+    <form action='admin-exec.php' method='post'>
+        <input type='text' name='status_name' value='<?php echo stripslashes($status['name']);?>' />
+        <label for='default_checkbox'>Make default</label>
+        <input type='checkbox' name='status_is_default' id='default_checkbox'
+        <?php
+        // check the box if the status is already default
+        if ($status['is_default'] == 1) {
+            echo " checked";
+        }
+        ?>>
+        <div id='colorwheel_div_edit_status_<?php echo $status['id'];?>'>
+        <div class='colorwheel inline'></div>
+        <input type='text' name='status_color' value='#<?php echo $status['color'];?>' />
+        </div>
+        <input type='hidden' name='status_id' value='<?php echo $status['id'];?>' />
+        <br />
+
+        <div class='center'>
+        <input type='submit' class='button' value='Edit <?php echo stripslashes($status['name']);?>' /><br />
+        </div>
+    </form></div>
+    <script>$(document).ready(function() {
+        $(".toggle_container_status_<?php echo $status['id'];?>").hide();
+        $("a.trigger_status_<?php echo $status['id'];?>").click(function(){
+            $('div.toggle_container_status_<?php echo $status['id'];?>').slideToggle(1);
+        });
+        color_wheel('#colorwheel_div_edit_status_<?php echo $status['id'];?>')
+    });</script></div>
+    <?php
+}
+?>
+
+</section>
+
+<section class='item'>
+    <a class='trigger_add_new_item'>
+        <h3>ADD NEW STATUS</h3>
+    </a>
+    <div class='simple_border toggle_add_new_item'>
+        <form action='admin-exec.php' method='post'>
+            <input type='text' class='biginput' name='new_status_name' />
+            <div id='colorwheel_div_new_status'>
+                <div class='colorwheel inline'></div>
+                <input type='text' name='new_status_color' value='#000000' />
+            </div>
+            <div class='center'>
+                <input type='submit' class='button' value='Add new status' />
+            </div>
+        </form>
+    </div>
+</section>
+
 <!-- TEAM MEMBERS -->
 <section class='item'>
 <h3>TEAM MEMBERS</h3>
@@ -322,6 +389,7 @@ $(document).ready(function() {
         $('div.toggle_add_new_item').slideToggle(1);
 	});
     color_wheel('#colorwheel_div_new')
+    color_wheel('#colorwheel_div_new_status')
     // EDITOR
     tinymce.init({
         mode : "specific_textareas",

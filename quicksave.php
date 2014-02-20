@@ -27,8 +27,9 @@ if (is_pos_int($_POST['id'])) {
 
 // we only update status
 if (isset($_POST['status'])) {
-    $status = check_status($_POST['status']);
-
+    if (is_pos_int($_POST['status'])) {
+        $status = $_POST['status'];
+    }
     $sql = "UPDATE experiments 
         SET status = :status 
         WHERE userid = :userid 

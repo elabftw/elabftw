@@ -100,38 +100,6 @@ h4 {
     border:2px solid #00FF00;
 }
 
-.running, .success, .redo, .fail {
-    background-color:grey;
-}
-.running {
-    border:3px dotted blue;
-}
-.success{
-    border:3px solid green;
-}
-.redo{
-    border:3px solid grey;
-}
-.fail{
-    border:3px solid red;
-}
-
-.running_compact, .success_compact, .redo_compact, .fail_compact {
-    background-color:grey;
-}
-.running_compact {
-    border:1px dotted blue;
-}
-.success_compact {
-    border:1px solid green;
-}
-.redo_compact{
-    border:1px solid grey;
-}
-.fail_compact{
-    border:1px solid red;
-}
-
 .date {
     color:black
 }

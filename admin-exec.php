@@ -308,6 +308,74 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
     }
 }
 
+// STATUS
+if (isset($_POST['status_name']) && is_pos_int($_POST['status_id'])) {
+    $status_id = $_POST['status_id'];
+    $status_name = filter_var($_POST['status_name'], FILTER_SANITIZE_STRING);
+    // we remove the # of the hexacode and sanitize string
+    $status_color = filter_var(substr($_POST['status_color'], 1, 6), FILTER_SANITIZE_STRING);
+    if (isset($_POST['status_is_default']) && $_POST['status_is_default'] === 'on') {
+        $status_is_default = true;
+        // if we set true to status_is_default somewhere, it's best to remove all other default
+        // so we won't have two default status
+        $sql = "UPDATE status SET
+            is_default = false";
+        $req = $pdo->prepare($sql);
+        $req->execute();
+    } else {
+        $status_is_default = false;
+    }
+
+
+    // now we update the status
+    $sql = "UPDATE status SET
+        name = :name,
+        color = :color,
+        is_default = :is_default
+        WHERE id = :id";
+    $req = $pdo->prepare($sql);
+    $result = $req->execute(array(
+        'name' => $status_name,
+        'color' => $status_color,
+        'is_default' => $status_is_default,
+        'id' => $status_id
+    ));
+    if ($result) {
+        $infos_arr[] = 'Status updated successfully.';
+        $_SESSION['infos'] = $infos_arr;
+        header('Location: admin.php');
+        exit();
+    } else { //sql fail
+        $infos_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $_SESSION['errors'] = $infos_arr;
+        header('Location: admin.php');
+        exit();
+    }
+}
+// add new status
+if (isset($_POST['new_status_name'])) {
+    $status_name = filter_var($_POST['new_status_name'], FILTER_SANITIZE_STRING);
+    // we remove the # of the hexacode and sanitize string
+    $status_color = filter_var(substr($_POST['new_status_color'], 1, 6), FILTER_SANITIZE_STRING);
+    $sql = "INSERT INTO status(name, color) VALUES(:name, :color)";
+    $req = $pdo->prepare($sql);
+    $result = $req->execute(array(
+        'name' => $status_name,
+        'color' => $status_color
+    ));
+    if ($result) {
+        $infos_arr[] = 'New status added successfully.';
+        $_SESSION['infos'] = $infos_arr;
+        header('Location: admin.php');
+        exit();
+    } else { //sql fail
+        $infos_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $_SESSION['errors'] = $infos_arr;
+        header('Location: admin.php');
+        exit();
+    }
+}
+
 // ITEMS TYPES
 if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
     $item_type_id = $_POST['item_type_id'];

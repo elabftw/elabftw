@@ -53,7 +53,9 @@ if (is_pos_int($_POST['item_id'])) {
 $title = check_title($_POST['title']);
 $date = check_date($_POST['date']);
 $body = check_body($_POST['body']);
-$status = check_status($_POST['status']);
+if (isset($_POST['status']) && is_pos_int($_POST['status'])) {
+    $status = $_POST['status'];
+}
 
 // Store stuff in Session to get it back if error input
 $_SESSION['new_title'] = $title;

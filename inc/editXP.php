@@ -41,7 +41,8 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
 }
 
 // SQL for editXP
-$sql = "SELECT * FROM experiments WHERE id = :id";
+$sql = "SELECT experiments.*, status.color FROM experiments LEFT JOIN status ON (experiments.status = status.id)
+    WHERE experiments.id = :id";
 $req = $pdo->prepare($sql);
 $req->bindParam(':id', $id, PDO::PARAM_INT);
 $req->execute();
@@ -65,7 +66,7 @@ if ($experiment['locked'] == 1) {
 
 // BEGIN CONTENT
 ?>
-<section id='view_xp_item' class='item <?php echo $experiment['status'];?>'>
+<section id='view_xp_item' class='item' style='border: 1px solid #<?php echo $experiment['color'];?>'>
 <img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','exp', 'experiments.php')" />
 <!-- ADD TAG FORM -->
 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
@@ -97,15 +98,39 @@ while ($tags = $tagreq->fetch()) {
 
 <span class='align_right'>
 <h4>Status</h4>
-<!-- Status get selected by default -->
+<script>
+// this array is used by updateStatus() to get the color of new status
+var status_arr = Array();
+</script>
+
 <?php
-$status = $experiment['status'];
+// put all available status in array
+$status_arr = array();
+// SQL TO GET ALL STATUS INFO
+$sql = 'SELECT id, name, color FROM status';
+$req = $pdo->prepare($sql);
+$req->execute();
+
+while ($status = $req->fetch()) {
+    
+    $status_arr[$status['id']] = $status['name'];
+    // get also a JS array for update_status() that needs the color to set the border immediately
+    echo "<script>
+        status_arr['".$status['id']."'] =  '".$status['color']."';
+        </script>";
+}
 ?>
-    <select id="status_form" name="status" onchange="update_status(this.value)">
-<option id='option_running' value="running">Running</option>
-<option id='option_success' value="success">Success</option>
-<option id='option_redo' value="redo">Need to be redone</option>
-<option id='option_fail' value="fail">Fail</option>
+<select id="status_form" name="status" onchange="updateStatus(this.value)">
+    <?php
+    // now display all possible values of status in select menu
+    foreach ($status_arr as $key => $value) {
+        echo "<option ";
+        if ($experiment['status'] == $key) {
+            echo "selected ";
+        }
+        echo "value='$key'>$value</option>";
+    }
+    ?>
 </select>
 </span>
 <br />
@@ -309,7 +334,7 @@ function addLinkOnEnter(e) { // the argument here is the event (needed to detect
 }
 
 // This function is activated with the select element and send a post request to quicksave.php
-function update_status(status) {
+function updateStatus(status) {
             var jqxhr = $.ajax({
                 type: "POST",
                 url: "quicksave.php",
@@ -320,9 +345,11 @@ function update_status(status) {
                 // change the color of the item border
             }).done(function() { 
                 // we first remove any status class
-                $("#view_xp_item").removeClass('running success redo fail');
-                // and we add our new status class
-                $("#view_xp_item").toggleClass(status);
+                $("#view_xp_item").css('border', null);
+                // and we add our new border color
+                // first : get what is the color of the new status
+                var css = '1px solid #' + status_arr[status];
+                $("#view_xp_item").css('border', css);
             });
 }
 
@@ -353,39 +380,9 @@ $(document).ready(function() {
     // KEYBOARD SHORTCUTS
     key('<?php echo $_SESSION['prefs']['shortcuts']['create'];?>', function(){location.href = 'create_item.php?type=exp'});
     key('<?php echo $_SESSION['prefs']['shortcuts']['submit'];?>', function(){document.forms['editXP'].submit()});
+
     // hide the little 'Updated !' message
     $('#visibility_msg_div').hide();
-
-    // javascript to put the selected on status option, because with php, browser cache the value of previous edited XP
-    var status = "<?php echo $status;?>";
-    switch(status) {
-    case 'running' :
-        $("#option_running").prop('selected', true);
-        break;
-    case 'success' :
-        $("#option_success").prop('selected', true);
-        break;
-    case 'redo' :
-        $("#option_redo").prop('selected', true);
-        break;
-    case 'fail' :
-        $("#option_fail").prop('selected', true);
-        break;
-    default :
-        $("#option_running").prop('selected', true);
-    }
-    // javascript to put the selected on visibility option, because with php, browser cache the value of previous edited XP
-    var visibility = "<?php echo $visibility;?>";
-    switch(visibility) {
-    case 'team' :
-        $("#option_team").prop('selected', true);
-        break;
-    case 'user' :
-        $("#option_user").prop('selected', true);
-        break;
-    default :
-        $("#option_team").prop('selected', true);
-    }
 
     // fix for the ' and "
     title = "<?php echo $experiment['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");

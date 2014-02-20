@@ -25,36 +25,43 @@
 ********************************************************************************/
 // Count number of experiments for each status
 // SUCCESS
+// get all status name and id
+$sql = "SELECT * FROM status";
+$req = $pdo->prepare($sql);
+$req->execute();
+
 $status_arr = array();
 $count_arr = array();
-$status_arr[] = 'success';
-$status_arr[] = 'fail';
-$status_arr[] = 'redo';
-$status_arr[] = 'running';
-foreach ($status_arr as $status) {
+
+while ($status = $req->fetch()) {
+    $status_arr[$status['id']] = $status['name'];
+}
+
+foreach ($status_arr as $key => $value) {
     $sql = "SELECT COUNT(id)
         FROM experiments
         WHERE userid = :userid
-        AND status LIKE'".$status."'";
+        AND status = :status";
     $req = $pdo->prepare($sql);
     $req->bindParam(':userid', $_SESSION['userid']);
+    $req->bindParam(':status', $key);
     $req->execute();
-    $count_arr[] = $req->fetch();
+    $count_arr[$key] = $req->fetchColumn();
 }
 
-$success = $count_arr[0][0];
-$fail = $count_arr[1][0];
-$redo = $count_arr[2][0];
-$running = $count_arr[3][0];
 // MAKE TOTAL
-$total = ($success + $fail + $redo + $running);
+$sql = "SELECT COUNT(id) FROM experiments WHERE userid = :userid";
+$req = $pdo->prepare($sql);
+$req->bindParam(':userid', $_SESSION['userid']);
+$req->execute();
+$total = $req->fetchColumn();
+
+
 // Make percentage
 if ($total != 0) {
-    $success_p = round(($success / $total)*100);
-    $fail_p = round(($fail / $total)*100);
-    $redo_p = round(($redo / $total)*100);
-    $running_p = round(($running / $total)*100);
-    $total_p = ($success_p + $fail_p + $redo_p + $running_p);
+    foreach ($status_arr as $key => $value) {
+        $percent_arr[$value] = round(($count_arr[$key]/$total)*100);
+    }
 
     // BEGIN CONTENT
     echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/statistics.png' alt='' /> <h4>STATISTICS</h4>";
@@ -69,10 +76,11 @@ if ($total != 0) {
             data.addColumn('string', 'status');
             data.addColumn('number', 'Experiments number');
             data.addRows([
-                ['Running', <?php echo $running_p;?>],
-                ['Fail',  <?php echo $fail_p;?>],
-                ['Need to be redone',    <?php echo $redo_p;?>],
-                ['Success',      <?php echo $success_p;?>],
+            <?php
+                foreach ($percent_arr as $name => $percent) {
+                    echo "['$name', $percent],";
+                }
+            ?>
                           ]);
 
             var options = {

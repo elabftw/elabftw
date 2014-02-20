@@ -141,37 +141,6 @@ nav a:hover {
     color:black;
 }
 
-.running_compact, .success_compact, .redo_compact, .fail_compact {
-    background-color:#EEE;
-    box-shadow: 2px 2px 2px 2px #CCC; 
-    -webkit-box-shadow: 2px 2px 2px 2px #CCC;
-    -moz-box-shadow: 2px 2px 2px 2px #CCC;
-}
-.running_compact {
-    border:1px dotted blue;
-}
-.success_compact {
-    border:1px solid green;
-}
-.redo_compact{
-    border:1px solid grey;
-}
-.fail_compact{
-    border:1px solid red;
-}
-
-.running {
-    border:2px dotted blue;
-}
-.success {
-    border:2px solid green;
-}
-.redo {
-    border:2px solid gray;
-}
-.fail {
-    border:2px solid red;
-}
 /* FILES */
 .filesdiv {
     border: 1px solid #CCC;

@@ -32,13 +32,15 @@ if (isset($_SESSION['prefs']['theme'])) {
 }
 ?>
 <div id='submenu'>
-    <form id='big_search' method='get' action='experiments.php'>
-        <input id='big_search_input' type='search' name='q' size='50' placeholder='Type your search' />
-    </form>
-    <br />
     <a href="create_item.php?type=exp"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/notepad_add.png" alt="" /> Create experiment</a> | 
-    <a href='#' class='trigger'><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/duplicate.png" alt="" /> Create from template</a> |
-    <a onmouseover="changeSrc('<?php echo $_SESSION['prefs']['theme'];?>')" onmouseout="stopAnim('<?php echo $_SESSION['prefs']['theme'];?>')" href='experiments.php?mode=show&q=runningonly'><img id='runningimg' src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/running.fix.png" alt="running" /> Show running experiments</a>
+    <a href='#' class='trigger'><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/duplicate.png" alt="" /> Create from template</a> | 
+    <form id='big_search' method='get' action='experiments.php'>
+    <input id='big_search_input' type='search' name='q' size='50' placeholder='Search...' value='<?php
+if (isset($_GET['q'])) {
+    echo filter_var($_GET['q'], FILTER_SANITIZE_STRING);
+}
+?>' />
+    </form>
 </div><!-- end submenu -->
 <div class='toggle_container'><ul>
 <?php // SQL to get user's templates
@@ -74,25 +76,7 @@ $limit = $_SESSION['prefs']['limit'];
 if (isset($_GET['q'])) { // if there is a query
     $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
 
-    // RUNNING ONLY
-    if ($query === 'runningonly') {
-        $results_arr = array();
-        // show only running XP
-        $sql = "SELECT id FROM experiments 
-        WHERE userid = :userid AND status = 'running' LIMIT 100";
-        $req = $pdo->prepare($sql);
-        $req->execute(array(
-            'userid' => $_SESSION['userid']
-        ));
-        // put resulting ids in the results array
-        while ($running_experiments = $req->fetch()) {
-            $results_arr[] = $running_experiments['id'];
-        }
-
-    // NORMAL SEARCH
-    } else {
-        $results_arr = search_item('xp', $query, $_SESSION['userid']);
-    }
+    $results_arr = search_item('xp', $query, $_SESSION['userid']);
 
     // show number of results found
     $time = microtime();
@@ -262,14 +246,6 @@ if (isset($_GET['q'])) { // if there is a query
 
 
 <script>
-// ANIMATE RUNNING ICON
-function changeSrc(theme){
-    document.getElementById('runningimg').src = 'themes/'+theme+'/img/running.png';
-}
-function stopAnim(theme){
-    document.getElementById('runningimg').src = 'themes/'+theme+'/img/running.fix.png';
-}
-
 // READY ? GO !
 $(document).ready(function(){
 

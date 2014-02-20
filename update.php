@@ -503,3 +503,59 @@ if (!$table_is_here) {
 }
 
 
+// STATUS UPDATE
+// Convert all experiments status in numbers
+$sql = "UPDATE experiments SET status = 1 WHERE status = 'running'";
+$req = $pdo->prepare($sql);
+$req->execute();
+$sql = "UPDATE experiments SET status = 2 WHERE status = 'success'";
+$req = $pdo->prepare($sql);
+$req->execute();
+$sql = "UPDATE experiments SET status = 3 WHERE status = 'redo'";
+$req = $pdo->prepare($sql);
+$req->execute();
+$sql = "UPDATE experiments SET status = 4 WHERE status = 'fail'";
+$req = $pdo->prepare($sql);
+$req->execute();
+
+// CREATE table config
+$sql = "SHOW TABLES";
+$req = $pdo->prepare($sql);
+$req->execute();
+$table_is_here = false;
+while ($show = $req->fetch()) {
+    if (in_array('status', $show)) {
+        $table_is_here = true;
+    }
+}
+
+if (!$table_is_here) {
+    $create_sql = "CREATE TABLE IF NOT EXISTS `status` (
+          `id` int unsigned NOT NULL AUTO_INCREMENT,
+          `name` text NOT NULL,
+          `color` varchar(6) NOT NULL,
+          `is_default` BOOLEAN NULL DEFAULT NULL,
+          PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+    $req = $pdo->prepare($create_sql);
+    $result1 = $req->execute();
+
+    // Populate config table
+    $sql = "INSERT INTO status (name, color, is_default) VALUES
+        ('Running', '0000FF', true),
+        ('Success', '00FF00', false),
+        ('Need to be redone', 'c0c0c0', false),
+        ('Fail', 'ff0000', false);";
+    $req = $pdo->prepare($sql);
+    $result2 = $req->execute();
+
+    if($result && $result2) {
+        echo "Table 'status' successfully created and populated.\n";
+    } else {
+        die($die_msg);
+    }
+
+
+} else {
+    echo "Table 'status' already exists. Nothing to do.\n";
+}

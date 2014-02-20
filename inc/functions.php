@@ -246,41 +246,45 @@ function showXP($id, $display)
 // Show unique XP
     global $pdo;
     // SQL to get everything from selected id
-    $sql = "SELECT id, title, date, body, status, locked  FROM experiments WHERE id = :id";
+    $sql = "SELECT experiments.*, status.color FROM
+        experiments LEFT JOIN
+        status ON (experiments.status = status.id)
+        WHERE experiments.id = :id";
     $req = $pdo->prepare($sql);
     $req->execute(array(
         'id' => $id
     ));
-    $final_query = $req->fetch();
+    $experiments = $req->fetch();
+
     if ($display === 'compact') {
         // COMPACT MODE //
-        echo "<section class='item'>";
-        echo "<span class='".$final_query['status']."_compact'>".$final_query['date']."</span> ";
-        echo stripslashes($final_query['title']);
+        echo "<section class='item' style='border: 1px solid #".$experiments['color']."'>";
+        echo "<span class='date_compact'>".$experiments['date']."</span> ";
+        echo stripslashes($experiments['title']);
         // view link
-        echo "<a href='experiments.php?mode=view&id=".$final_query['id']."'>
-            <img class='align_right' src='img/view_compact.png' alt='view' title='view experiment' /></a>";
+        echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>
+            <img style='height:1em;float:right' src='img/view_compact.png' alt='view' title='view experiment' /></a>";
         echo "</section>";
     } else { // NOT COMPACT
         ?>
-        <section class="item <?php echo $final_query['status'];?>">
+        <section class="item" style='border: 1px solid #<?php echo $experiments['color'];?>'>
         <?php
         // DATE
-        echo "<span class='redo_compact'>".$final_query['date']."</span> ";
+        echo "<span class='date'>".$experiments['date']."</span> ";
         // TAGS
         echo show_tags($id, 'experiments_tags');
         // view link
-        echo "<a href='experiments.php?mode=view&id=".$final_query['id']."'>
+        echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>
             <img class='align_right' style='margin-left:5px;' src='img/arrow_right.png' alt='view' title='view experiment' /></a>";
         // show attached if there is a file attached
-        if (has_attachement($final_query['id'])) {
+        if (has_attachement($experiments['id'])) {
             echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='file attached' />";
         }
         // show lock if item is locked on viewXP
-        if ($final_query['locked'] == 1) {
+        if ($experiments['locked'] == 1) {
             echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' alt='lock' />";
         }
-        echo "<p class='title'>". stripslashes($final_query['title']) . "</p>";
+        echo "<p class='title'>". stripslashes($experiments['title']) . "</p>";
         echo "</section>";
     }
 }
@@ -324,43 +328,45 @@ function showDB($id, $display)
 // Show unique DB item
     global $pdo;
     // SQL to get everything from selected id
-    $sql = "SELECT * FROM items WHERE id = :id";
+    $sql = "SELECT items.*, items_types.bgcolor, items_types.name FROM items 
+        LEFT JOIN items_types ON (items.type = items_types.id)
+        WHERE items.id = :id";
     $req = $pdo->prepare($sql);
     $req->execute(array(
         'id' => $id
     ));
-    $final_query = $req->fetch();
+    $item = $req->fetch();
     if ($display === 'compact') {
         // COMPACT MODE //
         ?>
         <section class='item'>
-            <h4 style='color:#<?php echo get_item_info_from_id($final_query['type'], 'bgcolor');?>'><?php echo get_item_info_from_id($final_query['type'], 'name');?> </h4>
-            <span class='date date_compact'><?php echo $final_query['date'];?></span>
-            <span><?php echo stripslashes($final_query['title']);?>
+            <span class='date date_compact'><?php echo $item['date'];?></span>
+            <h4 style='border-right:1px dotted #ccd;color:#<?php echo $item['bgcolor'];?>'><?php echo $item['name'];?> </h4>
+            <span style='margin-left:7px'><?php echo stripslashes($item['title']);?>
         <?php
         // view link
-        echo "<a href='database.php?mode=view&id=".$final_query['id']."'>
-        <img class='align_right' style='margin-left:5px;' src='img/view_compact.png' alt='view' title='view item' /></a>";
+        echo "<a href='database.php?mode=view&id=".$item['id']."'>
+        <img style='height:1em;float:right; margin-left:7px;' src='img/view_compact.png' alt='view' title='view item' /></a>";
         // STAR RATING read only
-        show_stars($final_query['rating']);
+        show_stars($item['rating']);
         echo "</section>";
 
     } else { // NOT COMPACT
 
         echo "<section class='item'>";
-        echo "<h4 style='color:#".get_item_info_from_id($final_query['type'], 'bgcolor')."'>".get_item_info_from_id($final_query['type'], 'name')." </h4>";
+        echo "<h4 style='color:#".get_item_info_from_id($item['type'], 'bgcolor')."'>".get_item_info_from_id($item['type'], 'name')." </h4>";
         // TAGS
         echo show_tags($id, 'items_tags');
         // view link
-        echo "<a href='database.php?mode=view&id=".$final_query['id']."'>
+        echo "<a href='database.php?mode=view&id=".$item['id']."'>
         <img class='align_right' style='margin-left:5px;' src='img/arrow_right.png' alt='view' title='view item' /></a>";
         // STARS
-        show_stars($final_query['rating']);
+        show_stars($item['rating']);
         // show attached if there is a file attached
-        if (has_attachement($final_query['id'])) {
+        if (has_attachement($item['id'])) {
             echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='file attached' />";
         }
-        echo "<p class='title'>". stripslashes($final_query['title']) . "</p>";
+        echo "<p class='title'>". stripslashes($item['title']) . "</p>";
         echo "</section>";
     }
 }
@@ -409,22 +415,6 @@ function check_body($input)
         return strip_tags($input, "<br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol><blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td>");
     } else {
         return '';
-    }
-}
-
-function check_status($input)
-{
-    // Check STATUS
-    if ((isset($input)) && (!empty($input))) {
-        if (($input === 'running')
-        || ($input === 'success')
-        || ($input === 'fail')
-        || ($input === 'redo')) {
-            return $input;
-        }
-    } else {
-        // default is running
-        return 'running';
     }
 }
 
@@ -559,6 +549,25 @@ function duplicate_item($id, $type)
     global $pdo;
     if ($type === 'experiments') {
         $elabid = generate_elabid();
+
+        // what will be the status ?
+        // go pick what is the default status upon creating experiment
+        // there should be only one because upon making a status default,
+        // all the others are made not default
+        $sql = 'SELECT id FROM status WHERE is_default = true LIMIT 1';
+        $req = $pdo->prepare($sql);
+        $req->execute();
+        $status = $req->fetchColumn();
+
+        // if there is no is_default status
+        // we take the first status that come
+        if (!$status) {
+            $sql = 'SELECT id FROM status LIMIT 1';
+            $req = $pdo->prepare($sql);
+            $req->execute();
+            $status = $req->fetchColumn();
+        }
+
         // SQL to get data from the experiment we duplicate
         $sql = "SELECT title, body, visibility FROM experiments WHERE id = ".$id;
         $req = $pdo->prepare($sql);
@@ -571,7 +580,7 @@ function duplicate_item($id, $type)
             'title' => $data['title'],
             'date' => kdate(),
             'body' => $data['body'],
-            'status' => 'running',
+            'status' => $status,
             'elabid' => $elabid,
             'visibility' => $data['visibility'],
             'userid' => $_SESSION['userid']));
@@ -617,7 +626,7 @@ function duplicate_item($id, $type)
             'id' => $id
         ));
         $tag_number = $req->rowCount();
-        if ($tag_number > 1) {
+        if ($tag_number > 0) {
             while ($tags = $req->fetch()) {
                 // Put them in the new one. here $newid is the new exp created
                 $sql = "INSERT INTO experiments_tags(tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
@@ -657,14 +666,17 @@ function duplicate_item($id, $type)
         $sql = "SELECT tag FROM items_tags WHERE item_id = ".$id;
         $req = $pdo->prepare($sql);
         $req->execute();
-        while ($tags = $req->fetch()) {
-            // Put them in the new one. here $newid is the new exp created
-            $sql = "INSERT INTO items_tags(tag, item_id) VALUES(:tag, :item_id)";
-            $reqtag = $pdo->prepare($sql);
-            $result_tags = $reqtag->execute(array(
-                'tag' => $tags['tag'],
-                'item_id' => $newid
-            ));
+        $tag_number = $req->rowCount();
+        if ($tag_number > 0) {
+            while ($tags = $req->fetch()) {
+                // Put them in the new one. here $newid is the new exp created
+                $sql = "INSERT INTO items_tags(tag, item_id) VALUES(:tag, :item_id)";
+                $reqtag = $pdo->prepare($sql);
+                $result_tags = $reqtag->execute(array(
+                    'tag' => $tags['tag'],
+                    'item_id' => $newid
+                ));
+            }
         }
         if ($result && $result_tags) {
             return $newid;

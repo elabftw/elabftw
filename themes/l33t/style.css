@@ -152,18 +152,11 @@ h4 {
 .filesdiv a:hover {
     color:green;
 }
-.file_item{
-    border:1px solid #CCC;
-}
 .filesize{
     color:grey;
 }
 .editable{
     background-color: white;
-}
-
-.innerdiv{
-    border: 2px solid #00FF00;
 }
 
 /* FOOTER */

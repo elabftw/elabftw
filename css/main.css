@@ -29,7 +29,7 @@
     margin: auto;
     opacity: 0.95;
     padding: 10px 20px 10px 20px;
-    width: 900px;
+    width: 90%;
 }
 /* LINKS */
 a {
@@ -68,6 +68,7 @@ p a{
     font-weight: bold;
 }
 
+/* in install/index.php */
 .code {
     font:14px Courrier, sans-serif;
     background-color:white;
@@ -170,8 +171,10 @@ nav a{
 }
 
 
-/* on admin.php for items types */
-section.item a.trigger_add_new_item:hover {
+/* on admin.php for items types
+ * it's bettor to have a pointer to show that you should click
+ */
+section.item a[class*='trigger_']:hover {
     cursor:pointer;
 }
 
@@ -191,21 +194,11 @@ section.item a.trigger_add_new_item:hover {
 
 
 /* TITLES */
-h1{
-    margin-top: -5px;
-    text-align: center;
-    width: 140px;
-}
-h1 a {
-    text-decoration: none;
-}
 h2 {
     font: 24px Verdana, Arial, Helvetica, sans-serif;
     text-align: center;
     width: 100%;
 }
-
-
 
 h3 {
     font: 20px Verdana, Arial, Helvetica, sans-serif;
@@ -283,22 +276,6 @@ form#big_search input {
     width:30%;
 }
 
-/* LOGIN */
-.login{
-    border: 2px solid blue;
-    border-radius: 20px;
-    padding: 10px;
-    margin: 10px 7px 10px 7px;
-
-}
-
-.innerdiv {
-    border-radius: 20px;
-    margin: auto;
-    text-align: center;
-    width: 600px;
-}
-
 .innerinnerdiv {
     margin: auto;
     position: relative;
@@ -307,23 +284,9 @@ form#big_search input {
 }
 
 /***********/
-textarea{
+textarea {
     border:  3px solid #CCC;
     font-family:  Verdana, Arial, Helvetica, sans-serif;
-    padding:  5px;
-}
-/* BACKGROUND OF THE EDITOR */
-/* toolbar */
-.nicEdit-panel {
-    background-color:  #fff;
-}
-.nicEdit-main {
-    background-color:  #fff;
-}
-
-.input {
-    border:  3px solid #CCC;
-    margin: 5px 0 5px 0;
     padding:  5px;
 }
 
@@ -345,19 +308,11 @@ textarea{
 
 
 /* comments for files */
-.addFileDiv {
-    margin: 10px;
-}
-
 .filesdiv {
-    border-radius: 20px;
+    border-radius: 5px;
 }
 .filesdiv p {
     display: inline;
-}
-
-.com_file_field{
-    margin: 10px 0 0 4px;
 }
 
 img {
@@ -366,7 +321,7 @@ img {
     top: 3px;
 }
 
-/* submit button */
+/* save and go back button */
 #saveButton {
     margin-top:10px;
 }
@@ -381,7 +336,7 @@ img {
     -moz-box-shadow: 3px 2px 2px 1px #CCC;
     margin: 7px auto 7px auto;
     padding: 10px;
-    width: 742px;
+    width: 80%;
 }
 /* admin.php */
 #config_form input, #config_form select {
@@ -390,10 +345,6 @@ img {
 
 #config_form label {
     float:left;
-}
-/* in admin.php for templates */
-.high {
-    height:450px;
 }
 
 /* comments for experiments comments box */
@@ -415,6 +366,7 @@ img {
 .expcomment_box p {
     margin:0;
 }
+/* end experiments comments */
 
 .simple_border {
     border-radius: 20px;
@@ -428,7 +380,7 @@ img {
     line-height: 120%;
     margin: 5px;
     padding: 5px;
-    width: 650px;
+    width:85%;
 }
 
 .date, .date_compact {
@@ -452,7 +404,7 @@ img {
     line-height: 200%;
     margin: 10px 0px 10px 5px;
     padding: 3px;
-    width: 680px;
+    width: 90%;
 }
 .tags a{
     text-decoration: none;
@@ -469,7 +421,6 @@ img {
 }
 #tagdiv{
     padding: 5px;
-    width: 442px;
 }
 
 .tag {
@@ -523,22 +474,15 @@ img {
 }
 
 
-.filesdiv{
+.filesdiv {
     font: 14px Verdana, Arial, Helvetica, sans-serif;
     margin: 10px auto 10px auto;
     padding: 5px;
-    width: 550px;
+    width:80%;
 }
-.filesdiv a{
+.filesdiv a {
     font: 14px Verdana, Arial, Helvetica, sans-serif;
     text-decoration: none;
-}
-
-.file_item{
-    border-radius: 20px;
-    margin: 10px auto 10px auto;
-    padding:  5px;
-    width: 342px;
 }
 
 .filesize{
@@ -547,13 +491,12 @@ img {
 
 /* bigger space to enter experiment */
 .mceditable {
-    width:700px;
     height:700px;
 }
 
 /* title on editXP -- fix for firefox */
 #title_txtarea {
-    width:700px;
+    width:90%;
 }
 
 /* elabid */
@@ -608,6 +551,9 @@ footer p, footer p a {
         padding: 15px;
         font-size: 14px;
         line-height: 18px;
+    }
+    h2 {
+        visibility:hidden;
     }
     footer {
         visibility:hidden;

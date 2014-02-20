@@ -148,16 +148,9 @@ nav a:hover {
     -webkit-box-shadow: 2px 2px 2px 2px #CCC;
     -moz-box-shadow: 2px 2px 2px 2px #CCC;
 }
-.file_item{
-    border:1px solid #CCC;
-}
 
 .filesize{
     color:grey;
-}
-
-.innerdiv{
-    border: 2px solid blue;
 }
 
 /* FOOTER */

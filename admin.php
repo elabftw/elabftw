@@ -164,11 +164,30 @@ $sql = "SELECT * from status";
 $req = $pdo->prepare($sql);
 $req->execute();
 while ($status = $req->fetch()) {
+    // count the experiments with this status
+    // don't allow deletion if experiments with this status exist
+    // but instead display a message to explain
+    $count_exp_sql = "SELECT COUNT(id) FROM experiments WHERE status = :status";
+    $count_exp_req = $pdo->prepare($count_exp_sql);
+    $count_exp_req->bindParam(':status', $status['id'], PDO::PARAM_INT);
+    $count_exp_req->execute();
+    $count = $count_exp_req->fetchColumn();
     ?>
     <div class='simple_border'>
     <a class='trigger_status_<?php echo $status['id'];?>'>Edit <?php echo $status['name'];?></a>
     <div class='toggle_container_status_<?php echo $status['id'];?>'>
-    <img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $status['id'];?>','status', 'admin.php')" />
+    <?php
+    var_dump($count);
+    if ($count == 0) {
+        ?>
+        <img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $status['id'];?>','status', 'admin.php')" />
+    <?php
+    } else {
+        ?>
+        <img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="alert('Remove all experiments with this status before deleting this status.')" />
+    <?php
+    }
+    ?>
 
     <form action='admin-exec.php' method='post'>
         <input type='text' name='status_name' value='<?php echo stripslashes($status['name']);?>' />

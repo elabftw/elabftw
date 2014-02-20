@@ -236,6 +236,15 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             ));
             break;
 
+        case 'status':
+            // normally there is no experiments left with this status
+            $delete_sql = "DELETE FROM status WHERE id = :id";
+            $delete_req = $pdo->prepare($delete_sql);
+            $delete_req->execute(array(
+                'id' => $id
+            ));
+            break;
+
         // END
         default:
             $err_flag = true;

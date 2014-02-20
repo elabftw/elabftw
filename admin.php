@@ -177,7 +177,6 @@ while ($status = $req->fetch()) {
     <a class='trigger_status_<?php echo $status['id'];?>'>Edit <?php echo $status['name'];?></a>
     <div class='toggle_container_status_<?php echo $status['id'];?>'>
     <?php
-    var_dump($count);
     if ($count == 0) {
         ?>
         <img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $status['id'];?>','status', 'admin.php')" />

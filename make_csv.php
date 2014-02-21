@@ -50,20 +50,22 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         // MAIN LOOP
         ////////////////
         // SQL
-        //$sql = "SELECT * FROM :table WHERE id = :id";
-        $sql = "SELECT * FROM $table WHERE id = $id";
+        if ($table === 'experiments') {
+            $sql = "SELECT experiments.*,
+                status.name AS statusname
+                FROM experiments
+                LEFT JOIN status ON (experiments.status = status.id)
+                WHERE experiments.id = $id";
+        } else {
+            $sql = "SELECT * FROM items WHERE id = $id";
+        }
+            
         $req = $pdo->prepare($sql);
         $req->execute();
-        /*
-        $req->execute(array(
-            'table' => $table,
-            'id' => $id
-        ));
-         */
         $csv_data = $req->fetch();
 
         if ($table === 'experiments') {
-            $list[] = array($csv_data['id'], $csv_data['date'], $csv_data['title'], $csv_data['status'], $csv_data['elabid']);
+            $list[] = array($csv_data['id'], $csv_data['date'], $csv_data['title'], $csv_data['statusname'], $csv_data['elabid']);
         } else { // items
             $list[] = array($csv_data['id'], $csv_data['date'], $csv_data['type'], $csv_data['title'], $csv_data['rating']);
         }

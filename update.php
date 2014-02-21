@@ -543,7 +543,7 @@ if (!$table_is_here) {
     // Populate config table
     $sql = "INSERT INTO status (name, color, is_default) VALUES
         ('Running', '0000FF', true),
-        ('Success', '00FF00', false),
+        ('Success', '00ac00', false),
         ('Need to be redone', 'c0c0c0', false),
         ('Fail', 'ff0000', false);";
     $req = $pdo->prepare($sql);

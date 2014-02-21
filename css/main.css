@@ -278,8 +278,12 @@ form#big_search {
 }
 form#big_search input {
     width:10%;
+    transition:width 1s;
 }
 
+form#big_search input:focus {
+    width:15%;
+}
 .innerinnerdiv {
     margin: auto;
     position: relative;

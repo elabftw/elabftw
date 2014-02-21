@@ -57,7 +57,7 @@ while ($items_types = $req->fetch()) {
 ?>
 </select> | 
     <form id='big_search' method='get' action='database.php'>
-        <input id='big_search_input' type='search' name='q' size='50' placeholder='Type your search' />
+        <input id='big_search_input' type='search' name='q' size='50' placeholder='Search...' />
     </form>
 </div>
 <!-- end submenu -->

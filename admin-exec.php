@@ -407,9 +407,16 @@ if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
         exit();
     }
 }
-// add new item type
+// ADD NEW ITEM TYPE
 if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
     $item_type_name = filter_var($_POST['new_item_type_name'], FILTER_SANITIZE_STRING);
+    if (strlen($item_type_name) < 1) {
+        $infos_arr[] = 'You need to put a title !';
+        $_SESSION['errors'] = $infos_arr;
+        header('Location: admin.php');
+        exit();
+    }
+
     // we remove the # of the hexacode and sanitize string
     $item_type_bgcolor = filter_var(substr($_POST['new_item_type_bgcolor'], 1, 6), FILTER_SANITIZE_STRING);
     $item_type_template = check_body($_POST['new_item_type_template']);

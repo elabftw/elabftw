@@ -174,7 +174,7 @@ nav a{
 /* on admin.php for items types
  * it's bettor to have a pointer to show that you should click
  */
-section.item a[class*='trigger_']:hover {
+a[class*='trigger_']:hover {
     cursor:pointer;
 }
 
@@ -217,6 +217,10 @@ h4 {
 /* MENU */
 
 /* BUTTONS */
+
+.submit {
+    margin-top:20px;
+}
 
 .button {
     border:1px solid #b7b7b7;
@@ -369,7 +373,7 @@ img {
 /* end experiments comments */
 
 .simple_border {
-    border-radius: 20px;
+    border-radius: 5px;
     padding: 10px;
     margin:5px;
 }

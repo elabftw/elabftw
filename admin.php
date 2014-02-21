@@ -61,264 +61,287 @@ if ($count > 0) {
 }
 ?>
 
-<!-- CONFIGURATION FORM -->
-<section class='item'>
-<h3>CONFIGURATION</h3>
-<form method='post' action='admin-exec.php'>
-<div id='config_form'>
-    <label for='lab_name'>Name of the lab :</label>
-    <input type='text' value='<?php echo get_config('lab_name');?>' name='lab_name' id='lab_name' />
-<br />
-<br />
-    <label for='admin_validate'>Users need validation by admin after registration :</label>
-    <select name='admin_validate' id='admin_validate'>
-        <option value='1'<?php
-            if (get_config('admin_validate') == 1) { echo " selected='selected'"; } ?>
-        >yes</option>
-        <option value='0'<?php
-                if (get_config('admin_validate') == 0) { echo " selected='selected'"; } ?>
-        >no</option>
-    </select>
-<br />
-<br />
-    <label for='deletable_xp'>Users can delete experiments :</label>
-    <select name='deletable_xp' id='deletable_xp'>
-        <option value='1'<?php
-            if (get_config('deletable_xp') == 1) { echo " selected='selected'"; } ?>
-        >yes</option>
-        <option value='0'<?php
-                if (get_config('deletable_xp') == 0) { echo " selected='selected'"; } ?>
-        >no, only the admin can</option>
-    </select>
-<br />
-<br />
-    <label for='debug'>Activate debug mode :</label>
-    <select name='debug' id='debug'>
-        <option value='1'<?php
-            if (get_config('debug') == 1) { echo " selected='selected'"; } ?>
-        >yes</option>
-        <option value='0'<?php
-                if (get_config('debug') == 0) { echo " selected='selected'"; } ?>
-        >no</option>
-    </select>
-<br />
-<br />
-    <label for='link_name'>Name of the link in the main menu :</label>
-    <input type='text' value='<?php echo get_config('link_name');?>' name='link_name' id='link_name' />
-<br />
-<br />
-    <label for='link_href'>Address where this link should point :</label>
-    <input type='url' value='<?php echo get_config('link_href');?>' name='link_href' id='link_href' />
-<br />
-<br />
-    <label for='path'>Full path to the install folder :</label>
-    <input type='text' value='<?php echo get_config('path');?>' name='path' id='path' />
-<br />
-<br />
-    <label for='proxy'>Address of the proxy :</label>
-    <input type='text' value='<?php echo get_config('proxy');?>' name='proxy' id='proxy' />
-<br />
-<br />
-    <label for='smtp_address'>Address of the SMTP server :</label>
-    <input type='text' value='<?php echo get_config('smtp_address');?>' name='smtp_address' id='smtp_address' />
-<br />
-<br />
-    <label for='smtp_encryption'>SMTP encryption (can be TLS or STARTSSL):</label>
-    <input type='text' value='<?php echo get_config('smtp_encryption');?>' name='smtp_encryption' id='smtp_encryption' />
-<br />
-<br />
-    <label for='smtp_port'>SMTP port :</label>
-    <input type='text' value='<?php echo get_config('smtp_port');?>' name='smtp_port' id='smtp_port' />
-<br />
-<br />
-    <label for='smtp_username'>SMTP username :</label>
-    <input type='text' value='<?php echo get_config('smtp_username');?>' name='smtp_username' id='smtp_username' />
-<br />
-<br />
-    <label for='smtp_password'>SMTP password :</label>
-    <input type='password' value='<?php echo get_config('smtp_password');?>' name='smtp_password' id='smtp_password' />
-<br />
-<br />
-    <label for='login_tries'>Number of allowed login attempts :</label>
-    <input type='text' value='<?php echo get_config('login_tries');?>' name='login_tries' id='login_tries' />
-<br />
-<br />
-    <label for='ban_time'>Time of the ban after failed login attempts (in minutes) :</label>
-    <input type='text' value='<?php echo get_config('ban_time');?>' name='ban_time' id='ban_time' />
-<br />
-<br />
-</div>
-<div class='center'>
-    <input type='submit' name='submit_config' class='button' value='Edit config' /><br />
-</div>
-</form>
+<div id='tabs'>
+<ul>
+<li><a href='#tabs-1'>Main configuration</a></li>
+<li><a href='#tabs-2'>Users</a></li>
+<li><a href='#tabs-3'>Status</a></li>
+<li><a href='#tabs-4'>Types of items</a></li>
+</ul>
 
+<!-- TABS 1 -->
+<div id='tabs-1'>
+
+    <h3>CONFIGURATION</h3>
+    <form method='post' action='admin-exec.php'>
+    <div id='config_form'>
+        <label for='lab_name'>Name of the lab :</label>
+        <input type='text' value='<?php echo get_config('lab_name');?>' name='lab_name' id='lab_name' />
+    <br />
+    <br />
+        <label for='admin_validate'>Users need validation by admin after registration :</label>
+        <select name='admin_validate' id='admin_validate'>
+            <option value='1'<?php
+                if (get_config('admin_validate') == 1) { echo " selected='selected'"; } ?>
+            >yes</option>
+            <option value='0'<?php
+                    if (get_config('admin_validate') == 0) { echo " selected='selected'"; } ?>
+            >no</option>
+        </select>
+    <br />
+    <br />
+        <label for='deletable_xp'>Users can delete experiments :</label>
+        <select name='deletable_xp' id='deletable_xp'>
+            <option value='1'<?php
+                if (get_config('deletable_xp') == 1) { echo " selected='selected'"; } ?>
+            >yes</option>
+            <option value='0'<?php
+                    if (get_config('deletable_xp') == 0) { echo " selected='selected'"; } ?>
+            >no, only the admin can</option>
+        </select>
+    <br />
+    <br />
+        <label for='debug'>Activate debug mode :</label>
+        <select name='debug' id='debug'>
+            <option value='1'<?php
+                if (get_config('debug') == 1) { echo " selected='selected'"; } ?>
+            >yes</option>
+            <option value='0'<?php
+                    if (get_config('debug') == 0) { echo " selected='selected'"; } ?>
+            >no</option>
+        </select>
+    <br />
+    <br />
+        <label for='link_name'>Name of the link in the main menu :</label>
+        <input type='text' value='<?php echo get_config('link_name');?>' name='link_name' id='link_name' />
+    <br />
+    <br />
+        <label for='link_href'>Address where this link should point :</label>
+        <input type='url' value='<?php echo get_config('link_href');?>' name='link_href' id='link_href' />
+    <br />
+    <br />
+        <label for='path'>Full path to the install folder :</label>
+        <input type='text' value='<?php echo get_config('path');?>' name='path' id='path' />
+    <br />
+    <br />
+        <label for='proxy'>Address of the proxy :</label>
+        <input type='text' value='<?php echo get_config('proxy');?>' name='proxy' id='proxy' />
+    <br />
+    <br />
+        <label for='smtp_address'>Address of the SMTP server :</label>
+        <input type='text' value='<?php echo get_config('smtp_address');?>' name='smtp_address' id='smtp_address' />
+    <br />
+    <br />
+        <label for='smtp_encryption'>SMTP encryption (can be TLS or STARTSSL):</label>
+        <input type='text' value='<?php echo get_config('smtp_encryption');?>' name='smtp_encryption' id='smtp_encryption' />
+    <br />
+    <br />
+        <label for='smtp_port'>SMTP port :</label>
+        <input type='text' value='<?php echo get_config('smtp_port');?>' name='smtp_port' id='smtp_port' />
+    <br />
+    <br />
+        <label for='smtp_username'>SMTP username :</label>
+        <input type='text' value='<?php echo get_config('smtp_username');?>' name='smtp_username' id='smtp_username' />
+    <br />
+    <br />
+        <label for='smtp_password'>SMTP password :</label>
+        <input type='password' value='<?php echo get_config('smtp_password');?>' name='smtp_password' id='smtp_password' />
+    <br />
+    <br />
+        <label for='login_tries'>Number of allowed login attempts :</label>
+        <input type='text' value='<?php echo get_config('login_tries');?>' name='login_tries' id='login_tries' />
+    <br />
+    <br />
+        <label for='ban_time'>Time of the ban after failed login attempts (in minutes) :</label>
+        <input type='text' value='<?php echo get_config('ban_time');?>' name='ban_time' id='ban_time' />
+    <br />
+    <br />
+    </div>
+    <div class='center'>
+        <input type='submit' name='submit_config' class='submit button' value='Save' />
+    </div>
+    </form>
+
+</div>
+
+<!-- TABS 2 -->
+<div id='tabs-2'>
+
+    <h3>TEAM MEMBERS</h3>
+    <?php
+    // SQL to get all users
+    $sql = "SELECT * FROM users";
+    $req = $pdo->prepare($sql);
+    $req->execute();
+    while ($users = $req->fetch()) {
+        ?>
+        <div class='simple_border'>
+            <a class='trigger_users_<?php echo $users['userid'];?>'><img src='img/profile.png' alt='profile' /> <?php echo "Edit ".$users['firstname'];?></a>
+            <div class='toggle_users_<?php echo $users['userid'];?>'>
+        <br />
+                <form method='post' action='admin-exec.php' id='admin_user_form'>
+                    <input type='hidden' value='<?php echo $users['userid'];?>' name='userid' />
+                    <input type='text' value='<?php echo $users['firstname'];?>' name='firstname' />
+                    <input type='text' value='<?php echo $users['lastname'];?>' name='lastname' />
+                    <input type='email' value='<?php echo $users['email'];?>' name='email' /><br />
+                    Has admin rights ?<select name='is_admin'>
+                    <option value='1'<?php
+                            if($users['is_admin'] == 1) {
+                                echo " selected='selected'";
+                            }
+        ?>
+            >yes</option>
+            <option value='0'<?php
+                            if ($users['is_admin'] == 0) {
+                                echo " selected='selected'";
+                            }
+        ?>
+                            >no</option>
+                    </select>
+        <br />
+                    Can lock experiments of others ?<select name='can_lock'>
+                    <option value='1'<?php
+                            if ($users['can_lock'] == 1) { echo " selected='selected'"; } ?>
+            >yes</option>
+            <option value='0'<?php
+                            if ($users['can_lock'] == 0) { echo " selected='selected'"; } ?>
+                            >no</option>
+                    </select>
+        <br />
+        <label for'validated'>Has an active account ?</label>
+        <select name='validated' id='validated'>
+            <option value='1'<?php
+                    if ($users['validated'] == 1) { echo " selected='selected'"; } ?>
+            >yes</option>
+            <option value='0'<?php
+                if ($users['validated'] == 0) { echo " selected='selected'"; } ?>
+            >no</option>
+        </select>
+        <br />
+        Reset user password : <input type='password' value='' name='new_password' />
+        <br />
+        Repeat new password : <input type='password' value='' name='confirm_new_password' />
+        <br />
+        <br />
+        <div class='center'>
+            <input type='submit' class='button' value='Edit this user' />
+        </div>
+            </form>
+        </div>
+        <script>
+                $(".toggle_users_<?php echo $users['userid'];?>").hide();
+                $("a.trigger_users_<?php echo $users['userid'];?>").click(function(){
+                    $('div.toggle_users_<?php echo $users['userid'];?>').slideToggle(1);
+                });
+        </script>
+        </div>
+        <?php
+    }
+    ?>
+<section class='simple_border' style='background-color:#FF8080;'>
+
+    <h3>DANGER ZONE</h3>
+    <h4>Delete a user</h4>
+    <form action='admin-exec.php' method='post'>
+        <!-- form key -->
+        <?php $formKey->output_formkey(); ?>
+        <label for'delete_user'>Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever.</label>
+        <input type='email' name='delete_user' id='delete_user' />
+    <div class='center'>
+        <input type='submit' class='button submit' value='Delete this user !' />
+    </div>
+    </form>
 </section>
 
-<!-- STATUS -->
-<section class='item'>
-<h3>STATUS</h3>
-<?php
-// SQL to get all status
-$sql = "SELECT * from status";
-$req = $pdo->prepare($sql);
-$req->execute();
-while ($status = $req->fetch()) {
-    // count the experiments with this status
-    // don't allow deletion if experiments with this status exist
-    // but instead display a message to explain
-    $count_exp_sql = "SELECT COUNT(id) FROM experiments WHERE status = :status";
-    $count_exp_req = $pdo->prepare($count_exp_sql);
-    $count_exp_req->bindParam(':status', $status['id'], PDO::PARAM_INT);
-    $count_exp_req->execute();
-    $count = $count_exp_req->fetchColumn();
-    ?>
-    <div class='simple_border'>
-    <a class='trigger_status_<?php echo $status['id'];?>'>Edit <?php echo $status['name'];?></a>
-    <div class='toggle_container_status_<?php echo $status['id'];?>'>
+</div>
+
+<!-- TABS-3 -->
+<div id='tabs-3'>
+
+    <h3>STATUS</h3>
     <?php
-    if ($count == 0) {
+    // SQL to get all status
+    $sql = "SELECT * from status";
+    $req = $pdo->prepare($sql);
+    $req->execute();
+    while ($status = $req->fetch()) {
+        // count the experiments with this status
+        // don't allow deletion if experiments with this status exist
+        // but instead display a message to explain
+        $count_exp_sql = "SELECT COUNT(id) FROM experiments WHERE status = :status";
+        $count_exp_req = $pdo->prepare($count_exp_sql);
+        $count_exp_req->bindParam(':status', $status['id'], PDO::PARAM_INT);
+        $count_exp_req->execute();
+        $count = $count_exp_req->fetchColumn();
         ?>
-        <img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $status['id'];?>','status', 'admin.php')" />
-    <?php
-    } else {
+        <div class='simple_border'>
+        <a class='trigger_status_<?php echo $status['id'];?>'>Edit <?php echo $status['name'];?></a>
+        <div class='toggle_container_status_<?php echo $status['id'];?>'>
+        <?php
+        if ($count == 0) {
+            ?>
+            <img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $status['id'];?>','status', 'admin.php')" />
+        <?php
+        } else {
+            ?>
+            <img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="alert('Remove all experiments with this status before deleting this status.')" />
+        <?php
+        }
         ?>
-        <img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="alert('Remove all experiments with this status before deleting this status.')" />
-    <?php
+
+        <form action='admin-exec.php' method='post'>
+            <input type='text' name='status_name' value='<?php echo stripslashes($status['name']);?>' />
+            <label for='default_checkbox'>Make default</label>
+            <input type='checkbox' name='status_is_default' id='default_checkbox'
+            <?php
+            // check the box if the status is already default
+            if ($status['is_default'] == 1) {
+                echo " checked";
+            }
+            ?>>
+            <div id='colorwheel_div_edit_status_<?php echo $status['id'];?>'>
+            <div class='colorwheel inline'></div>
+            <input type='text' name='status_color' value='#<?php echo $status['color'];?>' />
+            </div>
+            <input type='hidden' name='status_id' value='<?php echo $status['id'];?>' />
+            <br />
+
+            <div class='center'>
+            <input type='submit' class='button' value='Edit <?php echo stripslashes($status['name']);?>' /><br />
+            </div>
+        </form></div>
+        <script>$(document).ready(function() {
+            $(".toggle_container_status_<?php echo $status['id'];?>").hide();
+            $("a.trigger_status_<?php echo $status['id'];?>").click(function(){
+                $('div.toggle_container_status_<?php echo $status['id'];?>').slideToggle(1);
+            });
+            color_wheel('#colorwheel_div_edit_status_<?php echo $status['id'];?>')
+        });</script></div>
+        <?php
     }
     ?>
 
-    <form action='admin-exec.php' method='post'>
-        <input type='text' name='status_name' value='<?php echo stripslashes($status['name']);?>' />
-        <label for='default_checkbox'>Make default</label>
-        <input type='checkbox' name='status_is_default' id='default_checkbox'
-        <?php
-        // check the box if the status is already default
-        if ($status['is_default'] == 1) {
-            echo " checked";
-        }
-        ?>>
-        <div id='colorwheel_div_edit_status_<?php echo $status['id'];?>'>
-        <div class='colorwheel inline'></div>
-        <input type='text' name='status_color' value='#<?php echo $status['color'];?>' />
-        </div>
-        <input type='hidden' name='status_id' value='<?php echo $status['id'];?>' />
-        <br />
-
-        <div class='center'>
-        <input type='submit' class='button' value='Edit <?php echo stripslashes($status['name']);?>' /><br />
-        </div>
-    </form></div>
-    <script>$(document).ready(function() {
-        $(".toggle_container_status_<?php echo $status['id'];?>").hide();
-        $("a.trigger_status_<?php echo $status['id'];?>").click(function(){
-            $('div.toggle_container_status_<?php echo $status['id'];?>').slideToggle(1);
-        });
-        color_wheel('#colorwheel_div_edit_status_<?php echo $status['id'];?>')
-    });</script></div>
-    <?php
-}
-?>
-
-</section>
-
-<section class='item'>
-    <a class='trigger_add_new_item'>
+    <section class='simple_border'>
         <h3>ADD NEW STATUS</h3>
-    </a>
-    <div class='simple_border toggle_add_new_item'>
         <form action='admin-exec.php' method='post'>
             <input type='text' class='biginput' name='new_status_name' />
             <div id='colorwheel_div_new_status'>
                 <div class='colorwheel inline'></div>
                 <input type='text' name='new_status_color' value='#000000' />
             </div>
+            <br />
             <div class='center'>
-                <input type='submit' class='button' value='Add new status' />
+                <input type='submit' class='submit button' value='Add new status' />
             </div>
         </form>
-    </div>
-</section>
+    </section>
 
-<!-- TEAM MEMBERS -->
-<section class='item'>
-<h3>TEAM MEMBERS</h3>
-<?php
-// SQL to get all users
-$sql = "SELECT * FROM users";
-$req = $pdo->prepare($sql);
-$req->execute();
-while ($users = $req->fetch()) {
-    ?>
-    <div class='simple_border'>
-        <a class='trigger_users_<?php echo $users['userid'];?>'><img src='img/profile.png' alt='profile' /> <?php echo "Edit ".$users['firstname'];?></a>
-        <div class='toggle_users_<?php echo $users['userid'];?>'>
-    <br />
-            <form method='post' action='admin-exec.php' id='admin_user_form'>
-                <input type='hidden' value='<?php echo $users['userid'];?>' name='userid' />
-                <input type='text' value='<?php echo $users['firstname'];?>' name='firstname' />
-                <input type='text' value='<?php echo $users['lastname'];?>' name='lastname' />
-                <input type='email' value='<?php echo $users['email'];?>' name='email' /><br />
-                Has admin rights ?<select name='is_admin'>
-                <option value='1'<?php
-                        if($users['is_admin'] == 1) {
-                            echo " selected='selected'";
-                        }
-    ?>
-        >yes</option>
-        <option value='0'<?php
-                        if ($users['is_admin'] == 0) {
-                            echo " selected='selected'";
-                        }
-    ?>
-                        >no</option>
-                </select>
-    <br />
-                Can lock experiments of others ?<select name='can_lock'>
-                <option value='1'<?php
-                        if ($users['can_lock'] == 1) { echo " selected='selected'"; } ?>
-        >yes</option>
-        <option value='0'<?php
-                        if ($users['can_lock'] == 0) { echo " selected='selected'"; } ?>
-                        >no</option>
-                </select>
-    <br />
-    <label for'validated'>Has an active account ?</label>
-    <select name='validated' id='validated'>
-        <option value='1'<?php
-                if ($users['validated'] == 1) { echo " selected='selected'"; } ?>
-        >yes</option>
-        <option value='0'<?php
-            if ($users['validated'] == 0) { echo " selected='selected'"; } ?>
-        >no</option>
-    </select>
-    <br />
-    Reset user password : <input type='password' value='' name='new_password' />
-    <br />
-    Repeat new password : <input type='password' value='' name='confirm_new_password' />
-    <br />
-    <br />
-    <div class='center'>
-        <input type='submit' class='button' value='Edit this user' />
-    </div>
-        </form>
-    </div>
-    <script>
-            $(".toggle_users_<?php echo $users['userid'];?>").hide();
-            $("a.trigger_users_<?php echo $users['userid'];?>").click(function(){
-                $('div.toggle_users_<?php echo $users['userid'];?>').slideToggle(1);
-            });
-    </script>
-    </div>
-    <?php
-}
-?>
 </div>
-</section>
 
-<section class='item'>
+<!-- TABS 4 ITEMS TYPES-->
+<div id='tabs-4'>
 <a id='items_types'></a>
-<h3>DATABASE ITEMS TYPE</h3>
+<h3>EXISTING TYPES</h3>
 <?php
 // SQL to get all items type
 $sql = "SELECT * from items_types";
@@ -373,41 +396,25 @@ while ($items_types = $req->fetch()) {
 }
 ?>
 
-</section>
 
-<section class='item'>
-<a class='trigger_add_new_item'><h3>ADD NEW KIND OF DATABASE ITEM</h3></a>
-<div class='simple_border toggle_add_new_item'>
-<form action='admin-exec.php' method='post'>
-    <input type='text' class='biginput' name='new_item_type_name' />
-    <input type='hidden' name='new_item_type' value='1' />
-    <div id='colorwheel_div_new'>
-    <div class='colorwheel inline'></div>
-    <input type='text' name='new_item_type_bgcolor' value='#000000' /></div><br /><br />
-    <textarea class='mceditable' name='new_item_type_template' /></textarea><br />
-    <div class='center'>
-    <input type='submit' class='button' value='Add new item type' />
-    </div>
-</form></div>
+<section class='simple_border'>
+    <h3>ADD NEW TYPE OF DATABASE ITEM</h3>
+    <form action='admin-exec.php' method='post'>
+        <input type='text' class='biginput' name='new_item_type_name' />
+        <input type='hidden' name='new_item_type' value='1' />
+        <div id='colorwheel_div_new'>
+        <div class='colorwheel inline'></div>
+        <input type='text' name='new_item_type_bgcolor' value='#000000' /></div><br /><br />
+        <textarea class='mceditable' name='new_item_type_template' /></textarea><br />
+        <div class='center'>
+        <input type='submit' class='button' value='Add new item type' />
+        </div>
+    </form>
 </section>
-
-<section class='item' style='background-color:#FF8080'>
-<h3>DANGER ZONE</h3>
-<h4>Delete a user</h4>
-<p>
-<form action='admin-exec.php' method='post'>
-    <!-- form key -->
-    <?php $formKey->output_formkey(); ?>
-    <label for'delete_user'>Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever.</label>
-    <input type='email' name='delete_user' id='delete_user' /><br />
-<br />
-<div class='center'>
-    <input type='submit' class='button' value='Delete this user !' />
 </div>
-</form>
 
+</div>
 
-</section>
 <script>
 // color wheel
 function color_wheel(div_name) {
@@ -415,14 +422,14 @@ function color_wheel(div_name) {
             cw.input($(div_name+" input" )[0]);
 }
 $(document).ready(function() {
+    // TABS
+    $('#tabs').tabs();
+    $('#tabs li');
+    // TOGGLE
     $(".toggle_users_<?php echo $users['userid'];?>").hide();
     $("a.trigger_users_<?php echo $users['userid'];?>").click(function(){
         $('div.toggle_users_<?php echo $users['userid'];?>').slideToggle(1);
     });
-    $(".toggle_add_new_item").hide();
-	$("a.trigger_add_new_item").click(function(){
-        $('div.toggle_add_new_item').slideToggle(1);
-	});
     color_wheel('#colorwheel_div_new')
     color_wheel('#colorwheel_div_new_status')
     // EDITOR
@@ -437,4 +444,3 @@ $(document).ready(function() {
 });
 </script>
 <?php require_once 'inc/footer.php';
-

@@ -329,8 +329,25 @@ while ($items_types = $req->fetch()) {
     <div class='simple_border'>
     <a class='trigger_<?php echo $items_types['id'];?>'>Edit <?php echo $items_types['name'];?></a>
     <div class='toggle_container_<?php echo $items_types['id'];?>'>
-    <img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $items_types['id'];?>','item_type', 'admin.php')" />
-
+    <?php
+    // count the items with this type
+    // don't allow deletion if items with this type exist
+    // but instead display a message to explain
+    $count_db_sql = "SELECT COUNT(id) FROM items WHERE type = :type";
+    $count_db_req = $pdo->prepare($count_db_sql);
+    $count_db_req->bindParam(':type', $items_types['id'], PDO::PARAM_INT);
+    $count_db_req->execute();
+    $count = $count_db_req->fetchColumn();
+    if ($count == 0) {
+        ?>
+        <img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $items_types['id'];?>','item_type', 'admin.php')" />
+    <?php
+    } else {
+        ?>
+        <img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="alert('Remove all database items with this type before deleting this type.')" />
+    <?php
+    }
+    ?>
     <form action='admin-exec.php' method='post'>
     <input type='text' class='biginput' name='item_type_name' value='<?php echo stripslashes($items_types['name']);?>' />
     <input type='hidden' name='item_type_id' value='<?php echo $items_types['id'];?>' />

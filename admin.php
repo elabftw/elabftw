@@ -181,10 +181,14 @@ if ($count > 0) {
         <br />
                 <form method='post' action='admin-exec.php' id='admin_user_form'>
                     <input type='hidden' value='<?php echo $users['userid'];?>' name='userid' />
-                    <input type='text' value='<?php echo $users['firstname'];?>' name='firstname' />
-                    <input type='text' value='<?php echo $users['lastname'];?>' name='lastname' />
-                    <input type='text' value='<?php echo $users['username'];?>' name='username' />
-                    <input type='email' value='<?php echo $users['email'];?>' name='email' /><br />
+                    <label for='edituser_firstname'>Firstname</label>
+                    <input  id='edituser_firstname' type='text' value='<?php echo $users['firstname'];?>' name='firstname' />
+                    <label for='edituser_lastname'>Lastname</label>
+                    <input  id='edituser_lastname' type='text' value='<?php echo $users['lastname'];?>' name='lastname' />
+                    <label for='edituser_username'>Username</label>
+                    <input  id='edituser_username' type='text' value='<?php echo $users['username'];?>' name='username' />
+                    <label for='edituser_email'>Email</label>
+                    <input id='edituser_email' type='email' value='<?php echo $users['email'];?>' name='email' /><br />
                     Has admin rights ?<select name='is_admin'>
                     <option value='1'<?php
                             if($users['is_admin'] == 1) {

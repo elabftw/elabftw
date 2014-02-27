@@ -203,26 +203,6 @@ if(in_array('items_types',$test_arr)) {
 
 }
 
-// change outcome in status
-// check if it exists first
-$sql = "SELECT * from experiments";
-$req = $pdo->prepare($sql);
-$req->execute();
-$test = $req->fetch();
-if(isset($test['status'])) {
-    echo "Column 'status' already exists. Nothing to do.\n";
-} else {
-    $sql = "ALTER TABLE `experiments` CHANGE `outcome` `status` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL";
-    $req = $pdo->prepare($sql);
-    $result = $req->execute();
-    if($result) {
-        echo "Outcome is now status.\n";
-    } else {
-        die($die_msg);
-    }
-}
-
-
 // ADD visibility field in experiments table
 add_field('experiments', 'visibility', "VARCHAR(255) NOT NULL", ">>> Experiments now have a visibility switch.\n", "Column 'visibility' already exists. Nothing to do.\n");
 // put visibility = team everywhere

@@ -221,6 +221,19 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
+--
+-- Table structure for table `status`
+--
+
+CREATE TABLE IF NOT EXISTS `status` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` text NOT NULL,
+  `color` varchar(6) NOT NULL,
+  `is_default` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
@@ -232,3 +245,8 @@ INSERT INTO `items_types` (`id`, `name`, `bgcolor`, `template`) VALUES
 (4, 'Drugs', 'fd00fe', '<p><strong>Action :</strong> &nbsp;<strong> </strong></p>\r\n<p><strong>Concentration :</strong>&nbsp;</p>\r\n<p><strong>Use at :</strong>&nbsp;</p>\r\n<p><strong>Buffer :</strong> </p>'),
 (5, 'Crystal', '84ff00', '<p>Edit me</p>');
 
+INSERT INTO `status` (`id`, `name`, `color`, `is_default`) VALUES
+(1, 'Running', '0096ff', 1),
+(2, 'Success', '00ac00', 0),
+(3, 'Need to be redone', 'c0c0c0', 0),
+(4, 'Fail', 'ff0000', 0);

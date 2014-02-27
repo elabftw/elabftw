@@ -65,7 +65,13 @@ if ($data['userid'] != $_SESSION['userid']) {
         require_once 'inc/footer.php';
         exit();
     } else {
-        $message = "<strong>Read-only mode:</strong> this is not your experiment.";
+        // get who owns the experiment
+        $sql = 'SELECT firstname, lastname FROM users WHERE userid = :userid';
+        $get_owner = $pdo->prepare($sql);
+        $get_owner->bindParam(':userid', $data['userid']);
+        $get_owner->execute();
+        $owner = $get_owner->fetch();
+        $message = "<strong>Read-only mode:</strong> this experiment is owned by ".$owner['firstname']." ".$owner['lastname'].".";
         display_message('info', $message);
     }
 }

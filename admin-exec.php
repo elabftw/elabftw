@@ -227,6 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
     $firstname = ucwords(strtolower(filter_var($_POST['firstname'], FILTER_SANITIZE_STRING)));
     // Lastname in uppercase
     $lastname = strtoupper(filter_var($_POST['lastname'], FILTER_SANITIZE_STRING));
+    $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
     if ($_POST['is_admin'] == 1) {
         $is_admin = 1;
@@ -276,6 +277,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
     $sql = "UPDATE users SET
         firstname = :firstname,
         lastname = :lastname,
+        username = :username,
         email = :email,
         is_admin = :is_admin,
         can_lock = :can_lock,
@@ -285,6 +287,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
     $result = $req->execute(array(
         'firstname' => $firstname,
         'lastname' => $lastname,
+        'username' => $username,
         'email' => $email,
         'is_admin' => $is_admin,
         'can_lock' => $can_lock,

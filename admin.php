@@ -40,16 +40,17 @@ $formKey = new formKey();
 <script src="js/raphael-2.1.0.min.js"></script>
 <script src="js/colorwheel.min.js"></script>
 <?php
-// SQL to get all unvalidated users
-$sql = "SELECT userid, lastname, firstname, email FROM users WHERE validated = 0";
-$req = $pdo->prepare($sql);
-$req->execute();
-$count = $req->rowCount();
+// MAIN SQL FOR USERS
+$sql = "SELECT * FROM users WHERE validated = :validated";
+$user_req = $pdo->prepare($sql);
+$user_req->bindValue(':validated', 0);
+$user_req->execute();
+$count = $user_req->rowCount();
 // only show the frame if there is some users to validate
 if ($count > 0) {
     $message = "There are users waiting for validation of their account :";
     $message .= "<form method='post' action='admin-exec.php'><ul>";
-    while ($data = $req->fetch()) {
+    while ($data = $user_req->fetch()) {
         $message .= "<li><label>
             <input type='checkbox' name='validate[]' 
             value='".$data['userid']."'> ".$data['firstname']." ".$data['lastname']." (".$data['email'].")
@@ -169,11 +170,10 @@ if ($count > 0) {
 
     <h3>TEAM MEMBERS</h3>
     <?php
-    // SQL to get all users
-    $sql = "SELECT * FROM users";
-    $req = $pdo->prepare($sql);
-    $req->execute();
-    while ($users = $req->fetch()) {
+    // we show only the validated users here
+    $user_req->bindValue(':validated', 1);
+    $user_req->execute();
+    while ($users = $user_req->fetch()) {
         ?>
         <div class='simple_border'>
             <a class='trigger_users_<?php echo $users['userid'];?>'><img src='img/profile.png' alt='profile' /> <?php echo "Edit ".$users['firstname'];?></a>
@@ -183,6 +183,7 @@ if ($count > 0) {
                     <input type='hidden' value='<?php echo $users['userid'];?>' name='userid' />
                     <input type='text' value='<?php echo $users['firstname'];?>' name='firstname' />
                     <input type='text' value='<?php echo $users['lastname'];?>' name='lastname' />
+                    <input type='text' value='<?php echo $users['username'];?>' name='username' />
                     <input type='email' value='<?php echo $users['email'];?>' name='email' /><br />
                     Has admin rights ?<select name='is_admin'>
                     <option value='1'<?php

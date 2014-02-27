@@ -151,7 +151,9 @@ $result = $pdo->exec($sql);
 //Check whether the query was successful or not
 if ($result) {
     $msg_arr = array();
-    if (get_config('admin_validate') == 1 && $is_admin == 0) {
+    // only send an email if validation is needed and smtp config is set
+    if (get_config('admin_validate') == 1 && $is_admin == 0
+    && get_config('smtp_password' != '')) {
         // we send an email to the admin so he can validate the user
         require_once('lib/swift_required.php');
         // get email of the admin (there might be several admins, but we send only to the first one we find)

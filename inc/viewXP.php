@@ -90,7 +90,7 @@ if ($data['locked'] == 0) {
 }
 
 // TAGS
-echo show_tags($id, 'experiments_tags');
+show_tags($id, 'experiments_tags');
 // TITLE : click on it to go to edit mode
 ?>
 <div OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['expid'];?>'" class='title'>

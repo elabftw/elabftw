@@ -23,9 +23,14 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+
+/**
+ * Return the date as YYYYMMDD format.
+ *
+ * @return string
+ */
 function kdate()
 {
-    // returns today's date as YYYYMMDD format
     $today = getdate();
     $month = $today['mon'];
     // add 0 in front of month if needed
@@ -40,6 +45,12 @@ function kdate()
     return $today['year'].$month.$day;
 }
 
+/**
+ * Show the units in human format from bytes.
+ *
+ * @param int $a_bytes size in bytes
+ * @return string
+ */
 function format_bytes($a_bytes)
 {
     // nice display of filesize
@@ -64,21 +75,12 @@ function format_bytes($a_bytes)
     }
 }
 
-function createPassword($length)
-{
-    $password = "ChangeMe_";
-    $chars = "1234567890abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    $i = 0;
-    $random_part = "";
-    while ($i < $length) {
-        $random_part .= $chars{mt_rand(0, strlen($chars))};
-        $i++;
-    }
-    $fullpassword = $password.$random_part;
-
-    return $fullpassword;
-}
-
+/**
+ * Get the extension of a file.
+ *
+ * @param string $filename path of the file
+ * @return string file extension
+ */
 function get_ext($filename)
 {
     // Get file extension
@@ -91,10 +93,18 @@ function get_ext($filename)
     return false;
 }
 
-
+/**
+ * Create a thumbnail from images of type jpg, png or gif.
+ *
+ * @param string $src Path to the original file
+ * @param string $ext Extension of the file
+ * @param string $dest Path to the place to save the thumbnail
+ * @param int $desired_width Width of the thumbnail (height is automatic depending on width)
+ * @return nothing
+ */
 function make_thumb($src, $ext, $dest, $desired_width)
 {
-    // Create thumbnail from jpg, png or gif
+    // the used fonction is different depending on extension
     if ($ext === 'jpg' || $ext === 'JPEG' || $ext === 'JPG' || $ext === 'jpeg') {
         $source_image = imagecreatefromjpeg($src);
     } elseif ($ext === 'png') {
@@ -118,7 +128,12 @@ function make_thumb($src, $ext, $dest, $desired_width)
     imagejpeg($virtual_image, $dest, 85);
 }
 
-// check if $int is a positive integer
+/**
+ * Check in input is a positive integer.
+ *
+ * @param int $int The int to check
+ * @return bool|int Return false if it's not an int
+ */
 function is_pos_int($int)
 {
     $filter_options = array(
@@ -128,9 +143,14 @@ function is_pos_int($int)
     return filter_var($int, FILTER_VALIDATE_INT, $filter_options);
 }
 
+/**
+ * Check if an item has a file attached.
+ *
+ * @param int $id ID of the item to check
+ * @return bool Return false if there is now file attached
+ */
 function has_attachement($id)
 {
-    // Check if an item has a file attached
     global $pdo;
     $sql = "SELECT id FROM uploads 
         WHERE item_id = :item_id";
@@ -146,7 +166,14 @@ function has_attachement($id)
 }
 
 
-// Search item
+/**
+ * Main function to search for something
+ *
+ * @param string $type Can be 'xp' or 'db'
+ * @param string $query The thing to search
+ * @param int $userid Userid is used for 'xp' only
+ * @return array $results_arr Array of ID with the $query string inside
+ */
 function search_item($type, $query, $userid)
 {
     global $pdo;
@@ -213,17 +240,22 @@ function search_item($type, $query, $userid)
         }
             $req->closeCursor();
     } else {
-        die('bad type : must be db or xp');
+        return false;
     }
     // filter out duplicate ids and reverse the order; XP should be sorted by date
     return $results_arr = array_reverse(array_unique($results_arr));
 }
 
+/**
+ * Display the tags.
+ *
+ * @param int $item_id The ID of the item for which we want the tags
+ * @param string $table The table can be experiments_tags or items_tags
+ * @return string|bool Will show the HTML for tags or false if there is no tags
+ */
 function show_tags($item_id, $table)
 {
-    // $table can be experiments_tags or items_tags
     global $pdo;
-    // DISPLAY TAGS
     $sql = "SELECT tag FROM $table WHERE item_id = $item_id";
     $req = $pdo->prepare($sql);
     $req->execute();
@@ -238,14 +270,21 @@ function show_tags($item_id, $table)
             }
         }
         echo "</span>";
+    } else {
+        return false;
     }
 }
 
+/**
+ * Show an experiment (in mode=show).
+ *
+ * @param int $id The ID of the experiment to show
+ * @param string $display Can be 'compact' or 'default'
+ * @return string HTML of the single experiment
+ */
 function showXP($id, $display)
 {
-// Show unique XP
     global $pdo;
-    // SQL to get everything from selected id
     $sql = "SELECT experiments.*, status.color FROM
         experiments LEFT JOIN
         status ON (experiments.status = status.id)
@@ -288,10 +327,15 @@ function showXP($id, $display)
         echo "</section>";
     }
 }
+
+/**
+ * Display the stars rating for a DB item.
+ *
+ * @param int $rating The number of stars to display
+ * @return HTML of the stars
+ */
 function show_stars($rating)
 {
-// a function to display the star ratings read only
-// show_stars(3)
     echo "<div id='rating'>";
     if ($rating == 1) {
         echo "<img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";
@@ -311,11 +355,16 @@ function show_stars($rating)
     echo "</div>";
 }
 
+/**
+ * Display a DB item (in mode=show).
+ *
+ * @param int $id The ID of the item to show
+ * @param string $display Can be 'compact' or 'default'
+ * @return string HTML of the single item
+ */
 function showDB($id, $display)
 {
-// Show unique DB item
     global $pdo;
-    // SQL to get everything from selected id
     $sql = "SELECT items.*,
         items_types.bgcolor,
         items_types.name
@@ -362,6 +411,12 @@ function showDB($id, $display)
     }
 }
 
+/**
+ * Sanitize title with a filter_var and remove the line breaks.
+ *
+ * @param string $input The title to sanitize
+ * @return string Will return empty string if there is no input.
+ */
 function check_title($input)
 {
     // Check TITLE, what else ?
@@ -374,6 +429,12 @@ function check_title($input)
     }
 }
 
+/**
+ * Check if the date is valid.
+ *
+ * @param int $input The date to check
+ * @return int $input The input date if it's valid, or the date of today if not
+ */
 function check_date($input)
 {
     // Check DATE (is != null ? is 8 in length ? is int ? is valable ?)
@@ -398,6 +459,12 @@ function check_date($input)
     }
 }
 
+/**
+ * Sanitize body with a white list of allowed html tags.
+ *
+ * @param string $input Body to sanitize
+ * @return string The sanitized body or empty string if there is no input
+ */
 function check_body($input)
 {
     // Check BODY (sanitize only);

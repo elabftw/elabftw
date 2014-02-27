@@ -84,7 +84,7 @@ if ($data['locked'] == 0) {
     echo "<a href='lock.php?id=".$data['itemid']."&action=unlock&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' title='unlock experiment' alt='unlock' /></a>";
 }
 // TAGS
-echo show_tags($id, 'items_tags');
+show_tags($id, 'items_tags');
 // TITLE : click on it to go to edit mode
 ?>
 <div OnClick="document.location='database.php?mode=edit&id=<?php echo $data['itemid'];?>'" class='title'>

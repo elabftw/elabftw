@@ -476,9 +476,14 @@ function check_body($input)
     }
 }
 
+/**
+ * Check visibility is either 'team or 'user'.
+ *
+ * @param string $input The visibility
+ * @return string Will return team if the visibility is wrong
+ */
 function check_visibility($input)
 {
-    // Check VISIBILITY
     if ((isset($input)) && (!empty($input))) {
         if (($input === 'team')
         || ($input === 'user')) {
@@ -490,13 +495,17 @@ function check_visibility($input)
     }
 }
 
+/**
+ * Make the pdf file.
+ *
+ * @param int $id The id of the item to pdfize
+ * @param string $type The type of item can be 'experiments' or 'items'
+ * @param string $out Do we put it in a file or out to the browser ? Default is browser
+ * @return either the pdf of the path to pdf file
+ */
 function make_pdf($id, $type, $out = 'browser')
 {
-    // make a pdf
-    // $type can be 'experiments' or 'items'
-    // $out is the output directory, 'browser' => pdf is downloaded (default), else it's written in the specified dir
     global $pdo;
-
     // SQL to get title, body and date
     $sql = "SELECT * FROM $type WHERE id = $id";
     $req = $pdo->prepare($sql);
@@ -549,8 +558,6 @@ function make_pdf($id, $type, $out = 'browser')
             $url = str_replace('make_zip.php', 'experiments.php', $url);
         }
         $full_url = $url."?mode=view&id=".$id;
-    // QR CODE (commented out as it's not possible with mpdf)
-        //$content .= "<qrcode value='".$full_url."' ec='H' style='width: 42mm; background-color: white; color: black;'></qrcode>";
         $content .= "<br /><p>elabid : ".$elabid."</p>";
         $content .= "<p>URL : <a href='".$full_url."'>".$full_url."</a></p>";
     } else {
@@ -595,13 +602,25 @@ function make_pdf($id, $type, $out = 'browser')
 }
 
 
+/**
+ * Generate unique elabID.
+ * This function is called during the creation of an experiment.
+ *
+ * @return string unique elabid with date in front of it
+ */
 function generate_elabid()
 {
-// Generate unique elabID
     $date = kdate();
     return $date."-".sha1(uniqid($date, true));
 }
 
+/**
+ * Duplicate an item.
+ *
+ * @param int $id The id of the item to duplicate
+ * @param string $type Can be 'experiments' or 'item'
+ * @return int|bool Will return the ID of the new item or false if error
+ */
 function duplicate_item($id, $type)
 {
     global $pdo;
@@ -643,8 +662,6 @@ function duplicate_item($id, $type)
             'visibility' => $data['visibility'],
             'userid' => $_SESSION['userid']));
         // END SQL main
-
-
     }
 
     if ($type === 'items') {
@@ -744,8 +761,13 @@ function duplicate_item($id, $type)
     }
 }
 
-// for displaying messages using jquery ui highlight/error messages
-// call with display_message('info|error', $message);
+/**
+ * For displaying messages using jquery ui highlight/error messages
+ *
+ * @param string $type Can be 'info' or 'error'
+ * @param string $message The message to display
+ * @return string Will echo the HTML of the message
+ */
 function display_message($type, $message)
 {
     if ($type === 'info') {
@@ -764,7 +786,15 @@ function display_message($type, $message)
     return false;
 }
 
-// to check if something is owned by a user before we add/delete/edit
+/**
+ * To check if something is owned by a user before we add/delete/edit.
+ * There is a check only for experiments and experiments templates.
+ *
+ * @param int $id ID of the item to check
+ * @param string $table Can be 'experiments' or experiments_templates'
+ * @param int $userid The ID of the user to test
+ * @return bool Will return true if it is owned by user
+ */
 function is_owned_by_user($id, $table, $userid)
 {
     global $pdo;
@@ -781,7 +811,12 @@ function is_owned_by_user($id, $table, $userid)
     }
 }
 
-// return conf_value of asked conf_name
+/**
+ * Return conf_value of asked conf_name
+ *
+ * @param string $conf_name The configuration we want to read
+ * @return string The config_value
+ */
 function get_config($conf_name)
 {
     global $pdo;
@@ -793,11 +828,24 @@ function get_config($conf_name)
     return $config[$conf_name][0];
 }
 
+/**
+ * Will check if an executable is on the system.
+ * Only used by check_for_updates.php to check for git.
+ *
+ * @param string $cmd The command to check
+ * @return bool Will return true if the executable can be used
+ */
 function check_executable($cmd)
 {
     return shell_exec("which $cmd");
 }
 
+/**
+ * Display the end of page.
+ * Only used in install/index.php
+ *
+ * @return string The HTML of the end of the page
+ */
 function custom_die()
 {
     echo "

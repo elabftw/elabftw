@@ -204,7 +204,15 @@ if (extension_loaded("gd")) {
 
 <p>
 <label for='db_user'>Username to connect to the MySQL server:</label><br />
-<input id='db_user' name='db_user' type='text' value='elabftw' />
+<input id='db_user' name='db_user' type='text' value='
+<?php
+// we show root here if we're on windoze
+if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32' || PHP_OS == 'WINNT' || PHP_OS == 'Windows') {
+    echo 'root';
+} else {
+    echo 'elabftw';
+}
+?>' />
 <span class='install_hint'>(should be 'elabftw' if you followed the README file)</span>
 </p>
 

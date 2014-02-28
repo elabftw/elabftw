@@ -213,7 +213,7 @@ if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32' || PHP_OS == 'WINNT' || PHP_OS == 'Wi
     echo 'elabftw';
 }
 ?>' />
-<span class='install_hint'>(should be 'elabftw' if you followed the README file)</span>
+<span class='install_hint'>(should be 'elabftw' or 'root' if you're on Windows)</span>
 </p>
 
 <p>

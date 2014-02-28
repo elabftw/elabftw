@@ -3,7 +3,7 @@
 // php update.php on normal server
 // /Applications/MAMP/bin/php/php5.3.6/bin/php update.php for MAMP install
 //
-
+require_once 'inc/functions.php';
 function add_field($table, $field, $params, $added, $not_added) {
     global $pdo;
     // first test if it's here already
@@ -538,4 +538,14 @@ if (!$table_is_here) {
 
 } else {
     echo "Table 'status' already exists. Nothing to do.\n";
+}
+
+// change path to md5(path) in config
+// first check if we have something else than a md5 in the config
+if (strlen(get_config('path')) != 36 || strpos(get_config('path'), '/'))  {
+    $newpath = md5(dirname(__FILE__));
+    $sql = "UPDATE config SET conf_value = :newpath WHERE conf_name = 'path'";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':newpath', $newpath);
+    $req->execute();
 }

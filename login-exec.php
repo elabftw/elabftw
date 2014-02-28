@@ -118,7 +118,8 @@ if ($result) {
         // setcookie( $name, $value, $expire, $path, $domain, $secure, $httponly )
         setcookie('token', $token, time() + 60*60*24*30, null, null, true, true);
         //setcookie('token', $token, time() + 60*60*24*30, dirname(__FILE__), null, true, true);
-        setcookie('path', dirname(__FILE__), time() + 60*60*24*30, null, null, true, true);
+        // we use md5 of the path to avoid problems with \ on windows
+        setcookie('path', md5(dirname(__FILE__)), time() + 60*60*24*30, null, null, true, true);
         // Update the token in SQL
         $sql = "UPDATE users SET token = :token WHERE userid = :userid";
         $req = $pdo->prepare($sql);

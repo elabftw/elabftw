@@ -62,6 +62,7 @@ try {
 
 // remove /install/install.php from path
 $path = substr(realpath(__FILE__), 0, -20);
+$path = md5($path);
 
 $sql = "INSERT INTO config (conf_name, conf_value) VALUES
     ('lab_name', 'eLab'),

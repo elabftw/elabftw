@@ -408,8 +408,8 @@ $(document).ready(function() {
         mode : "specific_textareas",
         editor_selector : "mceditable",
         content_css : "css/tinymce.css",
-        plugins : "table textcolor searchreplace code fullscreen insertdatetime paste charmap save",
-        toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | save",
+        plugins : "table textcolor searchreplace code fullscreen insertdatetime paste charmap save image link",
+        toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | image link | save",
         removed_menuitems : "newdocument",
         // save button :
         save_onsavecallback: function() {

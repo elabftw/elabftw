@@ -5,6 +5,7 @@ Version 0.9.4.2
 * Add image button in editor
 * Add URL in CSV export
 * Fix div blocks not passing the filter and losing formatting (thx David !)
+* Easier install on Mac and Windows
 
 Version 0.9.4.1
 * Status are now fully editable

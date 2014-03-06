@@ -98,6 +98,7 @@ define('DB_PASSWORD', '".$db_password."');
 
 // we try to write content to file and propose the file for download if we can't write to it
 
+error_reporting(E_ERROR);
 if (file_put_contents($config_file, $config)) {
     $infos_arr = array();
     $infos_arr[] = 'Congratulations, you successfully installed eLabFTW, 

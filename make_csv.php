@@ -35,10 +35,10 @@ $list = array();
 
 // Switch exp/items
 if ($_GET['type'] === 'exp') {
-    $list[] = array('id', 'date', 'title', 'status', 'elabid');
+    $list[] = array('id', 'date', 'title', 'status', 'elabid', 'url');
     $table = 'experiments';
 } elseif ($_GET['type'] === 'items') {
-    $list[] = array('id', 'date', 'type', 'title', 'rating');
+    $list[] = array('id', 'date', 'type', 'title', 'rating', 'url');
     $table = 'items';
 } else {
     die('bad type');
@@ -57,7 +57,11 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                 LEFT JOIN status ON (experiments.status = status.id)
                 WHERE experiments.id = $id";
         } else {
-            $sql = "SELECT * FROM items WHERE id = $id";
+            $sql = "SELECT items.*,
+                items_types.name AS typename
+                FROM items
+                LEFT JOIN items_types ON (items.type = items_types.id)
+                WHERE items.id = $id";
         }
             
         $req = $pdo->prepare($sql);
@@ -65,11 +69,35 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         $csv_data = $req->fetch();
 
         if ($table === 'experiments') {
-            $list[] = array($csv_data['id'], $csv_data['date'], $csv_data['title'], $csv_data['statusname'], $csv_data['elabid']);
+            // now let's get the URL so we can have a nice link in the csv
+            $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+            $url = str_replace('make_csv.php', 'experiments.php', $url);
+            $url .= "?mode=view&id=".$csv_data['id'];
+            $list[] = array(
+                $csv_data['id'],
+                $csv_data['date'],
+                htmlspecialchars_decode($csv_data['title'], ENT_QUOTES | ENT_COMPAT),
+                htmlspecialchars_decode($csv_data['statusname'], ENT_QUOTES | ENT_COMPAT),
+                $csv_data['elabid'],
+                $url
+            );
+
         } else { // items
-            $list[] = array($csv_data['id'], $csv_data['date'], $csv_data['type'], $csv_data['title'], $csv_data['rating']);
+        // now let's get the URL so we can have a nice link in the csv
+        $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+        $url = str_replace('make_csv.php', 'database.php', $url);
+        $url .= "?mode=view&id=".$csv_data['id'];
+        $list[] = array(
+            $csv_data['id'],
+            $csv_data['date'],
+            htmlspecialchars_decode($csv_data['typename'], ENT_QUOTES | ENT_COMPAT),
+            htmlspecialchars_decode($csv_data['title'], ENT_QUOTES | ENT_COMPAT),
+            $csv_data['rating'],
+            $url
+        );
+
         }
-    }
+    } // end foreach
 } else {
     die('No id to export :/');
 }
@@ -91,10 +119,12 @@ fclose($fp);
 
 // PAGE BEGIN
 echo "<div class='item'>";
-    // Get zip size
+    // Get csv file size
     $filesize = filesize($filepath);
-    echo "<p>Download CSV file <span class='filesize'>(".format_bytes($filesize).")</span> :<br />
+    echo "<p>Your CSV file is ready :<br />
+        <a href='download.php?f=".$filepath."&name=elabftw-export.csv' target='_blank'>
         <img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='download' /> 
-        <a href='download.php?f=".$filepath."&name=elabftw-export.csv' target='_blank'>elabftw-export.csv</a></p>";
+        elabftw-export.csv</a>
+        <span class='filesize'>(".format_bytes($filesize).")</span></p>";
 echo "</div>";
 require_once 'inc/footer.php';

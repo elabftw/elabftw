@@ -1,5 +1,11 @@
 /* Changelog for eLabFTW */
 
+Version 0.9.4.2
+* Add links button in editor
+* Add image button in editor
+* Add URL in CSV export
+* Fix div blocks not passing the filter and losing formatting (thx David !)
+
 Version 0.9.4.1
 * Status are now fully editable
 * Bugfixes and cosmetic improvements

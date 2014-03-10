@@ -64,8 +64,11 @@ if ($count > 0) {
                 if (!file_exists($thumbpath) && $filesize <= 2000000) {
                     make_thumb($filepath, $ext, $thumbpath, 150);
                 }
-                echo "<div class='center'>";
-                echo "<a href='uploads/".$uploads_data['long_name']."' class='lightbox'><img src='".$thumbpath."' width='150' alt='thumbnail' /></a></div>";
+                // only display the thumbnail if the file is here
+                if (file_exists($thumbpath)) {
+                    echo "<div class='center'>";
+                    echo "<a href='uploads/".$uploads_data['long_name']."' class='lightbox'><img src='".$thumbpath."' width='150' alt='thumbnail' /></a></div>";
+                }
             } // end if extension is valid
         } // end gd here
         // END THUMBNAIL GENERATION

@@ -79,9 +79,9 @@ echo "<a href='database.php?mode=edit&id=".$data['itemid']."'><img src='themes/"
 <a href='experiments.php?mode=show&related=".$data['itemid']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/link.png' alt='Linked experiments' title='Linked experiments' /></a> ";
 // lock
 if ($data['locked'] == 0) {
-    echo "<a href='lock.php?id=".$data['itemid']."&action=lock&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/unlock.png' title='lock experiment' alt='lock' /></a>";
-} else { // experiment is locked
-    echo "<a href='lock.php?id=".$data['itemid']."&action=unlock&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' title='unlock experiment' alt='unlock' /></a>";
+    echo "<a href='lock.php?id=".$data['itemid']."&action=lock&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/unlock.png' title='lock item' alt='lock' /></a>";
+} else { // item is locked
+    echo "<a href='lock.php?id=".$data['itemid']."&action=unlock&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' title='unlock item' alt='unlock' /></a>";
 }
 // TAGS
 show_tags($id, 'items_tags');

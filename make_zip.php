@@ -120,138 +120,41 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                 $comment[] = $uploads['comment'];
             }
 
-            // create an html page
-            $html = "<!DOCTYPE html><html><head><meta http-equiv='Content-Type' content='text/html'; charset='utf-8'><title>";
-            $html .= $title;
-            $html .= "</title></head><body>";
-            $html .="<style type='text/css'>
-                html {
-                    background-color:#fff;
-                }
-                #container {
-                    width:793px;
-                    margin:auto;
-                    padding:20px;
-                    border: 2px solid green;
-                }
-                footer{
-                    font-size:10px;
-                }
-            </style>";
-            $html .= "<section id='container'>Date : ".$date."<br />
-        <span style='text-align: right;'>By : ".$firstname." ".$lastname."</span><br />
-        <div style='text-align: center;'><font size='10'>".$title."</font></span></div><br /><br />
-        ".$body."<br />";
             // files attached ?
             $filenb = count($real_name);
             if ($filenb > 0) {
-                $html .= "<section>";
-                if ($filenb == 1) {
-                    $html .= '
-                        <h3>Attached file :</h3>';
-                } else {
-                    $html .= '<h3>Attached files :</h3>';
-                }
-                $html .= "<ul>";
                 for ($i=0; $i<$filenb; $i++) {
-                    $html .= "<li><a href='".$real_name[$i]."'>".$real_name[$i]."</a> (".stripslashes(str_replace("&#39;", "'", utf8_decode($comment[$i]))).").</li>";
                     // add files to archive
                     $zip->addFile('uploads/'.$long_name[$i], $folder."/".$real_name[$i]);
                 }
-                $html .= "
-                    </ul>
-                    </section>";
-
-            }
-            // GET LINKS
-            // are we an experiment ?
-            if ($table === 'experiments') {
-                // has links ?
-                $link_sql = "SELECT * FROM experiments_links WHERE item_id = ".$id;
-                $link_req = $pdo->prepare($link_sql);
-                $link_req->execute();
-                while ($link_data = $link_req->fetch()) {
-                    $link_id[] = $link_data['link_id'];
-                }
-                $linknb = $link_req->rowCount();
-                if ($linknb > 0) {
-                    $html .= "
-                        <section>
-                        <h3>Linked items :</h3>
-                        <ul>";
-                    // create url for database
-                    $url = str_replace('make_zip.php', 'database.php', $url);
-                    // put links in list with link to the url of item
-                    for ($j=0; $j<$linknb; $j++) {
-                        // get title and type of the item linked
-                        $sql = "SELECT items.*,
-                            items_types.name AS items_typesname
-                            FROM items
-                            LEFT JOIN items_types ON (items.type = items_types.id)
-                            WHERE items.id = :id";
-                        $item_req = $pdo->prepare($sql);
-                        $item_req->execute(array(
-                            'id' => $link_id[$j]
-                        ));
-                        $item_infos = $item_req->fetch();
-
-                        $link_title = $item_infos['title'];
-                        $link_type = $item_infos['items_typesname'];
-
-                        $html .= "<li>[".$link_type."] - <a href='".$url."?mode=view&id=".$link_id[$j]."'>".$link_title."</a></li>";
-                    }
-                    $html .= "
-                        </ul>
-                        </section>";
-                }
             }
 
-
-            // FOOTER
-            $html .= "~~~~<br />
-                <footer>
-            File created with <strong>elabFTW</strong> -- Free open source lab manager<br />
-            <a href='http://www.elabftw.net'>eLabFTW.net</a>
-                </footer>";
-            $html .= "</section></body></html>";
-            // CREATE HTML FILE
-            // utf8 ftw
-            $html = utf8_encode($html);
-            // add header for utf-8
-            $html = "\xEF\xBB\xBF".$html;
-            $txtfile = 'uploads/export/'.'elabftw-'.uniqid();
-            $tf = fopen($txtfile, 'w+');
-            fwrite($tf, $html);
-            fclose($tf);
-            // add html file
-            $zip->addFile($txtfile, $folder."/".$clean_title.".html");
-            // add a PDF, too
+            // add PDF to archive
             $pdfname = make_pdf($id, $table, 'uploads/export');
             $zip->addFile('uploads/export/'.$pdfname, $folder."/".$pdfname);
-            // delete files
-            //unlink($txtfile);
-            //unlink('/tmp/'.$pdfname);
+            // delete file
+            //unlink('uploads/export/'.$pdfname);
 
         } // end foreach
-            $zip->close();
+        $zip->close();
 
         // PAGE BEGIN
         echo "<div class='item'>";
-        // Get zip size
-        $zipsize = filesize($zipfile);
         // Get the title if there is only one experiment in the zip
         if (count($id_arr) === 1) {
             $zipname = $date."-".$clean_title;
         }
         // Display download link (with attribute type=zip for download.php)
-        echo "<p>Your zip archive is ready, click to download <span class='filesize'>(".format_bytes($zipsize).")</span> :<br />
+        echo "<p>Your ZIP archive is ready :<br />
+            <a href='download.php?f=".$zipfile."&name=".$zipname.".zip&type=zip' target='_blank'>
             <img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='download' /> 
-            <a href='download.php?f=".$zipfile."&name=".$zipname.".zip&type=zip' target='_blank'>".$zipname.".zip</a></p>";
-        echo "</div>";
+            ".$zipname.".zip</a>
+            <span class='filesize'>(".format_bytes(filesize($zipfile)).")</span></p>";
+            echo "</div>";
     } else {
         echo 'Archive creation failed :(';
     }
-    require_once('inc/footer.php');
+    require_once 'inc/footer.php';
 } else {
     die("The id parameter in the URL isn't a valid experiment ID");
 }

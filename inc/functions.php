@@ -551,6 +551,7 @@ function make_pdf($id, $type, $out = 'browser')
     // eLabFTW is only HTTPS
     $protocol = 'https://';
     $url = $protocol.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+    // EXPERIMENTS
     if ($type == 'experiments') {
         if ($out === 'browser') {
             $url = str_replace('make_pdf.php', 'experiments.php', $url);
@@ -558,16 +559,42 @@ function make_pdf($id, $type, $out = 'browser')
             $url = str_replace('make_zip.php', 'experiments.php', $url);
         }
         $full_url = $url."?mode=view&id=".$id;
+
+        // SQL to get filesattached
+        $sql = "SELECT * FROM uploads WHERE item_id = ".$id;
+        $req = $pdo->prepare($sql);
+        $req->execute();
+        $real_name = array();
+        $comment = array();
+        while ($uploads = $req->fetch()) {
+            $real_name[] = $uploads['real_name'];
+            $comment[] = $uploads['comment'];
+        }
+        // do we have files attached ?
+        $filenb = count($real_name);
+        if ($filenb > 0) {
+            $content .= "<section>";
+            if ($filenb === 1) {
+                $content .= "<h3>Attached file :</h3>";
+            } else {
+                $content .= "<h3>Attached files :</h3>";
+            }
+            $content .= "<ul>";
+            for ($i=0; $i<$filenb;$i++) {
+                $content .= "<li>".$real_name[$i]."</a> (".stripslashes(htmlspecialchars_decode($comment[$i])).").</li>";
+            }
+            $content .= "</ul></section>";
+        }
+
         $content .= "<br /><p>elabid : ".$elabid."</p>";
         $content .= "<p>URL : <a href='".$full_url."'>".$full_url."</a></p>";
-    } else {
+    } else { // ITEM
         if ($out === 'browser') {
             $url = str_replace('make_pdf.php', 'database.php', $url);
         } else { // call from make_zip
             $url = str_replace('make_zip.php', 'database.php', $url);
         }
         $full_url = $url."?mode=view&id=".$id;
-        //$content .= "<qrcode value='".$full_url."' ec='H' style='width: 42mm; background-color: white; color: black;'></qrcode>";
         $content .= "<p>URL : <a href='".$full_url."'>".$full_url."</a></p>";
     }
 

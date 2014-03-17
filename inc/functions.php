@@ -571,21 +571,65 @@ function make_pdf($id, $type, $out = 'browser')
             $comment[] = $uploads['comment'];
         }
         // do we have files attached ?
-        $filenb = count($real_name);
-        if ($filenb > 0) {
+        if (count($real_name) > 0) {
             $content .= "<section>";
-            if ($filenb === 1) {
+            if (count($real_name) === 1) {
                 $content .= "<h3>Attached file :</h3>";
             } else {
                 $content .= "<h3>Attached files :</h3>";
             }
             $content .= "<ul>";
-            for ($i=0; $i<$filenb;$i++) {
-                $content .= "<li>".$real_name[$i]."</a> (".stripslashes(htmlspecialchars_decode($comment[$i])).").</li>";
+            for ($i=0; $i<count($real_name);$i++) {
+                $content .= "<li>".$real_name[$i]." (".stripslashes(htmlspecialchars_decode($comment[$i])).").</li>";
             }
             $content .= "</ul></section>";
         }
 
+        // SQL to get linked items
+        $sql = "SELECT experiments_links.*,
+            experiments_links.link_id AS item_id,
+            items.title AS title,
+            items_types.name AS type
+            FROM experiments_links
+            LEFT JOIN items ON (experiments_links.link_id = items.id)
+            LEFT JOIN items_types ON (items.type = items_types.id)
+            WHERE item_id = ".$id;
+        $req = $pdo->prepare($sql);
+        $req->execute();
+        $links_id_arr = array();
+        $links_title_arr = array();
+        $links_type_arr = array();
+        // we put what we need in arrays
+        while ($links = $req->fetch()) {
+            $links_id_arr[] = $links['item_id'];
+            $links_title_arr[] = $links['title'];
+            $links_type_arr[] = $links['type'];
+        }
+        // only display this section if there is something to display
+        if ($req->rowCount() > 0) {
+            $content .= '<section>';
+            if ($req->rowCount() === 1) {
+                $content .= "<h3>Linked item :</h3>";
+            } else {
+                $content .= "<h3>Linked items :</h3>";
+            }
+            $content .= "<ul>";
+            for ($i=0; $i<$req->rowCount();$i++) {
+                // we need the url of the displayed item
+                if ($out === 'browser') {
+                    $item_url = str_replace('experiments.php', 'database.php', $url);
+                } else { // call from make_zip
+                    $item_url = str_replace('experiments.php', 'database.php', $url);
+                }
+                $full_item_url = $item_url."?mode=view&id=".$links_id_arr[$i];
+
+                $content .= "<li>[".$links_type_arr[$i]."] - <a href='".$full_item_url."'>".$links_title_arr[$i]."</a></li>";
+            }
+            $content .= "</ul></section>";
+        }
+
+
+        // ELABID and URL
         $content .= "<br /><p>elabid : ".$elabid."</p>";
         $content .= "<p>URL : <a href='".$full_url."'>".$full_url."</a></p>";
     } else { // ITEM

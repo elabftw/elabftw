@@ -107,9 +107,17 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                 $tags .= stripslashes($data['tag']).' ';
             }
 
-            // SQL to get filesattached
-            $sql = "SELECT * FROM uploads WHERE item_id = ".$id;
+            // SQL to get filesattached (of the right type)
+            $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
             $req = $pdo->prepare($sql);
+            // we could use $table instead of $type, but 'items' will be of type 'database', so we need this "if"
+            if ($table === 'items') {
+                $type = 'database';
+            } else {
+                $type = $table; // experiments
+            }
+            $req->bindParam(':id', $id);
+            $req->bindParam(':type', $type);
             $req->execute();
             $real_name = array();
             $long_name = array();

@@ -406,6 +406,10 @@ function showDB($id, $display)
         if (has_attachement($item['id'])) {
             echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='file attached' />";
         }
+        // show lock if item is locked on viewDB
+        if ($item['locked'] == 1) {
+            echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' alt='lock' />";
+        }
         echo "<p class='title'>". stripslashes($item['title']) . "</p>";
         echo "</section>";
     }

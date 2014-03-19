@@ -1,11 +1,16 @@
 /* Changelog for eLabFTW */
 
 Version 0.9.4.2
+* Easier install on Mac and Windows
+* Add linked items list to pdf and list of attached files
 * Add links button in editor
 * Add image button in editor
 * Add URL in CSV export
+* Show the lock on database item
+* Removed the html from zip export
 * Fix div blocks not passing the filter and losing formatting (thx David !)
-* Easier install on Mac and Windows
+* Fix a bug with lock/unlock of items
+* Fix a bug in zip generation
 
 Version 0.9.4.1
 * Status are now fully editable

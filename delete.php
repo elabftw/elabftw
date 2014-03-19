@@ -144,7 +144,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             $req = $pdo->prepare($sql);
             $result[] = $req->execute(array(
                 'id' => $id,
-                'type' => 'database'
+                'type' => 'items'
             ));
 
             // delete links of this item in experiments with this item linked

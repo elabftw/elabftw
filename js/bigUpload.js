@@ -237,10 +237,10 @@ function bigUpload () {
         }
         var item_id = getURLParameter('id');
         var url = document.URL;
-        // the uploaded file need to be labelled «experiments» or «database» in the SQL DB for check on delete
+        // the uploaded file need to be labelled «experiments» or «items» in the SQL DB
         var type = url.match(/experiments/);
         if (type != 'experiments') {
-            type = 'database';
+            type = 'items';
         }
 
 		var data = 'key=' + this.uploadData.key + '&realname=' + this.uploadData.file.name + '&type=' + type + '&item_id=' + item_id;
@@ -265,7 +265,12 @@ function bigUpload () {
 					parent.$(parent.settings.submitButton).value = 'Start Upload';
 					parent.printResponse('File uploaded successfully.', false);
                     // reload the div to display the freshly uploaded file
-                    $("#filesdiv").load(type+'.php?mode=edit&id='+item_id+' #filesdiv');
+                    if (type == 'items') {
+                        bigtype = 'database';
+                    } else {
+                        bigtype = 'experiments';
+                    }
+                    $("#filesdiv").load(bigtype+'.php?mode=edit&id='+item_id+' #filesdiv');
 
 					parent.success(response);
 				}

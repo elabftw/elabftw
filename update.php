@@ -549,3 +549,9 @@ if (strlen(get_config('path')) != 36 || strpos(get_config('path'), '/'))  {
     $req->bindParam(':newpath', $newpath);
     $req->execute();
 }
+
+// in uploads there is no more database type so change database to 'items'
+// it will be executed everytime but we don't care.
+$sql = "UPDATE uploads SET type = 'items' WHERE type = 'database'";
+$req = $pdo->prepare($sql);
+$req->execute();

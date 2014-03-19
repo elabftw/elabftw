@@ -500,7 +500,7 @@ function check_visibility($input)
 }
 
 /**
- * Make the pdf file.
+ * Make the pdf file. This is a function, and it's not in the make_pdf.php file because it is called by make_zip also.
  *
  * @param int $id The id of the item to pdfize
  * @param string $type The type of item can be 'experiments' or 'items'
@@ -510,6 +510,7 @@ function check_visibility($input)
 function make_pdf($id, $type, $out = 'browser')
 {
     global $pdo;
+
     // SQL to get title, body and date
     $sql = "SELECT * FROM $type WHERE id = $id";
     $req = $pdo->prepare($sql);
@@ -520,7 +521,7 @@ function make_pdf($id, $type, $out = 'browser')
     // the name of the pdf is needed in make_zip
     $clean_title = $date."-".preg_replace('/[^A-Za-z0-9]/', ' ', $title);
     $body = stripslashes($data['body']);
-    if ($type == 'experiments') {
+    if ($type === 'experiments') {
         $elabid = $data['elabid'];
     }
     $req->closeCursor();
@@ -552,11 +553,38 @@ function make_pdf($id, $type, $out = 'browser')
         <em>Keywords : ".$tags."</em><br />
         <hr>".$body."<br /><br />
         <hr>Made by : ".$firstname." ".$lastname."<br /><br />";
-    // eLabFTW is only HTTPS
-    $protocol = 'https://';
-    $url = $protocol.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+    // Construct URL
+    $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+
+    // ATTACHED FILES
+    // SQL to get attached files
+    $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':id', $id);
+    $req->bindParam(':type', $type);
+    $req->execute();
+    $real_name = array();
+    $comment = array();
+    while ($uploads = $req->fetch()) {
+        $real_name[] = $uploads['real_name'];
+        $comment[] = $uploads['comment'];
+    }
+    // do we have files attached ?
+    if (count($real_name) > 0) {
+        $content .= "<section>";
+        if (count($real_name) === 1) {
+            $content .= "<h3>Attached file :</h3>";
+        } else {
+            $content .= "<h3>Attached files :</h3>";
+        }
+        $content .= "<ul>";
+        for ($i=0; $i<count($real_name);$i++) {
+            $content .= "<li>".$real_name[$i]." (".stripslashes(htmlspecialchars_decode($comment[$i])).").</li>";
+        }
+        $content .= "</ul></section>";
+    }
     // EXPERIMENTS
-    if ($type == 'experiments') {
+    if ($type === 'experiments') {
         if ($out === 'browser') {
             $url = str_replace('make_pdf.php', 'experiments.php', $url);
         } else { // call from make_zip
@@ -564,30 +592,6 @@ function make_pdf($id, $type, $out = 'browser')
         }
         $full_url = $url."?mode=view&id=".$id;
 
-        // SQL to get filesattached
-        $sql = "SELECT * FROM uploads WHERE item_id = ".$id;
-        $req = $pdo->prepare($sql);
-        $req->execute();
-        $real_name = array();
-        $comment = array();
-        while ($uploads = $req->fetch()) {
-            $real_name[] = $uploads['real_name'];
-            $comment[] = $uploads['comment'];
-        }
-        // do we have files attached ?
-        if (count($real_name) > 0) {
-            $content .= "<section>";
-            if (count($real_name) === 1) {
-                $content .= "<h3>Attached file :</h3>";
-            } else {
-                $content .= "<h3>Attached files :</h3>";
-            }
-            $content .= "<ul>";
-            for ($i=0; $i<count($real_name);$i++) {
-                $content .= "<li>".$real_name[$i]." (".stripslashes(htmlspecialchars_decode($comment[$i])).").</li>";
-            }
-            $content .= "</ul></section>";
-        }
 
         // SQL to get linked items
         $sql = "SELECT experiments_links.*,
@@ -632,6 +636,9 @@ function make_pdf($id, $type, $out = 'browser')
             $content .= "</ul></section>";
         }
 
+        // Comments
+        // SQL to get comments
+        $sql = "SELECT * FROM comments";
 
         // ELABID and URL
         $content .= "<br /><p>elabid : ".$elabid."</p>";
@@ -817,6 +824,8 @@ function duplicate_item($id, $type)
         $req = $pdo->prepare($sql);
         $req->execute();
         $tag_number = $req->rowCount();
+        // we initilize $result_tags here in case there is now tag to duplicate
+        $result_tags = true;
         if ($tag_number > 0) {
             while ($tags = $req->fetch()) {
                 // Put them in the new one. here $newid is the new exp created

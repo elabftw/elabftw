@@ -547,6 +547,36 @@ function make_pdf($id, $type, $out = 'browser')
     }
     $req->closeCursor();
 
+    // SQL to get comments
+    // check if there is something to display first
+    // get all comments, and infos on the commenter associated with this experiment
+    $sql = "SELECT * FROM experiments_comments
+        LEFT JOIN users ON (experiments_comments.userid = users.userid)
+        WHERE exp_id = :id
+        ORDER BY experiments_comments.datetime DESC";
+    $req = $pdo->prepare($sql);
+    $req->execute(array(
+        'id' => $id
+    ));
+    if ($req->rowCount() > 0) {
+        $comments_block .= "<section>";
+        if ($req->rowCount() === 1) {
+            $comments_block .= "<h3>Comment :</h3>";
+        } else {
+            $comments_block .= "<h3>Comments :</h3>";
+        }
+        // there is comments to display
+        while ($comments = $req->fetch()) {
+            if (empty($comments['firstname'])) {
+                $comments['firstname'] = '[deleted]';
+            }
+        $comments_block .= "<p>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :<br />";
+        $comments_block .= "<p>".$comments['comment']."</p>";
+
+        }
+        $comments_block .= "</section>";
+    }
+
     // build content of page
     $content = "<h1>".$title."</h1><br />
         Date : ".$date."<br />
@@ -636,13 +666,12 @@ function make_pdf($id, $type, $out = 'browser')
             $content .= "</ul></section>";
         }
 
-        // Comments
-        // SQL to get comments
-        $sql = "SELECT * FROM comments";
-
+        // Add comments
+        $content .= $comments_block;
         // ELABID and URL
         $content .= "<br /><p>elabid : ".$elabid."</p>";
         $content .= "<p>URL : <a href='".$full_url."'>".$full_url."</a></p>";
+
     } else { // ITEM
         if ($out === 'browser') {
             $url = str_replace('make_pdf.php', 'database.php', $url);
@@ -652,6 +681,7 @@ function make_pdf($id, $type, $out = 'browser')
         $full_url = $url."?mode=view&id=".$id;
         $content .= "<p>URL : <a href='".$full_url."'>".$full_url."</a></p>";
     }
+
 
 
     // Generate pdf with mpdf

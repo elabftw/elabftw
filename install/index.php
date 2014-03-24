@@ -238,7 +238,7 @@ if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32' || PHP_OS == 'WINNT' || PHP_OS == 'Wi
 <p>If you want to modify some parameters afterwards, just edit this file directly.</p>
 
 <div class='center' style='margin-top:8px'>
-    <input type="submit" name="Submit" class='button' value="INSTALL eLabFTW" />
+    <button type="submit" name="Submit" class='button'>INSTALL eLabFTW</button>
 </div>
 
 <p>If the config.php file is in place, <button onclick='window.location.reload()'>reload this page</button></p>

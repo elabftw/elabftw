@@ -117,7 +117,7 @@ if (!checkCookiesEnabled()) {
                     <label for="password">Password</label>
                     <input name="password" type="password" id="password" />
                 </p>
-          <input type="submit" name="Submit" value="Log in" />
+          <button type="submit" class='button' name="Submit">Log in</button>
         </fieldset>
     </form>
     <p>Note : you need cookies enabled to log in.<br />
@@ -127,7 +127,7 @@ if (!checkCookiesEnabled()) {
 <hr>
     <form name='resetPass' method='post' action='reset-pass.php'>
     <input placeholder='Enter your email address' name='email' type='email' />
-    <input type="submit" name="Submit" value="Send new password" />
+    <button type="submit" name="Submit">Send new password</button>
     </form>
     </div>
 </section>

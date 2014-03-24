@@ -7,6 +7,8 @@ eLabFTW is an electronic lab notebook manager for research teams. It also featur
 * [Official website](http://www.elabftw.net)
 * [Live demo](http://demo.elabftw.net)
 
+Keep in mind that eLabFTW is currently in beta and is under heavy developpement. Your input is very welcome :)
+
 # Installation
 Thank you for choosing eLabFTW as a lab manager =)
 Please report bugs on [github](https://github.com/NicolasCARPi/elabftw/issues).

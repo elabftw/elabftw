@@ -57,7 +57,7 @@ if ($count > 0) {
             </label></li>";
     }
     $message .= "</ul><div class='center'>
-    <input class='button' type='submit' value='Validate users' /></div></form>";
+    <button class='button' type='submit'>Validate users</button></div></form>";
     display_message('error', $message);
 }
 ?>
@@ -68,6 +68,7 @@ if ($count > 0) {
 <li><a href='#tabs-2'>Users</a></li>
 <li><a href='#tabs-3'>Status</a></li>
 <li><a href='#tabs-4'>Types of items</a></li>
+<li><a href='#tabs-5'>Experiment template</a></li>
 </ul>
 
 <!-- TABS 1 -->
@@ -159,7 +160,7 @@ if ($count > 0) {
     <br />
     </div>
     <div class='center'>
-        <input type='submit' name='submit_config' class='submit button' value='Save' />
+        <button type='submit' name='submit_config' class='submit button'>Save</button>
     </div>
     </form>
 
@@ -229,7 +230,7 @@ if ($count > 0) {
         <br />
         <br />
         <div class='center'>
-            <input type='submit' class='button' value='Edit this user' />
+            <button type='submit' class='button'>Edit this user</button>
         </div>
             </form>
         </div>
@@ -253,7 +254,7 @@ if ($count > 0) {
         <label for'delete_user'>Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever.</label>
         <input type='email' name='delete_user' id='delete_user' />
     <div class='center'>
-        <input type='submit' class='button submit' value='Delete this user !' />
+        <button type='submit' class='button submit'>Delete this user !</button>
     </div>
     </form>
 </section>
@@ -312,7 +313,7 @@ if ($count > 0) {
             <br />
 
             <div class='center'>
-            <input type='submit' class='button' value='Edit <?php echo stripslashes($status['name']);?>' /><br />
+            <button type='submit' class='button'>Edit <?php echo stripslashes($status['name']);?></button><br />
             </div>
         </form></div>
         <script>$(document).ready(function() {
@@ -336,7 +337,7 @@ if ($count > 0) {
             </div>
             <br />
             <div class='center'>
-                <input type='submit' class='submit button' value='Add new status' />
+                <button type='submit' class='submit button'>Add new status</button>
             </div>
         </form>
     </section>
@@ -387,7 +388,7 @@ while ($items_types = $req->fetch()) {
      
     <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']);?></textarea><br />
     <div class='center'>
-    <input type='submit' class='button' value='Edit <?php echo stripslashes($items_types['name']);?>' /><br />
+    <button type='submit' class='button'>Edit <?php echo stripslashes($items_types['name']);?></button><br />
     </div>
     </form></div>
     <script>$(document).ready(function() {
@@ -412,10 +413,34 @@ while ($items_types = $req->fetch()) {
         <input type='text' name='new_item_type_bgcolor' value='#000000' /></div><br /><br />
         <textarea class='mceditable' name='new_item_type_template' /></textarea><br />
         <div class='center'>
-        <input type='submit' class='button' value='Add new item type' />
+        <button type='submit' class='button'>Add new item type</button>
         </div>
     </form>
 </section>
+</div>
+
+<!-- TABS 5 -->
+<div id='tabs-5'>
+<?php
+// get what is the default experiment template
+$sql = "SELECT body FROM experiments_templates WHERE userid = 0 LIMIT 1";
+$req = $pdo->prepare($sql);
+$req->execute();
+$exp_tpl = $req->fetch();
+?>
+    <h3>EDIT DEFAULT EXPERIMENT TEMPLATE</h3>
+    <p>This is the default text when one creates an experiment.</p>
+    <form action='admin-exec.php' method='post'>
+    <input type='hidden' name='default_exp_tpl' value='1' />
+    <textarea class='mceditable' name='default_exp_tpl' />
+<?php
+echo $exp_tpl['body'];
+?></textarea><br />
+    <div class='center'>
+    <button type='submit' class='button'>Edit default template</button>
+    </div>
+    </form>
+
 </div>
 
 </div>
@@ -448,4 +473,6 @@ $(document).ready(function() {
     });
 });
 </script>
+
+
 <?php require_once 'inc/footer.php';

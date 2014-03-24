@@ -108,7 +108,7 @@ while ($tags = $tagreq->fetch()) {
 </textarea>
 <!-- SUBMIT BUTTON -->
 <div class='center' id='saveButton'>
-    <input type="submit" name="Submit" class='button' value="Save and go back" />
+    <button type="submit" name="Submit" class='button'>Save and go back</button>
 </div>
 </form>
 <!-- end edit items form -->

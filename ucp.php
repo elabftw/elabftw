@@ -62,7 +62,7 @@ $users = $req->fetch();
             <br />
             <input type='hidden' name='main'>
             <div class='center'>
-                <input type="submit" name="Submit" class='button' value="Update profile" />
+                <button type="submit" name="Submit" class='button'>Update profile</button>
             </div>
         </form>
     </div>
@@ -134,7 +134,7 @@ $users = $req->fetch();
 
             <!-- SUBMIT BUTTON -->
             <div class='center'>
-                <input type="submit" name="Submit" class='button' value="Set preferences" />
+                <button type="submit" name="Submit" class='button'>Set preferences</button>
             </div>
         </form>
     </div>
@@ -165,7 +165,7 @@ $users = $req->fetch();
                 <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='mceditable' rows='50' cols='60'></textarea>
             <br />
                 <div class='center'>
-                    <input type="submit" name="Submit" class='button' value="Add template" />
+                    <button type="submit" name="Submit" class='button'>Add template</button>
                 </div>
             </form>
         </div>
@@ -185,7 +185,7 @@ $users = $req->fetch();
             echo "<input name='tpl_name[]' value='".stripslashes($users['name'])."' /><br />";
             echo "<textarea name='tpl_body[]' class='mceditable' style='height:500px;'>".stripslashes($users['body'])."</textarea><br />";
             echo "<div class='center'>";
-            echo "<input type='submit' name='Submit' class='button' value='Edit template' />";
+            echo "<button type='submit' name='Submit' class='button'>Edit template</button>";
             echo "</div>";
             echo "</form>";
             echo "</div>";
@@ -225,7 +225,7 @@ $users = $req->fetch();
                 <br />
                 <br />
                 <div class='center'>
-                    <input type="submit" name="Submit" class='button' value="Change shortcuts" />
+                    <button type="submit" name="Submit" class='button'>Change shortcuts</button>
                 </div>
             </form>
         </div>

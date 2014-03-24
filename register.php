@@ -69,7 +69,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
                 </p>
                 Password complexity (for your information) : <span id="complexity">0%</span><br /><br />
                 <div id='submitDiv'>
-                <input type="submit" name="Submit" class='submit' value="Register" />
+                <button type="submit" name="Submit" class='submit button'>Register</button>
                 </div>
         </fieldset>
     </form>

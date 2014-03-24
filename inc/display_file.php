@@ -27,6 +27,9 @@ echo "<section id='filesdiv'>";
 // What type of item we are displaying the files of ?
 $type_arr = explode('.', basename($_SERVER['PHP_SELF']));
 $type = $type_arr[0];
+if ($type === 'database') {
+    $type = 'items';
+}
 // Check that the item we view has attached files
 $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
 $req = $pdo->prepare($sql);

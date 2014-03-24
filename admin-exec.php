@@ -218,7 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
     }
     if ($errflag) {
         $_SESSION['errors'] = $msg_arr;
-        header("location: admin.php");
+        header("location: admin.php#tabs-2");
         die();
     }
 
@@ -298,7 +298,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
         if (empty($errors_arr)) {
             $infos_arr[] = 'User infos updated successfully.';
             $_SESSION['infos'] = $infos_arr;
-            header('Location: admin.php');
+            header('Location: admin.php#tabs-2');
             exit();
         } else {
             header('Location: admin.php');
@@ -346,7 +346,7 @@ if (isset($_POST['status_name']) && is_pos_int($_POST['status_id'])) {
     if ($result) {
         $infos_arr[] = 'Status updated successfully.';
         $_SESSION['infos'] = $infos_arr;
-        header('Location: admin.php');
+        header('Location: admin.php#tabs-3');
         exit();
     } else { //sql fail
         $infos_arr[] = 'There was a problem in the SQL request. Report a bug !';
@@ -369,7 +369,7 @@ if (isset($_POST['new_status_name'])) {
     if ($result) {
         $infos_arr[] = 'New status added successfully.';
         $_SESSION['infos'] = $infos_arr;
-        header('Location: admin.php');
+        header('Location: admin.php#tabs-3');
         exit();
     } else { //sql fail
         $infos_arr[] = 'There was a problem in the SQL request. Report a bug !';
@@ -401,7 +401,7 @@ if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
     if ($result) {
         $infos_arr[] = 'New item category updated successfully.';
         $_SESSION['infos'] = $infos_arr;
-        header('Location: admin.php#items_types');
+        header('Location: admin.php#tabs-4');
         exit();
     } else { //sql fail
         $infos_arr[] = 'There was a problem in the SQL request. Report a bug !';
@@ -416,7 +416,7 @@ if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
     if (strlen($item_type_name) < 1) {
         $infos_arr[] = 'You need to put a title !';
         $_SESSION['errors'] = $infos_arr;
-        header('Location: admin.php');
+        header('Location: admin.php#tabs-4');
         exit();
     }
 
@@ -433,7 +433,7 @@ if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
     if ($result) {
         $infos_arr[] = 'New item category added successfully.';
         $_SESSION['infos'] = $infos_arr;
-        header('Location: admin.php#items_types');
+        header('Location: admin.php#tabs-4');
         exit();
     } else { //sql fail
         $infos_arr[] = 'There was a problem in the SQL request. Report a bug !';
@@ -459,7 +459,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     }
     if ($errflag) {
         $_SESSION['errors'] = $msg_arr;
-        header("location: admin.php");
+        header("location: admin.php#tabs-2");
         die();
     }
     // look which user has this email address
@@ -498,6 +498,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     $req->execute();
     $infos_arr[] = 'Everything was purged successfully.';
     $_SESSION['infos'] = $infos_arr;
-    header('Location: admin.php');
+    header('Location: admin.php#tabs-2');
     exit();
+}
+// DEFAULT EXPERIMENT TEMPLATE
+if (isset($_POST['default_exp_tpl'])) {
+    $default_exp_tpl = check_body($_POST['default_exp_tpl']);
+    $sql = "UPDATE experiments_templates SET
+        name = 'default',
+        body = :body
+        WHERE userid = 0";
+    $req = $pdo->prepare($sql);
+    $result = $req->execute(array(
+        'body' => $default_exp_tpl
+    ));
+    if ($result) {
+        $infos_arr[] = 'Default experiment template edited successfully.';
+        $_SESSION['infos'] = $infos_arr;
+        header('Location: admin.php#tabs-5');
+        exit();
+    } else { //sql fail
+        $infos_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $_SESSION['errors'] = $infos_arr;
+        header('Location: admin.php');
+        exit();
+    }
 }

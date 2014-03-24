@@ -34,7 +34,7 @@ if (!class_exists('ZipArchive')) {
 }
 
 // Switch exp/items just for the table to search in sql requests
-if ($_GET['type'] === 'exp') {
+if ($_GET['type'] === 'experiments') {
     $table = 'experiments';
 } elseif ($_GET['type'] === 'items') {
     $table = 'items';
@@ -43,8 +43,7 @@ if ($_GET['type'] === 'exp') {
 }
 
 // CREATE URL
-$protocol = 'https://';
-$url = $protocol.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+$url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
 
 // Check id is valid and assign it to $id
 if (isset($_GET['id']) && !empty($_GET['id'])) {
@@ -85,8 +84,8 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             if ($table == 'experiments') {
                 $folder = $date."-".$clean_title;
             } else { // items
-                $type = $zipped['items_typesname'];
-                $folder = $type." - ".$clean_title;
+                $itemtype = $zipped['items_typesname'];
+                $folder = $itemtype." - ".$clean_title;
             }
             $body = stripslashes($zipped['body']);
             $req->closeCursor();
@@ -110,14 +109,8 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             // SQL to get filesattached (of the right type)
             $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
             $req = $pdo->prepare($sql);
-            // we could use $table instead of $type, but 'items' will be of type 'database', so we need this "if"
-            if ($table === 'items') {
-                $type = 'database';
-            } else {
-                $type = $table; // experiments
-            }
             $req->bindParam(':id', $id);
-            $req->bindParam(':type', $type);
+            $req->bindParam(':type', $table);
             $req->execute();
             $real_name = array();
             $long_name = array();

@@ -500,7 +500,7 @@ function check_visibility($input)
 }
 
 /**
- * Make the pdf file.
+ * Make the pdf file. This is a function, and it's not in the make_pdf.php file because it is called by make_zip also.
  *
  * @param int $id The id of the item to pdfize
  * @param string $type The type of item can be 'experiments' or 'items'
@@ -510,6 +510,7 @@ function check_visibility($input)
 function make_pdf($id, $type, $out = 'browser')
 {
     global $pdo;
+
     // SQL to get title, body and date
     $sql = "SELECT * FROM $type WHERE id = $id";
     $req = $pdo->prepare($sql);
@@ -520,7 +521,7 @@ function make_pdf($id, $type, $out = 'browser')
     // the name of the pdf is needed in make_zip
     $clean_title = $date."-".preg_replace('/[^A-Za-z0-9]/', ' ', $title);
     $body = stripslashes($data['body']);
-    if ($type == 'experiments') {
+    if ($type === 'experiments') {
         $elabid = $data['elabid'];
     }
     $req->closeCursor();
@@ -546,17 +547,74 @@ function make_pdf($id, $type, $out = 'browser')
     }
     $req->closeCursor();
 
+    // SQL to get comments
+    // check if there is something to display first
+    // get all comments, and infos on the commenter associated with this experiment
+    $sql = "SELECT * FROM experiments_comments
+        LEFT JOIN users ON (experiments_comments.userid = users.userid)
+        WHERE exp_id = :id
+        ORDER BY experiments_comments.datetime DESC";
+    $req = $pdo->prepare($sql);
+    $req->execute(array(
+        'id' => $id
+    ));
+    if ($req->rowCount() > 0) {
+        $comments_block .= "<section>";
+        if ($req->rowCount() === 1) {
+            $comments_block .= "<h3>Comment :</h3>";
+        } else {
+            $comments_block .= "<h3>Comments :</h3>";
+        }
+        // there is comments to display
+        while ($comments = $req->fetch()) {
+            if (empty($comments['firstname'])) {
+                $comments['firstname'] = '[deleted]';
+            }
+        $comments_block .= "<p>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :<br />";
+        $comments_block .= "<p>".$comments['comment']."</p>";
+
+        }
+        $comments_block .= "</section>";
+    }
+
     // build content of page
     $content = "<h1>".$title."</h1><br />
         Date : ".$date."<br />
         <em>Keywords : ".$tags."</em><br />
         <hr>".$body."<br /><br />
         <hr>Made by : ".$firstname." ".$lastname."<br /><br />";
-    // eLabFTW is only HTTPS
-    $protocol = 'https://';
-    $url = $protocol.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+    // Construct URL
+    $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+
+    // ATTACHED FILES
+    // SQL to get attached files
+    $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':id', $id);
+    $req->bindParam(':type', $type);
+    $req->execute();
+    $real_name = array();
+    $comment = array();
+    while ($uploads = $req->fetch()) {
+        $real_name[] = $uploads['real_name'];
+        $comment[] = $uploads['comment'];
+    }
+    // do we have files attached ?
+    if (count($real_name) > 0) {
+        $content .= "<section>";
+        if (count($real_name) === 1) {
+            $content .= "<h3>Attached file :</h3>";
+        } else {
+            $content .= "<h3>Attached files :</h3>";
+        }
+        $content .= "<ul>";
+        for ($i=0; $i<count($real_name);$i++) {
+            $content .= "<li>".$real_name[$i]." (".stripslashes(htmlspecialchars_decode($comment[$i])).").</li>";
+        }
+        $content .= "</ul></section>";
+    }
     // EXPERIMENTS
-    if ($type == 'experiments') {
+    if ($type === 'experiments') {
         if ($out === 'browser') {
             $url = str_replace('make_pdf.php', 'experiments.php', $url);
         } else { // call from make_zip
@@ -564,30 +622,6 @@ function make_pdf($id, $type, $out = 'browser')
         }
         $full_url = $url."?mode=view&id=".$id;
 
-        // SQL to get filesattached
-        $sql = "SELECT * FROM uploads WHERE item_id = ".$id;
-        $req = $pdo->prepare($sql);
-        $req->execute();
-        $real_name = array();
-        $comment = array();
-        while ($uploads = $req->fetch()) {
-            $real_name[] = $uploads['real_name'];
-            $comment[] = $uploads['comment'];
-        }
-        // do we have files attached ?
-        if (count($real_name) > 0) {
-            $content .= "<section>";
-            if (count($real_name) === 1) {
-                $content .= "<h3>Attached file :</h3>";
-            } else {
-                $content .= "<h3>Attached files :</h3>";
-            }
-            $content .= "<ul>";
-            for ($i=0; $i<count($real_name);$i++) {
-                $content .= "<li>".$real_name[$i]." (".stripslashes(htmlspecialchars_decode($comment[$i])).").</li>";
-            }
-            $content .= "</ul></section>";
-        }
 
         // SQL to get linked items
         $sql = "SELECT experiments_links.*,
@@ -632,10 +666,12 @@ function make_pdf($id, $type, $out = 'browser')
             $content .= "</ul></section>";
         }
 
-
+        // Add comments
+        $content .= $comments_block;
         // ELABID and URL
         $content .= "<br /><p>elabid : ".$elabid."</p>";
         $content .= "<p>URL : <a href='".$full_url."'>".$full_url."</a></p>";
+
     } else { // ITEM
         if ($out === 'browser') {
             $url = str_replace('make_pdf.php', 'database.php', $url);
@@ -645,6 +681,7 @@ function make_pdf($id, $type, $out = 'browser')
         $full_url = $url."?mode=view&id=".$id;
         $content .= "<p>URL : <a href='".$full_url."'>".$full_url."</a></p>";
     }
+
 
 
     // Generate pdf with mpdf
@@ -817,6 +854,8 @@ function duplicate_item($id, $type)
         $req = $pdo->prepare($sql);
         $req->execute();
         $tag_number = $req->rowCount();
+        // we initilize $result_tags here in case there is now tag to duplicate
+        $result_tags = true;
         if ($tag_number > 0) {
             while ($tags = $req->fetch()) {
                 // Put them in the new one. here $newid is the new exp created

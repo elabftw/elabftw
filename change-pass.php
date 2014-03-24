@@ -51,7 +51,7 @@ function checkPasswordMatch() {
     if (password != confirmPassword)
         $("#checkPasswordMatchDiv").html("<p>Passwords do not match !</p>");
     else
-        $("#checkPasswordMatchDiv").html("<input type='submit' name='Submit' value='Change password' />");
+        $("#checkPasswordMatchDiv").html("<button type='submit' name='Submit'>Change password</button>");
 }
 
 $(document).ready(function () {

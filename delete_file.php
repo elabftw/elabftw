@@ -62,9 +62,9 @@ if ($_GET['type'] === 'experiments') {
     }
 
 // DATABASE ITEM
-} elseif ($_GET['type'] === 'database') {
+} elseif ($_GET['type'] === 'items') {
     // Get realname
-    $sql = "SELECT real_name, long_name, item_id FROM uploads WHERE id = ".$id;
+    $sql = "SELECT real_name, long_name, item_id FROM uploads WHERE id = ".$id." AND type = 'items'";
     $req = $pdo->prepare($sql);
     $req->execute();
     $data = $req->fetch();
@@ -74,7 +74,7 @@ if ($_GET['type'] === 'experiments') {
 
     // Delete SQL entry (and verify that the type is database),
     // to avoid someone deleting files saying it's DB whereas it's exp
-    $sql = "DELETE FROM uploads WHERE id = ".$id." AND type = 'database'";
+    $sql = "DELETE FROM uploads WHERE id = ".$id." AND type = 'items'";
     $reqdel = $pdo->prepare($sql);
     $reqdel->execute();
 

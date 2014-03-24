@@ -23,9 +23,22 @@
 *    License along with eLabFTW.  If not, see <http: //www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+/* little shadow on top of the screen for no reasons */
+body:before {
+    content: "";
+    position: fixed;
+    top: -10px;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    z-index: 100;
+    box-shadow: 0px 0px 10px rgba(0,0,0,.8);
+}
+
+/* this is the big white thing that holds everything */
 #container {
-    border-radius: 20px;
-    font: 16px Verdana, Arial, Helvetica, sans-serif;
+    border-radius: 10px;
+    font: 100% Verdana, Arial, Helvetica, sans-serif;
     margin: auto;
     opacity: 0.95;
     padding: 10px 20px 10px 20px;
@@ -55,17 +68,20 @@ a :hover {
 .align_left{
     text-align: left;
 }
-p{
-    font: 16px Verdana, Arial, Helvetica, sans-serif;
-}
-
-p a{
-    font: 16px Verdana, Arial, Helvetica, sans-serif;
-    text-decoration: none;
-}
 
 .strong {
     font-weight: bold;
+}
+
+/* paragraphs */
+
+p {
+    font: 100% Verdana, Arial, Helvetica, sans-serif;
+}
+
+p a {
+    font: 100% Verdana, Arial, Helvetica, sans-serif;
+    text-decoration: none;
 }
 
 /* in install/index.php */
@@ -81,35 +97,14 @@ p a{
 hr {
     margin: 10px 0 10px 0;
 }
+
 hr.flourishes {
-    background: url('../img/flourishes.png') no-repeat scroll center 0px transparent; /* -61px */
+    background: url('images/flourishes.png') no-repeat scroll center 0px transparent; /* -61px */
     border: 0 none;
     clear: both;
     display: block;
     height: 18px;
     opacity: 0.8;
-}
-
-hr.tinyflourishes {
-    background: url('../img/flourishes.png') no-repeat scroll center -16px transparent; /* -61px */
-    border: 0 none;
-    clear: both;
-    display: block;
-    height: 18px;
-    margin: 18px 0 0;
-    opacity: 0.8;
-    outline: 0 none;
-}
-
-hr.rishes {
-    background: url('../img/flourishes.png') no-repeat scroll center -36px transparent; /* -61px */
-    border: 0 none;
-    clear: both;
-    display: block;
-    height: 18px;
-    margin: 18px 0 0;
-    opacity: 0.8;
-    outline: 0 none;
 }
 
 li.inline {
@@ -136,15 +131,15 @@ div.txt li {
     text-align: center;
 }
 
-nav{
+nav {
     clear: both;
     margin: -10px;
     text-align: center;
 }
 
-nav a{
-    font-size: 20px;
-    line-height: 300%;
+nav a {
+    font-size: 120%;
+    line-height: 200%;
     padding: 5px 10px 5px 10px;
     text-decoration: none;
     border-radius:5px;
@@ -155,12 +150,12 @@ nav a{
     top: 30px;
 }
 
-#logmenu p{
-    font:  13px Verdana, Arial, Helvetica, sans-serif;
+#logmenu p {
+    font:  90% Verdana, Arial, Helvetica, sans-serif;
     padding-bottom: 7px;
 }
-#logmenu p a{
-    font:  13px Verdana, Arial, Helvetica, sans-serif;
+#logmenu p a {
+    font:  90% Verdana, Arial, Helvetica, sans-serif;
 }
 /* submenu */
 #submenu {

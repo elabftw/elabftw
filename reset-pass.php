@@ -76,16 +76,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
             // Give it a body
             ->setBody(
                 'Hi,
-                Someone (probably you) with the IP Adress : '.$ip.' and the user agent : '.$u_agent.'
-                requested a new password on eLabFTW.
+Someone (probably you) with the IP Adress : '.$ip.' and the user agent : '.$u_agent.'
+requested a new password on eLabFTW.
 
-                Follow this link to change your password :
-                '.$reset_link.'
+Follow this link to change your password :
+'.$reset_link.'
 
-                ~~
-                Email sent by eLabFTW
-                http://www.elabftw.net
-                Free open-source Lab Manager'
+~~
+Email sent by eLabFTW
+http://www.elabftw.net
+Free open-source Lab Manager'
             );
             $transport = Swift_SmtpTransport::newInstance(
                 get_config('smtp_address'),

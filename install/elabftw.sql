@@ -238,6 +238,7 @@ CREATE TABLE IF NOT EXISTS `status` (
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 -- ELABFTW
+/* the default item_types
 INSERT INTO `items_types` (`id`, `name`, `bgcolor`, `template`) VALUES
 (1, 'Antibody', '31a700', '<p><strong>Host :</strong></p>\r\n<p><strong>Target :</strong></p>\r\n<p><strong>Dilution to use :</strong></p>\r\n<p>Don''t forget to add the datasheet !</p>'),
 (2, 'Plasmid', '29AEB9', '<p><strong>Concentration : </strong></p>\r\n<p><strong>Resistances : </strong></p>\r\n<p><strong>Backbone :</strong></p>\r\n<p><strong><br /></strong></p>'),
@@ -245,8 +246,17 @@ INSERT INTO `items_types` (`id`, `name`, `bgcolor`, `template`) VALUES
 (4, 'Drugs', 'fd00fe', '<p><strong>Action :</strong> &nbsp;<strong> </strong></p>\r\n<p><strong>Concentration :</strong>&nbsp;</p>\r\n<p><strong>Use at :</strong>&nbsp;</p>\r\n<p><strong>Buffer :</strong> </p>'),
 (5, 'Crystal', '84ff00', '<p>Edit me</p>');
 
+/* the default status */
 INSERT INTO `status` (`id`, `name`, `color`, `is_default`) VALUES
 (1, 'Running', '0096ff', 1),
 (2, 'Success', '00ac00', 0),
 (3, 'Need to be redone', 'c0c0c0', 0),
 (4, 'Fail', 'ff0000', 0);
+
+/* the default experiment template */
+INSERT INTO `experiments_templates` (`body`, `name`, `userid`) VALUES
+('<p><span style=\"font-size: 14pt;\"><strong>Goal :</strong></span></p>
+<p>&nbsp;</p>
+<p><span style=\"font-size: 14pt;\"><strong>Procedure :</strong></span></p>
+<p>&nbsp;</p>
+<p><span style=\"font-size: 14pt;\"><strong>Results :</strong></span></p>', 'default', 0);

@@ -55,9 +55,14 @@ if ($type === 'experiments') {
         $title = $get_tpl_info['name'];
         $body = $get_tpl_info['body'];
     } else {
-        // if there is no template, title is 'Untitled' and there is nothing in the body
+        // if there is no template, title is 'Untitled' and the body is the default exp_tpl
         $title = 'Untitled';
-        $body = '';
+        // SQL to get body
+        $sql = "SELECT body FROM experiments_templates WHERE userid = 0";
+        $get_body = $pdo->prepare($sql);
+        $get_body->execute();
+        $experiments_templates = $get_body->fetch();
+        $body = $experiments_templates['body'];
     }
 
     // what will be the status ?

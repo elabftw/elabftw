@@ -68,6 +68,7 @@ if ($count > 0) {
 <li><a href='#tabs-2'>Users</a></li>
 <li><a href='#tabs-3'>Status</a></li>
 <li><a href='#tabs-4'>Types of items</a></li>
+<li><a href='#tabs-5'>Experiment template</a></li>
 </ul>
 
 <!-- TABS 1 -->
@@ -418,6 +419,30 @@ while ($items_types = $req->fetch()) {
 </section>
 </div>
 
+<!-- TABS 5 -->
+<div id='tabs-5'>
+<?php
+// get what is the default experiment template
+$sql = "SELECT body FROM experiments_templates WHERE userid = 0 LIMIT 1";
+$req = $pdo->prepare($sql);
+$req->execute();
+$exp_tpl = $req->fetch();
+?>
+    <h3>EDIT DEFAULT EXPERIMENT TEMPLATE</h3>
+    <p>This is the default text when one creates an experiment.</p>
+    <form action='admin-exec.php' method='post'>
+    <input type='hidden' name='default_exp_tpl' value='1' />
+    <textarea class='mceditable' name='default_exp_tpl' />
+<?php
+echo $exp_tpl['body'];
+?></textarea><br />
+    <div class='center'>
+    <button type='submit' class='button'>Edit default template</button>
+    </div>
+    </form>
+
+</div>
+
 </div>
 
 <script>
@@ -448,4 +473,6 @@ $(document).ready(function() {
     });
 });
 </script>
+
+
 <?php require_once 'inc/footer.php';

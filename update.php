@@ -555,3 +555,24 @@ if (strlen(get_config('path')) != 36 || strpos(get_config('path'), '/'))  {
 $sql = "UPDATE uploads SET type = 'items' WHERE type = 'database'";
 $req = $pdo->prepare($sql);
 $req->execute();
+
+// add experiment template
+// check if there is one
+$sql = "SELECT COUNT(id) FROM experiments_templates WHERE userid = 0";
+$req = $pdo->prepare($sql);
+$req->execute();
+$count = $req->fetch();
+if ($count[0] === "1") {
+    echo "Default experiment template already set. Nothing to do.\n";
+} else {
+    // we need to add it
+    $sql = "INSERT INTO `experiments_templates` (`body`, `name`, `userid`) VALUES
+        ('<p><span style=\"font-size: 14pt;\"><strong>Goal :</strong></span></p>
+        <p>&nbsp;</p>
+        <p><span style=\"font-size: 14pt;\"><strong>Procedure :</strong></span></p>
+        <p>&nbsp;</p>
+        <p><span style=\"font-size: 14pt;\"><strong>Results :</strong></span></p>', 'default', 0)";
+    $req = $pdo->prepare($sql);
+    $req->execute();
+    echo ">>> There is now a default experiment template editable by admin.\n";
+}

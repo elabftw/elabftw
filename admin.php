@@ -62,6 +62,9 @@ if ($count > 0) {
 }
 ?>
 
+    <p><a href='import.php'><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/import.png' alt='import' />
+Import CSV file into the database</a></p>
+
 <div id='tabs'>
 <ul>
 <li><a href='#tabs-1'>Main configuration</a></li>

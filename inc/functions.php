@@ -153,7 +153,7 @@ function has_attachement($id)
 {
     global $pdo;
     $sql = "SELECT id FROM uploads 
-        WHERE item_id = :item_id";
+        WHERE item_id = :item_id AND type = 'items'";
     $req = $pdo->prepare($sql);
     $req->execute(array(
         'item_id' => $id

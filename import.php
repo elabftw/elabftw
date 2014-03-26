@@ -32,58 +32,72 @@ $row = 0;
 $inserted = 0;
 $column = array();
 
-// open the file
-$handle = fopen('strains.csv', 'r');
-if ($handle == false) {
-    die('Could not open the file.');
-}
+// file upload block
 // show select of type
 // SQL to get items names
 $sql = "SELECT * FROM items_types";
 $req = $pdo->prepare($sql);
 $req->execute();
-echo "<b>The import will start right after you selected the item type, so be careful, and do it once ! ;)</b><br>";
-echo "<b>You should make a backup of your database before importing thousands of items !</b><br><br>";
+?>
+<p style='text-align:justify'>This page will allow you to import a .csv (Excel spreadsheet) file into the database.
+Firt you need to open your (.xls/.xlsx) file in Excel or Libreoffice and save it as .csv.
+In order to have a good import, the first column should be the title. The rest of the columns will be imported in the body. You can make a tiny import of 3 lines to see if everything works before you import a big file.
+<b>You should make a backup of your database before importing thousands of items !</b></p>
 
-echo "Select a type of item to import to :<select onchange=go_url(this.value)><option value=''>--------</option>";
+<label for='item_selector'>1. Select a type of item to import to :</label>
+<select id='item_selector' onchange='goNext(this.value)'><option value=''>--------</option>
+<?php
 while ($items_types = $req->fetch()) {
-    echo "<option value='import.php?go=1&type=".$items_types['id']."' name='type' ";
+    echo "<option value='".$items_types['id']."' name='type' ";
     echo ">".$items_types['name']."</option>";
 }
-echo "</select>";
+?>
+</select><br>
+<div id='import_block'>
+<form enctype="multipart/form-data" action="import.php" method="POST">
+    <label for='uploader'>2. Select a CSV file to import :</label>
+    <input id='uploader' name="csvfile" type="file" />
+    <br>
+    <br>
+    <div class='center'>
+        <button type="submit" class='button' value="Upload">Import CSV</button>
+    </div>
+</form>
+</div>
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // open the file
+    $handle = fopen($_FILES['csvfile']['tmp_name'], 'r');
+    if ($handle == false) {
+        die('Could not open the file.');
+    }
 
-if (isset($_GET['type']) && is_pos_int($_GET['type'])) {
-    $type = $_GET['type'];
-}
-// loop the lines
-while ($data = fgetcsv($handle, 0, ",")) {
-    $num = count($data);
-    // get the column names (first line)
-    if($row == 0) {
-        for($i=0;$i < $num;$i++) {
-            $column[] = $data[$i];
+    // get what type we want
+    if (isset($_COOKIE['itemType']) && is_pos_int($_COOKIE['itemType'])) {
+        $type = $_COOKIE['itemType'];
+    }
+    // loop the lines
+    while ($data = fgetcsv($handle, 0, ",")) {
+        $num = count($data);
+        // get the column names (first line)
+        if($row == 0) {
+            for($i=0;$i < $num;$i++) {
+                $column[] = $data[$i];
+            }
+            $row++;
+            continue;
         }
         $row++;
-        continue;
-    }
-    $row++;
 
-    $title = $data[0];
-    $body = '';
-    $j = 0;
-    foreach($data as $line) {
-        $body .= "<p><b>".$column[$j]." :</b> ".$line.'</p>';
-        $j++;
-    }
+        $title = $data[0];
+        $body = '';
+        $j = 0;
+        foreach($data as $line) {
+            $body .= "<p><b>".$column[$j]." :</b> ".$line.'</p>';
+            $j++;
+        }
 
-    /*
-    echo '<h3>'.$title.'</h3>';
-    echo $body;
-    echo '<hr>';
-     */
-
-    
-    if (isset($_GET['go']) && $_GET['go'] == 1) {
+        // SQL for importing
         $sql = "INSERT INTO items(title, date, body, userid, type) VALUES(:title, :date, :body, :userid, :type)";
         $req = $pdo->prepare($sql);
         $result = $req->execute(array(
@@ -97,18 +111,22 @@ while ($data = fgetcsv($handle, 0, ",")) {
             $inserted++;
         }
     }
+    fclose($handle);
+    $message = $inserted." items imported.";
+    display_message('info', $message);
 }
-echo "<br>".$inserted." items imported.";
-fclose($handle);
-
 ?>
 <script>
-function go_url(x) {
+function goNext(x) {
     if(x == '') {
         return;
     }
-    location = x;
+    document.cookie = 'itemType='+x;
+    $('#import_block').show();
 }
+$(document).ready(function() {
+    $('#import_block').hide();
+});
 </script>
 <?php
 require_once 'inc/footer.php';

@@ -81,6 +81,7 @@ if ($data['userid'] != $_SESSION['userid']) {
 // Display experiment
 ?>
     <section class="item" style='border: 1px solid #<?php echo $data['color'];?>'>
+    <span class='align_right' id='status'>(<?php echo $data['name'];?>)</span>
 <?php
 echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' title='date' alt='Date :' /><span class='date'> ".$data['date']."</span><br />
     <a href='experiments.php?mode=edit&id=".$data['expid']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/edit.png' title='edit' alt='edit' /></a> 
@@ -101,7 +102,6 @@ show_tags($id, 'experiments_tags');
 ?>
 <div OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['expid'];?>'" class='title'>
     <?php echo stripslashes($data['title']);?>
-    <span class='align_right' id='status'>(<?php echo $data['name'];?>)<span>
 </div>
 <?php
 // BODY (show only if not empty, click on it to edit

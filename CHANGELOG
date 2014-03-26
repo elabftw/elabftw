@@ -1,5 +1,8 @@
 /* Changelog for eLabFTW */
 
+Version 0.9.4.3
+* Add body to CSV export
+
 Version 0.9.4.2
 * Add general template for experiments
 * Add linked items and comments on PDF

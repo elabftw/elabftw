@@ -1,6 +1,8 @@
 /* Changelog for eLabFTW */
 
 Version 0.9.4.2
+* Add general template for experiments
+* Add linked items and comments on PDF
 * Easier install on Mac and Windows
 * Add linked items list to pdf and list of attached files
 * Add links button in editor

@@ -70,6 +70,7 @@ if (isset($_POST['status'])) {
     // SQL for quicksave
     // we do a usercheck for experiments
     if ($_POST['type'] == 'experiments') {
+        // we update the real experiment
         $sql = "UPDATE experiments 
             SET title = :title, date = :date, body = :body
             WHERE userid = :userid 
@@ -81,6 +82,15 @@ if (isset($_POST['status'])) {
         'body' => $body,
         'userid' => $_SESSION['userid'],
         'id' => $id
+        ));
+
+        // we add a revision to the revision table
+        $sql = "INSERT INTO experiments_revisions (exp_id, body, userid) VALUES(:exp_id, :body, :userid)";
+        $req = $pdo->prepare($sql);
+        $result = $req->execute(array(
+        'exp_id' => $id,
+        'body' => $body,
+        'userid' => $_SESSION['userid']
         ));
 
     } elseif ($_POST['type'] == 'items') {

@@ -125,6 +125,20 @@ CREATE TABLE IF NOT EXISTS `experiments_templates` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `experiments_revisions`
+--
+
+CREATE TABLE IF NOT EXISTS `experiments_revisions` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `exp_id` int(10) unsigned NOT NULL,
+  `body` text NOT NULL,
+  `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `userid` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+--
 -- Table structure for table `items`
 --
 
@@ -259,4 +273,4 @@ INSERT INTO `experiments_templates` (`body`, `name`, `userid`) VALUES
 <p>&nbsp;</p>
 <p><span style=\"font-size: 14pt;\"><strong>Procedure :</strong></span></p>
 <p>&nbsp;</p>
-<p><span style=\"font-size: 14pt;\"><strong>Results :</strong></span></p>', 'default', 0);
+<p><span style=\"font-size: 14pt;\"><strong>Results :</strong></span></p><p>&nbsp;</p>', 'default', 0);

@@ -88,6 +88,15 @@ $result = $req->execute(array(
     'id' => $id
 ));
 
+// we add a revision to the revision table
+$sql = "INSERT INTO experiments_revisions (exp_id, body, userid) VALUES(:exp_id, :body, :userid)";
+$req = $pdo->prepare($sql);
+$result = $req->execute(array(
+'exp_id' => $id,
+'body' => $body,
+'userid' => $_SESSION['userid']
+));
+
 
 // Check if insertion is successful
 if ($result) {

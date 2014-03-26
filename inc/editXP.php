@@ -213,6 +213,20 @@ $visibility = $experiment['visibility'];
 <option id='option_user' value="user">Only me</option>
 </select>
 <span id='visibility_msg_div'>Updated !</span>
+<br>
+
+<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/revisions.png'> <h4>Revisions</h4>
+<?php
+// get the list of revisions
+$sql = "SELECT COUNT(id) FROM experiments_revisions WHERE exp_id = :exp_id AND userid = :userid ORDER BY savedate DESC";
+$req = $pdo->prepare($sql);
+$req->execute(array(
+    'exp_id' => $id,
+    'userid' => $_SESSION['userid']
+));
+$rev_count = $req->fetch();
+echo $rev_count[0]." <a href='revision.php?exp_id=".$id."'>Browse</a>";
+?>
 
 </section>
 

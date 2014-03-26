@@ -520,7 +520,7 @@ if (!$table_is_here) {
     $req = $pdo->prepare($create_sql);
     $result1 = $req->execute();
 
-    // Populate config table
+    // Populate status table
     $sql = "INSERT INTO status (name, color, is_default) VALUES
         ('Running', '0000FF', true),
         ('Success', '00ac00', false),
@@ -571,8 +571,42 @@ if ($count[0] === "1") {
         <p>&nbsp;</p>
         <p><span style=\"font-size: 14pt;\"><strong>Procedure :</strong></span></p>
         <p>&nbsp;</p>
-        <p><span style=\"font-size: 14pt;\"><strong>Results :</strong></span></p>', 'default', 0)";
+        <p><span style=\"font-size: 14pt;\"><strong>Results :</strong></span></p><p>&nbsp;</p>', 'default', 0)";
     $req = $pdo->prepare($sql);
     $req->execute();
     echo ">>> There is now a default experiment template editable by admin.\n";
+}
+
+// CREATE table experiments_revisions
+$sql = "SHOW TABLES";
+$req = $pdo->prepare($sql);
+$req->execute();
+$table_is_here = false;
+while ($show = $req->fetch()) {
+    if (in_array('experiments_revisions', $show)) {
+        $table_is_here = true;
+    }
+}
+
+if (!$table_is_here) {
+    $create_sql = "CREATE TABLE IF NOT EXISTS `experiments_revisions` (
+      `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+      `exp_id` int(10) unsigned NOT NULL,
+      `body` text NOT NULL,
+      `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      `userid` int(11) NOT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8";
+    $req = $pdo->prepare($create_sql);
+    $result = $req->execute();
+
+
+    if($result) {
+        echo ">>> There is now a revision system for experiments.\n";
+    } else {
+        die($die_msg);
+    }
+
+} else {
+    echo "Table 'experiments_revisions' already exists. Nothing to do.\n";
 }

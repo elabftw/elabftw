@@ -1,6 +1,7 @@
 /* Changelog for eLabFTW */
 
 Version 0.9.4.3
+* Add a revision system (to be able to see old versions of an experiment)
 * Add body to CSV export
 
 Version 0.9.4.2

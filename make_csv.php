@@ -35,10 +35,10 @@ $list = array();
 
 // Switch exp/items
 if ($_GET['type'] === 'exp') {
-    $list[] = array('id', 'date', 'title', 'status', 'elabid', 'url');
+    $list[] = array('id', 'date', 'title', 'content', 'status', 'elabid', 'url');
     $table = 'experiments';
 } elseif ($_GET['type'] === 'items') {
-    $list[] = array('id', 'date', 'type', 'title', 'rating', 'url');
+    $list[] = array('id', 'date', 'type', 'title', 'description', 'rating', 'url');
     $table = 'items';
 } else {
     die('bad type');
@@ -77,25 +77,26 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                 $csv_data['id'],
                 $csv_data['date'],
                 htmlspecialchars_decode($csv_data['title'], ENT_QUOTES | ENT_COMPAT),
+                html_entity_decode(strip_tags(htmlspecialchars_decode($csv_data['body'], ENT_QUOTES | ENT_COMPAT))),
                 htmlspecialchars_decode($csv_data['statusname'], ENT_QUOTES | ENT_COMPAT),
                 $csv_data['elabid'],
                 $url
             );
 
         } else { // items
-        // now let's get the URL so we can have a nice link in the csv
-        $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
-        $url = str_replace('make_csv.php', 'database.php', $url);
-        $url .= "?mode=view&id=".$csv_data['id'];
-        $list[] = array(
-            $csv_data['id'],
-            $csv_data['date'],
-            htmlspecialchars_decode($csv_data['typename'], ENT_QUOTES | ENT_COMPAT),
-            htmlspecialchars_decode($csv_data['title'], ENT_QUOTES | ENT_COMPAT),
-            $csv_data['rating'],
-            $url
-        );
-
+            // now let's get the URL so we can have a nice link in the csv
+            $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+            $url = str_replace('make_csv.php', 'database.php', $url);
+            $url .= "?mode=view&id=".$csv_data['id'];
+            $list[] = array(
+                $csv_data['id'],
+                $csv_data['date'],
+                htmlspecialchars_decode($csv_data['typename'], ENT_QUOTES | ENT_COMPAT),
+                htmlspecialchars_decode($csv_data['title'], ENT_QUOTES | ENT_COMPAT),
+                html_entity_decode(strip_tags(htmlspecialchars_decode($csv_data['body'], ENT_QUOTES | ENT_COMPAT))),
+                $csv_data['rating'],
+                $url
+            );
         }
     } // end foreach
 } else {

@@ -24,11 +24,11 @@
 *                                                                               *
 ********************************************************************************/
 // Search.php
-require_once('inc/common.php');
-$page_title='Search';
-require_once('inc/head.php');
-require_once('inc/menu.php');
-require_once('inc/info_box.php');
+require_once 'inc/common.php';
+$page_title = 'Search';
+require_once 'inc/head.php';
+require_once 'inc/menu.php';
+require_once 'inc/info_box.php';
 ?>
 <!-- Advanced Search page begin -->
 <div class='item' style='padding-bottom:16px;'>

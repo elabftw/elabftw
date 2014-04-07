@@ -644,3 +644,9 @@ footer p, footer p a {
 	font-size: 14px;
 }
 
+/* prettier code */
+code {
+    border: 1px dotted #ccc;
+    padding:3px;
+    background-color:#eee;
+}

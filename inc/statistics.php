@@ -78,6 +78,9 @@ if ($total != 0) {
             data.addRows([
             <?php
                 foreach ($percent_arr as $name => $percent) {
+                    // as we replace all the quotes (ENT_QUOTES), we need to translate ' to \'
+                    // otherwise the js code is broken
+                    $name = str_replace("'", "\'", html_entity_decode($name, ENT_QUOTES));
                     echo "['$name', $percent],";
                 }
             ?>

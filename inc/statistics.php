@@ -31,10 +31,12 @@ $req = $pdo->prepare($sql);
 $req->execute();
 
 $status_arr = array();
+$status_colors = array();
 $count_arr = array();
 
 while ($status = $req->fetch()) {
     $status_arr[$status['id']] = $status['name'];
+    $status_colors[] = $status['color'];
 }
 
 foreach ($status_arr as $key => $value) {
@@ -88,7 +90,17 @@ if ($total != 0) {
 
             var options = {
                 title: 'Experiments for <?php echo $_SESSION['username'];?>',
-                backgroundColor: '#EEE'
+                backgroundColor: '#EEE',
+                colors: [
+                <?php
+                // string that will hold the list of colors correctly formatted
+                $color_list = "";
+                foreach($status_colors as $color) {
+                    $color_list .= "'#".$color."',";
+                }
+                // remove last ,
+                $color_list = rtrim($color_list, ",");
+                echo $color_list;?>]
             }
             var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
             chart.draw(data, options);

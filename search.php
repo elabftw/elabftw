@@ -281,7 +281,7 @@ if (isset($_GET)) {
                     $results_id_str .= $id."+";
                 }
                 // remove last +
-                $results_id_str = substr($results_id_str, 0, -1);
+                $results_id_str = rtrim($results_id_str, '+');
     ?>
 
                 <div id='export_menu'>
@@ -340,7 +340,7 @@ if (isset($_GET)) {
                 $results_id_str .= $id."+";
             }
             // remove last +
-            $results_id_str = substr($results_id_str, 0, -1);
+            $results_id_str = rtrim($results_id_str, '+');
 ?>
 
             <div id='export_menu'>

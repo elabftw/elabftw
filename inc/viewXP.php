@@ -24,6 +24,8 @@
 *                                                                               *
 ********************************************************************************/
 // inc/viewXP.php
+// read only ?
+$ro = false;
 // ID
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
@@ -73,6 +75,8 @@ if ($data['userid'] != $_SESSION['userid']) {
         $owner = $get_owner->fetch();
         $message = "<strong>Read-only mode:</strong> this experiment is owned by ".$owner['firstname']." ".$owner['lastname'].".";
         display_message('info', $message);
+        // we set this variable for later, to check if we are in read only mode
+        $ro = true;
     }
 }
 
@@ -98,19 +102,23 @@ if ($data['locked'] == 0) {
 
 // TAGS
 show_tags($id, 'experiments_tags');
-// TITLE : click on it to go to edit mode
-?>
-<div OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['expid'];?>'" class='title'>
-    <?php echo stripslashes($data['title']);?>
-</div>
-<?php
+// TITLE : click on it to go to edit mode only if we are not in read only mode
+echo "<div ";
+if ($ro === false) {
+    echo "OnClick=\"document.location='experiments.php?mode=edit&id=".$data['expid']."'\"";
+}
+echo " class='title'>";
+echo stripslashes($data['title'])."</div>";
 // BODY (show only if not empty, click on it to edit
 if ($data['body'] != '') {
-    ?>
-    <div OnClick="document.location='experiments.php?mode=edit&id=<?php echo $data['expid'];?>'" class='txt'><?php echo stripslashes($data['body']);?></div>
-    <?php
+    echo "<div ";
+    // make the body clickable only if we are not in read only
+    if ($ro === false) {
+        echo "OnClick=\"document.location='experiments.php?mode=edit&id=".$data['expid']."'\"";
+    }
+    echo "class='txt'>".stripslashes($data['body'])."</div>";
+    echo "<br>";
 }
-echo "<br />";
 
 // DISPLAY FILES
 require_once 'inc/display_file.php';

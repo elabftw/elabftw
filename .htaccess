@@ -1,9 +1,9 @@
 # .htaccess for elabftw
 # AllowOverride must be set to All in Apache config
 # FORCE HTTPS
-RewriteEngine On
-RewriteCond %{HTTPS} off
-RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+#RewriteEngine On
+#RewriteCond %{HTTPS} off
+#RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
 
 # DO NOT SHOW DIRECTORIES
 Options -Indexes

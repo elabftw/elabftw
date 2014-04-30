@@ -457,10 +457,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
         $msg_arr[] = 'Email is not valid';
         $errflag = true;
     }
-    if ($errflag) {
-        $_SESSION['errors'] = $msg_arr;
-        header("location: admin.php#tabs-2");
-        die();
+    if (isset($_POST['delete_user_confpass']) && !empty($_POST['delete_user_confpass'])) {
+        // get the salt from db
+        $sql = "SELECT salt, password FROM users WHERE userid = :userid";
+        $req = $pdo->prepare($sql);
+        $req->bindParam(':userid', $_SESSION['userid']);
+        $req->execute();
+        $pass_infos = $req->fetch();
+
+        // check if the given password is good
+        $password_hash = hash("sha512", $pass_infos['salt'].$_POST['delete_user_confpass']);
+        if ($password_hash != $pass_infos['password']) {
+            $msg_arr[] = 'Wrong password !';
+            $errflag = true;
+        }
+
+    } else {
+        $msg_arr[] = 'You need to put your password !';
+        $errflag = true;
     }
     // look which user has this email address
     $sql = "SELECT userid FROM users WHERE email LIKE :email";
@@ -469,8 +483,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
         'email' => $email
     ));
     $user = $req->fetch();
-    $userid = $user['userid'];
+    // email doesn't exist
+    if ($req->rowCount() === 0) {
+        $msg_arr[] = 'No user with this email';
+        $errflag = true;
+    }
 
+
+    // Check for errors and redirect if there is one
+    if ($errflag) {
+        $_SESSION['errors'] = $msg_arr;
+        header("location: admin.php#tabs-2");
+        die();
+    }
+
+    $userid = $user['userid'];
     // DELETE USER
     $sql = "DELETE FROM users WHERE userid = ".$userid;
     $req = $pdo->prepare($sql);

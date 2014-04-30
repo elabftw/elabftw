@@ -67,7 +67,7 @@ if ($count_tpl > 0) {
         echo "<li class='inline'><a href='create_item.php?type=exp&tpl=".$tpl['id']."' class='templates'>".$tpl['name']."</a></li> ";
     }
 } else { // user has no templates
-    $message = "<strong>You do not have any templates yet.</strong> Go to <a style='color:blue;' href='ucp.php'>your control panel</a> to make one !";
+    $message = "<strong>You do not have any templates yet.</strong> Go to <a href='ucp.php'>your control panel</a> to make one !";
     display_message('info', $message);
 }
 ?>
@@ -234,9 +234,8 @@ if (isset($_GET['q'])) { // if there is a query
     // If there are no experiments, display a little message
     if ($count == 0) {
         $message = "<strong>Welcome to eLabFTW.</strong> 
-            Click the <a style='color:blue;' href='create_item.php?type=exp'>
-            <img src='themes/".$_SESSION['prefs']['theme']."/img/notepad_add.png' alt='Create experiment' />
-            Create experiment</a> button to get started.";
+            Click the <img src='themes/".$_SESSION['prefs']['theme']."/img/notepad_add.png' alt='Create experiment' />
+            <a href='create_item.php?type=exp'>Create experiment</a> button to get started.";
         display_message('info', $message);
     } else {
         while ($experiments = $req->fetch()) {

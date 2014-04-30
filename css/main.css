@@ -121,6 +121,12 @@ div.txt li {
     list-style-type:square !important;
 }
 
+/* fix the links in the error/info messages displayed with jquery-ui */
+div.ui-state-error a, div.ui-state-highlight a {
+    color:blue;
+    text-decoration:underline;
+}
+
 /* HEAD */
 #logo {
     float: left;

@@ -147,7 +147,7 @@ CREATE TABLE IF NOT EXISTS `items` (
   `title` varchar(255) DEFAULT NULL,
   `date` int(10) unsigned NOT NULL,
   `body` text,
-  `rating` tinyint(10) DEFAULT '0',
+  `rating` tinyint(10) unsigned DEFAULT '0',
   `type` int(10) unsigned NOT NULL,
   `locked` tinyint(3) unsigned DEFAULT NULL,
   `userid` int(10) unsigned NOT NULL,
@@ -217,7 +217,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `cellphone` varchar(127) DEFAULT NULL,
   `skype` varchar(255) DEFAULT NULL,
   `website` varchar(255) DEFAULT NULL,
-  `is_admin` tinyint(1) NOT NULL DEFAULT '0',
+  `is_admin` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `can_lock` int(1) NOT NULL DEFAULT '0',
   `register_date` bigint(20) unsigned NOT NULL,
   `token` varchar(255) DEFAULT NULL,
@@ -226,12 +226,13 @@ CREATE TABLE IF NOT EXISTS `users` (
   `display` varchar(10) NOT NULL DEFAULT 'default',
   `order_by` varchar(255) NOT NULL DEFAULT 'date',
   `sort_by` varchar(4) NOT NULL DEFAULT 'desc',
-  `limit_nb` tinyint(255) NOT NULL DEFAULT '15',
+  `limit_nb` tinyint(255) unsigned NOT NULL DEFAULT '15',
   `sc_create` varchar(1) NOT NULL DEFAULT 'c',
   `sc_edit` varchar(1) NOT NULL DEFAULT 'e',
   `sc_submit` varchar(1) NOT NULL DEFAULT 's',
   `sc_todo` varchar(1) NOT NULL DEFAULT 't',
-  `validated` tinyint(1) NOT NULL DEFAULT '0',
+  `close_warning` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `validated` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
@@ -243,7 +244,7 @@ CREATE TABLE IF NOT EXISTS `status` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` text NOT NULL,
   `color` varchar(6) NOT NULL,
-  `is_default` tinyint(1) DEFAULT NULL,
+  `is_default` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 

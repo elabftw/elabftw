@@ -254,15 +254,16 @@ $(document).ready(function() {
     title = "<?php echo $data['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
     document.title = title;
 
-    /*
-     * commented out because it should only ask when the user didn't save
-     *
     // ask the user if he really wants to navigate out of the page
+<?php
+    if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
+        echo "
     window.onbeforeunload = function (e) {
           e = e || window.event;
           return 'Do you want to navigate away from this page ? Unsaved changes will be lost !';
-    };
-    */
+    };";
+    }
+?>
 });
 </script>
 

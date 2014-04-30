@@ -195,13 +195,15 @@ $users = $req->fetch();
         </div><!-- end #tpl -->
     </div>
 
-    <h3><a href='#keyboard'>KEYBOARD SHORTCUTS</a></h3>
+    <h3><a href='#keyboard'>PREFERENCES</a></h3>
 
     <div>
+        <!-- keyboard shortcuts -->
         <div class='align_left'>
             <form action='ucp-exec.php' method='post'>
             <div id='ucp_keyboard'>
-                <br />
+                <h4>KEYBOARD SHORTCUTS</h4>
+                <hr>
                 <input type='hidden' name='shortcuts'>
                 <label for='create'>Create item :</label>
                 <input id='create' type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['create'];?>' name='create' />
@@ -226,6 +228,29 @@ $users = $req->fetch();
                 <br />
                 <div class='center'>
                     <button type="submit" name="Submit" class='button'>Change shortcuts</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- prefs -->
+        <div class='align_left'>
+            <form action='ucp-exec.php' method='post'>
+                <h4>PREFERENCES</h4>
+                <hr>
+                <input type='hidden' name='prefs'>
+                <label for='close_warning'>Display a warning before closing an edit window/tab ? </label>
+                <input id='close_warning' type='checkbox' name='close_warning' <?php
+        if ($_SESSION['prefs']['close_warning'] === 1) {
+            echo "checked='checked'  ";
+        };?>/>
+
+                <br />
+                <br />
+                <!-- SUBMIT BUTTON -->
+                <br />
+                <br />
+                <div class='center'>
+                    <button type="submit" name="Submit" class='button'>Change prefs</button>
                 </div>
             </form>
         </div>

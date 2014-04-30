@@ -221,7 +221,7 @@ if (isset($_GET)) {
         $owner_search = false;
     }
 
-    // EXPERIMENT ADVANCED SEARCH
+    // EXPERIMENT SEARCH
     if(isset($_GET['type'])) {
         if($_GET['type'] === 'experiments') {
             // SQL
@@ -308,7 +308,7 @@ if (isset($_GET)) {
                 display_message('error', $message);
             }
 
-    // DATABASE ADVANCED SEARCH
+    // DATABASE SEARCH
     } elseif (is_pos_int($_GET['type'])) {
             // SQL
             // the BETWEEN stuff makes the date mandatory, so we switch the $sql with/without date
@@ -378,4 +378,5 @@ $(document).ready(function(){
 });
 </script>
 
-<?php require_once('inc/footer.php');
+<?php
+require_once('inc/footer.php');

@@ -456,16 +456,17 @@ $(document).ready(function() {
     jQuery('#linkinput').keypress(function (e) {
         addLinkOnEnter(e);
     });
-    /*
-     * commented out because it should only ask when the user didn't save
-     *
 
     // ask the user if he really wants to navigate out of the page
+<?php
+    if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
+        echo "
     window.onbeforeunload = function (e) {
           e = e || window.event;
           return 'Do you want to navigate away from this page ? Unsaved changes will be lost !';
-    };
-    */
+    };";
+    }
+?>
 });
 </script>
 

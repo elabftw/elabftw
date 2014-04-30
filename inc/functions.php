@@ -498,6 +498,95 @@ function check_visibility($input)
         return 'team';
     }
 }
+/**
+ * Make a CSV file. This is a function, and it's not in the make_csv.php file because it is called by make_zip also.
+ *
+ * @param int $id The id of the item to export
+ * @param string $type The type of item can be 'experiments' or 'items'
+ * @return the path to csv file
+ */
+function make_unique_csv($id, $type)
+{
+    global $pdo;
+    // this is the lines in the csv file
+    $list = array();
+
+    // Switch exp/items
+    if ($type === 'experiments') {
+        $list[] = array('id', 'date', 'title', 'content', 'status', 'elabid', 'url');
+        $table = 'experiments';
+    } elseif ($type === 'items') {
+        $list[] = array('id', 'date', 'type', 'title', 'description', 'rating', 'url');
+        $table = 'items';
+    } else {
+        return false;
+    }
+    // SQL
+    if ($table === 'experiments') {
+        $sql = "SELECT experiments.*,
+            status.name AS statusname
+            FROM experiments
+            LEFT JOIN status ON (experiments.status = status.id)
+            WHERE experiments.id = $id";
+    } else {
+        $sql = "SELECT items.*,
+            items_types.name AS typename
+            FROM items
+            LEFT JOIN items_types ON (items.type = items_types.id)
+            WHERE items.id = $id";
+    }
+
+    $req = $pdo->prepare($sql);
+    $req->execute();
+    $csv_data = $req->fetch();
+
+    if ($table === 'experiments') {
+        // now let's get the URL so we can have a nice link in the csv
+        $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+        $url = str_replace('make_zip.php', 'experiments.php', $url);
+        $url .= "?mode=view&id=".$csv_data['id'];
+        $list[] = array(
+            $csv_data['id'],
+            $csv_data['date'],
+            htmlspecialchars_decode($csv_data['title'], ENT_QUOTES | ENT_COMPAT),
+            html_entity_decode(strip_tags(htmlspecialchars_decode($csv_data['body'], ENT_QUOTES | ENT_COMPAT))),
+            htmlspecialchars_decode($csv_data['statusname'], ENT_QUOTES | ENT_COMPAT),
+            $csv_data['elabid'],
+            $url
+        );
+
+    } else { // items
+        // now let's get the URL so we can have a nice link in the csv
+        $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+        $url = str_replace('make_zip.php', 'database.php', $url);
+        $url .= "?mode=view&id=".$csv_data['id'];
+        $list[] = array(
+            $csv_data['id'],
+            $csv_data['date'],
+            htmlspecialchars_decode($csv_data['typename'], ENT_QUOTES | ENT_COMPAT),
+            htmlspecialchars_decode($csv_data['title'], ENT_QUOTES | ENT_COMPAT),
+            html_entity_decode(strip_tags(htmlspecialchars_decode($csv_data['body'], ENT_QUOTES | ENT_COMPAT))),
+            $csv_data['rating'],
+            $url
+        );
+    }
+
+
+    // make CSV file
+    $filename = hash("sha512", uniqid(rand(), true));
+    $filepath = 'uploads/export/'.$filename;
+
+    $fp = fopen($filepath, 'w+');
+    // utf8 headers
+    fwrite($fp, "\xEF\xBB\xBF");
+
+    foreach ($list as $fields) {
+            fputcsv($fp, $fields);
+    }
+
+    fclose($fp);
+    return $filepath;
+}
 
 /**
  * Make the pdf file. This is a function, and it's not in the make_pdf.php file because it is called by make_zip also.
@@ -558,6 +647,7 @@ function make_pdf($id, $type, $out = 'browser')
     $req->execute(array(
         'id' => $id
     ));
+    // if we have comments
     if ($req->rowCount() > 0) {
         $comments_block .= "<section>";
         if ($req->rowCount() === 1) {
@@ -575,6 +665,8 @@ function make_pdf($id, $type, $out = 'browser')
 
         }
         $comments_block .= "</section>";
+    } else { // no comments to display
+        $comments_block = '';
     }
 
     // build content of page

@@ -132,7 +132,11 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
             // add PDF to archive
             $pdfname = make_pdf($id, $table, 'uploads/export');
-            $zip->addFile('uploads/export/'.$pdfname, $folder."/".$pdfname);
+            $zip->addFile("uploads/export/".$pdfname, $folder."/".$pdfname);
+            // add CSV file to archive
+            $csvpath = make_unique_csv($id, $table);
+            $zip->addFile($csvpath, $folder."/".$clean_title.".csv");
+
             // delete file
             //unlink('uploads/export/'.$pdfname);
 

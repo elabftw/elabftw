@@ -286,10 +286,10 @@ if (isset($_GET)) {
 
                 <div id='export_menu'>
                 <p class='inline'>Export this result : </p>
-                <a href='make_zip.php?id=<?php echo $results_id_str;?>&type=exp'>
+                <a href='make_zip.php?id=<?php echo $results_id_str;?>&type=experiments'>
                 <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/zip.png' title='make a zip archive' alt='zip' /></a>
 
-                    <a href='make_csv.php?id=<?php echo $results_id_str;?>&type=exp'><img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export in spreadsheet file' /></a>
+                    <a href='make_csv.php?id=<?php echo $results_id_str;?>&type=experiments'><img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export in spreadsheet file' /></a>
                 </div>
     <?php
                 if ($count == 1) {

@@ -34,7 +34,7 @@ require_once 'inc/info_box.php';
 $list = array();
 
 // Switch exp/items
-if ($_GET['type'] === 'exp') {
+if ($_GET['type'] === 'experiments') {
     $list[] = array('id', 'date', 'title', 'content', 'status', 'elabid', 'url');
     $table = 'experiments';
 } elseif ($_GET['type'] === 'items') {

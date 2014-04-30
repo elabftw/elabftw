@@ -1,6 +1,7 @@
 /* Changelog for eLabFTW */
 
 Version 0.9.4.3
+* Add CSV file to ZIP exports
 * Add a revision system (to be able to see old versions of an experiment)
 * Add body to CSV export
 

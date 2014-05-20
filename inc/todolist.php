@@ -23,6 +23,16 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+?>
+    <script>
+        console.log($this);
+        var data = '<?php echo $_POST['value'];?>';
+        localStorage.setItem($this.parent().attr("id"), data.value);
+    </script>
+<?php
+    exit();
+}
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -41,8 +51,8 @@
         </div>
         <script src="../bower_components/jquery/dist/jquery.min.js"></script>
         <script src="../bower_components/jquery-ui/ui/minified/jquery-ui.min.js"></script>
-        <script src="../bower_components/inline-edit/jquery.inline-edit.js"></script>
-        <script src="../bower_components/jquery-pubsub/jquery.pubsub.js"></script>
+        <script src="../bower_components/jquery_jeditable/jquery.jeditable.js"></script>
         <script src="../js/todolist.js"></script>
     </body>
 </html>
+

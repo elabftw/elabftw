@@ -14,7 +14,6 @@ Code from others (a big thanks to them for making their code available !) :
 * jQuery UI
 
 * jQuery plugins :
-    * Inline edit : https://github.com/codenothing/inline-edit
     * Jeditable : http://www.appelsiini.net/projects/jeditable
     * Pageslide : http://srobbin.com/jquery-plugins/pageslide/
     * PubSub : https://github.com/tubalmartin/jquery-pubsub (GPL v3)
@@ -24,8 +23,6 @@ Code from others (a big thanks to them for making their code available !) :
     * Complexify : http://danpalmer.me/jquery-complexify (WTFPL v2 licence)
 
 * Keymaster (for keyboard shortcuts) : https://github.com/madrobby/keymaster (License MIT)
-
-* Todolist : http://web.koesbong.com/2011/01/24/sortable-and-editable-to-do-list-using-html5s-localstorage/
 
 * TinyMCE (html wysiwyg editor) http://www.tinymce.com/ (LGPL)
 

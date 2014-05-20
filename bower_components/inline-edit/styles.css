@@ -1,0 +1,26 @@
+/**
+ * In-Line Text Edit - CSS Temp
+ * April 3, 2009
+ * Corey Hart @ http://www.codenothing.com
+ */
+
+textarea {
+	width: 300px;
+	height: 150px;
+}
+
+.inline-edit {
+	font-size: 9pt;
+	width: 500px;
+	margin-top: 10px;
+	border: 1px solid black;
+}
+
+.inline-edit .form {
+	display: none;
+}
+
+.inline-edit .hover {
+	background-color: #FFFFA5;
+	cursor: pointer;
+}

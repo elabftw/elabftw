@@ -1,0 +1,12 @@
+In-Line Text Editing
+April 3, 2009
+Corey Hart @ http://www.codenothing.com
+
+@href: Link to script for ajax call
+@display: Displayed text grouping
+@form: Form grouping
+@text: Text input element (INPUT or TEXTAREA)
+@save: Save Button
+@cancel: Cancel Button
+@loadtxt: html to replace display text with while ajax call completes
+@hover: Class for mouseover/mouseout's on the display grouping

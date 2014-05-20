@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+	<head>
+		<link rel="stylesheet" href="style.css">
+		<script src="js/bigUpload.js"></script>
+		<script>
+		bigUpload = new bigUpload();
+		function upload() {
+			bigUpload.fire();
+		}
+		function abort() {
+			bigUpload.abortFileUpload();
+		}
+		</script>
+	</head>
+	<body>
+		<div class="bigUpload">
+			<div class="bigUploadContainer">
+				<h1>BigUpload</h1>
+				<form action="inc/bigUpload.php?action=post-unsupported" method="post" enctype="multipart/form-data" id="bigUploadForm">
+					<input type="file" id="bigUploadFile" name="bigUploadFile" />
+					<input type="button" class="bigUploadButton" value="Start Upload" id="bigUploadSubmit" onclick="upload()" />
+					<input type="button" class="bigUploadButton bigUploadAbort" value="Cancel" onclick="abort()" />
+				</form>
+				<div id="bigUploadProgressBarContainer">
+					<div id="bigUploadProgressBarFilled">
+					</div>
+				</div>
+				<div id="bigUploadTimeRemaining"></div>
+				<div id="bigUploadResponse"></div>
+			</div>
+		</div>
+	</body>
+</html>

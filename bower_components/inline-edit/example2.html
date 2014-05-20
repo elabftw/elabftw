@@ -1,0 +1,50 @@
+<html>
+<head>
+	<link rel='stylesheet' type='text/css' href='styles2.css' />
+	<script type='text/javascript' src='jquery-1.3.1.min.js'></script>
+	<script type='text/javascript' src='jquery.inline-edit.pack.js'></script>
+<script type='text/javascript'>
+$(document).ready(function(){
+	$('#first-block').inlineEdit({display: '.original', form: '.newText', text: '.user-edit', save: '#send', cancel: '#stop', hover: 'hover'});
+	$('.second-block').inlineEdit({href: 'ajax.php', display: '#old', text: '#change', save: '.send', cancel: '.stop', hover: 'hover', loadtxt: 'Lag'});
+});
+</script>
+</head>
+<body>
+<!--
+Inline Text Edit
+April 3, 2009
+Corey Hart @ http://www.codenothing.com
+-->
+
+<!-- Page Info -->
+<h1>In-Line Text Editing</h1>
+<pre>
+$(document).ready(function(){
+	$('#first-block').inlineEdit({display: '.original', form: '.newText', text: '.user-edit', save: '#send', cancel: '#stop', hover: 'hover'});
+	$('.second-block').inlineEdit({href: 'ajax.php', display: '#old', text: '#change', save: '.send', cancel: '.stop', hover: 'hover', loadtxt: 'Lag'});
+});
+</pre>
+<!-- Page Info -->
+
+
+<div id='first-block'>
+	<div class='original'>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi lacus felis, euismod at, pulvinar sit amet, dapibus eu, eros. Etiam tellus. Nam vestibulum porttitor urna. Phasellus aliquet pretium quam. Proin pharetra, wisi nec tristique accumsan, magna sapien pulvinar purus, vel hendrerit ipsum tellus at ante.</div>
+	<div class='newText'>
+		<textarea class='user-edit'></textarea><br>
+		<input type='submit' id='send' value=' Save ' />
+		<input type='submit' id='stop' value=' Cancel ' />
+	</div>
+</div>
+
+<span class='second-block'>
+	<span id='old'>Unkown Author</span>
+	<span class='form'>
+		<input type='text' id='change' /><br>
+		<input type='submit' class='send' value=' Save ' />
+		<input type='submit' class='stop' value=' Cancel ' />
+	</span>
+</span>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "elabftw",
+  "version": "0.9.4",
+  "homepage": "http://www.elabftw.net",
+  "authors": [
+    "Nicolas CARPi <nicolas.carpi@curie.fr>"
+  ],
+  "description": "Free and open source electronic notebook for research laboratories.",
+  "main": "experiments.php",
+  "keywords": [
+    "free",
+    "opensource",
+    "laboratory",
+    "notebook",
+    "research"
+  ],
+  "license": "Affero GPL v3",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

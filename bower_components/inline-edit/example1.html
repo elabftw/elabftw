@@ -1,0 +1,50 @@
+<html>
+<head>
+	<link rel='stylesheet' type='text/css' href='styles.css' />
+	<script type='text/javascript' src='jquery-1.3.1.min.js'></script>
+	<script type='text/javascript' src='jquery.inline-edit.js'></script>
+<script type='text/javascript'>
+$(document).ready(function(){
+	$('.inline-edit').inlineEdit({hover: 'hover'});
+});
+</script>
+</head>
+<body>
+<!--
+Inline Text Edit
+April 3, 2009
+Corey Hart @ http://www.codenothing.com
+-->
+
+<!-- Page Info -->
+<h2>In-Line Text Editing</h2>
+<pre>
+$(document).ready(function(){
+	$('.inline-edit').inlineEdit({hover: 'hover'})
+});
+</pre>
+<!-- Page Info -->
+
+
+<div class='inline-edit'>
+	<div class='display'>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi lacus felis, euismod at, pulvinar sit amet, dapibus eu, eros. Etiam tellus. Nam vestibulum porttitor urna. Phasellus aliquet pretium quam. Proin pharetra, wisi nec tristique accumsan, magna sapien pulvinar purus, vel hendrerit ipsum tellus at ante.</div>
+	<div class='form'>
+		<div><div><textarea class='text'></textarea></div></div>
+		<div>
+			<input type='submit' class='save' value=' Save ' />
+			<input type='submit' class='cancel' value=' Cancel ' />
+		</div>
+	</div>
+</div>
+
+<div class='inline-edit' style='border: none;'>
+	<div class='display'>Unkown Author</div>
+	<div class='form'>
+		<input type='text' class='text' /><br>
+		<input type='submit' class='save' value=' Save ' />
+		<input type='submit' class='cancel' value=' Cancel ' />
+	</div>
+</div>
+
+</body>
+</html>

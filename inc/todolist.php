@@ -39,11 +39,10 @@
             <ul id="show-items"></ul>
             <a href="#" id="clear-all">Clear All</a>
         </div>
-        <script src="../js/jquery-2.1.0.min.js"></script>
-        <script src="../js/jquery-ui-1.10.3.custom.min.js"></script>
-        <script src="../js/jquery.inlineedit.js"></script>
-        <script src="../js/pubsub.min.js"></script>
-        <script src="../js/todolist.min.js"></script>
+        <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="../bower_components/jquery-ui/ui/minified/jquery-ui.min.js"></script>
+        <script src="../bower_components/inline-edit/jquery.inline-edit.js"></script>
+        <script src="../bower_components/jquery-pubsub/jquery.pubsub.js"></script>
+        <script src="../js/todolist.js"></script>
     </body>
 </html>
-

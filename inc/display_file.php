@@ -71,7 +71,11 @@ if ($count > 0) {
                 if (file_exists($thumbpath)) {
                     echo "<div class='center'>";
                     // we add rel='gallery' to the images for fancybox to display it as an album (possibility to go next/previous)
-                    echo "<a href='uploads/".$uploads_data['long_name']."' class='fancybox' rel='gallery'><img src='".$thumbpath."' width='150' alt='thumbnail' /></a></div>";
+                    echo "<a href='uploads/".$uploads_data['long_name']."' class='fancybox' rel='gallery' ";
+                    if ($uploads_data['comment'] != 'Click to add a comment') {
+                        echo "title='".$uploads_data['comment']."'";
+                    }
+                    echo "><img src='".$thumbpath."' width='150' alt='thumbnail' /></a></div>";
                 }
             } // end if extension is valid
         } // end gd here

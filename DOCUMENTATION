@@ -1,14 +1,10 @@
 eLabFTW DOCUMENTATION
----------------------
+--------------------- 
 
-This file is for developpers who want to help with the code, and also for me, as a reminder of stuff I did...
+==== THANKS ====
 
+eLabFTW uses code from others. A big thanks to them for making their code available !
 
-eLabFTW uses :
-* php version > 5 (with PDO)
-* mysql version > 5
-
-Code from others (a big thanks to them for making their code available !) :
 * jQuery : http://jquery.com (MIT)
 
 * jQuery UI : http://jqueryui.com (MIT)
@@ -39,7 +35,26 @@ Code from others (a big thanks to them for making their code available !) :
 
 * File upload : https://github.com/sthielen/BigUpload
 
----------------------------
+−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−
 
-Developped with vim, and 4 spaces indent.
+A big thanks also to early alpha testers ;)
+
+−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−
+
+
+==== GET INVOLVED ====
+
+You know your way around php and want to help this project ? Then read on !
+
+What can you do to help this project ?
+* Have a look at the current issues https://github.com/NicolasCARPi/elabftw/issues
+* Develop a theme
+* Read the code and spot places needing improvements
+* Open Github issues to discuss bugs or features suggestions
+* Improve the wiki https://github.com/NicolasCARPi/elabftw/wiki
+* Suggest icons
+
+Your code must follow PSR-2.
+https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md
+
 

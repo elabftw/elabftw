@@ -51,7 +51,10 @@ $(function() {
         $todoListLi.remove();
     }
 
-    // define some vars
+    /*
+     * VARS
+     */
+
     var i = Number(localStorage.getItem('todo-counter')) + 1,
         j = 0,
         k,
@@ -62,6 +65,10 @@ $(function() {
         $newTodo = $('#todo'),
         order = [],
         orderList;
+
+    /*
+     * START
+     */
 
     // Initial loading of todo items
     orderList = localStorage.getItem('todo-orders');
@@ -129,28 +136,6 @@ $(function() {
         }
     });
     
-    // Use of jeditable to edit and save inline
-    $('.editable').editable('todolist.php', {
-         cancel    : 'Nope',
-         submit    : 'Yep',
-         tooltip   : 'Click to edit...',
-         style     : 'display:inline'
-    }).click(function(evt) {
-            $(this).find('input').keydown(function(event) {
-                        if (event.which == 13) // ENTER key
-                            $(this).closest('form').submit();
-                });
-    });
-
-    /*
-        save: function(e, data) {
-                var $this = $(this);
-                localStorage.setItem(
-                    $this.parent().attr("id"), data.value
-                );
-            }
-            */
-
     // Clear all
     $clearAll.click(function(e) {
         e.preventDefault();
@@ -167,6 +152,4 @@ $(function() {
             $this.stop(true, true).fadeOut();
         }
     });
-        
-    
 });

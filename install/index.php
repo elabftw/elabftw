@@ -45,15 +45,6 @@ require_once '../inc/functions.php';
     font-size:12px;
     display:inline;
 }
-/* form validation */
-.parsley-error {
-    color:red;
-    background-color:yellow;
-}
-.parsley-error-list {
-    color:red;
-    font-weight:bold;
-}
 </style>
 
 <!-- JAVASCRIPT -->

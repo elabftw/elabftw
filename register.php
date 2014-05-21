@@ -33,39 +33,37 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
 }
 ?>
 <!-- Password complexity visualizer -->
-<script src="js/jquery.complexify.min.js"></script>
-<!-- Form validation client-side -->
-<script src="js/parsley.min.js"></script>
-
+<script src="bower_components/jquery.complexify.js/jquery.complexify.min.js"></script>
+<script src="bower_components/jquery.complexify.js/jquery.complexify.banlist.js"></script>
 
 <section>
     <!-- Register form -->
-    <form name="regForm" data-validate="parsley" id="regForm" method="post" autocomplete="off" action="register-exec.php" class='innerinnerdiv'>
+    <form method="post" autocomplete="off" action="register-exec.php" class='innerinnerdiv'>
         <fieldset>
             <legend>Create your account :</legend>
                 <p>
                     <label for="firstname">Firstname</label>
-                    <input name="firstname" type="text" id="firstname" data-trigger="change" data-required="true" />
+                    <input name="firstname" type="text" id="firstname" required />
                 </p>
                 <p>
                     <label for="lastname">Lastname</label>
-                    <input name="lastname" type="text" id="lastname" data-trigger="change" data-required="true" />
+                    <input name="lastname" type="text" id="lastname" required />
                 </p>
                 <p>
                     <label for="username">Username</label>
-                    <input name="username" type="text" id="username" data-trigger="change" data-required="true" />
+                    <input name="username" type="text" id="username" required />
                 </p>
                 <p>
                     <label for="email">Email</label>
-                    <input name="email" type="email" id="email" data-trigger="change" data-required="true" data-type="email" />
+                    <input name="email" type="email" id="email" required />
                 </p>
                 <p>
                     <label for="password">Password</label>
-                    <input name="password" type="password" id="password" data-trigger="change" data-minlength="8" />
+                    <input name="password" type="password" title='8 characters minimum' id="password" pattern=".{8,}" required />
                 </p>
                 <p>
                     <label for="cpassword">Confirm password</label>
-                    <input name="cpassword" type="password" id="cpassword" data-trigger="change" data-equalto="#password" data-error-message="The passwords do not match !" />
+                    <input name="cpassword" type="password" id="cpassword" pattern=".{8,}" required />
                 </p>
                 Password complexity (for your information) : <span id="complexity">0%</span><br /><br />
                 <div id='submitDiv'>
@@ -76,18 +74,18 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
     <!-- end register form -->
 </section>
 
-<style>
-.parsley-error {
-    color:red;
-    background-color:yellow;
-}
-.parsley-error-list {
-    color:red;
-    font-weight:bold;
-}
-</style>
-
 <script>
+function validatePassword(){
+    var pass=document.getElementById("password").value;
+    var cpass=document.getElementById("cpassword").value;
+    if (pass != cpass) {
+        document.getElementById("cpassword").setCustomValidity("Passwords don't match");
+    } else {
+        //empty string means no validation error
+        document.getElementById("cpassword").setCustomValidity(''); 
+    }
+}
+
 $(document).ready(function() {
     // give focus to the first field on page load
     document.getElementById("firstname").focus();
@@ -109,6 +107,10 @@ $(document).ready(function() {
 			this.value = username.toLowerCase();
 		}
 	});
+    // check if both passwords are the same
+    document.getElementById("password").onchange = validatePassword;
+    document.getElementById("cpassword").onchange = validatePassword;
+
 });
 </script>
 <?php require_once 'inc/footer.php';

@@ -9,17 +9,17 @@ eLabFTW uses :
 * mysql version > 5
 
 Code from others (a big thanks to them for making their code available !) :
-* jQuery
+* jQuery : http://jquery.com (MIT)
 
-* jQuery UI
+* jQuery UI : http://jqueryui.com (MIT)
 
 * jQuery plugins :
     * Jeditable : http://www.appelsiini.net/projects/jeditable
-    * Pageslide : http://srobbin.com/jquery-plugins/pageslide/
-    * Star Rating Plugin v3.14 (2012-02-08)
-        http://www.fyneworks.com/jquery/star-rating/
+    * Pageslide : http://srobbin.com/jquery-plugins/pageslide
+    * Star Rating Plugin v3.14 (2012-02-08) http://www.fyneworks.com/jquery/star-rating/
         Dual licence : MIT, GPLv2
     * Complexify : http://danpalmer.me/jquery-complexify (WTFPL v2 licence)
+    * Fancybox : http://fancyapps.com/fancybox/ (by-nc 3.0)
 
 * Keymaster (for keyboard shortcuts) : https://github.com/madrobby/keymaster (License MIT)
 

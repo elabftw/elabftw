@@ -84,7 +84,6 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 <link rel="stylesheet" media="all" href="css/tagcloud.css" />
 <link rel="stylesheet" media="all" href="bower_components/jquery-pageslide/jquery.pageslide.css" />
 <link rel="stylesheet" media="all" href="css/jquery.rating.css" />
-<link rel="stylesheet" media="all" href="css/jquery.lightbox-0.5.css" />
 <!-- JAVASCRIPT -->
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <script src="bower_components/jquery-ui/ui/minified/jquery-ui.min.js"></script>

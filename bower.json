@@ -1,12 +1,11 @@
 {
   "name": "elabftw",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "homepage": "http://www.elabftw.net",
   "authors": [
     "Nicolas CARPi <nicolas.carpi@curie.fr>"
   ],
   "description": "Free and open source electronic notebook for research laboratories.",
-  "main": "experiments.php",
   "keywords": [
     "free",
     "opensource",

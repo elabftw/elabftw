@@ -60,7 +60,9 @@ $total = $req->fetchColumn();
 
 
 // Make percentage
-if ($total != 0) {
+if ($total === 0) {
+    echo 'No statistics available yet.'; // fix division by zero
+} else {
     foreach ($status_arr as $key => $value) {
         $percent_arr[$value] = round(($count_arr[$key]/$total)*100);
     }
@@ -68,9 +70,9 @@ if ($total != 0) {
     // BEGIN CONTENT
     echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/statistics.png' alt='' /> <h4>STATISTICS</h4>";
     ?>
-    <script src='js/google-jsapi.js'></script>
+     <!--Load the AJAX API-->
+    <script src="https://www.google.com/jsapi"></script>
     <script>
-          //google.load('visualization', '1', {packages:['imagepiechart']});
           google.load('visualization', '1', {packages:['corechart']});
           google.setOnLoadCallback(drawChart);
           function drawChart() {
@@ -108,6 +110,4 @@ if ($total != 0) {
         </script>
      <div id="chart_div" class='center'></div>
     <?php
-} else { //end fix division by zero
-    echo 'No statistics available yet.';
 }

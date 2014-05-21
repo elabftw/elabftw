@@ -37,7 +37,7 @@ require_once '../inc/functions.php';
 <!-- CSS -->
 <link rel="stylesheet" media="all" href="../css/main.css" />
 <link id='maincss' rel='stylesheet' media='all' href='../themes/default/style.css' />
-<link rel="stylesheet" media="all" href="../bower_components/jquery-ui/themes/ui-lightness/jquery-ui.min.css" />
+<link rel="stylesheet" media="all" href="../bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css" />
 <style>
 /* little gray text */
 .install_hint {

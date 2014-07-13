@@ -37,7 +37,7 @@ require_once '../inc/functions.php';
 <!-- CSS -->
 <link rel="stylesheet" media="all" href="../css/main.css" />
 <link id='maincss' rel='stylesheet' media='all' href='../themes/default/style.css' />
-<link rel="stylesheet" media="all" href="../css/jquery-ui-1.10.3.custom.min.css" />
+<link rel="stylesheet" media="all" href="../bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css" />
 <style>
 /* little gray text */
 .install_hint {
@@ -45,20 +45,11 @@ require_once '../inc/functions.php';
     font-size:12px;
     display:inline;
 }
-/* form validation */
-.parsley-error {
-    color:red;
-    background-color:yellow;
-}
-.parsley-error-list {
-    color:red;
-    font-weight:bold;
-}
 </style>
 
 <!-- JAVASCRIPT -->
-<script src="../js/jquery-2.1.0.min.js"></script>
-<script src="../js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="../bower_components/jquery/dist/jquery.min.js"></script>
+<script src="../bower_components/jquery-ui/ui/minified/jquery-ui.min.js"></script>
 </head>
 
 <body>

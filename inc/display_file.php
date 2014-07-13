@@ -70,7 +70,12 @@ if ($count > 0) {
                 // only display the thumbnail if the file is here
                 if (file_exists($thumbpath)) {
                     echo "<div class='center'>";
-                    echo "<a href='uploads/".$uploads_data['long_name']."' class='lightbox'><img src='".$thumbpath."' width='150' alt='thumbnail' /></a></div>";
+                    // we add rel='gallery' to the images for fancybox to display it as an album (possibility to go next/previous)
+                    echo "<a href='uploads/".$uploads_data['long_name']."' class='fancybox' rel='gallery' ";
+                    if ($uploads_data['comment'] != 'Click to add a comment') {
+                        echo "title='".$uploads_data['comment']."'";
+                    }
+                    echo "><img src='".$thumbpath."' width='150' alt='thumbnail' /></a></div>";
                 }
             } // end if extension is valid
         } // end gd here
@@ -125,18 +130,20 @@ if ($_GET['mode'] === 'edit') {
     <?php
 }
 ?>
-<script src='js/jquery.lightbox-0.5.min.js'></script>
+<script src='bower_components/fancybox/source/jquery.fancybox.pack.js'></script>
+<link rel="stylesheet" href="bower_components/fancybox/source/jquery.fancybox.css" type="text/css" media="screen" />
 <script>
 $(document).ready(function() {
-     // click thumbnail to show full size http://leandrovieira.com/projects/jquery/lightbox/
-    $('a.lightbox').lightBox({
+    // we use fancybox to display thumbnails
+    $('a.fancybox').fancybox();
+    /*
         txtImage: '<?php
         if (!empty($uploads_data['real_name'])) {
            echo $uploads_data['real_name'];
         } else {
            echo '';
         };?>'
-    });
+     */
 });
 </script>
 

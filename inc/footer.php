@@ -38,9 +38,10 @@ $total_time = round(($finish - $start), 4);
 echo "Page generated in ".$total_time." seconds.<br />";
 ?>
 </footer>
-<script src="js/jquery.pageslide.min.js"></script>
+<script src="bower_components/jquery-pageslide/jquery.pageslide.min.js"></script>
 <?php
 if (isset($_SESSION['auth'])) {
+    // show TODOlist
     echo "<script>
     key('".$_SESSION['prefs']['shortcuts']['todo']."', function(){
         $.pageslide({href:'inc/todolist.php'});

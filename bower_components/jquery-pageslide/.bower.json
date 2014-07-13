@@ -1,0 +1,14 @@
+{
+  "name": "jquery-pageslide",
+  "homepage": "https://github.com/srobbin/jquery-pageslide",
+  "_release": "6e3d776f59",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "6e3d776f5920299f3c7599186f38a42386f5a569"
+  },
+  "_source": "https://github.com/srobbin/jquery-pageslide.git",
+  "_target": "*",
+  "_originalSource": "srobbin/jquery-pageslide",
+  "_direct": true
+}

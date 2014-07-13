@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  	<title>jQuery PageSlide Demo</title>
+  	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  	<!--  The jquery.pageslide.css stylesheet has the class that you'll need on your page -->
+  	<link rel="stylesheet" type="text/css" href="../jquery.pageslide.css" />
+  	<style>
+  	
+  	    body { 
+        	background: #f4f4f4;
+        	font: 14px/18px "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        	color: #666; 
+        	-webkit-font-smoothing: antialiased; /* Fix for webkit rendering */
+        	-webkit-text-size-adjust: none;
+        }
+
+        a, a:visited { color: #C30; text-decoration: none; border-bottom: 1px dotted #C30; }
+        a:hover { color: #900; border-bottom-style: solid; }
+
+        p { margin-bottom: 20px; }
+
+        #content {
+            width: 940px;
+            padding: 10px;
+            margin: 0 auto;
+        }
+            #content h1 { color: #333; line-height: 1em; }
+            
+            ul#nav { padding-left: 0; list-style: none; width: 100%; margin-bottom: 40px; }
+            ul#nav:after { content: "\0020"; display: block; height: 0; clear: both; visibility: hidden; }
+            
+                #content ul#nav li { float: left; width: 20%; text-align: center; }
+                #content ul#nav a { 
+                        display: block; 
+                        background: #000;
+                        color: #FFF; 
+                        font-weight: bold; 
+                        padding: 10px; 
+                        border-right: 1px solid #FFF;
+                }
+                #content ul#nav a:hover { background: #333; }
+
+        .open {
+            display: none;
+            float: left;
+            width: 40px;
+            height: 30px;
+            margin-right: 10px;
+            background: url(menu.png) center center no-repeat #333;
+            -moz-border-radius: 8px;
+            -webkit-border-radius: 8px;
+            -border-radius: 8px;
+            box-shadow: inset 0 0 3px #000;
+            text-indent: -999999px;
+            border: 0;
+        }
+        
+        /* Media Queries
+        * 
+        * Note: Please don't base your responsive design off of this code. It is just here for demo purposes.
+        * Rather, grab yourself a copy of Ethan's book: http://www.abookapart.com/products/responsive-web-design
+        ================================================== */
+        
+        /* Mobile and iPad Portrait */
+    	@media only screen and (max-width: 959px) {
+    	    #content { width: 748px; }
+    	}
+    	
+    	/* Mobile Landscape and Portrait */
+    	@media only screen and (max-width: 767px) {
+    	    #content { width: 400px; }
+    	    #content h1 { font-size: 22px; line-height: 30px; background-color: #000; color: #FFF; padding: 10px; }
+    	    #content ul#nav { display: none; }
+    	    
+    	    .open { display: block; }
+    	    #pageslide { width: 200px; }
+    	        #pageslide #nav li { padding: 10px 0; border-bottom: 1px solid #666; }
+    	        #pageslide #nav li a { color: #FFF; border: none; }
+    	        #pageslide #nav li a:hover { text-decoration: underline; }
+    	}
+    	
+    	/* Mobile Portrait */
+        @media only screen and (max-width: 479px) {
+            #content { width: 280px; }
+            #content h1 { font-size: 14px; }
+        }
+        
+    </style>
+</head>
+<body>
+    <div id="content">
+        <h1><a class="open" href="#nav">Menu</a>PageSlide Responsive Demo</h1>
+        <ul id="nav">
+            <li><a href="">Menu Item 1</a></li>
+            <li><a href="">Menu Item 2</a></li>
+            <li><a href="">Menu Item 3</a></li>
+            <li><a href="">Menu Item 4</a></li>
+            <li><a href="">Menu Item 5</a></li>
+        </ul>
+        <div class="copy">
+            <p>If you've ever used the <a href="http://m.facebook.com">mobile version of Facebook</a>, or <a href="http://www.path.com">Path</a>, then you've probably seen something akin to PageSlide in action.</p>
+            <p>In this example, resizing the browser to a smaller window (less than or equal to an iPhone's landscape view) will collapse and hide the faux menu nav above. Clicking on the menu icon will then trigger PageSlide to open.</a>
+        </div>
+    </div>
+    <script src="../lib/jquery-1.7.1.min.js"></script>
+    <script src="../jquery.pageslide.min.js"></script>
+    <script>
+        $(".open").pageslide();
+    </script>
+</body>
+</html>

@@ -80,18 +80,17 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     echo "<link id='maincss' rel='stylesheet' media='all' href='themes/default/style.css' />";
 }
 ?>
-<link rel="stylesheet" media="all" href="css/jquery-ui-1.10.3.custom.min.css" />
+<link rel="stylesheet" media="all" href="bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css" />
 <link rel="stylesheet" media="all" href="css/tagcloud.css" />
-<link rel="stylesheet" media="all" href="css/pageslide.css" />
+<link rel="stylesheet" media="all" href="bower_components/jquery-pageslide/jquery.pageslide.css" />
 <link rel="stylesheet" media="all" href="css/jquery.rating.css" />
-<link rel="stylesheet" media="all" href="css/jquery.lightbox-0.5.css" />
 <!-- JAVASCRIPT -->
-<script src="js/jquery-2.1.0.min.js"></script>
-<script src="js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="bower_components/jquery-ui/ui/minified/jquery-ui.min.js"></script>
 <!-- for editable comments -->
-<script src="js/jquery.jeditable.min.js"></script>
+<script src="bower_components/jquery_jeditable/jquery.jeditable.js"></script>
 <!-- for keyboard shortcuts -->
-<script src='js/keymaster.min.js'></script>
+<script src='bower_components/keymaster/keymaster.js'></script>
 <!-- for stars rating -->
 <script src='js/jquery.rating.min.js'></script>
 <!-- common stuff -->

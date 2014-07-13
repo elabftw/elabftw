@@ -105,7 +105,8 @@ if ($result) {
             'order' => $data['order_by'],
             'sort' => $data['sort_by'],
             'limit' => $data['limit_nb'],
-            'shortcuts' => array('create' => $data['sc_create'], 'edit' => $data['sc_edit'], 'submit' => $data['sc_submit'], 'todo' => $data['sc_todo']));
+            'shortcuts' => array('create' => $data['sc_create'], 'edit' => $data['sc_edit'], 'submit' => $data['sc_submit'], 'todo' => $data['sc_todo']),
+            'close_warning' => intval($data['close_warning']));
         session_write_close();
         // Make a unique token and store it in sql AND cookie
         $token = md5(uniqid(rand(), true));

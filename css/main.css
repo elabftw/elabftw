@@ -40,7 +40,6 @@ body:before {
     border-radius: 10px;
     font: 100% Verdana, Arial, Helvetica, sans-serif;
     margin: auto;
-    opacity: 0.95;
     padding: 10px 20px 10px 20px;
     width: 90%;
 }
@@ -119,6 +118,12 @@ div.txt ol li {
 div.txt li {
     /* !important because there is a list-style-type:none in jquery-ui */
     list-style-type:square !important;
+}
+
+/* fix the links in the error/info messages displayed with jquery-ui */
+div.ui-state-error a, div.ui-state-highlight a {
+    color:blue;
+    text-decoration:underline;
 }
 
 /* HEAD */

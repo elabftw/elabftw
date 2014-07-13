@@ -36,9 +36,9 @@ require_once 'inc/info_box.php';
 require_once 'lib/classes/formkey.class.php';
 $formKey = new formKey();
 ?>
-<script src="js/tinymce/tinymce.min.js"></script>
-<script src="js/raphael-2.1.0.min.js"></script>
-<script src="js/colorwheel.min.js"></script>
+<script src="bower_components/tinymce/tinymce.min.js"></script>
+<script src="bower_components/raphael/raphael-min.js"></script>
+<script src="bower_components/colorwheel/colorwheel.js"></script>
 <?php
 // MAIN SQL FOR USERS
 $sql = "SELECT * FROM users WHERE validated = :validated";
@@ -250,12 +250,16 @@ Import CSV file into the database</a></p>
 <section class='simple_border' style='background-color:#FF8080;'>
 
     <h3>DANGER ZONE</h3>
-    <h4>Delete a user</h4>
+    <h4><strong>Delete a user</strong></h4>
     <form action='admin-exec.php' method='post'>
         <!-- form key -->
         <?php $formKey->output_formkey(); ?>
-        <label for'delete_user'>Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever.</label>
+        <label for'delete_user'>Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever :</label>
         <input type='email' name='delete_user' id='delete_user' />
+        <br>
+        <br>
+        <label for'delete_user_confpass'>Type your password :</label>
+        <input type='password' name='delete_user_confpass' id='delete_user_confpass' />
     <div class='center'>
         <button type='submit' class='button submit'>Delete this user !</button>
     </div>

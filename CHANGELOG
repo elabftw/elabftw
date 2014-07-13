@@ -1,6 +1,10 @@
 /* Changelog for eLabFTW */
 
-Version 0.9.4.3
+Version 0.9.5
+* Use of bower to keep track of dependencies
+* HTML5 video and audio can now be added
+* Add a user preference to ask before leaving an edit page
+* Add CSV file to ZIP exports
 * Add a revision system (to be able to see old versions of an experiment)
 * Add body to CSV export
 

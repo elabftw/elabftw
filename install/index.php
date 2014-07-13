@@ -37,7 +37,7 @@ require_once '../inc/functions.php';
 <!-- CSS -->
 <link rel="stylesheet" media="all" href="../css/main.css" />
 <link id='maincss' rel='stylesheet' media='all' href='../themes/default/style.css' />
-<link rel="stylesheet" media="all" href="../css/jquery-ui-1.10.3.custom.min.css" />
+<link rel="stylesheet" media="all" href="../bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css" />
 <style>
 /* little gray text */
 .install_hint {
@@ -45,20 +45,11 @@ require_once '../inc/functions.php';
     font-size:12px;
     display:inline;
 }
-/* form validation */
-.parsley-error {
-    color:red;
-    background-color:yellow;
-}
-.parsley-error-list {
-    color:red;
-    font-weight:bold;
-}
 </style>
 
 <!-- JAVASCRIPT -->
-<script src="../js/jquery-2.1.0.min.js"></script>
-<script src="../js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="../bower_components/jquery/dist/jquery.min.js"></script>
+<script src="../bower_components/jquery-ui/ui/minified/jquery-ui.min.js"></script>
 </head>
 
 <body>
@@ -109,7 +100,11 @@ if (file_exists('../admin/config.php')) {
 <?php
 // CHECK WE ARE WITH HTTPS
 if (!isset($_SERVER['HTTPS'])) {
-    $message = "Please enable HTTPS on the server and access eLabFTW through HTTPS.";
+    // get the url to display a link to click (without the port)
+    $url = 'https://'.$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'];
+    $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server
+        (<a href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting#wiki-switch-to-https'
+        >see documentation</a>). Or click this link : <a href='$url'>$url</a>";
     display_message('error', $message);
     custom_die();
 }
@@ -148,7 +143,7 @@ if (is_writable('../uploads') && is_writable('../uploads/export') && is_writable
     } else { // failed at creating the folder
         $message = "Faild creating <em>uploads/</em> directory. 
             You need to do it manually. 
-            <a style='color:blue; font-style:underline;' href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting#failed-creating-uploads-directory-'>Click here to discover how.</a>";
+            <a href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting#failed-creating-uploads-directory-'>Click here to discover how.</a>";
         display_message('error', $message);
         custom_die();
     }
@@ -160,7 +155,7 @@ if (extension_loaded("openssl")) {
     display_message('info', $message);
 } else {
     $message = "The <em>openssl</em> extension is <strong>NOT</strong> loaded.
-            <a style='color:blue; font-style:underline;' href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting#the-openssl-extension-is-not-loaded'>Click here to read how to fix this.</a>";
+            <a href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting#the-openssl-extension-is-not-loaded'>Click here to read how to fix this.</a>";
     display_message('error', $message);
     custom_die();
 }
@@ -171,7 +166,7 @@ if (extension_loaded("gd")) {
     display_message('info', $message);
 } else {
     $message = "The <em>gd</em> extension is <strong>NOT</strong> loaded.
-            <a style='color:blue; font-style:underline;' href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting#the-gd-extension-is-not-loaded'>Click here to read how to fix this.</a>";
+            <a href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting#the-gd-extension-is-not-loaded'>Click here to read how to fix this.</a>";
     display_message('error', $message);
     custom_die();
 }

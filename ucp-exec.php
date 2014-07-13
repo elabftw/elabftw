@@ -406,6 +406,26 @@ if (isset($_POST['shortcuts'])) {
 }
 
 
+if (isset($_POST['prefs'])) {
+    if ($_POST['close_warning'] === 'on') {
+        $new_close_warning = 1;
+    } else {
+        $new_close_warning = 0;
+    }
+
+    // SQL
+    $sql = "UPDATE users SET close_warning = :new_close_warning WHERE userid = :userid";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':new_close_warning', $new_close_warning, PDO::PARAM_INT);
+    $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
+    $req->execute();
+
+    // put it in session
+    $_SESSION['prefs']['close_warning'] = $new_close_warning;
+    $infomsg_arr[] = 'Your preferences have been updated.';
+    $infoflag = true;
+}
+
 // INFO BOX
 if($errflag) {
     $_SESSION['errors'] = $msg_arr;

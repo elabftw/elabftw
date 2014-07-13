@@ -3,7 +3,10 @@
 // php update.php on normal server
 // /Applications/MAMP/bin/php/php5.3.6/bin/php update.php for MAMP install
 //
+$die_msg = "There was a problem in the database update :/ Please report a bug : https://github.com/NicolasCARPi/elabftw/issues?state=open";
+
 require_once 'inc/functions.php';
+
 function add_field($table, $field, $params, $added, $not_added) {
     global $pdo;
     // first test if it's here already
@@ -23,16 +26,15 @@ function add_field($table, $field, $params, $added, $not_added) {
         $result = $req->execute();
 
         if($result) {
-            $added;
+            return $added;
         } else {
              die($die_msg);
         }
     } else {
-        $not_added;
+        return $not_added;
     }
 }
 
-$die_msg = "There was a problem in the database update :/ Please report a bug : https://github.com/NicolasCARPi/elabftw/issues?state=open";
 // check if it's run from cli or web; do nothing if it's from web
 if(php_sapi_name() != 'cli' || !empty($_SERVER['REMOTE_ADDR'])) {
     die("<p>Thank you for using eLabFTW. <br />To update your database, run this file only from the command line.</p>");
@@ -610,3 +612,7 @@ if (!$table_is_here) {
 } else {
     echo "Table 'experiments_revisions' already exists. Nothing to do.\n";
 }
+
+
+// ADD close_warning column to users table
+echo add_field ('users', 'close_warning', "TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER sc_todo", ">>> New preference to ask confirmation before closing an edition window (go in UCP to check it).\n", "Column 'close_warning' already exists. Nothing to do.\n");

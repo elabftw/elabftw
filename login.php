@@ -36,9 +36,21 @@ require_once 'inc/info_box.php';
 require_once('lib/classes/formkey.class.php');
 $formKey = new formKey();
 
+// Check for HTTPS
+if (!isset($_SERVER['HTTPS'])) {
+    // get the url to display a link to click (without the port)
+    $url = 'https://'.$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'];
+    $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server
+        (<a href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting#wiki-switch-to-https'
+        >see documentation</a>). Or click this link : <a href='$url'>$url</a>";
+    display_message('error', $message);
+    require_once 'inc/footer.php';
+    die();
+}
+
 // Check if already logged in
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
-    $message ='You are already logged in !';
+    $message = 'You are already logged in !';
     display_message('error', $message);
     require_once 'inc/footer.php';
     die();

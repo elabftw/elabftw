@@ -28,7 +28,7 @@
 //require_once('lib/classes/formkey.class.php');
 //$formKey = new formKey();
 ?>
-<script src="js/tinymce/tinymce.min.js"></script>
+<script src="bower_components/tinymce/tinymce.min.js"></script>
 <?php
 // ID
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
@@ -456,16 +456,17 @@ $(document).ready(function() {
     jQuery('#linkinput').keypress(function (e) {
         addLinkOnEnter(e);
     });
-    /*
-     * commented out because it should only ask when the user didn't save
-     *
 
     // ask the user if he really wants to navigate out of the page
+<?php
+    if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
+        echo "
     window.onbeforeunload = function (e) {
           e = e || window.event;
           return 'Do you want to navigate away from this page ? Unsaved changes will be lost !';
-    };
-    */
+    };";
+    }
+?>
 });
 </script>
 

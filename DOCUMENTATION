@@ -1,31 +1,23 @@
 eLabFTW DOCUMENTATION
----------------------
+--------------------- 
 
-This file is for developpers who want to help with the code, and also for me, as a reminder of stuff I did...
+==== THANKS ====
 
+eLabFTW uses code from others. A big thanks to them for making their code available !
 
-eLabFTW uses :
-* php version > 5 (with PDO)
-* mysql version > 5
+* jQuery : http://jquery.com (MIT)
 
-Code from others (a big thanks to them for making their code available !) :
-* jQuery
-
-* jQuery UI
+* jQuery UI : http://jqueryui.com (MIT)
 
 * jQuery plugins :
-    * Inline edit : https://github.com/codenothing/inline-edit
     * Jeditable : http://www.appelsiini.net/projects/jeditable
-    * Pageslide : http://srobbin.com/jquery-plugins/pageslide/
-    * PubSub : https://github.com/tubalmartin/jquery-pubsub (GPL v3)
-    * Star Rating Plugin v3.14 (2012-02-08)
-        http://www.fyneworks.com/jquery/star-rating/
+    * Pageslide : http://srobbin.com/jquery-plugins/pageslide
+    * Star Rating Plugin v3.14 (2012-02-08) http://www.fyneworks.com/jquery/star-rating/
         Dual licence : MIT, GPLv2
     * Complexify : http://danpalmer.me/jquery-complexify (WTFPL v2 licence)
+    * Fancybox : http://fancyapps.com/fancybox/ (by-nc 3.0)
 
 * Keymaster (for keyboard shortcuts) : https://github.com/madrobby/keymaster (License MIT)
-
-* Todolist : http://web.koesbong.com/2011/01/24/sortable-and-editable-to-do-list-using-html5s-localstorage/
 
 * TinyMCE (html wysiwyg editor) http://www.tinymce.com/ (LGPL)
 
@@ -43,9 +35,26 @@ Code from others (a big thanks to them for making their code available !) :
 
 * File upload : https://github.com/sthielen/BigUpload
 
-* Form field validation : http://parsleyjs.org/documentation.html
+−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−
 
----------------------------
+A big thanks also to early alpha testers ;)
 
-Developped with vim, and 4 spaces indent.
+−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−
+
+
+==== GET INVOLVED ====
+
+You know your way around php and want to help this project ? Then read on !
+
+What can you do to help this project ?
+* Have a look at the current issues https://github.com/NicolasCARPi/elabftw/issues
+* Develop a theme
+* Read the code and spot places needing improvements
+* Open Github issues to discuss bugs or features suggestions
+* Improve the wiki https://github.com/NicolasCARPi/elabftw/wiki
+* Suggest icons
+
+Your code must follow PSR-2.
+https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md
+
 

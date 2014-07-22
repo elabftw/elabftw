@@ -23,6 +23,8 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+// we disable errors to avoid having notice and warning polluting our file
+error_reporting(E_ERROR);
 require_once 'inc/common.php';
 
 // Check type

@@ -8,11 +8,12 @@ a:link {
 }
 #container {
     text-align:center;
-    width: 260px;
+    width: 250px;
+    overflow:hidden;
 }
 input[type="text"] {
     height: 25px;
-    width: 260px;
+    width: 200px;
     padding: 5px;
     font-size: 18px;
 }
@@ -47,10 +48,10 @@ ul li a:link {
     float: right;
     display: none;
     text-decoration: none;
-    color: #f03;
+    color: #303030;
 }
 ul li a:hover {
-    text-decoration: underline;
+    color:red;
 }
 #clear-all {
     color:white;

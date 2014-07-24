@@ -126,6 +126,11 @@ div.ui-state-error a, div.ui-state-highlight a {
     text-decoration:underline;
 }
 
+/* prettier tables  */
+table, table td {
+    border: 1px solid black;
+}
+
 /* HEAD */
 #logo {
     float: left;

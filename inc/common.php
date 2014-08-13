@@ -58,6 +58,7 @@ if (isset($_SESSION['auth'])) { // if user is auth, we check the cookie
         $msg_arr[] = 'You are not logged in !';
         $_SESSION['errors'] = $msg_arr;
         header('Location: login.php');
+        exit;
     }
 } else { // user is not auth with php sessions
     if (isset($_COOKIE['token']) && (strlen($_COOKIE['token']) == 32)) {
@@ -99,11 +100,13 @@ if (isset($_SESSION['auth'])) { // if user is auth, we check the cookie
             $msg_arr[] = 'You are not logged in !';
             $_SESSION['errors'] = $msg_arr;
             header("location: login.php");
+            exit;
         }
     } else { // no cookie
         $msg_arr = array();
         $msg_arr[] = 'You are not logged in !';
         $_SESSION['errors'] = $msg_arr;
         header('location: login.php');
+        exit;
     }
 }

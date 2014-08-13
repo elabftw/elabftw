@@ -98,9 +98,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // SQL for importing
-        $sql = "INSERT INTO items(title, date, body, userid, type) VALUES(:title, :date, :body, :userid, :type)";
+        $sql = "INSERT INTO items(team, title, date, body, userid, type) VALUES(:team, :title, :date, :body, :userid, :type)";
         $req = $pdo->prepare($sql);
         $result = $req->execute(array(
+            'team' => $_SESSION['team_id'],
             'title' => $title,
             'date' => kdate(),
             'body' => $body,
@@ -112,8 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     fclose($handle);
-    $message = $inserted." items imported.";
-    display_message('info', $message);
+    echo "<script alert('"$inserted." items imported.')</script>";
 }
 ?>
 <script>

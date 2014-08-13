@@ -112,21 +112,26 @@ Free open-source Lab Manager'
                 }
                 $_SESSION['errors'] = $msg_arr;
                 header('location: login.php');
+                exit;
             } else { // no problem
                 $msg_arr[] = 'Email sent. Check your INBOX.';
                 $_SESSION['infos'] = $msg_arr;
                 header("location: login.php");
+                exit;
             }
         } else {
             $msg_arr[] = 'Email not found in database !';
             $_SESSION['errors'] = $msg_arr;
             header("location: login.php");
+            exit;
         }
     } else {
             $msg_arr[] = 'The email address you entered was invalid !';
             $_SESSION['errors'] = $msg_arr;
             header("location: login.php");
+            exit;
     }
 } else { // this page isn't called with POST
     header('Location: experiments.php');
+    exit;
 }

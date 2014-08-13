@@ -61,7 +61,6 @@ if ($row_count === 0) {
 
 $data = $req->fetch();
 
-// now we check if we didn't fetch an ID with nothing inside.
 ?>
 <section class="item">
 

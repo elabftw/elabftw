@@ -30,14 +30,15 @@ require_once 'inc/common.php';
 if ($_SESSION['is_admin'] != 1) {
     die('You are not admin !');
 }
-// formkey stuff
-require_once 'lib/classes/formkey.class.php';
-$formKey = new formKey();
 // for success messages
 $infos_arr = array();
 // for error messages
 $errors_arr = array();
 $errflag = false;
+
+// FORMKEY
+require_once 'lib/classes/formkey.class.php';
+$formKey = new formKey();
 
 // VALIDATE USERS
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
@@ -111,46 +112,92 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
             $msg_arr[] = 'There was a problem sending the email. Error was logged.';
             $_SESSION['errors'] = $msg_arr;
             header('location: admin.php');
-            exit();
+            exit;
         }
     }
     $_SESSION['infos'] = $infos_arr;
     header('Location: admin.php');
-    exit();
+    exit;
+}
+
+// TEAM CONFIGURATION FORM COMING FROM CONFIGURATION.PHP
+// ADD A NEW TEAM
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team'])) {
+    $new_team_name = filter_var($_POST['new_team'], FILTER_SANITIZE_STRING);
+    $sql = 'INSERT INTO teams (team_name) VALUES (:team_name)';
+    $req = $pdo->prepare($sql);
+    $result = $req->execute(array(
+        'team_name' => $new_team_name
+    ));
+    if ($result) {
+        $infos_arr[] = 'Team added successfully.';
+        $_SESSION['infos'] = $infos_arr;
+        header('Location: configuration.php');
+        exit;
+    } else {
+        $errors_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $_SESSION['errors'] = $errors_arr;
+        header('Location: configuration.php');
+        exit;
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST'
+    && isset($_POST['edit_team'])
+    && isset($_POST['team_id'])
+    && is_pos_int($_POST['team_id'])) {
+
+    $team_id = $_POST['team_id'];
+    $team_newname = filter_var($_POST['edit_team_name'], FILTER_SANITIZE_STRING);
+    $sql = 'UPDATE teams SET (team_name) VALUES (:team_name) WHERE team_id = :team_id';
+    $req = $pdo->$prepare($sql);
+    $req->bindParam(':team_id', $_POST['team_id'], PDO::PARAM_INT);
+    $req->bindParam(':team_name', $team_newname, PDO::PARAM_STR);
+    $result = $req->execute();
+
+    if ($result) {
+        $infos_arr[] = 'Team edited successfully.';
+        $_SESSION['infos'] = $infos_arr;
+        header('Location: configuration.php');
+        exit;
+    } else {
+        $errors_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $_SESSION['errors'] = $errors_arr;
+        header('Location: configuration.php');
+        exit;
+    }
 }
 
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['lab_name'])) {
-    // MAIN CONFIGURATION FORM
-    if (isset($_POST['lab_name'])) {
-        $lab_name = filter_var($_POST['lab_name'], FILTER_SANITIZE_STRING);
+// MAIN CONFIGURATION FORM COMING FROM CONFIGURATION.PHP (with form_key)
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
+    // Check the form_key
+    if (!isset($_POST['form_key']) || !$formKey->validate()) {
+        // form key is invalid
+        die('The form key is invalid. Please retry.');
     }
-    if ($_POST['admin_validate'] == 1) {
-        $admin_validate = 1;
-    } else {
-        $admin_validate = 0;
-    }
-    if ($_POST['deletable_xp'] == 1) {
-        $deletable_xp = 1;
-    } else {
-        $deletable_xp = 0;
-    }
+
     if ($_POST['debug'] == 1) {
         $debug = 1;
     } else {
         $debug = 0;
-    }
-    if (isset($_POST['link_name'])) {
-        $link_name = filter_var($_POST['link_name'], FILTER_SANITIZE_STRING);
-    }
-    if (isset($_POST['link_href'])) {
-        $link_href = filter_var($_POST['link_href'], FILTER_SANITIZE_STRING);
     }
     if (isset($_POST['path'])) {
         $path = filter_var($_POST['path'], FILTER_SANITIZE_STRING);
     }
     if (isset($_POST['proxy'])) {
         $proxy = filter_var($_POST['proxy'], FILTER_SANITIZE_STRING);
+    }
+    if ($_POST['admin_validate'] == 1) {
+        $admin_validate = 1;
+    } else {
+        $admin_validate = 0;
+    }
+    if (isset($_POST['login_tries'])) {
+        $login_tries = filter_var($_POST['login_tries'], FILTER_SANITIZE_STRING);
+    }
+    if (isset($_POST['ban_time'])) {
+        $ban_time = filter_var($_POST['ban_time'], FILTER_SANITIZE_STRING);
     }
     if (isset($_POST['smtp_address'])) {
         $smtp_address = filter_var($_POST['smtp_address'], FILTER_SANITIZE_STRING);
@@ -167,30 +214,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['lab_name'])) {
     if (isset($_POST['smtp_password'])) {
         $smtp_password = filter_var($_POST['smtp_password'], FILTER_SANITIZE_STRING);
     }
-    if (isset($_POST['login_tries'])) {
-        $login_tries = filter_var($_POST['login_tries'], FILTER_SANITIZE_STRING);
-    }
-    if (isset($_POST['ban_time'])) {
-        $ban_time = filter_var($_POST['ban_time'], FILTER_SANITIZE_STRING);
-    }
 
     // build request array
     $updates = array(
-        'lab_name' => $lab_name,
-        'admin_validate' => $admin_validate,
-        'deletable_xp' => $deletable_xp,
         'debug' => $debug,
-        'link_name' => $link_name,
-        'link_href' => $link_href,
         'path' => $path,
         'proxy' => $proxy,
+        'admin_validate' => $admin_validate,
+        'login_tries' => $login_tries,
+        'ban_time' => $ban_time,
         'smtp_address' => $smtp_address,
         'smtp_encryption' => $smtp_encryption,
         'smtp_port' => $smtp_port,
         'smtp_username' => $smtp_username,
-        'smtp_password' => $smtp_password,
-        'login_tries' => $login_tries,
-        'ban_time' => $ban_time
+        'smtp_password' => $smtp_password
     );
     $values = array();
     foreach ($updates as $name => $value) {
@@ -201,12 +238,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['lab_name'])) {
     if ($result) {
         $infos_arr[] = 'Configuration updated successfully.';
         $_SESSION['infos'] = $infos_arr;
+        header('Location: configuration.php');
+        exit;
+    } else {
+        $errors_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $_SESSION['errors'] = $errors_arr;
+        header('Location: configuration.php');
+        exit;
+    }
+}
+
+
+// TEAM CONFIGURATION COMING FROM ADMIN.PHP
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
+
+    // CHECKS
+    if ($_POST['deletable_xp'] == 1) {
+        $deletable_xp = true;
+    } else {
+        $deletable_xp = false;
+    }
+    if (isset($_POST['link_name'])) {
+        $link_name = filter_var($_POST['link_name'], FILTER_SANITIZE_STRING);
+    }
+    if (isset($_POST['link_href'])) {
+        $link_href = filter_var($_POST['link_href'], FILTER_SANITIZE_STRING);
+    }
+
+    // SQL
+    $sql = "UPDATE teams SET deletable_xp = :deletable_xp, link_name = :link_name, link_href = :link_href WHERE team_id = :team_id";
+    $req = $pdo->prepare($sql);
+    $result = $req->execute(array(
+        'deletable_xp' => $deletable_xp,
+        'link_name' => $link_name,
+        'link_href' => $link_href,
+        'team_id' => $_SESSION['team_id']
+    ));
+
+    if ($result) {
+        $infos_arr[] = 'Configuration updated successfully.';
+        $_SESSION['infos'] = $infos_arr;
         header('Location: admin.php');
-        exit();
+        exit;
     } else {
         $errors_arr[] = 'There was a problem in the SQL request. Report a bug !';
         $_SESSION['errors'] = $errors_arr;
         header('Location: admin.php');
+        exit;
     }
 }
 
@@ -219,7 +297,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
     if ($errflag) {
         $_SESSION['errors'] = $msg_arr;
         header("location: admin.php#tabs-2");
-        die();
+        exit;
     }
 
     $userid = $_POST['userid'];
@@ -299,15 +377,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
             $infos_arr[] = 'User infos updated successfully.';
             $_SESSION['infos'] = $infos_arr;
             header('Location: admin.php#tabs-2');
-            exit();
+            exit;
         } else {
             header('Location: admin.php');
+            exit;
         }
     } else { //sql fail
         $errors_arr[] = 'There was a problem in the SQL request. Report a bug !';
         $_SESSION['errors'] = $errors_arr;
         header('Location: admin.php');
-        exit();
+        exit;
     }
 }
 
@@ -320,11 +399,13 @@ if (isset($_POST['status_name']) && is_pos_int($_POST['status_id'])) {
     if (isset($_POST['status_is_default']) && $_POST['status_is_default'] === 'on') {
         $status_is_default = true;
         // if we set true to status_is_default somewhere, it's best to remove all other default
-        // so we won't have two default status
-        $sql = "UPDATE status SET
-            is_default = false";
+        // in the team so we won't have two default status
+        $sql = "UPDATE status
+                SET is_default = false
+                WHERE team = :team_id";
         $req = $pdo->prepare($sql);
-        $req->execute();
+        $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
+        $res = $req->execute();
     } else {
         $status_is_default = false;
     }
@@ -347,12 +428,12 @@ if (isset($_POST['status_name']) && is_pos_int($_POST['status_id'])) {
         $infos_arr[] = 'Status updated successfully.';
         $_SESSION['infos'] = $infos_arr;
         header('Location: admin.php#tabs-3');
-        exit();
+        exit;
     } else { //sql fail
         $infos_arr[] = 'There was a problem in the SQL request. Report a bug !';
         $_SESSION['errors'] = $infos_arr;
         header('Location: admin.php');
-        exit();
+        exit;
     }
 }
 // add new status
@@ -360,22 +441,24 @@ if (isset($_POST['new_status_name'])) {
     $status_name = filter_var($_POST['new_status_name'], FILTER_SANITIZE_STRING);
     // we remove the # of the hexacode and sanitize string
     $status_color = filter_var(substr($_POST['new_status_color'], 1, 6), FILTER_SANITIZE_STRING);
-    $sql = "INSERT INTO status(name, color) VALUES(:name, :color)";
+    $sql = "INSERT INTO status(name, color, team, is_default) VALUES(:name, :color, :team, :is_default)";
     $req = $pdo->prepare($sql);
     $result = $req->execute(array(
         'name' => $status_name,
-        'color' => $status_color
+        'color' => $status_color,
+        'team' => $_SESSION['team_id'],
+        'is_default' => 0
     ));
     if ($result) {
         $infos_arr[] = 'New status added successfully.';
         $_SESSION['infos'] = $infos_arr;
         header('Location: admin.php#tabs-3');
-        exit();
+        exit;
     } else { //sql fail
         $infos_arr[] = 'There was a problem in the SQL request. Report a bug !';
         $_SESSION['errors'] = $infos_arr;
         header('Location: admin.php');
-        exit();
+        exit;
     }
 }
 
@@ -388,12 +471,14 @@ if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
     $item_type_template = check_body($_POST['item_type_template']);
     $sql = "UPDATE items_types SET
         name = :name,
+        team = :team,
         bgcolor = :bgcolor,
         template = :template
         WHERE id = :id";
     $req = $pdo->prepare($sql);
     $result = $req->execute(array(
         'name' => $item_type_name,
+        'team' => $_SESSION['team_id'],
         'bgcolor' => $item_type_bgcolor,
         'template' => $item_type_template,
         'id' => $item_type_id
@@ -402,12 +487,12 @@ if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
         $infos_arr[] = 'New item category updated successfully.';
         $_SESSION['infos'] = $infos_arr;
         header('Location: admin.php#tabs-4');
-        exit();
+        exit;
     } else { //sql fail
         $infos_arr[] = 'There was a problem in the SQL request. Report a bug !';
         $_SESSION['errors'] = $infos_arr;
         header('Location: admin.php');
-        exit();
+        exit;
     }
 }
 // ADD NEW ITEM TYPE
@@ -417,16 +502,17 @@ if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
         $infos_arr[] = 'You need to put a title !';
         $_SESSION['errors'] = $infos_arr;
         header('Location: admin.php#tabs-4');
-        exit();
+        exit;
     }
 
     // we remove the # of the hexacode and sanitize string
     $item_type_bgcolor = filter_var(substr($_POST['new_item_type_bgcolor'], 1, 6), FILTER_SANITIZE_STRING);
     $item_type_template = check_body($_POST['new_item_type_template']);
-    $sql = "INSERT INTO items_types(name, bgcolor, template) VALUES(:name, :bgcolor, :template)";
+    $sql = "INSERT INTO items_types(name, team, bgcolor, template) VALUES(:name, :team, :bgcolor, :template)";
     $req = $pdo->prepare($sql);
     $result = $req->execute(array(
         'name' => $item_type_name,
+        'team' => $_SESSION['team_id'],
         'bgcolor' => $item_type_bgcolor,
         'template' => $item_type_template
     ));
@@ -434,22 +520,21 @@ if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
         $infos_arr[] = 'New item category added successfully.';
         $_SESSION['infos'] = $infos_arr;
         header('Location: admin.php#tabs-4');
-        exit();
+        exit;
     } else { //sql fail
         $infos_arr[] = 'There was a problem in the SQL request. Report a bug !';
         $_SESSION['errors'] = $infos_arr;
         header('Location: admin.php');
-        exit();
+        exit;
     }
 }
 
-// DELETE USER
+// DELETE USER (we receive a formkey from this form)
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     // Check the form_key
     if (!isset($_POST['form_key']) || !$formKey->validate()) {
         // form key is invalid
-        $msg_arr[] = 'The form key is invalid !';
-        $errflag = true;
+        die('The form key is invalid. Please retry.');
     }
     if (filter_var($_POST['delete_user'], FILTER_VALIDATE_EMAIL)) {
         $email = $_POST['delete_user'];
@@ -476,16 +561,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
         $msg_arr[] = 'You need to put your password !';
         $errflag = true;
     }
-    // look which user has this email address
-    $sql = "SELECT userid FROM users WHERE email LIKE :email";
+    // look which user has this email address and make sure it is in the same team as admin
+    $sql = "SELECT userid FROM users WHERE email LIKE :email AND team = :team";
     $req = $pdo->prepare($sql);
     $req->execute(array(
-        'email' => $email
+        'email' => $email,
+        'team' => $_SESSION['team_id']
     ));
     $user = $req->fetch();
     // email doesn't exist
     if ($req->rowCount() === 0) {
-        $msg_arr[] = 'No user with this email';
+        $msg_arr[] = 'No user with this email or user not in your team.';
         $errflag = true;
     }
 
@@ -494,7 +580,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     if ($errflag) {
         $_SESSION['errors'] = $msg_arr;
         header("location: admin.php#tabs-2");
-        die();
+        exit;
     }
 
     $userid = $user['userid'];
@@ -526,28 +612,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     $infos_arr[] = 'Everything was purged successfully.';
     $_SESSION['infos'] = $infos_arr;
     header('Location: admin.php#tabs-2');
-    exit();
+    exit;
 }
 // DEFAULT EXPERIMENT TEMPLATE
 if (isset($_POST['default_exp_tpl'])) {
     $default_exp_tpl = check_body($_POST['default_exp_tpl']);
     $sql = "UPDATE experiments_templates SET
         name = 'default',
+        team = :team,
         body = :body
-        WHERE userid = 0";
+        WHERE userid = 0 AND team = :team";
     $req = $pdo->prepare($sql);
     $result = $req->execute(array(
-        'body' => $default_exp_tpl
+        'body' => $default_exp_tpl,
+        'team' => $_SESSION['team_id']
     ));
     if ($result) {
         $infos_arr[] = 'Default experiment template edited successfully.';
         $_SESSION['infos'] = $infos_arr;
         header('Location: admin.php#tabs-5');
-        exit();
+        exit;
     } else { //sql fail
         $infos_arr[] = 'There was a problem in the SQL request. Report a bug !';
         $_SESSION['errors'] = $infos_arr;
         header('Location: admin.php');
-        exit();
+        exit;
     }
 }

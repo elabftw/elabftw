@@ -41,15 +41,17 @@ $formKey = new formKey();
 <script src="bower_components/colorwheel/colorwheel.js"></script>
 <?php
 // MAIN SQL FOR USERS
-$sql = "SELECT * FROM users WHERE validated = :validated";
+$sql = "SELECT * FROM users WHERE validated = :validated AND team = :team";
 $user_req = $pdo->prepare($sql);
 $user_req->bindValue(':validated', 0);
+$user_req->bindValue(':team', $_SESSION['team_id']);
 $user_req->execute();
 $count = $user_req->rowCount();
 // only show the frame if there is some users to validate
 if ($count > 0) {
     $message = "There are users waiting for validation of their account :";
-    $message .= "<form method='post' action='admin-exec.php'><ul>";
+    $message .= "<form method='post' action='admin-exec.php'>";
+    $message .= "<ul>";
     while ($data = $user_req->fetch()) {
         $message .= "<li><label>
             <input type='checkbox' name='validate[]' 
@@ -57,110 +59,48 @@ if ($count > 0) {
             </label></li>";
     }
     $message .= "</ul><div class='center'>
-    <button class='button' type='submit'>Validate users</button></div></form>";
+    <button class='button' type='submit'>Validate users</button></div>";
+    var_dump($message);
     display_message('error', $message);
+    // as this will 'echo', we need to call it at the right moment. It will not go smoothly into $message.
+    $formKey->output_formkey();
+    echo "</form>";
 }
 ?>
 
-    <p><a href='import.php'><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/import.png' alt='import' />
-Import CSV file into the database</a></p>
-
 <div id='tabs'>
 <ul>
-<li><a href='#tabs-1'>Main configuration</a></li>
+<li><a href='#tabs-1'>Team Settings</a></li>
 <li><a href='#tabs-2'>Users</a></li>
 <li><a href='#tabs-3'>Status</a></li>
 <li><a href='#tabs-4'>Types of items</a></li>
 <li><a href='#tabs-5'>Experiment template</a></li>
+<li><a href='#tabs-6'>Import CSV</a></li>
 </ul>
 
 <!-- TABS 1 -->
 <div id='tabs-1'>
 
-    <h3>CONFIGURATION</h3>
+    <h3>TEAM SETTINGS</h3>
     <form method='post' action='admin-exec.php'>
     <div id='config_form'>
-        <label for='lab_name'>Name of the lab :</label>
-        <input type='text' value='<?php echo get_config('lab_name');?>' name='lab_name' id='lab_name' />
-    <br />
-    <br />
-        <label for='admin_validate'>Users need validation by admin after registration :</label>
-        <select name='admin_validate' id='admin_validate'>
-            <option value='1'<?php
-                if (get_config('admin_validate') == 1) { echo " selected='selected'"; } ?>
-            >yes</option>
-            <option value='0'<?php
-                    if (get_config('admin_validate') == 0) { echo " selected='selected'"; } ?>
-            >no</option>
-        </select>
-    <br />
-    <br />
         <label for='deletable_xp'>Users can delete experiments :</label>
         <select name='deletable_xp' id='deletable_xp'>
             <option value='1'<?php
-                if (get_config('deletable_xp') == 1) { echo " selected='selected'"; } ?>
+                if (get_team_config('deletable_xp') == 1) { echo " selected='selected'"; } ?>
             >yes</option>
             <option value='0'<?php
-                    if (get_config('deletable_xp') == 0) { echo " selected='selected'"; } ?>
+                    if (get_team_config('deletable_xp') == 0) { echo " selected='selected'"; } ?>
             >no, only the admin can</option>
         </select>
     <br />
     <br />
-        <label for='debug'>Activate debug mode :</label>
-        <select name='debug' id='debug'>
-            <option value='1'<?php
-                if (get_config('debug') == 1) { echo " selected='selected'"; } ?>
-            >yes</option>
-            <option value='0'<?php
-                    if (get_config('debug') == 0) { echo " selected='selected'"; } ?>
-            >no</option>
-        </select>
-    <br />
-    <br />
         <label for='link_name'>Name of the link in the main menu :</label>
-        <input type='text' value='<?php echo get_config('link_name');?>' name='link_name' id='link_name' />
+        <input type='text' value='<?php echo get_team_config('link_name');?>' name='link_name' id='link_name' />
     <br />
     <br />
         <label for='link_href'>Address where this link should point :</label>
-        <input type='url' value='<?php echo get_config('link_href');?>' name='link_href' id='link_href' />
-    <br />
-    <br />
-        <label for='path'>Full path to the install folder :</label>
-        <input type='text' value='<?php echo get_config('path');?>' name='path' id='path' />
-    <br />
-    <br />
-        <label for='proxy'>Address of the proxy :</label>
-        <input type='text' value='<?php echo get_config('proxy');?>' name='proxy' id='proxy' />
-    <br />
-    <br />
-        <label for='smtp_address'>Address of the SMTP server :</label>
-        <input type='text' value='<?php echo get_config('smtp_address');?>' name='smtp_address' id='smtp_address' />
-    <br />
-    <br />
-        <label for='smtp_encryption'>SMTP encryption (can be TLS or STARTSSL):</label>
-        <input type='text' value='<?php echo get_config('smtp_encryption');?>' name='smtp_encryption' id='smtp_encryption' />
-    <br />
-    <br />
-        <label for='smtp_port'>SMTP port :</label>
-        <input type='text' value='<?php echo get_config('smtp_port');?>' name='smtp_port' id='smtp_port' />
-    <br />
-    <br />
-        <label for='smtp_username'>SMTP username :</label>
-        <input type='text' value='<?php echo get_config('smtp_username');?>' name='smtp_username' id='smtp_username' />
-    <br />
-    <br />
-        <label for='smtp_password'>SMTP password :</label>
-        <input type='password' value='<?php echo get_config('smtp_password');?>' name='smtp_password' id='smtp_password' />
-    <br />
-    <br />
-        <label for='login_tries'>Number of allowed login attempts :</label>
-        <input type='text' value='<?php echo get_config('login_tries');?>' name='login_tries' id='login_tries' />
-    <br />
-    <br />
-        <label for='ban_time'>Time of the ban after failed login attempts (in minutes) :</label>
-        <input type='text' value='<?php echo get_config('ban_time');?>' name='ban_time' id='ban_time' />
-    <br />
-    <br />
+        <input type='url' value='<?php echo get_team_config('link_href');?>' name='link_href' id='link_href' />
     </div>
     <div class='center'>
         <button type='submit' name='submit_config' class='submit button'>Save</button>
@@ -274,9 +214,11 @@ Import CSV file into the database</a></p>
     <h3>STATUS</h3>
     <?php
     // SQL to get all status
-    $sql = "SELECT * from status";
+    $sql = "SELECT * from status WHERE team = :team_id";
     $req = $pdo->prepare($sql);
+    $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
     $req->execute();
+
     while ($status = $req->fetch()) {
         // count the experiments with this status
         // don't allow deletion if experiments with this status exist
@@ -357,9 +299,12 @@ Import CSV file into the database</a></p>
 <h3>EXISTING TYPES</h3>
 <?php
 // SQL to get all items type
-$sql = "SELECT * from items_types";
+$sql = "SELECT * from items_types WHERE team = :team";
 $req = $pdo->prepare($sql);
-$req->execute();
+$req->execute(array(
+    'team' => $_SESSION['team_id']
+));
+
 while ($items_types = $req->fetch()) {
     ?>
     <div class='simple_border'>
@@ -384,20 +329,22 @@ while ($items_types = $req->fetch()) {
     <?php
     }
     ?>
+
     <form action='admin-exec.php' method='post'>
-    <input type='text' class='biginput' name='item_type_name' value='<?php echo stripslashes($items_types['name']);?>' />
-    <input type='hidden' name='item_type_id' value='<?php echo $items_types['id'];?>' />
+        <input type='text' class='biginput' name='item_type_name' value='<?php echo stripslashes($items_types['name']);?>' />
+        <input type='hidden' name='item_type_id' value='<?php echo $items_types['id'];?>' />
 
-    <div id='colorwheel_div_<?php echo $items_types['id'];?>'>
-    <div class='colorwheel inline'></div>
+        <div id='colorwheel_div_<?php echo $items_types['id'];?>'>
+            <div class='colorwheel inline'></div>
 
-    <input type='color' name='item_type_bgcolor' value='#<?php echo $items_types['bgcolor'];?>'/></div><br /><br />
-     
-    <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']);?></textarea><br />
-    <div class='center'>
-    <button type='submit' class='button'>Edit <?php echo stripslashes($items_types['name']);?></button><br />
-    </div>
-    </form></div>
+            <input type='color' name='item_type_bgcolor' value='#<?php echo $items_types['bgcolor'];?>'/></div><br /><br />
+            <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']);?></textarea><br />
+            <div class='center'>
+                <button type='submit' class='button'>Edit <?php echo stripslashes($items_types['name']);?></button><br />
+            </div>
+        </div>
+    </form>
+
     <script>$(document).ready(function() {
         $(".toggle_container_<?php echo $items_types['id'];?>").hide();
         $("a.trigger_<?php echo $items_types['id'];?>").click(function(){
@@ -430,9 +377,11 @@ while ($items_types = $req->fetch()) {
 <div id='tabs-5'>
 <?php
 // get what is the default experiment template
-$sql = "SELECT body FROM experiments_templates WHERE userid = 0 LIMIT 1";
+$sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1";
 $req = $pdo->prepare($sql);
-$req->execute();
+$req->execute(array(
+    'team' => $_SESSION['team_id']
+));
 $exp_tpl = $req->fetch();
 ?>
     <h3>EDIT DEFAULT EXPERIMENT TEMPLATE</h3>
@@ -449,6 +398,113 @@ echo $exp_tpl['body'];
     </form>
 
 </div>
+
+<!-- TABS 6 -->
+<div id='tabs-6'>
+    <h3><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/import.png' alt='import' /> IMPORT CSV FILE INTO DATABASE</h3>
+<?php
+$row = 0;
+$inserted = 0;
+$column = array();
+
+// file upload block
+// show select of type
+// SQL to get items names
+$sql = "SELECT * FROM items_types WHERE team = :team_id";
+$req = $pdo->prepare($sql);
+$req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
+$req->execute();
+?>
+<p style='text-align:justify'>This page will allow you to import a .csv (Excel spreadsheet) file into the database.
+Firt you need to open your (.xls/.xlsx) file in Excel or Libreoffice and save it as .csv.
+In order to have a good import, the first column should be the title. The rest of the columns will be imported in the body. You can make a tiny import of 3 lines to see if everything works before you import a big file.
+<b>You should make a backup of your database before importing thousands of items !</b></p>
+
+<label for='item_selector'>1. Select a type of item to import to :</label>
+<select id='item_selector' onchange='goNext(this.value)'><option value=''>--------</option>
+<?php
+while ($items_types = $req->fetch()) {
+    echo "<option value='".$items_types['id']."' name='type' ";
+    echo ">".$items_types['name']."</option>";
+}
+?>
+</select><br>
+<div id='import_block'>
+<form enctype="multipart/form-data" action="admin.php" method="POST">
+    <label for='uploader'>2. Select a CSV file to import :</label>
+    <input id='uploader' name="csvfile" type="file" />
+    <br>
+    <br>
+    <div class='center'>
+        <button type="submit" class='button' value="Upload">Import CSV</button>
+    </div>
+</form>
+</div>
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // open the file
+    $handle = fopen($_FILES['csvfile']['tmp_name'], 'r');
+    if ($handle == false) {
+        die('Could not open the file.');
+    }
+
+    // get what type we want
+    if (isset($_COOKIE['itemType']) && is_pos_int($_COOKIE['itemType'])) {
+        $type = $_COOKIE['itemType'];
+    }
+    // loop the lines
+    while ($data = fgetcsv($handle, 0, ",")) {
+        $num = count($data);
+        // get the column names (first line)
+        if($row == 0) {
+            for($i=0;$i < $num;$i++) {
+                $column[] = $data[$i];
+            }
+            $row++;
+            continue;
+        }
+        $row++;
+
+        $title = $data[0];
+        $body = '';
+        $j = 0;
+        foreach($data as $line) {
+            $body .= "<p><b>".$column[$j]." :</b> ".$line.'</p>';
+            $j++;
+        }
+
+        // SQL for importing
+        $sql = "INSERT INTO items(team, title, date, body, userid, type) VALUES(:team, :title, :date, :body, :userid, :type)";
+        $req = $pdo->prepare($sql);
+        $result = $req->execute(array(
+            'team' => $_SESSION['team_id'],
+            'title' => $title,
+            'date' => kdate(),
+            'body' => $body,
+            'userid' => $_SESSION['userid'],
+            'type' => $type
+        ));
+        if ($result) {
+            $inserted++;
+        }
+    }
+    fclose($handle);
+    $msg_arr[] = $inserted." items were imported successfully.";
+    $_SESSION['infos'] = $msg_arr;
+}
+?>
+<script>
+function goNext(x) {
+    if(x == '') {
+        return;
+    }
+    document.cookie = 'itemType='+x;
+    $('#import_block').show();
+}
+$(document).ready(function() {
+    $('#import_block').hide();
+});
+</script>
 
 </div>
 

@@ -42,6 +42,20 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
         <fieldset>
             <legend>Create your account :</legend>
                 <p>
+                    <label for="team">Team</label>
+                    <select name='team' id='team' required>
+                        <option value=''>------- Select a team -------</option>
+                        <?php
+                        $sql = "SELECT * FROM teams ORDER by team_name";
+                        $req = $pdo->prepare($sql);
+                        $req->execute();
+                        while ($teams = $req->fetch()) {
+                            echo "<option value = '".$teams['team_id']."'>".$teams['team_name']."</option>";
+                        }
+                        ?>
+                    </select>
+                </p>
+                <p>
                     <label for="firstname">Firstname</label>
                     <input name="firstname" type="text" id="firstname" required />
                 </p>

@@ -64,7 +64,7 @@ if ($errflag) {
     $_SESSION['errors'] = $msg_arr;
     session_write_close();
     header("location: login.php");
-    exit();
+    exit;
 }
 
 // SQL for verification + actual login with cookies
@@ -77,7 +77,7 @@ $salt = $data['salt'];
 // Create hash
 $passwordHash = hash("sha512", $salt.$_POST['password']);
 
-// admin validated ?
+// Do we let people in if they are not validated by an admin ?
 if (get_config('admin_validate') == 1) {
     $sql = "SELECT * FROM users WHERE username='$username' AND password='$passwordHash' AND validated= 1";
 } else {
@@ -98,6 +98,7 @@ if ($result) {
         $_SESSION['userid'] = $data['userid'];
         // Used in the menu
         $_SESSION['username'] = $data['username'];
+        $_SESSION['team_id'] = $data['team'];
         $_SESSION['is_admin'] = $data['is_admin'];
         // PREFS
         $_SESSION['prefs'] = array('theme' => $data['theme'],
@@ -129,6 +130,7 @@ if ($result) {
             'userid' => $data['userid']
         ));
         header("location: experiments.php");
+        exit;
     } else {
         //Login failed
         $msg_arr = array();
@@ -141,6 +143,7 @@ if ($result) {
 
         $_SESSION['errors'] = $msg_arr;
         header("location: login.php");
+        exit;
     }
 } else {
     die("Query failed");

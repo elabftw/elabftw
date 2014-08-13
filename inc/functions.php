@@ -1035,6 +1035,27 @@ function get_config($conf_name)
 }
 
 /**
+ * Return the value of asked column
+ *
+ * @param string $column The configuration we want to read
+ * @return string The content of the config for the current team
+ */
+function get_team_config($column)
+{
+    global $pdo;
+
+    $sql = "SELECT * FROM `teams` WHERE team_id = :team_id";
+    $req = $pdo->prepare($sql);
+    // remove notice when not logged in
+    if (isset($_SESSION['team_id'])) {
+        $req->execute(array(
+            'team_id' => $_SESSION['team_id']
+        ));
+    }
+    $team_config = $req->fetch();
+    return $team_config[$column];
+}
+/**
  * Will check if an executable is on the system.
  * Only used by check_for_updates.php to check for git.
  *

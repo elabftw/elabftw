@@ -41,8 +41,8 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
 }
 
 // SQL for editXP
-$sql = "SELECT experiments.*, status.color FROM experiments LEFT JOIN status ON (experiments.status = status.id)
-    WHERE experiments.id = :id";
+$sql = "SELECT experiments.*, status.color FROM experiments LEFT JOIN status ON experiments.status = status.id
+    WHERE experiments.id = :id ";
 $req = $pdo->prepare($sql);
 $req->bindParam(':id', $id, PDO::PARAM_INT);
 $req->execute();
@@ -106,10 +106,12 @@ var status_arr = Array();
 <?php
 // put all available status in array
 $status_arr = array();
-// SQL TO GET ALL STATUS INFO
-$sql = 'SELECT id, name, color FROM status';
+// SQL to get all the status of the team
+$sql = 'SELECT id, name, color FROM status WHERE team = :team';
 $req = $pdo->prepare($sql);
-$req->execute();
+$req->execute(array(
+    'team' => $_SESSION['team_id']
+));
 
 while ($status = $req->fetch()) {
     
@@ -294,16 +296,24 @@ $(function() {
 <?php // get all links for autocomplete
 $sql = "SELECT items_types.name,
 items.id AS itemid,
+items.team AS itemteam,
 items.* FROM items
 LEFT JOIN items_types
-ON (items.type = items_types.id)";
+ON items.type = items_types.id";
 $getalllinks = $pdo->prepare($sql);
-$getalllinks->execute();
+$res = $getalllinks->execute(array(
+        'team' => $_SESSION['team_id']
+    ));
+
+
 while ($link = $getalllinks->fetch()) {
-    // html_entity_decode is needed to convert the quotes
-    // str_replace to remove ' because it messes everything up
-    $name = $link['name'];
-    echo "'".$link['itemid']." - ".$name." - ".str_replace("'", "", html_entity_decode(substr($link['title'], 0, 60), ENT_QUOTES))."',";
+    // we show the item only if it is from the team
+    if ($link['itemteam'] == $_SESSION['team_id']) {
+        // html_entity_decode is needed to convert the quotes
+        // str_replace to remove ' because it messes everything up
+        $name = $link['name'];
+        echo "'".$link['itemid']." - ".$name." - ".str_replace("'", "", html_entity_decode(substr($link['title'], 0, 60), ENT_QUOTES))."',";
+    }
 }?>
 		];
 		$( "#linkinput" ).autocomplete({

@@ -23,6 +23,8 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+// Note : for a page with several <form>, this will work only for 1 <form> !
+
 class formKey {
     // here we store the generated form key
     private $formkey;

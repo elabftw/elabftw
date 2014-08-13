@@ -38,9 +38,13 @@ require_once('inc/info_box.php');
 <!-- *********************** -->
 <div id='team-1'>
 <?php // SQL to get members info
-$sql = "SELECT * FROM users WHERE validated = 1";
+$sql = "SELECT * FROM users WHERE validated = :validated AND team = :team_id";
 $req = $pdo->prepare($sql);
-$req->execute();
+$req->execute(array(
+    'validated' => 1,
+    'team_id' => $_SESSION['team_id']
+));
+
 echo "<ul>";
 while ($data = $req->fetch()) {
     echo "<li><img src='img/profile.png' alt='profile' /> ";

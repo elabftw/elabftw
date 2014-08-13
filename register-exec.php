@@ -50,6 +50,15 @@ if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
     $msg_arr[] = 'Username missing';
     $errflag = true;
 }
+// Check team (should be an int)
+if (isset($_POST['team']) &&
+    !empty($_POST['team']) &&
+    filter_var($_POST['team'], FILTER_VALIDATE_INT)) {
+    $team = $_POST['team'];
+} else {
+    $msg_arr[] = 'Team missing';
+    $errflag = true;
+}
 // Check FIRSTNAME (sanitize, and make it look like Firstname)
 if ((isset($_POST['firstname'])) && (!empty($_POST['firstname']))) {
     // Put everything lowercase and first letter uppercase
@@ -121,13 +130,13 @@ if ($errflag) {
     $_SESSION['errors'] = $msg_arr;
     session_write_close();
     header("location: register.php");
-    exit();
+    exit;
 }
 
 // Registration date is stored in epoch
 $register_date = time();
 // If it's the first user, make him admin (just after the install process usually)
-$sql = "SELECT COUNT(*) FROM users WHERE is_admin = 1";
+$sql = "SELECT COUNT(*) FROM users WHERE is_admin = 1 AND team = $team";
 $req = $pdo->prepare($sql);
 $req->execute();
 $test = $req->fetch();
@@ -142,9 +151,30 @@ if ($test[0] == 0) {
 // If all is good => registration
 // we don't want admin validation if it's the first time we register an admin account
 if (get_config('admin_validate')  == 1 && $is_admin == 0) {
-    $sql = "INSERT INTO users(username, firstname, lastname, email, password, salt, register_date, is_admin) VALUES('$username', '$firstname', '$lastname', '$email', '$passwordHash', '$salt', '$register_date', '$is_admin')";
+    $sql = "INSERT INTO users(
+        username,
+        firstname,
+        lastname,
+        email,
+        password,
+        team,
+        salt,
+        register_date,
+        is_admin
+    ) VALUES(
+        '$username',
+        '$firstname',
+        '$lastname',
+        '$email',
+        '$passwordHash',
+        '$team',
+        '$salt',
+        '$register_date',
+        '$is_admin'
+    )";
+
 } else { // no admin validation in config file or it's the first account created
-    $sql = "INSERT INTO users(username, firstname, lastname, email, password, salt, register_date, validated, is_admin) VALUES('$username', '$firstname', '$lastname', '$email', '$passwordHash', '$salt', '$register_date', '1', '$is_admin')";
+    $sql = "INSERT INTO users(username, firstname, lastname, email, password, team, salt, register_date, validated, is_admin) VALUES('$username', '$firstname', '$lastname', '$email', '$passwordHash', '$team', '$salt', '$register_date', '1', '$is_admin')";
 }
 
 $result = $pdo->exec($sql);
@@ -195,6 +225,7 @@ if ($result) {
     $_SESSION['infos'] = $msg_arr;
     $_SESSION['username'] = $username;
     header("location: login.php");
+    exit;
 } else {
     die("Query failed");
 }

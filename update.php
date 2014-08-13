@@ -616,3 +616,18 @@ if (!$table_is_here) {
 
 // ADD close_warning column to users table
 echo add_field ('users', 'close_warning', "TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER sc_todo", ">>> New preference to ask confirmation before closing an edition window (go in UCP to check it).\n", "Column 'close_warning' already exists. Nothing to do.\n");
+
+
+// BIG TEAM UPDATE
+
+CREATE TABLE IF NOT EXISTS `teams` (
+`team_id` int(10) unsigned NOT NULL,
+  `team_name` text NOT NULL,
+  `admin_validate` tinyint(1) NOT NULL,
+  `deletable_xp` tinyint(1) NOT NULL,
+  `link_name` text NOT NULL,
+  `link_href` text NOT NULL,
+  `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
+
++ add team columns etc

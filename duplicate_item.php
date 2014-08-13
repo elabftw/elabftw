@@ -46,10 +46,12 @@ if (is_pos_int($newid)) {
         $msg_arr[] = 'Experiment successfully duplicated';
         $_SESSION['infos'] = $msg_arr;
         header('location: experiments.php?mode=edit&id='.$newid.'');
+        exit;
     } else {
         $msg_arr[] = 'Successfully duplicated';
         $_SESSION['infos'] = $msg_arr;
         header('location: database.php?mode=edit&id='.$newid.'');
+        exit;
     }
 } else {
     echo "Something went wrong in the database query. Check the flux capacitor.";

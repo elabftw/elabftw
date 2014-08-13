@@ -36,7 +36,7 @@ if (isset($_GET['type']) && !empty($_GET['type']) && is_pos_int($_GET['type'])) 
     $msg_arr[] = 'Wrong item type !';
     $_SESSION['infos'] = $msg_arr;
     header('location: index.php');
-    exit();
+    exit;
 }
 
 
@@ -58,20 +58,24 @@ if ($type === 'experiments') {
         // if there is no template, title is 'Untitled' and the body is the default exp_tpl
         $title = 'Untitled';
         // SQL to get body
-        $sql = "SELECT body FROM experiments_templates WHERE userid = 0";
+        $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team";
         $get_body = $pdo->prepare($sql);
-        $get_body->execute();
+        $get_body->execute(array(
+            'team' => $_SESSION['team_id']
+        ));
         $experiments_templates = $get_body->fetch();
         $body = $experiments_templates['body'];
     }
 
     // what will be the status ?
-    // go pick what is the default status upon creating experiment
+    // go pick what is the default status for the team
     // there should be only one because upon making a status default,
     // all the others are made not default
-    $sql = 'SELECT id FROM status WHERE is_default = true LIMIT 1';
+    $sql = "SELECT id FROM status WHERE is_default = true AND team = :team_id LIMIT 1";
     $req = $pdo->prepare($sql);
-    $req->execute();
+    $req->execute(array(
+        'team_id' => $_SESSION['team']
+    ));
     $status = $req->fetchColumn();
 
     // if there is no is_default status
@@ -84,9 +88,10 @@ if ($type === 'experiments') {
     }
 
     // SQL for create experiments
-    $sql = "INSERT INTO experiments(title, date, body, status, elabid, visibility, userid) VALUES(:title, :date, :body, :status, :elabid, :visibility, :userid)";
+    $sql = "INSERT INTO experiments(team, title, date, body, status, elabid, visibility, userid) VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
     $req = $pdo->prepare($sql);
     $result = $req->execute(array(
+        'team' => $_SESSION['team_id'],
         'title' => $title,
         'date' => kdate(),
         'body' => $body,
@@ -105,9 +110,10 @@ if ($type === 'experiments') {
     $get_tpl_body = $get_tpl->fetch();
 
     // SQL for create DB item
-    $sql = "INSERT INTO items(title, date, body, userid, type) VALUES(:title, :date, :body, :userid, :type)";
+    $sql = "INSERT INTO items(team, title, date, body, userid, type) VALUES(:team, :title, :date, :body, :userid, :type)";
     $req = $pdo->prepare($sql);
     $result = $req->execute(array(
+        'team' => $_SESSION['team_id'],
         'title' => 'Untitled',
         'date' => kdate(),
         'body' => $get_tpl_body['template'],
@@ -135,10 +141,11 @@ if ($result) {
     $_SESSION['infos'] = $msg_arr;
     if ($type === 'experiments') {
         header('location: experiments.php?mode=edit&id='.$newid.'');
+        exit;
     } else {
         header('location: database.php?mode=edit&id='.$newid.'');
+        exit;
     }
 } else {
     die();
 }
-

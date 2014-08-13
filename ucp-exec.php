@@ -181,7 +181,7 @@ if( ($result) && ($numrows === 1) ) {
         $_SESSION['errors'] = $msg_arr;
         session_write_close();
         header("location: ucp.php");
-        exit();
+        exit;
     }
 
     // SQL for update profile
@@ -431,12 +431,13 @@ if($errflag) {
     $_SESSION['errors'] = $msg_arr;
     session_write_close();
     header("location: ucp.php");
-    exit();
+    exit;
 }
 elseif($infoflag){
     $_SESSION['infos'] = $infomsg_arr;
     session_write_close();
     header("location: ucp.php");
+    exit;
     // end infobox
 } else {
     header("location: ucp.php");

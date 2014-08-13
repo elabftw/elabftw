@@ -120,6 +120,7 @@ switch($_GET['type']) {
         ));
         if ($result) {
             header("Location: database.php?mode=view&id=$id");
+            exit;
         } else {
             die('SQL failed');
         }

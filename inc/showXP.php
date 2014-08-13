@@ -36,9 +36,12 @@ if (isset($_SESSION['prefs']['theme'])) {
     <a href='#' class='trigger'><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/duplicate.png" alt="" /> Create from template</a> | 
 <?php
 // 'List all' dropdown menu
-$sql = "SELECT id, name FROM status";
+$sql = "SELECT id, name FROM status WHERE team = :team_id";
 $req = $pdo->prepare($sql);
-$req->execute();
+$req->execute(array(
+    'team_id' => $_SESSION['team_id']
+));
+
 echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/search.png' alt='search' /> List all <select onchange=go_url(this.value)><option value=''>--------</option>";
 while ($status = $req->fetch()) {
     echo "<option value='search.php?type=experiments&status=".$status['id']."'>";

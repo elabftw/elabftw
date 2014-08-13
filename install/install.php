@@ -35,7 +35,7 @@ require_once '../inc/functions.php';
 // Check if there is already a config file, redirect to index if yes.
 if (file_exists('../admin/config.php')) {
     header('Location: ../install/index.php');
-    die();
+    exit;
 }
 
 // POST data
@@ -68,7 +68,6 @@ $path = substr(realpath(__FILE__), 0, -20);
 $path = md5($path);
 
 $sql = "INSERT INTO config (conf_name, conf_value) VALUES
-    ('lab_name', 'eLab'),
     ('path', '$path'),
     ('admin_validate', '0'),
     ('link_name', 'Wiki'),
@@ -107,10 +106,11 @@ if (file_put_contents($config_file, $config)) {
     now you need to <strong>register</strong> your account (you will have admin rights).';
     $_SESSION['infos'] = $infos_arr;
     header('Location: ../register.php');
+    exit;
 
 } else {
     header('Content-Type: text/x-delimtext; name="config.php"');
     header('Content-disposition: attachment; filename=config.php');
     echo $config;
-    exit();
+    exit;
 }

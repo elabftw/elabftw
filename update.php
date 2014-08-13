@@ -620,14 +620,50 @@ echo add_field ('users', 'close_warning', "TINYINT(1) UNSIGNED NOT NULL DEFAULT 
 
 // BIG TEAM UPDATE
 
-CREATE TABLE IF NOT EXISTS `teams` (
-`team_id` int(10) unsigned NOT NULL,
-  `team_name` text NOT NULL,
-  `admin_validate` tinyint(1) NOT NULL,
-  `deletable_xp` tinyint(1) NOT NULL,
-  `link_name` text NOT NULL,
-  `link_href` text NOT NULL,
-  `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
+// CREATE table teams
+$sql = "SHOW TABLES";
+$req = $pdo->prepare($sql);
+$req->execute();
+$table_is_here = false;
+while ($show = $req->fetch()) {
+    if (in_array('teams', $show)) {
+        $table_is_here = true;
+    }
+}
 
-+ add team columns etc
+if (!$table_is_here) {
+    $create_sql = "CREATE TABLE IF NOT EXISTS `teams` (
+    `team_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+      `team_name` text NOT NULL,
+      `admin_validate` tinyint(1) NOT NULL,
+      `deletable_xp` tinyint(1) NOT NULL,
+      `link_name` text NOT NULL,
+      `link_href` text NOT NULL,
+      `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY ( `team_id` )
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8";
+    $req = $pdo->prepare($create_sql);
+    $result = $req->execute();
+
+    // Populate table
+    $sql = "INSERT INTO teams (team_name, deletable_xp, link_name, link_href) VALUES
+        ('".get_config('lab_name')."', 0, '".get_config('link_name')."', '".get_config('link_href')."')";
+    $req = $pdo->prepare($sql);
+    $result2 = $req->execute();
+
+    if($result && $result2) {
+        echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n";
+        echo ">>> BIG UPDATE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
+        echo ">>> One eLabFTW install can now host several teams !\n";
+        echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n";
+    } else {
+        die($die_msg);
+    }
+
+} else {
+    echo "Table 'teams' already exists. Nothing to do.\n";
+}
+
+// Remove the configs from the config table because now they are in the teams table
+
+// add team columns

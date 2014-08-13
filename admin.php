@@ -379,13 +379,12 @@ while ($items_types = $req->fetch()) {
 // get what is the default experiment template
 $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1";
 $req = $pdo->prepare($sql);
-$req->execute(array(
-    'team' => $_SESSION['team_id']
-));
+$req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
+$req->execute();
 $exp_tpl = $req->fetch();
 ?>
     <h3>EDIT DEFAULT EXPERIMENT TEMPLATE</h3>
-    <p>This is the default text when one creates an experiment.</p>
+    <p>This is the default text when someone creates an experiment.</p>
     <form action='admin-exec.php' method='post'>
     <input type='hidden' name='default_exp_tpl' value='1' />
     <textarea class='mceditable' name='default_exp_tpl' />

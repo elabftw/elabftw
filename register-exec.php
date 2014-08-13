@@ -135,58 +135,92 @@ if ($errflag) {
 
 // Registration date is stored in epoch
 $register_date = time();
-// If it's the first user, make him admin (just after the install process usually)
-$sql = "SELECT COUNT(*) FROM users WHERE is_admin = 1 AND team = $team";
+
+// If it's the first user ever, make him sysadmin
+$sql = "SELECT COUNT(*) AS usernb FROM users";
 $req = $pdo->prepare($sql);
 $req->execute();
 $test = $req->fetch();
-// if there is no admin
-if ($test[0] == 0) {
-    // next user will be admin
-    $is_admin = 1;
+// if there is no users
+if ($test['usernb'] == 0) {
+    // we are just after install, next user will be sysadmin
+    $group = 1; // sysadmins group
 } else {
-    $is_admin = 0;
+    $group = 4; // users group
 }
 
-// If all is good => registration
-// we don't want admin validation if it's the first time we register an admin account
-if (get_config('admin_validate')  == 1 && $is_admin == 0) {
-    $sql = "INSERT INTO users(
-        username,
-        firstname,
-        lastname,
-        email,
-        password,
-        team,
-        salt,
-        register_date,
-        is_admin
-    ) VALUES(
-        '$username',
-        '$firstname',
-        '$lastname',
-        '$email',
-        '$passwordHash',
-        '$team',
-        '$salt',
-        '$register_date',
-        '$is_admin'
-    )";
-
-} else { // no admin validation in config file or it's the first account created
-    $sql = "INSERT INTO users(username, firstname, lastname, email, password, team, salt, register_date, validated, is_admin) VALUES('$username', '$firstname', '$lastname', '$email', '$passwordHash', '$team', '$salt', '$register_date', '1', '$is_admin')";
+// If it's the first user of a team, make him admin
+$sql = "SELECT COUNT(*) AS usernb FROM users WHERE team = :team";
+$req = $pdo->prepare($sql);
+$req->bindParam(':team', $team);
+$req->execute();
+$test = $req->fetch();
+// if there is no users
+if ($test['usernb'] == 0) {
+    // the team is freshly created, next user will be admin
+    $group = 2; // admins group
+} else {
+    $group = 4; // users group
 }
 
-$result = $pdo->exec($sql);
+// WILL NEW USER BE VALIDATED ?
+// here an admin or sysadmin won't need validation
+if (get_config('admin_validate')  == 1 && $group == 4) { // validation is required for normal user
+    $validated = 0; // so new user will need validation
+} else {
+    $validated = 1;
+}
+
+// *****************
+//   REGISTRATION
+// *****************
+
+$sql = "INSERT INTO users (
+    `username`,
+    `firstname`,
+    `lastname`,
+    `email`,
+    `password`,
+    `team`,
+    `group`,
+    `salt`,
+    `register_date`,
+    `validated`
+) VALUES (
+    :username,
+    :firstname,
+    :lastname,
+    :email,
+    :passwordHash,
+    :team,
+    :group,
+    :salt,
+    :register_date,
+    :validated);";
+$req = $pdo->prepare($sql);
+$req->bindParam(':username', $username);
+$req->bindParam(':firstname', $firstname);
+$req->bindParam(':lastname', $lastname);
+$req->bindParam(':email', $email);
+$req->bindParam(':passwordHash', $passwordHash);
+$req->bindParam(':team', $team);
+$req->bindParam(':group', $group);
+$req->bindParam(':salt', $salt);
+$req->bindParam(':register_date', $register_date);
+$req->bindParam(':validated', $validated);
+
+$result = $req->execute();
+
 //Check whether the query was successful or not
 if ($result) {
     $msg_arr = array();
     // only send an email if validation is needed and smtp config is set
-    if (get_config('admin_validate') == 1 && $is_admin == 0
+    if (get_config('admin_validate') == 1 && $group == 4
     && get_config('smtp_password' != '')) {
         // we send an email to the admin so he can validate the user
         require_once('lib/swift_required.php');
         // get email of the admin (there might be several admins, but we send only to the first one we find)
+        // TODO
         $sql = "SELECT email FROM users WHERE is_admin = 1 LIMIT 1";
         $req = $pdo->prepare($sql);
         $req->execute();

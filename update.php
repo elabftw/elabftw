@@ -667,3 +667,4 @@ if (!$table_is_here) {
 // Remove the configs from the config table because now they are in the teams table
 
 // add team columns
+// make body of exp null

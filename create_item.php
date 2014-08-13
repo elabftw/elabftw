@@ -71,18 +71,18 @@ if ($type === 'experiments') {
     // go pick what is the default status for the team
     // there should be only one because upon making a status default,
     // all the others are made not default
-    $sql = "SELECT id FROM status WHERE is_default = true AND team = :team_id LIMIT 1";
+    $sql = "SELECT id FROM status WHERE is_default = true AND team = :team LIMIT 1";
     $req = $pdo->prepare($sql);
-    $req->execute(array(
-        'team_id' => $_SESSION['team']
-    ));
+    $req->bindParam(':team', $_SESSION['team_id']);
+    $req->execute();
     $status = $req->fetchColumn();
 
     // if there is no is_default status
     // we take the first status that come
     if (!$status) {
-        $sql = 'SELECT id FROM status LIMIT 1';
+        $sql = 'SELECT id FROM status WHERE team = :team LIMIT 1';
         $req = $pdo->prepare($sql);
+        $req->bindParam(':team', $_SESSION['team_id']);
         $req->execute();
         $status = $req->fetchColumn();
     }

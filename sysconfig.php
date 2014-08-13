@@ -23,10 +23,10 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-/* superadmin.php - for administration of the elabs */
+/* sysconfig.php - configuration system */
 require_once 'inc/common.php';
-if ($_SESSION['is_admin'] != 1) {
-    die('You are not admin !');
+if ($_SESSION['is_sysadmin'] != 1) {
+    die('You are not Sysadmin !');
 }
 $page_title = 'eLabFTW configuration';
 require_once 'inc/head.php';

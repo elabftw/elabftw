@@ -89,17 +89,30 @@ $numrows = $req->rowCount();
 //Check whether the query was successful or not
 if ($result) {
     if ($numrows === 1) {
-        //Login Successful
+
+        // **********************
+        //    LOGIN SUCCESSFUL
+        // **********************
+
         $data = $req->fetch();
         // Store userid and permissions in $_SESSION
         session_regenerate_id();
         $_SESSION['auth'] = 1;
         $_SESSION['path'] = get_config('path');
         $_SESSION['userid'] = $data['userid'];
+        $_SESSION['team_id'] = $data['team'];
         // Used in the menu
         $_SESSION['username'] = $data['username'];
-        $_SESSION['team_id'] = $data['team'];
-        $_SESSION['is_admin'] = $data['is_admin'];
+        // load permissions
+        $perm_sql = "SELECT * FROM groups WHERE group_id = :group_id LIMIT 1";
+        $perm_req = $pdo->prepare($perm_sql);
+        $perm_req->bindParam(':group_id', $data['group']);
+        $perm_req->execute();
+        $group = $perm_req->fetch(PDO::FETCH_ASSOC);
+
+        $_SESSION['is_admin'] = $group['is_admin'];
+        $_SESSION['is_sysadmin'] = $group['is_sysadmin'];
+
         // PREFS
         $_SESSION['prefs'] = array('theme' => $data['theme'],
             'display' => $data['display'],

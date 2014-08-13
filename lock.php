@@ -45,16 +45,23 @@ switch($_GET['type']) {
 
     // Locking experiment
     case 'experiments':
-    // Do we have can_lock set to 1 ?
-    $sql = "SELECT can_lock FROM users WHERE userid = :userid";
+    // Is the user in a group with can_lock set to 1 ?
+    // 1. get what is the group of the user
+    $sql = "SELECT * FROM users WHERE userid = :userid LIMIT 1";
     $req = $pdo->prepare($sql);
-    $req->execute(array(
-        'userid' => $_SESSION['userid']
-    ));
+    $req->bindParam(':userid', $_SESSION['userid']);
+    $req->execute();
+    $user = $req->fetch();
+
+    // 2. check if this group has locking rights
+    $sql = "SELECT can_lock FROM groups WHERE group_id = :usergroup";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':usergroup', $user['group']);
+    $req->execute();
     $can_lock = $req->fetchColumn(); // can be 0 or 1
 
     // We don't have can_lock, but maybe it's our XP, so we can lock it
-    if ($can_lock === 0 && $action === 1) {
+    if ($can_lock == 0 && $action === 1) {
         // Is it his own XP ?
         $sql = "SELECT userid FROM experiments WHERE id = :id";
         $req = $pdo->prepare($sql);
@@ -94,8 +101,8 @@ switch($_GET['type']) {
             exit();
         }
     }
-
-        $sql = "UPDATE experiments SET locked = :action, lockedby = :lockedby WHERE id = :id";
+    // The actual locking action (and we add a timestamp in the lockedwhen column)
+        $sql = "UPDATE experiments SET locked = :action, lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE id = :id";
         $req = $pdo->prepare($sql);
         $result = $req->execute(array(
             'action' => $action,

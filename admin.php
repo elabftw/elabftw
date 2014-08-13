@@ -60,7 +60,6 @@ if ($count > 0) {
     }
     $message .= "</ul><div class='center'>
     <button class='button' type='submit'>Validate users</button></div>";
-    var_dump($message);
     display_message('error', $message);
     // as this will 'echo', we need to call it at the right moment. It will not go smoothly into $message.
     $formKey->output_formkey();
@@ -415,7 +414,7 @@ $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
 $req->execute();
 ?>
 <p style='text-align:justify'>This page will allow you to import a .csv (Excel spreadsheet) file into the database.
-Firt you need to open your (.xls/.xlsx) file in Excel or Libreoffice and save it as .csv.
+First you need to open your (.xls/.xlsx) file in Excel or Libreoffice and save it as .csv.
 In order to have a good import, the first column should be the title. The rest of the columns will be imported in the body. You can make a tiny import of 3 lines to see if everything works before you import a big file.
 <b>You should make a backup of your database before importing thousands of items !</b></p>
 

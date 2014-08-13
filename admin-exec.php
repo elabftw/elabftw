@@ -120,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
     exit;
 }
 
-// TEAM CONFIGURATION FORM COMING FROM CONFIGURATION.PHP
+// TEAM CONFIGURATION FORM COMING FROM SYSCONFIG.PHP
 // ADD A NEW TEAM
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team'])) {
     $new_team_name = filter_var($_POST['new_team'], FILTER_SANITIZE_STRING);
@@ -132,12 +132,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team'])) {
     if ($result) {
         $infos_arr[] = 'Team added successfully.';
         $_SESSION['infos'] = $infos_arr;
-        header('Location: configuration.php');
+        header('Location: sysconfig.php');
         exit;
     } else {
         $errors_arr[] = 'There was a problem in the SQL request. Report a bug !';
         $_SESSION['errors'] = $errors_arr;
-        header('Location: configuration.php');
+        header('Location: sysconfig.php');
         exit;
     }
 }
@@ -158,18 +158,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'
     if ($result) {
         $infos_arr[] = 'Team edited successfully.';
         $_SESSION['infos'] = $infos_arr;
-        header('Location: configuration.php');
+        header('Location: sysconfig.php');
         exit;
     } else {
         $errors_arr[] = 'There was a problem in the SQL request. Report a bug !';
         $_SESSION['errors'] = $errors_arr;
-        header('Location: configuration.php');
+        header('Location: sysconfig.php');
         exit;
     }
 }
 
 
-// MAIN CONFIGURATION FORM COMING FROM CONFIGURATION.PHP (with form_key)
+// MAIN CONFIGURATION FORM COMING FROM SYSCONFIG.PHP (with form_key)
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
     // Check the form_key
     if (!isset($_POST['form_key']) || !$formKey->validate()) {
@@ -238,12 +238,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
     if ($result) {
         $infos_arr[] = 'Configuration updated successfully.';
         $_SESSION['infos'] = $infos_arr;
-        header('Location: configuration.php');
+        header('Location: sysconfig.php');
         exit;
     } else {
         $errors_arr[] = 'There was a problem in the SQL request. Report a bug !';
         $_SESSION['errors'] = $errors_arr;
-        header('Location: configuration.php');
+        header('Location: sysconfig.php');
         exit;
     }
 }

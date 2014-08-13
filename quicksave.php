@@ -25,7 +25,7 @@ if (is_pos_int($_POST['id'])) {
     die('Bad id value.');
 }
 
-// we update the name of a team via configuration.php
+// we update the name of a team via sysconfig.php
 if (isset($_POST['team_name'])) {
     $team_name = filter_var($_POST['team_name'], FILTER_SANITIZE_STRING);
     $sql = "UPDATE teams

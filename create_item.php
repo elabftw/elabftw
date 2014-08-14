@@ -122,28 +122,16 @@ if ($type === 'experiments') {
     ));
 }
 
-// Get what is the item id we just created
-if ($type === 'experiments') {
-    $sql = "SELECT id FROM experiments WHERE userid = :userid ORDER BY id DESC LIMIT 0,1";
-} else {
-    $sql = "SELECT id FROM items WHERE userid = :userid ORDER BY id DESC LIMIT 0,1";
-}
-$req = $pdo->prepare($sql);
-$req->bindParam(':userid', $_SESSION['userid']);
-$req->execute();
-$data = $req->fetch();
-$newid = $data['id'];
-
 // Check if insertion is successful and redirect to the newly created experiment in edit mode
 if ($result) {
     // info box
     $msg_arr[] = 'New item successfully created.';
     $_SESSION['infos'] = $msg_arr;
     if ($type === 'experiments') {
-        header('location: experiments.php?mode=edit&id='.$newid.'');
+        header('location: experiments.php?mode=edit&id='.$pdo->lastInsertId().'');
         exit;
     } else {
-        header('location: database.php?mode=edit&id='.$newid.'');
+        header('location: database.php?mode=edit&id='.$pdo->lastInsertId().'');
         exit;
     }
 } else {

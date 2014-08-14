@@ -70,8 +70,6 @@ $path = md5($path);
 $sql = "INSERT INTO config (conf_name, conf_value) VALUES
     ('path', '$path'),
     ('admin_validate', '0'),
-    ('link_name', 'Wiki'),
-    ('link_href', 'https://github.com/NicolasCARPi/elabftw/wiki'),
     ('smtp_address', '173.194.66.108'),
     ('smtp_port', '587'),
     ('smtp_encryption', 'tls'),
@@ -79,7 +77,6 @@ $sql = "INSERT INTO config (conf_name, conf_value) VALUES
     ('smtp_password', 'gmail password'),
     ('proxy', ''),
     ('debug', '0'),
-    ('deletable_xp', '1'),
     ('login_tries', '5'),
     ('ban_time', '60');";
 $req = $pdo->prepare($sql);

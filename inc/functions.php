@@ -613,6 +613,20 @@ function make_pdf($id, $type, $out = 'browser')
     if ($type === 'experiments') {
         $elabid = $data['elabid'];
     }
+    if ($data['locked'] == '1' && $type == 'experiments') {
+        // get info about the locker
+        $sql = "SELECT firstname,lastname FROM users WHERE userid = :userid LIMIT 1";
+        $reqlock = $pdo->prepare($sql);
+        $reqlock->execute(array(
+            'userid' => $data['lockedby']
+        ));
+        $lockuser = $reqlock->fetch();
+
+        // separate date and time
+        $lockdate = explode(' ', $data['lockedwhen']);
+        // this will be added after the URL
+        $lockinfo = "<p>Locked by ".$lockuser['firstname']." ".$lockuser['lastname']." on ".$lockdate[0]." at ".$lockdate[1].".</p>";
+    }
     $req->closeCursor();
 
     // SQL to get firstname + lastname
@@ -774,6 +788,10 @@ function make_pdf($id, $type, $out = 'browser')
         $content .= "<p>URL : <a href='".$full_url."'>".$full_url."</a></p>";
     }
 
+
+    if (isset($lockinfo)) {
+        $content .= $lockinfo;
+    }
 
 
     // Generate pdf with mpdf

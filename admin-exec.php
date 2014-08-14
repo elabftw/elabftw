@@ -154,7 +154,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team'])) {
     $req->bindValue(':team', $new_team_id);
     $result3 = $req->execute();
 
-    if ($result1 && $result2 && $result3) {
+    // now we need to insert a new default experiment template for the newly created team
+    $sql = "INSERT INTO `experiments_templates` (`team`, `body`, `name`, `userid`) VALUES
+    (':team', '<p><span style=\"font-size: 14pt;\"><strong>Goal :</strong></span></p>
+    <p>&nbsp;</p>
+    <p><span style=\"font-size: 14pt;\"><strong>Procedure :</strong></span></p>
+    <p>&nbsp;</p>
+    <p><span style=\"font-size: 14pt;\"><strong>Results :</strong></span></p><p>&nbsp;</p>', 'default', 0);";
+    $req = $pdo->prepare($sql);
+    $req->bindValue(':team', $new_team_id);
+    $result4 = $req->execute();
+    if ($result1 && $result2 && $result3 && $result4) {
         $infos_arr[] = 'Team added successfully.';
         $_SESSION['infos'] = $infos_arr;
         header('Location: sysconfig.php');

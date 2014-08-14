@@ -7,6 +7,20 @@ $die_msg = "There was a problem in the database update :/ Please report a bug : 
 
 require_once 'inc/functions.php';
 
+// make a simple query
+function q($sql) {
+    global $pdo;
+    try {
+        $req = $pdo->prepare($sql);
+        $req->execute();
+    }
+    catch (PDOException $e)
+    {
+        echo $e->getMessage();
+        die();
+    }
+}
+
 function add_field($table, $field, $params, $added, $not_added) {
     global $pdo;
     // first test if it's here already
@@ -293,6 +307,7 @@ if ($req->rowCount() > 0) {
 // ADD DELETABLE_XP CONFIG
 // check if we need to add it
 
+/*
 if (defined('DELETABLE_XP'))  {
     echo "DELETABLE_XP already set. Nothing to do.\n";
 } else {
@@ -305,6 +320,7 @@ if (defined('DELETABLE_XP'))  {
         echo "Couldn't add the DELETEABLE_XP option in config file, add it manually (see the config.php-EXAMPLE file).\n";
     }
 }
+ */
 
 // ADD experiments_comments table
 $sql = "SHOW TABLES";
@@ -564,7 +580,7 @@ $sql = "SELECT COUNT(id) FROM experiments_templates WHERE userid = 0";
 $req = $pdo->prepare($sql);
 $req->execute();
 $count = $req->fetch();
-if ($count[0] === "1") {
+if ($count[0] > "0") {
     echo "Default experiment template already set. Nothing to do.\n";
 } else {
     // we need to add it
@@ -618,7 +634,7 @@ if (!$table_is_here) {
 echo add_field ('users', 'close_warning', "TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER sc_todo", ">>> New preference to ask confirmation before closing an edition window (go in UCP to check it).\n", "Column 'close_warning' already exists. Nothing to do.\n");
 
 
-// BIG TEAM UPDATE
+// BIG TEAM AND GROUPS UPDATE
 
 // CREATE table teams
 $sql = "SHOW TABLES";
@@ -631,40 +647,74 @@ while ($show = $req->fetch()) {
     }
 }
 
+
+
+// BIG update coming up
 if (!$table_is_here) {
-    $create_sql = "CREATE TABLE IF NOT EXISTS `teams` (
+    // create teams table
+    q("CREATE TABLE IF NOT EXISTS `teams` (
     `team_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
       `team_name` text NOT NULL,
-      `admin_validate` tinyint(1) NOT NULL,
       `deletable_xp` tinyint(1) NOT NULL,
       `link_name` text NOT NULL,
       `link_href` text NOT NULL,
       `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY ( `team_id` )
-    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8";
-    $req = $pdo->prepare($create_sql);
-    $result = $req->execute();
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8");
+    // populate table teams
+    q("INSERT INTO teams (team_name, deletable_xp, link_name, link_href) VALUES
+     ('".get_config('lab_name')."', '".get_config('deletable_xp')."', '".get_config('link_name')."', '".get_config('link_href')."')");
+    // add teams and group to other tables
+    q("ALTER TABLE experiments ADD team int(10) unsigned not null after id;");
+    q("ALTER TABLE items ADD team int(10) unsigned not null after id;");
+    q("ALTER TABLE items_types ADD team int(10) unsigned not null after id;");
+    q("ALTER TABLE status ADD team int(10) unsigned not null after id;");
+    q("ALTER TABLE users ADD team int(10) unsigned not null after password;");
+    q("ALTER TABLE users ADD usergroup int(10) unsigned not null after team;");
+    // populate tables
+    q("UPDATE experiments SET team = 1;");
+    q("UPDATE items SET team = 1;");
+    q("UPDATE items_types SET team = 1;");
+    q("UPDATE status SET team = 1;");
+    q("UPDATE users SET team = 1;");
+    q("UPDATE users SET usergroup = 1 WHERE is_admin = 1;");
+    q("UPDATE users SET usergroup = 4 WHERE is_admin = 0;");
+    q("UPDATE users SET usergroup = 3 WHERE can_lock = 1;");
+    // remove unused fields
+    q("ALTER  users DROP is_admin;");
+    q("ALTER  users DROP can_lock;");
+    // create table groups
+    q("CREATE TABLE IF NOT EXISTS `groups` (
+    `group_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+      `group_name` text NOT NULL,
+      `is_sysadmin` tinyint(1) NOT NULL,
+      `is_admin` text NOT NULL,
+      `can_lock` text NOT NULL,
+        PRIMARY KEY ( `group_id` )
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8");
 
     // Populate table
-    $sql = "INSERT INTO teams (team_name, deletable_xp, link_name, link_href) VALUES
-        ('".get_config('lab_name')."', 0, '".get_config('link_name')."', '".get_config('link_href')."')";
-    $req = $pdo->prepare($sql);
-    $result2 = $req->execute();
+    q("INSERT INTO `groups` (`group_id`, `group_name`, `is_sysadmin`, `is_admin`, `can_lock`) VALUES
+    (1, 'Sysadmins', 1, 1, 0),
+    (2, 'Admins', 0, 1, 0),
+    (3, 'Chiefs', 0, 1, 1),
+    (4, 'Users', 0, 0, 0);");
 
-    if($result && $result2) {
-        echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n";
-        echo ">>> BIG UPDATE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
-        echo ">>> One eLabFTW install can now host several teams !\n";
-        echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n";
-    } else {
-        die($die_msg);
-    }
+    // Remove the configs from the config table because now they are in the teams table
+    q("DELETE FROM `config` WHERE `config`.`conf_name` = 'deletable_xp';
+    DELETE FROM `config` WHERE `config`.`conf_name` = 'link_name';
+    DELETE FROM `config` WHERE `config`.`conf_name` = 'link_href';
+    DELETE FROM `config` WHERE `config`.`conf_name` = 'lab_name'");
+
+    echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n";
+    echo ">>> BIG UPDATE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
+    echo ">>> One eLabFTW install can now host several teams !\n";
+    echo ">>> There is now groups with set of permissions.       \n";
+    echo ">>> There is now a new sysadmin group for elabftw configuration\n";
+    echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n";
 
 } else {
     echo "Table 'teams' already exists. Nothing to do.\n";
 }
 
-// Remove the configs from the config table because now they are in the teams table
 
-// add team columns
-// make body of exp null

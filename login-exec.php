@@ -106,7 +106,7 @@ if ($result) {
         // load permissions
         $perm_sql = "SELECT * FROM groups WHERE group_id = :group_id LIMIT 1";
         $perm_req = $pdo->prepare($perm_sql);
-        $perm_req->bindParam(':group_id', $data['group']);
+        $perm_req->bindParam(':group_id', $data['usergroup']);
         $perm_req->execute();
         $group = $perm_req->fetch(PDO::FETCH_ASSOC);
 

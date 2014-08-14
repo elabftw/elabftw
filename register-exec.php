@@ -182,7 +182,7 @@ $sql = "INSERT INTO users (
     `email`,
     `password`,
     `team`,
-    `group`,
+    `usergroup`,
     `salt`,
     `register_date`,
     `validated`
@@ -193,7 +193,7 @@ $sql = "INSERT INTO users (
     :email,
     :passwordHash,
     :team,
-    :group,
+    :usergroup,
     :salt,
     :register_date,
     :validated);";
@@ -204,7 +204,7 @@ $req->bindParam(':lastname', $lastname);
 $req->bindParam(':email', $email);
 $req->bindParam(':passwordHash', $passwordHash);
 $req->bindParam(':team', $team);
-$req->bindParam(':group', $group);
+$req->bindParam(':usergroup', $group);
 $req->bindParam(':salt', $salt);
 $req->bindParam(':register_date', $register_date);
 $req->bindParam(':validated', $validated);
@@ -219,7 +219,7 @@ if ($result) {
         // we send an email to the admin so he can validate the user
         require_once('lib/swift_required.php');
         // get email of the admin of the team (there might be several admins, but we send only to the first one we find)
-        $sql = "SELECT * FROM users WHERE `group` = 2 AND `team` = :team LIMIT 1";
+        $sql = "SELECT * FROM users WHERE `usergroup` = 1 OR `usergroup` = 2 AND `team` = :team LIMIT 1";
         $req = $pdo->prepare($sql);
         $req->bindParam(':team', $team);
         $req->execute();
@@ -227,20 +227,20 @@ if ($result) {
         // Create the message
         $message = Swift_Message::newInstance()
         // Give the message a subject
-        ->setSubject('[eLabFTW] New user registred')
+        ->setSubject('[eLabFTW] New user registered')
         // Set the From address with an associative array
-        ->setFrom(array('elabftw.net@gmail.com' => 'eLabFTW'))
+        ->setFrom(array(get_config('smtp_username') => get_config('smtp_username')))
         // Set the To addresses with an associative array
         ->setTo(array($admin['email'] => 'Admin eLabFTW'))
         // Give it a body
         ->setBody(
             'Hi,
-            Someone registered a new account on eLabFTW. Head to the admin panel to activate the account !
+Someone registered a new account on eLabFTW. Head to the admin panel to activate the account !
 
-            ~~
-            Email sent by eLabFTW
-            http://www.elabftw.net
-            Free open-source Lab Manager'
+~~
+Email sent by eLabFTW
+http://www.elabftw.net
+Free open-source Lab Manager'
         );
         $transport = Swift_SmtpTransport::newInstance(
             get_config('smtp_address'),

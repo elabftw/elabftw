@@ -56,7 +56,7 @@ switch($_GET['type']) {
     // 2. check if this group has locking rights
     $sql = "SELECT can_lock FROM groups WHERE group_id = :usergroup";
     $req = $pdo->prepare($sql);
-    $req->bindParam(':usergroup', $user['group']);
+    $req->bindParam(':usergroup', $user['usergroup']);
     $req->execute();
     $can_lock = $req->fetchColumn(); // can be 0 or 1
 

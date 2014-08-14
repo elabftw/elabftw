@@ -1,5 +1,10 @@
 /* Changelog for eLabFTW */
 
+Version 0.10
+* Support of several teams on the same install
+* Added groups for better permissions control
+* Minor bugs fixing
+
 Version 0.9.5
 * Use of bower to keep track of dependencies
 * HTML5 video and audio can now be added

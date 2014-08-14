@@ -215,14 +215,13 @@ $result = $req->execute();
 if ($result) {
     $msg_arr = array();
     // only send an email if validation is needed and smtp config is set
-    if (get_config('admin_validate') == 1 && $group == 4
-    && get_config('smtp_password' != '')) {
+    if (get_config('admin_validate') == '1' && $group == '4' && get_config('smtp_password') != '') {
         // we send an email to the admin so he can validate the user
         require_once('lib/swift_required.php');
-        // get email of the admin (there might be several admins, but we send only to the first one we find)
-        // TODO
-        $sql = "SELECT email FROM users WHERE is_admin = 1 LIMIT 1";
+        // get email of the admin of the team (there might be several admins, but we send only to the first one we find)
+        $sql = "SELECT * FROM users WHERE `group` = 2 AND `team` = :team LIMIT 1";
         $req = $pdo->prepare($sql);
+        $req->bindParam(':team', $team);
         $req->execute();
         $admin = $req->fetch();
         // Create the message

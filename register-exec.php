@@ -146,22 +146,21 @@ if ($test['usernb'] == 0) {
     // we are just after install, next user will be sysadmin
     $group = 1; // sysadmins group
 } else {
-    $group = 4; // users group
+    // If it's the first user of a team, make him admin
+    $sql = "SELECT COUNT(*) AS usernb FROM users WHERE team = :team";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':team', $team);
+    $req->execute();
+    $test = $req->fetch();
+    // if there is no users
+    if ($test['usernb'] == 0) {
+        // the team is freshly created, next user will be admin
+        $group = 2; // admins group
+    } else {
+        $group = 4; // users group
+    }
 }
 
-// If it's the first user of a team, make him admin
-$sql = "SELECT COUNT(*) AS usernb FROM users WHERE team = :team";
-$req = $pdo->prepare($sql);
-$req->bindParam(':team', $team);
-$req->execute();
-$test = $req->fetch();
-// if there is no users
-if ($test['usernb'] == 0) {
-    // the team is freshly created, next user will be admin
-    $group = 2; // admins group
-} else {
-    $group = 4; // users group
-}
 
 // WILL NEW USER BE VALIDATED ?
 // here an admin or sysadmin won't need validation

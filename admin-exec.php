@@ -132,6 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team'])) {
         'link_name' => 'Wiki',
         'link_href' => 'https://github.com/NicolasCARPi/elabftw/wiki'
     ));
+    $new_team_id = $pdo->lastInsertId();
     // now we need to insert a new default set of status for the newly created team
     $sql = "INSERT INTO status (team, name, color, is_default) VALUES
     (:team, 'Running', '0096ff', 1),
@@ -139,10 +140,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team'])) {
     (:team, 'Need to be redone', 'c0c0c0', 0),
     (:team, 'Fail', 'ff0000', 0);";
     $req = $pdo->prepare($sql);
-    $req->bindParam(':team', $pdo->lastInsertId());
-    $result = $req->execute();
+    $req->bindValue(':team', $new_team_id);
+    $result2 = $req->execute();
 
-    if ($result) {
+    // now we need to insert a new default set of items_types for the newly created team
+    $sql = "INSERT INTO `items_types` (`team`, `name`, `bgcolor`, `template`) VALUES
+(:team, 'Antibody', '31a700', '<p><strong>Host :</strong></p>\r\n<p><strong>Target :</strong></p>\r\n<p><strong>Dilution to use :</strong></p>\r\n<p>Don''t forget to add the datasheet !</p>'),
+(:team, 'Plasmid', '29AEB9', '<p><strong>Concentration : </strong></p>\r\n<p><strong>Resistances : </strong></p>\r\n<p><strong>Backbone :</strong></p>\r\n<p><strong><br /></strong></p>'),
+(:team, 'siRNA', '0064ff', '<p><strong>Sequence :</strong></p>\r\n<p><strong>Target :</strong></p>\r\n<p><strong>Concentration :</strong></p>\r\n<p><strong>Buffer :</strong></p>'),
+(:team, 'Drugs', 'fd00fe', '<p><strong>Action :</strong> &nbsp;<strong> </strong></p>\r\n<p><strong>Concentration :</strong>&nbsp;</p>\r\n<p><strong>Use at :</strong>&nbsp;</p>\r\n<p><strong>Buffer :</strong> </p>'),
+(:team, 'Crystal', '84ff00', '<p>Edit me</p>');";
+    $req = $pdo->prepare($sql);
+    $req->bindValue(':team', $new_team_id);
+    $result3 = $req->execute();
+
+    if ($result1 && $result2 && $result3) {
         $infos_arr[] = 'Team added successfully.';
         $_SESSION['infos'] = $infos_arr;
         header('Location: sysconfig.php');

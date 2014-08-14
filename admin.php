@@ -132,29 +132,6 @@ if ($count > 0) {
                     <input  id='edituser_username' type='text' value='<?php echo $users['username'];?>' name='username' />
                     <label for='edituser_email'>Email</label>
                     <input id='edituser_email' type='email' value='<?php echo $users['email'];?>' name='email' /><br />
-                    Has admin rights ?<select name='is_admin'>
-                    <option value='1'<?php
-                            if($users['is_admin'] == 1) {
-                                echo " selected='selected'";
-                            }
-        ?>
-            >yes</option>
-            <option value='0'<?php
-                            if ($users['is_admin'] == 0) {
-                                echo " selected='selected'";
-                            }
-        ?>
-                            >no</option>
-                    </select>
-        <br />
-                    Can lock experiments of others ?<select name='can_lock'>
-                    <option value='1'<?php
-                            if ($users['can_lock'] == 1) { echo " selected='selected'"; } ?>
-            >yes</option>
-            <option value='0'<?php
-                            if ($users['can_lock'] == 0) { echo " selected='selected'"; } ?>
-                            >no</option>
-                    </select>
         <br />
         <label for'validated'>Has an active account ?</label>
         <select name='validated' id='validated'>
@@ -164,6 +141,28 @@ if ($count > 0) {
             <option value='0'<?php
                 if ($users['validated'] == 0) { echo " selected='selected'"; } ?>
             >no</option>
+        </select>
+        <br />
+        <label for'usergroup'>Group :</label>
+        <select name='usergroup' id='usergroup'>
+<?php
+            if ($_SESSION['is_sysadmin'] == 1) {
+?>
+                <option value='1'<?php
+                        if ($users['usergroup'] == 1) { echo " selected='selected'"; } ?>
+                >Sysadmins</option>
+<?php
+            }
+?>
+            <option value='2'<?php
+                    if ($users['usergroup'] == 2) { echo " selected='selected'"; } ?>
+            >Admins</option>
+            <option value='3'<?php
+                    if ($users['usergroup'] == 3) { echo " selected='selected'"; } ?>
+            >Admin + Lock power</option>
+            <option value='4'<?php
+                    if ($users['usergroup'] == 4) { echo " selected='selected'"; } ?>
+            >Users</option>
         </select>
         <br />
         Reset user password : <input type='password' value='' name='new_password' />

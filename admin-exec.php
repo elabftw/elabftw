@@ -124,11 +124,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
 // ADD A NEW TEAM
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team'])) {
     $new_team_name = filter_var($_POST['new_team'], FILTER_SANITIZE_STRING);
-    $sql = 'INSERT INTO teams (team_name) VALUES (:team_name)';
+    $sql = 'INSERT INTO teams (team_name, deletable_xp, link_name, link_href) VALUES (:team_name, :deletable_xp, :link_name, :link_href)';
     $req = $pdo->prepare($sql);
-    $result = $req->execute(array(
-        'team_name' => $new_team_name
+    $result1 = $req->execute(array(
+        'team_name' => $new_team_name,
+        'deletable_xp' => 1,
+        'link_name' => 'Wiki',
+        'link_href' => 'https://github.com/NicolasCARPi/elabftw/wiki'
     ));
+    // now we need to insert a new default set of status for the newly created team
+    $sql = "INSERT INTO status (team, name, color, is_default) VALUES
+    (:team, 'Running', '0096ff', 1),
+    (:team, 'Success', '00ac00', 0),
+    (:team, 'Need to be redone', 'c0c0c0', 0),
+    (:team, 'Fail', 'ff0000', 0);";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':team', $pdo->lastInsertId());
+    $result = $req->execute();
+
     if ($result) {
         $infos_arr[] = 'Team added successfully.';
         $_SESSION['infos'] = $infos_arr;
@@ -307,20 +320,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
     $lastname = strtoupper(filter_var($_POST['lastname'], FILTER_SANITIZE_STRING));
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-    if ($_POST['is_admin'] == 1) {
-        $is_admin = 1;
-    } else {
-        $is_admin = 0;
-    }
-    if ($_POST['can_lock'] == 1) {
-        $can_lock = 1;
-    } else {
-        $can_lock = 0;
-    }
     if ($_POST['validated'] == 1) {
         $validated = 1;
     } else {
         $validated = 0;
+    }
+    if (is_pos_int($_POST['usergroup'])) {
+        // a non sysadmin cannot put someone sysadmin
+        $usergroup = $_POST['usergroup'];
+        if ($usergroup == 1 && $_SESSION['is_sysadmin'] != 1) {
+            die('Only a sysadmin can put someone sysadmin.');
+        }
+
+    } else {
+        $usergroup = '4';;
     }
     // reset password
     if (isset($_POST['new_password']) && !empty($_POST['new_password']) && isset($_POST['confirm_new_password'])) {
@@ -357,8 +370,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
         lastname = :lastname,
         username = :username,
         email = :email,
-        is_admin = :is_admin,
-        can_lock = :can_lock,
+        usergroup = :usergroup,
         validated = :validated
         WHERE userid = :userid";
     $req = $pdo->prepare($sql);
@@ -367,8 +379,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
         'lastname' => $lastname,
         'username' => $username,
         'email' => $email,
-        'is_admin' => $is_admin,
-        'can_lock' => $can_lock,
+        'usergroup' => $usergroup,
         'validated' => $validated,
         'userid' => $userid
     ));

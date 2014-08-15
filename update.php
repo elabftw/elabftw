@@ -683,6 +683,11 @@ if (!$table_is_here) {
     // remove unused fields
     q("ALTER TABLE users DROP is_admin;");
     q("ALTER TABLE users DROP can_lock;");
+    // add timestamp to locks
+    q("ALTER TABLE `experiments` ADD `lockedwhen` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `lockedby`;");
+    // add team to experiments_templates
+    q("ALTER TABLE `experiments_templates` ADD `team` INT(10) unsigned not null after id;");
+    q("UPDATE experiments_templates SET team = 1;");
     // create table groups
     q("CREATE TABLE IF NOT EXISTS `groups` (
     `group_id` int(10) unsigned NOT NULL AUTO_INCREMENT,

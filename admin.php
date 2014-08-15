@@ -437,6 +437,7 @@ while ($items_types = $req->fetch()) {
     </div>
 </form>
 </div>
+</div>
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // open the file

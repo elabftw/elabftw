@@ -78,11 +78,11 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             $title = stripslashes($zipped['title']);
             // make a title without special char for folder inside .zip
             $clean_title = preg_replace('/[^A-Za-z0-9]/', ' ', $title);
-            $date = $zipped['date'];
+            $zdate = $zipped['date'];
             // name of the folder
             // folder begin with date for experiments
             if ($table == 'experiments') {
-                $folder = $date."-".$clean_title;
+                $folder = $zdate."-".$clean_title;
             } else { // items
                 $itemtype = $zipped['items_typesname'];
                 $folder = $itemtype." - ".$clean_title;
@@ -141,6 +141,10 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             for ($i = 0; $i < $zip->numFiles; $i++) {
                 $manifest .= $zip->getNameIndex($i)."\n";
             }
+            // add info about the creator + timestamp
+            $manifest .= "Zip archive created by ".$users['firstname']." ".$users['lastname']." on ".date('Y.m.d')." at ".date('H:i:s').".\n";
+            $manifest .= "~~~\neLabFTW - Free open source lab manager - http://www.elabftw.net \n";
+            // fix utf8
             $manifest = utf8_encode($manifest);
             $manifest = "\xEF\xBB\xBF".$manifest;
             $manifestpath = 'uploads/export/'.'manifest-'.uniqid();
@@ -163,7 +167,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         echo "<div class='item'>";
         // Get the title if there is only one experiment in the zip
         if (count($id_arr) === 1) {
-            $zipname = $date."-".$clean_title;
+            $zipname = $zdate."-".$clean_title;
         }
         // Display download link (with attribute type=zip for download.php)
         echo "<p>Your ZIP archive is ready :<br />

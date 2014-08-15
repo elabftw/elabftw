@@ -3,7 +3,9 @@
 Version 0.10
 * Support of several teams on the same install
 * Added groups for better permissions control
-* Minor bugs fixing
+* Add MANIFEST file in zip archive
+* Add lock info in pdf
+* Minor bugs fixing and improvements
 
 Version 0.9.5
 * Use of bower to keep track of dependencies

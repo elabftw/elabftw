@@ -1,6 +1,6 @@
 {
   "name": "tinymce",
-  "version": "4.0.26",
+  "version": "4.0.28",
   "description": "Web based JavaScript HTML WYSIWYG editor control.",
   "license": "http://www.tinymce.com/license",
   "keywords": [
@@ -18,14 +18,13 @@
     "composer.json",
     "package.json"
   ],
-  "_release": "4.0.26",
+  "_release": "4.0.28",
   "_resolution": {
     "type": "version",
-    "tag": "4.0.26",
-    "commit": "e078ad02472cd660333d6c0b001c127d98d7aaf7"
+    "tag": "4.0.28",
+    "commit": "b4adcdb83aa98d67fecb318c91d489d28e2aca71"
   },
-  "_source": "https://github.com/tinymce/tinymce-dist.git",
+  "_source": "git://github.com/tinymce/tinymce-dist.git",
   "_target": "~4.0.26",
-  "_originalSource": "tinymce",
-  "_direct": true
+  "_originalSource": "tinymce"
 }

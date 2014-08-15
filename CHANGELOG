@@ -2,6 +2,7 @@
 
 Version 0.10.0
 * Support of several teams on the same install
+* Fixed a bug in the search page
 * Added groups for better permissions control
 * Add MANIFEST file in zip archive
 * Add lock info in pdf

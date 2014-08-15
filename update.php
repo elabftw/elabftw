@@ -681,8 +681,8 @@ if (!$table_is_here) {
     q("UPDATE users SET usergroup = 4 WHERE is_admin = 0;");
     q("UPDATE users SET usergroup = 3 WHERE can_lock = 1;");
     // remove unused fields
-    q("ALTER  users DROP is_admin;");
-    q("ALTER  users DROP can_lock;");
+    q("ALTER TABLE users DROP is_admin;");
+    q("ALTER TABLE users DROP can_lock;");
     // create table groups
     q("CREATE TABLE IF NOT EXISTS `groups` (
     `group_id` int(10) unsigned NOT NULL AUTO_INCREMENT,

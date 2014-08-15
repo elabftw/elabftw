@@ -136,12 +136,28 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             // add CSV file to archive
             $csvpath = make_unique_csv($id, $table);
             $zip->addFile($csvpath, $folder."/".$clean_title.".csv");
-
-            // delete file
-            //unlink('uploads/export/'.$pdfname);
+            // add the MANIFEST file that lists the files in archive
+            $manifest = "";
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $manifest .= $zip->getNameIndex($i)."\n";
+            }
+            $manifest = utf8_encode($manifest);
+            $manifest = "\xEF\xBB\xBF".$manifest;
+            $manifestpath = 'uploads/export/'.'manifest-'.uniqid();
+            $tf = fopen($manifestpath, 'w+');
+            fwrite($tf, $manifest);
+            fclose($tf);
+            $zip->addFile($manifestpath, $folder."/MANIFEST");
 
         } // end foreach
+        // close the archive
         $zip->close();
+        // cleanup
+        unlink($manifestpath);
+        unlink('uploads/export/'.$pdfname);
+        unlink($csvpath);
+
+
 
         // PAGE BEGIN
         echo "<div class='item'>";

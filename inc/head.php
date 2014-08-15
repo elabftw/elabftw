@@ -23,6 +23,8 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+// start chrono for page generation time
+$start = microtime(true);
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -98,11 +100,4 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 </head>
 
 <body>
-<?php // Page generation time
-$time = microtime();
-$time = explode(' ', $time);
-$time = $time[1] + $time[0];
-$start = $time;
-?>
 <section id="container">
-

@@ -36,7 +36,7 @@ $users = $req->fetch();
 
 // BEGIN UCP PAGE
 ?>
-<script src="bower_components/tinymce/tinymce.min.js"></script>
+<script src="js/tinymce/tinymce.min.js"></script>
 
 <div id='accordion'>
     <h3><a href='#infos'>PERSONNAL INFORMATIONS</a></h3>

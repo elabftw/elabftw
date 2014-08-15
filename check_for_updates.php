@@ -72,16 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (strlen(get_config('proxy')) > 0) {
         curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
     }
-    // options to verify the github certificate
-    // set to false by default, set it to true if you're paranoid
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_CAPATH, get_config('path')."/ca_github.com.pem");
+    // options to verify the github certificate (we disable check)
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 
-    // set a timeout of 500 millisecond
-    //curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, 500);
-    // removed because we don't actually need it and it might lead to fail
-    //
     // add user agent
     // http://developer.github.com/v3/#user-agent-required
     curl_setopt($ch, CURLOPT_USERAGENT, "elabftw");

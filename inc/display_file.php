@@ -130,8 +130,8 @@ if ($_GET['mode'] === 'edit') {
     <?php
 }
 ?>
-<script src='bower_components/fancybox/source/jquery.fancybox.pack.js'></script>
-<link rel="stylesheet" href="bower_components/fancybox/source/jquery.fancybox.css" type="text/css" media="screen" />
+<script src='js/fancybox/source/jquery.fancybox.pack.js'></script>
+<link rel="stylesheet" href="js/fancybox/source/jquery.fancybox.css" type="text/css" media="screen" />
 <script>
 $(document).ready(function() {
     // we use fancybox to display thumbnails

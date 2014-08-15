@@ -36,9 +36,9 @@ require_once 'inc/info_box.php';
 require_once 'lib/classes/formkey.class.php';
 $formKey = new formKey();
 ?>
-<script src="bower_components/tinymce/tinymce.min.js"></script>
-<script src="bower_components/raphael/raphael-min.js"></script>
-<script src="bower_components/colorwheel/colorwheel.js"></script>
+<script src="js/tinymce/tinymce.min.js"></script>
+<script src="js/raphael/raphael-min.js"></script>
+<script src="js/colorwheel/colorwheel.js"></script>
 <?php
 // MAIN SQL FOR USERS
 $sql = "SELECT * FROM users WHERE validated = :validated AND team = :team";

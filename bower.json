@@ -1,6 +1,6 @@
 {
   "name": "elabftw",
-  "version": "0.9.5",
+  "version": "0.10.0",
   "homepage": "http://www.elabftw.net",
   "authors": [
     "Nicolas CARPi <nicolas.carpi@curie.fr>"
@@ -20,5 +20,17 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+      "colorwheel",
+      "jquery",
+      "raphael",
+      "fancybox",
+      "jquery-pageslide",
+      "jquery-ui",
+      "jquery.complexify.js",
+      "jquery_jeditable",
+      "keymaster",
+      "tinymce"
+  }
 }

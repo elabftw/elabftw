@@ -1,11 +1,12 @@
 /* Changelog for eLabFTW */
 
-Version 0.10
+Version 0.10.0
 * Support of several teams on the same install
 * Added groups for better permissions control
 * Add MANIFEST file in zip archive
 * Add lock info in pdf
 * Minor bugs fixing and improvements
+* A lot of other things
 
 Version 0.9.5
 * Use of bower to keep track of dependencies

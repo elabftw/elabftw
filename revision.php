@@ -64,6 +64,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'restore' && is_pos_int($_GET[
     $req->bindParam(':body', $revision['body']);
     $req->bindParam(':exp_id', $exp_id, PDO::PARAM_INT);
     $req->execute();
+    header("Location:experiments.php?mode=view&id=$exp_id");
+    exit;
 }
 
 // Get the currently stored body

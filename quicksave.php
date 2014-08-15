@@ -36,6 +36,7 @@ if (isset($_POST['team_name'])) {
         'team_name' => $team_name,
         'team_id' => $id
     ));
+    exit;
 }
 
 // we only update status

@@ -86,9 +86,9 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 <link rel="stylesheet" media="all" href="css/jquery.rating.css" />
 <!-- JAVASCRIPT -->
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
-<script src="bower_components/jquery-ui/ui/minified/jquery-ui.min.js"></script>
+<script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
 <!-- for editable comments -->
-<script src="bower_components/jquery_jeditable/jquery.jeditable.js"></script>
+<script src="bower_components/jeditable/jquery.jeditable.js"></script>
 <!-- for keyboard shortcuts -->
 <script src='bower_components/keymaster/keymaster.js'></script>
 <!-- for stars rating -->

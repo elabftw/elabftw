@@ -31,7 +31,8 @@
     "tag": "2.1.1",
     "commit": "4dec426aa2a6cbabb1b064319ba7c272d594a688"
   },
-  "_source": "https://github.com/jquery/jquery.git",
-  "_target": ">= 1.4.1",
-  "_originalSource": "jquery"
+  "_source": "git://github.com/jquery/jquery.git",
+  "_target": "~2.1.1",
+  "_originalSource": "jquery",
+  "_direct": true
 }

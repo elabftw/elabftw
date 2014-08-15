@@ -8,8 +8,8 @@
     "tag": "v1.6.2",
     "commit": "2172fc23aa52e9b0fb35ec06c9080599be325379"
   },
-  "_source": "https://github.com/madrobby/keymaster.git",
+  "_source": "git://github.com/madrobby/keymaster.git",
   "_target": "~1.6.2",
-  "_originalSource": "madrobby/keymaster",
+  "_originalSource": "keymaster",
   "_direct": true
 }

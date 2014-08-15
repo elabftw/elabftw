@@ -38,7 +38,7 @@
     "tag": "v1.0.0",
     "commit": "c80b13017d883cda425d646699f07577834f8771"
   },
-  "_source": "https://github.com/jweir/colorwheel.git",
+  "_source": "git://github.com/jweir/colorwheel.git",
   "_target": "~1.0.0",
   "_originalSource": "colorwheel",
   "_direct": true

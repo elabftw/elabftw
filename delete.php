@@ -43,7 +43,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
         // EXPERIMENTS
         case 'exp':
             // check if we can delete experiments
-            if (((get_config('deletable_xp') == '0')  &&
+            if (((get_team_config('deletable_xp') == '0')  &&
                 !$_SESSION['is_admin']) ||
                 !is_owned_by_user($id, 'experiments', $_SESSION['userid'])) {
                 $msg_arr[] = "You don't have the rights to delete this experiments.";

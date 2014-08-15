@@ -34,9 +34,11 @@ if (isset($_SESSION['prefs']['display'])) {
 ?>
 <div id='submenu'>
 <?php // SQL to get items names
-$sql = "SELECT * FROM items_types";
+$sql = "SELECT * FROM items_types WHERE team = :team";
 $req = $pdo->prepare($sql);
-$req->execute();
+$req->execute(array(
+    'team' => $_SESSION['team_id']
+));
 
 // 'Create new' dropdown menu
 echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/notepad_add.png' alt='create' /> Create new <select onchange=go_url(this.value)><option value=''>--------</option>";
@@ -122,9 +124,11 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
 } else { // there is no search
     // we show the last 10 uploads
     // get the last id
-    $sql = "SELECT * FROM items ORDER BY id DESC LIMIT 10";
+    $sql = "SELECT * FROM items WHERE team = :team ORDER BY id DESC LIMIT 10";
     $req = $pdo->prepare($sql);
-    $req->execute();
+    $req->execute(array(
+        'team' => $_SESSION['team_id']
+    ));
     $count = $req->rowCount();
     if ($count == 0) {
         $message = "<strong>Welcome to eLabFTW.</strong> 

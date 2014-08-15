@@ -181,7 +181,7 @@ if( ($result) && ($numrows === 1) ) {
         $_SESSION['errors'] = $msg_arr;
         session_write_close();
         header("location: ucp.php");
-        exit();
+        exit;
     }
 
     // SQL for update profile
@@ -338,9 +338,10 @@ if (isset($_POST['new_tpl_form'])) {
     } else {
         $tpl_name = filter_var($_POST['new_tpl_name'], FILTER_SANITIZE_STRING);
         $tpl_body = check_body($_POST['new_tpl_body']);
-        $sql = "INSERT INTO experiments_templates(name, body, userid) VALUES(:name, :body, :userid)";
+        $sql = "INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)";
         $req = $pdo->prepare($sql);
         $result = $req->execute(array(
+            'team' => $_SESSION['team_id'],
             'name' => $tpl_name,
             'body' => $tpl_body,
             'userid' => $_SESSION['userid']
@@ -431,12 +432,13 @@ if($errflag) {
     $_SESSION['errors'] = $msg_arr;
     session_write_close();
     header("location: ucp.php");
-    exit();
+    exit;
 }
 elseif($infoflag){
     $_SESSION['infos'] = $infomsg_arr;
     session_write_close();
     header("location: ucp.php");
+    exit;
     // end infobox
 } else {
     header("location: ucp.php");

@@ -35,7 +35,7 @@ require_once '../inc/functions.php';
 // Check if there is already a config file, redirect to index if yes.
 if (file_exists('../admin/config.php')) {
     header('Location: ../install/index.php');
-    die();
+    exit;
 }
 
 // POST data
@@ -68,11 +68,8 @@ $path = substr(realpath(__FILE__), 0, -20);
 $path = md5($path);
 
 $sql = "INSERT INTO config (conf_name, conf_value) VALUES
-    ('lab_name', 'eLab'),
     ('path', '$path'),
     ('admin_validate', '0'),
-    ('link_name', 'Wiki'),
-    ('link_href', 'https://github.com/NicolasCARPi/elabftw/wiki'),
     ('smtp_address', '173.194.66.108'),
     ('smtp_port', '587'),
     ('smtp_encryption', 'tls'),
@@ -80,7 +77,6 @@ $sql = "INSERT INTO config (conf_name, conf_value) VALUES
     ('smtp_password', 'gmail password'),
     ('proxy', ''),
     ('debug', '0'),
-    ('deletable_xp', '1'),
     ('login_tries', '5'),
     ('ban_time', '60');";
 $req = $pdo->prepare($sql);
@@ -107,10 +103,11 @@ if (file_put_contents($config_file, $config)) {
     now you need to <strong>register</strong> your account (you will have admin rights).';
     $_SESSION['infos'] = $infos_arr;
     header('Location: ../register.php');
+    exit;
 
 } else {
     header('Content-Type: text/x-delimtext; name="config.php"');
     header('Content-disposition: attachment; filename=config.php');
     echo $config;
-    exit();
+    exit;
 }

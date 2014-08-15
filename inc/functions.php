@@ -613,6 +613,20 @@ function make_pdf($id, $type, $out = 'browser')
     if ($type === 'experiments') {
         $elabid = $data['elabid'];
     }
+    if ($data['locked'] == '1' && $type == 'experiments') {
+        // get info about the locker
+        $sql = "SELECT firstname,lastname FROM users WHERE userid = :userid LIMIT 1";
+        $reqlock = $pdo->prepare($sql);
+        $reqlock->execute(array(
+            'userid' => $data['lockedby']
+        ));
+        $lockuser = $reqlock->fetch();
+
+        // separate date and time
+        $lockdate = explode(' ', $data['lockedwhen']);
+        // this will be added after the URL
+        $lockinfo = "<p>Locked by ".$lockuser['firstname']." ".$lockuser['lastname']." on ".$lockdate[0]." at ".$lockdate[1].".</p>";
+    }
     $req->closeCursor();
 
     // SQL to get firstname + lastname
@@ -774,6 +788,10 @@ function make_pdf($id, $type, $out = 'browser')
         $content .= "<p>URL : <a href='".$full_url."'>".$full_url."</a></p>";
     }
 
+
+    if (isset($lockinfo)) {
+        $content .= $lockinfo;
+    }
 
 
     // Generate pdf with mpdf
@@ -1034,6 +1052,27 @@ function get_config($conf_name)
     return $config[$conf_name][0];
 }
 
+/**
+ * Return the value of asked column
+ *
+ * @param string $column The configuration we want to read
+ * @return string The content of the config for the current team
+ */
+function get_team_config($column)
+{
+    global $pdo;
+
+    $sql = "SELECT * FROM `teams` WHERE team_id = :team_id";
+    $req = $pdo->prepare($sql);
+    // remove notice when not logged in
+    if (isset($_SESSION['team_id'])) {
+        $req->execute(array(
+            'team_id' => $_SESSION['team_id']
+        ));
+    }
+    $team_config = $req->fetch();
+    return $team_config[$column];
+}
 /**
  * Will check if an executable is on the system.
  * Only used by check_for_updates.php to check for git.

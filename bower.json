@@ -1,6 +1,6 @@
 {
   "name": "elabftw",
-  "version": "0.9.5",
+  "version": "0.10.0",
   "homepage": "http://www.elabftw.net",
   "authors": [
     "Nicolas CARPi <nicolas.carpi@curie.fr>"
@@ -20,5 +20,17 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "jquery": "~2.1.1",
+    "jquery-ui": "~1.11.1",
+    "colorwheel": "~1.0.0",
+    "fancybox": "~2.1.5",
+    "jquery-pageslide": "*",
+    "jquery.complexify.js": "*",
+    "keymaster": "~1.6.2",
+    "tinymce": "~4.1.3",
+    "raphael": "~2.1.2",
+    "jeditable": "~1.7.3"
+  }
 }

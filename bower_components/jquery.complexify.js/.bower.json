@@ -7,7 +7,7 @@
     "branch": "master",
     "commit": "7daf255588bd9e7428bc41638a9fee8d315a7c66"
   },
-  "_source": "https://github.com/danpalmer/jquery.complexify.js.git",
+  "_source": "git://github.com/danpalmer/jquery.complexify.js.git",
   "_target": "*",
   "_originalSource": "jquery.complexify.js",
   "_direct": true

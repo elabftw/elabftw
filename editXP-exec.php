@@ -63,7 +63,7 @@ if ($errflag) {
     $_SESSION['errors'] = $msg_arr;
     session_write_close();
     header("location: experiments.php?mode=show&id=$id");
-    exit();
+    exit;
 }
 
 // SQL for editXP
@@ -98,6 +98,7 @@ if ($result) {
     unset($_SESSION['new_date']);
     unset($_SESSION['errors']);
     header("location: experiments.php?mode=view&id=$id");
+    exit;
 } else {
     die('Something went wrong in the database query. Check the flux capacitor.');
 }

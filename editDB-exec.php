@@ -63,7 +63,7 @@ if ($errflag) {
     $_SESSION['errors'] = $msg_arr;
     session_write_close();
     header("location: database.php?mode=edit&id=$id");
-    exit();
+    exit;
 }
 
 // SQL for editDB
@@ -90,6 +90,7 @@ if ($result) {
     unset($_SESSION['new_date']);
     unset($_SESSION['errors']);
     header("location: database.php?mode=view&id=$id");
+    exit;
 } else {
     die();
 }

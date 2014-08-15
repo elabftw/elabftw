@@ -39,13 +39,13 @@ require_once 'inc/functions.php';
 
 <div id="logmenu"><p>
 <?php
-if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
+if (isset($_SESSION['auth']) && $_SESSION['is_sysadmin'] === '1') {
     ?>
-    <!-- ADMIN MENU --> 
+    <!-- SYSADMIN MENU --> 
     <a href='https://twitter.com/elabftw'>
     <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/twitter.png' alt='twitter' title='Follow eLabFTW on Twitter !'>
     </a> | 
-    <a id='check_for_updates' href='#'>Check for updates</a> | <a href='admin.php'>Admin Panel</a> | 
+    <a id='check_for_updates' href='#'>Check for updates</a> | <a href='sysconfig.php'>Sysadmin panel</a> | 
     <script>
     $('#check_for_updates').click(function() {
         var jqxhr = $.post('check_for_updates.php', function(answer) {
@@ -53,8 +53,12 @@ if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
         });
     });
     </script>
-    <?php
+<?php
 }
+if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
+    echo "<a href='admin.php'>Admin Panel</a> | ";
+}
+
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     echo "Logged in as <a href='profile.php' title='Profile'>".$_SESSION['username']."</a> | 
         <a href='ucp.php'><img src='themes/".$_SESSION['prefs']['theme']."/img/pref.png' alt='Control panel' title='Control panel' /></a> | 
@@ -69,19 +73,10 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 <a href="database.php?mode=show">Database</a>
 <a href="team.php">Team</a>
 <a href="search.php">Search</a>
-<a href="<?php echo get_config('link_href');?>" target='_blank'><?php echo get_config('link_name')?></a>
+<a href="<?php echo get_team_config('link_href');?>" target='_blank'><?php echo get_team_config('link_name')?></a>
 </nav>
 <hr class='flourishes'>
 <!-- TITLE -->
 <div id='page_title'>
 <h2><?php echo strtoupper($page_title);?></h2>
 </div>
-<?php
-if (get_config('debug') == 1) {
-    echo "Session array : ";
-    echo '<pre>'.var_dump($_SESSION).'</pre>';
-    echo "<br />";
-    echo "Cookie : ";
-    echo '<pre>'.var_dump($_COOKIE).'</pre>';
-    echo "<br />";
-}

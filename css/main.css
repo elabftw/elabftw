@@ -358,11 +358,11 @@ section.item div.txt {
     width: 80%;
 }
 /* admin.php */
-#config_form input, #config_form select {
+.config_form input, .config_form select {
     float:right;
 }
 
-#config_form label {
+.config_form label {
     float:left;
 }
 

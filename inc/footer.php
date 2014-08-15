@@ -24,7 +24,7 @@
 
 <p>
 <?php
-echo "<p>".get_config('lab_name')." powered by <a href='http://www.elabftw.net'>eLabFTW</a> by <a href='http://www.elabftw.net' onClick='cornify_add();return false;'>Nicolas CARPi</a></p>";
+echo "<p>".get_team_config('team_name')." powered by <a href='http://www.elabftw.net'>eLabFTW</a> by <a href='http://www.elabftw.net' onClick='cornify_add();return false;'>Nicolas CARPi</a></p>";
 ?>
 <figure><a href='http://www.php.net'><img id='php' onmouseover="mouseOverPhp('on')" onmouseout="mouseOverPhp('off')" class='img' src='img/phpoff.gif' /></a>
 <a href='http://www.mysql.com'><img id='mysql' onmouseover="mouseOverSql('on')" onmouseout="mouseOverSql('off')" class='img' src='img/mysqloff.gif' /></a>
@@ -36,6 +36,15 @@ $time = $time[1] + $time[0];
 $finish = $time;
 $total_time = round(($finish - $start), 4);
 echo "Page generated in ".$total_time." seconds.<br />";
+// show debug info only to admins
+if (isset($_SESSION['auth']) && get_config('debug') == 1 && $_SESSION['is_admin'] == 1) {
+    echo "Session array : ";
+    echo '<pre>'.var_dump($_SESSION).'</pre>';
+    echo "<br />";
+    echo "Cookie : ";
+    echo '<pre>'.var_dump($_COOKIE).'</pre>';
+    echo "<br />";
+}
 ?>
 </footer>
 <script src="bower_components/jquery-pageslide/jquery.pageslide.min.js"></script>

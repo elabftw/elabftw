@@ -36,7 +36,7 @@ if (isset($_GET['type']) && !empty($_GET['type']) && is_pos_int($_GET['type'])) 
     $msg_arr[] = 'Wrong item type !';
     $_SESSION['infos'] = $msg_arr;
     header('location: index.php');
-    exit();
+    exit;
 }
 
 
@@ -58,35 +58,40 @@ if ($type === 'experiments') {
         // if there is no template, title is 'Untitled' and the body is the default exp_tpl
         $title = 'Untitled';
         // SQL to get body
-        $sql = "SELECT body FROM experiments_templates WHERE userid = 0";
+        $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team";
         $get_body = $pdo->prepare($sql);
-        $get_body->execute();
+        $get_body->execute(array(
+            'team' => $_SESSION['team_id']
+        ));
         $experiments_templates = $get_body->fetch();
         $body = $experiments_templates['body'];
     }
 
     // what will be the status ?
-    // go pick what is the default status upon creating experiment
+    // go pick what is the default status for the team
     // there should be only one because upon making a status default,
     // all the others are made not default
-    $sql = 'SELECT id FROM status WHERE is_default = true LIMIT 1';
+    $sql = "SELECT id FROM status WHERE is_default = true AND team = :team LIMIT 1";
     $req = $pdo->prepare($sql);
+    $req->bindParam(':team', $_SESSION['team_id']);
     $req->execute();
     $status = $req->fetchColumn();
 
     // if there is no is_default status
     // we take the first status that come
     if (!$status) {
-        $sql = 'SELECT id FROM status LIMIT 1';
+        $sql = 'SELECT id FROM status WHERE team = :team LIMIT 1';
         $req = $pdo->prepare($sql);
+        $req->bindParam(':team', $_SESSION['team_id']);
         $req->execute();
         $status = $req->fetchColumn();
     }
 
     // SQL for create experiments
-    $sql = "INSERT INTO experiments(title, date, body, status, elabid, visibility, userid) VALUES(:title, :date, :body, :status, :elabid, :visibility, :userid)";
+    $sql = "INSERT INTO experiments(team, title, date, body, status, elabid, visibility, userid) VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
     $req = $pdo->prepare($sql);
     $result = $req->execute(array(
+        'team' => $_SESSION['team_id'],
         'title' => $title,
         'date' => kdate(),
         'body' => $body,
@@ -105,9 +110,10 @@ if ($type === 'experiments') {
     $get_tpl_body = $get_tpl->fetch();
 
     // SQL for create DB item
-    $sql = "INSERT INTO items(title, date, body, userid, type) VALUES(:title, :date, :body, :userid, :type)";
+    $sql = "INSERT INTO items(team, title, date, body, userid, type) VALUES(:team, :title, :date, :body, :userid, :type)";
     $req = $pdo->prepare($sql);
     $result = $req->execute(array(
+        'team' => $_SESSION['team_id'],
         'title' => 'Untitled',
         'date' => kdate(),
         'body' => $get_tpl_body['template'],
@@ -116,29 +122,18 @@ if ($type === 'experiments') {
     ));
 }
 
-// Get what is the item id we just created
-if ($type === 'experiments') {
-    $sql = "SELECT id FROM experiments WHERE userid = :userid ORDER BY id DESC LIMIT 0,1";
-} else {
-    $sql = "SELECT id FROM items WHERE userid = :userid ORDER BY id DESC LIMIT 0,1";
-}
-$req = $pdo->prepare($sql);
-$req->bindParam(':userid', $_SESSION['userid']);
-$req->execute();
-$data = $req->fetch();
-$newid = $data['id'];
-
 // Check if insertion is successful and redirect to the newly created experiment in edit mode
 if ($result) {
     // info box
     $msg_arr[] = 'New item successfully created.';
     $_SESSION['infos'] = $msg_arr;
     if ($type === 'experiments') {
-        header('location: experiments.php?mode=edit&id='.$newid.'');
+        header('location: experiments.php?mode=edit&id='.$pdo->lastInsertId().'');
+        exit;
     } else {
-        header('location: database.php?mode=edit&id='.$newid.'');
+        header('location: database.php?mode=edit&id='.$pdo->lastInsertId().'');
+        exit;
     }
 } else {
     die();
 }
-

@@ -25,6 +25,20 @@ if (is_pos_int($_POST['id'])) {
     die('Bad id value.');
 }
 
+// we update the name of a team via sysconfig.php
+if (isset($_POST['team_name'])) {
+    $team_name = filter_var($_POST['team_name'], FILTER_SANITIZE_STRING);
+    $sql = "UPDATE teams
+        SET team_name = :team_name
+        WHERE team_id = :team_id";
+    $req = $pdo->prepare($sql);
+    $result = $req->execute(array(
+        'team_name' => $team_name,
+        'team_id' => $id
+    ));
+    exit;
+}
+
 // we only update status
 if (isset($_POST['status'])) {
     if (is_pos_int($_POST['status'])) {

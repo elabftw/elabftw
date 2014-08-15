@@ -38,9 +38,13 @@ require_once('inc/info_box.php');
 <!-- *********************** -->
 <div id='team-1'>
 <?php // SQL to get members info
-$sql = "SELECT * FROM users WHERE validated = 1";
+$sql = "SELECT * FROM users WHERE validated = :validated AND team = :team_id";
 $req = $pdo->prepare($sql);
-$req->execute();
+$req->execute(array(
+    'validated' => 1,
+    'team_id' => $_SESSION['team_id']
+));
+
 echo "<ul>";
 while ($data = $req->fetch()) {
     echo "<li><img src='img/profile.png' alt='profile' /> ";
@@ -65,18 +69,18 @@ echo "</ul>";
 <!-- *********************** -->
 <div id='team-2'>
 <?php
-// show stats about eLabFTW
-// number of experiments total
-$sql_exp_total = 'SELECT * FROM experiments';
-$req_exp_total = $pdo->prepare($sql_exp_total);
-$req_exp_total->execute();
-// number of items total
-$sql_db_total = 'SELECT * FROM items';
-$req_db_total = $pdo->prepare($sql_db_total);
-$req_db_total->execute();
+// show team stats
+$count_sql="SELECT
+(SELECT COUNT(users.userid) FROM users WHERE users.team = :team) AS totusers,
+(SELECT COUNT(items.id) FROM items WHERE items.team = :team) AS totdb,
+(SELECT COUNT(experiments.id) FROM experiments WHERE experiments.team = :team) AS totxp";
+$count_req = $pdo->prepare($count_sql);
+$count_req->bindParam(':team', $_SESSION['team_id']);
+$count_req->execute();
+$totals = $count_req->fetch(PDO::FETCH_ASSOC);
 ?>
-    <p>There is a total of <?php echo $req_exp_total->rowCount() ;?> experiments.</p>
-    <p>There is a total of <?php echo $req_db_total->rowCount() ;?> items in the database.</p>
+    <p>There is a total of <?php echo $totals['totxp'];?> experiments by <?php echo $totals['totusers'];?> different users.</p>
+    <p>There is a total of <?php echo $totals['totdb'];?> items in the database.</p>
 </div>
 
 <div id='team-3'>

@@ -16,7 +16,7 @@ function q($sql) {
     }
     catch (PDOException $e)
     {
-        echo $e->getMessage();
+        echo "\nThe update failed. Here is the error :\n\n".$e->getMessage();
         die();
     }
 }
@@ -752,3 +752,25 @@ if (!$table_is_here) {
 
 // remove theme from users
 rm_field('users', 'theme', ">>> Removed custom themes.\n", "Column 'theme' already removed. Nothing to do.\n");
+
+// add logs
+$sql = "SHOW TABLES";
+$req = $pdo->prepare($sql);
+$req->execute();
+$table_is_here = false;
+while ($show = $req->fetch()) {
+    if (in_array('logs', $show)) {
+        $table_is_here = true;
+    }
+}
+
+if (!$table_is_here) {
+    q("CREATE TABLE IF NOT EXISTS `logs` (
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+      `type` varchar(255) NOT NULL,
+      `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      `user` text,
+      `body` text NOT NULL
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;");
+    echo ">>> Logs are now stored in the database.\n";
+}

@@ -58,5 +58,5 @@ $(document).ready(function () {
    $("#cpasswordtxt").keyup(checkPasswordMatch);
 });
 </script>
-<?php require_once 'inc/footer.php';
-
+<?php
+require_once 'inc/footer.php';

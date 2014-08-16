@@ -100,8 +100,7 @@ Free open-source Lab Manager'
                 $mailer->send($message);
             } catch (Exception $e) {
                 // log the error
-                $logline = date('Y-m-d H:i:s')  . ' - ' . $e->getMessage() . PHP_EOL;
-                file_put_contents('errors.log', $logline, FILE_APPEND);
+                dblog('Error', $_SERVER['REMOTE_ADDR'], $e->getMessage());
                 $errflag = true;
             }
             if ($errflag) {

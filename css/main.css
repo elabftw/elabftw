@@ -35,8 +35,14 @@ body:before {
     box-shadow: 0px 0px 10px rgba(0,0,0,.8);
 }
 
+body {
+    background-image:url(../img/background.jpg);
+}
+
 /* this is the big white thing that holds everything */
 #container {
+    background: #fff;
+    font:16px Verdana, Arial, Helvetica, sans-serif;
     border-radius: 10px;
     font: 100% Verdana, Arial, Helvetica, sans-serif;
     margin: auto;
@@ -45,10 +51,17 @@ body:before {
 }
 /* LINKS */
 a {
-    color:  #000;
+    color: #606264;
+    text-decoration:none;
 }
 a :hover {
-    color:  #29AEB9;
+    color:#29AEB9;
+    text-decoration:none;
+}
+
+/* LISTS */
+ul, li {
+    list-style-type:none;
 }
 
 /* GENERAL */
@@ -148,11 +161,22 @@ nav {
 }
 
 nav a {
+    border:1px solid white;
+    color:#606264;
     font-size: 120%;
     line-height: 200%;
     padding: 5px 10px 5px 10px;
     text-decoration: none;
     border-radius:5px;
+}
+nav a:hover {
+    border:1px solid black;
+    border-radius:5px;
+    color:#29AEB9;
+    -moz-transition-duration: 1500ms;
+    -webkit-transition-duration: 1500ms;
+    -o-transition-duration: 1500ms;
+    -ms-transition-duration: 1500ms;
 }
 
 #logmenu {
@@ -161,10 +185,12 @@ nav a {
 }
 
 #logmenu p {
+    color: #AAA;
     font:  90% Verdana, Arial, Helvetica, sans-serif;
     padding-bottom: 7px;
 }
 #logmenu p a {
+    color: black;
     font:  90% Verdana, Arial, Helvetica, sans-serif;
 }
 /* submenu */
@@ -173,6 +199,21 @@ nav a {
     margin-bottom: 15px;
     padding-bottom: 15px;
     text-align:center;
+}
+#submenu a {
+    border:1px solid white;
+    border-radius:5px;
+    color:blue;
+    padding:7px;
+}
+#submenu a:hover {
+    border:1px solid black;
+    border-radius:5px;
+    color: #29AEB9;
+    -moz-transition-duration: 1500ms;
+    -webkit-transition-duration: 1500ms;
+    -o-transition-duration: 1500ms;
+    -ms-transition-duration: 1500ms;
 }
 
 
@@ -321,11 +362,8 @@ textarea {
 
 
 /* comments for files */
-.filesdiv {
-    border-radius: 5px;
-}
-.filesdiv p {
-    display: inline;
+.editable:hover {
+    background-color: #CCC;
 }
 
 img {
@@ -388,12 +426,16 @@ section.item div.txt {
 /* end experiments comments */
 
 .simple_border {
+    border:2px solid #AAA;
     border-radius: 5px;
     padding: 10px;
     margin:5px;
 }
 
 .title {
+    background-color:white;
+    border:1px solid #AAA;
+    color:black;
     border-radius: 15px;
     font-size:  20px;
     line-height: 120%;
@@ -418,6 +460,9 @@ section.item div.txt {
 }
 
 .tags {
+    background-color:white;
+    border:1px solid #AAA;
+    color:black;
     border-radius: 15px;
     font:  12px Courier,Arial,sans-serif;
     line-height: 200%;
@@ -428,7 +473,13 @@ section.item div.txt {
 .tags a{
     text-decoration: none;
 }
+.tag a:hover {
+    color:red;
+}
 .tags_compact {
+    background-color:white;
+    border:1px solid #AAA;
+    color:black;
     border-radius: 15px;
     font:  12px Courier,Arial,sans-serif;
     line-height: 200%;
@@ -438,7 +489,12 @@ section.item div.txt {
 .tags_compact a{
     text-decoration: none;
 }
+.tags_compact a:hover {
+    color:red;
+}
 #tagdiv{
+    background-color:white;
+    border:3px solid #CCC;
     padding: 5px;
 }
 
@@ -452,6 +508,7 @@ section.item div.txt {
 }
 
 .smallgray{
+    color:gray;
     font: 12px Verdana, Arial, Helvetica, sans-serif;
 }
 
@@ -471,33 +528,36 @@ section.item div.txt {
     background-color: #FF8080;
 }
 
-.themes_div {
-    -moz-column-count:  2;
-    -moz-column-gap:  10px;
-    -webkit-column-count:  2;
-    -webkit-column-gap:  10px;
-    column-count:  2;
-    column-gap:  10px; 
-}
-
 /* TEMPLATES */
 .templates {
+    border:1px solid black;
     font: 12px Verdana, Arial, Helvetica, sans-serif;
     line-height: 300%;
     padding: 7px;
 }
 
 .txt {
+    background-color:white;
+    border:1px solid #CCC;
+    color:black;
     font-size: 16px;
     padding: 5px;
 }
 
 
 .filesdiv {
+    border-radius: 5px;
+    border: 1px solid #CCC;
+    box-shadow: 2px 2px 2px 2px #CCC;
+    -webkit-box-shadow: 2px 2px 2px 2px #CCC;
+    -moz-box-shadow: 2px 2px 2px 2px #CCC;
     font: 14px Verdana, Arial, Helvetica, sans-serif;
     margin: 10px auto 10px auto;
     padding: 5px;
     width:80%;
+}
+.filesdiv p {
+    display: inline;
 }
 .filesdiv a {
     font: 14px Verdana, Arial, Helvetica, sans-serif;
@@ -505,6 +565,7 @@ section.item div.txt {
 }
 
 .filesize{
+    color:grey;
     font-size: 10px;
 }
 
@@ -542,20 +603,20 @@ section.item div.txt {
 
 /* FOOTER */
 footer {
+    border-top:solid 2px #CCC;
     font-size: 11px;
     margin: 15px 0 5px 0;
     padding: 5px 0 5px 0;
     text-align: center;
 }
 footer p, footer p a {
+    color: #AAA;
     font-size: 11px;
     line-height: 20%;
     text-align: center;
 }
-
-/* PAGINATION */
-.pagination{
-    text-align: center;
+footer p a:hover {
+    color: #29AEB9;
 }
 
 /* print only the main div */

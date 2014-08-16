@@ -23,7 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/cloud.png' alt='' /> <h4>TAG CLOUD</h4>";
+echo "<img src='img/cloud.png' alt='' /> <h4>TAG CLOUD</h4>";
 echo "<div id='tagcloud'>";
 // 1. Create an array with tag -> count
 $sql = "SELECT tag, COUNT(id) AS total

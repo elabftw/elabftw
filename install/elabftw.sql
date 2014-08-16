@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `banned_users` (
   `ieuieuie` int(11) NOT NULL,
   `user_infos` text NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `experiments` (
   `lockedwhen` timestamp NULL DEFAULT NULL,
   `visibility` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=103 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `experiments_comments` (
   `exp_id` int(11) NOT NULL,
   `comment` text NOT NULL,
   `userid` int(11) NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=48 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `experiments_links` (
 `id` int(10) unsigned NOT NULL,
   `item_id` int(10) unsigned NOT NULL,
   `link_id` text NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=39 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS `experiments_revisions` (
   `body` text NOT NULL,
   `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `userid` int(11) NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=68 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS `experiments_tags` (
   `tag` varchar(255) NOT NULL,
   `item_id` int(10) unsigned NOT NULL,
   `userid` int(10) unsigned NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=212 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -132,7 +132,7 @@ CREATE TABLE IF NOT EXISTS `experiments_templates` (
   `body` text,
   `name` varchar(255) NOT NULL,
   `userid` int(10) unsigned DEFAULT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=31 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -146,7 +146,7 @@ CREATE TABLE IF NOT EXISTS `groups` (
   `is_sysadmin` tinyint(1) NOT NULL,
   `is_admin` text NOT NULL,
   `can_lock` text NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -164,7 +164,7 @@ CREATE TABLE IF NOT EXISTS `items` (
   `type` int(10) unsigned NOT NULL,
   `locked` tinyint(3) unsigned DEFAULT NULL,
   `userid` int(10) unsigned NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=330 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -176,7 +176,7 @@ CREATE TABLE IF NOT EXISTS `items_tags` (
 `id` int(10) unsigned NOT NULL,
   `tag` varchar(255) NOT NULL,
   `item_id` int(10) unsigned NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=55 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -190,9 +190,20 @@ CREATE TABLE IF NOT EXISTS `items_types` (
   `name` text NOT NULL,
   `bgcolor` varchar(6) DEFAULT '000000',
   `template` text
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=13 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
+--
+-- Table structure for table `logs`
+--
+
+CREATE TABLE IF NOT EXISTS `logs` (
+`id` int(10) unsigned NOT NULL,
+  `type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `user` text COLLATE utf8_unicode_ci,
+  `body` text COLLATE utf8_unicode_ci NOT NULL
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Table structure for table `status`
@@ -204,7 +215,7 @@ CREATE TABLE IF NOT EXISTS `status` (
   `name` text NOT NULL,
   `color` varchar(6) NOT NULL,
   `is_default` tinyint(1) DEFAULT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=12 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -219,7 +230,7 @@ CREATE TABLE IF NOT EXISTS `teams` (
   `link_name` text NOT NULL,
   `link_href` text NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -236,7 +247,7 @@ CREATE TABLE IF NOT EXISTS `uploads` (
   `userid` text NOT NULL,
   `type` varchar(255) NOT NULL,
   `date` date DEFAULT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=76 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -261,7 +272,6 @@ CREATE TABLE IF NOT EXISTS `users` (
   `can_lock` int(1) NOT NULL DEFAULT '0',
   `register_date` bigint(20) unsigned NOT NULL,
   `token` varchar(255) DEFAULT NULL,
-  `theme` varchar(30) NOT NULL DEFAULT 'default',
   `display` varchar(10) NOT NULL DEFAULT 'default',
   `order_by` varchar(255) NOT NULL DEFAULT 'date',
   `sort_by` varchar(4) NOT NULL DEFAULT 'desc',
@@ -272,7 +282,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `sc_todo` varchar(1) NOT NULL DEFAULT 't',
   `close_warning` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `validated` tinyint(1) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=56 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 --
 -- Indexes for dumped tables
@@ -348,6 +358,12 @@ ALTER TABLE `items_tags`
 -- Indexes for table `items_types`
 --
 ALTER TABLE `items_types`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `logs`
+--
+ALTER TABLE `logs`
  ADD PRIMARY KEY (`id`);
 
 --
@@ -435,6 +451,11 @@ MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT for table `items_types`
 --
 ALTER TABLE `items_types`
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `logs`
+--
+ALTER TABLE `logs`
 MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `status`

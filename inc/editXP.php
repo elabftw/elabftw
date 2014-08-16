@@ -28,7 +28,7 @@
 //require_once('lib/classes/formkey.class.php');
 //$formKey = new formKey();
 ?>
-<script src="bower_components/tinymce/tinymce.min.js"></script>
+<script src="js/tinymce/tinymce.min.js"></script>
 <?php
 // ID
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
@@ -67,9 +67,9 @@ if ($experiment['locked'] == 1) {
 // BEGIN CONTENT
 ?>
 <section id='view_xp_item' class='item' style='border: 1px solid #<?php echo $experiment['color'];?>'>
-<img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','exp', 'experiments.php')" />
+<img class='align_right' src='img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','exp', 'experiments.php')" />
 <!-- ADD TAG FORM -->
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
+<img src='img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
 <div class='tags'>
 <span id='tags_div'>
 <?php
@@ -94,7 +94,7 @@ while ($tags = $tagreq->fetch()) {
 
 <h4>Date</h4><span class='smallgray'> (date format : YYYYMMDD)</span><br />
 <!-- TODO if firefox has support for it: type = date -->
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /> <input name='date' id='datepicker' size='8' type='text' value='<?php echo $experiment['date'];?>' />
+<img src='img/calendar.png' title='date' alt='Date :' /> <input name='date' id='datepicker' size='8' type='text' value='<?php echo $experiment['date'];?>' />
 
 <span class='align_right'>
 <h4>Status</h4>
@@ -170,7 +170,7 @@ require_once 'inc/display_file.php';
 
 <hr class='flourishes'>
 
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/link.png'> <h4 style='display:inline'>Linked items</h4>
+<img src='img/link.png'> <h4 style='display:inline'>Linked items</h4>
 <div id='links_div'>
 <?php
 // DISPLAY LINKED ITEMS
@@ -193,7 +193,7 @@ if ($req->rowcount() > 0) {
         echo "<li>- [".$links['name']."] - <a href='database.php?mode=view&id=".$links['itemid']."'>".
             stripslashes($links['title'])."</a>";
         echo "<a onclick='delete_link(".$links['linkid'].", ".$id.")'>
-        <img src='themes/".$_SESSION['prefs']['theme']."/img/trash.png' title='delete' alt='delete' /></a></li>";
+        <img src='img/trash.png' title='delete' alt='delete' /></a></li>";
     } // end while
     echo "</ul>";
 } else { // end if link exist
@@ -205,7 +205,7 @@ if ($req->rowcount() > 0) {
 <input id='linkinput' size='60' type="text" name="link" placeholder="from the database" />
 
 <br /><br />
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/visibility.png'> <h4 style='display:inline'>Visibility</h4>
+<img src='img/visibility.png'> <h4 style='display:inline'>Visibility</h4>
 <!-- visibility get selected by default -->
 <?php
 $visibility = $experiment['visibility'];
@@ -217,7 +217,7 @@ $visibility = $experiment['visibility'];
 <span id='visibility_msg_div'>Updated !</span>
 <br>
 
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/revisions.png'> <h4>Revisions</h4>
+<img src='img/revisions.png'> <h4>Revisions</h4>
 <?php
 // get the list of revisions
 $sql = "SELECT COUNT(id) FROM experiments_revisions WHERE exp_id = :exp_id AND userid = :userid ORDER BY savedate DESC";

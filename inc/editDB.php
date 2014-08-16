@@ -28,7 +28,7 @@
 //require_once('lib/classes/formkey.class.php');
 //$formKey = new formKey();
 ?>
-<script src='bower_components/tinymce/tinymce.min.js'></script>
+<script src='js/tinymce/tinymce.min.js'></script>
 <?php
 // ID
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
@@ -57,9 +57,9 @@ if ($data['locked'] == 1) {
 // BEGIN CONTENT
 ?>
 <section class='item'>
-<img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','item', 'database.php')" />
+<img class='align_right' src='img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','item', 'database.php')" />
 <!-- ADD TAG FORM -->
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
+<img src='img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
 <div class='tags'>
 <span id='tags_div'>
 <?php
@@ -84,7 +84,7 @@ while ($tags = $tagreq->fetch()) {
 <input name='item_id' type='hidden' value='<?php echo $id;?>' />
 <h4>Date</h4><span class='smallgray'> (date format : YYYYMMDD)</span><br />
 <!-- TODO if firefox has support for it: type = date -->
-<img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /> <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date'];?>' />
+<img src='img/calendar.png' title='date' alt='Date :' /> <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date'];?>' />
 <!-- STAR RATING via ajax request -->
 <div id='rating'>
 <input id='star1' name="star" type="radio" class="star" value='1' <?php if ($data['rating'] == 1) { echo "checked=checked ";}?>/>

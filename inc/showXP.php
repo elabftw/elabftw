@@ -26,14 +26,10 @@
 $load_more_button = "<div class='center'>
         <button class='button' id='loadButton'>Load more</button>
         </div>";
-
-if (isset($_SESSION['prefs']['theme'])) {
-    require_once("themes/".$_SESSION['prefs']['theme']."/highlight.css");
-}
 ?>
 <div id='submenu'>
-    <a href="create_item.php?type=exp"><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/notepad_add.png" alt="" /> Create experiment</a> | 
-    <a href='#' class='trigger'><img src="themes/<?php echo $_SESSION['prefs']['theme'];?>/img/duplicate.png" alt="" /> Create from template</a> | 
+    <a href="create_item.php?type=exp"><img src="img/notepad_add.png" alt="" /> Create experiment</a> | 
+    <a href='#' class='trigger'><img src="img/duplicate.png" alt="" /> Create from template</a> | 
 <?php
 // 'List all' dropdown menu
 $sql = "SELECT id, name FROM status WHERE team = :team_id";
@@ -42,7 +38,7 @@ $req->execute(array(
     'team_id' => $_SESSION['team_id']
 ));
 
-echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/search.png' alt='search' /> List all <select onchange=go_url(this.value)><option value=''>--------</option>";
+echo "<img src='img/search.png' alt='search' /> List all <select onchange=go_url(this.value)><option value=''>--------</option>";
 while ($status = $req->fetch()) {
     echo "<option value='search.php?type=experiments&status=".$status['id']."'>";
     echo $status['name']."</option>";
@@ -237,7 +233,7 @@ if (isset($_GET['q'])) { // if there is a query
     // If there are no experiments, display a little message
     if ($count == 0) {
         $message = "<strong>Welcome to eLabFTW.</strong> 
-            Click the <img src='themes/".$_SESSION['prefs']['theme']."/img/notepad_add.png' alt='Create experiment' />
+            Click the <img src='img/notepad_add.png' alt='Create experiment' />
             <a href='create_item.php?type=exp'>Create experiment</a> button to get started.";
         display_message('info', $message);
     } else {

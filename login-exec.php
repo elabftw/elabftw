@@ -114,7 +114,7 @@ if ($result) {
         $_SESSION['is_sysadmin'] = $group['is_sysadmin'];
 
         // PREFS
-        $_SESSION['prefs'] = array('theme' => $data['theme'],
+        $_SESSION['prefs'] = array(
             'display' => $data['display'],
             'order' => $data['order_by'],
             'sort' => $data['sort_by'],
@@ -142,10 +142,14 @@ if ($result) {
             'token' => $token,
             'userid' => $data['userid']
         ));
+
         header("location: experiments.php");
         exit;
-    } else {
-        //Login failed
+    } else { // login failed
+        // log the attempt
+        dblog('Warning', $_SERVER['REMOTE_ADDR'], 'Failed login attempt');
+
+        // inform the user
         $msg_arr = array();
         $msg_arr[] = "Login failed. Either you mistyped your password, or your account isn't activated yet.";
         if (!isset($_SESSION['failed_attempt'])) {
@@ -153,8 +157,8 @@ if ($result) {
         } else {
             $_SESSION['failed_attempt'] += 1;
         }
-
         $_SESSION['errors'] = $msg_arr;
+
         header("location: login.php");
         exit;
     }

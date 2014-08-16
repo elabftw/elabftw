@@ -104,8 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
             $mailer->send($message);
         } catch (Exception $e) {
             // log the error
-            $logline = date('Y-m-d H:i:s')  . ' - ' . $e->getMessage() . PHP_EOL;
-            file_put_contents('errors.log', $logline, FILE_APPEND);
+            dblog('Error', $_SESSION['userid'], $e->getMessage());
             $errflag = true;
         }
         if ($errflag) {

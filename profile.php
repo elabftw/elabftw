@@ -41,7 +41,7 @@ $req->execute();
 $data = $req->fetch();
 
 echo "<section class='item'>";
-echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/user.png' alt='user' /> <h4>INFOS</h4>";
+echo "<img src='img/user.png' alt='user' /> <h4>INFOS</h4>";
 echo "<div class='center'>
     <p>".$data['firstname']." ".$data['lastname']." (".$data['email'].")</p>
     <p>".$count[0]." experiments done since ".date("l jS \of F Y", $data['register_date']);

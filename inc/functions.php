@@ -261,7 +261,7 @@ function show_tags($item_id, $table)
     $req->execute();
     $tagcount = $req->rowCount();
     if ($tagcount > 0) {
-        echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.png' alt='tags' /> ";
+        echo "<span class='tags'><img src='img/tags.png' alt='tags' /> ";
         while ($tags = $req->fetch()) {
             if ($table === 'experiments_tags') {
                 echo "<a href='experiments.php?mode=show&tag=".urlencode(stripslashes($tags['tag']))."'>".stripslashes($tags['tag'])."</a> ";
@@ -317,11 +317,11 @@ function showXP($id, $display)
             <img class='align_right' style='margin-left:5px;' src='img/arrow_right.png' alt='view' title='view experiment' /></a>";
         // show attached if there is a file attached
         if (has_attachement($experiments['id'])) {
-            echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='file attached' />";
+            echo "<img class='align_right' src='img/attached_file.png' alt='file attached' />";
         }
         // show lock if item is locked on viewXP
         if ($experiments['locked'] == 1) {
-            echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' alt='lock' />";
+            echo "<img class='align_right' src='img/lock.png' alt='lock' />";
         }
         echo "<p class='title'>". stripslashes($experiments['title']) . "</p>";
         echo "</section>";
@@ -404,11 +404,11 @@ function showDB($id, $display)
         show_stars($item['rating']);
         // show attached if there is a file attached
         if (has_attachement($item['id'])) {
-            echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='file attached' />";
+            echo "<img class='align_right' src='img/attached_file.png' alt='file attached' />";
         }
         // show lock if item is locked on viewDB
         if ($item['locked'] == 1) {
-            echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' alt='lock' />";
+            echo "<img class='align_right' src='img/lock.png' alt='lock' />";
         }
         echo "<p class='title'>". stripslashes($item['title']) . "</p>";
         echo "</section>";
@@ -663,6 +663,7 @@ function make_pdf($id, $type, $out = 'browser')
     ));
     // if we have comments
     if ($req->rowCount() > 0) {
+        $comments_block = "";
         $comments_block .= "<section>";
         if ($req->rowCount() === 1) {
             $comments_block .= "<h3>Comment :</h3>";
@@ -1062,16 +1063,17 @@ function get_team_config($column)
 {
     global $pdo;
 
-    $sql = "SELECT * FROM `teams` WHERE team_id = :team_id";
-    $req = $pdo->prepare($sql);
     // remove notice when not logged in
     if (isset($_SESSION['team_id'])) {
+        $sql = "SELECT * FROM `teams` WHERE team_id = :team_id";
+        $req = $pdo->prepare($sql);
         $req->execute(array(
             'team_id' => $_SESSION['team_id']
         ));
+        $team_config = $req->fetch();
+        return $team_config[$column];
     }
-    $team_config = $req->fetch();
-    return $team_config[$column];
+    return "";
 }
 /**
  * Will check if an executable is on the system.
@@ -1085,6 +1087,32 @@ function check_executable($cmd)
     return shell_exec("which $cmd");
 }
 
+/**
+ * Insert a log entry in the logs table
+ *
+ * @param string $type The type of the log. Can be 'Error', 'Warning', 'Info'
+ * @param string $body The content of the log
+ * @return bool Will return true if the query is successfull
+ */
+function dblog($type, $user, $body)
+{
+    global $pdo;
+
+    // no need to check the params are they come from the code
+
+    $sql = "INSERT INTO logs (type, user, body) VALUES (:type, :user, :body)";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':type', $type);
+    $req->bindParam(':user', $user);
+    $req->bindParam(':body', $body);
+    try {
+        $req->execute();
+    } catch (Exception $e) {
+        die("Couln't not log message to database. Error is ".$e->getMessage());
+    }
+
+    return true;
+}
 /**
  * Display the end of page.
  * Only used in install/index.php

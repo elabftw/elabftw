@@ -42,7 +42,7 @@ if (isset($_SESSION['auth']) && get_config('debug') == 1 && $_SESSION['is_admin'
 }
 ?>
 </footer>
-<script src="bower_components/jquery-pageslide/jquery.pageslide.min.js"></script>
+<script src="js/jquery-pageslide/jquery.pageslide.min.js"></script>
 <?php
 if (isset($_SESSION['auth'])) {
     // show TODOlist

@@ -33,7 +33,7 @@ if (isset($_GET['exp_id']) && !empty($_GET['exp_id']) && is_pos_int($_GET['exp_i
 } else {
     die('Bad experiment id.');
 }
-echo "<a href='experiments.php?mode=view&id=".$exp_id."'><h4><img src='themes/".$_SESSION['prefs']['theme']."/img/undo.png' alt='<--' /> Go back to the experiment</h4></a>";
+echo "<a href='experiments.php?mode=view&id=".$exp_id."'><h4><img src='img/undo.png' alt='<--' /> Go back to the experiment</h4></a>";
 
 if (isset($_GET['action']) && $_GET['action'] === 'restore' && is_pos_int($_GET['rev_id'])) {
     // get the body of the restored time

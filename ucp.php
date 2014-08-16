@@ -36,7 +36,7 @@ $users = $req->fetch();
 
 // BEGIN UCP PAGE
 ?>
-<script src="bower_components/tinymce/tinymce.min.js"></script>
+<script src="js/tinymce/tinymce.min.js"></script>
 
 <div id='accordion'>
     <h3><a href='#infos'>PERSONNAL INFORMATIONS</a></h3>
@@ -117,21 +117,6 @@ $users = $req->fetch();
             <input type='text' size='2' maxlength='2' value='<?php echo $_SESSION['prefs']['limit'];?>' name='limit'>
 
             <br /><br />
-
-            <h4>Theme (hover to preview) :</h4>
-
-            <br /><br />
-
-            <div class='themes_div'>
-                <input type='radio' name='theme' value='default' <?php if ($_SESSION['prefs']['theme'] === 'default'){ echo "checked='checked'";}?>>Default<br />
-                <img onmouseover="setTmpTheme('default');" onmouseout="setTmpTheme('<?php echo $_SESSION['prefs']['theme'];?>')" src='themes/default/img/sample.png' alt='default theme'>
-                <br />
-                <input type='radio' name='theme' value='l33t' <?php if ($_SESSION['prefs']['theme'] === 'l33t'){ echo "checked='checked'";}?> class='inline'>l33t<br />
-                <img onmouseover="setTmpTheme('l33t');" onmouseout="setTmpTheme('<?php echo $_SESSION['prefs']['theme'];?>')" src='themes/l33t/img/sample.png' alt='l33t theme'>
-            </div>
-
-            <br /><br />
-
             <!-- SUBMIT BUTTON -->
             <div class='center'>
                 <button type="submit" name="Submit" class='button'>Set preferences</button>
@@ -177,7 +162,7 @@ $users = $req->fetch();
         while ($users = $req->fetch()) {
         ?>
         <div id='tpl-<?php echo $i;?>'>
-<img class='align_right' src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $users['id'];?>','tpl', 'ucp.php')" />
+<img class='align_right' src='img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $users['id'];?>','tpl', 'ucp.php')" />
         <form action='ucp-exec.php' method='post'>
         <input type='hidden' name='tpl_form' />
         <?php
@@ -261,9 +246,9 @@ $users = $req->fetch();
 
 <script>
 // hover to choose theme
-function setTmpTheme(theme){
-    document.getElementById('maincss').href = 'themes/'+theme+'/style.css';
-}
+//function setTmpTheme(theme){
+//    document.getElementById('maincss').href = 'themes/'+theme+'/style.css';
+//}
 // READY ? GO !!
 $(document).ready(function() {
     // ACCORDION

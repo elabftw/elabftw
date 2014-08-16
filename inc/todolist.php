@@ -39,8 +39,8 @@
             <ul id="show-items"></ul>
             <a href="#" id="clear-all">Clear All</a>
         </div>
-        <script src="../bower_components/jquery/dist/jquery.min.js"></script>
-        <script src="../bower_components/jquery-ui/jquery-ui.min.js"></script>
+        <script src="../js/jquery/dist/jquery.min.js"></script>
+        <script src="../js/jquery-ui/jquery-ui.min.js"></script>
         <script src="../js/todolist.js"></script>
     </body>
 </html>

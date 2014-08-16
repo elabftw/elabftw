@@ -33,8 +33,8 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
 }
 ?>
 <!-- Password complexity visualizer -->
-<script src="bower_components/jquery.complexify.js/jquery.complexify.min.js"></script>
-<script src="bower_components/jquery.complexify.js/jquery.complexify.banlist.js"></script>
+<script src="js/jquery.complexify.js/jquery.complexify.min.js"></script>
+<script src="js/jquery.complexify.js/jquery.complexify.banlist.js"></script>
 
 <section>
     <!-- Register form -->

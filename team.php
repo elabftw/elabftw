@@ -50,16 +50,16 @@ while ($data = $req->fetch()) {
     echo "<li><img src='img/profile.png' alt='profile' /> ";
     echo "<a href='mailto:".$data['email']."'>".$data['firstname']." ".$data['lastname']."</a>";
         if (!empty($data['phone'])) { 
-        echo " <img src='themes/".$_SESSION['prefs']['theme']."/img/phone.png' alt='Phone :' title='phone' /> ".$data['phone'];
+        echo " <img src='img/phone.png' alt='Phone :' title='phone' /> ".$data['phone'];
         } 
         if (!empty($data['cellphone'])) { 
-        echo " <img src='themes/".$_SESSION['prefs']['theme']."/img/cellphone.png' alt='Cellphone :' title='Cellphone' /> ".$data['cellphone']; 
+        echo " <img src='img/cellphone.png' alt='Cellphone :' title='Cellphone' /> ".$data['cellphone']; 
         }
         if (!empty($data['website'])) { 
-        echo " <img src='themes/".$_SESSION['prefs']['theme']."/img/website.png' alt='website :' title='website' /> <a href='".$data['website']."'>www</a>"; 
+        echo " <img src='img/website.png' alt='website :' title='website' /> <a href='".$data['website']."'>www</a>"; 
         }
         if (!empty($data['skype'])) { 
-        echo " <img src='themes/".$_SESSION['prefs']['theme']."/img/skype.png' alt='skype :' title='skype' /> ".$data['skype'];
+        echo " <img src='img/skype.png' alt='skype :' title='skype' /> ".$data['skype'];
         } 
     echo "</li>";
 }

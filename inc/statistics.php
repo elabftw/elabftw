@@ -68,7 +68,7 @@ if ($total === 0) {
     }
 
     // BEGIN CONTENT
-    echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/statistics.png' alt='' /> <h4>STATISTICS</h4>";
+    echo "<img src='img/statistics.png' alt='' /> <h4>STATISTICS</h4>";
     ?>
      <!--Load the AJAX API-->
     <script src="https://www.google.com/jsapi"></script>

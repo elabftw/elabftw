@@ -45,7 +45,7 @@ if ($count > 0) {
         // show the delete button only in edit mode, not in view mode
         if ($_GET['mode'] === 'edit') {
             echo "<a class='align_right' href='delete_file.php?id=".$uploads_data['id']."&type=".$uploads_data['type']."&item_id=".$uploads_data['item_id']."' onClick=\"return confirm('Delete this file ?');\">";
-            echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/trash.png' title='delete' alt='delete' /></a>";
+            echo "<img src='img/trash.png' title='delete' alt='delete' /></a>";
         } // end if it is in edit mode
 
         // THUMBNAIL GENERATION
@@ -80,7 +80,7 @@ if ($count > 0) {
             } // end if extension is valid
         } // end gd here
         // END THUMBNAIL GENERATION
-        echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='' /> <a href='download.php?f=".$uploads_data['long_name']."&name=".$uploads_data['real_name']."' target='_blank'>".$uploads_data['real_name']."</a>
+        echo "<img src='img/attached_file.png' alt='' /> <a href='download.php?f=".$uploads_data['long_name']."&name=".$uploads_data['real_name']."' target='_blank'>".$uploads_data['real_name']."</a>
         <span class='filesize'> (".format_bytes(filesize('uploads/'.$uploads_data['long_name'])).")</span><br />";
         // if we are in view mode, we don't show the comment
         // this is to avoid showing 'Click to add a comment' where in fact you can't click to add a comment because
@@ -89,13 +89,13 @@ if ($count > 0) {
         case 'view':
             if ($uploads_data['comment'] != 'Click to add a comment') {
                 // show non editable comment
-                echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/comments.png' alt='comment' />
+                echo "<img src='img/comments.png' alt='comment' />
                     <p id='filecomment_".$uploads_data['id']."'>".stripslashes($uploads_data['comment'])."</p>";
             }
             break;
         case 'edit':
             // show editable comment whatever is the comment
-            echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/comments.png' alt='comment' />
+            echo "<img src='img/comments.png' alt='comment' />
                 <p class='editable' id='filecomment_".$uploads_data['id']."'>".
                 stripslashes($uploads_data['comment'])."</p>";
             break;
@@ -130,8 +130,8 @@ if ($_GET['mode'] === 'edit') {
     <?php
 }
 ?>
-<script src='bower_components/fancybox/source/jquery.fancybox.pack.js'></script>
-<link rel="stylesheet" href="bower_components/fancybox/source/jquery.fancybox.css" type="text/css" media="screen" />
+<script src='js/fancybox/source/jquery.fancybox.pack.js'></script>
+<link rel="stylesheet" href="js/fancybox/source/jquery.fancybox.css" type="text/css" media="screen" />
 <script>
 $(document).ready(function() {
     // we use fancybox to display thumbnails

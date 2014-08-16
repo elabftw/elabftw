@@ -172,7 +172,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         // Display download link (with attribute type=zip for download.php)
         echo "<p>Your ZIP archive is ready :<br />
             <a href='download.php?f=".$zipfile."&name=".$zipname.".zip&type=zip' target='_blank'>
-            <img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='download' /> 
+            <img src='img/download.png' alt='download' /> 
             ".$zipname.".zip</a>
             <span class='filesize'>(".format_bytes(filesize($zipfile)).")</span></p>";
             echo "</div>";

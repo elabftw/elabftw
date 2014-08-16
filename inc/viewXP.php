@@ -87,17 +87,17 @@ if ($data['userid'] != $_SESSION['userid']) {
     <section class="item" style='border: 1px solid #<?php echo $data['color'];?>'>
     <span class='align_right' id='status'>(<?php echo $data['name'];?>)</span>
 <?php
-echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/calendar.png' title='date' alt='Date :' /><span class='date'> ".$data['date']."</span><br />
-    <a href='experiments.php?mode=edit&id=".$data['expid']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/edit.png' title='edit' alt='edit' /></a> 
-<a href='duplicate_item.php?id=".$data['expid']."&type=exp'><img src='themes/".$_SESSION['prefs']['theme']."/img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a> 
-<a href='make_pdf.php?id=".$data['expid']."&type=experiments'><img src='themes/".$_SESSION['prefs']['theme']."/img/pdf.png' title='make a pdf' alt='pdf' /></a> 
-<a href='javascript:window.print()'><img src='themes/".$_SESSION['prefs']['theme']."/img/print.png' title='Print this page' alt='Print' /></a> 
-<a href='make_zip.php?id=".$data['expid']."&type=experiments'><img src='themes/".$_SESSION['prefs']['theme']."/img/zip.png' title='make a zip archive' alt='zip' /></a> ";
+echo "<img src='img/calendar.png' title='date' alt='Date :' /><span class='date'> ".$data['date']."</span><br />
+    <a href='experiments.php?mode=edit&id=".$data['expid']."'><img src='img/edit.png' title='edit' alt='edit' /></a> 
+<a href='duplicate_item.php?id=".$data['expid']."&type=exp'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a> 
+<a href='make_pdf.php?id=".$data['expid']."&type=experiments'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a> 
+<a href='javascript:window.print()'><img src='img/print.png' title='Print this page' alt='Print' /></a> 
+<a href='make_zip.php?id=".$data['expid']."&type=experiments'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a> ";
 // lock
 if ($data['locked'] == 0) {
-    echo "<a href='lock.php?id=".$data['expid']."&action=lock&type=experiments'><img src='themes/".$_SESSION['prefs']['theme']."/img/unlock.png' title='lock experiment' alt='lock' /></a>";
+    echo "<a href='lock.php?id=".$data['expid']."&action=lock&type=experiments'><img src='img/unlock.png' title='lock experiment' alt='lock' /></a>";
 } else { // experiment is locked
-    echo "<a href='lock.php?id=".$data['expid']."&action=unlock&type=experiments'><img src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' title='unlock experiment' alt='unlock' /></a>";
+    echo "<a href='lock.php?id=".$data['expid']."&action=unlock&type=experiments'><img src='img/lock.png' title='unlock experiment' alt='unlock' /></a>";
 }
 
 // TAGS
@@ -140,7 +140,7 @@ $req->execute(array(
 // Check there is at least one link to display
 if ($req->rowcount() > 0) {
     echo "<hr class='flourishes'>";
-    echo "<img src='themes/".$_SESSION['prefs']['theme']."/img/link.png'> <h4 style='display:inline'>Linked items</h4>
+    echo "<img src='img/link.png'> <h4 style='display:inline'>Linked items</h4>
 <div id='links_div'><ul>";
     while ($link = $req->fetch()) {
         // SQL to get title
@@ -180,7 +180,7 @@ if ($req->rowCount() > 0) {
             $comments['firstname'] = '[deleted]';
         }
     echo "<div class='expcomment_box'>
-    <img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/trash.png' title='delete' alt='delete' onClick=\"deleteThisAndReload(".$comments['id'].",'expcomment')\" />";
+    <img class='align_right' src='img/trash.png' title='delete' alt='delete' onClick=\"deleteThisAndReload(".$comments['id'].",'expcomment')\" />";
      echo "<span class='smallgray'>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :</span><br />";
         echo "<p class='editable' id='expcomment_".$comments['id']."'>".$comments['comment']."</p></div>";
     }

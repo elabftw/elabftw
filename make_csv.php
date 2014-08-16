@@ -124,7 +124,7 @@ echo "<div class='item'>";
     $filesize = filesize($filepath);
     echo "<p>Your CSV file is ready :<br />
         <a href='download.php?f=".$filepath."&name=elabftw-export.csv' target='_blank'>
-        <img src='themes/".$_SESSION['prefs']['theme']."/img/download.png' alt='download' /> 
+        <img src='img/download.png' alt='download' /> 
         elabftw-export.csv</a>
         <span class='filesize'>(".format_bytes($filesize).")</span></p>";
 echo "</div>";

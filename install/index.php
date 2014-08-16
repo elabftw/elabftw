@@ -36,7 +36,6 @@ require_once '../inc/functions.php';
 <meta name="author" content="Nicolas CARPi" />
 <!-- CSS -->
 <link rel="stylesheet" media="all" href="../css/main.css" />
-<link id='maincss' rel='stylesheet' media='all' href='../themes/default/style.css' />
 <link rel="stylesheet" media="all" href="../js/jquery-ui/themes/smoothness/jquery-ui.min.css" />
 <style>
 /* little gray text */

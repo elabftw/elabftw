@@ -64,23 +64,23 @@ $data = $req->fetch();
 ?>
 <section class="item">
 
-<span class='date'><img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/calendar.png' title='date' alt='Date :' /> <?php echo $data['date'];?></span><br />
+<span class='date'><img src='img/calendar.png' title='date' alt='Date :' /> <?php echo $data['date'];?></span><br />
 
 <h3 style='color:#<?php echo $data['bgcolor'];?>'><?php echo $data['name'];?> </h3>
 <?php
 show_stars($data['rating']);
 // buttons
-echo "<a href='database.php?mode=edit&id=".$data['itemid']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/edit.png' title='edit' alt='edit' /></a> 
-<a href='duplicate_item.php?id=".$data['itemid']."&type=db'><img src='themes/".$_SESSION['prefs']['theme']."/img/duplicate.png' title='duplicate item' alt='duplicate' /></a> 
-<a href='make_pdf.php?id=".$data['itemid']."&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/pdf.png' title='make a pdf' alt='pdf' /></a> 
-<a href='javascript:window.print()'><img src='themes/".$_SESSION['prefs']['theme']."/img/print.png' title='Print this page' alt='Print' /></a> 
-<a href='make_zip.php?id=".$data['itemid']."&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/zip.png' title='make a zip archive' alt='zip' /></a>
-<a href='experiments.php?mode=show&related=".$data['itemid']."'><img src='themes/".$_SESSION['prefs']['theme']."/img/link.png' alt='Linked experiments' title='Linked experiments' /></a> ";
+echo "<a href='database.php?mode=edit&id=".$data['itemid']."'><img src='img/edit.png' title='edit' alt='edit' /></a> 
+<a href='duplicate_item.php?id=".$data['itemid']."&type=db'><img src='img/duplicate.png' title='duplicate item' alt='duplicate' /></a> 
+<a href='make_pdf.php?id=".$data['itemid']."&type=items'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a> 
+<a href='javascript:window.print()'><img src='img/print.png' title='Print this page' alt='Print' /></a> 
+<a href='make_zip.php?id=".$data['itemid']."&type=items'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a>
+<a href='experiments.php?mode=show&related=".$data['itemid']."'><img src='img/link.png' alt='Linked experiments' title='Linked experiments' /></a> ";
 // lock
 if ($data['locked'] == 0) {
-    echo "<a href='lock.php?id=".$data['itemid']."&action=lock&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/unlock.png' title='lock item' alt='lock' /></a>";
+    echo "<a href='lock.php?id=".$data['itemid']."&action=lock&type=items'><img src='img/unlock.png' title='lock item' alt='lock' /></a>";
 } else { // item is locked
-    echo "<a href='lock.php?id=".$data['itemid']."&action=unlock&type=items'><img src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' title='unlock item' alt='unlock' /></a>";
+    echo "<a href='lock.php?id=".$data['itemid']."&action=unlock&type=items'><img src='img/lock.png' title='unlock item' alt='unlock' /></a>";
 }
 // TAGS
 show_tags($id, 'items_tags');

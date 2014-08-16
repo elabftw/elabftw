@@ -261,7 +261,7 @@ function show_tags($item_id, $table)
     $req->execute();
     $tagcount = $req->rowCount();
     if ($tagcount > 0) {
-        echo "<span class='tags'><img src='themes/".$_SESSION['prefs']['theme']."/img/tags.png' alt='tags' /> ";
+        echo "<span class='tags'><img src='img/tags.png' alt='tags' /> ";
         while ($tags = $req->fetch()) {
             if ($table === 'experiments_tags') {
                 echo "<a href='experiments.php?mode=show&tag=".urlencode(stripslashes($tags['tag']))."'>".stripslashes($tags['tag'])."</a> ";
@@ -317,11 +317,11 @@ function showXP($id, $display)
             <img class='align_right' style='margin-left:5px;' src='img/arrow_right.png' alt='view' title='view experiment' /></a>";
         // show attached if there is a file attached
         if (has_attachement($experiments['id'])) {
-            echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='file attached' />";
+            echo "<img class='align_right' src='img/attached_file.png' alt='file attached' />";
         }
         // show lock if item is locked on viewXP
         if ($experiments['locked'] == 1) {
-            echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' alt='lock' />";
+            echo "<img class='align_right' src='img/lock.png' alt='lock' />";
         }
         echo "<p class='title'>". stripslashes($experiments['title']) . "</p>";
         echo "</section>";
@@ -404,11 +404,11 @@ function showDB($id, $display)
         show_stars($item['rating']);
         // show attached if there is a file attached
         if (has_attachement($item['id'])) {
-            echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/attached_file.png' alt='file attached' />";
+            echo "<img class='align_right' src='img/attached_file.png' alt='file attached' />";
         }
         // show lock if item is locked on viewDB
         if ($item['locked'] == 1) {
-            echo "<img class='align_right' src='themes/".$_SESSION['prefs']['theme']."/img/lock.png' alt='lock' />";
+            echo "<img class='align_right' src='img/lock.png' alt='lock' />";
         }
         echo "<p class='title'>". stripslashes($item['title']) . "</p>";
         echo "</section>";
@@ -663,6 +663,7 @@ function make_pdf($id, $type, $out = 'browser')
     ));
     // if we have comments
     if ($req->rowCount() > 0) {
+        $comments_block = "";
         $comments_block .= "<section>";
         if ($req->rowCount() === 1) {
             $comments_block .= "<h3>Comment :</h3>";

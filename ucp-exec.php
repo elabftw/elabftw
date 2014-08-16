@@ -221,27 +221,6 @@ if( ($result) && ($numrows === 1) ) {
 }
 }// end if first form submitted
 
-// DISPLAY PREFS
-if (isset($_POST['theme']) && $_POST['theme'] != $_SESSION['prefs']['theme']) {
-    if ($_POST['theme'] === 'default'){
-        $new_theme = 'default';
-    } elseif ($_POST['theme'] === 'l33t'){
-        $new_theme = 'l33t';
-    } else {
-        die('Tampering data much ?');
-    }
-    // SQL to update theme 
-    $sql = "UPDATE users SET theme = :new_theme WHERE userid = ".$_SESSION['userid'];
-    $req = $pdo->prepare($sql);
-    $req->execute(array(
-        'new_theme' => $new_theme
-    ));
-    // Put it in session
-    $_SESSION['prefs']['theme'] = $new_theme;
-    $infomsg_arr[] = 'Your theme is now : '.$new_theme;
-    $infoflag = true;
-}
-
 // VIEW MODE
 if (isset($_POST['display']) && $_POST['display'] != $_SESSION['prefs']['display']) {
     if ($_POST['display'] === 'default'){

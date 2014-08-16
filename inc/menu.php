@@ -43,7 +43,7 @@ if (isset($_SESSION['auth']) && $_SESSION['is_sysadmin'] === '1') {
     ?>
     <!-- SYSADMIN MENU --> 
     <a href='https://twitter.com/elabftw'>
-    <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/twitter.png' alt='twitter' title='Follow eLabFTW on Twitter !'>
+    <img src='img/twitter.png' alt='twitter' title='Follow eLabFTW on Twitter !'>
     </a> | 
     <a id='check_for_updates' href='#'>Check for updates</a> | <a href='sysconfig.php'>Sysadmin panel</a> | 
     <script>
@@ -61,8 +61,8 @@ if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
 
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     echo "Logged in as <a href='profile.php' title='Profile'>".$_SESSION['username']."</a> | 
-        <a href='ucp.php'><img src='themes/".$_SESSION['prefs']['theme']."/img/pref.png' alt='Control panel' title='Control panel' /></a> | 
-        <a href='logout.php'><img src='themes/".$_SESSION['prefs']['theme']."/img/logout.png' alt='' title='Logout' /></a></p>";
+        <a href='ucp.php'><img src='img/pref.png' alt='Control panel' title='Control panel' /></a> | 
+        <a href='logout.php'><img src='img/logout.png' alt='' title='Logout' /></a></p>";
 } else {
     echo "<a href='login.php'>Not logged in !</a>";
 }

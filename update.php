@@ -40,12 +40,40 @@ function add_field($table, $field, $params, $added, $not_added) {
         $result = $req->execute();
 
         if($result) {
-            return $added;
+            echo $added;
         } else {
              die($die_msg);
         }
     } else {
-        return $not_added;
+        echo $not_added;
+    }
+}
+
+function rm_field($table, $field, $added, $not_added) {
+    global $pdo;
+    // first test if it's here already
+    $sql = "SHOW COLUMNS FROM $table";
+    $req = $pdo->prepare($sql);
+    $req->execute();
+    $field_is_here = false;
+    while ($show = $req->fetch()) {
+        if (in_array($field, $show)) {
+            $field_is_here = true;
+        }
+    }
+    // rm field if it's here
+    if ($field_is_here) {
+        $sql = "ALTER TABLE $table DROP $field";
+        $req = $pdo->prepare($sql);
+        $result = $req->execute();
+
+        if($result) {
+            echo $added;
+        } else {
+             die($die_msg);
+        }
+    } else {
+        echo $not_added;
     }
 }
 
@@ -722,4 +750,5 @@ if (!$table_is_here) {
     echo "Table 'teams' already exists. Nothing to do.\n";
 }
 
-
+// remove theme from users
+rm_field('users', 'theme', ">>> Removed custom themes.\n", "Column 'theme' already removed. Nothing to do.\n");

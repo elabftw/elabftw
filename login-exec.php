@@ -114,7 +114,7 @@ if ($result) {
         $_SESSION['is_sysadmin'] = $group['is_sysadmin'];
 
         // PREFS
-        $_SESSION['prefs'] = array('theme' => $data['theme'],
+        $_SESSION['prefs'] = array(
             'display' => $data['display'],
             'order' => $data['order_by'],
             'sort' => $data['sort_by'],

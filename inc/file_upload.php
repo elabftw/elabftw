@@ -37,7 +37,7 @@ function abort() {
 </script>
 <hr class='flourishes'><div class="bigUpload inline">
     <div class="bigUploadContainer">
-    <img src='themes/<?php echo $_SESSION['prefs']['theme'];?>/img/upload.png'> <h3 style='display:inline'>Attach a file</h3>
+    <img src='img/upload.png'> <h3 style='display:inline'>Attach a file</h3>
         <form action="inc/bigUpload.php?action=post-unsupported"
             method="post"
             enctype="multipart/form-data"

@@ -75,13 +75,6 @@ $ftw = $ftw_arr[0];
 echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."</title>"?>
 <!-- CSS -->
 <link rel="stylesheet" media="all" href="css/main.css" />
-<?php
-if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
-    echo "<link id='maincss' rel='stylesheet' media='all' href='themes/".$_SESSION['prefs']['theme']."/style.css' />";
-} else {
-    echo "<link id='maincss' rel='stylesheet' media='all' href='themes/default/style.css' />";
-}
-?>
 <link rel="stylesheet" media="all" href="js/jquery-ui/themes/smoothness/jquery-ui.min.css" />
 <link rel="stylesheet" media="all" href="css/tagcloud.css" />
 <link rel="stylesheet" media="all" href="js/jquery-pageslide/jquery.pageslide.css" />

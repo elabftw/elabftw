@@ -261,7 +261,6 @@ CREATE TABLE IF NOT EXISTS `users` (
   `can_lock` int(1) NOT NULL DEFAULT '0',
   `register_date` bigint(20) unsigned NOT NULL,
   `token` varchar(255) DEFAULT NULL,
-  `theme` varchar(30) NOT NULL DEFAULT 'default',
   `display` varchar(10) NOT NULL DEFAULT 'default',
   `order_by` varchar(255) NOT NULL DEFAULT 'date',
   `sort_by` varchar(4) NOT NULL DEFAULT 'desc',

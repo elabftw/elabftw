@@ -69,6 +69,7 @@ if ($password == $cpassword) {
                 $_SESSION['auth'] = 1;
                 $_SESSION['path'] = PATH;
                 $_SESSION['userid'] = $data['userid'];
+                $_SESSION['team_id'] = $data['team'];
                 // Used in the menu
                 $_SESSION['username'] = $data['username'];
                 // load permissions

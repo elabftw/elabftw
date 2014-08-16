@@ -79,6 +79,7 @@ if (isset($_SESSION['auth'])) { // if user is auth, we check the cookie
             // fix for cookies problem
             $_SESSION['path'] = get_config('path');
             $_SESSION['userid'] = $data['userid'];
+            $_SESSION['team_id'] = $data['team'];
             // Used in the menu
             $_SESSION['username'] = $data['username'];
             // load permissions

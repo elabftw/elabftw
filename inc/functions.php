@@ -1063,16 +1063,17 @@ function get_team_config($column)
 {
     global $pdo;
 
-    $sql = "SELECT * FROM `teams` WHERE team_id = :team_id";
-    $req = $pdo->prepare($sql);
     // remove notice when not logged in
     if (isset($_SESSION['team_id'])) {
+        $sql = "SELECT * FROM `teams` WHERE team_id = :team_id";
+        $req = $pdo->prepare($sql);
         $req->execute(array(
             'team_id' => $_SESSION['team_id']
         ));
+        $team_config = $req->fetch();
+        return $team_config[$column];
     }
-    $team_config = $req->fetch();
-    return $team_config[$column];
+    return "";
 }
 /**
  * Will check if an executable is on the system.

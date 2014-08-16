@@ -69,13 +69,19 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 ?>
 </div>
 
-<nav><a href="experiments.php?mode=show">Experiments</a>
-<a href="database.php?mode=show">Database</a>
-<a href="team.php">Team</a>
-<a href="search.php">Search</a>
-<a href="<?php echo get_team_config('link_href');?>" target='_blank'><?php echo get_team_config('link_name')?></a>
-</nav>
-<hr class='flourishes'>
+<?php
+if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
+?>
+    <nav><a href="experiments.php?mode=show">Experiments</a>
+    <a href="database.php?mode=show">Database</a>
+    <a href="team.php">Team</a>
+    <a href="search.php">Search</a>
+    <a href="<?php echo get_team_config('link_href');?>" target='_blank'><?php echo get_team_config('link_name')?></a>
+    </nav>
+    <hr class='flourishes'>
+<?php
+}
+?>
 <!-- TITLE -->
 <div id='page_title'>
 <h2><?php echo strtoupper($page_title);?></h2>

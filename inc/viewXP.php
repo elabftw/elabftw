@@ -100,7 +100,7 @@ if ($data['locked'] == 0) {
     echo "<a href='lock.php?id=".$data['expid']."&action=unlock&type=experiments'><img src='img/lock.png' title='unlock experiment' alt='unlock' /></a>";
     // show timestamp button if it's not timestamped already
     if ($data['timestamped'] == 0) {
-        echo "<a href='timestamp.php?id=".$data['expid']."'><img src='img/stamp.png' title='timestamp experiment' alt='timestamp' /></a>";
+        echo "<a onClick=\"return confirmStamp()\" href='timestamp.php?id=".$data['expid']."'><img src='img/stamp.png' title='timestamp experiment' alt='timestamp' /></a>";
     }
 }
 
@@ -245,6 +245,16 @@ function makeEditable() {
 
 
 // READY ? GO !!
+
+function confirmStamp() {
+    var you_sure = confirm('Once timestamped, an experiment cannot be edited anymore ! Are you sure you want to do this ?');
+    if (you_sure === true) {
+        return true;
+    } else {
+
+        return false;
+    }
+}
 $(document).ready(function() {
     // change title
     // fix for the ' and "

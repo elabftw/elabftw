@@ -1,5 +1,20 @@
 /* Changelog for eLabFTW */
 
+Version 0.10.2
+* Add a possibility for timestamping a pdf export of an experiment
+* Removed old update.php content
+* Add md5sum to uploaded files
+* Display md5sum of attached files in the pdf
+
+Version 0.10.1
+* Fix a bug in authentification
+* Error logs make their apparition in the database
+* l33t theme is no more
+* Removed the github ssl cert (was not used anyway)
+* Move files around (js dependencies in js/)
+* Better bower integration
+
+
 Version 0.10.0
 * Support of several teams on the same install
 * Fixed a bug in the search page

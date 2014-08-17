@@ -614,9 +614,11 @@ function make_pdf($id, $type, $out = 'browser')
     // the name of the pdf is needed in make_zip
     $clean_title = $date."-".preg_replace('/[^A-Za-z0-9]/', ' ', $title);
     $body = stripslashes($data['body']);
+    // ELABID
     if ($type === 'experiments') {
         $elabid = $data['elabid'];
     }
+    // LOCK BLOCK
     if ($data['locked'] == '1' && $type == 'experiments') {
         // get info about the locker
         $sql = "SELECT firstname,lastname FROM users WHERE userid = :userid LIMIT 1";
@@ -706,9 +708,11 @@ function make_pdf($id, $type, $out = 'browser')
     $req->execute();
     $real_name = array();
     $comment = array();
+    $md5 = array();
     while ($uploads = $req->fetch()) {
         $real_name[] = $uploads['real_name'];
         $comment[] = $uploads['comment'];
+        $md5[] = $uploads['md5'];
     }
     // do we have files attached ?
     if (count($real_name) > 0) {
@@ -719,8 +723,18 @@ function make_pdf($id, $type, $out = 'browser')
             $content .= "<h3>Attached files :</h3>";
         }
         $content .= "<ul>";
-        for ($i=0; $i<count($real_name);$i++) {
-            $content .= "<li>".$real_name[$i]." (".stripslashes(htmlspecialchars_decode($comment[$i])).").</li>";
+        $real_name_cnt = count($real_name);
+        for ($i = 0 ; $i < $real_name_cnt ; $i++) {
+            $content .= "<li>".$real_name[$i];
+            // add a comment ? don't add if it's the default text
+            if ($comment[$i] != 'Click to add a comment') {
+               $content .= " (".stripslashes(htmlspecialchars_decode($comment[$i])).")";
+            }
+            // add md5 sum ? don't add if we don't have it
+            if (strlen($md5[$i]) == '32') { // we have md5 sum
+                $content .= "<br>md5 : ".$md5[$i];
+            }
+            $content .= "</li>";
         }
         $content .= "</ul></section>";
     }

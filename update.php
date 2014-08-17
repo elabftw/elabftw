@@ -216,4 +216,8 @@ if (!$field_is_here) {
     echo ">>> You can now timestamp experiments. See the wiki for more infos.\n";
 }
 
+// add md5 field to uploads
+add_field('uploads', 'md5', 'VARCHAR(32) NULL DEFAULT NULL', ">>> Uploaded files are now md5 summed upon upload.\n");
+
+// END
 echo "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day ! :)\n";

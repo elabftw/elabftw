@@ -77,7 +77,7 @@ try {
         }
     } catch (Exception $e) {
         dblog("Error", $_SESSION['userid'], "File: ".$e->getFile().", line ".$e->getLine().": ".$e->getMessage());
-        $msg_arr[] = "There was an error with the timestamping. Error has been logged. Check your login credentials.";
+        $msg_arr[] = "There was an error with the timestamping. Experiment is NOT timestamped. Error has been logged.";
         $_SESSION['errors'] = $msg_arr;
         header("Location:experiments.php?mode=view&id=$id");
         exit;

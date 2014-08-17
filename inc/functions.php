@@ -327,7 +327,8 @@ function showXP($id, $display)
         if ($experiments['timestamped']) {
             echo "<img class='align_right' src='img/valid.png' alt='stamp' title='Timestamp OK' />";
         }
-        echo "<p class='title'>". stripslashes($experiments['title']) . "</p>";
+        echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>
+            <p class='title'>". stripslashes($experiments['title']) . "</p></a>";
         echo "</section>";
     }
 }
@@ -414,7 +415,8 @@ function showDB($id, $display)
         if ($item['locked'] == 1) {
             echo "<img class='align_right' src='img/lock.png' alt='lock' />";
         }
-        echo "<p class='title'>". stripslashes($item['title']) . "</p>";
+        echo "<a href='database.php?mode=view&id=".$item['id']."'>
+            <p class='title'>". stripslashes($item['title']) . "</p></a>";
         echo "</section>";
     }
 }

@@ -141,6 +141,9 @@ For example : http://12.34.56.78/elabftw/install
 
 ******
 
+# Post install things to do
+You can read [this page](https://github.com/NicolasCARPi/elabftw/wiki/finalizing) to finish fully the configuration of your install.
+
 # Updating
 To update, just cd in the `elabftw` folder and do :
 ~~~ sh

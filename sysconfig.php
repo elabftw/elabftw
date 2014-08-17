@@ -62,7 +62,7 @@ $formKey = new formKey();
     <br />
     <br />
         <label for='stamplogin'>Login for external timestamping service :</label>
-        <input type='text' value='<?php echo get_config('stamplogin');?>' name='stamplogin' id='stamplogin' />
+        <input type='email' value='<?php echo get_config('stamplogin');?>' name='stamplogin' id='stamplogin' />
     <br />
     <br />
         <label for='stamppass'>Password for external timestamping service :</label>

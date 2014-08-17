@@ -61,6 +61,14 @@ $formKey = new formKey();
         <input type='text' value='<?php echo get_config('proxy');?>' name='proxy' id='proxy' />
     <br />
     <br />
+        <label for='stamplogin'>Login for external timestamping service :</label>
+        <input type='text' value='<?php echo get_config('stamplogin');?>' name='stamplogin' id='stamplogin' />
+    <br />
+    <br />
+        <label for='stamppass'>Password for external timestamping service :</label>
+        <input type='password' value='<?php echo get_config('stamppass');?>' name='stamppass' id='stamppass' />
+    <br />
+    <br />
     <h3>Security settings</h3>
         <label for='admin_validate'>Users need validation by admin after registration :</label>
         <select name='admin_validate' id='admin_validate'>

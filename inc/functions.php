@@ -320,8 +320,12 @@ function showXP($id, $display)
             echo "<img class='align_right' src='img/attached_file.png' alt='file attached' />";
         }
         // show lock if item is locked on viewXP
-        if ($experiments['locked'] == 1) {
+        if ($experiments['locked']) {
             echo "<img class='align_right' src='img/lock.png' alt='lock' />";
+        }
+        // show stamp if experiment is timestamped
+        if ($experiments['timestamped']) {
+            echo "<img class='align_right' src='img/valid.png' alt='stamp' />";
         }
         echo "<p class='title'>". stripslashes($experiments['title']) . "</p>";
         echo "</section>";
@@ -1134,3 +1138,23 @@ function custom_die()
     </html>";
     die();
 }
+
+/**
+ * Make a simple query
+ * 
+ * @param string The SQL query
+ * @return bool the return value of execute
+function q($sql) {
+    global $pdo;
+    try {
+        $req = $pdo->prepare($sql);
+        $req->execute();
+        return true;
+    }
+    catch (PDOException $e)
+    {
+        dblog('Error', 'mysql', $e->getMessage());
+        return false;
+    }
+}
+ */

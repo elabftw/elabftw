@@ -1,57 +1,59 @@
--- phpMyAdmin SQL Dump
--- version 4.2.7
--- http://www.phpmyadmin.net
+-- MySQL dump 10.15  Distrib 10.0.12-MariaDB, for Linux (x86_64)
 --
--- Host: localhost
--- Generation Time: Aug 14, 2014 at 09:00 PM
--- Server version: 10.0.12-MariaDB-log
--- PHP Version: 5.5.15
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
-
+-- Host: localhost    Database: elabftw2
+-- ------------------------------------------------------
+-- Server version	10.0.12-MariaDB-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
-
---
--- Database: `elabftw2`
---
-
--- --------------------------------------------------------
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
 -- Table structure for table `banned_users`
 --
 
-CREATE TABLE IF NOT EXISTS `banned_users` (
-`id` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `banned_users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `banned_users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `ieuieuie` int(11) NOT NULL,
   `user_infos` text NOT NULL,
-  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `config`
 --
 
-CREATE TABLE IF NOT EXISTS `config` (
+DROP TABLE IF EXISTS `config`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `config` (
   `conf_name` varchar(255) NOT NULL,
-  `conf_value` text
+  `conf_value` text,
+  PRIMARY KEY (`conf_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `experiments`
 --
 
-CREATE TABLE IF NOT EXISTS `experiments` (
-`id` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `experiments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `experiments` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `team` int(10) unsigned NOT NULL,
   `title` varchar(255) NOT NULL,
   `date` int(10) unsigned NOT NULL,
@@ -63,99 +65,124 @@ CREATE TABLE IF NOT EXISTS `experiments` (
   `locked` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `lockedby` int(10) unsigned DEFAULT NULL,
   `lockedwhen` timestamp NULL DEFAULT NULL,
+  `timestamped` tinyint(1) NOT NULL DEFAULT '0',
+  `timestampedby` int(11) DEFAULT NULL,
+  `timestamptoken` text,
+  `timestampedwhen` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `visibility` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
+  `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `experiments_comments`
 --
 
-CREATE TABLE IF NOT EXISTS `experiments_comments` (
-`id` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `experiments_comments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `experiments_comments` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `datetime` datetime NOT NULL,
   `exp_id` int(11) NOT NULL,
   `comment` text NOT NULL,
-  `userid` int(11) NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
+  `userid` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `experiments_links`
 --
 
-CREATE TABLE IF NOT EXISTS `experiments_links` (
-`id` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `experiments_links`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `experiments_links` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `item_id` int(10) unsigned NOT NULL,
-  `link_id` text NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
+  `link_id` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `experiments_revisions`
 --
 
-CREATE TABLE IF NOT EXISTS `experiments_revisions` (
-`id` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `experiments_revisions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `experiments_revisions` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `exp_id` int(10) unsigned NOT NULL,
   `body` text NOT NULL,
   `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `userid` int(11) NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
+  `userid` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `experiments_tags`
 --
 
-CREATE TABLE IF NOT EXISTS `experiments_tags` (
-`id` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `experiments_tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `experiments_tags` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `tag` varchar(255) NOT NULL,
   `item_id` int(10) unsigned NOT NULL,
-  `userid` int(10) unsigned NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
+  `userid` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `experiments_templates`
 --
 
-CREATE TABLE IF NOT EXISTS `experiments_templates` (
-`id` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `experiments_templates`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `experiments_templates` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `team` int(10) unsigned DEFAULT NULL,
   `body` text,
   `name` varchar(255) NOT NULL,
-  `userid` int(10) unsigned DEFAULT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
+  `userid` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `groups`
 --
 
-CREATE TABLE IF NOT EXISTS `groups` (
-`group_id` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `groups`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `groups` (
+  `group_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `group_name` text NOT NULL,
   `is_sysadmin` tinyint(1) NOT NULL,
   `is_admin` text NOT NULL,
-  `can_lock` text NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
+  `can_lock` text NOT NULL,
+  PRIMARY KEY (`group_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `items`
 --
 
-CREATE TABLE IF NOT EXISTS `items` (
-`id` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `items`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `items` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `team` int(10) unsigned NOT NULL,
   `title` varchar(255) DEFAULT NULL,
   `date` int(10) unsigned NOT NULL,
@@ -163,100 +190,124 @@ CREATE TABLE IF NOT EXISTS `items` (
   `rating` tinyint(10) DEFAULT '0',
   `type` int(10) unsigned NOT NULL,
   `locked` tinyint(3) unsigned DEFAULT NULL,
-  `userid` int(10) unsigned NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
+  `userid` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `items_tags`
 --
 
-CREATE TABLE IF NOT EXISTS `items_tags` (
-`id` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `items_tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `items_tags` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `tag` varchar(255) NOT NULL,
-  `item_id` int(10) unsigned NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
+  `item_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `items_types`
 --
 
-CREATE TABLE IF NOT EXISTS `items_types` (
-`id` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `items_types`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `items_types` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `team` int(10) unsigned NOT NULL,
   `name` text NOT NULL,
   `bgcolor` varchar(6) DEFAULT '000000',
-  `template` text
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+  `template` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- --------------------------------------------------------
 --
 -- Table structure for table `logs`
 --
 
-CREATE TABLE IF NOT EXISTS `logs` (
-`id` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `logs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `logs` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `user` text COLLATE utf8_unicode_ci,
-  `body` text COLLATE utf8_unicode_ci NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `body` text COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `status`
 --
 
-CREATE TABLE IF NOT EXISTS `status` (
-`id` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `status`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `status` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `team` int(10) unsigned NOT NULL,
   `name` text NOT NULL,
   `color` varchar(6) NOT NULL,
-  `is_default` tinyint(1) DEFAULT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
+  `is_default` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `teams`
 --
 
-CREATE TABLE IF NOT EXISTS `teams` (
-`team_id` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `teams`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `teams` (
+  `team_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `team_name` text NOT NULL,
   `deletable_xp` tinyint(1) NOT NULL,
   `link_name` text NOT NULL,
   `link_href` text NOT NULL,
-  `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
+  `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`team_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `uploads`
 --
 
-CREATE TABLE IF NOT EXISTS `uploads` (
-`id` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `uploads`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `uploads` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `real_name` text NOT NULL,
   `long_name` text NOT NULL,
   `comment` text NOT NULL,
   `item_id` int(10) unsigned DEFAULT NULL,
   `userid` text NOT NULL,
   `type` varchar(255) NOT NULL,
-  `date` date DEFAULT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
+  `date` date DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `users`
 --
 
-CREATE TABLE IF NOT EXISTS `users` (
-`userid` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
+  `userid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(255) NOT NULL,
   `salt` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
@@ -281,205 +332,21 @@ CREATE TABLE IF NOT EXISTS `users` (
   `sc_submit` varchar(1) NOT NULL DEFAULT 's',
   `sc_todo` varchar(1) NOT NULL DEFAULT 't',
   `close_warning` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `validated` tinyint(1) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+  `validated` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`userid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `banned_users`
---
-ALTER TABLE `banned_users`
- ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `config`
---
-ALTER TABLE `config`
- ADD PRIMARY KEY (`conf_name`);
-
---
--- Indexes for table `experiments`
---
-ALTER TABLE `experiments`
- ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `experiments_comments`
---
-ALTER TABLE `experiments_comments`
- ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `experiments_links`
---
-ALTER TABLE `experiments_links`
- ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `experiments_revisions`
---
-ALTER TABLE `experiments_revisions`
- ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `experiments_tags`
---
-ALTER TABLE `experiments_tags`
- ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `experiments_templates`
---
-ALTER TABLE `experiments_templates`
- ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `groups`
---
-ALTER TABLE `groups`
- ADD PRIMARY KEY (`group_id`);
-
---
--- Indexes for table `items`
---
-ALTER TABLE `items`
- ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `items_tags`
---
-ALTER TABLE `items_tags`
- ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `items_types`
---
-ALTER TABLE `items_types`
- ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `logs`
---
-ALTER TABLE `logs`
- ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `status`
---
-ALTER TABLE `status`
- ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `teams`
---
-ALTER TABLE `teams`
- ADD PRIMARY KEY (`team_id`);
-
---
--- Indexes for table `uploads`
---
-ALTER TABLE `uploads`
- ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
- ADD PRIMARY KEY (`userid`);
-
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
---
--- AUTO_INCREMENT for dumped tables
---
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
---
--- AUTO_INCREMENT for table `banned_users`
---
-ALTER TABLE `banned_users`
-MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `experiments`
---
-ALTER TABLE `experiments`
-MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `experiments_comments`
---
-ALTER TABLE `experiments_comments`
-MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `experiments_links`
---
-ALTER TABLE `experiments_links`
-MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `experiments_revisions`
---
-ALTER TABLE `experiments_revisions`
-MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `experiments_tags`
---
-ALTER TABLE `experiments_tags`
-MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `experiments_templates`
---
-ALTER TABLE `experiments_templates`
-MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `groups`
---
-ALTER TABLE `groups`
-MODIFY `group_id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `items`
---
-ALTER TABLE `items`
-MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `items_tags`
---
-ALTER TABLE `items_tags`
-MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `items_types`
---
-ALTER TABLE `items_types`
-MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `logs`
---
-ALTER TABLE `logs`
-MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `status`
---
-ALTER TABLE `status`
-MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `teams`
---
-ALTER TABLE `teams`
-MODIFY `team_id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `uploads`
---
-ALTER TABLE `uploads`
-MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-MODIFY `userid` int(10) unsigned NOT NULL AUTO_INCREMENT;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- Dump completed on 2014-08-17  2:33:04
 -- ELABFTW
 /* the default item_types */
 INSERT INTO `items_types` (`team`, `id`, `name`, `bgcolor`, `template`) VALUES

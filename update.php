@@ -774,3 +774,21 @@ if (!$table_is_here) {
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;");
     echo ">>> Logs are now stored in the database.\n";
 }
+
+// TIMESTAMPS
+
+// check if there is the timestamp columns
+$sql = "SHOW COLUMNS FROM experiments";
+$req = $pdo->prepare($sql);
+$req->execute();
+$field_is_here = false;
+while ($show = $req->fetch()) {
+    if (in_array('timestamped', $show)) {
+        $field_is_here = true;
+    }
+}
+// add field if it's not here
+if (!$field_is_here) {
+    q("ALTER TABLE `experiments` ADD `timestamped` BOOLEAN NOT NULL DEFAULT FALSE AFTER `lockedwhen`, ADD `timestampedby` INT NULL DEFAULT NULL AFTER `timestamped`, ADD `timestampedwhen` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `timestampedby`, ADD `timestamptoken` TEXT NULL AFTER `timestampedwhen`;");
+    q("INSERT INTO `config` (`conf_name`, `conf_value`) VALUES ('stamplogin', NULL), ('stamppass', NULL);");
+}

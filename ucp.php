@@ -45,7 +45,7 @@ $users = $req->fetch();
         <form name="profileForm" method="post" action="ucp-exec.php">
             <div>
                 <p>Enter your current password to change personnal infos
-                <input id='currpass' name="currpass" type="password" /></p>
+                <input id='currpass' name="currpass" type="password" required /></p>
             </div>
             <div class='innerinnerdiv'>
                   New password <input name="newpass" type="password" /><br />

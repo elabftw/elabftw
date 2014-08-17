@@ -228,6 +228,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
     if (isset($_POST['stamppass'])) {
         $stamppass = filter_var($_POST['stamppass'], FILTER_SANITIZE_STRING);
     }
+    if ($_POST['stampshare'] == 1) {
+        $stampshare = 1;
+    } else {
+        $stampshare = 0;
+    }
     if ($_POST['admin_validate'] == 1) {
         $admin_validate = 1;
     } else {
@@ -262,6 +267,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
         'proxy' => $proxy,
         'stamplogin' => $stamplogin,
         'stamppass' => $stamppass,
+        'stampshare' => $stampshare,
         'admin_validate' => $admin_validate,
         'login_tries' => $login_tries,
         'ban_time' => $ban_time,
@@ -306,14 +312,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
     if (isset($_POST['link_href'])) {
         $link_href = filter_var($_POST['link_href'], FILTER_SANITIZE_STRING);
     }
+    if (isset($_POST['stamplogin'])) {
+        $stamplogin = filter_var($_POST['stamplogin'], FILTER_VALIDATE_EMAIL);
+    }
+    if (isset($_POST['stamppass'])) {
+        $stamppass = filter_var($_POST['stamppass'], FILTER_SANITIZE_STRING);
+    }
 
     // SQL
-    $sql = "UPDATE teams SET deletable_xp = :deletable_xp, link_name = :link_name, link_href = :link_href WHERE team_id = :team_id";
+    $sql = "UPDATE teams SET deletable_xp = :deletable_xp, link_name = :link_name, link_href = :link_href, stamplogin = :stamplogin, stamppass = :stamppass WHERE team_id = :team_id";
     $req = $pdo->prepare($sql);
     $result = $req->execute(array(
         'deletable_xp' => $deletable_xp,
         'link_name' => $link_name,
         'link_href' => $link_href,
+        'stamplogin' => $stamplogin,
+        'stamppass' => $stamppass,
         'team_id' => $_SESSION['team_id']
     ));
 

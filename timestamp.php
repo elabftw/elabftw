@@ -37,10 +37,18 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
 }
 
 // Get login/password info
-$login = get_config('stamplogin');
-$password = get_config('stamppass');
+// if the team config is set, we use this one, else, we use the general one, unless we can't (not allowed in config)
+if (strlen(get_team_config('stamplogin')) > 2) {
 
-if (strlen($login) < 2) {
+    $login = get_team_config('stamplogin');
+    $password = get_team_config('stamppass');
+
+} elseif (get_config('stampshare')) {
+
+    $login = get_config('stamplogin');
+    $password = get_config('stamppass');
+} else {
+
     $msg_arr[] = "The timestamping feature is not configured. Please read the <a href='https://github.com/NicolasCARPi/elabftw/wiki/finalizing#setting-up-timestamping'>wiki</a>.";
     $_SESSION['errors'] = $msg_arr;
     header("Location:experiments.php?mode=view&id=$id");

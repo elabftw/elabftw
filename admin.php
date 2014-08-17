@@ -100,6 +100,16 @@ if ($count > 0) {
     <br />
         <label for='link_href'>Address where this link should point :</label>
         <input type='url' value='<?php echo get_team_config('link_href');?>' name='link_href' id='link_href' />
+    <br />
+    <br />
+        <label for='stamplogin'>Login for external timestamping service :</label>
+        <input type='email' value='<?php echo get_team_config('stamplogin');?>' name='stamplogin' id='stamplogin' />
+    <br />
+    <br />
+        <label for='stamppass'>Password for external timestamping service :</label>
+        <input type='password' value='<?php echo get_team_config('stamppass');?>' name='stamppass' id='stamppass' />
+    <br />
+    <br />
     </div>
     <div class='center'>
         <button type='submit' name='submit_config' class='submit button'>Save</button>

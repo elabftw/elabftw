@@ -41,7 +41,7 @@ $login = get_config('stamplogin');
 $password = get_config('stamppass');
 
 if (strlen($login) < 2) {
-    $msg_arr[] = "The timestamping feature is not configured. Please read the wiki.";
+    $msg_arr[] = "The timestamping feature is not configured. Please read the <a href='https://github.com/NicolasCARPi/elabftw/wiki/finalizing#setting-up-timestamping'>wiki</a>.";
     $_SESSION['errors'] = $msg_arr;
     header("Location:experiments.php?mode=view&id=$id");
     exit;

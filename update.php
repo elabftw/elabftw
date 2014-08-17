@@ -216,4 +216,4 @@ if (!$field_is_here) {
     echo ">>> You can now timestamp experiments. See the wiki for more infos.\n";
 }
 
-echo "\n\nEverything went well :). Thanks for using eLabFTW. Have a great day !\n";
+echo "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day ! :)\n";

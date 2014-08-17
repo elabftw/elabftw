@@ -149,15 +149,15 @@ function is_pos_int($int)
  * @param int $id ID of the item to check
  * @return bool Return false if there is now file attached
  */
-function has_attachement($id)
+function has_attachement($id, $type)
 {
     global $pdo;
     $sql = "SELECT id FROM uploads 
-        WHERE item_id = :item_id AND type = 'items'";
+        WHERE item_id = :item_id AND type = :type LIMIT 1";
     $req = $pdo->prepare($sql);
-    $req->execute(array(
-        'item_id' => $id
-    ));
+    $req->bindParam(':item_id', $id);
+    $req->bindParam(':type', $type);
+    $req->execute();
     if ($req->rowCount() > 0) {
         return true;
     }
@@ -316,7 +316,7 @@ function showXP($id, $display)
         echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>
             <img class='align_right' style='margin-left:5px;' src='img/arrow_right.png' alt='view' title='view experiment' /></a>";
         // show attached if there is a file attached
-        if (has_attachement($experiments['id'])) {
+        if (has_attachement($experiments['id'], 'experiments')) {
             echo "<img class='align_right' src='img/attached_file.png' alt='file attached' />";
         }
         // show lock if item is locked on viewXP
@@ -408,7 +408,7 @@ function showDB($id, $display)
         // STARS
         show_stars($item['rating']);
         // show attached if there is a file attached
-        if (has_attachement($item['id'])) {
+        if (has_attachement($item['id'], 'items')) {
             echo "<img class='align_right' src='img/attached_file.png' alt='file attached' />";
         }
         // show lock if item is locked on viewDB

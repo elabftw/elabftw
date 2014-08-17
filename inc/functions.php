@@ -784,7 +784,8 @@ function make_pdf($id, $type, $out = 'browser')
                 $content .= "<h3>Linked items :</h3>";
             }
             $content .= "<ul>";
-            for ($i=0; $i<$req->rowCount();$i++) {
+            $row_cnt = $req->rowCount();
+            for ($i=0; $i<$row_cnt;$i++) {
                 // we need the url of the displayed item
                 if ($out === 'browser') {
                     $item_url = str_replace('experiments.php', 'database.php', $url);

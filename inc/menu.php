@@ -39,26 +39,6 @@ require_once 'inc/functions.php';
 
 <div id="logmenu"><p>
 <?php
-if (isset($_SESSION['auth']) && $_SESSION['is_sysadmin'] === '1') {
-    ?>
-    <!-- SYSADMIN MENU --> 
-    <a href='https://twitter.com/elabftw'>
-    <img src='img/twitter.png' alt='twitter' title='Follow eLabFTW on Twitter !'>
-    </a> | 
-    <a id='check_for_updates' href='#'>Check for updates</a> | <a href='sysconfig.php'>Sysadmin panel</a> | 
-    <script>
-    $('#check_for_updates').click(function() {
-        var jqxhr = $.post('check_for_updates.php', function(answer) {
-            alert(answer);
-        });
-    });
-    </script>
-<?php
-}
-if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
-    echo "<a href='admin.php'>Admin Panel</a> | ";
-}
-
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     echo "Logged in as <a href='profile.php' title='Profile'>".$_SESSION['username']."</a> | 
         <a href='ucp.php'><img src='img/pref.png' alt='Control panel' title='Control panel' /></a> | 

@@ -26,8 +26,8 @@
 /* install/testSQL.php to test if the SQL/email parameters are good */
 
 // Check if there is already a config file, die if yes.
-if(file_exists('../admin/config.php')) {
-    die();
+if(file_exists('../config.php')) {
+    die('Remove config file.');
 }
 
 // MYSQL

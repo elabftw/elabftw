@@ -78,10 +78,21 @@ if(php_sapi_name() != 'cli' || !empty($_SERVER['REMOTE_ADDR'])) {
     die("<p>Thank you for using eLabFTW. <br />To update your database, run this file only from the command line.</p>");
 }
 
-
+// UPDATE the config file path
 // check for config file
-if (!file_exists('admin/config.php')) {
-    die("There is something seriously wrong with your install. I could not find the file admin/config.php !");
+if (!file_exists('config.php')) {
+    if (file_exists('admin/config.php')) { // update
+        // copy the file
+        if (rename('admin/config.php', 'config.php')) {
+            echo ">>> Config file is now in the root directory\n";
+            echo "!!! You can now safely delete the admin directory if you wish: 'rm -rf admin'\n";
+        } else {
+            echo "!!! Please move 'admin/config.php' to the root directory : 'mv admin/config.php .'\n";
+            exit;
+        }
+    } else {
+        die("There is something seriously wrong with your install. I could not find the file config.php !");
+    }
 }
 
 require_once 'inc/connect.php';

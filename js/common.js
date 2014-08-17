@@ -56,24 +56,3 @@ function showSaved() {
 function removeSaved() {
        document.body.removeChild(document.getElementById('overlay'));
 }
-
-// for the footer
-function mouseOverPhp(action){
-if (action == 'on') {
-    document.php.src ="img/phpon.gif";
-} else {
-document.php.src ="img/phpoff.gif";}
-}
-function mouseOverSql(action){
-if (action == 'on') {
-    document.mysql.src ="img/mysqlon.gif";
-} else {
-document.mysql.src ="img/mysqloff.gif";}
-}
-function mouseOverCss(action){
-if (action == 'on') {
-    document.css.src ="img/csson.gif";
-} else {
-document.css.src ="img/cssoff.gif";}
-}
-

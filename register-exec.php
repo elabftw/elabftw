@@ -249,7 +249,16 @@ Free open-source Lab Manager'
         ->setUsername(get_config('smtp_username'))
         ->setPassword(get_config('smtp_password'));
         $mailer = Swift_Mailer::newInstance($transport);
-        $result = $mailer->send($message);
+        // SEND EMAIL
+        try {
+            $mailer->send($message);
+        } catch (Exception $e) {
+            dblog('Error', 'smtp', $e->getMessage());
+            $msg_arr[] = "Could not send email to inform admin. Error was logged. Contact an admin directly to validate your account.";
+            $_SESSION['errors'] = $msg_arr;
+            header('Location: register.php');
+            exit;
+        }
         $msg_arr[] = 'Registration successful :)<br />Your account must now be validated by an admin.<br />You will receive an email when it is done.';
     } else {
         $msg_arr[] = 'Registration successful :)<br />Welcome to eLabFTW \o/';

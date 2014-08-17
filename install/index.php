@@ -60,18 +60,18 @@ require_once '../inc/functions.php';
 <?php
 // Check if there is already a config file
 
-if (file_exists('../admin/config.php')) {
+if (file_exists('../config.php')) {
     // ok there is a config file, but maybe it's a fresh install, so redirect to the register page
     // check that the config file is here and readable
-    if (!is_readable('../admin/config.php')) {
+    if (!is_readable('../config.php')) {
         $message = "No readable config file found. Make sure the server has permissions to read it. Try :<br />
-            chmod 644 admin/config.php<br />";
+            chmod 644 config.php<br />";
         display_message('error', $message);
         custom_die();
     }
 
     // check if there are users registered
-    require_once '../admin/config.php';
+    require_once '../config.php';
     try {
         $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
         $pdo = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
@@ -226,9 +226,9 @@ if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32' || PHP_OS == 'WINNT' || PHP_OS == 'Wi
 
 <!-- FINAL SECTION -->
 <section id='final_section'>
-<p>When you click the button below, it will create the file <em>admin/config.php</em>. If it cannot create it (because the server doesn't have write permission to this folder), your browser will download it and you will need to put it in the folder <em>admin</em>.</p>
+<p>When you click the button below, it will create the file <em>config.php</em>. If it cannot create it (because the server doesn't have write permission to this folder), your browser will download it and you will need to put it in the folder <em>admin</em>.</p>
 <p>To put this file on the server, you can use scp (don't write the '$') :</p>
-<p class='code'>$ scp /path/to/config.php pi@12.34.56.78:/var/www/elabftw/admin</p>
+<p class='code'>$ scp /path/to/config.php pi@12.34.56.78:/var/www/elabftw/</p>
 <p>If you want to modify some parameters afterwards, just edit this file directly.</p>
 
 <div class='center' style='margin-top:8px'>

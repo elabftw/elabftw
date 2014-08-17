@@ -33,7 +33,7 @@ if (!isset($_SESSION)) {
 require_once '../inc/functions.php';
 
 // Check if there is already a config file, redirect to index if yes.
-if (file_exists('../admin/config.php')) {
+if (file_exists('../config.php')) {
     header('Location: ../install/index.php');
     exit;
 }
@@ -88,7 +88,7 @@ $req->execute();
 // BUILD CONFIG FILE
 
 // the new file to write to
-$config_file = '../admin/config.php';
+$config_file = '../config.php';
 // what we will write
 $config = "<?php
 define('DB_HOST', '".$db_host."');

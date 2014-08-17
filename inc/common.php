@@ -29,14 +29,15 @@ if (!isset($_SESSION)) {
 }
 
 // check that the config file is here and readable
-if (!is_readable('admin/config.php')) {
+if (!is_readable('config.php')) {
     die("No readable config file found. Make sure the server has permissions to read it. Try :<br />
         <hr>
-        chmod 644 admin/config.php
+        chmod 644 config.php
         <hr>
-        Or if eLabFTW is not yet installed, head to the <a href='install'>install folder</a>");
+        Or if eLabFTW is not yet installed, head to the <a href='install'>install folder</a><br>
+        Or if you just did a git pull, run php update.php");
 }
-require_once 'admin/config.php';
+require_once 'config.php';
 require_once 'inc/functions.php';
 // SQL CONNECT
 try {

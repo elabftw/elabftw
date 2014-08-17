@@ -49,13 +49,12 @@ if (strlen($login) < 2) {
 
 
 // generate the pdf to timestamp
-$pdf_path = make_pdf($id, 'experiments', 'uploads/tmp');
+$pdf_path = make_pdf($id, 'experiments', 'uploads');
 
 // generate the sha256 hash that we will send
-$hashedDataToTimestamp = hash_file('sha256', "uploads/tmp/$pdf_path");
-// delete the pdf, we don't use it anymore
-unlink("uploads/tmp/$pdf_path");
+$hashedDataToTimestamp = hash_file('sha256', "uploads/$pdf_path");
 
+// CONFIGURE DATA TO SEND
 $dataToSend = array ('hashAlgo' => 'SHA256', 'withCert' => 'true', 'hashValue' => $hashedDataToTimestamp);
 $dataQuery = http_build_query($dataToSend);
 $context_options = array (
@@ -69,7 +68,20 @@ $context_options = array (
 );
 
 $context = stream_context_create($context_options);
-$fp = fopen("https://ws.universign.eu/tsa/post/", 'r', false, $context);
+
+// SEND DATA
+try {
+    $fp = fopen("https://ws.universign.eu/tsa/post/", 'r', false, $context);
+    if (!$fp) {
+            throw new Exception("There was an error in the timestamping. Login credentials probably wrong or no more credits.");
+        }
+    } catch (Exception $e) {
+        dblog("Error", $_SESSION['userid'], "File: ".$e->getFile().", line ".$e->getLine().": ".$e->getMessage());
+        $msg_arr[] = "There was an error with the timestamping. Error has been logged. Check your login credentials.";
+        $_SESSION['errors'] = $msg_arr;
+        header("Location:experiments.php?mode=view&id=$id");
+        exit;
+}
 $token = stream_get_contents($fp);
 
 $longname = hash("sha512", uniqid(rand(), true)).".asn1";
@@ -85,14 +97,42 @@ try {
     header("Location:experiments.php?mode=view&id=$id");
     exit;
 }
+
+// SQL
 $sql = "UPDATE `experiments` SET `timestamped` = 1, `timestampedby` = :userid, `timestampedwhen` = CURRENT_TIMESTAMP, `timestamptoken` = :longname WHERE `id` = :id;";
 $req = $pdo->prepare($sql);
 $req->bindParam(':longname', $longname);
 $req->bindParam(':userid', $_SESSION['userid']);
 $req->bindParam(':id', $id);
-$res = $req->execute();
-if ($res) {
-    $msg_arr[] = "Experiment timestamped with success.";
+$res1 = $req->execute();
+
+// add also our pdf to the attached files of the experiment, this way it is kept safely :)
+// I had this idea when realizing that if you comment an experiment, the hash won't be good anymore. Because the pdf will contain the new comments.
+// Keeping the pdf here is the best way to go, as this leaves room to leave comments.
+
+// this sql is to get the elabid which will be the real_name of the PDF
+$sql = "SELECT elabid FROM experiments WHERE id = :id";
+$req = $pdo->prepare($sql);
+$req->bindParam(':id', $id);
+$res2 = $req->execute();
+$real_name = $req->fetch(PDO::FETCH_COLUMN)."-timestamped.pdf";
+
+$md5 = hash_file('md5', "uploads/$pdf_path");
+
+// DA REAL SQL
+$sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, md5) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :md5)";
+$req = $pdo->prepare($sql);
+$req->bindParam(':real_name', $real_name);
+$req->bindParam(':long_name', $pdf_path);
+$req->bindValue(':comment', "Timestamped PDF");
+$req->bindParam(':item_id', $id);
+$req->bindParam(':userid', $_SESSION['userid']);
+$req->bindValue(':type', 'exp-pdf-timestamp');
+$req->bindParam(':md5', $md5);
+$res3 = $req->execute();
+
+if ($res1 && $res2 && $res3) {
+    $msg_arr[] = "Experiment timestamped with success. The timestamped PDF can now be downloaded below.";
     $_SESSION['infos'] = $msg_arr;
     header("Location:experiments.php?mode=view&id=$id");
     exit;

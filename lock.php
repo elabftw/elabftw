@@ -109,7 +109,7 @@ switch($_GET['type']) {
     $req->execute();
     $timestamped = $req->fetchColumn();
     if ($action === 0 && $timestamped) {
-            $err_arr[] = "You cannot unlock a timestamped experiment. You can still comment it.";
+            $err_arr[] = "You cannot unlock or edit in any way a timestamped experiment.";
             $_SESSION['errors'] = $err_arr;
             header("Location: experiments.php?mode=view&id=$id");
             exit;

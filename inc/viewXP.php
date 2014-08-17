@@ -158,12 +158,25 @@ if ($req->rowcount() > 0) {
 
 // SHOW INFO ON TIMESTAMP
 if ($data['timestamped'] == 1) {
+    // who what when ?
     $sql = 'SELECT firstname, lastname FROM users WHERE userid = :userid';
     $req_stamper = $pdo->prepare($sql);
     $req_stamper->bindParam(':userid', $data['timestampedby']);
     $req_stamper->execute();
     $timestamper = $req_stamper->fetch();
-    display_message('info', "Experiment was timestamped by ".$timestamper['firstname']." ".$timestamper['lastname']." on ".$data['timestampedwhen']);
+
+    // display timestamped pdf download link
+    $sql = "SELECT * FROM uploads WHERE type = 'exp-pdf-timestamp' AND item_id = :item_id LIMIT 1";
+    $req_stamper = $pdo->prepare($sql);
+    $req_stamper->bindParam(':item_id', $id);
+    $req_stamper->execute();
+    $uploads = $req_stamper->fetch();
+
+    display_message('info', "Experiment was timestamped by ".$timestamper['firstname']." ".$timestamper['lastname']." on ".$data['timestampedwhen']."
+        <a href='uploads/".$uploads['long_name']."'><img src='img/pdf.png' title='Download timestamped pdf' alt='pdf' /></a>");
+    unset($timestamper);
+    unset($uploads);
+
 }
 
 // DISPLAY eLabID

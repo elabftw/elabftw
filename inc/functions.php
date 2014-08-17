@@ -629,9 +629,13 @@ function make_pdf($id, $type, $out = 'browser')
         $lockuser = $reqlock->fetch();
 
         // separate date and time
-        $lockdate = explode(' ', $data['lockedwhen']);
-        // this will be added after the URL
-        $lockinfo = "<p>Locked by ".$lockuser['firstname']." ".$lockuser['lastname']." on ".$lockdate[0]." at ".$lockdate[1].".</p>";
+        if(isset($data['lockedwhen'])) {
+            $lockdate = explode(' ', $data['lockedwhen']);
+            // this will be added after the URL
+            $lockinfo = "<p>Locked by ".$lockuser['firstname']." ".$lockuser['lastname']." on ".$lockdate[0]." at ".$lockdate[1].".</p>";
+        } else {
+            $lockinfo = "";
+        }
     }
     $req->closeCursor();
 
@@ -742,8 +746,9 @@ function make_pdf($id, $type, $out = 'browser')
     if ($type === 'experiments') {
         if ($out === 'browser') {
             $url = str_replace('make_pdf.php', 'experiments.php', $url);
-        } else { // call from make_zip
+        } else { // call from make_zip or timestamp.php
             $url = str_replace('make_zip.php', 'experiments.php', $url);
+            $url = str_replace('timestamp.php', 'experiments.php', $url);
         }
         $full_url = $url."?mode=view&id=".$id;
 
@@ -781,8 +786,9 @@ function make_pdf($id, $type, $out = 'browser')
                 // we need the url of the displayed item
                 if ($out === 'browser') {
                     $item_url = str_replace('experiments.php', 'database.php', $url);
-                } else { // call from make_zip
+                } else { // call from make_zip or timestamp.php
                     $item_url = str_replace('experiments.php', 'database.php', $url);
+                    $item_url = str_replace('timestamp.php', 'database.php', $url);
                 }
                 $full_item_url = $item_url."?mode=view&id=".$links_id_arr[$i];
 

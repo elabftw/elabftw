@@ -219,5 +219,11 @@ if (!$field_is_here) {
 // add md5 field to uploads
 add_field('uploads', 'md5', 'VARCHAR(32) NULL DEFAULT NULL', ">>> Uploaded files are now md5 summed upon upload.\n");
 
+// change the unused date column in uploads to a datetime one with current timestamp on insert
+rm_field('uploads', 'date', ">>> Removed unused field.\n");
+add_field('uploads', 'datetime', "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `type`", ">>> Added timestamp to uploads\n");
+// TODO this is run each time (but doesn't hurt)
+q("UPDATE uploads SET datetime = CURRENT_TIMESTAMP WHERE datetime = '0000-00-00 00:00:00'");
+
 // END
 echo "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day ! :)\n";

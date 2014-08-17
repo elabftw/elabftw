@@ -101,6 +101,21 @@ switch($_GET['type']) {
             exit();
         }
     }
+
+    // check if the experiment is timestamped. Disallow unlock in this case.
+    $sql = "SELECT timestamped FROM experiments WHERE id = :id";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':id', $id, PDO::PARAM_INT);
+    $req->execute();
+    $timestamped = $req->fetchColumn();
+    if ($action === 0 && $timestamped) {
+            $err_arr[] = "You cannot unlock or edit in any way a timestamped experiment.";
+            $_SESSION['errors'] = $err_arr;
+            header("Location: experiments.php?mode=view&id=$id");
+            exit;
+    }
+        
+
     // The actual locking action (and we add a timestamp in the lockedwhen column)
         $sql = "UPDATE experiments SET locked = :action, lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE id = :id";
         $req = $pdo->prepare($sql);
@@ -111,6 +126,7 @@ switch($_GET['type']) {
         ));
         if ($result) {
             header("Location: experiments.php?mode=view&id=$id");
+            exit;
         } else {
             die('SQL failed');
         }

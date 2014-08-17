@@ -320,10 +320,15 @@ function showXP($id, $display)
             echo "<img class='align_right' src='img/attached_file.png' alt='file attached' />";
         }
         // show lock if item is locked on viewXP
-        if ($experiments['locked'] == 1) {
-            echo "<img class='align_right' src='img/lock.png' alt='lock' />";
+        if ($experiments['locked']) {
+            echo "<img class='align_right' src='img/lock.png' alt='lock' title='Locked' />";
         }
-        echo "<p class='title'>". stripslashes($experiments['title']) . "</p>";
+        // show stamp if experiment is timestamped
+        if ($experiments['timestamped']) {
+            echo "<img class='align_right' src='img/valid.png' alt='stamp' title='Timestamp OK' />";
+        }
+        echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>
+            <p class='title'>". stripslashes($experiments['title']) . "</p></a>";
         echo "</section>";
     }
 }
@@ -410,7 +415,8 @@ function showDB($id, $display)
         if ($item['locked'] == 1) {
             echo "<img class='align_right' src='img/lock.png' alt='lock' />";
         }
-        echo "<p class='title'>". stripslashes($item['title']) . "</p>";
+        echo "<a href='database.php?mode=view&id=".$item['id']."'>
+            <p class='title'>". stripslashes($item['title']) . "</p></a>";
         echo "</section>";
     }
 }
@@ -610,9 +616,11 @@ function make_pdf($id, $type, $out = 'browser')
     // the name of the pdf is needed in make_zip
     $clean_title = $date."-".preg_replace('/[^A-Za-z0-9]/', ' ', $title);
     $body = stripslashes($data['body']);
+    // ELABID
     if ($type === 'experiments') {
         $elabid = $data['elabid'];
     }
+    // LOCK BLOCK
     if ($data['locked'] == '1' && $type == 'experiments') {
         // get info about the locker
         $sql = "SELECT firstname,lastname FROM users WHERE userid = :userid LIMIT 1";
@@ -623,9 +631,13 @@ function make_pdf($id, $type, $out = 'browser')
         $lockuser = $reqlock->fetch();
 
         // separate date and time
-        $lockdate = explode(' ', $data['lockedwhen']);
-        // this will be added after the URL
-        $lockinfo = "<p>Locked by ".$lockuser['firstname']." ".$lockuser['lastname']." on ".$lockdate[0]." at ".$lockdate[1].".</p>";
+        if(isset($data['lockedwhen'])) {
+            $lockdate = explode(' ', $data['lockedwhen']);
+            // this will be added after the URL
+            $lockinfo = "<p>Locked by ".$lockuser['firstname']." ".$lockuser['lastname']." on ".$lockdate[0]." at ".$lockdate[1].".</p>";
+        } else {
+            $lockinfo = "";
+        }
     }
     $req->closeCursor();
 
@@ -702,9 +714,11 @@ function make_pdf($id, $type, $out = 'browser')
     $req->execute();
     $real_name = array();
     $comment = array();
+    $md5 = array();
     while ($uploads = $req->fetch()) {
         $real_name[] = $uploads['real_name'];
         $comment[] = $uploads['comment'];
+        $md5[] = $uploads['md5'];
     }
     // do we have files attached ?
     if (count($real_name) > 0) {
@@ -715,8 +729,18 @@ function make_pdf($id, $type, $out = 'browser')
             $content .= "<h3>Attached files :</h3>";
         }
         $content .= "<ul>";
-        for ($i=0; $i<count($real_name);$i++) {
-            $content .= "<li>".$real_name[$i]." (".stripslashes(htmlspecialchars_decode($comment[$i])).").</li>";
+        $real_name_cnt = count($real_name);
+        for ($i = 0 ; $i < $real_name_cnt ; $i++) {
+            $content .= "<li>".$real_name[$i];
+            // add a comment ? don't add if it's the default text
+            if ($comment[$i] != 'Click to add a comment') {
+               $content .= " (".stripslashes(htmlspecialchars_decode($comment[$i])).")";
+            }
+            // add md5 sum ? don't add if we don't have it
+            if (strlen($md5[$i]) == '32') { // we have md5 sum
+                $content .= "<br>md5 : ".$md5[$i];
+            }
+            $content .= "</li>";
         }
         $content .= "</ul></section>";
     }
@@ -724,8 +748,9 @@ function make_pdf($id, $type, $out = 'browser')
     if ($type === 'experiments') {
         if ($out === 'browser') {
             $url = str_replace('make_pdf.php', 'experiments.php', $url);
-        } else { // call from make_zip
+        } else { // call from make_zip or timestamp.php
             $url = str_replace('make_zip.php', 'experiments.php', $url);
+            $url = str_replace('timestamp.php', 'experiments.php', $url);
         }
         $full_url = $url."?mode=view&id=".$id;
 
@@ -763,8 +788,9 @@ function make_pdf($id, $type, $out = 'browser')
                 // we need the url of the displayed item
                 if ($out === 'browser') {
                     $item_url = str_replace('experiments.php', 'database.php', $url);
-                } else { // call from make_zip
+                } else { // call from make_zip or timestamp.php
                     $item_url = str_replace('experiments.php', 'database.php', $url);
+                    $item_url = str_replace('timestamp.php', 'database.php', $url);
                 }
                 $full_item_url = $item_url."?mode=view&id=".$links_id_arr[$i];
 
@@ -1134,3 +1160,23 @@ function custom_die()
     </html>";
     die();
 }
+
+/**
+ * Make a simple query
+ * 
+ * @param string The SQL query
+ * @return bool the return value of execute
+function q($sql) {
+    global $pdo;
+    try {
+        $req = $pdo->prepare($sql);
+        $req->execute();
+        return true;
+    }
+    catch (PDOException $e)
+    {
+        dblog('Error', 'mysql', $e->getMessage());
+        return false;
+    }
+}
+ */

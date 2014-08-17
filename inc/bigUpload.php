@@ -169,6 +169,12 @@ class BigUpload
         // Try to move the file to its final place
 		if(rename($this->getTempDirectory() . $this->getTempName(), $this->getMainDirectory() . $longname)) {
 
+            // generate a md5sum of the file if it's not too big
+            if (filesize($this->getMainDirectory() . $longname) < 5000000) {
+                $md5 = hash_file('md5', $this->getMainDirectory() . $longname);
+            } else {
+                $md5 = null;
+            }
             // SQL TO PUT FILE IN UPLOADS TABLE
             // we don't use inc/connect.php because it requires the config file but there is a path problem
             // so the config is put here directly
@@ -182,7 +188,7 @@ class BigUpload
             {
                 die('Error : '.$e->getMessage());
             }
-            $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type)";
+            $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, md5) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :md5)";
             $req = $pdo->prepare($sql);
             $result = $req->execute(array(
                 'real_name' => $realname,
@@ -191,7 +197,8 @@ class BigUpload
                 'comment' => 'Click to add a comment',
                 'item_id' => $item_id,
                 'userid' => $_SESSION['userid'],
-                'type' => $type
+                'type' => $type,
+                'md5' => $md5
             ));
 			return json_encode(array('errorStatus' => 0));
 		}

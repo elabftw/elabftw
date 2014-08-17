@@ -86,6 +86,8 @@ if (isset($_POST['filecomment'])) {
                 $id = $id_arr[1];
                 // Update comment
                 if (($_POST['expcomment'] != '') && ($_POST['expcomment'] != ' ')) {
+
+                    // we must first check
                     $expcomment = filter_var($_POST['expcomment'], FILTER_SANITIZE_STRING);
                     // SQL to update single exp comment
                     $sql = "UPDATE experiments_comments SET 

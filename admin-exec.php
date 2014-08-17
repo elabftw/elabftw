@@ -222,6 +222,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
     if (isset($_POST['proxy'])) {
         $proxy = filter_var($_POST['proxy'], FILTER_SANITIZE_STRING);
     }
+    if (isset($_POST['stamplogin'])) {
+        $stamplogin = filter_var($_POST['stamplogin'], FILTER_VALIDATE_EMAIL);
+    }
+    if (isset($_POST['stamppass'])) {
+        $stamppass = filter_var($_POST['stamppass'], FILTER_SANITIZE_STRING);
+    }
     if ($_POST['admin_validate'] == 1) {
         $admin_validate = 1;
     } else {
@@ -254,6 +260,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
         'debug' => $debug,
         'path' => $path,
         'proxy' => $proxy,
+        'stamplogin' => $stamplogin,
+        'stamppass' => $stamppass,
         'admin_validate' => $admin_validate,
         'login_tries' => $login_tries,
         'ban_time' => $ban_time,

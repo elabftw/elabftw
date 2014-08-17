@@ -21,7 +21,7 @@ function q($sql) {
     }
 }
 
-function add_field($table, $field, $params, $added, $not_added) {
+function add_field($table, $field, $params, $added) {
     global $pdo;
     // first test if it's here already
     $sql = "SHOW COLUMNS FROM $table";
@@ -44,12 +44,10 @@ function add_field($table, $field, $params, $added, $not_added) {
         } else {
              die($die_msg);
         }
-    } else {
-        echo $not_added;
     }
 }
 
-function rm_field($table, $field, $added, $not_added) {
+function rm_field($table, $field, $added) {
     global $pdo;
     // first test if it's here already
     $sql = "SHOW COLUMNS FROM $table";
@@ -72,8 +70,6 @@ function rm_field($table, $field, $added, $not_added) {
         } else {
              die($die_msg);
         }
-    } else {
-        echo $not_added;
     }
 }
 
@@ -174,13 +170,10 @@ if (!$table_is_here) {
     echo ">>> There is now groups with set of permissions.       \n";
     echo ">>> There is now a new sysadmin group for elabftw configuration\n";
     echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n";
-
-} else {
-    echo "Table 'teams' already exists. Nothing to do.\n";
 }
 
 // remove theme from users
-rm_field('users', 'theme', ">>> Removed custom themes.\n", "Column 'theme' already removed. Nothing to do.\n");
+rm_field('users', 'theme', ">>> Removed custom themes.\n");
 
 // add logs
 $sql = "SHOW TABLES";
@@ -220,4 +213,7 @@ while ($show = $req->fetch()) {
 if (!$field_is_here) {
     q("ALTER TABLE `experiments` ADD `timestamped` BOOLEAN NOT NULL DEFAULT FALSE AFTER `lockedwhen`, ADD `timestampedby` INT NULL DEFAULT NULL AFTER `timestamped`, ADD `timestampedwhen` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `timestampedby`, ADD `timestamptoken` TEXT NULL AFTER `timestampedwhen`;");
     q("INSERT INTO `config` (`conf_name`, `conf_value`) VALUES ('stamplogin', NULL), ('stamppass', NULL);");
+    echo ">>> You can now timestamp experiments. See the wiki for more infos.\n";
 }
+
+echo "\n\nEverything went well :). Thanks for using eLabFTW. Have a great day !\n";

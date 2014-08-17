@@ -40,7 +40,7 @@ switch ($_POST['type']) {
     // TAGS FOR EXPERIMENTS
     case 'exptag':
         // Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
-        $tag = str_replace('\\', '', filter_var($_POST['tag'], FILTER_SANITIZE_STRING));
+        $tag = strtr(filter_var($_POST['tag'], FILTER_SANITIZE_STRING), '\\', '');
 
         // check for string length and if user owns the experiment
         if (strlen($tag) > 0 && is_owned_by_user($id, 'experiments', $_SESSION['userid'])) {
@@ -58,7 +58,7 @@ switch ($_POST['type']) {
     // TAG FOR ITEMS
     case 'itemtag':
         // Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
-        $tag = str_replace('\\', '', filter_var($_POST['tag'], FILTER_SANITIZE_STRING));
+        $tag = strtr(filter_var($_POST['tag'], FILTER_SANITIZE_STRING), '\\', '');
 
         // check for string length only as there is no owning of database item
         if (strlen($tag) > 0) {

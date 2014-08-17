@@ -104,10 +104,10 @@ if ($count > 0) {
     <br />
         <label for='stamplogin'>Login for external timestamping service :</label>
         <input type='email' value='<?php echo get_team_config('stamplogin');?>' name='stamplogin' id='stamplogin' />
-    <br />
-    <br />
+        <p class='smallgray'>This should be the email address associated with your account on Universign.com.</p>
         <label for='stamppass'>Password for external timestamping service :</label>
         <input type='password' value='<?php echo get_team_config('stamppass');?>' name='stamppass' id='stamppass' />
+        <p class='smallgray'>Your Universign password</p>
     <br />
     <br />
     </div>

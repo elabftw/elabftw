@@ -52,15 +52,19 @@ $formKey = new formKey();
             >no</option>
         </select>
     <br />
+        <p class='smallgray'>When activated, content of $_SESSION and $_COOKIES array will be displayed in the footer for admins.</p>
     <br />
         <label for='path'>Full path to the install folder :</label>
         <input type='text' value='<?php echo get_config('path');?>' name='path' id='path' />
     <br />
+        <p class='smallgray'>This is actually the md5 hash of the path to the install. You probably don't need to change that except when you move an existing install.</p>
     <br />
         <label for='proxy'>Address of the proxy :</label>
         <input type='text' value='<?php echo get_config('proxy');?>' name='proxy' id='proxy' />
     <br />
+        <p class='smallgray'>If you are behind a firewall/proxy, enter the address here. Example : http://proxy.example.com:3128</p>
     <br />
+    <h3>Timestamp settings</h3>
         <label for='stampshare'>The teams can use the credentials below to timestamp :</label>
         <select name='stampshare' id='stampshare'>
             <option value='1'<?php
@@ -71,6 +75,7 @@ $formKey = new formKey();
             >no</option>
         </select>
     <br />
+        <p class='smallgray'>You can control if the teams can use the global Universign account. If set to <em>no</em>, the team admin must add login infos in the admin panel.</p>
     <br />
         <label for='stamplogin'>Login for external timestamping service :</label>
         <input type='email' value='<?php echo get_config('stamplogin');?>' name='stamplogin' id='stamplogin' />
@@ -101,17 +106,21 @@ $formKey = new formKey();
     <br />
     <br />
     <h3>Email settings</h3>
+<p class='smallgray'>Here it is recommended to create a specific gmail account, and add the infos here.</p>
         <label for='smtp_address'>Address of the SMTP server :</label>
         <input type='text' value='<?php echo get_config('smtp_address');?>' name='smtp_address' id='smtp_address' />
     <br />
+        <p class='smallgray'>The default value (173.194.66.108) corresponds to smtp.gmail.com. But sometimes the gmail.com domain name is forbidden, so this is a workaround.<br>Also, it speed things up as you don't need to lookup for the IP address.</p>
     <br />
         <label for='smtp_encryption'>SMTP encryption (can be TLS or STARTSSL):</label>
         <input type='text' value='<?php echo get_config('smtp_encryption');?>' name='smtp_encryption' id='smtp_encryption' />
     <br />
+        <p class='smallgray'>Gmail uses TLS.</p>
     <br />
         <label for='smtp_port'>SMTP port :</label>
         <input type='text' value='<?php echo get_config('smtp_port');?>' name='smtp_port' id='smtp_port' />
     <br />
+        <p class='smallgray'>Default is 587.</p>
     <br />
         <label for='smtp_username'>SMTP username :</label>
         <input type='text' value='<?php echo get_config('smtp_username');?>' name='smtp_username' id='smtp_username' />

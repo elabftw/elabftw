@@ -321,11 +321,11 @@ function showXP($id, $display)
         }
         // show lock if item is locked on viewXP
         if ($experiments['locked']) {
-            echo "<img class='align_right' src='img/lock.png' alt='lock' />";
+            echo "<img class='align_right' src='img/lock.png' alt='lock' title='Locked' />";
         }
         // show stamp if experiment is timestamped
         if ($experiments['timestamped']) {
-            echo "<img class='align_right' src='img/valid.png' alt='stamp' />";
+            echo "<img class='align_right' src='img/valid.png' alt='stamp' title='Timestamp OK' />";
         }
         echo "<p class='title'>". stripslashes($experiments['title']) . "</p>";
         echo "</section>";

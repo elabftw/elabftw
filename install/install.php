@@ -78,7 +78,10 @@ $sql = "INSERT INTO config (conf_name, conf_value) VALUES
     ('proxy', ''),
     ('debug', '0'),
     ('login_tries', '5'),
-    ('ban_time', '60');";
+    ('ban_time', '60'),
+    ('stamplogin', ''),
+    ('stamppass', ''),
+    ('stampshare', '0');";
 $req = $pdo->prepare($sql);
 $req->execute();
 

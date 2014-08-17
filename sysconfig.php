@@ -61,6 +61,17 @@ $formKey = new formKey();
         <input type='text' value='<?php echo get_config('proxy');?>' name='proxy' id='proxy' />
     <br />
     <br />
+        <label for='stampshare'>The teams can use the credentials below to timestamp :</label>
+        <select name='stampshare' id='stampshare'>
+            <option value='1'<?php
+                if (get_config('stampshare') == 1) { echo " selected='selected'"; } ?>
+            >yes</option>
+            <option value='0'<?php
+                    if (get_config('stampshare') == 0) { echo " selected='selected'"; } ?>
+            >no</option>
+        </select>
+    <br />
+    <br />
         <label for='stamplogin'>Login for external timestamping service :</label>
         <input type='email' value='<?php echo get_config('stamplogin');?>' name='stamplogin' id='stamplogin' />
     <br />

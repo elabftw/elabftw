@@ -222,8 +222,32 @@ add_field('uploads', 'md5', 'VARCHAR(32) NULL DEFAULT NULL', ">>> Uploaded files
 // change the unused date column in uploads to a datetime one with current timestamp on insert
 rm_field('uploads', 'date', ">>> Removed unused field.\n");
 add_field('uploads', 'datetime', "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `type`", ">>> Added timestamp to uploads\n");
-// TODO this is run each time (but doesn't hurt)
+// this is run each time (but doesn't hurt)
 q("UPDATE uploads SET datetime = CURRENT_TIMESTAMP WHERE datetime = '0000-00-00 00:00:00'");
+
+// add timestamp conf for teams
+add_field('teams', 'stamplogin', "TEXT NULL DEFAULT NULL", ">>> Added timestamp team config (login)\n");
+add_field('teams', 'stamppass', "TEXT NULL DEFAULT NULL", ">>> Added timestamp team config (pass)\n");
+
+// add stampshare configuration
+// check if we need to
+$sql = "SELECT COUNT(*) AS confcnt FROM config";
+$req = $pdo->prepare($sql);
+$req->execute();
+$confcnt = $req->fetch(PDO::FETCH_ASSOC);
+
+if ($confcnt['confcnt'] < 14) {
+    $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('stampshare', null)";
+    $req = $pdo->prepare($sql);
+    $res = $req->execute();
+    if ($res) {
+        echo ">>> Added timestamp credentials sharing\n";
+    } else {
+        die($die_msg);
+    }
+}
+
+
 
 // END
 echo "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day ! :)\n";

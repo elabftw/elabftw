@@ -28,8 +28,8 @@ $load_more_button = "<div class='center'>
         </div>";
 ?>
 <div id='submenu'>
-    <a href="create_item.php?type=exp"><!--img src="img/notepad_add.png" alt="" /--> Create experiment</a> | 
-    <a href='#' class='trigger'><!--img src="img/.png" alt="" /--> Create from template</a>
+    <a href="create_item.php?type=exp"><img src="img/add.png" alt="" /> Create experiment</a> | 
+    <a href='#' class='trigger'><img src="img/add-template.png" alt="" /> Create from template</a>
 
 <!-- 'List all' dropdown menu -->
 <span style='float:right'>

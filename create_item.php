@@ -125,7 +125,7 @@ if ($type === 'experiments') {
 // Check if insertion is successful and redirect to the newly created experiment in edit mode
 if ($result) {
     // info box
-    $msg_arr[] = 'New item successfully created.';
+    $msg_arr[] = 'New item created successfully';
     $_SESSION['infos'] = $msg_arr;
     if ($type === 'experiments') {
         header('location: experiments.php?mode=edit&id='.$pdo->lastInsertId().'');

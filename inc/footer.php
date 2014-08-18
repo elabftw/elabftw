@@ -23,11 +23,20 @@
 <script src="js/cornify.min.js"></script>
 
 <p>
+<p class='footer_left'>
+<a href='https://twitter.com/elabftw'>
+<img src='img/twitter.png' alt='twitter' title='Follow eLabFTW on Twitter !'>
+</a>
+ <a href='https://github.com/NicolasCARPi/elabftw'>
+<img src='img/github.png' alt='github' title='eLabFTW on GitHub'>
+</a>
+<span>
 <?php
 if (isset($_SESSION['auth']) && $_SESSION['is_sysadmin'] === '1') {
     ?>
     <!-- SYSADMIN MENU --> 
-    <a id='check_for_updates' href='#'>Check for updates</a> | <a href='sysconfig.php'>Sysadmin panel</a> | 
+    <span class='strong'>
+    <a id='check_for_updates' href='#'>CHECK FOR UPDATES</a><a href='sysconfig.php'>SYSADMIN PANEL</a>
     <script>
     $('#check_for_updates').click(function() {
         var jqxhr = $.post('check_for_updates.php', function(answer) {
@@ -38,17 +47,16 @@ if (isset($_SESSION['auth']) && $_SESSION['is_sysadmin'] === '1') {
 <?php
 }
 if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
-    echo "<a href='admin.php'>Admin Panel</a>";
+    echo "<a href='admin.php'>ADMIN PANEL</a>";
 }
-echo "<p>";
+echo "</span><p>";
 if (isset($_SESSION['auth']) && isset($_SESSION['team_id'])) {
     echo get_team_config('team_name')." lab p";
 } else {
     echo "P";
 }
 
-echo "owered by <a href='http://www.elabftw.net'>eLabFTW</a></p>";
-echo "Page generated in ".round((microtime(true) - $start), 5)." seconds";
+echo "owered by <a href='http://www.elabftw.net'>eLabFTW</a></span>";
 // show debug info only to admins
 if (isset($_SESSION['auth']) && get_config('debug') == 1 && $_SESSION['is_admin'] == 1) {
     echo "Session array : ";
@@ -59,16 +67,8 @@ if (isset($_SESSION['auth']) && get_config('debug') == 1 && $_SESSION['is_admin'
     echo "<br>";
 }
 ?>
-<br>
-<a href='https://twitter.com/elabftw'>
-<img src='img/twitter.png' alt='twitter' title='Follow eLabFTW on Twitter !'>
-</a>
- <a href='https://github.com/NicolasCARPi/elabftw'>
-<img src='img/github.png' alt='github' title='eLabFTW on GitHub'>
-</a>
-<a href='https://killallhumans.com' onClick='cornify_add();return false;'>
-<img src='img/color.png' alt='?' title='?'>
-</a>
+</span>
+<p>Page generated in <span class='strong'><?php echo round((microtime(true) - $start), 5);?> seconds</p>
 </p>
 </footer>
 <script src="js/jquery-pageslide/jquery.pageslide.min.js"></script>

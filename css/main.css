@@ -25,9 +25,14 @@
 ********************************************************************************/
 
 /*
- *
  * 343434 => dark gray
+ * 797979 => lightgray
  * 29AEB9 => blue
+ * 1F8591 => dark blue
+ * C4F9FF => light blue
+ * dd1e00 => dark red
+ * ffc1b7 => light red
+ *
  *
  *
  *
@@ -104,10 +109,6 @@ ul, li {
 
 /* paragraphs */
 
-p {
-    font: 100% 'Lato', Verdana, Arial, Helvetica, sans-serif;
-}
-
 p a {
     text-decoration: none;
 }
@@ -124,6 +125,7 @@ p a {
 /* hr */
 hr {
     margin: 10px 0 10px 0;
+    color: #dcdddc
 }
 
 li.inline {
@@ -140,11 +142,6 @@ div.txt li {
     list-style-type:square !important;
 }
 
-/* fix the links in the error/info messages displayed with jquery-ui */
-div.ui-state-error a, div.ui-state-highlight a {
-    color:blue;
-    text-decoration:underline;
-}
 
 /* prettier tables  */
 table, table td {
@@ -201,6 +198,40 @@ nav .navleft a:hover {
     -ms-transition-duration: 1500ms;
 }
 
+/* info / error bar */
+/*
+ *
+ *
+ *
+ *
+ */
+
+/* ERROR/INFO message box */
+
+.messagebox {
+    background-color: #C4F9FF;
+    color: #343434;
+    border: 1px #24AEB9 solid;
+    border-radius: 5px;
+    padding: 0 10px;
+}
+
+/* fix the links in the error/info messages */
+.messagebox a {
+    color: #343434;
+    text-decoration:underline;
+}
+
+.infobox {
+    background-color: #C4F9FF;
+}
+
+.errorbox {
+    background-color: #ffc1b7;
+    border-color: #dd1e00;
+}
+
+
 /* list all dropdown status list */
 .dropdown {
     font: 80% 'Lato', Verdana, Arial, Helvetica, sans-serif;
@@ -235,11 +266,15 @@ a[class*='trigger_']:hover {
 
 
 /* TITLES */
+h2 {
+    color: #797979;
+    font-size: 30px;
+}
 
 h3 {
+    color: #797979;
     font-size: 20px;
     margin: 0 auto 10px auto;
-    text-align: center;
 }
 
 h4 {
@@ -259,33 +294,20 @@ h4 {
 }
 
 .button {
-    border:1px solid #b7b7b7;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-    font-family:arial, helvetica, sans-serif;
-    padding: 10px 10px 10px 10px;
-    text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
-    font-weight:bold;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
     text-align: center;
     color: #FFFFFF;
-    background-color: #d3d3d3;
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #d3d3d3), color-stop(100%, #707070));
-    background-image: -webkit-linear-gradient(top, #d3d3d3, #707070);
-    background-image: -moz-linear-gradient(top, #d3d3d3, #707070);
-    background-image: -ms-linear-gradient(top, #d3d3d3, #707070);
-    background-image: -o-linear-gradient(top, #d3d3d3, #707070);
-    background-image: linear-gradient(top, #d3d3d3, #707070);
-      }
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    background-color: #29AEB9;
+}
 
 .button:hover{
-    border:1px solid #a0a0a0; background-color: #bababa;
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#bababa), color-stop(100%, #585858));
-    background-image: -webkit-linear-gradient(top, #bababa, #585858);
-    background-image: -moz-linear-gradient(top, #bababa, #585858);
-    background-image: -ms-linear-gradient(top, #bababa, #585858);
-    background-image: -o-linear-gradient(top, #bababa, #585858);
-    background-image: linear-gradient(top, #bababa, #585858);
+    border: none;
+    background-color: #1F8591;
 }
 
 /* SEARCH */
@@ -377,11 +399,8 @@ section.item div.txt {
 .item {
     border:  1px solid #CCC;
     border-radius: 5px;
-    box-shadow:  3px 2px 2px 1px #CCC; 
-    -webkit-box-shadow: 3px 2px 2px 1px #CCC;
-    -moz-box-shadow: 3px 2px 2px 1px #CCC;
     margin: 10px auto;
-    padding: 10px 0;
+    padding: 4px 0;
 }
 
 .item a:hover {
@@ -395,6 +414,14 @@ section.item div.txt {
 
 .config_form label {
     float:left;
+}
+
+.top_right_status {
+    color: #797979;
+    float:right;
+}
+.top_right_status img {
+    margin: 0 4px 0 25px;
 }
 
 /* comments for experiments comments box */
@@ -427,14 +454,20 @@ section.item div.txt {
 
 .title {
     font-size:  160%;
-    line-height: 120%;
-    margin: 5px;
-    padding: 5px;
+    margin: 0;
+    padding-left: 20px;
+}
+.title_view {
+    font-size:  160%;
 }
 
 .date, .date_compact {
     color: #5d5d5d;
     margin:15px auto;
+    padding-left: 20px;
+}
+.date_view {
+    padding-left: 0;
 }
 
 .date_compact {
@@ -524,22 +557,15 @@ section.item div.txt {
 .txt {
     background-color:white;
     border:1px solid #CCC;
+    border-radius: 5px;
+    margin-top: 10px;
     color:black;
     font-size: 16px;
     padding: 5px;
 }
 
-
-.filesdiv {
-    border-radius: 5px;
-    border: 1px solid #CCC;
-    box-shadow: 2px 2px 2px 2px #CCC;
-    -webkit-box-shadow: 2px 2px 2px 2px #CCC;
-    -moz-box-shadow: 2px 2px 2px 2px #CCC;
-    font-size: 14px;
-    margin: 10px auto 10px auto;
-    padding: 5px;
-    width:80%;
+#filesdiv {
+    margin-top:20px;
 }
 .filesdiv p {
     display: inline;
@@ -548,7 +574,6 @@ section.item div.txt {
     font-size: 14px;
     text-decoration: none;
 }
-
 .filesize{
     color:grey;
     font-size: 10px;
@@ -567,6 +592,7 @@ section.item div.txt {
 /* elabid */
 .elabid {
     text-align:right;
+    color: #797979;
     font-size: 11px;
 }
 
@@ -588,10 +614,9 @@ section.item div.txt {
 
 /* FOOTER */
 footer {
-    border-top:solid 2px #CCC;
+    border-top:solid 1px #dcdddc;
     font-size: 11px;
     margin: 80px 0 5px 0;
-    padding: 5px 0 5px 0;
     text-align: center;
 }
 footer p, footer p a {
@@ -601,6 +626,15 @@ footer p, footer p a {
 }
 footer p a:hover {
     color: #29AEB9;
+}
+
+.footer_left {
+    text-align: left;
+}
+
+.footer_left a {
+    border-right: 1px #ccc solid;
+    padding:0 5px;
 }
 
 /* print only the main div */

@@ -309,26 +309,27 @@ function showXP($id, $display)
         ?>
         <section class="item" style='border-left: 6px solid #<?php echo $experiments['color'];?>'>
         <?php
-        // show lock if item is locked on viewXP
-        if ($experiments['locked']) {
-            echo "<img style='margin-left:8px' src='img/lock.png' alt='lock' title='Locked' />";
-        }
-        // show attached if there is a file attached
-        if (has_attachement($experiments['id'], 'experiments')) {
-            echo "<img class='align_right' src='img/attached_file.png' alt='file attached' />";
-        }
+        echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>";
         // show stamp if experiment is timestamped
         if ($experiments['timestamped']) {
-            echo "<img class='align_right' src='img/valid.png' alt='stamp' title='Timestamp OK' />";
+            echo "<img class='align_right' src='img/check.png' alt='stamp' title='Timestamp OK' />";
         }
         // TITLE
-        echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>
-            <p class='title inline'>". stripslashes($experiments['title']) . "</p></a><br>";
+        echo "<p class='title'>";
+        // show lock if item is locked on viewXP
+        if ($experiments['locked']) {
+            echo "<img style='padding-bottom:3px;' src='img/lock-blue.png' alt='lock' title='Locked' /> ";
+        }
+        echo stripslashes($experiments['title']) . "</a></p>";
         // DATE
-        echo "<span class='date' style='padding:10px'><img class='image' src='img/calendar.png' /> ".$experiments['date'][0].$experiments['date'][1].$experiments['date'][2].$experiments['date'][3]."/".$experiments['date'][4].
-            $experiments['date'][5]."/".$experiments['date'][6].$experiments['date'][7]."</span> ";
+        echo "<span class='date'><img class='image' src='img/calendar.png' /> ".$experiments['date'][0].$experiments['date'][1].$experiments['date'][2].$experiments['date'][3].".".$experiments['date'][4].
+            $experiments['date'][5].".".$experiments['date'][6].$experiments['date'][7]."</span> ";
         // TAGS
         echo show_tags($id, 'experiments_tags');
+        // show attached if there is a file attached
+        if (has_attachement($experiments['id'], 'experiments')) {
+            echo "<img class='align_right' src='img/attached.png' alt='file attached' />";
+        }
         echo "</section>";
     }
 }
@@ -343,19 +344,19 @@ function show_stars($rating)
 {
     echo "<div id='rating'>";
     if ($rating == 1) {
-        echo "<img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";
+        echo "<img src='img/star-green.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' />";
     }
     if ($rating == 2) {
-        echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";
+        echo "<img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' />";
     }
     if ($rating == 3) {
-        echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";
+        echo "<img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' />";
     }
     if ($rating == 4) {
-        echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";
+        echo "<img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-gray.png' alt='1' />";
     }
     if ($rating == 5) {
-        echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' />";
+        echo "<img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' />";
     }
     echo "</div>";
 }
@@ -399,19 +400,20 @@ function showDB($id, $display)
     } else { // NOT COMPACT
 
         echo "<section class='item'>";
+        echo "<a href='database.php?mode=view&id=".$item['id']."'>";
         // STARS
         show_stars($item['rating']);
         // show attached if there is a file attached
         if (has_attachement($item['id'], 'items')) {
-            echo "<img class='align_right' src='img/attached_file.png' alt='file attached' />";
+            echo "<img class='align_right' src='img/attached.png' alt='file attached' />";
         }
+        echo "<p class='title'>";
         // show lock if item is locked on viewDB
         if ($item['locked'] == 1) {
-            echo "<img class='align_right' src='img/lock.png' alt='lock' />";
+            echo "<img style='padding-bottom:3px;' src='img/lock-blue.png' alt='lock' />";
         }
         // TITLE
-        echo "<a href='database.php?mode=view&id=".$item['id']."'>
-            <p class='title'>". stripslashes($item['title']) . "</p></a>";
+        echo stripslashes($item['title']) . "</p></a>";
         // ITEM TYPE
         echo "<span style='padding:10px;color:#".$item['bgcolor']."'>".$item['name']." </span>";
         // TAGS
@@ -1023,15 +1025,13 @@ function display_message($type, $message)
 {
     if ($type === 'info') {
 
-        echo "<div class='ui-state-highlight ui-corner-all' style='margin:5px'>
-        <p><span class='ui-icon ui-icon-info' style='float: left; margin: 0 5px 0 5px;'></span>
-        $message</p></div>";
+        echo "<div class='infobox messagebox' style='margin:5px'>
+        <p>$message<span style='float:right'><img src='img/cross-blue.png' alt='hide' title='Hide message' /></span></p></div>";
 
     } elseif ($type === 'error') {
 
-        echo "<div class='ui-state-error ui-corner-all' style='margin:5px'>
-        <p><span class='ui-icon ui-icon-alert' style='float:left; margin: 0 5px 0 5px;'></span>
-        $message</p></div>";
+        echo "<div class='errorbox messagebox' style='margin:5px'>
+        <p>$message<span style='float:right'><img src='img/cross-red.png' alt='hide' title='Hide message' /></span></p></div>";
     }
 
     return false;

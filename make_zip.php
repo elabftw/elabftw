@@ -26,7 +26,6 @@
 require_once 'inc/common.php';
 require_once 'inc/head.php';
 $page_title = 'Make zip';
-require_once 'inc/menu.php';
 require_once 'inc/info_box.php';
 // Test if there is zip
 if (!class_exists('ZipArchive')) {

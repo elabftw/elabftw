@@ -26,7 +26,6 @@
 require_once('inc/common.php');
 $page_title = 'User Control Panel';
 require_once('inc/head.php');
-require_once('inc/menu.php');
 require_once('inc/info_box.php');
 // SQL for UCP
 $sql = "SELECT username, email, firstname, lastname, phone, cellphone, skype, website FROM users WHERE userid = ".$_SESSION['userid'];

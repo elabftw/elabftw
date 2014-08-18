@@ -30,7 +30,6 @@ $page_title = 'Login';
 require_once 'inc/head.php';
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
-require_once 'inc/menu.php';
 require_once 'inc/info_box.php';
 // formkey stuff
 require_once('lib/classes/formkey.class.php');
@@ -120,7 +119,6 @@ if (!checkCookiesEnabled()) {
         <!-- form key -->
         <?php $formKey->output_formkey(); ?>
         <fieldset>
-            <legend>Login :</legend>
                 <p>
                     <label for="username">Username</label>
                     <input name="username" type="text" id="username" />

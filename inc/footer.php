@@ -40,7 +40,13 @@ if (isset($_SESSION['auth']) && $_SESSION['is_sysadmin'] === '1') {
 if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
     echo "<a href='admin.php'>Admin Panel</a>";
 }
-echo "<p>".get_team_config('team_name')." powered by <a href='http://www.elabftw.net'>eLabFTW</a> by <a href='http://www.elabftw.net' onClick='cornify_add();return false;'>Nicolas CARPi</a></p>";
+echo "<p>";
+if (isset($_SESSION['auth']) && isset($_SESSION['team_id'])) {
+    echo "<a href='".get_team_config('link_href')." target='_blank'>".get_team_config('link_name')."</a> | ";
+    echo get_team_config('team_name')." ";
+}
+
+echo "powered by <a href='http://www.elabftw.net'>eLabFTW</a> by <a href='http://www.elabftw.net' onClick='cornify_add();return false;'>Nicolas CARPi</a></p>";
 echo "Page generated in ".round((microtime(true) - $start), 5)." seconds";
 // show debug info only to admins
 if (isset($_SESSION['auth']) && get_config('debug') == 1 && $_SESSION['is_admin'] == 1) {

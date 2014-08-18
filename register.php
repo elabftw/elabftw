@@ -21,7 +21,6 @@ session_start();
 require_once 'inc/head.php';
 $page_title = 'Register';
 require_once 'inc/connect.php';
-require_once 'inc/menu.php';
 require_once 'inc/info_box.php';
 require_once 'inc/functions.php';
 // Check if we're logged in

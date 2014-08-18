@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 /* this file is called with ajax post javascript from "Check for updates" link in 
- * Admin menu in inc/menu.php. It will return a string with the error/status.
+ * Admin menu in inc/head.php. It will return a string with the error/status.
  */
 
 require_once 'inc/connect.php';

@@ -94,3 +94,69 @@ echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."<
 
 <body>
 <section id="container">
+<noscript><!-- show warning if javascript is disabled -->
+<div class="ui-state-error ui-corner-all">
+<p><span class='ui-icon ui-icon-alert' style='float:left; margin: 0 5px 0 5px;'></span>
+<strong>Javascript is disabled.</strong> Please enable Javascript to view this site in all its glory. Thank You.</p>
+</div>
+</noscript>
+
+<?php
+if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
+?>
+<nav>
+<span class='navleft'>
+    <a href='index.php'>elab<strong>FTW</strong></a>
+    <a href="experiments.php?mode=show"
+    <?php
+    if ($page_title == 'Experiments') {
+        echo " class='selected'";
+    }?>
+>Experiments</a>
+    <a href="database.php?mode=show"
+    <?php
+    if ($page_title == 'Database') {
+        echo " class='selected'";
+    }?>
+    >Database</a>
+    <a href="team.php"
+    <?php
+    if ($page_title == 'Team') {
+        echo " class='selected'";
+    }?>
+    >Team</a>
+</span>
+<?php
+        if ($page_title === 'Database') {
+            $action_target = 'database.php';
+        } else {
+            $action_target = 'experiments.php';
+        }
+?>
+    <form id='big_search' method='get' action='<?php echo $action_target;?>'>
+    <input id='big_search_input' type='search' name='q' size='50' value='<?php
+if (isset($_GET['q'])) {
+    echo filter_var($_GET['q'], FILTER_SANITIZE_STRING);
+}
+?>' />
+    </form>
+<?php
+}
+?>
+</nav>
+<div id='real_container'>
+<?php
+if (isset($_SESSION['auth'])) {
+?>
+<span style='float:right'>
+    Logged in as <a href='profile.php' title='Profile'><?php echo $_SESSION['username'];?></a> | 
+    <a href='ucp.php'><img src='img/pref.png' alt='Control panel' title='Control panel' /></a>
+    <a href='logout.php'><img src='img/logout.png' alt='' title='Logout' /></a>
+</span>
+<?php
+} else {
+        echo "<div class='center' style='padding-top:20px;'><img src='img/logo.png' alt='elabftw' title='elabftw' /></div>";
+}
+?>
+<!-- TITLE -->
+<h2><?php echo $page_title;?></h2>

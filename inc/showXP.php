@@ -28,30 +28,24 @@ $load_more_button = "<div class='center'>
         </div>";
 ?>
 <div id='submenu'>
-    <a href="create_item.php?type=exp"><img src="img/notepad_add.png" alt="" /> Create experiment</a> | 
-    <a href='#' class='trigger'><img src="img/duplicate.png" alt="" /> Create from template</a> | 
+    <a href="create_item.php?type=exp"><!--img src="img/notepad_add.png" alt="" /--> Create experiment</a> | 
+    <a href='#' class='trigger'><!--img src="img/.png" alt="" /--> Create from template</a>
+
+<!-- 'List all' dropdown menu -->
+<span style='float:right'>
+<select class='dropdown' onchange=go_url(this.value)><option value=''>LIST ALL</option>
 <?php
-// 'List all' dropdown menu
 $sql = "SELECT id, name FROM status WHERE team = :team_id";
 $req = $pdo->prepare($sql);
 $req->execute(array(
     'team_id' => $_SESSION['team_id']
 ));
-
-echo "<img src='img/search.png' alt='search' /> List all <select onchange=go_url(this.value)><option value=''>--------</option>";
 while ($status = $req->fetch()) {
     echo "<option value='search.php?type=experiments&status=".$status['id']."'>";
     echo $status['name']."</option>";
 }
 ?>
-</select> | 
-    <form id='big_search' method='get' action='experiments.php'>
-    <input id='big_search_input' type='search' name='q' size='50' placeholder='Search...' value='<?php
-if (isset($_GET['q'])) {
-    echo filter_var($_GET['q'], FILTER_SANITIZE_STRING);
-}
-?>' />
-    </form>
+</select></span>
 </div><!-- end submenu -->
 <div class='toggle_container'><ul>
 <?php // SQL to get user's templates

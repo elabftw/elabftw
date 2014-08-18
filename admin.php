@@ -30,7 +30,6 @@ if ($_SESSION['is_admin'] != 1) {
 }
 $page_title = 'Admin Panel';
 require_once 'inc/head.php';
-require_once 'inc/menu.php';
 require_once 'inc/info_box.php';
 // formkey stuff
 require_once 'lib/classes/formkey.class.php';
@@ -94,7 +93,7 @@ if ($count > 0) {
         </select>
     <br />
     <br />
-        <label for='link_name'>Name of the link in the main menu :</label>
+        <label for='link_name'>Name of the link in the footer :</label>
         <input type='text' value='<?php echo get_team_config('link_name');?>' name='link_name' id='link_name' />
     <br />
     <br />

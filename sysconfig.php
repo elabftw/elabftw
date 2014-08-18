@@ -30,7 +30,6 @@ if ($_SESSION['is_sysadmin'] != 1) {
 }
 $page_title = 'eLabFTW configuration';
 require_once 'inc/head.php';
-require_once 'inc/menu.php';
 require_once 'inc/info_box.php';
 // formkey stuff
 require_once 'lib/classes/formkey.class.php';

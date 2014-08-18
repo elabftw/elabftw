@@ -23,6 +23,21 @@
 *    License along with eLabFTW.  If not, see <http: //www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+
+/*
+ *
+ * 343434 => dark gray
+ * 29AEB9 => blue
+ *
+ *
+ *
+ */
+
+
+
+/* Font is Lato */
+@import url(https://fonts.googleapis.com/css?family=Lato);
+
 /* little shadow on top of the screen for no reasons */
 body:before {
     content: "";
@@ -36,18 +51,20 @@ body:before {
 }
 
 body {
-    background-image:url(../img/background.jpg);
+    background-image:url(images/background.jpg);
+    background-repeat: round;
 }
 
 /* this is the big white thing that holds everything */
 #container {
     background: #fff;
-    font:16px Verdana, Arial, Helvetica, sans-serif;
-    border-radius: 10px;
-    font: 100% Verdana, Arial, Helvetica, sans-serif;
+    font: 100% 'Lato', Verdana, Arial, Helvetica, sans-serif;
     margin: auto;
-    padding: 10px 20px 10px 20px;
-    width: 90%;
+    width: 80%;
+}
+
+#real_container {
+    padding: 10px 45px;
 }
 /* LINKS */
 a {
@@ -88,11 +105,10 @@ ul, li {
 /* paragraphs */
 
 p {
-    font: 100% Verdana, Arial, Helvetica, sans-serif;
+    font: 100% 'Lato', Verdana, Arial, Helvetica, sans-serif;
 }
 
 p a {
-    font: 100% Verdana, Arial, Helvetica, sans-serif;
     text-decoration: none;
 }
 
@@ -108,15 +124,6 @@ p a {
 /* hr */
 hr {
     margin: 10px 0 10px 0;
-}
-
-hr.flourishes {
-    background: url('images/flourishes.png') no-repeat scroll center 0px transparent; /* -61px */
-    border: 0 none;
-    clear: both;
-    display: block;
-    height: 18px;
-    opacity: 0.8;
 }
 
 li.inline {
@@ -145,33 +152,25 @@ table, table td {
 }
 
 /* HEAD */
-#logo {
-    float: left;
-}
-
-#page_title {
-    clear: both;
-    text-align: center;
-}
 
 nav {
-    clear: both;
-    margin: -10px;
-    text-align: center;
+    background-color:#343434;
+    padding: 20px;
 }
 
-nav a {
-    border:1px solid white;
-    color:#606264;
-    font-size: 120%;
-    line-height: 200%;
+
+nav .navleft a {
+    font-size:130%;
+    color:white;
     padding: 5px 10px 5px 10px;
     text-decoration: none;
-    border-radius:5px;
 }
-nav a:hover {
-    border:1px solid black;
-    border-radius:5px;
+
+nav .navleft a.selected {
+    color:#29AEB9;
+}
+
+nav .navleft a:hover {
     color:#29AEB9;
     -moz-transition-duration: 1500ms;
     -webkit-transition-duration: 1500ms;
@@ -179,41 +178,36 @@ nav a:hover {
     -ms-transition-duration: 1500ms;
 }
 
-#logmenu {
-    float: right;
-    top: 30px;
-}
-
-#logmenu p {
-    color: #AAA;
-    font:  90% Verdana, Arial, Helvetica, sans-serif;
-    padding-bottom: 7px;
-}
-#logmenu p a {
-    color: black;
-    font:  90% Verdana, Arial, Helvetica, sans-serif;
-}
 /* submenu */
 #submenu {
     border-bottom: 1px dotted #CCC;
     margin-bottom: 15px;
     padding-bottom: 15px;
-    text-align:center;
 }
 #submenu a {
     border:1px solid white;
     border-radius:5px;
-    color:blue;
+    color:#36b1c0;
     padding:7px;
 }
 #submenu a:hover {
     border:1px solid black;
     border-radius:5px;
-    color: #29AEB9;
+    color: black;
     -moz-transition-duration: 1500ms;
     -webkit-transition-duration: 1500ms;
     -o-transition-duration: 1500ms;
     -ms-transition-duration: 1500ms;
+}
+
+/* list all dropdown status list */
+.dropdown {
+    font: 80% 'Lato', Verdana, Arial, Helvetica, sans-serif;
+    background-color: #ccc;
+    color: #000000;
+    padding: 5px;
+    border: none;
+    border-radius: 10px;
 }
 
 
@@ -225,7 +219,7 @@ a[class*='trigger_']:hover {
 }
 
 .biginput {
-    font: 30px Helvetica, Verdana, Arial, sans-serif;
+    font: 30px 'Lato', Helvetica, Verdana, Arial, sans-serif;
     text-align:center;
     margin-left:auto;
     display:block;
@@ -240,21 +234,16 @@ a[class*='trigger_']:hover {
 
 
 /* TITLES */
-h2 {
-    font: 24px Verdana, Arial, Helvetica, sans-serif;
-    text-align: center;
-    width: 100%;
-}
 
 h3 {
-    font: 20px Verdana, Arial, Helvetica, sans-serif;
+    font-size: 20px;
     margin: 0 auto 10px auto;
     text-align: center;
 }
 
 h4 {
     display: inline;
-    font: 18px Verdana, Arial, Helvetica, sans-serif;
+    font-size: 18px;
 }
 
 .inline {
@@ -299,14 +288,6 @@ h4 {
 }
 
 /* SEARCH */
-
-.search_buttons {
-	color:  blue;
-	cursor:  pointer;
-	font:  bold 10px Arial, Helvetica;
-    text-align:right;
-}
-
 #search_inputs_div {
     width:400px;
 }
@@ -319,17 +300,25 @@ h4 {
 }
 /* search bar */
 form#big_search {
-    display: inline;
-
+    width:40%;
+    float:right;
+    text-align:right;
+    margin-top:-6px;
 }
 form#big_search input {
-    width:10%;
+    background-color:#ccc;
+    border: none;
+    border-radius: 20px;
+    width:40%;
+    padding: 10px;
+    background:#ccc url(../img/search32px.png) no-repeat scroll right center;
     transition:width 1s;
 }
-
 form#big_search input:focus {
-    width:15%;
+    width:45%;
 }
+
+
 .innerinnerdiv {
     margin: auto;
     position: relative;
@@ -385,16 +374,19 @@ section.item div.txt {
 }
 
 .item {
-    background-color: #EEE;
     border:  1px solid #CCC;
     border-radius: 5px;
     box-shadow:  3px 2px 2px 1px #CCC; 
     -webkit-box-shadow: 3px 2px 2px 1px #CCC;
     -moz-box-shadow: 3px 2px 2px 1px #CCC;
-    margin: 7px auto 7px auto;
-    padding: 10px;
-    width: 80%;
+    margin: 10px auto;
+    padding: 10px 0;
 }
+
+.item a:hover {
+    color:#29AEB9;
+}
+
 /* admin.php */
 .config_form input, .config_form select {
     float:right;
@@ -433,48 +425,40 @@ section.item div.txt {
 }
 
 .title {
-    background-color:white;
-    border:1px solid #AAA;
-    color:black;
-    border-radius: 15px;
-    font-size:  20px;
+    font-size:  160%;
     line-height: 120%;
     margin: 5px;
     padding: 5px;
-    width:85%;
 }
 
 .date, .date_compact {
     color: #5d5d5d;
     margin:15px auto;
-    padding:5px;
 }
 
 .date_compact {
     border-right:1px dotted #ccd;
 }
 
-
 #rating {
     float:right;
 }
 
 .tags {
-    background-color:white;
-    border:1px solid #AAA;
-    color:black;
-    border-radius: 15px;
-    font:  12px Courier,Arial,sans-serif;
     line-height: 200%;
     margin: 10px 0px 10px 5px;
     padding: 3px;
     width: 90%;
 }
-.tags a{
+.tags a {
     text-decoration: none;
+    color:#29AEB9;
+}
+.tags a:hover {
+    color: #343434;
 }
 .tag a:hover {
-    color:red;
+    color: red;
 }
 .tags_compact {
     background-color:white;
@@ -509,7 +493,7 @@ section.item div.txt {
 
 .smallgray{
     color:gray;
-    font: 12px Verdana, Arial, Helvetica, sans-serif;
+    font-size: 12px;
 }
 
 #addtaginput {
@@ -531,7 +515,7 @@ section.item div.txt {
 /* TEMPLATES */
 .templates {
     border:1px solid black;
-    font: 12px Verdana, Arial, Helvetica, sans-serif;
+    font-size: 12px;
     line-height: 300%;
     padding: 7px;
 }
@@ -551,7 +535,7 @@ section.item div.txt {
     box-shadow: 2px 2px 2px 2px #CCC;
     -webkit-box-shadow: 2px 2px 2px 2px #CCC;
     -moz-box-shadow: 2px 2px 2px 2px #CCC;
-    font: 14px Verdana, Arial, Helvetica, sans-serif;
+    font-size: 14px;
     margin: 10px auto 10px auto;
     padding: 5px;
     width:80%;
@@ -560,7 +544,7 @@ section.item div.txt {
     display: inline;
 }
 .filesdiv a {
-    font: 14px Verdana, Arial, Helvetica, sans-serif;
+    font-size: 14px;
     text-decoration: none;
 }
 

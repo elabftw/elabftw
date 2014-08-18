@@ -26,7 +26,6 @@
 session_start();
 $page_title = 'Change your password';
 require_once 'inc/head.php';
-require_once 'inc/menu.php';
 require_once 'inc/info_box.php';
 // get the unique key
 $key = filter_var($_GET['key'], FILTER_SANITIZE_STRING);

@@ -27,7 +27,6 @@
 require_once 'inc/common.php';
 require_once 'inc/head.php';
 $page_title='Make CSV';
-require_once 'inc/menu.php';
 require_once 'inc/info_box.php';
 
 // this is the lines in the csv file

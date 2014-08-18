@@ -62,11 +62,11 @@ if ($row_count === 0) {
 $data = $req->fetch();
 
 ?>
-<section class="item">
+<section class="item" style='padding:15px'>
 
-<span class='date'><img src='img/calendar.png' title='date' alt='Date :' /> <?php echo $data['date'];?></span><br />
 
 <h3 style='color:#<?php echo $data['bgcolor'];?>'><?php echo $data['name'];?> </h3>
+<span class='date'><img src='img/calendar.png' title='date' alt='Date :' /> <?php echo $data['date'];?></span><br>
 <?php
 show_stars($data['rating']);
 // buttons

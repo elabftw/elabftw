@@ -27,7 +27,6 @@
 require_once 'inc/common.php';
 $page_title = 'Search';
 require_once 'inc/head.php';
-require_once 'inc/menu.php';
 require_once 'inc/info_box.php';
 ?>
 <!-- Advanced Search page begin -->
@@ -169,8 +168,6 @@ require_once 'inc/info_box.php';
                 </button>
         </div>
         </form>
-    </div>
-</div>
 
 
 <?php
@@ -303,7 +300,6 @@ if (isset($_GET)) {
                 } else {
                 echo "<div id='search_count'>".$count." results</div>";
                 }
-                echo "<div class='search_results_div'>";
                 // Display results
                 echo "<hr>";
                 foreach ($results_id as $id) {
@@ -362,7 +358,6 @@ if (isset($_GET)) {
             } else {
             echo "<div id='search_count'>".$count." results</div>";
             }
-            echo "<div class='search_results_div'>";
             // Display results
             echo "<hr>";
             foreach ($results_id as $id) {

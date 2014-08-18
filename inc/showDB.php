@@ -38,7 +38,7 @@ $req->execute(array(
 ));
 
 // 'Create new' dropdown menu
-echo "<img src='img/notepad_add.png' alt='create' /> Create new <select onchange=go_url(this.value)><option value=''>--------</option>";
+echo "<select class='dropdown' onchange=go_url(this.value)><option value=''>CREATE NEW</option>";
 while ($items_types = $req->fetch()) {
     echo "<option value='create_item.php?type=".$items_types['id']."' name='type' ";
     echo ">".$items_types['name']."</option>";
@@ -48,16 +48,13 @@ echo "</select>";
 // 'List all' dropdown menu
 // we do the request again to get the list again
 $req->execute();
-echo " | <img src='img/search.png' alt='search' /> List all <select onchange=go_url(this.value)><option value=''>--------</option>";
+echo "<span style='float:right'><select class='dropdown' onchange=go_url(this.value)><option value=''>LIST ALL</option>";
 while ($items_types = $req->fetch()) {
     echo "<option value='search.php?type=".$items_types['id']."' name='type' ";
     echo ">".$items_types['name']."</option>";
 }
 ?>
-</select> | 
-    <form id='big_search' method='get' action='database.php'>
-        <input id='big_search_input' type='search' name='q' size='50' placeholder='Search...' />
-    </form>
+</select>
 </div>
 <!-- end submenu -->
 

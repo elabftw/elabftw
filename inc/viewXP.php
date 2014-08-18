@@ -84,7 +84,7 @@ if ($data['userid'] != $_SESSION['userid']) {
 
 // Display experiment
 ?>
-    <section class="item" style='border: 1px solid #<?php echo $data['color'];?>'>
+    <section class="item" style='padding:15px;border-left: 6px solid #<?php echo $data['color'];?>'>
     <span class='align_right' id='status'>(<?php echo $data['name'];?>)</span>
 <?php
 echo "<img src='img/calendar.png' title='date' alt='Date :' /><span class='date'> ".$data['date']."</span><br />

@@ -26,7 +26,6 @@
 require_once 'inc/common.php';
 $page_title = 'Profile';
 require_once 'inc/head.php';
-require_once 'inc/menu.php';
 // SQL to get number of experiments
 $sql = "SELECT COUNT(*) FROM experiments WHERE userid = ".$_SESSION['userid'];
 $req = $pdo->prepare($sql);

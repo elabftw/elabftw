@@ -290,45 +290,45 @@ function showXP($id, $display)
         status ON (experiments.status = status.id)
         WHERE experiments.id = :id";
     $req = $pdo->prepare($sql);
-    $req->execute(array(
-        'id' => $id
-    ));
+    $req->bindParam(':id', $id, PDO::PARAM_INT);
+    $req->execute();
     $experiments = $req->fetch();
 
     if ($display === 'compact') {
         // COMPACT MODE //
-        echo "<section class='item' style='border: 1px solid #".$experiments['color']."'>";
+        echo "<section class='item' style='border-left: 5px solid #".$experiments['color']."'>";
+        echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>";
+        // show lock if item is locked on viewXP
+        if ($experiments['locked']) {
+            echo "<img src='img/lock32px.png' alt='lock' title='Locked' />";
+        }
         echo "<span class='date_compact'>".$experiments['date']."</span> ";
-        echo stripslashes($experiments['title']);
-        // view link
-        echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>
-            <img style='height:1em;float:right' src='img/view_compact.png' alt='view' title='view experiment' /></a>";
-        echo "</section>";
+        echo "<span class='title'>".stripslashes($experiments['title'])."</span>";
+        echo "</a></section>";
     } else { // NOT COMPACT
         ?>
-        <section class="item" style='border: 1px solid #<?php echo $experiments['color'];?>'>
+        <section class="item" style='border-left: 6px solid #<?php echo $experiments['color'];?>'>
         <?php
-        // DATE
-        echo "<span class='date'>".$experiments['date']."</span> ";
-        // TAGS
-        echo show_tags($id, 'experiments_tags');
-        // view link
-        echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>
-            <img class='align_right' style='margin-left:5px;' src='img/arrow_right.png' alt='view' title='view experiment' /></a>";
+        // show lock if item is locked on viewXP
+        if ($experiments['locked']) {
+            echo "<img style='margin-left:8px' src='img/lock.png' alt='lock' title='Locked' />";
+        }
         // show attached if there is a file attached
         if (has_attachement($experiments['id'], 'experiments')) {
             echo "<img class='align_right' src='img/attached_file.png' alt='file attached' />";
-        }
-        // show lock if item is locked on viewXP
-        if ($experiments['locked']) {
-            echo "<img class='align_right' src='img/lock.png' alt='lock' title='Locked' />";
         }
         // show stamp if experiment is timestamped
         if ($experiments['timestamped']) {
             echo "<img class='align_right' src='img/valid.png' alt='stamp' title='Timestamp OK' />";
         }
+        // TITLE
         echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>
-            <p class='title'>". stripslashes($experiments['title']) . "</p></a>";
+            <p class='title inline'>". stripslashes($experiments['title']) . "</p></a><br>";
+        // DATE
+        echo "<span class='date' style='padding:10px'><img class='image' src='img/calendar.png' /> ".$experiments['date'][0].$experiments['date'][1].$experiments['date'][2].$experiments['date'][3]."/".$experiments['date'][4].
+            $experiments['date'][5]."/".$experiments['date'][6].$experiments['date'][7]."</span> ";
+        // TAGS
+        echo show_tags($id, 'experiments_tags');
         echo "</section>";
     }
 }
@@ -399,12 +399,6 @@ function showDB($id, $display)
     } else { // NOT COMPACT
 
         echo "<section class='item'>";
-        echo "<h4 style='color:#".$item['bgcolor']."'>".$item['name']." </h4>";
-        // TAGS
-        echo show_tags($id, 'items_tags');
-        // view link
-        echo "<a href='database.php?mode=view&id=".$item['id']."'>
-        <img class='align_right' style='margin-left:5px;' src='img/arrow_right.png' alt='view' title='view item' /></a>";
         // STARS
         show_stars($item['rating']);
         // show attached if there is a file attached
@@ -415,8 +409,13 @@ function showDB($id, $display)
         if ($item['locked'] == 1) {
             echo "<img class='align_right' src='img/lock.png' alt='lock' />";
         }
+        // TITLE
         echo "<a href='database.php?mode=view&id=".$item['id']."'>
             <p class='title'>". stripslashes($item['title']) . "</p></a>";
+        // ITEM TYPE
+        echo "<span style='padding:10px;color:#".$item['bgcolor']."'>".$item['name']." </span>";
+        // TAGS
+        echo show_tags($id, 'items_tags');
         echo "</section>";
     }
 }

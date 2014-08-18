@@ -22,6 +22,14 @@
 <!-- konami code and unicorns -->
 <script src="js/cornify.min.js"></script>
 
+<script>
+    $('#adv_search').hide();
+$('#big_search_input').click(function() {
+    $('#adv_search').show();
+});
+
+</script>
+
 <p>
 <p class='footer_left'>
 <a href='https://twitter.com/elabftw'>

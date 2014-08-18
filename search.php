@@ -25,7 +25,7 @@
 ********************************************************************************/
 // Search.php
 require_once 'inc/common.php';
-$page_title = 'Search';
+$page_title = 'Advanced Search';
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 ?>

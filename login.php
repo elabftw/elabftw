@@ -118,7 +118,6 @@ if (!checkCookiesEnabled()) {
     <form method="post" action="login-exec.php" autocomplete="off">
         <!-- form key -->
         <?php $formKey->output_formkey(); ?>
-        <fieldset>
                 <p>
                     <label for="username">Username</label>
                     <input name="username" type="text" id="username" />
@@ -128,7 +127,6 @@ if (!checkCookiesEnabled()) {
                     <input name="password" type="password" id="password" />
                 </p>
           <button type="submit" class='button' name="Submit">Log in</button>
-        </fieldset>
     </form>
     <p>Note : you need cookies enabled to log in.<br />
     Don't have an account ? <a href='register.php'>Register</a> now !<br />

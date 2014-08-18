@@ -66,8 +66,9 @@ if ($experiment['locked'] == 1) {
 
 // BEGIN CONTENT
 ?>
-<section id='view_xp_item' class='item' style='border: 1px solid #<?php echo $experiment['color'];?>'>
-<img class='align_right' src='img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','exp', 'experiments.php')" />
+<span class='backdiv'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' alt='' /> back to experiments listing</a></span>
+<section id='view_xp_item' class='item' style='border-left: 6px solid #<?php echo $experiment['color'];?>'>
+<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','exp', 'experiments.php')" />
 <!-- ADD TAG FORM -->
 <img src='img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
 <div class='tags'>
@@ -92,53 +93,73 @@ while ($tags = $tagreq->fetch()) {
 <?php // $formKey->output_formkey(); ?>
 <input name='item_id' type='hidden' value='<?php echo $id;?>' />
 
-<h4>Date</h4><span class='smallgray'> (date format : YYYYMMDD)</span><br />
-<!-- TODO if firefox has support for it: type = date -->
-<img src='img/calendar.png' title='date' alt='Date :' /> <input name='date' id='datepicker' size='8' type='text' value='<?php echo $experiment['date'];?>' />
+<div class='three-columns'>
+    <div class='column-left'>
+        <img src='img/calendar.png' title='date' alt='calendar' /> <h4>Date</h4><br>
+        <!-- TODO if firefox has support for it: type = date -->
+        <input name='date' id='datepicker' size='8' type='text' value='<?php echo $experiment['date'];?>' />
+    </div>
 
-<span class='align_right'>
-<h4>Status</h4>
-<script>
-// this array is used by updateStatus() to get the color of new status
-var status_arr = Array();
-</script>
+    <div class='column-right'>
+        <img src='img/eye.png' alt='visibility' />
+        <h4>Visibility</h4><br>
+        <!-- visibility get selected by default -->
+        <?php
+        $visibility = $experiment['visibility'];
+        ?>
+        <select id="visibility_form" name="visibility" onchange="update_visibility(this.value)">
+            <option id='option_team' value="team">Only the team</option>
+            <option id='option_user' value="user">Only me</option>
+        </select>
+        <span id='visibility_msg_div'>Updated !</span>
+    </div>
 
-<?php
-// put all available status in array
-$status_arr = array();
-// SQL to get all the status of the team
-$sql = 'SELECT id, name, color FROM status WHERE team = :team';
-$req = $pdo->prepare($sql);
-$req->execute(array(
-    'team' => $_SESSION['team_id']
-));
+    <div class='column-center'>
+        <img src='img/status.png' alt='status' /> <h4>Status</h4><br>
+        <script>
+        // this array is used by updateStatus() to get the color of new status
+        var status_arr = Array();
+        </script>
 
-while ($status = $req->fetch()) {
-    
-    $status_arr[$status['id']] = $status['name'];
-    // get also a JS array for update_status() that needs the color to set the border immediately
-    echo "<script>
-        status_arr['".$status['id']."'] =  '".$status['color']."';
-        </script>";
-}
-?>
-<select id="status_form" name="status" onchange="updateStatus(this.value)">
-<?php
-// now display all possible values of status in select menu
-foreach ($status_arr as $key => $value) {
-    echo "<option ";
-    if ($experiment['status'] == $key) {
-        echo "selected ";
-    }
-    echo "value='$key'>$value</option>";
-}
-?>
-</select>
-</span>
+        <?php
+        // put all available status in array
+        $status_arr = array();
+        // SQL to get all the status of the team
+        $sql = 'SELECT id, name, color FROM status WHERE team = :team';
+        $req = $pdo->prepare($sql);
+        $req->execute(array(
+            'team' => $_SESSION['team_id']
+        ));
+
+        while ($status = $req->fetch()) {
+            
+            $status_arr[$status['id']] = $status['name'];
+            // get also a JS array for update_status() that needs the color to set the border immediately
+            echo "<script>
+                status_arr['".$status['id']."'] =  '".$status['color']."';
+                </script>";
+        }
+        ?>
+        <select name="status" onchange="updateStatus(this.value)">
+        <?php
+        // now display all possible values of status in select menu
+        foreach ($status_arr as $key => $value) {
+            echo "<option ";
+            if ($experiment['status'] == $key) {
+                echo "selected ";
+            }
+            echo "value='$key'>$value</option>";
+        }
+        ?>
+        </select>
+    </div>
+
+</div>
+
 <br />
 <br />
 <h4>Title</h4><br />
-<textarea id='title_txtarea' name='title' rows="1" cols="80">
+<input id='title_input' name='title' rows="1" value="
 <?php
 if (empty($_SESSION['errors'])) {
     echo stripslashes($experiment['title']);
@@ -146,7 +167,7 @@ if (empty($_SESSION['errors'])) {
     echo stripslashes($_SESSION['new_title']);
 }
 ?>
-</textarea>
+" />
 
 <br />
 <h4>Experiment</h4>
@@ -156,8 +177,8 @@ if (empty($_SESSION['errors'])) {
 </textarea>
 
 <!-- SUBMIT BUTTON -->
-<div class='center' id='saveButton'>
-    <button type="submit" name="Submit" class='button'>Save and go back</button>
+<div id='saveButton'>
+    <button type="submit" name="Submit" class='button'>SAVE & GO BACK</button>
 </div>
 </form><!-- end editXP form -->
 
@@ -168,8 +189,8 @@ require_once 'inc/file_upload.php';
 require_once 'inc/display_file.php';
 ?>
 
-<hr class='flourishes'>
-
+<br><br>
+<section>
 <img src='img/link.png'> <h4 style='display:inline'>Linked items</h4>
 <div id='links_div'>
 <?php
@@ -193,7 +214,7 @@ if ($req->rowcount() > 0) {
         echo "<li>- [".$links['name']."] - <a href='database.php?mode=view&id=".$links['itemid']."'>".
             stripslashes($links['title'])."</a>";
         echo "<a onclick='delete_link(".$links['linkid'].", ".$id.")'>
-        <img src='img/trash.png' title='delete' alt='delete' /></a></li>";
+        <img src='img/small-trash.png' title='delete' alt='delete' /></a></li>";
     } // end while
     echo "</ul>";
 } else { // end if link exist
@@ -203,21 +224,11 @@ if ($req->rowcount() > 0) {
 </div>
 <p class='inline'>Add a link</p>
 <input id='linkinput' size='60' type="text" name="link" placeholder="from the database" />
+</section>
 
 <br /><br />
-<img src='img/visibility.png'> <h4 style='display:inline'>Visibility</h4>
-<!-- visibility get selected by default -->
-<?php
-$visibility = $experiment['visibility'];
-?>
-    <select id="visibility_form" name="visibility" onchange="update_visibility(this.value)">
-<option id='option_team' value="team">Only the team</option>
-<option id='option_user' value="user">Only me</option>
-</select>
-<span id='visibility_msg_div'>Updated !</span>
-<br>
 
-<img src='img/revisions.png'> <h4>Revisions</h4>
+<span class='align_right'>
 <?php
 // get the list of revisions
 $sql = "SELECT COUNT(id) FROM experiments_revisions WHERE exp_id = :exp_id AND userid = :userid ORDER BY savedate DESC";
@@ -227,7 +238,15 @@ $req->execute(array(
     'userid' => $_SESSION['userid']
 ));
 $rev_count = $req->fetch();
-echo $rev_count[0]." <a href='revision.php?exp_id=".$id."'>Browse</a>";
+$count = intval($rev_count[0]);
+if ($count > 0) {
+    if ($count === 1) {
+        $s = '';
+    } else {
+        $s = 's';
+    }
+    echo $count." revision".$s." available. <a href='revision.php?exp_id=".$id."'>Show history</a>";
+}
 ?>
 
 </section>

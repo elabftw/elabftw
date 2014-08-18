@@ -27,7 +27,7 @@
 /*
  * 343434 => dark gray
  * 797979 => lightgray
- * 29AEB9 => blue
+ * #29AEB9 => blue
  * 1F8591 => dark blue
  * C4F9FF => light blue
  * dd1e00 => dark red
@@ -56,8 +56,9 @@ body:before {
 }
 
 body {
-    background-image:url(images/background.jpg);
-    background-repeat: round;
+    background:url(images/bg.png) no-repeat center center fixed;
+    -moz-background-size:cover;
+    background-size: cover;
 }
 
 /* this is the big white thing that holds everything */
@@ -106,6 +107,14 @@ ul, li {
 .strong {
     font-weight: bold;
 }
+
+.three-columns {
+    width: 60%;
+}
+
+.column-left{ float: left; width: 20%; }
+.column-right{ float: right; width: 20%; }
+.column-center{ display: inline-block; width: 20%; }
 
 /* paragraphs */
 
@@ -168,6 +177,8 @@ nav .navleft a.selected {
     padding-bottom:14px;
 }
 
+
+
 nav .navleft a:hover {
     color:#29AEB9;
     -moz-transition-duration: 1500ms;
@@ -198,22 +209,18 @@ nav .navleft a:hover {
     -ms-transition-duration: 1500ms;
 }
 
-/* info / error bar */
-/*
- *
- *
- *
- *
- */
-
 /* ERROR/INFO message box */
 
 .messagebox {
-    background-color: #C4F9FF;
+    margin: 10px 0;
     color: #343434;
     border: 1px #24AEB9 solid;
     border-radius: 5px;
     padding: 0 10px;
+}
+
+.messagebox img:hover {
+    opacity: 0.6;
 }
 
 /* fix the links in the error/info messages */
@@ -279,9 +286,25 @@ h3 {
 
 h4 {
     display: inline;
-    font-size: 18px;
+    font-size: 110%;
+    color: #797979;
 }
 
+.backdiv {
+    text-transform: uppercase;
+    color: #29AEB9;
+    background-color: #fff;
+    border-radius: 25px;
+    font-size: 70%;
+}
+
+.backdiv a {
+    color: #29AEB9;
+}
+
+.backdiv a:hover {
+    opacity: 0.7;
+}
 .inline {
     display: inline;
 }
@@ -310,6 +333,24 @@ h4 {
     background-color: #1F8591;
 }
 
+/* TEAM */
+#team .menu ul li {
+    display:inline;
+    margin: 30px 20px;
+    text-transform: uppercase;
+    font-weight:bold;
+    color: #797979;
+    cursor: pointer;
+}
+
+#team div {
+    margin-top: 40px;
+}
+
+.menu .selected {
+    border-bottom:6px #29AEB9 solid;
+    padding-bottom:4px;
+}
 /* SEARCH */
 #search_inputs_div {
     width:400px;
@@ -340,7 +381,19 @@ form#big_search input {
 form#big_search input:focus {
     width:45%;
 }
+#adv_search {
+    z-index:-1;
+    padding-top:-20px;
+    color: #fff;
+    background-color: #29AEB9;
+    border-radius: 25px;
+    display:inline;
+    text-align:center;
+}
 
+#adv_search a {
+    color: #fff;
+}
 
 .innerinnerdiv {
     margin: auto;
@@ -351,11 +404,8 @@ form#big_search input:focus {
 
 /***********/
 textarea {
-    border:  3px solid #CCC;
-    font-family:  Verdana, Arial, Helvetica, sans-serif;
-    padding:  5px;
+    font: 100% 'Lato', Verdana, Arial, Helvetica, sans-serif;
 }
-
 /* overlay to say it's saved */
 .overlay {
     background-color: #000;
@@ -377,6 +427,14 @@ textarea {
 .editable:hover {
     background-color: #CCC;
 }
+.editable button[type='submit'] {
+    background-color:#29AEB9;
+}
+.editable button[type='cancel'] {
+    background-color:#29AEB9;
+    color:white;
+    text-transform: uppercase;
+}
 
 img {
     border: none;
@@ -386,7 +444,9 @@ img {
 
 /* save and go back button */
 #saveButton {
-    margin-top:10px;
+    margin:20px 0;
+    text-align:right;
+
 }
 
 /* ITEMS */
@@ -457,6 +517,11 @@ section.item div.txt {
     margin: 0;
     padding-left: 20px;
 }
+
+#view_xp_item {
+    padding: 20px;
+}
+
 .title_view {
     font-size:  160%;
 }
@@ -564,13 +629,12 @@ section.item div.txt {
     padding: 5px;
 }
 
-#filesdiv {
+.filediv {
     margin-top:20px;
 }
-.filesdiv p {
-    display: inline;
+.filediv p, .filediv img {
 }
-.filesdiv a {
+.filediv a {
     font-size: 14px;
     text-decoration: none;
 }
@@ -585,8 +649,12 @@ section.item div.txt {
 }
 
 /* title on editXP -- fix for firefox */
-#title_txtarea {
-    width:90%;
+#title_input {
+    border-radius: 5px;
+    margin: 5px 0 10px 0;
+    padding: 10px 0 10px 10px;
+    border: 1px solid #dcdddc;
+    width:100%;
 }
 
 /* elabid */
@@ -670,25 +738,13 @@ footer p a:hover {
 }
 
 .bigUpload .bigUploadContainer {
-	max-width: 350px;
-	padding: 20px 30px 30px;
-	margin: 0 auto 20px;
+	padding: 30px 0;
 	margin-top:15px;
-	background-color: #ffffff;
-	border: 1px solid #e5e5e5;
-	border-radius: 5px;
-	box-shadow: 0 1px 2px rgba(0,0,0,.05);
-	text-align: center;
+    border-top: 1px solid #dcdddc;
+    border-bottom: 1px solid #dcdddc;
 }
 .bigUpload #bigUploadFile {
-	border: 1px solid #e5e5e5;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-	box-shadow: 0 1px 2px rgba(0,0,0,.05);
-	padding: 10px;
+	padding: 20px 0;
 }
 
 .bigUpload #bigUploadProgressBarContainer {

@@ -65,7 +65,7 @@ $data = $req->fetch();
 <section class="item" style='padding:15px'>
 
 
-<span class='date'><img src='img/calendar.png' title='date' alt='Date :' /> <?php echo $data['date'];?></span><br>
+<span class='date_view'><img src='img/calendar.png' title='date' alt='Date :' /> <?php echo $data['date'];?></span><br>
 <?php
 show_stars($data['rating']);
 // buttons

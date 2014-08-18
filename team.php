@@ -29,13 +29,23 @@ require_once('inc/head.php');
 require_once('inc/info_box.php');
 ?>
 <div id='team'>
+<div class='menu'>
 <ul>
-<li><a href='#team-1'>Members</a></li>
-<li><a href='#team-2'>Statistics</a></li>
-<li><a href='#team-3'>Tips and tricks</a></li>
+<li class='tabhandle' id='tab1'>Members</li>
+<li class='tabhandle' id='tab2'>Statistics</li>
+<li class='tabhandle' id='tab3'>Tips and tricks</li>
 </ul>
+</div>
 <!-- *********************** -->
-<div id='team-1'>
+<div class='divhandle' id='tab1div'>
+<table>
+    <tr>
+        <th>Name</th>
+        <th><img src='img/phone.png' alt='phone' title='phone' /> Phone</th>
+        <th><img src='img/cellphone.png' alt='mobile' title='mobile phone' /> Mobile</th>
+        <th>Website</th>
+        <th><img src='img/skype.png' alt='skype' title='skype' /> Skype</th>
+    </tr>
 <?php // SQL to get members info
 $sql = "SELECT * FROM users WHERE validated = :validated AND team = :team_id";
 $req = $pdo->prepare($sql);
@@ -44,29 +54,27 @@ $req->execute(array(
     'team_id' => $_SESSION['team_id']
 ));
 
-echo "<ul>";
 while ($data = $req->fetch()) {
-    echo "<li><img src='img/profile.png' alt='profile' /> ";
-    echo "<a href='mailto:".$data['email']."'>".$data['firstname']." ".$data['lastname']."</a>";
+    echo "<tr>";
+    echo "<td><a href='mailto:".$data['email']."'>".$data['firstname']." ".$data['lastname']."</a></td>";
         if (!empty($data['phone'])) { 
-        echo " <img src='img/phone.png' alt='Phone :' title='phone' /> ".$data['phone'];
+            echo "<td>".$data['phone']."</td>";
         } 
         if (!empty($data['cellphone'])) { 
-        echo " <img src='img/cellphone.png' alt='Cellphone :' title='Cellphone' /> ".$data['cellphone']; 
+            echo "<td>".$data['cellphone']."</td>"; 
         }
         if (!empty($data['website'])) { 
-        echo " <img src='img/website.png' alt='website :' title='website' /> <a href='".$data['website']."'>www</a>"; 
+            echo "<td><a href='".$data['website']."'>www</a></td>"; 
         }
         if (!empty($data['skype'])) { 
-        echo " <img src='img/skype.png' alt='skype :' title='skype' /> ".$data['skype'];
+            echo "<td>".$data['skype']."</td>";
         } 
-    echo "</li>";
 }
-echo "</ul>";
 ?>
+</table>
 </div>
 <!-- *********************** -->
-<div id='team-2'>
+<div class='divhandle' id='tab2div'>
 <?php
 // show team stats
 $count_sql="SELECT
@@ -82,7 +90,8 @@ $totals = $count_req->fetch(PDO::FETCH_ASSOC);
     <p>There is a total of <?php echo $totals['totdb'];?> items in the database.</p>
 </div>
 
-<div id='team-3'>
+<!-- *********************** -->
+<div class='divhandle' id='tab3div'>
     <p>
         <ul>
             <li>- You can use a TODOlist by pressing 't'</li>
@@ -95,14 +104,25 @@ $totals = $count_req->fetch(PDO::FETCH_ASSOC);
 </div>
 
 </div>
-<?php require_once('inc/footer.php');?>
 
 <script>
 $(document).ready(function() {
     // TABS
-    $( "#team" ).tabs({
-        autoHeight: false
+
+    // init
+    $(".divhandle").hide();
+    $("#tab1div").show();
+    $("#tab1").addClass('selected');
+
+    $(".tabhandle" ).click(function(event) {
+        var tabhandle = '#' + event.target.id;
+        var divhandle = '#' + event.target.id + 'div';
+        $(".divhandle").hide();
+        $(divhandle).show();
+        $(".tabhandle").removeClass('selected');
+        $(tabhandle).addClass('selected');
     });
 });
 </script>
 
+<?php require_once('inc/footer.php');?>

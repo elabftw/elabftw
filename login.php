@@ -27,9 +27,9 @@ if (!isset($_SESSION)) {
     session_start();
 }
 $page_title = 'Login';
-require_once 'inc/head.php';
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
+require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 // formkey stuff
 require_once('lib/classes/formkey.class.php');

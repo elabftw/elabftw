@@ -42,11 +42,12 @@ if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
 }
 echo "<p>";
 if (isset($_SESSION['auth']) && isset($_SESSION['team_id'])) {
-    echo "<a href='".get_team_config('link_href')." target='_blank'>".get_team_config('link_name')."</a> | ";
-    echo get_team_config('team_name')." ";
+    echo get_team_config('team_name')." lab p";
+} else {
+    echo "P";
 }
 
-echo "powered by <a href='http://www.elabftw.net'>eLabFTW</a> by <a href='http://www.elabftw.net' onClick='cornify_add();return false;'>Nicolas CARPi</a></p>";
+echo "owered by <a href='http://www.elabftw.net'>eLabFTW</a></p>";
 echo "Page generated in ".round((microtime(true) - $start), 5)." seconds";
 // show debug info only to admins
 if (isset($_SESSION['auth']) && get_config('debug') == 1 && $_SESSION['is_admin'] == 1) {
@@ -64,6 +65,9 @@ if (isset($_SESSION['auth']) && get_config('debug') == 1 && $_SESSION['is_admin'
 </a>
  <a href='https://github.com/NicolasCARPi/elabftw'>
 <img src='img/github.png' alt='github' title='eLabFTW on GitHub'>
+</a>
+<a href='https://killallhumans.com' onClick='cornify_add();return false;'>
+<img src='img/color.png' alt='?' title='?'>
 </a>
 </p>
 </footer>

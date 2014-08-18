@@ -167,7 +167,8 @@ nav .navleft a {
 }
 
 nav .navleft a.selected {
-    color:#29AEB9;
+    border-bottom:6px #29AEB9 solid;
+    padding-bottom:14px;
 }
 
 nav .navleft a:hover {
@@ -596,7 +597,7 @@ footer {
 footer p, footer p a {
     font-size: 11px;
     line-height: 20%;
-    text-align: center;
+    text-align: right;
 }
 footer p a:hover {
     color: #29AEB9;

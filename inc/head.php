@@ -125,20 +125,21 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
         echo " class='selected'";
     }?>
     >Team</a>
-</span>
-<?php
-        if ($page_title === 'Database') {
-            $action_target = 'database.php';
-        } else {
-            $action_target = 'experiments.php';
-        }
-?>
+    <?php
+    echo "<a href='".get_team_config('link_href')."' target='_blank'>".get_team_config('link_name')."</a></span>";
+    
+    if ($page_title === 'Database') {
+        $action_target = 'database.php';
+    } else {
+        $action_target = 'experiments.php';
+    }
+    ?>
     <form id='big_search' method='get' action='<?php echo $action_target;?>'>
     <input id='big_search_input' type='search' name='q' size='50' value='<?php
-if (isset($_GET['q'])) {
-    echo filter_var($_GET['q'], FILTER_SANITIZE_STRING);
-}
-?>' />
+    if (isset($_GET['q'])) {
+        echo filter_var($_GET['q'], FILTER_SANITIZE_STRING);
+    }
+    ?>' />
     </form>
 <?php
 }

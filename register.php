@@ -18,11 +18,11 @@
 *
 ********************************************************************************/
 session_start();
-require_once 'inc/head.php';
 $page_title = 'Register';
 require_once 'inc/connect.php';
-require_once 'inc/info_box.php';
 require_once 'inc/functions.php';
+require_once 'inc/head.php';
+require_once 'inc/info_box.php';
 // Check if we're logged in
 if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
     $message = "Please <a style='text-decoration:underline' href='logout.php'>logout</a> before you register another account.";

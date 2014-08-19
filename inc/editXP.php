@@ -67,7 +67,7 @@ if ($experiment['locked'] == 1) {
 // BEGIN CONTENT
 ?>
 <span class='backdiv'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' alt='' /> back to experiments listing</a></span>
-<section id='view_xp_item' class='item' style='border-left: 6px solid #<?php echo $experiment['color'];?>'>
+<section class='padding item' style='border-left: 6px solid #<?php echo $experiment['color'];?>'>
 <img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','exp', 'experiments.php')" />
 <!-- ADD TAG FORM -->
 <img src='img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />

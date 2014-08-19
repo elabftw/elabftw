@@ -322,8 +322,7 @@ function showXP($id, $display)
         // TITLE
         echo stripslashes($experiments['title']) . "</p></a>";
         // DATE
-        echo "<span class='date'><img class='image' src='img/calendar.png' /> ".$experiments['date'][0].$experiments['date'][1].$experiments['date'][2].$experiments['date'][3].".".$experiments['date'][4].
-            $experiments['date'][5].".".$experiments['date'][6].$experiments['date'][7]."</span> ";
+        echo "<span class='date'><img class='image' src='img/calendar.png' /> ".format_date($experiments['date'])."</span> ";
         // TAGS
         echo show_tags($id, 'experiments_tags');
         // show attached if there is a file attached
@@ -399,7 +398,7 @@ function showDB($id, $display)
 
     } else { // NOT COMPACT
 
-        echo "<section class='item'>";
+        echo "<section class='item' style='border-left: 6px solid #".$item['bgcolor']."'>";
         echo "<a href='database.php?mode=view&id=".$item['id']."'>";
         // STARS
         show_stars($item['rating']);
@@ -415,7 +414,7 @@ function showDB($id, $display)
         // TITLE
         echo stripslashes($item['title']) . "</p></a>";
         // ITEM TYPE
-        echo "<span style='padding:10px;color:#".$item['bgcolor']."'>".$item['name']." </span>";
+        echo "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#".$item['bgcolor']."'>".$item['name']." </span>";
         // TAGS
         echo show_tags($id, 'items_tags');
         echo "</section>";

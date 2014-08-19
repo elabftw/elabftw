@@ -24,8 +24,8 @@
 *                                                                               *
 ********************************************************************************/
 require_once 'inc/common.php';
-require_once 'inc/head.php';
 $page_title = 'Make zip';
+require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 // Test if there is zip
 if (!class_exists('ZipArchive')) {
@@ -163,7 +163,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
 
         // PAGE BEGIN
-        echo "<div class='item'>";
+        echo "<section>";
         // Get the title if there is only one experiment in the zip
         if (count($id_arr) === 1) {
             $zipname = $zdate."-".$clean_title;
@@ -174,10 +174,10 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             <img src='img/download.png' alt='download' /> 
             ".$zipname.".zip</a>
             <span class='filesize'>(".format_bytes(filesize($zipfile)).")</span></p>";
-            echo "</div>";
     } else {
         echo 'Archive creation failed :(';
     }
+    echo "</section>";
     require_once 'inc/footer.php';
 } else {
     die("The id parameter in the URL isn't a valid experiment ID");

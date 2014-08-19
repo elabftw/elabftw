@@ -349,7 +349,7 @@ if ($count > 0) {
                     <div id='colorwheel_div_<?php echo $items_types['id'];?>'>
                         <div class='colorwheel inline'></div>
                         <input type='color' name='item_type_bgcolor' value='#<?php echo $items_types['bgcolor'];?>'/>
-                    </div>
+                    </div><br><br>
                     <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']);?></textarea><br />
                     <div class='center'>
                         <button type='submit' class='button'>Edit <?php echo stripslashes($items_types['name']);?></button><br />
@@ -378,7 +378,7 @@ if ($count > 0) {
                 <div id='colorwheel_div_new'>
                     <div class='colorwheel inline'></div>
                     <input type='text' name='new_item_type_bgcolor' value='#000000' />
-                </div>
+                </div><br><br><br><br>
                 <textarea class='mceditable' name='new_item_type_template' /></textarea>
                 <div class='center'>
                     <button type='submit' class='button'>Add new item type</button>

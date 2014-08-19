@@ -94,12 +94,6 @@ echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."<
 
 <body>
 <section id="container">
-<noscript><!-- show warning if javascript is disabled -->
-<div class="ui-state-error ui-corner-all">
-<p><span class='ui-icon ui-icon-alert' style='float:left; margin: 0 5px 0 5px;'></span>
-<strong>Javascript is disabled.</strong> Please enable Javascript to view this site in all its glory. Thank You.</p>
-</div>
-</noscript>
 
 <?php
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
@@ -161,5 +155,10 @@ if (isset($_SESSION['auth'])) {
 <?php
 }
 ?>
+<noscript><!-- show warning if javascript is disabled -->
+<div class='infobox messagebox'>
+    <p><strong>Javascript is disabled.</strong> Please enable Javascript to view this site in all its glory. Thank You.</p>
+</div>
+</noscript>
 <!-- TITLE -->
 <h2><?php echo $page_title;?></h2>

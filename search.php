@@ -300,7 +300,7 @@ if (isset($_GET)) {
                 $results_id_str = rtrim($results_id_str, '+');
     ?>
 
-                <div class='align_rightexport_menu'>
+                <div class='align_right'><a name='anchor'></a>
                 <p class='inline'>Export this result : </p>
                 <a href='make_zip.php?id=<?php echo $results_id_str;?>&type=experiments'>
                 <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>
@@ -358,7 +358,7 @@ if (isset($_GET)) {
             $results_id_str = rtrim($results_id_str, '+');
 ?>
 
-            <div id='export_menu'>
+            <div class='align_right'><a name='anchor'></a>
             <p class='inline'>Export this result : </p>
             <a href='make_zip.php?id=<?php echo $results_id_str;?>&type=items'>
             <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>
@@ -389,6 +389,11 @@ if (isset($_GET)) {
 $(document).ready(function(){
     // DATEPICKER
     $( ".datepicker" ).datepicker({dateFormat: 'yymmdd'});
+<?php
+// scroll to anchor if there is a search
+if (isset($_GET)) {
+    echo "location.hash = '#anchor';";
+}?>
 });
 </script>
 

@@ -455,6 +455,7 @@ form#big_search input {
     border-radius: 20px;
     width:40%;
     padding: 10px 30px 10px 10px;
+    margin-top: -1px;
     transition:width 1s;
 }
 form#big_search input:focus {
@@ -540,6 +541,8 @@ section.item div.txt {
     border:  1px solid #dcdddc;
     border-radius: 5px;
     margin: 10px auto;
+    padding: 10px 0;
+    overflow:hidden;
 }
 
 
@@ -611,7 +614,7 @@ p.title {
     width:100%;
 }
 
-#view_xp_item {
+.padding {
     padding: 20px;
 }
 

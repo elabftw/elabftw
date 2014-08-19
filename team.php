@@ -38,6 +38,7 @@ require_once('inc/info_box.php');
 <div id='team'>
 <!-- *********************** -->
 <div class='divhandle' id='tab1div'>
+<?php display_message('info_nocross', "You belong to the ".get_team_config('team_name')." team.");?>
 <table id='teamtable'>
     <tr>
         <th>Name</th>

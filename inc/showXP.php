@@ -31,21 +31,21 @@ $load_more_button = "<div class='center'>
     <a href="create_item.php?type=exp"><img src="img/add.png" alt="" /> Create experiment</a> | 
     <a href='#' class='trigger'><img src="img/add-template.png" alt="" /> Create from template</a>
 
-<!-- 'List all' dropdown menu -->
-<span style='float:right'>
-<select class='dropdown' onchange=go_url(this.value)><option value=''>LIST ALL</option>
-<?php
-$sql = "SELECT id, name FROM status WHERE team = :team_id";
-$req = $pdo->prepare($sql);
-$req->execute(array(
-    'team_id' => $_SESSION['team_id']
-));
-while ($status = $req->fetch()) {
-    echo "<option value='search.php?type=experiments&status=".$status['id']."'>";
-    echo $status['name']."</option>";
-}
-?>
-</select></span>
+    <!-- 'List all' dropdown menu -->
+    <span style='float:right'>
+    <select class='dropdown' onchange=go_url(this.value)><option value=''>LIST ALL</option>
+    <?php
+    $sql = "SELECT id, name FROM status WHERE team = :team_id";
+    $req = $pdo->prepare($sql);
+    $req->execute(array(
+        'team_id' => $_SESSION['team_id']
+    ));
+    while ($status = $req->fetch()) {
+        echo "<option value='search.php?type=experiments&status=".$status['id']."'>";
+        echo $status['name']."</option>";
+    }
+    ?>
+    </select></span>
 </div><!-- end submenu -->
 <div class='toggle_container'><ul>
 <?php // SQL to get user's templates

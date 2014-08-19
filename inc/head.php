@@ -105,6 +105,20 @@ echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."<
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 ?>
 <nav>
+<?php
+    if ($page_title === 'Database') {
+        $action_target = 'database.php';
+    } else {
+        $action_target = 'experiments.php';
+    }
+?>
+    <form id='big_search' method='get' action='<?php echo $action_target;?>'>
+    <input id='big_search_input' type='search' name='q' size='50' value='<?php
+    if (isset($_GET['q'])) {
+        echo filter_var($_GET['q'], FILTER_SANITIZE_STRING);
+    }
+    ?>' /><br>
+    </form>
 <span class='navleft'>
     <a href='index.php'>elab<strong>FTW</strong></a>
     <a href="experiments.php?mode=show"
@@ -128,20 +142,8 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     <?php
     echo "<a href='".get_team_config('link_href')."' target='_blank'>".get_team_config('link_name')."</a></span>";
     
-    if ($page_title === 'Database') {
-        $action_target = 'database.php';
-    } else {
-        $action_target = 'experiments.php';
-    }
     ?>
-    <form id='big_search' method='get' action='<?php echo $action_target;?>'>
-    <input id='big_search_input' type='search' name='q' size='50' value='<?php
-    if (isset($_GET['q'])) {
-        echo filter_var($_GET['q'], FILTER_SANITIZE_STRING);
-    }
-    ?>' /><br><div id='adv_search'><a href='search.php'><img src='img/arrow-right-white.png' alt='' />Advanced search</a></div>
-    </form>
-    </nav>
+    </nav><div id='adv_search'><a href='search.php'><img src='img/arrow-right-white.png' alt='' />Advanced search</a></div>
 <?php
 } else {
     echo "<nav><span class='navleft'><a href='index.php'>elab<strong>FTW</strong></a></span></nav>";

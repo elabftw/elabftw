@@ -1200,3 +1200,25 @@ function q($sql) {
     }
 }
  */
+
+/**
+ * Used in sysconfig.php to update config values
+ * 
+ * @param array conf_name => conf_value
+ * @return bool the return value of execute queries
+ */
+function update_config($array)
+{
+    global $pdo;
+    $values = array();
+    foreach ($array as $name => $value) {
+        $sql = "UPDATE config SET conf_value = '".$value."' WHERE conf_name = '".$name."';";
+        $req = $pdo->prepare($sql);
+        $result = $req->execute();
+    }
+    if ($result) {
+        return true;
+    } else {
+        return false;
+    }
+}

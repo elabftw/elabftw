@@ -82,47 +82,24 @@ a :hover {
     text-decoration:none;
 }
 
-/* LOGIN.PHP */
-.loginform {
-    border-top:1px solid #dcdddc;
-    margin-top:20px;
-}
-.loginform label {
-    display:block;
+
+/* LISTS */
+ul, li {
+    list-style-type:none;
 }
 
-form#regform p.two-columns label {
-    display:block;
-    text-align:left;
-    padding-left:60px;
-}
-
-.loginform input, .loginform select {
+/* input and select */
+input, select {
     margin:10px;
     padding:10px;
-    text-align:center;
     background-color:#F2F2F2;
     color:#797979;
     border-radius: 10px;
     border: 1px #e3e3e3 solid;
 }
 
-.loginform p {
-    font-size: 115%;
-}
-.loginform button[type='submit'] {
-    padding: 10px 60px;
-    font-size: 110%;
-}
-#loginButtonDiv {
-    border-top: 1px solid #e3e3e3;
-    padding-top:30px;
-    margin-top: 30px;
-}
-
-/* LISTS */
-ul, li {
-    list-style-type:none;
+.loginform input, .loginform select {
+    text-align:center;
 }
 
 /* GENERAL */
@@ -168,6 +145,36 @@ p a {
     text-decoration: none;
 }
 
+/* LOGIN.PHP */
+.loginform {
+    border-top:1px solid #dcdddc;
+    margin-top:20px;
+}
+.loginform label {
+    display:block;
+}
+
+
+form#regform p.two-columns label {
+    text-align:left;
+    padding-left:60px;
+}
+
+
+.loginform p {
+    font-size: 115%;
+}
+.loginform button[type='submit'] {
+    padding: 10px 60px;
+    font-size: 110%;
+}
+
+#loginButtonDiv {
+    border-top: 1px solid #e3e3e3;
+    padding-top:30px;
+    margin-top: 30px;
+}
+
 /* in install/index.php */
 .code {
     font:14px Courrier, sans-serif;
@@ -198,10 +205,26 @@ div.txt li {
 }
 
 
-/* prettier tables  */
-table, table td {
+/* prettier tables in mceditable area */
+div.txt table, div.txt table td {
     border: 1px solid black;
 }
+
+table#teamtable td {
+    padding: 5px;
+    margin: 5px;
+}
+
+table#teamtable th {
+    background-color:#797979;
+    color: #dcdddc;
+    text-transform: uppercase;
+    font-size: 90%;
+    padding: 5px;
+    text-align:left;
+    width: 150px;
+}
+
 
 /* HEAD */
 
@@ -237,7 +260,7 @@ nav .navleft a:hover {
 #submenu {
     border-bottom: 1px dotted #CCC;
     margin-bottom: 15px;
-    padding-bottom: 15px;
+    padding-bottom: 35px;
 }
 #submenu a {
     border:1px solid white;
@@ -290,18 +313,11 @@ nav .navleft a:hover {
     font: 80% 'Lato', Verdana, Arial, Helvetica, sans-serif;
     background-color: #ccc;
     color: #000000;
-    padding: 5px;
+    padding: 7px;
     border: none;
     border-radius: 10px;
 }
 
-
-/* on admin.php for items types
- * it's bettor to have a pointer to show that you should click
- */
-a[class*='trigger_']:hover {
-    cursor:pointer;
-}
 
 .biginput {
     font: 30px 'Lato', Helvetica, Verdana, Arial, sans-serif;
@@ -313,17 +329,13 @@ a[class*='trigger_']:hover {
 }
 
 /* SEARCH.PHP */
-#export_menu {
-    float:right;
-}
-
 .searchform {
     border-top:1px solid #dcdddc;
     margin-top:20px;
 }
 
 #searchDiv {
-    border: 2px solid #dcdddc;
+    border: 1px solid #e3e3e3;
     border-radius: 10px;
     margin-top: 20px;
 }
@@ -349,11 +361,6 @@ a[class*='trigger_']:hover {
 .searchform p {
     font-size: 135%;
 }
-
-#searchButton {
-}
-
-
 
 
 /* TITLES */
@@ -395,11 +402,6 @@ h4 {
 /* MENU */
 
 /* BUTTONS */
-
-.submit {
-    margin-top:20px;
-}
-
 .button {
     border: none;
     border-radius: 25px;
@@ -412,13 +414,17 @@ h4 {
     background-color: #29AEB9;
 }
 
-.button:hover{
+.button:hover {
     border: none;
     background-color: #1F8591;
 }
 
+.button:disabled {
+    background-color: #dcdddc;
+}
+
 /* TEAM */
-#team .menu ul li {
+.menu ul li {
     display:inline;
     margin: 30px 20px;
     text-transform: uppercase;
@@ -427,7 +433,7 @@ h4 {
     cursor: pointer;
 }
 
-#team div {
+#team, #adminpanel, #sysconfig {
     margin-top: 40px;
 }
 
@@ -444,24 +450,26 @@ form#big_search {
     margin-top:-6px;
 }
 form#big_search input {
-    background-color:#ccc;
+    background:#555 url(../img/search.png) no-repeat scroll right center;
     border: none;
     border-radius: 20px;
     width:40%;
-    padding: 10px;
-    background:#ccc url(../img/search32px.png) no-repeat scroll right center;
+    padding: 10px 30px 10px 10px;
     transition:width 1s;
 }
 form#big_search input:focus {
     width:45%;
 }
 #adv_search {
-    padding:0 10px 5px 0;
+    position:absolute;
+    right:15%;
+    z-index: 30;
+    width:200px;
+    padding:5px 10px;
     color: #fff;
+    text-align:center;
     background-color: #29AEB9;
     border-radius: 25px;
-    display:inline;
-    text-align:center;
 }
 
 #adv_search a {
@@ -529,17 +537,37 @@ section.item div.txt {
 }
 
 .item {
-    border:  1px solid #CCC;
+    border:  1px solid #dcdddc;
     border-radius: 5px;
     margin: 10px auto;
-    padding: 4px 0;
 }
+
 
 .item a:hover {
     color:#29AEB9;
 }
 
-/* admin.php */
+/* ADMIN.PHP */
+.simple_border {
+    border:1px solid #dcdddc;
+    border-radius: 5px;
+    padding: 10px;
+    margin:5px;
+}
+.simple_border label {
+    font-size: 125%;
+    padding-left:20px;
+}
+
+
+/* on admin.php for items types
+ * it's bettor to have a pointer to show that you can click
+ */
+a[class*='trigger_']:hover {
+    cursor:pointer;
+}
+
+
 .config_form input, .config_form select {
     float:right;
 }
@@ -573,12 +601,6 @@ section.item div.txt {
 }
 /* end experiments comments */
 
-.simple_border {
-    border:2px solid #AAA;
-    border-radius: 5px;
-    padding: 10px;
-    margin:5px;
-}
 
 .title {
     font-size:  160%;
@@ -658,8 +680,9 @@ p.title {
 }
 
 .smallgray{
+    display:block;
     color:gray;
-    font-size: 12px;
+    font-size: 80%;
 }
 
 #addtaginput {

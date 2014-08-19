@@ -300,7 +300,7 @@ if (isset($_GET)) {
                 $results_id_str = rtrim($results_id_str, '+');
     ?>
 
-                <div id='export_menu'>
+                <div class='align_rightexport_menu'>
                 <p class='inline'>Export this result : </p>
                 <a href='make_zip.php?id=<?php echo $results_id_str;?>&type=experiments'>
                 <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>

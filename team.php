@@ -28,7 +28,6 @@ $page_title= 'Team';
 require_once('inc/head.php');
 require_once('inc/info_box.php');
 ?>
-<div id='team'>
 <div class='menu'>
 <ul>
 <li class='tabhandle' id='tab1'>Members</li>
@@ -36,15 +35,16 @@ require_once('inc/info_box.php');
 <li class='tabhandle' id='tab3'>Tips and tricks</li>
 </ul>
 </div>
+<div id='team'>
 <!-- *********************** -->
 <div class='divhandle' id='tab1div'>
-<table>
+<table id='teamtable'>
     <tr>
         <th>Name</th>
-        <th><img src='img/phone.png' alt='phone' title='phone' /> Phone</th>
-        <th><img src='img/cellphone.png' alt='mobile' title='mobile phone' /> Mobile</th>
+        <th>Phone</th>
+        <th>Mobile</th>
         <th>Website</th>
-        <th><img src='img/skype.png' alt='skype' title='skype' /> Skype</th>
+        <th>Skype</th>
     </tr>
 <?php // SQL to get members info
 $sql = "SELECT * FROM users WHERE validated = :validated AND team = :team_id";

@@ -314,13 +314,13 @@ function showXP($id, $display)
         if ($experiments['timestamped']) {
             echo "<img class='align_right' src='img/check.png' alt='stamp' title='Timestamp OK' />";
         }
-        // TITLE
         echo "<p class='title'>";
         // show lock if item is locked on viewXP
         if ($experiments['locked']) {
             echo "<img style='padding-bottom:3px;' src='img/lock-blue.png' alt='lock' title='Locked' /> ";
         }
-        echo stripslashes($experiments['title']) . "</a></p>";
+        // TITLE
+        echo stripslashes($experiments['title']) . "</p></a>";
         // DATE
         echo "<span class='date'><img class='image' src='img/calendar.png' /> ".$experiments['date'][0].$experiments['date'][1].$experiments['date'][2].$experiments['date'][3].".".$experiments['date'][4].
             $experiments['date'][5].".".$experiments['date'][6].$experiments['date'][7]."</span> ";
@@ -1119,6 +1119,19 @@ function check_executable($cmd)
 {
     return shell_exec("which $cmd");
 }
+
+/**
+ * Take a 8 digits input and output 2014.08.16
+ *
+ * @param string $date Input date '20140302'
+ * @param string $s an optionnal param to specify the separator
+ * @return string The formatted strng
+ */
+function format_date($date, $s = ' ')
+{
+    return $date[0].$date[1].$date[2].$date[3].$s.$date['4'].$date['5'].$s.$date['6'].$date['7'];
+}
+
 
 /**
  * Insert a log entry in the logs table

@@ -25,7 +25,7 @@
 ********************************************************************************/
 
 /*
- * 343434 => dark gray
+ * 343434 => very dark gray (main nav bg)
  * 797979 => lightgray
  * #29AEB9 => blue
  * 1F8591 => dark blue
@@ -74,12 +74,50 @@ body {
 }
 /* LINKS */
 a {
-    color: #606264;
+    color: #29AEB9;
     text-decoration:none;
 }
 a :hover {
     color:#29AEB9;
     text-decoration:none;
+}
+
+/* LOGIN.PHP */
+.loginform {
+    border-top:1px solid #dcdddc;
+    margin-top:20px;
+}
+.loginform label {
+    display:block;
+}
+
+p.two-columns label {
+    display:block;
+    text-align:left;
+    padding-left:60px;
+}
+
+.loginform input, .loginform select {
+    margin:10px;
+    padding:10px;
+    text-align:center;
+    background-color:#F2F2F2;
+    color:#797979;
+    border-radius: 10px;
+    border: 1px #e3e3e3 solid;
+}
+
+.loginform p {
+    font-size: 115%;
+}
+.loginform button[type='submit'] {
+    padding: 10px 60px;
+    font-size: 110%;
+}
+#loginButtonDiv {
+    border-top: 1px solid #e3e3e3;
+    padding-top:30px;
+    margin-top: 30px;
 }
 
 /* LISTS */
@@ -111,12 +149,20 @@ ul, li {
 .three-columns {
     width: 60%;
 }
+.two-columns {
+    -moz-columns:2 250px;
+    -webkit-columns:2 250px;
+    columns: 2 250px;
+}
 
 .column-left{ float: left; width: 20%; }
 .column-right{ float: right; width: 20%; }
 .column-center{ display: inline-block; width: 20%; }
 
 /* paragraphs */
+p {
+    color:#797979;
+}
 
 p a {
     text-decoration: none;
@@ -134,7 +180,7 @@ p a {
 /* hr */
 hr {
     margin: 10px 0 10px 0;
-    color: #dcdddc
+    color: #dcdddc;
 }
 
 li.inline {
@@ -280,7 +326,7 @@ h2 {
 
 h3 {
     color: #797979;
-    font-size: 20px;
+    font-size: 150%;
     margin: 0 auto 10px auto;
 }
 
@@ -516,6 +562,9 @@ section.item div.txt {
     font-size:  160%;
     margin: 0;
     padding-left: 20px;
+}
+p.title {
+    width:100%;
 }
 
 #view_xp_item {

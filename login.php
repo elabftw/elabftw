@@ -113,29 +113,29 @@ if (!checkCookiesEnabled()) {
 }
 </script>
 
-<section class='center'>
+    <p class='backdiv'>Note : you need cookies enabled to log in.</p>
+<section class='center loginform'>
     <!-- Login form -->
     <form method="post" action="login-exec.php" autocomplete="off">
-        <!-- form key -->
-        <?php $formKey->output_formkey(); ?>
-                <p>
-                    <label for="username">Username</label>
-                    <input name="username" type="text" id="username" />
-                </p>
-                <p>
-                    <label for="password">Password</label>
-                    <input name="password" type="password" id="password" />
-                </p>
-          <button type="submit" class='button' name="Submit">Log in</button>
+        <h2>Sign in to your account</h2>
+        <p>
+            <label for="username">Username</label>
+            <input name="username" type="text" required /><br>
+            <label for="password">Password</label>
+            <input name="password" type="password" required /><br>
+            <!-- form key -->
+            <?php $formKey->output_formkey(); ?>
+        </p>
+        <div id='loginButtonDiv'>
+        <button type="submit" class='button' name="Submit">Login</button>
+        </div>
     </form>
-    <p>Note : you need cookies enabled to log in.<br />
-    Don't have an account ? <a href='register.php'>Register</a> now !<br />
+    <p>Don't have an account ? <a href='register.php'>Register</a> now !<br />
     Lost your password ? <a href='#' class='trigger'>Reset</a> it !</p>
     <div class='toggle_container'>
-<hr>
     <form name='resetPass' method='post' action='reset-pass.php'>
-    <input placeholder='Enter your email address' name='email' type='email' />
-    <button type="submit" name="Submit">Send new password</button>
+    <input placeholder='Enter your email address' name='email' type='email' required />
+    <button class='button' type="submit" name="Submit">Send new password</button>
     </form>
     </div>
 </section>

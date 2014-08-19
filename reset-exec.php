@@ -50,7 +50,7 @@ if ($password == $cpassword) {
         'salt' => $salt,
         'userid' => $userid));
     if($result){
-        dblog('Info', $_SESSION['userid'], 'Password was changed for this user.');
+        dblog('Info', $userid, 'Password was changed for this user.');
         // LOGIN THE USER
         // admin validated ?
         if (get_config('admin_validate') == 1){

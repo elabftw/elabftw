@@ -208,7 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
     // Check the form_key
     if (!isset($_POST['form_key']) || !$formKey->validate()) {
         // form key is invalid
-        die('The form key is invalid. Please retry.');
+        die('Form key invalid: please resubmit the form.');
     }
 
     if ($_POST['debug'] == 1) {

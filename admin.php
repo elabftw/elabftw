@@ -242,11 +242,11 @@ if ($count > 0) {
         <?php
         if ($count == 0) {
             ?>
-            <img class='align_right' src='img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $status['id'];?>','status', 'admin.php')" />
+            <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $status['id'];?>','status', 'admin.php')" />
         <?php
         } else {
             ?>
-            <img class='align_right' src='img/trash.png' title='delete' alt='delete' onClick="alert('Remove all experiments with this status before deleting this status.')" />
+            <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert('Remove all experiments with this status before deleting this status.')" />
         <?php
         }
         ?>
@@ -328,11 +328,11 @@ while ($items_types = $req->fetch()) {
     $count = $count_db_req->fetchColumn();
     if ($count == 0) {
         ?>
-        <img class='align_right' src='img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $items_types['id'];?>','item_type', 'admin.php')" />
+        <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $items_types['id'];?>','item_type', 'admin.php')" />
     <?php
     } else {
         ?>
-        <img class='align_right' src='img/trash.png' title='delete' alt='delete' onClick="alert('Remove all database items with this type before deleting this type.')" />
+        <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert('Remove all database items with this type before deleting this type.')" />
     <?php
     }
     ?>

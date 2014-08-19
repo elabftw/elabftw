@@ -57,7 +57,7 @@ if ($data['locked'] == 1) {
 // BEGIN CONTENT
 ?>
 <section class='item'>
-<img class='align_right' src='img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','item', 'database.php')" />
+<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','item', 'database.php')" />
 <!-- ADD TAG FORM -->
 <img src='img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
 <div class='tags'>

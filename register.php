@@ -60,6 +60,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
             <input name="email" type="email" id="email" required />
             <label for="firstname">Firstname</label>
             <input name="firstname" type="text" id="firstname" required />
+            <!-- add two br to fix layout in chrome --><br><br>
             <label for="lastname">Lastname</label>
             <input name="lastname" type="text" id="lastname" required />
             <label for="password">Password</label>
@@ -91,7 +92,7 @@ function validatePassword(){
 
 $(document).ready(function() {
     // give focus to the first field on page load
-    document.getElementById("firstname").focus();
+    document.getElementById("team").focus();
     // password complexity
     $("#password").complexify({}, function (valid, complexity){
         if (complexity < 20) {

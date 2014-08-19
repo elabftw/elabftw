@@ -201,7 +201,7 @@ if ($req->rowCount() > 0) {
             $comments['firstname'] = '[deleted]';
         }
     echo "<div class='expcomment_box'>
-    <img class='align_right' src='img/trash.png' title='delete' alt='delete' onClick=\"deleteThisAndReload(".$comments['id'].",'expcomment')\" />";
+    <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick=\"deleteThisAndReload(".$comments['id'].",'expcomment')\" />";
      echo "<span class='smallgray'>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :</span><br />";
         echo "<p class='editable' id='expcomment_".$comments['id']."'>".$comments['comment']."</p></div>";
     }

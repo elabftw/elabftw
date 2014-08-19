@@ -91,7 +91,7 @@ a :hover {
     display:block;
 }
 
-p.two-columns label {
+form#regform p.two-columns label {
     display:block;
     text-align:left;
     padding-left:60px;
@@ -317,6 +317,28 @@ a[class*='trigger_']:hover {
     float:right;
 }
 
+.searchform {
+    border-top:1px solid #dcdddc;
+    margin-top:20px;
+}
+.searchform label {
+    display:block;
+}
+
+.searchform input, .searchform select {
+    margin:10px;
+    padding:10px;
+    background-color:#F2F2F2;
+    color:#797979;
+    border-radius: 10px;
+    border: 1px #e3e3e3 solid;
+}
+
+.searchform p {
+    font-size: 115%;
+}
+
+
 
 /* TITLES */
 h2 {
@@ -428,8 +450,7 @@ form#big_search input:focus {
     width:45%;
 }
 #adv_search {
-    z-index:-1;
-    padding-top:-20px;
+    padding:0 10px 5px 0;
     color: #fff;
     background-color: #29AEB9;
     border-radius: 25px;
@@ -471,13 +492,12 @@ textarea {
 
 /* comments for files */
 .editable:hover {
-    background-color: #CCC;
+    font-weight:bold;
 }
-.editable button[type='submit'] {
+.editable button {
     background-color:#29AEB9;
-}
-.editable button[type='cancel'] {
-    background-color:#29AEB9;
+    border: none;
+    border-radius: 20px;
     color:white;
     text-transform: uppercase;
 }
@@ -533,15 +553,11 @@ section.item div.txt {
 /* comments for experiments comments box */
 .newexpcomment {
     background-color:white;
-    border:solid 1px #CCC;
-    border-radius: 7px;
     margin:2px;
     padding: 2px;
 }
 
 .expcomment_box {
-    border:solid 1px #CCC;
-    border-radius: 7px;
     margin:2px;
     padding: 2px;
 }

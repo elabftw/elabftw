@@ -312,7 +312,7 @@ a[class*='trigger_']:hover {
     height: 40px;
 }
 
-/* on search.php */
+/* SEARCH.PHP */
 #export_menu {
     float:right;
 }
@@ -321,12 +321,20 @@ a[class*='trigger_']:hover {
     border-top:1px solid #dcdddc;
     margin-top:20px;
 }
-.searchform label {
+
+#searchDiv {
+    border: 2px solid #dcdddc;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+/* we need to add a block class, otherwise the search in everyone exp box is messed up */
+.searchform label.block {
     display:block;
 }
 
 .searchform input, .searchform select {
-    margin:10px;
+    margin:10px 0;
     padding:10px;
     background-color:#F2F2F2;
     color:#797979;
@@ -334,9 +342,17 @@ a[class*='trigger_']:hover {
     border: 1px #e3e3e3 solid;
 }
 
-.searchform p {
-    font-size: 115%;
+.searchform input#title, .searchform input#body {
+    width: 100%;
 }
+
+.searchform p {
+    font-size: 135%;
+}
+
+#searchButton {
+}
+
 
 
 
@@ -419,18 +435,8 @@ h4 {
     border-bottom:6px #29AEB9 solid;
     padding-bottom:4px;
 }
-/* SEARCH */
-#search_inputs_div {
-    width:400px;
-}
-.search_inputs {
-    float:right;
-}
 
-.submit_search_button{
-    float:right;
-}
-/* search bar */
+/* search bar in head */
 form#big_search {
     width:40%;
     float:right;
@@ -604,10 +610,6 @@ p.title {
     border-right:1px dotted #ccd;
 }
 
-#rating {
-    float:right;
-}
-
 .tags {
     line-height: 200%;
     margin: 10px 0px 10px 5px;
@@ -753,6 +755,7 @@ footer {
     text-align: center;
 }
 footer p, footer p a {
+    color: #797979;
     font-size: 11px;
     line-height: 20%;
     text-align: right;

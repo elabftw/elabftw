@@ -92,6 +92,10 @@ starting at 1, as they appear in the .ttc file e.g.
 */
 
 $this->fontdata = array(
+    "lato" => array(
+        'R' => "Lato-Regular.ttf"
+    ),
+
 	"dejavusanscondensed" => array(
 		'R' => "DejaVuSansCondensed.ttf",
 		'B' => "DejaVuSansCondensed-Bold.ttf",
@@ -284,20 +288,20 @@ $this->BMPonly = array(
 //     (Otherwise the order is irrelevant)
 // Use the mPDF font-family names i.e. lowercase and no spaces (after any translations in $fonttrans)
 // Always include "sans-serif", "serif" and "monospace" etc.
-$this->sans_fonts = array('dejavusanscondensed','dejavusans','freesans','liberationsans','sans','sans-serif','cursive','fantasy', 
+$this->sans_fonts = array('lato', 'dejavusanscondensed','dejavusans','freesans','liberationsans','sans','sans-serif','cursive','fantasy', 
 				'arial','helvetica','verdana','geneva','lucida','arialnarrow','arialblack','arialunicodems',
 				'franklin','franklingothicbook','tahoma','garuda','calibri','trebuchet','lucidagrande','microsoftsansserif',
 				'trebuchetms','lucidasansunicode','franklingothicmedium','albertusmedium','xbriyaz','albasuper','quillscript'
 
 );
 
-$this->serif_fonts = array('dejavuserifcondensed','dejavuserif','freeserif','liberationserif','serif',
+$this->serif_fonts = array('lato', 'dejavuserifcondensed','dejavuserif','freeserif','liberationserif','serif',
 				'timesnewroman','times','centuryschoolbookl','palatinolinotype','centurygothic',
 				'bookmanoldstyle','bookantiqua','cyberbit','cambria',
 				'norasi','charis','palatino','constantia','georgia','albertus','xbzar','algerian','garamond',
 );
 
-$this->mono_fonts = array('dejavusansmono','freemono','liberationmono','courier', 'mono','monospace','ocrb','ocr-b','lucidaconsole',
+$this->mono_fonts = array('lato', 'dejavusansmono','freemono','liberationmono','courier', 'mono','monospace','ocrb','ocr-b','lucidaconsole',
 				'couriernew','monotypecorsiva'
 );
 

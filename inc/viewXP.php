@@ -182,9 +182,9 @@ echo "</section>";
 ?>
 <!-- we need to add a container here so the reload function in the callback of .editable() doesn't mess things up -->
 <section id='expcomment_container'>
-<div id='expcomment' class='item'>
+<div id='expcomment' class='box'>
     <h3><img src='img/comment.png' alt='comment' /> Comments</h3>
-    <p class='editable newexpcomment' id='newexpcomment_<?php echo $id;?>'>Click to add a comment.</p>
+    <p class='editable newexpcomment' id='newexpcomment_<?php echo $id;?>'>Add a comment</p>
 <?php
 
 // check if there is something to display first

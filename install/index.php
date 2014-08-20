@@ -53,7 +53,7 @@ require_once '../inc/functions.php';
 
 <body>
 <section id="container">
-<section class='item'>
+<section class='box'>
 <center><img src='../img/logo.png' alt='elabftw' title='elabftw' /></center>
 <h2>Welcome to the install of eLabFTW</h2>
 
@@ -66,7 +66,7 @@ if (file_exists('../config.php')) {
     if (!is_readable('../config.php')) {
         $message = "No readable config file found. Make sure the server has permissions to read it. Try :<br />
             chmod 644 config.php<br />";
-        display_message('error', $message);
+        display_message('error_nocross', $message);
         custom_die();
     }
 
@@ -87,7 +87,7 @@ if (file_exists('../config.php')) {
         header('Location: ../register.php');
     } else {
         $message = 'It looks like eLabFTW is already installed. Delete the config file if you wish to reinstall it.';
-        display_message('error', $message);
+        display_message('error_nocross', $message);
         custom_die();
     }
 }
@@ -104,24 +104,24 @@ if (!isset($_SERVER['HTTPS'])) {
     $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server
         (<a href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting#wiki-switch-to-https'
         >see documentation</a>). Or click this link : <a href='$url'>$url</a>";
-    display_message('error', $message);
+    display_message('error_nocross', $message);
     custom_die();
 }
 
 // CHECK PHP version
 if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.3', '<')) {
     $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.3";
-    display_message('error', $message);
+    display_message('error_nocross', $message);
     custom_die();
 } else {
     $message = "Your version of PHP is recent enough.";
-    display_message('info', $message);
+    display_message('info_nocross', $message);
 }
 
 // Check for hash function
 if (!function_exists('hash')) {
     $message = "You don't have the hash function. On Freebsd it's in /usr/ports/security/php5-hash.";
-    display_message('error', $message);
+    display_message('error_nocross', $message);
     custom_die();
 }
 
@@ -129,7 +129,7 @@ if (!function_exists('hash')) {
 // UPLOADS DIR
 if (is_writable('../uploads') && is_writable('../uploads/export') && is_writable('../uploads/tmp')) {
     $message = 'The <em>uploads/</em> folder and its subdirectories are here and I can write to it.';
-    display_message('info', $message);
+    display_message('info_nocross', $message);
 } else {
     // create the folders
     mkdir('../uploads');
@@ -138,12 +138,12 @@ if (is_writable('../uploads') && is_writable('../uploads/export') && is_writable
     // check the folders
     if (is_writable('../uploads') && is_writable('../uploads/export') && is_writable('../uploads/tmp')) {
         $message = "The <em>uploads/</em> folder and its subdirectories were created successfully.";
-        display_message('info', $message);
+        display_message('info_nocross', $message);
     } else { // failed at creating the folder
         $message = "Faild creating <em>uploads/</em> directory. 
             You need to do it manually. 
             <a href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting#failed-creating-uploads-directory-'>Click here to discover how.</a>";
-        display_message('error', $message);
+        display_message('error_nocross', $message);
         custom_die();
     }
 }
@@ -151,22 +151,22 @@ if (is_writable('../uploads') && is_writable('../uploads/export') && is_writable
 // CHECK ssl extension
 if (extension_loaded("openssl")) {
     $message = 'The <em>openssl</em> extension is loaded.';
-    display_message('info', $message);
+    display_message('info_nocross', $message);
 } else {
     $message = "The <em>openssl</em> extension is <strong>NOT</strong> loaded.
             <a href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting#the-openssl-extension-is-not-loaded'>Click here to read how to fix this.</a>";
-    display_message('error', $message);
+    display_message('error_nocross', $message);
     custom_die();
 }
 
 // CHECK gd extension
 if (extension_loaded("gd")) {
     $message = 'The <em>gd</em> extension is loaded.';
-    display_message('info', $message);
+    display_message('info_nocross', $message);
 } else {
     $message = "The <em>gd</em> extension is <strong>NOT</strong> loaded.
             <a href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting#the-gd-extension-is-not-loaded'>Click here to read how to fix this.</a>";
-    display_message('error', $message);
+    display_message('error_nocross', $message);
     custom_die();
 }
 
@@ -228,7 +228,7 @@ if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32' || PHP_OS == 'WINNT' || PHP_OS == 'Wi
 <section id='final_section'>
 <p>When you click the button below, it will create the file <em>config.php</em>. If it cannot create it (because the server doesn't have write permission to this folder), your browser will download it and you will need to put it in the folder <em>admin</em>.</p>
 <p>To put this file on the server, you can use scp (don't write the '$') :</p>
-<p class='code'>$ scp /path/to/config.php pi@12.34.56.78:/var/www/elabftw/</p>
+<code>$ scp /path/to/config.php pi@12.34.56.78:/var/www/elabftw/</code>
 <p>If you want to modify some parameters afterwards, just edit this file directly.</p>
 
 <div class='center' style='margin-top:8px'>
@@ -243,9 +243,6 @@ if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32' || PHP_OS == 'WINNT' || PHP_OS == 'Wi
 
 </section>
 
-<footer>
-    <p>Thanks for using eLabFTW :)</p>
-</footer>
 </section>
 
 <script>

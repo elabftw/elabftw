@@ -31,11 +31,11 @@ function bigUpload () {
 		//Color of the background of the progress bar
 		//This must also be defined in the progressBarField css, but it's used here to reset the color after an error
 		//Default: green
-		'progressBarColor': '#5bb75b',
+		'progressBarColor': '#29AEB9',
 
 		//Color of the background of the progress bar when an error is triggered
 		//Default: red
-		'progressBarColorError': '#da4f49',
+		'progressBarColorError': '#c4f9ff',
 
 		//Path to the php script for handling the uploads
 		'scriptPath': 'inc/bigUpload.php',
@@ -334,7 +334,7 @@ function bigUpload () {
 
 		var percent = Math.ceil((progress / this.uploadData.numberOfChunks) * 100);
 		this.$(this.settings.progressBarField).style.width = percent + '%';
-		this.$(this.settings.progressBarField).textContent = percent + '%';
+		//this.$(this.settings.progressBarField).textContent = '◉';
 
 		//Calculate the estimated time remaining
 		//Only run this every five chunks, otherwise the time remaining jumps all over the place (see: http://xkcd.com/612/)

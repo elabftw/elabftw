@@ -67,7 +67,7 @@ if ($experiment['locked'] == 1) {
 // BEGIN CONTENT
 ?>
 <span class='backdiv'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' alt='' /> back to experiments listing</a></span>
-<section class='padding item' style='border-left: 6px solid #<?php echo $experiment['color'];?>'>
+<section class='box' id='main_section' style='border-left: 6px solid #<?php echo $experiment['color'];?>'>
 <img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','exp', 'experiments.php')" />
 <!-- ADD TAG FORM -->
 <img src='img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
@@ -94,6 +94,7 @@ while ($tags = $tagreq->fetch()) {
 <input name='item_id' type='hidden' value='<?php echo $id;?>' />
 
 <div class='three-columns'>
+
     <div class='column-left'>
         <img src='img/calendar.png' title='date' alt='calendar' /> <h4>Date</h4><br>
         <!-- TODO if firefox has support for it: type = date -->
@@ -103,13 +104,9 @@ while ($tags = $tagreq->fetch()) {
     <div class='column-right'>
         <img src='img/eye.png' alt='visibility' />
         <h4>Visibility</h4><br>
-        <!-- visibility get selected by default -->
-        <?php
-        $visibility = $experiment['visibility'];
-        ?>
         <select id="visibility_form" name="visibility" onchange="update_visibility(this.value)">
             <option id='option_team' value="team">Only the team</option>
-            <option id='option_user' value="user">Only me</option>
+            <option id='option_user' value="user" <?php if ($experiment['visibility'] === 'user') echo "selected";?>>Only me</option>
         </select>
         <span id='visibility_msg_div'>Updated !</span>
     </div>
@@ -117,7 +114,7 @@ while ($tags = $tagreq->fetch()) {
     <div class='column-center'>
         <img src='img/status.png' alt='status' /> <h4>Status</h4><br>
         <script>
-        // this array is used by updateStatus() to get the color of new status
+        // this array is used by updateStatus() to get the color of new status 
         var status_arr = Array();
         </script>
 
@@ -398,11 +395,11 @@ function updateStatus(status) {
                 // change the color of the item border
             }).done(function() { 
                 // we first remove any status class
-                $("#view_xp_item").css('border', null);
+                $("#main_section").css('border', null);
                 // and we add our new border color
                 // first : get what is the color of the new status
-                var css = '1px solid #' + status_arr[status];
-                $("#view_xp_item").css('border', css);
+                var css = '6px solid #' + status_arr[status];
+                $("#main_section").css('border-left', css);Untitled
             });
 }
 
@@ -463,7 +460,7 @@ $(document).ready(function() {
                 id : <?php echo $id;?>,
                 type : 'experiments',
                 // we need this to get the updated content
-                title : document.getElementById('title_txtarea').value,
+                title : document.getElementById('title_input').value,
                 date : document.getElementById('datepicker').value,
                 body : tinymce.activeEditor.getContent()
                 }

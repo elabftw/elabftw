@@ -634,7 +634,7 @@ function make_pdf($id, $type, $out = 'browser')
         if(isset($data['lockedwhen'])) {
             $lockdate = explode(' ', $data['lockedwhen']);
             // this will be added after the URL
-            $lockinfo = "<p>Locked by ".$lockuser['firstname']." ".$lockuser['lastname']." on ".$lockdate[0]." at ".$lockdate[1].".</p>";
+            $lockinfo = "<p class='elabid'>locked by ".$lockuser['firstname']." ".$lockuser['lastname']." on ".$lockdate[0]." at ".$lockdate[1].".</p>";
         } else {
             $lockinfo = "";
         }
@@ -697,11 +697,13 @@ function make_pdf($id, $type, $out = 'browser')
     }
 
     // build content of page
-    $content = "<h1>".$title."</h1><br />
-        Date : ".$date."<br />
-        <em>Keywords : ".$tags."</em><br />
-        <hr>".$body."<br /><br />
-        <hr>Made by : ".$firstname." ".$lastname."<br /><br />";
+    // add css
+    $content = "<link rel='stylesheet' media='all' href='css/pdf.css' />";
+    $content .= "<h1>".$title."</h1>
+        Date : ".format_date($date)."<br />
+        <em>Tags : ".$tags."</em><br />
+        Made by : ".$firstname." ".$lastname."
+        <hr><p>".$body."</p>";
     // Construct URL
     $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
 
@@ -803,8 +805,8 @@ function make_pdf($id, $type, $out = 'browser')
         // Add comments
         $content .= $comments_block;
         // ELABID and URL
-        $content .= "<br /><p>elabid : ".$elabid."</p>";
-        $content .= "<p>URL : <a href='".$full_url."'>".$full_url."</a></p>";
+        $content .= "<p class='elabid'>elabid : ".$elabid."</p>";
+        $content .= "<p class='elabid'>link :<a href='".$full_url."'>".$full_url."</a></p>";
 
     } else { // ITEM
         if ($out === 'browser') {
@@ -820,6 +822,9 @@ function make_pdf($id, $type, $out = 'browser')
     if (isset($lockinfo)) {
         $content .= $lockinfo;
     }
+
+    // FOOTER
+    $content .= "<footer>PDF generated with <a href='http://www.elabftw.net'>elabftw</a>, a free and open source lab notebook</footer>";
 
 
     // Generate pdf with mpdf
@@ -1016,7 +1021,7 @@ function duplicate_item($id, $type)
 /**
  * For displaying messages using jquery ui highlight/error messages
  *
- * @param string $type Can be 'info' or 'error'
+ * @param string $type Can be 'info', 'info_nocross' or 'error', 'error_nocross'
  * @param string $message The message to display
  * @return string Will echo the HTML of the message
  */
@@ -1167,14 +1172,7 @@ function dblog($type, $user, $body)
 function custom_die()
 {
     echo "
-    <br />
-    <br />
     </section>
-    <br />
-    <br />
-    <footer>
-    <p>Thanks for using eLabFTW :)</p>
-    </footer>
     </body>
     </html>";
     die();

@@ -227,9 +227,9 @@ if (isset($_GET['q'])) { // if there is a query
     // If there are no experiments, display a little message
     if ($count == 0) {
         $message = "<strong>Welcome to eLabFTW.</strong> 
-            Click the <img src='img/notepad_add.png' alt='Create experiment' />
+            Click the <img src='img/add.png' alt='Create experiment' />
             <a href='create_item.php?type=exp'>Create experiment</a> button to get started.";
-        display_message('info', $message);
+        display_message('info_nocross', $message);
     } else {
         while ($experiments = $req->fetch()) {
             $results_arr[] = $experiments['id'];

@@ -48,7 +48,7 @@ echo "</select>";
 // 'List all' dropdown menu
 // we do the request again to get the list again
 $req->execute();
-echo "<span style='float:right'><select class='dropdown' onchange=go_url(this.value)><option value=''>LIST ALL</option>";
+echo "<span style='float:right'><select class='dropdown' onchange=go_url(this.value)><option value=''>FILTER TYPE</option>";
 while ($items_types = $req->fetch()) {
     echo "<option value='search.php?type=".$items_types['id']."' name='type' ";
     echo ">".$items_types['name']."</option>";

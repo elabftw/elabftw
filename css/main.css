@@ -85,7 +85,13 @@ a :hover {
 
 /* LISTS */
 ul, li {
-    list-style-type:none;
+    list-style: none;
+}
+
+li.tip:before {
+    content: "☺ ";
+    font-size:120%;
+    color: #29AEB9;
 }
 
 /* input and select */
@@ -180,15 +186,6 @@ form#regform p.two-columns label {
     margin-top: 30px;
 }
 
-/* in install/index.php */
-.code {
-    font:14px Courrier, sans-serif;
-    background-color:white;
-    border:1px dotted #ccc;
-    margin:10px;
-    padding:7px;
-}
-
 /* hr */
 hr {
     margin: 10px 0 10px 0;
@@ -209,6 +206,10 @@ div.txt li {
     list-style-type:square !important;
 }
 
+/* bigger space to enter experiment */
+.mceditable {
+    height:500px;
+}
 
 /* prettier tables in mceditable area */
 div.txt table, div.txt table td {
@@ -421,7 +422,6 @@ h4 {
 }
 
 .button:hover {
-    border: none;
     background-color: #1F8591;
 }
 
@@ -514,17 +514,6 @@ textarea {
 }
 
 
-/* comments for files */
-.editable:hover {
-    font-weight:bold;
-}
-.editable button {
-    background-color:#29AEB9;
-    border: none;
-    border-radius: 20px;
-    color:white;
-    text-transform: uppercase;
-}
 
 img {
     border: none;
@@ -558,6 +547,13 @@ section.item div.txt {
 .item a:hover {
     color:#29AEB9;
 }
+
+.box {
+    border: 1px solid #dcdddc;
+    border-radius: 5px;
+    padding: 20px;
+}
+
 
 /* ADMIN.PHP */
 .simple_border {
@@ -596,23 +592,52 @@ a[class*='trigger_']:hover {
     margin: 0 4px 0 25px;
 }
 
-/* comments for experiments comments box */
+/* COMMENTS FOR EXPERIMENTS COMMENTS BOX */
 .newexpcomment {
-    background-color:white;
+    background-color: #f2f2f2;
+    border-radius: 5px;
+    color: #797979;
     margin:2px;
-    padding: 2px;
+    padding: 10px;
 }
 
-.expcomment_box {
-    margin:2px;
-    padding: 2px;
+.expcomment_box, .filediv {
+    background-color: #f2f2f2;
+    border: 1px solid #dcdddc;
+    border-radius: 5px;
+    margin-top:5px;
+    padding: 10px;
 }
 
 .expcomment_box p {
-    margin:0;
+    margin: 5px 0;
+    padding: 5px;
+    border-radius: 5 0 5px 0;
+    border-left: 3px solid #797979;
 }
-/* end experiments comments */
+.expcomment_box p:hover {
+    background-color:#555;
+    color:#fff;
+}
+/* EDITABLE */
+.editable:hover {
+    background-color:#555;
+    color:#fff;
+}
+.editable button {
+    background-color:#29AEB9;
+    border: none;
+    border-radius: 20px;
+    color:white;
+    font-weight:bold;
+    text-transform: uppercase;
+    margin: 6px;
+}
+.editable button:hover {
+    background-color: #1F8591;
+}
 
+/* END COMMENTS */
 
 .title {
     font-size:  160%;
@@ -621,10 +646,6 @@ a[class*='trigger_']:hover {
 }
 p.title {
     width:100%;
-}
-
-.padding {
-    padding: 20px;
 }
 
 .title_view {
@@ -739,10 +760,6 @@ p.title {
     font-size: 10px;
 }
 
-/* bigger space to enter experiment */
-.mceditable {
-    height:700px;
-}
 
 /* title on editXP -- fix for firefox */
 #title_input {
@@ -829,41 +846,35 @@ footer p a:hover {
 }
 
 /* fix the overflow for long filenames and little width of browser */
-#bigUploadFile {
-    max-width:250px;
-    overflow: hidden;
-}
-
 .bigUpload .bigUploadContainer {
 	padding: 30px 0;
 	margin-top:15px;
     border-top: 1px solid #dcdddc;
     border-bottom: 1px solid #dcdddc;
 }
-.bigUpload #bigUploadFile {
-	padding: 20px 0;
+
+.bigUpload input {
+    margin: 10px;
 }
 
+/* the browse button */
+.bigUpload #bigUploadFile {
+    max-width:250px;
+    overflow: hidden;
+	padding: 20px;
+}
+
+/* the progress bar */
 .bigUpload #bigUploadProgressBarContainer {
-	width:94%;
-	height:19px;
-	margin-left: 3%;
-	margin-top:1%;
-	border: 1px solid #e5e5e5;
-	-webkit-border-radius: 6px;
-	-moz-border-radius: 6px;
-	border-radius: 6px;
-	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-	box-shadow: 0 1px 2px rgba(0,0,0,.05);
+	width:300px;
+	height:23px;
 }
 
 .bigUpload #bigUploadProgressBarFilled {
-	border-radius: 5px;
-	margin: 1px;
-	height:17px;
+	border-radius: 25px;
+	height:23px;
 	width:0;
-	background-color: rgb(91, 183, 91);
+	background-color: #29AEB9;
 	font-size: 14px;
 }
 

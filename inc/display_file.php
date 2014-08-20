@@ -23,7 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-echo "<div>";
+echo "<div id='filesdiv'>";
 // What type of item we are displaying the files of ?
 $type_arr = explode('.', basename($_SERVER['PHP_SELF']));
 $type = $type_arr[0];

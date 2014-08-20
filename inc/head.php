@@ -114,7 +114,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     ?>' /><br>
     </form>
 <span class='navleft'>
-    <a href='index.php'>elab<strong>FTW</strong></a>
+    <a href='index.php'>elab<span class='strong'>FTW</span></a>
     <a href="experiments.php?mode=show"
     <?php
     if ($page_title == 'Experiments') {

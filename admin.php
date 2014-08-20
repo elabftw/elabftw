@@ -96,7 +96,7 @@ if ($count > 0) {
             </select>
             </p>
             <p>
-            <label for='link_name'>Name of the link in the footer :</label>
+            <label for='link_name'>Name of the link in the top menu :</label>
             <input type='text' value='<?php echo get_team_config('link_name');?>' name='link_name' id='link_name' />
             </p>
             <p>

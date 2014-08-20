@@ -236,6 +236,7 @@ table#teamtable th {
 nav {
     background-color:#343434;
     padding: 20px;
+    line-height: 300%;
 }
 
 
@@ -440,6 +441,9 @@ h4 {
 
 #team, #adminpanel, #sysconfig {
     margin-top: 40px;
+}
+.menu {
+    line-height:200%;
 }
 
 .menu .selected {

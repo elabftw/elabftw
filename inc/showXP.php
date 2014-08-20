@@ -33,7 +33,7 @@ $load_more_button = "<div class='center'>
 
     <!-- 'List all' dropdown menu -->
     <span style='float:right'>
-    <select class='dropdown' onchange=go_url(this.value)><option value=''>LIST ALL</option>
+    <select class='dropdown' onchange=go_url(this.value)><option value=''>FILTER STATUS</option>
     <?php
     $sql = "SELECT id, name FROM status WHERE team = :team_id";
     $req = $pdo->prepare($sql);

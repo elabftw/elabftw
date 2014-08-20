@@ -90,7 +90,6 @@ ul, li {
 
 /* input and select */
 input, select {
-    margin:10px;
     padding:10px;
     background-color:#F2F2F2;
     color:#797979;
@@ -144,6 +143,12 @@ p {
 p a {
     text-decoration: none;
 }
+
+label {
+    color:#797979;
+    font-size:120%;
+}
+
 
 /* LOGIN.PHP */
 .loginform {
@@ -341,7 +346,7 @@ nav .navleft a:hover {
 }
 
 /* we need to add a block class, otherwise the search in everyone exp box is messed up */
-.searchform label.block {
+label.block {
     display:block;
 }
 
@@ -688,18 +693,12 @@ p.title {
     font-size: 80%;
 }
 
-#addtaginput {
-    margin-top: 7px;
-}
 /* ucp.php */
 
 #ucp_keyboard input {
     float:right;
 }
 
-#ucp_keyboard label {
-    float:left;
-}
 #currpass {
     background-color: #FF8080;
 }

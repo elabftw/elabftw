@@ -167,7 +167,7 @@ if (empty($_SESSION['errors'])) {
     echo stripslashes($_SESSION['new_title']);
 }
 ?>
-" />
+" required />
 
 <br />
 <h4>Experiment</h4>

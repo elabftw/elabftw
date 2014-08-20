@@ -99,7 +99,7 @@ if ($data['body'] != '') {
 // DISPLAY FILES
 require_once 'inc/display_file.php';
 // SHOW USER
-echo "Last modified by ".$data['firstname']." ".$data['lastname']." on ".$data['date'];
+echo "Last modified by ".$data['firstname']." ".$data['lastname']." on ".format_date($data['date']);
 echo "</section>";
 ?>
 <script>

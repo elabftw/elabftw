@@ -341,7 +341,7 @@ function showXP($id, $display)
  */
 function show_stars($rating)
 {
-    echo "<div id='rating'>";
+    echo "<span class='align_right'>";
     if ($rating == 1) {
         echo "<img src='img/star-green.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' />";
     }
@@ -357,7 +357,7 @@ function show_stars($rating)
     if ($rating == 5) {
         echo "<img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' />";
     }
-    echo "</div>";
+    echo "</span>";
 }
 
 /**
@@ -384,7 +384,7 @@ function showDB($id, $display)
     if ($display === 'compact') {
         // COMPACT MODE //
         ?>
-        <section class='item'>
+            <section class='item' style='border-left: 6px solid #<?php echo $item['bgcolor'];?>'>
             <span class='date date_compact'><?php echo $item['date'];?></span>
             <h4 style='border-right:1px dotted #ccd;color:#<?php echo $item['bgcolor'];?>'><?php echo $item['name'];?> </h4>
             <span style='margin-left:7px'><?php echo stripslashes($item['title']);?>
@@ -400,12 +400,12 @@ function showDB($id, $display)
 
         echo "<section class='item' style='border-left: 6px solid #".$item['bgcolor']."'>";
         echo "<a href='database.php?mode=view&id=".$item['id']."'>";
-        // STARS
-        show_stars($item['rating']);
         // show attached if there is a file attached
         if (has_attachement($item['id'], 'items')) {
-            echo "<img class='align_right' src='img/attached.png' alt='file attached' />";
+            echo "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
         }
+        // STARS
+        show_stars($item['rating']);
         echo "<p class='title'>";
         // show lock if item is locked on viewDB
         if ($item['locked'] == 1) {

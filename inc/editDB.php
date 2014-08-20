@@ -62,52 +62,50 @@ if ($data['locked'] == 1) {
 // BEGIN CONTENT
 ?>
 <section class='padding item' style='border-left: 6px solid #<?php echo $data['bgcolor'];?>'>
+    <!-- TRASH -->
     <img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','item', 'database.php')" />
+
     <!-- ADD TAG FORM -->
-    <img src='img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
+    <img src='img/tags.png' alt='tags' /><label for='addtaginput'>Tags</label>
     <div class='tags'>
-    <span id='tags_div'>
-    <?php
-    $sql = "SELECT id, tag FROM items_tags WHERE item_id = ".$id;
-    $tagreq = $pdo->prepare($sql);
-    $tagreq->execute();
-    // DISPLAY TAGS
-    while ($tags = $tagreq->fetch()) {
-        echo "<span class='tag'><a onclick='delete_tag(".$tags['id'].",".$id.")'>";
-        echo stripslashes($tags['tag'])."</a></span>";
-    } //end while tags
-    ?>
-    </span>
-    <input type="text" name="tag" id="addtaginput" placeholder="Add a tag" />
+        <span id='tags_div'>
+        <?php
+        $sql = "SELECT id, tag FROM items_tags WHERE item_id = ".$id;
+        $tagreq = $pdo->prepare($sql);
+        $tagreq->execute();
+        // DISPLAY TAGS
+        while ($tags = $tagreq->fetch()) {
+            echo "<span class='tag'><a onclick='delete_tag(".$tags['id'].",".$id.")'>";
+            echo stripslashes($tags['tag'])."</a></span>";
+        } //end while tags
+        ?>
+        </span>
+        <input type="text" name="tag" id="addtaginput" placeholder="Add a tag" />
     </div>
     <!-- END ADD TAG -->
 
     <!-- BEGIN 2ND FORM -->
     <form method="post" action="editDB-exec.php" enctype='multipart/form-data'>
-    <!-- form key -->
-    <?php // $formKey->output_formkey(); ?>
-    <input name='item_id' type='hidden' value='<?php echo $id;?>' />
-    <h4>Date</h4><span class='smallgray'> (date format : YYYYMMDD)</span><br />
-    <!-- TODO if firefox has support for it: type = date -->
-    <img src='img/calendar.png' title='date' alt='Date :' /> <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date'];?>' />
     <!-- STAR RATING via ajax request -->
-    <div id='rating'>
+    <div class='align_right'>
     <input id='star1' name="star" type="radio" class="star" value='1' <?php if ($data['rating'] == 1) { echo "checked=checked ";}?>/>
     <input id='star2' name="star" type="radio" class="star" value='2' <?php if ($data['rating'] == 2) { echo "checked=checked ";}?>/>
     <input id='star3' name="star" type="radio" class="star" value='3' <?php if ($data['rating'] == 3) { echo "checked=checked ";}?>/>
     <input id='star4' name="star" type="radio" class="star" value='4' <?php if ($data['rating'] == 4) { echo "checked=checked ";}?>/>
     <input id='star5' name="star" type="radio" class="star" value='5' <?php if ($data['rating'] == 5) { echo "checked=checked ";}?>/>
     </div><!-- END STAR RATING -->
-    <br />
-    <h4>Title</h4><br />
-          <textarea id='title_txtarea' name='title' rows="1" cols="80"><?php if (empty($_SESSION['errors'])) {
-              echo stripslashes($data['title']);
-          } else {
-              echo stripslashes($_SESSION['new_title']);
-          } ?></textarea>
-    <br />
-    <br />
-    <h4>Infos</h4><br />
+    <input name='item_id' type='hidden' value='<?php echo $id;?>' />
+    <img src='img/calendar.png' title='date' alt='Date :' />
+    <label for='datepicker'>Date</label>
+    <!-- TODO if firefox has support for it: type = date -->
+    <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date'];?>' /><br>
+    <label class='block' for='title_txtarea'>Title</label>
+    <input id='title_input' name='title' rows="1" value='<?php if (empty($_SESSION['errors'])) {
+      echo stripslashes($data['title']);
+    } else {
+      echo stripslashes($_SESSION['new_title']);
+    } ?>' required />
+    <label for='body_area' class='block'>Infos</label>
     <textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">
         <?php echo stripslashes($data['body']);?>
     </textarea>

@@ -192,21 +192,20 @@ label {
 
 nav {
     background-color:#343434;
-    padding: 10px 10px 7px 10px;
-    line-height: 300%;
+    line-height: 3;
 }
 
 
 nav .navleft a {
     font-size:130%;
+    margin:10px;
     color:white;
-    padding: 5px 10px 5px 10px;
     text-decoration: none;
 }
 
 nav .navleft a.selected {
     border-bottom:6px #29AEB9 solid;
-    padding-bottom:14px;
+    padding-bottom:13px;
 }
 
 
@@ -477,7 +476,7 @@ textarea {
     overflow:hidden;
 }
 
-.item a:hover {
+.item a p:hover {
     color:#29AEB9;
 }
 

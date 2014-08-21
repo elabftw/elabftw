@@ -18,12 +18,11 @@
 *
 ********************************************************************************/
 session_start();
-require_once 'inc/head.php';
 $page_title = 'Register';
 require_once 'inc/connect.php';
-require_once 'inc/menu.php';
-require_once 'inc/info_box.php';
 require_once 'inc/functions.php';
+require_once 'inc/head.php';
+require_once 'inc/info_box.php';
 // Check if we're logged in
 if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
     $message = "Please <a style='text-decoration:underline' href='logout.php'>logout</a> before you register another account.";
@@ -36,54 +35,45 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
 <script src="js/jquery.complexify.js/jquery.complexify.min.js"></script>
 <script src="js/jquery.complexify.js/jquery.complexify.banlist.js"></script>
 
-<section>
+<menu class='border'><a href='login.php'><img src='img/arrow-left-blue.png' alt='' /> back to login page</a></menu>
+<section class='center'>
     <!-- Register form -->
-    <form method="post" autocomplete="off" action="register-exec.php" class='innerinnerdiv'>
-        <fieldset>
-            <legend>Create your account :</legend>
-                <p>
-                    <label for="team">Team</label>
-                    <select name='team' id='team' required>
-                        <option value=''>------- Select a team -------</option>
-                        <?php
-                        $sql = "SELECT * FROM teams ORDER by team_name";
-                        $req = $pdo->prepare($sql);
-                        $req->execute();
-                        while ($teams = $req->fetch()) {
-                            echo "<option value = '".$teams['team_id']."'>".$teams['team_name']."</option>";
-                        }
-                        ?>
-                    </select>
-                </p>
-                <p>
-                    <label for="firstname">Firstname</label>
-                    <input name="firstname" type="text" id="firstname" required />
-                </p>
-                <p>
-                    <label for="lastname">Lastname</label>
-                    <input name="lastname" type="text" id="lastname" required />
-                </p>
-                <p>
-                    <label for="username">Username</label>
-                    <input name="username" type="text" id="username" required />
-                </p>
-                <p>
-                    <label for="email">Email</label>
-                    <input name="email" type="email" id="email" required />
-                </p>
-                <p>
-                    <label for="password">Password</label>
-                    <input name="password" type="password" title='8 characters minimum' id="password" pattern=".{8,}" required />
-                </p>
-                <p>
-                    <label for="cpassword">Confirm password</label>
-                    <input name="cpassword" type="password" id="cpassword" pattern=".{8,}" required />
-                </p>
-                Password complexity (for your information) : <span id="complexity">0%</span><br /><br />
-                <div id='submitDiv'>
-                <button type="submit" name="Submit" class='submit button'>Register</button>
-                </div>
-        </fieldset>
+    <form id='regform' method="post" class='loginform' autocomplete="off" action="register-exec.php">
+        <h2>Create your account</h2>
+        <div style='margin:auto;width:50%'>
+        <p class='two-columns'>
+            <label class='block' for="team">Team</label>
+            <select name='team' id='team' required>
+                <option value=''>------- Select a team -------</option>
+                <?php
+                $sql = "SELECT team_id, team_name FROM teams ORDER by team_name";
+                $req = $pdo->prepare($sql);
+                $req->execute();
+                while ($teams = $req->fetch()) {
+                    echo "<option value = '".$teams['team_id']."'>".$teams['team_name']."</option>";
+                }
+                ?>
+            </select>
+            <label class='block' for="username">Username</label>
+            <input name="username" type="text" id="username" required />
+            <label class='block' for="email">Email</label>
+            <input name="email" type="email" id="email" required />
+            <label class='block' for="firstname">Firstname</label>
+            <input name="firstname" type="text" id="firstname" required />
+            <!-- add two br to fix layout in chrome --><br><br>
+            <label class='block' for="lastname">Lastname</label>
+            <input name="lastname" type="text" id="lastname" required />
+            <label class='block' for="password">Password</label>
+            <input name="password" type="password" title='8 characters minimum' id="password" pattern=".{8,}" required />
+            <label class='block' for="cpassword">Confirm password</label>
+            <input name="cpassword" type="password" id="cpassword" pattern=".{8,}" required />
+            <label class='block' for='comlexity'>Password complexity</label>
+            <input id="complexity" disabled />
+        </p>
+    </div>
+        <div id='submitDiv'>
+        <button type="submit" name="Submit" class='submit button'>create</button>
+        </div>
     </form>
     <!-- end register form -->
 </section>
@@ -102,15 +92,47 @@ function validatePassword(){
 
 $(document).ready(function() {
     // give focus to the first field on page load
-    document.getElementById("firstname").focus();
+    document.getElementById("team").focus();
     // password complexity
     $("#password").complexify({}, function (valid, complexity){
-        if (complexity < 30) {
-            $('#complexity').css({'color':'red'});
+        if (complexity < 20) {
+            $('#complexity').css({'background-color':'red'});
+            $('#complexity').css({'color':'white'});
+            $('#complexity').val('Weak password');
+            $('#complexity').css({'border-color' : '#e3e3e3'});
+            $('#complexity').css({'box-shadow': '0 0  yellow'});
+            $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
+        } else if (complexity < 30) {
+            $('#complexity').css({'color':'#white'});
+            $('#complexity').css({'background-color':'orange'});
+            $('#complexity').val('Average password');
+            $('#complexity').css({'box-shadow': '0 0  yellow'});
+            $('#complexity').css({'border-color' : '#e3e3e3'});
+            $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
+        } else if (complexity < 50) {
+            $('#complexity').css({'color':'white'});
+            $('#complexity').val('Good password');
+            $('#complexity').css({'background-color':'green'});
+            $('#complexity').css({'box-shadow': '0 0  yellow'});
+            $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
+            $('#complexity').css({'border-color' : '#e3e3e3'});
+        } else if (complexity < 99) {
+            $('#complexity').css({'color':'black'});
+            $('#complexity').val('Strong password');
+            $('#complexity').css({'background-color':'#ffd700'});
+            $('#complexity').css({'box-shadow': '0px 0px 15px 5px #ffd700'});
+            $('#complexity').css({'border' : 'none'});
+            $('#complexity').css({'-moz-box-shadow': '0px 0px 15px 5px #ffd700'});
         } else {
-            $('#complexity').css({'color':'green'});
+            $('#complexity').css({'color':'#797979'});
+            $('#complexity').val('I don\'t believe you');
+            $('#complexity').css({'background-color':'#e3e3e3'});
+            $('#complexity').css({'box-shadow': '0 0  yellow'});
+            $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
+            $('#complexity').css({'border-color' : '#e3e3e3'});
         }
-        $("#complexity").html(Math.round(complexity) + '%');
+
+        //$("#complexity").html(Math.round(complexity) + '%');
     });
 	// propose username by combining firstname's first letter and lastname
 	$("#username").focus(function() {

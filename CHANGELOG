@@ -1,5 +1,8 @@
 /* Changelog for eLabFTW */
 
+Version 0.11.0
+* So many things…
+
 Version 0.10.2
 * Add a possibility for timestamping a pdf export of an experiment
 * Removed old update.php content

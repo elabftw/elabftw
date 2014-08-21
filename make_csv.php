@@ -25,9 +25,8 @@
 ********************************************************************************/
 /* make_csv.php -- export database in spreadsheet file */
 require_once 'inc/common.php';
+$page_title='Export to spreadsheet';
 require_once 'inc/head.php';
-$page_title='Make CSV';
-require_once 'inc/menu.php';
 require_once 'inc/info_box.php';
 
 // this is the lines in the csv file
@@ -119,7 +118,7 @@ foreach ($list as $fields) {
 fclose($fp);
 
 // PAGE BEGIN
-echo "<div class='item'>";
+echo "<section>";
     // Get csv file size
     $filesize = filesize($filepath);
     echo "<p>Your CSV file is ready :<br />
@@ -127,5 +126,5 @@ echo "<div class='item'>";
         <img src='img/download.png' alt='download' /> 
         elabftw-export.csv</a>
         <span class='filesize'>(".format_bytes($filesize).")</span></p>";
-echo "</div>";
+echo "</section>";
 require_once 'inc/footer.php';

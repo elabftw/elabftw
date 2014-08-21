@@ -30,7 +30,6 @@ if ($_SESSION['is_admin'] != 1) {
 }
 $page_title = 'Admin Panel';
 require_once 'inc/head.php';
-require_once 'inc/menu.php';
 require_once 'inc/info_box.php';
 // formkey stuff
 require_once 'lib/classes/formkey.class.php';
@@ -67,22 +66,23 @@ if ($count > 0) {
 }
 ?>
 
-<div id='tabs'>
-<ul>
-<li><a href='#tabs-1'>Team Settings</a></li>
-<li><a href='#tabs-2'>Users</a></li>
-<li><a href='#tabs-3'>Status</a></li>
-<li><a href='#tabs-4'>Types of items</a></li>
-<li><a href='#tabs-5'>Experiment template</a></li>
-<li><a href='#tabs-6'>Import CSV</a></li>
-</ul>
+<menu>
+    <ul>
+        <li class='tabhandle' id='tab1'>Team</li>
+        <li class='tabhandle' id='tab2'>Users</li>
+        <li class='tabhandle' id='tab3'>Status</li>
+        <li class='tabhandle' id='tab4'>Types of items</li>
+        <li class='tabhandle' id='tab5'>Experiment template</li>
+        <li class='tabhandle' id='tab6'>Import CSV</li>
+    </ul>
+</menu>
 
 <!-- TABS 1 -->
-<div id='tabs-1'>
+<div class='divhandle' id='tab1div'>
 
-    <h3>TEAM SETTINGS</h3>
+    <h3>Configure your team</h3>
     <form method='post' action='admin-exec.php'>
-    <div id='config_form'>
+        <p>
         <label for='deletable_xp'>Users can delete experiments :</label>
         <select name='deletable_xp' id='deletable_xp'>
             <option value='1'<?php
@@ -92,36 +92,36 @@ if ($count > 0) {
                     if (get_team_config('deletable_xp') == 0) { echo " selected='selected'"; } ?>
             >no, only the admin can</option>
         </select>
-    <br />
-    <br />
-        <label for='link_name'>Name of the link in the main menu :</label>
+        </p>
+        <p>
+        <label for='link_name'>Name of the link in the top menu :</label>
         <input type='text' value='<?php echo get_team_config('link_name');?>' name='link_name' id='link_name' />
-    <br />
-    <br />
+        </p>
+        <p>
         <label for='link_href'>Address where this link should point :</label>
         <input type='url' value='<?php echo get_team_config('link_href');?>' name='link_href' id='link_href' />
-    <br />
-    <br />
+        </p>
+        <p>
         <label for='stamplogin'>Login for external timestamping service :</label>
         <input type='email' value='<?php echo get_team_config('stamplogin');?>' name='stamplogin' id='stamplogin' />
-        <p class='smallgray'>This should be the email address associated with your account on Universign.com.</p>
+        <span class='smallgray'>This should be the email address associated with your account on Universign.com.</span>
+        </p>
+        <p>
         <label for='stamppass'>Password for external timestamping service :</label>
         <input type='password' value='<?php echo get_team_config('stamppass');?>' name='stamppass' id='stamppass' />
-        <p class='smallgray'>Your Universign password</p>
-    <br />
-    <br />
-    </div>
-    <div class='center'>
-        <button type='submit' name='submit_config' class='submit button'>Save</button>
-    </div>
+        <span class='smallgray'>Your Universign password</span>
+        </p>
+        <div class='center'>
+            <button type='submit' name='submit_config' class='submit button'>Save</button>
+        </div>
     </form>
 
 </div>
 
 <!-- TABS 2 -->
-<div id='tabs-2'>
+<div class='divhandle' id='tab2div'>
 
-    <h3>TEAM MEMBERS</h3>
+    <h3>Edit users</h3>
     <?php
     // we show only the validated users here
     $user_req->bindValue(':validated', 1);
@@ -129,7 +129,7 @@ if ($count > 0) {
     while ($users = $user_req->fetch()) {
         ?>
         <div class='simple_border'>
-            <a class='trigger_users_<?php echo $users['userid'];?>'><img src='img/profile.png' alt='profile' /> <?php echo "Edit ".$users['firstname'];?></a>
+            <a class='trigger_users_<?php echo $users['userid'];?>'><?php echo $users['firstname']." ".$users['lastname'];?></a>
             <div class='toggle_users_<?php echo $users['userid'];?>'>
         <br />
                 <form method='post' action='admin-exec.php' id='admin_user_form'>
@@ -143,7 +143,7 @@ if ($count > 0) {
                     <label for='edituser_email'>Email</label>
                     <input id='edituser_email' type='email' value='<?php echo $users['email'];?>' name='email' /><br />
         <br />
-        <label for'validated'>Has an active account ?</label>
+        <label for='validated'>Has an active account ?</label>
         <select name='validated' id='validated'>
             <option value='1'<?php
                     if ($users['validated'] == 1) { echo " selected='selected'"; } ?>
@@ -153,7 +153,7 @@ if ($count > 0) {
             >no</option>
         </select>
         <br />
-        <label for'usergroup'>Group :</label>
+        <label for='usergroup'>Group :</label>
         <select name='usergroup' id='usergroup'>
 <?php
             if ($_SESSION['is_sysadmin'] == 1) {
@@ -202,11 +202,11 @@ if ($count > 0) {
     <form action='admin-exec.php' method='post'>
         <!-- form key -->
         <?php $formKey->output_formkey(); ?>
-        <label for'delete_user'>Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever :</label>
+        <label for='delete_user'>Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever :</label>
         <input type='email' name='delete_user' id='delete_user' />
         <br>
         <br>
-        <label for'delete_user_confpass'>Type your password :</label>
+        <label for='delete_user_confpass'>Type your password :</label>
         <input type='password' name='delete_user_confpass' id='delete_user_confpass' />
     <div class='center'>
         <button type='submit' class='button submit'>Delete this user !</button>
@@ -216,10 +216,26 @@ if ($count > 0) {
 
 </div>
 
-<!-- TABS-3 -->
-<div id='tabs-3'>
+<!-- TAB 3 -->
+<div class='divhandle' id='tab3div'>
+    <h3>Add a new status</h3>
+    <p>
+    <form action='admin-exec.php' method='post'>
+        <label for='new_status_name'>Add here a new status</label>
+        <input type='text' id='new_status_name' name='new_status_name' />
+        <div id='colorwheel_div_new_status'>
+            <div class='colorwheel inline'></div>
+            <input type='text' name='new_status_color' value='#000000' />
+        </div>
+        <div class='center'>
+            <button type='submit' class='submit button'>Add new status</button>
+        </div>
+    </form>
+    </p>
+    <br><br>
 
-    <h3>STATUS</h3>
+    <h3>Edit an existing status</h3>
+
     <?php
     // SQL to get all status
     $sql = "SELECT * from status WHERE team = :team_id";
@@ -231,23 +247,24 @@ if ($count > 0) {
         // count the experiments with this status
         // don't allow deletion if experiments with this status exist
         // but instead display a message to explain
-        $count_exp_sql = "SELECT COUNT(id) FROM experiments WHERE status = :status";
+        $count_exp_sql = "SELECT COUNT(id) FROM experiments WHERE status = :status AND team = :team";
         $count_exp_req = $pdo->prepare($count_exp_sql);
         $count_exp_req->bindParam(':status', $status['id'], PDO::PARAM_INT);
+        $count_exp_req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
         $count_exp_req->execute();
         $count = $count_exp_req->fetchColumn();
         ?>
         <div class='simple_border'>
-        <a class='trigger_status_<?php echo $status['id'];?>'>Edit <?php echo $status['name'];?></a>
+        <a class='trigger_status_<?php echo $status['id'];?>'><?php echo $status['name'];?></a>
         <div class='toggle_container_status_<?php echo $status['id'];?>'>
         <?php
         if ($count == 0) {
             ?>
-            <img class='align_right' src='img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $status['id'];?>','status', 'admin.php')" />
+            <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $status['id'];?>','status', 'admin.php')" />
         <?php
         } else {
             ?>
-            <img class='align_right' src='img/trash.png' title='delete' alt='delete' onClick="alert('Remove all experiments with this status before deleting this status.')" />
+            <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert('Remove all experiments with this status before deleting this status.')" />
         <?php
         }
         ?>
@@ -284,172 +301,156 @@ if ($count > 0) {
     }
     ?>
 
-    <section class='simple_border'>
-        <h3>ADD NEW STATUS</h3>
-        <form action='admin-exec.php' method='post'>
-            <input type='text' class='biginput' name='new_status_name' />
-            <div id='colorwheel_div_new_status'>
-                <div class='colorwheel inline'></div>
-                <input type='text' name='new_status_color' value='#000000' />
+
+</div>
+
+<!-- TAB 4 ITEMS TYPES-->
+<div class='divhandle' id='tab4div'>
+    <?php
+    // SQL to get all items type
+    $sql = "SELECT * from items_types WHERE team = :team";
+    $req = $pdo->prepare($sql);
+    $req->execute(array(
+        'team' => $_SESSION['team_id']
+    ));
+
+    while ($items_types = $req->fetch()) {
+        ?>
+        <div class='simple_border'>
+            <a class='trigger_<?php echo $items_types['id'];?>'>Edit <?php echo $items_types['name'];?></a>
+            <div class='toggle_container_<?php echo $items_types['id'];?>'>
+            <?php
+            // count the items with this type
+            // don't allow deletion if items with this type exist
+            // but instead display a message to explain
+            $count_db_sql = "SELECT COUNT(id) FROM items WHERE type = :type";
+            $count_db_req = $pdo->prepare($count_db_sql);
+            $count_db_req->bindParam(':type', $items_types['id'], PDO::PARAM_INT);
+            $count_db_req->execute();
+            $count = $count_db_req->fetchColumn();
+            if ($count == 0) {
+                ?>
+                <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $items_types['id'];?>','item_type', 'admin.php')" />
+            <?php
+            } else {
+                ?>
+                <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert('Remove all database items with this type before deleting this type.')" />
+            <?php
+            }
+            ?>
+
+            <form action='admin-exec.php' method='post'>
+                <label>Edit the name :</label>
+                <input type='text' name='item_type_name' value='<?php echo stripslashes($items_types['name']);?>' />
+                <input type='hidden' name='item_type_id' value='<?php echo $items_types['id'];?>' />
+
+                <div id='colorwheel_div_<?php echo $items_types['id'];?>'>
+                    <div class='colorwheel inline'></div>
+                    <input type='color' name='item_type_bgcolor' value='#<?php echo $items_types['bgcolor'];?>'/>
+                </div><br><br>
+                <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']);?></textarea><br />
+                <div class='center'>
+                    <button type='submit' class='button'>Edit <?php echo stripslashes($items_types['name']);?></button><br />
+                </div>
             </div>
-            <br />
+            </form>
+
+        <script>$(document).ready(function() {
+            $(".toggle_container_<?php echo $items_types['id'];?>").hide();
+            $("a.trigger_<?php echo $items_types['id'];?>").click(function(){
+                $('div.toggle_container_<?php echo $items_types['id'];?>').slideToggle(1);
+            });
+            color_wheel('#colorwheel_div_<?php echo $items_types['id'];?>')
+        });</script>
+        </div>
+        <?php
+    } // end generation of items_types
+    ?>
+
+
+    <section class='simple_border'>
+        <form action='admin-exec.php' method='post'>
+            <label for='new_item_type_name'>Add a new type of item :</label> 
+            <input type='text' id='new_item_type_name' name='new_item_type_name' />
+            <input type='hidden' name='new_item_type' value='1' />
+            <div id='colorwheel_div_new'>
+                <div class='colorwheel inline'></div>
+                <input type='text' name='new_item_type_bgcolor' value='#000000' />
+            </div><br><br><br><br>
+            <textarea class='mceditable' name='new_item_type_template' /></textarea>
             <div class='center'>
-                <button type='submit' class='submit button'>Add new status</button>
+                <button type='submit' class='button'>Add new item type</button>
             </div>
         </form>
     </section>
-
-</div>
-
-<!-- TABS 4 ITEMS TYPES-->
-<div id='tabs-4'>
-<a id='items_types'></a>
-<h3>EXISTING TYPES</h3>
-<?php
-// SQL to get all items type
-$sql = "SELECT * from items_types WHERE team = :team";
-$req = $pdo->prepare($sql);
-$req->execute(array(
-    'team' => $_SESSION['team_id']
-));
-
-while ($items_types = $req->fetch()) {
-    ?>
-    <div class='simple_border'>
-    <a class='trigger_<?php echo $items_types['id'];?>'>Edit <?php echo $items_types['name'];?></a>
-    <div class='toggle_container_<?php echo $items_types['id'];?>'>
-    <?php
-    // count the items with this type
-    // don't allow deletion if items with this type exist
-    // but instead display a message to explain
-    $count_db_sql = "SELECT COUNT(id) FROM items WHERE type = :type";
-    $count_db_req = $pdo->prepare($count_db_sql);
-    $count_db_req->bindParam(':type', $items_types['id'], PDO::PARAM_INT);
-    $count_db_req->execute();
-    $count = $count_db_req->fetchColumn();
-    if ($count == 0) {
-        ?>
-        <img class='align_right' src='img/trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $items_types['id'];?>','item_type', 'admin.php')" />
-    <?php
-    } else {
-        ?>
-        <img class='align_right' src='img/trash.png' title='delete' alt='delete' onClick="alert('Remove all database items with this type before deleting this type.')" />
-    <?php
-    }
-    ?>
-
-    <form action='admin-exec.php' method='post'>
-        <input type='text' class='biginput' name='item_type_name' value='<?php echo stripslashes($items_types['name']);?>' />
-        <input type='hidden' name='item_type_id' value='<?php echo $items_types['id'];?>' />
-
-        <div id='colorwheel_div_<?php echo $items_types['id'];?>'>
-            <div class='colorwheel inline'></div>
-
-            <input type='color' name='item_type_bgcolor' value='#<?php echo $items_types['bgcolor'];?>'/></div><br /><br />
-            <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']);?></textarea><br />
-            <div class='center'>
-                <button type='submit' class='button'>Edit <?php echo stripslashes($items_types['name']);?></button><br />
-            </div>
-        </div>
-    </form>
-
-    <script>$(document).ready(function() {
-        $(".toggle_container_<?php echo $items_types['id'];?>").hide();
-        $("a.trigger_<?php echo $items_types['id'];?>").click(function(){
-            $('div.toggle_container_<?php echo $items_types['id'];?>').slideToggle(1);
-        });
-        color_wheel('#colorwheel_div_<?php echo $items_types['id'];?>')
-    });</script></div>
-    <?php
-}
-?>
-
-
-<section class='simple_border'>
-    <h3>ADD NEW TYPE OF DATABASE ITEM</h3>
-    <form action='admin-exec.php' method='post'>
-        <input type='text' class='biginput' name='new_item_type_name' />
-        <input type='hidden' name='new_item_type' value='1' />
-        <div id='colorwheel_div_new'>
-        <div class='colorwheel inline'></div>
-        <input type='text' name='new_item_type_bgcolor' value='#000000' /></div><br /><br />
-        <textarea class='mceditable' name='new_item_type_template' /></textarea><br />
-        <div class='center'>
-        <button type='submit' class='button'>Add new item type</button>
-        </div>
-    </form>
-</section>
 </div>
 
 <!-- TABS 5 -->
-<div id='tabs-5'>
-<?php
-// get what is the default experiment template
-$sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1";
-$req = $pdo->prepare($sql);
-$req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
-$req->execute();
-$exp_tpl = $req->fetch();
-?>
-    <h3>EDIT DEFAULT EXPERIMENT TEMPLATE</h3>
+<div class='divhandle' id='tab5div'>
+    <?php
+    // get what is the default experiment template
+    $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
+    $req->execute();
+    $exp_tpl = $req->fetch();
+    ?>
     <p>This is the default text when someone creates an experiment.</p>
     <form action='admin-exec.php' method='post'>
-    <input type='hidden' name='default_exp_tpl' value='1' />
-    <textarea class='mceditable' name='default_exp_tpl' />
-<?php
-echo $exp_tpl['body'];
-?></textarea><br />
-    <div class='center'>
-    <button type='submit' class='button'>Edit default template</button>
-    </div>
+        <input type='hidden' name='default_exp_tpl' value='1' />
+        <textarea class='mceditable' name='default_exp_tpl' />
+        <?php
+        echo $exp_tpl['body'];
+        ?></textarea>
+        <div class='center'>
+        <button type='submit' class='button'>Edit default template</button>
+        </div>
     </form>
-
 </div>
 
 <!-- TABS 6 -->
-<div id='tabs-6'>
-    <h3><img src='img/import.png' alt='import' /> IMPORT CSV FILE INTO DATABASE</h3>
-<?php
-$row = 0;
-$inserted = 0;
-$column = array();
+<div class='divhandle' id='tab6div'>
+    <?php
 
-// file upload block
-// show select of type
-// SQL to get items names
-$sql = "SELECT * FROM items_types WHERE team = :team_id";
-$req = $pdo->prepare($sql);
-$req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
-$req->execute();
-?>
-<p style='text-align:justify'>This page will allow you to import a .csv (Excel spreadsheet) file into the database.
-First you need to open your (.xls/.xlsx) file in Excel or Libreoffice and save it as .csv.
-In order to have a good import, the first column should be the title. The rest of the columns will be imported in the body. You can make a tiny import of 3 lines to see if everything works before you import a big file.
-<b>You should make a backup of your database before importing thousands of items !</b></p>
+    // file upload block
+    // show select of type
+    // SQL to get items names
+    $sql = "SELECT * FROM items_types WHERE team = :team_id";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
+    $req->execute();
+    ?>
+    <p style='text-align:justify'>This page will allow you to import a .csv (Excel spreadsheet) file into the database.
+    First you need to open your (.xls/.xlsx) file in Excel or Libreoffice and save it as .csv.
+    In order to have a good import, the first column should be the title. The rest of the columns will be imported in the body. You can make a tiny import of 3 lines to see if everything works before you import a big file.
+    <span class='strong'>You should make a backup of your database before importing thousands of items !</span></p>
 
-<label for='item_selector'>1. Select a type of item to import to :</label>
-<select id='item_selector' onchange='goNext(this.value)'><option value=''>--------</option>
-<?php
-while ($items_types = $req->fetch()) {
-    echo "<option value='".$items_types['id']."' name='type' ";
-    echo ">".$items_types['name']."</option>";
-}
-?>
-</select><br>
-<div id='import_block'>
-<form enctype="multipart/form-data" action="admin.php" method="POST">
-    <label for='uploader'>2. Select a CSV file to import :</label>
-    <input id='uploader' name="csvfile" type="file" />
-    <br>
-    <br>
-    <div class='center'>
-        <button type="submit" class='button' value="Upload">Import CSV</button>
+        <label for='item_selector'>1. Select a type of item to import to :</label>
+        <select id='item_selector' onchange='goNext(this.value)'><option value=''>--------</option>
+        <?php
+        while ($items_types = $req->fetch()) {
+            echo "<option value='".$items_types['id']."' name='type' ";
+            echo ">".$items_types['name']."</option>";
+        }
+        ?>
+        </select><br>
+        <div id='import_block'>
+        <form enctype="multipart/form-data" action="admin.php" method="POST">
+            <label for='uploader'>2. Select a CSV file to import :</label>
+            <input id='uploader' name="csvfile" type="file" />
+            <div class='center'>
+                <button type="submit" class='button' value="Upload">Import CSV</button>
+            </div>
+        </form>
     </div>
-</form>
 </div>
-</div>
+
 <?php
+// CODE TO IMPORT CSV
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $row = 0;
+    $inserted = 0;
+    $column = array();
     // open the file
     $handle = fopen($_FILES['csvfile']['tmp_name'], 'r');
     if ($handle == false) {
@@ -500,7 +501,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $msg_arr[] = $inserted." items were imported successfully.";
     $_SESSION['infos'] = $msg_arr;
 }
+// END CODE TO IMPORT CSV
 ?>
+
 <script>
 function goNext(x) {
     if(x == '') {
@@ -512,20 +515,37 @@ function goNext(x) {
 $(document).ready(function() {
     $('#import_block').hide();
 });
-</script>
 
-</div>
-
-<script>
 // color wheel
 function color_wheel(div_name) {
         var cw = Raphael.colorwheel($(div_name)[0], 80);
             cw.input($(div_name+" input" )[0]);
 }
+
 $(document).ready(function() {
     // TABS
-    $('#tabs').tabs();
-    $('#tabs li');
+    // get the tab=X parameter in the url
+    var params = getGetParameters();
+    var tab = parseInt(params['tab']);
+    if (!isInt(tab)) {
+        var tab = 1;
+    }
+    var initdiv = '#tab' + tab + 'div';
+    var inittab = '#tab' + tab;
+    // init
+    $(".divhandle").hide();
+    $(initdiv).show();
+    $(inittab).addClass('selected');
+
+    $(".tabhandle" ).click(function(event) {
+        var tabhandle = '#' + event.target.id;
+        var divhandle = '#' + event.target.id + 'div';
+        $(".divhandle").hide();
+        $(divhandle).show();
+        $(".tabhandle").removeClass('selected');
+        $(tabhandle).addClass('selected');
+    });
+    // END TABS
     // TOGGLE
     $(".toggle_users_<?php echo $users['userid'];?>").hide();
     $("a.trigger_users_<?php echo $users['userid'];?>").click(function(){

@@ -50,6 +50,7 @@ if ($password == $cpassword) {
         'salt' => $salt,
         'userid' => $userid));
     if($result){
+        dblog('Info', $userid, 'Password was changed for this user.');
         // LOGIN THE USER
         // admin validated ?
         if (get_config('admin_validate') == 1){
@@ -67,7 +68,6 @@ if ($password == $cpassword) {
                 // Store userid and permissions in $_SESSION
                 session_regenerate_id();
                 $_SESSION['auth'] = 1;
-                $_SESSION['path'] = PATH;
                 $_SESSION['userid'] = $data['userid'];
                 $_SESSION['team_id'] = $data['team'];
                 // Used in the menu

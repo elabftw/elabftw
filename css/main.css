@@ -23,6 +23,24 @@
 *    License along with eLabFTW.  If not, see <http: //www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+
+/*
+343434 => very dark gray (main nav bg)
+797979 => gray main text color
+f2f2f2 => very light gray
+dcdddc = > borders gray
+29AEB9 => blue
+1F8591 => dark blue
+C4F9FF => light blue
+dd1e00 => dark red
+ffc1b7 => light red
+*/
+
+
+
+/* Font is Lato */
+@import url(https://fonts.googleapis.com/css?family=Lato);
+
 /* little shadow on top of the screen for no reasons */
 body:before {
     content: "";
@@ -35,36 +53,64 @@ body:before {
     box-shadow: 0px 0px 10px rgba(0,0,0,.8);
 }
 
+/* set background image */
 body {
-    background-image:url(../img/background.jpg);
+    background:url(images/bg.png) no-repeat center center fixed;
+    -moz-background-size:cover;
+    background-size: cover;
 }
 
 /* this is the big white thing that holds everything */
 #container {
     background: #fff;
-    font:16px Verdana, Arial, Helvetica, sans-serif;
-    border-radius: 10px;
-    font: 100% Verdana, Arial, Helvetica, sans-serif;
+    font: 100% 'Lato', Verdana, Arial, Helvetica, sans-serif;
     margin: auto;
-    padding: 10px 20px 10px 20px;
-    width: 90%;
+    width: 80%;
 }
+
+#real_container {
+    padding: 10px 45px;
+}
+
 /* LINKS */
 a {
-    color: #606264;
+    color: #29AEB9;
     text-decoration:none;
 }
-a :hover {
+a:hover {
     color:#29AEB9;
     text-decoration:none;
 }
 
+
 /* LISTS */
 ul, li {
-    list-style-type:none;
+    list-style: none;
 }
 
+li.tip:before {
+    content: "☺ ";
+    font-size:120%;
+    color: #29AEB9;
+}
+li.inline {
+    display: inline;
+}
+
+/* input and select */
+input, select {
+    padding:7px;
+    background-color:#F2F2F2;
+    color:#797979;
+    border-radius: 10px;
+    border: 1px #e3e3e3 solid;
+}
+
+
 /* GENERAL */
+.inline {
+    display: inline;
+}
 .center {
     text-align: center;
 }
@@ -85,43 +131,246 @@ ul, li {
     font-weight: bold;
 }
 
-/* paragraphs */
+hr {
+    margin: 10px 0 10px 0;
+    color: #dcdddc;
+}
 
+img {
+    border: none;
+    position: relative;
+    top: 3px;
+}
+
+/* COLUMNS */
+.three-columns {
+    width: 60%;
+}
+.two-columns {
+    -moz-columns:2 250px;
+    -webkit-columns:2 250px;
+    columns: 2 250px;
+}
+
+.column-left{ float: left; width: 20%; }
+.column-right{ float: right; width: 20%; }
+.column-center{ display: inline-block; width: 20%; }
+
+/* TITLES */
+h2 {
+    font-weight:normal;
+    color: #797979;
+    font-size: 30px;
+}
+
+h3 {
+    color: #797979;
+    font-size: 150%;
+    margin: 0 auto 10px auto;
+}
+
+h4 {
+    display: inline;
+    color: #797979;
+}
+/* paragraphs */
 p {
-    font: 100% Verdana, Arial, Helvetica, sans-serif;
+    color:#797979;
 }
 
 p a {
-    font: 100% Verdana, Arial, Helvetica, sans-serif;
     text-decoration: none;
 }
 
-/* in install/index.php */
-.code {
-    font:14px Courrier, sans-serif;
-    background-color:white;
-    border:1px dotted #ccc;
+label {
+    color:#797979;
+    font-size:120%;
+    padding-bottom: 5px;
+}
+
+/* HEAD */
+
+nav {
+    background-color:#343434;
+    line-height: 3;
+}
+
+
+nav .navleft a {
+    font-size:130%;
     margin:10px;
+    color:white;
+    text-decoration: none;
+}
+
+nav .navleft a.selected {
+    border-bottom:6px #29AEB9 solid;
+    padding-bottom:13px;
+}
+
+
+
+nav .navleft a:hover {
+    color:#29AEB9;
+    -moz-transition-duration: 1500ms;
+    -webkit-transition-duration: 1500ms;
+    -o-transition-duration: 1500ms;
+    -ms-transition-duration: 1500ms;
+}
+
+/* search bar in head.php ; nav */
+form#big_search {
+    width:40%;
+    float:right;
+    text-align:right;
+}
+form#big_search input {
+    background:#555 url(../img/search.png) no-repeat scroll right center;
+    border: none;
+    border-radius: 20px;
+    width:40%;
+    padding: 10px 30px 10px 10px;
+    transition:width 1s;
+}
+form#big_search input:focus {
+    width:60%;
+}
+#adv_search {
+    position:absolute;
+    right:15%;
+    width:200px;
+    color: #fff;
+    text-align:center;
+    background-color: #29AEB9;
+    border-radius: 25px;
+}
+
+#adv_search a {
+    color: #fff;
+}
+
+/*  MENU is below main nav */
+menu {
+    line-height:200%;
+    margin: 30px 0 40px;
+    padding: 0;
+}
+menu ul {
+    padding:0 0 2px;
+    border-bottom: 1px solid #dcdddc;
+}
+menu ul li {
+    display:inline;
+    margin-right: 30px;
+    text-transform: uppercase;
+    font-weight:bold;
+    color: #797979;
+    cursor: pointer;
+}
+menu ul li.selected {
+    border-bottom:6px #29AEB9 solid;
+    padding-bottom:4px;
+}
+
+/* MENU with .border is on showXP and showDB */
+
+menu.border {
+    border-bottom: 1px solid #dcdddc;
+    margin-bottom: 15px;
+    padding-bottom: 19px;
+}
+menu.border a {
+    border:1px solid white;
+    border-radius:5px;
+    color:#36b1c0;
     padding:7px;
 }
-
-/* hr */
-hr {
-    margin: 10px 0 10px 0;
+menu.border a:hover {
+    border:1px solid black;
+    border-radius:5px;
+    color: black;
+    -moz-transition-duration: 1500ms;
+    -webkit-transition-duration: 1500ms;
+    -o-transition-duration: 1500ms;
+    -ms-transition-duration: 1500ms;
 }
 
-hr.flourishes {
-    background: url('images/flourishes.png') no-repeat scroll center 0px transparent; /* -61px */
-    border: 0 none;
-    clear: both;
-    display: block;
-    height: 18px;
-    opacity: 0.8;
+/* ERROR/INFO message box */
+.messagebox {
+    margin: 10px 0;
+    color: #343434;
+    border: 1px #24AEB9 solid;
+    border-radius: 5px;
+    padding: 0 10px;
 }
 
-li.inline {
-    display: inline;
+.messagebox img:hover {
+    opacity: 0.6;
 }
+
+/* fix the links in the error/info messages */
+.messagebox a {
+    color: #343434;
+    text-decoration:underline;
+}
+
+.infobox {
+    background-color: #C4F9FF;
+}
+
+.errorbox {
+    background-color: #ffc1b7;
+    border-color: #dd1e00;
+}
+
+/* BUTTONS */
+.button {
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    background-color: #29AEB9;
+}
+
+.button:hover {
+    background-color: #1F8591;
+}
+
+.button:disabled {
+    background-color: #dcdddc;
+}
+
+
+
+/* LOGIN.PHP */
+.loginform input, .loginform select {
+    text-align:center;
+}
+#loginButtonDiv {
+    border-top: 1px solid #e3e3e3;
+    padding-top:30px;
+    margin-top: 30px;
+}
+
+/* REGISTER */
+form#regform p.two-columns label {
+    text-align:left;
+    padding-left:60px;
+}
+/* the team name can be long and destroy the view */
+form#regform select {
+    max-width: 240px;
+}
+
+/* body on view mode */
+#body_view {
+    background-color: #f2f2f2;
+}
+
 /* fix the list in the body */
 div.txt ol li {
     /* !important because there is a list-style-type:none in jquery-ui */
@@ -133,217 +382,65 @@ div.txt li {
     list-style-type:square !important;
 }
 
-/* fix the links in the error/info messages displayed with jquery-ui */
-div.ui-state-error a, div.ui-state-highlight a {
-    color:blue;
-    text-decoration:underline;
+/* fix for big images uploaded in the text */
+section.item div.txt {
+    overflow:hidden;
 }
 
-/* prettier tables  */
-table, table td {
+/* size of the editable box in edit mode */
+.mceditable {
+    height:500px;
+}
+
+/* prettier tables in mceditable area */
+div.txt table, div.txt table td {
     border: 1px solid black;
 }
 
-/* HEAD */
-#logo {
-    float: left;
+table td {
+    padding: 5px;
+    margin: 5px;
 }
 
-#page_title {
-    clear: both;
-    text-align: center;
+table th {
+    background-color:#797979;
+    color: #dcdddc;
+    text-transform: uppercase;
+    font-size: 90%;
+    padding: 5px;
+    text-align:left;
+    width: 150px;
 }
 
-nav {
-    clear: both;
-    margin: -10px;
-    text-align: center;
+/* SEARCH.PHP */
+#searchDiv {
+    border: 1px solid #e3e3e3;
+    border-radius: 10px;
+    margin-top: 20px;
 }
 
-nav a {
-    border:1px solid white;
-    color:#606264;
-    font-size: 120%;
-    line-height: 200%;
-    padding: 5px 10px 5px 10px;
-    text-decoration: none;
-    border-radius:5px;
-}
-nav a:hover {
-    border:1px solid black;
-    border-radius:5px;
-    color:#29AEB9;
-    -moz-transition-duration: 1500ms;
-    -webkit-transition-duration: 1500ms;
-    -o-transition-duration: 1500ms;
-    -ms-transition-duration: 1500ms;
-}
-
-#logmenu {
-    float: right;
-    top: 30px;
-}
-
-#logmenu p {
-    color: #AAA;
-    font:  90% Verdana, Arial, Helvetica, sans-serif;
-    padding-bottom: 7px;
-}
-#logmenu p a {
-    color: black;
-    font:  90% Verdana, Arial, Helvetica, sans-serif;
-}
-/* submenu */
-#submenu {
-    border-bottom: 1px dotted #CCC;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
-    text-align:center;
-}
-#submenu a {
-    border:1px solid white;
-    border-radius:5px;
-    color:blue;
-    padding:7px;
-}
-#submenu a:hover {
-    border:1px solid black;
-    border-radius:5px;
-    color: #29AEB9;
-    -moz-transition-duration: 1500ms;
-    -webkit-transition-duration: 1500ms;
-    -o-transition-duration: 1500ms;
-    -ms-transition-duration: 1500ms;
-}
-
-
-/* on admin.php for items types
- * it's bettor to have a pointer to show that you should click
- */
-a[class*='trigger_']:hover {
-    cursor:pointer;
-}
-
-.biginput {
-    font: 30px Helvetica, Verdana, Arial, sans-serif;
-    text-align:center;
-    margin-left:auto;
+/* we need to add a block class, otherwise the search in everyone exp box is messed up */
+label.block {
     display:block;
-    margin-right:auto;
-    height: 40px;
 }
 
-/* on search.php */
-#export_menu {
-    float:right;
+.searchform input, .searchform select {
+    margin:10px 0;
 }
 
-
-/* TITLES */
-h2 {
-    font: 24px Verdana, Arial, Helvetica, sans-serif;
-    text-align: center;
+.searchform input#title, .searchform input#body {
     width: 100%;
 }
 
-h3 {
-    font: 20px Verdana, Arial, Helvetica, sans-serif;
-    margin: 0 auto 10px auto;
-    text-align: center;
+.searchform p {
+    font-size: 115%;
 }
 
-h4 {
-    display: inline;
-    font: 18px Verdana, Arial, Helvetica, sans-serif;
-}
 
-.inline {
-    display: inline;
-}
-/* MENU */
 
-/* BUTTONS */
-
-.submit {
-    margin-top:20px;
-}
-
-.button {
-    border:1px solid #b7b7b7;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-    font-family:arial, helvetica, sans-serif;
-    padding: 10px 10px 10px 10px;
-    text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
-    font-weight:bold;
-    text-align: center;
-    color: #FFFFFF;
-    background-color: #d3d3d3;
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #d3d3d3), color-stop(100%, #707070));
-    background-image: -webkit-linear-gradient(top, #d3d3d3, #707070);
-    background-image: -moz-linear-gradient(top, #d3d3d3, #707070);
-    background-image: -ms-linear-gradient(top, #d3d3d3, #707070);
-    background-image: -o-linear-gradient(top, #d3d3d3, #707070);
-    background-image: linear-gradient(top, #d3d3d3, #707070);
-      }
-
-.button:hover{
-    border:1px solid #a0a0a0; background-color: #bababa;
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#bababa), color-stop(100%, #585858));
-    background-image: -webkit-linear-gradient(top, #bababa, #585858);
-    background-image: -moz-linear-gradient(top, #bababa, #585858);
-    background-image: -ms-linear-gradient(top, #bababa, #585858);
-    background-image: -o-linear-gradient(top, #bababa, #585858);
-    background-image: linear-gradient(top, #bababa, #585858);
-}
-
-/* SEARCH */
-
-.search_buttons {
-	color:  blue;
-	cursor:  pointer;
-	font:  bold 10px Arial, Helvetica;
-    text-align:right;
-}
-
-#search_inputs_div {
-    width:400px;
-}
-.search_inputs {
-    float:right;
-}
-
-.submit_search_button{
-    float:right;
-}
-/* search bar */
-form#big_search {
-    display: inline;
-
-}
-form#big_search input {
-    width:10%;
-    transition:width 1s;
-}
-
-form#big_search input:focus {
-    width:15%;
-}
-.innerinnerdiv {
-    margin: auto;
-    position: relative;
-    text-align: right;
-    width: 500px;
-}
-
-/***********/
 textarea {
-    border:  3px solid #CCC;
-    font-family:  Verdana, Arial, Helvetica, sans-serif;
-    padding:  5px;
+    font: 100% 'Lato', Verdana, Arial, Helvetica, sans-serif;
 }
-
 /* overlay to say it's saved */
 .overlay {
     background-color: #000;
@@ -361,41 +458,57 @@ textarea {
 }
 
 
-/* comments for files */
-.editable:hover {
-    background-color: #CCC;
-}
 
-img {
-    border: none;
-    position: relative;
-    top: 3px;
-}
 
 /* save and go back button */
 #saveButton {
-    margin-top:10px;
+    margin:20px 0;
+    text-align:right;
+
 }
 
 /* ITEMS */
-
-/* fix for big images uploaded in the text */
-section.item div.txt {
+.item {
+    border:  1px solid #dcdddc;
+    border-radius: 5px;
+    margin: 10px auto;
+    padding: 5px 10px 10px 5px;
     overflow:hidden;
 }
 
-.item {
-    background-color: #EEE;
-    border:  1px solid #CCC;
-    border-radius: 5px;
-    box-shadow:  3px 2px 2px 1px #CCC; 
-    -webkit-box-shadow: 3px 2px 2px 1px #CCC;
-    -moz-box-shadow: 3px 2px 2px 1px #CCC;
-    margin: 7px auto 7px auto;
-    padding: 10px;
-    width: 80%;
+.item a p:hover {
+    color:#29AEB9;
 }
-/* admin.php */
+
+.box {
+    border: 1px solid #dcdddc;
+    margin-top: 10px;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+
+/* ADMIN.PHP */
+.simple_border {
+    border:1px solid #dcdddc;
+    border-radius: 5px;
+    padding: 10px;
+    margin:5px;
+}
+.simple_border label {
+    font-size: 125%;
+    padding-left:20px;
+}
+
+
+/* on admin.php for items types
+ * it's bettor to have a pointer to show that you can click
+ */
+a[class*='trigger_']:hover {
+    cursor:pointer;
+}
+
+
 .config_form input, .config_form select {
     float:right;
 }
@@ -404,77 +517,107 @@ section.item div.txt {
     float:left;
 }
 
-/* comments for experiments comments box */
-.newexpcomment {
-    background-color:white;
-    border:solid 1px #CCC;
-    border-radius: 7px;
-    margin:2px;
-    padding: 2px;
+.top_right_status {
+    color: #797979;
+    float:right;
+}
+.top_right_status img {
+    margin: 0 4px 0 25px;
 }
 
-.expcomment_box {
-    border:solid 1px #CCC;
-    border-radius: 7px;
-    margin:2px;
-    padding: 2px;
+/* COMMENTS FOR EXPERIMENTS COMMENTS BOX */
+.newexpcomment {
+    background-color: #f2f2f2;
+    border: 1px solid #dcdddc;
+    border-radius: 5px;
+    color: #797979;
+    padding: 10px;
+}
+
+.expcomment_box, .filediv {
+    background-color: #f2f2f2;
+    border: 1px solid #dcdddc;
+    border-radius: 5px;
+    margin-top:5px;
+    padding: 10px;
 }
 
 .expcomment_box p {
-    margin:0;
+    margin: 5px 0;
+    padding: 5px;
+    border-radius: 5 0 5px 0;
+    border-left: 3px solid #797979;
 }
-/* end experiments comments */
+.expcomment_box p:hover {
+    background-color:#555;
+    color:#fff;
+}
+/* EDITABLE */
+.editable:hover {
+    background-color:#555;
+    color:#fff;
+}
+.editable button {
+    background-color:#29AEB9;
+    border: none;
+    border-radius: 20px;
+    color:white;
+    font-weight:bold;
+    text-transform: uppercase;
+    margin: 6px;
+}
+.editable button:hover {
+    background-color: #1F8591;
+}
 
-.simple_border {
-    border:2px solid #AAA;
-    border-radius: 5px;
-    padding: 10px;
-    margin:5px;
-}
+/* END COMMENTS */
 
 .title {
-    background-color:white;
-    border:1px solid #AAA;
-    color:black;
-    border-radius: 15px;
-    font-size:  20px;
-    line-height: 120%;
-    margin: 5px;
-    padding: 5px;
-    width:85%;
+    font-size:  160%;
+    margin: 0;
+    padding-left: 20px;
+}
+p.title {
+    width:100%;
 }
 
-.date, .date_compact {
+.title_view {
+    font-size:  160%;
+}
+
+.date {
     color: #5d5d5d;
     margin:15px auto;
-    padding:5px;
+    padding-left: 20px;
+}
+.date_view {
+    padding-left: 0;
+}
+.item_compact {
+    padding: 5px;
+    margin: 5px;
 }
 
 .date_compact {
-    border-right:1px dotted #ccd;
-}
-
-
-#rating {
+    margin: 0 10px 0 0;
+    padding: 0;
     float:right;
 }
 
 .tags {
-    background-color:white;
-    border:1px solid #AAA;
-    color:black;
-    border-radius: 15px;
-    font:  12px Courier,Arial,sans-serif;
-    line-height: 200%;
-    margin: 10px 0px 10px 5px;
-    padding: 3px;
+    line-height: 150%;
+    margin-bottom: 10px;
     width: 90%;
 }
-.tags a{
+.tags a {
     text-decoration: none;
+    color:#29AEB9;
+}
+.tags a:hover {
+    color: #343434;
 }
 .tag a:hover {
-    color:red;
+    color: red;
 }
 .tags_compact {
     background-color:white;
@@ -508,22 +651,13 @@ section.item div.txt {
 }
 
 .smallgray{
+    display:block;
     color:gray;
-    font: 12px Verdana, Arial, Helvetica, sans-serif;
+    font-size: 80%;
 }
 
-#addtaginput {
-    margin-top: 7px;
-}
 /* ucp.php */
 
-#ucp_keyboard input {
-    float:right;
-}
-
-#ucp_keyboard label {
-    float:left;
-}
 #currpass {
     background-color: #FF8080;
 }
@@ -531,7 +665,7 @@ section.item div.txt {
 /* TEMPLATES */
 .templates {
     border:1px solid black;
-    font: 12px Verdana, Arial, Helvetica, sans-serif;
+    font-size: 12px;
     line-height: 300%;
     padding: 7px;
 }
@@ -539,57 +673,42 @@ section.item div.txt {
 .txt {
     background-color:white;
     border:1px solid #CCC;
+    border-radius: 5px;
+    margin-top: 10px;
     color:black;
     font-size: 16px;
     padding: 5px;
 }
 
-
-.filesdiv {
-    border-radius: 5px;
-    border: 1px solid #CCC;
-    box-shadow: 2px 2px 2px 2px #CCC;
-    -webkit-box-shadow: 2px 2px 2px 2px #CCC;
-    -moz-box-shadow: 2px 2px 2px 2px #CCC;
-    font: 14px Verdana, Arial, Helvetica, sans-serif;
-    margin: 10px auto 10px auto;
-    padding: 5px;
-    width:80%;
+.filediv {
+    margin-top:10px;
 }
-.filesdiv p {
-    display: inline;
+.filediv p, .filediv img {
 }
-.filesdiv a {
-    font: 14px Verdana, Arial, Helvetica, sans-serif;
+.filediv a {
+    font-size: 14px;
     text-decoration: none;
 }
-
 .filesize{
     color:grey;
     font-size: 10px;
 }
 
-/* bigger space to enter experiment */
-.mceditable {
-    height:700px;
-}
 
 /* title on editXP -- fix for firefox */
-#title_txtarea {
-    width:90%;
+#title_input {
+    border-radius: 5px;
+    margin: 5px 0 10px 0;
+    padding: 10px 0 10px 10px;
+    border: 1px solid #dcdddc;
+    width:100%;
 }
 
 /* elabid */
 .elabid {
     text-align:right;
+    color: #797979;
     font-size: 11px;
-}
-
-/* results number and time */
-.results_and_time {
-    display: inline;
-    font-size: 12px;
-    color: gray;
 }
 
 /* PROFILE PAGE */
@@ -603,19 +722,28 @@ section.item div.txt {
 
 /* FOOTER */
 footer {
-    border-top:solid 2px #CCC;
+    border-top:solid 1px #dcdddc;
     font-size: 11px;
     margin: 80px 0 5px 0;
-    padding: 5px 0 5px 0;
     text-align: center;
 }
 footer p, footer p a {
+    color: #797979;
     font-size: 11px;
     line-height: 20%;
-    text-align: center;
+    text-align: right;
 }
 footer p a:hover {
     color: #29AEB9;
+}
+
+.footer_left {
+    text-align: left;
+}
+
+.footer_left a {
+    border-right: 1px #ccc solid;
+    padding:0 5px;
 }
 
 /* print only the main div */
@@ -645,53 +773,31 @@ footer p a:hover {
 }
 
 /* fix the overflow for long filenames and little width of browser */
-#bigUploadFile {
+.bigUpload .bigUploadContainer {
+}
+
+.bigUpload input {
+    margin: 10px;
+}
+
+/* the browse button */
+.bigUpload #bigUploadFile {
     max-width:250px;
     overflow: hidden;
+	padding: 20px;
 }
 
-.bigUpload .bigUploadContainer {
-	max-width: 350px;
-	padding: 20px 30px 30px;
-	margin: 0 auto 20px;
-	margin-top:15px;
-	background-color: #ffffff;
-	border: 1px solid #e5e5e5;
-	border-radius: 5px;
-	box-shadow: 0 1px 2px rgba(0,0,0,.05);
-	text-align: center;
-}
-.bigUpload #bigUploadFile {
-	border: 1px solid #e5e5e5;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-	box-shadow: 0 1px 2px rgba(0,0,0,.05);
-	padding: 10px;
-}
-
+/* the progress bar */
 .bigUpload #bigUploadProgressBarContainer {
-	width:94%;
-	height:19px;
-	margin-left: 3%;
-	margin-top:1%;
-	border: 1px solid #e5e5e5;
-	-webkit-border-radius: 6px;
-	-moz-border-radius: 6px;
-	border-radius: 6px;
-	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-	box-shadow: 0 1px 2px rgba(0,0,0,.05);
+	width:300px;
+	height:23px;
 }
 
 .bigUpload #bigUploadProgressBarFilled {
-	border-radius: 5px;
-	margin: 1px;
-	height:17px;
+	border-radius: 25px;
+	height:23px;
 	width:0;
-	background-color: rgb(91, 183, 91);
+	background-color: #29AEB9;
 	font-size: 14px;
 }
 
@@ -700,4 +806,11 @@ code {
     border: 1px dotted #ccc;
     padding:3px;
     background-color:#eee;
+}
+
+.thumb {
+    max-width: 100px;
+    max-height: 100px;
+    padding-right: 10px;
+
 }

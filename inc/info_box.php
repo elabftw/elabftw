@@ -42,8 +42,8 @@ if (isset($_SESSION['infos']) && is_array($_SESSION['infos']) && count($_SESSION
 ?>
 
 <script>
-// box disappear when user click on it
-$(".ui-state-highlight").click(function(){
+// box disappears when user click on it
+$(".messagebox").click(function(){
     $(this).hide(500);
 });
 </script>

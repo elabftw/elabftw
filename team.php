@@ -26,17 +26,26 @@
 require_once('inc/common.php');
 $page_title= 'Team'; 
 require_once('inc/head.php');
-require_once('inc/menu.php');
 require_once('inc/info_box.php');
 ?>
-<div id='team'>
+<menu>
 <ul>
-<li><a href='#team-1'>Members</a></li>
-<li><a href='#team-2'>Statistics</a></li>
-<li><a href='#team-3'>Tips and tricks</a></li>
+<li class='tabhandle' id='tab1'>Members</li>
+<li class='tabhandle' id='tab2'>Statistics</li>
+<li class='tabhandle' id='tab3'>Tips and tricks</li>
 </ul>
+</menu>
 <!-- *********************** -->
-<div id='team-1'>
+<div class='divhandle' id='tab1div'>
+<?php display_message('info_nocross', "You belong to the ".get_team_config('team_name')." team.");?>
+<table id='teamtable'>
+    <tr>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Mobile</th>
+        <th>Website</th>
+        <th>Skype</th>
+    </tr>
 <?php // SQL to get members info
 $sql = "SELECT * FROM users WHERE validated = :validated AND team = :team_id";
 $req = $pdo->prepare($sql);
@@ -45,29 +54,27 @@ $req->execute(array(
     'team_id' => $_SESSION['team_id']
 ));
 
-echo "<ul>";
 while ($data = $req->fetch()) {
-    echo "<li><img src='img/profile.png' alt='profile' /> ";
-    echo "<a href='mailto:".$data['email']."'>".$data['firstname']." ".$data['lastname']."</a>";
+    echo "<tr>";
+    echo "<td><a href='mailto:".$data['email']."'>".$data['firstname']." ".$data['lastname']."</a></td>";
         if (!empty($data['phone'])) { 
-        echo " <img src='img/phone.png' alt='Phone :' title='phone' /> ".$data['phone'];
+            echo "<td>".$data['phone']."</td>";
         } 
         if (!empty($data['cellphone'])) { 
-        echo " <img src='img/cellphone.png' alt='Cellphone :' title='Cellphone' /> ".$data['cellphone']; 
+            echo "<td>".$data['cellphone']."</td>"; 
         }
         if (!empty($data['website'])) { 
-        echo " <img src='img/website.png' alt='website :' title='website' /> <a href='".$data['website']."'>www</a>"; 
+            echo "<td><a href='".$data['website']."'>www</a></td>"; 
         }
         if (!empty($data['skype'])) { 
-        echo " <img src='img/skype.png' alt='skype :' title='skype' /> ".$data['skype'];
+            echo "<td>".$data['skype']."</td>";
         } 
-    echo "</li>";
 }
-echo "</ul>";
 ?>
+</table>
 </div>
 <!-- *********************** -->
-<div id='team-2'>
+<div class='divhandle' id='tab2div'>
 <?php
 // show team stats
 $count_sql="SELECT
@@ -83,27 +90,50 @@ $totals = $count_req->fetch(PDO::FETCH_ASSOC);
     <p>There is a total of <?php echo $totals['totdb'];?> items in the database.</p>
 </div>
 
-<div id='team-3'>
+<!-- *********************** -->
+<div class='divhandle' id='tab3div'>
     <p>
         <ul>
-            <li>- You can use a TODOlist by pressing 't'</li>
-            <li>- You can have templates (edit them in your User Control Panel)</li>
-            <li>- If you press Ctrl Shift D in the editor, the date will appear under the cursor</li>
-            <li>- You can duplicate experiments in one click</li>
-            <li>- Click a tag to list all items with this tag</li>
+            <li class='tip'>You can use a TODOlist by pressing 't'</li>
+            <li class='tip'>You can have experiments templates (<a href='ucp.php?tab=3'>Control Panel</a>)</li>
+            <li class='tip'>The admin of a team can edit the status and the types of items available (<a href='admin.php?tab=4'>Admin Panel</a>)</li>
+            <li class='tip'>If you press Ctrl Shift D in the editor, the date will appear under the cursor</li>
+            <li class='tip'>Custom shortcuts are available (<a href='ucp.php?tab=2'>Control Panel</a>)</li>
+            <li class='tip'>You can duplicate experiments in one click</li>
+            <li class='tip'>Click a tag to list all items with this tag</li>
+            <li class='tip'>Register an account with <a href='https://www.universign.eu/en/timestamp'>Universign</a> to start timestamping experiments</li>
+            <li class='tip'>Only a locked experiment can be timestamped</li>
+            <li class='tip'>Once timestamped, an experiment cannot be unlocked or modified. Only comments can be added.</li>
         </ul>
     </p>
 </div>
 
-</div>
-<?php require_once('inc/footer.php');?>
-
 <script>
 $(document).ready(function() {
     // TABS
-    $( "#team" ).tabs({
-        autoHeight: false
+    // get the tab=X parameter in the url
+    var params = getGetParameters();
+    var tab = parseInt(params['tab']);
+    if (!isInt(tab)) {
+        var tab = 1;
+    }
+    var initdiv = '#tab' + tab + 'div';
+    var inittab = '#tab' + tab;
+    // init
+    $(".divhandle").hide();
+    $(initdiv).show();
+    $(inittab).addClass('selected');
+
+    $(".tabhandle" ).click(function(event) {
+        var tabhandle = '#' + event.target.id;
+        var divhandle = '#' + event.target.id + 'div';
+        $(".divhandle").hide();
+        $(divhandle).show();
+        $(".tabhandle").removeClass('selected');
+        $(tabhandle).addClass('selected');
     });
+    // END TABS
 });
 </script>
 
+<?php require_once('inc/footer.php');?>

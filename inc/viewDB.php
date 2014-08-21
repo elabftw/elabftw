@@ -62,15 +62,14 @@ if ($row_count === 0) {
 $data = $req->fetch();
 
 ?>
-<section class="item">
+<!-- begin item view -->
+<section class="box">
 
-<span class='date'><img src='img/calendar.png' title='date' alt='Date :' /> <?php echo $data['date'];?></span><br />
-
-<h3 style='color:#<?php echo $data['bgcolor'];?>'><?php echo $data['name'];?> </h3>
+<span class='date_view'><img src='img/calendar.png' title='date' alt='Date :' /> <?php echo format_date($data['date']);?></span><br>
 <?php
 show_stars($data['rating']);
 // buttons
-echo "<a href='database.php?mode=edit&id=".$data['itemid']."'><img src='img/edit.png' title='edit' alt='edit' /></a> 
+echo "<a href='database.php?mode=edit&id=".$data['itemid']."'><img src='img/pen-blue.png' title='edit' alt='edit' /></a> 
 <a href='duplicate_item.php?id=".$data['itemid']."&type=db'><img src='img/duplicate.png' title='duplicate item' alt='duplicate' /></a> 
 <a href='make_pdf.php?id=".$data['itemid']."&type=items'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a> 
 <a href='javascript:window.print()'><img src='img/print.png' title='Print this page' alt='Print' /></a> 
@@ -80,24 +79,25 @@ echo "<a href='database.php?mode=edit&id=".$data['itemid']."'><img src='img/edit
 if ($data['locked'] == 0) {
     echo "<a href='lock.php?id=".$data['itemid']."&action=lock&type=items'><img src='img/unlock.png' title='lock item' alt='lock' /></a>";
 } else { // item is locked
-    echo "<a href='lock.php?id=".$data['itemid']."&action=unlock&type=items'><img src='img/lock.png' title='unlock item' alt='unlock' /></a>";
+    echo "<a href='lock.php?id=".$data['itemid']."&action=unlock&type=items'><img src='img/lock-gray.png' title='unlock item' alt='unlock' /></a>";
 }
 // TAGS
 show_tags($id, 'items_tags');
 // TITLE : click on it to go to edit mode
 ?>
-<div OnClick="document.location='database.php?mode=edit&id=<?php echo $data['itemid'];?>'" class='title'>
+<div OnClick="document.location='database.php?mode=edit&id=<?php echo $data['itemid'];?>'" class='title_view'>
+<span style='color:#<?php echo $data['bgcolor'];?>'><?php echo $data['name'];?> </span>
     <?php echo stripslashes($data['title']);?>
 </div>
 <?php
 // BODY (show only if not empty)
 if ($data['body'] != '') {
     ?>
-    <div OnClick="document.location='database.php?mode=edit&id=<?php echo $data['itemid'];?>'" class='txt'><?php echo stripslashes($data['body'])?></div>
+    <div id='body_view' OnClick="document.location='database.php?mode=edit&id=<?php echo $data['itemid'];?>'" class='txt'><?php echo stripslashes($data['body'])?></div>
     <?php
 }
 // SHOW USER
-echo "Last modified by ".$data['firstname']." ".$data['lastname']." on ".$data['date'];
+echo "Last modified by ".$data['firstname']." ".$data['lastname']." on ".format_date($data['date']);
 echo "</section>";
 // DISPLAY FILES
 require_once 'inc/display_file.php';

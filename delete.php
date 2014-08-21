@@ -243,6 +243,8 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             $delete_req->execute(array(
                 'id' => $id
             ));
+            $msg_arr[] = "Status was deleted successfully.";
+            $_SESSION['infos'] = $msg_arr;
             break;
 
         // END

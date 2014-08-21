@@ -290,45 +290,46 @@ function showXP($id, $display)
         status ON (experiments.status = status.id)
         WHERE experiments.id = :id";
     $req = $pdo->prepare($sql);
-    $req->execute(array(
-        'id' => $id
-    ));
+    $req->bindParam(':id', $id, PDO::PARAM_INT);
+    $req->execute();
     $experiments = $req->fetch();
 
     if ($display === 'compact') {
         // COMPACT MODE //
-        echo "<section class='item' style='border: 1px solid #".$experiments['color']."'>";
-        echo "<span class='date_compact'>".$experiments['date']."</span> ";
-        echo stripslashes($experiments['title']);
-        // view link
-        echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>
-            <img style='height:1em;float:right' src='img/view_compact.png' alt='view' title='view experiment' /></a>";
-        echo "</section>";
-    } else { // NOT COMPACT
-        ?>
-        <section class="item" style='border: 1px solid #<?php echo $experiments['color'];?>'>
-        <?php
-        // DATE
-        echo "<span class='date'>".$experiments['date']."</span> ";
-        // TAGS
-        echo show_tags($id, 'experiments_tags');
-        // view link
-        echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>
-            <img class='align_right' style='margin-left:5px;' src='img/arrow_right.png' alt='view' title='view experiment' /></a>";
-        // show attached if there is a file attached
-        if (has_attachement($experiments['id'], 'experiments')) {
-            echo "<img class='align_right' src='img/attached_file.png' alt='file attached' />";
-        }
+        echo "<section class='item_compact' style='border-left: 6px solid #".$experiments['color']."'>";
+        echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>";
+        echo "<span class='date date_compact'>".format_date($experiments['date'])."</span> ";
+        echo "<span style='padding-left:10px;'>";
         // show lock if item is locked on viewXP
         if ($experiments['locked']) {
-            echo "<img class='align_right' src='img/lock.png' alt='lock' title='Locked' />";
+            echo "<img src='img/lock-blue.png' alt='lock' title='Locked' />";
         }
+        echo stripslashes($experiments['title']);
+        echo "</a></span></section>";
+    } else { // NOT COMPACT
+        ?>
+        <section class="item" style='border-left: 6px solid #<?php echo $experiments['color'];?>'>
+        <?php
+        echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>";
         // show stamp if experiment is timestamped
         if ($experiments['timestamped']) {
-            echo "<img class='align_right' src='img/valid.png' alt='stamp' title='Timestamp OK' />";
+            echo "<img class='align_right' src='img/check.png' alt='stamp' title='Timestamp OK' />";
         }
-        echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>
-            <p class='title'>". stripslashes($experiments['title']) . "</p></a>";
+        echo "<p class='title'>";
+        // show lock if item is locked on viewXP
+        if ($experiments['locked']) {
+            echo "<img style='padding-bottom:3px;' src='img/lock-blue.png' alt='lock' title='Locked' /> ";
+        }
+        // TITLE
+        echo stripslashes($experiments['title']) . "</p></a>";
+        // DATE
+        echo "<span class='date'><img class='image' src='img/calendar.png' /> ".format_date($experiments['date'])."</span> ";
+        // TAGS
+        echo show_tags($id, 'experiments_tags');
+        // show attached if there is a file attached
+        if (has_attachement($experiments['id'], 'experiments')) {
+            echo "<img class='align_right' src='img/attached.png' alt='file attached' />";
+        }
         echo "</section>";
     }
 }
@@ -341,23 +342,23 @@ function showXP($id, $display)
  */
 function show_stars($rating)
 {
-    echo "<div id='rating'>";
+    echo "<span class='align_right'>";
     if ($rating == 1) {
-        echo "<img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";
+        echo "<img src='img/star-green.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' />";
     }
     if ($rating == 2) {
-        echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";
+        echo "<img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' />";
     }
     if ($rating == 3) {
-        echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";
+        echo "<img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' />";
     }
     if ($rating == 4) {
-        echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/greystar.gif' alt='1' />";
+        echo "<img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-gray.png' alt='1' />";
     }
     if ($rating == 5) {
-        echo "<img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' /><img src='img/redstar.gif' alt='1' />";
+        echo "<img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' />";
     }
-    echo "</div>";
+    echo "</span>";
 }
 
 /**
@@ -384,39 +385,37 @@ function showDB($id, $display)
     if ($display === 'compact') {
         // COMPACT MODE //
         ?>
-        <section class='item'>
+            <section class='item_compact' style='border-left: 6px solid #<?php echo $item['bgcolor'];?>'>
+            <a href='database.php?mode=view&id=<?php echo $item['id'];?>'>
             <span class='date date_compact'><?php echo $item['date'];?></span>
-            <h4 style='border-right:1px dotted #ccd;color:#<?php echo $item['bgcolor'];?>'><?php echo $item['name'];?> </h4>
-            <span style='margin-left:7px'><?php echo stripslashes($item['title']);?>
+            <h4 style='padding-left:10px;border-right:1px dotted #ccd;color:#<?php echo $item['bgcolor'];?>'><?php echo $item['name'];?> </h4>
+            <span style='margin-left:7px'><?php echo stripslashes($item['title']);?></span>
         <?php
-        // view link
-        echo "<a href='database.php?mode=view&id=".$item['id']."'>
-        <img style='height:1em;float:right; margin-left:7px;' src='img/view_compact.png' alt='view' title='view item' /></a>";
         // STAR RATING read only
         show_stars($item['rating']);
-        echo "</section>";
+        echo "</a></section>";
 
     } else { // NOT COMPACT
 
-        echo "<section class='item'>";
-        echo "<h4 style='color:#".$item['bgcolor']."'>".$item['name']." </h4>";
-        // TAGS
-        echo show_tags($id, 'items_tags');
-        // view link
-        echo "<a href='database.php?mode=view&id=".$item['id']."'>
-        <img class='align_right' style='margin-left:5px;' src='img/arrow_right.png' alt='view' title='view item' /></a>";
-        // STARS
-        show_stars($item['rating']);
+        echo "<section class='item' style='border-left: 6px solid #".$item['bgcolor']."'>";
+        echo "<a href='database.php?mode=view&id=".$item['id']."'>";
         // show attached if there is a file attached
         if (has_attachement($item['id'], 'items')) {
-            echo "<img class='align_right' src='img/attached_file.png' alt='file attached' />";
+            echo "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
         }
+        // STARS
+        show_stars($item['rating']);
+        echo "<p class='title'>";
         // show lock if item is locked on viewDB
         if ($item['locked'] == 1) {
-            echo "<img class='align_right' src='img/lock.png' alt='lock' />";
+            echo "<img style='padding-bottom:3px;' src='img/lock-blue.png' alt='lock' />";
         }
-        echo "<a href='database.php?mode=view&id=".$item['id']."'>
-            <p class='title'>". stripslashes($item['title']) . "</p></a>";
+        // TITLE
+        echo stripslashes($item['title']) . "</p></a>";
+        // ITEM TYPE
+        echo "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#".$item['bgcolor']."'>".$item['name']." </span>";
+        // TAGS
+        echo show_tags($id, 'items_tags');
         echo "</section>";
     }
 }
@@ -634,7 +633,7 @@ function make_pdf($id, $type, $out = 'browser')
         if(isset($data['lockedwhen'])) {
             $lockdate = explode(' ', $data['lockedwhen']);
             // this will be added after the URL
-            $lockinfo = "<p>Locked by ".$lockuser['firstname']." ".$lockuser['lastname']." on ".$lockdate[0]." at ".$lockdate[1].".</p>";
+            $lockinfo = "<p class='elabid'>locked by ".$lockuser['firstname']." ".$lockuser['lastname']." on ".$lockdate[0]." at ".$lockdate[1].".</p>";
         } else {
             $lockinfo = "";
         }
@@ -697,11 +696,13 @@ function make_pdf($id, $type, $out = 'browser')
     }
 
     // build content of page
-    $content = "<h1>".$title."</h1><br />
-        Date : ".$date."<br />
-        <em>Keywords : ".$tags."</em><br />
-        <hr>".$body."<br /><br />
-        <hr>Made by : ".$firstname." ".$lastname."<br /><br />";
+    // add css
+    $content = "<link rel='stylesheet' media='all' href='css/pdf.css' />";
+    $content .= "<h1>".$title."</h1>
+        Date : ".format_date($date)."<br />
+        <em>Tags : ".$tags."</em><br />
+        Made by : ".$firstname." ".$lastname."
+        <hr><p>".$body."</p>";
     // Construct URL
     $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
 
@@ -803,8 +804,8 @@ function make_pdf($id, $type, $out = 'browser')
         // Add comments
         $content .= $comments_block;
         // ELABID and URL
-        $content .= "<br /><p>elabid : ".$elabid."</p>";
-        $content .= "<p>URL : <a href='".$full_url."'>".$full_url."</a></p>";
+        $content .= "<p class='elabid'>elabid : ".$elabid."</p>";
+        $content .= "<p class='elabid'>link :<a href='".$full_url."'>".$full_url."</a></p>";
 
     } else { // ITEM
         if ($out === 'browser') {
@@ -820,6 +821,9 @@ function make_pdf($id, $type, $out = 'browser')
     if (isset($lockinfo)) {
         $content .= $lockinfo;
     }
+
+    // FOOTER
+    $content .= "<footer>PDF generated with <a href='http://www.elabftw.net'>elabftw</a>, a free and open source lab notebook</footer>";
 
 
     // Generate pdf with mpdf
@@ -1016,7 +1020,7 @@ function duplicate_item($id, $type)
 /**
  * For displaying messages using jquery ui highlight/error messages
  *
- * @param string $type Can be 'info' or 'error'
+ * @param string $type Can be 'info', 'info_nocross' or 'error', 'error_nocross'
  * @param string $message The message to display
  * @return string Will echo the HTML of the message
  */
@@ -1024,15 +1028,20 @@ function display_message($type, $message)
 {
     if ($type === 'info') {
 
-        echo "<div class='ui-state-highlight ui-corner-all' style='margin:5px'>
-        <p><span class='ui-icon ui-icon-info' style='float: left; margin: 0 5px 0 5px;'></span>
-        $message</p></div>";
+        echo "<div class='infobox messagebox'>
+        <p>$message<span style='float:right'><img src='img/cross-blue.png' alt='hide' title='Hide message' /></span></p></div>";
+
+    } elseif ($type === 'info_nocross') {
+        echo "<div class='infobox messagebox'><p>$message</p></div>";
 
     } elseif ($type === 'error') {
 
-        echo "<div class='ui-state-error ui-corner-all' style='margin:5px'>
-        <p><span class='ui-icon ui-icon-alert' style='float:left; margin: 0 5px 0 5px;'></span>
-        $message</p></div>";
+        echo "<div class='errorbox messagebox'>
+        <p>$message<span style='float:right'><img src='img/cross-red.png' alt='hide' title='Hide message' /></span></p></div>";
+
+    } elseif ($type === 'error_nocross') {
+        echo "<div class='errorbox messagebox'><p>$message</p></div>";
+
     }
 
     return false;
@@ -1115,6 +1124,19 @@ function check_executable($cmd)
 }
 
 /**
+ * Take a 8 digits input and output 2014.08.16
+ *
+ * @param string $date Input date '20140302'
+ * @param string $s an optionnal param to specify the separator
+ * @return string The formatted strng
+ */
+function format_date($date, $s = ' ')
+{
+    return $date[0].$date[1].$date[2].$date[3].$s.$date['4'].$date['5'].$s.$date['6'].$date['7'];
+}
+
+
+/**
  * Insert a log entry in the logs table
  *
  * @param string $type The type of the log. Can be 'Error', 'Warning', 'Info'
@@ -1149,14 +1171,7 @@ function dblog($type, $user, $body)
 function custom_die()
 {
     echo "
-    <br />
-    <br />
     </section>
-    <br />
-    <br />
-    <footer>
-    <p>Thanks for using eLabFTW :)</p>
-    </footer>
     </body>
     </html>";
     die();
@@ -1181,3 +1196,25 @@ function q($sql) {
     }
 }
  */
+
+/**
+ * Used in sysconfig.php to update config values
+ * 
+ * @param array conf_name => conf_value
+ * @return bool the return value of execute queries
+ */
+function update_config($array)
+{
+    global $pdo;
+    $values = array();
+    foreach ($array as $name => $value) {
+        $sql = "UPDATE config SET conf_value = '".$value."' WHERE conf_name = '".$name."';";
+        $req = $pdo->prepare($sql);
+        $result = $req->execute();
+    }
+    if ($result) {
+        return true;
+    } else {
+        return false;
+    }
+}

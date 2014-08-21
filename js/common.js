@@ -56,3 +56,26 @@ function showSaved() {
 function removeSaved() {
        document.body.removeChild(document.getElementById('overlay'));
 }
+/* for menus on team, admin, sysconfig and ucp */
+
+/* parse the $_GET from the url */
+function getGetParameters() {
+    var prmstr = window.location.search.substr(1);
+    return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
+}
+
+/* put the $_GET in array */
+function transformToAssocArray( prmstr ) {
+    var params = {};
+    var prmarr = prmstr.split("&");
+    for ( var i = 0; i < prmarr.length; i++) {
+        var tmparr = prmarr[i].split("=");
+                params[tmparr[0]] = tmparr[1];
+            }
+    return params;
+}
+/* to check if the param is good */
+function isInt(n) {
+    return n % 1 === 0;
+}
+

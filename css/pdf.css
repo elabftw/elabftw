@@ -1,0 +1,331 @@
+/* CSS Document */
+/********************************************************************************
+*                                                                               *
+*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
+*   http: //www.elabftw.net/                                                     *
+*                                                                               *
+********************************************************************************/
+
+/********************************************************************************
+*  This file is part of eLabFTW.                                                *
+*                                                                               *
+*    eLabFTW is free software:  you can redistribute it and/or modify            *
+*    it under the terms of the GNU Affero General Public License as             *
+*    published by the Free Software Foundation, either version 3 of             *
+*    the License, or (at your option) any later version.                        *
+*                                                                               *
+*    eLabFTW is distributed in the hope that it will be useful,                 *
+*    but WITHOUT ANY WARRANTY; without even the implied                         *
+*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
+*    PURPOSE.  See the GNU Affero General Public License for more details.      *
+*                                                                               *
+*    You should have received a copy of the GNU Affero General Public           *
+*    License along with eLabFTW.  If not, see <http: //www.gnu.org/licenses/>.   *
+*                                                                               *
+********************************************************************************/
+/* CSS for the PDF generation */
+
+/*
+ * 343434 => very dark gray (main nav bg)
+ * 797979 => lightgray
+ * #29AEB9 => blue
+ * 1F8591 => dark blue
+ * C4F9FF => light blue
+ * dd1e00 => dark red
+ * ffc1b7 => light red
+ *
+ *
+ *
+ *
+ */
+
+/* LINKS */
+a {
+    color: #29AEB9;
+    text-decoration:none;
+}
+
+/* LISTS */
+ul, li {
+    color: #797979;
+}
+
+/* GENERAL */
+
+.align_right{
+    float: right;
+}
+
+.align_left{
+    text-align: left;
+}
+
+.strong {
+    font-weight: bold;
+}
+
+.three-columns {
+    width: 60%;
+}
+.two-columns {
+    -moz-columns:2 250px;
+    -webkit-columns:2 250px;
+    columns: 2 250px;
+}
+
+.column-left{ float: left; width: 20%; }
+.column-right{ float: right; width: 20%; }
+.column-center{ display: inline-block; width: 20%; }
+
+/* paragraphs */
+p {
+    color:#797979;
+}
+
+p a {
+    text-decoration: none;
+}
+
+label {
+    color:#797979;
+    font-size:120%;
+}
+
+/* hr */
+hr {
+    margin: 10px 0 10px 0;
+    color: #dcdddc;
+}
+
+li.inline {
+    display: inline;
+}
+/* fix the list in the body */
+div.txt ol li {
+    /* !important because there is a list-style-type:none in jquery-ui */
+    list-style-type:decimal !important;
+}
+
+div.txt li {
+    /* !important because there is a list-style-type:none in jquery-ui */
+    list-style-type:square !important;
+}
+
+/* prettier tables in mceditable area */
+div.txt table, div.txt table td {
+    border: 1px solid black;
+}
+
+
+/* TITLES */
+h2 {
+    color: #797979;
+    font-size: 30px;
+}
+
+h3 {
+    color: #797979;
+    font-size: 150%;
+    margin: 0 auto 10px auto;
+}
+
+/* bigger space to enter experiment */
+.mceditable {
+    height:500px;
+}
+h4 {
+    display: inline;
+    font-size: 110%;
+    color: #797979;
+}
+
+.inline {
+    display: inline;
+}
+
+img {
+    border: none;
+    position: relative;
+    top: 3px;
+}
+
+
+/* ITEMS */
+
+/* fix for big images uploaded in the text */
+section.item div.txt {
+    overflow:hidden;
+}
+
+.item {
+    border:  1px solid #dcdddc;
+    border-radius: 5px;
+    margin: 10px auto;
+    padding: 10px 0;
+    overflow:hidden;
+}
+
+
+.item a:hover {
+    color:#29AEB9;
+}
+
+.box {
+    border: 1px solid #dcdddc;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+
+/* COMMENTS FOR EXPERIMENTS COMMENTS BOX */
+.newexpcomment {
+    background-color: #f2f2f2;
+    border-radius: 5px;
+    color: #797979;
+    margin:2px;
+    padding: 10px;
+}
+
+.expcomment_box {
+    background-color: #f2f2f2;
+    border-radius: 5px;
+    margin-top:5px;
+    padding: 10px;
+}
+
+.expcomment_box p {
+    margin: 5px 0;
+    padding: 5px;
+    border-radius: 5 0 5px 0;
+    border-left: 3px solid #797979;
+}
+.expcomment_box p:hover {
+    background-color:#555;
+    color:#fff;
+}
+
+/* END COMMENTS */
+
+.title {
+    font-size:  160%;
+    margin: 0;
+    padding-left: 20px;
+}
+p.title {
+    width:100%;
+}
+
+.title_view {
+    font-size:  160%;
+}
+
+.date, .date_compact {
+    color: #5d5d5d;
+    margin:15px auto;
+    padding-left: 20px;
+}
+.date_view {
+    padding-left: 0;
+}
+
+.date_compact {
+    border-right:1px dotted #ccd;
+}
+
+.tags {
+    line-height: 200%;
+    margin: 10px 0px 10px 5px;
+    padding: 3px;
+    width: 90%;
+}
+.tags a {
+    text-decoration: none;
+    color:#29AEB9;
+}
+.tags a:hover {
+    color: #343434;
+}
+.tag a:hover {
+    color: red;
+}
+.tags_compact {
+    background-color:white;
+    border:1px solid #AAA;
+    color:black;
+    border-radius: 15px;
+    font:  12px Courier,Arial,sans-serif;
+    line-height: 200%;
+    padding: 5px;
+    margin: 10px 0px 10px 25px;
+}
+.tags_compact a{
+    text-decoration: none;
+}
+.tags_compact a:hover {
+    color:red;
+}
+#tagdiv{
+    background-color:white;
+    border:3px solid #CCC;
+    padding: 5px;
+}
+
+.tag {
+    font: bold 13px Verdana, Arial, Helvetica, sans-serif;
+    line-height: 160%;
+}
+.tag a {
+    padding: 5px 5px 5px 5px;
+    text-decoration: none;
+}
+
+.smallgray{
+    display:block;
+    color:gray;
+    font-size: 80%;
+}
+
+/* ucp.php */
+
+
+.filediv {
+    margin-top:20px;
+}
+.filediv p, .filediv img {
+}
+.filediv a {
+    font-size: 14px;
+    text-decoration: none;
+}
+.filesize{
+    color:grey;
+    font-size: 10px;
+}
+
+
+/* elabid */
+.elabid {
+    text-align:right;
+    color: #797979;
+    font-size: 11px;
+}
+
+
+/* prettier code */
+code {
+    border: 1px dotted #ccc;
+    padding:3px;
+    background-color:#eee;
+}
+
+footer {
+    position: absolute;
+    bottom:0;
+    left:0;
+    background-color:#e2e2e2;
+    padding: 10px 0;
+    width: 100%;
+    font-size: 80%;
+    text-align:center;
+}
+

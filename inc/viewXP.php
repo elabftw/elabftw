@@ -81,14 +81,37 @@ if ($data['userid'] != $_SESSION['userid']) {
 }
 
 
+// SHOW INFO ON TIMESTAMP
+if ($data['timestamped'] == 1) {
+    // who what when ?
+    $sql = 'SELECT firstname, lastname FROM users WHERE userid = :userid';
+    $req_stamper = $pdo->prepare($sql);
+    $req_stamper->bindParam(':userid', $data['timestampedby']);
+    $req_stamper->execute();
+    $timestamper = $req_stamper->fetch();
+
+    // display timestamped pdf download link
+    $sql = "SELECT * FROM uploads WHERE type = 'exp-pdf-timestamp' AND item_id = :item_id LIMIT 1";
+    $req_stamper = $pdo->prepare($sql);
+    $req_stamper->bindParam(':item_id', $id);
+    $req_stamper->execute();
+    $uploads = $req_stamper->fetch();
+
+    $date_arr = explode(' ', $data['timestampedwhen']);
+    display_message('info_nocross', "Experiment was timestamped by ".$timestamper['firstname']." ".$timestamper['lastname']." on ".$date_arr[0]." at ".$date_arr[1]."
+        <a href='uploads/".$uploads['long_name']."'><img src='img/pdf.png' title='Download timestamped pdf' alt='pdf' /></a>");
+    unset($timestamper);
+    unset($uploads);
+
+}
 
 // Display experiment
 ?>
-    <section class="item" style='border: 1px solid #<?php echo $data['color'];?>'>
-    <span class='align_right' id='status'>(<?php echo $data['name'];?>)</span>
+    <section class="item" style='padding:15px;border-left: 6px solid #<?php echo $data['color'];?>'>
+    <span class='top_right_status'><img src='img/status.png'><?php echo $data['name'];?><img src='img/eye.png' alt='eye' /><?php echo $data['visibility'];?></span>
 <?php
-echo "<img src='img/calendar.png' title='date' alt='Date :' /><span class='date'> ".$data['date']."</span><br />
-    <a href='experiments.php?mode=edit&id=".$data['expid']."'><img src='img/edit.png' title='edit' alt='edit' /></a> 
+echo "<span class='date_view'><img src='img/calendar.png' title='date' alt='Date :' /> ".format_date($data['date'])."</span><br />
+    <a href='experiments.php?mode=edit&id=".$data['expid']."'><img src='img/pen-blue.png' title='edit' alt='edit' /></a> 
 <a href='duplicate_item.php?id=".$data['expid']."&type=exp'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a> 
 <a href='make_pdf.php?id=".$data['expid']."&type=experiments'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a> 
 <a href='javascript:window.print()'><img src='img/print.png' title='Print this page' alt='Print' /></a> 
@@ -97,7 +120,7 @@ echo "<img src='img/calendar.png' title='date' alt='Date :' /><span class='date'
 if ($data['locked'] == 0) {
     echo "<a href='lock.php?id=".$data['expid']."&action=lock&type=experiments'><img src='img/unlock.png' title='lock experiment' alt='lock' /></a>";
 } else { // experiment is locked
-    echo "<a href='lock.php?id=".$data['expid']."&action=unlock&type=experiments'><img src='img/lock.png' title='unlock experiment' alt='unlock' /></a>";
+    echo "<a href='lock.php?id=".$data['expid']."&action=unlock&type=experiments'><img src='img/lock-gray.png' title='unlock experiment' alt='unlock' /></a>";
     // show timestamp button if it's not timestamped already
     if ($data['timestamped'] == 0) {
         echo "<a onClick=\"return confirmStamp()\" href='timestamp.php?id=".$data['expid']."'><img src='img/stamp.png' title='timestamp experiment' alt='timestamp' /></a>";
@@ -111,11 +134,11 @@ echo "<div ";
 if ($ro === false) {
     echo "OnClick=\"document.location='experiments.php?mode=edit&id=".$data['expid']."'\"";
 }
-echo " class='title'>";
+echo " class='title_view'>";
 echo stripslashes($data['title'])."</div>";
 // BODY (show only if not empty, click on it to edit
 if ($data['body'] != '') {
-    echo "<div ";
+    echo "<div id='body_view' ";
     // make the body clickable only if we are not in read only
     if ($ro === false) {
         echo "OnClick=\"document.location='experiments.php?mode=edit&id=".$data['expid']."'\"";
@@ -124,8 +147,6 @@ if ($data['body'] != '') {
     echo "<br>";
 }
 
-// DISPLAY FILES
-require_once 'inc/display_file.php';
 
 // DISPLAY LINKED ITEMS
 $sql = "SELECT items.id AS itemid,
@@ -143,55 +164,27 @@ $req->execute(array(
 ));
 // Check there is at least one link to display
 if ($req->rowcount() > 0) {
-    echo "<hr class='flourishes'>";
-    echo "<img src='img/link.png'> <h4 style='display:inline'>Linked items</h4>
-<div id='links_div'><ul>";
     while ($link = $req->fetch()) {
         // SQL to get title
-        echo "<li>[".$link['name']."] - <a href='database.php?mode=view&id=".$link['itemid']."'>".
-            stripslashes($link['title'])."</a></li>";
+        echo "<img src='img/link.png'> [".$link['name']."] - <a href='database.php?mode=view&id=".$link['itemid']."'>".
+            stripslashes($link['title'])."</a><br>";
     } // end while
-    echo "</ul>";
-} else { // end if link exist
-    echo "<br />";
 }
 
-// SHOW INFO ON TIMESTAMP
-if ($data['timestamped'] == 1) {
-    // who what when ?
-    $sql = 'SELECT firstname, lastname FROM users WHERE userid = :userid';
-    $req_stamper = $pdo->prepare($sql);
-    $req_stamper->bindParam(':userid', $data['timestampedby']);
-    $req_stamper->execute();
-    $timestamper = $req_stamper->fetch();
-
-    // display timestamped pdf download link
-    $sql = "SELECT * FROM uploads WHERE type = 'exp-pdf-timestamp' AND item_id = :item_id LIMIT 1";
-    $req_stamper = $pdo->prepare($sql);
-    $req_stamper->bindParam(':item_id', $id);
-    $req_stamper->execute();
-    $uploads = $req_stamper->fetch();
-
-    display_message('info', "Experiment was timestamped by ".$timestamper['firstname']." ".$timestamper['lastname']." on ".$data['timestampedwhen']."
-        <a href='uploads/".$uploads['long_name']."'><img src='img/pdf.png' title='Download timestamped pdf' alt='pdf' /></a>");
-    unset($timestamper);
-    unset($uploads);
-
-}
 
 // DISPLAY eLabID
 echo "<p class='elabid'>Unique eLabID : ".$data['elabid'];
-// DISPLAY visibility
-echo "<br />Visibility : ".$data['visibility']."</p>";
 echo "</section>";
+// DISPLAY FILES
+require_once 'inc/display_file.php';
 
 // COMMENT BOX
 ?>
 <!-- we need to add a container here so the reload function in the callback of .editable() doesn't mess things up -->
 <section id='expcomment_container'>
-<div id='expcomment' class='item'>
-    <h3>Comments</h3>
-    <p class='editable newexpcomment' id='newexpcomment_<?php echo $id;?>'>Click to add a comment.</p>
+<div id='expcomment' class='box'>
+    <h3><img src='img/comment.png' alt='comment' /> Comments</h3>
+    <p class='editable newexpcomment' id='newexpcomment_<?php echo $id;?>'>Add a comment</p>
 <?php
 
 // check if there is something to display first
@@ -208,7 +201,7 @@ if ($req->rowCount() > 0) {
             $comments['firstname'] = '[deleted]';
         }
     echo "<div class='expcomment_box'>
-    <img class='align_right' src='img/trash.png' title='delete' alt='delete' onClick=\"deleteThisAndReload(".$comments['id'].",'expcomment')\" />";
+    <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick=\"deleteThisAndReload(".$comments['id'].",'expcomment')\" />";
      echo "<span class='smallgray'>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :</span><br />";
         echo "<p class='editable' id='expcomment_".$comments['id']."'>".$comments['comment']."</p></div>";
     }

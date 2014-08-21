@@ -19,49 +19,65 @@
 ********************************************************************************/
 ?>
 <footer>
+
+    <p class='footer_left'>
+    <a href='https://twitter.com/elabftw'>
+    <img src='img/twitter.png' alt='twitter' title='Follow eLabFTW on Twitter !'>
+    </a>
+     <a href='https://github.com/NicolasCARPi/elabftw'>
+    <img src='img/github.png' alt='github' title='eLabFTW on GitHub'>
+    </a>
+    <span>
+    <?php
+    if (isset($_SESSION['auth']) && $_SESSION['is_sysadmin'] === '1') {
+        ?>
+        <!-- SYSADMIN MENU -->
+        <span class='strong'>
+        <a id='check_for_updates' href='#'>CHECK FOR UPDATES</a><a href='sysconfig.php'>SYSADMIN PANEL</a>
+        <script>
+        $('#check_for_updates').click(function() {
+            var jqxhr = $.post('check_for_updates.php', function(answer) {
+                alert(answer);
+            });
+        });
+        </script>
+    <?php
+    }
+    if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
+        echo "<a href='admin.php'>ADMIN PANEL</a>";
+    }
+    echo "</span></p><p>";
+    if (isset($_SESSION['team_id'])) {
+        echo get_team_config('team_name')." lab p";
+    } else {
+        echo "P";
+    }
+
+    echo "owered by <a href='http://www.elabftw.net'>eLabFTW</a>";
+    // show debug info only to admins
+    if (isset($_SESSION['auth']) && get_config('debug') == 1 && $_SESSION['is_admin'] == 1) {
+        echo "Session array : ";
+        echo '<pre>'.var_dump($_SESSION).'</pre>';
+        echo "<br>";
+        echo "Cookie : ";
+        echo '<pre>'.var_dump($_COOKIE).'</pre>';
+        echo "<br>";
+    }
+    ?>
+    </p>
+    <p>Page generated in <span class='strong'><?php echo round((microtime(true) - $start), 5);?> seconds</span></p>
+</footer>
+
+<script src="js/jquery-pageslide/jquery.pageslide.min.js"></script>
 <!-- konami code and unicorns -->
 <script src="js/cornify.min.js"></script>
-
-<p>
-<?php
-if (isset($_SESSION['auth']) && $_SESSION['is_sysadmin'] === '1') {
-    ?>
-    <!-- SYSADMIN MENU --> 
-    <a id='check_for_updates' href='#'>Check for updates</a> | <a href='sysconfig.php'>Sysadmin panel</a> | 
-    <script>
-    $('#check_for_updates').click(function() {
-        var jqxhr = $.post('check_for_updates.php', function(answer) {
-            alert(answer);
-        });
-    });
-    </script>
-<?php
-}
-if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
-    echo "<a href='admin.php'>Admin Panel</a>";
-}
-echo "<p>".get_team_config('team_name')." powered by <a href='http://www.elabftw.net'>eLabFTW</a> by <a href='http://www.elabftw.net' onClick='cornify_add();return false;'>Nicolas CARPi</a></p>";
-echo "Page generated in ".round((microtime(true) - $start), 5)." seconds";
-// show debug info only to admins
-if (isset($_SESSION['auth']) && get_config('debug') == 1 && $_SESSION['is_admin'] == 1) {
-    echo "Session array : ";
-    echo '<pre>'.var_dump($_SESSION).'</pre>';
-    echo "<br>";
-    echo "Cookie : ";
-    echo '<pre>'.var_dump($_COOKIE).'</pre>';
-    echo "<br>";
-}
-?>
-<br>
-<a href='https://twitter.com/elabftw'>
-<img src='img/twitter.png' alt='twitter' title='Follow eLabFTW on Twitter !'>
-</a>
- <a href='https://github.com/NicolasCARPi/elabftw'>
-<img src='img/github.png' alt='github' title='eLabFTW on GitHub'>
-</a>
-</p>
-</footer>
-<script src="js/jquery-pageslide/jquery.pageslide.min.js"></script>
+<!-- advanced search div -->
+<script>
+    $('#adv_search').hide();
+$('#big_search_input').click(function() {
+    $('#adv_search').show();
+});
+</script>
 <?php
 if (isset($_SESSION['auth'])) {
     // show TODOlist
@@ -72,6 +88,7 @@ if (isset($_SESSION['auth'])) {
     </script>";
 }
 ?>
+
 </body>
 </html>
 

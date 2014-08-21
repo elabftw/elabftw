@@ -94,3 +94,71 @@ echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."<
 
 <body>
 <section id="container">
+
+<?php
+if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
+?>
+<nav>
+<?php
+    if ($page_title === 'Database') {
+        $action_target = 'database.php';
+    } else {
+        $action_target = 'experiments.php';
+    }
+?>
+    <form id='big_search' method='get' action='<?php echo $action_target;?>'>
+    <input id='big_search_input' type='search' name='q' size='50' value='<?php
+    if (isset($_GET['q'])) {
+        echo filter_var($_GET['q'], FILTER_SANITIZE_STRING);
+    }
+    ?>' /><div id='adv_search'><a href='search.php'><img src='img/arrow-right-white.png' alt='' />Advanced search</a></div>
+    </form>
+<span class='navleft'>
+    <a href='index.php'>elab<span class='strong'>FTW</span></a>
+    <a href="experiments.php?mode=show"
+    <?php
+    if ($page_title == 'Experiments') {
+        echo " class='selected'";
+    }?>
+>Experiments</a>
+    <a href="database.php?mode=show"
+    <?php
+    if ($page_title == 'Database') {
+        echo " class='selected'";
+    }?>
+    >Database</a>
+    <a href="team.php"
+    <?php
+    if ($page_title == 'Team') {
+        echo " class='selected'";
+    }?>
+    >Team</a>
+    <?php
+    echo "<a href='".get_team_config('link_href')."' target='_blank'>".get_team_config('link_name')."</a></span>";
+    
+    ?>
+    </nav>
+<?php
+} else {
+    echo "<nav><span class='navleft'><a href='index.php'>elab<strong>FTW</strong></a></span></nav>";
+}
+?>
+<div id='real_container'>
+<?php
+if (isset($_SESSION['auth'])) {
+?>
+<span style='float:right;text-align:right;'>
+    Logged in as <a href='profile.php' title='Profile'><?php echo $_SESSION['username'];?></a><br>
+    <a href='ucp.php'><img src='img/settings.png' alt='Settings' title='Settings' /></a> | 
+    <a href='logout.php'><img src='img/logout.png' alt='' title='Logout' /></a>
+</span>
+<?php
+}
+?>
+<noscript><!-- show warning if javascript is disabled -->
+<div class='infobox messagebox'>
+    <p><strong>Javascript is disabled.</strong> Please enable Javascript to view this site in all its glory. Thank You.</p>
+</div>
+</noscript>
+<!-- TITLE -->
+<h2><?php echo $page_title;?></h2>

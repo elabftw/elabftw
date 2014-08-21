@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
 
 // TEAM CONFIGURATION FORM COMING FROM SYSCONFIG.PHP
 // ADD A NEW TEAM
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team']) && $_POST['new_team'] != '' && $_POST['new_team'] != ' ') {
     $new_team_name = filter_var($_POST['new_team'], FILTER_SANITIZE_STRING);
     $sql = 'INSERT INTO teams (team_name, deletable_xp, link_name, link_href) VALUES (:team_name, :deletable_xp, :link_name, :link_href)';
     $req = $pdo->prepare($sql);
@@ -169,28 +169,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team'])) {
         header('Location: sysconfig.php');
         exit;
     } else {
-        $errors_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $errors_arr[] = 'There was a problem (errorId : 42). Please report a bug if you think this is one.';
         $_SESSION['errors'] = $errors_arr;
         header('Location: sysconfig.php');
         exit;
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST'
-    && isset($_POST['edit_team'])
-    && isset($_POST['team_id'])
-    && is_pos_int($_POST['team_id'])) {
 
-    $team_id = $_POST['team_id'];
-    $team_newname = filter_var($_POST['edit_team_name'], FILTER_SANITIZE_STRING);
-    $sql = 'UPDATE teams SET (team_name) VALUES (:team_name) WHERE team_id = :team_id';
-    $req = $pdo->$prepare($sql);
-    $req->bindParam(':team_id', $_POST['team_id'], PDO::PARAM_INT);
-    $req->bindParam(':team_name', $team_newname, PDO::PARAM_STR);
-    $result = $req->execute();
+// SERVER SETTINGS
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
 
-    if ($result) {
-        $infos_arr[] = 'Team edited successfully.';
+    if ($_POST['debug'] == 1) {
+        $debug = 1;
+    } else {
+        $debug = 0;
+    }
+
+    if (isset($_POST['proxy'])) {
+        $proxy = filter_var($_POST['proxy'], FILTER_SANITIZE_STRING);
+    }
+
+    if (isset($_POST['path'])) {
+        $path = filter_var($_POST['path'], FILTER_SANITIZE_STRING);
+    }
+
+    // SQL
+    $updates = array(
+        'debug' => $debug,
+        'proxy' => $proxy,
+        'path' => $path
+    );
+
+    if (update_config($updates)) {
+        $infos_arr[] = 'Configuration updated successfully.';
         $_SESSION['infos'] = $infos_arr;
         header('Location: sysconfig.php');
         exit;
@@ -200,27 +212,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'
         header('Location: sysconfig.php');
         exit;
     }
-}
+} // END SERVER SETTINGS
 
+// TIMESTAMP CONFIG
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {
 
-// MAIN CONFIGURATION FORM COMING FROM SYSCONFIG.PHP (with form_key)
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
-    // Check the form_key
-    if (!isset($_POST['form_key']) || !$formKey->validate()) {
-        // form key is invalid
-        die('The form key is invalid. Please retry.');
-    }
-
-    if ($_POST['debug'] == 1) {
-        $debug = 1;
+    if ($_POST['stampshare'] == 1) {
+        $stampshare = 1;
     } else {
-        $debug = 0;
-    }
-    if (isset($_POST['path'])) {
-        $path = filter_var($_POST['path'], FILTER_SANITIZE_STRING);
-    }
-    if (isset($_POST['proxy'])) {
-        $proxy = filter_var($_POST['proxy'], FILTER_SANITIZE_STRING);
+        $stampshare = 0;
     }
     if (isset($_POST['stamplogin'])) {
         $stamplogin = filter_var($_POST['stamplogin'], FILTER_VALIDATE_EMAIL);
@@ -228,11 +228,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
     if (isset($_POST['stamppass'])) {
         $stamppass = filter_var($_POST['stamppass'], FILTER_SANITIZE_STRING);
     }
-    if ($_POST['stampshare'] == 1) {
-        $stampshare = 1;
+
+    // SQL
+    $updates = array(
+        'stampshare' => $stampshare,
+        'stamplogin' => $stamplogin,
+        'stamppass' => $stamppass
+    );
+
+    if (update_config($updates)) {
+        $infos_arr[] = 'Configuration updated successfully.';
+        $_SESSION['infos'] = $infos_arr;
+        header('Location: sysconfig.php');
+        exit;
     } else {
-        $stampshare = 0;
+        $errors_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $_SESSION['errors'] = $errors_arr;
+        header('Location: sysconfig.php');
+        exit;
     }
+} // END TIMESTAMP CONFIG
+
+// SECURITY
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['admin_validate'])) {
+
     if ($_POST['admin_validate'] == 1) {
         $admin_validate = 1;
     } else {
@@ -244,6 +263,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
     if (isset($_POST['ban_time'])) {
         $ban_time = filter_var($_POST['ban_time'], FILTER_SANITIZE_STRING);
     }
+
+    // SQL
+    $updates = array(
+        'admin_validate' => $admin_validate,
+        'login_tries' => $login_tries,
+        'ban_time' => $ban_time
+    );
+
+    if (update_config($updates)) {
+        $infos_arr[] = 'Configuration updated successfully.';
+        $_SESSION['infos'] = $infos_arr;
+        header('Location: sysconfig.php');
+        exit;
+    } else {
+        $errors_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $_SESSION['errors'] = $errors_arr;
+        header('Location: sysconfig.php');
+        exit;
+    }
+} // END SECURITY
+
+// EMAIL
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['smtp_address'])) {
+
     if (isset($_POST['smtp_address'])) {
         $smtp_address = filter_var($_POST['smtp_address'], FILTER_SANITIZE_STRING);
     }
@@ -260,30 +303,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
         $smtp_password = filter_var($_POST['smtp_password'], FILTER_SANITIZE_STRING);
     }
 
-    // build request array
+    // SQL
     $updates = array(
-        'debug' => $debug,
-        'path' => $path,
-        'proxy' => $proxy,
-        'stamplogin' => $stamplogin,
-        'stamppass' => $stamppass,
-        'stampshare' => $stampshare,
-        'admin_validate' => $admin_validate,
-        'login_tries' => $login_tries,
-        'ban_time' => $ban_time,
         'smtp_address' => $smtp_address,
         'smtp_encryption' => $smtp_encryption,
         'smtp_port' => $smtp_port,
         'smtp_username' => $smtp_username,
         'smtp_password' => $smtp_password
     );
-    $values = array();
-    foreach ($updates as $name => $value) {
-        $sql = "UPDATE config SET conf_value = '".$value."' WHERE conf_name = '".$name."';";
-        $req = $pdo->prepare($sql);
-        $result = $req->execute();
-    }
-    if ($result) {
+
+    if (update_config($updates)) {
         $infos_arr[] = 'Configuration updated successfully.';
         $_SESSION['infos'] = $infos_arr;
         header('Location: sysconfig.php');
@@ -294,8 +323,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
         header('Location: sysconfig.php');
         exit;
     }
-}
 
+} // END EMAIL
 
 // TEAM CONFIGURATION COMING FROM ADMIN.PHP
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
@@ -352,7 +381,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
     }
     if ($errflag) {
         $_SESSION['errors'] = $msg_arr;
-        header("location: admin.php#tabs-2");
+        header("location: admin.php");
         exit;
     }
 
@@ -430,7 +459,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
         if (empty($errors_arr)) {
             $infos_arr[] = 'User infos updated successfully.';
             $_SESSION['infos'] = $infos_arr;
-            header('Location: admin.php#tabs-2');
+            header('Location: admin.php');
             exit;
         } else {
             header('Location: admin.php');
@@ -481,7 +510,7 @@ if (isset($_POST['status_name']) && is_pos_int($_POST['status_id'])) {
     if ($result) {
         $infos_arr[] = 'Status updated successfully.';
         $_SESSION['infos'] = $infos_arr;
-        header('Location: admin.php#tabs-3');
+        header('Location: admin.php');
         exit;
     } else { //sql fail
         $infos_arr[] = 'There was a problem in the SQL request. Report a bug !';
@@ -506,7 +535,7 @@ if (isset($_POST['new_status_name'])) {
     if ($result) {
         $infos_arr[] = 'New status added successfully.';
         $_SESSION['infos'] = $infos_arr;
-        header('Location: admin.php#tabs-3');
+        header('Location: admin.php');
         exit;
     } else { //sql fail
         $infos_arr[] = 'There was a problem in the SQL request. Report a bug !';
@@ -540,7 +569,7 @@ if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
     if ($result) {
         $infos_arr[] = 'New item category updated successfully.';
         $_SESSION['infos'] = $infos_arr;
-        header('Location: admin.php#tabs-4');
+        header('Location: admin.php');
         exit;
     } else { //sql fail
         $infos_arr[] = 'There was a problem in the SQL request. Report a bug !';
@@ -555,7 +584,7 @@ if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
     if (strlen($item_type_name) < 1) {
         $infos_arr[] = 'You need to put a title !';
         $_SESSION['errors'] = $infos_arr;
-        header('Location: admin.php#tabs-4');
+        header('Location: admin.php');
         exit;
     }
 
@@ -573,7 +602,7 @@ if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
     if ($result) {
         $infos_arr[] = 'New item category added successfully.';
         $_SESSION['infos'] = $infos_arr;
-        header('Location: admin.php#tabs-4');
+        header('Location: admin.php');
         exit;
     } else { //sql fail
         $infos_arr[] = 'There was a problem in the SQL request. Report a bug !';
@@ -633,7 +662,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     // Check for errors and redirect if there is one
     if ($errflag) {
         $_SESSION['errors'] = $msg_arr;
-        header("location: admin.php#tabs-2");
+        header("location: admin.php");
         exit;
     }
 
@@ -665,7 +694,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     $req->execute();
     $infos_arr[] = 'Everything was purged successfully.';
     $_SESSION['infos'] = $infos_arr;
-    header('Location: admin.php#tabs-2');
+    header('Location: admin.php');
     exit;
 }
 // DEFAULT EXPERIMENT TEMPLATE
@@ -684,7 +713,7 @@ if (isset($_POST['default_exp_tpl'])) {
     if ($result) {
         $infos_arr[] = 'Default experiment template edited successfully.';
         $_SESSION['infos'] = $infos_arr;
-        header('Location: admin.php#tabs-5');
+        header('Location: admin.php');
         exit;
     } else { //sql fail
         $infos_arr[] = 'There was a problem in the SQL request. Report a bug !';

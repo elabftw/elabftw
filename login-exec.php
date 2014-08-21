@@ -40,7 +40,7 @@ $errflag = false;
 // Check the form_key
 if (!isset($_POST['form_key']) || !$formKey->validate()) {
     // form key is invalid
-    $msg_arr[] = 'The form key is invalid !';
+    $msg_arr[] = 'Form key invalid: please resubmit the form.';
     $errflag = true;
 }
 

@@ -27,10 +27,9 @@ if (!isset($_SESSION)) {
     session_start();
 }
 $page_title = 'Login';
-require_once 'inc/head.php';
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
-require_once 'inc/menu.php';
+require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 // formkey stuff
 require_once('lib/classes/formkey.class.php');
@@ -114,32 +113,29 @@ if (!checkCookiesEnabled()) {
 }
 </script>
 
-<section class='center'>
+    <menu class='border' style='color:#29AEB9'>Note : you need cookies enabled to log in.</menu>
+<section class='center loginform'>
     <!-- Login form -->
     <form method="post" action="login-exec.php" autocomplete="off">
-        <!-- form key -->
-        <?php $formKey->output_formkey(); ?>
-        <fieldset>
-            <legend>Login :</legend>
-                <p>
-                    <label for="username">Username</label>
-                    <input name="username" type="text" id="username" />
-                </p>
-                <p>
-                    <label for="password">Password</label>
-                    <input name="password" type="password" id="password" />
-                </p>
-          <button type="submit" class='button' name="Submit">Log in</button>
-        </fieldset>
+        <h2>Sign in to your account</h2>
+        <p>
+            <label class='block' for="username">Username</label>
+            <input name="username" type="text" required /><br>
+            <label class='block' for="password">Password</label>
+            <input name="password" type="password" required /><br>
+            <!-- form key -->
+            <?php $formKey->output_formkey(); ?>
+        </p>
+        <div id='loginButtonDiv'>
+        <button type="submit" class='button' name="Submit">Login</button>
+        </div>
     </form>
-    <p>Note : you need cookies enabled to log in.<br />
-    Don't have an account ? <a href='register.php'>Register</a> now !<br />
+    <p>Don't have an account ? <a href='register.php'>Register</a> now !<br />
     Lost your password ? <a href='#' class='trigger'>Reset</a> it !</p>
     <div class='toggle_container'>
-<hr>
     <form name='resetPass' method='post' action='reset-pass.php'>
-    <input placeholder='Enter your email address' name='email' type='email' />
-    <button type="submit" name="Submit">Send new password</button>
+    <input placeholder='Enter your email address' name='email' type='email' required />
+    <button class='button' type="submit" name="Submit">Send new password</button>
     </form>
     </div>
 </section>

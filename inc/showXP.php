@@ -27,47 +27,41 @@ $load_more_button = "<div class='center'>
         <button class='button' id='loadButton'>Load more</button>
         </div>";
 ?>
-<div id='submenu'>
-    <a href="create_item.php?type=exp"><img src="img/notepad_add.png" alt="" /> Create experiment</a> | 
-    <a href='#' class='trigger'><img src="img/duplicate.png" alt="" /> Create from template</a> | 
-<?php
-// 'List all' dropdown menu
-$sql = "SELECT id, name FROM status WHERE team = :team_id";
-$req = $pdo->prepare($sql);
-$req->execute(array(
-    'team_id' => $_SESSION['team_id']
-));
+<menu class='border'>
+    <a href="create_item.php?type=exp"><img src="img/add.png" alt="" /> Create experiment</a> | 
+    <a href='#' class='trigger'><img src="img/add-template.png" alt="" /> Create from template</a>
 
-echo "<img src='img/search.png' alt='search' /> List all <select onchange=go_url(this.value)><option value=''>--------</option>";
-while ($status = $req->fetch()) {
-    echo "<option value='search.php?type=experiments&status=".$status['id']."'>";
-    echo $status['name']."</option>";
-}
-?>
-</select> | 
-    <form id='big_search' method='get' action='experiments.php'>
-    <input id='big_search_input' type='search' name='q' size='50' placeholder='Search...' value='<?php
-if (isset($_GET['q'])) {
-    echo filter_var($_GET['q'], FILTER_SANITIZE_STRING);
-}
-?>' />
-    </form>
-</div><!-- end submenu -->
+    <!-- 'FILTER STATUS' dropdown menu -->
+    <span class='align_right'>
+    <select onchange=go_url(this.value)><option value=''>FILTER STATUS</option>
+    <?php
+    $sql = "SELECT id, name FROM status WHERE team = :team_id";
+    $req = $pdo->prepare($sql);
+    $req->execute(array(
+        'team_id' => $_SESSION['team_id']
+    ));
+    while ($status = $req->fetch()) {
+        echo "<option value='search.php?type=experiments&status=".$status['id']."'>";
+        echo $status['name']."</option>";
+    }
+    ?>
+    </select></span>
+</menu>
+
+<!-- TEMPLATE CONTAINER -->
 <div class='toggle_container'><ul>
 <?php // SQL to get user's templates
 $sql = "SELECT id, name FROM experiments_templates WHERE userid = :userid";
 $tplreq = $pdo->prepare($sql);
-$tplreq->execute(array(
-    'userid' => $_SESSION['userid']
-));
-$count_tpl = $tplreq->rowCount();
-if ($count_tpl > 0) {
+$tplreq->bindParam(':userid', $_SESSION['userid']);
+$tplreq->execute();
+if ($tplreq->rowCount() > 0) {
     while ($tpl = $tplreq->fetch()) {
         echo "<li class='inline'><a href='create_item.php?type=exp&tpl=".$tpl['id']."' class='templates'>".$tpl['name']."</a></li> ";
     }
 } else { // user has no templates
-    $message = "<strong>You do not have any templates yet.</strong> Go to <a href='ucp.php'>your control panel</a> to make one !";
-    display_message('info', $message);
+    $message = "<strong>You do not have any templates yet.</strong> Go to <a href='ucp.php?tab=3'>your control panel</a> to make one !";
+    display_message('info_nocross', $message);
 }
 ?>
 </ul></div><br />
@@ -101,9 +95,9 @@ if (isset($_GET['q'])) { // if there is a query
         $unit = 'milliseconds';
     }
     if (count($results_arr) > 1) {
-        echo "<p class='results_and_time'>".count($results_arr)." results ($total_time $unit)</p>";
+        echo "<p class='smallgray'>".count($results_arr)." results ($total_time $unit)</p>";
     } elseif (count($results_arr) == 1) {
-        echo "<p class='results_and_time'>1 result ($total_time $unit)</p>";
+        echo "<p class='smallgray'>1 result ($total_time $unit)</p>";
     } else {
         $message = 'No experiments were found.';
         display_message('error', $message);
@@ -150,9 +144,9 @@ if (isset($_GET['q'])) { // if there is a query
         $unit = 'milliseconds';
     }
     if (count($results_arr) > 1) {
-        echo "<p class='results_and_time'>".count($results_arr)." results ($total_time $unit)</p>";
+        echo "<p class='smallgray'>".count($results_arr)." results ($total_time $unit)</p>";
     } elseif (count($results_arr) == 1) {
-        echo "<p class='results_and_time'>1 result ($total_time $unit)</p>";
+        echo "<p class='smallgray'>1 result ($total_time $unit)</p>";
     } else {
         $message = 'No experiments are linked with this item.';
         display_message('error', $message);
@@ -197,9 +191,9 @@ if (isset($_GET['q'])) { // if there is a query
         $unit = 'milliseconds';
     }
     if (count($results_arr) > 1) {
-        echo "<p class='results_and_time'>".count($results_arr)." results ($total_time $unit)</p>";
+        echo "<p class='smallgray'>".count($results_arr)." results ($total_time $unit)</p>";
     } elseif (count($results_arr) == 1) {
-        echo "<p class='results_and_time'>1 result ($total_time $unit)</p>";
+        echo "<p class='smallgray'>1 result ($total_time $unit)</p>";
     } else {
         $message = 'No experiments were found.';
         display_message('error', $message);
@@ -233,9 +227,9 @@ if (isset($_GET['q'])) { // if there is a query
     // If there are no experiments, display a little message
     if ($count == 0) {
         $message = "<strong>Welcome to eLabFTW.</strong> 
-            Click the <img src='img/notepad_add.png' alt='Create experiment' />
+            Click the <img src='img/add.png' alt='Create experiment' />
             <a href='create_item.php?type=exp'>Create experiment</a> button to get started.";
-        display_message('info', $message);
+        display_message('info_nocross', $message);
     } else {
         while ($experiments = $req->fetch()) {
             $results_arr[] = $experiments['id'];

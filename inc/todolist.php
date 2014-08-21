@@ -34,7 +34,7 @@
         <div id="container">
             <form id="todo-form">
                 <input id="todo" type="text" />
-                <input id="submit" type="submit" value="TODOfy">
+                <input id="submit" type="submit" class='button' value="TODOfy">
             </form>
             <ul id="show-items"></ul>
             <a href="#" id="clear-all">Clear All</a>
@@ -44,4 +44,3 @@
         <script src="../js/todolist.js"></script>
     </body>
 </html>
-

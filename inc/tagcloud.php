@@ -23,6 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+echo "<section class='box'>";
 echo "<img src='img/cloud.png' alt='' /> <h4>TAG CLOUD</h4>";
 echo "<div id='tagcloud'>";
 // 1. Create an array with tag -> count
@@ -81,3 +82,5 @@ if ($count > 10) {
 } else {
     echo 'Not enough tags to make a tagcloud.';
 }// end fix division by zero
+?>
+</section>

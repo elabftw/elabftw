@@ -104,6 +104,7 @@ input, select {
     color:#797979;
     border-radius: 10px;
     border: 1px #e3e3e3 solid;
+    margin:5px 0;
 }
 
 
@@ -170,9 +171,12 @@ h3 {
 }
 
 h4 {
+    font-size: 140%;
     display: inline;
+    font-weight:normal;
     color: #797979;
 }
+
 /* paragraphs */
 p {
     color:#797979;
@@ -361,6 +365,12 @@ menu.border a:hover {
     margin-top: 30px;
 }
 
+.submitButtonDiv {
+    margin-top: 30px;
+    text-align:center;
+}
+
+
 /* REGISTER */
 form#regform p.two-columns label {
     text-align:left;
@@ -490,6 +500,10 @@ textarea {
     margin-top: 10px;
     border-radius: 5px;
     padding: 20px;
+}
+
+.box section {
+    margin-bottom:15px;
 }
 
 
@@ -664,7 +678,8 @@ p.title {
 /* ucp.php */
 
 #currpass {
-    background-color: #FF8080;
+    background-color: #c4f9ff;
+    border: 1px solid #29AEB9;
 }
 
 /* TEMPLATES */

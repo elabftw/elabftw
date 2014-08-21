@@ -46,23 +46,39 @@ $users = $req->fetch();
 </menu>
 
 <!-- *********************** -->
-<div class='box divhandle' id='tab1div'>
+<div class='divhandle' id='tab1div'>
+    <div class='box'>
 
     <form method="post" action="ucp-exec.php">
+        <div class='two-columns'>
+        <section style='height:150px'>
+        <h4>Modify your personal informations</h4>
         <label class='block' for='currpass'>Enter your current password to change personnal infos</label>
         <input id='currpass' name="currpass" type="password" required />
-        <label class='block' for='newpass'>New password</label>
-        <input name="newpass" type="password" />
-        <label class='block' for='cnewpass'>Confirm new password</label>
-        <input name="cnewpass" type="password" />
-        <label class='block' for='email'>Change Email</label>
-        <input name="email" type="email" value='<?php echo $users['email'];?>' cols='20' rows='1' />
-        <label class='block' for='username'>Username</label>
-        <input name="username" value='<?php echo $users['username'];?>' cols='20' rows='1' />
+        </section>
+
+        <section>
+        <h4>Modify your identity</h4>
         <label class='block' for='firstname'>Firstname</label>
         <input name="firstname" value='<?php echo $users['firstname'];?>' cols='20' rows='1' />
         <label class='block' for='lastname'>Lastname</label>
         <input name="lastname" value='<?php echo $users['lastname'];?>' cols='20' rows='1' />
+        <label class='block' for='username'>Username</label>
+        <input name="username" value='<?php echo $users['username'];?>' cols='20' rows='1' />
+        <label class='block' for='email'>Email</label>
+        <input name="email" type="email" value='<?php echo $users['email'];?>' cols='20' rows='1' />
+        </section>
+
+        <section>
+        <h4>Modify your password</h4>
+        <label class='block' for='newpass'>New password</label>
+        <input name="newpass" type="password" />
+        <label class='block' for='cnewpass'>Confirm new password</label>
+        <input name="cnewpass" type="password" />
+        </section>
+
+        <section>
+        <h4>Modify your contact information</h4>
         <label class='block' for='phone'>Phone</label>
         <input name="phone" value='<?php echo $users['phone'];?>' cols='20' rows='1' />
         <label class='block' for='cellphone'>Cellphone</label>
@@ -71,7 +87,11 @@ $users = $req->fetch();
         <input name="skype" value='<?php echo $users['skype'];?>' cols='20' rows='1' />
         <label class='block' for='website'>Website</label>
         <input name="website" type="url" value='<?php echo $users['website'];?>' cols='20' rows='1' />
-        <div class='center'>
+        </section>
+        </div>
+
+    </div>
+        <div class='submitButtonDiv'>
             <button type="submit" name="Submit" class='button'>Update profile</button>
         </div>
     </form>

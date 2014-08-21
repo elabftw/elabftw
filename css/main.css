@@ -199,13 +199,17 @@ nav {
 nav .navleft a {
     font-size:130%;
     margin:10px;
-    color:white;
+    color: #5a5a5a;
     text-decoration: none;
+}
+#logonav {
+    color:white;
 }
 
 nav .navleft a.selected {
     border-bottom:6px #29AEB9 solid;
     padding-bottom:13px;
+    color:white;
 }
 
 
@@ -230,6 +234,7 @@ form#big_search input {
     border-radius: 20px;
     width:40%;
     padding: 10px 30px 10px 10px;
+    margin: 13px 10px 0 0;
     transition:width 1s;
 }
 form#big_search input:focus {

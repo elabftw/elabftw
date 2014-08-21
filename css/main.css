@@ -199,13 +199,14 @@ nav {
 nav .navleft a {
     font-size:130%;
     margin:10px;
-    color:white;
+    color: #5a5a5a;
     text-decoration: none;
 }
 
 nav .navleft a.selected {
     border-bottom:6px #29AEB9 solid;
     padding-bottom:13px;
+    color:white;
 }
 
 

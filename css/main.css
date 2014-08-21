@@ -409,17 +409,16 @@ section.item div.txt {
 
 /* prettier tables in mceditable area */
 div.txt table, div.txt table td {
-    border: 1px solid black;
+    border: 1px solid #797979;
 }
 
 table td {
     padding: 5px;
-    margin: 5px;
 }
 
 table th {
-    background-color:#797979;
-    color: #dcdddc;
+    background-color:#dcdddc;
+    color: #797979;
     text-transform: uppercase;
     font-size: 90%;
     padding: 5px;
@@ -427,6 +426,14 @@ table th {
     width: 150px;
 }
 
+/* color one row every other row */
+tr:nth-child(even) {
+        background-color: #fff;
+}
+
+tr:nth-child(odd) {
+        background-color: #f2f2f2;
+}
 /* SEARCH.PHP */
 #searchDiv {
     border: 1px solid #e3e3e3;

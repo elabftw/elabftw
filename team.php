@@ -35,7 +35,6 @@ require_once('inc/info_box.php');
 <li class='tabhandle' id='tab3'>Tips and tricks</li>
 </ul>
 </div>
-<div id='team'>
 <!-- *********************** -->
 <div class='divhandle' id='tab1div'>
 <?php display_message('info_nocross', "You belong to the ".get_team_config('team_name')." team.");?>
@@ -107,8 +106,6 @@ $totals = $count_req->fetch(PDO::FETCH_ASSOC);
             <li class='tip'>Once timestamped, an experiment cannot be unlocked or modified. Only comments can be added.</li>
         </ul>
     </p>
-</div>
-
 </div>
 
 <script>

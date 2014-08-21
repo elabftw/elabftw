@@ -35,14 +35,14 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
 <script src="js/jquery.complexify.js/jquery.complexify.min.js"></script>
 <script src="js/jquery.complexify.js/jquery.complexify.banlist.js"></script>
 
-<span class='backdiv'><a href='login.php'><img src='img/arrow-left-blue.png' alt='' /> back to login page</a></span>
+<menu class='border'><a href='login.php'><img src='img/arrow-left-blue.png' alt='' /> back to login page</a></menu>
 <section class='center'>
     <!-- Register form -->
     <form id='regform' method="post" class='loginform' autocomplete="off" action="register-exec.php">
         <h2>Create your account</h2>
         <div style='margin:auto;width:50%'>
         <p class='two-columns'>
-            <label for="team">Team</label>
+            <label class='block' for="team">Team</label>
             <select name='team' id='team' required>
                 <option value=''>------- Select a team -------</option>
                 <?php
@@ -54,20 +54,20 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
                 }
                 ?>
             </select>
-            <label for="username">Username</label>
+            <label class='block' for="username">Username</label>
             <input name="username" type="text" id="username" required />
-            <label for="email">Email</label>
+            <label class='block' for="email">Email</label>
             <input name="email" type="email" id="email" required />
-            <label for="firstname">Firstname</label>
+            <label class='block' for="firstname">Firstname</label>
             <input name="firstname" type="text" id="firstname" required />
             <!-- add two br to fix layout in chrome --><br><br>
-            <label for="lastname">Lastname</label>
+            <label class='block' for="lastname">Lastname</label>
             <input name="lastname" type="text" id="lastname" required />
-            <label for="password">Password</label>
+            <label class='block' for="password">Password</label>
             <input name="password" type="password" title='8 characters minimum' id="password" pattern=".{8,}" required />
-            <label for="cpassword">Confirm password</label>
+            <label class='block' for="cpassword">Confirm password</label>
             <input name="cpassword" type="password" id="cpassword" pattern=".{8,}" required />
-            <label for='comlexity'>Password complexity</label>
+            <label class='block' for='comlexity'>Password complexity</label>
             <input id="complexity" disabled />
         </p>
     </div>

@@ -28,13 +28,13 @@ $page_title= 'Team';
 require_once('inc/head.php');
 require_once('inc/info_box.php');
 ?>
-<div class='menu'>
+<menu>
 <ul>
 <li class='tabhandle' id='tab1'>Members</li>
 <li class='tabhandle' id='tab2'>Statistics</li>
 <li class='tabhandle' id='tab3'>Tips and tricks</li>
 </ul>
-</div>
+</menu>
 <!-- *********************** -->
 <div class='divhandle' id='tab1div'>
 <?php display_message('info_nocross', "You belong to the ".get_team_config('team_name')." team.");?>

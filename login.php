@@ -113,15 +113,15 @@ if (!checkCookiesEnabled()) {
 }
 </script>
 
-    <p class='backdiv'>Note : you need cookies enabled to log in.</p>
+    <menu class='border' style='color:#29AEB9'>Note : you need cookies enabled to log in.</menu>
 <section class='center loginform'>
     <!-- Login form -->
     <form method="post" action="login-exec.php" autocomplete="off">
         <h2>Sign in to your account</h2>
         <p>
-            <label for="username">Username</label>
+            <label class='block' for="username">Username</label>
             <input name="username" type="text" required /><br>
-            <label for="password">Password</label>
+            <label class='block' for="password">Password</label>
             <input name="password" type="password" required /><br>
             <!-- form key -->
             <?php $formKey->output_formkey(); ?>

@@ -35,7 +35,7 @@ require_once 'inc/info_box.php';
 require_once 'lib/classes/formkey.class.php';
 $formKey = new formKey();
 ?>
-<div class='menu'>
+<menu>
     <ul>
         <li class='tabhandle' id='tab1'>Teams</li>
         <li class='tabhandle' id='tab2'>Server</li>
@@ -43,7 +43,7 @@ $formKey = new formKey();
         <li class='tabhandle' id='tab4'>Security</li>
         <li class='tabhandle' id='tab5'>Email</li>
     </ul>
-</div>
+</menu>
 
 
 <!-- TAB 1 -->

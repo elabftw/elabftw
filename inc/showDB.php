@@ -28,35 +28,36 @@ if (isset($_SESSION['prefs']['display'])) {
 } else {
     $display = 'default';
 }
-?>
-<div id='submenu'>
-<?php // SQL to get items names
+// SQL to get items names
 $sql = "SELECT * FROM items_types WHERE team = :team";
 $req = $pdo->prepare($sql);
 $req->execute(array(
     'team' => $_SESSION['team_id']
 ));
-
-// 'Create new' dropdown menu
-echo "<select class='dropdown' onchange=go_url(this.value)><option value=''>CREATE NEW</option>";
-while ($items_types = $req->fetch()) {
-    echo "<option value='create_item.php?type=".$items_types['id']."' name='type' ";
-    echo ">".$items_types['name']."</option>";
-}
-echo "</select>";
-
-// 'List all' dropdown menu
-// we do the request again to get the list again
-$req->execute();
-echo "<span style='float:right'><select class='dropdown' onchange=go_url(this.value)><option value=''>FILTER TYPE</option>";
-while ($items_types = $req->fetch()) {
-    echo "<option value='search.php?type=".$items_types['id']."' name='type' ";
-    echo ">".$items_types['name']."</option>";
-}
 ?>
-</select>
-</div>
-<!-- end submenu -->
+
+<menu class='border'>
+
+    <?php
+    // 'Create new' dropdown menu
+    echo "<select onchange=go_url(this.value)><option value=''>CREATE NEW</option>";
+    while ($items_types = $req->fetch()) {
+        echo "<option value='create_item.php?type=".$items_types['id']."' name='type' ";
+        echo ">".$items_types['name']."</option>";
+    }
+    echo "</select>";
+
+    // we do the request again to get the list again
+    $req->execute();
+    echo "<span class='align_right'><select onchange=go_url(this.value)><option value=''>FILTER TYPE</option>";
+    while ($items_types = $req->fetch()) {
+        echo "<option value='search.php?type=".$items_types['id']."' name='type' ";
+        echo ">".$items_types['name']."</option>";
+    }
+    ?>
+    </select>
+</menu>
+<!-- end menu -->
 
 <?php
 // SQL for showDB

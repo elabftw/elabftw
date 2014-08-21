@@ -25,18 +25,16 @@
 ********************************************************************************/
 
 /*
- * 343434 => very dark gray (main nav bg)
- * 797979 => lightgray
- * #29AEB9 => blue
- * 1F8591 => dark blue
- * C4F9FF => light blue
- * dd1e00 => dark red
- * ffc1b7 => light red
- *
- *
- *
- *
- */
+343434 => very dark gray (main nav bg)
+797979 => gray main text color
+f2f2f2 => very light gray
+dcdddc = > borders gray
+29AEB9 => blue
+1F8591 => dark blue
+C4F9FF => light blue
+dd1e00 => dark red
+ffc1b7 => light red
+*/
 
 
 
@@ -55,6 +53,7 @@ body:before {
     box-shadow: 0px 0px 10px rgba(0,0,0,.8);
 }
 
+/* set background image */
 body {
     background:url(images/bg.png) no-repeat center center fixed;
     -moz-background-size:cover;
@@ -72,12 +71,13 @@ body {
 #real_container {
     padding: 10px 45px;
 }
+
 /* LINKS */
 a {
     color: #29AEB9;
     text-decoration:none;
 }
-a :hover {
+a:hover {
     color:#29AEB9;
     text-decoration:none;
 }
@@ -93,21 +93,24 @@ li.tip:before {
     font-size:120%;
     color: #29AEB9;
 }
+li.inline {
+    display: inline;
+}
 
 /* input and select */
 input, select {
-    padding:10px;
+    padding:7px;
     background-color:#F2F2F2;
     color:#797979;
     border-radius: 10px;
     border: 1px #e3e3e3 solid;
 }
 
-.loginform input, .loginform select {
-    text-align:center;
-}
 
 /* GENERAL */
+.inline {
+    display: inline;
+}
 .center {
     text-align: center;
 }
@@ -128,6 +131,18 @@ input, select {
     font-weight: bold;
 }
 
+hr {
+    margin: 10px 0 10px 0;
+    color: #dcdddc;
+}
+
+img {
+    border: none;
+    position: relative;
+    top: 3px;
+}
+
+/* COLUMNS */
 .three-columns {
     width: 60%;
 }
@@ -141,6 +156,23 @@ input, select {
 .column-right{ float: right; width: 20%; }
 .column-center{ display: inline-block; width: 20%; }
 
+/* TITLES */
+h2 {
+    font-weight:normal;
+    color: #797979;
+    font-size: 30px;
+}
+
+h3 {
+    color: #797979;
+    font-size: 150%;
+    margin: 0 auto 10px auto;
+}
+
+h4 {
+    display: inline;
+    color: #797979;
+}
 /* paragraphs */
 p {
     color:#797979;
@@ -153,90 +185,8 @@ p a {
 label {
     color:#797979;
     font-size:120%;
+    padding-bottom: 5px;
 }
-
-
-/* LOGIN.PHP */
-.loginform {
-    border-top:1px solid #dcdddc;
-    margin-top:20px;
-}
-.loginform label {
-    display:block;
-}
-
-
-form#regform p.two-columns label {
-    text-align:left;
-    padding-left:60px;
-}
-
-
-.loginform p {
-    font-size: 115%;
-}
-
-#loginButtonDiv {
-    border-top: 1px solid #e3e3e3;
-    padding-top:30px;
-    margin-top: 30px;
-}
-
-/* hr */
-hr {
-    margin: 10px 0 10px 0;
-    color: #dcdddc;
-}
-
-li.inline {
-    display: inline;
-}
-
-#body_view {
-    background-color: #f2f2f2;
-}
-
-/* fix the list in the body */
-div.txt ol li {
-    /* !important because there is a list-style-type:none in jquery-ui */
-    list-style-type:decimal !important;
-}
-
-div.txt li {
-    /* !important because there is a list-style-type:none in jquery-ui */
-    list-style-type:square !important;
-}
-
-/* fix for big images uploaded in the text */
-section.item div.txt {
-    overflow:hidden;
-}
-
-/* bigger space to enter experiment */
-.mceditable {
-    height:500px;
-}
-
-/* prettier tables in mceditable area */
-div.txt table, div.txt table td {
-    border: 1px solid black;
-}
-
-table td {
-    padding: 5px;
-    margin: 5px;
-}
-
-table th {
-    background-color:#797979;
-    color: #dcdddc;
-    text-transform: uppercase;
-    font-size: 90%;
-    padding: 5px;
-    text-align:left;
-    width: 150px;
-}
-
 
 /* HEAD */
 
@@ -268,196 +218,6 @@ nav .navleft a:hover {
     -o-transition-duration: 1500ms;
     -ms-transition-duration: 1500ms;
 }
-
-/* submenu */
-#submenu {
-    border-bottom: 1px dotted #CCC;
-    margin-bottom: 15px;
-    padding-bottom: 35px;
-}
-#submenu a {
-    border:1px solid white;
-    border-radius:5px;
-    color:#36b1c0;
-    padding:7px;
-}
-#submenu a:hover {
-    border:1px solid black;
-    border-radius:5px;
-    color: black;
-    -moz-transition-duration: 1500ms;
-    -webkit-transition-duration: 1500ms;
-    -o-transition-duration: 1500ms;
-    -ms-transition-duration: 1500ms;
-}
-
-/* ERROR/INFO message box */
-
-.messagebox {
-    margin: 10px 0;
-    color: #343434;
-    border: 1px #24AEB9 solid;
-    border-radius: 5px;
-    padding: 0 10px;
-}
-
-.messagebox img:hover {
-    opacity: 0.6;
-}
-
-/* fix the links in the error/info messages */
-.messagebox a {
-    color: #343434;
-    text-decoration:underline;
-}
-
-.infobox {
-    background-color: #C4F9FF;
-}
-
-.errorbox {
-    background-color: #ffc1b7;
-    border-color: #dd1e00;
-}
-
-
-/* list all dropdown status list */
-.dropdown {
-    font: 80% 'Lato', Verdana, Arial, Helvetica, sans-serif;
-    background-color: #ccc;
-    color: #000000;
-    padding: 7px;
-    border: none;
-    border-radius: 10px;
-}
-
-
-.biginput {
-    font: 30px 'Lato', Helvetica, Verdana, Arial, sans-serif;
-    text-align:center;
-    margin-left:auto;
-    display:block;
-    margin-right:auto;
-    height: 40px;
-}
-
-/* SEARCH.PHP */
-.searchform {
-    border-top:1px solid #dcdddc;
-    margin-top:20px;
-}
-
-#searchDiv {
-    border: 1px solid #e3e3e3;
-    border-radius: 10px;
-    margin-top: 20px;
-}
-
-/* we need to add a block class, otherwise the search in everyone exp box is messed up */
-label.block {
-    display:block;
-}
-
-.searchform input, .searchform select {
-    margin:10px 0;
-    padding:10px;
-    background-color:#F2F2F2;
-    color:#797979;
-    border-radius: 10px;
-    border: 1px #e3e3e3 solid;
-}
-
-.searchform input#title, .searchform input#body {
-    width: 100%;
-}
-
-.searchform p {
-    font-size: 135%;
-}
-
-
-/* TITLES */
-h2 {
-    font-weight:normal;
-    color: #797979;
-    font-size: 30px;
-}
-
-h3 {
-    color: #797979;
-    font-size: 150%;
-    margin: 0 auto 10px auto;
-}
-
-h4 {
-    display: inline;
-    color: #797979;
-}
-
-.backdiv {
-    text-transform: uppercase;
-    color: #29AEB9;
-    background-color: #fff;
-    border-radius: 25px;
-    font-size: 70%;
-}
-
-.backdiv a {
-    color: #29AEB9;
-}
-
-.backdiv a:hover {
-    opacity: 0.7;
-}
-.inline {
-    display: inline;
-}
-/* MENU */
-
-/* BUTTONS */
-.button {
-    border: none;
-    border-radius: 25px;
-    padding: 10px 20px;
-    text-align: center;
-    color: #FFFFFF;
-    font-size: 11px;
-    font-weight: bold;
-    text-transform: uppercase;
-    background-color: #29AEB9;
-}
-
-.button:hover {
-    background-color: #1F8591;
-}
-
-.button:disabled {
-    background-color: #dcdddc;
-}
-
-/* (sub) MENU */
-.menu {
-    line-height:200%;
-    margin: 30px 0 40px 0;
-}
-.menu .selected {
-    border-bottom:6px #29AEB9 solid;
-    padding-bottom:4px;
-}
-.menu ul {
-    padding-bottom: 2px;
-    border-bottom: 1px solid #dcdddc;
-}
-.menu ul li {
-    display:inline;
-    margin-right: 30px;
-    text-transform: uppercase;
-    font-weight:bold;
-    color: #797979;
-    cursor: pointer;
-}
-/* END MENU */
-
 
 /* search bar in head */
 form#big_search {
@@ -494,14 +254,195 @@ form#big_search input:focus {
     color: #fff;
 }
 
-.innerinnerdiv {
-    margin: auto;
-    position: relative;
-    text-align: right;
-    width: 500px;
+/*  MENU is below main nav */
+menu {
+    line-height:200%;
+    margin: 30px 0 40px 0;
+    padding: 0;
+}
+menu .selected {
+    border-bottom:6px #29AEB9 solid;
+    padding-bottom:4px;
+}
+menu ul {
+    padding-bottom: 2px;
+    border-bottom: 1px solid #dcdddc;
+}
+menu ul li {
+    display:inline;
+    margin-right: 30px;
+    text-transform: uppercase;
+    font-weight:bold;
+    color: #797979;
+    cursor: pointer;
 }
 
-/***********/
+/* MENU with .border is on showXP and showDB */
+
+menu.border {
+    border-bottom: 1px solid #dcdddc;
+    margin-bottom: 15px;
+    padding-bottom: 19px;
+}
+menu.border a {
+    border:1px solid white;
+    border-radius:5px;
+    color:#36b1c0;
+    padding:7px;
+}
+menu.border a:hover {
+    border:1px solid black;
+    border-radius:5px;
+    color: black;
+    -moz-transition-duration: 1500ms;
+    -webkit-transition-duration: 1500ms;
+    -o-transition-duration: 1500ms;
+    -ms-transition-duration: 1500ms;
+}
+
+/* ERROR/INFO message box */
+.messagebox {
+    margin: 10px 0;
+    color: #343434;
+    border: 1px #24AEB9 solid;
+    border-radius: 5px;
+    padding: 0 10px;
+}
+
+.messagebox img:hover {
+    opacity: 0.6;
+}
+
+/* fix the links in the error/info messages */
+.messagebox a {
+    color: #343434;
+    text-decoration:underline;
+}
+
+.infobox {
+    background-color: #C4F9FF;
+}
+
+.errorbox {
+    background-color: #ffc1b7;
+    border-color: #dd1e00;
+}
+
+/* BUTTONS */
+.button {
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    background-color: #29AEB9;
+}
+
+.button:hover {
+    background-color: #1F8591;
+}
+
+.button:disabled {
+    background-color: #dcdddc;
+}
+
+
+
+/* LOGIN.PHP */
+.loginform input, .loginform select {
+    text-align:center;
+}
+#loginButtonDiv {
+    border-top: 1px solid #e3e3e3;
+    padding-top:30px;
+    margin-top: 30px;
+}
+
+/* REGISTER */
+form#regform p.two-columns label {
+    text-align:left;
+    padding-left:60px;
+}
+/* the team name can be long and destroy the view */
+form#regform select {
+    max-width: 240px;
+}
+
+/* body on view mode */
+#body_view {
+    background-color: #f2f2f2;
+}
+
+/* fix the list in the body */
+div.txt ol li {
+    /* !important because there is a list-style-type:none in jquery-ui */
+    list-style-type:decimal !important;
+}
+
+div.txt li {
+    /* !important because there is a list-style-type:none in jquery-ui */
+    list-style-type:square !important;
+}
+
+/* fix for big images uploaded in the text */
+section.item div.txt {
+    overflow:hidden;
+}
+
+/* size of the editable box in edit mode */
+.mceditable {
+    height:500px;
+}
+
+/* prettier tables in mceditable area */
+div.txt table, div.txt table td {
+    border: 1px solid black;
+}
+
+table td {
+    padding: 5px;
+    margin: 5px;
+}
+
+table th {
+    background-color:#797979;
+    color: #dcdddc;
+    text-transform: uppercase;
+    font-size: 90%;
+    padding: 5px;
+    text-align:left;
+    width: 150px;
+}
+
+/* SEARCH.PHP */
+#searchDiv {
+    border: 1px solid #e3e3e3;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+/* we need to add a block class, otherwise the search in everyone exp box is messed up */
+label.block {
+    display:block;
+}
+
+.searchform input, .searchform select {
+    margin:10px 0;
+}
+
+.searchform input#title, .searchform input#body {
+    width: 100%;
+}
+
+.searchform p {
+    font-size: 115%;
+}
+
+
+
 textarea {
     font: 100% 'Lato', Verdana, Arial, Helvetica, sans-serif;
 }
@@ -523,11 +464,6 @@ textarea {
 
 
 
-img {
-    border: none;
-    position: relative;
-    top: 3px;
-}
 
 /* save and go back button */
 #saveButton {
@@ -537,8 +473,6 @@ img {
 }
 
 /* ITEMS */
-
-
 .item {
     border:  1px solid #dcdddc;
     border-radius: 5px;
@@ -728,10 +662,6 @@ p.title {
 }
 
 /* ucp.php */
-
-#ucp_keyboard input {
-    float:right;
-}
 
 #currpass {
     background-color: #FF8080;

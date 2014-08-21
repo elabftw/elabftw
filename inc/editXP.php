@@ -66,7 +66,7 @@ if ($experiment['locked'] == 1) {
 
 // BEGIN CONTENT
 ?>
-<span class='backdiv'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' alt='' /> back to experiments listing</a></span>
+<menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' alt='' /> back to experiments listing</a></menu>
 <section class='box' id='main_section' style='border-left: 6px solid #<?php echo $experiment['color'];?>'>
 <img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','exp', 'experiments.php')" />
 <!-- ADD TAG FORM -->

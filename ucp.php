@@ -37,13 +37,13 @@ $users = $req->fetch();
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
 
-<div class='menu'>
+<menu>
     <ul>
         <li class='tabhandle' id='tab1'>Account</li>
         <li class='tabhandle' id='tab2'>Preferences</li>
         <li class='tabhandle' id='tab3'>Templates</li>
     </ul>
-</div>
+</menu>
 
 <!-- *********************** -->
 <div class='box divhandle' id='tab1div'>

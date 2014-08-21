@@ -31,11 +31,10 @@ require_once 'inc/info_box.php';
 ?>
 
 <!-- Advanced Search page begin -->
-<span class='backdiv'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' alt='' /> back to experiments listing</a></span>
-<section class='searchform'>
-<div id='searchDiv'>
+<menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' alt='' /> back to experiments listing</a></menu>
+<section class='searchform box'>
     <form name="search" method="get" action="search.php">
-        <div style='width:50%;padding-left:30px;'>
+        <div style='width:50%;'>
 
             <p style='display:inline-block;' class='align_right'>
                 <label for'searchonly'>Search only in experiments owned by : </label><br>
@@ -106,7 +105,7 @@ require_once 'inc/info_box.php';
                 ?>'/>
             </p>
         </div>
-        <div style='width:90%;padding-left:30px;'>
+        <div style='width:90%;'>
             <p>
 
 
@@ -122,8 +121,7 @@ require_once 'inc/info_box.php';
                 echo check_body($_GET['body']);
             }
             ?>'/>
-</div>
-        <div style='width:50%;padding-left:30px;'>
+        <div style='width:50%'>
 
         <p style='display:inline-block'>
         <label class='block' for='status'>And status is</label>

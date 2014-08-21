@@ -40,11 +40,11 @@ if (isset($_GET['key']) && strlen($_GET['key']) === 64 && isset($_GET['userid'])
 <section class='center'>
     <form method="post" class='loginform' action="reset-exec.php">
         <p>
-            <label for='passwordtxt'>New password</label>
+            <label class='block' for='passwordtxt'>New password</label>
             <input name="password" type="password" title='8 characters minimum' id="password" pattern=".{8,}" required />
-            <label for='cpasswordtxt'>Type it again</label>
+            <label class='block' for='cpasswordtxt'>Type it again</label>
             <input name="cpassword" type="password" title='8 characters minimum' id="cpassword" pattern=".{8,}" required />
-            <label for='complexity'>Complexity</label>
+            <label class='block' for='complexity'>Complexity</label>
             <input id='complexity' disabled />
 
             <div id="checkPasswordMatchDiv"><p>Passwords do not match !</p></div>

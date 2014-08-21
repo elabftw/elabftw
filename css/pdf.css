@@ -287,31 +287,6 @@ p.title {
 
 /* ucp.php */
 
-#ucp_keyboard input {
-    float:right;
-}
-
-#currpass {
-    background-color: #FF8080;
-}
-
-/* TEMPLATES */
-.templates {
-    border:1px solid black;
-    font-size: 12px;
-    line-height: 300%;
-    padding: 7px;
-}
-
-.txt {
-    background-color:white;
-    border:1px solid #CCC;
-    border-radius: 5px;
-    margin-top: 10px;
-    color:black;
-    font-size: 16px;
-    padding: 5px;
-}
 
 .filediv {
     margin-top:20px;

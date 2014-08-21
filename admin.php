@@ -66,7 +66,7 @@ if ($count > 0) {
 }
 ?>
 
-<div class='menu'>
+<menu>
     <ul>
         <li class='tabhandle' id='tab1'>Team</li>
         <li class='tabhandle' id='tab2'>Users</li>
@@ -75,7 +75,7 @@ if ($count > 0) {
         <li class='tabhandle' id='tab5'>Experiment template</li>
         <li class='tabhandle' id='tab6'>Import CSV</li>
     </ul>
-</div>
+</menu>
 
 <!-- TABS 1 -->
 <div class='divhandle' id='tab1div'>

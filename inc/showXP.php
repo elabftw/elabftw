@@ -27,13 +27,13 @@ $load_more_button = "<div class='center'>
         <button class='button' id='loadButton'>Load more</button>
         </div>";
 ?>
-<div id='submenu'>
+<menu class='border'>
     <a href="create_item.php?type=exp"><img src="img/add.png" alt="" /> Create experiment</a> | 
     <a href='#' class='trigger'><img src="img/add-template.png" alt="" /> Create from template</a>
 
-    <!-- 'List all' dropdown menu -->
-    <span style='float:right'>
-    <select class='dropdown' onchange=go_url(this.value)><option value=''>FILTER STATUS</option>
+    <!-- 'FILTER STATUS' dropdown menu -->
+    <span class='align_right'>
+    <select onchange=go_url(this.value)><option value=''>FILTER STATUS</option>
     <?php
     $sql = "SELECT id, name FROM status WHERE team = :team_id";
     $req = $pdo->prepare($sql);
@@ -46,7 +46,7 @@ $load_more_button = "<div class='center'>
     }
     ?>
     </select></span>
-</div><!-- end submenu -->
+</menu>
 
 <!-- TEMPLATE CONTAINER -->
 <div class='toggle_container'><ul>

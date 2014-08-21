@@ -24,10 +24,10 @@
 *                                                                               *
 ********************************************************************************/
 // Count number of experiments for each status
-// SUCCESS
 // get all status name and id
-$sql = "SELECT * FROM status";
+$sql = "SELECT * FROM status WHERE team = :team";
 $req = $pdo->prepare($sql);
+$req->bindParam(':team', $_SESSION['team_id']);
 $req->execute();
 
 $status_arr = array();
@@ -58,6 +58,9 @@ $req->bindParam(':userid', $_SESSION['userid']);
 $req->execute();
 $total = $req->fetchColumn();
 
+
+// BEGIN PAGE
+echo "<section class='box'>";
 
 // Make percentage
 if ($total === 0) {
@@ -92,7 +95,7 @@ if ($total === 0) {
 
             var options = {
                 title: 'Experiments for <?php echo $_SESSION['username'];?>',
-                backgroundColor: '#EEE',
+                backgroundColor: '#fff',
                 colors: [
                 <?php
                 // string that will hold the list of colors correctly formatted
@@ -111,3 +114,5 @@ if ($total === 0) {
      <div id="chart_div" class='center'></div>
     <?php
 }
+?>
+</section>

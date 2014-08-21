@@ -138,7 +138,7 @@ echo " class='title_view'>";
 echo stripslashes($data['title'])."</div>";
 // BODY (show only if not empty, click on it to edit
 if ($data['body'] != '') {
-    echo "<div ";
+    echo "<div id='body_view' ";
     // make the body clickable only if we are not in read only
     if ($ro === false) {
         echo "OnClick=\"document.location='experiments.php?mode=edit&id=".$data['expid']."'\"";
@@ -147,8 +147,6 @@ if ($data['body'] != '') {
     echo "<br>";
 }
 
-// DISPLAY FILES
-require_once 'inc/display_file.php';
 
 // DISPLAY LINKED ITEMS
 $sql = "SELECT items.id AS itemid,
@@ -177,6 +175,8 @@ if ($req->rowcount() > 0) {
 // DISPLAY eLabID
 echo "<p class='elabid'>Unique eLabID : ".$data['elabid'];
 echo "</section>";
+// DISPLAY FILES
+require_once 'inc/display_file.php';
 
 // COMMENT BOX
 ?>

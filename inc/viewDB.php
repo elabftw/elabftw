@@ -93,7 +93,7 @@ show_tags($id, 'items_tags');
 // BODY (show only if not empty)
 if ($data['body'] != '') {
     ?>
-    <div OnClick="document.location='database.php?mode=edit&id=<?php echo $data['itemid'];?>'" class='txt'><?php echo stripslashes($data['body'])?></div>
+    <div id='body_view' OnClick="document.location='database.php?mode=edit&id=<?php echo $data['itemid'];?>'" class='txt'><?php echo stripslashes($data['body'])?></div>
     <?php
 }
 // DISPLAY FILES

@@ -39,6 +39,7 @@ $req->execute(array(
 ));
 $count = $req->rowCount();
 if ($count > 0) {
+    echo "<div class='box'>";
     if ($count === 1) {
         echo "<img src='img/attached.png'> <h3 style='display:inline'>Attached file</h3>";
     } else {
@@ -74,15 +75,18 @@ if ($count > 0) {
                 // only display the thumbnail if the file is here
                 if (file_exists($thumbpath)) {
                     // we add rel='gallery' to the images for fancybox to display it as an album (possibility to go next/previous)
-                    echo "<span class='column-left'><a href='uploads/".$uploads_data['long_name']."' class='fancybox' rel='gallery' ";
+                    echo "<a href='uploads/".$uploads_data['long_name']."' class='fancybox' rel='gallery' ";
                     if ($uploads_data['comment'] != 'Click to add a comment') {
                         echo "title='".$uploads_data['comment']."'";
                     }
-                    echo "><img src='".$thumbpath."' width='150' alt='thumbnail' /></a></span>";
+                    echo "><img class='thumb' src='".$thumbpath."' width='100' height='100' alt='thumbnail' /></a>";
                 }
-            } // end if extension is valid
-        } // end gd here
-        // END THUMBNAIL GENERATION
+            } else {
+                echo "<img class='thumb' src='img/thumb.png' width='100' height='100' alt='thumbnail' />";
+            }
+        }
+
+        // now display the name + comment with icons
         echo "<span class='column-center'><img src='img/attached.png' alt='attached' /> ";
         echo "<a href='download.php?f=".$uploads_data['long_name']."&name=".$uploads_data['real_name']."' target='_blank'>".$uploads_data['real_name']."</a>";
         echo "<span class='filesize'> ".format_bytes(filesize('uploads/'.$uploads_data['long_name']))."</span><br>";
@@ -93,7 +97,7 @@ if ($count > 0) {
         case 'view':
             if ($uploads_data['comment'] != 'Click to add a comment') {
                 // show non editable comment
-                echo "<br><img src='img/comment.png' alt='comment' /><p class='inline'>".stripslashes($uploads_data['comment'])." </p>";
+                echo "<img src='img/comment.png' alt='comment' /><p class='inline'>".stripslashes($uploads_data['comment'])." </p>";
             }
             break;
         case 'edit':
@@ -105,13 +109,13 @@ if ($count > 0) {
         default:
             die();
         }
-        echo "</span>";
+        echo "</span></div>";
     } // end while
-    echo "</div><br>";
+    echo "</div>";
 } // end if count > 0
 // END DISPLAY FILES
+echo "</div>";
 ?>
-</div>
 
 <?php
 // we only want the file comment div to be editable on edit mode, not view mode

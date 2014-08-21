@@ -195,6 +195,11 @@ hr {
 li.inline {
     display: inline;
 }
+
+#body_view {
+    background-color: #f2f2f2;
+}
+
 /* fix the list in the body */
 div.txt ol li {
     /* !important because there is a list-style-type:none in jquery-ui */
@@ -216,12 +221,12 @@ div.txt table, div.txt table td {
     border: 1px solid black;
 }
 
-table#teamtable td {
+table td {
     padding: 5px;
     margin: 5px;
 }
 
-table#teamtable th {
+table th {
     background-color:#797979;
     color: #dcdddc;
     text-transform: uppercase;
@@ -384,7 +389,6 @@ h3 {
 
 h4 {
     display: inline;
-    font-size: 110%;
     color: #797979;
 }
 
@@ -430,6 +434,10 @@ h4 {
 }
 
 /* TEAM */
+.menu ul {
+    padding-bottom: 2px;
+    border-bottom: 1px solid #dcdddc;
+}
 .menu ul li {
     display:inline;
     margin: 30px 20px;
@@ -439,7 +447,7 @@ h4 {
     cursor: pointer;
 }
 
-#team, #adminpanel, #sysconfig {
+#team, #adminpanel, #sysconfig, #ucp {
     margin-top: 40px;
 }
 .menu {
@@ -550,6 +558,7 @@ section.item div.txt {
 
 .box {
     border: 1px solid #dcdddc;
+    margin-top: 10px;
     border-radius: 5px;
     padding: 20px;
 }
@@ -595,9 +604,9 @@ a[class*='trigger_']:hover {
 /* COMMENTS FOR EXPERIMENTS COMMENTS BOX */
 .newexpcomment {
     background-color: #f2f2f2;
+    border: 1px solid #dcdddc;
     border-radius: 5px;
     color: #797979;
-    margin:2px;
     padding: 10px;
 }
 
@@ -652,7 +661,7 @@ p.title {
     font-size:  160%;
 }
 
-.date, .date_compact {
+.date {
     color: #5d5d5d;
     margin:15px auto;
     padding-left: 20px;
@@ -660,15 +669,20 @@ p.title {
 .date_view {
     padding-left: 0;
 }
+.item_compact {
+    padding: 5px;
+    margin: 5px;
+}
 
 .date_compact {
-    border-right:1px dotted #ccd;
+    margin: 0 10px 0 0;
+    padding: 0;
+    float:right;
 }
 
 .tags {
-    line-height: 200%;
-    margin: 10px 0px 10px 5px;
-    padding: 3px;
+    line-height: 150%;
+    margin-bottom: 10px;
     width: 90%;
 }
 .tags a {
@@ -747,7 +761,7 @@ p.title {
 }
 
 .filediv {
-    margin-top:20px;
+    margin-top:10px;
 }
 .filediv p, .filediv img {
 }
@@ -775,13 +789,6 @@ p.title {
     text-align:right;
     color: #797979;
     font-size: 11px;
-}
-
-/* results number and time */
-.results_and_time {
-    display: inline;
-    font-size: 12px;
-    color: gray;
 }
 
 /* PROFILE PAGE */
@@ -847,10 +854,6 @@ footer p a:hover {
 
 /* fix the overflow for long filenames and little width of browser */
 .bigUpload .bigUploadContainer {
-	padding: 30px 0;
-	margin-top:15px;
-    border-top: 1px solid #dcdddc;
-    border-bottom: 1px solid #dcdddc;
 }
 
 .bigUpload input {
@@ -883,4 +886,11 @@ code {
     border: 1px dotted #ccc;
     padding:3px;
     background-color:#eee;
+}
+
+.thumb {
+    max-width: 100px;
+    max-height: 100px;
+    padding-right: 10px;
+
 }

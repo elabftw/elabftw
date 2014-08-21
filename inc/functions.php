@@ -296,15 +296,16 @@ function showXP($id, $display)
 
     if ($display === 'compact') {
         // COMPACT MODE //
-        echo "<section class='item' style='border-left: 5px solid #".$experiments['color']."'>";
+        echo "<section class='item_compact' style='border-left: 6px solid #".$experiments['color']."'>";
         echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>";
+        echo "<span class='date date_compact'>".format_date($experiments['date'])."</span> ";
+        echo "<span style='padding-left:10px;'>";
         // show lock if item is locked on viewXP
         if ($experiments['locked']) {
-            echo "<img src='img/lock32px.png' alt='lock' title='Locked' />";
+            echo "<img src='img/lock-blue.png' alt='lock' title='Locked' />";
         }
-        echo "<span class='date_compact'>".$experiments['date']."</span> ";
-        echo "<span class='title'>".stripslashes($experiments['title'])."</span>";
-        echo "</a></section>";
+        echo stripslashes($experiments['title']);
+        echo "</a></span></section>";
     } else { // NOT COMPACT
         ?>
         <section class="item" style='border-left: 6px solid #<?php echo $experiments['color'];?>'>
@@ -384,17 +385,15 @@ function showDB($id, $display)
     if ($display === 'compact') {
         // COMPACT MODE //
         ?>
-            <section class='item' style='border-left: 6px solid #<?php echo $item['bgcolor'];?>'>
+            <section class='item_compact' style='border-left: 6px solid #<?php echo $item['bgcolor'];?>'>
+            <a href='database.php?mode=view&id=<?php echo $item['id'];?>'>
             <span class='date date_compact'><?php echo $item['date'];?></span>
-            <h4 style='border-right:1px dotted #ccd;color:#<?php echo $item['bgcolor'];?>'><?php echo $item['name'];?> </h4>
-            <span style='margin-left:7px'><?php echo stripslashes($item['title']);?>
+            <h4 style='padding-left:10px;border-right:1px dotted #ccd;color:#<?php echo $item['bgcolor'];?>'><?php echo $item['name'];?> </h4>
+            <span style='margin-left:7px'><?php echo stripslashes($item['title']);?></span>
         <?php
-        // view link
-        echo "<a href='database.php?mode=view&id=".$item['id']."'>
-        <img style='height:1em;float:right; margin-left:7px;' src='img/view_compact.png' alt='view' title='view item' /></a>";
         // STAR RATING read only
         show_stars($item['rating']);
-        echo "</section>";
+        echo "</a></section>";
 
     } else { // NOT COMPACT
 

@@ -115,16 +115,14 @@ if ($data['locked'] == 1) {
     </div>
     </form>
     <!-- end edit items form -->
+</section>
     <?php
     // FILE UPLOAD
     require_once 'inc/file_upload.php';
     // DISPLAY FILES
     require_once 'inc/display_file.php';
     ?>
-    </div>
 
-    </div>
-</section>
 <?php
 // unset session variables
 unset($_SESSION['errors']);

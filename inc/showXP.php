@@ -95,9 +95,9 @@ if (isset($_GET['q'])) { // if there is a query
         $unit = 'milliseconds';
     }
     if (count($results_arr) > 1) {
-        echo "<p class='results_and_time'>".count($results_arr)." results ($total_time $unit)</p>";
+        echo "<p class='smallgray'>".count($results_arr)." results ($total_time $unit)</p>";
     } elseif (count($results_arr) == 1) {
-        echo "<p class='results_and_time'>1 result ($total_time $unit)</p>";
+        echo "<p class='smallgray'>1 result ($total_time $unit)</p>";
     } else {
         $message = 'No experiments were found.';
         display_message('error', $message);
@@ -144,9 +144,9 @@ if (isset($_GET['q'])) { // if there is a query
         $unit = 'milliseconds';
     }
     if (count($results_arr) > 1) {
-        echo "<p class='results_and_time'>".count($results_arr)." results ($total_time $unit)</p>";
+        echo "<p class='smallgray'>".count($results_arr)." results ($total_time $unit)</p>";
     } elseif (count($results_arr) == 1) {
-        echo "<p class='results_and_time'>1 result ($total_time $unit)</p>";
+        echo "<p class='smallgray'>1 result ($total_time $unit)</p>";
     } else {
         $message = 'No experiments are linked with this item.';
         display_message('error', $message);
@@ -191,9 +191,9 @@ if (isset($_GET['q'])) { // if there is a query
         $unit = 'milliseconds';
     }
     if (count($results_arr) > 1) {
-        echo "<p class='results_and_time'>".count($results_arr)." results ($total_time $unit)</p>";
+        echo "<p class='smallgray'>".count($results_arr)." results ($total_time $unit)</p>";
     } elseif (count($results_arr) == 1) {
-        echo "<p class='results_and_time'>1 result ($total_time $unit)</p>";
+        echo "<p class='smallgray'>1 result ($total_time $unit)</p>";
     } else {
         $message = 'No experiments were found.';
         display_message('error', $message);

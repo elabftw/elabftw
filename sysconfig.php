@@ -49,14 +49,15 @@ $formKey = new formKey();
 
     <!-- TAB 1 -->
     <div class='divhandle' id='tab1div'>
+        <p>
         <h3>Add a new team</h3>
         <form method='post' action='admin-exec.php'>
-            <input type='text' placeholder='Enter new team name' class='biginput' name='new_team' id='new_team' />
-            <div class='center'>
-                <button type='submit' class='submit button'>Add</button>
-            </div>
+            <input type='text' placeholder='Enter new team name' name='new_team' id='new_team' />
+            <button type='submit' class='submit button'>Add</button>
         </form>
+        </p>
 
+        <p>
         <h3>Edit existing teams</h3>
         <?php
         // a lil' bit of stats can't hurt
@@ -80,6 +81,7 @@ $formKey = new formKey();
             echo " Members: ".$count['totusers']." − Experiments: ".$count['totxp']." − Items: ".$count['totdb']." − Created: ".$team['datetime']."<br>";
         }
         ?>
+        </p>
     </div>
 
     <!-- TAB 2 -->

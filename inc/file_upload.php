@@ -24,6 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 ?>
+<section class='box'>
 <!-- FILE UPLOAD -->
 <script src="js/bigUpload.js"></script>
 <script>
@@ -55,4 +56,5 @@ function abort() {
         <div id="bigUploadResponse"></div>
     </div>
 </div><!-- END FILE UPLOAD -->
+</section>
 

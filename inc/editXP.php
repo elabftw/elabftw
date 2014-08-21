@@ -179,14 +179,7 @@ if (empty($_SESSION['errors'])) {
 </div>
 </form><!-- end editXP form -->
 
-<?php
-// FILE UPLOAD
-require_once 'inc/file_upload.php';
-// DISPLAY FILES
-require_once 'inc/display_file.php';
-?>
-
-<br><br>
+<!-- LINKED ITEMS -->
 <section>
 <img src='img/link.png'> <h4 style='display:inline'>Linked items</h4>
 <div id='links_div'>
@@ -222,9 +215,6 @@ if ($req->rowcount() > 0) {
 <p class='inline'>Add a link</p>
 <input id='linkinput' size='60' type="text" name="link" placeholder="from the database" />
 </section>
-
-<br /><br />
-
 <span class='align_right'>
 <?php
 // get the list of revisions
@@ -247,6 +237,14 @@ if ($count > 0) {
 ?>
 
 </section>
+<?php
+// FILE UPLOAD
+require_once 'inc/file_upload.php';
+// DISPLAY FILES
+require_once 'inc/display_file.php';
+?>
+
+
 
 <script>
 // JAVASCRIPT

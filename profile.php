@@ -39,17 +39,15 @@ $req = $pdo->prepare($sql);
 $req->execute();
 $data = $req->fetch();
 
-echo "<section class='item'>";
+echo "<section class='box'>";
 echo "<img src='img/user.png' alt='user' /> <h4>INFOS</h4>";
 echo "<div class='center'>
     <p>".$data['firstname']." ".$data['lastname']." (".$data['email'].")</p>
     <p>".$count[0]." experiments done since ".date("l jS \of F Y", $data['register_date']);
 echo "</div>";
-echo "<hr>";
+echo "</section>";
 require_once('inc/statistics.php');
-echo "<hr>";
 require_once('inc/tagcloud.php');
 
-echo "</section>";
 
 require_once('inc/footer.php');

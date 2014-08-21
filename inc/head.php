@@ -111,7 +111,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     if (isset($_GET['q'])) {
         echo filter_var($_GET['q'], FILTER_SANITIZE_STRING);
     }
-    ?>' /><br>
+    ?>' /><div id='adv_search'><a href='search.php'><img src='img/arrow-right-white.png' alt='' />Advanced search</a></div>
     </form>
 <span class='navleft'>
     <a href='index.php'>elab<span class='strong'>FTW</span></a>
@@ -137,7 +137,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     echo "<a href='".get_team_config('link_href')."' target='_blank'>".get_team_config('link_name')."</a></span>";
     
     ?>
-    </nav><div id='adv_search'><a href='search.php'><img src='img/arrow-right-white.png' alt='' />Advanced search</a></div>
+    </nav>
 <?php
 } else {
     echo "<nav><span class='navleft'><a href='index.php'>elab<strong>FTW</strong></a></span></nav>";

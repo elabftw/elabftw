@@ -219,12 +219,11 @@ nav .navleft a:hover {
     -ms-transition-duration: 1500ms;
 }
 
-/* search bar in head */
+/* search bar in head.php ; nav */
 form#big_search {
     width:40%;
     float:right;
     text-align:right;
-    margin-top:-6px;
 }
 form#big_search input {
     background:#555 url(../img/search.png) no-repeat scroll right center;
@@ -232,18 +231,15 @@ form#big_search input {
     border-radius: 20px;
     width:40%;
     padding: 10px 30px 10px 10px;
-    margin-top: -1px;
     transition:width 1s;
 }
 form#big_search input:focus {
-    width:45%;
+    width:60%;
 }
 #adv_search {
     position:absolute;
     right:15%;
-    z-index: 30;
     width:200px;
-    padding:5px 10px;
     color: #fff;
     text-align:center;
     background-color: #29AEB9;
@@ -257,15 +253,11 @@ form#big_search input:focus {
 /*  MENU is below main nav */
 menu {
     line-height:200%;
-    margin: 30px 0 40px 0;
+    margin: 30px 0 40px;
     padding: 0;
 }
-menu .selected {
-    border-bottom:6px #29AEB9 solid;
-    padding-bottom:4px;
-}
 menu ul {
-    padding-bottom: 2px;
+    padding:0 0 2px;
     border-bottom: 1px solid #dcdddc;
 }
 menu ul li {
@@ -275,6 +267,10 @@ menu ul li {
     font-weight:bold;
     color: #797979;
     cursor: pointer;
+}
+menu ul li.selected {
+    border-bottom:6px #29AEB9 solid;
+    padding-bottom:4px;
 }
 
 /* MENU with .border is on showXP and showDB */

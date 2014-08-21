@@ -527,11 +527,18 @@ function color_wheel(div_name) {
 
 $(document).ready(function() {
     // TABS
-
+    // get the tab=X parameter in the url
+    var params = getGetParameters();
+    var tab = parseInt(params['tab']);
+    if (!isInt(tab)) {
+        var tab = 1;
+    }
+    var initdiv = '#tab' + tab + 'div';
+    var inittab = '#tab' + tab;
     // init
     $(".divhandle").hide();
-    $("#tab1div").show();
-    $("#tab1").addClass('selected');
+    $(initdiv).show();
+    $(inittab).addClass('selected');
 
     $(".tabhandle" ).click(function(event) {
         var tabhandle = '#' + event.target.id;
@@ -541,6 +548,7 @@ $(document).ready(function() {
         $(".tabhandle").removeClass('selected');
         $(tabhandle).addClass('selected');
     });
+    // END TABS
     // TOGGLE
     $(".toggle_users_<?php echo $users['userid'];?>").hide();
     $("a.trigger_users_<?php echo $users['userid'];?>").click(function(){

@@ -47,21 +47,21 @@ $load_more_button = "<div class='center'>
     ?>
     </select></span>
 </div><!-- end submenu -->
+
+<!-- TEMPLATE CONTAINER -->
 <div class='toggle_container'><ul>
 <?php // SQL to get user's templates
 $sql = "SELECT id, name FROM experiments_templates WHERE userid = :userid";
 $tplreq = $pdo->prepare($sql);
-$tplreq->execute(array(
-    'userid' => $_SESSION['userid']
-));
-$count_tpl = $tplreq->rowCount();
-if ($count_tpl > 0) {
+$tplreq->bindParam(':userid', $_SESSION['userid']);
+$tplreq->execute();
+if ($tplreq->rowCount() > 0) {
     while ($tpl = $tplreq->fetch()) {
         echo "<li class='inline'><a href='create_item.php?type=exp&tpl=".$tpl['id']."' class='templates'>".$tpl['name']."</a></li> ";
     }
 } else { // user has no templates
-    $message = "<strong>You do not have any templates yet.</strong> Go to <a href='ucp.php'>your control panel</a> to make one !";
-    display_message('info', $message);
+    $message = "<strong>You do not have any templates yet.</strong> Go to <a href='ucp.php?tab=3'>your control panel</a> to make one !";
+    display_message('info_nocross', $message);
 }
 ?>
 </ul></div><br />

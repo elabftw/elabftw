@@ -62,8 +62,8 @@ if ($row_count === 0) {
 $data = $req->fetch();
 
 ?>
-<section class="item" style='padding:15px'>
-
+<!-- begin item view -->
+<section class="box">
 
 <span class='date_view'><img src='img/calendar.png' title='date' alt='Date :' /> <?php echo format_date($data['date']);?></span><br>
 <?php
@@ -96,11 +96,11 @@ if ($data['body'] != '') {
     <div id='body_view' OnClick="document.location='database.php?mode=edit&id=<?php echo $data['itemid'];?>'" class='txt'><?php echo stripslashes($data['body'])?></div>
     <?php
 }
-// DISPLAY FILES
-require_once 'inc/display_file.php';
 // SHOW USER
 echo "Last modified by ".$data['firstname']." ".$data['lastname']." on ".format_date($data['date']);
 echo "</section>";
+// DISPLAY FILES
+require_once 'inc/display_file.php';
 ?>
 <script>
 // change title

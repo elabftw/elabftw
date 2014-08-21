@@ -96,13 +96,13 @@ $totals = $count_req->fetch(PDO::FETCH_ASSOC);
     <p>
         <ul>
             <li class='tip'>You can use a TODOlist by pressing 't'</li>
-            <li class='tip'>You can have templates (<a href='ucp.php'>Control Panel</a>)</li>
-            <li class='tip'>The admin of a team can edit the status and the types of items available (<a href='admin.php'>Admin Panel</a>)</li>
+            <li class='tip'>You can have experiments templates (<a href='ucp.php?tab=3'>Control Panel</a>)</li>
+            <li class='tip'>The admin of a team can edit the status and the types of items available (<a href='admin.php?tab=4'>Admin Panel</a>)</li>
             <li class='tip'>If you press Ctrl Shift D in the editor, the date will appear under the cursor</li>
-            <li class='tip'>Custom shortcuts are available (<a href='ucp.php'>Control Panel</a>)</li>
+            <li class='tip'>Custom shortcuts are available (<a href='ucp.php?tab=2'>Control Panel</a>)</li>
             <li class='tip'>You can duplicate experiments in one click</li>
             <li class='tip'>Click a tag to list all items with this tag</li>
-            <li class='tip'>Register an account with <a href='https://www.universign.eu/en/'>Universign</a> to start timestamping experiments</li>
+            <li class='tip'>Register an account with <a href='https://www.universign.eu/en/timestamp'>Universign</a> to start timestamping experiments</li>
             <li class='tip'>Only a locked experiment can be timestamped</li>
             <li class='tip'>Once timestamped, an experiment cannot be unlocked or modified. Only comments can be added.</li>
         </ul>
@@ -114,11 +114,18 @@ $totals = $count_req->fetch(PDO::FETCH_ASSOC);
 <script>
 $(document).ready(function() {
     // TABS
-
+    // get the tab=X parameter in the url
+    var params = getGetParameters();
+    var tab = parseInt(params['tab']);
+    if (!isInt(tab)) {
+        var tab = 1;
+    }
+    var initdiv = '#tab' + tab + 'div';
+    var inittab = '#tab' + tab;
     // init
     $(".divhandle").hide();
-    $("#tab1div").show();
-    $("#tab1").addClass('selected');
+    $(initdiv).show();
+    $(inittab).addClass('selected');
 
     $(".tabhandle" ).click(function(event) {
         var tabhandle = '#' + event.target.id;
@@ -128,6 +135,7 @@ $(document).ready(function() {
         $(".tabhandle").removeClass('selected');
         $(tabhandle).addClass('selected');
     });
+    // END TABS
 });
 </script>
 

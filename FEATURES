@@ -4,7 +4,6 @@
 - multi-plateform (server or client)
 - web based (no install necessary on client)
 - multiple teams
-- custom link in menu
 - quick search + advanced search
 - git deployement
 
@@ -40,9 +39,12 @@
 - option for new account admin validation
 
 # intellectual property
+- timestamping of experiments (pdf export)
+compliant with European standard ETSI TS 102 023 and
+certified RGS (French General Security Specifications)
+more info : https://www.universign.eu/en/timestamp/
 - allow or not users to delete experiments
 - revisions system to see history
-- timestamping of experiments (pdf) with external service
 
 # user experience
 - lovely design (by Manon Potier)
@@ -50,6 +52,7 @@
 - customizable keyboard shortcuts
 - option for displaying a warning on editor tab close
 - display preferences
+- custom link in menu
 - statistics
 - tagcloud
 - TODOlist

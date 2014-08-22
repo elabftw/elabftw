@@ -33,6 +33,7 @@ if ($_SESSION['is_admin'] != 1) {
 
 $msg_arr = array();
 $errflag = false;
+$email = '';
 
 // FORMKEY
 require_once 'lib/classes/formkey.class.php';

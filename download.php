@@ -64,15 +64,14 @@ if ($type == 'zip') {
 }
 
 // MIME
+$mtype = "application/force-download";
+
 if (function_exists('mime_content_type')) {
     $mtype = mime_content_type($file_path);
 } elseif (function_exists('finfo_file')) {
     $finfo = finfo_open(FILEINFO_MIME); // return mime type
     $mtype = finfo_file($finfo, $file_path);
     finfo_close($finfo);
-}
-if ($mtype == '') {
-    $mtype = "application/force-download";
 }
 
 // Make sure program execution doesn't time out

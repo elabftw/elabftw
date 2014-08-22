@@ -32,6 +32,13 @@ $msg_arr = array();
 //Validation error flag
 $errflag = false;
 
+$username = '';
+$firstname = '';
+$lastname = '';
+$email = '';
+$passwordHash = '';
+$salt = '';
+
 // Check USERNAME (sanitize and validate)
 if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
@@ -56,6 +63,7 @@ if (isset($_POST['team']) &&
     filter_var($_POST['team'], FILTER_VALIDATE_INT)) {
     $team = $_POST['team'];
 } else {
+    $team = '';
     $msg_arr[] = 'Team missing';
     $errflag = true;
 }

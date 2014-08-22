@@ -200,7 +200,15 @@ class BigUpload
                 'type' => $type,
                 'md5' => $md5
             ));
-			return json_encode(array('errorStatus' => 0));
+
+            if ($result) {
+                return json_encode(array('errorStatus' => 0));
+            } else {
+                return json_encode(array(
+                    'errorStatus' => 1,
+                    'errorText' => 'SQL failed.'
+                ));
+            }
 		}
 		else {
 			return json_encode(array(
@@ -218,7 +226,6 @@ class BigUpload
 	 */
 	public function postUnsupported() {
 		$name = $_FILES['bigUploadFile']['name'];
-		$size = $_FILES['bigUploadFile']['size'];
 		$tempName = $_FILES['bigUploadFile']['tmp_name'];
 
 		if(filesize($tempName) > self::MAX_SIZE) {

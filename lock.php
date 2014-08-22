@@ -39,6 +39,8 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
     } else {
         $action = 0; // unlock
     }
+} else {
+    exit;
 }
 
 switch($_GET['type']) {

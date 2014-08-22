@@ -32,6 +32,10 @@ if (!class_exists('ZipArchive')) {
     die("<p>You are missing the ZipArchive class in php. Uncomment the line extension=zip.so in /etc/php/php.ini.</p>");
 }
 
+// init some var
+$zdate = '';
+$clean_title = '';
+
 // Switch exp/items just for the table to search in sql requests
 if ($_GET['type'] === 'experiments') {
     $table = 'experiments';
@@ -155,10 +159,10 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         } // end foreach
         // close the archive
         $zip->close();
-        // cleanup
-        unlink($manifestpath);
-        unlink('uploads/export/'.$pdfname);
-        unlink($csvpath);
+        // cleanup TODO
+        //unlink($manifestpath);
+        //unlink('uploads/export/'.$pdfname);
+        //unlink($csvpath);
 
 
 

@@ -27,9 +27,14 @@ require_once('inc/common.php');
 
 // INFO BOX
 $msg_arr = array();
-$infomsg_arr =array();
 $errflag = false;
 $infoflag = false;
+$email = '';
+$username = '';
+$firstname = '';
+$lastname = '';
+$website = '';
+
 
 // Form 1 User infos
 if (isset($_POST['currpass'])){
@@ -79,7 +84,7 @@ if (isset($_POST['currpass'])){
                     'password' => $passwordHash,
                     'userid' => $_SESSION['userid']));
                 if($result){
-                    $infomsg_arr[] = 'Password updated !';
+                    $msg_arr[] = 'Password updated !';
                     $infoflag = true;
                 } else {
                     die('SQL failed');
@@ -210,7 +215,7 @@ if (isset($_POST['currpass'])){
             'website' => $website,
             'userid' => $_SESSION['userid']));
         if($result){
-            $infomsg_arr[] = 'Profile updated !';
+            $msg_arr[] = 'Profile updated !';
             $infoflag = true;
         } else {
             die('SQL failed');
@@ -304,7 +309,7 @@ if (isset($_POST['display'])) {
     $_SESSION['prefs']['shortcuts']['submit'] = $new_sc_submit;
     $_SESSION['prefs']['shortcuts']['todo'] = $new_sc_todo;
     $_SESSION['prefs']['close_warning'] = $new_close_warning;
-    $infomsg_arr[] = 'Your preferences have been updated.';
+    $msg_arr[] = 'Your preferences have been updated.';
     $infoflag = true;
 }
 
@@ -330,7 +335,7 @@ if (isset($_POST['new_tpl_form'])) {
             'body' => $tpl_body,
             'userid' => $_SESSION['userid']
         ));
-        $infomsg_arr[] = 'Experiment template successfully added.';
+        $msg_arr[] = 'Experiment template successfully added.';
         $infoflag = true;
     }
 }
@@ -360,7 +365,7 @@ if (isset($_POST['tpl_form'])) {
         'name' => $new_tpl_name[$i]
     ));
     }
-    $infomsg_arr[] = 'Experiment template successfully edited.';
+    $msg_arr[] = 'Experiment template successfully edited.';
     $infoflag = true;
 }
 
@@ -374,7 +379,7 @@ if ($errflag) {
     exit;
 
 } elseif ($infoflag) {
-    $_SESSION['infos'] = $infomsg_arr;
+    $_SESSION['infos'] = $msg_arr;
     session_write_close();
     header("location: ucp.php");
     exit;

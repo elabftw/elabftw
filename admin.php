@@ -460,6 +460,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // get what type we want
     if (isset($_COOKIE['itemType']) && is_pos_int($_COOKIE['itemType'])) {
         $type = $_COOKIE['itemType'];
+    } else {
+        die('No cookies found');
     }
     // loop the lines
     while ($data = fgetcsv($handle, 0, ",")) {

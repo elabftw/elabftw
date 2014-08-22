@@ -106,9 +106,6 @@ Free open-source Lab Manager'
             if ($errflag) {
                 // problem
                 $msg_arr[] = 'There was a problem sending the email. Error was logged.';
-                if (get_config('debug') == 1) {
-                    $msg_arr[] = $e->getMessage();
-                }
                 $_SESSION['errors'] = $msg_arr;
                 header('location: login.php');
                 exit;

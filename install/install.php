@@ -41,18 +41,26 @@ if (file_exists('../config.php')) {
 // POST data
 if (isset($_POST['db_host']) && !empty($_POST['db_host'])) {
     $db_host = $_POST['db_host'];
+} else {
+    die('Bad POST data');
 }
 
 if (isset($_POST['db_name']) && !empty($_POST['db_name'])) {
     $db_name = $_POST['db_name'];
+} else {
+    die('Bad POST data');
 }
 
 if (isset($_POST['db_user']) && !empty($_POST['db_user'])) {
     $db_user = $_POST['db_user'];
+} else {
+    die('Bad POST data');
 }
 
 if (isset($_POST['db_password']) && !empty($_POST['db_password'])) {
     $db_password = $_POST['db_password'];
+} else {
+    die('Bad POST data');
 }
 // connect to DB
 try {

@@ -30,7 +30,7 @@ class formKey {
     private $formkey;
 
     // here we store the old form key
-    private $old_formkey;
+    private $old_formKey;
 
     // function to generate the form key
     private function generate_formkey() {

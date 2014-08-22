@@ -35,6 +35,8 @@ if (isset($_GET['id']) && is_pos_int($_GET['id'])) {
 // check the type
 if (($_GET['type'] === 'experiments') || ($_GET['type'] === 'items')) {
     $type = $_GET['type'];
+} else {
+    die('Bad type');
 }
 
 // do the pdf

@@ -38,6 +38,8 @@ if ($password == $cpassword) {
     // Get userid
     if (filter_var($_POST['userid'], FILTER_VALIDATE_INT)) {
         $userid = $_POST['userid'];
+    } else {
+        die('Bad userid');
     }
     // Replace new password in database
     $sql = "UPDATE users 

@@ -49,6 +49,7 @@ if (!isset($_POST['form_key']) || !$formKey->validate()) {
 if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
 } else {
+    $username = '';
     $msg_arr[] = 'Username missing';
     $errflag = true;
 }

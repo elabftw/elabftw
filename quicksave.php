@@ -43,6 +43,8 @@ if (isset($_POST['team_name'])) {
 if (isset($_POST['status'])) {
     if (is_pos_int($_POST['status'])) {
         $status = $_POST['status'];
+    } else {
+        exit;
     }
     $sql = "UPDATE experiments 
         SET status = :status 

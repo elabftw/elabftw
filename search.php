@@ -233,6 +233,7 @@ if (isset($_GET)) {
         $owner = $_GET['owner'];
     } else {
         $owner_search = false;
+        $owner = '';
     }
 
     // EXPERIMENT SEARCH

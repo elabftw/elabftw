@@ -58,6 +58,7 @@ $req->bindParam(':userid', $_SESSION['userid']);
 $req->execute();
 $total = $req->fetchColumn();
 
+$percent_arr = array();
 
 // BEGIN PAGE
 echo "<section class='box'>";

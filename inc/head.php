@@ -25,6 +25,8 @@
 ********************************************************************************/
 // start chrono for page generation time
 $start = microtime(true);
+// set page_title no matter what
+$page_title = '';
 ?>
 <!DOCTYPE HTML>
 <html>

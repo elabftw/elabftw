@@ -26,6 +26,8 @@
 $load_more_button = "<div class='center'>
         <button class='button' id='loadButton'>Load more</button>
         </div>";
+// array to store results;
+$results_arr = array();
 ?>
 <menu class='border'>
     <a href="create_item.php?type=exp"><img src="img/add.png" alt="" /> Create experiment</a> | 
@@ -118,8 +120,6 @@ if (isset($_GET['q'])) { // if there is a query
 // /////////////
 } elseif (isset($_GET['related']) && is_pos_int($_GET['related'])) {// search for related experiments to DB item id
     $item_id = $_GET['related'];
-    // we make an array for the resulting ids
-    $results_arr = array();
     // search in title date and body
     $sql = "SELECT item_id FROM experiments_links 
         WHERE link_id = :link_id LIMIT 100";
@@ -167,7 +167,6 @@ if (isset($_GET['q'])) { // if there is a query
 ///////////////
 } elseif (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
-    $results_arr = array();
     $sql = "SELECT item_id FROM experiments_tags
     WHERE tag LIKE :tag";
     $req = $pdo->prepare($sql);

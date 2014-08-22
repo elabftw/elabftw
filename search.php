@@ -31,7 +31,7 @@ require_once 'inc/info_box.php';
 ?>
 
 <!-- Advanced Search page begin -->
-<menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' alt='' /> back to experiments listing</a></menu>
+<menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' alt='' /> Back to experiments listing</a></menu>
 <section class='searchform box'>
     <form name="search" method="get" action="search.php">
         <div style='width:50%;'>

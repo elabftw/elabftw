@@ -66,11 +66,11 @@ if ($experiment['locked'] == 1) {
 
 // BEGIN CONTENT
 ?>
-<menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' alt='' /> back to experiments listing</a></menu>
+<menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' alt='' /> Back to experiments listing</a></menu>
 <section class='box' id='main_section' style='border-left: 6px solid #<?php echo $experiment['color'];?>'>
 <img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','exp', 'experiments.php')" />
 <!-- ADD TAG FORM -->
-<img src='img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span><br />
+<img src='img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span>
 <div class='tags'>
 <span id='tags_div'>
 <?php
@@ -153,8 +153,7 @@ while ($tags = $tagreq->fetch()) {
 
 </div>
 
-<br />
-<br />
+<br>
 <h4>Title</h4><br />
 <input id='title_input' name='title' rows="1" value="
 <?php

@@ -25,8 +25,6 @@
 ********************************************************************************/
 // start chrono for page generation time
 $start = microtime(true);
-// set page_title no matter what
-$page_title = '';
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -113,10 +111,10 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     if (isset($_GET['q'])) {
         echo filter_var($_GET['q'], FILTER_SANITIZE_STRING);
     }
-    ?>' /><div id='adv_search'><a href='search.php'><img src='img/arrow-right-white.png' alt='' />Advanced search</a></div>
+    ?>' />
     </form>
 <span class='navleft'>
-    <a id='logonav' href='index.php'>elab<span class='strong'>FTW</span></a>
+    <span id='logonav'>elab<span class='strong' style='color:white;'>FTW</span></span>
     <a href="experiments.php?mode=show"
     <?php
     if ($page_title == 'Experiments') {
@@ -135,6 +133,12 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
         echo " class='selected'";
     }?>
     >Team</a>
+    <a href="search.php"
+    <?php
+    if ($page_title == 'Advanced Search') {
+        echo " class='selected'";
+    }?>
+    >Search</a>
     <?php
     echo "<a href='".get_team_config('link_href')."' target='_blank'>".get_team_config('link_name')."</a></span>";
     
@@ -142,7 +146,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     </nav>
 <?php
 } else {
-    echo "<nav><span class='navleft'><a id='logonav' href='index.php'>elab<strong>FTW</strong></a></span></nav>";
+    echo "<nav><span id='logonav' class='navleft'>elab<strong>FTW</strong></span></nav>";
 }
 ?>
 <div id='real_container'>

@@ -33,14 +33,14 @@ But you can also install it locally and use it for yourself only. Here is how :
 Please refer to your distribution's documentation to install :
 * a webserver (like Apache, nginx, lighttpd or cherokee)
 * php version > 5
-* mysql version > 5
+* mysql version > 5.6.6
 * git
 
 The quick way to do that on a Debian/Ubuntu setup :
 ~~~ sh 
 $ sudo apt-get update
 $ sudo apt-get upgrade
-$ sudo apt-get install mysql-server mysql-client apache2 php5 php5-mysql libapache2-mod-php5 phpmyadmin git
+$ sudo apt-get install mysql-server-5.6 mysql-client apache2 php5 php5-mysql libapache2-mod-php5 phpmyadmin git
 ~~~
 
 Make sure to put a root password on your mysql installation :

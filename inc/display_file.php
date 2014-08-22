@@ -87,7 +87,7 @@ if ($count > 0) {
         }
 
         // now display the name + comment with icons
-        echo "<span class='column-center'><img src='img/attached.png' alt='attached' /> ";
+        echo "<span style='width:50%;' class='column-center'><img src='img/attached.png' alt='attached' /> ";
         echo "<a href='download.php?f=".$uploads_data['long_name']."&name=".$uploads_data['real_name']."' target='_blank'>".$uploads_data['real_name']."</a>";
         echo "<span class='filesize'> ".format_bytes(filesize('uploads/'.$uploads_data['long_name']))."</span><br>";
         // if we are in view mode, we don't show the comment

@@ -66,7 +66,7 @@ if ($tplreq->rowCount() > 0) {
     display_message('info_nocross', $message);
 }
 ?>
-</ul></div><br />
+</ul></div>
 <?php
 // VIEWING PREFS //
 $display = $_SESSION['prefs']['display'];

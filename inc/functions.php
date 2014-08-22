@@ -1124,7 +1124,7 @@ function check_executable($cmd)
  * @param string $s an optionnal param to specify the separator
  * @return string The formatted strng
  */
-function format_date($date, $s = ' ')
+function format_date($date, $s = '.')
 {
     return $date[0].$date[1].$date[2].$date[3].$s.$date['4'].$date['5'].$s.$date['6'].$date['7'];
 }

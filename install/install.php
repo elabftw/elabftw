@@ -57,10 +57,9 @@ if (isset($_POST['db_user']) && !empty($_POST['db_user'])) {
     die('Bad POST data');
 }
 
+// the db pass can be empty on mac and windows install
 if (isset($_POST['db_password']) && !empty($_POST['db_password'])) {
     $db_password = $_POST['db_password'];
-} else {
-    die('Bad POST data');
 }
 // connect to DB
 try {

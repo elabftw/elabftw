@@ -24,10 +24,16 @@ Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM 
 
 Don't have an old computer ? That's okay, you can install eLabFTW on a Raspberry Pi (you can buy one on [Radiospares](http://www.rs-components.com/index.html)). It's a 30€ computer on which you can install GNU/Linux and run a server in no time ! That's what we use in our lab. Check out the [wiki](https://github.com/NicolasCARPi/elabftw/wiki/raspberrypi) to know more.
 
+
 But you can also install it locally and use it for yourself only. Here is how :
 
 * [Install locally on Mac](https://github.com/NicolasCARPi/elabftw/wiki/installmac).
 * [Install locally on Windows](https://github.com/NicolasCARPi/elabftw/wiki/installwin).
+
+## NEW : Install on a drop (easiest method)
+With this method, you can have a running elabftw server in no time. You need to purchase a `drop` from [DigitalOcean.com](https://www.digitalocean.com/pricing/). It starts at 5$/month. This setup is enough to run eLabFTW for a team or two.
+Everything is explained here : 
+* [Install eLabFTW on a drop](https://github.com/NicolasCARPi/drop-elabftw#how-to-use)
 
 ## Install on Unix-like OS (GNU/Linux, BSD, Solaris, etc…) (the recommended way !)
 Please refer to your distribution's documentation to install :

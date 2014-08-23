@@ -568,8 +568,7 @@ a[class*='trigger_']:hover {
 }
 /* EDITABLE */
 .editable:hover {
-    background-color:#555;
-    color:#fff;
+    background-color:#fff;
 }
 .editable button {
     background-color:#29AEB9;

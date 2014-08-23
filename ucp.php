@@ -105,7 +105,7 @@ $users = $req->fetch();
 
             <h3>DISPLAY</h3>
             <hr>
-            <p style='margin-top:20px;'>
+            <p id='display'>
             <label for='radio_view_default'>Default</label>
             <input id='radio_view_default' type='radio' name='display' value='default' 
             <?php echo ($_SESSION['prefs']['display'] === 'default') ? "checked" : "";?>

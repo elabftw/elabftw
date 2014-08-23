@@ -108,6 +108,7 @@ input, select {
 }
 
 
+
 /* GENERAL */
 .inline {
     display: inline;
@@ -671,6 +672,13 @@ p.title {
 
 /* ucp.php */
 
+/* on ucp.php */
+#display {
+    margin-top:20px;
+}
+#display > input, select {
+    margin: 6px;
+}
 #currpass {
     background-color: #c4f9ff;
     border: 1px solid #29AEB9;

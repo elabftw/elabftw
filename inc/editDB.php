@@ -96,9 +96,9 @@ if ($data['locked'] == 1) {
     </div><!-- END STAR RATING -->
     <input name='item_id' type='hidden' value='<?php echo $id;?>' />
     <img src='img/calendar.png' title='date' alt='Date :' />
-    <label for='datepicker'>Date</label>
+    <label class='block' for='datepicker'>Date</label>
     <!-- TODO if firefox has support for it: type = date -->
-    <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date'];?>' /><br>
+    <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date'];?>' />
     <label class='block' for='title_txtarea'>Title</label>
     <input id='title_input' name='title' rows="1" value='<?php if (empty($_SESSION['errors'])) {
       echo stripslashes($data['title']);

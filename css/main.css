@@ -236,6 +236,7 @@ nav .navleft a:hover {
 form#big_search {
     width:40%;
     float:right;
+    margin-right: 30px;
     text-align:right;
 }
 form#big_search input {
@@ -588,11 +589,11 @@ a[class*='trigger_']:hover {
 
 .title {
     font-size:  160%;
-    margin: 0;
+    margin: 0 20px 0 0;
     padding-left: 20px;
 }
 p.title {
-    width:100%;
+  /*  width:100%; */
 }
 
 .title_view {
@@ -721,9 +722,8 @@ p.title {
 #title_input {
     border-radius: 5px;
     margin: 5px 0 10px 0;
-    padding: 10px 0 10px 10px;
     border: 1px solid #dcdddc;
-    width:100%;
+    width:95%;
 }
 
 /* elabid */

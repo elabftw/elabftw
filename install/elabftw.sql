@@ -68,7 +68,7 @@ CREATE TABLE `experiments` (
   `timestamped` tinyint(1) NOT NULL DEFAULT '0',
   `timestampedby` int(11) DEFAULT NULL,
   `timestamptoken` text,
-  `timestampedwhen` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `timestampedwhen` timestamp NULL,
   `visibility` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)

@@ -222,7 +222,7 @@ while ($show = $req->fetch()) {
 }
 // add field if it's not here
 if (!$field_is_here) {
-    q("ALTER TABLE `experiments` ADD `timestamped` BOOLEAN NOT NULL DEFAULT FALSE AFTER `lockedwhen`, ADD `timestampedby` INT NULL DEFAULT NULL AFTER `timestamped`, ADD `timestampedwhen` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `timestampedby`, ADD `timestamptoken` TEXT NULL AFTER `timestampedwhen`;");
+    q("ALTER TABLE `experiments` ADD `timestamped` BOOLEAN NOT NULL DEFAULT FALSE AFTER `lockedwhen`, ADD `timestampedby` INT NULL DEFAULT NULL AFTER `timestamped`, ADD `timestampedwhen` TIMESTAMP NULL AFTER `timestampedby`, ADD `timestamptoken` TEXT NULL AFTER `timestampedwhen`;");
     q("INSERT INTO `config` (`conf_name`, `conf_value`) VALUES ('stamplogin', NULL), ('stamppass', NULL);");
     echo ">>> You can now timestamp experiments. See the wiki for more infos.\n";
 }

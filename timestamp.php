@@ -63,24 +63,36 @@ $pdf_path = make_pdf($id, 'experiments', 'uploads');
 $hashedDataToTimestamp = hash_file('sha256', "uploads/$pdf_path");
 
 // CONFIGURE DATA TO SEND
-$dataToSend = array ('hashAlgo' => 'SHA256', 'withCert' => 'true', 'hashValue' => $hashedDataToTimestamp);
-$dataQuery = http_build_query($dataToSend);
-$context_options = array (
-    'http' => array (
-        'method' => 'POST',
-        'header'=> "Content-type: application/x-www-form-urlencoded\r\n"
-        ."Content-Length: " . strlen($dataQuery) . "\r\n"
-        ."Authorization: Basic ".base64_encode($login.':'.$password)."\r\n",
-        'content' => $dataQuery
-        )
+$dataToSend = array (
+    'hashAlgo' => 'SHA256',
+    'withCert' => 'true',
+    'hashValue' => $hashedDataToTimestamp
 );
-
-$context = stream_context_create($context_options);
 
 // SEND DATA
 try {
-    $fp = fopen("https://ws.universign.eu/tsa/post/", 'r', false, $context);
-    if (!$fp) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://ws.universign.eu/tsa/post/");
+    curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_setopt($ch, CURLOPT_USERPWD, $login.":".$password);
+    curl_setopt($ch,CURLOPT_POST, count($dataToSend));
+    curl_setopt($ch,CURLOPT_POSTFIELDS, http_build_query($dataToSend));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    if (strlen(get_config('proxy')) > 0) {
+        curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
+    }
+    // options to verify the certificate (we disable check)
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+    // add user agent
+    // http://developer.github.com/v3/#user-agent-required
+    curl_setopt($ch, CURLOPT_USERAGENT, "elabftw");
+    // DO IT
+    $token = curl_exec($ch);
+    // free resources
+    curl_close($ch);
+
+    if (!$token) {
             throw new Exception("There was an error in the timestamping. Login credentials probably wrong or no more credits.");
         }
     } catch (Exception $e) {
@@ -90,7 +102,6 @@ try {
         header("Location:experiments.php?mode=view&id=$id");
         exit;
 }
-$token = stream_get_contents($fp);
 
 $longname = hash("sha512", uniqid(rand(), true)).".asn1";
 $file_path = 'uploads/'.$longname;

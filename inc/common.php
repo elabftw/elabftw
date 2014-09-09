@@ -98,6 +98,7 @@ if (isset($_SESSION['auth'])) { // if user is auth, we check the cookie
             'order' => $data['order_by'],
             'sort' => $data['sort_by'],
             'limit' => $data['limit_nb'],
+            'close_warning' => intval($data['close_warning']),
             'shortcuts' => array(
                 'create' => $data['sc_create'],
                 'edit' => $data['sc_edit'],

@@ -51,7 +51,8 @@ if (is_pos_int($_POST['item_id'])) {
     $errflag = true;
 }
 $title = check_title($_POST['title']);
-$date = check_date($_POST['date']);
+// the date gets updated to today's date
+$date = kdate();
 $body = check_body($_POST['body']);
 
 // Store stuff in Session to get it back if error input

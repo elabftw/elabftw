@@ -434,7 +434,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
         }
 
     } else {
-        $usergroup = '4';;
+        $usergroup = '4';
     }
     // reset password
     if (isset($_POST['new_password']) && !empty($_POST['new_password']) && isset($_POST['confirm_new_password'])) {

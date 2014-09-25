@@ -103,8 +103,9 @@ if (isset($_SESSION['auth'])) { // if user is auth, we check the cookie
                 'create' => $data['sc_create'],
                 'edit' => $data['sc_edit'],
                 'submit' => $data['sc_submit'],
-                'todo' => $data['sc_todo']
-            ));
+                'todo' => $data['sc_todo']),
+            // TODO
+            'lang' => 'en-GB');
             session_write_close();
         } else { // no token found in database
             $msg_arr = array();
@@ -121,3 +122,6 @@ if (isset($_SESSION['auth'])) { // if user is auth, we check the cookie
         exit;
     }
 }
+
+// lang
+//require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';

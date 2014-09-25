@@ -28,10 +28,9 @@
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    $message = "The id parameter in the URL isn't a valid item ID.";
-    display_message('error', $message);
+    display_message('error', INVALID_ID);
     require_once 'inc/footer.php';
-    die();
+    exit;
 }
 
 // SQL FOR VIEWDB
@@ -53,10 +52,9 @@ $req->execute();
 // got results ?
 $row_count = $req->rowCount();
 if ($row_count === 0) {
-    $message = 'Nothing to show with this ID.';
-    display_message('error', $message);
+    display_message('error', NOTHING_TO_SHOW);
     require_once 'inc/footer.php';
-    die();
+    exit;
 }
 
 $data = $req->fetch();
@@ -97,7 +95,7 @@ if ($data['body'] != '') {
     <?php
 }
 // SHOW USER
-echo "Last modified by ".$data['firstname']." ".$data['lastname']." on ".format_date($data['date']);
+echo LAST_MODIFIED_BY.' '.$data['firstname']." ".$data['lastname'].' '.ON.' '.format_date($data['date']);
 echo "</section>";
 // DISPLAY FILES
 require_once 'inc/display_file.php';
@@ -110,4 +108,3 @@ $(document).ready(function() {
     document.title = title;
 });
 </script>
-

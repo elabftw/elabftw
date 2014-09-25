@@ -25,21 +25,22 @@
 ********************************************************************************/
 // Search.php
 require_once 'inc/common.php';
-$page_title = 'Advanced Search';
+require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
+$page_title = SEARCH_TITLE;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 ?>
 
 <!-- Advanced Search page begin -->
-<menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' alt='' /> Back to experiments listing</a></menu>
+<menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' alt='' /> <?php echo SEARCH_BACK;?></a></menu>
 <section class='searchform box'>
     <form name="search" method="get" action="search.php">
         <div style='width:50%;'>
 
             <p style='display:inline-block;' class='align_right'>
-                <label for'searchonly'>Search only in experiments owned by : </label><br>
+            <label for'searchonly'><?php echo SEARCH_ONLY;?> </label><br>
                 <select id='searchonly' name='owner'>
-                    <option value=''>You</option>
+                    <option value=''><?php echo SEARCH_YOU;?></option>
                     <?php
                     $users_sql = "SELECT userid, firstname, lastname FROM users WHERE team = :team";
                     $users_req = $pdo->prepare($users_sql);
@@ -57,7 +58,7 @@ require_once 'inc/info_box.php';
                     ?>
                 </select><br>
                 <!-- search everyone box -->
-                <label for='all_experiments_chkbx'>(search in everyone's experiment </label>
+                <label for='all_experiments_chkbx'>(<?php echo SEARCH_EVERYONE;?> </label>
                 <input name="all" id='all_experiments_chkbx' value="y" type="checkbox" <?php
                     // keep the box checked if it was checked
                     if(isset($_GET['all'])){
@@ -68,7 +69,7 @@ require_once 'inc/info_box.php';
             <p style='display:inline-block;'>
                 <label class='block' for='searchin'>Search in</label>
                 <select name='type' id='searchin'>
-                    <option value='experiments'>Experiments</option>
+                    <option value='experiments'><?php echo EXPERIMENTS_TITLE;?></option>
                     <?php // Database items types
                     $sql = "SELECT * FROM items_types WHERE team = :team";
                     $req = $pdo->prepare($sql);
@@ -91,13 +92,13 @@ require_once 'inc/info_box.php';
 
 
             <p class='align_left'>
-                <label class='block' for='from'>Where date is between</label>
+                <label class='block' for='from'><?php echo SEARCH_DATE;?></label>
                 <input id='fr</input>om' name='from' type='text' size='8' class='datepicker' value='<?php
                 if (isset($_GET['from']) && !empty($_GET['from'])) {
                     echo check_date($_GET['from']);
                 }
                 ?>'/>
-                <label span style='margin:0 10px;' for='to'> and </label>
+                    <label span style='margin:0 10px;' for='to'> <?php echo SEARCH_AND;?> </label>
                 <input id='to' name='to' type='text' size='8' class='datepicker' value='<?php
                     if(isset($_GET['to']) && !empty($_GET['to'])) {
                         echo check_date($_GET['to']);
@@ -109,13 +110,13 @@ require_once 'inc/info_box.php';
             <p>
 
 
-        <label class='block' for='title'>And title contains</label>
+        <label class='block' for='title'><?php echo SEARCH_AND_TITLE;?></label>
         <input id='title' name='title' type='text' value='<?php
             if(isset($_GET['title']) && !empty($_GET['title'])) {
                 echo check_title($_GET['title']);
             }
             ?>'/><br>
-        <label class='block' for='body'>And body contains</label>
+                <label class='block' for='body'><?php echo SEARCH_AND_BODY;?></label>
         <input id='body' name='body' type='text' value='<?php
             if(isset($_GET['body']) && !empty($_GET['body'])) {
                 echo check_body($_GET['body']);
@@ -124,9 +125,9 @@ require_once 'inc/info_box.php';
         <div style='width:50%'>
 
         <p style='display:inline-block'>
-        <label class='block' for='status'>And status is</label>
+        <label class='block' for='status'><?php echo SEARCH_AND_STATUS;?></label>
         <select id='status' name="status">
-            <option value='' name='status'>select status</option>
+            <option value='' name='status'><?php echo SEARCH_SELECT_STATUS;?></option>
             <?php
             // put all available status in array
             $status_arr = array();
@@ -153,10 +154,10 @@ require_once 'inc/info_box.php';
                 ?>
             </select></p>
             <p style='display:inline-block' class='align_right'>
-            <label class='block' for='rating'>And rating is</label>
+            <label class='block' for='rating'><?php echo SEARCH_AND_RATING;?></label>
             <select id='rating' name='rating'>
-                <option value='' name='rating'>select number of stars</option>
-                <option value='no' name='rating'>Unrated</option>
+                <option value='' name='rating'><?php echo SEARCH_STARS;?></option>
+                <option value='no' name='rating'><?php echo SEARCH_UNRATED;?></option>
                 <?php
                 for($i=1; $i<=5; $i++) {
                 echo "<option value='".$i."' name='rating'";
@@ -175,7 +176,7 @@ require_once 'inc/info_box.php';
     </div>
     </div> <!-- div with the border -->
     <div style='margin:30px;' class='center'>
-                <button id='searchButton' class='button' value='Submit' type='submit'>Launch search</button>
+        <button id='searchButton' class='button' value='Submit' type='submit'><?php echo SEARCH_BUTTON;?></button>
     </div>
     </form>
 </section>
@@ -300,7 +301,7 @@ if (isset($_GET)) {
     ?>
 
                 <div class='align_right'><a name='anchor'></a>
-                <p class='inline'>Export this result : </p>
+                <p class='inline'><?php echo SEARCH_EXPORT;?> </p>
                 <a href='make_zip.php?id=<?php echo $results_id_str;?>&type=experiments'>
                 <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>
 
@@ -318,8 +319,7 @@ if (isset($_GET)) {
                     showXP($id, $_SESSION['prefs']['display']);
                 }
             } else { // no results
-                $message = "Sorry, I couldn't find anything :(";
-                display_message('error', $message);
+                display_message('error_nocross', SEARCH_SORRY);
             }
 
     // DATABASE SEARCH
@@ -358,7 +358,7 @@ if (isset($_GET)) {
 ?>
 
             <div class='align_right'><a name='anchor'></a>
-            <p class='inline'>Export this result : </p>
+            <p class='inline'><?php echo SEARCH_EXPORT;?> </p>
             <a href='make_zip.php?id=<?php echo $results_id_str;?>&type=items'>
             <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>
 
@@ -376,8 +376,7 @@ if (isset($_GET)) {
                 showDB($id, $_SESSION['prefs']['display']);
             }
         } else { // no results
-            $message = "Sorry, I couldn't find anything :(";
-            display_message('error', $message);
+            display_message('error_nocross', SEARCH_SORRY);
         }
     }
     }

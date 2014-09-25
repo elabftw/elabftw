@@ -23,16 +23,16 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-$page_title = 'Revisions';
-require_once 'inc/head.php';
 require_once 'inc/common.php';
+$page_title = REVISIONS_TITLE;
+require_once 'inc/head.php';
 
 if (isset($_GET['exp_id']) && !empty($_GET['exp_id']) && is_pos_int($_GET['exp_id'])) {
     $exp_id = $_GET['exp_id'];
 } else {
-    die('Bad experiment id.');
+    die(INVALID_ID);
 }
-echo "<a href='experiments.php?mode=view&id=".$exp_id."'><h4><img src='img/undo.png' alt='<--' /> Go back to the experiment</h4></a>";
+echo "<a href='experiments.php?mode=view&id=".$exp_id."'><h4><img src='img/undo.png' alt='<--' /> ".REVISIONS_GO_BACK."</h4></a>";
 
 if (isset($_GET['action']) && $_GET['action'] === 'restore' && is_pos_int($_GET['rev_id'])) {
     // get the body of the restored time
@@ -50,10 +50,9 @@ if (isset($_GET['action']) && $_GET['action'] === 'restore' && is_pos_int($_GET[
     $req->execute();
     $locked = $req->fetch();
     if ($locked['locked'] == 1) {
-        $message = "You cannot restore a revision of a locked experiment !";
-        display_message('error', $message);
+        display_message('error', REVISIONS_LOCKED);
         require_once 'inc/footer.php';
-        die();
+        exit;
     }
     
     // experiment is not locked, we can continue
@@ -74,7 +73,7 @@ $req = $pdo->prepare($sql);
 $req->bindParam(':id', $exp_id, PDO::PARAM_INT);
 $req->execute();
 $experiment = $req->fetch();
-echo "<div class='item'>Current :<br>".$experiment['body']."</div>";
+echo "<div class='item'>".REVISIONS_CURRENT."<br>".$experiment['body']."</div>";
 
 // Get list of revisions
 $sql = "SELECT * FROM experiments_revisions WHERE exp_id = :exp_id AND userid = :userid ORDER BY savedate DESC";
@@ -84,10 +83,7 @@ $req->execute(array(
     'userid' => $_SESSION['userid']
 ));
 while($revisions = $req->fetch()) {
-    echo "<div class='item'>Saved on : ".$revisions['savedate']." <a href='revision.php?exp_id=".$exp_id."&action=restore&rev_id=".$revisions['id']."'>Restore</a><br>";
+    echo "<div class='item'>".REVISIONS_SAVED." ".$revisions['savedate']." <a href='revision.php?exp_id=".$exp_id."&action=restore&rev_id=".$revisions['id']."'>".REVISIONS_RESTORE."</a><br>";
     echo $revisions['body']."</div>";
 }
-?>
-
-<?php
 require_once 'inc/footer.php';

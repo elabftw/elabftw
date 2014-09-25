@@ -26,7 +26,7 @@
 /* this file is called with ajax post javascript from "Check for updates" link in 
  * Admin menu in inc/head.php. It will return a string with the error/status.
  */
-
+require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
 
@@ -37,14 +37,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
      */
     // check if git exists on the system
     if (!check_executable('git')) {
-        echo "Install git to check for updates.";
-        exit();
+        echo CHK_UPDATE_GIT;
+        exit;
     }
 
     // check that curl extension is installed and loaded
     if (!extension_loaded('curl')) {
-        echo "You need to install the curl extension for php.";
-        exit();
+        echo CHK_UPDATE_CURL;
+        exit;
     }
 
     // all is good, go !
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // for branch next
         curl_setopt($ch, CURLOPT_URL, "https://api.github.com/repos/NicolasCARPi/elabftw/git/refs/heads/next");
     } else {
-        echo "Unknown branch.";
+        echo CHK_UPDATE_UNKOWN;
         exit();
     }
     // this is to get content
@@ -95,21 +95,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // do the check and display message if both versions differ
     // we check also the size of latest version, or we get the message if it couldn't connect
     if (strlen($latest_version) != 40) { // couldn't connect
-        echo "Couldn't connect to github.com to check for updates.";
-        exit();
+        echo CHK_UPDATE_GITHUB;
+        exit;
     }
     if ($latest_version != $current_version) {
-        echo "A new update is available !";
-        exit();
+        echo CHK_UPDATE_NEW;
+        exit;
     }
     if ($latest_version == $current_version) {
     // sha1 are the same
         if ($current_branch == 'master') {
-            echo "Congratulations ! You are running the latest stable version of eLabFTW :)";
-            exit();
+            echo CHK_UPDATE_MASTER;
+            exit;
         } else { // for branch next
-            echo "Congratulations ! You are running the latest developement version of eLabFTW :)";
-            exit();
+            echo CHK_UPDATE_NEXT;
+            exit;
         }
     }
 }

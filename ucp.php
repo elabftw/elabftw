@@ -24,7 +24,8 @@
 *                                                                               *
 ********************************************************************************/
 require_once('inc/common.php');
-$page_title = 'User Control Panel';
+require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
+$page_title = UCP_TITLE;;
 require_once('inc/head.php');
 require_once('inc/info_box.php');
 // SQL for UCP
@@ -39,9 +40,9 @@ $users = $req->fetch();
 
 <menu>
     <ul>
-        <li class='tabhandle' id='tab1'>Account</li>
-        <li class='tabhandle' id='tab2'>Preferences</li>
-        <li class='tabhandle' id='tab3'>Templates</li>
+        <li class='tabhandle' id='tab1'><?php echo UCP_ACCOUNT;?></li>
+        <li class='tabhandle' id='tab2'><?php echo UCP_PREFERENCES;?></li>
+        <li class='tabhandle' id='tab3'><?php echo UCP_TPL;?></li>
     </ul>
 </menu>
 
@@ -52,47 +53,47 @@ $users = $req->fetch();
     <form method="post" action="ucp-exec.php">
         <div class='two-columns'>
         <section style='height:150px'>
-        <h4>Modify your personal informations</h4>
-        <label class='block' for='currpass'>Enter your current password to change personnal infos</label>
+        <h4><?php echo UCP_H4_1;?></h4>
+        <label class='block' for='currpass'><?php echo UCP_CURRPASS;?></label>
         <input id='currpass' name="currpass" type="password" required />
         </section>
 
         <section>
-        <h4>Modify your identity</h4>
-        <label class='block' for='firstname'>Firstname</label>
+        <h4><?php echo UCP_H4_2;?></h4>
+        <label class='block' for='firstname'><?php echo FIRSTNAME;?></label>
         <input name="firstname" value='<?php echo $users['firstname'];?>' cols='20' rows='1' />
-        <label class='block' for='lastname'>Lastname</label>
+        <label class='block' for='lastname'><?php echo LASTNAME;?></label>
         <input name="lastname" value='<?php echo $users['lastname'];?>' cols='20' rows='1' />
-        <label class='block' for='username'>Username</label>
+        <label class='block' for='username'><?php echo USERNAME;?></label>
         <input name="username" value='<?php echo $users['username'];?>' cols='20' rows='1' />
-        <label class='block' for='email'>Email</label>
+        <label class='block' for='email'><?php echo EMAIL;?></label>
         <input name="email" type="email" value='<?php echo $users['email'];?>' cols='20' rows='1' />
         </section>
 
         <section>
-        <h4>Modify your password</h4>
-        <label class='block' for='newpass'>New password</label>
+        <h4><?php echo UCP_H4_3;?></h4>
+        <label class='block' for='newpass'><?php echo UCP_NEWPASS;?></label>
         <input name="newpass" type="password" />
-        <label class='block' for='cnewpass'>Confirm new password</label>
+        <label class='block' for='cnewpass'><?php echo UCP_CNEWPASS;?></label>
         <input name="cnewpass" type="password" />
         </section>
 
         <section>
-        <h4>Modify your contact information</h4>
-        <label class='block' for='phone'>Phone</label>
+        <h4><?php echo UCP_H4_4;?></h4>
+        <label class='block' for='phone'><?php echo PHONE;?> </label>
         <input name="phone" value='<?php echo $users['phone'];?>' cols='20' rows='1' />
-        <label class='block' for='cellphone'>Cellphone</label>
+        <label class='block' for='cellphone'><?php echo MOBILE;?></label>
         <input name="cellphone" value='<?php echo $users['cellphone'];?>' cols='20' rows='1' />
-        <label class='block' for='skype'>Skype</label>
+        <label class='block' for='skype'><?php echo SKYPE;?></label>
         <input name="skype" value='<?php echo $users['skype'];?>' cols='20' rows='1' />
-        <label class='block' for='website'>Website</label>
+        <label class='block' for='website'><?php echo WEBSITE;?></label>
         <input name="website" type="url" value='<?php echo $users['website'];?>' cols='20' rows='1' />
         </section>
         </div>
 
     </div>
         <div class='submitButtonDiv'>
-            <button type="submit" name="Submit" class='button'>Update profile</button>
+            <button type="submit" name="Submit" class='button'><?php echo UCP_BUTTON_1;?></button>
         </div>
     </form>
 
@@ -103,75 +104,75 @@ $users = $req->fetch();
     <form action='ucp-exec.php' method='post'>
         <section class='box'>
 
-            <h3>DISPLAY</h3>
+            <h3><?php echo UCP_H3_1;?></h3>
             <hr>
             <p id='display'>
-            <label for='radio_view_default'>Default</label>
+            <label for='radio_view_default'><?php echo UCP_DEFAULT;?></label>
             <input id='radio_view_default' type='radio' name='display' value='default' 
             <?php echo ($_SESSION['prefs']['display'] === 'default') ? "checked" : "";?>
              />
 
-            <label for='radio_view_compact'>Compact</label>
+                 <label for='radio_view_compact'><?php echo UCP_COMPACT;?></label>
             <input id='radio_view_compact' type='radio' name='display' value='compact' 
             <?php echo ($_SESSION['prefs']['display'] === 'compact') ? "checked" : "";?>
              />
             </p>
 
             <p style='margin-top:20px;'>
-            <label for='order'>Order by :</label>
+            <label for='order'><?php echo UCP_ORDER_BY;?></label>
             <select id='order' name="order">
                 <option
                 <?php
                 if ($_SESSION['prefs']['order'] === 'date'){
-                    echo ' selected ';}?>value="date">date</option>
+                    echo ' selected ';}?>value="date"><?php echo DATE;?></option>
                 <option
                 <?php
                 if ($_SESSION['prefs']['order'] === 'id'){
-                    echo ' selected ';}?>value="id">item ID</option>
+                    echo ' selected ';}?>value="id"><?php echo UCP_ITEM_ID;?></option>
                 <option
                 <?php
                 if ($_SESSION['prefs']['order'] === 'title'){
-                    echo ' selected ';}?>value="title">title</option>
+                    echo ' selected ';}?>value="title"><?php echo TITLE;?></option>
             </select>
 
-            with
+            <?php echo UCP_WITH;?>
             <select name="sort">
                 <option
                 <?php
                 if ($_SESSION['prefs']['sort'] === 'desc'){
-                    echo ' selected ';}?>value="desc">newer first</option>
+                    echo ' selected ';}?>value="desc"><?php echo UCP_NEWER;?></option>
                 <option
                 <?php
                 if ($_SESSION['prefs']['sort'] === 'asc'){
-                    echo ' selected ';}?>value="asc">older first</option>
+                    echo ' selected ';}?>value="asc"><?php echo UCP_OLDER;?></option>
             </select>
 
             <p style='margin-top:20px;'>
-            <label for='limit'>Items per page :</label>
+            <label for='limit'><?php echo UCP_LIMIT;?></label>
             <input id='limit' type='text' size='2' maxlength='2' value='<?php echo $_SESSION['prefs']['limit'];?>' name='limit'>
             </p>
         </section>
 
         <section class='box'>
-            <h3>KEYBOARD SHORTCUTS</h3>
+            <h3><?php echo UCP_H3_2;?></h3>
             <hr>
             <p>
                 <table>
-                    <tr><th>Action</th><th>Shortcut</th></tr>
+                <tr><th><?php echo ACTION;?></th><th><?php echo SHORTCUT;?></th></tr>
 
-                    <tr><td>Create</td><td>
+                <tr><td><?php echo CREATE;?></td><td>
                     <input id='create' type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['create'];?>' name='create' />
                     </td></tr>
 
-                    <tr><td>Edit</td><td>
+                    <tr><td><?php echo EDIT;?></td><td>
                     <input id='edit' type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['edit'];?>' name='edit' />
                     </td></tr>
 
-                    <tr><td>Submit</td><td>
+                    <tr><td><?php echo SUBMIT;?></td><td>
                     <input id='key_submit' type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['submit'];?>' name='submit' />
                     </td></tr>
 
-                    <tr><td>TODO list</td><td>
+                    <tr><td><?php echo TODO;?></td><td>
                     <input id='todolist' type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['todo'];?>' name='todo' />
                     </td></tr>
                 </table>
@@ -179,17 +180,17 @@ $users = $req->fetch();
         </section>
 
         <section class='box'>
-            <h3>ALERT</h3>
+            <h3><?php echo UCP_H3_3;?></h3>
             <hr>
             <p>
-            <label for='close_warning'>Display a warning before closing an edit window/tab ?</label>
+            <label for='close_warning'><?php echo UCP_CLOSE_WARNING;?></label>
             <input id='close_warning' type='checkbox' name='close_warning' <?php
             if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
                 echo "checked='checked'  ";
             };?> />
         </section>
         <div style='margin-top:30px;' class='center'>
-            <button type="submit" name="Submit" class='button'>Save preferences</button>
+        <button type="submit" name="Submit" class='button'><?php echo SAVE;?></button>
         </div>
             </p>
 
@@ -221,7 +222,7 @@ $users = $req->fetch();
             <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='mceditable' rows='50' cols='60'></textarea>
         <br />
             <div class='center'>
-                <button type="submit" name="Submit" class='button'>Add template</button>
+                <button type="submit" name="Submit" class='button'><?php echo UCP_ADD_TPL;?></button>
             </div>
         </form>
     </div>
@@ -241,7 +242,7 @@ $users = $req->fetch();
             echo "<input name='tpl_name[]' value='".stripslashes($users['name'])."' /><br />";
             echo "<textarea name='tpl_body[]' class='mceditable' style='height:500px;'>".stripslashes($users['body'])."</textarea><br />";
             echo "<div class='center'>";
-            echo "<button type='submit' name='Submit' class='button'>Edit template</button>";
+            echo "<button type='submit' name='Submit' class='button'>".UCP_EDIT_BUTTON."</button>";
             echo "</div>";
             echo "</form>";
             echo "</div>";
@@ -295,4 +296,3 @@ $(document).ready(function() {
     });
 });
 </script>
-

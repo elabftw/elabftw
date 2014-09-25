@@ -46,9 +46,9 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             if (((get_team_config('deletable_xp') == '0')  &&
                 !$_SESSION['is_admin']) ||
                 !is_owned_by_user($id, 'experiments', $_SESSION['userid'])) {
-                $msg_arr[] = "You don't have the rights to delete this experiments.";
+                $msg_arr[] = DELETE_NO_RIGHTS;
                 $_SESSION['errors'] = $msg_arr;
-                die();
+                exit;
 
             } else {
 
@@ -88,9 +88,9 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                     'id' => $id
                 ));
 
-                $msg_arr[] = "Experiment was deleted successfully.";
+                $msg_arr[] = DELETE_EXP_SUCCESS;
                 $_SESSION['infos'] = $msg_arr;
-                die();
+                exit;
 
             }
 
@@ -104,7 +104,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                 'id' => $id
             ));
             if ($result) {
-                $msg_arr[] = "Template was deleted successfully.";
+                $msg_arr[] = DELETE_TPL_SUCCESS;
                 $_SESSION['infos'] = $msg_arr;
             }
             break;
@@ -162,10 +162,10 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
 
             // test if there was an error somewhere
             if (in_array(false, $result)) {
-                $msg_arr[] = "There was an error during the deletion.";
+                $msg_arr[] = ERROR_BUG;
                 $_SESSION['errors'] = $msg_arr;
             } else {
-                $msg_arr[] = "Item was deleted successfully.";
+                $msg_arr[] = DELETE_ITEM_SUCCESS;
                 $_SESSION['infos'] = $msg_arr;
             }
 
@@ -182,7 +182,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             ));
 
             if ($result) {
-                $msg_arr[] = "Item type was deleted successfully.";
+                $msg_arr[] = DELETE_ITEM_TYPE_SUCCESS;
                 $_SESSION['infos'] = $msg_arr;
             }
 
@@ -203,10 +203,6 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                 $result = $delete_req->execute(array(
                     'id' => $id
                 ));
-            }
-            if ($result) {
-                $msg_arr[] = "Item type was deleted successfully.";
-                $_SESSION['infos'] = $msg_arr;
             }
             break;
 
@@ -243,7 +239,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             $delete_req->execute(array(
                 'id' => $id
             ));
-            $msg_arr[] = "Status was deleted successfully.";
+            $msg_arr[] = DELETE_STATUS_SUCCESS;
             $_SESSION['infos'] = $msg_arr;
             break;
 
@@ -257,5 +253,5 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
 }
 
 if (isset($err_flag)) {
-    die('Nope.');
+    die(ERROR_BUG);
 }

@@ -24,18 +24,18 @@
 *                                                                               *
 ********************************************************************************/
 $load_more_button = "<div class='center'>
-        <button class='button' id='loadButton'>Load more</button>
+        <button class='button' id='loadButton'>".SHOW_XP_MORE."</button>
         </div>";
 // array to store results;
 $results_arr = array();
 ?>
 <menu class='border'>
-    <a href="create_item.php?type=exp"><img src="img/add.png" alt="" /> Create experiment</a> | 
-    <a href='#' class='trigger'><img src="img/add-template.png" alt="" /> Create from template</a>
+    <a href="create_item.php?type=exp"><img src="img/add.png" alt="" /> <?php echo SHOW_XP_CREATE;?></a> | 
+    <a href='#' class='trigger'><img src="img/add-template.png" alt="" /> <?php echo SHOW_XP_CREATE_TPL;?></a>
 
     <!-- 'FILTER STATUS' dropdown menu -->
     <span class='align_right'>
-    <select onchange=go_url(this.value)><option value=''>FILTER STATUS</option>
+    <select onchange=go_url(this.value)><option value=''><?php echo SHOW_XP_FILTER_STATUS;?></option>
     <?php
     $sql = "SELECT id, name FROM status WHERE team = :team_id";
     $req = $pdo->prepare($sql);
@@ -62,8 +62,7 @@ if ($tplreq->rowCount() > 0) {
         echo "<li class='inline'><a href='create_item.php?type=exp&tpl=".$tpl['id']."' class='templates'>".$tpl['name']."</a></li> ";
     }
 } else { // user has no templates
-    $message = "<strong>You do not have any templates yet.</strong> Go to <a href='ucp.php?tab=3'>your control panel</a> to make one !";
-    display_message('info_nocross', $message);
+    display_message('info_nocross', SHOW_XP_NO_TPL);
 }
 ?>
 </ul></div>
@@ -97,12 +96,11 @@ if (isset($_GET['q'])) { // if there is a query
         $unit = 'milliseconds';
     }
     if (count($results_arr) > 1) {
-        echo "<p class='smallgray'>".count($results_arr)." results ($total_time $unit)</p>";
+        echo "<p class='smallgray'>".count($results_arr)." ".RESULTS." ($total_time $unit)</p>";
     } elseif (count($results_arr) == 1) {
-        echo "<p class='smallgray'>1 result ($total_time $unit)</p>";
+        echo "<p class='smallgray'>".FOUND_1." ($total_time $unit)</p>";
     } else {
-        $message = 'No experiments were found.';
-        display_message('error', $message);
+        display_message('error', FOUND_0);
     }
 
     // loop the results array and display results
@@ -144,12 +142,11 @@ if (isset($_GET['q'])) { // if there is a query
         $unit = 'milliseconds';
     }
     if (count($results_arr) > 1) {
-        echo "<p class='smallgray'>".count($results_arr)." results ($total_time $unit)</p>";
+        echo "<p class='smallgray'>".count($results_arr)." ".RESULTS." ($total_time $unit)</p>";
     } elseif (count($results_arr) == 1) {
-        echo "<p class='smallgray'>1 result ($total_time $unit)</p>";
+        echo "<p class='smallgray'>".FOUND_1." ($total_time $unit)</p>";
     } else {
-        $message = 'No experiments are linked with this item.';
-        display_message('error', $message);
+        display_message('error', FOUND_0);
     }
 
     // loop the results array and display results
@@ -190,12 +187,11 @@ if (isset($_GET['q'])) { // if there is a query
         $unit = 'milliseconds';
     }
     if (count($results_arr) > 1) {
-        echo "<p class='smallgray'>".count($results_arr)." results ($total_time $unit)</p>";
+        echo "<p class='smallgray'>".count($results_arr)." ".RESULTS." ($total_time $unit)</p>";
     } elseif (count($results_arr) == 1) {
-        echo "<p class='smallgray'>1 result ($total_time $unit)</p>";
+        echo "<p class='smallgray'>".FOUND_1." ($total_time $unit)</p>";
     } else {
-        $message = 'No experiments were found.';
-        display_message('error', $message);
+        display_message('error', FOUND_0);
     }
 
     // clean duplicates
@@ -225,10 +221,7 @@ if (isset($_GET['q'])) { // if there is a query
     $count = $req->rowCount();
     // If there are no experiments, display a little message
     if ($count == 0) {
-        $message = "<strong>Welcome to eLabFTW.</strong> 
-            Click the <img src='img/add.png' alt='Create experiment' />
-            <a href='create_item.php?type=exp'>Create experiment</a> button to get started.";
-        display_message('info_nocross', $message);
+        display_message('info_nocross', SHOW_XP_NO_EXP);
     } else {
         while ($experiments = $req->fetch()) {
             $results_arr[] = $experiments['id'];

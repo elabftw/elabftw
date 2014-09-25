@@ -25,11 +25,12 @@
 ********************************************************************************/
 // lock.php
 require_once 'inc/common.php';
+require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 // Check id is valid and assign it to $id
 if (isset($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    die("The id parameter in the URL isn't a valid ID");
+    die(INVALID_ID);
 }
 
 // what do we do ? lock or unlock ?
@@ -73,7 +74,7 @@ switch($_GET['type']) {
         $userid = $req->fetchColumn();
         // we are trying to lock an XP which is not ours, and we don't have can_lock, show error
         if ($userid != $_SESSION['userid']) {
-            $err_arr[] = "You don't have the rights to lock/unlock this.";
+            $err_arr[] = LOCK_NO_RIGHTS;
             $_SESSION['errors'] = $err_arr;
             header("Location: experiments.php?mode=view&id=$id");
             exit();
@@ -97,7 +98,7 @@ switch($_GET['type']) {
                 'userid' => $lockedby
             ));
             $locker_name = $req->fetchColumn();
-            $err_arr[] = "This experiment was locked by $locker_name. You don't have the rights to unlock it.";
+            $err_arr[] = LOCK_LOCKED_BY.' '.$locker_name.'. '.LOCK_NO_RIGHTS;
             $_SESSION['errors'] = $err_arr;
             header("Location: experiments.php?mode=view&id=$id");
             exit();
@@ -111,7 +112,7 @@ switch($_GET['type']) {
     $req->execute();
     $timestamped = $req->fetchColumn();
     if ($action === 0 && $timestamped) {
-            $err_arr[] = "You cannot unlock or edit in any way a timestamped experiment.";
+            $err_arr[] = LOCK_NO_EDIT;
             $_SESSION['errors'] = $err_arr;
             header("Location: experiments.php?mode=view&id=$id");
             exit;
@@ -130,7 +131,7 @@ switch($_GET['type']) {
             header("Location: experiments.php?mode=view&id=$id");
             exit;
         } else {
-            die('SQL failed');
+            die(ERROR_BUG);
         }
         break;
 
@@ -147,11 +148,9 @@ switch($_GET['type']) {
             header("Location: database.php?mode=view&id=$id");
             exit;
         } else {
-            die('SQL failed');
+            die(ERROR_BUG);
         }
         break;
     default:
-        die();
+        die(ERROR_BUG);
 }
-
-

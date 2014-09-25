@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 echo "<section class='box'>";
-echo "<img src='img/cloud.png' alt='' /> <h4>TAG CLOUD</h4>";
+echo "<img src='img/cloud.png' alt='' /> <h4>".TAGCLOUD_H4."</h4>";
 echo "<div id='tagcloud'>";
 // 1. Create an array with tag -> count
 $sql = "SELECT tag, COUNT(id) AS total
@@ -80,7 +80,7 @@ if ($count > 10) {
     // TAGCLOUD
     echo "</div>";
 } else {
-    echo 'Not enough tags to make a tagcloud.';
+    echo NOT_ENOUGH_TAGS;
 }// end fix division by zero
 ?>
 </section>

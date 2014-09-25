@@ -48,13 +48,13 @@ if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
     $numrows = $result->rowCount();
     if ($result) {
         if ($numrows > 0) {
-            $msg_arr[] = 'Username already in use';
+            $msg_arr[] = REGISTER_USERNAME_USED;
             $errflag = true;
         }
         $result = null;
     }
 } else {
-    $msg_arr[] = 'Username missing';
+    $msg_arr[] = FIELD_MISSING;
     $errflag = true;
 }
 // Check team (should be an int)
@@ -64,7 +64,7 @@ if (isset($_POST['team']) &&
     $team = $_POST['team'];
 } else {
     $team = '';
-    $msg_arr[] = 'Team missing';
+    $msg_arr[] = FIELD_MISSING;
     $errflag = true;
 }
 // Check FIRSTNAME (sanitize, and make it look like Firstname)
@@ -72,14 +72,14 @@ if ((isset($_POST['firstname'])) && (!empty($_POST['firstname']))) {
     // Put everything lowercase and first letter uppercase
     $firstname = ucwords(strtolower(filter_var($_POST['firstname'], FILTER_SANITIZE_STRING)));
 } else {
-    $msg_arr[] = 'Firstname missing';
+    $msg_arr[] = FIELD_MISSING;
     $errflag = true;
 }
 // Check LASTNAME (sanitize, and make it look like LASTNAME)
 if ((isset($_POST['lastname'])) && (!empty($_POST['lastname']))) {
     $lastname = strtoupper(filter_var($_POST['lastname'], FILTER_SANITIZE_STRING));
 } else {
-    $msg_arr[] = 'Lastname missing';
+    $msg_arr[] = FIELD_MISSING;
     $errflag = true;
 }
 
@@ -96,14 +96,14 @@ if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
         $numrows = $result->rowCount();
         if ($result) {
             if ($numrows > 0) {
-                $msg_arr[] = 'Someone is already using that email address !';
+                $msg_arr[] = REGISTER_EMAIL_USED;
                 $errflag = true;
             }
             $result= null;
         }
     }
 } else {
-    $msg_arr[] = 'Email missing';
+    $msg_arr[] = FIELD_MISSING;
     $errflag = true;
 }
 
@@ -115,21 +115,21 @@ if ((isset($_POST['cpassword'])) && (!empty($_POST['cpassword']))) {
         // Create hash
         $passwordHash = hash("sha512", $salt.$_POST['password']);
         // Check for password length
-        if (strlen($_POST['password']) <= 3) {
-            $msg_arr[] = 'Password must contain at least 4 characters';
+        if (strlen($_POST['password']) <= 7) {
+            $msg_arr[] = PASSWORD_TOO_SHORT;
             $errflag = true;
         }
         // Check confirm password is same as password
         if (strcmp($_POST['password'], $_POST['cpassword']) != 0) {
-            $msg_arr[] = 'Passwords do not match';
+            $msg_arr[] = PASSWORDS_DONT_MATCH;
             $errflag = true;
         }
     } else {
-        $msg_arr[] = 'Password missing';
+        $msg_arr[] = FIELD_MISSING;
         $errflag = true;
     }
 } else {
-    $msg_arr[] = 'Confirmation password missing';
+    $msg_arr[] = FIELD_MISSING;
     $errflag = true;
 }
 
@@ -234,21 +234,13 @@ if ($result) {
         // Create the message
         $message = Swift_Message::newInstance()
         // Give the message a subject
-        ->setSubject('[eLabFTW] New user registered')
+        ->setSubject(REGISTER_EMAIL_SUBJECT)
         // Set the From address with an associative array
         ->setFrom(array(get_config('smtp_username') => get_config('smtp_username')))
         // Set the To addresses with an associative array
         ->setTo(array($admin['email'] => 'Admin eLabFTW'))
         // Give it a body
-        ->setBody(
-            'Hi,
-Someone registered a new account on eLabFTW. Head to the admin panel to activate the account !
-
-~~
-Email sent by eLabFTW
-http://www.elabftw.net
-Free open-source Lab Manager'
-        );
+        ->setBody(REGISTER_EMAIL_BODY);
         $transport = Swift_SmtpTransport::newInstance(
             get_config('smtp_address'),
             get_config('smtp_port'),
@@ -262,19 +254,19 @@ Free open-source Lab Manager'
             $mailer->send($message);
         } catch (Exception $e) {
             dblog('Error', 'smtp', $e->getMessage());
-            $msg_arr[] = "Could not send email to inform admin. Error was logged. Contact an admin directly to validate your account.";
+            $msg_arr[] = REGISTER_EMAIL_FAILED;
             $_SESSION['errors'] = $msg_arr;
             header('Location: register.php');
             exit;
         }
-        $msg_arr[] = 'Registration successful :)<br />Your account must now be validated by an admin.<br />You will receive an email when it is done.';
+        $msg_arr[] = REGISTER_SUCCESS_NEED_VALIDATION;
     } else {
-        $msg_arr[] = 'Registration successful :)<br />Welcome to eLabFTW \o/';
+        $msg_arr[] = REGISTER_SUCCESS;
     }
     $_SESSION['infos'] = $msg_arr;
     $_SESSION['username'] = $username;
     header("location: login.php");
     exit;
 } else {
-    die("Query failed");
+    die(ERROR_BUG);
 }

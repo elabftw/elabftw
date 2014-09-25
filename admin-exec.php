@@ -28,7 +28,7 @@ require_once 'inc/common.php';
 
 // only admin can use this
 if ($_SESSION['is_admin'] != 1) {
-    die('You are not admin !');
+    die(NO_ACCESS_DIE);
 }
 
 $msg_arr = array();
@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
 
         // validate the user
         $req->execute();
-        $msg_arr[] = 'Validated user with user ID : '.$user;
+        $msg_arr[] = ADMIN_USER_VALIDATED.' '.$user;
 
         // get email
         $req_email->execute();
@@ -72,23 +72,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
         // Create the message
         $message = Swift_Message::newInstance()
         // Give the message a subject
-        ->setSubject('[eLabFTW] New user registred')
+        ->setSubject(EMAIL_NEW_USER_SUBJECT)
         // Set the From address with an associative array
-        ->setFrom(array('elabftw.net@gmail.com' => 'eLabFTW'))
+        ->setFrom(array(get_config('smtp_username') => get_config('smtp_username')))
         // Set the To addresses with an associative array
-        ->setTo(array($user['email'] => 'Your account has been activated.'))
+        ->setTo(array($user['email'] => 'eLabFTW'))
         // Give it a body
         ->setBody(
-            'Hi,
-            Your account on eLabFTW has been activated. You can now login:
-            '.$url.'
-
-            Thanks for using eLabFTW :)
-
-            ~~
-            Email sent by eLabFTW
-            http://www.elabftw.net
-            Free open-source Lab Manager'
+            EMAIL_NEW_USER_BODY_1
+            .$url.
+            EMAIL_NEW_USER_BODY_2
         );
         $transport = Swift_SmtpTransport::newInstance(
             get_config('smtp_address'),
@@ -107,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
             $errflag = true;
         }
         if ($errflag) {
-            $msg_arr[] = 'There was a problem sending the email. Error was logged.';
+            $msg_arr[] = EMAIL_SEND_ERROR;
             $_SESSION['errors'] = $msg_arr;
             header('location: admin.php');
             exit;
@@ -163,12 +156,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team']) && $_POST[
     $req->bindValue(':team', $new_team_id);
     $result4 = $req->execute();
     if ($result1 && $result2 && $result3 && $result4) {
-        $msg_arr[] = 'Team added successfully.';
+        $msg_arr[] = ADMIN_TEAM_ADDED;
         $_SESSION['infos'] = $msg_arr;
         header('Location: sysconfig.php');
         exit;
     } else {
-        $msg_arr[] = 'There was a problem (errorId : 42). Please report a bug if you think this is one.';
+        $msg_arr[] = ERROR_BUG;
         $_SESSION['errors'] = $msg_arr;
         header('Location: sysconfig.php');
         exit;
@@ -205,12 +198,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
     );
 
     if (update_config($updates)) {
-        $msg_arr[] = 'Configuration updated successfully.';
+        $msg_arr[] = CONFIG_UPDATE_OK;
         $_SESSION['infos'] = $msg_arr;
         header('Location: sysconfig.php?tab=2');
         exit;
     } else {
-        $msg_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $msg_arr[] = ERROR_BUG;
         $_SESSION['errors'] = $msg_arr;
         header('Location: sysconfig.php?tab=2');
         exit;
@@ -244,12 +237,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {
     );
 
     if (update_config($updates)) {
-        $msg_arr[] = 'Configuration updated successfully.';
+        $msg_arr[] = CONFIG_UPDATE_OK;
         $_SESSION['infos'] = $msg_arr;
         header('Location: sysconfig.php?tab=3');
         exit;
     } else {
-        $msg_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $msg_arr[] = ERROR_BUG;
         $_SESSION['errors'] = $msg_arr;
         header('Location: sysconfig.php?tab=3');
         exit;
@@ -283,12 +276,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['admin_validate'])) {
     );
 
     if (update_config($updates)) {
-        $msg_arr[] = 'Configuration updated successfully.';
+        $msg_arr[] = CONFIG_UPDATE_OK;
         $_SESSION['infos'] = $msg_arr;
         header('Location: sysconfig.php?tab=4');
         exit;
     } else {
-        $msg_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $msg_arr[] = ERROR_BUG;
         $_SESSION['errors'] = $msg_arr;
         header('Location: sysconfig.php?tab=4');
         exit;
@@ -334,12 +327,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['smtp_address'])) {
     );
 
     if (update_config($updates)) {
-        $msg_arr[] = 'Configuration updated successfully.';
+        $msg_arr[] = CONFIG_UPDATE_OK;
         $_SESSION['infos'] = $msg_arr;
         header('Location: sysconfig.php?tab=5');
         exit;
     } else {
-        $msg_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $msg_arr[] = ERROR_BUG;
         $_SESSION['errors'] = $msg_arr;
         header('Location: sysconfig.php?tab=5');
         exit;
@@ -390,12 +383,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
     ));
 
     if ($result) {
-        $msg_arr[] = 'Configuration updated successfully.';
+        $msg_arr[] = CONFIG_UPDATE_OK;
         $_SESSION['infos'] = $msg_arr;
         header('Location: admin.php');
         exit;
     } else {
-        $msg_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $msg_arr[] = ERROR_BUG;
         $_SESSION['errors'] = $msg_arr;
         header('Location: admin.php');
         exit;
@@ -405,7 +398,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
 // EDIT USER
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
     if (!is_pos_int($_POST['userid'])) {
-        $msg_arr[] = 'Userid is not valid.';
+        $msg_arr[] = INVALID_USERID;
         $errflag = true;
     }
     if ($errflag) {
@@ -430,7 +423,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
         // a non sysadmin cannot put someone sysadmin
         $usergroup = $_POST['usergroup'];
         if ($usergroup == 1 && $_SESSION['is_sysadmin'] != 1) {
-            die('Only a sysadmin can put someone sysadmin.');
+            die(SYSADMIN_GRANT_SYSADMIN);
         }
 
     } else {
@@ -454,14 +447,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
                 'salt' => $salt
             ));
             if ($result) {
-                $msg_arr[] = 'User password updated successfully.';
+                $msg_arr[] = CONFIG_UPDATE_OK;
                 $_SESSION['infos'] = $msg_arr;
             } else {
-                $msg_arr[] = 'There was a problem in the SQL update of the password.';
+                $msg_arr[] = ERROR_BUG;
                 $_SESSION['errors'] = $msg_arr;
             }
         } else { // passwords do not match
-            $msg_arr[] = 'Passwords do not match !';
+            $msg_arr[] = PASSWORDS_DONT_MATCH;
             $_SESSION['errors'] = $msg_arr;
         }
     }
@@ -486,7 +479,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
     ));
     if ($result) {
         if (empty($msg_arr)) {
-            $msg_arr[] = 'User infos updated successfully.';
+            $msg_arr[] = CONFIG_UPDATE_OK;
             $_SESSION['infos'] = $msg_arr;
             header('Location: admin.php?tab=2');
             exit;
@@ -495,7 +488,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
             exit;
         }
     } else { //sql fail
-        $msg_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $msg_arr[] = ERROR_BUG;
         $_SESSION['errors'] = $msg_arr;
         header('Location: admin.php?tab=2');
         exit;
@@ -503,7 +496,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
 }
 
 // STATUS
-if (isset($_POST['status_name']) && is_pos_int($_POST['status_id'])) {
+if (isset($_POST['status_name']) && is_pos_int($_POST['status_id']) && !empty($_POST['status_name'])) {
     $status_id = $_POST['status_id'];
     $status_name = filter_var($_POST['status_name'], FILTER_SANITIZE_STRING);
     // we remove the # of the hexacode and sanitize string
@@ -537,19 +530,19 @@ if (isset($_POST['status_name']) && is_pos_int($_POST['status_id'])) {
         'id' => $status_id
     ));
     if ($result) {
-        $msg_arr[] = 'Status updated successfully.';
+        $msg_arr[] = CONFIG_UPDATE_OK;
         $_SESSION['infos'] = $msg_arr;
         header('Location: admin.php?tab=3');
         exit;
     } else { //sql fail
-        $msg_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $msg_arr[] = ERROR_BUG;
         $_SESSION['errors'] = $msg_arr;
         header('Location: admin.php?tab=3');
         exit;
     }
 }
 // add new status
-if (isset($_POST['new_status_name'])) {
+if (isset($_POST['new_status_name']) && !empty($_POST['status_name'])) {
     $status_name = filter_var($_POST['new_status_name'], FILTER_SANITIZE_STRING);
     // we remove the # of the hexacode and sanitize string
     $status_color = filter_var(substr($_POST['new_status_color'], 1, 6), FILTER_SANITIZE_STRING);
@@ -562,16 +555,21 @@ if (isset($_POST['new_status_name'])) {
         'is_default' => 0
     ));
     if ($result) {
-        $msg_arr[] = 'New status added successfully.';
+        $msg_arr[] = CONFIG_UPDATE_OK;
         $_SESSION['infos'] = $msg_arr;
         header('Location: admin.php?tab=3');
         exit;
     } else { //sql fail
-        $msg_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $msg_arr[] = ERROR_BUG;
         $_SESSION['errors'] = $msg_arr;
         header('Location: admin.php?tab=3');
         exit;
     }
+} else {
+    $msg_arr[] = FIELD_MISSING;
+    $_SESSION['errors'] = $msg_arr;
+    header('Location: admin.php?tab=3');
+    exit;
 }
 
 // ITEMS TYPES
@@ -596,12 +594,12 @@ if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
         'id' => $item_type_id
     ));
     if ($result) {
-        $msg_arr[] = 'New item category updated successfully.';
+        $msg_arr[] = CONFIG_UPDATE_OK;
         $_SESSION['infos'] = $msg_arr;
         header('Location: admin.php?tab=4');
         exit;
     } else { //sql fail
-        $msg_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $msg_arr[] = ERROR_BUG;
         $_SESSION['errors'] = $msg_arr;
         header('Location: admin.php?tab=4');
         exit;
@@ -611,7 +609,7 @@ if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
 if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
     $item_type_name = filter_var($_POST['new_item_type_name'], FILTER_SANITIZE_STRING);
     if (strlen($item_type_name) < 1) {
-        $msg_arr[] = 'You need to put a title !';
+        $msg_arr[] = NEED_TITLE;
         $_SESSION['errors'] = $msg_arr;
         header('Location: admin.php?tab=4');
         exit;
@@ -629,12 +627,12 @@ if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
         'template' => $item_type_template
     ));
     if ($result) {
-        $msg_arr[] = 'New item category added successfully.';
+        $msg_arr[] = CONFIG_UPDATE_OK;
         $_SESSION['infos'] = $msg_arr;
         header('Location: admin.php?tab=4');
         exit;
     } else { //sql fail
-        $msg_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $msg_arr[] = ERROR_BUG;
         $_SESSION['errors'] = $msg_arr;
         header('Location: admin.php?tab=4');
         exit;
@@ -646,12 +644,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     // Check the form_key
     if (!isset($_POST['form_key']) || !$formKey->validate()) {
         // form key is invalid
-        die('The form key is invalid. Please retry.');
+        die(INVALID_FORMKEY);
     }
     if (filter_var($_POST['delete_user'], FILTER_VALIDATE_EMAIL)) {
         $email = $_POST['delete_user'];
     } else {
-        $msg_arr[] = 'Email is not valid';
+        $msg_arr[] = INVALID_EMAIL;
         $errflag = true;
     }
     if (isset($_POST['delete_user_confpass']) && !empty($_POST['delete_user_confpass'])) {
@@ -665,12 +663,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
         // check if the given password is good
         $password_hash = hash("sha512", $pass_infos['salt'].$_POST['delete_user_confpass']);
         if ($password_hash != $pass_infos['password']) {
-            $msg_arr[] = 'Wrong password !';
+            $msg_arr[] = INVALID_PASSWORD;
             $errflag = true;
         }
 
     } else {
-        $msg_arr[] = 'You need to put your password !';
+        $msg_arr[] = NEED_PASSWORD;
         $errflag = true;
     }
     // look which user has this email address and make sure it is in the same team as admin
@@ -683,7 +681,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     $user = $req->fetch();
     // email doesn't exist
     if ($req->rowCount() === 0) {
-        $msg_arr[] = 'No user with this email or user not in your team.';
+        $msg_arr[] = INVALID_USER;
         $errflag = true;
     }
 
@@ -721,7 +719,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     $sql = "DELETE FROM uploads WHERE userid = ".$userid;
     $req = $pdo->prepare($sql);
     $req->execute();
-    $msg_arr[] = 'Everything was purged successfully.';
+    $msg_arr[] = USER_DELETED;
     $_SESSION['infos'] = $msg_arr;
     header('Location: admin.php?tab=2');
     exit;
@@ -740,12 +738,12 @@ if (isset($_POST['default_exp_tpl'])) {
         'team' => $_SESSION['team_id']
     ));
     if ($result) {
-        $msg_arr[] = 'Default experiment template edited successfully.';
+        $msg_arr[] = CONFIG_UPDATE_OK;
         $_SESSION['infos'] = $msg_arr;
         header('Location: admin.php?tab=5');
         exit;
     } else { //sql fail
-        $msg_arr[] = 'There was a problem in the SQL request. Report a bug !';
+        $msg_arr[] = ERROR_BUG;
         $_SESSION['errors'] = $msg_arr;
         header('Location: admin.php?tab=5');
         exit;

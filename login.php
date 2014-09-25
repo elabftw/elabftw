@@ -26,7 +26,9 @@
 if (!isset($_SESSION)) {
     session_start();
 }
-$page_title = 'Login';
+// TODO
+require_once 'lang/en-GB.php';
+$page_title = LOGIN_TITLE;
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
 require_once 'inc/head.php';
@@ -44,15 +46,14 @@ if (!isset($_SERVER['HTTPS'])) {
         >see documentation</a>). Or click this link : <a href='$url'>$url</a>";
     display_message('error', $message);
     require_once 'inc/footer.php';
-    die();
+    exit;
 }
 
 // Check if already logged in
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
-    $message = 'You are already logged in !';
-    display_message('error', $message);
+    display_message('error', LOGIN_ALREADY);
     require_once 'inc/footer.php';
-    die();
+    exit;
 }
 
 // Check if we are banned after too much failed login attempts
@@ -66,16 +67,15 @@ while ($banned_users = $req->fetch()) {
     $banned_users_arr[] = $banned_users['user_infos'];
 }
 if (in_array(md5($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']), $banned_users_arr)) {
-    $message ='You cannot login now because of too much failed login attempts.';
-    display_message('error', $message);
+    display_message('error', LOGIN_TOO_MUCH_FAILED);
     require_once 'inc/footer.php';
-    die();
+    exit;
 }
 
 // show message if there is a failed_attempt
 if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] < get_config('login_tries')) {
     $number_of_tries_left = get_config('login_tries') - $_SESSION['failed_attempt'];
-    $message = "Number of login attempt left before being banned for ".get_config('ban_time')." minutes : $number_of_tries_left.";
+    $message = LOGIN_ATTEMPT_NB.' '.get_config('ban_time').' '.LOGIN_MINUTES.' '.$number_of_tries_left;
     display_message('error', $message);
 }
 
@@ -90,10 +90,9 @@ if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] >= get_con
         'user_infos' => $user_infos
     ));
     unset($_SESSION['failed_attempt']);
-    $message ='Too much failed login attempts. Login is disabled for '.get_config('ban_time').' minutes.';
-    display_message('error', $message);
+    display_message('error', LOGIN_TOO_MUCH_FAILED);
     require_once 'inc/footer.php';
-    die();
+    exit;
 }
 ?>
 
@@ -108,34 +107,33 @@ function checkCookiesEnabled() {
 return (cookieEnabled);
 }
 if (!checkCookiesEnabled()) {
-    var cookie_alert = "<div class='ui-state-error ui-corner-all' style='margin:5px'><p><span class='ui-icon ui-icon-alert' style='float:left; margin: 0 5px 0 5px;'></span>Please enable cookies in your navigator to continue.</p></div>";
+    var cookie_alert = "<div class='errorbox messagebox<p><?php echo LOGIN_ENABLE_COOKIES;?></p></div>";
     document.write(cookie_alert);
 }
 </script>
 
-    <menu class='border' style='color:#29AEB9'>Note : you need cookies enabled to log in.</menu>
+    <menu class='border' style='color:#29AEB9'><?php echo LOGIN_COOKIES_NOTE;?></menu>
 <section class='center loginform'>
     <!-- Login form -->
     <form method="post" action="login-exec.php" autocomplete="off">
-        <h2>Sign in to your account</h2>
+        <h2><?php echo LOGIN_H2;?></h2>
         <p>
-            <label class='block' for="username">Username</label>
+        <label class='block' for="username"><?php echo USERNAME;?></label>
             <input name="username" type="text" required /><br>
-            <label class='block' for="password">Password</label>
+            <label class='block' for="password"><?php echo PASSWORD;?></label>
             <input name="password" type="password" required /><br>
             <!-- form key -->
             <?php $formKey->output_formkey(); ?>
         </p>
         <div id='loginButtonDiv'>
-        <button type="submit" class='button' name="Submit">Login</button>
+        <button type="submit" class='button' name="Submit"><?php echo LOGIN_BUTTON;?></button>
         </div>
     </form>
-    <p>Don't have an account ? <a href='register.php'>Register</a> now !<br />
-    Lost your password ? <a href='#' class='trigger'>Reset</a> it !</p>
+    <p><?php echo LOGIN_FOOTER;?></p>
     <div class='toggle_container'>
     <form name='resetPass' method='post' action='reset-pass.php'>
     <input placeholder='Enter your email address' name='email' type='email' required />
-    <button class='button' type="submit" name="Submit">Send new password</button>
+    <button class='button' type="submit" name="Submit"><?php echo LOGIN_FOOTER_BUTTON;?></button>
     </form>
     </div>
 </section>
@@ -149,4 +147,3 @@ $(document).ready(function(){
 	});
 });
 </script>
-

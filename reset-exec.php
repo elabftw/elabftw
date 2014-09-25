@@ -24,8 +24,10 @@
 *                                                                               *
 ********************************************************************************/
 session_start();
-require_once('inc/connect.php');
-require_once('inc/functions.php');
+require_once 'inc/connect.php';
+require_once 'inc/functions.php';
+// TODO
+require_once 'lang/en-GB.php';
 
 $password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);
 $cpassword = filter_var($_POST['cpassword'], FILTER_SANITIZE_STRING);
@@ -39,7 +41,7 @@ if ($password == $cpassword) {
     if (filter_var($_POST['userid'], FILTER_VALIDATE_INT)) {
         $userid = $_POST['userid'];
     } else {
-        die('Bad userid');
+        die(INVALID_USERID);
     }
     // Replace new password in database
     $sql = "UPDATE users 
@@ -53,61 +55,8 @@ if ($password == $cpassword) {
         'userid' => $userid));
     if($result){
         dblog('Info', $userid, 'Password was changed for this user.');
-        // LOGIN THE USER
-        // admin validated ?
-        if (get_config('admin_validate') == 1){
-        $sql = "SELECT * FROM users WHERE userid='$userid' AND password='$passwordHash' AND validated= 1";
-        } else {
-        $sql = "SELECT * FROM users WHERE userid='$userid' AND password='$passwordHash'";
-        }
-        $req = $pdo->prepare($sql);
-        $result = $req->execute();
-        $numrows = $req->rowCount();
-        //Check whether the query was successful or not
-        if ($result) {
-            if ($numrows === 1) {
-                $data = $req->fetch();
-                // Store userid and permissions in $_SESSION
-                session_regenerate_id();
-                $_SESSION['auth'] = 1;
-                $_SESSION['userid'] = $data['userid'];
-                $_SESSION['team_id'] = $data['team'];
-                // Used in the menu
-                $_SESSION['username'] = $data['username'];
-                // load permissions
-                $perm_sql = "SELECT * FROM groups WHERE group_id = :group_id LIMIT 1";
-                $perm_req = $pdo->prepare($perm_sql);
-                $perm_req->bindParam(':group_id', $data['usergroup']);
-                $perm_req->execute();
-                $group = $perm_req->fetch(PDO::FETCH_ASSOC);
-
-                $_SESSION['is_admin'] = $group['is_admin'];
-                $_SESSION['is_sysadmin'] = $group['is_sysadmin'];
-                // PREFS
-                $_SESSION['prefs'] = array(
-                    'display' => $data['display'], 
-                    'order' => $data['order_by'], 
-                    'sort' => $data['sort_by'], 
-                    'limit' => $data['limit_nb'], 
-                    'shortcuts' => array('create' => $data['sc_create'], 'edit' => $data['sc_edit'], 'submit' => $data['sc_submit'], 'todo' => $data['sc_todo']));
-                // Make a unique token and store it in sql AND cookie
-                $token = md5(uniqid(rand(), true));
-                // Cookie validity = 1 month
-                setcookie('token', $token, time() + 60*60*24*30);
-                $path = dirname(__FILE__);
-                setcookie('path', $path, time() + 60*60*24*30);
-                $sql = "UPDATE users SET token = :token WHERE userid = :userid";
-                $req = $pdo->prepare($sql);
-                $req->execute(array(
-                    'token' => $token,
-                    'userid' => $data['userid']
-                ));
-                $msg_arr[] = 'New password updated. You have been automagically logged in. Welcome back ;)';
-                $_SESSION['infos'] = $msg_arr;
-                session_write_close();
-                header("location: experiments.php");
-            }
-        }
+        $msg_arr[] = RESET_SUCCESS;
+        $_SESSION['infos'] = $msg_arr;
+        header("location: login.php");
     }
 }
-

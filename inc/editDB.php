@@ -34,10 +34,9 @@
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    $message = "<strong>Cannot edit:</strong> the id parameter is not valid !";
-    display_message('error', $message);
+    display_message('error', INVALID_ID);
     require_once 'inc/footer.php';
-    exit();
+    exit;
 }
 
 // GET CONTENT
@@ -53,10 +52,9 @@ $data = $req->fetch();
 
 // Check for lock
 if ($data['locked'] == 1) {
-    $message = "<strong>This item is locked.</strong> You cannot edit it.";
-    display_message('error', $message);
+    display_message('error', LOCKED_NO_EDIT);
     require_once 'inc/footer.php';
-    exit();
+    exit;
 }
 
 // BEGIN CONTENT
@@ -66,7 +64,7 @@ if ($data['locked'] == 1) {
     <img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','item', 'database.php')" />
 
     <!-- ADD TAG FORM -->
-    <img src='img/tags.png' alt='tags' /><label for='addtaginput'>Tags</label>
+    <img src='img/tags.png' alt='tags' /><label for='addtaginput'><?php echo TAGS;?></label>
     <div class='tags'>
         <span id='tags_div'>
         <?php
@@ -96,22 +94,22 @@ if ($data['locked'] == 1) {
     </div><!-- END STAR RATING -->
     <input name='item_id' type='hidden' value='<?php echo $id;?>' />
     <img src='img/calendar.png' title='date' alt='Date :' />
-    <label class='block' for='datepicker'>Date</label>
+    <label class='block' for='datepicker'><?php echo DATE;?></label>
     <!-- TODO if firefox has support for it: type = date -->
     <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date'];?>' />
-    <label class='block' for='title_txtarea'>Title</label>
+    <label class='block' for='title_txtarea'><?php echo TITLE;?></label>
     <input id='title_input' name='title' rows="1" value='<?php if (empty($_SESSION['errors'])) {
       echo stripslashes($data['title']);
     } else {
       echo stripslashes($_SESSION['new_title']);
     } ?>' required />
-    <label for='body_area' class='block'>Infos</label>
+        <label for='body_area' class='block'><?php echo INFOS;?></label>
     <textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">
         <?php echo stripslashes($data['body']);?>
     </textarea>
     <!-- SUBMIT BUTTON -->
     <div class='center' id='saveButton'>
-        <button type="submit" name="Submit" class='button'>Save and go back</button>
+        <button type="submit" name="Submit" class='button'><?php echo SAVE_AND_BACK;?></button>
     </div>
     </form>
     <!-- end edit items form -->
@@ -147,7 +145,7 @@ while ($tag = $getalltags->fetch()) {
 	});
 // DELETE TAG
 function delete_tag(tag_id,item_id){
-    var you_sure = confirm('Delete this tag ?');
+    var you_sure = confirm('<?php echo DELETE_THIS;?>');
     if (you_sure == true) {
         $.post('delete.php', {
             id:tag_id,
@@ -261,10 +259,9 @@ $(document).ready(function() {
         echo "
     window.onbeforeunload = function (e) {
           e = e || window.event;
-          return 'Do you want to navigate away from this page ? Unsaved changes will be lost !';
+          return '".CLOSE_WARNING."';
     };";
     }
 ?>
 });
 </script>
-

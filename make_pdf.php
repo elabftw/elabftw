@@ -29,14 +29,14 @@ require_once 'inc/common.php';
 if (isset($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    die("The id parameter in the URL isn't a valid experiment ID");
+    die(INVALID_ID);
 }
 
 // check the type
 if (($_GET['type'] === 'experiments') || ($_GET['type'] === 'items')) {
     $type = $_GET['type'];
 } else {
-    die('Bad type');
+    die(INVALID_TYPE);
 }
 
 // do the pdf

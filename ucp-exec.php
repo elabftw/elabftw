@@ -24,6 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 require_once('inc/common.php');
+require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 
 // INFO BOX
 $msg_arr = array();
@@ -63,12 +64,12 @@ if (isset($_POST['currpass'])){
                 // Good to go
                 $password = filter_var($_POST['newpass'], FILTER_SANITIZE_STRING);
                 // Check for password length
-                if (strlen($password) <= 3) {
-                    $msg_arr[] = 'Password must contain at least 4 characters';
+                if (strlen($password) <= 7) {
+                    $msg_arr[] = PASSWORD_TOO_SHORT;
                     $errflag = true;
                 }
                 if (strcmp($password, $cpassword) != 0 ) {
-                    $msg_arr[] = 'Passwords do not match';
+                    $msg_arr[] = PASSWORD_DONT_MATCH;
                     $errflag = true;
                 }
                 // Create salt
@@ -84,10 +85,10 @@ if (isset($_POST['currpass'])){
                     'password' => $passwordHash,
                     'userid' => $_SESSION['userid']));
                 if($result){
-                    $msg_arr[] = 'Password updated !';
+                    $msg_arr[] = PASSWORD_SUCCESS;
                     $infoflag = true;
                 } else {
-                    die('SQL failed');
+                    die(ERROR_BUG);
                 }
             }
         }
@@ -102,27 +103,27 @@ if (isset($_POST['currpass'])){
             if($result) {
                 if($numrows > 0) {
                     if($data['userid'] != $_SESSION['userid']){
-                    $msg_arr[] = 'Username already in use';
+                    $msg_arr[] = REGISTER_USERNAME_USED;
                     $errflag = true;
                 }
             }
             }
         } else {
-            $msg_arr[] = 'Username missing !';
+            $msg_arr[] = FIELD_MISSING;
             $errflag = true;
         }
         // Check FIRSTNAME (sanitize only)
             if ((isset($_POST['firstname'])) && (!empty($_POST['firstname']))) {
             $firstname = filter_var($_POST['firstname'], FILTER_SANITIZE_STRING);
         } else {
-            $msg_arr[] = 'Firstname missing';
+            $msg_arr[] = FIELD_MISSING;
             $errflag = true;
         }
         // Check LASTNAME (sanitize only)
             if ((isset($_POST['lastname'])) && (!empty($_POST['lastname']))) {
             $lastname = filter_var($_POST['lastname'], FILTER_SANITIZE_STRING);
         } else {
-            $msg_arr[] = 'Lastname missing';
+            $msg_arr[] = FIELD_MISSING;
             $errflag = true;
         }
 
@@ -130,7 +131,7 @@ if (isset($_POST['currpass'])){
         if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
             $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $msg_arr[] = 'Email seems to be invalid';
+                $msg_arr[] = INVALID_EMAIL;
                 $errflag = true;
             } else {
                 // Check for duplicate email in DB
@@ -141,14 +142,14 @@ if (isset($_POST['currpass'])){
                 if($result) {
                     if($numrows > 0) {
                         if($data['userid'] != $_SESSION['userid']){
-                        $msg_arr[] = 'Someone is already using that email address !';
+                        $msg_arr[] = REGISTER_EMAIL_USED;
                         $errflag = true;
                         }
                     }
                 }
             }
         } else {
-            $msg_arr[] = 'Email missing';
+            $msg_arr[] = FIELD_MISSING;
             $errflag = true;
         }
         // Check phone
@@ -174,7 +175,7 @@ if (isset($_POST['currpass'])){
             if  (filter_var($_POST['website'], FILTER_VALIDATE_URL)) {
                 $website = $_POST['website'];
             } else { // do not validate as url
-                $msg_arr[] = 'Please input a valid URL !';
+                $msg_arr[] = FIELD_MISSING;
                 $errflag = true;
             }
         } else {
@@ -215,13 +216,13 @@ if (isset($_POST['currpass'])){
             'website' => $website,
             'userid' => $_SESSION['userid']));
         if($result){
-            $msg_arr[] = 'Profile updated !';
+            $msg_arr[] = UCP_PROFILE_UPDATED;
             $infoflag = true;
         } else {
-            die('SQL failed');
+            die(ERROR_BUG);
         }
     }else{ //end if result and numrow > 1
-        $msg_arr[] = 'Enter your password to edit anything !';
+        $msg_arr[] = UCP_ENTER_PASSWORD;
         $errflag = true;
     }
 }// end if first form submitted
@@ -233,14 +234,14 @@ if (isset($_POST['display'])) {
     } elseif ($_POST['display'] === 'compact'){
         $new_display = 'compact';
     } else {
-        die('Tampering data much ?');
+        die(ERROR_BUG);
     }
 
     // ORDER
     if ($_POST['order'] === 'date' || $_POST['order'] === 'id' || $_POST['order'] === 'title') {
         $new_order = $_POST['order'];
     } else {
-        die('Tampering data much ?');
+        die(ERROR_BUG);
     }
 
     // SORT
@@ -249,7 +250,7 @@ if (isset($_POST['display'])) {
     } elseif ($_POST['sort'] === 'desc') {
         $new_sort = $_POST['sort'];
     } else {
-        die('Tampering data much ?');
+        die(ERROR_BUG);
     }
 
     // LIMIT
@@ -309,7 +310,7 @@ if (isset($_POST['display'])) {
     $_SESSION['prefs']['shortcuts']['submit'] = $new_sc_submit;
     $_SESSION['prefs']['shortcuts']['todo'] = $new_sc_todo;
     $_SESSION['prefs']['close_warning'] = $new_close_warning;
-    $msg_arr[] = 'Your preferences have been updated.';
+    $msg_arr[] = UCP_PREFS_UPDATED;
     $infoflag = true;
 }
 
@@ -318,11 +319,11 @@ if (isset($_POST['display'])) {
 if (isset($_POST['new_tpl_form'])) {
     // do nothing if the template name is empty
     if (empty($_POST['new_tpl_name'])) {
-        $msg_arr[] = 'You need to specify a name for the template !';
+        $msg_arr[] = UCP_TPL_NAME;
         $errflag = true;
     // template name must be 3 chars at least
     } elseif (strlen($_POST['new_tpl_name']) < 3) {
-        $msg_arr[] = 'The template name must be 3 characters long.';
+        $msg_arr[] = UCP_TPL_SHORT;
         $errflag = true;
     } else {
         $tpl_name = filter_var($_POST['new_tpl_name'], FILTER_SANITIZE_STRING);
@@ -335,7 +336,7 @@ if (isset($_POST['new_tpl_form'])) {
             'body' => $tpl_body,
             'userid' => $_SESSION['userid']
         ));
-        $msg_arr[] = 'Experiment template successfully added.';
+        $msg_arr[] = UCP_TPL_SUCCESS;
         $infoflag = true;
     }
 }
@@ -365,10 +366,9 @@ if (isset($_POST['tpl_form'])) {
         'name' => $new_tpl_name[$i]
     ));
     }
-    $msg_arr[] = 'Experiment template successfully edited.';
+    $msg_arr[] = UCP_TPL_EDITED;
     $infoflag = true;
 }
-
 
 
 // INFO BOX

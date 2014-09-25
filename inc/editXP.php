@@ -34,10 +34,9 @@
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    $message = "<strong>Cannot edit:</strong> the id parameter is not valid !";
-    display_message('error', $message);
+    display_message('error', INVALID_ID);
     require_once 'inc/footer.php';
-    exit();
+    exit;
 }
 
 // SQL for editXP
@@ -50,27 +49,25 @@ $experiment = $req->fetch();
 
 // Check id is owned by connected user
 if ($experiment['userid'] != $_SESSION['userid']) {
-    $message = "<strong>Cannot edit:</strong> this experiment is not yours !";
-    display_message('error', $message);
+    display_message('error', EDIT_XP_NO_RIGHTS);
     require_once 'inc/footer.php';
-    exit();
+    exit;
 }
 
 // Check for lock
 if ($experiment['locked'] == 1) {
-    $message = "<strong>This item is locked.</strong> You cannot edit it.";
-    display_message('error', $message);
+    display_message('error', LOCKED_NO_EDIT);
     require_once 'inc/footer.php';
-    exit();
+    exit;
 }
 
 // BEGIN CONTENT
 ?>
-<menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' alt='' /> Back to experiments listing</a></menu>
+    <menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' alt='' /> <?php echo SEARCH_BACK;?></a></menu>
 <section class='box' id='main_section' style='border-left: 6px solid #<?php echo $experiment['color'];?>'>
 <img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','exp', 'experiments.php')" />
 <!-- ADD TAG FORM -->
-<img src='img/tags.png' alt='tags' /> <h4>Tags</h4><span class='smallgray'> (click a tag to remove it)</span>
+<img src='img/tags.png' alt='tags' /> <h4><?php echo TAGS;?></h4><span class='smallgray'> (<?php echo EDIT_XP_TAGS_HELP;?>)</span>
 <div class='tags'>
 <span id='tags_div'>
 <?php
@@ -84,7 +81,7 @@ while ($tags = $tagreq->fetch()) {
 } //end while tags
 ?>
 </span>
-<input type="text" name="tag" id="addtaginput" placeholder="Add a tag" />
+<input type="text" name="tag" id="addtaginput" placeholder="<?php echo EDIT_XP_ADD_TAG;?>" />
 </div>
 <!-- END ADD TAG -->
 <!-- BEGIN EDITXP FORM -->
@@ -96,23 +93,23 @@ while ($tags = $tagreq->fetch()) {
 <div class='three-columns'>
 
     <div class='column-left'>
-        <img src='img/calendar.png' title='date' alt='calendar' /> <h4>Date</h4><br>
+    <img src='img/calendar.png' title='date' alt='calendar' /> <h4><?php echo DATE;?></h4><br>
         <!-- TODO if firefox has support for it: type = date -->
         <input name='date' id='datepicker' size='8' type='text' value='<?php echo $experiment['date'];?>' />
     </div>
 
     <div class='column-right'>
         <img src='img/eye.png' alt='visibility' />
-        <h4>Visibility</h4><br>
+        <h4><?php echo VISIBILITY;?></h4><br>
         <select id="visibility_form" name="visibility" onchange="update_visibility(this.value)">
-            <option id='option_team' value="team">Only the team</option>
+            <option id='option_team' value="team"><?php echo ONLY_THE_TEAM;?></option>
             <option id='option_user' value="user" <?php if ($experiment['visibility'] === 'user') echo "selected";?>>Only me</option>
         </select>
-        <span id='visibility_msg_div'>Updated !</span>
+        <span id='visibility_msg_div'><?php echo UPDATED;?></span>
     </div>
 
     <div class='column-center'>
-        <img src='img/status.png' alt='status' /> <h4>Status</h4><br>
+    <img src='img/status.png' alt='status' /> <h4><?php echo STATUS;?></h4><br>
         <script>
         // this array is used by updateStatus() to get the color of new status 
         var status_arr = Array();
@@ -154,7 +151,7 @@ while ($tags = $tagreq->fetch()) {
 </div>
 
 <br>
-<h4>Title</h4><br />
+<h4><?php echo TITLE;?></h4><br>
 <input id='title_input' name='title' rows="1" value="
 <?php
 if (empty($_SESSION['errors'])) {
@@ -165,54 +162,53 @@ if (empty($_SESSION['errors'])) {
 ?>
 " required />
 
-<br />
-<h4>Experiment</h4>
-<br />
+<br>
+<h4><?php echo EXPERIMENT;?></h4><br>
 <textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">
     <?php echo stripslashes($experiment['body']);?>
 </textarea>
 
 <!-- SUBMIT BUTTON -->
 <div id='saveButton'>
-    <button type="submit" name="Submit" class='button'>SAVE & GO BACK</button>
+    <button type="submit" name="Submit" class='button'><?php echo SAVE_AND_BACK;?></button>
 </div>
 </form><!-- end editXP form -->
 
 <!-- LINKED ITEMS -->
 <section>
-<img src='img/link.png'> <h4 style='display:inline'>Linked items</h4>
-<div id='links_div'>
-<?php
-// DISPLAY LINKED ITEMS
-$sql = "SELECT items.id AS itemid,
-    experiments_links.id AS linkid,
-    experiments_links.*,
-    items.*,
-    items_types.*
-    FROM experiments_links
-    LEFT JOIN items ON (experiments_links.link_id = items.id)
-    LEFT JOIN items_types ON (items.type = items_types.id)
-    WHERE experiments_links.item_id = :id";
-$req = $pdo->prepare($sql);
-$req->bindParam(':id', $id, PDO::PARAM_INT);
-$req->execute();
-// Check there is at least one link to display
-if ($req->rowcount() > 0) {
-    echo "<ul>";
-    while ($links = $req->fetch()) {
-        echo "<li>- [".$links['name']."] - <a href='database.php?mode=view&id=".$links['itemid']."'>".
-            stripslashes($links['title'])."</a>";
-        echo "<a onclick='delete_link(".$links['linkid'].", ".$id.")'>
-        <img src='img/small-trash.png' title='delete' alt='delete' /></a></li>";
-    } // end while
-    echo "</ul>";
-} else { // end if link exist
-    echo "<br />";
-}
-?>
-</div>
-<p class='inline'>Add a link</p>
-<input id='linkinput' size='60' type="text" name="link" placeholder="from the database" />
+    <img src='img/link.png'> <h4 style='display:inline'><?php echo LINKED_ITEMS;?></h4>
+    <div id='links_div'>
+        <?php
+        // DISPLAY LINKED ITEMS
+        $sql = "SELECT items.id AS itemid,
+            experiments_links.id AS linkid,
+            experiments_links.*,
+            items.*,
+            items_types.*
+            FROM experiments_links
+            LEFT JOIN items ON (experiments_links.link_id = items.id)
+            LEFT JOIN items_types ON (items.type = items_types.id)
+            WHERE experiments_links.item_id = :id";
+        $req = $pdo->prepare($sql);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->execute();
+        // Check there is at least one link to display
+        if ($req->rowcount() > 0) {
+            echo "<ul>";
+            while ($links = $req->fetch()) {
+                echo "<li>- [".$links['name']."] - <a href='database.php?mode=view&id=".$links['itemid']."'>".
+                    stripslashes($links['title'])."</a>";
+                echo "<a onclick='delete_link(".$links['linkid'].", ".$id.")'>
+                <img src='img/small-trash.png' title='delete' alt='delete' /></a></li>";
+            } // end while
+            echo "</ul>";
+        } else { // end if link exist
+            echo "<br />";
+        }
+        ?>
+    </div>
+    <p class='inline'><?php echo ADD_LINK;?></p>
+    <input id='linkinput' size='60' type="text" name="link" placeholder="<?php echo ADD_LINK_PLACEHOLDER;?>" />
 </section>
 <span class='align_right'>
 <?php
@@ -225,13 +221,14 @@ $req->execute(array(
 ));
 $rev_count = $req->fetch();
 $count = intval($rev_count[0]);
+// FIXME NOT I18N friendly
 if ($count > 0) {
     if ($count === 1) {
         $s = '';
     } else {
         $s = 's';
     }
-    echo $count." revision".$s." available. <a href='revision.php?exp_id=".$id."'>Show history</a>";
+    echo $count." revision".$s." available. <a href='revision.php?exp_id=".$id."'>".SHOW_HISTORY."</a>";
 }
 ?>
 
@@ -266,7 +263,7 @@ while ($tag = $getalltags->fetch()) {
 	});
 // DELETE TAG
 function delete_tag(tag_id, item_id) {
-    var you_sure = confirm('Delete this tag ?');
+    var you_sure = confirm('<?php echo DELETE_THIS;?>');
     if (you_sure == true) {
         $.post('delete.php', {
             id: tag_id,
@@ -335,7 +332,7 @@ while ($link = $getalllinks->fetch()) {
 	});
 // DELETE LINK
 function delete_link(id, item_id) {
-    var you_sure = confirm('Delete this link ?');
+    var you_sure = confirm('<?php echo DELETE_THIS;?>');
     if (you_sure == true) {
         $.post('delete.php', {
             type: 'link',
@@ -486,10 +483,9 @@ $(document).ready(function() {
         echo "
     window.onbeforeunload = function (e) {
           e = e || window.event;
-          return 'Do you want to navigate away from this page ? Unsaved changes will be lost !';
+          return '".CLOSE_WARNING."';
     };";
     }
 ?>
 });
 </script>
-

@@ -30,10 +30,9 @@ $ro = false;
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    $message = "The id parameter in the URL isn't a valid experiment ID.";
-    display_message('error', $message);
+    display_message('error', INVALID_ID);
     require_once 'inc/footer.php';
-    die();
+    exit;
 }
 
 // SQL for viewXP
@@ -62,10 +61,9 @@ $data = $req->fetch();
 if ($data['userid'] != $_SESSION['userid']) {
     // Can the user see this experiment which is not his ?
     if ($data['visibility'] == 'user') {
-        $message = "<strong>Access forbidden:</strong> the visibility setting of this experiment is set to 'owner only'.";
-        display_message('error', $message);
+        display_message('error', VIEW_XP_FORBIDDEN);
         require_once 'inc/footer.php';
-        exit();
+        exit;
     } else {
         // get who owns the experiment
         $sql = 'SELECT firstname, lastname FROM users WHERE userid = :userid';
@@ -73,7 +71,7 @@ if ($data['userid'] != $_SESSION['userid']) {
         $get_owner->bindParam(':userid', $data['userid']);
         $get_owner->execute();
         $owner = $get_owner->fetch();
-        $message = "<strong>Read-only mode:</strong> this experiment is owned by ".$owner['firstname']." ".$owner['lastname'].".";
+        $message = VIEW_XP_RO.' '.$owner['firstname'].' '.$owner['lastname'].'.';
         display_message('info', $message);
         // we set this variable for later, to check if we are in read only mode
         $ro = true;
@@ -98,11 +96,10 @@ if ($data['timestamped'] == 1) {
     $uploads = $req_stamper->fetch();
 
     $date_arr = explode(' ', $data['timestampedwhen']);
-    display_message('info_nocross', "Experiment was timestamped by ".$timestamper['firstname']." ".$timestamper['lastname']." on ".$date_arr[0]." at ".$date_arr[1]."
+    display_message('info_nocross', VIEW_XP_TIMESTAMPED." ".$timestamper['firstname']." ".$timestamper['lastname']." ".ON." ".$date_arr[0]." ".AT." ".$date_arr[1]."
         <a href='uploads/".$uploads['long_name']."'><img src='img/pdf.png' title='Download timestamped pdf' alt='pdf' /></a>");
     unset($timestamper);
     unset($uploads);
-
 }
 
 // Display experiment
@@ -173,7 +170,7 @@ if ($req->rowcount() > 0) {
 
 
 // DISPLAY eLabID
-echo "<p class='elabid'>Unique eLabID : ".$data['elabid'];
+echo "<p class='elabid'>".VIEW_XP_ELABID." ".$data['elabid'];
 echo "</section>";
 // DISPLAY FILES
 require_once 'inc/display_file.php';
@@ -183,8 +180,8 @@ require_once 'inc/display_file.php';
 <!-- we need to add a container here so the reload function in the callback of .editable() doesn't mess things up -->
 <section id='expcomment_container'>
 <div id='expcomment' class='box'>
-    <h3><img src='img/comment.png' alt='comment' /> Comments</h3>
-    <p class='editable newexpcomment' id='newexpcomment_<?php echo $id;?>'>Add a comment</p>
+    <h3><img src='img/comment.png' alt='comment' /> <?php echo COMMENTS;?></h3>
+    <p class='editable newexpcomment' id='newexpcomment_<?php echo $id;?>'><?php echo ADD_COMMENT;?></p>
 <?php
 
 // check if there is something to display first
@@ -213,7 +210,7 @@ if ($req->rowCount() > 0) {
 <script>
 // DELETE EXP COMMENT
 function deleteThisAndReload(id, type) {
-    var you_sure = confirm('Delete this ?');
+    var you_sure = confirm('<?php echo DELETE_THIS;?>');
     if (you_sure == true) {
         $.post('delete.php', {
             id:id,
@@ -233,11 +230,11 @@ function makeEditable() {
     $('div#expcomment').on("mouseover", ".editable", function(){
         $('div#expcomment p.editable').editable('editinplace.php', {
             tooltip : 'Click to edit',
-            indicator : 'Saving...',
+                indicator : '<?php echo SAVING;?>',
             id   : 'id',
             name : 'expcomment',
-            submit : 'Save',
-            cancel : 'Cancel',
+            submit : '<?php echo SAVE;?>',
+            cancel : '<?php echo CANCEL;?>',
             style : 'display:inline',
             callback : function() {
                 // now we reload the comments part to show the comment we just submitted
@@ -253,7 +250,7 @@ function makeEditable() {
 // READY ? GO !!
 
 function confirmStamp() {
-    var you_sure = confirm('Once timestamped, an experiment cannot be edited anymore ! Are you sure you want to do this ?');
+    var you_sure = confirm('<?php echo CONFIRM_STAMP;?>');
     if (you_sure === true) {
         return true;
     } else {
@@ -273,4 +270,3 @@ $(document).ready(function() {
     setInterval(makeEditable, 50);
 });
 </script>
-

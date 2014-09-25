@@ -24,7 +24,8 @@
 *                                                                               *
 ********************************************************************************/
 require_once 'inc/common.php';
-$page_title = 'Experiments';
+require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
+$page_title = EXPERIMENTS_TITLE;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 
@@ -36,6 +37,6 @@ if (!isset($_GET['mode']) || (empty($_GET['mode'])) || ($_GET['mode'] === 'show'
 } elseif ($_GET['mode'] === 'edit') {
     require_once 'inc/editXP.php';
 } else {
-    echo '<p>What are you doing, Dave ?</p>';
+    die(ERROR_BUG);
 }
 require_once 'inc/footer.php';

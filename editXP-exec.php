@@ -47,7 +47,7 @@ if (is_pos_int($_POST['item_id'])) {
     $id = $_POST['item_id'];
 } else {
     $id='';
-    $msg_arr[] = 'The id parameter is not valid !';
+    $msg_arr[] = INVALID_ID;
     $errflag = true;
 }
 $title = check_title($_POST['title']);
@@ -100,5 +100,5 @@ if ($result) {
     header("location: experiments.php?mode=view&id=$id");
     exit;
 } else {
-    die('Something went wrong in the database query. Check the flux capacitor.');
+    die(ERROR_BUG);
 }

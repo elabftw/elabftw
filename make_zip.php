@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 require_once 'inc/common.php';
-$page_title = 'Make zip';
+$page_title = ZIP_TITLE;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 // Test if there is zip
@@ -42,7 +42,7 @@ if ($_GET['type'] === 'experiments') {
 } elseif ($_GET['type'] === 'items') {
     $table = 'items';
 } else {
-    die('bad type');
+    die(INVALID_TYPE);
 }
 
 // CREATE URL
@@ -173,16 +173,16 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             $zipname = $zdate."-".$clean_title;
         }
         // Display download link (with attribute type=zip for download.php)
-        echo "<p>Your ZIP archive is ready :<br />
+        echo "<p>".ZIP_READY."<br>
             <a href='download.php?f=".$zipfile."&name=".$zipname.".zip&type=zip' target='_blank'>
             <img src='img/download.png' alt='download' /> 
             ".$zipname.".zip</a>
             <span class='filesize'>(".format_bytes(filesize($zipfile)).")</span></p>";
     } else {
-        echo 'Archive creation failed :(';
+        echo ERROR_BUG;
     }
     echo "</section>";
     require_once 'inc/footer.php';
 } else {
-    die("The id parameter in the URL isn't a valid experiment ID");
+    die(INVALID_ID);
 }

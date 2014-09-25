@@ -18,33 +18,32 @@
 *
 ********************************************************************************/
 session_start();
-$page_title = 'Register';
+$page_title = REGISTER_TITLE;
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 // Check if we're logged in
 if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
-    $message = "Please <a style='text-decoration:underline' href='logout.php'>logout</a> before you register another account.";
-    display_message('error', $message);
+    display_message('error', REGISTER_LOGOUT);
     require_once 'inc/footer.php';
-    die();
+    exit;
 }
 ?>
 <!-- Password complexity visualizer -->
 <script src="js/jquery.complexify.js/jquery.complexify.min.js"></script>
 <script src="js/jquery.complexify.js/jquery.complexify.banlist.js"></script>
 
-<menu class='border'><a href='login.php'><img src='img/arrow-left-blue.png' alt='' /> back to login page</a></menu>
+<menu class='border'><a href='login.php'><img src='img/arrow-left-blue.png' alt='' /> <?php echo REGISTER_BACK_TO_LOGIN;?></a></menu>
 <section class='center'>
     <!-- Register form -->
     <form id='regform' method="post" class='loginform' autocomplete="off" action="register-exec.php">
-        <h2>Create your account</h2>
+        <h2><?php echo REGISTER_H2;?></h2>
         <div style='margin:auto;width:50%'>
         <p class='two-columns'>
-            <label class='block' for="team">Team</label>
+        <label class='block' for="team"><?php echo TEAM;?></label>
             <select name='team' id='team' required>
-                <option value=''>------- Select a team -------</option>
+            <option value=''><?php echo REGISTER_DROPLIST;?></option>
                 <?php
                 $sql = "SELECT team_id, team_name FROM teams ORDER by team_name";
                 $req = $pdo->prepare($sql);
@@ -54,25 +53,25 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
                 }
                 ?>
             </select>
-            <label class='block' for="username">Username</label>
+            <label class='block' for="username"><?php echo USERNAME;?></label>
             <input name="username" type="text" id="username" required />
-            <label class='block' for="email">Email</label>
+            <label class='block' for="email"><?php echo EMAIL;?></label>
             <input name="email" type="email" id="email" required />
-            <label class='block' for="firstname">Firstname</label>
+            <label class='block' for="firstname"><?php echo FIRSTNAME;?></label>
             <input name="firstname" type="text" id="firstname" required />
             <!-- add two br to fix layout in chrome --><br><br>
-            <label class='block' for="lastname">Lastname</label>
+            <label class='block' for="lastname"><?php echo LASTNAME;?></label>
             <input name="lastname" type="text" id="lastname" required />
-            <label class='block' for="password">Password</label>
+            <label class='block' for="password"><?php echo PASSWORD;?></label>
             <input name="password" type="password" title='8 characters minimum' id="password" pattern=".{8,}" required />
-            <label class='block' for="cpassword">Confirm password</label>
+            <label class='block' for="cpassword"><?php echo REGISTER_CONFIRM_PASSWORD;?></label>
             <input name="cpassword" type="password" id="cpassword" pattern=".{8,}" required />
-            <label class='block' for='comlexity'>Password complexity</label>
+            <label class='block' for='comlexity'><?php echo REGISTER_PASSWORD_COMPLEXITY;?></label>
             <input id="complexity" disabled />
         </p>
     </div>
         <div id='submitDiv'>
-        <button type="submit" name="Submit" class='submit button'>create</button>
+        <button type="submit" name="Submit" class='submit button'><?php echo REGISTER_BUTTON;?></button>
         </div>
     </form>
     <!-- end register form -->
@@ -83,7 +82,7 @@ function validatePassword(){
     var pass=document.getElementById("password").value;
     var cpass=document.getElementById("cpassword").value;
     if (pass != cpass) {
-        document.getElementById("cpassword").setCustomValidity("Passwords don't match");
+        document.getElementById("cpassword").setCustomValidity("<?php echo PASSWORDS_DONT_MATCH;?>");
     } else {
         //empty string means no validation error
         document.getElementById("cpassword").setCustomValidity(''); 
@@ -98,40 +97,39 @@ $(document).ready(function() {
         if (complexity < 20) {
             $('#complexity').css({'background-color':'red'});
             $('#complexity').css({'color':'white'});
-            $('#complexity').val('Weak password');
+            $('#complexity').val('<?php echo CHANGE_PASS_WEAK;?>');
             $('#complexity').css({'border-color' : '#e3e3e3'});
             $('#complexity').css({'box-shadow': '0 0  yellow'});
             $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
         } else if (complexity < 30) {
             $('#complexity').css({'color':'#white'});
             $('#complexity').css({'background-color':'orange'});
-            $('#complexity').val('Average password');
+            $('#complexity').val('<?php echo CHANGE_PASS_AVERAGE;?>');
             $('#complexity').css({'box-shadow': '0 0  yellow'});
             $('#complexity').css({'border-color' : '#e3e3e3'});
             $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
         } else if (complexity < 50) {
             $('#complexity').css({'color':'white'});
-            $('#complexity').val('Good password');
+            $('#complexity').val('<?php echo CHANGE_PASS_GOOD;?>');
             $('#complexity').css({'background-color':'green'});
             $('#complexity').css({'box-shadow': '0 0  yellow'});
             $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
             $('#complexity').css({'border-color' : '#e3e3e3'});
         } else if (complexity < 99) {
             $('#complexity').css({'color':'black'});
-            $('#complexity').val('Strong password');
+            $('#complexity').val('<?php echo CHANGE_PASS_STRONG;?>');
             $('#complexity').css({'background-color':'#ffd700'});
             $('#complexity').css({'box-shadow': '0px 0px 15px 5px #ffd700'});
             $('#complexity').css({'border' : 'none'});
             $('#complexity').css({'-moz-box-shadow': '0px 0px 15px 5px #ffd700'});
         } else {
             $('#complexity').css({'color':'#797979'});
-            $('#complexity').val('I don\'t believe you');
+            $('#complexity').val('<?php echo CHANGE_PASS_NO_WAY;?>');
             $('#complexity').css({'background-color':'#e3e3e3'});
             $('#complexity').css({'box-shadow': '0 0  yellow'});
             $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
             $('#complexity').css({'border-color' : '#e3e3e3'});
         }
-
         //$("#complexity").html(Math.round(complexity) + '%');
     });
 	// propose username by combining firstname's first letter and lastname

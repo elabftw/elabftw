@@ -24,7 +24,8 @@
 *                                                                               *
 ********************************************************************************/
 require_once 'inc/common.php';
-$page_title = 'Database';
+require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
+$page_title = DATABASE_TITLE;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 
@@ -36,8 +37,7 @@ if (!isset($_GET['mode']) || (empty($_GET['mode'])) || ($_GET['mode'] === 'show'
 } elseif ($_GET['mode'] === 'edit') {
     require_once 'inc/editDB.php';
 } else {
-    echo "What are you doing, Dave ?";
+    echo ERROR_BUG;
 }
 
 require_once 'inc/footer.php';
-

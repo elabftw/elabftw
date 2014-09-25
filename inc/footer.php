@@ -54,15 +54,6 @@
     }
 
     echo "owered by <a href='http://www.elabftw.net'>eLabFTW</a>";
-    // show debug info only to admins
-    if (isset($_SESSION['auth']) && get_config('debug') == 1 && $_SESSION['is_admin'] == 1) {
-        echo "Session array : ";
-        echo '<pre>'.var_dump($_SESSION).'</pre>';
-        echo "<br>";
-        echo "Cookie : ";
-        echo '<pre>'.var_dump($_COOKIE).'</pre>';
-        echo "<br>";
-    }
     ?>
     </p>
     <p>Page generated in <span class='strong'><?php echo round((microtime(true) - $start), 5);?> seconds</span></p>
@@ -80,6 +71,15 @@ $('#big_search_input').click(function() {
 </script>
 <?php
 if (isset($_SESSION['auth'])) {
+    // show debug info only to admins
+    if (isset($_SESSION['auth']) && get_config('debug') == 1 && $_SESSION['is_admin'] == 1) {
+        echo "Session array : ";
+        echo '<pre>'.var_dump($_SESSION).'</pre>';
+        echo "<br>";
+        echo "Cookie : ";
+        echo '<pre>'.var_dump($_COOKIE).'</pre>';
+        echo "<br>";
+    }
     // show TODOlist
     echo "<script>
     key('".$_SESSION['prefs']['shortcuts']['todo']."', function(){

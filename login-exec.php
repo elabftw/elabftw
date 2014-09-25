@@ -40,7 +40,7 @@ $errflag = false;
 // Check the form_key
 if (!isset($_POST['form_key']) || !$formKey->validate()) {
     // form key is invalid
-    $msg_arr[] = 'Form key invalid: please resubmit the form.';
+    $msg_arr[] = INVALID_FORMKEY;
     $errflag = true;
 }
 
@@ -50,13 +50,13 @@ if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
 } else {
     $username = '';
-    $msg_arr[] = 'Username missing';
+    $msg_arr[] = FIELD_MISSING;
     $errflag = true;
 }
 
 // Check PASSWORD is sent
 if ((!isset($_POST['password'])) || (empty($_POST['password']))) {
-    $msg_arr[] = 'Password missing';
+    $msg_arr[] = FIELD_MISSING;
     $errflag = true;
 }
 
@@ -121,6 +121,8 @@ if ($result) {
             'sort' => $data['sort_by'],
             'limit' => $data['limit_nb'],
             'shortcuts' => array('create' => $data['sc_create'], 'edit' => $data['sc_edit'], 'submit' => $data['sc_submit'], 'todo' => $data['sc_todo']),
+            // TODO
+            'lang' => 'en-GB',
             'close_warning' => intval($data['close_warning']));
         session_write_close();
         // Make a unique token and store it in sql AND cookie
@@ -152,7 +154,7 @@ if ($result) {
 
         // inform the user
         $msg_arr = array();
-        $msg_arr[] = "Login failed. Either you mistyped your password, or your account isn't activated yet.";
+        $msg_arr[] = LOGIN_FAILED;
         if (!isset($_SESSION['failed_attempt'])) {
             $_SESSION['failed_attempt'] = 1;
         } else {
@@ -164,5 +166,5 @@ if ($result) {
         exit;
     }
 } else {
-    die("Query failed");
+    die(ERROR_BUG);
 }

@@ -28,7 +28,7 @@ require_once 'inc/common.php';
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    die('Bad id');
+    die(INVALID_ID);
 }
 
 if ($_GET['type'] === 'exp') {
@@ -36,7 +36,7 @@ if ($_GET['type'] === 'exp') {
 } elseif ($_GET['type'] === 'db') {
     $type = 'items';
 } else {
-    die('Bad type.');
+    die(INVALID_TYPE);
 }
 
 // this function will return the ID of the new experiment
@@ -45,16 +45,16 @@ $newid = duplicate_item($id, $type);
 
 if (is_pos_int($newid)) {
     if ($type === 'experiments') {
-        $msg_arr[] = 'Experiment successfully duplicated';
+        $msg_arr[] = DUPLICATE_EXP_SUCCESS;
         $_SESSION['infos'] = $msg_arr;
         header('location: experiments.php?mode=edit&id='.$newid.'');
         exit;
     } else {
-        $msg_arr[] = 'Successfully duplicated';
+        $msg_arr[] = DUPLICATE_ITEM_SUCCESS;
         $_SESSION['infos'] = $msg_arr;
         header('location: database.php?mode=edit&id='.$newid.'');
         exit;
     }
 } else {
-    echo "Something went wrong in the database query. Check the flux capacitor.";
+    die(ERROR_BUG);
 }

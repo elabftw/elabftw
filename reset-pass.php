@@ -27,6 +27,8 @@ session_start();
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
 require_once 'lib/swift_required.php';
+// TODO
+require_once 'lang/en-GB.php';
 
 $errflag = false;
 
@@ -70,23 +72,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
             // Give the message a subject
             ->setSubject('[eLabFTW] Password reset')
             // Set the From address with an associative array
-            ->setFrom(array('elabftw.net@gmail.com' => 'eLabFTW.net'))
+            ->setFrom(array(get_config('smtp_username') => get_config('smtp_username')))
             // Set the To addresses with an associative array
             ->setTo(array($email => 'Dori'))
             // Give it a body
-            ->setBody(
-                'Hi,
-Someone (probably you) with the IP Adress : '.$ip.' and the user agent : '.$u_agent.'
-requested a new password on eLabFTW.
+            ->setBody(RESET_MAIL_BODY.' '.$ip.' '.RESET_MAIL_BODY2.' '.$u_agent.' '.RESET_MAIL_BODY3.'
+            '.$reset_link.'
 
-Follow this link to change your password :
-'.$reset_link.'
-
-~~
-Email sent by eLabFTW
-http://www.elabftw.net
-Free open-source Lab Manager'
-            );
+            '.RESET_MAIL_BODY4);
             $transport = Swift_SmtpTransport::newInstance(
                 get_config('smtp_address'),
                 get_config('smtp_port'),
@@ -101,28 +94,29 @@ Free open-source Lab Manager'
             } catch (Exception $e) {
                 // log the error
                 dblog('Error', $_SERVER['REMOTE_ADDR'], $e->getMessage());
+                die($e->getMessage());
                 $errflag = true;
             }
             if ($errflag) {
                 // problem
-                $msg_arr[] = 'There was a problem sending the email. Error was logged.';
+                $msg_arr[] = EMAIL_SEND_ERROR;
                 $_SESSION['errors'] = $msg_arr;
                 header('location: login.php');
                 exit;
             } else { // no problem
-                $msg_arr[] = 'Email sent. Check your INBOX.';
+                $msg_arr[] = EMAIL_SUCCESS;
                 $_SESSION['infos'] = $msg_arr;
                 header("location: login.php");
                 exit;
             }
         } else {
-            $msg_arr[] = 'Email not found in database !';
+            $msg_arr[] = RESET_NOT_FOUND;
             $_SESSION['errors'] = $msg_arr;
             header("location: login.php");
             exit;
         }
     } else {
-            $msg_arr[] = 'The email address you entered was invalid !';
+            $msg_arr[] = INVALID_EMAIL;
             $_SESSION['errors'] = $msg_arr;
             header("location: login.php");
             exit;

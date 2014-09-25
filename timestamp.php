@@ -30,10 +30,9 @@ $msg_arr = array();
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    $message = "The id parameter in the URL isn't a valid experiment ID.";
-    display_message('error', $message);
+    display_message('error', INVALID_ID);
     require_once 'inc/footer.php';
-    die();
+    exit;
 }
 
 // Get login/password info
@@ -49,7 +48,7 @@ if (strlen(get_team_config('stamplogin')) > 2) {
     $password = get_config('stamppass');
 } else {
 
-    $msg_arr[] = "The timestamping feature is not configured. Please read the <a href='https://github.com/NicolasCARPi/elabftw/wiki/finalizing#setting-up-timestamping'>wiki</a>.";
+    $msg_arr[] = TIMESTAMP_ERROR;
     $_SESSION['errors'] = $msg_arr;
     header("Location:experiments.php?mode=view&id=$id");
     exit;
@@ -93,11 +92,11 @@ try {
     curl_close($ch);
 
     if (!$token) {
-            throw new Exception("There was an error in the timestamping. Login credentials probably wrong or no more credits.");
+            throw new Exception(TIMESTAMP_ERROR);
         }
     } catch (Exception $e) {
         dblog("Error", $_SESSION['userid'], "File: ".$e->getFile().", line ".$e->getLine().": ".$e->getMessage());
-        $msg_arr[] = "There was an error with the timestamping. Experiment is NOT timestamped. Error has been logged.";
+        $msg_arr[] = TIMESTAMP_USER_ERROR;
         $_SESSION['errors'] = $msg_arr;
         header("Location:experiments.php?mode=view&id=$id");
         exit;
@@ -111,7 +110,7 @@ try {
     file_put_contents($file_path, $token);
 } catch (Exception $e) {
     dblog('Error', $_SESSION['userid'], $e->getMessage());
-    $msg_arr[] = "There was an error with the timestamping. Error has been logged.";
+    $msg_arr[] = TIMESTAMP_USER_ERROR;
     $_SESSION['errors'] = $msg_arr;
     header("Location:experiments.php?mode=view&id=$id");
     exit;
@@ -151,10 +150,10 @@ $req->bindParam(':md5', $md5);
 $res3 = $req->execute();
 
 if ($res1 && $res2 && $res3) {
-    $msg_arr[] = "Experiment timestamped with success. The timestamped PDF can now be downloaded below.";
+    $msg_arr[] =
     $_SESSION['infos'] = $msg_arr;
     header("Location:experiments.php?mode=view&id=$id");
     exit;
 } else {
-    die('SQL failed');
+    die(ERROR_BUG);
 }

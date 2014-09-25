@@ -25,7 +25,7 @@
 ********************************************************************************/
 /* make_csv.php -- export database in spreadsheet file */
 require_once 'inc/common.php';
-$page_title='Export to spreadsheet';
+$page_title = CSV_TITLE;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 
@@ -99,7 +99,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         }
     } // end foreach
 } else {
-    die('No id to export :/');
+    die(INVALID_ID);
 }
 
 
@@ -121,7 +121,7 @@ fclose($fp);
 echo "<section>";
     // Get csv file size
     $filesize = filesize($filepath);
-    echo "<p>Your CSV file is ready :<br />
+echo "<p>".CSV_READY."<br>
         <a href='download.php?f=".$filepath."&name=elabftw-export.csv' target='_blank'>
         <img src='img/download.png' alt='download' /> 
         elabftw-export.csv</a>

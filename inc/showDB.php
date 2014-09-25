@@ -40,7 +40,7 @@ $req->execute(array(
 
     <?php
     // 'Create new' dropdown menu
-    echo "<select onchange=go_url(this.value)><option value=''>CREATE NEW</option>";
+    echo "<select onchange=go_url(this.value)><option value=''>".SHOW_DB_CREATE_NEW."</option>";
     while ($items_types = $req->fetch()) {
         echo "<option value='create_item.php?type=".$items_types['id']."' name='type' ";
         echo ">".$items_types['name']."</option>";
@@ -49,7 +49,7 @@ $req->execute(array(
 
     // we do the request again to get the list again
     $req->execute();
-    echo "<span class='align_right'><select onchange=go_url(this.value)><option value=''>FILTER TYPE</option>";
+    echo "<span class='align_right'><select onchange=go_url(this.value)><option value=''>".SHOW_DB_FILTER_TYPE."</option>";
     while ($items_types = $req->fetch()) {
         echo "<option value='search.php?type=".$items_types['id']."' name='type' ";
         echo ">".$items_types['name']."</option>";
@@ -80,11 +80,11 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
 
     // show number of results found
     if (count($results_arr) > 1) {
-        echo "Found ".count($results_arr)." results.";
+        echo FOUND.' '.count($results_arr).' '.RESULTS.'.';
     } elseif (count($results_arr) == 1) {
-        echo "Found 1 result.";
+        echo FOUND_1;
     } else {
-        echo "No items were found.";
+        echo FOUND_0;
     }
 
     // clean duplicates
@@ -104,11 +104,11 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $results_arr = array_reverse(array_unique($results_arr));
     // show number of results found
     if (count($results_arr) > 1) {
-        echo "Found ".count($results_arr)." results.";
+        echo FOUND.' '.count($results_arr).' '.RESULTS.'.';
     } elseif (count($results_arr) == 1) {
-        echo "Found 1 result.";
+        echo FOUND_1;
     } else {
-        echo "Nothing found :(";
+        echo FOUND_0;
     }
 
     // loop the results array and display results
@@ -126,16 +126,14 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     ));
     $count = $req->rowCount();
     if ($count == 0) {
-        $message = "<strong>Welcome to eLabFTW.</strong> 
-            Select an item in the «Create new» list to begin filling your database.";
-        display_message('info', $message);
+        display_message('info', SHOW_DB_WELCOME);
     } else {
         $results_arr = array();
         while ($final_query = $req->fetch()) {
             $results_arr[] = $final_query['id'];
         }
         // loop the results array and display results
-        echo "<p>Showing last 10 uploads :</p>";
+        echo "<p>".SHOW_DB_LAST_10."</p>";
         foreach ($results_arr as $result_id) {
             showDB($result_id, $display);
         }
@@ -151,4 +149,3 @@ function go_url(x) {
     location = x;
 }
 </script>
-

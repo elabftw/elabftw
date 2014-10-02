@@ -30,6 +30,7 @@ if ($_SESSION['is_sysadmin'] != 1) {
     die(NO_ACCESS_DIE);
 }
 $page_title = SYSCONFIG_TITLE;
+$selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 // formkey stuff
@@ -86,6 +87,17 @@ $formKey = new formKey();
 <!-- TAB 2 -->
 <div class='divhandle' id='tab2div'>
     <form method='post' action='admin-exec.php'>
+        <h3><?php echo LANGUAGE;?></h3>
+            <select id='lang' name="lang">
+                <option
+                <?php
+                if (get_config('lang') === 'en-GB') {
+                    echo ' selected ';}?>value="en-GB">en-GB</option>
+                <option
+                <?php
+                if (get_config('lang') === 'fr-FR') {
+                    echo ' selected ';}?>value="fr-FR">fr-FR</option>
+            </select>
         <h3><?php echo SYSCONFIG_2_H3;?></h3>
         <label for='debug'><?php echo SYSCONFIG_DEBUG;?></label>
         <select name='debug' id='debug'>

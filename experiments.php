@@ -26,6 +26,7 @@
 require_once 'inc/common.php';
 require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 $page_title = EXPERIMENTS_TITLE;
+$selected_menu = 'Experiments';
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 

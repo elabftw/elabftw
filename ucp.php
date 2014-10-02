@@ -26,6 +26,7 @@
 require_once('inc/common.php');
 require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 $page_title = UCP_TITLE;;
+$selected_menu = null;
 require_once('inc/head.php');
 require_once('inc/info_box.php');
 // SQL for UCP
@@ -54,7 +55,7 @@ $users = $req->fetch();
         <div class='two-columns'>
         <section style='height:150px'>
         <h4><?php echo UCP_H4_1;?></h4>
-        <label class='block' for='currpass'><?php echo UCP_CURRPASS;?></label>
+        <label class='block' for='currpass'><?php echo UCP_ENTER_PASSWORD;?></label>
         <input id='currpass' name="currpass" type="password" required />
         </section>
 
@@ -188,12 +189,28 @@ $users = $req->fetch();
             if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
                 echo "checked='checked'  ";
             };?> />
+            </p>
+        </section>
+
+        <section class='box'>
+            <h3><?php echo LANGUAGE;?></h3>
+            <hr>
+            <p>
+            <select id='lang' name="lang">
+                <option
+                <?php
+                if ($_SESSION['prefs']['lang'] === 'en-GB') {
+                    echo ' selected ';}?>value="en-GB">en-GB</option>
+                <option
+                <?php
+                if ($_SESSION['prefs']['lang'] === 'fr-FR') {
+                    echo ' selected ';}?>value="fr-FR">fr-FR</option>
+            </select>
         </section>
         <div style='margin-top:30px;' class='center'>
         <button type="submit" name="Submit" class='button'><?php echo SAVE;?></button>
         </div>
             </p>
-
     </form>
 
 </div>
@@ -218,7 +235,7 @@ $users = $req->fetch();
     <div id="tpl-0">
         <form action='ucp-exec.php' method='post'>
             <input type='hidden' name='new_tpl_form' />
-            <input type='text' name='new_tpl_name' placeholder='Name of the template' /><br />
+            <input type='text' name='new_tpl_name' placeholder='<?php echo UCP_TPL_PLACEHOLDER;?>' /><br>
             <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='mceditable' rows='50' cols='60'></textarea>
         <br />
             <div class='center'>

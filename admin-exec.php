@@ -25,6 +25,7 @@
 ********************************************************************************/
 /* admin-exec.php - for administration of the elab */
 require_once 'inc/common.php';
+require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 
 // only admin can use this
 if ($_SESSION['is_admin'] != 1) {
@@ -78,11 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
         // Set the To addresses with an associative array
         ->setTo(array($user['email'] => 'eLabFTW'))
         // Give it a body
-        ->setBody(
-            EMAIL_NEW_USER_BODY_1
-            .$url.
-            EMAIL_NEW_USER_BODY_2
-        );
+        ->setBody(EMAIL_NEW_USER_BODY_1.$url.EMAIL_FOOTER);
+
         $transport = Swift_SmtpTransport::newInstance(
             get_config('smtp_address'),
             get_config('smtp_port'),
@@ -172,6 +170,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team']) && $_POST[
 // SERVER SETTINGS
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
 
+    if (isset($_POST['lang']) && (strlen($_POST['lang']) === 5)) {
+        $lang = $_POST['lang'];
+    } else {
+        $lang = 'en-GB';
+    }
+
     if ($_POST['debug'] == 1) {
         $debug = 1;
     } else {
@@ -192,6 +196,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
 
     // SQL
     $updates = array(
+        'lang' => $lang,
         'debug' => $debug,
         'proxy' => $proxy,
         'path' => $path

@@ -26,6 +26,7 @@
 require_once 'inc/common.php';
 require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 $page_title = PROFILE_TITLE;
+$selected_menu = null;
 require_once 'inc/head.php';
 
 // SQL to get number of experiments
@@ -42,7 +43,7 @@ $req->execute();
 $data = $req->fetch();
 
 echo "<section class='box'>";
-echo "<img src='img/user.png' alt='user' /> <h4>".PROFILE_H4."</h4>";
+echo "<img src='img/user.png' alt='user' /> <h4>".INFOS."</h4>";
 echo "<div class='center'>
     <p>".$data['firstname']." ".$data['lastname']." (".$data['email'].")</p>
     <p>".$count[0]." ".PROFILE_EXP_DONE." ".date("l jS \of F Y", $data['register_date']);

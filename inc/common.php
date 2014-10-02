@@ -45,7 +45,7 @@ try {
     $pdo_options[PDO::ATTR_PERSISTENT] = true;
     $pdo = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
 } catch (Exception $e) {
-    die('Error : '.$e->getMessage());
+    die('Error connecting to the database : '.$e->getMessage());
 }
 // END SQL CONNECT
 
@@ -55,9 +55,6 @@ if (isset($_SESSION['auth'])) { // if user is auth, we check the cookie
         ($_COOKIE['path'] != get_config('path')) ||
         ($_SESSION['path'] != get_config('path'))) { // no cookie for this domain
         session_destroy(); // kill session
-        $msg_arr = array();
-        $msg_arr[] = 'You are not logged in !';
-        $_SESSION['errors'] = $msg_arr;
         header('Location: login.php');
         exit;
     }
@@ -104,24 +101,14 @@ if (isset($_SESSION['auth'])) { // if user is auth, we check the cookie
                 'edit' => $data['sc_edit'],
                 'submit' => $data['sc_submit'],
                 'todo' => $data['sc_todo']),
-            // TODO
-            'lang' => 'en-GB');
+            'lang' => $data['lang']);
             session_write_close();
         } else { // no token found in database
-            $msg_arr = array();
-            $msg_arr[] = 'You are not logged in !';
-            $_SESSION['errors'] = $msg_arr;
             header("location: login.php");
             exit;
         }
     } else { // no cookie
-        $msg_arr = array();
-        $msg_arr[] = 'You are not logged in !';
-        $_SESSION['errors'] = $msg_arr;
         header('location: login.php');
         exit;
     }
 }
-
-// lang
-//require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';

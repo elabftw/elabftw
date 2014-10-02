@@ -24,10 +24,11 @@
 *                                                                               *
 ********************************************************************************/
 session_start();
-// TODO load default lang
-require_once 'lang/en-GB.php';
-$page_title = CHANGE_PASS_TITLE;
+require_once 'inc/connect.php';
 require_once 'inc/functions.php';
+require_once 'lang/'.get_config('lang').'.php';
+$page_title = CHANGE_PASS_TITLE;
+$selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 // get the unique key

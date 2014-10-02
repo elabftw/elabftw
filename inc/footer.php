@@ -33,7 +33,7 @@
         ?>
         <!-- SYSADMIN MENU -->
         <span class='strong'>
-        <a id='check_for_updates' href='#'>CHECK FOR UPDATES</a><a href='sysconfig.php'>SYSADMIN PANEL</a>
+        <a id='check_for_updates' href='#'><?php echo CHECK_FOR_UPDATES;?></a><a href='sysconfig.php'><?php echo SYSADMIN_PANEL;?></a>
         <script>
         $('#check_for_updates').click(function() {
             var jqxhr = $.post('check_for_updates.php', function(answer) {
@@ -44,19 +44,13 @@
     <?php
     }
     if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
-        echo "<a href='admin.php'>ADMIN PANEL</a>";
+        echo "<a href='admin.php'>".ADMIN_PANEL."</a>";
     }
     echo "</span></p><p>";
-    if (isset($_SESSION['team_id'])) {
-        echo get_team_config('team_name')." lab p";
-    } else {
-        echo "P";
-    }
-
-    echo "owered by <a href='http://www.elabftw.net'>eLabFTW</a>";
+    echo POWERED_BY." <a href='http://www.elabftw.net'>eLabFTW</a>";
     ?>
     </p>
-    <p>Page generated in <span class='strong'><?php echo round((microtime(true) - $start), 5);?> seconds</span></p>
+    <p><?php echo PAGE_GENERATED.' ';?><span class='strong'><?php echo round((microtime(true) - $start), 5);?> seconds</span></p>
 </footer>
 
 <script src="js/jquery-pageslide/jquery.pageslide.min.js"></script>
@@ -91,4 +85,3 @@ if (isset($_SESSION['auth'])) {
 
 </body>
 </html>
-

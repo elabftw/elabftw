@@ -25,6 +25,7 @@
 ********************************************************************************/
 require_once 'inc/common.php';
 $page_title = REVISIONS_TITLE;
+$selected_menu = null;
 require_once 'inc/head.php';
 
 if (isset($_GET['exp_id']) && !empty($_GET['exp_id']) && is_pos_int($_GET['exp_id'])) {

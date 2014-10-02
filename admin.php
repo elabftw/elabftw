@@ -25,10 +25,12 @@
 ********************************************************************************/
 /* admin.php - for administration of the elab */
 require_once 'inc/common.php';
+require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 if ($_SESSION['is_admin'] != 1) {
     die(ADMIN_DIE);
 }
 $page_title = ADMIN_TITLE;
+$selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 // formkey stuff
@@ -67,12 +69,12 @@ if ($count > 0) {
 
 <menu>
     <ul>
-        <li class='tabhandle' id='tab1'>Team</li>
-        <li class='tabhandle' id='tab2'>Users</li>
-        <li class='tabhandle' id='tab3'>Status</li>
-        <li class='tabhandle' id='tab4'>Types of items</li>
-        <li class='tabhandle' id='tab5'>Experiment template</li>
-        <li class='tabhandle' id='tab6'>Import CSV</li>
+    <li class='tabhandle' id='tab1'><?php echo ADMIN_MENU_TEAM;?></li>
+        <li class='tabhandle' id='tab2'><?php echo ADMIN_MENU_USERS;?></li>
+        <li class='tabhandle' id='tab3'><?php echo ADMIN_MENU_STATUS;?></li>
+        <li class='tabhandle' id='tab4'><?php echo ADMIN_MENU_ITEMSTYPES;?></li>
+        <li class='tabhandle' id='tab5'><?php echo ADMIN_MENU_EXPTPL;?></li>
+        <li class='tabhandle' id='tab6'><?php echo ADMIN_MENU_CSV;?></li>
     </ul>
 </menu>
 

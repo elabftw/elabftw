@@ -23,12 +23,11 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-/* this file is called with ajax post javascript from "Check for updates" link in 
- * Admin menu in inc/head.php. It will return a string with the error/status.
+/* this file is called with ajax post javascript from "Check for updates" link in footer
+ * It will return a string with the error/status.
  */
+require_once 'inc/common.php';
 require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
-require_once 'inc/connect.php';
-require_once 'inc/functions.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     /* before we do the check, we need to make sure :
@@ -63,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // for branch next
         curl_setopt($ch, CURLOPT_URL, "https://api.github.com/repos/NicolasCARPi/elabftw/git/refs/heads/next");
     } else {
-        echo CHK_UPDATE_UNKOWN;
+        echo CHK_UPDATE_UNKNOWN;
         exit();
     }
     // this is to get content

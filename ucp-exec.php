@@ -275,6 +275,15 @@ if (isset($_POST['display'])) {
         $new_close_warning = 0;
     }
 
+    // LANG
+    $lang_array = array('en-GB', 'fr-FR');
+    if (isset($_POST['lang']) && in_array($_POST['lang'], $lang_array)) {
+        $new_lang = $_POST['lang'];
+    } else {
+        $new_lang = 'en-GB';
+    }
+
+
     // SQL
     $sql = "UPDATE users SET
         display = :new_display,
@@ -285,7 +294,8 @@ if (isset($_POST['display'])) {
         sc_edit = :new_sc_edit,
         sc_submit = :new_sc_submit,
         sc_todo = :new_sc_todo,
-        close_warning = :new_close_warning
+        close_warning = :new_close_warning,
+        lang = :new_lang
         WHERE userid = :userid;";
     $req = $pdo->prepare($sql);
     $req->execute(array(
@@ -298,6 +308,7 @@ if (isset($_POST['display'])) {
         'new_sc_submit' => $new_sc_submit,
         'new_sc_todo' => $new_sc_todo,
         'new_close_warning' => $new_close_warning,
+        'new_lang' => $new_lang,
         'userid' => $_SESSION['userid']
     ));
     // put it in session
@@ -310,6 +321,7 @@ if (isset($_POST['display'])) {
     $_SESSION['prefs']['shortcuts']['submit'] = $new_sc_submit;
     $_SESSION['prefs']['shortcuts']['todo'] = $new_sc_todo;
     $_SESSION['prefs']['close_warning'] = $new_close_warning;
+    $_SESSION['prefs']['lang'] = $new_lang;
     $msg_arr[] = UCP_PREFS_UPDATED;
     $infoflag = true;
 }

@@ -26,8 +26,7 @@
 session_start();
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
-// TODO
-require_once 'lang/en-GB.php';
+require_once 'lang/'.get_config('lang').'.php';
 
 $password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);
 $cpassword = filter_var($_POST['cpassword'], FILTER_SANITIZE_STRING);

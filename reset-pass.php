@@ -27,8 +27,7 @@ session_start();
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
 require_once 'lib/swift_required.php';
-// TODO
-require_once 'lang/en-GB.php';
+require_once 'lang/'.get_config('lang').'.php';
 
 $errflag = false;
 
@@ -79,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
             ->setBody(RESET_MAIL_BODY.' '.$ip.' '.RESET_MAIL_BODY2.' '.$u_agent.' '.RESET_MAIL_BODY3.'
             '.$reset_link.'
 
-            '.RESET_MAIL_BODY4);
+            '.EMAIL_FOOTER);
             $transport = Swift_SmtpTransport::newInstance(
                 get_config('smtp_address'),
                 get_config('smtp_port'),

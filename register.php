@@ -18,7 +18,10 @@
 *
 ********************************************************************************/
 session_start();
+$_SESSION['prefs']['lang'] = 'fr-FR';
+require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 $page_title = REGISTER_TITLE;
+$selected_menu = null;
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
 require_once 'inc/head.php';

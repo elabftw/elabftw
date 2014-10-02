@@ -26,11 +26,11 @@
 if (!isset($_SESSION)) {
     session_start();
 }
-// TODO
-require_once 'lang/en-GB.php';
-$page_title = LOGIN_TITLE;
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
+require_once 'lang/'.get_config('lang').'.php';
+$page_title = LOGIN;
+$selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 // formkey stuff
@@ -51,8 +51,7 @@ if (!isset($_SERVER['HTTPS'])) {
 
 // Check if already logged in
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
-    display_message('error', LOGIN_ALREADY);
-    require_once 'inc/footer.php';
+    header('Location: experiments.php');
     exit;
 }
 
@@ -126,13 +125,13 @@ if (!checkCookiesEnabled()) {
             <?php $formKey->output_formkey(); ?>
         </p>
         <div id='loginButtonDiv'>
-        <button type="submit" class='button' name="Submit"><?php echo LOGIN_BUTTON;?></button>
+        <button type="submit" class='button' name="Submit"><?php echo LOGIN;?></button>
         </div>
     </form>
     <p><?php echo LOGIN_FOOTER;?></p>
     <div class='toggle_container'>
     <form name='resetPass' method='post' action='reset-pass.php'>
-    <input placeholder='Enter your email address' name='email' type='email' required />
+    <input placeholder='<?php echo LOGIN_FOOTER_PLACEHOLDER;?>' name='email' type='email' required />
     <button class='button' type="submit" name="Submit"><?php echo LOGIN_FOOTER_BUTTON;?></button>
     </form>
     </div>

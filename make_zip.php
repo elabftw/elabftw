@@ -25,6 +25,7 @@
 ********************************************************************************/
 require_once 'inc/common.php';
 $page_title = ZIP_TITLE;
+$selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 // Test if there is zip

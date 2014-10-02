@@ -100,6 +100,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 ?>
 <nav>
 <?php
+    // to redirect to the right page
     if ($page_title === 'Database') {
         $action_target = 'database.php';
     } else {
@@ -115,37 +116,36 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     </form>
 <span class='navleft'>
     <span id='logonav'>elab<span class='strong' style='color:white;'>FTW</span></span>
-    <a href="experiments.php?mode=show"
     <?php
-    if ($page_title == 'Experiments') {
+    echo "<a href='experiments.php?mode=show'";
+    if ($selected_menu == 'Experiments') {
         echo " class='selected'";
-    }?>
->Experiments</a>
-    <a href="database.php?mode=show"
-    <?php
-    if ($page_title == 'Database') {
+    }
+    echo ">".EXPERIMENTS_TITLE."</a>";
+    echo "<a href='database.php?mode=show'";
+    if ($selected_menu == 'Database') {
         echo " class='selected'";
-    }?>
-    >Database</a>
-    <a href="team.php"
-    <?php
-    if ($page_title == 'Team') {
+    }
+    echo ">".DATABASE_TITLE."</a>";
+
+    echo "<a href='team.php'";
+    if ($selected_menu == 'Team') {
         echo " class='selected'";
-    }?>
-    >Team</a>
-    <a href="search.php"
-    <?php
-    if ($page_title == 'Advanced Search') {
+    }
+    echo ">".TEAM_TITLE."</a>";
+
+    echo "<a href='search.php'";
+    if ($selected_menu == 'Search') {
         echo " class='selected'";
-    }?>
-    >Search</a>
-    <?php
+    }
+    echo ">".SEARCH."</a>";
+
     echo "<a href='".get_team_config('link_href')."' target='_blank'>".get_team_config('link_name')."</a></span>";
     
     ?>
     </nav>
 <?php
-} else {
+} else { // not logged in, show only logo, no menu
     echo "<nav><span id='logonav' class='navleft'>elab<strong>FTW</strong></span></nav>";
 }
 ?>
@@ -154,9 +154,9 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 if (isset($_SESSION['auth'])) {
 ?>
 <span style='float:right;text-align:right;'>
-    Logged in as <a href='profile.php' title='Profile'><?php echo $_SESSION['username'];?></a><br>
-    <a href='ucp.php'><img src='img/settings.png' alt='Settings' title='Settings' /></a> | 
-    <a href='logout.php'><img src='img/logout.png' alt='' title='Logout' /></a>
+    <?php echo LOGGED_IN_AS.' ';?><a href='profile.php' title='<?php echo PROFILE_TITLE;?>'><?php echo $_SESSION['username'];?></a><br>
+    <a href='ucp.php'><img src='img/settings.png' alt='<?php echo SETTINGS;?>' title='<?php echo SETTINGS;?>' /></a> | 
+    <a href='logout.php'><img src='img/logout.png' alt='<?php echo LOGOUT;?>' title='<?php echo LOGOUT;?>' /></a>
 </span>
 <?php
 }

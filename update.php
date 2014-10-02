@@ -259,6 +259,16 @@ if ($confcnt['confcnt'] < 14) {
 }
 
 
+// add lang to users
+add_field('users', 'lang', "VARCHAR(5) NOT NULL DEFAULT 'en-GB'", ">>> You can now select a language!\n");
+
+// add default lang to config
+// remove the notice that will appear if there is no lang in config yet
+error_reporting(E_ALL & ~E_NOTICE);
+if (strlen(get_config('lang')) != 5) {
+    q("INSERT INTO `config` (`conf_name`, `conf_value`) VALUES ('lang', 'en-GB');");
+}
+
 
 // END
-echo "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day ! :)\n";
+echo "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)\n";

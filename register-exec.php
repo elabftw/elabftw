@@ -234,13 +234,13 @@ if ($result) {
         // Create the message
         $message = Swift_Message::newInstance()
         // Give the message a subject
-        ->setSubject(REGISTER_EMAIL_SUBJECT)
+        ->setSubject(EMAIL_NEW_USER_SUBJECT)
         // Set the From address with an associative array
         ->setFrom(array(get_config('smtp_username') => get_config('smtp_username')))
         // Set the To addresses with an associative array
         ->setTo(array($admin['email'] => 'Admin eLabFTW'))
         // Give it a body
-        ->setBody(REGISTER_EMAIL_BODY);
+        ->setBody(REGISTER_EMAIL_BODY.EMAIL_FOOTER);
         $transport = Swift_SmtpTransport::newInstance(
             get_config('smtp_address'),
             get_config('smtp_port'),

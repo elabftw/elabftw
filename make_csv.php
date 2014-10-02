@@ -25,6 +25,7 @@
 ********************************************************************************/
 /* make_csv.php -- export database in spreadsheet file */
 require_once 'inc/common.php';
+require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 $page_title = CSV_TITLE;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';

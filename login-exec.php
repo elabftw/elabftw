@@ -28,6 +28,7 @@ if (!isset($_SESSION)) {
 }
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
+require_once 'lang/'.get_config('lang').'.php';
 // formkey stuff
 require_once 'lib/classes/formkey.class.php';
 $formKey = new formKey();
@@ -121,8 +122,7 @@ if ($result) {
             'sort' => $data['sort_by'],
             'limit' => $data['limit_nb'],
             'shortcuts' => array('create' => $data['sc_create'], 'edit' => $data['sc_edit'], 'submit' => $data['sc_submit'], 'todo' => $data['sc_todo']),
-            // TODO
-            'lang' => 'en-GB',
+            'lang' => $data['lang'],
             'close_warning' => intval($data['close_warning']));
         session_write_close();
         // Make a unique token and store it in sql AND cookie

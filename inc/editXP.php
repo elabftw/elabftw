@@ -90,15 +90,16 @@ while ($tags = $tagreq->fetch()) {
 <?php // $formKey->output_formkey(); ?>
 <input name='item_id' type='hidden' value='<?php echo $id;?>' />
 
-<div class='three-columns'>
+<div class='row'>
 
-    <div class='column-left'>
-    <img src='img/calendar.png' title='date' alt='calendar' /> <h4><?php echo DATE;?></h4><br>
+    <div class='col-md-4'>
+        <img src='img/calendar.png' title='date' alt='calendar' />
+        <h4><?php echo DATE;?></h4><br>
         <!-- TODO if firefox has support for it: type = date -->
         <input name='date' id='datepicker' size='8' type='text' value='<?php echo $experiment['date'];?>' />
     </div>
 
-    <div class='column-right'>
+    <div class='col-md-4'>
         <img src='img/eye.png' alt='visibility' />
         <h4><?php echo VISIBILITY;?></h4><br>
         <select id="visibility_form" name="visibility" onchange="update_visibility(this.value)">
@@ -108,8 +109,8 @@ while ($tags = $tagreq->fetch()) {
         <span id='visibility_msg_div'><?php echo UPDATED;?></span>
     </div>
 
-    <div class='column-center'>
-    <img src='img/status.png' alt='status' /> <h4><?php echo STATUS;?></h4><br>
+    <div class='col-md-4'>
+        <img src='img/status.png' alt='status' /> <h4><?php echo STATUS;?></h4><br>
         <script>
         // this array is used by updateStatus() to get the color of new status 
         var status_arr = Array();

@@ -39,6 +39,7 @@ ffc1b7 => light red
 
 
 /* Font is Lato */
+/* TODO put in local */
 @import url(https://fonts.googleapis.com/css?family=Lato);
 
 /* little shadow on top of the screen for no reasons */
@@ -138,13 +139,7 @@ hr {
     color: #dcdddc;
 }
 
-img {
-    border: none;
-    position: relative;
-    top: 3px;
-}
-
-/* COLUMNS */
+/* COLUMNS
 .three-columns {
     width: 60%;
 }
@@ -157,6 +152,7 @@ img {
 .column-left{ float: left; width: 20%; }
 .column-right{ float: right; width: 20%; }
 .column-center{ display: inline-block; width: 20%; }
+*/
 
 /* TITLES */
 h2 {
@@ -244,6 +240,7 @@ form#big_search input {
     border: none;
     border-radius: 20px;
     width:40%;
+    height:2em;
     padding: 10px 30px 10px 10px;
     margin: 13px 10px 0 0;
     transition:width 1s;
@@ -294,21 +291,9 @@ menu.border a:hover {
     -ms-transition-duration: 1500ms;
 }
 
-/* ERROR/INFO message box */
-.messagebox {
-    margin: 10px 0;
-    color: #343434;
-    border: 1px #24AEB9 solid;
-    border-radius: 5px;
-    padding: 0 10px;
-}
-
-.messagebox img:hover {
-    opacity: 0.6;
-}
-
 /* fix the links in the error/info messages */
-.messagebox a {
+/*
+.alert a {
     color: #343434;
     text-decoration:underline;
 }
@@ -321,6 +306,7 @@ menu.border a:hover {
     background-color: #ffc1b7;
     border-color: #dd1e00;
 }
+*/
 
 /* BUTTONS */
 .button {

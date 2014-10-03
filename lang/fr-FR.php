@@ -53,7 +53,7 @@ define("DATE", "Date");
 define("TITLE", "Titre");
 define("INFOS", "Infos");
 define("VISIBILITY", "Visibilité");
-define("STATUS", "Status");
+define("STATUS", "Statuts");
 
 define("EDIT", "Editer");
 define("SAVE", "Enregistrer");
@@ -96,7 +96,6 @@ define("ADMIN_VALIDATION_QUEUE_SUBMIT", "Valider");
 
 define("ADMIN_MENU_TEAM", "Équipe");
 define("ADMIN_MENU_USERS", "Utilisateurs");
-define("ADMIN_MENU_STATUS", "Status");
 define("ADMIN_MENU_ITEMSTYPES", "Catégories d'items");
 define("ADMIN_MENU_EXPTPL", "Modèle d'expériences");
 define("ADMIN_MENU_CSV", "Importer un CSV");
@@ -123,12 +122,12 @@ define("ADMIN_DELETE_USER_HELP", "Taper l'ADRESSE EMAIL d'un membre pour le supp
 define("ADMIN_DELETE_USER_CONFPASS", "Tapez votre mot de passe :");
 define("ADMIN_DELETE_USER_BUTTON", "Supprimer cet utilisateur !");
 
-define("ADMIN_STATUS_ADD_H3", "Ajouter un nouveau status");
-define("ADMIN_STATUS_ADD_NEW", "Nom du nouveau status :");
-define("ADMIN_STATUS_ADD_BUTTON", "Ajouter un nouveau status");
-define("ADMIN_STATUS_EDIT_H3", "Éditer un status existant");
-define("ADMIN_STATUS_EDIT_ALERT", "Supprimez toutes les expériences avec ce status avant de supprimer ce status.");
-define("ADMIN_STATUS_EDIT_DEFAULT", "Status par défaut");
+define("ADMIN_STATUS_ADD_H3", "Ajouter un nouveau statut");
+define("ADMIN_STATUS_ADD_NEW", "Nom du nouveau statut :");
+define("ADMIN_STATUS_ADD_BUTTON", "Ajouter un nouveau statut");
+define("ADMIN_STATUS_EDIT_H3", "Éditer un statut existant");
+define("ADMIN_STATUS_EDIT_ALERT", "Supprimez toutes les expériences avec ce statut avant de supprimer ce statut.");
+define("ADMIN_STATUS_EDIT_DEFAULT", "Statut par défaut");
 
 define("ADMIN_ITEMS_TYPES_H3", "Catégories d'items de la base de données");
 define("ADMIN_ITEMS_TYPES_ALERT", "Supprimez tous les items de la base de données de cette catégorie avant de supprimer cette catégorie.");
@@ -194,7 +193,7 @@ define("DELETE_EXP_SUCCESS", "L'expérience a été supprimée avec succès.");
 define("DELETE_TPL_SUCCESS", "Le modéle a été supprimé avec succès.");
 define("DELETE_ITEM_SUCCESS", "L'item a été supprimé avec succès.");
 define("DELETE_ITEM_TYPE_SUCCESS", "La catégorie d'item a été supprimée avec succès.");
-define("DELETE_STATUS_SUCCESS", "Le status a été supprimé avec succès.");
+define("DELETE_STATUS_SUCCESS", "Le statut a été supprimé avec succès.");
 
 // DUPLICATE_ITEM.PHP
 define("DUPLICATE_EXP_SUCCESS", "Expérince dupliquée avec succès.");
@@ -283,14 +282,14 @@ define("SEARCH_TITLE", "Recherche avancée");
 define("SEARCH_BACK", "Retourner à la liste des expériences");
 define("SEARCH_ONLY", "Rechercher uniquement dans les expériences de :");
 define("SEARCH_YOU", "Vous-même");
-define("SEARCH_EVERYONE", "chercher dans les expérinces de toute l'équipe");
+define("SEARCH_EVERYONE", "chercher dans les expériences de toute l'équipe");
 define("SEARCH_IN", "Chercher dans");
 define("SEARCH_DATE", "Où la date est entre");
 define("SEARCH_AND", "et");
 define("SEARCH_AND_TITLE", "Et le titre contient");
 define("SEARCH_AND_BODY", "Et le corps contient");
-define("SEARCH_AND_STATUS", "Et le status est");
-define("SEARCH_SELECT_STATUS", "choisir un status");
+define("SEARCH_AND_STATUS", "Et le statut est");
+define("SEARCH_SELECT_STATUS", "choisir un statut");
 define("SEARCH_AND_RATING", "Et l'évaluation est");
 define("SEARCH_STARS", "choisir le nombre d'étoiles");
 define("SEARCH_UNRATED", "Pas d'étoiles");
@@ -353,7 +352,7 @@ define("TEAM_DIFF_USERS", "utilisateurs différents");
 define("TEAM_ITEMS_DB", "items dans la base de données.");
 define("TEAM_TIP_1", "Vous pouvez afficher une TODO liste en pressant 't'");
 define("TEAM_TIP_2", "Vous pouvez avoir des modèles d'expériences (<a href='ucp.php?tab=3'>Panneau de contrôle utilisateur</a>)");
-define("TEAM_TIP_3", "L'administrateur d'une équipe peut éditer les status et les types d'items disponibles (<a href='admin.php?tab=4'>Panneau d'administration</a>)");
+define("TEAM_TIP_3", "L'administrateur d'une équipe peut éditer les statuts et les types d'items disponibles (<a href='admin.php?tab=4'>Panneau d'administration</a>)");
 define("TEAM_TIP_4", "Si vous faîtes Ctrl Maj D dans la fenêtre d'édition, la date du jour apparaîtra sous le curseur.");
 define("TEAM_TIP_5", "Des raccourcis claviers personnalisables sont disponibles (<a href='ucp.php?tab=2'>Panneau de contrôle utilisateur</a>)");
 define("TEAM_TIP_6", "Vous pouvez dupliquer des expériences en un seul clic");
@@ -447,7 +446,7 @@ define("SHOW_DB_LAST_10", "Liste des 10 derniers ajouts :");
 define("SHOW_XP_MORE", "Afficher plus");
 define("SHOW_XP_CREATE", "Créer une expérience");
 define("SHOW_XP_CREATE_TPL", "Créer depuis un modèle");
-define("SHOW_XP_FILTER_STATUS", "FILTRER LES STATUS");
+define("SHOW_XP_FILTER_STATUS", "FILTRER LES STATUTS");
 define("SHOW_XP_NO_TPL", "<strong>Vous n'avez pas encore créé de modèles.</strong> Rendez-vous dans <a href='ucp.php?tab=3'>votre panneau de contrôle</a> pour en ajouter !");
 define("SHOW_XP_NO_EXP", "<strong>Bienvenue sur eLabFTW.</strong>Cliquez le bouton <img src='img/add.png' alt='Create experiment' /><a href='create_item.php?type=exp'>Créer une expérience</a> pour démarrer.");
 

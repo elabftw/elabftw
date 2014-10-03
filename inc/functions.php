@@ -1022,19 +1022,19 @@ function display_message($type, $message)
 {
     if ($type === 'info') {
 
-        echo "<div class='infobox messagebox'>
-        <p>$message<span style='float:right'><img src='img/cross-blue.png' alt='hide' title='Hide message' /></span></p></div>";
+        echo "<div class='alert alert-success'>
+        <a href='#' class='close' data-dismiss='alert'>&times</a><p>$message</p></div>";
 
     } elseif ($type === 'info_nocross') {
-        echo "<div class='infobox messagebox'><p>$message</p></div>";
+        echo "<div class='alert alert-success'><p>$message</p></div>";
 
     } elseif ($type === 'error') {
 
-        echo "<div class='errorbox messagebox'>
-        <p>$message<span style='float:right'><img src='img/cross-red.png' alt='hide' title='Hide message' /></span></p></div>";
+        echo "<div class='alert alert-danger'>
+        <a href='#' class='close' data-dismiss='alert'>&times</a><p>$message</p></div>";
 
     } elseif ($type === 'error_nocross') {
-        echo "<div class='errorbox messagebox'><p>$message</p></div>";
+        echo "<div class='alert alert-danger'><p>$message</p></div>";
 
     }
 

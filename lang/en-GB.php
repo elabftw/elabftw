@@ -96,7 +96,6 @@ define ("ADMIN_VALIDATION_QUEUE_SUBMIT", "Validate user(s)");
 
 define ("ADMIN_MENU_TEAM", "Team");
 define ("ADMIN_MENU_USERS", "Users");
-define ("ADMIN_MENU_STATUS", "Status");
 define ("ADMIN_MENU_ITEMSTYPES", "Types of items");
 define ("ADMIN_MENU_EXPTPL", "Experiments template");
 define ("ADMIN_MENU_CSV", "Import CSV");

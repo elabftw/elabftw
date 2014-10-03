@@ -30,6 +30,8 @@ $start = microtime(true);
 <html>
 <head>
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="author" content="Nicolas CARPi" />
 <link rel="icon" type="image/ico" href="img/favicon.ico" />
 <?php
@@ -74,6 +76,8 @@ $ftw = $ftw_arr[0];
 
 echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."</title>"?>
 <!-- CSS -->
+<!-- Bootstrap -->
+<link rel="stylesheet" media="all" href="js/bootstrap/dist/css/bootstrap.min.css">
 <link rel="stylesheet" media="all" href="css/main.css" />
 <link rel="stylesheet" media="all" href="js/jquery-ui/themes/smoothness/jquery-ui.min.css" />
 <link rel="stylesheet" media="all" href="css/tagcloud.css" />
@@ -90,6 +94,8 @@ echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."<
 <script src='js/jquery.rating.min.js'></script>
 <!-- common stuff -->
 <script src="js/common.min.js"></script>
+<!-- bootstrap JS -->
+<script src="js/bootstrap/js/alert.js"></script>
 </head>
 
 <body>

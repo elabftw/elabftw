@@ -71,7 +71,7 @@ if ($count > 0) {
     <ul>
     <li class='tabhandle' id='tab1'><?php echo ADMIN_MENU_TEAM;?></li>
         <li class='tabhandle' id='tab2'><?php echo ADMIN_MENU_USERS;?></li>
-        <li class='tabhandle' id='tab3'><?php echo ADMIN_MENU_STATUS;?></li>
+        <li class='tabhandle' id='tab3'><?php echo STATUS;?></li>
         <li class='tabhandle' id='tab4'><?php echo ADMIN_MENU_ITEMSTYPES;?></li>
         <li class='tabhandle' id='tab5'><?php echo ADMIN_MENU_EXPTPL;?></li>
         <li class='tabhandle' id='tab6'><?php echo ADMIN_MENU_CSV;?></li>

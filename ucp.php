@@ -71,23 +71,23 @@ $users = $req->fetch();
 
         <div class='row'>
             <div class='col-md-6'>
-                <label for='firstname'><?php echo FIRSTNAME;?></label>
+                <label class='block' for='firstname'><?php echo FIRSTNAME;?></label>
                 <input name="firstname" value='<?php echo $users['firstname'];?>' cols='20' rows='1' />
             </div>
-
             <div class='col-md-6'>
-                <label for='lastname'><?php echo LASTNAME;?></label>
-                <input name="lastname" value='<?php echo $users['lastname'];?>' cols='20' rows='1' />
+                <label class='block' for='username'><?php echo USERNAME;?></label>
+                <input name="username" value='<?php echo $users['username'];?>' cols='20' rows='1' />
             </div>
+
         </div>
 
         <div class='row'>
             <div class='col-md-6'>
-                <label for='username'><?php echo USERNAME;?></label>
-                <input name="username" value='<?php echo $users['username'];?>' cols='20' rows='1' />
+                <label class='block' for='lastname'><?php echo LASTNAME;?></label>
+                <input name="lastname" value='<?php echo $users['lastname'];?>' cols='20' rows='1' />
             </div>
             <div class='col-md-6'>
-                <label for='email'><?php echo EMAIL;?></label>
+                <label class='block' for='email'><?php echo EMAIL;?></label>
                 <input name="email" type="email" value='<?php echo $users['email'];?>' cols='20' rows='1' />
             </div>
         </div>
@@ -96,21 +96,21 @@ $users = $req->fetch();
         <h4><?php echo UCP_H4_4;?></h4>
         <div class='row'>
             <div class='col-md-6'>
-                <label for='phone'><?php echo PHONE;?> </label>
+                <label class='block' for='phone'><?php echo PHONE;?> </label>
                 <input name="phone" value='<?php echo $users['phone'];?>' cols='20' rows='1' />
             </div>
             <div class='col-md-6'>
-                <label for='cellphone'><?php echo MOBILE;?></label>
+                <label class='block' for='cellphone'><?php echo MOBILE;?></label>
                 <input name="cellphone" value='<?php echo $users['cellphone'];?>' cols='20' rows='1' />
             </div>
         </div>
         <div class='row'>
             <div class='col-md-6'>
-                <label for='skype'><?php echo SKYPE;?></label>
+                <label class='block' for='skype'><?php echo SKYPE;?></label>
                 <input name="skype" value='<?php echo $users['skype'];?>' cols='20' rows='1' />
             </div>
             <div class='col-md-6'>
-                <label for='website'><?php echo WEBSITE;?></label>
+                <label class='block' for='website'><?php echo WEBSITE;?></label>
                 <input name="website" type="url" value='<?php echo $users['website'];?>' cols='20' rows='1' />
             </div>
         </div>

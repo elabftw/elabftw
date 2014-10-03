@@ -276,21 +276,19 @@ menu.border a:hover {
 }
 
 /* fix the links in the error/info messages */
-/*
 .alert a {
     color: #343434;
     text-decoration:underline;
 }
 
-.infobox {
+.alert-success {
     background-color: #C4F9FF;
 }
 
-.errorbox {
+.alert-danger {
     background-color: #ffc1b7;
     border-color: #dd1e00;
 }
-*/
 
 /* BUTTONS */
 .button {

@@ -294,6 +294,11 @@ menu.border a:hover {
     border-color: #dd1e00;
 }
 
+/* BADGE */
+.badge {
+    margin-right: 5px;
+}
+
 /* BUTTONS */
 .button {
     border: none;

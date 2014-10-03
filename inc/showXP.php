@@ -59,7 +59,7 @@ $tplreq->bindParam(':userid', $_SESSION['userid']);
 $tplreq->execute();
 if ($tplreq->rowCount() > 0) {
     while ($tpl = $tplreq->fetch()) {
-        echo "<li class='inline'><a href='create_item.php?type=exp&tpl=".$tpl['id']."' class='templates'>".$tpl['name']."</a></li> ";
+        echo "<a href='create_item.php?type=exp&tpl=".$tpl['id']."' class='badge'>".$tpl['name']."</a>";
     }
 } else { // user has no templates
     display_message('warning_nocross', SHOW_XP_NO_TPL);

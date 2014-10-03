@@ -658,14 +658,6 @@ p.title {
     border: 1px solid #29AEB9;
 }
 
-/* TEMPLATES */
-.templates {
-    border:1px solid black;
-    font-size: 12px;
-    line-height: 300%;
-    padding: 7px;
-}
-
 .txt {
     background-color:white;
     border:1px solid #CCC;

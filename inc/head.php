@@ -155,7 +155,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 <?php
 if (isset($_SESSION['auth'])) {
     ?>
-    <span style='float:right;'>
+    <span style='float:right;text-align:right'>
         <?php echo LOGGED_IN_AS.' ';?><a href='profile.php' title='<?php echo PROFILE_TITLE;?>'><?php echo $_SESSION['username'];?></a><br>
         <a href='ucp.php'><img src='img/settings.png' alt='<?php echo SETTINGS;?>' title='<?php echo SETTINGS;?>' /></a> | 
         <a href='logout.php'><img src='img/logout.png' alt='<?php echo LOGOUT;?>' title='<?php echo LOGOUT;?>' /></a>

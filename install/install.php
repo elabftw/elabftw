@@ -88,7 +88,8 @@ $sql = "INSERT INTO config (conf_name, conf_value) VALUES
     ('ban_time', '60'),
     ('stamplogin', ''),
     ('stamppass', ''),
-    ('stampshare', '0');";
+    ('stampshare', '0'),
+    ('lang', 'en-GB');";
 $req = $pdo->prepare($sql);
 $req->execute();
 

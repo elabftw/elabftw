@@ -203,7 +203,8 @@ nav .navleft a {
 
 nav .navleft a.selected {
     border-bottom:6px #29AEB9 solid;
-    padding-bottom:14px;
+    padding-bottom:11px;
+    -moz-padding-bottom:12px;
     color:white;
 }
 
@@ -282,12 +283,6 @@ menu.border a:hover {
 /* ALERT */
 .alert {
     margin-top:20px;
-}
-
-/* fix the links in the error/info messages */
-.alert a {
-    color: #343434;
-    text-decoration:underline;
 }
 
 .alert-success {

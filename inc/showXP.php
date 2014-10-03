@@ -62,7 +62,7 @@ if ($tplreq->rowCount() > 0) {
         echo "<li class='inline'><a href='create_item.php?type=exp&tpl=".$tpl['id']."' class='templates'>".$tpl['name']."</a></li> ";
     }
 } else { // user has no templates
-    display_message('info_nocross', SHOW_XP_NO_TPL);
+    display_message('warning_nocross', SHOW_XP_NO_TPL);
 }
 ?>
 </ul></div>

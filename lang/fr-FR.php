@@ -219,8 +219,7 @@ define("LOGIN_MINUTES", "minutes :");
 define("LOGIN_ENABLE_COOKIES", "Merci d'autoriser les cookies dans votre navigateur pour continuer.");
 define("LOGIN_COOKIES_NOTE", "Note : il vous faut accepter les cookies pour vous connecter.");
 define("LOGIN_H2", "Connectez-vous à votre compte");
-define("LOGIN_FOOTER", "Pas de compte ? <a href='register.php'>Créez un compte</a> maintenant !<br>
-Mot de passe oublié ? <a href='#' class='trigger'>Réinitialisez-le</a> !");
+define("LOGIN_FOOTER", "Pas de compte ? <a href='register.php'>Créez un compte</a> maintenant !<br>Mot de passe oublié ? <a href='#' class='trigger'>Réinitialisez-le</a> !");
 define("LOGIN_FOOTER_PLACEHOLDER", "Entrez votre adresse email");
 define("LOGIN_FOOTER_BUTTON", "Envoyer le lien de réinitialisation");
 
@@ -247,7 +246,7 @@ define("REGISTER_SUCCESS", "Registration successful :)<br>Welcome to eLabFTW \o/
 
 // REGISTER.PHP
 define("REGISTER_TITLE", "Créer un compte");
-define("REGISTER_LOGOUT", "<a style='text-decoration:underline' href='logout.php'>Déconnectez-vous</a> avant d'enregistrer un autre compte.");
+define("REGISTER_LOGOUT", "<a class='alert-link' href='logout.php'>Déconnectez-vous</a> avant d'enregistrer un autre compte.");
 define("REGISTER_BACK_TO_LOGIN", "retour à la page de connexion");
 define("REGISTER_H2", "Créez votre compte");
 define("REGISTER_DROPLIST", "Choisissez une équipe");
@@ -362,7 +361,7 @@ define("TEAM_TIP_9", "Seule une expérience vérouillée peut être horodatée."
 define("TEAM_TIP_10", "Une fois vérouillée, une expérience ne peut pas être modifiée ou déverouillée. Seuls des commentaires peuvent être ajoutés.");
 
 // TIMESTAMP.PHP
-define("TIMESTAMP_CONFIG_ERROR", "L'horodatage n'est pas configuré. Merci de lire <a href='https://github.com/NicolasCARPi/elabftw/wiki/finalizing#setting-up-timestamping'>le wiki</a>.");
+define("TIMESTAMP_CONFIG_ERROR", "L'horodatage n'est pas configuré. Merci de lire <a class='alert-link' href='https://github.com/NicolasCARPi/elabftw/wiki/finalizing#setting-up-timestamping'>le wiki</a>.");
 define("TIMESTAMP_ERROR", "Il y a eu une erreur dans l'horodatage. Les informations d'authentification sont peut-être fausses, ou il n'y a plus de crédits.");
 define("TIMESTAMP_USER_ERROR", "Il y a eu une erreur dans l'horodatage. L'expérience n'est PAS horodatée. L'erreur a été logguée.");
 define("TIMESTAMP_SUCCESS", "Expérience horodatée avec succès. Le PDF horodaté peut être téléchargé ci-dessous.");
@@ -447,8 +446,8 @@ define("SHOW_XP_MORE", "Afficher plus");
 define("SHOW_XP_CREATE", "Créer une expérience");
 define("SHOW_XP_CREATE_TPL", "Créer depuis un modèle");
 define("SHOW_XP_FILTER_STATUS", "FILTRER LES STATUTS");
-define("SHOW_XP_NO_TPL", "<strong>Vous n'avez pas encore créé de modèles.</strong> Rendez-vous dans <a href='ucp.php?tab=3'>votre panneau de contrôle</a> pour en ajouter !");
-define("SHOW_XP_NO_EXP", "<strong>Bienvenue sur eLabFTW.</strong>Cliquez le bouton <img src='img/add.png' alt='Create experiment' /><a href='create_item.php?type=exp'>Créer une expérience</a> pour démarrer.");
+define("SHOW_XP_NO_TPL", "<strong>Vous n'avez pas encore créé de modèles.</strong> Rendez-vous dans <a class='alert-link' href='ucp.php?tab=3'>votre panneau de contrôle</a> pour en ajouter !");
+define("SHOW_XP_NO_EXP", "<strong>Bienvenue sur eLabFTW.</strong>Cliquez le bouton <img src='img/add.png' alt='Create experiment' /><a class='alert-link' href='create_item.php?type=exp'>Créer une expérience</a> pour démarrer.");
 
 // EDIT DB
 define("LOCKED_NO_EDIT", "<strong>Cet item est vérouillé.</strong> Vous ne pouvez pas l'éditer.");

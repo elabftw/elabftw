@@ -39,42 +39,64 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
 
 <menu class='border'><a href='login.php'><img src='img/arrow-left-blue.png' alt='' /> <?php echo REGISTER_BACK_TO_LOGIN;?></a></menu>
 <section class='center'>
+    <h2><?php echo REGISTER_H2;?></h2><br><br>
     <!-- Register form -->
     <form id='regform' method="post" class='loginform' autocomplete="off" action="register-exec.php">
-        <h2><?php echo REGISTER_H2;?></h2>
-        <div style='margin:auto;width:50%'>
-        <p class='two-columns'>
-        <label class='block' for="team"><?php echo TEAM;?></label>
-            <select name='team' id='team' required>
-            <option value=''><?php echo REGISTER_DROPLIST;?></option>
-                <?php
-                $sql = "SELECT team_id, team_name FROM teams ORDER by team_name";
-                $req = $pdo->prepare($sql);
-                $req->execute();
-                while ($teams = $req->fetch()) {
-                    echo "<option value = '".$teams['team_id']."'>".$teams['team_name']."</option>";
-                }
-                ?>
-            </select>
-            <label class='block' for="username"><?php echo USERNAME;?></label>
-            <input name="username" type="text" id="username" required />
-            <label class='block' for="email"><?php echo EMAIL;?></label>
-            <input name="email" type="email" id="email" required />
-            <label class='block' for="firstname"><?php echo FIRSTNAME;?></label>
-            <input name="firstname" type="text" id="firstname" required />
-            <!-- add two br to fix layout in chrome --><br><br>
-            <label class='block' for="lastname"><?php echo LASTNAME;?></label>
-            <input name="lastname" type="text" id="lastname" required />
-            <label class='block' for="password"><?php echo PASSWORD;?></label>
-            <input name="password" type="password" title='8 characters minimum' id="password" pattern=".{8,}" required />
-            <label class='block' for="cpassword"><?php echo REGISTER_CONFIRM_PASSWORD;?></label>
-            <input name="cpassword" type="password" id="cpassword" pattern=".{8,}" required />
-            <label class='block' for='comlexity'><?php echo REGISTER_PASSWORD_COMPLEXITY;?></label>
-            <input id="complexity" disabled />
-        </p>
-    </div>
-        <div id='submitDiv'>
-        <button type="submit" name="Submit" class='submit button'><?php echo REGISTER_BUTTON;?></button>
+
+        <div class='row'>
+            <div class='col-md-4'>
+                <label class='block' for="team"><?php echo TEAM;?></label>
+                <select name='team' id='team' required>
+                    <option value=''><?php echo REGISTER_DROPLIST;?></option>
+                        <?php
+                        $sql = "SELECT team_id, team_name FROM teams ORDER by team_name";
+                        $req = $pdo->prepare($sql);
+                        $req->execute();
+                        while ($teams = $req->fetch()) {
+                            echo "<option value = '".$teams['team_id']."'>".$teams['team_name']."</option>";
+                        }
+                    ?>
+                </select>
+            </div>
+            <div class='col-md-4'>
+                <label class='block' for="username"><?php echo USERNAME;?></label>
+                <input name="username" type="text" id="username" required />
+            </div>
+
+            <div class='col-md-4'>
+                <label class='block' for="email"><?php echo EMAIL;?></label>
+                <input name="email" type="email" id="email" required />
+            </div>
+        </div>
+
+        <div class='row'>
+            <div class='col-md-4'>
+                <label class='block' for="firstname"><?php echo FIRSTNAME;?></label>
+                <input name="firstname" type="text" id="firstname" required />
+            </div>
+
+            <div class='col-md-4'>
+                <label class='block' for="lastname"><?php echo LASTNAME;?></label>
+                <input name="lastname" type="text" id="lastname" required />
+            </div>
+            <div class='col-md-4'>
+                <label class='block' for="password"><?php echo PASSWORD;?></label>
+                <input name="password" type="password" title='8 characters minimum' id="password" pattern=".{8,}" required />
+            </div>
+        </div>
+
+        <div class='row'>
+            <div class='col-md-4'>
+                <label class='block' for="cpassword"><?php echo REGISTER_CONFIRM_PASSWORD;?></label>
+                <input name="cpassword" type="password" id="cpassword" pattern=".{8,}" required />
+            </div>
+            <div class='col-md-4'>
+                <label class='block' for='comlexity'><?php echo REGISTER_PASSWORD_COMPLEXITY;?></label>
+                <input id="complexity" disabled />
+            </div>
+        </div>
+        <div class='submitButtonDiv'>
+            <button type="submit" name="Submit" class='submit button'><?php echo REGISTER_BUTTON;?></button>
         </div>
     </form>
     <!-- end register form -->

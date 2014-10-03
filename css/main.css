@@ -348,10 +348,6 @@ menu.border a:hover {
 
 
 /* REGISTER */
-form#regform p.two-columns label {
-    text-align:left;
-    padding-left:60px;
-}
 /* the team name can be long and destroy the view */
 form#regform select {
     max-width: 240px;

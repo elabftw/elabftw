@@ -30,8 +30,8 @@ $load_more_button = "<div class='center'>
 $results_arr = array();
 ?>
 <menu class='border'>
-    <a href="create_item.php?type=exp"><img src="img/add.png" alt="" /> <?php echo SHOW_XP_CREATE;?></a> | 
-    <a href='#' class='trigger'><img src="img/add-template.png" alt="" /> <?php echo SHOW_XP_CREATE_TPL;?></a>
+    <a href="create_item.php?type=exp"><img src="img/add.png" class='bot5px' alt="" /> <?php echo SHOW_XP_CREATE;?></a> | 
+    <a href='#' class='trigger'><img src="img/add-template.png" class='bot5px' alt="" /> <?php echo SHOW_XP_CREATE_TPL;?></a>
 
     <!-- 'FILTER STATUS' dropdown menu -->
     <span class='align_right'>

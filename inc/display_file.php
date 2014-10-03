@@ -41,9 +41,9 @@ $count = $req->rowCount();
 if ($count > 0) {
     echo "<div class='box'>";
     if ($count === 1) {
-        echo "<img src='img/attached.png'> <h3 style='display:inline'>Attached file</h3>";
+        echo "<img src='img/attached.png' class='bot5px'> <h3 style='display:inline'>Attached file</h3>";
     } else {
-        echo "<img src='img/attached.png'> <h3 style='display:inline'>Attached files</h3>";
+        echo "<img src='img/attached.png' class='bot5px'> <h3 style='display:inline'>Attached files</h3>";
     }
     while ($uploads_data = $req->fetch()) {
         echo "<div class='filediv'>";
@@ -87,7 +87,7 @@ if ($count > 0) {
         }
 
         // now display the name + comment with icons
-        echo "<span style='width:50%;' class='column-center'><img src='img/attached.png' alt='attached' /> ";
+        echo "<span style='width:50%;' class='column-center'><img src='img/attached.png' class='bot5px' alt='attached' /> ";
         echo "<a href='download.php?f=".$uploads_data['long_name']."&name=".$uploads_data['real_name']."' target='_blank'>".$uploads_data['real_name']."</a>";
         echo "<span class='filesize'> ".format_bytes(filesize('uploads/'.$uploads_data['long_name']))."</span><br>";
         // if we are in view mode, we don't show the comment
@@ -97,12 +97,12 @@ if ($count > 0) {
         case 'view':
             if ($uploads_data['comment'] != 'Click to add a comment') {
                 // show non editable comment
-                echo "<img src='img/comment.png' alt='comment' /><p class='inline'>".stripslashes($uploads_data['comment'])." </p>";
+                echo "<img src='img/comment.png' class='bot5px' alt='comment' /><p class='inline'>".stripslashes($uploads_data['comment'])." </p>";
             }
             break;
         case 'edit':
             // show editable comment whatever is the comment
-            echo "<img src='img/comment.png' alt='comment' />
+            echo "<img src='img/comment.png' class='bot5px' alt='comment' />
                 <p class='editable inline' id='filecomment_".$uploads_data['id']."'>".
                 stripslashes($uploads_data['comment'])."</p>";
             break;

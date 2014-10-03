@@ -382,7 +382,7 @@ if ($count > 0) {
                 <input type='text' name='new_item_type_bgcolor' value='#000000' />
             </div><br><br><br><br>
             <textarea class='mceditable' name='new_item_type_template' /></textarea>
-            <div class='center'>
+            <div class='center submitButtonDiv'>
             <button type='submit' class='button'><?php echo ADMIN_ITEMS_TYPES_ADD_BUTTON;?></button>
             </div>
         </form>
@@ -408,7 +408,7 @@ if ($count > 0) {
         <?php
         echo $exp_tpl['body'];
         ?></textarea>
-        <div class='center'>
+        <div class='center submitButtonDiv'>
         <button type='submit' class='button'><?php echo EDIT;?></button>
         </div>
     </form>

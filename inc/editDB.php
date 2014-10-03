@@ -64,7 +64,7 @@ if ($data['locked'] == 1) {
     <img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','item', 'database.php')" />
 
     <!-- ADD TAG FORM -->
-    <img src='img/tags.png' alt='tags' /><label for='addtaginput'><?php echo TAGS;?></label>
+    <img src='img/tags.png' class='bot5px' alt='tags' /><label for='addtaginput'><?php echo TAGS;?></label>
     <div class='tags'>
         <span id='tags_div'>
         <?php
@@ -93,8 +93,8 @@ if ($data['locked'] == 1) {
     <input id='star5' name="star" type="radio" class="star" value='5' <?php if ($data['rating'] == 5) { echo "checked=checked ";}?>/>
     </div><!-- END STAR RATING -->
     <input name='item_id' type='hidden' value='<?php echo $id;?>' />
-    <img src='img/calendar.png' title='date' alt='Date :' />
-    <label class='block' for='datepicker'><?php echo DATE;?></label>
+    <img src='img/calendar.png' class='bot5px' title='date' alt='Date :' />
+    <label for='datepicker'><?php echo DATE;?></label>
     <!-- TODO if firefox has support for it: type = date -->
     <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date'];?>' />
     <label class='block' for='title_txtarea'><?php echo TITLE;?></label>

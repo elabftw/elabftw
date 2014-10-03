@@ -151,7 +151,7 @@ $formKey = new formKey();
 <div class='divhandle' id='tab4div'>
     <h3><?php echo SYSCONFIG_4_H3;?></h3>
     <form method='post' action='admin-exec.php'>
-        <label for='admin_validate'></label>
+    <label for='admin_validate'><?php echo SYSCONFIG_ADMIN_VALIDATE;?></label>
         <select name='admin_validate' id='admin_validate'>
             <option value='1'<?php
                 if (get_config('admin_validate') == 1) { echo " selected='selected'"; } ?>

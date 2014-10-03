@@ -63,11 +63,11 @@ if ($experiment['locked'] == 1) {
 
 // BEGIN CONTENT
 ?>
-    <menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' alt='' /> <?php echo SEARCH_BACK;?></a></menu>
+    <menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' class='bot5px' alt='' /> <?php echo SEARCH_BACK;?></a></menu>
 <section class='box' id='main_section' style='border-left: 6px solid #<?php echo $experiment['color'];?>'>
 <img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','exp', 'experiments.php')" />
 <!-- ADD TAG FORM -->
-<img src='img/tags.png' alt='tags' /> <h4><?php echo TAGS;?></h4><span class='smallgray'> (<?php echo EDIT_XP_TAGS_HELP;?>)</span>
+<img src='img/tags.png' class='bot5px' alt='tags' /> <h4><?php echo TAGS;?></h4><span class='smallgray'> (<?php echo EDIT_XP_TAGS_HELP;?>)</span>
 <div class='tags'>
 <span id='tags_div'>
 <?php
@@ -93,14 +93,14 @@ while ($tags = $tagreq->fetch()) {
 <div class='row'>
 
     <div class='col-md-4'>
-        <img src='img/calendar.png' title='date' alt='calendar' />
+        <img src='img/calendar.png' class='bot5px' title='date' alt='calendar' />
         <h4><?php echo DATE;?></h4><br>
         <!-- TODO if firefox has support for it: type = date -->
         <input name='date' id='datepicker' size='8' type='text' value='<?php echo $experiment['date'];?>' />
     </div>
 
     <div class='col-md-4'>
-        <img src='img/eye.png' alt='visibility' />
+        <img src='img/eye.png' class='bot5px' alt='visibility' />
         <h4><?php echo VISIBILITY;?></h4><br>
         <select id="visibility_form" name="visibility" onchange="update_visibility(this.value)">
             <option id='option_team' value="team"><?php echo ONLY_THE_TEAM;?></option>
@@ -110,7 +110,7 @@ while ($tags = $tagreq->fetch()) {
     </div>
 
     <div class='col-md-4'>
-        <img src='img/status.png' alt='status' /> <h4><?php echo STATUS;?></h4><br>
+        <img src='img/status.png' class='bot5px' alt='status' /> <h4><?php echo STATUS;?></h4><br>
         <script>
         // this array is used by updateStatus() to get the color of new status 
         var status_arr = Array();
@@ -177,7 +177,7 @@ if (empty($_SESSION['errors'])) {
 
 <!-- LINKED ITEMS -->
 <section>
-    <img src='img/link.png'> <h4 style='display:inline'><?php echo LINKED_ITEMS;?></h4>
+    <img src='img/link.png' class='bot5px' class='bot5px'> <h4 style='display:inline'><?php echo LINKED_ITEMS;?></h4>
     <div id='links_div'>
         <?php
         // DISPLAY LINKED ITEMS

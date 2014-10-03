@@ -111,6 +111,9 @@ input, select {
 
 
 /* GENERAL */
+img.bot5px {
+    margin-bottom: 5px;
+}
 .inline {
     display: inline;
 }
@@ -273,6 +276,11 @@ menu.border a:hover {
     -webkit-transition-duration: 1500ms;
     -o-transition-duration: 1500ms;
     -ms-transition-duration: 1500ms;
+}
+
+/* ALERT */
+.alert {
+    margin-top:20px;
 }
 
 /* fix the links in the error/info messages */
@@ -502,7 +510,7 @@ a[class*='trigger_']:hover {
     float:right;
 }
 .top_right_status img {
-    margin: 0 4px 0 25px;
+    margin: 0 5px 5px 25px;
 }
 
 /* COMMENTS FOR EXPERIMENTS COMMENTS BOX */

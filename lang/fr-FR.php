@@ -53,7 +53,7 @@ define("DATE", "Date");
 define("TITLE", "Titre");
 define("INFOS", "Infos");
 define("VISIBILITY", "Visibilité");
-define("STATUS", "Statuts");
+define("STATUS", "Statut");
 
 define("EDIT", "Editer");
 define("SAVE", "Enregistrer");
@@ -196,7 +196,7 @@ define("DELETE_ITEM_TYPE_SUCCESS", "La catégorie d'item a été supprimée avec
 define("DELETE_STATUS_SUCCESS", "Le statut a été supprimé avec succès.");
 
 // DUPLICATE_ITEM.PHP
-define("DUPLICATE_EXP_SUCCESS", "Expérince dupliquée avec succès.");
+define("DUPLICATE_EXP_SUCCESS", "Expérience dupliquée avec succès.");
 define("DUPLICATE_ITEM_SUCCESS", "Item dupliqué avec succès.");
 
 // EXPERIMENTS.PHP

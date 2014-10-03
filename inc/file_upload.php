@@ -38,7 +38,7 @@ function abort() {
 </script>
 <div class="bigUpload inline">
     <div class="bigUploadContainer">
-    <img src='img/attached.png'> <h3 style='display:inline'><?php echo FILE_UPLOAD_H3;?></h3>
+    <img src='img/attached.png' class='bot5px'> <h3 style='display:inline'><?php echo FILE_UPLOAD_H3;?></h3>
         <form action="inc/bigUpload.php?action=post-unsupported"
             method="post"
             enctype="multipart/form-data"

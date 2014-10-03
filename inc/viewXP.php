@@ -97,7 +97,7 @@ if ($data['timestamped'] == 1) {
 
     $date_arr = explode(' ', $data['timestampedwhen']);
     display_message('info_nocross', VIEW_XP_TIMESTAMPED." ".$timestamper['firstname']." ".$timestamper['lastname']." ".ON." ".$date_arr[0]." ".AT." ".$date_arr[1]."
-        <a href='uploads/".$uploads['long_name']."'><img src='img/pdf.png' title='Download timestamped pdf' alt='pdf' /></a>");
+        <a href='uploads/".$uploads['long_name']."'><img src='img/pdf.png' class='bot5px' title='Download timestamped pdf' alt='pdf' /></a>");
     unset($timestamper);
     unset($uploads);
 }
@@ -107,7 +107,7 @@ if ($data['timestamped'] == 1) {
     <section class="item" style='padding:15px;border-left: 6px solid #<?php echo $data['color'];?>'>
     <span class='top_right_status'><img src='img/status.png'><?php echo $data['name'];?><img src='img/eye.png' alt='eye' /><?php echo $data['visibility'];?></span>
 <?php
-echo "<span class='date_view'><img src='img/calendar.png' title='date' alt='Date :' /> ".format_date($data['date'])."</span><br />
+echo "<span class='date_view'><img src='img/calendar.png' class='bot5px' title='date' alt='Date :' /> ".format_date($data['date'])."</span><br />
     <a href='experiments.php?mode=edit&id=".$data['expid']."'><img src='img/pen-blue.png' title='edit' alt='edit' /></a> 
 <a href='duplicate_item.php?id=".$data['expid']."&type=exp'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a> 
 <a href='make_pdf.php?id=".$data['expid']."&type=experiments'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a> 

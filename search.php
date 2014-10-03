@@ -33,7 +33,7 @@ require_once 'inc/info_box.php';
 ?>
 
 <!-- Advanced Search page begin -->
-<menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' alt='' /> <?php echo SEARCH_BACK;?></a></menu>
+<menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' class='bot5px' alt='' /> <?php echo SEARCH_BACK;?></a></menu>
 <section class='searchform box'>
     <form name="search" method="get" action="search.php">
 
@@ -123,8 +123,9 @@ require_once 'inc/info_box.php';
                 }
                 ?>'/>
             </div>
+            <!-- STATUS -->
             <div class='col-md-4'>
-                <label for='status'><?php echo SEARCH_AND_STATUS;?></label>
+                <label class='block' for='status'><?php echo SEARCH_AND_STATUS;?></label>
                 <select id='status' name="status">
                     <option value='' name='status'><?php echo SEARCH_SELECT_STATUS;?></option>
                     <?php

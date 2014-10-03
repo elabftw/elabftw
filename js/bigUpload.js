@@ -270,10 +270,8 @@ function bigUpload () {
                     } else {
                         bigtype = 'experiments';
                     }
-                    // we reload the whole page because I still need to understand event delegation…
-                    // see issue #54
-                    location.reload();
-                    //$("#filesdiv").load(bigtype+'.php?mode=edit&id='+item_id+' #filesdiv');
+                    // TODO see issue #54
+                    $("#filesdiv").load(bigtype+'.php?mode=edit&id='+item_id+' #filesdiv');
 
 					parent.success(response);
 				}

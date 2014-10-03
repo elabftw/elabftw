@@ -139,21 +139,6 @@ hr {
     color: #dcdddc;
 }
 
-/* COLUMNS
-.three-columns {
-    width: 60%;
-}
-.two-columns {
-    -moz-columns:2 250px;
-    -webkit-columns:2 250px;
-    columns: 2 250px;
-}
-
-.column-left{ float: left; width: 20%; }
-.column-right{ float: right; width: 20%; }
-.column-center{ display: inline-block; width: 20%; }
-*/
-
 /* TITLES */
 h2 {
     margin-bottom:0;
@@ -169,7 +154,7 @@ h3 {
 }
 
 h4 {
-    font-size: 140%;
+    font-size: 150%;
     display: inline;
     font-weight:normal;
     color: #797979;
@@ -187,7 +172,6 @@ p a {
 label {
     color:#797979;
     font-size:120%;
-    padding-bottom: 5px;
 }
 
 /* HEAD */

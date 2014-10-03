@@ -52,44 +52,67 @@ $users = $req->fetch();
     <div class='box'>
 
     <form method="post" action="ucp-exec.php">
-        <div class='two-columns'>
-        <section style='height:150px'>
-        <h4><?php echo UCP_H4_1;?></h4>
-        <label class='block' for='currpass'><?php echo UCP_ENTER_PASSWORD;?></label>
-        <input id='currpass' name="currpass" type="password" required />
-        </section>
+        <div class='row'>
+            <div class='col-md-6'>
+                <h4><?php echo UCP_H4_1;?></h4>
+                <label class='block' for='currpass'><?php echo UCP_ENTER_PASSWORD;?></label>
+                <input id='currpass' name="currpass" type="password" required />
+            </div>
+            <div class='col-md-6'>
+                <h4><?php echo UCP_H4_3;?></h4>
+                <label class='block' for='newpass'><?php echo UCP_NEWPASS;?></label>
+                <input name="newpass" type="password" />
+                <label class='block' for='cnewpass'><?php echo UCP_CNEWPASS;?></label>
+                <input name="cnewpass" type="password" />
+            </div>
+        </div>
 
-        <section>
         <h4><?php echo UCP_H4_2;?></h4>
-        <label class='block' for='firstname'><?php echo FIRSTNAME;?></label>
-        <input name="firstname" value='<?php echo $users['firstname'];?>' cols='20' rows='1' />
-        <label class='block' for='lastname'><?php echo LASTNAME;?></label>
-        <input name="lastname" value='<?php echo $users['lastname'];?>' cols='20' rows='1' />
-        <label class='block' for='username'><?php echo USERNAME;?></label>
-        <input name="username" value='<?php echo $users['username'];?>' cols='20' rows='1' />
-        <label class='block' for='email'><?php echo EMAIL;?></label>
-        <input name="email" type="email" value='<?php echo $users['email'];?>' cols='20' rows='1' />
-        </section>
 
-        <section>
-        <h4><?php echo UCP_H4_3;?></h4>
-        <label class='block' for='newpass'><?php echo UCP_NEWPASS;?></label>
-        <input name="newpass" type="password" />
-        <label class='block' for='cnewpass'><?php echo UCP_CNEWPASS;?></label>
-        <input name="cnewpass" type="password" />
-        </section>
+        <div class='row'>
+            <div class='col-md-6'>
+                <label for='firstname'><?php echo FIRSTNAME;?></label>
+                <input name="firstname" value='<?php echo $users['firstname'];?>' cols='20' rows='1' />
+            </div>
 
-        <section>
+            <div class='col-md-6'>
+                <label for='lastname'><?php echo LASTNAME;?></label>
+                <input name="lastname" value='<?php echo $users['lastname'];?>' cols='20' rows='1' />
+            </div>
+        </div>
+
+        <div class='row'>
+            <div class='col-md-6'>
+                <label for='username'><?php echo USERNAME;?></label>
+                <input name="username" value='<?php echo $users['username'];?>' cols='20' rows='1' />
+            </div>
+            <div class='col-md-6'>
+                <label for='email'><?php echo EMAIL;?></label>
+                <input name="email" type="email" value='<?php echo $users['email'];?>' cols='20' rows='1' />
+            </div>
+        </div>
+
+<br>
         <h4><?php echo UCP_H4_4;?></h4>
-        <label class='block' for='phone'><?php echo PHONE;?> </label>
-        <input name="phone" value='<?php echo $users['phone'];?>' cols='20' rows='1' />
-        <label class='block' for='cellphone'><?php echo MOBILE;?></label>
-        <input name="cellphone" value='<?php echo $users['cellphone'];?>' cols='20' rows='1' />
-        <label class='block' for='skype'><?php echo SKYPE;?></label>
-        <input name="skype" value='<?php echo $users['skype'];?>' cols='20' rows='1' />
-        <label class='block' for='website'><?php echo WEBSITE;?></label>
-        <input name="website" type="url" value='<?php echo $users['website'];?>' cols='20' rows='1' />
-        </section>
+        <div class='row'>
+            <div class='col-md-6'>
+                <label for='phone'><?php echo PHONE;?> </label>
+                <input name="phone" value='<?php echo $users['phone'];?>' cols='20' rows='1' />
+            </div>
+            <div class='col-md-6'>
+                <label for='cellphone'><?php echo MOBILE;?></label>
+                <input name="cellphone" value='<?php echo $users['cellphone'];?>' cols='20' rows='1' />
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-md-6'>
+                <label for='skype'><?php echo SKYPE;?></label>
+                <input name="skype" value='<?php echo $users['skype'];?>' cols='20' rows='1' />
+            </div>
+            <div class='col-md-6'>
+                <label for='website'><?php echo WEBSITE;?></label>
+                <input name="website" type="url" value='<?php echo $users['website'];?>' cols='20' rows='1' />
+            </div>
         </div>
 
     </div>

@@ -438,7 +438,7 @@ define("FOUND", "Found");
 define("RESULTS", "results");
 define("FOUND_1", "Found 1 result.");
 define("FOUND_0", "Nothing found.");
-define("SHOW_DB_WELCOME", "<strong>Welcome to eLabFTW.</strong>Select an item in the «Create new» list to begin filling your database.");
+define("SHOW_DB_WELCOME", "<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list to begin filling your database.");
 define("SHOW_DB_LAST_10", "Showing last 10 uploads:");
 
 // SHOW XP
@@ -447,7 +447,7 @@ define("SHOW_XP_CREATE", "Create experiment");
 define("SHOW_XP_CREATE_TPL", "Create from template");
 define("SHOW_XP_FILTER_STATUS", "FILTER STATUS");
 define("SHOW_XP_NO_TPL", "<strong>You do not have any templates yet.</strong> Go to <a  class='alert-link' href='ucp.php?tab=3'>your control panel</a> to make one !");
-define("SHOW_XP_NO_EXP", "<strong>Welcome to eLabFTW.</strong>Click the <img src='img/add.png' alt='Create experiment' /><a class='alert-link' href='create_item.php?type=exp'>Create experiment</a> button to get started.");
+define("SHOW_XP_NO_EXP", "<strong>Welcome to eLabFTW.</strong> Click the <img src='img/add.png' alt='Create experiment' /><a class='alert-link' href='create_item.php?type=exp'>Create experiment</a> button to get started.");
 
 // EDIT DB
 define("LOCKED_NO_EDIT", "<strong>This item is locked.</strong> You cannot edit it.");

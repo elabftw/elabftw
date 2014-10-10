@@ -780,7 +780,7 @@ function make_pdf($id, $type, $out = 'browser')
             }
             $content .= "<ul>";
             $row_cnt = $req->rowCount();
-            for ($i=0; $i<$row_cnt;$i++) {
+            for ($i=0; $i<$row_cnt; $i++) {
                 // we need the url of the displayed item
                 if ($out === 'browser') {
                     $item_url = str_replace('experiments.php', 'database.php', $url);
@@ -799,7 +799,7 @@ function make_pdf($id, $type, $out = 'browser')
         $content .= $comments_block;
         // ELABID and URL
         $content .= "<p class='elabid'>elabid : ".$elabid."</p>";
-        $content .= "<p class='elabid'>link :<a href='".$full_url."'>".$full_url."</a></p>";
+        $content .= "<p class='elabid'>link : <a href='".$full_url."'>".$full_url."</a></p>";
 
     } else { // ITEM
         if ($out === 'browser') {

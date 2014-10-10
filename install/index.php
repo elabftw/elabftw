@@ -35,6 +35,8 @@ require_once '../inc/functions.php';
 <title>eLabFTW - INSTALL</title>
 <meta name="author" content="Nicolas CARPi" />
 <!-- CSS -->
+<!-- Bootstrap -->
+<link rel="stylesheet" media="all" href="../js/bootstrap/dist/css/bootstrap.min.css">
 <link rel="stylesheet" media="all" href="../css/main.css" />
 <link rel="stylesheet" media="all" href="../js/jquery-ui/themes/smoothness/jquery-ui.min.css" />
 <style>

@@ -103,16 +103,14 @@ echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."<
 
 <?php
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
-?>
-<nav>
-<?php
+    echo "<nav>";
     // to redirect to the right page
     if ($page_title === 'Database') {
         $action_target = 'database.php';
     } else {
         $action_target = 'experiments.php';
     }
-?>
+    ?>
     <form id='big_search' method='get' action='<?php echo $action_target;?>'>
     <input id='big_search_input' type='search' name='q' size='50' value='<?php
     if (isset($_GET['q'])) {
@@ -120,7 +118,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     }
     ?>' />
     </form>
-<span class='navleft'>
+    <span class='navleft'>
     <span id='logonav'>elab<span class='strong' style='color:white;'>FTW</span></span>
     <?php
     echo "<a href='experiments.php?mode=show'";
@@ -148,9 +146,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 
     echo "<a href='".get_team_config('link_href')."' target='_blank'>".get_team_config('link_name')."</a></span>";
     
-    ?>
-    </nav>
-<?php
+    echo "</nav>";
 } else { // not logged in, show only logo, no menu
     echo "<nav><span id='logonav' class='navleft'>elab<strong>FTW</strong></span></nav>";
 }
@@ -158,17 +154,17 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 <div id='real_container'>
 <?php
 if (isset($_SESSION['auth'])) {
-?>
-<span style='float:right;text-align:right;'>
-    <?php echo LOGGED_IN_AS.' ';?><a href='profile.php' title='<?php echo PROFILE_TITLE;?>'><?php echo $_SESSION['username'];?></a><br>
-    <a href='ucp.php'><img src='img/settings.png' alt='<?php echo SETTINGS;?>' title='<?php echo SETTINGS;?>' /></a> | 
-    <a href='logout.php'><img src='img/logout.png' alt='<?php echo LOGOUT;?>' title='<?php echo LOGOUT;?>' /></a>
-</span>
-<?php
+    ?>
+    <span style='float:right;text-align:right'>
+        <?php echo LOGGED_IN_AS.' ';?><a href='profile.php' title='<?php echo PROFILE_TITLE;?>'><?php echo $_SESSION['username'];?></a><br>
+        <a href='ucp.php'><img src='img/settings.png' alt='<?php echo SETTINGS;?>' title='<?php echo SETTINGS;?>' /></a> | 
+        <a href='logout.php'><img src='img/logout.png' alt='<?php echo LOGOUT;?>' title='<?php echo LOGOUT;?>' /></a>
+    </span>
+    <?php
 }
 ?>
 <noscript><!-- show warning if javascript is disabled -->
-<div class='infobox messagebox'>
+<div class='alert alert-danger'>
     <p><strong>Javascript is disabled.</strong> Please enable Javascript to view this site in all its glory. Thank You.</p>
 </div>
 </noscript>

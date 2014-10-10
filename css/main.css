@@ -38,9 +38,18 @@ ffc1b7 => light red
 
 
 
-/* Font is Lato */
-/* TODO put in local */
+/* Font is Lato
 @import url(https://fonts.googleapis.com/css?family=Lato);
+*/
+@font-face {
+    font-family: 'Lato';
+    src: url('fonts/lato-medium-.ttf');
+    src: url('fonts/lato-medium-webfont.eot');
+    src: url('fonts/lato-medium-webfont.eot?#iefix') format('embedded-opentype'),
+    url('fonts/lato-medium-webfont.woff') format('woff'),
+    url('fonts/lato-medium-webfont.ttf') format('truetype'),
+    url('fonts/lato-medium-webfont.svg#webfont') format('svg');
+}
 
 /* little shadow on top of the screen for no reasons */
 body:before {
@@ -528,7 +537,19 @@ a[class*='trigger_']:hover {
     padding: 10px;
 }
 
-.expcomment_box, .filediv {
+/* fix for bootstrap's thumbnail class */
+.thumbnail {
+    overflow:hidden;
+}
+
+.thumb {
+    min-height:50px;
+    min-width:50px;
+    width: 100px;
+    height: 100px;
+}
+
+.expcomment_box {
     background-color: #f2f2f2;
     border: 1px solid #dcdddc;
     border-radius: 5px;
@@ -673,21 +694,6 @@ p.title {
     padding: 5px;
 }
 
-.filediv {
-    margin-top:10px;
-}
-.filediv p, .filediv img {
-}
-.filediv a {
-    font-size: 14px;
-    text-decoration: none;
-}
-.filesize{
-    color:grey;
-    font-size: 10px;
-}
-
-
 /* title on editXP -- fix for firefox */
 #title_input {
     border-radius: 5px;
@@ -805,9 +811,55 @@ code {
     background-color:#eee;
 }
 
-.thumb {
-    max-width: 100px;
-    max-height: 100px;
-    padding-right: 10px;
-
+/* TODOLIST */
+#slide-panel {
+    font: 100% 'Lato', Verdana, Arial, Helvetica, sans-serif;
+    text-align:center;
+    overflow:hidden;
+    background:#343434;
+    display:none;
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    width:20%;
+    min-width:300px;
+    padding:20px;
+    border-radius: 10px;
+    margin:10px;
+    border: 1px solid #fff;
 }
+#slide-panel a, a:link {
+    outline: none;
+}
+
+#slide-panel ul {
+    margin-top:30px;
+    width: 80%;
+}
+#slide-panel ul li {
+    list-style-type: none;
+    font-size: 18px;
+    cursor: move;
+    background-color: #efefef;
+    margin-bottom: 5px;
+    padding: 10px;
+    text-align: left;
+}
+#slide-panel ul li span {
+    cursor: text;
+}
+#slide-panel ul li a,
+ul li a:link {
+    float: right;
+    display: none;
+    text-decoration: none;
+    color: #303030;
+}
+#slide-panel ul li a:hover {
+    color:red;
+}
+#slide-panel #clear-all, #slide-panel #close {
+    color: white;
+    text-decoration:none;
+}
+/* END TODOLIST */

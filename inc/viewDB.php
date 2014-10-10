@@ -83,7 +83,13 @@ if ($data['locked'] == 0) {
 show_tags($id, 'items_tags');
 // TITLE : click on it to go to edit mode
 ?>
-<div OnClick="document.location='database.php?mode=edit&id=<?php echo $data['itemid'];?>'" class='title_view'>
+<div
+<?php
+if($data['locked'] == 0) {
+    echo " OnClick=\"document.location='database.php?mode=edit&id=".$data['itemid']."'\" ";
+}
+?>
+class='title_view'>
 <span style='color:#<?php echo $data['bgcolor'];?>'><?php echo $data['name'];?> </span>
     <?php echo stripslashes($data['title']);?>
 </div>
@@ -91,7 +97,13 @@ show_tags($id, 'items_tags');
 // BODY (show only if not empty)
 if ($data['body'] != '') {
     ?>
-    <div id='body_view' OnClick="document.location='database.php?mode=edit&id=<?php echo $data['itemid'];?>'" class='txt'><?php echo stripslashes($data['body'])?></div>
+    <div
+    <?php
+    if($data['locked'] == 0) {
+        echo " OnClick=\"document.location='database.php?mode=edit&id=".$data['itemid']."'\" ";
+    }
+    ?>
+id='body_view' class='txt'><?php echo stripslashes($data['body'])?></div>
     <?php
 }
 // SHOW USER

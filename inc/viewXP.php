@@ -128,7 +128,7 @@ if ($data['locked'] == 0) {
 show_tags($id, 'experiments_tags');
 // TITLE : click on it to go to edit mode only if we are not in read only mode
 echo "<div ";
-if ($ro === false) {
+if ($ro === false && $data['locked'] == 0) {
     echo "OnClick=\"document.location='experiments.php?mode=edit&id=".$data['expid']."'\"";
 }
 echo " class='title_view'>";
@@ -137,7 +137,7 @@ echo stripslashes($data['title'])."</div>";
 if ($data['body'] != '') {
     echo "<div id='body_view' ";
     // make the body clickable only if we are not in read only
-    if ($ro === false) {
+    if ($ro === false && $data['locked'] == 0) {
         echo "OnClick=\"document.location='experiments.php?mode=edit&id=".$data['expid']."'\"";
     }
     echo "class='txt'>".stripslashes($data['body'])."</div>";

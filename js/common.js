@@ -79,3 +79,14 @@ function isInt(n) {
     return n % 1 === 0;
 }
 
+// To show the todolist
+function showPanel() {
+    console.log('yep');
+    var panel = $('#slide-panel');
+    if (panel.css('display') == 'none') {
+        panel.css('display', 'inline');
+    } else {
+        panel.css('display', 'none');
+    }
+    return false;
+}

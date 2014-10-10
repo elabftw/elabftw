@@ -18,6 +18,17 @@
 *
 ********************************************************************************/
 ?>
+<!-- TODOLIST -->
+<div id='slide-panel'>
+    <form id="todo-form">
+        <input id="todo" type="text" />
+        <input id="submit" type="submit" class='button' value="TODOfy">
+    </form>
+    <ul id="show-items"></ul>
+    <a href="#" id="clear-all">Clear All</a><br><br>
+    <a href="#" onClick='showPanel()'>Close</a>
+</div>
+
 <footer>
 
     <p class='footer_left'>
@@ -53,12 +64,13 @@
     <p><?php echo PAGE_GENERATED.' ';?><span class='strong'><?php echo round((microtime(true) - $start), 5);?> seconds</span></p>
 </footer>
 
-<script src="js/jquery-pageslide/jquery.pageslide.min.js"></script>
+<!-- todolist -->
+<script src="js/todolist.min.js"></script>
 <!-- konami code and unicorns -->
 <script src="js/cornify.min.js"></script>
 <!-- advanced search div -->
 <script>
-    $('#adv_search').hide();
+$('#adv_search').hide();
 $('#big_search_input').click(function() {
     $('#adv_search').show();
 });
@@ -77,11 +89,10 @@ if (isset($_SESSION['auth'])) {
     // show TODOlist
     echo "<script>
     key('".$_SESSION['prefs']['shortcuts']['todo']."', function(){
-        $.pageslide({href:'inc/todolist.php'});
+        showPanel();
     });
     </script>";
 }
 ?>
-
 </body>
 </html>

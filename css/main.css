@@ -811,3 +811,55 @@ code {
     background-color:#eee;
 }
 
+/* TODOLIST */
+#slide-panel {
+    font: 100% 'Lato', Verdana, Arial, Helvetica, sans-serif;
+    text-align:center;
+    overflow:hidden;
+    background:#343434;
+    display:none;
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    width:20%;
+    min-width:300px;
+    padding:20px;
+    border-radius: 10px;
+    margin:10px;
+    border: 1px solid #fff;
+}
+#slide-panel a, a:link {
+    outline: none;
+}
+
+#slide-panel ul {
+    margin-top:30px;
+    width: 80%;
+}
+#slide-panel ul li {
+    list-style-type: none;
+    font-size: 18px;
+    cursor: move;
+    background-color: #efefef;
+    margin-bottom: 5px;
+    padding: 10px;
+    text-align: left;
+}
+#slide-panel ul li span {
+    cursor: text;
+}
+#slide-panel ul li a,
+ul li a:link {
+    float: right;
+    display: none;
+    text-decoration: none;
+    color: #303030;
+}
+#slide-panel ul li a:hover {
+    color:red;
+}
+#slide-panel #clear-all, #slide-panel #close {
+    color: white;
+    text-decoration:none;
+}
+/* END TODOLIST */

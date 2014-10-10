@@ -81,7 +81,6 @@ echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."<
 <link rel="stylesheet" media="all" href="css/main.css" />
 <link rel="stylesheet" media="all" href="js/jquery-ui/themes/smoothness/jquery-ui.min.css" />
 <link rel="stylesheet" media="all" href="css/tagcloud.css" />
-<link rel="stylesheet" media="all" href="js/jquery-pageslide/jquery.pageslide.css" />
 <link rel="stylesheet" media="all" href="css/jquery.rating.css" />
 <!-- JAVASCRIPT -->
 <script src="js/jquery/dist/jquery.min.js"></script>

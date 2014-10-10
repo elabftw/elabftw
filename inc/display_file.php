@@ -45,8 +45,10 @@ if ($count > 0) {
     } else {
         echo "<img src='img/attached.png' class='bot5px'> <h3 style='display:inline'>Attached files</h3>";
     }
+        echo "<div class='row'>";
     while ($uploads_data = $req->fetch()) {
-        echo "<div class='filediv'>";
+        echo "<div class='col-md-4 col-sm-6'>";
+        echo "<div class='thumbnail'>";
         // show the delete button only in edit mode, not in view mode
         if ($_GET['mode'] === 'edit') {
             echo "<a class='align_right' href='delete_file.php?id=".$uploads_data['id']."&type=".$uploads_data['type']."&item_id=".$uploads_data['item_id']."' onClick=\"return confirm('Delete this file ?');\">";
@@ -79,51 +81,41 @@ if ($count > 0) {
                     if ($uploads_data['comment'] != 'Click to add a comment') {
                         echo "title='".$uploads_data['comment']."'";
                     }
-                    echo "><img class='thumb' src='".$thumbpath."' width='100' height='100' alt='thumbnail' /></a>";
+                    echo "><img class='thumb' src='".$thumbpath."' alt='thumbnail' /></a>";
                 }
             } else {
-                echo "<img class='thumb' src='img/thumb.png' width='100' height='100' alt='thumbnail' />";
+                echo "<img class='thumb' src='img/thumb.png' alt='thumbnail' />";
             }
         }
 
         // now display the name + comment with icons
-        echo "<span style='width:50%;' class='column-center'><img src='img/attached.png' class='bot5px' alt='attached' /> ";
+        echo "<div class='caption'><img src='img/attached.png' class='bot5px' alt='attached' /> ";
         echo "<a href='download.php?f=".$uploads_data['long_name']."&name=".$uploads_data['real_name']."' target='_blank'>".$uploads_data['real_name']."</a>";
-        echo "<span class='filesize'> ".format_bytes(filesize('uploads/'.$uploads_data['long_name']))."</span><br>";
-        // if we are in view mode, we don't show the comment
+        echo "<span class='smallgray' style='display:inline'> ".format_bytes(filesize('uploads/'.$uploads_data['long_name']))."</span><br>";
+        // if we are in view mode, we don't show the comment if it's the default text
         // this is to avoid showing 'Click to add a comment' where in fact you can't click to add a comment because
         // your are in view mode
-        switch ($_GET['mode']) {
-        case 'view':
-            if ($uploads_data['comment'] != 'Click to add a comment') {
-                // show non editable comment
-                echo "<img src='img/comment.png' class='bot5px' alt='comment' /><p class='inline'>".stripslashes($uploads_data['comment'])." </p>";
-            }
-            break;
-        case 'edit':
-            // show editable comment whatever is the comment
-            echo "<img src='img/comment.png' class='bot5px' alt='comment' />
-                <p class='editable inline' id='filecomment_".$uploads_data['id']."'>".
-                stripslashes($uploads_data['comment'])."</p>";
-            break;
-        default:
-            die();
+        $comment = "<img src='img/comment.png' class='bot5px' alt='comment' />
+                    <p class='editable inline' id='filecomment_".$uploads_data['id']."'>".
+                    stripslashes($uploads_data['comment'])."</p>";
+
+        if ($_GET['mode'] === 'edit' || $uploads_data['comment'] != 'Click to add a comment') {
+            echo $comment;
         }
-        echo "</span></div>";
+
+        echo "</div></div></div>";
     } // end while
-    echo "</div>";
+    echo "</div></div>";
 } // end if count > 0
 // END DISPLAY FILES
 echo "</div>";
-?>
 
-<?php
 // we only want the file comment div to be editable on edit mode, not view mode
 if ($_GET['mode'] === 'edit') {
     ?>
     <script>
-    $('.filediv').on("mouseover", ".editable", function(){
-        $('.filediv p.editable').editable('editinplace.php', {
+    $('.thumbnail').on("mouseover", ".editable", function(){
+        $('.thumbnail p.editable').editable('editinplace.php', {
          tooltip : 'Click to edit',
          indicator : 'Saving...',
          id   : 'id',
@@ -146,4 +138,3 @@ $(document).ready(function() {
     $('a.fancybox').fancybox();
 });
 </script>
-

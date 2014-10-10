@@ -537,7 +537,19 @@ a[class*='trigger_']:hover {
     padding: 10px;
 }
 
-.expcomment_box, .filediv {
+/* fix for bootstrap's thumbnail class */
+.thumbnail {
+    overflow:hidden;
+}
+
+.thumb {
+    min-height:50px;
+    min-width:50px;
+    width: 100px;
+    height: 100px;
+}
+
+.expcomment_box {
     background-color: #f2f2f2;
     border: 1px solid #dcdddc;
     border-radius: 5px;
@@ -682,21 +694,6 @@ p.title {
     padding: 5px;
 }
 
-.filediv {
-    margin-top:10px;
-}
-.filediv p, .filediv img {
-}
-.filediv a {
-    font-size: 14px;
-    text-decoration: none;
-}
-.filesize{
-    color:grey;
-    font-size: 10px;
-}
-
-
 /* title on editXP -- fix for firefox */
 #title_input {
     border-radius: 5px;
@@ -814,9 +811,3 @@ code {
     background-color:#eee;
 }
 
-.thumb {
-    max-width: 100px;
-    max-height: 100px;
-    padding-right: 10px;
-
-}

@@ -44,6 +44,13 @@ A big thanks also to early alpha testers ;)
 
 −−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−
 
+i18n
+````
+
+* pt-BR : kikuti
+
+−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−
+
 
 ==== GET INVOLVED ====
 
@@ -51,12 +58,10 @@ You know your way around php and want to help this project ? Then read on !
 
 What can you do to help this project ?
 * Have a look at the current issues https://github.com/NicolasCARPi/elabftw/issues
+* Translate it !
 * Read the code and spot places needing improvements
 * Open Github issues to discuss bugs or features suggestions
 * Improve the wiki https://github.com/NicolasCARPi/elabftw/wiki
-* Suggest icons
 
 Your code must follow PSR-2.
 https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md
-
-

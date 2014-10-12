@@ -228,6 +228,10 @@ $users = $req->fetch();
                 <?php
                 if ($_SESSION['prefs']['lang'] === 'fr-FR') {
                     echo ' selected ';}?>value="fr-FR">fr-FR</option>
+                <option
+                <?php
+                if ($_SESSION['prefs']['lang'] === 'pt-BR') {
+                    echo ' selected ';}?>value="pt-BR">pt-BR</option>
             </select>
         </section>
         <div style='margin-top:30px;' class='center'>

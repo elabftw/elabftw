@@ -169,7 +169,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
 
         // PAGE BEGIN
-        echo "<section>";
+        echo "<div class='well' style='margin-top:20px'>";
         // Get the title if there is only one experiment in the zip
         if (count($id_arr) === 1) {
             $zipname = $zdate."-".$clean_title;
@@ -183,7 +183,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     } else {
         echo ERROR_BUG;
     }
-    echo "</section>";
+    echo "</div>";
     require_once 'inc/footer.php';
 } else {
     die(INVALID_ID);

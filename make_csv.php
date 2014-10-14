@@ -27,6 +27,7 @@
 require_once 'inc/common.php';
 require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 $page_title = CSV_TITLE;
+$selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 
@@ -119,7 +120,7 @@ foreach ($list as $fields) {
 fclose($fp);
 
 // PAGE BEGIN
-echo "<section>";
+echo "<div class='well' style='margin-top:20px'>";
     // Get csv file size
     $filesize = filesize($filepath);
 echo "<p>".CSV_READY."<br>
@@ -127,5 +128,5 @@ echo "<p>".CSV_READY."<br>
         <img src='img/download.png' alt='download' /> 
         elabftw-export.csv</a>
         <span class='filesize'>(".format_bytes($filesize).")</span></p>";
-echo "</section>";
+echo "</div>";
 require_once 'inc/footer.php';

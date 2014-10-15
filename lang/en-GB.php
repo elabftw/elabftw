@@ -32,7 +32,7 @@ define("INVALID_ID", "The id parameter is not valid!");
 define("INVALID_USERID", "Userid is not valid.");
 define("INVALID_TYPE", "The type parameter is not valid!");
 define("INVALID_FORMKEY", "The form key is invalid. Please retry.");
-define("INVALID_EMAIL", "The email is not invalid.");
+define("INVALID_EMAIL", "The email is not valid.");
 define("INVALID_PASSWORD", "Wrong password!");
 define("INVALID_USER", "No user with this email or user not in your team");
 define("PASSWORDS_DONT_MATCH", "The passwords do not match!");
@@ -212,7 +212,7 @@ define("LOGIN_FAILED", "Login failed. Either you mistyped your password, or your
 
 // LOGIN.PHP
 define("LOGIN", "Login");
-define("LOGIN_TOO_MUCH_FAILED", "You cannot login now because of too much failed login attempts.");
+define("LOGIN_TOO_MUCH_FAILED", "You cannot login now because of too many failed login attempts.");
 define("LOGIN_ATTEMPT_NB", "Number of login attempt left before being banned for");
 define("LOGIN_MINUTES", "minutes:");
 // in JS code

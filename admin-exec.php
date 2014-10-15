@@ -26,6 +26,7 @@
 /* admin-exec.php - for administration of the elab */
 require_once 'inc/common.php';
 require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
+require_once 'vendor/autoload.php';
 
 // only admin can use this
 if ($_SESSION['is_admin'] != 1) {
@@ -69,7 +70,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
         $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
         $url = str_replace('admin-exec.php', 'login.php', $url);
         // we send an email to each validated new user
-        require_once 'lib/swift_required.php';
         // Create the message
         $message = Swift_Message::newInstance()
         // Give the message a subject
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
         // Set the To addresses with an associative array
         ->setTo(array($user['email'] => 'eLabFTW'))
         // Give it a body
-        ->setBody(EMAIL_NEW_USER_BODY_1.$url.EMAIL_FOOTER);
+        ->setBody(EMAIL_NEW_USER_BODY_1.' '.$url.EMAIL_FOOTER);
 
         $transport = Swift_SmtpTransport::newInstance(
             get_config('smtp_address'),

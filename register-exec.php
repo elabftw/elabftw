@@ -26,8 +26,9 @@
 session_start();
 $_SESSION['prefs']['lang'] = 'en-GB';
 require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
-require_once('inc/connect.php');
-require_once('inc/functions.php');
+require_once 'inc/connect.php';
+require_once 'inc/functions.php';
+require_once 'vendor/autoload.php';
 
 //Array to store validation errors
 $msg_arr = array();
@@ -226,7 +227,6 @@ if ($result) {
     // only send an email if validation is needed and smtp config is set
     if (get_config('admin_validate') == '1' && $group == '4' && get_config('smtp_password') != '') {
         // we send an email to the admin so he can validate the user
-        require_once('lib/swift_required.php');
         // get email of the admin of the team (there might be several admins, but we send only to the first one we find)
         $sql = "SELECT * FROM users WHERE `usergroup` = 1 OR `usergroup` = 2 AND `team` = :team LIMIT 1";
         $req = $pdo->prepare($sql);

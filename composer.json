@@ -1,0 +1,6 @@
+{
+    "require": {
+        "swiftmailer/swiftmailer":"@stable",
+        "mpdf/mpdf":"@stable"
+    }
+}

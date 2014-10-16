@@ -7,8 +7,6 @@ eLabFTW uses code from others. A big thanks to them for making their code availa
 
 * jQuery : http://jquery.com (MIT)
 
-* jQuery UI : http://jqueryui.com (MIT)
-
 * jQuery plugins :
     * Jeditable : http://www.appelsiini.net/projects/jeditable
     * Star Rating Plugin v3.14 (2012-02-08) http://www.fyneworks.com/jquery/star-rating/

@@ -57,7 +57,9 @@ if (strlen(get_team_config('stamplogin')) > 2) {
 
 
 // generate the pdf to timestamp
-$pdf_path = make_pdf($id, 'experiments', 'uploads');
+require_once 'lib/classes/MakePdf.class.php';
+$pdf = new MakePdf();
+$pdf_path = $pdf->create($id, $table, 'uploads/export');
 
 // generate the sha256 hash that we will send
 $hashedDataToTimestamp = hash_file('sha256', "uploads/$pdf_path");

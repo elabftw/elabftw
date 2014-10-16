@@ -41,4 +41,6 @@ if (($_GET['type'] === 'experiments') || ($_GET['type'] === 'items')) {
 }
 
 // do the pdf
-make_pdf($id, $type);
+require_once 'lib/classes/MakePdf.class.php';
+$pdf = new MakePdf();
+$pdf->create($id, $type);

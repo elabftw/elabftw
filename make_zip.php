@@ -136,7 +136,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             }
 
             // add PDF to archive
-            require_once 'lib/classes/MakePdf.class.php';
+            require_once 'lib/classes/makepdf.class.php';
             $pdf = new MakePdf();
             $pdfname = $pdf->create($id, $table, 'uploads/export');
             $zip->addFile("uploads/export/".$pdfname, $folder."/".$pdfname);

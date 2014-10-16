@@ -57,7 +57,7 @@ if (strlen(get_team_config('stamplogin')) > 2) {
 
 
 // generate the pdf to timestamp
-require_once 'lib/classes/MakePdf.class.php';
+require_once 'lib/classes/makepdf.class.php';
 $pdf = new MakePdf();
 $pdf_path = $pdf->create($id, 'experiments', 'uploads');
 

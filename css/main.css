@@ -307,6 +307,18 @@ menu.border a:hover {
 .badge {
     margin-right: 5px;
 }
+.badgetab {
+    padding: 5px;
+    margin: 0 20px 10px 0;
+}
+.badgetab:hover {
+    background-color:#f2f2f2;
+    color:black;
+}
+.badgetabactive {
+    background-color:#f2f2f2;
+    color:black;
+}
 
 /* BUTTONS */
 .button {

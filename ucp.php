@@ -246,7 +246,6 @@ $users = $req->fetch();
 <!-- *********************** -->
 <div class='divhandle' id='tab3div'>
 
-
     <?php // SQL TO GET TEMPLATES
     $sql = "SELECT id, body, name FROM experiments_templates WHERE userid = ".$_SESSION['userid'];
     $req = $pdo->prepare($sql);
@@ -254,10 +253,10 @@ $users = $req->fetch();
 
     echo "<ul class='nav nav-pills' role='tablist'>";
     // tabs titles
-    echo "<li class='subtabhandle active badge' id='subtab1'>Create new</li>";
+    echo "<li class='subtabhandle badge badgetab badgetabactive' id='subtab1'>Create new</li>";
     $i = 2;
     while ($exp_tpl = $req->fetch()) {
-        echo "<li class='subtabhandle badge' id='subtab".$i."'>".stripslashes($exp_tpl['name'])."</li>";
+        echo "<li class='subtabhandle badge badgetab' id='subtab".$i."'>".stripslashes($exp_tpl['name'])."</li>";
         $i++;
     }
     echo "</ul>";
@@ -343,8 +342,8 @@ $(document).ready(function() {
         var divhandle = '#' + event.target.id + 'div';
         $(".subdivhandle").hide();
         $(divhandle).show();
-        $(".subtabhandle").removeClass('selected');
-        $(tabhandle).addClass('selected');
+        $(".subtabhandle").removeClass('badgetabactive');
+        $(tabhandle).addClass('badgetabactive');
     });
     // END SUB TABS
     // Give focus to password field

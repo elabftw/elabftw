@@ -4,7 +4,7 @@ Version 0.12.0
 * the font is now loaded locally
 * use bootstrap for css disposition
 * fix some issues reported by users
-* i18n (only English and French at the moment)
+* i18n (only English, Brazilian and French at the moment)
 
 Version 0.11.0
 * So many things…

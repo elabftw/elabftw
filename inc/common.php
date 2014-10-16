@@ -29,6 +29,7 @@ if (!isset($_SESSION)) {
 }
 
 // check that the config file is here and readable
+//if (!is_readable($_SERVER['DOCUMENT_ROOT'] . dirname($_SERVER['SCRIPT_NAME']).'/config.php')) {
 if (!is_readable('config.php')) {
     die("No readable config file found. Make sure the server has permissions to read it. Try :<br />
         <hr>

@@ -23,7 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/common.php');
+require_once 'inc/common.php';
 require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 
 // INFO BOX
@@ -386,13 +386,10 @@ if (isset($_POST['tpl_form'])) {
 // INFO BOX
 if ($errflag) {
     $_SESSION['errors'] = $msg_arr;
-    session_write_close();
     header("location: ucp.php");
     exit;
-
 } elseif ($infoflag) {
     $_SESSION['infos'] = $msg_arr;
-    session_write_close();
     header("location: ucp.php");
     exit;
 } else {

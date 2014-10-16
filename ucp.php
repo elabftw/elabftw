@@ -23,12 +23,13 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/common.php');
+require_once 'inc/common.php';
 require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 $page_title = UCP_TITLE;;
 $selected_menu = null;
 require_once('inc/head.php');
 require_once('inc/info_box.php');
+
 // SQL for UCP
 $sql = "SELECT username, email, firstname, lastname, phone, cellphone, skype, website FROM users WHERE userid = ".$_SESSION['userid'];
 $req = $pdo->prepare($sql);
@@ -38,6 +39,7 @@ $users = $req->fetch();
 // BEGIN UCP PAGE
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
+<script src="js/bootstrap/js/tab.js"></script>
 
 <menu>
     <ul>
@@ -243,23 +245,25 @@ $users = $req->fetch();
 </div>
 <!-- *********************** -->
 <div class='divhandle' id='tab3div'>
-    <div id='tpl'>
+
+
     <?php // SQL TO GET TEMPLATES
     $sql = "SELECT id, body, name FROM experiments_templates WHERE userid = ".$_SESSION['userid'];
     $req = $pdo->prepare($sql);
     $req->execute();
-    echo "<ul>";
+
+    echo "<ul class='nav nav-pills' role='tablist'>";
     // tabs titles
-    echo "<li><a href='#tpl-0'>Create new</a></li>";
+    echo "<li class='subtabhandle active badge' id='subtab1'>Create new</li>";
     $i = 2;
-    while ($users = $req->fetch()) {
-        echo "<li><a href='#tpl-".$i."'>".stripslashes($users['name'])."</a></li>";
+    while ($exp_tpl = $req->fetch()) {
+        echo "<li class='subtabhandle badge' id='subtab".$i."'>".stripslashes($exp_tpl['name'])."</li>";
         $i++;
     }
     echo "</ul>";
     ?>
     <!-- create new tpl tab -->
-    <div id="tpl-0">
+    <div class='subdivhandle' id='subtab1div'>
         <form action='ucp-exec.php' method='post'>
             <input type='hidden' name='new_tpl_form' />
             <input type='text' name='new_tpl_name' placeholder='<?php echo UCP_TPL_PLACEHOLDER;?>' /><br>
@@ -275,16 +279,16 @@ $users = $req->fetch();
     // tabs content
     $req->execute();
     $i=2;
-    while ($users = $req->fetch()) {
+    while ($exp_tpl = $req->fetch()) {
     ?>
-    <div id='tpl-<?php echo $i;?>'>
-        <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $users['id'];?>','tpl', 'ucp.php')" />
+    <div class='subdivhandle' id='subtab<?php echo $i;?>div'>
+        <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $exp_tpl['id'];?>','tpl', 'ucp.php')" />
         <form action='ucp-exec.php' method='post'>
         <input type='hidden' name='tpl_form' />
         <?php
-            echo "<input type='hidden' name='tpl_id[]' value='".$users['id']."' />";
-            echo "<input name='tpl_name[]' value='".stripslashes($users['name'])."' /><br />";
-            echo "<textarea name='tpl_body[]' class='mceditable' style='height:500px;'>".stripslashes($users['body'])."</textarea><br />";
+            echo "<input type='hidden' name='tpl_id[]' value='".$exp_tpl['id']."' />";
+            echo "<input name='tpl_name[]' value='".stripslashes($exp_tpl['name'])."' /><br />";
+            echo "<textarea name='tpl_body[]' class='mceditable' style='height:500px;'>".stripslashes($exp_tpl['body'])."</textarea><br />";
             echo "<div class='center'>";
             echo "<button type='submit' name='Submit' class='button'>".UCP_EDIT_BUTTON."</button>";
             echo "</div>";
@@ -325,10 +329,26 @@ $(document).ready(function() {
         $(tabhandle).addClass('selected');
     });
     // END TABS
+    // SUB TABS
+    var tab = 1;
+    var initdiv = '#subtab' + tab + 'div';
+    var inittab = '#subtab' + tab;
+    // init
+    $(".subdivhandle").hide();
+    $(initdiv).show();
+    $(inittab).addClass('selected');
+
+    $(".subtabhandle" ).click(function(event) {
+        var tabhandle = '#' + event.target.id;
+        var divhandle = '#' + event.target.id + 'div';
+        $(".subdivhandle").hide();
+        $(divhandle).show();
+        $(".subtabhandle").removeClass('selected');
+        $(tabhandle).addClass('selected');
+    });
+    // END SUB TABS
     // Give focus to password field
     document.getElementById('currpass').focus();
-    // add tabs to templates
-    $( "#tpl" ).tabs();
     // TinyMCE
     tinymce.init({
         mode : "specific_textareas",

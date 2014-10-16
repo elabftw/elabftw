@@ -128,13 +128,6 @@ $(function() {
         remove($this);
     });
     
-    // Sort todo
-    $itemList.sortable({
-        revert: true,
-        stop: function() {
-            regenerate();
-        }
-    });
     
     // Clear all
     $clearAll.click(function(e) {

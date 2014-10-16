@@ -1,13 +1,6 @@
-.DS_Store
 *~
 *.swp
-admin/config.php
-admin/config.php.bak
-admin/config.ini
-admin/.htpasswd
-PASTIE
 uploads/
 test.php
-TODO
 config.php
 Session.vim

@@ -736,9 +736,6 @@ footer {
     font-size: 11px;
     margin: 60px 0 5px 0;
 }
-footer div {
-    margin: 10px;
-}
 footer div, footer div a, footer p, footer p a {
     color: #797979;
     font-size: 11px;

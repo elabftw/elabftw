@@ -30,7 +30,7 @@ require_once 'inc/connect.php';
 require_once 'inc/functions.php';
 require_once 'lang/'.get_config('lang').'.php';
 // formkey stuff
-require_once 'lib/classes/formkey.class.php';
+require_once 'inc/classes/formkey.class.php';
 $formKey = new formKey();
 
 //Array to store validation errors

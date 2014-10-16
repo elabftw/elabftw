@@ -25,7 +25,7 @@
 ********************************************************************************/
 // inc/editDB.php
 // formkey stuff
-//require_once('lib/classes/formkey.class.php');
+//require_once('inc/classes/formkey.class.php');
 //$formKey = new formKey();
 ?>
 <script src='js/tinymce/tinymce.min.js'></script>

@@ -38,7 +38,7 @@ $errflag = false;
 $email = '';
 
 // FORMKEY
-require_once 'lib/classes/formkey.class.php';
+require_once 'inc/classes/formkey.class.php';
 $formKey = new formKey();
 
 // VALIDATE USERS

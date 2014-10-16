@@ -496,6 +496,7 @@ textarea {
     margin-top: 10px;
     border-radius: 5px;
     padding: 20px;
+    overflow: hidden;
 }
 
 .box section {

@@ -734,21 +734,24 @@ p.title {
 footer {
     border-top:solid 1px #dcdddc;
     font-size: 11px;
-    margin: 80px 0 5px 0;
-    text-align: center;
+    margin: 60px 0 5px 0;
 }
-footer p, footer p a {
+footer div {
+    margin: 10px;
+}
+footer div, footer div a, footer p, footer p a {
     color: #797979;
     font-size: 11px;
-    line-height: 20%;
-    text-align: right;
 }
-footer p a:hover {
+footer div a:hover {
     color: #29AEB9;
 }
 
 .footer_left {
     text-align: left;
+}
+.footer_right {
+    text-align: right;
 }
 
 .footer_left a {

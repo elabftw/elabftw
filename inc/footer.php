@@ -57,11 +57,10 @@
     if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
         echo "<a href='admin.php'>".ADMIN_PANEL."</a>";
     }
-    echo "</span></p><p>";
-    echo POWERED_BY." <a href='http://www.elabftw.net'>eLabFTW</a>";
+    echo "</span></p><div class='footer_right'>";
+    echo POWERED_BY." <a href='http://www.elabftw.net'>eLabFTW</a><br>";
     ?>
-    </p>
-    <p><?php echo PAGE_GENERATED.' ';?><span class='strong'><?php echo round((microtime(true) - $start), 5);?> seconds</span></p>
+    <?php echo PAGE_GENERATED.' ';?><span class='strong'><?php echo round((microtime(true) - $start), 5);?> seconds</span></div>
 </footer>
 
 <!-- todolist -->

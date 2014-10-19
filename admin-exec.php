@@ -547,34 +547,36 @@ if (isset($_POST['status_name']) && is_pos_int($_POST['status_id']) && !empty($_
     }
 }
 // add new status
-if (isset($_POST['new_status_name']) && !empty($_POST['status_name'])) {
-    $status_name = filter_var($_POST['new_status_name'], FILTER_SANITIZE_STRING);
-    // we remove the # of the hexacode and sanitize string
-    $status_color = filter_var(substr($_POST['new_status_color'], 1, 6), FILTER_SANITIZE_STRING);
-    $sql = "INSERT INTO status(name, color, team, is_default) VALUES(:name, :color, :team, :is_default)";
-    $req = $pdo->prepare($sql);
-    $result = $req->execute(array(
-        'name' => $status_name,
-        'color' => $status_color,
-        'team' => $_SESSION['team_id'],
-        'is_default' => 0
-    ));
-    if ($result) {
-        $msg_arr[] = CONFIG_UPDATE_OK;
-        $_SESSION['infos'] = $msg_arr;
-        header('Location: admin.php?tab=3');
-        exit;
-    } else { //sql fail
-        $msg_arr[] = ERROR_BUG;
+if (isset($_POST['new_status_name'])) {
+    if (!empty($_POST['new_status_name'])) {
+        $status_name = filter_var($_POST['new_status_name'], FILTER_SANITIZE_STRING);
+        // we remove the # of the hexacode and sanitize string
+        $status_color = filter_var(substr($_POST['new_status_color'], 1, 6), FILTER_SANITIZE_STRING);
+        $sql = "INSERT INTO status(name, color, team, is_default) VALUES(:name, :color, :team, :is_default)";
+        $req = $pdo->prepare($sql);
+        $result = $req->execute(array(
+            'name' => $status_name,
+            'color' => $status_color,
+            'team' => $_SESSION['team_id'],
+            'is_default' => 0
+        ));
+        if ($result) {
+            $msg_arr[] = CONFIG_UPDATE_OK;
+            $_SESSION['infos'] = $msg_arr;
+            header('Location: admin.php?tab=3');
+            exit;
+        } else { //sql fail
+            $msg_arr[] = ERROR_BUG;
+            $_SESSION['errors'] = $msg_arr;
+            header('Location: admin.php?tab=3');
+            exit;
+        }
+    } else {
+        $msg_arr[] = FIELD_MISSING;
         $_SESSION['errors'] = $msg_arr;
         header('Location: admin.php?tab=3');
         exit;
     }
-} else {
-    $msg_arr[] = FIELD_MISSING;
-    $_SESSION['errors'] = $msg_arr;
-    header('Location: admin.php?tab=3');
-    exit;
 }
 
 // ITEMS TYPES

@@ -2,5 +2,5 @@
 *.swp
 uploads/
 test.php
-config.php
+/config.php
 Session.vim

@@ -104,8 +104,6 @@ mysql> grant usage on *.* to elabftw@localhost identified by 'YOUR_PASSWORD';
 # we give all rights to this user on this database
 mysql> grant all privileges on elabftw.* to elabftw@localhost;
 mysql> exit
-# now we import the database structure
-$ mysql -u elabftw -p elabftw < elabftw/install/elabftw.sql
 ~~~
 You will be asked for the password you put after `identified by` three lines above.
 
@@ -124,7 +122,7 @@ Now you will connect to the phpmyadmin panel from your browser on your computer.
 Example : http://12.34.56.78/phpmyadmin
 
 Login with the root user on PhpMyAdmin panel (use the password you setup for mysql root user).
-#### 1) create a user `elabftw` with all rights on the database `elabftw`
+#### Create a user `elabftw` with all rights on the database `elabftw`
 
 Now click the `Users` tab and click ![add user](http://i.imgur.com/SJmdg0Z.png).
 
@@ -132,13 +130,6 @@ Do like this :
 
 ![phpmyadmin add user](http://i.imgur.com/kE1gtT1.png)
 
-
-#### 2) import the database structure :
-* On the menu on the left, select the newly created database `elabftw`
-* Click the Import tab
-* Download [this file](https://raw.github.com/NicolasCARPi/elabftw/master/install/elabftw.sql)
-* Click Browse... and select the file you just downloaded
-* Click Go
 
 ## Final step
 Finally, point your browser to the install folder (install/) and read onscreen instructions.

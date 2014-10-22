@@ -31,6 +31,19 @@ if (!isset($_SESSION)) {
     session_start();
 }
 require_once '../inc/functions.php';
+// make a simple query
+function q($sql) {
+    global $pdo;
+    try {
+        $req = $pdo->prepare($sql);
+        $req->execute();
+    }
+    catch (PDOException $e)
+    {
+        echo 'Error : '.$e->getMessage();
+        die();
+    }
+}
 
 // Check if there is already a config file, redirect to index if yes.
 if (file_exists('../config.php')) {
@@ -68,8 +81,33 @@ try {
 } catch (Exception $e) {
     die('Error : '.$e->getMessage());
 }
-// Populate config table with default values
 
+// now import the structure
+$sqlfile = 'elabftw.sql';
+
+// temporary variable, used to store current query
+$queryline = '';
+// read in entire file
+$lines = file($sqlfile);
+// loop through each line
+foreach ($lines as $line) {
+    // Skip it if it's a comment
+    if (substr($line, 0, 2) == '--' || $line == '')
+        continue;
+
+    // Add this line to the current segment
+    $queryline .= $line;
+    // If it has a semicolon at the end, it's the end of the query
+    if (substr(trim($line), -1, 1) == ';')
+    {
+        // Perform the query
+        q($queryline);
+        // Reset temp variable to empty
+        $queryline = '';
+    }
+}
+
+// Populate config table with default values
 // remove /install/install.php from path
 $path = substr(realpath(__FILE__), 0, -20);
 $path = md5($path);

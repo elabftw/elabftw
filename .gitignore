@@ -3,4 +3,5 @@
 uploads/
 test.php
 /config.php
+*.bak
 Session.vim

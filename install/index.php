@@ -228,7 +228,7 @@ if (PHP_OS == 'WINNT' || PHP_OS == 'WIN32' || PHP_OS == 'WINNT' || PHP_OS == 'Wi
 
 <!-- FINAL SECTION -->
 <section id='final_section'>
-<p>When you click the button below, it will create the file <em>config.php</em>. If it cannot create it (because the server doesn't have write permission to this folder), your browser will download it and you will need to put it in the folder <em>admin</em>.</p>
+<p>When you click the button below, it will create the file <em>config.php</em>. If it cannot create it (because the server doesn't have write permission to this folder), your browser will download it and you will need to put it in the main elabftw folder.</p>
 <p>To put this file on the server, you can use scp (don't write the '$') :</p>
 <code>$ scp /path/to/config.php pi@12.34.56.78:/var/www/elabftw/</code>
 <p>If you want to modify some parameters afterwards, just edit this file directly.</p>

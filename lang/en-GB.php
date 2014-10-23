@@ -27,7 +27,7 @@
 define("YES", "Yes");
 define("NO", "No");
 define("CONFIG_UPDATE_OK", "Configuration updated successfully.");
-define("ERROR_BUG", "There was a unexpected problem! Please <a href='https://github.com/NicolasCARPi/elabftw/issues/'>open an issue on GitHub</a> if you think this is a bug.");
+define("ERROR_BUG", "There was an unexpected problem! Please <a href='https://github.com/NicolasCARPi/elabftw/issues/'>open an issue on GitHub</a> if you think this is a bug.");
 define("INVALID_ID", "The id parameter is not valid!");
 define("INVALID_USERID", "Userid is not valid.");
 define("INVALID_TYPE", "The type parameter is not valid!");

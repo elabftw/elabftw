@@ -469,7 +469,6 @@ define("ADD_LINK_PLACEHOLDER", "depuis la base de données");
 define("SHOW_HISTORY", "Voir historique");
 define("REVISION_AVAILABLE", "revision disponible.");
 define("REVISIONS_AVAILABLE", "revisions disponibles.");
-define("SHOW_HISTORY", "Voir l'historique");
 
 // INC/HEAD.PHP
 define('LOGGED_IN_AS', 'Salutations,');

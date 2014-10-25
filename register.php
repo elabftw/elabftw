@@ -18,12 +18,11 @@
 *
 ********************************************************************************/
 session_start();
-$_SESSION['prefs']['lang'] = 'en-GB';
-require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
-$page_title = REGISTER_TITLE;
-$selected_menu = null;
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
+require_once 'lang/'.get_config('lang').'.php';
+$page_title = REGISTER_TITLE;
+$selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 // Check if we're logged in

@@ -24,9 +24,9 @@
 *                                                                               *
 ********************************************************************************/
 session_start();
-require_once 'lang/'.get_config('lang').'.php';
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
+require_once 'lang/'.get_config('lang').'.php';
 require_once 'vendor/autoload.php';
 
 //Array to store validation errors

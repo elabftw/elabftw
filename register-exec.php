@@ -24,8 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 session_start();
-$_SESSION['prefs']['lang'] = 'en-GB';
-require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
+require_once 'lang/'.get_config('lang').'.php';
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
 require_once 'vendor/autoload.php';

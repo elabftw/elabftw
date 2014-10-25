@@ -104,7 +104,7 @@ while ($tags = $tagreq->fetch()) {
         <h4><?php echo VISIBILITY;?></h4><br>
         <select id="visibility_form" name="visibility" onchange="update_visibility(this.value)">
             <option id='option_team' value="team"><?php echo ONLY_THE_TEAM;?></option>
-            <option id='option_user' value="user" <?php if ($experiment['visibility'] === 'user') echo "selected";?>>Only me</option>
+            <option id='option_user' value="user" <?php if ($experiment['visibility'] === 'user') echo "selected";?>><?php echo ONLY_ME;?></option>
         </select>
         <span id='visibility_msg_div'><?php echo UPDATED;?></span>
     </div>
@@ -222,14 +222,12 @@ $req->execute(array(
 ));
 $rev_count = $req->fetch();
 $count = intval($rev_count[0]);
-// FIXME NOT I18N friendly
 if ($count > 0) {
     if ($count === 1) {
-        $s = '';
+        echo $count." ".REVISION_AVAILABLE." <a href='revision.php?exp_id=".$id."'>".SHOW_HISTORY."</a>";
     } else {
-        $s = 's';
+        echo $count." ".REVISIONS_AVAILABLE." <a href='revision.php?exp_id=".$id."'>".SHOW_HISTORY."</a>";
     }
-    echo $count." revision".$s." available. <a href='revision.php?exp_id=".$id."'>".SHOW_HISTORY."</a>";
 }
 ?>
 
@@ -467,7 +465,8 @@ $(document).ready(function() {
         // keyboard shortcut to insert today's date at cursor in editor
         setup : function(editor) {
             editor.addShortcut("ctrl+shift+d", "add date at cursor", function() { addDateOnCursor(); });
-        }
+        },
+        language : '<?php echo $_SESSION['prefs']['lang'];?>'
     });
 
     // ADD TAG JS

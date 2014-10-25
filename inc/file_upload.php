@@ -45,8 +45,8 @@ function abort() {
             id="bigUploadForm">
 
             <input type="file" id="bigUploadFile" name="bigUploadFile" />
-            <input type="button" class="button" value="Start Upload" id="bigUploadSubmit" onclick="upload()" />
-            <input type="button" class="button" value="Cancel" onclick="abort()" />
+            <input type="button" class="button" value="<?php echo FILE_START_UPLOAD;?>" id="bigUploadSubmit" onclick="upload()" />
+            <input type="button" class="button" value="<?php echo CANCEL;?>" onclick="abort()" />
         </form>
         <div id="bigUploadProgressBarContainer">
             <div id="bigUploadProgressBarFilled">

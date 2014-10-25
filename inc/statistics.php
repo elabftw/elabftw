@@ -64,7 +64,7 @@ $percent_arr = array();
 echo "<section class='box'>";
 
 // Make percentage
-if ($total === 0) {
+if ($total == 0) {
     echo STATISTICS_NOT_YET; // fix division by zero
 } else {
     foreach ($status_arr as $key => $value) {

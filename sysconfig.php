@@ -101,6 +101,10 @@ $formKey = new formKey();
                 <?php
                 if (get_config('lang') === 'pt-BR') {
                     echo ' selected ';}?>value="pt-BR">pt-BR</option>
+                <option
+                <?php
+                if (get_config('lang') === 'zh-CN') {
+                    echo ' selected ';}?>value="zh-CN">zh-CN</option>
             </select>
         <h3><?php echo SYSCONFIG_2_H3;?></h3>
         <label for='debug'><?php echo SYSCONFIG_DEBUG;?></label>

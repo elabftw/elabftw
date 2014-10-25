@@ -24,6 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 require_once 'inc/common.php';
+require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 $page_title = REVISIONS_TITLE;
 $selected_menu = null;
 require_once 'inc/head.php';

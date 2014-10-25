@@ -18,7 +18,8 @@
 *
 ********************************************************************************/
 session_start();
-require_once 'lang/'.get_config('lang').'.php';
+$_SESSION['prefs']['lang'] = 'en-GB';
+require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 $page_title = REGISTER_TITLE;
 $selected_menu = null;
 require_once 'inc/connect.php';

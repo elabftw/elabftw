@@ -102,6 +102,7 @@ suggestions to this project.
 ### The people that helped with internationalization :
 
 * pt-BR : Carlos Kikuti
+* zh-CN : Suyoung Wang
 
 ***
 

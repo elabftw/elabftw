@@ -399,6 +399,7 @@ define("UCP_LIMIT", "Itens por página:");
 define("UCP_H3_2", "ATALHOS DE TECLADO");
 define("UCP_H3_3", "ALERTA");
 define("UCP_CLOSE_WARNING", "Perguntar antes de fechar uma janela de edição ?");
+define("UCP_CREATE_NEW", "Criar nova");
 define("UCP_ADD_TPL", "Criar um modelo");
 define("UCP_EDIT_BUTTON", "Modificar modelo");
 define("LANGUAGE", "Idioma");
@@ -430,6 +431,7 @@ define("STATISTICS_EXP_FOR", "Experimentos de");
 
 // FILE UPLOAD
 define("FILE_UPLOAD_H3", "Anexar um arquivo.");
+define("FILE_START_UPLOAD", "Iniciar upload");
 
 // SHOW DB
 define("SHOW_DB_CREATE_NEW", "CRIAR NOVO");
@@ -459,11 +461,15 @@ define("EDIT_XP_NO_RIGHTS", "<strong>Você não pode modificar:</strong> este ex
 define("EDIT_XP_TAGS_HELP", "clique em uma etiqueta para removê-la");
 define("EDIT_XP_ADD_TAG", "Adicionar uma etiqueta");
 define("ONLY_THE_TEAM", "Apenas a equipe");
+define("ONLY_ME", "só me");
 define("EXPERIMENT", "Experimento");
 define("LINKED_ITEMS", "Itens conectados");
 define("ADD_LINK", "Conectar um item");
 define("ADD_LINK_PLACEHOLDER", "no banco de dados");
 define("SHOW_HISTORY", "Mostrar histórico");
+define("REVISION_AVAILABLE", "revisão disponível.");
+define("REVISIONS_AVAILABLE", "revisões disponíveis.");
+define("SHOW_HISTORY", "Show de história");
 
 // INC/HEAD.PHP
 define("LOGGED_IN_AS", "Oi,");

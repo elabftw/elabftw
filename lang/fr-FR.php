@@ -399,9 +399,10 @@ define("UCP_LIMIT", "Items par page :");
 define("UCP_H3_2", "RACCOURCIS CLAVIER");
 define("UCP_H3_3", "ALERTE");
 define("UCP_CLOSE_WARNING", "Afficher un avertissement avant de fermer un onglet d'édition ?");
+define("UCP_CREATE_NEW", "Créer un nouveau");
 define("UCP_ADD_TPL", "Ajouter un modèle");
 define("UCP_EDIT_BUTTON", "Éditer un modèle");
-define('LANGUAGE', 'Language');
+define("LANGUAGE", "Langage");
 
 // VIEW DB
 define("NOTHING_TO_SHOW", "Rien à afficher avec cet ID.");
@@ -430,6 +431,7 @@ define("STATISTICS_EXP_FOR", "Expériences pour");
 
 // FILE UPLOAD
 define("FILE_UPLOAD_H3", "Joindre un fichier.");
+define("FILE_START_UPLOAD", "Démarrer l'upload");
 
 // SHOW DB
 define("SHOW_DB_CREATE_NEW", "CRÉER NOUVEAU");
@@ -459,11 +461,15 @@ define("EDIT_XP_NO_RIGHTS", "<strong>Édition interdite :</strong> cette expéri
 define("EDIT_XP_TAGS_HELP", "cliquer un tag pour le supprimer");
 define("EDIT_XP_ADD_TAG", "Ajouter un tag");
 define("ONLY_THE_TEAM", "Seulement l'équipe");
+define("ONLY_ME", "Seulement moi");
 define("EXPERIMENT", "Experience");
 define("LINKED_ITEMS", "Items liés");
 define("ADD_LINK", "Ajouter un lien");
 define("ADD_LINK_PLACEHOLDER", "depuis la base de données");
 define("SHOW_HISTORY", "Voir historique");
+define("REVISION_AVAILABLE", "revision disponible.");
+define("REVISIONS_AVAILABLE", "revisions disponibles.");
+define("SHOW_HISTORY", "Voir l'historique");
 
 // INC/HEAD.PHP
 define('LOGGED_IN_AS', 'Salutations,');

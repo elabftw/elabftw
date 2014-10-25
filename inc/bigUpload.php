@@ -156,7 +156,7 @@ class BigUpload
 	 */
 	public function finishUpload($realname, $type, $item_id) {
         // Create a clean filename : remplace all non letters/numbers by '.' (this way we don't lose the file extension)
-        $realname = preg_replace('/[^A-Za-z0-9]/', '_', $realname);
+        $realname = preg_replace('/[^A-Za-z0-9]/', '.', $realname);
         // get extension
         $path_info = pathinfo($realname);
         if (!empty($path_info['extension'])) {

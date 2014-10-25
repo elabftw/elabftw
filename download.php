@@ -50,7 +50,7 @@ if (!isset($_GET['name']) || empty($_GET['name'])) {
     $filename = $long_filename;
 } else {
     // we redo a check for filename
-    $filename = preg_replace('/[^A-Za-z0-9]/', '.', $_GET['name']);
+    $filename = preg_replace('/[^A-Za-z0-9]/', '_', $_GET['name']);
     if ($filename === '') {
         $filename = 'unnamed_file';
     }

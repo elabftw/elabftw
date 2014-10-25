@@ -234,6 +234,10 @@ $users = $req->fetch();
                 <?php
                 if ($_SESSION['prefs']['lang'] === 'pt-BR') {
                     echo ' selected ';}?>value="pt-BR">pt-BR</option>
+                <option
+                <?php
+                if ($_SESSION['prefs']['lang'] === 'zh-CN') {
+                    echo ' selected ';}?>value="zh-CN">zh-CN</option>
             </select>
         </section>
         <div style='margin-top:30px;' class='center'>
@@ -253,7 +257,7 @@ $users = $req->fetch();
 
     echo "<ul class='nav nav-pills' role='tablist'>";
     // tabs titles
-    echo "<li class='subtabhandle badge badgetab badgetabactive' id='subtab1'>Create new</li>";
+    echo "<li class='subtabhandle badge badgetab badgetabactive' id='subtab1'>".UCP_CREATE_NEW."</li>";
     $i = 2;
     while ($exp_tpl = $req->fetch()) {
         echo "<li class='subtabhandle badge badgetab' id='subtab".$i."'>".stripslashes($exp_tpl['name'])."</li>";
@@ -355,7 +359,8 @@ $(document).ready(function() {
         content_css : "css/tinymce.css",
         plugins : "table textcolor searchreplace code fullscreen insertdatetime paste charmap save image link",
         toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | link",
-        removed_menuitems : "newdocument"
+        removed_menuitems : "newdocument",
+        language : '<?php echo $_SESSION['prefs']['lang'];?>'
     });
 });
 </script>

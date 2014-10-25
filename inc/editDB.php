@@ -224,7 +224,8 @@ $(document).ready(function() {
         // keyboard shortcut to insert today's date at cursor in editor
         setup : function(editor) {
             editor.addShortcut("ctrl+shift+d", "add date at cursor", function() { addDateOnCursor(); });
-        }
+        },
+        language : '<?php echo $_SESSION['prefs']['lang'];?>'
     });
     // DATEPICKER
     $( "#datepicker" ).datepicker({dateFormat: 'yymmdd'});

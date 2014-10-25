@@ -399,6 +399,7 @@ define("UCP_LIMIT", "Items per page:");
 define("UCP_H3_2", "KEYBOARD SHORTCUTS");
 define("UCP_H3_3", "ALERT");
 define("UCP_CLOSE_WARNING", "Display a warning before closing an edit window/tab ?");
+define("UCP_CREATE_NEW", "Create new");
 define("UCP_ADD_TPL", "Add template");
 define("UCP_EDIT_BUTTON", "Edit template");
 define("LANGUAGE", "Language");
@@ -430,12 +431,13 @@ define("STATISTICS_EXP_FOR", "Experiments for");
 
 // FILE UPLOAD
 define("FILE_UPLOAD_H3", "Attach a file.");
+define("FILE_START_UPLOAD", "Start Upload");
 
 // SHOW DB
 define("SHOW_DB_CREATE_NEW", "CREATE NEW");
 define("SHOW_DB_FILTER_TYPE", "FILTER TYPE");
 define("FOUND", "Found");
-define("RESULTS", "results");
+define("RESULTS", "results.");
 define("FOUND_1", "Found 1 result.");
 define("FOUND_0", "Nothing found.");
 define("SHOW_DB_WELCOME", "<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list to begin filling your database.");
@@ -459,10 +461,13 @@ define("EDIT_XP_NO_RIGHTS", "<strong>Cannot edit:</strong> this experiment is no
 define("EDIT_XP_TAGS_HELP", "click a tag to remove it");
 define("EDIT_XP_ADD_TAG", "Add a tag");
 define("ONLY_THE_TEAM", "Only the team");
+define("ONLY_ME", "Only me");
 define("EXPERIMENT", "Experiment");
 define("LINKED_ITEMS", "Linked items");
 define("ADD_LINK", "Add a link");
 define("ADD_LINK_PLACEHOLDER", "from the database");
+define("REVISION_AVAILABLE", "revision available.");
+define("REVISIONS_AVAILABLE", "revisions available.");
 define("SHOW_HISTORY", "Show history");
 
 // INC/HEAD.PHP

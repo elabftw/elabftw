@@ -80,7 +80,7 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
 
     // show number of results found
     if (count($results_arr) > 1) {
-        echo FOUND.' '.count($results_arr).' '.RESULTS.'.';
+        echo FOUND.' '.count($results_arr).' '.RESULTS;
     } elseif (count($results_arr) == 1) {
         echo FOUND_1;
     } else {

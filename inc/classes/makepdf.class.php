@@ -21,7 +21,7 @@ class MakePdf {
         $title = stripslashes($data['title']);
         $date = $data['date'];
         // the name of the pdf is needed in make_zip
-        $clean_title = $date."-".preg_replace('/[^A-Za-z0-9]/', ' ', $title);
+        $clean_title = $date."-".preg_replace('/[^A-Za-z0-9]/', '_', $title);
         $body = stripslashes($data['body']);
         // ELABID
         if ($type === 'experiments') {

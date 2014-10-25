@@ -82,7 +82,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             $zipped = $req->fetch();
             $title = stripslashes($zipped['title']);
             // make a title without special char for folder inside .zip
-            $clean_title = preg_replace('/[^A-Za-z0-9]/', ' ', $title);
+            $clean_title = preg_replace('/[^A-Za-z0-9]/', '_', $title);
             $zdate = $zipped['date'];
             // name of the folder
             // folder begin with date for experiments

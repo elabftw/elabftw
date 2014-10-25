@@ -61,16 +61,24 @@ while ($data = $req->fetch()) {
     echo "<td><a href='mailto:".$data['email']."'>".$data['firstname']." ".$data['lastname']."</a></td>";
         if (!empty($data['phone'])) { 
             echo "<td>".$data['phone']."</td>";
-        } 
+        } else {
+            echo "<td>&nbsp;</td>"; // Placeholder
+        }
         if (!empty($data['cellphone'])) { 
             echo "<td>".$data['cellphone']."</td>"; 
+        } else {
+            echo "<td>&nbsp;</td>";
         }
         if (!empty($data['website'])) { 
             echo "<td><a href='".$data['website']."'>www</a></td>"; 
+        } else {
+            echo "<td>&nbsp;</td>";
         }
         if (!empty($data['skype'])) { 
             echo "<td>".$data['skype']."</td>";
-        } 
+        } else {
+            echo "<td>&nbsp;</td>";
+        }
 }
 ?>
 </table>

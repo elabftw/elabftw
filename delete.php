@@ -47,7 +47,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             if (((get_team_config('deletable_xp') == '0')  &&
                 !$_SESSION['is_admin']) ||
                 !is_owned_by_user($id, 'experiments', $_SESSION['userid'])) {
-                $msg_arr[] = _('You don't have the rights to delete this experiment.');
+                $msg_arr[] = _("You don't have the rights to delete this experiment.");
                 $_SESSION['errors'] = $msg_arr;
                 exit;
 
@@ -240,7 +240,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             $delete_req->execute(array(
                 'id' => $id
             ));
-            $msg_arr[] = DELETE__('Status')_SUCCESS;
+            $msg_arr[] = _('Status was deleted successfully.');
             $_SESSION['infos'] = $msg_arr;
             break;
 

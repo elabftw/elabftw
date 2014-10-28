@@ -96,8 +96,9 @@ $count_req->bindParam(':team', $_SESSION['team_id']);
 $count_req->execute();
 $totals = $count_req->fetch(PDO::FETCH_ASSOC);
 ?>
-    <p><?php echo _('There is a total of').' '.$totals['totxp'].' '._('experiments by').' '.$totals['totusers'].' '._('different users.');?></p>
-    <p><?php echo _('There is a total of').' '.$totals['totdb'].' '._('items in the database');?></p>
+    <p><?php echo sprintf(ngettext('There is a total of %d experiment', 'There is a total of %d experiments', $totals['totxp']), $totals['totxp']);
+             echo ' '.sprintf(ngettext('by %d different user.', 'by %d different users', $totals['totusers']), $totals['totusers']);?></p>
+    <p><?php echo sprintf(ngettext('There is a total of %d item in the database.', 'There is a total of %d items in the database.', $totals['totdb']), $totals['totdb']);?></p>
 </div>
 
 <!-- *********************** -->

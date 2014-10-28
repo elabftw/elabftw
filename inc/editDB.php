@@ -109,7 +109,7 @@ if ($data['locked'] == 1) {
     </textarea>
     <!-- _('Submit') BUTTON -->
     <div class='center' id='saveButton'>
-        <button type="submit" name="Submit" class='button'><?php echo _('Save')_AND_BACK;?></button>
+        <button type="submit" name="Submit" class='button'><?php echo _('Save and go back');?></button>
     </div>
     </form>
     <!-- end edit items form -->

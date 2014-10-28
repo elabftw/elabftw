@@ -30,14 +30,14 @@ require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 if (isset($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    die(INVALID_ID);
+    die(_("The id parameter is not valid!"));
 }
 
 // check the type
 if (($_GET['type'] === 'experiments') || ($_GET['type'] === 'items')) {
     $type = $_GET['type'];
 } else {
-    die(INVALID_TYPE);
+    die(_("The type parameter is not valid."));
 }
 
 // do the pdf

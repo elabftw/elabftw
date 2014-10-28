@@ -31,7 +31,7 @@ $msg_arr = array();
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    display_message('error', INVALID_ID);
+    display_message('error', _("The id parameter is not valid!"));
     require_once 'inc/footer.php';
     exit;
 }
@@ -158,5 +158,5 @@ if ($res1 && $res2 && $res3) {
     header("Location:experiments.php?mode=view&id=$id");
     exit;
 } else {
-    die(ERROR_BUG);
+    die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>"));
 }

@@ -101,7 +101,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         }
     } // end foreach
 } else {
-    die(INVALID_ID);
+    die(_("The id parameter is not valid!"));
 }
 
 

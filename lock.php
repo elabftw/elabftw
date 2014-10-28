@@ -30,7 +30,7 @@ require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 if (isset($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    die(INVALID_ID);
+    die(_("The id parameter is not valid!"));
 }
 
 // what do we do ? lock or unlock ?
@@ -131,7 +131,7 @@ switch($_GET['type']) {
             header("Location: experiments.php?mode=view&id=$id");
             exit;
         } else {
-            die(ERROR_BUG);
+            die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>"));
         }
         break;
 
@@ -148,9 +148,9 @@ switch($_GET['type']) {
             header("Location: database.php?mode=view&id=$id");
             exit;
         } else {
-            die(ERROR_BUG);
+            die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>"));
         }
         break;
     default:
-        die(ERROR_BUG);
+        die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>"));
 }

@@ -22,7 +22,7 @@ require_once('inc/common.php');
 if (is_pos_int($_POST['id'])) {
     $id = $_POST['id'];
 } else {
-    die(INVALID_ID);
+    die(_("The id parameter is not valid!"));
 }
 
 // we update the name of a team via sysconfig.php

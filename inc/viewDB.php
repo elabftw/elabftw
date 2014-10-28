@@ -28,7 +28,7 @@
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    display_message('error', INVALID_ID);
+    display_message('error', _("The id parameter is not valid!"));
     require_once 'inc/footer.php';
     exit;
 }

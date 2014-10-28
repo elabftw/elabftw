@@ -24,6 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 require_once 'inc/common.php';
+require_once 'inc/locale.php';
 require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 $page_title = DATABASE_TITLE;
 $selected_menu = 'Database';
@@ -38,7 +39,7 @@ if (!isset($_GET['mode']) || (empty($_GET['mode'])) || ($_GET['mode'] === 'show'
 } elseif ($_GET['mode'] === 'edit') {
     require_once 'inc/editDB.php';
 } else {
-    echo ERROR_BUG;
+    printf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
 }
 
 require_once 'inc/footer.php';

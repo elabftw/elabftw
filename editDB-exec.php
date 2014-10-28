@@ -47,7 +47,7 @@ if (is_pos_int($_POST['item_id'])) {
     $id = $_POST['item_id'];
 } else {
     $id='';
-    $msg_arr[] = INVALID_ID;
+    $msg_arr[] = _("The id parameter is not valid!");
     $errflag = true;
 }
 $title = check_title($_POST['title']);
@@ -93,5 +93,5 @@ if ($result) {
     header("location: database.php?mode=view&id=$id");
     exit;
 } else {
-    die(ERROR_BUG);
+    die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>"));
 }

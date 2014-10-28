@@ -44,7 +44,7 @@ if ($_GET['type'] === 'experiments') {
 } elseif ($_GET['type'] === 'items') {
     $table = 'items';
 } else {
-    die(INVALID_TYPE);
+    die(_("The type parameter is not valid."));
 }
 
 // CREATE URL
@@ -183,10 +183,10 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             ".$zipname.".zip</a>
             <span class='filesize'>(".format_bytes(filesize($zipfile)).")</span></p>";
     } else {
-        echo ERROR_BUG;
+        echo sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
     }
     echo "</div>";
     require_once 'inc/footer.php';
 } else {
-    die(INVALID_ID);
+    die(_("The id parameter is not valid!"));
 }

@@ -25,6 +25,7 @@
 ********************************************************************************/
 /* sysconfig.php - configuration system */
 require_once 'inc/common.php';
+require_once 'inc/locale.php';
 require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 if ($_SESSION['is_sysadmin'] != 1) {
     die(NO_ACCESS_DIE);
@@ -111,10 +112,10 @@ $formKey = new formKey();
         <select name='debug' id='debug'>
             <option value='1'<?php
                 if (get_config('debug') == 1) { echo " selected='selected'"; } ?>
-            ><?php echo YES;?></option>
+            ><?php echo _('Yes');?></option>
             <option value='0'<?php
                     if (get_config('debug') == 0) { echo " selected='selected'"; } ?>
-            ><?php echo NO;?></option>
+            ><?php echo _('No');?></option>
         </select>
         <p class='smallgray'><?php echo SYSCONFIG_DEBUG_HELP;?></p>
         <label for='proxy'><?php echo SYSCONFIG_PROXY;?></label>
@@ -137,10 +138,10 @@ $formKey = new formKey();
         <select name='stampshare' id='stampshare'>
             <option value='1'<?php
                 if (get_config('stampshare') == 1) { echo " selected='selected'"; } ?>
-            ><?php echo YES;?></option>
+            ><?php echo _('Yes');?></option>
             <option value='0'<?php
                     if (get_config('stampshare') == 0) { echo " selected='selected'"; } ?>
-            ><?php echo NO;?></option>
+            ><?php echo _('No');?></option>
         </select>
         <p class='smallgray'><?php echo SYSCONFIG_STAMPSHARE_HELP;?></p>
         <label for='stamplogin'><?php echo SYSCONFIG_STAMPLOGIN_HELP;?></label>
@@ -163,10 +164,10 @@ $formKey = new formKey();
         <select name='admin_validate' id='admin_validate'>
             <option value='1'<?php
                 if (get_config('admin_validate') == 1) { echo " selected='selected'"; } ?>
-            ><?php echo YES;?></option>
+            ><?php echo _('Yes');?></option>
             <option value='0'<?php
                     if (get_config('admin_validate') == 0) { echo " selected='selected'"; } ?>
-            ><?php echo NO;?></option>
+            ><?php echo _('No');?></option>
         </select>
         <p class='smallgray'><?php echo SYSCONFIG_ADMIN_VALIDATE_HELP;?></p>
         <label for='login_tries'><?php echo SYSCONFIG_LOGIN_TRIES;?></label>

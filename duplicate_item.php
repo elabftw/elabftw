@@ -29,7 +29,7 @@ require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    die(INVALID_ID);
+    die(_("The id parameter is not valid!"));
 }
 
 if ($_GET['type'] === 'exp') {
@@ -37,7 +37,7 @@ if ($_GET['type'] === 'exp') {
 } elseif ($_GET['type'] === 'db') {
     $type = 'items';
 } else {
-    die(INVALID_TYPE);
+    die(_("The type parameter is not valid."));
 }
 
 // this function will return the ID of the new experiment
@@ -57,5 +57,5 @@ if (is_pos_int($newid)) {
         exit;
     }
 } else {
-    die(ERROR_BUG);
+    die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>"));
 }

@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
             exit;
         }
     } else {
-            $msg_arr[] = INVALID_EMAIL;
+            $msg_arr[] = _("The email is not valid.");
             $_SESSION['errors'] = $msg_arr;
             header("location: login.php");
             exit;

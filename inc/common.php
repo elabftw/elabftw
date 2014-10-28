@@ -59,6 +59,7 @@ if (isset($_SESSION['auth'])) { // if user is auth, we check the cookie
         header('Location: login.php');
         exit;
     }
+
 } else { // user is not auth with php sessions
     if (isset($_COOKIE['token']) && (strlen($_COOKIE['token']) == 32)) {
         // If user has a cookie; check cookie is valid

@@ -166,5 +166,5 @@ if ($result) {
         exit;
     }
 } else {
-    die(ERROR_BUG);
+    die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>"));
 }

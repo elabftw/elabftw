@@ -32,7 +32,7 @@ require_once 'inc/head.php';
 if (isset($_GET['exp_id']) && !empty($_GET['exp_id']) && is_pos_int($_GET['exp_id'])) {
     $exp_id = $_GET['exp_id'];
 } else {
-    die(INVALID_ID);
+    die(_("The id parameter is not valid!"));
 }
 echo "<a href='experiments.php?mode=view&id=".$exp_id."'><h4><img src='img/undo.png' alt='<--' /> ".REVISIONS_GO_BACK."</h4></a>";
 

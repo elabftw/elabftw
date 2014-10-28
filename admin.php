@@ -25,6 +25,7 @@
 ********************************************************************************/
 /* admin.php - for administration of the elab */
 require_once 'inc/common.php';
+require_once 'inc/locale.php';
 require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 if ($_SESSION['is_admin'] != 1) {
     die(ADMIN_DIE);
@@ -88,10 +89,10 @@ if ($count > 0) {
         <select name='deletable_xp' id='deletable_xp'>
             <option value='1'<?php
                 if (get_team_config('deletable_xp') == 1) { echo " selected='selected'"; } ?>
-                    ><?php echo YES;?></option>
+                    ><?php echo _('Yes');?></option>
             <option value='0'<?php
                     if (get_team_config('deletable_xp') == 0) { echo " selected='selected'"; } ?>
-                        ><?php echo NO;?></option>
+                        ><?php echo _('No');?></option>
         </select>
         </p>
         <p>
@@ -148,10 +149,10 @@ if ($count > 0) {
         <select name='validated' id='validated'>
             <option value='1'<?php
                     if ($users['validated'] == 1) { echo " selected='selected'"; } ?>
-                        ><?php echo YES;?></option>
+                        ><?php echo _('Yes');?></option>
             <option value='0'<?php
                 if ($users['validated'] == 0) { echo " selected='selected'"; } ?>
-                    ><?php echo NO;?></option>
+                    ><?php echo _('No');?></option>
         </select>
         <br>
         <label for='usergroup'><?php echo ADMIN_USERS_GROUP;?></label>

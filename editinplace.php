@@ -63,7 +63,7 @@ if (isset($_POST['filecomment'])) {
         // either we have something that looks like comment_56 and we need to UPDATE
         // or we have new_expcomment and we need to INSERT
         $id_arr = explode('_', $_POST['id']);
-        // NEW COMMENT FOR EXPERIMENT
+        // NEW COMMENT FOR _('Experiment')
         if ($id_arr[0] === 'newexpcomment' && is_pos_int($id_arr[1])) {
             // the $id here is the one of the experiment, not the comment.
             $id = $id_arr[1];

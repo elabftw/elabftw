@@ -41,13 +41,13 @@ if (isset($_POST['id']) && is_pos_int($_POST['id'])) {
 if (isset($_POST['type']) && !empty($_POST['type'])) {
     switch ($_POST['type']) {
 
-        // EXPERIMENTS
+        // _('Experiment')S
         case 'exp':
             // check if we can delete experiments
             if (((get_team_config('deletable_xp') == '0')  &&
                 !$_SESSION['is_admin']) ||
                 !is_owned_by_user($id, 'experiments', $_SESSION['userid'])) {
-                $msg_arr[] = DELETE_NO_RIGHTS;
+                $msg_arr[] = _('You don't have the rights to delete this experiment.');
                 $_SESSION['errors'] = $msg_arr;
                 exit;
 
@@ -89,7 +89,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                     'id' => $id
                 ));
 
-                $msg_arr[] = DELETE_EXP_SUCCESS;
+                $msg_arr[] = _('Experiment was deleted successfully.');
                 $_SESSION['infos'] = $msg_arr;
                 exit;
 
@@ -97,7 +97,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
 
             break;
 
-        // DELETE EXPERIMENTS TEMPLATES
+        // DELETE _('Experiment')S TEMPLATES
         case 'tpl':
             $delete_sql = "DELETE FROM experiments_templates WHERE id = :id";
             $delete_req = $pdo->prepare($delete_sql);
@@ -105,12 +105,12 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                 'id' => $id
             ));
             if ($result) {
-                $msg_arr[] = DELETE_TPL_SUCCESS;
+                $msg_arr[] = _('Template was deleted successfully.');
                 $_SESSION['infos'] = $msg_arr;
             }
             break;
 
-        // DELETE EXPERIMENT COMMENT
+        // DELETE _('Experiment') COMMENT
         case 'expcomment':
             // this is called by deleteThisAndReload
             // it reloads part of the page, so no need to put session['infos']
@@ -166,7 +166,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                 $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
                 $_SESSION['errors'] = $msg_arr;
             } else {
-                $msg_arr[] = DELETE_ITEM_SUCCESS;
+                $msg_arr[] = _('Item was deleted successfully.');
                 $_SESSION['infos'] = $msg_arr;
             }
 
@@ -183,7 +183,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             ));
 
             if ($result) {
-                $msg_arr[] = DELETE_ITEM_TYPE_SUCCESS;
+                $msg_arr[] = _('Item type was deleted successfully.');
                 $_SESSION['infos'] = $msg_arr;
             }
 
@@ -207,7 +207,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             }
             break;
 
-        // DELETE TAGS
+        // DELETE _('Tags')
         case 'exptag':
             if (is_pos_int($_POST['item_id'])) {
                 $item_id = $_POST['item_id'];
@@ -240,7 +240,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             $delete_req->execute(array(
                 'id' => $id
             ));
-            $msg_arr[] = DELETE_STATUS_SUCCESS;
+            $msg_arr[] = DELETE__('Status')_SUCCESS;
             $_SESSION['infos'] = $msg_arr;
             break;
 

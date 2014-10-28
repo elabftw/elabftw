@@ -57,7 +57,7 @@ if (isset($_POST['currpass'])){
     if( ($result) && ($numrows === 1) ) {
         // Old password is good. Continue
 
-        // PASSWORD CHANGE
+        // _('Password') CHANGE
         if ((isset($_POST['cnewpass'])) && (!empty($_POST['cnewpass']))) {
             $cpassword = filter_var($_POST['cnewpass'], FILTER_SANITIZE_STRING);
             if ((isset($_POST['newpass'])) && (!empty($_POST['newpass']))) {
@@ -65,11 +65,11 @@ if (isset($_POST['currpass'])){
                 $password = filter_var($_POST['newpass'], FILTER_SANITIZE_STRING);
                 // Check for password length
                 if (strlen($password) <= 7) {
-                    $msg_arr[] = PASSWORD_TOO_SHORT;
+                    $msg_arr[] = _('Password must contain at least 8 characters.');
                     $errflag = true;
                 }
                 if (strcmp($password, $cpassword) != 0 ) {
-                    $msg_arr[] = PASSWORD_DONT_MATCH;
+                    $msg_arr[] = _('Password')_DONT_MATCH;
                     $errflag = true;
                 }
                 // Create salt
@@ -85,14 +85,14 @@ if (isset($_POST['currpass'])){
                     'password' => $passwordHash,
                     'userid' => $_SESSION['userid']));
                 if($result){
-                    $msg_arr[] = PASSWORD_SUCCESS;
+                    $msg_arr[] = _('Password')_SUCCESS;
                     $infoflag = true;
                 } else {
                     die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>"));
                 }
             }
         }
-        // Check USERNAME (sanitize and validate)
+        // Check _('Username') (sanitize and validate)
             if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
             $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
             // Check for duplicate username in DB
@@ -103,34 +103,34 @@ if (isset($_POST['currpass'])){
             if($result) {
                 if($numrows > 0) {
                     if($data['userid'] != $_SESSION['userid']){
-                    $msg_arr[] = REGISTER_USERNAME_USED;
+                    $msg_arr[] = REGISTER__('Username')_USED;
                     $errflag = true;
                 }
             }
             }
         } else {
-            $msg_arr[] = FIELD_MISSING;
+            $msg_arr[] = _('A mandatory field is missing!');
             $errflag = true;
         }
-        // Check FIRSTNAME (sanitize only)
+        // Check _('Firstname') (sanitize only)
             if ((isset($_POST['firstname'])) && (!empty($_POST['firstname']))) {
             $firstname = filter_var($_POST['firstname'], FILTER_SANITIZE_STRING);
         } else {
-            $msg_arr[] = FIELD_MISSING;
+            $msg_arr[] = _('A mandatory field is missing!');
             $errflag = true;
         }
-        // Check LASTNAME (sanitize only)
+        // Check _('Lastname') (sanitize only)
             if ((isset($_POST['lastname'])) && (!empty($_POST['lastname']))) {
             $lastname = filter_var($_POST['lastname'], FILTER_SANITIZE_STRING);
         } else {
-            $msg_arr[] = FIELD_MISSING;
+            $msg_arr[] = _('A mandatory field is missing!');
             $errflag = true;
         }
 
-        // Check EMAIL (sanitize and validate)
+        // Check _('Email') (sanitize and validate)
         if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
-            $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $email = filter_var($_POST['email'], FILTER_SANITIZE__('Email'));
+            if (!filter_var($email, FILTER_VALIDATE__('Email'))) {
                 $msg_arr[] = _("The email is not valid.");
                 $errflag = true;
             } else {
@@ -142,14 +142,14 @@ if (isset($_POST['currpass'])){
                 if($result) {
                     if($numrows > 0) {
                         if($data['userid'] != $_SESSION['userid']){
-                        $msg_arr[] = REGISTER_EMAIL_USED;
+                        $msg_arr[] = REGISTER__('Email')_USED;
                         $errflag = true;
                         }
                     }
                 }
             }
         } else {
-            $msg_arr[] = FIELD_MISSING;
+            $msg_arr[] = _('A mandatory field is missing!');
             $errflag = true;
         }
         // Check phone
@@ -175,7 +175,7 @@ if (isset($_POST['currpass'])){
             if  (filter_var($_POST['website'], FILTER_VALIDATE_URL)) {
                 $website = $_POST['website'];
             } else { // do not validate as url
-                $msg_arr[] = FIELD_MISSING;
+                $msg_arr[] = _('A mandatory field is missing!');
                 $errflag = true;
             }
         } else {
@@ -216,13 +216,13 @@ if (isset($_POST['currpass'])){
             'website' => $website,
             'userid' => $_SESSION['userid']));
         if($result){
-            $msg_arr[] = UCP_PROFILE_UPDATED;
+            $msg_arr[] = UCP_PROFILE__('Updated!');
             $infoflag = true;
         } else {
             die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>"));
         }
     }else{ //end if result and numrow > 1
-        $msg_arr[] = UCP_ENTER_PASSWORD;
+        $msg_arr[] = UCP_ENTER__('Password');
         $errflag = true;
     }
 }// end if first form submitted
@@ -262,7 +262,7 @@ if (isset($_POST['display'])) {
         ));
     $new_limit = filter_var($_POST['limit'], FILTER_VALIDATE_INT, $filter_options);
 
-    // KEYBOARD SHORTCUTS
+    // KEYBOARD _('Shortcut')S
     $new_sc_create = substr($_POST['create'], 0, 1);
     $new_sc_edit = substr($_POST['edit'], 0, 1);
     $new_sc_submit = substr($_POST['submit'], 0, 1);
@@ -322,20 +322,20 @@ if (isset($_POST['display'])) {
     $_SESSION['prefs']['shortcuts']['todo'] = $new_sc_todo;
     $_SESSION['prefs']['close_warning'] = $new_close_warning;
     $_SESSION['prefs']['lang'] = $new_lang;
-    $msg_arr[] = UCP_PREFS_UPDATED;
+    $msg_arr[] = UCP_PREFS__('Updated!');
     $infoflag = true;
 }
 
-// EXPERIMENTS TEMPLATES
+// _('Experiment')S TEMPLATES
 // add new tpl
 if (isset($_POST['new_tpl_form'])) {
     // do nothing if the template name is empty
     if (empty($_POST['new_tpl_name'])) {
-        $msg_arr[] = UCP_TPL_NAME;
+        $msg_arr[] = _('Templates')__('Name');
         $errflag = true;
     // template name must be 3 chars at least
     } elseif (strlen($_POST['new_tpl_name']) < 3) {
-        $msg_arr[] = UCP_TPL_SHORT;
+        $msg_arr[] = _('The template name must be 3 characters long.');
         $errflag = true;
     } else {
         $tpl_name = filter_var($_POST['new_tpl_name'], FILTER_SANITIZE_STRING);
@@ -348,7 +348,7 @@ if (isset($_POST['new_tpl_form'])) {
             'body' => $tpl_body,
             'userid' => $_SESSION['userid']
         ));
-        $msg_arr[] = UCP_TPL_SUCCESS;
+        $msg_arr[] = _('Experiment template successfully added.');
         $infoflag = true;
     }
 }
@@ -378,7 +378,7 @@ if (isset($_POST['tpl_form'])) {
         'name' => $new_tpl_name[$i]
     ));
     }
-    $msg_arr[] = UCP_TPL_EDITED;
+    $msg_arr[] = _('Templates')__('Edit')ED;
     $infoflag = true;
 }
 

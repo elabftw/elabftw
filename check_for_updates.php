@@ -36,13 +36,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
      */
     // check if git exists on the system
     if (!check_executable('git')) {
-        echo CHK_UPDATE_GIT;
+        echo _('Install git to check for updates.');
         exit;
     }
 
     // check that curl extension is installed and loaded
     if (!extension_loaded('curl')) {
-        echo CHK_UPDATE_CURL;
+        echo _('You need to install the curl extension for php.');
         exit;
     }
 
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // for branch next
         curl_setopt($ch, CURLOPT_URL, "https://api.github.com/repos/NicolasCARPi/elabftw/git/refs/heads/next");
     } else {
-        echo CHK_UPDATE_UNKNOWN;
+        echo _('Unknown branch!');
         exit();
     }
     // this is to get content
@@ -94,20 +94,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // do the check and display message if both versions differ
     // we check also the size of latest version, or we get the message if it couldn't connect
     if (strlen($latest_version) != 40) { // couldn't connect
-        echo CHK_UPDATE_GITHUB;
+        echo _('Install git to check for updates.')HUB;
         exit;
     }
     if ($latest_version != $current_version) {
-        echo CHK_UPDATE_NEW;
+        echo _('A new update is available!');
         exit;
     }
     if ($latest_version == $current_version) {
     // sha1 are the same
         if ($current_branch == 'master') {
-            echo CHK_UPDATE_MASTER;
+            echo _('Congratulations! You are running the latest stable version of eLabFTW :');
             exit;
         } else { // for branch next
-            echo CHK_UPDATE_NEXT;
+            echo _('Congratulations! You are running the latest development version of eLabFTW :');
             exit;
         }
     }

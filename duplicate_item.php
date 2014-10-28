@@ -46,12 +46,12 @@ $newid = duplicate_item($id, $type);
 
 if (is_pos_int($newid)) {
     if ($type === 'experiments') {
-        $msg_arr[] = DUPLICATE_EXP_SUCCESS;
+        $msg_arr[] = _('Experiment successfully duplicated.');
         $_SESSION['infos'] = $msg_arr;
         header('location: experiments.php?mode=edit&id='.$newid.'');
         exit;
     } else {
-        $msg_arr[] = DUPLICATE_ITEM_SUCCESS;
+        $msg_arr[] = _('Database entry successfully duplicated.');
         $_SESSION['infos'] = $msg_arr;
         header('location: database.php?mode=edit&id='.$newid.'');
         exit;

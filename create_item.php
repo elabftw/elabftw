@@ -34,7 +34,7 @@ if (isset($_GET['type']) && !empty($_GET['type']) && is_pos_int($_GET['type'])) 
 } elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')) {
     $type = 'experiments';
 } else {
-    $msg_arr[] = CREATE_ITEM_WRONG_TYPE;
+    $msg_arr[] = _('Create')_ITEM_WRONG_TYPE;
     $_SESSION['infos'] = $msg_arr;
     header('location: index.php');
     exit;
@@ -57,7 +57,7 @@ if ($type === 'experiments') {
         $body = $get_tpl_info['body'];
     } else {
         // if there is no template, title is 'Untitled' and the body is the default exp_tpl
-        $title = CREATE_ITEM_UNTITLED;
+        $title = _('Create')_ITEM_UNTITLED;
         // SQL to get body
         $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team";
         $get_body = $pdo->prepare($sql);
@@ -126,7 +126,7 @@ if ($type === 'experiments') {
 // Check if insertion is successful and redirect to the newly created experiment in edit mode
 if ($result) {
     // info box
-    $msg_arr[] = CREATE_ITEM_SUCCESS;
+    $msg_arr[] = _('Create')_ITEM_SUCCESS;
     $_SESSION['infos'] = $msg_arr;
     if ($type === 'experiments') {
         header('location: experiments.php?mode=edit&id='.$pdo->lastInsertId().'');

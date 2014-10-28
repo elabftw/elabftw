@@ -25,7 +25,7 @@
 ********************************************************************************/
 require_once 'inc/common.php';
 require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
-$page_title = ZIP_TITLE;
+$page_title = _('Make zip archive');
 $selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
@@ -47,8 +47,8 @@ if ($_GET['type'] === 'experiments') {
     die(_("The type parameter is not valid."));
 }
 
-// CREATE URL
-$url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+// _('Create') URL
+$url = 'https://'.$_SERVER['SERVER__('Name')'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
 
 // Check id is valid and assign it to $id
 if (isset($_GET['id']) && !empty($_GET['id'])) {
@@ -60,7 +60,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     $zipfile = 'uploads/export/'.$zipname."-".hash("sha512", uniqid(rand(), true)).".zip";
 
     $zip = new ZipArchive;
-    $res = $zip->open($zipfile, ZipArchive::CREATE);
+    $res = $zip->open($zipfile, ZipArchive::_('Create'));
     if ($res === true) {
         foreach ($id_arr as $id) {
             // MAIN LOOP
@@ -163,7 +163,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         } // end foreach
         // close the archive
         $zip->close();
-        // cleanup TODO
+        // cleanup _('_('TODO list') list')
         //unlink($manifestpath);
         //unlink('uploads/export/'.$pdfname);
         //unlink($csvpath);
@@ -177,7 +177,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             $zipname = $zdate."-".$clean_title;
         }
         // Display download link (with attribute type=zip for download.php)
-        echo "<p>".ZIP_READY."<br>
+        echo "<p>"._('Your ZIP archive is ready:')."<br>
             <a href='download.php?f=".$zipfile."&name=".$zipname.".zip&type=zip' target='_blank'>
             <img src='img/download.png' alt='download' /> 
             ".$zipname.".zip</a>

@@ -25,8 +25,7 @@
 ********************************************************************************/
 require_once 'inc/common.php';
 require_once 'inc/locale.php';
-require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
-$page_title = DATABASE_TITLE;
+$page_title = _('Database');
 $selected_menu = 'Database';
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';

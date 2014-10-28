@@ -31,7 +31,7 @@ require_once 'vendor/autoload.php';
 
 // only admin can use this
 if ($_SESSION['is_admin'] != 1) {
-    die(NO_ACCESS_DIE);
+    die(_('This section is out of your reach.'));
 }
 
 $msg_arr = array();
@@ -62,25 +62,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
 
         // validate the user
         $req->execute();
-        $msg_arr[] = ADMIN_USER_VALIDATED.' '.$user;
+        $msg_arr[] = _('Validated user with ID :').' '.$user;
 
         // get email
         $req_email->execute();
         $user = $req_email->fetch();
         // now let's get the URL so we can have a nice link in the email
-        $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+        $url = 'https://'.$_SERVER['SERVER__('Name')'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
         $url = str_replace('admin-exec.php', 'login.php', $url);
         // we send an email to each validated new user
         // Create the message
         $message = Swift_Message::newInstance()
         // Give the message a subject
-        ->setSubject(EMAIL_NEW_USER_SUBJECT)
+        ->setSubject(_('Email')_NEW_USER_SUBJECT)
         // Set the From address with an associative array
         ->setFrom(array(get_config('smtp_username') => get_config('smtp_username')))
         // Set the To addresses with an associative array
         ->setTo(array($user['email'] => 'eLabFTW'))
         // Give it a body
-        ->setBody(EMAIL_NEW_USER_BODY_1.' '.$url.EMAIL_FOOTER);
+        ->setBody(_('Email')_NEW_USER_BODY_1.' '.$url._('Email')_FOOTER);
 
         $transport = Swift_SmtpTransport::newInstance(
             get_config('smtp_address'),
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
             $errflag = true;
         }
         if ($errflag) {
-            $msg_arr[] = EMAIL_SEND_ERROR;
+            $msg_arr[] = _('Email')_SEND_ERROR;
             $_SESSION['errors'] = $msg_arr;
             header('location: admin.php');
             exit;
@@ -110,8 +110,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
     exit;
 }
 
-// TEAM CONFIGURATION FORM COMING FROM SYSCONFIG.PHP
-// ADD A NEW TEAM
+// _('Team') CONFIGURATION FORM COMING FROM SYSCONFIG.PHP
+// ADD A NEW _('Team')
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team']) && $_POST['new_team'] != '' && $_POST['new_team'] != ' ') {
     $new_team_name = filter_var($_POST['new_team'], FILTER_SANITIZE_STRING);
     $sql = 'INSERT INTO teams (team_name, deletable_xp, link_name, link_href) VALUES (:team_name, :deletable_xp, :link_name, :link_href)';
@@ -161,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team']) && $_POST[
     $result4 = $req->execute();
 
     if ($result1 && $result2 && $result3 && $result4) {
-        $msg_arr[] = ADMIN_TEAM_ADDED;
+        $msg_arr[] = ADMIN__('Team')_ADDED;
         $_SESSION['infos'] = $msg_arr;
         header('Location: sysconfig.php');
         exit;
@@ -174,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team']) && $_POST[
 }
 
 
-// SERVER SETTINGS
+// SERVER _('Settings')
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
 
     if (isset($_POST['lang']) && (strlen($_POST['lang']) === 5)) {
@@ -220,7 +220,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
         header('Location: sysconfig.php?tab=2');
         exit;
     }
-} // END SERVER SETTINGS
+} // END SERVER _('Settings')
 
 // TIMESTAMP CONFIG
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {
@@ -231,7 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {
         $stampshare = 0;
     }
     if (isset($_POST['stamplogin'])) {
-        $stamplogin = filter_var($_POST['stamplogin'], FILTER_VALIDATE_EMAIL);
+        $stamplogin = filter_var($_POST['stamplogin'], FILTER_VALIDATE__('Email'));
     } else {
         $stamplogin = '';
     }
@@ -300,7 +300,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['admin_validate'])) {
     }
 } // END SECURITY
 
-// EMAIL
+// _('Email')
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['smtp_address'])) {
 
     if (isset($_POST['smtp_address'])) {
@@ -350,9 +350,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['smtp_address'])) {
         exit;
     }
 
-} // END EMAIL
+} // END _('Email')
 
-// TEAM CONFIGURATION COMING FROM ADMIN.PHP
+// _('Team') CONFIGURATION COMING FROM ADMIN.PHP
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
 
     // CHECKS
@@ -372,7 +372,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
         $link_href = 'https://github.com/NicolasCARPi/elabftw/wiki';
     }
     if (isset($_POST['stamplogin'])) {
-        $stamplogin = filter_var($_POST['stamplogin'], FILTER_VALIDATE_EMAIL);
+        $stamplogin = filter_var($_POST['stamplogin'], FILTER_VALIDATE__('Email'));
     } else {
         $stamplogin = '';
     }
@@ -409,7 +409,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
     exit;
 }
 
-// EDIT USER
+// _('Edit') USER
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
     if (!is_pos_int($_POST['userid'])) {
         $msg_arr[] = _("Userid is not valid."); 
@@ -427,7 +427,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
     // Lastname in uppercase
     $lastname = strtoupper(filter_var($_POST['lastname'], FILTER_SANITIZE_STRING));
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
-    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $email = filter_var($_POST['email'], FILTER_SANITIZE__('Email'));
     if ($_POST['validated'] == 1) {
         $validated = 1;
     } else {
@@ -437,7 +437,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
         // a non sysadmin cannot put someone sysadmin
         $usergroup = $_POST['usergroup'];
         if ($usergroup == 1 && $_SESSION['is_sysadmin'] != 1) {
-            die(SYSADMIN_GRANT_SYSADMIN);
+            die(_('Only a sysadmin can put someone sysadmin.'));
         }
 
     } else {
@@ -468,7 +468,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
                 $_SESSION['errors'] = $msg_arr;
             }
         } else { // passwords do not match
-            $msg_arr[] = PASSWORDS_DONT_MATCH;
+            $msg_arr[] = _('The passwords do not match!');
             $_SESSION['errors'] = $msg_arr;
         }
     }
@@ -509,7 +509,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
     }
 }
 
-// STATUS
+// _('Status')
 if (isset($_POST['status_name']) && is_pos_int($_POST['status_id']) && !empty($_POST['status_name'])) {
     $status_id = $_POST['status_id'];
     $status_name = filter_var($_POST['status_name'], FILTER_SANITIZE_STRING);
@@ -581,7 +581,7 @@ if (isset($_POST['new_status_name'])) {
             exit;
         }
     } else {
-        $msg_arr[] = FIELD_MISSING;
+        $msg_arr[] = _('A mandatory field is missing!');
         $_SESSION['errors'] = $msg_arr;
         header('Location: admin.php?tab=3');
         exit;
@@ -625,7 +625,7 @@ if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
 if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
     $item_type_name = filter_var($_POST['new_item_type_name'], FILTER_SANITIZE_STRING);
     if (strlen($item_type_name) < 1) {
-        $msg_arr[] = NEED_TITLE;
+        $msg_arr[] = _('You need to put a title!');
         $_SESSION['errors'] = $msg_arr;
         header('Location: admin.php?tab=4');
         exit;
@@ -663,7 +663,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
         // form key is invalid
         die(INVALID_FORMKEY);
     }
-    if (filter_var($_POST['delete_user'], FILTER_VALIDATE_EMAIL)) {
+    if (filter_var($_POST['delete_user'], FILTER_VALIDATE__('Email'))) {
         $email = $_POST['delete_user'];
     } else {
         $msg_arr[] = _("The email is not valid.");
@@ -685,7 +685,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
         }
 
     } else {
-        $msg_arr[] = NEED_PASSWORD;
+        $msg_arr[] = _('You need to put a password!');
         $errflag = true;
     }
     // look which user has this email address and make sure it is in the same team as admin
@@ -698,7 +698,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     $user = $req->fetch();
     // email doesn't exist
     if ($req->rowCount() === 0) {
-        $msg_arr[] = INVALID_USER;
+        $msg_arr[] = _('No user with this email or user not in your team');
         $errflag = true;
     }
 
@@ -736,12 +736,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     $sql = "DELETE FROM uploads WHERE userid = ".$userid;
     $req = $pdo->prepare($sql);
     $req->execute();
-    $msg_arr[] = USER_DELETED;
+    $msg_arr[] = _('Everything was purged successfully.');
     $_SESSION['infos'] = $msg_arr;
     header('Location: admin.php?tab=2');
     exit;
 }
-// DEFAULT EXPERIMENT TEMPLATE
+// DEFAULT _('Experiment') TEMPLATE
 if (isset($_POST['default_exp_tpl'])) {
     $default_exp_tpl = check_body($_POST['default_exp_tpl']);
     $sql = "UPDATE experiments_templates SET

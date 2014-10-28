@@ -318,7 +318,7 @@ function showXP($id, $display)
         echo stripslashes($experiments['title']) . "</p></a>";
         // DATE
         echo "<span class='date'><img class='image' src='img/calendar.png' /> ".format_date($experiments['date'])."</span> ";
-        // TAGS
+        // _('Tags')
         echo show_tags($id, 'experiments_tags');
         // show attached if there is a file attached
         if (has_attachement($experiments['id'], 'experiments')) {
@@ -408,7 +408,7 @@ function showDB($id, $display)
         echo stripslashes($item['title']) . "</p></a>";
         // ITEM TYPE
         echo "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#".$item['bgcolor']."'>".$item['name']." </span>";
-        // TAGS
+        // _('Tags')
         echo show_tags($id, 'items_tags');
         echo "</section>";
     }
@@ -679,7 +679,7 @@ function duplicate_item($id, $type)
 
 
     if ($type === 'experiments') {
-        // TAGS
+        // _('Tags')
         $sql = "SELECT tag FROM experiments_tags WHERE item_id = :id";
         $req = $pdo->prepare($sql);
         $req->execute(array(
@@ -722,7 +722,7 @@ function duplicate_item($id, $type)
         return false;
 
     } else { // DB
-        // TAGS
+        // _('Tags')
         $sql = "SELECT tag FROM items_tags WHERE item_id = ".$id;
         $req = $pdo->prepare($sql);
         $req->execute();

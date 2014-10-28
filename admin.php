@@ -30,7 +30,7 @@ require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 if ($_SESSION['is_admin'] != 1) {
     die(ADMIN_DIE);
 }
-$page_title = ADMIN_TITLE;
+$page_title = _('Admin panel');
 $selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
@@ -50,7 +50,7 @@ $user_req->bindValue(':team', $_SESSION['team_id']);
 $user_req->execute(); $count = $user_req->rowCount();
 // only show the frame if there is some users to validate
 if ($count > 0) {
-    $message = ADMIN_VALIDATION_QUEUE;
+    $message = _('There are users waiting for validation of their account:');
     $message .= "<form method='post' action='admin-exec.php'>";
     $message .= "<ul>";
     while ($data = $user_req->fetch()) {
@@ -60,7 +60,7 @@ if ($count > 0) {
             </label></li>";
     }
     $message .= "</ul><div class='center'>
-    <button class='button' type='submit'>".ADMIN_VALIDATION_QUEUE_SUBMIT."</button></div>";
+    <button class='button' type='submit'>"._('There are users waiting for validation of their account:')__('Submit')."</button></div>";
     display_message('error', $message);
     // as this will 'echo', we need to call it at the right moment. It will not go smoothly into $message.
     $formKey->output_formkey();
@@ -70,22 +70,22 @@ if ($count > 0) {
 
 <menu>
     <ul>
-    <li class='tabhandle' id='tab1'><?php echo ADMIN_MENU_TEAM;?></li>
-        <li class='tabhandle' id='tab2'><?php echo ADMIN_MENU_USERS;?></li>
-        <li class='tabhandle' id='tab3'><?php echo STATUS;?></li>
-        <li class='tabhandle' id='tab4'><?php echo ADMIN_MENU_ITEMSTYPES;?></li>
-        <li class='tabhandle' id='tab5'><?php echo ADMIN_MENU_EXPTPL;?></li>
-        <li class='tabhandle' id='tab6'><?php echo ADMIN_MENU_CSV;?></li>
+    <li class='tabhandle' id='tab1'><?php echo ADMIN_MENU__('Team');?></li>
+        <li class='tabhandle' id='tab2'><?php echo _('Users');?></li>
+        <li class='tabhandle' id='tab3'><?php echo _('Status');?></li>
+        <li class='tabhandle' id='tab4'><?php echo _('Types of items');?></li>
+        <li class='tabhandle' id='tab5'><?php echo _('Experiments template');?></li>
+        <li class='tabhandle' id='tab6'><?php echo _('Import CSV');?></li>
     </ul>
 </menu>
 
 <!-- TABS 1 -->
 <div class='divhandle' id='tab1div'>
 
-<h3><?php echo ADMIN_TEAM_H3;?></h3>
+<h3><?php echo ADMIN__('Team')_H3;?></h3>
     <form method='post' action='admin-exec.php'>
         <p>
-        <label for='deletable_xp'><?php echo ADMIN_TEAM_DELETABLE_XP;?></label>
+        <label for='deletable_xp'><?php echo ADMIN__('Team')_DELETABLE_XP;?></label>
         <select name='deletable_xp' id='deletable_xp'>
             <option value='1'<?php
                 if (get_team_config('deletable_xp') == 1) { echo " selected='selected'"; } ?>
@@ -96,22 +96,22 @@ if ($count > 0) {
         </select>
         </p>
         <p>
-        <label for='link_name'><?php echo ADMIN_TEAM_LINK_NAME;?></label>
+        <label for='link_name'><?php echo ADMIN__('Team')_LINK__('Name');?></label>
         <input type='text' value='<?php echo get_team_config('link_name');?>' name='link_name' id='link_name' />
         </p>
         <p>
-        <label for='link_href'><?php echo ADMIN_TEAM_LINK_HREF;?></label>
+        <label for='link_href'><?php echo ADMIN__('Team')_LINK_HREF;?></label>
         <input type='url' value='<?php echo get_team_config('link_href');?>' name='link_href' id='link_href' />
         </p>
         <p>
-        <label for='stamplogin'><?php echo ADMIN_TEAM_STAMPLOGIN;?></label>
+        <label for='stamplogin'><?php echo ADMIN__('Team')_STAMP_('Login');?></label>
         <input type='email' value='<?php echo get_team_config('stamplogin');?>' name='stamplogin' id='stamplogin' />
-        <span class='smallgray'><?php echo ADMIN_TEAM_STAMPLOGIN_HELP;?></span>
+        <span class='smallgray'><?php echo ADMIN__('Team')_STAMP_('Login')_HELP;?></span>
         </p>
         <p>
-        <label for='stamppass'><?php echo ADMIN_TEAM_STAMPPASS;?></label>
+        <label for='stamppass'><?php echo ADMIN__('Team')_STAMPPASS;?></label>
         <input type='password' value='<?php echo get_team_config('stamppass');?>' name='stamppass' id='stamppass' />
-        <span class='smallgray'><?php echo ADMIN_TEAM_STAMPPASS_HELP;?></span>
+        <span class='smallgray'><?php echo ADMIN__('Team')_STAMPPASS_HELP;?></span>
         </p>
         <div class='center'>
             <button type='submit' name='submit_config' class='submit button'>Save</button>
@@ -123,7 +123,7 @@ if ($count > 0) {
 <!-- TABS 2 -->
 <div class='divhandle' id='tab2div'>
 
-    <h3><?php echo ADMIN_USERS_H3;?></h3>
+    <h3><?php echo _('Edit users');?></h3>
     <?php
     // we show only the validated users here
     $user_req->bindValue(':validated', 1);
@@ -136,16 +136,16 @@ if ($count > 0) {
         <br>
                 <form method='post' action='admin-exec.php' id='admin_user_form'>
                     <input type='hidden' value='<?php echo $users['userid'];?>' name='userid' />
-                    <label class='block' for='edituser_firstname'><?php echo FIRSTNAME;?></label>
+                    <label class='block' for='edituser_firstname'><?php echo _('Firstname');?></label>
                     <input  id='edituser_firstname' type='text' value='<?php echo $users['firstname'];?>' name='firstname' />
-                    <label class='block' for='edituser_lastname'><?php echo LASTNAME;?></label>
+                    <label class='block' for='edituser_lastname'><?php echo _('Lastname');?></label>
                     <input  id='edituser_lastname' type='text' value='<?php echo $users['lastname'];?>' name='lastname' />
-                    <label class='block' for='edituser_username'><?php echo USERNAME;?></label>
+                    <label class='block' for='edituser_username'><?php echo _('Username');?></label>
                     <input  id='edituser_username' type='text' value='<?php echo $users['username'];?>' name='username' />
-                    <label class='block' for='edituser_email'><?php echo EMAIL;?></label>
+                    <label class='block' for='edituser_email'><?php echo _('Email');?></label>
                     <input id='edituser_email' type='email' value='<?php echo $users['email'];?>' name='email' /><br>
         <br>
-        <label for='validated'><?php echo ADMIN_USERS_VALIDATED;?></label>
+        <label for='validated'><?php echo _('Has an active account?');?></label>
         <select name='validated' id='validated'>
             <option value='1'<?php
                     if ($users['validated'] == 1) { echo " selected='selected'"; } ?>
@@ -155,7 +155,7 @@ if ($count > 0) {
                     ><?php echo _('No');?></option>
         </select>
         <br>
-        <label for='usergroup'><?php echo ADMIN_USERS_GROUP;?></label>
+        <label for='usergroup'><?php echo _('Group:');?></label>
         <select name='usergroup' id='usergroup'>
 <?php
             if ($_SESSION['is_sysadmin'] == 1) {
@@ -177,15 +177,15 @@ if ($count > 0) {
             >Users</option>
         </select>
         <br>
-        <label for='users_reset_password'><?php echo ADMIN_USERS_RESET_PASSWORD;?></label>
+        <label for='users_reset_password'><?php echo ADMIN_USERS_RESET__('Password');?></label>
         <input id='users_reset_password' type='password' value='' name='new_password' />
         <br>
-        <label for='users_reset_cpassword'><?php echo ADMIN_USERS_REPEAT_PASSWORD;?></label>
+        <label for='users_reset_cpassword'><?php echo ADMIN_USERS_REPEAT__('Password');?></label>
         <input id='users_reset_cpassword' type='password' value='' name='confirm_new_password' />
         <br>
         <br>
         <div class='center'>
-        <button type='submit' class='button'><?php echo ADMIN_USERS_BUTTON;?></button>
+        <button type='submit' class='button'><?php echo _('Edit this user');?></button>
         </div>
             </form>
         </div>
@@ -201,19 +201,19 @@ if ($count > 0) {
     ?>
 <section class='simple_border' style='background-color:#FF8080;'>
 
-    <h3><?php echo ADMIN_DELETE_USER_H3;?></h3>
-    <h4><strong><?php echo ADMIN_DELETE_USER_H4;?></strong></h4>
+    <h3><?php echo _('DANGER ZONE');?></h3>
+    <h4><strong><?php echo _('Delete an account');?></strong></h4>
     <form action='admin-exec.php' method='post'>
         <!-- form key -->
         <?php $formKey->output_formkey(); ?>
-        <label for='delete_user'><?php echo ADMIN_DELETE_USER_HELP;?></label>
+        <label for='delete_user'><?php echo _('Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:');?></label>
         <input type='email' name='delete_user' id='delete_user' />
         <br>
         <br>
-        <label for='delete_user_confpass'><?php echo ADMIN_DELETE_USER_CONFPASS;?></label>
+        <label for='delete_user_confpass'><?php echo _('Type your password:');?></label>
         <input type='password' name='delete_user_confpass' id='delete_user_confpass' />
     <div class='center'>
-        <button type='submit' class='button submit'><?php echo ADMIN_DELETE_USER_BUTTON;?></button>
+        <button type='submit' class='button submit'><?php echo _('Delete this user!');?></button>
     </div>
     </form>
 </section>
@@ -222,23 +222,23 @@ if ($count > 0) {
 
 <!-- TAB 3 -->
 <div class='divhandle' id='tab3div'>
-    <h3><?php echo ADMIN_STATUS_ADD_H3;?></h3>
+    <h3><?php echo ADMIN__('Status')_ADD_H3;?></h3>
     <p>
     <form action='admin-exec.php' method='post'>
-        <label for='new_status_name'><?php echo ADMIN_STATUS_ADD_NEW;?></label>
+        <label for='new_status_name'><?php echo ADMIN__('Status')_ADD_NEW;?></label>
         <input type='text' id='new_status_name' name='new_status_name' />
         <div id='colorwheel_div_new_status'>
             <div class='colorwheel inline'></div>
             <input type='text' name='new_status_color' value='#000000' />
         </div>
         <div class='center'>
-            <button type='submit' class='submit button'><?php echo ADMIN_STATUS_ADD_BUTTON;?></button>
+            <button type='submit' class='submit button'><?php echo ADMIN__('Status')_ADD_BUTTON;?></button>
         </div>
     </form>
     </p>
     <br><br>
 
-    <h3><?php echo ADMIN_STATUS_EDIT_H3;?></h3>
+    <h3><?php echo ADMIN__('Status')__('Edit')_H3;?></h3>
 
     <?php
     // SQL to get all status
@@ -268,14 +268,14 @@ if ($count > 0) {
         <?php
         } else {
             ?>
-                <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert(<?php echo ADMIN_STATUS_EDIT_ALERT;?>)" />
+                <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert(<?php echo ADMIN__('Status')__('Edit')_ALERT;?>)" />
         <?php
         }
         ?>
 
         <form action='admin-exec.php' method='post'>
             <input type='text' name='status_name' value='<?php echo stripslashes($status['name']);?>' />
-            <label for='default_checkbox'><?php echo ADMIN_STATUS_EDIT_DEFAULT;?></label>
+            <label for='default_checkbox'><?php echo ADMIN__('Status')__('Edit')_DEFAULT;?></label>
             <input type='checkbox' name='status_is_default' id='default_checkbox'
             <?php
             // check the box if the status is already default
@@ -291,7 +291,7 @@ if ($count > 0) {
             <br>
 
             <div class='center'>
-            <button type='submit' class='button'><?php echo EDIT.' '.stripslashes($status['name']);?></button><br>
+            <button type='submit' class='button'><?php echo _('Edit').' '.stripslashes($status['name']);?></button><br>
             </div>
         </form></div>
         <script>$(document).ready(function() {
@@ -310,7 +310,7 @@ if ($count > 0) {
 
 <!-- TAB 4 ITEMS TYPES-->
 <div class='divhandle' id='tab4div'>
-    <h3><?php echo ADMIN_ITEMS_TYPES_H3;?></h3>
+    <h3><?php echo _('Database items types');?></h3>
     <?php
     // SQL to get all items type
     $sql = "SELECT * from items_types WHERE team = :team";
@@ -322,7 +322,7 @@ if ($count > 0) {
     while ($items_types = $req->fetch()) {
         ?>
         <div class='simple_border'>
-            <a class='trigger_<?php echo $items_types['id'];?>'><?php echo EDIT.' '.$items_types['name'];?></a>
+            <a class='trigger_<?php echo $items_types['id'];?>'><?php echo _('Edit').' '.$items_types['name'];?></a>
             <div class='toggle_container_<?php echo $items_types['id'];?>'>
             <?php
             // count the items with this type
@@ -339,13 +339,13 @@ if ($count > 0) {
             <?php
             } else {
                 ?>
-                <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert(<?php echo ADMIN_ITEMS_TYPES_ALERT;?>)" />
+                <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert(<?php echo _('Remove all database items with this type before deleting this type.');?>)" />
             <?php
             }
             ?>
 
             <form action='admin-exec.php' method='post'>
-            <label><?php echo ADMIN_ITEMS_TYPES_EDIT_NAME;?></label>
+            <label><?php echo ADMIN_ITEMS_TYPES__('Edit')__('Name');?></label>
                 <input type='text' name='item_type_name' value='<?php echo stripslashes($items_types['name']);?>' />
                 <input type='hidden' name='item_type_id' value='<?php echo $items_types['id'];?>' />
 
@@ -355,7 +355,7 @@ if ($count > 0) {
                 </div><br><br>
                 <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']);?></textarea><br>
                 <div class='center'>
-                    <button type='submit' class='button'><?php echo EDIT.' '.stripslashes($items_types['name']);?></button><br>
+                    <button type='submit' class='button'><?php echo _('Edit').' '.stripslashes($items_types['name']);?></button><br>
                 </div>
             </div>
             </form>
@@ -375,7 +375,7 @@ if ($count > 0) {
 
     <section class='simple_border'>
         <form action='admin-exec.php' method='post'>
-            <label for='new_item_type_name'><?php echo ADMIN_ITEMS_TYPES_ADD;?></label> 
+            <label for='new_item_type_name'><?php echo _('Add a new type of item:');?></label> 
             <input type='text' id='new_item_type_name' name='new_item_type_name' />
             <input type='hidden' name='new_item_type' value='1' />
             <div id='colorwheel_div_new'>
@@ -384,7 +384,7 @@ if ($count > 0) {
             </div><br><br><br><br>
             <textarea class='mceditable' name='new_item_type_template' /></textarea>
             <div class='center submitButtonDiv'>
-            <button type='submit' class='button'><?php echo ADMIN_ITEMS_TYPES_ADD_BUTTON;?></button>
+            <button type='submit' class='button'><?php echo _('Add a new type of item:')_BUTTON;?></button>
             </div>
         </form>
     </section>
@@ -393,7 +393,7 @@ if ($count > 0) {
 <!-- TABS 5 -->
 <div class='divhandle' id='tab5div'>
 
-    <h3><?php echo ADMIN_EXPERIMENT_TEMPLATE_H3;?></h3>
+    <h3><?php echo _('Common experiment template');?></h3>
     <?php
     // get what is the default experiment template
     $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1";
@@ -402,7 +402,7 @@ if ($count > 0) {
     $req->execute();
     $exp_tpl = $req->fetch();
     ?>
-    <p><?php echo ADMIN_EXPERIMENT_TEMPLATE_HELP;?></p>
+    <p><?php echo _('This is the default text when someone creates an experiment.');?></p>
     <form action='admin-exec.php' method='post'>
         <input type='hidden' name='default_exp_tpl' value='1' />
         <textarea class='mceditable' name='default_exp_tpl' />
@@ -410,7 +410,7 @@ if ($count > 0) {
         echo $exp_tpl['body'];
         ?></textarea>
         <div class='center submitButtonDiv'>
-        <button type='submit' class='button'><?php echo EDIT;?></button>
+        <button type='submit' class='button'><?php echo _('Edit');?></button>
         </div>
     </form>
 </div>
@@ -418,7 +418,7 @@ if ($count > 0) {
 <!-- TABS 6 -->
 <div class='divhandle' id='tab6div'>
 
-    <h3><?php echo ADMIN_IMPORT_CSV_H3;?></h3>
+    <h3><?php echo _('Import a CSV file');?></h3>
     <?php
 
     // file upload block
@@ -429,9 +429,9 @@ if ($count > 0) {
     $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
     $req->execute();
     ?>
-        <p style='text-align:justify'><?php echo ADMIN_IMPORT_CSV_HELP."<span class='strong'>".ADMIN_IMPORT_CSV_HELP_STRONG;?></span></p>
+        <p style='text-align:justify'><?php echo _('This page will allow you to import a .csv (Excel spreadsheet file into the database.<br>First you need to open your (.xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import the first column should be the title. The rest of the columns will be imported in the body. You can make a tiny import of 3 lines to see if everything works before you import a big file.')."<span class='strong'>"._('This page will allow you to import a .csv (Excel spreadsheet file into the database.<br>First you need to open your (.xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import the first column should be the title. The rest of the columns will be imported in the body. You can make a tiny import of 3 lines to see if everything works before you import a big file.')_STRONG;?></span></p>
 
-        <label for='item_selector'><?php echo ADMIN_IMPORT_CSV_STEP_1;?></label>
+        <label for='item_selector'><?php echo _('1. Select a type of item to import to:');?></label>
         <select id='item_selector' onchange='goNext(this.value)'><option value=''>--------</option>
         <?php
         while ($items_types = $req->fetch()) {
@@ -442,10 +442,10 @@ if ($count > 0) {
         </select><br>
         <div id='import_block'>
         <form enctype="multipart/form-data" action="admin.php" method="POST">
-        <label for='uploader'><?php echo ADMIN_IMPORT_CSV_STEP_2;?></label>
+        <label for='uploader'><?php echo _('2. Select a CSV file to import:');?></label>
             <input id='uploader' name="csvfile" type="file" />
             <div class='center'>
-            <button type="submit" class='button' value="Upload"><?php echo ADMIN_IMPORT_CSV_BUTTON;?></button>
+            <button type="submit" class='button' value="Upload"><?php echo _('Import CSV');?></button>
             </div>
         </form>
     </div>
@@ -506,7 +506,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     fclose($handle);
-    $msg_arr[] = $inserted.' '.ADMIN_IMPORT_CSV_MSG;
+    $msg_arr[] = $inserted.' '._('items were imported successfully.');
     $_SESSION['infos'] = $msg_arr;
 }
 // END CODE TO IMPORT CSV
@@ -561,7 +561,7 @@ $(document).ready(function() {
     });
     color_wheel('#colorwheel_div_new')
     color_wheel('#colorwheel_div_new_status')
-    // EDITOR
+    // _('Edit')OR
     tinymce.init({
         mode : "specific_textareas",
         editor_selector : "mceditable",

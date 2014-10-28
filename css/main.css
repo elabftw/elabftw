@@ -740,6 +740,7 @@ footer {
 footer div, footer div a, footer p, footer p a {
     color: #797979;
     font-size: 11px;
+    text-transform:uppercase;
 }
 footer div a:hover {
     color: #29AEB9;

@@ -24,18 +24,18 @@
 *                                                                               *
 ********************************************************************************/
 $load_more_button = "<div class='center'>
-        <button class='button' id='loadButton'>".SHOW_XP_MORE."</button>
+        <button class='button' id='loadButton'>"._('Load more')."</button>
         </div>";
 // array to store results;
 $results_arr = array();
 ?>
 <menu class='border'>
-    <a href="create_item.php?type=exp"><img src="img/add.png" class='bot5px' alt="" /> <?php echo SHOW_XP_CREATE;?></a> | 
-    <a href='#' class='trigger'><img src="img/add-template.png" class='bot5px' alt="" /> <?php echo SHOW_XP_CREATE_TPL;?></a>
+    <a href="create_item.php?type=exp"><img src="img/add.png" class='bot5px' alt="" /> <?php echo _('Create experiment');?></a> | 
+    <a href='#' class='trigger'><img src="img/add-template.png" class='bot5px' alt="" /> <?php echo _('Create from template');?></a>
 
-    <!-- 'FILTER STATUS' dropdown menu -->
+    <!-- 'FILTER _('Status')' dropdown menu -->
     <span class='align_right'>
-    <select onchange=go_url(this.value)><option value=''><?php echo SHOW_XP_FILTER_STATUS;?></option>
+    <select onchange=go_url(this.value)><option value=''><?php echo _('FILTER STATUS');?></option>
     <?php
     $sql = "SELECT id, name FROM status WHERE team = :team_id";
     $req = $pdo->prepare($sql);
@@ -62,7 +62,7 @@ if ($tplreq->rowCount() > 0) {
         echo "<a href='create_item.php?type=exp&tpl=".$tpl['id']."' class='badge'>".$tpl['name']."</a>";
     }
 } else { // user has no templates
-    display_message('warning_nocross', SHOW_XP_NO_TPL);
+    display_message('warning_nocross', _("<strong>You do not have any templates yet.</strong> Go to <a class='alert-link' href='ucp.php?tab=3'>your control panel</a> to make one !"));
 }
 ?>
 </ul></div>
@@ -77,7 +77,7 @@ $limit = $_SESSION['prefs']['limit'];
 // SQL for showXP
 // reminder : order by and sort must be passed to the prepare(), not during execute()
 // /////////////////
-// SEARCH
+// _('Search')
 // /////////////////
 if (isset($_GET['q'])) { // if there is a query
     $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
@@ -96,11 +96,12 @@ if (isset($_GET['q'])) { // if there is a query
         $unit = 'milliseconds';
     }
     if (count($results_arr) > 1) {
-        echo "<p class='smallgray'>".count($results_arr)." ".RESULTS." ($total_time $unit)</p>";
+        echo "<p class='smallgray'>".count($results_arr)." "._('results.')." ($total_time $unit)</p>";
     } elseif (count($results_arr) == 1) {
-        echo "<p class='smallgray'>".FOUND_1." ($total_time $unit)</p>";
+        // TODO plural
+        echo "<p class='smallgray'>"._('Found')." ($total_time $unit)</p>";
     } else {
-        display_message('error', FOUND_0);
+        display_message('error', _('Found'));
     }
 
     // loop the results array and display results
@@ -142,11 +143,11 @@ if (isset($_GET['q'])) { // if there is a query
         $unit = 'milliseconds';
     }
     if (count($results_arr) > 1) {
-        echo "<p class='smallgray'>".count($results_arr)." ".RESULTS." ($total_time $unit)</p>";
+        echo "<p class='smallgray'>".count($results_arr)." "._('results.')." ($total_time $unit)</p>";
     } elseif (count($results_arr) == 1) {
-        echo "<p class='smallgray'>".FOUND_1." ($total_time $unit)</p>";
+        echo "<p class='smallgray'>"._('Found')." ($total_time $unit)</p>";
     } else {
-        display_message('error', FOUND_0);
+        display_message('error', _('Found'));
     }
 
     // loop the results array and display results
@@ -160,7 +161,7 @@ if (isset($_GET['q'])) { // if there is a query
     }
 
 ///////////////
-// TAG SEARCH
+// TAG _('Search')
 ///////////////
 } elseif (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
@@ -187,11 +188,11 @@ if (isset($_GET['q'])) { // if there is a query
         $unit = 'milliseconds';
     }
     if (count($results_arr) > 1) {
-        echo "<p class='smallgray'>".count($results_arr)." ".RESULTS." ($total_time $unit)</p>";
+        echo "<p class='smallgray'>".count($results_arr)." "._('results.')." ($total_time $unit)</p>";
     } elseif (count($results_arr) == 1) {
-        echo "<p class='smallgray'>".FOUND_1." ($total_time $unit)</p>";
+        echo "<p class='smallgray'>"._('Found')." ($total_time $unit)</p>";
     } else {
-        display_message('error', FOUND_0);
+        display_message('error', _('Found'));
     }
 
     // clean duplicates
@@ -221,7 +222,7 @@ if (isset($_GET['q'])) { // if there is a query
     $count = $req->rowCount();
     // If there are no experiments, display a little message
     if ($count == 0) {
-        display_message('info_nocross', SHOW_XP_NO_EXP);
+        display_message('info_nocross', _("<strong>Welcome to eLabFTW.</strong> Click the <img src='img/add.png' alt='Create experiment' /><a class='alert-link' href='create_item.php?type=exp'>Create experiment</a> button to get started."));
     } else {
         while ($experiments = $req->fetch()) {
             $results_arr[] = $experiments['id'];
@@ -251,7 +252,7 @@ function go_url(x) {
 }
 $(document).ready(function(){
 
-    // SHOW MORE EXPERIMENTS BUTTON
+    // SHOW MORE _('Experiment')S BUTTON
     $('section.item').hide(); // hide everyone
     $('section.item').slice(0, <?php echo $limit;?>).show(); // show only the default at the beginning
     $('#loadButton').click(function(e){ // click to load more
@@ -262,12 +263,12 @@ $(document).ready(function(){
         }
     });
 
-    // EXPERIMENTS TEMPLATE HIDDEN DIV
+    // _('Experiment')S TEMPLATE HIDDEN DIV
 	$(".toggle_container").hide();
 	$("a.trigger").click(function(){
 		$('div.toggle_container').slideToggle(1);
 	});
-    // KEYBOARD SHORTCUTS
+    // KEYBOARD _('Shortcut')S
     key('<?php echo $_SESSION['prefs']['shortcuts']['create'];?>', function(){
         location.href = 'create_item.php?type=exp'
         });

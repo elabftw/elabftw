@@ -61,7 +61,7 @@ $data = $req->fetch();
 if ($data['userid'] != $_SESSION['userid']) {
     // Can the user see this experiment which is not his ?
     if ($data['visibility'] == 'user') {
-        display_message('error', VIEW_XP_FORBIDDEN);
+        display_message('error', _("<strong>Access forbidden:</strong> the visibility setting of this experiment is set to 'owner only'."));
         require_once 'inc/footer.php';
         exit;
     } else {
@@ -71,7 +71,7 @@ if ($data['userid'] != $_SESSION['userid']) {
         $get_owner->bindParam(':userid', $data['userid']);
         $get_owner->execute();
         $owner = $get_owner->fetch();
-        $message = VIEW_XP_RO.' '.$owner['firstname'].' '.$owner['lastname'].'.';
+        $message = _('<strong>Read-only mode:</strong> this experiment is owned by').' '.$owner['firstname'].' '.$owner['lastname'].'.';
         display_message('info', $message);
         // we set this variable for later, to check if we are in read only mode
         $ro = true;
@@ -96,7 +96,7 @@ if ($data['timestamped'] == 1) {
     $uploads = $req_stamper->fetch();
 
     $date_arr = explode(' ', $data['timestampedwhen']);
-    display_message('info_nocross', VIEW_XP_TIMESTAMPED." ".$timestamper['firstname']." ".$timestamper['lastname']." ".ON." ".$date_arr[0]." ".AT." ".$date_arr[1]."
+    display_message('info_nocross', _('Experiment was timestamped by')." ".$timestamper['firstname']." ".$timestamper['lastname']." ".ON." ".$date_arr[0]." ".AT." ".$date_arr[1]."
         <a href='uploads/".$uploads['long_name']."'><img src='img/pdf.png' class='bot5px' title='Download timestamped pdf' alt='pdf' /></a>");
     unset($timestamper);
     unset($uploads);
@@ -124,7 +124,7 @@ if ($data['locked'] == 0) {
     }
 }
 
-// TAGS
+// _('Tags')
 show_tags($id, 'experiments_tags');
 // TITLE : click on it to go to edit mode only if we are not in read only mode
 echo "<div ";
@@ -170,7 +170,7 @@ if ($req->rowcount() > 0) {
 
 
 // DISPLAY eLabID
-echo "<p class='elabid'>".VIEW_XP_ELABID." ".$data['elabid'];
+echo "<p class='elabid'>"._('Unique eLabID:')." ".$data['elabid'];
 echo "</section>";
 // DISPLAY FILES
 require_once 'inc/display_file.php';
@@ -180,8 +180,8 @@ require_once 'inc/display_file.php';
 <!-- we need to add a container here so the reload function in the callback of .editable() doesn't mess things up -->
 <section id='expcomment_container'>
 <div id='expcomment' class='box'>
-    <h3><img src='img/comment.png' alt='comment' /> <?php echo COMMENTS;?></h3>
-    <p class='editable newexpcomment' id='newexpcomment_<?php echo $id;?>'><?php echo ADD_COMMENT;?></p>
+    <h3><img src='img/comment.png' alt='comment' /> <?php echo _('Comments');?></h3>
+    <p class='editable newexpcomment' id='newexpcomment_<?php echo $id;?>'><?php echo _('Add a comment');?></p>
 <?php
 
 // check if there is something to display first
@@ -210,7 +210,7 @@ if ($req->rowCount() > 0) {
 <script>
 // DELETE EXP COMMENT
 function deleteThisAndReload(id, type) {
-    var you_sure = confirm('<?php echo DELETE_THIS;?>');
+    var you_sure = confirm('<?php echo _('Delete this?');?>');
     if (you_sure == true) {
         $.post('delete.php', {
             id:id,
@@ -230,11 +230,11 @@ function makeEditable() {
     $('div#expcomment').on("mouseover", ".editable", function(){
         $('div#expcomment p.editable').editable('editinplace.php', {
             tooltip : 'Click to edit',
-                indicator : '<?php echo SAVING;?>',
+                indicator : '<?php echo _('Saving');?>',
             id   : 'id',
             name : 'expcomment',
-            submit : '<?php echo SAVE;?>',
-            cancel : '<?php echo CANCEL;?>',
+            submit : '<?php echo _('Save');?>',
+            cancel : '<?php echo _('Cancel');?>',
             style : 'display:inline',
             callback : function() {
                 // now we reload the comments part to show the comment we just submitted
@@ -250,7 +250,7 @@ function makeEditable() {
 // READY ? GO !!
 
 function confirmStamp() {
-    var you_sure = confirm('<?php echo CONFIRM_STAMP;?>');
+    var you_sure = confirm('<?php echo _('Once timestamped an experiment cannot be edited anymore ! Are you sure you want to do this ?');?>');
     if (you_sure === true) {
         return true;
     } else {

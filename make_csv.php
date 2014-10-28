@@ -26,7 +26,7 @@
 /* make_csv.php -- export database in spreadsheet file */
 require_once 'inc/common.php';
 require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
-$page_title = CSV_TITLE;
+$page_title = _('Export to spreadsheet');
 $selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
@@ -71,7 +71,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
         if ($table === 'experiments') {
             // now let's get the URL so we can have a nice link in the csv
-            $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+            $url = 'https://'.$_SERVER['SERVER__('Name')'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
             $url = str_replace('make_csv.php', 'experiments.php', $url);
             $url .= "?mode=view&id=".$csv_data['id'];
             $list[] = array(
@@ -86,7 +86,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
         } else { // items
             // now let's get the URL so we can have a nice link in the csv
-            $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+            $url = 'https://'.$_SERVER['SERVER__('Name')'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
             $url = str_replace('make_csv.php', 'database.php', $url);
             $url .= "?mode=view&id=".$csv_data['id'];
             $list[] = array(
@@ -123,7 +123,7 @@ fclose($fp);
 echo "<div class='well' style='margin-top:20px'>";
     // Get csv file size
     $filesize = filesize($filepath);
-echo "<p>".CSV_READY."<br>
+echo "<p>"._('Your CSV file is ready:')."<br>
         <a href='download.php?f=".$filepath."&name=elabftw-export.csv' target='_blank'>
         <img src='img/download.png' alt='download' /> 
         elabftw-export.csv</a>

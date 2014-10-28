@@ -38,15 +38,15 @@ function abort() {
 </script>
 <div class="bigUpload inline">
     <div class="bigUploadContainer">
-    <img src='img/attached.png' class='bot5px'> <h3 style='display:inline'><?php echo FILE_UPLOAD_H3;?></h3>
+    <img src='img/attached.png' class='bot5px'> <h3 style='display:inline'><?php echo _('Attach a file.');?></h3>
         <form action="inc/bigUpload.php?action=post-unsupported"
             method="post"
             enctype="multipart/form-data"
             id="bigUploadForm">
 
             <input type="file" id="bigUploadFile" name="bigUploadFile" />
-            <input type="button" class="button" value="<?php echo FILE_START_UPLOAD;?>" id="bigUploadSubmit" onclick="upload()" />
-            <input type="button" class="button" value="<?php echo CANCEL;?>" onclick="abort()" />
+            <input type="button" class="button" value="<?php echo _('Start Upload');?>" id="bigUploadSubmit" onclick="upload()" />
+            <input type="button" class="button" value="<?php echo _('Cancel');?>" onclick="abort()" />
         </form>
         <div id="bigUploadProgressBarContainer">
             <div id="bigUploadProgressBarFilled">

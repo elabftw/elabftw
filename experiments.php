@@ -24,9 +24,8 @@
 *                                                                               *
 ********************************************************************************/
 require_once 'inc/common.php';
-require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 require_once 'inc/locale.php';
-$page_title = EXPERIMENTS_TITLE;
+$page_title = _('Experiments');
 $selected_menu = 'Experiments';
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';

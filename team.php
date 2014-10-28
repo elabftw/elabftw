@@ -24,29 +24,29 @@
 *                                                                               *
 ********************************************************************************/
 require_once('inc/common.php');
-require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
-$page_title= TEAM_TITLE; 
+require_once('inc/locale.php');
+$page_title= _('Team'); 
 $selected_menu = 'Team';
 require_once('inc/head.php');
 require_once('inc/info_box.php');
 ?>
 <menu>
 <ul>
-<li class='tabhandle' id='tab1'><?php echo SYSCONFIG_MEMBERS;?></li>
-<li class='tabhandle' id='tab2'><?php echo TEAM_STATISTICS;?></li>
-<li class='tabhandle' id='tab3'><?php echo TEAM_TIPS_TRICKS;?></li>
+<li class='tabhandle' id='tab1'><?php echo _('Members');?></li>
+<li class='tabhandle' id='tab2'><?php echo _('Statistics')?></li>
+<li class='tabhandle' id='tab3'><?php echo _('Tips and tricks');?></li>
 </ul>
 </menu>
 <!-- *********************** -->
 <div class='divhandle' id='tab1div'>
-<?php display_message('info_nocross', TEAM_BELONG.' '.get_team_config('team_name').' '.TEAM_TEAM);?>
+<?php display_message('info_nocross', sprintf(_('You belong to the %s team.'), get_team_config('team_name')));?>
 <table id='teamtable'>
     <tr>
-        <th><?php echo NAME;?></th>
-        <th><?php echo PHONE;?></th>
-        <th><?php echo MOBILE;?></th>
-        <th><?php echo WEBSITE;?></th>
-        <th><?php echo SKYPE;?></th>
+        <th><?php echo _('Name');?></th>
+        <th><?php echo _('Phone');?></th>
+        <th><?php echo _('Mobile');?></th>
+        <th><?php echo _('Website');?></th>
+        <th><?php echo _('Skype');?></th>
     </tr>
 <?php // SQL to get members info
 $sql = "SELECT * FROM users WHERE validated = :validated AND team = :team_id";
@@ -96,24 +96,24 @@ $count_req->bindParam(':team', $_SESSION['team_id']);
 $count_req->execute();
 $totals = $count_req->fetch(PDO::FETCH_ASSOC);
 ?>
-    <p><?php echo TEAM_TOTAL_OF.' '.$totals['totxp'].' '.TEAM_EXP_BY.' '.$totals['totusers'].' '.TEAM_DIFF_USERS;?></p>
-    <p><?php echo TEAM_TOTAL_OF.' '.$totals['totdb'].' '.TEAM_ITEMS_DB;?></p>
+    <p><?php echo _('There is a total of').' '.$totals['totxp'].' '._('experiments by').' '.$totals['totusers'].' '._('different users.');?></p>
+    <p><?php echo _('There is a total of').' '.$totals['totdb'].' '._('items in the database');?></p>
 </div>
 
 <!-- *********************** -->
 <div class='divhandle' id='tab3div'>
     <p>
         <ul>
-        <li class='tip'><?php echo TEAM_TIP_1;?></li>
-        <li class='tip'><?php echo TEAM_TIP_2;?></li>
-        <li class='tip'><?php echo TEAM_TIP_3;?></li>
-        <li class='tip'><?php echo TEAM_TIP_4;?></li>
-        <li class='tip'><?php echo TEAM_TIP_5;?></li>
-        <li class='tip'><?php echo TEAM_TIP_6;?></li>
-        <li class='tip'><?php echo TEAM_TIP_7;?></li>
-        <li class='tip'><?php echo TEAM_TIP_8;?></li>
-        <li class='tip'><?php echo TEAM_TIP_9;?></li>
-        <li class='tip'><?php echo TEAM_TIP_10;?></li>
+        <li class='tip'><?php echo _("You can use a TODOlist by pressing 't'");?></li>
+        <li class='tip'><?php printf(_('You can have experiments templates (%sControl Panel%s)'), "<a href='ucp.php?tab=3'>", "</a>");?></li>
+        <li class='tip'><?php echo _('Team');?></li>
+        <li class='tip'><?php echo _('Team');?></li>
+        <li class='tip'><?php echo _('Team');?></li>
+        <li class='tip'><?php echo _('Team');?></li>
+        <li class='tip'><?php echo _('Team');?></li>
+        <li class='tip'><?php echo _('Team');?></li>
+        <li class='tip'><?php echo _('Team');?></li>
+        <li class='tip'><?php echo _('Team');?></li>
         </ul>
     </p>
 </div>

@@ -25,7 +25,7 @@
 ********************************************************************************/
 require_once 'inc/common.php';
 require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
-$page_title = REVISIONS_TITLE;
+$page_title = _('Revisions');
 $selected_menu = null;
 require_once 'inc/head.php';
 
@@ -34,7 +34,7 @@ if (isset($_GET['exp_id']) && !empty($_GET['exp_id']) && is_pos_int($_GET['exp_i
 } else {
     die(_("The id parameter is not valid!"));
 }
-echo "<a href='experiments.php?mode=view&id=".$exp_id."'><h4><img src='img/undo.png' alt='<--' /> ".REVISIONS_GO_BACK."</h4></a>";
+echo "<a href='experiments.php?mode=view&id=".$exp_id."'><h4><img src='img/undo.png' alt='<--' /> "._('Go back to the experiment')."</h4></a>";
 
 if (isset($_GET['action']) && $_GET['action'] === 'restore' && is_pos_int($_GET['rev_id'])) {
     // get the body of the restored time
@@ -52,7 +52,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'restore' && is_pos_int($_GET[
     $req->execute();
     $locked = $req->fetch();
     if ($locked['locked'] == 1) {
-        display_message('error', REVISIONS_LOCKED);
+        display_message('error', _('You cannot restore a revision of a locked experiment!'));
         require_once 'inc/footer.php';
         exit;
     }
@@ -75,7 +75,7 @@ $req = $pdo->prepare($sql);
 $req->bindParam(':id', $exp_id, PDO::PARAM_INT);
 $req->execute();
 $experiment = $req->fetch();
-echo "<div class='item'>".REVISIONS_CURRENT."<br>".$experiment['body']."</div>";
+echo "<div class='item'>"._('Current:')."<br>".$experiment['body']."</div>";
 
 // Get list of revisions
 $sql = "SELECT * FROM experiments_revisions WHERE exp_id = :exp_id AND userid = :userid ORDER BY savedate DESC";
@@ -85,7 +85,7 @@ $req->execute(array(
     'userid' => $_SESSION['userid']
 ));
 while($revisions = $req->fetch()) {
-    echo "<div class='item'>".REVISIONS_SAVED." ".$revisions['savedate']." <a href='revision.php?exp_id=".$exp_id."&action=restore&rev_id=".$revisions['id']."'>".REVISIONS_RESTORE."</a><br>";
+    echo "<div class='item'>".REVISIONS__('Save')D." ".$revisions['savedate']." <a href='revision.php?exp_id=".$exp_id."&action=restore&rev_id=".$revisions['id']."'>"._('Restore')."</a><br>";
     echo $revisions['body']."</div>";
 }
 require_once 'inc/footer.php';

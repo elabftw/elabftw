@@ -46,9 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
     $u_agent = $_SERVER['HTTP_USER_AGENT'];
 
     // Sanitize post
-    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $email = filter_var($_POST['email'], FILTER_SANITIZE__('Email'));
     // Is email in database ?
-    if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+    if (filter_var($_POST['email'], FILTER_VALIDATE__('Email'))) {
         // Get associated userid
         $sql = "SELECT userid,username FROM users WHERE email = :email";
         $result = $pdo->prepare($sql);
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
         if ($numrows === 1) {
             // Get info to build the URL
             $protocol = 'https://';
-            $reset_url = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
+            $reset_url = $_SERVER['SERVER__('Name')'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
             // Generate unique link
             $reset_link = $protocol.str_replace('reset-pass', 'change-pass', $reset_url).'?key='.hash("sha256", uniqid(rand(), true)).'&userid='.$userid;
             // Send an email with the reset link
@@ -75,10 +75,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
             // Set the To addresses with an associative array
             ->setTo(array($email => 'Dori'))
             // Give it a body
-            ->setBody(RESET_MAIL_BODY.' '.$ip.' '.RESET_MAIL_BODY2.' '.$u_agent.' '.RESET_MAIL_BODY3.'
+            ->setBody(_('Hi. Someone (probably you with the IP address:').' '.$ip.' '._('Hi. Someone (probably you with the IP address:')2.' '.$u_agent.' '._('Hi. Someone (probably you with the IP address:')3.'
             '.$reset_link.'
 
-            '.EMAIL_FOOTER);
+            '._('Email')_FOOTER);
             $transport = Swift_SmtpTransport::newInstance(
                 get_config('smtp_address'),
                 get_config('smtp_port'),
@@ -98,18 +98,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
             }
             if ($errflag) {
                 // problem
-                $msg_arr[] = EMAIL_SEND_ERROR;
+                $msg_arr[] = _('Email')_SEND_ERROR;
                 $_SESSION['errors'] = $msg_arr;
                 header('location: login.php');
                 exit;
             } else { // no problem
-                $msg_arr[] = EMAIL_SUCCESS;
+                $msg_arr[] = _('Email')_SUCCESS;
                 $_SESSION['infos'] = $msg_arr;
                 header("location: login.php");
                 exit;
             }
         } else {
-            $msg_arr[] = RESET_NOT_FOUND;
+            $msg_arr[] = _('Email not found in database!');
             $_SESSION['errors'] = $msg_arr;
             header("location: login.php");
             exit;

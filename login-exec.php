@@ -46,18 +46,18 @@ if (!isset($_POST['form_key']) || !$formKey->validate()) {
 }
 
 
-// Check USERNAME (sanitize and validate)
+// Check _('Username') (sanitize and validate)
 if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
 } else {
     $username = '';
-    $msg_arr[] = FIELD_MISSING;
+    $msg_arr[] = _('A mandatory field is missing!');
     $errflag = true;
 }
 
-// Check PASSWORD is sent
+// Check _('Password') is sent
 if ((!isset($_POST['password'])) || (empty($_POST['password']))) {
-    $msg_arr[] = FIELD_MISSING;
+    $msg_arr[] = _('A mandatory field is missing!');
     $errflag = true;
 }
 
@@ -93,7 +93,7 @@ if ($result) {
     if ($numrows === 1) {
 
         // **********************
-        //    LOGIN SUCCESSFUL
+        //    _('Login') SUCCESSFUL
         // **********************
 
         $data = $req->fetch();
@@ -154,7 +154,7 @@ if ($result) {
 
         // inform the user
         $msg_arr = array();
-        $msg_arr[] = LOGIN_FAILED;
+        $msg_arr[] = _('Login failed. Either you mistyped your password or your account isn't activated yet.');
         if (!isset($_SESSION['failed_attempt'])) {
             $_SESSION['failed_attempt'] = 1;
         } else {

@@ -65,14 +65,14 @@ echo "<section class='box'>";
 
 // Make percentage
 if ($total == 0) {
-    echo STATISTICS_NOT_YET; // fix division by zero
+    echo _('No statistics available yet.'); // fix division by zero
 } else {
     foreach ($status_arr as $key => $value) {
         $percent_arr[$value] = round(($count_arr[$key]/$total)*100);
     }
 
     // BEGIN CONTENT
-    echo "<img src='img/statistics.png' alt='' /> <h4>".STATISTICS_H4."</h4>";
+    echo "<img src='img/statistics.png' alt='' /> <h4>"._('Statistics')."</h4>";
     ?>
      <!--Load the AJAX API-->
     <script src="https://www.google.com/jsapi"></script>
@@ -95,7 +95,7 @@ if ($total == 0) {
                           ]);
 
             var options = {
-                title: '<?php echo STATISTICS_EXP_FOR.' '.$_SESSION['username'];?>',
+                title: '<?php echo _('Experiments for').' '.$_SESSION['username'];?>',
                 backgroundColor: '#fff',
                 colors: [
                 <?php

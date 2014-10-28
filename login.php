@@ -29,7 +29,7 @@ if (!isset($_SESSION)) {
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
 require_once 'lang/'.get_config('lang').'.php';
-$page_title = LOGIN;
+$page_title = _('Login');
 $selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
@@ -40,7 +40,7 @@ $formKey = new formKey();
 // Check for HTTPS
 if (!isset($_SERVER['HTTPS'])) {
     // get the url to display a link to click (without the port)
-    $url = 'https://'.$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'];
+    $url = 'https://'.$_SERVER['SERVER__('Name')'].$_SERVER['PHP_SELF'];
     $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server
         (<a href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting#wiki-switch-to-https'
         >see documentation</a>). Or click this link : <a href='$url'>$url</a>";
@@ -66,7 +66,7 @@ while ($banned_users = $req->fetch()) {
     $banned_users_arr[] = $banned_users['user_infos'];
 }
 if (in_array(md5($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']), $banned_users_arr)) {
-    display_message('error', LOGIN_TOO_MUCH_FAILED);
+    display_message('error', _('Login')_TOO_MUCH_FAILED);
     require_once 'inc/footer.php';
     exit;
 }
@@ -74,7 +74,7 @@ if (in_array(md5($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']), $banned_u
 // show message if there is a failed_attempt
 if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] < get_config('login_tries')) {
     $number_of_tries_left = get_config('login_tries') - $_SESSION['failed_attempt'];
-    $message = LOGIN_ATTEMPT_NB.' '.get_config('ban_time').' '.LOGIN_MINUTES.' '.$number_of_tries_left;
+    $message = _('Login')_ATTEMPT_NB.' '.get_config('ban_time').' '._('Login')_MINUTES.' '.$number_of_tries_left;
     display_message('error', $message);
 }
 
@@ -89,7 +89,7 @@ if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] >= get_con
         'user_infos' => $user_infos
     ));
     unset($_SESSION['failed_attempt']);
-    display_message('error', LOGIN_TOO_MUCH_FAILED);
+    display_message('error', _('Login')_TOO_MUCH_FAILED);
     require_once 'inc/footer.php';
     exit;
 }
@@ -106,33 +106,33 @@ function checkCookiesEnabled() {
 return (cookieEnabled);
 }
 if (!checkCookiesEnabled()) {
-    var cookie_alert = "<div class='errorbox messagebox<p><?php echo LOGIN_ENABLE_COOKIES;?></p></div>";
+    var cookie_alert = "<div class='errorbox messagebox<p><?php echo _('Login')_ENABLE_COOKIES;?></p></div>";
     document.write(cookie_alert);
 }
 </script>
 
-    <menu class='border' style='color:#29AEB9'><?php echo LOGIN_COOKIES_NOTE;?></menu>
+    <menu class='border' style='color:#29AEB9'><?php echo _('Login')_COOKIES_NOTE;?></menu>
 <section class='center loginform'>
     <!-- Login form -->
     <form method="post" action="login-exec.php" autocomplete="off">
-        <h2><?php echo LOGIN_H2;?></h2>
+        <h2><?php echo _('Login')_H2;?></h2>
         <p>
-        <label class='block' for="username"><?php echo USERNAME;?></label>
+        <label class='block' for="username"><?php echo _('Username');?></label>
             <input name="username" type="text" required /><br>
-            <label class='block' for="password"><?php echo PASSWORD;?></label>
+            <label class='block' for="password"><?php echo _('Password');?></label>
             <input name="password" type="password" required /><br>
             <!-- form key -->
             <?php $formKey->output_formkey(); ?>
         </p>
         <div id='loginButtonDiv'>
-        <button type="submit" class='button' name="Submit"><?php echo LOGIN;?></button>
+        <button type="submit" class='button' name="Submit"><?php echo _('Login');?></button>
         </div>
     </form>
-    <p><?php echo LOGIN_FOOTER;?></p>
+    <p><?php echo _('Login')_FOOTER;?></p>
     <div class='toggle_container'>
     <form name='resetPass' method='post' action='reset-pass.php'>
-    <input placeholder='<?php echo LOGIN_FOOTER_PLACEHOLDER;?>' name='email' type='email' required />
-    <button class='button' type="submit" name="Submit"><?php echo LOGIN_FOOTER_BUTTON;?></button>
+    <input placeholder='<?php echo _('Login')_FOOTER_PLACEHOLDER;?>' name='email' type='email' required />
+    <button class='button' type="submit" name="Submit"><?php echo _('Login')_FOOTER_BUTTON;?></button>
     </form>
     </div>
 </section>

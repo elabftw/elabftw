@@ -44,7 +44,7 @@
         ?>
         <!-- SYSADMIN MENU -->
         <span class='strong'>
-        <a id='check_for_updates' href='#'><?php echo CHECK_FOR_UPDATES;?></a><a href='sysconfig.php'><?php echo SYSADMIN_PANEL;?></a>
+        <a id='check_for_updates' href='#'><?php echo _('Check for updates');?></a><a href='sysconfig.php'><?php echo _('Sysadmin panel');?></a>
         <script>
         $('#check_for_updates').click(function() {
             var jqxhr = $.post('check_for_updates.php', function(answer) {
@@ -55,12 +55,12 @@
     <?php
     }
     if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
-        echo "<a href='admin.php'>".ADMIN_PANEL."</a>";
+        echo "<a href='admin.php'>"._('Admin panel')."</a>";
     }
     echo "</span></p><div class='footer_right'>";
-    echo POWERED_BY." <a href='http://www.elabftw.net'>eLabFTW</a><br>";
+    echo _('Powered by')." <a href='http://www.elabftw.net'>eLabFTW</a><br>";
     ?>
-    <?php echo PAGE_GENERATED.' ';?><span class='strong'><?php echo round((microtime(true) - $start), 5);?> seconds</span></div>
+    <?php echo _('Page generated in').' ';?><span class='strong'><?php echo round((microtime(true) - $start), 5);?> seconds</span></div>
 </footer>
 
 <!-- todolist -->

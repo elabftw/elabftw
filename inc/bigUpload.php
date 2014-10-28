@@ -182,7 +182,7 @@ class BigUpload
             try
             {
                 $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-                $pdo = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
+                $pdo = new PDO('mysql:host='.DB_HOST.';dbname='.DB__('Name'), DB_USER, DB__('Password'), $pdo_options);
             }
             catch(Exception $e)
             {

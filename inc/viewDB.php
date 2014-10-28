@@ -52,7 +52,7 @@ $req->execute();
 // got results ?
 $row_count = $req->rowCount();
 if ($row_count === 0) {
-    display_message('error', NOTHING_TO_SHOW);
+    display_message('error', _('Nothing to show with this ID.'));
     require_once 'inc/footer.php';
     exit;
 }
@@ -79,7 +79,7 @@ if ($data['locked'] == 0) {
 } else { // item is locked
     echo "<a href='lock.php?id=".$data['itemid']."&action=unlock&type=items'><img src='img/lock-gray.png' title='unlock item' alt='unlock' /></a>";
 }
-// TAGS
+// _('Tags')
 show_tags($id, 'items_tags');
 // TITLE : click on it to go to edit mode
 ?>
@@ -107,7 +107,7 @@ id='body_view' class='txt'><?php echo stripslashes($data['body'])?></div>
     <?php
 }
 // SHOW USER
-echo LAST_MODIFIED_BY.' '.$data['firstname']." ".$data['lastname'].' '.ON.' '.format_date($data['date']);
+echo _('Last modified by').' '.$data['firstname']." ".$data['lastname'].' '.ON.' '.format_date($data['date']);
 echo "</section>";
 // DISPLAY FILES
 require_once 'inc/display_file.php';

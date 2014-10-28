@@ -27,7 +27,7 @@ session_start();
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
 require_once 'lang/'.get_config('lang').'.php';
-$page_title = CHANGE_PASS_TITLE;
+$page_title = _('Reset password');
 $selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
@@ -44,14 +44,14 @@ if (isset($_GET['key']) && strlen($_GET['key']) === 64 && isset($_GET['userid'])
 <section class='center'>
     <form method="post" class='loginform' action="reset-exec.php">
         <p>
-            <label class='block' for='passwordtxt'><?php echo CHANGE_PASS_PASSWORD;?></label>
-            <input name="password" type="password" title='<?php echo CHANGE_PASS_HELP;?>' id="password" pattern=".{8,}" required />
-            <label class='block' for='cpasswordtxt'><?php echo CHANGE_PASS_REPEAT_PASSWORD;?></label>
-            <input name="cpassword" type="password" title='<?php echo CHANGE_PASS_HELP;?>' id="cpassword" pattern=".{8,}" required />
-            <label class='block' for='complexity'><?php echo CHANGE_PASS_COMPLEXITY;?></label>
+            <label class='block' for='passwordtxt'><?php echo CHANGE_PASS__('Password');?></label>
+            <input name="password" type="password" title='<?php echo _('8 characters minimum');?>' id="password" pattern=".{8,}" required />
+            <label class='block' for='cpasswordtxt'><?php echo CHANGE_PASS_REPEAT__('Password');?></label>
+            <input name="cpassword" type="password" title='<?php echo _('8 characters minimum');?>' id="cpassword" pattern=".{8,}" required />
+            <label class='block' for='complexity'><?php echo _('Complexity');?></label>
             <input id='complexity' disabled />
 
-            <div id="checkPasswordMatchDiv"><p><?php echo PASSWORDS_DONT_MATCH;?></p></div>
+            <div id="checkPasswordMatchDiv"><p><?php echo _('The passwords do not match!');?></p></div>
             <input type="hidden" name="key" value="<?php echo $key;?>" />
             <input type="hidden" name="userid" value="<?php echo $userid;?>" />
         </p>
@@ -68,9 +68,9 @@ function checkPasswordMatch() {
     var confirmPassword = $("#cpassword").val();
 
     if (password != confirmPassword)
-        $("#checkPasswordMatchDiv").html("<p><?php echo PASSWORDS_DONT_MATCH;?></p>");
+        $("#checkPasswordMatchDiv").html("<p><?php echo _('The passwords do not match!');?></p>");
     else
-        $("#checkPasswordMatchDiv").html("<button class='button' type='submit' name='Submit'><?php echo CHANGE_PASS_BUTTON;?></button>");
+        $("#checkPasswordMatchDiv").html("<button class='button' type='submit' name='Submit'><?php echo _('Save new password');?></button>");
 }
 
 $(document).ready(function () {
@@ -82,34 +82,34 @@ $(document).ready(function () {
         if (complexity < 20) {
             $('#complexity').css({'background-color':'red'});
             $('#complexity').css({'color':'white'});
-            $('#complexity').val('<?php echo CHANGE_PASS_WEAK;?>');
+            $('#complexity').val('<?php echo _('Weak password');?>');
             $('#complexity').css({'border-color' : '#e3e3e3'});
             $('#complexity').css({'box-shadow': '0 0  yellow'});
             $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
         } else if (complexity < 30) {
             $('#complexity').css({'color':'#white'});
             $('#complexity').css({'background-color':'orange'});
-            $('#complexity').val('<?php echo CHANGE_PASS_AVERAGE;?>');
+            $('#complexity').val('<?php echo _('Average password');?>');
             $('#complexity').css({'box-shadow': '0 0  yellow'});
             $('#complexity').css({'border-color' : '#e3e3e3'});
             $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
         } else if (complexity < 50) {
             $('#complexity').css({'color':'white'});
-            $('#complexity').val('<?php echo CHANGE_PASS_GOOD;?>');
+            $('#complexity').val('<?php echo _('Good password');?>');
             $('#complexity').css({'background-color':'green'});
             $('#complexity').css({'box-shadow': '0 0  yellow'});
             $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
             $('#complexity').css({'border-color' : '#e3e3e3'});
         } else if (complexity < 99) {
             $('#complexity').css({'color':'black'});
-            $('#complexity').val('<?php echo CHANGE_PASS_STRONG;?>');
+            $('#complexity').val('<?php echo _('Strong password');?>');
             $('#complexity').css({'background-color':'#ffd700'});
             $('#complexity').css({'box-shadow': '0px 0px 15px 5px #ffd700'});
             $('#complexity').css({'border' : 'none'});
             $('#complexity').css({'-moz-box-shadow': '0px 0px 15px 5px #ffd700'});
         } else {
             $('#complexity').css({'color':'#797979'});
-            $('#complexity').val('<?php echo CHANGE_PASS_NO_WAY;?>');
+            $('#complexity').val('<?php echo _('No way that is your real password!');?>');
             $('#complexity').css({'background-color':'#e3e3e3'});
             $('#complexity').css({'box-shadow': '0 0  yellow'});
             $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});

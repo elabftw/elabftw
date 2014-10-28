@@ -124,24 +124,24 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     if ($selected_menu == 'Experiments') {
         echo " class='selected'";
     }
-    echo ">".EXPERIMENTS_TITLE."</a>";
+    echo ">"._('Experiments')."</a>";
     echo "<a href='database.php?mode=show'";
     if ($selected_menu == 'Database') {
         echo " class='selected'";
     }
-    echo ">".DATABASE_TITLE."</a>";
+    echo ">"._('Database')."</a>";
 
     echo "<a href='team.php'";
     if ($selected_menu == 'Team') {
         echo " class='selected'";
     }
-    echo ">".TEAM_TITLE."</a>";
+    echo ">"._('Team')."</a>";
 
     echo "<a href='search.php'";
     if ($selected_menu == 'Search') {
         echo " class='selected'";
     }
-    echo ">".SEARCH."</a>";
+    echo ">"._('Search')."</a>";
 
     echo "<a href='".get_team_config('link_href')."' target='_blank'>".get_team_config('link_name')."</a></span>";
     
@@ -155,9 +155,9 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 if (isset($_SESSION['auth'])) {
     ?>
     <span style='float:right;text-align:right'>
-        <?php echo LOGGED_IN_AS.' ';?><a href='profile.php' title='<?php echo PROFILE_TITLE;?>'><?php echo $_SESSION['username'];?></a><br>
-        <a href='ucp.php'><img src='img/settings.png' alt='<?php echo SETTINGS;?>' title='<?php echo SETTINGS;?>' /></a> | 
-        <a href='logout.php'><img src='img/logout.png' alt='<?php echo LOGOUT;?>' title='<?php echo LOGOUT;?>' /></a>
+        <?php echo _('Howdy').' ';?><a href='profile.php' title='<?php echo _('Profile');?>'><?php echo $_SESSION['username'];?></a><br>
+        <a href='ucp.php'><img src='img/settings.png' alt='<?php echo _('Settings');?>' title='<?php echo _('Settings');?>' /></a> | 
+        <a href='logout.php'><img src='img/logout.png' alt='<?php echo _('Logout');?>' title='<?php echo _('Logout');?>' /></a>
     </span>
     <?php
 }

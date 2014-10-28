@@ -49,42 +49,42 @@ $experiment = $req->fetch();
 
 // Check id is owned by connected user
 if ($experiment['userid'] != $_SESSION['userid']) {
-    display_message('error', EDIT_XP_NO_RIGHTS);
+    display_message('error', _('<strong>Cannot edit:</strong> this experiment is not yours!'));
     require_once 'inc/footer.php';
     exit;
 }
 
 // Check for lock
 if ($experiment['locked'] == 1) {
-    display_message('error', LOCKED_NO_EDIT);
+    display_message('error', _('Edit'));
     require_once 'inc/footer.php';
     exit;
 }
 
 // BEGIN CONTENT
 ?>
-    <menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' class='bot5px' alt='' /> <?php echo SEARCH_BACK;?></a></menu>
+    <menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' class='bot5px' alt='' /> <?php echo _('Back to experiments listing');?></a></menu>
 <section class='box' id='main_section' style='border-left: 6px solid #<?php echo $experiment['color'];?>'>
 <img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','exp', 'experiments.php')" />
 <!-- ADD TAG FORM -->
-<img src='img/tags.png' class='bot5px' alt='tags' /> <h4><?php echo TAGS;?></h4><span class='smallgray'> (<?php echo EDIT_XP_TAGS_HELP;?>)</span>
+<img src='img/tags.png' class='bot5px' alt='tags' /> <h4><?php echo _('Tags');?></h4><span class='smallgray'> (<?php echo _('Click a tag to remove it');?>)</span>
 <div class='tags'>
 <span id='tags_div'>
 <?php
 $sql = "SELECT id, tag FROM experiments_tags WHERE item_id = ".$id;
 $tagreq = $pdo->prepare($sql);
 $tagreq->execute();
-// DISPLAY TAGS
+// DISPLAY _('Tags')
 while ($tags = $tagreq->fetch()) {
     echo "<span class='tag'><a onclick='delete_tag(".$tags['id'].",".$id.")'>";
     echo stripslashes($tags['tag'])."</a></span>";
 } //end while tags
 ?>
 </span>
-<input type="text" name="tag" id="addtaginput" placeholder="<?php echo EDIT_XP_ADD_TAG;?>" />
+<input type="text" name="tag" id="addtaginput" placeholder="<?php echo _('Add a tag');?>" />
 </div>
 <!-- END ADD TAG -->
-<!-- BEGIN EDITXP FORM -->
+<!-- BEGIN _('Edit')XP FORM -->
 <form id="editXP" name="editXP" method="post" action="editXP-exec.php" enctype='multipart/form-data'>
 <!-- form key -->
 <?php // $formKey->output_formkey(); ?>
@@ -94,23 +94,23 @@ while ($tags = $tagreq->fetch()) {
 
     <div class='col-md-4'>
         <img src='img/calendar.png' class='bot5px' title='date' alt='calendar' />
-        <h4><?php echo DATE;?></h4><br>
-        <!-- TODO if firefox has support for it: type = date -->
+        <h4><?php echo _('Date');?></h4><br>
+        <!-- _('_('TODO list') list') if firefox has support for it: type = date -->
         <input name='date' id='datepicker' size='8' type='text' value='<?php echo $experiment['date'];?>' />
     </div>
 
     <div class='col-md-4'>
         <img src='img/eye.png' class='bot5px' alt='visibility' />
-        <h4><?php echo VISIBILITY;?></h4><br>
+        <h4><?php echo _('Visibility');?></h4><br>
         <select id="visibility_form" name="visibility" onchange="update_visibility(this.value)">
-            <option id='option_team' value="team"><?php echo ONLY_THE_TEAM;?></option>
-            <option id='option_user' value="user" <?php if ($experiment['visibility'] === 'user') echo "selected";?>><?php echo ONLY_ME;?></option>
+            <option id='option_team' value="team"><?php echo _('Only the team');?></option>
+            <option id='option_user' value="user" <?php if ($experiment['visibility'] === 'user') echo "selected";?>><?php echo _('Only me');?></option>
         </select>
-        <span id='visibility_msg_div'><?php echo UPDATED;?></span>
+        <span id='visibility_msg_div'><?php echo _('Updated!');?></span>
     </div>
 
     <div class='col-md-4'>
-        <img src='img/status.png' class='bot5px' alt='status' /> <h4><?php echo STATUS;?></h4><br>
+        <img src='img/status.png' class='bot5px' alt='status' /> <h4><?php echo _('Status');?></h4><br>
         <script>
         // this array is used by updateStatus() to get the color of new status 
         var status_arr = Array();
@@ -152,7 +152,7 @@ while ($tags = $tagreq->fetch()) {
 </div>
 
 <br>
-<h4><?php echo TITLE;?></h4><br>
+<h4><?php echo _('Title');?></h4><br>
 <input id='title_input' name='title' rows="1" value="
 <?php
 if (empty($_SESSION['errors'])) {
@@ -164,20 +164,20 @@ if (empty($_SESSION['errors'])) {
 " required />
 
 <br>
-<h4><?php echo EXPERIMENT;?></h4><br>
+<h4><?php echo _('Experiment');?></h4><br>
 <textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">
     <?php echo stripslashes($experiment['body']);?>
 </textarea>
 
-<!-- SUBMIT BUTTON -->
+<!-- _('Submit') BUTTON -->
 <div id='saveButton'>
-    <button type="submit" name="Submit" class='button'><?php echo SAVE_AND_BACK;?></button>
+    <button type="submit" name="Submit" class='button'><?php echo _('Save and go back');?></button>
 </div>
 </form><!-- end editXP form -->
 
 <!-- LINKED ITEMS -->
 <section>
-    <img src='img/link.png' class='bot5px' class='bot5px'> <h4 style='display:inline'><?php echo LINKED_ITEMS;?></h4>
+    <img src='img/link.png' class='bot5px' class='bot5px'> <h4 style='display:inline'><?php echo _('Linked items');?></h4>
     <div id='links_div'>
         <?php
         // DISPLAY LINKED ITEMS
@@ -208,8 +208,8 @@ if (empty($_SESSION['errors'])) {
         }
         ?>
     </div>
-    <p class='inline'><?php echo ADD_LINK;?></p>
-    <input id='linkinput' size='60' type="text" name="link" placeholder="<?php echo ADD_LINK_PLACEHOLDER;?>" />
+    <p class='inline'><?php echo _('Add a link');?></p>
+    <input id='linkinput' size='60' type="text" name="link" placeholder="<?php echo _('from the database');?>" />
 </section>
 <span class='align_right'>
 <?php
@@ -224,9 +224,9 @@ $rev_count = $req->fetch();
 $count = intval($rev_count[0]);
 if ($count > 0) {
     if ($count === 1) {
-        echo $count." ".REVISION_AVAILABLE." <a href='revision.php?exp_id=".$id."'>".SHOW_HISTORY."</a>";
+        echo $count." "._('revision available.')." <a href='revision.php?exp_id=".$id."'>"._('Show history')."</a>";
     } else {
-        echo $count." ".REVISIONS_AVAILABLE." <a href='revision.php?exp_id=".$id."'>".SHOW_HISTORY."</a>";
+        echo $count." "._('revisions available.')." <a href='revision.php?exp_id=".$id."'>"._('Show history')."</a>";
     }
 }
 ?>
@@ -243,7 +243,7 @@ require_once 'inc/display_file.php';
 
 <script>
 // JAVASCRIPT
-// TAGS AUTOCOMPLETE
+// _('Tags') AUTOCOMPLETE
 $(function() {
 		var availableTags = [
 <?php // get all user's tag for autocomplete
@@ -262,7 +262,7 @@ while ($tag = $getalltags->fetch()) {
 	});
 // DELETE TAG
 function delete_tag(tag_id, item_id) {
-    var you_sure = confirm('<?php echo DELETE_THIS;?>');
+    var you_sure = confirm('<?php echo _('Delete this?');?>');
     if (you_sure == true) {
         $.post('delete.php', {
             id: tag_id,
@@ -334,7 +334,7 @@ while ($link = $getalllinks->fetch()) {
 	});
 // DELETE LINK
 function delete_link(id, item_id) {
-    var you_sure = confirm('<?php echo DELETE_THIS;?>');
+    var you_sure = confirm('<?php echo _('Delete this?');?>');
     if (you_sure == true) {
         $.post('delete.php', {
             type: 'link',
@@ -423,7 +423,7 @@ function update_visibility(visibility) {
 
 // READY ? GO !!
 $(document).ready(function() {
-    // KEYBOARD SHORTCUTS
+    // KEYBOARD _('Shortcut')S
     key('<?php echo $_SESSION['prefs']['shortcuts']['create'];?>', function(){location.href = 'create_item.php?type=exp'});
     key('<?php echo $_SESSION['prefs']['shortcuts']['submit'];?>', function(){document.forms['editXP'].submit()});
 
@@ -439,7 +439,7 @@ $(document).ready(function() {
     $("#title").focus(function(){
         $("#title").select();
     });
-    // EDITOR
+    // _('Edit')OR
     tinymce.init({
         mode : "specific_textareas",
         editor_selector : "mceditable",
@@ -486,7 +486,7 @@ $(document).ready(function() {
         echo "
     window.onbeforeunload = function (e) {
           e = e || window.event;
-          return '".CLOSE_WARNING."';
+          return '"._('Do you want to navigate away from this page? Unsaved changes will be lost!')."';
     };";
     }
 ?>

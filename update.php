@@ -99,8 +99,8 @@ require_once 'inc/connect.php';
 
 // START //
 
-// BIG TEAM AND GROUPS UPDATE
-// CREATE table teams
+// BIG _('Team') AND GROUPS UPDATE
+// _('Create') table teams
 $sql = "SHOW TABLES";
 $req = $pdo->prepare($sql);
 $req->execute();
@@ -116,7 +116,7 @@ while ($show = $req->fetch()) {
 // BIG update coming up
 if (!$table_is_here) {
     // create teams table
-    q("CREATE TABLE IF NOT EXISTS `teams` (
+    q("_('Create') TABLE IF NOT EXISTS `teams` (
     `team_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
       `team_name` text NOT NULL,
       `deletable_xp` tinyint(1) NOT NULL,
@@ -153,7 +153,7 @@ if (!$table_is_here) {
     q("ALTER TABLE `experiments_templates` ADD `team` INT(10) unsigned not null after id;");
     q("UPDATE experiments_templates SET team = 1;");
     // create table groups
-    q("CREATE TABLE IF NOT EXISTS `groups` (
+    q("_('Create') TABLE IF NOT EXISTS `groups` (
     `group_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
       `group_name` text NOT NULL,
       `is_sysadmin` tinyint(1) NOT NULL,
@@ -198,7 +198,7 @@ while ($show = $req->fetch()) {
 }
 
 if (!$table_is_here) {
-    q("CREATE TABLE IF NOT EXISTS `logs` (
+    q("_('Create') TABLE IF NOT EXISTS `logs` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
       `type` varchar(255) NOT NULL,
       `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

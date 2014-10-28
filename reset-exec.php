@@ -31,7 +31,7 @@ require_once 'lang/'.get_config('lang').'.php';
 $password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);
 $cpassword = filter_var($_POST['cpassword'], FILTER_SANITIZE_STRING);
 if ($password == $cpassword) {
-    // BUILD PASSWORD
+    // BUILD _('Password')
     // Create salt
     $salt = hash("sha512", uniqid(rand(), true));
     // Create hash
@@ -54,7 +54,7 @@ if ($password == $cpassword) {
         'userid' => $userid));
     if($result){
         dblog('Info', $userid, 'Password was changed for this user.');
-        $msg_arr[] = RESET_SUCCESS;
+        $msg_arr[] = _('New password updated. You can now login.');
         $_SESSION['infos'] = $msg_arr;
         header("location: login.php");
     }

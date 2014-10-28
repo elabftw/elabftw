@@ -52,7 +52,7 @@ $data = $req->fetch();
 
 // Check for lock
 if ($data['locked'] == 1) {
-    display_message('error', LOCKED_NO_EDIT);
+    display_message('error', LOCKED_NO__('Edit'));
     require_once 'inc/footer.php';
     exit;
 }
@@ -64,14 +64,14 @@ if ($data['locked'] == 1) {
     <img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','item', 'database.php')" />
 
     <!-- ADD TAG FORM -->
-    <img src='img/tags.png' class='bot5px' alt='tags' /><label for='addtaginput'><?php echo TAGS;?></label>
+    <img src='img/tags.png' class='bot5px' alt='tags' /><label for='addtaginput'><?php echo _('Tags');?></label>
     <div class='tags'>
         <span id='tags_div'>
         <?php
         $sql = "SELECT id, tag FROM items_tags WHERE item_id = ".$id;
         $tagreq = $pdo->prepare($sql);
         $tagreq->execute();
-        // DISPLAY TAGS
+        // DISPLAY _('Tags')
         while ($tags = $tagreq->fetch()) {
             echo "<span class='tag'><a onclick='delete_tag(".$tags['id'].",".$id.")'>";
             echo stripslashes($tags['tag'])."</a></span>";
@@ -95,7 +95,7 @@ if ($data['locked'] == 1) {
     <input name='item_id' type='hidden' value='<?php echo $id;?>' />
     <img src='img/calendar.png' class='bot5px' title='date' alt='Date :' />
     <label for='datepicker'><?php echo DATE;?></label>
-    <!-- TODO if firefox has support for it: type = date -->
+    <!-- _('_('TODO list') list') if firefox has support for it: type = date -->
     <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date'];?>' />
     <label class='block' for='title_txtarea'><?php echo TITLE;?></label>
     <input id='title_input' name='title' rows="1" value='<?php if (empty($_SESSION['errors'])) {
@@ -103,13 +103,13 @@ if ($data['locked'] == 1) {
     } else {
       echo stripslashes($_SESSION['new_title']);
     } ?>' required />
-        <label for='body_area' class='block'><?php echo INFOS;?></label>
+        <label for='body_area' class='block'><?php echo _('Infos');?></label>
     <textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">
         <?php echo stripslashes($data['body']);?>
     </textarea>
-    <!-- SUBMIT BUTTON -->
+    <!-- _('Submit') BUTTON -->
     <div class='center' id='saveButton'>
-        <button type="submit" name="Submit" class='button'><?php echo SAVE_AND_BACK;?></button>
+        <button type="submit" name="Submit" class='button'><?php echo _('Save')_AND_BACK;?></button>
     </div>
     </form>
     <!-- end edit items form -->
@@ -128,7 +128,7 @@ unset($_SESSION['errors']);
 
 <script>
 // JAVASCRIPT
-// TAGS AUTOCOMPLETE LIST
+// _('Tags') AUTOCOMPLETE LIST
 $(function() {
 		var availableTags = [
 <?php // get all user's tag for autocomplete
@@ -145,7 +145,7 @@ while ($tag = $getalltags->fetch()) {
 	});
 // DELETE TAG
 function delete_tag(tag_id,item_id){
-    var you_sure = confirm('<?php echo DELETE_THIS;?>');
+    var you_sure = confirm('<?php echo _('Delete this?');?>');
     if (you_sure == true) {
         $.post('delete.php', {
             id:tag_id,
@@ -198,7 +198,7 @@ $(document).ready(function() {
     $('#addtaginput').keypress(function (e) {
         addTagOnEnter(e);
     });
-    // EDITOR
+    // _('Edit')OR
     tinymce.init({
         mode : "specific_textareas",
         editor_selector : "mceditable",
@@ -260,7 +260,7 @@ $(document).ready(function() {
         echo "
     window.onbeforeunload = function (e) {
           e = e || window.event;
-          return '".CLOSE_WARNING."';
+          return '"._('Do you want to navigate away from this page? Unsaved changes will be lost!')."';
     };";
     }
 ?>

@@ -28,9 +28,9 @@ require_once 'inc/common.php';
 require_once 'inc/locale.php';
 require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 if ($_SESSION['is_sysadmin'] != 1) {
-    die(NO_ACCESS_DIE);
+    die(_('This section is out of your reach.'));
 }
-$page_title = SYSCONFIG_TITLE;
+$page_title = _('eLabFTW configuration');
 $selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
@@ -40,18 +40,18 @@ $formKey = new formKey();
 ?>
 <menu>
     <ul>
-        <li class='tabhandle' id='tab1'><?php echo SYSCONFIG_TEAMS;?></li>
-        <li class='tabhandle' id='tab2'><?php echo SYSCONFIG_SERVER;?></li>
-        <li class='tabhandle' id='tab3'><?php echo SYSCONFIG_TIMESTAMP;?></li>
-        <li class='tabhandle' id='tab4'><?php echo SYSCONFIG_SECURITY;?></li>
-        <li class='tabhandle' id='tab5'><?php echo EMAIL;?></li>
+        <li class='tabhandle' id='tab1'><?php echo SYSCONFIG__('Team')S;?></li>
+        <li class='tabhandle' id='tab2'><?php echo _('Server');?></li>
+        <li class='tabhandle' id='tab3'><?php echo _('Timestamp');?></li>
+        <li class='tabhandle' id='tab4'><?php echo _('Security');?></li>
+        <li class='tabhandle' id='tab5'><?php echo _('Email');?></li>
     </ul>
 </menu>
 
 <!-- TAB 1 -->
 <div class='divhandle' id='tab1div'>
     <p>
-    <h3><?php echo SYSCONFIG_1_H3_1;?></h3>
+    <h3><?php echo _('Add a new team');?></h3>
     <form method='post' action='admin-exec.php'>
         <input type='text' placeholder='Enter new team name' name='new_team' id='new_team' />
         <button type='submit' class='submit button'>Add</button>
@@ -59,7 +59,7 @@ $formKey = new formKey();
     </p>
 
     <p>
-    <h3><?php echo SYSCONFIG_1_H3_2;?></h3>
+    <h3><?php echo _('Edit existing teams');?></h3>
     <?php
     // a lil' bit of stats can't hurt
     $count_sql="SELECT
@@ -76,10 +76,10 @@ $formKey = new formKey();
     while ($team = $req->fetch()) {
         $count_req->bindParam(':team', $team['team_id']);
         $count_req->execute();
-        $count = $count_req->fetch(PDO::FETCH_NAMED);
+        $count = $count_req->fetch(PDO::FETCH__('Name')D);
         echo " <input type='text' name='edit_team_name' value='".$team['team_name']."' id='team_".$team['team_id']."' />";
         echo " <input id='button_".$team['team_id']."' onClick=\"updateTeam('".$team['team_id']."')\" type='submit' class='button' value='Save' />";
-        echo SYSCONFIG_MEMBERS.": ".$count['totusers']." − ".EXPERIMENTS_TITLE.": ".$count['totxp']." − ".SYSCONFIG_ITEMS.": ".$count['totdb']." − ".SYSCONFIG_CREATED.": ".$team['datetime']."<br>";
+        echo _('Members').": ".$count['totusers']." − "._('Experiments').": ".$count['totxp']." − "._('Items').": ".$count['totdb']." − ".SYSCONFIG__('Create')D.": ".$team['datetime']."<br>";
     }
     ?>
     </p>
@@ -88,7 +88,7 @@ $formKey = new formKey();
 <!-- TAB 2 -->
 <div class='divhandle' id='tab2div'>
     <form method='post' action='admin-exec.php'>
-        <h3><?php echo LANGUAGE;?></h3>
+        <h3><?php echo _('Language');?></h3>
             <select id='lang' name="lang">
                 <option
                 <?php
@@ -107,8 +107,8 @@ $formKey = new formKey();
                 if (get_config('lang') === 'zh-CN') {
                     echo ' selected ';}?>value="zh-CN">zh-CN</option>
             </select>
-        <h3><?php echo SYSCONFIG_2_H3;?></h3>
-        <label for='debug'><?php echo SYSCONFIG_DEBUG;?></label>
+        <h3><?php echo _('Under the hood');?></h3>
+        <label for='debug'><?php echo _('Activate debug mode:');?></label>
         <select name='debug' id='debug'>
             <option value='1'<?php
                 if (get_config('debug') == 1) { echo " selected='selected'"; } ?>
@@ -117,24 +117,24 @@ $formKey = new formKey();
                     if (get_config('debug') == 0) { echo " selected='selected'"; } ?>
             ><?php echo _('No');?></option>
         </select>
-        <p class='smallgray'><?php echo SYSCONFIG_DEBUG_HELP;?></p>
-        <label for='proxy'><?php echo SYSCONFIG_PROXY;?></label>
+        <p class='smallgray'><?php echo _('Activate debug mode:')_HELP;?></p>
+        <label for='proxy'><?php echo _('Address of the proxy:');?></label>
         <input type='text' value='<?php echo get_config('proxy');?>' name='proxy' id='proxy' />
-        <p class='smallgray'><?php echo SYSCONFIG_PROXY_HELP;?></p>
-        <label for='path'><?php echo SYSCONFIG_PATH;?></label>
+        <p class='smallgray'><?php echo _('Address of the proxy:')_HELP;?></p>
+        <label for='path'><?php echo _('Full path to the install folder:');?></label>
         <input type='text' value='<?php echo get_config('path');?>' name='path' id='path' />
-        <p class='smallgray'><?php echo SYSCONFIG_PATH_HELP;?></p>
+        <p class='smallgray'><?php echo _('Full path to the install folder:')_HELP;?></p>
         <div class='center'>
-            <button type='submit' name='submit_config' class='submit button'><?php echo SAVE;?></button>
+            <button type='submit' name='submit_config' class='submit button'><?php echo _('Save');?></button>
         </div>
     </form>
 </div>
 
 <!-- TAB 3 -->
 <div class='divhandle' id='tab3div'>
-    <h3><?php echo SYSCONFIG_3_H3;?></h3>
+    <h3><?php echo _('Universign timestamping configuration');?></h3>
     <form method='post' action='admin-exec.php'>
-        <label for='stampshare'><?php echo SYSCONFIG_STAMPSHARE;?></label>
+        <label for='stampshare'><?php echo _('The teams can use the credentials below to timestamp:');?></label>
         <select name='stampshare' id='stampshare'>
             <option value='1'<?php
                 if (get_config('stampshare') == 1) { echo " selected='selected'"; } ?>
@@ -143,24 +143,24 @@ $formKey = new formKey();
                     if (get_config('stampshare') == 0) { echo " selected='selected'"; } ?>
             ><?php echo _('No');?></option>
         </select>
-        <p class='smallgray'><?php echo SYSCONFIG_STAMPSHARE_HELP;?></p>
-        <label for='stamplogin'><?php echo SYSCONFIG_STAMPLOGIN_HELP;?></label>
+        <p class='smallgray'><?php echo _('The teams can use the credentials below to timestamp:')_HELP;?></p>
+        <label for='stamplogin'><?php echo SYSCONFIG_STAMP_('Login')_HELP;?></label>
         <input type='email' value='<?php echo get_config('stamplogin');?>' name='stamplogin' id='stamplogin' />
-        <p class='smallgray'><?php echo SYSCONFIG_STAMPLOGIN_HELP;?></p>
-        <label for='stamppass'><?php echo SYSCONFIG_STAMPPASS;?></label>
+        <p class='smallgray'><?php echo SYSCONFIG_STAMP_('Login')_HELP;?></p>
+        <label for='stamppass'><?php echo _('Password for external timestamping service:');?></label>
         <input type='password' value='<?php echo get_config('stamppass');?>' name='stamppass' id='stamppass' />
-        <p class='smallgray'><?php echo SYSCONFIG_STAMPPASS_HELP;?></p>
+        <p class='smallgray'><?php echo _('Password for external timestamping service:')_HELP;?></p>
         <div class='center'>
-        <button type='submit' name='submit_config' class='submit button'><?php echo SAVE;?></button>
+        <button type='submit' name='submit_config' class='submit button'><?php echo _('Save');?></button>
         </div>
     </form>
 </div>
 
 <!-- TAB 4 -->
 <div class='divhandle' id='tab4div'>
-    <h3><?php echo SYSCONFIG_4_H3;?></h3>
+    <h3><?php echo _('Security settings');?></h3>
     <form method='post' action='admin-exec.php'>
-    <label for='admin_validate'><?php echo SYSCONFIG_ADMIN_VALIDATE;?></label>
+    <label for='admin_validate'><?php echo _('Users need validation by admin after registration:');?></label>
         <select name='admin_validate' id='admin_validate'>
             <option value='1'<?php
                 if (get_config('admin_validate') == 1) { echo " selected='selected'"; } ?>
@@ -169,49 +169,49 @@ $formKey = new formKey();
                     if (get_config('admin_validate') == 0) { echo " selected='selected'"; } ?>
             ><?php echo _('No');?></option>
         </select>
-        <p class='smallgray'><?php echo SYSCONFIG_ADMIN_VALIDATE_HELP;?></p>
-        <label for='login_tries'><?php echo SYSCONFIG_LOGIN_TRIES;?></label>
+        <p class='smallgray'><?php echo _('Users need validation by admin after registration:')_HELP;?></p>
+        <label for='login_tries'><?php echo SYSCONFIG__('Login')_TRIES;?></label>
         <input type='text' value='<?php echo get_config('login_tries');?>' name='login_tries' id='login_tries' />
-        <p class='smallgray'><?php echo SYSCONFIG_LOGIN_TRIES_HELP;?></p>
-        <label for='ban_time'><?php echo SYSCONFIG_BAN_TIME;?></label>
+        <p class='smallgray'><?php echo SYSCONFIG__('Login')_TRIES_HELP;?></p>
+        <label for='ban_time'><?php echo _('Time of the ban after failed login attempts (in minutes:');?></label>
         <input type='text' value='<?php echo get_config('ban_time');?>' name='ban_time' id='ban_time' />
-        <p class='smallgray'><?php echo SYSCONFIG_BAN_TIME_HELP;?></p>
+        <p class='smallgray'><?php echo _('Time of the ban after failed login attempts (in minutes:')_HELP;?></p>
         <div class='center'>
-            <button type='submit' name='submit_config' class='submit button'><?php echo SAVE;?></button>
+            <button type='submit' name='submit_config' class='submit button'><?php echo _('Save');?></button>
         </div>
     </form>
 </div>
 
 <!-- TAB 5 -->
 <div class='divhandle' id='tab5div'>
-    <h3><?php echo SYSCONFIG_5_H3;?></h3>
+    <h3><?php echo _('SMTP settings');?></h3>
     <form method='post' action='admin-exec.php'>
-        <p><?php echo SYSCONFIG_5_HELP;?></p>
+        <p><?php echo _('Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mandrill.com (or gmail account and add the infos here.');?></p>
         <p>
-        <label for='smtp_address'><?php echo SYSCONFIG_SMTP_ADDRESS;?></label>
+        <label for='smtp_address'><?php echo _('Address of the SMTP server:');?></label>
         <input type='text' value='<?php echo get_config('smtp_address');?>' name='smtp_address' id='smtp_address' />
         </p>
         <p>
-        <span class='smallgray'><?php echo SYSCONFIG_SMTP_ADDRESS_HELP;?></span>
-        <label for='smtp_encryption'><?php echo SYSCONFIG_SMTP_ENCRYPTION;?></label>
+        <span class='smallgray'><?php echo _('Address of the SMTP server:')_HELP;?></span>
+        <label for='smtp_encryption'><?php echo _('SMTP encryption (can be TLS or STARTSSL:');?></label>
         <input type='text' value='<?php echo get_config('smtp_encryption');?>' name='smtp_encryption' id='smtp_encryption' />
         </p>
         <p>
-        <span class='smallgray'><?php echo SYSCONFIG_SMTP_ENCRYPTION_HELP;?></span>
-        <label for='smtp_port'><?php echo SYSCONFIG_SMTP_PORT;?></label>
+        <span class='smallgray'><?php echo _('SMTP encryption (can be TLS or STARTSSL:')_HELP;?></span>
+        <label for='smtp_port'><?php echo _('SMTP Port:');?></label>
         <input type='text' value='<?php echo get_config('smtp_port');?>' name='smtp_port' id='smtp_port' />
         </p>
         <p>
-        <span class='smallgray'><?php echo SYSCONFIG_SMTP_PORT_HELP;?></span>
-        <label for='smtp_username'><?php echo SYSCONFIG_SMTP_USERNAME;?></label>
+        <span class='smallgray'><?php echo _('SMTP Port:')_HELP;?></span>
+        <label for='smtp_username'><?php echo SYSCONFIG_SMTP__('Username');?></label>
         <input type='text' value='<?php echo get_config('smtp_username');?>' name='smtp_username' id='smtp_username' />
         </p>
         <p>
-        <label for='smtp_password'><?php echo SYSCONFIG_SMTP_PASSWORD;?></label>
+        <label for='smtp_password'><?php echo SYSCONFIG_SMTP__('Password');?></label>
         <input type='password' value='<?php echo get_config('smtp_password');?>' name='smtp_password' id='smtp_password' />
         </p>
         <div class='center'>
-            <button type='submit' name='submit_config' class='submit button'><?php echo SAVE;?></button>
+            <button type='submit' name='submit_config' class='submit button'><?php echo _('Save');?></button>
         </div>
     </form>
 </div>
@@ -236,7 +236,7 @@ function updateTeam(team_id) {
         team_name : new_team_name,
         }
     }).done(function() {
-        document.getElementById('button_'+team_id).value = '<?php echo SAVED?>';
+        document.getElementById('button_'+team_id).value = '<?php echo _('Save')D?>';
         document.getElementById('button_'+team_id).disabled = true;
     });
 }

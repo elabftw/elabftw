@@ -55,7 +55,7 @@ if ($_GET['type'] === 'experiments') {
         // Redirect to the viewXP
         $expid = $data['item_id'];
         $msg_arr = array();
-        $msg_arr [] = DELETE_FILE_FILE.' '.$data['real_name'].' '.DELETE_FILE_DELETED;
+        $msg_arr [] = _('File').' '.$data['real_name'].' '._('deleted successfully');
         $_SESSION['infos'] = $msg_arr;
         header("location: experiments.php?mode=edit&id=$expid");
     } else {
@@ -81,7 +81,7 @@ if ($_GET['type'] === 'experiments') {
 
     // Redirect to the viewDB
     $msg_arr = array();
-    $msg_arr [] = DELETE_FILE_FILE.' '.$data['real_name'].' '.DELETE_FILE_DELETED;
+    $msg_arr [] = _('File').' '.$data['real_name'].' '._('deleted successfully');
     $_SESSION['infos'] = $msg_arr;
     $item_id = $data['item_id'];
     header("location: database.php?mode=edit&id=$item_id");

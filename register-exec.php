@@ -41,7 +41,7 @@ $email = '';
 $passwordHash = '';
 $salt = '';
 
-// Check USERNAME (sanitize and validate)
+// Check _('Username') (sanitize and validate)
 if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
     // Check for duplicate username in DB
@@ -50,13 +50,13 @@ if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
     $numrows = $result->rowCount();
     if ($result) {
         if ($numrows > 0) {
-            $msg_arr[] = REGISTER_USERNAME_USED;
+            $msg_arr[] = REGISTER__('Username')_USED;
             $errflag = true;
         }
         $result = null;
     }
 } else {
-    $msg_arr[] = FIELD_MISSING;
+    $msg_arr[] = _('A mandatory field is missing!');
     $errflag = true;
 }
 // Check team (should be an int)
@@ -66,29 +66,29 @@ if (isset($_POST['team']) &&
     $team = $_POST['team'];
 } else {
     $team = '';
-    $msg_arr[] = FIELD_MISSING;
+    $msg_arr[] = _('A mandatory field is missing!');
     $errflag = true;
 }
-// Check FIRSTNAME (sanitize, and make it look like Firstname)
+// Check _('Firstname') (sanitize, and make it look like Firstname)
 if ((isset($_POST['firstname'])) && (!empty($_POST['firstname']))) {
     // Put everything lowercase and first letter uppercase
     $firstname = ucwords(strtolower(filter_var($_POST['firstname'], FILTER_SANITIZE_STRING)));
 } else {
-    $msg_arr[] = FIELD_MISSING;
+    $msg_arr[] = _('A mandatory field is missing!');
     $errflag = true;
 }
-// Check LASTNAME (sanitize, and make it look like LASTNAME)
+// Check _('Lastname') (sanitize, and make it look like _('Lastname'))
 if ((isset($_POST['lastname'])) && (!empty($_POST['lastname']))) {
     $lastname = strtoupper(filter_var($_POST['lastname'], FILTER_SANITIZE_STRING));
 } else {
-    $msg_arr[] = FIELD_MISSING;
+    $msg_arr[] = _('A mandatory field is missing!');
     $errflag = true;
 }
 
-// Check EMAIL (sanitize and validate)
+// Check _('Email') (sanitize and validate)
 if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
-    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $email = filter_var($_POST['email'], FILTER_SANITIZE__('Email'));
+    if (!filter_var($email, FILTER_VALIDATE__('Email'))) {
         $msg_arr[] = 'Email seems to be invalid';
         $errflag = true;
     } else {
@@ -98,18 +98,18 @@ if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
         $numrows = $result->rowCount();
         if ($result) {
             if ($numrows > 0) {
-                $msg_arr[] = REGISTER_EMAIL_USED;
+                $msg_arr[] = REGISTER__('Email')_USED;
                 $errflag = true;
             }
             $result= null;
         }
     }
 } else {
-    $msg_arr[] = FIELD_MISSING;
+    $msg_arr[] = _('A mandatory field is missing!');
     $errflag = true;
 }
 
-// Check PASSWORDS
+// Check _('Password')S
 if ((isset($_POST['cpassword'])) && (!empty($_POST['cpassword']))) {
     if ((isset($_POST['password'])) && (!empty($_POST['password']))) {
         // Create salt
@@ -118,20 +118,20 @@ if ((isset($_POST['cpassword'])) && (!empty($_POST['cpassword']))) {
         $passwordHash = hash("sha512", $salt.$_POST['password']);
         // Check for password length
         if (strlen($_POST['password']) <= 7) {
-            $msg_arr[] = PASSWORD_TOO_SHORT;
+            $msg_arr[] = _('Password must contain at least 8 characters.');
             $errflag = true;
         }
         // Check confirm password is same as password
         if (strcmp($_POST['password'], $_POST['cpassword']) != 0) {
-            $msg_arr[] = PASSWORDS_DONT_MATCH;
+            $msg_arr[] = _('The passwords do not match!');
             $errflag = true;
         }
     } else {
-        $msg_arr[] = FIELD_MISSING;
+        $msg_arr[] = _('A mandatory field is missing!');
         $errflag = true;
     }
 } else {
-    $msg_arr[] = FIELD_MISSING;
+    $msg_arr[] = _('A mandatory field is missing!');
     $errflag = true;
 }
 
@@ -235,13 +235,13 @@ if ($result) {
         // Create the message
         $message = Swift_Message::newInstance()
         // Give the message a subject
-        ->setSubject(EMAIL_NEW_USER_SUBJECT)
+        ->setSubject(_('Email')_NEW_USER_SUBJECT)
         // Set the From address with an associative array
         ->setFrom(array(get_config('smtp_username') => get_config('smtp_username')))
         // Set the To addresses with an associative array
         ->setTo(array($admin['email'] => 'Admin eLabFTW'))
         // Give it a body
-        ->setBody(REGISTER_EMAIL_BODY.EMAIL_FOOTER);
+        ->setBody(REGISTER__('Email')_BODY._('Email')_FOOTER);
         $transport = Swift_SmtpTransport::newInstance(
             get_config('smtp_address'),
             get_config('smtp_port'),
@@ -250,19 +250,19 @@ if ($result) {
         ->setUsername(get_config('smtp_username'))
         ->setPassword(get_config('smtp_password'));
         $mailer = Swift_Mailer::newInstance($transport);
-        // SEND EMAIL
+        // SEND _('Email')
         try {
             $mailer->send($message);
         } catch (Exception $e) {
             dblog('Error', 'smtp', $e->getMessage());
-            $msg_arr[] = REGISTER_EMAIL_FAILED;
+            $msg_arr[] = REGISTER__('Email')_FAILED;
             $_SESSION['errors'] = $msg_arr;
             header('Location: register.php');
             exit;
         }
-        $msg_arr[] = REGISTER_SUCCESS_NEED_VALIDATION;
+        $msg_arr[] = _('Registration successful :<br>Your account must now be validated by an admin.<br>You will receive an email when it is done.');
     } else {
-        $msg_arr[] = REGISTER_SUCCESS;
+        $msg_arr[] = _('Registration successful :<br>Welcome to eLabFTW o/');
     }
     $_SESSION['infos'] = $msg_arr;
     $_SESSION['username'] = $username;

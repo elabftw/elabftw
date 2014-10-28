@@ -34,7 +34,7 @@ if (isset($_GET['type']) && $_GET['type'] == 'zip') {
     $type = '';
 }
 
-// LONG_NAME
+// LONG__('Name')
 if (!isset($_GET['f']) || empty($_GET['f'])) {
     die('What are you doing, Dave ?');
 }
@@ -45,7 +45,7 @@ if (strpos($_GET['f'], "\0") != false) {
 // Remove any path info to avoid hacking by adding relative path, etc.
 $long_filename = basename($_GET['f']);
 
-// REAL_NAME
+// REAL__('Name')
 if (!isset($_GET['name']) || empty($_GET['name'])) {
     $filename = $long_filename;
 } else {

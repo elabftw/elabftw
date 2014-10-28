@@ -49,7 +49,7 @@ if (strlen(get_team_config('stamplogin')) > 2) {
     $password = get_config('stamppass');
 } else {
 
-    $msg_arr[] = TIMESTAMP_ERROR;
+    $msg_arr[] = _('There was an error in the timestamping. Login credentials probably wrong or no more credits.');
     $_SESSION['errors'] = $msg_arr;
     header("Location:experiments.php?mode=view&id=$id");
     exit;
@@ -95,11 +95,11 @@ try {
     curl_close($ch);
 
     if (!$token) {
-            throw new Exception(TIMESTAMP_ERROR);
+            throw new Exception(_('There was an error in the timestamping. Login credentials probably wrong or no more credits.'));
         }
     } catch (Exception $e) {
         dblog("Error", $_SESSION['userid'], "File: ".$e->getFile().", line ".$e->getLine().": ".$e->getMessage());
-        $msg_arr[] = TIMESTAMP_USER_ERROR;
+        $msg_arr[] = _('There was an error with the timestamping. Experiment is NOT timestamped. Error has been logged.');
         $_SESSION['errors'] = $msg_arr;
         header("Location:experiments.php?mode=view&id=$id");
         exit;
@@ -113,7 +113,7 @@ try {
     file_put_contents($file_path, $token);
 } catch (Exception $e) {
     dblog('Error', $_SESSION['userid'], $e->getMessage());
-    $msg_arr[] = TIMESTAMP_USER_ERROR;
+    $msg_arr[] = _('There was an error with the timestamping. Experiment is NOT timestamped. Error has been logged.');
     $_SESSION['errors'] = $msg_arr;
     header("Location:experiments.php?mode=view&id=$id");
     exit;

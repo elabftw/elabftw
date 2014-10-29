@@ -71,7 +71,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
         if ($table === 'experiments') {
             // now let's get the URL so we can have a nice link in the csv
-            $url = 'https://'.$_SERVER['SERVER__('Name')'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+            $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
             $url = str_replace('make_csv.php', 'experiments.php', $url);
             $url .= "?mode=view&id=".$csv_data['id'];
             $list[] = array(
@@ -86,7 +86,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
         } else { // items
             // now let's get the URL so we can have a nice link in the csv
-            $url = 'https://'.$_SERVER['SERVER__('Name')'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+            $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
             $url = str_replace('make_csv.php', 'database.php', $url);
             $url .= "?mode=view&id=".$csv_data['id'];
             $list[] = array(

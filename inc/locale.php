@@ -7,5 +7,8 @@ if (isset($_SESSION['prefs']['lang'])) {
 $domain = 'messages';
 putenv("LC_ALL=$locale");
 $res = setlocale(LC_ALL, $locale);
-bindtextdomain($domain, ELAB_PATH."locale");
+# uncomment this line to remove cache from gettext (need to do :
+# "cd locale;ln -s nocache ." before)
+#bindtextdomain($domain, ELAB_PATH."locale/nocache");
+bindtextdomain($domain, ELAB_ROOT."locale");
 textdomain($domain);

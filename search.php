@@ -371,7 +371,7 @@ if (isset($_GET)) {
 ?>
 
             <div class='align_right'><a name='anchor'></a>
-            <p class='inline'><?php echo _('Search')_EXPORT;?> </p>
+            <p class='inline'><?php echo _('Export this result:');?> </p>
             <a href='make_zip.php?id=<?php echo $results_id_str;?>&type=items'>
             <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>
 
@@ -389,7 +389,7 @@ if (isset($_GET)) {
                 showDB($id, $_SESSION['prefs']['display']);
             }
         } else { // no results
-            display_message('error_nocross', _('Search')_SORRY);
+            display_message('error_nocross', _("Sorry. I couldn't find anything :("));
         }
     }
     }

@@ -182,7 +182,7 @@ class BigUpload
             try
             {
                 $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-                $pdo = new PDO('mysql:host='.DB_HOST.';dbname='.DB__('Name'), DB_USER, DB__('Password'), $pdo_options);
+                $pdo = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
             }
             catch(Exception $e)
             {
@@ -194,6 +194,7 @@ class BigUpload
                 'real_name' => $realname,
                 'long_name' => $longname,
                 // comment can be edited after upload
+                // not i18n friendly because it is used somewhere else (not a valid reason, but for the moment that will do)
                 'comment' => 'Click to add a comment',
                 'item_id' => $item_id,
                 'userid' => $_SESSION['userid'],

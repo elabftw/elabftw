@@ -275,6 +275,17 @@ if (strpos(get_config('lang'), '-')) {
     q("UPDATE users SET `lang` = 'en_GB';");
 }
 
+// add elab_root in config.php
+if (!defined(ELAB_ROOT)) {
+    $path = substr(realpath(__FILE__), 0, -10);
+    $text2add = "define('ELAB_ROOT', '".$path."');";
+    if (file_put_contents('config.php', $text2add, FILE_APPEND)) {
+        echo ">>> Added constant ELAB_ROOT in file config.php\n";
+    } else {
+        echo "!!! Error writing file config.php. Please fix permissions for server to write to it. Or edit it yoursefl (look at config.php-EXAMPLE)";
+    }
+}
+
 
 // END
 echo "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)\n";

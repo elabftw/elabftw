@@ -3,3 +3,5 @@ define('DB_HOST', 'localhost');
 define('DB_NAME', 'elabftw');
 define('DB_USER', 'elabftw');
 define('DB_PASSWORD', 'YOUR PASSWORD');
+# keep the / at the end
+define('ELAB_ROOT', '/path/to/elabftw/');

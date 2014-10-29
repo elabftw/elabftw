@@ -27,7 +27,7 @@ session_start();
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
 require_once 'vendor/swiftmailer/swiftmailer/lib/swift_required.php';
-require_once 'lang/'.get_config('lang').'.php';
+require_once 'inc/locale.php';
 
 $errflag = false;
 

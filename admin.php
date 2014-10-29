@@ -26,7 +26,6 @@
 /* admin.php - for administration of the elab */
 require_once 'inc/common.php';
 require_once 'inc/locale.php';
-require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
 if ($_SESSION['is_admin'] != 1) {
     die(ADMIN_DIE);
 }

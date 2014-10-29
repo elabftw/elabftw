@@ -96,7 +96,7 @@ if ($data['timestamped'] == 1) {
     $uploads = $req_stamper->fetch();
 
     $date_arr = explode(' ', $data['timestampedwhen']);
-    display_message('info_nocross', _('Experiment was timestamped by')." ".$timestamper['firstname']." ".$timestamper['lastname']." ".ON." ".$date_arr[0]." ".AT." ".$date_arr[1]."
+    display_message('info_nocross', _('Experiment was timestamped by')." ".$timestamper['firstname']." ".$timestamper['lastname']." "._('on')." ".$date_arr[0]." "._('at')." ".$date_arr[1]."
         <a href='uploads/".$uploads['long_name']."'><img src='img/pdf.png' class='bot5px' title='Download timestamped pdf' alt='pdf' /></a>");
     unset($timestamper);
     unset($uploads);

@@ -47,6 +47,7 @@ if (strlen(get_team_config('stamplogin')) > 2) {
 
     $login = get_config('stamplogin');
     $password = get_config('stamppass');
+
 } else {
 
     $msg_arr[] = _('There was an error in the timestamping. Login credentials probably wrong or no more credits.');

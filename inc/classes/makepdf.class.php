@@ -112,7 +112,7 @@ class MakePdf {
             Made by : ".$firstname." ".$lastname."
             <hr><p>".$body."</p>";
         // Construct URL
-        $url = 'https://'.$_SERVER['SERVER__('Name')'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+        $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
 
         // ATTACHED FILES
         // SQL to get attached files

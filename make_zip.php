@@ -48,7 +48,7 @@ if ($_GET['type'] === 'experiments') {
 }
 
 // _('Create') URL
-$url = 'https://'.$_SERVER['SERVER__('Name')'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+$url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
 
 // Check id is valid and assign it to $id
 if (isset($_GET['id']) && !empty($_GET['id'])) {
@@ -60,7 +60,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
     $zipfile = 'uploads/export/'.$zipname."-".hash("sha512", uniqid(rand(), true)).".zip";
 
     $zip = new ZipArchive;
-    $res = $zip->open($zipfile, ZipArchive::_('Create'));
+    $res = $zip->open($zipfile, ZipArchive::CREATE);
     if ($res === true) {
         foreach ($id_arr as $id) {
             // MAIN LOOP

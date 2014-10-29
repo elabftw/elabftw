@@ -52,7 +52,7 @@ $data = $req->fetch();
 
 // Check for lock
 if ($data['locked'] == 1) {
-    display_message('error', LOCKED_NO__('Edit'));
+    display_message('error', _('<strong>This item is locked.</strong> You cannot edit it.'));
     require_once 'inc/footer.php';
     exit;
 }
@@ -71,7 +71,7 @@ if ($data['locked'] == 1) {
         $sql = "SELECT id, tag FROM items_tags WHERE item_id = ".$id;
         $tagreq = $pdo->prepare($sql);
         $tagreq->execute();
-        // DISPLAY _('Tags')
+        // DISPLAY TAGS
         while ($tags = $tagreq->fetch()) {
             echo "<span class='tag'><a onclick='delete_tag(".$tags['id'].",".$id.")'>";
             echo stripslashes($tags['tag'])."</a></span>";
@@ -94,10 +94,10 @@ if ($data['locked'] == 1) {
     </div><!-- END STAR RATING -->
     <input name='item_id' type='hidden' value='<?php echo $id;?>' />
     <img src='img/calendar.png' class='bot5px' title='date' alt='Date :' />
-    <label for='datepicker'><?php echo DATE;?></label>
+    <label for='datepicker'><?php echo _('Date');?></label>
     <!-- _('_('TODO list') list') if firefox has support for it: type = date -->
     <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date'];?>' />
-    <label class='block' for='title_txtarea'><?php echo TITLE;?></label>
+    <label class='block' for='title_txtarea'><?php echo _('Title');?></label>
     <input id='title_input' name='title' rows="1" value='<?php if (empty($_SESSION['errors'])) {
       echo stripslashes($data['title']);
     } else {

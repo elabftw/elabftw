@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // do the check and display message if both versions differ
     // we check also the size of latest version, or we get the message if it couldn't connect
     if (strlen($latest_version) != 40) { // couldn't connect
-        echo _('Install git to check for updates.')HUB;
+        echo _('Install git to check for updates.');
         exit;
     }
     if ($latest_version != $current_version) {

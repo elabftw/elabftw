@@ -107,7 +107,7 @@ id='body_view' class='txt'><?php echo stripslashes($data['body'])?></div>
     <?php
 }
 // SHOW USER
-echo _('Last modified by').' '.$data['firstname']." ".$data['lastname'].' '.ON.' '.format_date($data['date']);
+echo _('Last modified by').' '.$data['firstname']." ".$data['lastname'].' '._('on').' '.format_date($data['date']);
 echo "</section>";
 // DISPLAY FILES
 require_once 'inc/display_file.php';

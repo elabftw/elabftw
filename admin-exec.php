@@ -232,7 +232,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {
         $stampshare = 0;
     }
     if (isset($_POST['stamplogin'])) {
-        $stamplogin = filter_var($_POST['stamplogin'], FILTER_VALIDATE__('Email'));
+        $stamplogin = filter_var($_POST['stamplogin'], FILTER_VALIDATE_EMAIL);
     } else {
         $stamplogin = '';
     }

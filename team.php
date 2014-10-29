@@ -105,16 +105,16 @@ $totals = $count_req->fetch(PDO::FETCH_ASSOC);
 <div class='divhandle' id='tab3div'>
     <p>
         <ul>
-        <li class='tip'><?php echo _("You can use a TODOlist by pressing 't'");?></li>
-        <li class='tip'><?php printf(_('You can have experiments templates (%sControl Panel%s)'), "<a href='ucp.php?tab=3'>", "</a>");?></li>
-        <li class='tip'><?php echo _('Team');?></li>
-        <li class='tip'><?php echo _('Team');?></li>
-        <li class='tip'><?php echo _('Team');?></li>
-        <li class='tip'><?php echo _('Team');?></li>
-        <li class='tip'><?php echo _('Team');?></li>
-        <li class='tip'><?php echo _('Team');?></li>
-        <li class='tip'><?php echo _('Team');?></li>
-        <li class='tip'><?php echo _('Team');?></li>
+        <li class='tip'><?php echo _("You can use a TODOlist by pressing 't'.");?></li>
+        <li class='tip'><?php printf(_('You can have experiments templates (%sControl Panel%s).'), "<a href='ucp.php?tab=3'>", "</a>");?></li>
+        <li class='tip'><?php printf(_('The admin of a team can edit the status and the types of items available (%sAdmin Panel%s).'), "<a href='admin.php?tab=4'>", "</a>");?></li>
+        <li class='tip'><?php echo _('If you press Ctrl Shift D in the editor, the date will appear under the cursor.');?></li>
+        <li class='tip'><?php printf(_('Custom shortcuts are available (%sControl Panel%s).'), "<a href='ucp.php?tab=2'>", "</a>");?></li>
+        <li class='tip'><?php echo _('You can duplicate experiments in one click.');?></li>
+        <li class='tip'><?php echo _('Click a tag to list all items with this tag.');?></li>
+        <li class='tip'><?php printf(_('Register an account with %sUniversign%s to start timestamping experiments.'), "<a href='https://www.universign.eu/en/timestamp'>", "</a>");?></li>
+        <li class='tip'><?php echo _('Only a locked experiment can be timestamped.');?></li>
+        <li class='tip'><?php echo _('Once timestamped an experiment cannot be unlocked or modified. Only comments can be added.');?></li>
         </ul>
     </p>
 </div>

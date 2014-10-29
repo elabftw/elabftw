@@ -20,14 +20,14 @@
 session_start();
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
-require_once 'lang/'.get_config('lang').'.php';
+require_once 'inc/locale.php';
 $page_title = _('Register');
 $selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 // Check if we're logged in
 if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
-    display_message('error', _('Please <a style='alert-link' href='logout.php'>logout</a> before you register another account.'));
+    display_message('error', sprintf(_('Please %slogout%s before you register another account.'), "<a style='alert-link' href='logout.php'>", "</a>"));
     require_once 'inc/footer.php';
     exit;
 }
@@ -36,7 +36,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
 <script src="js/jquery.complexify.js/jquery.complexify.min.js"></script>
 <script src="js/jquery.complexify.js/jquery.complexify.banlist.js"></script>
 
-<menu class='border'><a href='login.php'><img src='img/arrow-left-blue.png' alt='' /> <?php echo REGISTER_BACK_TO__('Login');?></a></menu>
+<menu class='border'><a href='login.php'><img src='img/arrow-left-blue.png' alt='' /> <?php echo _('go back to login page');?></a></menu>
 <section class='center'>
     <h2><?php echo _('Create your account');?></h2><br><br>
     <!-- Register form -->
@@ -86,11 +86,11 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
 
         <div class='row'>
             <div class='col-md-4'>
-                <label class='block' for="cpassword"><?php echo REGISTER_CONFIRM__('Password');?></label>
+                <label class='block' for="cpassword"><?php echo _('Confirm password');?></label>
                 <input name="cpassword" type="password" id="cpassword" pattern=".{8,}" required />
             </div>
             <div class='col-md-4'>
-                <label class='block' for='comlexity'><?php echo REGISTER__('Password')_COMPLEXITY;?></label>
+                <label class='block' for='comlexity'><?php echo _('Password complexity');?></label>
                 <input id="complexity" disabled />
             </div>
         </div>

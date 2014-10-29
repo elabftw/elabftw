@@ -56,7 +56,7 @@ if ($experiment['userid'] != $_SESSION['userid']) {
 
 // Check for lock
 if ($experiment['locked'] == 1) {
-    display_message('error', _('Edit'));
+    display_message('error', _('<strong>This item is locked.</strong> You cannot edit it.'));
     require_once 'inc/footer.php';
     exit;
 }
@@ -74,7 +74,7 @@ if ($experiment['locked'] == 1) {
 $sql = "SELECT id, tag FROM experiments_tags WHERE item_id = ".$id;
 $tagreq = $pdo->prepare($sql);
 $tagreq->execute();
-// DISPLAY _('Tags')
+// DISPLAY TAGS
 while ($tags = $tagreq->fetch()) {
     echo "<span class='tag'><a onclick='delete_tag(".$tags['id'].",".$id.")'>";
     echo stripslashes($tags['tag'])."</a></span>";
@@ -84,7 +84,7 @@ while ($tags = $tagreq->fetch()) {
 <input type="text" name="tag" id="addtaginput" placeholder="<?php echo _('Add a tag');?>" />
 </div>
 <!-- END ADD TAG -->
-<!-- BEGIN _('Edit')XP FORM -->
+<!-- BEGIN EDITXP FORM -->
 <form id="editXP" name="editXP" method="post" action="editXP-exec.php" enctype='multipart/form-data'>
 <!-- form key -->
 <?php // $formKey->output_formkey(); ?>
@@ -95,7 +95,7 @@ while ($tags = $tagreq->fetch()) {
     <div class='col-md-4'>
         <img src='img/calendar.png' class='bot5px' title='date' alt='calendar' />
         <h4><?php echo _('Date');?></h4><br>
-        <!-- _('_('TODO list') list') if firefox has support for it: type = date -->
+        <!-- TODO if firefox has support for it: type = date -->
         <input name='date' id='datepicker' size='8' type='text' value='<?php echo $experiment['date'];?>' />
     </div>
 
@@ -169,7 +169,7 @@ if (empty($_SESSION['errors'])) {
     <?php echo stripslashes($experiment['body']);?>
 </textarea>
 
-<!-- _('Submit') BUTTON -->
+<!-- SUBMIT BUTTON -->
 <div id='saveButton'>
     <button type="submit" name="Submit" class='button'><?php echo _('Save and go back');?></button>
 </div>

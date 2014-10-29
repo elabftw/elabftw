@@ -67,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
             $reset_link = $protocol.str_replace('reset-pass', 'change-pass', $reset_url).'?key='.hash("sha256", uniqid(rand(), true)).'&userid='.$userid;
             // Send an email with the reset link
             // Create the message
+            $footer = "~~~\nSent from eLabFTW http://www.elabftw.net\n";
             $message = Swift_Message::newInstance()
             // Give the message a subject
             ->setSubject('[eLabFTW] Password reset')
@@ -75,10 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
             // Set the To addresses with an associative array
             ->setTo(array($email => 'Dori'))
             // Give it a body
-            ->setBody(_('Hi. Someone (probably you with the IP address:').' '.$ip.' '._('Hi. Someone (probably you with the IP address:')2.' '.$u_agent.' '._('Hi. Someone (probably you with the IP address:')3.'
-            '.$reset_link.'
-
-            '._('Email')_FOOTER);
+            ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $u_agent, $reset_link).$footer)
             $transport = Swift_SmtpTransport::newInstance(
                 get_config('smtp_address'),
                 get_config('smtp_port'),
@@ -98,12 +96,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
             }
             if ($errflag) {
                 // problem
-                $msg_arr[] = _('Email')_SEND_ERROR;
+                $msg_arr[] = _('There was a problem sending the email! Error was logged.');
                 $_SESSION['errors'] = $msg_arr;
                 header('location: login.php');
                 exit;
             } else { // no problem
-                $msg_arr[] = _('Email')_SUCCESS;
+                $msg_arr[] = _('Email sent. Check your INBOX.');
                 $_SESSION['infos'] = $msg_arr;
                 header("location: login.php");
                 exit;

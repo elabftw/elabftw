@@ -27,7 +27,7 @@
  * It will return a string with the error/status.
  */
 require_once 'inc/common.php';
-require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
+require_once 'inc/locale.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     /* before we do the check, we need to make sure :

@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 require_once 'inc/common.php';
-require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
+require_once 'inc/locale.php';
 $msg_arr = array();
 
 // ID

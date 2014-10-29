@@ -1,9 +1,11 @@
 <?php
-define('ROOT_PATH', '/srv/http/elabftw/');
-$locale = 'fr_FR.UTF8';
+if (isset($_SESSION['prefs']['lang'])) {
+    $locale = $_SESSION['prefs']['lang'].'.utf8';
+} else {
+    $locale = 'en_GB.utf8';
+}
 $domain = 'messages';
 putenv("LC_ALL=$locale");
-setlocale(LC_ALL, $locale);
-bindtextdomain($domain, ROOT_PATH."locale/nocache");
-bindtextdomain($domain, ROOT_PATH."locale");
+$res = setlocale(LC_ALL, $locale);
+bindtextdomain($domain, ELAB_PATH."locale");
 textdomain($domain);

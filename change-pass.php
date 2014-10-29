@@ -26,7 +26,7 @@
 session_start();
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
-require_once 'lang/'.get_config('lang').'.php';
+require_once 'inc/locale.php';
 $page_title = _('Reset password');
 $selected_menu = null;
 require_once 'inc/head.php';
@@ -44,9 +44,9 @@ if (isset($_GET['key']) && strlen($_GET['key']) === 64 && isset($_GET['userid'])
 <section class='center'>
     <form method="post" class='loginform' action="reset-exec.php">
         <p>
-            <label class='block' for='passwordtxt'><?php echo CHANGE_PASS__('Password');?></label>
+            <label class='block' for='passwordtxt'><?php echo _('New password');?></label>
             <input name="password" type="password" title='<?php echo _('8 characters minimum');?>' id="password" pattern=".{8,}" required />
-            <label class='block' for='cpasswordtxt'><?php echo CHANGE_PASS_REPEAT__('Password');?></label>
+            <label class='block' for='cpasswordtxt'><?php echo _('Type it again');?></label>
             <input name="cpassword" type="password" title='<?php echo _('8 characters minimum');?>' id="cpassword" pattern=".{8,}" required />
             <label class='block' for='complexity'><?php echo _('Complexity');?></label>
             <input id='complexity' disabled />

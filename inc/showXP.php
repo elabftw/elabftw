@@ -35,7 +35,7 @@ $results_arr = array();
 
     <!-- 'FILTER _('Status')' dropdown menu -->
     <span class='align_right'>
-    <select onchange=go_url(this.value)><option value=''><?php echo _('FILTER STATUS');?></option>
+    <select onchange=go_url(this.value)><option value=''><?php echo _('Filter status');?></option>
     <?php
     $sql = "SELECT id, name FROM status WHERE team = :team_id";
     $req = $pdo->prepare($sql);
@@ -62,7 +62,7 @@ if ($tplreq->rowCount() > 0) {
         echo "<a href='create_item.php?type=exp&tpl=".$tpl['id']."' class='badge'>".$tpl['name']."</a>";
     }
 } else { // user has no templates
-    display_message('warning_nocross', _("<strong>You do not have any templates yet.</strong> Go to <a class='alert-link' href='ucp.php?tab=3'>your control panel</a> to make one !"));
+    display_message('warning_nocross', sprintf(_("<strong>You do not have any templates yet.</strong> Go to %syour control panel%s to make one !"), "<a class='alert-link' href='ucp.php?tab=3'>", "</a>"));
 }
 ?>
 </ul></div>
@@ -222,7 +222,7 @@ if (isset($_GET['q'])) { // if there is a query
     $count = $req->rowCount();
     // If there are no experiments, display a little message
     if ($count == 0) {
-        display_message('info_nocross', _("<strong>Welcome to eLabFTW.</strong> Click the <img src='img/add.png' alt='Create experiment' /><a class='alert-link' href='create_item.php?type=exp'>Create experiment</a> button to get started."));
+        display_message('info_nocross', sprintf(_("<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button to get started."), "<img src='img/add.png' alt='' /><a class='alert-link' href='create_item.php?type=exp'>", "</a>"));
     } else {
         while ($experiments = $req->fetch()) {
             $results_arr[] = $experiments['id'];

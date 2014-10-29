@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2014-10-27 17:55+0100\n"
-"PO-Revision-Date: 2014-10-28 18:43+0100\n"
+"PO-Revision-Date: 2014-10-29 14:25+0100\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -115,7 +115,7 @@ msgstr "Editer"
 msgid "Save"
 msgstr "Enregistrer"
 
-msgid "SaveD"
+msgid "Saved"
 msgstr "Enregistré !"
 
 msgid "Cancel"
@@ -143,7 +143,7 @@ msgid "Submit"
 msgstr "Valider"
 
 msgid "TODO list"
-msgstr "TODO list liste"
+msgstr "TODO liste"
 
 msgid "Name"
 msgstr "Nom"
@@ -160,33 +160,21 @@ msgstr "Site web"
 msgid "Skype"
 msgstr "Skype"
 
-msgid "Email_NEW_USER_SUBJECT"
+msgid "[eLabFTW] New user registered"
 msgstr "[eLabFTW] Nouvel utilisateur enregistré"
 
-msgid "Email_NEW_USER_BODY_1"
-msgstr "Bonjour"
-
-msgid "Email_SEND_ERROR"
+msgid "There was a problem sending the email! Error was logged."
 msgstr ""
 "Il y a eu un problème lors de l'envoi de l'email ! L'erreur a été logguée."
 
-msgid "Email_SUCCESS"
+msgid "Email sent. Check your INBOX."
 msgstr "Email envoyé. Consultez votre boîte de réception."
-
-msgid "Email_FOOTER"
-msgstr "~~"
-
-msgid "ADMIN_Title"
-msgstr "Panneau d'administration"
 
 msgid "There are users waiting for validation of their account:"
 msgstr "Il y a des utilisateurs en attente de validation :"
 
-msgid "There are users waiting for validation of their account:_Submit"
+msgid "Validate"
 msgstr "Valider"
-
-msgid "ADMIN_MENU_Team"
-msgstr "Équipe"
 
 msgid "Users"
 msgstr "Utilisateurs"
@@ -197,43 +185,39 @@ msgstr "Catégories d'items"
 msgid "Experiments template"
 msgstr "Modèle d'expériences"
 
-msgid "ADMIN_Team_H3"
+msgid "Configure your team"
 msgstr "Configurez votre équipe"
 
-msgid "ADMIN_Team_DELETABLE_XP"
+msgid "Users can delete experiments:"
 msgstr "Les utilisateurs peuvent supprimer leurs expériences :"
 
-msgid "ADMIN_Team_LINK_Name"
+msgid "Name of the link in the top menu:"
 msgstr "Nom du lien dans le menu du haut :"
 
-msgid "ADMIN_Team_LINK_HREF"
+msgid "Address where this link should point:"
 msgstr "Adresse vers laquelle ce lien pointe :"
 
-msgid "ADMIN_Team_STAMPLogin"
-msgstr "Identifiant pour le service externe de timestamping :"
-
-msgid "ADMIN_Team_STAMPLogin_HELP"
+msgid ""
+"This should be the email address associated with your account on Universign."
+"com."
 msgstr "Adresse email associée à votre compte sur Universign.com."
 
-msgid "ADMIN_Team_STAMPPASS"
-msgstr "Mot de passe pour le service externe de timestamping :"
-
-msgid "ADMIN_Team_STAMPPASS_HELP"
+msgid "Your Universign password"
 msgstr "Votre mot de passe Universign"
 
 msgid "Edit users"
 msgstr "Éditer les utilisateurs"
 
-msgid "ADMIN_USERS_VALIDateD"
+msgid "Has an active account?"
 msgstr "Compte activé ?"
 
 msgid "Group:"
 msgstr "Groupe :"
 
-msgid "ADMIN_USERS_RESET_Password"
+msgid "Reset user password:"
 msgstr "Réinitialiser le mot de passe utilisateur :"
 
-msgid "ADMIN_USERS_REPEat_Password"
+msgid "Repeat new password:"
 msgstr "Répéter le nouveau mot de passe :"
 
 msgid "Edit this user"
@@ -258,23 +242,20 @@ msgstr "Tapez votre mot de passe :"
 msgid "Delete this user!"
 msgstr "Supprimer cet utilisateur !"
 
-msgid "ADMIN_Status_ADD_H3"
+msgid "Add a new status"
 msgstr "Ajouter un nouveau statut"
 
-msgid "ADMIN_Status_ADD_NEW"
+msgid "New status name:"
 msgstr "Nom du nouveau statut :"
 
-msgid "ADMIN_Status_ADD_BUTTON"
-msgstr "Ajouter un nouveau statut"
-
-msgid "ADMIN_Status_Edit_H3"
+msgid "Edit an existing status"
 msgstr "Éditer un statut existant"
 
-msgid "ADMIN_Status_Edit_ALERT"
+msgid "Remove all experiments with this status before deleting this status."
 msgstr ""
 "Supprimez toutes les expériences avec ce statut avant de supprimer ce statut."
 
-msgid "ADMIN_Status_Edit_DEFAULT"
+msgid "Default status"
 msgstr "Statut par défaut"
 
 msgid "Database items types"
@@ -285,14 +266,11 @@ msgstr ""
 "Supprimez tous les items de la base de données de cette catégorie avant de "
 "supprimer cette catégorie."
 
-msgid "ADMIN_ITEMS_TYPES_Edit_Name"
+msgid "Edit name:"
 msgstr "Éditer le nom :"
 
 msgid "Add a new type of item:"
 msgstr "Ajouter une nouvelle catégorie d'items :"
-
-msgid "Add a new type of item:_BUTTON"
-msgstr "Ajouter une nouvelle catégorie d'items"
 
 msgid "Common experiment template"
 msgstr "Modèle d'expérience commun"
@@ -314,12 +292,8 @@ msgstr ""
 "passe "
 
 msgid ""
-"This page will allow you to import a .csv (Excel spreadsheet file into the "
-"database.<br>First you need to open your (.xls/.xlsx file in Excel or "
-"Libreoffice and save it as .csv.<br>In order to have a good import the first "
-"column should be the title. The rest of the columns will be imported in the "
-"body. You can make a tiny import of 3 lines to see if everything works "
-"before you import a big file._STRONG"
+"You should make a backup of your database before importing thousands of "
+"items!"
 msgstr ""
 "Faîtes une sauvegarde de votre base de données (SQL) avant d'importer des "
 "milliers d'items !"
@@ -336,11 +310,11 @@ msgstr "Importer le CSV"
 msgid "items were imported successfully."
 msgstr "items ont été importés avec succès."
 
-msgid "ADMIN_USER_VALIDateD"
+msgid "Validated user with ID:"
 msgstr "Ont été validés les utilisateurs avec l'ID :"
 
-msgid "ADMIN_Team_ADDED"
-msgstr "Équipe ajoutée avec succès"
+msgid "Team added successfully."
+msgstr "Équipe ajoutée avec succès."
 
 msgid "Only a sysadmin can put someone sysadmin."
 msgstr "Seul un sysadmin peut nommer un autre sysadmin."
@@ -348,13 +322,10 @@ msgstr "Seul un sysadmin peut nommer un autre sysadmin."
 msgid "Everything was purged successfully."
 msgstr "Tout a été supprimé avec succès."
 
-msgid "CHANGE_PASS_Title"
+msgid "Reset password"
 msgstr "Réinitialiser le mot de passe"
 
-msgid "CHANGE_PASS_Password"
-msgstr "Nouveau mot de passe"
-
-msgid "CHANGE_PASS_REPEat_Password"
+msgid "Type it again"
 msgstr "Tapez-le encore"
 
 msgid "8 characters minimum"
@@ -381,25 +352,27 @@ msgstr "Mot de passe fort"
 msgid "No way that is your real password!"
 msgstr "Pas moyen que ce soit votre vrai mot de passe !"
 
-msgid "CHK_UPDate_GIT"
+msgid "Install git to check for updates."
 msgstr "Installez git pour vérifier les mises à jour."
 
-msgid "CHK_UPDate_CURL"
+msgid "You need to install the curl extension for php."
 msgstr "Il vous faut installer l'extension curl pour php."
 
-msgid "CHK_UPDate_UNKNOWN"
+msgid "Unknown branch!"
 msgstr "Branche inconnue !"
 
-msgid "CHK_UPDate_GITHUB"
+msgid "Couldn't connect to github.com to check for updates."
 msgstr "Échec de la connexion à github.com pour vérifier les mises à jour."
 
-msgid "CHK_UPDate_NEW"
+msgid "A new update is available!"
 msgstr "Des mises à jour sont disponibles !"
 
-msgid "CHK_UPDate_MASTER"
+msgid ""
+"Congratulations! You are running the latest stable version of eLabFTW :)"
 msgstr "Félicitations ! Vous utilisez la dernière version stable d'eLabFTW :)"
 
-msgid "CHK_UPDate_NEXT"
+msgid ""
+"Congratulations! You are running the latest development version of eLabFTW :)"
 msgstr ""
 "Félicitations ! Vous utilisez la dernière version de développement "
 "d'eLabFTW :)"
@@ -434,7 +407,7 @@ msgstr "L'item a été supprimé avec succès."
 msgid "Item type was deleted successfully."
 msgstr "La catégorie d'item a été supprimée avec succès."
 
-msgid "DELETE_Status_SUCCESS"
+msgid "Status was deleted successfully."
 msgstr "Le statut a été supprimé avec succès."
 
 msgid "Experiment successfully duplicated."
@@ -442,9 +415,6 @@ msgstr "Expérience dupliquée avec succès."
 
 msgid "Database entry successfully duplicated."
 msgstr "Item dupliqué avec succès."
-
-msgid "ExperimentS_Title"
-msgstr "Expériences"
 
 msgid "You don't have the rights to lock/unlock this."
 msgstr "Vous n'avez pas les droits suffisants pour vérouiller/déverouiller."
@@ -463,90 +433,91 @@ msgstr "Identification échouée. Soit vous avez mal tapé votre mot de p"
 msgid "Login"
 msgstr "Connexion"
 
-msgid "Login_TOO_MUCH_FAILED"
+msgid "You cannot login now because of too many failed login attempts."
 msgstr ""
 "Vous ne pouvez pas vous connecter en raison d'un trop grand nombre d'échec "
 "de connection."
 
-msgid "Login_atTEMPT_NB"
+msgid "Number of login attempt left before being banned for"
 msgstr "Nombre d'essais avant d'être banni pour"
 
-msgid "Login_MINUTES"
+msgid "minutes:"
 msgstr "minutes :"
 
-msgid "Login_ENABLE_COOKIES"
+msgid "Please enable cookies in your navigator to continue."
 msgstr "Merci d'autoriser les cookies dans votre navigateur pour continuer."
 
-msgid "Login_COOKIES_NOTE"
+msgid "Note: you need cookies enabled to log in."
 msgstr "Note : il vous faut accepter les cookies pour vous connecter."
 
-msgid "Login_H2"
+msgid "Sign in to your account"
 msgstr "Connectez-vous à votre compte"
 
-msgid "Login_FOOTER"
+msgid ""
+"Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"
 msgstr ""
-"Pas de compte ? <a href='register.php'>Créez un compte</a> maintenant !"
-"<br>Mot de passe oublié ? <a href='#' class='trigger'>Réinitialisez-le</a> !"
+"Pas de compte ? %sCréez un compte%s maintenant !<br>Mot de passe oublié ? "
+"%sRéinitialisez-le%s !"
 
-msgid "Login_FOOTER_PLACEHOLDER"
+msgid "Enter your email address"
 msgstr "Entrez votre adresse email"
 
-msgid "Login_FOOTER_BUTTON"
+msgid "Send new password"
 msgstr "Envoyer le lien de réinitialisation"
 
-msgid "CSV_Title"
+msgid "Export to spreadsheet"
 msgstr "Exporter en tableur"
 
 msgid "Your CSV file is ready:"
 msgstr "Le fichier CSV est prêt :"
 
-msgid "ZIP_Title"
+msgid "Make zip archive"
 msgstr "Créer une archive ZIP"
 
 msgid "Your ZIP archive is ready:"
 msgstr "Votre archive ZIP est prête :"
 
-msgid "PROFILE_Title"
+msgid "Profile"
 msgstr "Profil"
 
 msgid "experiments done since"
 msgstr "expériences réalisées depuis"
 
-msgid "REGISTER_Username_USED"
+msgid "Username already in use!"
 msgstr "Nom d'utilisateur déjà pris !"
 
-msgid "REGISTER_Email_USED"
+msgid "Someone is already using that email address!"
 msgstr "Cette adresse email est déjà enregistrée !"
 
-msgid "REGISTER_Email_BODY"
-msgstr "Hi"
-
-msgid "REGISTER_Email_FAILED"
+msgid ""
+"Hi. A new user registered on elabftw. Head to the admin panel to validate "
+"the account."
 msgstr ""
+"Bonjour. Un nouvel utilisateur s'est enregistré sur elabftw. Rendez-vous "
+"dans le panneau d'administration pour valider le compte."
+
+msgid ""
 "Could not send email to inform admin. Error was logged. Contact an admin "
 "directly to validate your account."
+msgstr ""
+"Erreur lors de l'envoi de l'email pour informer l'admin. L'erreur a été "
+"enregistrée. Contactez un administrateur directement pour valider votre "
+"compte."
 
 msgid ""
 "Registration successful :<br>Your account must now be validated by an admin."
 "<br>You will receive an email when it is done."
 msgstr ""
-"Registration successful :)<br>Your account must now be validated by an admin."
-"<br>You will receive an email when it is done."
+"Enregistrement réussi :)<br>Votre compte doit maintenant être validé par un "
+"admin.<br>Vous recevrez un email lorsque cela sera fait."
 
-msgid "Registration successful :<br>Welcome to eLabFTW o/"
-msgstr "Registration successful :)<br>Welcome to eLabFTW!"
+msgid "Registration successful :)<br>Welcome to eLabFTW o/"
+msgstr "Enregistrement réussi :)<br>Bienvenue sur eLabFTW!"
 
-msgid "REGISTER_Title"
-msgstr "Créer un compte"
+msgid "Please %slogout%s before you register another account."
+msgstr "%sDéconnectez-vous%s avant d'enregistrer un autre compte."
 
-msgid ""
-"Please <a style='alert-link' href='logout.php'>logout</a> before you "
-"register another account."
-msgstr ""
-"<a class='alert-link' href='logout.php'>Déconnectez-vous</a> avant "
-"d'enregistrer un autre compte."
-
-msgid "REGISTER_BACK_TO_Login"
+msgid "go back to login page"
 msgstr "retour à la page de connexion"
 
 msgid "Create your account"
@@ -555,25 +526,31 @@ msgstr "Créez votre compte"
 msgid "------ Select a team ------"
 msgstr "Choisissez une équipe"
 
-msgid "REGISTER_CONFIRM_Password"
+msgid "Confirm password"
 msgstr "Confirmer le mot de passe"
 
-msgid "REGISTER_Password_COMPLEXITY"
+msgid "Password complexity"
 msgstr "Complexité du mot de passe"
 
 msgid "create"
 msgstr "créer"
 
 msgid "New password updated. You can now login."
-msgstr "New password updated. You can now login."
+msgstr "Nouveau mot de passe mis à jour. Vous pouvez vous connecter désormais."
 
-msgid "Hi. Someone (probably you with the IP address:"
-msgstr "Bonjour"
+msgid ""
+"Hi. Someone (probably you) with the IP address: %s and user agent %s "
+"requested a new password on eLabFTW. Please follow this link to reset your "
+"password : %s"
+msgstr ""
+"Bonjour. Quelqu'un (probablement vous) avec l'adresse IP : %s et le "
+"navigateur %s a demandé un nouveau mot de passe sur eLabFTW. Suivez ce lien "
+"pour réinitialiser votre mot de passe : %s"
 
 msgid "Email not found in database!"
 msgstr "Cette adresse email n'est pas dans la base de données !"
 
-msgid "REVISIONS_Title"
+msgid "Revisions"
 msgstr "Révisions"
 
 msgid "Go back to the experiment"
@@ -586,7 +563,7 @@ msgstr ""
 msgid "Current:"
 msgstr "Actuel :"
 
-msgid "REVISIONS_SaveD"
+msgid "Saved on:"
 msgstr "Enregistré le :"
 
 msgid "Restore"
@@ -595,65 +572,62 @@ msgstr "Restaurer"
 msgid "Search"
 msgstr "Recherche"
 
-msgid "Search_Title"
+msgid "Advanced search"
 msgstr "Recherche avancée"
 
 msgid "Back to experiments listing"
 msgstr "Retourner à la liste des expériences"
 
-msgid "Search_ONLY"
+msgid "Search only in experiments owned by:"
 msgstr "Rechercher uniquement dans les expériences de :"
 
-msgid "Search_YOU"
+msgid "Yourself"
 msgstr "Vous-même"
 
-msgid "Search_EVERYONE"
+msgid "search in everyone's experiments"
 msgstr "chercher dans les expériences de toute l'équipe"
 
-msgid "Search_IN"
+msgid "Search in"
 msgstr "Chercher dans"
 
-msgid "Search_Date"
+msgid "Where date is between"
 msgstr "Où la date est entre"
 
-msgid "Search_AND"
+msgid "and"
 msgstr "et"
 
-msgid "Search_AND_Title"
+msgid "And title contains"
 msgstr "Et le titre contient"
 
-msgid "Search_AND_BODY"
+msgid "And body contains"
 msgstr "Et le corps contient"
 
-msgid "Search_AND_Status"
+msgid "And status is"
 msgstr "Et le statut est"
 
-msgid "Search_SELECT_Status"
+msgid "select status"
 msgstr "choisir un statut"
 
-msgid "Search_AND_RatING"
+msgid "And rating is"
 msgstr "Et l'évaluation est"
 
-msgid "Search_STARS"
+msgid "select number of stars"
 msgstr "choisir le nombre d'étoiles"
 
-msgid "Search_UNRatED"
+msgid "Unrated"
 msgstr "Pas d'étoiles"
 
-msgid "Search_BUTTON"
+msgid "Launch search"
 msgstr "Lancer la recherche"
 
-msgid "Search_EXPORT"
+msgid "Export this result:"
 msgstr "Exporter ce résultat :"
 
-msgid "Search_SORRY"
-msgstr "Dés"
+msgid "Sorry. I couldn't find anything :("
+msgstr "Désolé, aucun résultat pour ces critères."
 
-msgid "SYSCONFIG_Title"
+msgid "eLabFTW configuration"
 msgstr "eLabFTW configuration"
-
-msgid "SYSCONFIG_TeamS"
-msgstr "Équipes"
 
 msgid "Server"
 msgstr "Serveur"
@@ -676,7 +650,7 @@ msgstr "Membres"
 msgid "Items"
 msgstr "Items"
 
-msgid "SYSCONFIG_CreateD"
+msgid "Created"
 msgstr "Créée"
 
 msgid "Under the hood"
@@ -685,19 +659,28 @@ msgstr "Paramètres avancés"
 msgid "Activate debug mode:"
 msgstr "Activer le mode debug :"
 
-msgid "Activate debug mode:_HELP"
-msgstr "Lorsque ce mode est act"
+msgid ""
+"Content of SESSION and COOKIES array will be displayed in the footer for "
+"admins."
+msgstr ""
+"Le contenu de SESSION et COOKIES sera affiché dans le footer des admins."
 
 msgid "Address of the proxy:"
 msgstr "Adresse du proxy :"
 
-msgid "Address of the proxy:_HELP"
-msgstr "Si vous êtes derrière un pare-feu/p"
+msgid ""
+"If you are behind a firewall/proxy, enter the address here. Example : http://"
+"proxy.example.com:3128"
+msgstr ""
+"Si vous êtes derrière un pare-feu, entrez l'adresse ici. Exemple : http://"
+"proxy.example.cm:3128"
 
 msgid "Full path to the install folder:"
 msgstr "Chemin complet du dossier où est eLabFTW"
 
-msgid "Full path to the install folder:_HELP"
+msgid ""
+"This is actually the md5 hash of the path to the install. You probably don't "
+"need to change that except when you move an existing install."
 msgstr ""
 "Ceci est en réalité le hash md5 du chemin. Vous n'avez probablement pas "
 "besoin de changer"
@@ -708,21 +691,26 @@ msgstr "Configuration de l'horodatage Universign"
 msgid "The teams can use the credentials below to timestamp:"
 msgstr "Les équipes peuvent utiliser les informations de connexion suivantes :"
 
-msgid "The teams can use the credentials below to timestamp:_HELP"
+msgid ""
+"You can control if the teams can use the global Universign account. If set "
+"to <em>no</em> the team admin must add login infos in the admin panel."
 msgstr ""
 "Vous pouvez contrôler si les équipes peuvent utiliser le compte Universign "
-"global ou pas. Si <em>non</em> est sélectio"
+"global ou pas. Si <em>non</em> est sélectionné, les administrateurs d'équipe "
+"devront ajouter leurs infos de connexion."
 
-msgid "SYSCONFIG_STAMPLogin"
+msgid "Login for external timestamping service:"
 msgstr "Identifiant pour le service externe d'horodatage :"
 
-msgid "SYSCONFIG_STAMPLogin_HELP"
+msgid "Must be an email address."
 msgstr "Doit être une adresse email."
 
 msgid "Password for external timestamping service:"
 msgstr "Mot de passe pour le service externe d'horodatage :"
 
-msgid "Password for external timestamping service:_HELP"
+msgid ""
+"This password will be stored in clear in the database ! Make sure it doesn't "
+"open other doors…"
 msgstr ""
 "Ce mot de passe sera stocké en clair dans la base de données ! Choisissez-en "
 "un d'unique."
@@ -730,23 +718,28 @@ msgstr ""
 msgid "Security settings"
 msgstr "Paramètres de sécurité"
 
-msgid "SYSCONFIG_ADMIN_VALIDate"
+msgid "Users need validation by admin after registration:"
 msgstr "Les nouveaux inscrits nécessitent une validation par l'admin :"
 
-msgid "SYSCONFIG_ADMIN_VALIDate_HELP"
+msgid "Set to yes for added security."
 msgstr "Mettez oui pour plus de sécurité."
 
-msgid "SYSCONFIG_Login_TRIES"
+msgid "Number of allowed login attempts:"
 msgstr "Nombre d'essais de connexion autorisés :"
 
-msgid "SYSCONFIG_Login_TRIES_HELP"
+msgid "3 might be too few. See for yourself :)"
 msgstr "3 n'est peut-être pas assez. À vous de voir :)"
 
 msgid "Time of the ban after failed login attempts (in minutes:"
 msgstr "Temps de bannissement (en minutes) :"
 
-msgid "Time of the ban after failed login attempts (in minutes:_HELP"
-msgstr "Pour identifier un utilisa"
+msgid ""
+"To identify an user we use an md5 of user agent + IP. Because doing it only "
+"based on IP address would surely cause problems."
+msgstr ""
+"Pour identifier un utilisateur, un hash md5 de l'user agent + IP est "
+"utilisé. Car se baser seulement sur l'adresse IP pourrait causer des "
+"problèmes."
 
 msgid "SMTP settings"
 msgstr "Configuration SMTP"
@@ -755,37 +748,31 @@ msgid ""
 "Without a valid way to send emails users won't be able to reset their "
 "password. It is recommended to create a specific Mandrill.com (or gmail "
 "account and add the infos here."
-msgstr "Sans possibilité d'envoyer des em"
+msgstr ""
+"Sans possibilité d'envoyer des emails, les utilisateurs ne pourrant pas "
+"réinitialiser leurs mots de passe. Il est recommandé d'utiliser un compte "
+"spécifique Mandrill.com (ou gmail)."
 
 msgid "Address of the SMTP server:"
 msgstr "Adresse du serveur SMTP :"
 
-msgid "Address of the SMTP server:_HELP"
-msgstr "smtp.mandrillapp.com"
-
-msgid "SMTP encryption (can be TLS or STARTSSL:"
+msgid "SMTP encryption (can be TLS or STARTSSL):"
 msgstr "Encryption SMTP (TLS ou STARTSSL) :"
 
-msgid "SMTP encryption (can be TLS or STARTSSL:_HELP"
+msgid "Probably TLS"
 msgstr "Probablement TLS."
 
 msgid "SMTP Port:"
 msgstr "Port SMTP :"
 
-msgid "SMTP Port:_HELP"
+msgid "Default is 587."
 msgstr "Le port par défaut est 587."
 
-msgid "SYSCONFIG_SMTP_Username"
+msgid "SMTP username:"
 msgstr "Nom d'utilisateur SMTP :"
 
-msgid "SYSCONFIG_SMTP_Password"
+msgid "SMTP password"
 msgstr "Mot de passe SMTP :"
-
-msgid "Team_Title"
-msgstr "Équipe"
-
-msgid "Statistics"
-msgstr "Statistiques"
 
 msgid "Tips and tricks"
 msgstr "Trucs et astuces"
@@ -808,52 +795,54 @@ msgid_plural "There is a total of %d items in the database."
 msgstr[0] "Il y a un total de %d item dans la base de données."
 msgstr[1] "Il y a un total de %d items dans la base de données."
 
-msgid "You can use a TODOlist by pressing 't'"
-msgstr "Vous pouvez afficher une TODO list liste en pressant 't'"
+msgid "You can use a TODOlist by pressing 't'."
+msgstr "Vous pouvez afficher une TODO list liste en pressant 't'."
 
 msgid "You can have experiments templates (%sControl Panel%s)"
 msgstr ""
 "Vous pouvez avoir des modèles d'expériences (%sPanneau de contrôle "
-"utilisateur%s)"
-
-msgid "Team_TIP_3"
-msgstr ""
-"L'administrateur d'une équipe peut éditer les statuts et les types d'items "
-"disponibles (<a href='admin.php?tab=4'>Panneau d'administration</a>)"
-
-msgid "Team_TIP_4"
-msgstr "Si vous faîtes Ctrl Maj D dans la fenêtre d'édi"
-
-msgid "Team_TIP_5"
-msgstr ""
-"Des raccourcis claviers personnalisables sont disponibles (<a href='ucp.php?"
-"tab=2'>Panneau de contrôle utilisateur</a>)"
-
-msgid "Team_TIP_6"
-msgstr "Vous pouvez dupliquer des expériences en un seul clic"
-
-msgid "Team_TIP_7"
-msgstr "Cliquez un tag pour lister tous les items avec ce tag"
-
-msgid "Team_TIP_8"
-msgstr ""
-"Créez un compte avec <a href='https://www.universign.eu/en/"
-"timestamp'>Universign</a> pour commencer à horodater des expériences."
-
-msgid "Team_TIP_9"
-msgstr "Seule une expérience vérouillée peut être horodatée."
-
-msgid "Team_TIP_10"
-msgstr "Une fois vérouil"
+"utilisateur%s)."
 
 msgid ""
-"The timestamping feature is not configured. Please read the <a class='alert-"
-"link' href='https://github.com/NicolasCARPi/elabftw/wiki/finalizing#setting-"
-"up-timestamping'>wiki</a>."
+"The admin of a team can edit the status and the types of items available "
+"(%sAdmin Panel%s)."
 msgstr ""
-"L'horodatage n'est pas configuré. Merci de lire <a class='alert-link' "
-"href='https://github.com/NicolasCARPi/elabftw/wiki/finalizing#setting-up-"
-"timestamping'>le wiki</a>."
+"L'administrateur d'une équipe peut éditer les statuts et les types d'items "
+"disponibles (%sPanneau d'administration%s)."
+
+msgid ""
+"If you press Ctrl Shift D in the editor the date will appear under the "
+"cursor."
+msgstr ""
+"Si vous faîtes Ctrl Maj D dans la fenêtre d'édition, la date apparaîtra sous "
+"le curseur."
+
+msgid "Custom shortcuts are available (%sControl Panel%s)."
+msgstr ""
+"Des raccourcis claviers personnalisables sont disponibles (%sPanneau de "
+"contrôle utilisateur%s)."
+
+msgid "You can duplicate experiments in one click."
+msgstr "Vous pouvez dupliquer des expériences en un seul clic."
+
+msgid "Click a tag to list all items with this tag."
+msgstr "Cliquez un tag pour lister tous les items avec ce tag."
+
+msgid ""
+"Register an account with %sUniversign%s to start timestamping experiments."
+msgstr ""
+"Créez un compte avec %sUniversign%s pour commencer à horodater des "
+"expériences."
+
+msgid "Only a locked experiment can be timestamped."
+msgstr "Seule une expérience vérouillée peut être horodatée."
+
+msgid ""
+"Once timestamped an experiment cannot be unlocked or modified. Only comments "
+"can be added."
+msgstr ""
+"Une fois vérouilée, une expérience ne peut plus être dévérouillée ou "
+"modifiée, seuls des commentaires peuvent être ajoutés."
 
 msgid ""
 "There was an error in the timestamping. Login credentials probably wrong or "
@@ -876,22 +865,22 @@ msgstr ""
 "Expérience horodatée avec succès. Le PDF horodaté peut être téléchargé ci-"
 "dessous."
 
-msgid "UCP_Title"
+msgid "User Control Panel"
 msgstr "Panneau de contrôle utilisateur"
 
-msgid "UCP_Password_SUCCESS"
+msgid "Password updated!"
 msgstr "Mot de passe mis à jour !"
 
-msgid "UCP_PROFILE_UPDateD"
-msgstr "Profil mis à jour !"
+msgid "Profile updated."
+msgstr "Profil mis à jour."
 
-msgid "UCP_ENTER_Password"
-msgstr "Entrez votre mot de passe pour éditer les informations !"
+msgid "Enter your password to edit anything."
+msgstr "Entrez votre mot de passe pour éditer les informations."
 
-msgid "UCP_PREFS_UPDateD"
+msgid "Preferences updated."
 msgstr "Vos préférences on été mises à jour."
 
-msgid "Templates_Name"
+msgid "You must specify a name for the template!"
 msgstr "Il faut spécifier un nom pour le modèle !"
 
 msgid "The template name must be 3 characters long."
@@ -900,7 +889,7 @@ msgstr "Le nom du modèle doit être long d'au moins 3 caractères."
 msgid "Experiment template successfully added."
 msgstr "Modèle d'expérience ajouté avec succès."
 
-msgid "Templates_EditED"
+msgid "Template successfully edited."
 msgstr "Modèle d'expérience édité avec succès."
 
 msgid "Name of the template"
@@ -972,13 +961,13 @@ msgstr "ALERTE"
 msgid "Display a warning before closing an edit window/tab ?"
 msgstr "Afficher un avertissement avant de fermer un onglet d'édition ?"
 
-msgid "UCP_Create_NEW"
+msgid "Create new"
 msgstr "Créer un nouveau"
 
 msgid "Add template"
 msgstr "Ajouter un modèle"
 
-msgid "UCP_Edit_BUTTON"
+msgid "Edit template"
 msgstr "Éditer un modèle"
 
 msgid "Language"
@@ -990,7 +979,7 @@ msgstr "Rien à afficher avec cet ID."
 msgid "Last modified by"
 msgstr "Dernière modification par"
 
-msgid "ON"
+msgid "on"
 msgstr "le"
 
 msgid ""
@@ -1034,13 +1023,13 @@ msgstr "Nuage de tags"
 msgid "Not enough tags to make a tagcloud."
 msgstr "Pas assez de tags pour faire un nuage."
 
-msgid "STatISTICS_H4"
+msgid "Statistics"
 msgstr "Statistiques"
 
-msgid "STatISTICS_NOT_YET"
+msgid "No statistics available yet."
 msgstr "Pas de statistiques disponibles."
 
-msgid "STatISTICS_EXP_FOR"
+msgid "Experiments for"
 msgstr "Expériences pour"
 
 msgid "Attach a file."
@@ -1048,9 +1037,6 @@ msgstr "Joindre un fichier."
 
 msgid "Start Upload"
 msgstr "Démarrer l'upload"
-
-msgid "Create new"
-msgstr "Créer nouveau"
 
 msgid "Filter type"
 msgstr "Filtrer les catégories"
@@ -1080,33 +1066,30 @@ msgstr "Liste des 10 derniers ajouts :"
 msgid "Load more"
 msgstr "Afficher plus"
 
-msgid "SHOW_XP_Create"
+msgid "Create experiment"
 msgstr "Créer une expérience"
 
-msgid "SHOW_XP_Create_TPL"
+msgid "Create from template"
 msgstr "Créer depuis un modèle"
 
-msgid "SHOW_XP_FILTER_Status"
-msgstr "FILTRER LES STatUTS"
+msgid "Filter status"
+msgstr "Filtrer les statuts"
 
 msgid ""
-"<strong>You do not have any templates yet.</strong> Go to <a class='alert-"
-"link' href='ucp.php?tab=3'>your control panel</a> to make one !"
+"<strong>You do not have any templates yet.</strong> Go to %syour control "
+"panel%s to make one !"
 msgstr ""
-"<strong>Vous n'avez pas encore créé de modèles.</strong> Rendez-vous dans <a "
-"class='alert-link' href='ucp.php?tab=3'>votre panneau de contrôle</a> pour "
-"en ajouter !"
+"<strong>Vous n'avez pas encore créé de modèles.</strong> Rendez-vous dans "
+"%svotre panneau de contrôle%s pour en ajouter !"
 
 msgid ""
-"<strong>Welcome to eLabFTW.</strong> Click the <img src='img/add.png' "
-"alt='Create experiment' /><a class='alert-link' href='create_item.php?"
-"type=exp'>Create experiment</a> button to get started."
+"<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button "
+"to get started."
 msgstr ""
-"<strong>Bienvenue sur eLabFTW.</strong>Cliquez le bouton <img src='img/add."
-"png' alt='Create experiment' /><a class='alert-link' href='create_item.php?"
-"type=exp'>Créer une expérience</a> pour démarrer."
+"<strong>Bienvenue sur eLabFTW.</strong>Cliquez le bouton %sCréer une "
+"expérience%s pour démarrer."
 
-msgid "LOCKED_NO_Edit"
+msgid "<strong>This item is locked.</strong> You cannot edit it."
 msgstr "<strong>Cet item est vérouillé.</strong> Vous ne pouvez pas l'éditer."
 
 msgid "Tags"

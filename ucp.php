@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 require_once 'inc/common.php';
-require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
+require_once 'inc/locale.php';
 $page_title = _('User Control Panel');;
 $selected_menu = null;
 require_once('inc/head.php');
@@ -57,7 +57,7 @@ $users = $req->fetch();
         <div class='row'>
             <div class='col-md-6'>
                 <h4><?php echo _('Modify your personal informations');?></h4>
-                <label class='block' for='currpass'><?php echo UCP_ENTER__('Password');?></label>
+                <label class='block' for='currpass'><?php echo _('Enter your password to edit infos.');?></label>
                 <input id='currpass' name="currpass" type="password" required />
             </div>
             <div class='col-md-6'>
@@ -150,15 +150,15 @@ $users = $req->fetch();
                 <option
                 <?php
                 if ($_SESSION['prefs']['order'] === 'date'){
-                    echo ' selected ';}?>value="date"><?php echo DATE;?></option>
+                    echo ' selected ';}?>value="date"><?php echo _('Date');?></option>
                 <option
                 <?php
                 if ($_SESSION['prefs']['order'] === 'id'){
-                    echo ' selected ';}?>value="id"><?php echo _('Item ID');?></option>
+                    echo ' selected ';}?>value="id">ID</option>
                 <option
                 <?php
                 if ($_SESSION['prefs']['order'] === 'title'){
-                    echo ' selected ';}?>value="title"><?php echo TITLE;?></option>
+                    echo ' selected ';}?>value="title"><?php echo _('Title');?></option>
             </select>
 
             <?php echo _('with');?>
@@ -198,7 +198,7 @@ $users = $req->fetch();
                     <input id='key_submit' type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['submit'];?>' name='submit' />
                     </td></tr>
 
-                    <tr><td><?php echo _('_('TODO list') list');?></td><td>
+                    <tr><td><?php echo _('TODO list');?></td><td>
                     <input id='todolist' type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['todo'];?>' name='todo' />
                     </td></tr>
                 </table>
@@ -224,20 +224,20 @@ $users = $req->fetch();
             <select id='lang' name="lang">
                 <option
                 <?php
-                if ($_SESSION['prefs']['lang'] === 'en-GB') {
-                    echo ' selected ';}?>value="en-GB">en-GB</option>
+                if ($_SESSION['prefs']['lang'] === 'en_GB') {
+                    echo ' selected ';}?>value="en_GB">en_GB</option>
                 <option
                 <?php
-                if ($_SESSION['prefs']['lang'] === 'fr-FR') {
-                    echo ' selected ';}?>value="fr-FR">fr-FR</option>
+                if ($_SESSION['prefs']['lang'] === 'fr_FR') {
+                    echo ' selected ';}?>value="fr_FR">fr_FR</option>
                 <option
                 <?php
-                if ($_SESSION['prefs']['lang'] === 'pt-BR') {
-                    echo ' selected ';}?>value="pt-BR">pt-BR</option>
+                if ($_SESSION['prefs']['lang'] === 'pt_BR') {
+                    echo ' selected ';}?>value="pt_BR">pt_BR</option>
                 <option
                 <?php
-                if ($_SESSION['prefs']['lang'] === 'zh-CN') {
-                    echo ' selected ';}?>value="zh-CN">zh-CN</option>
+                if ($_SESSION['prefs']['lang'] === 'zh_CN') {
+                    echo ' selected ';}?>value="zh_CN">zh_CN</option>
             </select>
         </section>
         <div style='margin-top:30px;' class='center'>
@@ -257,7 +257,7 @@ $users = $req->fetch();
 
     echo "<ul class='nav nav-pills' role='tablist'>";
     // tabs titles
-    echo "<li class='subtabhandle badge badgetab badgetabactive' id='subtab1'>".UCP__('Create')_NEW."</li>";
+    echo "<li class='subtabhandle badge badgetab badgetabactive' id='subtab1'>"._('Create new')."</li>";
     $i = 2;
     while ($exp_tpl = $req->fetch()) {
         echo "<li class='subtabhandle badge badgetab' id='subtab".$i."'>".stripslashes($exp_tpl['name'])."</li>";
@@ -293,7 +293,7 @@ $users = $req->fetch();
             echo "<input name='tpl_name[]' value='".stripslashes($exp_tpl['name'])."' /><br />";
             echo "<textarea name='tpl_body[]' class='mceditable' style='height:500px;'>".stripslashes($exp_tpl['body'])."</textarea><br />";
             echo "<div class='center'>";
-            echo "<button type='submit' name='Submit' class='button'>".UCP__('Edit')_BUTTON."</button>";
+            echo "<button type='submit' name='Submit' class='button'>"._('Edit template')."</button>";
             echo "</div>";
             echo "</form>";
             echo "</div>";

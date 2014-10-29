@@ -269,6 +269,12 @@ if (strlen(get_config('lang')) != 5) {
     q("INSERT INTO `config` (`conf_name`, `conf_value`) VALUES ('lang', 'en-GB');");
 }
 
+// update lang, put locale with _ instead of -
+// put everyone in english, it's simpler
+if (strpos(get_config('lang'), '-')) {
+    q("UPDATE users SET `lang` = 'en_GB';");
+}
+
 
 // END
 echo "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)\n";

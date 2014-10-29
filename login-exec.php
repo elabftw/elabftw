@@ -28,7 +28,7 @@ if (!isset($_SESSION)) {
 }
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
-require_once 'lang/'.get_config('lang').'.php';
+require_once 'inc/locale.php';
 // formkey stuff
 require_once 'inc/classes/formkey.class.php';
 $formKey = new formKey();
@@ -41,7 +41,7 @@ $errflag = false;
 // Check the form_key
 if (!isset($_POST['form_key']) || !$formKey->validate()) {
     // form key is invalid
-    $msg_arr[] = INVALID_FORMKEY;
+    $msg_arr[] = _('The form key is invalid. Please retry.');
     $errflag = true;
 }
 
@@ -154,7 +154,7 @@ if ($result) {
 
         // inform the user
         $msg_arr = array();
-        $msg_arr[] = _('Login failed. Either you mistyped your password or your account isn't activated yet.');
+        $msg_arr[] = _("Login failed. Either you mistyped your password or your account isn't activated yet.");
         if (!isset($_SESSION['failed_attempt'])) {
             $_SESSION['failed_attempt'] = 1;
         } else {

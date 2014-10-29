@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 require_once 'inc/common.php';
-require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
+require_once 'inc/locale.php';
 
 // INFO BOX
 $msg_arr = array();
@@ -69,7 +69,7 @@ if (isset($_POST['currpass'])){
                     $errflag = true;
                 }
                 if (strcmp($password, $cpassword) != 0 ) {
-                    $msg_arr[] = _('Password')_DONT_MATCH;
+                    $msg_arr[] = _('The passwords do not match!');
                     $errflag = true;
                 }
                 // Create salt
@@ -85,7 +85,7 @@ if (isset($_POST['currpass'])){
                     'password' => $passwordHash,
                     'userid' => $_SESSION['userid']));
                 if($result){
-                    $msg_arr[] = _('Password')_SUCCESS;
+                    $msg_arr[] = _('Configuration updated successfully.');
                     $infoflag = true;
                 } else {
                     die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>"));
@@ -103,7 +103,7 @@ if (isset($_POST['currpass'])){
             if($result) {
                 if($numrows > 0) {
                     if($data['userid'] != $_SESSION['userid']){
-                    $msg_arr[] = REGISTER__('Username')_USED;
+                    $msg_arr[] = _('Username already in use!');
                     $errflag = true;
                 }
             }
@@ -142,7 +142,7 @@ if (isset($_POST['currpass'])){
                 if($result) {
                     if($numrows > 0) {
                         if($data['userid'] != $_SESSION['userid']){
-                        $msg_arr[] = REGISTER__('Email')_USED;
+                        $msg_arr[] = _('Someone is already using that email address!');
                         $errflag = true;
                         }
                     }
@@ -216,13 +216,13 @@ if (isset($_POST['currpass'])){
             'website' => $website,
             'userid' => $_SESSION['userid']));
         if($result){
-            $msg_arr[] = UCP_PROFILE__('Updated!');
+            $msg_arr[] = _('Profile updated.');
             $infoflag = true;
         } else {
             die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>"));
         }
-    }else{ //end if result and numrow > 1
-        $msg_arr[] = UCP_ENTER__('Password');
+    } else { //end if result and numrow > 1
+        $msg_arr[] = _('Enter your passsword to edit anything.');
         $errflag = true;
     }
 }// end if first form submitted
@@ -276,11 +276,11 @@ if (isset($_POST['display'])) {
     }
 
     // LANG
-    $lang_array = array('en-GB', 'fr-FR', 'pt-BR', 'zh-CN');
+    $lang_array = array('en_GB', 'fr_FR', 'pt_BR', 'zh_CN');
     if (isset($_POST['lang']) && in_array($_POST['lang'], $lang_array)) {
         $new_lang = $_POST['lang'];
     } else {
-        $new_lang = 'en-GB';
+        $new_lang = 'en_GB';
     }
 
 
@@ -322,7 +322,7 @@ if (isset($_POST['display'])) {
     $_SESSION['prefs']['shortcuts']['todo'] = $new_sc_todo;
     $_SESSION['prefs']['close_warning'] = $new_close_warning;
     $_SESSION['prefs']['lang'] = $new_lang;
-    $msg_arr[] = UCP_PREFS__('Updated!');
+    $msg_arr[] = _('Preferences updated.');
     $infoflag = true;
 }
 
@@ -331,7 +331,7 @@ if (isset($_POST['display'])) {
 if (isset($_POST['new_tpl_form'])) {
     // do nothing if the template name is empty
     if (empty($_POST['new_tpl_name'])) {
-        $msg_arr[] = _('Templates')__('Name');
+        $msg_arr[] = _('You must specify a name for the template!');
         $errflag = true;
     // template name must be 3 chars at least
     } elseif (strlen($_POST['new_tpl_name']) < 3) {
@@ -378,7 +378,7 @@ if (isset($_POST['tpl_form'])) {
         'name' => $new_tpl_name[$i]
     ));
     }
-    $msg_arr[] = _('Templates')__('Edit')ED;
+    $msg_arr[] = _('Template successfully edited.');
     $infoflag = true;
 }
 

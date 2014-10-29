@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 require_once 'inc/common.php';
-require_once 'lang/'.$_SESSION['prefs']['lang'].'.php';
+require_once 'inc/locale.php';
 $page_title = _('Revisions');
 $selected_menu = null;
 require_once 'inc/head.php';
@@ -85,7 +85,7 @@ $req->execute(array(
     'userid' => $_SESSION['userid']
 ));
 while($revisions = $req->fetch()) {
-    echo "<div class='item'>".REVISIONS__('Save')D." ".$revisions['savedate']." <a href='revision.php?exp_id=".$exp_id."&action=restore&rev_id=".$revisions['id']."'>"._('Restore')."</a><br>";
+    echo "<div class='item'>"._('Saved on:')." ".$revisions['savedate']." <a href='revision.php?exp_id=".$exp_id."&action=restore&rev_id=".$revisions['id']."'>"._('Restore')."</a><br>";
     echo $revisions['body']."</div>";
 }
 require_once 'inc/footer.php';

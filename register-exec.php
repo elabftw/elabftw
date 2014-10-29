@@ -26,7 +26,7 @@
 session_start();
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
-require_once 'lang/'.get_config('lang').'.php';
+require_once 'inc/locale.php';
 require_once 'vendor/autoload.php';
 
 //Array to store validation errors
@@ -50,7 +50,7 @@ if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
     $numrows = $result->rowCount();
     if ($result) {
         if ($numrows > 0) {
-            $msg_arr[] = REGISTER__('Username')_USED;
+            $msg_arr[] = _('Username already in use!');
             $errflag = true;
         }
         $result = null;
@@ -69,7 +69,7 @@ if (isset($_POST['team']) &&
     $msg_arr[] = _('A mandatory field is missing!');
     $errflag = true;
 }
-// Check _('Firstname') (sanitize, and make it look like Firstname)
+// Check FIRSTNAME (sanitize, and make it look like Firstname)
 if ((isset($_POST['firstname'])) && (!empty($_POST['firstname']))) {
     // Put everything lowercase and first letter uppercase
     $firstname = ucwords(strtolower(filter_var($_POST['firstname'], FILTER_SANITIZE_STRING)));
@@ -77,7 +77,7 @@ if ((isset($_POST['firstname'])) && (!empty($_POST['firstname']))) {
     $msg_arr[] = _('A mandatory field is missing!');
     $errflag = true;
 }
-// Check _('Lastname') (sanitize, and make it look like _('Lastname'))
+// Check LASTNAME (sanitize, and make it look like _('Lastname'))
 if ((isset($_POST['lastname'])) && (!empty($_POST['lastname']))) {
     $lastname = strtoupper(filter_var($_POST['lastname'], FILTER_SANITIZE_STRING));
 } else {
@@ -85,10 +85,10 @@ if ((isset($_POST['lastname'])) && (!empty($_POST['lastname']))) {
     $errflag = true;
 }
 
-// Check _('Email') (sanitize and validate)
+// Check EMAIL (sanitize and validate)
 if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
-    $email = filter_var($_POST['email'], FILTER_SANITIZE__('Email'));
-    if (!filter_var($email, FILTER_VALIDATE__('Email'))) {
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $msg_arr[] = 'Email seems to be invalid';
         $errflag = true;
     } else {
@@ -98,7 +98,7 @@ if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
         $numrows = $result->rowCount();
         if ($result) {
             if ($numrows > 0) {
-                $msg_arr[] = REGISTER__('Email')_USED;
+                $msg_arr[] = _('Someone is already using that email address!');
                 $errflag = true;
             }
             $result= null;
@@ -233,15 +233,16 @@ if ($result) {
         $req->execute();
         $admin = $req->fetch();
         // Create the message
+        $footer = "~~~\nSent from eLabFTW http://www.elabftw.net\n";
         $message = Swift_Message::newInstance()
         // Give the message a subject
-        ->setSubject(_('Email')_NEW_USER_SUBJECT)
+        ->setSubject(_('[eLabFTW] New user registered'))
         // Set the From address with an associative array
         ->setFrom(array(get_config('smtp_username') => get_config('smtp_username')))
         // Set the To addresses with an associative array
         ->setTo(array($admin['email'] => 'Admin eLabFTW'))
         // Give it a body
-        ->setBody(REGISTER__('Email')_BODY._('Email')_FOOTER);
+        ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account.').$footer);
         $transport = Swift_SmtpTransport::newInstance(
             get_config('smtp_address'),
             get_config('smtp_port'),
@@ -255,14 +256,14 @@ if ($result) {
             $mailer->send($message);
         } catch (Exception $e) {
             dblog('Error', 'smtp', $e->getMessage());
-            $msg_arr[] = REGISTER__('Email')_FAILED;
+            $msg_arr[] = _('Could not send email to inform admin. Error was logged. Contact an admin directly to validate your account.');
             $_SESSION['errors'] = $msg_arr;
             header('Location: register.php');
             exit;
         }
-        $msg_arr[] = _('Registration successful :<br>Your account must now be validated by an admin.<br>You will receive an email when it is done.');
+        $msg_arr[] = _('Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done.');
     } else {
-        $msg_arr[] = _('Registration successful :<br>Welcome to eLabFTW o/');
+        $msg_arr[] = _('Registration successful :)<br>Welcome to eLabFTW o/');
     }
     $_SESSION['infos'] = $msg_arr;
     $_SESSION['username'] = $username;

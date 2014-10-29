@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2014-10-27 17:55+0100\n"
-"PO-Revision-Date: 2014-10-27 18:28+0100\n"
+"PO-Revision-Date: 2014-10-29 17:53+0100\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,3 +18,1142 @@ msgstr "Sim"
 
 msgid "No"
 msgstr "Não"
+
+msgid "Configuration updated successfully."
+msgstr "Configuração alterada."
+
+msgid ""
+"There was an unexpected problem! Please %sopen an issue on GitHub%s if you "
+"think this is a bug."
+msgstr ""
+"Uia! Um problema inesperado! Favor %sabrir um issue no GitHub%s se você acha "
+"que isto é um bug."
+
+msgid "The id parameter is not valid."
+msgstr "Parâmetro id inválido!"
+
+msgid "Userid is not valid."
+msgstr "Userid inválido."
+
+msgid "The type parameter is not valid."
+msgstr "Parâmetro type inválido!"
+
+msgid "The form key is invalid. Please retry."
+msgstr "Chave de formulário inválida. Favor tentar novamente."
+
+msgid "The email is not valid."
+msgstr "Endereço eletrônico inválido."
+
+msgid "Wrong password!"
+msgstr "A senha não é essa!"
+
+msgid "No user with this email or user not in your team"
+msgstr "Não há usuário com este e-mail na sua equipe"
+
+msgid "The passwords do not match!"
+msgstr "Senhas não conferem!"
+
+msgid "Password must contain at least 8 characters."
+msgstr "A senha precisa ter pelo menos 8 caracteres."
+
+msgid "You need to put a title!"
+msgstr "Cadê o título???"
+
+msgid "You need to put a password!"
+msgstr "Cadê a senha???"
+
+msgid "A mandatory field is missing!"
+msgstr "Os campos obrigatórios... são obrigatórios!"
+
+msgid "This section is out of your reach."
+msgstr "Infelizmente você não pode acessar esta seção."
+
+msgid "Username"
+msgstr "Usuário"
+
+msgid "Password"
+msgstr "Senha"
+
+msgid "Firstname"
+msgstr "Nome"
+
+msgid "Lastname"
+msgstr "Sobrenome"
+
+msgid "Email"
+msgstr "E-mail"
+
+msgid "Experiments"
+msgstr "Experimentos"
+
+msgid "Database"
+msgstr "Banco de Dados"
+
+msgid "Team"
+msgstr "Equipe"
+
+msgid "Date"
+msgstr "Data"
+
+msgid "Title"
+msgstr "Título"
+
+msgid "Infos"
+msgstr "Informações"
+
+msgid "Visibility"
+msgstr "Visibilidade"
+
+msgid "Status"
+msgstr "Situação"
+
+msgid "Edit"
+msgstr "Modificar"
+
+msgid "Save"
+msgstr "Salvar"
+
+msgid "Saved"
+msgstr "Salvo!"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Saving"
+msgstr "Salvando"
+
+msgid "Save and go back"
+msgstr "Salvar e voltar"
+
+msgid "Updated!"
+msgstr "Atualizado!"
+
+msgid "Action"
+msgstr "Ação"
+
+msgid "Shortcut"
+msgstr "Atalho"
+
+msgid "Create"
+msgstr "Criar"
+
+msgid "Submit"
+msgstr "Enviar"
+
+msgid "TODO list"
+msgstr "Lista de Tarefas"
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "Phone"
+msgstr "Telefone"
+
+msgid "Mobile"
+msgstr "Celular"
+
+msgid "Website"
+msgstr "Sítio internet"
+
+msgid "Skype"
+msgstr "Skype"
+
+msgid "[eLabFTW] New user registered"
+msgstr "[eLabFTW] Novo usuário registrado"
+
+msgid "There was a problem sending the email! Error was logged."
+msgstr "Houve um problema com o envio do e-mail! Este erro foi registrado."
+
+msgid "Email sent. Check your INBOX."
+msgstr "Correio eletrônico enviado. Verifique sua caixa de entrada."
+
+msgid "There are users waiting for validation of their account:"
+msgstr "Há usuários pedindo validação de conta:"
+
+msgid "Validate"
+msgstr "Validar"
+
+msgid "Users"
+msgstr "Usuários"
+
+msgid "Types of items"
+msgstr "Tipos de itens"
+
+msgid "Experiments template"
+msgstr "Modelo de Experimento"
+
+msgid "Configure your team"
+msgstr "Configure a sua equipe"
+
+msgid "Users can delete experiments:"
+msgstr "Usuários podem apagar experimentos?"
+
+msgid "Name of the link in the top menu:"
+msgstr "Nome no menu superior:"
+
+msgid "Address where this link should point:"
+msgstr "Endereço para o qual este link deve apontar:"
+
+msgid ""
+"This should be the email address associated with your account on Universign."
+"com."
+msgstr ""
+"Este tem que ser o endereço e-mail associado à sua conta Universign.com."
+
+msgid "Your Universign password"
+msgstr "Senha do serviço de timestamping:"
+
+msgid "Edit users"
+msgstr "Modificar usuários"
+
+msgid "Has an active account?"
+msgstr "Tem conta ativa?"
+
+msgid "Group:"
+msgstr "Grupo:"
+
+msgid "Reset user password:"
+msgstr "Modificar a senha deste usuário:"
+
+msgid "Repeat new password:"
+msgstr "Repita a nova senha:"
+
+msgid "Edit this user"
+msgstr "Modificar este usuário"
+
+msgid "DANGER ZONE"
+msgstr "ZONA PERIGOSA"
+
+msgid "Delete an account"
+msgstr "Apagar uma conta"
+
+msgid ""
+"Type EMAIL ADDRESS of a member to delete this user and all his experiments/"
+"files forever:"
+msgstr ""
+"Digite o ENDEREÇO E-MAIL de um usuário para apagar tudo relacionado a ele "
+"(inclusive experimentos e arquivos) pra sempre:"
+
+msgid "Type your password:"
+msgstr "Digite sua senha:"
+
+msgid "Delete this user!"
+msgstr "Apagar este usuário!"
+
+msgid "Add a new status"
+msgstr "Adicionar uma situação possível"
+
+msgid "New status name:"
+msgstr "Nome da nova situação:"
+
+msgid "Edit an existing status"
+msgstr "Adicionar situação"
+
+msgid "Remove all experiments with this status before deleting this status."
+msgstr "Remova todos os experimentos nesta situação antes de apagá-la."
+
+msgid "Default status"
+msgstr "Situação dos novos experimentos"
+
+msgid "Database items types"
+msgstr "Tipos de itens do banco de dados"
+
+msgid "Remove all database items with this type before deleting this type."
+msgstr "Remova todos os itens deste tipo antes de apagar o tipo."
+
+msgid "Edit name:"
+msgstr "Modificar o nome:"
+
+msgid "Add a new type of item:"
+msgstr "Adicionar um tipo de item:"
+
+msgid "Common experiment template"
+msgstr "Modelo de experimento padrão"
+
+msgid "This is the default text when someone creates an experiment."
+msgstr "Isto vai aparecer sempre que alguém criar um novo experimento."
+
+msgid ""
+"This page will allow you to import a .csv (Excel spreadsheet file into the "
+"database.<br>First you need to open your (.xls/.xlsx file in Excel or "
+"Libreoffice and save it as .csv.<br>In order to have a good import the first "
+"column should be the title. The rest of the columns will be imported in the "
+"body. You can make a tiny import of 3 lines to see if everything works "
+"before you import a big file."
+msgstr ""
+"Esta página permite a importação de um arquivo .csv (planilha Excel) no "
+"banco de dados.<br>Primeiro você precisa abrir o seu arquivo .xls ou .xlsx "
+"no Excel ou no Libreoffice e então salvá-lo como .csv.<br>Pra isto aqui "
+"funcionar direito a primeira coluna tem que ser o título. As outras colunas "
+"serão importadas no corpo do item. É melhor testar a importação com umas 3 "
+"ou 4 linhas só pra ver se funciona antes de importar um arquivo muito grande."
+
+msgid ""
+"You should make a backup of your database before importing thousands of "
+"items!"
+msgstr ""
+"É melhor gravar uma cópia de segurança do seu banco de dados antes de "
+"importar uma tabela muito grande!"
+
+msgid "1. Select a type of item to import to:"
+msgstr "1. Selecione o tipo que esses itens terão:"
+
+msgid "2. Select a CSV file to import:"
+msgstr "2. Selecione um arquivo CSV a importar:"
+
+msgid "Import CSV"
+msgstr "Importar CSV"
+
+msgid "items were imported successfully."
+msgstr "Consegui importar tudo."
+
+msgid "Validated user with ID:"
+msgstr "Validou a conta de :"
+
+msgid "Team added successfully."
+msgstr "A equipe foi adicionada."
+
+msgid "Only a sysadmin can put someone sysadmin."
+msgstr ""
+"Pra tornar alguém um administrador do sistema você também tem que ser "
+"administrador do sistema."
+
+msgid "Everything was purged successfully."
+msgstr "Tudo limpo."
+
+msgid "Reset password"
+msgstr "Modificar senha"
+
+msgid "Type it again"
+msgstr "Digite de novo por favor"
+
+msgid "8 characters minimum"
+msgstr "mínimo de 8 caracteres"
+
+msgid "Complexity"
+msgstr "Complexidade"
+
+msgid "Save new password"
+msgstr "Gravar nova senha"
+
+msgid "Weak password"
+msgstr "Senha fraquinha"
+
+msgid "Average password"
+msgstr "Mais ou menos"
+
+msgid "Good password"
+msgstr "Boazinha essa senha"
+
+msgid "Strong password"
+msgstr "Senha boa pra caramba"
+
+msgid "No way that is your real password!"
+msgstr "Ah vai tem certeza de que vai lembrar disso???"
+
+msgid "Install git to check for updates."
+msgstr "Instale o git pra poder verificar as atualizações."
+
+msgid "You need to install the curl extension for php."
+msgstr "Você precisa instalar a extensão curl para php."
+
+msgid "Unknown branch!"
+msgstr "Branch desconhecido!"
+
+msgid "Couldn't connect to github.com to check for updates."
+msgstr ""
+"Desculpe; não consegui conectar no github.com pra ver se há atualizações."
+
+msgid "A new update is available!"
+msgstr "Há uma nova atualização disponível!"
+
+msgid ""
+"Congratulations! You are running the latest stable version of eLabFTW :)"
+msgstr ""
+"Parabéns! Você está rodando a mais recente versão estável do eLabFTW :)"
+
+msgid ""
+"Congratulations! You are running the latest development version of eLabFTW :)"
+msgstr ""
+"Parabéns! Você está rodando a mais recente versão de desenvolvimento do "
+"eLabFTW :)"
+
+msgid "Wrong item type!"
+msgstr "Tipo de item errado!"
+
+msgid "Untitled"
+msgstr "Sem título"
+
+msgid "New item created successfully."
+msgstr "Novo item criado."
+
+msgid "File"
+msgstr "Arquivo"
+
+msgid "deleted successfully"
+msgstr "excluída com sucesso"
+
+msgid "You don't have the rights to delete this experiment."
+msgstr "Você não tem permissão para apagar este experimento."
+
+msgid "Experiment was deleted successfully."
+msgstr "O experimento foi apagado."
+
+msgid "Template was deleted successfully."
+msgstr "O modelo foi apagado."
+
+msgid "Item was deleted successfully."
+msgstr "O tipo de item foi apagado."
+
+msgid "Item type was deleted successfully."
+msgstr "O tipo de item foi apagado."
+
+msgid "Status was deleted successfully."
+msgstr "A situação foi apagada."
+
+msgid "Experiment successfully duplicated."
+msgstr "O experimento foi duplicado."
+
+msgid "Database entry successfully duplicated."
+msgstr "Entrada de banco de dados duplicada."
+
+msgid "You don't have the rights to lock/unlock this."
+msgstr "Você não tem autoridade para bloquear ou liberar isto aqui."
+
+msgid "This experiment was locked by"
+msgstr "Este experimento foi bloqueado por"
+
+msgid "This item is locked. You cannot edit it."
+msgstr "Este item está bloqueado você não pode editá-lo"
+
+msgid ""
+"Login failed. Either you mistyped your password or your account isn't "
+"activated yet."
+msgstr ""
+"Falha no Login. Ou a senha está incorreta; ou a sua conta ainda não está "
+"ativa."
+
+msgid "Login"
+msgstr "Login"
+
+msgid "You cannot login now because of too many failed login attempts."
+msgstr ""
+"Bixo; você tentou se logar tantas vezes que agora vai ficar de castigo."
+
+msgid "Number of login attempt left before being banned for"
+msgstr "Número de tentativas de login antes de ser banido(a) por"
+
+msgid "minutes:"
+msgstr "minutos:"
+
+msgid "Please enable cookies in your navigator to continue."
+msgstr "Favor habilitar os cookies no seu navegador."
+
+msgid "Note: you need cookies enabled to log in."
+msgstr "Nota: você precisa habilitar os cookies pra poder se conectar."
+
+msgid "Sign in to your account"
+msgstr "Conecte-se à sua conta"
+
+msgid ""
+"Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"
+msgstr ""
+"Não tem uma conta ? %sRegistre-se%s now!<br>Esqueceu a senha? %sModificar%s "
+"a senha !"
+
+msgid "Enter your email address"
+msgstr "Digite seu endereço eletrônico"
+
+msgid "Send new password"
+msgstr "Enviar nova senha"
+
+msgid "Export to spreadsheet"
+msgstr "Exportar em forma de planilha"
+
+msgid "Your CSV file is ready:"
+msgstr "Seu arquivo CSV está pronto:"
+
+msgid "Make zip archive"
+msgstr "Comprimir em um arquivo zip"
+
+msgid "Your ZIP archive is ready:"
+msgstr "Seu arquivo zip está pronto:"
+
+msgid "Profile"
+msgstr "Perfil"
+
+msgid "experiments done since"
+msgstr "Experimentando com eLabFTW desde"
+
+msgid "Username already in use!"
+msgstr "Já existe um usuário com esse nome!"
+
+msgid "Someone is already using that email address!"
+msgstr "Alguém já está usando esse endereço eletrônico!"
+
+msgid ""
+"Hi. A new user registered on elabftw. Head to the admin panel to validate "
+"the account."
+msgstr ""
+"Ôpa; Alguém acabou de abrir uma nova conta no eLabFTW. Vá para o painel de "
+"administrador para ativá-la!"
+
+msgid ""
+"Could not send email to inform admin. Error was logged. Contact an admin "
+"directly to validate your account."
+msgstr ""
+"Não consegui enviar o e-mail para informar o administrador. Este problema "
+"foi registrado. Contate o administrador e peça para que ele valide a sua "
+"conta."
+
+msgid ""
+"Registration successful :<br>Your account must now be validated by an admin."
+"<br>You will receive an email when it is done."
+msgstr ""
+"Registro bem-sucedido :)<br>Agora a sua conta precisa ser validada por um "
+"administrador.<br>Você deve receber um e-mail avisando que ela foi ativada."
+
+msgid "Registration successful :)<br>Welcome to eLabFTW o/"
+msgstr "Registro bem-sucedido :)<br>Bem-vindo(a) ao eLabFTW o/"
+
+msgid "Please %slogout%s before you register another account."
+msgstr "Favor %sse desconectar%s para poder registrar uma outra conta."
+
+msgid "go back to login page"
+msgstr "de volta à página de login"
+
+msgid "Create your account"
+msgstr "Crie sua conta"
+
+msgid "------ Select a team ------"
+msgstr "------ Selecione uma equipe ------"
+
+msgid "Confirm password"
+msgstr "Confirme a senha"
+
+msgid "Password complexity"
+msgstr "Complexidade da senha"
+
+msgid "create"
+msgstr "criar"
+
+msgid "New password updated. You can now login."
+msgstr "Senha atualizada. Agora você pode se conectar."
+
+msgid ""
+"Hi. Someone (probably you) with the IP address: %s and user agent %s "
+"requested a new password on eLabFTW. Please follow this link to reset your "
+"password : %s"
+msgstr ""
+"Olá; Alguém (esperamos que tenha sido você) com o endereço IP: %s e agente "
+"de usuário: %s pediu uma nova senha no eLabFTW. Siga este link se quiser "
+"realmente mudar a sua senha: %s"
+
+msgid "Email not found in database!"
+msgstr "Endereço eletrônico não encontrado no banco de dados!"
+
+msgid "Revisions"
+msgstr "Revisões"
+
+msgid "Go back to the experiment"
+msgstr "Voltar aos experimentos"
+
+msgid "You cannot restore a revision of a locked experiment!"
+msgstr "Não se pode voltar atrás num experimento bloqueado!"
+
+msgid "Current:"
+msgstr "Versão Atual:"
+
+msgid "Saved on:"
+msgstr "Gravada em:"
+
+msgid "Restore"
+msgstr "Restaurar"
+
+msgid "Search"
+msgstr "Busca"
+
+msgid "Advanced search"
+msgstr "Busca com mais opções"
+
+msgid "Back to experiments listing"
+msgstr "Voltar para a lista de experimentos"
+
+msgid "Search only in experiments owned by:"
+msgstr "Busque somente nos experimentos de:"
+
+msgid "Yourself"
+msgstr "Você mesmo(a)"
+
+msgid "search in everyone's experiments"
+msgstr "Busque nos experimentos de todos"
+
+msgid "Search in"
+msgstr "Busque em"
+
+msgid "Where date is between"
+msgstr "Com data entre"
+
+msgid "and"
+msgstr "e"
+
+msgid "And title contains"
+msgstr "Título contém"
+
+msgid "And body contains"
+msgstr "Corpo de texto contém"
+
+msgid "And status is"
+msgstr "Situação é"
+
+msgid "select status"
+msgstr "selecione a situação"
+
+msgid "And rating is"
+msgstr "Com nota"
+
+msgid "select number of stars"
+msgstr "selecione o número de estrelas"
+
+msgid "Unrated"
+msgstr "Sem estrela"
+
+msgid "Launch search"
+msgstr "Buscar"
+
+msgid "Export this result:"
+msgstr "Exportar estes resultados:"
+
+msgid "Sorry. I couldn't find anything :("
+msgstr "Desculpa aí; não achei nada :("
+
+msgid "eLabFTW configuration"
+msgstr "Configuração do eLabFTW"
+
+msgid "Server"
+msgstr "Servidor"
+
+msgid "Timestamp"
+msgstr "Timestamp"
+
+msgid "on"
+msgstr "em"
+
+msgid "at"
+msgstr "em"
+
+msgid "Security"
+msgstr "Segurança"
+
+msgid "Add a new team"
+msgstr "Adicionar equipe"
+
+msgid "Edit existing teams"
+msgstr "Modificar equipes existentes"
+
+msgid "Members"
+msgstr "Membros"
+
+msgid "Items"
+msgstr "Itens"
+
+msgid "Created"
+msgstr "Criação"
+
+msgid "Under the hood"
+msgstr "Sob o capô"
+
+msgid "Activate debug mode:"
+msgstr "Ativar modo debug:"
+
+msgid ""
+"Content of SESSION and COOKIES array will be displayed in the footer for "
+"admins."
+msgstr ""
+"Conteúdo de SESSION e de COOKIES será mostrado no rodapé para os "
+"adminsitradores."
+
+msgid "Address of the proxy:"
+msgstr "Endereço do proxy:"
+
+msgid ""
+"If you are behind a firewall/proxy, enter the address here. Example : http://"
+"proxy.example.com:3128"
+msgstr ""
+"Se você está atrás de uma fireway ou de um proxy digite o endereço. "
+"Exemplo : http://proxy.exemplo.com.br:3128"
+
+msgid "Full path to the install folder:"
+msgstr "Endereço completo do diretório de instalação:"
+
+msgid ""
+"This is actually the md5 hash of the path to the install. You probably don't "
+"need to change that except when you move an existing install."
+msgstr ""
+"Na verdade este é o hash md5 do caminho para a instalação. Você "
+"provavelmente não precisa mudá-lo a menos que esteja movendo uma instalação "
+"existente."
+
+msgid "Universign timestamping configuration"
+msgstr "Configuração do timestamping Universign"
+
+msgid "The teams can use the credentials below to timestamp:"
+msgstr "As equipes podem usar as credenciais abaixo para o timestamp:"
+
+msgid ""
+"You can control if the teams can use the global Universign account. If set "
+"to <em>no</em> the team admin must add login infos in the admin panel."
+msgstr ""
+"Você pode controlar o uso da conta global Universign pelas equipes. Se "
+"colocado em <em>não</em> o administrador de equipe precisa adicionar "
+"informações de login no painel de administração."
+
+msgid "Login for external timestamping service:"
+msgstr "Login para o serviço externo de timestamping:"
+
+msgid "Must be an email address."
+msgstr "Isto tem que ser um endereço eletrônico."
+
+msgid "Password for external timestamping service:"
+msgstr "Senha para o serviço externo de timestamping:"
+
+msgid ""
+"This password will be stored in clear in the database ! Make sure it doesn't "
+"open other doors…"
+msgstr ""
+"Atenção: este senha será gravada de forma não criptografada no banco de "
+"dados! Use uma senha que não abra outras portas…"
+
+msgid "Security settings"
+msgstr "Configurações de Segurança"
+
+msgid "Users need validation by admin after registration:"
+msgstr "Os usuários precisam ser autorizados pelo administrador após registro:"
+
+msgid "Set to yes for added security."
+msgstr "Deixe em sim se quiser ter mais segurança."
+
+msgid "Number of allowed login attempts:"
+msgstr "Número de tentativas de conexão que o usuário pode fazer:"
+
+msgid "3 might be too few. See for yourself :)"
+msgstr "3 pode ser pouco demais. Cuidado :)"
+
+msgid "Time of the ban after failed login attempts (in minutes:"
+msgstr ""
+"Tempo de espera após tantas tentativas de conexão fracassadas (em minutos):"
+
+msgid ""
+"To identify an user we use an md5 of user agent + IP. Because doing it only "
+"based on IP address would surely cause problems."
+msgstr ""
+"Para poder identificar um usuário usamos um md5 do agente de usuário e "
+"também seu IP. Porque se fizéssemos isso apenas baseado em IP certamente "
+"causaríamos problemas."
+
+msgid "SMTP settings"
+msgstr "Configuração SMTP"
+
+msgid ""
+"Without a valid way to send emails users won't be able to reset their "
+"password. It is recommended to create a specific Mandrill.com (or gmail "
+"account and add the infos here."
+msgstr ""
+"Se o sistema não tiver uma maneira eficaz de enviar e-mails os usuários não "
+"poderão modificar suas senhas. Recomendamos que você crie uma conta "
+"exclusiva no Mandrill.com (ou então no Gmail) e adicione as informações de "
+"conexão aqui."
+
+msgid "Address of the SMTP server:"
+msgstr "Endereço do servidor SMTP:"
+
+msgid "SMTP encryption (can be TLS or STARTSSL):"
+msgstr "Criptografia SMTP (pode ser TLS ou STARTSSL):"
+
+msgid "Probably TLS"
+msgstr "Aqui pode deixar TLS sem problemas."
+
+msgid "SMTP Port:"
+msgstr "Porta SMTP:"
+
+msgid "Default is 587."
+msgstr "A configuração normal é 587."
+
+msgid "SMTP username:"
+msgstr "Usuário SMTP:"
+
+msgid "SMTP password"
+msgstr "Senha SMTP:"
+
+msgid "Tips and tricks"
+msgstr "Dicas de uso"
+
+msgid "You belong to the %s team."
+msgstr "Você pertence à equipe %s"
+
+msgid "There is a total of %d experiment"
+msgid_plural "There is a total of %d experiments"
+msgstr[0] "Há um total de %d experimento"
+msgstr[1] "Há um total de %d experimentos"
+
+msgid "by %d different user."
+msgid_plural "by %d different users."
+msgstr[0] "par %d seul utilisateur."
+msgstr[1] "par %d utilisateurs différents."
+
+msgid "There is a total of %d item in the database."
+msgid_plural "There is a total of %d items in the database."
+msgstr[0] "Há um total de %d iten en la banco de dados."
+msgstr[1] "Há um total de %d itens en la banco de dados."
+
+msgid "You can use a TODOlist by pressing 't'."
+msgstr "Para exibir a Lista de Tarefas pressione 't'"
+
+msgid "You can have experiments templates (%sControl Panel%s)"
+msgstr "Você pode definir modelos de experimentos (%sPainel de Controle%s)"
+
+msgid ""
+"The admin of a team can edit the status and the types of items available "
+"(%sAdmin Panel%s)."
+msgstr ""
+"O administrador da equipe pode modificar a lista de situações e os tipos "
+"disponíveis de itens(%sPainel de Administração%s)"
+
+msgid ""
+"If you press Ctrl Shift D in the editor the date will appear under the "
+"cursor."
+msgstr ""
+"Se você pressionar Control+Shift+D no editor de texto a data de hoje será "
+"adicionada na posição em que o cursor estiver"
+
+msgid "Custom shortcuts are available (%sControl Panel%s)."
+msgstr "Você pode programar seus próprios atalhos (%sPainel de Controle%s)"
+
+msgid "You can duplicate experiments in one click."
+msgstr "Com um clique você duplica um experimento"
+
+msgid "Click a tag to list all items with this tag."
+msgstr "Clique numa etiqueta para listar todos os itens que a usam"
+
+msgid ""
+"Register an account with %sUniversign%s to start timestamping experiments."
+msgstr ""
+"Registrar uma conta no %sUniversign%s para poder registrar timestamping nos "
+"experimentos"
+
+msgid "Only a locked experiment can be timestamped."
+msgstr "Bloqueie o experimento para poder gravar o timestamp"
+
+msgid ""
+"Once timestamped an experiment cannot be unlocked or modified. Only comments "
+"can be added."
+msgstr ""
+"CUIDADO: uma vez gravado o timestamp o experimento não poderá ser "
+"desbloqueado nem modificado. Apenas comentários poderão ser adicionados."
+
+msgid ""
+"There was an error in the timestamping. Login credentials probably wrong or "
+"no more credits."
+msgstr ""
+"Houve um erro na tentativa de timestamping. Provavelmente as credenciais de "
+"login não estão corretas ou então acabaram os seus créditos."
+
+msgid ""
+"There was an error with the timestamping. Experiment is NOT timestamped. "
+"Error has been logged."
+msgstr ""
+"Houve um erro na tentativa de timestamping. Este experimento NÃO foi gravado "
+"com timestamp. Este problema foi registrado."
+
+msgid ""
+"Experiment timestamped with success. The timestamped PDF can now be "
+"downloaded below."
+msgstr ""
+"O experimento foi gravado com timestamp. O PDF com timestamp pode ser "
+"baixado com a partir deste link."
+
+msgid "User Control Panel"
+msgstr "Painel de Controle do Usuário"
+
+msgid "Password updated!"
+msgstr "A senha foi atualizada!"
+
+msgid "Profile updated."
+msgstr "O perfil foi atualizado!"
+
+msgid "Enter your password to edit anything."
+msgstr "Digite sua senha para poder modificar algo!"
+
+msgid "Preferences updated."
+msgstr "Suas preferências foram atualizadas."
+
+msgid "You must specify a name for the template!"
+msgstr "Favor especificar um nome para o modelo!"
+
+msgid "The template name must be 3 characters long."
+msgstr "O nome do modelo precisa ter no mínimo 3 caracteres."
+
+msgid "Experiment template successfully added."
+msgstr "O modelo de experimento foi criado."
+
+msgid "Template successfully edited."
+msgstr "O modelo de experimento foi modificado."
+
+msgid "Name of the template"
+msgstr "Nome do modelo"
+
+msgid "Account"
+msgstr "Conta"
+
+msgid "Preferences"
+msgstr "Preferências"
+
+msgid "Templates"
+msgstr "Modelos"
+
+msgid "Modify your personal informations"
+msgstr "Modifique suas informações pessoais"
+
+msgid "Modify your identity"
+msgstr "Modifique sua identidade"
+
+msgid "Modify your password"
+msgstr "Modifique sua senha"
+
+msgid "New password"
+msgstr "Nova senha"
+
+msgid "Confirm new password"
+msgstr "Confirme a nova senha"
+
+msgid "Modify your contact information"
+msgstr "Modifique suas informações para contato"
+
+msgid "Update profile"
+msgstr "Atualize o perfil"
+
+msgid "DISPLAY"
+msgstr "APARENCIA"
+
+msgid "Default"
+msgstr "Normal"
+
+msgid "Compact"
+msgstr "Compacto"
+
+msgid "Order by:"
+msgstr "Ordenar por:"
+
+msgid "with"
+msgstr "com"
+
+msgid "newer first"
+msgstr "primeiro os mais recentes"
+
+msgid "older first"
+msgstr "primeiro os mais antigos"
+
+msgid "Items per page:"
+msgstr "Itens por página:"
+
+msgid "KEYBOARD SHORTCUTS"
+msgstr "ATALHOS DE TECLADO"
+
+msgid "ALERT"
+msgstr "ALERTA"
+
+msgid "Display a warning before closing an edit window/tab ?"
+msgstr "Perguntar antes de fechar uma janela de edição ?"
+
+msgid "Create new"
+msgstr "Criar nova"
+
+msgid "Add template"
+msgstr "Criar um modelo"
+
+msgid "Edit template"
+msgstr "Modificar modelo"
+
+msgid "Language"
+msgstr "Idioma"
+
+msgid "Nothing to show with this ID."
+msgstr "Não existe nada com esse ID."
+
+msgid "Last modified by"
+msgstr "Modificado pela última vez por"
+
+msgid ""
+"<strong>Access forbidden:</strong> the visibility setting of this experiment "
+"is set to 'owner only'."
+msgstr ""
+"<strong>Acesso proibido:</strong> a configuração de visibilidade deste "
+"experimento é 'somente para o proprietário'."
+
+msgid "<strong>Read-only mode:</strong> this experiment is owned by"
+msgstr "<strong>Modo somente leitura:</strong> este experimento pertence a"
+
+msgid "Experiment was timestamped by"
+msgstr "O registro de timestamp foi feito por"
+
+msgid "Unique eLabID:"
+msgstr "eLabID único:"
+
+msgid "Comments"
+msgstr "Comentários"
+
+msgid "Add a comment"
+msgstr "Clique para adicionar um comentário"
+
+msgid "Delete this?"
+msgstr "Apagar isto?"
+
+msgid ""
+"Once timestamped an experiment cannot be edited anymore ! Are you sure you "
+"want to do this ?"
+msgstr ""
+"Uma vez que  timestamp for feito o experimento não poderá ser modificado. "
+"Isto é definitivo! Tem certeza que quer gravar o timestamp agora ?"
+
+msgid "Tag cloud"
+msgstr "Nuvem de Etiquetas"
+
+msgid "Not enough tags to make a tagcloud."
+msgstr "Não existem etiquetas suficientes pra construir uma nuvem."
+
+msgid "Statistics"
+msgstr "Estatísticas"
+
+msgid "No statistics available yet."
+msgstr "Ainda não há estatísticas disponíveis."
+
+msgid "Experiments for"
+msgstr "Experimentos de"
+
+msgid "Attach a file."
+msgstr "Anexar um arquivo."
+
+msgid "Start Upload"
+msgstr "Iniciar upload"
+
+msgid "Filter type"
+msgstr "Filtrar por tipo"
+
+msgid "Found"
+msgstr "Encontrado(s)"
+
+msgid "results."
+msgstr "resultados"
+
+msgid "Found_1"
+msgstr "Encontrado 1 resultado."
+
+msgid "Found_0"
+msgstr "Não encontrei nada."
+
+msgid ""
+"<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list "
+"to begin filling your database."
+msgstr ""
+"<strong>Bem-vindo(a) ao eLabFTW.</strong>Selecione um item na lista «Criar "
+"novo» para começar a alimentar o banco de dados."
+
+msgid "Showing last 10 uploads:"
+msgstr "Mostrando 10 últimos itens gravados:"
+
+msgid "Load more"
+msgstr "Carregar mais"
+
+msgid "Create experiment"
+msgstr "Novo experimento"
+
+msgid "Create from template"
+msgstr "Novo a partir de um modelo"
+
+msgid "Filter status"
+msgstr "Filtrar por situação"
+
+msgid ""
+"<strong>You do not have any templates yet.</strong> Go to %syour control "
+"panel%s to make one !"
+msgstr ""
+"<strong>Você ainda não tem nenhum modelo.</strong> Vá para o %sseu painel de "
+"controle%s para fazer um !"
+
+msgid ""
+"<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button "
+"to get started."
+msgstr ""
+"<strong>Bem-vindo(a) ao eLabFTW.</strong>Clique em %sCriar experimento%s "
+"para começar."
+
+msgid "<strong>This item is locked.</strong> You cannot edit it."
+msgstr "<strong>Este item está bloqueado.</strong> Você não pode modificá-lo."
+
+msgid "Tags"
+msgstr "Etiquetas"
+
+msgid ""
+"Do you want to navigate away from this page? Unsaved changes will be lost!"
+msgstr ""
+"Você quer mesmo sair desta página? As modificações não salvas serão perdidas!"
+
+msgid "<strong>Cannot edit:</strong> this experiment is not yours!"
+msgstr "<strong>Você não pode modificar:</strong> este experimento não é seu!"
+
+msgid "click a tag to remove it"
+msgstr "clique em uma etiqueta para removê-la"
+
+msgid "Add a tag"
+msgstr "Adicionar uma etiqueta"
+
+msgid "Only the team"
+msgstr "Apenas a equipe"
+
+msgid "Only me"
+msgstr "só me"
+
+msgid "Experiment"
+msgstr "Experimento"
+
+msgid "Linked items"
+msgstr "Itens conectados"
+
+msgid "Add a link"
+msgstr "Conectar um item"
+
+msgid "from the database"
+msgstr "no banco de dados"
+
+msgid "Show history"
+msgstr "Mostrar histórico"
+
+msgid "revision available."
+msgstr "revisão disponível."
+
+msgid "revisions available."
+msgstr "revisões disponíveis."
+
+msgid "Howdy"
+msgstr "Oi"
+
+msgid "Settings"
+msgstr "Configurações"
+
+msgid "Logout"
+msgstr "Desconectar-se"
+
+msgid "Check for updates"
+msgstr "Verificar atualizações disponíveis"
+
+msgid "Sysadmin panel"
+msgstr "Painel do administrador de sistemas"
+
+msgid "Admin panel"
+msgstr "Painel do administrador"
+
+msgid "Powered by"
+msgstr "Turbinado por"
+
+msgid "Page generated in"
+msgstr "Esta página foi gerada em"

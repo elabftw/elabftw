@@ -135,13 +135,14 @@ $req->execute();
 
 // the new file to write to
 $config_file = '../config.php';
+$elab_root = substr(realpath(__FILE__), 0, -20).'/';
 // what we will write
 $config = "<?php
 define('DB_HOST', '".$db_host."');
 define('DB_NAME', '".$db_name."');
 define('DB_USER', '".$db_user."');
 define('DB_PASSWORD', '".$db_password."');
-define('ELAB_ROOT', '".$path."/');
+define('ELAB_ROOT', '".$elab_root."');
 ";
 
 // we try to write content to file and propose the file for download if we can't write to it

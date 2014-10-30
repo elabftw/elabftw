@@ -37,7 +37,7 @@ if (isset($_POST['item_id']) && is_pos_int($_POST['item_id'])) {
 // what do we add ?
 
 switch ($_POST['type']) {
-    // _('Tags') FOR _('Experiment')S
+    // TAGS FOR EXPERIMENTS
     case 'exptag':
         // Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
         $tag = strtr(filter_var($_POST['tag'], FILTER_SANITIZE_STRING), '\\', '');
@@ -72,7 +72,7 @@ switch ($_POST['type']) {
 
         break;
 
-    // ADD A LINK TO AN _('Experiment')
+    // ADD A LINK TO AN EXPERIMENT
     case 'link':
         // check link is int and experiment is owned by user
         if (filter_var($_POST['link_id'], FILTER_VALIDATE_INT) &&

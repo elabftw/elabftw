@@ -282,7 +282,7 @@ if (!defined(ELAB_ROOT)) {
     if (file_put_contents('config.php', $text2add, FILE_APPEND)) {
         echo ">>> Added constant ELAB_ROOT in file config.php\n";
     } else {
-        echo "!!! Error writing file config.php. Please fix permissions for server to write to it. Or edit it yoursefl (look at config.php-EXAMPLE)";
+        echo "!!! Error writing file config.php. Please fix permissions for server to write to it. Or edit it yourself (look at config.php-EXAMPLE)";
     }
 }
 

@@ -164,7 +164,7 @@ if (empty($_SESSION['errors'])) {
 " required />
 
 <br>
-<h4><?php echo _('Experiment');?></h4><br>
+<h4><?php echo ngettext('Experiment', 'Experiments', 1);?></h4><br>
 <textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">
     <?php echo stripslashes($experiment['body']);?>
 </textarea>
@@ -223,11 +223,7 @@ $req->execute(array(
 $rev_count = $req->fetch();
 $count = intval($rev_count[0]);
 if ($count > 0) {
-    if ($count === 1) {
-        echo $count." "._('revision available.')." <a href='revision.php?exp_id=".$id."'>"._('Show history')."</a>";
-    } else {
-        echo $count." "._('revisions available.')." <a href='revision.php?exp_id=".$id."'>"._('Show history')."</a>";
-    }
+    echo $count." ".ngettext(_('revision available.'), _('revisions available.'), $count)." <a href='revision.php?exp_id=".$id."'>"._('Show history')."</a>";
 }
 ?>
 

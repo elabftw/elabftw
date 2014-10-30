@@ -138,9 +138,9 @@ $config_file = '../config.php';
 // what we will write
 $config = "<?php
 define('DB_HOST', '".$db_host."');
-define('DB__('Name')', '".$db_name."');
+define('DB_NAME', '".$db_name."');
 define('DB_USER', '".$db_user."');
-define('DB__('Password')', '".$db_password."');
+define('DB_PASSWORD', '".$db_password."');
 define('ELAB_ROOT', '".$path."/');
 ";
 

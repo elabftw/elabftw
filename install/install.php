@@ -127,7 +127,7 @@ $sql = "INSERT INTO config (conf_name, conf_value) VALUES
     ('stamplogin', ''),
     ('stamppass', ''),
     ('stampshare', '0'),
-    ('lang', 'en-GB');";
+    ('lang', 'en_GB');";
 $req = $pdo->prepare($sql);
 $req->execute();
 

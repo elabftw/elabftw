@@ -636,9 +636,10 @@ function duplicate_item($id, $type)
         $req->execute();
         $data = $req->fetch();
         // SQL for duplicateXP
-        $sql = "INSERT INTO experiments(title, date, body, status, elabid, visibility, userid) VALUES(:title, :date, :body, :status, :elabid, :visibility, :userid)";
+        $sql = "INSERT INTO experiments(team, title, date, body, status, elabid, visibility, userid) VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
         $req = $pdo->prepare($sql);
         $result = $req->execute(array(
+            'team' => $_SESSION['team_id'],
             'title' => $data['title'],
             'date' => kdate(),
             'body' => $data['body'],

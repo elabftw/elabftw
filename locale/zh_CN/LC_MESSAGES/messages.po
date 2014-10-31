@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2014-10-27 17:55+0100\n"
-"PO-Revision-Date: 2014-10-30 13:21+0100\n"
-"Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
+"PO-Revision-Date: 2014-10-31 18:17+0800\n"
+"Last-Translator: Suyoung Wang <wsy5987@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,7 +20,7 @@ msgid "No"
 msgstr "否"
 
 msgid "Configuration updated successfully."
-msgstr "配置已更新成功。"
+msgstr "配置已成功更新。"
 
 msgid ""
 "There was an unexpected problem! Please %sopen an issue on GitHub%s if you "
@@ -30,13 +30,13 @@ msgstr ""
 "告%s。"
 
 msgid "The id parameter is not valid."
-msgstr "ID 参数无效！"
+msgstr "ID 参数无效。"
 
 msgid "Userid is not valid."
 msgstr "用户名无效。"
 
 msgid "The type parameter is not valid."
-msgstr "类型参数无效！"
+msgstr "类型参数无效。"
 
 msgid "The form key is invalid. Please retry."
 msgstr "表格键无效。请重试。"
@@ -48,7 +48,7 @@ msgid "Wrong password!"
 msgstr "密码错误！"
 
 msgid "No user with this email or user not in your team"
-msgstr "无用户使用此 Email 或用户不再您的团队中"
+msgstr "无用户使用此 Email 或用户不在您的团队中"
 
 msgid "The passwords do not match!"
 msgstr "密码不匹配！"
@@ -115,7 +115,7 @@ msgid "Save"
 msgstr "保存"
 
 msgid "Saved"
-msgstr "已保存！"
+msgstr "已保存"
 
 msgid "Cancel"
 msgstr "取消"
@@ -181,7 +181,7 @@ msgid "Types of items"
 msgstr "项目类型"
 
 msgid "Experiments template"
-msgstr "实验记录模版"
+msgstr "实验记录模板"
 
 msgid "Configure your team"
 msgstr "配置您的团队"
@@ -198,16 +198,16 @@ msgstr "链接指向的地址："
 msgid ""
 "This should be the email address associated with your account on Universign."
 "com."
-msgstr "在此输入您的 Universign.com 账号关联的 Email 地址。"
+msgstr "在此输入与您的 Universign.com 账号关联的 Email 地址。"
 
 msgid "Your Universign password"
-msgstr "外部时间戳服务密码："
+msgstr "您的 Universign 密码："
 
 msgid "Edit users"
 msgstr "编辑用户"
 
 msgid "Has an active account?"
-msgstr "账号以激活？"
+msgstr "已有激活账号？"
 
 msgid "Group:"
 msgstr "用户组："
@@ -222,7 +222,7 @@ msgid "Edit this user"
 msgstr "编辑此用户"
 
 msgid "DANGER ZONE"
-msgstr "添加一个新状态"
+msgstr "危险区域"
 
 msgid "Delete an account"
 msgstr "删除账号"
@@ -230,7 +230,7 @@ msgstr "删除账号"
 msgid ""
 "Type EMAIL ADDRESS of a member to delete this user and all his experiments/"
 "files forever:"
-msgstr "输入一个用户的 Email 地址来永久删除此用户及其所有实验 / 文件："
+msgstr "输入一个用户的 Email 地址来永久删除此用户及其所有实验记录 / 文件："
 
 msgid "Type your password:"
 msgstr "输入您的密码："
@@ -251,7 +251,7 @@ msgid "Remove all experiments with this status before deleting this status."
 msgstr "删除此状态前请将所有实验记录从此状态中移除。"
 
 msgid "Default status"
-msgstr "设为默认"
+msgstr "默认状态"
 
 msgid "Database items types"
 msgstr "数据库项目类型"
@@ -266,10 +266,10 @@ msgid "Add a new type of item:"
 msgstr "添加新项目类型："
 
 msgid "Common experiment template"
-msgstr "公共实验记录模版"
+msgstr "公共实验记录模板"
 
 msgid "This is the default text when someone creates an experiment."
-msgstr "这是创建新实验记录的默认模版。"
+msgstr "这是创建新实验记录的默认模板。"
 
 msgid ""
 "This page will allow you to import a .csv (Excel spreadsheet file into the "
@@ -302,19 +302,19 @@ msgid "items were imported successfully."
 msgstr "个项目被成功导入。"
 
 msgid "Validated user with ID:"
-msgstr "Validated user with ID ："
+msgstr "已验证用户 ID："
 
 msgid "Team added successfully."
-msgstr "Team added successfully."
+msgstr "已成功添加团队。"
 
 msgid "Only a sysadmin can put someone sysadmin."
-msgstr "Only a sysadmin can put someone sysadmin."
+msgstr "只有系统管理员可以设置系统管理员。"
 
 msgid "Everything was purged successfully."
-msgstr "Everything was purged successfully."
+msgstr "清理成功。"
 
 msgid "Reset password"
-msgstr "新密码"
+msgstr "重置密码"
 
 msgid "Type it again"
 msgstr "请再输入一次"
@@ -353,7 +353,7 @@ msgid "Unknown branch!"
 msgstr "未知分支！"
 
 msgid "Couldn't connect to github.com to check for updates."
-msgstr "无法连接到 github.com 来检查更新。"
+msgstr "无法连接到 Github.com 来检查更新。"
 
 msgid "A new update is available!"
 msgstr "有更新可用！"
@@ -388,7 +388,7 @@ msgid "Experiment was deleted successfully."
 msgstr "已成功删除实验记录。"
 
 msgid "Template was deleted successfully."
-msgstr "已成功删除模版。"
+msgstr "已成功删除模板。"
 
 msgid "Item was deleted successfully."
 msgstr "已成功删除项目类型。"
@@ -409,7 +409,7 @@ msgid "You don't have the rights to lock/unlock this."
 msgstr "您无权锁定 / 解锁。"
 
 msgid "This item is locked. You cannot edit it."
-msgstr "此实验记录已被下列用户锁定"
+msgstr "此项目已被锁定。您不能编辑。"
 
 msgid ""
 "Login failed. Either you mistyped your password or your account isn't "
@@ -474,7 +474,7 @@ msgstr "已有人使用此 Email 地址！"
 msgid ""
 "Hi. A new user registered on elabftw. Head to the admin panel to validate "
 "the account."
-msgstr "您好 有人在 eLabFTW 中注册了新的账号。请转到管理面板来激活账号！"
+msgstr "您好。有新用户在 eLabFTW 中注册了账号。请转到管理面板来验证账号！"
 
 msgid ""
 "Could not send email to inform admin. Error was logged. Contact an admin "
@@ -521,7 +521,7 @@ msgid ""
 "requested a new password on eLabFTW. Please follow this link to reset your "
 "password : %s"
 msgstr ""
-"您好 有人 (可能是您) 在以下 IP 地址：%s 浏览器 UA 为： %s 在 eLabFTW 上请求了"
+"您好。有人 (可能是您) 在以下 IP 地址：%s 浏览器 UA 为：%s 在 eLabFTW 上请求了"
 "新的密码。请根据以下链接的指示来重置密码：%s"
 
 msgid "Email not found in database!"
@@ -591,7 +591,7 @@ msgid "select number of stars"
 msgstr "选择星标数量"
 
 msgid "Unrated"
-msgstr "为评级"
+msgstr "未评级"
 
 msgid "Launch search"
 msgstr "启动搜索"
@@ -612,7 +612,7 @@ msgid "Timestamp"
 msgstr "时间戳"
 
 msgid "on"
-msgstr "上"
+msgstr "于"
 
 msgid "at"
 msgstr "在"
@@ -653,7 +653,7 @@ msgid ""
 "If you are behind a firewall/proxy, enter the address here. Example : http://"
 "proxy.example.com:3128"
 msgstr ""
-"如果您处在防火墙 / 代理服务器之后 请在此处输入地址。例如：http://proxy."
+"如果您处在防火墙 / 代理服务器之后，请在此处输入地址。例如：http://proxy."
 "example.com:3128"
 
 msgid "Full path to the install folder:"
@@ -699,7 +699,7 @@ msgid "Users need validation by admin after registration:"
 msgstr "用户注册后需要由管理员验证："
 
 msgid "Set to yes for added security."
-msgstr "设为是来增加额外的安全性。"
+msgstr "设置为是来增加额外的安全性。"
 
 msgid "Number of allowed login attempts:"
 msgstr "允许尝试登录次数："
@@ -734,7 +734,7 @@ msgid "SMTP encryption (can be TLS or STARTSSL):"
 msgstr "SMTP 加密方式 (可能是 TLS 或 STARTSSL)："
 
 msgid "Probably TLS"
-msgstr "您可以将此设置为 TLS 而不会引起问题。"
+msgstr "很可能是 TLS"
 
 msgid "SMTP Port:"
 msgstr "SMTP 端口："
@@ -752,51 +752,51 @@ msgid "Tips and tricks"
 msgstr "小提示"
 
 msgid "You belong to the %s team."
-msgstr "您属于%s"
+msgstr "您属于 %s 团队。"
 
 msgid "There is a total of %d experiment"
 msgid_plural "There is a total of %d experiments"
-msgstr[0] "Il y a un total de %d expérience"
+msgstr[0] "共有 %d 个实验记录，"
 
 msgid "by %d different user."
 msgid_plural "by %d different users."
-msgstr[0] "par %d seul utilisateur."
+msgstr[0] "由 %d 个用户完成。"
 
 msgid "There is a total of %d item in the database."
 msgid_plural "There is a total of %d items in the database."
-msgstr[0] "Il y a un total de %d item dans la base de données."
+msgstr[0] "数据库中共有 %d 个项目。"
 
 msgid "You can use a TODOlist by pressing 't'."
-msgstr "您可以通过按下 'T' 来使用任务列表"
+msgstr "您可以通过按下 'T' 来使用任务列表。"
 
 msgid "You can have experiments templates (%sControl Panel%s)"
-msgstr "您可以拥有自己的实验记录模版 (%s控制面板%s)"
+msgstr "您可以拥有自己的实验记录模板 (%s控制面板%s)。"
 
 msgid ""
 "The admin of a team can edit the status and the types of items available "
 "(%sAdmin Panel%s)."
-msgstr "团队管理员可以编辑可用的状态和项目类型 (%s管理面板%s)"
+msgstr "团队管理员可以编辑可用的状态和项目类型 (%s管理面板%s)。"
 
 msgid ""
 "If you press Ctrl Shift D in the editor the date will appear under the "
 "cursor."
-msgstr "如果您在编辑器中按下 Ctrl + Shift + D，日期将会出现在光标处"
+msgstr "如果您在编辑器中按下 Ctrl + Shift + D，日期将会插入到光标处。"
 
 msgid "Custom shortcuts are available (%sControl Panel%s)."
-msgstr "您可以自定义快捷键 (%s控制面板%s)"
+msgstr "您可以自定义快捷键 (%s控制面板%s)。"
 
 msgid "You can duplicate experiments in one click."
-msgstr "您可以一键复制实验记录"
+msgstr "您可以一键复制实验记录。"
 
 msgid "Click a tag to list all items with this tag."
-msgstr "点击标签来列出所有具有此标签的项目"
+msgstr "点击标签来列出所有具有此标签的项目。"
 
 msgid ""
 "Register an account with %sUniversign%s to start timestamping experiments."
-msgstr "在 %sUniversign%s 注册账号来为实验记录添加时间戳"
+msgstr "在 %sUniversign%s 注册账号来为实验记录添加时间戳。"
 
 msgid "Only a locked experiment can be timestamped."
-msgstr "只有被锁定的实验记录可以添加时间戳"
+msgstr "只有被锁定的实验记录可以添加时间戳。"
 
 msgid ""
 "Once timestamped an experiment cannot be unlocked or modified. Only comments "
@@ -806,12 +806,12 @@ msgstr "一旦添加了时间戳，实验记录将不能解锁或编辑。只能
 msgid ""
 "There was an error in the timestamping. Login credentials probably wrong or "
 "no more credits."
-msgstr "时间戳功能未配置。请查看 %swiki%s。"
+msgstr "添加时间戳时发生错误。登录凭证可能有误或余额不足。"
 
 msgid ""
 "There was an error with the timestamping. Experiment is NOT timestamped. "
 "Error has been logged."
-msgstr "添加时间戳时发生错误。登录凭证可能有误或余额不足。"
+msgstr "添加时间戳时发生错误。实验记录未被添加时间戳。错误已被记录。"
 
 msgid ""
 "Experiment timestamped with success. The timestamped PDF can now be "
@@ -825,28 +825,28 @@ msgid "Password updated!"
 msgstr "密码已更新！"
 
 msgid "Profile updated."
-msgstr "个人资料已更新"
+msgstr "个人资料已更新。"
 
 msgid "Enter your password to edit anything."
-msgstr "输入您的密码来编辑！"
+msgstr "输入您的密码来编辑。"
 
 msgid "Preferences updated."
 msgstr "您的偏好设置已更新。"
 
 msgid "You must specify a name for the template!"
-msgstr "您需要为模版指定一个名称！"
+msgstr "您需要为模板指定一个名称！"
 
 msgid "The template name must be 3 characters long."
-msgstr "模版名称最少为 3 个字符。"
+msgstr "模板名称最少为 3 个字符。"
 
 msgid "Experiment template successfully added."
-msgstr "已成功添加实验记录模版。"
+msgstr "已成功添加实验记录模板。"
 
 msgid "Template successfully edited."
-msgstr "已成功编辑实验记录模版。"
+msgstr "已成功编辑实验记录模板。"
 
 msgid "Name of the template"
-msgstr "模版名称"
+msgstr "模板名称"
 
 msgid "Account"
 msgstr "账号"
@@ -855,7 +855,7 @@ msgid "Preferences"
 msgstr "偏好"
 
 msgid "Templates"
-msgstr "模版"
+msgstr "模板"
 
 msgid "Modify your personal informations"
 msgstr "修改您的个人信息"
@@ -918,10 +918,10 @@ msgid "Create new"
 msgstr "新建"
 
 msgid "Add template"
-msgstr "添加模版"
+msgstr "添加模板"
 
 msgid "Edit template"
-msgstr "编辑模版"
+msgstr "编辑模板"
 
 msgid "Language"
 msgstr "语言"
@@ -930,7 +930,7 @@ msgid "Nothing to show with this ID."
 msgstr "此 ID 无可显示内容。"
 
 msgid "Last modified by"
-msgstr "由"
+msgstr "最后修改："
 
 msgid ""
 "<strong>Access forbidden:</strong> the visibility setting of this experiment "
@@ -941,7 +941,7 @@ msgid "<strong>Read-only mode:</strong> this experiment is owned by"
 msgstr "<strong>只读模式：</strong>此实验记录所有者为"
 
 msgid "Experiment was timestamped by"
-msgstr "实验记录已被"
+msgstr "添加时间戳："
 
 msgid "Unique eLabID:"
 msgstr "唯一 eLabID："
@@ -1007,13 +1007,13 @@ msgid "Showing last 10 uploads:"
 msgstr "显示最近 10 条记录："
 
 msgid "Load more"
-msgstr "Load more"
+msgstr "加载更多"
 
 msgid "Create experiment"
 msgstr "创建实验记录"
 
 msgid "Create from template"
-msgstr "从模版创建"
+msgstr "从模板创建"
 
 msgid "Filter status"
 msgstr "选择状态"
@@ -1021,7 +1021,7 @@ msgstr "选择状态"
 msgid ""
 "<strong>You do not have any templates yet.</strong> Go to %syour control "
 "panel%s to make one !"
-msgstr "<strong>您还没有模版。</strong>转到%s您的控制面板%s来创建一个！"
+msgstr "<strong>您还没有模板。</strong>转到%s您的控制面板%s来创建一个！"
 
 msgid ""
 "<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button "

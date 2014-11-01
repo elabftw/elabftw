@@ -624,13 +624,24 @@ tinymce.PluginManager.add('lists', function(editor) {
 		self.backspaceDelete = function(isForward) {
 			function findNextCaretContainer(rng, isForward) {
 				var node = rng.startContainer, offset = rng.startOffset;
+				var nonEmptyBlocks, walker;
 
 				if (node.nodeType == 3 && (isForward ? offset < node.data.length : offset > 0)) {
 					return node;
 				}
 
-				var walker = new tinymce.dom.TreeWalker(rng.startContainer);
+				nonEmptyBlocks = editor.schema.getNonEmptyElements();
+				walker = new tinymce.dom.TreeWalker(rng.startContainer);
+
 				while ((node = walker[isForward ? 'next' : 'prev']())) {
+					if (node.nodeName == 'LI' && !node.hasChildNodes()) {
+						return node;
+					}
+
+					if (nonEmptyBlocks[node.nodeName]) {
+						return node;
+					}
+
 					if (node.nodeType == 3 && node.data.length > 0) {
 						return node;
 					}
@@ -649,8 +660,14 @@ tinymce.PluginManager.add('lists', function(editor) {
 					dom.remove(node);
 				}
 
-				while ((node = fromElm.firstChild)) {
-					toElm.appendChild(node);
+				if (dom.isEmpty(toElm)) {
+					dom.$(toElm).empty();
+				}
+
+				if (!dom.isEmpty(fromElm)) {
+					while ((node = fromElm.firstChild)) {
+						toElm.appendChild(node);
+					}
 				}
 
 				if (listNode) {
@@ -721,7 +738,12 @@ tinymce.PluginManager.add('lists', function(editor) {
 		editor.addQueryStateHandler('InsertDefinitionList', queryListCommandState('DL'));
 
 		editor.on('keydown', function(e) {
-			if (e.keyCode == 9 && editor.dom.getParent(editor.selection.getStart(), 'LI,DT,DD')) {
+			// Check for tab but not ctrl/cmd+tab since it switches browser tabs
+			if (e.keyCode != 9 || tinymce.util.VK.metaKeyPressed(e)) {
+				return;
+			}
+
+			if (editor.dom.getParent(editor.selection.getStart(), 'LI,DT,DD')) {
 				e.preventDefault();
 
 				if (e.shiftKey) {

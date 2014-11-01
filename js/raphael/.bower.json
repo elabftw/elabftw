@@ -24,6 +24,6 @@
     "commit": "3331359c102e23dc72a224ba65e4fdec6f20894c"
   },
   "_source": "git://github.com/DmitryBaranovskiy/raphael.git",
-  "_target": ">= 2.1.0",
+  "_target": "~2.1.2",
   "_originalSource": "raphael"
 }

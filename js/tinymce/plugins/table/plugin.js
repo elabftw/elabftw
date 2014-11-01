@@ -1528,17 +1528,21 @@ define("tinymce/tableplugin/Dialogs", [
 	return function(editor) {
 		var self = this;
 
-		function pickColorAction() {
-			var self = this, colorPickerCallback = editor.settings.color_picker_callback;
+		function createColorPickAction() {
+			var colorPickerCallback = editor.settings.color_picker_callback;
 
 			if (colorPickerCallback) {
-				colorPickerCallback.call(
-					editor,
-					function(value) {
-						self.value(value).fire('change');
-					},
-					self.value()
-				);
+				return function() {
+					var self = this;
+
+					colorPickerCallback.call(
+						editor,
+						function(value) {
+							self.value(value).fire('change');
+						},
+						self.value()
+					);
+				};
 			}
 		}
 
@@ -1573,14 +1577,14 @@ define("tinymce/tableplugin/Dialogs", [
 								label: 'Border color',
 								type: 'colorbox',
 								name: 'borderColor',
-								onaction: pickColorAction
+								onaction: createColorPickAction()
 							},
 
 							{
 								label: 'Background color',
 								type: 'colorbox',
 								name: 'backgroundColor',
-								onaction: pickColorAction
+								onaction: createColorPickAction()
 							}
 						]
 					}
@@ -1825,7 +1829,7 @@ define("tinymce/tableplugin/Dialogs", [
 				]
 			};
 
-			if (editor.settings.table_adv_tab !== false) {
+			if (editor.settings.table_advtab !== false) {
 				appendStylesToData(dom, data, tableElm);
 
 				editor.windowManager.open({
@@ -2047,7 +2051,7 @@ define("tinymce/tableplugin/Dialogs", [
 				]
 			};
 
-			if (editor.settings.table_cell_adv_tab !== false) {
+			if (editor.settings.table_cell_advtab !== false) {
 				appendStylesToData(dom, data, cellElm);
 
 				editor.windowManager.open({
@@ -2070,7 +2074,7 @@ define("tinymce/tableplugin/Dialogs", [
 				editor.windowManager.open({
 					title: "Cell properties",
 					data: data,
-					items: generalCellForm,
+					body: generalCellForm,
 					onsubmit: onSubmitCellForm
 				});
 			}
@@ -2219,7 +2223,7 @@ define("tinymce/tableplugin/Dialogs", [
 				]
 			};
 
-			if (editor.settings.table_row_adv_tab !== false) {
+			if (editor.settings.table_row_advtab !== false) {
 				appendStylesToData(dom, data, rowElm);
 
 				editor.windowManager.open({

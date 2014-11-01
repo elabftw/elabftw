@@ -635,12 +635,17 @@ function duplicate_item($id, $type)
         $req = $pdo->prepare($sql);
         $req->execute();
         $data = $req->fetch();
+
+        // let's add something at the end of the title to show it's a duplicate
+        // capital i looks good enough
+        $title = $data['title'].' I';
+
         // SQL for duplicateXP
         $sql = "INSERT INTO experiments(team, title, date, body, status, elabid, visibility, userid) VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
         $req = $pdo->prepare($sql);
         $result = $req->execute(array(
             'team' => $_SESSION['team_id'],
-            'title' => $data['title'],
+            'title' => $title,
             'date' => kdate(),
             'body' => $data['body'],
             'status' => $status,

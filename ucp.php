@@ -269,7 +269,7 @@ $users = $req->fetch();
     <div class='subdivhandle' id='subtab1div'>
         <form action='ucp-exec.php' method='post'>
             <input type='hidden' name='new_tpl_form' />
-            <input type='text' name='new_tpl_name' placeholder='<?php echo _('Name of the template');?>' /><br>
+            <input required type='text' name='new_tpl_name' placeholder='<?php echo _('Name of the template');?>' /><br>
             <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='mceditable' rows='50' cols='60'></textarea>
         <br />
             <div class='center'>

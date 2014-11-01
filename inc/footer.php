@@ -26,7 +26,7 @@
     </form>
     <ul id="show-items"></ul>
     <a href="#" id="clear-all">Clear All</a><br><br>
-    <a href="#" onClick='showPanel()'>Close</a>
+    <a class='button' href="#" onClick='showPanel()'>Close</a>
 </div>
 
 <footer>

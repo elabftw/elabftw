@@ -201,7 +201,7 @@ $formKey = new formKey();
         <input type='text' value='<?php echo get_config('smtp_port');?>' name='smtp_port' id='smtp_port' />
         </p>
         <p>
-        <span class='smallgray'><?php echo _('Default is 587');?></span>
+        <span class='smallgray'><?php echo _('Default is 587.');?></span>
         <label for='smtp_username'><?php echo _('SMTP username:');?></label>
         <input type='text' value='<?php echo get_config('smtp_username');?>' name='smtp_username' id='smtp_username' />
         </p>

@@ -237,7 +237,7 @@ function search_item($type, $query, $userid)
         return false;
     }
     // filter out duplicate ids and reverse the order; XP should be sorted by date
-    return $results_arr = array_reverse(array_unique($results_arr));
+    return array_reverse(array_unique($results_arr));
 }
 
 /**
@@ -947,7 +947,6 @@ function q($sql) {
 function update_config($array)
 {
     global $pdo;
-    $values = array();
     foreach ($array as $name => $value) {
         $sql = "UPDATE config SET conf_value = '".$value."' WHERE conf_name = '".$name."';";
         $req = $pdo->prepare($sql);

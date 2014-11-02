@@ -78,7 +78,7 @@ $formKey = new formKey();
         $count = $count_req->fetch(PDO::FETCH_NAMED);
         echo " <input type='text' name='edit_team_name' value='".$team['team_name']."' id='team_".$team['team_id']."' />";
         echo " <input id='button_".$team['team_id']."' onClick=\"updateTeam('".$team['team_id']."')\" type='submit' class='button' value='Save' />";
-        echo _('Members').": ".$count['totusers']." − "._('Experiments').": ".$count['totxp']." − "._('Items').": ".$count['totdb']." − "._('Created').": ".$team['datetime']."<br>";
+        echo "<p>"._('Members').": ".$count['totusers']." − ".ngettext('Experiment', 'Experiments', $count['totxp'] ).": ".$count['totxp']." − "._('Items').": ".$count['totdb']." − "._('Created').": ".$team['datetime']."<p>";
     }
     ?>
     </p>

@@ -172,6 +172,16 @@ if (extension_loaded("gd")) {
     custom_die();
 }
 
+// CHECK gettext extension
+if (extension_loaded("gettext")) {
+    $message = 'The <em>gettext</em> extension is loaded.';
+    display_message('info_nocross', $message);
+} else {
+    $message = "The <em>gettext</em> extension is <strong>NOT</strong> loaded.
+            <a href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting#the-gd-extension-is-not-loaded'>Click here to read how to fix this.</a>";
+    display_message('error_nocross', $message);
+    custom_die();
+}
 ?>
 
 <br />

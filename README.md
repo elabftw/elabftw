@@ -38,7 +38,7 @@ Everything is explained here :
 ## Install on Unix-like OS (GNU/Linux, BSD, Solaris, etc…) (the recommended way !)
 Please refer to your distribution's documentation to install :
 * a webserver (like Apache, nginx, lighttpd or cherokee)
-* php version > 5
+* php version > 5 with the following extensions : gettext, gd, openssl, hash
 * mysql version > 5.6.6
 * git
 

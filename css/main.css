@@ -859,8 +859,8 @@ code {
     padding: 10px;
     text-align: left;
 }
-#slide-panel ul li span {
-    cursor: text;
+#slide-panel ul li {
+    cursor: auto;
 }
 #slide-panel ul li a,
 #slide-panel ul li a:link {

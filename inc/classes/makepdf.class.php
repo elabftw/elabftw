@@ -153,13 +153,12 @@ class MakePdf {
             }
             $content .= "</ul></section>";
         }
-        // _('Experiment')S
+        // EXPERIMENTS
         if ($type === 'experiments') {
             if ($out === 'browser') {
                 $url = str_replace('make_pdf.php', 'experiments.php', $url);
             } else { // call from make_zip or timestamp.php
-                $url = str_replace('make_zip.php', 'experiments.php', $url);
-                $url = str_replace('timestamp.php', 'experiments.php', $url);
+                $url = str_replace(array('make_zip.php', 'timestamp.php'), 'experiments.php', $url);
             }
             $full_url = $url."?mode=view&id=".$id;
 
@@ -199,8 +198,7 @@ class MakePdf {
                     if ($out === 'browser') {
                         $item_url = str_replace('experiments.php', 'database.php', $url);
                     } else { // call from make_zip or timestamp.php
-                        $item_url = str_replace('experiments.php', 'database.php', $url);
-                        $item_url = str_replace('timestamp.php', 'database.php', $url);
+                        $item_url = str_replace(array('experiments.php', 'timestamp.php'), 'database.php', $url);
                     }
                     $full_item_url = $item_url."?mode=view&id=".$links_id_arr[$i];
 

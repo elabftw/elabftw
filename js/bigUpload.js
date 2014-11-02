@@ -270,8 +270,18 @@ function bigUpload () {
                     } else {
                         bigtype = 'experiments';
                     }
-                    // TODO see issue #54
-                    $("#filesdiv").load(bigtype+'.php?mode=edit&id='+item_id+' #filesdiv');
+                    $("#filesdiv").load(bigtype+'.php?mode=edit&id='+item_id+' #filesdiv', function() {
+                    // make the comment zone editable (fix issue #54)
+                        $('.thumbnail p.editable').editable('editinplace.php', {
+                         tooltip : 'Click to edit',
+                         indicator : 'Saving...',
+                         id   : 'id',
+                         name : 'filecomment',
+                         submit : 'Save',
+                         cancel : 'Cancel',
+                         style : 'display:inline'
+                        });
+                    });
 
 					parent.success(response);
 				}

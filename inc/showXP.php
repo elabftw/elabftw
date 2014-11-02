@@ -99,9 +99,9 @@ if (isset($_GET['q'])) { // if there is a query
         echo "<p class='smallgray'>".count($results_arr)." "._('results.')." ($total_time $unit)</p>";
     } elseif (count($results_arr) == 1) {
         // TODO plural
-        echo "<p class='smallgray'>"._('Found')." ($total_time $unit)</p>";
+        echo "<p class='smallgray'>"._('Found_1')." ($total_time $unit)</p>";
     } else {
-        display_message('error', _('Found'));
+        display_message('error', _('Found_0'));
     }
 
     // loop the results array and display results

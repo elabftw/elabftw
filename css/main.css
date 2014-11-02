@@ -239,8 +239,8 @@ form#big_search input {
     border-radius: 20px;
     width:40%;
     height:2em;
-    padding: 10px 30px 10px 10px;
     margin: 13px 10px 0 0;
+    color: white;
     transition:width 1s;
 }
 form#big_search input:focus {

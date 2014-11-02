@@ -23,10 +23,10 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once 'inc/common.php';
-require_once 'inc/locale.php';
 $page_title = _('Database');
 $selected_menu = 'Database';
+require_once 'inc/common.php';
+require_once 'inc/locale.php';
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 

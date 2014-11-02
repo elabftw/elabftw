@@ -52,7 +52,7 @@ $formKey = new formKey();
     <p>
     <h3><?php echo _('Add a new team');?></h3>
     <form method='post' action='admin-exec.php'>
-        <input type='text' placeholder='Enter new team name' name='new_team' id='new_team' />
+        <input required type='text' placeholder='Enter new team name' name='new_team' id='new_team' />
         <button type='submit' class='submit button'>Add</button>
     </form>
     </p>

@@ -62,12 +62,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
         if ($numrows === 1) {
             // Get info to build the URL
             $protocol = 'https://';
-            $reset_url = $_SERVER['SERVER__('Name')'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
+            $reset_url = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
             // Generate unique link
             $reset_link = $protocol.str_replace('reset-pass', 'change-pass', $reset_url).'?key='.hash("sha256", uniqid(rand(), true)).'&userid='.$userid;
             // Send an email with the reset link
             // Create the message
-            $footer = "~~~\nSent from eLabFTW http://www.elabftw.net\n";
+            $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
             $message = Swift_Message::newInstance()
             // Give the message a subject
             ->setSubject('[eLabFTW] Password reset')
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
             // Set the To addresses with an associative array
             ->setTo(array($email => 'Dori'))
             // Give it a body
-            ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $u_agent, $reset_link).$footer)
+            ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $u_agent, $reset_link).$footer);
             $transport = Swift_SmtpTransport::newInstance(
                 get_config('smtp_address'),
                 get_config('smtp_port'),

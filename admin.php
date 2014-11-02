@@ -345,7 +345,7 @@ if ($count > 0) {
 
             <form action='admin-exec.php' method='post'>
             <label><?php echo _('Edit name');?></label>
-                <input type='text' name='item_type_name' value='<?php echo stripslashes($items_types['name']);?>' />
+                <input required type='text' name='item_type_name' value='<?php echo stripslashes($items_types['name']);?>' />
                 <input type='hidden' name='item_type_id' value='<?php echo $items_types['id'];?>' />
 
                 <div id='colorwheel_div_<?php echo $items_types['id'];?>'>
@@ -375,7 +375,7 @@ if ($count > 0) {
     <section class='simple_border'>
         <form action='admin-exec.php' method='post'>
             <label for='new_item_type_name'><?php echo _('Add a new type of item:');?></label> 
-            <input type='text' id='new_item_type_name' name='new_item_type_name' />
+            <input required type='text' id='new_item_type_name' name='new_item_type_name' />
             <input type='hidden' name='new_item_type' value='1' />
             <div id='colorwheel_div_new'>
                 <div class='colorwheel inline'></div>

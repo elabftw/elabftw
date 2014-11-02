@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
         $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
         $url = str_replace('admin-exec.php', 'login.php', $url);
         // we send an email to each validated new user
-        $footer = "~~~\nSent from eLabFTW http://www.elabftw.net\n";
+        $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
         // Create the message
         $message = Swift_Message::newInstance()
         // Give the message a subject
@@ -428,7 +428,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
     // Lastname in uppercase
     $lastname = strtoupper(filter_var($_POST['lastname'], FILTER_SANITIZE_STRING));
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
-    $email = filter_var($_POST['email'], FILTER_SANITIZE__('Email'));
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
     if ($_POST['validated'] == 1) {
         $validated = 1;
     } else {
@@ -664,7 +664,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
         // form key is invalid
         die(INVALID_FORMKEY);
     }
-    if (filter_var($_POST['delete_user'], FILTER_VALIDATE__('Email'))) {
+    if (filter_var($_POST['delete_user'], FILTER_VALIDATE_EMAIL)) {
         $email = $_POST['delete_user'];
     } else {
         $msg_arr[] = _("The email is not valid.");

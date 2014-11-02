@@ -127,10 +127,10 @@ if (isset($_POST['currpass'])){
             $errflag = true;
         }
 
-        // Check _('Email') (sanitize and validate)
+        // Check EMAIL (sanitize and validate)
         if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
-            $email = filter_var($_POST['email'], FILTER_SANITIZE__('Email'));
-            if (!filter_var($email, FILTER_VALIDATE__('Email'))) {
+            $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $msg_arr[] = _("The email is not valid.");
                 $errflag = true;
             } else {

@@ -233,7 +233,7 @@ if ($result) {
         $req->execute();
         $admin = $req->fetch();
         // Create the message
-        $footer = "~~~\nSent from eLabFTW http://www.elabftw.net\n";
+        $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
         $message = Swift_Message::newInstance()
         // Give the message a subject
         ->setSubject(_('[eLabFTW] New user registered'))
@@ -251,7 +251,7 @@ if ($result) {
         ->setUsername(get_config('smtp_username'))
         ->setPassword(get_config('smtp_password'));
         $mailer = Swift_Mailer::newInstance($transport);
-        // SEND _('Email')
+        // SEND EMAIL
         try {
             $mailer->send($message);
         } catch (Exception $e) {

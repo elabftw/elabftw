@@ -46,9 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
     $u_agent = $_SERVER['HTTP_USER_AGENT'];
 
     // Sanitize post
-    $email = filter_var($_POST['email'], FILTER_SANITIZE__('Email'));
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
     // Is email in database ?
-    if (filter_var($_POST['email'], FILTER_VALIDATE__('Email'))) {
+    if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
         // Get associated userid
         $sql = "SELECT userid,username FROM users WHERE email = :email";
         $result = $pdo->prepare($sql);

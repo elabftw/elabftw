@@ -124,7 +124,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     if ($selected_menu == 'Experiments') {
         echo " class='selected'";
     }
-    echo ">"._('Experiments')."</a>";
+    echo ">".ngettext('Experiment', 'Experiments', 2)."</a>";
     echo "<a href='database.php?mode=show'";
     if ($selected_menu == 'Database') {
         echo " class='selected'";

@@ -25,8 +25,10 @@
         <input id="submit" type="submit" class='button' value="TODOfy">
     </form>
     <ul id="show-items"></ul>
-    <a href="#" id="clear-all">Clear All</a><br><br>
+    <br><br>
     <a class='button' href="#" onClick='showPanel()'>Close</a>
+    <br><br>
+    <a href="#" style='float:left' id="clear-all">Clear All</a>
 </div>
 
 <footer>

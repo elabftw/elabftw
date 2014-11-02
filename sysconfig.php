@@ -226,7 +226,6 @@ for (var i=0; i < input_list.length; i++) {
 
 function updateTeam(team_id) {
     var new_team_name = document.getElementById('team_'+team_id).value;
-    console.log(new_team_name);
     var jqxhr = $.ajax({
         type: "POST",
         url: "quicksave.php",

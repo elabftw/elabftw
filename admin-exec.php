@@ -172,9 +172,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team']) && $_POST[
         header('Location: sysconfig.php');
         exit;
     }
-} else {
-    header('Location: sysconfig.php');
-    exit;
 }
 
 

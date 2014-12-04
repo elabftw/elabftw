@@ -276,7 +276,7 @@ if (strpos(get_config('lang'), '-')) {
 }
 
 // add elab_root in config.php
-if (!defined(ELAB_ROOT)) {
+if (!defined('ELAB_ROOT')) {
     $path = substr(realpath(__FILE__), 0, -10);
     $text2add = "define('ELAB_ROOT', '".$path."');";
     if (file_put_contents('config.php', $text2add, FILE_APPEND)) {
@@ -286,6 +286,10 @@ if (!defined(ELAB_ROOT)) {
     }
 }
 
+// remove path in sql config table
+if (strlen(get_config('path')) == 32) {
+    q("DELETE FROM `config` WHERE `conf_name` = 'path';");
+}
 
 // END
 echo "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)\n";

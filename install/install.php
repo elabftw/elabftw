@@ -108,12 +108,7 @@ foreach ($lines as $line) {
 }
 
 // Populate config table with default values
-// remove /install/install.php from path
-$path = substr(realpath(__FILE__), 0, -20);
-$path = md5($path);
-
 $sql = "INSERT INTO config (conf_name, conf_value) VALUES
-    ('path', '$path'),
     ('admin_validate', '0'),
     ('smtp_address', '173.194.66.108'),
     ('smtp_port', '587'),

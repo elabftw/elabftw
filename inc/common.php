@@ -52,41 +52,28 @@ try {
 // END SQL CONNECT
 
 // AUTH
-if (isset($_SESSION['auth'])) { // if user is auth, we check the cookie
-    if (!isset($_COOKIE['path']) ||
-        ($_COOKIE['path'] != get_config('path')) ||
-        ($_SESSION['path'] != get_config('path'))) { // no cookie for this domain
-        session_destroy(); // kill session
-        header('Location: login.php');
-        exit;
-    }
-
-} else { // user is not auth with php sessions
+if (!isset($_SESSION['auth'])) { // user is not auth with php sessions
     if (isset($_COOKIE['token']) && (strlen($_COOKIE['token']) == 32)) {
         // If user has a cookie; check cookie is valid
         $token = filter_var($_COOKIE['token'], FILTER_SANITIZE_STRING);
         // Get token from SQL
-        $sql = "SELECT * FROM users WHERE token = :token";
+        $sql = "SELECT * FROM users WHERE token = :token LIMIT 1";
         $result = $pdo->prepare($sql);
         $result->execute(array(
-        'token' => $token
+            'token' => $token
         ));
-        $data = $result->fetch();
-        $numrows = $result->rowCount();
-        // Check cookie path vs. real install path
-        if (($numrows == 1) && (get_config('path') == $_COOKIE['path'])) { // token is valid
+        $users = $result->fetch();
+        if ($result->rowCount() == 1) { // token is valid
             session_regenerate_id();
             $_SESSION['auth'] = 1;
-            // fix for cookies problem
-            $_SESSION['path'] = get_config('path');
-            $_SESSION['userid'] = $data['userid'];
-            $_SESSION['team_id'] = $data['team'];
+            $_SESSION['userid'] = $users['userid'];
+            $_SESSION['team_id'] = $users['team'];
             // Used in the menu
-            $_SESSION['username'] = $data['username'];
+            $_SESSION['username'] = $users['username'];
             // load permissions
             $perm_sql = "SELECT * FROM groups WHERE group_id = :group_id LIMIT 1";
             $perm_req = $pdo->prepare($perm_sql);
-            $perm_req->bindParam(':group_id', $data['usergroup']);
+            $perm_req->bindParam(':group_id', $users['usergroup']);
             $perm_req->execute();
             $group = $perm_req->fetch(PDO::FETCH_ASSOC);
 
@@ -94,17 +81,17 @@ if (isset($_SESSION['auth'])) { // if user is auth, we check the cookie
             $_SESSION['is_sysadmin'] = $group['is_sysadmin'];
             // PREFS
             $_SESSION['prefs'] = array(
-            'display' => $data['display'],
-            'order' => $data['order_by'],
-            'sort' => $data['sort_by'],
-            'limit' => $data['limit_nb'],
-            'close_warning' => intval($data['close_warning']),
+            'display' => $users['display'],
+            'order' => $users['order_by'],
+            'sort' => $users['sort_by'],
+            'limit' => $users['limit_nb'],
+            'close_warning' => intval($users['close_warning']),
             'shortcuts' => array(
-                'create' => $data['sc_create'],
-                'edit' => $data['sc_edit'],
-                'submit' => $data['sc_submit'],
-                'todo' => $data['sc_todo']),
-            'lang' => $data['lang']);
+                'create' => $users['sc_create'],
+                'edit' => $users['sc_edit'],
+                'submit' => $users['sc_submit'],
+                'todo' => $users['sc_todo']),
+            'lang' => $users['lang']);
             session_write_close();
         } else { // no token found in database
             header("location: login.php");

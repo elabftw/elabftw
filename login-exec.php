@@ -100,7 +100,6 @@ if ($result) {
         // Store userid and permissions in $_SESSION
         session_regenerate_id();
         $_SESSION['auth'] = 1;
-        $_SESSION['path'] = get_config('path');
         $_SESSION['userid'] = $data['userid'];
         $_SESSION['team_id'] = $data['team'];
         // Used in the menu
@@ -132,12 +131,9 @@ if ($result) {
             die("eLabFTW works only in HTTPS. Please enable HTTPS on your server (<a href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting#wiki-switch-to-https'>see documentation</a>). Or retry with https:// in front of the address.");
         }
 
-        // Set the two cookies : token and path
+        // Set token cookie
         // setcookie( $name, $value, $expire, $path, $domain, $secure, $httponly )
         setcookie('token', $token, time() + 60*60*24*30, null, null, true, true);
-        //setcookie('token', $token, time() + 60*60*24*30, dirname(__FILE__), null, true, true);
-        // we use md5 of the path to avoid problems with \ on windows
-        setcookie('path', md5(dirname(__FILE__)), time() + 60*60*24*30, null, null, true, true);
         // Update the token in SQL
         $sql = "UPDATE users SET token = :token WHERE userid = :userid";
         $req = $pdo->prepare($sql);

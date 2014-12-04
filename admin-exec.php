@@ -197,18 +197,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
         $proxy = '';
     }
 
-    if (isset($_POST['path'])) {
-        $path = filter_var($_POST['path'], FILTER_SANITIZE_STRING);
-    } else {
-        die('Missing path');
-    }
-
     // SQL
     $updates = array(
         'lang' => $lang,
         'debug' => $debug,
-        'proxy' => $proxy,
-        'path' => $path
+        'proxy' => $proxy
     );
 
     if (update_config($updates)) {

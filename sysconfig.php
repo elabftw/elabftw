@@ -120,9 +120,6 @@ $formKey = new formKey();
         <label for='proxy'><?php echo _('Address of the proxy:');?></label>
         <input type='text' value='<?php echo get_config('proxy');?>' name='proxy' id='proxy' />
         <p class='smallgray'><?php echo _('If you are behind a firewall/proxy, enter the address here. Example : http://proxy.example.com:3128');?></p>
-        <label for='path'><?php echo _('Full path to the install folder:');?></label>
-        <input type='text' value='<?php echo get_config('path');?>' name='path' id='path' />
-        <p class='smallgray'><?php echo _("This is actually the md5 hash of the path to the install. You probably don't need to change that except when you move an existing install.");?></p>
         <div class='center'>
             <button type='submit' name='submit_config' class='submit button'><?php echo _('Save');?></button>
         </div>

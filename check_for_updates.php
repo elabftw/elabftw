@@ -78,6 +78,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // http://developer.github.com/v3/#user-agent-required
     curl_setopt($ch, CURLOPT_USERAGENT, "elabftw");
 
+    // add a timeout, because if you need proxy, but don't have it, it will mess up things
+    // 5 seconds
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,5); 
+
     // get the json data and put in an array
     $result = json_decode(curl_exec($ch), true);
     // free resources

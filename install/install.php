@@ -24,6 +24,12 @@
 *                                                                               *
 ********************************************************************************/
 /* install/install.php to get an installation up and running */
+/* this script will :
+ * 1. read the sql infos given through POST
+ * 2. import the SQL structure (+ default values)
+ * 3. write the config file (or propose to download it)
+ */
+
 // we disable errors to avoid having notice and warning polluting our file
 error_reporting(E_ERROR);
 
@@ -106,25 +112,6 @@ foreach ($lines as $line) {
         $queryline = '';
     }
 }
-
-// Populate config table with default values
-$sql = "INSERT INTO config (conf_name, conf_value) VALUES
-    ('admin_validate', '0'),
-    ('smtp_address', '173.194.66.108'),
-    ('smtp_port', '587'),
-    ('smtp_encryption', 'tls'),
-    ('smtp_username', 'username@gmail.com'),
-    ('smtp_password', 'gmail password'),
-    ('proxy', ''),
-    ('debug', '0'),
-    ('login_tries', '5'),
-    ('ban_time', '60'),
-    ('stamplogin', ''),
-    ('stamppass', ''),
-    ('stampshare', '0'),
-    ('lang', 'en_GB');";
-$req = $pdo->prepare($sql);
-$req->execute();
 
 // BUILD CONFIG FILE
 

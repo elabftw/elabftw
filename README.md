@@ -11,7 +11,7 @@ Want an electronic lab notebook that let's you timestamp legally your experiment
 Then you are at the right place !
 
 * [Official website](http://www.elabftw.net)
-* [Live demo](http://demo.elabftw.net)
+* [Live demo](https://demo.elabftw.net)
 
 Keep in mind that eLabFTW is currently in beta and is under heavy developpement. Your input is very welcome :)
 

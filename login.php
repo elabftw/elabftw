@@ -74,7 +74,7 @@ if (in_array(md5($_SERVER['REMOTE_ADDR'].$_SERVER['HTTP_USER_AGENT']), $banned_u
 // show message if there is a failed_attempt
 if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] < get_config('login_tries')) {
     $number_of_tries_left = get_config('login_tries') - $_SESSION['failed_attempt'];
-    $message = _('Number of login attempt left before being banned for').get_config('ban_time').' '._('minutes:').' '.$number_of_tries_left;
+    $message = _('Number of login attempt left before being banned for').' '.get_config('ban_time').' '._('minutes:').' '.$number_of_tries_left;
     display_message('error', $message);
 }
 

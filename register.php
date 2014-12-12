@@ -33,7 +33,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
 }
 ?>
 <!-- Password complexity visualizer -->
-<script src="js/jquery.complexify.js/jquery.complexify.min.js"></script>
+<script src="js/jquery.complexify.js/jquery.complexify.js"></script>
 <script src="js/jquery.complexify.js/jquery.complexify.banlist.js"></script>
 
 <menu class='border'><a href='login.php'><img src='img/arrow-left-blue.png' alt='' /> <?php echo _('go back to login page');?></a></menu>

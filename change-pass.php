@@ -59,7 +59,7 @@ if (isset($_GET['key']) && strlen($_GET['key']) === 64 && isset($_GET['userid'])
 </section>
 
 <!-- Password complexity visualizer -->
-<script src="js/jquery.complexify.js/jquery.complexify.min.js"></script>
+<script src="js/jquery.complexify.js/jquery.complexify.js"></script>
 <script src="js/jquery.complexify.js/jquery.complexify.banlist.js"></script>
 <script>
 // we check for password match here

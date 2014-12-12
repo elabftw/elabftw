@@ -36,6 +36,11 @@ require_once 'inc/info_box.php';
 // formkey stuff
 require_once 'inc/classes/formkey.class.php';
 $formKey = new formKey();
+
+if (strlen(get_config('smtp_username')) == 0) {
+    $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://github.com/NicolasCARPi/elabftw/wiki/finalizing'>", "</a>");
+    display_message('error', $message);
+}
 ?>
 <menu>
     <ul>

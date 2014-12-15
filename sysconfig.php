@@ -100,6 +100,10 @@ if (strlen(get_config('smtp_username')) == 0) {
                     echo ' selected ';}?>value="en_GB">en_GB</option>
                 <option
                 <?php
+                if (get_config('lang') === 'ca_ES') {
+                    echo ' selected ';}?>value="ca_ES">ca_ES</option>
+                <option
+                <?php
                 if (get_config('lang') === 'de_DE') {
                     echo ' selected ';}?>value="de_DE">de_DE</option>
                 <option

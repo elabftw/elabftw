@@ -236,6 +236,10 @@ $users = $req->fetch();
                     echo ' selected ';}?>value="fr_FR">fr_FR</option>
                 <option
                 <?php
+                if ($_SESSION['prefs']['lang'] === 'it_IT') {
+                    echo ' selected ';}?>value="it_IT">it_IT</option>
+                <option
+                <?php
                 if ($_SESSION['prefs']['lang'] === 'pt_BR') {
                     echo ' selected ';}?>value="pt_BR">pt_BR</option>
                 <option

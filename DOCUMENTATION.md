@@ -103,6 +103,9 @@ suggestions to this project.
 
 * pt-BR : Carlos Kikuti
 * zh-CN : Suyoung Wang
+* it-IT : Maddalena Nano, Paolo Maiuri
+* es-ES : Elena, Arnau Montagud
+* de-DE : Marko Storch, Timo Betz, Christian Wunder
 
 ***
 
@@ -117,4 +120,3 @@ You want to help this project ? Then read on !
 * Open Github issues to discuss bugs or features suggestions
 
 Your code must follow [the PSR standards](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md).
-

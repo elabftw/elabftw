@@ -105,7 +105,7 @@ suggestions to this project.
 * zh-CN : Suyoung Wang
 * it-IT : Maddalena Nano, Paolo Maiuri
 * es-ES : Elena, Arnau Montagud, Amaya Blesa Siemann, Jesus
-* de-DE : Marko Storch, Timo Betz, Christian Wunder
+* de-DE : Marko Storch, Timo Betz, Christian Wunder, Doug Morse
 
 ***
 

@@ -104,7 +104,7 @@ suggestions to this project.
 * pt-BR : Carlos Kikuti
 * zh-CN : Suyoung Wang
 * it-IT : Maddalena Nano, Paolo Maiuri
-* es-ES : Elena, Arnau Montagud
+* es-ES : Elena, Arnau Montagud, Amaya Blesa Siemann, Jesus
 * de-DE : Marko Storch, Timo Betz, Christian Wunder
 
 ***

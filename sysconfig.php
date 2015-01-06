@@ -36,6 +36,11 @@ require_once 'inc/info_box.php';
 // formkey stuff
 require_once 'inc/classes/formkey.class.php';
 $formKey = new formKey();
+
+if (strlen(get_config('smtp_username')) == 0) {
+    $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://github.com/NicolasCARPi/elabftw/wiki/finalizing'>", "</a>");
+    display_message('error', $message);
+}
 ?>
 <menu>
     <ul>
@@ -95,8 +100,24 @@ $formKey = new formKey();
                     echo ' selected ';}?>value="en_GB">en_GB</option>
                 <option
                 <?php
+                if (get_config('lang') === 'ca_ES') {
+                    echo ' selected ';}?>value="ca_ES">ca_ES</option>
+                <option
+                <?php
+                if (get_config('lang') === 'de_DE') {
+                    echo ' selected ';}?>value="de_DE">de_DE</option>
+                <option
+                <?php
+                if (get_config('lang') === 'es_ES') {
+                    echo ' selected ';}?>value="es_ES">es_ES</option>
+                <option
+                <?php
                 if (get_config('lang') === 'fr_FR') {
                     echo ' selected ';}?>value="fr_FR">fr_FR</option>
+                <option
+                <?php
+                if (get_config('lang') === 'it_IT') {
+                    echo ' selected ';}?>value="it_IT">it_IT</option>
                 <option
                 <?php
                 if (get_config('lang') === 'pt_BR') {

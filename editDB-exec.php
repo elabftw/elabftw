@@ -68,11 +68,11 @@ if ($errflag) {
 }
 
 // SQL for editDB
-    $sql = "UPDATE items 
-        SET title = :title, 
-        date = :date, 
-        body = :body, 
-        userid = :userid 
+    $sql = "UPDATE items
+        SET title = :title,
+        date = :date,
+        body = :body,
+        userid = :userid
         WHERE id = :id";
 $req = $pdo->prepare($sql);
 $result = $req->execute(array(

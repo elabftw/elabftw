@@ -1,0 +1,1237 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.11\n"
+"Project-Id-Version: elabftw\n"
+"Language: it\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
+"Language-Team: \n"
+
+msgid "Yes"
+msgstr "Si"
+
+msgid "No"
+msgstr "No"
+
+msgid "Configuration updated successfully."
+msgstr "Configurazione completata con successo"
+
+msgid ""
+"There was an unexpected problem! Please %sopen an issue on GitHub%s if you "
+"think this is a bug."
+msgstr ""
+"Si é verificato un problema inatteso. Per piacere %screa un elemento su "
+"GitHub%s se credi si tratti di un bug"
+
+#. By ID do you mean identificatif?
+msgid "The id parameter is not valid."
+msgstr "Il parametro ID non  è valido"
+
+msgid "Userid is not valid."
+msgstr "Userid non é valido"
+
+#. What is a type parameter?
+msgid "The type parameter is not valid."
+msgstr "Il parametro tipo non é valido."
+
+#. What is a form key?
+msgid "The form key is invalid. Please retry."
+msgstr "Sessione scaduta, si prega di ricaricare la pagina."
+
+msgid "The email is not valid."
+msgstr "Indirizzo e-mail non valido"
+
+msgid "Wrong password!"
+msgstr "Password incorretta"
+
+msgid "No user with this email or user not in your team"
+msgstr ""
+"Questa e-mail non corrisponde a nessun utente oppure l'utente non fa parte "
+"del tuo gruppo"
+
+msgid "The passwords do not match!"
+msgstr "La password non corrisponde"
+
+msgid "Password must contain at least 8 characters."
+msgstr "La password deve contenere minimo 8 caratteri"
+
+msgid "You need to put a title!"
+msgstr "E' necessario che tu inserisca un titolo!"
+
+msgid "You need to put a password!"
+msgstr "E' necessaria una password!"
+
+msgid "A mandatory field is missing!"
+msgstr "Un campo obbligatorio deve ancora essere riempito!"
+
+#. Not sure is kind/usual to say in Italian. What do you mean exactly?
+msgid "This section is out of your reach."
+msgstr "Il tuo account non consente l'accesso a questa sezione"
+
+msgid "Username"
+msgstr "Username/Nome utente"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "Firstname"
+msgstr "Nome"
+
+msgid "Lastname"
+msgstr "Cognome"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Experiment"
+msgid_plural "Experiments"
+msgstr[0] "Esperimento"
+msgstr[1] "Esperimenti"
+
+msgid "Database"
+msgstr "Database"
+
+msgid "Team"
+msgstr "Team"
+
+msgid "Date"
+msgstr "Data"
+
+msgid "Title"
+msgstr "Titolo"
+
+msgid "Infos"
+msgstr "Informazioni"
+
+msgid "Visibility"
+msgstr "Visibilità"
+
+msgid "Status"
+msgstr "Stato"
+
+msgid "Edit"
+msgstr "Modifica"
+
+msgid "Save"
+msgstr "Salva"
+
+#. "Salvataggio riuscito" might be better
+msgid "Saved"
+msgstr "Salvato"
+
+msgid "Cancel"
+msgstr "Annulla"
+
+msgid "Saving"
+msgstr "Salvataggio in corso"
+
+msgid "Save and go back"
+msgstr "Salva e torna indietro"
+
+#. 'Aggiornato con successo' might be better
+msgid "Updated!"
+msgstr "Aggiornato!"
+
+msgid "Action"
+msgstr "Azione"
+
+msgid "Shortcut"
+msgstr "Scorciatoia"
+
+#. You can alsop say "crea..." but then you need a complement, like "crea nuovo foglio di lavoro" = create a new working file
+msgid "Create"
+msgstr "Creare"
+
+msgid "Submit"
+msgstr "Invia"
+
+#. Not very usual...
+msgid "TODO list"
+msgstr "TODO list"
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "Phone"
+msgstr "Telefono fisso"
+
+msgid "Mobile"
+msgstr "Cellulare"
+
+msgid "Website"
+msgstr "Sito web"
+
+msgid "Skype"
+msgstr "Contatto Skype"
+
+#. You can add "con successo", In italy we like when things are succesfull
+msgid "[eLabFTW] New user registered"
+msgstr "[eLabFTW] Nuovo utente registrato"
+
+#. Error was logged means...?
+msgid "There was a problem sending the email! Error was logged."
+msgstr ""
+"C'é stato un problema nell'inviare l'e-mail. Un rapporto d'errore è stato "
+"salvato in un log file"
+
+msgid "Email sent. Check your INBOX."
+msgstr "Email inviata. Controlla la tua casella di posta"
+
+#. Account is frequently used in italian, but you can also call it "conto elettronico" --> less common
+msgid "There are users waiting for validation of their account:"
+msgstr "Ci sono degli utenti in attesa di validazione del proprio account"
+
+msgid "Validate"
+msgstr "Conferma"
+
+msgid "Users"
+msgstr "Utenti"
+
+msgid "Types of items"
+msgstr "Tipo di elementi"
+
+msgid "Experiments template"
+msgstr "Modelli degli esperimenti"
+
+msgid "Configure your team"
+msgstr "Configura il tuo team"
+
+#. Maybe rimuovere is better than cancellare
+msgid "Users can delete experiments:"
+msgstr "L'utente puo' cancellare gli esperimenti:"
+
+#. Link can also be translated with "collegamento"
+msgid "Name of the link in the top menu:"
+msgstr "Nome del link nel menu in cima alla pagina"
+
+msgid "Address where this link should point:"
+msgstr "Indirizzo web connesso al link:"
+
+#. é=it is
+#. dovrebbe essere=should be
+#. But I think this is a sure info, or not?
+msgid ""
+"This should be the email address associated with your account on Universign."
+"com."
+msgstr "Questo é l'indirizzo e-mail associato al tuo account Universign.com"
+
+msgid "Your Universign password"
+msgstr "La tua password Universign"
+
+#. Maybe it is better "modifica dettagli utente", because modifica utente sounds like modifying the whole guy :D
+msgid "Edit users"
+msgstr "Modifica utente"
+
+msgid "Has an active account?"
+msgstr "Possiede un account attivo?"
+
+msgid "Group:"
+msgstr "Gruppo:"
+
+#. Reset meaning change or delete?
+msgid "Reset user password:"
+msgstr "Cambiare la password utente"
+
+msgid "Repeat new password:"
+msgstr "Conferma nuova password:"
+
+msgid "Edit this user"
+msgstr "Modifica questo utente"
+
+msgid "DANGER ZONE"
+msgstr "Zona pericolosa"
+
+msgid "Delete an account"
+msgstr "Rimuovere un account"
+
+msgid ""
+"Type EMAIL ADDRESS of a member to delete this user and all his experiments/"
+"files forever:"
+msgstr ""
+"Inserire l'indirizzo e-mail di un membro del gruppo per cancellare l'utente "
+"e tutti i suoi esperimenti/file definitivamente:"
+
+msgid "Type your password:"
+msgstr "Inserire la password:"
+
+msgid "Delete this user!"
+msgstr "Cancella questo utente!"
+
+msgid "Add a new status"
+msgstr "Aggiungi un nuovo stato"
+
+#. Not sure status translation is perfect, better ask somebody else
+msgid "New status name:"
+msgstr "Nome dello stato:"
+
+msgid "Edit an existing status"
+msgstr "Modifica uno stato esistente"
+
+#. Not sure of the meqning in English. You meant to delete everything, including the status?
+msgid "Remove all experiments with this status before deleting this status."
+msgstr ""
+"E' necessario rimuovere tutti gli esperimenti di questo stato prima di "
+"poterlo eliminare"
+
+msgid "Default status"
+msgstr "Stato predefinito"
+
+msgid "Database items types"
+msgstr "Database del tipo di elementi"
+
+msgid "Remove all database items with this type before deleting this type."
+msgstr ""
+"E' necessario rimuovere tutti gli elementi di questo tipo prima di poter "
+"eliminare questo tipo"
+
+msgid "Edit name:"
+msgstr "Modifica nome:"
+
+msgid "Add a new type of item:"
+msgstr "Aggiungere un nuovo tipo di oggetti:"
+
+msgid "Common experiment template"
+msgstr "Modello comune dell'esperimento"
+
+msgid "This is the default text when someone creates an experiment."
+msgstr "Questo è il testo predefinito quando qualcuno crea un esperimento"
+
+msgid ""
+"This page will allow you to import a .csv (Excel spreadsheet file into the "
+"database.<br>First you need to open your (.xls/.xlsx file in Excel or "
+"Libreoffice and save it as .csv.<br>In order to have a good import the first "
+"column should be the title. The rest of the columns will be imported in the "
+"body. You can make a tiny import of 3 lines to see if everything works "
+"before you import a big file."
+msgstr ""
+"Questa pagina ti permette di importare un file .csv (foglio di lavoro Excel) "
+"nel database.<br> Per farlo, apri il tuo file .xls/.xlsx in Excel o "
+"Libreoffice e salvalo come .csv.<br>Per ottenere una buona importazione, la "
+"prima colonna dovrebbe contenere il titolo. Le colonne successive saranno "
+"importate nel corpo del file. Puoi provare a vedere se tutto funziona "
+"facendo una piccola importazione di 3 colonne, prima di importare grandi "
+"file."
+
+msgid ""
+"You should make a backup of your database before importing thousands of "
+"items!"
+msgstr ""
+"Dovresti fare un backup del tuo database prima di importare così tanti "
+"oggetti!"
+
+#. Should it be -select the yype of item to import - or -select the type of item to import to-?
+msgid "1. Select a type of item to import to:"
+msgstr "1. Selezionare il tipo di oggetto da importare verso:"
+
+msgid "2. Select a CSV file to import:"
+msgstr "2. Selezionare un file CSV da importare:"
+
+msgid "Import CSV"
+msgstr "Importare CSV"
+
+msgid "items were imported successfully."
+msgstr "Importazione riuscita"
+
+msgid "Validated user with ID:"
+msgstr "Convalidato utente con ID:"
+
+msgid "Team added successfully."
+msgstr "Team aggiunto con successo."
+
+msgid "Only a sysadmin can put someone sysadmin."
+msgstr "Solo un sysadmin può nominare un sysadmin."
+
+msgid "Everything was purged successfully."
+msgstr "Pulizia riuscita."
+
+msgid "Reset password"
+msgstr "Cambia password"
+
+msgid "Type it again"
+msgstr "Digitare nuovamente"
+
+msgid "8 characters minimum"
+msgstr "Minimo 8 caratteri"
+
+msgid "Complexity"
+msgstr "Complessità"
+
+msgid "Save new password"
+msgstr "Salva nuova password"
+
+msgid "Weak password"
+msgstr "Password debole!"
+
+msgid "Average password"
+msgstr "Password nella media"
+
+msgid "Good password"
+msgstr "Buona password"
+
+msgid "Strong password"
+msgstr "Password sicura"
+
+#. Is it ironic? If yes I need to change the translation
+msgid "No way that is your real password!"
+msgstr "Questa non puo' essere la tua vera password!"
+
+msgid "Install git to check for updates."
+msgstr "Installare git per verificare la presenza di aggiornamenti"
+
+msgid "You need to install the curl extension for php."
+msgstr "E' necessario installare l'estensione curl per php"
+
+msgid "Unknown branch!"
+msgstr "Diramazione sconosciuta!"
+
+msgid "Couldn't connect to github.com to check for updates."
+msgstr ""
+"La connessione a github.com per verificare la presenza di aggiornamenti non "
+"é riuscita"
+
+msgid "A new update is available!"
+msgstr "E' disponibile un aggiornamento!"
+
+#. Stable meaning?
+msgid ""
+"Congratulations! You are running the latest stable version of eLabFTW :)"
+msgstr ""
+"Congratulazioni! Stai utilizzando la versione stabile più recente di "
+"eLabFTW :)"
+
+msgid ""
+"Congratulations! You are running the latest development version of eLabFTW :)"
+msgstr ""
+"Congratulazioni! Stai utilizzando la versione più recente di eLabFTW :)"
+
+msgid "Wrong item type!"
+msgstr "Tipo di oggetto sbagliato!"
+
+msgid "Untitled"
+msgstr "Senza titolo"
+
+msgid "New item created successfully."
+msgstr "Nuovo oggetto creato con successo"
+
+msgid "File"
+msgstr "File"
+
+msgid "deleted successfully"
+msgstr "Cancellato con successo"
+
+msgid "You don't have the rights to delete this experiment."
+msgstr "Non hai l'autorizzazione per cancellare questo esperimento"
+
+msgid "Experiment was deleted successfully."
+msgstr "L'esperimento é stato cancellato"
+
+msgid "Template was deleted successfully."
+msgstr "Il modello é stato eliminato"
+
+msgid "Item was deleted successfully."
+msgstr "L'oggetto é stato eliminato"
+
+msgid "Item type was deleted successfully."
+msgstr "Il tipo di oggetto é stato cancellato"
+
+msgid "Status was deleted successfully."
+msgstr "Stato cancellato con successo"
+
+msgid "Experiment successfully duplicated."
+msgstr "Esperimento duplicato con successo"
+
+#. Please can you give me a synonim for entry? Element might work?
+msgid "Database entry successfully duplicated."
+msgstr "Elemento del database duplicato con successo"
+
+msgid "You don't have the rights to lock/unlock this."
+msgstr "Non hai l'autorizzazione per bloccare/sbloccare questo elemento"
+
+msgid "This experiment was locked by"
+msgstr "Questo esperimento é stato bloccato da:"
+
+msgid "This item is locked. You cannot edit it."
+msgstr "Non puoi modificare questo elemento, perché é stato bloccato."
+
+msgid ""
+"Login failed. Either you mistyped your password or your account isn't "
+"activated yet."
+msgstr ""
+"Login non riuscito. Potrebbe trattarsi di un errore nella password, oppure "
+"il tuo account deve ancora essere attivato"
+
+#. Less common: accesso
+msgid "Login"
+msgstr "Login"
+
+msgid "You cannot login now because of too many failed login attempts."
+msgstr ""
+"Non ti é più possibile accedere. Hai superato il numero massimo di tentativi "
+"di login autorizzati"
+
+msgid "Number of login attempt left before being banned for"
+msgstr ""
+"Tentativi di login restanti prima che il tuo accesso venga bloccato per"
+
+msgid "minutes:"
+msgstr "minuti:"
+
+msgid "Please enable cookies in your navigator to continue."
+msgstr "Per piacere abilita i cookies nel tuo browser per continuare"
+
+msgid "Note: you need cookies enabled to log in."
+msgstr "Nota: i cookies devono essere abilitati per poter effettuare il log in"
+
+msgid "Sign in to your account"
+msgstr "Effettua l'accesso al tuo account"
+
+msgid ""
+"Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"
+msgstr ""
+"Non hai un account? %sRegistrati%s ora! <br>Hai perso la password? "
+"%sReimpostala%s!"
+
+msgid "Enter your email address"
+msgstr "Inserisci il tuo indirizzo e-mail"
+
+msgid "Send new password"
+msgstr "Invia nuova password"
+
+msgid "Export to spreadsheet"
+msgstr "Esporta su un foglio di lavoro"
+
+msgid "Your CSV file is ready:"
+msgstr "Il tuo file CSV é pronto"
+
+msgid "Make zip archive"
+msgstr "Crea un archivio zip"
+
+msgid "Your ZIP archive is ready:"
+msgstr "Il tuo archivio ZIP è pronto:"
+
+msgid "Profile"
+msgstr "Profilo"
+
+#. The sentence need to be completed e.g. "da gennaio 2013", if the date is in the format dd/mm/yy then "da" needs to be replaced by "dal"
+msgid "experiments done since"
+msgstr "esperimenti fatti a partire dal"
+
+#. Username can be replaced by "nome utente"
+msgid "Username already in use!"
+msgstr "Username già in uso"
+
+msgid "Someone is already using that email address!"
+msgstr "Qualcuno utilizza già questo indirizzo e-mail!"
+
+msgid ""
+"Hi. A new user registered on elabftw. Head to the admin panel to validate "
+"the account."
+msgstr ""
+"Ciao! Un nuovo utente si è registrato su elabftw. Per convalidare il suo "
+"account, utilizza il pannello amministratore"
+
+#. Error logged = error detected
+msgid ""
+"Could not send email to inform admin. Error was logged. Contact an admin "
+"directly to validate your account."
+msgstr ""
+"L'invio dell'e-mail per informare l'amministratore non è riuscito. Si è "
+"verificato un errore. Contatta direttamente un amministratore per "
+"convalidare il tuo account"
+
+#. I guess <br> is not necessary?
+msgid ""
+"Registration successful :<br>Your account must now be validated by an admin."
+"<br>You will receive an email when it is done."
+msgstr ""
+"Registrazione completata con successo:<br>Il tuo account deve ora essere "
+"convalidato da un amministratore.<br>Riceverai un'e-mail di conferma quando "
+"questo accadrà."
+
+msgid "Registration successful :)<br>Welcome to eLabFTW o/"
+msgstr "Registrazione completata con successo :) <br>Benvenuto su eLabFTW o/"
+
+msgid "Please %slogout%s before you register another account."
+msgstr ""
+"Per piacere effettua il %slogout%s prima di registrare un nuovo account"
+
+msgid "go back to login page"
+msgstr "Torna indietro alla pagina di login"
+
+msgid "Create your account"
+msgstr "Crea il tuo account"
+
+msgid "------ Select a team ------"
+msgstr "------ Seleziona un team ------"
+
+msgid "Confirm password"
+msgstr "Conferma password"
+
+msgid "Password complexity"
+msgstr "Complessità della password"
+
+msgid "create"
+msgstr "crea"
+
+msgid "New password updated. You can now login."
+msgstr "Password aggiornata. Ora puoi effettuare l'accesso"
+
+msgid ""
+"Hi. Someone (probably you) with the IP address: %s and user agent %s "
+"requested a new password on eLabFTW. Please follow this link to reset your "
+"password : %s"
+msgstr ""
+"Ciao. Qualcuno (probabilmente tu) con indirizzo IP: %s e nome utente %s ha "
+"richiesto una nuova password per accedere a eLabFTW. Segui questo link per "
+"cambiare la tua password: %s"
+
+#. "e-mail non trovata" should be sufficient
+msgid "Email not found in database!"
+msgstr "E-mail non trovata nel database!"
+
+msgid "Revisions"
+msgstr "Revisioni"
+
+msgid "Go back to the experiment"
+msgstr "Torna all'esperimento"
+
+msgid "You cannot restore a revision of a locked experiment!"
+msgstr "Non puoi rispristinare la revisione di un esperimento bloccato!"
+
+msgid "Current:"
+msgstr "Attuale:"
+
+#. on refers to a date or to a place?
+msgid "Saved on:"
+msgstr "Salvato in:"
+
+msgid "Restore"
+msgstr "Ripristina"
+
+msgid "Search"
+msgstr "Cerca"
+
+msgid "Advanced search"
+msgstr "Ricerca avanzata"
+
+msgid "Back to experiments listing"
+msgstr "Torna alla lista degli esperimenti"
+
+msgid "Search only in experiments owned by:"
+msgstr "Cerca solo negli esperimenti di:"
+
+msgid "Yourself"
+msgstr "Tu"
+
+msgid "search in everyone's experiments"
+msgstr "Cerca tra gli esperimenti di tutti"
+
+msgid "Search in"
+msgstr "Cerca in"
+
+msgid "Where date is between"
+msgstr "Con data compresa tra"
+
+msgid "and"
+msgstr "e"
+
+msgid "And title contains"
+msgstr "E il cui titolo contiene"
+
+#. Body doesn't really have a translation in Italian in this context (at least I don't know it), so I put text
+msgid "And body contains"
+msgstr "E il cui testo contiene"
+
+msgid "And status is"
+msgstr "E il cui stato è"
+
+msgid "select status"
+msgstr "Seleziona stato"
+
+msgid "And rating is"
+msgstr "E la cui classificazione è"
+
+#. What do you mean by stars?
+msgid "select number of stars"
+msgstr "seleziona il numero di stelle"
+
+msgid "Unrated"
+msgstr "Non valutato"
+
+msgid "Launch search"
+msgstr "Inizia ricerca"
+
+msgid "Export this result:"
+msgstr "Esporta il risultato:"
+
+msgid "Sorry. I couldn't find anything :("
+msgstr "Spiacente, non ho trovato risultati :("
+
+msgid "eLabFTW configuration"
+msgstr "Configurazione di eLabFTW"
+
+msgid "Server"
+msgstr "Server"
+
+#. Sorry, need to explain what is timestamp
+msgid "Timestamp"
+msgstr "Timestamp"
+
+#. It is gonna work only if followed by a date e.g. il 2/5/1989
+msgid "on"
+msgstr "il"
+
+#. Depends... At 3pm = Alle 3
+msgid "at"
+msgstr "alle"
+
+msgid "Security"
+msgstr "Sicurezza"
+
+msgid "Add a new team"
+msgstr "Aggiungi un nuovo team"
+
+msgid "Edit existing teams"
+msgstr "Modifica team esistenti"
+
+msgid "Members"
+msgstr "Membri"
+
+msgid "Items"
+msgstr "Elementi"
+
+#. file (m) = creato; folder (f) = creata
+msgid "Created"
+msgstr "Creato"
+
+msgid "Under the hood"
+msgstr "Configurazioni avanzate"
+
+msgid "Activate debug mode:"
+msgstr "Attivare la modalità debug:"
+
+#. I don't know what do you mean by session, if I can translate it.
+msgid ""
+"Content of SESSION and COOKIES array will be displayed in the footer for "
+"admins."
+msgstr ""
+"Il contenuto di SESSION e i COOKIES array saranno mostrati agli "
+"amministratori a piè di pagina"
+
+msgid "Address of the proxy:"
+msgstr "Indirizzo del proxy:"
+
+msgid ""
+"If you are behind a firewall/proxy, enter the address here. Example : http://"
+"proxy.example.com:3128"
+msgstr ""
+"Se stai utilizzando un firewall/proxy, inserisci l'indirizzo qui. Per "
+"esempio: http://proxy.example.com:3128"
+
+msgid "Full path to the install folder:"
+msgstr "Percorso completo alla cartella di installazione:"
+
+#. md5 hash of the path to the install -- can u explain this please?
+msgid ""
+"This is actually the md5 hash of the path to the install. You probably don't "
+"need to change that except when you move an existing install."
+msgstr ""
+"Questo è l'md5 hash del percorso di installazione. Probabilmente non è "
+"necessario cambiarlo, a meno che tu non stia spostando un'installazione "
+"esistente"
+
+msgid "Universign timestamping configuration"
+msgstr "Configurazione timestamping Universign"
+
+msgid "The teams can use the credentials below to timestamp:"
+msgstr "Il team può utilizzare queste credenziali per effettuare il timestamp"
+
+msgid ""
+"You can control if the teams can use the global Universign account. If set "
+"to <em>no</em> the team admin must add login infos in the admin panel."
+msgstr ""
+"Puoi controllare se i team possono usare l'account Universign globale. Se "
+"l'opzione è impostata su <em>no</em>, l'amministratore del team deve "
+"aggiungere le informazioni di login nel pannello amministratore"
+
+msgid "Login for external timestamping service:"
+msgstr "Login al servizio di timestamping esterno:"
+
+msgid "Must be an email address."
+msgstr "Deve essere un indirizzo e-mail"
+
+msgid "Password for external timestamping service:"
+msgstr "Password per il servizio di timestamping esterno:"
+
+msgid ""
+"This password will be stored in clear in the database ! Make sure it doesn't "
+"open other doors…"
+msgstr ""
+"Questa password sarà conservata in chiaro nel database! Assicurati che non "
+"sia utilizzabile per altri accessi"
+
+msgid "Security settings"
+msgstr "Impostazioni di sicurezza"
+
+msgid "Users need validation by admin after registration:"
+msgstr ""
+"La registrazione degli utenti deve essere convalidata da un amministratore:"
+
+#. Is a statement or a suggestion?
+msgid "Set to yes for added security."
+msgstr "Impostare su si per aumentare la sicurezza"
+
+msgid "Number of allowed login attempts:"
+msgstr "Tentativi di login consentiti:"
+
+msgid "3 might be too few. See for yourself :)"
+msgstr "3 potrebbero non essere sufficienti. Valuta tu :)"
+
+msgid "Time of the ban after failed login attempts (in minutes:"
+msgstr ""
+"Durata dell'espulsione dopo aver fallito tutti i tenativi di login "
+"consentiti (in minuti)"
+
+#. User agent = user ID?
+msgid ""
+"To identify an user we use an md5 of user agent + IP. Because doing it only "
+"based on IP address would surely cause problems."
+msgstr ""
+"Per identificare un utente usiamo un md5 dell'user agent + IP.\n"
+"Perchè farlo solo sulla base di un indirizzo IP causerebbe sicuramente dei "
+"problemi"
+
+msgid "SMTP settings"
+msgstr "Impostazioni SMTP"
+
+msgid ""
+"Without a valid way to send emails users won't be able to reset their "
+"password. It is recommended to create a specific Mandrill.com (or gmail "
+"account and add the infos here."
+msgstr ""
+"Senza un valido indirizzo di posta elettronica gli utilizzatori non saranno "
+"in grado di cambiare la propria password. Si raccomanda di creare un "
+"apposito account gmail o Mandrill.com ed aggiungervi le informazioni."
+
+msgid "Address of the SMTP server:"
+msgstr "Indirizzo del server SMTP:"
+
+msgid "SMTP encryption (can be TLS or STARTSSL):"
+msgstr "Criptaggio SMTP (TLS o STARTSSL):"
+
+msgid "Probably TLS"
+msgstr "Probabilmente TLS"
+
+msgid "SMTP Port:"
+msgstr "Porta SMTP:"
+
+msgid "Default is 587."
+msgstr "L'impostazione predefinita  è 587"
+
+msgid "SMTP username:"
+msgstr "Nome utente SMTP"
+
+msgid "SMTP password"
+msgstr "Password SMTP"
+
+msgid "Tips and tricks"
+msgstr "Suggerimenti"
+
+msgid "You belong to the %s team."
+msgstr "Tu fai parte del team %s"
+
+#. The singular doesn't make sense unless you want to say that the experiment is complete for a tot percent
+msgid "There is a total of %d experiment"
+msgid_plural "There is a total of %d experiments"
+msgstr[0] "C'e` %d esperimento"
+msgstr[1] "Ci sono in totale %d esperimenti"
+
+#. As before
+msgid "by %d different user."
+msgid_plural "by %d different users."
+msgstr[0] "Da %d utilizzatore"
+msgstr[1] "Da %d diversi utilizzatori"
+
+#. as before
+msgid "There is a total of %d item in the database."
+msgid_plural "There is a total of %d items in the database."
+msgstr[0] "C'e` %d elemento nel database"
+msgstr[1] "Ci sono in totale %d elementi nel database"
+
+msgid "You can use a TODOlist by pressing 't'."
+msgstr "Puoi usare una TODOlist premendo 't'."
+
+msgid ""
+"The admin of a team can edit the status and the types of items available "
+"(%sAdmin Panel%s)."
+msgstr ""
+"L'amministratore di un team puo' modificare lo stato ed il tipo di elementi "
+"disponibili (%sAdmin Panel%s)"
+
+msgid "Custom shortcuts are available (%sControl Panel%s)."
+msgstr "Sono disponibili scorciatoie (%sControl Panel%s)."
+
+msgid "You can duplicate experiments in one click."
+msgstr "Puoi duplicare gli esperimenti con un click."
+
+#. Tag can be translated with ''etichetta'' but I'm not sure we actually do that
+msgid "Click a tag to list all items with this tag."
+msgstr ""
+"Clicca su un tag per visualizzare una lista di tutti gli elementi del tag."
+
+#. I'm sorry but I don't get what you mean by timestamping :(
+msgid ""
+"Register an account with %sUniversign%s to start timestamping experiments."
+msgstr ""
+"Crea un account con %sUniversign%s per poter effettuare il timestamp degli "
+"esperimenti."
+
+msgid "Only a locked experiment can be timestamped."
+msgstr "Il timestamp si può apporre solo su un esperimento bloccato."
+
+msgid ""
+"Once timestamped an experiment cannot be unlocked or modified. Only comments "
+"can be added."
+msgstr ""
+"Una volta apposto il timestamp, un esperimento non può essere sbloccato o "
+"modificato. Solo commenti possono essere aggiunti."
+
+msgid ""
+"There was an error in the timestamping. Login credentials probably wrong or "
+"no more credits."
+msgstr ""
+"Si è verificato un errore di timestamping. Potrebbe trattarsi di un errore "
+"nelle credenziali di accesso o il credito potrebbe essere esaurito"
+
+msgid ""
+"There was an error with the timestamping. Experiment is NOT timestamped. "
+"Error has been logged."
+msgstr ""
+"Si è verificato un errore di timestamping. Il timestamp NON è stato apposto "
+"sull'esperimento. Un rapporto d'errore è stato salvato in un log file"
+
+msgid ""
+"Experiment timestamped with success. The timestamped PDF can now be "
+"downloaded below."
+msgstr ""
+"Il timestamp è stato apposto sull'esperimento con successo. Il PDF con "
+"timestamp può essere scaricato qui sotto."
+
+msgid "User Control Panel"
+msgstr "Pannello di controllo utente"
+
+msgid "Password updated!"
+msgstr "Password aggiornata!"
+
+msgid "Profile updated."
+msgstr "Il profilo è stato aggiornato."
+
+msgid "Enter your password to edit anything."
+msgstr "Inserisci la password per effettuare modifiche."
+
+msgid "Preferences updated."
+msgstr "Le tue preferenze sono state aggiornate."
+
+msgid "You must specify a name for the template!"
+msgstr "E' necessario specificare un nome per il modello!"
+
+msgid "The template name must be 3 characters long."
+msgstr "Il nome del modello deve essere di 3 caratteri."
+
+msgid "Experiment template successfully added."
+msgstr "Modello dell'esperimento aggiunto con successo."
+
+msgid "Template successfully edited."
+msgstr "Modello modificato con successo."
+
+msgid "Name of the template"
+msgstr "Nome del modello"
+
+msgid "Account"
+msgstr "Account"
+
+msgid "Preferences"
+msgstr "Preferenze"
+
+msgid "Templates"
+msgstr "Modelli"
+
+msgid "Modify your personal informations"
+msgstr "Modifica le tue informazioni personali"
+
+#. Is that any legal?? :)
+msgid "Modify your identity"
+msgstr "Modifica la tua identità"
+
+msgid "Modify your password"
+msgstr "Modifica la tua password"
+
+msgid "New password"
+msgstr "Nuova password"
+
+msgid "Confirm new password"
+msgstr "Conferma nuova password"
+
+msgid "Modify your contact information"
+msgstr "Modifica le informazioni del tuo contatto"
+
+msgid "Update profile"
+msgstr "Aggiorna profilo"
+
+msgid "DISPLAY"
+msgstr "MOSTRA"
+
+msgid "Default"
+msgstr "Predefinito"
+
+#. Verb or adjective?
+msgid "Compact"
+msgstr "Compatto"
+
+msgid "Order by:"
+msgstr "Ordina per:"
+
+msgid "with"
+msgstr "con"
+
+msgid "newer first"
+msgstr "primo piú recente"
+
+msgid "older first"
+msgstr "primo meno recente"
+
+msgid "Items per page:"
+msgstr "elementi per pagina:"
+
+msgid "KEYBOARD SHORTCUTS"
+msgstr "Scorciatoie di tastiera"
+
+msgid "ALERT"
+msgstr "Allerta"
+
+msgid "Display a warning before closing an edit window/tab ?"
+msgstr "Mostrare un avviso prima di chiudere una finestra modificata?"
+
+msgid "Create new"
+msgstr "Crea nuovo"
+
+msgid "Add template"
+msgstr "Aggiungi modello"
+
+msgid "Edit template"
+msgstr "Modifica modello"
+
+msgid "Language"
+msgstr "Lingua"
+
+msgid "Nothing to show with this ID."
+msgstr "Nessun elemento per questo ID"
+
+msgid "Last modified by"
+msgstr "Ultima modifica effettuata da"
+
+msgid ""
+"<strong>Access forbidden:</strong> the visibility setting of this experiment "
+"is set to 'owner only'."
+msgstr ""
+"<strong>Accesso negato:</strong> la visibilità di questo esperimento è "
+"impostata su \"solo proprietario\"."
+
+msgid "<strong>Read-only mode:</strong> this experiment is owned by"
+msgstr "<strong>Modalità di sola lettura:</strong> questo esperimento è di"
+
+msgid "Experiment was timestamped by"
+msgstr "Il timestamp è stato apposto sull'esperimento da:"
+
+#. Unique like common or like a single one?
+msgid "Unique eLabID:"
+msgstr "Unico eLabID:"
+
+msgid "Comments"
+msgstr "Commenti"
+
+msgid "Add a comment"
+msgstr "Aggiungi un commento"
+
+msgid "Delete this?"
+msgstr "Cancellare questo elemento?"
+
+msgid ""
+"Once timestamped an experiment cannot be edited anymore ! Are you sure you "
+"want to do this ?"
+msgstr ""
+"Una volta apposto il timestamp un esperimento non può più essere modificato! "
+"Sei sicuro di voler procedere?"
+
+#. Not sure how to translate, sorry
+msgid "Tag cloud"
+msgstr "Tag cloud"
+
+msgid "Not enough tags to make a tagcloud."
+msgstr "Non ci sono sufficienti tag per creare un tagcloud"
+
+#. I put it plural
+msgid "Statistics"
+msgstr "Statistiche"
+
+msgid "No statistics available yet."
+msgstr "Statistiche non ancora disponibili."
+
+msgid "Experiments for"
+msgstr "Esperimenti per"
+
+msgid "Attach a file."
+msgstr "Allega un file."
+
+#. Can also be -inizia a caricare
+msgid "Start Upload"
+msgstr "Inizia upload"
+
+msgid "Filter type"
+msgstr "Tipo di filtro"
+
+msgid "Found"
+msgstr "Trovato"
+
+msgid "results."
+msgstr "risultati."
+
+msgid "Found_1"
+msgstr "Trovato_1"
+
+msgid "Found_0"
+msgstr "Trovato_0"
+
+msgid ""
+"<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list "
+"to begin filling your database."
+msgstr ""
+"<strong>Benvenuto su eLabFTW.</strong> Seleziona un elemento nella lista "
+"«Crea nuovo» per cominciare a riempire il tuo database."
+
+msgid "Showing last 10 uploads:"
+msgstr "Visualizzazione degli ultimi 10 upload"
+
+msgid "Load more"
+msgstr "Carica altro"
+
+msgid "Create experiment"
+msgstr "Crea esperimento"
+
+msgid "Create from template"
+msgstr "Crea da modello"
+
+msgid "Filter status"
+msgstr "Stato del filtro"
+
+#. when you put this <strong> i don't get if it is part of the code and you need it copied as it is, if you want a translation or if it is just a bug
+msgid ""
+"<strong>You do not have any templates yet.</strong> Go to %syour control "
+"panel%s to make one !"
+msgstr ""
+"<strong>Non hai ancora nessun modello.</strong> Vai al tuo pannello di "
+"controllo per crearne uno!"
+
+msgid ""
+"<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button "
+"to get started."
+msgstr ""
+"<strong>Benvenuto su eLabFTW.</strong> Clicca su %sCrea esperimento%s per "
+"cominciare."
+
+msgid "<strong>This item is locked.</strong> You cannot edit it."
+msgstr "<strong>Questo elemento è bloccato. </strong> Non lo puoi modificare"
+
+#. Maybe "etichette"
+msgid "Tags"
+msgstr "Tag"
+
+msgid ""
+"Do you want to navigate away from this page? Unsaved changes will be lost!"
+msgstr ""
+"Sei sicuro di voler lasciare la pagina? I cambiamenti non salvati verranno "
+"persi!"
+
+msgid "<strong>Cannot edit:</strong> this experiment is not yours!"
+msgstr "<strong>Modifica impossibile:</strong> questo esperimento non è tuo!"
+
+msgid "click a tag to remove it"
+msgstr "clicca su un tag per rimuoverlo"
+
+msgid "Add a tag"
+msgstr "Aggiungi un tag"
+
+msgid "Only the team"
+msgstr "Solo il team"
+
+msgid "Only me"
+msgstr "Solo io"
+
+msgid "Linked items"
+msgstr "Elementi correlati"
+
+msgid "Add a link"
+msgstr "Aggiungi un collegamento"
+
+#. Maybe database can be translated with archivio dati, but I guess database is common enough in italian right now
+msgid "from the database"
+msgstr "dal database"
+
+msgid "Show history"
+msgstr "Mostra cronologia"
+
+msgid "revision available."
+msgid_plural "revisions available."
+msgstr[0] "Revisione disponibile"
+msgstr[1] "Revisioni disponibili"
+
+#. It's to recall attention or to say hello?
+msgid "Howdy,"
+msgstr "Ehi,"
+
+msgid "Settings"
+msgstr "Impostazioni"
+
+msgid "Logout"
+msgstr "Logout"
+
+msgid "Check for updates"
+msgstr "Verifica la presenza di aggiornamenti"
+
+#. Sysadmin I'm not sure I can translate...
+msgid "Sysadmin panel"
+msgstr "Pannello Sysadmin"
+
+msgid "Admin panel"
+msgstr "Pannello amministratore"
+
+msgid "Powered by"
+msgstr "Sponsorizzato da"
+
+msgid "Page generated in"
+msgstr "Pagina creata con"
+
+msgid "Item ID"
+msgstr "ID dell'elemento"
+
+msgid "You can have experiments templates (%sControl Panel%s)."
+msgstr "Puoi salvare i modelli degli esperimenti (%sControl Panel%s)."
+
+#. what is the editor in this context?
+msgid ""
+"If you press Ctrl Shift D in the editor, the date will appear under the "
+"cursor."
+msgstr ""
+"Premendo Ctrl Shift D nella finestra di lavoro, la data apparirà sotto al "
+"cursore"
+
+msgid "Go to user control panel"
+msgstr "Vai al pannello di controllo utente"
+
+msgid "Please finalize install : %slink to documentation%s."
+msgstr "Per piacere finalizza l'installazione: %slink to documentation%s."

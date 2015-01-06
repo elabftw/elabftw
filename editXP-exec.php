@@ -67,11 +67,11 @@ if ($errflag) {
 }
 
 // SQL for editXP
-    $sql = "UPDATE experiments 
-        SET title = :title, 
-        date = :date, 
+    $sql = "UPDATE experiments
+        SET title = :title,
+        date = :date,
         body = :body
-        WHERE userid = :userid 
+        WHERE userid = :userid
         AND id = :id";
 $req = $pdo->prepare($sql);
 $result = $req->execute(array(

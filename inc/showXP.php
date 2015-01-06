@@ -30,7 +30,7 @@ $load_more_button = "<div class='center'>
 $results_arr = array();
 ?>
 <menu class='border'>
-    <a href="create_item.php?type=exp"><img src="img/add.png" class='bot5px' alt="" /> <?php echo _('Create experiment');?></a> | 
+    <a href="create_item.php?type=exp"><img src="img/add.png" class='bot5px' alt="" /> <?php echo _('Create experiment');?></a> |
     <a href='#' class='trigger'><img src="img/add-template.png" class='bot5px' alt="" /> <?php echo _('Create from template');?></a>
 
     <!-- 'FILTER _('Status')' dropdown menu -->
@@ -120,7 +120,7 @@ if (isset($_GET['q'])) { // if there is a query
 } elseif (isset($_GET['related']) && is_pos_int($_GET['related'])) {// search for related experiments to DB item id
     $item_id = $_GET['related'];
     // search in title date and body
-    $sql = "SELECT item_id FROM experiments_links 
+    $sql = "SELECT item_id FROM experiments_links
         WHERE link_id = :link_id LIMIT 100";
     $req = $pdo->prepare($sql);
     $req->execute(array(
@@ -211,10 +211,10 @@ if (isset($_GET['q'])) { // if there is a query
 // DEFAULT VIEW
 // /////////////////
 } else {
-    $sql = "SELECT id, date, title 
-        FROM experiments 
-        WHERE userid = :userid 
-        ORDER BY $order $sort 
+    $sql = "SELECT id, date, title
+        FROM experiments
+        WHERE userid = :userid
+        ORDER BY $order $sort
         LIMIT 100";
     $req = $pdo->prepare($sql);
     $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
@@ -274,4 +274,3 @@ $(document).ready(function(){
         });
     });
 </script>
-

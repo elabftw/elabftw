@@ -41,14 +41,19 @@ $formKey = new formKey();
 <script src="js/raphael/raphael-min.js"></script>
 <script src="js/colorwheel/colorwheel.js"></script>
 <?php
+if (strlen(get_config('smtp_username')) == 0) {
+    $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://github.com/NicolasCARPi/elabftw/wiki/finalizing'>", "</a>");
+    display_message('error', $message);
+}
+
 // MAIN SQL FOR USERS
 $sql = "SELECT * FROM users WHERE validated = :validated AND team = :team";
 $user_req = $pdo->prepare($sql);
 $user_req->bindValue(':validated', 0);
 $user_req->bindValue(':team', $_SESSION['team_id']);
 $user_req->execute(); $count = $user_req->rowCount();
-// only show the frame if there is some users to validate
-if ($count > 0) {
+// only show the frame if there is some users to validate and there is an email config
+if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
     $message = _('There are users waiting for validation of their account:');
     $message .= "<form method='post' action='admin-exec.php'>";
     $message .= "<ul>";

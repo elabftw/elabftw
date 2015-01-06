@@ -407,7 +407,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
 // EDIT USER
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
     if (!is_pos_int($_POST['userid'])) {
-        $msg_arr[] = _("Userid is not valid."); 
+        $msg_arr[] = _("Userid is not valid.");
         $errflag = true;
     }
     if ($errflag) {

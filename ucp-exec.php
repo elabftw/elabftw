@@ -276,7 +276,7 @@ if (isset($_POST['display'])) {
     }
 
     // LANG
-    $lang_array = array('en_GB', 'fr_FR', 'pt_BR', 'zh_CN');
+    $lang_array = array('en_GB', 'ca_ES', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pt_BR', 'zh_CN');
     if (isset($_POST['lang']) && in_array($_POST['lang'], $lang_array)) {
         $new_lang = $_POST['lang'];
     } else {

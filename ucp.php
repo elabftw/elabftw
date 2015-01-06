@@ -228,8 +228,24 @@ $users = $req->fetch();
                     echo ' selected ';}?>value="en_GB">en_GB</option>
                 <option
                 <?php
+                if ($_SESSION['prefs']['lang'] === 'ca_ES') {
+                    echo ' selected ';}?>value="ca_ES">ca_ES</option>
+                <option
+                <?php
+                if ($_SESSION['prefs']['lang'] === 'de_DE') {
+                    echo ' selected ';}?>value="de_DE">de_DE</option>
+                <option
+                <?php
+                if ($_SESSION['prefs']['lang'] === 'es_ES') {
+                    echo ' selected ';}?>value="es_ES">es_ES</option>
+                <option
+                <?php
                 if ($_SESSION['prefs']['lang'] === 'fr_FR') {
                     echo ' selected ';}?>value="fr_FR">fr_FR</option>
+                <option
+                <?php
+                if ($_SESSION['prefs']['lang'] === 'it_IT') {
+                    echo ' selected ';}?>value="it_IT">it_IT</option>
                 <option
                 <?php
                 if ($_SESSION['prefs']['lang'] === 'pt_BR') {

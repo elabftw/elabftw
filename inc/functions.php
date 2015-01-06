@@ -146,7 +146,7 @@ function is_pos_int($int)
 function has_attachement($id, $type)
 {
     global $pdo;
-    $sql = "SELECT id FROM uploads 
+    $sql = "SELECT id FROM uploads
         WHERE item_id = :item_id AND type = :type LIMIT 1";
     $req = $pdo->prepare($sql);
     $req->bindParam(':item_id', $id);
@@ -175,7 +175,7 @@ function search_item($type, $query, $userid)
     $results_arr = array();
     if ($type === 'xp') {
         // search in title date and body
-        $sql = "SELECT id FROM experiments 
+        $sql = "SELECT id FROM experiments
             WHERE userid = :userid AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
         $req = $pdo->prepare($sql);
         $req->execute(array(
@@ -207,7 +207,7 @@ function search_item($type, $query, $userid)
 
     } elseif ($type === 'db') {
         // search in title date and body
-        $sql = "SELECT id FROM items 
+        $sql = "SELECT id FROM items
             WHERE (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
         $req = $pdo->prepare($sql);
         $req->execute();
@@ -381,7 +381,7 @@ function showDB($id, $display)
         ?>
             <section class='item_compact' style='border-left: 6px solid #<?php echo $item['bgcolor'];?>'>
             <a href='database.php?mode=view&id=<?php echo $item['id'];?>'>
-            <span class='date date_compact'><?php echo $item['date'];?></span>
+            <span class='date date_compact'><?php echo format_date($item['date']);?></span>
             <h4 style='padding-left:10px;border-right:1px dotted #ccd;color:#<?php echo $item['bgcolor'];?>'><?php echo $item['name'];?> </h4>
             <span style='margin-left:7px'><?php echo stripslashes($item['title']);?></span>
         <?php
@@ -413,6 +413,60 @@ function showDB($id, $display)
         echo "</section>";
     }
 }
+
+function showTask($id, $display)
+{
+  global $pdo;
+  $sql = "SELECT * FROM tasks WHERE id = :id";
+  $req = $pdo->prepare($sql);
+  $req->execute(array(
+    'id' => $id
+  ));
+  $task = $req->fetch();
+  $sql = "SELECT * FROM users WHERE userid = :userid";
+  $req = $pdo->prepare($sql);
+  $req->execute(array(
+    'userid' => $task['assignedUser']
+  ));
+  $user = $req->fetch();
+
+  if ($display === 'compact') {
+    // COMPACT MODE
+    echo "<section class='item_compact' style='border-left: 6px solid red'>
+      <a href='tasks.php?mode=view&id=".$task['id']."'>
+        <span class='date date_compact'>".format_date($task['datetime'])."</span>
+        <h4 style='padding-left:10px;border-right:1px dotted #ccd;'>".$task['title']."</h4>
+        <span style='margin-left:7px'>".stripslashes($user['firstname']." ".$user['lastname'])."</span>
+      </a></section>";
+
+    } else { // NOT COMPACT
+
+        echo "<section class='item' ";
+        if ($task['status'] === '0')
+        {
+          echo "style='border-left: 6px solid red'";
+        }
+        echo ">";
+        echo "<a href='tasks.php?mode=view&id=".$task['id']."'>";
+        echo "<p class='title'>";
+
+
+
+        // TITLE
+        echo stripslashes($task['title'])."</p></a>";
+        echo "<span style='clear:both' class='align_right'>".show_tags($id, 'items_tags')."</span>";
+
+
+        // assigned Person
+        echo "<span  style='font-size:80%;padding-left:20px;color:grey'>".$user['firstname']." ".$user['lastname']."</span>";
+        // _('Tags')
+
+        echo "</section>";
+      }
+
+    }
+
+
 
 /**
  * Sanitize title with a filter_var and remove the line breaks.
@@ -871,7 +925,7 @@ function check_executable($cmd)
  * @param string $s an optionnal param to specify the separator
  * @return string The formatted strng
  */
-function format_date($date, $s = '.')
+function format_date($date, $s = '-')
 {
     return $date[0].$date[1].$date[2].$date[3].$s.$date['4'].$date['5'].$s.$date['6'].$date['7'];
 }
@@ -920,7 +974,7 @@ function custom_die()
 
 /**
  * Make a simple query
- * 
+ *
  * @param string The SQL query
  * @return bool the return value of execute
 function q($sql) {
@@ -940,7 +994,7 @@ function q($sql) {
 
 /**
  * Used in sysconfig.php to update config values
- * 
+ *
  * @param array conf_name => conf_value
  * @return bool the return value of execute queries
  */

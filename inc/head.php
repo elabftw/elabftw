@@ -125,6 +125,15 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
         echo " class='selected'";
     }
     echo ">".ngettext('Experiment', 'Experiments', 2)."</a>";
+
+    echo "<a href='tasks.php'";
+    if ($selected_menu == 'Tasks') {
+      echo " class='selected'";
+    }
+    echo ">"._('Tasks')."</a>";
+
+
+
     echo "<a href='database.php?mode=show'";
     if ($selected_menu == 'Database') {
         echo " class='selected'";
@@ -144,7 +153,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     echo ">"._('Search')."</a>";
 
     echo "<a href='".get_team_config('link_href')."' target='_blank'>".get_team_config('link_name')."</a></span>";
-    
+
     echo "</nav>";
 } else { // not logged in, show only logo, no menu
     echo "<nav><span id='logonav' class='navleft'>elab<strong>FTW</strong></span></nav>";
@@ -156,7 +165,7 @@ if (isset($_SESSION['auth'])) {
     ?>
     <div>
         <?php echo _('Howdy,').' ';?><a href='profile.php' title='<?php echo _('Profile');?>'><?php echo $_SESSION['username'];?></a><br>
-        <a href='ucp.php'><img src='img/settings.png' alt='<?php echo _('Settings');?>' title='<?php echo _('Settings');?>' /></a> | 
+        <a href='ucp.php'><img src='img/settings.png' alt='<?php echo _('Settings');?>' title='<?php echo _('Settings');?>' /></a> |
         <a href='logout.php'><img src='img/logout.png' alt='<?php echo _('Logout');?>' title='<?php echo _('Logout');?>' /></a>
     </div>
     <?php

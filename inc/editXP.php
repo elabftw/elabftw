@@ -27,6 +27,8 @@
 // formkey stuff
 //require_once('inc/classes/formkey.class.php');
 //$formKey = new formKey();
+
+
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
 <?php
@@ -112,7 +114,7 @@ while ($tags = $tagreq->fetch()) {
     <div class='col-md-4'>
         <img src='img/status.png' class='bot5px' alt='status' /> <h4><?php echo _('Status');?></h4><br>
         <script>
-        // this array is used by updateStatus() to get the color of new status 
+        // this array is used by updateStatus() to get the color of new status
         var status_arr = Array();
         </script>
 
@@ -127,7 +129,7 @@ while ($tags = $tagreq->fetch()) {
         ));
 
         while ($status = $req->fetch()) {
-            
+
             $status_arr[$status['id']] = $status['name'];
             // get also a JS array for update_status() that needs the color to set the border immediately
             echo "<script>
@@ -385,7 +387,7 @@ function updateStatus(status) {
                 status : status,
                 }
                 // change the color of the item border
-            }).done(function() { 
+            }).done(function() {
                 // we first remove any status class
                 $("#main_section").css('border', null);
                 // and we add our new border color
@@ -440,8 +442,8 @@ $(document).ready(function() {
         mode : "specific_textareas",
         editor_selector : "mceditable",
         content_css : "css/tinymce.css",
-        plugins : "table textcolor searchreplace code fullscreen insertdatetime paste charmap save image link",
-        toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | image link | save",
+        plugins : "table textcolor searchreplace code fullscreen insertdatetime paste charmap save image link jbimages",
+        toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | image link jbimages | save",
         removed_menuitems : "newdocument",
         // save button :
         save_onsavecallback: function() {

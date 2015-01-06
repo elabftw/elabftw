@@ -33,6 +33,8 @@ if (isset($_GET['type']) && !empty($_GET['type']) && is_pos_int($_GET['type'])) 
     $type = $_GET['type'];
 } elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'exp')) {
     $type = 'experiments';
+} elseif (isset($_GET['type']) && !empty($_GET['type']) && ($_GET['type'] === 'task')) {
+    $type = 'task';
 } else {
     $msg_arr[] = _('Wrong item type!');
     $_SESSION['infos'] = $msg_arr;
@@ -101,7 +103,24 @@ if ($type === 'experiments') {
         'visibility' => 'team',
         'userid' => $_SESSION['userid']
     ));
-} else { // create item for DB
+}
+elseif ($type === 'task')
+{
+  $sql = "INSERT INTO tasks(team, creator, assignedUser, datetime, title, description, status) VALUES(:team, :creator, :assignedUser, :datetime, :title, :description, :status)";
+  $req = $pdo->prepare($sql);
+  $result = $req->execute(array(
+    'team' => $_SESSION['team_id'],
+    'creator' => $_SESSION['userid'],
+    'assignedUser' => $_SESSION['userid'],
+    'datetime' => kdate(),
+    'title' => 'Untitled',
+    'description' => '',
+    'status' => 0
+  ));
+
+}
+
+else { // create item for DB
     // SQL to get template
     $sql = "SELECT template FROM items_types WHERE id = :id";
     $get_tpl = $pdo->prepare($sql);
@@ -131,6 +150,9 @@ if ($result) {
     if ($type === 'experiments') {
         header('location: experiments.php?mode=edit&id='.$pdo->lastInsertId().'');
         exit;
+    } elseif ($type === 'task') {
+      header('location: tasks.php?mode=edit&id='.$pdo->lastInsertId().'');
+      exit;
     } else {
         header('location: database.php?mode=edit&id='.$pdo->lastInsertId().'');
         exit;

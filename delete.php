@@ -244,6 +244,13 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             $_SESSION['infos'] = $msg_arr;
             break;
 
+        case 'task':
+            $delete_sql = "DELETE FROM tasks WHERE id = :id";
+            $delete_req = $pdo->prepare($delete_sql);
+            $delete_req->execute(array(
+              'id' => $id
+            ));
+            break;
         // END
         default:
             $err_flag = true;

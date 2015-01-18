@@ -25,10 +25,11 @@
 ********************************************************************************/
 require_once 'inc/common.php';
 require_once 'inc/locale.php';
-$page_title = _('Experiments');
+$page_title = ngettext('Experiment', 'Experiments', 2);
 $selected_menu = 'Experiments';
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
+echo ngettext('Experiment', 'Experiments', 1);
 
 // MAIN SWITCH
 if (!isset($_GET['mode']) || (empty($_GET['mode'])) || ($_GET['mode'] === 'show')) {

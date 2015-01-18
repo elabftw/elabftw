@@ -42,7 +42,7 @@ require_once 'inc/info_box.php';
             <div class='col-md-4'>
                 <label for='searchin'><?php echo _('Search in');?></label>
                 <select name='type' id='searchin'>
-                    <option value='experiments'><?php echo _('Experiments');?></option>
+                    <option value='experiments'><?php echo ngettext('Experiment', 'Experiments', 2);?></option>
                     <?php // Database items types
                     $sql = "SELECT * FROM items_types WHERE team = :team";
                     $req = $pdo->prepare($sql);
@@ -52,7 +52,7 @@ require_once 'inc/info_box.php';
                     while ($items_types = $req->fetch()) {
                         echo "<option value='".$items_types['id']."'";
                         // item get selected if it is in the search url
-                        if(isset($_GET['type']) && ($items_types['id'] == $_GET['type'])) {
+                        if (isset($_GET['type']) && ($items_types['id'] == $_GET['type'])) {
                             echo " selected='selected'";
                         }
                         echo ">".$items_types['name']."</option>";

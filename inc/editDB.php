@@ -78,7 +78,7 @@ if ($data['locked'] == 1) {
         } //end while tags
         ?>
         </span>
-        <input type="text" name="tag" id="addtaginput" placeholder="Add a tag" />
+        <input type="text" name="tag" id="addtaginput" placeholder="<?php echo _('Add a tag');?>" />
     </div>
     <!-- END ADD TAG -->
 

@@ -1,16 +1,19 @@
+#
+# Johannes Hermann <linuxrider@web.de>, 2015.
+#
 msgid ""
 msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.6.11\n"
+"X-Generator: Gtranslator 2.91.6\n"
 "Project-Id-Version: elabftw\n"
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2015-01-18 16:40+0100\n"
+"Last-Translator: Johannes Hermann <linuxrider@web.de>\n"
+"Language-Team: Deutsch <>\n"
 
 msgid "Yes"
 msgstr "Ja"
@@ -25,8 +28,8 @@ msgid ""
 "There was an unexpected problem! Please %sopen an issue on GitHub%s if you "
 "think this is a bug."
 msgstr ""
-"Es ist ein unerwartetes Problem aufgetreten! Bitte %open ein neues issue  "
-"auf GitHub%s wenn Sie denken, das es sich um einen Bug handelt."
+"Es ist ein unerwartetes Problem aufgetreten! Bitte %seröffnen Sie ein neues "
+"Issue auf GitHub%s, wenn Sie denken, dass es sich um einen Bug handelt."
 
 msgid "The id parameter is not valid."
 msgstr "Der Parameter ID ist nicht gültig."
@@ -38,7 +41,7 @@ msgid "The type parameter is not valid."
 msgstr "Der Typ Parameter ist nicht gültig."
 
 msgid "The form key is invalid. Please retry."
-msgstr "Der Form Schlüssel is ungültig. Bitte versuchen Sie es erneut."
+msgstr "Der Form Schlüssel ist ungültig. Bitte versuchen Sie es erneut."
 
 msgid "The email is not valid."
 msgstr "Die E-Mail ist ungültig."
@@ -58,10 +61,10 @@ msgid "Password must contain at least 8 characters."
 msgstr "Das Passwort muss mindestens 8 Zeichen lang sein."
 
 msgid "You need to put a title!"
-msgstr "Sie müssen einen Titel einsetzen!"
+msgstr "Sie müssen einen Titel angeben!"
 
 msgid "You need to put a password!"
-msgstr "Sie muessen ein Passwort setzen!"
+msgstr "Sie müssen ein Passwort setzen!"
 
 msgid "A mandatory field is missing!"
 msgstr "Ein Pflichtfeld fehlt!"
@@ -87,7 +90,7 @@ msgstr "E-Mail"
 msgid "Experiment"
 msgid_plural "Experiments"
 msgstr[0] "Experiment"
-msgstr[1] "Experiments"
+msgstr[1] "Experimente"
 
 msgid "Database"
 msgstr "Datenbank"
@@ -122,6 +125,7 @@ msgstr "Gespeichert"
 msgid "Cancel"
 msgstr "Abbrechen"
 
+# Speichern?
 msgid "Saving"
 msgstr "Einsparung"
 
@@ -134,11 +138,12 @@ msgstr "Aktualisiert!"
 msgid "Action"
 msgstr "Aktion"
 
+# Verknüpfung?
 msgid "Shortcut"
 msgstr "Abkürzung"
 
 msgid "Create"
-msgstr "Schaffen"
+msgstr "Erstellen"
 
 msgid "Submit"
 msgstr "Abschicken"
@@ -162,16 +167,17 @@ msgid "Skype"
 msgstr "Skype"
 
 msgid "[eLabFTW] New user registered"
-msgstr "[ELabFTW] Neuer Benutzer registriert"
+msgstr "[eLabFTW] Neuer Benutzer registriert"
 
 msgid "There was a problem sending the email! Error was logged."
-msgstr "Es gab ein Problem beim Senden der E-Mail! Fehler wurde protokolliert."
+msgstr ""
+"Es gab ein Problem beim Versenden der E-Mail! Fehler wurde protokolliert."
 
 msgid "Email sent. Check your INBOX."
 msgstr "E-Mail gesendet. Überprüfen Sie Ihren Posteingang."
 
 msgid "There are users waiting for validation of their account:"
-msgstr "Benutzer warten auf Überprüfung ihres Kontos:"
+msgstr "Benutzer warten auf Bestätigung ihres Kontos:"
 
 msgid "Validate"
 msgstr "Bestätigen"
@@ -183,7 +189,7 @@ msgid "Types of items"
 msgstr "Arten von Gegenständen"
 
 msgid "Experiments template"
-msgstr "Vorlage fuer Experiment"
+msgstr "Vorlage für Experiment"
 
 msgid "Configure your team"
 msgstr "Konfigurieren Sie Ihr Team"
@@ -195,17 +201,18 @@ msgid "Name of the link in the top menu:"
 msgstr "Name des Links im oberen Menü:"
 
 msgid "Address where this link should point:"
-msgstr "Adresse, wohin dieser  Link fuehren soll"
+msgstr "Adresse, wohin dieser Link führen soll"
 
+# oder: Dies sollte die E-Mail-Adresse Ihres Universign.com sKontos sein.
 msgid ""
 "This should be the email address associated with your account on Universign."
 "com."
 msgstr ""
-"Dies sollte die E-Mail-Adresse mit Ihrem Konto auf Universign.com Verbindung "
-"gebracht werden."
+"Dies sollte die E-Mail-Adresse sein, die mit Ihrem Konto auf Universign.com "
+"verknüpft ist."
 
 msgid "Your Universign password"
-msgstr "Ihre Universign Passwort"
+msgstr "Ihr Universign Passwort"
 
 msgid "Edit users"
 msgstr "Benutzer bearbeiten"
@@ -226,7 +233,7 @@ msgid "Edit this user"
 msgstr "Diesen Benutzer bearbeiten"
 
 msgid "DANGER ZONE"
-msgstr "GEFAHREN ZONE"
+msgstr "GEFAHRENZONE"
 
 msgid "Delete an account"
 msgstr "Löschen Sie ein Konto"
@@ -235,7 +242,7 @@ msgid ""
 "Type EMAIL ADDRESS of a member to delete this user and all his experiments/"
 "files forever:"
 msgstr ""
-"Geben Sie die EMail-Adresse eines Mitglieds an um alle seine Experimente / "
+"Geben Sie die E-Mail-Adresse eines Mitglieds an, um alle seine Experimente/"
 "Dateien für immer zu löschen:"
 
 msgid "Type your password:"
@@ -264,16 +271,17 @@ msgid "Database items types"
 msgstr "Datenbankelemente Typen"
 
 msgid "Remove all database items with this type before deleting this type."
-msgstr "Lösche alle Datenbankelemente dieses Typs vorm Loeschen dieses Typs."
+msgstr "Lösche alle Datenbankelemente dieses Typs vorm Löschen dieses Typs."
 
 msgid "Edit name:"
 msgstr "Namen ändern:"
 
+# Datenbankelement?
 msgid "Add a new type of item:"
 msgstr "Fügen Sie dem Datebankelement einen neuen Typ hinzu:"
 
 msgid "Common experiment template"
-msgstr "Gemeinsame Experiment Vorlage"
+msgstr "Gemeinsame Experimentenvorlage"
 
 msgid "This is the default text when someone creates an experiment."
 msgstr "Dies ist der Standardtext, wenn jemand ein neues Experiment anlegt."
@@ -287,18 +295,18 @@ msgid ""
 "before you import a big file."
 msgstr ""
 "Diese Seite ermöglicht es Ihnen, eine CSV (Excel Spreadsheet-Datei in die "
-"Datenbank zu importieren. <br> Zuerst müssen Sie Ihre (.xls-Datei / .xlsx in "
-"Excel oder Libreoffice öffnen und speichern als .csv benötigen. <br> Um um "
+"Datenbank zu importieren.<br>Zuerst müssen Sie Ihre (.xls-Datei / .xlsx in "
+"Excel oder Libreoffice öffnen und speichern als .csv benötigen.<br>Um um "
 "einen guten Import zu haben sollte die erste Spalte der Titel sein. Der Rest "
-"der Spalten wird im body eingeführt werden. Sie können einen test Import von "
-"3 Zeilen machen, um zu pruefen ob alles funktioniert, bevor Sie eine große "
+"der Spalten wird im Textkörper eingefügt. Sie können einen Testimport von 3 "
+"Zeilen machen, um zu prüfen ob alles funktioniert, bevor Sie eine große "
 "Datei zu importieren."
 
 msgid ""
 "You should make a backup of your database before importing thousands of "
 "items!"
 msgstr ""
-"Sie sollten eine Sicherungskopie der Datenbank machen bevor sie grosse "
+"Sie sollten eine Sicherungskopie Ihrer Datenbank erstellen bevor Sie große "
 "Mengen importieren!"
 
 msgid "1. Select a type of item to import to:"
@@ -321,7 +329,7 @@ msgstr "Team erfolgreich hinzugefügt."
 
 msgid "Only a sysadmin can put someone sysadmin."
 msgstr ""
-"Nur ein Systemadministrator kann jemanden zum Systemadministrator machen ."
+"Nur ein Systemadministrator kann jemanden zum Systemadministrator machen."
 
 msgid "Everything was purged successfully."
 msgstr "Alles wurde erfolgreich bereinigt."
@@ -329,6 +337,7 @@ msgstr "Alles wurde erfolgreich bereinigt."
 msgid "Reset password"
 msgstr "Passwort zurücksetzen"
 
+# Eingeben?
 msgid "Type it again"
 msgstr "Tippen Sie es erneut ein"
 
@@ -351,23 +360,24 @@ msgid "Good password"
 msgstr "Gutes Passwort"
 
 msgid "Strong password"
-msgstr "Starkes password"
+msgstr "Starkes Passwort"
 
 msgid "No way that is your real password!"
 msgstr "Das kann nicht Ihr richtiges Passwort sein!"
 
 msgid "Install git to check for updates."
-msgstr "Installieren git um Updates zu pruefen."
+msgstr "Installieren git um auf Updates zu prüfen."
 
 msgid "You need to install the curl extension for php."
 msgstr "Sie müssen die curl Erweiterung für PHP installieren."
 
+# Ist git-zweig gemeint?
 msgid "Unknown branch!"
-msgstr "Unbekannter Bereich!"
+msgstr "Unbekannter Branch!"
 
 msgid "Couldn't connect to github.com to check for updates."
 msgstr ""
-"Es konnte keine Verbindung zum github.com fuer Updates hergestellt werden."
+"Es konnte keine Verbindung zu github.com für Updates hergestellt werden."
 
 msgid "A new update is available!"
 msgstr "Ein neues Update ist verfügbar!"
@@ -390,7 +400,7 @@ msgid "Untitled"
 msgstr "Unbenannt"
 
 msgid "New item created successfully."
-msgstr "Neue Artikel erfolgreich erstellt."
+msgstr "Neuer Eintrag erfolgreich erstellt."
 
 msgid "File"
 msgstr "Datei"
@@ -399,13 +409,13 @@ msgid "deleted successfully"
 msgstr "erfolgreich gelöscht"
 
 msgid "You don't have the rights to delete this experiment."
-msgstr "Sie haben nicht die Rechte, um dieses Experiment zu löschen."
+msgstr "Sie haben nicht die nötigen Rechte, um dieses Experiment zu löschen."
 
 msgid "Experiment was deleted successfully."
 msgstr "Experiment wurde erfolgreich gelöscht."
 
 msgid "Template was deleted successfully."
-msgstr "Template wurde erfolgreich gelöscht."
+msgstr "Vorlage wurde erfolgreich gelöscht."
 
 msgid "Item was deleted successfully."
 msgstr "Artikel wurde erfolgreich gelöscht."
@@ -414,7 +424,7 @@ msgid "Item type was deleted successfully."
 msgstr "Artikeltyp wurde erfolgreich gelöscht."
 
 msgid "Status was deleted successfully."
-msgstr "Der Status wurde erfolgreich gelöscht."
+msgstr "Status wurde erfolgreich gelöscht."
 
 msgid "Experiment successfully duplicated."
 msgstr "Experiment erfolgreich dupliziert."
@@ -443,30 +453,29 @@ msgstr "Login"
 
 msgid "You cannot login now because of too many failed login attempts."
 msgstr ""
-"Sie koennen sich jetzt nicht einlogen wegen zu vieler fehlgeschlagener "
+"Sie können sich jetzt nicht einloggen wegen zu vieler fehlgeschlagener "
 "Anmeldeversuche."
 
 msgid "Number of login attempt left before being banned for"
-msgstr "Anzahl der Login-Versuche,  bevor sie gesperrt werden"
+msgstr "Anzahl der Login-Versuche, bevor Sie gesperrt werden"
 
 msgid "minutes:"
 msgstr "Minuten:"
 
 msgid "Please enable cookies in your navigator to continue."
-msgstr "Bitte aktivieren Sie Cookies in Ihrem Navigator, um fortzufahren."
+msgstr "Bitte aktivieren Sie Cookies in Ihrem Browser, um fortzufahren."
 
 msgid "Note: you need cookies enabled to log in."
-msgstr ""
-"Hinweis: Cookies muessen aktiviert sein um sich eingeloggen zu koennen."
+msgstr "Hinweis: Cookies müssen aktiviert sein, um sich einloggen zu können."
 
 msgid "Sign in to your account"
-msgstr "Melden Sie sich bei Ihrem Konto an"
+msgstr "Melden Sie sich an Ihrem Konto an"
 
 msgid ""
 "Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"
 msgstr ""
-"Sie haben noch kein Konto? % SRegister% jetzt s! <br> Passwort vergessen? % "
-"SRESET% s it!"
+"Sie haben noch kein Konto? Jetzt %sregistrieren%s!<br>Passwort vergessen? "
+"%sZurücksetzen%s!"
 
 msgid "Enter your email address"
 msgstr "Geben Sie Ihre E-Mail-Adresse ein"
@@ -478,53 +487,53 @@ msgid "Export to spreadsheet"
 msgstr "Kalkulationstabelle exportieren"
 
 msgid "Your CSV file is ready:"
-msgstr "Ihre CSV-Datei ist fertig:"
+msgstr "Ihre CSV-Datei ist bereit:"
 
 msgid "Make zip archive"
-msgstr "Erstellen ein Zip-Archiv"
+msgstr "Erstelle ein Zip-Archiv"
 
 msgid "Your ZIP archive is ready:"
-msgstr "Ihr ZIP-Archiv ist fertig:"
+msgstr "Ihr ZIP-Archiv ist bereit:"
 
 msgid "Profile"
 msgstr "Profil"
 
 msgid "experiments done since"
-msgstr "Versuche seit getan"
+msgstr "Versuche durchgeführt seit"
 
 msgid "Username already in use!"
-msgstr "ID bereits im Einsatz!"
+msgstr "Benutzername bereits in Verwendung!"
 
 msgid "Someone is already using that email address!"
-msgstr "Jemand ist bereits mit dieser E-Mail Adresse!"
+msgstr "Jemand verwendet diese E-Mail Adresse schon!"
 
 msgid ""
 "Hi. A new user registered on elabftw. Head to the admin panel to validate "
 "the account."
 msgstr ""
-"Hallo. Ein neuer Benutzer elabftw registriert auf. Kopf auf die Admin-Panel "
-"das Konto zu bestätigen."
+"Hallo. Ein neuer Benutzer hat sich auf elabftw registriert. Gehen Sie zum "
+"Admin-Panel, um das Konto zu bestätigen."
 
 msgid ""
 "Could not send email to inform admin. Error was logged. Contact an admin "
 "directly to validate your account."
 msgstr ""
-"E-Mail konnte nicht gesendet werden dem Server-Betreiber zu informieren. "
-"Fehler wurde protokolliert. Kontaktieren Sie einen Admin direkt auf Ihr "
-"Konto zu überprüfen."
+"E-Mail konnte nicht gesendet werden, um den Administrator zu informieren. "
+"Fehler wurde protokolliert. Kontaktieren Sie einen Admin direkt, um Ihr "
+"Konto zu bestätigen."
 
 msgid ""
 "Registration successful :<br>Your account must now be validated by an admin."
 "<br>You will receive an email when it is done."
 msgstr ""
-"Registrierung erfolgreich:: Ihr Konto muss nun von einem Admin überprüft "
-"werden <br> Sie eine E-Mail zu erhalten, wenn es fertig ist.."
+"Registrierung erfolgreich: <br>Ihr Konto muss nun von einem Admin überprüft "
+"werden. <br> Sie erhalten eine E-Mail, sobald dies geschehen ist."
 
 msgid "Registration successful :)<br>Welcome to eLabFTW o/"
 msgstr "Registrierung erfolgreich :) <br> Willkommen bei eLabFTW o /"
 
 msgid "Please %slogout%s before you register another account."
-msgstr "Bitte% slogout% s, bevor Sie ein anderes Konto zu registrieren."
+msgstr "Bitte %sausloggen%s, bevor Sie ein anderes Konto registrieren."
 
 msgid "go back to login page"
 msgstr "gehen Sie zurück zur Login-Seite"
@@ -542,7 +551,7 @@ msgid "Password complexity"
 msgstr "Kennwortkomplexität"
 
 msgid "create"
-msgstr "schaffen"
+msgstr "erstellen"
 
 msgid "New password updated. You can now login."
 msgstr "Neues Passwort aktualisiert. Sie können sich nun einloggen."
@@ -552,9 +561,9 @@ msgid ""
 "requested a new password on eLabFTW. Please follow this link to reset your "
 "password : %s"
 msgstr ""
-"Hallo. Jemand (wahrscheinlich Sie) mit der IP-Adresse:% s und User-Agent% s "
-"angefordert ein neues Passwort auf eLabFTW. Bitte folgen Sie diesem Link, um "
-"Ihr Passwort zurückzusetzen:% s"
+"Hallo. Jemand (wahrscheinlich Sie) mit der IP-Adresse: %s und dem User-Agent "
+"%s hat ein neues Passwort auf eLabFTW angefordert. Bitte folgen Sie diesem "
+"Link, um Ihr Passwort zurückzusetzen: %s"
 
 msgid "Email not found in database!"
 msgstr "E-Mail nicht in der Datenbank gefunden!"
@@ -567,7 +576,8 @@ msgstr "Zurück zum Experiment"
 
 msgid "You cannot restore a revision of a locked experiment!"
 msgstr ""
-"Sie können eine Revision einer gesperrten Experiment nicht wiederherstellen!"
+"Sie können eine Revision eines gesperrten Experimentes nicht "
+"wiederherstellen!"
 
 msgid "Current:"
 msgstr "Aktuell:"
@@ -585,13 +595,13 @@ msgid "Advanced search"
 msgstr "Erweiterte Suche"
 
 msgid "Back to experiments listing"
-msgstr "Zurück zu den Experimenten Angebot"
+msgstr "Zurück zur Experiment-Übersicht"
 
 msgid "Search only in experiments owned by:"
 msgstr "Nur suchen in Experimenten gehört:"
 
 msgid "Yourself"
-msgstr "Selbst"
+msgstr "Ich selbst"
 
 msgid "search in everyone's experiments"
 msgstr "Suche in allen Experimenten"
@@ -600,7 +610,7 @@ msgid "Search in"
 msgstr "Suche in"
 
 msgid "Where date is between"
-msgstr "Wo Datum zwischen"
+msgstr "Datum zwischen"
 
 msgid "and"
 msgstr "und"
@@ -609,28 +619,28 @@ msgid "And title contains"
 msgstr "Und Titel enthält"
 
 msgid "And body contains"
-msgstr "Und Körper enthält"
+msgstr "Und Text enthält"
 
 msgid "And status is"
-msgstr "Und Status"
+msgstr "Und Status ist"
 
 msgid "select status"
-msgstr "wählen Sie Status"
+msgstr "Wählen Sie einen Status"
 
 msgid "And rating is"
-msgstr "Und Rating ist"
+msgstr "Und Wertung ist"
 
 msgid "select number of stars"
 msgstr "Wählen Sie Anzahl der Sterne"
 
 msgid "Unrated"
-msgstr "Unrated"
+msgstr "Unbewertet"
 
 msgid "Launch search"
 msgstr "Suche starten"
 
 msgid "Export this result:"
-msgstr "Exportieren Sie dieses Ergebnis:"
+msgstr "Dieses Ergebnis exportieren:"
 
 msgid "Sorry. I couldn't find anything :("
 msgstr "Entschuldigung. Ich konnte nichts finden :("
@@ -642,7 +652,7 @@ msgid "Server"
 msgstr "Server"
 
 msgid "Timestamp"
-msgstr "Timestamp"
+msgstr "Zeitstempel"
 
 msgid "on"
 msgstr "auf"
@@ -678,7 +688,7 @@ msgid ""
 "Content of SESSION and COOKIES array will be displayed in the footer for "
 "admins."
 msgstr ""
-"Inhalt des SESSION und Cookies Array wird in der Fußzeile für Admins "
+"Inhalt des SESSION- und COOKIES-Array wird in der Fußzeile für Admins "
 "angezeigt werden."
 
 msgid "Address of the proxy:"
@@ -688,8 +698,8 @@ msgid ""
 "If you are behind a firewall/proxy, enter the address here. Example : http://"
 "proxy.example.com:3128"
 msgstr ""
-"Wenn Sie sich hinter einer Firewall / Proxy sind, geben Sie hier die "
-"Adresse. Beispiel: http://proxy.example.com:3128"
+"Wenn Sie sich hinter Firewall / Proxy befinden, geben Sie hier die Adresse. "
+"Beispiel: http://proxy.example.com:3128"
 
 msgid "Full path to the install folder:"
 msgstr "Vollständiger Pfad zum Installationsordner:"
@@ -703,19 +713,20 @@ msgstr ""
 "bestehende Installation."
 
 msgid "Universign timestamping configuration"
-msgstr "Universign timestamping Konfiguration"
+msgstr "Universign Zeitstempel Konfiguration"
 
 msgid "The teams can use the credentials below to timestamp:"
 msgstr ""
-"Die Teams können die Anmeldeinformationen aus, um Zeitstempel zu verwenden:"
+"Die Teams können die Anmeldeinformationen unten nutzen, um Zeitstempel zu "
+"verwenden:"
 
 msgid ""
 "You can control if the teams can use the global Universign account. If set "
 "to <em>no</em> the team admin must add login infos in the admin panel."
 msgstr ""
-"Sie können steuern, ob die Teams können die globale Universign Konto "
-"verwenden. Wenn auf <em> nicht </ em> das Team Admin muss Login Infos in der "
-"Admin-Panel hinzuzufügen."
+"Sie können einstellen, ob die Teams das globale Universign Konto verwenden "
+"können. Wenn auf <em>Nein</em> muss der Team Admin Login Infos im Admin-"
+"Panel hinzufügen."
 
 msgid "Login for external timestamping service:"
 msgstr "Login für externe Zeitstempeldienst:"
@@ -724,20 +735,20 @@ msgid "Must be an email address."
 msgstr "Muss eine E-Mail-Adresse sein."
 
 msgid "Password for external timestamping service:"
-msgstr "Passwort für externe Zeitstempeldienst:"
+msgstr "Passwort für externen Zeitstempeldienst:"
 
 msgid ""
 "This password will be stored in clear in the database ! Make sure it doesn't "
 "open other doors…"
 msgstr ""
-"Dieses Passwort wird im Klar in der Datenbank gespeichert werden! Achten Sie "
-"darauf, es nicht anderen Türen zu öffnen ..."
+"Dieses Passwort wird in Klartext in der Datenbank gespeichert! Achten Sie "
+"darauf, dass es keine anderen Türen öffnet ..."
 
 msgid "Security settings"
 msgstr "Sicherheitseinstellungen"
 
 msgid "Users need validation by admin after registration:"
-msgstr "Benutzer müssen Validierung von admin nach Anmeldung:"
+msgstr "Benutzer müssen nach Registrierung vom Administrator bestätigt werden:"
 
 msgid "Set to yes for added security."
 msgstr "Stellen Sie auf Ja für zusätzliche Sicherheit."
@@ -746,18 +757,18 @@ msgid "Number of allowed login attempts:"
 msgstr "Anzahl der zulässigen Login-Versuche:"
 
 msgid "3 might be too few. See for yourself :)"
-msgstr "3 könnte zu wenig sein. Überzeugen Sie sich selbst :)"
+msgstr "3 könnten zu wenig sein. Überzeugen Sie sich selbst :)"
 
 msgid "Time of the ban after failed login attempts (in minutes:"
-msgstr "Zeit des Verbots nach fehlgeschlagener Anmeldeversuche (in Minuten:"
+msgstr "Zeit des Banns nach fehlgeschlagener Anmeldeversuche (in Minuten:"
 
 msgid ""
 "To identify an user we use an md5 of user agent + IP. Because doing it only "
 "based on IP address would surely cause problems."
 msgstr ""
-"Um einen Spieler zu verwenden wir einen MD5 der User-Agent + IP "
-"identifizieren. Da tut es nur auf IP-Adresse basieren würde sicherlich zu "
-"Problemen führen."
+"Um einen Benutzer zu identifizieren verwenden wir einen MD5-Hash von User-"
+"Agent + IP. Würde er nur auf der IP-Adresse basieren, würde das sicherlich "
+"zu Problemen führen."
 
 msgid "SMTP settings"
 msgstr "SMTP-Einstellungen"
@@ -767,15 +778,16 @@ msgid ""
 "password. It is recommended to create a specific Mandrill.com (or gmail "
 "account and add the infos here."
 msgstr ""
-"Ohne gültigen Weg, um E-Mails zu senden Nutzer nicht in der Lage, ihr "
-"Passwort zurücksetzen können. Es wird empfohlen, eine bestimmte Mandrill.com "
-"(oder Google Mail-Konto zu erstellen und fügen Sie die Infos hier."
+"Ohne gültigen Weg E-Mails zu versenden werden Nutzer nicht in der Lage sein, "
+"ihr Passwort zurückzusetzen. Es wird empfohlen, für diesen Zweck ein "
+"Mandrill.com (oder Google Mail-Konto zu erstellen und die Infos hier "
+"einzufügen."
 
 msgid "Address of the SMTP server:"
-msgstr "Adresse der SMTP-Server:"
+msgstr "Adresse des SMTP-Server:"
 
 msgid "SMTP encryption (can be TLS or STARTSSL):"
-msgstr "SMTP-Verschlüsselung (TLS oder startssl sein):"
+msgstr "SMTP-Verschlüsselung (TLS oder startssl):"
 
 msgid "Probably TLS"
 msgstr "Wahrscheinlich TLS"
@@ -784,7 +796,7 @@ msgid "SMTP Port:"
 msgstr "SMTP-Port:"
 
 msgid "Default is 587."
-msgstr "Der Standardwert ist 587."
+msgstr "Der Standardport ist 587."
 
 msgid "SMTP username:"
 msgstr "SMTP-Benutzername:"
@@ -796,89 +808,91 @@ msgid "Tips and tricks"
 msgstr "Tipps und Tricks"
 
 msgid "You belong to the %s team."
-msgstr "Sie gehören zu der Mannschaft% s."
+msgstr "Sie gehören dem Team %s an."
 
 msgid "There is a total of %d experiment"
 msgid_plural "There is a total of %d experiments"
 msgstr[0] "Es gibt insgesamt %d Experiment"
-msgstr[1] "Es gibt insgesamt %d Experiment"
+msgstr[1] "Es gibt insgesamt %d Experimente"
 
+# benutzt von?
 msgid "by %d different user."
 msgid_plural "by %d different users."
-msgstr[0] "um %d verschiedene Benutzer."
-msgstr[1] "um %d verschiedene Benutzer."
+msgstr[0] "von %d verschiedenen Benutzer."
+msgstr[1] "von %d verschiedenen Benutzern."
 
 msgid "There is a total of %d item in the database."
 msgid_plural "There is a total of %d items in the database."
-msgstr[0] "Es gibt insgesamt %d Artikel in der Datenbank."
-msgstr[1] "Es gibt insgesamt %d Artikel in der Datenbank."
+msgstr[0] "Es gibt insgesamt %d Eintrag in der Datenbank."
+msgstr[1] "Es gibt insgesamt %d Einträge in der Datenbank."
 
 msgid "You can use a TODOlist by pressing 't'."
-msgstr "Sie können eine TodoList mit 't' zu verwenden."
+msgstr "Sie können eine Todo-Liste mit 't' zu verwenden."
 
 msgid "You can have experiments templates (%sControl Panel%s)"
-msgstr "Sie können Experimente Vorlagen haben (% sControl Gremium% s)"
+msgstr "Sie können Experiment-Vorlagen erstellen (%sKontrollzentrum%s)"
 
 msgid ""
 "The admin of a team can edit the status and the types of items available "
 "(%sAdmin Panel%s)."
 msgstr ""
-"Der Admin eines Teams können den Status und die Art der Produkte erhältlich "
-"(% sAdmin Gremium% s) zu bearbeiten."
+"Der Admin eines Teams kann den Status und die Art der Artikel verfügbaren "
+"(%sAdmin-Panel%s) bearbeiten."
 
 msgid ""
 "If you press Ctrl Shift D in the editor the date will appear under the "
 "cursor."
 msgstr ""
-"Wenn Sie Strg Umschalt D im Editor drücken wird das Datum unter dem Cursor "
+"Wenn Sie Strg Umschalt D im Editor drücken, wird das Datum unter dem Cursor "
 "angezeigt."
 
 msgid "Custom shortcuts are available (%sControl Panel%s)."
 msgstr ""
-"Benutzerdefinierte Shortcuts stehen zur Verfügung (% sControl Gremium% s)."
+"Benutzerdefinierte Verknüpfungen stehen zur Verfügung (%sKontrollzentrum%s)."
 
 msgid "You can duplicate experiments in one click."
-msgstr "Sie können Experimente mit einem Klick zu duplizieren."
+msgstr "Sie können Experimente mit einem Klick duplizieren."
 
 msgid "Click a tag to list all items with this tag."
-msgstr "Klicken Sie auf einen Tag, um alle Artikel mit diesem Tag auflisten."
+msgstr "Klicken Sie einen Tag an, um alle Artikel mit diesem Tag aufzulisten."
 
 msgid ""
 "Register an account with %sUniversign%s to start timestamping experiments."
 msgstr ""
-"Registrieren Sie ein Konto mit% sUniversign% s zu beginnen Timestamping "
-"Experimenten."
+"Registrieren Sie ein Konto mit %sUniversign%s, um mit dem Timestamping von "
+"Experimenten zu beginnen."
 
 msgid "Only a locked experiment can be timestamped."
-msgstr "Nur ein gesperrter Experiment kann Zeitstempel werden."
+msgstr ""
+"Nur ein gesperrtes Experiment kann mit einem Zeitstempel versehen werden."
 
 msgid ""
 "Once timestamped an experiment cannot be unlocked or modified. Only comments "
 "can be added."
 msgstr ""
-"Sobald timestamped ein Experiment kann nicht entsperrt oder verändert "
-"werden. Nur Kommentare können hinzugefügt werden."
+"Sobald ein Experiment mit einem Zeitstempel versehen ist, kann es nicht mehr "
+"entsperrt oder verändert werden. Nur Kommentare können hinzugefügt werden."
 
 msgid ""
 "There was an error in the timestamping. Login credentials probably wrong or "
 "no more credits."
 msgstr ""
-"Es gab einen Fehler in der Zeitstempel. Anmeldedaten wahrscheinlich falsch "
-"oder gar keine mehr Credits."
+"Es gab einen Fehler mit dem Zeitstempel. Anmeldedaten sind wahrscheinlich "
+"falsch oder gar keine angegeben."
 
 msgid ""
 "There was an error with the timestamping. Experiment is NOT timestamped. "
 "Error has been logged."
 msgstr ""
-"Es gab einen Fehler mit dem Zeitstempel. Experiment ist NICHT timestamped. "
-"Fehler wurde protokolliert."
+"Es gab einen Fehler mit dem Zeitstempel. Experiment ist NICHT "
+"zeitgestempelt. Fehler wurde protokolliert."
 
 msgid ""
 "Experiment timestamped with success. The timestamped PDF can now be "
 "downloaded below."
 msgstr ""
-"Experiment timestamped mit Erfolg. Der Zeitstempel versehen PDF kann nun "
-"hier heruntergeladen werden."
+"Experiment erfolgreich mit Zeitstempel versehen. Die zeitgestempelte PDF "
+"kann nun hier heruntergeladen werden."
 
 msgid "User Control Panel"
 msgstr "Benutzerkontrollzentrum"
@@ -890,7 +904,7 @@ msgid "Profile updated."
 msgstr "Profil aktualisiert."
 
 msgid "Enter your password to edit anything."
-msgstr "Geben Sie Ihr Passwort, um alles zu bearbeiten."
+msgstr "Geben Sie Ihr Passwort ein, um etwas zu bearbeiten."
 
 msgid "Preferences updated."
 msgstr "Einstellungen aktualisiert."
@@ -902,10 +916,10 @@ msgid "The template name must be 3 characters long."
 msgstr "Der Vorlagenname muss 3 Zeichen lang sein."
 
 msgid "Experiment template successfully added."
-msgstr "Experiment Vorlage erfolgreich hinzugefügt."
+msgstr "Experimentenvorlage erfolgreich hinzugefügt."
 
 msgid "Template successfully edited."
-msgstr "Template erfolgreich bearbeitet."
+msgstr "Vorlage erfolgreich bearbeitet."
 
 msgid "Name of the template"
 msgstr "Name der Vorlage"
@@ -941,10 +955,10 @@ msgid "Update profile"
 msgstr "Profil aktualisieren"
 
 msgid "DISPLAY"
-msgstr "DISPLAY"
+msgstr "Anzeige"
 
 msgid "Default"
-msgstr "Default"
+msgstr "Standard"
 
 msgid "Compact"
 msgstr "Kompakt"
@@ -956,25 +970,27 @@ msgid "with"
 msgstr "mit"
 
 msgid "newer first"
-msgstr "Neue zuerst"
+msgstr "neueres zuerst"
 
 msgid "older first"
-msgstr "alt zuerst"
+msgstr "älteres zuerst"
 
 msgid "Items per page:"
-msgstr "Artikel pro Seite:"
+msgstr "Einträge pro Seite:"
 
 msgid "KEYBOARD SHORTCUTS"
 msgstr "Tastaturkürzel"
 
 msgid "ALERT"
-msgstr "ALERT"
+msgstr "WARNUNGEN"
 
 msgid "Display a warning before closing an edit window/tab ?"
-msgstr "Eine Warnung vor dem Schließen einer Bearbeitungs Fenster / Tab?"
+msgstr ""
+"Eine Warnung vor dem Schließen eines Bearbeitungsfensters oder -tabs "
+"anzeigen?"
 
 msgid "Create new"
-msgstr "Neues"
+msgstr "Neu erstellen"
 
 msgid "Add template"
 msgstr "Vorlage hinzufügen"
@@ -986,7 +1002,7 @@ msgid "Language"
 msgstr "Sprache"
 
 msgid "Nothing to show with this ID."
-msgstr "Nichts zu tun mit dieser ID zeigen."
+msgstr "Nichts mit dieser ID anzuzeigen."
 
 msgid "Last modified by"
 msgstr "Zuletzt geändert von"
@@ -995,45 +1011,45 @@ msgid ""
 "<strong>Access forbidden:</strong> the visibility setting of this experiment "
 "is set to 'owner only'."
 msgstr ""
-"<Strong> Zugriff verboten: </ strong> die Sichtbarkeit Einstellung dieses "
-"Experiment \"Eigentümer nur 'gesetzt."
+"<strong>Zugriff verboten:</strong> die Sichtbarkeitseinstellung dieses "
+"Experimentes ist auf \"Nur Eigentümer\" gesetzt."
 
 msgid "<strong>Read-only mode:</strong> this experiment is owned by"
-msgstr "<Strong> Read-only-Modus: </ strong> dieses Experiment ist im Besitz"
+msgstr "<Strong>Nur-Lese-Modus:</strong> dieses Experiment ist im Besitz von"
 
 msgid "Experiment was timestamped by"
-msgstr "Experiment wurde von einem Zeitstempel"
+msgstr "Experiment wurde zeitgestempelt von"
 
 msgid "Unique eLabID:"
-msgstr "Einzigartige eLabID:"
+msgstr "Eindeutige eLabID:"
 
 msgid "Comments"
 msgstr "Kommentare"
 
 msgid "Add a comment"
-msgstr "Einen Kommentar hinzufügen"
+msgstr "Kommentar hinzufügen"
 
 msgid "Delete this?"
-msgstr "Löschen Sie diese?"
+msgstr "Löschen?"
 
 msgid ""
 "Once timestamped an experiment cannot be edited anymore ! Are you sure you "
 "want to do this ?"
 msgstr ""
-"Sobald timestamped einem Experiment kann nicht mehr bearbeitet werden! Sind "
-"Sie sicher, dass Sie dies tun wollen?"
+"Sobald ein Experiment zeitgestempelt ist, kann es nicht mehr bearbeitet "
+"werden! Sind Sie sicher, dass Sie dies tun wollen?"
 
 msgid "Tag cloud"
-msgstr "Tag cloud"
+msgstr "Tagcloud"
 
 msgid "Not enough tags to make a tagcloud."
-msgstr "Nicht genug Tags, um eine Tagcloud machen."
+msgstr "Nicht genug Tags, um eine Tagcloud zu erstellen."
 
 msgid "Statistics"
 msgstr "Statistiken"
 
 msgid "No statistics available yet."
-msgstr "Keine Statistik vorhanden."
+msgstr "Noch keine Statistiken vorhanden."
 
 msgid "Experiments for"
 msgstr "Experimente für"
@@ -1045,7 +1061,7 @@ msgid "Start Upload"
 msgstr "Upload starten"
 
 msgid "Filter type"
-msgstr "Filtertyp"
+msgstr "Typ filtern"
 
 msgid "Found"
 msgstr "Gefunden"
@@ -1063,61 +1079,62 @@ msgid ""
 "<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list "
 "to begin filling your database."
 msgstr ""
-"<Strong> Willkommen in eLabFTW. </ Strong> Wählen Sie ein Element in der "
-"«Neuen» Liste Ausfüllen Ihrer Datenbank zu beginnen."
+"<strong>Willkommen bei eLabFTW.</strong> Wählen Sie ein Element in der «Neu "
+"erstellen» Liste und füllen Sie Ihrer Datenbank."
 
 msgid "Showing last 10 uploads:"
-msgstr "Angezeigt letzten 10 Uploads:"
+msgstr "Die letzten 10 Uploads:"
 
 msgid "Load more"
-msgstr "Legen Sie mehr"
+msgstr "Laden Sie mehr"
 
 msgid "Create experiment"
-msgstr "Erstellen Experiment"
+msgstr "Experiment erstellen"
 
 msgid "Create from template"
-msgstr "Erstellen Sie aus Vorlage"
+msgstr "Aus Vorlage erstellen"
 
 msgid "Filter status"
-msgstr "Filterstatus"
+msgstr "Status filtern"
 
 msgid ""
 "<strong>You do not have any templates yet.</strong> Go to %syour control "
 "panel%s to make one !"
 msgstr ""
-"<Strong> Sie haben noch keine Vorlagen vorhanden. </ Strong> Zum% syour "
-"Bedienfeld% s eine zu machen!"
+"<strong>Sie haben noch keine Vorlagen.</strong> Gehen Sie zu %sIhrem "
+"Kontrollzentrum%s, um eine zu erstellen!"
 
 msgid ""
 "<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button "
 "to get started."
 msgstr ""
-"<Strong> Willkommen in eLabFTW. </ Strong> Klicken Sie auf die screate "
-"Experiment% s Taste%, um loszulegen."
+"<strong>Willkommen bei eLabFTW.</strong> Klicken Sie auf die %sExperiment "
+"erstellen%s Schaltfläche, um loszulegen."
 
 msgid "<strong>This item is locked.</strong> You cannot edit it."
 msgstr ""
-"<Strong> Dieser Artikel ist gesperrt. </ Strong> Sie können nicht bearbeiten."
+"<strong>Dieser Artikel ist gesperrt.</strong> Sie können ihn nicht "
+"bearbeiten."
 
 msgid "Tags"
-msgstr "Schlagwörter"
+msgstr "Tags"
 
 msgid ""
 "Do you want to navigate away from this page? Unsaved changes will be lost!"
 msgstr ""
-"Wollen Sie weg von dieser Seite navigieren? Nicht gespeicherte Änderungen "
-"gehen verloren!"
+"Wollen Sie die Seite wirklich verlassen? Nicht gespeicherte Änderungen gehen "
+"verloren!"
 
 msgid "<strong>Cannot edit:</strong> this experiment is not yours!"
 msgstr ""
-"<Strong> kann nicht bearbeitet werden: </ strong> dieses Experiment ist "
-"nicht deins!"
+"<strong>Kann nicht bearbeitet werden:</strong> Dieses Experiment ist nicht "
+"deines!"
 
 msgid "click a tag to remove it"
-msgstr "klicken Sie auf einen Tag, um es zu entfernen"
+msgstr "Zum Entfernen Tag anklicken"
 
 msgid "Add a tag"
-msgstr "Add einen tag"
+msgstr "Tag hinzufügen"
 
 msgid "Only the team"
 msgstr "Nur das Team"
@@ -1126,7 +1143,7 @@ msgid "Only me"
 msgstr "Nur ich"
 
 msgid "Linked items"
-msgstr "Verlinkte Artikel"
+msgstr "Verlinkte Einträge"
 
 msgid "Add a link"
 msgstr "Link hinzufügen"
@@ -1139,8 +1156,8 @@ msgstr "Verlauf anzeigen"
 
 msgid "revision available."
 msgid_plural "revisions available."
-msgstr[0] "Revision zur Verfügung."
-msgstr[1] "Revision zur Verfügung."
+msgstr[0] "Revision verfügbar."
+msgstr[1] "Revisionen verfügbar."
 
 msgid "Howdy,"
 msgstr "Howdy,"
@@ -1149,7 +1166,7 @@ msgid "Settings"
 msgstr "Einstellungen"
 
 msgid "Logout"
-msgstr "Abmeldung"
+msgstr "Abmelden"
 
 msgid "Check for updates"
 msgstr "Nach Updates suchen"
@@ -1164,7 +1181,7 @@ msgid "Powered by"
 msgstr "Bereitgestellt von"
 
 msgid "Page generated in"
-msgstr "Seite generiert in"
+msgstr "Seite erzeugt in"
 
 msgid "Item ID"
-msgstr "Item ID"
+msgstr "Element ID"

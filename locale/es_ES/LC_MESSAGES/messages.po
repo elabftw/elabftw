@@ -3,7 +3,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.6.11\n"
+"X-Generator: Poedit 1.7.3\n"
 "Project-Id-Version: elabftw\n"
 "Language: es\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1127,7 +1127,7 @@ msgstr "¿Quieres salir de esta página? ¡Los cambios no guardados se perderán
 msgid "<strong>Cannot edit:</strong> this experiment is not yours!"
 msgstr "<strong>No se puede editar:</strong> ¡este experimento no es suyo!"
 
-msgid "click a tag to remove it"
+msgid "Click a tag to remove it"
 msgstr "haga clic en una etiqueta para eliminarla"
 
 msgid "Add a tag"

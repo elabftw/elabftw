@@ -161,15 +161,16 @@ if (isset($_GET['q'])) { // if there is a query
     }
 
 ///////////////
-// TAG _('Search')
+// TAG SEARCH
 ///////////////
 } elseif (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
-    $sql = "SELECT item_id FROM experiments_tags
-    WHERE tag LIKE :tag";
+    $sql = "SELECT item_id, userid FROM experiments_tags
+    WHERE tag LIKE :tag AND userid = :userid";
     $req = $pdo->prepare($sql);
     $req->execute(array(
-        'tag' => $tag
+        'tag' => $tag,
+        'userid' => $_SESSION['userid']
     ));
     // put resulting ids in the results array
     while ($data = $req->fetch()) {

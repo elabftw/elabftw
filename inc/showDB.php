@@ -62,16 +62,17 @@ $req->execute(array(
 <?php
 // SQL for showDB
 ///////////////
-// TAG _('Search')
+// TAG SEARCH
 ///////////////
 if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
     $results_arr = array();
-    $sql = "SELECT item_id FROM items_tags
-    WHERE tag LIKE :tag";
+    $sql = "SELECT item_id, team_id FROM items_tags
+    WHERE tag LIKE :tag AND team_id = :team_id";
     $req = $pdo->prepare($sql);
     $req->execute(array(
-        'tag' => $tag
+        'tag' => $tag,
+        'team_id' => $_SESSION['team_id']
     ));
     // put resulting ids in the results array
     while ($data = $req->fetch()) {

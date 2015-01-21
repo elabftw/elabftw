@@ -291,5 +291,34 @@ if (strlen(get_config('path')) == 32) {
     q("DELETE FROM `config` WHERE `conf_name` = 'path';");
 }
 
+// add a team column to items_tags
+add_field('items_tags', 'team_id', "INT(10) NOT NULL DEFAULT 0", ">>> Added team column in items_tags table.\n");
+// now loop on each items_tags and assign the right team for each. We have the item_id, which is linked to the team.
+// first, do we need to do that ?
+$sql = "SELECT team_id FROM items_tags LIMIT 1";
+$req = $pdo->prepare($sql);
+$req->execute();
+$team_id = $req->fetch();
+if ($team_id[0] == 0) { // if we just added the column, it will be 0
+    $sql = "SELECT items_tags.id, items_tags.item_id FROM items_tags";
+    $req = $pdo->prepare($sql);
+    $req->execute();
+    while ($tag = $req->fetch()) {
+        $sql = "SELECT items.team FROM items WHERE items.id = :item_id";
+        $req2 = $pdo->prepare($sql);
+        $req2->execute(array(
+            'item_id' => $tag['item_id']
+        ));
+        while ($team = $req2->fetch()) {
+            $sql = "UPDATE items_tags SET team_id = :team WHERE id = :id";
+            $update = $pdo->prepare($sql);
+            $update->execute(array(
+                'team' => $team['team'],
+                'id' => $tag['id']
+            ));
+        }
+    }
+}
+
 // END
 echo "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)\n";

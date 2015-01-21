@@ -1,9 +1,9 @@
 /* Changelog for eLabFTW */
 
 Version 0.12.4
-
 * add languages : Catalan, Spanish, German and Italian
 * easier install on docker
+* fix a bug where wrong admin was informed of new user
 
 Version 0.12.0
 * new todolist

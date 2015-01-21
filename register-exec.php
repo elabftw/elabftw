@@ -227,7 +227,7 @@ if ($result) {
     if (get_config('admin_validate') == '1' && $group == '4' && get_config('smtp_password') != '') {
         // we send an email to the admin so he can validate the user
         // get email of the admin of the team (there might be several admins, but we send only to the first one we find)
-        $sql = "SELECT * FROM users WHERE `usergroup` = 1 OR `usergroup` = 2 AND `team` = :team LIMIT 1";
+        $sql = "SELECT * FROM users WHERE (`usergroup` = 1 OR `usergroup` = 2) AND `team` = :team LIMIT 1";
         $req = $pdo->prepare($sql);
         $req->bindParam(':team', $team);
         $req->execute();

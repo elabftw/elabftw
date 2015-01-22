@@ -491,9 +491,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $body = '';
         $j = 0;
         foreach($data as $line) {
-            $body .= "<p><b>".$column[$j]." :</b> ".$line.'</p>';
+            $body .= "<p><strong>".$column[$j]." :</strong> ".$line.'</p>';
             $j++;
         }
+        // clean the body
+        $body = str_replace('<p><strong> :</strong> </p>', '', $body);
 
         // SQL for importing
         $sql = "INSERT INTO items(team, title, date, body, userid, type) VALUES(:team, :title, :date, :body, :userid, :type)";

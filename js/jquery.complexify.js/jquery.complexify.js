@@ -13,6 +13,7 @@
 			var CHARSETS = [
 				// Commonly Used
 				////////////////////
+				[0x0020, 0x0020], // Space
 				[0x0030, 0x0039], // Numbers
 				[0x0041, 0x005A], // Uppercase
 				[0x0061, 0x007A], // Lowercase
@@ -115,8 +116,7 @@
 				minimumChars: 8,
 				strengthScaleFactor: 1,
         bannedPasswords: window.COMPLEXIFY_BANLIST || [],
-				banmode: 'strict', // (strict|loose)
-        evaluateOnInit: true
+				banMode: 'strict' // (strict|loose)
 			};
 
 			if($.isFunction(options) && !callback) {
@@ -136,7 +136,7 @@
 			}
 
 			function inBanlist(str) {
-				if (options.banmode === 'strict') {
+				if (options.banMode === 'strict') {
 					for (var i = 0; i < options.bannedPasswords.length; i++) {
             if (options.bannedPasswords[i].indexOf(str) !== -1) {
               return true;
@@ -176,11 +176,9 @@
         callback.call(this, valid, complexity);
       }
 
-      if( options.evaluateOnInit ) {
-        this.each(function () {
-          evaluateSecurity.apply(this);
-        });
-      }
+      this.each(function () {
+        evaluateSecurity.apply(this);
+      });
 
 			return this.each(function () {
         $(this).bind('keyup focus input propertychange mouseup', evaluateSecurity);

@@ -1,3 +1,14 @@
+Version 4.1.7 (2014-11-27)
+	Added HTML5 schema support for srcset, source and picture. Patch contributed by mattheu.
+	Added new cache_suffix setting to enable cache busting by producing unique urls.
+	Added new paste_convert_word_fake_lists option to enable users to disable the fake lists convert logic.
+	Fixed so advlist style changes adds undo levels for each change.
+	Fixed bug where WebKit would sometimes produce an exception when the autolink plugin where looking for URLs.
+	Fixed bug where IE 7 wouldn't be rendered properly due to to aggressive css compression.
+	Fixed bug where DomQuery wouldn't accept window as constructor element.
+	Fixed bug where the color picker in 3.x dialogs wouldn't work properly. Patch contributed by Callidior.
+	Fixed bug where the image plugin wouldn't respect the document_base_url.
+	Fixed bug where the jQuery plugin would fail to append to elements named array prototype names.
 Version 4.1.6 (2014-10-08)
 	Fixed bug with clicking on the scrollbar of the iframe would cause a JS error to be thrown.
 	Fixed bug where null would produce an exception if you passed it to selection.setRng.

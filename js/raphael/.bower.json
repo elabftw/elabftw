@@ -1,6 +1,6 @@
 {
   "name": "raphael",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "main": "raphael.js",
   "ignore": [
     "eve",
@@ -17,13 +17,13 @@
     "reference.js"
   ],
   "homepage": "https://github.com/DmitryBaranovskiy/raphael",
-  "_release": "2.1.2",
+  "_release": "2.1.3",
   "_resolution": {
     "type": "version",
-    "tag": "v2.1.2",
-    "commit": "3331359c102e23dc72a224ba65e4fdec6f20894c"
+    "tag": "v2.1.3",
+    "commit": "210ce2127a423d30071a3fb84d03880a2d13f7cd"
   },
-  "_source": "git://github.com/DmitryBaranovskiy/raphael.git",
+  "_source": "https://github.com/DmitryBaranovskiy/raphael.git",
   "_target": "~2.1.2",
   "_originalSource": "raphael"
 }

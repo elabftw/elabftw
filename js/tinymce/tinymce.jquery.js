@@ -1,4 +1,4 @@
-// 4.1.6 (2014-10-08)
+// 4.1.7 (2014-11-27)
 
 /**
  * Compiled inline version. (Library mode)
@@ -674,6 +674,144 @@ define("tinymce/dom/Sizzle", [], function() {
 	return jQuery.find;
 });
 
+// Included from: js/tinymce/classes/Env.js
+
+/**
+ * Env.js
+ *
+ * Copyright, Moxiecode Systems AB
+ * Released under LGPL License.
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
+
+/**
+ * This class contains various environment constants like browser versions etc.
+ * Normally you don't want to sniff specific browser versions but sometimes you have
+ * to when it's impossible to feature detect. So use this with care.
+ *
+ * @class tinymce.Env
+ * @static
+ */
+define("tinymce/Env", [], function() {
+	var nav = navigator, userAgent = nav.userAgent;
+	var opera, webkit, ie, ie11, gecko, mac, iDevice;
+
+	opera = window.opera && window.opera.buildNumber;
+	webkit = /WebKit/.test(userAgent);
+	ie = !webkit && !opera && (/MSIE/gi).test(userAgent) && (/Explorer/gi).test(nav.appName);
+	ie = ie && /MSIE (\w+)\./.exec(userAgent)[1];
+	ie11 = userAgent.indexOf('Trident/') != -1 && (userAgent.indexOf('rv:') != -1 || nav.appName.indexOf('Netscape') != -1) ? 11 : false;
+	ie = ie || ie11;
+	gecko = !webkit && !ie11 && /Gecko/.test(userAgent);
+	mac = userAgent.indexOf('Mac') != -1;
+	iDevice = /(iPad|iPhone)/.test(userAgent);
+
+	// Is a iPad/iPhone and not on iOS5 sniff the WebKit version since older iOS WebKit versions
+	// says it has contentEditable support but there is no visible caret.
+	var contentEditable = !iDevice || userAgent.match(/AppleWebKit\/(\d*)/)[1] >= 534;
+
+	return {
+		/**
+		 * Constant that is true if the browser is Opera.
+		 *
+		 * @property opera
+		 * @type Boolean
+		 * @final
+		 */
+		opera: opera,
+
+		/**
+		 * Constant that is true if the browser is WebKit (Safari/Chrome).
+		 *
+		 * @property webKit
+		 * @type Boolean
+		 * @final
+		 */
+		webkit: webkit,
+
+		/**
+		 * Constant that is more than zero if the browser is IE.
+		 *
+		 * @property ie
+		 * @type Boolean
+		 * @final
+		 */
+		ie: ie,
+
+		/**
+		 * Constant that is true if the browser is Gecko.
+		 *
+		 * @property gecko
+		 * @type Boolean
+		 * @final
+		 */
+		gecko: gecko,
+
+		/**
+		 * Constant that is true if the os is Mac OS.
+		 *
+		 * @property mac
+		 * @type Boolean
+		 * @final
+		 */
+		mac: mac,
+
+		/**
+		 * Constant that is true if the os is iOS.
+		 *
+		 * @property iOS
+		 * @type Boolean
+		 * @final
+		 */
+		iOS: iDevice,
+
+		/**
+		 * Constant that is true if the browser supports editing.
+		 *
+		 * @property contentEditable
+		 * @type Boolean
+		 * @final
+		 */
+		contentEditable: contentEditable,
+
+		/**
+		 * Transparent image data url.
+		 *
+		 * @property transparentSrc
+		 * @type Boolean
+		 * @final
+		 */
+		transparentSrc: "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
+
+		/**
+		 * Returns true/false if the browser can or can't place the caret after a inline block like an image.
+		 *
+		 * @property noCaretAfter
+		 * @type Boolean
+		 * @final
+		 */
+		caretAfter: ie != 8,
+
+		/**
+		 * Constant that is true if the browser supports native DOM Ranges. IE 9+.
+		 *
+		 * @property range
+		 * @type Boolean
+		 */
+		range: window.getSelection && "Range" in window,
+
+		/**
+		 * Returns the IE document mode for non IE browsers this will fake IE 10.
+		 *
+		 * @property documentMode
+		 * @type Number
+		 */
+		documentMode: ie ? (document.documentMode || 7) : 10
+	};
+});
+
 // Included from: js/tinymce/classes/util/Tools.js
 
 /**
@@ -692,7 +830,9 @@ define("tinymce/dom/Sizzle", [], function() {
  *
  * @class tinymce.util.Tools
  */
-define("tinymce/util/Tools", [], function() {
+define("tinymce/util/Tools", [
+	"tinymce/Env"
+], function(Env) {
 	/**
 	 * Removes whitespace from the beginning and end of a string.
 	 *
@@ -841,18 +981,18 @@ define("tinymce/util/Tools", [], function() {
 	 * one array list into another.
 	 *
 	 * @method map
-	 * @param {Array} a Array of items to iterate.
-	 * @param {function} f Function to call for each item. It's return value will be the new value.
+	 * @param {Array} array Array of items to iterate.
+	 * @param {function} callback Function to call for each item. It's return value will be the new value.
 	 * @return {Array} Array with new values based on function return values.
 	 */
-	function map(a, f) {
-		var o = [];
+	function map(array, callback) {
+		var out = [];
 
-		each(a, function(v) {
-			o.push(f(v));
+		each(array, function(item) {
+			out.push(callback(item));
 		});
 
-		return o;
+		return out;
 	}
 
 	/**
@@ -1164,6 +1304,16 @@ define("tinymce/util/Tools", [], function() {
 		return map(s.split(d || ','), trim);
 	}
 
+	function _addCacheSuffix(url) {
+		var cacheSuffix = Env.cacheSuffix;
+
+		if (cacheSuffix) {
+			url += (url.indexOf('?') === -1 ? '?' : '&') + cacheSuffix;
+		}
+
+		return url;
+	}
+
 	return {
 		trim: trim,
 		isArray: isArray,
@@ -1179,145 +1329,8 @@ define("tinymce/util/Tools", [], function() {
 		walk: walk,
 		createNS: createNS,
 		resolve: resolve,
-		explode: explode
-	};
-});
-
-// Included from: js/tinymce/classes/Env.js
-
-/**
- * Env.js
- *
- * Copyright, Moxiecode Systems AB
- * Released under LGPL License.
- *
- * License: http://www.tinymce.com/license
- * Contributing: http://www.tinymce.com/contributing
- */
-
-/**
- * This class contains various environment constants like browser versions etc.
- * Normally you don't want to sniff specific browser versions but sometimes you have
- * to when it's impossible to feature detect. So use this with care.
- *
- * @class tinymce.Env
- * @static
- */
-define("tinymce/Env", [], function() {
-	var nav = navigator, userAgent = nav.userAgent;
-	var opera, webkit, ie, ie11, gecko, mac, iDevice;
-
-	opera = window.opera && window.opera.buildNumber;
-	webkit = /WebKit/.test(userAgent);
-	ie = !webkit && !opera && (/MSIE/gi).test(userAgent) && (/Explorer/gi).test(nav.appName);
-	ie = ie && /MSIE (\w+)\./.exec(userAgent)[1];
-	ie11 = userAgent.indexOf('Trident/') != -1 && (userAgent.indexOf('rv:') != -1 || nav.appName.indexOf('Netscape') != -1) ? 11 : false;
-	ie = ie || ie11;
-	gecko = !webkit && !ie11 && /Gecko/.test(userAgent);
-	mac = userAgent.indexOf('Mac') != -1;
-	iDevice = /(iPad|iPhone)/.test(userAgent);
-
-	// Is a iPad/iPhone and not on iOS5 sniff the WebKit version since older iOS WebKit versions
-	// says it has contentEditable support but there is no visible caret.
-	var contentEditable = !iDevice || userAgent.match(/AppleWebKit\/(\d*)/)[1] >= 534;
-
-	return {
-		/**
-		 * Constant that is true if the browser is Opera.
-		 *
-		 * @property opera
-		 * @type Boolean
-		 * @final
-		 */
-		opera: opera,
-
-		/**
-		 * Constant that is true if the browser is WebKit (Safari/Chrome).
-		 *
-		 * @property webKit
-		 * @type Boolean
-		 * @final
-		 */
-		webkit: webkit,
-
-		/**
-		 * Constant that is more than zero if the browser is IE.
-		 *
-		 * @property ie
-		 * @type Boolean
-		 * @final
-		 */
-		ie: ie,
-
-		/**
-		 * Constant that is true if the browser is Gecko.
-		 *
-		 * @property gecko
-		 * @type Boolean
-		 * @final
-		 */
-		gecko: gecko,
-
-		/**
-		 * Constant that is true if the os is Mac OS.
-		 *
-		 * @property mac
-		 * @type Boolean
-		 * @final
-		 */
-		mac: mac,
-
-		/**
-		 * Constant that is true if the os is iOS.
-		 *
-		 * @property iOS
-		 * @type Boolean
-		 * @final
-		 */
-		iOS: iDevice,
-
-		/**
-		 * Constant that is true if the browser supports editing.
-		 *
-		 * @property contentEditable
-		 * @type Boolean
-		 * @final
-		 */
-		contentEditable: contentEditable,
-
-		/**
-		 * Transparent image data url.
-		 *
-		 * @property transparentSrc
-		 * @type Boolean
-		 * @final
-		 */
-		transparentSrc: "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
-
-		/**
-		 * Returns true/false if the browser can or can't place the caret after a inline block like an image.
-		 *
-		 * @property noCaretAfter
-		 * @type Boolean
-		 * @final
-		 */
-		caretAfter: ie != 8,
-
-		/**
-		 * Constant that is true if the browser supports native DOM Ranges. IE 9+.
-		 *
-		 * @property range
-		 * @type Boolean
-		 */
-		range: window.getSelection && "Range" in window,
-
-		/**
-		 * Returns the IE document mode for non IE browsers this will fake IE 10.
-		 *
-		 * @property documentMode
-		 * @type Number
-		 */
-		documentMode: ie ? (document.documentMode || 7) : 10
+		explode: explode,
+		_addCacheSuffix: _addCacheSuffix
 	};
 });
 
@@ -1370,6 +1383,10 @@ define("tinymce/dom/DomQuery", [
 
 	function isString(obj) {
 		return typeof obj === 'string';
+	}
+
+	function isWindow(obj) {
+		return obj && obj == obj.window;
 	}
 
 	function createFragment(html, fragDoc) {
@@ -1660,10 +1677,6 @@ define("tinymce/dom/DomQuery", [
 
 			if (isString(items)) {
 				return self.add(DomQuery(items));
-			}
-
-			if (items.nodeType) {
-				return self.add([items]);
 			}
 
 			if (sort !== false) {
@@ -2446,7 +2459,13 @@ define("tinymce/dom/DomQuery", [
 		 * @param {Object} object Object to convert to array.
 		 * @return {Arrau} Array produced from object.
 		 */
-		makeArray: Tools.toArray,
+		makeArray: function(array) {
+			if (isWindow(array) || array.nodeType) {
+				return [array];
+			}
+
+			return Tools.toArray(array);
+		},
 
 		/**
 		 * Returns the index of the specified item inside the array.
@@ -4413,7 +4432,9 @@ define("tinymce/html/Entities", [
  * @class tinymce.dom.StyleSheetLoader
  * @private
  */
-define("tinymce/dom/StyleSheetLoader", [], function() {
+define("tinymce/dom/StyleSheetLoader", [
+	"tinymce/util/Tools"
+], function(Tools) {
 	"use strict";
 
 	return function(document, settings) {
@@ -4509,6 +4530,8 @@ define("tinymce/dom/StyleSheetLoader", [], function() {
 					}
 				}, waitForGeckoLinkLoaded);
 			}
+
+			url = Tools._addCacheSuffix(url);
 
 			if (!loadedStates[url]) {
 				state = {
@@ -5546,6 +5569,8 @@ define("tinymce/dom/DOMUtils", [
 			each(url.split(','), function(url) {
 				var link;
 
+				url = Tools._addCacheSuffix(url);
+
 				if (self.files[url]) {
 					return;
 				}
@@ -6510,7 +6535,7 @@ define("tinymce/dom/ScriptLoader", [
 			elm = document.createElement('script');
 			elm.id = id;
 			elm.type = 'text/javascript';
-			elm.src = url;
+			elm.src = Tools._addCacheSuffix(url);
 
 			// Seems that onreadystatechange works better on IE 10 onload seems to fire incorrectly
 			if ("onreadystatechange" in elm) {
@@ -8267,7 +8292,7 @@ define("tinymce/html/Schema", [
 		add("a", "href target rel media hreflang type", phrasingContent);
 		add("q", "cite", phrasingContent);
 		add("ins del", "cite datetime", flowContent);
-		add("img", "src alt usemap ismap width height");
+		add("img", "src srcset alt usemap ismap width height");
 		add("iframe", "src name width height", flowContent);
 		add("embed", "src type width height");
 		add("object", "data type typemustmatch name usemap form width height", flowContent, "param");
@@ -8306,7 +8331,8 @@ define("tinymce/html/Schema", [
 			add("video", "src crossorigin poster preload autoplay mediagroup loop " +
 				"muted controls width height buffered", flowContent, "track source");
 			add("audio", "src crossorigin preload autoplay mediagroup loop muted controls buffered volume", flowContent, "track source");
-			add("source", "src type media");
+			add("picture", "", "img source");
+			add("source", "src srcset type media sizes");
 			add("track", "kind src srclang label default");
 			add("datalist", "", phrasingContent, "option");
 			add("article section nav aside header footer", "", flowContent);
@@ -11659,7 +11685,7 @@ define("tinymce/util/VK", [
 		UP: 38,
 
 		modifierPressed: function(e) {
-			return e.shiftKey || e.ctrlKey || e.altKey;
+			return e.shiftKey || e.ctrlKey || e.altKey || this.metaKeyPressed(e);
 		},
 
 		metaKeyPressed: function(e) {
@@ -16257,10 +16283,11 @@ define("tinymce/Formatter", [
  * @class tinymce.UndoManager
  */
 define("tinymce/UndoManager", [
+	"tinymce/util/VK",
 	"tinymce/Env",
 	"tinymce/util/Tools",
 	"tinymce/html/SaxParser"
-], function(Env, Tools, SaxParser) {
+], function(VK, Env, Tools, SaxParser) {
 	var trim = Tools.trim, trimContentRegExp;
 
 	trimContentRegExp = new RegExp([
@@ -16385,7 +16412,8 @@ define("tinymce/UndoManager", [
 			}
 
 			// If key isn't shift,ctrl,alt,capslock,metakey
-			if ((keyCode < 16 || keyCode > 20) && keyCode != 224 && keyCode != 91 && !self.typing) {
+			var modKey = VK.modifierPressed(e);
+			if ((keyCode < 16 || keyCode > 20) && keyCode != 224 && keyCode != 91 && !self.typing && !modKey) {
 				self.beforeChange();
 				self.typing = true;
 				self.add({}, e);
@@ -18908,11 +18936,11 @@ define("tinymce/util/EventDispatcher", [
 			handlers = bindings[name];
 			if (handlers) {
 				for (i = 0, l = handlers.length; i < l; i++) {
-					handlers[i] = callback = handlers[i];
+					callback = handlers[i];
 
 					// Unbind handlers marked with "once"
 					if (callback.once) {
-						off(name, callback);
+						off(name, callback.func);
 					}
 
 					// Stop immediate propagation if needed
@@ -18922,7 +18950,7 @@ define("tinymce/util/EventDispatcher", [
 					}
 
 					// If callback returns false then prevent default and stop all propagation
-					if (callback.call(scope, args) === false) {
+					if (callback.func.call(scope, args) === false) {
 						args.preventDefault();
 						return args;
 					}
@@ -18945,7 +18973,7 @@ define("tinymce/util/EventDispatcher", [
 		 *     // Callback logic
 		 * });
 		 */
-		function on(name, callback, prepend) {
+		function on(name, callback, prepend, extra) {
 			var handlers, names, i;
 
 			if (callback === false) {
@@ -18953,6 +18981,14 @@ define("tinymce/util/EventDispatcher", [
 			}
 
 			if (callback) {
+				callback = {
+					func: callback
+				};
+
+				if (extra) {
+					Tools.extend(callback, extra);
+				}
+
 				names = name.toLowerCase().split(' ');
 				i = names.length;
 				while (i--) {
@@ -19019,7 +19055,7 @@ define("tinymce/util/EventDispatcher", [
 							// Unbind specific ones
 							hi = handlers.length;
 							while (hi--) {
-								if (handlers[hi] === callback) {
+								if (handlers[hi].func === callback) {
 									handlers = handlers.slice(0, hi).concat(handlers.slice(hi + 1));
 									bindings[name] = handlers;
 								}
@@ -19058,8 +19094,7 @@ define("tinymce/util/EventDispatcher", [
 		 * });
 		 */
 		function once(name, callback, prepend) {
-			callback.once = true;
-			return on(name, callback, prepend);
+			return on(name, callback, prepend, {once: true});
 		}
 
 		/**
@@ -26334,6 +26369,10 @@ define("tinymce/Editor", [
 		self.editorManager = editorManager;
 		self.inline = settings.inline;
 
+		if (settings.cache_suffix) {
+			Env.cacheSuffix = settings.cache_suffix.replace(/^[\?\&]+/, '');
+		}
+
 		// Call setup
 		editorManager.fire('SetupEditor', self);
 		self.execCallback('setup', self);
@@ -26700,7 +26739,11 @@ define("tinymce/Editor", [
 			// Load the CSS by injecting them into the HTML this will reduce "flicker"
 			for (i = 0; i < self.contentCSS.length; i++) {
 				var cssUrl = self.contentCSS[i];
-				self.iframeHTML += '<link type="text/css" rel="stylesheet" href="' + cssUrl + '" />';
+				self.iframeHTML += (
+					'<link type="text/css" ' +
+						'rel="stylesheet" ' +
+						'href="' + Tools._addCacheSuffix(cssUrl) + '" />'
+				);
 				self.loadedCSS[cssUrl] = true;
 			}
 
@@ -28694,7 +28737,7 @@ define("tinymce/EditorManager", [
 		 * @property minorVersion
 		 * @type String
 		 */
-		minorVersion: '1.6',
+		minorVersion: '1.7',
 
 		/**
 		 * Release date of TinyMCE build.
@@ -28702,7 +28745,7 @@ define("tinymce/EditorManager", [
 		 * @property releaseDate
 		 * @type String
 		 */
-		releaseDate: '2014-10-08',
+		releaseDate: '2014-11-27',
 
 		/**
 		 * Collection of editor instances.
@@ -35578,5 +35621,5 @@ define("tinymce/ui/Throbber", [
 	};
 });
 
-expose(["tinymce/dom/EventUtils","tinymce/dom/Sizzle","tinymce/util/Tools","tinymce/Env","tinymce/dom/DomQuery","tinymce/html/Styles","tinymce/dom/TreeWalker","tinymce/dom/Range","tinymce/html/Entities","tinymce/dom/DOMUtils","tinymce/dom/ScriptLoader","tinymce/AddOnManager","tinymce/html/Node","tinymce/html/Schema","tinymce/html/SaxParser","tinymce/html/DomParser","tinymce/html/Writer","tinymce/html/Serializer","tinymce/dom/Serializer","tinymce/dom/TridentSelection","tinymce/util/VK","tinymce/dom/ControlSelection","tinymce/dom/BookmarkManager","tinymce/dom/Selection","tinymce/dom/ElementUtils","tinymce/Formatter","tinymce/UndoManager","tinymce/EnterKey","tinymce/ForceBlocks","tinymce/EditorCommands","tinymce/util/URI","tinymce/util/Class","tinymce/util/EventDispatcher","tinymce/ui/Selector","tinymce/ui/Collection","tinymce/ui/DomUtils","tinymce/ui/Control","tinymce/ui/Factory","tinymce/ui/KeyboardNavigation","tinymce/ui/Container","tinymce/ui/DragHelper","tinymce/ui/Scrollable","tinymce/ui/Panel","tinymce/ui/Movable","tinymce/ui/Resizable","tinymce/ui/FloatPanel","tinymce/ui/Window","tinymce/ui/MessageBox","tinymce/WindowManager","tinymce/util/Quirks","tinymce/util/Observable","tinymce/EditorObservable","tinymce/Shortcuts","tinymce/Editor","tinymce/util/I18n","tinymce/FocusManager","tinymce/EditorManager","tinymce/LegacyInput","tinymce/util/XHR","tinymce/util/JSON","tinymce/util/JSONRequest","tinymce/util/JSONP","tinymce/util/LocalStorage","tinymce/Compat","tinymce/ui/Layout","tinymce/ui/AbsoluteLayout","tinymce/ui/Tooltip","tinymce/ui/Widget","tinymce/ui/Button","tinymce/ui/ButtonGroup","tinymce/ui/Checkbox","tinymce/ui/ComboBox","tinymce/ui/ColorBox","tinymce/ui/PanelButton","tinymce/ui/ColorButton","tinymce/util/Color","tinymce/ui/ColorPicker","tinymce/ui/Path","tinymce/ui/ElementPath","tinymce/ui/FormItem","tinymce/ui/Form","tinymce/ui/FieldSet","tinymce/ui/FilePicker","tinymce/ui/FitLayout","tinymce/ui/FlexLayout","tinymce/ui/FlowLayout","tinymce/ui/FormatControls","tinymce/ui/GridLayout","tinymce/ui/Iframe","tinymce/ui/Label","tinymce/ui/Toolbar","tinymce/ui/MenuBar","tinymce/ui/MenuButton","tinymce/ui/ListBox","tinymce/ui/MenuItem","tinymce/ui/Menu","tinymce/ui/Radio","tinymce/ui/ResizeHandle","tinymce/ui/Spacer","tinymce/ui/SplitButton","tinymce/ui/StackLayout","tinymce/ui/TabPanel","tinymce/ui/TextBox","tinymce/ui/Throbber"]);
+expose(["tinymce/dom/EventUtils","tinymce/dom/Sizzle","tinymce/Env","tinymce/util/Tools","tinymce/dom/DomQuery","tinymce/html/Styles","tinymce/dom/TreeWalker","tinymce/dom/Range","tinymce/html/Entities","tinymce/dom/DOMUtils","tinymce/dom/ScriptLoader","tinymce/AddOnManager","tinymce/html/Node","tinymce/html/Schema","tinymce/html/SaxParser","tinymce/html/DomParser","tinymce/html/Writer","tinymce/html/Serializer","tinymce/dom/Serializer","tinymce/dom/TridentSelection","tinymce/util/VK","tinymce/dom/ControlSelection","tinymce/dom/BookmarkManager","tinymce/dom/Selection","tinymce/dom/ElementUtils","tinymce/Formatter","tinymce/UndoManager","tinymce/EnterKey","tinymce/ForceBlocks","tinymce/EditorCommands","tinymce/util/URI","tinymce/util/Class","tinymce/util/EventDispatcher","tinymce/ui/Selector","tinymce/ui/Collection","tinymce/ui/DomUtils","tinymce/ui/Control","tinymce/ui/Factory","tinymce/ui/KeyboardNavigation","tinymce/ui/Container","tinymce/ui/DragHelper","tinymce/ui/Scrollable","tinymce/ui/Panel","tinymce/ui/Movable","tinymce/ui/Resizable","tinymce/ui/FloatPanel","tinymce/ui/Window","tinymce/ui/MessageBox","tinymce/WindowManager","tinymce/util/Quirks","tinymce/util/Observable","tinymce/EditorObservable","tinymce/Shortcuts","tinymce/Editor","tinymce/util/I18n","tinymce/FocusManager","tinymce/EditorManager","tinymce/LegacyInput","tinymce/util/XHR","tinymce/util/JSON","tinymce/util/JSONRequest","tinymce/util/JSONP","tinymce/util/LocalStorage","tinymce/Compat","tinymce/ui/Layout","tinymce/ui/AbsoluteLayout","tinymce/ui/Tooltip","tinymce/ui/Widget","tinymce/ui/Button","tinymce/ui/ButtonGroup","tinymce/ui/Checkbox","tinymce/ui/ComboBox","tinymce/ui/ColorBox","tinymce/ui/PanelButton","tinymce/ui/ColorButton","tinymce/util/Color","tinymce/ui/ColorPicker","tinymce/ui/Path","tinymce/ui/ElementPath","tinymce/ui/FormItem","tinymce/ui/Form","tinymce/ui/FieldSet","tinymce/ui/FilePicker","tinymce/ui/FitLayout","tinymce/ui/FlexLayout","tinymce/ui/FlowLayout","tinymce/ui/FormatControls","tinymce/ui/GridLayout","tinymce/ui/Iframe","tinymce/ui/Label","tinymce/ui/Toolbar","tinymce/ui/MenuBar","tinymce/ui/MenuButton","tinymce/ui/ListBox","tinymce/ui/MenuItem","tinymce/ui/Menu","tinymce/ui/Radio","tinymce/ui/ResizeHandle","tinymce/ui/Spacer","tinymce/ui/SplitButton","tinymce/ui/StackLayout","tinymce/ui/TabPanel","tinymce/ui/TextBox","tinymce/ui/Throbber"]);
 })(this);

@@ -223,7 +223,7 @@ $req->execute(array(
 $rev_count = $req->fetch();
 $count = intval($rev_count[0]);
 if ($count > 0) {
-    echo $count." ".ngettext(_('revision available.'), _('revisions available.'), $count)." <a href='revision.php?exp_id=".$id."'>"._('Show history')."</a>";
+    echo $count." ".ngettext('revision available.', 'revisions available.', $count)." <a href='revision.php?exp_id=".$id."'>"._('Show history')."</a>";
 }
 ?>
 

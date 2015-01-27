@@ -5,6 +5,7 @@
 //
 $die_msg = "There was a problem in the database update :/ Please report a bug : https://github.com/NicolasCARPi/elabftw/issues?state=open";
 
+require_once 'inc/common.php';
 require_once 'inc/functions.php';
 
 // make a simple query
@@ -74,9 +75,9 @@ function rm_field($table, $field, $added) {
 }
 
 // check if it's run from cli or web; do nothing if it's from web
-if(php_sapi_name() != 'cli' || !empty($_SERVER['REMOTE_ADDR'])) {
-    die("<p>Thank you for using eLabFTW. <br />To update your database, run this file only from the command line.</p>");
-}
+//if(php_sapi_name() != 'cli' || !empty($_SERVER['REMOTE_ADDR'])) {
+//    die("<p>Thank you for using eLabFTW. <br />To update your database, run this file only from the command line.</p>");
+//}
 
 // UPDATE the config file path
 // check for config file
@@ -321,4 +322,6 @@ if ($team_id[0] == 0) { // if we just added the column, it will be 0
 }
 
 // END
-echo "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)\n";
+$msg_arr[] = "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)";
+$_SESSION['infos'] = $msg_arr;
+header('Location: sysconfig.php');

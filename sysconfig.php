@@ -33,6 +33,7 @@ $page_title = _('eLabFTW configuration');
 $selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
+
 // formkey stuff
 require_once 'inc/classes/formkey.class.php';
 $formKey = new formKey();
@@ -42,6 +43,18 @@ if (strlen(get_config('smtp_username')) == 0) {
     display_message('error', $message);
 }
 ?>
+
+<?php
+// get current version
+$current_version = shell_exec('git describe --abbrev=0 --tags');
+?>
+<div class='align_right'>
+<form method='post' action='admin-exec.php'>
+<input type='hidden' value='1' name='update' />
+<button type='submit' class='submit button'>Update elabftw</button>
+</form>
+</div>
+
 <menu>
     <ul>
         <li class='tabhandle' id='tab1'><?php echo _('Teams');?></li>
@@ -52,7 +65,6 @@ if (strlen(get_config('smtp_username')) == 0) {
     </ul>
 </menu>
 
-<!-- TAB 1 -->
 <div class='divhandle' id='tab1div'>
     <p>
     <h3><?php echo _('Add a new team');?></h3>

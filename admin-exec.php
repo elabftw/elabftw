@@ -111,6 +111,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
     exit;
 }
 
+
+// update coming from sysconfig.php
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['update'] == '1') {
+    $res = shell_exec('git pull');
+    if ($res === NULL) {
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
+        $_SESSION['errors'] = $msg_arr;
+        header('Location: sysconfig.php');
+    } else {
+        header('Location: update.php');
+    }
+
+}
+
 // TEAM CONFIGURATION FORM COMING FROM SYSCONFIG.PHP
 // ADD A NEW TEAM
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team']) && $_POST['new_team'] != '' && $_POST['new_team'] != ' ') {

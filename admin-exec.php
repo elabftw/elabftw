@@ -116,6 +116,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['update'] == '1') {
     // we don't do a `git pull` because it would mean a lot of tweaking to get it working with the www user
     // so we use tar.gz and tagged releases.
+    $update_list_url = 'https://www.elabftw.net/updates.ini';
+    $update_zip_file = 'uploads/tmp/elabftw-latest.zip';
+
     // 1. get the ini file with the updates
     // we use curl to be able to input proxy settings
     $ch = curl_init();
@@ -126,19 +129,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
         curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
     }
     // set url
-    curl_setopt($ch, CURLOPT_URL, "https://www.elabftw.net/updates.ini");
+    curl_setopt($ch, CURLOPT_URL, $update_list_url);
     // options to verify the ssl certificate (we disable check)
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 
     // add user agent
     // http://developer.github.com/v3/#user-agent-required
-    curl_setopt($ch, CURLOPT_USERAGENT, "elabftw");
+    curl_setopt($ch, CURLOPT_USERAGENT, "elabftw updater");
 
     // add a timeout, because if you need proxy, but don't have it, it will mess up things
     // 5 seconds
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,5);
 
-    // get the json data and put in an array
+    // DO IT
     $update = curl_exec($ch);
     curl_close($ch);
 
@@ -147,9 +150,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
         $_SESSION['errors'] = $msg_arr;
         header('Location: sysconfig.php');
     }
-    // convert ini into array
+    // convert ini into array. The `true` is for process_sections: to get multidimensionnal array.
     $versions = parse_ini_string($update, true);
-    // get the latest version
+    // get the latest version (latest item in array, an array itself with url and checksum)
     $latest_arr = end($versions);
 
     // NOW GET THE ARCHIVE
@@ -171,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
     // 5 seconds
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,5);
     // say where we want the file
-    $handle = fopen('uploads/tmp/elabftw-latest.zip', 'w');
+    $handle = fopen($update_zip_file, 'w');
     curl_setopt($ch, CURLOPT_FILE , $handle);
 
     if (curl_exec($ch) != true) {
@@ -180,11 +183,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
         header('Location: sysconfig.php');
     }
     curl_close($ch);
-    fclose('uploads/tmp/elabftw-latest.zip');
+    fclose($update_zip_file);
 
     // NOW OPEN THE ARCHIVE
     $zip = new ZipArchive;
-    if ($zip->open('uploads/tmp/elabftw-latest.zip') === TRUE) {
+    if ($zip->open($update_zip_file) === TRUE) {
         // extract to root, overwrite everything
         if ($zip->extractTo(ELAB_ROOT)) {
             $zip->close();

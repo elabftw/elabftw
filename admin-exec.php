@@ -219,9 +219,13 @@ if (!is_dir($dest)) {
 $i = new DirectoryIterator($src);
     foreach($i as $f) {
         if($f->isFile()) {
-            copy($f->getRealPath(), $dest.'/'.$f->getFileName());
+            //echo "copy from : ".$f->getRealPath()."<br>";
+            //echo "to : ".$dest.$f->getFileName()."<br><hr>";
+            copy($f->getRealPath(), $dest.$f->getFileName());
         } else if(!$f->isDot() && $f->isDir()) {
-            rcopy($f->getRealPath(), $dest.'/'.$f);
+            //echo "rcopy from : ".$f->getRealPath()."<br>";
+            //echo "to : ".$dest.$f."<br><hr>";
+            rcopy($f->getRealPath(), $dest.$f);
         }
     }
 }
@@ -236,6 +240,7 @@ $i = new DirectoryIterator($src);
             $filename = str_replace('elabftw-update/', '', $stat['name']);
             //echo "FROM - uploads/tmp/extracted/".$stat['name'];
             //echo "<br>TO - " . ELAB_ROOT.$filename."<br><hr>";
+            set_time_limit(0);
             rcopy("uploads/tmp/extracted/elabftw-update/", ELAB_ROOT);
         }
         $zip->close();

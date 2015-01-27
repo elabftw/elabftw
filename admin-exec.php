@@ -114,15 +114,87 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
 
 // update coming from sysconfig.php
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['update'] == '1') {
-    $res = shell_exec('git pull');
-    if ($res === NULL) {
+    // we don't do a `git pull` because it would mean a lot of tweaking to get it working with the www user
+    // so we use tar.gz and tagged releases.
+    // 1. get the ini file with the updates
+    // we use curl to be able to input proxy settings
+    $ch = curl_init();
+    // this is to get content
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    // add proxy if there is one
+    if (strlen(get_config('proxy')) > 0) {
+        curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
+    }
+    // set url
+    curl_setopt($ch, CURLOPT_URL, "https://www.elabftw.net/updates.ini");
+    // options to verify the ssl certificate (we disable check)
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+
+    // add user agent
+    // http://developer.github.com/v3/#user-agent-required
+    curl_setopt($ch, CURLOPT_USERAGENT, "elabftw");
+
+    // add a timeout, because if you need proxy, but don't have it, it will mess up things
+    // 5 seconds
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,5);
+
+    // get the json data and put in an array
+    $update = curl_exec($ch);
+    curl_close($ch);
+
+    if ($update === false) {
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
         header('Location: sysconfig.php');
-    } else {
-        header('Location: update.php');
     }
+    // convert ini into array
+    $versions = parse_ini_string($update, true);
+    // get the latest version
+    $latest_arr = end($versions);
 
+    // NOW GET THE ARCHIVE
+    $ch = curl_init();
+    // this is to get content
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    // add proxy if there is one
+    if (strlen(get_config('proxy')) > 0) {
+        curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
+    }
+    // set url
+    curl_setopt($ch, CURLOPT_URL, $latest_arr['url']);
+    // options to verify the ssl certificate (we disable check)
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+    // add user agent
+    // http://developer.github.com/v3/#user-agent-required
+    curl_setopt($ch, CURLOPT_USERAGENT, "elabftw");
+    // add a timeout, because if you need proxy, but don't have it, it will mess up things
+    // 5 seconds
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,5);
+    // say where we want the file
+    $handle = fopen('uploads/tmp/elabftw-latest.zip', 'w');
+    curl_setopt($ch, CURLOPT_FILE , $handle);
+
+    if (curl_exec($ch) != true) {
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
+        $_SESSION['errors'] = $msg_arr;
+        header('Location: sysconfig.php');
+    }
+    curl_close($ch);
+    fclose('uploads/tmp/elabftw-latest.zip');
+
+    // NOW OPEN THE ARCHIVE
+    $zip = new ZipArchive;
+    if ($zip->open('uploads/tmp/elabftw-latest.zip') === TRUE) {
+        // extract to root, overwrite everything
+        if ($zip->extractTo(ELAB_ROOT)) {
+            $zip->close();
+            header('Location: update.php');
+        } else {
+            $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
+            $_SESSION['errors'] = $msg_arr;
+            header('Location: sysconfig.php');
+        }
+    }
 }
 
 // TEAM CONFIGURATION FORM COMING FROM SYSCONFIG.PHP

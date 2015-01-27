@@ -149,6 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
         header('Location: sysconfig.php');
+        exit;
     }
     // convert ini into array. The `true` is for process_sections: to get multidimensionnal array.
     $versions = parse_ini_string($update, true);
@@ -172,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
     curl_setopt($ch, CURLOPT_USERAGENT, "elabftw");
     // add a timeout, because if you need proxy, but don't have it, it will mess up things
     // 5 seconds
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,5);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
     // say where we want the file
     $handle = fopen($update_zip_file, 'w');
     curl_setopt($ch, CURLOPT_FILE , $handle);
@@ -181,23 +182,70 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
         header('Location: sysconfig.php');
+        exit;
     }
     curl_close($ch);
-    fclose($update_zip_file);
+    fclose($handle);
+
+    // VERIFY MD5SUM
+    if (md5_file($update_zip_file) != $latest_arr['md5']) {
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
+        $_SESSION['errors'] = $msg_arr;
+        header('Location: sysconfig.php');
+        exit;
+    }
+
+/**
+ * Recursively copy files from one directory to another
+ *
+ * @param String $src - Source of files being moved
+ * @param String $dest - Destination of files being moved
+ */
+
+function rcopy($src, $dest){
+// If source is not a directory stop processing
+    if (!is_dir($src)) {
+        return false;
+    }
+
+// If the destination directory does not exist create it
+if (!is_dir($dest)) {
+    if (!mkdir($dest)) {
+    // If the destination directory could not be created stop processing
+    return false;
+    }
+}
+// Open the source directory to read in files
+$i = new DirectoryIterator($src);
+    foreach($i as $f) {
+        if($f->isFile()) {
+            copy($f->getRealPath(), "$dest/" .$f->getFilename());
+        } else if(!$f->isDot() && $f->isDir()) {
+            rcopy($f->getRealPath(), "$dest/$f");
+        }
+    }
+}
 
     // NOW OPEN THE ARCHIVE
     $zip = new ZipArchive;
-    if ($zip->open($update_zip_file) === TRUE) {
-        // extract to root, overwrite everything
-        if ($zip->extractTo(ELAB_ROOT)) {
-            $zip->close();
-            header('Location: update.php');
-        } else {
-            $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
-            $_SESSION['errors'] = $msg_arr;
-            header('Location: sysconfig.php');
+    if ($zip->open($update_zip_file) === true) {
+        $zip->extractTo('uploads/tmp/extracted');
+        // loop to copy the files from the archive to the real location
+        // we start at 1 because we don't want the root folder line
+        for ($i=1; $i<$zip->numFiles; $i++) {
+            $stat = $zip->statIndex($i);
+            $filename = str_replace('elabftw-update/', '', $stat['name']);
+            //echo "FROM - uploads/tmp/extracted/".$stat['name'];
+            //echo "<br>TO - " . ELAB_ROOT.$filename."<br><hr>";
+            rcopy("uploads/tmp/extracted/".$stat['name'], ELAB_ROOT.$filename);
         }
+        $zip->close();
+    } else {
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
+        $_SESSION['errors'] = $msg_arr;
+        header('Location: sysconfig.php');
     }
+    //}
 }
 
 // TEAM CONFIGURATION FORM COMING FROM SYSCONFIG.PHP

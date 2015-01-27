@@ -219,17 +219,16 @@ if (!is_dir($dest)) {
 $i = new DirectoryIterator($src);
     foreach($i as $f) {
         if($f->isFile()) {
-            copy($f->getRealPath(), "$dest/" .$f->getFilename());
+            copy($f->getRealPath(), $dest.'/'.$f->getFileName());
         } else if(!$f->isDot() && $f->isDir()) {
-            rcopy($f->getRealPath(), "$dest/$f");
+            rcopy($f->getRealPath(), $dest.'/'.$f);
         }
     }
 }
 
     // NOW OPEN THE ARCHIVE
     $zip = new ZipArchive;
-    if ($zip->open($update_zip_file) === true) {
-        $zip->extractTo('uploads/tmp/extracted');
+    if ($zip->open($update_zip_file) && $zip->extractTo('uploads/tmp/extracted')) {
         // loop to copy the files from the archive to the real location
         // we start at 1 because we don't want the root folder line
         for ($i=1; $i<$zip->numFiles; $i++) {
@@ -237,15 +236,15 @@ $i = new DirectoryIterator($src);
             $filename = str_replace('elabftw-update/', '', $stat['name']);
             //echo "FROM - uploads/tmp/extracted/".$stat['name'];
             //echo "<br>TO - " . ELAB_ROOT.$filename."<br><hr>";
-            rcopy("uploads/tmp/extracted/".$stat['name'], ELAB_ROOT.$filename);
+            rcopy("uploads/tmp/extracted/elabftw-update/", ELAB_ROOT);
         }
         $zip->close();
+        header('Location: update.php');
     } else {
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
         header('Location: sysconfig.php');
     }
-    //}
 }
 
 // TEAM CONFIGURATION FORM COMING FROM SYSCONFIG.PHP

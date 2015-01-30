@@ -225,7 +225,7 @@ $i = new DirectoryIterator($src);
         } else if(!$f->isDot() && $f->isDir()) {
             //echo "rcopy from : ".$f->getRealPath()."<br>";
             //echo "to : ".$dest.$f."<br><hr>";
-            rcopy($f->getRealPath(), $dest.$f);
+            rcopy($f->getRealPath(), $dest.'/'.$f);
         }
     }
 }

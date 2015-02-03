@@ -197,13 +197,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
 
     // NOW OPEN THE ARCHIVE
     $zip = new ZipArchive;
-    if ($zip->open($update_zip_file) && $zip->extractTo('uploads/tmp/extracted')) {
+    if ($zip->open($update_zip_file) && $zip->extractTo('uploads/tmp/')) {
         // it might take some time and we don't want to be cut in the middle, so set time_limit to ∞
         set_time_limit(0);
         // I tried to do something that would work on windows also, but it's too complicated, so this will
         // work only for GNU/Linux and Mac OS X. The fact is I don't really care for Windows server users.
-        shell_exec("cp -r uploads/tmp/extracted/elabftw-update/* ${ELAB_ROOT}");
-        shell_exec("rm -rf uploads/tmp/extracted/");
+        //
+        // The unzipped archive will be a folder elabftw-master, because that's how github does it.
+        // So this means that only update on master branch are supported. If you want to update from next, use git !
+        shell_exec("/bin/cp -r uploads/tmp/elabftw-master/* ${ELAB_ROOT}");
+        shell_exec("/bin/rm -rf uploads/tmp/*");
         $zip->close();
         $msg_arr[] = _("Congratulations! You are running the latest stable version of eLabFTW :)");
         $_SESSION['infos'] = $msg_arr;

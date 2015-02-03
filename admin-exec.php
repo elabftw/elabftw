@@ -195,55 +195,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
         exit;
     }
 
-/**
- * Recursively copy files from one directory to another
- *
- * @param String $src - Source of files being moved
- * @param String $dest - Destination of files being moved
- */
-
-function rcopy($src, $dest){
-// If source is not a directory stop processing
-    if (!is_dir($src)) {
-        return false;
-    }
-
-// If the destination directory does not exist create it
-if (!is_dir($dest)) {
-    if (!mkdir($dest)) {
-    // If the destination directory could not be created stop processing
-    return false;
-    }
-}
-// Open the source directory to read in files
-$i = new DirectoryIterator($src);
-    foreach($i as $f) {
-        if($f->isFile()) {
-            //echo "copy from : ".$f->getRealPath()."<br>";
-            //echo "to : ".$dest.$f->getFileName()."<br><hr>";
-            copy($f->getRealPath(), $dest.$f->getFileName());
-        } else if(!$f->isDot() && $f->isDir()) {
-            //echo "rcopy from : ".$f->getRealPath()."<br>";
-            //echo "to : ".$dest.$f."<br><hr>";
-            rcopy($f->getRealPath(), $dest.'/'.$f);
-        }
-    }
-}
-
     // NOW OPEN THE ARCHIVE
     $zip = new ZipArchive;
     if ($zip->open($update_zip_file) && $zip->extractTo('uploads/tmp/extracted')) {
-        // loop to copy the files from the archive to the real location
-        // we start at 1 because we don't want the root folder line
-        for ($i=1; $i<$zip->numFiles; $i++) {
-            $stat = $zip->statIndex($i);
-            $filename = str_replace('elabftw-update/', '', $stat['name']);
-            //echo "FROM - uploads/tmp/extracted/".$stat['name'];
-            //echo "<br>TO - " . ELAB_ROOT.$filename."<br><hr>";
+            // it might take some time and we don't want to be cut in the middle, so set time_limit to ∞
             set_time_limit(0);
-            rcopy("uploads/tmp/extracted/elabftw-update/", ELAB_ROOT);
+            // I tried to do something that would work on windows also, but it's too complicated, so this will
+            // work only for GNU/Linux and Mac OS X. The fact is I don't really care for Windows server users.
+            shell_exec("cp -r uploads/tmp/extracted/elabftw-update/ ${ELAB_ROOT}");
+            shell_exec("rm -rf uploads/tmp/extracted/");
         }
         $zip->close();
+        $msg_arr[] = _("Congratulations! You are running the latest stable version of eLabFTW :)");
+        $_SESSION['infos'] = $msg_arr;
         header('Location: update.php');
     } else {
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");

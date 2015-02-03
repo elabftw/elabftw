@@ -202,7 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
             set_time_limit(0);
             // I tried to do something that would work on windows also, but it's too complicated, so this will
             // work only for GNU/Linux and Mac OS X. The fact is I don't really care for Windows server users.
-            shell_exec("cp -r uploads/tmp/extracted/elabftw-update/ ${ELAB_ROOT}");
+            shell_exec("cp -r uploads/tmp/extracted/elabftw-update/* ${ELAB_ROOT}");
             shell_exec("rm -rf uploads/tmp/extracted/");
         }
         $zip->close();

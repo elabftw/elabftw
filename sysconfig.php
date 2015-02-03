@@ -47,13 +47,20 @@ if (strlen(get_config('smtp_username')) == 0) {
 <?php
 // get current version
 $current_version = shell_exec('git describe --abbrev=0 --tags');
+// FIXME
+// TODO
+// we disable this because it's too alpha for now
+if ($current_version == 'something') {
+    ?>
+    <div class='align_right'>
+    <form method='post' action='admin-exec.php'>
+    <input type='hidden' value='1' name='update' />
+    <button type='submit' class='submit button'>Update elabftw</button>
+    </form>
+    </div>
+<?php
+}
 ?>
-<div class='align_right'>
-<form method='post' action='admin-exec.php'>
-<input type='hidden' value='1' name='update' />
-<button type='submit' class='submit button'>Update elabftw</button>
-</form>
-</div>
 
 <menu>
     <ul>

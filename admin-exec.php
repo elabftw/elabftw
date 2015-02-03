@@ -205,8 +205,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
         //
         // The unzipped archive will be a folder elabftw-master, because that's how github does it.
         // So this means that only update on master branch are supported. If you want to update from next, use git !
-        shell_exec("/bin/cp -r uploads/tmp/elabftw-master/* ${ELAB_ROOT}");
-        shell_exec("/bin/rm -rf uploads/tmp/*");
+        $cmd = "/bin/cp -r uploads/tmp/elabftw-master/* ".ELAB_ROOT;
+        var_dump(shell_exec($cmd));
+        exit;
+        //shell_exec("/bin/rm -rf uploads/tmp/*");
         $zip->close();
         $msg_arr[] = _("Congratulations! You are running the latest stable version of eLabFTW :)");
         $_SESSION['infos'] = $msg_arr;

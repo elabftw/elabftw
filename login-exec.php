@@ -133,7 +133,8 @@ if ($result) {
 
         // Set token cookie
         // setcookie( $name, $value, $expire, $path, $domain, $secure, $httponly )
-        setcookie('token', $token, time() + 60*60*24*30, null, null, true, true);
+        // expiration = 1 month = 60*60*24*30 =  2592000
+        setcookie('token', $token, time() + 2592000, null, null, true, true);
         // Update the token in SQL
         $sql = "UPDATE users SET token = :token WHERE userid = :userid";
         $req = $pdo->prepare($sql);

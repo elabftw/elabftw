@@ -23,9 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-if (!isset($_SESSION)) {
-    session_start();
-}
+session_start();
 require_once 'inc/connect.php';
 require_once 'inc/functions.php';
 require_once 'inc/locale.php';
@@ -45,8 +43,7 @@ if (!isset($_POST['form_key']) || !$formKey->validate()) {
     $errflag = true;
 }
 
-
-// Check _('Username') (sanitize and validate)
+// Check username (sanitize and validate)
 if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
 } else {
@@ -55,7 +52,7 @@ if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
     $errflag = true;
 }
 
-// Check _('Password') is sent
+// Check password is sent
 if ((!isset($_POST['password'])) || (empty($_POST['password']))) {
     $msg_arr[] = _('A mandatory field is missing!');
     $errflag = true;
@@ -127,14 +124,17 @@ if ($result) {
         // Make a unique token and store it in sql AND cookie
         $token = md5(uniqid(rand(), true));
         // Cookie validity = 1 month, works only in https
-        if (!isset($_SERVER['HTTPS'])) {
+        if (!using_ssl()) {
             die("eLabFTW works only in HTTPS. Please enable HTTPS on your server (<a href='https://github.com/NicolasCARPi/elabftw/wiki/Troubleshooting#wiki-switch-to-https'>see documentation</a>). Or retry with https:// in front of the address.");
         }
 
         // Set token cookie
         // setcookie( $name, $value, $expire, $path, $domain, $secure, $httponly )
         // expiration = 1 month = 60*60*24*30 =  2592000
-        setcookie('token', $token, time() + 2592000, null, null, true, true);
+        // TODO can we set true for $secure in setcookie() ?
+        // because it might not work if we are in http but using https from haproxy, dunno.
+        // so it's left to false, it's ok for now.
+        setcookie('token', $token, time() + 2592000, null, null, false, true);
         // Update the token in SQL
         $sql = "UPDATE users SET token = :token WHERE userid = :userid";
         $req = $pdo->prepare($sql);

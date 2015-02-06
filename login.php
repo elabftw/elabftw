@@ -37,8 +37,8 @@ require_once 'inc/info_box.php';
 require_once('inc/classes/formkey.class.php');
 $formKey = new formKey();
 
-// Check for HTTPS
-if (!isset($_SERVER['HTTPS'])) {
+// if we are not in https, die saying we work only in https
+if (!using_ssl()) {
     // get the url to display a link to click (without the port)
     $url = 'https://'.$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'];
     $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server

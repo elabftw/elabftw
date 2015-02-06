@@ -958,3 +958,21 @@ function update_config($array)
         return false;
     }
 }
+
+/*
+ * Used in login.php, login-exec.php and install/index.php
+ * This is need in the case you run an http server but people are connecting
+ * through haproxy with ssl, with a http_x_forwarded_proto header.
+ *
+ * @return bool
+ */
+function using_ssl()
+{
+    $headers = getallheaders();
+    if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ||
+        (isset($headers['HTTP_X_FORWARDED_PROTO']) && strtolower($headers['HTTP_X_FORWARDED_PROTO']) == 'https' )) {
+            return true;
+        } else {
+            return false;
+        }
+}

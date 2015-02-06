@@ -57,7 +57,16 @@
     <?php
     }
     if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
-        echo "<a href='admin.php'>"._('Admin panel')."</a>";
+        echo "<a href='admin.php'>"._('Admin panel');
+        // show counter of unvalidated users
+        $sql = "SELECT count(validated) FROM users WHERE validated = 0";
+        $req = $pdo->prepare($sql);
+        $req->execute();
+        $unvalidated = $req->fetchColumn();
+        if ($unvalidated > 0) {
+            echo " <span class='badge'>".$unvalidated."</span>";
+        }
+        echo "</a>";
     }
     echo "</span></p><div class='footer_right'>";
     echo _('Powered by')." <a href='http://www.elabftw.net'>eLabFTW</a><br>";

@@ -961,13 +961,18 @@ function update_config($array)
 
 /*
  * Used in login.php, login-exec.php and install/index.php
- * This is need in the case you run an http server but people are connecting
+ * This is needed in the case you run an http server but people are connecting
  * through haproxy with ssl, with a http_x_forwarded_proto header.
  *
  * @return bool
  */
 function using_ssl()
 {
+    return ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on')
+        || (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
+        && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https'));
+
+    /*
     $headers = getallheaders();
     if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ||
         (isset($headers['HTTP_X_FORWARDED_PROTO']) && strtolower($headers['HTTP_X_FORWARDED_PROTO']) == 'https' )) {
@@ -975,4 +980,5 @@ function using_ssl()
         } else {
             return false;
         }
+     */
 }

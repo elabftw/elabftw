@@ -3,6 +3,11 @@
 // php update.php on normal server
 // /Applications/MAMP/bin/php/php5.3.6/bin/php update.php for MAMP install
 //
+// check if it's run from cli or web; tell it must be called from web now
+if(php_sapi_name() == 'cli' || empty($_SERVER['REMOTE_ADDR'])) {
+    echo ">>> Please run the update script from your browser (enter update.php instead of experiments.php in the URL).\n";
+    exit;
+}
 $die_msg = "There was a problem in the database update :/ Please report a bug : https://github.com/NicolasCARPi/elabftw/issues?state=open";
 
 require_once 'inc/common.php';
@@ -74,10 +79,6 @@ function rm_field($table, $field, $added) {
     }
 }
 
-// check if it's run from cli or web; do nothing if it's from web
-//if(php_sapi_name() != 'cli' || !empty($_SERVER['REMOTE_ADDR'])) {
-//    die("<p>Thank you for using eLabFTW. <br />To update your database, run this file only from the command line.</p>");
-//}
 
 // UPDATE the config file path
 // check for config file

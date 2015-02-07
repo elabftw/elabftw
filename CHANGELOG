@@ -1,4 +1,12 @@
 /* Changelog for eLabFTW */
+Version 1.0-ALPHA
+
+* different folder structure
+
+Version 0.12.6
+* better docker/haproxy integration
+* show counter of unvalidated users to admin
+
 Version 0.12.5
 * add possibility to update via the web
 

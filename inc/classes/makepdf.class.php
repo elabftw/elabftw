@@ -94,8 +94,8 @@ class MakePdf {
                 if (empty($comments['firstname'])) {
                     $comments['firstname'] = '[deleted]';
                 }
-            $comments_block .= "<p>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :<br />";
-            $comments_block .= "<p>".$comments['comment']."</p>";
+                $comments_block .= "<p>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :<br />";
+                $comments_block .= "<p>".$comments['comment']."</p>";
 
             }
             $comments_block .= "</section>";
@@ -105,8 +105,7 @@ class MakePdf {
 
         // build content of page
         // add css
-        // TODO FIXME the css doesn't load :/
-        $content = "<link rel='stylesheet' media='all' href='".ELAB_ROOT."css/pdf.css' />";
+        $content = "<link rel='stylesheet' media='all' href='css/pdf.css' />";
         $content .= "<h1>".$title."</h1>
             Date : ".format_date($date)."<br />
             <em>Tags : ".$tags."</em><br />
@@ -140,11 +139,11 @@ class MakePdf {
             }
             $content .= "<ul>";
             $real_name_cnt = count($real_name);
-            for ($i = 0 ; $i < $real_name_cnt ; $i++) {
+            for ($i = 0; $i < $real_name_cnt; $i++) {
                 $content .= "<li>".$real_name[$i];
                 // add a comment ? don't add if it's the default text
                 if ($comment[$i] != 'Click to add a comment') {
-                   $content .= " (".stripslashes(htmlspecialchars_decode($comment[$i])).")";
+                    $content .= " (".stripslashes(htmlspecialchars_decode($comment[$i])).")";
                 }
                 // add md5 sum ? don't add if we don't have it
                 if (strlen($md5[$i]) == '32') { // we have md5 sum

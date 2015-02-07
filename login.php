@@ -130,7 +130,7 @@ if (!checkCookiesEnabled()) {
     </form>
     <p><?php printf(_("Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"), "<a href='register.php'>", "</a>", "<a href='#' class='trigger'>", "</a>");?></p>
     <div class='toggle_container'>
-    <form name='resetPass' method='post' action='reset-pass.php'>
+    <form name='resetPass' method='post' action='app/reset.php'>
     <input placeholder='<?php echo _('Enter your email address');?>' name='email' type='email' required />
     <button class='button' type="submit" name="Submit"><?php echo _('Send new password');?></button>
     </form>

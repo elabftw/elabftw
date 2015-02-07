@@ -49,7 +49,7 @@
         <a id='check_for_updates' href='#'><?php echo _('Check for updates');?></a><a href='sysconfig.php'><?php echo _('Sysadmin panel');?></a>
         <script>
         $('#check_for_updates').click(function() {
-            var jqxhr = $.post('check_for_updates.php', function(answer) {
+            var jqxhr = $.post('app/check_for_updates.php', function(answer) {
                 alert(answer);
             });
         });

@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 // add.php -- called with POST containing data, type and id.
-require_once 'inc/common.php';
+require_once '../inc/common.php';
 
 // Check expid is valid and assign it to $id
 if (isset($_POST['item_id']) && is_pos_int($_POST['item_id'])) {
@@ -33,9 +33,7 @@ if (isset($_POST['item_id']) && is_pos_int($_POST['item_id'])) {
     die();
 }
 
-
 // what do we add ?
-
 switch ($_POST['type']) {
     // TAGS FOR EXPERIMENTS
     case 'exptag':

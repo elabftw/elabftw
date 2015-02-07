@@ -24,9 +24,9 @@
 *                                                                               *
 ********************************************************************************/
 /* admin-exec.php - for administration of the elab */
-require_once 'inc/common.php';
-require_once 'inc/locale.php';
-require_once 'vendor/autoload.php';
+require_once '../inc/common.php';
+require_once ELAB_ROOT.'inc/locale.php';
+require_once ELAB_ROOT.'vendor/autoload.php';
 
 // only admin can use this
 if ($_SESSION['is_admin'] != 1) {
@@ -38,7 +38,7 @@ $errflag = false;
 $email = '';
 
 // FORMKEY
-require_once 'inc/classes/formkey.class.php';
+require_once ELAB_ROOT.'inc/classes/formkey.class.php';
 $formKey = new formKey();
 
 // VALIDATE USERS
@@ -102,22 +102,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
         if ($errflag) {
             $msg_arr[] = _('There was a problem sending the email! Error was logged.');
             $_SESSION['errors'] = $msg_arr;
-            header('location: admin.php');
+            header('location: ../admin.php');
             exit;
         }
     }
     $_SESSION['infos'] = $msg_arr;
-    header('Location: admin.php');
+    header('Location: ../admin.php');
     exit;
 }
 
 
-// update coming from sysconfig.php
+// update coming from ../sysconfig.php
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['update'] == '1') {
     // we don't do a `git pull` because it would mean a lot of tweaking to get it working with the www user
     // so we use tar.gz and tagged releases.
     $update_list_url = 'https://www.elabftw.net/updates.ini';
-    $update_zip_file = 'uploads/tmp/elabftw-latest.zip';
+    $update_zip_file = ELAB_ROOT.'uploads/tmp/elabftw-latest.zip';
 
     // 1. get the ini file with the updates
     // we use curl to be able to input proxy settings
@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
 
     // add a timeout, because if you need proxy, but don't have it, it will mess up things
     // 5 seconds
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,5);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
 
     // DO IT
     $update = curl_exec($ch);
@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
     if ($update === false) {
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#1", "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
-        header('Location: sysconfig.php');
+        header('Location: ../sysconfig.php');
         exit;
     }
     // convert ini into array. The `true` is for process_sections: to get multidimensionnal array.
@@ -176,12 +176,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
     // say where we want the file
     $handle = fopen($update_zip_file, 'w');
-    curl_setopt($ch, CURLOPT_FILE , $handle);
+    curl_setopt($ch, CURLOPT_FILE, $handle);
 
     if (curl_exec($ch) != true) {
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#2", "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
-        header('Location: sysconfig.php');
+        header('Location: ../sysconfig.php');
         exit;
     }
     curl_close($ch);
@@ -191,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
     if (md5_file($update_zip_file) != $latest_arr['md5']) {
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#3", "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
-        header('Location: sysconfig.php');
+        header('Location: ../sysconfig.php');
         exit;
     }
 
@@ -216,11 +216,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
     } else {
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#4", "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
-        header('Location: sysconfig.php');
+        header('Location: ../sysconfig.php');
     }
 }
 
-// TEAM CONFIGURATION FORM COMING FROM SYSCONFIG.PHP
+// TEAM CONFIGURATION FORM COMING FROM ../sysconfig.php
 // ADD A NEW TEAM
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team']) && $_POST['new_team'] != '' && $_POST['new_team'] != ' ') {
     $new_team_name = filter_var($_POST['new_team'], FILTER_SANITIZE_STRING);
@@ -273,12 +273,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team']) && $_POST[
     if ($result1 && $result2 && $result3 && $result4) {
         $msg_arr[] = _('Team added successfully.');
         $_SESSION['infos'] = $msg_arr;
-        header('Location: sysconfig.php');
+        header('Location: ../sysconfig.php');
         exit;
     } else {
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#5", "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
-        header('Location: sysconfig.php');
+        header('Location: ../sysconfig.php');
         exit;
     }
 }
@@ -316,12 +316,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
     if (update_config($updates)) {
         $msg_arr[] = _('Configuration updated successfully.');
         $_SESSION['infos'] = $msg_arr;
-        header('Location: sysconfig.php?tab=2');
+        header('Location: ../sysconfig.php?tab=2');
         exit;
     } else {
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#6", "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
-        header('Location: sysconfig.php?tab=2');
+        header('Location: ../sysconfig.php?tab=2');
         exit;
     }
 } // END SERVER SETTINGS
@@ -355,12 +355,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {
     if (update_config($updates)) {
         $msg_arr[] = _('Configuration updated successfully.');
         $_SESSION['infos'] = $msg_arr;
-        header('Location: sysconfig.php?tab=3');
+        header('Location: ../sysconfig.php?tab=3');
         exit;
     } else {
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#7", "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
-        header('Location: sysconfig.php?tab=3');
+        header('Location: ../sysconfig.php?tab=3');
         exit;
     }
 } // END TIMESTAMP CONFIG
@@ -394,12 +394,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['admin_validate'])) {
     if (update_config($updates)) {
         $msg_arr[] = _('Configuration updated successfully.');
         $_SESSION['infos'] = $msg_arr;
-        header('Location: sysconfig.php?tab=4');
+        header('Location: ../sysconfig.php?tab=4');
         exit;
     } else {
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#8", "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
-        header('Location: sysconfig.php?tab=4');
+        header('Location: ../sysconfig.php?tab=4');
         exit;
     }
 } // END SECURITY
@@ -445,18 +445,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['smtp_address'])) {
     if (update_config($updates)) {
         $msg_arr[] = _('Configuration updated successfully.');
         $_SESSION['infos'] = $msg_arr;
-        header('Location: sysconfig.php?tab=5');
+        header('Location: ../sysconfig.php?tab=5');
         exit;
     } else {
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#9", "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
-        header('Location: sysconfig.php?tab=5');
+        header('Location: ../sysconfig.php?tab=5');
         exit;
     }
 
 } // END EMAIL
 
-// TEAM CONFIGURATION COMING FROM ADMIN.PHP
+// TEAM CONFIGURATION COMING FROM ../admin.php
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
 
     // CHECKS
@@ -498,30 +498,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
         'stamppass' => $stamppass,
         'team_id' => $_SESSION['team_id']
         ));
-    }
-    catch (PDOException $e)
-    {
+    } catch (PDOException $e) {
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#10", "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
-        header('Location: admin.php');
+        header('Location: ../admin.php');
         exit;
     }
 
     $msg_arr[] = _('Configuration updated successfully.');
     $_SESSION['infos'] = $msg_arr;
-    header('Location: admin.php');
+    header('Location: ../admin.php');
     exit;
 }
 
 // EDIT USER
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
     if (!is_pos_int($_POST['userid'])) {
-        $msg_arr[] = _("Userid is not valid."); 
+        $msg_arr[] = _("Userid is not valid.");
         $errflag = true;
     }
     if ($errflag) {
         $_SESSION['errors'] = $msg_arr;
-        header("location: admin.php?tab=2");
+        header("location: ../admin.php?tab=2");
         exit;
     }
 
@@ -599,16 +597,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
         if (empty($msg_arr)) {
             $msg_arr[] = _('Configuration updated successfully.');
             $_SESSION['infos'] = $msg_arr;
-            header('Location: admin.php?tab=2');
+            header('Location: ../admin.php?tab=2');
             exit;
         } else {
-            header('Location: admin.php');
+            header('Location: ../admin.php');
             exit;
         }
     } else { //sql fail
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#12", "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
-        header('Location: admin.php?tab=2');
+        header('Location: ../admin.php?tab=2');
         exit;
     }
 }
@@ -650,12 +648,12 @@ if (isset($_POST['status_name']) && is_pos_int($_POST['status_id']) && !empty($_
     if ($result) {
         $msg_arr[] = _('Configuration updated successfully.');
         $_SESSION['infos'] = $msg_arr;
-        header('Location: admin.php?tab=3');
+        header('Location: ../admin.php?tab=3');
         exit;
     } else { //sql fail
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#13", "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
-        header('Location: admin.php?tab=3');
+        header('Location: ../admin.php?tab=3');
         exit;
     }
 }
@@ -676,18 +674,18 @@ if (isset($_POST['new_status_name'])) {
         if ($result) {
             $msg_arr[] = _('Configuration updated successfully.');
             $_SESSION['infos'] = $msg_arr;
-            header('Location: admin.php?tab=3');
+            header('Location: ../admin.php?tab=3');
             exit;
         } else { //sql fail
             $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#14", "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
             $_SESSION['errors'] = $msg_arr;
-            header('Location: admin.php?tab=3');
+            header('Location: ../admin.php?tab=3');
             exit;
         }
     } else {
         $msg_arr[] = _('A mandatory field is missing!');
         $_SESSION['errors'] = $msg_arr;
-        header('Location: admin.php?tab=3');
+        header('Location: ../admin.php?tab=3');
         exit;
     }
 }
@@ -716,12 +714,12 @@ if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
     if ($result) {
         $msg_arr[] = _('Configuration updated successfully.');
         $_SESSION['infos'] = $msg_arr;
-        header('Location: admin.php?tab=4');
+        header('Location: ../admin.php?tab=4');
         exit;
     } else { //sql fail
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#14", "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
-        header('Location: admin.php?tab=4');
+        header('Location: ../admin.php?tab=4');
         exit;
     }
 }
@@ -731,7 +729,7 @@ if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
     if (strlen($item_type_name) < 1) {
         $msg_arr[] = _('You need to put a title!');
         $_SESSION['errors'] = $msg_arr;
-        header('Location: admin.php?tab=4');
+        header('Location: ../admin.php?tab=4');
         exit;
     }
 
@@ -749,13 +747,13 @@ if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
     if ($result) {
         $msg_arr[] = _('Configuration updated successfully.');
         $_SESSION['infos'] = $msg_arr;
-        header('Location: admin.php?tab=4');
+        header('Location: ../admin.php?tab=4');
         exit;
     } else { //sql fail
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#15", "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
 
         $_SESSION['errors'] = $msg_arr;
-        header('Location: admin.php?tab=4');
+        header('Location: ../admin.php?tab=4');
         exit;
     }
 }
@@ -810,7 +808,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     // Check for errors and redirect if there is one
     if ($errflag) {
         $_SESSION['errors'] = $msg_arr;
-        header("location: admin.php");
+        header("location: ../admin.php");
         exit;
     }
 
@@ -842,7 +840,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     $req->execute();
     $msg_arr[] = _('Everything was purged successfully.');
     $_SESSION['infos'] = $msg_arr;
-    header('Location: admin.php?tab=2');
+    header('Location: ../admin.php?tab=2');
     exit;
 }
 // DEFAULT _('Experiment') TEMPLATE
@@ -859,16 +857,14 @@ if (isset($_POST['default_exp_tpl'])) {
         'body' => $default_exp_tpl,
         'team' => $_SESSION['team_id']
         ));
-    }
-    catch (PDOException $e)
-    {
+    } catch (PDOException $e) {
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#16", "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
-        header('Location: admin.php?tab=5');
+        header('Location: ../admin.php?tab=5');
         exit;
     }
     $msg_arr[] = _('Configuration updated successfully.');
     $_SESSION['infos'] = $msg_arr;
-    header('Location: admin.php?tab=5');
+    header('Location: ../admin.php?tab=5');
     exit;
 }

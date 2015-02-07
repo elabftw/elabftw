@@ -30,7 +30,7 @@ $load_more_button = "<div class='center'>
 $results_arr = array();
 ?>
 <menu class='border'>
-    <a href="create_item.php?type=exp"><img src="img/add.png" class='bot5px' alt="" /> <?php echo _('Create experiment');?></a> | 
+    <a href="app/create_item.php?type=exp"><img src="img/add.png" class='bot5px' alt="" /> <?php echo _('Create experiment');?></a> | 
     <a href='#' class='trigger'><img src="img/add-template.png" class='bot5px' alt="" /> <?php echo _('Create from template');?></a>
 
     <!-- 'FILTER _('Status')' dropdown menu -->
@@ -59,7 +59,7 @@ $tplreq->bindParam(':userid', $_SESSION['userid']);
 $tplreq->execute();
 if ($tplreq->rowCount() > 0) {
     while ($tpl = $tplreq->fetch()) {
-        echo "<a href='create_item.php?type=exp&tpl=".$tpl['id']."' class='badge'>".$tpl['name']."</a>";
+        echo "<a href='app/create_item.php?type=exp&tpl=".$tpl['id']."' class='badge'>".$tpl['name']."</a>";
     }
 } else { // user has no templates
     display_message('warning_nocross', sprintf(_("<strong>You do not have any templates yet.</strong> Go to %syour control panel%s to make one !"), "<a class='alert-link' href='ucp.php?tab=3'>", "</a>"));
@@ -223,7 +223,7 @@ if (isset($_GET['q'])) { // if there is a query
     $count = $req->rowCount();
     // If there are no experiments, display a little message
     if ($count == 0) {
-        display_message('info_nocross', sprintf(_("<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button to get started."), "<img src='img/add.png' alt='' /><a class='alert-link' href='create_item.php?type=exp'>", "</a>"));
+        display_message('info_nocross', sprintf(_("<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button to get started."), "<img src='img/add.png' alt='' /><a class='alert-link' href='app/create_item.php?type=exp'>", "</a>"));
     } else {
         while ($experiments = $req->fetch()) {
             $results_arr[] = $experiments['id'];
@@ -271,7 +271,7 @@ $(document).ready(function(){
 	});
     // KEYBOARD _('Shortcut')S
     key('<?php echo $_SESSION['prefs']['shortcuts']['create'];?>', function(){
-        location.href = 'create_item.php?type=exp'
+        location.href = 'app/create_item.php?type=exp'
         });
     });
 </script>

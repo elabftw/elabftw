@@ -30,7 +30,15 @@ if (!isset($_SESSION)) {
 
 // check that the config file is here and readable
 //if (!is_readable($_SERVER['DOCUMENT_ROOT'] . dirname($_SERVER['SCRIPT__('Name')']).'/config.php')) {
-if (!is_readable('config.php')) {
+if (is_readable('config.php')) {
+    require_once 'config.php';
+    require_once 'inc/functions.php';
+} elseif (is_readable('../config.php')) {
+    // we might be called from app folder
+    require_once '../config.php';
+    require_once '../inc/functions.php';
+} else {
+
     die("No readable config file found. Make sure the server has permissions to read it. Try :<br />
         <hr>
         chmod 644 config.php
@@ -38,8 +46,6 @@ if (!is_readable('config.php')) {
         Or if eLabFTW is not yet installed, head to the <a href='install'>install folder</a><br>
         Or if you just did a git pull, run php update.php");
 }
-require_once 'config.php';
-require_once 'inc/functions.php';
 // SQL CONNECT
 try {
     $pdo_options = array();

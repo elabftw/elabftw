@@ -272,7 +272,7 @@ function bigUpload () {
                     }
                     $("#filesdiv").load(bigtype+'.php?mode=edit&id='+item_id+' #filesdiv', function() {
                     // make the comment zone editable (fix issue #54)
-                        $('.thumbnail p.editable').editable('editinplace.php', {
+                        $('.thumbnail p.editable').editable('app/editinplace.php', {
                          tooltip : 'Click to edit',
                          indicator : 'Saving...',
                          id   : 'id',

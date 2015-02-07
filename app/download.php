@@ -25,7 +25,7 @@
 ********************************************************************************/
 // we disable errors to avoid having notice and warning polluting our file
 error_reporting(E_ERROR);
-require_once 'inc/common.php';
+require_once '../inc/common.php';
 
 // Check type
 if (isset($_GET['type']) && $_GET['type'] == 'zip') {
@@ -60,9 +60,9 @@ if (!isset($_GET['name']) || empty($_GET['name'])) {
 
 // FILE PATH
 if ($type == 'zip') {
-    $file_path = 'uploads/export/'.$long_filename;
+    $file_path = ELAB_ROOT.'uploads/export/'.$long_filename;
 } else {
-    $file_path = 'uploads/'.$long_filename;
+    $file_path = ELAB_ROOT.'uploads/'.$long_filename;
 }
 
 // MIME

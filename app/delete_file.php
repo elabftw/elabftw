@@ -23,8 +23,8 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once 'inc/common.php';
-require_once 'inc/locale.php';
+require_once '../inc/common.php';
+require_once ELAB_ROOT.'inc/locale.php';
 // Check id is valid and assign it to $id
 if (isset($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
@@ -57,7 +57,7 @@ if ($_GET['type'] === 'experiments') {
         $msg_arr = array();
         $msg_arr [] = _('File').' '.$data['real_name'].' '._('deleted successfully');
         $_SESSION['infos'] = $msg_arr;
-        header("location: experiments.php?mode=edit&id=$expid");
+        header("location: ../experiments.php?mode=edit&id=$expid");
     } else {
         die();
     }
@@ -84,7 +84,7 @@ if ($_GET['type'] === 'experiments') {
     $msg_arr [] = _('File').' '.$data['real_name'].' '._('deleted successfully');
     $_SESSION['infos'] = $msg_arr;
     $item_id = $data['item_id'];
-    header("location: database.php?mode=edit&id=$item_id");
+    header("location: ../database.php?mode=edit&id=$item_id");
 
 } else {
     die();

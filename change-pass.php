@@ -42,7 +42,7 @@ if (isset($_GET['key']) && strlen($_GET['key']) === 64 && isset($_GET['userid'])
 ?>
 
 <section class='center'>
-    <form method="post" class='loginform' action="reset-exec.php">
+    <form method="post" class='loginform' action="app/reset-exec.php">
         <p>
             <label class='block' for='passwordtxt'><?php echo _('New password');?></label>
             <input name="password" type="password" title='<?php echo _('8 characters minimum');?>' id="password" pattern=".{8,}" required />

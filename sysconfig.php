@@ -53,7 +53,7 @@ $current_version = shell_exec('git describe --abbrev=0 --tags');
 if ($current_version == 'something') {
     ?>
     <div class='align_right'>
-    <form method='post' action='admin-exec.php'>
+    <form method='post' action='app/admin-exec.php'>
     <input type='hidden' value='1' name='update' />
     <button type='submit' class='submit button'>Update elabftw</button>
     </form>
@@ -75,7 +75,7 @@ if ($current_version == 'something') {
 <div class='divhandle' id='tab1div'>
     <p>
     <h3><?php echo _('Add a new team');?></h3>
-    <form method='post' action='admin-exec.php'>
+    <form method='post' action='app/admin-exec.php'>
         <input required type='text' placeholder='Enter new team name' name='new_team' id='new_team' />
         <button type='submit' class='submit button'>Add</button>
     </form>
@@ -110,7 +110,7 @@ if ($current_version == 'something') {
 
 <!-- TAB 2 -->
 <div class='divhandle' id='tab2div'>
-    <form method='post' action='admin-exec.php'>
+    <form method='post' action='app/admin-exec.php'>
         <h3><?php echo _('Language');?></h3>
             <select id='lang' name="lang">
                 <option
@@ -169,7 +169,7 @@ if ($current_version == 'something') {
 <!-- TAB 3 -->
 <div class='divhandle' id='tab3div'>
     <h3><?php echo _('Universign timestamping configuration');?></h3>
-    <form method='post' action='admin-exec.php'>
+    <form method='post' action='app/admin-exec.php'>
         <label for='stampshare'><?php echo _('The teams can use the credentials below to timestamp:');?></label>
         <select name='stampshare' id='stampshare'>
             <option value='1'<?php
@@ -195,7 +195,7 @@ if ($current_version == 'something') {
 <!-- TAB 4 -->
 <div class='divhandle' id='tab4div'>
     <h3><?php echo _('Security settings');?></h3>
-    <form method='post' action='admin-exec.php'>
+    <form method='post' action='app/admin-exec.php'>
     <label for='admin_validate'><?php echo _('Users need validation by admin after registration:');?></label>
         <select name='admin_validate' id='admin_validate'>
             <option value='1'<?php
@@ -221,7 +221,7 @@ if ($current_version == 'something') {
 <!-- TAB 5 -->
 <div class='divhandle' id='tab5div'>
     <h3><?php echo _('SMTP settings');?></h3>
-    <form method='post' action='admin-exec.php'>
+    <form method='post' action='app/admin-exec.php'>
         <p><?php echo _("Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mandrill.com (or gmail account and add the infos here.");?></p>
         <p>
         <label for='smtp_address'><?php echo _('Address of the SMTP server:');?></label>
@@ -265,7 +265,7 @@ function updateTeam(team_id) {
     var new_team_name = document.getElementById('team_'+team_id).value;
     var jqxhr = $.ajax({
         type: "POST",
-        url: "quicksave.php",
+        url: "app/quicksave.php",
         data: {
         id : team_id,
         team_name : new_team_name,

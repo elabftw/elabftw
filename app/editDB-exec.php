@@ -23,7 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once 'inc/common.php';
+require_once '../inc/common.php';
 // formkey stuff
 //require_once 'inc/classes/formkey.class.php';
 //$formKey = new formKey();
@@ -63,7 +63,7 @@ $_SESSION['new_date'] = $date;
 if ($errflag) {
     $_SESSION['errors'] = $msg_arr;
     session_write_close();
-    header("location: database.php?mode=edit&id=$id");
+    header("location: ../database.php?mode=edit&id=$id");
     exit;
 }
 
@@ -90,7 +90,7 @@ if ($result) {
     unset($_SESSION['new_title']);
     unset($_SESSION['new_date']);
     unset($_SESSION['errors']);
-    header("location: database.php?mode=view&id=$id");
+    header("location: ../database.php?mode=view&id=$id");
     exit;
 } else {
     die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>"));

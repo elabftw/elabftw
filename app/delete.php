@@ -26,8 +26,8 @@
 // delete.php
 // This page is called with POST requests containing an id and a type.
 
-require_once 'inc/common.php';
-require_once 'inc/locale.php';
+require_once '../inc/common.php';
+require_once ELAB_ROOT.'inc/locale.php';
 
 
 // Check id is valid and assign it to $id
@@ -41,7 +41,7 @@ if (isset($_POST['id']) && is_pos_int($_POST['id'])) {
 if (isset($_POST['type']) && !empty($_POST['type'])) {
     switch ($_POST['type']) {
 
-        // _('Experiment')S
+        // EXPERIMENTS
         case 'exp':
             // check if we can delete experiments
             if (((get_team_config('deletable_xp') == '0')  &&
@@ -68,6 +68,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                 ));
 
                 // delete associated files
+                // TODO actually delete the files. seriously...
                 $sql = "DELETE FROM uploads WHERE item_id = :id AND type = :type";
                 $req = $pdo->prepare($sql);
                 $req->execute(array(
@@ -207,7 +208,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             }
             break;
 
-        // DELETE _('Tags')
+        // DELETE TAGS
         case 'exptag':
             if (is_pos_int($_POST['item_id'])) {
                 $item_id = $_POST['item_id'];

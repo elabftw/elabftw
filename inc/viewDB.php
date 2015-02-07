@@ -68,16 +68,16 @@ $data = $req->fetch();
 show_stars($data['rating']);
 // buttons
 echo "<a href='database.php?mode=edit&id=".$data['itemid']."'><img src='img/pen-blue.png' title='edit' alt='edit' /></a> 
-<a href='duplicate_item.php?id=".$data['itemid']."&type=db'><img src='img/duplicate.png' title='duplicate item' alt='duplicate' /></a> 
+<a href='app/duplicate_item.php?id=".$data['itemid']."&type=db'><img src='img/duplicate.png' title='duplicate item' alt='duplicate' /></a> 
 <a href='make_pdf.php?id=".$data['itemid']."&type=items'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a> 
 <a href='javascript:window.print()'><img src='img/print.png' title='Print this page' alt='Print' /></a> 
 <a href='make_zip.php?id=".$data['itemid']."&type=items'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a>
 <a href='experiments.php?mode=show&related=".$data['itemid']."'><img src='img/link.png' alt='Linked experiments' title='Linked experiments' /></a> ";
 // lock
 if ($data['locked'] == 0) {
-    echo "<a href='lock.php?id=".$data['itemid']."&action=lock&type=items'><img src='img/unlock.png' title='lock item' alt='lock' /></a>";
+    echo "<a href='app/lock.php?id=".$data['itemid']."&action=lock&type=items'><img src='img/unlock.png' title='lock item' alt='lock' /></a>";
 } else { // item is locked
-    echo "<a href='lock.php?id=".$data['itemid']."&action=unlock&type=items'><img src='img/lock-gray.png' title='unlock item' alt='unlock' /></a>";
+    echo "<a href='app/lock.php?id=".$data['itemid']."&action=unlock&type=items'><img src='img/lock-gray.png' title='unlock item' alt='unlock' /></a>";
 }
 // _('Tags')
 show_tags($id, 'items_tags');

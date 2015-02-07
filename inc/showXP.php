@@ -77,7 +77,7 @@ $limit = $_SESSION['prefs']['limit'];
 // SQL for showXP
 // reminder : order by and sort must be passed to the prepare(), not during execute()
 // /////////////////
-// _('Search')
+// SEARCH
 // /////////////////
 if (isset($_GET['q'])) { // if there is a query
     $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);

@@ -12,7 +12,6 @@ function deleteThis(id, type, redirect) {
             type:type
         })
         .success(function() {
-            // document.cookie = info;
             window.location = redirect;
         });
     } else {

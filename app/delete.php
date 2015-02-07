@@ -68,12 +68,27 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                 ));
 
                 // delete associated files
-                // TODO actually delete the files. seriously...
+                $sql = "SELECT real_name, long_name FROM uploads WHERE item_id = :id AND type = :type";
+                $req = $pdo->prepare($sql);
+                $req->execute(array(
+                    'id' => $id,
+                    'type' => 'experiments'
+                ));
+                while ($uploads = $req->fetch()) {
+                    $filepath = ELAB_ROOT.'uploads/'.$uploads['long_name'];
+                    unlink($filepath);
+                    // remove thumbnail
+                    $ext = get_ext($uploads['real_name']);
+                    if (file_exists(ELAB_ROOT.'uploads/'.$uploads['long_name'].'_th.'.$ext)) {
+                        unlink(ELAB_ROOT.'uploads/'.$uploads['long_name'].'_th.'.$ext);
+                    }
+                }
+                // now delete files from the database
                 $sql = "DELETE FROM uploads WHERE item_id = :id AND type = :type";
                 $req = $pdo->prepare($sql);
                 $req->execute(array(
                     'id' => $id,
-                    'type' => 'exp'
+                    'type' => 'experiments'
                 ));
 
                 // delete associated links
@@ -98,7 +113,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
 
             break;
 
-        // DELETE _('Experiment')S TEMPLATES
+        // DELETE EXPERIMENTS TEMPLATES
         case 'tpl':
             $delete_sql = "DELETE FROM experiments_templates WHERE id = :id";
             $delete_req = $pdo->prepare($delete_sql);
@@ -111,7 +126,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             }
             break;
 
-        // DELETE _('Experiment') COMMENT
+        // DELETE EXPERIMENT COMMENT
         case 'expcomment':
             // this is called by deleteThisAndReload
             // it reloads part of the page, so no need to put session['infos']
@@ -142,6 +157,22 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             ));
 
             // delete associated files
+            $sql = "SELECT real_name, long_name FROM uploads WHERE item_id = :id AND type = :type";
+            $req = $pdo->prepare($sql);
+            $req->execute(array(
+                'id' => $id,
+                'type' => 'items'
+            ));
+            while ($uploads = $req->fetch()) {
+                $filepath = ELAB_ROOT.'uploads/'.$uploads['long_name'];
+                unlink($filepath);
+                // remove thumbnail
+                $ext = get_ext($uploads['real_name']);
+                if (file_exists(ELAB_ROOT.'uploads/'.$uploads['long_name'].'_th.'.$ext)) {
+                    unlink(ELAB_ROOT.'uploads/'.$uploads['long_name'].'_th.'.$ext);
+                }
+            }
+            // now remove them from the database
             $sql = "DELETE FROM uploads WHERE item_id = :id AND type = :type";
             $req = $pdo->prepare($sql);
             $result[] = $req->execute(array(

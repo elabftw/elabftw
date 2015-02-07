@@ -36,11 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     header('Location: ../login.php');
     exit;
 }
-// we receive email in POST
-if (!isset($_POST['email'])) {
-    header('Location: ../login.php');
-    exit;
-}
 
 /*
  * FIRST PART
@@ -48,91 +43,92 @@ if (!isset($_POST['email'])) {
  * We send an email with a link + a key + the userid.
  *
  */
+if (isset($_POST['email'])) {
+    // Get infos about the requester (will be sent in the mail afterwards)
+    // Get IP
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        $ip = $_SERVER['HTTP_CLIENT_IP'];
+    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    } else {
+        $ip = $_SERVER['REMOTE_ADDR'];
+    }
+    // Get user agent
+    $u_agent = $_SERVER['HTTP_USER_AGENT'];
 
-// Get infos about the requester (will be sent in the mail afterwards)
-// Get IP
-if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-    $ip = $_SERVER['HTTP_CLIENT_IP'];
-} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-} else {
-    $ip = $_SERVER['REMOTE_ADDR'];
-}
-// Get user agent
-$u_agent = $_SERVER['HTTP_USER_AGENT'];
-
-// Sanitize post
-$email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-// Is email in database ?
-if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-    // Get associated userid
-    $sql = "SELECT userid,username FROM users WHERE email = :email";
-    $result = $pdo->prepare($sql);
-    $result->execute(array(
-    'email' => $email));
-    $data = $result->fetch();
-    $userid = $data['userid'];
-    $username = $data['username'];
-    $numrows = $result->rowCount();
-    // Check email exists
-    if ($numrows === 1) {
-        // Get info to build the URL
-        $protocol = 'https://';
-        $reset_url = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
-        // Generate unique link
-        $reset_link = $protocol.str_replace('app/reset', 'change-pass', $reset_url).'?key='.hash("sha256", uniqid(rand(), true)).'&userid='.$userid;
-        // Send an email with the reset link
-        // Create the message
-        $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
-        $message = Swift_Message::newInstance()
-        // Give the message a subject
-        ->setSubject('[eLabFTW] Password reset')
-        // Set the From address with an associative array
-        ->setFrom(array(get_config('smtp_username') => get_config('smtp_username')))
-        // Set the To addresses with an associative array
-        ->setTo(array($email => 'Dori'))
-        // Give it a body
-        ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $u_agent, $reset_link).$footer);
-        $transport = Swift_SmtpTransport::newInstance(
-            get_config('smtp_address'),
-            get_config('smtp_port'),
-            get_config('smtp_encryption')
-        )
-        ->setUsername(get_config('smtp_username'))
-        ->setPassword(get_config('smtp_password'));
-        $mailer = Swift_Mailer::newInstance($transport);
-        // now we try to send the email
-        try {
-            $mailer->send($message);
-        } catch (Exception $e) {
-            // log the error
-            dblog('Error', $_SERVER['REMOTE_ADDR'], $e->getMessage());
-            die($e->getMessage());
-            $errflag = true;
-        }
-        if ($errflag) {
-            // problem
-            $msg_arr[] = _('There was a problem sending the email! Error was logged.');
+    // Sanitize post
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    // Is email in database ?
+    if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+        // Get associated userid
+        $sql = "SELECT userid,username FROM users WHERE email = :email";
+        $result = $pdo->prepare($sql);
+        $result->execute(array(
+        'email' => $email));
+        $data = $result->fetch();
+        $userid = $data['userid'];
+        $username = $data['username'];
+        $numrows = $result->rowCount();
+        // Check email exists
+        if ($numrows === 1) {
+            // Get info to build the URL
+            $protocol = 'https://';
+            $reset_url = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
+            // Generate unique link
+            $reset_link = $protocol.str_replace('app/reset', 'change-pass', $reset_url).'?key='.hash("sha256", uniqid(rand(), true)).'&userid='.$userid;
+            // Send an email with the reset link
+            // Create the message
+            $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
+            $message = Swift_Message::newInstance()
+            // Give the message a subject
+            ->setSubject('[eLabFTW] Password reset')
+            // Set the From address with an associative array
+            ->setFrom(array(get_config('smtp_username') => get_config('smtp_username')))
+            // Set the To addresses with an associative array
+            ->setTo(array($email => 'Dori'))
+            // Give it a body
+            ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $u_agent, $reset_link).$footer);
+            $transport = Swift_SmtpTransport::newInstance(
+                get_config('smtp_address'),
+                get_config('smtp_port'),
+                get_config('smtp_encryption')
+            )
+            ->setUsername(get_config('smtp_username'))
+            ->setPassword(get_config('smtp_password'));
+            $mailer = Swift_Mailer::newInstance($transport);
+            // now we try to send the email
+            try {
+                $mailer->send($message);
+            } catch (Exception $e) {
+                // log the error
+                dblog('Error', $_SERVER['REMOTE_ADDR'], $e->getMessage());
+                die($e->getMessage());
+                $errflag = true;
+            }
+            if ($errflag) {
+                // problem
+                $msg_arr[] = _('There was a problem sending the email! Error was logged.');
+                $_SESSION['errors'] = $msg_arr;
+                header('location: ../login.php');
+                exit;
+            } else { // no problem
+                $msg_arr[] = _('Email sent. Check your INBOX.');
+                $_SESSION['infos'] = $msg_arr;
+                header("location: ../login.php");
+                exit;
+            }
+        } else {
+            $msg_arr[] = _('Email not found in database!');
             $_SESSION['errors'] = $msg_arr;
-            header('location: ../login.php');
-            exit;
-        } else { // no problem
-            $msg_arr[] = _('Email sent. Check your INBOX.');
-            $_SESSION['infos'] = $msg_arr;
             header("location: ../login.php");
             exit;
         }
     } else {
-        $msg_arr[] = _('Email not found in database!');
+        $msg_arr[] = _("The email is not valid.");
         $_SESSION['errors'] = $msg_arr;
         header("location: ../login.php");
         exit;
     }
-} else {
-    $msg_arr[] = _("The email is not valid.");
-    $_SESSION['errors'] = $msg_arr;
-    header("location: ../login.php");
-    exit;
 }
 
 /*
@@ -144,7 +140,7 @@ if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
 if (isset($_POST['password']) &&
     isset($_POST['cpassword']) &&
     isset($_POST['key']) &&
-    $password === $cpassword) {
+    $_POST['password'] === $_POST['cpassword']) {
 
     // Validate key
     if ($_POST['key'] != $_SESSION['key']) {
@@ -155,7 +151,7 @@ if (isset($_POST['password']) &&
     // Create salt
     $salt = hash("sha512", uniqid(rand(), true));
     // Create hash
-    $passwordHash = hash("sha512", $salt.$password);
+    $passwordHash = hash("sha512", $salt.$_POST['password']);
     // Get userid
     if (filter_var($_POST['userid'], FILTER_VALIDATE_INT)) {
         $userid = $_POST['userid'];

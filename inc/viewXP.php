@@ -120,7 +120,7 @@ if ($data['locked'] == 0) {
     echo "<a href='app/lock.php?id=".$data['expid']."&action=unlock&type=experiments'><img src='img/lock-gray.png' title='unlock experiment' alt='unlock' /></a>";
     // show timestamp button if it's not timestamped already
     if ($data['timestamped'] == 0) {
-        echo "<a onClick=\"return confirmStamp()\" href='timestamp.php?id=".$data['expid']."'><img src='img/stamp.png' title='timestamp experiment' alt='timestamp' /></a>";
+        echo "<a onClick=\"return confirmStamp()\" href='app/timestamp.php?id=".$data['expid']."'><img src='img/stamp.png' title='timestamp experiment' alt='timestamp' /></a>";
     }
 }
 

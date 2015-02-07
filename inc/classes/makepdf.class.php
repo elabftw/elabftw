@@ -105,7 +105,8 @@ class MakePdf {
 
         // build content of page
         // add css
-        $content = "<link rel='stylesheet' media='all' href='css/pdf.css' />";
+        // TODO FIXME the css doesn't load :/
+        $content = "<link rel='stylesheet' media='all' href='".ELAB_ROOT."css/pdf.css' />";
         $content .= "<h1>".$title."</h1>
             Date : ".format_date($date)."<br />
             <em>Tags : ".$tags."</em><br />
@@ -158,7 +159,7 @@ class MakePdf {
             if ($out === 'browser') {
                 $url = str_replace('make_pdf.php', 'experiments.php', $url);
             } else { // call from make_zip or timestamp.php
-                $url = str_replace(array('make_zip.php', 'timestamp.php'), 'experiments.php', $url);
+                $url = str_replace(array('make_zip.php', 'app/timestamp.php'), 'experiments.php', $url);
             }
             $full_url = $url."?mode=view&id=".$id;
 
@@ -198,7 +199,7 @@ class MakePdf {
                     if ($out === 'browser') {
                         $item_url = str_replace('experiments.php', 'database.php', $url);
                     } else { // call from make_zip or timestamp.php
-                        $item_url = str_replace(array('experiments.php', 'timestamp.php'), 'database.php', $url);
+                        $item_url = str_replace(array('experiments.php', 'app/timestamp.php'), 'database.php', $url);
                     }
                     $full_item_url = $item_url."?mode=view&id=".$links_id_arr[$i];
 
@@ -233,7 +234,7 @@ class MakePdf {
 
 
         // Generate pdf with mpdf
-        require_once 'vendor/autoload.php';
+        require_once ELAB_ROOT.'vendor/autoload.php';
         $mpdf = new mPDF();
 
         $mpdf->SetAuthor($firstname.' '.$lastname);

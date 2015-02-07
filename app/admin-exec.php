@@ -461,9 +461,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
 
     // CHECKS
     if ($_POST['deletable_xp'] == 1) {
-        $deletable_xp = true;
+        $deletable_xp = 1;
     } else {
-        $deletable_xp = false;
+        $deletable_xp = 0;
     }
     if (isset($_POST['link_name'])) {
         $link_name = filter_var($_POST['link_name'], FILTER_SANITIZE_STRING);

@@ -41,31 +41,27 @@ Everything is explained here :
 * [Install eLabFTW on a drop](https://github.com/NicolasCARPi/drop-elabftw#how-to-use)
 
 ## Install in a docker container
-If you know Docker already and want to use a dockerized elabftw, please see [this repo](https://github.com/NicolasCARPi/elabftw-docker-nosql#elabftw-docker-nosql).
+![Docker](https://i.imgur.com/VRjbY8R.png) |
+:------------------------------------------:|
+If you know Docker already and want to use a dockerized elabftw, please see [this repo](https://github.com/NicolasCARPi/elabftw-docker-nosql#elabftw-docker-nosql). |
 
-## Install on a GNU/Linux server
+## Install on a GNU/Linux or BSD server
+
+![Gnu/Linux](https://i.imgur.com/WkqWf5f.png) ![Beastie](https://i.imgur.com/8vGuEya.png)
+
 Please refer to your distribution's documentation to install :
 * a webserver (like nginx, Apache, lighttpd or cherokee)
 * php version > 5 with the following extensions : gettext, gd, openssl, hash
 * mysql version > 5.5
 * git
 
-The quick way to do that on a Debian/Ubuntu setup :
-~~~ sh 
-$ sudo apt-get update
-$ sudo apt-get upgrade
-$ sudo apt-get install mysql-server-5.6 mysql-client apache2 php5 php5-mysql libapache2-mod-php5 phpmyadmin git
-~~~
-
-Make sure to put a root password on your mysql installation :
-~~~ sh
-$ sudo /usr/bin/mysql_secure_installation
-~~~
-
+If you don't know how to do that, have a look at [installing eLabFTW on a cheap server (drop)](https://github.com/NicolasCARPi/drop-elabftw#how-to-use).
 
 ### Getting the files
 
-The first part is to get the files on your server, with git.
+The first part is to get the files composing `elabftw` on your server, with git.
+
+Alternatively, you can download the latest release from [this page](https://github.com/NicolasCARPi/elabftw/releases/latest) as a zip archive or a tarball.
 
 #### Connect to your server with SSH
 ~~~ sh

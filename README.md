@@ -17,7 +17,7 @@ Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM 
 
 Don't have an old computer ? That's okay, you can install eLabFTW on a Raspberry Pi (you can buy one on [Radiospares](http://www.rs-components.com/index.html)). It's a 30€ computer on which you can install GNU/Linux and run a server in no time ! That's what we use in our lab. Check out the [wiki](https://github.com/NicolasCARPi/elabftw/wiki/raspberrypi) to know more.
 
-Keep in mind that eLabFTW is currently in beta and is under heavy developpement. Your input is very welcome :)
+Keep in mind that **eLabFTW is currently in beta** and is under heavy developpement. Your input is very welcome :)
 Please report bugs on [github](https://github.com/NicolasCARPi/elabftw/issues).
 
 # Installation
@@ -139,26 +139,12 @@ Do like this :
 ### Final step
 Finally, point your browser to the install folder (install/) and read onscreen instructions.
 
-For example : http://12.34.56.78/elabftw/install
+For example : https://12.34.56.78/elabftw/install
 
 -------------------------------------------------
 
 # Post install things to do 
 You should read [this page](https://github.com/NicolasCARPi/elabftw/wiki/finalizing) to finish your install (configure email, backup, *etc*…).
-
--------------------------------------------------
-
-# Updating
-To update, just cd in the `elabftw` folder and do :
-~~~ sh
-$ git pull
-~~~
-
-Or get the latest zip archive and overwrite all the files.
-
-Once the new files are here, you need to update the database : visit `/update.php` in your browser.
-
-![bad time](http://i.imgur.com/aUzNvIg.jpg)
 
 -------------------------------------------------
 

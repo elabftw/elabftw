@@ -26,9 +26,11 @@
 /* admin.php - for administration of the elab */
 require_once 'inc/common.php';
 require_once 'inc/locale.php';
+
 if ($_SESSION['is_admin'] != 1) {
     die(ADMIN_DIE);
 }
+
 $page_title = _('Admin panel');
 $selected_menu = null;
 require_once 'inc/head.php';
@@ -51,7 +53,8 @@ $sql = "SELECT * FROM users WHERE validated = :validated AND team = :team";
 $user_req = $pdo->prepare($sql);
 $user_req->bindValue(':validated', 0);
 $user_req->bindValue(':team', $_SESSION['team_id']);
-$user_req->execute(); $count = $user_req->rowCount();
+$user_req->execute();
+$count = $user_req->rowCount();
 // only show the frame if there is some users to validate and there is an email config
 if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
     $message = _('There are users waiting for validation of their account:');
@@ -478,8 +481,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     while ($data = fgetcsv($handle, 0, ",")) {
         $num = count($data);
         // get the column names (first line)
-        if($row == 0) {
-            for($i=0;$i < $num;$i++) {
+        if ($row == 0) {
+            for ($i=0; $i < $num; $i++) {
                 $column[] = $data[$i];
             }
             $row++;
@@ -490,7 +493,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $title = $data[0];
         $body = '';
         $j = 0;
-        foreach($data as $line) {
+        foreach ($data as $line) {
             $body .= "<p><strong>".$column[$j]." :</strong> ".$line.'</p>';
             $j++;
         }
@@ -520,6 +523,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <script>
+// used on import csv to go to next step
 function goNext(x) {
     if(x == '') {
         return;
@@ -527,9 +531,6 @@ function goNext(x) {
     document.cookie = 'itemType='+x;
     $('#import_block').show();
 }
-$(document).ready(function() {
-    $('#import_block').hide();
-});
 
 // color wheel
 function color_wheel(div_name) {
@@ -538,6 +539,7 @@ function color_wheel(div_name) {
 }
 
 $(document).ready(function() {
+    $('#import_block').hide();
     // TABS
     // get the tab=X parameter in the url
     var params = getGetParameters();
@@ -568,7 +570,7 @@ $(document).ready(function() {
     });
     color_wheel('#colorwheel_div_new')
     color_wheel('#colorwheel_div_new_status')
-    // _('Edit')OR
+    // EDITOR
     tinymce.init({
         mode : "specific_textareas",
         editor_selector : "mceditable",
@@ -580,6 +582,4 @@ $(document).ready(function() {
     });
 });
 </script>
-
-
 <?php require_once 'inc/footer.php';

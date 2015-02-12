@@ -27,43 +27,39 @@
 error_reporting(E_ERROR);
 require_once '../inc/common.php';
 
-// Check type
-if (isset($_GET['type']) && $_GET['type'] == 'zip') {
-    $type = 'zip';
-} else {
-    $type = '';
-}
-
-// LONG__('Name')
+// Check for LONG_NAME
 if (!isset($_GET['f']) || empty($_GET['f'])) {
     die('What are you doing, Dave ?');
 }
 // Nullbyte hack fix
-if (strpos($_GET['f'], "\0") != false) {
+if (strpos($_GET['f'], "\0") === true) {
     die('What are you doing, Dave ?');
 }
 // Remove any path info to avoid hacking by adding relative path, etc.
 $long_filename = basename($_GET['f']);
 
-// REAL__('Name')
+// REAL_NAME
 if (!isset($_GET['name']) || empty($_GET['name'])) {
     $filename = $long_filename;
 } else {
     // we redo a check for filename
     // IMPORTANT
-    // it needs to be a dot, so we keep the file extension at the end !
+    // the replacing char needs to be a dot, so we keep the file extension at the end!
     $filename = preg_replace('/[^A-Za-z0-9]/', '.', $_GET['name']);
     if ($filename === '') {
         $filename = 'unnamed_file';
     }
 }
 
-// FILE PATH
-if ($type == 'zip') {
+// SET FILE PATH
+// the zip archives will be in the export folder
+if (isset($_GET['type']) && $_GET['type'] == 'zip') {
     $file_path = ELAB_ROOT.'uploads/export/'.$long_filename;
 } else {
     $file_path = ELAB_ROOT.'uploads/'.$long_filename;
 }
+
+
 
 // MIME
 $mtype = "application/force-download";
@@ -101,7 +97,7 @@ if ($file) {
     while (!feof($file)) {
         print(fread($file, 1024*8));
         flush();
-        if (connection_status()!=0) {
+        if (connection_status() != 0) {
             @fclose($file);
             die();
         }

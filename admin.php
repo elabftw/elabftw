@@ -433,7 +433,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
     $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
     $req->execute();
     ?>
-        <p style='text-align:justify'><?php echo _("This page will allow you to import a .csv (Excel spreadsheet file into the database.<br>First you need to open your (.xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file.");?>
+        <p style='text-align:justify'><?php echo _("This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file.");?>
 <span class='strong'><?php echo _('You should make a backup of your database before importing thousands of items!');?></span></p>
 
         <label for='item_selector'><?php echo _('1. Select a type of item to import to:');?></label>

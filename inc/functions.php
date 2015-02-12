@@ -685,7 +685,7 @@ function duplicate_item($id, $type)
 
 
     if ($type === 'experiments') {
-        // _('Tags')
+        // TAGS
         $sql = "SELECT tag FROM experiments_tags WHERE item_id = :id";
         $req = $pdo->prepare($sql);
         $req->execute(array(
@@ -728,7 +728,7 @@ function duplicate_item($id, $type)
         return false;
 
     } else { // DB
-        // _('Tags')
+        // TAGS
         $sql = "SELECT tag FROM items_tags WHERE item_id = ".$id;
         $req = $pdo->prepare($sql);
         $req->execute();

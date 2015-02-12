@@ -94,8 +94,8 @@ class MakePdf {
                 if (empty($comments['firstname'])) {
                     $comments['firstname'] = '[deleted]';
                 }
-            $comments_block .= "<p>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :<br />";
-            $comments_block .= "<p>".$comments['comment']."</p>";
+                $comments_block .= "<p>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :<br />";
+                $comments_block .= "<p>".$comments['comment']."</p>";
 
             }
             $comments_block .= "</section>";
@@ -139,11 +139,11 @@ class MakePdf {
             }
             $content .= "<ul>";
             $real_name_cnt = count($real_name);
-            for ($i = 0 ; $i < $real_name_cnt ; $i++) {
+            for ($i = 0; $i < $real_name_cnt; $i++) {
                 $content .= "<li>".$real_name[$i];
                 // add a comment ? don't add if it's the default text
                 if ($comment[$i] != 'Click to add a comment') {
-                   $content .= " (".stripslashes(htmlspecialchars_decode($comment[$i])).")";
+                    $content .= " (".stripslashes(htmlspecialchars_decode($comment[$i])).")";
                 }
                 // add md5 sum ? don't add if we don't have it
                 if (strlen($md5[$i]) == '32') { // we have md5 sum
@@ -158,7 +158,7 @@ class MakePdf {
             if ($out === 'browser') {
                 $url = str_replace('make_pdf.php', 'experiments.php', $url);
             } else { // call from make_zip or timestamp.php
-                $url = str_replace(array('make_zip.php', 'timestamp.php'), 'experiments.php', $url);
+                $url = str_replace(array('make_zip.php', 'app/timestamp.php'), 'experiments.php', $url);
             }
             $full_url = $url."?mode=view&id=".$id;
 
@@ -198,7 +198,7 @@ class MakePdf {
                     if ($out === 'browser') {
                         $item_url = str_replace('experiments.php', 'database.php', $url);
                     } else { // call from make_zip or timestamp.php
-                        $item_url = str_replace(array('experiments.php', 'timestamp.php'), 'database.php', $url);
+                        $item_url = str_replace(array('experiments.php', 'app/timestamp.php'), 'database.php', $url);
                     }
                     $full_item_url = $item_url."?mode=view&id=".$links_id_arr[$i];
 
@@ -233,7 +233,7 @@ class MakePdf {
 
 
         // Generate pdf with mpdf
-        require_once 'vendor/autoload.php';
+        require_once ELAB_ROOT.'vendor/autoload.php';
         $mpdf = new mPDF();
 
         $mpdf->SetAuthor($firstname.' '.$lastname);

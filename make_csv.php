@@ -124,7 +124,7 @@ echo "<div class='well' style='margin-top:20px'>";
     // Get csv file size
     $filesize = filesize($filepath);
 echo "<p>"._('Your CSV file is ready:')."<br>
-        <a href='download.php?f=".$filepath."&name=elabftw-export.csv' target='_blank'>
+        <a href='app/download.php?f=".$filepath."&name=elabftw-export.csv' target='_blank'>
         <img src='img/download.png' alt='download' /> 
         elabftw-export.csv</a>
         <span class='filesize'>(".format_bytes($filesize).")</span></p>";

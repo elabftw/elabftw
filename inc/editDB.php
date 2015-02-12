@@ -83,7 +83,7 @@ if ($data['locked'] == 1) {
     <!-- END ADD TAG -->
 
     <!-- BEGIN 2ND FORM -->
-    <form method="post" action="editDB-exec.php" enctype='multipart/form-data'>
+    <form method="post" action="app/editDB-exec.php" enctype='multipart/form-data'>
     <!-- STAR RATING via ajax request -->
     <div class='align_right'>
     <input id='star1' name="star" type="radio" class="star" value='1' <?php if ($data['rating'] == 1) { echo "checked=checked ";}?>/>
@@ -95,9 +95,9 @@ if ($data['locked'] == 1) {
     <input name='item_id' type='hidden' value='<?php echo $id;?>' />
     <img src='img/calendar.png' class='bot5px' title='date' alt='Date :' />
     <label for='datepicker'><?php echo _('Date');?></label>
-    <!-- _('_('TODO list') list') if firefox has support for it: type = date -->
+    <!-- TODO if firefox has support for it: type = date -->
     <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date'];?>' />
-    <label class='block' for='title_txtarea'><?php echo _('Title');?></label>
+    <label class='block' for='title_input'><?php echo _('Title');?></label>
     <input id='title_input' name='title' rows="1" value='<?php if (empty($_SESSION['errors'])) {
       echo stripslashes($data['title']);
     } else {
@@ -147,7 +147,7 @@ while ($tag = $getalltags->fetch()) {
 function delete_tag(tag_id,item_id){
     var you_sure = confirm('<?php echo _('Delete this?');?>');
     if (you_sure == true) {
-        $.post('delete.php', {
+        $.post('app/delete.php', {
             id:tag_id,
             item_id:item_id,
             type:'itemtag'
@@ -165,7 +165,7 @@ function addTagOnEnter(e){ // the argument here is the event (needed to detect w
         // get tag
         var tag = $('#addtaginput').val();
         // POST request
-        $.post('add.php', {
+        $.post('app/add.php', {
             tag: tag,
             item_id: <?php echo $id; ?>,
             type: 'itemtag'
@@ -181,7 +181,7 @@ function addTagOnEnter(e){ // the argument here is the event (needed to detect w
 // STAR RATINGS
 function updateRating(rating) {
     // POST request
-    $.post('star-rating.php', {
+    $.post('app/star-rating.php', {
         star: rating,
         item_id: <?php echo $id; ?>
     })
@@ -210,12 +210,12 @@ $(document).ready(function() {
         save_onsavecallback: function() {
             $.ajax({
                 type: "POST",
-                url: "quicksave.php",
+                url: "app/quicksave.php",
                 data: {
                 id : <?php echo $id;?>,
                 type : 'items',
                 // we need this to get the updated content
-                title : document.getElementById('title_txtarea').value,
+                title : document.getElementById('title_input').value,
                 date : document.getElementById('datepicker').value,
                 body : tinymce.activeEditor.getContent()
                 }

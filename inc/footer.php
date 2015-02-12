@@ -24,7 +24,7 @@
         <input id="todo" type="text" />
         <input id="submit" type="submit" class='button' value="TODOfy">
     </form>
-    <ul id="show-items"></ul>
+   <ul id="show-items"></ul>
     <br><br>
     <a class='button' href="#" onClick='showPanel()'>Close</a>
     <br><br>
@@ -49,7 +49,7 @@
         <a id='check_for_updates' href='#'><?php echo _('Check for updates');?></a><a href='sysconfig.php'><?php echo _('Sysadmin panel');?></a>
         <script>
         $('#check_for_updates').click(function() {
-            var jqxhr = $.post('check_for_updates.php', function(answer) {
+            var jqxhr = $.post('app/check_for_updates.php', function(answer) {
                 alert(answer);
             });
         });
@@ -57,7 +57,17 @@
     <?php
     }
     if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
-        echo "<a href='admin.php'>"._('Admin panel')."</a>";
+        echo "<a href='admin.php'>"._('Admin panel');
+        // show counter of unvalidated users
+        $sql = "SELECT count(validated) FROM users WHERE validated = 0 AND team = :team";
+        $req = $pdo->prepare($sql);
+        $req->bindValue(':team', $_SESSION['team_id']);
+        $req->execute();
+        $unvalidated = $req->fetchColumn();
+        if ($unvalidated > 0) {
+            echo " <span class='badge'>".$unvalidated."</span>";
+        }
+        echo "</a>";
     }
     echo "</span></p><div class='footer_right'>";
     echo _('Powered by')." <a href='http://www.elabftw.net'>eLabFTW</a><br>";

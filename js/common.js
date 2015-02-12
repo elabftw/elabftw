@@ -7,12 +7,11 @@
 function deleteThis(id, type, redirect) {
     var you_sure = confirm('Delete this ?');
     if (you_sure === true) {
-        $.post('delete.php', {
+        $.post('app/delete.php', {
             id:id,
             type:type
         })
         .success(function() {
-            // document.cookie = info;
             window.location = redirect;
         });
     } else {

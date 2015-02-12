@@ -1,12 +1,45 @@
 <?php
-// elabftw update file. Run it after each git pull.
-// php update.php on normal server
-// /Applications/MAMP/bin/php/php5.3.6/bin/php update.php for MAMP install
-//
-$die_msg = "There was a problem in the database update :/ Please report a bug : https://github.com/NicolasCARPi/elabftw/issues?state=open";
+/********************************************************************************
+*                                                                               *
+*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
+*   http://www.elabftw.net/                                                     *
+*                                                                               *
+********************************************************************************/
+
+/********************************************************************************
+*  This file is part of eLabFTW.                                                *
+*                                                                               *
+*    eLabFTW is free software: you can redistribute it and/or modify            *
+*    it under the terms of the GNU Affero General Public License as             *
+*    published by the Free Software Foundation, either version 3 of             *
+*    the License, or (at your option) any later version.                        *
+*                                                                               *
+*    eLabFTW is distributed in the hope that it will be useful,                 *
+*    but WITHOUT ANY WARRANTY; without even the implied                         *
+*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
+*    PURPOSE.  See the GNU Affero General Public License for more details.      *
+*                                                                               *
+*    You should have received a copy of the GNU Affero General Public           *
+*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
+*                                                                               *
+********************************************************************************/
+// elabftw update file. Access it after each git pull.
+
+// check if it's run from cli or web; tell it must be called from web now
+if (php_sapi_name() == 'cli' || empty($_SERVER['REMOTE_ADDR'])) {
+    echo ">>> Please run the update script from your browser (enter update.php instead of experiments.php in the URL).\n";
+    exit;
+}
 
 require_once 'inc/common.php';
 require_once 'inc/functions.php';
+
+// die if you are not sysadmin
+if ($_SESSION['is_sysadmin'] != 1) {
+    die(_('This section is out of your reach.'));
+}
+
+$die_msg = "There was a problem in the database update :/ Please report a bug : https://github.com/NicolasCARPi/elabftw/issues?state=open";
 
 // make a simple query
 function q($sql) {
@@ -73,11 +106,6 @@ function rm_field($table, $field, $added) {
         }
     }
 }
-
-// check if it's run from cli or web; do nothing if it's from web
-//if(php_sapi_name() != 'cli' || !empty($_SERVER['REMOTE_ADDR'])) {
-//    die("<p>Thank you for using eLabFTW. <br />To update your database, run this file only from the command line.</p>");
-//}
 
 // UPDATE the config file path
 // check for config file

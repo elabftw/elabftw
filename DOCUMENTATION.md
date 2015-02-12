@@ -116,6 +116,7 @@ You want to help this project ? Then read on !
 **What can you do to help this project ?**
 * Have a look at [the current issues](https://github.com/NicolasCARPi/elabftw/issues)
 * [Translate it!](https://github.com/NicolasCARPi/elabftw/wiki/Contributing#translating-i18n)
+* Talk about it to your colleagues, spread the word!
 * Read the code and spot places needing improvements
 * Open Github issues to discuss bugs or features suggestions
 

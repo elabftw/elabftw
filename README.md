@@ -17,11 +17,8 @@ Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM 
 
 Don't have an old computer ? That's okay, you can install eLabFTW on a Raspberry Pi (you can buy one on [Radiospares](http://www.rs-components.com/index.html)). It's a 30€ computer on which you can install GNU/Linux and run a server in no time ! That's what we use in our lab. Check out the [wiki](https://github.com/NicolasCARPi/elabftw/wiki/raspberrypi) to know more.
 
-
-Keep in mind that eLabFTW is currently in beta and is under heavy developpement. Your input is very welcome :)
+Keep in mind that **eLabFTW is currently in beta** and is under heavy developpement. Your input is very welcome :)
 Please report bugs on [github](https://github.com/NicolasCARPi/elabftw/issues).
-
-Thank you for choosing eLabFTW as a lab manager =)
 
 # Installation
 ## The legendary four steps installation instructions (for advanced users)
@@ -31,40 +28,37 @@ Thank you for choosing eLabFTW as a lab manager =)
 * Go to https://your-address.org/elabftw/install
 
 ## Install on your computer (Mac/Win)
-* [Install locally on Mac](https://github.com/NicolasCARPi/elabftw/wiki/installmac).
-* [Install locally on Windows](https://github.com/NicolasCARPi/elabftw/wiki/installwin).
+![Mac OS X](https://i.imgur.com/t62AQAi.png) | ![Windoze](https://i.imgur.com/ZKkPOL1.png)
+:---------------------------------------------:|:--------------------------------------------:
+[Install locally on Mac](https://github.com/NicolasCARPi/elabftw/wiki/installmac) | [Install locally on Windows](https://github.com/NicolasCARPi/elabftw/wiki/installwin)
 
 ## Install on a digitalocean's drop (easiest/quickest method)
-With this method, you can have a running elabftw server in no time. You need to purchase a `drop` from [DigitalOcean.com](https://www.digitalocean.com/pricing/). It starts at 5$/month. This setup is enough to run eLabFTW for a team or more.
-Everything is explained here : 
-* [Install eLabFTW on a drop](https://github.com/NicolasCARPi/drop-elabftw#how-to-use)
+With this method, you can have a running elabftw server in no time. You need to purchase a `drop` from [DigitalOcean.com](https://www.digitalocean.com/pricing/). It starts at 5$/month. This setup is enough to run eLabFTW for a team or more. And it's very easy to install, all is automatic! |
+:--------------------------------------------------------------:|
+[Install eLabFTW on a drop](https://github.com/NicolasCARPi/drop-elabftw#how-to-use) |
 
 ## Install in a docker container
-If you know Docker already and want to use a dockerized elabftw, please see [this repo](https://github.com/NicolasCARPi/elabftw-docker-nosql#elabftw-docker-nosql).
+![Docker](https://i.imgur.com/VRjbY8R.png) |
+:------------------------------------------:|
+If you know Docker already and want to use a dockerized elabftw, please see [this repo](https://github.com/NicolasCARPi/elabftw-docker-nosql#elabftw-docker-nosql). |
 
-## Install on a GNU/Linux server
+## Install on a GNU/Linux or BSD server
+
+![Gnu/Linux](https://i.imgur.com/WkqWf5f.png) ![Beastie](https://i.imgur.com/8vGuEya.png)
+
 Please refer to your distribution's documentation to install :
-* a webserver (like Apache, nginx, lighttpd or cherokee)
+* a webserver (like nginx, Apache, lighttpd or cherokee)
 * php version > 5 with the following extensions : gettext, gd, openssl, hash
 * mysql version > 5.5
 * git
 
-The quick way to do that on a Debian/Ubuntu setup :
-~~~ sh 
-$ sudo apt-get update
-$ sudo apt-get upgrade
-$ sudo apt-get install mysql-server-5.6 mysql-client apache2 php5 php5-mysql libapache2-mod-php5 phpmyadmin git
-~~~
-
-Make sure to put a root password on your mysql installation :
-~~~ sh
-$ sudo /usr/bin/mysql_secure_installation
-~~~
-
+If you don't know how to do that, have a look at [installing eLabFTW on a cheap server (drop)](https://github.com/NicolasCARPi/drop-elabftw#how-to-use).
 
 ### Getting the files
 
-The first part is to get the files on your server, with git.
+The first part is to get the files composing `elabftw` on your server, with git.
+
+Alternatively, you can download the latest release from [this page](https://github.com/NicolasCARPi/elabftw/releases/latest) as a zip archive or a tarball.
 
 #### Connect to your server with SSH
 ~~~ sh
@@ -145,38 +139,13 @@ Do like this :
 ### Final step
 Finally, point your browser to the install folder (install/) and read onscreen instructions.
 
-For example : http://12.34.56.78/elabftw/install
+For example : https://12.34.56.78/elabftw/install
 
-******
+-------------------------------------------------
 
-# Post install things to do
-You can read [this page](https://github.com/NicolasCARPi/elabftw/wiki/finalizing) to finish fully the configuration of your install.
+# Post install things to do 
+You should read [this page](https://github.com/NicolasCARPi/elabftw/wiki/finalizing) to finish your install (configure email, backup, *etc*…).
 
-# Updating
-To update, just cd in the `elabftw` folder and do :
-~~~ sh
-$ git pull
-$ php update.php
-~~~
+-------------------------------------------------
 
-![bad time](http://i.imgur.com/aUzNvIg.jpg)
-
-# Backup
-It is important to backup your files to somewhere else, in case anything bad happens.
-Please refer to the [wiki](https://github.com/NicolasCARPi/elabftw/wiki/backup).
-
-# Bonus stage
-* It's a good idea to use a php optimizer to increase speed. I recommand installing XCache.
-* You can show a TODOlist by pressing 't'.
-* You can duplicate an experiment in one click.
-* You can export in a .zip, a .pdf or a spreadsheet.
-* You can share an experiment by just sending the URL of the page to someone else.
-* Experiments can be locked by your PI
-
-
-~Thank you for using eLabFTW :)
-Please open a github issue if you have any problem (or send me an email !).
-
-http://www.elabftw.net
-
-\o/
+~Thank you for using [eLabFTW](http://www.elabftw.net) :)

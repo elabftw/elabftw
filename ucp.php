@@ -53,7 +53,7 @@ $users = $req->fetch();
 <div class='divhandle' id='tab1div'>
     <div class='box'>
 
-    <form method="post" action="ucp-exec.php">
+    <form method="post" action="app/ucp-exec.php">
         <div class='row'>
             <div class='col-md-6'>
                 <h4><?php echo _('Modify your personal informations');?></h4>
@@ -127,7 +127,7 @@ $users = $req->fetch();
 <!-- *********************** -->
 <div class='divhandle' id='tab2div'>
 
-    <form action='ucp-exec.php' method='post'>
+    <form action='app/ucp-exec.php' method='post'>
         <section class='box'>
 
             <h3><?php echo _('DISPLAY');?></h3>
@@ -283,7 +283,7 @@ $users = $req->fetch();
     ?>
     <!-- create new tpl tab -->
     <div class='subdivhandle' id='subtab1div'>
-        <form action='ucp-exec.php' method='post'>
+        <form action='app/ucp-exec.php' method='post'>
             <input type='hidden' name='new_tpl_form' />
             <input required type='text' name='new_tpl_name' placeholder='<?php echo _('Name of the template');?>' /><br>
             <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='mceditable' rows='50' cols='60'></textarea>
@@ -302,7 +302,7 @@ $users = $req->fetch();
     ?>
     <div class='subdivhandle' id='subtab<?php echo $i;?>div'>
         <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $exp_tpl['id'];?>','tpl', 'ucp.php')" />
-        <form action='ucp-exec.php' method='post'>
+        <form action='app/ucp-exec.php' method='post'>
         <input type='hidden' name='tpl_form' />
         <?php
             echo "<input type='hidden' name='tpl_id[]' value='".$exp_tpl['id']."' />";

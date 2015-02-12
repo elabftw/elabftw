@@ -85,7 +85,7 @@ while ($tags = $tagreq->fetch()) {
 </div>
 <!-- END ADD TAG -->
 <!-- BEGIN EDITXP FORM -->
-<form id="editXP" name="editXP" method="post" action="editXP-exec.php" enctype='multipart/form-data'>
+<form id="editXP" name="editXP" method="post" action="app/editXP-exec.php" enctype='multipart/form-data'>
 <!-- form key -->
 <?php // $formKey->output_formkey(); ?>
 <input name='item_id' type='hidden' value='<?php echo $id;?>' />
@@ -260,7 +260,7 @@ while ($tag = $getalltags->fetch()) {
 function delete_tag(tag_id, item_id) {
     var you_sure = confirm('<?php echo _('Delete this?');?>');
     if (you_sure == true) {
-        $.post('delete.php', {
+        $.post('app/delete.php', {
             id: tag_id,
             item_id: item_id,
             type: 'exptag'
@@ -281,7 +281,7 @@ function addTagOnEnter(e) { // the argument here is the event (needed to detect 
         // get tag
         var tag = $('#addtaginput').val();
         // POST request
-        $.post('add.php', {
+        $.post('app/add.php', {
             tag: tag,
             item_id: <?php echo $id; ?>,
             type: 'exptag'
@@ -332,7 +332,7 @@ while ($link = $getalllinks->fetch()) {
 function delete_link(id, item_id) {
     var you_sure = confirm('<?php echo _('Delete this?');?>');
     if (you_sure == true) {
-        $.post('delete.php', {
+        $.post('app/delete.php', {
             type: 'link',
             id: id,
             item_id : item_id
@@ -358,7 +358,7 @@ function addLinkOnEnter(e) { // the argument here is the event (needed to detect
             link_id = parseInt(link_id, 10);
             if (isNaN(link_id) != true) {
                 // POST request
-                $.post('add.php', {
+                $.post('app/add.php', {
                     type: 'link',
                     link_id: link_id,
                     item_id: <?php echo $id; ?>
@@ -379,7 +379,7 @@ function addLinkOnEnter(e) { // the argument here is the event (needed to detect
 function updateStatus(status) {
             var jqxhr = $.ajax({
                 type: "POST",
-                url: "quicksave.php",
+                url: "app/quicksave.php",
                 data: {
                 id : <?php echo $id;?>,
                 status : status,
@@ -399,7 +399,7 @@ function updateStatus(status) {
 function update_visibility(visibility) {
             var jqxhr = $.ajax({
                 type: "POST",
-                url: "quicksave.php",
+                url: "app/quicksave.php",
                 data: {
                 id : <?php echo $id;?>,
                 visibility : visibility,
@@ -419,8 +419,8 @@ function update_visibility(visibility) {
 
 // READY ? GO !!
 $(document).ready(function() {
-    // KEYBOARD _('Shortcut')S
-    key('<?php echo $_SESSION['prefs']['shortcuts']['create'];?>', function(){location.href = 'create_item.php?type=exp'});
+    // KEYBOARD SHORTCUTS
+    key('<?php echo $_SESSION['prefs']['shortcuts']['create'];?>', function(){location.href = 'app/create_item.php?type=exp'});
     key('<?php echo $_SESSION['prefs']['shortcuts']['submit'];?>', function(){document.forms['editXP'].submit()});
 
     // hide the little 'Updated !' message
@@ -447,7 +447,7 @@ $(document).ready(function() {
         save_onsavecallback: function() {
             $.ajax({
                 type: "POST",
-                url: "quicksave.php",
+                url: "app/quicksave.php",
                 data: {
                 id : <?php echo $id;?>,
                 type : 'experiments',

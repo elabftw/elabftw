@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "mpdf/mpdf",
-            "version": "v5.7.3",
+            "version": "v5.7.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/finwe/mpdf.git",
-                "reference": "ace190986978df40b9c416cf7ba8761945fc1758"
+                "reference": "f9a374c7ea975ce8c795cec4dfd17ef55addac9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/finwe/mpdf/zipball/ace190986978df40b9c416cf7ba8761945fc1758",
-                "reference": "ace190986978df40b9c416cf7ba8761945fc1758",
+                "url": "https://api.github.com/repos/finwe/mpdf/zipball/f9a374c7ea975ce8c795cec4dfd17ef55addac9c",
+                "reference": "f9a374c7ea975ce8c795cec4dfd17ef55addac9c",
                 "shasum": ""
             },
             "require": {
@@ -47,20 +47,20 @@
                 "php",
                 "utf-8"
             ],
-            "time": "2014-08-24 08:33:20"
+            "time": "2014-12-14 18:32:11"
         },
         {
             "name": "swiftmailer/swiftmailer",
-            "version": "v5.3.0",
+            "version": "v5.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swiftmailer/swiftmailer.git",
-                "reference": "b86b927dfefdb56ab0b22d1350033d9a38e9f205"
+                "reference": "c5f963e7f9d6f6438fda4f22d5cc2db296ec621a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/b86b927dfefdb56ab0b22d1350033d9a38e9f205",
-                "reference": "b86b927dfefdb56ab0b22d1350033d9a38e9f205",
+                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/c5f963e7f9d6f6438fda4f22d5cc2db296ec621a",
+                "reference": "c5f963e7f9d6f6438fda4f22d5cc2db296ec621a",
                 "shasum": ""
             },
             "require": {
@@ -99,7 +99,7 @@
                 "mail",
                 "mailer"
             ],
-            "time": "2014-10-04 05:53:18"
+            "time": "2014-12-05 14:17:14"
         }
     ],
     "packages-dev": [],
@@ -110,6 +110,7 @@
         "mpdf/mpdf": 0
     },
     "prefer-stable": false,
+    "prefer-lowest": false,
     "platform": [],
     "platform-dev": []
 }

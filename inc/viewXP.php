@@ -109,18 +109,18 @@ if ($data['timestamped'] == 1) {
 <?php
 echo "<span class='date_view'><img src='img/calendar.png' class='bot5px' title='date' alt='Date :' /> ".format_date($data['date'])."</span><br />
     <a href='experiments.php?mode=edit&id=".$data['expid']."'><img src='img/pen-blue.png' title='edit' alt='edit' /></a> 
-<a href='duplicate_item.php?id=".$data['expid']."&type=exp'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a> 
+<a href='app/duplicate_item.php?id=".$data['expid']."&type=exp'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a> 
 <a href='make_pdf.php?id=".$data['expid']."&type=experiments'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a> 
 <a href='javascript:window.print()'><img src='img/print.png' title='Print this page' alt='Print' /></a> 
 <a href='make_zip.php?id=".$data['expid']."&type=experiments'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a> ";
 // lock
 if ($data['locked'] == 0) {
-    echo "<a href='lock.php?id=".$data['expid']."&action=lock&type=experiments'><img src='img/unlock.png' title='lock experiment' alt='lock' /></a>";
+    echo "<a href='app/lock.php?id=".$data['expid']."&action=lock&type=experiments'><img src='img/unlock.png' title='lock experiment' alt='lock' /></a>";
 } else { // experiment is locked
-    echo "<a href='lock.php?id=".$data['expid']."&action=unlock&type=experiments'><img src='img/lock-gray.png' title='unlock experiment' alt='unlock' /></a>";
+    echo "<a href='app/lock.php?id=".$data['expid']."&action=unlock&type=experiments'><img src='img/lock-gray.png' title='unlock experiment' alt='unlock' /></a>";
     // show timestamp button if it's not timestamped already
     if ($data['timestamped'] == 0) {
-        echo "<a onClick=\"return confirmStamp()\" href='timestamp.php?id=".$data['expid']."'><img src='img/stamp.png' title='timestamp experiment' alt='timestamp' /></a>";
+        echo "<a onClick=\"return confirmStamp()\" href='app/timestamp.php?id=".$data['expid']."'><img src='img/stamp.png' title='timestamp experiment' alt='timestamp' /></a>";
     }
 }
 
@@ -212,7 +212,7 @@ if ($req->rowCount() > 0) {
 function deleteThisAndReload(id, type) {
     var you_sure = confirm('<?php echo _('Delete this?');?>');
     if (you_sure == true) {
-        $.post('delete.php', {
+        $.post('app/delete.php', {
             id:id,
             type:type
         })
@@ -228,7 +228,7 @@ function deleteThisAndReload(id, type) {
 function makeEditable() {
     // Experiment comment is editable
     $('div#expcomment').on("mouseover", ".editable", function(){
-        $('div#expcomment p.editable').editable('editinplace.php', {
+        $('div#expcomment p.editable').editable('app/editinplace.php', {
             tooltip : 'Click to edit',
                 indicator : '<?php echo _('Saving');?>',
             id   : 'id',
@@ -264,7 +264,7 @@ $(document).ready(function() {
     title = "<?php echo $data['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
     document.title = title;
     // Keyboard shortcuts
-    key('<?php echo $_SESSION['prefs']['shortcuts']['create'];?>', function(){location.href = 'create_item.php?type=exp'});
+    key('<?php echo $_SESSION['prefs']['shortcuts']['create'];?>', function(){location.href = 'app/create_item.php?type=exp'});
     key('<?php echo $_SESSION['prefs']['shortcuts']['edit'];?>', function(){location.href = 'experiments.php?mode=edit&id=<?php echo $id;?>'});
     // make editable
     setInterval(makeEditable, 50);

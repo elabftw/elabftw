@@ -27,7 +27,15 @@
  * can't use inc/common.php
  */
 // SQL CONNECT
-require_once 'config.php';
+if (is_readable('config.php')) {
+    require_once 'config.php';
+} elseif (is_readable('../config.php')) {
+    // we might be called from app folder
+    require_once '../config.php';
+} else {
+    die('No config file found.');
+}
+
 try {
     $pdo_options = array();
     $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;

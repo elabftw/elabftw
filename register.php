@@ -27,7 +27,7 @@ require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 // Check if we're logged in
 if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
-    display_message('error', sprintf(_('Please %slogout%s before you register another account.'), "<a style='alert-link' href='logout.php'>", "</a>"));
+    display_message('error', sprintf(_('Please %slogout%s before you register another account.'), "<a style='alert-link' href='app/logout.php'>", "</a>"));
     require_once 'inc/footer.php';
     exit;
 }
@@ -40,7 +40,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
 <section class='center'>
     <h2><?php echo _('Create your account');?></h2><br><br>
     <!-- Register form -->
-    <form id='regform' method="post" class='loginform' autocomplete="off" action="register-exec.php">
+    <form id='regform' method="post" class='loginform' autocomplete="off" action="app/register-exec.php">
 
         <div class='row'>
             <div class='col-md-4'>

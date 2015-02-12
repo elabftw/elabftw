@@ -51,7 +51,7 @@ if ($count > 0) {
         echo "<div class='thumbnail'>";
         // show the delete button only in edit mode, not in view mode
         if ($_GET['mode'] === 'edit') {
-            echo "<a class='align_right' href='delete_file.php?id=".$uploads_data['id']."&type=".$uploads_data['type']."&item_id=".$uploads_data['item_id']."' onClick=\"return confirm('Delete this file ?');\">";
+            echo "<a class='align_right' href='app/delete_file.php?id=".$uploads_data['id']."&type=".$uploads_data['type']."&item_id=".$uploads_data['item_id']."' onClick=\"return confirm('Delete this file ?');\">";
             echo "<img src='img/small-trash.png' title='delete' alt='delete' /></a>";
         } // end if it is in edit mode
 
@@ -88,7 +88,7 @@ if ($count > 0) {
 
         // now display the name + comment with icons
         echo "<div class='caption'><img src='img/attached.png' class='bot5px' alt='attached' /> ";
-        echo "<a href='download.php?f=".$uploads_data['long_name']."&name=".$uploads_data['real_name']."' target='_blank'>".$uploads_data['real_name']."</a>";
+        echo "<a href='app/download.php?f=".$uploads_data['long_name']."&name=".$uploads_data['real_name']."' target='_blank'>".$uploads_data['real_name']."</a>";
         echo "<span class='smallgray' style='display:inline'> ".format_bytes(filesize('uploads/'.$uploads_data['long_name']))."</span><br>";
         // if we are in view mode, we don't show the comment if it's the default text
         // this is to avoid showing 'Click to add a comment' where in fact you can't click to add a comment because
@@ -113,7 +113,7 @@ if ($_GET['mode'] === 'edit') {
     ?>
     <script>
     $('.thumbnail').on("mouseover", ".editable", function(){
-        $('.thumbnail p.editable').editable('editinplace.php', {
+        $('.thumbnail p.editable').editable('app/editinplace.php', {
          tooltip : 'Click to edit',
          indicator : 'Saving...',
          id   : 'id',

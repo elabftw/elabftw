@@ -157,7 +157,7 @@ if (isset($_SESSION['auth'])) {
     <div>
         <?php echo _('Howdy,').' ';?><a href='profile.php' title='<?php echo _('Profile');?>'><?php echo $_SESSION['username'];?></a><br>
         <a href='ucp.php'><img src='img/settings.png' alt='<?php echo _('Settings');?>' title='<?php echo _('Settings');?>' /></a> | 
-        <a href='logout.php'><img src='img/logout.png' alt='<?php echo _('Logout');?>' title='<?php echo _('Logout');?>' /></a>
+        <a href='app/logout.php'><img src='img/logout.png' alt='<?php echo _('Logout');?>' title='<?php echo _('Logout');?>' /></a>
     </div>
     <?php
 }

@@ -26,9 +26,11 @@
 /* admin.php - for administration of the elab */
 require_once 'inc/common.php';
 require_once 'inc/locale.php';
+
 if ($_SESSION['is_admin'] != 1) {
     die(ADMIN_DIE);
 }
+
 $page_title = _('Admin panel');
 $selected_menu = null;
 require_once 'inc/head.php';
@@ -51,11 +53,12 @@ $sql = "SELECT * FROM users WHERE validated = :validated AND team = :team";
 $user_req = $pdo->prepare($sql);
 $user_req->bindValue(':validated', 0);
 $user_req->bindValue(':team', $_SESSION['team_id']);
-$user_req->execute(); $count = $user_req->rowCount();
+$user_req->execute();
+$count = $user_req->rowCount();
 // only show the frame if there is some users to validate and there is an email config
 if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
     $message = _('There are users waiting for validation of their account:');
-    $message .= "<form method='post' action='admin-exec.php'>";
+    $message .= "<form method='post' action='app/admin-exec.php'>";
     $message .= "<ul>";
     while ($data = $user_req->fetch()) {
         $message .= "<li><label>
@@ -87,7 +90,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
 <div class='divhandle' id='tab1div'>
 
 <h3><?php echo _('Configure your team');?></h3>
-    <form method='post' action='admin-exec.php'>
+    <form method='post' action='app/admin-exec.php'>
         <p>
         <label for='deletable_xp'><?php echo _('Users can delete experiments:');?></label>
         <select name='deletable_xp' id='deletable_xp'>
@@ -138,7 +141,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
             <a class='trigger_users_<?php echo $users['userid'];?>'><?php echo $users['firstname']." ".$users['lastname'];?></a>
             <div class='toggle_users_<?php echo $users['userid'];?>'>
         <br>
-                <form method='post' action='admin-exec.php' id='admin_user_form'>
+                <form method='post' action='app/admin-exec.php' id='admin_user_form'>
                     <input type='hidden' value='<?php echo $users['userid'];?>' name='userid' />
                     <label class='block' for='edituser_firstname'><?php echo _('Firstname');?></label>
                     <input  id='edituser_firstname' type='text' value='<?php echo $users['firstname'];?>' name='firstname' />
@@ -207,7 +210,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
 
     <h3><?php echo _('DANGER ZONE');?></h3>
     <h4><strong><?php echo _('Delete an account');?></strong></h4>
-    <form action='admin-exec.php' method='post'>
+    <form action='app/admin-exec.php' method='post'>
         <!-- form key -->
         <?php $formKey->output_formkey(); ?>
         <label for='delete_user'><?php echo _('Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:');?></label>
@@ -228,7 +231,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
 <div class='divhandle' id='tab3div'>
     <h3><?php echo _('Add a new status');?></h3>
     <p>
-    <form action='admin-exec.php' method='post'>
+    <form action='app/admin-exec.php' method='post'>
         <label for='new_status_name'><?php echo _('New status name');?></label>
         <input type='text' id='new_status_name' name='new_status_name' />
         <div id='colorwheel_div_new_status'>
@@ -277,7 +280,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
         }
         ?>
 
-        <form action='admin-exec.php' method='post'>
+        <form action='app/admin-exec.php' method='post'>
             <input type='text' name='status_name' value='<?php echo stripslashes($status['name']);?>' />
             <label for='default_checkbox'><?php echo _('Default status');?></label>
             <input type='checkbox' name='status_is_default' id='default_checkbox'
@@ -348,7 +351,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
             }
             ?>
 
-            <form action='admin-exec.php' method='post'>
+            <form action='app/admin-exec.php' method='post'>
             <label><?php echo _('Edit name');?></label>
                 <input required type='text' name='item_type_name' value='<?php echo stripslashes($items_types['name']);?>' />
                 <input type='hidden' name='item_type_id' value='<?php echo $items_types['id'];?>' />
@@ -378,7 +381,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
 
 
     <section class='simple_border'>
-        <form action='admin-exec.php' method='post'>
+        <form action='app/admin-exec.php' method='post'>
             <label for='new_item_type_name'><?php echo _('Add a new type of item:');?></label> 
             <input required type='text' id='new_item_type_name' name='new_item_type_name' />
             <input type='hidden' name='new_item_type' value='1' />
@@ -407,7 +410,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
     $exp_tpl = $req->fetch();
     ?>
     <p><?php echo _('This is the default text when someone creates an experiment.');?></p>
-    <form action='admin-exec.php' method='post'>
+    <form action='app/admin-exec.php' method='post'>
         <input type='hidden' name='default_exp_tpl' value='1' />
         <textarea class='mceditable' name='default_exp_tpl' />
         <?php
@@ -478,8 +481,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     while ($data = fgetcsv($handle, 0, ",")) {
         $num = count($data);
         // get the column names (first line)
-        if($row == 0) {
-            for($i=0;$i < $num;$i++) {
+        if ($row == 0) {
+            for ($i=0; $i < $num; $i++) {
                 $column[] = $data[$i];
             }
             $row++;
@@ -490,7 +493,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $title = $data[0];
         $body = '';
         $j = 0;
-        foreach($data as $line) {
+        foreach ($data as $line) {
             $body .= "<p><strong>".$column[$j]." :</strong> ".$line.'</p>';
             $j++;
         }
@@ -520,6 +523,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <script>
+// used on import csv to go to next step
 function goNext(x) {
     if(x == '') {
         return;
@@ -527,9 +531,6 @@ function goNext(x) {
     document.cookie = 'itemType='+x;
     $('#import_block').show();
 }
-$(document).ready(function() {
-    $('#import_block').hide();
-});
 
 // color wheel
 function color_wheel(div_name) {
@@ -538,6 +539,7 @@ function color_wheel(div_name) {
 }
 
 $(document).ready(function() {
+    $('#import_block').hide();
     // TABS
     // get the tab=X parameter in the url
     var params = getGetParameters();
@@ -568,7 +570,7 @@ $(document).ready(function() {
     });
     color_wheel('#colorwheel_div_new')
     color_wheel('#colorwheel_div_new_status')
-    // _('Edit')OR
+    // EDITOR
     tinymce.init({
         mode : "specific_textareas",
         editor_selector : "mceditable",
@@ -580,6 +582,4 @@ $(document).ready(function() {
     });
 });
 </script>
-
-
 <?php require_once 'inc/footer.php';

@@ -1,6 +1,7 @@
 {
     "require": {
         "swiftmailer/swiftmailer":"@stable",
-        "mpdf/mpdf":"@stable"
+        "mpdf/mpdf":"@stable",
+        "ext-gd":"*"
     }
 }

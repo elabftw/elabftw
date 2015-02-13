@@ -2,6 +2,10 @@
     "require": {
         "swiftmailer/swiftmailer":"@stable",
         "mpdf/mpdf":"@stable",
-        "ext-gd":"*"
+        "ext-gd":"*",
+        "ext-gettext":"*",
+        "ext-mcrypt":"*",
+        "ext-openssl":"*"
+
     }
 }

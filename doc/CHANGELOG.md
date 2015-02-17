@@ -1,6 +1,12 @@
 # Changelog for eLabFTW
 
-# Version 1.0-alpha
+# Version 1.0.0-beta
+* changelog is now in markdown
+* move some files in doc/ folder
+* improve download.php code
+* add deps to composer.json
+
+# Version 1.0.0-alpha
 * different folder structure
 
 # Version 0.12.6

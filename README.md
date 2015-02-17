@@ -15,14 +15,14 @@ Then you are at the right place !
 **eLabFTW** is designed to be installed on a server, and people from the team would just log into it from their browser.
 Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM and an old CPU, it's more than enough. Just install a recent GNU/Linux distribution on it and plug it to the intranet.
 
-Don't have an old computer ? That's okay, you can install eLabFTW on a Raspberry Pi (you can buy one on [Radiospares](http://www.rs-components.com/index.html)). It's a 30€ computer on which you can install GNU/Linux and run a server in no time ! That's what we use in our lab. Check out the [wiki](https://github.com/NicolasCARPi/elabftw/wiki/raspberrypi) to know more.
+Don't have an old computer ? That's okay, you can install eLabFTW on a Raspberry Pi (you can buy one on [Radiospares](http://www.rs-components.com/index.html)). It's a 30€ computer on which you can install GNU/Linux and run a server in no time ! That's what we use in our lab. Check out the [wiki](https://github.com/elabftw/elabftw/wiki/raspberrypi) to know more.
 
 Keep in mind that **eLabFTW is currently in beta** and is under heavy developpement. Your input is very welcome :)
-Please report bugs on [github](https://github.com/NicolasCARPi/elabftw/issues).
+Please report bugs on [github](https://github.com/elabftw/elabftw/issues).
 
 # Installation
 ## The legendary four steps installation instructions (for advanced users)
-* [Download the latest stable version](https://github.com/NicolasCARPi/elabftw/releases/latest/)
+* [Download the latest stable version](https://github.com/elabftw/elabftw/releases/latest/)
 * Extract it on your web server
 * Create a MySQL database and a MySQL user for elabftw
 * Go to https://your-address.org/elabftw/install
@@ -30,17 +30,17 @@ Please report bugs on [github](https://github.com/NicolasCARPi/elabftw/issues).
 ## Install on your computer (Mac/Win)
 ![Mac OS X](https://i.imgur.com/t62AQAi.png) | ![Windoze](https://i.imgur.com/ZKkPOL1.png)
 :---------------------------------------------:|:--------------------------------------------:
-[Install locally on Mac](https://github.com/NicolasCARPi/elabftw/wiki/installmac) | [Install locally on Windows](https://github.com/NicolasCARPi/elabftw/wiki/installwin)
+[Install locally on Mac](https://github.com/elabftw/elabftw/wiki/installmac) | [Install locally on Windows](https://github.com/elabftw/elabftw/wiki/installwin)
 
 ## Install on a digitalocean's drop (easiest/quickest method)
 With this method, you can have a running elabftw server in no time. You need to purchase a `drop` from [DigitalOcean.com](https://www.digitalocean.com/pricing/). It starts at 5$/month. This setup is enough to run eLabFTW for a team or more. And it's very easy to install, all is automatic! |
 :--------------------------------------------------------------:|
-[Install eLabFTW on a drop](https://github.com/NicolasCARPi/drop-elabftw#how-to-use) |
+[Install eLabFTW on a drop](https://github.com/elabftw/drop-elabftw#how-to-use) |
 
 ## Install in a docker container
 ![Docker](https://i.imgur.com/VRjbY8R.png) |
 :------------------------------------------:|
-If you know Docker already and want to use a dockerized elabftw, please see [this repo](https://github.com/NicolasCARPi/elabftw-docker-nosql#elabftw-docker-nosql). |
+If you know Docker already and want to use a dockerized elabftw, please see [this repo](https://github.com/elabftw/elabftw-docker-nosql#elabftw-docker-nosql). |
 
 ## Install on a GNU/Linux or BSD server
 
@@ -52,13 +52,13 @@ Please refer to your distribution's documentation to install :
 * mysql version > 5.5
 * git
 
-If you don't know how to do that, have a look at [installing eLabFTW on a cheap server (drop)](https://github.com/NicolasCARPi/drop-elabftw#how-to-use).
+If you don't know how to do that, have a look at [installing eLabFTW on a cheap server (drop)](https://github.com/elabftw/drop-elabftw#how-to-use).
 
 ### Getting the files
 
 The first part is to get the files composing `elabftw` on your server, with git.
 
-Alternatively, you can download the latest release from [this page](https://github.com/NicolasCARPi/elabftw/releases/latest) as a zip archive or a tarball.
+Alternatively, you can download the latest release from [this page](https://github.com/elabftw/elabftw/releases/latest) as a zip archive or a tarball.
 
 #### Connect to your server with SSH
 ~~~ sh
@@ -76,7 +76,7 @@ Note the `.` at the end that means `current folder`.
 
 #### Get latest stable version via git :
 ~~~ sh
-$ git clone --depth 1 https://github.com/NicolasCARPi/elabftw.git
+$ git clone --depth 1 https://github.com/elabftw/elabftw.git
 ~~~
 (this will create a folder `elabftw`)
 The `--depth 1` option is to avoid downloading the whole history.
@@ -90,7 +90,7 @@ If you still cannot connect, tell git your proxy :
 $ git config --global http.proxy http://proxy.example.com:8080
 ~~~
 
-Alternatively, you can [download a stable version](https://github.com/NicolasCARPi/elabftw/releases/latest).
+Alternatively, you can [download a stable version](https://github.com/elabftw/elabftw/releases/latest).
 
 But git will allow for easier updates (and they are frequent !).
 
@@ -144,7 +144,7 @@ For example : https://12.34.56.78/elabftw/install
 -------------------------------------------------
 
 # Post install things to do 
-You should read [this page](https://github.com/NicolasCARPi/elabftw/wiki/finalizing) to finish your install (configure email, backup, *etc*…).
+You should read [this page](https://github.com/elabftw/elabftw/wiki/finalizing) to finish your install (configure email, backup, *etc*…).
 
 -------------------------------------------------
 

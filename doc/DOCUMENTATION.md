@@ -2,7 +2,7 @@
 
 ## Wiki
 
-You will find a lot of informations on [the official wiki](https://github.com/NicolasCARPi/elabftw/wiki).
+You will find a lot of informations on [the official wiki](https://github.com/elabftw/elabftw/wiki).
 
 ## Features
 ### general
@@ -114,8 +114,8 @@ suggestions to this project.
 You want to help this project ? Then read on !
 
 **What can you do to help this project ?**
-* Have a look at [the current issues](https://github.com/NicolasCARPi/elabftw/issues)
-* [Translate it!](https://github.com/NicolasCARPi/elabftw/wiki/Contributing#translating-i18n)
+* Have a look at [the current issues](https://github.com/elabftw/elabftw/issues)
+* [Translate it!](https://github.com/elabftw/elabftw/wiki/Contributing#translating-i18n)
 * Talk about it to your colleagues, spread the word!
 * Read the code and spot places needing improvements
 * Open Github issues to discuss bugs or features suggestions

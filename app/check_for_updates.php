@@ -57,10 +57,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($current_branch == 'master') {
         // for branch master
-        curl_setopt($ch, CURLOPT_URL, "https://api.github.com/repos/NicolasCARPi/elabftw/git/refs/heads/master");
+        curl_setopt($ch, CURLOPT_URL, "https://api.github.com/repos/elabftw/elabftw/git/refs/heads/master");
     } elseif ($current_branch == 'next') {
         // for branch next
-        curl_setopt($ch, CURLOPT_URL, "https://api.github.com/repos/NicolasCARPi/elabftw/git/refs/heads/next");
+        curl_setopt($ch, CURLOPT_URL, "https://api.github.com/repos/elabftw/elabftw/git/refs/heads/next");
     } else {
         echo _('Unknown branch!');
         exit();

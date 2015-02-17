@@ -34,7 +34,7 @@ require_once ELAB_ROOT.'inc/locale.php';
 if (isset($_POST['id']) && is_pos_int($_POST['id'])) {
     $id = $_POST['id'];
 } else {
-    die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>"));
+    die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
 }
 
 // Item switch
@@ -195,7 +195,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
 
             // test if there was an error somewhere
             if (in_array(false, $result)) {
-                $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
+                $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
                 $_SESSION['errors'] = $msg_arr;
             } else {
                 $msg_arr[] = _('Item was deleted successfully.');
@@ -286,5 +286,5 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
 }
 
 if (isset($err_flag)) {
-    die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>"));
+    die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
 }

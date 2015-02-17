@@ -44,7 +44,7 @@ $formKey = new formKey();
 <script src="js/colorwheel/colorwheel.js"></script>
 <?php
 if (strlen(get_config('smtp_username')) == 0) {
-    $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://github.com/NicolasCARPi/elabftw/wiki/finalizing'>", "</a>");
+    $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://github.com/elabftw/elabftw/wiki/finalizing'>", "</a>");
     display_message('error', $message);
 }
 

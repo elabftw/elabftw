@@ -37,7 +37,7 @@
     <a href='https://twitter.com/elabftw'>
     <img src='img/twitter.png' alt='twitter' title='Follow eLabFTW on Twitter !'>
     </a>
-     <a href='https://github.com/NicolasCARPi/elabftw'>
+     <a href='https://github.com/elabftw/elabftw'>
     <img src='img/github.png' alt='github' title='eLabFTW on GitHub'>
     </a>
     <span>

@@ -39,7 +39,7 @@ if ($_SESSION['is_sysadmin'] != 1) {
     die(_('This section is out of your reach.'));
 }
 
-$die_msg = "There was a problem in the database update :/ Please report a bug : https://github.com/NicolasCARPi/elabftw/issues?state=open";
+$die_msg = "There was a problem in the database update :/ Please report a bug : https://github.com/elabftw/elabftw/issues?state=open";
 
 // make a simple query
 function q($sql) {

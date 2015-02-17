@@ -88,7 +88,7 @@ if (isset($_POST['currpass'])){
                     $msg_arr[] = _('Configuration updated successfully.');
                     $infoflag = true;
                 } else {
-                    die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>"));
+                    die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
                 }
             }
         }
@@ -219,7 +219,7 @@ if (isset($_POST['currpass'])){
             $msg_arr[] = _('Profile updated.');
             $infoflag = true;
         } else {
-            die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>"));
+            die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
         }
     } else { //end if result and numrow > 1
         $msg_arr[] = _('Enter your passsword to edit anything.');
@@ -234,14 +234,14 @@ if (isset($_POST['display'])) {
     } elseif ($_POST['display'] === 'compact'){
         $new_display = 'compact';
     } else {
-        die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>"));
+        die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
     }
 
     // ORDER
     if ($_POST['order'] === 'date' || $_POST['order'] === 'id' || $_POST['order'] === 'title') {
         $new_order = $_POST['order'];
     } else {
-        die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>"));
+        die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
     }
 
     // SORT
@@ -250,7 +250,7 @@ if (isset($_POST['display'])) {
     } elseif ($_POST['sort'] === 'desc') {
         $new_sort = $_POST['sort'];
     } else {
-        die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>"));
+        die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
     }
 
     // LIMIT

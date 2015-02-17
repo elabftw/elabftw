@@ -183,7 +183,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             ".$zipname.".zip</a>
             <span class='filesize'>(".format_bytes(filesize($zipfile)).")</span></p>";
     } else {
-        echo sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/NicolasCARPi/elabftw/issues/'>", "</a>");
+        echo sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
     }
     echo "</div>";
     require_once 'inc/footer.php';

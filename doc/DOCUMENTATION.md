@@ -121,3 +121,5 @@ You want to help this project ? Then read on !
 * Open Github issues to discuss bugs or features suggestions
 
 Your code must follow [the PSR standards](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md).
+Before doing a pull request, open an issue so we can discuss about it (unless it is obvious that your code should be merged ;).
+Please base your PR on the ***next*** branch.

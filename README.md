@@ -17,7 +17,6 @@ Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM 
 
 Don't have an old computer ? That's okay, you can install eLabFTW on a Raspberry Pi (you can buy one on [Radiospares](http://www.rs-components.com/index.html)). It's a 30€ computer on which you can install GNU/Linux and run a server in no time ! That's what we use in our lab. Check out the [wiki](https://github.com/elabftw/elabftw/wiki/raspberrypi) to know more.
 
-Keep in mind that **eLabFTW is currently in beta** and is under heavy developpement. Your input is very welcome :)
 Please report bugs on [github](https://github.com/elabftw/elabftw/issues).
 
 # Installation

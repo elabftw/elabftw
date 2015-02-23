@@ -37,6 +37,7 @@ if (!class_exists('ZipArchive')) {
 // init some var
 $zdate = '';
 $clean_title = '';
+$files_to_delete = array();
 
 // Switch exp/items just for the table to search in sql requests
 if ($_GET['type'] === 'experiments') {
@@ -150,25 +151,31 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             }
             // add info about the creator + timestamp
             $manifest .= "Zip archive created by ".$users['firstname']." ".$users['lastname']." on ".date('Y.m.d')." at ".date('H:i:s').".\n";
-            $manifest .= "~~~\neLabFTW - Free open source lab manager - http://www.elabftw.net \n";
+            $manifest .= "~~~\neLabFTW - Free open source lab manager - http://www.elabftw.net\n";
             // fix utf8
             $manifest = utf8_encode($manifest);
             $manifest = "\xEF\xBB\xBF".$manifest;
-            $manifestpath = 'uploads/export/'.'manifest-'.uniqid();
+            $manifestpath = 'uploads/export/manifest-'.uniqid();
             $tf = fopen($manifestpath, 'w+');
             fwrite($tf, $manifest);
             fclose($tf);
             $zip->addFile($manifestpath, $folder."/MANIFEST");
 
+            // add the path of the files to be deleted in the files_to_delete array
+            // (csv, MANIFEST and pdf)
+            $files_to_delete[] = $csvpath;
+            $files_to_delete[] = $manifestpath;
+            $files_to_delete[] = 'uploads/export/'.$pdfname;
+
         } // end foreach
         // close the archive
         $zip->close();
-        // cleanup _('_('TODO list') list')
-        //unlink($manifestpath);
-        //unlink('uploads/export/'.$pdfname);
-        //unlink($csvpath);
 
-
+        // now clean up
+        // we need to do that after $zip->close() or it doesn't work
+        foreach ($files_to_delete as $file) {
+            unlink($file);
+        }
 
         // PAGE BEGIN
         echo "<div class='well' style='margin-top:20px'>";
@@ -178,8 +185,8 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         }
         // Display download link (with attribute type=zip for download.php)
         echo "<p>"._('Your ZIP archive is ready:')."<br>
-            <a href='app/download.php?f=".$zipfile."&name=".$zipname.".zip&type=zip' target='_blank'>
             <img src='img/download.png' alt='download' /> 
+            <a href='app/download.php?f=".$zipfile."&name=".$zipname.".zip&type=zip' target='_blank'>
             ".$zipname.".zip</a>
             <span class='filesize'>(".format_bytes(filesize($zipfile)).")</span></p>";
     } else {

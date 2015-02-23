@@ -78,7 +78,7 @@ require_once 'inc/info_box.php';
                             // item get selected if it is in the search url
                             if(isset($_GET['owner']) && ($users['userid'] == $_GET['owner'])) {
                                 echo " selected='selected'";
-                            } 
+                            }
                             echo ">".$users['firstname']." ".$users['lastname']."</option>";
                     }
                     ?>
@@ -250,7 +250,7 @@ if (isset($_GET)) {
         $owner = '';
     }
 
-    // _('Experiment') _('Search')
+    // EXPERIMENT SEARCH
     if(isset($_GET['type'])) {
         if($_GET['type'] === 'experiments') {
             // SQL
@@ -293,7 +293,7 @@ if (isset($_GET)) {
                 'userid' => $_SESSION['userid']
             ));
             }
-            // This counts the number or results - and if there wasn't any it gives them a little message explaining that 
+            // This counts the number or results - and if there wasn't any it gives them a little message explaining that
             $count = $req->rowCount();
             if ($count > 0) {
                 // make array of results id
@@ -303,7 +303,6 @@ if (isset($_GET)) {
                 }
                 // sort by id, biggest (newer item) comes first
                 $results_id = array_reverse($results_id);
-                
                 // construct string for links to export results
                 $results_id_str = "";
                 foreach($results_id as $id) {
@@ -335,7 +334,7 @@ if (isset($_GET)) {
                 display_message('error_nocross', _("Sorry. I couldn't find anything :("));
             }
 
-    // DATABASE _('Search')
+    // DATABASE SEARCH
     } elseif (is_pos_int($_GET['type'])) {
             // SQL
             // the BETWEEN stuff makes the date mandatory, so we switch the $sql with/without date
@@ -360,7 +359,6 @@ if (isset($_GET)) {
             }
             // sort by id, biggest (newer item) comes first
             $results_id = array_reverse($results_id);
-            
             // construct string for links to export results
             $results_id_str = "";
             foreach($results_id as $id) {

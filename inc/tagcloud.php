@@ -56,21 +56,21 @@ if ($count > 10) {
         $ratio = floor((($data[1] - $minoccur) / $spread)*100);
         if ($ratio < 10) {
             $class = 'c1';
-        } elseif ($ratio >= 10 and $ratio < 20) {
+        } elseif ($ratio >= 10 && $ratio < 20) {
             $class = 'c2';
-        } elseif ($ratio >= 20 and $ratio < 30) {
+        } elseif ($ratio >= 20 && $ratio < 30) {
             $class = 'c3';
-        } elseif ($ratio >= 30 and $ratio < 40) {
+        } elseif ($ratio >= 30 && $ratio < 40) {
             $class = 'c4';
-        } elseif ($ratio >= 40 and $ratio < 50) {
+        } elseif ($ratio >= 40 && $ratio < 50) {
             $class = 'c5';
-        } elseif ($ratio >= 50 and $ratio < 60) {
+        } elseif ($ratio >= 50 && $ratio < 60) {
             $class = 'c6';
-        } elseif ($ratio >= 60 and $ratio < 70) {
+        } elseif ($ratio >= 60 && $ratio < 70) {
             $class = 'c7';
-        } elseif ($ratio >= 70 and $ratio < 80) {
+        } elseif ($ratio >= 70 && $ratio < 80) {
             $class = 'c8';
-        } elseif ($ratio >= 80 and $ratio < 90) {
+        } elseif ($ratio >= 80 && $ratio < 90) {
             $class = 'c9';
         } else {
             $class = 'c10';

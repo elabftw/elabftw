@@ -23,38 +23,63 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+// where are we, on experiments or items (database) page ?
+if (strpos($_SERVER['SCRIPT_FILENAME'], 'experiments')) {
+    $type = 'experiments';
+} else {
+    $type = 'items';
+}
 ?>
 <section class='box'>
-<!-- FILE UPLOAD -->
-<script src="js/bigUpload.min.js"></script>
-<script>
-bigUpload = new bigUpload();
-function upload() {
-    bigUpload.fire();
-}
-function abort() {
-    bigUpload.abortFileUpload();
-}
-</script>
-<div class="bigUpload inline">
-    <div class="bigUploadContainer">
-    <img src='img/attached.png' class='bot5px'> <h3 style='display:inline'><?php echo _('Attach a file.');?></h3>
-        <form action="inc/bigUpload.php?action=post-unsupported"
-            method="post"
-            enctype="multipart/form-data"
-            id="bigUploadForm">
-
-            <input type="file" id="bigUploadFile" name="bigUploadFile" />
-            <input type="button" class="button" value="<?php echo _('Start Upload');?>" id="bigUploadSubmit" onclick="upload()" />
-            <input type="button" class="button" value="<?php echo _('Cancel');?>" onclick="abort()" />
-        </form>
-        <div id="bigUploadProgressBarContainer">
-            <div id="bigUploadProgressBarFilled">
-            </div>
-        </div>
-        <div id="bigUploadTimeRemaining"></div>
-        <div id="bigUploadResponse"></div>
-    </div>
-</div><!-- END FILE UPLOAD -->
+    <!-- FILE UPLOAD BLOCK -->
+    <script src="js/dropzone/dist/min/dropzone.min.js"></script>
+    <link rel="stylesheet" media="all" href="js/dropzone/dist/dropzone.css" />
+    <!-- fix some css here -->
+    <style>
+    .dropzone {
+        border: none;
+    }
+    </style>
+    <img src='img/attached.png' class='bot5px'> <h3 style='display:inline'><?php echo _('Attach a file');?></h3>
+    <!-- additionnal parameters are added as GET params -->
+    <form action="app/upload.php?item_id=<?php echo $id;?>&type=<?php echo $type;?>"
+        method="post"
+        enctype="multipart/form-data"
+        class="dropzone"
+        id='elabftw-dropzone'>
+    </form>
 </section>
+<script>
+// we need this to reload the #filesdiv (div displaying uploaded files)
+var type = '<?php echo $type;?>';
+if (type == 'items') {
+    type = 'database';
+}
+var item_id = '<?php echo $id;?>';
 
+// config for dropzone, id is camelCased.
+Dropzone.options.elabftwDropzone = {
+    // i18n message to user
+    dictDefaultMessage: '<?php echo _('Drop files here to upload');?>',
+    maxFilesize: 2, // MB
+    init: function() {
+        this.on("complete", function() {
+            // reload the #filesdiv once the file is uploaded
+            if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+                $("#filesdiv").load(type + '.php?mode=edit&id=' + item_id + ' #filesdiv', function() {
+                    // make the comment zone editable (fix issue #54)
+                    $('.thumbnail p.editable').editable('app/editinplace.php', {
+                     tooltip : 'Click to edit',
+                     indicator : 'Saving...',
+                     id   : 'id',
+                     name : 'filecomment',
+                     submit : 'Save',
+                     cancel : 'Cancel',
+                     style : 'display:inline'
+                    });
+                });
+            }
+        });
+    }
+};
+</script>

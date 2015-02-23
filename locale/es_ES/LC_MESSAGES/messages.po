@@ -922,8 +922,8 @@ msgstr "Aún no hay estadísticas disponibles."
 msgid "Experiments for"
 msgstr "Experimentos por"
 
-msgid "Attach a file."
-msgstr "Añadir un archivo."
+msgid "Attach a file"
+msgstr "Añadir un archivo"
 
 msgid "Start Upload"
 msgstr "Empezar la subida"

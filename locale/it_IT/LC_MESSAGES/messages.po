@@ -949,8 +949,8 @@ msgstr "Statistiche non ancora disponibili."
 msgid "Experiments for"
 msgstr "Esperimenti per"
 
-msgid "Attach a file."
-msgstr "Allega un file."
+msgid "Attach a file"
+msgstr "Allega un file"
 
 #. Can also be -inizia a caricare
 msgid "Start Upload"

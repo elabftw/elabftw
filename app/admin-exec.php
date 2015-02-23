@@ -206,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
         // The unzipped archive will be a folder elabftw-master, because that's how github does it.
         // So this means that only update on master branch are supported. If you want to update from next, use git !
         $cmd = "/bin/cp -rv uploads/tmp/elabftw-master/* ".ELAB_ROOT." >> /tmp/elabcopy.log 2>&1";
-        var_dump(shell_exec($cmd));
+        //var_dump(shell_exec($cmd));
         exit;
         //shell_exec("/bin/rm -rf uploads/tmp/*");
         $zip->close();

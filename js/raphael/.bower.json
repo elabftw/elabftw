@@ -23,7 +23,7 @@
     "tag": "v2.1.3",
     "commit": "210ce2127a423d30071a3fb84d03880a2d13f7cd"
   },
-  "_source": "https://github.com/DmitryBaranovskiy/raphael.git",
-  "_target": "~2.1.2",
+  "_source": "git://github.com/DmitryBaranovskiy/raphael.git",
+  "_target": ">= 2.1.0",
   "_originalSource": "raphael"
 }

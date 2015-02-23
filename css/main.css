@@ -779,45 +779,6 @@ footer div a:hover {
     }
 }
 
-/* bigUpload stuff */
-.bigUpload {
-    display:inline;
-}
-
-/* fix the overflow for long filenames and little width of browser */
-.bigUpload .bigUploadContainer {
-    overflow:hidden;
-    color: #797979;
-}
-
-.bigUpload input {
-    margin: 10px;
-}
-.bigUpload input[type="cancel"] {
-    color:#dcdddc;
-}
-
-/* the browse button */
-.bigUpload #bigUploadFile {
-    max-width:250px;
-    overflow: hidden;
-	padding: 20px;
-}
-
-/* the progress bar */
-.bigUpload #bigUploadProgressBarContainer {
-	width:300px;
-	height:23px;
-}
-
-.bigUpload #bigUploadProgressBarFilled {
-	border-radius: 25px;
-	height:23px;
-	width:0;
-	background-color: #29AEB9;
-	font-size: 14px;
-}
-
 /* prettier code */
 code {
     border: 1px dotted #ccc;

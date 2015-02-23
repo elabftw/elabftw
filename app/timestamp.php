@@ -40,7 +40,7 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
 if (get_config('ts_provider_url')) {
     $ts_url = get_config('ts_provider_url');
 } else {
-    $msg_arr[] = _('There was an error in the timestamping. Login credentials probably wrong or no more credits.');
+    $msg_arr[] = _('There was an error in the timestamping. No timestamping service provider has been configured.');
     $_SESSION['errors'] = $msg_arr;
     header("Location: ../experiments.php?mode=view&id=$id");
     exit;

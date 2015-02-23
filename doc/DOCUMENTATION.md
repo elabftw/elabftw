@@ -19,6 +19,7 @@ You will find a lot of informations on [the official wiki](https://github.com/el
 * visibility setting
 * rich wysiwyg editor
 * insert images into text
+* upload multiple files
 * duplicate experiments
 * export as pdf
 * export as zip archive

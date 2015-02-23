@@ -500,6 +500,7 @@ function check_visibility($input)
         return 'team';
     }
 }
+
 /**
  * Make a CSV file. This is a function, and it's not in the make_csv.php file because it is called by make_zip also.
  *
@@ -857,6 +858,7 @@ function get_team_config($column)
     }
     return "";
 }
+
 /**
  * Will check if an executable is on the system.
  * Only used by check_for_updates.php to check for git.
@@ -907,6 +909,7 @@ function dblog($type, $user, $body)
     }
     return true;
 }
+
 /**
  * Display the end of page.
  * Only used in install/index.php
@@ -924,7 +927,7 @@ function custom_die()
 
 /**
  * Make a simple query
- * 
+ *
  * @param string The SQL query
  * @return boolean|string the return value of execute
  */
@@ -1020,7 +1023,7 @@ function add_field($table, $field, $params, $added)
         if ($result) {
             echo $added;
         } else {
-             die($die_msg);
+            die($die_msg);
         }
     }
 }
@@ -1056,7 +1059,7 @@ function rm_field($table, $field, $added)
         if ($result) {
             echo $added;
         } else {
-             die($die_msg);
+            die($die_msg);
         }
     }
 }

@@ -104,7 +104,7 @@ echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."<
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     echo "<nav>";
     // to redirect to the right page
-    if ($page_title === 'Database') {
+    if ($selected_menu === 'Database') {
         $action_target = 'database.php';
     } else {
         $action_target = 'experiments.php';
@@ -144,7 +144,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     echo ">"._('Search')."</a>";
 
     echo "<a href='".get_team_config('link_href')."' target='_blank'>".get_team_config('link_name')."</a></span>";
-    
+
     echo "</nav>";
 } else { // not logged in, show only logo, no menu
     echo "<nav><span id='logonav' class='navleft'>elab<strong>FTW</strong></span></nav>";

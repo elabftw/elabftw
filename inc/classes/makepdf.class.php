@@ -7,7 +7,7 @@ class MakePdf {
      * @param int $id The id of the item to pdfize
      * @param string $type The type of item can be 'experiments' or 'items'
      * @param string $out Do we put it in a file or out to the browser ? Default is browser
-     * @return either the pdf of the path to pdf file
+     * @return string|null either the pdf of the path to pdf file
      */
     public function create($id, $type, $out = 'browser')
     {
@@ -38,7 +38,7 @@ class MakePdf {
             $lockuser = $reqlock->fetch();
 
             // separate date and time
-            if(isset($data['lockedwhen'])) {
+            if (isset($data['lockedwhen'])) {
                 $lockdate = explode(' ', $data['lockedwhen']);
                 // this will be added after the URL
                 $lockinfo = "<p class='elabid'>locked by ".$lockuser['firstname']." ".$lockuser['lastname']." on ".$lockdate[0]." at ".$lockdate[1].".</p>";

@@ -99,9 +99,9 @@ if ($data['locked'] == 1) {
     <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date'];?>' />
     <label class='block' for='title_input'><?php echo _('Title');?></label>
     <input id='title_input' name='title' rows="1" value='<?php if (empty($_SESSION['errors'])) {
-      echo stripslashes($data['title']);
+        echo stripslashes($data['title']);
     } else {
-      echo stripslashes($_SESSION['new_title']);
+        echo stripslashes($_SESSION['new_title']);
     } ?>' required />
         <label for='body_area' class='block'><?php echo _('Infos');?></label>
     <textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">

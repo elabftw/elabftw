@@ -95,7 +95,7 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
         showDB($result_id, $display);
     } // end foreach
 
-// NORMAL _('Search')
+// NORMAL SEARCH
 } elseif (isset($_GET['q']) && !empty($_GET['q'])) {
     $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
     // we make an array for the resulting ids

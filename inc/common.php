@@ -29,7 +29,6 @@ if (!isset($_SESSION)) {
 }
 
 // check that the config file is here and readable
-//if (!is_readable($_SERVER['DOCUMENT_ROOT'] . dirname($_SERVER['SCRIPT__('Name')']).'/config.php')) {
 if (is_readable('config.php')) {
     require_once 'config.php';
     require_once 'inc/functions.php';

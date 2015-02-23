@@ -85,7 +85,8 @@ eLabFTW uses open source code from others. A big thanks to them for making their
 * [Swiftmailer](http://swiftmailer.org)
 * [Raphael](http://raphaeljs.com/)
 * [Colorwheel](http://jweir.github.com/colorwheel/)
-* [File upload](https://github.com/sthielen/BigUpload)
+* [File upload](http://www.dropzonejs.com/)
+* [ChemDoodle](http://web.chemdoodle.com/)
 
 ### Other resources
 * [Icons](http://icons8.com)

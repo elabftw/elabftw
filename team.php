@@ -124,8 +124,8 @@ $totals = $count_req->fetch(PDO::FETCH_ASSOC);
     <h3><?php echo _('Molecule drawer');?></h3>
     <div class='box'>
         <link rel="stylesheet" href="css/chemdoodle.css" type="text/css">
-        <script type="text/javascript" src="js/chemdoodle.js"></script>
-        <script type="text/javascript" src="js/chemdoodle-uis.js"></script>
+        <script src="js/chemdoodle.js"></script>
+        <script src="js/chemdoodle-uis.js"></script>
         <script>
             var sketcher = new ChemDoodle.SketcherCanvas('sketcher', 500, 300, {oneMolecule:true});
         </script>

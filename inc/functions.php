@@ -143,6 +143,7 @@ function is_pos_int($int)
  * Check if an item has a file attached.
  *
  * @param int $id ID of the item to check
+ * @param string $type
  * @return bool Return false if there is now file attached
  */
 function has_attachement($id, $type)
@@ -247,7 +248,7 @@ function search_item($type, $query, $userid)
  *
  * @param int $item_id The ID of the item for which we want the tags
  * @param string $table The table can be experiments_tags or items_tags
- * @return string|false Will show the HTML for tags or false if there is no tags
+ * @return null|false Will show the HTML for tags or false if there is no tags
  */
 function show_tags($item_id, $table)
 {
@@ -504,7 +505,7 @@ function check_visibility($input)
  *
  * @param int $id The id of the item to export
  * @param string $type The type of item can be 'experiments' or 'items'
- * @return the path to csv file
+ * @return false|string path to csv file
  */
 function make_unique_csv($id, $type)
 {
@@ -763,7 +764,7 @@ function duplicate_item($id, $type)
  *
  * @param string $type Can be 'info', 'info_nocross' or 'error', 'error_nocross'
  * @param string $message The message to display
- * @return string Will echo the HTML of the message
+ * @return boolean Will echo the HTML of the message
  */
 function display_message($type, $message)
 {
@@ -861,7 +862,7 @@ function get_team_config($column)
  * Only used by check_for_updates.php to check for git.
  *
  * @param string $cmd The command to check
- * @return bool Will return true if the executable can be used
+ * @return string Will return true if the executable can be used
  */
 function check_executable($cmd)
 {
@@ -886,6 +887,7 @@ function format_date($date, $s = '.')
  *
  * @param string $type The type of the log. Can be 'Error', 'Warning', 'Info'
  * @param string $body The content of the log
+ * @param string $user
  * @return bool Will return true if the query is successfull
  */
 function dblog($type, $user, $body)
@@ -924,7 +926,7 @@ function custom_die()
  * Make a simple query
  * 
  * @param string The SQL query
- * @return bool the return value of execute
+ * @return boolean|string the return value of execute
  */
 function q($sql)
 {
@@ -933,8 +935,7 @@ function q($sql)
         $req = $pdo->prepare($sql);
         $req->execute();
         return true;
-    }
-    catch (PDOException $e)
+    } catch (PDOException $e)
     {
         dblog('Error', 'mysql', $e->getMessage());
         return $e->getMessage();

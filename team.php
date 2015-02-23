@@ -98,7 +98,7 @@ $count_req->execute();
 $totals = $count_req->fetch(PDO::FETCH_ASSOC);
 ?>
     <p><?php echo sprintf(ngettext('There is a total of %d experiment', 'There is a total of %d experiments', $totals['totxp']), $totals['totxp']);
-             echo ' ' . sprintf(ngettext('by %d different user.', 'by %d different users', $totals['totusers']), $totals['totusers']); ?></p>
+                echo ' ' . sprintf(ngettext('by %d different user.', 'by %d different users', $totals['totusers']), $totals['totusers']); ?></p>
     <p><?php echo sprintf(ngettext('There is a total of %d item in the database.', 'There is a total of %d items in the database.', $totals['totdb']), $totals['totdb']); ?></p>
 </div>
 

@@ -91,16 +91,15 @@ header("Content-Transfer-Encoding: binary");
 header("Content-Length: " . $fsize);
 
 // DOWNLOAD
-// @readfile($file_path);
 $file = @fopen($file_path, "rb");
 if ($file) {
     while (!feof($file)) {
-        print(fread($file, 1024*8));
+        echo fread($file, 1024*8);
         flush();
         if (connection_status() != 0) {
-            @fclose($file);
-            die();
+            fclose($file);
+            exit;
         }
     }
-    @fclose($file);
+    fclose($file);
 }

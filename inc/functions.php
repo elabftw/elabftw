@@ -94,7 +94,7 @@ function get_ext($filename)
  * @param string $ext Extension of the file
  * @param string $dest Path to the place to save the thumbnail
  * @param int $desired_width Width of the thumbnail (height is automatic depending on width)
- * @return null
+ * @return null|false
  */
 function make_thumb($src, $ext, $dest, $desired_width)
 {
@@ -105,6 +105,8 @@ function make_thumb($src, $ext, $dest, $desired_width)
         $source_image = imagecreatefrompng($src);
     } elseif ($ext === 'gif') {
         $source_image = imagecreatefromgif($src);
+    } else {
+        return false;
     }
     $width = imagesx($source_image);
     $height = imagesy($source_image);
@@ -609,6 +611,8 @@ function generate_elabid()
 function duplicate_item($id, $type)
 {
     global $pdo;
+    $result = false;
+    $result_tags = false;
     if ($type === 'experiments') {
         $elabid = generate_elabid();
 
@@ -939,13 +943,14 @@ function q($sql)
 
 /**
  * Used in sysconfig.php to update config values
- * 
+ *
  * @param array conf_name => conf_value
  * @return bool the return value of execute queries
  */
 function update_config($array)
 {
     global $pdo;
+    $result = false;
     foreach ($array as $name => $value) {
         $sql = "UPDATE config SET conf_value = '".$value."' WHERE conf_name = '".$name."';";
         $req = $pdo->prepare($sql);

@@ -36,73 +36,67 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     exit;
 }
 
-// Get login/password info
-// if the team config is set, we use this one, else, we use the general one, unless we can't (not allowed in config)
-if (strlen(get_team_config('stamplogin')) > 2) {
-
-    $login = get_team_config('stamplogin');
-    $password = get_team_config('stamppass');
-
-} elseif (get_config('stampshare')) {
-
-    $login = get_config('stamplogin');
-    $password = get_config('stamppass');
-
+// check if a timestamp provider is set. If not, throw an error message
+if (get_config('ts_provider_url')) {
+    $ts_url = get_config('ts_provider_url');
 } else {
-
     $msg_arr[] = _('There was an error in the timestamping. Login credentials probably wrong or no more credits.');
     $_SESSION['errors'] = $msg_arr;
-    header("Location: ../experiments.php?mode=view&id=".$id);
+    header("Location: ../experiments.php?mode=view&id=$id");
     exit;
 }
 
+// this is somewhat reduntant to the php function hash_algos(), but will ensure only strong sha2 algorithms can be used
+$hash_algorithms = array('sha256', 'sha384', 'sha512');
+
+// check if a valid hash algorithm has been selected. If not, fall back to sane defaults (sha256)
+if (get_config('ts_hash_algorithm') and in_array(get_config('ts_hash_algorithm'), $hash_algorithms)) {
+    $ts_hash_algorithm = get_config('ts_hash_algorithm');
+} else {
+    $ts_hash_algorithm = 'sha256';
+}
+
+// Get login/password info
+// if the team config is set, we use this one, else, we use the general one, unless we can't (not allowed in config)
+if (strlen(get_team_config('stamplogin')) > 2) {
+    $login = get_team_config('stamplogin');
+    $password = get_team_config('stamppass');
+} elseif (get_config('stampshare')) {
+    $login = get_config('stamplogin');
+    $password = get_config('stamppass');
+// otherwise assume no login or password is needed
+} else {
+    $login = NULL;
+    $password = NULL;
+}
 
 // generate the pdf to timestamp
 require_once '../inc/classes/makepdf.class.php';
 $pdf = new MakePdf();
 $pdf_path = $pdf->create($id, 'experiments', ELAB_ROOT.'uploads');
 
-// generate the sha256 hash that we will send
-$hashedDataToTimestamp = hash_file('sha256', ELAB_ROOT."uploads/".$pdf_path);
+require_once '../inc/classes/timestamp.class.php';
+$requestfile_path = TrustedTimestamps::createRequestfile(ELAB_ROOT."uploads/$pdf_path");
 
-// CONFIGURE DATA TO SEND
-$dataToSend = array (
-    'hashAlgo' => 'SHA256',
-    'withCert' => 'true',
-    'hashValue' => $hashedDataToTimestamp
-);
+// REQUEST TOKEN
+if (is_string($login) and is_string($password)) {
+    $token = TrustedTimestamps::signRequestfile($requestfile_path, $ts_url, $login, $password);
+} else {
+    $token = TrustedTimestamps::signRequestfile($requestfile_path, $ts_url);
+}
 
-// SEND DATA
 try {
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "https://ws.universign.eu/tsa/post/");
-    curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    curl_setopt($ch, CURLOPT_USERPWD, $login.":".$password);
-    curl_setopt($ch, CURLOPT_POST, count($dataToSend));
-    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($dataToSend));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $token = TrustedTimestamps::signRequestfile($requestfile_path, $ts_url, $login, $password);
 
-    if (strlen(get_config('proxy')) > 0) {
-        curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
-    }
-    // options to verify the certificate (we disable check)
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-    // add user agent
-    // http://developer.github.com/v3/#user-agent-required
-    curl_setopt($ch, CURLOPT_USERAGENT, "elabftw");
-    // DO IT
-    $token = curl_exec($ch);
-    // free resources
-    curl_close($ch);
-
-    if (!$token) {
-            throw new Exception(_('There was an error in the timestamping. Login credentials probably wrong or no more credits.'));
-        }
-    } catch (Exception $e) {
+    // throw an exception if token is not an array
+    if (!is_array($token)) {
+           throw new Exception(_('There was an error in the timestamping. Login credentials probably wrong or no more credits.'));
+       }
+} catch (Exception $e) {
         dblog("Error", $_SESSION['userid'], "File: ".$e->getFile().", line ".$e->getLine().": ".$e->getMessage());
         $msg_arr[] = _('There was an error with the timestamping. Experiment is NOT timestamped. Error has been logged.');
         $_SESSION['errors'] = $msg_arr;
-        header("Location: ../experiments.php?mode=view&id=".$id);
+        header("Location: ../experiments.php?mode=view&id=$id");
         exit;
 }
 
@@ -116,14 +110,16 @@ try {
     dblog('Error', $_SESSION['userid'], $e->getMessage());
     $msg_arr[] = _('There was an error with the timestamping. Experiment is NOT timestamped. Error has been logged.');
     $_SESSION['errors'] = $msg_arr;
-    header("Location: ../experiments.php?mode=view&id=".$id);
+    header("Location: ../experiments.php?mode=view&id=$id");
     exit;
 }
 
 // SQL
-$sql = "UPDATE `experiments` SET `timestamped` = 1, `timestampedby` = :userid, `timestampedwhen` = CURRENT_TIMESTAMP, `timestamptoken` = :longname WHERE `id` = :id;";
+$sql = "UPDATE `experiments` SET `timestamped` = 1, `timestampedby` = :userid, `timestampedwhen` = FROM_UNIXTIME(:timestampedwhen), `timestamptoken` = :timestamptoken WHERE `id` = :id;";
 $req = $pdo->prepare($sql);
-$req->bindParam(':longname', $longname);
+$req->bindParam(':timestampedwhen', $token['response_time']);
+// the date recorded in the db has to match the creation time of the timestamp token
+$req->bindParam(':timestamptoken', $token['response_string']);
 $req->bindParam(':userid', $_SESSION['userid']);
 $req->bindParam(':id', $id);
 $res1 = $req->execute();
@@ -139,7 +135,7 @@ $req->bindParam(':id', $id);
 $res2 = $req->execute();
 $real_name = $req->fetch(PDO::FETCH_COLUMN)."-timestamped.pdf";
 
-$md5 = hash_file('md5', ELAB_ROOT."uploads/".$pdf_path);
+$md5 = hash_file('md5', ELAB_ROOT."uploads/$pdf_path");
 
 // DA REAL SQL
 $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, md5) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :md5)";
@@ -156,7 +152,7 @@ $res3 = $req->execute();
 if ($res1 && $res2 && $res3) {
     $msg_arr[] =
     $_SESSION['infos'] = $msg_arr;
-    header("Location: ../experiments.php?mode=view&id=".$id);
+    header("Location: ../experiments.php?mode=view&id=$id");
     exit;
 } else {
     die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));

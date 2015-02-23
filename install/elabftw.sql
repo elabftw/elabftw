@@ -337,3 +337,5 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('stamplogin', ''),
 ('stamppass', ''),
 ('stampshare', '1');
+('ts_provider_url', '')
+('ts_hash_algorithm', 'sha256')

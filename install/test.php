@@ -26,7 +26,7 @@
 /* install/testSQL.php to test if the SQL/email parameters are good */
 
 // Check if there is already a config file, die if yes.
-if(file_exists('../config.php')) {
+if (file_exists('../config.php')) {
     die('Remove config file.');
 }
 
@@ -35,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['mysql'])) {
     try {
         $pdo_options = array();
         $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-        $pdo = new PDO('mysql:host='.$_POST['db_host'].';dbname='.$_POST['db_name'], $_POST['db_user'], $_POST['db_password'], $pdo_options);
-    } catch(Exception $e) {
+        $pdo = new PDO('mysql:host=' . $_POST['db_host'] . ';dbname=' . $_POST['db_name'], $_POST['db_user'], $_POST['db_password'], $pdo_options);
+    } catch (Exception $e) {
         echo $e->getMessage();
         exit();
     }

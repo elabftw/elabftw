@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 require_once '../inc/common.php';
-require_once ELAB_ROOT.'inc/locale.php';
+require_once ELAB_ROOT . 'inc/locale.php';
 // Check ID
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
@@ -48,12 +48,12 @@ if (is_pos_int($newid)) {
     if ($type === 'experiments') {
         $msg_arr[] = _('Experiment successfully duplicated.');
         $_SESSION['infos'] = $msg_arr;
-        header('location: ../experiments.php?mode=edit&id='.$newid.'');
+        header('location: ../experiments.php?mode=edit&id=' . $newid . '');
         exit;
     } else {
         $msg_arr[] = _('Database entry successfully duplicated.');
         $_SESSION['infos'] = $msg_arr;
-        header('location: ../database.php?mode=edit&id='.$newid.'');
+        header('location: ../database.php?mode=edit&id=' . $newid . '');
         exit;
     }
 } else {

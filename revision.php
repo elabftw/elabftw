@@ -34,7 +34,7 @@ if (isset($_GET['exp_id']) && !empty($_GET['exp_id']) && is_pos_int($_GET['exp_i
 } else {
     die(_("The id parameter is not valid!"));
 }
-echo "<a href='experiments.php?mode=view&id=".$exp_id."'><h4><img src='img/undo.png' alt='<--' /> "._('Go back to the experiment')."</h4></a>";
+echo "<a href='experiments.php?mode=view&id=" . $exp_id . "'><h4><img src='img/undo.png' alt='<--' /> " . _('Go back to the experiment') . "</h4></a>";
 
 if (isset($_GET['action']) && $_GET['action'] === 'restore' && is_pos_int($_GET['rev_id'])) {
     // get the body of the restored time
@@ -75,7 +75,7 @@ $req = $pdo->prepare($sql);
 $req->bindParam(':id', $exp_id, PDO::PARAM_INT);
 $req->execute();
 $experiment = $req->fetch();
-echo "<div class='item'>"._('Current:')."<br>".$experiment['body']."</div>";
+echo "<div class='item'>" . _('Current:') . "<br>" . $experiment['body'] . "</div>";
 
 // Get list of revisions
 $sql = "SELECT * FROM experiments_revisions WHERE exp_id = :exp_id AND userid = :userid ORDER BY savedate DESC";
@@ -84,8 +84,8 @@ $req->execute(array(
     'exp_id' => $exp_id,
     'userid' => $_SESSION['userid']
 ));
-while($revisions = $req->fetch()) {
-    echo "<div class='item'>"._('Saved on:')." ".$revisions['savedate']." <a href='revision.php?exp_id=".$exp_id."&action=restore&rev_id=".$revisions['id']."'>"._('Restore')."</a><br>";
-    echo $revisions['body']."</div>";
+while ($revisions = $req->fetch()) {
+    echo "<div class='item'>" . _('Saved on:') . " " . $revisions['savedate'] . " <a href='revision.php?exp_id=" . $exp_id . "&action=restore&rev_id=" . $revisions['id'] . "'>" . _('Restore') . "</a><br>";
+    echo $revisions['body'] . "</div>";
 }
 require_once 'inc/footer.php';

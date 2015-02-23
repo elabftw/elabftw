@@ -77,9 +77,9 @@ if (file_exists('../config.php')) {
     try {
         $pdo_options = array();
         $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-        $pdo = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
+        $pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
     } catch (Exception $e) {
-        die('Error : '.$e->getMessage());
+        die('Error : ' . $e->getMessage());
     }
     $sql = "SELECT * FROM users";
     $req = $pdo->prepare($sql);
@@ -103,7 +103,7 @@ if (file_exists('../config.php')) {
 // CHECK WE ARE WITH HTTPS
 if (!using_ssl()) {
     // get the url to display a link to click (without the port)
-    $url = 'https://'.$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'];
+    $url = 'https://' . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'];
     $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server
         (<a href='https://github.com/elabftw/elabftw/wiki/Troubleshooting#wiki-switch-to-https'
         >see documentation</a>). Or click this link : <a href='$url'>$url</a>";

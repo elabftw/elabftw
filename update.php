@@ -90,7 +90,7 @@ if (!$table_is_here) {
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8");
     // populate table teams
     q("INSERT INTO teams (team_name, deletable_xp, link_name, link_href) VALUES
-     ('".get_config('lab_name')."', '".get_config('deletable_xp')."', '".get_config('link_name')."', '".get_config('link_href')."')");
+     ('".get_config('lab_name') . "', '" . get_config('deletable_xp') . "', '" . get_config('link_name') . "', '" . get_config('link_href') . "')");
     // add teams and group to other tables
     q("ALTER TABLE experiments ADD team int(10) unsigned not null after id;");
     q("ALTER TABLE items ADD team int(10) unsigned not null after id;");
@@ -241,7 +241,7 @@ if (strpos(get_config('lang'), '-')) {
 // add elab_root in config.php
 if (!defined('ELAB_ROOT')) {
     $path = substr(realpath(__FILE__), 0, -10);
-    $text2add = "define('ELAB_ROOT', '".$path."');";
+    $text2add = "define('ELAB_ROOT', '" . $path . "');";
     if (file_put_contents('config.php', $text2add, FILE_APPEND)) {
         echo ">>> Added constant ELAB_ROOT in file config.php\n";
     } else {

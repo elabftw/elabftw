@@ -73,9 +73,9 @@ if (isset($_POST['email'])) {
         if ($numrows === 1) {
             // Get info to build the URL
             $protocol = 'https://';
-            $reset_url = $_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
+            $reset_url = $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];
             // Generate unique link
-            $reset_link = $protocol.str_replace('app/reset', 'change-pass', $reset_url).'?key='.hash("sha256", uniqid(rand(), true)).'&userid='.$userid;
+            $reset_link = $protocol . str_replace('app/reset', 'change-pass', $reset_url) . '?key=' . hash("sha256", uniqid(rand(), true)) . '&userid=' . $userid;
             // Send an email with the reset link
             // Create the message
             $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
@@ -87,7 +87,7 @@ if (isset($_POST['email'])) {
             // Set the To addresses with an associative array
             ->setTo(array($email => 'Dori'))
             // Give it a body
-            ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $u_agent, $reset_link).$footer);
+            ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $u_agent, $reset_link) . $footer);
             $transport = Swift_SmtpTransport::newInstance(
                 get_config('smtp_address'),
                 get_config('smtp_port'),
@@ -151,7 +151,7 @@ if (isset($_POST['password']) &&
     // Create salt
     $salt = hash("sha512", uniqid(rand(), true));
     // Create hash
-    $passwordHash = hash("sha512", $salt.$_POST['password']);
+    $passwordHash = hash("sha512", $salt . $_POST['password']);
     // Get userid
     if (filter_var($_POST['userid'], FILTER_VALIDATE_INT)) {
         $userid = $_POST['userid'];

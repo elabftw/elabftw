@@ -52,7 +52,7 @@ if (strlen(get_team_config('stamplogin')) > 2) {
 
     $msg_arr[] = _('There was an error in the timestamping. Login credentials probably wrong or no more credits.');
     $_SESSION['errors'] = $msg_arr;
-    header("Location: ../experiments.php?mode=view&id=".$id);
+    header("Location: ../experiments.php?mode=view&id=" . $id);
     exit;
 }
 
@@ -60,13 +60,13 @@ if (strlen(get_team_config('stamplogin')) > 2) {
 // generate the pdf to timestamp
 require_once '../inc/classes/makepdf.class.php';
 $pdf = new MakePdf();
-$pdf_path = $pdf->create($id, 'experiments', ELAB_ROOT.'uploads');
+$pdf_path = $pdf->create($id, 'experiments', ELAB_ROOT . 'uploads');
 
 // generate the sha256 hash that we will send
-$hashedDataToTimestamp = hash_file('sha256', ELAB_ROOT."uploads/".$pdf_path);
+$hashedDataToTimestamp = hash_file('sha256', ELAB_ROOT . "uploads/" . $pdf_path);
 
 // CONFIGURE DATA TO SEND
-$dataToSend = array (
+$dataToSend = array(
     'hashAlgo' => 'SHA256',
     'withCert' => 'true',
     'hashValue' => $hashedDataToTimestamp
@@ -77,7 +77,7 @@ try {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, "https://ws.universign.eu/tsa/post/");
     curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    curl_setopt($ch, CURLOPT_USERPWD, $login.":".$password);
+    curl_setopt($ch, CURLOPT_USERPWD, $login . ":" . $password);
     curl_setopt($ch, CURLOPT_POST, count($dataToSend));
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($dataToSend));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -99,15 +99,15 @@ try {
             throw new Exception(_('There was an error in the timestamping. Login credentials probably wrong or no more credits.'));
         }
     } catch (Exception $e) {
-        dblog("Error", $_SESSION['userid'], "File: ".$e->getFile().", line ".$e->getLine().": ".$e->getMessage());
+        dblog("Error", $_SESSION['userid'], "File: " . $e->getFile() . ", line " . $e->getLine() . ": " . $e->getMessage());
         $msg_arr[] = _('There was an error with the timestamping. Experiment is NOT timestamped. Error has been logged.');
         $_SESSION['errors'] = $msg_arr;
-        header("Location: ../experiments.php?mode=view&id=".$id);
+        header("Location: ../experiments.php?mode=view&id=" . $id);
         exit;
 }
 
-$longname = hash("sha512", uniqid(rand(), true)).".asn1";
-$file_path = ELAB_ROOT.'uploads/'.$longname;
+$longname = hash("sha512", uniqid(rand(), true)) . ".asn1";
+$file_path = ELAB_ROOT . 'uploads/' . $longname;
 
 // save the timestamptoken
 try {
@@ -116,7 +116,7 @@ try {
     dblog('Error', $_SESSION['userid'], $e->getMessage());
     $msg_arr[] = _('There was an error with the timestamping. Experiment is NOT timestamped. Error has been logged.');
     $_SESSION['errors'] = $msg_arr;
-    header("Location: ../experiments.php?mode=view&id=".$id);
+    header("Location: ../experiments.php?mode=view&id=" . $id);
     exit;
 }
 
@@ -137,9 +137,9 @@ $sql = "SELECT elabid FROM experiments WHERE id = :id";
 $req = $pdo->prepare($sql);
 $req->bindParam(':id', $id);
 $res2 = $req->execute();
-$real_name = $req->fetch(PDO::FETCH_COLUMN)."-timestamped.pdf";
+$real_name = $req->fetch(PDO::FETCH_COLUMN) . "-timestamped.pdf";
 
-$md5 = hash_file('md5', ELAB_ROOT."uploads/".$pdf_path);
+$md5 = hash_file('md5', ELAB_ROOT . "uploads/" . $pdf_path);
 
 // DA REAL SQL
 $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, md5) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :md5)";
@@ -156,7 +156,7 @@ $res3 = $req->execute();
 if ($res1 && $res2 && $res3) {
     $msg_arr[] =
     $_SESSION['infos'] = $msg_arr;
-    header("Location: ../experiments.php?mode=view&id=".$id);
+    header("Location: ../experiments.php?mode=view&id=" . $id);
     exit;
 } else {
     die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));

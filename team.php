@@ -23,18 +23,19 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once('inc/common.php');
-require_once('inc/locale.php');
+require_once 'inc/common.php';
+require_once 'inc/locale.php';
 $page_title= _('Team'); 
 $selected_menu = 'Team';
-require_once('inc/head.php');
-require_once('inc/info_box.php');
+require_once 'inc/head.php';
+require_once 'inc/info_box.php';
 ?>
 <menu>
 <ul>
 <li class='tabhandle' id='tab1'><?php echo _('Members');?></li>
 <li class='tabhandle' id='tab2'><?php echo _('Statistics')?></li>
 <li class='tabhandle' id='tab3'><?php echo _('Tips and tricks');?></li>
+<li class='tabhandle' id='tab4'><?php echo _('Tools');?></li>
 </ul>
 </menu>
 <!-- *********************** -->
@@ -117,6 +118,18 @@ $totals = $count_req->fetch(PDO::FETCH_ASSOC);
         <li class='tip'><?php echo _('Once timestamped an experiment cannot be unlocked or modified. Only comments can be added.');?></li>
         </ul>
     </p>
+</div>
+
+<div class='divhandle' id='tab4div'>
+    <h3><?php echo _('Molecule drawer');?></h3>
+    <div class='box'>
+        <link rel="stylesheet" href="css/chemdoodle.css" type="text/css">
+        <script type="text/javascript" src="js/chemdoodle.js"></script>
+        <script type="text/javascript" src="js/chemdoodle-uis.js"></script>
+        <script>
+            var sketcher = new ChemDoodle.SketcherCanvas('sketcher', 500, 300, {oneMolecule:true});
+        </script>
+    </div>
 </div>
 
 <script>

@@ -41,72 +41,6 @@ if ($_SESSION['is_sysadmin'] != 1) {
 
 $die_msg = "There was a problem in the database update :/ Please report a bug : https://github.com/elabftw/elabftw/issues?state=open";
 
-// make a simple query
-function q($sql) {
-    global $pdo;
-    try {
-        $req = $pdo->prepare($sql);
-        $req->execute();
-    }
-    catch (PDOException $e)
-    {
-        echo "\nThe update failed. Here is the error :\n\n".$e->getMessage();
-        die();
-    }
-}
-
-function add_field($table, $field, $params, $added) {
-    global $pdo;
-    // first test if it's here already
-    $sql = "SHOW COLUMNS FROM $table";
-    $req = $pdo->prepare($sql);
-    $req->execute();
-    $field_is_here = false;
-    while ($show = $req->fetch()) {
-        if (in_array($field, $show)) {
-            $field_is_here = true;
-        }
-    }
-    // add field if it's not here
-    if (!$field_is_here) {
-        $sql = "ALTER TABLE $table ADD $field $params";
-        $req = $pdo->prepare($sql);
-        $result = $req->execute();
-
-        if($result) {
-            echo $added;
-        } else {
-             die($die_msg);
-        }
-    }
-}
-
-function rm_field($table, $field, $added) {
-    global $pdo;
-    // first test if it's here already
-    $sql = "SHOW COLUMNS FROM $table";
-    $req = $pdo->prepare($sql);
-    $req->execute();
-    $field_is_here = false;
-    while ($show = $req->fetch()) {
-        if (in_array($field, $show)) {
-            $field_is_here = true;
-        }
-    }
-    // rm field if it's here
-    if ($field_is_here) {
-        $sql = "ALTER TABLE $table DROP $field";
-        $req = $pdo->prepare($sql);
-        $result = $req->execute();
-
-        if($result) {
-            echo $added;
-        } else {
-             die($die_msg);
-        }
-    }
-}
-
 // UPDATE the config file path
 // check for config file
 if (!file_exists('config.php')) {
@@ -128,8 +62,8 @@ require_once 'inc/connect.php';
 
 // START //
 
-// BIG _('Team') AND GROUPS UPDATE
-// _('Create') table teams
+// BIG TEAM AND GROUPS UPDATE
+// CREATE table teams
 $sql = "SHOW TABLES";
 $req = $pdo->prepare($sql);
 $req->execute();

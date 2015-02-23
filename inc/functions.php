@@ -923,7 +923,9 @@ function custom_die()
  * 
  * @param string The SQL query
  * @return bool the return value of execute
-function q($sql) {
+ */
+function q($sql)
+{
     global $pdo;
     try {
         $req = $pdo->prepare($sql);
@@ -933,10 +935,9 @@ function q($sql) {
     catch (PDOException $e)
     {
         dblog('Error', 'mysql', $e->getMessage());
-        return false;
+        return $e->getMessage();
     }
 }
- */
 
 /**
  * Used in sysconfig.php to update config values
@@ -981,4 +982,75 @@ function using_ssl()
             return false;
         }
      */
+}
+
+/*
+ * Used in update.php
+ *
+ * @param string table
+ * @param string field
+ * @param string params the list of options
+ * @param string added the message to display on success
+ * @return string success or error message
+ */
+function add_field($table, $field, $params, $added)
+{
+    global $pdo;
+    // first test if it's here already
+    $sql = "SHOW COLUMNS FROM $table";
+    $req = $pdo->prepare($sql);
+    $req->execute();
+    $field_is_here = false;
+    while ($show = $req->fetch()) {
+        if (in_array($field, $show)) {
+            $field_is_here = true;
+        }
+    }
+    // add field if it's not here
+    if (!$field_is_here) {
+        $sql = "ALTER TABLE $table ADD $field $params";
+        $req = $pdo->prepare($sql);
+        $result = $req->execute();
+
+        if($result) {
+            echo $added;
+        } else {
+             die($die_msg);
+        }
+    }
+}
+
+/*
+ * Used in update.php
+ *
+ * @param string table
+ * @param string field
+ * @param string added the message to display on success
+ * @return string success or error message
+ */
+function rm_field($table, $field, $added)
+{
+    global $pdo;
+    // first test if it's here already
+    $sql = "SHOW COLUMNS FROM $table";
+    $req = $pdo->prepare($sql);
+    $req->execute();
+    $field_is_here = false;
+    while ($show = $req->fetch()) {
+        if (in_array($field, $show)) {
+            $field_is_here = true;
+        }
+    }
+    // rm field if it's here
+    if ($field_is_here) {
+        $sql = "ALTER TABLE $table DROP $field";
+        $req = $pdo->prepare($sql);
+        $result = $req->execute();
+
+        if($result) {
+            echo $added;
+        } else {
+             die($die_msg);
+        }
+    }
 }

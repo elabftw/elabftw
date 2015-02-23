@@ -37,7 +37,11 @@ if (strpos($_SERVER['SCRIPT_FILENAME'], 'experiments')) {
     <!-- fix some css here -->
     <style>
     .dropzone {
-        border: none;
+        border: 1px solid #fff;
+    }
+    .dropzone:hover {
+        border: 1px solid #29AEB9;
+        border-radius: 5px;
     }
     </style>
     <img src='img/attached.png' class='bot5px'> <h3 style='display:inline'><?php echo _('Attach a file');?></h3>

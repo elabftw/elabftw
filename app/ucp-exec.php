@@ -92,34 +92,36 @@ if (isset($_POST['currpass'])){
                 }
             }
         }
-        // Check _('Username') (sanitize and validate)
+        // Check USERNAME (sanitize and validate)
             if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
             $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
             // Check for duplicate username in DB
-            $sql = "SELECT * FROM users WHERE username='$username'";
-            $result = $pdo->query($sql);
-            $numrows = $result->rowCount();
-            $data = $result->fetch();
-            if($result) {
-                if($numrows > 0) {
-                    if($data['userid'] != $_SESSION['userid']){
+            $sql = "SELECT * FROM users WHERE username = :username";
+            $req = $pdo->prepare($sql);
+            $req->bindParam(':username', $username);
+            $result = $req->execute();
+            $numrows = $req->rowCount();
+            $data = $req->fetch();
+            if ($result) {
+                if ($numrows > 0) {
+                    if ($data['userid'] != $_SESSION['userid']) {
                     $msg_arr[] = _('Username already in use!');
                     $errflag = true;
+                    }
                 }
-            }
             }
         } else {
             $msg_arr[] = _('A mandatory field is missing!');
             $errflag = true;
         }
-        // Check _('Firstname') (sanitize only)
+        // Check FIRSTNAME (sanitize only)
             if ((isset($_POST['firstname'])) && (!empty($_POST['firstname']))) {
             $firstname = filter_var($_POST['firstname'], FILTER_SANITIZE_STRING);
         } else {
             $msg_arr[] = _('A mandatory field is missing!');
             $errflag = true;
         }
-        // Check _('Lastname') (sanitize only)
+        // Check LASTNAME (sanitize only)
             if ((isset($_POST['lastname'])) && (!empty($_POST['lastname']))) {
             $lastname = filter_var($_POST['lastname'], FILTER_SANITIZE_STRING);
         } else {
@@ -135,13 +137,15 @@ if (isset($_POST['currpass'])){
                 $errflag = true;
             } else {
                 // Check for duplicate email in DB
-                $sql = "SELECT * FROM users WHERE email='$email'";
-                $result = $pdo->query($sql);
-                $numrows = $result->rowCount(); 
-                $data = $result->fetch();
-                if($result) {
-                    if($numrows > 0) {
-                        if($data['userid'] != $_SESSION['userid']){
+                $sql = "SELECT * FROM users WHERE email = :email";
+                $req = $pdo->prepare($sql);
+                $req->bindParam(':email', $email);
+                $result = $req->execute();
+                $numrows = $req->rowCount();
+                $data = $req->fetch();
+                if ($result) {
+                    if ($numrows > 0) {
+                        if ($data['userid'] != $_SESSION['userid']) {
                         $msg_arr[] = _('Someone is already using that email address!');
                         $errflag = true;
                         }

@@ -14,7 +14,7 @@ class MakePdf {
         global $pdo;
 
         // SQL to get title, body and date
-        $sql = "SELECT * FROM $type WHERE id = $id";
+        $sql = "SELECT * FROM ".$type." WHERE id = ".$id;
         $req = $pdo->prepare($sql);
         $req->execute();
         $data = $req->fetch();
@@ -60,7 +60,7 @@ class MakePdf {
         $req->closeCursor();
 
         // SQL to get tags
-        $sql = "SELECT tag FROM ".$type."_tags WHERE item_id = $id";
+        $sql = "SELECT tag FROM ".$type."_tags WHERE item_id = ".$id;
         $req = $pdo->prepare($sql);
         $req->execute();
         $tags = null;

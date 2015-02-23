@@ -41,25 +41,26 @@ $email = '';
 $passwordHash = '';
 $salt = '';
 
-// Check _('Username') (sanitize and validate)
+// Check USERNAME (sanitize and validate)
 if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
     // Check for duplicate username in DB
-    $sql = "SELECT * FROM users WHERE username='$username'";
-    $result = $pdo->query($sql);
-    $numrows = $result->rowCount();
+    $sql = "SELECT * FROM users WHERE username= :username";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':username', $username);
+    $result = $req->execute();
+    $numrows = $req->rowCount();
     if ($result) {
         if ($numrows > 0) {
             $msg_arr[] = _('Username already in use!');
             $errflag = true;
         }
-        $result = null;
     }
 } else {
     $msg_arr[] = _('A mandatory field is missing!');
     $errflag = true;
 }
-// Check team (should be an int)
+// Check TEAM (should be an int)
 if (isset($_POST['team']) &&
     !empty($_POST['team']) &&
     filter_var($_POST['team'], FILTER_VALIDATE_INT)) {
@@ -93,15 +94,16 @@ if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
         $errflag = true;
     } else {
         // Check for duplicate email in DB
-        $sql = "SELECT * FROM users WHERE email='$email'";
-        $result = $pdo->query($sql);
-        $numrows = $result->rowCount();
+        $sql = "SELECT * FROM users WHERE email = :email";
+        $req = $pdo->prepare($sql);
+        $req->bindParam(':email', $email);
+        $result = $req->execute();
+        $numrows = $req->rowCount();
         if ($result) {
             if ($numrows > 0) {
                 $msg_arr[] = _('Someone is already using that email address!');
                 $errflag = true;
             }
-            $result= null;
         }
     }
 } else {
@@ -109,7 +111,7 @@ if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
     $errflag = true;
 }
 
-// Check _('Password')S
+// Check PASSWORDS
 if ((isset($_POST['cpassword'])) && (!empty($_POST['cpassword']))) {
     if ((isset($_POST['password'])) && (!empty($_POST['password']))) {
         // Create salt

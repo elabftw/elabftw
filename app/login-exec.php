@@ -68,21 +68,24 @@ if ($errflag) {
 
 // SQL for verification + actual login with cookies
 // Get salt
-$sql = "SELECT salt FROM users WHERE username='$username'";
-$result = $pdo->prepare($sql);
-$result->execute();
-$data = $result->fetch();
+$sql = "SELECT salt FROM users WHERE username = :username";
+$req = $pdo->prepare($sql);
+$req->bindParam(':username', $username);
+$req->execute();
+$data = $req->fetch();
 $salt = $data['salt'];
 // Create hash
 $passwordHash = hash("sha512", $salt.$_POST['password']);
 
 // Do we let people in if they are not validated by an admin ?
 if (get_config('admin_validate') == 1) {
-    $sql = "SELECT * FROM users WHERE username='$username' AND password='$passwordHash' AND validated= 1";
+    $sql = "SELECT * FROM users WHERE username = :username AND password = :passwordHash AND validated= 1";
 } else {
-    $sql = "SELECT * FROM users WHERE username='$username' AND password='$passwordHash'";
+    $sql = "SELECT * FROM users WHERE username = :username AND password = :passwordHash";
 }
 $req = $pdo->prepare($sql);
+$req->bindParam(':username', $username);
+$req->bindParam(':passwordHash', $passwordHash);
 $result = $req->execute();
 $numrows = $req->rowCount();
 //Check whether the query was successful or not

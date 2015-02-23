@@ -76,7 +76,7 @@ switch($_GET['type']) {
         if ($userid != $_SESSION['userid']) {
             $err_arr[] = _("You don't have the rights to lock/unlock this.");
             $_SESSION['errors'] = $err_arr;
-            header("Location: ../experiments.php?mode=view&id=$id");
+            header("Location: ../experiments.php?mode=view&id=".$id);
             exit();
         }
     }
@@ -100,7 +100,7 @@ switch($_GET['type']) {
             $locker_name = $req->fetchColumn();
             $err_arr[] = _('This experiment was locked by').' '.$locker_name.'. '._("You don't have the rights to lock/unlock this.");
             $_SESSION['errors'] = $err_arr;
-            header("Location: ../experiments.php?mode=view&id=$id");
+            header("Location: ../experiments.php?mode=view&id=".$id);
             exit();
         }
     }
@@ -114,7 +114,7 @@ switch($_GET['type']) {
     if ($action === 0 && $timestamped) {
             $err_arr[] = _('You cannot unlock or edit in any way a timestamped experiment.');
             $_SESSION['errors'] = $err_arr;
-            header("Location: ../experiments.php?mode=view&id=$id");
+            header("Location: ../experiments.php?mode=view&id=".$id);
             exit;
     }
         
@@ -128,7 +128,7 @@ switch($_GET['type']) {
             'id' => $id
         ));
         if ($result) {
-            header("Location: ../experiments.php?mode=view&id=$id");
+            header("Location: ../experiments.php?mode=view&id=".$id);
             exit;
         } else {
             die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
@@ -145,7 +145,7 @@ switch($_GET['type']) {
             'id' => $id
         ));
         if ($result) {
-            header("Location: ../database.php?mode=view&id=$id");
+            header("Location: ../database.php?mode=view&id=".$id);
             exit;
         } else {
             die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));

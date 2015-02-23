@@ -80,7 +80,7 @@ if ($count > 0) {
             }
             echo "><img class='thumb' src='".$thumbpath."' alt='thumbnail' /></a>";
         } elseif (in_array($ext, $common_extensions)) {
-            echo "<img class='thumb' src='img/thumb-$ext.png' alt='' />";
+            echo "<img class='thumb' src='img/thumb-".$ext.".png' alt='' />";
         } else { // uncommon extension without a nice image to display
             echo "<img class='thumb' src='img/thumb.png' alt='' />";
         }

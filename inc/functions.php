@@ -94,7 +94,7 @@ function get_ext($filename)
  * @param string $ext Extension of the file
  * @param string $dest Path to the place to save the thumbnail
  * @param int $desired_width Width of the thumbnail (height is automatic depending on width)
- * @return nothing
+ * @return null
  */
 function make_thumb($src, $ext, $dest, $desired_width)
 {
@@ -245,7 +245,7 @@ function search_item($type, $query, $userid)
  *
  * @param int $item_id The ID of the item for which we want the tags
  * @param string $table The table can be experiments_tags or items_tags
- * @return string|bool Will show the HTML for tags or false if there is no tags
+ * @return string|false Will show the HTML for tags or false if there is no tags
  */
 function show_tags($item_id, $table)
 {
@@ -274,7 +274,7 @@ function show_tags($item_id, $table)
  *
  * @param int $id The ID of the experiment to show
  * @param string $display Can be 'compact' or 'default'
- * @return string HTML of the single experiment
+ * @return string|null HTML of the single experiment
  */
 function showXP($id, $display)
 {
@@ -889,7 +889,6 @@ function dblog($type, $user, $body)
     global $pdo;
 
     // no need to check the params are they come from the code
-
     $sql = "INSERT INTO logs (type, user, body) VALUES (:type, :user, :body)";
     $req = $pdo->prepare($sql);
     $req->bindParam(':type', $type);
@@ -898,9 +897,8 @@ function dblog($type, $user, $body)
     try {
         $req->execute();
     } catch (Exception $e) {
-        die("Couln't not log message to database. Error is ".$e->getMessage());
+        return false;
     }
-
     return true;
 }
 /**
@@ -996,6 +994,7 @@ function using_ssl()
 function add_field($table, $field, $params, $added)
 {
     global $pdo;
+    $die_msg = "There was a problem in the database update :/ Please report a bug : https://github.com/elabftw/elabftw/issues?state=open";
     // first test if it's here already
     $sql = "SHOW COLUMNS FROM $table";
     $req = $pdo->prepare($sql);
@@ -1012,7 +1011,7 @@ function add_field($table, $field, $params, $added)
         $req = $pdo->prepare($sql);
         $result = $req->execute();
 
-        if($result) {
+        if ($result) {
             echo $added;
         } else {
              die($die_msg);
@@ -1031,6 +1030,7 @@ function add_field($table, $field, $params, $added)
 function rm_field($table, $field, $added)
 {
     global $pdo;
+    $die_msg = "There was a problem in the database update :/ Please report a bug : https://github.com/elabftw/elabftw/issues?state=open";
     // first test if it's here already
     $sql = "SHOW COLUMNS FROM $table";
     $req = $pdo->prepare($sql);
@@ -1047,7 +1047,7 @@ function rm_field($table, $field, $added)
         $req = $pdo->prepare($sql);
         $result = $req->execute();
 
-        if($result) {
+        if ($result) {
             echo $added;
         } else {
              die($die_msg);

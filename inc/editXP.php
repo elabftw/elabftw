@@ -127,7 +127,6 @@ while ($tags = $tagreq->fetch()) {
         ));
 
         while ($status = $req->fetch()) {
-            
             $status_arr[$status['id']] = $status['name'];
             // get also a JS array for update_status() that needs the color to set the border immediately
             echo "<script>
@@ -143,7 +142,7 @@ while ($tags = $tagreq->fetch()) {
             if ($experiment['status'] == $key) {
                 echo "selected ";
             }
-            echo "value='$key'>$value</option>";
+            echo "value='".$key."'>".$value."</option>";
         }
         ?>
         </select>

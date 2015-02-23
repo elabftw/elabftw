@@ -41,7 +41,7 @@ class formKey {
         $uniqid = uniqid(mt_rand(), true);
 
         // return a md5 hash of all that
-        return md5($ip.$uniqid);
+        return md5($ip . $uniqid);
 
     }
 
@@ -51,7 +51,7 @@ class formKey {
         // store the form key in the session
         $_SESSION['form_key'] = $this->formkey;
         // output the form key
-        echo "<input type='hidden' name='form_key' id='form_key' value='".$this->formkey."' />";
+        echo "<input type='hidden' name='form_key' id='form_key' value='" . $this->formkey . "' />";
     }
 
         //The constructor stores the form key (if one exists) in our class variable.

@@ -46,7 +46,7 @@ if (!isset($_POST['form_key']) || !$formKey->validate()) {
 if (is_pos_int($_POST['item_id'])) {
     $id = $_POST['item_id'];
 } else {
-    $id='';
+    $id = '';
     $msg_arr[] = _("The id parameter is not valid!");
     $errflag = true;
 }
@@ -62,7 +62,7 @@ $_SESSION['new_date'] = $date;
 if ($errflag) {
     $_SESSION['errors'] = $msg_arr;
     session_write_close();
-    header("location: ../experiments.php?mode=show&id=".$id);
+    header("location: ../experiments.php?mode=show&id=" . $id);
     exit;
 }
 
@@ -97,7 +97,7 @@ if ($result) {
     unset($_SESSION['new_title']);
     unset($_SESSION['new_date']);
     unset($_SESSION['errors']);
-    header("location: ../experiments.php?mode=view&id=".$id);
+    header("location: ../experiments.php?mode=view&id=" . $id);
     exit;
 } else {
     die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));

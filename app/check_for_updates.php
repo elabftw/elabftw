@@ -27,7 +27,7 @@
  * It will return a string with the error/status.
  */
 require_once '../inc/common.php';
-require_once ELAB_ROOT.'inc/locale.php';
+require_once ELAB_ROOT . 'inc/locale.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     /* before we do the check, we need to make sure :
@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // add a timeout, because if you need proxy, but don't have it, it will mess up things
     // 5 seconds
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT ,5); 
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5); 
 
     // get the json data and put in an array
     $result = json_decode(curl_exec($ch), true);
@@ -92,8 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // get curent version from local system
     $current_version = exec("git log -1 --format='%H'");
     if (get_config('debug') == 1) {
-        echo "latest : ".$latest_version."\n";
-        echo "current : ".$current_version."\n";
+        echo "latest : " . $latest_version . "\n";
+        echo "current : " . $current_version . "\n";
     }
     // do the check and display message if both versions differ
     // we check also the size of latest version, or we get the message if it couldn't connect

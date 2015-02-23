@@ -44,9 +44,9 @@ if (strpos($_SERVER['SCRIPT_FILENAME'], 'experiments')) {
         border-radius: 5px;
     }
     </style>
-    <img src='img/attached.png' class='bot5px'> <h3 style='display:inline'><?php echo _('Attach a file');?></h3>
+    <img src='img/attached.png' class='bot5px'> <h3 style='display:inline'><?php echo _('Attach a file'); ?></h3>
     <!-- additionnal parameters are added as GET params -->
-    <form action="app/upload.php?item_id=<?php echo $id;?>&type=<?php echo $type;?>"
+    <form action="app/upload.php?item_id=<?php echo $id; ?>&type=<?php echo $type; ?>"
         method="post"
         enctype="multipart/form-data"
         class="dropzone"
@@ -55,16 +55,16 @@ if (strpos($_SERVER['SCRIPT_FILENAME'], 'experiments')) {
 </section>
 <script>
 // we need this to reload the #filesdiv (div displaying uploaded files)
-var type = '<?php echo $type;?>';
+var type = '<?php echo $type; ?>';
 if (type == 'items') {
     type = 'database';
 }
-var item_id = '<?php echo $id;?>';
+var item_id = '<?php echo $id; ?>';
 
 // config for dropzone, id is camelCased.
 Dropzone.options.elabftwDropzone = {
     // i18n message to user
-    dictDefaultMessage: '<?php echo _('Drop files here to upload');?>',
+    dictDefaultMessage: '<?php echo _('Drop files here to upload'); ?>',
     maxFilesize: 2, // MB
     init: function() {
         this.on("complete", function() {

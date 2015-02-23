@@ -45,7 +45,7 @@ if (isset($_POST['filecomment'])) {
                 echo stripslashes($filecomment);
             } else { // Submitted comment is empty
                 // Get old comment
-                $sql = "SELECT comment FROM uploads WHERE id = ".$id;
+                $sql = "SELECT comment FROM uploads WHERE id = " . $id;
                 $req = $pdo->prepare($sql);
                 $req->execute();
                 $filecomment = $req->fetch();

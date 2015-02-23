@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 require_once '../inc/common.php';
-require_once ELAB_ROOT.'inc/locale.php';
+require_once ELAB_ROOT . 'inc/locale.php';
 $msg_arr = array();
 
 // What do we create ?
@@ -129,10 +129,10 @@ if ($result) {
     $msg_arr[] = _('New item created successfully.');
     $_SESSION['infos'] = $msg_arr;
     if ($type === 'experiments') {
-        header('location: ../experiments.php?mode=edit&id='.$pdo->lastInsertId().'');
+        header('location: ../experiments.php?mode=edit&id=' . $pdo->lastInsertId() . '');
         exit;
     } else {
-        header('location: ../database.php?mode=edit&id='.$pdo->lastInsertId().'');
+        header('location: ../database.php?mode=edit&id=' . $pdo->lastInsertId() . '');
         exit;
     }
 } else {

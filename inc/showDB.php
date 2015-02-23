@@ -40,19 +40,19 @@ $req->execute(array(
 
     <?php
     // 'Create new' dropdown menu
-    echo "<select onchange=go_url(this.value)><option value=''>"._('Create new')."</option>";
+    echo "<select onchange=go_url(this.value)><option value=''>" . _('Create new') . "</option>";
     while ($items_types = $req->fetch()) {
-        echo "<option value='app/create_item.php?type=".$items_types['id']."' name='type' ";
-        echo ">".$items_types['name']."</option>";
+        echo "<option value='app/create_item.php?type=" . $items_types['id'] . "' name='type' ";
+        echo ">" . $items_types['name'] . "</option>";
     }
     echo "</select>";
 
     // we do the request again to get the list again
     $req->execute();
-    echo "<span class='align_right'><select onchange=go_url(this.value)><option value=''>"._('Filter type')."</option>";
+    echo "<span class='align_right'><select onchange=go_url(this.value)><option value=''>" . _('Filter type') . "</option>";
     while ($items_types = $req->fetch()) {
-        echo "<option value='search.php?type=".$items_types['id']."' name='type' ";
-        echo ">".$items_types['name']."</option>";
+        echo "<option value='search.php?type=" . $items_types['id'] . "' name='type' ";
+        echo ">" . $items_types['name'] . "</option>";
     }
     ?>
     </select>
@@ -81,7 +81,7 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
 
     // show number of results found
     if (count($results_arr) > 1) {
-        echo _('Found').' '.count($results_arr).' '._('results.');
+        echo _('Found') . ' ' . count($results_arr) . ' ' . _('results.');
     } elseif (count($results_arr) == 1) {
         echo _('Found_1');
     } else {
@@ -105,7 +105,7 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $results_arr = array_reverse(array_unique($results_arr));
     // show number of results found
     if (count($results_arr) > 1) {
-        echo _('Found').' '.count($results_arr).' '._('results.').'.';
+        echo _('Found') . ' ' . count($results_arr) . ' ' . _('results.') . '.';
     } elseif (count($results_arr) == 1) {
         echo _('Found_1');
     } else {
@@ -134,7 +134,7 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
             $results_arr[] = $final_query['id'];
         }
         // loop the results array and display results
-        echo "<p>"._('Showing last 10 uploads:')."</p>";
+        echo "<p>" . _('Showing last 10 uploads:') . "</p>";
         foreach ($results_arr as $result_id) {
             showDB($result_id, $display);
         }

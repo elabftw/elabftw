@@ -14,14 +14,14 @@ class MakePdf {
         global $pdo;
 
         // SQL to get title, body and date
-        $sql = "SELECT * FROM ".$type." WHERE id = ".$id;
+        $sql = "SELECT * FROM " . $type . " WHERE id = " . $id;
         $req = $pdo->prepare($sql);
         $req->execute();
         $data = $req->fetch();
         $title = stripslashes($data['title']);
         $date = $data['date'];
         // the name of the pdf is needed in make_zip
-        $clean_title = $date."-".preg_replace('/[^A-Za-z0-9]/', '_', $title);
+        $clean_title = $date . "-" . preg_replace('/[^A-Za-z0-9]/', '_', $title);
         $body = stripslashes($data['body']);
         // ELABID
         if ($type === 'experiments') {
@@ -41,7 +41,7 @@ class MakePdf {
             if (isset($data['lockedwhen'])) {
                 $lockdate = explode(' ', $data['lockedwhen']);
                 // this will be added after the URL
-                $lockinfo = "<p class='elabid'>locked by ".$lockuser['firstname']." ".$lockuser['lastname']." on ".$lockdate[0]." at ".$lockdate[1].".</p>";
+                $lockinfo = "<p class='elabid'>locked by " . $lockuser['firstname'] . " " . $lockuser['lastname'] . " on " . $lockdate[0] . " at " . $lockdate[1] . ".</p>";
             } else {
                 $lockinfo = "";
             }
@@ -60,12 +60,12 @@ class MakePdf {
         $req->closeCursor();
 
         // SQL to get tags
-        $sql = "SELECT tag FROM ".$type."_tags WHERE item_id = ".$id;
+        $sql = "SELECT tag FROM " . $type . "_tags WHERE item_id = " . $id;
         $req = $pdo->prepare($sql);
         $req->execute();
         $tags = null;
         while ($data = $req->fetch()) {
-            $tags .= $data['tag'].' ';
+            $tags .= $data['tag'] . ' ';
         }
         $req->closeCursor();
 
@@ -94,8 +94,8 @@ class MakePdf {
                 if (empty($comments['firstname'])) {
                     $comments['firstname'] = '[deleted]';
                 }
-                $comments_block .= "<p>On ".$comments['datetime']." ".$comments['firstname']." ".$comments['lastname']." wrote :<br />";
-                $comments_block .= "<p>".$comments['comment']."</p>";
+                $comments_block .= "<p>On " . $comments['datetime'] . " " . $comments['firstname'] . " " . $comments['lastname'] . " wrote :<br />";
+                $comments_block .= "<p>" . $comments['comment'] . "</p>";
 
             }
             $comments_block .= "</section>";
@@ -106,13 +106,13 @@ class MakePdf {
         // build content of page
         // add css
         $content = "<link rel='stylesheet' media='all' href='css/pdf.css' />";
-        $content .= "<h1>".$title."</h1>
-            Date : ".format_date($date)."<br />
-            <em>Tags : ".$tags."</em><br />
-            Made by : ".$firstname." ".$lastname."
-            <hr><p>".$body."</p>";
+        $content .= "<h1>" . $title . "</h1>
+            Date : ".format_date($date) . "<br />
+            <em>Tags : ".$tags . "</em><br />
+            Made by : ".$firstname . " " . $lastname . "
+            <hr><p>".$body . "</p>";
         // Construct URL
-        $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+        $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
 
         // ATTACHED FILES
         // SQL to get attached files
@@ -140,14 +140,14 @@ class MakePdf {
             $content .= "<ul>";
             $real_name_cnt = count($real_name);
             for ($i = 0; $i < $real_name_cnt; $i++) {
-                $content .= "<li>".$real_name[$i];
+                $content .= "<li>" . $real_name[$i];
                 // add a comment ? don't add if it's the default text
                 if ($comment[$i] != 'Click to add a comment') {
-                    $content .= " (".stripslashes(htmlspecialchars_decode($comment[$i])).")";
+                    $content .= " (" . stripslashes(htmlspecialchars_decode($comment[$i])) . ")";
                 }
                 // add md5 sum ? don't add if we don't have it
                 if (strlen($md5[$i]) == '32') { // we have md5 sum
-                    $content .= "<br>md5 : ".$md5[$i];
+                    $content .= "<br>md5 : " . $md5[$i];
                 }
                 $content .= "</li>";
             }
@@ -160,7 +160,7 @@ class MakePdf {
             } else { // call from make_zip or timestamp.php
                 $url = str_replace(array('make_zip.php', 'app/timestamp.php'), 'experiments.php', $url);
             }
-            $full_url = $url."?mode=view&id=".$id;
+            $full_url = $url . "?mode=view&id=" . $id;
 
 
             // SQL to get linked items
@@ -193,16 +193,16 @@ class MakePdf {
                 }
                 $content .= "<ul>";
                 $row_cnt = $req->rowCount();
-                for ($i=0; $i<$row_cnt; $i++) {
+                for ($i = 0; $i < $row_cnt; $i++) {
                     // we need the url of the displayed item
                     if ($out === 'browser') {
                         $item_url = str_replace('experiments.php', 'database.php', $url);
                     } else { // call from make_zip or timestamp.php
                         $item_url = str_replace(array('experiments.php', 'app/timestamp.php'), 'database.php', $url);
                     }
-                    $full_item_url = $item_url."?mode=view&id=".$links_id_arr[$i];
+                    $full_item_url = $item_url . "?mode=view&id=" . $links_id_arr[$i];
 
-                    $content .= "<li>[".$links_type_arr[$i]."] - <a href='".$full_item_url."'>".$links_title_arr[$i]."</a></li>";
+                    $content .= "<li>[" . $links_type_arr[$i] . "] - <a href='" . $full_item_url . "'>" . $links_title_arr[$i] . "</a></li>";
                 }
                 $content .= "</ul></section>";
             }
@@ -210,8 +210,8 @@ class MakePdf {
             // Add comments
             $content .= $comments_block;
             // ELABID and URL
-            $content .= "<p class='elabid'>elabid : ".$elabid."</p>";
-            $content .= "<p class='elabid'>link : <a href='".$full_url."'>".$full_url."</a></p>";
+            $content .= "<p class='elabid'>elabid : " . $elabid . "</p>";
+            $content .= "<p class='elabid'>link : <a href='" . $full_url . "'>" . $full_url . "</a></p>";
 
         } else { // ITEM
             if ($out === 'browser') {
@@ -219,8 +219,8 @@ class MakePdf {
             } else { // call from make_zip
                 $url = str_replace('make_zip.php', 'database.php', $url);
             }
-            $full_url = $url."?mode=view&id=".$id;
-            $content .= "<p>URL : <a href='".$full_url."'>".$full_url."</a></p>";
+            $full_url = $url . "?mode=view&id=" . $id;
+            $content .= "<p>URL : <a href='" . $full_url . "'>" . $full_url . "</a></p>";
         }
 
 
@@ -233,10 +233,10 @@ class MakePdf {
 
 
         // Generate pdf with mpdf
-        require_once ELAB_ROOT.'vendor/autoload.php';
+        require_once ELAB_ROOT . 'vendor/autoload.php';
         $mpdf = new mPDF();
 
-        $mpdf->SetAuthor($firstname.' '.$lastname);
+        $mpdf->SetAuthor($firstname . ' ' . $lastname);
         $mpdf->SetTitle($title);
         $mpdf->SetSubject('eLabFTW pdf');
         $mpdf->SetKeywords($tags);
@@ -245,18 +245,18 @@ class MakePdf {
         if ($type == 'experiments') {
             // used by make_zip
             if ($out != 'browser') {
-                $mpdf->Output($out.'/'.$clean_title.'.pdf', 'F');
-                return $clean_title.'.pdf';
+                $mpdf->Output($out . '/' . $clean_title . '.pdf', 'F');
+                return $clean_title . '.pdf';
             } else {
-                $mpdf->Output($clean_title.'.pdf', 'I');
+                $mpdf->Output($clean_title . '.pdf', 'I');
             }
         } else { // database item(s)
             // used by make_zip
             if ($out != 'browser') {
-                $mpdf->Output($out.'/'.$clean_title.'.pdf', 'F');
-                return $clean_title.'.pdf';
+                $mpdf->Output($out . '/' . $clean_title . '.pdf', 'F');
+                return $clean_title . '.pdf';
             } else {
-                $mpdf->Output($clean_title.'.pdf', 'I');
+                $mpdf->Output($clean_title . '.pdf', 'I');
             }
         }
     }

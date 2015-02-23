@@ -35,14 +35,14 @@ function kdate()
     $month = $today['mon'];
     // add 0 in front of month if needed
     if (strlen($month) === 1) {
-        $month = '0'.$month;
+        $month = '0' . $month;
     }
     $day = $today['mday'];
     // add 0 in front of day if needed
     if (strlen($day) === 1) {
-        $day = '0'.$day;
+        $day = '0' . $day;
     }
-    return $today['year'].$month.$day;
+    return $today['year'] . $month . $day;
 }
 
 /**
@@ -55,15 +55,15 @@ function format_bytes($a_bytes)
 {
     // nice display of filesize
     if ($a_bytes < 1024) {
-        return $a_bytes .' B';
+        return $a_bytes . ' B';
     } elseif ($a_bytes < 1048576) {
-        return round($a_bytes / 1024, 2) .' KiB';
+        return round($a_bytes / 1024, 2) . ' KiB';
     } elseif ($a_bytes < 1073741824) {
         return round($a_bytes / 1048576, 2) . ' MiB';
     } elseif ($a_bytes < 1099511627776) {
         return round($a_bytes / 1073741824, 2) . ' GiB';
     } elseif ($a_bytes < 1125899906842624) {
-        return round($a_bytes / 1099511627776, 2) .' TiB';
+        return round($a_bytes / 1099511627776, 2) . ' TiB';
     } else {
         return 'That is a very big file you have there my friend.';
     }
@@ -112,7 +112,7 @@ function make_thumb($src, $ext, $dest, $desired_width)
     $height = imagesy($source_image);
 
     // find the "desired height" of this thumbnail, relative to the desired width
-    $desired_height = floor($height*($desired_width/$width));
+    $desired_height = floor($height * ($desired_width / $width));
 
     // create a new, "virtual" image
     $virtual_image = imagecreatetruecolor($desired_width, $desired_height);
@@ -261,9 +261,9 @@ function show_tags($item_id, $table)
         echo "<span class='tags'><img src='img/tags.png' alt='tags' /> ";
         while ($tags = $req->fetch()) {
             if ($table === 'experiments_tags') {
-                echo "<a href='experiments.php?mode=show&tag=".urlencode(stripslashes($tags['tag']))."'>".stripslashes($tags['tag'])."</a> ";
+                echo "<a href='experiments.php?mode=show&tag=" . urlencode(stripslashes($tags['tag'])) . "'>" . stripslashes($tags['tag']) . "</a> ";
             } else { // table is items_tags
-                echo "<a href='database.php?mode=show&tag=".urlencode(stripslashes($tags['tag']))."'>".stripslashes($tags['tag'])."</a> ";
+                echo "<a href='database.php?mode=show&tag=" . urlencode(stripslashes($tags['tag'])) . "'>" . stripslashes($tags['tag']) . "</a> ";
             }
         }
         echo "</span>";
@@ -293,9 +293,9 @@ function showXP($id, $display)
 
     if ($display === 'compact') {
         // COMPACT MODE //
-        echo "<section class='item_compact' style='border-left: 6px solid #".$experiments['color']."'>";
-        echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>";
-        echo "<span class='date date_compact'>".format_date($experiments['date'])."</span> ";
+        echo "<section class='item_compact' style='border-left: 6px solid #" . $experiments['color'] . "'>";
+        echo "<a href='experiments.php?mode=view&id=" . $experiments['id'] . "'>";
+        echo "<span class='date date_compact'>" . format_date($experiments['date']) . "</span> ";
         echo "<span style='padding-left:10px;'>";
         // show lock if item is locked on viewXP
         if ($experiments['locked']) {
@@ -305,9 +305,9 @@ function showXP($id, $display)
         echo "</a></span></section>";
     } else { // NOT COMPACT
         ?>
-        <section class="item" style='border-left: 6px solid #<?php echo $experiments['color'];?>'>
+        <section class="item" style='border-left: 6px solid #<?php echo $experiments['color']; ?>'>
         <?php
-        echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>";
+        echo "<a href='experiments.php?mode=view&id=" . $experiments['id'] . "'>";
         // show stamp if experiment is timestamped
         if ($experiments['timestamped']) {
             echo "<img class='align_right' src='img/check.png' alt='stamp' title='Timestamp OK' />";
@@ -320,7 +320,7 @@ function showXP($id, $display)
         // TITLE
         echo stripslashes($experiments['title']) . "</p></a>";
         // DATE
-        echo "<span class='date'><img class='image' src='img/calendar.png' /> ".format_date($experiments['date'])."</span> ";
+        echo "<span class='date'><img class='image' src='img/calendar.png' /> " . format_date($experiments['date']) . "</span> ";
         // _('Tags')
         echo show_tags($id, 'experiments_tags');
         // show attached if there is a file attached
@@ -382,11 +382,11 @@ function showDB($id, $display)
     if ($display === 'compact') {
         // COMPACT MODE //
         ?>
-            <section class='item_compact' style='border-left: 6px solid #<?php echo $item['bgcolor'];?>'>
-            <a href='database.php?mode=view&id=<?php echo $item['id'];?>'>
-            <span class='date date_compact'><?php echo $item['date'];?></span>
-            <h4 style='padding-left:10px;border-right:1px dotted #ccd;color:#<?php echo $item['bgcolor'];?>'><?php echo $item['name'];?> </h4>
-            <span style='margin-left:7px'><?php echo stripslashes($item['title']);?></span>
+            <section class='item_compact' style='border-left: 6px solid #<?php echo $item['bgcolor']; ?>'>
+            <a href='database.php?mode=view&id=<?php echo $item['id']; ?>'>
+            <span class='date date_compact'><?php echo $item['date']; ?></span>
+            <h4 style='padding-left:10px;border-right:1px dotted #ccd;color:#<?php echo $item['bgcolor']; ?>'><?php echo $item['name']; ?> </h4>
+            <span style='margin-left:7px'><?php echo stripslashes($item['title']); ?></span>
         <?php
         // STAR RATING read only
         show_stars($item['rating']);
@@ -394,8 +394,8 @@ function showDB($id, $display)
 
     } else { // NOT COMPACT
 
-        echo "<section class='item' style='border-left: 6px solid #".$item['bgcolor']."'>";
-        echo "<a href='database.php?mode=view&id=".$item['id']."'>";
+        echo "<section class='item' style='border-left: 6px solid #" . $item['bgcolor'] . "'>";
+        echo "<a href='database.php?mode=view&id=" . $item['id'] . "'>";
         // show attached if there is a file attached
         if (has_attachement($item['id'], 'items')) {
             echo "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
@@ -410,7 +410,7 @@ function showDB($id, $display)
         // TITLE
         echo stripslashes($item['title']) . "</p></a>";
         // ITEM TYPE
-        echo "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#".$item['bgcolor']."'>".$item['name']." </span>";
+        echo "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['bgcolor'] . "'>" . $item['name'] . " </span>";
         // _('Tags')
         echo show_tags($id, 'items_tags');
         echo "</section>";
@@ -544,9 +544,9 @@ function make_unique_csv($id, $type)
 
     if ($table === 'experiments') {
         // now let's get the URL so we can have a nice link in the csv
-        $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+        $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
         $url = str_replace('make_zip.php', 'experiments.php', $url);
-        $url .= "?mode=view&id=".$csv_data['id'];
+        $url .= "?mode=view&id=" . $csv_data['id'];
         $list[] = array(
             $csv_data['id'],
             $csv_data['date'],
@@ -559,9 +559,9 @@ function make_unique_csv($id, $type)
 
     } else { // items
         // now let's get the URL so we can have a nice link in the csv
-        $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+        $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
         $url = str_replace('make_zip.php', 'database.php', $url);
-        $url .= "?mode=view&id=".$csv_data['id'];
+        $url .= "?mode=view&id=" . $csv_data['id'];
         $list[] = array(
             $csv_data['id'],
             $csv_data['date'],
@@ -576,7 +576,7 @@ function make_unique_csv($id, $type)
 
     // make CSV file
     $filename = hash("sha512", uniqid(rand(), true));
-    $filepath = 'uploads/export/'.$filename;
+    $filepath = 'uploads/export/' . $filename;
 
     $fp = fopen($filepath, 'w+');
     // utf8 headers
@@ -599,7 +599,7 @@ function make_unique_csv($id, $type)
 function generate_elabid()
 {
     $date = kdate();
-    return $date."-".sha1(uniqid($date, true));
+    return $date . "-" . sha1(uniqid($date, true));
 }
 
 /**
@@ -636,14 +636,14 @@ function duplicate_item($id, $type)
         }
 
         // SQL to get data from the experiment we duplicate
-        $sql = "SELECT title, body, visibility FROM experiments WHERE id = ".$id;
+        $sql = "SELECT title, body, visibility FROM experiments WHERE id = " . $id;
         $req = $pdo->prepare($sql);
         $req->execute();
         $data = $req->fetch();
 
         // let's add something at the end of the title to show it's a duplicate
         // capital i looks good enough
-        $title = $data['title'].' I';
+        $title = $data['title'] . ' I';
 
         // SQL for duplicateXP
         $sql = "INSERT INTO experiments(team, title, date, body, status, elabid, visibility, userid) VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
@@ -662,7 +662,7 @@ function duplicate_item($id, $type)
 
     if ($type === 'items') {
         // SQL to get data from the item we duplicate
-        $sql = "SELECT * FROM items WHERE id = ".$id;
+        $sql = "SELECT * FROM items WHERE id = " . $id;
         $req = $pdo->prepare($sql);
         $req->execute();
         $data = $req->fetch();
@@ -734,7 +734,7 @@ function duplicate_item($id, $type)
 
     } else { // DB
         // TAGS
-        $sql = "SELECT tag FROM items_tags WHERE item_id = ".$id;
+        $sql = "SELECT tag FROM items_tags WHERE item_id = " . $id;
         $req = $pdo->prepare($sql);
         $req->execute();
         $tag_number = $req->rowCount();
@@ -831,7 +831,7 @@ function get_config($conf_name)
     $sql = "SELECT * FROM config";
     $req = $pdo->prepare($sql);
     $req->execute();
-    $config = $req->fetchAll(PDO::FETCH_COLUMN|PDO::FETCH_GROUP);
+    $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
     return $config[$conf_name][0];
 }
 
@@ -878,7 +878,7 @@ function check_executable($cmd)
  */
 function format_date($date, $s = '.')
 {
-    return $date[0].$date[1].$date[2].$date[3].$s.$date['4'].$date['5'].$s.$date['6'].$date['7'];
+    return $date[0] . $date[1] . $date[2] . $date[3] . $s . $date['4'] . $date['5'] . $s . $date['6'] . $date['7'];
 }
 
 
@@ -953,7 +953,7 @@ function update_config($array)
     global $pdo;
     $result = false;
     foreach ($array as $name => $value) {
-        $sql = "UPDATE config SET conf_value = '".$value."' WHERE conf_name = '".$name."';";
+        $sql = "UPDATE config SET conf_value = '" . $value . "' WHERE conf_name = '" . $name . "';";
         $req = $pdo->prepare($sql);
         $result = $req->execute();
     }

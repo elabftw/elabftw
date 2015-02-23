@@ -117,7 +117,7 @@ if ((isset($_POST['cpassword'])) && (!empty($_POST['cpassword']))) {
         // Create salt
         $salt = hash("sha512", uniqid(rand(), true));
         // Create hash
-        $passwordHash = hash("sha512", $salt.$_POST['password']);
+        $passwordHash = hash("sha512", $salt . $_POST['password']);
         // Check for password length
         if (strlen($_POST['password']) <= 7) {
             $msg_arr[] = _('Password must contain at least 8 characters.');
@@ -176,7 +176,7 @@ if ($test['usernb'] == 0) {
 
 // WILL NEW USER BE VALIDATED ?
 // here an admin or sysadmin won't need validation
-if (get_config('admin_validate')  == 1 && $group == 4) { // validation is required for normal user
+if (get_config('admin_validate') == 1 && $group == 4) { // validation is required for normal user
     $validated = 0; // so new user will need validation
 } else {
     $validated = 1;
@@ -244,7 +244,7 @@ if ($result) {
         // Set the To addresses with an associative array
         ->setTo(array($admin['email'] => 'Admin eLabFTW'))
         // Give it a body
-        ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account.').$footer);
+        ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account.') . $footer);
         $transport = Swift_SmtpTransport::newInstance(
             get_config('smtp_address'),
             get_config('smtp_port'),

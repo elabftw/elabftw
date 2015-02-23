@@ -30,24 +30,24 @@ $selected_menu = null;
 require_once 'inc/head.php';
 
 // SQL to get number of experiments
-$sql = "SELECT COUNT(*) FROM experiments WHERE userid = ".$_SESSION['userid'];
+$sql = "SELECT COUNT(*) FROM experiments WHERE userid = " . $_SESSION['userid'];
 $req = $pdo->prepare($sql);
 $req->execute();
 
 $count = $req->fetch();
 
 // SQL for profile
-$sql = "SELECT * FROM users WHERE userid = ".$_SESSION['userid'];
+$sql = "SELECT * FROM users WHERE userid = " . $_SESSION['userid'];
 $req = $pdo->prepare($sql);
 $req->execute();
 $data = $req->fetch();
 
 echo "<section class='box'>";
-echo "<img src='img/user.png' alt='user' /> <h4>"._('Infos')."</h4>";
+echo "<img src='img/user.png' alt='user' /> <h4>" . _('Infos') . "</h4>";
 echo "<div class='center'>
-    <p>".$data['firstname']." ".$data['lastname']." (".$data['email'].")</p>
-    <p>".$count[0]." "._('experiments done since')." ".date("l jS \of F Y", $data['register_date'])
-    ."<p><a href='ucp.php'>"._('Go to user control panel')."</a>";
+    <p>".$data['firstname'] . " " . $data['lastname'] . " (" . $data['email'] . ")</p>
+    <p>".$count[0] . " " . _('experiments done since') . " " . date("l jS \of F Y", $data['register_date'])
+    ."<p><a href='ucp.php'>" . _('Go to user control panel') . "</a>";
 echo "</div>";
 echo "</section>";
 require_once 'inc/statistics.php';

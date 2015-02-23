@@ -43,22 +43,22 @@ if ($count > 1) {
 }
 if ($count > 0) {
     echo "<div class='box'>";
-    echo "<img src='img/attached.png' class='bot5px'> <h3 style='display:inline'>".ngettext('Attached file', 'Attached files', $count)."</h3>";
+    echo "<img src='img/attached.png' class='bot5px'> <h3 style='display:inline'>" . ngettext('Attached file', 'Attached files', $count) . "</h3>";
     echo "<div class='row'>";
     while ($uploads_data = $req->fetch()) {
         echo "<div class='col-md-4 col-sm-6'>";
         echo "<div class='thumbnail'>";
         // show the delete button only in edit mode, not in view mode
         if ($_GET['mode'] === 'edit') {
-            echo "<a class='align_right' href='app/delete_file.php?id=".$uploads_data['id']."&type=".$uploads_data['type']."&item_id=".$uploads_data['item_id']."' onClick=\"return confirm('Delete this file ?');\">";
+            echo "<a class='align_right' href='app/delete_file.php?id=" . $uploads_data['id'] . "&type=" . $uploads_data['type'] . "&item_id=" . $uploads_data['item_id'] . "' onClick=\"return confirm('Delete this file ?');\">";
             echo "<img src='img/small-trash.png' title='delete' alt='delete' /></a>";
         } // end if it is in edit mode
 
         // get file extension
         $ext = filter_var(get_ext($uploads_data['real_name']), FILTER_SANITIZE_STRING);
-        $filepath = 'uploads/'.$uploads_data['long_name'];
-        $filesize = filesize('uploads/'.$uploads_data['long_name']);
-        $thumbpath = 'uploads/'.$uploads_data['long_name'].'_th.'.$ext;
+        $filepath = 'uploads/' . $uploads_data['long_name'];
+        $filesize = filesize('uploads/' . $uploads_data['long_name']);
+        $thumbpath = 'uploads/' . $uploads_data['long_name'] . '_th.' . $ext;
 
         // list of image type we can deal with the GD lib
         $image_extensions = array('jpg', 'jpeg', 'JPG', 'JPEG', 'png', 'PNG', 'gif', 'GIF');
@@ -74,27 +74,27 @@ if ($count > 0) {
         // only display the thumbnail if the file is here
         if (file_exists($thumbpath) && in_array($ext, $image_extensions)) {
             // we add rel='gallery' to the images for fancybox to display it as an album (possibility to go next/previous)
-            echo "<a href='uploads/".$uploads_data['long_name']."' class='fancybox' rel='gallery' ";
+            echo "<a href='uploads/" . $uploads_data['long_name'] . "' class='fancybox' rel='gallery' ";
             if ($uploads_data['comment'] != 'Click to add a comment') {
-                echo "title='".$uploads_data['comment']."'";
+                echo "title='" . $uploads_data['comment'] . "'";
             }
-            echo "><img class='thumb' src='".$thumbpath."' alt='thumbnail' /></a>";
+            echo "><img class='thumb' src='" . $thumbpath . "' alt='thumbnail' /></a>";
         } elseif (in_array($ext, $common_extensions)) {
-            echo "<img class='thumb' src='img/thumb-".$ext.".png' alt='' />";
+            echo "<img class='thumb' src='img/thumb-" . $ext . ".png' alt='' />";
         } else { // uncommon extension without a nice image to display
             echo "<img class='thumb' src='img/thumb.png' alt='' />";
         }
 
         // now display the name + comment with icons
         echo "<div class='caption'><img src='img/attached.png' class='bot5px' alt='attached' /> ";
-        echo "<a href='app/download.php?f=".$uploads_data['long_name']."&name=".$uploads_data['real_name']."' target='_blank'>".$uploads_data['real_name']."</a>";
-        echo "<span class='smallgray' style='display:inline'> ".format_bytes(filesize('uploads/'.$uploads_data['long_name']))."</span><br>";
+        echo "<a href='app/download.php?f=" . $uploads_data['long_name'] . "&name=" . $uploads_data['real_name'] . "' target='_blank'>" . $uploads_data['real_name'] . "</a>";
+        echo "<span class='smallgray' style='display:inline'> " . format_bytes(filesize('uploads/' . $uploads_data['long_name'])) . "</span><br>";
         // if we are in view mode, we don't show the comment if it's the default text
         // this is to avoid showing 'Click to add a comment' where in fact you can't click to add a comment because
         // your are in view mode
         $comment = "<img src='img/comment.png' class='bot5px' alt='comment' />
-                    <p class='editable inline' id='filecomment_".$uploads_data['id']."'>".
-                    stripslashes($uploads_data['comment'])."</p>";
+                    <p class='editable inline' id='filecomment_".$uploads_data['id'] . "'>" .
+                    stripslashes($uploads_data['comment']) . "</p>";
 
         if ($_GET['mode'] === 'edit' || $uploads_data['comment'] != 'Click to add a comment') {
             echo $comment;

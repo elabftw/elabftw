@@ -46,7 +46,7 @@
         ?>
         <!-- SYSADMIN MENU -->
         <span class='strong'>
-        <a id='check_for_updates' href='#'><?php echo _('Check for updates');?></a><a href='sysconfig.php'><?php echo _('Sysadmin panel');?></a>
+        <a id='check_for_updates' href='#'><?php echo _('Check for updates'); ?></a><a href='sysconfig.php'><?php echo _('Sysadmin panel'); ?></a>
         <script>
         $('#check_for_updates').click(function() {
             var jqxhr = $.post('app/check_for_updates.php', function(answer) {
@@ -57,7 +57,7 @@
     <?php
     }
     if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
-        echo "<a href='admin.php'>"._('Admin panel');
+        echo "<a href='admin.php'>" . _('Admin panel');
         // show counter of unvalidated users
         $sql = "SELECT count(validated) FROM users WHERE validated = 0 AND team = :team";
         $req = $pdo->prepare($sql);
@@ -65,14 +65,14 @@
         $req->execute();
         $unvalidated = $req->fetchColumn();
         if ($unvalidated > 0) {
-            echo " <span class='badge'>".$unvalidated."</span>";
+            echo " <span class='badge'>" . $unvalidated . "</span>";
         }
         echo "</a>";
     }
     echo "</span></p><div class='footer_right'>";
-    echo _('Powered by')." <a href='http://www.elabftw.net'>eLabFTW</a><br>";
+    echo _('Powered by') . " <a href='http://www.elabftw.net'>eLabFTW</a><br>";
     ?>
-    <?php echo _('Page generated in').' ';?><span class='strong'><?php echo round((microtime(true) - $start), 5);?> seconds</span></div>
+    <?php echo _('Page generated in') . ' '; ?><span class='strong'><?php echo round((microtime(true) - $start), 5); ?> seconds</span></div>
 </footer>
 
 <!-- todolist -->
@@ -91,15 +91,15 @@ if (isset($_SESSION['auth'])) {
     // show debug info only to admins
     if (isset($_SESSION['auth']) && get_config('debug') == 1 && $_SESSION['is_admin'] == 1) {
         echo "Session array : ";
-        echo '<pre>'.var_dump($_SESSION).'</pre>';
+        echo '<pre>' . var_dump($_SESSION) . '</pre>';
         echo "<br>";
         echo "Cookie : ";
-        echo '<pre>'.var_dump($_COOKIE).'</pre>';
+        echo '<pre>' . var_dump($_COOKIE) . '</pre>';
         echo "<br>";
     }
     // show TODOlist
     echo "<script>
-    key('".$_SESSION['prefs']['shortcuts']['todo']."', function(){
+    key('".$_SESSION['prefs']['shortcuts']['todo'] . "', function(){
         showPanel();
     });
     </script>";

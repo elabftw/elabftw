@@ -70,9 +70,9 @@ if (isset($_POST['db_password']) && !empty($_POST['db_password'])) {
 // connect to DB
 try {
     $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-    $pdo = new PDO('mysql:host='.$db_host.';dbname='.$db_name, $db_user, $db_password, $pdo_options);
+    $pdo = new PDO('mysql:host=' . $db_host . ';dbname=' . $db_name, $db_user, $db_password, $pdo_options);
 } catch (Exception $e) {
-    die('Error : '.$e->getMessage());
+    die('Error : ' . $e->getMessage());
 }
 
 // now import the structure
@@ -105,14 +105,14 @@ foreach ($lines as $line) {
 
 // the new file to write to
 $config_file = '../config.php';
-$elab_root = substr(realpath(__FILE__), 0, -20).'/';
+$elab_root = substr(realpath(__FILE__), 0, -20) . '/';
 // what we will write
 $config = "<?php
-define('DB_HOST', '".$db_host."');
-define('DB_NAME', '".$db_name."');
-define('DB_USER', '".$db_user."');
-define('DB_PASSWORD', '".$db_password."');
-define('ELAB_ROOT', '".$elab_root."');
+define('DB_HOST', '".$db_host . "');
+define('DB_NAME', '".$db_name . "');
+define('DB_USER', '".$db_user . "');
+define('DB_PASSWORD', '".$db_password . "');
+define('ELAB_ROOT', '".$elab_root . "');
 ";
 
 // we try to write content to file and propose the file for download if we can't write to it

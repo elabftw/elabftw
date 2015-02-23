@@ -38,7 +38,7 @@ $start = microtime(true);
 // Random title
 $ftw_arr = array();
 // Lots of 'For The World' so the other ones appear more rarely
-for ($i=0; $i<200; $i++) {
+for ($i = 0; $i < 200; $i++) {
     $ftw_arr[] = 'For The World';
 }
 // Now the fun ones
@@ -74,7 +74,7 @@ $ftw_arr[] = 'Flash The Watch';
 shuffle($ftw_arr);
 $ftw = $ftw_arr[0];
 
-echo "<title>".(isset($page_title)?$page_title:"Lab manager")." - eLab ".$ftw."</title>"?>
+echo "<title>" . (isset($page_title) ? $page_title : "Lab manager") . " - eLab " . $ftw . "</title>"?>
 <!-- CSS -->
 <!-- Bootstrap -->
 <link rel="stylesheet" media="all" href="js/bootstrap/dist/css/bootstrap.min.css">
@@ -110,7 +110,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
         $action_target = 'experiments.php';
     }
     ?>
-    <form id='big_search' method='get' action='<?php echo $action_target;?>'>
+    <form id='big_search' method='get' action='<?php echo $action_target; ?>'>
     <input id='big_search_input' type='search' name='q' size='50' value='<?php
     if (isset($_GET['q'])) {
         echo filter_var($_GET['q'], FILTER_SANITIZE_STRING);
@@ -124,26 +124,26 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     if ($selected_menu == 'Experiments') {
         echo " class='selected'";
     }
-    echo ">".ngettext('Experiment', 'Experiments', 2)."</a>";
+    echo ">" . ngettext('Experiment', 'Experiments', 2) . "</a>";
     echo "<a href='database.php?mode=show'";
     if ($selected_menu == 'Database') {
         echo " class='selected'";
     }
-    echo ">"._('Database')."</a>";
+    echo ">" . _('Database') . "</a>";
 
     echo "<a href='team.php'";
     if ($selected_menu == 'Team') {
         echo " class='selected'";
     }
-    echo ">"._('Team')."</a>";
+    echo ">" . _('Team') . "</a>";
 
     echo "<a href='search.php'";
     if ($selected_menu == 'Search') {
         echo " class='selected'";
     }
-    echo ">"._('Search')."</a>";
+    echo ">" . _('Search') . "</a>";
 
-    echo "<a href='".get_team_config('link_href')."' target='_blank'>".get_team_config('link_name')."</a></span>";
+    echo "<a href='" . get_team_config('link_href') . "' target='_blank'>" . get_team_config('link_name') . "</a></span>";
 
     echo "</nav>";
 } else { // not logged in, show only logo, no menu
@@ -155,9 +155,9 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 if (isset($_SESSION['auth'])) {
     ?>
     <div>
-        <?php echo _('Howdy,').' ';?><a href='profile.php' title='<?php echo _('Profile');?>'><?php echo $_SESSION['username'];?></a><br>
-        <a href='ucp.php'><img src='img/settings.png' alt='<?php echo _('Settings');?>' title='<?php echo _('Settings');?>' /></a> | 
-        <a href='app/logout.php'><img src='img/logout.png' alt='<?php echo _('Logout');?>' title='<?php echo _('Logout');?>' /></a>
+        <?php echo _('Howdy,') . ' '; ?><a href='profile.php' title='<?php echo _('Profile'); ?>'><?php echo $_SESSION['username']; ?></a><br>
+        <a href='ucp.php'><img src='img/settings.png' alt='<?php echo _('Settings'); ?>' title='<?php echo _('Settings'); ?>' /></a> | 
+        <a href='app/logout.php'><img src='img/logout.png' alt='<?php echo _('Logout'); ?>' title='<?php echo _('Logout'); ?>' /></a>
     </div>
     <?php
 }
@@ -168,4 +168,4 @@ if (isset($_SESSION['auth'])) {
 </div>
 </noscript>
 <!-- TITLE -->
-<h2><?php echo $page_title;?></h2>
+<h2><?php echo $page_title; ?></h2>

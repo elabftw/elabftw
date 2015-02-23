@@ -75,7 +75,7 @@ $req->execute();
 $data = $req->fetch();
 $salt = $data['salt'];
 // Create hash
-$passwordHash = hash("sha512", $salt.$_POST['password']);
+$passwordHash = hash("sha512", $salt . $_POST['password']);
 
 // Do we let people in if they are not validated by an admin ?
 if (get_config('admin_validate') == 1) {

@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 echo "<section class='box'>";
-echo "<img src='img/cloud.png' alt='' /> <h4>"._('Tag cloud')."</h4>";
+echo "<img src='img/cloud.png' alt='' /> <h4>" . _('Tag cloud') . "</h4>";
 echo "<div id='tagcloud'>";
 // 1. Create an array with tag -> count
 $sql = "SELECT tag, COUNT(id) AS total
@@ -41,10 +41,10 @@ if ($count > 10) {
     // max occurence = first result in array
     $maxoccur = $full[0][1];
     // min occurenc = last result in array
-    $minoccur = $full[$count-1][1];
+    $minoccur = $full[$count - 1][1];
 
     // 2nd SQL to get the tags unsorted
-    $sql = "SELECT tag, COUNT(id) AS total FROM experiments_tags WHERE userid = ".$_SESSION['userid']." GROUP BY tag";
+    $sql = "SELECT tag, COUNT(id) AS total FROM experiments_tags WHERE userid = " . $_SESSION['userid'] . " GROUP BY tag";
     $req = $pdo->prepare($sql);
     $req->execute();
     $spread = $maxoccur - $minoccur;
@@ -53,7 +53,7 @@ if ($count > 10) {
     }
     while ($data = $req->fetch()) {
         // Calculate ratio
-        $ratio = floor((($data[1] - $minoccur) / $spread)*100);
+        $ratio = floor((($data[1] - $minoccur) / $spread) * 100);
         if ($ratio < 10) {
             $class = 'c1';
         } elseif ($ratio >= 10 && $ratio < 20) {
@@ -75,7 +75,7 @@ if ($count > 10) {
         } else {
             $class = 'c10';
         }
-        echo "<a href='experiments.php?mode=show&q=".$data[0]."' class='".$class."'>".stripslashes($data[0])."</a> ";
+        echo "<a href='experiments.php?mode=show&q=" . $data[0] . "' class='" . $class . "'>" . stripslashes($data[0]) . "</a> ";
     }
     // TAGCLOUD
     echo "</div>";

@@ -63,54 +63,54 @@ if ($experiment['locked'] == 1) {
 
 // BEGIN CONTENT
 ?>
-    <menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' class='bot5px' alt='' /> <?php echo _('Back to experiments listing');?></a></menu>
-<section class='box' id='main_section' style='border-left: 6px solid #<?php echo $experiment['color'];?>'>
-<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','exp', 'experiments.php')" />
+    <menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' class='bot5px' alt='' /> <?php echo _('Back to experiments listing'); ?></a></menu>
+<section class='box' id='main_section' style='border-left: 6px solid #<?php echo $experiment['color']; ?>'>
+<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id; ?>','exp', 'experiments.php')" />
 <!-- ADD TAG FORM -->
-<img src='img/tags.png' class='bot5px' alt='tags' /> <h4><?php echo _('Tags');?></h4><span class='smallgray'> (<?php echo _('Click a tag to remove it');?>)</span>
+<img src='img/tags.png' class='bot5px' alt='tags' /> <h4><?php echo _('Tags'); ?></h4><span class='smallgray'> (<?php echo _('Click a tag to remove it'); ?>)</span>
 <div class='tags'>
 <span id='tags_div'>
 <?php
-$sql = "SELECT id, tag FROM experiments_tags WHERE item_id = ".$id;
+$sql = "SELECT id, tag FROM experiments_tags WHERE item_id = " . $id;
 $tagreq = $pdo->prepare($sql);
 $tagreq->execute();
 // DISPLAY TAGS
 while ($tags = $tagreq->fetch()) {
-    echo "<span class='tag'><a onclick='delete_tag(".$tags['id'].",".$id.")'>";
-    echo stripslashes($tags['tag'])."</a></span>";
+    echo "<span class='tag'><a onclick='delete_tag(" . $tags['id'] . "," . $id . ")'>";
+    echo stripslashes($tags['tag']) . "</a></span>";
 } //end while tags
 ?>
 </span>
-<input type="text" name="tag" id="addtaginput" placeholder="<?php echo _('Add a tag');?>" />
+<input type="text" name="tag" id="addtaginput" placeholder="<?php echo _('Add a tag'); ?>" />
 </div>
 <!-- END ADD TAG -->
 <!-- BEGIN EDITXP FORM -->
 <form id="editXP" name="editXP" method="post" action="app/editXP-exec.php" enctype='multipart/form-data'>
 <!-- form key -->
 <?php // $formKey->output_formkey(); ?>
-<input name='item_id' type='hidden' value='<?php echo $id;?>' />
+<input name='item_id' type='hidden' value='<?php echo $id; ?>' />
 
 <div class='row'>
 
     <div class='col-md-4'>
         <img src='img/calendar.png' class='bot5px' title='date' alt='calendar' />
-        <h4><?php echo _('Date');?></h4><br>
+        <h4><?php echo _('Date'); ?></h4><br>
         <!-- TODO if firefox has support for it: type = date -->
-        <input name='date' id='datepicker' size='8' type='text' value='<?php echo $experiment['date'];?>' />
+        <input name='date' id='datepicker' size='8' type='text' value='<?php echo $experiment['date']; ?>' />
     </div>
 
     <div class='col-md-4'>
         <img src='img/eye.png' class='bot5px' alt='visibility' />
-        <h4><?php echo _('Visibility');?></h4><br>
+        <h4><?php echo _('Visibility'); ?></h4><br>
         <select id="visibility_form" name="visibility" onchange="update_visibility(this.value)">
-            <option id='option_team' value="team"><?php echo _('Only the team');?></option>
-            <option id='option_user' value="user" <?php if ($experiment['visibility'] === 'user') echo "selected";?>><?php echo _('Only me');?></option>
+            <option id='option_team' value="team"><?php echo _('Only the team'); ?></option>
+            <option id='option_user' value="user" <?php if ($experiment['visibility'] === 'user') echo "selected"; ?>><?php echo _('Only me'); ?></option>
         </select>
-        <span id='visibility_msg_div'><?php echo _('Updated!');?></span>
+        <span id='visibility_msg_div'><?php echo _('Updated!'); ?></span>
     </div>
 
     <div class='col-md-4'>
-        <img src='img/status.png' class='bot5px' alt='status' /> <h4><?php echo _('Status');?></h4><br>
+        <img src='img/status.png' class='bot5px' alt='status' /> <h4><?php echo _('Status'); ?></h4><br>
         <script>
         // this array is used by updateStatus() to get the color of new status 
         var status_arr = Array();
@@ -130,7 +130,7 @@ while ($tags = $tagreq->fetch()) {
             $status_arr[$status['id']] = $status['name'];
             // get also a JS array for update_status() that needs the color to set the border immediately
             echo "<script>
-                status_arr['".$status['id']."'] =  '".$status['color']."';
+                status_arr['".$status['id'] . "'] =  '" . $status['color'] . "';
                 </script>";
         }
         ?>
@@ -142,7 +142,7 @@ while ($tags = $tagreq->fetch()) {
             if ($experiment['status'] == $key) {
                 echo "selected ";
             }
-            echo "value='".$key."'>".$value."</option>";
+            echo "value='" . $key . "'>" . $value . "</option>";
         }
         ?>
         </select>
@@ -151,7 +151,7 @@ while ($tags = $tagreq->fetch()) {
 </div>
 
 <br>
-<h4><?php echo _('Title');?></h4><br>
+<h4><?php echo _('Title'); ?></h4><br>
 <input id='title_input' name='title' rows="1" value="
 <?php
 if (empty($_SESSION['errors'])) {
@@ -163,20 +163,20 @@ if (empty($_SESSION['errors'])) {
 " required />
 
 <br>
-<h4><?php echo ngettext('Experiment', 'Experiments', 1);?></h4><br>
+<h4><?php echo ngettext('Experiment', 'Experiments', 1); ?></h4><br>
 <textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">
-    <?php echo stripslashes($experiment['body']);?>
+    <?php echo stripslashes($experiment['body']); ?>
 </textarea>
 
 <!-- SUBMIT BUTTON -->
 <div id='saveButton'>
-    <button type="submit" name="Submit" class='button'><?php echo _('Save and go back');?></button>
+    <button type="submit" name="Submit" class='button'><?php echo _('Save and go back'); ?></button>
 </div>
 </form><!-- end editXP form -->
 
 <!-- LINKED ITEMS -->
 <section>
-    <img src='img/link.png' class='bot5px' class='bot5px'> <h4 style='display:inline'><?php echo _('Linked items');?></h4>
+    <img src='img/link.png' class='bot5px' class='bot5px'> <h4 style='display:inline'><?php echo _('Linked items'); ?></h4>
     <div id='links_div'>
         <?php
         // DISPLAY LINKED ITEMS
@@ -196,9 +196,9 @@ if (empty($_SESSION['errors'])) {
         if ($req->rowcount() > 0) {
             echo "<ul>";
             while ($links = $req->fetch()) {
-                echo "<li>- [".$links['name']."] - <a href='database.php?mode=view&id=".$links['itemid']."'>".
-                    stripslashes($links['title'])."</a>";
-                echo "<a onclick='delete_link(".$links['linkid'].", ".$id.")'>
+                echo "<li>- [" . $links['name'] . "] - <a href='database.php?mode=view&id=" . $links['itemid'] . "'>" .
+                    stripslashes($links['title']) . "</a>";
+                echo "<a onclick='delete_link(" . $links['linkid'] . ", " . $id . ")'>
                 <img src='img/small-trash.png' title='delete' alt='delete' /></a></li>";
             } // end while
             echo "</ul>";
@@ -207,8 +207,8 @@ if (empty($_SESSION['errors'])) {
         }
         ?>
     </div>
-    <p class='inline'><?php echo _('Add a link');?></p>
-    <input id='linkinput' size='60' type="text" name="link" placeholder="<?php echo _('from the database');?>" />
+    <p class='inline'><?php echo _('Add a link'); ?></p>
+    <input id='linkinput' size='60' type="text" name="link" placeholder="<?php echo _('from the database'); ?>" />
 </section>
 <span class='align_right'>
 <?php
@@ -222,7 +222,7 @@ $req->execute(array(
 $rev_count = $req->fetch();
 $count = intval($rev_count[0]);
 if ($count > 0) {
-    echo $count." ".ngettext('revision available.', 'revisions available.', $count)." <a href='revision.php?exp_id=".$id."'>"._('Show history')."</a>";
+    echo $count . " " . ngettext('revision available.', 'revisions available.', $count) . " <a href='revision.php?exp_id=" . $id . "'>" . _('Show history') . "</a>";
 }
 ?>
 
@@ -248,7 +248,7 @@ $getalltags->execute(array(
     'userid' => $_SESSION['userid']
 ));
 while ($tag = $getalltags->fetch()) {
-    echo "'".$tag[0]."',";
+    echo "'" . $tag[0] . "',";
 }?>
 		];
 		$( "#addtaginput" ).autocomplete({
@@ -257,7 +257,7 @@ while ($tag = $getalltags->fetch()) {
 	});
 // DELETE TAG
 function delete_tag(tag_id, item_id) {
-    var you_sure = confirm('<?php echo _('Delete this?');?>');
+    var you_sure = confirm('<?php echo _('Delete this?'); ?>');
     if (you_sure == true) {
         $.post('app/delete.php', {
             id: tag_id,
@@ -287,7 +287,7 @@ function addTagOnEnter(e) { // the argument here is the event (needed to detect 
         })
         // reload the tags list
         .success(function () {
-            $("#tags_div").load("experiments.php?mode=edit&id=<?php echo $id;?> #tags_div");
+            $("#tags_div").load("experiments.php?mode=edit&id=<?php echo $id; ?> #tags_div");
             // clear input field
             $("#addtaginput").val("");
             return false;
@@ -319,7 +319,7 @@ while ($link = $getalllinks->fetch()) {
         $link_name = str_replace("'", "", html_entity_decode(substr($link['title'], 0, 60), ENT_QUOTES));
         // remove also the % (see issue #62)
         $link_name = str_replace("%", "", $link_name);
-        echo "'".$link['itemid']." - ".$link_type." - ".$link_name."',";
+        echo "'" . $link['itemid'] . " - " . $link_type . " - " . $link_name . "',";
     }
 }?>
 		];
@@ -329,7 +329,7 @@ while ($link = $getalllinks->fetch()) {
 	});
 // DELETE LINK
 function delete_link(id, item_id) {
-    var you_sure = confirm('<?php echo _('Delete this?');?>');
+    var you_sure = confirm('<?php echo _('Delete this?'); ?>');
     if (you_sure == true) {
         $.post('app/delete.php', {
             type: 'link',
@@ -364,7 +364,7 @@ function addLinkOnEnter(e) { // the argument here is the event (needed to detect
                 })
                 // reload the link list
                 .done(function () {
-                    $("#links_div").load("experiments.php?mode=edit&id=<?php echo $id;?> #links_div");
+                    $("#links_div").load("experiments.php?mode=edit&id=<?php echo $id; ?> #links_div");
                     // clear input field
                     $("#linkinput").val("");
                     return false;
@@ -380,7 +380,7 @@ function updateStatus(status) {
                 type: "POST",
                 url: "app/quicksave.php",
                 data: {
-                id : <?php echo $id;?>,
+                id : <?php echo $id; ?>,
                 status : status,
                 }
                 // change the color of the item border
@@ -400,7 +400,7 @@ function update_visibility(visibility) {
                 type: "POST",
                 url: "app/quicksave.php",
                 data: {
-                id : <?php echo $id;?>,
+                id : <?php echo $id; ?>,
                 visibility : visibility,
                 }
             }).done(function() {
@@ -419,8 +419,8 @@ function update_visibility(visibility) {
 // READY ? GO !!
 $(document).ready(function() {
     // KEYBOARD SHORTCUTS
-    key('<?php echo $_SESSION['prefs']['shortcuts']['create'];?>', function(){location.href = 'app/create_item.php?type=exp'});
-    key('<?php echo $_SESSION['prefs']['shortcuts']['submit'];?>', function(){document.forms['editXP'].submit()});
+    key('<?php echo $_SESSION['prefs']['shortcuts']['create']; ?>', function(){location.href = 'app/create_item.php?type=exp'});
+    key('<?php echo $_SESSION['prefs']['shortcuts']['submit']; ?>', function(){document.forms['editXP'].submit()});
 
     // hide the little 'Updated !' message
     $('#visibility_msg_div').hide();
@@ -448,7 +448,7 @@ $(document).ready(function() {
                 type: "POST",
                 url: "app/quicksave.php",
                 data: {
-                id : <?php echo $id;?>,
+                id : <?php echo $id; ?>,
                 type : 'experiments',
                 // we need this to get the updated content
                 title : document.getElementById('title_input').value,
@@ -461,7 +461,7 @@ $(document).ready(function() {
         setup : function(editor) {
             editor.addShortcut("ctrl+shift+d", "add date at cursor", function() { addDateOnCursor(); });
         },
-        language : '<?php echo $_SESSION['prefs']['lang'];?>'
+        language : '<?php echo $_SESSION['prefs']['lang']; ?>'
     });
 
     // ADD TAG JS
@@ -481,7 +481,7 @@ $(document).ready(function() {
         echo "
     window.onbeforeunload = function (e) {
           e = e || window.event;
-          return '"._('Do you want to navigate away from this page? Unsaved changes will be lost!')."';
+          return '"._('Do you want to navigate away from this page? Unsaved changes will be lost!') . "';
     };";
     }
 ?>

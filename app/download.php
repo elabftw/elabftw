@@ -54,9 +54,9 @@ if (!isset($_GET['name']) || empty($_GET['name'])) {
 // SET FILE PATH
 // the zip archives will be in the export folder
 if (isset($_GET['type']) && $_GET['type'] == 'zip') {
-    $file_path = ELAB_ROOT.'uploads/export/'.$long_filename;
+    $file_path = ELAB_ROOT . 'uploads/export/' . $long_filename;
 } else {
-    $file_path = ELAB_ROOT.'uploads/'.$long_filename;
+    $file_path = ELAB_ROOT . 'uploads/' . $long_filename;
 }
 
 
@@ -94,7 +94,7 @@ header("Content-Length: " . $fsize);
 $file = @fopen($file_path, "rb");
 if ($file) {
     while (!feof($file)) {
-        echo fread($file, 1024*8);
+        echo fread($file, 1024 * 8);
         flush();
         if (connection_status() != 0) {
             fclose($file);

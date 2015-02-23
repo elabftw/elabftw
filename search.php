@@ -224,7 +224,7 @@ if (isset($_GET)) {
         $tags = '';
     }
     if (isset($_GET['body']) && !empty($_GET['body'])) {
-         $body = filter_var(check_body($_GET['body']), FILTER_SANITIZE_STRING);
+        $body = filter_var(check_body($_GET['body']), FILTER_SANITIZE_STRING);
     } else {
         $body = '';
     }

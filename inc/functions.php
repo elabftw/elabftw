@@ -306,7 +306,7 @@ function showXP($id, $display)
         echo "<a href='experiments.php?mode=view&id=" . $experiments['id'] . "'>";
         // show stamp if experiment is timestamped
         if ($experiments['timestamped']) {
-            echo "<img class='align_right' src='img/check.png' alt='stamp' title='Timestamp OK' />";
+            echo "<img class='align_right' src='img/check.png' alt='stamp' title='Timestamped' />";
         }
         echo "<p class='title'>";
         // show lock if item is locked on viewXP

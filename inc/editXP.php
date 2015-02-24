@@ -24,9 +24,6 @@
 *                                                                               *
 ********************************************************************************/
 // inc/editXP.php
-// formkey stuff
-//require_once('inc/classes/formkey.class.php');
-//$formKey = new formKey();
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
 <?php

@@ -29,7 +29,7 @@ require_once '../inc/functions.php';
 require_once '../inc/locale.php';
 // formkey stuff
 require_once '../inc/classes/formkey.class.php';
-$formKey = new formKey();
+$formKey = new \elabftw\elabftw\FormKey();
 
 //Array to store validation errors
 $msg_arr = array();

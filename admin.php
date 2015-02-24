@@ -37,7 +37,7 @@ require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 // formkey stuff
 require_once 'inc/classes/formkey.class.php';
-$formKey = new formKey();
+$formKey = new \elabftw\elabftw\FormKey();
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
 <script src="js/raphael/raphael-min.js"></script>

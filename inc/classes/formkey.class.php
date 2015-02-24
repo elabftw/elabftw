@@ -24,13 +24,14 @@
 *                                                                               *
 ********************************************************************************/
 // Note : for a page with several <form>, this will work only for 1 <form> !
+namespace elabftw\elabftw;
 
-class formKey {
+class FormKey {
     // here we store the generated form key
     private $formkey;
 
     // here we store the old form key
-    private $old_formKey;
+    private $oldFormKey;
 
     // function to generate the form key
     private function generate_formkey() {
@@ -54,22 +55,16 @@ class formKey {
         echo "<input type='hidden' name='form_key' id='form_key' value='" . $this->formkey . "' />";
     }
 
-        //The constructor stores the form key (if one exists) in our class variable.
-        function __construct() {
-        //We need the previous key so we store it  
-        if (isset($_SESSION['form_key'])) {  
-            $this->old_formKey = $_SESSION['form_key'];  
-        }  
-        }
+    //The constructor stores the form key (if one exists) in our class variable.
+    function __construct() {
+    //We need the previous key so we store it
+    if (isset($_SESSION['form_key'])) {
+        $this->oldFormKey = $_SESSION['form_key'];
+    }
+    }
 
-        public function validate() {
-            // we use the old formKey and not the new generated one
-            if ($_POST['form_key'] == $this->old_formKey) {
-                // the key is valid
-                return true;
-            } else {
-                // the key is not valid
-                return false;
-            }
-        }
+    public function validate() {
+        // we use the old formKey and not the new generated one
+        return $_POST['form_key'] == $this->oldFormKey;
+    }
 }

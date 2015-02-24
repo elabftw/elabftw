@@ -35,7 +35,7 @@ require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 // formkey stuff
 require_once('inc/classes/formkey.class.php');
-$formKey = new formKey();
+$formKey = new \elabftw\elabftw\FormKey();
 
 // if we are not in https, die saying we work only in https
 if (!using_ssl()) {

@@ -24,9 +24,6 @@
 *                                                                               *
 ********************************************************************************/
 require_once '../inc/common.php';
-// formkey stuff
-//require_once 'inc/classes/formkey.class.php';
-//$formKey = new formKey();
 
 //Array to store validation errors
 $msg_arr = array();
@@ -34,14 +31,6 @@ $msg_arr = array();
 $errflag = false;
 
 // CHECKS
-/*
-// Check the form_key
-if (!isset($_POST['form_key']) || !$formKey->validate()) {
-    // form key is invalid
-    $msg_arr[] = 'The form key is invalid !';
-    $errflag = true;
-}
- */
 // ID
 if (is_pos_int($_POST['item_id'])) {
     $id = $_POST['item_id'];

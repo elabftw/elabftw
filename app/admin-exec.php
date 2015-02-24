@@ -39,7 +39,7 @@ $email = '';
 
 // FORMKEY
 require_once ELAB_ROOT . 'inc/classes/formkey.class.php';
-$formKey = new formKey();
+$formKey = new \elabftw\elabftw\FormKey();
 
 // VALIDATE USERS
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {

@@ -57,10 +57,10 @@ class FormKey {
 
     //The constructor stores the form key (if one exists) in our class variable.
     public function __construct() {
-    //We need the previous key so we store it
-    if (isset($_SESSION['form_key'])) {
-        $this->oldFormKey = $_SESSION['form_key'];
-    }
+        //We need the previous key so we store it
+        if (isset($_SESSION['form_key'])) {
+            $this->oldFormKey = $_SESSION['form_key'];
+        }
     }
 
     public function validate() {

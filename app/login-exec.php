@@ -29,7 +29,7 @@ require_once '../inc/functions.php';
 require_once '../inc/locale.php';
 // formkey stuff
 require_once '../inc/classes/formkey.class.php';
-$formKey = new formKey();
+$formKey = new \elabftw\elabftw\FormKey();
 
 //Array to store validation errors
 $msg_arr = array();
@@ -75,7 +75,7 @@ $req->execute();
 $data = $req->fetch();
 $salt = $data['salt'];
 // Create hash
-$passwordHash = hash("sha512", $salt.$_POST['password']);
+$passwordHash = hash("sha512", $salt . $_POST['password']);
 
 // Do we let people in if they are not validated by an admin ?
 if (get_config('admin_validate') == 1) {

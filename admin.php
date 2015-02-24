@@ -37,7 +37,7 @@ require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 // formkey stuff
 require_once 'inc/classes/formkey.class.php';
-$formKey = new formKey();
+$formKey = new \elabftw\elabftw\FormKey();
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
 <script src="js/raphael/raphael-min.js"></script>
@@ -63,11 +63,11 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
     while ($data = $user_req->fetch()) {
         $message .= "<li><label>
             <input type='checkbox' name='validate[]' 
-            value='".$data['userid']."'> ".$data['firstname']." ".$data['lastname']." (".$data['email'].")
+            value='".$data['userid'] . "'> " . $data['firstname'] . " " . $data['lastname'] . " (" . $data['email'] . ")
             </label></li>";
     }
     $message .= "</ul><div class='center'>
-    <button class='button' type='submit'>"._('Submit')."</button></div>";
+    <button class='button' type='submit'>"._('Submit') . "</button></div>";
     display_message('error', $message);
     // as this will 'echo', we need to call it at the right moment. It will not go smoothly into $message.
     $formKey->output_formkey();
@@ -77,52 +77,52 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
 
 <menu>
     <ul>
-    <li class='tabhandle' id='tab1'><?php echo _('Teams');?></li>
-        <li class='tabhandle' id='tab2'><?php echo _('Users');?></li>
-        <li class='tabhandle' id='tab3'><?php echo _('Status');?></li>
-        <li class='tabhandle' id='tab4'><?php echo _('Types of items');?></li>
-        <li class='tabhandle' id='tab5'><?php echo _('Experiments template');?></li>
-        <li class='tabhandle' id='tab6'><?php echo _('Import CSV');?></li>
+    <li class='tabhandle' id='tab1'><?php echo _('Teams'); ?></li>
+        <li class='tabhandle' id='tab2'><?php echo _('Users'); ?></li>
+        <li class='tabhandle' id='tab3'><?php echo _('Status'); ?></li>
+        <li class='tabhandle' id='tab4'><?php echo _('Types of items'); ?></li>
+        <li class='tabhandle' id='tab5'><?php echo _('Experiments template'); ?></li>
+        <li class='tabhandle' id='tab6'><?php echo _('Import CSV'); ?></li>
     </ul>
 </menu>
 
 <!-- TABS 1 -->
 <div class='divhandle' id='tab1div'>
 
-<h3><?php echo _('Configure your team');?></h3>
+<h3><?php echo _('Configure your team'); ?></h3>
     <form method='post' action='app/admin-exec.php'>
         <p>
-        <label for='deletable_xp'><?php echo _('Users can delete experiments:');?></label>
+        <label for='deletable_xp'><?php echo _('Users can delete experiments:'); ?></label>
         <select name='deletable_xp' id='deletable_xp'>
             <option value='1'<?php
                 if (get_team_config('deletable_xp') == 1) { echo " selected='selected'"; } ?>
-                    ><?php echo _('Yes');?></option>
+                    ><?php echo _('Yes'); ?></option>
             <option value='0'<?php
                     if (get_team_config('deletable_xp') == 0) { echo " selected='selected'"; } ?>
-                        ><?php echo _('No');?></option>
+                        ><?php echo _('No'); ?></option>
         </select>
         </p>
         <p>
-        <label for='link_name'><?php echo _('Name of the link in the top menu:');?></label>
-        <input type='text' value='<?php echo get_team_config('link_name');?>' name='link_name' id='link_name' />
+        <label for='link_name'><?php echo _('Name of the link in the top menu:'); ?></label>
+        <input type='text' value='<?php echo get_team_config('link_name'); ?>' name='link_name' id='link_name' />
         </p>
         <p>
-        <label for='link_href'><?php echo _('Address where this link should point:');?></label>
-        <input type='url' value='<?php echo get_team_config('link_href');?>' name='link_href' id='link_href' />
+        <label for='link_href'><?php echo _('Address where this link should point:'); ?></label>
+        <input type='url' value='<?php echo get_team_config('link_href'); ?>' name='link_href' id='link_href' />
         </p>
         <p>
         <label for='ts_provider_url'><?php echo _('URL for external timestamping service:');?></label>
         <input type='url' value='<?php echo get_team_config('ts_provider_url');?>' name='ts_provider_url' id='ts_provider_url' />
         <span class='smallgray'><?php echo _('This should be the URL used for RFC3616-compliant timestamping requests.');?></span>
         </p>
-        <label for='stamplogin'><?php echo _('Login for external timestamping service:');?></label>
+        <label for='stamplogin'><?php echo _('Login for external timestamping service:'); ?></label>
         <input type='text' value='<?php echo get_team_config('stamplogin');?>' name='stamplogin' id='stamplogin' />
-        <span class='smallgray'><?php echo _('This should be the login associated with your timestamping service provider');?></span>
+        <span class='smallgray'><?php echo _('This should be the login associated with your timestamping service provider'); ?></span>
         </p>
         <p>
-        <label for='stamppass'><?php echo _('Password for external timestamping service:');?></label>
-        <input type='password' value='<?php echo get_team_config('stamppass');?>' name='stamppass' id='stamppass' />
-        <span class='smallgray'><?php echo _('Your timestamping service provider password');?></span>
+        <label for='stamppass'><?php echo _('Password for external timestamping service:'); ?></label>
+        <input type='password' value='<?php echo get_team_config('stamppass'); ?>' name='stamppass' id='stamppass' />
+        <span class='smallgray'><?php echo _('Your timestamping service provider password'); ?></span>
         </p>
         <div class='center'>
             <button type='submit' name='submit_config' class='submit button'>Save</button>
@@ -134,7 +134,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
 <!-- TABS 2 -->
 <div class='divhandle' id='tab2div'>
 
-    <h3><?php echo _('Edit users');?></h3>
+    <h3><?php echo _('Edit users'); ?></h3>
     <?php
     // we show only the validated users here
     $user_req->bindValue(':validated', 1);
@@ -142,31 +142,31 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
     while ($users = $user_req->fetch()) {
         ?>
         <div class='simple_border'>
-            <a class='trigger_users_<?php echo $users['userid'];?>'><?php echo $users['firstname']." ".$users['lastname'];?></a>
-            <div class='toggle_users_<?php echo $users['userid'];?>'>
+            <a class='trigger_users_<?php echo $users['userid']; ?>'><?php echo $users['firstname'] . " " . $users['lastname']; ?></a>
+            <div class='toggle_users_<?php echo $users['userid']; ?>'>
         <br>
                 <form method='post' action='app/admin-exec.php' id='admin_user_form'>
-                    <input type='hidden' value='<?php echo $users['userid'];?>' name='userid' />
-                    <label class='block' for='edituser_firstname'><?php echo _('Firstname');?></label>
-                    <input  id='edituser_firstname' type='text' value='<?php echo $users['firstname'];?>' name='firstname' />
-                    <label class='block' for='edituser_lastname'><?php echo _('Lastname');?></label>
-                    <input  id='edituser_lastname' type='text' value='<?php echo $users['lastname'];?>' name='lastname' />
-                    <label class='block' for='edituser_username'><?php echo _('Username');?></label>
-                    <input  id='edituser_username' type='text' value='<?php echo $users['username'];?>' name='username' />
-                    <label class='block' for='edituser_email'><?php echo _('Email');?></label>
-                    <input id='edituser_email' type='email' value='<?php echo $users['email'];?>' name='email' /><br>
+                    <input type='hidden' value='<?php echo $users['userid']; ?>' name='userid' />
+                    <label class='block' for='edituser_firstname'><?php echo _('Firstname'); ?></label>
+                    <input  id='edituser_firstname' type='text' value='<?php echo $users['firstname']; ?>' name='firstname' />
+                    <label class='block' for='edituser_lastname'><?php echo _('Lastname'); ?></label>
+                    <input  id='edituser_lastname' type='text' value='<?php echo $users['lastname']; ?>' name='lastname' />
+                    <label class='block' for='edituser_username'><?php echo _('Username'); ?></label>
+                    <input  id='edituser_username' type='text' value='<?php echo $users['username']; ?>' name='username' />
+                    <label class='block' for='edituser_email'><?php echo _('Email'); ?></label>
+                    <input id='edituser_email' type='email' value='<?php echo $users['email']; ?>' name='email' /><br>
         <br>
-        <label for='validated'><?php echo _('Has an active account?');?></label>
+        <label for='validated'><?php echo _('Has an active account?'); ?></label>
         <select name='validated' id='validated'>
             <option value='1'<?php
                     if ($users['validated'] == 1) { echo " selected='selected'"; } ?>
-                        ><?php echo _('Yes');?></option>
+                        ><?php echo _('Yes'); ?></option>
             <option value='0'<?php
                 if ($users['validated'] == 0) { echo " selected='selected'"; } ?>
-                    ><?php echo _('No');?></option>
+                    ><?php echo _('No'); ?></option>
         </select>
         <br>
-        <label for='usergroup'><?php echo _('Group:');?></label>
+        <label for='usergroup'><?php echo _('Group:'); ?></label>
         <select name='usergroup' id='usergroup'>
 <?php
             if ($_SESSION['is_sysadmin'] == 1) {
@@ -188,22 +188,22 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
             >Users</option>
         </select>
         <br>
-        <label for='users_reset_password'><?php echo _('Reset user password:');?></label>
+        <label for='users_reset_password'><?php echo _('Reset user password:'); ?></label>
         <input id='users_reset_password' type='password' value='' name='new_password' />
         <br>
-        <label for='users_reset_cpassword'><?php echo _('Repeat new password:');?></label>
+        <label for='users_reset_cpassword'><?php echo _('Repeat new password:'); ?></label>
         <input id='users_reset_cpassword' type='password' value='' name='confirm_new_password' />
         <br>
         <br>
         <div class='center'>
-        <button type='submit' class='button'><?php echo _('Edit this user');?></button>
+        <button type='submit' class='button'><?php echo _('Edit this user'); ?></button>
         </div>
             </form>
         </div>
         <script>
-                $(".toggle_users_<?php echo $users['userid'];?>").hide();
-                $("a.trigger_users_<?php echo $users['userid'];?>").click(function(){
-                    $('div.toggle_users_<?php echo $users['userid'];?>').slideToggle(1);
+                $(".toggle_users_<?php echo $users['userid']; ?>").hide();
+                $("a.trigger_users_<?php echo $users['userid']; ?>").click(function(){
+                    $('div.toggle_users_<?php echo $users['userid']; ?>').slideToggle(1);
                 });
         </script>
         </div>
@@ -212,19 +212,19 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
     ?>
 <section class='simple_border' style='background-color:#FF8080;'>
 
-    <h3><?php echo _('DANGER ZONE');?></h3>
-    <h4><strong><?php echo _('Delete an account');?></strong></h4>
+    <h3><?php echo _('DANGER ZONE'); ?></h3>
+    <h4><strong><?php echo _('Delete an account'); ?></strong></h4>
     <form action='app/admin-exec.php' method='post'>
         <!-- form key -->
         <?php $formKey->output_formkey(); ?>
-        <label for='delete_user'><?php echo _('Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:');?></label>
+        <label for='delete_user'><?php echo _('Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:'); ?></label>
         <input type='email' name='delete_user' id='delete_user' />
         <br>
         <br>
-        <label for='delete_user_confpass'><?php echo _('Type your password:');?></label>
+        <label for='delete_user_confpass'><?php echo _('Type your password:'); ?></label>
         <input type='password' name='delete_user_confpass' id='delete_user_confpass' />
     <div class='center'>
-        <button type='submit' class='button submit'><?php echo _('Delete this user!');?></button>
+        <button type='submit' class='button submit'><?php echo _('Delete this user!'); ?></button>
     </div>
     </form>
 </section>
@@ -233,23 +233,23 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
 
 <!-- TAB 3 -->
 <div class='divhandle' id='tab3div'>
-    <h3><?php echo _('Add a new status');?></h3>
+    <h3><?php echo _('Add a new status'); ?></h3>
     <p>
     <form action='app/admin-exec.php' method='post'>
-        <label for='new_status_name'><?php echo _('New status name');?></label>
+        <label for='new_status_name'><?php echo _('New status name'); ?></label>
         <input type='text' id='new_status_name' name='new_status_name' />
         <div id='colorwheel_div_new_status'>
             <div class='colorwheel inline'></div>
             <input type='text' name='new_status_color' value='#000000' />
         </div>
         <div class='center'>
-            <button type='submit' class='submit button'><?php echo _('Add a new status');?></button>
+            <button type='submit' class='submit button'><?php echo _('Add a new status'); ?></button>
         </div>
     </form>
     </p>
     <br><br>
 
-    <h3><?php echo _('Edit an existing status');?></h3>
+    <h3><?php echo _('Edit an existing status'); ?></h3>
 
     <?php
     // SQL to get all status
@@ -270,23 +270,23 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
         $count = $count_exp_req->fetchColumn();
         ?>
         <div class='simple_border'>
-        <a class='trigger_status_<?php echo $status['id'];?>'><?php echo $status['name'];?></a>
-        <div class='toggle_container_status_<?php echo $status['id'];?>'>
+        <a class='trigger_status_<?php echo $status['id']; ?>'><?php echo $status['name']; ?></a>
+        <div class='toggle_container_status_<?php echo $status['id']; ?>'>
         <?php
         if ($count == 0) {
             ?>
-            <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $status['id'];?>','status', 'admin.php')" />
+            <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $status['id']; ?>','status', 'admin.php')" />
         <?php
         } else {
             ?>
-                <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert(<?php echo _('Remove all experiments with this status before deleting this status.');?>)" />
+                <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert(<?php echo _('Remove all experiments with this status before deleting this status.'); ?>)" />
         <?php
         }
         ?>
 
         <form action='app/admin-exec.php' method='post'>
-            <input type='text' name='status_name' value='<?php echo stripslashes($status['name']);?>' />
-            <label for='default_checkbox'><?php echo _('Default status');?></label>
+            <input type='text' name='status_name' value='<?php echo stripslashes($status['name']); ?>' />
+            <label for='default_checkbox'><?php echo _('Default status'); ?></label>
             <input type='checkbox' name='status_is_default' id='default_checkbox'
             <?php
             // check the box if the status is already default
@@ -294,23 +294,23 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
                 echo " checked";
             }
             ?>>
-            <div id='colorwheel_div_edit_status_<?php echo $status['id'];?>'>
+            <div id='colorwheel_div_edit_status_<?php echo $status['id']; ?>'>
             <div class='colorwheel inline'></div>
-            <input type='text' name='status_color' value='#<?php echo $status['color'];?>' />
+            <input type='text' name='status_color' value='#<?php echo $status['color']; ?>' />
             </div>
-            <input type='hidden' name='status_id' value='<?php echo $status['id'];?>' />
+            <input type='hidden' name='status_id' value='<?php echo $status['id']; ?>' />
             <br>
 
             <div class='center'>
-            <button type='submit' class='button'><?php echo _('Edit').' '.stripslashes($status['name']);?></button><br>
+            <button type='submit' class='button'><?php echo _('Edit') . ' ' . stripslashes($status['name']); ?></button><br>
             </div>
         </form></div>
         <script>$(document).ready(function() {
-            $(".toggle_container_status_<?php echo $status['id'];?>").hide();
-            $("a.trigger_status_<?php echo $status['id'];?>").click(function(){
-                $('div.toggle_container_status_<?php echo $status['id'];?>').slideToggle(1);
+            $(".toggle_container_status_<?php echo $status['id']; ?>").hide();
+            $("a.trigger_status_<?php echo $status['id']; ?>").click(function(){
+                $('div.toggle_container_status_<?php echo $status['id']; ?>').slideToggle(1);
             });
-            color_wheel('#colorwheel_div_edit_status_<?php echo $status['id'];?>')
+            color_wheel('#colorwheel_div_edit_status_<?php echo $status['id']; ?>')
         });</script></div>
         <?php
     }
@@ -321,7 +321,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
 
 <!-- TAB 4 ITEMS TYPES-->
 <div class='divhandle' id='tab4div'>
-    <h3><?php echo _('Database items types');?></h3>
+    <h3><?php echo _('Database items types'); ?></h3>
     <?php
     // SQL to get all items type
     $sql = "SELECT * from items_types WHERE team = :team";
@@ -333,8 +333,8 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
     while ($items_types = $req->fetch()) {
         ?>
         <div class='simple_border'>
-            <a class='trigger_<?php echo $items_types['id'];?>'><?php echo _('Edit').' '.$items_types['name'];?></a>
-            <div class='toggle_container_<?php echo $items_types['id'];?>'>
+            <a class='trigger_<?php echo $items_types['id']; ?>'><?php echo _('Edit') . ' ' . $items_types['name']; ?></a>
+            <div class='toggle_container_<?php echo $items_types['id']; ?>'>
             <?php
             // count the items with this type
             // don't allow deletion if items with this type exist
@@ -346,37 +346,37 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
             $count = $count_db_req->fetchColumn();
             if ($count == 0) {
                 ?>
-                <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $items_types['id'];?>','item_type', 'admin.php')" />
+                <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $items_types['id']; ?>','item_type', 'admin.php')" />
             <?php
             } else {
                 ?>
-                <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert(<?php echo _('Remove all database items with this type before deleting this type.');?>)" />
+                <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert(<?php echo _('Remove all database items with this type before deleting this type.'); ?>)" />
             <?php
             }
             ?>
 
             <form action='app/admin-exec.php' method='post'>
-            <label><?php echo _('Edit name');?></label>
-                <input required type='text' name='item_type_name' value='<?php echo stripslashes($items_types['name']);?>' />
-                <input type='hidden' name='item_type_id' value='<?php echo $items_types['id'];?>' />
+            <label><?php echo _('Edit name'); ?></label>
+                <input required type='text' name='item_type_name' value='<?php echo stripslashes($items_types['name']); ?>' />
+                <input type='hidden' name='item_type_id' value='<?php echo $items_types['id']; ?>' />
 
-                <div id='colorwheel_div_<?php echo $items_types['id'];?>'>
+                <div id='colorwheel_div_<?php echo $items_types['id']; ?>'>
                     <div class='colorwheel inline'></div>
-                    <input type='color' name='item_type_bgcolor' value='#<?php echo $items_types['bgcolor'];?>'/>
+                    <input type='color' name='item_type_bgcolor' value='#<?php echo $items_types['bgcolor']; ?>'/>
                 </div><br><br>
-                <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']);?></textarea><br>
+                <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']); ?></textarea><br>
                 <div class='center'>
-                    <button type='submit' class='button'><?php echo _('Edit').' '.stripslashes($items_types['name']);?></button><br>
+                    <button type='submit' class='button'><?php echo _('Edit') . ' ' . stripslashes($items_types['name']); ?></button><br>
                 </div>
             </div>
             </form>
 
         <script>$(document).ready(function() {
-            $(".toggle_container_<?php echo $items_types['id'];?>").hide();
-            $("a.trigger_<?php echo $items_types['id'];?>").click(function(){
-                $('div.toggle_container_<?php echo $items_types['id'];?>').slideToggle(1);
+            $(".toggle_container_<?php echo $items_types['id']; ?>").hide();
+            $("a.trigger_<?php echo $items_types['id']; ?>").click(function(){
+                $('div.toggle_container_<?php echo $items_types['id']; ?>').slideToggle(1);
             });
-            color_wheel('#colorwheel_div_<?php echo $items_types['id'];?>')
+            color_wheel('#colorwheel_div_<?php echo $items_types['id']; ?>')
         });</script>
         </div>
         <?php
@@ -386,7 +386,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
 
     <section class='simple_border'>
         <form action='app/admin-exec.php' method='post'>
-            <label for='new_item_type_name'><?php echo _('Add a new type of item:');?></label> 
+            <label for='new_item_type_name'><?php echo _('Add a new type of item:'); ?></label> 
             <input required type='text' id='new_item_type_name' name='new_item_type_name' />
             <input type='hidden' name='new_item_type' value='1' />
             <div id='colorwheel_div_new'>
@@ -395,7 +395,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
             </div><br><br><br><br>
             <textarea class='mceditable' name='new_item_type_template' /></textarea>
             <div class='center submitButtonDiv'>
-            <button type='submit' class='button'><?php echo _('Save');?></button>
+            <button type='submit' class='button'><?php echo _('Save'); ?></button>
             </div>
         </form>
     </section>
@@ -404,7 +404,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
 <!-- TABS 5 -->
 <div class='divhandle' id='tab5div'>
 
-    <h3><?php echo _('Common experiment template');?></h3>
+    <h3><?php echo _('Common experiment template'); ?></h3>
     <?php
     // get what is the default experiment template
     $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1";
@@ -413,7 +413,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
     $req->execute();
     $exp_tpl = $req->fetch();
     ?>
-    <p><?php echo _('This is the default text when someone creates an experiment.');?></p>
+    <p><?php echo _('This is the default text when someone creates an experiment.'); ?></p>
     <form action='app/admin-exec.php' method='post'>
         <input type='hidden' name='default_exp_tpl' value='1' />
         <textarea class='mceditable' name='default_exp_tpl' />
@@ -421,7 +421,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
         echo $exp_tpl['body'];
         ?></textarea>
         <div class='center submitButtonDiv'>
-        <button type='submit' class='button'><?php echo _('Edit');?></button>
+        <button type='submit' class='button'><?php echo _('Edit'); ?></button>
         </div>
     </form>
 </div>
@@ -429,7 +429,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
 <!-- TABS 6 -->
 <div class='divhandle' id='tab6div'>
 
-    <h3><?php echo _('Import a CSV file');?></h3>
+    <h3><?php echo _('Import a CSV file'); ?></h3>
     <?php
 
     // file upload block
@@ -440,24 +440,24 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
     $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
     $req->execute();
     ?>
-        <p style='text-align:justify'><?php echo _("This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file.");?>
-<span class='strong'><?php echo _('You should make a backup of your database before importing thousands of items!');?></span></p>
+        <p style='text-align:justify'><?php echo _("This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file."); ?>
+<span class='strong'><?php echo _('You should make a backup of your database before importing thousands of items!'); ?></span></p>
 
-        <label for='item_selector'><?php echo _('1. Select a type of item to import to:');?></label>
+        <label for='item_selector'><?php echo _('1. Select a type of item to import to:'); ?></label>
         <select id='item_selector' onchange='goNext(this.value)'><option value=''>--------</option>
         <?php
         while ($items_types = $req->fetch()) {
-            echo "<option value='".$items_types['id']."' name='type' ";
-            echo ">".$items_types['name']."</option>";
+            echo "<option value='" . $items_types['id'] . "' name='type' ";
+            echo ">" . $items_types['name'] . "</option>";
         }
         ?>
         </select><br>
         <div id='import_block'>
         <form enctype="multipart/form-data" action="admin.php" method="POST">
-        <label for='uploader'><?php echo _('2. Select a CSV file to import:');?></label>
+        <label for='uploader'><?php echo _('2. Select a CSV file to import:'); ?></label>
             <input id='uploader' name="csvfile" type="file" />
             <div class='center'>
-            <button type="submit" class='button' value="Upload"><?php echo _('Import CSV');?></button>
+            <button type="submit" class='button' value="Upload"><?php echo _('Import CSV'); ?></button>
             </div>
         </form>
     </div>
@@ -486,7 +486,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $num = count($data);
         // get the column names (first line)
         if ($row == 0) {
-            for ($i=0; $i < $num; $i++) {
+            for ($i = 0; $i < $num; $i++) {
                 $column[] = $data[$i];
             }
             $row++;
@@ -498,7 +498,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $body = '';
         $j = 0;
         foreach ($data as $line) {
-            $body .= "<p><strong>".$column[$j]." :</strong> ".$line.'</p>';
+            $body .= "<p><strong>" . $column[$j] . " :</strong> " . $line . '</p>';
             $j++;
         }
         // clean the body
@@ -520,7 +520,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     fclose($handle);
-    $msg_arr[] = $inserted.' '._('items were imported successfully.');
+    $msg_arr[] = $inserted . ' ' . _('items were imported successfully.');
     $_SESSION['infos'] = $msg_arr;
 }
 // END CODE TO IMPORT CSV
@@ -568,9 +568,9 @@ $(document).ready(function() {
     });
     // END TABS
     // TOGGLE
-    $(".toggle_users_<?php echo $users['userid'];?>").hide();
-    $("a.trigger_users_<?php echo $users['userid'];?>").click(function(){
-        $('div.toggle_users_<?php echo $users['userid'];?>').slideToggle(1);
+    $(".toggle_users_<?php echo $users['userid']; ?>").hide();
+    $("a.trigger_users_<?php echo $users['userid']; ?>").click(function(){
+        $('div.toggle_users_<?php echo $users['userid']; ?>').slideToggle(1);
     });
     color_wheel('#colorwheel_div_new')
     color_wheel('#colorwheel_div_new_status')
@@ -582,7 +582,7 @@ $(document).ready(function() {
         plugins : "table textcolor searchreplace code fullscreen insertdatetime paste charmap save image link",
         toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | link",
         removed_menuitems : "newdocument",
-        language : '<?php echo $_SESSION['prefs']['lang'];?>'
+        language : '<?php echo $_SESSION['prefs']['lang']; ?>'
     });
 });
 </script>

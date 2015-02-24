@@ -71,9 +71,9 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
         if ($table === 'experiments') {
             // now let's get the URL so we can have a nice link in the csv
-            $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+            $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
             $url = str_replace('make_csv.php', 'experiments.php', $url);
-            $url .= "?mode=view&id=".$csv_data['id'];
+            $url .= "?mode=view&id=" . $csv_data['id'];
             $list[] = array(
                 $csv_data['id'],
                 $csv_data['date'],
@@ -86,9 +86,9 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
         } else { // items
             // now let's get the URL so we can have a nice link in the csv
-            $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+            $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
             $url = str_replace('make_csv.php', 'database.php', $url);
-            $url .= "?mode=view&id=".$csv_data['id'];
+            $url .= "?mode=view&id=" . $csv_data['id'];
             $list[] = array(
                 $csv_data['id'],
                 $csv_data['date'],
@@ -107,7 +107,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
 // make CSV file
 $filename = hash("sha512", uniqid(rand(), true));
-$filepath = 'uploads/'.$filename;
+$filepath = 'uploads/' . $filename;
 
 $fp = fopen($filepath, 'w+');
 // utf8 headers
@@ -123,10 +123,10 @@ fclose($fp);
 echo "<div class='well' style='margin-top:20px'>";
     // Get csv file size
     $filesize = filesize($filepath);
-echo "<p>"._('Your CSV file is ready:')."<br>
-        <a href='app/download.php?f=".$filepath."&name=elabftw-export.csv' target='_blank'>
+echo "<p>" . _('Your CSV file is ready:') . "<br>
+        <a href='app/download.php?f=".$filepath . "&name=elabftw-export.csv' target='_blank'>
         <img src='img/download.png' alt='download' /> 
         elabftw-export.csv</a>
-        <span class='filesize'>(".format_bytes($filesize).")</span></p>";
+        <span class='filesize'>(".format_bytes($filesize) . ")</span></p>";
 echo "</div>";
 require_once 'inc/footer.php';

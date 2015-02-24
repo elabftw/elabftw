@@ -74,7 +74,7 @@ switch ($_POST['type']) {
     case 'link':
         // check link is int and experiment is owned by user
         if (filter_var($_POST['link_id'], FILTER_VALIDATE_INT) &&
-            is_owned_by_user($id, 'experiments', $_SESSION['userid']) ) {
+            is_owned_by_user($id, 'experiments', $_SESSION['userid'])) {
 
                 // SQL for addlink
                 $sql = "INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)";

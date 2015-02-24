@@ -33,16 +33,16 @@ require_once 'inc/info_box.php';
 ?>
 
 <!-- Advanced Search page begin -->
-<menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' class='bot5px' alt='' /> <?php echo _('Back to experiments listing');?></a></menu>
+<menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' class='bot5px' alt='' /> <?php echo _('Back to experiments listing'); ?></a></menu>
 <section class='searchform box'>
     <form name="search" method="get" action="search.php">
 
         <div class='row'>
             <!-- _('Search') IN-->
             <div class='col-md-4'>
-                <label for='searchin'><?php echo _('Search in');?></label>
+                <label for='searchin'><?php echo _('Search in'); ?></label>
                 <select name='type' id='searchin'>
-                    <option value='experiments'><?php echo ngettext('Experiment', 'Experiments', 2);?></option>
+                    <option value='experiments'><?php echo ngettext('Experiment', 'Experiments', 2); ?></option>
                     <?php // Database items types
                     $sql = "SELECT * FROM items_types WHERE team = :team";
                     $req = $pdo->prepare($sql);
@@ -50,12 +50,12 @@ require_once 'inc/info_box.php';
                         'team' => $_SESSION['team_id']
                     ));
                     while ($items_types = $req->fetch()) {
-                        echo "<option value='".$items_types['id']."'";
+                        echo "<option value='" . $items_types['id'] . "'";
                         // item get selected if it is in the search url
                         if (isset($_GET['type']) && ($items_types['id'] == $_GET['type'])) {
                             echo " selected='selected'";
                         }
-                        echo ">".$items_types['name']."</option>";
+                        echo ">" . $items_types['name'] . "</option>";
                     }
                     ?>
                 </select>
@@ -64,9 +64,9 @@ require_once 'inc/info_box.php';
 
             <!-- SEARCH ONLY -->
             <div class='col-md-8'>
-                <label for'searchonly'><?php echo _('Search only in experiments owned by:');?> </label><br>
+                <label for'searchonly'><?php echo _('Search only in experiments owned by:'); ?> </label><br>
                 <select id='searchonly' name='owner'>
-                    <option value=''><?php echo _('Yourself');?></option>
+                    <option value=''><?php echo _('Yourself'); ?></option>
                     <?php
                     $users_sql = "SELECT userid, firstname, lastname FROM users WHERE team = :team";
                     $users_req = $pdo->prepare($users_sql);
@@ -74,20 +74,20 @@ require_once 'inc/info_box.php';
                         'team' => $_SESSION['team_id']
                     ));
                     while ($users = $users_req->fetch()) {
-                        echo "<option value='".$users['userid']."'";
+                        echo "<option value='" . $users['userid'] . "'";
                             // item get selected if it is in the search url
-                            if(isset($_GET['owner']) && ($users['userid'] == $_GET['owner'])) {
+                            if (isset($_GET['owner']) && ($users['userid'] == $_GET['owner'])) {
                                 echo " selected='selected'";
                             }
-                            echo ">".$users['firstname']." ".$users['lastname']."</option>";
+                            echo ">" . $users['firstname'] . " " . $users['lastname'] . "</option>";
                     }
                     ?>
                 </select><br>
                 <!-- search everyone box -->
-                <label for='all_experiments_chkbx'>(<?php echo _("search in everyone's experiments");?> </label>
+                <label for='all_experiments_chkbx'>(<?php echo _("search in everyone's experiments"); ?> </label>
                 <input name="all" id='all_experiments_chkbx' value="y" type="checkbox" <?php
                     // keep the box checked if it was checked
-                    if(isset($_GET['all'])){
+                    if (isset($_GET['all'])) {
                         echo "checked=checked";
                     }?>>)
             </div>
@@ -97,15 +97,15 @@ require_once 'inc/info_box.php';
         <div class='row'>
             <!-- _('Search') DATE -->
             <div class='col-md-8'>
-                <label for='from'><?php echo _('Where date is between');?></label>
+                <label for='from'><?php echo _('Where date is between'); ?></label>
                 <input id='from' name='from' type='text' size='8' class='datepicker' value='<?php
                 if (isset($_GET['from']) && !empty($_GET['from'])) {
                     echo check_date($_GET['from']);
                 }
                 ?>'/>
-                <label span style='margin:0 10px;' for='to'> <?php echo _('and');?> </label>
+                <label span style='margin:0 10px;' for='to'> <?php echo _('and'); ?> </label>
                 <input id='to' name='to' type='text' size='8' class='datepicker' value='<?php
-                    if(isset($_GET['to']) && !empty($_GET['to'])) {
+                    if (isset($_GET['to']) && !empty($_GET['to'])) {
                         echo check_date($_GET['to']);
                     }
                 ?>'/>
@@ -116,18 +116,18 @@ require_once 'inc/info_box.php';
         <div class='row'>
             <!-- TITLE -->
             <div class='col-md-6'>
-            <label for='title'><?php echo _('And title contains');?></label>
+            <label for='title'><?php echo _('And title contains'); ?></label>
             <input id='title' name='title' type='text' value='<?php
-                if(isset($_GET['title']) && !empty($_GET['title'])) {
+                if (isset($_GET['title']) && !empty($_GET['title'])) {
                     echo check_title($_GET['title']);
                 }
                 ?>'/>
             </div>
             <!-- _('Status') -->
             <div class='col-md-4'>
-                <label class='block' for='status'><?php echo _('And status is');?></label>
+                <label class='block' for='status'><?php echo _('And status is'); ?></label>
                 <select id='status' name="status">
-                    <option value='' name='status'><?php echo _('select status');?></option>
+                    <option value='' name='status'><?php echo _('select status'); ?></option>
                     <?php
                     // put all available status in array
                     $status_arr = array();
@@ -159,9 +159,9 @@ require_once 'inc/info_box.php';
 
         <div class='row'>
             <div class='col-md-6'>
-            <label for='body'><?php echo _('And body contains');?></label>
+            <label for='body'><?php echo _('And body contains'); ?></label>
             <input id='body' name='body' type='text' value='<?php
-                if(isset($_GET['body']) && !empty($_GET['body'])) {
+                if (isset($_GET['body']) && !empty($_GET['body'])) {
                     echo check_body($_GET['body']);
                 }
                 ?>'/>
@@ -170,18 +170,18 @@ require_once 'inc/info_box.php';
 
             <!-- RATING -->
             <div class='col-md-4'>
-                <label class='block' for='rating'><?php echo _('And rating is');?></label>
+                <label class='block' for='rating'><?php echo _('And rating is'); ?></label>
                 <select id='rating' name='rating'>
-                    <option value='' name='rating'><?php echo _('select number of stars');?></option>
-                    <option value='no' name='rating'><?php echo _('Unrated');?></option>
+                    <option value='' name='rating'><?php echo _('select number of stars'); ?></option>
+                    <option value='no' name='rating'><?php echo _('Unrated'); ?></option>
                     <?php
-                    for($i=1; $i<=5; $i++) {
-                    echo "<option value='".$i."' name='rating'";
+                    for ($i = 1; $i <= 5; $i++) {
+                    echo "<option value='" . $i . "' name='rating'";
                         // item get selected if it is in the search url
                     if (isset($_GET['rating']) && ($_GET['rating'] == $i)) {
                         echo " selected='selected'";
                     }
-                    echo ">".$i."</option>";
+                    echo ">" . $i . "</option>";
                     }?>
                 </select>
             </div>
@@ -189,7 +189,7 @@ require_once 'inc/info_box.php';
         </div>
 
         <div style='margin:30px;' class='center'>
-            <button id='searchButton' class='button' value='Submit' type='submit'><?php echo _('Launch search');?></button>
+            <button id='searchButton' class='button' value='Submit' type='submit'><?php echo _('Launch search'); ?></button>
         </div>
     </form>
 </section>
@@ -204,7 +204,7 @@ require_once 'inc/info_box.php';
 if (isset($_GET)) {
     // assign variables from get
     if (isset($_GET['title']) && !empty($_GET['title'])) {
-        $title =  filter_var($_GET['title'], FILTER_SANITIZE_STRING);
+        $title = filter_var($_GET['title'], FILTER_SANITIZE_STRING);
     } else {
         $title = '';
     }
@@ -224,7 +224,7 @@ if (isset($_GET)) {
         $tags = '';
     }
     if (isset($_GET['body']) && !empty($_GET['body'])) {
-         $body = filter_var(check_body($_GET['body']), FILTER_SANITIZE_STRING);
+        $body = filter_var(check_body($_GET['body']), FILTER_SANITIZE_STRING);
     } else {
         $body = '';
     }
@@ -234,7 +234,7 @@ if (isset($_GET)) {
         $status = '';
     }
     if (isset($_GET['rating']) && !empty($_GET['rating'])) {
-        if($_GET['rating'] === 'no') {
+        if ($_GET['rating'] === 'no') {
             $rating = '0';
         } else {
         $rating = intval($_GET['rating']);
@@ -251,30 +251,30 @@ if (isset($_GET)) {
     }
 
     // EXPERIMENT SEARCH
-    if(isset($_GET['type'])) {
-        if($_GET['type'] === 'experiments') {
+    if (isset($_GET['type'])) {
+        if ($_GET['type'] === 'experiments') {
             // SQL
             // the BETWEEN stuff makes the date mandatory, so we switch the $sql with/without date
-            if(isset($_GET['to']) && !empty($_GET['to'])) {
+            if (isset($_GET['to']) && !empty($_GET['to'])) {
 
-                if(isset($_GET['all']) && !empty($_GET['all'])) {
-            $sql = "SELECT * FROM experiments WHERE team = ".$_SESSION['team_id']." AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%' AND date BETWEEN '$from' AND '$to'";
+                if (isset($_GET['all']) && !empty($_GET['all'])) {
+            $sql = "SELECT * FROM experiments WHERE team = " . $_SESSION['team_id'] . " AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%' AND date BETWEEN '$from' AND '$to'";
                 } else { //search only in your experiments
             $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%' AND date BETWEEN '$from' AND '$to'";
                 }
 
 
-            } elseif(isset($_GET['from']) && !empty($_GET['from'])) {
-                if(isset($_GET['all']) && !empty($_GET['all'])) {
-            $sql = "SELECT * FROM experiments WHERE team = ".$_SESSION['team_id']." AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%' AND date BETWEEN '$from' AND '99991212'";
+            } elseif (isset($_GET['from']) && !empty($_GET['from'])) {
+                if (isset($_GET['all']) && !empty($_GET['all'])) {
+            $sql = "SELECT * FROM experiments WHERE team = " . $_SESSION['team_id'] . " AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%' AND date BETWEEN '$from' AND '99991212'";
                 } else { //search only in your experiments
             $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%' AND date BETWEEN '$from' AND '99991212'";
                 }
 
 
             } else { // no date input
-                if(isset($_GET['all']) && !empty($_GET['all'])) {
-            $sql = "SELECT * FROM experiments WHERE team = ".$_SESSION['team_id']." AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%'";
+                if (isset($_GET['all']) && !empty($_GET['all'])) {
+            $sql = "SELECT * FROM experiments WHERE team = " . $_SESSION['team_id'] . " AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%'";
                 } else { //search only in your experiments
             $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%'";
                 }
@@ -305,25 +305,25 @@ if (isset($_GET)) {
                 $results_id = array_reverse($results_id);
                 // construct string for links to export results
                 $results_id_str = "";
-                foreach($results_id as $id) {
-                    $results_id_str .= $id."+";
+                foreach ($results_id as $id) {
+                    $results_id_str .= $id . "+";
                 }
                 // remove last +
                 $results_id_str = rtrim($results_id_str, '+');
     ?>
 
                 <div class='align_right'><a name='anchor'></a>
-                <p class='inline'><?php echo _('Export this result:');?> </p>
-                <a href='make_zip.php?id=<?php echo $results_id_str;?>&type=experiments'>
+                <p class='inline'><?php echo _('Export this result:'); ?> </p>
+                <a href='make_zip.php?id=<?php echo $results_id_str; ?>&type=experiments'>
                 <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>
 
-                    <a href='make_csv.php?id=<?php echo $results_id_str;?>&type=experiments'><img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export in spreadsheet file' /></a>
+                    <a href='make_csv.php?id=<?php echo $results_id_str; ?>&type=experiments'><img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export in spreadsheet file' /></a>
                 </div>
     <?php
                 if ($count == 1) {
-                echo "<div id='search_count'>".$count." result</div>";
+                echo "<div id='search_count'>" . $count . " result</div>";
                 } else {
-                echo "<div id='search_count'>".$count." results</div>";
+                echo "<div id='search_count'>" . $count . " results</div>";
                 }
                 // Display results
                 echo "<hr>";
@@ -338,9 +338,9 @@ if (isset($_GET)) {
     } elseif (is_pos_int($_GET['type'])) {
             // SQL
             // the BETWEEN stuff makes the date mandatory, so we switch the $sql with/without date
-            if(isset($_GET['to']) && !empty($_GET['to'])) {
+            if (isset($_GET['to']) && !empty($_GET['to'])) {
             $sql = "SELECT * FROM items WHERE type = :type AND title LIKE '%$title%' AND body LIKE '%$body%' AND rating LIKE '%$rating%' AND date BETWEEN '$from' AND '$to'";
-            } elseif(isset($_GET['from']) && !empty($_GET['from'])) {
+            } elseif (isset($_GET['from']) && !empty($_GET['from'])) {
             $sql = "SELECT * FROM items WHERE type = :type AND title LIKE '%$title%' AND body LIKE '%$body%' AND rating LIKE '%$rating%' AND date BETWEEN '$from' AND '991212'";
             } else { // no date input
             $sql = "SELECT * FROM items WHERE type = :type AND title LIKE '%$title%' AND body LIKE '%$body%' AND rating LIKE '%$rating%'";
@@ -361,25 +361,25 @@ if (isset($_GET)) {
             $results_id = array_reverse($results_id);
             // construct string for links to export results
             $results_id_str = "";
-            foreach($results_id as $id) {
-                $results_id_str .= $id."+";
+            foreach ($results_id as $id) {
+                $results_id_str .= $id . "+";
             }
             // remove last +
             $results_id_str = rtrim($results_id_str, '+');
 ?>
 
             <div class='align_right'><a name='anchor'></a>
-            <p class='inline'><?php echo _('Export this result:');?> </p>
-            <a href='make_zip.php?id=<?php echo $results_id_str;?>&type=items'>
+            <p class='inline'><?php echo _('Export this result:'); ?> </p>
+            <a href='make_zip.php?id=<?php echo $results_id_str; ?>&type=items'>
             <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>
 
-                <a href='make_csv.php?id=<?php echo $results_id_str;?>&type=items'><img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export in spreadsheet file' /></a>
+                <a href='make_csv.php?id=<?php echo $results_id_str; ?>&type=items'><img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export in spreadsheet file' /></a>
             </div>
 <?php
             if ($count == 1) {
-            echo "<div id='search_count'>".$count." result</div>";
+            echo "<div id='search_count'>" . $count . " result</div>";
             } else {
-            echo "<div id='search_count'>".$count." results</div>";
+            echo "<div id='search_count'>" . $count . " results</div>";
             }
             // Display results
             echo "<hr>";

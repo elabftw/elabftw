@@ -38,7 +38,7 @@ $website = '';
 
 
 // Form 1 User infos
-if (isset($_POST['currpass'])){
+if (isset($_POST['currpass'])) {
     // 1. Check that we were given a good password
     // Get salt
     $sql = "SELECT salt FROM users WHERE userid = :userid LIMIT 1";
@@ -47,14 +47,14 @@ if (isset($_POST['currpass'])){
     $salt->execute();
     $salt = $salt->fetchColumn();
     // Create hash
-    $passwordHash = hash("sha512", $salt.$_POST['currpass']);
+    $passwordHash = hash("sha512", $salt . $_POST['currpass']);
     $sql = "SELECT userid FROM users WHERE userid = :userid AND password = :password LIMIT 1";
     $req = $pdo->prepare($sql);
     $result = $req->execute(array(
         'userid' => $_SESSION['userid'],
         'password' => $passwordHash));
     $numrows = $req->rowCount();
-    if( ($result) && ($numrows === 1) ) {
+    if (($result) && ($numrows === 1)) {
         // Old password is good. Continue
 
         // _('Password') CHANGE
@@ -68,14 +68,14 @@ if (isset($_POST['currpass'])){
                     $msg_arr[] = _('Password must contain at least 8 characters.');
                     $errflag = true;
                 }
-                if (strcmp($password, $cpassword) != 0 ) {
+                if (strcmp($password, $cpassword) != 0) {
                     $msg_arr[] = _('The passwords do not match!');
                     $errflag = true;
                 }
                 // Create salt
                 $salt = hash("sha512", uniqid(rand(), true));
                 // Create hash
-                $passwordHash = hash("sha512", $salt.$password);
+                $passwordHash = hash("sha512", $salt . $password);
                 $sql = "UPDATE users SET salt = :salt, 
                     password = :password 
                     WHERE userid = :userid";
@@ -84,7 +84,7 @@ if (isset($_POST['currpass'])){
                     'salt' => $salt,
                     'password' => $passwordHash,
                     'userid' => $_SESSION['userid']));
-                if($result){
+                if ($result) {
                     $msg_arr[] = _('Configuration updated successfully.');
                     $infoflag = true;
                 } else {
@@ -176,7 +176,7 @@ if (isset($_POST['currpass'])){
         }
         // Check website
         if (isset($_POST['website']) && !empty($_POST['website'])) {
-            if  (filter_var($_POST['website'], FILTER_VALIDATE_URL)) {
+            if (filter_var($_POST['website'], FILTER_VALIDATE_URL)) {
                 $website = $_POST['website'];
             } else { // do not validate as url
                 $msg_arr[] = _('A mandatory field is missing!');
@@ -187,7 +187,7 @@ if (isset($_POST['currpass'])){
         }
 
         //If there are input validations, redirect back to the registration form
-        if($errflag) {
+        if ($errflag) {
             $_SESSION['errors'] = $msg_arr;
             session_write_close();
             header("location: ../ucp.php");
@@ -219,7 +219,7 @@ if (isset($_POST['currpass'])){
             'skype' => $skype,
             'website' => $website,
             'userid' => $_SESSION['userid']));
-        if($result){
+        if ($result) {
             $msg_arr[] = _('Profile updated.');
             $infoflag = true;
         } else {
@@ -233,9 +233,9 @@ if (isset($_POST['currpass'])){
 
 // FORM 2. PREFERENCES
 if (isset($_POST['display'])) {
-    if ($_POST['display'] === 'default'){
+    if ($_POST['display'] === 'default') {
         $new_display = 'default';
-    } elseif ($_POST['display'] === 'compact'){
+    } elseif ($_POST['display'] === 'compact') {
         $new_display = 'compact';
     } else {
         die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
@@ -373,7 +373,7 @@ if (isset($_POST['tpl_form'])) {
     }
     $new_tpl_body[] = filter_var($_POST['tpl_body'], FILTER_SANITIZE_STRING); 
     $new_tpl_name[] = filter_var($_POST['tpl_name'], FILTER_SANITIZE_STRING); 
-    $sql = "UPDATE experiments_templates SET body = :body, name = :name WHERE userid = ".$_SESSION['userid']." AND id = :id";
+    $sql = "UPDATE experiments_templates SET body = :body, name = :name WHERE userid = " . $_SESSION['userid'] . " AND id = :id";
     $req = $pdo->prepare($sql);
     for ($i = 0; $i < count($_POST['tpl_body']); $i++) {
     $req->execute(array(

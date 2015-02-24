@@ -24,9 +24,6 @@
 *                                                                               *
 ********************************************************************************/
 require_once '../inc/common.php';
-// formkey stuff
-//require_once 'inc/classes/formkey.class.php';
-//$formKey = new formKey();
 
 //Array to store validation errors
 $msg_arr = array();
@@ -34,19 +31,11 @@ $msg_arr = array();
 $errflag = false;
 
 // CHECKS
-/*
-// Check the form_key
-if (!isset($_POST['form_key']) || !$formKey->validate()) {
-    // form key is invalid
-    $msg_arr[] = 'The form key is invalid !';
-    $errflag = true;
-}
- */
 // ID
 if (is_pos_int($_POST['item_id'])) {
     $id = $_POST['item_id'];
 } else {
-    $id='';
+    $id = '';
     $msg_arr[] = _("The id parameter is not valid!");
     $errflag = true;
 }
@@ -63,7 +52,7 @@ $_SESSION['new_date'] = $date;
 if ($errflag) {
     $_SESSION['errors'] = $msg_arr;
     session_write_close();
-    header("location: ../database.php?mode=edit&id=".$id);
+    header("location: ../database.php?mode=edit&id=" . $id);
     exit;
 }
 
@@ -90,7 +79,7 @@ if ($result) {
     unset($_SESSION['new_title']);
     unset($_SESSION['new_date']);
     unset($_SESSION['errors']);
-    header("location: ../database.php?mode=view&id=".$id);
+    header("location: ../database.php?mode=view&id=" . $id);
     exit;
 } else {
     die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));

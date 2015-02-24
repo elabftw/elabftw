@@ -24,18 +24,18 @@
 *                                                                               *
 ********************************************************************************/
 $load_more_button = "<div class='center'>
-        <button class='button' id='loadButton'>"._('Load more')."</button>
+        <button class='button' id='loadButton'>"._('Load more') . "</button>
         </div>";
 // array to store results;
 $results_arr = array();
 ?>
 <menu class='border'>
-    <a href="app/create_item.php?type=exp"><img src="img/add.png" class='bot5px' alt="" /> <?php echo _('Create experiment');?></a> | 
-    <a href='#' class='trigger'><img src="img/add-template.png" class='bot5px' alt="" /> <?php echo _('Create from template');?></a>
+    <a href="app/create_item.php?type=exp"><img src="img/add.png" class='bot5px' alt="" /> <?php echo _('Create experiment'); ?></a> | 
+    <a href='#' class='trigger'><img src="img/add-template.png" class='bot5px' alt="" /> <?php echo _('Create from template'); ?></a>
 
     <!-- 'FILTER _('Status')' dropdown menu -->
     <span class='align_right'>
-    <select onchange=go_url(this.value)><option value=''><?php echo _('Filter status');?></option>
+    <select onchange=go_url(this.value)><option value=''><?php echo _('Filter status'); ?></option>
     <?php
     $sql = "SELECT id, name FROM status WHERE team = :team_id";
     $req = $pdo->prepare($sql);
@@ -43,8 +43,8 @@ $results_arr = array();
         'team_id' => $_SESSION['team_id']
     ));
     while ($status = $req->fetch()) {
-        echo "<option value='search.php?type=experiments&status=".$status['id']."'>";
-        echo $status['name']."</option>";
+        echo "<option value='search.php?type=experiments&status=" . $status['id'] . "'>";
+        echo $status['name'] . "</option>";
     }
     ?>
     </select></span>
@@ -59,7 +59,7 @@ $tplreq->bindParam(':userid', $_SESSION['userid']);
 $tplreq->execute();
 if ($tplreq->rowCount() > 0) {
     while ($tpl = $tplreq->fetch()) {
-        echo "<a href='app/create_item.php?type=exp&tpl=".$tpl['id']."' class='badge'>".$tpl['name']."</a>";
+        echo "<a href='app/create_item.php?type=exp&tpl=" . $tpl['id'] . "' class='badge'>" . $tpl['name'] . "</a>";
     }
 } else { // user has no templates
     display_message('warning_nocross', sprintf(_("<strong>You do not have any templates yet.</strong> Go to %syour control panel%s to make one !"), "<a class='alert-link' href='ucp.php?tab=3'>", "</a>"));
@@ -96,10 +96,10 @@ if (isset($_GET['q'])) { // if there is a query
         $unit = 'milliseconds';
     }
     if (count($results_arr) > 1) {
-        echo "<p class='smallgray'>".count($results_arr)." "._('results.')." ($total_time $unit)</p>";
+        echo "<p class='smallgray'>" . count($results_arr) . " " . _('results.') . " ($total_time $unit)</p>";
     } elseif (count($results_arr) == 1) {
         // TODO plural
-        echo "<p class='smallgray'>"._('Found_1')." ($total_time $unit)</p>";
+        echo "<p class='smallgray'>" . _('Found_1') . " ($total_time $unit)</p>";
     } else {
         display_message('error', _('Found_0'));
     }
@@ -143,9 +143,9 @@ if (isset($_GET['q'])) { // if there is a query
         $unit = 'milliseconds';
     }
     if (count($results_arr) > 1) {
-        echo "<p class='smallgray'>".count($results_arr)." "._('results.')." ($total_time $unit)</p>";
+        echo "<p class='smallgray'>" . count($results_arr) . " " . _('results.') . " ($total_time $unit)</p>";
     } elseif (count($results_arr) == 1) {
-        echo "<p class='smallgray'>"._('Found')." ($total_time $unit)</p>";
+        echo "<p class='smallgray'>" . _('Found') . " ($total_time $unit)</p>";
     } else {
         display_message('error', _('Found'));
     }
@@ -189,9 +189,9 @@ if (isset($_GET['q'])) { // if there is a query
         $unit = 'milliseconds';
     }
     if (count($results_arr) > 1) {
-        echo "<p class='smallgray'>".count($results_arr)." "._('results.')." ($total_time $unit)</p>";
+        echo "<p class='smallgray'>" . count($results_arr) . " " . _('results.') . " ($total_time $unit)</p>";
     } elseif (count($results_arr) == 1) {
-        echo "<p class='smallgray'>"._('Found')." ($total_time $unit)</p>";
+        echo "<p class='smallgray'>" . _('Found') . " ($total_time $unit)</p>";
     } else {
         display_message('error', _('Found'));
     }
@@ -255,10 +255,10 @@ $(document).ready(function(){
 
     // SHOW MORE _('Experiment')S BUTTON
     $('section.item').hide(); // hide everyone
-    $('section.item').slice(0, <?php echo $limit;?>).show(); // show only the default at the beginning
+    $('section.item').slice(0, <?php echo $limit; ?>).show(); // show only the default at the beginning
     $('#loadButton').click(function(e){ // click to load more
         e.preventDefault();
-        $("section.item:hidden").slice(0, <?php echo $limit;?>).show();
+        $("section.item:hidden").slice(0, <?php echo $limit; ?>).show();
         if ($("section.item:hidden").length == 0) { // check if there are more exp to show
             $('#loadButton').hide(); // hide load button when there is nothing more to show
         }
@@ -270,7 +270,7 @@ $(document).ready(function(){
 		$('div.toggle_container').slideToggle(1);
 	});
     // KEYBOARD _('Shortcut')S
-    key('<?php echo $_SESSION['prefs']['shortcuts']['create'];?>', function(){
+    key('<?php echo $_SESSION['prefs']['shortcuts']['create']; ?>', function(){
         location.href = 'app/create_item.php?type=exp'
         });
     });

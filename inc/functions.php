@@ -35,14 +35,14 @@ function kdate()
     $month = $today['mon'];
     // add 0 in front of month if needed
     if (strlen($month) === 1) {
-        $month = '0'.$month;
+        $month = '0' . $month;
     }
     $day = $today['mday'];
     // add 0 in front of day if needed
     if (strlen($day) === 1) {
-        $day = '0'.$day;
+        $day = '0' . $day;
     }
-    return $today['year'].$month.$day;
+    return $today['year'] . $month . $day;
 }
 
 /**
@@ -55,15 +55,15 @@ function format_bytes($a_bytes)
 {
     // nice display of filesize
     if ($a_bytes < 1024) {
-        return $a_bytes .' B';
+        return $a_bytes . ' B';
     } elseif ($a_bytes < 1048576) {
-        return round($a_bytes / 1024, 2) .' KiB';
+        return round($a_bytes / 1024, 2) . ' KiB';
     } elseif ($a_bytes < 1073741824) {
         return round($a_bytes / 1048576, 2) . ' MiB';
     } elseif ($a_bytes < 1099511627776) {
         return round($a_bytes / 1073741824, 2) . ' GiB';
     } elseif ($a_bytes < 1125899906842624) {
-        return round($a_bytes / 1099511627776, 2) .' TiB';
+        return round($a_bytes / 1099511627776, 2) . ' TiB';
     } else {
         return 'That is a very big file you have there my friend.';
     }
@@ -94,7 +94,7 @@ function get_ext($filename)
  * @param string $ext Extension of the file
  * @param string $dest Path to the place to save the thumbnail
  * @param int $desired_width Width of the thumbnail (height is automatic depending on width)
- * @return null
+ * @return null|false
  */
 function make_thumb($src, $ext, $dest, $desired_width)
 {
@@ -105,12 +105,14 @@ function make_thumb($src, $ext, $dest, $desired_width)
         $source_image = imagecreatefrompng($src);
     } elseif ($ext === 'gif') {
         $source_image = imagecreatefromgif($src);
+    } else {
+        return false;
     }
     $width = imagesx($source_image);
     $height = imagesy($source_image);
 
     // find the "desired height" of this thumbnail, relative to the desired width
-    $desired_height = floor($height*($desired_width/$width));
+    $desired_height = floor($height * ($desired_width / $width));
 
     // create a new, "virtual" image
     $virtual_image = imagecreatetruecolor($desired_width, $desired_height);
@@ -141,6 +143,7 @@ function is_pos_int($int)
  * Check if an item has a file attached.
  *
  * @param int $id ID of the item to check
+ * @param string $type
  * @return bool Return false if there is now file attached
  */
 function has_attachement($id, $type)
@@ -152,11 +155,7 @@ function has_attachement($id, $type)
     $req->bindParam(':item_id', $id);
     $req->bindParam(':type', $type);
     $req->execute();
-    if ($req->rowCount() > 0) {
-        return true;
-    }
-
-    return false;
+    return $req->rowCount() > 0;
 }
 
 
@@ -166,7 +165,7 @@ function has_attachement($id, $type)
  * @param string $type Can be 'xp' or 'db'
  * @param string $query The thing to search
  * @param int $userid Userid is used for 'xp' only
- * @return array $results_arr Array of ID with the $query string inside
+ * @return false|array $results_arr Array of ID with the $query string inside
  */
 function search_item($type, $query, $userid)
 {
@@ -245,7 +244,7 @@ function search_item($type, $query, $userid)
  *
  * @param int $item_id The ID of the item for which we want the tags
  * @param string $table The table can be experiments_tags or items_tags
- * @return string|false Will show the HTML for tags or false if there is no tags
+ * @return null|false Will show the HTML for tags or false if there is no tags
  */
 function show_tags($item_id, $table)
 {
@@ -258,9 +257,9 @@ function show_tags($item_id, $table)
         echo "<span class='tags'><img src='img/tags.png' alt='tags' /> ";
         while ($tags = $req->fetch()) {
             if ($table === 'experiments_tags') {
-                echo "<a href='experiments.php?mode=show&tag=".urlencode(stripslashes($tags['tag']))."'>".stripslashes($tags['tag'])."</a> ";
+                echo "<a href='experiments.php?mode=show&tag=" . urlencode(stripslashes($tags['tag'])) . "'>" . stripslashes($tags['tag']) . "</a> ";
             } else { // table is items_tags
-                echo "<a href='database.php?mode=show&tag=".urlencode(stripslashes($tags['tag']))."'>".stripslashes($tags['tag'])."</a> ";
+                echo "<a href='database.php?mode=show&tag=" . urlencode(stripslashes($tags['tag'])) . "'>" . stripslashes($tags['tag']) . "</a> ";
             }
         }
         echo "</span>";
@@ -290,9 +289,9 @@ function showXP($id, $display)
 
     if ($display === 'compact') {
         // COMPACT MODE //
-        echo "<section class='item_compact' style='border-left: 6px solid #".$experiments['color']."'>";
-        echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>";
-        echo "<span class='date date_compact'>".format_date($experiments['date'])."</span> ";
+        echo "<section class='item_compact' style='border-left: 6px solid #" . $experiments['color'] . "'>";
+        echo "<a href='experiments.php?mode=view&id=" . $experiments['id'] . "'>";
+        echo "<span class='date date_compact'>" . format_date($experiments['date']) . "</span> ";
         echo "<span style='padding-left:10px;'>";
         // show lock if item is locked on viewXP
         if ($experiments['locked']) {
@@ -302,9 +301,9 @@ function showXP($id, $display)
         echo "</a></span></section>";
     } else { // NOT COMPACT
         ?>
-        <section class="item" style='border-left: 6px solid #<?php echo $experiments['color'];?>'>
+        <section class="item" style='border-left: 6px solid #<?php echo $experiments['color']; ?>'>
         <?php
-        echo "<a href='experiments.php?mode=view&id=".$experiments['id']."'>";
+        echo "<a href='experiments.php?mode=view&id=" . $experiments['id'] . "'>";
         // show stamp if experiment is timestamped
         if ($experiments['timestamped']) {
             echo "<img class='align_right' src='img/check.png' alt='stamp' title='Timestamp OK' />";
@@ -317,7 +316,7 @@ function showXP($id, $display)
         // TITLE
         echo stripslashes($experiments['title']) . "</p></a>";
         // DATE
-        echo "<span class='date'><img class='image' src='img/calendar.png' /> ".format_date($experiments['date'])."</span> ";
+        echo "<span class='date'><img class='image' src='img/calendar.png' /> " . format_date($experiments['date']) . "</span> ";
         // _('Tags')
         echo show_tags($id, 'experiments_tags');
         // show attached if there is a file attached
@@ -332,7 +331,7 @@ function showXP($id, $display)
  * Display the stars rating for a DB item.
  *
  * @param int $rating The number of stars to display
- * @return HTML of the stars
+ * @return string HTML of the stars
  */
 function show_stars($rating)
 {
@@ -360,7 +359,7 @@ function show_stars($rating)
  *
  * @param int $id The ID of the item to show
  * @param string $display Can be 'compact' or 'default'
- * @return string HTML of the single item
+ * @return string|null HTML of the single item
  */
 function showDB($id, $display)
 {
@@ -379,11 +378,11 @@ function showDB($id, $display)
     if ($display === 'compact') {
         // COMPACT MODE //
         ?>
-            <section class='item_compact' style='border-left: 6px solid #<?php echo $item['bgcolor'];?>'>
-            <a href='database.php?mode=view&id=<?php echo $item['id'];?>'>
-            <span class='date date_compact'><?php echo $item['date'];?></span>
-            <h4 style='padding-left:10px;border-right:1px dotted #ccd;color:#<?php echo $item['bgcolor'];?>'><?php echo $item['name'];?> </h4>
-            <span style='margin-left:7px'><?php echo stripslashes($item['title']);?></span>
+            <section class='item_compact' style='border-left: 6px solid #<?php echo $item['bgcolor']; ?>'>
+            <a href='database.php?mode=view&id=<?php echo $item['id']; ?>'>
+            <span class='date date_compact'><?php echo $item['date']; ?></span>
+            <h4 style='padding-left:10px;border-right:1px dotted #ccd;color:#<?php echo $item['bgcolor']; ?>'><?php echo $item['name']; ?> </h4>
+            <span style='margin-left:7px'><?php echo stripslashes($item['title']); ?></span>
         <?php
         // STAR RATING read only
         show_stars($item['rating']);
@@ -391,8 +390,8 @@ function showDB($id, $display)
 
     } else { // NOT COMPACT
 
-        echo "<section class='item' style='border-left: 6px solid #".$item['bgcolor']."'>";
-        echo "<a href='database.php?mode=view&id=".$item['id']."'>";
+        echo "<section class='item' style='border-left: 6px solid #" . $item['bgcolor'] . "'>";
+        echo "<a href='database.php?mode=view&id=" . $item['id'] . "'>";
         // show attached if there is a file attached
         if (has_attachement($item['id'], 'items')) {
             echo "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
@@ -407,7 +406,7 @@ function showDB($id, $display)
         // TITLE
         echo stripslashes($item['title']) . "</p></a>";
         // ITEM TYPE
-        echo "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#".$item['bgcolor']."'>".$item['name']." </span>";
+        echo "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['bgcolor'] . "'>" . $item['name'] . " </span>";
         // _('Tags')
         echo show_tags($id, 'items_tags');
         echo "</section>";
@@ -436,7 +435,7 @@ function check_title($input)
  * Check if the date is valid.
  *
  * @param int $input The date to check
- * @return int $input The input date if it's valid, or the date of today if not
+ * @return string $input The input date if it's valid, or the date of today if not
  */
 function check_date($input)
 {
@@ -483,7 +482,7 @@ function check_body($input)
  * Check visibility is either 'team or 'user'.
  *
  * @param string $input The visibility
- * @return string Will return team if the visibility is wrong
+ * @return string|null Will return team if the visibility is wrong
  */
 function check_visibility($input)
 {
@@ -497,12 +496,13 @@ function check_visibility($input)
         return 'team';
     }
 }
+
 /**
  * Make a CSV file. This is a function, and it's not in the make_csv.php file because it is called by make_zip also.
  *
  * @param int $id The id of the item to export
  * @param string $type The type of item can be 'experiments' or 'items'
- * @return the path to csv file
+ * @return false|string path to csv file
  */
 function make_unique_csv($id, $type)
 {
@@ -541,9 +541,9 @@ function make_unique_csv($id, $type)
 
     if ($table === 'experiments') {
         // now let's get the URL so we can have a nice link in the csv
-        $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+        $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
         $url = str_replace('make_zip.php', 'experiments.php', $url);
-        $url .= "?mode=view&id=".$csv_data['id'];
+        $url .= "?mode=view&id=" . $csv_data['id'];
         $list[] = array(
             $csv_data['id'],
             $csv_data['date'],
@@ -556,9 +556,9 @@ function make_unique_csv($id, $type)
 
     } else { // items
         // now let's get the URL so we can have a nice link in the csv
-        $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+        $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
         $url = str_replace('make_zip.php', 'database.php', $url);
-        $url .= "?mode=view&id=".$csv_data['id'];
+        $url .= "?mode=view&id=" . $csv_data['id'];
         $list[] = array(
             $csv_data['id'],
             $csv_data['date'],
@@ -573,7 +573,7 @@ function make_unique_csv($id, $type)
 
     // make CSV file
     $filename = hash("sha512", uniqid(rand(), true));
-    $filepath = 'uploads/export/'.$filename;
+    $filepath = 'uploads/export/' . $filename;
 
     $fp = fopen($filepath, 'w+');
     // utf8 headers
@@ -596,7 +596,7 @@ function make_unique_csv($id, $type)
 function generate_elabid()
 {
     $date = kdate();
-    return $date."-".sha1(uniqid($date, true));
+    return $date . "-" . sha1(uniqid($date, true));
 }
 
 /**
@@ -609,6 +609,8 @@ function generate_elabid()
 function duplicate_item($id, $type)
 {
     global $pdo;
+    $result = false;
+    $result_tags = false;
     if ($type === 'experiments') {
         $elabid = generate_elabid();
 
@@ -631,14 +633,14 @@ function duplicate_item($id, $type)
         }
 
         // SQL to get data from the experiment we duplicate
-        $sql = "SELECT title, body, visibility FROM experiments WHERE id = ".$id;
+        $sql = "SELECT title, body, visibility FROM experiments WHERE id = " . $id;
         $req = $pdo->prepare($sql);
         $req->execute();
         $data = $req->fetch();
 
         // let's add something at the end of the title to show it's a duplicate
         // capital i looks good enough
-        $title = $data['title'].' I';
+        $title = $data['title'] . ' I';
 
         // SQL for duplicateXP
         $sql = "INSERT INTO experiments(team, title, date, body, status, elabid, visibility, userid) VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
@@ -657,7 +659,7 @@ function duplicate_item($id, $type)
 
     if ($type === 'items') {
         // SQL to get data from the item we duplicate
-        $sql = "SELECT * FROM items WHERE id = ".$id;
+        $sql = "SELECT * FROM items WHERE id = " . $id;
         $req = $pdo->prepare($sql);
         $req->execute();
         $data = $req->fetch();
@@ -729,7 +731,7 @@ function duplicate_item($id, $type)
 
     } else { // DB
         // TAGS
-        $sql = "SELECT tag FROM items_tags WHERE item_id = ".$id;
+        $sql = "SELECT tag FROM items_tags WHERE item_id = " . $id;
         $req = $pdo->prepare($sql);
         $req->execute();
         $tag_number = $req->rowCount();
@@ -759,7 +761,7 @@ function duplicate_item($id, $type)
  *
  * @param string $type Can be 'info', 'info_nocross' or 'error', 'error_nocross'
  * @param string $message The message to display
- * @return string Will echo the HTML of the message
+ * @return boolean Will echo the HTML of the message
  */
 function display_message($type, $message)
 {
@@ -805,12 +807,7 @@ function is_owned_by_user($id, $table, $userid)
     $req = $pdo->prepare($sql);
     $req->execute();
     $result = $req->fetchColumn();
-
-    if ($result === $userid) {
-        return true;
-    } else {
-        return false;
-    }
+    return $result === $userid;
 }
 
 /**
@@ -826,7 +823,7 @@ function get_config($conf_name)
     $sql = "SELECT * FROM config";
     $req = $pdo->prepare($sql);
     $req->execute();
-    $config = $req->fetchAll(PDO::FETCH_COLUMN|PDO::FETCH_GROUP);
+    $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
     return $config[$conf_name][0];
 }
 
@@ -852,12 +849,13 @@ function get_team_config($column)
     }
     return "";
 }
+
 /**
  * Will check if an executable is on the system.
  * Only used by check_for_updates.php to check for git.
  *
  * @param string $cmd The command to check
- * @return bool Will return true if the executable can be used
+ * @return string Will return true if the executable can be used
  */
 function check_executable($cmd)
 {
@@ -873,7 +871,7 @@ function check_executable($cmd)
  */
 function format_date($date, $s = '.')
 {
-    return $date[0].$date[1].$date[2].$date[3].$s.$date['4'].$date['5'].$s.$date['6'].$date['7'];
+    return $date[0] . $date[1] . $date[2] . $date[3] . $s . $date['4'] . $date['5'] . $s . $date['6'] . $date['7'];
 }
 
 
@@ -882,6 +880,7 @@ function format_date($date, $s = '.')
  *
  * @param string $type The type of the log. Can be 'Error', 'Warning', 'Info'
  * @param string $body The content of the log
+ * @param string $user
  * @return bool Will return true if the query is successfull
  */
 function dblog($type, $user, $body)
@@ -901,11 +900,12 @@ function dblog($type, $user, $body)
     }
     return true;
 }
+
 /**
  * Display the end of page.
  * Only used in install/index.php
  *
- * @return string The HTML of the end of the page
+ * @return string|null The HTML of the end of the page
  */
 function custom_die()
 {
@@ -918,9 +918,9 @@ function custom_die()
 
 /**
  * Make a simple query
- * 
+ *
  * @param string The SQL query
- * @return bool the return value of execute
+ * @return boolean|string the return value of execute
  */
 function q($sql)
 {
@@ -929,8 +929,7 @@ function q($sql)
         $req = $pdo->prepare($sql);
         $req->execute();
         return true;
-    }
-    catch (PDOException $e)
+    } catch (PDOException $e)
     {
         dblog('Error', 'mysql', $e->getMessage());
         return $e->getMessage();
@@ -939,23 +938,20 @@ function q($sql)
 
 /**
  * Used in sysconfig.php to update config values
- * 
+ *
  * @param array conf_name => conf_value
  * @return bool the return value of execute queries
  */
 function update_config($array)
 {
     global $pdo;
+    $result = false;
     foreach ($array as $name => $value) {
-        $sql = "UPDATE config SET conf_value = '".$value."' WHERE conf_name = '".$name."';";
+        $sql = "UPDATE config SET conf_value = '" . $value . "' WHERE conf_name = '" . $name . "';";
         $req = $pdo->prepare($sql);
         $result = $req->execute();
     }
-    if ($result) {
-        return true;
-    } else {
-        return false;
-    }
+    return (bool) $result;
 }
 
 /*
@@ -970,16 +966,6 @@ function using_ssl()
     return ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on')
         || (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
         && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https'));
-
-    /*
-    $headers = getallheaders();
-    if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ||
-        (isset($headers['HTTP_X_FORWARDED_PROTO']) && strtolower($headers['HTTP_X_FORWARDED_PROTO']) == 'https' )) {
-            return true;
-        } else {
-            return false;
-        }
-     */
 }
 
 /*
@@ -989,7 +975,7 @@ function using_ssl()
  * @param string field
  * @param string params the list of options
  * @param string added the message to display on success
- * @return string success or error message
+ * @return string|null success or error message
  */
 function add_field($table, $field, $params, $added)
 {
@@ -1014,7 +1000,7 @@ function add_field($table, $field, $params, $added)
         if ($result) {
             echo $added;
         } else {
-             die($die_msg);
+            die($die_msg);
         }
     }
 }
@@ -1025,7 +1011,7 @@ function add_field($table, $field, $params, $added)
  * @param string table
  * @param string field
  * @param string added the message to display on success
- * @return string success or error message
+ * @return string|null success or error message
  */
 function rm_field($table, $field, $added)
 {
@@ -1050,7 +1036,7 @@ function rm_field($table, $field, $added)
         if ($result) {
             echo $added;
         } else {
-             die($die_msg);
+            die($die_msg);
         }
     }
 }

@@ -25,8 +25,8 @@
 ********************************************************************************/
 /* admin-exec.php - for administration of the elab */
 require_once '../inc/common.php';
-require_once ELAB_ROOT.'inc/locale.php';
-require_once ELAB_ROOT.'vendor/autoload.php';
+require_once ELAB_ROOT . 'inc/locale.php';
+require_once ELAB_ROOT . 'vendor/autoload.php';
 
 // only admin can use this
 if ($_SESSION['is_admin'] != 1) {
@@ -38,8 +38,8 @@ $errflag = false;
 $email = '';
 
 // FORMKEY
-require_once ELAB_ROOT.'inc/classes/formkey.class.php';
-$formKey = new formKey();
+require_once ELAB_ROOT . 'inc/classes/formkey.class.php';
+$formKey = new \elabftw\elabftw\FormKey();
 
 // VALIDATE USERS
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
@@ -61,13 +61,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
 
         // validate the user
         $req->execute();
-        $msg_arr[] = _('Validated user with ID :').' '.$user;
+        $msg_arr[] = _('Validated user with ID :') . ' ' . $user;
 
         // get email
         $req_email->execute();
         $user = $req_email->fetch();
         // now let's get the URL so we can have a nice link in the email
-        $url = 'https://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$_SERVER['PHP_SELF'];
+        $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
         $url = str_replace('admin-exec.php', 'login.php', $url);
         // we send an email to each validated new user
         $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
         // Set the To addresses with an associative array
         ->setTo(array($user['email'] => 'eLabFTW'))
         // Give it a body
-        ->setBody('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login : '.$url.$footer);
+        ->setBody('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login : ' . $url . $footer);
 
         $transport = Swift_SmtpTransport::newInstance(
             get_config('smtp_address'),
@@ -117,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
     // we don't do a `git pull` because it would mean a lot of tweaking to get it working with the www user
     // so we use tar.gz and tagged releases.
     $update_list_url = 'https://www.elabftw.net/updates.ini';
-    $update_zip_file = ELAB_ROOT.'uploads/tmp/elabftw-latest.zip';
+    $update_zip_file = ELAB_ROOT . 'uploads/tmp/elabftw-latest.zip';
 
     // 1. get the ini file with the updates
     // we use curl to be able to input proxy settings
@@ -146,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
     curl_close($ch);
 
     if ($update === false) {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#1", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#1", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
         header('Location: ../sysconfig.php');
         exit;
@@ -179,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
     curl_setopt($ch, CURLOPT_FILE, $handle);
 
     if (curl_exec($ch) != true) {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#2", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#2", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
         header('Location: ../sysconfig.php');
         exit;
@@ -189,7 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
 
     // VERIFY MD5SUM
     if (md5_file($update_zip_file) != $latest_arr['md5']) {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#3", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#3", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
         header('Location: ../sysconfig.php');
         exit;
@@ -205,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
         //
         // The unzipped archive will be a folder elabftw-master, because that's how github does it.
         // So this means that only update on master branch are supported. If you want to update from next, use git !
-        $cmd = "/bin/cp -rv uploads/tmp/elabftw-master/* ".ELAB_ROOT." >> /tmp/elabcopy.log 2>&1";
+        $cmd = "/bin/cp -rv uploads/tmp/elabftw-master/* " . ELAB_ROOT . " >> /tmp/elabcopy.log 2>&1";
         //var_dump(shell_exec($cmd));
         exit;
         //shell_exec("/bin/rm -rf uploads/tmp/*");
@@ -214,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
         $_SESSION['infos'] = $msg_arr;
         header('Location: update.php');
     } else {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#4", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#4", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
         header('Location: ../sysconfig.php');
     }
@@ -256,7 +256,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team']) && $_POST[
 
     // now we need to insert a new default experiment template for the newly created team
     $sql = "INSERT INTO `experiments_templates` (`team`, `body`, `name`, `userid`) VALUES
-    ('".$new_team_id."', '<p><span style=\"font-size: 14pt;\"><strong>Goal :</strong></span></p>
+    ('".$new_team_id . "', '<p><span style=\"font-size: 14pt;\"><strong>Goal :</strong></span></p>
     <p>&nbsp;</p>
     <p><span style=\"font-size: 14pt;\"><strong>Procedure :</strong></span></p>
     <p>&nbsp;</p>
@@ -276,7 +276,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team']) && $_POST[
         header('Location: ../sysconfig.php');
         exit;
     } else {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#5", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#5", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
         header('Location: ../sysconfig.php');
         exit;
@@ -319,7 +319,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
         header('Location: ../sysconfig.php?tab=2');
         exit;
     } else {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#6", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#6", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
         header('Location: ../sysconfig.php?tab=2');
         exit;
@@ -364,7 +364,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {
         header('Location: ../sysconfig.php?tab=3');
         exit;
     } else {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#7", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#7", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
         header('Location: ../sysconfig.php?tab=3');
         exit;
@@ -403,7 +403,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['admin_validate'])) {
         header('Location: ../sysconfig.php?tab=4');
         exit;
     } else {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#8", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#8", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
         header('Location: ../sysconfig.php?tab=4');
         exit;
@@ -454,7 +454,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['smtp_address'])) {
         header('Location: ../sysconfig.php?tab=5');
         exit;
     } else {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#9", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#9", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
         header('Location: ../sysconfig.php?tab=5');
         exit;
@@ -511,7 +511,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
         'team_id' => $_SESSION['team_id']
         ));
     } catch (PDOException $e) {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#10", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#10", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
         header('Location: ../admin.php');
         exit;
@@ -565,7 +565,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
             // Create salt
             $salt = hash("sha512", uniqid(rand(), true));
             // Create hash
-            $passwordHash = hash("sha512", $salt.$_POST['new_password']);
+            $passwordHash = hash("sha512", $salt . $_POST['new_password']);
 
             $sql = "UPDATE users SET password = :password, salt = :salt WHERE userid = :userid";
             $req = $pdo->prepare($sql);
@@ -578,7 +578,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
                 $msg_arr[] = _('Configuration updated successfully.');
                 $_SESSION['infos'] = $msg_arr;
             } else {
-                $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#11", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+                $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#11", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
                 $_SESSION['errors'] = $msg_arr;
             }
         } else { // passwords do not match
@@ -616,7 +616,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
             exit;
         }
     } else { //sql fail
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#12", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#12", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
         header('Location: ../admin.php?tab=2');
         exit;
@@ -663,7 +663,7 @@ if (isset($_POST['status_name']) && is_pos_int($_POST['status_id']) && !empty($_
         header('Location: ../admin.php?tab=3');
         exit;
     } else { //sql fail
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#13", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#13", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
         header('Location: ../admin.php?tab=3');
         exit;
@@ -689,7 +689,7 @@ if (isset($_POST['new_status_name'])) {
             header('Location: ../admin.php?tab=3');
             exit;
         } else { //sql fail
-            $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#14", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+            $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#14", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
             $_SESSION['errors'] = $msg_arr;
             header('Location: ../admin.php?tab=3');
             exit;
@@ -729,7 +729,7 @@ if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
         header('Location: ../admin.php?tab=4');
         exit;
     } else { //sql fail
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#14", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#14", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
         header('Location: ../admin.php?tab=4');
         exit;
@@ -762,7 +762,7 @@ if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
         header('Location: ../admin.php?tab=4');
         exit;
     } else { //sql fail
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#15", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#15", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
 
         $_SESSION['errors'] = $msg_arr;
         header('Location: ../admin.php?tab=4');
@@ -792,7 +792,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
         $pass_infos = $req->fetch();
 
         // check if the given password is good
-        $password_hash = hash("sha512", $pass_infos['salt'].$_POST['delete_user_confpass']);
+        $password_hash = hash("sha512", $pass_infos['salt'] . $_POST['delete_user_confpass']);
         if ($password_hash != $pass_infos['password']) {
             $msg_arr[] = _("Wrong password!");
             $errflag = true;
@@ -826,13 +826,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
 
     $userid = $user['userid'];
     // DELETE USER
-    $sql = "DELETE FROM users WHERE userid = ".$userid;
+    $sql = "DELETE FROM users WHERE userid = " . $userid;
     $req = $pdo->prepare($sql);
     $req->execute();
-    $sql = "DELETE FROM experiments_tags WHERE userid = ".$userid;
+    $sql = "DELETE FROM experiments_tags WHERE userid = " . $userid;
     $req = $pdo->prepare($sql);
     $req->execute();
-    $sql = "DELETE FROM experiments WHERE userid = ".$userid;
+    $sql = "DELETE FROM experiments WHERE userid = " . $userid;
     $req = $pdo->prepare($sql);
     $req->execute();
     // get all filenames
@@ -844,10 +844,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     ));
     while ($uploads = $req->fetch()) {
         // Delete file
-        $filepath = 'uploads/'.$uploads['long_name'];
+        $filepath = 'uploads/' . $uploads['long_name'];
         unlink($filepath);
     }
-    $sql = "DELETE FROM uploads WHERE userid = ".$userid;
+    $sql = "DELETE FROM uploads WHERE userid = " . $userid;
     $req = $pdo->prepare($sql);
     $req->execute();
     $msg_arr[] = _('Everything was purged successfully.');
@@ -870,7 +870,7 @@ if (isset($_POST['default_exp_tpl'])) {
         'team' => $_SESSION['team_id']
         ));
     } catch (PDOException $e) {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.")."<br>E#16", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#16", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;
         header('Location: ../admin.php?tab=5');
         exit;

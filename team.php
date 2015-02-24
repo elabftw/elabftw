@@ -25,29 +25,29 @@
 ********************************************************************************/
 require_once 'inc/common.php';
 require_once 'inc/locale.php';
-$page_title= _('Team'); 
+$page_title = _('Team'); 
 $selected_menu = 'Team';
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 ?>
 <menu>
 <ul>
-<li class='tabhandle' id='tab1'><?php echo _('Members');?></li>
+<li class='tabhandle' id='tab1'><?php echo _('Members'); ?></li>
 <li class='tabhandle' id='tab2'><?php echo _('Statistics')?></li>
-<li class='tabhandle' id='tab3'><?php echo _('Tips and tricks');?></li>
-<li class='tabhandle' id='tab4'><?php echo _('Tools');?></li>
+<li class='tabhandle' id='tab3'><?php echo _('Tips and tricks'); ?></li>
+<li class='tabhandle' id='tab4'><?php echo _('Tools'); ?></li>
 </ul>
 </menu>
 <!-- *********************** -->
 <div class='divhandle' id='tab1div'>
-<?php display_message('info_nocross', sprintf(_('You belong to the %s team.'), get_team_config('team_name')));?>
+<?php display_message('info_nocross', sprintf(_('You belong to the %s team.'), get_team_config('team_name'))); ?>
 <table id='teamtable'>
     <tr>
-        <th><?php echo _('Name');?></th>
-        <th><?php echo _('Phone');?></th>
-        <th><?php echo _('Mobile');?></th>
-        <th><?php echo _('Website');?></th>
-        <th><?php echo _('Skype');?></th>
+        <th><?php echo _('Name'); ?></th>
+        <th><?php echo _('Phone'); ?></th>
+        <th><?php echo _('Mobile'); ?></th>
+        <th><?php echo _('Website'); ?></th>
+        <th><?php echo _('Skype'); ?></th>
     </tr>
 <?php // SQL to get members info
 $sql = "SELECT * FROM users WHERE validated = :validated AND team = :team_id";
@@ -59,24 +59,24 @@ $req->execute(array(
 
 while ($data = $req->fetch()) {
     echo "<tr>";
-    echo "<td><a href='mailto:".$data['email']."'>".$data['firstname']." ".$data['lastname']."</a></td>";
+    echo "<td><a href='mailto:" . $data['email'] . "'>" . $data['firstname'] . " " . $data['lastname'] . "</a></td>";
         if (!empty($data['phone'])) { 
-            echo "<td>".$data['phone']."</td>";
+            echo "<td>" . $data['phone'] . "</td>";
         } else {
             echo "<td>&nbsp;</td>"; // Placeholder
         }
         if (!empty($data['cellphone'])) { 
-            echo "<td>".$data['cellphone']."</td>"; 
+            echo "<td>" . $data['cellphone'] . "</td>"; 
         } else {
             echo "<td>&nbsp;</td>";
         }
         if (!empty($data['website'])) { 
-            echo "<td><a href='".$data['website']."'>www</a></td>"; 
+            echo "<td><a href='" . $data['website'] . "'>www</a></td>"; 
         } else {
             echo "<td>&nbsp;</td>";
         }
         if (!empty($data['skype'])) { 
-            echo "<td>".$data['skype']."</td>";
+            echo "<td>" . $data['skype'] . "</td>";
         } else {
             echo "<td>&nbsp;</td>";
         }
@@ -88,7 +88,7 @@ while ($data = $req->fetch()) {
 <div class='divhandle' id='tab2div'>
 <?php
 // show team stats
-$count_sql="SELECT
+$count_sql = "SELECT
 (SELECT COUNT(users.userid) FROM users WHERE users.team = :team) AS totusers,
 (SELECT COUNT(items.id) FROM items WHERE items.team = :team) AS totdb,
 (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.team = :team) AS totxp";
@@ -98,30 +98,30 @@ $count_req->execute();
 $totals = $count_req->fetch(PDO::FETCH_ASSOC);
 ?>
     <p><?php echo sprintf(ngettext('There is a total of %d experiment', 'There is a total of %d experiments', $totals['totxp']), $totals['totxp']);
-             echo ' '.sprintf(ngettext('by %d different user.', 'by %d different users', $totals['totusers']), $totals['totusers']);?></p>
-    <p><?php echo sprintf(ngettext('There is a total of %d item in the database.', 'There is a total of %d items in the database.', $totals['totdb']), $totals['totdb']);?></p>
+                echo ' ' . sprintf(ngettext('by %d different user.', 'by %d different users', $totals['totusers']), $totals['totusers']); ?></p>
+    <p><?php echo sprintf(ngettext('There is a total of %d item in the database.', 'There is a total of %d items in the database.', $totals['totdb']), $totals['totdb']); ?></p>
 </div>
 
 <!-- *********************** -->
 <div class='divhandle' id='tab3div'>
     <p>
         <ul>
-        <li class='tip'><?php echo _("You can use a TODOlist by pressing 't'.");?></li>
-        <li class='tip'><?php printf(_('You can have experiments templates (%sControl Panel%s).'), "<a href='ucp.php?tab=3'>", "</a>");?></li>
-        <li class='tip'><?php printf(_('The admin of a team can edit the status and the types of items available (%sAdmin Panel%s).'), "<a href='admin.php?tab=4'>", "</a>");?></li>
-        <li class='tip'><?php echo _('If you press Ctrl Shift D in the editor, the date will appear under the cursor.');?></li>
-        <li class='tip'><?php printf(_('Custom shortcuts are available (%sControl Panel%s).'), "<a href='ucp.php?tab=2'>", "</a>");?></li>
-        <li class='tip'><?php echo _('You can duplicate experiments in one click.');?></li>
-        <li class='tip'><?php echo _('Click a tag to list all items with this tag.');?></li>
-        <li class='tip'><?php printf(_('Register an account with %sUniversign%s to start timestamping experiments.'), "<a href='https://www.universign.eu/en/timestamp'>", "</a>");?></li>
-        <li class='tip'><?php echo _('Only a locked experiment can be timestamped.');?></li>
-        <li class='tip'><?php echo _('Once timestamped an experiment cannot be unlocked or modified. Only comments can be added.');?></li>
+        <li class='tip'><?php echo _("You can use a TODOlist by pressing 't'."); ?></li>
+        <li class='tip'><?php printf(_('You can have experiments templates (%sControl Panel%s).'), "<a href='ucp.php?tab=3'>", "</a>"); ?></li>
+        <li class='tip'><?php printf(_('The admin of a team can edit the status and the types of items available (%sAdmin Panel%s).'), "<a href='admin.php?tab=4'>", "</a>"); ?></li>
+        <li class='tip'><?php echo _('If you press Ctrl Shift D in the editor, the date will appear under the cursor.'); ?></li>
+        <li class='tip'><?php printf(_('Custom shortcuts are available (%sControl Panel%s).'), "<a href='ucp.php?tab=2'>", "</a>"); ?></li>
+        <li class='tip'><?php echo _('You can duplicate experiments in one click.'); ?></li>
+        <li class='tip'><?php echo _('Click a tag to list all items with this tag.'); ?></li>
+        <li class='tip'><?php printf(_('Register an account with %sUniversign%s to start timestamping experiments.'), "<a href='https://www.universign.eu/en/timestamp'>", "</a>"); ?></li>
+        <li class='tip'><?php echo _('Only a locked experiment can be timestamped.'); ?></li>
+        <li class='tip'><?php echo _('Once timestamped an experiment cannot be unlocked or modified. Only comments can be added.'); ?></li>
         </ul>
     </p>
 </div>
 
 <div class='divhandle' id='tab4div'>
-    <h3><?php echo _('Molecule drawer');?></h3>
+    <h3><?php echo _('Molecule drawer'); ?></h3>
     <div class='box'>
         <link rel="stylesheet" href="css/chemdoodle.css" type="text/css">
         <script src="js/chemdoodle.js"></script>
@@ -160,4 +160,4 @@ $(document).ready(function() {
 });
 </script>
 
-<?php require_once('inc/footer.php');?>
+<?php require_once('inc/footer.php'); ?>

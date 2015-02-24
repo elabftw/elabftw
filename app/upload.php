@@ -68,13 +68,13 @@ if (!empty($path_info['extension'])) {
     $ext = "unknown";
 }
 // Create a unique long filename + extension
-$longname = hash("sha512", uniqid(rand(), true)).".".$ext;
+$longname = hash("sha512", uniqid(rand(), true)) . "." . $ext;
 // Try to move the file to its final place
-if (rename($_FILES['file']['tmp_name'], ELAB_ROOT.'uploads/'.$longname)) {
+if (rename($_FILES['file']['tmp_name'], ELAB_ROOT . 'uploads/' . $longname)) {
 
     // generate a md5sum of the file if it's not too big
     if ($_FILES['file']['size'] < 5000000) {
-        $md5 = hash_file('md5', ELAB_ROOT.'uploads/' . $longname);
+        $md5 = hash_file('md5', ELAB_ROOT . 'uploads/' . $longname);
     } else {
         $md5 = null;
     }

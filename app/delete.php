@@ -27,7 +27,7 @@
 // This page is called with POST requests containing an id and a type.
 
 require_once '../inc/common.php';
-require_once ELAB_ROOT.'inc/locale.php';
+require_once ELAB_ROOT . 'inc/locale.php';
 
 
 // Check id is valid and assign it to $id
@@ -44,7 +44,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
         // EXPERIMENTS
         case 'exp':
             // check if we can delete experiments
-            if (((get_team_config('deletable_xp') == '0')  &&
+            if (((get_team_config('deletable_xp') == '0') &&
                 !$_SESSION['is_admin']) ||
                 !is_owned_by_user($id, 'experiments', $_SESSION['userid'])) {
                 $msg_arr[] = _("You don't have the rights to delete this experiment.");
@@ -75,12 +75,12 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                     'type' => 'experiments'
                 ));
                 while ($uploads = $req->fetch()) {
-                    $filepath = ELAB_ROOT.'uploads/'.$uploads['long_name'];
+                    $filepath = ELAB_ROOT . 'uploads/' . $uploads['long_name'];
                     unlink($filepath);
                     // remove thumbnail
                     $ext = get_ext($uploads['real_name']);
-                    if (file_exists(ELAB_ROOT.'uploads/'.$uploads['long_name'].'_th.'.$ext)) {
-                        unlink(ELAB_ROOT.'uploads/'.$uploads['long_name'].'_th.'.$ext);
+                    if (file_exists(ELAB_ROOT . 'uploads/' . $uploads['long_name'] . '_th.' . $ext)) {
+                        unlink(ELAB_ROOT . 'uploads/' . $uploads['long_name'] . '_th.' . $ext);
                     }
                 }
                 // now delete files from the database
@@ -164,12 +164,12 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                 'type' => 'items'
             ));
             while ($uploads = $req->fetch()) {
-                $filepath = ELAB_ROOT.'uploads/'.$uploads['long_name'];
+                $filepath = ELAB_ROOT . 'uploads/' . $uploads['long_name'];
                 unlink($filepath);
                 // remove thumbnail
                 $ext = get_ext($uploads['real_name']);
-                if (file_exists(ELAB_ROOT.'uploads/'.$uploads['long_name'].'_th.'.$ext)) {
-                    unlink(ELAB_ROOT.'uploads/'.$uploads['long_name'].'_th.'.$ext);
+                if (file_exists(ELAB_ROOT . 'uploads/' . $uploads['long_name'] . '_th.' . $ext)) {
+                    unlink(ELAB_ROOT . 'uploads/' . $uploads['long_name'] . '_th.' . $ext);
                 }
             }
             // now remove them from the database
@@ -188,7 +188,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                 'link_id' => $id
             ));
             while ($links = $req->fetch()) {
-                $delete_sql = "DELETE FROM experiments_links WHERE id=".$links['id'];
+                $delete_sql = "DELETE FROM experiments_links WHERE id=" . $links['id'];
                 $delete_req = $pdo->prepare($delete_sql);
                 $result[] = $delete_req->execute();
             }

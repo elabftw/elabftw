@@ -68,11 +68,11 @@ if ($total == 0) {
     echo _('No statistics available yet.'); // fix division by zero
 } else {
     foreach ($status_arr as $key => $value) {
-        $percent_arr[$value] = round(($count_arr[$key]/$total)*100);
+        $percent_arr[$value] = round(($count_arr[$key] / $total) * 100);
     }
 
     // BEGIN CONTENT
-    echo "<img src='img/statistics.png' alt='' /> <h4>"._('Statistics')."</h4>";
+    echo "<img src='img/statistics.png' alt='' /> <h4>" . _('Statistics') . "</h4>";
     ?>
      <!--Load the AJAX API-->
     <script src="https://www.google.com/jsapi"></script>
@@ -95,18 +95,18 @@ if ($total == 0) {
                           ]);
 
             var options = {
-                title: '<?php echo _('Experiments for').' '.$_SESSION['username'];?>',
+                title: '<?php echo _('Experiments for') . ' ' . $_SESSION['username']; ?>',
                 backgroundColor: '#fff',
                 colors: [
                 <?php
                 // string that will hold the list of colors correctly formatted
                 $color_list = "";
-                foreach($status_colors as $color) {
-                    $color_list .= "'#".$color."',";
+                foreach ($status_colors as $color) {
+                    $color_list .= "'#" . $color . "',";
                 }
                 // remove last ,
                 $color_list = rtrim($color_list, ",");
-                echo $color_list;?>]
+                echo $color_list; ?>]
             }
             var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
             chart.draw(data, options);

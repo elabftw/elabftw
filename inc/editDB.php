@@ -24,9 +24,6 @@
 *                                                                               *
 ********************************************************************************/
 // inc/editDB.php
-// formkey stuff
-//require_once('inc/classes/formkey.class.php');
-//$formKey = new formKey();
 ?>
 <script src='js/tinymce/tinymce.min.js'></script>
 <?php
@@ -59,26 +56,26 @@ if ($data['locked'] == 1) {
 
 // BEGIN CONTENT
 ?>
-<section class='box' style='border-left: 6px solid #<?php echo $data['bgcolor'];?>'>
+<section class='box' style='border-left: 6px solid #<?php echo $data['bgcolor']; ?>'>
     <!-- TRASH -->
-    <img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id;?>','item', 'database.php')" />
+    <img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id; ?>','item', 'database.php')" />
 
     <!-- ADD TAG FORM -->
-    <img src='img/tags.png' class='bot5px' alt='tags' /><label for='addtaginput'><?php echo _('Tags');?></label>
+    <img src='img/tags.png' class='bot5px' alt='tags' /><label for='addtaginput'><?php echo _('Tags'); ?></label>
     <div class='tags'>
         <span id='tags_div'>
         <?php
-        $sql = "SELECT id, tag FROM items_tags WHERE item_id = ".$id;
+        $sql = "SELECT id, tag FROM items_tags WHERE item_id = " . $id;
         $tagreq = $pdo->prepare($sql);
         $tagreq->execute();
         // DISPLAY TAGS
         while ($tags = $tagreq->fetch()) {
-            echo "<span class='tag'><a onclick='delete_tag(".$tags['id'].",".$id.")'>";
-            echo stripslashes($tags['tag'])."</a></span>";
+            echo "<span class='tag'><a onclick='delete_tag(" . $tags['id'] . "," . $id . ")'>";
+            echo stripslashes($tags['tag']) . "</a></span>";
         } //end while tags
         ?>
         </span>
-        <input type="text" name="tag" id="addtaginput" placeholder="<?php echo _('Add a tag');?>" />
+        <input type="text" name="tag" id="addtaginput" placeholder="<?php echo _('Add a tag'); ?>" />
     </div>
     <!-- END ADD TAG -->
 
@@ -86,30 +83,30 @@ if ($data['locked'] == 1) {
     <form method="post" action="app/editDB-exec.php" enctype='multipart/form-data'>
     <!-- STAR RATING via ajax request -->
     <div class='align_right'>
-    <input id='star1' name="star" type="radio" class="star" value='1' <?php if ($data['rating'] == 1) { echo "checked=checked ";}?>/>
-    <input id='star2' name="star" type="radio" class="star" value='2' <?php if ($data['rating'] == 2) { echo "checked=checked ";}?>/>
-    <input id='star3' name="star" type="radio" class="star" value='3' <?php if ($data['rating'] == 3) { echo "checked=checked ";}?>/>
-    <input id='star4' name="star" type="radio" class="star" value='4' <?php if ($data['rating'] == 4) { echo "checked=checked ";}?>/>
-    <input id='star5' name="star" type="radio" class="star" value='5' <?php if ($data['rating'] == 5) { echo "checked=checked ";}?>/>
+    <input id='star1' name="star" type="radio" class="star" value='1' <?php if ($data['rating'] == 1) { echo "checked=checked "; }?>/>
+    <input id='star2' name="star" type="radio" class="star" value='2' <?php if ($data['rating'] == 2) { echo "checked=checked "; }?>/>
+    <input id='star3' name="star" type="radio" class="star" value='3' <?php if ($data['rating'] == 3) { echo "checked=checked "; }?>/>
+    <input id='star4' name="star" type="radio" class="star" value='4' <?php if ($data['rating'] == 4) { echo "checked=checked "; }?>/>
+    <input id='star5' name="star" type="radio" class="star" value='5' <?php if ($data['rating'] == 5) { echo "checked=checked "; }?>/>
     </div><!-- END STAR RATING -->
-    <input name='item_id' type='hidden' value='<?php echo $id;?>' />
+    <input name='item_id' type='hidden' value='<?php echo $id; ?>' />
     <img src='img/calendar.png' class='bot5px' title='date' alt='Date :' />
-    <label for='datepicker'><?php echo _('Date');?></label>
+    <label for='datepicker'><?php echo _('Date'); ?></label>
     <!-- TODO if firefox has support for it: type = date -->
-    <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date'];?>' />
-    <label class='block' for='title_input'><?php echo _('Title');?></label>
+    <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date']; ?>' />
+    <label class='block' for='title_input'><?php echo _('Title'); ?></label>
     <input id='title_input' name='title' rows="1" value='<?php if (empty($_SESSION['errors'])) {
         echo stripslashes($data['title']);
     } else {
         echo stripslashes($_SESSION['new_title']);
     } ?>' required />
-        <label for='body_area' class='block'><?php echo _('Infos');?></label>
+        <label for='body_area' class='block'><?php echo _('Infos'); ?></label>
     <textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">
-        <?php echo stripslashes($data['body']);?>
+        <?php echo stripslashes($data['body']); ?>
     </textarea>
     <!-- _('Submit') BUTTON -->
     <div class='center' id='saveButton'>
-        <button type="submit" name="Submit" class='button'><?php echo _('Save and go back');?></button>
+        <button type="submit" name="Submit" class='button'><?php echo _('Save and go back'); ?></button>
     </div>
     </form>
     <!-- end edit items form -->
@@ -136,7 +133,7 @@ $sql = "SELECT DISTINCT tag FROM items_tags ORDER BY id DESC LIMIT 500";
 $getalltags = $pdo->prepare($sql);
 $getalltags->execute();
 while ($tag = $getalltags->fetch()) {
-    echo "'".$tag[0]."',";
+    echo "'" . $tag[0] . "',";
 }?>
 		];
 		$( "#addtaginput" ).autocomplete({
@@ -145,7 +142,7 @@ while ($tag = $getalltags->fetch()) {
 	});
 // DELETE TAG
 function delete_tag(tag_id,item_id){
-    var you_sure = confirm('<?php echo _('Delete this?');?>');
+    var you_sure = confirm('<?php echo _('Delete this?'); ?>');
     if (you_sure == true) {
         $.post('app/delete.php', {
             id:tag_id,
@@ -171,7 +168,7 @@ function addTagOnEnter(e){ // the argument here is the event (needed to detect w
             type: 'itemtag'
         })
         // reload the tags list
-        .success(function() {$("#tags_div").load("database.php?mode=edit&id=<?php echo $id;?> #tags_div");
+        .success(function() {$("#tags_div").load("database.php?mode=edit&id=<?php echo $id; ?> #tags_div");
     // clear input field
     $("#addtaginput").val("");
     return false;
@@ -212,7 +209,7 @@ $(document).ready(function() {
                 type: "POST",
                 url: "app/quicksave.php",
                 data: {
-                id : <?php echo $id;?>,
+                id : <?php echo $id; ?>,
                 type : 'items',
                 // we need this to get the updated content
                 title : document.getElementById('title_input').value,
@@ -225,7 +222,7 @@ $(document).ready(function() {
         setup : function(editor) {
             editor.addShortcut("ctrl+shift+d", "add date at cursor", function() { addDateOnCursor(); });
         },
-        language : '<?php echo $_SESSION['prefs']['lang'];?>'
+        language : '<?php echo $_SESSION['prefs']['lang']; ?>'
     });
     // DATEPICKER
     $( "#datepicker" ).datepicker({dateFormat: 'yymmdd'});
@@ -260,7 +257,7 @@ $(document).ready(function() {
         echo "
     window.onbeforeunload = function (e) {
           e = e || window.event;
-          return '"._('Do you want to navigate away from this page? Unsaved changes will be lost!')."';
+          return '"._('Do you want to navigate away from this page? Unsaved changes will be lost!') . "';
     };";
     }
 ?>

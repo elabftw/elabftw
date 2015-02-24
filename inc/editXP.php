@@ -101,7 +101,10 @@ while ($tags = $tagreq->fetch()) {
         <h4><?php echo _('Visibility'); ?></h4><br>
         <select id="visibility_form" name="visibility" onchange="update_visibility(this.value)">
             <option id='option_team' value="team"><?php echo _('Only the team'); ?></option>
-            <option id='option_user' value="user" <?php if ($experiment['visibility'] === 'user') echo "selected"; ?>><?php echo _('Only me'); ?></option>
+            <option id='option_user' value="user" <?php if ($experiment['visibility'] === 'user') {
+    echo "selected";
+}
+?>><?php echo _('Only me'); ?></option>
         </select>
         <span id='visibility_msg_div'><?php echo _('Updated!'); ?></span>
     </div>

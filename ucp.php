@@ -25,7 +25,7 @@
 ********************************************************************************/
 require_once 'inc/common.php';
 require_once 'inc/locale.php';
-$page_title = _('User Control Panel'); ;
+$page_title = _('User Control Panel');
 $selected_menu = null;
 require_once('inc/head.php');
 require_once('inc/info_box.php');

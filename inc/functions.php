@@ -155,11 +155,7 @@ function has_attachement($id, $type)
     $req->bindParam(':item_id', $id);
     $req->bindParam(':type', $type);
     $req->execute();
-    if ($req->rowCount() > 0) {
-        return true;
-    }
-
-    return false;
+    return $req->rowCount() > 0;
 }
 
 
@@ -169,7 +165,7 @@ function has_attachement($id, $type)
  * @param string $type Can be 'xp' or 'db'
  * @param string $query The thing to search
  * @param int $userid Userid is used for 'xp' only
- * @return array $results_arr Array of ID with the $query string inside
+ * @return false|array $results_arr Array of ID with the $query string inside
  */
 function search_item($type, $query, $userid)
 {
@@ -335,7 +331,7 @@ function showXP($id, $display)
  * Display the stars rating for a DB item.
  *
  * @param int $rating The number of stars to display
- * @return HTML of the stars
+ * @return string HTML of the stars
  */
 function show_stars($rating)
 {
@@ -363,7 +359,7 @@ function show_stars($rating)
  *
  * @param int $id The ID of the item to show
  * @param string $display Can be 'compact' or 'default'
- * @return string HTML of the single item
+ * @return string|null HTML of the single item
  */
 function showDB($id, $display)
 {
@@ -439,7 +435,7 @@ function check_title($input)
  * Check if the date is valid.
  *
  * @param int $input The date to check
- * @return int $input The input date if it's valid, or the date of today if not
+ * @return string $input The input date if it's valid, or the date of today if not
  */
 function check_date($input)
 {
@@ -486,7 +482,7 @@ function check_body($input)
  * Check visibility is either 'team or 'user'.
  *
  * @param string $input The visibility
- * @return string Will return team if the visibility is wrong
+ * @return string|null Will return team if the visibility is wrong
  */
 function check_visibility($input)
 {
@@ -811,12 +807,7 @@ function is_owned_by_user($id, $table, $userid)
     $req = $pdo->prepare($sql);
     $req->execute();
     $result = $req->fetchColumn();
-
-    if ($result === $userid) {
-        return true;
-    } else {
-        return false;
-    }
+    return $result === $userid;
 }
 
 /**
@@ -914,7 +905,7 @@ function dblog($type, $user, $body)
  * Display the end of page.
  * Only used in install/index.php
  *
- * @return string The HTML of the end of the page
+ * @return string|null The HTML of the end of the page
  */
 function custom_die()
 {
@@ -960,11 +951,7 @@ function update_config($array)
         $req = $pdo->prepare($sql);
         $result = $req->execute();
     }
-    if ($result) {
-        return true;
-    } else {
-        return false;
-    }
+    return (bool) $result;
 }
 
 /*
@@ -979,16 +966,6 @@ function using_ssl()
     return ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on')
         || (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
         && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https'));
-
-    /*
-    $headers = getallheaders();
-    if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ||
-        (isset($headers['HTTP_X_FORWARDED_PROTO']) && strtolower($headers['HTTP_X_FORWARDED_PROTO']) == 'https' )) {
-            return true;
-        } else {
-            return false;
-        }
-     */
 }
 
 /*
@@ -998,7 +975,7 @@ function using_ssl()
  * @param string field
  * @param string params the list of options
  * @param string added the message to display on success
- * @return string success or error message
+ * @return string|null success or error message
  */
 function add_field($table, $field, $params, $added)
 {
@@ -1034,7 +1011,7 @@ function add_field($table, $field, $params, $added)
  * @param string table
  * @param string field
  * @param string added the message to display on success
- * @return string success or error message
+ * @return string|null success or error message
  */
 function rm_field($table, $field, $added)
 {

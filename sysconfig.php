@@ -168,7 +168,7 @@ if ($current_version == 'something') {
 
 <!-- TAB 3 -->
 <div class='divhandle' id='tab3div'>
-    <h3><?php echo _('Universign timestamping configuration');?></h3>
+    <h3><?php echo _('Timestamping configuration');?></h3>
     <form method='post' action='app/admin-exec.php'>
         <label for='stampshare'><?php echo _('The teams can use the credentials below to timestamp:');?></label>
         <select name='stampshare' id='stampshare'>

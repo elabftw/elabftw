@@ -111,14 +111,18 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
         <input type='url' value='<?php echo get_team_config('link_href');?>' name='link_href' id='link_href' />
         </p>
         <p>
+        <label for='ts_provider_url'><?php echo _('URL for external timestamping service:');?></label>
+        <input type='url' value='<?php echo get_team_config('ts_provider_url');?>' name='ts_provider_url' id='ts_provider_url' />
+        <span class='smallgray'><?php echo _('This should be the URL used for RFC3616-compliant timestamping requests.');?></span>
+        </p>
         <label for='stamplogin'><?php echo _('Login for external timestamping service:');?></label>
-        <input type='email' value='<?php echo get_team_config('stamplogin');?>' name='stamplogin' id='stamplogin' />
-        <span class='smallgray'><?php echo _('This should be the email address associated with your account on Universign.com.');?></span>
+        <input type='text' value='<?php echo get_team_config('stamplogin');?>' name='stamplogin' id='stamplogin' />
+        <span class='smallgray'><?php echo _('This should be the login associated with your timestamping service provider');?></span>
         </p>
         <p>
         <label for='stamppass'><?php echo _('Password for external timestamping service:');?></label>
         <input type='password' value='<?php echo get_team_config('stamppass');?>' name='stamppass' id='stamppass' />
-        <span class='smallgray'><?php echo _('Your Universign password');?></span>
+        <span class='smallgray'><?php echo _('Your timestamping service provider password');?></span>
         </p>
         <div class='center'>
             <button type='submit' name='submit_config' class='submit button'>Save</button>

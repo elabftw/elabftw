@@ -329,13 +329,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
 // TIMESTAMP CONFIG
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {
 
+    if (isset($_POST['ts_provider_url'])) {
+        $ts_provider_url = filter_var($_POST['ts_provider_url'], FILTER_VALIDATE_URL);
+    } else {
+        $ts_provider_url = '';
+    }
     if ($_POST['stampshare'] == 1) {
         $stampshare = 1;
     } else {
         $stampshare = 0;
     }
     if (isset($_POST['stamplogin'])) {
-        $stamplogin = filter_var($_POST['stamplogin'], FILTER_VALIDATE_EMAIL);
+        $stamplogin = filter_var($_POST['stamplogin'], FILTER_VALIDATE_STRING);
     } else {
         $stamplogin = '';
     }
@@ -347,6 +352,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {
 
     // SQL
     $updates = array(
+        'ts_provider_url' => $ts_provider_url,
         'stampshare' => $stampshare,
         'stamplogin' => $stamplogin,
         'stamppass' => $stamppass
@@ -475,8 +481,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
     } else {
         $link_href = 'https://github.com/elabftw/elabftw/wiki';
     }
+    if (isset($_POST['ts_provider_url'])) {
+        $ts_provider_url = filter_var($_POST['ts_provider_url'], FILTER_VALIDATE_URL);
+    } else {
+        $ts_provider_url = '';
+    }
     if (isset($_POST['stamplogin'])) {
-        $stamplogin = filter_var($_POST['stamplogin'], FILTER_VALIDATE_EMAIL);
+        $stamplogin = filter_var($_POST['stamplogin'], FILTER_VALIDATE_STRING);
     } else {
         $stamplogin = '';
     }
@@ -487,13 +498,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
     }
 
     // SQL
-    $sql = "UPDATE teams SET deletable_xp = :deletable_xp, link_name = :link_name, link_href = :link_href, stamplogin = :stamplogin, stamppass = :stamppass WHERE team_id = :team_id";
+    $sql = "UPDATE teams SET deletable_xp = :deletable_xp, link_name = :link_name, link_href = :link_href, stamplogin = :stamplogin, stamppass = :stamppass, ts_provider_url = :ts_provider_url WHERE team_id = :team_id";
     $req = $pdo->prepare($sql);
     try {
         $req->execute(array(
         'deletable_xp' => $deletable_xp,
         'link_name' => $link_name,
         'link_href' => $link_href,
+        'ts_provider_url' => $ts_provider_url,
         'stamplogin' => $stamplogin,
         'stamppass' => $stamppass,
         'team_id' => $_SESSION['team_id']

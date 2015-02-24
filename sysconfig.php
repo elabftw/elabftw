@@ -179,10 +179,15 @@ if ($current_version == 'something') {
                     if (get_config('stampshare') == 0) { echo " selected='selected'"; } ?>
             ><?php echo _('No');?></option>
         </select>
-        <p class='smallgray'><?php echo _('You can control if the teams can use the global Universign account. If set to <em>no</em> the team admin must add login infos in the admin panel.');?></p>
+        <p class='smallgray'><?php echo _('You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login infos in the admin panel.');?></p>
+        <p>
+        <label for='ts_provider_url'><?php echo _('URL for external timestamping service:');?></label>
+        <input type='url' value='<?php echo get_config('ts_provider_url');?>' name='ts_provider_url' id='ts_provider_url' />
+        <span class='smallgray'><?php echo _('This should be the URL used for <a href="https://tools.ietf.org/html/rfc3616">RFC 3616</a>-compliant timestamping requests.');?></span>
+        </p>
         <label for='stamplogin'><?php echo _('Login for external timestamping service:');?></label>
         <input type='email' value='<?php echo get_config('stamplogin');?>' name='stamplogin' id='stamplogin' />
-        <p class='smallgray'><?php echo _('Must be an email address.');?></p>
+        <p class='smallgray'><?php echo _('Login for external timestamping service .');?></p>
         <label for='stamppass'><?php echo _('Password for external timestamping service:');?></label>
         <input type='password' value='<?php echo get_config('stamppass');?>' name='stamppass' id='stamppass' />
         <p class='smallgray'><?php echo _("This password will be stored in clear in the database ! Make sure it doesn't open other doors…");?></p>

@@ -232,6 +232,8 @@ CREATE TABLE `teams` (
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `stamplogin` text,
   `stamppass` text,
+  `ts_provider_url`, text,
+  `ts_hash_algorithm`, varchar(45),
   PRIMARY KEY (`team_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

@@ -186,7 +186,7 @@ if ($current_version == 'something') {
         <span class='smallgray'><?php echo _('This should be the URL used for <a href="https://tools.ietf.org/html/rfc3616">RFC 3616</a>-compliant timestamping requests.'); ?></span>
         </p>
         <label for='stamplogin'><?php echo _('Login for external timestamping service:'); ?></label>
-        <input type='email' value='<?php echo get_config('stamplogin'); ?>' name='stamplogin' id='stamplogin' />
+        <input type='text' value='<?php echo get_config('stamplogin'); ?>' name='stamplogin' id='stamplogin' />
         <p class='smallgray'><?php echo _('Login for external timestamping service .'); ?></p>
         <label for='stamppass'><?php echo _('Password for external timestamping service:'); ?></label>
         <input type='password' value='<?php echo get_config('stamppass'); ?>' name='stamppass' id='stamppass' />

@@ -26,9 +26,6 @@
 namespace elabftw\elabftw;
 
 class MakePdf {
-    private $id, $type, $date, $body, $lockinfo, $userid;
-    private $elabid = '';
-    private $comments_block = '';
 
     public $author;
     public $title;
@@ -36,21 +33,22 @@ class MakePdf {
     public $tags;
     public $content;
 
+
     public function __construct($id, $type)
     {
         $this->id = $id;
         $this->type = $type;
 
-        $this->setInfos();
+        $this->initData();
         $this->setAuthor();
+        $this->setCleanTitle();
+        $this->setTags();
         $this->buildContent();
     }
 
     public function getPath()
     {
-
         return ELAB_ROOT . 'uploads/' . $this->clean_title . '.pdf';
-
     }
 
     public function getFileName()
@@ -58,51 +56,42 @@ class MakePdf {
         return $this->clean_title . '.pdf';
     }
 
-    private function setInfos() {
+    private function initData()
+    {
         global $pdo;
 
-        // SQL to get title, body and date
+        // title, date, body, elabid, userid, lock
         $sql = "SELECT * FROM " . $this->type . " WHERE id = " . $this->id;
         $req = $pdo->prepare($sql);
         $req->execute();
+        $this->data = $req->fetch();
+    }
+
+    private function setAuthor()
+    {
+        global $pdo;
+
+        // SQL to get firstname + lastname
+        $sql = "SELECT firstname,lastname FROM users WHERE userid = :userid";
+        $req = $pdo->prepare($sql);
+        $req->execute(array(
+            'userid' => $this->data['userid']
+        ));
         $data = $req->fetch();
 
-        $this->title = stripslashes($data['title']);
-        $this->date = $data['date'];
-        // the name of the pdf is needed in make_zip
-        $this->clean_title = $this->date . "-" . preg_replace('/[^A-Za-z0-9]/', '_', $this->title);
-        $this->body = stripslashes($data['body']);
+        $this->author = $data['firstname'] . ' ' . $data['lastname'];
+    }
 
-        // ELABID
-        if ($this->type === 'experiments') {
-            $this->elabid = $data['elabid'];
-        }
+    private function setCleanTitle()
+    {
+        $this->title = stripslashes($this->data['title']);
+        $this->clean_title = $this->data['date'] . "-" . preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($this->data['title']));
+    }
 
-        // set userid
-        $this->userid = $data['userid'];
+    private function setTags()
+    {
 
-        // LOCK BLOCK
-        if ($data['locked'] == '1' && $this->type == 'experiments') {
-            // get info about the locker
-            $sql = "SELECT firstname,lastname FROM users WHERE userid = :userid LIMIT 1";
-            $reqlock = $pdo->prepare($sql);
-            $reqlock->execute(array(
-                'userid' => $data['lockedby']
-            ));
-            $lockuser = $reqlock->fetch();
-
-            // separate date and time
-            if (isset($data['lockedwhen'])) {
-                $lockdate = explode(' ', $data['lockedwhen']);
-                // this will be added after the URL
-                $this->lockinfo = "<p class='elabid'>locked by " . $lockuser['firstname'] . " " . $lockuser['lastname'] . " on " . $lockdate[0] . " at " . $lockdate[1] . ".</p>";
-            } else {
-                $this->lockinfo = "";
-            }
-        }
-        $req->closeCursor();
-
-
+        global $pdo;
         // SQL to get tags
         $sql = "SELECT tag FROM " . $this->type . "_tags WHERE item_id = " . $this->id;
         $req = $pdo->prepare($sql);
@@ -112,6 +101,42 @@ class MakePdf {
             $this->tags .= $data['tag'] . ' ';
         }
         $req->closeCursor();
+    }
+
+    private function addElabid()
+    {
+
+        // ELABID
+        if ($this->type === 'experiments') {
+            $this->content .= "<p class='elabid'>elabid : " . $this->data['elabid'] . "</p>";
+        }
+    }
+
+    private function addLockinfo()
+    {
+
+        // LOCK BLOCK
+        if ($this->data['locked'] == '1' && $this->type == 'experiments') {
+            global $pdo;
+            // get info about the locker
+            $sql = "SELECT firstname,lastname FROM users WHERE userid = :userid LIMIT 1";
+            $reqlock = $pdo->prepare($sql);
+            $reqlock->execute(array(
+                'userid' => $this->data['lockedby']
+            ));
+            $lockuser = $reqlock->fetch();
+
+            // separate date and time
+            if (isset($this->data['lockedwhen'])) {
+                $lockdate = explode(' ', $this->data['lockedwhen']);
+                $this->content .= "<p class='elabid'>locked by " . $lockuser['firstname'] . " " . $lockuser['lastname'] . " on " . $lockdate[0] . " at " . $lockdate[1] . ".</p>";
+            }
+        }
+    }
+
+    private function addComments()
+    {
+        global $pdo;
 
         // SQL to get comments
         // check if there is something to display first
@@ -143,26 +168,11 @@ class MakePdf {
 
             }
             $this->comments_block .= "</section>";
-        } else { // no comments to display
-            $this->comments_block = '';
+            $this->content .= $this->comments_block;
         }
 
     }
 
-    // AUTHOR
-    private function setAuthor() {
-        global $pdo;
-
-        // SQL to get firstname + lastname
-        $sql = "SELECT firstname,lastname FROM users WHERE userid = :userid";
-        $req = $pdo->prepare($sql);
-        $req->execute(array(
-            'userid' => $this->userid
-        ));
-        $data = $req->fetch();
-
-        $this->author = $data['firstname'] . ' ' . $data['lastname'];
-    }
 
     // the css is added here directly instead of loading it from the css/pdf.css file
     // to avoid path problems
@@ -174,21 +184,9 @@ class MakePdf {
 
     }
 
-    private function buildContent($out = 'browser')
+    private function addAttachedFiles()
     {
         global $pdo;
-        // build content of page
-        // add css
-        $this->addCss();
-        //$this->content = "<link rel='stylesheet' media='all' href='css/pdf.css' />";
-        $this->content .= "<h1>" . $this->title . "</h1>
-            Date : ".format_date($this->date) . "<br />
-            <em>Tags : ".$this->tags . "</em><br />
-            Made by : " . $this->author . "
-            <hr><p>".$this->body . "</p>";
-        // Construct URL
-        $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
-
         // ATTACHED FILES
         // SQL to get attached files
         $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
@@ -228,15 +226,34 @@ class MakePdf {
             }
             $this->content .= "</ul></section>";
         }
-        // EXPERIMENTS
+    }
+
+    private function addUrl()
+    {
+        // Construct URL
+        $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
+
         if ($this->type === 'experiments') {
-            if ($out === 'browser') {
+            if (preg_match('/make_pdf/', $url)) {
                 $url = str_replace('make_pdf.php', 'experiments.php', $url);
             } else { // call from make_zip or timestamp.php
                 $url = str_replace(array('make_zip.php', 'app/timestamp.php'), 'experiments.php', $url);
             }
-            $full_url = $url . "?mode=view&id=" . $this->id;
+        } else { //item
+            if (preg_match('/make_pdf/', $url)) {
+                $url = str_replace('make_pdf.php', 'database.php', $url);
+            } else { // call from make_zip
+                $url = str_replace('make_zip.php', 'database.php', $url);
+            }
+        }
+        $full_url = $url . "?mode=view&id=" . $this->id;
+        $this->content .= "<p class='elabid'>link : <a href='" . $full_url . "'>" . $full_url . "</a></p>";
+    }
 
+    private function addLinkedItems()
+    {
+        if ($this->type === 'experiments') {
+            global $pdo;
 
             // SQL to get linked items
             $sql = "SELECT experiments_links.*,
@@ -268,39 +285,37 @@ class MakePdf {
                 }
                 $this->content .= "<ul>";
                 $row_cnt = $req->rowCount();
+
+                // add the item with a link
+                $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
                 for ($i = 0; $i < $row_cnt; $i++) {
-                    // we need the url of the displayed item
-                    if ($out === 'browser') {
-                        $item_url = str_replace('experiments.php', 'database.php', $url);
-                    } else { // call from make_zip or timestamp.php
-                        $item_url = str_replace(array('experiments.php', 'app/timestamp.php'), 'database.php', $url);
-                    }
+
+                    $item_url = str_replace(array('make_pdf.php', 'make_zip.php', 'app/timestamp.php'), 'database.php', $url);
                     $full_item_url = $item_url . "?mode=view&id=" . $links_id_arr[$i];
 
                     $this->content .= "<li>[" . $links_type_arr[$i] . "] - <a href='" . $full_item_url . "'>" . $links_title_arr[$i] . "</a></li>";
                 }
                 $this->content .= "</ul></section>";
             }
-
-            // Add comments
-            $this->content .= $this->comments_block;
-            // ELABID and URL
-            $this->content .= "<p class='elabid'>elabid : " . $this->elabid . "</p>";
-            $this->content .= "<p class='elabid'>link : <a href='" . $full_url . "'>" . $full_url . "</a></p>";
-
-        } else { // ITEM
-            if ($out === 'browser') {
-                $url = str_replace('make_pdf.php', 'database.php', $url);
-            } else { // call from make_zip
-                $url = str_replace('make_zip.php', 'database.php', $url);
-            }
-            $full_url = $url . "?mode=view&id=" . $this->id;
-            $this->content .= "<p>URL : <a href='" . $full_url . "'>" . $full_url . "</a></p>";
         }
+    }
 
-        // FOOTER
+    private function buildContent()
+    {
+        // build HTML content that will be fed to mpdf->WriteHTML()
+        $this->addCss();
+        $this->content .= "<h1>" . stripslashes($this->data['title']) . "</h1>
+            Date : ".format_date($this->data['date']) . "<br />
+            <em>Tags : ".$this->tags . "</em><br />
+            Made by : " . $this->author . "
+            <hr><p>" . stripslashes($this->data['body']) . "</p>";
+
+        $this->addLinkedItems();
+        $this->addAttachedFiles();
+        $this->addComments();
+        $this->addElabid();
+        $this->addLockinfo();
+        $this->addUrl();
         $this->content .= "<footer>PDF generated with <a href='http://www.elabftw.net'>elabftw</a>, a free and open source lab notebook</footer>";
-
-
     }
 }

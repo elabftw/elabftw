@@ -26,10 +26,11 @@
 namespace elabftw\elabftw;
 
 class MakePdf {
+    private $id, $type, $data;
 
     public $author;
     public $title;
-    public $clean_title;
+    public $cleanTitle;
     public $tags;
     public $content;
 
@@ -48,12 +49,12 @@ class MakePdf {
 
     public function getPath()
     {
-        return ELAB_ROOT . 'uploads/' . $this->clean_title . '.pdf';
+        return ELAB_ROOT . 'uploads/' . $this->cleanTitle . '.pdf';
     }
 
     public function getFileName()
     {
-        return $this->clean_title . '.pdf';
+        return $this->cleanTitle . '.pdf';
     }
 
     private function initData()
@@ -85,7 +86,7 @@ class MakePdf {
     private function setCleanTitle()
     {
         $this->title = stripslashes($this->data['title']);
-        $this->clean_title = $this->data['date'] . "-" . preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($this->data['title']));
+        $this->cleanTitle = $this->data['date'] . "-" . preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($this->data['title']));
     }
 
     private function setTags()
@@ -151,28 +152,24 @@ class MakePdf {
         ));
         // if we have comments
         if ($req->rowCount() > 0) {
-            $this->comments_block = "";
-            $this->comments_block .= "<section>";
+            $this->content.= "<section>";
             if ($req->rowCount() === 1) {
-                $this->comments_block .= "<h3>Comment :</h3>";
+                $this->content .= "<h3>Comment :</h3>";
             } else {
-                $this->comments_block .= "<h3>Comments :</h3>";
+                $this->content .= "<h3>Comments :</h3>";
             }
             // there is comments to display
             while ($comments = $req->fetch()) {
                 if (empty($comments['firstname'])) {
                     $comments['firstname'] = '[deleted]';
                 }
-                $this->comments_block .= "<p>On " . $comments['datetime'] . " " . $comments['firstname'] . " " . $comments['lastname'] . " wrote :<br />";
-                $this->comments_block .= "<p>" . $comments['comment'] . "</p>";
+                $this->content .= "<p>On " . $comments['datetime'] . " " . $comments['firstname'] . " " . $comments['lastname'] . " wrote :<br />";
+                $this->content .= "<p>" . $comments['comment'] . "</p>";
 
             }
-            $this->comments_block .= "</section>";
-            $this->content .= $this->comments_block;
+            $this->content .= "</section>";
         }
-
     }
-
 
     // the css is added here directly instead of loading it from the css/pdf.css file
     // to avoid path problems

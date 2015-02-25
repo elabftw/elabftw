@@ -269,6 +269,39 @@ function show_tags($item_id, $table)
 }
 
 /**
+ * Validate timestamped file
+ *
+ * @param string $filename The path to the file to be validated
+ * @param string $timestamptoken base64-encoded timestamptoken
+ * @param string $timestampedwhen Date and time when the token was generated, either as UNIX timestamp or in ISO format: 'YYYY-MM-DD HH:MM:SS'
+ * @param string $certificate Path to the certificate chain used to generate the token (optional); Defaults to value saved in config
+ * @return true|false On successfull validation, return true, else or on error false.
+ */
+function validateTimestamp($filename, $timestamptoken, $timestampedwhen, $certificate = NULL)
+{
+    require_once 'inc/classes/timestamp.class.php';
+    
+    if (is_null($certificate)) {
+        if (strlen(get_team_config('ts_certfile')) > 2) {
+            $certificate = get_team_config('ts_certfile');
+        } elseif (get_config('ts_certfile')) {
+            $certificate = get_config('ts_certfile');
+        } else {
+        $certificate = NULL;
+        }
+    }
+    
+    try {
+        $validate = TrustedTimestamps::validate($filename, $timestamptoken, $timestampedwhen, $certificate);
+    } catch (Exception $e) {
+        dblog("Error", $_SESSION['userid'], $e->getMessage());
+        return false;
+    }
+    
+    return $validate;
+}
+
+/**
  * Show an experiment (in mode=show).
  *
  * @param int $id The ID of the experiment to show
@@ -306,7 +339,7 @@ function showXP($id, $display)
         echo "<a href='experiments.php?mode=view&id=" . $experiments['id'] . "'>";
         // show stamp if experiment is timestamped
         if ($experiments['timestamped']) {
-            echo "<img class='align_right' src='img/check.png' alt='stamp' title='Timestamped' />";
+            echo "<img class='align_right' src='img/stamp.png' alt='stamp' title='". _('Timestamped. Open the experiment for validation.') . "' />";
         }
         echo "<p class='title'>";
         // show lock if item is locked on viewXP

@@ -131,8 +131,11 @@ class TrustedTimestamps
 
         if (!$response_time)
             throw new Exception("The Timestamp was not found"); 
-            
-        return $response_time;
+        
+        /* Return formatted time as this is, what we will store in the database.
+         * PHP will take care of correct timezone conversions (if configured correctly)
+         */
+        return date("Y-m-d H:i:s", $response_time);
     }
 
     /**
@@ -146,6 +149,7 @@ class TrustedTimestamps
     public static function validate ($filename, $base64_response_string, $response_time, $tsa_cert_file)
     {      
         $binary_response_string = base64_decode($base64_response_string);
+        //echo("Timestamp: " . $binary_response_string);
         
         if (!strlen($binary_response_string))
             throw new Exception("There was no response-string");    
@@ -155,6 +159,7 @@ class TrustedTimestamps
         
         if (!file_exists($tsa_cert_file))
             throw new Exception("The TSA-Certificate could not be found");
+            
         
         $responsefile = self::createTempFile($binary_response_string);
 
@@ -174,6 +179,7 @@ class TrustedTimestamps
         
         if ($retcode === 0 && strtolower(trim($retarray[0])) == "verification: ok")
         {
+        
             if (self::getTimestampFromAnswer ($base64_response_string) != $response_time)
                 throw new Exception("The responsetime of the request was changed");
             

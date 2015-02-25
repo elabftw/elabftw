@@ -95,9 +95,21 @@ if ($data['timestamped'] == 1) {
     $req_stamper->execute();
     $uploads = $req_stamper->fetch();
 
-    $date_arr = explode(' ', $data['timestampedwhen']);
-    display_message('info_nocross', _('Experiment was timestamped by') . " " . $timestamper['firstname'] . " " . $timestamper['lastname'] . " " . _('on') . " " . $date_arr[0] . " " . _('at') . " " . $date_arr[1] . "
-        <a href='uploads/".$uploads['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='Download timestamped pdf' alt='pdf' /></a>");
+    $validate = validateTimestamp("uploads/".$uploads['long_name'],$data['timestamptoken'], $data['timestampedwhen']); 
+    
+    if ($validate) {
+        $message_type = 'info_nocross';
+        $validation_note = "<img class='align_right' src='img/check.png' alt='stamp' title='Valid Timestamp' />";
+    } else {
+        $message_type = 'error_nocross';
+        $validation_note = "<img class='align_right' src='img/cross-red.png' alt='stamp' title='Invalid Timestamp' />";
+    }
+    
+    $date = new DateTime($data['timestampedwhen']);
+    
+    display_message($message_type, _('Experiment was timestamped by') . " " . $timestamper['firstname'] . " " . $timestamper['lastname'] . " " . _('on') . " " . $date->format('Y-m-d') . " " . _('at') . " " . $date->format('H:i:s') . " 
+    " . $date->getTimezone()->getName() . " <a href='uploads/".$uploads['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='Download timestamped pdf' alt='pdf' /></a>" . $validation_note);
+
     unset($timestamper);
     unset($uploads);
 }

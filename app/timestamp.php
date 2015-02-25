@@ -115,7 +115,7 @@ try {
 }
 
 // SQL
-$sql = "UPDATE `experiments` SET `timestamped` = 1, `timestampedby` = :userid, `timestampedwhen` = FROM_UNIXTIME(:timestampedwhen), `timestamptoken` = :timestamptoken WHERE `id` = :id;";
+$sql = "UPDATE `experiments` SET `timestamped` = 1, `timestampedby` = :userid, `timestampedwhen` = :timestampedwhen, `timestamptoken` = :timestamptoken WHERE `id` = :id;";
 $req = $pdo->prepare($sql);
 $req->bindParam(':timestampedwhen', $token['response_time']);
 // the date recorded in the db has to match the creation time of the timestamp token

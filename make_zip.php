@@ -151,7 +151,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             $mpdf->SetKeywords($pdf->tags);
             $mpdf->SetCreator('www.elabftw.net');
             $mpdf->WriteHTML($pdf->content);
-            $mpdf->Output(ELAB_ROOT . 'uploads/export/'.$pdf->clean_title.'.pdf', 'F');
+            $mpdf->Output(ELAB_ROOT . 'uploads/export/' . $pdf->clean_title . '.pdf', 'F');
             $zip->addFile(ELAB_ROOT . 'uploads/export/' . $pdf->clean_title . '.pdf', $folder . '/' . $pdf->clean_title . '.pdf');
             // add CSV file to archive
             $csvpath = make_unique_csv($id, $table);
@@ -177,7 +177,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             // (csv, MANIFEST and pdf)
             $files_to_delete[] = $csvpath;
             $files_to_delete[] = $manifestpath;
-            $files_to_delete[] = 'uploads/export/' . $pdf->clean_title . '.pdf';
+            $files_to_delete[] = $pdf->getPath();
 
         } // end foreach
         // close the archive

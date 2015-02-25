@@ -97,7 +97,7 @@ if ($data['timestamped'] == 1) {
     
     $token = getBase64Token($data['timestamptoken']);
     if ($token) {
-        $validate = validateTimestamp("uploads/".$uploads['long_name'],$token, $data['timestampedwhen']); 
+        $validate = validateTimestamp("uploads/".$uploads['long_name'], $token, $data['timestampedwhen']); 
     } else {
         $validate = false;
     }

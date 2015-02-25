@@ -26,11 +26,14 @@
 namespace elabftw\elabftw;
 
 class MakePdf {
-    private $id, $type, $data;
+
+    private $id;
+    private $type;
+    private $data;
+    private $cleanTitle;
 
     public $author;
     public $title;
-    public $cleanTitle;
     public $tags;
     public $content;
 
@@ -152,7 +155,7 @@ class MakePdf {
         ));
         // if we have comments
         if ($req->rowCount() > 0) {
-            $this->content.= "<section>";
+            $this->content .= "<section>";
             if ($req->rowCount() === 1) {
                 $this->content .= "<h3>Comment :</h3>";
             } else {

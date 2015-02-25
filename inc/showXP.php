@@ -95,13 +95,10 @@ if (isset($_GET['q'])) { // if there is a query
         $total_time = $total_time * 1000;
         $unit = 'milliseconds';
     }
-    if (count($results_arr) > 1) {
-        echo "<p class='smallgray'>" . count($results_arr) . " " . _('results.') . " ($total_time $unit)</p>";
-    } elseif (count($results_arr) == 1) {
-        // TODO plural
-        echo "<p class='smallgray'>" . _('Found_1') . " ($total_time $unit)</p>";
+    if (count($results_arr) == 0) {
+        display_message('error_nocross', _("Sorry. I couldn't find anything :("));
     } else {
-        display_message('error', _('Found_0'));
+        echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time . " " . $unit . ")</p>";
     }
 
     // loop the results array and display results
@@ -188,12 +185,10 @@ if (isset($_GET['q'])) { // if there is a query
         $total_time = $total_time * 1000;
         $unit = 'milliseconds';
     }
-    if (count($results_arr) > 1) {
-        echo "<p class='smallgray'>" . count($results_arr) . " " . _('results.') . " ($total_time $unit)</p>";
-    } elseif (count($results_arr) == 1) {
-        echo "<p class='smallgray'>" . _('Found') . " ($total_time $unit)</p>";
+    if (count($results_arr) == 0) {
+        display_message('error_nocross', _("Sorry. I couldn't find anything :("));
     } else {
-        display_message('error', _('Found'));
+        echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time . " " . $unit . ")</p>";
     }
 
     // clean duplicates

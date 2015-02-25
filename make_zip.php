@@ -48,7 +48,7 @@ if ($_GET['type'] === 'experiments') {
     die(_("The type parameter is not valid."));
 }
 
-// _('Create') URL
+// CREATE URL
 $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
 
 // Check id is valid and assign it to $id

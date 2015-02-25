@@ -39,7 +39,7 @@ $errflag = false;
 // Check the form_key
 if (!isset($_POST['form_key']) || !$formKey->validate()) {
     // form key is invalid
-    $msg_arr[] = _('The form key is invalid. Please retry.');
+    $msg_arr[] = _("Your session expired. Please retry.");
     $errflag = true;
 }
 

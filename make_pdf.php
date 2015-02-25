@@ -24,7 +24,9 @@
 *                                                                               *
 ********************************************************************************/
 require_once 'inc/common.php';
-require_once 'inc/locale.php';
+require_once ELAB_ROOT . 'inc/locale.php';
+require_once ELAB_ROOT . 'inc/classes/makepdf.class.php';
+require_once ELAB_ROOT . 'vendor/autoload.php';
 
 // Check id is valid and assign it to $id
 if (isset($_GET['id']) && is_pos_int($_GET['id'])) {
@@ -41,6 +43,13 @@ if (($_GET['type'] === 'experiments') || ($_GET['type'] === 'items')) {
 }
 
 // do the pdf
-require_once 'inc/classes/makepdf.class.php';
-$pdf = new MakePdf();
-$pdf->create($id, $type);
+$pdf = new \elabftw\elabftw\MakePdf($id, $type);
+$mpdf = new mPDF();
+
+$mpdf->SetAuthor($pdf->author);
+$mpdf->SetTitle($pdf->title);
+$mpdf->SetSubject('eLabFTW pdf');
+$mpdf->SetKeywords($pdf->tags);
+$mpdf->SetCreator('www.elabftw.net');
+$mpdf->WriteHTML($pdf->content);
+$mpdf->Output($pdf->getFileName(), 'I');

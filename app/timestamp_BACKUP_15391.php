@@ -84,8 +84,13 @@ $mpdf->SetCreator('www.elabftw.net');
 $mpdf->WriteHTML($pdf->content);
 $mpdf->Output($pdf->getPath(), 'F');
 
+<<<<<<< HEAD
 require_once '../inc/classes/timestamp.class.php';
-$requestfile_path = TrustedTimestamps::createRequestfile($pdf->getPath());
+$requestfile_path = TrustedTimestamps::createRequestfile(ELAB_ROOT."uploads/$pdf_path");
+=======
+// generate the sha256 hash that we will send
+$hashedDataToTimestamp = hash_file('sha256', $pdf->getPath());
+>>>>>>> b16fa5b94a49f74ed8687cf86d7ed4705f3ecc0e
 
 // REQUEST TOKEN
 if (is_string($login) and is_string($password)) {

@@ -24,9 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 require_once '../inc/common.php';
-require_once ELAB_ROOT . 'inc/locale.php';
-require_once ELAB_ROOT . 'inc/classes/makepdf.class.php';
-require_once ELAB_ROOT . 'vendor/autoload.php';
+require_once '../inc/locale.php';
 $msg_arr = array();
 
 // ID
@@ -73,19 +71,12 @@ if (strlen(get_team_config('stamplogin')) > 2) {
 }
 
 // generate the pdf to timestamp
-$pdf = new \elabftw\elabftw\MakePdf($id, 'experiments');
-$mpdf = new mPDF();
-
-$mpdf->SetAuthor($pdf->author);
-$mpdf->SetTitle($pdf->title);
-$mpdf->SetSubject('eLabFTW pdf');
-$mpdf->SetKeywords($pdf->tags);
-$mpdf->SetCreator('www.elabftw.net');
-$mpdf->WriteHTML($pdf->content);
-$mpdf->Output($pdf->getPath(), 'F');
+require_once '../inc/classes/makepdf.class.php';
+$pdf = new MakePdf();
+$pdf_path = $pdf->create($id, 'experiments', ELAB_ROOT . 'uploads');
 
 require_once '../inc/classes/timestamp.class.php';
-$requestfile_path = TrustedTimestamps::createRequestfile($pdf->getPath());
+$requestfile_path = TrustedTimestamps::createRequestfile(ELAB_ROOT."uploads/$pdf_path");
 
 // REQUEST TOKEN
 if (is_string($login) and is_string($password)) {
@@ -144,13 +135,13 @@ $req->bindParam(':id', $id);
 $res2 = $req->execute();
 $real_name = $req->fetch(PDO::FETCH_COLUMN) . "-timestamped.pdf";
 
-$md5 = hash_file('md5', $pdf->getPath());
+$md5 = hash_file('md5', ELAB_ROOT . "uploads/" . $pdf_path);
 
 // DA REAL SQL
 $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, md5) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :md5)";
 $req = $pdo->prepare($sql);
 $req->bindParam(':real_name', $real_name);
-$req->bindParam(':long_name', $pdf->getFileName());
+$req->bindParam(':long_name', $pdf_path);
 $req->bindValue(':comment', "Timestamped PDF");
 $req->bindParam(':item_id', $id);
 $req->bindParam(':userid', $_SESSION['userid']);

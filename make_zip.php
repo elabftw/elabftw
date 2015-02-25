@@ -137,10 +137,22 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             }
 
             // add PDF to archive
-            require_once 'inc/classes/makepdf.class.php';
-            $pdf = new MakePdf();
-            $pdfname = $pdf->create($id, $table, 'uploads/export');
-            $zip->addFile("uploads/export/" . $pdfname, $folder . "/" . $pdfname);
+            require_once ELAB_ROOT . 'inc/classes/makepdf.class.php';
+            require_once ELAB_ROOT . 'vendor/autoload.php';
+
+            $pdf = new \elabftw\elabftw\MakePdf($id, $table);
+
+            // Generate pdf with mpdf
+            $mpdf = new mPDF();
+
+            $mpdf->SetAuthor($pdf->author);
+            $mpdf->SetTitle($pdf->title);
+            $mpdf->SetSubject('eLabFTW pdf');
+            $mpdf->SetKeywords($pdf->tags);
+            $mpdf->SetCreator('www.elabftw.net');
+            $mpdf->WriteHTML($pdf->content);
+            $mpdf->Output(ELAB_ROOT . 'uploads/export/' . $pdf->clean_title . '.pdf', 'F');
+            $zip->addFile(ELAB_ROOT . 'uploads/export/' . $pdf->clean_title . '.pdf', $folder . '/' . $pdf->clean_title . '.pdf');
             // add CSV file to archive
             $csvpath = make_unique_csv($id, $table);
             $zip->addFile($csvpath, $folder . "/" . $clean_title . ".csv");
@@ -165,7 +177,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             // (csv, MANIFEST and pdf)
             $files_to_delete[] = $csvpath;
             $files_to_delete[] = $manifestpath;
-            $files_to_delete[] = 'uploads/export/' . $pdfname;
+            $files_to_delete[] = $pdf->getPath();
 
         } // end foreach
         // close the archive

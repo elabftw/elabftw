@@ -23,9 +23,9 @@
 *    License along with eLabFTW.  If not, see <http: //www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-/* CSS for the PDF generation */
-
-/*
+/* CSS for the PDF generation
+/* This file is minified and used in the makepdf class.
+ *
  * 343434 => very dark gray (main nav bg)
  * 797979 => lightgray
  * #29AEB9 => blue

@@ -269,6 +269,29 @@ function show_tags($item_id, $table)
 }
 
 /**
+ * Return base64-encoded token. Ensures transparent handling of older, file-based tokens and tokens stored 
+ * directly as base64-encoded string in the database
+ *
+ * @param string $token The token to be converted to a base64 string
+ * @return string|false Base64-encoded string of $token or false if $token is neither a file, nor a valid base64-encoded string
+ */
+function getBase64Token($token) {
+    // check if provided token is actually an existing file
+    if (is_file($token)) {
+    // if yes, read content and convert to base64-encoded string
+        $binary_token = file_get_contents($token);
+        $base64_encoded_token = base64_encode($binary_token);
+        return $base64_encoded_token;
+    // else check if string is a valid base64_encoded string
+    } elseif (base64_decode($token, $strict = true)) {
+        return $token;
+    } else {
+    // if all fails, return false
+        return false;
+    }
+}
+
+/**
  * Validate timestamped file
  *
  * @param string $filename The path to the file to be validated

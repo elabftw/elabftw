@@ -94,8 +94,13 @@ if ($data['timestamped'] == 1) {
     $req_stamper->bindParam(':item_id', $id);
     $req_stamper->execute();
     $uploads = $req_stamper->fetch();
-
-    $validate = validateTimestamp("uploads/".$uploads['long_name'],$data['timestamptoken'], $data['timestampedwhen']); 
+    
+    $token = getBase64Token($data['timestamptoken']);
+    if ($token) {
+        $validate = validateTimestamp("uploads/".$uploads['long_name'],$token, $data['timestampedwhen']); 
+    } else {
+        $validate = false;
+    }
     
     if ($validate) {
         $message_type = 'info_nocross';

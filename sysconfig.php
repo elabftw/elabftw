@@ -68,6 +68,7 @@ if ($current_version == 'something') {
         <li class='tabhandle' id='tab3'><?php echo _('Timestamp'); ?></li>
         <li class='tabhandle' id='tab4'><?php echo _('Security'); ?></li>
         <li class='tabhandle' id='tab5'><?php echo _('Email'); ?></li>
+        <li class='tabhandle' id='tab6'><?php echo _('Logs'); ?></li>
     </ul>
 </menu>
 
@@ -251,6 +252,21 @@ if ($current_version == 'something') {
     </form>
 </div>
 
+<!-- TAB 6 -->
+<div class='divhandle' id='tab6div'>
+    <div class='well'>
+        <ul>
+        <?php
+        $sql = "SELECT * FROM logs ORDER BY id DESC LIMIT 100";
+        $req = $pdo->prepare($sql);
+        $req->execute();
+        while ($logs = $req->fetch()) {
+            echo "<li>" . $logs['datetime'] . " [" . $logs['type'] . "] " . $logs['body'] . " (" . $logs['user'] . ")</li>";
+        }
+        ?>
+        </ul>
+    </div>
+</div>
 
 <script>
 // we need to add this otherwise the button will stay disabled with the browser's cache (Firefox)

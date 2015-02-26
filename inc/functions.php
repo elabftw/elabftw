@@ -127,8 +127,8 @@ function make_thumb($src, $ext, $dest, $desired_width)
 /**
  * Check in input is a positive integer.
  *
- * @param int $int The int to check
- * @return bool|int Return false if it's not an int
+ * @param int|string $int The int to check
+ * @return bool Return false if it's not an int
  */
 function is_pos_int($int)
 {

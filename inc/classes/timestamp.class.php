@@ -33,10 +33,7 @@ class TrustedTimestamps
     {
         $outfilepath = self::createTempFile();
         $cmd = "openssl ts -query -data ".escapeshellarg($filename)." -cert -sha256 -no_nonce -out ".escapeshellarg($outfilepath);
-	echo($cmd);
-
         $retarray = array();
-	echo(var_dump($retarray));
         exec($cmd." 2>&1", $retarray, $retcode);
         
         if ($retcode !== 0)
@@ -120,11 +117,28 @@ class TrustedTimestamps
          * Time stamp: 21.08.2010 blabla GMT
          * Somestuff: Yayayayaya
          */
+        
         foreach ($retarray as $retline)
         {
             if (preg_match("~^Time\sstamp\:\s(.*)~", $retline, $matches))
             {
+                // try to automatically convert time to unique unix timestamp
                 $response_time = strtotime($matches[1]);
+                // workaround for faulty php strtotime function, that does not handle times in format "Feb 25 23:29:13.331 2015 GMT"
+                // currently this accounts for the format used presumably by Universign.eu
+                if(!$response_time) {
+                    $date = DateTime::createFromFormat("M d H:i:s.u Y T", strtotime($matches[1]));
+                    if(!$date) {
+                        $date = DateTime::createFromFormat("M j H:i:s.u Y T", strtotime($matches[1]));
+                    } else {
+                        $date = false;
+                    }
+                    if($date) {
+                        $response_time = $date->getTimestamp();
+                    } else {
+                        $response_time = false;
+                    }
+                }
                 break;      
             }
         }
@@ -149,7 +163,6 @@ class TrustedTimestamps
     public static function validate ($filename, $base64_response_string, $response_time, $tsa_cert_file)
     {      
         $binary_response_string = base64_decode($base64_response_string);
-        //echo("Timestamp: " . $binary_response_string);
         
         if (!strlen($binary_response_string))
             throw new Exception("There was no response-string");    

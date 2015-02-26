@@ -25,7 +25,6 @@
 ********************************************************************************/
 require_once 'inc/common.php';
 require_once ELAB_ROOT . 'inc/locale.php';
-require_once ELAB_ROOT . 'inc/classes/makepdf.class.php';
 require_once ELAB_ROOT . 'vendor/autoload.php';
 
 // Check id is valid and assign it to $id
@@ -43,7 +42,7 @@ if (($_GET['type'] === 'experiments') || ($_GET['type'] === 'items')) {
 }
 
 // do the pdf
-$pdf = new \elabftw\elabftw\MakePdf($id, $type);
+$pdf = new \Elabftw\Elabftw\MakePdf($id, $type);
 $mpdf = new mPDF();
 
 $mpdf->SetAuthor($pdf->author);

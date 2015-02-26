@@ -27,9 +27,9 @@ session_start();
 require_once '../inc/connect.php';
 require_once '../inc/functions.php';
 require_once '../inc/locale.php';
+require_once '../vendor/autoload.php';
 // formkey stuff
-require_once '../inc/classes/formkey.class.php';
-$formKey = new \elabftw\elabftw\FormKey();
+$formKey = new \Elabftw\Elabftw\FormKey();
 
 //Array to store validation errors
 $msg_arr = array();

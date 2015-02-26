@@ -33,10 +33,9 @@ $page_title = _('eLabFTW configuration');
 $selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
+require_once 'vendor/autoload.php';
 
-// formkey stuff
-require_once 'inc/classes/formkey.class.php';
-$formKey = new \elabftw\elabftw\FormKey();
+$formKey = new \Elabftw\Elabftw\FormKey();
 
 if (strlen(get_config('smtp_username')) == 0) {
     $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://github.com/elabftw/elabftw/wiki/finalizing'>", "</a>");

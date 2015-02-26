@@ -24,11 +24,12 @@
 *                                                                               *
 ********************************************************************************/
 require_once 'inc/common.php';
-require_once 'inc/locale.php';
+require_once ELAB_ROOT . 'inc/locale.php';
 $page_title = _('Make zip archive');
 $selected_menu = null;
-require_once 'inc/head.php';
-require_once 'inc/info_box.php';
+require_once ELAB_ROOT . 'inc/head.php';
+require_once ELAB_ROOT . 'inc/info_box.php';
+require_once ELAB_ROOT . 'vendor/autoload.php';
 // Test if there is zip
 if (!class_exists('ZipArchive')) {
     die("<p>You are missing the ZipArchive class in php. Uncomment the line extension=zip.so in /etc/php/php.ini.</p>");
@@ -137,12 +138,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             }
 
             // add PDF to archive
-            require_once ELAB_ROOT . 'inc/classes/makepdf.class.php';
-            require_once ELAB_ROOT . 'vendor/autoload.php';
-
-            $pdf = new \elabftw\elabftw\MakePdf($id, $table);
-
-            // Generate pdf with mpdf
+            $pdf = new \Elabftw\Elabftw\MakePdf($id, $table);
             $mpdf = new mPDF();
 
             $mpdf->SetAuthor($pdf->author);

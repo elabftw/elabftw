@@ -25,7 +25,6 @@
 ********************************************************************************/
 require_once '../inc/common.php';
 require_once ELAB_ROOT . 'inc/locale.php';
-require_once ELAB_ROOT . 'inc/classes/makepdf.class.php';
 require_once ELAB_ROOT . 'vendor/autoload.php';
 $msg_arr = array();
 
@@ -60,7 +59,7 @@ if (strlen(get_team_config('stamplogin')) > 2) {
 
 
 // generate the pdf to timestamp
-$pdf = new \elabftw\elabftw\MakePdf($id, 'experiments');
+$pdf = new \Elabftw\Elabftw\MakePdf($id, 'experiments');
 $mpdf = new mPDF();
 
 $mpdf->SetAuthor($pdf->author);

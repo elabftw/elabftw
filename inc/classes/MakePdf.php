@@ -23,7 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-namespace elabftw\elabftw;
+namespace Elabftw\Elabftw;
 
 class MakePdf {
 

@@ -103,7 +103,7 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     if (count($results_arr) == 0) {
         display_message('error_nocross', _("Sorry. I couldn't find anything :("));
     } else {
-        echo "<p class='smallgray'>" . count($results_arr) . " " .ngettext("result found", "results found", count($results_arr)) . " (" . $total_time . " " . $unit . ")</p>";
+        echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time . " " . $unit . ")</p>";
     }
 
     // loop the results array and display results

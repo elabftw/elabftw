@@ -678,12 +678,7 @@ function duplicate_item($id, $type)
     }
 
     // Get what is the id we just created
-    $sql = "SELECT id FROM $type WHERE userid = :userid ORDER BY id DESC LIMIT 0,1";
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':userid', $_SESSION['userid']);
-    $req->execute();
-    $data = $req->fetch();
-    $newid = $data['id'];
+    $newid = $pdo->lastInsertId();
 
 
     if ($type === 'experiments') {

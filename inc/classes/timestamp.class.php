@@ -127,9 +127,9 @@ class TrustedTimestamps
                 // workaround for faulty php strtotime function, that does not handle times in format "Feb 25 23:29:13.331 2015 GMT"
                 // currently this accounts for the format used presumably by Universign.eu
                 if(!$response_time) {
-                    $date = DateTime::createFromFormat("M d H:i:s.u Y T", strtotime($matches[1]));
+                    $date = DateTime::createFromFormat("M d H:i:s.u Y T", $matches[1]);
                     if(!$date) {
-                        $date = DateTime::createFromFormat("M j H:i:s.u Y T", strtotime($matches[1]));
+                        $date = DateTime::createFromFormat("M j H:i:s.u Y T", $matches[1]);
                     } else {
                         $date = false;
                     }

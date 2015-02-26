@@ -83,8 +83,6 @@ while ($tags = $tagreq->fetch()) {
 <!-- END ADD TAG -->
 <!-- BEGIN EDITXP FORM -->
 <form id="editXP" name="editXP" method="post" action="app/editXP-exec.php" enctype='multipart/form-data'>
-<!-- form key -->
-<?php // $formKey->output_formkey(); ?>
 <input name='item_id' type='hidden' value='<?php echo $id; ?>' />
 
 <div class='row'>

@@ -843,7 +843,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     header('Location: ../admin.php?tab=2');
     exit;
 }
-// DEFAULT _('Experiment') TEMPLATE
+// DEFAULT EXPERIMENT TEMPLATE
 if (isset($_POST['default_exp_tpl'])) {
     $default_exp_tpl = check_body($_POST['default_exp_tpl']);
     $sql = "UPDATE experiments_templates SET

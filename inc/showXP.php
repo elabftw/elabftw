@@ -33,7 +33,7 @@ $results_arr = array();
     <a href="app/create_item.php?type=exp"><img src="img/add.png" class='bot5px' alt="" /> <?php echo _('Create experiment'); ?></a> | 
     <a href='#' class='trigger'><img src="img/add-template.png" class='bot5px' alt="" /> <?php echo _('Create from template'); ?></a>
 
-    <!-- 'FILTER _('Status')' dropdown menu -->
+    <!-- FILTER STATUS dropdown menu -->
     <span class='align_right'>
     <select onchange=go_url(this.value)><option value=''><?php echo _('Filter status'); ?></option>
     <?php
@@ -76,9 +76,7 @@ $limit = $_SESSION['prefs']['limit'];
 
 // SQL for showXP
 // reminder : order by and sort must be passed to the prepare(), not during execute()
-// /////////////////
 // SEARCH
-// /////////////////
 if (isset($_GET['q'])) { // if there is a query
     $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
 
@@ -111,9 +109,7 @@ if (isset($_GET['q'])) { // if there is a query
         echo $load_more_button;
     }
 
-// /////////////
 // RELATED
-// /////////////
 } elseif (isset($_GET['related']) && is_pos_int($_GET['related'])) {// search for related experiments to DB item id
     $item_id = $_GET['related'];
     // search in title date and body
@@ -157,9 +153,7 @@ if (isset($_GET['q'])) { // if there is a query
         echo $load_more_button;
     }
 
-///////////////
 // TAG SEARCH
-///////////////
 } elseif (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
     $sql = "SELECT item_id, userid FROM experiments_tags
@@ -203,9 +197,7 @@ if (isset($_GET['q'])) { // if there is a query
         echo $load_more_button;
     }
 
-// /////////////////
 // DEFAULT VIEW
-// /////////////////
 } else {
     $sql = "SELECT id, date, title 
         FROM experiments 
@@ -248,7 +240,7 @@ function go_url(x) {
 }
 $(document).ready(function(){
 
-    // SHOW MORE _('Experiment')S BUTTON
+    // SHOW MORE EXPERIMENTS BUTTON
     $('section.item').hide(); // hide everyone
     $('section.item').slice(0, <?php echo $limit; ?>).show(); // show only the default at the beginning
     $('#loadButton').click(function(e){ // click to load more
@@ -259,12 +251,12 @@ $(document).ready(function(){
         }
     });
 
-    // _('Experiment')S TEMPLATE HIDDEN DIV
+    // EXPERIMENTS TEMPLATE HIDDEN DIV
 	$(".toggle_container").hide();
 	$("a.trigger").click(function(){
 		$('div.toggle_container').slideToggle(1);
 	});
-    // KEYBOARD _('Shortcut')S
+    // KEYBOARD SHORTCUTS
     key('<?php echo $_SESSION['prefs']['shortcuts']['create']; ?>', function(){
         location.href = 'app/create_item.php?type=exp'
         });

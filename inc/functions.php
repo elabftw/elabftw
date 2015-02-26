@@ -331,7 +331,7 @@ function showXP($id, $display)
  * Display the stars rating for a DB item.
  *
  * @param int $rating The number of stars to display
- * @return string HTML of the stars
+ * @return string|null HTML of the stars
  */
 function show_stars($rating)
 {
@@ -435,7 +435,7 @@ function check_title($input)
  * Check if the date is valid.
  *
  * @param int $input The date to check
- * @return string $input The input date if it's valid, or the date of today if not
+ * @return integer|string $input The input date if it's valid, or the date of today if not
  */
 function check_date($input)
 {

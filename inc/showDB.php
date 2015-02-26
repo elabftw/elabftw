@@ -39,7 +39,7 @@ $req->execute(array(
 <menu class='border'>
 
     <?php
-    // 'Create new' dropdown menu
+    // CREATE NEW dropdown menu
     echo "<select onchange=go_url(this.value)><option value=''>" . _('Create new') . "</option>";
     while ($items_types = $req->fetch()) {
         echo "<option value='app/create_item.php?type=" . $items_types['id'] . "' name='type' ";
@@ -61,9 +61,7 @@ $req->execute(array(
 
 <?php
 // SQL for showDB
-///////////////
 // TAG SEARCH
-///////////////
 if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
     $results_arr = array();

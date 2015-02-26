@@ -1,7 +1,7 @@
 <?php
 /******************************************************************************
 *   Copyright 2012 Nicolas CARPi
-*   This file is part of eLabFTW. 
+*   This file is part of eLabFTW.
 *
 *    eLabFTW is free software: you can redistribute it and/or modify
 *    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 *
 ********************************************************************************/
 require_once '../inc/common.php';
-// get $id from $_POST['id']
+
+// check id
 if (is_pos_int($_POST['id'])) {
     $id = $_POST['id'];
 } else {
@@ -74,13 +75,10 @@ if (isset($_POST['status'])) {
 
 // or we update date, title, and body
 } else {
-    // get $title from $_POST['title']
     $title = check_title($_POST['title']);
 
-    // get $body from $_POST['body']
     $body = check_body($_POST['body']);
 
-    // get $date from $_POST['date']
     $date = check_date($_POST['date']);
 
     // SQL for quicksave

@@ -33,10 +33,9 @@ $page_title = _('eLabFTW configuration');
 $selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
+require_once 'vendor/autoload.php';
 
-// formkey stuff
-require_once 'inc/classes/formkey.class.php';
-$formKey = new \elabftw\elabftw\FormKey();
+$formKey = new \Elabftw\Elabftw\FormKey();
 
 if (strlen(get_config('smtp_username')) == 0) {
     $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://github.com/elabftw/elabftw/wiki/finalizing'>", "</a>");
@@ -69,6 +68,7 @@ if ($current_version == 'something') {
         <li class='tabhandle' id='tab3'><?php echo _('Timestamp'); ?></li>
         <li class='tabhandle' id='tab4'><?php echo _('Security'); ?></li>
         <li class='tabhandle' id='tab5'><?php echo _('Email'); ?></li>
+        <li class='tabhandle' id='tab6'><?php echo _('Logs'); ?></li>
     </ul>
 </menu>
 
@@ -257,6 +257,21 @@ if ($current_version == 'something') {
     </form>
 </div>
 
+<!-- TAB 6 -->
+<div class='divhandle' id='tab6div'>
+    <div class='well'>
+        <ul>
+        <?php
+        $sql = "SELECT * FROM logs ORDER BY id DESC LIMIT 100";
+        $req = $pdo->prepare($sql);
+        $req->execute();
+        while ($logs = $req->fetch()) {
+            echo "<li>" . $logs['datetime'] . " [" . $logs['type'] . "] " . $logs['body'] . " (" . $logs['user'] . ")</li>";
+        }
+        ?>
+        </ul>
+    </div>
+</div>
 
 <script>
 // we need to add this otherwise the button will stay disabled with the browser's cache (Firefox)

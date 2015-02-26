@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2014-10-27 17:55+0100\n"
-"PO-Revision-Date: 2015-02-23 04:48+0100\n"
+"PO-Revision-Date: 2015-02-26 03:26+0100\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -34,8 +34,8 @@ msgstr "L'id utilisateur n'est pas valide."
 msgid "The type parameter is not valid."
 msgstr "Le paramètre type n'est pas valide."
 
-msgid "The form key is invalid. Please retry."
-msgstr "La clé de formulaire n'est pas valide. Merci de réessayer."
+msgid "Your session expired. Please retry."
+msgstr "Votre session a expiré. Merci de réessayer."
 
 msgid "The email is not valid."
 msgstr "L'email n'est pas valide."
@@ -912,17 +912,10 @@ msgstr "Démarrer l'upload"
 msgid "Filter type"
 msgstr "Filtrer les catégories"
 
-msgid "Found"
-msgstr "Trouvé"
-
-msgid "results."
-msgstr "résultats"
-
-msgid "Found_1"
-msgstr "1 résultat trouvé."
-
-msgid "Found_0"
-msgstr "Pas de résultat."
+msgid "result found"
+msgid_plural "results found"
+msgstr[0] "résultat trouvé"
+msgstr[1] "résultats trouvés"
 
 msgid "<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list to begin filling your database."
 msgstr "<strong>Bienvenue sur eLabFTW.</strong>Choisissez un item dans la liste «Créer nouveau» pour commencer à remplire votre base de données."
@@ -1032,3 +1025,6 @@ msgstr "Éditeur de molécule"
 
 msgid "Tools"
 msgstr "Outils"
+
+msgid "Logs"
+msgstr "Logs"

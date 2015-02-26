@@ -127,8 +127,8 @@ function make_thumb($src, $ext, $dest, $desired_width)
 /**
  * Check in input is a positive integer.
  *
- * @param int $int The int to check
- * @return bool|int Return false if it's not an int
+ * @param int|string $int The int to check
+ * @return bool Return false if it's not an int
  */
 function is_pos_int($int)
 {
@@ -387,7 +387,7 @@ function showXP($id, $display)
  * Display the stars rating for a DB item.
  *
  * @param int $rating The number of stars to display
- * @return string HTML of the stars
+ * @return string|null HTML of the stars
  */
 function show_stars($rating)
 {
@@ -491,7 +491,7 @@ function check_title($input)
  * Check if the date is valid.
  *
  * @param int $input The date to check
- * @return string $input The input date if it's valid, or the date of today if not
+ * @return integer|string $input The input date if it's valid, or the date of today if not
  */
 function check_date($input)
 {
@@ -734,12 +734,7 @@ function duplicate_item($id, $type)
     }
 
     // Get what is the id we just created
-    $sql = "SELECT id FROM $type WHERE userid = :userid ORDER BY id DESC LIMIT 0,1";
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':userid', $_SESSION['userid']);
-    $req->execute();
-    $data = $req->fetch();
-    $newid = $data['id'];
+    $newid = $pdo->lastInsertId();
 
 
     if ($type === 'experiments') {

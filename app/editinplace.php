@@ -42,14 +42,12 @@ if (isset($_POST['filecomment'])) {
                 $req->execute(array(
                     'new_comment' => $filecomment,
                     'id' => $id));
-                echo stripslashes($filecomment);
             } else { // Submitted comment is empty
                 // Get old comment
                 $sql = "SELECT comment FROM uploads WHERE id = " . $id;
                 $req = $pdo->prepare($sql);
                 $req->execute();
                 $filecomment = $req->fetch();
-                echo stripslashes($filecomment['comment']);
             }
         }
     }
@@ -63,7 +61,7 @@ if (isset($_POST['filecomment'])) {
         // either we have something that looks like comment_56 and we need to UPDATE
         // or we have new_expcomment and we need to INSERT
         $id_arr = explode('_', $_POST['id']);
-        // NEW COMMENT FOR _('Experiment')
+        // NEW COMMENT FOR EXPERIMENT
         if ($id_arr[0] === 'newexpcomment' && is_pos_int($id_arr[1])) {
             // the $id here is the one of the experiment, not the comment.
             $id = $id_arr[1];
@@ -78,8 +76,6 @@ if (isset($_POST['filecomment'])) {
                 'comment' => $expcomment,
                 'userid' => $_SESSION['userid']
             ));
-            // show comment
-            //echo stripslashes($expcomment);
         } else {
             // UPDATE OF EXISTING COMMENT
             if ($id_arr[0] === 'expcomment' && is_pos_int($id_arr[1])) {
@@ -100,8 +96,6 @@ if (isset($_POST['filecomment'])) {
                         'now' => date("Y-m-d H:i:s"),
                         'id' => $id
                     ));
-                    // show comment
-                    echo stripslashes($expcomment);
                 } else { // Submitted comment is empty
                     // Get old comment
                     $sql = "SELECT comment FROM experiments_comments WHERE id = :id";
@@ -110,7 +104,6 @@ if (isset($_POST['filecomment'])) {
                         'id' => $id
                     ));
                     $comment = $req->fetch();
-                    echo stripslashes($comment['comment']);
                 }
             }
         }

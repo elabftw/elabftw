@@ -5,6 +5,7 @@
 * add ChemDoodle on Team page
 * add a bash script in install folder to help beginners
 * fix a bug where the top right search bar was not searching at the good place if the lang was not english
+* add a log view for the sysadmin
 * various little improvements in code
 
 # Version 1.0.0

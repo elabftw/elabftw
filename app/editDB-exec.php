@@ -72,6 +72,14 @@ $result = $req->execute(array(
     'id' => $id
 ));
 
+// we add a revision to the revision table
+$sql = "INSERT INTO items_revisions (item_id, body, userid) VALUES(:item_id, :body, :userid)";
+$req = $pdo->prepare($sql);
+$result = $req->execute(array(
+    'item_id' => $id,
+    'body' => $body,
+    'userid' => $_SESSION['userid']
+));
 
 // Check if insertion is successful
 if ($result) {

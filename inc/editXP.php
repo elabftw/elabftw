@@ -223,6 +223,7 @@ if ($count > 0) {
     echo $count . " " . ngettext('revision available.', 'revisions available.', $count) . " <a href='revision.php?exp_id=" . $id . "'>" . _('Show history') . "</a>";
 }
 ?>
+</span>
 
 </section>
 <?php

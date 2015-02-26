@@ -91,20 +91,20 @@ if (isset($_POST['status'])) {
             AND id = :id";
         $req = $pdo->prepare($sql);
         $result = $req->execute(array(
-        'title' => $title,
-        'date' => $date,
-        'body' => $body,
-        'userid' => $_SESSION['userid'],
-        'id' => $id
+            'title' => $title,
+            'date' => $date,
+            'body' => $body,
+            'userid' => $_SESSION['userid'],
+            'id' => $id
         ));
 
         // we add a revision to the revision table
         $sql = "INSERT INTO experiments_revisions (exp_id, body, userid) VALUES(:exp_id, :body, :userid)";
         $req = $pdo->prepare($sql);
         $result = $req->execute(array(
-        'exp_id' => $id,
-        'body' => $body,
-        'userid' => $_SESSION['userid']
+            'exp_id' => $id,
+            'body' => $body,
+            'userid' => $_SESSION['userid']
         ));
 
     } elseif ($_POST['type'] == 'items') {
@@ -117,6 +117,15 @@ if (isset($_POST['status'])) {
             'date' => $date,
             'body' => $body,
             'id' => $id
+        ));
+
+        // we add a revision to the revision table
+        $sql = "INSERT INTO items_revisions (item_id, body, userid) VALUES(:item_id, :body, :userid)";
+        $req = $pdo->prepare($sql);
+        $result = $req->execute(array(
+            'item_id' => $id,
+            'body' => $body,
+            'userid' => $_SESSION['userid']
         ));
     }
 }

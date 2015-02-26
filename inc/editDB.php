@@ -110,13 +110,30 @@ if ($data['locked'] == 1) {
     </div>
     </form>
     <!-- end edit items form -->
+<span class='align_right'>
+<?php
+// get the list of revisions
+$sql = "SELECT COUNT(id) FROM items_revisions WHERE item_id = :item_id ORDER BY savedate DESC";
+$req = $pdo->prepare($sql);
+$req->execute(array(
+    'item_id' => $id
+));
+$rev_count = $req->fetch();
+$count = intval($rev_count[0]);
+if ($count > 0) {
+    echo $count . " " . ngettext('revision available.', 'revisions available.', $count) . " <a href='revision.php?item_id=" . $id . "'>" . _('Show history') . "</a>";
+}
+?>
+</span>
+
 </section>
-    <?php
-    // FILE UPLOAD
-    require_once 'inc/file_upload.php';
-    // DISPLAY FILES
-    require_once 'inc/display_file.php';
-    ?>
+
+<?php
+// FILE UPLOAD
+require_once 'inc/file_upload.php';
+// DISPLAY FILES
+require_once 'inc/display_file.php';
+?>
 
 <?php
 // unset session variables

@@ -76,8 +76,8 @@ class TrustedTimestamps
         curl_close($ch);
         
         if ($status != 200 || !strlen($binary_response_string))
-            // return 1 if request fails. Must be catched by calling function!
-            return 1;
+            // return false if request fails. Must be catched by calling function!
+            return false;
         
         $base64_response_string = base64_encode($binary_response_string);
         

@@ -129,6 +129,7 @@ class TrustedTimestamps
                 if(!$response_time) {
                     $date = DateTime::createFromFormat("M d H:i:s.u Y T", $matches[1]);
                     if(!$date) {
+                        //TODO Check if this one is really needed; j omits leading zeros for the day
                         $date = DateTime::createFromFormat("M j H:i:s.u Y T", $matches[1]);
                     } else {
                         $date = false;

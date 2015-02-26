@@ -2,6 +2,9 @@
 
 ###[Official website](http://www.elabftw.net) | [Live demo](https://demo.elabftw.net)
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/quality-score.png?b=next)](https://scrutinizer-ci.com/g/elabftw/elabftw/?branch=next)
+[![Build Status](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/build.png?b=next)](https://scrutinizer-ci.com/g/elabftw/elabftw/build-status/next)
+
 # Description
 
 **eLabFTW** is an electronic lab notebook manager for research teams. It also features a database where you can store any kind of objects (think antibodies, plasmids, cell lines, boxes, _etc_…)

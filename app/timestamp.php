@@ -103,7 +103,7 @@ try {
     // free resources
     curl_close($ch);
 
-    if (!$token) {
+    if (!$token || preg_match('/NOT_ENOUGH_TOKENS/', $token)) {
             throw new Exception(_('There was an error in the timestamping. Login credentials probably wrong or no more credits.'));
         }
     } catch (Exception $e) {

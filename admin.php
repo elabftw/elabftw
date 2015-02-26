@@ -35,9 +35,8 @@ $page_title = _('Admin panel');
 $selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
-// formkey stuff
-require_once 'inc/classes/formkey.class.php';
-$formKey = new \elabftw\elabftw\FormKey();
+require_once 'vendor/autoload.php';
+$formKey = new \Elabftw\Elabftw\FormKey();
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
 <script src="js/raphael/raphael-min.js"></script>

@@ -39,7 +39,7 @@ $req->execute(array(
 <menu class='border'>
 
     <?php
-    // 'Create new' dropdown menu
+    // CREATE NEW dropdown menu
     echo "<select onchange=go_url(this.value)><option value=''>" . _('Create new') . "</option>";
     while ($items_types = $req->fetch()) {
         echo "<option value='app/create_item.php?type=" . $items_types['id'] . "' name='type' ";
@@ -61,9 +61,7 @@ $req->execute(array(
 
 <?php
 // SQL for showDB
-///////////////
 // TAG SEARCH
-///////////////
 if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
     $results_arr = array();
@@ -80,12 +78,10 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     }
 
     // show number of results found
-    if (count($results_arr) > 1) {
-        echo _('Found') . ' ' . count($results_arr) . ' ' . _('results.');
-    } elseif (count($results_arr) == 1) {
-        echo _('Found_1');
+    if (count($results_arr) == 0) {
+        display_message('error_nocross', _("Sorry. I couldn't find anything :("));
     } else {
-        echo _('Found_0');
+        echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time . " " . $unit . ")</p>";
     }
 
     // clean duplicates
@@ -104,12 +100,10 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     // filter out duplicate ids and reverse the order; items should be sorted by date
     $results_arr = array_reverse(array_unique($results_arr));
     // show number of results found
-    if (count($results_arr) > 1) {
-        echo _('Found') . ' ' . count($results_arr) . ' ' . _('results.') . '.';
-    } elseif (count($results_arr) == 1) {
-        echo _('Found_1');
+    if (count($results_arr) == 0) {
+        display_message('error_nocross', _("Sorry. I couldn't find anything :("));
     } else {
-        echo _('Found_0');
+        echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time . " " . $unit . ")</p>";
     }
 
     // loop the results array and display results

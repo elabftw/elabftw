@@ -25,7 +25,6 @@
 ********************************************************************************/
 require_once '../inc/common.php';
 require_once ELAB_ROOT . 'inc/locale.php';
-require_once ELAB_ROOT . 'inc/classes/makepdf.class.php';
 require_once ELAB_ROOT . 'vendor/autoload.php';
 $msg_arr = array();
 
@@ -73,8 +72,11 @@ if (strlen(get_team_config('stamplogin')) > 2) {
 }
 
 // generate the pdf to timestamp
-$pdf = new \elabftw\elabftw\MakePdf($id, 'experiments');
+$pdf = new \Elabftw\Elabftw\MakePdf($id, 'experiments');
 $mpdf = new mPDF();
+
+$pdf_filename = hash("sha512", uniqid(rand(), true)) . ".pdf";
+$pdf_path = ELAB_ROOT . 'uploads/' . $pdf_filename;
 
 $mpdf->SetAuthor($pdf->author);
 $mpdf->SetTitle($pdf->title);
@@ -82,7 +84,7 @@ $mpdf->SetSubject('eLabFTW pdf');
 $mpdf->SetKeywords($pdf->tags);
 $mpdf->SetCreator('www.elabftw.net');
 $mpdf->WriteHTML($pdf->content);
-$mpdf->Output($pdf->getPath(), 'F');
+$mpdf->Output($pdf_path, 'F');
 
 require_once '../inc/classes/timestamp.class.php';
 $requestfile_path = TrustedTimestamps::createRequestfile($pdf->getPath());
@@ -144,13 +146,13 @@ $req->bindParam(':id', $id);
 $res2 = $req->execute();
 $real_name = $req->fetch(PDO::FETCH_COLUMN) . "-timestamped.pdf";
 
-$md5 = hash_file('md5', $pdf->getPath());
+$md5 = hash_file('md5', $pdf_path);
 
 // DA REAL SQL
 $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, md5) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :md5)";
 $req = $pdo->prepare($sql);
 $req->bindParam(':real_name', $real_name);
-$req->bindParam(':long_name', $pdf->getFileName());
+$req->bindParam(':long_name', $pdf_filename);
 $req->bindValue(':comment', "Timestamped PDF");
 $req->bindParam(':item_id', $id);
 $req->bindParam(':userid', $_SESSION['userid']);

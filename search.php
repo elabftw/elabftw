@@ -320,11 +320,7 @@ if (isset($_GET)) {
                     <a href='make_csv.php?id=<?php echo $results_id_str; ?>&type=experiments'><img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export in spreadsheet file' /></a>
                 </div>
     <?php
-                if ($count == 1) {
-                echo "<div id='search_count'>" . $count . " result</div>";
-                } else {
-                echo "<div id='search_count'>" . $count . " results</div>";
-                }
+                echo "<p id='search_count'>" . $count . " " . ngettext("result found", "results found", $count) . "</p>";
                 // Display results
                 echo "<hr>";
                 foreach ($results_id as $id) {

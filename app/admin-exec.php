@@ -37,9 +37,7 @@ $msg_arr = array();
 $errflag = false;
 $email = '';
 
-// FORMKEY
-require_once ELAB_ROOT . 'inc/classes/formkey.class.php';
-$formKey = new \elabftw\elabftw\FormKey();
+$formKey = new \Elabftw\Elabftw\FormKey();
 
 // VALIDATE USERS
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
@@ -855,7 +853,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     header('Location: ../admin.php?tab=2');
     exit;
 }
-// DEFAULT _('Experiment') TEMPLATE
+// DEFAULT EXPERIMENT TEMPLATE
 if (isset($_POST['default_exp_tpl'])) {
     $default_exp_tpl = check_body($_POST['default_exp_tpl']);
     $sql = "UPDATE experiments_templates SET

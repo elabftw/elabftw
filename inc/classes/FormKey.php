@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 // Note : for a page with several <form>, this will work only for 1 <form> !
-namespace elabftw\elabftw;
+namespace Elabftw\Elabftw;
 
 class FormKey {
     // here we store the generated form key

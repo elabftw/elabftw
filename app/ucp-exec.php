@@ -57,7 +57,7 @@ if (isset($_POST['currpass'])) {
     if (($result) && ($numrows === 1)) {
         // Old password is good. Continue
 
-        // _('Password') CHANGE
+        // PASSWORD CHANGE
         if ((isset($_POST['cnewpass'])) && (!empty($_POST['cnewpass']))) {
             $cpassword = filter_var($_POST['cnewpass'], FILTER_SANITIZE_STRING);
             if ((isset($_POST['newpass'])) && (!empty($_POST['newpass']))) {
@@ -266,7 +266,7 @@ if (isset($_POST['display'])) {
         ));
     $new_limit = filter_var($_POST['limit'], FILTER_VALIDATE_INT, $filter_options);
 
-    // KEYBOARD _('Shortcut')S
+    // KEYBOARD SHORTCUTS
     $new_sc_create = substr($_POST['create'], 0, 1);
     $new_sc_edit = substr($_POST['edit'], 0, 1);
     $new_sc_submit = substr($_POST['submit'], 0, 1);

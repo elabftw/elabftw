@@ -37,12 +37,12 @@ Please report bugs on [github](https://github.com/elabftw/elabftw/issues).
 ## Install on a digitalocean's drop (easiest/quickest method)
 With this method, you can have a running elabftw server in no time. You need to purchase a `drop` from [DigitalOcean.com](https://www.digitalocean.com/pricing/). It starts at 5$/month. This setup is enough to run eLabFTW for a team or more. And it's very easy to install, all is automatic! |
 :--------------------------------------------------------------:|
-[Install eLabFTW on a drop](https://github.com/elabftw/drop-elabftw#how-to-use) |
+[Install eLabFTW on a drop](https://github.com/NicolasCARPi/drop-elabftw#how-to-use) |
 
 ## Install in a docker container
 ![Docker](https://i.imgur.com/VRjbY8R.png) |
 :------------------------------------------:|
-If you know Docker already and want to use a dockerized elabftw, please see [this repo](https://github.com/elabftw/elabftw-docker-nosql#elabftw-docker-nosql). |
+If you know Docker already and want to use a dockerized elabftw, please see [this repo](https://github.com/NicolasCARPi/elabftw-docker-nosql#elabftw-docker-nosql). |
 
 ## Install on a GNU/Linux or BSD server
 
@@ -54,7 +54,7 @@ Please refer to your distribution's documentation to install :
 * mysql version > 5.5
 * git
 
-If you don't know how to do that, have a look at [installing eLabFTW on a cheap server (drop)](https://github.com/elabftw/drop-elabftw#how-to-use).
+If you don't know how to do that, have a look at [installing eLabFTW on a cheap server (drop)](https://github.com/NicolasCARPi/drop-elabftw#how-to-use).
 
 ### Getting the files
 

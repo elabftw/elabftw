@@ -283,6 +283,28 @@ if ($team_id[0] == 0) { // if we just added the column, it will be 0
     }
 }
 
+
+// 20150227 : add items_revisions
+$sql = "SHOW TABLES";
+$req = $pdo->prepare($sql);
+$req->execute();
+$table_is_here = false;
+while ($show = $req->fetch()) {
+    if (in_array('items_revisions', $show)) {
+        $table_is_here = true;
+    }
+}
+
+if (!$table_is_here) {
+    q("CREATE TABLE IF NOT EXISTS `items_revisions` (
+      `id` int(10) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+      `item_id` int(10) unsigned NOT NULL,
+      `body` text NOT NULL,
+      `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      `userid` int(11) NOT NULL
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;");
+}
+
 // END
 $msg_arr[] = "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)";
 $_SESSION['infos'] = $msg_arr;

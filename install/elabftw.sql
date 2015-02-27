@@ -106,6 +106,20 @@ CREATE TABLE `experiments_revisions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
+-- Table structure for table `items_revisions`
+--
+
+DROP TABLE IF EXISTS `items_revisions`;
+CREATE TABLE `items_revisions` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `item_id` int(10) unsigned NOT NULL,
+  `body` text NOT NULL,
+  `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `userid` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
 -- Table structure for table `experiments_tags`
 --
 

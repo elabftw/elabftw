@@ -34,6 +34,9 @@ $errflag = false;
 // ID
 if (is_pos_int($_POST['item_id'])) {
     $id = $_POST['item_id'];
+    if (!item_is_in_team($id, $_SESSION['team_id'])) {
+        die(_('This section is out of your reach.'));
+    }
 } else {
     $id = '';
     $msg_arr[] = _("The id parameter is not valid!");
@@ -72,6 +75,14 @@ $result = $req->execute(array(
     'id' => $id
 ));
 
+// we add a revision to the revision table
+$sql = "INSERT INTO items_revisions (item_id, body, userid) VALUES(:item_id, :body, :userid)";
+$req = $pdo->prepare($sql);
+$result = $req->execute(array(
+    'item_id' => $id,
+    'body' => $body,
+    'userid' => $_SESSION['userid']
+));
 
 // Check if insertion is successful
 if ($result) {

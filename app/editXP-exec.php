@@ -75,9 +75,9 @@ $result = $req->execute(array(
 $sql = "INSERT INTO experiments_revisions (exp_id, body, userid) VALUES(:exp_id, :body, :userid)";
 $req = $pdo->prepare($sql);
 $result = $req->execute(array(
-'exp_id' => $id,
-'body' => $body,
-'userid' => $_SESSION['userid']
+    'exp_id' => $id,
+    'body' => $body,
+    'userid' => $_SESSION['userid']
 ));
 
 

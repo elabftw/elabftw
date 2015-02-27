@@ -223,6 +223,7 @@ if ($count > 0) {
     echo $count . " " . ngettext('revision available.', 'revisions available.', $count) . " <a href='revision.php?exp_id=" . $id . "'>" . _('Show history') . "</a>";
 }
 ?>
+</span>
 
 </section>
 <?php
@@ -382,7 +383,7 @@ function updateStatus(status) {
                 status : status,
                 }
                 // change the color of the item border
-            }).done(function() { 
+            }).done(function() {
                 // we first remove any status class
                 $("#main_section").css('border', null);
                 // and we add our new border color
@@ -432,7 +433,7 @@ $(document).ready(function() {
     $("#title").focus(function(){
         $("#title").select();
     });
-    // _('Edit')OR
+    // EDITOR
     tinymce.init({
         mode : "specific_textareas",
         editor_selector : "mceditable",

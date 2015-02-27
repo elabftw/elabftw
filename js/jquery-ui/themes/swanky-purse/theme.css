@@ -1,8 +1,8 @@
 /*!
- * jQuery UI CSS Framework 1.11.2
+ * jQuery UI CSS Framework 1.11.3
  * http://jqueryui.com
  *
- * Copyright 2014 jQuery Foundation and other contributors
+ * Copyright jQuery Foundation and other contributors
  * Released under the MIT license.
  * http://jquery.org/license
  *
@@ -403,7 +403,7 @@
 .ui-widget-shadow {
 	margin: -8px 0 0 -8px;
 	padding: 8px;
-	background: #ddd4b0 url("images/ui-bg_flat_75_ddd4b0_40x100.png") 50% 50% repeat-x;
+	background: #ddd4b0;
 	opacity: .3;
 	filter: Alpha(Opacity=30); /* support: IE8 */
 	border-radius: 12px;

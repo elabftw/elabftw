@@ -1,8 +1,8 @@
 /*!
- * jQuery UI CSS Framework 1.11.2
+ * jQuery UI CSS Framework 1.11.3
  * http://jqueryui.com
  *
- * Copyright 2014 jQuery Foundation and other contributors
+ * Copyright jQuery Foundation and other contributors
  * Released under the MIT license.
  * http://jquery.org/license
  *
@@ -88,7 +88,7 @@
 .ui-widget-content .ui-state-active,
 .ui-widget-header .ui-state-active {
 	border: 1px solid #696969;
-	background: #4c4c4c url("images/ui-bg_flat_0_4c4c4c_40x100.png") 50% 50% repeat-x;
+	background: #4c4c4c;
 	font-weight: bold;
 	color: #ffffff;
 }
@@ -403,7 +403,7 @@
 .ui-widget-shadow {
 	margin: -6px 0 0 -6px;
 	padding: 6px;
-	background: #303030 url("images/ui-bg_flat_0_303030_40x100.png") 50% 50% repeat-x;
+	background: #303030;
 	opacity: .5;
 	filter: Alpha(Opacity=50); /* support: IE8 */
 	border-radius: 12px;

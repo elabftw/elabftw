@@ -34,6 +34,9 @@ $errflag = false;
 // ID
 if (is_pos_int($_POST['item_id'])) {
     $id = $_POST['item_id'];
+    if (!item_is_in_team($id, $_SESSION['team_id'])) {
+        die(_('This section is out of your reach.'));
+    }
 } else {
     $id = '';
     $msg_arr[] = _("The id parameter is not valid!");

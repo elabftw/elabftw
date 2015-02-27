@@ -42,16 +42,10 @@ if (isset($_GET['exp_id']) &&
 
 } elseif (isset($_GET['item_id']) && !empty($_GET['item_id']) && is_pos_int($_GET['item_id'])) {
     $id = $_GET['item_id'];
-    $type = 'item';
-    // get what is the team id of that item
-    $sql = "SELECT team FROM items WHERE id = $id";
-    $req = $pdo->prepare($sql);
-    $req->execute();
-    $item_team = $req->fetchColumn();
-    // check we are in this team
-    if ($item_team != $_SESSION['team_id']) {
+    if (!item_is_in_team($id, $_SESSION['team_id'])) {
         die(_('This section is out of your reach.'));
     }
+    $type = 'item';
 
 } else {
     die(_("The id parameter is not valid!"));

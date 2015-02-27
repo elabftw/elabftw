@@ -27,6 +27,9 @@
 // ID
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
+    if (!item_is_in_team($id, $_SESSION['team_id'])) {
+        die(_('This section is out of your reach.'));
+    }
 } else {
     display_message('error', _("The id parameter is not valid!"));
     require_once 'inc/footer.php';

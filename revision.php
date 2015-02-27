@@ -29,16 +29,35 @@ $page_title = _('Revisions');
 $selected_menu = null;
 require_once 'inc/head.php';
 
-if (isset($_GET['exp_id']) && !empty($_GET['exp_id']) && is_pos_int($_GET['exp_id'])) {
+// CHECKS
+if (isset($_GET['exp_id']) &&
+    !empty($_GET['exp_id']) &&
+    is_pos_int($_GET['exp_id'])) {
+
     $id = $_GET['exp_id'];
     $type = 'experiment';
+    if (!is_owned_by_user($id, 'experiments', $_SESSION['userid'])) {
+        die(_('This section is out of your reach.'));
+    }
+
 } elseif (isset($_GET['item_id']) && !empty($_GET['item_id']) && is_pos_int($_GET['item_id'])) {
     $id = $_GET['item_id'];
     $type = 'item';
+    // get what is the team id of that item
+    $sql = "SELECT team FROM items WHERE id = $id";
+    $req = $pdo->prepare($sql);
+    $req->execute();
+    $item_team = $req->fetchColumn();
+    // check we are in this team
+    if ($item_team != $_SESSION['team_id']) {
+        die(_('This section is out of your reach.'));
+    }
+
 } else {
     die(_("The id parameter is not valid!"));
 }
 
+// OK, GO!
 if ($type === 'experiment') {
 
     echo "<a href='experiments.php?mode=view&id=" . $id . "'><h4><img src='img/undo.png' alt='<--' /> " . _('Go back to the experiment') . "</h4></a>";

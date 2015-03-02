@@ -246,8 +246,8 @@ CREATE TABLE `teams` (
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `stamplogin` text,
   `stamppass` text,
-  `ts_provider_url`, text,
-  `ts_hash_algorithm`, varchar(45),
+  `ts_provider_url` text,
+  `ts_hash_algorithm` varchar(45),
   PRIMARY KEY (`team_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -352,6 +352,6 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('smtp_username', ''),
 ('stamplogin', ''),
 ('stamppass', ''),
-('stampshare', '1');
-('ts_provider_url', '')
-('ts_hash_algorithm', 'sha256')
+('stampshare', '1'),
+('ts_provider_url', ''),
+('ts_hash_algorithm', 'sha256');

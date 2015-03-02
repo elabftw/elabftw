@@ -33,6 +33,7 @@ class TrustedTimestamps
     {
         $outfilepath = self::createTempFile();
         $cmd = "openssl ts -query -data ".escapeshellarg($filename)." -cert -sha256 -no_nonce -out ".escapeshellarg($outfilepath);
+        echo($cmd);
         $retarray = array();
         exec($cmd." 2>&1", $retarray, $retcode);
         
@@ -127,17 +128,11 @@ class TrustedTimestamps
                 // workaround for faulty php strtotime function, that does not handle times in format "Feb 25 23:29:13.331 2015 GMT"
                 // currently this accounts for the format used presumably by Universign.eu
                 if(!$response_time) {
-                    $date = DateTime::createFromFormat("M d H:i:s.u Y T", $matches[1]);
-                    if(!$date) {
-                        //TODO Check if this one is really needed; j omits leading zeros for the day
-                        $date = DateTime::createFromFormat("M j H:i:s.u Y T", $matches[1]);
-                    } else {
-                        $date = false;
-                    }
+                    $date = DateTime::createFromFormat("M j H:i:s.u Y T", $matches[1]);
                     if($date) {
                         $response_time = $date->getTimestamp();
                     } else {
-                        $response_time = false;
+                        $response_time = False;
                     }
                 }
                 break;      

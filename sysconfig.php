@@ -185,6 +185,11 @@ if ($current_version == 'something') {
         <input type='url' value='<?php echo get_config('ts_provider_url');?>' name='ts_provider_url' id='ts_provider_url' />
         <span class='smallgray'><?php echo _('This should be the URL used for <a href="https://tools.ietf.org/html/rfc3616">RFC 3616</a>-compliant timestamping requests.'); ?></span>
         </p>
+        <p>
+        <label for='ts_cert_chain'><?php echo _('Chain of certificates of the external timestamping service:');?></label>
+        <input type='text' value='<?php echo get_config('ts_cert_chain');?>' name='ts_cert_chain' id='ts_cert_chain' />
+        <span class='smallgray'><?php echo _('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps. Can be either an URL or a local path'); ?></span>
+        </p>
         <label for='stamplogin'><?php echo _('Login for external timestamping service:'); ?></label>
         <input type='text' value='<?php echo get_config('stamplogin'); ?>' name='stamplogin' id='stamplogin' />
         <p class='smallgray'><?php echo _('Login for external timestamping service .'); ?></p>

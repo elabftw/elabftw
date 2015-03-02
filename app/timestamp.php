@@ -87,7 +87,7 @@ $mpdf->WriteHTML($pdf->content);
 $mpdf->Output($pdf_path, 'F');
 
 require_once '../inc/classes/timestamp.class.php';
-$requestfile_path = TrustedTimestamps::createRequestfile($pdf->getPath());
+$requestfile_path = TrustedTimestamps::createRequestfile($pdf_path);
 
 // REQUEST TOKEN
 if (is_string($login) and is_string($password)) {

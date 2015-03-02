@@ -305,10 +305,10 @@ function validateTimestamp($filename, $timestamptoken, $timestampedwhen, $certif
     require_once 'inc/classes/timestamp.class.php';
     
     if (is_null($certificate)) {
-        if (strlen(get_team_config('ts_certfile')) > 2) {
-            $certificate = get_team_config('ts_certfile');
-        } elseif (get_config('ts_certfile')) {
-            $certificate = get_config('ts_certfile');
+        if (strlen(get_team_config('ts_cert_chain')) > 2) {
+            $certificate = get_team_config('ts_cert_chain');
+        } elseif (get_config('ts_cert_chain')) {
+            $certificate = get_config('ts_cert_chain');
         } else {
         $certificate = NULL;
         }

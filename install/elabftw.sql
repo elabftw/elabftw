@@ -247,6 +247,7 @@ CREATE TABLE `teams` (
   `stamplogin` text,
   `stamppass` text,
   `ts_provider_url` text,
+  `ts_cert_chain` text,
   `ts_hash_algorithm` varchar(45),
   PRIMARY KEY (`team_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -354,4 +355,5 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('stamppass', ''),
 ('stampshare', '1'),
 ('ts_provider_url', ''),
+('ts_cert_chain', ''),
 ('ts_hash_algorithm', 'sha256');

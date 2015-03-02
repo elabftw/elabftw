@@ -332,13 +332,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {
     } else {
         $ts_provider_url = '';
     }
+    if (isset($_POST['ts_cert_chain'])) {
+        $cert_chain = filter_var($_POST['ts_cert_chain'], FILTER_SANITIZE_STRING);
+        if (is_file(realpath($cert_chain))) {
+            $ts_cert_chain = realpath($cert_chain);
+        } elseif (filter_var($cert_chain, FILTER_VALIDATE_URL)) {
+            $ts_cert_chain = $cert_chain;
+        } else {
+            $ts_cert_chain = '';
+        }
+    } else {
+        $ts_cert_chain = '';
+    }
     if ($_POST['stampshare'] == 1) {
         $stampshare = 1;
     } else {
         $stampshare = 0;
     }
     if (isset($_POST['stamplogin'])) {
-        $stamplogin = filter_var($_POST['stamplogin'], FILTER_VALIDATE_STRING);
+        $stamplogin = filter_var($_POST['stamplogin'], FILTER_SANITIZE_STRING);
     } else {
         $stamplogin = '';
     }
@@ -351,6 +363,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {
     // SQL
     $updates = array(
         'ts_provider_url' => $ts_provider_url,
+        'ts_cert_chain' => $ts_cert_chain,
         'stampshare' => $stampshare,
         'stamplogin' => $stamplogin,
         'stamppass' => $stamppass
@@ -484,8 +497,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
     } else {
         $ts_provider_url = '';
     }
+    if (isset($_POST['ts_cert_chain'])) {
+        $cert_chain = filter_var($_POST['ts_cert_chain'], FILTER_SANITIZE_STRING);
+        if (is_file(realpath('../' . $cert_chain))) {
+            $ts_cert_chain = realpath('../' . $cert_chain);
+        } elseif (filter_var($cert_chain, FILTER_VALIDATE_URL)) {
+            $ts_cert_chain = $cert_chain;
+        } else {
+            $ts_cert_chain = '';
+        }
+    } else {
+        $ts_cert_chain = '';
+    }
     if (isset($_POST['stamplogin'])) {
-        $stamplogin = filter_var($_POST['stamplogin'], FILTER_VALIDATE_STRING);
+        $stamplogin = filter_var($_POST['stamplogin'], FILTER_SANITIZE_STRING);
     } else {
         $stamplogin = '';
     }
@@ -496,7 +521,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
     }
 
     // SQL
-    $sql = "UPDATE teams SET deletable_xp = :deletable_xp, link_name = :link_name, link_href = :link_href, stamplogin = :stamplogin, stamppass = :stamppass, ts_provider_url = :ts_provider_url WHERE team_id = :team_id";
+    $sql = "UPDATE teams SET deletable_xp = :deletable_xp, link_name = :link_name, link_href = :link_href, stamplogin = :stamplogin, stamppass = :stamppass, ts_provider_url = :ts_provider_url, ts_cert_chain = :ts_cert_chain WHERE team_id = :team_id";
     $req = $pdo->prepare($sql);
     try {
         $req->execute(array(
@@ -504,6 +529,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
         'link_name' => $link_name,
         'link_href' => $link_href,
         'ts_provider_url' => $ts_provider_url,
+        `ts_cert_chain` => $ts_cert_chain,
         'stamplogin' => $stamplogin,
         'stamppass' => $stamppass,
         'team_id' => $_SESSION['team_id']

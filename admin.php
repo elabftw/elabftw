@@ -114,6 +114,11 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
         <input type='url' value='<?php echo get_team_config('ts_provider_url');?>' name='ts_provider_url' id='ts_provider_url' />
         <span class='smallgray'><?php echo _('This should be the URL used for RFC3616-compliant timestamping requests.');?></span>
         </p>
+        <p>
+        <label for='ts_cert_chain'><?php echo _('Chain of certificates of the external timestamping service:');?></label>
+        <input type='text' value='<?php echo get_team_config('ts_cert_chain');?>' name='ts_cert_chain' id='ts_cert_chain' />
+        <span class='smallgray'><?php echo _('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps. Can be either an URL or a local path');?></span>
+        </p>
         <label for='stamplogin'><?php echo _('Login for external timestamping service:'); ?></label>
         <input type='text' value='<?php echo get_team_config('stamplogin');?>' name='stamplogin' id='stamplogin' />
         <span class='smallgray'><?php echo _('This should be the login associated with your timestamping service provider'); ?></span>

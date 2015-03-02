@@ -161,15 +161,14 @@ class TrustedTimestamps
     {      
         $base64_response_string = getBase64Token($token);
         
-        if (!strlen($token))
+        if (!is_file($token))
             throw new Exception("There was no response-string");    
             
         if (!intval($response_time))
             throw new Exception("There is no valid response-time given");
-        
+            
         if (!file_exists($tsa_cert_file))
             throw new Exception("The TSA-Certificate could not be found");
-            
 
         $cmd = "openssl ts -verify -data ".escapeshellarg($filename)." -in ".escapeshellarg($token)." -CAfile ".escapeshellarg($tsa_cert_file);
         

@@ -269,7 +269,7 @@ function show_tags($item_id, $table)
 }
 
 /**
- * Return base64-encoded token. Ensures transparent handling of older, file-based tokens and tokens stored 
+ * Return base64-encoded token. Ensures transparent handling of file-based tokens and tokens stored 
  * directly as base64-encoded string in the database
  *
  * @param string $token The token to be converted to a base64 string
@@ -277,9 +277,9 @@ function show_tags($item_id, $table)
  */
 function getBase64Token($token) {
     // check if provided token is actually an existing file
-    if (is_file($token)) {
+    if (is_file("uploads/" . $token)) {
     // if yes, read content and convert to base64-encoded string
-        $binary_token = file_get_contents($token);
+        $binary_token = file_get_contents("uploads/" . $token);
         $base64_encoded_token = base64_encode($binary_token);
         return $base64_encoded_token;
     // else check if string is a valid base64_encoded string
@@ -287,7 +287,7 @@ function getBase64Token($token) {
         return $token;
     } else {
     // if all fails, return false
-        return false;
+        return False;
     }
 }
 

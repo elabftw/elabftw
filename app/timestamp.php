@@ -126,11 +126,11 @@ try {
 }
 
 // SQL
-$sql = "UPDATE `experiments` SET `timestamped` = 1, `timestampedby` = :userid, `timestampedwhen` = :timestampedwhen, `timestamptoken` = :timestamptoken WHERE `id` = :id;";
+$sql = "UPDATE `experiments` SET `timestamped` = 1, `timestampedby` = :userid, `timestampedwhen` = :timestampedwhen, `timestamptoken` = :longname WHERE `id` = :id;";
 $req = $pdo->prepare($sql);
 $req->bindParam(':timestampedwhen', $token['response_time']);
 // the date recorded in the db has to match the creation time of the timestamp token
-$req->bindParam(':timestamptoken', $token['response_string']);
+$req->bindParam(':longname', $longname);
 $req->bindParam(':userid', $_SESSION['userid']);
 $req->bindParam(':id', $id);
 $res1 = $req->execute();

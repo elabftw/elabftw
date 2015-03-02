@@ -84,7 +84,8 @@ class TrustedTimestamps
         
         $response_time = self::getTimestampFromAnswer ($base64_response_string);
         
-        return array("response_string" => $base64_response_string,
+        return array("binary_response_string" => $binary_response_string,
+                     "response_string" => $base64_response_string,
                      "response_time" => $response_time);
     }
 

@@ -116,7 +116,7 @@ $file_path = ELAB_ROOT . 'uploads/' . $longname;
 
 // save the timestamptoken
 try {
-    file_put_contents($file_path, $token);
+    file_put_contents($file_path, $token['binary_response_string']);
 } catch (Exception $e) {
     dblog('Error', $_SESSION['userid'], $e->getMessage());
     $msg_arr[] = _('There was an error with the timestamping. Experiment is NOT timestamped. Error has been logged.');

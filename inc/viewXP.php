@@ -104,10 +104,10 @@ if ($data['timestamped'] == 1) {
     
     if ($validate) {
         $message_type = 'info_nocross';
-        $validation_note = "<img class='align_right' src='img/check.png' alt='stamp' title='Valid Timestamp' />";
+        $validation_note = "<img class='align_right' src='img/check.png' alt='Valid Timestamp' title='Valid Timestamp' />";
     } else {
         $message_type = 'error_nocross';
-        $validation_note = "<img class='align_right' src='img/cross-red.png' alt='stamp' title='Invalid Timestamp' />";
+        $validation_note = "<img class='align_right' src='img/cross-red.png' alt='Invalid Timestamp' title='Invalid Timestamp' />";
     }
     
     $date = new DateTime($data['timestampedwhen']);

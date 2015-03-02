@@ -110,7 +110,7 @@ require_once 'inc/info_box.php';
                     }
                 ?>'/>
             </div>
-            <!-- END _('Search') DATE -->
+            <!-- END SEARCH DATE -->
         </div>
 
         <div class='row'>
@@ -123,7 +123,7 @@ require_once 'inc/info_box.php';
                 }
                 ?>'/>
             </div>
-            <!-- _('Status') -->
+            <!-- STATUS -->
             <div class='col-md-4'>
                 <label class='block' for='status'><?php echo _('And status is'); ?></label>
                 <select id='status' name="status">
@@ -131,7 +131,7 @@ require_once 'inc/info_box.php';
                     <?php
                     // put all available status in array
                     $status_arr = array();
-                    // SQL TO GET ALL _('Status') INFO
+                    // SQL TO GET ALL STATUS INFO
                     $sql = "SELECT id, name, color FROM status WHERE team = :team_id";
                     $req = $pdo->prepare($sql);
                     $req->execute(array(
@@ -258,7 +258,7 @@ if (isset($_GET)) {
             if (isset($_GET['to']) && !empty($_GET['to'])) {
 
                 if (isset($_GET['all']) && !empty($_GET['all'])) {
-            $sql = "SELECT * FROM experiments WHERE team = " . $_SESSION['team_id'] . " AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%' AND date BETWEEN '$from' AND '$to'";
+            $sql = "SELECT * FROM experiments WHERE team = " . $_SESSION['team_id'] . " AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '$status' AND date BETWEEN '$from' AND '$to'";
                 } else { //search only in your experiments
             $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%' AND date BETWEEN '$from' AND '$to'";
                 }
@@ -266,17 +266,17 @@ if (isset($_GET)) {
 
             } elseif (isset($_GET['from']) && !empty($_GET['from'])) {
                 if (isset($_GET['all']) && !empty($_GET['all'])) {
-            $sql = "SELECT * FROM experiments WHERE team = " . $_SESSION['team_id'] . " AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%' AND date BETWEEN '$from' AND '99991212'";
+            $sql = "SELECT * FROM experiments WHERE team = " . $_SESSION['team_id'] . " AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '$status' AND date BETWEEN '$from' AND '99991212'";
                 } else { //search only in your experiments
-            $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%' AND date BETWEEN '$from' AND '99991212'";
+            $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '$status' AND date BETWEEN '$from' AND '99991212'";
                 }
 
 
             } else { // no date input
                 if (isset($_GET['all']) && !empty($_GET['all'])) {
-            $sql = "SELECT * FROM experiments WHERE team = " . $_SESSION['team_id'] . " AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%'";
+            $sql = "SELECT * FROM experiments WHERE team = " . $_SESSION['team_id'] . " AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '$status'";
                 } else { //search only in your experiments
-            $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%'";
+            $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '$status'";
                 }
 
 

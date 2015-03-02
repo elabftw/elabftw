@@ -157,11 +157,11 @@ class TrustedTimestamps
      * @param string $tsa_cert_file: The path to the TSAs certificate chain (e.g. https://pki.pca.dfn.de/global-services-ca/pub/cacert/chain.txt)
      * @return <type>
      */
-    public static function validate ($filename, $base64_response_string, $response_time, $tsa_cert_file)
+    public static function validate ($filename, $token, $response_time, $tsa_cert_file)
     {      
-        $binary_response_string = base64_decode($base64_response_string);
+        $base64_response_string = getBase64Token($token);
         
-        if (!strlen($binary_response_string))
+        if (!strlen($token))
             throw new Exception("There was no response-string");    
             
         if (!intval($response_time))
@@ -170,10 +170,8 @@ class TrustedTimestamps
         if (!file_exists($tsa_cert_file))
             throw new Exception("The TSA-Certificate could not be found");
             
-        
-        $responsefile = self::createTempFile($binary_response_string);
 
-        $cmd = "openssl ts -verify -data ".escapeshellarg($filename)." -in ".escapeshellarg($responsefile)." -CAfile ".escapeshellarg($tsa_cert_file);
+        $cmd = "openssl ts -verify -data ".escapeshellarg($filename)." -in ".escapeshellarg($token)." -CAfile ".escapeshellarg($tsa_cert_file);
         
         $retarray = array();
         exec($cmd." 2>&1", $retarray, $retcode);

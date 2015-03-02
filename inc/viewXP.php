@@ -94,10 +94,10 @@ if ($data['timestamped'] == 1) {
     $req_stamper->bindParam(':item_id', $id);
     $req_stamper->execute();
     $uploads = $req_stamper->fetch();
-    
-    $token = getBase64Token($data['timestamptoken']);
+
+    $token = $data['timestamptoken'];
     if ($token) {
-        $validate = validateTimestamp("uploads/".$uploads['long_name'], $token, $data['timestampedwhen']); 
+        $validate = validateTimestamp("uploads/".$uploads['long_name'], realpath("uploads/" . $token), $data['timestampedwhen']); 
     } else {
         $validate = false;
     }

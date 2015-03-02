@@ -315,13 +315,14 @@ function validateTimestamp($filename, $timestamptoken, $timestampedwhen, $certif
     }
     
     try {
-        $validate = TrustedTimestamps::validate($filename, $timestamptoken, $timestampedwhen, $certificate);
+        $validator = new Elabftw\Elabftw\TrustedTimestamps();
+        $result = $validator->validate($filename, $timestamptoken, $timestampedwhen, $certificate);
     } catch (Exception $e) {
         dblog("Error", $_SESSION['userid'], $e->getMessage());
         return false;
     }
     
-    return $validate;
+    return $result;
 }
 
 /**

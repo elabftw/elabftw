@@ -21,6 +21,8 @@
  * Adapted by Alexander Minges for usage of sha2 instead of sha1
 */
 
+namespace Elabftw\Elabftw;
+
 class TrustedTimestamps
 {
     /**

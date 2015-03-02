@@ -86,7 +86,6 @@ $mpdf->SetCreator('www.elabftw.net');
 $mpdf->WriteHTML($pdf->content);
 $mpdf->Output($pdf_path, 'F');
 
-require_once '../inc/classes/timestamp.class.php';
 $trusted_timestamp = new Elabftw\Elabftw\TrustedTimestamps();
 $requestfile_path = $trusted_timestamp->createRequestfile($pdf_path);
 

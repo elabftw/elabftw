@@ -24,6 +24,8 @@
 *                                                                               *
 ********************************************************************************/
 
+require_once ELAB_ROOT . 'vendor/autoload.php';
+
 /**
  * Return the date as YYYYMMDD format.
  *
@@ -302,8 +304,6 @@ function getBase64Token($token) {
  */
 function validateTimestamp($filename, $timestamptoken, $timestampedwhen, $certificate = NULL)
 {
-    require_once 'inc/classes/timestamp.class.php';
-    
     if (is_null($certificate)) {
         if (strlen(get_team_config('ts_cert_chain')) > 2) {
             $certificate = get_team_config('ts_cert_chain');

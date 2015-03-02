@@ -117,7 +117,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
         <p>
         <label for='ts_cert_chain'><?php echo _('Chain of certificates of the external timestamping service:');?></label>
         <input type='text' value='<?php echo get_team_config('ts_cert_chain');?>' name='ts_cert_chain' id='ts_cert_chain' />
-        <span class='smallgray'><?php echo _('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps. Can be either an URL or a local path');?></span>
+        <span class='smallgray'><?php echo _('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.<br />Can be either an URL or a local path. The file needs to be in <a href="https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail">PEM-encoded (ASCII)</a> format!');?></span>
         </p>
         <label for='stamplogin'><?php echo _('Login for external timestamping service:'); ?></label>
         <input type='text' value='<?php echo get_team_config('stamplogin');?>' name='stamplogin' id='stamplogin' />

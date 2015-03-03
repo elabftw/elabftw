@@ -18,7 +18,7 @@
  * @author David Müller
  * @package trustedtimestamps
  *
- * Adapted by Alexander Minges for usage of sha2 instead of sha1
+ * Adapted by Alexander Minges for usage of sha2 instead of sha1 and inclusion into eLabFTW
 */
 
 namespace Elabftw\Elabftw;
@@ -73,7 +73,9 @@ class TrustedTimestamps
         curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents($requestfile_path));
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/timestamp-query'));
-        curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)"); 
+        //Be honest about our user agent instead of faking an ancienct IE
+        curl_setopt($ch, CURLOPT_USERAGENT, "eLabFTW/1.1.0");
+        //curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)");
         $binary_response_string = curl_exec($ch);
         $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);

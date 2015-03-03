@@ -28,3 +28,7 @@
 canvas.ChemDoodleWebComponent {
     border: 1px solid #f2f2f2;
 }
+
+.chemdoodle .box div label{
+    margin-bottom: 0;
+}

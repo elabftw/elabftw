@@ -25,7 +25,7 @@
 ********************************************************************************/
 require_once 'inc/common.php';
 require_once 'inc/locale.php';
-$page_title = _('Team'); 
+$page_title = _('Team');
 $selected_menu = 'Team';
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
@@ -41,7 +41,7 @@ require_once 'inc/info_box.php';
 <!-- *********************** -->
 <div class='divhandle' id='tab1div'>
 <?php display_message('info_nocross', sprintf(_('You belong to the %s team.'), get_team_config('team_name'))); ?>
-<table id='teamtable'>
+<table id='teamtable' class='table'>
     <tr>
         <th><?php echo _('Name'); ?></th>
         <th><?php echo _('Phone'); ?></th>
@@ -60,22 +60,22 @@ $req->execute(array(
 while ($data = $req->fetch()) {
     echo "<tr>";
     echo "<td><a href='mailto:" . $data['email'] . "'>" . $data['firstname'] . " " . $data['lastname'] . "</a></td>";
-        if (!empty($data['phone'])) { 
+        if (!empty($data['phone'])) {
             echo "<td>" . $data['phone'] . "</td>";
         } else {
             echo "<td>&nbsp;</td>"; // Placeholder
         }
-        if (!empty($data['cellphone'])) { 
-            echo "<td>" . $data['cellphone'] . "</td>"; 
+        if (!empty($data['cellphone'])) {
+            echo "<td>" . $data['cellphone'] . "</td>";
         } else {
             echo "<td>&nbsp;</td>";
         }
-        if (!empty($data['website'])) { 
-            echo "<td><a href='" . $data['website'] . "'>www</a></td>"; 
+        if (!empty($data['website'])) {
+            echo "<td><a href='" . $data['website'] . "'>www</a></td>";
         } else {
             echo "<td>&nbsp;</td>";
         }
-        if (!empty($data['skype'])) { 
+        if (!empty($data['skype'])) {
             echo "<td>" . $data['skype'] . "</td>";
         } else {
             echo "<td>&nbsp;</td>";
@@ -120,14 +120,14 @@ $totals = $count_req->fetch(PDO::FETCH_ASSOC);
     </p>
 </div>
 
-<div class='divhandle' id='tab4div'>
+<div class='divhandle chemdoodle' id='tab4div'>
     <h3><?php echo _('Molecule drawer'); ?></h3>
     <div class='box'>
         <link rel="stylesheet" href="css/chemdoodle.css" type="text/css">
         <script src="js/chemdoodle.js"></script>
         <script src="js/chemdoodle-uis.js"></script>
         <script>
-            var sketcher = new ChemDoodle.SketcherCanvas('sketcher', 500, 300, {oneMolecule:true});
+            var sketcher = new ChemDoodle.SketcherCanvas('sketcher', 550, 300, {oneMolecule:true});
         </script>
     </div>
 </div>

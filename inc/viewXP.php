@@ -25,6 +25,8 @@
 ********************************************************************************/
 // inc/viewXP.php
 // read only ?
+require_once ELAB_ROOT . 'vendor/autoload.php';
+
 $ro = false;
 // ID
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
@@ -100,7 +102,7 @@ if ($data['timestamped'] == 1) {
         $stamp_params = getTimestampParameters();
         $pdf_file = "uploads/" . $uploads['long_name'];
         $ts = new \Elabftw\Elabftw\TrustedTimestamps(NULL, $pdf_file, $token, NULL, NULL, $stamp_params['stampcert']);
-        $validate = $ts->validate();
+        $validate = $ts->validate($data['timestampedwhen']);
         //$validate = validateTimestamp("uploads/".$uploads['long_name'], realpath("uploads/" . $token), $data['timestampedwhen']); 
     } else {
         $validate = false;

@@ -204,9 +204,20 @@ require_once 'inc/info_box.php';
 if (isset($_GET)) {
     // assign variables from get
     if (isset($_GET['title']) && !empty($_GET['title'])) {
-        $title = filter_var($_GET['title'], FILTER_SANITIZE_STRING);
+        if(strrpos(trim($_GET['title']), " ") !== false){
+            $expTitle = explode(' ',trim($_GET['title']));
+            $title = '';
+        }else{ $title = filter_var(trim($_GET['title']), FILTER_SANITIZE_STRING); }
     } else {
         $title = '';
+    }
+    if (isset($_GET['body']) && !empty($_GET['body'])) {
+        if(strrpos(trim($_GET['body']), " ") !== false){
+            $expBody = explode(' ',trim($_GET['body']));
+            $body = '';
+        }else{ $body = filter_var(check_body(trim($_GET['body'])), FILTER_SANITIZE_STRING); }
+    } else {
+        $body = '';
     }
     if (isset($_GET['from']) && !empty($_GET['from'])) {
         $from = check_date($_GET['from']);
@@ -223,11 +234,6 @@ if (isset($_GET)) {
     } else {
         $tags = '';
     }
-    if (isset($_GET['body']) && !empty($_GET['body'])) {
-        $body = filter_var(check_body($_GET['body']), FILTER_SANITIZE_STRING);
-    } else {
-        $body = '';
-    }
     if (isset($_GET['status']) && !empty($_GET['status']) && is_pos_int($_GET['status'])) {
         $status = $_GET['status'];
     } else {
@@ -237,7 +243,7 @@ if (isset($_GET)) {
         if ($_GET['rating'] === 'no') {
             $rating = '0';
         } else {
-        $rating = intval($_GET['rating']);
+            $rating = intval($_GET['rating']);
         }
     } else {
         $rating = '';
@@ -249,39 +255,61 @@ if (isset($_GET)) {
         $owner_search = false;
         $owner = '';
     }
+    
+
+    // PREPARE SQL query
+    // Title search
+    if (!empty($title)){
+        $sqlTitle = " AND title LIKE '%$title%'";
+    }else if (isset($expTitle)){
+        $sqlTitle = " AND (";
+        foreach ($expTitle as $key => $value) {
+            if($key!=0) $sqlTitle .= " OR ";
+            $sqlTitle .= "title LIKE '%$value%'";
+        }
+        $sqlTitle .= ")";
+    }else { $sqlTitle = ""; }
+
+    // Body search
+    if (!empty($body)){
+        $sqlBody = " AND body LIKE '%$title%'";
+    }else if (isset($expBody)){
+        $sqlBody = " AND (";
+        foreach ($expBody as $key => $value) {
+            if($key!=0) $sqlBody .= " OR ";
+            $sqlBody .= "body LIKE '%$value%'";
+        }
+        $sqlBody .= ")";
+    }else { $sqlBody = ""; }
+
+    // Status search
+    if (!empty($status)){
+        $sqlStatus = " AND status LIKE '$status'";
+    }else { $sqlStatus = ""; }
+
+    // Rating search
+    if (!empty($rating)){
+        $sqlRating = " AND rating LIKE '$rating'";
+    }else { $sqlRating = ""; }
+
+    // Date search
+    if (!empty($from) && !empty($to)){
+        $sqlDate = " AND date BETWEEN '$from' AND '$to'";
+    }else if (!empty($from) && empty($to)){
+        $sqlDate = " AND date BETWEEN '$from' AND '99991212'";
+    }else if (empty($from) && !empty($to)){
+        $sqlDate = " AND date BETWEEN '00000101' AND '$to'";
+    }else { $sqlDate = ""; }
+
 
     // EXPERIMENT SEARCH
     if (isset($_GET['type'])) {
         if ($_GET['type'] === 'experiments') {
-            // SQL
-            // the BETWEEN stuff makes the date mandatory, so we switch the $sql with/without date
-            if (isset($_GET['to']) && !empty($_GET['to'])) {
 
-                if (isset($_GET['all']) && !empty($_GET['all'])) {
-            $sql = "SELECT * FROM experiments WHERE team = " . $_SESSION['team_id'] . " AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '$status' AND date BETWEEN '$from' AND '$to'";
-                } else { //search only in your experiments
-            $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '%$status%' AND date BETWEEN '$from' AND '$to'";
-                }
+            if (isset($_GET['all']) && !empty($_GET['all'])) { $sqlFirst = " team = " . $_SESSION['team_id'];
+            }else{ $sqlFirst = " userid = :userid"; }
 
-
-            } elseif (isset($_GET['from']) && !empty($_GET['from'])) {
-                if (isset($_GET['all']) && !empty($_GET['all'])) {
-            $sql = "SELECT * FROM experiments WHERE team = " . $_SESSION['team_id'] . " AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '$status' AND date BETWEEN '$from' AND '99991212'";
-                } else { //search only in your experiments
-            $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '$status' AND date BETWEEN '$from' AND '99991212'";
-                }
-
-
-            } else { // no date input
-                if (isset($_GET['all']) && !empty($_GET['all'])) {
-            $sql = "SELECT * FROM experiments WHERE team = " . $_SESSION['team_id'] . " AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '$status'";
-                } else { //search only in your experiments
-            $sql = "SELECT * FROM experiments WHERE userid = :userid AND title LIKE '%$title%' AND body LIKE '%$body%' AND status LIKE '$status'";
-                }
-
-
-            }
-
+            $sql = "SELECT * FROM experiments WHERE" . $sqlFirst . $sqlTitle .  $sqlBody . $sqlStatus . $sqlDate ;
             $req = $pdo->prepare($sql);
             // if there is a selection on 'owned by', we use the owner id as parameter
             if ($owner_search) {
@@ -289,9 +317,9 @@ if (isset($_GET)) {
                     'userid' => $owner
                 ));
             } else {
-            $req->execute(array(
-                'userid' => $_SESSION['userid']
-            ));
+                $req->execute(array(
+                    'userid' => $_SESSION['userid']
+                ));
             }
             // This counts the number or results - and if there wasn't any it gives them a little message explaining that
             $count = $req->rowCount();
@@ -332,16 +360,9 @@ if (isset($_GET)) {
 
     // DATABASE SEARCH
     } elseif (is_pos_int($_GET['type'])) {
-            // SQL
-            // the BETWEEN stuff makes the date mandatory, so we switch the $sql with/without date
-            if (isset($_GET['to']) && !empty($_GET['to'])) {
-            $sql = "SELECT * FROM items WHERE type = :type AND title LIKE '%$title%' AND body LIKE '%$body%' AND rating LIKE '%$rating%' AND date BETWEEN '$from' AND '$to'";
-            } elseif (isset($_GET['from']) && !empty($_GET['from'])) {
-            $sql = "SELECT * FROM items WHERE type = :type AND title LIKE '%$title%' AND body LIKE '%$body%' AND rating LIKE '%$rating%' AND date BETWEEN '$from' AND '991212'";
-            } else { // no date input
-            $sql = "SELECT * FROM items WHERE type = :type AND title LIKE '%$title%' AND body LIKE '%$body%' AND rating LIKE '%$rating%'";
-            }
 
+        $sqlFirst = " type = :type";
+        $sql = "SELECT * FROM items WHERE" . $sqlFirst . $sqlTitle .  $sqlBody . $sqlRating . $sqlDate ;
         $req = $pdo->prepare($sql);
         $req->execute(array(
             'type' => $_GET['type']

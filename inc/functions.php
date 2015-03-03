@@ -26,7 +26,7 @@
 
 // Only autoload if ELAB_ROOT is defined. Fixes issue with install script when no
 // config.php exists yet.
-if (isset(ELAB_ROOT)) {
+if (null !== ELAB_ROOT) {
     require_once ELAB_ROOT . 'vendor/autoload.php';
 }
 

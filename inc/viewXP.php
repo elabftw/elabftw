@@ -103,7 +103,6 @@ if ($data['timestamped'] == 1) {
         $pdf_file = "uploads/" . $uploads['long_name'];
         $ts = new \Elabftw\Elabftw\TrustedTimestamps(NULL, $pdf_file, $token, NULL, NULL, $stamp_params['stampcert']);
         $validate = $ts->validate($data['timestampedwhen']);
-        //$validate = validateTimestamp("uploads/".$uploads['long_name'], realpath("uploads/" . $token), $data['timestampedwhen']); 
     } else {
         $validate = false;
     }

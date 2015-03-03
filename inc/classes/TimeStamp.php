@@ -1,4 +1,32 @@
 <?php
+/********************************************************************************
+*                                                                               *
+*  Copyright 2015 Alexander Minges (alexander.minges@gmail.com)                 *
+*  http://www.elabftw.net/                                                      *
+*                                                                               *
+*  Based on work by David Müller:                                               *
+*  http://www.d-mueller.de/blog/dealing-with-trusted-timestamps-in-php-rfc-3161 *
+*                                                                               *
+********************************************************************************/
+
+/********************************************************************************
+*  This file is part of eLabFTW.                                                *
+*                                                                               *
+*    eLabFTW is free software: you can redistribute it and/or modify            *
+*    it under the terms of the GNU Affero General Public License as             *
+*    published by the Free Software Foundation, either version 3 of             *
+*    the License, or (at your option) any later version.                        *
+*                                                                               *
+*    eLabFTW is distributed in the hope that it will be useful,                 *
+*    but WITHOUT ANY WARRANTY; without even the implied                         *
+*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
+*    PURPOSE.  See the GNU Affero General Public License for more details.      *
+*                                                                               *
+*    You should have received a copy of the GNU Affero General Public           *
+*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
+*                                                                               *
+*********************************************************************************/
+
 namespace Elabftw\Elabftw;
 
 class TrustedTimestamps {
@@ -14,7 +42,19 @@ class TrustedTimestamps {
     private $response_time;
     
     private $responsefile_path;
-
+    
+    /**
+     * Class constructor
+     * At least $stampprovider + $data (+ $stamppassword + $stamplogin) or $data + $responsefile_path + $stampcert are needed
+     * to do anything usefull.
+     *
+     * @param string $stampprovider: URL of the TSA to be used (optional)
+     * @param string $data: Filename to be timestamped or validated (optional)
+     * @param string $responsefile_path: Filename to an already existing binary timestamp token (optional)
+     * @param string $stamplogin: Login for the TSA (optional)
+     * @param string $stamppassword: Password for the TSA (optional)
+     * @param string $stampcert: File with the certificate that is used by the TSA in PEM-encoded ASCII format (optional)
+     */    
     public function __construct($stampprovider=NULL, $data=NULL, $responsefile_path = NULL, $stamplogin = NULL, $stamppassword = NULL, $stampcert = NULL) {
         $this->stampprovider = $stampprovider;
         $this->data = $data;
@@ -33,6 +73,10 @@ class TrustedTimestamps {
         }
     }
     
+    /**
+    * Returns response in binary form
+    * @return string|boolean: binary response or False on error
+    */
     public function getBinaryResponse() {
         if(!is_null($this->binary_response_string)) {
             return $this->binary_response_string;
@@ -40,7 +84,11 @@ class TrustedTimestamps {
             return False;
         }
     }
-    
+
+    /**
+    * Returns response base64-encoded
+    * @return string|boolean: base64-encoded response or False on error
+    */
     public function getBase64Response() {
         if(!is_null($this->base64_response_string)) {
         return $this->base64_response_string;
@@ -48,7 +96,11 @@ class TrustedTimestamps {
             return False;
         }
     }
-    
+
+    /**
+    * Returns date and time of when the response was generated
+    * @return string|boolean: response time or False on error
+    */
     public function getResponseTime() {
         if(!is_null($this->response_time)) {
         return $this->response_time;
@@ -74,7 +126,10 @@ class TrustedTimestamps {
 
         return $tempfilename;
     }
-    
+
+    /**
+     * Process the response file and populate class variables accordingly.
+     */
     private function processResponsefile() {
         if(is_file($this->responsefile_path)) {
             $this->binary_response_string = file_get_contents($this->responsefile_path);
@@ -88,9 +143,6 @@ class TrustedTimestamps {
     
     /**
      * Creates a Timestamp Requestfile from a filename
-     *
-     * @param string $data: Filename to be hashed
-     * @return string: path of the created timestamp-requestfile
      */
     private function createRequestfile () {
         $outfilepath = $this->createTempFile();
@@ -110,7 +162,7 @@ class TrustedTimestamps {
     /**
      * Extracts the unix timestamp from the base64-encoded response string as returned by signRequestfile
      *
-     * @param string $base64_response_string: Response string as returned by signRequestfile
+     * @param string $responsefile_path: Path to an already existing response in binary form (optional)
      * @return int: unix timestamp
      */
     private function getTimestampFromAnswer ($responsefile_path = NULL) {
@@ -168,6 +220,9 @@ class TrustedTimestamps {
         return date("Y-m-d H:i:s", $response_time);
     }
     
+    /**
+     * Request a timestamp and parse the response
+     */    
     private function generateToken () {   
         if (is_null($this->requestfile_path)) {
             throw new \Exception("Cannot create new timestamp token! No data was provided during initialization!");
@@ -207,11 +262,10 @@ class TrustedTimestamps {
     }
     
     /**
+     * Validates a file against its timestamp and optionally check a provided time for consistence with the time encoded 
+     * in the timestamp itself.
      *
-     * @param string $filename: filename of the data which should be checked
-     * @param string $base64_response_string: The response string as returned by signRequestfile
      * @param int $response_time: The response time, which should be checked
-     * @param string $tsa_cert_file: The path to the TSAs certificate chain (e.g. https://pki.pca.dfn.de/global-services-ca/pub/cacert/chain.txt)
      * @return <type>
      */
     public function validate ($time_to_check = NULL)

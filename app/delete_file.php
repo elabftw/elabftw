@@ -45,12 +45,12 @@ if ($_GET['type'] === 'experiments') {
         $reqdel = $pdo->prepare($sql);
         $reqdel->execute();
         $reqdel->closeCursor();
-        $filepath = 'uploads/' . $data['long_name'];
+        $filepath = ELAB_ROOT . 'uploads/' . $data['long_name'];
         unlink($filepath);
         // remove thumbnail
         $ext = get_ext($data['real_name']);
-        if (file_exists('uploads/' . $data['long_name'] . '_th.' . $ext)) {
-            unlink('uploads/' . $data['long_name'] . '_th.' . $ext);
+        if (file_exists(ELAB_ROOT . 'uploads/' . $data['long_name'] . '_th.' . $ext)) {
+            unlink(ELAB_ROOT . 'uploads/' . $data['long_name'] . '_th.' . $ext);
         }
         // Redirect to the viewXP
         $expid = $data['item_id'];
@@ -70,7 +70,7 @@ if ($_GET['type'] === 'experiments') {
     $req->execute();
     $data = $req->fetch();
     // Delete file
-    $filepath = 'uploads/' . $data['long_name'];
+    $filepath = ELAB_ROOT . 'uploads/' . $data['long_name'];
     unlink($filepath);
 
     // Delete SQL entry (and verify that the type is database),

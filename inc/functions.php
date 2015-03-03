@@ -24,7 +24,11 @@
 *                                                                               *
 ********************************************************************************/
 
-require_once ELAB_ROOT . 'vendor/autoload.php';
+// Only autoload if ELAB_ROOT is defined. Fixes issue with install script when no
+// config.php exists yet.
+if (isset(ELAB_ROOT)) {
+    require_once ELAB_ROOT . 'vendor/autoload.php';
+}
 
 /**
  * Return the date as YYYYMMDD format.
@@ -304,11 +308,12 @@ function getBase64Token($token) {
  */
 function validateTimestamp($filename, $timestamptoken, $timestampedwhen, $certificate = NULL)
 {
+
     if (is_null($certificate)) {
-        if (strlen(get_team_config('ts_cert_chain')) > 2) {
-            $certificate = get_team_config('ts_cert_chain');
-        } elseif (get_config('ts_cert_chain')) {
-            $certificate = get_config('ts_cert_chain');
+        if (strlen(get_team_config('stampcert')) > 2) {
+            $certificate = get_team_config('stampcert');
+        } elseif (get_config('stampcert')) {
+            $certificate = get_config('stampcert');
         } else {
         $certificate = NULL;
         }

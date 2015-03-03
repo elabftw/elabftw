@@ -40,10 +40,10 @@ class TrustedTimestamps
         exec($cmd." 2>&1", $retarray, $retcode);
         
         if ($retcode !== 0)
-            throw new Exception("OpenSSL does not seem to be installed: ".implode(", ", $retarray));
+            throw new \Exception("OpenSSL does not seem to be installed: ".implode(", ", $retarray));
         
         if (stripos($retarray[0], "openssl:Error") !== false)
-            throw new Exception("There was an error with OpenSSL. Is version >= 0.99 installed?: ".implode(", ", $retarray));
+            throw new \Exception("There was an error with OpenSSL. Is version >= 0.99 installed?: ".implode(", ", $retarray));
 
         return $outfilepath;
     }
@@ -58,7 +58,7 @@ class TrustedTimestamps
     public static function signRequestfile ($requestfile_path, $tsa_url, $login = NULL, $password = NULL)
     {
         if (!file_exists($requestfile_path))
-            throw new Exception("The Requestfile was not found");
+            throw new \Exception("The Requestfile was not found");
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $tsa_url);
@@ -111,7 +111,7 @@ class TrustedTimestamps
         exec($cmd." 2>&1", $retarray, $retcode);
         
         if ($retcode !== 0)
-            throw new Exception("The reply failed: ".implode(", ", $retarray));
+            throw new \Exception("The reply failed: ".implode(", ", $retarray));
         
         $matches = array();
         $response_time = 0;
@@ -145,7 +145,7 @@ class TrustedTimestamps
         }
 
         if (!$response_time)
-            throw new Exception("The Timestamp was not found"); 
+            throw new \Exception("The Timestamp was not found"); 
         
         /* Return formatted time as this is, what we will store in the database.
          * PHP will take care of correct timezone conversions (if configured correctly)
@@ -166,13 +166,13 @@ class TrustedTimestamps
         $base64_response_string = getBase64Token($token);
         
         if (!is_file($token))
-            throw new Exception("There was no response-string");    
+            throw new \Exception("There was no response-string");    
             
         if (!intval($response_time))
-            throw new Exception("There is no valid response-time given");
+            throw new \Exception("There is no valid response-time given");
             
         if (!file_exists($tsa_cert_file))
-            throw new Exception("The TSA-Certificate could not be found");
+            throw new \Exception("The TSA-Certificate could not be found");
 
         $cmd = "openssl ts -verify -data ".escapeshellarg($filename)." -in ".escapeshellarg($token)." -CAfile ".escapeshellarg($tsa_cert_file);
         
@@ -192,7 +192,7 @@ class TrustedTimestamps
         {
         
             if (self::getTimestampFromAnswer ($base64_response_string) != $response_time)
-                throw new Exception("The responsetime of the request was changed");
+                throw new \Exception("The responsetime of the request was changed");
             
             return true;
         }
@@ -203,7 +203,7 @@ class TrustedTimestamps
                 return false;
         }
 
-        throw new Exception("Systemcommand failed: ".implode(", ", $retarray));
+        throw new \Exception("Systemcommand failed: ".implode(", ", $retarray));
     }
 
     /**
@@ -217,10 +217,10 @@ class TrustedTimestamps
         $tempfilename = tempnam(sys_get_temp_dir(), rand());
 
         if (!file_exists($tempfilename))
-            throw new Exception("Tempfile could not be created");
+            throw new \Exception("Tempfile could not be created");
             
         if (!empty($str) && !file_put_contents($tempfilename, $str))
-            throw new Exception("Could not write to tempfile");
+            throw new \Exception("Could not write to tempfile");
 
         return $tempfilename;
     }

@@ -334,10 +334,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {
     }
     if (isset($_POST['stampcert'])) {
         $cert_chain = filter_var($_POST['stampcert'], FILTER_SANITIZE_STRING);
-        if (is_file(realpath($cert_chain))) {
-            $stampcert = realpath($cert_chain);
-        } elseif (filter_var($cert_chain, FILTER_VALIDATE_URL)) {
-            $stampcert = $cert_chain;
+        $stampcert = $_POST['stampcert'];
+        if (is_file(realpath(ELAB_ROOT . $cert_chain))) {
+            $stampcert = realpath(ELAB_ROOT . $cert_chain);
         } else {
             $stampcert = '';
         }
@@ -499,10 +498,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
     }
     if (isset($_POST['stampcert'])) {
         $cert_chain = filter_var($_POST['stampcert'], FILTER_SANITIZE_STRING);
-        if (is_file(realpath('../' . $cert_chain))) {
-            $stampcert = realpath('../' . $cert_chain);
-        } elseif (filter_var($cert_chain, FILTER_VALIDATE_URL)) {
-            $stampcert = $cert_chain;
+        $stampcert = $_POST['stampcert'];
+        if (is_file(realpath(ELAB_ROOT . $cert_chain))) {
+            $stampcert = realpath(ELAB_ROOT . $cert_chain);
         } else {
             $stampcert = '';
         }

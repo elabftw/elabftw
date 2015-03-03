@@ -120,6 +120,9 @@ $req->bindParam(':userid', $_SESSION['userid']);
 $req->bindParam(':id', $id);
 $res1 = $req->execute();
 
+// unset $trusted_timestamp to delete associated temporary files
+unset($trusted_timestamp);
+
 // add also our pdf to the attached files of the experiment, this way it is kept safely :)
 // I had this idea when realizing that if you comment an experiment, the hash won't be good anymore. Because the pdf will contain the new comments.
 // Keeping the pdf here is the best way to go, as this leaves room to leave comments.

@@ -55,13 +55,15 @@ class TrustedTimestamps {
      * @param string $stamppassword: Password for the TSA (optional)
      * @param string $stampcert: File with the certificate that is used by the TSA in PEM-encoded ASCII format (optional)
      */    
-    public function __construct($stampprovider=NULL, $data=NULL, $responsefile_path = NULL, $stamplogin = NULL, $stamppassword = NULL, $stampcert = NULL) {
+    public function __construct($stampprovider=NULL, $data=NULL, $responsefile_path = NULL, $stamplogin = NULL, 
+                                $stamppassword = NULL, $stampcert = NULL) {
         $this->stampprovider = $stampprovider;
         $this->data = $data;
         $this->responsefile_path = $responsefile_path;
         $this->stamplogin = $stamplogin;
         $this->stamppassword = $stamppassword;
         $this->stampcert = $stampcert;
+        $this->tmpfiles = [];
         
         if (!is_null($this->data) and !is_null($this->stampprovider)) {
             $this->createRequestfile();
@@ -70,6 +72,16 @@ class TrustedTimestamps {
         
         if (!is_null($responsefile_path)) {
             $this->processResponsefile();
+        }
+    }
+    
+    /**
+     * Class destructor
+     * Deletes all temporary files created by TrustedTimestamps
+     */
+    public function __destruct() {
+        foreach ($this->tmpfiles as $file) {
+            unlink($file);
         }
     }
     
@@ -110,19 +122,21 @@ class TrustedTimestamps {
     }
     
     /**
-     * Create a tempfile in the systems temp path
+     * Create a tempfile in uploads/tmp temp path
      *
      * @param string $str: Content which should be written to the newly created tempfile
      * @return string: filepath of the created tempfile
      */
     private function createTempFile ($str = "") {
-        $tempfilename = tempnam(sys_get_temp_dir(), rand());
+        $tempfilename = tempnam(ELAB_ROOT . 'uploads/tmp', rand());
 
         if (!file_exists($tempfilename))
             throw new \Exception("Tempfile could not be created");
             
         if (!empty($str) && !file_put_contents($tempfilename, $str))
             throw new \Exception("Could not write to tempfile");
+            
+        array_push($this->tmpfiles, $tempfilename);
 
         return $tempfilename;
     }

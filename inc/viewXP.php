@@ -122,6 +122,7 @@ if ($data['timestamped'] == 1) {
 
     unset($timestamper);
     unset($uploads);
+    unset($ts);
 }
 
 // Display experiment

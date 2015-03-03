@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2015-03-03 23:51+0100\n"
-"PO-Revision-Date: 2015-03-04 00:14+0100\n"
+"PO-Revision-Date: 2015-03-04 00:28+0100\n"
 "Last-Translator: Alexander Minges <alexander.minges@gmail.com>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -48,7 +48,7 @@ msgstr "Status"
 
 #: elabftw/admin.php:82
 msgid "Types of items"
-msgstr "Arten von Gegenständen"
+msgstr "Arten von Einträgen"
 
 #: elabftw/admin.php:83
 msgid "Experiments template"
@@ -110,8 +110,8 @@ msgstr ""
 "Dies sollte auf die Zertifikatskette verweisen, welche vom externen "
 "Zeitstempeldienst verwendet wird, um Zeitstempel zu signieren.<br /> Lokaler "
 "Pfad, relativ zum eLabFTW Installationsverzeichnis. Die Datei muss in <a "
-"href=\"https://de.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail\">PEM-"
-"kodiertem (ASCII)</a> Format vorliegen!"
+"href=\"https://de.wikipedia.org/wiki/Privacy_Enhanced_Mail\">PEM-kodiertem "
+"(ASCII)</a> Format vorliegen!"
 
 #: elabftw/admin.php:122 elabftw/sysconfig.php:193
 msgid "Login for external timestamping service:"
@@ -232,7 +232,7 @@ msgstr "Lösche alle Datenbankelemente dieses Typs vorm Löschen dieses Typs."
 
 #: elabftw/admin.php:363
 msgid "Edit name"
-msgstr "Name bearbeiten"
+msgstr "Namen bearbeiten"
 
 # Datenbankelement?
 #: elabftw/admin.php:393
@@ -271,15 +271,15 @@ msgstr ""
 "einen guten Import zu haben sollte die erste Spalte der Titel sein. Der Rest "
 "der Spalten wird im Textkörper eingefügt. Sie können einen Testimport von 3 "
 "Zeilen machen, um zu prüfen ob alles funktioniert, bevor Sie eine große "
-"Datei zu importieren."
+"Datei importieren. "
 
 #: elabftw/admin.php:448
 msgid ""
 "You should make a backup of your database before importing thousands of "
 "items!"
 msgstr ""
-"Sie sollten eine Sicherungskopie Ihrer Datenbank erstellen bevor Sie große "
-"Mengen importieren!"
+"Sie sollten eine Sicherungskopie Ihrer Datenbank erstellen, bevor Sie "
+"tausende von Einträgen importieren!"
 
 #: elabftw/admin.php:450
 msgid "1. Select a type of item to import to:"
@@ -411,7 +411,7 @@ msgstr "Alles wurde erfolgreich bereinigt."
 
 #: elabftw/app/check_for_updates.php:39 elabftw/app/check_for_updates.php:101
 msgid "Install git to check for updates."
-msgstr "Installieren git um auf Updates zu prüfen."
+msgstr "Installieren Sie git, um auf Aktualisierungen zu prüfen."
 
 #: elabftw/app/check_for_updates.php:45
 msgid "You need to install the curl extension for php."
@@ -901,7 +901,7 @@ msgid ""
 "to begin filling your database."
 msgstr ""
 "<strong>Willkommen bei eLabFTW.</strong> Wählen Sie ein Element in der «Neu "
-"erstellen» Liste und füllen Sie Ihrer Datenbank."
+"erstellen» Liste und füllen Sie Ihre Datenbank."
 
 #: elabftw/inc/showDB.php:131
 msgid "Showing last 10 uploads:"
@@ -1341,8 +1341,8 @@ msgstr ""
 "Dies sollte auf die Zertifikatskette verweisen, welche vom externen "
 "Zeitstempeldienst verwendet wird, um Zeitstempel zu signieren.<br /> Lokaler "
 "Pfad, relativ zum eLabFTW Installationsverzeichnis. Die Datei muss in <a "
-"href=\"https://de.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail\">PEM-"
-"kodiertem (ASCII)</a> Format vorliegen!"
+"href=\"https://de.wikipedia.org/wiki/Privacy_Enhanced_Mail\">PEM-kodiertem "
+"(ASCII)</a> Format vorliegen!"
 
 #: elabftw/sysconfig.php:195
 msgid "Login for external timestamping service ."

@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c9843e93ce577902cd1257d3ac9c1aea",
+    "hash": "ee845840f207cc0fb25ad6efe4e9b7e9",
     "packages": [
         {
             "name": "mpdf/mpdf",
@@ -106,7 +106,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "swiftmailer/swiftmailer": 0
+        "swiftmailer/swiftmailer": 0,
+        "mpdf/mpdf": 0
     },
     "prefer-stable": false,
     "prefer-lowest": false,

@@ -1,41 +1,100 @@
 <?php
-/**
- * TrustedTimestamps.php - Creates Timestamp Requestfiles, processes the request at a Timestamp Authority (TSA) after RFC 3161
- *
- * bases on OpenSSL and RFC 3161: http://www.ietf.org/rfc/rfc3161.txt
- *
- * WARNING: 
- *  needs openssl ts, which is availible in OpenSSL versions >= 0.99
- *  This is currently (2011-03-02) not the case in Debian
- *  (see http://stackoverflow.com/questions/5043393/openssl-ts-command-not-working-trusted-timestamps)
- *  -> Possibility: Debian Experimentals -> http://wiki.debian.org/DebianExperimental
- * 
- * For OpenSSL on Windows, see
- *  http://www.slproweb.com/products/Win32OpenSSL.html
- *  http://www.switch.ch/aai/support/howto/openssl-windows.html
- * 
- * @version 0.3
- * @author David Müller
- * @package trustedtimestamps
- *
- * Adapted by Alexander Minges for usage of sha2 instead of sha1 and inclusion into eLabFTW
-*/
-
 namespace Elabftw\Elabftw;
 
-class TrustedTimestamps
-{
+class TrustedTimestamps {
+    private $stampprovider;
+    private $data;
+    private $stamplogin;
+    private $stamppassword;
+    private $stampcert;
+    private $requestfile_path;
+    
+    private $binary_response_string;
+    private $base64_response_string;
+    private $response_time;
+    
+    private $responsefile_path;
+
+    public function __construct($stampprovider=NULL, $data=NULL, $responsefile_path = NULL, $stamplogin = NULL, $stamppassword = NULL, $stampcert = NULL) {
+        $this->stampprovider = $stampprovider;
+        $this->data = $data;
+        $this->responsefile_path = $responsefile_path;
+        $this->stamplogin = $stamplogin;
+        $this->stamppassword = $stamppassword;
+        $this->stampcert = $stampcert;
+        
+        if (!is_null($this->data) and !is_null($this->stampprovider)) {
+            $this->createRequestfile();
+            $this->generateToken();
+        } 
+        
+        if (!is_null($responsefile_path)) {
+            $this->processResponsefile();
+        }
+    }
+    
+    public function getBinaryResponse() {
+        if(!is_null($this->binary_response_string)) {
+            return $this->binary_response_string;
+        } else {
+            return False;
+        }
+    }
+    
+    public function getBase64Response() {
+        if(!is_null($this->base64_response_string)) {
+        return $this->base64_response_string;
+        } else {
+            return False;
+        }
+    }
+    
+    public function getResponseTime() {
+        if(!is_null($this->response_time)) {
+        return $this->response_time;
+        } else {
+            return False;
+        }
+    }
+    
+    /**
+     * Create a tempfile in the systems temp path
+     *
+     * @param string $str: Content which should be written to the newly created tempfile
+     * @return string: filepath of the created tempfile
+     */
+    private function createTempFile ($str = "") {
+        $tempfilename = tempnam(sys_get_temp_dir(), rand());
+
+        if (!file_exists($tempfilename))
+            throw new \Exception("Tempfile could not be created");
+            
+        if (!empty($str) && !file_put_contents($tempfilename, $str))
+            throw new \Exception("Could not write to tempfile");
+
+        return $tempfilename;
+    }
+    
+    private function processResponsefile() {
+        if(is_file($this->responsefile_path)) {
+            $this->binary_response_string = file_get_contents($this->responsefile_path);
+            $this->base64_response_string = base64_encode($this->binary_response_string);
+            $this->responsefile_path = $this->createTempFile($this->binary_response_string);
+            $this->response_time = $this->getTimestampFromAnswer ($this->base64_response_string);
+        } else {
+            throw new \Exception("The responsefile " . $this->responsefile_path . " was not found!");
+        }
+    }
+    
     /**
      * Creates a Timestamp Requestfile from a filename
      *
-     * @param string $filename: Filename to be hashed
+     * @param string $data: Filename to be hashed
      * @return string: path of the created timestamp-requestfile
      */
-    public static function createRequestfile ($filename)
-    {
-        $outfilepath = self::createTempFile();
-        $cmd = "openssl ts -query -data ".escapeshellarg($filename)." -cert -sha256 -no_nonce -out ".escapeshellarg($outfilepath);
-        echo($cmd);
+    private function createRequestfile () {
+        $outfilepath = $this->createTempFile();
+        $cmd = "openssl ts -query -data ".escapeshellarg($this->data)." -cert -sha256 -no_nonce -out ".escapeshellarg($outfilepath);
         $retarray = array();
         exec($cmd." 2>&1", $retarray, $retcode);
         
@@ -45,67 +104,23 @@ class TrustedTimestamps
         if (stripos($retarray[0], "openssl:Error") !== false)
             throw new \Exception("There was an error with OpenSSL. Is version >= 0.99 installed?: ".implode(", ", $retarray));
 
-        return $outfilepath;
+         $this->requestfile_path = $outfilepath;
     }
-
-    /**
-     * Signs a timestamp requestfile at a TSA using CURL
-     *
-     * @param string $requestfile_path: The path to the Timestamp Requestfile as created by createRequestfile
-     * @param string $tsa_url: URL of a TSA such as http://zeitstempel.dfn.de
-     * @return array of response_string with the unix-timetamp of the timestamp response and the base64-encoded response_string
-     */
-    public static function signRequestfile ($requestfile_path, $tsa_url, $login = NULL, $password = NULL)
-    {
-        if (!file_exists($requestfile_path))
-            throw new \Exception("The Requestfile was not found");
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $tsa_url);
-        // if login and password are set, pass them to curl
-        if (is_string($login) and is_string($password)) {
-            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-            curl_setopt($ch, CURLOPT_USERPWD, $login.":".$password);
-        }
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents($requestfile_path));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/timestamp-query'));
-        //Be honest about our user agent instead of faking an ancienct IE
-        curl_setopt($ch, CURLOPT_USERAGENT, "eLabFTW/1.1.0");
-        //curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)");
-        $binary_response_string = curl_exec($ch);
-        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        
-        if ($status != 200 || !strlen($binary_response_string))
-            // return false if request fails. Must be catched by calling function!
-            return false;
-        
-        $base64_response_string = base64_encode($binary_response_string);
-        
-        $response_time = self::getTimestampFromAnswer ($base64_response_string);
-        
-        return array("binary_response_string" => $binary_response_string,
-                     "response_string" => $base64_response_string,
-                     "response_time" => $response_time);
-    }
-
+    
     /**
      * Extracts the unix timestamp from the base64-encoded response string as returned by signRequestfile
      *
      * @param string $base64_response_string: Response string as returned by signRequestfile
      * @return int: unix timestamp
      */
-    public static function getTimestampFromAnswer ($base64_response_string)
-    {
-        $binary_response_string = base64_decode($base64_response_string);
-
-        $responsefile = self::createTempFile($binary_response_string);
-
-        $cmd = "openssl ts -reply -in ".escapeshellarg($responsefile)." -text";
+    private function getTimestampFromAnswer ($responsefile_path = NULL) {
+        if (is_null($this->responsefile_path) and !is_null($this->binary_response_string)) {
+            $this->responsefile_path = $this->createTempFile();
+            file_put_contents($this->responsefile_path, $this->binary_response_string);
+        }
+        
+        
+        $cmd = "openssl ts -reply -in ".escapeshellarg($this->responsefile_path)." -text";
         
         $retarray = array();
         exec($cmd." 2>&1", $retarray, $retcode);
@@ -152,7 +167,45 @@ class TrustedTimestamps
          */
         return date("Y-m-d H:i:s", $response_time);
     }
+    
+    private function generateToken () {   
+        if (is_null($this->requestfile_path)) {
+            throw new \Exception("Cannot create new timestamp token! No data was provided during initialization!");
+        } elseif (!file_exists($this->requestfile_path)) {
+            throw new \Exception("The Requestfile was not found: ". $this->requestfile_path);
+        }
 
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $this->stampprovider);
+        // if login and password are set, pass them to curl
+        if (!is_null($this->stamplogin) and !is_null($this->stamppassword)) {
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            curl_setopt($ch, CURLOPT_USERPWD, $this->stamplogin.":".$this->stamppassword);
+        }
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents($this->requestfile_path));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/timestamp-query'));
+        //Be honest about our user agent instead of faking an ancienct IE
+        curl_setopt($ch, CURLOPT_USERAGENT, "eLabFTW/1.1.0");
+        //curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)");
+        $binary_response_string = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        
+        if ($status != 200 || !strlen($binary_response_string))
+            // return false if request fails. Must be catched by calling function!
+            return false;
+        
+        $base64_response_string = base64_encode($binary_response_string);
+        
+        $this->binary_response_string = $binary_response_string;
+        $this->base64_response_string = $base64_response_string;
+        $this->response_time = $this->getTimestampFromAnswer($base64_response_string);
+    }
+    
     /**
      *
      * @param string $filename: filename of the data which should be checked
@@ -161,20 +214,18 @@ class TrustedTimestamps
      * @param string $tsa_cert_file: The path to the TSAs certificate chain (e.g. https://pki.pca.dfn.de/global-services-ca/pub/cacert/chain.txt)
      * @return <type>
      */
-    public static function validate ($filename, $token, $response_time, $tsa_cert_file)
-    {      
-        $base64_response_string = getBase64Token($token);
-        
-        if (!is_file($token))
+    public function validate ($time_to_check = NULL)
+    {       
+        if (!is_file($this->responsefile_path))
             throw new \Exception("There was no response-string");    
             
-        if (!intval($response_time))
+        if (!intval($this->response_time))
             throw new \Exception("There is no valid response-time given");
             
-        if (!file_exists($tsa_cert_file))
+        if (!file_exists($this->stampcert))
             throw new \Exception("The TSA-Certificate could not be found");
 
-        $cmd = "openssl ts -verify -data ".escapeshellarg($filename)." -in ".escapeshellarg($token)." -CAfile ".escapeshellarg($tsa_cert_file);
+        $cmd = "openssl ts -verify -data ".escapeshellarg($this->data)." -in ".escapeshellarg($this->responsefile_path)." -CAfile ".escapeshellarg($this->stampcert);
         
         $retarray = array();
         exec($cmd." 2>&1", $retarray, $retcode);
@@ -191,9 +242,11 @@ class TrustedTimestamps
         if ($retcode === 0 && strtolower(trim($retarray[0])) == "verification: ok")
         {
         
-            if (self::getTimestampFromAnswer ($base64_response_string) != $response_time)
-                throw new \Exception("The responsetime of the request was changed");
-            
+            if (!is_null($time_to_check)) {
+                if ($time_to_check != $this->response_time) {
+                    throw new \Exception("The response time of the request was changed");
+                }
+            }
             return true;
         }
 
@@ -205,23 +258,7 @@ class TrustedTimestamps
 
         throw new \Exception("Systemcommand failed: ".implode(", ", $retarray));
     }
-
-    /**
-     * Create a tempfile in the systems temp path
-     *
-     * @param string $str: Content which should be written to the newly created tempfile
-     * @return string: filepath of the created tempfile
-     */
-    public static function createTempFile ($str = "")
-    {
-        $tempfilename = tempnam(sys_get_temp_dir(), rand());
-
-        if (!file_exists($tempfilename))
-            throw new \Exception("Tempfile could not be created");
-            
-        if (!empty($str) && !file_put_contents($tempfilename, $str))
-            throw new \Exception("Could not write to tempfile");
-
-        return $tempfilename;
-    }
 }
+
+
+?>

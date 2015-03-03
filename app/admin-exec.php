@@ -327,22 +327,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
 // TIMESTAMP CONFIG
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {
 
-    if (isset($_POST['ts_provider_url'])) {
-        $ts_provider_url = filter_var($_POST['ts_provider_url'], FILTER_VALIDATE_URL);
+    if (isset($_POST['stampprovider'])) {
+        $stampprovider = filter_var($_POST['stampprovider'], FILTER_VALIDATE_URL);
     } else {
-        $ts_provider_url = '';
+        $stampprovider = '';
     }
-    if (isset($_POST['ts_cert_chain'])) {
-        $cert_chain = filter_var($_POST['ts_cert_chain'], FILTER_SANITIZE_STRING);
+    if (isset($_POST['stampcert'])) {
+        $cert_chain = filter_var($_POST['stampcert'], FILTER_SANITIZE_STRING);
         if (is_file(realpath($cert_chain))) {
-            $ts_cert_chain = realpath($cert_chain);
+            $stampcert = realpath($cert_chain);
         } elseif (filter_var($cert_chain, FILTER_VALIDATE_URL)) {
-            $ts_cert_chain = $cert_chain;
+            $stampcert = $cert_chain;
         } else {
-            $ts_cert_chain = '';
+            $stampcert = '';
         }
     } else {
-        $ts_cert_chain = '';
+        $stampcert = '';
     }
     if ($_POST['stampshare'] == 1) {
         $stampshare = 1;
@@ -362,8 +362,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {
 
     // SQL
     $updates = array(
-        'ts_provider_url' => $ts_provider_url,
-        'ts_cert_chain' => $ts_cert_chain,
+        'stampprovider' => $stampprovider,
+        'stampcert' => $stampcert,
         'stampshare' => $stampshare,
         'stamplogin' => $stamplogin,
         'stamppass' => $stamppass
@@ -492,22 +492,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
     } else {
         $link_href = 'https://github.com/elabftw/elabftw/wiki';
     }
-    if (isset($_POST['ts_provider_url'])) {
-        $ts_provider_url = filter_var($_POST['ts_provider_url'], FILTER_VALIDATE_URL);
+    if (isset($_POST['stampprovider'])) {
+        $stampprovider = filter_var($_POST['stampprovider'], FILTER_VALIDATE_URL);
     } else {
-        $ts_provider_url = '';
+        $stampprovider = '';
     }
-    if (isset($_POST['ts_cert_chain'])) {
-        $cert_chain = filter_var($_POST['ts_cert_chain'], FILTER_SANITIZE_STRING);
+    if (isset($_POST['stampcert'])) {
+        $cert_chain = filter_var($_POST['stampcert'], FILTER_SANITIZE_STRING);
         if (is_file(realpath('../' . $cert_chain))) {
-            $ts_cert_chain = realpath('../' . $cert_chain);
+            $stampcert = realpath('../' . $cert_chain);
         } elseif (filter_var($cert_chain, FILTER_VALIDATE_URL)) {
-            $ts_cert_chain = $cert_chain;
+            $stampcert = $cert_chain;
         } else {
-            $ts_cert_chain = '';
+            $stampcert = '';
         }
     } else {
-        $ts_cert_chain = '';
+        $stampcert = '';
     }
     if (isset($_POST['stamplogin'])) {
         $stamplogin = filter_var($_POST['stamplogin'], FILTER_SANITIZE_STRING);
@@ -521,15 +521,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
     }
 
     // SQL
-    $sql = "UPDATE teams SET deletable_xp = :deletable_xp, link_name = :link_name, link_href = :link_href, stamplogin = :stamplogin, stamppass = :stamppass, ts_provider_url = :ts_provider_url, ts_cert_chain = :ts_cert_chain WHERE team_id = :team_id";
+    $sql = "UPDATE teams SET deletable_xp = :deletable_xp, link_name = :link_name, link_href = :link_href, stamplogin = :stamplogin, stamppass = :stamppass, stampprovider = :stampprovider, stampcert = :stampcert WHERE team_id = :team_id";
     $req = $pdo->prepare($sql);
     try {
         $req->execute(array(
         'deletable_xp' => $deletable_xp,
         'link_name' => $link_name,
         'link_href' => $link_href,
-        'ts_provider_url' => $ts_provider_url,
-        `ts_cert_chain` => $ts_cert_chain,
+        'stampprovider' => $stampprovider,
+        `stampcert` => $stampcert,
         'stamplogin' => $stamplogin,
         'stamppass' => $stamppass,
         'team_id' => $_SESSION['team_id']

@@ -38,8 +38,8 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
 }
 
 // check if a timestamp provider is set. If not, throw an error message
-if (get_config('ts_provider_url')) {
-    $ts_url = get_config('ts_provider_url');
+if (get_config('stampprovider')) {
+    $ts_url = get_config('stampprovider');
 } else {
     $msg_arr[] = _('There was an error in the timestamping. No timestamping service provider has been configured.');
     $_SESSION['errors'] = $msg_arr;
@@ -51,10 +51,10 @@ if (get_config('ts_provider_url')) {
 $hash_algorithms = array('sha256', 'sha384', 'sha512');
 
 // check if a valid hash algorithm has been selected. If not, fall back to sane defaults (sha256)
-if (get_config('ts_hash_algorithm') and in_array(get_config('ts_hash_algorithm'), $hash_algorithms)) {
-    $ts_hash_algorithm = get_config('ts_hash_algorithm');
+if (get_config('stamphash') and in_array(get_config('stamphash'), $hash_algorithms)) {
+    $stamphash = get_config('stamphash');
 } else {
-    $ts_hash_algorithm = 'sha256';
+    $stamphash = 'sha256';
 }
 
 // Get login/password info

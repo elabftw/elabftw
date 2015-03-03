@@ -110,13 +110,13 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
         <input type='url' value='<?php echo get_team_config('link_href'); ?>' name='link_href' id='link_href' />
         </p>
         <p>
-        <label for='ts_provider_url'><?php echo _('URL for external timestamping service:');?></label>
-        <input type='url' value='<?php echo get_team_config('ts_provider_url');?>' name='ts_provider_url' id='ts_provider_url' />
+        <label for='stampprovider'><?php echo _('URL for external timestamping service:');?></label>
+        <input type='url' value='<?php echo get_team_config('stampprovider');?>' name='stampprovider' id='stampprovider' />
         <span class='smallgray'><?php echo _('This should be the URL used for RFC3616-compliant timestamping requests.');?></span>
         </p>
         <p>
-        <label for='ts_cert_chain'><?php echo _('Chain of certificates of the external timestamping service:');?></label>
-        <input type='text' value='<?php echo get_team_config('ts_cert_chain');?>' name='ts_cert_chain' id='ts_cert_chain' />
+        <label for='stampcert'><?php echo _('Chain of certificates of the external timestamping service:');?></label>
+        <input type='text' value='<?php echo get_team_config('stampcert');?>' name='stampcert' id='stampcert' />
         <span class='smallgray'><?php echo _('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.<br />Can be either an URL or a local path. The file needs to be in <a href="https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail">PEM-encoded (ASCII)</a> format!');?></span>
         </p>
         <label for='stamplogin'><?php echo _('Login for external timestamping service:'); ?></label>

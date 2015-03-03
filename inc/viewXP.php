@@ -95,9 +95,13 @@ if ($data['timestamped'] == 1) {
     $req_stamper->execute();
     $uploads = $req_stamper->fetch();
 
-    $token = $data['timestamptoken'];
+    $token = ELAB_ROOT . 'uploads/' .$data['timestamptoken'];
     if ($token) {
-        $validate = validateTimestamp("uploads/".$uploads['long_name'], realpath("uploads/" . $token), $data['timestampedwhen']); 
+        $stamp_params = getTimestampParameters();
+        $pdf_file = "uploads/" . $uploads['long_name'];
+        $ts = new \Elabftw\Elabftw\TrustedTimestamps(NULL, $pdf_file, $token, NULL, NULL, $stamp_params['stampcert']);
+        $validate = $ts->validate();
+        //$validate = validateTimestamp("uploads/".$uploads['long_name'], realpath("uploads/" . $token), $data['timestampedwhen']); 
     } else {
         $validate = false;
     }

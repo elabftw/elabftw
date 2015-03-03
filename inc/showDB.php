@@ -65,16 +65,27 @@ $req->execute(array(
 if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
     $results_arr = array();
-    $sql = "SELECT item_id, team_id FROM items_tags
-    WHERE tag LIKE :tag AND team_id = :team_id";
+    $sql = "SELECT item_id FROM items_tags
+    WHERE tag LIKE :tag";
     $req = $pdo->prepare($sql);
     $req->execute(array(
-        'tag' => $tag,
-        'team_id' => $_SESSION['team_id']
+        'tag' => $tag
     ));
     // put resulting ids in the results array
     while ($data = $req->fetch()) {
         $results_arr[] = $data['item_id'];
+    }
+    
+    // load time
+    $time = microtime();
+    $time = explode(' ', $time);
+    $time = $time[1] + $time[0];
+    $finish = $time;
+    $total_time = round(($finish - $start), 4);
+    $unit = 'seconds';
+    if ($total_time < 0.01) {
+        $total_time = $total_time * 1000;
+        $unit = 'milliseconds';
     }
 
     // show number of results found
@@ -99,6 +110,19 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $results_arr = search_item('db', $query, $_SESSION['userid']);
     // filter out duplicate ids and reverse the order; items should be sorted by date
     $results_arr = array_reverse(array_unique($results_arr));
+
+    // load time
+    $time = microtime();
+    $time = explode(' ', $time);
+    $time = $time[1] + $time[0];
+    $finish = $time;
+    $total_time = round(($finish - $start), 4);
+    $unit = 'seconds';
+    if ($total_time < 0.01) {
+        $total_time = $total_time * 1000;
+        $unit = 'milliseconds';
+    }
+    
     // show number of results found
     if (count($results_arr) == 0) {
         display_message('error_nocross', _("Sorry. I couldn't find anything :("));

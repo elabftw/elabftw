@@ -282,7 +282,7 @@ class TrustedTimestamps {
      * @param int $response_time: The response time, which should be checked
      * @return <type>
      */
-    public function validate ($time_to_check = NULL)
+    public function validate ($timeToCheck = NULL)
     {       
         if (!is_file($this->responsefile_path))
             throw new \Exception("There was no response-string");    
@@ -310,14 +310,18 @@ class TrustedTimestamps {
         if ($retcode === 0 && strtolower(trim($retarray[0])) == "verification: ok")
         {
         
-            if (!is_null($time_to_check)) {
-                if ($time_to_check != $this->response_time) {
+            if (!is_null($timeToCheck)) {
+                if ($timeToCheck != $this->response_time) {
                     throw new \Exception("The response time of the request was changed");
                 }
             }
             return true;
         }
 
+        if (!is_array($retarray)) {
+            throw new \RuntimeException('$retarray must be an array.');
+        }
+        
         foreach ($retarray as $retline)
         {
             if (stripos($retline, "message imprint mismatch") !== false)

@@ -322,10 +322,10 @@ function getTimestampParameters() {
     }
     
     return array("stamplogin" => $login,
-                 "stamppassword" => $password,
-                 "stampprovider" => $provider,
-                 "stampcert" => $cert,
-                 "hash" => $hash);
+                    "stamppassword" => $password,
+                    "stampprovider" => $provider,
+                    "stampcert" => $cert,
+                    "hash" => $hash);
 }
 
 /**
@@ -335,7 +335,7 @@ function getTimestampParameters() {
  * @param string $timestamptoken base64-encoded timestamptoken
  * @param string $timestampedwhen Date and time when the token was generated, either as UNIX timestamp or in ISO format: 'YYYY-MM-DD HH:MM:SS'
  * @param string $certificate Path to the certificate chain used to generate the token (optional); Defaults to value saved in config
- * @return true|false On successfull validation, return true, else or on error false.
+ * @return boolean On successfull validation, return true, else or on error false.
  */
 function validateTimestamp($filename, $timestamptoken, $timestampedwhen, $certificate = NULL)
 {

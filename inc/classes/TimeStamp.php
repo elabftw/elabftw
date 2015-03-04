@@ -35,6 +35,7 @@ class TrustedTimestamps {
     private $stampLogin;
     private $stampPassword;
     private $stampCert;
+    private $stampHash;
     private $requestfilePath;
 
     private $binaryResponseString;
@@ -55,15 +56,17 @@ class TrustedTimestamps {
      * @param string $stampLogin Login for the TSA (optional)
      * @param string $stampPassword Password for the TSA (optional)
      * @param string $stampCert File with the certificate that is used by the TSA in PEM-encoded ASCII format (optional)
+     * @param string $stampHash Hash algorithm to be used (optional, defaults to sha256)
      */
     public function __construct($stampProvider = null, $data = null, $responsefilePath = null, $stampLogin = null,
-                                $stampPassword = null, $stampCert = null) {
+                                $stampPassword = null, $stampCert = null, $stampHash = 'sha256') {
         $this->stampProvider = $stampProvider;
         $this->data = $data;
         $this->responsefilePath = $responsefilePath;
         $this->stampLogin = $stampLogin;
         $this->stampPassword = $stampPassword;
         $this->stampCert = $stampCert;
+        $this->stampHash = $stampHash;
         $this->tmpfiles = [];
 
         if (!is_null($this->data) && !is_null($this->stampProvider)) {
@@ -163,7 +166,7 @@ class TrustedTimestamps {
      */
     private function createRequestfile() {
         $outfilepath = $this->createTempFile();
-        $cmd = "ts -query -data ".escapeshellarg($this->data)." -cert -sha256 -no_nonce -out ".escapeshellarg($outfilepath);
+        $cmd = "ts -query -data ".escapeshellarg($this->data)." -cert -" . $this->stampHash ." -no_nonce -out ".escapeshellarg($outfilepath);
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];
         $retcode = $opensslResult['retcode'];

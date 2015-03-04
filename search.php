@@ -347,7 +347,7 @@ if (isset($_GET)) {
                 $sqlFirst = " userid = :userid";
             }
 
-            $sql = "SELECT * FROM experiments WHERE" . $sqlFirst . $sqlTitle .  $sqlBody . $sqlStatus . $sqlDate ;
+            $sql = "SELECT * FROM experiments WHERE" . $sqlFirst . $sqlTitle .  $sqlBody . $sqlStatus . $sqlDate;
             echo $sql;
             $req = $pdo->prepare($sql);
             // if there is a selection on 'owned by', we use the owner id as parameter
@@ -402,7 +402,7 @@ if (isset($_GET)) {
         } elseif (is_pos_int($_GET['type'])) {
 
             $sqlFirst = " type = :type";
-            $sql = "SELECT * FROM items WHERE" . $sqlFirst . $sqlTitle .  $sqlBody . $sqlRating . $sqlDate ;
+            $sql = "SELECT * FROM items WHERE" . $sqlFirst . $sqlTitle .  $sqlBody . $sqlRating . $sqlDate;
             $req = $pdo->prepare($sql);
             $req->execute(array(
                 'type' => $_GET['type']

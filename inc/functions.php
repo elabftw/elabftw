@@ -311,39 +311,6 @@ function getTimestampParameters() {
 }
 
 /**
- * Validate timestamped file
- *
- * @param string $filename The path to the file to be validated
- * @param string $timestamptoken base64-encoded timestamptoken
- * @param string $timestampedwhen Date and time when the token was generated, either as UNIX timestamp or in ISO format: 'YYYY-MM-DD HH:MM:SS'
- * @param string $certificate Path to the certificate chain used to generate the token (optional); Defaults to value saved in config
- * @return boolean On successfull validation, return true, else or on error false.
- */
-function validateTimestamp($filename, $timestamptoken, $timestampedwhen, $certificate = NULL)
-{
-
-    if (is_null($certificate)) {
-        if (strlen(get_team_config('stampcert')) > 2) {
-            $certificate = get_team_config('stampcert');
-        } elseif (get_config('stampcert')) {
-            $certificate = get_config('stampcert');
-        } else {
-        $certificate = NULL;
-        }
-    }
-
-    try {
-        $validator = new Elabftw\Elabftw\TrustedTimestamps();
-        $result = $validator->validate($filename, $timestamptoken, $timestampedwhen, $certificate);
-    } catch (Exception $e) {
-        dblog("Error", $_SESSION['userid'], $e->getMessage());
-        return false;
-    }
-
-    return $result;
-}
-
-/**
  * Show an experiment (in mode=show).
  *
  * @param int $id The ID of the experiment to show

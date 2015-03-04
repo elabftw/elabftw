@@ -30,43 +30,43 @@
 namespace Elabftw\Elabftw;
 
 class TrustedTimestamps {
-    private $stampprovider;
+    private $stampProvider;
     private $data;
-    private $stamplogin;
-    private $stamppassword;
-    private $stampcert;
+    private $stampLogin;
+    private $stampPassword;
+    private $stampCert;
     private $requestfilePath;
     
     private $binaryResponseString;
     private $base64ResponseString;
     private $responseTime;
     
-    private $responsefile_path;
+    private $responsefilePath;
     private $tmpfiles;
     
     /**
      * Class constructor
-     * At least $stampprovider + $data (+ $stamppassword + $stamplogin) or $data + $responsefile_path + $stampcert are needed
+     * At least $stampProvider + $data (+ $stampPassword + $stampLogin) or $data + $responsefilePath + $stampCert are needed
      * to do anything usefull.
      *
-     * @param string $stampprovider URL of the TSA to be used (optional)
+     * @param string $stampProvider URL of the TSA to be used (optional)
      * @param string $data Filename to be timestamped or validated (optional)
-     * @param string $responsefile_path Filename to an already existing binary timestamp token (optional)
-     * @param string $stamplogin Login for the TSA (optional)
-     * @param string $stamppassword Password for the TSA (optional)
-     * @param string $stampcert File with the certificate that is used by the TSA in PEM-encoded ASCII format (optional)
+     * @param string $responsefilePath Filename to an already existing binary timestamp token (optional)
+     * @param string $stampLogin Login for the TSA (optional)
+     * @param string $stampPassword Password for the TSA (optional)
+     * @param string $stampCert File with the certificate that is used by the TSA in PEM-encoded ASCII format (optional)
      */    
     public function __construct($stampProvider = NULL, $data = NULL, $responsefilePath = NULL, $stampLogin = NULL, 
                                 $stampPassword = NULL, $stampCert = NULL) {
-        $this->stampprovider = $stampProvider;
+        $this->stampProvider = $stampProvider;
         $this->data = $data;
-        $this->responsefile_path = $responsefilePath;
-        $this->stamplogin = $stampLogin;
-        $this->stamppassword = $stampPassword;
-        $this->stampcert = $stampCert;
+        $this->responsefilePath = $responsefilePath;
+        $this->stampLogin = $stampLogin;
+        $this->stampPassword = $stampPassword;
+        $this->stampCert = $stampCert;
         $this->tmpfiles = [];
         
-        if (!is_null($this->data) && !is_null($this->stampprovider)) {
+        if (!is_null($this->data) && !is_null($this->stampProvider)) {
             $this->createRequestfile();
             $this->generateToken();
         } 
@@ -146,13 +146,13 @@ class TrustedTimestamps {
      * Process the response file and populate class variables accordingly.
      */
     private function processResponsefile() {
-        if(is_file($this->responsefile_path)) {
-            $this->binaryResponseString = file_get_contents($this->responsefile_path);
+        if(is_file($this->responsefilePath)) {
+            $this->binaryResponseString = file_get_contents($this->responsefilePath);
             $this->base64ResponseString = base64_encode($this->binaryResponseString);
-            $this->responsefile_path = $this->createTempFile($this->binaryResponseString);
-            $this->responseTime = $this->getTimestampFromAnswer ($this->base64ResponseString);
+            $this->responsefilePath = $this->createTempFile($this->binaryResponseString);
+            $this->responseTime = $this->getTimestampFromAnswer();
         } else {
-            throw new \Exception("The responsefile " . $this->responsefile_path . " was not found!");
+            throw new \Exception("The responsefile " . $this->responsefilePath . " was not found!");
         }
     }
     
@@ -181,13 +181,13 @@ class TrustedTimestamps {
      * @return int unix timestamp
      */
     private function getTimestampFromAnswer () {
-        if (is_null($this->responsefile_path) && !is_null($this->binaryResponseString)) {
-            $this->responsefile_path = $this->createTempFile();
-            file_put_contents($this->responsefile_path, $this->binaryResponseString);
+        if (is_null($this->responsefilePath) && !is_null($this->binaryResponseString)) {
+            $this->responsefilePath = $this->createTempFile();
+            file_put_contents($this->responsefilePath, $this->binaryResponseString);
         }
         
         
-        $cmd = "ts -reply -in ".escapeshellarg($this->responsefile_path)." -text";
+        $cmd = "ts -reply -in ".escapeshellarg($this->responsefilePath)." -text";
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];
         $retcode = $opensslResult['retcode'];
@@ -250,11 +250,11 @@ class TrustedTimestamps {
         }
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->stampprovider);
+        curl_setopt($ch, CURLOPT_URL, $this->stampProvider);
         // if login and password are set, pass them to curl
-        if (!is_null($this->stamplogin) && !is_null($this->stamppassword)) {
+        if (!is_null($this->stampLogin) && !is_null($this->stampPassword)) {
             curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-            curl_setopt($ch, CURLOPT_USERPWD, $this->stamplogin.":".$this->stamppassword);
+            curl_setopt($ch, CURLOPT_USERPWD, $this->stampLogin.":".$this->stampPassword);
         }
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
@@ -281,7 +281,7 @@ class TrustedTimestamps {
     
     /**
     * Run OpenSSL via exec() with a provided command
-    * @return array 
+    * @return array<string,string> 
     */
     private function runOpenSSL($cmd) {
         $retarray = array();
@@ -295,21 +295,21 @@ class TrustedTimestamps {
      * Validates a file against its timestamp and optionally check a provided time for consistence with the time encoded 
      * in the timestamp itself.
      *
-     * @param int $timeToCheck The response time, which should be checked
+     * @param int|null $timeToCheck The response time, which should be checked
      * @return bool
      */
     public function validate ($timeToCheck = NULL)
     {       
-        if (!is_file($this->responsefile_path))
+        if (!is_file($this->responsefilePath))
             throw new \Exception("There was no response-string");    
             
         if (!intval($this->responseTime))
             throw new \Exception("There is no valid response-time given");
             
-        if (!file_exists($this->stampcert))
+        if (!file_exists($this->stampCert))
             throw new \Exception("The TSA-Certificate could not be found");
 
-        $cmd = "ts -verify -data ".escapeshellarg($this->data)." -in ".escapeshellarg($this->responsefile_path)." -CAfile ".escapeshellarg($this->stampcert);
+        $cmd = "ts -verify -data ".escapeshellarg($this->data)." -in ".escapeshellarg($this->responsefilePath)." -CAfile ".escapeshellarg($this->stampCert);
         
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];

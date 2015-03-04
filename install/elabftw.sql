@@ -248,7 +248,7 @@ CREATE TABLE `teams` (
   `stamppass` text,
   `stampprovider` text,
   `stampcert` text,
-  `stamphash` varchar(45),
+  `stamphash` varchar(10),
   PRIMARY KEY (`team_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

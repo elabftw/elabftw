@@ -186,7 +186,7 @@ while ($show = $req->fetch()) {
 // add field if it's not here
 if (!$field_is_here) {
     q("ALTER TABLE `experiments` ADD `timestamped` BOOLEAN NOT NULL DEFAULT FALSE AFTER `lockedwhen`, ADD `timestampedby` INT NULL DEFAULT NULL AFTER `timestamped`, ADD `timestampedwhen` TIMESTAMP NULL AFTER `timestampedby`, ADD `timestamptoken` TEXT NULL AFTER `timestampedwhen`;");
-    q("INSERT INTO `config` (`conf_name`, `conf_value`) VALUES ('stamplogin', NULL), ('stamppass', NULL), ('stampprovider', NULL), ('stampcert', NULL), ('stamphash', NULL);");
+    q("INSERT INTO `config` (`conf_name`, `conf_value`) VALUES ('stamplogin', NULL), ('stamppass', NULL), ('stampprovider', NULL), ('stampcert', NULL), ('stamphash', 'sha256');");
     echo ">>> You can now timestamp experiments. See the wiki for more infos.\n";
 }
 
@@ -204,7 +204,7 @@ add_field('teams', 'stamplogin', "TEXT NULL DEFAULT NULL", ">>> Added timestamp 
 add_field('teams', 'stamppass', "TEXT NULL DEFAULT NULL", ">>> Added timestamp team config (pass)\n");
 add_field('teams', 'stampprovider', "TEXT NULL DEFAULT NULL", ">>> Added timestamp team config (provider)\n");
 add_field('teams', 'stampcert', "TEXT NULL DEFAULT NULL", ">>> Added timestamp team config (cert)\n");
-add_field('teams', 'stamphash', "VARCHAR(10) NULL DEFAULT NULL", ">>> Added timestamp team config (hash)\n");
+add_field('teams', 'stamphash', "VARCHAR(10) NULL DEFAULT 'sha256'", ">>> Added timestamp team config (hash)\n");
 
 // add stampshare configuration
 // check if we need to

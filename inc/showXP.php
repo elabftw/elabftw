@@ -37,7 +37,7 @@ $results_arr = array();
     <span class='align_right'>
     <select onchange=go_url(this.value)><option value=''><?php echo _('Filter status'); ?></option>
     <?php
-    $sql = "SELECT id, name FROM status WHERE team = :team_id";
+    $sql = "SELECT id, name FROM status WHERE team = :team_id ORDER BY name ASC";
     $req = $pdo->prepare($sql);
     $req->execute(array(
         'team_id' => $_SESSION['team_id']

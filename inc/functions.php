@@ -1099,6 +1099,10 @@ function rm_field($table, $field, $added)
     }
 }
 
+/*
+ * Check presence of basic cURL functionality
+ * @return bool true if cURL functions are present, else false
+ */
 function cURLcheckBasicFunctions()
 {
   if( !function_exists("curl_init") &&
@@ -1109,9 +1113,12 @@ function cURLcheckBasicFunctions()
 }
 
 /*
-* Returns string status information.
-* Can be changed to int or bool return types.
-*/
+ * Returns string status information.
+ * Can be changed to int or bool return types.
+ * @param string $url URL to download
+ * @param string $file Path and filename as which the download is to be saved
+ * @return bool Return true if the download succeeded, else false
+ */
 function cURLdownload($url, $file)
 {
   if( !cURLcheckBasicFunctions() ) return "UNAVAILABLE: cURL Basic Functions";
@@ -1125,16 +1132,16 @@ function cURLdownload($url, $file)
       {
         fclose($fp); // to match fopen()
         curl_close($ch); // to match curl_init()
-        return "FAIL: curl_setopt(CURLOPT_URL)";
+        return false;
       }
       if( !curl_setopt($ch, CURLOPT_FILE, $fp) ) return "FAIL: curl_setopt(CURLOPT_FILE)";
       if( !curl_setopt($ch, CURLOPT_HEADER, 0) ) return "FAIL: curl_setopt(CURLOPT_HEADER)";
       if( !curl_exec($ch) ) return "FAIL: curl_exec()";
       curl_close($ch);
       fclose($fp);
-      return "SUCCESS: $file [$url]";
+      return true;
     }
-    else return "FAIL: fopen()";
+    else return false;
   }
-  else return "FAIL: curl_init()";
-} 
+  else return false;
+}

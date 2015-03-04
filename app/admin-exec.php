@@ -337,6 +337,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {
         $stampcert = $_POST['stampcert'];
         if (is_file(realpath(ELAB_ROOT . $cert_chain))) {
             $stampcert = realpath(ELAB_ROOT . $cert_chain);
+        } elseif (realpath($cert_chain)) {
+            $stampcert = realpath($cert_chain);
         } else {
             $stampcert = '';
         }
@@ -501,6 +503,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
         $stampcert = $_POST['stampcert'];
         if (is_file(realpath(ELAB_ROOT . $cert_chain))) {
             $stampcert = realpath(ELAB_ROOT . $cert_chain);
+        } elseif (realpath($cert_chain)) {
+            $stampcert = realpath($cert_chain);
         } else {
             $stampcert = '';
         }

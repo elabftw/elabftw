@@ -193,7 +193,6 @@ class TrustedTimestamps {
                 } else {
                     return False;
                 }
-                break;
             case False:
                 return True;
             default:

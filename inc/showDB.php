@@ -29,7 +29,7 @@ if (isset($_SESSION['prefs']['display'])) {
     $display = 'default';
 }
 // SQL to get items names
-$sql = "SELECT * FROM items_types WHERE team = :team";
+$sql = "SELECT * FROM items_types WHERE team = :team ORDER BY name ASC";
 $req = $pdo->prepare($sql);
 $req->execute(array(
     'team' => $_SESSION['team_id']

@@ -7,6 +7,8 @@
 * fix a bug where the top right search bar was not searching at the good place if the lang was not english
 * add a log view for the sysadmin
 * various little improvements in code
+* fix a CSS bug with Chemdoodle
+* fix a bug where a file was not properly deleted from system
 
 # Version 1.0.0
 * no changes from beta

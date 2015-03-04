@@ -43,8 +43,10 @@ require_once 'inc/info_box.php';
                 <label for='searchin'><?php echo _('Search in'); ?></label>
                 <select name='type' id='searchin'>
                     <option value='experiments'><?php echo ngettext('Experiment', 'Experiments', 2); ?></option>
+                    <option disabled>----------------</option>
+                    <option disabled><?php echo ngettext('Database', '', 1); ?></option>
                     <?php // Database items types
-                    $sql = "SELECT * FROM items_types WHERE team = :team";
+                    $sql = "SELECT * FROM items_types WHERE team = :team ORDER BY name ASC";
                     $req = $pdo->prepare($sql);
                     $req->execute(array(
                         'team' => $_SESSION['team_id']
@@ -55,7 +57,7 @@ require_once 'inc/info_box.php';
                         if (isset($_GET['type']) && ($items_types['id'] == $_GET['type'])) {
                             echo " selected='selected'";
                         }
-                        echo ">" . $items_types['name'] . "</option>";
+                        echo "> - " . $items_types['name'] . "</option>";
                     }
                     ?>
                 </select>
@@ -67,8 +69,9 @@ require_once 'inc/info_box.php';
                 <label for'searchonly'><?php echo _('Search only in experiments owned by:'); ?> </label><br>
                 <select id='searchonly' name='owner'>
                     <option value=''><?php echo _('Yourself'); ?></option>
+                    <option disabled>----------------</option>
                     <?php
-                    $users_sql = "SELECT userid, firstname, lastname FROM users WHERE team = :team";
+                    $users_sql = "SELECT userid, firstname, lastname FROM users WHERE team = :team ORDER BY firstname ASC";
                     $users_req = $pdo->prepare($users_sql);
                     $users_req->execute(array(
                         'team' => $_SESSION['team_id']
@@ -132,7 +135,7 @@ require_once 'inc/info_box.php';
                     // put all available status in array
                     $status_arr = array();
                     // SQL TO GET ALL STATUS INFO
-                    $sql = "SELECT id, name, color FROM status WHERE team = :team_id";
+                    $sql = "SELECT id, name, color FROM status WHERE team = :team_id ORDER BY name ASC";
                     $req = $pdo->prepare($sql);
                     $req->execute(array(
                         'team_id' => $_SESSION['team_id']
@@ -344,7 +347,7 @@ if (isset($_GET)) {
                 $sqlFirst = " userid = :userid";
             }
 
-            $sql = "SELECT * FROM experiments WHERE" . $sqlFirst . $sqlTitle .  $sqlBody . $sqlStatus . $sqlDate ;
+            $sql = "SELECT * FROM experiments WHERE" . $sqlFirst . $sqlTitle .  $sqlBody . $sqlStatus . $sqlDate;
             echo $sql;
             $req = $pdo->prepare($sql);
             // if there is a selection on 'owned by', we use the owner id as parameter
@@ -399,7 +402,7 @@ if (isset($_GET)) {
         } elseif (is_pos_int($_GET['type'])) {
 
             $sqlFirst = " type = :type";
-            $sql = "SELECT * FROM items WHERE" . $sqlFirst . $sqlTitle .  $sqlBody . $sqlRating . $sqlDate ;
+            $sql = "SELECT * FROM items WHERE" . $sqlFirst . $sqlTitle .  $sqlBody . $sqlRating . $sqlDate;
             $req = $pdo->prepare($sql);
             $req->execute(array(
                 'type' => $_GET['type']

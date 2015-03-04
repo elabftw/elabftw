@@ -183,7 +183,7 @@ if ($current_version == 'something') {
         <p>
         <label for='stampprovider'><?php echo _('URL for external timestamping service:');?></label>
         <input type='url' value='<?php echo get_config('stampprovider');?>' name='stampprovider' id='stampprovider' />
-        <span class='smallgray'><?php echo _('This should be the URL used for <a href="https://tools.ietf.org/html/rfc3616">RFC 3616</a>-compliant timestamping requests.'); ?></span>
+        <span class='smallgray'><?php echo _('This should be the URL used for <a href="https://tools.ietf.org/html/rfc3161">RFC 3161</a>-compliant timestamping requests.'); ?></span>
         </p>
         <p>
         <label for='stampcert'><?php echo _('Chain of certificates of the external timestamping service:');?></label>

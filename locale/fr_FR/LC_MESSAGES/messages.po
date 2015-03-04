@@ -1,9 +1,8 @@
 msgid ""
 msgstr ""
-
 "Project-Id-Version: elabftw\n"
-"POT-Creation-Date: 2015-03-03 23:41+0100\n"
-"PO-Revision-Date: 2015-03-03 23:43+0100\n"
+"POT-Creation-Date: 2015-03-04 14:57+0100\n"
+"PO-Revision-Date: 2015-03-04 14:57+0100\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -15,6 +14,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: elabftw\n"
+"X-Poedit-SearchPathExcluded-0: elabftw/vendor\n"
+"X-Poedit-SearchPathExcluded-1: elabftw/js\n"
 
 #: elabftw/admin.php:34 elabftw/inc/footer.php:60
 msgid "Admin panel"
@@ -73,7 +74,7 @@ msgstr "Oui"
 #: elabftw/admin.php:101 elabftw/admin.php:170 elabftw/sysconfig.php:157
 #: elabftw/sysconfig.php:180 elabftw/sysconfig.php:216
 msgid "No"
-msgstr ""
+msgstr "Non"
 
 #: elabftw/admin.php:105
 msgid "Name of the link in the top menu:"
@@ -87,9 +88,10 @@ msgstr "Adresse vers laquelle ce lien pointe :"
 msgid "URL for external timestamping service:"
 msgstr ""
 
-#: elabftw/admin.php:115
+#: elabftw/admin.php:115 elabftw/sysconfig.php:186
 msgid ""
-"This should be the URL used for RFC3616-compliant timestamping requests."
+"This should be the URL used for <a href=\"https://tools.ietf.org/html/"
+"rfc3161\">RFC 3161</a>-compliant timestamping requests."
 msgstr ""
 
 #: elabftw/admin.php:118 elabftw/sysconfig.php:189
@@ -312,9 +314,7 @@ msgstr ""
 #: elabftw/app/editXP-exec.php:92 elabftw/app/lock.php:134
 #: elabftw/app/lock.php:151 elabftw/app/lock.php:155
 #: elabftw/app/login-exec.php:169 elabftw/app/register-exec.php:275
-#: elabftw/app/timestamp.php:157 elabftw/app/timestamp_BASE_15391.php:162
-#: elabftw/app/timestamp_LOCAL_15391.php:158
-#: elabftw/app/timestamp_REMOTE_15391.php:171 elabftw/app/ucp-exec.php:91
+#: elabftw/app/timestamp.php:157 elabftw/app/ucp-exec.php:91
 #: elabftw/app/ucp-exec.php:226 elabftw/app/ucp-exec.php:241
 #: elabftw/app/ucp-exec.php:248 elabftw/app/ucp-exec.php:257
 #: elabftw/database.php:41 elabftw/experiments.php:41 elabftw/make_zip.php:201
@@ -469,13 +469,10 @@ msgstr "supprimé avec succès"
 #: elabftw/app/duplicate_item.php:32 elabftw/app/editDB-exec.php:42
 #: elabftw/app/editXP-exec.php:39 elabftw/app/lock.php:33
 #: elabftw/app/quicksave.php:26 elabftw/app/timestamp.php:35
-#: elabftw/app/timestamp_BACKUP_15391.php:36
-#: elabftw/app/timestamp_BASE_15391.php:34
-#: elabftw/app/timestamp_LOCAL_15391.php:34
-#: elabftw/app/timestamp_REMOTE_15391.php:36 elabftw/inc/editDB.php:37
-#: elabftw/inc/editXP.php:34 elabftw/inc/viewDB.php:34
-#: elabftw/inc/viewXP.php:35 elabftw/make_csv.php:104 elabftw/make_pdf.php:34
-#: elabftw/make_zip.php:206 elabftw/revision.php:51
+#: elabftw/inc/editDB.php:37 elabftw/inc/editXP.php:34
+#: elabftw/inc/viewDB.php:34 elabftw/inc/viewXP.php:35
+#: elabftw/make_csv.php:104 elabftw/make_pdf.php:34 elabftw/make_zip.php:206
+#: elabftw/revision.php:51
 msgid "The id parameter is not valid!"
 msgstr ""
 
@@ -581,37 +578,12 @@ msgid "New password updated. You can now login."
 msgstr "Nouveau mot de passe mis à jour. Vous pouvez vous connecter désormais."
 
 #: elabftw/app/timestamp.php:93 elabftw/app/timestamp.php:107
-#: elabftw/app/timestamp_BASE_15391.php:103
-#: elabftw/app/timestamp_BASE_15391.php:117
-#: elabftw/app/timestamp_LOCAL_15391.php:97
-#: elabftw/app/timestamp_LOCAL_15391.php:111
-#: elabftw/app/timestamp_REMOTE_15391.php:112
-#: elabftw/app/timestamp_REMOTE_15391.php:126
 msgid ""
 "There was an error with the timestamping. Experiment is NOT timestamped. "
 "Error has been logged."
 msgstr ""
 "Il y a eu une erreur dans l'horodatage. L'expérience n'est PAS horodatée. "
 "L'erreur a été logguée."
-
-#: elabftw/app/timestamp_BACKUP_15391.php:45
-#: elabftw/app/timestamp_LOCAL_15391.php:43
-msgid ""
-"There was an error in the timestamping. No timestamping service provider has "
-"been configured."
-msgstr ""
-
-#: elabftw/app/timestamp_BASE_15391.php:53
-#: elabftw/app/timestamp_BASE_15391.php:99
-#: elabftw/app/timestamp_LOCAL_15391.php:93
-#: elabftw/app/timestamp_REMOTE_15391.php:55
-#: elabftw/app/timestamp_REMOTE_15391.php:108
-msgid ""
-"There was an error in the timestamping. Login credentials probably wrong or "
-"no more credits."
-msgstr ""
-"Il y a eu une erreur dans l'horodatage. Les informations d'authentification "
-"sont peut-être fausses"
 
 #: elabftw/app/ucp-exec.php:223
 msgid "Profile updated."
@@ -1286,12 +1258,6 @@ msgid ""
 "to <em>no</em> the team admin must add login infos in the admin panel."
 msgstr ""
 
-#: elabftw/sysconfig.php:186
-msgid ""
-"This should be the URL used for <a href=\"https://tools.ietf.org/html/"
-"rfc3616\">RFC 3616</a>-compliant timestamping requests."
-msgstr ""
-
 #: elabftw/sysconfig.php:191
 msgid ""
 "This should point to the chain of certificates used by your external "
@@ -1628,3 +1594,10 @@ msgstr "Ajouter un modèle"
 #: elabftw/ucp.php:312
 msgid "Edit template"
 msgstr "Éditer un modèle"
+
+#~ msgid ""
+#~ "There was an error in the timestamping. Login credentials probably wrong "
+#~ "or no more credits."
+#~ msgstr ""
+#~ "Il y a eu une erreur dans l'horodatage. Les informations "
+#~ "d'authentification sont peut-être fausses"

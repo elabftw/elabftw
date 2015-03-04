@@ -180,16 +180,35 @@ class TrustedTimestamps {
     }
 
     /**
+     * Check if a response file is present. If not, try to create it from $binaryResponseString
+     * @return bool True if found or created, False if not found and not able to create
+     */
+    private function checkResponseFileAvailability() {
+        switch (is_null($this->responsefilePath)) {
+            case True:
+                if (!is_null($this->binaryResponseString)) {
+                    $this->responsefilePath = $this->createTempFile();
+                    file_put_contents($this->responsefilePath, $this->binaryResponseString);
+                    return True;
+                } else {
+                    return False;
+                }
+                break;
+            case False:
+                return True;
+        }
+    }
+
+    /**
      * Extracts the unix timestamp from the base64-encoded response string as returned by signRequestfile
      *
      * @return int unix timestamp
      */
     private function getTimestampFromAnswer() {
-        if (is_null($this->responsefilePath) && !is_null($this->binaryResponseString)) {
-            $this->responsefilePath = $this->createTempFile();
-            file_put_contents($this->responsefilePath, $this->binaryResponseString);
-        }
 
+        if(!$this->checkResponseFileAvailability()) {
+            throw new \RuntimeException('Response file was not found and could not be created from binary response string.');
+        }
 
         $cmd = "ts -reply -in ".escapeshellarg($this->responsefilePath)." -text";
         $opensslResult = $this->runOpenSSL($cmd);
@@ -299,14 +318,10 @@ class TrustedTimestamps {
     }
 
     /**
-     * Validates a file against its timestamp and optionally check a provided time for consistence with the time encoded
-     * in the timestamp itself.
-     *
-     * @param int|null $timeToCheck The response time, which should be checked
-     * @return bool
-     */
-    public function validate($timeToCheck = NULL)
-    {
+    * Check if the requirements to perform a validation are met.
+    * @return bool Returns True if the requirements are met, otherwise throw an exception
+    */
+    private function checkValidationPrerequisits() {
         if (!is_file($this->responsefilePath)) {
                     throw new \Exception("There was no response-string");
         }
@@ -318,6 +333,20 @@ class TrustedTimestamps {
         if (!file_exists($this->stampCert)) {
                     throw new \Exception("The TSA-Certificate could not be found");
         }
+        return True;
+    }
+
+    /**
+     * Validates a file against its timestamp and optionally check a provided time for consistence with the time encoded
+     * in the timestamp itself.
+     *
+     * @param int|null $timeToCheck The response time, which should be checked
+     * @return bool
+     */
+    public function validate($timeToCheck = NULL) {
+
+        // Check if all requirements to perform a validation are met
+        $this->checkValidationPrerequisits();
 
         $cmd = "ts -verify -data ".escapeshellarg($this->data)." -in ".escapeshellarg($this->responsefilePath)." -CAfile ".escapeshellarg($this->stampCert);
 

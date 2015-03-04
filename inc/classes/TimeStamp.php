@@ -347,6 +347,3 @@ class TrustedTimestamps {
         throw new \Exception("Systemcommand failed: ".implode(", ", $retarray));
     }
 }
-
-
-?>

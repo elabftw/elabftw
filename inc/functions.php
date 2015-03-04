@@ -149,7 +149,7 @@ function is_pos_int($int)
 function has_attachement($id, $type)
 {
     global $pdo;
-    $sql = "SELECT id FROM uploads 
+    $sql = "SELECT id FROM uploads
         WHERE item_id = :item_id AND type = :type LIMIT 1";
     $req = $pdo->prepare($sql);
     $req->bindParam(':item_id', $id);
@@ -174,7 +174,7 @@ function search_item($type, $query, $userid)
     $results_arr = array();
     if ($type === 'xp') {
         // search in title date and body
-        $sql = "SELECT id FROM experiments 
+        $sql = "SELECT id FROM experiments
             WHERE userid = :userid AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
         $req = $pdo->prepare($sql);
         $req->execute(array(
@@ -206,7 +206,7 @@ function search_item($type, $query, $userid)
 
     } elseif ($type === 'db') {
         // search in title date and body
-        $sql = "SELECT id FROM items 
+        $sql = "SELECT id FROM items
             WHERE (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
         $req = $pdo->prepare($sql);
         $req->execute();
@@ -269,28 +269,10 @@ function show_tags($item_id, $table)
 }
 
 /**
- * Return base64-encoded token. Ensures transparent handling of file-based tokens and tokens stored 
- * directly as base64-encoded string in the database
+ * Return the needed parameters to request/verify a timestamp
  *
- * @param string $token The token to be converted to a base64 string
- * @return string|false Base64-encoded string of $token or false if $token is neither a file, nor a valid base64-encoded string
+ * @return array
  */
-function getBase64Token($token) {
-    // check if provided token is actually an existing file
-    if (is_file($token)) {
-    // if yes, read content and convert to base64-encoded string
-        $binary_token = file_get_contents($token);
-        $base64_encoded_token = base64_encode($binary_token);
-        return $base64_encoded_token;
-    // else check if string is a valid base64_encoded string
-    } elseif (base64_decode($token, $strict = true)) {
-        return $token;
-    } else {
-    // if all fails, return false
-        return False;
-    }
-}
-
 function getTimestampParameters() {
     $hash_algorithms = array('sha256', 'sha384', 'sha512');
 
@@ -320,7 +302,7 @@ function getTimestampParameters() {
         $cert = NULL;
         $hash = NULL;
     }
-    
+
     return array("stamplogin" => $login,
                     "stamppassword" => $password,
                     "stampprovider" => $provider,
@@ -349,7 +331,7 @@ function validateTimestamp($filename, $timestamptoken, $timestampedwhen, $certif
         $certificate = NULL;
         }
     }
-    
+
     try {
         $validator = new Elabftw\Elabftw\TrustedTimestamps();
         $result = $validator->validate($filename, $timestamptoken, $timestampedwhen, $certificate);
@@ -357,7 +339,7 @@ function validateTimestamp($filename, $timestamptoken, $timestampedwhen, $certif
         dblog("Error", $_SESSION['userid'], $e->getMessage());
         return false;
     }
-    
+
     return $result;
 }
 

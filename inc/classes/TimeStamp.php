@@ -56,8 +56,8 @@ class TrustedTimestamps {
      * @param string $stampPassword Password for the TSA (optional)
      * @param string $stampCert File with the certificate that is used by the TSA in PEM-encoded ASCII format (optional)
      */
-    public function __construct($stampProvider = NULL, $data = NULL, $responsefilePath = NULL, $stampLogin = NULL,
-                                $stampPassword = NULL, $stampCert = NULL) {
+    public function __construct($stampProvider = null, $data = null, $responsefilePath = null, $stampLogin = null,
+                                $stampPassword = null, $stampCert = null) {
         $this->stampProvider = $stampProvider;
         $this->data = $data;
         $this->responsefilePath = $responsefilePath;
@@ -88,37 +88,37 @@ class TrustedTimestamps {
 
     /**
      * Returns response in binary form
-     * @return string|bool binary response or False on error
+     * @return string|bool binary response or false on error
      */
     public function getBinaryResponse() {
         if (!is_null($this->binaryResponseString)) {
             return $this->binaryResponseString;
         } else {
-            return False;
+            return false;
         }
     }
 
     /**
      * Returns response base64-encoded
-     * @return string|bool base64-encoded response or False on error
+     * @return string|bool base64-encoded response or false on error
      */
     public function getBase64Response() {
         if (!is_null($this->base64ResponseString)) {
         return $this->base64ResponseString;
         } else {
-            return False;
+            return false;
         }
     }
 
     /**
      * Returns date and time of when the response was generated
-     * @return string|bool response time or False on error
+     * @return string|bool response time or false on error
      */
     public function getResponseTime() {
         if (!is_null($this->responseTime)) {
         return $this->responseTime;
         } else {
-            return False;
+            return false;
         }
     }
 
@@ -181,24 +181,24 @@ class TrustedTimestamps {
 
     /**
      * Check if a response file is present. If not, try to create it from $binaryResponseString
-     * @return bool True if found or created, False if not found and not able to create
+     * @return bool true if found or created, false if not found and not able to create
      */
     private function checkResponseFileAvailability() {
         switch (is_null($this->responsefilePath)) {
-            case True:
+            case true:
                 if (!is_null($this->binaryResponseString)) {
                     $this->responsefilePath = $this->createTempFile();
                     file_put_contents($this->responsefilePath, $this->binaryResponseString);
-                    return True;
+                    return true;
                 } else {
-                    return False;
+                    return false;
                 }
-            case False:
-                return True;
+            case false:
+                return true;
             default:
-                return False;
+                return false;
         }
-        return False;
+        return false;
     }
 
     /**
@@ -249,7 +249,7 @@ class TrustedTimestamps {
                     if ($date) {
                         $responseTime = $date->getTimestamp();
                     } else {
-                        $responseTime = False;
+                        $responseTime = false;
                     }
                 }
                 break;
@@ -321,7 +321,7 @@ class TrustedTimestamps {
 
     /**
     * Check if the requirements to perform a validation are met.
-    * @return bool Returns True if the requirements are met, otherwise throw an exception
+    * @return bool Returns true if the requirements are met, otherwise throw an exception
     */
     private function checkValidationPrerequisits() {
         if (!is_file($this->responsefilePath)) {
@@ -335,7 +335,7 @@ class TrustedTimestamps {
         if (!file_exists($this->stampCert)) {
                     throw new \Exception("The TSA-Certificate could not be found");
         }
-        return True;
+        return true;
     }
 
     /**
@@ -345,7 +345,7 @@ class TrustedTimestamps {
      * @param int|null $timeToCheck The response time, which should be checked
      * @return bool
      */
-    public function validate($timeToCheck = NULL) {
+    public function validate($timeToCheck = null) {
 
         // Check if all requirements to perform a validation are met
         $this->checkValidationPrerequisits();

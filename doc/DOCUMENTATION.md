@@ -113,15 +113,4 @@ suggestions to this project.
 
 
 ## GET INVOLVED
-You want to help this project ? Then read on !
-
-**What can you do to help this project ?**
-* Have a look at [the current issues](https://github.com/elabftw/elabftw/issues)
-* [Translate it!](https://github.com/elabftw/elabftw/wiki/Contributing#translating-i18n)
-* Talk about it to your colleagues, spread the word!
-* Read the code and spot places needing improvements
-* Open Github issues to discuss bugs or features suggestions
-
-Your code must follow [the PSR standards](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md).
-Before doing a pull request, open an issue so we can discuss about it (unless it is obvious that your code should be merged ;).
-Please base your PR on the ***next*** branch.
+Please have a look at the CONTRIBUTING file in the doc folder.

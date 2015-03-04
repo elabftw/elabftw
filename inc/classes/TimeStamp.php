@@ -160,9 +160,10 @@ class TrustedTimestamps {
      */
     private function createRequestfile () {
         $outfilepath = $this->createTempFile();
-        $cmd = "openssl ts -query -data ".escapeshellarg($this->data)." -cert -sha256 -no_nonce -out ".escapeshellarg($outfilepath);
-        $retarray = array();
-        exec($cmd." 2>&1", $retarray, $retcode);
+        $cmd = "ts -query -data ".escapeshellarg($this->data)." -cert -sha256 -no_nonce -out ".escapeshellarg($outfilepath);
+        $opensslResult = $this->runOpenSSL($cmd);
+        $retarray = $opensslResult['retarray'];
+        $retcode = $opensslResult['retcode'];
         
         if ($retcode !== 0)
             throw new \Exception("OpenSSL does not seem to be installed: ".implode(", ", $retarray));
@@ -185,10 +186,10 @@ class TrustedTimestamps {
         }
         
         
-        $cmd = "openssl ts -reply -in ".escapeshellarg($this->responsefile_path)." -text";
-        
-        $retarray = array();
-        exec($cmd." 2>&1", $retarray, $retcode);
+        $cmd = "ts -reply -in ".escapeshellarg($this->responsefile_path)." -text";
+        $opensslResult = $this->runOpenSSL($cmd);
+        $retarray = $opensslResult['retarray'];
+        $retcode = $opensslResult['retcode'];
         
         if ($retcode !== 0)
             throw new \Exception("The reply failed: ".implode(", ", $retarray));
@@ -278,6 +279,18 @@ class TrustedTimestamps {
     }
     
     /**
+    * Run OpenSSL via exec() with a provided command
+    * @return array 
+    */
+    private function runOpenSSL($cmd) {
+        $retarray = array();
+        exec("openssl " . $cmd." 2>&1", $retarray, $retcode);
+        
+        return array("retarray" => $retarray,
+                     "retcode" => $retcode);
+    }
+    
+    /**
      * Validates a file against its timestamp and optionally check a provided time for consistence with the time encoded 
      * in the timestamp itself.
      *
@@ -295,10 +308,11 @@ class TrustedTimestamps {
         if (!file_exists($this->stampcert))
             throw new \Exception("The TSA-Certificate could not be found");
 
-        $cmd = "openssl ts -verify -data ".escapeshellarg($this->data)." -in ".escapeshellarg($this->responsefile_path)." -CAfile ".escapeshellarg($this->stampcert);
+        $cmd = "ts -verify -data ".escapeshellarg($this->data)." -in ".escapeshellarg($this->responsefile_path)." -CAfile ".escapeshellarg($this->stampcert);
         
-        $retarray = array();
-        exec($cmd." 2>&1", $retarray, $retcode);
+        $opensslResult = $this->runOpenSSL($cmd);
+        $retarray = $opensslResult['retarray'];
+        $retcode = $opensslResult['retcode'];
         
         /*
          * just 2 "normal" cases: 

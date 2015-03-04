@@ -433,4 +433,4 @@ if (!$old_timestamping_global) {
 // END
 $msg_arr[] = "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)";
 $_SESSION['infos'] = $msg_arr;
-//header('Location: sysconfig.php');
+header('Location: sysconfig.php');

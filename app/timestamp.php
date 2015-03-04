@@ -37,26 +37,6 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     exit;
 }
 
-// check if a timestamp provider is set. If not, throw an error message
-// if (get_config('stampprovider')) {
-//     $ts_url = get_config('stampprovider');
-// } else {
-//     $msg_arr[] = _('There was an error in the timestamping. No timestamping service provider has been configured.');
-//     $_SESSION['errors'] = $msg_arr;
-//     header("Location: ../experiments.php?mode=view&id=$id");
-//     exit;
-// }
-
-// this is somewhat reduntant to the php function hash_algos(), but will ensure only strong sha2 algorithms can be used
-$hash_algorithms = array('sha256', 'sha384', 'sha512');
-
-// // check if a valid hash algorithm has been selected. If not, fall back to sane defaults (sha256)
-// if (get_config('stamphash') and in_array(get_config('stamphash'), $hash_algorithms)) {
-//     $stamphash = get_config('stamphash');
-// } else {
-//     $stamphash = 'sha256';
-// }
-
 // Get login/password info
 // if the team config is set, we use this one, else, we use the general one, unless we can't (not allowed in config)
 $stamp_params = getTimestampParameters();
@@ -82,8 +62,7 @@ $mpdf->SetCreator('www.elabftw.net');
 $mpdf->WriteHTML($pdf->content);
 $mpdf->Output($pdf_path, 'F');
 
-$trusted_timestamp = new Elabftw\Elabftw\TrustedTimestamps($provider, $pdf_path, NULL, $login, $password, NULL);
-//$requestfile_path = $trusted_timestamp->createRequestfile($pdf_path);
+$trusted_timestamp = new Elabftw\Elabftw\TrustedTimestamps($provider, $pdf_path, NULL, $login, $password, NULL, $hash);
 
 // REQUEST TOKEN
 try {

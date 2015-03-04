@@ -372,7 +372,12 @@ if ($old_timestamping_global || $old_timestamping_teams) {
     // Download Universign root certificate and convert to PEM format
     $url = "https://www.universign.eu/en/documents/universign-tsa-root.crt";
     $destination = ELAB_ROOT . 'uploads/universign-tsa-root.crt';
-    cURLdownload($url, $destination);
+    $download = cURLdownload($url, $destination);
+    if ($download) {
+        echo ">>> Downloaded Universign root certificate";
+    } else {
+        die("Download of Universign root certificate failed");
+    }
 
     // Convert from DER to PEM
     $cmd = 'x509 -in ' . $destination . ' -inform der -out ' . ELAB_ROOT . 'uploads/universign-tsa-root.pem -outform pem';

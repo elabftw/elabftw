@@ -1113,8 +1113,7 @@ function cURLcheckBasicFunctions()
 }
 
 /*
- * Returns string status information.
- * Can be changed to int or bool return types.
+ * Downloads a file with cURL; Returns bool status information.
  * @param string $url URL to download
  * @param string $file Path and filename as which the download is to be saved
  * @return bool Return true if the download succeeded, else false

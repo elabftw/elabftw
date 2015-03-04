@@ -307,7 +307,12 @@ if (!$table_is_here) {
 
 // 20150304 : add rfc 3161 timestamping/generic timestamping providers
 
-// check if stamppass and stamplogin are set but not stampprovider => old-style timestamping using Universign
+// add stampprovider, stampcert and stamphash to teams table
+add_field('teams', 'stampprovider', "TEXT NULL DEFAULT NULL", ">>> Added timestamp team config (provider)\n");
+add_field('teams', 'stampcert', "TEXT NULL DEFAULT NULL", ">>> Added timestamp team config (cert)\n");
+add_field('teams', 'stamphash', "VARCHAR(10) NULL DEFAULT 'sha256'", ">>> Added timestamp team config (hash)\n");
+
+// check if stamppass and stamplogin are set globally but not stampprovider => old-style timestamping using Universign
 $sql = "SELECT conf_name FROM config";
 $req = $pdo->prepare($sql);
 $req->execute();
@@ -318,20 +323,52 @@ while ($show = $req->fetch()) {
 }
 
 if (in_array('stamplogin', $config_items) && in_array('stamppass', $config_items) && !in_array('stampprovider', $config_items)) {
-    print_r("FOUND");
-        $old_timestamping_global = true;
+    $old_timestamping_global = true;
 }
 
+// if Universign was used globally, add timestamping parameters
 if ($old_timestamping_global) {
     $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('stampprovider', 'https://ws.universign.eu/tsa'), ('stampcert', :certfile), ('stamphash', 'sha256')";
     $req = $pdo->prepare($sql);
     $res = $req->execute(array('certfile' => ELAB_ROOT . 'uploads/universign-tsa-root.pem'));
     if ($res) {
-        echo ">>> Added Universign.eu as RFC 3161 TSA\n";
+        echo ">>> Added Universign.eu as global RFC 3161 TSA\n";
     } else {
         die($die_msg);
     }
+}
 
+// check if stamppass and stamplogin are set for teams but not stampprovider => old-style timestamping using Universign
+$sql = "SELECT * FROM teams";
+$req = $pdo->prepare($sql);
+$req->execute();
+$teams = [];
+$old_timestamping_teams = false;
+while ($show = $req->fetch()) {
+    array_push($teams, $show);
+}
+
+// check for each team and set timestamping parameters if needed
+foreach ($teams as $team) {
+    if ($team['stamplogin'] !== '' && $team['stamppass'] !== '' && $team['stampprovider'] === '') {
+        $old_timestamping_teams = true;
+        $sql = "UPDATE teams SET stampprovider = 'https://ws.universign.eu/tsaa', stampcert = :certfile,
+                stamphash = 'sha256' WHERE team_id = :id";
+        $req = $pdo->prepare($sql);
+        $res = $req->execute(array(
+            'certfile' => ELAB_ROOT . 'uploads/universign-tsa-root.pem',
+            'id' => $team['team_id']
+            ));
+        if ($res) {
+            echo ">>> Added Universign.eu as RFC 3161 TSA for team #" . $team['team_id'] . "\n";
+        } else {
+            die($die_msg);
+        }
+    }
+}
+
+// if Universign was used either globally or on a per team level, correct the recorded dates for the timestamps in the database
+if ($old_timestamping_global || $old_timestamping_teams) {
     // Download Universign root certificate and convert to PEM format
     $url = "https://www.universign.eu/en/documents/universign-tsa-root.crt";
     $destination = ELAB_ROOT . 'uploads/universign-tsa-root.crt';
@@ -339,49 +376,59 @@ if ($old_timestamping_global) {
 
     // Convert from DER to PEM
     $cmd = 'x509 -in ' . $destination . ' -inform der -out ' . ELAB_ROOT . 'uploads/universign-tsa-root.pem -outform pem';
+    $retarray = [];
     exec("openssl ".$cmd." 2>&1", $retarray, $retcode);
+    if ($retcode === 0) {
+        echo ">>> Converted Universign root certificate to PEM format\n";
+    } else {
+        die("Conversion of Universign root certificate to PEM format failed!");
+    }
     // Remove DER-formatted file
     unlink($destination);
 
-
-}
-
-//if ($old_timestamping_global) {
     // check if we have timestamped experiments
     $sql = "SELECT * FROM experiments";
     $req = $pdo->prepare($sql);
     $req->execute();
-    require_once 'vendor/autoload.php';)
+    require_once 'vendor/autoload.php';
     while ($show = $req->fetch()) {
-        print_r(var_dump($show));
-        if (in_array('timestamped', $show)) {
-            $timestamped_experiments = true;
+        if ($show['timestamped'] === '1') {
+            $ts = new Elabftw\Elabftw\TrustedTimestamps(null, null, ELAB_ROOT . 'uploads/' . $show['timestamptoken']);
+            $date = $ts->getResponseTime();
+            if ($show['timestampedwhen'] !== $date) {
+                $sql_update = "UPDATE experiments SET timestampedwhen = :date WHERE id = :id";
+                $req_update = $pdo->prepare($sql_update);
+                $res_update = $req_update->execute(array('date' => $date, 'id' => $show['id']));
+                if($res_update) {
+                    echo ">>> Corrected timestamp data for experiment #" . $show['id'] . "\n";
+                } else {
+                    die($die_msg);
+                }
+            }
         }
     }
-//}
+}
 
-// add_field('teams', 'stampprovider', "TEXT NULL DEFAULT NULL", ">>> Added timestamp team config (provider)\n");
-// add_field('teams', 'stampcert', "TEXT NULL DEFAULT NULL", ">>> Added timestamp team config (cert)\n");
-// add_field('teams', 'stamphash', "VARCHAR(10) NULL DEFAULT 'sha256'", ">>> Added timestamp team config (hash)\n");
-//
-// // add stampprovider, stampcert and stamphash to configuration
-// // check if we need to
-// $sql = "SELECT COUNT(*) AS confcnt FROM config";
-// $req = $pdo->prepare($sql);
-// $req->execute();
-// $confcnt = $req->fetch(PDO::FETCH_ASSOC);
-//
-// if ($confcnt['confcnt'] < 17) {
-//     $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('stampprovider', null), ('stampcert', null), ('stamphash', 'sha256')";
-//     $req = $pdo->prepare($sql);
-//     $res = $req->execute();
-//     if ($res) {
-//         echo ">>> Added timestamping provider, certificate and hash algorithm\n";
-//     } else {
-//         die($die_msg);
-//     }
-// }
+// if Universign.eu was not used, a database update might still be needed; check for that
+if (!$old_timestamping_global) {
+    // add stampprovider, stampcert and stamphash to configuration
+    // check if we need to
+    $sql = "SELECT COUNT(*) AS confcnt FROM config";
+    $req = $pdo->prepare($sql);
+    $req->execute();
+    $confcnt = $req->fetch(PDO::FETCH_ASSOC);
 
+    if ($confcnt['confcnt'] < 17) {
+        $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('stampprovider', null), ('stampcert', null), ('stamphash', 'sha256')";
+        $req = $pdo->prepare($sql);
+        $res = $req->execute();
+        if ($res) {
+            echo ">>> Added global timestamping provider, certificate and hash algorithm\n";
+        } else {
+            die($die_msg);
+        }
+    }
+}
 
 // END
 $msg_arr[] = "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)";

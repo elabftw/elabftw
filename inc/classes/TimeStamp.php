@@ -42,6 +42,7 @@ class TrustedTimestamps {
     private $responseTime;
     
     private $responsefile_path;
+    private $tmpfiles;
     
     /**
      * Class constructor

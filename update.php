@@ -374,7 +374,7 @@ if ($old_timestamping_global || $old_timestamping_teams) {
     $destination = ELAB_ROOT . 'uploads/universign-tsa-root.crt';
     $download = cURLdownload($url, $destination);
     if ($download) {
-        echo ">>> Downloaded Universign root certificate";
+        echo ">>> Downloaded Universign root certificate\n";
     } else {
         die("Download of Universign root certificate failed");
     }

@@ -276,7 +276,7 @@ class TrustedTimestamps {
         
         $this->binaryResponseString = $binaryResponseString;
         $this->base64ResponseString = $base64ResponseString;
-        $this->responseTime = $this->getTimestampFromAnswer($base64ResponseString);
+        $this->responseTime = $this->getTimestampFromAnswer();
     }
     
     /**

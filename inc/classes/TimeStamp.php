@@ -87,11 +87,11 @@ class TrustedTimestamps {
     }
     
     /**
-    * Returns response in binary form
-    * @return string|bool binary response or False on error
-    */
+     * Returns response in binary form
+     * @return string|bool binary response or False on error
+     */
     public function getBinaryResponse() {
-        if(!is_null($this->binaryResponseString)) {
+        if (!is_null($this->binaryResponseString)) {
             return $this->binaryResponseString;
         } else {
             return False;
@@ -99,11 +99,11 @@ class TrustedTimestamps {
     }
 
     /**
-    * Returns response base64-encoded
-    * @return string|bool base64-encoded response or False on error
-    */
+     * Returns response base64-encoded
+     * @return string|bool base64-encoded response or False on error
+     */
     public function getBase64Response() {
-        if(!is_null($this->base64ResponseString)) {
+        if (!is_null($this->base64ResponseString)) {
         return $this->base64ResponseString;
         } else {
             return False;
@@ -111,11 +111,11 @@ class TrustedTimestamps {
     }
 
     /**
-    * Returns date and time of when the response was generated
-    * @return string|bool response time or False on error
-    */
+     * Returns date and time of when the response was generated
+     * @return string|bool response time or False on error
+     */
     public function getResponseTime() {
-        if(!is_null($this->responseTime)) {
+        if (!is_null($this->responseTime)) {
         return $this->responseTime;
         } else {
             return False;
@@ -128,14 +128,16 @@ class TrustedTimestamps {
      * @param string $str Content which should be written to the newly created tempfile
      * @return string filepath of the created tempfile
      */
-    private function createTempFile ($str = "") {
-        $tempfilename = tempnam(ELAB_ROOT . 'uploads/tmp', rand());
+    private function createTempFile($str = "") {
+        $tempfilename = tempnam(ELAB_ROOT.'uploads/tmp', rand());
 
-        if (!file_exists($tempfilename))
-            throw new \Exception("Tempfile could not be created");
+        if (!file_exists($tempfilename)) {
+                    throw new \Exception("Tempfile could not be created");
+        }
             
-        if (!empty($str) && !file_put_contents($tempfilename, $str))
-            throw new \Exception("Could not write to tempfile");
+        if (!empty($str) && !file_put_contents($tempfilename, $str)) {
+                    throw new \Exception("Could not write to tempfile");
+        }
             
         array_push($this->tmpfiles, $tempfilename);
 
@@ -146,33 +148,35 @@ class TrustedTimestamps {
      * Process the response file and populate class variables accordingly.
      */
     private function processResponsefile() {
-        if(is_file($this->responsefilePath)) {
+        if (is_file($this->responsefilePath)) {
             $this->binaryResponseString = file_get_contents($this->responsefilePath);
             $this->base64ResponseString = base64_encode($this->binaryResponseString);
             $this->responsefilePath = $this->createTempFile($this->binaryResponseString);
             $this->responseTime = $this->getTimestampFromAnswer();
         } else {
-            throw new \Exception("The responsefile " . $this->responsefilePath . " was not found!");
+            throw new \Exception("The responsefile ".$this->responsefilePath." was not found!");
         }
     }
     
     /**
      * Creates a Timestamp Requestfile from a filename
      */
-    private function createRequestfile () {
+    private function createRequestfile() {
         $outfilepath = $this->createTempFile();
         $cmd = "ts -query -data ".escapeshellarg($this->data)." -cert -sha256 -no_nonce -out ".escapeshellarg($outfilepath);
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];
         $retcode = $opensslResult['retcode'];
         
-        if ($retcode !== 0)
-            throw new \Exception("OpenSSL does not seem to be installed: ".implode(", ", $retarray));
+        if ($retcode !== 0) {
+                    throw new \Exception("OpenSSL does not seem to be installed: ".implode(", ", $retarray));
+        }
         
-        if (stripos($retarray[0], "openssl:Error") !== false)
-            throw new \Exception("There was an error with OpenSSL. Is version >= 0.99 installed?: ".implode(", ", $retarray));
+        if (stripos($retarray[0], "openssl:Error") !== false) {
+                    throw new \Exception("There was an error with OpenSSL. Is version >= 0.99 installed?: ".implode(", ", $retarray));
+        }
 
-         $this->requestfilePath = $outfilepath;
+            $this->requestfilePath = $outfilepath;
     }
     
     /**
@@ -180,7 +184,7 @@ class TrustedTimestamps {
      *
      * @return int unix timestamp
      */
-    private function getTimestampFromAnswer () {
+    private function getTimestampFromAnswer() {
         if (is_null($this->responsefilePath) && !is_null($this->binaryResponseString)) {
             $this->responsefilePath = $this->createTempFile();
             file_put_contents($this->responsefilePath, $this->binaryResponseString);
@@ -192,8 +196,9 @@ class TrustedTimestamps {
         $retarray = $opensslResult['retarray'];
         $retcode = $opensslResult['retcode'];
         
-        if ($retcode !== 0)
-            throw new \Exception("The reply failed: ".implode(", ", $retarray));
+        if ($retcode !== 0) {
+                    throw new \Exception("The reply failed: ".implode(", ", $retarray));
+        }
         
         $matches = array();
         $responseTime = 0;
@@ -218,9 +223,9 @@ class TrustedTimestamps {
                 $responseTime = strtotime($matches[1]);
                 // workaround for faulty php strtotime function, that does not handle times in format "Feb 25 23:29:13.331 2015 GMT"
                 // currently this accounts for the format used presumably by Universign.eu
-                if(!$responseTime) {
+                if (!$responseTime) {
                     $date = DateTime::createFromFormat("M j H:i:s.u Y T", $matches[1]);
-                    if($date) {
+                    if ($date) {
                         $responseTime = $date->getTimestamp();
                     } else {
                         $responseTime = False;
@@ -230,8 +235,9 @@ class TrustedTimestamps {
             }
         }
 
-        if (!$responseTime)
-            throw new \Exception("The Timestamp was not found"); 
+        if (!$responseTime) {
+                    throw new \Exception("The Timestamp was not found");
+        }
         
         /* Return formatted time as this is, what we will store in the database.
          * PHP will take care of correct timezone conversions (if configured correctly)
@@ -242,11 +248,11 @@ class TrustedTimestamps {
     /**
      * Request a timestamp and parse the response
      */    
-    private function generateToken () {   
+    private function generateToken() {   
         if (is_null($this->requestfilePath)) {
             throw new \Exception("Cannot create new timestamp token! No data was provided during initialization!");
         } elseif (!file_exists($this->requestfilePath)) {
-            throw new \Exception("The Requestfile was not found: ". $this->requestfilePath);
+            throw new \Exception("The Requestfile was not found: ".$this->requestfilePath);
         }
 
         $ch = curl_init();
@@ -268,9 +274,10 @@ class TrustedTimestamps {
         $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
         
-        if ($status != 200 || !strlen($binaryResponseString))
-            // return false if request fails. Must be catched by calling function!
+        if ($status != 200 || !strlen($binaryResponseString)) {
+                    // return false if request fails. Must be catched by calling function!
             return false;
+        }
         
         $base64ResponseString = base64_encode($binaryResponseString);
         
@@ -280,15 +287,15 @@ class TrustedTimestamps {
     }
     
     /**
-    * Run OpenSSL via exec() with a provided command
-    * @return array<string,string> 
-    */
+     * Run OpenSSL via exec() with a provided command
+     * @return array<string,string> 
+     */
     private function runOpenSSL($cmd) {
         $retarray = array();
-        exec("openssl " . $cmd." 2>&1", $retarray, $retcode);
+        exec("openssl ".$cmd." 2>&1", $retarray, $retcode);
         
         return array("retarray" => $retarray,
-                     "retcode" => $retcode);
+                        "retcode" => $retcode);
     }
     
     /**
@@ -298,16 +305,19 @@ class TrustedTimestamps {
      * @param int|null $timeToCheck The response time, which should be checked
      * @return bool
      */
-    public function validate ($timeToCheck = NULL)
+    public function validate($timeToCheck = NULL)
     {       
-        if (!is_file($this->responsefilePath))
-            throw new \Exception("There was no response-string");    
+        if (!is_file($this->responsefilePath)) {
+                    throw new \Exception("There was no response-string");
+        }
             
-        if (!intval($this->responseTime))
-            throw new \Exception("There is no valid response-time given");
+        if (!intval($this->responseTime)) {
+                    throw new \Exception("There is no valid response-time given");
+        }
             
-        if (!file_exists($this->stampCert))
-            throw new \Exception("The TSA-Certificate could not be found");
+        if (!file_exists($this->stampCert)) {
+                    throw new \Exception("The TSA-Certificate could not be found");
+        }
 
         $cmd = "ts -verify -data ".escapeshellarg($this->data)." -in ".escapeshellarg($this->responsefilePath)." -CAfile ".escapeshellarg($this->stampCert);
         
@@ -341,8 +351,9 @@ class TrustedTimestamps {
         
         foreach ($retarray as $retline)
         {
-            if (stripos($retline, "message imprint mismatch") !== false)
-                return false;
+            if (stripos($retline, "message imprint mismatch") !== false) {
+                            return false;
+            }
         }
 
         throw new \Exception("Systemcommand failed: ".implode(", ", $retarray));

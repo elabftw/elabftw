@@ -92,8 +92,7 @@ foreach ($lines as $line) {
     // Add this line to the current segment
     $queryline .= $line;
     // If it has a semicolon at the end, it's the end of the query
-    if (substr(trim($line), -1, 1) == ';')
-    {
+    if (substr(trim($line), -1, 1) == ';') {
         // Perform the query
         q($queryline);
         // Reset temp variable to empty
@@ -118,6 +117,11 @@ define('ELAB_ROOT', '".$elab_root . "');
 // we try to write content to file and propose the file for download if we can't write to it
 
 if (file_put_contents($config_file, $config)) {
+    // it's cool, we managed to write the config file
+    // let's put restricting permissions on it as discussed in #129
+    if (is_writable($config_file)) {
+        chmod($config_file, 0400);
+    }
     $infos_arr = array();
     $infos_arr[] = 'Congratulations, you successfully installed eLabFTW, 
     now you need to <strong>register</strong> your account (you will have admin rights).';

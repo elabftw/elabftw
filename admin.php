@@ -69,7 +69,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
     <button class='button' type='submit'>"._('Submit') . "</button></div>";
     display_message('error', $message);
     // as this will 'echo', we need to call it at the right moment. It will not go smoothly into $message.
-    $formKey->output_formkey();
+    $formKey->outputFormkey();
     echo "</form>";
 }
 ?>
@@ -220,7 +220,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
     <h4><strong><?php echo _('Delete an account'); ?></strong></h4>
     <form action='app/admin-exec.php' method='post'>
         <!-- form key -->
-        <?php $formKey->output_formkey(); ?>
+        <?php $formKey->outputFormkey(); ?>
         <label for='delete_user'><?php echo _('Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:'); ?></label>
         <input type='email' name='delete_user' id='delete_user' />
         <br>

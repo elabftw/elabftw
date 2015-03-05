@@ -100,6 +100,6 @@ echo "chown -R $user:$group $elab_root"
 echo "================================"
 echo "[°] It is a good idea to secure the config file also :"
 echo "================================"
-echo "chmod 644 $elab_root/config.php"
+echo "chmod 400 $elab_root/config.php"
 echo "================================"
 exit 0

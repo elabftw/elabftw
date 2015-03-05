@@ -25,12 +25,14 @@
 ********************************************************************************/
 namespace Elabftw\Elabftw;
 
-class MakePdf {
+class MakePdf
+{
 
     private $id;
     private $type;
     private $data;
     private $cleanTitle;
+    private $body;
 
     public $author;
     public $title;
@@ -47,6 +49,7 @@ class MakePdf {
         $this->setAuthor();
         $this->setCleanTitle();
         $this->setTags();
+        $this->buildBody();
         $this->buildContent();
     }
 
@@ -300,6 +303,12 @@ class MakePdf {
         }
     }
 
+    // we need to fix the file path in the body so it shows properly into the pdf for timestamping (issue #131)
+    private function buildBody()
+    {
+        $this->body = str_replace("src=\"uploads/", "src=\"" . ELAB_ROOT . "uploads/", $this->data['body']);
+    }
+
     private function buildContent()
     {
         // build HTML content that will be fed to mpdf->WriteHTML()
@@ -308,7 +317,7 @@ class MakePdf {
             Date : ".format_date($this->data['date']) . "<br />
             <em>Tags : ".$this->tags . "</em><br />
             Made by : " . $this->author . "
-            <hr><p>" . stripslashes($this->data['body']) . "</p>";
+            <hr><p>" . stripslashes($this->body) . "</p>";
 
         $this->addLinkedItems();
         $this->addAttachedFiles();

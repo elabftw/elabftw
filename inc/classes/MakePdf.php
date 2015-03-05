@@ -25,7 +25,8 @@
 ********************************************************************************/
 namespace Elabftw\Elabftw;
 
-class MakePdf {
+class MakePdf
+{
 
     private $id;
     private $type;

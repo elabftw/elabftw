@@ -166,7 +166,7 @@ class TrustedTimestamps {
      */
     private function createRequestfile() {
         $outfilepath = $this->createTempFile();
-        $cmd = "ts -query -data ".escapeshellarg($this->data)." -cert -" . $this->stampHash ." -no_nonce -out ".escapeshellarg($outfilepath);
+        $cmd = "ts -query -data ".escapeshellarg($this->data)." -cert -".$this->stampHash." -no_nonce -out ".escapeshellarg($outfilepath);
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];
         $retcode = $opensslResult['retcode'];
@@ -207,11 +207,11 @@ class TrustedTimestamps {
     /**
      * Extracts the unix timestamp from the base64-encoded response string as returned by signRequestfile
      *
-     * @return int unix timestamp
+     * @return string unix timestamp
      */
     private function getTimestampFromAnswer() {
 
-        if(!$this->checkResponseFileAvailability()) {
+        if (!$this->checkResponseFileAvailability()) {
             throw new \RuntimeException('Response file was not found and could not be created from binary response string.');
         }
 
@@ -312,6 +312,7 @@ class TrustedTimestamps {
 
     /**
      * Run OpenSSL via exec() with a provided command
+     * @param string $cmd
      * @return array<string,string>
      */
     private function runOpenSSL($cmd) {
@@ -323,9 +324,9 @@ class TrustedTimestamps {
     }
 
     /**
-    * Check if the requirements to perform a validation are met.
-    * @return bool Returns true if the requirements are met, otherwise throw an exception
-    */
+     * Check if the requirements to perform a validation are met.
+     * @return bool Returns true if the requirements are met, otherwise throw an exception
+     */
     private function checkValidationPrerequisits() {
         if (!is_file($this->responsefilePath)) {
                     throw new \Exception("There was no response-string");

@@ -47,7 +47,7 @@ require_once 'inc/info_box.php';
             ?>
             <div class='col-md-3'>
                 <label for='searchin'><?php echo _('Search in'); ?></label>
-                <select name='type' id='searchin' onchange='toggleTag();'>
+                <select name='type' id='searchin'>
                     <option value='experiments'><?php echo ngettext('Experiment', 'Experiments', 2); ?></option>
                     <option disabled>----------------</option>
                     <option value='database' <?php echo $seldb; ?>><?php echo ngettext('Database', '', 1); ?></option>

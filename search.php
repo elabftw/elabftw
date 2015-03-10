@@ -50,7 +50,7 @@ require_once 'inc/info_box.php';
                 <select name='type' id='searchin'>
                     <option value='experiments'><?php echo ngettext('Experiment', 'Experiments', 2); ?></option>
                     <option disabled>----------------</option>
-                    <option value='database' <?php echo $seldb; ?>><?php echo ngettext('Database', '', 1); ?></option>
+                    <option value='database' <?php echo $seldb; ?>><?php echo _('Database'); ?></option>
                     <?php // Database items types
                     $sql = "SELECT * FROM items_types WHERE team = :team ORDER BY name ASC";
                     $req = $pdo->prepare($sql);
@@ -71,9 +71,9 @@ require_once 'inc/info_box.php';
             <!-- END SEARCH IN -->
             <!-- SEARCH WITH TAG -->
             <div class='col-md-3' id='tag_exp'>
-                <label for='tag_exp'><?php echo _('With the Tag'); ?></label>
+                <label for='tag_exp'><?php echo _('With the tag'); ?></label>
                 <select name='tag_exp'>
-                    <option value=''><?php echo ngettext('Select a Tag', '', 1); ?></option>
+                    <option value=''><?php echo _('Select a Tag'); ?></option>
                     <?php // Database items types
                     $sql = "SELECT tag, COUNT(id) as nbtag FROM experiments_tags GROUP BY tag ORDER BY tag ASC";
                     $req = $pdo->prepare($sql);
@@ -92,9 +92,9 @@ require_once 'inc/info_box.php';
                 </select>
             </div>
             <div class='col-md-3' id='tag_db'>
-                <label for='tag_db'><?php echo _('With the Tag'); ?></label>
+                <label for='tag_db'><?php echo _('With the tag'); ?></label>
                 <select name='tag_db'>
-                    <option value=''><?php echo ngettext('Select a Tag', '', 1); ?></option>
+                    <option value=''><?php echo _('Select a tag'); ?></option>
                     <?php // Database items types
                     $sql = "SELECT tag, COUNT(id) as nbtag FROM items_tags GROUP BY tag ORDER BY tag ASC";
                     $req = $pdo->prepare($sql);
@@ -112,25 +112,6 @@ require_once 'inc/info_box.php';
                     ?>
                 </select>
             </div>
-            <script>
-                <?php
-                if (isset($_GET['type']) && $_GET['type'] == 'experiments') {
-                    echo '$("#tag_db").hide();';
-                } else {
-                    echo '$("#tag_exp").hide();';
-                }
-                ?>
-
-                $('#searchin').on('change', function() {
-                    if(this.value == 'experiments'){
-                        $("#tag_exp").show();
-                        $("#tag_db").hide();
-                    }else{
-                        $("#tag_exp").hide();
-                        $("#tag_db").show();
-                    }
-                });
-            </script>
             <!-- END SEARCH WITH TAG -->
             <!-- SEARCH ONLY -->
             <div class='col-md-6'>
@@ -146,11 +127,11 @@ require_once 'inc/info_box.php';
                     ));
                     while ($users = $users_req->fetch()) {
                         echo "<option value='" . $users['userid'] . "'";
-                            // item get selected if it is in the search url
-                            if (isset($_GET['owner']) && ($users['userid'] == $_GET['owner'])) {
-                                echo " selected='selected'";
-                            }
-                            echo ">" . $users['firstname'] . " " . $users['lastname'] . "</option>";
+                        // item get selected if it is in the search url
+                        if (isset($_GET['owner']) && ($users['userid'] == $_GET['owner'])) {
+                            echo " selected='selected'";
+                        }
+                        echo ">" . $users['firstname'] . " " . $users['lastname'] . "</option>";
                     }
                     ?>
                 </select><br>
@@ -159,14 +140,15 @@ require_once 'inc/info_box.php';
                     // keep the box checked if it was checked
                     if (isset($_GET['all'])) {
                         echo "checked=checked";
-                    }?>>
+                    }
+?>>
                 <label for='all_experiments_chkbx'><?php echo _("search in everyone's experiments"); ?> </label>
             </div>
-            <!-- END _('Search') ONLY -->
+            <!-- END SEARCH ONLY -->
         </div>
 
         <div class='row'>
-            <!-- _('Search') DATE -->
+            <!-- SEARCH DATE -->
             <div class='col-md-8'>
                 <label for='from'><?php echo _('Where date is between'); ?></label>
                 <input id='from' name='from' type='text' size='8' class='datepicker' value='<?php
@@ -466,12 +448,16 @@ if (isset($_GET)) {
                 $results_id_str = rtrim($results_id_str, '+');
                     ?>
 
-                <div class='align_right'><a name='anchor'></a>
-                <p class='inline'><?php echo _('Export this result:'); ?> </p>
-                <a href='make_zip.php?id=<?php echo $results_id_str; ?>&type=experiments'>
-                <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>
+                <div class='align_right'>
+                    <a name='anchor'></a>
+                    <p class='inline'><?php echo _('Export this result:'); ?> </p>
+                    <a href='make_zip.php?id=<?php echo $results_id_str; ?>&type=experiments'>
+                        <img src='img/zip.png' title='make a zip archive' alt='zip' />
+                    </a>
 
-                    <a href='make_csv.php?id=<?php echo $results_id_str; ?>&type=experiments'><img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export in spreadsheet file' /></a>
+                    <a href='make_csv.php?id=<?php echo $results_id_str; ?>&type=experiments'>
+                        <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' />
+                    </a>
                 </div>
     <?php
                 echo "<p id='search_count'>" . $count . " " . ngettext("result found", "results found", $count) . "</p>";
@@ -487,16 +473,29 @@ if (isset($_GET)) {
         // DATABASE SEARCH
         } elseif (is_pos_int($_GET['type']) || $_GET['type'] === 'database') {
 
-            if($_GET['type'] === 'database' && empty($title) && empty($body) && empty($tags) && empty($status) && empty($rating) && empty($from) && empty($to)){
+            if ($_GET['type'] === 'database' &&
+                empty($title) &&
+                empty($body) &&
+                empty($tags) &&
+                empty($status) &&
+                empty($rating) &&
+                empty($from) &&
+                empty($to)) {
+
                 $sqlFirst = "SELECT i.* FROM items as i, items_tags as itag WHERE i.id > 0";
-            } elseif($_GET['type'] === 'database'){
+
+            } elseif ($_GET['type'] === 'database') {
+
                 $sqlFirst = "SELECT i.* FROM items as i, items_tags as itag WHERE i.id > 0";
+
             } else {
+
                 $sqlFirst = "SELECT i.* FROM items as i, items_tags as itag WHERE type = :type";
             }
+
             $sql = $sqlFirst . $sqlTitle .  $sqlBody . $sqlTag . $sqlRating . $sqlDate . $sqlGroup;
             $req = $pdo->prepare($sql);
-            if($_GET['type'] === 'database'){
+            if ($_GET['type'] === 'database') {
                 $req->execute();
             } else {
                 $req->execute(array(
@@ -552,6 +551,24 @@ if (isset($_GET)) {
 $(document).ready(function(){
     // DATEPICKER
     $( ".datepicker" ).datepicker({dateFormat: 'yymmdd'});
+    <?php
+    // I added !isset(get[type]) to avoid showing tab_db if we just got to the page
+    if ((isset($_GET['type']) && $_GET['type'] == 'experiments') || !isset($_GET['type'])) {
+        echo '$("#tag_db").hide();';
+    } else {
+        echo '$("#tag_exp").hide();';
+    }
+    ?>
+
+    $('#searchin').on('change', function() {
+        if(this.value == 'experiments'){
+            $("#tag_exp").show();
+            $("#tag_db").hide();
+        }else{
+            $("#tag_exp").hide();
+            $("#tag_db").show();
+        }
+    });
 <?php
 // scroll to anchor if there is a search
 if (isset($_GET)) {

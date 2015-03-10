@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2014-10-27 17:55+0100\n"
-"PO-Revision-Date: 2015-02-27 00:31+0100\n"
+"PO-Revision-Date: 2015-03-10 11:31+0100\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1031,3 +1031,9 @@ msgstr "Logs"
 
 msgid "Go back to item."
 msgstr "Retourner à l'item."
+
+msgid "Select a tag"
+msgstr "Choisir un tag"
+
+msgid "With the tag"
+msgstr "Avec le tag"

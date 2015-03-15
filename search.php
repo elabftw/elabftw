@@ -36,15 +36,21 @@ require_once 'inc/info_box.php';
 <menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' class='bot5px' alt='' /> <?php echo _('Back to experiments listing'); ?></a></menu>
 <section class='searchform box'>
     <form name="search" method="get" action="search.php">
-
         <div class='row'>
             <!-- SEARCH IN-->
-            <div class='col-md-4'>
+            <?php
+            if (isset($_GET['type']) && $_GET['type'] == 'database') {
+                $seldb = " selected='selected'";
+            } else {
+                $seldb = "";
+            }
+            ?>
+            <div class='col-md-3'>
                 <label for='searchin'><?php echo _('Search in'); ?></label>
                 <select name='type' id='searchin'>
                     <option value='experiments'><?php echo ngettext('Experiment', 'Experiments', 2); ?></option>
                     <option disabled>----------------</option>
-                    <option disabled><?php echo ngettext('Database', '', 1); ?></option>
+                    <option value='database' <?php echo $seldb; ?>><?php echo _('Database'); ?></option>
                     <?php // Database items types
                     $sql = "SELECT * FROM items_types WHERE team = :team ORDER BY name ASC";
                     $req = $pdo->prepare($sql);
@@ -54,7 +60,7 @@ require_once 'inc/info_box.php';
                     while ($items_types = $req->fetch()) {
                         echo "<option value='" . $items_types['id'] . "'";
                         // item get selected if it is in the search url
-                        if (isset($_GET['type']) && ($items_types['id'] == $_GET['type'])) {
+                        if (isset($_GET['type']) && $items_types['id'] == $_GET['type']) {
                             echo " selected='selected'";
                         }
                         echo "> - " . $items_types['name'] . "</option>";
@@ -63,9 +69,52 @@ require_once 'inc/info_box.php';
                 </select>
             </div>
             <!-- END SEARCH IN -->
-
+            <!-- SEARCH WITH TAG -->
+            <div class='col-md-3' id='tag_exp'>
+                <label for='tag_exp'><?php echo _('With the tag'); ?></label>
+                <select name='tag_exp'>
+                    <option value=''><?php echo _('Select a Tag'); ?></option>
+                    <?php // Database items types
+                    $sql = "SELECT tag, COUNT(id) as nbtag FROM experiments_tags GROUP BY tag ORDER BY tag ASC";
+                    $req = $pdo->prepare($sql);
+                    $req->execute(array(
+                        'team' => $_SESSION['team_id']
+                    ));
+                    while ($items_types = $req->fetch()) {
+                        echo "<option value='" . $items_types['tag'] . "'";
+                        // item get selected if it is in the search url
+                        if (isset($_GET['tag_exp']) && ($items_types['tag'] == $_GET['tag_exp'])) {
+                            echo " selected='selected'";
+                        }
+                        echo ">" . $items_types['tag'] . " (" . $items_types['nbtag'] . ")</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+            <div class='col-md-3' id='tag_db'>
+                <label for='tag_db'><?php echo _('With the tag'); ?></label>
+                <select name='tag_db'>
+                    <option value=''><?php echo _('Select a tag'); ?></option>
+                    <?php // Database items types
+                    $sql = "SELECT tag, COUNT(id) as nbtag FROM items_tags GROUP BY tag ORDER BY tag ASC";
+                    $req = $pdo->prepare($sql);
+                    $req->execute(array(
+                        'team' => $_SESSION['team_id']
+                    ));
+                    while ($items_types = $req->fetch()) {
+                        echo "<option value='" . $items_types['tag'] . "'";
+                        // item get selected if it is in the search url
+                        if (isset($_GET['tag_db']) && ($items_types['tag'] == $_GET['tag_db'])) {
+                            echo " selected='selected'";
+                        }
+                        echo ">" . $items_types['tag'] . " (" . $items_types['nbtag'] . ")</option>";
+                    }
+                    ?>
+                </select>
+            </div>
+            <!-- END SEARCH WITH TAG -->
             <!-- SEARCH ONLY -->
-            <div class='col-md-8'>
+            <div class='col-md-6'>
                 <label for'searchonly'><?php echo _('Search only in experiments owned by:'); ?> </label><br>
                 <select id='searchonly' name='owner'>
                     <option value=''><?php echo _('Yourself'); ?></option>
@@ -78,27 +127,28 @@ require_once 'inc/info_box.php';
                     ));
                     while ($users = $users_req->fetch()) {
                         echo "<option value='" . $users['userid'] . "'";
-                            // item get selected if it is in the search url
-                            if (isset($_GET['owner']) && ($users['userid'] == $_GET['owner'])) {
-                                echo " selected='selected'";
-                            }
-                            echo ">" . $users['firstname'] . " " . $users['lastname'] . "</option>";
+                        // item get selected if it is in the search url
+                        if (isset($_GET['owner']) && ($users['userid'] == $_GET['owner'])) {
+                            echo " selected='selected'";
+                        }
+                        echo ">" . $users['firstname'] . " " . $users['lastname'] . "</option>";
                     }
                     ?>
                 </select><br>
                 <!-- search everyone box -->
-                <label for='all_experiments_chkbx'>(<?php echo _("search in everyone's experiments"); ?> </label>
                 <input name="all" id='all_experiments_chkbx' value="y" type="checkbox" <?php
                     // keep the box checked if it was checked
                     if (isset($_GET['all'])) {
                         echo "checked=checked";
-                    }?>>)
+                    }
+?>>
+                <label for='all_experiments_chkbx'><?php echo _("search in everyone's experiments"); ?> </label>
             </div>
-            <!-- END _('Search') ONLY -->
+            <!-- END SEARCH ONLY -->
         </div>
 
         <div class='row'>
-            <!-- _('Search') DATE -->
+            <!-- SEARCH DATE -->
             <div class='col-md-8'>
                 <label for='from'><?php echo _('Where date is between'); ?></label>
                 <input id='from' name='from' type='text' size='8' class='datepicker' value='<?php
@@ -246,8 +296,10 @@ if (isset($_GET)) {
     }
 
     // TAGS
-    if (isset($_GET['tags']) && !empty($_GET['tags'])) {
-        $tags = filter_var($_GET['tags'], FILTER_SANITIZE_STRING);
+    if (isset($_GET['tag_exp']) && !empty($_GET['tag_exp']) && isset($_GET['type']) && $_GET['type'] === 'experiments') {
+        $tags = filter_var($_GET['tag_exp'], FILTER_SANITIZE_STRING);
+    } elseif (isset($_GET['tag_db']) && !empty($_GET['tag_db']) && isset($_GET['type']) && !empty($_GET['type']) && $_GET['type'] !== 'experiments') {
+        $tags = filter_var($_GET['tag_db'], FILTER_SANITIZE_STRING);
     } else {
         $tags = '';
     }
@@ -280,16 +332,26 @@ if (isset($_GET)) {
     }
 
     // PREPARE SQL query
+    if (isset($_GET['type']) && $_GET['type'] === 'experiments') {
+        $tb = 'exp';
+        $tbt = 'exptag';
+    } else {
+        $tb = 'i';
+        $tbt = 'itag';
+    }
+
+    $sqlGroup = " GROUP BY $tb.id";
+
     // Title search
     if (!empty($title)) {
-        $sqlTitle = " AND title LIKE '%$title%'";
+        $sqlTitle = " AND $tb.title LIKE '%$title%'";
     } elseif (isset($title_arr)) {
         $sqlTitle = " AND (";
         foreach ($title_arr as $key => $value) {
             if ($key != 0) {
                 $sqlTitle .= " OR ";
             }
-            $sqlTitle .= "title LIKE '%$value%'";
+            $sqlTitle .= "$tb.title LIKE '%$value%'";
         }
         $sqlTitle .= ")";
     } else {
@@ -298,41 +360,48 @@ if (isset($_GET)) {
 
     // Body search
     if (!empty($body)) {
-        $sqlBody = " AND body LIKE '%$title%'";
+        $sqlBody = " AND $tb.body LIKE '%$title%'";
     } elseif (isset($body_arr)) {
         $sqlBody = " AND (";
         foreach ($body_arr as $key => $value) {
             if ($key != 0) {
                 $sqlBody .= " OR ";
             }
-            $sqlBody .= "body LIKE '%$value%'";
+            $sqlBody .= "$tb.body LIKE '%$value%'";
         }
         $sqlBody .= ")";
     } else {
         $sqlBody = "";
     }
 
+    // Tag search
+    if (!empty($tags)) {
+        $sqlTag = " AND $tb.id = $tbt.item_id AND $tbt.tag = '$tags'";
+    } else {
+        $sqlTag = "";
+    }
+
     // Status search
     if (!empty($status)) {
-        $sqlStatus = " AND status LIKE '$status'";
+        $sqlStatus = " AND $tb.status LIKE '$status'";
     } else {
         $sqlStatus = "";
     }
 
     // Rating search
     if (!empty($rating)) {
-        $sqlRating = " AND rating LIKE '$rating'";
+        $sqlRating = " AND $tb.rating LIKE '$rating'";
     } else {
         $sqlRating = "";
     }
 
     // Date search
     if (!empty($from) && !empty($to)) {
-        $sqlDate = " AND date BETWEEN '$from' AND '$to'";
+        $sqlDate = " AND $tb.date BETWEEN '$from' AND '$to'";
     } elseif (!empty($from) && empty($to)) {
-        $sqlDate = " AND date BETWEEN '$from' AND '99991212'";
+        $sqlDate = " AND $tb.date BETWEEN '$from' AND '99991212'";
     } elseif (empty($from) && !empty($to)) {
-        $sqlDate = " AND date BETWEEN '00000101' AND '$to'";
+        $sqlDate = " AND $tb.date BETWEEN '00000101' AND '$to'";
     } else {
         $sqlDate = "";
     }
@@ -342,13 +411,12 @@ if (isset($_GET)) {
         if ($_GET['type'] === 'experiments') {
 
             if (isset($_GET['all']) && !empty($_GET['all'])) {
-                $sqlFirst = " team = " . $_SESSION['team_id'];
+                $sqlFirst = " $tb.team = " . $_SESSION['team_id'];
             } else {
-                $sqlFirst = " userid = :userid";
+                $sqlFirst = " $tb.userid = :userid";
             }
 
-            $sql = "SELECT * FROM experiments WHERE" . $sqlFirst . $sqlTitle .  $sqlBody . $sqlStatus . $sqlDate;
-            echo $sql;
+            $sql = "SELECT exp.* FROM experiments as exp, experiments_tags as exptag WHERE" . $sqlFirst . $sqlTitle .  $sqlBody . $sqlTag . $sqlStatus . $sqlDate . $sqlGroup;
             $req = $pdo->prepare($sql);
             // if there is a selection on 'owned by', we use the owner id as parameter
             if ($owner_search) {
@@ -380,12 +448,16 @@ if (isset($_GET)) {
                 $results_id_str = rtrim($results_id_str, '+');
                     ?>
 
-                <div class='align_right'><a name='anchor'></a>
-                <p class='inline'><?php echo _('Export this result:'); ?> </p>
-                <a href='make_zip.php?id=<?php echo $results_id_str; ?>&type=experiments'>
-                <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>
+                <div class='align_right'>
+                    <a name='anchor'></a>
+                    <p class='inline'><?php echo _('Export this result:'); ?> </p>
+                    <a href='make_zip.php?id=<?php echo $results_id_str; ?>&type=experiments'>
+                        <img src='img/zip.png' title='make a zip archive' alt='zip' />
+                    </a>
 
-                    <a href='make_csv.php?id=<?php echo $results_id_str; ?>&type=experiments'><img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export in spreadsheet file' /></a>
+                    <a href='make_csv.php?id=<?php echo $results_id_str; ?>&type=experiments'>
+                        <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' />
+                    </a>
                 </div>
     <?php
                 echo "<p id='search_count'>" . $count . " " . ngettext("result found", "results found", $count) . "</p>";
@@ -398,15 +470,39 @@ if (isset($_GET)) {
                 display_message('error_nocross', _("Sorry. I couldn't find anything :("));
             }
 
-    // DATABASE SEARCH
-        } elseif (is_pos_int($_GET['type'])) {
+        // DATABASE SEARCH
+        } elseif (is_pos_int($_GET['type']) || $_GET['type'] === 'database') {
 
-            $sqlFirst = " type = :type";
-            $sql = "SELECT * FROM items WHERE" . $sqlFirst . $sqlTitle .  $sqlBody . $sqlRating . $sqlDate;
+            if ($_GET['type'] === 'database' &&
+                empty($title) &&
+                empty($body) &&
+                empty($tags) &&
+                empty($status) &&
+                empty($rating) &&
+                empty($from) &&
+                empty($to)) {
+
+                $sqlFirst = "SELECT i.* FROM items as i, items_tags as itag WHERE i.id > 0";
+
+            } elseif ($_GET['type'] === 'database') {
+
+                $sqlFirst = "SELECT i.* FROM items as i, items_tags as itag WHERE i.id > 0";
+
+            } else {
+
+                $sqlFirst = "SELECT i.* FROM items as i, items_tags as itag WHERE type = :type";
+            }
+
+            $sql = $sqlFirst . $sqlTitle .  $sqlBody . $sqlTag . $sqlRating . $sqlDate . $sqlGroup;
             $req = $pdo->prepare($sql);
-            $req->execute(array(
-                'type' => $_GET['type']
-            ));
+            if ($_GET['type'] === 'database') {
+                $req->execute();
+            } else {
+                $req->execute(array(
+                    'type' => $_GET['type']
+                ));
+            }
+
             $count = $req->rowCount();
             if ($count > 0) {
                 // make array of results id
@@ -455,6 +551,24 @@ if (isset($_GET)) {
 $(document).ready(function(){
     // DATEPICKER
     $( ".datepicker" ).datepicker({dateFormat: 'yymmdd'});
+    <?php
+    // I added !isset(get[type]) to avoid showing tab_db if we just got to the page
+    if ((isset($_GET['type']) && $_GET['type'] == 'experiments') || !isset($_GET['type'])) {
+        echo '$("#tag_db").hide();';
+    } else {
+        echo '$("#tag_exp").hide();';
+    }
+    ?>
+
+    $('#searchin').on('change', function() {
+        if(this.value == 'experiments'){
+            $("#tag_exp").show();
+            $("#tag_db").hide();
+        }else{
+            $("#tag_exp").hide();
+            $("#tag_db").show();
+        }
+    });
 <?php
 // scroll to anchor if there is a search
 if (isset($_GET)) {

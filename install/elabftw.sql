@@ -187,6 +187,7 @@ CREATE TABLE `items_tags` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `tag` varchar(255) NOT NULL,
   `item_id` int(10) unsigned NOT NULL,
+  `team_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

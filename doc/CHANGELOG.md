@@ -1,5 +1,9 @@
 # Changelog for eLabFTW
 
+# Version 1.1.1
+* fix a bug in SQL structure file (only affect new installs) (thx Nils)
+* add tag search on search page (thx Tim)
+
 # Version 1.1.0
 * multiple file upload now possible
 * add ChemDoodle on Team page

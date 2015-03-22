@@ -28,28 +28,86 @@ $load_more_button = "<div class='center'>
         </div>";
 // array to store results;
 $results_arr = array();
+
+// keep tag var in url
+$getTag = '';
+if (isset($_GET['tag'])) {
+    if ($_GET['tag'] != '') {
+        $getTag = $_GET['tag'];
+    }
+}
+
+// function to keep current order/filter selection in dropdown
+function checkSelectOrder($val){
+    if (isset($_GET['order'])) {
+        if ($_GET['order'] == $val) {
+            echo " selected";
+        }
+    }
+}
+
+function checkSelectSort($val){
+    if (isset($_GET['sort'])) {
+        if ($_GET['sort'] == $val) {
+            echo " selected";
+        }
+    }
+}
+
+function checkSelectFilter($val){
+    if (isset($_GET['filter'])) {
+        if ($_GET['filter'] == $val) {
+            return " selected";
+        }
+    }
+}
 ?>
 <menu class='border'>
-    <a href="app/create_item.php?type=exp"><img src="img/add.png" class='bot5px' alt="" /> <?php echo _('Create experiment'); ?></a> | 
-    <a href='#' class='trigger'><img src="img/add-template.png" class='bot5px' alt="" /> <?php echo _('Create from template'); ?></a>
-
-    <!-- FILTER STATUS dropdown menu -->
-    <span class='align_right'>
-    <select onchange=go_url(this.value)><option value=''><?php echo _('Filter status'); ?></option>
-    <?php
-    $sql = "SELECT id, name FROM status WHERE team = :team_id ORDER BY name ASC";
-    $req = $pdo->prepare($sql);
-    $req->execute(array(
-        'team_id' => $_SESSION['team_id']
-    ));
-    while ($status = $req->fetch()) {
-        echo "<option value='search.php?type=experiments&status=" . $status['id'] . "'>";
-        echo $status['name'] . "</option>";
-    }
-    ?>
-    </select></span>
+    <div class="row">
+        <div class="col-md-6">
+            <a href="app/create_item.php?type=exp"><img src="img/add.png" class='bot5px' alt="" /> <?php echo _('Create experiment'); ?></a> | 
+            <a href='#' class='trigger'><img src="img/add-template.png" class='bot5px' alt="" /> <?php echo _('Create from template'); ?></a>
+        </div>
+        <div class="col-md-6">
+            <form class="form-inline pull-right">
+                <div class="form-group">
+                    <input type="hidden" name="mode" value="show" />
+                    <input type="hidden" name="tag" value="<?php echo $getTag; ?>" />
+                    <!-- ORDER / SORT dropdown menu -->
+                    <select name="order" class="form-control select-order">
+                        <option value=''><?php echo _('Order by'); ?></option>
+                        <option value='date'<?php checkSelectOrder('date'); ?>><?php echo _('Date'); ?></option>
+                        <option value='status'<?php checkSelectOrder('status'); ?>><?php echo _('Status'); ?></option>
+                        <option value='title'<?php checkSelectOrder('title'); ?>><?php echo _('Title'); ?></option>
+                    </select>
+                    <select name="sort" class="form-control select-sort">
+                        <option value=''><?php echo _('Sort'); ?></option>
+                        <option value='desc'<?php checkSelectSort('desc'); ?>><?php echo _('DESC'); ?></option>
+                        <option value='asc'<?php checkSelectSort('asc'); ?>><?php echo _('ASC'); ?></option>
+                    </select>
+                    <button class="btn btn-success submit-order"><?php echo _('Order'); ?></button>
+                    <!-- FILTER STATUS dropdown menu -->
+                    <select name="filter" class="form-control select-filter-status">
+                        <option value=''><?php echo _('Filter status'); ?></option>
+                    <?php
+                    $sql = "SELECT id, name FROM status WHERE team = :team_id ORDER BY name ASC";
+                    $req = $pdo->prepare($sql);
+                    $req->execute(array(
+                        'team_id' => $_SESSION['team_id']
+                    ));
+                    while ($status = $req->fetch()) {
+                        echo "
+                        <option value='" . $status['id'] . "'" . checkSelectFilter($status['id']) . ">" . $status['name'] . "</option>";
+                    }
+                    ?>
+                    </select>
+                    <button class="btn btn-success submit-filter"><?php echo _('Filter'); ?></button>
+                    <button type="reset" class="btn btn-danger submit-reset" onclick="javascript:location.href='experiments.php?mode=show&tag=<?php echo $getTag; ?>';"><?php echo _('Reset'); ?></button>
+                </div>
+            </form>
+        </div>
+    </div>
 </menu>
-
 <!-- TEMPLATE CONTAINER -->
 <div class='toggle_container'><ul>
 <?php // SQL to get user's templates
@@ -72,7 +130,30 @@ $display = $_SESSION['prefs']['display'];
 $order = $_SESSION['prefs']['order'];
 $sort = $_SESSION['prefs']['sort'];
 $limit = $_SESSION['prefs']['limit'];
+$filter = '';
 
+// REPLACE WITH ORDER //
+if (isset($_GET['order'])) {
+    if ($_GET['order'] != '') {
+        if ($_GET['order'] == 'status') {
+            $order = 'st.name';
+        } else {
+            $order = 'ex.' . $_GET['order'];
+        }
+    }
+}
+
+if (isset($_GET['sort'])) {
+    if ($_GET['sort'] != '') {
+        $sort = $_GET['sort'];
+    }
+}
+
+if (isset($_GET['filter'])) {
+    if ($_GET['filter'] != '') {
+        $filter = "AND st.id = '" . $_GET['filter'] . "' ";
+    }
+}
 
 // SQL for showXP
 // reminder : order by and sort must be passed to the prepare(), not during execute()
@@ -156,13 +237,25 @@ if (isset($_GET['q'])) { // if there is a query
 // TAG SEARCH
 } elseif (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
+    $sql = "SELECT ex.id, ex.date, ex.title, st.name, ta.item_id 
+        FROM experiments AS ex, experiments_tags AS ta, status AS st 
+        WHERE ex.userid = :userid 
+        AND ta.userid = :userid 
+        AND ex.status = st.id 
+        AND st.team = :teamid 
+        AND ex.id = ta.item_id 
+        AND ta.tag LIKE :tag 
+        " . $filter . "
+        ORDER BY $order $sort 
+        LIMIT 100";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':tag', $tag, PDO::PARAM_STR);
+    $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
+    $req->bindParam(':teamid', $_SESSION['team_id'], PDO::PARAM_INT);
+    $req->execute();
+
     $sql = "SELECT item_id, userid FROM experiments_tags
     WHERE tag LIKE :tag AND userid = :userid";
-    $req = $pdo->prepare($sql);
-    $req->execute(array(
-        'tag' => $tag,
-        'userid' => $_SESSION['userid']
-    ));
     // put resulting ids in the results array
     while ($data = $req->fetch()) {
         $results_arr[] = $data['item_id'];
@@ -199,13 +292,17 @@ if (isset($_GET['q'])) { // if there is a query
 
 // DEFAULT VIEW
 } else {
-    $sql = "SELECT id, date, title 
-        FROM experiments 
-        WHERE userid = :userid 
+    $sql = "SELECT ex.id, ex.date, ex.title, st.name 
+        FROM experiments AS ex, status AS st 
+        WHERE ex.userid = :userid 
+        AND ex.status = st.id 
+        AND st.team = :teamid 
+        " . $filter . "
         ORDER BY $order $sort 
         LIMIT 100";
     $req = $pdo->prepare($sql);
     $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
+    $req->bindParam(':teamid', $_SESSION['team_id'], PDO::PARAM_INT);
     $req->execute();
     $count = $req->rowCount();
     // If there are no experiments, display a little message

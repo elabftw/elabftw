@@ -407,6 +407,8 @@ function showDB($id, $display)
         echo stripslashes($item['title']) . "</p></a>";
         // ITEM TYPE
         echo "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['bgcolor'] . "'>" . $item['name'] . " </span>";
+        // DATE
+        echo "<span class='date' style='padding:0 5px;'><img class='image' src='img/calendar.png' /> " . format_date($item['date']) . "</span> ";
         // _('Tags')
         echo show_tags($id, 'items_tags');
         echo "</section>";

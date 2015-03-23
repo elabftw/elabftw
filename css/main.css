@@ -546,13 +546,18 @@ a[class*='trigger_']:hover {
     margin: 0 5px 5px 25px;
 }
 
-/* EXPERIMENTS - FILTER & ORDER */
-.select-order, .select-filter-status{
+/* EXPERIMENTS/DATABASE - FILTER & ORDER */
+.select-order, .select-filter-status, .select-filter-cat{
     float:left;
     border-right: 0;
     margin-right: 0;
     border-top-right-radius:0;
     border-bottom-right-radius:0;
+}
+
+.select-create-db{
+    float:left;
+    margin-left: 0;
 }
 
 .select-sort{

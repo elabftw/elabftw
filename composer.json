@@ -9,6 +9,6 @@
 
     },
     "autoload": {
-        "files": ["inc/classes/MakePdf.php", "inc/classes/FormKey.php", "inc/classes/TrustedTimestamps.php"]
+        "files": ["inc/classes/MakePdf.php", "inc/classes/FormKey.php", "inc/classes/Crypto.php", "inc/classes/TrustedTimestamps.php"]
     }
 }

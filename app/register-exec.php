@@ -29,6 +29,8 @@ require_once '../inc/functions.php';
 require_once '../inc/locale.php';
 require_once '../vendor/autoload.php';
 
+$crypto = new \Elabftw\Elabftw\Crypto();
+
 //Array to store validation errors
 $msg_arr = array();
 //Validation error flag
@@ -251,7 +253,7 @@ if ($result) {
             get_config('smtp_encryption')
         )
         ->setUsername(get_config('smtp_username'))
-        ->setPassword(get_config('smtp_password'));
+        ->setPassword($crypto->decrypt(get_config('smtp_password')));
         $mailer = Swift_Mailer::newInstance($transport);
         // SEND EMAIL
         try {

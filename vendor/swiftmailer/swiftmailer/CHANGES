@@ -1,6 +1,15 @@
 Changelog
 =========
 
+5.4.0 (2015-03-14)
+------------------
+
+ * added the possibility to add extra certs to PKCS#7 signature
+ * fix base64 encoding with streams
+ * added a new RESULT_SPOOLED status for SpoolTransport
+ * fixed getBody() on attachments when called more than once
+ * removed dots from generated filenames in filespool
+
 5.3.1 (2014-12-05)
 ------------------
 

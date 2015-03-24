@@ -26,6 +26,9 @@
 /* admin.php - for administration of the elab */
 require_once 'inc/common.php';
 require_once 'inc/locale.php';
+require_once 'vendor/autoload.php';
+
+$crypto = new \Elabftw\Elabftw\Crypto();
 
 if ($_SESSION['is_admin'] != 1) {
     die(ADMIN_DIE);
@@ -116,7 +119,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
         </p>
         <p>
         <label for='stamppass'><?php echo _('Password for external timestamping service:'); ?></label>
-        <input type='password' value='<?php echo get_team_config('stamppass'); ?>' name='stamppass' id='stamppass' />
+        <input type='password' value='<?php echo $crypto->decrypt(get_team_config('stamppass')); ?>' name='stamppass' id='stamppass' />
         <span class='smallgray'><?php echo _('Your Universign password'); ?></span>
         </p>
         <div class='center'>

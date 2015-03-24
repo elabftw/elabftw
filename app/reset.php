@@ -94,7 +94,7 @@ if (isset($_POST['email'])) {
                 get_config('smtp_encryption')
             )
             ->setUsername(get_config('smtp_username'))
-            ->setPassword(get_config('smtp_password'));
+            ->setPassword(decrypt(get_config('smtp_password')));
             $mailer = Swift_Mailer::newInstance($transport);
             // now we try to send the email
             try {

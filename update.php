@@ -32,7 +32,7 @@ if (php_sapi_name() == 'cli' || empty($_SERVER['REMOTE_ADDR'])) {
 }
 
 require_once 'inc/common.php';
-require_once 'inc/functions.php';
+require_once 'vendor/autoload.php';
 
 // die if you are not sysadmin
 if ($_SESSION['is_sysadmin'] != 1) {
@@ -303,6 +303,49 @@ if (!$table_is_here) {
       `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
       `userid` int(11) NOT NULL
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;");
+}
+
+// 20150324 : adding secret key used to encrypt the SMTP password
+// first we check if we can write the config file
+if (!is_writable('config.php')) {
+
+    // check that there is no secret key already
+    if (!defined('SECRET_KEY')) {
+
+        $msg_arr[] = "[ERROR] Please allow webserver to write config file, or add SECRET_KEY yourself to config.php. <a href='https://github.com/elabftw/elabftw/wiki/Troubleshooting'>Link to documentation</a>";
+        $_SESSION['errors'] = $msg_arr;
+        header('Location: sysconfig.php');
+        exit;
+    }
+
+} elseif (is_writable('config.php') && !defined('SECRET_KEY') && strlen(get_config('smtp_password')) > 0) {
+
+    $crypto = new \Elabftw\Elabftw\Crypto();
+    // add generated strings to config file
+    // the IV is stored in hex
+    $data_to_add = "\ndefine('SECRET_KEY', '" . $crypto->getSecretKey() . "');\ndefine('IV', '" . bin2hex($crypto->getIv()) . "');";
+
+    try {
+        file_put_contents('config.php', $data_to_add, FILE_APPEND);
+    } catch (Exception $e) {
+        $msg_arr[] = "[ERROR] " . $e->getMessage();
+        $_SESSION['errors'] = $msg_arr;
+        header('Location: sysconfig.php');
+        exit;
+    }
+
+    // ok so now we have a secret key, an IV and we want to convert our old cleartext SMTP password to an encrypted one
+    $config_arr = array();
+    $config_arr['smtp_password'] = $crypto->encrypt(get_config('smtp_password'));
+    try {
+        update_config($config_arr);
+    } catch (Exception $e) {
+        $msg_arr[] = "[ERROR] " . $e->getMessage();
+        $_SESSION['errors'] = $msg_arr;
+        header('Location: sysconfig.php');
+        exit;
+    }
+
 }
 
 // END

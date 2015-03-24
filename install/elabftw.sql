@@ -245,8 +245,8 @@ CREATE TABLE `teams` (
   `link_name` text NOT NULL,
   `link_href` text NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `stamplogin` text,
-  `stamppass` text,
+  `stamplogin` text DEFAULT NULL,
+  `stamppass` text DEFAULT NULL,
   PRIMARY KEY (`team_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

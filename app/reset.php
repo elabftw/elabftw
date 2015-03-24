@@ -28,6 +28,9 @@ require_once '../inc/connect.php';
 require_once '../inc/functions.php';
 require_once '../vendor/swiftmailer/swiftmailer/lib/swift_required.php';
 require_once '../inc/locale.php';
+require_once '../vendor/autoload.php';
+
+$crypto = new \Elabftw\Elabftw\Crypto();
 
 $errflag = false;
 
@@ -94,7 +97,7 @@ if (isset($_POST['email'])) {
                 get_config('smtp_encryption')
             )
             ->setUsername(get_config('smtp_username'))
-            ->setPassword(decrypt(get_config('smtp_password')));
+            ->setPassword($crypto->decrypt(get_config('smtp_password')));
             $mailer = Swift_Mailer::newInstance($transport);
             // now we try to send the email
             try {

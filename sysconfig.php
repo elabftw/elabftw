@@ -35,6 +35,8 @@ require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 require_once 'vendor/autoload.php';
 
+$crypto = new \Elabftw\Elabftw\Crypto();
+
 $formKey = new \Elabftw\Elabftw\FormKey();
 
 if (strlen(get_config('smtp_username')) == 0) {
@@ -244,7 +246,7 @@ if ($current_version == 'something') {
         </p>
         <p>
         <label for='smtp_password'><?php echo _('SMTP password'); ?></label>
-        <input type='password' value='<?php echo get_config('smtp_password'); ?>' name='smtp_password' id='smtp_password' />
+        <input type='password' value='<?php echo $crypto->decrypt(get_config('smtp_password')); ?>' name='smtp_password' id='smtp_password' />
         </p>
         <div class='center'>
             <button type='submit' name='submit_config' class='submit button'><?php echo _('Save'); ?></button>

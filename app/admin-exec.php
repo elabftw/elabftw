@@ -27,6 +27,7 @@
 require_once '../inc/common.php';
 require_once ELAB_ROOT . 'inc/locale.php';
 require_once ELAB_ROOT . 'vendor/autoload.php';
+$crypto = new \Elabftw\Elabftw\Crypto();
 
 // only admin can use this
 if ($_SESSION['is_admin'] != 1) {
@@ -87,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
             get_config('smtp_encryption')
         )
             ->setUsername(get_config('smtp_username'))
-            ->setPassword(get_config('smtp_password'));
+            ->setPassword($crypto->decrypt(get_config('smtp_password')));
         $mailer = Swift_Mailer::newInstance($transport);
         // now we try to send the email
         try {
@@ -338,7 +339,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {
         $stamplogin = '';
     }
     if (isset($_POST['stamppass'])) {
-        $stamppass = filter_var($_POST['stamppass'], FILTER_SANITIZE_STRING);
+        $stamppass = $crypto->encrypt(filter_var($_POST['stamppass'], FILTER_SANITIZE_STRING));
     } else {
         $stamppass = '';
     }
@@ -426,7 +427,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['smtp_address'])) {
         $smtp_username = '';
     }
     if (isset($_POST['smtp_password'])) {
-        $smtp_password = filter_var($_POST['smtp_password'], FILTER_SANITIZE_STRING);
+        // the password is stored encrypted in the SQL
+        $smtp_password = $crypto->encrypt(filter_var($_POST['smtp_password'], FILTER_SANITIZE_STRING));
     } else {
         $smtp_password = '';
     }
@@ -479,7 +481,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
         $stamplogin = '';
     }
     if (isset($_POST['stamppass'])) {
-        $stamppass = filter_var($_POST['stamppass'], FILTER_SANITIZE_STRING);
+        $stamppass = $crypto->encrypt(filter_var($_POST['stamppass'], FILTER_SANITIZE_STRING));
     } else {
         $stamppass = '';
     }

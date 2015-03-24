@@ -318,12 +318,12 @@ if (!is_writable('config.php')) {
         exit;
     }
 
-} elseif (is_writable('config.php') && !defined('SECRET_KEY') && strlen(get_config('smtp_password')) > 0) {
+} elseif (is_writable('config.php') && !defined('SECRET_KEY')) {
 
     $crypto = new \Elabftw\Elabftw\Crypto();
     // add generated strings to config file
     // the IV is stored in hex
-    $data_to_add = "\ndefine('SECRET_KEY', '" . $crypto->getSecretKey() . "');\ndefine('IV', '" . bin2hex($crypto->getIv()) . "');";
+    $data_to_add = "\ndefine('SECRET_KEY', '" . $crypto->getSecretKey() . "');\ndefine('IV', '" . bin2hex($crypto->getIv()) . "');\n";
 
     try {
         file_put_contents('config.php', $data_to_add, FILE_APPEND);
@@ -336,7 +336,15 @@ if (!is_writable('config.php')) {
 
     // ok so now we have a secret key, an IV and we want to convert our old cleartext SMTP password to an encrypted one
     $config_arr = array();
-    $config_arr['smtp_password'] = $crypto->encrypt(get_config('smtp_password'));
+
+    // if there is a password in cleartext in the database, we encrypt it
+    if (strlen(get_config('smtp_password')) > 0) {
+        $config_arr['smtp_password'] = $crypto->encrypt(get_config('smtp_password'));
+    }
+    if (strlen(get_config('stamppass')) > 0) {
+        $config_arr['stamppass'] = $crypto->encrypt(get_config('stamppass'));
+    }
+
     try {
         update_config($config_arr);
     } catch (Exception $e) {
@@ -346,6 +354,20 @@ if (!is_writable('config.php')) {
         exit;
     }
 
+    // now we update the stamppass in the `teams` table
+    // first get the list of teams with a stamppass
+    $sql = "SELECT * FROM teams WHERE CHAR_LENGTH(stamppass) > 0";
+    $req = $pdo->prepare($sql);
+    $req->execute();
+    while ($teams = $req->fetch()) {
+        $enc_pass = $crypto->encrypt($teams['stamppass']);
+
+        $sql2 = "UPDATE teams SET stamppass = :stamppass WHERE team_id = :id";
+        $req2 = $pdo->prepare($sql2);
+        $req2->bindParam(':stamppass', $enc_pass);
+        $req2->bindParam(':id', $teams['team_id']);
+        $req2->execute();
+    }
 }
 
 // END

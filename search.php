@@ -416,7 +416,11 @@ if (isset($_GET)) {
                 $sqlFirst = " $tb.userid = :userid";
             }
 
-            $sql = "SELECT exp.* FROM experiments as exp, experiments_tags as exptag WHERE" . $sqlFirst . $sqlTitle .  $sqlBody . $sqlTag . $sqlStatus . $sqlDate . $sqlGroup;
+            // if you select from two tables but one is empty, as it makes a cross join, no results will be returned
+            // on a fresh install, if there is no tags, it will not find anything
+            // so we make a left join
+            // https://stackoverflow.com/questions/3171276/select-multiple-tables-when-one-table-is-empty-in-mysql
+            $sql = "SELECT exp.* FROM experiments as exp LEFT JOIN experiments_tags as exptag ON 1=1 WHERE" . $sqlFirst . $sqlTitle .  $sqlBody . $sqlTag . $sqlStatus . $sqlDate . $sqlGroup;
             $req = $pdo->prepare($sql);
             // if there is a selection on 'owned by', we use the owner id as parameter
             if ($owner_search) {

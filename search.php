@@ -486,15 +486,15 @@ if (isset($_GET)) {
                 empty($from) &&
                 empty($to)) {
 
-                $sqlFirst = "SELECT i.* FROM items as i, items_tags as itag WHERE i.id > 0";
+                $sqlFirst = "SELECT i.* FROM items as i LEFT JOIN items_tags as itag ON 1=1 WHERE i.id > 0";
 
             } elseif ($_GET['type'] === 'database') {
 
-                $sqlFirst = "SELECT i.* FROM items as i, items_tags as itag WHERE i.id > 0";
+                $sqlFirst = "SELECT i.* FROM items as i LEFT JOIN items_tags as itag ON 1=1 WHERE i.id > 0";
 
             } else {
 
-                $sqlFirst = "SELECT i.* FROM items as i, items_tags as itag WHERE type = :type";
+                $sqlFirst = "SELECT i.* FROM items as i LEFT JOIN  items_tags as itag ON 1=1 WHERE type = :type";
             }
 
             $sql = $sqlFirst . $sqlTitle .  $sqlBody . $sqlTag . $sqlRating . $sqlDate . $sqlGroup;

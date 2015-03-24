@@ -61,10 +61,11 @@ switch ($_POST['type']) {
         // check for string length only as there is no owning of database item
         if (strlen($tag) > 0) {
             // SQL for add tag to database item
-            $sql = "INSERT INTO items_tags (tag, item_id) VALUES(:tag, :item_id)";
+            $sql = "INSERT INTO items_tags (tag, item_id, team_id) VALUES(:tag, :item_id, :team_id)";
             $req = $pdo->prepare($sql);
             $req->bindParam(':tag', $tag, PDO::PARAM_STR);
             $req->bindParam(':item_id', $_POST['item_id'], PDO::PARAM_INT);
+            $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
             $req->execute();
         }
 

@@ -370,6 +370,29 @@ if (!is_writable('config.php')) {
     }
 }
 
+// 20150325 : fix the items_tags not having a valid team_id
+// first look if there are entries to fix
+$sql = "SELECT * FROM items_tags WHERE team_id = 0";
+$req = $pdo->prepare($sql);
+$req->execute();
+if ($req->rowCount() > 0) {
+    while ($items_tags = $req->fetch()) {
+        // now we must find in which team the item associated to the tag is, and update the record
+        $sql2 = "SELECT team FROM items WHERE id = :item_id";
+        $req2 = $pdo->prepare($sql2);
+        $req2->bindParam(':item_id', $items_tags['item_id']);
+        $req2->execute();
+        $items = $req2->fetch();
+
+        // update the record
+        $sql3 = "UPDATE items_tags SET team_id = :team_id WHERE id = :id";
+        $req3 = $pdo->prepare($sql3);
+        $req3->bindParam(':team_id', $items['team']);
+        $req3->bindParam(':id', $items_tags['id']);
+        $req3->execute();
+    }
+}
+
 // END
 $msg_arr[] = "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)";
 $_SESSION['infos'] = $msg_arr;

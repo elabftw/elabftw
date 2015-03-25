@@ -43,8 +43,13 @@ $email = '';
 $passwordHash = '';
 $salt = '';
 
+// Stop bot registration by checking if the (invisible to humans) bot input is filled
+if (isset($_POST['bot']) && !empty($_POST['bot'])) {
+    exit;
+}
+
 // Check USERNAME (sanitize and validate)
-if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
+if ((isset($_POST['username'])) && !empty($_POST['username'])) {
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
     // Check for duplicate username in DB
     $sql = "SELECT * FROM users WHERE username= :username";

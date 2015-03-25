@@ -1198,7 +1198,7 @@ function cURLcheckBasicFunctions()
  * Downloads a file with cURL; Returns bool status information.
  * @param string $url URL to download
  * @param string $file Path and filename as which the download is to be saved
- * @return bool Return true if the download succeeded, else false
+ * @return string|boolean Return true if the download succeeded, else false
  */
 function cURLdownload($url, $file)
 {

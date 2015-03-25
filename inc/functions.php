@@ -407,7 +407,9 @@ function showDB($id, $display)
         echo stripslashes($item['title']) . "</p></a>";
         // ITEM TYPE
         echo "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['bgcolor'] . "'>" . $item['name'] . " </span>";
-        // _('Tags')
+        // DATE
+        echo "<span class='date' style='padding:0 5px;'><img class='image' src='img/calendar.png' /> " . format_date($item['date']) . "</span> ";
+        // TAGS
         echo show_tags($id, 'items_tags');
         echo "</section>";
     }
@@ -1054,5 +1056,34 @@ function rm_field($table, $field, $added)
         } else {
             die($die_msg);
         }
+    }
+}
+
+
+/*
+ * Functions to keep current order/filter selection in dropdown
+ *
+ * @param string value to check
+ * @return string echo 'selected'
+ */
+
+function checkSelectOrder($val)
+{
+    if (isset($_GET['order']) && $_GET['order'] === $val) {
+        return " selected";
+    }
+}
+
+function checkSelectSort($val)
+{
+    if (isset($_GET['sort']) && $_GET['sort'] === $val) {
+        return " selected";
+    }
+}
+
+function checkSelectFilter($val)
+{
+    if (isset($_GET['filter']) && $_GET['filter'] === $val) {
+        return " selected";
     }
 }

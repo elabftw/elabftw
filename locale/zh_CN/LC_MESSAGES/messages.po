@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2014-10-27 17:55+0100\n"
-"PO-Revision-Date: 2015-02-23 03:38+0100\n"
+"PO-Revision-Date: 2015-03-25 10:52+0100\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -637,9 +637,6 @@ msgstr "必须为 Email 地址。"
 
 msgid "Password for external timestamping service:"
 msgstr "外部时间戳服务密码："
-
-msgid "This password will be stored in clear in the database ! Make sure it doesn't open other doors…"
-msgstr "此密码将会明文保存在数据库中！确保其不能登录其他账号…"
 
 msgid "Security settings"
 msgstr "安全性设置"

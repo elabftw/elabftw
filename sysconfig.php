@@ -186,8 +186,7 @@ if ($current_version == 'something') {
         <input type='email' value='<?php echo get_config('stamplogin'); ?>' name='stamplogin' id='stamplogin' />
         <p class='smallgray'><?php echo _('Must be an email address.'); ?></p>
         <label for='stamppass'><?php echo _('Password for external timestamping service:'); ?></label>
-        <input type='password' value='<?php echo get_config('stamppass'); ?>' name='stamppass' id='stamppass' />
-        <p class='smallgray'><?php echo _("This password will be stored in clear in the database ! Make sure it doesn't open other doors…"); ?></p>
+        <input type='password' value='<?php echo $crypto->decrypt(get_config('stamppass')); ?>' name='stamppass' id='stamppass' />
         <div class='center'>
         <button type='submit' name='submit_config' class='submit button'><?php echo _('Save'); ?></button>
         </div>

@@ -11,7 +11,7 @@ msgstr ""
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-02-23 03:38+0100\n"
+"PO-Revision-Date: 2015-03-25 10:53+0100\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: Deutsch <>\n"
 
@@ -649,9 +649,6 @@ msgstr "Muss eine E-Mail-Adresse sein."
 
 msgid "Password for external timestamping service:"
 msgstr "Passwort für externen Zeitstempeldienst:"
-
-msgid "This password will be stored in clear in the database ! Make sure it doesn't open other doors…"
-msgstr "Dieses Passwort wird in Klartext in der Datenbank gespeichert! Achten Sie darauf, dass es keine anderen Türen öffnet ..."
 
 msgid "Security settings"
 msgstr "Sicherheitseinstellungen"

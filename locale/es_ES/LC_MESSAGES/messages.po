@@ -663,11 +663,6 @@ msgstr "Debe ser una dirección de correo electrónico."
 msgid "Password for external timestamping service:"
 msgstr "Contraseña para servicio externo de marcaje de tiempo:"
 
-#. I guess "in clear" here means not concealed/masqued/hidden. Else, I have no clue of the meaning
-#, fuzzy
-msgid "This password will be stored in clear in the database ! Make sure it doesn't open other doors…"
-msgstr "¡La contraseña no será enmascarada en la base de datos! Asegúrese que ello no abre otras puertas..."
-
 msgid "Security settings"
 msgstr "Configuración de seguridad"
 

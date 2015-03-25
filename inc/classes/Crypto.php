@@ -47,10 +47,14 @@ class Crypto
         // select the right method
         $this->availableMethods = openssl_get_cipher_methods();
 
+        // TODO improve choice of cipher
         if (in_array('AES-128-CBC-HMAC-SHA1', $this->availableMethods)) {
             $this->method = 'AES-128-CBC-HMAC-SHA1';
+        } elseif (in_array('AES-128-CBC', $this->availableMethods)) {
+            $this->method = 'AES-128-CBC';
         } else {
-            throw new Exception('No good cipher method available');
+            // just take the first one coming, I guess it's better than nothing.
+            $this->method = $this->availableMethods[0];
         }
     }
 

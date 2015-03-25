@@ -1,5 +1,19 @@
 # Changelog for eLabFTW
 
+# Version 1.1.2
+* add filtering options (#15)
+* add encryption for passwords of SMTP and Timestamp stored in the SQL database (#129)
+* fix team_id not added on db tag add
+* fix no experiments/db item showing if there is no tags
+* update mpdf library
+* update swiftmailer library
+
+# Version 1.1.1
+* add a CONTRIBUTING file to help contributors
+* add tag in search (#63)
+* fix a bug where images where not added to timestamp pdf (#131)
+* fix a bug in SQL install file (only impacts new installs)
+
 # Version 1.1.0
 * multiple file upload now possible
 * add ChemDoodle on Team page

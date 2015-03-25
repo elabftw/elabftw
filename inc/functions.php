@@ -127,7 +127,7 @@ function make_thumb($src, $ext, $dest, $desired_width)
 /**
  * Check in input is a positive integer.
  *
- * @param int|string $int The int to check
+ * @param integer $int The int to check
  * @return bool Return false if it's not an int
  */
 function is_pos_int($int)
@@ -1064,20 +1064,20 @@ function rm_field($table, $field, $added)
  * Functions to keep current order/filter selection in dropdown
  *
  * @param string value to check
- * @return string echo 'selected'
+ * @return string|null echo 'selected'
  */
 
 function checkSelectOrder($val)
 {
     if (isset($_GET['order']) && $_GET['order'] === $val) {
-        return " selected";
+        echo " selected";
     }
 }
 
 function checkSelectSort($val)
 {
     if (isset($_GET['sort']) && $_GET['sort'] === $val) {
-        return " selected";
+        echo " selected";
     }
 }
 

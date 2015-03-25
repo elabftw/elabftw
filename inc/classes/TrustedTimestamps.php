@@ -201,7 +201,6 @@ class TrustedTimestamps {
             default:
                 return false;
         }
-        return false;
     }
 
     /**

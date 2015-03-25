@@ -282,8 +282,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team']) && $_POST[
     }
 }
 
-
-
 // SERVER SETTINGS
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
 
@@ -327,48 +325,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
 
 // TIMESTAMP CONFIG
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {
-
-    if (isset($_POST['stampprovider'])) {
-        $stampprovider = filter_var($_POST['stampprovider'], FILTER_VALIDATE_URL);
-    } else {
-        $stampprovider = '';
-    }
-    if (isset($_POST['stampcert'])) {
-        $cert_chain = filter_var($_POST['stampcert'], FILTER_SANITIZE_STRING);
-        $stampcert = $_POST['stampcert'];
-        if (is_file(realpath(ELAB_ROOT . $cert_chain))) {
-            $stampcert = realpath(ELAB_ROOT . $cert_chain);
-        } elseif (realpath($cert_chain)) {
-            $stampcert = realpath($cert_chain);
-        } else {
-            $stampcert = '';
-        }
-    } else {
-        $stampcert = '';
-    }
-    if ($_POST['stampshare'] == 1) {
-        $stampshare = 1;
-    } else {
-        $stampshare = 0;
-    }
-    if (isset($_POST['stamplogin'])) {
-        $stamplogin = filter_var($_POST['stamplogin'], FILTER_SANITIZE_STRING);
-    } else {
-        $stamplogin = '';
-    }
-    if (isset($_POST['stamppass'])) {
-        $stamppass = $crypto->encrypt(filter_var($_POST['stamppass'], FILTER_SANITIZE_STRING));
-    } else {
-        $stamppass = '';
-    }
+    $post_stamp = processTimestampPost();
 
     // SQL
     $updates = array(
-        'stampprovider' => $stampprovider,
-        'stampcert' => $stampcert,
-        'stampshare' => $stampshare,
-        'stamplogin' => $stamplogin,
-        'stamppass' => $stamppass
+        'stampprovider' => $post_stamp['stampprovider'],
+        'stampcert' => $post_stamp['stampcert'],
+        'stampshare' => $post_stamp['stampshare'],
+        'stamplogin' => $post_stamp['stamplogin'],
+        'stamppass' => $post_stamp['stamppass']
     );
 
     if (update_config($updates)) {
@@ -479,6 +444,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['smtp_address'])) {
 // TEAM CONFIGURATION COMING FROM ../admin.php
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
 
+    $post_stamp = processTimestampPost();
+
     // CHECKS
     if ($_POST['deletable_xp'] == 1) {
         $deletable_xp = 1;
@@ -495,34 +462,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
     } else {
         $link_href = 'https://github.com/elabftw/elabftw/wiki';
     }
-    if (isset($_POST['stampprovider'])) {
-        $stampprovider = filter_var($_POST['stampprovider'], FILTER_VALIDATE_URL);
-    } else {
-        $stampprovider = '';
-    }
-    if (isset($_POST['stampcert'])) {
-        $cert_chain = filter_var($_POST['stampcert'], FILTER_SANITIZE_STRING);
-        $stampcert = $_POST['stampcert'];
-        if (is_file(realpath(ELAB_ROOT . $cert_chain))) {
-            $stampcert = realpath(ELAB_ROOT . $cert_chain);
-        } elseif (realpath($cert_chain)) {
-            $stampcert = realpath($cert_chain);
-        } else {
-            $stampcert = '';
-        }
-    } else {
-        $stampcert = '';
-    }
-    if (isset($_POST['stamplogin'])) {
-        $stamplogin = filter_var($_POST['stamplogin'], FILTER_SANITIZE_STRING);
-    } else {
-        $stamplogin = '';
-    }
-    if (isset($_POST['stamppass'])) {
-        $stamppass = $crypto->encrypt(filter_var($_POST['stamppass'], FILTER_SANITIZE_STRING));
-    } else {
-        $stamppass = '';
-    }
 
     // SQL
     $sql = "UPDATE teams SET deletable_xp = :deletable_xp, link_name = :link_name, link_href = :link_href, stamplogin = :stamplogin, stamppass = :stamppass, stampprovider = :stampprovider, stampcert = :stampcert WHERE team_id = :team_id";
@@ -532,10 +471,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
         'deletable_xp' => $deletable_xp,
         'link_name' => $link_name,
         'link_href' => $link_href,
-        'stampprovider' => $stampprovider,
-        `stampcert` => $stampcert,
-        'stamplogin' => $stamplogin,
-        'stamppass' => $stamppass,
+        'stampprovider' => $post_stamp['stampprovider'],
+        `stampcert` => $post_stamp['stampcert'],
+        'stamplogin' => $post_stamp['stamplogin'],
+        'stamppass' => $post_stamp['stamppass'],
         'team_id' => $_SESSION['team_id']
         ));
     } catch (PDOException $e) {

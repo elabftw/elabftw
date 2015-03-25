@@ -267,6 +267,56 @@ function show_tags($item_id, $table)
         return false;
     }
 }
+/**
+ * Validate POST variables containing login/validation data for the TSP;
+ * Substitute missing values with empty strings and return as array
+ *
+ * @return array
+ */
+function processTimestampPost()
+{
+    $crypto = new \Elabftw\Elabftw\Crypto();
+
+    if (isset($_POST['stampprovider'])) {
+        $stampprovider = filter_var($_POST['stampprovider'], FILTER_VALIDATE_URL);
+    } else {
+        $stampprovider = '';
+    }
+    if (isset($_POST['stampcert'])) {
+        $cert_chain = filter_var($_POST['stampcert'], FILTER_SANITIZE_STRING);
+        $stampcert = $_POST['stampcert'];
+        if (is_file(realpath(ELAB_ROOT . $cert_chain))) {
+            $stampcert = realpath(ELAB_ROOT . $cert_chain);
+        } elseif (realpath($cert_chain)) {
+            $stampcert = realpath($cert_chain);
+        } else {
+            $stampcert = '';
+        }
+    } else {
+        $stampcert = '';
+    }
+    if (isset($_POST['stampshare'])) {
+        $stampshare = $_POST['stampshare'];
+    } else {
+        $stampshare = 0;
+    }
+    if (isset($_POST['stamplogin'])) {
+        $stamplogin = filter_var($_POST['stamplogin'], FILTER_SANITIZE_STRING);
+    } else {
+        $stamplogin = '';
+    }
+    if (isset($_POST['stamppass'])) {
+        $stamppass = $crypto->encrypt(filter_var($_POST['stamppass'], FILTER_SANITIZE_STRING));
+    } else {
+        $stamppass = '';
+    }
+
+    return array('stampprovider' => $stampprovider,
+                    'stampcert' => $stampcert,
+                    'stampshare' => $stampshare,
+                    'stamplogin' => $stamplogin,
+                    'stamppass' => $stamppass);
+}
 
 /**
  * Return the needed parameters to request/verify a timestamp
@@ -304,11 +354,11 @@ function getTimestampParameters() {
         $hash = NULL;
     }
 
-    return array("stamplogin" => $login,
-                    "stamppassword" => $password,
-                    "stampprovider" => $provider,
-                    "stampcert" => $cert,
-                    "hash" => $hash);
+    return array('stamplogin' => $login,
+                    'stamppassword' => $password,
+                    'stampprovider' => $provider,
+                    'stampcert' => $cert,
+                    'hash' => $hash);
 }
 
 /**

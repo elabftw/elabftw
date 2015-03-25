@@ -28,6 +28,9 @@
 *********************************************************************************/
 
 namespace Elabftw\Elabftw;
+use \DateTime;
+use \Exception;
+use \RuntimeException;
 
 class TrustedTimestamps {
     private $stampProvider;
@@ -135,11 +138,11 @@ class TrustedTimestamps {
         $tempfilename = tempnam(ELAB_ROOT.'uploads/tmp', rand());
 
         if (!file_exists($tempfilename)) {
-                    throw new \Exception("Tempfile could not be created");
+                    throw new Exception("Tempfile could not be created");
         }
 
         if (!empty($str) && !file_put_contents($tempfilename, $str)) {
-                    throw new \Exception("Could not write to tempfile");
+                    throw new Exception("Could not write to tempfile");
         }
 
         array_push($this->tmpfiles, $tempfilename);
@@ -157,7 +160,7 @@ class TrustedTimestamps {
             $this->responsefilePath = $this->createTempFile($this->binaryResponseString);
             $this->responseTime = $this->getTimestampFromAnswer();
         } else {
-            throw new \Exception("The responsefile ".$this->responsefilePath." was not found!");
+            throw new Exception("The responsefile ".$this->responsefilePath." was not found!");
         }
     }
 
@@ -172,11 +175,11 @@ class TrustedTimestamps {
         $retcode = $opensslResult['retcode'];
 
         if ($retcode !== 0) {
-                    throw new \Exception("OpenSSL does not seem to be installed: ".implode(", ", $retarray));
+                    throw new Exception("OpenSSL does not seem to be installed: ".implode(", ", $retarray));
         }
 
         if (stripos($retarray[0], "openssl:Error") !== false) {
-                    throw new \Exception("There was an error with OpenSSL. Is version >= 0.99 installed?: ".implode(", ", $retarray));
+                    throw new Exception("There was an error with OpenSSL. Is version >= 0.99 installed?: ".implode(", ", $retarray));
         }
 
             $this->requestfilePath = $outfilepath;
@@ -211,7 +214,7 @@ class TrustedTimestamps {
     private function getTimestampFromAnswer() {
 
         if (!$this->checkResponseFileAvailability()) {
-            throw new \RuntimeException('Response file was not found and could not be created from binary response string.');
+            throw new RuntimeException('Response file was not found and could not be created from binary response string.');
         }
 
         $cmd = "ts -reply -in ".escapeshellarg($this->responsefilePath)." -text";
@@ -220,7 +223,7 @@ class TrustedTimestamps {
         $retcode = $opensslResult['retcode'];
 
         if ($retcode !== 0) {
-                    throw new \Exception("The reply failed: ".implode(", ", $retarray));
+                    throw new Exception("The reply failed: ".implode(", ", $retarray));
         }
 
         $matches = array();
@@ -235,7 +238,7 @@ class TrustedTimestamps {
          */
 
         if (!is_array($retarray)) {
-            throw new \RuntimeException('$retarray must be an array.');
+            throw new RuntimeException('$retarray must be an array.');
         }
 
         foreach ($retarray as $retline)
@@ -259,7 +262,7 @@ class TrustedTimestamps {
         }
 
         if (!$responseTime) {
-                    throw new \Exception("The Timestamp was not found");
+                    throw new Exception("The Timestamp was not found");
         }
 
         /* Return formatted time as this is, what we will store in the database.
@@ -273,9 +276,9 @@ class TrustedTimestamps {
      */
     private function generateToken() {
         if (is_null($this->requestfilePath)) {
-            throw new \Exception("Cannot create new timestamp token! No data was provided during initialization!");
+            throw new Exception("Cannot create new timestamp token! No data was provided during initialization!");
         } elseif (!file_exists($this->requestfilePath)) {
-            throw new \Exception("The Requestfile was not found: ".$this->requestfilePath);
+            throw new Exception("The Requestfile was not found: ".$this->requestfilePath);
         }
 
         $ch = curl_init();
@@ -328,15 +331,15 @@ class TrustedTimestamps {
      */
     private function checkValidationPrerequisits() {
         if (!is_file($this->responsefilePath)) {
-                    throw new \Exception("There was no response-string");
+                    throw new Exception("There was no response-string");
         }
 
         if (!intval($this->responseTime)) {
-                    throw new \Exception("There is no valid response-time given");
+                    throw new Exception("There is no valid response-time given");
         }
 
         if (!file_exists($this->stampCert)) {
-                    throw new \Exception("The TSA-Certificate could not be found");
+                    throw new Exception("The TSA-Certificate could not be found");
         }
         return true;
     }
@@ -373,14 +376,14 @@ class TrustedTimestamps {
 
             if (!is_null($timeToCheck)) {
                 if ($timeToCheck != $this->responseTime) {
-                    throw new \Exception("The response time of the request was changed");
+                    throw new Exception("The response time of the request was changed");
                 }
             }
             return true;
         }
 
         if (!is_array($retarray)) {
-            throw new \RuntimeException('$retarray must be an array.');
+            throw new RuntimeException('$retarray must be an array.');
         }
 
         foreach ($retarray as $retline)
@@ -390,6 +393,6 @@ class TrustedTimestamps {
             }
         }
 
-        throw new \Exception("Systemcommand failed: ".implode(", ", $retarray));
+        throw new Exception("Systemcommand failed: ".implode(", ", $retarray));
     }
 }

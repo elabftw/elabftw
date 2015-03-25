@@ -15,7 +15,7 @@ msgstr ""
 "X-Generator: Poedit 1.7.4\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-Basepath: .\n"
+"PO-Revision-Date: 2015-03-25 10:53+0100\n"
 "X-Poedit-SearchPath-0: elabftw\n"
 "X-Poedit-SearchPathExcluded-0: elabftw/js\n"
 "X-Poedit-SearchPathExcluded-1: elabftw/vendor\n"
@@ -1311,9 +1311,6 @@ msgstr ""
 #: elabftw/sysconfig.php:195
 msgid "Login for external timestamping service ."
 msgstr "Login für externe Zeitstempeldienst."
-
-#: elabftw/sysconfig.php:198
-msgid ""
 "This password will be stored in clear in the database ! Make sure it doesn't "
 "open other doors…"
 msgstr ""

@@ -237,7 +237,7 @@ require_once 'inc/display_file.php';
 
 <script>
 // JAVASCRIPT
-// _('Tags') AUTOCOMPLETE
+// TAGS AUTOCOMPLETE
 $(function() {
 		var availableTags = [
 <?php // get all user's tag for autocomplete

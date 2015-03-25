@@ -680,9 +680,6 @@ msgstr "Deve essere un indirizzo e-mail"
 msgid "Password for external timestamping service:"
 msgstr "Password per il servizio di timestamping esterno:"
 
-msgid "This password will be stored in clear in the database ! Make sure it doesn't open other doors…"
-msgstr "Questa password sarà conservata in chiaro nel database! Assicurati che non sia utilizzabile per altri accessi"
-
 msgid "Security settings"
 msgstr "Impostazioni di sicurezza"
 

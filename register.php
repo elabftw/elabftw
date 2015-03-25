@@ -42,6 +42,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
     <!-- Register form -->
     <form id='regform' method="post" class='loginform' autocomplete="off" action="app/register-exec.php">
 
+        <input style='display:none' type='text' name='bot' value=''>
         <div class='row'>
             <div class='col-md-4'>
                 <label class='block' for="team"><?php echo _('Team'); ?></label>

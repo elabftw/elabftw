@@ -641,9 +641,6 @@ msgstr "Ha de ser una direcció de correu electrònic."
 msgid "Password for external timestamping service:"
 msgstr "Contrasenya per al servei extern de marcatge de temps:"
 
-msgid "This password will be stored in clear in the database ! Make sure it doesn't open other doors…"
-msgstr "La contrasenya no serà emmascarada en la base de dades! Assegures que no obri altres portes..."
-
 msgid "Security settings"
 msgstr "Configuració de seguretat"
 

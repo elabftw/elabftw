@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2015-03-04 14:57+0100\n"
-"PO-Revision-Date: 2015-03-15 11:35+0100\n"
+"PO-Revision-Date: 2015-03-25 10:53+0100\n"
 "Last-Translator: Alexander Minges <alexander.minges@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -1270,9 +1270,6 @@ msgstr ""
 #: elabftw/sysconfig.php:195
 msgid "Login for external timestamping service ."
 msgstr ""
-
-#: elabftw/sysconfig.php:198
-msgid ""
 "This password will be stored in clear in the database ! Make sure it doesn't "
 "open other doors…"
 msgstr ""

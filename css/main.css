@@ -547,7 +547,7 @@ a[class*='trigger_']:hover {
 }
 
 /* EXPERIMENTS/DATABASE - FILTER & ORDER */
-.select-order, .select-filter-status, .select-filter-cat{
+.select-order, .select-filter-status, .select-filter-cat {
     float:left;
     border-right: 0;
     margin-right: 0;
@@ -555,12 +555,12 @@ a[class*='trigger_']:hover {
     border-bottom-right-radius:0;
 }
 
-.select-create-db{
+.select-create-db {
     float:left;
     margin-left: 0;
 }
 
-.select-sort{
+.select-sort {
     float:left;
     margin-left: 0;
     border-right: 0;
@@ -568,15 +568,16 @@ a[class*='trigger_']:hover {
     border-radius:0;
 }
 
-.submit-order, .submit-filter{
+.submit-order, .submit-filter {
     float:left;
     border-right: 0;
     margin:6px 0;
     border-top-left-radius:0;
     border-bottom-left-radius:0;
+    background-color:#29AEB9;
 }
 
-.submit-reset{
+.submit-reset {
     float:left;
     margin:6px 0 0 6px;
 }

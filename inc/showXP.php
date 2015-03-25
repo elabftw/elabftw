@@ -31,35 +31,8 @@ $results_arr = array();
 
 // keep tag var in url
 $getTag = '';
-if (isset($_GET['tag'])) {
-    if ($_GET['tag'] != '') {
-        $getTag = $_GET['tag'];
-    }
-}
-
-// function to keep current order/filter selection in dropdown
-function checkSelectOrder($val){
-    if (isset($_GET['order'])) {
-        if ($_GET['order'] == $val) {
-            echo " selected";
-        }
-    }
-}
-
-function checkSelectSort($val){
-    if (isset($_GET['sort'])) {
-        if ($_GET['sort'] == $val) {
-            echo " selected";
-        }
-    }
-}
-
-function checkSelectFilter($val){
-    if (isset($_GET['filter'])) {
-        if ($_GET['filter'] == $val) {
-            return " selected";
-        }
-    }
+if (isset($_GET['tag']) && $_GET['tag'] != '') {
+    $getTag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
 }
 ?>
 <menu class='border'>
@@ -132,25 +105,29 @@ $sort = $_SESSION['prefs']['sort'];
 $limit = $_SESSION['prefs']['limit'];
 $filter = '';
 
-// REPLACE WITH ORDER //
+// REPLACE WITH ORDER
 if (isset($_GET['order'])) {
     if ($_GET['order'] != '') {
-        if ($_GET['order'] == 'status') {
+        if ($_GET['order'] === 'status') {
             $order = 'st.name';
-        } else {
+        } elseif ($_GET['order'] === 'date' || $_GET['order'] === 'rating' || $_GET['order'] === 'title') {
             $order = 'ex.' . $_GET['order'];
+        } else {
+            $message = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#17", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+            display_message('error', $message);
+            exit;
         }
     }
 }
 
 if (isset($_GET['sort'])) {
-    if ($_GET['sort'] != '') {
+    if ($_GET['sort'] != '' && ($_GET['sort'] === 'asc' || $_GET['sort'] === 'desc')) {
         $sort = $_GET['sort'];
     }
 }
 
 if (isset($_GET['filter'])) {
-    if ($_GET['filter'] != '') {
+    if ($_GET['filter'] != '' && is_pos_int($_GET['filter'])) {
         $filter = "AND st.id = '" . $_GET['filter'] . "' ";
     }
 }
@@ -307,7 +284,12 @@ if (isset($_GET['q'])) { // if there is a query
     $count = $req->rowCount();
     // If there are no experiments, display a little message
     if ($count == 0) {
-        display_message('info_nocross', sprintf(_("<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button to get started."), "<img src='img/add.png' alt='' /><a class='alert-link' href='app/create_item.php?type=exp'>", "</a>"));
+        // it might be a fresh install, but it might also be the search filters are too restrictive
+        if (isset($_GET['tag'])) {
+            display_message('error_nocross', _("Sorry. I couldn't find anything :("));
+        } else {
+            display_message('info_nocross', sprintf(_("<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button to get started."), "<img src='img/add.png' alt='' /><a class='alert-link' href='app/create_item.php?type=exp'>", "</a>"));
+        }
     } else {
         while ($experiments = $req->fetch()) {
             $results_arr[] = $experiments['id'];

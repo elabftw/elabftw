@@ -31,38 +31,12 @@ if (isset($_SESSION['prefs']['display'])) {
 
 // keep tag var in url
 $getTag = '';
-if (isset($_GET['tag'])) {
-    if ($_GET['tag'] != '') {
-        $getTag = $_GET['tag'];
-    }
+if (isset($_GET['tag']) && $_GET['tag'] != '') {
+    $getTag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
 }
 
-// function to keep current order/filter selection in dropdown
-function checkSelectOrder($val){
-    if (isset($_GET['order'])) {
-        if ($_GET['order'] == $val) {
-            echo " selected";
-        }
-    }
-}
 
-function checkSelectSort($val){
-    if (isset($_GET['sort'])) {
-        if ($_GET['sort'] == $val) {
-            echo " selected";
-        }
-    }
-}
-
-function checkSelectFilter($val){
-    if (isset($_GET['filter'])) {
-        if ($_GET['filter'] == $val) {
-            return " selected";
-        }
-    }
-}
-
-// SQL to get items names
+// SQL to get items name
 $sql = "SELECT * FROM items_types WHERE team = :team ORDER BY name ASC";
 $req = $pdo->prepare($sql);
 $req->execute(array(
@@ -130,25 +104,29 @@ $order = 'it.id';
 $sort = 'DESC';
 $filter = '';
 
-// REPLACE WITH ORDER //
+// REPLACE WITH ORDER
 if (isset($_GET['order'])) {
     if ($_GET['order'] != '') {
-        if ($_GET['order'] == 'cat') {
+        if ($_GET['order'] === 'cat') {
             $order = 'ty.name';
-        } else {
+        } elseif ($_GET['order'] === 'date' || $_GET['order'] === 'rating' || $_GET['order'] === 'title') {
             $order = 'it.' . $_GET['order'];
+        } else {
+            $message = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#17", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+            display_message('error', $message);
+            exit;
         }
     }
 }
 
 if (isset($_GET['sort'])) {
-    if ($_GET['sort'] != '') {
+    if ($_GET['sort'] != '' && ($_GET['sort'] === 'asc' || $_GET['sort'] === 'desc')) {
         $sort = $_GET['sort'];
     }
 }
 
 if (isset($_GET['filter'])) {
-    if ($_GET['filter'] != '') {
+    if ($_GET['filter'] != '' && is_pos_int($_GET['filter'])) {
         $filter = "AND ty.id = '" . $_GET['filter'] . "' ";
     }
 }
@@ -236,7 +214,12 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $req->execute();
     $count = $req->rowCount();
     if ($count == 0) {
-        display_message('info', _('<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list to begin filling your database.'));
+        // it might be a fresh install, but it might also be the search filters are too restrictive
+        if (isset($_GET['tag'])) {
+            display_message('error_nocross', _("Sorry. I couldn't find anything :("));
+        } else {
+            display_message('info', _('<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list to begin filling your database.'));
+        }
     } else {
         $results_arr = array();
         while ($final_query = $req->fetch()) {

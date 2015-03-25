@@ -75,18 +75,19 @@ require_once 'inc/info_box.php';
                 <select name='tag_exp'>
                     <option value=''><?php echo _('Select a Tag'); ?></option>
                     <?php // Database items types
-                    $sql = "SELECT tag, COUNT(id) as nbtag FROM experiments_tags GROUP BY tag ORDER BY tag ASC";
+                    // TODO https://github.com/elabftw/elabftw/issues/135
+                    $sql = "SELECT tag, COUNT(id) as nbtag, userid FROM experiments_tags WHERE userid = :userid GROUP BY tag ORDER BY tag ASC";
                     $req = $pdo->prepare($sql);
                     $req->execute(array(
-                        'team' => $_SESSION['team_id']
+                        'userid' => $_SESSION['userid']
                     ));
-                    while ($items_types = $req->fetch()) {
-                        echo "<option value='" . $items_types['tag'] . "'";
+                    while ($exp_tags = $req->fetch()) {
+                        echo "<option value='" . $exp_tags['tag'] . "'";
                         // item get selected if it is in the search url
-                        if (isset($_GET['tag_exp']) && ($items_types['tag'] == $_GET['tag_exp'])) {
+                        if (isset($_GET['tag_exp']) && ($exp_tags['tag'] == $_GET['tag_exp'])) {
                             echo " selected='selected'";
                         }
-                        echo ">" . $items_types['tag'] . " (" . $items_types['nbtag'] . ")</option>";
+                        echo ">" . $exp_tags['tag'] . " (" . $exp_tags['nbtag'] . ")</option>";
                     }
                     ?>
                 </select>

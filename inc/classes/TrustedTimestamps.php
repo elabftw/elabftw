@@ -53,12 +53,12 @@ class TrustedTimestamps {
      * At least $stampProvider + $data (+ $stampPassword + $stampLogin) or $data + $responsefilePath + $stampCert are needed
      * to do anything usefull.
      *
-     * @param string $stampProvider URL of the TSA to be used (optional)
-     * @param string $data Filename to be timestamped or validated (optional)
-     * @param string $responsefilePath Filename to an already existing binary timestamp token (optional)
-     * @param string $stampLogin Login for the TSA (optional)
-     * @param string $stampPassword Password for the TSA (optional)
-     * @param string $stampCert File with the certificate that is used by the TSA in PEM-encoded ASCII format (optional)
+     * @param string|null $stampProvider URL of the TSA to be used (optional)
+     * @param string|null $data Filename to be timestamped or validated (optional)
+     * @param string|null $responsefilePath Filename to an already existing binary timestamp token (optional)
+     * @param string|null $stampLogin Login for the TSA (optional)
+     * @param string|null $stampPassword Password for the TSA (optional)
+     * @param string|null $stampCert File with the certificate that is used by the TSA in PEM-encoded ASCII format (optional)
      * @param string $stampHash Hash algorithm to be used (optional, defaults to sha256)
      */
     public function __construct($stampProvider = null, $data = null, $responsefilePath = null, $stampLogin = null,
@@ -199,6 +199,7 @@ class TrustedTimestamps {
                 } else {
                     return false;
                 }
+                // no break needed
             case false:
                 return true;
             default:
@@ -315,7 +316,7 @@ class TrustedTimestamps {
     /**
      * Run OpenSSL via exec() with a provided command
      * @param string $cmd
-     * @return array<string,string>
+     * @return array<string,null|array|integer>
      */
     private function runOpenSSL($cmd) {
         $retarray = array();

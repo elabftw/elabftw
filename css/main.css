@@ -278,7 +278,7 @@ menu ul li.selected {
 
 menu.border {
     border-bottom: 1px solid #dcdddc;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     margin-top: 0;
     padding-bottom: 19px;
 }
@@ -544,6 +544,41 @@ a[class*='trigger_']:hover {
 }
 .top_right_status img {
     margin: 0 5px 5px 25px;
+}
+
+/* EXPERIMENTS/DATABASE - FILTER & ORDER */
+.select-order, .select-filter-status, .select-filter-cat{
+    float:left;
+    border-right: 0;
+    margin-right: 0;
+    border-top-right-radius:0;
+    border-bottom-right-radius:0;
+}
+
+.select-create-db{
+    float:left;
+    margin-left: 0;
+}
+
+.select-sort{
+    float:left;
+    margin-left: 0;
+    border-right: 0;
+    margin-right: 0;
+    border-radius:0;
+}
+
+.submit-order, .submit-filter{
+    float:left;
+    border-right: 0;
+    margin:6px 0;
+    border-top-left-radius:0;
+    border-bottom-left-radius:0;
+}
+
+.submit-reset{
+    float:left;
+    margin:6px 0 0 6px;
 }
 
 /* COMMENTS FOR EXPERIMENTS COMMENTS BOX */

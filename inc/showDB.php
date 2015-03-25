@@ -28,6 +28,40 @@ if (isset($_SESSION['prefs']['display'])) {
 } else {
     $display = 'default';
 }
+
+// keep tag var in url
+$getTag = '';
+if (isset($_GET['tag'])) {
+    if ($_GET['tag'] != '') {
+        $getTag = $_GET['tag'];
+    }
+}
+
+// function to keep current order/filter selection in dropdown
+function checkSelectOrder($val){
+    if (isset($_GET['order'])) {
+        if ($_GET['order'] == $val) {
+            echo " selected";
+        }
+    }
+}
+
+function checkSelectSort($val){
+    if (isset($_GET['sort'])) {
+        if ($_GET['sort'] == $val) {
+            echo " selected";
+        }
+    }
+}
+
+function checkSelectFilter($val){
+    if (isset($_GET['filter'])) {
+        if ($_GET['filter'] == $val) {
+            return " selected";
+        }
+    }
+}
+
 // SQL to get items names
 $sql = "SELECT * FROM items_types WHERE team = :team ORDER BY name ASC";
 $req = $pdo->prepare($sql);
@@ -37,44 +71,122 @@ $req->execute(array(
 ?>
 
 <menu class='border'>
-
-    <?php
-    // CREATE NEW dropdown menu
-    echo "<select onchange=go_url(this.value)><option value=''>" . _('Create new') . "</option>";
-    while ($items_types = $req->fetch()) {
-        echo "<option value='app/create_item.php?type=" . $items_types['id'] . "' name='type' ";
-        echo ">" . $items_types['name'] . "</option>";
-    }
-    echo "</select>";
-
-    // we do the request again to get the list again
-    $req->execute();
-    echo "<span class='align_right'><select onchange=go_url(this.value)><option value=''>" . _('Filter type') . "</option>";
-    while ($items_types = $req->fetch()) {
-        echo "<option value='search.php?type=" . $items_types['id'] . "' name='type' ";
-        echo ">" . $items_types['name'] . "</option>";
-    }
-    ?>
-    </select>
+    <div class="row">
+        <div class="col-md-6">
+            <form class="form-inline pull-left">
+                <?php
+                // CREATE NEW dropdown menu
+                echo "<select class='form-control select-create-db' onchange='go_url(this.value)'>
+                <option value=''>" . _('Create new') . "</option>";
+                while ($items_types = $req->fetch()) {
+                    echo "<option value='app/create_item.php?type=" . $items_types['id'] . "' name='type' ";
+                    echo ">" . $items_types['name'] . "</option>";
+                }
+                echo "</select>";
+                ?>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <form class="form-inline pull-right">
+                <div class="form-group">
+                    <input type="hidden" name="mode" value="show" />
+                    <input type="hidden" name="tag" value="<?php echo $getTag; ?>" />
+                    <!-- ORDER / SORT dropdown menu -->
+                    <select name="order" class="form-control select-order">
+                        <option value=''><?php echo _('Order by'); ?></option>
+                        <option value='cat'<?php checkSelectOrder('cat'); ?>><?php echo _('Category'); ?></option>
+                        <option value='date'<?php checkSelectOrder('date'); ?>><?php echo _('Date'); ?></option>
+                        <option value='rating'<?php checkSelectOrder('rating'); ?>><?php echo _('Rating'); ?></option>
+                        <option value='title'<?php checkSelectOrder('title'); ?>><?php echo _('Title'); ?></option>
+                    </select>
+                    <select name="sort" class="form-control select-sort">
+                        <option value=''><?php echo _('Sort'); ?></option>
+                        <option value='desc'<?php checkSelectSort('desc'); ?>><?php echo _('DESC'); ?></option>
+                        <option value='asc'<?php checkSelectSort('asc'); ?>><?php echo _('ASC'); ?></option>
+                    </select>
+                    <button class="btn btn-success submit-order"><?php echo _('Order'); ?></button>
+                    <select name="filter" class="form-control select-filter-cat">
+                        <option value=""><?php echo _('Filter type'); ?></option>
+                    <?php
+                    // we do the request again to get the list again
+                    $req->execute();
+                    while ($items_types = $req->fetch()) {
+                        echo "
+                        <option value='" . $items_types['id'] . "'" . checkSelectFilter($items_types['id']) . ">" . $items_types['name'] . "</option>";
+                    }
+                    ?>
+                    </select>
+                    <button class="btn btn-success submit-filter"><?php echo _('Filter'); ?></button>
+                    <button type="reset" class="btn btn-danger submit-reset" onclick="javascript:location.href='database.php?mode=show&tag=<?php echo $getTag; ?>';"><?php echo _('Reset'); ?></button>
+                </div>
+            </form>
+        </div>
+    </div>
 </menu>
 <!-- end menu -->
 
 <?php
+$order = 'it.id';
+$sort = 'DESC';
+$filter = '';
+
+// REPLACE WITH ORDER //
+if (isset($_GET['order'])) {
+    if ($_GET['order'] != '') {
+        if ($_GET['order'] == 'cat') {
+            $order = 'ty.name';
+        } else {
+            $order = 'it.' . $_GET['order'];
+        }
+    }
+}
+
+if (isset($_GET['sort'])) {
+    if ($_GET['sort'] != '') {
+        $sort = $_GET['sort'];
+    }
+}
+
+if (isset($_GET['filter'])) {
+    if ($_GET['filter'] != '') {
+        $filter = "AND ty.id = '" . $_GET['filter'] . "' ";
+    }
+}
+
 // SQL for showDB
 // TAG SEARCH
 if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
-    $results_arr = array();
-    $sql = "SELECT item_id, team_id FROM items_tags
-    WHERE tag LIKE :tag AND team_id = :team_id";
+    $sql = "SELECT it.id, ty.name, ta.item_id 
+    FROM items AS it, items_types AS ty, items_tags AS ta 
+    WHERE it.type = ty.id 
+    AND it.team = :teamid 
+    AND it.id = ta.item_id 
+    AND ta.tag LIKE :tag 
+    " . $filter . "
+    ORDER BY $order $sort 
+    LIMIT 100";
     $req = $pdo->prepare($sql);
-    $req->execute(array(
-        'tag' => $tag,
-        'team_id' => $_SESSION['team_id']
-    ));
+    $req->bindParam(':tag', $tag, PDO::PARAM_STR);
+    $req->bindParam(':teamid', $_SESSION['team_id'], PDO::PARAM_INT);
+    $req->execute();
+
+    $results_arr = array();
     // put resulting ids in the results array
     while ($data = $req->fetch()) {
         $results_arr[] = $data['item_id'];
+    }
+
+    // show number of results found
+    $time = microtime();
+    $time = explode(' ', $time);
+    $time = $time[1] + $time[0];
+    $finish = $time;
+    $total_time = round(($finish - $start), 4);
+    $unit = 'seconds';
+    if ($total_time < 0.01) {
+        $total_time = $total_time * 1000;
+        $unit = 'milliseconds';
     }
 
     // show number of results found
@@ -112,13 +224,16 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     }
 // end if there is a search
 } else { // there is no search
-    // we show the last 10 uploads
-    // get the last id
-    $sql = "SELECT * FROM items WHERE team = :team ORDER BY id DESC LIMIT 10";
+    $sql = "SELECT it.id, ty.name 
+    FROM items AS it, items_types AS ty 
+    WHERE it.type = ty.id 
+    AND it.team = :teamid 
+    " . $filter . "
+    ORDER BY $order $sort 
+    LIMIT 100";
     $req = $pdo->prepare($sql);
-    $req->execute(array(
-        'team' => $_SESSION['team_id']
-    ));
+    $req->bindParam(':teamid', $_SESSION['team_id'], PDO::PARAM_INT);
+    $req->execute();
     $count = $req->rowCount();
     if ($count == 0) {
         display_message('info', _('<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list to begin filling your database.'));
@@ -128,7 +243,7 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
             $results_arr[] = $final_query['id'];
         }
         // loop the results array and display results
-        echo "<p>" . _('Showing last 10 uploads:') . "</p>";
+        echo "<p>" . _('Showing last uploads:') . "</p>";
         foreach ($results_arr as $result_id) {
             showDB($result_id, $display);
         }

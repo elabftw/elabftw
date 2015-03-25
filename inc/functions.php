@@ -320,7 +320,7 @@ function processTimestampPost()
 /**
  * Return the needed parameters to request/verify a timestamp
  *
- * @return array
+ * @return array<string,string|null>
  */
 function getTimestampParameters() {
     $hash_algorithms = array('sha256', 'sha384', 'sha512');

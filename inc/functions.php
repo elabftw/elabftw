@@ -284,7 +284,6 @@ function processTimestampPost()
     }
     if (isset($_POST['stampcert'])) {
         $cert_chain = filter_var($_POST['stampcert'], FILTER_SANITIZE_STRING);
-        $stampcert = $_POST['stampcert'];
         if (is_file(realpath(ELAB_ROOT . $cert_chain))) {
             $stampcert = realpath(ELAB_ROOT . $cert_chain);
         } elseif (realpath($cert_chain)) {

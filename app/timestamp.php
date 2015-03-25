@@ -26,6 +26,9 @@
 require_once '../inc/common.php';
 require_once ELAB_ROOT . 'inc/locale.php';
 require_once ELAB_ROOT . 'vendor/autoload.php';
+
+$crypto = new \Elabftw\Elabftw\Crypto();
+
 $msg_arr = array();
 
 // ID
@@ -42,12 +45,12 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
 if (strlen(get_team_config('stamplogin')) > 2) {
 
     $login = get_team_config('stamplogin');
-    $password = get_team_config('stamppass');
+    $password = $crypto->decrypt(get_team_config('stamppass'));
 
 } elseif (get_config('stampshare')) {
 
     $login = get_config('stamplogin');
-    $password = get_config('stamppass');
+    $password = $crypto->decrypt(get_config('stamppass'));
 
 } else {
 

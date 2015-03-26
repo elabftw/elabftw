@@ -1,4 +1,9 @@
 <?php
+/*
+* You normally don't need to look at this file
+* But if for some reason you need to, then rename this file config.php and place it
+* at the root folder of the elabftw installation.
+*/
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'elabftw');
 define('DB_USER', 'elabftw');

@@ -3,6 +3,7 @@
 # Version 1.1.2
 * add filtering options (#15)
 * add encryption for passwords of SMTP and Timestamp stored in the SQL database (#129)
+* add hidden field to prevent bot registration (#84)
 * fix team_id not added on db tag add
 * fix no experiments/db item showing if there is no tags
 * update mpdf library

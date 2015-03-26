@@ -101,12 +101,12 @@ if ($data['timestamped'] == 1) {
     if ($token) {
         $stamp_params = getTimestampParameters();
         $pdf_file = "uploads/" . $uploads['long_name'];
-        $ts = new \Elabftw\Elabftw\TrustedTimestamps(NULL, $pdf_file, $token, NULL, NULL, $stamp_params['stampcert']);
+        $ts = new \Elabftw\Elabftw\TrustedTimestamps(null, $pdf_file, $token, null, null, $stamp_params['stampcert']);
         $validate = $ts->validate($data['timestampedwhen']);
     } else {
         $validate = false;
     }
-    
+
     if ($validate) {
         $message_type = 'info_nocross';
         $validation_note = "<img class='align_right' src='img/check.png' alt='Valid Timestamp' title='Valid Timestamp' />";
@@ -114,11 +114,14 @@ if ($data['timestamped'] == 1) {
         $message_type = 'error_nocross';
         $validation_note = "<img class='align_right' src='img/cross-red.png' alt='Invalid Timestamp' title='Invalid Timestamp' />";
     }
-    
+
     $date = new DateTime($data['timestampedwhen']);
-    
-    display_message($message_type, _('Experiment was timestamped by') . " " . $timestamper['firstname'] . " " . $timestamper['lastname'] . " " . _('on') . " " . $date->format('Y-m-d') . " " . _('at') . " " . $date->format('H:i:s') . " 
-    " . $date->getTimezone()->getName() . " <a href='uploads/".$uploads['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='Download timestamped pdf' alt='pdf' /></a>" . $validation_note);
+
+    display_message(
+        $message_type,
+        _('Experiment was timestamped by') . " " . $timestamper['firstname'] . " " . $timestamper['lastname'] . " " . _('on') . " " . $date->format('Y-m-d') . " " . _('at') . " " . $date->format('H:i:s') . " " 
+        . $date->getTimezone()->getName() . " <a href='uploads/".$uploads['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='Download timestamped pdf' alt='pdf' /></a>" . $validation_note
+    );
 
     unset($timestamper);
     unset($uploads);

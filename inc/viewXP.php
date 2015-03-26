@@ -25,6 +25,8 @@
 ********************************************************************************/
 // inc/viewXP.php
 // read only ?
+require_once ELAB_ROOT . 'vendor/autoload.php';
+
 $ro = false;
 // ID
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
@@ -95,11 +97,32 @@ if ($data['timestamped'] == 1) {
     $req_stamper->execute();
     $uploads = $req_stamper->fetch();
 
-    $date_arr = explode(' ', $data['timestampedwhen']);
-    display_message('info_nocross', _('Experiment was timestamped by') . " " . $timestamper['firstname'] . " " . $timestamper['lastname'] . " " . _('on') . " " . $date_arr[0] . " " . _('at') . " " . $date_arr[1] . "
-        <a href='uploads/".$uploads['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='Download timestamped pdf' alt='pdf' /></a>");
+    $token = ELAB_ROOT . 'uploads/' .$data['timestamptoken'];
+    if ($token) {
+        $stamp_params = getTimestampParameters();
+        $pdf_file = "uploads/" . $uploads['long_name'];
+        $ts = new \Elabftw\Elabftw\TrustedTimestamps(NULL, $pdf_file, $token, NULL, NULL, $stamp_params['stampcert']);
+        $validate = $ts->validate($data['timestampedwhen']);
+    } else {
+        $validate = false;
+    }
+    
+    if ($validate) {
+        $message_type = 'info_nocross';
+        $validation_note = "<img class='align_right' src='img/check.png' alt='Valid Timestamp' title='Valid Timestamp' />";
+    } else {
+        $message_type = 'error_nocross';
+        $validation_note = "<img class='align_right' src='img/cross-red.png' alt='Invalid Timestamp' title='Invalid Timestamp' />";
+    }
+    
+    $date = new DateTime($data['timestampedwhen']);
+    
+    display_message($message_type, _('Experiment was timestamped by') . " " . $timestamper['firstname'] . " " . $timestamper['lastname'] . " " . _('on') . " " . $date->format('Y-m-d') . " " . _('at') . " " . $date->format('H:i:s') . " 
+    " . $date->getTimezone()->getName() . " <a href='uploads/".$uploads['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='Download timestamped pdf' alt='pdf' /></a>" . $validation_note);
+
     unset($timestamper);
     unset($uploads);
+    unset($ts);
 }
 
 // Display experiment

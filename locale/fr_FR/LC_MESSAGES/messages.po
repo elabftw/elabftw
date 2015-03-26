@@ -1,1033 +1,1596 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
-"POT-Creation-Date: 2014-10-27 17:55+0100\n"
+"POT-Creation-Date: 2015-03-04 14:57+0100\n"
 "PO-Revision-Date: 2015-03-25 10:53+0100\n"
-"Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
+"Last-Translator: Alexander Minges <alexander.minges@gmail.com>\n"
 "Language-Team: \n"
+"Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.7.4\n"
 "X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"Language: fr\n"
-
-msgid "Yes"
-msgstr "Oui"
-
-msgid "No"
-msgstr "Non"
-
-msgid "Configuration updated successfully."
-msgstr "Configuration mise à jour avec succès."
-
-msgid "There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."
-msgstr "Une erreur inattendue s'est produite ! Merci d'%souvrir un rapport de bug sur GitHub%s si vous pensez que c'est un bug."
-
-msgid "The id parameter is not valid."
-msgstr "Le paramètre id n'est pas valide."
-
-msgid "Userid is not valid."
-msgstr "L'id utilisateur n'est pas valide."
-
-msgid "The type parameter is not valid."
-msgstr "Le paramètre type n'est pas valide."
-
-msgid "Your session expired. Please retry."
-msgstr "Votre session a expiré. Merci de réessayer."
-
-msgid "The email is not valid."
-msgstr "L'email n'est pas valide."
-
-msgid "Wrong password!"
-msgstr "Mauvais mot de passe !"
-
-msgid "No user with this email or user not in your team"
-msgstr "Pas d'utilisateur avec cet email ou l'utilisateur n'est pas dans votre équipe."
-
-msgid "The passwords do not match!"
-msgstr "Les mots de passe entrés diffèrent !"
-
-msgid "Password must contain at least 8 characters."
-msgstr "Le mot de passe doit contenir au moins 8 charactères."
-
-msgid "You need to put a title!"
-msgstr "Il faut mettre un titre !"
-
-msgid "You need to put a password!"
-msgstr "Vous devez entrer un mot de passe !"
-
-msgid "A mandatory field is missing!"
-msgstr "Un champs obligatoire est manquant."
-
-msgid "This section is out of your reach."
-msgstr "Cette section est hors de votre portée."
-
-msgid "Username"
-msgstr "Nom d'utilisateur"
-
-msgid "Password"
-msgstr "Mot de passe"
-
-msgid "Firstname"
-msgstr "Prénom"
-
-msgid "Lastname"
-msgstr "Nom"
-
-msgid "Email"
-msgstr "Email"
-
-msgid "Experiment"
-msgid_plural "Experiments"
-msgstr[0] "Expérience"
-msgstr[1] "Expériences"
-
-msgid "Database"
-msgstr "Base de données"
-
-msgid "Team"
-msgstr "Équipe"
-
-msgid "Date"
-msgstr "Date"
-
-msgid "Title"
-msgstr "Titre"
-
-msgid "Infos"
-msgstr "Infos"
-
-msgid "Visibility"
-msgstr "Visibilité"
-
-msgid "Status"
-msgstr "Statut"
-
-msgid "Edit"
-msgstr "Editer"
-
-msgid "Save"
-msgstr "Enregistrer"
-
-msgid "Saved"
-msgstr "Enregistré !"
-
-msgid "Cancel"
-msgstr "Annuler"
-
-msgid "Saving"
-msgstr "Enregistrement…"
-
-msgid "Save and go back"
-msgstr "Enregistrer et revenir en arrière"
-
-msgid "Updated!"
-msgstr "Mis à jour !"
-
-msgid "Action"
-msgstr "Action"
-
-msgid "Shortcut"
-msgstr "Raccourci"
-
-msgid "Create"
-msgstr "Créer"
-
-msgid "Submit"
-msgstr "Valider"
-
-msgid "TODO list"
-msgstr "TODO liste"
-
-msgid "Name"
-msgstr "Nom"
-
-msgid "Phone"
-msgstr "Téléphone"
-
-msgid "Mobile"
-msgstr "Mobile"
-
-msgid "Website"
-msgstr "Site web"
-
-msgid "Skype"
-msgstr "Skype"
-
-msgid "[eLabFTW] New user registered"
-msgstr "[eLabFTW] Nouvel utilisateur enregistré"
-
-msgid "There was a problem sending the email! Error was logged."
-msgstr "Il y a eu un problème lors de l'envoi de l'email ! L'erreur a été logguée."
-
-msgid "Email sent. Check your INBOX."
-msgstr "Email envoyé. Consultez votre boîte de réception."
-
-msgid "There are users waiting for validation of their account:"
-msgstr "Il y a des utilisateurs en attente de validation :"
-
-msgid "Validate"
-msgstr "Valider"
-
-msgid "Users"
-msgstr "Utilisateurs"
-
-msgid "Types of items"
-msgstr "Catégories d'items"
-
-msgid "Experiments template"
-msgstr "Modèle d'expériences"
-
-msgid "Configure your team"
-msgstr "Configurez votre équipe"
-
-msgid "Users can delete experiments:"
-msgstr "Les utilisateurs peuvent supprimer leurs expériences :"
-
-msgid "Name of the link in the top menu:"
-msgstr "Nom du lien dans le menu du haut :"
-
-msgid "Address where this link should point:"
-msgstr "Adresse vers laquelle ce lien pointe :"
-
-msgid "This should be the email address associated with your account on Universign.com."
-msgstr "Adresse email associée à votre compte sur Universign.com."
-
-msgid "Your Universign password"
-msgstr "Votre mot de passe Universign"
-
-msgid "Edit users"
-msgstr "Éditer les utilisateurs"
-
-msgid "Has an active account?"
-msgstr "Compte activé ?"
-
-msgid "Group:"
-msgstr "Groupe :"
-
-msgid "Reset user password:"
-msgstr "Réinitialiser le mot de passe utilisateur :"
-
-msgid "Repeat new password:"
-msgstr "Répéter le nouveau mot de passe :"
-
-msgid "Edit this user"
-msgstr "Éditer cet utilisateur"
-
-msgid "DANGER ZONE"
-msgstr "ZONE DE DANGER"
-
-msgid "Delete an account"
-msgstr "Supprimer un compte"
-
-msgid "Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:"
-msgstr "Taper l'ADRESSE Email d'un membre pour le supprimer ainsi que toutes ses expériences pour toujours :"
-
-msgid "Type your password:"
-msgstr "Tapez votre mot de passe :"
-
-msgid "Delete this user!"
-msgstr "Supprimer cet utilisateur !"
-
-msgid "Add a new status"
-msgstr "Ajouter un nouveau statut"
-
-msgid "New status name:"
-msgstr "Nom du nouveau statut :"
-
-msgid "Edit an existing status"
-msgstr "Éditer un statut existant"
-
-msgid "Remove all experiments with this status before deleting this status."
-msgstr "Supprimez toutes les expériences avec ce statut avant de supprimer ce statut."
-
-msgid "Default status"
-msgstr "Statut par défaut"
-
-msgid "Database items types"
-msgstr "Catégories d'items de la base de données"
-
-msgid "Remove all database items with this type before deleting this type."
-msgstr "Supprimez tous les items de la base de données de cette catégorie avant de supprimer cette catégorie."
-
-msgid "Edit name:"
-msgstr "Éditer le nom :"
-
-msgid "Add a new type of item:"
-msgstr "Ajouter une nouvelle catégorie d'items :"
-
-msgid "Common experiment template"
-msgstr "Modèle d'expérience commun"
-
-msgid "This is the default text when someone creates an experiment."
-msgstr "Ceci est le texte par défaut affiché lorsqu'une expérience est créée."
-
-msgid "This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file."
-msgstr "Cette page vous permet d'importer un fichier .csv (un tableur Excel) dans la base de données.<br>D'abord il faut ouvrir le fichier (en .xls/.xlsx) dans Excel ou Libreoffice et l'enregistrer en .csv.<br>Pour que l'importation se passe "
-
-msgid "You should make a backup of your database before importing thousands of items!"
-msgstr "Faîtes une sauvegarde de votre base de données (SQL) avant d'importer des milliers d'items !"
-
-msgid "1. Select a type of item to import to:"
-msgstr "1. Choisissez une catégorie d'item dans laquelle importer :"
-
-msgid "2. Select a CSV file to import:"
-msgstr "2. Choisissez un fichier CSV :"
-
-msgid "Import CSV"
-msgstr "Importer le CSV"
-
-msgid "items were imported successfully."
-msgstr "items ont été importés avec succès."
-
-msgid "Validated user with ID:"
-msgstr "Ont été validés les utilisateurs avec l'ID :"
-
-msgid "Team added successfully."
-msgstr "Équipe ajoutée avec succès."
-
-msgid "Only a sysadmin can put someone sysadmin."
-msgstr "Seul un sysadmin peut nommer un autre sysadmin."
-
-msgid "Everything was purged successfully."
-msgstr "Tout a été supprimé avec succès."
-
-msgid "Reset password"
-msgstr "Réinitialiser le mot de passe"
-
-msgid "Type it again"
-msgstr "Tapez-le encore"
-
-msgid "8 characters minimum"
-msgstr "8 charactères au minimum"
-
-msgid "Complexity"
-msgstr "Complexité"
-
-msgid "Save new password"
-msgstr "Enregistrer le nouveau mot de passe"
-
-msgid "Weak password"
-msgstr "Mot de passe faible"
-
-msgid "Average password"
-msgstr "Mot de passe passable"
-
-msgid "Good password"
-msgstr "Bon mot de passe"
-
-msgid "Strong password"
-msgstr "Mot de passe fort"
-
-msgid "No way that is your real password!"
-msgstr "Pas moyen que ce soit votre vrai mot de passe !"
-
-msgid "Install git to check for updates."
-msgstr "Installez git pour vérifier les mises à jour."
-
-msgid "You need to install the curl extension for php."
-msgstr "Il vous faut installer l'extension curl pour php."
-
-msgid "Unknown branch!"
-msgstr "Branche inconnue !"
-
-msgid "Couldn't connect to github.com to check for updates."
-msgstr "Échec de la connexion à github.com pour vérifier les mises à jour."
-
-msgid "A new update is available!"
-msgstr "Des mises à jour sont disponibles !"
-
-msgid "Congratulations! You are running the latest stable version of eLabFTW :)"
-msgstr "Félicitations ! Vous utilisez la dernière version stable d'eLabFTW :)"
-
-msgid "Congratulations! You are running the latest development version of eLabFTW :)"
-msgstr "Félicitations ! Vous utilisez la dernière version de développement d'eLabFTW :)"
-
-msgid "Wrong item type!"
-msgstr "Mauvaise catégorie d'item !"
-
-msgid "Untitled"
-msgstr "Sans titre"
-
-msgid "New item created successfully."
-msgstr "Nouvel item créé avec succès."
-
-msgid "File"
-msgstr "Fichier"
-
-msgid "deleted successfully"
-msgstr "supprimé avec succès"
-
-msgid "You don't have the rights to delete this experiment."
-msgstr "Vous n'avez pas les droits suffisants pour supprimer cette expérience."
-
-msgid "Experiment was deleted successfully."
-msgstr "L'expérience a été supprimée avec succès."
-
-msgid "Template was deleted successfully."
-msgstr "Le modéle a été supprimé avec succès."
-
-msgid "Item was deleted successfully."
-msgstr "L'item a été supprimé avec succès."
-
-msgid "Item type was deleted successfully."
-msgstr "La catégorie d'item a été supprimée avec succès."
-
-msgid "Status was deleted successfully."
-msgstr "Le statut a été supprimé avec succès."
-
-msgid "Experiment successfully duplicated."
-msgstr "Expérience dupliquée avec succès."
-
-msgid "Database entry successfully duplicated."
-msgstr "Item dupliqué avec succès."
-
-msgid "You don't have the rights to lock/unlock this."
-msgstr "Vous n'avez pas les droits suffisants pour vérouiller/déverouiller."
-
-msgid "This experiment was locked by"
-msgstr "Cette expérience a été vérouillée par"
-
-msgid "This item is locked. You cannot edit it."
-msgstr "Cet item est vérouillé. Vous ne pouvez pas l'éditer."
-
-msgid "Login failed. Either you mistyped your password or your account isn't activated yet."
-msgstr "Identification échouée. Soit vous avez mal tapé votre mot de p"
-
-msgid "Login"
-msgstr "Connexion"
-
-msgid "You cannot login now because of too many failed login attempts."
-msgstr "Vous ne pouvez pas vous connecter en raison d'un trop grand nombre d'échec de connection."
-
-msgid "Number of login attempt left before being banned for"
-msgstr "Nombre d'essais avant d'être banni pour"
-
-msgid "minutes:"
-msgstr "minutes :"
-
-msgid "Please enable cookies in your navigator to continue."
-msgstr "Merci d'autoriser les cookies dans votre navigateur pour continuer."
-
-msgid "Note: you need cookies enabled to log in."
-msgstr "Note : il vous faut accepter les cookies pour vous connecter."
-
-msgid "Sign in to your account"
-msgstr "Connectez-vous à votre compte"
-
-msgid "Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"
-msgstr "Pas de compte ? %sCréez un compte%s maintenant !<br>Mot de passe oublié ? %sRéinitialisez-le%s !"
-
-msgid "Enter your email address"
-msgstr "Entrez votre adresse email"
-
-msgid "Send new password"
-msgstr "Envoyer le lien de réinitialisation"
-
-msgid "Export to spreadsheet"
-msgstr "Exporter en tableur"
-
-msgid "Your CSV file is ready:"
-msgstr "Le fichier CSV est prêt :"
-
-msgid "Make zip archive"
-msgstr "Créer une archive ZIP"
-
-msgid "Your ZIP archive is ready:"
-msgstr "Votre archive ZIP est prête :"
-
-msgid "Profile"
-msgstr "Profil"
-
-msgid "experiments done since"
-msgstr "expériences réalisées depuis"
-
-msgid "Username already in use!"
-msgstr "Nom d'utilisateur déjà pris !"
-
-msgid "Someone is already using that email address!"
-msgstr "Cette adresse email est déjà enregistrée !"
-
-msgid "Hi. A new user registered on elabftw. Head to the admin panel to validate the account."
-msgstr "Bonjour. Un nouvel utilisateur s'est enregistré sur elabftw. Rendez-vous dans le panneau d'administration pour valider le compte."
-
-msgid "Could not send email to inform admin. Error was logged. Contact an admin directly to validate your account."
-msgstr "Erreur lors de l'envoi de l'email pour informer l'admin. L'erreur a été enregistrée. Contactez un administrateur directement pour valider votre compte."
-
-msgid "Registration successful :<br>Your account must now be validated by an admin.<br>You will receive an email when it is done."
-msgstr "Enregistrement réussi :)<br>Votre compte doit maintenant être validé par un admin.<br>Vous recevrez un email lorsque cela sera fait."
-
-msgid "Registration successful :)<br>Welcome to eLabFTW o/"
-msgstr "Enregistrement réussi :)<br>Bienvenue sur eLabFTW!"
-
-msgid "Please %slogout%s before you register another account."
-msgstr "%sDéconnectez-vous%s avant d'enregistrer un autre compte."
-
-msgid "go back to login page"
-msgstr "retour à la page de connexion"
-
-msgid "Create your account"
-msgstr "Créez votre compte"
-
-msgid "------ Select a team ------"
-msgstr "Choisissez une équipe"
-
-msgid "Confirm password"
-msgstr "Confirmer le mot de passe"
-
-msgid "Password complexity"
-msgstr "Complexité du mot de passe"
-
-msgid "create"
-msgstr "créer"
-
-msgid "New password updated. You can now login."
-msgstr "Nouveau mot de passe mis à jour. Vous pouvez vous connecter désormais."
-
-msgid "Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s"
-msgstr "Bonjour. Quelqu'un (probablement vous) avec l'adresse IP : %s et le navigateur %s a demandé un nouveau mot de passe sur eLabFTW. Suivez ce lien pour réinitialiser votre mot de passe : %s"
-
-msgid "Email not found in database!"
-msgstr "Cette adresse email n'est pas dans la base de données !"
-
-msgid "Revisions"
-msgstr "Révisions"
-
-msgid "Go back to the experiment"
-msgstr "Retourner à l'expérience"
-
-msgid "You cannot restore a revision of a locked experiment!"
-msgstr "Vous ne pouvez pas restaurer une révision d'une expérience vérouillée !"
-
-msgid "Current:"
-msgstr "Actuel :"
-
-msgid "Saved on:"
-msgstr "Enregistré le :"
-
-msgid "Restore"
-msgstr "Restaurer"
-
-msgid "Search"
-msgstr "Recherche"
-
-msgid "Advanced search"
-msgstr "Recherche avancée"
-
-msgid "Back to experiments listing"
-msgstr "Retourner à la liste des expériences"
-
-msgid "Search only in experiments owned by:"
-msgstr "Rechercher uniquement dans les expériences de :"
-
-msgid "Yourself"
-msgstr "Vous-même"
-
-msgid "search in everyone's experiments"
-msgstr "chercher dans les expériences de toute l'équipe"
-
-msgid "Search in"
-msgstr "Chercher dans"
-
-msgid "Where date is between"
-msgstr "Où la date est entre"
-
-msgid "and"
-msgstr "et"
-
-msgid "And title contains"
-msgstr "Et le titre contient"
-
-msgid "And body contains"
-msgstr "Et le corps contient"
-
-msgid "And status is"
-msgstr "Et le statut est"
-
-msgid "select status"
-msgstr "choisir un statut"
-
-msgid "And rating is"
-msgstr "Et l'évaluation est"
-
-msgid "select number of stars"
-msgstr "choisir le nombre d'étoiles"
-
-msgid "Unrated"
-msgstr "Pas d'étoiles"
-
-msgid "Launch search"
-msgstr "Lancer la recherche"
-
-msgid "Export this result:"
-msgstr "Exporter ce résultat :"
-
-msgid "Sorry. I couldn't find anything :("
-msgstr "Désolé, aucun résultat pour ces critères."
-
-msgid "eLabFTW configuration"
-msgstr "eLabFTW configuration"
-
-msgid "Server"
-msgstr "Serveur"
-
-msgid "Timestamp"
-msgstr "Horodatage"
-
-msgid "on"
-msgstr "le"
-
-msgid "at"
-msgstr "à"
-
-msgid "Security"
-msgstr "Securité"
-
-msgid "Add a new team"
-msgstr "Ajouter une nouvelle équipe"
-
-msgid "Edit existing teams"
-msgstr "Éditer les équipes existantes"
-
-msgid "Members"
-msgstr "Membres"
-
-msgid "Items"
-msgstr "Items"
-
-msgid "Created"
-msgstr "Créée"
-
-msgid "Under the hood"
-msgstr "Paramètres avancés"
-
-msgid "Activate debug mode:"
-msgstr "Activer le mode debug :"
-
-msgid "Content of SESSION and COOKIES array will be displayed in the footer for admins."
-msgstr "Le contenu de SESSION et COOKIES sera affiché dans le footer des admins."
-
-msgid "Address of the proxy:"
-msgstr "Adresse du proxy :"
-
-msgid "If you are behind a firewall/proxy, enter the address here. Example : http://proxy.example.com:3128"
-msgstr "Si vous êtes derrière un pare-feu, entrez l'adresse ici. Exemple : http://proxy.example.cm:3128"
-
-msgid "Full path to the install folder:"
-msgstr "Chemin complet du dossier où est eLabFTW"
-
-msgid "This is actually the md5 hash of the path to the install. You probably don't need to change that except when you move an existing install."
-msgstr "Ceci est en réalité le hash md5 du chemin. Vous n'avez probablement pas besoin de changer"
-
-msgid "Universign timestamping configuration"
-msgstr "Configuration de l'horodatage Universign"
-
-msgid "The teams can use the credentials below to timestamp:"
-msgstr "Les équipes peuvent utiliser les informations de connexion suivantes :"
-
-msgid "You can control if the teams can use the global Universign account. If set to <em>no</em> the team admin must add login infos in the admin panel."
-msgstr "Vous pouvez contrôler si les équipes peuvent utiliser le compte Universign global ou pas. Si <em>non</em> est sélectionné, les administrateurs d'équipe devront ajouter leurs infos de connexion."
-
-msgid "Login for external timestamping service:"
-msgstr "Identifiant pour le service externe d'horodatage :"
-
-msgid "Must be an email address."
-msgstr "Doit être une adresse email."
-
-msgid "Password for external timestamping service:"
-msgstr "Mot de passe pour le service externe d'horodatage :"
-
-msgid "Security settings"
-msgstr "Paramètres de sécurité"
-
-msgid "Users need validation by admin after registration:"
-msgstr "Les nouveaux inscrits nécessitent une validation par l'admin :"
-
-msgid "Set to yes for added security."
-msgstr "Mettez oui pour plus de sécurité."
-
-msgid "Number of allowed login attempts:"
-msgstr "Nombre d'essais de connexion autorisés :"
-
-msgid "3 might be too few. See for yourself :)"
-msgstr "3 n'est peut-être pas assez. À vous de voir :)"
-
-msgid "Time of the ban after failed login attempts (in minutes:"
-msgstr "Temps de bannissement (en minutes) :"
-
-msgid "To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems."
-msgstr "Pour identifier un utilisateur, un hash md5 de l'user agent + IP est utilisé. Car se baser seulement sur l'adresse IP pourrait causer des problèmes."
-
-msgid "SMTP settings"
-msgstr "Configuration SMTP"
-
-msgid "Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mandrill.com (or gmail account and add the infos here."
-msgstr "Sans possibilité d'envoyer des emails, les utilisateurs ne pourrant pas réinitialiser leurs mots de passe. Il est recommandé d'utiliser un compte spécifique Mandrill.com (ou gmail)."
-
-msgid "Address of the SMTP server:"
-msgstr "Adresse du serveur SMTP :"
-
-msgid "SMTP encryption (can be TLS or STARTSSL):"
-msgstr "Encryption SMTP (TLS ou STARTSSL) :"
-
-msgid "Probably TLS"
-msgstr "Probablement TLS."
-
-msgid "SMTP Port:"
-msgstr "Port SMTP :"
-
-msgid "Default is 587."
-msgstr "Le port par défaut est 587."
-
-msgid "SMTP username:"
-msgstr "Nom d'utilisateur SMTP :"
-
-msgid "SMTP password"
-msgstr "Mot de passe SMTP :"
-
-msgid "Tips and tricks"
-msgstr "Trucs et astuces"
-
-msgid "You belong to the %s team."
-msgstr "Vous appartenez à l'équipe %s."
-
-msgid "There is a total of %d experiment"
-msgid_plural "There is a total of %d experiments"
-msgstr[0] "Il y a un total de %d expérience"
-msgstr[1] "Il y a un total de %d expériences"
-
-msgid "by %d different user."
-msgid_plural "by %d different users."
-msgstr[0] "par %d seul utilisateur."
-msgstr[1] "par %d utilisateurs différents."
-
-msgid "There is a total of %d item in the database."
-msgid_plural "There is a total of %d items in the database."
-msgstr[0] "Il y a un total de %d item dans la base de données."
-msgstr[1] "Il y a un total de %d items dans la base de données."
-
-msgid "You can use a TODOlist by pressing 't'."
-msgstr "Vous pouvez afficher une TODO list liste en pressant 't'."
-
-msgid "You can have experiments templates (%sControl Panel%s)."
-msgstr "Vous pouvez avoir des modèles d'expériences (%sPanneau de contrôle utilisateur%s)."
-
-msgid "The admin of a team can edit the status and the types of items available (%sAdmin Panel%s)."
-msgstr "L'administrateur d'une équipe peut éditer les statuts et les types d'items disponibles (%sPanneau d'administration%s)."
-
-msgid "If you press Ctrl Shift D in the editor, the date will appear under the cursor."
-msgstr "Si vous faîtes Ctrl Maj D dans la fenêtre d'édition, la date apparaîtra sous le curseur."
-
-msgid "Custom shortcuts are available (%sControl Panel%s)."
-msgstr "Des raccourcis claviers personnalisables sont disponibles (%sPanneau de contrôle utilisateur%s)."
-
-msgid "You can duplicate experiments in one click."
-msgstr "Vous pouvez dupliquer des expériences en un seul clic."
-
-msgid "Click a tag to list all items with this tag."
-msgstr "Cliquez un tag pour lister tous les items avec ce tag."
-
-msgid "Register an account with %sUniversign%s to start timestamping experiments."
-msgstr "Créez un compte avec %sUniversign%s pour commencer à horodater des expériences."
-
-msgid "Only a locked experiment can be timestamped."
-msgstr "Seule une expérience vérouillée peut être horodatée."
-
-msgid "Once timestamped an experiment cannot be unlocked or modified. Only comments can be added."
-msgstr "Une fois vérouillée, une expérience ne peut plus être dévérouillée ou modifiée, seuls des commentaires peuvent être ajoutés."
-
-msgid "There was an error in the timestamping. Login credentials probably wrong or no more credits."
-msgstr "Il y a eu une erreur dans l'horodatage. Les informations d'authentification sont peut-être fausses"
-
-msgid "There was an error with the timestamping. Experiment is NOT timestamped. Error has been logged."
-msgstr "Il y a eu une erreur dans l'horodatage. L'expérience n'est PAS horodatée. L'erreur a été logguée."
-
-msgid "Experiment timestamped with success. The timestamped PDF can now be downloaded below."
-msgstr "Expérience horodatée avec succès. Le PDF horodaté peut être téléchargé ci-dessous."
-
-msgid "User Control Panel"
-msgstr "Panneau de contrôle utilisateur"
-
-msgid "Password updated!"
-msgstr "Mot de passe mis à jour !"
-
-msgid "Profile updated."
-msgstr "Profil mis à jour."
-
-msgid "Enter your password to edit anything."
-msgstr "Entrez votre mot de passe pour éditer les informations."
-
-msgid "Preferences updated."
-msgstr "Vos préférences on été mises à jour."
-
-msgid "You must specify a name for the template!"
-msgstr "Il faut spécifier un nom pour le modèle !"
-
-msgid "The template name must be 3 characters long."
-msgstr "Le nom du modèle doit être long d'au moins 3 caractères."
-
-msgid "Experiment template successfully added."
-msgstr "Modèle d'expérience ajouté avec succès."
-
-msgid "Template successfully edited."
-msgstr "Modèle d'expérience édité avec succès."
-
-msgid "Name of the template"
-msgstr "Nom du modèle"
-
-msgid "Account"
-msgstr "Compte"
-
-msgid "Preferences"
-msgstr "Préférences"
-
-msgid "Templates"
-msgstr "Modèles"
-
-msgid "Modify your personal informations"
-msgstr "Modifier vos informations personnelles."
-
-msgid "Modify your identity"
-msgstr "Modifier votre identité"
-
-msgid "Modify your password"
-msgstr "Modifier votre mot de passe "
-
-msgid "New password"
-msgstr "Nouveau mot de passe"
-
-msgid "Confirm new password"
-msgstr "Confirmer le nouveau mot de passe"
-
-msgid "Modify your contact information"
-msgstr "Modifier vos informations de contact"
-
-msgid "Update profile"
-msgstr "Mettre à jour le profil"
-
-msgid "DISPLAY"
-msgstr "AFFICHAGE"
-
-msgid "Default"
-msgstr "Defaut"
-
-msgid "Compact"
-msgstr "Compact"
-
-msgid "Order by:"
-msgstr "Ordre basé sur :"
-
-msgid "Item ID"
-msgstr "Item ID"
-
-msgid "with"
-msgstr "avec"
-
-msgid "newer first"
-msgstr "les plus récents d'abord"
-
-msgid "older first"
-msgstr "les plus anciens d'abord"
-
-msgid "Items per page:"
-msgstr "Items par page :"
-
-msgid "KEYBOARD SHORTCUTS"
-msgstr "RACCOURCIS CLAVIER"
-
-msgid "ALERT"
-msgstr "ALERTE"
-
-msgid "Display a warning before closing an edit window/tab ?"
-msgstr "Afficher un avertissement avant de fermer un onglet d'édition ?"
-
-msgid "Create new"
-msgstr "Créer un nouveau"
-
-msgid "Add template"
-msgstr "Ajouter un modèle"
-
-msgid "Edit template"
-msgstr "Éditer un modèle"
-
-msgid "Language"
-msgstr "Langage"
-
-msgid "Nothing to show with this ID."
-msgstr "Rien à afficher avec cet ID."
-
-msgid "Last modified by"
-msgstr "Dernière modification par"
-
-msgid "<strong>Access forbidden:</strong> the visibility setting of this experiment is set to 'owner only'."
-msgstr "<strong>Accès interdit :</strong> le paramètre de visibilité de cette expérience est 'propriétaire seulement'."
-
-msgid "<strong>Read-only mode:</strong> this experiment is owned by"
-msgstr "<strong>Mode lecture seule :</strong> cette expérience appartient à"
-
-msgid "Experiment was timestamped by"
-msgstr "Expérience horodatée par"
-
-msgid "Unique eLabID:"
-msgstr "eLabID unique :"
-
-msgid "Comments"
-msgstr "Commentaires"
-
-msgid "Add a comment"
-msgstr "Ajouter un commentaire"
-
-msgid "Delete this?"
-msgstr "Supprimer ça ?"
-
-msgid "Once timestamped an experiment cannot be edited anymore ! Are you sure you want to do this ?"
-msgstr "Une expérience horodatée ne peut plus être éditée ! Êtes-vous sûr de vouloir faire ça ?"
-
-msgid "Tag cloud"
-msgstr "Nuage de tags"
-
-msgid "Not enough tags to make a tagcloud."
-msgstr "Pas assez de tags pour faire un nuage."
-
-msgid "Statistics"
-msgstr "Statistiques"
-
-msgid "No statistics available yet."
-msgstr "Pas de statistiques disponibles."
-
-msgid "Experiments for"
-msgstr "Expériences pour"
-
-msgid "Attach a file"
-msgstr "Joindre un fichier"
-
-msgid "Start Upload"
-msgstr "Démarrer l'upload"
-
-msgid "Filter type"
-msgstr "Filtrer les catégories"
-
-msgid "result found"
-msgid_plural "results found"
-msgstr[0] "résultat trouvé"
-msgstr[1] "résultats trouvés"
-
-msgid "<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list to begin filling your database."
-msgstr "<strong>Bienvenue sur eLabFTW.</strong>Choisissez un item dans la liste «Créer nouveau» pour commencer à remplire votre base de données."
-
-msgid "Showing last 10 uploads:"
-msgstr "Liste des 10 derniers ajouts :"
-
-msgid "Load more"
-msgstr "Afficher plus"
-
-msgid "Create experiment"
-msgstr "Créer une expérience"
-
-msgid "Create from template"
-msgstr "Créer depuis un modèle"
-
-msgid "Filter status"
-msgstr "Filtrer les statuts"
-
-msgid "<strong>You do not have any templates yet.</strong> Go to %syour control panel%s to make one !"
-msgstr "<strong>Vous n'avez pas encore créé de modèles.</strong> Rendez-vous dans %svotre panneau de contrôle%s pour en ajouter !"
-
-msgid "<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button to get started."
-msgstr "<strong>Bienvenue sur eLabFTW.</strong>Cliquez le bouton %sCréer une expérience%s pour démarrer."
-
-msgid "<strong>This item is locked.</strong> You cannot edit it."
-msgstr "<strong>Cet item est vérouillé.</strong> Vous ne pouvez pas l'éditer."
-
-msgid "Tags"
-msgstr "Tags"
-
-msgid "Do you want to navigate away from this page? Unsaved changes will be lost!"
-msgstr "Êtes vous sûr de vouloir quitter cette page ? Tout changement non sauvegardé sera perdu !"
-
-msgid "<strong>Cannot edit:</strong> this experiment is not yours!"
-msgstr "<strong>Édition interdite :</strong> cette expérience ne vous appartient pas !"
-
-msgid "Click a tag to remove it"
-msgstr "cliquer un tag pour le supprimer"
-
-msgid "Add a tag"
-msgstr "Ajouter un tag"
-
-msgid "Only the team"
-msgstr "Seulement l'équipe"
-
-msgid "Only me"
-msgstr "Seulement moi"
-
-msgid "Linked items"
-msgstr "Items liés"
-
-msgid "Add a link"
-msgstr "Ajouter un lien"
-
-msgid "from the database"
-msgstr "depuis la base de données"
-
-msgid "Show history"
-msgstr "Voir historique"
-
-msgid "revision available."
-msgid_plural "revisions available."
-msgstr[0] "revision disponible."
-msgstr[1] "revisions disponibles."
-
-msgid "Howdy,"
-msgstr "Salutations,"
-
-msgid "Settings"
-msgstr "Paramètres"
-
-msgid "Logout"
-msgstr "Déconnexion"
-
-msgid "Check for updates"
-msgstr "Mettre à jour"
-
-msgid "Sysadmin panel"
-msgstr "Panneau du sysadmin"
-
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: elabftw\n"
+"X-Poedit-SearchPathExcluded-0: elabftw/vendor\n"
+"X-Poedit-SearchPathExcluded-1: elabftw/js\n"
+
+#: elabftw/admin.php:34 elabftw/inc/footer.php:60
 msgid "Admin panel"
 msgstr "Panneau d'administration"
 
-msgid "Powered by"
-msgstr "Propulsé par"
-
-msgid "Page generated in"
-msgstr "Page générée en"
-
-msgid "Go to user control panel"
-msgstr "Aller au panneau utilisateur"
-
+#: elabftw/admin.php:46 elabftw/sysconfig.php:41
+#, php-format
 msgid "Please finalize install : %slink to documentation%s."
 msgstr "L'installation n'est pas terminée ! %sLien vers la documentation%s."
 
+#: elabftw/admin.php:59
+msgid "There are users waiting for validation of their account:"
+msgstr "Il y a des utilisateurs en attente de validation :"
+
+#: elabftw/admin.php:69 elabftw/ucp.php:197
+msgid "Submit"
+msgstr "Valider"
+
+#: elabftw/admin.php:79 elabftw/sysconfig.php:66
+msgid "Teams"
+msgstr ""
+
+#: elabftw/admin.php:80
+msgid "Users"
+msgstr "Utilisateurs"
+
+#: elabftw/admin.php:81 elabftw/inc/editXP.php:111
+msgid "Status"
+msgstr "Statut"
+
+#: elabftw/admin.php:82
+msgid "Types of items"
+msgstr "Catégories d'items"
+
+#: elabftw/admin.php:83
+msgid "Experiments template"
+msgstr "Modèle d'expériences"
+
+#: elabftw/admin.php:84 elabftw/admin.php:464
+msgid "Import CSV"
+msgstr "Importer le CSV"
+
+#: elabftw/admin.php:91
+msgid "Configure your team"
+msgstr "Configurez votre équipe"
+
+#: elabftw/admin.php:94
+msgid "Users can delete experiments:"
+msgstr "Les utilisateurs peuvent supprimer leurs expériences :"
+
+#: elabftw/admin.php:98 elabftw/admin.php:167 elabftw/sysconfig.php:154
+#: elabftw/sysconfig.php:177 elabftw/sysconfig.php:213
+msgid "Yes"
+msgstr "Oui"
+
+#: elabftw/admin.php:101 elabftw/admin.php:170 elabftw/sysconfig.php:157
+#: elabftw/sysconfig.php:180 elabftw/sysconfig.php:216
+msgid "No"
+msgstr "Non"
+
+#: elabftw/admin.php:105
+msgid "Name of the link in the top menu:"
+msgstr "Nom du lien dans le menu du haut :"
+
+#: elabftw/admin.php:109
+msgid "Address where this link should point:"
+msgstr "Adresse vers laquelle ce lien pointe :"
+
+#: elabftw/admin.php:113 elabftw/sysconfig.php:184
+msgid "URL for external timestamping service:"
+msgstr ""
+
+#: elabftw/admin.php:115 elabftw/sysconfig.php:186
+msgid ""
+"This should be the URL used for <a href=\"https://tools.ietf.org/html/"
+"rfc3161\">RFC 3161</a>-compliant timestamping requests."
+msgstr ""
+
+#: elabftw/admin.php:118 elabftw/sysconfig.php:189
+msgid "Chain of certificates of the external timestamping service:"
+msgstr ""
+
+#: elabftw/admin.php:120
+msgid ""
+"This should point to the chain of certificates used by your external "
+"timestamping provider to sign the timestamps.<br /> Local path relative to "
+"eLabFTW installation directory. The file needs to be in <a href=\"https://en."
+"wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail\">PEM-encoded (ASCII)</"
+"a> format!"
+msgstr ""
+
+#: elabftw/admin.php:122 elabftw/sysconfig.php:193
+msgid "Login for external timestamping service:"
+msgstr "Identifiant pour le service externe d'horodatage :"
+
+#: elabftw/admin.php:124
+msgid ""
+"This should be the login associated with your timestamping service provider"
+msgstr ""
+
+#: elabftw/admin.php:127 elabftw/sysconfig.php:196
+msgid "Password for external timestamping service:"
+msgstr "Mot de passe pour le service externe d'horodatage :"
+
+#: elabftw/admin.php:129
+msgid "Your timestamping service provider password"
+msgstr ""
+
+#: elabftw/admin.php:141
+msgid "Edit users"
+msgstr "Éditer les utilisateurs"
+
+#: elabftw/admin.php:154 elabftw/register.php:73 elabftw/ucp.php:76
+msgid "Firstname"
+msgstr "Prénom"
+
+#: elabftw/admin.php:156 elabftw/register.php:78 elabftw/ucp.php:88
+msgid "Lastname"
+msgstr "Nom"
+
+#: elabftw/admin.php:158 elabftw/login.php:120 elabftw/register.php:61
+#: elabftw/ucp.php:80
+msgid "Username"
+msgstr "Nom d'utilisateur"
+
+#: elabftw/admin.php:160 elabftw/register.php:66 elabftw/sysconfig.php:70
+#: elabftw/ucp.php:92
+msgid "Email"
+msgstr "Email"
+
+#: elabftw/admin.php:163
+msgid "Has an active account?"
+msgstr "Compte activé ?"
+
+#: elabftw/admin.php:173
+msgid "Group:"
+msgstr "Groupe :"
+
+#: elabftw/admin.php:195
+msgid "Reset user password:"
+msgstr "Réinitialiser le mot de passe utilisateur :"
+
+#: elabftw/admin.php:198
+msgid "Repeat new password:"
+msgstr "Répéter le nouveau mot de passe :"
+
+#: elabftw/admin.php:203
+msgid "Edit this user"
+msgstr "Éditer cet utilisateur"
+
+#: elabftw/admin.php:219
+msgid "DANGER ZONE"
+msgstr "ZONE DE DANGER"
+
+#: elabftw/admin.php:220
+msgid "Delete an account"
+msgstr "Supprimer un compte"
+
+#: elabftw/admin.php:224
+msgid ""
+"Type EMAIL ADDRESS of a member to delete this user and all his experiments/"
+"files forever:"
+msgstr ""
+"Taper l'ADRESSE Email d'un membre pour le supprimer ainsi que toutes ses "
+"expériences pour toujours :"
+
+#: elabftw/admin.php:228
+msgid "Type your password:"
+msgstr "Tapez votre mot de passe :"
+
+#: elabftw/admin.php:231
+msgid "Delete this user!"
+msgstr "Supprimer cet utilisateur !"
+
+#: elabftw/admin.php:240 elabftw/admin.php:250
+msgid "Add a new status"
+msgstr "Ajouter un nouveau statut"
+
+#: elabftw/admin.php:243
+msgid "New status name"
+msgstr ""
+
+#: elabftw/admin.php:256
+msgid "Edit an existing status"
+msgstr "Éditer un statut existant"
+
+#: elabftw/admin.php:286
+msgid "Remove all experiments with this status before deleting this status."
+msgstr ""
+"Supprimez toutes les expériences avec ce statut avant de supprimer ce statut."
+
+#: elabftw/admin.php:293
+msgid "Default status"
+msgstr "Statut par défaut"
+
+#: elabftw/admin.php:309 elabftw/admin.php:340 elabftw/admin.php:373
+#: elabftw/admin.php:428 elabftw/ucp.php:193
+msgid "Edit"
+msgstr "Editer"
+
+#: elabftw/admin.php:328
+msgid "Database items types"
+msgstr "Catégories d'items de la base de données"
+
+#: elabftw/admin.php:357
+msgid "Remove all database items with this type before deleting this type."
+msgstr ""
+"Supprimez tous les items de la base de données de cette catégorie avant de "
+"supprimer cette catégorie."
+
+#: elabftw/admin.php:363
+msgid "Edit name"
+msgstr ""
+
+#: elabftw/admin.php:393
+msgid "Add a new type of item:"
+msgstr "Ajouter une nouvelle catégorie d'items :"
+
+#: elabftw/admin.php:402 elabftw/inc/viewXP.php:259 elabftw/sysconfig.php:164
+#: elabftw/sysconfig.php:200 elabftw/sysconfig.php:226
+#: elabftw/sysconfig.php:260 elabftw/ucp.php:260
+msgid "Save"
+msgstr "Enregistrer"
+
+#: elabftw/admin.php:411
+msgid "Common experiment template"
+msgstr "Modèle d'expérience commun"
+
+#: elabftw/admin.php:420
+msgid "This is the default text when someone creates an experiment."
+msgstr "Ceci est le texte par défaut affiché lorsqu'une expérience est créée."
+
+#: elabftw/admin.php:436
+msgid "Import a CSV file"
+msgstr ""
+
+#: elabftw/admin.php:447
+msgid ""
+"This page will allow you to import a .csv (Excel spreadsheet) file into the "
+"database.<br>First you need to open your .xls/.xlsx file in Excel or "
+"Libreoffice and save it as .csv.<br>In order to have a good import, the "
+"first row should be the column's field names. You can make a tiny import of "
+"3 lines to see if everything works before you import a big file."
+msgstr ""
+"Cette page vous permet d'importer un fichier .csv (un tableur Excel) dans la "
+"base de données.<br>D'abord il faut ouvrir le fichier (en .xls/.xlsx) dans "
+"Excel ou Libreoffice et l'enregistrer en .csv.<br>Pour que l'importation se "
+"passe "
+
+#: elabftw/admin.php:448
+msgid ""
+"You should make a backup of your database before importing thousands of "
+"items!"
+msgstr ""
+"Faîtes une sauvegarde de votre base de données (SQL) avant d'importer des "
+"milliers d'items !"
+
+#: elabftw/admin.php:450
+msgid "1. Select a type of item to import to:"
+msgstr "1. Choisissez une catégorie d'item dans laquelle importer :"
+
+#: elabftw/admin.php:461
+msgid "2. Select a CSV file to import:"
+msgstr "2. Choisissez un fichier CSV :"
+
+#: elabftw/admin.php:527
+msgid "items were imported successfully."
+msgstr "items ont été importés avec succès."
+
+#: elabftw/app/admin-exec.php:33 elabftw/app/editDB-exec.php:38
+#: elabftw/inc/editDB.php:34 elabftw/inc/viewDB.php:31 elabftw/revision.php:40
+#: elabftw/revision.php:46 elabftw/sysconfig.php:30 elabftw/update.php:39
+msgid "This section is out of your reach."
+msgstr "Cette section est hors de votre portée."
+
+#: elabftw/app/admin-exec.php:62
+msgid "Validated user with ID :"
+msgstr ""
+
+#: elabftw/app/admin-exec.php:101 elabftw/app/reset.php:110
+msgid "There was a problem sending the email! Error was logged."
+msgstr ""
+"Il y a eu un problème lors de l'envoi de l'email ! L'erreur a été logguée."
+
+#: elabftw/app/admin-exec.php:147 elabftw/app/admin-exec.php:180
+#: elabftw/app/admin-exec.php:190 elabftw/app/admin-exec.php:215
+#: elabftw/app/admin-exec.php:277 elabftw/app/admin-exec.php:320
+#: elabftw/app/admin-exec.php:377 elabftw/app/admin-exec.php:416
+#: elabftw/app/admin-exec.php:467 elabftw/app/admin-exec.php:536
+#: elabftw/app/admin-exec.php:603 elabftw/app/admin-exec.php:641
+#: elabftw/app/admin-exec.php:688 elabftw/app/admin-exec.php:714
+#: elabftw/app/admin-exec.php:754 elabftw/app/admin-exec.php:787
+#: elabftw/app/admin-exec.php:895 elabftw/app/delete.php:37
+#: elabftw/app/delete.php:198 elabftw/app/delete.php:289
+#: elabftw/app/duplicate_item.php:60 elabftw/app/editDB-exec.php:96
+#: elabftw/app/editXP-exec.php:92 elabftw/app/lock.php:134
+#: elabftw/app/lock.php:151 elabftw/app/lock.php:155
+#: elabftw/app/login-exec.php:169 elabftw/app/register-exec.php:275
+#: elabftw/app/timestamp.php:157 elabftw/app/ucp-exec.php:91
+#: elabftw/app/ucp-exec.php:226 elabftw/app/ucp-exec.php:241
+#: elabftw/app/ucp-exec.php:248 elabftw/app/ucp-exec.php:257
+#: elabftw/database.php:41 elabftw/experiments.php:41 elabftw/make_zip.php:201
+#, php-format
+msgid ""
+"There was an unexpected problem! Please %sopen an issue on GitHub%s if you "
+"think this is a bug."
+msgstr ""
+"Une erreur inattendue s'est produite ! Merci d'%souvrir un rapport de bug "
+"sur GitHub%s si vous pensez que c'est un bug."
+
+#: elabftw/app/admin-exec.php:211
+msgid ""
+"Congratulations! You are running the latest stable version of eLabFTW :)"
+msgstr "Félicitations ! Vous utilisez la dernière version stable d'eLabFTW :)"
+
+#: elabftw/app/admin-exec.php:272
+msgid "Team added successfully."
+msgstr "Équipe ajoutée avec succès."
+
+#: elabftw/app/admin-exec.php:315 elabftw/app/admin-exec.php:372
+#: elabftw/app/admin-exec.php:411 elabftw/app/admin-exec.php:462
+#: elabftw/app/admin-exec.php:542 elabftw/app/admin-exec.php:600
+#: elabftw/app/admin-exec.php:632 elabftw/app/admin-exec.php:683
+#: elabftw/app/admin-exec.php:709 elabftw/app/admin-exec.php:749
+#: elabftw/app/admin-exec.php:782 elabftw/app/admin-exec.php:900
+#: elabftw/app/ucp-exec.php:88
+msgid "Configuration updated successfully."
+msgstr "Configuration mise à jour avec succès."
+
+#: elabftw/app/admin-exec.php:551 elabftw/app/reset.php:159
+msgid "Userid is not valid."
+msgstr "L'id utilisateur n'est pas valide."
+
+#: elabftw/app/admin-exec.php:576
+msgid "Only a sysadmin can put someone sysadmin."
+msgstr "Seul un sysadmin peut nommer un autre sysadmin."
+
+#: elabftw/app/admin-exec.php:607 elabftw/app/register-exec.php:128
+#: elabftw/app/ucp-exec.php:72 elabftw/change-pass.php:55
+#: elabftw/change-pass.php:72 elabftw/register.php:109
+msgid "The passwords do not match!"
+msgstr "Les mots de passe entrés diffèrent !"
+
+#: elabftw/app/admin-exec.php:720 elabftw/app/login-exec.php:51
+#: elabftw/app/login-exec.php:57 elabftw/app/register-exec.php:60
+#: elabftw/app/register-exec.php:70 elabftw/app/register-exec.php:78
+#: elabftw/app/register-exec.php:85 elabftw/app/register-exec.php:110
+#: elabftw/app/register-exec.php:132 elabftw/app/register-exec.php:136
+#: elabftw/app/ucp-exec.php:114 elabftw/app/ucp-exec.php:121
+#: elabftw/app/ucp-exec.php:128 elabftw/app/ucp-exec.php:156
+#: elabftw/app/ucp-exec.php:182
+msgid "A mandatory field is missing!"
+msgstr "Un champs obligatoire est manquant."
+
+#: elabftw/app/admin-exec.php:764
+msgid "You need to put a title!"
+msgstr "Il faut mettre un titre !"
+
+#: elabftw/app/admin-exec.php:805 elabftw/app/reset.php:127
+#: elabftw/app/ucp-exec.php:136
+msgid "The email is not valid."
+msgstr "L'email n'est pas valide."
+
+#: elabftw/app/admin-exec.php:819
+msgid "Wrong password!"
+msgstr "Mauvais mot de passe !"
+
+#: elabftw/app/admin-exec.php:824
+msgid "You need to put a password!"
+msgstr "Vous devez entrer un mot de passe !"
+
+#: elabftw/app/admin-exec.php:837
+msgid "No user with this email or user not in your team"
+msgstr ""
+"Pas d'utilisateur avec cet email ou l'utilisateur n'est pas dans votre "
+"équipe."
+
+#: elabftw/app/admin-exec.php:875
+msgid "Everything was purged successfully."
+msgstr "Tout a été supprimé avec succès."
+
+#: elabftw/app/check_for_updates.php:39 elabftw/app/check_for_updates.php:101
+msgid "Install git to check for updates."
+msgstr "Installez git pour vérifier les mises à jour."
+
+#: elabftw/app/check_for_updates.php:45
+msgid "You need to install the curl extension for php."
+msgstr "Il vous faut installer l'extension curl pour php."
+
+#: elabftw/app/check_for_updates.php:65
+msgid "Unknown branch!"
+msgstr "Branche inconnue !"
+
+#: elabftw/app/check_for_updates.php:105
+msgid "A new update is available!"
+msgstr "Des mises à jour sont disponibles !"
+
+#: elabftw/app/check_for_updates.php:111
+msgid "Congratulations! You are running the latest stable version of eLabFTW :"
+msgstr ""
+
+#: elabftw/app/check_for_updates.php:114
+msgid ""
+"Congratulations! You are running the latest development version of eLabFTW :"
+msgstr ""
+
+#: elabftw/app/create_item.php:37
+msgid "Wrong item type!"
+msgstr "Mauvaise catégorie d'item !"
+
+#: elabftw/app/create_item.php:60
+msgid "Untitled"
+msgstr "Sans titre"
+
+#: elabftw/app/create_item.php:129
+msgid "New item created successfully."
+msgstr "Nouvel item créé avec succès."
+
+#: elabftw/app/delete.php:50
+msgid "You don't have the rights to delete this experiment."
+msgstr "Vous n'avez pas les droits suffisants pour supprimer cette expérience."
+
+#: elabftw/app/delete.php:108
+msgid "Experiment was deleted successfully."
+msgstr "L'expérience a été supprimée avec succès."
+
+#: elabftw/app/delete.php:124
+msgid "Template was deleted successfully."
+msgstr "Le modéle a été supprimé avec succès."
+
+#: elabftw/app/delete.php:201
+msgid "Item was deleted successfully."
+msgstr "L'item a été supprimé avec succès."
+
+#: elabftw/app/delete.php:218
+msgid "Item type was deleted successfully."
+msgstr "La catégorie d'item a été supprimée avec succès."
+
+#: elabftw/app/delete.php:275
+msgid "Status was deleted successfully."
+msgstr "Le statut a été supprimé avec succès."
+
+#: elabftw/app/delete_file.php:58 elabftw/app/delete_file.php:84
+msgid "File"
+msgstr "Fichier"
+
+#: elabftw/app/delete_file.php:58 elabftw/app/delete_file.php:84
+msgid "deleted successfully"
+msgstr "supprimé avec succès"
+
+#: elabftw/app/duplicate_item.php:32 elabftw/app/editDB-exec.php:42
+#: elabftw/app/editXP-exec.php:39 elabftw/app/lock.php:33
+#: elabftw/app/quicksave.php:26 elabftw/app/timestamp.php:35
+#: elabftw/inc/editDB.php:37 elabftw/inc/editXP.php:34
+#: elabftw/inc/viewDB.php:34 elabftw/inc/viewXP.php:35
+#: elabftw/make_csv.php:104 elabftw/make_pdf.php:34 elabftw/make_zip.php:206
+#: elabftw/revision.php:51
+msgid "The id parameter is not valid!"
+msgstr ""
+
+#: elabftw/app/duplicate_item.php:40 elabftw/make_pdf.php:41
+#: elabftw/make_zip.php:49
+msgid "The type parameter is not valid."
+msgstr "Le paramètre type n'est pas valide."
+
+#: elabftw/app/duplicate_item.php:49
+msgid "Experiment successfully duplicated."
+msgstr "Expérience dupliquée avec succès."
+
+#: elabftw/app/duplicate_item.php:54
+msgid "Database entry successfully duplicated."
+msgstr "Item dupliqué avec succès."
+
+#: elabftw/app/lock.php:77 elabftw/app/lock.php:101
+msgid "You don't have the rights to lock/unlock this."
+msgstr "Vous n'avez pas les droits suffisants pour vérouiller/déverouiller."
+
+#: elabftw/app/lock.php:101
+msgid "This experiment was locked by"
+msgstr "Cette expérience a été vérouillée par"
+
+#: elabftw/app/lock.php:115
+msgid "You cannot unlock or edit in any way a timestamped experiment."
+msgstr ""
+
+#: elabftw/app/login-exec.php:42
+msgid "Your session expired. Please retry."
+msgstr "Votre session a expiré. Merci de réessayer."
+
+#: elabftw/app/login-exec.php:157
+msgid ""
+"Login failed. Either you mistyped your password or your account isn't "
+"activated yet."
+msgstr "Identification échouée. Soit vous avez mal tapé votre mot de p"
+
+#: elabftw/app/register-exec.php:55 elabftw/app/ucp-exec.php:108
+msgid "Username already in use!"
+msgstr "Nom d'utilisateur déjà pris !"
+
+#: elabftw/app/register-exec.php:104 elabftw/app/ucp-exec.php:149
+msgid "Someone is already using that email address!"
+msgstr "Cette adresse email est déjà enregistrée !"
+
+#: elabftw/app/register-exec.php:123 elabftw/app/ucp-exec.php:68
+msgid "Password must contain at least 8 characters."
+msgstr "Le mot de passe doit contenir au moins 8 charactères."
+
+#: elabftw/app/register-exec.php:241
+msgid "[eLabFTW] New user registered"
+msgstr "[eLabFTW] Nouvel utilisateur enregistré"
+
+#: elabftw/app/register-exec.php:247
+msgid ""
+"Hi. A new user registered on elabftw. Head to the admin panel to validate "
+"the account."
+msgstr ""
+"Bonjour. Un nouvel utilisateur s'est enregistré sur elabftw. Rendez-vous "
+"dans le panneau d'administration pour valider le compte."
+
+#: elabftw/app/register-exec.php:261
+msgid ""
+"Could not send email to inform admin. Error was logged. Contact an admin "
+"directly to validate your account."
+msgstr ""
+"Erreur lors de l'envoi de l'email pour informer l'admin. L'erreur a été "
+"enregistrée. Contactez un administrateur directement pour valider votre "
+"compte."
+
+#: elabftw/app/register-exec.php:266
+msgid ""
+"Registration successful :)<br>Your account must now be validated by an admin."
+"<br>You will receive an email when it is done."
+msgstr ""
+
+#: elabftw/app/register-exec.php:268
+msgid "Registration successful :)<br>Welcome to eLabFTW o/"
+msgstr "Enregistrement réussi :)<br>Bienvenue sur eLabFTW!"
+
+#: elabftw/app/reset.php:90
+#, php-format
+msgid ""
+"Hi. Someone (probably you) with the IP address: %s and user agent %s "
+"requested a new password on eLabFTW. Please follow this link to reset your "
+"password : %s"
+msgstr ""
+"Bonjour. Quelqu'un (probablement vous) avec l'adresse IP : %s et le "
+"navigateur %s a demandé un nouveau mot de passe sur eLabFTW. Suivez ce lien "
+"pour réinitialiser votre mot de passe : %s"
+
+#: elabftw/app/reset.php:115
+msgid "Email sent. Check your INBOX."
+msgstr "Email envoyé. Consultez votre boîte de réception."
+
+#: elabftw/app/reset.php:121
+msgid "Email not found in database!"
+msgstr "Cette adresse email n'est pas dans la base de données !"
+
+#: elabftw/app/reset.php:173
+msgid "New password updated. You can now login."
+msgstr "Nouveau mot de passe mis à jour. Vous pouvez vous connecter désormais."
+
+#: elabftw/app/timestamp.php:93 elabftw/app/timestamp.php:107
+msgid ""
+"There was an error with the timestamping. Experiment is NOT timestamped. "
+"Error has been logged."
+msgstr ""
+"Il y a eu une erreur dans l'horodatage. L'expérience n'est PAS horodatée. "
+"L'erreur a été logguée."
+
+#: elabftw/app/ucp-exec.php:223
+msgid "Profile updated."
+msgstr "Profil mis à jour."
+
+#: elabftw/app/ucp-exec.php:229
+msgid "Enter your passsword to edit anything."
+msgstr ""
+
+#: elabftw/app/ucp-exec.php:329
+msgid "Preferences updated."
+msgstr "Vos préférences on été mises à jour."
+
+#: elabftw/app/ucp-exec.php:338
+msgid "You must specify a name for the template!"
+msgstr "Il faut spécifier un nom pour le modèle !"
+
+#: elabftw/app/ucp-exec.php:342
+msgid "The template name must be 3 characters long."
+msgstr "Le nom du modèle doit être long d'au moins 3 caractères."
+
+#: elabftw/app/ucp-exec.php:355
+msgid "Experiment template successfully added."
+msgstr "Modèle d'expérience ajouté avec succès."
+
+#: elabftw/app/ucp-exec.php:385
+msgid "Template successfully edited."
+msgstr "Modèle d'expérience édité avec succès."
+
+#: elabftw/change-pass.php:30
+msgid "Reset password"
+msgstr "Réinitialiser le mot de passe"
+
+#: elabftw/change-pass.php:48 elabftw/ucp.php:65
+msgid "New password"
+msgstr "Nouveau mot de passe"
+
+#: elabftw/change-pass.php:49 elabftw/change-pass.php:51
+msgid "8 characters minimum"
+msgstr "8 charactères au minimum"
+
+#: elabftw/change-pass.php:50
+msgid "Type it again"
+msgstr "Tapez-le encore"
+
+#: elabftw/change-pass.php:52
+msgid "Complexity"
+msgstr "Complexité"
+
+#: elabftw/change-pass.php:74
+msgid "Save new password"
+msgstr "Enregistrer le nouveau mot de passe"
+
+#: elabftw/change-pass.php:86 elabftw/register.php:124
+msgid "Weak password"
+msgstr "Mot de passe faible"
+
+#: elabftw/change-pass.php:93 elabftw/register.php:131
+msgid "Average password"
+msgstr "Mot de passe passable"
+
+#: elabftw/change-pass.php:99 elabftw/register.php:137
+msgid "Good password"
+msgstr "Bon mot de passe"
+
+#: elabftw/change-pass.php:106 elabftw/register.php:144
+msgid "Strong password"
+msgstr "Mot de passe fort"
+
+#: elabftw/change-pass.php:113 elabftw/register.php:151
+msgid "No way that is your real password!"
+msgstr "Pas moyen que ce soit votre vrai mot de passe !"
+
+#: elabftw/database.php:28 elabftw/inc/head.php:132
+msgid "Database"
+msgstr "Base de données"
+
+#: elabftw/experiments.php:28 elabftw/inc/editXP.php:164
+#: elabftw/inc/head.php:127 elabftw/search.php:45 elabftw/sysconfig.php:105
+msgid "Experiment"
+msgid_plural "Experiments"
+msgstr[0] ""
+msgstr[1] ""
+
+#: elabftw/inc/display_file.php:46
+msgid "Attached file"
+msgid_plural "Attached files"
+msgstr[0] ""
+msgstr[1] ""
+
+#: elabftw/inc/editDB.php:55 elabftw/inc/editXP.php:56
+msgid "<strong>This item is locked.</strong> You cannot edit it."
+msgstr "<strong>Cet item est vérouillé.</strong> Vous ne pouvez pas l'éditer."
+
+#: elabftw/inc/editDB.php:67 elabftw/inc/editXP.php:67
+msgid "Tags"
+msgstr "Tags"
+
+#: elabftw/inc/editDB.php:81 elabftw/inc/editXP.php:81
+msgid "Add a tag"
+msgstr "Ajouter un tag"
+
+#: elabftw/inc/editDB.php:97 elabftw/inc/editXP.php:92 elabftw/ucp.php:153
+msgid "Date"
+msgstr "Date"
+
+#: elabftw/inc/editDB.php:100 elabftw/inc/editXP.php:152 elabftw/ucp.php:161
+msgid "Title"
+msgstr "Titre"
+
+#: elabftw/inc/editDB.php:106 elabftw/profile.php:46
+msgid "Infos"
+msgstr "Infos"
+
+#: elabftw/inc/editDB.php:112 elabftw/inc/editXP.php:171
+msgid "Save and go back"
+msgstr "Enregistrer et revenir en arrière"
+
+#: elabftw/inc/editDB.php:127 elabftw/inc/editXP.php:223
+msgid "revision available."
+msgid_plural "revisions available."
+msgstr[0] ""
+msgstr[1] ""
+
+#: elabftw/inc/editDB.php:127 elabftw/inc/editXP.php:223
+msgid "Show history"
+msgstr "Voir historique"
+
+#: elabftw/inc/editDB.php:165 elabftw/inc/editXP.php:259
+#: elabftw/inc/editXP.php:331 elabftw/inc/viewXP.php:236
+msgid "Delete this?"
+msgstr "Supprimer ça ?"
+
+#: elabftw/inc/editDB.php:280 elabftw/inc/editXP.php:483
+msgid ""
+"Do you want to navigate away from this page? Unsaved changes will be lost!"
+msgstr ""
+"Êtes vous sûr de vouloir quitter cette page ? Tout changement non sauvegardé "
+"sera perdu !"
+
+#: elabftw/inc/editXP.php:49
+msgid "<strong>Cannot edit:</strong> this experiment is not yours!"
+msgstr ""
+"<strong>Édition interdite :</strong> cette expérience ne vous appartient "
+"pas !"
+
+#: elabftw/inc/editXP.php:63 elabftw/search.php:36
+msgid "Back to experiments listing"
+msgstr "Retourner à la liste des expériences"
+
+#: elabftw/inc/editXP.php:67
+msgid "Click a tag to remove it"
+msgstr "cliquer un tag pour le supprimer"
+
+#: elabftw/inc/editXP.php:99
+msgid "Visibility"
+msgstr "Visibilité"
+
+#: elabftw/inc/editXP.php:101
+msgid "Only the team"
+msgstr "Seulement l'équipe"
+
+#: elabftw/inc/editXP.php:105
+msgid "Only me"
+msgstr "Seulement moi"
+
+#: elabftw/inc/editXP.php:107
+msgid "Updated!"
+msgstr "Mis à jour !"
+
+#: elabftw/inc/editXP.php:177
+msgid "Linked items"
+msgstr "Items liés"
+
+#: elabftw/inc/editXP.php:208
+msgid "Add a link"
+msgstr "Ajouter un lien"
+
+#: elabftw/inc/editXP.php:209
+msgid "from the database"
+msgstr "depuis la base de données"
+
+#: elabftw/inc/file_upload.php:47
+msgid "Attach a file"
+msgstr "Joindre un fichier"
+
+#: elabftw/inc/file_upload.php:67
 msgid "Drop files here to upload"
 msgstr "Déposez ici les fichiers à uploader"
 
-msgid "Attached file"
-msgid_plural "Attached files"
-msgstr[0] "Fichier attaché"
-msgstr[1] "Fichiers attachés"
+#: elabftw/inc/footer.php:49
+msgid "Check for updates"
+msgstr "Mettre à jour"
 
-msgid "Molecule drawer"
-msgstr "Éditeur de molécule"
+#: elabftw/inc/footer.php:49
+msgid "Sysadmin panel"
+msgstr "Panneau du sysadmin"
 
-msgid "Tools"
-msgstr "Outils"
+#: elabftw/inc/footer.php:73
+msgid "Powered by"
+msgstr "Propulsé par"
 
+#: elabftw/inc/footer.php:75
+msgid "Page generated in"
+msgstr "Page générée en"
+
+#: elabftw/inc/functions.php:402
+msgid "Timestamped. Open the experiment for validation."
+msgstr ""
+
+#: elabftw/inc/head.php:138 elabftw/register.php:47 elabftw/team.php:28
+msgid "Team"
+msgstr "Équipe"
+
+#: elabftw/inc/head.php:144 elabftw/search.php:29
+msgid "Search"
+msgstr "Recherche"
+
+#: elabftw/inc/head.php:158
+msgid "Howdy,"
+msgstr "Salutations,"
+
+#: elabftw/inc/head.php:158 elabftw/profile.php:28
+msgid "Profile"
+msgstr "Profil"
+
+#: elabftw/inc/head.php:159
+msgid "Settings"
+msgstr "Paramètres"
+
+#: elabftw/inc/head.php:160
+msgid "Logout"
+msgstr "Déconnexion"
+
+#: elabftw/inc/showDB.php:43 elabftw/ucp.php:276
+msgid "Create new"
+msgstr "Créer un nouveau"
+
+#: elabftw/inc/showDB.php:52
+msgid "Filter type"
+msgstr "Filtrer les catégories"
+
+#: elabftw/inc/showDB.php:82 elabftw/inc/showDB.php:104
+#: elabftw/inc/showXP.php:97 elabftw/inc/showXP.php:183 elabftw/search.php:395
+#: elabftw/search.php:444
+msgid "Sorry. I couldn't find anything :("
+msgstr "Désolé, aucun résultat pour ces critères."
+
+#: elabftw/inc/showDB.php:84 elabftw/inc/showDB.php:106
+#: elabftw/inc/showXP.php:99 elabftw/inc/showXP.php:185 elabftw/search.php:388
+msgid "result found"
+msgid_plural "results found"
+msgstr[0] ""
+msgstr[1] ""
+
+#: elabftw/inc/showDB.php:124
+msgid ""
+"<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list "
+"to begin filling your database."
+msgstr ""
+"<strong>Bienvenue sur eLabFTW.</strong>Choisissez un item dans la liste "
+"«Créer nouveau» pour commencer à remplire votre base de données."
+
+#: elabftw/inc/showDB.php:131
+msgid "Showing last 10 uploads:"
+msgstr "Liste des 10 derniers ajouts :"
+
+#: elabftw/inc/showXP.php:27
+msgid "Load more"
+msgstr "Afficher plus"
+
+#: elabftw/inc/showXP.php:33
+msgid "Create experiment"
+msgstr "Créer une expérience"
+
+#: elabftw/inc/showXP.php:34
+msgid "Create from template"
+msgstr "Créer depuis un modèle"
+
+#: elabftw/inc/showXP.php:38
+msgid "Filter status"
+msgstr "Filtrer les statuts"
+
+#: elabftw/inc/showXP.php:65
+#, php-format
+msgid ""
+"<strong>You do not have any templates yet.</strong> Go to %syour control "
+"panel%s to make one !"
+msgstr ""
+"<strong>Vous n'avez pas encore créé de modèles.</strong> Rendez-vous dans "
+"%svotre panneau de contrôle%s pour en ajouter !"
+
+#: elabftw/inc/showXP.php:139
+msgid "results."
+msgstr ""
+
+#: elabftw/inc/showXP.php:141 elabftw/inc/showXP.php:143
+msgid "Found"
+msgstr ""
+
+#: elabftw/inc/showXP.php:213
+#, php-format
+msgid ""
+"<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button "
+"to get started."
+msgstr ""
+"<strong>Bienvenue sur eLabFTW.</strong>Cliquez le bouton %sCréer une "
+"expérience%s pour démarrer."
+
+#: elabftw/inc/statistics.php:68
+msgid "No statistics available yet."
+msgstr "Pas de statistiques disponibles."
+
+#: elabftw/inc/statistics.php:75 elabftw/team.php:36
+msgid "Statistics"
+msgstr "Statistiques"
+
+#: elabftw/inc/statistics.php:98
+msgid "Experiments for"
+msgstr "Expériences pour"
+
+#: elabftw/inc/tagcloud.php:27
+msgid "Tag cloud"
+msgstr "Nuage de tags"
+
+#: elabftw/inc/tagcloud.php:83
+msgid "Not enough tags to make a tagcloud."
+msgstr "Pas assez de tags pour faire un nuage."
+
+#: elabftw/inc/viewDB.php:58
+msgid "Nothing to show with this ID."
+msgstr "Rien à afficher avec cet ID."
+
+#: elabftw/inc/viewDB.php:113
+msgid "Last modified by"
+msgstr "Dernière modification par"
+
+#: elabftw/inc/viewDB.php:113 elabftw/inc/viewXP.php:120
+msgid "on"
+msgstr ""
+
+#: elabftw/inc/viewXP.php:66
+msgid ""
+"<strong>Access forbidden:</strong> the visibility setting of this experiment "
+"is set to 'owner only'."
+msgstr ""
+"<strong>Accès interdit :</strong> le paramètre de visibilité de cette "
+"expérience est 'propriétaire seulement'."
+
+#: elabftw/inc/viewXP.php:76
+msgid "<strong>Read-only mode:</strong> this experiment is owned by"
+msgstr "<strong>Mode lecture seule :</strong> cette expérience appartient à"
+
+#: elabftw/inc/viewXP.php:120
+msgid "Experiment was timestamped by"
+msgstr ""
+
+#: elabftw/inc/viewXP.php:120
+msgid "at"
+msgstr ""
+
+#: elabftw/inc/viewXP.php:196
+msgid "Unique eLabID:"
+msgstr "eLabID unique :"
+
+#: elabftw/inc/viewXP.php:206
+msgid "Comments"
+msgstr "Commentaires"
+
+#: elabftw/inc/viewXP.php:207
+msgid "Add a comment"
+msgstr "Ajouter un commentaire"
+
+#: elabftw/inc/viewXP.php:256
+msgid "Saving"
+msgstr "Enregistrement…"
+
+#: elabftw/inc/viewXP.php:260
+msgid "Cancel"
+msgstr "Annuler"
+
+#: elabftw/inc/viewXP.php:276
+msgid ""
+"Once timestamped an experiment cannot be edited anymore ! Are you sure you "
+"want to do this ?"
+msgstr ""
+"Une expérience horodatée ne peut plus être éditée ! Êtes-vous sûr de vouloir "
+"faire ça ?"
+
+#: elabftw/login.php:32 elabftw/login.php:128
+msgid "Login"
+msgstr "Connexion"
+
+#: elabftw/login.php:69 elabftw/login.php:92
+msgid "You cannot login now because of too many failed login attempts."
+msgstr ""
+"Vous ne pouvez pas vous connecter en raison d'un trop grand nombre d'échec "
+"de connection."
+
+#: elabftw/login.php:77
+msgid "Number of login attempt left before being banned for"
+msgstr "Nombre d'essais avant d'être banni pour"
+
+#: elabftw/login.php:77
+msgid "minutes:"
+msgstr "minutes :"
+
+#: elabftw/login.php:109
+msgid "Please enable cookies in your navigator to continue."
+msgstr "Merci d'autoriser les cookies dans votre navigateur pour continuer."
+
+#: elabftw/login.php:114
+msgid "Note: you need cookies enabled to log in."
+msgstr "Note : il vous faut accepter les cookies pour vous connecter."
+
+#: elabftw/login.php:118
+msgid "Sign in to your account"
+msgstr "Connectez-vous à votre compte"
+
+#: elabftw/login.php:122 elabftw/register.php:82
+msgid "Password"
+msgstr "Mot de passe"
+
+#: elabftw/login.php:131
+#, php-format
+msgid ""
+"Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"
+msgstr ""
+"Pas de compte ? %sCréez un compte%s maintenant !<br>Mot de passe oublié ? "
+"%sRéinitialisez-le%s !"
+
+#: elabftw/login.php:134
+msgid "Enter your email address"
+msgstr "Entrez votre adresse email"
+
+#: elabftw/login.php:135
+msgid "Send new password"
+msgstr "Envoyer le lien de réinitialisation"
+
+#: elabftw/make_csv.php:29
+msgid "Export to spreadsheet"
+msgstr "Exporter en tableur"
+
+#: elabftw/make_csv.php:126
+msgid "Your CSV file is ready:"
+msgstr "Le fichier CSV est prêt :"
+
+#: elabftw/make_zip.php:28
+msgid "Make zip archive"
+msgstr "Créer une archive ZIP"
+
+#: elabftw/make_zip.php:195
+msgid "Your ZIP archive is ready:"
+msgstr "Votre archive ZIP est prête :"
+
+#: elabftw/profile.php:49
+msgid "experiments done since"
+msgstr "expériences réalisées depuis"
+
+#: elabftw/profile.php:50
+msgid "Go to user control panel"
+msgstr "Aller au panneau utilisateur"
+
+#: elabftw/register.php:24
+msgid "Register"
+msgstr ""
+
+#: elabftw/register.php:30
+#, php-format
+msgid "Please %slogout%s before you register another account."
+msgstr "%sDéconnectez-vous%s avant d'enregistrer un autre compte."
+
+#: elabftw/register.php:39
+msgid "go back to login page"
+msgstr "retour à la page de connexion"
+
+#: elabftw/register.php:41
+msgid "Create your account"
+msgstr "Créez votre compte"
+
+#: elabftw/register.php:49
+msgid "------ Select a team ------"
+msgstr "Choisissez une équipe"
+
+#: elabftw/register.php:89
+msgid "Confirm password"
+msgstr "Confirmer le mot de passe"
+
+#: elabftw/register.php:93
+msgid "Password complexity"
+msgstr "Complexité du mot de passe"
+
+#: elabftw/register.php:98
+msgid "create"
+msgstr "créer"
+
+#: elabftw/revision.php:28
+msgid "Revisions"
+msgstr "Révisions"
+
+#: elabftw/revision.php:57
+msgid "Go back to the experiment"
+msgstr "Retourner à l'expérience"
+
+#: elabftw/revision.php:75
+msgid "You cannot restore a revision of a locked experiment!"
+msgstr ""
+"Vous ne pouvez pas restaurer une révision d'une expérience vérouillée !"
+
+#: elabftw/revision.php:98 elabftw/revision.php:155
+msgid "Current:"
+msgstr "Actuel :"
+
+#: elabftw/revision.php:108 elabftw/revision.php:164
+msgid "Saved on:"
+msgstr "Enregistré le :"
+
+#: elabftw/revision.php:108 elabftw/revision.php:164
+msgid "Restore"
+msgstr "Restaurer"
+
+#: elabftw/revision.php:114
+msgid "Go back to item."
+msgstr "Retourner à l'item."
+
+#: elabftw/revision.php:132
+msgid "You cannot restore a revision of a locked item!"
+msgstr ""
+
+#: elabftw/search.php:43
+msgid "Search in"
+msgstr "Chercher dans"
+
+#: elabftw/search.php:67
+msgid "Search only in experiments owned by:"
+msgstr "Rechercher uniquement dans les expériences de :"
+
+#: elabftw/search.php:69
+msgid "Yourself"
+msgstr "Vous-même"
+
+#: elabftw/search.php:87
+msgid "search in everyone's experiments"
+msgstr "chercher dans les expériences de toute l'équipe"
+
+#: elabftw/search.php:100
+msgid "Where date is between"
+msgstr "Où la date est entre"
+
+#: elabftw/search.php:106
+msgid "and"
+msgstr ""
+
+#: elabftw/search.php:119
+msgid "And title contains"
+msgstr "Et le titre contient"
+
+#: elabftw/search.php:128
+msgid "And status is"
+msgstr "Et le statut est"
+
+#: elabftw/search.php:130
+msgid "select status"
+msgstr "choisir un statut"
+
+#: elabftw/search.php:162
+msgid "And body contains"
+msgstr "Et le corps contient"
+
+#: elabftw/search.php:173
+msgid "And rating is"
+msgstr "Et l'évaluation est"
+
+#: elabftw/search.php:175
+msgid "select number of stars"
+msgstr "choisir le nombre d'étoiles"
+
+#: elabftw/search.php:176
+msgid "Unrated"
+msgstr "Pas d'étoiles"
+
+#: elabftw/search.php:192
+msgid "Launch search"
+msgstr "Lancer la recherche"
+
+#: elabftw/search.php:381 elabftw/search.php:426
+msgid "Export this result:"
+msgstr "Exporter ce résultat :"
+
+#: elabftw/sysconfig.php:32
+msgid "eLabFTW configuration"
+msgstr "eLabFTW configuration"
+
+#: elabftw/sysconfig.php:67
+msgid "Server"
+msgstr "Serveur"
+
+#: elabftw/sysconfig.php:68
+msgid "Timestamp"
+msgstr "Horodatage"
+
+#: elabftw/sysconfig.php:69
+msgid "Security"
+msgstr "Securité"
+
+#: elabftw/sysconfig.php:71
 msgid "Logs"
 msgstr "Logs"
 
-msgid "Go back to item."
-msgstr "Retourner à l'item."
+#: elabftw/sysconfig.php:77
+msgid "Add a new team"
+msgstr "Ajouter une nouvelle équipe"
+
+#: elabftw/sysconfig.php:85
+msgid "Edit existing teams"
+msgstr "Éditer les équipes existantes"
+
+#: elabftw/sysconfig.php:105 elabftw/team.php:35
+msgid "Members"
+msgstr "Membres"
+
+#: elabftw/sysconfig.php:105
+msgid "Items"
+msgstr "Items"
+
+#: elabftw/sysconfig.php:105
+msgid "Created"
+msgstr "Créée"
+
+#: elabftw/sysconfig.php:114 elabftw/ucp.php:221
+msgid "Language"
+msgstr "Langage"
+
+#: elabftw/sysconfig.php:149
+msgid "Under the hood"
+msgstr "Paramètres avancés"
+
+#: elabftw/sysconfig.php:150
+msgid "Activate debug mode:"
+msgstr "Activer le mode debug :"
+
+#: elabftw/sysconfig.php:159
+msgid ""
+"Content of SESSION and COOKIES array will be displayed in the footer for "
+"admins."
+msgstr ""
+"Le contenu de SESSION et COOKIES sera affiché dans le footer des admins."
+
+#: elabftw/sysconfig.php:160
+msgid "Address of the proxy:"
+msgstr "Adresse du proxy :"
+
+#: elabftw/sysconfig.php:162
+msgid ""
+"If you are behind a firewall/proxy, enter the address here. Example : http://"
+"proxy.example.com:3128"
+msgstr ""
+"Si vous êtes derrière un pare-feu, entrez l'adresse ici. Exemple : http://"
+"proxy.example.cm:3128"
+
+#: elabftw/sysconfig.php:171
+msgid "Timestamping configuration"
+msgstr ""
+
+#: elabftw/sysconfig.php:173
+msgid "The teams can use the credentials below to timestamp:"
+msgstr "Les équipes peuvent utiliser les informations de connexion suivantes :"
+
+#: elabftw/sysconfig.php:182
+msgid ""
+"You can control if the teams can use the global timestamping account. If set "
+"to <em>no</em> the team admin must add login infos in the admin panel."
+msgstr ""
+
+#: elabftw/sysconfig.php:191
+msgid ""
+"This should point to the chain of certificates used by your external "
+"timestamping provider to sign the timestamps.<br />Local path relative to "
+"eLabFTW installation directory. The file needs to be in <a href=\"https://en."
+"wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail\">PEM-encoded (ASCII)</"
+"a> format!"
+msgstr ""
+
+#: elabftw/sysconfig.php:195
+msgid "Login for external timestamping service ."
+msgstr ""
+"This password will be stored in clear in the database ! Make sure it doesn't "
+"open other doors…"
+msgstr ""
+"Ce mot de passe sera stocké en clair dans la base de données ! Choisissez-en "
+"un d'unique."
+
+#: elabftw/sysconfig.php:207
+msgid "Security settings"
+msgstr "Paramètres de sécurité"
+
+#: elabftw/sysconfig.php:209
+msgid "Users need validation by admin after registration:"
+msgstr "Les nouveaux inscrits nécessitent une validation par l'admin :"
+
+#: elabftw/sysconfig.php:218
+msgid "Set to yes for added security."
+msgstr "Mettez oui pour plus de sécurité."
+
+#: elabftw/sysconfig.php:219
+msgid "Number of allowed login attempts:"
+msgstr "Nombre d'essais de connexion autorisés :"
+
+#: elabftw/sysconfig.php:221
+msgid "3 might be too few. See for yourself :)"
+msgstr "3 n'est peut-être pas assez. À vous de voir :)"
+
+#: elabftw/sysconfig.php:222
+msgid "Time of the ban after failed login attempts (in minutes:"
+msgstr "Temps de bannissement (en minutes) :"
+
+#: elabftw/sysconfig.php:224
+msgid ""
+"To identify an user we use an md5 of user agent + IP. Because doing it only "
+"based on IP address would surely cause problems."
+msgstr ""
+"Pour identifier un utilisateur, un hash md5 de l'user agent + IP est "
+"utilisé. Car se baser seulement sur l'adresse IP pourrait causer des "
+"problèmes."
+
+#: elabftw/sysconfig.php:233
+msgid "SMTP settings"
+msgstr "Configuration SMTP"
+
+#: elabftw/sysconfig.php:235
+msgid ""
+"Without a valid way to send emails users won't be able to reset their "
+"password. It is recommended to create a specific Mandrill.com (or gmail "
+"account and add the infos here."
+msgstr ""
+"Sans possibilité d'envoyer des emails, les utilisateurs ne pourrant pas "
+"réinitialiser leurs mots de passe. Il est recommandé d'utiliser un compte "
+"spécifique Mandrill.com (ou gmail)."
+
+#: elabftw/sysconfig.php:237
+msgid "Address of the SMTP server:"
+msgstr "Adresse du serveur SMTP :"
+
+#: elabftw/sysconfig.php:242
+msgid "SMTP encryption (can be TLS or STARTSSL):"
+msgstr "Encryption SMTP (TLS ou STARTSSL) :"
+
+#: elabftw/sysconfig.php:246
+msgid "Probably TLS"
+msgstr "Probablement TLS."
+
+#: elabftw/sysconfig.php:247
+msgid "SMTP Port:"
+msgstr "Port SMTP :"
+
+#: elabftw/sysconfig.php:251
+msgid "Default is 587."
+msgstr "Le port par défaut est 587."
+
+#: elabftw/sysconfig.php:252
+msgid "SMTP username:"
+msgstr "Nom d'utilisateur SMTP :"
+
+#: elabftw/sysconfig.php:256
+msgid "SMTP password"
+msgstr "Mot de passe SMTP :"
+
+#: elabftw/sysconfig.php:299
+msgid "Saved"
+msgstr "Enregistré !"
+
+#: elabftw/team.php:37
+msgid "Tips and tricks"
+msgstr "Trucs et astuces"
+
+#: elabftw/team.php:38
+msgid "Tools"
+msgstr "Outils"
+
+#: elabftw/team.php:43
+#, php-format
+msgid "You belong to the %s team."
+msgstr "Vous appartenez à l'équipe %s."
+
+#: elabftw/team.php:46
+msgid "Name"
+msgstr "Nom"
+
+#: elabftw/team.php:47 elabftw/ucp.php:101
+msgid "Phone"
+msgstr "Téléphone"
+
+#: elabftw/team.php:48 elabftw/ucp.php:105
+msgid "Mobile"
+msgstr "Mobile"
+
+#: elabftw/team.php:49 elabftw/ucp.php:115
+msgid "Website"
+msgstr "Site web"
+
+#: elabftw/team.php:50 elabftw/ucp.php:111
+msgid "Skype"
+msgstr "Skype"
+
+#: elabftw/team.php:100
+#, php-format
+msgid "There is a total of %d experiment"
+msgid_plural "There is a total of %d experiments"
+msgstr[0] ""
+msgstr[1] ""
+
+#: elabftw/team.php:101
+#, php-format
+msgid "by %d different user."
+msgid_plural "by %d different users"
+msgstr[0] ""
+msgstr[1] ""
+
+#: elabftw/team.php:102
+#, php-format
+msgid "There is a total of %d item in the database."
+msgid_plural "There is a total of %d items in the database."
+msgstr[0] ""
+msgstr[1] ""
+
+#: elabftw/team.php:109
+msgid "You can use a TODOlist by pressing 't'."
+msgstr "Vous pouvez afficher une TODO list liste en pressant 't'."
+
+#: elabftw/team.php:110
+#, php-format
+msgid "You can have experiments templates (%sControl Panel%s)."
+msgstr ""
+"Vous pouvez avoir des modèles d'expériences (%sPanneau de contrôle "
+"utilisateur%s)."
+
+#: elabftw/team.php:111
+#, php-format
+msgid ""
+"The admin of a team can edit the status and the types of items available "
+"(%sAdmin Panel%s)."
+msgstr ""
+"L'administrateur d'une équipe peut éditer les statuts et les types d'items "
+"disponibles (%sPanneau d'administration%s)."
+
+#: elabftw/team.php:112
+msgid ""
+"If you press Ctrl Shift D in the editor, the date will appear under the "
+"cursor."
+msgstr ""
+"Si vous faîtes Ctrl Maj D dans la fenêtre d'édition, la date apparaîtra sous "
+"le curseur."
+
+#: elabftw/team.php:113
+#, php-format
+msgid "Custom shortcuts are available (%sControl Panel%s)."
+msgstr ""
+"Des raccourcis claviers personnalisables sont disponibles (%sPanneau de "
+"contrôle utilisateur%s)."
+
+#: elabftw/team.php:114
+msgid "You can duplicate experiments in one click."
+msgstr "Vous pouvez dupliquer des expériences en un seul clic."
+
+#: elabftw/team.php:115
+msgid "Click a tag to list all items with this tag."
+msgstr "Cliquez un tag pour lister tous les items avec ce tag."
+
+#: elabftw/team.php:116
+#, php-format
+msgid ""
+"Register an account with %sUniversign%s to start timestamping experiments."
+msgstr ""
+"Créez un compte avec %sUniversign%s pour commencer à horodater des "
+"expériences."
+
+#: elabftw/team.php:117
+msgid "Only a locked experiment can be timestamped."
+msgstr "Seule une expérience vérouillée peut être horodatée."
+
+#: elabftw/team.php:118
+msgid ""
+"Once timestamped an experiment cannot be unlocked or modified. Only comments "
+"can be added."
+msgstr ""
+"Une fois vérouillée, une expérience ne peut plus être dévérouillée ou "
+"modifiée, seuls des commentaires peuvent être ajoutés."
+
+#: elabftw/team.php:124
+msgid "Molecule drawer"
+msgstr "Éditeur de molécule"
+
+#: elabftw/ucp.php:28
+msgid "User Control Panel"
+msgstr "Panneau de contrôle utilisateur"
+
+#: elabftw/ucp.php:46
+msgid "Account"
+msgstr "Compte"
+
+#: elabftw/ucp.php:47
+msgid "Preferences"
+msgstr "Préférences"
+
+#: elabftw/ucp.php:48
+msgid "Templates"
+msgstr "Modèles"
+
+#: elabftw/ucp.php:59
+msgid "Modify your personal informations"
+msgstr "Modifier vos informations personnelles."
+
+#: elabftw/ucp.php:60
+msgid "Enter your password to edit infos."
+msgstr ""
+
+#: elabftw/ucp.php:64
+msgid "Modify your password"
+msgstr "Modifier votre mot de passe "
+
+#: elabftw/ucp.php:67
+msgid "Confirm new password"
+msgstr "Confirmer le nouveau mot de passe"
+
+#: elabftw/ucp.php:72
+msgid "Modify your identity"
+msgstr "Modifier votre identité"
+
+#: elabftw/ucp.php:98
+msgid "Modify your contact information"
+msgstr "Modifier vos informations de contact"
+
+#: elabftw/ucp.php:122
+msgid "Update profile"
+msgstr "Mettre à jour le profil"
+
+#: elabftw/ucp.php:133
+msgid "DISPLAY"
+msgstr "AFFICHAGE"
+
+#: elabftw/ucp.php:136
+msgid "Default"
+msgstr "Defaut"
+
+#: elabftw/ucp.php:141
+msgid "Compact"
+msgstr "Compact"
+
+#: elabftw/ucp.php:148
+msgid "Order by:"
+msgstr "Ordre basé sur :"
+
+#: elabftw/ucp.php:164
+msgid "with"
+msgstr ""
+
+#: elabftw/ucp.php:169
+msgid "newer first"
+msgstr "les plus récents d'abord"
+
+#: elabftw/ucp.php:173
+msgid "older first"
+msgstr "les plus anciens d'abord"
+
+#: elabftw/ucp.php:177
+msgid "Items per page:"
+msgstr "Items par page :"
+
+#: elabftw/ucp.php:183
+msgid "KEYBOARD SHORTCUTS"
+msgstr "RACCOURCIS CLAVIER"
+
+#: elabftw/ucp.php:187
+msgid "Action"
+msgstr "Action"
+
+#: elabftw/ucp.php:187
+msgid "Shortcut"
+msgstr "Raccourci"
+
+#: elabftw/ucp.php:189
+msgid "Create"
+msgstr "Créer"
+
+#: elabftw/ucp.php:201
+msgid "TODO list"
+msgstr "TODO liste"
+
+#: elabftw/ucp.php:209
+msgid "ALERT"
+msgstr "ALERTE"
+
+#: elabftw/ucp.php:212
+msgid "Display a warning before closing an edit window/tab ?"
+msgstr "Afficher un avertissement avant de fermer un onglet d'édition ?"
+
+#: elabftw/ucp.php:288
+msgid "Name of the template"
+msgstr "Nom du modèle"
+
+#: elabftw/ucp.php:292
+msgid "Add template"
+msgstr "Ajouter un modèle"
+
+#: elabftw/ucp.php:312
+msgid "Edit template"
+msgstr "Éditer un modèle"
 
 msgid "Select a tag"
 msgstr "Choisir un tag"

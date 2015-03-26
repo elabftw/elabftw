@@ -247,6 +247,9 @@ CREATE TABLE `teams` (
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `stamplogin` text DEFAULT NULL,
   `stamppass` text DEFAULT NULL,
+  `stampprovider` text,
+  `stampcert` text,
+  `stamphash` varchar(10),
   PRIMARY KEY (`team_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -351,4 +354,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('smtp_username', ''),
 ('stamplogin', ''),
 ('stamppass', ''),
-('stampshare', '1');
+('stampshare', '1'),
+('stampprovider', ''),
+('stampcert', ''),
+('stamphash', 'sha256');

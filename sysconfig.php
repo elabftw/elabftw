@@ -170,7 +170,7 @@ if ($current_version == 'something') {
 
 <!-- TAB 3 -->
 <div class='divhandle' id='tab3div'>
-    <h3><?php echo _('Universign timestamping configuration'); ?></h3>
+    <h3><?php echo _('Timestamping configuration'); ?></h3>
     <form method='post' action='app/admin-exec.php'>
         <label for='stampshare'><?php echo _('The teams can use the credentials below to timestamp:'); ?></label>
         <select name='stampshare' id='stampshare'>
@@ -181,10 +181,20 @@ if ($current_version == 'something') {
                     if (get_config('stampshare') == 0) { echo " selected='selected'"; } ?>
             ><?php echo _('No'); ?></option>
         </select>
-        <p class='smallgray'><?php echo _('You can control if the teams can use the global Universign account. If set to <em>no</em> the team admin must add login infos in the admin panel.'); ?></p>
+        <p class='smallgray'><?php echo _('You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login infos in the admin panel.'); ?></p>
+        <p>
+        <label for='stampprovider'><?php echo _('URL for external timestamping service:');?></label>
+        <input type='url' value='<?php echo get_config('stampprovider');?>' name='stampprovider' id='stampprovider' />
+        <span class='smallgray'><?php echo _('This should be the URL used for <a href="https://tools.ietf.org/html/rfc3161">RFC 3161</a>-compliant timestamping requests.'); ?></span>
+        </p>
+        <p>
+        <label for='stampcert'><?php echo _('Chain of certificates of the external timestamping service:');?></label>
+        <input type='text' value='<?php echo get_config('stampcert');?>' name='stampcert' id='stampcert' />
+        <span class='smallgray'><?php echo _('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.<br />Local path relative to eLabFTW installation directory. The file needs to be in <a href="https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail">PEM-encoded (ASCII)</a> format!'); ?></span>
+        </p>
         <label for='stamplogin'><?php echo _('Login for external timestamping service:'); ?></label>
-        <input type='email' value='<?php echo get_config('stamplogin'); ?>' name='stamplogin' id='stamplogin' />
-        <p class='smallgray'><?php echo _('Must be an email address.'); ?></p>
+        <input type='text' value='<?php echo get_config('stamplogin'); ?>' name='stamplogin' id='stamplogin' />
+        <p class='smallgray'><?php echo _('Login for external timestamping service .'); ?></p>
         <label for='stamppass'><?php echo _('Password for external timestamping service:'); ?></label>
         <input type='password' value='<?php echo $crypto->decrypt(get_config('stamppass')); ?>' name='stamppass' id='stamppass' />
         <div class='center'>

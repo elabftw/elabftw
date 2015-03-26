@@ -42,24 +42,13 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
 
 // Get login/password info
 // if the team config is set, we use this one, else, we use the general one, unless we can't (not allowed in config)
-if (strlen(get_team_config('stamplogin')) > 2) {
+$stamp_params = getTimestampParameters();
 
-    $login = get_team_config('stamplogin');
-    $password = $crypto->decrypt(get_team_config('stamppass'));
-
-} elseif (get_config('stampshare')) {
-
-    $login = get_config('stamplogin');
-    $password = $crypto->decrypt(get_config('stamppass'));
-
-} else {
-
-    $msg_arr[] = _('There was an error in the timestamping. Login credentials probably wrong or no more credits.');
-    $_SESSION['errors'] = $msg_arr;
-    header("Location: ../experiments.php?mode=view&id=" . $id);
-    exit;
-}
-
+$login = $stamp_params['stamplogin'];
+$password = $stamp_params['stamppassword'];
+$provider = $stamp_params['stampprovider'];
+$cert = $stamp_params['stampcert'];
+$hash = $stamp_params['hash'];
 
 // generate the pdf to timestamp
 $pdf = new \Elabftw\Elabftw\MakePdf($id, 'experiments');
@@ -76,49 +65,18 @@ $mpdf->SetCreator('www.elabftw.net');
 $mpdf->WriteHTML($pdf->content);
 $mpdf->Output($pdf_path, 'F');
 
-// generate the sha256 hash that we will send
-$hashedDataToTimestamp = hash_file('sha256', $pdf_path);
+$trusted_timestamp = new Elabftw\Elabftw\TrustedTimestamps($provider, $pdf_path, NULL, $login, $password, NULL, $hash);
 
-// CONFIGURE DATA TO SEND
-$dataToSend = array(
-    'hashAlgo' => 'SHA256',
-    'withCert' => 'true',
-    'hashValue' => $hashedDataToTimestamp
-);
-
-// SEND DATA
+// REQUEST TOKEN
 try {
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "https://ws.universign.eu/tsa/post/");
-    curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    curl_setopt($ch, CURLOPT_USERPWD, $login . ":" . $password);
-    curl_setopt($ch, CURLOPT_POST, count($dataToSend));
-    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($dataToSend));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-    if (strlen(get_config('proxy')) > 0) {
-        curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
-    }
-    // options to verify the certificate (we disable check)
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-    // add user agent
-    // http://developer.github.com/v3/#user-agent-required
-    curl_setopt($ch, CURLOPT_USERAGENT, "elabftw");
-    // DO IT
-    $token = curl_exec($ch);
-    // free resources
-    curl_close($ch);
-
-    if (!$token || preg_match('/NOT_ENOUGH_TOKENS/', $token)) {
-            throw new Exception(_('There was an error in the timestamping. Login credentials probably wrong or no more credits.'));
-        }
+        $token = $trusted_timestamp->getBinaryResponse();
     } catch (Exception $e) {
         dblog("Error", $_SESSION['userid'], "File: " . $e->getFile() . ", line " . $e->getLine() . ": " . $e->getMessage());
         $msg_arr[] = _('There was an error with the timestamping. Experiment is NOT timestamped. Error has been logged.');
         $_SESSION['errors'] = $msg_arr;
         header("Location: ../experiments.php?mode=view&id=" . $id);
         exit;
-}
+    }
 
 $longname = hash("sha512", uniqid(rand(), true)) . ".asn1";
 $file_path = ELAB_ROOT . 'uploads/' . $longname;
@@ -135,12 +93,17 @@ try {
 }
 
 // SQL
-$sql = "UPDATE `experiments` SET `timestamped` = 1, `timestampedby` = :userid, `timestampedwhen` = CURRENT_TIMESTAMP, `timestamptoken` = :longname WHERE `id` = :id;";
+$sql = "UPDATE `experiments` SET `timestamped` = 1, `timestampedby` = :userid, `timestampedwhen` = :timestampedwhen, `timestamptoken` = :longname WHERE `id` = :id;";
 $req = $pdo->prepare($sql);
+$req->bindParam(':timestampedwhen', $trusted_timestamp->getResponseTime());
+// the date recorded in the db has to match the creation time of the timestamp token
 $req->bindParam(':longname', $longname);
 $req->bindParam(':userid', $_SESSION['userid']);
 $req->bindParam(':id', $id);
 $res1 = $req->execute();
+
+// unset $trusted_timestamp to delete associated temporary files
+unset($trusted_timestamp);
 
 // add also our pdf to the attached files of the experiment, this way it is kept safely :)
 // I had this idea when realizing that if you comment an experiment, the hash won't be good anymore. Because the pdf will contain the new comments.

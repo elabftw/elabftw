@@ -322,7 +322,8 @@ function processTimestampPost()
  *
  * @return array<string,string|null>
  */
-function getTimestampParameters() {
+function getTimestampParameters()
+{
     $hash_algorithms = array('sha256', 'sha384', 'sha512');
     $crypto = new \Elabftw\Elabftw\Crypto();
 
@@ -346,11 +347,11 @@ function getTimestampParameters() {
         }
         // otherwise assume no login or password is needed
     } else {
-        $login = NULL;
-        $password = NULL;
-        $provider = NULL;
-        $cert = NULL;
-        $hash = NULL;
+        $login = null;
+        $password = null;
+        $provider = null;
+        $cert = null;
+        $hash = null;
     }
 
     return array('stamplogin' => $login,
@@ -1039,8 +1040,7 @@ function q($sql)
         $req = $pdo->prepare($sql);
         $req->execute();
         return true;
-    } catch (PDOException $e)
-    {
+    } catch (PDOException $e) {
         dblog('Error', 'mysql', $e->getMessage());
         return $e->getMessage();
     }
@@ -1186,11 +1186,10 @@ function checkSelectFilter($val)
  */
 function cURLcheckBasicFunctions()
 {
-    if( !function_exists("curl_init") &&
-      !function_exists("curl_setopt") &&
-      !function_exists("curl_exec") &&
-      !function_exists("curl_close") ) return false;
-    else return true;
+    return function_exists("curl_init") &&
+      function_exists("curl_setopt") &&
+      function_exists("curl_exec") &&
+      function_exists("curl_close");
 }
 
 /*
@@ -1201,27 +1200,37 @@ function cURLcheckBasicFunctions()
  */
 function cURLdownload($url, $file)
 {
-    if( !cURLcheckBasicFunctions() ) return "UNAVAILABLE: cURL Basic Functions";
+    if (!cURLcheckBasicFunctions()) {
+        return "Please install php5-curl package.";
+    }
+
     $ch = curl_init();
-    if($ch)
-    {
+    curl_setopt($ch, CURLOPT_URL, $url);
+    // this is to get content
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    // add proxy if there is one
+    if (strlen(get_config('proxy')) > 0) {
+        curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
+    }
+    // disable certificate check
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+
+    // add user agent
+    // http://developer.github.com/v3/#user-agent-required
+    curl_setopt($ch, CURLOPT_USERAGENT, "elabftw");
+
+    // add a timeout, because if you need proxy, but don't have it, it will mess up things
+    // 5 seconds
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+
+    // now open the file
     $fp = fopen($file, "w");
-    if($fp)
-    {
-        if( !curl_setopt($ch, CURLOPT_URL, $url) )
-        {
-        fclose($fp); // to match fopen()
-        curl_close($ch); // to match curl_init()
-        return false;
-        }
-        if( !curl_setopt($ch, CURLOPT_FILE, $fp) ) return "FAIL: curl_setopt(CURLOPT_FILE)";
-        if( !curl_setopt($ch, CURLOPT_HEADER, 0) ) return "FAIL: curl_setopt(CURLOPT_HEADER)";
-        if( !curl_exec($ch) ) return "FAIL: curl_exec()";
-        curl_close($ch);
-        fclose($fp);
-        return true;
-    }
-    else return false;
-    }
-    else return false;
+    curl_setopt($ch, CURLOPT_FILE, $fp);
+    // we don't want the header
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    // DO IT!
+    return curl_exec($ch);
+    // cleanup
+    curl_close($ch);
+    fclose($fp);
 }

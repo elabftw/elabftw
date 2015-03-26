@@ -418,7 +418,7 @@ if (in_array('stamplogin', $config_items) && in_array('stamppass', $config_items
 if ($old_timestamping_global) {
     $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('stampprovider', 'https://ws.universign.eu/tsa'), ('stampcert', :certfile), ('stamphash', 'sha256')";
     $req = $pdo->prepare($sql);
-    $res = $req->execute(array('certfile' => ELAB_ROOT . 'uploads/universign-tsa-root.pem'));
+    $res = $req->execute(array('certfile' => ELAB_ROOT . 'vendor/universign-tsa-root.pem'));
     if ($res) {
         echo ">>> Added Universign.eu as global RFC 3161 TSA\n";
     } else {
@@ -457,33 +457,10 @@ foreach ($teams as $team) {
 
 // if Universign was used either globally or on a per team level, correct the recorded dates for the timestamps in the database
 if ($old_timestamping_global || $old_timestamping_teams) {
-    // Download Universign root certificate and convert to PEM format
-    $url = "https://www.universign.eu/en/documents/universign-tsa-root.crt";
-    $destination = ELAB_ROOT . 'uploads/universign-tsa-root.crt';
-    $download = cURLdownload($url, $destination);
-    if ($download) {
-        echo ">>> Downloaded Universign root certificate\n";
-    } else {
-        die("Download of Universign root certificate failed");
-    }
-
-    // Convert from DER to PEM
-    $cmd = 'x509 -in ' . $destination . ' -inform der -out ' . ELAB_ROOT . 'uploads/universign-tsa-root.pem -outform pem';
-    $retarray = [];
-    exec("openssl ".$cmd." 2>&1", $retarray, $retcode);
-    if ($retcode === 0) {
-        echo ">>> Converted Universign root certificate to PEM format\n";
-    } else {
-        die("Conversion of Universign root certificate to PEM format failed!");
-    }
-    // Remove DER-formatted file
-    unlink($destination);
-
     // check if we have timestamped experiments
     $sql = "SELECT * FROM experiments";
     $req = $pdo->prepare($sql);
     $req->execute();
-    require_once 'vendor/autoload.php';
     while ($show = $req->fetch()) {
         if ($show['timestamped'] === '1') {
             $ts = new Elabftw\Elabftw\TrustedTimestamps(null, null, ELAB_ROOT . 'uploads/' . $show['timestamptoken']);
@@ -492,7 +469,7 @@ if ($old_timestamping_global || $old_timestamping_teams) {
                 $sql_update = "UPDATE experiments SET timestampedwhen = :date WHERE id = :id";
                 $req_update = $pdo->prepare($sql_update);
                 $res_update = $req_update->execute(array('date' => $date, 'id' => $show['id']));
-                if($res_update) {
+                if ($res_update) {
                     echo ">>> Corrected timestamp data for experiment #" . $show['id'] . "\n";
                 } else {
                     die($die_msg);

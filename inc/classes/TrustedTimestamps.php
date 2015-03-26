@@ -28,11 +28,13 @@
 *********************************************************************************/
 
 namespace Elabftw\Elabftw;
+
 use \DateTime;
 use \Exception;
 use \RuntimeException;
 
-class TrustedTimestamps {
+class TrustedTimestamps
+{
     private $stampProvider;
     private $data;
     private $stampLogin;
@@ -61,8 +63,16 @@ class TrustedTimestamps {
      * @param string|null $stampCert File with the certificate that is used by the TSA in PEM-encoded ASCII format (optional)
      * @param string $stampHash Hash algorithm to be used (optional, defaults to sha256)
      */
-    public function __construct($stampProvider = null, $data = null, $responsefilePath = null, $stampLogin = null,
-                                $stampPassword = null, $stampCert = null, $stampHash = 'sha256') {
+    public function __construct(
+        $stampProvider = null,
+        $data = null,
+        $responsefilePath = null,
+        $stampLogin = null,
+        $stampPassword = null,
+        $stampCert = null,
+        $stampHash = 'sha256'
+    ) {
+
         $this->stampProvider = $stampProvider;
         $this->data = $data;
         $this->responsefilePath = $responsefilePath;
@@ -86,7 +96,8 @@ class TrustedTimestamps {
      * Class destructor
      * Deletes all temporary files created by TrustedTimestamps
      */
-    public function __destruct() {
+    public function __destruct()
+    {
         foreach ($this->tmpfiles as $file) {
             unlink($file);
         }
@@ -96,7 +107,8 @@ class TrustedTimestamps {
      * Returns response in binary form
      * @return string|bool binary response or false on error
      */
-    public function getBinaryResponse() {
+    public function getBinaryResponse()
+    {
         if (!is_null($this->binaryResponseString)) {
             return $this->binaryResponseString;
         } else {
@@ -108,9 +120,10 @@ class TrustedTimestamps {
      * Returns response base64-encoded
      * @return string|bool base64-encoded response or false on error
      */
-    public function getBase64Response() {
+    public function getBase64Response()
+    {
         if (!is_null($this->base64ResponseString)) {
-        return $this->base64ResponseString;
+            return $this->base64ResponseString;
         } else {
             return false;
         }
@@ -120,9 +133,10 @@ class TrustedTimestamps {
      * Returns date and time of when the response was generated
      * @return string|bool response time or false on error
      */
-    public function getResponseTime() {
+    public function getResponseTime()
+    {
         if (!is_null($this->responseTime)) {
-        return $this->responseTime;
+            return $this->responseTime;
         } else {
             return false;
         }
@@ -134,8 +148,9 @@ class TrustedTimestamps {
      * @param string $str Content which should be written to the newly created tempfile
      * @return string filepath of the created tempfile
      */
-    private function createTempFile($str = "") {
-        $tempfilename = tempnam(ELAB_ROOT.'uploads/tmp', rand());
+    private function createTempFile($str = "")
+    {
+        $tempfilename = tempnam(ELAB_ROOT . 'uploads/tmp', rand());
 
         if (!file_exists($tempfilename)) {
                     throw new Exception("Tempfile could not be created");
@@ -153,7 +168,8 @@ class TrustedTimestamps {
     /**
      * Process the response file and populate class variables accordingly.
      */
-    private function processResponsefile() {
+    private function processResponsefile()
+    {
         if (is_file($this->responsefilePath)) {
             $this->binaryResponseString = file_get_contents($this->responsefilePath);
             $this->base64ResponseString = base64_encode($this->binaryResponseString);
@@ -167,7 +183,8 @@ class TrustedTimestamps {
     /**
      * Creates a Timestamp Requestfile from a filename
      */
-    private function createRequestfile() {
+    private function createRequestfile()
+    {
         $outfilepath = $this->createTempFile();
         $cmd = "ts -query -data ".escapeshellarg($this->data)." -cert -".$this->stampHash." -no_nonce -out ".escapeshellarg($outfilepath);
         $opensslResult = $this->runOpenSSL($cmd);
@@ -189,7 +206,8 @@ class TrustedTimestamps {
      * Check if a response file is present. If not, try to create it from $binaryResponseString
      * @return bool true if found or created, false if not found and not able to create
      */
-    private function checkResponseFileAvailability() {
+    private function checkResponseFileAvailability()
+    {
         switch (is_null($this->responsefilePath)) {
             case true:
                 if (!is_null($this->binaryResponseString)) {
@@ -212,7 +230,8 @@ class TrustedTimestamps {
      *
      * @return string unix timestamp
      */
-    private function getTimestampFromAnswer() {
+    private function getTimestampFromAnswer()
+    {
 
         if (!$this->checkResponseFileAvailability()) {
             throw new RuntimeException('Response file was not found and could not be created from binary response string.');
@@ -242,10 +261,8 @@ class TrustedTimestamps {
             throw new RuntimeException('$retarray must be an array.');
         }
 
-        foreach ($retarray as $retline)
-        {
-            if (preg_match("~^Time\sstamp\:\s(.*)~", $retline, $matches))
-            {
+        foreach ($retarray as $retline) {
+            if (preg_match("~^Time\sstamp\:\s(.*)~", $retline, $matches)) {
                 // try to automatically convert time to unique unix timestamp
                 $responseTime = strtotime($matches[1]);
                 // workaround for faulty php strtotime function, that does not handle times in format "Feb 25 23:29:13.331 2015 GMT"
@@ -275,7 +292,8 @@ class TrustedTimestamps {
     /**
      * Request a timestamp and parse the response
      */
-    private function generateToken() {
+    private function generateToken()
+    {
         if (is_null($this->requestfilePath)) {
             throw new Exception("Cannot create new timestamp token! No data was provided during initialization!");
         } elseif (!file_exists($this->requestfilePath)) {
@@ -288,6 +306,10 @@ class TrustedTimestamps {
         if (!is_null($this->stampLogin) && !is_null($this->stampPassword)) {
             curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
             curl_setopt($ch, CURLOPT_USERPWD, $this->stampLogin.":".$this->stampPassword);
+        }
+        // add proxy if there is one
+        if (strlen(get_config('proxy')) > 0) {
+            curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
         }
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
@@ -318,7 +340,8 @@ class TrustedTimestamps {
      * @param string $cmd
      * @return array<string,null|array|integer>
      */
-    private function runOpenSSL($cmd) {
+    private function runOpenSSL($cmd)
+    {
         $retarray = array();
         exec("openssl ".$cmd." 2>&1", $retarray, $retcode);
 
@@ -330,7 +353,8 @@ class TrustedTimestamps {
      * Check if the requirements to perform a validation are met.
      * @return bool Returns true if the requirements are met, otherwise throw an exception
      */
-    private function checkValidationPrerequisits() {
+    private function checkValidationPrerequisits()
+    {
         if (!is_file($this->responsefilePath)) {
                     throw new Exception("There was no response-string");
         }
@@ -352,7 +376,8 @@ class TrustedTimestamps {
      * @param int|null $timeToCheck The response time, which should be checked
      * @return bool
      */
-    public function validate($timeToCheck = null) {
+    public function validate($timeToCheck = null)
+    {
 
         // Check if all requirements to perform a validation are met
         $this->checkValidationPrerequisits();
@@ -372,8 +397,7 @@ class TrustedTimestamps {
          * are being handled the same way -> retcode 1 + any retarray NOT containing "message imprint mismatch"
          */
 
-        if ($retcode === 0 && strtolower(trim($retarray[0])) == "verification: ok")
-        {
+        if ($retcode === 0 && strtolower(trim($retarray[0])) == "verification: ok") {
 
             if (!is_null($timeToCheck)) {
                 if ($timeToCheck != $this->responseTime) {
@@ -387,8 +411,7 @@ class TrustedTimestamps {
             throw new RuntimeException('$retarray must be an array.');
         }
 
-        foreach ($retarray as $retline)
-        {
+        foreach ($retarray as $retline) {
             if (stripos($retline, "message imprint mismatch") !== false) {
                             return false;
             }

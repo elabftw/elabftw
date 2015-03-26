@@ -418,7 +418,7 @@ if (in_array('stamplogin', $config_items) && in_array('stamppass', $config_items
 if ($old_timestamping_global) {
     $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('stampprovider', 'https://ws.universign.eu/tsa'), ('stampcert', :certfile), ('stamphash', 'sha256')";
     $req = $pdo->prepare($sql);
-    $res = $req->execute(array('certfile' => ELAB_ROOT . 'vendor/universign-tsa-root.pem'));
+    $res = $req->execute(array('certfile' => 'vendor/universign-tsa-root.pem'));
     if ($res) {
         echo ">>> Added Universign.eu as global RFC 3161 TSA\n";
     } else {
@@ -444,7 +444,7 @@ foreach ($teams as $team) {
                 stamphash = 'sha256' WHERE team_id = :id";
         $req = $pdo->prepare($sql);
         $res = $req->execute(array(
-            'certfile' => ELAB_ROOT . 'uploads/universign-tsa-root.pem',
+            'certfile' => 'vendor/universign-tsa-root.pem',
             'id' => $team['team_id']
             ));
         if ($res) {

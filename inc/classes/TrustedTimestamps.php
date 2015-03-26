@@ -382,7 +382,7 @@ class TrustedTimestamps
         // Check if all requirements to perform a validation are met
         $this->checkValidationPrerequisits();
 
-        $cmd = "ts -verify -data ".escapeshellarg($this->data)." -in ".escapeshellarg($this->responsefilePath)." -CAfile ".escapeshellarg($this->stampCert);
+        $cmd = "ts -verify -data ".escapeshellarg($this->data)." -in ".escapeshellarg($this->responsefilePath)." -CAfile " . ELAB_ROOT . escapeshellarg($this->stampCert);
 
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];

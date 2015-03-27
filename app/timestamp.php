@@ -65,18 +65,18 @@ $mpdf->SetCreator('www.elabftw.net');
 $mpdf->WriteHTML($pdf->content);
 $mpdf->Output($pdf_path, 'F');
 
-$trusted_timestamp = new Elabftw\Elabftw\TrustedTimestamps($provider, $pdf_path, NULL, $login, $password, NULL, $hash);
+$trusted_timestamp = new Elabftw\Elabftw\TrustedTimestamps($provider, $pdf_path, null, $login, $password, null, $hash);
 
 // REQUEST TOKEN
 try {
-        $token = $trusted_timestamp->getBinaryResponse();
-    } catch (Exception $e) {
+    $token = $trusted_timestamp->getBinaryResponse();
+} catch (Exception $e) {
         dblog("Error", $_SESSION['userid'], "File: " . $e->getFile() . ", line " . $e->getLine() . ": " . $e->getMessage());
         $msg_arr[] = _('There was an error with the timestamping. Experiment is NOT timestamped. Error has been logged.');
         $_SESSION['errors'] = $msg_arr;
         header("Location: ../experiments.php?mode=view&id=" . $id);
         exit;
-    }
+}
 
 $longname = hash("sha512", uniqid(rand(), true)) . ".asn1";
 $file_path = ELAB_ROOT . 'uploads/' . $longname;

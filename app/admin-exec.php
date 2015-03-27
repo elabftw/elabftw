@@ -464,21 +464,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
     }
 
     // SQL
-    $sql = "UPDATE teams SET deletable_xp = :deletable_xp, link_name = :link_name, link_href = :link_href, stamplogin = :stamplogin, stamppass = :stamppass, stampprovider = :stampprovider, stampcert = :stampcert WHERE team_id = :team_id";
+    $sql = "UPDATE teams SET
+        deletable_xp = :deletable_xp,
+        link_name = :link_name,
+        link_href = :link_href,
+        stamplogin = :stamplogin,
+        stamppass = :stamppass,
+        stampprovider = :stampprovider,
+        stampcert = :stampcert
+        WHERE team_id = :team_id";
     $req = $pdo->prepare($sql);
+    $req->bindParam(':deletable_xp', $deletable_xp);
+    $req->bindParam(':link_name', $link_name);
+    $req->bindParam(':link_href', $link_href);
+    $req->bindParam(':stamplogin', $post_stamp['stamplogin']);
+    $req->bindParam(':stamppass', $post_stamp['stamppass']);
+    $req->bindParam(':stampprovider', $post_stamp['stampprovider']);
+    $req->bindParam(':stampcert', $post_stamp['stampcert']);
+    $req->bindParam(':team_id', $_SESSION['team_id']);
+
     try {
-        $req->execute(array(
-        'deletable_xp' => $deletable_xp,
-        'link_name' => $link_name,
-        'link_href' => $link_href,
-        'stampprovider' => $post_stamp['stampprovider'],
-        `stampcert` => $post_stamp['stampcert'],
-        'stamplogin' => $post_stamp['stamplogin'],
-        'stamppass' => $post_stamp['stamppass'],
-        'team_id' => $_SESSION['team_id']
-        ));
+
+        $req->execute();
+
     } catch (PDOException $e) {
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#10", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+        $msg_arr[] = $e->getMessage();
         $_SESSION['errors'] = $msg_arr;
         header('Location: ../admin.php');
         exit;

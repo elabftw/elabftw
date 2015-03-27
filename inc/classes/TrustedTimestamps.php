@@ -243,7 +243,7 @@ class TrustedTimestamps
         $retcode = $opensslResult['retcode'];
 
         if ($retcode !== 0) {
-                    throw new Exception("The reply failed: ".implode(", ", $retarray));
+            throw new Exception("The reply failed: ".implode(", ", $retarray));
         }
 
         $matches = array();
@@ -280,7 +280,7 @@ class TrustedTimestamps
         }
 
         if (!$responseTime) {
-                    throw new Exception("The Timestamp was not found");
+            throw new Exception("The Timestamp was not found");
         }
 
         /* Return formatted time as this is, what we will store in the database.
@@ -417,6 +417,6 @@ class TrustedTimestamps
             }
         }
 
-        throw new Exception("Systemcommand failed: ".implode(", ", $retarray));
+        throw new Exception("System command failed: ".implode(", ", $retarray));
     }
 }

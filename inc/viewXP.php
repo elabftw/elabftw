@@ -97,6 +97,10 @@ if ($data['timestamped'] == 1) {
     $req_stamper->execute();
     $uploads = $req_stamper->fetch();
 
+    /*
+     * I'm disabling this because we don't need to check each time a page is loaded
+     * Also, as old timestamps sometime fail with this, doing it like that is better.
+     *
     $token = ELAB_ROOT . 'uploads/' .$data['timestamptoken'];
     if ($token) {
         $stamp_params = getTimestampParameters();
@@ -106,6 +110,9 @@ if ($data['timestamped'] == 1) {
     } else {
         $validate = false;
     }
+     */
+    // TODO add a button to validate the experiment against the asn1 token.
+    $validate = true;
 
     if ($validate) {
         $message_type = 'info_nocross';

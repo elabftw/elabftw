@@ -8,7 +8,7 @@ You will find a lot of informations on [the official wiki](https://github.com/el
 ### general
 * free (as in speech)
 * free (as in beer)
-* multi*plateform (server or client)
+* multi-plateform (server or client)
 * web based (no install necessary on client)
 * multiple teams
 * quick search + advanced search
@@ -43,7 +43,7 @@ You will find a lot of informations on [the official wiki](https://github.com/el
 * anti bruteforce system
 * log system
 * secure storage of password (sha512)
-* secure password reset mechanism 
+* secure password reset mechanism
 * option for new account admin validation
 
 ### intellectual property

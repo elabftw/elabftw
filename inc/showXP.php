@@ -58,7 +58,7 @@ if (isset($_GET['tag']) && $_GET['tag'] != '') {
                         <option value='desc'<?php checkSelectSort('desc'); ?>><?php echo _('DESC'); ?></option>
                         <option value='asc'<?php checkSelectSort('asc'); ?>><?php echo _('ASC'); ?></option>
                     </select>
-                    <button class="btn btn-success submit-order"><?php echo _('Order'); ?></button>
+                    <button class="btn btn-elab submit-order"><?php echo _('Order'); ?></button>
                     <!-- FILTER STATUS dropdown menu -->
                     <select name="filter" class="form-control select-filter-status">
                         <option value=''><?php echo _('Filter status'); ?></option>
@@ -74,7 +74,7 @@ if (isset($_GET['tag']) && $_GET['tag'] != '') {
                     }
                     ?>
                     </select>
-                    <button class="btn btn-success submit-filter"><?php echo _('Filter'); ?></button>
+                    <button class="btn btn-elab submit-filter"><?php echo _('Filter'); ?></button>
                     <button type="reset" class="btn btn-danger submit-reset" onclick="javascript:location.href='experiments.php?mode=show&tag=<?php echo $getTag; ?>';"><?php echo _('Reset'); ?></button>
                 </div>
             </form>

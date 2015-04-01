@@ -346,6 +346,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('debug', '0'),
 ('lang', 'en_GB'),
 ('login_tries', '3'),
+('mail_from', ''),
 ('mail_method', 'sendmail'),
 ('proxy', ''),
 ('sendmail_path', '/usr/bin/sendmail'),

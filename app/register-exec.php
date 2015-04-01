@@ -252,14 +252,8 @@ if ($result) {
         ->setTo(array($admin['email'] => 'Admin eLabFTW'))
         // Give it a body
         ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account.') . $footer);
-        $transport = Swift_SmtpTransport::newInstance(
-            get_config('smtp_address'),
-            get_config('smtp_port'),
-            get_config('smtp_encryption')
-        )
-        ->setUsername(get_config('smtp_username'))
-        ->setPassword($crypto->decrypt(get_config('smtp_password')));
-        $mailer = Swift_Mailer::newInstance($transport);
+        // generate Swift_Mailer instance
+        $mailer = getMailer();
         // SEND EMAIL
         try {
             $mailer->send($message);

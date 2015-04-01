@@ -25,8 +25,8 @@
 ********************************************************************************/
 session_start();
 require_once '../inc/connect.php';
-require_once '../inc/functions.php';
 require_once '../vendor/swiftmailer/swiftmailer/lib/swift_required.php';
+require_once '../inc/functions.php';
 require_once '../inc/locale.php';
 require_once '../vendor/autoload.php';
 
@@ -91,14 +91,8 @@ if (isset($_POST['email'])) {
             ->setTo(array($email => 'Dori'))
             // Give it a body
             ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $u_agent, $reset_link) . $footer);
-            $transport = Swift_SmtpTransport::newInstance(
-                get_config('smtp_address'),
-                get_config('smtp_port'),
-                get_config('smtp_encryption')
-            )
-            ->setUsername(get_config('smtp_username'))
-            ->setPassword($crypto->decrypt(get_config('smtp_password')));
-            $mailer = Swift_Mailer::newInstance($transport);
+            // generate Swift_Mailer instance
+            $mailer = getMailer();
             // now we try to send the email
             try {
                 $mailer->send($message);
@@ -162,9 +156,9 @@ if (isset($_POST['password']) &&
         die(_("Userid is not valid."));
     }
     // Replace new password in database
-    $sql = "UPDATE users 
-            SET password = :password, 
-            salt = :salt 
+    $sql = "UPDATE users
+            SET password = :password,
+            salt = :salt
             WHERE userid = :userid";
     $req = $pdo->prepare($sql);
     $result = $req->execute(array(

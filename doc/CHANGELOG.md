@@ -1,6 +1,7 @@
 # Changelog for eLabFTW
 
 # Version 1.1.2
+* add RFC 3161 compatible trusted timestamping (#100)
 * add filtering options (#15)
 * add encryption for passwords of SMTP and Timestamp stored in the SQL database (#129)
 * add hidden field to prevent bot registration (#84)

@@ -506,7 +506,7 @@ $req = $pdo->prepare($sql);
 $req->execute();
 $confcnt = $req->fetch(PDO::FETCH_ASSOC);
 
-if ($confcnt['confcnt'] < 19) {
+if ($confcnt['confcnt'] < 20) {
     $mail_method = 'sendmail';
     // check if an smtp server was set
     $sql = "SELECT * FROM config";
@@ -519,9 +519,17 @@ if ($confcnt['confcnt'] < 19) {
 
     if ($config_items['smtp_address'] !== '')  {
         $mail_method = 'smtp';
+        $smtp_username = filter_var($config_items['smtp_username']);
+        // check if we can use the smtp_username as sender email address
+        if($smtp_username) {
+            $from_email = $smtp_username;
+        } else {
+            // This is just a fallback and will NOT work, because Swiftmailer requires a valid email address
+            $from_email = '';
+        }
     }
 
-    $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('mail_method', '" . $mail_method . "'), ('sendmail_path', '/usr/bin/sendmail')";
+    $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('mail_method', '" . $mail_method . "'), ('sendmail_path', '/usr/bin/sendmail'), ('mail_from', '" . $from_email ."')";
     $req = $pdo->prepare($sql);
     $res = $req->execute();
     if ($res) {

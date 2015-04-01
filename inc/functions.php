@@ -1251,4 +1251,5 @@ function getMailer() {
             $transport = Swift_SendmailTransport::newInstance('' . get_config('sendmail_path') . ' -bs');
         }
         $mailer = Swift_Mailer::newInstance($transport);
+        return $mailer;
 }

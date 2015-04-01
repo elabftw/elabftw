@@ -500,6 +500,39 @@ if (!$old_timestamping_global) {
     }
 }
 
+// 20150401 Add mail method to database (SMTP/sendmail)
+$sql = "SELECT COUNT(*) AS confcnt FROM config";
+$req = $pdo->prepare($sql);
+$req->execute();
+$confcnt = $req->fetch(PDO::FETCH_ASSOC);
+
+// check if an smtp server was set
+$sql = "SELECT * FROM config";
+$req = $pdo->prepare($sql);
+$req->execute();
+$config_items = [];
+$mail_method = 'sendmail';
+while ($show = $req->fetch()) {
+    array_push($config_items, $show);
+}
+
+if ($config_items['smtp_address'] !== '')  {
+    $mail_method = 'smtp';
+}
+
+if ($confcnt['confcnt'] < 18) {
+    $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('mail_method', '" . $mail_method . "')";
+    $req = $pdo->prepare($sql);
+    $res = $req->execute();
+    if ($res) {
+        echo ">>> Set mail_method to " . $mail_method . "\n";
+    } else {
+        die($die_msg);
+    }
+}
+
+
+
 // END
 $msg_arr[] = "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)";
 $_SESSION['infos'] = $msg_arr;

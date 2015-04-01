@@ -247,7 +247,7 @@ if ($result) {
         // Give the message a subject
         ->setSubject(_('[eLabFTW] New user registered'))
         // Set the From address with an associative array
-        ->setFrom(array(get_config('smtp_username') => get_config('smtp_username')))
+        ->setFrom(get_config('mail_from'))
         // Set the To addresses with an associative array
         ->setTo(array($admin['email'] => 'Admin eLabFTW'))
         // Give it a body

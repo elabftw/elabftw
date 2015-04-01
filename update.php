@@ -506,7 +506,7 @@ $req = $pdo->prepare($sql);
 $req->execute();
 $confcnt = $req->fetch(PDO::FETCH_ASSOC);
 
-if ($confcnt['confcnt'] < 18) {
+if ($confcnt['confcnt'] < 19) {
     $mail_method = 'sendmail';
     // check if an smtp server was set
     $sql = "SELECT * FROM config";
@@ -521,7 +521,7 @@ if ($confcnt['confcnt'] < 18) {
         $mail_method = 'smtp';
     }
 
-    $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('mail_method', '" . $mail_method . "')";
+    $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('mail_method', '" . $mail_method . "'), ('sendmail_path', '/usr/bin/sendmail')";
     $req = $pdo->prepare($sql);
     $res = $req->execute();
     if ($res) {

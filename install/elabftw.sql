@@ -348,6 +348,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('login_tries', '3'),
 ('mail_method', 'sendmail'),
 ('proxy', ''),
+('sendmail_path', '/usr/bin/sendmail'),
 ('smtp_address', 'smtp.mandrillapp.com'),
 ('smtp_encryption', 'tls'),
 ('smtp_password', ''),

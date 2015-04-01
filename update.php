@@ -506,21 +506,21 @@ $req = $pdo->prepare($sql);
 $req->execute();
 $confcnt = $req->fetch(PDO::FETCH_ASSOC);
 
-// check if an smtp server was set
-$sql = "SELECT * FROM config";
-$req = $pdo->prepare($sql);
-$req->execute();
-$config_items = [];
-$mail_method = 'sendmail';
-while ($show = $req->fetch()) {
-    array_push($config_items, $show);
-}
-
-if ($config_items['smtp_address'] !== '')  {
-    $mail_method = 'smtp';
-}
-
 if ($confcnt['confcnt'] < 18) {
+    $mail_method = 'sendmail';
+    // check if an smtp server was set
+    $sql = "SELECT * FROM config";
+    $req = $pdo->prepare($sql);
+    $req->execute();
+    $config_items = [];
+    while ($show = $req->fetch()) {
+        array_push($config_items, $show);
+    }
+
+    if ($config_items['smtp_address'] !== '')  {
+        $mail_method = 'smtp';
+    }
+
     $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('mail_method', '" . $mail_method . "')";
     $req = $pdo->prepare($sql);
     $res = $req->execute();

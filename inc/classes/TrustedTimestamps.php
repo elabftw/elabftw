@@ -317,8 +317,7 @@ class TrustedTimestamps
         curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents($this->requestfilePath));
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/timestamp-query'));
-        //Be honest about our user agent instead of faking an ancienct IE
-        curl_setopt($ch, CURLOPT_USERAGENT, "eLabFTW/1.1.0");
+        curl_setopt($ch, CURLOPT_USERAGENT, "eLabFTW");
         $binaryResponseString = curl_exec($ch);
         $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);

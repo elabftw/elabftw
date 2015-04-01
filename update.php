@@ -519,7 +519,7 @@ if ($confcnt['confcnt'] < 20) {
 
     if ($config_items['smtp_address'] !== '')  {
         $mail_method = 'smtp';
-        $smtp_username = filter_var($config_items['smtp_username']);
+        $smtp_username = filter_var($config_items['smtp_username'], FILTER_VALIDATE_EMAIL);
         // check if we can use the smtp_username as sender email address
         if($smtp_username) {
             $from_email = $smtp_username;

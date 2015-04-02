@@ -382,7 +382,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['admin_validate'])) {
 } // END SECURITY
 
 // EMAIL
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && (isset($_POST['smtp_address'])) || isset($_POST['sendmail_path'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['mail_method'])) {
+
+    $mail_method = $_POST['mail_method'];
 
     if (isset($_POST['sendmail_path'])) {
         $sendmail_path = filter_var($_POST['sendmail_path'], FILTER_SANITIZE_STRING);
@@ -428,6 +430,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && (isset($_POST['smtp_address'])) || i
         'smtp_port' => $smtp_port,
         'smtp_username' => $smtp_username,
         'smtp_password' => $smtp_password,
+        'mail_method' => $mail_method,
         'mail_from' => $mail_from,
         'sendmail_path' => $sendmail_path
     );

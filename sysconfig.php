@@ -235,6 +235,12 @@ if ($current_version == 'something') {
     <form method='post' action='app/admin-exec.php'>
         <p><?php echo _("Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mandrill.com (or gmail account and add the infos here."); ?></p>
         <p>
+        <select name='mail_method'>
+            <option value='sendmail'></option>
+            <option value='smtp'></option>
+        </select>
+        </p>
+        <p>
         <label for='mail_from'><?php echo _('Sender address:'); ?></label>
         <input type='text' value='<?php echo get_config('mail_from'); ?>' name='mail_from' id='mail_from' />
         </p>

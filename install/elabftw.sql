@@ -355,6 +355,6 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('stamplogin', ''),
 ('stamppass', ''),
 ('stampshare', '1'),
-('stampprovider', ''),
-('stampcert', ''),
+('stampprovider', 'https://ws.universign.eu/tsa'),
+('stampcert', 'vendor/universign-tsa-root.pem'),
 ('stamphash', 'sha256');

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
-"POT-Creation-Date: 2015-03-04 14:57+0100\n"
-"PO-Revision-Date: 2015-03-25 10:53+0100\n"
+"POT-Creation-Date: 2015-04-02 13:09+0100\n"
+"PO-Revision-Date: 2015-04-02 13:09+0100\n"
 "Last-Translator: Alexander Minges <alexander.minges@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -17,88 +17,88 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: elabftw/vendor\n"
 "X-Poedit-SearchPathExcluded-1: elabftw/js\n"
 
-#: elabftw/admin.php:34 elabftw/inc/footer.php:60
+#: elabftw/admin.php:37 elabftw/inc/footer.php:60
 msgid "Admin panel"
 msgstr "Panneau d'administration"
 
-#: elabftw/admin.php:46 elabftw/sysconfig.php:41
+#: elabftw/admin.php:49 elabftw/sysconfig.php:43
 #, php-format
 msgid "Please finalize install : %slink to documentation%s."
 msgstr "L'installation n'est pas terminée ! %sLien vers la documentation%s."
 
-#: elabftw/admin.php:59
+#: elabftw/admin.php:62
 msgid "There are users waiting for validation of their account:"
 msgstr "Il y a des utilisateurs en attente de validation :"
 
-#: elabftw/admin.php:69 elabftw/ucp.php:197
+#: elabftw/admin.php:72 elabftw/ucp.php:197
 msgid "Submit"
 msgstr "Valider"
 
-#: elabftw/admin.php:79 elabftw/sysconfig.php:66
+#: elabftw/admin.php:82 elabftw/sysconfig.php:68
 msgid "Teams"
 msgstr ""
 
-#: elabftw/admin.php:80
+#: elabftw/admin.php:83
 msgid "Users"
 msgstr "Utilisateurs"
 
-#: elabftw/admin.php:81 elabftw/inc/editXP.php:111
+#: elabftw/admin.php:84 elabftw/inc/editXP.php:111 elabftw/inc/showXP.php:53
 msgid "Status"
 msgstr "Statut"
 
-#: elabftw/admin.php:82
+#: elabftw/admin.php:85
 msgid "Types of items"
 msgstr "Catégories d'items"
 
-#: elabftw/admin.php:83
+#: elabftw/admin.php:86
 msgid "Experiments template"
 msgstr "Modèle d'expériences"
 
-#: elabftw/admin.php:84 elabftw/admin.php:464
+#: elabftw/admin.php:87 elabftw/admin.php:467
 msgid "Import CSV"
 msgstr "Importer le CSV"
 
-#: elabftw/admin.php:91
+#: elabftw/admin.php:94
 msgid "Configure your team"
 msgstr "Configurez votre équipe"
 
-#: elabftw/admin.php:94
+#: elabftw/admin.php:97
 msgid "Users can delete experiments:"
 msgstr "Les utilisateurs peuvent supprimer leurs expériences :"
 
-#: elabftw/admin.php:98 elabftw/admin.php:167 elabftw/sysconfig.php:154
-#: elabftw/sysconfig.php:177 elabftw/sysconfig.php:213
+#: elabftw/admin.php:101 elabftw/admin.php:170 elabftw/sysconfig.php:156
+#: elabftw/sysconfig.php:179 elabftw/sysconfig.php:214
 msgid "Yes"
 msgstr "Oui"
 
-#: elabftw/admin.php:101 elabftw/admin.php:170 elabftw/sysconfig.php:157
-#: elabftw/sysconfig.php:180 elabftw/sysconfig.php:216
+#: elabftw/admin.php:104 elabftw/admin.php:173 elabftw/sysconfig.php:159
+#: elabftw/sysconfig.php:182 elabftw/sysconfig.php:217
 msgid "No"
 msgstr "Non"
 
-#: elabftw/admin.php:105
+#: elabftw/admin.php:108
 msgid "Name of the link in the top menu:"
 msgstr "Nom du lien dans le menu du haut :"
 
-#: elabftw/admin.php:109
+#: elabftw/admin.php:112
 msgid "Address where this link should point:"
 msgstr "Adresse vers laquelle ce lien pointe :"
 
-#: elabftw/admin.php:113 elabftw/sysconfig.php:184
+#: elabftw/admin.php:116 elabftw/sysconfig.php:186
 msgid "URL for external timestamping service:"
 msgstr ""
 
-#: elabftw/admin.php:115 elabftw/sysconfig.php:186
+#: elabftw/admin.php:118 elabftw/sysconfig.php:188
 msgid ""
 "This should be the URL used for <a href=\"https://tools.ietf.org/html/"
 "rfc3161\">RFC 3161</a>-compliant timestamping requests."
 msgstr ""
 
-#: elabftw/admin.php:118 elabftw/sysconfig.php:189
+#: elabftw/admin.php:121 elabftw/sysconfig.php:191
 msgid "Chain of certificates of the external timestamping service:"
 msgstr ""
 
-#: elabftw/admin.php:120
+#: elabftw/admin.php:123
 msgid ""
 "This should point to the chain of certificates used by your external "
 "timestamping provider to sign the timestamps.<br /> Local path relative to "
@@ -107,74 +107,74 @@ msgid ""
 "a> format!"
 msgstr ""
 
-#: elabftw/admin.php:122 elabftw/sysconfig.php:193
+#: elabftw/admin.php:125 elabftw/sysconfig.php:195
 msgid "Login for external timestamping service:"
 msgstr "Identifiant pour le service externe d'horodatage :"
 
-#: elabftw/admin.php:124
+#: elabftw/admin.php:127
 msgid ""
 "This should be the login associated with your timestamping service provider"
 msgstr ""
 
-#: elabftw/admin.php:127 elabftw/sysconfig.php:196
+#: elabftw/admin.php:130 elabftw/sysconfig.php:198
 msgid "Password for external timestamping service:"
 msgstr "Mot de passe pour le service externe d'horodatage :"
 
-#: elabftw/admin.php:129
+#: elabftw/admin.php:132
 msgid "Your timestamping service provider password"
 msgstr ""
 
-#: elabftw/admin.php:141
+#: elabftw/admin.php:144
 msgid "Edit users"
 msgstr "Éditer les utilisateurs"
 
-#: elabftw/admin.php:154 elabftw/register.php:73 elabftw/ucp.php:76
+#: elabftw/admin.php:157 elabftw/register.php:74 elabftw/ucp.php:76
 msgid "Firstname"
 msgstr "Prénom"
 
-#: elabftw/admin.php:156 elabftw/register.php:78 elabftw/ucp.php:88
+#: elabftw/admin.php:159 elabftw/register.php:79 elabftw/ucp.php:88
 msgid "Lastname"
 msgstr "Nom"
 
-#: elabftw/admin.php:158 elabftw/login.php:120 elabftw/register.php:61
+#: elabftw/admin.php:161 elabftw/login.php:120 elabftw/register.php:62
 #: elabftw/ucp.php:80
 msgid "Username"
 msgstr "Nom d'utilisateur"
 
-#: elabftw/admin.php:160 elabftw/register.php:66 elabftw/sysconfig.php:70
+#: elabftw/admin.php:163 elabftw/register.php:67 elabftw/sysconfig.php:72
 #: elabftw/ucp.php:92
 msgid "Email"
 msgstr "Email"
 
-#: elabftw/admin.php:163
+#: elabftw/admin.php:166
 msgid "Has an active account?"
 msgstr "Compte activé ?"
 
-#: elabftw/admin.php:173
+#: elabftw/admin.php:176
 msgid "Group:"
 msgstr "Groupe :"
 
-#: elabftw/admin.php:195
+#: elabftw/admin.php:198
 msgid "Reset user password:"
 msgstr "Réinitialiser le mot de passe utilisateur :"
 
-#: elabftw/admin.php:198
+#: elabftw/admin.php:201
 msgid "Repeat new password:"
 msgstr "Répéter le nouveau mot de passe :"
 
-#: elabftw/admin.php:203
+#: elabftw/admin.php:206
 msgid "Edit this user"
 msgstr "Éditer cet utilisateur"
 
-#: elabftw/admin.php:219
+#: elabftw/admin.php:222
 msgid "DANGER ZONE"
 msgstr "ZONE DE DANGER"
 
-#: elabftw/admin.php:220
+#: elabftw/admin.php:223
 msgid "Delete an account"
 msgstr "Supprimer un compte"
 
-#: elabftw/admin.php:224
+#: elabftw/admin.php:227
 msgid ""
 "Type EMAIL ADDRESS of a member to delete this user and all his experiments/"
 "files forever:"
@@ -182,77 +182,77 @@ msgstr ""
 "Taper l'ADRESSE Email d'un membre pour le supprimer ainsi que toutes ses "
 "expériences pour toujours :"
 
-#: elabftw/admin.php:228
+#: elabftw/admin.php:231
 msgid "Type your password:"
 msgstr "Tapez votre mot de passe :"
 
-#: elabftw/admin.php:231
+#: elabftw/admin.php:234
 msgid "Delete this user!"
 msgstr "Supprimer cet utilisateur !"
 
-#: elabftw/admin.php:240 elabftw/admin.php:250
+#: elabftw/admin.php:243 elabftw/admin.php:253
 msgid "Add a new status"
 msgstr "Ajouter un nouveau statut"
 
-#: elabftw/admin.php:243
+#: elabftw/admin.php:246
 msgid "New status name"
 msgstr ""
 
-#: elabftw/admin.php:256
+#: elabftw/admin.php:259
 msgid "Edit an existing status"
 msgstr "Éditer un statut existant"
 
-#: elabftw/admin.php:286
+#: elabftw/admin.php:289
 msgid "Remove all experiments with this status before deleting this status."
 msgstr ""
 "Supprimez toutes les expériences avec ce statut avant de supprimer ce statut."
 
-#: elabftw/admin.php:293
+#: elabftw/admin.php:296
 msgid "Default status"
 msgstr "Statut par défaut"
 
-#: elabftw/admin.php:309 elabftw/admin.php:340 elabftw/admin.php:373
-#: elabftw/admin.php:428 elabftw/ucp.php:193
+#: elabftw/admin.php:312 elabftw/admin.php:343 elabftw/admin.php:376
+#: elabftw/admin.php:431 elabftw/ucp.php:193
 msgid "Edit"
 msgstr "Editer"
 
-#: elabftw/admin.php:328
+#: elabftw/admin.php:331
 msgid "Database items types"
 msgstr "Catégories d'items de la base de données"
 
-#: elabftw/admin.php:357
+#: elabftw/admin.php:360
 msgid "Remove all database items with this type before deleting this type."
 msgstr ""
 "Supprimez tous les items de la base de données de cette catégorie avant de "
 "supprimer cette catégorie."
 
-#: elabftw/admin.php:363
+#: elabftw/admin.php:366
 msgid "Edit name"
 msgstr ""
 
-#: elabftw/admin.php:393
+#: elabftw/admin.php:396
 msgid "Add a new type of item:"
 msgstr "Ajouter une nouvelle catégorie d'items :"
 
-#: elabftw/admin.php:402 elabftw/inc/viewXP.php:259 elabftw/sysconfig.php:164
-#: elabftw/sysconfig.php:200 elabftw/sysconfig.php:226
-#: elabftw/sysconfig.php:260 elabftw/ucp.php:260
+#: elabftw/admin.php:405 elabftw/inc/viewXP.php:269 elabftw/sysconfig.php:166
+#: elabftw/sysconfig.php:201 elabftw/sysconfig.php:227
+#: elabftw/sysconfig.php:281 elabftw/ucp.php:260
 msgid "Save"
 msgstr "Enregistrer"
 
-#: elabftw/admin.php:411
+#: elabftw/admin.php:414
 msgid "Common experiment template"
 msgstr "Modèle d'expérience commun"
 
-#: elabftw/admin.php:420
+#: elabftw/admin.php:423
 msgid "This is the default text when someone creates an experiment."
 msgstr "Ceci est le texte par défaut affiché lorsqu'une expérience est créée."
 
-#: elabftw/admin.php:436
+#: elabftw/admin.php:439
 msgid "Import a CSV file"
 msgstr ""
 
-#: elabftw/admin.php:447
+#: elabftw/admin.php:450
 msgid ""
 "This page will allow you to import a .csv (Excel spreadsheet) file into the "
 "database.<br>First you need to open your .xls/.xlsx file in Excel or "
@@ -265,7 +265,7 @@ msgstr ""
 "Excel ou Libreoffice et l'enregistrer en .csv.<br>Pour que l'importation se "
 "passe "
 
-#: elabftw/admin.php:448
+#: elabftw/admin.php:451
 msgid ""
 "You should make a backup of your database before importing thousands of "
 "items!"
@@ -273,51 +273,53 @@ msgstr ""
 "Faîtes une sauvegarde de votre base de données (SQL) avant d'importer des "
 "milliers d'items !"
 
-#: elabftw/admin.php:450
+#: elabftw/admin.php:453
 msgid "1. Select a type of item to import to:"
 msgstr "1. Choisissez une catégorie d'item dans laquelle importer :"
 
-#: elabftw/admin.php:461
+#: elabftw/admin.php:464
 msgid "2. Select a CSV file to import:"
 msgstr "2. Choisissez un fichier CSV :"
 
-#: elabftw/admin.php:527
+#: elabftw/admin.php:530
 msgid "items were imported successfully."
 msgstr "items ont été importés avec succès."
 
-#: elabftw/app/admin-exec.php:33 elabftw/app/editDB-exec.php:38
+#: elabftw/app/admin-exec.php:34 elabftw/app/editDB-exec.php:38
 #: elabftw/inc/editDB.php:34 elabftw/inc/viewDB.php:31 elabftw/revision.php:40
 #: elabftw/revision.php:46 elabftw/sysconfig.php:30 elabftw/update.php:39
 msgid "This section is out of your reach."
 msgstr "Cette section est hors de votre portée."
 
-#: elabftw/app/admin-exec.php:62
+#: elabftw/app/admin-exec.php:63
 msgid "Validated user with ID :"
 msgstr ""
 
-#: elabftw/app/admin-exec.php:101 elabftw/app/reset.php:110
+#: elabftw/app/admin-exec.php:95 elabftw/app/reset.php:107
 msgid "There was a problem sending the email! Error was logged."
 msgstr ""
 "Il y a eu un problème lors de l'envoi de l'email ! L'erreur a été logguée."
 
-#: elabftw/app/admin-exec.php:147 elabftw/app/admin-exec.php:180
-#: elabftw/app/admin-exec.php:190 elabftw/app/admin-exec.php:215
-#: elabftw/app/admin-exec.php:277 elabftw/app/admin-exec.php:320
-#: elabftw/app/admin-exec.php:377 elabftw/app/admin-exec.php:416
-#: elabftw/app/admin-exec.php:467 elabftw/app/admin-exec.php:536
-#: elabftw/app/admin-exec.php:603 elabftw/app/admin-exec.php:641
-#: elabftw/app/admin-exec.php:688 elabftw/app/admin-exec.php:714
-#: elabftw/app/admin-exec.php:754 elabftw/app/admin-exec.php:787
-#: elabftw/app/admin-exec.php:895 elabftw/app/delete.php:37
+#: elabftw/app/admin-exec.php:141 elabftw/app/admin-exec.php:174
+#: elabftw/app/admin-exec.php:184 elabftw/app/admin-exec.php:209
+#: elabftw/app/admin-exec.php:271 elabftw/app/admin-exec.php:312
+#: elabftw/app/admin-exec.php:338 elabftw/app/admin-exec.php:377
+#: elabftw/app/admin-exec.php:444 elabftw/app/admin-exec.php:499
+#: elabftw/app/admin-exec.php:567 elabftw/app/admin-exec.php:605
+#: elabftw/app/admin-exec.php:652 elabftw/app/admin-exec.php:678
+#: elabftw/app/admin-exec.php:718 elabftw/app/admin-exec.php:751
+#: elabftw/app/admin-exec.php:859 elabftw/app/delete.php:37
 #: elabftw/app/delete.php:198 elabftw/app/delete.php:289
 #: elabftw/app/duplicate_item.php:60 elabftw/app/editDB-exec.php:96
 #: elabftw/app/editXP-exec.php:92 elabftw/app/lock.php:134
 #: elabftw/app/lock.php:151 elabftw/app/lock.php:155
-#: elabftw/app/login-exec.php:169 elabftw/app/register-exec.php:275
-#: elabftw/app/timestamp.php:157 elabftw/app/ucp-exec.php:91
+#: elabftw/app/login-exec.php:169 elabftw/app/register-exec.php:276
+#: elabftw/app/timestamp.php:148 elabftw/app/ucp-exec.php:91
 #: elabftw/app/ucp-exec.php:226 elabftw/app/ucp-exec.php:241
 #: elabftw/app/ucp-exec.php:248 elabftw/app/ucp-exec.php:257
-#: elabftw/database.php:41 elabftw/experiments.php:41 elabftw/make_zip.php:201
+#: elabftw/database.php:41 elabftw/experiments.php:41
+#: elabftw/inc/showDB.php:115 elabftw/inc/showXP.php:116
+#: elabftw/make_zip.php:201
 #, php-format
 msgid ""
 "There was an unexpected problem! Please %sopen an issue on GitHub%s if you "
@@ -326,74 +328,74 @@ msgstr ""
 "Une erreur inattendue s'est produite ! Merci d'%souvrir un rapport de bug "
 "sur GitHub%s si vous pensez que c'est un bug."
 
-#: elabftw/app/admin-exec.php:211
+#: elabftw/app/admin-exec.php:205
 msgid ""
 "Congratulations! You are running the latest stable version of eLabFTW :)"
 msgstr "Félicitations ! Vous utilisez la dernière version stable d'eLabFTW :)"
 
-#: elabftw/app/admin-exec.php:272
+#: elabftw/app/admin-exec.php:266
 msgid "Team added successfully."
 msgstr "Équipe ajoutée avec succès."
 
-#: elabftw/app/admin-exec.php:315 elabftw/app/admin-exec.php:372
-#: elabftw/app/admin-exec.php:411 elabftw/app/admin-exec.php:462
-#: elabftw/app/admin-exec.php:542 elabftw/app/admin-exec.php:600
-#: elabftw/app/admin-exec.php:632 elabftw/app/admin-exec.php:683
-#: elabftw/app/admin-exec.php:709 elabftw/app/admin-exec.php:749
-#: elabftw/app/admin-exec.php:782 elabftw/app/admin-exec.php:900
+#: elabftw/app/admin-exec.php:307 elabftw/app/admin-exec.php:333
+#: elabftw/app/admin-exec.php:372 elabftw/app/admin-exec.php:439
+#: elabftw/app/admin-exec.php:506 elabftw/app/admin-exec.php:564
+#: elabftw/app/admin-exec.php:596 elabftw/app/admin-exec.php:647
+#: elabftw/app/admin-exec.php:673 elabftw/app/admin-exec.php:713
+#: elabftw/app/admin-exec.php:746 elabftw/app/admin-exec.php:864
 #: elabftw/app/ucp-exec.php:88
 msgid "Configuration updated successfully."
 msgstr "Configuration mise à jour avec succès."
 
-#: elabftw/app/admin-exec.php:551 elabftw/app/reset.php:159
+#: elabftw/app/admin-exec.php:515 elabftw/app/reset.php:156
 msgid "Userid is not valid."
 msgstr "L'id utilisateur n'est pas valide."
 
-#: elabftw/app/admin-exec.php:576
+#: elabftw/app/admin-exec.php:540
 msgid "Only a sysadmin can put someone sysadmin."
 msgstr "Seul un sysadmin peut nommer un autre sysadmin."
 
-#: elabftw/app/admin-exec.php:607 elabftw/app/register-exec.php:128
+#: elabftw/app/admin-exec.php:571 elabftw/app/register-exec.php:135
 #: elabftw/app/ucp-exec.php:72 elabftw/change-pass.php:55
-#: elabftw/change-pass.php:72 elabftw/register.php:109
+#: elabftw/change-pass.php:72 elabftw/register.php:110
 msgid "The passwords do not match!"
 msgstr "Les mots de passe entrés diffèrent !"
 
-#: elabftw/app/admin-exec.php:720 elabftw/app/login-exec.php:51
-#: elabftw/app/login-exec.php:57 elabftw/app/register-exec.php:60
-#: elabftw/app/register-exec.php:70 elabftw/app/register-exec.php:78
-#: elabftw/app/register-exec.php:85 elabftw/app/register-exec.php:110
-#: elabftw/app/register-exec.php:132 elabftw/app/register-exec.php:136
+#: elabftw/app/admin-exec.php:684 elabftw/app/login-exec.php:51
+#: elabftw/app/login-exec.php:57 elabftw/app/register-exec.php:67
+#: elabftw/app/register-exec.php:77 elabftw/app/register-exec.php:85
+#: elabftw/app/register-exec.php:92 elabftw/app/register-exec.php:117
+#: elabftw/app/register-exec.php:139 elabftw/app/register-exec.php:143
 #: elabftw/app/ucp-exec.php:114 elabftw/app/ucp-exec.php:121
 #: elabftw/app/ucp-exec.php:128 elabftw/app/ucp-exec.php:156
 #: elabftw/app/ucp-exec.php:182
 msgid "A mandatory field is missing!"
 msgstr "Un champs obligatoire est manquant."
 
-#: elabftw/app/admin-exec.php:764
+#: elabftw/app/admin-exec.php:728
 msgid "You need to put a title!"
 msgstr "Il faut mettre un titre !"
 
-#: elabftw/app/admin-exec.php:805 elabftw/app/reset.php:127
+#: elabftw/app/admin-exec.php:769 elabftw/app/reset.php:124
 #: elabftw/app/ucp-exec.php:136
 msgid "The email is not valid."
 msgstr "L'email n'est pas valide."
 
-#: elabftw/app/admin-exec.php:819
+#: elabftw/app/admin-exec.php:783
 msgid "Wrong password!"
 msgstr "Mauvais mot de passe !"
 
-#: elabftw/app/admin-exec.php:824
+#: elabftw/app/admin-exec.php:788
 msgid "You need to put a password!"
 msgstr "Vous devez entrer un mot de passe !"
 
-#: elabftw/app/admin-exec.php:837
+#: elabftw/app/admin-exec.php:801
 msgid "No user with this email or user not in your team"
 msgstr ""
 "Pas d'utilisateur avec cet email ou l'utilisateur n'est pas dans votre "
 "équipe."
 
-#: elabftw/app/admin-exec.php:875
+#: elabftw/app/admin-exec.php:839
 msgid "Everything was purged successfully."
 msgstr "Tout a été supprimé avec succès."
 
@@ -468,7 +470,7 @@ msgstr "supprimé avec succès"
 
 #: elabftw/app/duplicate_item.php:32 elabftw/app/editDB-exec.php:42
 #: elabftw/app/editXP-exec.php:39 elabftw/app/lock.php:33
-#: elabftw/app/quicksave.php:26 elabftw/app/timestamp.php:35
+#: elabftw/app/quicksave.php:26 elabftw/app/timestamp.php:38
 #: elabftw/inc/editDB.php:37 elabftw/inc/editXP.php:34
 #: elabftw/inc/viewDB.php:34 elabftw/inc/viewXP.php:35
 #: elabftw/make_csv.php:104 elabftw/make_pdf.php:34 elabftw/make_zip.php:206
@@ -511,23 +513,23 @@ msgid ""
 "activated yet."
 msgstr "Identification échouée. Soit vous avez mal tapé votre mot de p"
 
-#: elabftw/app/register-exec.php:55 elabftw/app/ucp-exec.php:108
+#: elabftw/app/register-exec.php:62 elabftw/app/ucp-exec.php:108
 msgid "Username already in use!"
 msgstr "Nom d'utilisateur déjà pris !"
 
-#: elabftw/app/register-exec.php:104 elabftw/app/ucp-exec.php:149
+#: elabftw/app/register-exec.php:111 elabftw/app/ucp-exec.php:149
 msgid "Someone is already using that email address!"
 msgstr "Cette adresse email est déjà enregistrée !"
 
-#: elabftw/app/register-exec.php:123 elabftw/app/ucp-exec.php:68
+#: elabftw/app/register-exec.php:130 elabftw/app/ucp-exec.php:68
 msgid "Password must contain at least 8 characters."
 msgstr "Le mot de passe doit contenir au moins 8 charactères."
 
-#: elabftw/app/register-exec.php:241
+#: elabftw/app/register-exec.php:248
 msgid "[eLabFTW] New user registered"
 msgstr "[eLabFTW] Nouvel utilisateur enregistré"
 
-#: elabftw/app/register-exec.php:247
+#: elabftw/app/register-exec.php:254
 msgid ""
 "Hi. A new user registered on elabftw. Head to the admin panel to validate "
 "the account."
@@ -535,7 +537,7 @@ msgstr ""
 "Bonjour. Un nouvel utilisateur s'est enregistré sur elabftw. Rendez-vous "
 "dans le panneau d'administration pour valider le compte."
 
-#: elabftw/app/register-exec.php:261
+#: elabftw/app/register-exec.php:262
 msgid ""
 "Could not send email to inform admin. Error was logged. Contact an admin "
 "directly to validate your account."
@@ -544,17 +546,17 @@ msgstr ""
 "enregistrée. Contactez un administrateur directement pour valider votre "
 "compte."
 
-#: elabftw/app/register-exec.php:266
+#: elabftw/app/register-exec.php:267
 msgid ""
 "Registration successful :)<br>Your account must now be validated by an admin."
 "<br>You will receive an email when it is done."
 msgstr ""
 
-#: elabftw/app/register-exec.php:268
+#: elabftw/app/register-exec.php:269
 msgid "Registration successful :)<br>Welcome to eLabFTW o/"
 msgstr "Enregistrement réussi :)<br>Bienvenue sur eLabFTW!"
 
-#: elabftw/app/reset.php:90
+#: elabftw/app/reset.php:93
 #, php-format
 msgid ""
 "Hi. Someone (probably you) with the IP address: %s and user agent %s "
@@ -565,19 +567,19 @@ msgstr ""
 "navigateur %s a demandé un nouveau mot de passe sur eLabFTW. Suivez ce lien "
 "pour réinitialiser votre mot de passe : %s"
 
-#: elabftw/app/reset.php:115
+#: elabftw/app/reset.php:112
 msgid "Email sent. Check your INBOX."
 msgstr "Email envoyé. Consultez votre boîte de réception."
 
-#: elabftw/app/reset.php:121
+#: elabftw/app/reset.php:118
 msgid "Email not found in database!"
 msgstr "Cette adresse email n'est pas dans la base de données !"
 
-#: elabftw/app/reset.php:173
+#: elabftw/app/reset.php:170
 msgid "New password updated. You can now login."
 msgstr "Nouveau mot de passe mis à jour. Vous pouvez vous connecter désormais."
 
-#: elabftw/app/timestamp.php:93 elabftw/app/timestamp.php:107
+#: elabftw/app/timestamp.php:86 elabftw/app/timestamp.php:100
 msgid ""
 "There was an error with the timestamping. Experiment is NOT timestamped. "
 "Error has been logged."
@@ -637,32 +639,32 @@ msgstr "Complexité"
 msgid "Save new password"
 msgstr "Enregistrer le nouveau mot de passe"
 
-#: elabftw/change-pass.php:86 elabftw/register.php:124
+#: elabftw/change-pass.php:86 elabftw/register.php:125
 msgid "Weak password"
 msgstr "Mot de passe faible"
 
-#: elabftw/change-pass.php:93 elabftw/register.php:131
+#: elabftw/change-pass.php:93 elabftw/register.php:132
 msgid "Average password"
 msgstr "Mot de passe passable"
 
-#: elabftw/change-pass.php:99 elabftw/register.php:137
+#: elabftw/change-pass.php:99 elabftw/register.php:138
 msgid "Good password"
 msgstr "Bon mot de passe"
 
-#: elabftw/change-pass.php:106 elabftw/register.php:144
+#: elabftw/change-pass.php:106 elabftw/register.php:145
 msgid "Strong password"
 msgstr "Mot de passe fort"
 
-#: elabftw/change-pass.php:113 elabftw/register.php:151
+#: elabftw/change-pass.php:113 elabftw/register.php:152
 msgid "No way that is your real password!"
 msgstr "Pas moyen que ce soit votre vrai mot de passe !"
 
-#: elabftw/database.php:28 elabftw/inc/head.php:132
+#: elabftw/database.php:28 elabftw/inc/head.php:132 elabftw/search.php:53
 msgid "Database"
 msgstr "Base de données"
 
 #: elabftw/experiments.php:28 elabftw/inc/editXP.php:164
-#: elabftw/inc/head.php:127 elabftw/search.php:45 elabftw/sysconfig.php:105
+#: elabftw/inc/head.php:127 elabftw/search.php:51 elabftw/sysconfig.php:107
 msgid "Experiment"
 msgid_plural "Experiments"
 msgstr[0] ""
@@ -686,11 +688,13 @@ msgstr "Tags"
 msgid "Add a tag"
 msgstr "Ajouter un tag"
 
-#: elabftw/inc/editDB.php:97 elabftw/inc/editXP.php:92 elabftw/ucp.php:153
+#: elabftw/inc/editDB.php:97 elabftw/inc/editXP.php:92
+#: elabftw/inc/showDB.php:72 elabftw/inc/showXP.php:52 elabftw/ucp.php:153
 msgid "Date"
 msgstr "Date"
 
-#: elabftw/inc/editDB.php:100 elabftw/inc/editXP.php:152 elabftw/ucp.php:161
+#: elabftw/inc/editDB.php:100 elabftw/inc/editXP.php:152
+#: elabftw/inc/showDB.php:74 elabftw/inc/showXP.php:54 elabftw/ucp.php:161
 msgid "Title"
 msgstr "Titre"
 
@@ -713,7 +717,7 @@ msgid "Show history"
 msgstr "Voir historique"
 
 #: elabftw/inc/editDB.php:165 elabftw/inc/editXP.php:259
-#: elabftw/inc/editXP.php:331 elabftw/inc/viewXP.php:236
+#: elabftw/inc/editXP.php:331 elabftw/inc/viewXP.php:246
 msgid "Delete this?"
 msgstr "Supprimer ça ?"
 
@@ -790,11 +794,11 @@ msgstr "Propulsé par"
 msgid "Page generated in"
 msgstr "Page générée en"
 
-#: elabftw/inc/functions.php:402
+#: elabftw/inc/functions.php:397
 msgid "Timestamped. Open the experiment for validation."
 msgstr ""
 
-#: elabftw/inc/head.php:138 elabftw/register.php:47 elabftw/team.php:28
+#: elabftw/inc/head.php:138 elabftw/register.php:48 elabftw/team.php:28
 msgid "Team"
 msgstr "Équipe"
 
@@ -818,28 +822,66 @@ msgstr "Paramètres"
 msgid "Logout"
 msgstr "Déconnexion"
 
-#: elabftw/inc/showDB.php:43 elabftw/ucp.php:276
+#: elabftw/inc/showDB.php:54 elabftw/ucp.php:276
 msgid "Create new"
 msgstr "Créer un nouveau"
 
-#: elabftw/inc/showDB.php:52
+#: elabftw/inc/showDB.php:70 elabftw/inc/showXP.php:51
+msgid "Order by"
+msgstr ""
+
+#: elabftw/inc/showDB.php:71
+msgid "Category"
+msgstr ""
+
+#: elabftw/inc/showDB.php:73
+msgid "Rating"
+msgstr ""
+
+#: elabftw/inc/showDB.php:77 elabftw/inc/showXP.php:57
+msgid "Sort"
+msgstr ""
+
+#: elabftw/inc/showDB.php:78 elabftw/inc/showXP.php:58
+msgid "DESC"
+msgstr ""
+
+#: elabftw/inc/showDB.php:79 elabftw/inc/showXP.php:59
+msgid "ASC"
+msgstr ""
+
+#: elabftw/inc/showDB.php:81 elabftw/inc/showXP.php:61
+msgid "Order"
+msgstr ""
+
+#: elabftw/inc/showDB.php:83
 msgid "Filter type"
 msgstr "Filtrer les catégories"
 
-#: elabftw/inc/showDB.php:82 elabftw/inc/showDB.php:104
-#: elabftw/inc/showXP.php:97 elabftw/inc/showXP.php:183 elabftw/search.php:395
-#: elabftw/search.php:444
+#: elabftw/inc/showDB.php:93 elabftw/inc/showXP.php:77
+msgid "Filter"
+msgstr ""
+
+#: elabftw/inc/showDB.php:94 elabftw/inc/showXP.php:78
+msgid "Reset"
+msgstr ""
+
+#: elabftw/inc/showDB.php:172 elabftw/inc/showDB.php:194
+#: elabftw/inc/showDB.php:219 elabftw/inc/showXP.php:155
+#: elabftw/inc/showXP.php:253 elabftw/inc/showXP.php:289
+#: elabftw/search.php:475 elabftw/search.php:548
 msgid "Sorry. I couldn't find anything :("
 msgstr "Désolé, aucun résultat pour ces critères."
 
-#: elabftw/inc/showDB.php:84 elabftw/inc/showDB.php:106
-#: elabftw/inc/showXP.php:99 elabftw/inc/showXP.php:185 elabftw/search.php:388
+#: elabftw/inc/showDB.php:174 elabftw/inc/showDB.php:196
+#: elabftw/inc/showXP.php:157 elabftw/inc/showXP.php:255
+#: elabftw/search.php:468
 msgid "result found"
 msgid_plural "results found"
 msgstr[0] ""
 msgstr[1] ""
 
-#: elabftw/inc/showDB.php:124
+#: elabftw/inc/showDB.php:221
 msgid ""
 "<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list "
 "to begin filling your database."
@@ -847,27 +889,27 @@ msgstr ""
 "<strong>Bienvenue sur eLabFTW.</strong>Choisissez un item dans la liste "
 "«Créer nouveau» pour commencer à remplire votre base de données."
 
-#: elabftw/inc/showDB.php:131
-msgid "Showing last 10 uploads:"
-msgstr "Liste des 10 derniers ajouts :"
+#: elabftw/inc/showDB.php:229
+msgid "Showing last uploads:"
+msgstr ""
 
 #: elabftw/inc/showXP.php:27
 msgid "Load more"
 msgstr "Afficher plus"
 
-#: elabftw/inc/showXP.php:33
+#: elabftw/inc/showXP.php:41
 msgid "Create experiment"
 msgstr "Créer une expérience"
 
-#: elabftw/inc/showXP.php:34
+#: elabftw/inc/showXP.php:42
 msgid "Create from template"
 msgstr "Créer depuis un modèle"
 
-#: elabftw/inc/showXP.php:38
+#: elabftw/inc/showXP.php:64
 msgid "Filter status"
 msgstr "Filtrer les statuts"
 
-#: elabftw/inc/showXP.php:65
+#: elabftw/inc/showXP.php:96
 #, php-format
 msgid ""
 "<strong>You do not have any templates yet.</strong> Go to %syour control "
@@ -876,15 +918,15 @@ msgstr ""
 "<strong>Vous n'avez pas encore créé de modèles.</strong> Rendez-vous dans "
 "%svotre panneau de contrôle%s pour en ajouter !"
 
-#: elabftw/inc/showXP.php:139
+#: elabftw/inc/showXP.php:197
 msgid "results."
 msgstr ""
 
-#: elabftw/inc/showXP.php:141 elabftw/inc/showXP.php:143
+#: elabftw/inc/showXP.php:199 elabftw/inc/showXP.php:201
 msgid "Found"
 msgstr ""
 
-#: elabftw/inc/showXP.php:213
+#: elabftw/inc/showXP.php:291
 #, php-format
 msgid ""
 "<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button "
@@ -921,7 +963,7 @@ msgstr "Rien à afficher avec cet ID."
 msgid "Last modified by"
 msgstr "Dernière modification par"
 
-#: elabftw/inc/viewDB.php:113 elabftw/inc/viewXP.php:120
+#: elabftw/inc/viewDB.php:113 elabftw/inc/viewXP.php:129
 msgid "on"
 msgstr ""
 
@@ -937,35 +979,35 @@ msgstr ""
 msgid "<strong>Read-only mode:</strong> this experiment is owned by"
 msgstr "<strong>Mode lecture seule :</strong> cette expérience appartient à"
 
-#: elabftw/inc/viewXP.php:120
+#: elabftw/inc/viewXP.php:129
 msgid "Experiment was timestamped by"
 msgstr ""
 
-#: elabftw/inc/viewXP.php:120
+#: elabftw/inc/viewXP.php:129
 msgid "at"
 msgstr ""
 
-#: elabftw/inc/viewXP.php:196
+#: elabftw/inc/viewXP.php:206
 msgid "Unique eLabID:"
 msgstr "eLabID unique :"
 
-#: elabftw/inc/viewXP.php:206
+#: elabftw/inc/viewXP.php:216
 msgid "Comments"
 msgstr "Commentaires"
 
-#: elabftw/inc/viewXP.php:207
+#: elabftw/inc/viewXP.php:217
 msgid "Add a comment"
 msgstr "Ajouter un commentaire"
 
-#: elabftw/inc/viewXP.php:256
+#: elabftw/inc/viewXP.php:266
 msgid "Saving"
 msgstr "Enregistrement…"
 
-#: elabftw/inc/viewXP.php:260
+#: elabftw/inc/viewXP.php:270
 msgid "Cancel"
 msgstr "Annuler"
 
-#: elabftw/inc/viewXP.php:276
+#: elabftw/inc/viewXP.php:286
 msgid ""
 "Once timestamped an experiment cannot be edited anymore ! Are you sure you "
 "want to do this ?"
@@ -1003,7 +1045,7 @@ msgstr "Note : il vous faut accepter les cookies pour vous connecter."
 msgid "Sign in to your account"
 msgstr "Connectez-vous à votre compte"
 
-#: elabftw/login.php:122 elabftw/register.php:82
+#: elabftw/login.php:122 elabftw/register.php:83
 msgid "Password"
 msgstr "Mot de passe"
 
@@ -1064,19 +1106,19 @@ msgstr "retour à la page de connexion"
 msgid "Create your account"
 msgstr "Créez votre compte"
 
-#: elabftw/register.php:49
+#: elabftw/register.php:50
 msgid "------ Select a team ------"
 msgstr "Choisissez une équipe"
 
-#: elabftw/register.php:89
+#: elabftw/register.php:90
 msgid "Confirm password"
 msgstr "Confirmer le mot de passe"
 
-#: elabftw/register.php:93
+#: elabftw/register.php:94
 msgid "Password complexity"
 msgstr "Complexité du mot de passe"
 
-#: elabftw/register.php:98
+#: elabftw/register.php:99
 msgid "create"
 msgstr "créer"
 
@@ -1113,63 +1155,75 @@ msgstr "Retourner à l'item."
 msgid "You cannot restore a revision of a locked item!"
 msgstr ""
 
-#: elabftw/search.php:43
+#: elabftw/search.php:49
 msgid "Search in"
 msgstr "Chercher dans"
 
-#: elabftw/search.php:67
+#: elabftw/search.php:74 elabftw/search.php:96
+msgid "With the tag"
+msgstr "Avec le tag"
+
+#: elabftw/search.php:76
+msgid "Select a Tag"
+msgstr ""
+
+#: elabftw/search.php:98
+msgid "Select a tag"
+msgstr "Choisir un tag"
+
+#: elabftw/search.php:119
 msgid "Search only in experiments owned by:"
 msgstr "Rechercher uniquement dans les expériences de :"
 
-#: elabftw/search.php:69
+#: elabftw/search.php:121
 msgid "Yourself"
 msgstr "Vous-même"
 
-#: elabftw/search.php:87
+#: elabftw/search.php:146
 msgid "search in everyone's experiments"
 msgstr "chercher dans les expériences de toute l'équipe"
 
-#: elabftw/search.php:100
+#: elabftw/search.php:154
 msgid "Where date is between"
 msgstr "Où la date est entre"
 
-#: elabftw/search.php:106
+#: elabftw/search.php:160
 msgid "and"
 msgstr ""
 
-#: elabftw/search.php:119
+#: elabftw/search.php:173
 msgid "And title contains"
 msgstr "Et le titre contient"
 
-#: elabftw/search.php:128
+#: elabftw/search.php:182
 msgid "And status is"
 msgstr "Et le statut est"
 
-#: elabftw/search.php:130
+#: elabftw/search.php:184
 msgid "select status"
 msgstr "choisir un statut"
 
-#: elabftw/search.php:162
+#: elabftw/search.php:216
 msgid "And body contains"
 msgstr "Et le corps contient"
 
-#: elabftw/search.php:173
+#: elabftw/search.php:227
 msgid "And rating is"
 msgstr "Et l'évaluation est"
 
-#: elabftw/search.php:175
+#: elabftw/search.php:229
 msgid "select number of stars"
 msgstr "choisir le nombre d'étoiles"
 
-#: elabftw/search.php:176
+#: elabftw/search.php:230
 msgid "Unrated"
 msgstr "Pas d'étoiles"
 
-#: elabftw/search.php:192
+#: elabftw/search.php:246
 msgid "Launch search"
 msgstr "Lancer la recherche"
 
-#: elabftw/search.php:381 elabftw/search.php:426
+#: elabftw/search.php:458 elabftw/search.php:530
 msgid "Export this result:"
 msgstr "Exporter ce résultat :"
 
@@ -1177,66 +1231,66 @@ msgstr "Exporter ce résultat :"
 msgid "eLabFTW configuration"
 msgstr "eLabFTW configuration"
 
-#: elabftw/sysconfig.php:67
+#: elabftw/sysconfig.php:69
 msgid "Server"
 msgstr "Serveur"
 
-#: elabftw/sysconfig.php:68
+#: elabftw/sysconfig.php:70
 msgid "Timestamp"
 msgstr "Horodatage"
 
-#: elabftw/sysconfig.php:69
+#: elabftw/sysconfig.php:71
 msgid "Security"
 msgstr "Securité"
 
-#: elabftw/sysconfig.php:71
+#: elabftw/sysconfig.php:73
 msgid "Logs"
 msgstr "Logs"
 
-#: elabftw/sysconfig.php:77
+#: elabftw/sysconfig.php:79
 msgid "Add a new team"
 msgstr "Ajouter une nouvelle équipe"
 
-#: elabftw/sysconfig.php:85
+#: elabftw/sysconfig.php:87
 msgid "Edit existing teams"
 msgstr "Éditer les équipes existantes"
 
-#: elabftw/sysconfig.php:105 elabftw/team.php:35
+#: elabftw/sysconfig.php:107 elabftw/team.php:35
 msgid "Members"
 msgstr "Membres"
 
-#: elabftw/sysconfig.php:105
+#: elabftw/sysconfig.php:107
 msgid "Items"
 msgstr "Items"
 
-#: elabftw/sysconfig.php:105
+#: elabftw/sysconfig.php:107
 msgid "Created"
 msgstr "Créée"
 
-#: elabftw/sysconfig.php:114 elabftw/ucp.php:221
+#: elabftw/sysconfig.php:116 elabftw/ucp.php:221
 msgid "Language"
 msgstr "Langage"
 
-#: elabftw/sysconfig.php:149
+#: elabftw/sysconfig.php:151
 msgid "Under the hood"
 msgstr "Paramètres avancés"
 
-#: elabftw/sysconfig.php:150
+#: elabftw/sysconfig.php:152
 msgid "Activate debug mode:"
 msgstr "Activer le mode debug :"
 
-#: elabftw/sysconfig.php:159
+#: elabftw/sysconfig.php:161
 msgid ""
 "Content of SESSION and COOKIES array will be displayed in the footer for "
 "admins."
 msgstr ""
 "Le contenu de SESSION et COOKIES sera affiché dans le footer des admins."
 
-#: elabftw/sysconfig.php:160
+#: elabftw/sysconfig.php:162
 msgid "Address of the proxy:"
 msgstr "Adresse du proxy :"
 
-#: elabftw/sysconfig.php:162
+#: elabftw/sysconfig.php:164
 msgid ""
 "If you are behind a firewall/proxy, enter the address here. Example : http://"
 "proxy.example.com:3128"
@@ -1244,21 +1298,21 @@ msgstr ""
 "Si vous êtes derrière un pare-feu, entrez l'adresse ici. Exemple : http://"
 "proxy.example.cm:3128"
 
-#: elabftw/sysconfig.php:171
+#: elabftw/sysconfig.php:173
 msgid "Timestamping configuration"
 msgstr ""
 
-#: elabftw/sysconfig.php:173
+#: elabftw/sysconfig.php:175
 msgid "The teams can use the credentials below to timestamp:"
 msgstr "Les équipes peuvent utiliser les informations de connexion suivantes :"
 
-#: elabftw/sysconfig.php:182
+#: elabftw/sysconfig.php:184
 msgid ""
 "You can control if the teams can use the global timestamping account. If set "
 "to <em>no</em> the team admin must add login infos in the admin panel."
 msgstr ""
 
-#: elabftw/sysconfig.php:191
+#: elabftw/sysconfig.php:193
 msgid ""
 "This should point to the chain of certificates used by your external "
 "timestamping provider to sign the timestamps.<br />Local path relative to "
@@ -1267,40 +1321,37 @@ msgid ""
 "a> format!"
 msgstr ""
 
-#: elabftw/sysconfig.php:195
+#: elabftw/sysconfig.php:197
 msgid "Login for external timestamping service ."
 msgstr ""
 "This password will be stored in clear in the database ! Make sure it doesn't "
 "open other doors…"
-msgstr ""
-"Ce mot de passe sera stocké en clair dans la base de données ! Choisissez-en "
-"un d'unique."
 
-#: elabftw/sysconfig.php:207
+#: elabftw/sysconfig.php:208
 msgid "Security settings"
 msgstr "Paramètres de sécurité"
 
-#: elabftw/sysconfig.php:209
+#: elabftw/sysconfig.php:210
 msgid "Users need validation by admin after registration:"
 msgstr "Les nouveaux inscrits nécessitent une validation par l'admin :"
 
-#: elabftw/sysconfig.php:218
+#: elabftw/sysconfig.php:219
 msgid "Set to yes for added security."
 msgstr "Mettez oui pour plus de sécurité."
 
-#: elabftw/sysconfig.php:219
+#: elabftw/sysconfig.php:220
 msgid "Number of allowed login attempts:"
 msgstr "Nombre d'essais de connexion autorisés :"
 
-#: elabftw/sysconfig.php:221
+#: elabftw/sysconfig.php:222
 msgid "3 might be too few. See for yourself :)"
 msgstr "3 n'est peut-être pas assez. À vous de voir :)"
 
-#: elabftw/sysconfig.php:222
+#: elabftw/sysconfig.php:223
 msgid "Time of the ban after failed login attempts (in minutes:"
 msgstr "Temps de bannissement (en minutes) :"
 
-#: elabftw/sysconfig.php:224
+#: elabftw/sysconfig.php:225
 msgid ""
 "To identify an user we use an md5 of user agent + IP. Because doing it only "
 "based on IP address would surely cause problems."
@@ -1309,11 +1360,11 @@ msgstr ""
 "utilisé. Car se baser seulement sur l'adresse IP pourrait causer des "
 "problèmes."
 
-#: elabftw/sysconfig.php:233
-msgid "SMTP settings"
-msgstr "Configuration SMTP"
+#: elabftw/sysconfig.php:234
+msgid "E-mail settings"
+msgstr ""
 
-#: elabftw/sysconfig.php:235
+#: elabftw/sysconfig.php:236
 msgid ""
 "Without a valid way to send emails users won't be able to reset their "
 "password. It is recommended to create a specific Mandrill.com (or gmail "
@@ -1323,35 +1374,59 @@ msgstr ""
 "réinitialiser leurs mots de passe. Il est recommandé d'utiliser un compte "
 "spécifique Mandrill.com (ou gmail)."
 
-#: elabftw/sysconfig.php:237
+#: elabftw/sysconfig.php:238
+msgid "Send e-mails via:"
+msgstr ""
+
+#: elabftw/sysconfig.php:240
+msgid "Select mailing method..."
+msgstr ""
+
+#: elabftw/sysconfig.php:241
+msgid "sendmail"
+msgstr ""
+
+#: elabftw/sysconfig.php:242
+msgid "SMTP"
+msgstr ""
+
+#: elabftw/sysconfig.php:247
+msgid "Sender address:"
+msgstr ""
+
+#: elabftw/sysconfig.php:251
+msgid "Path to sendmail:"
+msgstr ""
+
+#: elabftw/sysconfig.php:257
 msgid "Address of the SMTP server:"
 msgstr "Adresse du serveur SMTP :"
 
-#: elabftw/sysconfig.php:242
+#: elabftw/sysconfig.php:262
 msgid "SMTP encryption (can be TLS or STARTSSL):"
 msgstr "Encryption SMTP (TLS ou STARTSSL) :"
 
-#: elabftw/sysconfig.php:246
+#: elabftw/sysconfig.php:266
 msgid "Probably TLS"
 msgstr "Probablement TLS."
 
-#: elabftw/sysconfig.php:247
+#: elabftw/sysconfig.php:267
 msgid "SMTP Port:"
 msgstr "Port SMTP :"
 
-#: elabftw/sysconfig.php:251
+#: elabftw/sysconfig.php:271
 msgid "Default is 587."
 msgstr "Le port par défaut est 587."
 
-#: elabftw/sysconfig.php:252
+#: elabftw/sysconfig.php:272
 msgid "SMTP username:"
 msgstr "Nom d'utilisateur SMTP :"
 
-#: elabftw/sysconfig.php:256
+#: elabftw/sysconfig.php:276
 msgid "SMTP password"
 msgstr "Mot de passe SMTP :"
 
-#: elabftw/sysconfig.php:299
+#: elabftw/sysconfig.php:333
 msgid "Saved"
 msgstr "Enregistré !"
 
@@ -1591,9 +1666,3 @@ msgstr "Ajouter un modèle"
 #: elabftw/ucp.php:312
 msgid "Edit template"
 msgstr "Éditer un modèle"
-
-msgid "Select a tag"
-msgstr "Choisir un tag"
-
-msgid "With the tag"
-msgstr "Avec le tag"

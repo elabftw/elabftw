@@ -232,14 +232,27 @@ if ($current_version == 'something') {
 <!-- TAB 5 -->
 <div class='divhandle' id='tab5div'>
     <h3><?php echo _('E-mail settings'); ?></h3>
+    <?php switch (get_config('mail_method')) {
+        case 'sendmail':
+            $disable_sendmail = false;
+            $disable_smtp = true;
+            break;
+        case 'smtp':
+            $disable_sendmail = true;
+            $disable_smtp = false;
+            break;
+        default:
+            $disable_sendmail = true;
+            $disable_smtp = true;
+    } ?>
     <form method='post' action='app/admin-exec.php'>
         <p><?php echo _("Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mandrill.com (or gmail account and add the infos here."); ?></p>
         <p>
         <label for='mail_method'><?php echo _('Send e-mails via:'); ?></label>
         <select onchange='toggleMailMethod()' name='mail_method' id='toggle_main_method'>
             <option value=''><?php echo _('Select mailing method...'); ?></option>
-            <option value='sendmail'><?php echo _('sendmail'); ?></option>
-            <option value='smtp'><?php echo _('SMTP'); ?></option>
+            <option value='sendmail' <?php if(!$disable_sendmail) echo 'selected="selected"'; ?>><?php echo _('sendmail'); ?></option>
+            <option value='smtp' <?php if(!$disable_smtp) echo 'selected="selected"'; ?>><?php echo _('SMTP'); ?></option>
         </select>
         </p>
         <div id='general_mail_config'>
@@ -251,32 +264,32 @@ if ($current_version == 'something') {
         <div id='sendmail_config'>
             <p>
             <label for='sendmail_path'><?php echo _('Path to sendmail:'); ?></label>
-            <input type='text' placeholder='/usr/bin/sendmail' value='<?php echo get_config('sendmail_path'); ?>' name='sendmail_path' id='sendmail_path' />
+            <input type='text' placeholder='/usr/bin/sendmail' value='<?php echo get_config('sendmail_path'); ?>' name='sendmail_path' id='sendmail_path' <?php if($disable_sendmail) echo 'disabled'; ?> />
             </p>
         </div>
         <div id='smtp_config'>
             <p>
             <label for='smtp_address'><?php echo _('Address of the SMTP server:'); ?></label>
-            <input type='text' value='<?php echo get_config('smtp_address'); ?>' name='smtp_address' id='smtp_address' />
+            <input type='text' value='<?php echo get_config('smtp_address'); ?>' name='smtp_address' id='smtp_address' <?php if($disable_smtp) echo 'disabled'; ?> />
             </p>
             <p>
             <span class='smallgray'>smtp.mandrillapp.com</span>
             <label for='smtp_encryption'><?php echo _('SMTP encryption (can be TLS or STARTSSL):'); ?></label>
-            <input type='text' value='<?php echo get_config('smtp_encryption'); ?>' name='smtp_encryption' id='smtp_encryption' />
+            <input type='text' value='<?php echo get_config('smtp_encryption'); ?>' name='smtp_encryption' id='smtp_encryption' <?php if($disable_smtp) echo 'disabled'; ?> />
             </p>
             <p>
             <span class='smallgray'><?php echo _('Probably TLS'); ?></span>
             <label for='smtp_port'><?php echo _('SMTP Port:'); ?></label>
-            <input type='text' value='<?php echo get_config('smtp_port'); ?>' name='smtp_port' id='smtp_port' />
+            <input type='text' value='<?php echo get_config('smtp_port'); ?>' name='smtp_port' id='smtp_port' <?php if($disable_smtp) echo 'disabled'; ?> />
             </p>
             <p>
             <span class='smallgray'><?php echo _('Default is 587.'); ?></span>
             <label for='smtp_username'><?php echo _('SMTP username:'); ?></label>
-            <input type='text' value='<?php echo get_config('smtp_username'); ?>' name='smtp_username' id='smtp_username' />
+            <input type='text' value='<?php echo get_config('smtp_username'); ?>' name='smtp_username' id='smtp_username' <?php if($disable_smtp) echo 'disabled'; ?> />
             </p>
             <p>
             <label for='smtp_password'><?php echo _('SMTP password'); ?></label>
-            <input type='password' value='<?php echo $crypto->decrypt(get_config('smtp_password')); ?>' name='smtp_password' id='smtp_password' />
+            <input type='password' value='<?php echo $crypto->decrypt(get_config('smtp_password')); ?>' name='smtp_password' id='smtp_password' <?php if($disable_smtp) echo 'disabled'; ?> />
             </p>
         </div>
         <div class='center'>

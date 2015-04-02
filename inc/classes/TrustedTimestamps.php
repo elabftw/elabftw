@@ -92,7 +92,12 @@ class TrustedTimestamps
         }
 
         if (!is_null($responsefilePath)) {
-            $this->processResponsefile();
+            try {
+                $this->processResponsefile();
+            } catch (Exception $e) {
+                $_SESSION['errors'][] = $e->getMessage();
+            }
+
         }
     }
 

@@ -83,8 +83,12 @@ class TrustedTimestamps
         $this->tmpfiles = [];
 
         if (!is_null($this->data) && !is_null($this->stampProvider)) {
-            $this->createRequestfile();
-            $this->generateToken();
+            try {
+                $this->createRequestfile();
+                $this->generateToken();
+            } catch (Exception $e) {
+                $_SESSION['errors'][] = $e->getMessage();
+            }
         }
 
         if (!is_null($responsefilePath)) {
@@ -323,8 +327,8 @@ class TrustedTimestamps
         curl_close($ch);
 
         if ($status != 200 || !strlen($binaryResponseString)) {
-                    // return false if request fails. Must be catched by calling function!
-            return false;
+            // check if we got something bad
+            throw new Exception('Bad answer from TSA (' . $status . ')<br>' . $binaryResponseString);
         }
 
         $base64ResponseString = base64_encode($binaryResponseString);

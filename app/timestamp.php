@@ -66,6 +66,12 @@ $mpdf->WriteHTML($pdf->content);
 $mpdf->Output($pdf_path, 'F');
 
 $trusted_timestamp = new Elabftw\Elabftw\TrustedTimestamps($provider, $pdf_path, null, $login, $password, null, $hash);
+// if there was a problem during the timestamping, an error will be inside the $_SESSION['errors'] array
+// and we want to stop there if that is the case.
+if (is_array($_SESSION['errors'])) {
+    header("Location: ../experiments.php?mode=view&id=" . $id);
+    exit;
+}
 
 // REQUEST TOKEN
 try {
@@ -131,8 +137,6 @@ $req->bindParam(':md5', $md5);
 $res3 = $req->execute();
 
 if ($res1 && $res2 && $res3) {
-    $msg_arr[] =
-    $_SESSION['infos'] = $msg_arr;
     header("Location: ../experiments.php?mode=view&id=" . $id);
     exit;
 } else {

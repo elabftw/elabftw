@@ -76,20 +76,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
         // no i18n here
         ->setSubject('[eLabFTW] Account validated')
         // Set the From address with an associative array
-        ->setFrom(array(get_config('smtp_username') => get_config('smtp_username')))
+        ->setFrom(get_config('mail_from'))
         // Set the To addresses with an associative array
         ->setTo(array($user['email'] => 'eLabFTW'))
         // Give it a body
         ->setBody('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login : ' . $url . $footer);
-
-        $transport = Swift_SmtpTransport::newInstance(
-            get_config('smtp_address'),
-            get_config('smtp_port'),
-            get_config('smtp_encryption')
-        )
-            ->setUsername(get_config('smtp_username'))
-            ->setPassword($crypto->decrypt(get_config('smtp_password')));
-        $mailer = Swift_Mailer::newInstance($transport);
+        // generate Swift_Mailer instance
+            $mailer = getMailer();
         // now we try to send the email
         try {
             $mailer->send($message);

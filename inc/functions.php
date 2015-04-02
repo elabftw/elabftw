@@ -1246,7 +1246,7 @@ function getMailer() {
             ->setUsername(get_config('smtp_username'))
             ->setPassword($crypto->decrypt(get_config('smtp_password')));
         } else {
-            $transport = Swift_SendmailTransport::newInstance('' . get_config('sendmail_path') . ' -bs');
+            $transport = Swift_SendmailTransport::newInstance(get_config('sendmail_path') . ' -bs');
         }
         $mailer = Swift_Mailer::newInstance($transport);
         return $mailer;

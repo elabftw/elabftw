@@ -42,7 +42,12 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
 
 // Get login/password info
 // if the team config is set, we use this one, else, we use the general one, unless we can't (not allowed in config)
-$stamp_params = getTimestampParameters();
+try {
+    $stamp_params = getTimestampParameters();
+} catch (Exception $e) {
+    $_SESSION['errors'][] = $e->getMessage();
+    header("Location: ../experiments.php?mode=view&id=" . $id);
+}
 
 $login = $stamp_params['stamplogin'];
 $password = $stamp_params['stamppassword'];

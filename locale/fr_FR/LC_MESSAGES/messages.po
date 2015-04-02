@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
-"POT-Creation-Date: 2015-04-02 13:09+0100\n"
-"PO-Revision-Date: 2015-04-02 13:09+0100\n"
-"Last-Translator: Alexander Minges <alexander.minges@gmail.com>\n"
+"POT-Creation-Date: 2015-04-02 14:08+0100\n"
+"PO-Revision-Date: 2015-04-02 14:09+0100\n"
+"Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
@@ -36,7 +36,7 @@ msgstr "Valider"
 
 #: elabftw/admin.php:82 elabftw/sysconfig.php:68
 msgid "Teams"
-msgstr ""
+msgstr "Équipes"
 
 #: elabftw/admin.php:83
 msgid "Users"
@@ -86,17 +86,19 @@ msgstr "Adresse vers laquelle ce lien pointe :"
 
 #: elabftw/admin.php:116 elabftw/sysconfig.php:186
 msgid "URL for external timestamping service:"
-msgstr ""
+msgstr "URL pour le service de timestamping :"
 
 #: elabftw/admin.php:118 elabftw/sysconfig.php:188
 msgid ""
 "This should be the URL used for <a href=\"https://tools.ietf.org/html/"
 "rfc3161\">RFC 3161</a>-compliant timestamping requests."
 msgstr ""
+"URL utilisée pour les requêtes <a href=\"https://tools.ietf.org/html/"
+"rfc3161\">RFC 3161</a>."
 
 #: elabftw/admin.php:121 elabftw/sysconfig.php:191
 msgid "Chain of certificates of the external timestamping service:"
-msgstr ""
+msgstr "Certificat pour le service externe de timestamping :"
 
 #: elabftw/admin.php:123
 msgid ""
@@ -106,6 +108,10 @@ msgid ""
 "wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail\">PEM-encoded (ASCII)</"
 "a> format!"
 msgstr ""
+"Endroit où est stocké le certificat utilisé par le service d'horodatage.<br /"
+"> Chemin relatif au dossier racine d'eLabFTW. Le fichier doit être dans le "
+"format <a href=\"https://en.wikipedia.org/wiki/Privacy-"
+"enhanced_Electronic_Mail\">PEM-encoded (ASCII)</a>"
 
 #: elabftw/admin.php:125 elabftw/sysconfig.php:195
 msgid "Login for external timestamping service:"
@@ -114,7 +120,7 @@ msgstr "Identifiant pour le service externe d'horodatage :"
 #: elabftw/admin.php:127
 msgid ""
 "This should be the login associated with your timestamping service provider"
-msgstr ""
+msgstr "Votre login pour le service d'horodatage"
 
 #: elabftw/admin.php:130 elabftw/sysconfig.php:198
 msgid "Password for external timestamping service:"
@@ -122,7 +128,7 @@ msgstr "Mot de passe pour le service externe d'horodatage :"
 
 #: elabftw/admin.php:132
 msgid "Your timestamping service provider password"
-msgstr ""
+msgstr "Votre mot de passe pour le service d'horodatage"
 
 #: elabftw/admin.php:144
 msgid "Edit users"
@@ -196,7 +202,7 @@ msgstr "Ajouter un nouveau statut"
 
 #: elabftw/admin.php:246
 msgid "New status name"
-msgstr ""
+msgstr "Nouveau nom du status"
 
 #: elabftw/admin.php:259
 msgid "Edit an existing status"
@@ -228,7 +234,7 @@ msgstr ""
 
 #: elabftw/admin.php:366
 msgid "Edit name"
-msgstr ""
+msgstr "Éditer le nom"
 
 #: elabftw/admin.php:396
 msgid "Add a new type of item:"
@@ -236,7 +242,7 @@ msgstr "Ajouter une nouvelle catégorie d'items :"
 
 #: elabftw/admin.php:405 elabftw/inc/viewXP.php:269 elabftw/sysconfig.php:166
 #: elabftw/sysconfig.php:201 elabftw/sysconfig.php:227
-#: elabftw/sysconfig.php:281 elabftw/ucp.php:260
+#: elabftw/sysconfig.php:296 elabftw/ucp.php:260
 msgid "Save"
 msgstr "Enregistrer"
 
@@ -250,7 +256,7 @@ msgstr "Ceci est le texte par défaut affiché lorsqu'une expérience est créé
 
 #: elabftw/admin.php:439
 msgid "Import a CSV file"
-msgstr ""
+msgstr "Importer un fichier CSV"
 
 #: elabftw/admin.php:450
 msgid ""
@@ -293,7 +299,7 @@ msgstr "Cette section est hors de votre portée."
 
 #: elabftw/app/admin-exec.php:63
 msgid "Validated user with ID :"
-msgstr ""
+msgstr "Utilisateur validé avec l'ID :"
 
 #: elabftw/app/admin-exec.php:95 elabftw/app/reset.php:107
 msgid "There was a problem sending the email! Error was logged."
@@ -476,7 +482,7 @@ msgstr "supprimé avec succès"
 #: elabftw/make_csv.php:104 elabftw/make_pdf.php:34 elabftw/make_zip.php:206
 #: elabftw/revision.php:51
 msgid "The id parameter is not valid!"
-msgstr ""
+msgstr "Le paramètre id n'est pas valide !"
 
 #: elabftw/app/duplicate_item.php:40 elabftw/make_pdf.php:41
 #: elabftw/make_zip.php:49
@@ -502,6 +508,8 @@ msgstr "Cette expérience a été vérouillée par"
 #: elabftw/app/lock.php:115
 msgid "You cannot unlock or edit in any way a timestamped experiment."
 msgstr ""
+"Vous ne pouvez pas dévérouiller ou éditer de quelque façon que ce soit une "
+"expérience horodatée."
 
 #: elabftw/app/login-exec.php:42
 msgid "Your session expired. Please retry."
@@ -551,6 +559,8 @@ msgid ""
 "Registration successful :)<br>Your account must now be validated by an admin."
 "<br>You will receive an email when it is done."
 msgstr ""
+"Enregistrement réussi :)<br>Votre compte doit maintenant être validé par un "
+"admin.<br>Vous recevrez un email lorsque cela sera fait."
 
 #: elabftw/app/register-exec.php:269
 msgid "Registration successful :)<br>Welcome to eLabFTW o/"
@@ -593,7 +603,7 @@ msgstr "Profil mis à jour."
 
 #: elabftw/app/ucp-exec.php:229
 msgid "Enter your passsword to edit anything."
-msgstr ""
+msgstr "Entrez votre mot de passe pour éditer les valeurs."
 
 #: elabftw/app/ucp-exec.php:329
 msgid "Preferences updated."
@@ -667,14 +677,14 @@ msgstr "Base de données"
 #: elabftw/inc/head.php:127 elabftw/search.php:51 elabftw/sysconfig.php:107
 msgid "Experiment"
 msgid_plural "Experiments"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Expérience"
+msgstr[1] "Expériences"
 
 #: elabftw/inc/display_file.php:46
 msgid "Attached file"
 msgid_plural "Attached files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Fichier attaché"
+msgstr[1] "Fichiers attachés"
 
 #: elabftw/inc/editDB.php:55 elabftw/inc/editXP.php:56
 msgid "<strong>This item is locked.</strong> You cannot edit it."
@@ -709,8 +719,8 @@ msgstr "Enregistrer et revenir en arrière"
 #: elabftw/inc/editDB.php:127 elabftw/inc/editXP.php:223
 msgid "revision available."
 msgid_plural "revisions available."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "révision disponible."
+msgstr[1] "révisions disponibles."
 
 #: elabftw/inc/editDB.php:127 elabftw/inc/editXP.php:223
 msgid "Show history"
@@ -796,7 +806,7 @@ msgstr "Page générée en"
 
 #: elabftw/inc/functions.php:397
 msgid "Timestamped. Open the experiment for validation."
-msgstr ""
+msgstr "Timestamped. "
 
 #: elabftw/inc/head.php:138 elabftw/register.php:48 elabftw/team.php:28
 msgid "Team"
@@ -878,8 +888,8 @@ msgstr "Désolé, aucun résultat pour ces critères."
 #: elabftw/search.php:468
 msgid "result found"
 msgid_plural "results found"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "résultat trouvé"
+msgstr[1] "résultats trouvés"
 
 #: elabftw/inc/showDB.php:221
 msgid ""
@@ -920,11 +930,11 @@ msgstr ""
 
 #: elabftw/inc/showXP.php:197
 msgid "results."
-msgstr ""
+msgstr "résultats."
 
 #: elabftw/inc/showXP.php:199 elabftw/inc/showXP.php:201
 msgid "Found"
-msgstr ""
+msgstr "Trouvé"
 
 #: elabftw/inc/showXP.php:291
 #, php-format
@@ -965,7 +975,7 @@ msgstr "Dernière modification par"
 
 #: elabftw/inc/viewDB.php:113 elabftw/inc/viewXP.php:129
 msgid "on"
-msgstr ""
+msgstr "le"
 
 #: elabftw/inc/viewXP.php:66
 msgid ""
@@ -981,11 +991,11 @@ msgstr "<strong>Mode lecture seule :</strong> cette expérience appartient à"
 
 #: elabftw/inc/viewXP.php:129
 msgid "Experiment was timestamped by"
-msgstr ""
+msgstr "Cette expérience a été horodatée par"
 
 #: elabftw/inc/viewXP.php:129
 msgid "at"
-msgstr ""
+msgstr "à"
 
 #: elabftw/inc/viewXP.php:206
 msgid "Unique eLabID:"
@@ -1091,7 +1101,7 @@ msgstr "Aller au panneau utilisateur"
 
 #: elabftw/register.php:24
 msgid "Register"
-msgstr ""
+msgstr "Enregistrement"
 
 #: elabftw/register.php:30
 #, php-format
@@ -1153,7 +1163,7 @@ msgstr "Retourner à l'item."
 
 #: elabftw/revision.php:132
 msgid "You cannot restore a revision of a locked item!"
-msgstr ""
+msgstr "Vous ne pouvez pas restaurer une révision d'un item vérouillé !"
 
 #: elabftw/search.php:49
 msgid "Search in"
@@ -1189,7 +1199,7 @@ msgstr "Où la date est entre"
 
 #: elabftw/search.php:160
 msgid "and"
-msgstr ""
+msgstr "et"
 
 #: elabftw/search.php:173
 msgid "And title contains"
@@ -1300,7 +1310,7 @@ msgstr ""
 
 #: elabftw/sysconfig.php:173
 msgid "Timestamping configuration"
-msgstr ""
+msgstr "Configuration de l'horodatage"
 
 #: elabftw/sysconfig.php:175
 msgid "The teams can use the credentials below to timestamp:"
@@ -1311,6 +1321,10 @@ msgid ""
 "You can control if the teams can use the global timestamping account. If set "
 "to <em>no</em> the team admin must add login infos in the admin panel."
 msgstr ""
+"Vous pouvez contrôler si les équipes peuvent utiliser les informations de "
+"connexions globales pour l'horodatage. Si c'est sur <em>non</em>, l'admin de "
+"l'équipe devra renseigner ses informations de connexion dans le panneau "
+"d'administration."
 
 #: elabftw/sysconfig.php:193
 msgid ""
@@ -1324,8 +1338,6 @@ msgstr ""
 #: elabftw/sysconfig.php:197
 msgid "Login for external timestamping service ."
 msgstr ""
-"This password will be stored in clear in the database ! Make sure it doesn't "
-"open other doors…"
 
 #: elabftw/sysconfig.php:208
 msgid "Security settings"
@@ -1364,7 +1376,7 @@ msgstr ""
 msgid "E-mail settings"
 msgstr ""
 
-#: elabftw/sysconfig.php:236
+#: elabftw/sysconfig.php:249
 msgid ""
 "Without a valid way to send emails users won't be able to reset their "
 "password. It is recommended to create a specific Mandrill.com (or gmail "
@@ -1374,59 +1386,59 @@ msgstr ""
 "réinitialiser leurs mots de passe. Il est recommandé d'utiliser un compte "
 "spécifique Mandrill.com (ou gmail)."
 
-#: elabftw/sysconfig.php:238
+#: elabftw/sysconfig.php:251
 msgid "Send e-mails via:"
 msgstr ""
 
-#: elabftw/sysconfig.php:240
+#: elabftw/sysconfig.php:253
 msgid "Select mailing method..."
 msgstr ""
 
-#: elabftw/sysconfig.php:241
+#: elabftw/sysconfig.php:254
 msgid "sendmail"
 msgstr ""
 
-#: elabftw/sysconfig.php:242
+#: elabftw/sysconfig.php:255
 msgid "SMTP"
 msgstr ""
 
-#: elabftw/sysconfig.php:247
+#: elabftw/sysconfig.php:260
 msgid "Sender address:"
 msgstr ""
 
-#: elabftw/sysconfig.php:251
+#: elabftw/sysconfig.php:266
 msgid "Path to sendmail:"
 msgstr ""
 
-#: elabftw/sysconfig.php:257
+#: elabftw/sysconfig.php:272
 msgid "Address of the SMTP server:"
 msgstr "Adresse du serveur SMTP :"
 
-#: elabftw/sysconfig.php:262
+#: elabftw/sysconfig.php:277
 msgid "SMTP encryption (can be TLS or STARTSSL):"
 msgstr "Encryption SMTP (TLS ou STARTSSL) :"
 
-#: elabftw/sysconfig.php:266
+#: elabftw/sysconfig.php:281
 msgid "Probably TLS"
 msgstr "Probablement TLS."
 
-#: elabftw/sysconfig.php:267
+#: elabftw/sysconfig.php:282
 msgid "SMTP Port:"
 msgstr "Port SMTP :"
 
-#: elabftw/sysconfig.php:271
+#: elabftw/sysconfig.php:286
 msgid "Default is 587."
 msgstr "Le port par défaut est 587."
 
-#: elabftw/sysconfig.php:272
+#: elabftw/sysconfig.php:287
 msgid "SMTP username:"
 msgstr "Nom d'utilisateur SMTP :"
 
-#: elabftw/sysconfig.php:276
+#: elabftw/sysconfig.php:291
 msgid "SMTP password"
 msgstr "Mot de passe SMTP :"
 
-#: elabftw/sysconfig.php:333
+#: elabftw/sysconfig.php:348
 msgid "Saved"
 msgstr "Enregistré !"
 
@@ -1467,22 +1479,22 @@ msgstr "Skype"
 #, php-format
 msgid "There is a total of %d experiment"
 msgid_plural "There is a total of %d experiments"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Il y a un total de %d expérience"
+msgstr[1] "Il y a un total de %d expériences"
 
 #: elabftw/team.php:101
 #, php-format
 msgid "by %d different user."
 msgid_plural "by %d different users"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "par %d utilisateur."
+msgstr[1] "par %d utilisateurs différents."
 
 #: elabftw/team.php:102
 #, php-format
 msgid "There is a total of %d item in the database."
 msgid_plural "There is a total of %d items in the database."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Il y a un total de %d item dans la base de données."
+msgstr[1] "Il y a un total de %d items dans la base de données."
 
 #: elabftw/team.php:109
 msgid "You can use a TODOlist by pressing 't'."
@@ -1573,7 +1585,7 @@ msgstr "Modifier vos informations personnelles."
 
 #: elabftw/ucp.php:60
 msgid "Enter your password to edit infos."
-msgstr ""
+msgstr "Entrez votre mot de passe pour éditer ces informations."
 
 #: elabftw/ucp.php:64
 msgid "Modify your password"
@@ -1613,7 +1625,7 @@ msgstr "Ordre basé sur :"
 
 #: elabftw/ucp.php:164
 msgid "with"
-msgstr ""
+msgstr "avec"
 
 #: elabftw/ucp.php:169
 msgid "newer first"
@@ -1666,3 +1678,13 @@ msgstr "Ajouter un modèle"
 #: elabftw/ucp.php:312
 msgid "Edit template"
 msgstr "Éditer un modèle"
+
+#~ msgid "Showing last 10 uploads:"
+#~ msgstr "Liste des 10 derniers ajouts :"
+
+#~ msgid "SMTP settings"
+#~ msgstr "Configuration SMTP"
+
+#~ msgid "No valid credentials were found for Time Stamping."
+#~ msgstr ""
+#~ "Aucune information de connexion n'a été trouvée pour le Time Stamping."

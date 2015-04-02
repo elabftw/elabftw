@@ -4,8 +4,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
-"POT-Creation-Date: 2015-04-02 13:10+0100\n"
-"PO-Revision-Date: 2015-04-02 13:15+0100\n"
+"POT-Creation-Date: 2015-04-02 14:10+0100\n"
+"PO-Revision-Date: 2015-04-02 14:12+0100\n"
 "Last-Translator: Alexander Minges <alexander.minges@gmail.com>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -245,7 +245,7 @@ msgstr "Fügen Sie dem Datebankelement einen neuen Typ hinzu:"
 
 #: elabftw/admin.php:405 elabftw/inc/viewXP.php:269 elabftw/sysconfig.php:166
 #: elabftw/sysconfig.php:201 elabftw/sysconfig.php:227
-#: elabftw/sysconfig.php:281 elabftw/ucp.php:260
+#: elabftw/sysconfig.php:296 elabftw/ucp.php:260
 msgid "Save"
 msgstr "Speichern"
 
@@ -880,7 +880,7 @@ msgstr "Aufsteigend"
 
 #: elabftw/inc/showDB.php:81 elabftw/inc/showXP.php:61
 msgid "Order"
-msgstr "Reihenfolge"
+msgstr "Reigenfolge"
 
 #: elabftw/inc/showDB.php:83
 msgid "Filter type"
@@ -1195,11 +1195,11 @@ msgstr "Mit dem Tag"
 
 #: elabftw/search.php:76
 msgid "Select a Tag"
-msgstr "Einen Tag auswählen"
+msgstr "Ein Tag auswählen"
 
 #: elabftw/search.php:98
 msgid "Select a tag"
-msgstr "Einen Tag auswählen"
+msgstr "Ein Tag auswählen"
 
 #: elabftw/search.php:119
 msgid "Search only in experiments owned by:"
@@ -1405,7 +1405,7 @@ msgstr ""
 msgid "E-mail settings"
 msgstr "E-Mail Einstellungen"
 
-#: elabftw/sysconfig.php:236
+#: elabftw/sysconfig.php:249
 msgid ""
 "Without a valid way to send emails users won't be able to reset their "
 "password. It is recommended to create a specific Mandrill.com (or gmail "
@@ -1416,59 +1416,59 @@ msgstr ""
 "Mandrill.com (oder Google Mail-Konto zu erstellen und die Infos hier "
 "einzufügen."
 
-#: elabftw/sysconfig.php:238
+#: elabftw/sysconfig.php:251
 msgid "Send e-mails via:"
-msgstr "Sende E-Mails mit:"
+msgstr "Sende E-mails mit:"
 
-#: elabftw/sysconfig.php:240
+#: elabftw/sysconfig.php:253
 msgid "Select mailing method..."
-msgstr "Versandmethode auswählen..."
+msgstr "Versandmethode wählen..."
 
-#: elabftw/sysconfig.php:241
+#: elabftw/sysconfig.php:254
 msgid "sendmail"
 msgstr "Sendmail"
 
-#: elabftw/sysconfig.php:242
+#: elabftw/sysconfig.php:255
 msgid "SMTP"
 msgstr "SMTP"
 
-#: elabftw/sysconfig.php:247
+#: elabftw/sysconfig.php:260
 msgid "Sender address:"
 msgstr "Absenderadresse:"
 
-#: elabftw/sysconfig.php:251
+#: elabftw/sysconfig.php:266
 msgid "Path to sendmail:"
 msgstr "Pfad zu Sendmail:"
 
-#: elabftw/sysconfig.php:257
+#: elabftw/sysconfig.php:272
 msgid "Address of the SMTP server:"
 msgstr "Adresse des SMTP-Server:"
 
-#: elabftw/sysconfig.php:262
+#: elabftw/sysconfig.php:277
 msgid "SMTP encryption (can be TLS or STARTSSL):"
 msgstr "SMTP-Verschlüsselung (TLS oder startssl):"
 
-#: elabftw/sysconfig.php:266
+#: elabftw/sysconfig.php:281
 msgid "Probably TLS"
 msgstr "Wahrscheinlich TLS"
 
-#: elabftw/sysconfig.php:267
+#: elabftw/sysconfig.php:282
 msgid "SMTP Port:"
 msgstr "SMTP-Port:"
 
-#: elabftw/sysconfig.php:271
+#: elabftw/sysconfig.php:286
 msgid "Default is 587."
 msgstr "Der Standardport ist 587."
 
-#: elabftw/sysconfig.php:272
+#: elabftw/sysconfig.php:287
 msgid "SMTP username:"
 msgstr "SMTP-Benutzername:"
 
-#: elabftw/sysconfig.php:276
+#: elabftw/sysconfig.php:291
 msgid "SMTP password"
 msgstr "SMTP-Passwort"
 
-#: elabftw/sysconfig.php:333
+#: elabftw/sysconfig.php:348
 msgid "Saved"
 msgstr "Gespeichert"
 
@@ -1709,3 +1709,9 @@ msgstr "Vorlage hinzufügen"
 #: elabftw/ucp.php:312
 msgid "Edit template"
 msgstr "Vorlage bearbeiten"
+
+#~ msgid "Showing last 10 uploads:"
+#~ msgstr "Die letzten 10 Uploads:"
+
+#~ msgid "SMTP settings"
+#~ msgstr "SMTP-Einstellungen"

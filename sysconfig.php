@@ -231,9 +231,17 @@ if ($current_version == 'something') {
 
 <!-- TAB 5 -->
 <div class='divhandle' id='tab5div'>
-    <h3><?php echo _('SMTP settings'); ?></h3>
+    <h3><?php echo _('E-mail settings'); ?></h3>
     <form method='post' action='app/admin-exec.php'>
         <p><?php echo _("Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mandrill.com (or gmail account and add the infos here."); ?></p>
+        <p>
+        <label for='mail_from'><?php echo _('Sender address:'); ?></label>
+        <input type='text' value='<?php echo get_config('mail_from'); ?>' name='mail_from' id='mail_from' />
+        </p>
+        <p>
+        <label for='sendmail_path'><?php echo _('Path to sendmail:'); ?></label>
+        <input type='text' placeholder='/usr/bin/sendmail' value='<?php echo get_config('sendmail_path'); ?>' name='sendmail_path' id='sendmail_path' />
+        </p>
         <p>
         <label for='smtp_address'><?php echo _('Address of the SMTP server:'); ?></label>
         <input type='text' value='<?php echo get_config('smtp_address'); ?>' name='smtp_address' id='smtp_address' />

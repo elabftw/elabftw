@@ -329,11 +329,15 @@ toggleMailMethod(<?php echo json_encode($mail_method);?>);
 // Called when mail_method selector is changed. Enables/Disables the config for the selected/unselected method
 function toggleMailMethod(value) {
     if(value == 'sendmail') {
-        $('#smtp_config :input').prop('disabled', true);
-        $('#sendmail_config :input').prop('disabled', false);
+        $('#smtp_config').hide();
+        $('#sendmail_config').show();
+    } else if(value == 'smtp') {
+        $('#smtp_config').show();
+        $('#sendmail_config').hide();
     } else {
-        $('#smtp_config :input').prop('disabled', false);
-        $('#sendmail_config :input').prop('disabled', true);
+        $('#smtp_config').hide();
+        $('#sendmail_config').hide();
+        $('#general_mail_config').hide();
     }
 }
 

@@ -37,6 +37,7 @@ if (!isset($_SESSION)) {
     session_start();
 }
 require_once '../inc/functions.php';
+require_once '../vendor/autoload.php';
 
 // Check if there is already a config file, redirect to index if yes.
 if (file_exists('../config.php')) {
@@ -105,17 +106,19 @@ foreach ($lines as $line) {
 // the new file to write to
 $config_file = '../config.php';
 $elab_root = substr(realpath(__FILE__), 0, -20) . '/';
+$crypto = new \Elabftw\Elabftw\Crypto();
 // what we will write
 $config = "<?php
-define('DB_HOST', '".$db_host . "');
-define('DB_NAME', '".$db_name . "');
-define('DB_USER', '".$db_user . "');
-define('DB_PASSWORD', '".$db_password . "');
-define('ELAB_ROOT', '".$elab_root . "');
+define('DB_HOST', '" . $db_host . "');
+define('DB_NAME', '" . $db_name . "');
+define('DB_USER', '" . $db_user . "');
+define('DB_PASSWORD', '" . $db_password . "');
+define('ELAB_ROOT', '" . $elab_root . "');
+define('SECRET_KEY', '" . $crypto->getSecretKey() . "');
+define('IV', '" . bin2hex($crypto->getIv()) . "');
 ";
 
 // we try to write content to file and propose the file for download if we can't write to it
-
 if (file_put_contents($config_file, $config)) {
     // it's cool, we managed to write the config file
     // let's put restricting permissions on it as discussed in #129

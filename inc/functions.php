@@ -345,7 +345,7 @@ function getTimestampParameters()
         }
         // otherwise assume no login or password is needed
     } else {
-        throw new Exception('No login parameters.');
+        throw new Exception(_('No valid credentials were found for Time Stamping.'));
         exit;
     }
 
@@ -394,7 +394,7 @@ function showXP($id, $display)
         echo "<a href='experiments.php?mode=view&id=" . $experiments['id'] . "'>";
         // show stamp if experiment is timestamped
         if ($experiments['timestamped']) {
-            echo "<img class='align_right' src='img/stamp.png' alt='stamp' title='". _('Timestamped. Open the experiment for validation.') . "' />";
+            echo "<img class='align_right' src='img/stamp.png' alt='stamp' title='experiment timestamped' />";
         }
         echo "<p class='title'>";
         // show lock if item is locked on viewXP

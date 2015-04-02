@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
-"POT-Creation-Date: 2015-04-02 14:08+0100\n"
-"PO-Revision-Date: 2015-04-02 14:09+0100\n"
+"POT-Creation-Date: 2015-04-02 14:26+0100\n"
+"PO-Revision-Date: 2015-04-02 14:26+0100\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -804,9 +804,9 @@ msgstr "Propulsé par"
 msgid "Page generated in"
 msgstr "Page générée en"
 
-#: elabftw/inc/functions.php:397
-msgid "Timestamped. Open the experiment for validation."
-msgstr "Timestamped. "
+#: elabftw/inc/functions.php:348
+msgid "No valid credentials were found for Time Stamping."
+msgstr "Aucune information de connexion n'a été trouvée pour le Time Stamping."
 
 #: elabftw/inc/head.php:138 elabftw/register.php:48 elabftw/team.php:28
 msgid "Team"
@@ -1679,12 +1679,11 @@ msgstr "Ajouter un modèle"
 msgid "Edit template"
 msgstr "Éditer un modèle"
 
+#~ msgid "Timestamped. Open the experiment for validation."
+#~ msgstr "Timestamped. "
+
 #~ msgid "Showing last 10 uploads:"
 #~ msgstr "Liste des 10 derniers ajouts :"
 
 #~ msgid "SMTP settings"
 #~ msgstr "Configuration SMTP"
-
-#~ msgid "No valid credentials were found for Time Stamping."
-#~ msgstr ""
-#~ "Aucune information de connexion n'a été trouvée pour le Time Stamping."

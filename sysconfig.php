@@ -232,7 +232,9 @@ if ($current_version == 'something') {
 <!-- TAB 5 -->
 <div class='divhandle' id='tab5div'>
     <h3><?php echo _('E-mail settings'); ?></h3>
-    <?php switch (get_config('mail_method')) {
+    <?php
+        $mail_method = get_config('mail_method');
+        switch ($mail_method) {
         case 'sendmail':
             $disable_sendmail = false;
             $disable_smtp = true;
@@ -249,7 +251,7 @@ if ($current_version == 'something') {
         <p><?php echo _("Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mandrill.com (or gmail account and add the infos here."); ?></p>
         <p>
         <label for='mail_method'><?php echo _('Send e-mails via:'); ?></label>
-        <select onchange='toggleMailMethod()' name='mail_method' id='toggle_main_method'>
+        <select onchange='toggleMailMethod($("#toggle_main_method").val())' name='mail_method' id='toggle_main_method'>
             <option value=''><?php echo _('Select mailing method...'); ?></option>
             <option value='sendmail' <?php if(!$disable_sendmail) echo 'selected="selected"'; ?>><?php echo _('sendmail'); ?></option>
             <option value='smtp' <?php if(!$disable_smtp) echo 'selected="selected"'; ?>><?php echo _('SMTP'); ?></option>
@@ -264,32 +266,32 @@ if ($current_version == 'something') {
         <div id='sendmail_config'>
             <p>
             <label for='sendmail_path'><?php echo _('Path to sendmail:'); ?></label>
-            <input type='text' placeholder='/usr/bin/sendmail' value='<?php echo get_config('sendmail_path'); ?>' name='sendmail_path' id='sendmail_path' <?php if($disable_sendmail) echo 'disabled'; ?> />
+            <input type='text' placeholder='/usr/bin/sendmail' value='<?php echo get_config('sendmail_path'); ?>' name='sendmail_path' id='sendmail_path' />
             </p>
         </div>
         <div id='smtp_config'>
             <p>
             <label for='smtp_address'><?php echo _('Address of the SMTP server:'); ?></label>
-            <input type='text' value='<?php echo get_config('smtp_address'); ?>' name='smtp_address' id='smtp_address' <?php if($disable_smtp) echo 'disabled'; ?> />
+            <input type='text' value='<?php echo get_config('smtp_address'); ?>' name='smtp_address' id='smtp_address' />
             </p>
             <p>
             <span class='smallgray'>smtp.mandrillapp.com</span>
             <label for='smtp_encryption'><?php echo _('SMTP encryption (can be TLS or STARTSSL):'); ?></label>
-            <input type='text' value='<?php echo get_config('smtp_encryption'); ?>' name='smtp_encryption' id='smtp_encryption' <?php if($disable_smtp) echo 'disabled'; ?> />
+            <input type='text' value='<?php echo get_config('smtp_encryption'); ?>' name='smtp_encryption' id='smtp_encryption' />
             </p>
             <p>
             <span class='smallgray'><?php echo _('Probably TLS'); ?></span>
             <label for='smtp_port'><?php echo _('SMTP Port:'); ?></label>
-            <input type='text' value='<?php echo get_config('smtp_port'); ?>' name='smtp_port' id='smtp_port' <?php if($disable_smtp) echo 'disabled'; ?> />
+            <input type='text' value='<?php echo get_config('smtp_port'); ?>' name='smtp_port' id='smtp_port' />
             </p>
             <p>
             <span class='smallgray'><?php echo _('Default is 587.'); ?></span>
             <label for='smtp_username'><?php echo _('SMTP username:'); ?></label>
-            <input type='text' value='<?php echo get_config('smtp_username'); ?>' name='smtp_username' id='smtp_username' <?php if($disable_smtp) echo 'disabled'; ?> />
+            <input type='text' value='<?php echo get_config('smtp_username'); ?>' name='smtp_username' id='smtp_username' />
             </p>
             <p>
             <label for='smtp_password'><?php echo _('SMTP password'); ?></label>
-            <input type='password' value='<?php echo $crypto->decrypt(get_config('smtp_password')); ?>' name='smtp_password' id='smtp_password' <?php if($disable_smtp) echo 'disabled'; ?> />
+            <input type='password' value='<?php echo $crypto->decrypt(get_config('smtp_password')); ?>' name='smtp_password' id='smtp_password' />
             </p>
         </div>
         <div class='center'>
@@ -297,19 +299,6 @@ if ($current_version == 'something') {
         </div>
     </form>
 </div>
-
-<script>
-    // Called when mail_method selector is changed. Enables/Disables the config for the selected/unselected method
-    function toggleMailMethod() {
-        if($('#toggle_main_method').val() == 'sendmail') {
-            $('#smtp_config :input').prop('disabled', true);
-            $('#sendmail_config :input').prop('disabled', false);
-        } else {
-            $('#smtp_config :input').prop('disabled', false);
-            $('#sendmail_config :input').prop('disabled', true);
-        }
-    }
-</script>
 
 <!-- TAB 6 -->
 <div class='divhandle' id='tab6div'>
@@ -333,6 +322,19 @@ var input_list = document.getElementsByTagName('input');
 for (var i=0; i < input_list.length; i++) {
     var input = input_list[i];
     input.disabled = false;
+}
+
+toggleMailMethod(<?php echo json_encode($mail_method);?>);
+
+// Called when mail_method selector is changed. Enables/Disables the config for the selected/unselected method
+function toggleMailMethod(value) {
+    if(value == 'sendmail') {
+        $('#smtp_config :input').prop('disabled', true);
+        $('#sendmail_config :input').prop('disabled', false);
+    } else {
+        $('#smtp_config :input').prop('disabled', false);
+        $('#sendmail_config :input').prop('disabled', true);
+    }
 }
 
 function updateTeam(team_id) {

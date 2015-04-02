@@ -345,11 +345,8 @@ function getTimestampParameters()
         }
         // otherwise assume no login or password is needed
     } else {
-        $login = null;
-        $password = null;
-        $provider = null;
-        $cert = null;
-        $hash = null;
+        throw new Exception('No login parameters.');
+        exit;
     }
 
     return array('stamplogin' => $login,

@@ -236,8 +236,9 @@ if ($current_version == 'something') {
         <p><?php echo _("Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mandrill.com (or gmail account and add the infos here."); ?></p>
         <p>
         <select name='mail_method'>
-            <option value='sendmail'></option>
-            <option value='smtp'></option>
+            <option value=''><?php echo _('Select mailing method...'); ?></option>
+            <option value='sendmail'><?php echo _('sendmail'); ?></option>
+            <option value='smtp'><?php echo _('SMTP'); ?></option>
         </select>
         </p>
         <p>

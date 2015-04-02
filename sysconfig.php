@@ -235,6 +235,7 @@ if ($current_version == 'something') {
     <form method='post' action='app/admin-exec.php'>
         <p><?php echo _("Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mandrill.com (or gmail account and add the infos here."); ?></p>
         <p>
+        <label for='mail_method'><?php echo _('Send e-mails via:'); ?></label>
         <select onchange='toggleMailMethod()' name='mail_method' id='toggle_main_method'>
             <option value=''><?php echo _('Select mailing method...'); ?></option>
             <option value='sendmail'><?php echo _('sendmail'); ?></option>

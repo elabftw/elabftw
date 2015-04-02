@@ -39,7 +39,7 @@ $crypto = new \Elabftw\Elabftw\Crypto();
 
 $formKey = new \Elabftw\Elabftw\FormKey();
 
-if (strlen(get_config('smtp_username')) == 0) {
+if (strlen(get_config('mail_method')) == 0) {
     $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://github.com/elabftw/elabftw/wiki/finalizing'>", "</a>");
     display_message('error', $message);
 }

@@ -324,9 +324,10 @@ for (var i=0; i < input_list.length; i++) {
     input.disabled = false;
 }
 
+// honor already saved mail_method setting and hide unused options accordingly
 toggleMailMethod(<?php echo json_encode($mail_method);?>);
 
-// Called when mail_method selector is changed. Enables/Disables the config for the selected/unselected method
+// called when mail_method selector is changed; enables/disables the config for the selected/unselected method
 function toggleMailMethod(value) {
     if(value == 'sendmail') {
         $('#smtp_config').hide();

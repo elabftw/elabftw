@@ -1235,6 +1235,7 @@ function cURLdownload($url, $file)
  * @return Swift_Mailer return Swift_Mailer instance
  */
 function getMailer() {
+    $crypto = new \Elabftw\Elabftw\Crypto();
     // Choose mail transport method; either smtp or sendmail
         if(get_config('mail_method') === 'smtp') {
             $transport = Swift_SmtpTransport::newInstance(

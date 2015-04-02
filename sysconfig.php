@@ -284,6 +284,7 @@ if ($current_version == 'something') {
 </div>
 
 <script>
+    // Called when mail_method selector is changed. Enables/Disables the config for the selected/unselected method
     function toggleMailMethod() {
         if($('#toggle_main_method').val() == 'sendmail') {
             $('#smtp_config :input').prop('disabled', true);

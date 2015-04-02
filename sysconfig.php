@@ -242,11 +242,13 @@ if ($current_version == 'something') {
             <option value='smtp'><?php echo _('SMTP'); ?></option>
         </select>
         </p>
-        <div id='sendmail_config'>
+        <div id='general_mail_config'>
             <p>
             <label for='mail_from'><?php echo _('Sender address:'); ?></label>
             <input type='text' value='<?php echo get_config('mail_from'); ?>' name='mail_from' id='mail_from' />
             </p>
+        </div>
+        <div id='sendmail_config'>
             <p>
             <label for='sendmail_path'><?php echo _('Path to sendmail:'); ?></label>
             <input type='text' placeholder='/usr/bin/sendmail' value='<?php echo get_config('sendmail_path'); ?>' name='sendmail_path' id='sendmail_path' />

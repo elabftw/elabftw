@@ -41,12 +41,11 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
     <h2><?php echo _('Create your account'); ?></h2><br><br>
     <!-- Register form -->
     <form id='regform' method="post" class='loginform' autocomplete="off" action="app/register-exec.php">
-
         <input style='display:none' type='text' name='bot' value=''>
-        <div class='row'>
-            <div class='col-md-4'>
-                <label class='block' for="team"><?php echo _('Team'); ?></label>
-                <select name='team' id='team' required>
+        <div class="form-group">
+            <label class='block col-md-5 txtright' for="team"><?php echo _('Team'); ?></label>
+            <div class='col-md-3'>
+                <select name='team' id='team' class="form-control" required>
                     <option value=''><?php echo _('------ Select a team ------'); ?></option>
                         <?php
                         $sql = "SELECT team_id, team_name FROM teams ORDER by team_name";
@@ -59,44 +58,72 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
                 </select>
             </div>
             <div class='col-md-4'>
-                <label class='block' for="username"><?php echo _('Username'); ?></label>
-                <input name="username" type="text" id="username" required />
-            </div>
-
-            <div class='col-md-4'>
-                <label class='block' for="email"><?php echo _('Email'); ?></label>
-                <input name="email" type="email" id="email" required />
             </div>
         </div>
-
-        <div class='row'>
-            <div class='col-md-4'>
-                <label class='block' for="firstname"><?php echo _('Firstname'); ?></label>
-                <input name="firstname" type="text" id="firstname" required />
-            </div>
-
-            <div class='col-md-4'>
-                <label class='block' for="lastname"><?php echo _('Lastname'); ?></label>
-                <input name="lastname" type="text" id="lastname" required />
+        <br class="clearfloat" /><br />
+        <div class="form-group">
+            <label class='block col-md-5 txtright' for="username"><?php echo _('Username'); ?></label>
+            <div class='col-md-3'>
+                <input name="username" type="text" id="username" class="form-control" required />
             </div>
             <div class='col-md-4'>
-                <label class='block' for="password"><?php echo _('Password'); ?></label>
-                <input name="password" type="password" title='8 characters minimum' id="password" pattern=".{8,}" required />
             </div>
         </div>
-
-        <div class='row'>
-            <div class='col-md-4'>
-                <label class='block' for="cpassword"><?php echo _('Confirm password'); ?></label>
-                <input name="cpassword" type="password" id="cpassword" pattern=".{8,}" required />
+        <div class="form-group">
+            <label class='block col-md-5 txtright' for="email"><?php echo _('Email'); ?></label>
+            <div class='col-md-3'>
+                <input name="email" type="email" id="email" class="form-control" required />
             </div>
             <div class='col-md-4'>
-                <label class='block' for='comlexity'><?php echo _('Password complexity'); ?></label>
-                <input id="complexity" disabled />
             </div>
         </div>
+        <br class="clearfloat" /><br />
+        <div class="form-group">
+            <label class='block col-md-5 txtright' for="firstname"><?php echo _('Firstname'); ?></label>
+            <div class='col-md-3'>
+                <input name="firstname" type="text" id="firstname" class="form-control" required />
+            </div>
+            <div class='col-md-4'>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class='block col-md-5 txtright' for="lastname"><?php echo _('Lastname'); ?></label>
+            <div class='col-md-3'>
+                <input name="lastname" type="text" id="lastname" class="form-control" required />
+            </div>
+            <div class='col-md-4'>
+            </div>
+        </div>
+        <br class="clearfloat" /><br />
+        <div class="form-group">
+            <label class='block col-md-5 txtright' for="password"><?php echo _('Password'); ?></label>
+            <div class='col-md-2'>
+                <input name="password" type="password" title='8 characters minimum' id="password" pattern=".{8,}" class="form-control" required />
+            </div>
+            <div class='col-md-5'>
+            </div>
+        </div>
+        <br class="clearfloat" />
+        <div class="form-group">
+            <label class='block col-md-5 txtright' for="cpassword"><?php echo _('Confirm password'); ?></label>
+            <div class='col-md-2'>
+                <input name="cpassword" type="password" id="cpassword" pattern=".{8,}" class="form-control" required />
+            </div>
+            <div class='col-md-5'>
+            </div>
+        </div>
+        <br class="clearfloat" />
+        <div class="form-group">
+            <label class='block col-md-5 txtright' for='comlexity'><?php echo _('Password complexity'); ?></label>
+            <div class='col-md-2'>
+                <input id="complexity" class="form-control center" disabled />
+            </div>
+            <div class='col-md-5'>
+            </div>
+        </div>
+        <br class="clearfloat" /><br />
         <div class='submitButtonDiv'>
-            <button type="submit" name="Submit" class='submit button'><?php echo _('create'); ?></button>
+            <button type="submit" name="Submit" class='btn btn-elab btn-lg'><?php echo _('create'); ?></button>
         </div>
     </form>
     <!-- end register form -->

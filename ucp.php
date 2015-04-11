@@ -153,7 +153,7 @@ $users = $req->fetch();
             <hr>
             <div class="row">
                 <div class="col-xs-2">
-                    <select id='lang' name="lang" class="form-control input-lg">
+                    <select id='lang' name="lang" class="form-control">
                         <option
                         <?php
                         if ($_SESSION['prefs']['lang'] === 'en_GB') {
@@ -297,7 +297,7 @@ $users = $req->fetch();
 
     echo "<ul class='nav nav-pills' role='tablist'>";
     // tabs titles
-    echo "<li class='subtabhandle badge badgetab badgetabactive' id='subtab1'>" . _('Create new') . "</li>";
+    echo "<li class='btn btn-success btn-xs' style='margin-right:10px;' id='subtab1'>" . _('Create new') . "</li>";
     $i = 2;
     while ($exp_tpl = $req->fetch()) {
         echo "<li class='subtabhandle badge badgetab' id='subtab" . $i . "'>" . stripslashes($exp_tpl['name']) . "</li>";
@@ -307,13 +307,18 @@ $users = $req->fetch();
     ?>
     <!-- create new tpl tab -->
     <div class='subdivhandle' id='subtab1div'>
+        <br />
         <form action='app/ucp-exec.php' method='post'>
             <input type='hidden' name='new_tpl_form' />
-            <input required type='text' name='new_tpl_name' placeholder='<?php echo _('Name of the template'); ?>' /><br>
+            <div class="row">
+                <div class="col-md-4">
+                    <input class="form-control" type='text' name='new_tpl_name' placeholder='<?php echo _('Name of the template'); ?>' required />
+                </div>
+            </div>
             <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='mceditable' rows='50' cols='60'></textarea>
         <br />
             <div class='center'>
-                <button type="submit" name="Submit" class='button'><?php echo _('Add template'); ?></button>
+                <button type="submit" name="Submit" class='btn btn-elab btn-lg'><?php echo _('Add template'); ?></button>
             </div>
         </form>
     </div>

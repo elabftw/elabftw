@@ -297,7 +297,7 @@ menu.border {
     border-bottom: 1px solid #dcdddc;
     margin-bottom: 5px;
     margin-top: 0;
-    padding-bottom: 19px;
+    padding-bottom: 5px;
 }
 menu.border a {
     color:#36b1c0;
@@ -328,10 +328,11 @@ menu.border a:hover {
 /* BADGE */
 .badge {
     margin-right: 5px;
+    border-radius: 5px;
 }
 .badgetab {
     padding: 5px;
-    margin: 0 20px 10px 0;
+    margin: 0 10px 10px 0;
 }
 .badgetab:hover {
     background-color:#f2f2f2;
@@ -377,6 +378,10 @@ menu.border a:hover {
 .submitButtonDiv {
     margin-top: 30px;
     text-align:center;
+}
+
+.loginform .form-horizontal .control-label{
+    padding-top: 0;
 }
 
 
@@ -524,6 +529,11 @@ textarea {
     margin-bottom:15px;
 }
 
+/* SYSCONFIG.PHP */
+.logs_div{
+    max-height: 500px;
+    overflow: auto;
+}
 
 /* ADMIN.PHP */
 .simple_border {
@@ -571,6 +581,10 @@ a[class*='trigger_']:hover {
     border-bottom-right-radius:0;
 }
 
+.select-filter-status{
+    margin-left: 6px;
+}
+
 .select-create-db {
     float:left;
     margin-left: 0;
@@ -587,14 +601,14 @@ a[class*='trigger_']:hover {
 .submit-order, .submit-filter {
     float:left;
     border-right: 0;
-    margin:6px 0;
+    margin:0;
     border-top-left-radius:0;
     border-bottom-left-radius:0;
 }
 
 .submit-reset {
     float:left;
-    margin:6px 0 0 6px;
+    margin:0 0 0 6px;
 }
 
 /* Bootstrap fixes */
@@ -750,6 +764,7 @@ p.title {
     display:block;
     color:gray;
     font-size: 80%;
+    margin-top: 8px;
 }
 
 /* ucp.php */
@@ -759,7 +774,7 @@ p.title {
     margin-top:20px;
 }
 #display > input, select {
-    margin: 6px;
+    /*margin: 6px;*/
 }
 #currpass {
     background-color: #c4f9ff;

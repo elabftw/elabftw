@@ -55,71 +55,91 @@ $users = $req->fetch();
 
     <form method="post" action="app/ucp-exec.php">
         <div class='row'>
-            <div class='col-md-6'>
-                <h4><?php echo _('Modify your personal informations'); ?></h4>
-                <label class='block' for='currpass'><?php echo _('Enter your password to edit infos.'); ?></label>
-                <input id='currpass' name="currpass" type="password" required />
+            <div class='col-md-5'>
+                <h4><?php echo _('Modify your identity'); ?></h4>
+                <br /><br />
+                <div class="form-group">
+                    <label class="col-sm-4 control-label txtright"><?php echo _('Firstname'); ?></label>
+                    <div class="col-sm-8">
+                        <input name="firstname" class="form-control" value='<?php echo $users['firstname']; ?>' />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label txtright"><?php echo _('Lastname'); ?></label>
+                    <div class="col-sm-8">
+                        <input name="lastname" class="form-control" value='<?php echo $users['lastname']; ?>' />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label txtright"><?php echo _('Username'); ?></label>
+                    <div class="col-sm-8">
+                        <input name="username" class="form-control" value='<?php echo $users['username']; ?>' />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label txtright"><?php echo _('Email'); ?></label>
+                    <div class="col-sm-8">
+                        <input name="email" type="email" class="form-control" value='<?php echo $users['email']; ?>' />
+                    </div>
+                </div>
+                <br class="clearfloat" /><br /><br />
+                <h4><?php echo _('Modify your contact information'); ?></h4>
+                <br /><br />
+                <div class="form-group">
+                    <label class="col-sm-4 control-label txtright"><?php echo _('Phone'); ?></label>
+                    <div class="col-sm-8">
+                        <input name="phone" class="form-control" value='<?php echo $users['phone']; ?>' />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label txtright"><?php echo _('Mobile'); ?></label>
+                    <div class="col-sm-8">
+                        <input name="cellphone" class="form-control" value='<?php echo $users['cellphone']; ?>' />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label txtright"><?php echo _('Skype'); ?></label>
+                    <div class="col-sm-8">
+                        <input name="skype" class="form-control" value='<?php echo $users['skype']; ?>' placeholder="<?php echo _('Username'); ?>" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label txtright"><?php echo _('Website'); ?></label>
+                    <div class="col-sm-8">
+                        <input name="website" type="url" class="form-control" value='<?php echo $users['website']; ?>' placeholder="http://" />
+                    </div>
+                </div>
             </div>
-            <div class='col-md-6'>
+            <div class='col-md-5 col-md-offset-2'>
                 <h4><?php echo _('Modify your password'); ?></h4>
-                <label class='block' for='newpass'><?php echo _('New password'); ?></label>
-                <input name="newpass" type="password" />
-                <label class='block' for='cnewpass'><?php echo _('Confirm new password'); ?></label>
-                <input name="cnewpass" type="password" />
+                <br /><br />
+                <div class="form-group">
+                    <label class="col-sm-8 control-label txtright"><?php echo _('New password'); ?></label>
+                    <div class="col-sm-4">
+                        <input name="newpass" type="password" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-8 control-label txtright"><?php echo _('Confirm new password'); ?></label>
+                    <div class="col-sm-4">
+                        <input name="cnewpass" type="password" class="form-control" />
+                    </div>
+                </div>
             </div>
         </div>
-
-        <h4><?php echo _('Modify your identity'); ?></h4>
-
-        <div class='row'>
-            <div class='col-md-6'>
-                <label class='block' for='firstname'><?php echo _('Firstname'); ?></label>
-                <input name="firstname" value='<?php echo $users['firstname']; ?>' cols='20' rows='1' />
-            </div>
-            <div class='col-md-6'>
-                <label class='block' for='username'><?php echo _('Username'); ?></label>
-                <input name="username" value='<?php echo $users['username']; ?>' cols='20' rows='1' />
-            </div>
-
-        </div>
-
-        <div class='row'>
-            <div class='col-md-6'>
-                <label class='block' for='lastname'><?php echo _('Lastname'); ?></label>
-                <input name="lastname" value='<?php echo $users['lastname']; ?>' cols='20' rows='1' />
-            </div>
-            <div class='col-md-6'>
-                <label class='block' for='email'><?php echo _('Email'); ?></label>
-                <input name="email" type="email" value='<?php echo $users['email']; ?>' cols='20' rows='1' />
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-4">
+                <br /><br />
+                <h4><?php echo _('Modify your personal informations'); ?></h4>
+                <div class="form-group has-error">
+                    <label class='control-label' for='currpass'><?php echo _('Enter your password to edit infos.'); ?></label><br />
+                    <input name="currpass" type="password" class="form-control " required /><!--id='currpass'-->
+                </div>
             </div>
         </div>
-
-<br>
-        <h4><?php echo _('Modify your contact information'); ?></h4>
-        <div class='row'>
-            <div class='col-md-6'>
-                <label class='block' for='phone'><?php echo _('Phone'); ?> </label>
-                <input name="phone" value='<?php echo $users['phone']; ?>' cols='20' rows='1' />
-            </div>
-            <div class='col-md-6'>
-                <label class='block' for='cellphone'><?php echo _('Mobile'); ?></label>
-                <input name="cellphone" value='<?php echo $users['cellphone']; ?>' cols='20' rows='1' />
-            </div>
-        </div>
-        <div class='row'>
-            <div class='col-md-6'>
-                <label class='block' for='skype'><?php echo _('Skype'); ?></label>
-                <input name="skype" value='<?php echo $users['skype']; ?>' cols='20' rows='1' />
-            </div>
-            <div class='col-md-6'>
-                <label class='block' for='website'><?php echo _('Website'); ?></label>
-                <input name="website" type="url" value='<?php echo $users['website']; ?>' cols='20' rows='1' />
-            </div>
-        </div>
-
     </div>
         <div class='submitButtonDiv'>
-            <button type="submit" name="Submit" class='button'><?php echo _('Update profile'); ?></button>
+            <button type="submit" name="Submit" class='btn btn-elab btn-lg'><?php echo _('Update profile'); ?></button>
         </div>
     </form>
 
@@ -129,53 +149,109 @@ $users = $req->fetch();
 
     <form action='app/ucp-exec.php' method='post'>
         <section class='box'>
+            <h3><?php echo _('Language'); ?></h3>
+            <hr>
+            <div class="row">
+                <div class="col-xs-2">
+                    <select id='lang' name="lang" class="form-control input-lg">
+                        <option
+                        <?php
+                        if ($_SESSION['prefs']['lang'] === 'en_GB') {
+                            echo ' selected '; }?>value="en_GB">en_GB</option>
+                        <option
+                        <?php
+                        if ($_SESSION['prefs']['lang'] === 'ca_ES') {
+                            echo ' selected '; }?>value="ca_ES">ca_ES</option>
+                        <option
+                        <?php
+                        if ($_SESSION['prefs']['lang'] === 'de_DE') {
+                            echo ' selected '; }?>value="de_DE">de_DE</option>
+                        <option
+                        <?php
+                        if ($_SESSION['prefs']['lang'] === 'es_ES') {
+                            echo ' selected '; }?>value="es_ES">es_ES</option>
+                        <option
+                        <?php
+                        if ($_SESSION['prefs']['lang'] === 'fr_FR') {
+                            echo ' selected '; }?>value="fr_FR">fr_FR</option>
+                        <option
+                        <?php
+                        if ($_SESSION['prefs']['lang'] === 'it_IT') {
+                            echo ' selected '; }?>value="it_IT">it_IT</option>
+                        <option
+                        <?php
+                        if ($_SESSION['prefs']['lang'] === 'pt_BR') {
+                            echo ' selected '; }?>value="pt_BR">pt_BR</option>
+                        <option
+                        <?php
+                        if ($_SESSION['prefs']['lang'] === 'zh_CN') {
+                            echo ' selected '; }?>value="zh_CN">zh_CN</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section class='box'>
+            <h3><?php echo _('ALERT'); ?></h3>
+            <hr>
+            <p>
+            <input id='close_warning' type='checkbox' name='close_warning' <?php
+            if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
+                echo "checked='checked'  ";
+            };?> />
+            <label for='close_warning'>&nbsp;<?php echo _('Display a warning before closing an edit window/tab ?'); ?></label>
+            </p>
+        </section>
+
+        <section class='box'>
 
             <h3><?php echo _('DISPLAY'); ?></h3>
             <hr>
             <p id='display'>
-            <label for='radio_view_default'><?php echo _('Default'); ?></label>
-            <input id='radio_view_default' type='radio' name='display' value='default' 
-            <?php echo ($_SESSION['prefs']['display'] === 'default') ? "checked" : ""; ?>
-             />
-
-                 <label for='radio_view_compact'><?php echo _('Compact'); ?></label>
-            <input id='radio_view_compact' type='radio' name='display' value='compact' 
-            <?php echo ($_SESSION['prefs']['display'] === 'compact') ? "checked" : ""; ?>
-             />
+                <input id='radio_view_default' type='radio' name='display' value='default' 
+                <?php echo ($_SESSION['prefs']['display'] === 'default') ? "checked" : ""; ?>
+                 />
+                <label for='radio_view_default'><?php echo _('Default'); ?></label>
+                <br />
+                <input id='radio_view_compact' type='radio' name='display' value='compact' 
+                <?php echo ($_SESSION['prefs']['display'] === 'compact') ? "checked" : ""; ?>
+                 />
+                <label for='radio_view_compact'><?php echo _('Compact'); ?></label>
             </p>
 
             <p style='margin-top:20px;'>
-            <label for='order'><?php echo _('Order by:'); ?></label>
-            <select id='order' name="order">
-                <option
-                <?php
-                if ($_SESSION['prefs']['order'] === 'date') {
-                    echo ' selected '; }?>value="date"><?php echo _('Date'); ?></option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['order'] === 'id') {
-                    echo ' selected '; }?>value="id">ID</option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['order'] === 'title') {
-                    echo ' selected '; }?>value="title"><?php echo _('Title'); ?></option>
-            </select>
-
-            <?php echo _('with'); ?>
-            <select name="sort">
-                <option
-                <?php
-                if ($_SESSION['prefs']['sort'] === 'desc') {
-                    echo ' selected '; }?>value="desc"><?php echo _('newer first'); ?></option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['sort'] === 'asc') {
-                    echo ' selected '; }?>value="asc"><?php echo _('older first'); ?></option>
-            </select>
+                <label class="boxlabel" for='order'><?php echo _('Order by:'); ?></label>
+                <select id='order' name="order" class="form-control">
+                    <option
+                    <?php
+                    if ($_SESSION['prefs']['order'] === 'date') {
+                        echo ' selected '; }?>value="date"><?php echo _('Date'); ?></option>
+                    <option
+                    <?php
+                    if ($_SESSION['prefs']['order'] === 'id') {
+                        echo ' selected '; }?>value="id">ID</option>
+                    <option
+                    <?php
+                    if ($_SESSION['prefs']['order'] === 'title') {
+                        echo ' selected '; }?>value="title"><?php echo _('Title'); ?></option>
+                </select>
+                <label class="boxlabel" for='sort'><?php echo _('with'); ?></label>
+                <select id="sort" name="sort" class="form-control">
+                    <option
+                    <?php
+                    if ($_SESSION['prefs']['sort'] === 'desc') {
+                        echo ' selected '; }?>value="desc"><?php echo _('newer first'); ?></option>
+                    <option
+                    <?php
+                    if ($_SESSION['prefs']['sort'] === 'asc') {
+                        echo ' selected '; }?>value="asc"><?php echo _('older first'); ?></option>
+                </select>
+                <br class="clearfloat" />
+            </p>
 
             <p style='margin-top:20px;'>
-            <label for='limit'><?php echo _('Items per page:'); ?></label>
-            <input id='limit' type='text' size='2' maxlength='2' value='<?php echo $_SESSION['prefs']['limit']; ?>' name='limit'>
+            <label class="boxlabel" for='limit'><?php echo _('Items per page:'); ?></label>
+            <input id='limit' type='text' size='3' maxlength='3' value='<?php echo $_SESSION['prefs']['limit']; ?>' name='limit' class="form-control">
             </p>
         </section>
 
@@ -205,61 +281,9 @@ $users = $req->fetch();
             </p>
         </section>
 
-        <section class='box'>
-            <h3><?php echo _('ALERT'); ?></h3>
-            <hr>
-            <p>
-            <label for='close_warning'><?php echo _('Display a warning before closing an edit window/tab ?'); ?></label>
-            <input id='close_warning' type='checkbox' name='close_warning' <?php
-            if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
-                echo "checked='checked'  ";
-            };?> />
-            </p>
-        </section>
-
-        <section class='box'>
-            <h3><?php echo _('Language'); ?></h3>
-            <hr>
-            <p>
-            <select id='lang' name="lang">
-                <option
-                <?php
-                if ($_SESSION['prefs']['lang'] === 'en_GB') {
-                    echo ' selected '; }?>value="en_GB">en_GB</option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['lang'] === 'ca_ES') {
-                    echo ' selected '; }?>value="ca_ES">ca_ES</option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['lang'] === 'de_DE') {
-                    echo ' selected '; }?>value="de_DE">de_DE</option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['lang'] === 'es_ES') {
-                    echo ' selected '; }?>value="es_ES">es_ES</option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['lang'] === 'fr_FR') {
-                    echo ' selected '; }?>value="fr_FR">fr_FR</option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['lang'] === 'it_IT') {
-                    echo ' selected '; }?>value="it_IT">it_IT</option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['lang'] === 'pt_BR') {
-                    echo ' selected '; }?>value="pt_BR">pt_BR</option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['lang'] === 'zh_CN') {
-                    echo ' selected '; }?>value="zh_CN">zh_CN</option>
-            </select>
-        </section>
         <div style='margin-top:30px;' class='center'>
-        <button type="submit" name="Submit" class='button'><?php echo _('Save'); ?></button>
+        <button type="submit" name="Submit" class='btn btn-elab btn-lg'><?php echo _('Save'); ?></button>
         </div>
-            </p>
     </form>
 
 </div>

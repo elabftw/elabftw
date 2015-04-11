@@ -268,6 +268,8 @@ form#big_search input {
 form#big_search input:focus {
     width:90%;
 }
+
+
 /*  MENU is below main nav */
 menu {
     line-height:200%;
@@ -463,6 +465,7 @@ label.block {
 
 .searchform input, .searchform select {
     margin:0 0 5px 0;
+    background:rgba(41,174,185,.1);
 }
 
 .searchform input#title, .searchform input#body {

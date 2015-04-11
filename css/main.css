@@ -585,7 +585,7 @@ a[class*='trigger_']:hover {
     border-bottom-right-radius:0;
 }
 
-.select-filter-status{
+.select-filter-status, .select-filter-cat{
     margin-left: 6px;
 }
 

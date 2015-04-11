@@ -237,7 +237,7 @@ require_once 'inc/info_box.php';
                 <!-- SEARCH ONLY -->
                 <div class="row">
                     <label class="col-md-4 txtright" for'searchonly'><?php echo _('Owned by'); ?> </label>
-                    <div class="col-md-4">
+                    <div class="col-md-5">
                         <select id='searchonly' name='owner' class="form-control">
                             <option value=''><?php echo _('Yourself'); ?></option>
                             <option disabled>----------------</option>
@@ -258,7 +258,7 @@ require_once 'inc/info_box.php';
                             ?>
                         </select>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                     </div>
                 </div>
                 <div class="row">

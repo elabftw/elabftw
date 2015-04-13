@@ -91,7 +91,7 @@ if (file_exists('../config.php')) {
     } else {
         $message = 'It looks like eLabFTW is already installed. Delete the config file if you wish to reinstall it.';
         display_message('error_nocross', $message);
-        custom_die();
+        //custom_die();
     }
 }
 ?>
@@ -183,6 +183,18 @@ if (extension_loaded("gettext")) {
     display_message('error_nocross', $message);
     custom_die();
 }
+
+// CHECK curl extension
+if (extension_loaded("curl")) {
+    $message = 'The <em>curl</em> extension is loaded.';
+    display_message('info_nocross', $message);
+} else {
+    $message = "The <em>curl</em> extension is <strong>NOT</strong> loaded.
+            <a href='https://github.com/elabftw/elabftw/wiki/Troubleshooting#the-gd-extension-is-not-loaded'>Click here to read how to fix this.</a>";
+    display_message('error_nocross', $message);
+    custom_die();
+}
+
 ?>
 
 <br />

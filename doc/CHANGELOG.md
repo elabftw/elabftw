@@ -4,6 +4,7 @@
 * add RFC 3161 compatible trusted timestamping (#100)
 * add filtering options (#15)
 * add encryption for passwords of SMTP and Timestamp stored in the SQL database (#129)
+* add a check for curl extension at install (#141)
 * add hidden field to prevent bot registration (#84)
 * fix team_id not added on db tag add
 * fix no experiments/db item showing if there is no tags

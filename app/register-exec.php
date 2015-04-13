@@ -29,6 +29,8 @@ require_once '../inc/functions.php';
 require_once '../inc/locale.php';
 require_once '../vendor/autoload.php';
 
+$crypto = new \Elabftw\Elabftw\Crypto();
+
 //Array to store validation errors
 $msg_arr = array();
 //Validation error flag
@@ -41,8 +43,13 @@ $email = '';
 $passwordHash = '';
 $salt = '';
 
+// Stop bot registration by checking if the (invisible to humans) bot input is filled
+if (isset($_POST['bot']) && !empty($_POST['bot'])) {
+    exit;
+}
+
 // Check USERNAME (sanitize and validate)
-if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
+if ((isset($_POST['username'])) && !empty($_POST['username'])) {
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
     // Check for duplicate username in DB
     $sql = "SELECT * FROM users WHERE username= :username";
@@ -251,7 +258,7 @@ if ($result) {
             get_config('smtp_encryption')
         )
         ->setUsername(get_config('smtp_username'))
-        ->setPassword(get_config('smtp_password'));
+        ->setPassword($crypto->decrypt(get_config('smtp_password')));
         $mailer = Swift_Mailer::newInstance($transport);
         // SEND EMAIL
         try {

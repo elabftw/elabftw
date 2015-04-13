@@ -1,7 +1,16 @@
 <?php
+/*
+* You normally don't need to look at this file
+* But if for some reason you need to, then rename this file config.php and place it
+* at the root folder of the elabftw installation.
+*/
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'elabftw');
 define('DB_USER', 'elabftw');
 define('DB_PASSWORD', 'YOUR PASSWORD');
-# keep the / at the end
+// keep the / at the end
 define('ELAB_ROOT', '/path/to/elabftw/');
+// long random string
+define('SECRET_KEY', 'b2af642239ebc9d1159ce9f11176c5add586e939fb59ece8638ad1d1bccb986fafaa46f857a67878584264c93a01f984bc13e8ccc1eedd26003eb9b17c9d39b4');
+// hexadecimal string
+define('IV', '665e5864c8e5be08ec94dab79e793934');

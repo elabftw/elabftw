@@ -27,6 +27,7 @@
 require_once '../inc/common.php';
 require_once ELAB_ROOT . 'inc/locale.php';
 require_once ELAB_ROOT . 'vendor/autoload.php';
+$crypto = new \Elabftw\Elabftw\Crypto();
 
 // only admin can use this
 if ($_SESSION['is_admin'] != 1) {
@@ -87,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
             get_config('smtp_encryption')
         )
             ->setUsername(get_config('smtp_username'))
-            ->setPassword(get_config('smtp_password'));
+            ->setPassword($crypto->decrypt(get_config('smtp_password')));
         $mailer = Swift_Mailer::newInstance($transport);
         // now we try to send the email
         try {
@@ -281,8 +282,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team']) && $_POST[
     }
 }
 
-
-
 // SERVER SETTINGS
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
 
@@ -326,28 +325,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
 
 // TIMESTAMP CONFIG
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {
-
-    if ($_POST['stampshare'] == 1) {
-        $stampshare = 1;
-    } else {
-        $stampshare = 0;
-    }
-    if (isset($_POST['stamplogin'])) {
-        $stamplogin = filter_var($_POST['stamplogin'], FILTER_VALIDATE_EMAIL);
-    } else {
-        $stamplogin = '';
-    }
-    if (isset($_POST['stamppass'])) {
-        $stamppass = filter_var($_POST['stamppass'], FILTER_SANITIZE_STRING);
-    } else {
-        $stamppass = '';
-    }
+    $post_stamp = processTimestampPost();
 
     // SQL
     $updates = array(
-        'stampshare' => $stampshare,
-        'stamplogin' => $stamplogin,
-        'stamppass' => $stamppass
+        'stampprovider' => $post_stamp['stampprovider'],
+        'stampcert' => $post_stamp['stampcert'],
+        'stampshare' => $post_stamp['stampshare'],
+        'stamplogin' => $post_stamp['stamplogin'],
+        'stamppass' => $post_stamp['stamppass']
     );
 
     if (update_config($updates)) {
@@ -426,7 +412,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['smtp_address'])) {
         $smtp_username = '';
     }
     if (isset($_POST['smtp_password'])) {
-        $smtp_password = filter_var($_POST['smtp_password'], FILTER_SANITIZE_STRING);
+        // the password is stored encrypted in the SQL
+        $smtp_password = $crypto->encrypt(filter_var($_POST['smtp_password'], FILTER_SANITIZE_STRING));
     } else {
         $smtp_password = '';
     }
@@ -457,6 +444,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['smtp_address'])) {
 // TEAM CONFIGURATION COMING FROM ../admin.php
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
 
+    $post_stamp = processTimestampPost();
+
     // CHECKS
     if ($_POST['deletable_xp'] == 1) {
         $deletable_xp = 1;
@@ -473,31 +462,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
     } else {
         $link_href = 'https://github.com/elabftw/elabftw/wiki';
     }
-    if (isset($_POST['stamplogin'])) {
-        $stamplogin = filter_var($_POST['stamplogin'], FILTER_VALIDATE_EMAIL);
-    } else {
-        $stamplogin = '';
-    }
-    if (isset($_POST['stamppass'])) {
-        $stamppass = filter_var($_POST['stamppass'], FILTER_SANITIZE_STRING);
-    } else {
-        $stamppass = '';
-    }
 
     // SQL
-    $sql = "UPDATE teams SET deletable_xp = :deletable_xp, link_name = :link_name, link_href = :link_href, stamplogin = :stamplogin, stamppass = :stamppass WHERE team_id = :team_id";
+    $sql = "UPDATE teams SET
+        deletable_xp = :deletable_xp,
+        link_name = :link_name,
+        link_href = :link_href,
+        stamplogin = :stamplogin,
+        stamppass = :stamppass,
+        stampprovider = :stampprovider,
+        stampcert = :stampcert
+        WHERE team_id = :team_id";
     $req = $pdo->prepare($sql);
+    $req->bindParam(':deletable_xp', $deletable_xp);
+    $req->bindParam(':link_name', $link_name);
+    $req->bindParam(':link_href', $link_href);
+    $req->bindParam(':stamplogin', $post_stamp['stamplogin']);
+    $req->bindParam(':stamppass', $post_stamp['stamppass']);
+    $req->bindParam(':stampprovider', $post_stamp['stampprovider']);
+    $req->bindParam(':stampcert', $post_stamp['stampcert']);
+    $req->bindParam(':team_id', $_SESSION['team_id']);
+
     try {
-        $req->execute(array(
-        'deletable_xp' => $deletable_xp,
-        'link_name' => $link_name,
-        'link_href' => $link_href,
-        'stamplogin' => $stamplogin,
-        'stamppass' => $stamppass,
-        'team_id' => $_SESSION['team_id']
-        ));
+
+        $req->execute();
+
     } catch (PDOException $e) {
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#10", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+        $msg_arr[] = $e->getMessage();
         $_SESSION['errors'] = $msg_arr;
         header('Location: ../admin.php');
         exit;

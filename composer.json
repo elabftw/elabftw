@@ -5,10 +5,11 @@
         "ext-gd":"*",
         "ext-gettext":"*",
         "ext-mcrypt":"*",
+        "ext-curl":"*",
         "ext-openssl":"*"
 
     },
     "autoload": {
-        "files": ["inc/classes/MakePdf.php", "inc/classes/FormKey.php"]
+        "files": ["inc/classes/MakePdf.php", "inc/classes/FormKey.php", "inc/classes/Crypto.php", "inc/classes/TrustedTimestamps.php"]
     }
 }

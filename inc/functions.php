@@ -127,7 +127,7 @@ function make_thumb($src, $ext, $dest, $desired_width)
 /**
  * Check in input is a positive integer.
  *
- * @param int|string $int The int to check
+ * @param integer $int The int to check
  * @return bool Return false if it's not an int
  */
 function is_pos_int($int)
@@ -149,7 +149,7 @@ function is_pos_int($int)
 function has_attachement($id, $type)
 {
     global $pdo;
-    $sql = "SELECT id FROM uploads 
+    $sql = "SELECT id FROM uploads
         WHERE item_id = :item_id AND type = :type LIMIT 1";
     $req = $pdo->prepare($sql);
     $req->bindParam(':item_id', $id);
@@ -174,7 +174,7 @@ function search_item($type, $query, $userid)
     $results_arr = array();
     if ($type === 'xp') {
         // search in title date and body
-        $sql = "SELECT id FROM experiments 
+        $sql = "SELECT id FROM experiments
             WHERE userid = :userid AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
         $req = $pdo->prepare($sql);
         $req->execute(array(
@@ -206,7 +206,7 @@ function search_item($type, $query, $userid)
 
     } elseif ($type === 'db') {
         // search in title date and body
-        $sql = "SELECT id FROM items 
+        $sql = "SELECT id FROM items
             WHERE (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
         $req = $pdo->prepare($sql);
         $req->execute();
@@ -267,6 +267,94 @@ function show_tags($item_id, $table)
         return false;
     }
 }
+/**
+ * Validate POST variables containing login/validation data for the TSP;
+ * Substitute missing values with empty strings and return as array
+ *
+ * @return array
+ */
+function processTimestampPost()
+{
+    $crypto = new \Elabftw\Elabftw\Crypto();
+
+    if (isset($_POST['stampprovider'])) {
+        $stampprovider = filter_var($_POST['stampprovider'], FILTER_VALIDATE_URL);
+    } else {
+        $stampprovider = '';
+    }
+    if (isset($_POST['stampcert'])) {
+        $cert_chain = filter_var($_POST['stampcert'], FILTER_SANITIZE_STRING);
+        if (is_file(realpath(ELAB_ROOT . $cert_chain)) || realpath($cert_chain)) {
+            $stampcert = $cert_chain;
+        } else {
+            $stampcert = '';
+        }
+    } else {
+        $stampcert = '';
+    }
+    if (isset($_POST['stampshare'])) {
+        $stampshare = $_POST['stampshare'];
+    } else {
+        $stampshare = 0;
+    }
+    if (isset($_POST['stamplogin'])) {
+        $stamplogin = filter_var($_POST['stamplogin'], FILTER_SANITIZE_STRING);
+    } else {
+        $stamplogin = '';
+    }
+    if (isset($_POST['stamppass'])) {
+        $stamppass = $crypto->encrypt(filter_var($_POST['stamppass'], FILTER_SANITIZE_STRING));
+    } else {
+        $stamppass = '';
+    }
+
+    return array('stampprovider' => $stampprovider,
+                    'stampcert' => $stampcert,
+                    'stampshare' => $stampshare,
+                    'stamplogin' => $stamplogin,
+                    'stamppass' => $stamppass);
+}
+
+/**
+ * Return the needed parameters to request/verify a timestamp
+ *
+ * @return array<string,string|null>
+ */
+function getTimestampParameters()
+{
+    $hash_algorithms = array('sha256', 'sha384', 'sha512');
+    $crypto = new \Elabftw\Elabftw\Crypto();
+
+    if (strlen(get_team_config('stamplogin')) > 2) {
+        $login = get_team_config('stamplogin');
+        $password = $crypto->decrypt(get_team_config('stamppass'));
+        $provider = get_team_config('stampprovider');
+        $cert = get_team_config('stampcert');
+        $hash = get_team_config('stamphash');
+        if (!in_array($hash, $hash_algorithms)) {
+            $hash = 'sha256';
+        }
+    } elseif (get_config('stampshare')) {
+        $login = get_config('stamplogin');
+        $password = $crypto->decrypt(get_config('stamppass'));
+        $provider = get_config('stampprovider');
+        $cert = get_config('stampcert');
+        $hash = get_config('stamphash');
+        if (!in_array($hash, $hash_algorithms)) {
+            $hash = 'sha256';
+        }
+        // otherwise assume no login or password is needed
+    } else {
+        throw new Exception(_('No valid credentials were found for Time Stamping.'));
+        exit;
+    }
+
+    return array('stamplogin' => $login,
+                    'stamppassword' => $password,
+                    'stampprovider' => $provider,
+                    'stampcert' => $cert,
+                    'hash' => $hash);
+}
 
 /**
  * Show an experiment (in mode=show).
@@ -306,7 +394,7 @@ function showXP($id, $display)
         echo "<a href='experiments.php?mode=view&id=" . $experiments['id'] . "'>";
         // show stamp if experiment is timestamped
         if ($experiments['timestamped']) {
-            echo "<img class='align_right' src='img/check.png' alt='stamp' title='Timestamp OK' />";
+            echo "<img class='align_right' src='img/stamp.png' alt='stamp' title='experiment timestamped' />";
         }
         echo "<p class='title'>";
         // show lock if item is locked on viewXP
@@ -407,7 +495,9 @@ function showDB($id, $display)
         echo stripslashes($item['title']) . "</p></a>";
         // ITEM TYPE
         echo "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['bgcolor'] . "'>" . $item['name'] . " </span>";
-        // _('Tags')
+        // DATE
+        echo "<span class='date' style='padding:0 5px;'><img class='image' src='img/calendar.png' /> " . format_date($item['date']) . "</span> ";
+        // TAGS
         echo show_tags($id, 'items_tags');
         echo "</section>";
     }
@@ -945,8 +1035,7 @@ function q($sql)
         $req = $pdo->prepare($sql);
         $req->execute();
         return true;
-    } catch (PDOException $e)
-    {
+    } catch (PDOException $e) {
         dblog('Error', 'mysql', $e->getMessage());
         return $e->getMessage();
     }
@@ -1055,4 +1144,88 @@ function rm_field($table, $field, $added)
             die($die_msg);
         }
     }
+}
+
+
+/*
+ * Functions to keep current order/filter selection in dropdown
+ *
+ * @param string value to check
+ * @return string|null echo 'selected'
+ */
+
+function checkSelectOrder($val)
+{
+    if (isset($_GET['order']) && $_GET['order'] === $val) {
+        echo " selected";
+    }
+}
+
+function checkSelectSort($val)
+{
+    if (isset($_GET['sort']) && $_GET['sort'] === $val) {
+        echo " selected";
+    }
+}
+
+function checkSelectFilter($val)
+{
+    if (isset($_GET['filter']) && $_GET['filter'] === $val) {
+        return " selected";
+    }
+}
+
+/*
+ * Check presence of basic cURL functionality
+ * @return bool true if cURL functions are present, else false
+ */
+function cURLcheckBasicFunctions()
+{
+    return function_exists("curl_init") &&
+      function_exists("curl_setopt") &&
+      function_exists("curl_exec") &&
+      function_exists("curl_close");
+}
+
+/*
+ * Downloads a file with cURL; Returns bool status information.
+ * @param string $url URL to download
+ * @param string $file Path and filename as which the download is to be saved
+ * @return string|boolean Return true if the download succeeded, else false
+ */
+function cURLdownload($url, $file)
+{
+    if (!cURLcheckBasicFunctions()) {
+        return "Please install php5-curl package.";
+    }
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    // this is to get content
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    // add proxy if there is one
+    if (strlen(get_config('proxy')) > 0) {
+        curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
+    }
+    // disable certificate check
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+
+    // add user agent
+    // http://developer.github.com/v3/#user-agent-required
+    curl_setopt($ch, CURLOPT_USERAGENT, "elabftw");
+
+    // add a timeout, because if you need proxy, but don't have it, it will mess up things
+    // 5 seconds
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+
+    // now open the file
+    $fp = fopen($file, "w");
+    curl_setopt($ch, CURLOPT_FILE, $fp);
+    // we don't want the header
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    // DO IT!
+    return curl_exec($ch);
+    // cleanup
+    curl_close($ch);
+    fclose($fp);
 }

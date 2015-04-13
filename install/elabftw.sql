@@ -245,8 +245,11 @@ CREATE TABLE `teams` (
   `link_name` text NOT NULL,
   `link_href` text NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `stamplogin` text,
-  `stamppass` text,
+  `stamplogin` text DEFAULT NULL,
+  `stamppass` text DEFAULT NULL,
+  `stampprovider` text DEFAULT NULL,
+  `stampcert` text DEFAULT NULL,
+  `stamphash` varchar(10) DEFAULT 'sha256',
   PRIMARY KEY (`team_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -351,4 +354,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('smtp_username', ''),
 ('stamplogin', ''),
 ('stamppass', ''),
-('stampshare', '1');
+('stampshare', '1'),
+('stampprovider', 'https://ws.universign.eu/tsa'),
+('stampcert', 'vendor/universign-tsa-root.pem'),
+('stamphash', 'sha256');

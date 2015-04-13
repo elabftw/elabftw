@@ -32,7 +32,7 @@ if (php_sapi_name() == 'cli' || empty($_SERVER['REMOTE_ADDR'])) {
 }
 
 require_once 'inc/common.php';
-require_once 'inc/functions.php';
+require_once 'vendor/autoload.php';
 
 // die if you are not sysadmin
 if ($_SESSION['is_sysadmin'] != 1) {
@@ -303,6 +303,201 @@ if (!$table_is_here) {
       `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
       `userid` int(11) NOT NULL
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;");
+}
+
+// 20150324 : adding secret key used to encrypt the SMTP password
+// first we check if we can write the config file
+if (!is_writable('config.php')) {
+
+    // check that there is no secret key already
+    if (!defined('SECRET_KEY')) {
+
+        $msg_arr[] = "[ERROR] Please allow webserver to write config file, or add SECRET_KEY yourself to config.php. <a href='https://github.com/elabftw/elabftw/wiki/Troubleshooting'>Link to documentation</a>";
+        $_SESSION['errors'] = $msg_arr;
+        header('Location: sysconfig.php');
+        exit;
+    }
+
+} elseif (is_writable('config.php') && !defined('SECRET_KEY')) {
+
+    $crypto = new \Elabftw\Elabftw\Crypto();
+    // add generated strings to config file
+    // the IV is stored in hex
+    $data_to_add = "\ndefine('SECRET_KEY', '" . $crypto->getSecretKey() . "');\ndefine('IV', '" . bin2hex($crypto->getIv()) . "');\n";
+
+    try {
+        file_put_contents('config.php', $data_to_add, FILE_APPEND);
+    } catch (Exception $e) {
+        $msg_arr[] = "[ERROR] " . $e->getMessage();
+        $_SESSION['errors'] = $msg_arr;
+        header('Location: sysconfig.php');
+        exit;
+    }
+
+    // ok so now we have a secret key, an IV and we want to convert our old cleartext SMTP password to an encrypted one
+    $config_arr = array();
+
+    // if there is a password in cleartext in the database, we encrypt it
+    if (strlen(get_config('smtp_password')) > 0) {
+        $config_arr['smtp_password'] = $crypto->encrypt(get_config('smtp_password'));
+    }
+    if (strlen(get_config('stamppass')) > 0) {
+        $config_arr['stamppass'] = $crypto->encrypt(get_config('stamppass'));
+    }
+
+    try {
+        update_config($config_arr);
+    } catch (Exception $e) {
+        $msg_arr[] = "[ERROR] " . $e->getMessage();
+        $_SESSION['errors'] = $msg_arr;
+        header('Location: sysconfig.php');
+        exit;
+    }
+
+    // now we update the stamppass in the `teams` table
+    // first get the list of teams with a stamppass
+    $sql = "SELECT * FROM teams WHERE CHAR_LENGTH(stamppass) > 0";
+    $req = $pdo->prepare($sql);
+    $req->execute();
+    while ($teams = $req->fetch()) {
+        $enc_pass = $crypto->encrypt($teams['stamppass']);
+
+        $sql2 = "UPDATE teams SET stamppass = :stamppass WHERE team_id = :id";
+        $req2 = $pdo->prepare($sql2);
+        $req2->bindParam(':stamppass', $enc_pass);
+        $req2->bindParam(':id', $teams['team_id']);
+        $req2->execute();
+    }
+}
+
+// 20150325 : fix the items_tags not having a valid team_id
+// first look if there are entries to fix
+$sql = "SELECT * FROM items_tags WHERE team_id = 0";
+$req = $pdo->prepare($sql);
+$req->execute();
+if ($req->rowCount() > 0) {
+    while ($items_tags = $req->fetch()) {
+        // now we must find in which team the item associated to the tag is, and update the record
+        $sql2 = "SELECT team FROM items WHERE id = :item_id";
+        $req2 = $pdo->prepare($sql2);
+        $req2->bindParam(':item_id', $items_tags['item_id']);
+        $req2->execute();
+        $items = $req2->fetch();
+
+        // update the record
+        $sql3 = "UPDATE items_tags SET team_id = :team_id WHERE id = :id";
+        $req3 = $pdo->prepare($sql3);
+        $req3->bindParam(':team_id', $items['team']);
+        $req3->bindParam(':id', $items_tags['id']);
+        $req3->execute();
+    }
+}
+
+// 20150304 : add rfc 3161 timestamping/generic timestamping providers
+
+// add stampprovider, stampcert and stamphash to teams table
+add_field('teams', 'stampprovider', "TEXT NULL DEFAULT NULL", ">>> Added timestamp team config (provider)\n");
+add_field('teams', 'stampcert', "TEXT NULL DEFAULT NULL", ">>> Added timestamp team config (cert)\n");
+add_field('teams', 'stamphash', "VARCHAR(10) NULL DEFAULT 'sha256'", ">>> Added timestamp team config (hash)\n");
+
+// check if stamppass and stamplogin are set globally but not stampprovider => old-style timestamping using Universign
+$sql = "SELECT conf_name FROM config";
+$req = $pdo->prepare($sql);
+$req->execute();
+$config_items = [];
+$old_timestamping_global = false;
+while ($show = $req->fetch()) {
+    array_push($config_items, $show["conf_name"]);
+}
+
+if (in_array('stamplogin', $config_items) && in_array('stamppass', $config_items) && !in_array('stampprovider', $config_items)) {
+    $old_timestamping_global = true;
+}
+
+// if Universign was used globally, add timestamping parameters
+if ($old_timestamping_global) {
+    $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('stampprovider', 'https://ws.universign.eu/tsa'), ('stampcert', :certfile), ('stamphash', 'sha256')";
+    $req = $pdo->prepare($sql);
+    $res = $req->execute(array('certfile' => 'vendor/universign-tsa-root.pem'));
+    if ($res) {
+        echo ">>> Added Universign.eu as global RFC 3161 TSA\n";
+    } else {
+        die($die_msg);
+    }
+}
+
+// check if stamppass and stamplogin are set for teams but not stampprovider => old-style timestamping using Universign
+$sql = "SELECT * FROM teams";
+$req = $pdo->prepare($sql);
+$req->execute();
+$teams = [];
+$old_timestamping_teams = false;
+while ($show = $req->fetch()) {
+    array_push($teams, $show);
+}
+
+// check for each team and set timestamping parameters if needed
+foreach ($teams as $team) {
+    if ($team['stamplogin'] !== '' && $team['stamppass'] !== '' && $team['stampprovider'] === '') {
+        $old_timestamping_teams = true;
+        $sql = "UPDATE teams SET stampprovider = 'https://ws.universign.eu/tsaa', stampcert = :certfile,
+                stamphash = 'sha256' WHERE team_id = :id";
+        $req = $pdo->prepare($sql);
+        $res = $req->execute(array(
+            'certfile' => 'vendor/universign-tsa-root.pem',
+            'id' => $team['team_id']
+            ));
+        if ($res) {
+            echo ">>> Added Universign.eu as RFC 3161 TSA for team #" . $team['team_id'] . "\n";
+        } else {
+            die($die_msg);
+        }
+    }
+}
+
+// if Universign was used either globally or on a per team level, correct the recorded dates for the timestamps in the database
+if ($old_timestamping_global || $old_timestamping_teams) {
+    // check if we have timestamped experiments
+    $sql = "SELECT * FROM experiments";
+    $req = $pdo->prepare($sql);
+    $req->execute();
+    while ($show = $req->fetch()) {
+        if ($show['timestamped'] === '1') {
+            $ts = new Elabftw\Elabftw\TrustedTimestamps(null, null, ELAB_ROOT . 'uploads/' . $show['timestamptoken']);
+            $date = $ts->getResponseTime();
+            if ($show['timestampedwhen'] !== $date) {
+                $sql_update = "UPDATE experiments SET timestampedwhen = :date WHERE id = :id";
+                $req_update = $pdo->prepare($sql_update);
+                $res_update = $req_update->execute(array('date' => $date, 'id' => $show['id']));
+                if ($res_update) {
+                    echo ">>> Corrected timestamp data for experiment #" . $show['id'] . "\n";
+                } else {
+                    die($die_msg);
+                }
+            }
+        }
+    }
+}
+
+// if Universign.eu was not used, a database update might still be needed; check for that
+if (!$old_timestamping_global) {
+    // add stampprovider, stampcert and stamphash to configuration
+    // check if we need to
+    $sql = "SELECT COUNT(*) AS confcnt FROM config";
+    $req = $pdo->prepare($sql);
+    $req->execute();
+    $confcnt = $req->fetch(PDO::FETCH_ASSOC);
+
+    if ($confcnt['confcnt'] < 17) {
+        $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('stampprovider', null), ('stampcert', null), ('stamphash', 'sha256')";
+        $req = $pdo->prepare($sql);
+        $res = $req->execute();
+        if ($res) {
+            echo ">>> Added global timestamping provider, certificate and hash algorithm\n";
+        } else {
+            die($die_msg);
+        }
+    }
 }
 
 // END

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2014-10-27 17:55+0100\n"
-"PO-Revision-Date: 2015-02-23 03:38+0100\n"
+"PO-Revision-Date: 2015-03-25 10:52+0100\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -641,9 +641,6 @@ msgstr "Isto tem que ser um endereço eletrônico."
 
 msgid "Password for external timestamping service:"
 msgstr "Senha para o serviço externo de timestamping:"
-
-msgid "This password will be stored in clear in the database ! Make sure it doesn't open other doors…"
-msgstr "Atenção: este senha será gravada de forma não criptografada no banco de dados! Use uma senha que não abra outras portas…"
 
 msgid "Security settings"
 msgstr "Configurações de Segurança"

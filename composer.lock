@@ -4,20 +4,20 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8f269895ebb1923e0fab0c5c639ed560",
+    "hash": "3cef560028365e051ecf54913b70ba48",
     "packages": [
         {
             "name": "mpdf/mpdf",
-            "version": "v5.7.4",
+            "version": "v6.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/finwe/mpdf.git",
-                "reference": "f9a374c7ea975ce8c795cec4dfd17ef55addac9c"
+                "url": "https://github.com/mpdf/mpdf.git",
+                "reference": "a15743d030ce3b5b7be36c6e83f76589b27c3f2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/finwe/mpdf/zipball/f9a374c7ea975ce8c795cec4dfd17ef55addac9c",
-                "reference": "f9a374c7ea975ce8c795cec4dfd17ef55addac9c",
+                "url": "https://api.github.com/repos/mpdf/mpdf/zipball/a15743d030ce3b5b7be36c6e83f76589b27c3f2c",
+                "reference": "a15743d030ce3b5b7be36c6e83f76589b27c3f2c",
                 "shasum": ""
             },
             "require": {
@@ -47,20 +47,20 @@
                 "php",
                 "utf-8"
             ],
-            "time": "2014-12-14 18:32:11"
+            "time": "2015-03-01 10:27:49"
         },
         {
             "name": "swiftmailer/swiftmailer",
-            "version": "v5.3.1",
+            "version": "v5.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swiftmailer/swiftmailer.git",
-                "reference": "c5f963e7f9d6f6438fda4f22d5cc2db296ec621a"
+                "reference": "31454f258f10329ae7c48763eb898a75c39e0a9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/c5f963e7f9d6f6438fda4f22d5cc2db296ec621a",
-                "reference": "c5f963e7f9d6f6438fda4f22d5cc2db296ec621a",
+                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/31454f258f10329ae7c48763eb898a75c39e0a9f",
+                "reference": "31454f258f10329ae7c48763eb898a75c39e0a9f",
                 "shasum": ""
             },
             "require": {
@@ -72,7 +72,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "5.3-dev"
+                    "dev-master": "5.4-dev"
                 }
             },
             "autoload": {
@@ -99,7 +99,7 @@
                 "mail",
                 "mailer"
             ],
-            "time": "2014-12-05 14:17:14"
+            "time": "2015-03-14 06:06:39"
         }
     ],
     "packages-dev": [],
@@ -110,6 +110,7 @@
         "mpdf/mpdf": 0
     },
     "prefer-stable": false,
+    "prefer-lowest": false,
     "platform": {
         "ext-gd": "*",
         "ext-gettext": "*",

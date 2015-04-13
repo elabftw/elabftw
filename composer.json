@@ -5,6 +5,7 @@
         "ext-gd":"*",
         "ext-gettext":"*",
         "ext-mcrypt":"*",
+        "ext-curl":"*",
         "ext-openssl":"*"
 
     },

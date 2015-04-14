@@ -404,7 +404,7 @@ add_field('teams', 'stamphash', "VARCHAR(10) NULL DEFAULT 'sha256'", ">>> Added 
 $sql = "SELECT conf_name FROM config";
 $req = $pdo->prepare($sql);
 $req->execute();
-$config_items = [];
+$config_items = array();
 $old_timestamping_global = false;
 while ($show = $req->fetch()) {
     array_push($config_items, $show["conf_name"]);
@@ -430,7 +430,7 @@ if ($old_timestamping_global) {
 $sql = "SELECT * FROM teams";
 $req = $pdo->prepare($sql);
 $req->execute();
-$teams = [];
+$teams = array();
 $old_timestamping_teams = false;
 while ($show = $req->fetch()) {
     array_push($teams, $show);

@@ -517,11 +517,11 @@ if ($confcnt['confcnt'] < 20) {
         array_push($config_items, $show);
     }
 
-    if ($config_items['smtp_address'] !== '')  {
+    if ($config_items['smtp_address'] !== '') {
         $mail_method = 'smtp';
         $smtp_username = filter_var($config_items['smtp_username'], FILTER_VALIDATE_EMAIL);
         // check if we can use the smtp_username as sender email address
-        if($smtp_username) {
+        if ($smtp_username) {
             $from_email = $smtp_username;
         } else {
             // This is just a fallback and will NOT work, because Swiftmailer requires a valid email address
@@ -532,9 +532,7 @@ if ($confcnt['confcnt'] < 20) {
     $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('mail_method', '" . $mail_method . "'), ('sendmail_path', '/usr/bin/sendmail'), ('mail_from', '" . $from_email ."')";
     $req = $pdo->prepare($sql);
     $res = $req->execute();
-    if ($res) {
-        echo ">>> Set mail_method to " . $mail_method . "\n";
-    } else {
+    if (!$res) {
         die($die_msg);
     }
 }

@@ -99,7 +99,7 @@ if (isset($_POST['email'])) {
             } catch (Exception $e) {
                 // log the error
                 dblog('Error', $_SERVER['REMOTE_ADDR'], $e->getMessage());
-                die($e->getMessage());
+                //die($e->getMessage());
                 $errflag = true;
             }
             if ($errflag) {

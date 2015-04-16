@@ -86,19 +86,13 @@ if (isset($_POST['email'])) {
             // Give the message a subject
             ->setSubject('[eLabFTW] Password reset')
             // Set the From address with an associative array
-            ->setFrom(array(get_config('smtp_username') => get_config('smtp_username')))
+            ->setFrom(get_config('mail_from'))
             // Set the To addresses with an associative array
             ->setTo(array($email => 'Dori'))
             // Give it a body
             ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $u_agent, $reset_link) . $footer);
-            $transport = Swift_SmtpTransport::newInstance(
-                get_config('smtp_address'),
-                get_config('smtp_port'),
-                get_config('smtp_encryption')
-            )
-            ->setUsername(get_config('smtp_username'))
-            ->setPassword($crypto->decrypt(get_config('smtp_password')));
-            $mailer = Swift_Mailer::newInstance($transport);
+            // generate Swift_Mailer instance
+            $mailer = getMailer();
             // now we try to send the email
             try {
                 $mailer->send($message);
@@ -162,9 +156,9 @@ if (isset($_POST['password']) &&
         die(_("Userid is not valid."));
     }
     // Replace new password in database
-    $sql = "UPDATE users 
-            SET password = :password, 
-            salt = :salt 
+    $sql = "UPDATE users
+            SET password = :password,
+            salt = :salt
             WHERE userid = :userid";
     $req = $pdo->prepare($sql);
     $result = $req->execute(array(

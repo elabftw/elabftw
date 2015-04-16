@@ -76,20 +76,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
         // no i18n here
         ->setSubject('[eLabFTW] Account validated')
         // Set the From address with an associative array
-        ->setFrom(array(get_config('smtp_username') => get_config('smtp_username')))
+        ->setFrom(get_config('mail_from'))
         // Set the To addresses with an associative array
         ->setTo(array($user['email'] => 'eLabFTW'))
         // Give it a body
         ->setBody('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login : ' . $url . $footer);
-
-        $transport = Swift_SmtpTransport::newInstance(
-            get_config('smtp_address'),
-            get_config('smtp_port'),
-            get_config('smtp_encryption')
-        )
-            ->setUsername(get_config('smtp_username'))
-            ->setPassword($crypto->decrypt(get_config('smtp_password')));
-        $mailer = Swift_Mailer::newInstance($transport);
+        // generate Swift_Mailer instance
+            $mailer = getMailer();
         // now we try to send the email
         try {
             $mailer->send($message);
@@ -389,8 +382,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['admin_validate'])) {
 } // END SECURITY
 
 // EMAIL
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['smtp_address'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['mail_method'])) {
 
+    $mail_method = $_POST['mail_method'];
+
+    if (isset($_POST['sendmail_path'])) {
+        $sendmail_path = filter_var($_POST['sendmail_path'], FILTER_SANITIZE_STRING);
+    } else {
+        $sendmail_path = '';
+    }
+    if (isset($_POST['mail_from'])) {
+        $mail_from = filter_var($_POST['mail_from'], FILTER_SANITIZE_EMAIL);
+    } else {
+        $mail_from = '';
+    }
     if (isset($_POST['smtp_address'])) {
         $smtp_address = filter_var($_POST['smtp_address'], FILTER_SANITIZE_STRING);
     } else {
@@ -424,7 +429,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['smtp_address'])) {
         'smtp_encryption' => $smtp_encryption,
         'smtp_port' => $smtp_port,
         'smtp_username' => $smtp_username,
-        'smtp_password' => $smtp_password
+        'smtp_password' => $smtp_password,
+        'mail_method' => $mail_method,
+        'mail_from' => $mail_from,
+        'sendmail_path' => $sendmail_path
     );
 
     if (update_config($updates)) {

@@ -1229,3 +1229,25 @@ function cURLdownload($url, $file)
     curl_close($ch);
     fclose($fp);
 }
+
+/*
+ * Returns Swift_Mailer instance and chooses between sendmail and smtp
+ * @return Swift_Mailer return Swift_Mailer instance
+ */
+function getMailer() {
+    $crypto = new \Elabftw\Elabftw\Crypto();
+    // Choose mail transport method; either smtp or sendmail
+        if(get_config('mail_method') === 'smtp') {
+            $transport = Swift_SmtpTransport::newInstance(
+                get_config('smtp_address'),
+                get_config('smtp_port'),
+                get_config('smtp_encryption')
+            )
+            ->setUsername(get_config('smtp_username'))
+            ->setPassword($crypto->decrypt(get_config('smtp_password')));
+        } else {
+            $transport = Swift_SendmailTransport::newInstance(get_config('sendmail_path') . ' -bs');
+        }
+        $mailer = Swift_Mailer::newInstance($transport);
+        return $mailer;
+}

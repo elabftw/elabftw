@@ -247,19 +247,13 @@ if ($result) {
         // Give the message a subject
         ->setSubject(_('[eLabFTW] New user registered'))
         // Set the From address with an associative array
-        ->setFrom(array(get_config('smtp_username') => get_config('smtp_username')))
+        ->setFrom(get_config('mail_from'))
         // Set the To addresses with an associative array
         ->setTo(array($admin['email'] => 'Admin eLabFTW'))
         // Give it a body
         ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account.') . $footer);
-        $transport = Swift_SmtpTransport::newInstance(
-            get_config('smtp_address'),
-            get_config('smtp_port'),
-            get_config('smtp_encryption')
-        )
-        ->setUsername(get_config('smtp_username'))
-        ->setPassword($crypto->decrypt(get_config('smtp_password')));
-        $mailer = Swift_Mailer::newInstance($transport);
+        // generate Swift_Mailer instance
+        $mailer = getMailer();
         // SEND EMAIL
         try {
             $mailer->send($message);

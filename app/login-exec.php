@@ -123,9 +123,12 @@ if ($result) {
             'shortcuts' => array('create' => $data['sc_create'], 'edit' => $data['sc_edit'], 'submit' => $data['sc_submit'], 'todo' => $data['sc_todo']),
             'lang' => $data['lang'],
             'close_warning' => intval($data['close_warning']));
-        session_write_close();
         // Make a unique token and store it in sql AND cookie
         $token = md5(uniqid(rand(), true));
+        // and SESSION
+        $_SESSION['token'] = $token;
+        session_write_close();
+
         // Cookie validity = 1 month, works only in https
         if (!using_ssl()) {
             die("eLabFTW works only in HTTPS. Please enable HTTPS on your server (<a href='https://github.com/elabftw/elabftw/wiki/Troubleshooting#wiki-switch-to-https'>see documentation</a>). Or retry with https:// in front of the address.");

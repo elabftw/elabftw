@@ -56,8 +56,9 @@ try {
 }
 // END SQL CONNECT
 
-// AUTH
-if (!isset($_SESSION['auth'])) { // user is not auth with php sessions
+
+if (!isset($_SESSION['auth'])) {
+
     if (isset($_COOKIE['token']) && (strlen($_COOKIE['token']) == 32)) {
         // If user has a cookie; check cookie is valid
         $token = filter_var($_COOKIE['token'], FILTER_SANITIZE_STRING);
@@ -71,6 +72,7 @@ if (!isset($_SESSION['auth'])) { // user is not auth with php sessions
         if ($result->rowCount() == 1) { // token is valid
             session_regenerate_id();
             $_SESSION['auth'] = 1;
+            $_SESSION['token'] = $token;
             $_SESSION['userid'] = $users['userid'];
             $_SESSION['team_id'] = $users['team'];
             // Used in the menu
@@ -104,6 +106,21 @@ if (!isset($_SESSION['auth'])) { // user is not auth with php sessions
         }
     } else { // no cookie
         header('location: login.php');
+        exit;
+    }
+}
+
+if (isset($_SESSION['auth'])) {
+    // check that the token in session is the same as in SQL
+    // first get the token in sql
+    $sql = "SELECT token FROM users WHERE userid = :userid";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':userid', $_SESSION['userid']);
+    $req->execute();
+    $token = $req->fetchColumn();
+
+    if ($_SESSION['token'] != $token || !isset($_SESSION['token'])) {
+        header("Location: app/logout.php");
         exit;
     }
 }

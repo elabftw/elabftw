@@ -112,8 +112,8 @@ if (!using_ssl()) {
 }
 
 // CHECK PHP version
-if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.3', '<')) {
-    $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.3";
+if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.4', '<')) {
+    $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.4";
     display_message('error_nocross', $message);
     custom_die();
 } else {

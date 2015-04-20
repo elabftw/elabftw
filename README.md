@@ -50,7 +50,7 @@ If you know Docker already and want to use a dockerized elabftw, please see [thi
 
 Please refer to your distribution's documentation to install :
 * a webserver (like nginx, Apache, lighttpd or cherokee)
-* php version > 5 with the following extensions : gettext, gd, openssl, hash
+* php version > 5.4 with the following extensions : gettext, gd, openssl, hash, curl
 * mysql version > 5.5
 * git
 

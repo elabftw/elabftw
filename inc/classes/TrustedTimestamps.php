@@ -80,7 +80,7 @@ class TrustedTimestamps
         $this->stampPassword = $stampPassword;
         $this->stampCert = $stampCert;
         $this->stampHash = $stampHash;
-        $this->tmpfiles = [];
+        $this->tmpfiles = array();
 
         if (!is_null($this->data) && !is_null($this->stampProvider)) {
             try {

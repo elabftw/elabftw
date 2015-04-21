@@ -183,13 +183,13 @@ if ($current_version == 'something') {
         </select>
         <p class='smallgray'><?php echo _('You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login infos in the admin panel.'); ?></p>
         <p>
-        <label for='stampprovider'><?php echo _('URL for external timestamping service:');?></label>
-        <input type='url' placeholder='https://ws.universign.eu/tsa' value='<?php echo get_config('stampprovider');?>' name='stampprovider' id='stampprovider' />
+        <label for='stampprovider'><?php echo _('URL for external timestamping service:'); ?></label>
+        <input type='url' placeholder='https://ws.universign.eu/tsa' value='<?php echo get_config('stampprovider'); ?>' name='stampprovider' id='stampprovider' />
         <span class='smallgray'><?php printf(_('This should be the URL used for %sRFC 3161%s-compliant timestamping requests.'), "<a href='https://tools.ietf.org/html/rfc3161'>", "</a>"); ?></span>
         </p>
         <p>
-        <label for='stampcert'><?php echo _('Chain of certificates of the external timestamping service:');?></label>
-        <input type='text' placeholder='vendor/universign-tsa-root.pem' value='<?php echo get_config('stampcert');?>' name='stampcert' id='stampcert' />
+        <label for='stampcert'><?php echo _('Chain of certificates of the external timestamping service:'); ?></label>
+        <input type='text' placeholder='vendor/universign-tsa-root.pem' value='<?php echo get_config('stampcert'); ?>' name='stampcert' id='stampcert' />
         <span class='smallgray'><?php printf(_('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. The file needs to be in %sPEM-encoded (ASCII)%s format!'), "<br>", "<a href='https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail'>", "</a>"); ?></span>
         </p>
         <label for='stamplogin'><?php echo _('Login for external timestamping service:'); ?></label>
@@ -235,35 +235,35 @@ if ($current_version == 'something') {
     <?php
         $mail_method = get_config('mail_method');
         switch ($mail_method) {
-        case 'sendmail':
-            $disable_sendmail = false;
-            $disable_smtp = true;
-            $disable_php = true;
-            break;
-        case 'smtp':
-            $disable_sendmail = true;
-            $disable_smtp = false;
-            $disable_php = true;
-            break;
-        case 'php':
-            $disable_sendmail = true;
-            $disable_smtp = true;
-            $disable_php = false;
-            break;
-        default:
-            $disable_sendmail = true;
-            $disable_smtp = true;
-            $disable_php = true;
-    } ?>
+            case 'sendmail':
+                $disable_sendmail = false;
+                $disable_smtp = true;
+                $disable_php = true;
+                break;
+            case 'smtp':
+                $disable_sendmail = true;
+                $disable_smtp = false;
+                $disable_php = true;
+                break;
+            case 'php':
+                $disable_sendmail = true;
+                $disable_smtp = true;
+                $disable_php = false;
+                break;
+            default:
+                $disable_sendmail = true;
+                $disable_smtp = true;
+                $disable_php = true;
+        } ?>
     <form method='post' action='app/admin-exec.php'>
         <p><?php echo _("Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mandrill.com (or gmail account and add the infos here."); ?></p>
         <p>
         <label for='mail_method'><?php echo _('Send e-mails via:'); ?></label>
         <select onchange='toggleMailMethod($("#toggle_main_method").val())' name='mail_method' id='toggle_main_method'>
             <option value=''><?php echo _('Select mailing method...'); ?></option>
-            <option value='sendmail' <?php if(!$disable_sendmail) echo 'selected="selected"'; ?>><?php echo _('Local MTA (default)'); ?></option>
-            <option value='smtp' <?php if(!$disable_smtp) echo 'selected="selected"'; ?>><?php echo _('SMTP'); ?></option>
-            <option value='php' <?php if(!$disable_php) echo 'selected="selected"'; ?>><?php echo _('PHP'); ?></option>
+            <option value='sendmail' <?php if (!$disable_sendmail) echo 'selected="selected"'; ?>><?php echo _('Local MTA (default)'); ?></option>
+            <option value='smtp' <?php if (!$disable_smtp) echo 'selected="selected"'; ?>><?php echo _('SMTP'); ?></option>
+            <option value='php' <?php if (!$disable_php) echo 'selected="selected"'; ?>><?php echo _('PHP'); ?></option>
         </select>
         </p>
         <div id='general_mail_config'>
@@ -334,7 +334,7 @@ for (var i=0; i < input_list.length; i++) {
 }
 
 // honor already saved mail_method setting and hide unused options accordingly
-toggleMailMethod(<?php echo json_encode($mail_method);?>);
+toggleMailMethod(<?php echo json_encode($mail_method); ?>);
 
 // called when mail_method selector is changed; enables/disables the config for the selected/unselected method
 function toggleMailMethod(value) {

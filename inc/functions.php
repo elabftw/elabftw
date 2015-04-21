@@ -1253,7 +1253,7 @@ function getMailer()
             ->setPassword($crypto->decrypt(get_config('smtp_password')));
             break;
 
-        // Use php mail()
+        // Use php mail function
         case 'php':
             $transport = Swift_MailTransport::newInstance();
             break;

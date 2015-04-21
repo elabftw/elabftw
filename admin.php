@@ -45,7 +45,7 @@ $formKey = new \Elabftw\Elabftw\FormKey();
 <script src="js/raphael/raphael-min.js"></script>
 <script src="js/colorwheel/colorwheel.js"></script>
 <?php
-if (strlen(get_config('smtp_username')) == 0) {
+if (strlen(get_config('mail_from')) == 0) {
     $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://github.com/elabftw/elabftw/wiki/finalizing'>", "</a>");
     display_message('error', $message);
 }
@@ -58,13 +58,13 @@ $user_req->bindValue(':team', $_SESSION['team_id']);
 $user_req->execute();
 $count = $user_req->rowCount();
 // only show the frame if there is some users to validate and there is an email config
-if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
+if ($count > 0 && strlen(get_config('mail_from')) > 0) {
     $message = _('There are users waiting for validation of their account:');
     $message .= "<form method='post' action='app/admin-exec.php'>";
     $message .= "<ul>";
     while ($data = $user_req->fetch()) {
         $message .= "<li><label>
-            <input type='checkbox' name='validate[]' 
+            <input type='checkbox' name='validate[]'
             value='".$data['userid'] . "'> " . $data['firstname'] . " " . $data['lastname'] . " (" . $data['email'] . ")
             </label></li>";
     }
@@ -393,7 +393,7 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
 
     <section class='simple_border'>
         <form action='app/admin-exec.php' method='post'>
-            <label for='new_item_type_name'><?php echo _('Add a new type of item:'); ?></label> 
+            <label for='new_item_type_name'><?php echo _('Add a new type of item:'); ?></label>
             <input required type='text' id='new_item_type_name' name='new_item_type_name' />
             <input type='hidden' name='new_item_type' value='1' />
             <div id='colorwheel_div_new'>

@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
         // no i18n here
         ->setSubject('[eLabFTW] Account validated')
         // Set the From address with an associative array
-        ->setFrom(get_config('mail_from'))
+        ->setFrom(array(get_config('mail_from') => 'eLabFTW'))
         // Set the To addresses with an associative array
         ->setTo(array($user['email'] => 'eLabFTW'))
         // Give it a body

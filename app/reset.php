@@ -86,7 +86,7 @@ if (isset($_POST['email'])) {
             // Give the message a subject
             ->setSubject('[eLabFTW] Password reset')
             // Set the From address with an associative array
-            ->setFrom(get_config('mail_from'))
+            ->setFrom(array(get_config('mail_from') => 'eLabFTW'))
             // Set the To addresses with an associative array
             ->setTo(array($email => 'Dori'))
             // Give it a body

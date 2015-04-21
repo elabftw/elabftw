@@ -344,6 +344,10 @@ function toggleMailMethod(value) {
     } else if(value == 'smtp') {
         $('#smtp_config').show();
         $('#sendmail_config').hide();
+    } else if(value == 'php') {
+        $('#smtp_config').hide();
+        $('#sendmail_config').hide();
+        $('#general_mail_config').show();
     } else {
         $('#smtp_config').hide();
         $('#sendmail_config').hide();

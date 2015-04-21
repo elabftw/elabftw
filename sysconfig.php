@@ -238,18 +238,22 @@ if ($current_version == 'something') {
         case 'sendmail':
             $disable_sendmail = false;
             $disable_smtp = true;
+            $disable_php = true;
             break;
         case 'smtp':
             $disable_sendmail = true;
             $disable_smtp = false;
+            $disable_php = true;
             break;
         case 'php':
             $disable_sendmail = true;
             $disable_smtp = true;
+            $disable_php = false;
             break;
         default:
             $disable_sendmail = true;
             $disable_smtp = true;
+            $disable_php = true;
     } ?>
     <form method='post' action='app/admin-exec.php'>
         <p><?php echo _("Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mandrill.com (or gmail account and add the infos here."); ?></p>
@@ -259,6 +263,7 @@ if ($current_version == 'something') {
             <option value=''><?php echo _('Select mailing method...'); ?></option>
             <option value='sendmail' <?php if(!$disable_sendmail) echo 'selected="selected"'; ?>><?php echo _('Local MTA (default)'); ?></option>
             <option value='smtp' <?php if(!$disable_smtp) echo 'selected="selected"'; ?>><?php echo _('SMTP'); ?></option>
+            <option value='php' <?php if(!$disable_php) echo 'selected="selected"'; ?>><?php echo _('PHP'); ?></option>
         </select>
         </p>
         <div id='general_mail_config'>

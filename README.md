@@ -55,7 +55,8 @@ Please refer to your distribution's documentation to install :
 * git
 
 If you don't know how to do that, have a look at [installing eLabFTW on a cheap server (drop)](https://github.com/NicolasCARPi/drop-elabftw#how-to-use).
-I wouldn't recommand HHVM because Gettext support is not here yet (see [this issue](https://github.com/facebook/hhvm/issues/1228)).
+
+I wouldn't recommend HHVM because Gettext support is not here yet (see [this issue](https://github.com/facebook/hhvm/issues/1228)).
 
 ### Getting the files
 

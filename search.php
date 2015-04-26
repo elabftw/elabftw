@@ -37,213 +37,249 @@ require_once 'inc/info_box.php';
 <section class='searchform box'>
     <form name="search" method="get" action="search.php">
         <div class='row'>
-            <!-- SEARCH IN-->
-            <?php
-            if (isset($_GET['type']) && $_GET['type'] == 'database') {
-                $seldb = " selected='selected'";
-            } else {
-                $seldb = "";
-            }
-            ?>
-            <div class='col-md-3'>
-                <label for='searchin'><?php echo _('Search in'); ?></label>
-                <select name='type' id='searchin'>
-                    <option value='experiments'><?php echo ngettext('Experiment', 'Experiments', 2); ?></option>
-                    <option disabled>----------------</option>
-                    <option value='database' <?php echo $seldb; ?>><?php echo _('Database'); ?></option>
-                    <?php // Database items types
-                    $sql = "SELECT * FROM items_types WHERE team = :team ORDER BY name ASC";
-                    $req = $pdo->prepare($sql);
-                    $req->execute(array(
-                        'team' => $_SESSION['team_id']
-                    ));
-                    while ($items_types = $req->fetch()) {
-                        echo "<option value='" . $items_types['id'] . "'";
-                        // item get selected if it is in the search url
-                        if (isset($_GET['type']) && $items_types['id'] == $_GET['type']) {
-                            echo " selected='selected'";
-                        }
-                        echo "> - " . $items_types['name'] . "</option>";
-                    }
-                    ?>
-                </select>
-            </div>
-            <!-- END SEARCH IN -->
-            <!-- SEARCH WITH TAG -->
-            <div class='col-md-3' id='tag_exp'>
-                <label for='tag_exp'><?php echo _('With the tag'); ?></label>
-                <select name='tag_exp'>
-                    <option value=''><?php echo _('Select a Tag'); ?></option>
-                    <?php // Database items types
-                    // TODO https://github.com/elabftw/elabftw/issues/135
-                    $sql = "SELECT tag, COUNT(id) as nbtag, userid FROM experiments_tags WHERE userid = :userid GROUP BY tag ORDER BY tag ASC";
-                    $req = $pdo->prepare($sql);
-                    $req->execute(array(
-                        'userid' => $_SESSION['userid']
-                    ));
-                    while ($exp_tags = $req->fetch()) {
-                        echo "<option value='" . $exp_tags['tag'] . "'";
-                        // item get selected if it is in the search url
-                        if (isset($_GET['tag_exp']) && ($exp_tags['tag'] == $_GET['tag_exp'])) {
-                            echo " selected='selected'";
-                        }
-                        echo ">" . $exp_tags['tag'] . " (" . $exp_tags['nbtag'] . ")</option>";
-                    }
-                    ?>
-                </select>
-            </div>
-            <div class='col-md-3' id='tag_db'>
-                <label for='tag_db'><?php echo _('With the tag'); ?></label>
-                <select name='tag_db'>
-                    <option value=''><?php echo _('Select a tag'); ?></option>
-                    <?php // Database items types
-                    $sql = "SELECT tag, COUNT(id) as nbtag FROM items_tags GROUP BY tag ORDER BY tag ASC";
-                    $req = $pdo->prepare($sql);
-                    $req->execute(array(
-                        'team' => $_SESSION['team_id']
-                    ));
-                    while ($items_types = $req->fetch()) {
-                        echo "<option value='" . $items_types['tag'] . "'";
-                        // item get selected if it is in the search url
-                        if (isset($_GET['tag_db']) && ($items_types['tag'] == $_GET['tag_db'])) {
-                            echo " selected='selected'";
-                        }
-                        echo ">" . $items_types['tag'] . " (" . $items_types['nbtag'] . ")</option>";
-                    }
-                    ?>
-                </select>
-            </div>
-            <!-- END SEARCH WITH TAG -->
-            <!-- SEARCH ONLY -->
-            <div class='col-md-6'>
-                <label for'searchonly'><?php echo _('Search only in experiments owned by:'); ?> </label><br>
-                <select id='searchonly' name='owner'>
-                    <option value=''><?php echo _('Yourself'); ?></option>
-                    <option disabled>----------------</option>
+            <div class="col-md-6">
+                <div class="row">
+                    <!-- SEARCH IN-->
                     <?php
-                    $users_sql = "SELECT userid, firstname, lastname FROM users WHERE team = :team ORDER BY firstname ASC";
-                    $users_req = $pdo->prepare($users_sql);
-                    $users_req->execute(array(
-                        'team' => $_SESSION['team_id']
-                    ));
-                    while ($users = $users_req->fetch()) {
-                        echo "<option value='" . $users['userid'] . "'";
-                        // item get selected if it is in the search url
-                        if (isset($_GET['owner']) && ($users['userid'] == $_GET['owner'])) {
-                            echo " selected='selected'";
-                        }
-                        echo ">" . $users['firstname'] . " " . $users['lastname'] . "</option>";
+                    if (isset($_GET['type']) && $_GET['type'] == 'database') {
+                        $seldb = " selected='selected'";
+                    } else {
+                        $seldb = "";
                     }
                     ?>
-                </select><br>
-                <!-- search everyone box -->
-                <input name="all" id='all_experiments_chkbx' value="y" type="checkbox" <?php
-                    // keep the box checked if it was checked
-                    if (isset($_GET['all'])) {
-                        echo "checked=checked";
-                    }
-?>>
-                <label for='all_experiments_chkbx'><?php echo _("search in everyone's experiments"); ?> </label>
-            </div>
-            <!-- END SEARCH ONLY -->
-        </div>
-
-        <div class='row'>
-            <!-- SEARCH DATE -->
-            <div class='col-md-8'>
-                <label for='from'><?php echo _('Where date is between'); ?></label>
-                <input id='from' name='from' type='text' size='8' class='datepicker' value='<?php
-                if (isset($_GET['from']) && !empty($_GET['from'])) {
-                    echo check_date($_GET['from']);
-                }
-                ?>'/>
-                <label span style='margin:0 10px;' for='to'> <?php echo _('and'); ?> </label>
-                <input id='to' name='to' type='text' size='8' class='datepicker' value='<?php
-                    if (isset($_GET['to']) && !empty($_GET['to'])) {
-                        echo check_date($_GET['to']);
-                    }
-                ?>'/>
-            </div>
-            <!-- END SEARCH DATE -->
-        </div>
-
-        <div class='row'>
-            <!-- TITLE -->
-            <div class='col-md-6'>
-            <label for='title'><?php echo _('And title contains'); ?></label>
-            <input id='title' name='title' type='text' value='<?php
-                if (isset($_GET['title']) && !empty($_GET['title'])) {
-                    echo check_title($_GET['title']);
-                }
-                ?>'/>
-            </div>
-            <!-- STATUS -->
-            <div class='col-md-4'>
-                <label class='block' for='status'><?php echo _('And status is'); ?></label>
-                <select id='status' name="status">
-                    <option value='' name='status'><?php echo _('select status'); ?></option>
-                    <?php
-                    // put all available status in array
-                    $status_arr = array();
-                    // SQL TO GET ALL STATUS INFO
-                    $sql = "SELECT id, name, color FROM status WHERE team = :team_id ORDER BY name ASC";
-                    $req = $pdo->prepare($sql);
-                    $req->execute(array(
-                        'team_id' => $_SESSION['team_id']
-                    ));
-
-                    while ($status = $req->fetch()) {
-                        $status_arr[$status['id']] = $status['name'];
-                    }
-                    ?>
-                        <?php
-                        // now display all possible values of status in select menu
-                        foreach ($status_arr as $key => $value) {
-                            echo "<option ";
-                            if (isset($_GET['status']) && $_GET['status'] == $key) {
-                                echo "selected ";
+                    <label class="col-md-4 txtright" for='searchin'><?php echo _('Search in'); ?>&nbsp;</label>
+                    <div class="col-md-4">
+                        <select name='type' id='searchin' class="form-control">
+                            <option value='experiments'><?php echo ngettext('Experiment', 'Experiments', 2); ?></option>
+                            <option disabled>----------------</option>
+                            <option value='database' <?php echo $seldb; ?>><?php echo _('Database'); ?></option>
+                            <?php // Database items types
+                            $sql = "SELECT * FROM items_types WHERE team = :team ORDER BY name ASC";
+                            $req = $pdo->prepare($sql);
+                            $req->execute(array(
+                                'team' => $_SESSION['team_id']
+                            ));
+                            while ($items_types = $req->fetch()) {
+                                echo "<option value='" . $items_types['id'] . "'";
+                                // item get selected if it is in the search url
+                                if (isset($_GET['type']) && $items_types['id'] == $_GET['type']) {
+                                    echo " selected='selected'";
+                                }
+                                echo "> - " . $items_types['name'] . "</option>";
                             }
-                            echo "value='$key'>$value</option>";
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                    </div>
+                </div>
+                    <!-- END SEARCH IN -->
+                    <!-- SEARCH WITH TAG -->
+                <div class="row" id="tag_exp">
+                    <label class="col-md-4 txtright" for='tag_exp'><?php echo _('With the tag'); ?>&nbsp;</label>
+                    <div class="col-md-4">
+                        <select name='tag_exp' class="form-control">
+                            <option value=''><?php echo _('Select a Tag'); ?></option>
+                            <?php // Database items types
+                            // TODO https://github.com/elabftw/elabftw/issues/135
+                            $sql = "SELECT tag, COUNT(id) as nbtag, userid FROM experiments_tags WHERE userid = :userid GROUP BY tag ORDER BY tag ASC";
+                            $req = $pdo->prepare($sql);
+                            $req->execute(array(
+                                'userid' => $_SESSION['userid']
+                            ));
+                            while ($exp_tags = $req->fetch()) {
+                                echo "<option value='" . $exp_tags['tag'] . "'";
+                                // item get selected if it is in the search url
+                                if (isset($_GET['tag_exp']) && ($exp_tags['tag'] == $_GET['tag_exp'])) {
+                                    echo " selected='selected'";
+                                }
+                                echo ">" . $exp_tags['tag'] . " (" . $exp_tags['nbtag'] . ")</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                    </div>
+                </div>
+                <div class="row" id="tag_db">
+                    <label class="col-md-4 txtright" for='tag_db'><?php echo _('With the tag'); ?>&nbsp;</label>
+                    <div class="col-md-4">
+                        <select name='tag_db' class="form-control">
+                            <option value=''><?php echo _('Select a tag'); ?></option>
+                            <?php // Database items types
+                            $sql = "SELECT tag, COUNT(id) as nbtag FROM items_tags GROUP BY tag ORDER BY tag ASC";
+                            $req = $pdo->prepare($sql);
+                            $req->execute(array(
+                                'team' => $_SESSION['team_id']
+                            ));
+                            while ($items_types = $req->fetch()) {
+                                echo "<option value='" . $items_types['tag'] . "'";
+                                // item get selected if it is in the search url
+                                if (isset($_GET['tag_db']) && ($items_types['tag'] == $_GET['tag_db'])) {
+                                    echo " selected='selected'";
+                                }
+                                echo ">" . $items_types['tag'] . " (" . $items_types['nbtag'] . ")</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                    </div>
+                    <!-- END SEARCH WITH TAG -->
+                </div>
+                <br /><br />
+                <!-- TITLE -->
+                <div class='row'>
+                    <label class="col-md-4 txtright" for='title'><?php echo _('Title contains'); ?></label>
+                    <div class="col-md-7">
+                        <input id='title' name='title' type='text' class="form-control" value='<?php
+                            if (isset($_GET['title']) && !empty($_GET['title'])) {
+                                echo check_title($_GET['title']);
+                            }
+                            ?>'/>
+                    </div>
+                    <div class="col-md-1">
+                    </div>
+                </div>
+                <!-- END TITLE -->
+                <!-- BODY -->
+                <div class='row'>
+                    <label class="col-md-4 txtright" for='body'><?php echo _('Body contains'); ?></label>
+                    <div class="col-md-7">
+                        <input id='body' name='body' type='text' class="form-control" value='<?php
+                            if (isset($_GET['body']) && !empty($_GET['body'])) {
+                                echo check_body($_GET['body']);
+                            }
+                            ?>'/>
+                    </div>
+                    <div class="col-md-1">
+                    </div>
+                </div>
+                <!-- END BODY -->
+            </div>
+            <div class="col-md-6">
+                <!-- STATUS -->
+                <div class="row">
+                    <label class="col-md-4 txtright" class="col-md-4 txtright" for='status'><?php echo _('Status is'); ?></label>
+                    <div class="col-md-5">
+                        <select id='status' name="status" class="form-control">
+                        <option value='' name='status'><?php echo _('select status'); ?></option>
+                        <?php
+                        // put all available status in array
+                        $status_arr = array();
+                        // SQL TO GET ALL STATUS INFO
+                        $sql = "SELECT id, name, color FROM status WHERE team = :team_id ORDER BY name ASC";
+                        $req = $pdo->prepare($sql);
+                        $req->execute(array(
+                            'team_id' => $_SESSION['team_id']
+                        ));
+
+                        while ($status = $req->fetch()) {
+                            $status_arr[$status['id']] = $status['name'];
                         }
                         ?>
-                    </select>
-            </div>
-
-        </div>
-
-        <div class='row'>
-            <div class='col-md-6'>
-            <label for='body'><?php echo _('And body contains'); ?></label>
-            <input id='body' name='body' type='text' value='<?php
-                if (isset($_GET['body']) && !empty($_GET['body'])) {
-                    echo check_body($_GET['body']);
-                }
-                ?>'/>
-            </div>
-            <!-- END TITLE -->
-
-            <!-- RATING -->
-            <div class='col-md-4'>
-                <label class='block' for='rating'><?php echo _('And rating is'); ?></label>
-                <select id='rating' name='rating'>
-                    <option value='' name='rating'><?php echo _('select number of stars'); ?></option>
-                    <option value='no' name='rating'><?php echo _('Unrated'); ?></option>
-                    <?php
-                    for ($i = 1; $i <= 5; $i++) {
-                        echo "<option value='" . $i . "' name='rating'";
-                        // item get selected if it is in the search url
-                        if (isset($_GET['rating']) && ($_GET['rating'] == $i)) {
-                        echo " selected='selected'";
+                            <?php
+                            // now display all possible values of status in select menu
+                            foreach ($status_arr as $key => $value) {
+                                echo "<option ";
+                                if (isset($_GET['status']) && $_GET['status'] == $key) {
+                                    echo "selected ";
+                                }
+                                echo "value='$key'>$value</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                    </div>
+                </div>
+                <!-- RATING -->
+                <div class="row">
+                    <label class="col-md-4 txtright" for='rating'><?php echo _('Rating is'); ?></label>
+                    <div class="col-md-5">
+                        <select id='rating' name='rating' class="form-control">
+                            <option value='' name='rating'><?php echo _('select number of stars'); ?></option>
+                            <option value='no' name='rating'><?php echo _('Unrated'); ?></option>
+                            <?php
+                            for ($i = 1; $i <= 5; $i++) {
+                                echo "<option value='" . $i . "' name='rating'";
+                                // item get selected if it is in the search url
+                                if (isset($_GET['rating']) && ($_GET['rating'] == $i)) {
+                                echo " selected='selected'";
+                                }
+                                echo ">" . $i . "</option>";
+                            }?>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                    </div>
+                </div>
+                <!-- END RATING -->
+                <br /><br />
+                <!-- SEARCH DATE -->
+                <div class='row'>
+                    <label class="col-md-4 txtright" for='from'><?php echo _('Where date is between'); ?></label>
+                    <div class="col-md-8">
+                        <input id='from' name='from' type='text' size='8' class='datepicker form-control' value='<?php
+                        if (isset($_GET['from']) && !empty($_GET['from'])) {
+                            echo check_date($_GET['from']);
                         }
-                        echo ">" . $i . "</option>";
-                    }?>
-                </select>
+                        ?>'/>
+                        <label span style='margin:5px 10px; float:left;' for='to'> <?php echo _('and'); ?> </label>
+                        <input id='to' name='to' type='text' size='8' class='datepicker form-control' value='<?php
+                            if (isset($_GET['to']) && !empty($_GET['to'])) {
+                                echo check_date($_GET['to']);
+                            }
+                        ?>'/>
+                    </div>
+                </div>
+                <!-- END SEARCH DATE -->
+                <!-- SEARCH ONLY -->
+                <div class="row">
+                    <label class="col-md-4 txtright" for'searchonly'><?php echo _('Owned by'); ?> </label>
+                    <div class="col-md-5">
+                        <select id='searchonly' name='owner' class="form-control">
+                            <option value=''><?php echo _('Yourself'); ?></option>
+                            <option disabled>----------------</option>
+                            <?php
+                            $users_sql = "SELECT userid, firstname, lastname FROM users WHERE team = :team ORDER BY firstname ASC";
+                            $users_req = $pdo->prepare($users_sql);
+                            $users_req->execute(array(
+                                'team' => $_SESSION['team_id']
+                            ));
+                            while ($users = $users_req->fetch()) {
+                                echo "<option value='" . $users['userid'] . "'";
+                                // item get selected if it is in the search url
+                                if (isset($_GET['owner']) && ($users['userid'] == $_GET['owner'])) {
+                                    echo " selected='selected'";
+                                }
+                                echo ">" . $users['firstname'] . " " . $users['lastname'] . "</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-8">
+                        <!-- search everyone box -->
+                        <input name="all" id='all_experiments_chkbx' value="y" type="checkbox" <?php
+                            // keep the box checked if it was checked
+                            if (isset($_GET['all'])) {
+                                echo "checked=checked";
+                            }
+            ?>>
+                        <label for='all_experiments_chkbx'><?php echo _("search in everyone's experiments"); ?> </label>
+                    </div>
+                </div>
+                <!-- END SEARCH ONLY -->
             </div>
-            <!-- END RATING -->
         </div>
-
-        <div style='margin:30px;' class='center'>
-            <button id='searchButton' class='button' value='Submit' type='submit'><?php echo _('Launch search'); ?></button>
+        <div style='margin:20px 0 0 0;' class='center'>
+            <button id='searchButton' class='btn btn-elab btn-lg' value='Submit' type='submit'><?php echo _('Launch search'); ?></button>
         </div>
     </form>
 </section>

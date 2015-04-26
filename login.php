@@ -112,30 +112,52 @@ if (!checkCookiesEnabled()) {
 </script>
 
     <menu class='border' style='color:#29AEB9'><?php echo _('Note: you need cookies enabled to log in.'); ?></menu>
-<section class='center loginform'>
-    <!-- Login form -->
-    <form method="post" action="app/login-exec.php" autocomplete="off">
-        <h2><?php echo _('Sign in to your account'); ?></h2>
-        <p>
-        <label class='block' for="username"><?php echo _('Username'); ?></label>
-            <input name="username" type="text" required /><br>
-            <label class='block' for="password"><?php echo _('Password'); ?></label>
-            <input name="password" type="password" required /><br>
-            <!-- form key -->
-            <?php $formKey->outputFormkey(); ?>
-        </p>
-        <div id='loginButtonDiv'>
-        <button type="submit" class='button' name="Submit"><?php echo _('Login'); ?></button>
-        </div>
-    </form>
-    <p><?php printf(_("Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"), "<a href='register.php'>", "</a>", "<a href='#' class='trigger'>", "</a>"); ?></p>
-    <div class='toggle_container'>
-    <form name='resetPass' method='post' action='app/reset.php'>
-    <input placeholder='<?php echo _('Enter your email address'); ?>' name='email' type='email' required />
-    <button class='button' type="submit" name="Submit"><?php echo _('Send new password'); ?></button>
-    </form>
+    <div class="row">
+        <section class='loginform col-md-4 col-md-offset-4'>
+            <!-- Login form -->
+            <form method="post" action="app/login-exec.php" autocomplete="off" class="form-horizontal">
+                <h2><?php echo _('Sign in to your account'); ?></h2>
+                <p>
+                    <br />
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><?php echo _('Username'); ?></label>
+                        <div class="col-sm-8">
+                            <input name="username" type="text" class="form-control" placeholder="<?php echo _('Username'); ?>" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword" class="col-sm-4 control-label"><?php echo _('Password'); ?></label>
+                        <div class="col-sm-8">
+                            <input name="password" type="password" class="form-control" placeholder="<?php echo _('Password'); ?>" required />
+                        </div>
+                    </div>
+                    <!-- form key -->
+                    <?php $formKey->outputFormkey(); ?>
+                </p>
+                <div id='loginButtonDiv'>
+                    <div class="form-group">
+                        <label for="inputPassword" class="col-sm-4 control-label"></label>
+                        <div class="col-sm-8 align_left">
+                            <button type="submit" class='btn btn-elab btn-lg' name="Submit"><?php echo _('Login'); ?></button>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+            </form>
+            <p><br />
+            <?php printf(_("%sDon't have an account? Register now!%s"), "<a href='register.php' class='btn btn-success btn-block'>", "</a>"); ?><br />
+            <?php printf(_("%sLost your password? Reset it!%s"), "<a href='#' class='trigger btn btn-warning btn-block'>", "</a>"); ?>
+            </p>
+            <div class='toggle_container'>
+            <form name='resetPass' method='post' action='app/reset.php'>
+                <div class="form-group">
+                    <input placeholder='<?php echo _('Enter your email address'); ?>' name='email' type='email' class="form-control" required />
+                    <button class='btn btn-elab' type="submit" name="Submit"><?php echo _('Send new password'); ?></button>
+                </div>
+            </form>
+            </div>
+        </section>
     </div>
-</section>
 <?php require_once 'inc/footer.php'; ?>
 <!-- BEGIN PASSSWORD RESET FORM -->
 <script>

@@ -118,7 +118,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     ?>' />
     </form>
     <span class='navleft'>
-    <span id='logonav'>elab<span class='strong' style='color:white;'>FTW</span></span>
+        <img src="img/logo-nav.png" id='logonav' alt='eLabFTW' />
     <?php
     echo "<a href='experiments.php?mode=show'";
     if ($selected_menu == 'Experiments') {
@@ -147,7 +147,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 
     echo "</nav>";
 } else { // not logged in, show only logo, no menu
-    echo "<nav><span id='logonav' class='navleft'>elab<strong>FTW</strong></span></nav>";
+    echo "<nav><img src='img/logo-nav.png' id='logonav' alt='eLabFTW' /></nav>";
 }
 ?>
 <div id='real_container'>

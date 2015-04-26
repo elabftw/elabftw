@@ -71,7 +71,7 @@ while ($data = $req->fetch()) {
             echo "<td>&nbsp;</td>";
         }
         if (!empty($data['website'])) {
-            echo "<td><a href='" . $data['website'] . "'>www</a></td>";
+            echo "<td><a href='" . $data['website'] . "'>" . $data['website'] . "</a></td>";
         } else {
             echo "<td>&nbsp;</td>";
         }

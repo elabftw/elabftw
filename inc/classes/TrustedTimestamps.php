@@ -185,7 +185,7 @@ class TrustedTimestamps
             $this->responsefilePath = $this->createTempFile($this->binaryResponseString);
             $this->responseTime = $this->getTimestampFromAnswer();
         } else {
-            throw new Exception("The responsefile ".$this->responsefilePath." was not found!");
+            throw new Exception("The responsefile " . $this->responsefilePath . " was not found!");
         }
     }
 
@@ -195,17 +195,17 @@ class TrustedTimestamps
     private function createRequestfile()
     {
         $outfilepath = $this->createTempFile();
-        $cmd = "ts -query -data ".escapeshellarg($this->data)." -cert -".$this->stampHash." -no_nonce -out ".escapeshellarg($outfilepath);
+        $cmd = "ts -query -data " . escapeshellarg($this->data) . " -cert -" . $this->stampHash . " -no_nonce -out " . escapeshellarg($outfilepath);
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];
         $retcode = $opensslResult['retcode'];
 
         if ($retcode !== 0) {
-                    throw new Exception("OpenSSL does not seem to be installed: ".implode(", ", $retarray));
+                    throw new Exception("OpenSSL does not seem to be installed: " . implode(", ", $retarray));
         }
 
         if (stripos($retarray[0], "openssl:Error") !== false) {
-                    throw new Exception("There was an error with OpenSSL. Is version >= 0.99 installed?: ".implode(", ", $retarray));
+                    throw new Exception("There was an error with OpenSSL. Is version >= 0.99 installed?: " . implode(", ", $retarray));
         }
 
             $this->requestfilePath = $outfilepath;
@@ -246,13 +246,13 @@ class TrustedTimestamps
             throw new RuntimeException('Response file was not found and could not be created from binary response string.');
         }
 
-        $cmd = "ts -reply -in ".escapeshellarg($this->responsefilePath)." -text";
+        $cmd = "ts -reply -in " . escapeshellarg($this->responsefilePath) . " -text";
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];
         $retcode = $opensslResult['retcode'];
 
         if ($retcode !== 0) {
-            throw new Exception("The reply failed: ".implode(", ", $retarray));
+            throw new Exception("The reply failed: " . implode(", ", $retarray));
         }
 
         $matches = array();
@@ -306,7 +306,7 @@ class TrustedTimestamps
         if (is_null($this->requestfilePath)) {
             throw new Exception("Cannot create new timestamp token! No data was provided during initialization!");
         } elseif (!file_exists($this->requestfilePath)) {
-            throw new Exception("The Requestfile was not found: ".$this->requestfilePath);
+            throw new Exception("The Requestfile was not found: " . $this->requestfilePath);
         }
 
         $ch = curl_init();
@@ -314,7 +314,7 @@ class TrustedTimestamps
         // if login and password are set, pass them to curl
         if (!is_null($this->stampLogin) && !is_null($this->stampPassword)) {
             curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-            curl_setopt($ch, CURLOPT_USERPWD, $this->stampLogin.":".$this->stampPassword);
+            curl_setopt($ch, CURLOPT_USERPWD, $this->stampLogin . ":" . $this->stampPassword);
         }
         // add proxy if there is one
         if (strlen(get_config('proxy')) > 0) {
@@ -351,7 +351,7 @@ class TrustedTimestamps
     private function runOpenSSL($cmd)
     {
         $retarray = array();
-        exec("openssl ".$cmd." 2>&1", $retarray, $retcode);
+        exec("openssl " . $cmd . " 2>&1", $retarray, $retcode);
 
         return array("retarray" => $retarray,
                         "retcode" => $retcode);
@@ -390,7 +390,7 @@ class TrustedTimestamps
         // Check if all requirements to perform a validation are met
         $this->checkValidationPrerequisits();
 
-        $cmd = "ts -verify -data ".escapeshellarg($this->data)." -in ".escapeshellarg($this->responsefilePath)." -CAfile " . ELAB_ROOT . escapeshellarg($this->stampCert);
+        $cmd = "ts -verify -data " . escapeshellarg($this->data) . " -in " . escapeshellarg($this->responsefilePath) . " -CAfile " . ELAB_ROOT . escapeshellarg($this->stampCert);
 
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];
@@ -425,6 +425,6 @@ class TrustedTimestamps
             }
         }
 
-        throw new Exception("System command failed: ".implode(", ", $retarray));
+        throw new Exception("System command failed: " . implode(", ", $retarray));
     }
 }

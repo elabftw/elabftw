@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2015-03-04 14:57+0100\n"
-"PO-Revision-Date: 2015-04-27 15:42+0100\n"
+"PO-Revision-Date: 2015-04-27 16:25+0100\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -771,8 +771,8 @@ msgid "<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new»
 msgstr "<strong>Bienvenue sur eLabFTW.</strong>Choisissez un item dans la liste «Créer nouveau» pour commencer à remplire votre base de données."
 
 #: elabftw/inc/showDB.php:131
-msgid "Showing last 10 uploads:"
-msgstr "Liste des 10 derniers ajouts :"
+msgid "Showing last uploads:"
+msgstr "Liste des derniers ajouts :"
 
 #: elabftw/inc/showXP.php:27
 msgid "Load more"

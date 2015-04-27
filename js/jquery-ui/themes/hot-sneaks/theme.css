@@ -1,5 +1,5 @@
 /*!
- * jQuery UI CSS Framework 1.11.3
+ * jQuery UI CSS Framework 1.11.4
  * http://jqueryui.com
  *
  * Copyright jQuery Foundation and other contributors
@@ -30,7 +30,7 @@
 }
 .ui-widget-content {
 	border: 1px solid #aaaaaa;
-	background: #ffffff;
+	background: #ffffff url("images/ui-bg_flat_75_ffffff_40x100.png") 50% 50% repeat-x;
 	color: #2c4359;
 }
 .ui-widget-content a {
@@ -403,7 +403,7 @@
 .ui-widget-shadow {
 	margin: 8px 0 0 8px;
 	padding: 10px;
-	background: #ba9217;
+	background: #ba9217 url("images/ui-bg_flat_75_ba9217_40x100.png") 50% 50% repeat-x;
 	opacity: .2;
 	filter: Alpha(Opacity=20); /* support: IE8 */
 	border-radius: 5px;

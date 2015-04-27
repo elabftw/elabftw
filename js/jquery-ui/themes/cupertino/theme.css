@@ -1,5 +1,5 @@
 /*!
- * jQuery UI CSS Framework 1.11.3
+ * jQuery UI CSS Framework 1.11.4
  * http://jqueryui.com
  *
  * Copyright jQuery Foundation and other contributors
@@ -117,7 +117,7 @@
 .ui-widget-content .ui-state-error,
 .ui-widget-header .ui-state-error {
 	border: 1px solid #cd0a0a;
-	background: #cd0a0a;
+	background: #cd0a0a url("images/ui-bg_flat_15_cd0a0a_40x100.png") 50% 50% repeat-x;
 	color: #ffffff;
 }
 .ui-state-error a,

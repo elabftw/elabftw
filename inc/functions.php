@@ -268,11 +268,11 @@ function show_tags($item_id, $table)
     }
 }
 /**
- * Validate POST variables containing login/validation data for the TSP;
- * Substitute missing values with empty strings and return as array
- *
- * @return array
- */
+     * Validate POST variables containing login/validation data for the TSP;
+     * Substitute missing values with empty strings and return as array
+     *
+     * @return array
+     */
 function processTimestampPost()
 {
     $crypto = new \Elabftw\Elabftw\Crypto();

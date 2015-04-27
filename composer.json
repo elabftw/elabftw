@@ -10,6 +10,6 @@
 
     },
     "autoload": {
-        "files": ["inc/classes/MakePdf.php", "inc/classes/FormKey.php", "inc/classes/Crypto.php", "inc/classes/TrustedTimestamps.php"]
+        "psr-4": {"Elabftw\\Elabftw\\" : "inc/classes/" }
     }
 }

@@ -131,7 +131,7 @@ if ($data['timestamped'] == 1) {
     display_message(
         $message_type,
         _('Experiment was timestamped by') . " " . $timestamper['firstname'] . " " . $timestamper['lastname'] . " " . _('on') . " " . $date->format('Y-m-d') . " " . _('at') . " " . $date->format('H:i:s') . " "
-        . $date->getTimezone()->getName() . " <a href='uploads/".$uploads['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='" . _('Download timestamped pdf') . "' alt='pdf' /></a>" . $validation_note
+        . $date->getTimezone()->getName() . " <a href='uploads/" . $uploads['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='" . _('Download timestamped pdf') . "' alt='pdf' /></a>" . $validation_note
     );
 
     unset($timestamper);

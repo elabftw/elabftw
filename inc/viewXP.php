@@ -112,6 +112,7 @@ if ($data['timestamped'] == 1) {
     }
      */
     // TODO add a button to validate the experiment against the asn1 token.
+    /*
     $validate = true;
 
     if ($validate) {
@@ -121,13 +122,15 @@ if ($data['timestamped'] == 1) {
         $message_type = 'error_nocross';
         $validation_note = "<img class='align_right' src='img/cross-red.png' alt='Invalid Timestamp' title='Invalid Timestamp' />";
     }
-
+    */
+    // Until a button is implmented, don't fool the user to think the timestamp is valid
+    $validation_note = "<img class='align_right' src='img/stamp.png' alt='Unchecked timestamp' title='" . _('Unchecked timestamp') . "' />";
     $date = new DateTime($data['timestampedwhen']);
 
     display_message(
         $message_type,
-        _('Experiment was timestamped by') . " " . $timestamper['firstname'] . " " . $timestamper['lastname'] . " " . _('on') . " " . $date->format('Y-m-d') . " " . _('at') . " " . $date->format('H:i:s') . " " 
-        . $date->getTimezone()->getName() . " <a href='uploads/".$uploads['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='Download timestamped pdf' alt='pdf' /></a>" . $validation_note
+        _('Experiment was timestamped by') . " " . $timestamper['firstname'] . " " . $timestamper['lastname'] . " " . _('on') . " " . $date->format('Y-m-d') . " " . _('at') . " " . $date->format('H:i:s') . " "
+        . $date->getTimezone()->getName() . " <a href='uploads/".$uploads['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='" . _('Download timestamped pdf') . "' alt='pdf' /></a>" . $validation_note
     );
 
     unset($timestamper);
@@ -141,10 +144,10 @@ if ($data['timestamped'] == 1) {
     <span class='top_right_status'><img src='img/status.png'><?php echo $data['name']; ?><img src='img/eye.png' alt='eye' /><?php echo $data['visibility']; ?></span>
 <?php
 echo "<span class='date_view'><img src='img/calendar.png' class='bot5px' title='date' alt='Date :' /> " . format_date($data['date']) . "</span><br />
-    <a href='experiments.php?mode=edit&id=".$data['expid'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a> 
-<a href='app/duplicate_item.php?id=".$data['expid'] . "&type=exp'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a> 
-<a href='make_pdf.php?id=".$data['expid'] . "&type=experiments'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a> 
-<a href='javascript:window.print()'><img src='img/print.png' title='Print this page' alt='Print' /></a> 
+    <a href='experiments.php?mode=edit&id=".$data['expid'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a>
+<a href='app/duplicate_item.php?id=".$data['expid'] . "&type=exp'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a>
+<a href='make_pdf.php?id=".$data['expid'] . "&type=experiments'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a>
+<a href='javascript:window.print()'><img src='img/print.png' title='Print this page' alt='Print' /></a>
 <a href='make_zip.php?id=".$data['expid'] . "&type=experiments'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a> ";
 // lock
 if ($data['locked'] == 0) {

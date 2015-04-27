@@ -183,13 +183,13 @@ if ($current_version == 'something') {
         </select>
         <p class='smallgray'><?php echo _('You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login infos in the admin panel.'); ?></p>
         <p>
-        <label for='stampprovider'><?php echo _('URL for external timestamping service:');?></label>
-        <input type='url' placeholder='https://ws.universign.eu/tsa' value='<?php echo get_config('stampprovider');?>' name='stampprovider' id='stampprovider' />
+        <label for='stampprovider'><?php echo _('URL for external timestamping service:'); ?></label>
+        <input type='url' placeholder='https://ws.universign.eu/tsa' value='<?php echo get_config('stampprovider'); ?>' name='stampprovider' id='stampprovider' />
         <span class='smallgray'><?php printf(_('This should be the URL used for %sRFC 3161%s-compliant timestamping requests.'), "<a href='https://tools.ietf.org/html/rfc3161'>", "</a>"); ?></span>
         </p>
         <p>
-        <label for='stampcert'><?php echo _('Chain of certificates of the external timestamping service:');?></label>
-        <input type='text' placeholder='vendor/universign-tsa-root.pem' value='<?php echo get_config('stampcert');?>' name='stampcert' id='stampcert' />
+        <label for='stampcert'><?php echo _('Chain of certificates of the external timestamping service:'); ?></label>
+        <input type='text' placeholder='vendor/universign-tsa-root.pem' value='<?php echo get_config('stampcert'); ?>' name='stampcert' id='stampcert' />
         <span class='smallgray'><?php printf(_('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. The file needs to be in %sPEM-encoded (ASCII)%s format!'), "<br>", "<a href='https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail'>", "</a>"); ?></span>
         </p>
         <label for='stamplogin'><?php echo _('Login for external timestamping service:'); ?></label>

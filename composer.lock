@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3cef560028365e051ecf54913b70ba48",
+    "hash": "4cfed832255395edca530a130474458e",
     "packages": [
         {
             "name": "mpdf/mpdf",
@@ -115,6 +115,7 @@
         "ext-gd": "*",
         "ext-gettext": "*",
         "ext-mcrypt": "*",
+        "ext-curl": "*",
         "ext-openssl": "*"
     },
     "platform-dev": []

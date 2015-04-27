@@ -124,6 +124,7 @@ if ($data['timestamped'] == 1) {
     }
     */
     // Until a button is implmented, don't fool the user to think the timestamp is valid
+    $message_type = 'info_nocross';
     $validation_note = "<img class='align_right' src='img/stamp.png' alt='Unchecked timestamp' title='" . _('Unchecked timestamp') . "' />";
     $date = new DateTime($data['timestampedwhen']);
 

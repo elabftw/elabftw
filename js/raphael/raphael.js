@@ -1,5 +1,5 @@
 // ┌────────────────────────────────────────────────────────────────────┐ \\
-// │ Raphaël 2.1.3 - JavaScript Vector Library                          │ \\
+// │ Raphaël 2.1.4 - JavaScript Vector Library                          │ \\
 // ├────────────────────────────────────────────────────────────────────┤ \\
 // │ Copyright © 2008-2012 Dmitry Baranovskiy (http://raphaeljs.com)    │ \\
 // │ Copyright © 2008-2012 Sencha Labs (http://sencha.com)              │ \\
@@ -851,7 +851,7 @@
      = (number) angle in degrees.
     \*/
     R.deg = function (rad) {
-        return rad * 180 / PI % 360;
+        return Math.round ((rad * 180 / PI% 360)* 1000) / 1000;
     };
     /*\
      * Raphael.snapTo
@@ -5942,7 +5942,7 @@
             }
         }
         $(o, {
-            fill: "url(" + document.location + "#" + id + ")",
+            fill: "url('" + document.location + "#" + id + "')",
             opacity: 1,
             "fill-opacity": 1
         });
@@ -6422,7 +6422,7 @@
         } else {
             return node;
         }
-    }
+    },
     Element = function (node, svg) {
         var X = 0,
             Y = 0;
@@ -8125,7 +8125,7 @@
         this._viewBoxShift = {
             dx: -x,
             dy: -y,
-            scale: size
+            scale: paperSize
         };
         this.forEach(function (el) {
             el.transform("...");

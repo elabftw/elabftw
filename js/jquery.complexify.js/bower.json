@@ -1,6 +1,6 @@
 {
   "name": "jquery.complexify",
-  "version": "0.3.1",
+  "version": "0.5.0",
   "main": "jquery.complexify.js",
   "ignore": [
     "jquery.complexify.min.js"

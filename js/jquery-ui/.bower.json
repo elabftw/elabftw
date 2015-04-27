@@ -1,6 +1,6 @@
 {
   "name": "jquery-ui",
-  "version": "1.11.3",
+  "version": "1.11.4",
   "main": [
     "jquery-ui.js"
   ],
@@ -9,13 +9,13 @@
     "jquery": ">=1.6"
   },
   "homepage": "https://github.com/components/jqueryui",
-  "_release": "1.11.3",
+  "_release": "1.11.4",
   "_resolution": {
     "type": "version",
-    "tag": "1.11.3",
-    "commit": "7e2d6bec1c729925d9ad7c0c9ab4b561174efa99"
+    "tag": "1.11.4",
+    "commit": "c34f8dbf3ba57b3784b93f26119f436c0e8288e1"
   },
-  "_source": "git://github.com/components/jqueryui.git",
+  "_source": "https://github.com/components/jqueryui.git",
   "_target": "~1.11.1",
   "_originalSource": "jquery-ui"
 }

@@ -7,8 +7,4 @@ $baseDir = dirname($vendorDir);
 
 return array(
     $vendorDir . '/swiftmailer/swiftmailer/lib/swift_required.php',
-    $baseDir . '/inc/classes/MakePdf.php',
-    $baseDir . '/inc/classes/FormKey.php',
-    $baseDir . '/inc/classes/Crypto.php',
-    $baseDir . '/inc/classes/TrustedTimestamps.php',
 );

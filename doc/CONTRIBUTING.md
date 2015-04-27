@@ -14,8 +14,8 @@ Then you are in the right place :)
 - before doing a pull request, open an issue so we can discuss about it (unless it is obvious that your code should be merged ;).
 - base your PR on the ***next*** branch, which is the development branch. ***Master*** being the "release" branch.
 - most of the code is procedural, but a progressive transition to object oriented code is on the way.
-- classes should be in `inc/classes`
-- you need to add your class to the `composer.json` file.
+- classes should be in `inc/classes` with namespace Elabftw\Elabftw
+- a new class will be loaded automagically thanks to the use of PSR-4 with composer
 - for i18n, we use gettext
 - if you change a string in gettext _('they look like this'), change it also in a .po file (generally the french one) and generate a .mo file (with poedit)
 - same if you add a string shown to the user, it needs to be gettexted

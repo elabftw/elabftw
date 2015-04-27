@@ -113,17 +113,17 @@ if ($count > 0 && strlen(get_config('smtp_username')) > 0) {
         <input type='url' value='<?php echo get_team_config('link_href'); ?>' name='link_href' id='link_href' />
         </p>
         <p>
-        <label for='stampprovider'><?php echo _('URL for external timestamping service:');?></label>
-        <input type='url' value='<?php echo get_team_config('stampprovider');?>' name='stampprovider' id='stampprovider' />
-        <span class='smallgray'><?php echo _('This should be the URL used for <a href="https://tools.ietf.org/html/rfc3161">RFC 3161</a>-compliant timestamping requests.');?></span>
+        <label for='stampprovider'><?php echo _('URL for external timestamping service:'); ?></label>
+        <input type='url' value='<?php echo get_team_config('stampprovider'); ?>' name='stampprovider' id='stampprovider' />
+        <span class='smallgray'><?php echo _('This should be the URL used for <a href="https://tools.ietf.org/html/rfc3161">RFC 3161</a>-compliant timestamping requests.'); ?></span>
         </p>
         <p>
-        <label for='stampcert'><?php echo _('Chain of certificates of the external timestamping service:');?></label>
-        <input type='text' placeholder='vendor/universign-tsa-root.pem' value='<?php echo get_team_config('stampcert');?>' name='stampcert' id='stampcert' />
-        <span class='smallgray'><?php echo _('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.<br /> Local path relative to eLabFTW installation directory. The file needs to be in <a href="https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail">PEM-encoded (ASCII)</a> format!');?></span>
+        <label for='stampcert'><?php echo _('Chain of certificates of the external timestamping service:'); ?></label>
+        <input type='text' placeholder='vendor/universign-tsa-root.pem' value='<?php echo get_team_config('stampcert'); ?>' name='stampcert' id='stampcert' />
+        <span class='smallgray'><?php echo _('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.<br /> Local path relative to eLabFTW installation directory. The file needs to be in <a href="https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail">PEM-encoded (ASCII)</a> format!'); ?></span>
         </p>
         <label for='stamplogin'><?php echo _('Login for external timestamping service:'); ?></label>
-        <input type='text' value='<?php echo get_team_config('stamplogin');?>' name='stamplogin' id='stamplogin' />
+        <input type='text' value='<?php echo get_team_config('stamplogin'); ?>' name='stamplogin' id='stamplogin' />
         <span class='smallgray'><?php echo _('This should be the login associated with your timestamping service provider'); ?></span>
         </p>
         <p>

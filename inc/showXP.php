@@ -37,11 +37,11 @@ if (isset($_GET['tag']) && $_GET['tag'] != '') {
 ?>
 <menu class='border'>
     <div class="row">
-        <div class="col-md-6">
-            <a href="app/create_item.php?type=exp"><img src="img/add.png" class='bot5px' alt="" /> <?php echo _('Create experiment'); ?></a> | 
+        <div class="col-md-4">
+            <a href="app/create_item.php?type=exp"><img src="img/add.png" class='bot5px' alt="" /> <?php echo _('Create experiment'); ?></a> |
             <a href='#' class='trigger'><img src="img/add-template.png" class='bot5px' alt="" /> <?php echo _('Create from template'); ?></a>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-8">
             <form class="form-inline pull-right">
                 <div class="form-group">
                     <input type="hidden" name="mode" value="show" />
@@ -171,7 +171,7 @@ if (isset($_GET['q'])) { // if there is a query
 } elseif (isset($_GET['related']) && is_pos_int($_GET['related'])) {// search for related experiments to DB item id
     $item_id = $_GET['related'];
     // search in title date and body
-    $sql = "SELECT item_id FROM experiments_links 
+    $sql = "SELECT item_id FROM experiments_links
         WHERE link_id = :link_id LIMIT 100";
     $req = $pdo->prepare($sql);
     $req->execute(array(
@@ -214,16 +214,16 @@ if (isset($_GET['q'])) { // if there is a query
 // TAG SEARCH
 } elseif (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
-    $sql = "SELECT ex.id, ex.date, ex.title, st.name, ta.item_id 
-        FROM experiments AS ex, experiments_tags AS ta, status AS st 
-        WHERE ex.userid = :userid 
-        AND ta.userid = :userid 
-        AND ex.status = st.id 
-        AND st.team = :teamid 
-        AND ex.id = ta.item_id 
-        AND ta.tag LIKE :tag 
+    $sql = "SELECT ex.id, ex.date, ex.title, st.name, ta.item_id
+        FROM experiments AS ex, experiments_tags AS ta, status AS st
+        WHERE ex.userid = :userid
+        AND ta.userid = :userid
+        AND ex.status = st.id
+        AND st.team = :teamid
+        AND ex.id = ta.item_id
+        AND ta.tag LIKE :tag
         " . $filter . "
-        ORDER BY $order $sort 
+        ORDER BY $order $sort
         LIMIT 100";
     $req = $pdo->prepare($sql);
     $req->bindParam(':tag', $tag, PDO::PARAM_STR);
@@ -269,13 +269,13 @@ if (isset($_GET['q'])) { // if there is a query
 
 // DEFAULT VIEW
 } else {
-    $sql = "SELECT ex.id, ex.date, ex.title, st.name 
-        FROM experiments AS ex, status AS st 
-        WHERE ex.userid = :userid 
-        AND ex.status = st.id 
-        AND st.team = :teamid 
+    $sql = "SELECT ex.id, ex.date, ex.title, st.name
+        FROM experiments AS ex, status AS st
+        WHERE ex.userid = :userid
+        AND ex.status = st.id
+        AND st.team = :teamid
         " . $filter . "
-        ORDER BY $order $sort 
+        ORDER BY $order $sort
         LIMIT 100";
     $req = $pdo->prepare($sql);
     $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);

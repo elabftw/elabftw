@@ -194,7 +194,7 @@ if ($current_version == 'something') {
         </p>
         <label for='stamplogin'><?php echo _('Login for external timestamping service:'); ?></label>
         <input type='text' value='<?php echo get_config('stamplogin'); ?>' name='stamplogin' id='stamplogin' />
-        <p class='smallgray'><?php echo _('Login for external timestamping service .'); ?></p>
+        <p class='smallgray'><?php echo _('Login for external timestamping service:'); ?></p>
         <label for='stamppass'><?php echo _('Password for external timestamping service:'); ?></label>
         <input type='password' value='<?php echo $crypto->decrypt(get_config('stamppass')); ?>' name='stamppass' id='stamppass' />
         <div class='center'>

@@ -47,7 +47,7 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
 switch ($_GET['type']) {
 
     // Locking experiment
-        case 'experiments':
+    case 'experiments':
         // Is the user in a group with can_lock set to 1 ?
         // 1. get what is the group of the user
         $sql = "SELECT * FROM users WHERE userid = :userid LIMIT 1";
@@ -117,40 +117,41 @@ switch ($_GET['type']) {
                 header("Location: ../experiments.php?mode=view&id=" . $id);
                 exit;
         }
-        
 
         // The actual locking action (and we add a timestamp in the lockedwhen column)
-            $sql = "UPDATE experiments SET locked = :action, lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE id = :id";
-            $req = $pdo->prepare($sql);
-            $result = $req->execute(array(
-                'action' => $action,
-                'lockedby' => $_SESSION['userid'],
-                'id' => $id
-            ));
-            if ($result) {
-                header("Location: ../experiments.php?mode=view&id=" . $id);
-                exit;
-            } else {
-                die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
-            }
-            break;
-
-        // Locking item
-        case 'items':
-
-            $sql = "UPDATE items SET locked = :action WHERE id = :id";
-            $req = $pdo->prepare($sql);
-            $result = $req->execute(array(
-                'action' => $action,
-                'id' => $id
-            ));
-            if ($result) {
-                header("Location: ../database.php?mode=view&id=" . $id);
-                exit;
-            } else {
-                die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
-            }
-            break;
-        default:
+        $sql = "UPDATE experiments SET locked = :action, lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE id = :id";
+        $req = $pdo->prepare($sql);
+        $result = $req->execute(array(
+            'action' => $action,
+            'lockedby' => $_SESSION['userid'],
+            'id' => $id
+        ));
+        if ($result) {
+            header("Location: ../experiments.php?mode=view&id=" . $id);
+            exit;
+        } else {
             die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
+        }
+        break;
+
+    // Locking item
+    case 'items':
+
+        $sql = "UPDATE items SET locked = :action WHERE id = :id";
+        $req = $pdo->prepare($sql);
+        $result = $req->execute(array(
+            'action' => $action,
+            'id' => $id
+        ));
+
+        if ($result) {
+            header("Location: ../database.php?mode=view&id=" . $id);
+            exit;
+        } else {
+            die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
+        }
+        break;
+
+    default:
+        die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
 }

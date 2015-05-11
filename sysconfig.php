@@ -48,6 +48,8 @@ if (strlen(get_config('smtp_username')) == 0) {
 <?php
 // get current version
 $current_version = shell_exec('git describe --abbrev=0 --tags');
+// display the current version to sysadmin
+echo "<p>Version installée : " . $current_version . "</p>";
 // FIXME
 // TODO
 // we disable this because it's too alpha for now

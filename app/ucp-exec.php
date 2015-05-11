@@ -93,7 +93,7 @@ if (isset($_POST['currpass'])) {
             }
         }
         // Check USERNAME (sanitize and validate)
-            if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
+        if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
             $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
             // Check for duplicate username in DB
             $sql = "SELECT * FROM users WHERE username = :username";
@@ -105,8 +105,8 @@ if (isset($_POST['currpass'])) {
             if ($result) {
                 if ($numrows > 0) {
                     if ($data['userid'] != $_SESSION['userid']) {
-                    $msg_arr[] = _('Username already in use!');
-                    $errflag = true;
+                        $msg_arr[] = _('Username already in use!');
+                        $errflag = true;
                     }
                 }
             }
@@ -115,14 +115,14 @@ if (isset($_POST['currpass'])) {
             $errflag = true;
         }
         // Check FIRSTNAME (sanitize only)
-            if ((isset($_POST['firstname'])) && (!empty($_POST['firstname']))) {
+        if ((isset($_POST['firstname'])) && (!empty($_POST['firstname']))) {
             $firstname = filter_var($_POST['firstname'], FILTER_SANITIZE_STRING);
         } else {
             $msg_arr[] = _('A mandatory field is missing!');
             $errflag = true;
         }
         // Check LASTNAME (sanitize only)
-            if ((isset($_POST['lastname'])) && (!empty($_POST['lastname']))) {
+        if ((isset($_POST['lastname'])) && (!empty($_POST['lastname']))) {
             $lastname = filter_var($_POST['lastname'], FILTER_SANITIZE_STRING);
         } else {
             $msg_arr[] = _('A mandatory field is missing!');
@@ -146,8 +146,8 @@ if (isset($_POST['currpass'])) {
                 if ($result) {
                     if ($numrows > 0) {
                         if ($data['userid'] != $_SESSION['userid']) {
-                        $msg_arr[] = _('Someone is already using that email address!');
-                        $errflag = true;
+                            $msg_arr[] = _('Someone is already using that email address!');
+                            $errflag = true;
                         }
                     }
                 }
@@ -371,16 +371,20 @@ if (isset($_POST['tpl_form'])) {
     foreach ($_POST['tpl_name'] as $name) {
         $new_tpl_name[] = $name;
     }
-    $new_tpl_body[] = filter_var($_POST['tpl_body'], FILTER_SANITIZE_STRING); 
-    $new_tpl_name[] = filter_var($_POST['tpl_name'], FILTER_SANITIZE_STRING); 
-    $sql = "UPDATE experiments_templates SET body = :body, name = :name WHERE userid = " . $_SESSION['userid'] . " AND id = :id";
+    $new_tpl_body[] = filter_var($_POST['tpl_body'], FILTER_SANITIZE_STRING);
+    $new_tpl_name[] = filter_var($_POST['tpl_name'], FILTER_SANITIZE_STRING);
+    $sql = "UPDATE experiments_templates SET
+        body = :body,
+        name = :name
+        WHERE userid = :userid AND id = :id";
     $req = $pdo->prepare($sql);
     for ($i = 0; $i < count($_POST['tpl_body']); $i++) {
-    $req->execute(array(
-        'id' => $tpl_id[$i],
-        'body' => $new_tpl_body[$i],
-        'name' => $new_tpl_name[$i]
-    ));
+        $req->execute(array(
+            'id' => $tpl_id[$i],
+            'body' => $new_tpl_body[$i],
+            'name' => $new_tpl_name[$i],
+            'userid' => $_SESSION['userid']
+        ));
     }
     $msg_arr[] = _('Template successfully edited.');
     $infoflag = true;

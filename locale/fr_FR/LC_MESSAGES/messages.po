@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2015-03-04 14:57+0100\n"
-"PO-Revision-Date: 2015-04-27 16:25+0100\n"
+"PO-Revision-Date: 2015-05-11 16:52+0100\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -413,13 +413,8 @@ msgstr "La catégorie d'item a été supprimée avec succès."
 msgid "Status was deleted successfully."
 msgstr "Le statut a été supprimé avec succès."
 
-#: elabftw/app/delete_file.php:58 elabftw/app/delete_file.php:84
-msgid "File"
-msgstr "Fichier"
-
-#: elabftw/app/delete_file.php:58 elabftw/app/delete_file.php:84
-msgid "deleted successfully"
-msgstr "supprimé avec succès"
+msgid "File %s deleted successfully."
+msgstr "Le fichier %s a été supprimé avec succès."
 
 #: elabftw/app/duplicate_item.php:32 elabftw/app/editDB-exec.php:42
 #: elabftw/app/editXP-exec.php:39 elabftw/app/lock.php:33

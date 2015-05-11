@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2015-04-27 19:37+0100\n"
-"PO-Revision-Date: 2015-04-28 11:24+0100\n"
+"PO-Revision-Date: 2015-05-11 16:52+0100\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -428,13 +428,8 @@ msgstr "Artikeltyp wurde erfolgreich gelöscht."
 msgid "Status was deleted successfully."
 msgstr "Status wurde erfolgreich gelöscht."
 
-#: elabftw/app/delete_file.php:58 elabftw/app/delete_file.php:84
-msgid "File"
-msgstr "Datei"
-
-#: elabftw/app/delete_file.php:58 elabftw/app/delete_file.php:84
-msgid "deleted successfully"
-msgstr "erfolgreich gelöscht"
+msgid "File %s deleted successfully."
+msgstr "Datei %s erfolgreich gelöscht."
 
 #: elabftw/app/duplicate_item.php:32 elabftw/app/editDB-exec.php:42
 #: elabftw/app/editXP-exec.php:39 elabftw/app/lock.php:33

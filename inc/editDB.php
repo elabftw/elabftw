@@ -145,7 +145,7 @@ unset($_SESSION['errors']);
 
 <script>
 // JAVASCRIPT
-// _('Tags') AUTOCOMPLETE LIST
+// TAGS AUTOCOMPLETE LIST
 $(function() {
 		var availableTags = [
 <?php // get all user's tag for autocomplete
@@ -215,7 +215,7 @@ $(document).ready(function() {
     $('#addtaginput').keypress(function (e) {
         addTagOnEnter(e);
     });
-    // _('Edit')OR
+    // EDITOR
     tinymce.init({
         mode : "specific_textareas",
         editor_selector : "mceditable",
@@ -264,8 +264,8 @@ $(document).ready(function() {
         updateRating(5);
     });
     // SELECT ALL TXT WHEN FOCUS ON TITLE INPUT
-    $("#title").focus(function(){
-        $("#title").select();
+    $("#title_input").focus(function(){
+        $("#title_input").select();
     });
     // fix for the ' and "
     title = "<?php echo $data['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
@@ -273,13 +273,13 @@ $(document).ready(function() {
 
     // ask the user if he really wants to navigate out of the page
 <?php
-    if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
-        echo "
-    window.onbeforeunload = function (e) {
-          e = e || window.event;
-          return '"._('Do you want to navigate away from this page? Unsaved changes will be lost!') . "';
-    };";
-    }
+if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
+    echo "
+window.onbeforeunload = function (e) {
+      e = e || window.event;
+      return '"._('Do you want to navigate away from this page? Unsaved changes will be lost!') . "';
+};";
+}
 ?>
 });
 </script>

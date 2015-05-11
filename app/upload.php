@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 require_once '../inc/common.php';
-/*  
+/*
     we receive the file in $_FILES['file']. The array looks like that :
     name : filename.pdf
     type : "application/pdf"
@@ -48,7 +48,7 @@ if ($_GET['type'] === 'experiments' || $_GET['type'] === 'items') {
 }
 
 if ($type === 'experiments') {
-    // we check that the user owns the experiment before adding thigs to it
+    // we check that the user owns the experiment before adding things to it
     if (!is_owned_by_user($item_id, 'experiments', $_SESSION['userid'])) {
         die('Not your experiment');
     }
@@ -60,15 +60,13 @@ if (count($_FILES) === 0) {
 
 // Create a clean filename : remplace all non letters/numbers by '.' (this way we don't lose the file extension)
 $realname = preg_replace('/[^A-Za-z0-9]/', '.', $_FILES['file']['name']);
+
 // get extension
-$path_info = pathinfo($realname);
-if (!empty($path_info['extension'])) {
-    $ext = $path_info['extension'];
-} else {
-    $ext = "unknown";
-}
+$ext = get_ext($realname);
+
 // Create a unique long filename + extension
 $longname = hash("sha512", uniqid(rand(), true)) . "." . $ext;
+
 // Try to move the file to its final place
 if (rename($_FILES['file']['tmp_name'], ELAB_ROOT . 'uploads/' . $longname)) {
 
@@ -80,18 +78,36 @@ if (rename($_FILES['file']['tmp_name'], ELAB_ROOT . 'uploads/' . $longname)) {
     }
 
     // SQL TO PUT FILE IN UPLOADS TABLE
-    $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, md5) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :md5)";
-    $req = $pdo->prepare($sql);
-    $result = $req->execute(array(
-    'real_name' => $realname,
-    'long_name' => $longname,
-    // comment can be edited after upload
-    // not i18n friendly because it is used somewhere else (not a valid reason, but for the moment that will do)
-    'comment' => 'Click to add a comment',
-    'item_id' => $item_id,
-    'userid' => $_SESSION['userid'],
-    'type' => $type,
-    'md5' => $md5
-    ));
+    $sql = "INSERT INTO uploads(
+        real_name,
+        long_name,
+        comment,
+        item_id,
+        userid,
+        type,
+        md5
+    ) VALUES(
+        :real_name,
+        :long_name,
+        :comment,
+        :item_id,
+        :userid,
+        :type,
+        :md5
+    )";
 
+    $req = $pdo->prepare($sql);
+    $req->execute(array(
+        'real_name' => $realname,
+        'long_name' => $longname,
+        // comment can be edited after upload
+        // not i18n friendly because it is used somewhere else (not a valid reason, but for the moment that will do)
+        'comment' => 'Click to add a comment',
+        'item_id' => $item_id,
+        'userid' => $_SESSION['userid'],
+        'type' => $type,
+        'md5' => $md5
+    ));
+} else {
+    die('Cannot move the file.');
 }

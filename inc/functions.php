@@ -84,7 +84,7 @@ function get_ext($filename)
         return $path_info['extension'];
     }
 
-    return false;
+    return 'unknown';
 }
 
 /**

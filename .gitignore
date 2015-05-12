@@ -6,3 +6,4 @@ test.php
 *.bak
 Session.vim
 /nbproject/private/
+.DS_Store

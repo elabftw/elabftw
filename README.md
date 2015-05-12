@@ -29,7 +29,7 @@ Please report bugs on [github](https://github.com/elabftw/elabftw/issues).
 * Create a MySQL database and a MySQL user for elabftw
 * Go to https://your-address.org/elabftw/install
 
-## Install on your computer (Mac/Win)
+## Install on your computer (Mac OS X only)
 ![Mac OS X](https://i.imgur.com/t62AQAi.png)
 [Install locally on Mac](https://github.com/elabftw/elabftw/wiki/installmac)
 

@@ -30,9 +30,8 @@ Please report bugs on [github](https://github.com/elabftw/elabftw/issues).
 * Go to https://your-address.org/elabftw/install
 
 ## Install on your computer (Mac/Win)
-![Mac OS X](https://i.imgur.com/t62AQAi.png) | ![Windoze](https://i.imgur.com/ZKkPOL1.png)
-:---------------------------------------------:|:--------------------------------------------:
-[Install locally on Mac](https://github.com/elabftw/elabftw/wiki/installmac) | [Install locally on Windows](https://github.com/elabftw/elabftw/wiki/installwin)
+![Mac OS X](https://i.imgur.com/t62AQAi.png)
+[Install locally on Mac](https://github.com/elabftw/elabftw/wiki/installmac)
 
 ## Install on a digitalocean's drop (easiest/quickest method)
 With this method, you can have a running elabftw server in no time. You need to purchase a `drop` from [DigitalOcean.com](https://www.digitalocean.com/pricing/). It starts at 5$/month. This setup is enough to run eLabFTW for a team or more. And it's very easy to install, all is automatic! |

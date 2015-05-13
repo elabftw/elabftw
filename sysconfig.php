@@ -49,8 +49,13 @@ if (strlen(get_config('smtp_username')) == 0) {
 // get current version
 if (check_executable('git')) {
     $current_version = shell_exec('git describe --abbrev=0 --tags');
-    // display the current version to sysadmin
-    echo "<p>Version installée : " . $current_version . "</p>";
+
+    // it is possible to have git installed, but elabftw is installed without git (zip or tarball)
+    // so we need to check if the version actually looks like a version number
+    if (preg_match('/\d\.\d\.\d*/', $current_version) === 1) {
+        // display the current version to sysadmin
+        echo "<p>Version installée : " . $current_version . "</p>";
+    }
 }
 // FIXME
 // TODO

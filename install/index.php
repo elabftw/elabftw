@@ -81,6 +81,19 @@ if (file_exists('../config.php')) {
     } catch (Exception $e) {
         die('Error : ' . $e->getMessage());
     }
+    // ok so we are connected, now count the number of tables before trying to count the users
+    // if we are in docker, the number of tables might be 0
+    // so we will need to import the structure before going further
+    $sql = "SELECT COUNT(DISTINCT `table_name`) FROM `information_schema`.`columns` WHERE `table_schema` = :db_name";
+    $req = $pdo->prepare($sql);
+    $req->bindValue(':db_name', DB_NAME);
+    $req->execute();
+    if ($req->rowCount() < 2) {
+        import_sql_structure();
+        header('Location: ../register.php');
+        exit;
+    }
+
     $sql = "SELECT * FROM users";
     $req = $pdo->prepare($sql);
     $req->execute();

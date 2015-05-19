@@ -1,6 +1,7 @@
 # Changelog for eLabFTW
 
 # Verson 1.1.3
+* fix bug on experiment duplication
 * display version in sysconfig page
 * update pt-BR translation (thanks Kikuti)
 * code cleaning

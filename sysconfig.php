@@ -52,7 +52,7 @@ if (check_executable('git')) {
 
     // it is possible to have git installed, but elabftw is installed without git (zip or tarball)
     // so we need to check if the version actually looks like a version number
-    if (preg_match('/\d\.\d\.\d*/', $current_version) === 1) {
+    if (preg_match('/[0-99]+\.[0-99]+\.[0-99]+.*/', $current_version) === 1) {
         // display the current version to sysadmin
         echo "<p>Version installée : " . $current_version . "</p>";
     }

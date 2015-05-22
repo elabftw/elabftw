@@ -41,7 +41,7 @@ With this method, you can have a running elabftw server in no time. You need to 
 ## Install in a docker container
 ![Docker](https://i.imgur.com/VRjbY8R.png) |
 :------------------------------------------:|
-If you know Docker already and want to use a dockerized elabftw, please see [this repo](https://github.com/NicolasCARPi/elabftw-docker-nosql#elabftw-docker-nosql). |
+If you know Docker already and want to use a dockerized elabftw, please see [this repo](https://github.com/elabftw/docker-elabftw). |
 
 ## Install on a GNU/Linux or BSD server
 

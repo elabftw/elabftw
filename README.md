@@ -8,7 +8,7 @@
 # Description
 
 **eLabFTW** is an electronic lab notebook manager for research teams. It also features a database where you can store any kind of objects (think antibodies, plasmids, cell lines, boxes, _etc_…)
-It is accessed _via_ the browser by the users. Several research teams can be hosted on the same install.
+It is accessed _via_ the browser by the users. Several research teams can be hosted on the same install, so **eLabFTW** can be installed at the institute level and host everyone at the same place (this is what is done at [Institut Curie](http://www.curie.fr) and in several other research centers across the globe.
 
 Tired of that shared excel file for your antibodies or plasmids ?
 Want to be able to search in your past experiments as easily as you'd do it on google ?
@@ -17,10 +17,6 @@ Then you are at the right place !
 
 **eLabFTW** is designed to be installed on a server, and people from the team would just log into it from their browser.
 Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM and an old CPU, it's more than enough. Just install a recent GNU/Linux distribution on it and plug it to the intranet.
-
-Don't have an old computer ? That's okay, you can install eLabFTW on a Raspberry Pi (you can buy one on [Radiospares](http://www.rs-components.com/index.html)). It's a 30€ computer on which you can install GNU/Linux and run a server in no time ! That's what we use in our lab. Check out the [wiki](https://github.com/elabftw/elabftw/wiki/raspberrypi) to know more.
-
-Please report bugs on [github](https://github.com/elabftw/elabftw/issues).
 
 # Installation
 ## The legendary four steps installation instructions (for advanced users)
@@ -33,6 +29,7 @@ Please report bugs on [github](https://github.com/elabftw/elabftw/issues).
 ![Mac OS X](https://i.imgur.com/t62AQAi.png)
 [Install locally on Mac](https://github.com/elabftw/elabftw/wiki/installmac)
 
+If you want to install it locally on Windows, have a look at [Boot2Docker](http://boot2docker.io/) and the [docker repo](https://github.com/elabftw/docker-elabftw).
 ## Install on a digitalocean's drop (easiest/quickest method)
 With this method, you can have a running elabftw server in no time. You need to purchase a `drop` from [DigitalOcean.com](https://www.digitalocean.com/pricing/). It starts at 5$/month. This setup is enough to run eLabFTW for a team or more. And it's very easy to install, all is automatic! |
 :--------------------------------------------------------------:|
@@ -150,5 +147,7 @@ For example : https://12.34.56.78/elabftw/install
 You should read [this page](https://github.com/elabftw/elabftw/wiki/finalizing) to finish your install (configure email, backup, *etc*…).
 
 -------------------------------------------------
+
+Please report bugs on [github](https://github.com/elabftw/elabftw/issues).
 
 ~Thank you for using [eLabFTW](http://www.elabftw.net) :)

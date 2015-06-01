@@ -77,29 +77,7 @@ try {
 }
 
 // now import the structure
-$sqlfile = 'elabftw.sql';
-
-// temporary variable, used to store current query
-$queryline = '';
-// read in entire file
-$lines = file($sqlfile);
-// loop through each line
-foreach ($lines as $line) {
-    // Skip it if it's a comment
-    if (substr($line, 0, 2) == '--' || $line == '') {
-            continue;
-    }
-
-    // Add this line to the current segment
-    $queryline .= $line;
-    // If it has a semicolon at the end, it's the end of the query
-    if (substr(trim($line), -1, 1) == ';') {
-        // Perform the query
-        q($queryline);
-        // Reset temp variable to empty
-        $queryline = '';
-    }
-}
+import_sql_structure();
 
 // BUILD CONFIG FILE
 

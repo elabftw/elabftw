@@ -430,8 +430,8 @@ $(document).ready(function() {
     // DATEPICKER
     $( "#datepicker" ).datepicker({dateFormat: 'yymmdd'});
     // SELECT ALL TXT WHEN FOCUS ON TITLE INPUT
-    $("#title").focus(function(){
-        $("#title").select();
+    $("#title_input").focus(function(){
+        $("#title_input").select();
     });
     // EDITOR
     tinymce.init({

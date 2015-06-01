@@ -1,5 +1,19 @@
 # Changelog for eLabFTW
 
+# Verson 1.1.3
+* add user guide in doc/ folder
+* fix bug on experiment duplication
+* display version in sysconfig page
+* update pt-BR translation (thanks Kikuti)
+* code cleaning
+
+# Version 1.1.2-p1
+* fix css layout
+* fix german translation (thanks Athemis)
+* update JS components (bower update)
+* update PHP components (composer update)
+* use PSR-4 for autoloading classes
+
 # Version 1.1.2
 * add RFC 3161 compatible trusted timestamping (#100)
 * add filtering options (#15)

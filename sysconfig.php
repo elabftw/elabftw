@@ -47,10 +47,20 @@ if (strlen(get_config('mail_method')) == 0) {
 
 <?php
 // get current version
-$current_version = shell_exec('git describe --abbrev=0 --tags');
+if (check_executable('git')) {
+    $current_version = shell_exec('git describe --abbrev=0 --tags');
+
+    // it is possible to have git installed, but elabftw is installed without git (zip or tarball)
+    // so we need to check if the version actually looks like a version number
+    if (preg_match('/[0-99]+\.[0-99]+\.[0-99]+.*/', $current_version) === 1) {
+        // display the current version to sysadmin
+        echo "<p>Version installée : " . $current_version . "</p>";
+    }
+}
 // FIXME
 // TODO
 // we disable this because it's too alpha for now
+/*
 if ($current_version == 'something') {
     ?>
     <div class='align_right'>
@@ -61,6 +71,7 @@ if ($current_version == 'something') {
     </div>
     <?php
 }
+ */
 ?>
 
 <menu>

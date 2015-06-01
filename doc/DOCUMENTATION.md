@@ -3,6 +3,7 @@
 ## Wiki
 
 You will find a lot of informations on [the official wiki](https://github.com/elabftw/elabftw/wiki).
+There is also a user guide in the doc/ folder.
 
 ## Features
 ### general

@@ -84,7 +84,7 @@ function get_ext($filename)
         return $path_info['extension'];
     }
 
-    return false;
+    return 'unknown';
 }
 
 /**
@@ -708,16 +708,18 @@ function duplicate_item($id, $type)
         // go pick what is the default status upon creating experiment
         // there should be only one because upon making a status default,
         // all the others are made not default
-        $sql = 'SELECT id FROM status WHERE is_default = true LIMIT 1';
+        $sql = 'SELECT id FROM status WHERE is_default = true AND team = :team LIMIT 1';
         $req = $pdo->prepare($sql);
+        $req->bindParam(':team', $_SESSION['team_id']);
         $req->execute();
         $status = $req->fetchColumn();
 
         // if there is no is_default status
         // we take the first status that come
         if (!$status) {
-            $sql = 'SELECT id FROM status LIMIT 1';
+            $sql = 'SELECT id FROM status WHERE team = :team LIMIT 1';
             $req = $pdo->prepare($sql);
+            $req->bindParam(':team', $_SESSION['team_id']);
             $req->execute();
             $status = $req->fetchColumn();
         }
@@ -1228,6 +1230,37 @@ function cURLdownload($url, $file)
     // cleanup
     curl_close($ch);
     fclose($fp);
+}
+
+/*
+ * Import the SQL structure
+ *
+ */
+function import_sql_structure()
+{
+    $sqlfile = 'elabftw.sql';
+
+    // temporary variable, used to store current query
+    $queryline = '';
+    // read in entire file
+    $lines = file($sqlfile);
+    // loop through each line
+    foreach ($lines as $line) {
+        // Skip it if it's a comment
+        if (substr($line, 0, 2) == '--' || $line == '') {
+                continue;
+        }
+
+        // Add this line to the current segment
+        $queryline .= $line;
+        // If it has a semicolon at the end, it's the end of the query
+        if (substr(trim($line), -1, 1) == ';') {
+            // Perform the query
+            q($queryline);
+            // Reset temp variable to empty
+            $queryline = '';
+        }
+    }
 }
 
 /*

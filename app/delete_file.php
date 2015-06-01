@@ -36,15 +36,18 @@ if ($_GET['type'] === 'experiments') {
 // Check file id is owned by connected user
     $sql = "SELECT userid, real_name, long_name, item_id FROM uploads WHERE id = :id";
     $req = $pdo->prepare($sql);
-    $req->execute(array(
-        'id' => $id));
+    $req->bindParam(':id', $id, PDO::PARAM_INT);
+    $req->execute();
     $data = $req->fetch();
+
     if ($data['userid'] == $_SESSION['userid']) {
-        // Good to go -> DELETE FILE
-        $sql = "DELETE FROM uploads WHERE id = " . $id;
+        // Good to go -> delete file from SQL table
+        $sql = "DELETE FROM uploads WHERE id = :id";
         $reqdel = $pdo->prepare($sql);
+        $reqdel->bindParam(':id', $id, PDO::PARAM_INT);
         $reqdel->execute();
-        $reqdel->closeCursor();
+
+        // now delete it from filesystem
         $filepath = ELAB_ROOT . 'uploads/' . $data['long_name'];
         unlink($filepath);
         // remove thumbnail
@@ -53,11 +56,10 @@ if ($_GET['type'] === 'experiments') {
             unlink(ELAB_ROOT . 'uploads/' . $data['long_name'] . '_th.' . $ext);
         }
         // Redirect to the viewXP
-        $expid = $data['item_id'];
         $msg_arr = array();
-        $msg_arr [] = _('File') . ' ' . $data['real_name'] . ' ' . _('deleted successfully');
+        $msg_arr [] = sprintf(_('File %s deleted successfully.'), $data['real_name']);
         $_SESSION['infos'] = $msg_arr;
-        header("location: ../experiments.php?mode=edit&id=" . $expid);
+        header("location: ../experiments.php?mode=edit&id=" . $data['item_id']);
     } else {
         die();
     }
@@ -65,26 +67,28 @@ if ($_GET['type'] === 'experiments') {
 // DATABASE ITEM
 } elseif ($_GET['type'] === 'items') {
     // Get realname
-    $sql = "SELECT real_name, long_name, item_id FROM uploads WHERE id = " . $id . " AND type = 'items'";
+    $sql = "SELECT real_name, long_name, item_id FROM uploads WHERE id = :id AND type = 'items'";
     $req = $pdo->prepare($sql);
+    $req->bindParam(':id', $id, PDO::PARAM_INT);
     $req->execute();
     $data = $req->fetch();
+
+    // Delete SQL entry (and verify that the type is database),
+    // to avoid someone deleting files saying it's DB whereas it's exp
+    $sql = "DELETE FROM uploads WHERE id = :id AND type = 'items'";
+    $reqdel = $pdo->prepare($sql);
+    $reqdel->bindParam(':id', $id, PDO::PARAM_INT);
+    $reqdel->execute();
+
     // Delete file
     $filepath = ELAB_ROOT . 'uploads/' . $data['long_name'];
     unlink($filepath);
 
-    // Delete SQL entry (and verify that the type is database),
-    // to avoid someone deleting files saying it's DB whereas it's exp
-    $sql = "DELETE FROM uploads WHERE id = " . $id . " AND type = 'items'";
-    $reqdel = $pdo->prepare($sql);
-    $reqdel->execute();
-
     // Redirect to the viewDB
     $msg_arr = array();
-    $msg_arr [] = _('File') . ' ' . $data['real_name'] . ' ' . _('deleted successfully');
+        $msg_arr [] = sprintf(_('File %s deleted successfully.'), $data['real_name']);
     $_SESSION['infos'] = $msg_arr;
-    $item_id = $data['item_id'];
-    header("location: ../database.php?mode=edit&id=" . $item_id);
+    header("location: ../database.php?mode=edit&id=" . $data['item_id']);
 
 } else {
     die();

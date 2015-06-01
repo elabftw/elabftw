@@ -64,7 +64,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                 LEFT JOIN items_types ON (items.type = items_types.id)
                 WHERE items.id = $id";
         }
-            
+
         $req = $pdo->prepare($sql);
         $req->execute();
         $csv_data = $req->fetch();
@@ -125,8 +125,7 @@ echo "<div class='well' style='margin-top:20px'>";
     $filesize = filesize($filepath);
 echo "<p>" . _('Your CSV file is ready:') . "<br>
         <a href='app/download.php?f=".$filepath . "&name=elabftw-export.csv' target='_blank'>
-        <img src='img/download.png' alt='download' /> 
-        elabftw-export.csv</a>
+        <img src='img/download.png' alt='download' /> elabftw-export.csv</a>
         <span class='filesize'>(".format_bytes($filesize) . ")</span></p>";
 echo "</div>";
 require_once 'inc/footer.php';

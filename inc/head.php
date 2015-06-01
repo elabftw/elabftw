@@ -23,8 +23,6 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-// start chrono for page generation time
-$start = microtime(true);
 ?>
 <!DOCTYPE HTML>
 <html>

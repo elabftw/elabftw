@@ -148,7 +148,6 @@ echo "<span class='date_view'><img src='img/calendar.png' class='bot5px' title='
     <a href='experiments.php?mode=edit&id=".$data['expid'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a>
 <a href='app/duplicate_item.php?id=".$data['expid'] . "&type=exp'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a>
 <a href='make_pdf.php?id=".$data['expid'] . "&type=experiments'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a>
-<a href='javascript:window.print()'><img src='img/print.png' title='Print this page' alt='Print' /></a>
 <a href='make_zip.php?id=".$data['expid'] . "&type=experiments'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a> ";
 // lock
 if ($data['locked'] == 0) {

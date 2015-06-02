@@ -313,11 +313,11 @@ class MakePdf
     {
         // build HTML content that will be fed to mpdf->WriteHTML()
         $this->addCss();
-        $this->content .= "<h1>" . stripslashes($this->data['title']) . "</h1>
+        $this->content .= "<h1 style='margin-bottom:5px'>" . stripslashes($this->data['title']) . "</h1>
             Date : ".format_date($this->data['date']) . "<br />
-            <em>Tags : ".$this->tags . "</em><br />
+            Tags : <em>".$this->tags . "</em><br />
             Made by : " . $this->author . "
-            <hr><p>" . stripslashes($this->body) . "</p>";
+            <hr>" . stripslashes($this->body);
 
         $this->addLinkedItems();
         $this->addAttachedFiles();

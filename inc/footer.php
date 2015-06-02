@@ -1,7 +1,7 @@
 <?php
 /******************************************************************************
 *   Copyright 2012 Nicolas CARPi
-*   This file is part of eLabFTW. 
+*   This file is part of eLabFTW.
 *
 *    eLabFTW is free software: you can redistribute it and/or modify
 *    it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@
     echo "</span></p><div class='footer_right'>";
     echo _('Powered by') . " <a href='http://www.elabftw.net'>eLabFTW</a><br>";
     ?>
-    <?php echo _('Page generated in') . ' '; ?><span class='strong'><?php echo round((microtime(true) - $start), 5); ?> seconds</span></div>
+    <?php echo _('Page generated in') . ' '; ?><span class='strong'><?php echo round((microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]), 5); ?> seconds</span></div>
 </footer>
 
 <!-- todolist -->

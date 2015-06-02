@@ -819,6 +819,9 @@ footer div a:hover {
 
 /* print only the main div */
 @media print {
+    nav {
+        visibility:hidden;
+    }
     section.item {
         background-color: white;
         width: 900px;

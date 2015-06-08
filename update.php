@@ -500,6 +500,35 @@ if (!$old_timestamping_global) {
     }
 }
 
+// 20150608 try to fix the experiments that were duplicated before the duplication bug was fixed in 72ef0bf
+// the bug was that the status fetched was not the right one for teams with id ≠ 1
+// so we need to find all the experiments with a wrong status, and fix them (by replacing it with the default status)
+$sql = "SELECT id, status, team FROM experiments WHERE team > 1";
+$req = $pdo->prepare($sql);
+$req->execute();
+
+while ($experiment = $req->fetch()) {
+    // check that the status of the experiment is owned by the team of the experiment
+    $get_status_list_sql = "SELECT id FROM status WHERE team = :team";
+    $req2 = $pdo->prepare($get_status_list_sql);
+    $req2->bindParam(':team', $experiment['team']);
+    $req2->execute();
+    while ($status = $req2->fetch()) {
+        $status_arr[] = $status['id'];
+    }
+    // if we can't find the status id in the status list of the team
+    // then we need to update the status to one owned by the team
+    var_dump(!in_array($experiment['status'], $status_arr));
+    if (!in_array($experiment['status'], $status_arr)) {
+        $update_sql = "UPDATE experiments SET status = :status WHERE id = :id";
+        $req3 = $pdo->prepare($update_sql);
+        // first one coming
+        $req3->bindParam(':status', $status_arr[0]);
+        $req3->bindParam(':id', $experiment['id']);
+        $req3->execute();
+    }
+}
+
 // END
 $msg_arr[] = "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)";
 $_SESSION['infos'] = $msg_arr;

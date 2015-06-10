@@ -24,6 +24,8 @@
 *                                                                               *
 ********************************************************************************/
 require_once '../inc/common.php';
+require_once '../vendor/autoload.php';
+$crypto = new \Elabftw\Elabftw\Crypto();
 
 if (isset($_POST['filecomment'])) {
     // we are editing a comment for a file
@@ -70,12 +72,66 @@ if (isset($_POST['filecomment'])) {
             $sql = "INSERT INTO experiments_comments(datetime, exp_id, comment, userid) 
                 VALUES(:datetime, :exp_id, :comment, :userid)";
             $req = $pdo->prepare($sql);
-            $req->execute(array(
+            $result = $req->execute(array(
                 'datetime' => date("Y-m-d H:i:s"),
                 'exp_id' => $id, // the $id here is the one of the experiment
                 'comment' => $expcomment,
                 'userid' => $_SESSION['userid']
             ));
+            // if the insert is successful, send an email to the XP owner so he/she knows someone left
+            // a comment (issue #160)
+            if ($result) {
+                // get the first and lastname of the commenter
+                $sql = "SELECT firstname, lastname FROM users WHERE userid = :userid";
+                $req = $pdo->prepare($sql);
+                $req->bindParam(':userid', $_SESSION['userid']);
+                $req->execute();
+                $commenter = $req->fetch();
+
+                // get email of the XP owner
+                $sql = "SELECT email, userid FROM users WHERE userid = (SELECT userid FROM experiments WHERE id = :id)";
+                $req = $pdo->prepare($sql);
+                $req->bindParam(':id', $id);
+                $req->execute();
+                $users = $req->fetch();
+
+                // don't send an email if we are commenting on our own XP
+                if ($users['userid'] === $_SESSION['userid']) {
+                    exit;
+                }
+
+                // Create the message
+                $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
+                $url = str_replace('app/editinplace.php', 'experiments.php', $url);
+                $full_url = $url . "?mode=view&id=" . $id;
+
+                $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
+
+                $message = Swift_Message::newInstance()
+                // Give the message a subject
+                ->setSubject(_('[eLabFTW] New comment posted'))
+                // Set the From address with an associative array
+                ->setFrom(array(get_config('smtp_username') => get_config('smtp_username')))
+                // Set the To addresses with an associative array
+                ->setTo(array($users['email'] => 'Admin eLabFTW'))
+                // Give it a body
+                ->setBody(sprintf(_('Hi. %s %s left a comment on your experiment. Have a look: %s'), $commenter['firstname'], $commenter['lastname'], $full_url) . $footer);
+                $transport = Swift_SmtpTransport::newInstance(
+                    get_config('smtp_address'),
+                    get_config('smtp_port'),
+                    get_config('smtp_encryption')
+                )
+                ->setUsername(get_config('smtp_username'))
+                ->setPassword($crypto->decrypt(get_config('smtp_password')));
+                $mailer = Swift_Mailer::newInstance($transport);
+                // SEND EMAIL
+                try {
+                    $mailer->send($message);
+                } catch (Exception $e) {
+                    dblog('Error', 'smtp', $e->getMessage());
+                    exit;
+                }
+            }
         } else {
             // UPDATE OF EXISTING COMMENT
             if ($id_arr[0] === 'expcomment' && is_pos_int($id_arr[1])) {

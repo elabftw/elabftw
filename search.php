@@ -361,7 +361,7 @@ if (isset($_GET)) {
 
     // Body search
     if (!empty($body)) {
-        $sqlBody = " AND $tb.body LIKE '%$title%'";
+        $sqlBody = " AND $tb.body LIKE '%$body%'";
     } elseif (isset($body_arr)) {
         $sqlBody = " AND (";
         foreach ($body_arr as $key => $value) {

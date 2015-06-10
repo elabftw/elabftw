@@ -160,7 +160,7 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $time = explode(' ', $time);
     $time = $time[1] + $time[0];
     $finish = $time;
-    $total_time = round(($finish - $start), 4);
+    $total_time = round(($finish - $_SERVER["REQUEST_TIME_FLOAT"]), 4);
     $unit = 'seconds';
     if ($total_time < 0.01) {
         $total_time = $total_time * 1000;

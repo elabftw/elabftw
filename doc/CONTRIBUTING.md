@@ -7,7 +7,7 @@ Then you are in the right place :)
 * Have a look at [the current issues](https://github.com/elabftw/elabftw/issues)
 * [Translate it!](https://github.com/elabftw/elabftw/wiki/Contributing#translating-i18n)
 * Talk about it to your colleagues, spread the word!
-* Read the code and spot places needing improvements (git grep TODO)
+* Read the code and spot places needing improvements (`git grep TODO`)
 * Open Github issues to discuss bugs or features suggestions
 
 # Misc

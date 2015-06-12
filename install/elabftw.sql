@@ -349,7 +349,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('mail_from', 'notconfigured@example.com'),
 ('mail_method', 'sendmail'),
 ('proxy', ''),
-('sendmail_path', '/usr/bin/sendmail'),
+('sendmail_path', '/usr/sbin/sendmail'),
 ('smtp_address', 'smtp.mandrillapp.com'),
 ('smtp_encryption', 'tls'),
 ('smtp_password', ''),

@@ -388,7 +388,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['mail_method'])) {
     $valid_mail_methods = array('smtp', 'php', 'sendmail');
 
     // Check if POST variable for mail_method is white-listed
-    if(in_array($_POST['mail_method'], $valid_mail_methods)) {
+    if (in_array($_POST['mail_method'], $valid_mail_methods)) {
         $mail_method = $_POST['mail_method'];
     // if not, fall back to sendmail method
     } else {

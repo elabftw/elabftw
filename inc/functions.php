@@ -1278,7 +1278,7 @@ function getMailer()
         // Use SMTP Server
         case 'smtp':
             $transport = Swift_SmtpTransport::newInstance(
-            get_config('smtp_address'),
+                get_config('smtp_address'),
                 get_config('smtp_port'),
                 get_config('smtp_encryption')
             )

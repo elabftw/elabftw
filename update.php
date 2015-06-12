@@ -524,8 +524,8 @@ if ($confcnt['confcnt'] < 20) {
         if ($smtp_username) {
             $from_email = $smtp_username;
         } else {
-            // This is just a fallback and will NOT work, because Swiftmailer requires a valid email address
-            $from_email = '';
+            // put a fake address so that it works right away
+            $from_email = 'notconfigured@example.com';
         }
     }
 

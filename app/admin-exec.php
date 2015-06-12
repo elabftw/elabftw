@@ -384,7 +384,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['admin_validate'])) {
 // EMAIL
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['mail_method'])) {
 
-    $mail_method = $_POST['mail_method'];
+    // Whitelist for valid mailing methods
+    $valid_mail_methods = array('smtp', 'php', 'sendmail');
+
+    // Check if POST variable for mail_method is white-listed
+    if(in_array($_POST['mail_method'], $valid_mail_methods)) {
+        $mail_method = $_POST['mail_method'];
+    // if not, fall back to sendmail method
+    } else {
+         $mail_method = 'sendmail';
+    }
 
     if (isset($_POST['sendmail_path'])) {
         $sendmail_path = filter_var($_POST['sendmail_path'], FILTER_SANITIZE_STRING);

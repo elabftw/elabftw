@@ -68,13 +68,14 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                 ));
 
                 // delete associated files
-                $sql = "SELECT real_name, long_name FROM uploads WHERE item_id = :id AND type = :type";
+                $sql = "SELECT id, real_name, long_name FROM uploads WHERE item_id = :id AND type = :type";
                 $req = $pdo->prepare($sql);
                 $req->execute(array(
                     'id' => $id,
                     'type' => 'experiments'
                 ));
                 while ($uploads = $req->fetch()) {
+                    // delete file from disk
                     $filepath = ELAB_ROOT . 'uploads/' . $uploads['long_name'];
                     unlink($filepath);
                     // remove thumbnail
@@ -82,14 +83,12 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                     if (file_exists(ELAB_ROOT . 'uploads/' . $uploads['long_name'] . '_th.' . $ext)) {
                         unlink(ELAB_ROOT . 'uploads/' . $uploads['long_name'] . '_th.' . $ext);
                     }
+                    // now delete row in uploads table
+                    $delete_sql = "DELETE FROM uploads WHERE id = :id";
+                    $delete_req = $pdo->prepare($delete_sql);
+                    $delete_req->bindParam('id', $uploads['id']);
+                    $delete_req->execute();
                 }
-                // now delete files from the database
-                $sql = "DELETE FROM uploads WHERE item_id = :id AND type = :type";
-                $req = $pdo->prepare($sql);
-                $req->execute(array(
-                    'id' => $id,
-                    'type' => 'experiments'
-                ));
 
                 // delete associated links
                 $delete_sql = "DELETE FROM experiments_links WHERE item_id = :item_id";

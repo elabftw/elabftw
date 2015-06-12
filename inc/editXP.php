@@ -98,7 +98,16 @@ while ($tags = $tagreq->fetch()) {
         <img src='img/eye.png' class='bot5px' alt='visibility' />
         <h4><?php echo _('Visibility'); ?></h4><br>
         <select id="visibility_form" name="visibility" onchange="update_visibility(this.value)">
-            <option id='option_team' value="team"><?php echo _('Only the team'); ?></option>
+<!-- disable this for now because you need an account anyway.
+            <option id='option_team' value="public" <?php //if ($experiment['visibility'] === 'public') {
+   // echo "selected";
+//}?>><?php //echo _('Everyone'); ?></option>-->
+            <option id='option_team' value="organization" <?php if ($experiment['visibility'] === 'organization') {
+    echo "selected";
+}?>><?php echo _('Everyone with an account'); ?></option>
+            <option id='option_team' value="team" <?php if ($experiment['visibility'] === 'team') {
+    echo "selected";
+}?>><?php echo _('Only the team'); ?></option>
             <option id='option_user' value="user" <?php if ($experiment['visibility'] === 'user') {
     echo "selected";
 }

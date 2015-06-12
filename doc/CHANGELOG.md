@@ -1,6 +1,8 @@
 # Changelog for eLabFTW
 
 # Verson 1.1.3
+* add new way to send emails (thanks to @Athemis)
+* add new visibility setting (organization)
 * add user guide in doc/ folder
 * fix bug on experiment duplication
 * display version in sysconfig page

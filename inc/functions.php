@@ -576,11 +576,14 @@ function check_body($input)
  */
 function check_visibility($input)
 {
-    if ((isset($input)) && (!empty($input))) {
-        if (($input === 'team')
-        || ($input === 'user')) {
-            return $input;
-        }
+    $valid_visibility = array(
+        'public',
+        'organization',
+        'team',
+        'user');
+
+    if (isset($input) && !empty($input) && in_array($input, $valid_visibility)) {
+        return $input;
     } else {
         // default is team
         return 'team';

@@ -68,11 +68,19 @@ if ($data['userid'] != $_SESSION['userid']) {
         exit;
     } else {
         // get who owns the experiment
-        $sql = 'SELECT firstname, lastname FROM users WHERE userid = :userid';
+        $sql = 'SELECT firstname, lastname, team FROM users WHERE userid = :userid';
         $get_owner = $pdo->prepare($sql);
         $get_owner->bindParam(':userid', $data['userid']);
         $get_owner->execute();
         $owner = $get_owner->fetch();
+        if ($owner['team'] != $_SESSION['team_id']) {
+            // the experiment needs to be organization for us to see it as we are not in the team of the owner
+            if ($data['visibility'] != 'organization') {
+                display_message('error', _("<strong>Access forbidden:</strong> you don't have the rights to access this."));
+                require_once 'inc/footer.php';
+                exit;
+            }
+        }
         $message = _('<strong>Read-only mode:</strong> this experiment is owned by') . ' ' . $owner['firstname'] . ' ' . $owner['lastname'] . '.';
         display_message('info', $message);
         // we set this variable for later, to check if we are in read only mode

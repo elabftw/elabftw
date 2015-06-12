@@ -1262,3 +1262,41 @@ function import_sql_structure()
         }
     }
 }
+
+/*
+ * Returns Swift_Mailer instance and chooses between sendmail and smtp
+ * @return Swift_Mailer return Swift_Mailer instance
+ */
+function getMailer()
+{
+    $crypto = new \Elabftw\Elabftw\Crypto();
+    // Choose mail transport method; either smtp or sendmail
+    $mail_method = get_config('mail_method');
+
+    switch ($mail_method) {
+
+        // Use SMTP Server
+        case 'smtp':
+            $transport = Swift_SmtpTransport::newInstance(
+                get_config('smtp_address'),
+                get_config('smtp_port'),
+                get_config('smtp_encryption')
+            )
+            ->setUsername(get_config('smtp_username'))
+            ->setPassword($crypto->decrypt(get_config('smtp_password')));
+            break;
+
+        // Use php mail function
+        case 'php':
+            $transport = Swift_MailTransport::newInstance();
+            break;
+
+        // Use locally installed MTA (aka sendmail); Default
+        default:
+            $transport = Swift_SendmailTransport::newInstance(get_config('sendmail_path') . ' -bs');
+            break;
+    }
+
+    $mailer = Swift_Mailer::newInstance($transport);
+    return $mailer;
+}

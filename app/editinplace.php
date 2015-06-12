@@ -69,7 +69,7 @@ if (isset($_POST['filecomment'])) {
             $id = $id_arr[1];
             $expcomment = filter_var($_POST['expcomment'], FILTER_SANITIZE_STRING);
             // SQL to insert expcomment
-            $sql = "INSERT INTO experiments_comments(datetime, exp_id, comment, userid) 
+            $sql = "INSERT INTO experiments_comments(datetime, exp_id, comment, userid)
                 VALUES(:datetime, :exp_id, :comment, :userid)";
             $req = $pdo->prepare($sql);
             $result = $req->execute(array(
@@ -111,19 +111,12 @@ if (isset($_POST['filecomment'])) {
                 // Give the message a subject
                 ->setSubject(_('[eLabFTW] New comment posted'))
                 // Set the From address with an associative array
-                ->setFrom(array(get_config('smtp_username') => get_config('smtp_username')))
+                ->setFrom(array(get_config('mail_from') => 'eLabFTW'))
                 // Set the To addresses with an associative array
                 ->setTo(array($users['email'] => 'Admin eLabFTW'))
                 // Give it a body
                 ->setBody(sprintf(_('Hi. %s %s left a comment on your experiment. Have a look: %s'), $commenter['firstname'], $commenter['lastname'], $full_url) . $footer);
-                $transport = Swift_SmtpTransport::newInstance(
-                    get_config('smtp_address'),
-                    get_config('smtp_port'),
-                    get_config('smtp_encryption')
-                )
-                ->setUsername(get_config('smtp_username'))
-                ->setPassword($crypto->decrypt(get_config('smtp_password')));
-                $mailer = Swift_Mailer::newInstance($transport);
+                $mailer = getMailer();
                 // SEND EMAIL
                 try {
                     $mailer->send($message);
@@ -142,9 +135,9 @@ if (isset($_POST['filecomment'])) {
                     // we must first check
                     $expcomment = filter_var($_POST['expcomment'], FILTER_SANITIZE_STRING);
                     // SQL to update single exp comment
-                    $sql = "UPDATE experiments_comments SET 
-                        comment = :new_comment, 
-                        datetime = :now 
+                    $sql = "UPDATE experiments_comments SET
+                        comment = :new_comment,
+                        datetime = :now
                         WHERE id = :id";
                     $req = $pdo->prepare($sql);
                     $req->execute(array(

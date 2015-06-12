@@ -4,9 +4,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2015-05-04 14:25+0100\n"
-"PO-Revision-Date: 2015-06-01 14:42+0100\n"
-"Last-Translator: Alexander Minges <alexander.minges@gmail.com>\n"
+"PO-Revision-Date: 2015-05-04 14:26+0100\n"
+=======
+"POT-Creation-Date: 2015-04-27 19:37+0100\n"
+"PO-Revision-Date: 2015-05-11 16:52+0100\n"
+>>>>>>> upstream/next
+"Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"

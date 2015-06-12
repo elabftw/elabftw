@@ -149,7 +149,12 @@ if ($result) {
             'userid' => $data['userid']
         ));
 
-        header("Location: ../experiments.php");
+        if (isset($_COOKIE['redirect'])) {
+            $location = $_COOKIE['redirect'];
+        } else {
+            $location = '../experiments.php';
+        }
+        header("Location: " . $location);
         exit;
     } else { // login failed
         // log the attempt

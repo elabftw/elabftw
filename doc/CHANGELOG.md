@@ -259,11 +259,11 @@ data)
 * Various FTW titles
 * Git repo @ gitorious
 
-# Version 0.5 Released on 120301
+# Version 0.5 Released 2012.03.01
 * UCP
-** Themes
-** Keyboard Shortcuts
-** View modes
+* Themes
+* Keyboard Shortcuts
+* View modes
 * Admin Panel
 * Profile
 * Send zip by email

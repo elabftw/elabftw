@@ -146,7 +146,7 @@ For example : https://12.34.56.78/elabftw/install
 
 -------------------------------------------------
 
-# Post install things to do 
+# Post install things to do
 You should read [this page](https://github.com/elabftw/elabftw/wiki/finalizing) to finish your install (configure email, backup, *etc*…).
 
 -------------------------------------------------

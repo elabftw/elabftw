@@ -41,248 +41,7 @@ if ($_SESSION['is_sysadmin'] != 1) {
 
 $die_msg = "There was a problem in the database update :/ Please report a bug : https://github.com/elabftw/elabftw/issues?state=open";
 
-// UPDATE the config file path
-// check for config file
-if (!file_exists('config.php')) {
-    if (file_exists('admin/config.php')) { // update
-        // copy the file
-        if (rename('admin/config.php', 'config.php')) {
-            echo ">>> Config file is now in the root directory\n";
-            echo "!!! You can now safely delete the admin directory if you wish: 'rm -rf admin'\n";
-        } else {
-            echo "!!! Please move 'admin/config.php' to the root directory : 'mv admin/config.php .'\n";
-            exit;
-        }
-    } else {
-        die("There is something seriously wrong with your install. I could not find the file config.php !");
-    }
-}
-
-require_once 'inc/connect.php';
-
 // START //
-
-// BIG TEAM AND GROUPS UPDATE
-// CREATE table teams
-$sql = "SHOW TABLES";
-$req = $pdo->prepare($sql);
-$req->execute();
-$table_is_here = false;
-while ($show = $req->fetch()) {
-    if (in_array('teams', $show)) {
-        $table_is_here = true;
-    }
-}
-
-
-
-// BIG update coming up
-if (!$table_is_here) {
-    // create teams table
-    q("CREATE TABLE IF NOT EXISTS `teams` (
-    `team_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-      `team_name` text NOT NULL,
-      `deletable_xp` tinyint(1) NOT NULL,
-      `link_name` text NOT NULL,
-      `link_href` text NOT NULL,
-      `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY ( `team_id` )
-    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8");
-    // populate table teams
-    q("INSERT INTO teams (team_name, deletable_xp, link_name, link_href) VALUES
-     ('".get_config('lab_name') . "', '" . get_config('deletable_xp') . "', '" . get_config('link_name') . "', '" . get_config('link_href') . "')");
-    // add teams and group to other tables
-    q("ALTER TABLE experiments ADD team int(10) unsigned not null after id;");
-    q("ALTER TABLE items ADD team int(10) unsigned not null after id;");
-    q("ALTER TABLE items_types ADD team int(10) unsigned not null after id;");
-    q("ALTER TABLE status ADD team int(10) unsigned not null after id;");
-    q("ALTER TABLE users ADD team int(10) unsigned not null after password;");
-    q("ALTER TABLE users ADD usergroup int(10) unsigned not null after team;");
-    // populate tables
-    q("UPDATE experiments SET team = 1;");
-    q("UPDATE items SET team = 1;");
-    q("UPDATE items_types SET team = 1;");
-    q("UPDATE status SET team = 1;");
-    q("UPDATE users SET team = 1;");
-    q("UPDATE users SET usergroup = 1 WHERE is_admin = 1;");
-    q("UPDATE users SET usergroup = 4 WHERE is_admin = 0;");
-    q("UPDATE users SET usergroup = 3 WHERE can_lock = 1;");
-    // remove unused fields
-    q("ALTER TABLE users DROP is_admin;");
-    q("ALTER TABLE users DROP can_lock;");
-    // add timestamp to locks
-    q("ALTER TABLE `experiments` ADD `lockedwhen` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `lockedby`;");
-    // add team to experiments_templates
-    q("ALTER TABLE `experiments_templates` ADD `team` INT(10) unsigned not null after id;");
-    q("UPDATE experiments_templates SET team = 1;");
-    // create table groups
-    q("CREATE TABLE IF NOT EXISTS `groups` (
-    `group_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-      `group_name` text NOT NULL,
-      `is_sysadmin` tinyint(1) NOT NULL,
-      `is_admin` text NOT NULL,
-      `can_lock` text NOT NULL,
-        PRIMARY KEY ( `group_id` )
-    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8");
-
-    // Populate table
-    q("INSERT INTO `groups` (`group_id`, `group_name`, `is_sysadmin`, `is_admin`, `can_lock`) VALUES
-    (1, 'Sysadmins', 1, 1, 0),
-    (2, 'Admins', 0, 1, 0),
-    (3, 'Chiefs', 0, 1, 1),
-    (4, 'Users', 0, 0, 0);");
-
-    // Remove the configs from the config table because now they are in the teams table
-    q("DELETE FROM `config` WHERE `config`.`conf_name` = 'deletable_xp';
-    DELETE FROM `config` WHERE `config`.`conf_name` = 'link_name';
-    DELETE FROM `config` WHERE `config`.`conf_name` = 'link_href';
-    DELETE FROM `config` WHERE `config`.`conf_name` = 'lab_name'");
-
-    echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n";
-    echo ">>> BIG UPDATE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
-    echo ">>> One eLabFTW install can now host several teams !\n";
-    echo ">>> There is now groups with set of permissions.       \n";
-    echo ">>> There is now a new sysadmin group for elabftw configuration\n";
-    echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n";
-}
-
-// remove theme from users
-rm_field('users', 'theme', ">>> Removed custom themes.\n");
-
-// add logs
-$sql = "SHOW TABLES";
-$req = $pdo->prepare($sql);
-$req->execute();
-$table_is_here = false;
-while ($show = $req->fetch()) {
-    if (in_array('logs', $show)) {
-        $table_is_here = true;
-    }
-}
-
-if (!$table_is_here) {
-    q("CREATE TABLE IF NOT EXISTS `logs` (
-    `id` int(10) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
-      `type` varchar(255) NOT NULL,
-      `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      `user` text,
-      `body` text NOT NULL
-    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;");
-    echo ">>> Logs are now stored in the database.\n";
-}
-
-// TIMESTAMPS
-
-// check if there is the timestamp columns
-$sql = "SHOW COLUMNS FROM experiments";
-$req = $pdo->prepare($sql);
-$req->execute();
-$field_is_here = false;
-while ($show = $req->fetch()) {
-    if (in_array('timestamped', $show)) {
-        $field_is_here = true;
-    }
-}
-// add field if it's not here
-if (!$field_is_here) {
-    q("ALTER TABLE `experiments` ADD `timestamped` BOOLEAN NOT NULL DEFAULT FALSE AFTER `lockedwhen`, ADD `timestampedby` INT NULL DEFAULT NULL AFTER `timestamped`, ADD `timestampedwhen` TIMESTAMP NULL AFTER `timestampedby`, ADD `timestamptoken` TEXT NULL AFTER `timestampedwhen`;");
-    q("INSERT INTO `config` (`conf_name`, `conf_value`) VALUES ('stamplogin', NULL), ('stamppass', NULL);");
-    echo ">>> You can now timestamp experiments. See the wiki for more infos.\n";
-}
-
-// add md5 field to uploads
-add_field('uploads', 'md5', 'VARCHAR(32) NULL DEFAULT NULL', ">>> Uploaded files are now md5 summed upon upload.\n");
-
-// change the unused date column in uploads to a datetime one with current timestamp on insert
-rm_field('uploads', 'date', ">>> Removed unused field.\n");
-add_field('uploads', 'datetime', "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `type`", ">>> Added timestamp to uploads\n");
-// this is run each time (but doesn't hurt)
-q("UPDATE uploads SET datetime = CURRENT_TIMESTAMP WHERE datetime = '0000-00-00 00:00:00'");
-
-// add timestamp conf for teams
-add_field('teams', 'stamplogin', "TEXT NULL DEFAULT NULL", ">>> Added timestamp team config (login)\n");
-add_field('teams', 'stamppass', "TEXT NULL DEFAULT NULL", ">>> Added timestamp team config (pass)\n");
-
-// add stampshare configuration
-// check if we need to
-$sql = "SELECT COUNT(*) AS confcnt FROM config";
-$req = $pdo->prepare($sql);
-$req->execute();
-$confcnt = $req->fetch(PDO::FETCH_ASSOC);
-
-if ($confcnt['confcnt'] < 14) {
-    $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('stampshare', null)";
-    $req = $pdo->prepare($sql);
-    $res = $req->execute();
-    if ($res) {
-        echo ">>> Added timestamp credentials sharing\n";
-    } else {
-        die($die_msg);
-    }
-}
-
-
-// add lang to users
-add_field('users', 'lang', "VARCHAR(5) NOT NULL DEFAULT 'en-GB'", ">>> You can now select a language!\n");
-
-// add default lang to config
-// remove the notice that will appear if there is no lang in config yet
-error_reporting(E_ALL & ~E_NOTICE);
-if (strlen(get_config('lang')) != 5) {
-    q("INSERT INTO `config` (`conf_name`, `conf_value`) VALUES ('lang', 'en-GB');");
-}
-
-// update lang, put locale with _ instead of -
-// put everyone in english, it's simpler
-if (strpos(get_config('lang'), '-')) {
-    q("UPDATE users SET `lang` = 'en_GB';");
-}
-
-// add elab_root in config.php
-if (!defined('ELAB_ROOT')) {
-    $path = substr(realpath(__FILE__), 0, -10);
-    $text2add = "define('ELAB_ROOT', '" . $path . "');";
-    if (file_put_contents('config.php', $text2add, FILE_APPEND)) {
-        echo ">>> Added constant ELAB_ROOT in file config.php\n";
-    } else {
-        echo "!!! Error writing file config.php. Please fix permissions for server to write to it. Or edit it yourself (look at config.php-EXAMPLE)";
-    }
-}
-
-// remove path in sql config table
-if (strlen(get_config('path')) == 32) {
-    q("DELETE FROM `config` WHERE `conf_name` = 'path';");
-}
-
-// add a team column to items_tags
-add_field('items_tags', 'team_id', "INT(10) NOT NULL DEFAULT 0", ">>> Added team column in items_tags table.\n");
-// now loop on each items_tags and assign the right team for each. We have the item_id, which is linked to the team.
-// first, do we need to do that ?
-$sql = "SELECT team_id FROM items_tags LIMIT 1";
-$req = $pdo->prepare($sql);
-$req->execute();
-$team_id = $req->fetch();
-if ($team_id[0] == 0) { // if we just added the column, it will be 0
-    $sql = "SELECT items_tags.id, items_tags.item_id FROM items_tags";
-    $req = $pdo->prepare($sql);
-    $req->execute();
-    while ($tag = $req->fetch()) {
-        $sql = "SELECT items.team FROM items WHERE items.id = :item_id";
-        $req2 = $pdo->prepare($sql);
-        $req2->execute(array(
-            'item_id' => $tag['item_id']
-        ));
-        while ($team = $req2->fetch()) {
-            $sql = "UPDATE items_tags SET team_id = :team WHERE id = :id";
-            $update = $pdo->prepare($sql);
-            $update->execute(array(
-                'team' => $team['team'],
-                'id' => $tag['id']
-            ));
-        }
-    }
-}
-
 
 // 20150227 : add items_revisions
 $sql = "SHOW TABLES";
@@ -420,7 +179,7 @@ if ($old_timestamping_global) {
     $req = $pdo->prepare($sql);
     $res = $req->execute(array('certfile' => 'vendor/universign-tsa-root.pem'));
     if ($res) {
-        echo ">>> Added Universign.eu as global RFC 3161 TSA\n";
+        $msg_arr[] = ">>> Added Universign.eu as global RFC 3161 TSA";
     } else {
         die($die_msg);
     }
@@ -448,7 +207,7 @@ foreach ($teams as $team) {
             'id' => $team['team_id']
             ));
         if ($res) {
-            echo ">>> Added Universign.eu as RFC 3161 TSA for team #" . $team['team_id'] . "\n";
+            $msg_arr[] = ">>> Added Universign.eu as RFC 3161 TSA for team #" . $team['team_id'];
         } else {
             die($die_msg);
         }
@@ -470,7 +229,7 @@ if ($old_timestamping_global || $old_timestamping_teams) {
                 $req_update = $pdo->prepare($sql_update);
                 $res_update = $req_update->execute(array('date' => $date, 'id' => $show['id']));
                 if ($res_update) {
-                    echo ">>> Corrected timestamp data for experiment #" . $show['id'] . "\n";
+                    $msg_arr[] = ">>> Corrected timestamp data for experiment #" . $show['id'];
                 } else {
                     die($die_msg);
                 }
@@ -493,7 +252,7 @@ if (!$old_timestamping_global) {
         $req = $pdo->prepare($sql);
         $res = $req->execute();
         if ($res) {
-            echo ">>> Added global timestamping provider, certificate and hash algorithm\n";
+            $msg_arr[] = ">>> Added global timestamping provider, certificate and hash algorithm";
         } else {
             die($die_msg);
         }

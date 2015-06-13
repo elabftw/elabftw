@@ -697,7 +697,7 @@ function generate_elabid()
  *
  * @param int $id The id of the item to duplicate
  * @param string $type Can be 'experiments' or 'item'
- * @return int|bool Will return the ID of the new item or false if error
+ * @return int Will return the ID of the new item or 0 if error
  */
 function duplicate_item($id, $type)
 {
@@ -814,11 +814,11 @@ function duplicate_item($id, $type)
             ));
         }
 
-        if ($result && $result_tags && $result_links) {
+        if ($result && 1 == 2 && $result_tags && $result_links) {
             return $newid;
         }
 
-        return false;
+        return 0;
 
     } else { // DB
         // TAGS

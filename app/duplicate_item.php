@@ -41,7 +41,7 @@ if ($_GET['type'] === 'exp') {
 }
 
 // this function will return the ID of the new experiment
-// or false if it failed somewhere
+// or 0 if it failed somewhere
 $newid = duplicate_item($id, $type);
 
 if (is_pos_int($newid)) {
@@ -57,5 +57,8 @@ if (is_pos_int($newid)) {
         exit;
     }
 } else {
-    die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
+    $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+    $_SESSION['errors'] = $msg_arr;
+    header('location: ../experiments.php');
+    exit;
 }

@@ -1030,7 +1030,7 @@ function custom_die()
 /**
  * Make a simple query
  *
- * @param string The SQL query
+ * @param string $sql The SQL query
  * @return boolean|string the return value of execute
  */
 function q($sql)

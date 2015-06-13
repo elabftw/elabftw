@@ -109,20 +109,16 @@ if (isset($_POST['email'])) {
                 $msg_arr[] = _('Email sent. Check your INBOX.');
                 $_SESSION['infos'] = $msg_arr;
             }
-            header("location: ../login.php");
-            exit;
         } else {
             $msg_arr[] = _('Email not found in database!');
             $_SESSION['errors'] = $msg_arr;
-            header("location: ../login.php");
-            exit;
         }
     } else {
         $msg_arr[] = _("The email is not valid.");
         $_SESSION['errors'] = $msg_arr;
-        header("location: ../login.php");
-        exit;
     }
+    header("location: ../login.php");
+    exit;
 }
 
 /*

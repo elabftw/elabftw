@@ -814,7 +814,7 @@ function duplicate_item($id, $type)
             ));
         }
 
-        if ($result && 1 == 2 && $result_tags && $result_links) {
+        if ($result && $result_tags && $result_links) {
             return $newid;
         }
 

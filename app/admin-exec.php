@@ -392,7 +392,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['mail_method'])) {
         $mail_method = $_POST['mail_method'];
     // if not, fall back to sendmail method
     } else {
-         $mail_method = 'sendmail';
+        $mail_method = 'sendmail';
     }
 
     if (isset($_POST['sendmail_path'])) {

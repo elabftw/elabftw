@@ -119,7 +119,7 @@ while ($tags = $tagreq->fetch()) {
     <div class='col-md-4'>
         <img src='img/status.png' class='bot5px' alt='status' /> <h4><?php echo _('Status'); ?></h4><br>
         <script>
-        // this array is used by updateStatus() to get the color of new status 
+        // this array is used by updateStatus() to get the color of new status
         var status_arr = Array();
         </script>
 

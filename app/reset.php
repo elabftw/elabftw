@@ -99,21 +99,18 @@ if (isset($_POST['email'])) {
             } catch (Exception $e) {
                 // log the error
                 dblog('Error', $_SERVER['REMOTE_ADDR'], $e->getMessage());
-                //die($e->getMessage());
                 $errflag = true;
             }
             if ($errflag) {
                 // problem
                 $msg_arr[] = _('There was a problem sending the email! Error was logged.');
                 $_SESSION['errors'] = $msg_arr;
-                header('location: ../login.php');
-                exit;
             } else { // no problem
                 $msg_arr[] = _('Email sent. Check your INBOX.');
                 $_SESSION['infos'] = $msg_arr;
-                header("location: ../login.php");
-                exit;
             }
+            header("location: ../login.php");
+            exit;
         } else {
             $msg_arr[] = _('Email not found in database!');
             $_SESSION['errors'] = $msg_arr;

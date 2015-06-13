@@ -529,7 +529,7 @@ if ($confcnt['confcnt'] < 20) {
         }
     }
 
-    $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('mail_method', '" . $mail_method . "'), ('sendmail_path', '/usr/bin/sendmail'), ('mail_from', '" . $from_email ."')";
+    $sql = "INSERT INTO config (conf_name, conf_value) VALUES ('mail_method', '" . $mail_method . "'), ('sendmail_path', '/usr/bin/sendmail'), ('mail_from', '" . $from_email . "')";
     $req = $pdo->prepare($sql);
     $res = $req->execute();
     if (!$res) {

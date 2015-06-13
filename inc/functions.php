@@ -569,10 +569,10 @@ function check_body($input)
 }
 
 /**
- * Check visibility is either 'team or 'user'.
+ * Check visibility for an experiment.
  *
  * @param string $input The visibility
- * @return string|null Will return team if the visibility is wrong
+ * @return string Will return team if the visibility is wrong
  */
 function check_visibility($input)
 {

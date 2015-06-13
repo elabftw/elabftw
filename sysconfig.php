@@ -243,29 +243,29 @@ if ($current_version == 'something') {
 <!-- TAB 5 -->
 <div class='divhandle' id='tab5div'>
     <h3><?php echo _('E-mail settings'); ?></h3>
-    <?php
-        $mail_method = get_config('mail_method');
-        switch ($mail_method) {
-            case 'sendmail':
-                $disable_sendmail = false;
-                $disable_smtp = true;
-                $disable_php = true;
-                break;
-            case 'smtp':
-                $disable_sendmail = true;
-                $disable_smtp = false;
-                $disable_php = true;
-                break;
-            case 'php':
-                $disable_sendmail = true;
-                $disable_smtp = true;
-                $disable_php = false;
-                break;
-            default:
-                $disable_sendmail = true;
-                $disable_smtp = true;
-                $disable_php = true;
-        } ?>
+<?php
+$mail_method = get_config('mail_method');
+switch ($mail_method) {
+    case 'sendmail':
+        $disable_sendmail = false;
+        $disable_smtp = true;
+        $disable_php = true;
+        break;
+    case 'smtp':
+        $disable_sendmail = true;
+        $disable_smtp = false;
+        $disable_php = true;
+        break;
+    case 'php':
+        $disable_sendmail = true;
+        $disable_smtp = true;
+        $disable_php = false;
+        break;
+    default:
+        $disable_sendmail = true;
+        $disable_smtp = true;
+        $disable_php = true;
+} ?>
     <form method='post' action='app/admin-exec.php'>
         <p><?php echo _("Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mandrill.com (or gmail account and add the infos here."); ?></p>
         <p>

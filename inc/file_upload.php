@@ -29,6 +29,28 @@ if (strpos($_SERVER['SCRIPT_FILENAME'], 'experiments')) {
 } else {
     $type = 'items';
 }
+
+// Converts the php.ini upload size setting to a numeric value in MB
+// Returns 2 if no value is found (utilizing the default setting that was in there previously)
+function returnMaxUploadSize() {    
+    $val = trim($ini_get('upload_max_filesize'));
+    
+    if (!isset($val)) {
+      return 2;
+    }
+    
+    $last = strtolower($val[strlen($val)-1]);
+    
+    switch($last) {
+        case 'g':
+            $val *= 1000;
+        case 'k':
+            $val /= 1024;
+    }
+
+    return $val;
+}
+
 ?>
 <section class='box'>
     <!-- FILE UPLOAD BLOCK -->
@@ -65,7 +87,7 @@ var item_id = '<?php echo $id; ?>';
 Dropzone.options.elabftwDropzone = {
     // i18n message to user
     dictDefaultMessage: '<?php echo _('Drop files here to upload'); ?>',
-    maxFilesize: 2, // MB
+    maxFilesize: '<?php returnMaxUploadSize(); ?>', // MB
     init: function() {
         this.on("complete", function() {
             // reload the #filesdiv once the file is uploaded

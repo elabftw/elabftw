@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /********************************************************************************
 *                                                                               *
 *   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
@@ -23,34 +23,14 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+require_once 'inc/functions.php';
+
 // where are we, on experiments or items (database) page ?
 if (strpos($_SERVER['SCRIPT_FILENAME'], 'experiments')) {
     $type = 'experiments';
 } else {
     $type = 'items';
 }
-
-// Converts the php.ini upload size setting to a numeric value in MB
-// Returns 2 if no value is found (utilizing the default setting that was in there previously)
-function returnMaxUploadSize() {    
-    $val = trim($ini_get('upload_max_filesize'));
-    
-    if (!isset($val)) {
-      return 2;
-    }
-    
-    $last = strtolower($val[strlen($val)-1]);
-    
-    switch($last) {
-        case 'g':
-            $val *= 1000;
-        case 'k':
-            $val /= 1024;
-    }
-
-    return $val;
-}
-
 ?>
 <section class='box'>
     <!-- FILE UPLOAD BLOCK -->

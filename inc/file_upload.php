@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /********************************************************************************
 *                                                                               *
 *   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
@@ -23,6 +23,8 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+require_once 'inc/functions.php';
+
 // where are we, on experiments or items (database) page ?
 if (strpos($_SERVER['SCRIPT_FILENAME'], 'experiments')) {
     $type = 'experiments';
@@ -65,7 +67,7 @@ var item_id = '<?php echo $id; ?>';
 Dropzone.options.elabftwDropzone = {
     // i18n message to user
     dictDefaultMessage: '<?php echo _('Drop files here to upload'); ?>',
-    maxFilesize: 2, // MB
+    maxFilesize: '<?php returnMaxUploadSize(); ?>', // MB
     init: function() {
         this.on("complete", function() {
             // reload the #filesdiv once the file is uploaded

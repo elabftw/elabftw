@@ -1,5 +1,9 @@
 # Changelog for eLabFTW
 
+# Version 1.1.4
+* add pagebreak tag in editor
+* max file upload size is now based on system configuration (thx @jcapellman)
+
 # Verson 1.1.3
 * add new way to send emails (thanks to @Athemis)
 * add new visibility setting (organization)

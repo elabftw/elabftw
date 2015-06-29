@@ -30,3 +30,4 @@ and if yes, do it.
 - your code must follow [the PSR standards](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md)
 - add a plugin to your editor to show trailing whitespaces in red
 - add a plugin to your editor to show PSR-1 errors
+- remove BOM

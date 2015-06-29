@@ -46,6 +46,58 @@ function kdate()
 }
 
 /**
+ * Converts the php.ini upload size setting to a numeric value in MB
+ * Returns 2 if no value is found (using the default setting that was in there previously)
+ * @return int maximum size in MB of files allowed for upload
+*/
+function returnMaxUploadSize()
+{
+    $max_size = trim(ini_get('upload_max_filesize'));
+
+    if (!isset($max_size)) {
+        return 2;
+    }
+
+    $unit = strtolower($max_size[strlen($max_size)-1]);
+
+    // convert to Mb
+    switch($unit) {
+        case 'g':
+            $max_size *= 1000;
+            break;
+        case 'k':
+            $max_size /= 1024;
+            break;
+    }
+
+    // check that post_max_size is greater than upload_max_filesize
+    // if not, use this value
+    $post_max_size = trim(ini_get('post_max_size'));
+
+    if (!isset($post_max_size)) {
+        return 2;
+    }
+
+    $unit = strtolower($post_max_size[strlen($post_max_size)-1]);
+
+    // convert to Mb
+    switch($unit) {
+        case 'g':
+            $post_max_size *= 1000;
+            break;
+        case 'k':
+            $post_max_size /= 1024;
+            break;
+    }
+
+    if (intval($post_max_size) > intval($max_size)) {
+        return intval($max_size);
+    } else {
+        return intval($post_max_size);
+    }
+}
+
+/**
  * Show the units in human format from bytes.
  *
  * @param int $a_bytes size in bytes

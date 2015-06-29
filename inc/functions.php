@@ -48,10 +48,11 @@ function kdate()
 /**
  * Converts the php.ini upload size setting to a numeric value in MB
  * Returns 2 if no value is found (utilizing the default setting that was in there previously)
+ * @return int
 */
 function returnMaxUploadSize()
 {
-    $val = trim($ini_get('upload_max_filesize'));
+    $val = trim(ini_get('upload_max_filesize'));
 
     if (!isset($val)) {
         return 2;
@@ -68,7 +69,7 @@ function returnMaxUploadSize()
             break;
     }
 
-    return $val;
+    return intval($val);
 }
 
 /**

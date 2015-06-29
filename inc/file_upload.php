@@ -31,6 +31,7 @@ if (strpos($_SERVER['SCRIPT_FILENAME'], 'experiments')) {
 } else {
     $type = 'items';
 }
+echo returnMaxUploadSize();
 ?>
 <section class='box'>
     <!-- FILE UPLOAD BLOCK -->
@@ -67,7 +68,7 @@ var item_id = '<?php echo $id; ?>';
 Dropzone.options.elabftwDropzone = {
     // i18n message to user
     dictDefaultMessage: '<?php echo _('Drop files here to upload'); ?>',
-    maxFilesize: '<?php returnMaxUploadSize(); ?>', // MB
+    maxFilesize: '<?php echo returnMaxUploadSize(); ?>', // MB
     init: function() {
         this.on("complete", function() {
             // reload the #filesdiv once the file is uploaded

@@ -23,15 +23,12 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once 'inc/functions.php';
-
 // where are we, on experiments or items (database) page ?
 if (strpos($_SERVER['SCRIPT_FILENAME'], 'experiments')) {
     $type = 'experiments';
 } else {
     $type = 'items';
 }
-echo returnMaxUploadSize();
 ?>
 <section class='box'>
     <!-- FILE UPLOAD BLOCK -->

@@ -169,11 +169,22 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             fclose($tf);
             $zip->addFile($manifestpath, $folder . "/MANIFEST");
 
+            // add the export.txt file that is helpful for importing
+            // first line is title, rest is body
+            $txt = $title . "\n" . $body;
+            // fix utf8
+            $txt = utf8_encode($txt);
+            $txtpath = 'uploads/export/txt-' . uniqid();
+            $tf = fopen($txtpath, 'w+');
+            fwrite($tf, $txt);
+            fclose($tf);
+            $zip->addFile($txtpath, $folder . "/export.txt");
             // add the path of the files to be deleted in the files_to_delete array
             // (csv, MANIFEST and pdf)
             $files_to_delete[] = $csvpath;
             $files_to_delete[] = $manifestpath;
             $files_to_delete[] = $pdf->getPath();
+            $files_to_delete[] = $txtpath;
 
         } // end foreach
         // close the archive

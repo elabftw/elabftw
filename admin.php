@@ -85,6 +85,7 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
         <li class='tabhandle' id='tab4'><?php echo _('Types of items'); ?></li>
         <li class='tabhandle' id='tab5'><?php echo _('Experiments template'); ?></li>
         <li class='tabhandle' id='tab6'><?php echo _('Import CSV'); ?></li>
+        <li class='tabhandle' id='tab7'><?php echo _('Import ZIP'); ?></li>
     </ul>
 </menu>
 
@@ -459,10 +460,11 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
         }
         ?>
         </select><br>
-        <div id='import_block'>
-        <form enctype="multipart/form-data" action="admin.php" method="POST">
+        <div class='import_block'>
+        <form enctype="multipart/form-data" action="app/import.php" method="POST">
         <label for='uploader'><?php echo _('2. Select a CSV file to import:'); ?></label>
             <input id='uploader' name="csvfile" type="file" />
+            <input name='type' type='hidden' value='csv' />
             <div class='center'>
             <button type="submit" class='button' value="Upload"><?php echo _('Import CSV'); ?></button>
             </div>
@@ -470,77 +472,52 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
     </div>
 </div>
 
-<?php
-// CODE TO IMPORT CSV
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $row = 0;
-    $inserted = 0;
-    $column = array();
-    // open the file
-    $handle = fopen($_FILES['csvfile']['tmp_name'], 'r');
-    if ($handle == false) {
-        die('Could not open the file.');
-    }
+<!-- TABS 7 -->
+<div class='divhandle' id='tab7div'>
 
-    // get what type we want
-    if (isset($_COOKIE['itemType']) && is_pos_int($_COOKIE['itemType'])) {
-        $type = $_COOKIE['itemType'];
-    } else {
-        die('No cookies found');
-    }
-    // loop the lines
-    while ($data = fgetcsv($handle, 0, ",")) {
-        $num = count($data);
-        // get the column names (first line)
-        if ($row == 0) {
-            for ($i = 0; $i < $num; $i++) {
-                $column[] = $data[$i];
-            }
-            $row++;
-            continue;
-        }
-        $row++;
+    <h3><?php echo _('Import a ZIP file'); ?></h3>
+    <?php
 
-        $title = $data[0];
-        $body = '';
-        $j = 0;
-        foreach ($data as $line) {
-            $body .= "<p><strong>" . $column[$j] . " :</strong> " . $line . '</p>';
-            $j++;
-        }
-        // clean the body
-        $body = str_replace('<p><strong> :</strong> </p>', '', $body);
+    // file upload block
+    // show select of type
+    // SQL to get items names
+    $sql = "SELECT * FROM items_types WHERE team = :team_id";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
+    $req->execute();
+    ?>
+        <p style='text-align:justify'><?php echo _("This page will allow you to import a .elabftw.zip archive."); ?>
+<br><span class='strong'><?php echo _('You should make a backup of your database before importing thousands of items!'); ?></span></p>
 
-        // SQL for importing
-        $sql = "INSERT INTO items(team, title, date, body, userid, type) VALUES(:team, :title, :date, :body, :userid, :type)";
-        $req = $pdo->prepare($sql);
-        $result = $req->execute(array(
-            'team' => $_SESSION['team_id'],
-            'title' => $title,
-            'date' => kdate(),
-            'body' => $body,
-            'userid' => $_SESSION['userid'],
-            'type' => $type
-        ));
-        if ($result) {
-            $inserted++;
+        <label for='item_selector'><?php echo _('1. Select a type of item to import to:'); ?></label>
+        <select id='item_selector' onchange='goNext(this.value)'><option value=''>--------</option>
+        <?php
+        while ($items_types = $req->fetch()) {
+            echo "<option value='" . $items_types['id'] . "' name='type' ";
+            echo ">" . $items_types['name'] . "</option>";
         }
-    }
-    fclose($handle);
-    $msg_arr[] = $inserted . ' ' . _('items were imported successfully.');
-    $_SESSION['infos'] = $msg_arr;
-}
-// END CODE TO IMPORT CSV
-?>
+        ?>
+        </select><br>
+        <div class='import_block'>
+        <form enctype="multipart/form-data" action="app/import.php" method="POST">
+        <label for='uploader'><?php echo _('2. Select a ZIP file to import:'); ?></label>
+            <input id='uploader' name="zipfile" type="file" />
+            <input name='type' type='hidden' value='zip' />
+            <div class='center'>
+            <button type="submit" class='button' value="Upload"><?php echo _('Import ZIP'); ?></button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <script>
-// used on import csv to go to next step
+// used on import csv/zip to go to next step
 function goNext(x) {
     if(x == '') {
         return;
     }
     document.cookie = 'itemType='+x;
-    $('#import_block').show();
+    $('.import_block').show();
 }
 
 // color wheel
@@ -550,7 +527,7 @@ function color_wheel(div_name) {
 }
 
 $(document).ready(function() {
-    $('#import_block').hide();
+    $('.import_block').hide();
     // TABS
     // get the tab=X parameter in the url
     var params = getGetParameters();

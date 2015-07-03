@@ -649,18 +649,18 @@ function check_visibility($input)
  * @param string $type The type of item can be 'experiments' or 'items'
  * @return false|string path to csv file
  */
-function make_unique_csv($id, $type)
+function make_unique_csv($id, $type, $write = true)
 {
     global $pdo;
     // this is the lines in the csv file
     $list = array();
 
-    // Switch exp/items
+    // Here we populate the first row: it will be the column names
     if ($type === 'experiments') {
         $list[] = array('id', 'date', 'title', 'content', 'status', 'elabid', 'url');
         $table = 'experiments';
     } elseif ($type === 'items') {
-        $list[] = array('id', 'date', 'type', 'title', 'description', 'rating', 'url');
+        $list[] = array('title', 'description', 'id', 'date', 'type', 'rating', 'url');
         $table = 'items';
     } else {
         return false;
@@ -671,16 +671,17 @@ function make_unique_csv($id, $type)
             status.name AS statusname
             FROM experiments
             LEFT JOIN status ON (experiments.status = status.id)
-            WHERE experiments.id = $id";
+            WHERE experiments.id = :id";
     } else {
         $sql = "SELECT items.*,
             items_types.name AS typename
             FROM items
             LEFT JOIN items_types ON (items.type = items_types.id)
-            WHERE items.id = $id";
+            WHERE items.id = :id";
     }
 
     $req = $pdo->prepare($sql);
+    $req->bindParam('id', $id, PDO::PARAM_INT);
     $req->execute();
     $csv_data = $req->fetch();
 
@@ -689,6 +690,8 @@ function make_unique_csv($id, $type)
         $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
         $url = str_replace('make_zip.php', 'experiments.php', $url);
         $url .= "?mode=view&id=" . $csv_data['id'];
+
+        // populate
         $list[] = array(
             $csv_data['id'],
             $csv_data['date'],
@@ -704,32 +707,38 @@ function make_unique_csv($id, $type)
         $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
         $url = str_replace('make_zip.php', 'database.php', $url);
         $url .= "?mode=view&id=" . $csv_data['id'];
+
+        // populate
         $list[] = array(
+            htmlspecialchars_decode($csv_data['title'], ENT_QUOTES | ENT_COMPAT),
+            html_entity_decode(strip_tags(htmlspecialchars_decode($csv_data['body'], ENT_QUOTES | ENT_COMPAT))),
             $csv_data['id'],
             $csv_data['date'],
             htmlspecialchars_decode($csv_data['typename'], ENT_QUOTES | ENT_COMPAT),
-            htmlspecialchars_decode($csv_data['title'], ENT_QUOTES | ENT_COMPAT),
-            html_entity_decode(strip_tags(htmlspecialchars_decode($csv_data['body'], ENT_QUOTES | ENT_COMPAT))),
             $csv_data['rating'],
             $url
         );
     }
 
+    if ($write) {
+        // make CSV file
+        $filename = hash("sha512", uniqid(rand(), true));
+        $filepath = 'uploads/export/' . $filename;
 
-    // make CSV file
-    $filename = hash("sha512", uniqid(rand(), true));
-    $filepath = 'uploads/export/' . $filename;
+        $fp = fopen($filepath, 'w+');
+        // utf8 headers
+        fwrite($fp, "\xEF\xBB\xBF");
 
-    $fp = fopen($filepath, 'w+');
-    // utf8 headers
-    fwrite($fp, "\xEF\xBB\xBF");
+        foreach ($list as $fields) {
+                fputcsv($fp, $fields);
+        }
 
-    foreach ($list as $fields) {
-            fputcsv($fp, $fields);
+        fclose($fp);
+        return $filepath;
+    } else {
+        // yeah I know it's dirty…
+        return $list[1];
     }
-
-    fclose($fp);
-    return $filepath;
 }
 
 /**

@@ -84,6 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['type'] === 'csv') {
     fclose($handle);
     $msg_arr[] = $inserted . ' ' . _('items were imported successfully.');
     $_SESSION['infos'] = $msg_arr;
+    header('Location: ../database.php');
+    exit;
 }
 // END CODE TO IMPORT CSV
 

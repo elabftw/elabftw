@@ -34,76 +34,31 @@ require_once 'inc/info_box.php';
 // this is the lines in the csv file
 $list = array();
 
-// Switch exp/items
+// Here we populate the first row: it will be the column names
 if ($_GET['type'] === 'experiments') {
     $list[] = array('id', 'date', 'title', 'content', 'status', 'elabid', 'url');
     $table = 'experiments';
 } elseif ($_GET['type'] === 'items') {
-    $list[] = array('id', 'date', 'type', 'title', 'description', 'rating', 'url');
+    $list[] = array('title', 'description', 'id', 'date', 'type', 'rating', 'url');
     $table = 'items';
 } else {
-    die('bad type');
+        die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>Bad type", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
 }
-// Check id is valid and assign it to $id
+// loop through the id
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     $id_arr = explode(" ", $_GET['id']);
+
     foreach ($id_arr as $id) {
-        // MAIN LOOP
-        ////////////////
-        // SQL
-        if ($table === 'experiments') {
-            $sql = "SELECT experiments.*,
-                status.name AS statusname
-                FROM experiments
-                LEFT JOIN status ON (experiments.status = status.id)
-                WHERE experiments.id = $id";
-        } else {
-            $sql = "SELECT items.*,
-                items_types.name AS typename
-                FROM items
-                LEFT JOIN items_types ON (items.type = items_types.id)
-                WHERE items.id = $id";
+        // check the quality of id parameter here
+        if (!is_pos_int($id)) {
+            die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>" . _("The id parameter is not valid!"), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
         }
+        $list[] = make_unique_csv($id, $table, false);
+    }
 
-        $req = $pdo->prepare($sql);
-        $req->execute();
-        $csv_data = $req->fetch();
-
-        if ($table === 'experiments') {
-            // now let's get the URL so we can have a nice link in the csv
-            $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
-            $url = str_replace('make_csv.php', 'experiments.php', $url);
-            $url .= "?mode=view&id=" . $csv_data['id'];
-            $list[] = array(
-                $csv_data['id'],
-                $csv_data['date'],
-                htmlspecialchars_decode($csv_data['title'], ENT_QUOTES | ENT_COMPAT),
-                html_entity_decode(strip_tags(htmlspecialchars_decode($csv_data['body'], ENT_QUOTES | ENT_COMPAT))),
-                htmlspecialchars_decode($csv_data['statusname'], ENT_QUOTES | ENT_COMPAT),
-                $csv_data['elabid'],
-                $url
-            );
-
-        } else { // items
-            // now let's get the URL so we can have a nice link in the csv
-            $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
-            $url = str_replace('make_csv.php', 'database.php', $url);
-            $url .= "?mode=view&id=" . $csv_data['id'];
-            $list[] = array(
-                $csv_data['id'],
-                $csv_data['date'],
-                htmlspecialchars_decode($csv_data['typename'], ENT_QUOTES | ENT_COMPAT),
-                htmlspecialchars_decode($csv_data['title'], ENT_QUOTES | ENT_COMPAT),
-                html_entity_decode(strip_tags(htmlspecialchars_decode($csv_data['body'], ENT_QUOTES | ENT_COMPAT))),
-                $csv_data['rating'],
-                $url
-            );
-        }
-    } // end foreach
 } else {
-    die(_("The id parameter is not valid!"));
+        die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>" . _("The id parameter is not valid!"), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
 }
-
 
 // make CSV file
 $filename = hash("sha512", uniqid(rand(), true));
@@ -124,8 +79,8 @@ echo "<div class='well' style='margin-top:20px'>";
     // Get csv file size
     $filesize = filesize($filepath);
 echo "<p>" . _('Your CSV file is ready:') . "<br>
-        <a href='app/download.php?f=".$filepath . "&name=elabftw-export.csv' target='_blank'>
+        <a href='app/download.php?f=" . $filepath . "&name=elabftw-export.csv' target='_blank'>
         <img src='img/download.png' alt='download' /> elabftw-export.csv</a>
-        <span class='filesize'>(".format_bytes($filesize) . ")</span></p>";
+        <span class='filesize'>(" . format_bytes($filesize) . ")</span></p>";
 echo "</div>";
 require_once 'inc/footer.php';

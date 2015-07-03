@@ -48,7 +48,7 @@ class Create
      *
      * @return int The status ID
      */
-    public function getStatus()
+    private function getStatus()
     {
         global $pdo;
 

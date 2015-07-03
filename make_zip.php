@@ -56,10 +56,7 @@ $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     $id_arr = explode(" ", $_GET['id']);
     // BEGIN ZIP
-    // name of the downloadable file
-    $zipname = kdate() . ".export.elabftw";
-
-    $zipfile = 'uploads/export/' . $zipname . "-" . hash("sha512", uniqid(rand(), true)) . ".zip";
+    $zipfile = 'uploads/export/' . hash("sha512", uniqid(rand(), true)) . ".zip";
 
     $zip = new ZipArchive;
     $res = $zip->open($zipfile, ZipArchive::CREATE);
@@ -71,17 +68,29 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             // SQL to get info on the item we are zipping
             if ($table == 'experiments') {
                 $sql = "SELECT * FROM experiments WHERE id = :id LIMIT 1";
+                $req = $pdo->prepare($sql);
+                $req->bindParam(':id', $id, PDO::PARAM_INT);
+                $req->execute();
+                $zipped = $req->fetch();
+                if ($zipped['userid'] != $_SESSION['userid']) {
+                    die('Not your experiment!');
+                }
+
             } else {
                 $sql = "SELECT items.*,
                     items_types.name AS items_typesname
                     FROM items
                     LEFT JOIN items_types ON (items.type = items_types.id)
                     WHERE items.id = :id LIMIT 1";
+                $req = $pdo->prepare($sql);
+                $req->bindParam(':id', $id, PDO::PARAM_INT);
+                $req->execute();
+                $zipped = $req->fetch();
+                if ($zipped['team'] != $_SESSION['team_id']) {
+                    die('Not an item of your team!');
+                }
             }
-            $req = $pdo->prepare($sql);
-            $req->bindParam(':id', $id, PDO::PARAM_INT);
-            $req->execute();
-            $zipped = $req->fetch();
+
             $title = stripslashes($zipped['title']);
             // make a title without special char for folder inside .zip
             $clean_title = preg_replace('/[^A-Za-z0-9]/', '_', $title);
@@ -152,22 +161,6 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             // add CSV file to archive
             $csvpath = make_unique_csv($id, $table);
             $zip->addFile($csvpath, $folder . "/" . $clean_title . ".csv");
-            // add the MANIFEST file that lists the files in archive
-            $manifest = "";
-            for ($i = 0; $i < $zip->numFiles; $i++) {
-                $manifest .= $zip->getNameIndex($i) . "\n";
-            }
-            // add info about the creator + timestamp
-            $manifest .= "Zip archive created by " . $users['firstname'] . " " . $users['lastname'] . " on " . date('Y.m.d') . " at " . date('H:i:s') . ".\n";
-            $manifest .= "~~~\neLabFTW - Free open source lab manager - http://www.elabftw.net\n";
-            // fix utf8
-            $manifest = utf8_encode($manifest);
-            $manifest = "\xEF\xBB\xBF" . $manifest;
-            $manifestpath = 'uploads/export/manifest-' . uniqid();
-            $tf = fopen($manifestpath, 'w+');
-            fwrite($tf, $manifest);
-            fclose($tf);
-            $zip->addFile($manifestpath, $folder . "/MANIFEST");
 
             // add the export.txt file that is helpful for importing
             // first line is title, rest is body
@@ -182,11 +175,29 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             // add the path of the files to be deleted in the files_to_delete array
             // (csv, MANIFEST and pdf)
             $files_to_delete[] = $csvpath;
-            $files_to_delete[] = $manifestpath;
             $files_to_delete[] = $pdf->getPath();
             $files_to_delete[] = $txtpath;
 
         } // end foreach
+
+        // add the MANIFEST file that lists the files in archive
+        $manifest = "";
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $manifest .= $zip->getNameIndex($i) . "\n";
+        }
+        // add info about the creator + timestamp
+        $manifest .= "\nZip archive created by " . $users['firstname'] . " " . $users['lastname'] . " on " . date('Y.m.d') . " at " . date('H:i:s') . ".\n";
+        $manifest .= "~~~\neLabFTW - Free open source lab manager - http://www.elabftw.net\n";
+        // fix utf8
+        $manifest = utf8_encode($manifest);
+        $manifest = "\xEF\xBB\xBF" . $manifest;
+        $manifestpath = 'uploads/export/manifest-' . uniqid();
+        $tf = fopen($manifestpath, 'w+');
+        fwrite($tf, $manifest);
+        fclose($tf);
+        $zip->addFile($manifestpath, "MANIFEST");
+        $files_to_delete[] = $manifestpath;
+
         // close the archive
         $zip->close();
 
@@ -198,15 +209,18 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
         // PAGE BEGIN
         echo "<div class='well' style='margin-top:20px'>";
-        // Get the title if there is only one experiment in the zip
+        // set the name of the archive
+        // add the title if there is only one item
         if (count($id_arr) === 1) {
             $zipname = $zdate . "-" . $clean_title;
+        } else {
+            $zipname = kdate();
         }
         // Display download link (with attribute type=zip for download.php)
         echo "<p>" . _('Your ZIP archive is ready:') . "<br>
             <img src='img/download.png' alt='download' /> 
-            <a href='app/download.php?f=".$zipfile . "&name=" . $zipname . ".zip&type=zip' target='_blank'>
-            ".$zipname . ".zip</a>
+            <a href='app/download.php?f=".$zipfile . "&name=" . $zipname . ".elabftw.zip&type=zip' target='_blank'>
+            ".$zipname . ".elabftw.zip</a>
             <span class='filesize'>(".format_bytes(filesize($zipfile)) . ")</span></p>";
     } else {
         echo sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");

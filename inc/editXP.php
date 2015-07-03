@@ -313,19 +313,21 @@ $res = $getalllinks->execute(array(
         'team' => $_SESSION['team_id']
     ));
 
-
-while ($link = $getalllinks->fetch()) {
-    // we show the item only if it is from the team
-    if ($link['itemteam'] == $_SESSION['team_id']) {
-        $link_type = $link['name'];
-        // html_entity_decode is needed to convert the quotes
-        // str_replace to remove ' because it messes everything up
-        $link_name = str_replace("'", "", html_entity_decode(substr($link['title'], 0, 60), ENT_QUOTES));
-        // remove also the % (see issue #62)
-        $link_name = str_replace("%", "", $link_name);
-        echo "'" . $link['itemid'] . " - " . $link_type . " - " . $link_name . "',";
+if ($res) {
+    while ($link = $getalllinks->fetch()) {
+        // we show the item only if it is from the team
+        if ($link['itemteam'] == $_SESSION['team_id']) {
+            $link_type = $link['name'];
+            // html_entity_decode is needed to convert the quotes
+            // str_replace to remove ' because it messes everything up
+            $link_name = str_replace("'", "", html_entity_decode(substr($link['title'], 0, 60), ENT_QUOTES));
+            // remove also the % (see issue #62)
+            $link_name = str_replace("%", "", $link_name);
+            echo "'" . $link['itemid'] . " - " . $link_type . " - " . $link_name . "',";
+        }
     }
-}?>
+}
+?>
 		];
 		$( "#linkinput" ).autocomplete({
 			source: availableLinks

@@ -131,7 +131,7 @@ class Create
         // TAGS
         $sql = "SELECT tag FROM items_tags WHERE item_id = :id";
         $req = $pdo->prepare($sql);
-        $req->bindParam('id', $id);
+        $req->bindParam(':id', $id);
         $req->execute();
         $tag_number = $req->rowCount();
         if ($tag_number > 0) {
@@ -162,7 +162,7 @@ class Create
         // LINKS
         $linksql = "SELECT link_id FROM experiments_links WHERE item_id = :id";
         $linkreq = $pdo->prepare($linksql);
-        $linkreq->bindParam('id', $id);
+        $linkreq->bindParam(':id', $id);
         $linkreq->execute();
 
         while ($links = $linkreq->fetch()) {
@@ -192,7 +192,7 @@ class Create
             // SQL to get template
             $sql = "SELECT name, body FROM experiments_templates WHERE id = :id";
             $get_tpl = $pdo->prepare($sql);
-            $get_tpl->bindParam('id', $tpl);
+            $get_tpl->bindParam(':id', $tpl);
             $get_tpl->execute();
             $get_tpl_info = $get_tpl->fetch();
 
@@ -204,7 +204,7 @@ class Create
             // SQL to get body
             $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team";
             $get_body = $pdo->prepare($sql);
-            $get_body->bindParam('team', $_SESSION['team_id']);
+            $get_body->bindParam(':team', $_SESSION['team_id']);
             $get_body->execute();
             $experiments_templates = $get_body->fetch();
 
@@ -243,7 +243,7 @@ class Create
         // SQL to get data from the experiment we duplicate
         $sql = "SELECT title, body, visibility FROM experiments WHERE id = :id";
         $req = $pdo->prepare($sql);
-        $req->bindParam('id', $id);
+        $req->bindParam(':id', $id);
         $req->execute();
         $experiments = $req->fetch();
 
@@ -284,7 +284,7 @@ class Create
         // SQL to get template
         $sql = "SELECT template FROM items_types WHERE id = :id";
         $get_tpl = $pdo->prepare($sql);
-        $get_tpl->bindParam('id', $item_type);
+        $get_tpl->bindParam(':id', $item_type);
         $get_tpl->execute();
         $get_tpl_body = $get_tpl->fetch();
 
@@ -316,7 +316,7 @@ class Create
         // SQL to get data from the item we duplicate
         $sql = "SELECT * FROM items WHERE id = :id";
         $req = $pdo->prepare($sql);
-        $req->bindParam('id', $id);
+        $req->bindParam(':id', $id);
         $req->execute();
         $items = $req->fetch();
 

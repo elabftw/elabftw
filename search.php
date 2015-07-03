@@ -477,7 +477,10 @@ if (isset($_GET)) {
 
         // DATABASE SEARCH
         } elseif (is_pos_int($_GET['type']) || $_GET['type'] === 'database') {
+            // we want only stuff from our team
+            $sqlTeam = " AND i.team = " . $_SESSION['team_id'];
 
+            // display entire team database
             if ($_GET['type'] === 'database' &&
                 empty($title) &&
                 empty($body) &&
@@ -498,7 +501,7 @@ if (isset($_GET)) {
                 $sqlFirst = "SELECT i.* FROM items as i LEFT JOIN  items_tags as itag ON 1=1 WHERE type = :type";
             }
 
-            $sql = $sqlFirst . $sqlTitle . $sqlBody . $sqlTag . $sqlRating . $sqlDate . $sqlGroup;
+            $sql = $sqlFirst . $sqlTeam . $sqlTitle . $sqlBody . $sqlTag . $sqlRating . $sqlDate . $sqlGroup;
             $req = $pdo->prepare($sql);
             if ($_GET['type'] === 'database') {
                 $req->execute();

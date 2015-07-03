@@ -25,6 +25,11 @@
 ********************************************************************************/
 require_once '../inc/common.php';
 require_once ELAB_ROOT . 'inc/locale.php';
+require_once ELAB_ROOT . 'vendor/autoload.php';
+$msg_arr = array();
+
+$creator = new \Elabftw\Elabftw\Create();
+
 // Check ID
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
@@ -33,27 +38,23 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
 }
 
 if ($_GET['type'] === 'exp') {
-    $type = 'experiments';
+    $new_id = $creator->duplicateExperiment($_GET['id']);
 } elseif ($_GET['type'] === 'db') {
-    $type = 'items';
+    $new_id = $creator->duplicateItem($_GET['id']);
 } else {
     die(_("The type parameter is not valid."));
 }
 
-// this function will return the ID of the new experiment
-// or 0 if it failed somewhere
-$newid = duplicate_item($id, $type);
-
-if (is_pos_int($newid)) {
-    if ($type === 'experiments') {
+if (is_pos_int($new_id)) {
+    if ($_GET['type'] === 'exp') {
         $msg_arr[] = _('Experiment successfully duplicated.');
         $_SESSION['infos'] = $msg_arr;
-        header('location: ../experiments.php?mode=edit&id=' . $newid . '');
+        header('location: ../experiments.php?mode=edit&id=' . $new_id . '');
         exit;
     } else {
         $msg_arr[] = _('Database entry successfully duplicated.');
         $_SESSION['infos'] = $msg_arr;
-        header('location: ../database.php?mode=edit&id=' . $newid . '');
+        header('location: ../database.php?mode=edit&id=' . $new_id . '');
         exit;
     }
 } else {

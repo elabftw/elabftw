@@ -24,7 +24,7 @@
 *                                                                               *
 ********************************************************************************/
 require_once '../inc/common.php';
-require_once '../vendor/autoload.php';
+require_once ELAB_ROOT . 'vendor/autoload.php';
 require_once ELAB_ROOT . 'inc/locale.php';
 $msg_arr = array();
 

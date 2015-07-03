@@ -114,13 +114,3 @@ if ($type === 'experiments' || $type == 'items') {
         die('Cannot move the file.');
     }
 }
-
-// ZIP IMPORT
-if ($type == 'zip_import') {
-    // create an item in the DB
-    // open the zip
-    // check it contains the manifest
-    // upload files to newly created item
-    // import html into item
-
-}

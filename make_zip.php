@@ -73,7 +73,10 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                 $req->execute();
                 $zipped = $req->fetch();
                 if ($zipped['userid'] != $_SESSION['userid']) {
-                    die('Not your experiment!');
+                    $msg_arr[] = "You are trying to download an experiment you don't own!";
+                    $_SESSION['errors'] = $msg_arr;
+                    header('Location: experiments.php');
+                    exit;
                 }
 
             } else {
@@ -87,7 +90,10 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                 $req->execute();
                 $zipped = $req->fetch();
                 if ($zipped['team'] != $_SESSION['team_id']) {
-                    die('Not an item of your team!');
+                    $msg_arr[] = "You are trying to download an item you don't own!";
+                    $_SESSION['errors'] = $msg_arr;
+                    header('Location: search.php');
+                    exit;
                 }
             }
 

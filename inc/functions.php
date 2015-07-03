@@ -647,7 +647,7 @@ function check_visibility($input)
  *
  * @param int $id The id of the item to export
  * @param string $type The type of item can be 'experiments' or 'items'
- * @return false|string path to csv file
+ * @return false|string|string[] path to csv file or if write is false, array of csv lines
  */
 function make_unique_csv($id, $type, $write = true)
 {

@@ -36,11 +36,7 @@ class Create
      */
     private function checkTpl($tpl)
     {
-        if (is_pos_int($tpl)) {
-            return true;
-        } else {
-            return false;
-        }
+        return is_pos_int($tpl);
     }
 
     /**
@@ -90,10 +86,10 @@ class Create
      * Copy the tags from one experiment to an other.
      *
      * @param int $id The id of the original experiment
-     * @param int $new_id The id of the new experiment that will receive the tags
+     * @param int $newId The id of the new experiment that will receive the tags
      * @return null
      */
-    private function copyExperimentTags($id, $new_id)
+    private function copyExperimentTags($id, $newId)
     {
         global $pdo;
 
@@ -105,12 +101,12 @@ class Create
         $tag_number = $req->rowCount();
         if ($tag_number > 0) {
             while ($tags = $req->fetch()) {
-                // Put them in the new one. here $new_id is the new exp created
+                // Put them in the new one. here $newId is the new exp created
                 $sql = "INSERT INTO experiments_tags(tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
                 $reqtag = $pdo->prepare($sql);
-                $result_tags = $reqtag->execute(array(
+                $reqtag->execute(array(
                     'tag' => $tags['tag'],
-                    'item_id' => $new_id,
+                    'item_id' => $newId,
                     'userid' => $_SESSION['userid']
                 ));
             }
@@ -121,10 +117,10 @@ class Create
      * Copy the tags from one item to an other.
      *
      * @param int $id The id of the original item
-     * @param int $new_id The id of the new item that will receive the tags
+     * @param int $newId The id of the new item that will receive the tags
      * @return null
      */
-    private function copyItemTags($id, $new_id)
+    private function copyItemTags($id, $newId)
     {
         global $pdo;
 
@@ -142,7 +138,7 @@ class Create
                 $reqtag = $pdo->prepare($sql);
                 $reqtag->execute(array(
                     'tag' => $tags['tag'],
-                    'item_id' => $new_id
+                    'item_id' => $newId
                 ));
             }
         }
@@ -152,10 +148,10 @@ class Create
      * Copy the links from one experiment to an other.
      *
      * @param int $id The id of the original experiment
-     * @param int $new_id The id of the new experiment that will receive the links
+     * @param int $newId The id of the new experiment that will receive the links
      * @return null
      */
-    private function copyLinks($id, $new_id)
+    private function copyLinks($id, $newId)
     {
         global $pdo;
 
@@ -170,7 +166,7 @@ class Create
             $req = $pdo->prepare($sql);
             $req->execute(array(
                 'link_id' => $links['link_id'],
-                'item_id' => $new_id
+                'item_id' => $newId
             ));
         }
     }
@@ -179,7 +175,7 @@ class Create
     /**
      * Create an experiment.
      *
-     * @param int $tpl the template on which to base the experiment
+     * @param int|null $tpl the template on which to base the experiment
      * @return int the new id of the experiment
      */
     public function createExperiment($tpl = null)
@@ -263,11 +259,11 @@ class Create
             'elabid' => self::generateElabid(),
             'visibility' => $experiments['visibility'],
             'userid' => $_SESSION['userid']));
-        $new_id = $pdo->lastInsertId();
+        $newId = $pdo->lastInsertId();
 
-        self::copyExperimentTags($id, $new_id);
-        self::copyLinks($id, $new_id);
-        return $new_id;
+        self::copyExperimentTags($id, $newId);
+        self::copyLinks($id, $newId);
+        return $newId;
     }
 
     /**
@@ -307,7 +303,7 @@ class Create
      * Duplicate an item.
      *
      * @param int $id The id of the item to duplicate
-     * @return int $new_id The id of the newly created item
+     * @return int $newId The id of the newly created item
      */
     public function duplicateItem($id)
     {
@@ -331,9 +327,9 @@ class Create
             'userid' => $_SESSION['userid'],
             'type' => $items['type']
         ));
-        $new_id = $pdo->lastInsertId();
+        $newId = $pdo->lastInsertId();
 
-        self::copyItemTags($id, $new_id);
-        return $new_id;
+        self::copyItemTags($id, $newId);
+        return $newId;
     }
 }

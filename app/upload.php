@@ -34,14 +34,13 @@ require_once '../inc/common.php';
  */
 
 // check the item_id
-if (is_pos_int($_GET['item_id'])) {
+if (isset($_GET['item_id']) && is_pos_int($_GET['item_id'])) {
     $item_id = $_GET['item_id'];
-} else {
-    die('Bad ID');
 }
 
 // are we uploading for an experiment or a database item ?
-if ($_GET['type'] === 'experiments' || $_GET['type'] === 'items') {
+$type_whitelist = array('experiments', 'items', 'zip_import');
+if (in_array($_GET['type'], $type_whitelist)) {
     $type = $_GET['type'];
 } else {
     die('Bad type');
@@ -54,60 +53,74 @@ if ($type === 'experiments') {
     }
 }
 
+// check we actually have files
 if (count($_FILES) === 0) {
     die('No files received');
 }
 
-// Create a clean filename : remplace all non letters/numbers by '.' (this way we don't lose the file extension)
-$realname = preg_replace('/[^A-Za-z0-9]/', '.', $_FILES['file']['name']);
+// UPLOAD A FILE TO AN EXPERIMENT OR DB ITEM
+if ($type === 'experiments' || $type == 'items') {
+    // Create a clean filename : remplace all non letters/numbers by '.' (this way we don't lose the file extension)
+    $realname = preg_replace('/[^A-Za-z0-9]/', '.', $_FILES['file']['name']);
 
-// get extension
-$ext = get_ext($realname);
+    // get extension
+    $ext = get_ext($realname);
 
-// Create a unique long filename + extension
-$longname = hash("sha512", uniqid(rand(), true)) . "." . $ext;
+    // Create a unique long filename + extension
+    $longname = hash("sha512", uniqid(rand(), true)) . "." . $ext;
 
-// Try to move the file to its final place
-if (rename($_FILES['file']['tmp_name'], ELAB_ROOT . 'uploads/' . $longname)) {
+    // Try to move the file to its final place
+    if (rename($_FILES['file']['tmp_name'], ELAB_ROOT . 'uploads/' . $longname)) {
 
-    // generate a md5sum of the file if it's not too big
-    if ($_FILES['file']['size'] < 5000000) {
-        $md5 = hash_file('md5', ELAB_ROOT . 'uploads/' . $longname);
+        // generate a md5sum of the file if it's not too big
+        if ($_FILES['file']['size'] < 5000000) {
+            $md5 = hash_file('md5', ELAB_ROOT . 'uploads/' . $longname);
+        } else {
+            $md5 = null;
+        }
+
+        // SQL TO PUT FILE IN UPLOADS TABLE
+        $sql = "INSERT INTO uploads(
+            real_name,
+            long_name,
+            comment,
+            item_id,
+            userid,
+            type,
+            md5
+        ) VALUES(
+            :real_name,
+            :long_name,
+            :comment,
+            :item_id,
+            :userid,
+            :type,
+            :md5
+        )";
+
+        $req = $pdo->prepare($sql);
+        $req->execute(array(
+            'real_name' => $realname,
+            'long_name' => $longname,
+            // comment can be edited after upload
+            // not i18n friendly because it is used somewhere else (not a valid reason, but for the moment that will do)
+            'comment' => 'Click to add a comment',
+            'item_id' => $item_id,
+            'userid' => $_SESSION['userid'],
+            'type' => $type,
+            'md5' => $md5
+        ));
     } else {
-        $md5 = null;
+        die('Cannot move the file.');
     }
+}
 
-    // SQL TO PUT FILE IN UPLOADS TABLE
-    $sql = "INSERT INTO uploads(
-        real_name,
-        long_name,
-        comment,
-        item_id,
-        userid,
-        type,
-        md5
-    ) VALUES(
-        :real_name,
-        :long_name,
-        :comment,
-        :item_id,
-        :userid,
-        :type,
-        :md5
-    )";
+// ZIP IMPORT
+if ($type == 'zip_import') {
+    // create an item in the DB
+    // open the zip
+    // check it contains the manifest
+    // upload files to newly created item
+    // import html into item
 
-    $req = $pdo->prepare($sql);
-    $req->execute(array(
-        'real_name' => $realname,
-        'long_name' => $longname,
-        // comment can be edited after upload
-        // not i18n friendly because it is used somewhere else (not a valid reason, but for the moment that will do)
-        'comment' => 'Click to add a comment',
-        'item_id' => $item_id,
-        'userid' => $_SESSION['userid'],
-        'type' => $type,
-        'md5' => $md5
-    ));
-} else {
-    die('Cannot move the file.');
 }

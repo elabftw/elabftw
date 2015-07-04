@@ -170,7 +170,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
             // add the export.txt file that is helpful for importing
             // first line is title, rest is body
-            $txt = $title . "\n" . $body;
+            $txt = $title . "\n" . $body ."\n";
             // fix utf8
             $txt = utf8_encode($txt);
             $txtpath = 'uploads/export/txt-' . uniqid();

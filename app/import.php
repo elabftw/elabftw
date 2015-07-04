@@ -101,10 +101,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['type'] === 'zip') {
 
         // we need to get title and body from the txt file
         $file = "../uploads/tmp/" . $folder_name . "/export.txt";
-        $file_arr = file($file);
-        $title = $file_arr[0];
-        unset($file_array[0]);
-        $body = implode("", $file_arr);
+        $content = file_get_contents($file);
+        $lines = explode("\n", $content);
+        $title = $lines[0];
+        $body = implode("\n", array_slice($lines, 1));
 
         // we need to attach files
 
@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['type'] === 'zip') {
         ));
         $msg_arr[] = _("Zip imported successfully.");
         $_SESSION['infos'] = $msg_arr;
-        header('Location: ../admin.php');
+        header('Location: ../database.php');
     } else {
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#17", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
         $_SESSION['errors'] = $msg_arr;

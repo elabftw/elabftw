@@ -58,10 +58,10 @@ function returnMaxUploadSize()
         return 2;
     }
 
-    $unit = strtolower($max_size[strlen($max_size)-1]);
+    $unit = strtolower($max_size[strlen($max_size) - 1]);
 
     // convert to Mb
-    switch($unit) {
+    switch ($unit) {
         case 'g':
             $max_size *= 1000;
             break;
@@ -78,10 +78,10 @@ function returnMaxUploadSize()
         return 2;
     }
 
-    $unit = strtolower($post_max_size[strlen($post_max_size)-1]);
+    $unit = strtolower($post_max_size[strlen($post_max_size) - 1]);
 
     // convert to Mb
-    switch($unit) {
+    switch ($unit) {
         case 'g':
             $post_max_size *= 1000;
             break;

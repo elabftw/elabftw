@@ -301,13 +301,14 @@ $users = $req->fetch();
     while ($exp_tpl = $req->fetch()) {
     ?>
     <div class='subdivhandle' id='subtab<?php echo $i; ?>div'>
+    <img class='align_right' src='img/download.png' title='export template' alt='export' onClick="exportTpl('<?php echo $exp_tpl['name']; ?>', '<?php echo $exp_tpl['id']; ?>')" />
         <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $exp_tpl['id']; ?>','tpl', 'ucp.php')" />
         <form action='app/ucp-exec.php' method='post'>
         <input type='hidden' name='tpl_form' />
         <?php
             echo "<input type='hidden' name='tpl_id[]' value='" . $exp_tpl['id'] . "' />";
             echo "<input name='tpl_name[]' value='" . stripslashes($exp_tpl['name']) . "' /><br />";
-            echo "<textarea name='tpl_body[]' class='mceditable' style='height:500px;'>" . stripslashes($exp_tpl['body']) . "</textarea><br />";
+            echo "<textarea id='" . $exp_tpl['id'] . "' name='tpl_body[]' class='mceditable' style='height:500px;'>" . stripslashes($exp_tpl['body']) . "</textarea><br />";
             echo "<div class='center'>";
             echo "<button type='submit' name='Submit' class='button'>" . _('Edit template') . "</button>";
             echo "</div>";
@@ -322,7 +323,16 @@ $users = $req->fetch();
 
 <?php require_once('inc/footer.php'); ?>
 
+<script src='js/file-saver.js/FileSaver.js'></script>
 <script>
+function exportTpl(name, id) {
+    // we have the name of the template used for filename
+    // and we have the id of the editor to get the content from
+    // we don't use activeEditor because it requires a click inside the editing area
+    var content = tinyMCE.get(id).getContent()
+    var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, name + ".elabftw.tpl");
+}
 // READY ? GO !!
 $(document).ready(function() {
     // TABS

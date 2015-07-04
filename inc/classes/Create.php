@@ -95,13 +95,12 @@ class Create
         global $pdo;
 
         // TAGS
-        $sql = "SELECT tag FROM :table WHERE item_id = :id";
-        $req = $pdo->prepare($sql);
         if ($type === 'experiment') {
-            $req->bindParam(':table', 'experiments_tags');
+            $sql = "SELECT tag FROM experiments_tags WHERE item_id = :id";
         } else {
-            $req->bindParam(':table', 'items_tags');
+            $sql = "SELECT tag FROM items_tags WHERE item_id = :id";
         }
+        $req = $pdo->prepare($sql);
         $req->bindParam(':id', $id);
         $req->execute();
         $tag_number = $req->rowCount();

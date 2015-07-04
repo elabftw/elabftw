@@ -248,10 +248,10 @@ class Create
     /**
      * Create an item.
      *
-     * @param int $item_type What kind of item we want to create.
+     * @param int $itemType What kind of item we want to create.
      * @return int the new id of the item
      */
-    public function createItem($item_type)
+    public function createItem($itemType)
     {
 
         global $pdo;
@@ -259,7 +259,7 @@ class Create
         // SQL to get template
         $sql = "SELECT template FROM items_types WHERE id = :id";
         $get_tpl = $pdo->prepare($sql);
-        $get_tpl->bindParam(':id', $item_type);
+        $get_tpl->bindParam(':id', $itemType);
         $get_tpl->execute();
         $get_tpl_body = $get_tpl->fetch();
 
@@ -272,7 +272,7 @@ class Create
             'date' => kdate(),
             'body' => $get_tpl_body['template'],
             'userid' => $_SESSION['userid'],
-            'type' => $item_type
+            'type' => $itemType
         ));
 
         return $pdo->lastInsertId();

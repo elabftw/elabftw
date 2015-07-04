@@ -1,8 +1,11 @@
 # Changelog for eLabFTW
 
 # Version 1.1.4
+* fix bug in search page showing tags of other teams
+* add possibility to import .elabftw.zip archives in the database
 * add pagebreak tag in editor
 * max file upload size is now based on system configuration (thx @jcapellman)
+* move creation/duplication functions to Create() class
 
 # Verson 1.1.3
 * add new way to send emails (thanks to @Athemis)

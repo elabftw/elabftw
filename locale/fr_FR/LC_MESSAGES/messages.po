@@ -2,14 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2015-03-04 14:57+0100\n"
-"PO-Revision-Date: 2015-05-11 16:52+0100\n"
+"PO-Revision-Date: 2015-07-04 12:33+0100\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.7.5\n"
+"X-Generator: Poedit 1.8.1\n"
 "X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -241,6 +241,9 @@ msgstr "Importer un fichier CSV"
 msgid "This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file."
 msgstr "Cette page vous permet d'importer un fichier .csv (un tableur Excel) dans la base de données.<br>D'abord il faut ouvrir le fichier (en .xls/.xlsx) dans Excel ou Libreoffice et l'enregistrer en .csv.<br>Pour que l'importation se passe "
 
+msgid "This page will allow you to import a .elabftw.zip archive."
+msgstr "Cette page permet l'import d'archive .elabftw.zip."
+
 #: elabftw/admin.php:448
 msgid "You should make a backup of your database before importing thousands of items!"
 msgstr "Faîtes une sauvegarde de votre base de données (SQL) avant d'importer des milliers d'items !"
@@ -254,8 +257,10 @@ msgid "2. Select a CSV file to import:"
 msgstr "2. Choisissez un fichier CSV :"
 
 #: elabftw/admin.php:527
-msgid "items were imported successfully."
-msgstr "items ont été importés avec succès."
+msgid "item imported successfully."
+msgid_plural "items imported successfully."
+msgstr[0] "item importé avec succès."
+msgstr[1] "items importés avec succès."
 
 #: elabftw/app/admin-exec.php:33 elabftw/app/editDB-exec.php:38
 #: elabftw/inc/editDB.php:34 elabftw/inc/viewDB.php:31 elabftw/revision.php:40

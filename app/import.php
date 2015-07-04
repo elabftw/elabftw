@@ -25,11 +25,12 @@
 *                                                                               *
 ********************************************************************************/
 require_once '../inc/common.php';
+$inserted = 0;
+$errflag = false;
 
 // CODE TO IMPORT CSV
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['type'] === 'csv') {
     $row = 0;
-    $inserted = 0;
     $column = array();
     // open the file
     $handle = fopen($_FILES['csvfile']['tmp_name'], 'r');
@@ -98,18 +99,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['type'] === 'zip') {
     if ($zip->open($_FILES['zipfile']['tmp_name']) && $zip->extractTo('../uploads/tmp/')) {
         // how many items do we have to import ?
         // we loop through all the entries
-        for($i = 0;$i<20000;$i++) {
+        for ($i = 0; $i<20000; $i++) {
             // MANIFEST will always be the last entry
             if ($zip->getNameIndex($i) === 'MANIFEST') {
                 break;
             }
             $dirs[] = dirname($zip->getNameIndex($i));
         }
+        $zip->close();
         // we want to know how many unique item are in the zip
         $dirs = array_unique($dirs);
 
         // now for each folder, import the things
-        foreach($dirs as $dir) {
+        foreach ($dirs as $dir) {
             // we need to get title and body from the txt file
             $file = "../uploads/tmp/" . $dir . "/export.txt";
             $content = file_get_contents($file);
@@ -137,22 +139,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['type'] === 'zip') {
                 'userid' => $_SESSION['userid'],
                 'type' => $type
             ));
+            // count the number of inserts
+            if ($result) {
+                $inserted++;
+            } else {
+                $errflag = true;
             }
-        $zip->close();
-
-        if ($result) {
-            $msg_arr[] = _("Zip imported successfully.");
-            $_SESSION['infos'] = $msg_arr;
-            header('Location: ../database.php');
-        } else {
-            $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#17", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-            $_SESSION['errors'] = $msg_arr;
-            header('Location: ../admin.php');
         }
     } else {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#18", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: ../admin.php');
+        $errflag = true;
     }
 }
 // END CODE TO IMPORT ZIP
+
+// REDIRECT
+if (!$errflag) {
+    $msg_arr[] = $inserted . ' ' . ngettext('item imported successfully.', 'items imported successfully.', $inserted);
+    $_SESSION['infos'] = $msg_arr;
+    header('Location: ../database.php');
+} else {
+    $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#17", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+    $_SESSION['errors'] = $msg_arr;
+    header('Location: ../admin.php');
+}

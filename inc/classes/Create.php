@@ -83,63 +83,44 @@ class Create
     }
 
     /**
-     * Copy the tags from one experiment to an other.
+     * Copy the tags from one experiment/item to an other.
      *
-     * @param int $id The id of the original experiment
-     * @param int $newId The id of the new experiment that will receive the tags
+     * @param int $id The id of the original experiment/item
+     * @param int $newId The id of the new experiment/item that will receive the tags
+     * @param string $type can be experiment or item
      * @return null
      */
-    private function copyExperimentTags($id, $newId)
+    private function copyTags($id, $newId, $type)
     {
         global $pdo;
 
         // TAGS
-        $sql = "SELECT tag FROM experiments_tags WHERE item_id = :id";
+        $sql = "SELECT tag FROM :table WHERE item_id = :id";
         $req = $pdo->prepare($sql);
-        $req->bindParam('id', $id);
-        $req->execute();
-        $tag_number = $req->rowCount();
-        if ($tag_number > 0) {
-            while ($tags = $req->fetch()) {
-                // Put them in the new one. here $newId is the new exp created
-                $sql = "INSERT INTO experiments_tags(tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
-                $reqtag = $pdo->prepare($sql);
-                $reqtag->execute(array(
-                    'tag' => $tags['tag'],
-                    'item_id' => $newId,
-                    'userid' => $_SESSION['userid']
-                ));
-            }
+        if ($type === 'experiment') {
+            $req->bindParam(':table', 'experiments_tags');
+        } else {
+            $req->bindParam(':table', 'items_tags');
         }
-    }
-
-    /**
-     * Copy the tags from one item to an other.
-     *
-     * @param int $id The id of the original item
-     * @param int $newId The id of the new item that will receive the tags
-     * @return null
-     */
-    private function copyItemTags($id, $newId)
-    {
-        global $pdo;
-
-        // TAGS
-        $sql = "SELECT tag FROM items_tags WHERE item_id = :id";
-        $req = $pdo->prepare($sql);
         $req->bindParam(':id', $id);
         $req->execute();
         $tag_number = $req->rowCount();
         if ($tag_number > 0) {
             while ($tags = $req->fetch()) {
-                // Put them in the new one. here $id is the new exp created
-                // there is no userId for items (hence the need for two functions)
-                $sql = "INSERT INTO items_tags(tag, item_id) VALUES(:tag, :item_id)";
-                $reqtag = $pdo->prepare($sql);
-                $reqtag->execute(array(
-                    'tag' => $tags['tag'],
-                    'item_id' => $newId
-                ));
+                // Put them in the new one. here $newId is the new exp created
+                if ($type === 'experiment') {
+                    $sql = "INSERT INTO experiments_tags(tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
+                    $reqtag = $pdo->prepare($sql);
+                    $reqtag->bindParam(':tag', $tags['tag']);
+                    $reqtag->bindParam(':item_id', $newId);
+                    $reqtag->bindParam(':userid', $_SESSION['userid']);
+                } else {
+                    $sql = "INSERT INTO items_tags(tag, item_id) VALUES(:tag, :item_id)";
+                    $reqtag = $pdo->prepare($sql);
+                    $reqtag->bindParam(':tag', $tags['tag']);
+                    $reqtag->bindParam(':item_id', $newId);
+                }
+                $reqtag->execute();
             }
         }
     }
@@ -170,7 +151,6 @@ class Create
             ));
         }
     }
-
 
     /**
      * Create an experiment.
@@ -261,7 +241,7 @@ class Create
             'userid' => $_SESSION['userid']));
         $newId = $pdo->lastInsertId();
 
-        self::copyExperimentTags($id, $newId);
+        self::copyTags($id, $newId, 'experiment');
         self::copyLinks($id, $newId);
         return $newId;
     }
@@ -329,7 +309,7 @@ class Create
         ));
         $newId = $pdo->lastInsertId();
 
-        self::copyItemTags($id, $newId);
+        self::copyTags($id, $newId, 'item');
         return $newId;
     }
 }

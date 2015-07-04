@@ -32,18 +32,35 @@ $errflag = false;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['type'] === 'csv') {
     $row = 0;
     $column = array();
+    // look at mime type. not a trusted source, but it can prevent dumb errors (like uploading a .zip)
+    // there is null in the array because elabftw csv have a null mime type
+    $mimes = array(null, 'application/vnd.ms-excel','text/plain','text/csv','text/tsv');
+    if (!in_array($_FILES['file']['type'], $mimes)) {
+        $errflag = true;
+        $msg_arr[] = _("This doesn't look like a .csv file. Import aborted.");
+    }
     // open the file
     $handle = fopen($_FILES['csvfile']['tmp_name'], 'r');
     if ($handle == false) {
-        die('Could not open the file.');
+        $errflag = true;
+        $msg_arr[] = _("Could not open the file.");
     }
 
     // get what type we want
     if (isset($_COOKIE['itemType']) && is_pos_int($_COOKIE['itemType'])) {
         $type = $_COOKIE['itemType'];
     } else {
-        die('No cookies found');
+        $errflag = true;
+        $msg_arr[] = _("No cookies found. Import aborted.");
     }
+
+
+    if ($errflag) {
+        $_SESSION['errors'] = $msg_arr;
+        header('Location: ../admin.php');
+        exit;
+    }
+
     // loop the lines
     while ($data = fgetcsv($handle, 0, ",")) {
         $num = count($data);
@@ -80,13 +97,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['type'] === 'csv') {
         ));
         if ($result) {
             $inserted++;
+        } else {
+            $errflag = true;
         }
     }
     fclose($handle);
-    $msg_arr[] = $inserted . ' ' . _('items were imported successfully.');
-    $_SESSION['infos'] = $msg_arr;
-    header('Location: ../database.php');
-    exit;
 }
 // END CODE TO IMPORT CSV
 

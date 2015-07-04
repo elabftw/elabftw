@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['type'] === 'csv') {
     $column = array();
     // look at mime type. not a trusted source, but it can prevent dumb errors (like uploading a .zip)
     // there is null in the array because elabftw csv have a null mime type
-    $mimes = array(null, 'application/vnd.ms-excel','text/plain','text/csv','text/tsv');
+    $mimes = array(null, 'application/vnd.ms-excel', 'text/plain', 'text/csv', 'text/tsv');
     if (!in_array($_FILES['file']['type'], $mimes)) {
         $errflag = true;
         $msg_arr[] = _("This doesn't look like a .csv file. Import aborted.");
@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['type'] === 'zip') {
     if ($zip->open($_FILES['zipfile']['tmp_name']) && $zip->extractTo('../uploads/tmp/')) {
         // how many items do we have to import ?
         // we loop through all the entries
-        for ($i = 0; $i<20000; $i++) {
+        for ($i = 0; $i < 20000; $i++) {
             // MANIFEST will always be the last entry
             if ($zip->getNameIndex($i) === 'MANIFEST') {
                 break;

@@ -79,6 +79,7 @@ require_once 'inc/info_box.php';
                     $sql = "SELECT tag, COUNT(id) as nbtag, userid FROM experiments_tags WHERE userid = :userid GROUP BY tag ORDER BY tag ASC";
                     $req = $pdo->prepare($sql);
                     $req->execute(array(
+                        // TODO here we should replace with whatever userid is selected on the 'searchonly' select
                         'userid' => $_SESSION['userid']
                     ));
                     while ($exp_tags = $req->fetch()) {
@@ -97,6 +98,7 @@ require_once 'inc/info_box.php';
                 <select name='tag_db'>
                     <option value=''><?php echo _('Select a tag'); ?></option>
                     <?php // Database items types
+                    // TODO here we should show only the tags linked with the type of item selected in the 'searchin' select
                     $sql = "SELECT tag, COUNT(id) as nbtag FROM items_tags WHERE team_id = :team GROUP BY tag ORDER BY tag ASC";
                     $req = $pdo->prepare($sql);
                     $req->execute(array(
@@ -577,6 +579,7 @@ $(document).ready(function(){
             $("#tag_db").show();
         }
     });
+
 <?php
 // scroll to anchor if there is a search
 if (isset($_GET)) {

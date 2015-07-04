@@ -74,7 +74,7 @@ require_once 'inc/info_box.php';
                 <label for='tag_exp'><?php echo _('With the tag'); ?></label>
                 <select name='tag_exp'>
                     <option value=''><?php echo _('Select a Tag'); ?></option>
-                    <?php // Database items types
+                    <?php // Experiments tags
                     // TODO https://github.com/elabftw/elabftw/issues/135
                     $sql = "SELECT tag, COUNT(id) as nbtag, userid FROM experiments_tags WHERE userid = :userid GROUP BY tag ORDER BY tag ASC";
                     $req = $pdo->prepare($sql);
@@ -97,7 +97,7 @@ require_once 'inc/info_box.php';
                 <select name='tag_db'>
                     <option value=''><?php echo _('Select a tag'); ?></option>
                     <?php // Database items types
-                    $sql = "SELECT tag, COUNT(id) as nbtag FROM items_tags GROUP BY tag ORDER BY tag ASC";
+                    $sql = "SELECT tag, COUNT(id) as nbtag FROM items_tags WHERE team_id = :team GROUP BY tag ORDER BY tag ASC";
                     $req = $pdo->prepare($sql);
                     $req->execute(array(
                         'team' => $_SESSION['team_id']
@@ -569,10 +569,10 @@ $(document).ready(function(){
     ?>
 
     $('#searchin').on('change', function() {
-        if(this.value == 'experiments'){
+        if (this.value == 'experiments') {
             $("#tag_exp").show();
             $("#tag_db").hide();
-        }else{
+        } else {
             $("#tag_exp").hide();
             $("#tag_db").show();
         }

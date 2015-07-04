@@ -55,13 +55,15 @@ while ($show = $req->fetch()) {
 }
 
 if (!$table_is_here) {
-    q("CREATE TABLE IF NOT EXISTS `items_revisions` (
-      `id` int(10) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
-      `item_id` int(10) unsigned NOT NULL,
-      `body` text NOT NULL,
-      `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      `userid` int(11) NOT NULL
-    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;");
+    q(
+        "CREATE TABLE IF NOT EXISTS `items_revisions` (
+        `id` int(10) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        `item_id` int(10) unsigned NOT NULL,
+        `body` text NOT NULL,
+        `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        `userid` int(11) NOT NULL
+        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;"
+    );
 }
 
 // 20150324 : adding secret key used to encrypt the SMTP password
@@ -314,7 +316,6 @@ while ($experiment = $req->fetch()) {
     }
     // if we can't find the status id in the status list of the team
     // then we need to update the status to one owned by the team
-    var_dump(!in_array($experiment['status'], $status_arr));
     if (!in_array($experiment['status'], $status_arr)) {
         $update_sql = "UPDATE experiments SET status = :status WHERE id = :id";
         $req3 = $pdo->prepare($update_sql);
@@ -323,6 +324,25 @@ while ($experiment = $req->fetch()) {
         $req3->bindParam(':id', $experiment['id']);
         $req3->execute();
     }
+}
+
+// //////////////////////////////////////////
+// INSERT NEW CODE BLOCKS ABOVE THIS LINE //
+// /////////////////////////////////////////
+
+// cleanup files in tmp and export
+$dir = ELAB_ROOT . '/uploads/tmp';
+$di = new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS);
+$ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
+foreach ($ri as $file) {
+    $file->isDir() ? rmdir($file) : unlink($file);
+}
+
+$dir = ELAB_ROOT . '/uploads/export';
+$di = new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS);
+$ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
+foreach ($ri as $file) {
+    $file->isDir() ? rmdir($file) : unlink($file);
 }
 
 // END

@@ -182,14 +182,6 @@ msgstr "Supprimer cet utilisateur !"
 msgid "Add a new status"
 msgstr "Ajouter un nouveau statut"
 
-#: elabftw/admin.php:243
-msgid "New status name"
-msgstr "Nouveau nom du status"
-
-#: elabftw/admin.php:256
-msgid "Edit an existing status"
-msgstr "Éditer un statut existant"
-
 #: elabftw/admin.php:286
 msgid "Remove all experiments with this status before deleting this status."
 msgstr "Supprimez toutes les expériences avec ce statut avant de supprimer ce statut."

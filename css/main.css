@@ -94,6 +94,10 @@ a:hover {
 
 
 /* LISTS */
+.list-group-item {
+    margin-bottom:3px;
+}
+
 ul, li {
     list-style: none;
 }
@@ -515,21 +519,6 @@ textarea {
 }
 
 
-/* ADMIN.PHP */
-.simple_border {
-    border:1px solid #dcdddc;
-    border-radius: 5px;
-    padding: 10px;
-    margin:5px;
-}
-.simple_border label {
-    font-size: 125%;
-    padding-left:20px;
-}
-
-ul.sortable, li.ui-sortable-handle {
-    list-style:none;
-}
 
 
 /* on admin.php for items types

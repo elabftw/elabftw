@@ -203,6 +203,7 @@ CREATE TABLE `items_types` (
   `name` text NOT NULL,
   `bgcolor` varchar(6) DEFAULT '000000',
   `template` text,
+  `ordering` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

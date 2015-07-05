@@ -326,9 +326,10 @@ while ($experiment = $req->fetch()) {
     }
 }
 
-// 20150705 add ordering to experiments_templates and status
+// 20150705 add ordering to experiments_templates, status and items types
 add_field('experiments_templates', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL");
 add_field('status', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL");
+add_field('items_types', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL");
 
 
 // //////////////////////////////////////////

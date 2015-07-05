@@ -79,7 +79,7 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
 
 <menu>
     <ul>
-    <li class='tabhandle' id='tab1'><?php echo _('Teams'); ?></li>
+    <li class='tabhandle' id='tab1'><?php echo _('Team'); ?></li>
         <li class='tabhandle' id='tab2'><?php echo _('Users'); ?></li>
         <li class='tabhandle' id='tab3'><?php echo _('Status'); ?></li>
         <li class='tabhandle' id='tab4'><?php echo _('Types of items'); ?></li>
@@ -139,17 +139,18 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
 
 </div>
 
-<!-- TABS 2 -->
+<!-- TABS 2 USERS -->
 <div class='divhandle' id='tab2div'>
 
     <h3><?php echo _('Edit users'); ?></h3>
+    <ul class='list-group'>
     <?php
     // we show only the validated users here
     $user_req->bindValue(':validated', 1);
     $user_req->execute();
     while ($users = $user_req->fetch()) {
         ?>
-        <div class='simple_border'>
+            <li id='users_<?php echo $users['id']; ?>' class='list-group-item'>
             <a class='trigger_users_<?php echo $users['userid']; ?>'><?php echo $users['firstname'] . " " . $users['lastname']; ?></a>
             <div class='toggle_users_<?php echo $users['userid']; ?>'>
         <br>
@@ -207,7 +208,6 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
         <button type='submit' class='button'><?php echo _('Edit this user'); ?></button>
         </div>
             </form>
-        </div>
         <script>
                 $(".toggle_users_<?php echo $users['userid']; ?>").hide();
                 $("a.trigger_users_<?php echo $users['userid']; ?>").click(function(){
@@ -215,11 +215,14 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
                 });
         </script>
         </div>
+        </li>
         <?php
     }
     ?>
-<section class='simple_border' style='background-color:#FF8080;'>
 
+<!-- DELETE USER -->
+<ul class='list-group'>
+<li class='list-group-item' style='background-color:#FF8080;'>
     <h3><?php echo _('DANGER ZONE'); ?></h3>
     <h4><strong><?php echo _('Delete an account'); ?></strong></h4>
     <form action='app/admin-exec.php' method='post'>
@@ -235,14 +238,15 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
         <button type='submit' class='button submit'><?php echo _('Delete this user!'); ?></button>
     </div>
     </form>
-</section>
+</li>
+</ul>
 
 </div>
 
 <!-- TAB 3 STATUS -->
 <div class='divhandle' id='tab3div'>
     <h3><?php echo _('Edit an existing status'); ?></h3>
-    <ul class='sortable list-group'>
+    <ul class='sortable_status list-group'>
 
     <?php
     // SQL to get all status
@@ -315,14 +319,14 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
 <ul class='list-group'>
 <li class='list-group-item'>
     <form action='app/admin-exec.php' method='post'>
-        <label for='new_status_name'><?php echo _('New status name'); ?></label>
-        <input type='text' id='new_status_name' name='new_status_name' />
+        <label for='new_status_name'><?php echo _('Add a new status'); ?></label>
+        <input type='text' id='new_status_name' name='new_status_name' required />
         <div id='colorwheel_div_new_status'>
             <div class='colorwheel inline'></div>
             <input type='text' name='new_status_color' value='#000000' />
         </div>
         <div class='center'>
-            <button type='submit' class='submit button'><?php echo _('Add a new status'); ?></button>
+            <button type='submit' class='submit button'><?php echo _('Save'); ?></button>
         </div>
         <br>
     </form>
@@ -334,11 +338,11 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
 <!-- TAB 4 ITEMS TYPES-->
 <div class='divhandle' id='tab4div'>
     <h3><?php echo _('Database items types'); ?></h3>
-    <ul class='sortable list-group'>
+    <ul class='sortable_itemstypes list-group'>
 
     <?php
     // SQL to get all items type
-    $sql = "SELECT * from items_types WHERE team = :team";
+    $sql = "SELECT * from items_types WHERE team = :team ORDER BY ordering ASC";
     $req = $pdo->prepare($sql);
     $req->execute(array(
         'team' => $_SESSION['team_id']
@@ -346,7 +350,7 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
 
     while ($items_types = $req->fetch()) {
         ?>
-        <li id='itemstypes_<?php echo $status['id']; ?>' class='list-group-item'>
+        <li id='itemstypes_<?php echo $items_types['id']; ?>' class='list-group-item'>
             <a class='trigger_<?php echo $items_types['id']; ?>'><?php echo _('Edit') . ' ' . $items_types['name']; ?></a>
             <div class='toggle_container_<?php echo $items_types['id']; ?>'>
             <?php
@@ -399,6 +403,7 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
 
 </ul>
 
+<!-- ADD NEW TYPE OF ITEM -->
 <ul class='list-group'>
 <li class='list-group-item'>
     <form action='app/admin-exec.php' method='post'>
@@ -537,15 +542,15 @@ function color_wheel(div_name) {
 }
 
 $(document).ready(function() {
-    // SORTABLE
-    $('.sortable').sortable({
+    // SORTABLE for STATUS
+    $('.sortable_status').sortable({
         // limit to horizontal dragging
         axis : 'y',
         helper : 'clone',
         // do ajax request to update db with new order
         update: function(event, ui) {
             // send the orders as an array
-            var ordering = $(".sortable").sortable("toArray");
+            var ordering = $(".sortable_status").sortable("toArray");
 
             $.post("app/order.php", {
                 'ordering_status' : ordering
@@ -553,6 +558,21 @@ $(document).ready(function() {
         }
     });
 
+    // SORTABLE for ITEMS TYPES
+    $('.sortable_itemstypes').sortable({
+        // limit to horizontal dragging
+        axis : 'y',
+        helper : 'clone',
+        // do ajax request to update db with new order
+        update: function(event, ui) {
+            // send the orders as an array
+            var ordering = $(".sortable_itemstypes").sortable("toArray");
+
+            $.post("app/order.php", {
+                'ordering_itemstypes' : ordering
+            });
+        }
+    });
     // IMPORT
     $('.import_block').hide();
 

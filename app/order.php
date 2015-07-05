@@ -76,3 +76,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ordering_status'])) {
         $req->execute();
     }
 }
+
+// ITEMS TYPES
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ordering_itemstypes'])) {
+
+    // loop the array and update sql
+    foreach ($_POST['ordering_itemstypes'] as $ordering => $id) {
+        $id = explode('_', $id);
+        $id = $id[1];
+        // check we own it
+        $sql = "SELECT team FROM items_types WHERE id = :id";
+        $req = $pdo->prepare($sql);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->execute();
+        $team = $req->fetch();
+        if ($team['team'] != $_SESSION['team_id']) {
+            exit;
+        }
+        // update the ordering
+        $sql = "UPDATE items_types SET ordering = :ordering WHERE id = :id";
+        $req = $pdo->prepare($sql);
+        $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->execute();
+    }
+}

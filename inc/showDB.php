@@ -37,7 +37,7 @@ if (isset($_GET['tag']) && $_GET['tag'] != '') {
 
 
 // SQL to get items name
-$sql = "SELECT * FROM items_types WHERE team = :team ORDER BY name ASC";
+$sql = "SELECT * FROM items_types WHERE team = :team ORDER BY ordering ASC";
 $req = $pdo->prepare($sql);
 $req->bindParam('team', $_SESSION['team_id']);
 $req->execute();

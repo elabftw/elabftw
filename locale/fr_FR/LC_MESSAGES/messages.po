@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2015-03-04 14:57+0100\n"
-"PO-Revision-Date: 2015-07-04 12:33+0100\n"
+"PO-Revision-Date: 2015-07-05 23:35+0100\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -361,6 +361,12 @@ msgstr "Tout a été supprimé avec succès."
 #: elabftw/app/check_for_updates.php:39 elabftw/app/check_for_updates.php:101
 msgid "Install git to check for updates."
 msgstr "Installez git pour vérifier les mises à jour."
+
+msgid "Installed version:"
+msgstr "Version installée :"
+
+msgid "Latest version"
+msgstr "Dernière version :"
 
 #: elabftw/app/check_for_updates.php:45
 msgid "You need to install the curl extension for php."

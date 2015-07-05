@@ -2,10 +2,16 @@
 
 # Version 1.1.4
 * fix bug in search page showing tags of other teams
+* fix bug in search page returning items from other teams
+* add ordering options to items types, status and templates (try sorting them!)
+* add possibility to export experiments templates to a file (.elabftw.tpl)
+* add possibility to import a template from a .elabftw.tpl file
 * add possibility to import .elabftw.zip archives in the database
 * add pagebreak tag in editor
 * max file upload size is now based on system configuration (thx @jcapellman)
 * move creation/duplication functions to Create() class
+* show latest version on sysconfig page
+* various little improvements and bug fixes
 
 # Verson 1.1.3
 * add new way to send emails (thanks to @Athemis)

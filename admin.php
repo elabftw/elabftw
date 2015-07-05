@@ -222,7 +222,7 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
 
 <!-- DELETE USER -->
 <ul class='list-group'>
-<li class='list-group-item' style='background-color:#FF8080;'>
+<li class='list-group-item' style='border-color:red;background-color:#FFC1B7;'>
     <h3><?php echo _('DANGER ZONE'); ?></h3>
     <h4><strong><?php echo _('Delete an account'); ?></strong></h4>
     <form action='app/admin-exec.php' method='post'>
@@ -306,7 +306,9 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
         <script>$(document).ready(function() {
             $(".toggle_container_status_<?php echo $status['id']; ?>").hide();
             $("a.trigger_status_<?php echo $status['id']; ?>").click(function(){
-                $('div.toggle_container_status_<?php echo $status['id']; ?>').slideToggle(1);
+                $('div.toggle_container_status_<?php echo $status['id']; ?>').slideToggle(100);
+                // disable sortable behavior
+                $('.sortable_status').sortable("disable");
             });
             color_wheel('#colorwheel_div_edit_status_<?php echo $status['id']; ?>')
         });</script></div></li>
@@ -392,6 +394,8 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
             $(".toggle_container_<?php echo $items_types['id']; ?>").hide();
             $("a.trigger_<?php echo $items_types['id']; ?>").click(function(){
                 $('div.toggle_container_<?php echo $items_types['id']; ?>').slideToggle(1);
+                // disable sortable behavior
+                $('.sortable_itemstypes').sortable("disable");
             });
             color_wheel('#colorwheel_div_<?php echo $items_types['id']; ?>')
         });</script>

@@ -157,9 +157,9 @@ if ($req->rowCount() > 0) {
 // 20150304 : add rfc 3161 timestamping/generic timestamping providers
 
 // add stampprovider, stampcert and stamphash to teams table
-add_field('teams', 'stampprovider', "TEXT NULL DEFAULT NULL", ">>> Added timestamp team config (provider)\n");
-add_field('teams', 'stampcert', "TEXT NULL DEFAULT NULL", ">>> Added timestamp team config (cert)\n");
-add_field('teams', 'stamphash', "VARCHAR(10) NULL DEFAULT 'sha256'", ">>> Added timestamp team config (hash)\n");
+add_field('teams', 'stampprovider', "TEXT NULL DEFAULT NULL");
+add_field('teams', 'stampcert', "TEXT NULL DEFAULT NULL");
+add_field('teams', 'stamphash', "VARCHAR(10) NULL DEFAULT 'sha256'");
 
 // check if stamppass and stamplogin are set globally but not stampprovider => old-style timestamping using Universign
 $sql = "SELECT conf_name FROM config";
@@ -326,8 +326,10 @@ while ($experiment = $req->fetch()) {
     }
 }
 
-// 20150705 add ordering to experiments_templates
-add_field('experiments_templates', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL", "");
+// 20150705 add ordering to experiments_templates and status
+add_field('experiments_templates', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL");
+add_field('status', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL");
+
 
 // //////////////////////////////////////////
 // INSERT NEW CODE BLOCKS ABOVE THIS LINE //

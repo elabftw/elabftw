@@ -377,7 +377,7 @@ $(document).ready(function() {
             var ordering = $(".nav-pills").sortable("toArray");
 
             $.post("app/order.php", {
-                'ordering' : ordering
+                'ordering_status' : ordering
             });
         }
     });

@@ -239,29 +239,14 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
 
 </div>
 
-<!-- TAB 3 -->
+<!-- TAB 3 STATUS -->
 <div class='divhandle' id='tab3div'>
-    <h3><?php echo _('Add a new status'); ?></h3>
-    <p>
-    <form action='app/admin-exec.php' method='post'>
-        <label for='new_status_name'><?php echo _('New status name'); ?></label>
-        <input type='text' id='new_status_name' name='new_status_name' />
-        <div id='colorwheel_div_new_status'>
-            <div class='colorwheel inline'></div>
-            <input type='text' name='new_status_color' value='#000000' />
-        </div>
-        <div class='center'>
-            <button type='submit' class='submit button'><?php echo _('Add a new status'); ?></button>
-        </div>
-    </form>
-    </p>
-    <br><br>
-
     <h3><?php echo _('Edit an existing status'); ?></h3>
+    <ul class='sortable list-group'>
 
     <?php
     // SQL to get all status
-    $sql = "SELECT * from status WHERE team = :team_id";
+    $sql = "SELECT * from status WHERE team = :team_id ORDER BY ordering ASC";
     $req = $pdo->prepare($sql);
     $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
     $req->execute();
@@ -277,7 +262,8 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
         $count_exp_req->execute();
         $count = $count_exp_req->fetchColumn();
         ?>
-        <div class='simple_border'>
+
+        <li id='status_<?php echo $status['id']; ?>' class='list-group-item'>
         <a class='trigger_status_<?php echo $status['id']; ?>'><?php echo $status['name']; ?></a>
         <div class='toggle_container_status_<?php echo $status['id']; ?>'>
         <?php
@@ -310,26 +296,46 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
             <br>
 
             <div class='center'>
-            <button type='submit' class='button'><?php echo _('Edit') . ' ' . stripslashes($status['name']); ?></button><br>
+                <button type='submit' class='button'><?php echo _('Edit') . ' ' . stripslashes($status['name']); ?></button><br>
             </div>
-        </form></div>
+        </form>
         <script>$(document).ready(function() {
             $(".toggle_container_status_<?php echo $status['id']; ?>").hide();
             $("a.trigger_status_<?php echo $status['id']; ?>").click(function(){
                 $('div.toggle_container_status_<?php echo $status['id']; ?>').slideToggle(1);
             });
             color_wheel('#colorwheel_div_edit_status_<?php echo $status['id']; ?>')
-        });</script></div>
+        });</script></div></li>
         <?php
     }
     ?>
+</ul>
 
+<!-- ADD NEW STATUS -->
+<ul class='list-group'>
+<li class='list-group-item'>
+    <form action='app/admin-exec.php' method='post'>
+        <label for='new_status_name'><?php echo _('New status name'); ?></label>
+        <input type='text' id='new_status_name' name='new_status_name' />
+        <div id='colorwheel_div_new_status'>
+            <div class='colorwheel inline'></div>
+            <input type='text' name='new_status_color' value='#000000' />
+        </div>
+        <div class='center'>
+            <button type='submit' class='submit button'><?php echo _('Add a new status'); ?></button>
+        </div>
+        <br>
+    </form>
+</li>
+</ul>
 
 </div>
 
 <!-- TAB 4 ITEMS TYPES-->
 <div class='divhandle' id='tab4div'>
     <h3><?php echo _('Database items types'); ?></h3>
+    <ul class='sortable list-group'>
+
     <?php
     // SQL to get all items type
     $sql = "SELECT * from items_types WHERE team = :team";
@@ -340,7 +346,7 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
 
     while ($items_types = $req->fetch()) {
         ?>
-        <div class='simple_border'>
+        <li id='itemstypes_<?php echo $status['id']; ?>' class='list-group-item'>
             <a class='trigger_<?php echo $items_types['id']; ?>'><?php echo _('Edit') . ' ' . $items_types['name']; ?></a>
             <div class='toggle_container_<?php echo $items_types['id']; ?>'>
             <?php
@@ -376,7 +382,6 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
                 <div class='center'>
                     <button type='submit' class='button'><?php echo _('Edit') . ' ' . stripslashes($items_types['name']); ?></button><br>
                 </div>
-            </div>
             </form>
 
         <script>$(document).ready(function() {
@@ -387,26 +392,31 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
             color_wheel('#colorwheel_div_<?php echo $items_types['id']; ?>')
         });</script>
         </div>
+        </li>
         <?php
     } // end generation of items_types
     ?>
 
+</ul>
 
-    <section class='simple_border'>
-        <form action='app/admin-exec.php' method='post'>
-            <label for='new_item_type_name'><?php echo _('Add a new type of item:'); ?></label>
-            <input required type='text' id='new_item_type_name' name='new_item_type_name' />
-            <input type='hidden' name='new_item_type' value='1' />
-            <div id='colorwheel_div_new'>
-                <div class='colorwheel inline'></div>
-                <input type='text' name='new_item_type_bgcolor' value='#000000' />
-            </div><br><br><br><br>
-            <textarea class='mceditable' name='new_item_type_template' /></textarea>
-            <div class='center submitButtonDiv'>
-            <button type='submit' class='button'><?php echo _('Save'); ?></button>
-            </div>
-        </form>
-    </section>
+<ul class='list-group'>
+<li class='list-group-item'>
+    <form action='app/admin-exec.php' method='post'>
+        <label for='new_item_type_name'><?php echo _('Add a new type of item:'); ?></label>
+        <input required type='text' id='new_item_type_name' name='new_item_type_name' />
+        <input type='hidden' name='new_item_type' value='1' />
+        <div id='colorwheel_div_new'>
+            <div class='colorwheel inline'></div>
+            <input type='text' name='new_item_type_bgcolor' value='#000000' />
+        </div><br><br><br><br>
+        <textarea class='mceditable' name='new_item_type_template' /></textarea>
+        <div class='center submitButtonDiv'>
+        <button type='submit' class='button'><?php echo _('Save'); ?></button>
+        </div>
+    </form>
+</li>
+</ul>
+
 </div>
 
 <!-- TABS 5 -->
@@ -527,7 +537,25 @@ function color_wheel(div_name) {
 }
 
 $(document).ready(function() {
+    // SORTABLE
+    $('.sortable').sortable({
+        // limit to horizontal dragging
+        axis : 'y',
+        helper : 'clone',
+        // do ajax request to update db with new order
+        update: function(event, ui) {
+            // send the orders as an array
+            var ordering = $(".sortable").sortable("toArray");
+
+            $.post("app/order.php", {
+                'ordering_status' : ordering
+            });
+        }
+    });
+
+    // IMPORT
     $('.import_block').hide();
+
     // TABS
     // get the tab=X parameter in the url
     var params = getGetParameters();

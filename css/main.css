@@ -527,6 +527,10 @@ textarea {
     padding-left:20px;
 }
 
+ul.sortable, li.ui-sortable-handle {
+    list-style:none;
+}
+
 
 /* on admin.php for items types
  * it's bettor to have a pointer to show that you can click

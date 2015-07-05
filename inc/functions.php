@@ -978,10 +978,9 @@ function using_ssl()
  * @param string table
  * @param string field
  * @param string params the list of options
- * @param string added the message to display on success
  * @return string|null success or error message
  */
-function add_field($table, $field, $params, $added)
+function add_field($table, $field, $params)
 {
     global $pdo;
     $die_msg = "There was a problem in the database update :/ Please report a bug : https://github.com/elabftw/elabftw/issues?state=open";
@@ -1001,9 +1000,7 @@ function add_field($table, $field, $params, $added)
         $req = $pdo->prepare($sql);
         $result = $req->execute();
 
-        if ($result) {
-            echo $added;
-        } else {
+        if (!$result) {
             die($die_msg);
         }
     }

@@ -231,6 +231,7 @@ CREATE TABLE `status` (
   `name` text NOT NULL,
   `color` varchar(6) NOT NULL,
   `is_default` tinyint(1) DEFAULT NULL,
+  `ordering` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

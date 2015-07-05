@@ -25,12 +25,13 @@
 ********************************************************************************/
 require_once '../inc/common.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ordering'])) {
+// TEMPLATES
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ordering_templates'])) {
 
     // remove the create new entry
-    unset($_POST['ordering'][0]);
+    unset($_POST['ordering_templates'][0]);
     // loop the array and update sql
-    foreach($_POST['ordering'] as $ordering => $id) {
+    foreach ($_POST['ordering_templates'] as $ordering => $id) {
         $id = explode('_', $id);
         $id = $id[1];
         // check we own it
@@ -44,6 +45,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ordering'])) {
         }
         // update the ordering
         $sql = "UPDATE experiments_templates SET ordering = :ordering WHERE id = :id";
+        $req = $pdo->prepare($sql);
+        $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->execute();
+    }
+}
+
+// STATUS
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ordering_status'])) {
+
+    // loop the array and update sql
+    foreach ($_POST['ordering_status'] as $ordering => $id) {
+        $id = explode('_', $id);
+        $id = $id[1];
+        // check we own it
+        $sql = "SELECT team FROM status WHERE id = :id";
+        $req = $pdo->prepare($sql);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->execute();
+        $team = $req->fetch();
+        if ($team['team'] != $_SESSION['team_id']) {
+            exit;
+        }
+        // update the ordering
+        $sql = "UPDATE status SET ordering = :ordering WHERE id = :id";
         $req = $pdo->prepare($sql);
         $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
         $req->bindParam(':id', $id, PDO::PARAM_INT);

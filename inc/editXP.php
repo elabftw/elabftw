@@ -123,7 +123,7 @@ while ($tags = $tagreq->fetch()) {
         // put all available status in array
         $status_arr = array();
         // SQL to get all the status of the team
-        $sql = 'SELECT id, name, color FROM status WHERE team = :team ORDER BY name ASC';
+        $sql = 'SELECT id, name, color FROM status WHERE team = :team ORDER BY ordering ASC';
         $req = $pdo->prepare($sql);
         $req->execute(array(
             'team' => $_SESSION['team_id']

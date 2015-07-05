@@ -31,7 +31,7 @@ require_once ELAB_ROOT . 'inc/locale.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (checkForUpdate()) {
-        echo _('A new update is available!');
+        echo _('A new version is available!');
     } else {
         echo _('Congratulations! You are running the latest stable version of eLabFTW :)');
     }

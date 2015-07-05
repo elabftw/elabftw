@@ -377,7 +377,7 @@ msgid "Unknown branch!"
 msgstr "Branche inconnue !"
 
 #: elabftw/app/check_for_updates.php:105
-msgid "A new update is available!"
+msgid "A new version is available!"
 msgstr "Des mises à jour sont disponibles !"
 
 #: elabftw/app/create_item.php:37

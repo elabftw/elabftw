@@ -277,7 +277,7 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
         <?php
         } else {
             ?>
-                <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert(<?php echo _('Remove all experiments with this status before deleting this status.'); ?>)" />
+                <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert('<?php echo _('Remove all experiments with this status before deleting this status.'); ?>')" />
         <?php
         }
         ?>
@@ -370,7 +370,7 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
             <?php
             } else {
                 ?>
-                <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert(<?php echo _('Remove all database items with this type before deleting this type.'); ?>)" />
+                <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert('<?php echo _('Remove all database items with this type before deleting this type.'); ?>')" />
             <?php
             }
             ?>
@@ -382,8 +382,8 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
 
                 <div id='colorwheel_div_<?php echo $items_types['id']; ?>'>
                     <div class='colorwheel inline'></div>
-                    <input type='color' name='item_type_bgcolor' value='#<?php echo $items_types['bgcolor']; ?>'/>
-                </div><br><br>
+                    <input type='text' name='item_type_bgcolor' value='#<?php echo $items_types['bgcolor']; ?>'/>
+                </div><br><br><br>
                 <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']); ?></textarea><br>
                 <div class='center'>
                     <button type='submit' class='button'><?php echo _('Edit') . ' ' . stripslashes($items_types['name']); ?></button><br>
@@ -393,7 +393,7 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
         <script>$(document).ready(function() {
             $(".toggle_container_<?php echo $items_types['id']; ?>").hide();
             $("a.trigger_<?php echo $items_types['id']; ?>").click(function(){
-                $('div.toggle_container_<?php echo $items_types['id']; ?>').slideToggle(1);
+                $('div.toggle_container_<?php echo $items_types['id']; ?>').slideToggle(100);
                 // disable sortable behavior
                 $('.sortable_itemstypes').sortable("disable");
             });
@@ -608,8 +608,9 @@ $(document).ready(function() {
     $("a.trigger_users_<?php echo $users['userid']; ?>").click(function(){
         $('div.toggle_users_<?php echo $users['userid']; ?>').slideToggle(1);
     });
-    color_wheel('#colorwheel_div_new')
-    color_wheel('#colorwheel_div_new_status')
+    // COLOR WHEEL
+    color_wheel('#colorwheel_div_new');
+    color_wheel('#colorwheel_div_new_status');
     // EDITOR
     tinymce.init({
         mode : "specific_textareas",

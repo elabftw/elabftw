@@ -326,6 +326,9 @@ while ($experiment = $req->fetch()) {
     }
 }
 
+// 20150705 add ordering to experiments_templates
+add_field('experiments_templates', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL", "");
+
 // //////////////////////////////////////////
 // INSERT NEW CODE BLOCKS ABOVE THIS LINE //
 // /////////////////////////////////////////

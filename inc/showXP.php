@@ -84,7 +84,7 @@ if (isset($_GET['tag']) && $_GET['tag'] != '') {
 <!-- TEMPLATE CONTAINER -->
 <div class='toggle_container'><ul>
 <?php // SQL to get user's templates
-$sql = "SELECT id, name FROM experiments_templates WHERE userid = :userid";
+$sql = "SELECT id, name FROM experiments_templates WHERE userid = :userid ORDER BY ordering ASC";
 $tplreq = $pdo->prepare($sql);
 $tplreq->bindParam(':userid', $_SESSION['userid']);
 $tplreq->execute();

@@ -267,22 +267,23 @@ $users = $req->fetch();
 <div class='divhandle' id='tab3div'>
 
     <?php // SQL TO GET TEMPLATES
-    $sql = "SELECT id, body, name FROM experiments_templates WHERE userid = " . $_SESSION['userid'];
+    $sql = "SELECT id, body, name FROM experiments_templates WHERE userid = :userid ORDER BY ordering ASC";
     $req = $pdo->prepare($sql);
+    $req->bindParam(':userid', $_SESSION['userid']);
     $req->execute();
 
     echo "<ul class='nav nav-pills' role='tablist'>";
     // tabs titles
-    echo "<li class='subtabhandle badge badgetab badgetabactive' id='subtab1'>" . _('Create new') . "</li>";
+    echo "<li class='subtabhandle badge badgetab badgetabactive' id='subtab_1'>" . _('Create new') . "</li>";
     $i = 2;
     while ($exp_tpl = $req->fetch()) {
-        echo "<li class='subtabhandle badge badgetab' id='subtab" . $i . "'>" . stripslashes($exp_tpl['name']) . "</li>";
+        echo "<li class='sortable subtabhandle badge badgetab' id='subtab_" . $exp_tpl['id'] . "'>" . stripslashes($exp_tpl['name']) . "</li>";
         $i++;
     }
     echo "</ul>";
     ?>
     <!-- CREATE NEW TPL TAB -->
-    <div class='subdivhandle' id='subtab1div'>
+    <div class='subdivhandle' id='subtab_1div'>
     <p onClick="toggleUpload()"><img src='img/add.png' title='import template' alt='import' /><?php echo _('Import from file'); ?></p>
         <form action='app/ucp-exec.php' method='post'>
             <input type='hidden' name='new_tpl_form' />
@@ -303,7 +304,7 @@ $users = $req->fetch();
     $i = 2;
     while ($exp_tpl = $req->fetch()) {
     ?>
-    <div class='subdivhandle' id='subtab<?php echo $i; ?>div'>
+    <div class='subdivhandle' id='subtab_<?php echo $exp_tpl['id']; ?>div'>
     <img class='align_right' src='img/download.png' title='export template' alt='export' onClick="exportTpl('<?php echo $exp_tpl['name']; ?>', '<?php echo $exp_tpl['id']; ?>')" />
         <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $exp_tpl['id']; ?>','tpl', 'ucp.php')" />
         <form action='app/ucp-exec.php' method='post'>
@@ -364,7 +365,25 @@ function exportTpl(name, id) {
 
 // READY ? GO !!
 $(document).ready(function() {
+    $('.nav-pills').sortable({
+        // limit to horizontal dragging
+        axis : 'x',
+        helper : 'clone',
+        // we don't want the Create new pill to be sortable
+        cancel: "#subtab_1",
+        // do ajax request to update db with new order
+        update: function(event, ui) {
+            // send the orders as an array
+            var ordering = $(".nav-pills").sortable("toArray");
+
+            $.post("app/order.php", {
+                'ordering' : ordering
+            });
+        }
+    });
+    // hide the file input
     $('#import_tpl').hide();
+
     // TABS
     // get the tab=X parameter in the url
     var params = getGetParameters();
@@ -390,8 +409,8 @@ $(document).ready(function() {
     // END TABS
     // SUB TABS
     var tab = 1;
-    var initdiv = '#subtab' + tab + 'div';
-    var inittab = '#subtab' + tab;
+    var initdiv = '#subtab_' + tab + 'div';
+    var inittab = '#subtab_' + tab;
     // init
     $(".subdivhandle").hide();
     $(initdiv).show();

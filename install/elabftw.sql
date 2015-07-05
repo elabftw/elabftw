@@ -143,6 +143,7 @@ CREATE TABLE `experiments_templates` (
   `body` text,
   `name` varchar(255) NOT NULL,
   `userid` int(10) unsigned DEFAULT NULL,
+  `ordering` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

@@ -46,14 +46,7 @@
         ?>
         <!-- SYSADMIN MENU -->
         <span class='strong'>
-        <a id='check_for_updates' href='#'><?php echo _('Check for updates'); ?></a><a href='sysconfig.php'><?php echo _('Sysadmin panel'); ?></a>
-        <script>
-        $('#check_for_updates').click(function() {
-            var jqxhr = $.post('app/check_for_updates.php', function(answer) {
-                alert(answer);
-            });
-        });
-        </script>
+        <a href='sysconfig.php'><?php echo _('Sysadmin panel'); ?></a>
     <?php
     }
     if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {

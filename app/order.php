@@ -25,79 +25,84 @@
 ********************************************************************************/
 require_once '../inc/common.php';
 
-// TEMPLATES
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ordering_templates'])) {
-
-    // remove the create new entry
-    unset($_POST['ordering_templates'][0]);
-    // loop the array and update sql
-    foreach ($_POST['ordering_templates'] as $ordering => $id) {
-        $id = explode('_', $id);
-        $id = $id[1];
-        // check we own it
-        $sql = "SELECT userid FROM experiments_templates WHERE id = :id";
-        $req = $pdo->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->execute();
-        $exp_tpl = $req->fetch();
-        if ($exp_tpl['userid'] != $_SESSION['userid']) {
-            exit;
-        }
-        // update the ordering
-        $sql = "UPDATE experiments_templates SET ordering = :ordering WHERE id = :id";
-        $req = $pdo->prepare($sql);
-        $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->execute();
-    }
+if ($_SERVER['REQUEST_METHOD'] != 'POST' || !isset($_POST)) {
+    exit;
 }
 
-// STATUS
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ordering_status'])) {
+foreach ($_POST as $key => $value) {
+    switch ($key) {
+        case 'ordering_templates':
+            // remove the create new entry
+            unset($_POST['ordering_templates'][0]);
+            // loop the array and update sql
+            foreach ($_POST['ordering_templates'] as $ordering => $id) {
+                $id = explode('_', $id);
+                $id = $id[1];
+                // check we own it
+                $sql = "SELECT userid FROM experiments_templates WHERE id = :id";
+                $req = $pdo->prepare($sql);
+                $req->bindParam(':id', $id, PDO::PARAM_INT);
+                $req->execute();
+                $exp_tpl = $req->fetch();
+                if ($exp_tpl['userid'] != $_SESSION['userid']) {
+                    exit;
+                }
+                // update the ordering
+                $sql = "UPDATE experiments_templates SET ordering = :ordering WHERE id = :id";
+                $req = $pdo->prepare($sql);
+                $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
+                $req->bindParam(':id', $id, PDO::PARAM_INT);
+                $req->execute();
+            }
+            break;
 
-    // loop the array and update sql
-    foreach ($_POST['ordering_status'] as $ordering => $id) {
-        $id = explode('_', $id);
-        $id = $id[1];
-        // check we own it
-        $sql = "SELECT team FROM status WHERE id = :id";
-        $req = $pdo->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->execute();
-        $team = $req->fetch();
-        if ($team['team'] != $_SESSION['team_id']) {
+        case 'ordering_status':
+            // loop the array and update sql
+            foreach ($_POST['ordering_status'] as $ordering => $id) {
+                $id = explode('_', $id);
+                $id = $id[1];
+                // check we own it
+                $sql = "SELECT team FROM status WHERE id = :id";
+                $req = $pdo->prepare($sql);
+                $req->bindParam(':id', $id, PDO::PARAM_INT);
+                $req->execute();
+                $team = $req->fetch();
+                if ($team['team'] != $_SESSION['team_id']) {
+                    exit;
+                }
+                // update the ordering
+                $sql = "UPDATE status SET ordering = :ordering WHERE id = :id";
+                $req = $pdo->prepare($sql);
+                $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
+                $req->bindParam(':id', $id, PDO::PARAM_INT);
+                $req->execute();
+            }
+            break;
+
+        case 'ordering_itemstypes':
+            // loop the array and update sql
+            foreach ($_POST['ordering_itemstypes'] as $ordering => $id) {
+                $id = explode('_', $id);
+                $id = $id[1];
+                // check we own it
+                $sql = "SELECT team FROM items_types WHERE id = :id";
+                $req = $pdo->prepare($sql);
+                $req->bindParam(':id', $id, PDO::PARAM_INT);
+                $req->execute();
+                $team = $req->fetch();
+                if ($team['team'] != $_SESSION['team_id']) {
+                    exit;
+                }
+                // update the ordering
+                $sql = "UPDATE items_types SET ordering = :ordering WHERE id = :id";
+                $req = $pdo->prepare($sql);
+                $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
+                $req->bindParam(':id', $id, PDO::PARAM_INT);
+                $req->execute();
+            }
+            break;
+
+        default:
             exit;
-        }
-        // update the ordering
-        $sql = "UPDATE status SET ordering = :ordering WHERE id = :id";
-        $req = $pdo->prepare($sql);
-        $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->execute();
-    }
-}
-
-// ITEMS TYPES
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ordering_itemstypes'])) {
-
-    // loop the array and update sql
-    foreach ($_POST['ordering_itemstypes'] as $ordering => $id) {
-        $id = explode('_', $id);
-        $id = $id[1];
-        // check we own it
-        $sql = "SELECT team FROM items_types WHERE id = :id";
-        $req = $pdo->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->execute();
-        $team = $req->fetch();
-        if ($team['team'] != $_SESSION['team_id']) {
-            exit;
-        }
-        // update the ordering
-        $sql = "UPDATE items_types SET ordering = :ordering WHERE id = :id";
-        $req = $pdo->prepare($sql);
-        $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->execute();
     }
 }

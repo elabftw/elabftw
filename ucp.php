@@ -281,13 +281,16 @@ $users = $req->fetch();
     }
     echo "</ul>";
     ?>
-    <!-- create new tpl tab -->
+    <!-- CREATE NEW TPL TAB -->
     <div class='subdivhandle' id='subtab1div'>
+    <p onClick="toggleUpload()"><img src='img/add.png' title='import template' alt='import' /><?php echo _('Import from file'); ?></p>
         <form action='app/ucp-exec.php' method='post'>
             <input type='hidden' name='new_tpl_form' />
-            <input required type='text' name='new_tpl_name' placeholder='<?php echo _('Name of the template'); ?>' /><br>
+            <input type='file' accept='.elabftw.tpl' id='import_tpl'>
+            <input required type='text' name='new_tpl_name' id='new_tpl_name' placeholder='<?php echo _('Name of the template'); ?>' />
+            <br>
             <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='mceditable' rows='50' cols='60'></textarea>
-        <br />
+            <br>
             <div class='center'>
                 <button type="submit" name="Submit" class='button'><?php echo _('Add template'); ?></button>
             </div>
@@ -323,8 +326,33 @@ $users = $req->fetch();
 
 <?php require_once('inc/footer.php'); ?>
 
+<!-- to export templates -->
 <script src='js/file-saver.js/FileSaver.js'></script>
 <script>
+function toggleUpload() {
+    $('#import_tpl').toggle();
+}
+
+$('#import_tpl').on('change', function(e){
+    var title = document.getElementById('import_tpl').value.replace(".elabftw.tpl", "");
+    readFile(this.files[0], function(e) {
+        tinyMCE.get('new_tpl_txt').setContent(e.target.result);
+        $('#new_tpl_name').val(title);
+        $('#import_tpl').hide();
+    });
+});
+
+function readFile(file, onLoadCallback){
+    // check for the various File API support
+    if (!window.FileReader) {
+        alert('Please use a modern web browser. Import aborted.');
+        return false;
+    }
+    var reader = new FileReader();
+    reader.onload = onLoadCallback;
+    reader.readAsText(file);
+}
+
 function exportTpl(name, id) {
     // we have the name of the template used for filename
     // and we have the id of the editor to get the content from
@@ -333,8 +361,10 @@ function exportTpl(name, id) {
     var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
     saveAs(blob, name + ".elabftw.tpl");
 }
+
 // READY ? GO !!
 $(document).ready(function() {
+    $('#import_tpl').hide();
     // TABS
     // get the tab=X parameter in the url
     var params = getGetParameters();

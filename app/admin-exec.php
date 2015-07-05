@@ -104,6 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
 }
 
 
+/*
 // update coming from ../sysconfig.php
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['update'] == '1') {
     // we don't do a `git pull` because it would mean a lot of tweaking to get it working with the www user
@@ -211,6 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['u
         header('Location: ../sysconfig.php');
     }
 }
+ */
 
 // TEAM CONFIGURATION FORM COMING FROM ../sysconfig.php
 // ADD A NEW TEAM

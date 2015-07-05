@@ -1075,7 +1075,7 @@ function checkSelectFilter($val)
  * Check presence of basic cURL functionality
  * @return bool true if cURL functions are present, else false
  */
-function cURLcheckBasicFunctions()
+function curlCheckBasicFunctions()
 {
     return function_exists("curl_init") &&
       function_exists("curl_setopt") &&
@@ -1086,12 +1086,12 @@ function cURLcheckBasicFunctions()
 /*
  * Downloads a file with cURL; Returns bool status information.
  * @param string $url URL to download
- * @param string $file Path and filename as which the download is to be saved
+ * @param string|null $file Path and filename as which the download is to be saved
  * @return string|boolean Return true if the download succeeded, else false
  */
-function cURLdownload($url, $file)
+function curlDownload($url, $file = null)
 {
-    if (!cURLcheckBasicFunctions()) {
+    if (!curlCheckBasicFunctions()) {
         return "Please install php5-curl package.";
     }
 
@@ -1114,16 +1114,20 @@ function cURLdownload($url, $file)
     // 5 seconds
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
 
-    // now open the file
-    $fp = fopen($file, "w");
-    curl_setopt($ch, CURLOPT_FILE, $fp);
+    if (!empty($file)) {
+        // now open the file
+        $fp = fopen($file, "w");
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+    }
     // we don't want the header
     curl_setopt($ch, CURLOPT_HEADER, 0);
     // DO IT!
     return curl_exec($ch);
     // cleanup
     curl_close($ch);
-    fclose($fp);
+    if (!empty($file)) {
+        fclose($fp);
+    }
 }
 
 /*
@@ -1193,4 +1197,24 @@ function getMailer()
 
     $mailer = Swift_Mailer::newInstance($transport);
     return $mailer;
+}
+
+/*
+ * Return the latest version of elabftw
+ * Will fetch updates.ini file from elabftw.net
+ *
+ * @return string|bool latest version or false if error
+ */
+function getLatestVersion()
+{
+    $update_list_url = 'https://get.elabftw.net/updates.ini';
+    $ini = curlDownload($update_list_url);
+    if (strlen($ini) > 0) {
+        // convert ini into array. The `true` is for process_sections: to get multidimensionnal array.
+        $versions = parse_ini_string($ini, true);
+        // get the latest version (first item in array, an array itself with url and checksum)
+        return array_keys($versions)[0];
+    } else {
+        return false;
+    }
 }

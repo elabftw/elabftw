@@ -43,35 +43,23 @@ if (strlen(get_config('mail_method')) == 0) {
     $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://github.com/elabftw/elabftw/wiki/finalizing'>", "</a>");
     display_message('error', $message);
 }
-?>
 
-<?php
-// get current version
-if (check_executable('git')) {
-    $current_version = shell_exec('git describe --abbrev=0 --tags');
-
-    // it is possible to have git installed, but elabftw is installed without git (zip or tarball)
-    // so we need to check if the version actually looks like a version number
-    if (preg_match('/[0-99]+\.[0-99]+\.[0-99]+.*/', $current_version) === 1) {
-        // display the current version to sysadmin
-        echo "<p>Version installée : " . $current_version . "</p>";
-    }
+// DISPLAY CURRENT AND LATEST VERSION
+require_once 'app/version.php';
+echo "<br><p>" . _('Installed version:') . " " . VERSION . " ";
+if (VERSION === getLatestVersion()) {
+    echo "<img src='img/check.png' width='16px' length='16px' title='latest' style='position:relative;bottom:8px' alt='OK' />";
 }
-// FIXME
-// TODO
-// we disable this because it's too alpha for now
-/*
-if ($current_version == 'something') {
+echo "<br>" . _('Latest version:') . " " . getLatestVersion() . "</p>";
+
+// IF WE DON'T HAVE THE LATEST VERSION, SHOW BUTTON REDIRECTING TO WIKI
+if (VERSION != getLatestVersion()) {
     ?>
-    <div class='align_right'>
-    <form method='post' action='app/admin-exec.php'>
-    <input type='hidden' value='1' name='update' />
-    <button type='submit' class='submit button'>Update elabftw</button>
-    </form>
-    </div>
+    <a href='https://github.com/elabftw/elabftw/wiki/How-to-update'>
+        <button id='updateButton' type='submit' class='submit button'>Update elabftw</button>
+    </a>
     <?php
 }
- */
 ?>
 
 <menu>

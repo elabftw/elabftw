@@ -28,6 +28,11 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
+// ///////////////////////////////
+// UPDATE THIS AFTER RELEASING
+define('VERSION', '1.1.4');
+// ///////////////////////////////
+
 // check that the config file is here and readable
 if (is_readable('config.php')) {
     require_once 'config.php';

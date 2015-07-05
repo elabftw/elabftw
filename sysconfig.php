@@ -39,21 +39,22 @@ $crypto = new \Elabftw\Elabftw\Crypto();
 
 $formKey = new \Elabftw\Elabftw\FormKey();
 
+$update = new \Elabftw\Elabftw\Update();
+
 if (strlen(get_config('mail_method')) == 0) {
     $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://github.com/elabftw/elabftw/wiki/finalizing'>", "</a>");
     display_message('error', $message);
 }
 
 // DISPLAY CURRENT AND LATEST VERSION
-require_once 'app/version.php';
 echo "<br><p>" . _('Installed version:') . " " . VERSION . " ";
-if (!checkForUpdate()) {
+if ($update->availableUpdate()) {
     echo "<img src='img/check.png' width='16px' length='16px' title='latest' style='position:relative;bottom:8px' alt='OK' />";
 }
-echo "<br>" . _('Latest version:') . " " . getLatestVersion() . "</p>";
+echo "<br>" . _('Latest version:') . " " . $update->getLatestVersion() . "</p>";
 
 // IF WE DON'T HAVE THE LATEST VERSION, SHOW BUTTON REDIRECTING TO WIKI
-if (checkForUpdate()) {
+if ($update->availableUpdate()) {
     $message = _('A new version is available!') . " <a href='https://github.com/elabftw/elabftw/wiki/How-to-update'>
         <button id='updateButton' type='submit' class='submit button'>Update elabftw</button></a>";
     display_message('error', $message);

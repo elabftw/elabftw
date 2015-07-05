@@ -1084,7 +1084,7 @@ function curlDownload($url, $file = null)
 
     // add user agent
     // http://developer.github.com/v3/#user-agent-required
-    curl_setopt($ch, CURLOPT_USERAGENT, "elabftw");
+    curl_setopt($ch, CURLOPT_USERAGENT, "Elabftw/" . VERSION);
 
     // add a timeout, because if you need proxy, but don't have it, it will mess up things
     // 5 seconds
@@ -1173,48 +1173,4 @@ function getMailer()
 
     $mailer = Swift_Mailer::newInstance($transport);
     return $mailer;
-}
-
-/*
- * Return the latest version of elabftw using GitHub API
- *
- * @return string|bool latest version or false if error
- */
-function getLatestVersionFromGitHub()
-{
-    $url = 'https://api.github.com/repos/elabftw/elabftw/releases/latest';
-    $res = curlDownload($url);
-    $latest_arr = json_decode($res, true);
-    return $latest_arr['tag_name'];
-}
-
-/*
- * Return the latest version of elabftw
- * Will fetch updates.ini file from elabftw.net
- *
- * @return string|bool latest version or false if error
- */
-function getLatestVersion()
-{
-    $update_list_url = 'https://get.elabftw.net/updates.ini';
-    $ini = curlDownload($update_list_url);
-    if (strlen($ini) > 0) {
-        // convert ini into array. The `true` is for process_sections: to get multidimensionnal array.
-        $versions = parse_ini_string($ini, true);
-        // get the latest version (first item in array, an array itself with url and checksum)
-        return array_keys($versions)[0];
-    } else {
-        return false;
-    }
-}
-
-/*
- * Return true if there is a new version out there
- *
- * @return bool
- */
-function checkForUpdate()
-{
-    require_once ELAB_ROOT . '/app/version.php';
-    return VERSION != getLatestVersionFromGitHub();
 }

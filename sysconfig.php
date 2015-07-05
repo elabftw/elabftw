@@ -47,18 +47,16 @@ if (strlen(get_config('mail_method')) == 0) {
 // DISPLAY CURRENT AND LATEST VERSION
 require_once 'app/version.php';
 echo "<br><p>" . _('Installed version:') . " " . VERSION . " ";
-if (VERSION === getLatestVersion()) {
+if (!checkForUpdate()) {
     echo "<img src='img/check.png' width='16px' length='16px' title='latest' style='position:relative;bottom:8px' alt='OK' />";
 }
 echo "<br>" . _('Latest version:') . " " . getLatestVersion() . "</p>";
 
 // IF WE DON'T HAVE THE LATEST VERSION, SHOW BUTTON REDIRECTING TO WIKI
-if (VERSION != getLatestVersion()) {
-    ?>
-    <a href='https://github.com/elabftw/elabftw/wiki/How-to-update'>
-        <button id='updateButton' type='submit' class='submit button'>Update elabftw</button>
-    </a>
-    <?php
+if (checkForUpdate()) {
+    $message = _('A new version is available!') . " <a href='https://github.com/elabftw/elabftw/wiki/How-to-update'>
+        <button id='updateButton' type='submit' class='submit button'>Update elabftw</button></a>";
+    display_message('error', $message);
 }
 ?>
 

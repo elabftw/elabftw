@@ -856,18 +856,6 @@ function get_team_config($column)
 }
 
 /**
- * Will check if an executable is on the system.
- * Only used by check_for_updates.php to check for git.
- *
- * @param string $cmd The command to check
- * @return string Will return true if the executable can be used
- */
-function check_executable($cmd)
-{
-    return shell_exec("which $cmd");
-}
-
-/**
  * Take a 8 digits input and output 2014.08.16
  *
  * @param string $date Input date '20140302'
@@ -1072,18 +1060,6 @@ function checkSelectFilter($val)
 }
 
 /*
- * Check presence of basic cURL functionality
- * @return bool true if cURL functions are present, else false
- */
-function curlCheckBasicFunctions()
-{
-    return function_exists("curl_init") &&
-      function_exists("curl_setopt") &&
-      function_exists("curl_exec") &&
-      function_exists("curl_close");
-}
-
-/*
  * Downloads a file with cURL; Returns bool status information.
  * @param string $url URL to download
  * @param string|null $file Path and filename as which the download is to be saved
@@ -1091,7 +1067,7 @@ function curlCheckBasicFunctions()
  */
 function curlDownload($url, $file = null)
 {
-    if (!curlCheckBasicFunctions()) {
+    if (!extension_loaded('curl')) {
         return "Please install php5-curl package.";
     }
 
@@ -1200,6 +1176,19 @@ function getMailer()
 }
 
 /*
+ * Return the latest version of elabftw using GitHub API
+ *
+ * @return string|bool latest version or false if error
+ */
+function getLatestVersionFromGitHub()
+{
+    $url = 'https://api.github.com/repos/elabftw/elabftw/releases/latest';
+    $res = curlDownload($url);
+    $latest_arr = json_decode($res, true);
+    return $latest_arr['tag_name'];
+}
+
+/*
  * Return the latest version of elabftw
  * Will fetch updates.ini file from elabftw.net
  *
@@ -1217,4 +1206,15 @@ function getLatestVersion()
     } else {
         return false;
     }
+}
+
+/*
+ * Return true if there is a new version out there
+ *
+ * @return bool
+ */
+function checkForUpdate()
+{
+    require_once ELAB_ROOT . '/app/version.php';
+    return VERSION != getLatestVersionFromGitHub();
 }

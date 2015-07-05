@@ -10,7 +10,7 @@
 * add pagebreak tag in editor
 * max file upload size is now based on system configuration (thx @jcapellman)
 * move creation/duplication functions to Create() class
-* show latest version on sysconfig page
+* check for latest version on sysconfig page
 * various little improvements and bug fixes
 
 # Verson 1.1.3

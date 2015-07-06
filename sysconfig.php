@@ -57,10 +57,10 @@ if (is_object($update)) {
     // display latest version
     echo "<br>" . _('Latest version:') . " " . $update->getLatestVersion() . "</p>";
 
-    // IF WE DON'T HAVE THE LATEST VERSION, SHOW BUTTON REDIRECTING TO WIKI
+    // if we don't have the latest version, show button redirecting to wiki
     if ($update->updateIsAvailable()) {
         $message = _('A new version is available!') . " <a href='https://github.com/elabftw/elabftw/wiki/How-to-update'>
-            <button id='updateButton' type='submit' class='submit button'>Update elabftw</button></a>";
+            <button class='submit button'>Update elabftw</button></a>";
         display_message('error', $message);
     }
 }

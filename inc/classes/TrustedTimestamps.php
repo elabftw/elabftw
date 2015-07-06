@@ -73,7 +73,7 @@ class TrustedTimestamps
     /**
      * Return the needed parameters to request/verify a timestamp
      *
-     * @return array<string,string|null>
+     * @return array<string,string>
      */
     public function getTimestampParameters()
     {
@@ -128,7 +128,7 @@ class TrustedTimestamps
      * Returns date and time of when the response was generated
      * @return string|bool response time or false on error
      */
-    public function getResponseTime($token = null)
+    public function getResponseTime()
     {
         if (!is_null($this->responseTime)) {
             return $this->responseTime;
@@ -166,7 +166,7 @@ class TrustedTimestamps
     private function createRequestfile($pdf)
     {
         $outfilepath = $this->createTempFile();
-        $cmd = "ts -query -data " . escapeshellarg($pdf) . " -cert " . $this->stamParams['stampHash'] . " -no_nonce -out " . escapeshellarg($outfilepath);
+        $cmd = "ts -query -data " . escapeshellarg($pdf) . " -cert -" . $this->stampParams['hash'] . " -no_nonce -out " . escapeshellarg($outfilepath);
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];
         $retcode = $opensslResult['retcode'];
@@ -317,7 +317,7 @@ class TrustedTimestamps
      * Validates a file against its timestamp and optionally check a provided time for consistence with the time encoded
      * in the timestamp itself.
      *
-     * @param int|null $timeToCheck The response time, which should be checked
+     * @param $pdf Path of the timestamped pdf
      * @return bool
      */
     private function validate($pdf)
@@ -343,11 +343,13 @@ class TrustedTimestamps
 
         if ($retcode === 0 && strtolower(trim($retarray[0])) == "verification: ok") {
 
+            /*
             if (!is_null($timeToCheck)) {
                 if ($timeToCheck != $this->responseTime) {
                     throw new Exception("The response time of the request was changed");
                 }
             }
+             */
             return true;
         }
 

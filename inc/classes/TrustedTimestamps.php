@@ -37,13 +37,13 @@ class TrustedTimestamps
 {
     private $stampParams = array();
     private $tmpfiles = array();
+
     private $requestfilePath;
+    private $responsefilePath;
 
     private $binaryResponseString;
-    private $base64ResponseString;
-    public $responseTime;
+    private $responseTime;
 
-    private $responsefilePath;
 
     /**
      * Class constructor
@@ -51,33 +51,23 @@ class TrustedTimestamps
      */
     public function __construct()
     {
-
         // initialize with info from config
         try {
             $this->stampParams = $this->getTimestampParameters();
         } catch (Exception $e) {
             $_SESSION['errors'][] = $e->getMessage();
         }
+    }
 
-/*
-        if (!is_null($this->data) && !is_null($this->stampParams['stampprovider'])) {
-            try {
-                $this->createRequestfile();
-                $this->generateToken();
-            } catch (Exception $e) {
-                $_SESSION['errors'][] = $e->getMessage();
-            }
+    /**
+     * Class destructor
+     * Deletes all temporary files created by TrustedTimestamps
+     */
+    public function __destruct()
+    {
+        foreach ($this->tmpfiles as $file) {
+            unlink($file);
         }
-
-        if (!is_null($responsefilePath)) {
-            try {
-                $this->processResponsefile();
-            } catch (Exception $e) {
-                $_SESSION['errors'][] = $e->getMessage();
-            }
-
-        }
- */
     }
 
     /**
@@ -120,49 +110,25 @@ class TrustedTimestamps
                         'hash' => $hash);
     }
 
-
     /**
-     * Class destructor
-     * Deletes all temporary files created by TrustedTimestamps
+     * Run OpenSSL via exec() with a provided command
+     * @param string $cmd
+     * @return array<string,null|array|integer>
      */
-    public function __destruct()
+    private function runOpenSSL($cmd)
     {
-        foreach ($this->tmpfiles as $file) {
-            unlink($file);
-        }
-    }
+        $retarray = array();
+        exec("openssl " . $cmd . " 2>&1", $retarray, $retcode);
 
-    /**
-     * Returns response in binary form
-     * @return string|bool binary response or false on error
-     */
-    public function getBinaryResponse()
-    {
-        if (!is_null($this->binaryResponseString)) {
-            return $this->binaryResponseString;
-        } else {
-            throw new Exception('No token found!');
-        }
-    }
-
-    /**
-     * Returns response base64-encoded
-     * @return string|bool base64-encoded response or false on error
-     */
-    public function getBase64Response()
-    {
-        if (!is_null($this->base64ResponseString)) {
-            return $this->base64ResponseString;
-        } else {
-            return false;
-        }
+        return array("retarray" => $retarray,
+                        "retcode" => $retcode);
     }
 
     /**
      * Returns date and time of when the response was generated
      * @return string|bool response time or false on error
      */
-    public function getResponseTime()
+    public function getResponseTime($token = null)
     {
         if (!is_null($this->responseTime)) {
             return $this->responseTime;
@@ -195,21 +161,6 @@ class TrustedTimestamps
     }
 
     /**
-     * Process the response file and populate class variables accordingly.
-     */
-    private function processResponsefile()
-    {
-        if (is_file($this->responsefilePath)) {
-            $this->binaryResponseString = file_get_contents($this->responsefilePath);
-            $this->base64ResponseString = base64_encode($this->binaryResponseString);
-            //$this->responsefilePath = $this->createTempFile($this->binaryResponseString);
-            $this->responseTime = $this->getTimestampFromAnswer();
-        } else {
-            throw new Exception("The responsefile " . $this->responsefilePath . " was not found!");
-        }
-    }
-
-    /**
      * Creates a Timestamp Requestfile from a filename
      */
     private function createRequestfile($pdf)
@@ -221,37 +172,14 @@ class TrustedTimestamps
         $retcode = $opensslResult['retcode'];
 
         if ($retcode !== 0) {
-                    throw new Exception("OpenSSL does not seem to be installed: " . implode(", ", $retarray));
+            throw new Exception("OpenSSL does not seem to be installed: " . implode(", ", $retarray));
         }
 
         if (stripos($retarray[0], "openssl:Error") !== false) {
-                    throw new Exception("There was an error with OpenSSL. Is version >= 0.99 installed?: " . implode(", ", $retarray));
+            throw new Exception("There was an error with OpenSSL. Is version >= 0.99 installed?: " . implode(", ", $retarray));
         }
 
         $this->requestfilePath = $outfilepath;
-    }
-
-    /**
-     * Check if a response file is present. If not, try to create it from $binaryResponseString
-     * @return bool true if found or created, false if not found and not able to create
-     */
-    private function checkResponseFileAvailability()
-    {
-        switch (is_null($this->responsefilePath)) {
-            case true:
-                if (!is_null($this->binaryResponseString)) {
-                    $this->responsefilePath = $this->createTempFile();
-                    file_put_contents($this->responsefilePath, $this->binaryResponseString);
-                    return true;
-                } else {
-                    return false;
-                }
-                // no break needed
-            case false:
-                return true;
-            default:
-                return false;
-        }
     }
 
     /**
@@ -259,11 +187,10 @@ class TrustedTimestamps
      *
      * @return string unix timestamp
      */
-    private function getTimestampFromAnswer()
+    public function getTimestampFromAnswer()
     {
-
-        if (!$this->checkResponseFileAvailability()) {
-            throw new RuntimeException('Response file was not found and could not be created from binary response string.');
+        if (!is_readable($this->responsefilePath)) {
+            throw new Exception('Bad token');
         }
 
         $cmd = "ts -reply -in " . escapeshellarg($this->responsefilePath) . " -text";
@@ -281,9 +208,25 @@ class TrustedTimestamps
         /*
          * Format of answer:
          *
-         * Foobar: some stuff
-         * Time stamp: 21.08.2010 blabla GMT
-         * Somestuff: Yayayayaya
+         * Status info:
+         *   Status: Granted.
+         *   Status description: unspecified
+         *   Failure info: unspecified
+         *
+         *   TST info:
+         *   Version: 1
+         *   Policy OID: 1.3.6.1.4.1.15819.5.2.2
+         *   Hash Algorithm: sha256
+         *   Message data:
+         *       0000 - 3a 9a 6c 32 12 7f b0 c7-cd e0 c9 9e e2 66 be a9   :.l2.........f..
+         *       0010 - 20 b9 b1 83 3d b1 7c 16-e4 ac b0 5f 43 bc 40 eb    ...=.|...._C.@.
+         *   Serial number: 0xA7452417D851301981FA9A7CC2CF776B5934D3E5
+         *   Time stamp: Apr 27 13:37:34.363 2015 GMT
+         *   Accuracy: unspecified seconds, 0x01 millis, unspecified micros
+         *   Ordering: yes
+         *   Nonce: unspecified
+         *   TSA: DirName:/CN=Universign Timestamping Unit 012/OU=0002 43912916400026/O=Cryptolog International/C=FR
+         *   Extensions:
          */
 
         if (!is_array($retarray)) {
@@ -318,17 +261,15 @@ class TrustedTimestamps
         return date("Y-m-d H:i:s", $responseTime);
     }
 
-    /**
-     * The main function.
-     * Request a timestamp and parse the response.
+    /*
+     * Contact the TSA and receive a token after successful timestamp
+     *
      */
-    public function timeStamp($pdf)
+    private function postData()
     {
-        // first we create the request file
-        $this->createRequestfile($pdf);
-
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->stampParams['provider']);
+        // set url of TSA
+        curl_setopt($ch, CURLOPT_URL, $this->stampParams['stampprovider']);
         // if login and password are set, pass them to curl
         if (!is_null($this->stampParams['stamplogin']) && !is_null($this->stampParams['stamppassword'])) {
             curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
@@ -338,9 +279,6 @@ class TrustedTimestamps
         if (strlen(get_config('proxy')) > 0) {
             curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
         }
-        curl_setopt($ch, CURLOPT_VERBOSE, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, f0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -350,53 +288,29 @@ class TrustedTimestamps
         curl_setopt($ch, CURLOPT_USERAGENT, "eLabFTW");
         $binaryResponseString = curl_exec($ch);
         $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
 
         if ($status != 200 || !strlen($binaryResponseString)) {
             // check if we got something bad
-            //throw new Exception('Bad answer from TSA (' . $status . ')<br>' . $binaryResponseString);
-            throw new Exception(print_r(curl_getinfo($ch)));
+            throw new Exception('Bad answer from TSA (' . $status . ')<br>' . $binaryResponseString);
         }
-        curl_close($ch);
 
-        $base64ResponseString = base64_encode($binaryResponseString);
-
+        // populate variable
         $this->binaryResponseString = $binaryResponseString;
-        $this->base64ResponseString = $base64ResponseString;
-        $this->responseTime = $this->getTimestampFromAnswer();
     }
 
-    /**
-     * Run OpenSSL via exec() with a provided command
-     * @param string $cmd
-     * @return array<string,null|array|integer>
+    /*
+     * Save the binaryResponseString to a .asn1 file (token)
+     *
      */
-    private function runOpenSSL($cmd)
+    private function saveToken()
     {
-        $retarray = array();
-        exec("openssl " . $cmd . " 2>&1", $retarray, $retcode);
-
-        return array("retarray" => $retarray,
-                        "retcode" => $retcode);
-    }
-
-    /**
-     * Check if the requirements to perform a validation are met.
-     * @return bool Returns true if the requirements are met, otherwise throw an exception
-     */
-    private function checkValidationPrerequisits()
-    {
-        if (!is_file($this->responsefilePath)) {
-                    throw new Exception("There was no response-string");
+        $longname = hash("sha512", uniqid(rand(), true)) . ".asn1";
+        $file_path = ELAB_ROOT . 'uploads/' . $longname;
+        if (!file_put_contents($file_path, $this->binaryResponseString)) {
+            throw new Exception('Cannot save token to disk!');
         }
-
-        if (!intval($this->responseTime)) {
-                    throw new Exception("There is no valid response-time given");
-        }
-
-        if (!file_exists($this->stampParams['stampcert'])) {
-                    throw new Exception("The TSA-Certificate could not be found");
-        }
-        return true;
+        $this->responsefilePath = $file_path;
     }
 
     /**
@@ -406,14 +320,11 @@ class TrustedTimestamps
      * @param int|null $timeToCheck The response time, which should be checked
      * @return bool
      */
-    public function validate($timeToCheck = null)
+    private function validate($pdf)
     {
-
-        // Check if all requirements to perform a validation are met
-        $this->checkValidationPrerequisits();
         // FIXME I don't manage to validate anything!
         // The error I get is 139901699057304:error:2F06D064:time stamp routines:TS_VERIFY_CERT:certificate verify error:ts_rsp_verify.c:263:Verify error:unable to get local issuer certificate
-        $cmd = "ts -verify -data " . escapeshellarg(ELAB_ROOT . $this->data) . " -in " . escapeshellarg($this->responsefilePath) . " -CAfile " . escapeshellarg(ELAB_ROOT . $this->stampParams['stampcert']);
+        $cmd = "ts -verify -data " . escapeshellarg($pdf) . " -in " . escapeshellarg($this->responsefilePath) . " -CAfile " . escapeshellarg(ELAB_ROOT . $this->stampParams['stampcert']);
 
         // debug
         //throw new Exception($cmd);
@@ -451,5 +362,28 @@ class TrustedTimestamps
         }
 
         throw new Exception("System command failed: " . implode(", ", $retarray));
+    }
+    /*
+     * The main function.
+     * Request a timestamp and parse the response.
+     */
+    public function timeStamp($pdf)
+    {
+        // first we create the request file
+        $this->createRequestfile($pdf);
+
+        // make the request to the TSA
+        $this->postData();
+
+        // save the token to .asn1 file
+        $this->saveToken();
+
+        // set the responseTime
+        $this->responseTime = $this->getTimestampFromAnswer();
+
+        // validate everything
+        // disabled for now as it doesn't work for some reason
+        //return $this->validate($pdf);
+        return true;
     }
 }

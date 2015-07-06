@@ -105,35 +105,6 @@ if ($data['timestamped'] == 1) {
     $req_stamper->execute();
     $uploads = $req_stamper->fetch();
 
-    /*
-     * I'm disabling this because we don't need to check each time a page is loaded
-     * Also, as old timestamps sometime fail with this, doing it like that is better.
-     *
-    $validate = false;
-    $token = ELAB_ROOT . 'uploads/' .$data['timestamptoken'];
-    if ($token) {
-        $stamp_params = getTimestampParameters();
-        $pdf_file = "uploads/" . $uploads['long_name'];
-        $ts = new \Elabftw\Elabftw\TrustedTimestamps(null, $pdf_file, $token, null, null, $stamp_params['stampcert']);
-        try {
-            $validate = $ts->validate($data['timestampedwhen']);
-        } catch (Exception $e) {
-            display_message('error', $e->getMessage());
-        }
-    } else {
-        display_message('error', 'Token not found!');
-    }
-    // TODO add a button to validate the experiment against the asn1 token.
-
-    if ($validate) {
-        $message_type = 'info_nocross';
-        $validation_note = "<img class='align_right' src='img/check.png' alt='Valid Timestamp' title='Valid Timestamp' />";
-    } else {
-        $message_type = 'error_nocross';
-        $validation_note = "<img class='align_right' src='img/cross-red.png' alt='Invalid Timestamp' title='Invalid Timestamp' />";
-    }
-     */
-
     // Until a button is implemented, don't fool the user to think the timestamp is valid
     $message_type = 'info_nocross';
     $validation_note = "<img class='align_right' src='img/stamp.png' alt='Unchecked timestamp' title='" . _('Unchecked timestamp') . "' />";

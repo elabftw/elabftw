@@ -40,23 +40,6 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     exit;
 }
 
-// Get login/password info
-// if the team config is set, we use this one, else, we use the general one, unless we can't (not allowed in config)
-/*
-try {
-    $stamp_params = getTimestampParameters();
-} catch (Exception $e) {
-    $_SESSION['errors'][] = $e->getMessage();
-    header("Location: ../experiments.php?mode=view&id=" . $id);
-}
-
-$login = $stamp_params['stamplogin'];
-$password = $stamp_params['stamppassword'];
-$provider = $stamp_params['stampprovider'];
-$cert = $stamp_params['stampcert'];
-$hash = $stamp_params['hash'];
-
-*/
 // generate the pdf to timestamp
 $pdf = new \Elabftw\Elabftw\MakePdf($id, 'experiments');
 $mpdf = new mPDF();
@@ -72,11 +55,12 @@ $mpdf->SetCreator('www.elabftw.net');
 $mpdf->WriteHTML($pdf->content);
 $mpdf->Output($pdf_path, 'F');
 
-$trusted_timestamp = new Elabftw\Elabftw\TrustedTimestamps();
+// now timestamp that pdf
+$ts = new Elabftw\Elabftw\TrustedTimestamps();
 try {
-    $trusted_timestamp->timeStamp($pdf_path);
+    $ts->timeStamp($pdf_path);
 } catch (Exception $e) {
-    die($e->getMessage());
+    $_SESSION['errors'][] = $e->getMessage();
 }
 
 // if there was a problem during the timestamping, an error will be inside the $_SESSION['errors'] array
@@ -86,43 +70,18 @@ if (is_array($_SESSION['errors'])) {
     exit;
 }
 
-// REQUEST TOKEN
-try {
-    $token = $trusted_timestamp->getBinaryResponse();
-} catch (Exception $e) {
-        dblog("Error", $_SESSION['userid'], "File: " . $e->getFile() . ", line " . $e->getLine() . ": " . $e->getMessage());
-        $msg_arr[] = _('There was an error with the timestamping. Experiment is NOT timestamped. Error has been logged.');
-        $_SESSION['errors'] = $msg_arr;
-        header("Location: ../experiments.php?mode=view&id=" . $id);
-        exit;
-}
-
-$longname = hash("sha512", uniqid(rand(), true)) . ".asn1";
-$file_path = ELAB_ROOT . 'uploads/' . $longname;
-
-// save the timestamptoken
-try {
-    file_put_contents($file_path, $token);
-} catch (Exception $e) {
-    dblog('Error', $_SESSION['userid'], $e->getMessage());
-    $msg_arr[] = _('There was an error with the timestamping. Experiment is NOT timestamped. Error has been logged.');
-    $_SESSION['errors'] = $msg_arr;
-    header("Location: ../experiments.php?mode=view&id=" . $id);
-    exit;
-}
-
 // SQL
 $sql = "UPDATE `experiments` SET `timestamped` = 1, `timestampedby` = :userid, `timestampedwhen` = :timestampedwhen, `timestamptoken` = :longname WHERE `id` = :id;";
 $req = $pdo->prepare($sql);
-$req->bindParam(':timestampedwhen', $trusted_timestamp->getResponseTime());
+$req->bindParam(':timestampedwhen', $ts->getResponseTime());
 // the date recorded in the db has to match the creation time of the timestamp token
 $req->bindParam(':longname', $longname);
 $req->bindParam(':userid', $_SESSION['userid']);
 $req->bindParam(':id', $id);
 $res1 = $req->execute();
 
-// unset $trusted_timestamp to delete associated temporary files
-unset($trusted_timestamp);
+// unset $ts to delete associated temporary files
+unset($ts);
 
 // add also our pdf to the attached files of the experiment, this way it is kept safely :)
 // I had this idea when realizing that if you comment an experiment, the hash won't be good anymore. Because the pdf will contain the new comments.

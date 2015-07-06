@@ -201,7 +201,7 @@ while ($show = $req->fetch()) {
 foreach ($teams as $team) {
     if ($team['stamplogin'] !== '' && $team['stamppass'] !== '' && $team['stampprovider'] === '') {
         $old_timestamping_teams = true;
-        $sql = "UPDATE teams SET stampprovider = 'https://ws.universign.eu/tsaa', stampcert = :certfile,
+        $sql = "UPDATE teams SET stampprovider = 'https://ws.universign.eu/tsa/', stampcert = :certfile,
                 stamphash = 'sha256' WHERE team_id = :id";
         $req = $pdo->prepare($sql);
         $res = $req->execute(array(
@@ -216,6 +216,7 @@ foreach ($teams as $team) {
     }
 }
 
+/*
 // if Universign was used either globally or on a per team level, correct the recorded dates for the timestamps in the database
 if ($old_timestamping_global || $old_timestamping_teams) {
     // check if we have timestamped experiments
@@ -224,8 +225,8 @@ if ($old_timestamping_global || $old_timestamping_teams) {
     $req->execute();
     while ($show = $req->fetch()) {
         if ($show['timestamped'] === '1') {
-            $ts = new Elabftw\Elabftw\TrustedTimestamps(null, null, ELAB_ROOT . 'uploads/' . $show['timestamptoken']);
-            $date = $ts->getResponseTime();
+            $ts = new Elabftw\Elabftw\TrustedTimestamps();
+            $date = $ts->getResponseTime(ELAB_ROOT . 'uploads/' . $show['timestamptoken']);
             if ($show['timestampedwhen'] !== $date) {
                 $sql_update = "UPDATE experiments SET timestampedwhen = :date WHERE id = :id";
                 $req_update = $pdo->prepare($sql_update);
@@ -239,6 +240,7 @@ if ($old_timestamping_global || $old_timestamping_teams) {
         }
     }
 }
+ */
 
 // if Universign.eu was not used, a database update might still be needed; check for that
 if (!$old_timestamping_global) {

@@ -42,6 +42,7 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
 
 // Get login/password info
 // if the team config is set, we use this one, else, we use the general one, unless we can't (not allowed in config)
+/*
 try {
     $stamp_params = getTimestampParameters();
 } catch (Exception $e) {
@@ -55,6 +56,7 @@ $provider = $stamp_params['stampprovider'];
 $cert = $stamp_params['stampcert'];
 $hash = $stamp_params['hash'];
 
+*/
 // generate the pdf to timestamp
 $pdf = new \Elabftw\Elabftw\MakePdf($id, 'experiments');
 $mpdf = new mPDF();
@@ -70,7 +72,13 @@ $mpdf->SetCreator('www.elabftw.net');
 $mpdf->WriteHTML($pdf->content);
 $mpdf->Output($pdf_path, 'F');
 
-$trusted_timestamp = new Elabftw\Elabftw\TrustedTimestamps($provider, $pdf_path, null, $login, $password, null, $hash);
+$trusted_timestamp = new Elabftw\Elabftw\TrustedTimestamps();
+try {
+    $trusted_timestamp->timeStamp($pdf_path);
+} catch (Exception $e) {
+    die($e->getMessage());
+}
+
 // if there was a problem during the timestamping, an error will be inside the $_SESSION['errors'] array
 // and we want to stop there if that is the case.
 if (is_array($_SESSION['errors'])) {

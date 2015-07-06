@@ -35,54 +35,32 @@ use \RuntimeException;
 
 class TrustedTimestamps
 {
-    private $stampProvider;
-    private $data;
-    private $stampLogin;
-    private $stampPassword;
-    private $stampCert;
-    private $stampHash;
+    private $stampParams = array();
+    private $tmpfiles = array();
     private $requestfilePath;
 
     private $binaryResponseString;
     private $base64ResponseString;
-    private $responseTime;
+    public $responseTime;
 
     private $responsefilePath;
-    private $tmpfiles;
 
     /**
      * Class constructor
-     * At least $stampProvider + $data (+ $stampPassword + $stampLogin) or $data + $responsefilePath + $stampCert are needed
-     * to do anything usefull.
      *
-     * @param string|null $stampProvider URL of the TSA to be used (optional)
-     * @param string|null $data Filename to be timestamped or validated (optional)
-     * @param string|null $responsefilePath Filename to an already existing binary timestamp token (optional)
-     * @param string|null $stampLogin Login for the TSA (optional)
-     * @param string|null $stampPassword Password for the TSA (optional)
-     * @param string|null $stampCert File with the certificate that is used by the TSA in PEM-encoded ASCII format (optional)
-     * @param string $stampHash Hash algorithm to be used (optional, defaults to sha256)
      */
-    public function __construct(
-        $stampProvider = null,
-        $data = null,
-        $responsefilePath = null,
-        $stampLogin = null,
-        $stampPassword = null,
-        $stampCert = null,
-        $stampHash = 'sha256'
-    ) {
+    public function __construct()
+    {
 
-        $this->stampProvider = $stampProvider;
-        $this->data = $data;
-        $this->responsefilePath = $responsefilePath;
-        $this->stampLogin = $stampLogin;
-        $this->stampPassword = $stampPassword;
-        $this->stampCert = $stampCert;
-        $this->stampHash = $stampHash;
-        $this->tmpfiles = array();
+        // initialize with info from config
+        try {
+            $this->stampParams = $this->getTimestampParameters();
+        } catch (Exception $e) {
+            $_SESSION['errors'][] = $e->getMessage();
+        }
 
-        if (!is_null($this->data) && !is_null($this->stampProvider)) {
+/*
+        if (!is_null($this->data) && !is_null($this->stampParams['stampprovider'])) {
             try {
                 $this->createRequestfile();
                 $this->generateToken();
@@ -99,7 +77,49 @@ class TrustedTimestamps
             }
 
         }
+ */
     }
+
+    /**
+     * Return the needed parameters to request/verify a timestamp
+     *
+     * @return array<string,string|null>
+     */
+    public function getTimestampParameters()
+    {
+        $hash_algorithms = array('sha256', 'sha384', 'sha512');
+        $crypto = new \Elabftw\Elabftw\Crypto();
+
+        if (strlen(get_team_config('stamplogin')) > 2) {
+            $login = get_team_config('stamplogin');
+            $password = $crypto->decrypt(get_team_config('stamppass'));
+            $provider = get_team_config('stampprovider');
+            $cert = get_team_config('stampcert');
+            $hash = get_team_config('stamphash');
+            if (!in_array($hash, $hash_algorithms)) {
+                $hash = 'sha256';
+            }
+        } elseif (get_config('stampshare')) {
+            $login = get_config('stamplogin');
+            $password = $crypto->decrypt(get_config('stamppass'));
+            $provider = get_config('stampprovider');
+            $cert = get_config('stampcert');
+            $hash = get_config('stamphash');
+            if (!in_array($hash, $hash_algorithms)) {
+                $hash = 'sha256';
+            }
+            // otherwise assume no login or password is needed
+        } else {
+            throw new Exception(_('No valid credentials were found for Time Stamping.'));
+        }
+
+        return array('stamplogin' => $login,
+                        'stamppassword' => $password,
+                        'stampprovider' => $provider,
+                        'stampcert' => $cert,
+                        'hash' => $hash);
+    }
+
 
     /**
      * Class destructor
@@ -121,7 +141,7 @@ class TrustedTimestamps
         if (!is_null($this->binaryResponseString)) {
             return $this->binaryResponseString;
         } else {
-            return false;
+            throw new Exception('No token found!');
         }
     }
 
@@ -192,10 +212,10 @@ class TrustedTimestamps
     /**
      * Creates a Timestamp Requestfile from a filename
      */
-    private function createRequestfile()
+    private function createRequestfile($pdf)
     {
         $outfilepath = $this->createTempFile();
-        $cmd = "ts -query -data " . escapeshellarg($this->data) . " -cert -" . $this->stampHash . " -no_nonce -out " . escapeshellarg($outfilepath);
+        $cmd = "ts -query -data " . escapeshellarg($pdf) . " -cert " . $this->stamParams['stampHash'] . " -no_nonce -out " . escapeshellarg($outfilepath);
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];
         $retcode = $opensslResult['retcode'];
@@ -208,7 +228,7 @@ class TrustedTimestamps
                     throw new Exception("There was an error with OpenSSL. Is version >= 0.99 installed?: " . implode(", ", $retarray));
         }
 
-            $this->requestfilePath = $outfilepath;
+        $this->requestfilePath = $outfilepath;
     }
 
     /**
@@ -299,27 +319,28 @@ class TrustedTimestamps
     }
 
     /**
-     * Request a timestamp and parse the response
+     * The main function.
+     * Request a timestamp and parse the response.
      */
-    private function generateToken()
+    public function timeStamp($pdf)
     {
-        if (is_null($this->requestfilePath)) {
-            throw new Exception("Cannot create new timestamp token! No data was provided during initialization!");
-        } elseif (!file_exists($this->requestfilePath)) {
-            throw new Exception("The Requestfile was not found: " . $this->requestfilePath);
-        }
+        // first we create the request file
+        $this->createRequestfile($pdf);
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->stampProvider);
+        curl_setopt($ch, CURLOPT_URL, $this->stampParams['provider']);
         // if login and password are set, pass them to curl
-        if (!is_null($this->stampLogin) && !is_null($this->stampPassword)) {
+        if (!is_null($this->stampParams['stamplogin']) && !is_null($this->stampParams['stamppassword'])) {
             curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-            curl_setopt($ch, CURLOPT_USERPWD, $this->stampLogin . ":" . $this->stampPassword);
+            curl_setopt($ch, CURLOPT_USERPWD, $this->stampParams['stamplogin'] . ":" . $this->stampParams['stamppassword']);
         }
         // add proxy if there is one
         if (strlen(get_config('proxy')) > 0) {
             curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
         }
+        curl_setopt($ch, CURLOPT_VERBOSE, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, f0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -329,12 +350,13 @@ class TrustedTimestamps
         curl_setopt($ch, CURLOPT_USERAGENT, "eLabFTW");
         $binaryResponseString = curl_exec($ch);
         $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
 
         if ($status != 200 || !strlen($binaryResponseString)) {
             // check if we got something bad
-            throw new Exception('Bad answer from TSA (' . $status . ')<br>' . $binaryResponseString);
+            //throw new Exception('Bad answer from TSA (' . $status . ')<br>' . $binaryResponseString);
+            throw new Exception(print_r(curl_getinfo($ch)));
         }
+        curl_close($ch);
 
         $base64ResponseString = base64_encode($binaryResponseString);
 
@@ -371,7 +393,7 @@ class TrustedTimestamps
                     throw new Exception("There is no valid response-time given");
         }
 
-        if (!file_exists($this->stampCert)) {
+        if (!file_exists($this->stampParams['stampcert'])) {
                     throw new Exception("The TSA-Certificate could not be found");
         }
         return true;
@@ -389,7 +411,9 @@ class TrustedTimestamps
 
         // Check if all requirements to perform a validation are met
         $this->checkValidationPrerequisits();
-        $cmd = "ts -verify -data " . escapeshellarg(ELAB_ROOT . $this->data) . " -in " . escapeshellarg($this->responsefilePath) . " -CAfile " . escapeshellarg(ELAB_ROOT . $this->stampCert);
+        // FIXME I don't manage to validate anything!
+        // The error I get is 139901699057304:error:2F06D064:time stamp routines:TS_VERIFY_CERT:certificate verify error:ts_rsp_verify.c:263:Verify error:unable to get local issuer certificate
+        $cmd = "ts -verify -data " . escapeshellarg(ELAB_ROOT . $this->data) . " -in " . escapeshellarg($this->responsefilePath) . " -CAfile " . escapeshellarg(ELAB_ROOT . $this->stampParams['stampcert']);
 
         // debug
         //throw new Exception($cmd);

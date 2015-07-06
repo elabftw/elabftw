@@ -368,47 +368,6 @@ function processTimestampPost()
 }
 
 /**
- * Return the needed parameters to request/verify a timestamp
- *
- * @return array<string,string|null>
- */
-function getTimestampParameters()
-{
-    $hash_algorithms = array('sha256', 'sha384', 'sha512');
-    $crypto = new \Elabftw\Elabftw\Crypto();
-
-    if (strlen(get_team_config('stamplogin')) > 2) {
-        $login = get_team_config('stamplogin');
-        $password = $crypto->decrypt(get_team_config('stamppass'));
-        $provider = get_team_config('stampprovider');
-        $cert = get_team_config('stampcert');
-        $hash = get_team_config('stamphash');
-        if (!in_array($hash, $hash_algorithms)) {
-            $hash = 'sha256';
-        }
-    } elseif (get_config('stampshare')) {
-        $login = get_config('stamplogin');
-        $password = $crypto->decrypt(get_config('stamppass'));
-        $provider = get_config('stampprovider');
-        $cert = get_config('stampcert');
-        $hash = get_config('stamphash');
-        if (!in_array($hash, $hash_algorithms)) {
-            $hash = 'sha256';
-        }
-        // otherwise assume no login or password is needed
-    } else {
-        throw new Exception(_('No valid credentials were found for Time Stamping.'));
-        exit;
-    }
-
-    return array('stamplogin' => $login,
-                    'stamppassword' => $password,
-                    'stampprovider' => $provider,
-                    'stampcert' => $cert,
-                    'hash' => $hash);
-}
-
-/**
  * Show an experiment (in mode=show).
  *
  * @param int $id The ID of the experiment to show

@@ -114,14 +114,15 @@ if ($data['timestamped'] == 1) {
         $stamp_params = getTimestampParameters();
         $pdf_file = "uploads/" . $uploads['long_name'];
         $ts = new \Elabftw\Elabftw\TrustedTimestamps(null, $pdf_file, $token, null, null, $stamp_params['stampcert']);
-        $validate = $ts->validate($data['timestampedwhen']);
+        try {
+            $validate = $ts->validate($data['timestampedwhen']);
+        } catch (Exception $e) {
+            display_message('error', $e->getMessage());
+        }
     } else {
         $validate = false;
     }
-     */
     // TODO add a button to validate the experiment against the asn1 token.
-    /*
-    $validate = true;
 
     if ($validate) {
         $message_type = 'info_nocross';
@@ -130,10 +131,13 @@ if ($data['timestamped'] == 1) {
         $message_type = 'error_nocross';
         $validation_note = "<img class='align_right' src='img/cross-red.png' alt='Invalid Timestamp' title='Invalid Timestamp' />";
     }
-    */
+
+     */
     // Until a button is implemented, don't fool the user to think the timestamp is valid
     $message_type = 'info_nocross';
     $validation_note = "<img class='align_right' src='img/stamp.png' alt='Unchecked timestamp' title='" . _('Unchecked timestamp') . "' />";
+    // ///////////////////////////
+
     $date = new DateTime($data['timestampedwhen']);
 
     display_message(
@@ -168,7 +172,7 @@ if ($data['locked'] == 0) {
     }
 }
 
-// _('Tags')
+// TAGS
 show_tags($id, 'experiments_tags');
 // TITLE : click on it to go to edit mode only if we are not in read only mode
 echo "<div ";

@@ -25,7 +25,7 @@
 ********************************************************************************/
 namespace Elabftw\Elabftw;
 
-use Exception;
+use \Exception;
 
 class Update
 {

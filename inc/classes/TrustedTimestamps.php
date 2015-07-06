@@ -182,7 +182,7 @@ class TrustedTimestamps
         if (is_file($this->responsefilePath)) {
             $this->binaryResponseString = file_get_contents($this->responsefilePath);
             $this->base64ResponseString = base64_encode($this->binaryResponseString);
-            $this->responsefilePath = $this->createTempFile($this->binaryResponseString);
+            //$this->responsefilePath = $this->createTempFile($this->binaryResponseString);
             $this->responseTime = $this->getTimestampFromAnswer();
         } else {
             throw new Exception("The responsefile " . $this->responsefilePath . " was not found!");
@@ -389,9 +389,10 @@ class TrustedTimestamps
 
         // Check if all requirements to perform a validation are met
         $this->checkValidationPrerequisits();
+        $cmd = "ts -verify -data " . escapeshellarg(ELAB_ROOT . $this->data) . " -in " . escapeshellarg($this->responsefilePath) . " -CAfile " . escapeshellarg(ELAB_ROOT . $this->stampCert);
 
-        $cmd = "ts -verify -data " . escapeshellarg($this->data) . " -in " . escapeshellarg($this->responsefilePath) . " -CAfile " . ELAB_ROOT . escapeshellarg($this->stampCert);
-
+        // debug
+        //throw new Exception($cmd);
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];
         $retcode = $opensslResult['retcode'];

@@ -125,7 +125,7 @@ class Update
      *
      * @return bool
      */
-    public function availableUpdate()
+    public function updateIsAvailable()
     {
         return self::INSTALLED_VERSION != $this->version;
     }

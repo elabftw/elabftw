@@ -26,6 +26,7 @@ There is also a user guide in the doc/ folder.
 * export as zip archive
 * general default experiment template
 * user templates
+* export/import user templates to files
 * lock the experiment
 * tags
 * join any type of file
@@ -33,6 +34,8 @@ There is also a user guide in the doc/ folder.
 
 ### database
 * import from spreadsheet files
+* export/import zip archives
+* import items from .csv file
 * custom type of items with templates
 * same features as experiments
 * rating system
@@ -52,8 +55,10 @@ There is also a user guide in the doc/ folder.
 compliant with European standard ETSI TS 102 023 and
 certified RGS (French General Security Specifications)
 more info : https://www.universign.eu/en/timestamp/
+* RFC 3161 compliant Trusted Timestamping
 * allow or not users to delete experiments
 * revisions system to see history
+* attached files are md5summed and thus timestamped with the experience
 
 ### user experience
 * lovely design (by Manon Potier)
@@ -114,4 +119,4 @@ suggestions to this project.
 
 
 ## GET INVOLVED
-Please have a look at the CONTRIBUTING file in the doc folder.
+Please have a look at the [CONTRIBUTING](https://github.com/elabftw/elabftw/blob/master/doc/CONTRIBUTING.md) file in the doc folder.

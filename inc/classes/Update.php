@@ -82,8 +82,6 @@ class Update
 
         // DO IT!
         return curl_exec($ch);
-        // cleanup
-        curl_close($ch);
     }
 
 

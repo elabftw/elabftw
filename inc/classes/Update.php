@@ -103,7 +103,7 @@ class Update
     /*
      * Check if the version string actually looks like a version
      *
-     * @return bool true if version match
+     * @return int 1 if version match
      */
     private function validateVersion()
     {
@@ -123,7 +123,7 @@ class Update
     /*
      * Return the latest version string
      *
-     * @return string 1.1.4
+     * @return string|int 1.1.4
      */
     public function getLatestVersion()
     {

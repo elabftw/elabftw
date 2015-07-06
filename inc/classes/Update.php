@@ -47,6 +47,53 @@ class Update
             throw new Exception('Error getting latest version information from server!');
         }
     }
+    /*
+     * Downloads a file with cURL (so we can use proxy setting)
+     * @param string $url URL to download
+     * @param string|null $file Path and filename as which the download is to be saved
+     * @return string|boolean Return true if the download succeeded, else false
+     */
+    private function get($url, $file = null)
+    {
+        if (!extension_loaded('curl')) {
+            throw new Exception('Please install php5-curl package.');
+        }
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        // this is to get content
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // add proxy if there is one
+        if (strlen(get_config('proxy')) > 0) {
+            curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
+        }
+        // disable certificate check
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+
+        // add user agent
+        // http://developer.github.com/v3/#user-agent-required
+        curl_setopt($ch, CURLOPT_USERAGENT, "Elabftw/" . self::INSTALLED_VERSION);
+
+        // add a timeout, because if you need proxy, but don't have it, it will mess up things
+        // 5 seconds
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+
+        if (!empty($file)) {
+            // now open the file
+            $fp = fopen($file, "w");
+            curl_setopt($ch, CURLOPT_FILE, $fp);
+        }
+        // we don't want the header
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        // DO IT!
+        return curl_exec($ch);
+        // cleanup
+        curl_close($ch);
+        if (!empty($file)) {
+            fclose($fp);
+        }
+    }
+
 
     /*
      * Return the latest version of elabftw
@@ -56,7 +103,7 @@ class Update
      */
     private function getUpdatesIni()
     {
-        $ini = curlDownload(self::URL);
+        $ini = self::get(self::URL);
         // convert ini into array. The `true` is for process_sections: to get multidimensionnal array.
         $versions = parse_ini_string($ini, true);
         // get the latest version (first item in array, an array itself with url and checksum)
@@ -101,7 +148,7 @@ class Update
     private function getLatestVersionFromGitHub()
     {
         $url = 'https://api.github.com/repos/elabftw/elabftw/releases/latest';
-        $res = curlDownload($url);
+        $res = get($url);
         $latest_arr = json_decode($res, true);
         return $latest_arr['tag_name'];
     }

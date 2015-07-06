@@ -1060,53 +1060,6 @@ function checkSelectFilter($val)
 }
 
 /*
- * Downloads a file with cURL; Returns bool status information.
- * @param string $url URL to download
- * @param string|null $file Path and filename as which the download is to be saved
- * @return string|boolean Return true if the download succeeded, else false
- */
-function curlDownload($url, $file = null)
-{
-    if (!extension_loaded('curl')) {
-        return "Please install php5-curl package.";
-    }
-
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    // this is to get content
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    // add proxy if there is one
-    if (strlen(get_config('proxy')) > 0) {
-        curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
-    }
-    // disable certificate check
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-
-    // add user agent
-    // http://developer.github.com/v3/#user-agent-required
-    curl_setopt($ch, CURLOPT_USERAGENT, "Elabftw/" . VERSION);
-
-    // add a timeout, because if you need proxy, but don't have it, it will mess up things
-    // 5 seconds
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-
-    if (!empty($file)) {
-        // now open the file
-        $fp = fopen($file, "w");
-        curl_setopt($ch, CURLOPT_FILE, $fp);
-    }
-    // we don't want the header
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-    // DO IT!
-    return curl_exec($ch);
-    // cleanup
-    curl_close($ch);
-    if (!empty($file)) {
-        fclose($fp);
-    }
-}
-
-/*
  * Import the SQL structure
  *
  */

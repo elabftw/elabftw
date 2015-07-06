@@ -48,12 +48,11 @@ class Update
         }
     }
     /*
-     * Downloads a file with cURL (so we can use proxy setting)
-     * @param string $url URL to download
-     * @param string|null $file Path and filename as which the download is to be saved
+     * Make a get request with cURL, using proxy setting if any
+     * @param string $url URL to hit
      * @return string|boolean Return true if the download succeeded, else false
      */
-    private function get($url, $file = null)
+    private function get($url)
     {
         if (!extension_loaded('curl')) {
             throw new Exception('Please install php5-curl package.');
@@ -78,20 +77,13 @@ class Update
         // 5 seconds
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
 
-        if (!empty($file)) {
-            // now open the file
-            $fp = fopen($file, "w");
-            curl_setopt($ch, CURLOPT_FILE, $fp);
-        }
         // we don't want the header
         curl_setopt($ch, CURLOPT_HEADER, 0);
+
         // DO IT!
         return curl_exec($ch);
         // cleanup
         curl_close($ch);
-        if (!empty($file)) {
-            fclose($fp);
-        }
     }
 
 

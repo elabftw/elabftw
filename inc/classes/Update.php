@@ -25,28 +25,52 @@
 ********************************************************************************/
 namespace Elabftw\Elabftw;
 
+use Exception;
+
 class Update
 {
     public $version;
+    const URL = 'https://get.elabftw.net/updates.ini';
+    // ///////////////////////////////
+    // UPDATE THIS AFTER RELEASING
+    const INSTALLED_VERSION = '1.1.4';
+    // ///////////////////////////////
 
+    /*
+     * Constructor will get what is the latest version available from URL
+     *
+     */
     public function __construct()
     {
         $this->getUpdatesIni();
+        if (!$this->validateVersion()) {
+            throw new Exception('Error getting latest version information from server!');
+        }
     }
+
     /*
      * Return the latest version of elabftw
      * Will fetch updates.ini file from elabftw.net
      *
-     * @return string|bool latest version or false if error
+     * @return string|bool|null latest version or false if error
      */
     private function getUpdatesIni()
     {
-        $url = 'https://get.elabftw.net/updates.ini';
-        $ini = curlDownload($url);
+        $ini = curlDownload(self::URL);
         // convert ini into array. The `true` is for process_sections: to get multidimensionnal array.
         $versions = parse_ini_string($ini, true);
         // get the latest version (first item in array, an array itself with url and checksum)
         $this->version = array_keys($versions)[0];
+    }
+
+    /*
+     * Check if the version string actually looks like a version
+     *
+     * @return bool true if version match
+     */
+    private function validateVersion()
+    {
+        return preg_match('/[0-99]+\.[0-99]+\.[0-99]+.*/', $this->version);
     }
 
     /*
@@ -56,7 +80,7 @@ class Update
      */
     public function availableUpdate()
     {
-        return VERSION != $this->version;
+        return self::INSTALLED_VERSION != $this->version;
     }
 
     /*
@@ -71,9 +95,9 @@ class Update
 
     /*
      * Return the latest version of elabftw using GitHub API
+     * This function is unused but let's keep it.
      *
      * @return string|bool latest version or false if error
-     */
     private function getLatestVersionFromGitHub()
     {
         $url = 'https://api.github.com/repos/elabftw/elabftw/releases/latest';
@@ -81,4 +105,5 @@ class Update
         $latest_arr = json_decode($res, true);
         return $latest_arr['tag_name'];
     }
+     */
 }

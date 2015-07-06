@@ -39,24 +39,34 @@ $crypto = new \Elabftw\Elabftw\Crypto();
 
 $formKey = new \Elabftw\Elabftw\FormKey();
 
-$update = new \Elabftw\Elabftw\Update();
+try {
+    $update = new \Elabftw\Elabftw\Update();
+} catch (Exception $e) {
+    display_message('error', $e->getMessage());
+}
+
+// if we managed to get a version from the server
+if (is_object($update)) {
+
+    // display current and latest version
+    echo "<br><p>" . _('Installed version:') . " " . $update::INSTALLED_VERSION . " ";
+    // show a little green check if we have latest version
+    if (!$update->availableUpdate()) {
+        echo "<img src='img/check.png' width='16px' length='16px' title='latest' style='position:relative;bottom:8px' alt='OK' />";
+    }
+    // display latest version
+    echo "<br>" . _('Latest version:') . " " . $update->getLatestVersion() . "</p>";
+
+    // IF WE DON'T HAVE THE LATEST VERSION, SHOW BUTTON REDIRECTING TO WIKI
+    if ($update->availableUpdate()) {
+        $message = _('A new version is available!') . " <a href='https://github.com/elabftw/elabftw/wiki/How-to-update'>
+            <button id='updateButton' type='submit' class='submit button'>Update elabftw</button></a>";
+        display_message('error', $message);
+    }
+}
 
 if (strlen(get_config('mail_method')) == 0) {
     $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://github.com/elabftw/elabftw/wiki/finalizing'>", "</a>");
-    display_message('error', $message);
-}
-
-// DISPLAY CURRENT AND LATEST VERSION
-echo "<br><p>" . _('Installed version:') . " " . VERSION . " ";
-if ($update->availableUpdate()) {
-    echo "<img src='img/check.png' width='16px' length='16px' title='latest' style='position:relative;bottom:8px' alt='OK' />";
-}
-echo "<br>" . _('Latest version:') . " " . $update->getLatestVersion() . "</p>";
-
-// IF WE DON'T HAVE THE LATEST VERSION, SHOW BUTTON REDIRECTING TO WIKI
-if ($update->availableUpdate()) {
-    $message = _('A new version is available!') . " <a href='https://github.com/elabftw/elabftw/wiki/How-to-update'>
-        <button id='updateButton' type='submit' class='submit button'>Update elabftw</button></a>";
     display_message('error', $message);
 }
 ?>

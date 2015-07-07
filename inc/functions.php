@@ -925,7 +925,7 @@ function using_ssl()
  * @param string table
  * @param string field
  * @param string params the list of options
- * @return string|null success or error message
+ * @return bool|null success or error message
  */
 function add_field($table, $field, $params)
 {

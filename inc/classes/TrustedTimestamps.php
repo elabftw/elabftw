@@ -210,7 +210,6 @@ class TrustedTimestamps
     /**
      * Extracts the unix timestamp from the base64-encoded response string as returned by signRequestfile
      *
-     * @return string unix timestamp
      */
     private function setResponseTime()
     {
@@ -228,7 +227,6 @@ class TrustedTimestamps
         }
 
         $matches = array();
-        $responseTime = 0;
 
         /*
          * Format of answer:
@@ -258,6 +256,7 @@ class TrustedTimestamps
             throw new Exception('$retarray must be an array.');
         }
 
+        // loop each line to find the Time stamp line
         foreach ($retarray as $retline) {
             if (preg_match("~^Time\sstamp\:\s(.*)~", $retline, $matches)) {
                 // try to automatically convert time to unique unix timestamp
@@ -462,7 +461,7 @@ class TrustedTimestamps
         $this->setResponseTime();
 
         // validate everything so we are sure it is OK
-        $this->validate($this->pdfPath);
+        $this->validate();
 
         // SQL
         $this->sqlUpdateExperiment();

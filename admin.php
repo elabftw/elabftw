@@ -150,7 +150,7 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
     $user_req->execute();
     while ($users = $user_req->fetch()) {
         ?>
-            <li id='users_<?php echo $users['id']; ?>' class='list-group-item'>
+            <li class='list-group-item'>
             <a class='trigger_users_<?php echo $users['userid']; ?>'><?php echo $users['firstname'] . " " . $users['lastname']; ?></a>
             <div class='toggle_users_<?php echo $users['userid']; ?>'>
         <br>

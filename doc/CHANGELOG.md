@@ -13,7 +13,7 @@
 * add pagebreak tag in editor
 * max file upload size is now based on system configuration (thx @jcapellman)
 * move creation/duplication functions to Create() class
-* timestamped pdf is now in the exported zip
+* timestamped pdf is now in the exported zip along with the .asn1 token
 * removed check for update button in footer
 * check for latest version on sysconfig page
 * various little improvements and bug fixes

@@ -105,22 +105,16 @@ if ($data['timestamped'] == 1) {
     $req_stamper->execute();
     $uploads = $req_stamper->fetch();
 
-    // Until a button is implemented, don't fool the user to think the timestamp is valid
-    $message_type = 'info_nocross';
-    $validation_note = "<img class='align_right' src='img/stamp.png' alt='Unchecked timestamp' title='" . _('Unchecked timestamp') . "' />";
-    // ///////////////////////////
-
     $date = new DateTime($data['timestampedwhen']);
 
     display_message(
-        $message_type,
+        'info_nocross',
         _('Experiment was timestamped by') . " " . $timestamper['firstname'] . " " . $timestamper['lastname'] . " " . _('on') . " " . $date->format('Y-m-d') . " " . _('at') . " " . $date->format('H:i:s') . " "
-        . $date->getTimezone()->getName() . " <a href='uploads/" . $uploads['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='" . _('Download timestamped pdf') . "' alt='pdf' /></a>" . $validation_note
+        . $date->getTimezone()->getName() . " <a href='uploads/" . $uploads['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='" . _('Download timestamped pdf') . "' alt='pdf' /></a>"
     );
 
     unset($timestamper);
     unset($uploads);
-    unset($ts);
 }
 
 // Display experiment

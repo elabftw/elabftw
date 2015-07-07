@@ -339,12 +339,8 @@ class TrustedTimestamps
      */
     private function validate()
     {
-        // FIXME I don't manage to validate anything!
-        // The error I get is 139901699057304:error:2F06D064:time stamp routines:TS_VERIFY_CERT:certificate verify error:ts_rsp_verify.c:263:Verify error:unable to get local issuer certificate
         $cmd = "ts -verify -data " . escapeshellarg($this->pdfPath) . " -in " . escapeshellarg($this->responsefilePath) . " -CAfile " . escapeshellarg(ELAB_ROOT . $this->stampParams['stampcert']);
 
-        // debug
-        //throw new Exception($cmd);
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];
         $retcode = $opensslResult['retcode'];
@@ -465,9 +461,8 @@ class TrustedTimestamps
         // set the responseTime
         $this->setResponseTime();
 
-        // validate everything
-        // disabled for now as it doesn't work for some reason
-        //$this->validate($this->pdfPath);
+        // validate everything so we are sure it is OK
+        $this->validate($this->pdfPath);
 
         // SQL
         $this->sqlUpdateExperiment();

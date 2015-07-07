@@ -361,6 +361,6 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('stamplogin', ''),
 ('stamppass', ''),
 ('stampshare', '1'),
-('stampprovider', 'https://ws.universign.eu/tsa'),
-('stampcert', 'vendor/universign-tsa-root.pem'),
+('stampprovider', 'http://zeitstempel.dfn.de/'),
+('stampcert', 'vendor/pki.dfn.pem'),
 ('stamphash', 'sha256');

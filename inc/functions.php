@@ -947,9 +947,13 @@ function add_field($table, $field, $params)
         $req = $pdo->prepare($sql);
         $result = $req->execute();
 
-        if (!$result) {
+        if ($result) {
+            return true;
+        } else {
             die($die_msg);
         }
+    } else {
+        return false;
     }
 }
 

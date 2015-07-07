@@ -329,9 +329,28 @@ while ($experiment = $req->fetch()) {
 }
 
 // 20150705 add ordering to experiments_templates, status and items types
-add_field('experiments_templates', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL");
-add_field('status', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL");
-add_field('items_types', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL");
+if (add_field('experiments_templates', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL")) {
+    $msg_arr[] = '>>> Added ordering to experiments templates.';
+}
+if (add_field('status', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL")) {
+    $msg_arr[] = '>>> Added ordering to status.';
+}
+
+if (add_field('items_types', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL")) {
+    $msg_arr[] = '>>> Added ordering to items types.';
+}
+
+
+// 20150715
+// set pki.dfn.de as TSA if we have not configured universign
+if (get_config('stampprovider') == 'https://ws.universign.eu/tsa' && !get_config('stamplogin')) {
+    $config_arr = array(
+        'stampprovider' => 'http://zeitstempel.dfn.de/',
+        'stampcert' => 'vendor/pki.dfn.pem');
+
+    update_config($config_arr);
+    $msg_arr[] = '>>> Timestamping is now done with pki.dfn.de, requires no further configuration and is free!';
+}
 
 
 // //////////////////////////////////////////

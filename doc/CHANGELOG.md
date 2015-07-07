@@ -7,9 +7,13 @@
 * add possibility to export experiments templates to a file (.elabftw.tpl)
 * add possibility to import a template from a .elabftw.tpl file
 * add possibility to import .elabftw.zip archives in the database
+* switch to pki.dfn.de as default timestamper (it is free)
+* revamp the timestamping class
+* timestamping is properly validated
 * add pagebreak tag in editor
 * max file upload size is now based on system configuration (thx @jcapellman)
 * move creation/duplication functions to Create() class
+* removed check for update button in footer
 * check for latest version on sysconfig page
 * various little improvements and bug fixes
 

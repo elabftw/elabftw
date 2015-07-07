@@ -129,7 +129,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             }
 
             // SQL to get filesattached (of the right type)
-            $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
+            $sql = "SELECT * FROM uploads WHERE item_id = :id AND (type = :type OR type = 'exp-pdf-timestamp')";
             $req = $pdo->prepare($sql);
             $req->bindParam(':id', $id);
             $req->bindParam(':type', $table);

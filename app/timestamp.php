@@ -29,8 +29,6 @@ require_once ELAB_ROOT . 'vendor/autoload.php';
 
 $crypto = new \Elabftw\Elabftw\Crypto();
 
-$msg_arr = array();
-
 // ID
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
@@ -40,28 +38,16 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     exit;
 }
 
-// generate the pdf to timestamp
-$pdf = new \Elabftw\Elabftw\MakePdf($id, 'experiments');
-$mpdf = new mPDF();
-
-$pdf_filename = hash("sha512", uniqid(rand(), true)) . ".pdf";
-$pdf_path = ELAB_ROOT . 'uploads/' . $pdf_filename;
-
-$mpdf->SetAuthor($pdf->author);
-$mpdf->SetTitle($pdf->title);
-$mpdf->SetSubject('eLabFTW pdf');
-$mpdf->SetKeywords($pdf->tags);
-$mpdf->SetCreator('www.elabftw.net');
-$mpdf->WriteHTML($pdf->content);
-$mpdf->Output($pdf_path, 'F');
-
-// now timestamp that pdf
-$ts = new Elabftw\Elabftw\TrustedTimestamps();
+// timestamping begins
+$ts = new Elabftw\Elabftw\TrustedTimestamps($id);
 try {
-    $ts->timeStamp($pdf_path);
+    $ts->timeStamp();
 } catch (Exception $e) {
     $_SESSION['errors'][] = $e->getMessage();
 }
+
+// unset $ts to delete associated temporary files
+unset($ts);
 
 // if there was a problem during the timestamping, an error will be inside the $_SESSION['errors'] array
 // and we want to stop there if that is the case.
@@ -70,47 +56,5 @@ if (is_array($_SESSION['errors'])) {
     exit;
 }
 
-// SQL
-$sql = "UPDATE `experiments` SET `timestamped` = 1, `timestampedby` = :userid, `timestampedwhen` = :timestampedwhen, `timestamptoken` = :longname WHERE `id` = :id;";
-$req = $pdo->prepare($sql);
-$req->bindParam(':timestampedwhen', $ts->getResponseTime());
-// the date recorded in the db has to match the creation time of the timestamp token
-$req->bindParam(':longname', $longname);
-$req->bindParam(':userid', $_SESSION['userid']);
-$req->bindParam(':id', $id);
-$res1 = $req->execute();
-
-// unset $ts to delete associated temporary files
-unset($ts);
-
-// add also our pdf to the attached files of the experiment, this way it is kept safely :)
-// I had this idea when realizing that if you comment an experiment, the hash won't be good anymore. Because the pdf will contain the new comments.
-// Keeping the pdf here is the best way to go, as this leaves room to leave comments.
-
-// this sql is to get the elabid which will be the real_name of the PDF
-$sql = "SELECT elabid FROM experiments WHERE id = :id";
-$req = $pdo->prepare($sql);
-$req->bindParam(':id', $id);
-$res2 = $req->execute();
-$real_name = $req->fetch(PDO::FETCH_COLUMN) . "-timestamped.pdf";
-
-$md5 = hash_file('md5', $pdf_path);
-
-// DA REAL SQL
-$sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, md5) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :md5)";
-$req = $pdo->prepare($sql);
-$req->bindParam(':real_name', $real_name);
-$req->bindParam(':long_name', $pdf_filename);
-$req->bindValue(':comment', "Timestamped PDF");
-$req->bindParam(':item_id', $id);
-$req->bindParam(':userid', $_SESSION['userid']);
-$req->bindValue(':type', 'exp-pdf-timestamp');
-$req->bindParam(':md5', $md5);
-$res3 = $req->execute();
-
-if ($res1 && $res2 && $res3) {
-    header("Location: ../experiments.php?mode=view&id=" . $id);
-    exit;
-} else {
-    die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
-}
+// redirect
+header("Location: ../experiments.php?mode=view&id=" . $id);

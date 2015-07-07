@@ -31,11 +31,21 @@ namespace Elabftw\Elabftw;
 
 use \DateTime;
 use \Exception;
-use \RuntimeException;
 
 class TrustedTimestamps
 {
+    private $id;
+
+    // a sha512 hash.pdf
+    private $pdfFileName;
+    // ELAB_ROOT . uploads/ . $pdfFileName
+    private $pdfPath;
+    // elabid-timestamped.pdf
+    private $pdfRealName;
+
+    // array with config (url, login, password, cert)
     private $stampParams = array();
+    // things that get deleted with destruct method
     private $tmpfiles = array();
 
     private $requestfilePath;
@@ -45,12 +55,18 @@ class TrustedTimestamps
     private $responseTime;
 
 
+
     /**
      * Class constructor
+     * It just needs the id of the experiment
      *
      */
-    public function __construct()
+    public function __construct($id)
     {
+        // will be used in sqlUpdate()
+        $this->id = $id;
+        $this->generatePdf();
+
         // initialize with info from config
         try {
             $this->stampParams = $this->getTimestampParameters();
@@ -68,6 +84,28 @@ class TrustedTimestamps
         foreach ($this->tmpfiles as $file) {
             unlink($file);
         }
+    }
+
+    /*
+     * Generate the pdf to timestamp.
+     *
+     */
+    private function generatePdf()
+    {
+
+        $pdf = new \Elabftw\Elabftw\MakePdf($this->id, 'experiments');
+        $mpdf = new \mPDF();
+        $mpdf->SetAuthor($pdf->author);
+        $mpdf->SetTitle($pdf->title);
+        $mpdf->SetSubject('eLabFTW pdf');
+        $mpdf->SetKeywords($pdf->tags);
+        $mpdf->SetCreator('www.elabftw.net');
+        $mpdf->WriteHTML($pdf->content);
+
+        $this->pdfFileName = hash("sha512", uniqid(rand(), true)) . ".pdf";
+        $this->pdfPath = ELAB_ROOT . 'uploads/' . $this->pdfFileName;
+        // write pdf to file
+        $mpdf->Output($this->pdfPath, 'F');
     }
 
     /**
@@ -125,19 +163,6 @@ class TrustedTimestamps
     }
 
     /**
-     * Returns date and time of when the response was generated
-     * @return string|bool response time or false on error
-     */
-    public function getResponseTime()
-    {
-        if (!is_null($this->responseTime)) {
-            return $this->responseTime;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Create a tempfile in uploads/tmp temp path
      *
      * @param string $str Content which should be written to the newly created tempfile
@@ -187,7 +212,7 @@ class TrustedTimestamps
      *
      * @return string unix timestamp
      */
-    public function getTimestampFromAnswer()
+    private function setResponseTime()
     {
         if (!is_readable($this->responsefilePath)) {
             throw new Exception('Bad token');
@@ -230,7 +255,7 @@ class TrustedTimestamps
          */
 
         if (!is_array($retarray)) {
-            throw new RuntimeException('$retarray must be an array.');
+            throw new Exception('$retarray must be an array.');
         }
 
         foreach ($retarray as $retline) {
@@ -242,23 +267,16 @@ class TrustedTimestamps
                 if (!$responseTime) {
                     $date = DateTime::createFromFormat("M j H:i:s.u Y T", $matches[1]);
                     if ($date) {
-                        $responseTime = $date->getTimestamp();
+                        // Return formatted time as this is, what we will store in the database.
+                        // PHP will take care of correct timezone conversions (if configured correctly)
+                        $this->responseTime = date("Y-m-d H:i:s", $date->getTimestamp());
                     } else {
-                        $responseTime = false;
+                        throw new Exception('Could not get response time!');
                     }
                 }
                 break;
             }
         }
-
-        if (!$responseTime) {
-            throw new Exception("The Timestamp was not found");
-        }
-
-        /* Return formatted time as this is, what we will store in the database.
-         * PHP will take care of correct timezone conversions (if configured correctly)
-         */
-        return date("Y-m-d H:i:s", $responseTime);
     }
 
     /*
@@ -317,14 +335,13 @@ class TrustedTimestamps
      * Validates a file against its timestamp and optionally check a provided time for consistence with the time encoded
      * in the timestamp itself.
      *
-     * @param $pdf Path of the timestamped pdf
      * @return bool
      */
-    private function validate($pdf)
+    private function validate()
     {
         // FIXME I don't manage to validate anything!
         // The error I get is 139901699057304:error:2F06D064:time stamp routines:TS_VERIFY_CERT:certificate verify error:ts_rsp_verify.c:263:Verify error:unable to get local issuer certificate
-        $cmd = "ts -verify -data " . escapeshellarg($pdf) . " -in " . escapeshellarg($this->responsefilePath) . " -CAfile " . escapeshellarg(ELAB_ROOT . $this->stampParams['stampcert']);
+        $cmd = "ts -verify -data " . escapeshellarg($this->pdfPath) . " -in " . escapeshellarg($this->responsefilePath) . " -CAfile " . escapeshellarg(ELAB_ROOT . $this->stampParams['stampcert']);
 
         // debug
         //throw new Exception($cmd);
@@ -354,7 +371,7 @@ class TrustedTimestamps
         }
 
         if (!is_array($retarray)) {
-            throw new RuntimeException('$retarray must be an array.');
+            throw new Exception('$retarray must be an array.');
         }
 
         foreach ($retarray as $retline) {
@@ -365,14 +382,79 @@ class TrustedTimestamps
 
         throw new Exception("System command failed: " . implode(", ", $retarray));
     }
+
+    /*
+     * Update SQL
+     *
+     */
+    private function sqlUpdateExperiment()
+    {
+        global $pdo;
+
+        $sql = "UPDATE experiments SET timestamped = 1, timestampedby = :userid, timestampedwhen = :timestampedwhen, timestamptoken = :longname WHERE id = :id;";
+        $req = $pdo->prepare($sql);
+        $req->bindParam(':timestampedwhen', $this->responseTime);
+        // the date recorded in the db has to match the creation time of the timestamp token
+        $req->bindParam(':longname', $this->responsefilePath);
+        $req->bindParam(':userid', $_SESSION['userid']);
+        $req->bindParam(':id', $this->id);
+        if (!$req->execute()) {
+            throw new Exception('Cannot update SQL!');
+        }
+    }
+
+    /*
+     * The realname is elabid-timestamped.pdf
+     *
+     */
+    private function setPdfRealName()
+    {
+        global $pdo;
+
+        $sql = "SELECT elabid FROM experiments WHERE id = :id";
+        $req = $pdo->prepare($sql);
+        $req->bindParam(':id', $this->id);
+        if (!$req->execute()) {
+            throw new Exception('Cannot get elabid!');
+        }
+        $this->pdfRealName = $req->fetch(\PDO::FETCH_COLUMN) . "-timestamped.pdf";
+    }
+
+    /*
+     * Add also our pdf to the attached files of the experiment, this way it is kept safely :)
+     * I had this idea when realizing that if you comment an experiment, the hash won't be good anymore. Because the pdf will contain the new comments.
+     * Keeping the pdf here is the best way to go, as this leaves room to leave comments.
+     */
+    private function sqlInsertPdf()
+    {
+        global $pdo;
+
+        $md5 = hash_file('md5', $this->pdfPath);
+
+        // DA REAL SQL
+        $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, md5) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :md5)";
+        $req = $pdo->prepare($sql);
+        $req->bindParam(':real_name', $this->pdfRealName);
+        $req->bindParam(':long_name', $this->pdfFileName);
+        $req->bindValue(':comment', "Timestamped PDF");
+        $req->bindParam(':item_id', $this->id);
+        $req->bindParam(':userid', $_SESSION['userid']);
+        $req->bindValue(':type', 'exp-pdf-timestamp');
+        $req->bindParam(':md5', $md5);
+        if (!$req->execute()) {
+            throw new Exception('Cannot insert into SQL!');
+        }
+    }
     /*
      * The main function.
      * Request a timestamp and parse the response.
+     *
+     * @return bool True upon timestamping success, throw Exceptions in your face if it fails
      */
-    public function timeStamp($pdf)
+    public function timeStamp()
     {
         // first we create the request file
-        $this->createRequestfile($pdf);
+        $this->createRequestfile($this->pdfPath);
 
         // make the request to the TSA
         $this->postData();
@@ -381,11 +463,17 @@ class TrustedTimestamps
         $this->saveToken();
 
         // set the responseTime
-        $this->responseTime = $this->getTimestampFromAnswer();
+        $this->setResponseTime();
 
         // validate everything
         // disabled for now as it doesn't work for some reason
-        //return $this->validate($pdf);
+        //$this->validate($this->pdfPath);
+
+        // SQL
+        $this->sqlUpdateExperiment();
+        $this->setPdfRealName();
+        $this->sqlInsertPdf();
+
         return true;
     }
 }

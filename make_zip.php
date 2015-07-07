@@ -128,6 +128,18 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
                 $tags .= stripslashes($data['tag']) . ' ';
             }
 
+            // add the .asn1 token to the zip archive if the experiment is timestamped
+            if ($table === 'experiments' && $zipped['timestamped'] == 1) {
+                // SQL to get the path of the token
+                $sql = "SELECT real_name, long_name FROM uploads WHERE item_id = :id AND type = 'timestamp-token' LIMIT 1";
+                $req = $pdo->prepare($sql);
+                $req->bindParam(':id', $id);
+                $req->execute();
+                $token = $req->fetch();
+                // add it to the .zip
+                $zip->addFile('uploads/' . $token['long_name'], $folder . "/" . $token['real_name']);
+            }
+
             // SQL to get filesattached (of the right type)
             $sql = "SELECT * FROM uploads WHERE item_id = :id AND (type = :type OR type = 'exp-pdf-timestamp')";
             $req = $pdo->prepare($sql);

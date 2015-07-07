@@ -322,12 +322,30 @@ class TrustedTimestamps
      */
     private function saveToken()
     {
-        $longname = hash("sha512", uniqid(rand(), true)) . ".asn1";
-        $file_path = ELAB_ROOT . 'uploads/' . $longname;
+        global $pdo;
+
+        $long_name = hash("sha512", uniqid(rand(), true)) . ".asn1";
+        $file_path = ELAB_ROOT . 'uploads/' . $long_name;
         if (!file_put_contents($file_path, $this->binaryResponseString)) {
             throw new Exception('Cannot save token to disk!');
         }
         $this->responsefilePath = $file_path;
+        $md5 = hash_file('md5', $this->responsefilePath);
+        $real_name = $this->pdfRealName . '.asn1';
+
+        // keep a trace of where we put the token
+        $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, md5) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :md5)";
+        $req = $pdo->prepare($sql);
+        $req->bindParam(':real_name', $real_name);
+        $req->bindParam(':long_name', $long_name);
+        $req->bindValue(':comment', "Timestamp token");
+        $req->bindParam(':item_id', $this->id);
+        $req->bindParam(':userid', $_SESSION['userid']);
+        $req->bindValue(':type', 'timestamp-token');
+        $req->bindParam(':md5', $md5);
+        if (!$req->execute()) {
+            throw new Exception('Cannot insert into SQL!');
+        }
     }
 
     /**
@@ -439,6 +457,7 @@ class TrustedTimestamps
         if (!$req->execute()) {
             throw new Exception('Cannot insert into SQL!');
         }
+
     }
     /*
      * The main function.
@@ -454,6 +473,10 @@ class TrustedTimestamps
         // make the request to the TSA
         $this->postData();
 
+        // we need the name of the pdf (elabid-timestamped.pdf)
+        // for saving the token correctly
+        $this->setPdfRealName();
+
         // save the token to .asn1 file
         $this->saveToken();
 
@@ -465,7 +488,6 @@ class TrustedTimestamps
 
         // SQL
         $this->sqlUpdateExperiment();
-        $this->setPdfRealName();
         $this->sqlInsertPdf();
 
         return true;

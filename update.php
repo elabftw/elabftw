@@ -341,7 +341,7 @@ if (add_field('items_types', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL")) 
 }
 
 
-// 20150715
+// 20150707
 // set pki.dfn.de as TSA if we have not configured universign
 if (get_config('stampprovider') == 'https://ws.universign.eu/tsa' && !get_config('stamplogin')) {
     $config_arr = array(
@@ -350,6 +350,12 @@ if (get_config('stampprovider') == 'https://ws.universign.eu/tsa' && !get_config
 
     update_config($config_arr);
     $msg_arr[] = '>>> Timestamping is now done with pki.dfn.de, requires no further configuration and is free!';
+}
+
+// 20150708
+// add chem_editor pref
+if (add_field('users', 'chem_editor', "TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `close_warning`")) {
+    $msg_arr[] = '>>> Added Chem editor pref to users.';
 }
 
 

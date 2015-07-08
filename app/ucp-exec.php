@@ -195,7 +195,8 @@ if (isset($_POST['currpass'])) {
         }
 
         // SQL for update profile
-        $sql = "UPDATE users SET salt = :salt, 
+        $sql = "UPDATE users SET
+            salt = :salt,
             password = :password,
             email = :email,
             username = :username,
@@ -278,6 +279,12 @@ if (isset($_POST['display'])) {
     } else {
         $new_close_warning = 0;
     }
+    // CHEM EDITOR
+    if (isset($_POST['chem_editor']) && $_POST['chem_editor'] === 'on') {
+        $new_chem_editor = 1;
+    } else {
+        $new_chem_editor = 0;
+    }
 
     // LANG
     $lang_array = array('en_GB', 'ca_ES', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pt_BR', 'zh_CN');
@@ -299,6 +306,7 @@ if (isset($_POST['display'])) {
         sc_submit = :new_sc_submit,
         sc_todo = :new_sc_todo,
         close_warning = :new_close_warning,
+        chem_editor = :new_chem_editor,
         lang = :new_lang
         WHERE userid = :userid;";
     $req = $pdo->prepare($sql);
@@ -312,6 +320,7 @@ if (isset($_POST['display'])) {
         'new_sc_submit' => $new_sc_submit,
         'new_sc_todo' => $new_sc_todo,
         'new_close_warning' => $new_close_warning,
+        'new_chem_editor' => $new_chem_editor,
         'new_lang' => $new_lang,
         'userid' => $_SESSION['userid']
     ));
@@ -325,12 +334,13 @@ if (isset($_POST['display'])) {
     $_SESSION['prefs']['shortcuts']['submit'] = $new_sc_submit;
     $_SESSION['prefs']['shortcuts']['todo'] = $new_sc_todo;
     $_SESSION['prefs']['close_warning'] = $new_close_warning;
+    $_SESSION['prefs']['chem_editor'] = $new_chem_editor;
     $_SESSION['prefs']['lang'] = $new_lang;
     $msg_arr[] = _('Preferences updated.');
     $infoflag = true;
 }
 
-// _('Experiment')S TEMPLATES
+// EXPERIMENTS TEMPLATES
 // add new tpl
 if (isset($_POST['new_tpl_form'])) {
     // do nothing if the template name is empty

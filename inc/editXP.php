@@ -232,6 +232,20 @@ if ($count > 0) {
 
 </section>
 <?php
+if ($_SESSION['prefs']['chem_editor']) {
+    ?>
+        <div class='box chemdoodle'>
+            <h3><?php echo _('Molecule drawer'); ?></h3>
+            <link rel="stylesheet" href="css/chemdoodle.css" type="text/css">
+            <script src="js/chemdoodle.js"></script>
+            <script src="js/chemdoodle-uis.js"></script>
+            <script>
+                ChemDoodle.iChemLabs.useHTTPS();
+                var sketcher = new ChemDoodle.SketcherCanvas('sketcher', 550, 300, {oneMolecule:true});
+            </script>
+    </div>
+    <?php
+}
 // FILE UPLOAD
 require_once 'inc/file_upload.php';
 // DISPLAY FILES

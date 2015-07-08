@@ -31,8 +31,9 @@ require_once('inc/head.php');
 require_once('inc/info_box.php');
 
 // SQL for UCP
-$sql = "SELECT username, email, firstname, lastname, phone, cellphone, skype, website FROM users WHERE userid = " . $_SESSION['userid'];
+$sql = "SELECT * FROM users WHERE userid = :userid";
 $req = $pdo->prepare($sql);
+$req->bindParam(':userid', $_SESSION['userid']);
 $req->execute();
 $users = $req->fetch();
 
@@ -129,6 +130,23 @@ $users = $req->fetch();
 
     <form action='app/ucp-exec.php' method='post'>
         <section class='box'>
+            <h3><?php echo _('Language'); ?></h3>
+            <hr>
+            <p>
+            <select id='lang' name="lang">
+<?php
+$lang_array = array('en_GB', 'ca_ES', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pt_BR', 'zh_CN');
+foreach ($lang_array as $lang) {
+    echo "<option ";
+    if ($_SESSION['prefs']['lang'] === $lang) {
+        echo ' selected ';
+    }
+    echo "value='" . $lang . "'>" . $lang . "</option>";
+}
+?>
+            </select>
+        </section>
+        <section class='box'>
 
             <h3><?php echo _('DISPLAY'); ?></h3>
             <hr>
@@ -206,7 +224,7 @@ $users = $req->fetch();
         </section>
 
         <section class='box'>
-            <h3><?php echo _('ALERT'); ?></h3>
+            <h3><?php echo _('Miscellaneous'); ?></h3>
             <hr>
             <p>
             <label for='close_warning'><?php echo _('Display a warning before closing an edit window/tab ?'); ?></label>
@@ -214,48 +232,15 @@ $users = $req->fetch();
             if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
                 echo "checked='checked'  ";
             };?> />
+            <br>
+            <label for='chem_editor'><?php echo _('Display the molecule drawer in edit mode?'); ?></label>
+            <input id='chem_editor' type='checkbox' name='chem_editor' <?php
+            if (isset($_SESSION['prefs']['chem_editor']) && $_SESSION['prefs']['chem_editor'] === 1) {
+                echo "checked='checked'  ";
+            };?> />
             </p>
         </section>
 
-        <section class='box'>
-            <h3><?php echo _('Language'); ?></h3>
-            <hr>
-            <p>
-            <select id='lang' name="lang">
-                <option
-                <?php
-                if ($_SESSION['prefs']['lang'] === 'en_GB') {
-                    echo ' selected '; }?>value="en_GB">en_GB</option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['lang'] === 'ca_ES') {
-                    echo ' selected '; }?>value="ca_ES">ca_ES</option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['lang'] === 'de_DE') {
-                    echo ' selected '; }?>value="de_DE">de_DE</option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['lang'] === 'es_ES') {
-                    echo ' selected '; }?>value="es_ES">es_ES</option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['lang'] === 'fr_FR') {
-                    echo ' selected '; }?>value="fr_FR">fr_FR</option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['lang'] === 'it_IT') {
-                    echo ' selected '; }?>value="it_IT">it_IT</option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['lang'] === 'pt_BR') {
-                    echo ' selected '; }?>value="pt_BR">pt_BR</option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['lang'] === 'zh_CN') {
-                    echo ' selected '; }?>value="zh_CN">zh_CN</option>
-            </select>
-        </section>
         <div style='margin-top:30px;' class='center'>
         <button type="submit" name="Submit" class='button'><?php echo _('Save'); ?></button>
         </div>

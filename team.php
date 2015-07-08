@@ -59,7 +59,13 @@ $req->execute(array(
 
 while ($data = $req->fetch()) {
     echo "<tr>";
-    echo "<td><a href='mailto:" . $data['email'] . "'>" . $data['firstname'] . " " . $data['lastname'] . "</a></td>";
+    echo "<td><a href='mailto:" . $data['email'] . "'><span";
+    // put sysadmin, admin and chiefs in bold
+    if ($data['usergroup'] == 3 || $data['usergroup'] == 1 || $data['usergroup'] == 2) {
+        echo " style='font-weight:bold'";
+    }
+    echo ">". $data['firstname'] . " " . $data['lastname'] . "</span></a>";
+    echo "</td>";
     if (!empty($data['phone'])) {
         echo "<td>" . $data['phone'] . "</td>";
     } else {
@@ -113,7 +119,6 @@ $totals = $count_req->fetch(PDO::FETCH_ASSOC);
         <li class='tip'><?php printf(_('Custom shortcuts are available (%sControl Panel%s).'), "<a href='ucp.php?tab=2'>", "</a>"); ?></li>
         <li class='tip'><?php echo _('You can duplicate experiments in one click.'); ?></li>
         <li class='tip'><?php echo _('Click a tag to list all items with this tag.'); ?></li>
-        <li class='tip'><?php printf(_('Register an account with %sUniversign%s to start timestamping experiments.'), "<a href='https://www.universign.eu/en/timestamp'>", "</a>"); ?></li>
         <li class='tip'><?php echo _('Only a locked experiment can be timestamped.'); ?></li>
         <li class='tip'><?php echo _('Once timestamped an experiment cannot be unlocked or modified. Only comments can be added.'); ?></li>
         </ul>
@@ -131,6 +136,7 @@ $totals = $count_req->fetch(PDO::FETCH_ASSOC);
         </script>
     </div>
 </div>
+
 
 <script>
 $(document).ready(function() {

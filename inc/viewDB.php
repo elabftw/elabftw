@@ -111,6 +111,16 @@ id='body_view' class='txt'><?php echo stripslashes($data['body'])?></div>
 // SHOW USER
 echo _('Last modified by') . ' ' . $data['firstname'] . " " . $data['lastname'] . ' ' . _('on') . ' ' . format_date($data['date']);
 echo "</section>";
+if ($_SESSION['prefs']['chem_editor']) {
+    ?>
+    <link rel="stylesheet" href="css/chemdoodle.css" type="text/css">
+    <script src="js/chemdoodle.js"></script>
+    <script src="js/chemdoodle-uis.js"></script>
+            <script>
+                ChemDoodle.iChemLabs.useHTTPS();
+            </script>
+    <?php
+}
 // DISPLAY FILES
 require_once 'inc/display_file.php';
 ?>

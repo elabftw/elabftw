@@ -122,7 +122,8 @@ if ($result) {
             'limit' => $data['limit_nb'],
             'shortcuts' => array('create' => $data['sc_create'], 'edit' => $data['sc_edit'], 'submit' => $data['sc_submit'], 'todo' => $data['sc_todo']),
             'lang' => $data['lang'],
-            'close_warning' => intval($data['close_warning']));
+            'close_warning' => intval($data['close_warning']),
+            'chem_editor' => intval($data['chem_editor']));
         // Make a unique token and store it in sql AND cookie
         $token = md5(uniqid(rand(), true));
         // and SESSION

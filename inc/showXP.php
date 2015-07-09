@@ -46,19 +46,6 @@ if (isset($_GET['tag']) && $_GET['tag'] != '') {
                 <div class="form-group">
                     <input type="hidden" name="mode" value="show" />
                     <input type="hidden" name="tag" value="<?php echo $getTag; ?>" />
-                    <!-- ORDER / SORT dropdown menu -->
-                    <select name="order" class="form-control select-order">
-                        <option value=''><?php echo _('Order by'); ?></option>
-                        <option value='date'<?php checkSelectOrder('date'); ?>><?php echo _('Date'); ?></option>
-                        <option value='status'<?php checkSelectOrder('status'); ?>><?php echo _('Status'); ?></option>
-                        <option value='title'<?php checkSelectOrder('title'); ?>><?php echo _('Title'); ?></option>
-                    </select>
-                    <select name="sort" class="form-control select-sort">
-                        <option value=''><?php echo _('Sort'); ?></option>
-                        <option value='desc'<?php checkSelectSort('desc'); ?>><?php echo _('DESC'); ?></option>
-                        <option value='asc'<?php checkSelectSort('asc'); ?>><?php echo _('ASC'); ?></option>
-                    </select>
-                    <button class="btn btn-elab submit-order"><?php echo _('Order'); ?></button>
                     <!-- FILTER STATUS dropdown menu -->
                     <select name="filter" class="form-control select-filter-status">
                         <option value=''><?php echo _('Filter status'); ?></option>
@@ -75,6 +62,19 @@ if (isset($_GET['tag']) && $_GET['tag'] != '') {
                     ?>
                     </select>
                     <button class="btn btn-elab submit-filter"><?php echo _('Filter'); ?></button>
+                    <!-- ORDER / SORT dropdown menu -->
+                    <select name="order" class="form-control select-order">
+                        <option value=''><?php echo _('Order by'); ?></option>
+                        <option value='date'<?php checkSelectOrder('date'); ?>><?php echo _('Date'); ?></option>
+                        <option value='status'<?php checkSelectOrder('status'); ?>><?php echo _('Status'); ?></option>
+                        <option value='title'<?php checkSelectOrder('title'); ?>><?php echo _('Title'); ?></option>
+                    </select>
+                    <select name="sort" class="form-control select-sort">
+                        <option value=''><?php echo _('Sort'); ?></option>
+                        <option value='desc'<?php checkSelectSort('desc'); ?>><?php echo _('DESC'); ?></option>
+                        <option value='asc'<?php checkSelectSort('asc'); ?>><?php echo _('ASC'); ?></option>
+                    </select>
+                    <button class="btn btn-elab submit-order"><?php echo _('Order'); ?></button>
                     <button type="reset" class="btn btn-danger submit-reset" onclick="javascript:location.href='experiments.php?mode=show&tag=<?php echo $getTag; ?>';"><?php echo _('Reset'); ?></button>
                 </div>
             </form>

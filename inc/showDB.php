@@ -64,6 +64,19 @@ $req->execute();
                 <div class="form-group">
                     <input type="hidden" name="mode" value="show" />
                     <input type="hidden" name="tag" value="<?php echo $getTag; ?>" />
+                    <!-- filter TYPE -->
+                    <select name="filter" class="form-control select-filter-cat">
+                        <option value=""><?php echo _('Filter type'); ?></option>
+                    <?php
+                    // we do the request again to get the list again
+                    $req->execute();
+                    while ($items_types = $req->fetch()) {
+                        echo "
+                        <option value='" . $items_types['id'] . "'" . checkSelectFilter($items_types['id']) . ">" . $items_types['name'] . "</option>";
+                    }
+                    ?>
+                    </select>
+                    <button class="btn btn-elab submit-filter"><?php echo _('Filter'); ?></button>
                     <!-- ORDER / SORT dropdown menu -->
                     <select name="order" class="form-control select-order">
                         <option value=''><?php echo _('Order by'); ?></option>
@@ -78,18 +91,6 @@ $req->execute();
                         <option value='asc'<?php checkSelectSort('asc'); ?>><?php echo _('ASC'); ?></option>
                     </select>
                     <button class="btn btn-elab submit-order"><?php echo _('Order'); ?></button>
-                    <select name="filter" class="form-control select-filter-cat">
-                        <option value=""><?php echo _('Filter type'); ?></option>
-                    <?php
-                    // we do the request again to get the list again
-                    $req->execute();
-                    while ($items_types = $req->fetch()) {
-                        echo "
-                        <option value='" . $items_types['id'] . "'" . checkSelectFilter($items_types['id']) . ">" . $items_types['name'] . "</option>";
-                    }
-                    ?>
-                    </select>
-                    <button class="btn btn-elab submit-filter"><?php echo _('Filter'); ?></button>
                     <button type="reset" class="btn btn-danger submit-reset" onclick="javascript:location.href='database.php?mode=show&tag=<?php echo $getTag; ?>';"><?php echo _('Reset'); ?></button>
                 </div>
             </form>

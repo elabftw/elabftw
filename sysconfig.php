@@ -123,38 +123,16 @@ if (strlen(get_config('mail_method')) == 0) {
     <form method='post' action='app/admin-exec.php'>
         <h3><?php echo _('Language'); ?></h3>
             <select id='lang' name="lang">
-                <option
-                <?php
-                if (get_config('lang') === 'en_GB') {
-                    echo ' selected '; }?>value="en_GB">en_GB</option>
-                <option
-                <?php
-                if (get_config('lang') === 'ca_ES') {
-                    echo ' selected '; }?>value="ca_ES">ca_ES</option>
-                <option
-                <?php
-                if (get_config('lang') === 'de_DE') {
-                    echo ' selected '; }?>value="de_DE">de_DE</option>
-                <option
-                <?php
-                if (get_config('lang') === 'es_ES') {
-                    echo ' selected '; }?>value="es_ES">es_ES</option>
-                <option
-                <?php
-                if (get_config('lang') === 'fr_FR') {
-                    echo ' selected '; }?>value="fr_FR">fr_FR</option>
-                <option
-                <?php
-                if (get_config('lang') === 'it_IT') {
-                    echo ' selected '; }?>value="it_IT">it_IT</option>
-                <option
-                <?php
-                if (get_config('lang') === 'pt_BR') {
-                    echo ' selected '; }?>value="pt_BR">pt_BR</option>
-                <option
-                <?php
-                if (get_config('lang') === 'zh_CN') {
-                    echo ' selected '; }?>value="zh_CN">zh_CN</option>
+<?php
+$lang_array = array('en_GB', 'ca_ES', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pt_BR', 'zh_CN');
+foreach ($lang_array as $lang) {
+    echo "<option ";
+    if ($_SESSION['prefs']['lang'] === $lang) {
+        echo ' selected ';
+    }
+    echo "value='" . $lang . "'>" . $lang . "</option>";
+}
+?>
             </select>
         <h3><?php echo _('Under the hood'); ?></h3>
         <label for='debug'><?php echo _('Activate debug mode:'); ?></label>

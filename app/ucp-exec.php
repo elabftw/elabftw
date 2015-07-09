@@ -24,7 +24,6 @@
 *                                                                               *
 ********************************************************************************/
 require_once '../inc/common.php';
-require_once '../inc/locale.php';
 
 // INFO BOX
 $msg_arr = array();

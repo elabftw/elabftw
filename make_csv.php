@@ -25,7 +25,6 @@
 ********************************************************************************/
 /* make_csv.php -- export database in spreadsheet file */
 require_once 'inc/common.php';
-require_once 'inc/locale.php';
 $page_title = _('Export to spreadsheet');
 $selected_menu = null;
 require_once 'inc/head.php';

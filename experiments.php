@@ -24,11 +24,22 @@
 *                                                                               *
 ********************************************************************************/
 require_once 'inc/common.php';
-require_once 'inc/locale.php';
 $page_title = ngettext('Experiment', 'Experiments', 2);
 $selected_menu = 'Experiments';
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
+
+// add the chemdoodle stuff if we want it
+if (isset($_SESSION) && $_SESSION['prefs']['chem_editor']) {
+    ?>
+    <link rel="stylesheet" href="css/chemdoodle.css" type="text/css">
+    <script src="js/chemdoodle.js"></script>
+    <script src="js/chemdoodle-uis.js"></script>
+    <script>
+        ChemDoodle.iChemLabs.useHTTPS();
+    </script>
+    <?php
+}
 
 // MAIN SWITCH
 if (!isset($_GET['mode']) || (empty($_GET['mode'])) || ($_GET['mode'] === 'show')) {

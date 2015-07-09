@@ -95,15 +95,4 @@ if (!isset($_SESSION['auth'])) {
         header("Location: app/logout.php");
         exit;
     }
-    // add the chemdoodle stuff if we want it
-    if (isset($_SESSION) && $_SESSION['prefs']['chem_editor']) {
-        ?>
-        <link rel="stylesheet" href="css/chemdoodle.css" type="text/css">
-        <script src="js/chemdoodle.js"></script>
-        <script src="js/chemdoodle-uis.js"></script>
-        <script>
-            ChemDoodle.iChemLabs.useHTTPS();
-        </script>
-        <?php
-    }
 }

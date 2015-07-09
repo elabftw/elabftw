@@ -24,7 +24,6 @@
 *                                                                               *
 ********************************************************************************/
 require_once '../inc/common.php';
-require_once ELAB_ROOT . 'inc/locale.php';
 // Check id is valid and assign it to $id
 if (isset($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];

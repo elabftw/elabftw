@@ -25,7 +25,6 @@
 ********************************************************************************/
 // Search.php
 require_once 'inc/common.php';
-require_once 'inc/locale.php';
 $page_title = _('Search');
 $selected_menu = 'Search';
 require_once 'inc/head.php';

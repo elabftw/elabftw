@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2015-03-04 14:57+0100\n"
-"PO-Revision-Date: 2015-07-06 00:19+0100\n"
+"PO-Revision-Date: 2015-07-09 15:14+0100\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -1414,13 +1414,18 @@ msgstr "Créer"
 msgid "TODO list"
 msgstr "TODO liste"
 
-#: elabftw/ucp.php:209
-msgid "ALERT"
-msgstr "ALERTE"
+msgid "Miscellaneous"
+msgstr "Divers"
+
+msgid "Import from file"
+msgstr "Importer un fichier"
 
 #: elabftw/ucp.php:212
 msgid "Display a warning before closing an edit window/tab ?"
 msgstr "Afficher un avertissement avant de fermer un onglet d'édition ?"
+
+msgid "Display the molecule drawer in edit mode?"
+msgstr "Afficher l'éditeur de molécule en mode édition ?"
 
 #: elabftw/ucp.php:288
 msgid "Name of the template"

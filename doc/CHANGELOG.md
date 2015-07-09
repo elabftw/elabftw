@@ -17,6 +17,9 @@
 * removed check for update button in footer
 * check for latest version on sysconfig page
 * various little improvements and bug fixes
+* update tinymce to 4.1.10
+* update jquery to 2.1.4
+* update SwiftMailer to 5.4.1
 
 # Verson 1.1.3
 * add new way to send emails (thanks to @Athemis)

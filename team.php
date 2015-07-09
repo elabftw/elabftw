@@ -63,7 +63,7 @@ while ($data = $req->fetch()) {
     if ($data['usergroup'] == 3 || $data['usergroup'] == 1 || $data['usergroup'] == 2) {
         echo " style='font-weight:bold'";
     }
-    echo ">". $data['firstname'] . " " . $data['lastname'] . "</span></a>";
+    echo ">" . $data['firstname'] . " " . $data['lastname'] . "</span></a>";
     echo "</td>";
     if (!empty($data['phone'])) {
         echo "<td>" . $data['phone'] . "</td>";

@@ -357,12 +357,22 @@ if (add_field('users', 'chem_editor', "TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' 
     $msg_arr[] = '>>> Added Chem editor pref to users.';
 }
 
+// 20150709 remove export folder
+// first remove content
+$dir = ELAB_ROOT . '/uploads/export';
+$di = new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS);
+$ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
+foreach ($ri as $file) {
+    $file->isDir() ? rmdir($file) : unlink($file);
+}
+// and remove folder itself
+rmdir($dir);
 
 // //////////////////////////////////////////
 // INSERT NEW CODE BLOCKS ABOVE THIS LINE //
 // /////////////////////////////////////////
 
-// cleanup files in tmp and export
+// cleanup files in tmp
 $dir = ELAB_ROOT . '/uploads/tmp';
 $di = new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS);
 $ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
@@ -370,14 +380,6 @@ foreach ($ri as $file) {
     $file->isDir() ? rmdir($file) : unlink($file);
 }
 
-$dir = ELAB_ROOT . '/uploads/export';
-$di = new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS);
-$ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
-foreach ($ri as $file) {
-    $file->isDir() ? rmdir($file) : unlink($file);
-}
-
-// END
 $msg_arr[] = "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)";
 $_SESSION['infos'] = $msg_arr;
 header('Location: sysconfig.php');

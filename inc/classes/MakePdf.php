@@ -53,11 +53,6 @@ class MakePdf
         $this->buildContent();
     }
 
-    public function getPath()
-    {
-        return ELAB_ROOT . 'uploads/' . $this->cleanTitle . '.pdf';
-    }
-
     public function getFileName()
     {
         return $this->cleanTitle . '.pdf';

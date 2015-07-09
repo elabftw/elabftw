@@ -61,7 +61,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
 // make CSV file
 $filename = hash("sha512", uniqid(rand(), true));
-$filepath = 'uploads/' . $filename;
+$filepath = 'uploads/tmp/' . $filename;
 
 $fp = fopen($filepath, 'w+');
 // utf8 headers
@@ -75,11 +75,9 @@ fclose($fp);
 
 // PAGE BEGIN
 echo "<div class='well' style='margin-top:20px'>";
-    // Get csv file size
-    $filesize = filesize($filepath);
 echo "<p>" . _('Your CSV file is ready:') . "<br>
-        <a href='app/download.php?f=" . $filepath . "&name=elabftw-export.csv' target='_blank'>
-        <img src='img/download.png' alt='download' /> elabftw-export.csv</a>
-        <span class='filesize'>(" . format_bytes($filesize) . ")</span></p>";
+        <a href='app/download.php?type=csv&f=" . $filename . "&name=export.elabftw.csv' target='_blank'>
+        <img src='img/download.png' alt='download' /> export.elabftw.csv</a>
+        <span class='filesize'>(" . format_bytes(filesize($filepath)) . ")</span></p>";
 echo "</div>";
 require_once 'inc/footer.php';

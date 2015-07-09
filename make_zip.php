@@ -54,7 +54,7 @@ $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     $id_arr = explode(" ", $_GET['id']);
     // BEGIN ZIP
-    $zipfile = 'uploads/export/' . hash("sha512", uniqid(rand(), true)) . ".zip";
+    $zipfile = 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . ".zip";
 
     $zip = new ZipArchive;
     $res = $zip->open($zipfile, ZipArchive::CREATE);
@@ -172,27 +172,29 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
             $mpdf->SetKeywords($pdf->tags);
             $mpdf->SetCreator('www.elabftw.net');
             $mpdf->WriteHTML($pdf->content);
-            $mpdf->Output($pdf->getPath(), 'F');
-            $zip->addFile($pdf->getPath(), $folder . '/' . $pdf->getFileName());
+            $pdfPath = ELAB_ROOT . 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . '.pdf';
+            $mpdf->Output($pdfPath, 'F');
+            $zip->addFile($pdfPath, $folder . '/' . $pdf->getFileName());
             // add CSV file to archive
-            $csvpath = make_unique_csv($id, $table);
-            $zip->addFile($csvpath, $folder . "/" . $clean_title . ".csv");
+            $csvPath = make_unique_csv($id, $table);
+            $zip->addFile($csvPath, $folder . "/" . $clean_title . ".csv");
 
             // add the export.txt file that is helpful for importing
             // first line is title, rest is body
             $txt = $title . "\n" . $body . "\n";
             // fix utf8
             $txt = utf8_encode($txt);
-            $txtpath = 'uploads/export/txt-' . uniqid();
-            $tf = fopen($txtpath, 'w+');
+            $txtPath = ELAB_ROOT . 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . '.txt';
+            $tf = fopen($txtPath, 'w+');
             fwrite($tf, $txt);
             fclose($tf);
-            $zip->addFile($txtpath, $folder . "/export.txt");
+            // add the export.txt file as hidden file, users don't need to see it
+            $zip->addFile($txtPath, $folder . "/.export.txt");
             // add the path of the files to be deleted in the files_to_delete array
             // (csv, export file and pdf)
-            $files_to_delete[] = $csvpath;
-            $files_to_delete[] = $txtpath;
-            $files_to_delete[] = $pdf->getPath();
+            $files_to_delete[] = $csvPath;
+            $files_to_delete[] = $txtPath;
+            $files_to_delete[] = $pdfPath;
 
         } // end foreach
 
@@ -207,7 +209,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
         // fix utf8
         $manifest = utf8_encode($manifest);
         $manifest = "\xEF\xBB\xBF" . $manifest;
-        $manifestpath = 'uploads/export/manifest-' . uniqid();
+        $manifestpath = 'uploads/tmp/manifest-' . uniqid();
         $tf = fopen($manifestpath, 'w+');
         fwrite($tf, $manifest);
         fclose($tf);
@@ -219,6 +221,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 
         // now clean up
         // we need to do that after $zip->close() or it doesn't work
+        //print_r($files_to_delete);
         foreach ($files_to_delete as $file) {
             unlink($file);
         }

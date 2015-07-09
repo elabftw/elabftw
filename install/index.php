@@ -143,17 +143,16 @@ if (!function_exists('hash')) {
 
 
 // UPLOADS DIR
-if (is_writable('../uploads') && is_writable('../uploads/export') && is_writable('../uploads/tmp')) {
-    $message = 'The <em>uploads/</em> folder and its subdirectories are here and I can write to it.';
+if (is_writable('../uploads') && is_writable('../uploads/tmp')) {
+    $message = 'The <em>uploads/</em> folder and its subdirectory are here and I can write to it.';
     display_message('info_nocross', $message);
 } else {
     // create the folders
     mkdir('../uploads');
-    mkdir('../uploads/export');
     mkdir('../uploads/tmp');
     // check the folders
-    if (is_writable('../uploads') && is_writable('../uploads/export') && is_writable('../uploads/tmp')) {
-        $message = "The <em>uploads/</em> folder and its subdirectories were created successfully.";
+    if (is_writable('../uploads') && is_writable('../uploads/tmp')) {
+        $message = "The <em>uploads/</em> folder and its subdirectory were created successfully.";
         display_message('info_nocross', $message);
     } else { // failed at creating the folder
         $message = "Faild creating <em>uploads/</em> directory. 

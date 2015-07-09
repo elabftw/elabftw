@@ -52,9 +52,9 @@ if (!isset($_GET['name']) || empty($_GET['name'])) {
 }
 
 // SET FILE PATH
-// the zip archives will be in the export folder
-if (isset($_GET['type']) && $_GET['type'] == 'zip') {
-    $file_path = ELAB_ROOT . 'uploads/export/' . $long_filename;
+// the zip archives will be in the tmp folder
+if (isset($_GET['type']) && ($_GET['type'] === 'zip' || $_GET['type'] === 'csv')) {
+    $file_path = ELAB_ROOT . 'uploads/tmp/' . $long_filename;
 } else {
     $file_path = ELAB_ROOT . 'uploads/' . $long_filename;
 }

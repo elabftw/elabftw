@@ -679,8 +679,8 @@ function make_unique_csv($id, $type, $write = true)
 
     if ($write) {
         // make CSV file
-        $filename = hash("sha512", uniqid(rand(), true));
-        $filepath = 'uploads/export/' . $filename;
+        $filename = hash("sha512", uniqid(rand(), true)) . '.csv';
+        $filepath = ELAB_ROOT . 'uploads/tmp/' . $filename;
 
         $fp = fopen($filepath, 'w+');
         // utf8 headers

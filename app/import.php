@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['type'] === 'zip') {
         // now for each folder, import the things
         foreach ($dirs as $dir) {
             // we need to get title and body from the txt file
-            $file = "../uploads/tmp/" . $dir . "/export.txt";
+            $file = "../uploads/tmp/" . $dir . "/.export.txt";
             $content = file_get_contents($file);
             $lines = explode("\n", $content);
             $title = $lines[0];

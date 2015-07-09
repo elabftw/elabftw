@@ -372,14 +372,6 @@ class TrustedTimestamps
          */
 
         if ($retcode === 0 && strtolower(trim($retarray[0])) == "verification: ok") {
-
-            /*
-            if (!is_null($timeToCheck)) {
-                if ($timeToCheck != $this->responseTime) {
-                    throw new Exception("The response time of the request was changed");
-                }
-            }
-             */
             return true;
         }
 

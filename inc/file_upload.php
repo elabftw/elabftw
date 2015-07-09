@@ -73,7 +73,6 @@ Dropzone.options.elabftwDropzone = {
                 $("#filesdiv").load(type + '.php?mode=edit&id=' + item_id + ' #filesdiv', function() {
                     // make the comment zone editable (fix issue #54)
                     $('.thumbnail p.editable').editable('app/editinplace.php', {
-                     tooltip : 'Click to edit',
                      indicator : 'Saving...',
                      id   : 'id',
                      name : 'filecomment',

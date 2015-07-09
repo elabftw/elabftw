@@ -93,6 +93,18 @@ echo "<title>" . (isset($page_title) ? $page_title : "Lab manager") . " - eLab "
 <script src="js/common.min.js"></script>
 <!-- bootstrap JS -->
 <script src="js/bootstrap/js/alert.js"></script>
+<?php
+if ($_SESSION['prefs']['chem_editor']) {
+    ?>
+    <link rel="stylesheet" href="css/chemdoodle.css" type="text/css">
+    <script src="js/chemdoodle.js"></script>
+    <script src="js/chemdoodle-uis.js"></script>
+    <script>
+        ChemDoodle.iChemLabs.useHTTPS();
+    </script>
+    <?php
+}
+?>
 </head>
 
 <body>

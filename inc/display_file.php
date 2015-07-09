@@ -79,23 +79,17 @@ if ($count > 0) {
                 echo "title='" . $uploads_data['comment'] . "'";
             }
             echo "><img class='thumb' src='" . $thumbpath . "' alt='thumbnail' /></a>";
+
         } elseif (in_array($ext, $common_extensions)) {
             echo "<img class='thumb' src='img/thumb-" . $ext . ".png' alt='' />";
-        } elseif ($ext === 'mol' && $_SESSION['prefs']['chem_editor']) {
+
+        } elseif ($ext === 'mol' && $_SESSION['prefs']['chem_editor'] && $_GET['mode'] === 'view') {
             // we need to escape \n in the mol file or we get unterminated string literal error in JS
             $mol = str_replace("\n", "\\n", file_get_contents(ELAB_ROOT . 'uploads/' . $uploads_data['long_name']));
             echo "<div class='center'><script>
-                    var viewer = new ChemDoodle.ViewerCanvas('" . $uploads_data['long_name'] . "', 100, 100);
-            viewer.specs.bonds_width_2D = .6;
-              viewer.specs.bonds_saturationWidth_2D = .18;
-              viewer.specs.bonds_hashSpacing_2D = 2.5;
-                viewer.specs.atoms_font_size_2D = 10;
-                viewer.specs.atoms_font_families_2D = ['Helvetica', 'Arial', 'sans-serif'];
-                  viewer.specs.atoms_displayTerminalCarbonLabels_2D = true;
-                    var molFileContent = '". $mol . "';
-                    var mol = ChemDoodle.readMOL(molFileContent);
-                    viewer.loadMolecule(mol);
-                      </script></div>";
+                  showMol('" . $mol . "');
+                  </script></div>";
+
         } else { // uncommon extension without a nice image to display
             echo "<img class='thumb' src='img/thumb.png' alt='' />";
         }

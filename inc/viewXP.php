@@ -186,13 +186,6 @@ if ($req->rowcount() > 0) {
 // DISPLAY eLabID
 echo "<p class='elabid'>" . _('Unique eLabID:') . " " . $data['elabid'];
 echo "</section>";
-if ($_SESSION['prefs']['chem_editor']) {
-    ?>
-    <link rel="stylesheet" href="css/chemdoodle.css" type="text/css">
-    <script src="js/chemdoodle.js"></script>
-    <script src="js/chemdoodle-uis.js"></script>
-    <?php
-}
 // DISPLAY FILES
 require_once 'inc/display_file.php';
 

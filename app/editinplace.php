@@ -25,7 +25,6 @@
 ********************************************************************************/
 require_once '../inc/common.php';
 require_once '../vendor/autoload.php';
-$crypto = new \Elabftw\Elabftw\Crypto();
 
 if (isset($_POST['filecomment'])) {
     // we are editing a comment for a file
@@ -44,6 +43,7 @@ if (isset($_POST['filecomment'])) {
                 $req->execute(array(
                     'new_comment' => $filecomment,
                     'id' => $id));
+                echo stripslashes($filecomment);
             } else { // Submitted comment is empty
                 // Get old comment
                 $sql = "SELECT comment FROM uploads WHERE id = " . $id;

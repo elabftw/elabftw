@@ -88,3 +88,17 @@ function showPanel() {
     }
     return false;
 }
+// display mol files
+function showMol(molFileContent) {
+    // the first parameter is a random id
+    // otherwise several .mol files will clash
+    var viewer = new ChemDoodle.ViewerCanvas(Math.random(), 100, 100);
+    viewer.specs.bonds_width_2D = .6;
+    viewer.specs.bonds_saturationWidth_2D = .18;
+    viewer.specs.bonds_hashSpacing_2D = 2.5;
+    viewer.specs.atoms_font_size_2D = 10;
+    viewer.specs.atoms_font_families_2D = ['Helvetica', 'Arial', 'sans-serif'];
+    viewer.specs.atoms_displayTerminalCarbonLabels_2D = true;
+    var mol = ChemDoodle.readMOL(molFileContent);
+    viewer.loadMolecule(mol);
+}

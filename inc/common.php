@@ -43,10 +43,6 @@ if (is_readable('config.php')) {
         Or if you just did a git pull, run php update.php");
 }
 
-// require common stuff
-require_once ELAB_ROOT . 'inc/functions.php';
-require_once ELAB_ROOT . 'vendor/autoload.php';
-require_once ELAB_ROOT . 'inc/locale.php';
 
 // SQL CONNECT
 try {
@@ -59,6 +55,10 @@ try {
 }
 // END SQL CONNECT
 
+// require common stuff
+require_once ELAB_ROOT . 'inc/functions.php';
+require_once ELAB_ROOT . 'vendor/autoload.php';
+require_once ELAB_ROOT . 'inc/locale.php';
 $user = new \Elabftw\Elabftw\User();
 
 if (!isset($_SESSION['auth'])) {

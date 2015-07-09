@@ -31,13 +31,10 @@ if (!isset($_SESSION)) {
 // check that the config file is here and readable
 if (is_readable('config.php')) {
     require_once 'config.php';
-    require_once 'inc/functions.php';
 } elseif (is_readable('../config.php')) {
     // we might be called from app folder
     require_once '../config.php';
-    require_once '../inc/functions.php';
 } else {
-
     die("No readable config file found. Make sure the server has permissions to read it. Try :<br />
         <hr>
         chmod 644 config.php
@@ -45,6 +42,12 @@ if (is_readable('config.php')) {
         Or if eLabFTW is not yet installed, head to the <a href='install'>install folder</a><br>
         Or if you just did a git pull, run php update.php");
 }
+
+// require common stuff
+require_once ELAB_ROOT . 'inc/functions.php';
+require_once ELAB_ROOT . 'vendor/autoload.php';
+require_once ELAB_ROOT . 'inc/locale.php';
+
 // SQL CONNECT
 try {
     $pdo_options = array();
@@ -56,55 +59,11 @@ try {
 }
 // END SQL CONNECT
 
+$user = new \Elabftw\Elabftw\User();
 
 if (!isset($_SESSION['auth'])) {
-
-    if (isset($_COOKIE['token']) && (strlen($_COOKIE['token']) == 32)) {
-        // If user has a cookie; check cookie is valid
-        $token = filter_var($_COOKIE['token'], FILTER_SANITIZE_STRING);
-        // Get token from SQL
-        $sql = "SELECT * FROM users WHERE token = :token LIMIT 1";
-        $result = $pdo->prepare($sql);
-        $result->execute(array(
-            'token' => $token
-        ));
-        $users = $result->fetch();
-        if ($result->rowCount() == 1) { // token is valid
-            session_regenerate_id();
-            $_SESSION['auth'] = 1;
-            $_SESSION['token'] = $token;
-            $_SESSION['userid'] = $users['userid'];
-            $_SESSION['team_id'] = $users['team'];
-            // Used in the menu
-            $_SESSION['username'] = $users['username'];
-            // load permissions
-            $perm_sql = "SELECT * FROM groups WHERE group_id = :group_id LIMIT 1";
-            $perm_req = $pdo->prepare($perm_sql);
-            $perm_req->bindParam(':group_id', $users['usergroup']);
-            $perm_req->execute();
-            $group = $perm_req->fetch(PDO::FETCH_ASSOC);
-
-            $_SESSION['is_admin'] = $group['is_admin'];
-            $_SESSION['is_sysadmin'] = $group['is_sysadmin'];
-            // PREFS
-            $_SESSION['prefs'] = array(
-            'display' => $users['display'],
-            'order' => $users['order_by'],
-            'sort' => $users['sort_by'],
-            'limit' => $users['limit_nb'],
-            'close_warning' => intval($users['close_warning']),
-            'shortcuts' => array(
-                'create' => $users['sc_create'],
-                'edit' => $users['sc_edit'],
-                'submit' => $users['sc_submit'],
-                'todo' => $users['sc_todo']),
-            'lang' => $users['lang']);
-            session_write_close();
-        } else { // no token found in database
-            header("location: login.php");
-            exit;
-        }
-    } else { // no cookie
+    // try to login with the cookie
+    if (!$user->loginWithCookie()) {
         // maybe we clicked an email link and we want to be redirected to the page upon successful login
         // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
         if (using_ssl()) {
@@ -122,9 +81,8 @@ if (!isset($_SESSION['auth'])) {
         header('location: login.php');
         exit;
     }
-}
+} else { // not auth with session
 
-if (isset($_SESSION['auth'])) {
     // check that the token in session is the same as in SQL
     // first get the token in sql
     $sql = "SELECT token FROM users WHERE userid = :userid";
@@ -136,5 +94,16 @@ if (isset($_SESSION['auth'])) {
     if ($_SESSION['token'] != $token || !isset($_SESSION['token'])) {
         header("Location: app/logout.php");
         exit;
+    }
+    // add the chemdoodle stuff if we want it
+    if (isset($_SESSION) && $_SESSION['prefs']['chem_editor']) {
+        ?>
+        <link rel="stylesheet" href="css/chemdoodle.css" type="text/css">
+        <script src="js/chemdoodle.js"></script>
+        <script src="js/chemdoodle-uis.js"></script>
+        <script>
+            ChemDoodle.iChemLabs.useHTTPS();
+        </script>
+        <?php
     }
 }

@@ -25,20 +25,19 @@
 ********************************************************************************/
 /* admin-exec.php - for administration of the elab */
 require_once '../inc/common.php';
-require_once ELAB_ROOT . 'inc/locale.php';
-require_once ELAB_ROOT . 'vendor/autoload.php';
-$crypto = new \Elabftw\Elabftw\Crypto();
 
 // only admin can use this
 if ($_SESSION['is_admin'] != 1) {
     die(_('This section is out of your reach.'));
 }
 
+$formKey = new \Elabftw\Elabftw\FormKey();
+$crypto = new \Elabftw\Elabftw\Crypto();
+
 $msg_arr = array();
 $errflag = false;
 $email = '';
 
-$formKey = new \Elabftw\Elabftw\FormKey();
 
 // VALIDATE USERS
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {

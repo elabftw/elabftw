@@ -24,7 +24,6 @@
 *                                                                               *
 ********************************************************************************/
 require_once '../inc/common.php';
-require_once '../vendor/autoload.php';
 
 if (isset($_POST['filecomment'])) {
     // we are editing a comment for a file

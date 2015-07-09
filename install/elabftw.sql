@@ -305,6 +305,7 @@ CREATE TABLE `users` (
   `sc_submit` varchar(1) NOT NULL DEFAULT 's',
   `sc_todo` varchar(1) NOT NULL DEFAULT 't',
   `close_warning` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `chem_editor` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `validated` tinyint(1) NOT NULL DEFAULT '0',
   `lang` varchar(5) NOT NULL DEFAULT 'en_GB',
   PRIMARY KEY (`userid`)

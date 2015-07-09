@@ -32,7 +32,6 @@ if (php_sapi_name() == 'cli' || empty($_SERVER['REMOTE_ADDR'])) {
 }
 
 require_once 'inc/common.php';
-require_once 'vendor/autoload.php';
 
 // die if you are not sysadmin
 if ($_SESSION['is_sysadmin'] != 1) {

@@ -24,12 +24,10 @@
 *                                                                               *
 ********************************************************************************/
 require_once 'inc/common.php';
-require_once ELAB_ROOT . 'inc/locale.php';
 $page_title = _('Make zip archive');
 $selected_menu = null;
 require_once ELAB_ROOT . 'inc/head.php';
 require_once ELAB_ROOT . 'inc/info_box.php';
-require_once ELAB_ROOT . 'vendor/autoload.php';
 // Test if there is zip
 if (!class_exists('ZipArchive')) {
     die("<p>You are missing the ZipArchive class in php. Uncomment the line extension=zip.so in /etc/php/php.ini.</p>");

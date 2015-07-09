@@ -28,13 +28,18 @@ require_once '../inc/connect.php';
 require_once '../inc/functions.php';
 require_once '../inc/locale.php';
 require_once '../vendor/autoload.php';
-// formkey stuff
+
 $formKey = new \Elabftw\Elabftw\FormKey();
+$user = new \Elabftw\Elabftw\User();
 
 //Array to store validation errors
 $msg_arr = array();
 //Validation error flag
 $errflag = false;
+
+if (!using_ssl()) {
+    die("eLabFTW works only in HTTPS. Please enable HTTPS on your server (<a href='https://github.com/elabftw/elabftw/wiki/Troubleshooting#wiki-switch-to-https'>see documentation</a>). Or retry with https:// in front of the address.");
+}
 
 // Check the form_key
 if (!isset($_POST['form_key']) || !$formKey->validate()) {
@@ -66,114 +71,5 @@ if ($errflag) {
     exit;
 }
 
-// SQL for verification + actual login with cookies
-// Get salt
-$sql = "SELECT salt FROM users WHERE username = :username";
-$req = $pdo->prepare($sql);
-$req->bindParam(':username', $username);
-$req->execute();
-$data = $req->fetch();
-$salt = $data['salt'];
-// Create hash
-$passwordHash = hash("sha512", $salt . $_POST['password']);
-
-// Do we let people in if they are not validated by an admin ?
-if (get_config('admin_validate') == 1) {
-    $sql = "SELECT * FROM users WHERE username = :username AND password = :passwordHash AND validated= 1";
-} else {
-    $sql = "SELECT * FROM users WHERE username = :username AND password = :passwordHash";
-}
-$req = $pdo->prepare($sql);
-$req->bindParam(':username', $username);
-$req->bindParam(':passwordHash', $passwordHash);
-$result = $req->execute();
-$numrows = $req->rowCount();
-//Check whether the query was successful or not
-if ($result) {
-    if ($numrows === 1) {
-
-        // **********************
-        //    LOGIN SUCCESSFUL
-        // **********************
-
-        $data = $req->fetch();
-        // Store userid and permissions in $_SESSION
-        session_regenerate_id();
-        $_SESSION['auth'] = 1;
-        $_SESSION['userid'] = $data['userid'];
-        $_SESSION['team_id'] = $data['team'];
-        // Used in the menu
-        $_SESSION['username'] = $data['username'];
-        // load permissions
-        $perm_sql = "SELECT * FROM groups WHERE group_id = :group_id LIMIT 1";
-        $perm_req = $pdo->prepare($perm_sql);
-        $perm_req->bindParam(':group_id', $data['usergroup']);
-        $perm_req->execute();
-        $group = $perm_req->fetch(PDO::FETCH_ASSOC);
-
-        $_SESSION['is_admin'] = $group['is_admin'];
-        $_SESSION['is_sysadmin'] = $group['is_sysadmin'];
-
-        // PREFS
-        $_SESSION['prefs'] = array(
-            'display' => $data['display'],
-            'order' => $data['order_by'],
-            'sort' => $data['sort_by'],
-            'limit' => $data['limit_nb'],
-            'shortcuts' => array('create' => $data['sc_create'], 'edit' => $data['sc_edit'], 'submit' => $data['sc_submit'], 'todo' => $data['sc_todo']),
-            'lang' => $data['lang'],
-            'close_warning' => intval($data['close_warning']),
-            'chem_editor' => intval($data['chem_editor']));
-        // Make a unique token and store it in sql AND cookie
-        $token = md5(uniqid(rand(), true));
-        // and SESSION
-        $_SESSION['token'] = $token;
-        session_write_close();
-
-        // Cookie validity = 1 month, works only in https
-        if (!using_ssl()) {
-            die("eLabFTW works only in HTTPS. Please enable HTTPS on your server (<a href='https://github.com/elabftw/elabftw/wiki/Troubleshooting#wiki-switch-to-https'>see documentation</a>). Or retry with https:// in front of the address.");
-        }
-
-        // Set token cookie
-        // setcookie( $name, $value, $expire, $path, $domain, $secure, $httponly )
-        // expiration = 1 month = 60*60*24*30 =  2592000
-        // TODO can we set true for $secure in setcookie() ?
-        // because it might not work if we are in http but using https from haproxy, dunno.
-        // so it's left to false, it's ok for now.
-        setcookie('token', $token, time() + 2592000, null, null, false, true);
-        // Update the token in SQL
-        $sql = "UPDATE users SET token = :token WHERE userid = :userid";
-        $req = $pdo->prepare($sql);
-        $req->execute(array(
-            'token' => $token,
-            'userid' => $data['userid']
-        ));
-
-        if (isset($_COOKIE['redirect'])) {
-            $location = $_COOKIE['redirect'];
-        } else {
-            $location = '../experiments.php';
-        }
-        header("Location: " . $location);
-        exit;
-    } else { // login failed
-        // log the attempt
-        dblog('Warning', $_SERVER['REMOTE_ADDR'], 'Failed login attempt');
-
-        // inform the user
-        $msg_arr = array();
-        $msg_arr[] = _("Login failed. Either you mistyped your password or your account isn't activated yet.");
-        if (!isset($_SESSION['failed_attempt'])) {
-            $_SESSION['failed_attempt'] = 1;
-        } else {
-            $_SESSION['failed_attempt'] += 1;
-        }
-        $_SESSION['errors'] = $msg_arr;
-
-        header("location: ../login.php");
-        exit;
-    }
-} else {
-    die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
-}
+// the actual login
+$user->login($username, $_POST['password']);

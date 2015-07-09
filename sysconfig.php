@@ -25,15 +25,15 @@
 ********************************************************************************/
 /* sysconfig.php - configuration system */
 require_once 'inc/common.php';
-require_once 'inc/locale.php';
+
 if ($_SESSION['is_sysadmin'] != 1) {
     die(_('This section is out of your reach.'));
 }
+
 $page_title = _('eLabFTW configuration');
 $selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
-require_once 'vendor/autoload.php';
 
 $crypto = new \Elabftw\Elabftw\Crypto();
 

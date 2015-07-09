@@ -25,21 +25,19 @@
 ********************************************************************************/
 /* admin.php - for administration of the elab */
 require_once 'inc/common.php';
-require_once 'inc/locale.php';
-require_once 'vendor/autoload.php';
 
-$crypto = new \Elabftw\Elabftw\Crypto();
-
+// only admin can use this
 if ($_SESSION['is_admin'] != 1) {
-    die(ADMIN_DIE);
+    die(_('This section is out of your reach.'));
 }
+
+$formKey = new \Elabftw\Elabftw\FormKey();
+$crypto = new \Elabftw\Elabftw\Crypto();
 
 $page_title = _('Admin panel');
 $selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
-require_once 'vendor/autoload.php';
-$formKey = new \Elabftw\Elabftw\FormKey();
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
 <script src="js/raphael/raphael-min.js"></script>

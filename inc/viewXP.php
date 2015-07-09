@@ -25,8 +25,6 @@
 ********************************************************************************/
 // inc/viewXP.php
 // read only ?
-require_once ELAB_ROOT . 'vendor/autoload.php';
-
 $ro = false;
 // ID
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {

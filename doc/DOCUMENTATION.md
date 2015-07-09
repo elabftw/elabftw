@@ -30,7 +30,9 @@ There is also a user guide in the doc/ folder.
 * lock the experiment
 * tags
 * join any type of file
+* attached mol files will display the molecule in the thumbnail
 * link with database items
+* molecule drawer (optional)
 
 ### database
 * import from spreadsheet files
@@ -40,6 +42,7 @@ There is also a user guide in the doc/ folder.
 * same features as experiments
 * rating system
 * see all experiments linked with this item
+* molecule drawer (optional)
 
 ### security
 * HTTPS
@@ -52,13 +55,10 @@ There is also a user guide in the doc/ folder.
 
 ### intellectual property
 * timestamping of experiments (pdf export)
-compliant with European standard ETSI TS 102 023 and
-certified RGS (French General Security Specifications)
-more info : https://www.universign.eu/en/timestamp/
 * RFC 3161 compliant Trusted Timestamping
 * allow or not users to delete experiments
 * revisions system to see history
-* attached files are md5summed and thus timestamped with the experience
+* attached files are md5summed and thus timestamped with the experiment
 
 ### user experience
 * lovely design (by Manon Potier)
@@ -94,6 +94,7 @@ eLabFTW uses open source code from others. A big thanks to them for making their
 * [Colorwheel](http://jweir.github.com/colorwheel/)
 * [File upload](http://www.dropzonejs.com/)
 * [ChemDoodle](http://web.chemdoodle.com/)
+* [FileSaver.js](https://github.com/eligrey/FileSaver.js/)
 
 ### Other resources
 * [Icons](http://icons8.com)

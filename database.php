@@ -33,8 +33,8 @@ require_once 'inc/info_box.php';
 if (isset($_SESSION) && $_SESSION['prefs']['chem_editor']) {
     ?>
     <link rel="stylesheet" href="css/chemdoodle.css" type="text/css">
-    <script src="js/chemdoodle.js" async></script>
-    <script src="js/chemdoodle-uis.js" async></script>
+    <script src="js/chemdoodle.js"></script>
+    <script src="js/chemdoodle-uis.js"></script>
     <script>
         ChemDoodle.iChemLabs.useHTTPS();
     </script>

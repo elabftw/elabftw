@@ -131,7 +131,7 @@ class User
         // TODO can we set true for $secure in setcookie() ?
         // because it might not work if we are in http but using https from haproxy, dunno.
         // so it's left to false, it's ok for now.
-        setcookie('token', $token, time() + 2592000, null, null, false, true);
+        setcookie('token', $this->token, time() + 2592000, null, null, false, true);
         // Update the token in SQL
         $sql = "UPDATE users SET token = :token WHERE userid = :userid";
         $req = $pdo->prepare($sql);
@@ -183,10 +183,12 @@ class User
     /*
      * We are not auth, but maybe we have a cookie, try to login with that
      *
-     * @return bool|null True if we have a valid cookie and it is the same token as in the DB
+     * @return bool True if we have a valid cookie and it is the same token as in the DB
      */
     public function loginWithCookie()
     {
+        global $pdo;
+
         // the token is a md5 sum
         if (!isset($_COOKIE['token']) || strlen($_COOKIE['token']) != 32) {
             return false;
@@ -197,8 +199,8 @@ class User
         $sql = "SELECT * FROM users WHERE token = :token LIMIT 1";
         $req = $pdo->prepare($sql);
         $req->bindParam(':token', $token);
-        $result->execute();
-        if ($result->rowCount() === 1) {
+        $req->execute();
+        if ($req->rowCount() === 1) {
             $this->populateSession();
             return true;
         } else {

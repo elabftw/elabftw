@@ -140,21 +140,12 @@ if (isset($_GET['q'])) { // if there is a query
 
     $results_arr = search_item('xp', $query, $_SESSION['userid']);
 
-    // show number of results found
-    $time = microtime();
-    $time = explode(' ', $time);
-    $time = $time[1] + $time[0];
-    $finish = $time;
-    $total_time = round(($finish - $_SERVER["REQUEST_TIME_FLOAT"]), 4);
-    $unit = 'seconds';
-    if ($total_time < 0.01) {
-        $total_time = $total_time * 1000;
-        $unit = 'milliseconds';
-    }
+    $total_time = get_total_time();
+
     if (count($results_arr) == 0) {
         display_message('error_nocross', _("Sorry. I couldn't find anything :("));
     } else {
-        echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time . " " . $unit . ")</p>";
+        echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time['time'] . " " . $total_time['unit'] . ")</p>";
     }
 
     // loop the results array and display results
@@ -177,28 +168,19 @@ if (isset($_GET['q'])) { // if there is a query
     $req->execute(array(
         'link_id' => $item_id
     ));
+
+    $total_time = get_total_time();
+
     // put resulting ids in the results array
     while ($data = $req->fetch()) {
         $results_arr[] = $data['item_id'];
     }
     $req->closeCursor();
-    // show number of results found and time
-    $time = microtime();
-    $time = explode(' ', $time);
-    $time = $time[1] + $time[0];
-    $finish = $time;
-    $total_time = round(($finish - $_SERVER["REQUEST_TIME_FLOAT"]), 4);
-    $unit = 'seconds';
-    if ($total_time < 0.01) {
-        $total_time = $total_time * 1000;
-        $unit = 'milliseconds';
-    }
-    if (count($results_arr) > 1) {
-        echo "<p class='smallgray'>" . count($results_arr) . " " . _('results.') . " ($total_time $unit)</p>";
-    } elseif (count($results_arr) == 1) {
-        echo "<p class='smallgray'>" . _('Found') . " ($total_time $unit)</p>";
+    // show number of results found
+    if (count($results_arr) == 0) {
+        display_message('error_nocross', _("Sorry. I couldn't find anything :("));
     } else {
-        display_message('error', _('Found'));
+        echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time['time'] . " " . $total_time['unit'] . ")</p>";
     }
 
     // loop the results array and display results
@@ -231,28 +213,18 @@ if (isset($_GET['q'])) { // if there is a query
     $req->bindParam(':teamid', $_SESSION['team_id'], PDO::PARAM_INT);
     $req->execute();
 
-    $sql = "SELECT item_id, userid FROM experiments_tags
-    WHERE tag LIKE :tag AND userid = :userid";
     // put resulting ids in the results array
     while ($data = $req->fetch()) {
         $results_arr[] = $data['item_id'];
     }
 
+    $total_time = get_total_time();
+
     // show number of results found
-    $time = microtime();
-    $time = explode(' ', $time);
-    $time = $time[1] + $time[0];
-    $finish = $time;
-    $total_time = round(($finish - $_SERVER["REQUEST_TIME_FLOAT"]), 4);
-    $unit = 'seconds';
-    if ($total_time < 0.01) {
-        $total_time = $total_time * 1000;
-        $unit = 'milliseconds';
-    }
     if (count($results_arr) == 0) {
         display_message('error_nocross', _("Sorry. I couldn't find anything :("));
     } else {
-        echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time . " " . $unit . ")</p>";
+        echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time['time'] . " " . $total_time['unit'] . ")</p>";
     }
 
     // clean duplicates
@@ -311,12 +283,6 @@ if (isset($_GET['q'])) { // if there is a query
 
 <script>
 // READY ? GO !
-function go_url(x) {
-    if(x == '') {
-        return;
-    }
-    location = x;
-}
 $(document).ready(function(){
 
     // SHOW MORE EXPERIMENTS BUTTON

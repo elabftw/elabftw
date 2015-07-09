@@ -284,8 +284,6 @@ function search_item($type, $query, $userid)
             $results_arr[] = $data['item_id'];
         }
             $req->closeCursor();
-    } else {
-        return false;
     }
     // filter out duplicate ids and reverse the order; XP should be sorted by date
     return array_reverse(array_unique($results_arr));
@@ -1089,4 +1087,25 @@ function getMailer()
 
     $mailer = Swift_Mailer::newInstance($transport);
     return $mailer;
+}
+
+/*
+ * Get the time difference between start of page and now.
+ *
+ * @return array with time and unit
+ */
+function get_total_time()
+{
+    $time = microtime();
+    $time = explode(' ', $time);
+    $time = $time[1] + $time[0];
+    $total_time = round(($time - $_SERVER["REQUEST_TIME_FLOAT"]), 4);
+    $unit = _('seconds');
+    if ($total_time < 0.01) {
+        $total_time = $total_time * 1000;
+        $unit = _('milliseconds');
+    }
+    return array(
+        'time' => $total_time,
+        'unit' => $unit);
 }

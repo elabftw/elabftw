@@ -131,6 +131,8 @@ if (isset($_GET['filter'])) {
     }
 }
 
+$total_time = get_total_time();
+
 // SQL for showDB
 // TAG SEARCH
 if (isset($_GET['tag']) && !empty($_GET['tag'])) {
@@ -155,23 +157,12 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
         $results_arr[] = $data['item_id'];
     }
 
-    // show number of results found
-    $time = microtime();
-    $time = explode(' ', $time);
-    $time = $time[1] + $time[0];
-    $finish = $time;
-    $total_time = round(($finish - $_SERVER["REQUEST_TIME_FLOAT"]), 4);
-    $unit = 'seconds';
-    if ($total_time < 0.01) {
-        $total_time = $total_time * 1000;
-        $unit = 'milliseconds';
-    }
 
     // show number of results found
     if (count($results_arr) == 0) {
         display_message('error_nocross', _("Sorry. I couldn't find anything :("));
     } else {
-        echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time . " " . $unit . ")</p>";
+        echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time['time'] . " " . $total_time['unit'] . ")</p>";
     }
 
     // clean duplicates
@@ -193,7 +184,7 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     if (count($results_arr) == 0) {
         display_message('error_nocross', _("Sorry. I couldn't find anything :("));
     } else {
-        echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time . " " . $unit . ")</p>";
+        echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time['time'] . " " . $total_time['unit'] . ")</p>";
     }
 
     // loop the results array and display results
@@ -202,12 +193,12 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     }
 // end if there is a search
 } else { // there is no search
-    $sql = "SELECT it.id, ty.name 
-    FROM items AS it, items_types AS ty 
-    WHERE it.type = ty.id 
-    AND it.team = :teamid 
+    $sql = "SELECT it.id, ty.name
+    FROM items AS it, items_types AS ty
+    WHERE it.type = ty.id
+    AND it.team = :teamid
     " . $filter . "
-    ORDER BY $order $sort 
+    ORDER BY $order $sort
     LIMIT 100";
     $req = $pdo->prepare($sql);
     $req->bindParam(':teamid', $_SESSION['team_id'], PDO::PARAM_INT);
@@ -232,13 +223,3 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
         }
     }
 }
-?>
-
-<script>
-function go_url(x) {
-    if(x == '') {
-        return;
-    }
-    location = x;
-}
-</script>

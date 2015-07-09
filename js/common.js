@@ -102,3 +102,10 @@ function showMol(molFileContent) {
     var mol = ChemDoodle.readMOL(molFileContent);
     viewer.loadMolecule(mol);
 }
+// go to url
+function go_url(x) {
+    if (x == '') {
+        return;
+    }
+    location = x;
+}

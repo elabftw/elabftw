@@ -1,4 +1,4 @@
-tinymce.addI18n('it',{
+tinymce.addI18n('it_IT',{
 "Cut": "Taglia",
 "Heading 5": "Intestazione 5",
 "Header 2": "Header 2",

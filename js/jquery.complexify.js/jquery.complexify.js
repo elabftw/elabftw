@@ -177,7 +177,9 @@
       }
 
       this.each(function () {
-        evaluateSecurity.apply(this);
+      	if($(this).val()) {
+          evaluateSecurity.apply(this);
+        }
       });
 
       return this.each(function () {

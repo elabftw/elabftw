@@ -1,4 +1,4 @@
-// 4.1.9 (2015-03-10)
+// 4.1.10 (2015-05-05)
 
 /**
  * Compiled inline version. (Library mode)
@@ -2711,7 +2711,7 @@ return Sizzle;
  */
 define("tinymce/Env", [], function() {
 	var nav = navigator, userAgent = nav.userAgent;
-	var opera, webkit, ie, ie11, gecko, mac, iDevice, android;
+	var opera, webkit, ie, ie11, ie12, gecko, mac, iDevice, android;
 
 	opera = window.opera && window.opera.buildNumber;
 	android = /Android/.test(userAgent);
@@ -2719,10 +2719,15 @@ define("tinymce/Env", [], function() {
 	ie = !webkit && !opera && (/MSIE/gi).test(userAgent) && (/Explorer/gi).test(nav.appName);
 	ie = ie && /MSIE (\w+)\./.exec(userAgent)[1];
 	ie11 = userAgent.indexOf('Trident/') != -1 && (userAgent.indexOf('rv:') != -1 || nav.appName.indexOf('Netscape') != -1) ? 11 : false;
-	ie = ie || ie11;
+	ie12 = (document.msElementsFromPoint && !ie && !ie11) ? 12 : false;
+	ie = ie || ie11 || ie12;
 	gecko = !webkit && !ie11 && /Gecko/.test(userAgent);
 	mac = userAgent.indexOf('Mac') != -1;
 	iDevice = /(iPad|iPhone)/.test(userAgent);
+
+	if (ie12) {
+		webkit = false;
+	}
 
 	// Is a iPad/iPhone and not on iOS5 sniff the WebKit version since older iOS WebKit versions
 	// says it has contentEditable support but there is no visible caret.
@@ -2833,7 +2838,7 @@ define("tinymce/Env", [], function() {
 		 * @property documentMode
 		 * @type Number
 		 */
-		documentMode: ie ? (document.documentMode || 7) : 10
+		documentMode: ie && !ie12 ? (document.documentMode || 7) : 10
 	};
 });
 
@@ -6204,7 +6209,7 @@ define("tinymce/html/Entities", [
 		attrsCharsRegExp = /[&<>\"\u0060\u007E-\uD7FF\uE000-\uFFEF]|[\uD800-\uDBFF][\uDC00-\uDFFF]/g,
 		textCharsRegExp = /[<>&\u007E-\uD7FF\uE000-\uFFEF]|[\uD800-\uDBFF][\uDC00-\uDFFF]/g,
 		rawCharsRegExp = /[<>&\"\']/g,
-		entityRegExp = /&(#x|#)?([\w]+);/g,
+		entityRegExp = /&#([a-z0-9]+);?|&([a-z0-9]+);/gi,
 		asciiMap = {
 			128: "\u20AC", 130: "\u201A", 131: "\u0192", 132: "\u201E", 133: "\u2026", 134: "\u2020",
 			135: "\u2021", 136: "\u02C6", 137: "\u2030", 138: "\u0160", 139: "\u2039", 140: "\u0152",
@@ -6418,17 +6423,21 @@ define("tinymce/html/Entities", [
 		 * @return {String} Entity decoded string.
 		 */
 		decode: function(text) {
-			return text.replace(entityRegExp, function(all, numeric, value) {
+			return text.replace(entityRegExp, function(all, numeric) {
 				if (numeric) {
-					value = parseInt(value, numeric.length === 2 ? 16 : 10);
+					if (numeric.charAt(0).toLowerCase() === 'x') {
+						numeric = parseInt(numeric.substr(1), 16);
+					} else {
+						numeric = parseInt(numeric, 10);
+					}
 
 					// Support upper UTF
-					if (value > 0xFFFF) {
-						value -= 0x10000;
+					if (numeric > 0xFFFF) {
+						numeric -= 0x10000;
 
-						return String.fromCharCode(0xD800 + (value >> 10), 0xDC00 + (value & 0x3FF));
+						return String.fromCharCode(0xD800 + (numeric >> 10), 0xDC00 + (numeric & 0x3FF));
 					} else {
-						return asciiMap[value] || String.fromCharCode(value);
+						return asciiMap[numeric] || String.fromCharCode(numeric);
 					}
 				}
 
@@ -12643,7 +12652,7 @@ define("tinymce/html/Writer", [
 			 */
 			pi: function(name, text) {
 				if (text) {
-					html.push('<?', name, ' ', text, '?>');
+					html.push('<?', name, ' ', encode(text), '?>');
 				} else {
 					html.push('<?', name, '?>');
 				}
@@ -15580,7 +15589,8 @@ define("tinymce/dom/Selection", [
 		},
 
 		/**
-		 * Executes callback of the current selection matches the specified selector or not and passes the state and args to the callback.
+		 * Executes callback when the current selection starts/stops matching the specified selector. The current
+		 * state will be passed to the callback as it's first argument.
 		 *
 		 * @method selectorChanged
 		 * @param {String} selector CSS selector to check for.
@@ -16125,6 +16135,10 @@ define("tinymce/Formatter", [
 			return !!ed.schema.getTextBlockElements()[name.toLowerCase()];
 		}
 
+		function isTableCell(node) {
+			return /^(TH|TD)$/.test(node.nodeName);
+		}
+
 		function getParents(node, selector) {
 			return dom.getParents(node, selector, dom.getRoot());
 		}
@@ -16242,12 +16256,12 @@ define("tinymce/Formatter", [
 
 			// BlockFormat shortcuts keys
 			for (var i = 1; i <= 6; i++) {
-				ed.addShortcut('meta+shift+' + i, '', ['FormatBlock', false, 'h' + i]);
+				ed.addShortcut('access+' + i, '', ['FormatBlock', false, 'h' + i]);
 			}
 
-			ed.addShortcut('meta+shift+7', '', ['FormatBlock', false, 'p']);
-			ed.addShortcut('meta+shift+8', '', ['FormatBlock', false, 'div']);
-			ed.addShortcut('meta+shift+9', '', ['FormatBlock', false, 'address']);
+			ed.addShortcut('access+7', '', ['FormatBlock', false, 'p']);
+			ed.addShortcut('access+8', '', ['FormatBlock', false, 'div']);
+			ed.addShortcut('access+9', '', ['FormatBlock', false, 'address']);
 		}
 
 		// Public functions
@@ -16857,21 +16871,28 @@ define("tinymce/Formatter", [
 						// Try to adjust endContainer as well if cells on the same row were selected - bug #6410
 						if (commonAncestorContainer &&
 							/^T(HEAD|BODY|FOOT|R)$/.test(commonAncestorContainer.nodeName) &&
-							/^(TH|TD)$/.test(endContainer.nodeName) && endContainer.firstChild) {
+							isTableCell(endContainer) && endContainer.firstChild) {
 							endContainer = endContainer.firstChild || endContainer;
 						}
 
-						// Wrap start/end nodes in span element since these might be cloned/moved
-						startContainer = wrap(startContainer, 'span', {id: '_start', 'data-mce-type': 'bookmark'});
-						endContainer = wrap(endContainer, 'span', {id: '_end', 'data-mce-type': 'bookmark'});
+						if (dom.isChildOf(startContainer, endContainer) && !isTableCell(startContainer) && !isTableCell(endContainer)) {
+							startContainer = wrap(startContainer, 'span', {id: '_start', 'data-mce-type': 'bookmark'});
+							splitToFormatRoot(startContainer);
+							startContainer = unwrap(TRUE);
+							return;
+						} else {
+							// Wrap start/end nodes in span element since these might be cloned/moved
+							startContainer = wrap(startContainer, 'span', {id: '_start', 'data-mce-type': 'bookmark'});
+							endContainer = wrap(endContainer, 'span', {id: '_end', 'data-mce-type': 'bookmark'});
 
-						// Split start/end
-						splitToFormatRoot(startContainer);
-						splitToFormatRoot(endContainer);
+							// Split start/end
+							splitToFormatRoot(startContainer);
+							splitToFormatRoot(endContainer);
 
-						// Unwrap start/end to get real elements again
-						startContainer = unwrap(TRUE);
-						endContainer = unwrap();
+							// Unwrap start/end to get real elements again
+							startContainer = unwrap(TRUE);
+							endContainer = unwrap();
+						}
 					} else {
 						startContainer = endContainer = splitToFormatRoot(startContainer);
 					}
@@ -18443,6 +18464,10 @@ define("tinymce/UndoManager", [
 			return trim(content);
 		}
 
+		function setDirty(state) {
+			editor.isNotDirty = !state;
+		}
+
 		function addNonTypingUndoLevel(e) {
 			self.typing = false;
 			self.add({}, e);
@@ -18492,9 +18517,9 @@ define("tinymce/UndoManager", [
 
 			// Fire a TypingUndo event on the first character entered
 			if (isFirstTypedCharacter && self.typing) {
-				// Make the it dirty if the content was changed after typing the first character
+				// Make it dirty if the content was changed after typing the first character
 				if (!editor.isDirty()) {
-					editor.isNotDirty = !data[0] || getContent() == data[0].content;
+					setDirty(data[0] && getContent() != data[0].content);
 
 					// Fire initial change event
 					if (!editor.isNotDirty) {
@@ -18520,8 +18545,8 @@ define("tinymce/UndoManager", [
 				return;
 			}
 
-			// If key isn't shift,ctrl,alt,capslock,metakey
-			var modKey = VK.modifierPressed(e);
+			// If key isn't Ctrl+Alt/AltGr
+			var modKey = (e.ctrlKey && !e.altKey) || e.metaKey;
 			if ((keyCode < 16 || keyCode > 20) && keyCode != 224 && keyCode != 91 && !self.typing && !modKey) {
 				self.beforeChange();
 				self.typing = true;
@@ -18546,6 +18571,7 @@ define("tinymce/UndoManager", [
 			}
 		});
 
+		/*eslint consistent-this:0 */
 		self = {
 			// Explose for debugging reasons
 			data: data,
@@ -18631,7 +18657,7 @@ define("tinymce/UndoManager", [
 				editor.fire('AddUndo', args);
 
 				if (index > 0) {
-					editor.isNotDirty = false;
+					setDirty(true);
 					editor.fire('change', args);
 				}
 
@@ -18657,7 +18683,7 @@ define("tinymce/UndoManager", [
 
 					// Undo to first index then set dirty state to false
 					if (index === 0) {
-						editor.isNotDirty = true;
+						setDirty(false);
 					}
 
 					editor.setContent(level.content, {format: 'raw'});
@@ -18683,6 +18709,7 @@ define("tinymce/UndoManager", [
 
 					editor.setContent(level.content, {format: 'raw'});
 					editor.selection.moveToBookmark(level.bookmark);
+					setDirty(true);
 
 					editor.fire('redo', {level: level});
 				}
@@ -26878,6 +26905,22 @@ define("tinymce/util/Quirks", [
 				return true;
 			}
 
+			function isSiblingsIgnoreWhiteSpace(node1, node2) {
+				var node;
+
+				for (node = node1.nextSibling; node && node != node2; node = node.nextSibling) {
+					if (node.nodeType == 3 && $.trim(node.data).length === 0) {
+						continue;
+					}
+
+					if (node !== node2) {
+						return false;
+					}
+				}
+
+				return node === node2;
+			}
+
 			function findCaretNode(node, forward, startNode) {
 				var walker, current, nonEmptyElements;
 
@@ -26989,8 +27032,12 @@ define("tinymce/util/Quirks", [
 					return rng;
 				}
 
-				if (textBlock != targetTextBlock) {
+				if (targetTextBlock && textBlock != targetTextBlock) {
 					if (!isForward) {
+						if (!isSiblingsIgnoreWhiteSpace(targetTextBlock, textBlock)) {
+							return rng;
+						}
+
 						if (targetCaretNode.nodeType == 1) {
 							if (targetCaretNode.nodeName == "BR") {
 								rng.setStartBefore(targetCaretNode);
@@ -27007,6 +27054,10 @@ define("tinymce/util/Quirks", [
 							rng.setEndBefore(caretNode);
 						}
 					} else {
+						if (!isSiblingsIgnoreWhiteSpace(textBlock, targetTextBlock)) {
+							return rng;
+						}
+
 						if (caretNode.nodeType == 1) {
 							if (caretNode.nodeName == "BR") {
 								rng.setStartBefore(caretNode);
@@ -27991,7 +28042,7 @@ define("tinymce/util/Quirks", [
 				editor.on('keydown', function(e) {
 					if (VK.metaKeyPressed(e) && (e.keyCode == 37 || e.keyCode == 39)) {
 						e.preventDefault();
-						editor.selection.getSel().modify('move', e.keyCode == 37 ? 'backward' : 'forward', 'word');
+						editor.selection.getSel().modify('move', e.keyCode == 37 ? 'backward' : 'forward', 'lineboundary');
 					}
 				});
 			}
@@ -29751,7 +29802,9 @@ define("tinymce/Editor", [
 						editor = self.editorManager.get(settings.auto_focus);
 					}
 
-					editor.focus();
+					if (!editor.destroyed) {
+						editor.focus();
+					}
 				}, 100);
 			}
 
@@ -31285,7 +31338,7 @@ define("tinymce/EditorManager", [
 		 * @property minorVersion
 		 * @type String
 		 */
-		minorVersion: '1.9',
+		minorVersion: '1.10',
 
 		/**
 		 * Release date of TinyMCE build.
@@ -31293,7 +31346,7 @@ define("tinymce/EditorManager", [
 		 * @property releaseDate
 		 * @type String
 		 */
-		releaseDate: '2015-03-10',
+		releaseDate: '2015-05-05',
 
 		/**
 		 * Collection of editor instances.

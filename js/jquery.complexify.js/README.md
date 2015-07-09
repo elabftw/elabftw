@@ -9,6 +9,10 @@ This plugin only provides client-side validation, and should be combined with so
 
 For more information, a demo, documentation, and the motivation behind Complexify, [visit the website](http://danpalmer.me/jquery-complexify).
 
+### Contributing
+
+Contributions are always welcome! If you're uncertain about something, open a PR and we can discuss. Always feel free to ping me for an update on a merge, reminding me isn't rude, it's helpful.
+
 
 ### Alternative Implementations
 

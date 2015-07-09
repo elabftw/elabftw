@@ -1,4 +1,4 @@
-tinymce.addI18n('ca',{
+tinymce.addI18n('ca_ES',{
 "Cut": "Retalla",
 "Heading 5": "Encap\u00e7alament 5",
 "Header 2": "Cap\u00e7alera 2",
@@ -80,9 +80,12 @@ tinymce.addI18n('ca',{
 "Fullscreen": "Pantalla completa",
 "Horizontal line": "L\u00ednia horitzontal",
 "Horizontal space": "Espai horitzontal",
+"B": "B",
 "Insert\/edit image": "Inserir\/editar imatge",
 "General": "General",
 "Advanced": "Avan\u00e7at",
+"G": "G",
+"R": "R",
 "Source": "Font",
 "Border": "Vora",
 "Constrain proportions": "Mantenir proporcions",

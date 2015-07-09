@@ -269,9 +269,18 @@ switch ($mail_method) {
         <label for='mail_method'><?php echo _('Send e-mails via:'); ?></label>
         <select onchange='toggleMailMethod($("#toggle_main_method").val())' name='mail_method' id='toggle_main_method'>
             <option value=''><?php echo _('Select mailing method...'); ?></option>
-            <option value='sendmail' <?php if (!$disable_sendmail) echo 'selected="selected"'; ?>><?php echo _('Local MTA (default)'); ?></option>
-            <option value='smtp' <?php if (!$disable_smtp) echo 'selected="selected"'; ?>><?php echo _('SMTP'); ?></option>
-            <option value='php' <?php if (!$disable_php) echo 'selected="selected"'; ?>><?php echo _('PHP'); ?></option>
+            <option value='sendmail' <?php if (!$disable_sendmail) {
+    echo 'selected="selected"';
+}
+?>><?php echo _('Local MTA (default)'); ?></option>
+            <option value='smtp' <?php if (!$disable_smtp) {
+    echo 'selected="selected"';
+}
+?>><?php echo _('SMTP'); ?></option>
+            <option value='php' <?php if (!$disable_php) {
+    echo 'selected="selected"';
+}
+?>><?php echo _('PHP'); ?></option>
         </select>
         </p>
         <div id='general_mail_config'>

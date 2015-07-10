@@ -44,6 +44,9 @@ class MakeZip
     private $zdate;
     private $cleanTitle;
 
+    private $firstname;
+    private $lastname;
+
 
     /*
      * Provide it with the $_GET['id'] and $_GET['type']
@@ -63,6 +66,7 @@ class MakeZip
         $this->zipRealName = hash("sha512", uniqid(rand(), true)) . ".zip";
         $this->zipRelativePath = 'uploads/tmp/' . $this->zipRealName;
         $this->zipAbsolutePath = ELAB_ROOT . $this->zipRelativePath;
+        $this->setFirstLastName();
         $this->createZipArchive();
         $this->loopIdArr();
 
@@ -119,19 +123,43 @@ class MakeZip
     }
 
     /*
-     * Loop on each id and add it to our zip archive
+     * Add a MANIFEST file at the root of the zip for listing files inside the zip.
      *
      */
-    private function loopIdArr()
+    private function addManifest()
     {
-        $this->idArr = explode(" ", $this->idList);
-        foreach ($this->idArr as $id) {
-            if (!is_pos_int($id)) {
-                throw new Exception('Bad id.');
-            }
-            $this->addToZip($id);
+        // add the MANIFEST file that lists the files in archive
+        $manifest = "";
+        for ($i = 0; $i < $this->zip->numFiles; $i++) {
+            $manifest .= $this->zip->getNameIndex($i) . "\n";
         }
-        $this->zip->close();
+        // add info about the creator + timestamp
+        $manifest .= "\nZip archive created by " . $this->firstname . " " . $this->lastname . " on " . date('Y.m.d') . " at " . date('H:i:s') . ".\n";
+        $manifest .= "~~~\neLabFTW - Free open source lab manager - http://www.elabftw.net\n";
+        // fix utf8
+        $manifest = utf8_encode($manifest);
+        $manifest = "\xEF\xBB\xBF" . $manifest;
+        $manifestpath = ELAB_ROOT . 'uploads/tmp/manifest-' . uniqid();
+        $tf = fopen($manifestpath, 'w+');
+        fwrite($tf, $manifest);
+        fclose($tf);
+        $this->zip->addFile($manifestpath, "MANIFEST");
+        $this->filesToDelete[] = $manifestpath;
+    }
+
+    private function setFirstLastName()
+    {
+        global $pdo;
+
+        // SQL to get firstname + lastname
+        $sql = "SELECT firstname, lastname FROM users WHERE userid = :userid";
+        $req = $pdo->prepare($sql);
+        $req->bindParam(':userid', $_SESSION['userid']);
+        $req->execute();
+        $users = $req->fetch();
+        $this->firstname = $users['firstname'];
+        $this->lastname = $users['lastname'];
+
     }
 
     /*
@@ -150,10 +178,7 @@ class MakeZip
             $req->execute();
             $zipped = $req->fetch();
             if ($zipped['userid'] != $_SESSION['userid']) {
-                $msg_arr[] = "You are trying to download an experiment you don't own!";
-                $_SESSION['errors'] = $msg_arr;
-                header('Location: experiments.php');
-                exit;
+                throw new Exception(_("You are trying to download an experiment you don't own!"));
             }
 
         } else {
@@ -167,16 +192,12 @@ class MakeZip
             $req->execute();
             $zipped = $req->fetch();
             if ($zipped['team'] != $_SESSION['team_id']) {
-                $msg_arr[] = "You are trying to download an item you don't own!";
-                $_SESSION['errors'] = $msg_arr;
-                header('Location: search.php');
-                exit;
+                throw new Exception(_("You are trying to download an item you don't own!"));
             }
         }
 
-        $title = stripslashes($zipped['title']);
         // make a title without special char for folder inside .zip
-        $this->cleanTitle = preg_replace('/[^A-Za-z0-9]/', '_', $title);
+        $this->cleanTitle = preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($zipped['title']));
         $this->zdate = $zipped['date'];
         // name of the folder
         // folder begin with date for experiments
@@ -189,13 +210,6 @@ class MakeZip
         $body = stripslashes($zipped['body']);
         $req->closeCursor();
 
-        // SQL to get firstname + lastname
-        $sql = "SELECT firstname,lastname FROM users WHERE userid = " . $_SESSION['userid'];
-        $req = $pdo->prepare($sql);
-        $req->execute();
-        $users = $req->fetch();
-        $firstname = $users['firstname'];
-        $lastname = $users['lastname'];
 
         // SQL to get tags
         $sql = "SELECT tag FROM " . $this->table . "_tags WHERE item_id = $id";
@@ -278,6 +292,25 @@ class MakeZip
         $this->filesToDelete[] = $pdfPath;
 
     }
+
+    /*
+     * Loop on each id and add it to our zip archive
+     * This could be called the main function.
+     *
+     */
+    private function loopIdArr()
+    {
+        $this->idArr = explode(" ", $this->idList);
+        foreach ($this->idArr as $id) {
+            if (!is_pos_int($id)) {
+                throw new Exception('Bad id.');
+            }
+            $this->addToZip($id);
+        }
+        $this->addManifest();
+        $this->zip->close();
+    }
+
 
     /*
      * Clean up the temporary files (csv, txt and pdf)

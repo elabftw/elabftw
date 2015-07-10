@@ -1,4 +1,9 @@
 # Changelog for eLabFTW
+# Version 1.1.4-p2
+* fix INSTALLED_VERSION constant so it displays correctly if an update is available in sysconfig
+
+# Version 1.1.4-p1
+* fix bug in zip/csv generation
 
 # Version 1.1.4
 * fix bug in search page showing tags of other teams

@@ -258,17 +258,8 @@ class MakeZip
     {
         global $pdo;
 
-        $pdf = new \Elabftw\Elabftw\MakePdf($id, $this->table);
-        $mpdf = new \mPDF();
-
-        $mpdf->SetAuthor($pdf->author);
-        $mpdf->SetTitle($pdf->title);
-        $mpdf->SetSubject('eLabFTW pdf');
-        $mpdf->SetKeywords($pdf->getTags());
-        $mpdf->SetCreator('www.elabftw.net');
-        $mpdf->WriteHTML($pdf->content);
         $pdfPath = ELAB_ROOT . 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . '.pdf';
-        $mpdf->Output($pdfPath, 'F');
+        $pdf = new \Elabftw\Elabftw\MakePdf($id, $this->table, $pdfPath);
         $this->zip->addFile($pdfPath, $this->folder . '/' . $pdf->getFileName());
         $this->filesToDelete[] = $pdfPath;
     }
@@ -308,6 +299,7 @@ class MakeZip
         $this->nameFolder();
         $this->addAsn1Token($id);
         $this->addAttachedFiles($id);
+        $this->addCsv($id);
         $this->addPdf($id);
         $this->addExportTxt($id);
     }

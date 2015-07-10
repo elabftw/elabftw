@@ -25,28 +25,9 @@
 ********************************************************************************/
 require_once 'inc/common.php';
 
-// Check id is valid and assign it to $id
-if (isset($_GET['id']) && is_pos_int($_GET['id'])) {
-    $id = $_GET['id'];
-} else {
-    die(_("The id parameter is not valid!"));
+// pdf output is browser window
+try {
+    $pdf = new \Elabftw\Elabftw\MakePdf($_GET['id'], $_GET['type']);
+} catch (Exception $e) {
+    display_message('error', $e->getMessage());
 }
-
-// check the type
-if (($_GET['type'] === 'experiments') || ($_GET['type'] === 'items')) {
-    $type = $_GET['type'];
-} else {
-    die(_("The type parameter is not valid."));
-}
-
-// do the pdf
-$pdf = new \Elabftw\Elabftw\MakePdf($id, $type);
-$mpdf = new mPDF();
-
-$mpdf->SetAuthor($pdf->author);
-$mpdf->SetTitle($pdf->title);
-$mpdf->SetSubject('eLabFTW pdf');
-$mpdf->SetKeywords($pdf->tags);
-$mpdf->SetCreator('www.elabftw.net');
-$mpdf->WriteHTML($pdf->content);
-$mpdf->Output($pdf->getFileName(), 'I');

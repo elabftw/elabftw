@@ -267,7 +267,7 @@ class MakeZip
     private function addCsv($id)
     {
         // add CSV file to archive
-        $csv = new \Elabftw\Elabftw\MakeCsv($id, $this->type);
+        $csv = new \Elabftw\Elabftw\MakeCsv($id, $this->table);
         $this->zip->addFile($csv->getFilePath(), $this->folder . "/" . $this->cleanTitle . ".csv");
         $this->filesToDelete[] = $csv->getFilePath();
     }

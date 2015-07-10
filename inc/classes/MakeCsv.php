@@ -40,6 +40,7 @@ class MakeCsv
     private $data;
     private $url;
 
+    private $path;
 
     public function __construct($idList, $type, $path = null)
     {

@@ -44,6 +44,9 @@ class MakeZip
     private $zdate;
     private $cleanTitle;
 
+    private $zipped;
+    private $tags = null;
+
     private $firstname;
     private $lastname;
 
@@ -162,11 +165,7 @@ class MakeZip
 
     }
 
-    /*
-     * This is where the magic happens
-     *
-     */
-    private function addToZip($id)
+    private function getInfoFromId($id)
     {
         global $pdo;
 
@@ -176,8 +175,8 @@ class MakeZip
             $req = $pdo->prepare($sql);
             $req->bindParam(':id', $id, \PDO::PARAM_INT);
             $req->execute();
-            $zipped = $req->fetch();
-            if ($zipped['userid'] != $_SESSION['userid']) {
+            $this->zipped = $req->fetch();
+            if ($this->zipped['userid'] != $_SESSION['userid']) {
                 throw new Exception(_("You are trying to download an experiment you don't own!"));
             }
 
@@ -188,40 +187,42 @@ class MakeZip
                 LEFT JOIN items_types ON (items.type = items_types.id)
                 WHERE items.id = :id LIMIT 1";
             $req = $pdo->prepare($sql);
-            $req->bindParam(':id', $id, PDO::PARAM_INT);
+            $req->bindParam(':id', $id, \PDO::PARAM_INT);
             $req->execute();
-            $zipped = $req->fetch();
-            if ($zipped['team'] != $_SESSION['team_id']) {
+            $this->zipped = $req->fetch();
+            if ($this->zipped['team'] != $_SESSION['team_id']) {
                 throw new Exception(_("You are trying to download an item you don't own!"));
             }
         }
 
         // make a title without special char for folder inside .zip
-        $this->cleanTitle = preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($zipped['title']));
-        $this->zdate = $zipped['date'];
-        // name of the folder
-        // folder begin with date for experiments
-        if ($this->table == 'experiments') {
-            $folder = $this->zdate . "-" . $this->cleanTitle;
-        } else { // items
-            $itemtype = $zipped['items_typesname'];
-            $folder = $itemtype . " - " . $this->cleanTitle;
-        }
-        $body = stripslashes($zipped['body']);
-        $req->closeCursor();
+        $this->cleanTitle = preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($this->zipped['title']));
+        $this->zdate = $this->zipped['date'];
+    }
 
+    /*
+     * Get the tags of an item
+     *
+     */
+    private function getTags($id)
+    {
+        global $pdo;
 
-        // SQL to get tags
+        $this->tags = null;
         $sql = "SELECT tag FROM " . $this->table . "_tags WHERE item_id = $id";
         $req = $pdo->prepare($sql);
         $req->execute();
-        $tags = null;
         while ($data = $req->fetch()) {
-            $tags .= stripslashes($data['tag']) . ' ';
+            $this->tags .= stripslashes($data['tag']) . ' ';
         }
+    }
 
-        // add the .asn1 token to the zip archive if the experiment is timestamped
-        if ($this->table === 'experiments' && $zipped['timestamped'] == 1) {
+    // add the .asn1 token to the zip archive if the experiment is timestamped
+    private function addAsn1Token($id)
+    {
+        global $pdo;
+
+        if ($this->table === 'experiments' && $this->zipped['timestamped'] == 1) {
             // SQL to get the path of the token
             $sql = "SELECT real_name, long_name FROM uploads WHERE item_id = :id AND type = 'timestamp-token' LIMIT 1";
             $req = $pdo->prepare($sql);
@@ -229,8 +230,26 @@ class MakeZip
             $req->execute();
             $token = $req->fetch();
             // add it to the .zip
-            $this->zip->addFile(ELAB_ROOT . 'uploads/' . $token['long_name'], $folder . "/" . $token['real_name']);
+            $this->zip->addFile(ELAB_ROOT . 'uploads/' . $token['long_name'], $this->folder . "/" . $token['real_name']);
         }
+    }
+
+    // folder begin with date for experiments
+    private function nameFolder()
+    {
+        if ($this->table === 'experiments') {
+            $this->folder = $this->zdate . "-" . $this->cleanTitle;
+        } else { // items
+            $this->folder = $this->zipped['items_typesname'] . " - " . $this->cleanTitle;
+        }
+    }
+
+    private function addAttachedFiles($id)
+    {
+        global $pdo;
+        $real_name = array();
+        $long_name = array();
+        $comment = array();
 
         // SQL to get filesattached (of the right type)
         $sql = "SELECT * FROM uploads WHERE item_id = :id AND (type = :type OR type = 'exp-pdf-timestamp')";
@@ -238,9 +257,6 @@ class MakeZip
         $req->bindParam(':id', $id);
         $req->bindParam(':type', $this->table);
         $req->execute();
-        $real_name = array();
-        $long_name = array();
-        $comment = array();
         while ($uploads = $req->fetch()) {
             $real_name[] = $uploads['real_name'];
             $long_name[] = $uploads['long_name'];
@@ -252,11 +268,16 @@ class MakeZip
         if ($filenb > 0) {
             for ($i = 0; $i < $filenb; $i++) {
                 // add files to archive
-                $this->zip->addFile(ELAB_ROOT . 'uploads/' . $long_name[$i], $folder . "/" . $real_name[$i]);
+                $this->zip->addFile(ELAB_ROOT . 'uploads/' . $long_name[$i], $this->folder . "/" . $real_name[$i]);
             }
         }
+    }
 
-        // add PDF to archive
+    // add PDF to archive
+    private function addPdf($id)
+    {
+        global $pdo;
+
         $pdf = new \Elabftw\Elabftw\MakePdf($id, $this->table);
         $mpdf = new \mPDF();
 
@@ -268,15 +289,23 @@ class MakeZip
         $mpdf->WriteHTML($pdf->content);
         $pdfPath = ELAB_ROOT . 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . '.pdf';
         $mpdf->Output($pdfPath, 'F');
-        $this->zip->addFile($pdfPath, $folder . '/' . $pdf->getFileName());
+        $this->zip->addFile($pdfPath, $this->folder . '/' . $pdf->getFileName());
+        $this->filesToDelete[] = $pdfPath;
+    }
 
+    private function addCsv($id)
+    {
         // add CSV file to archive
         $csvPath = make_unique_csv($id, $this->table);
-        $this->zip->addFile($csvPath, $folder . "/" . $this->cleanTitle . ".csv");
+        $this->zip->addFile($csvPath, $this->folder . "/" . $this->cleanTitle . ".csv");
+        $this->filesToDelete[] = $csvPath;
+    }
 
+    private function addExportTxt($id)
+    {
         // add the export.txt file that is helpful for importing
         // first line is title, rest is body
-        $txt = $pdf->title . "\n" . $body . "\n";
+        $txt = stripslashes($this->zipped['title']) . "\n" . stripslashes($this->zipped['body']) . "\n";
         // fix utf8
         $txt = utf8_encode($txt);
         $txtPath = ELAB_ROOT . 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . '.txt';
@@ -284,13 +313,23 @@ class MakeZip
         fwrite($tf, $txt);
         fclose($tf);
         // add the export.txt file as hidden file, users don't need to see it
-        $this->zip->addFile($txtPath, $folder . "/.export.txt");
-        // add the path of the files to be deleted in the files_to_delete array
-        // (csv, export file and pdf)
-        $this->filesToDelete[] = $csvPath;
+        $this->zip->addFile($txtPath, $this->folder . "/.export.txt");
         $this->filesToDelete[] = $txtPath;
-        $this->filesToDelete[] = $pdfPath;
+    }
 
+    /*
+     * This is where the magic happens
+     *
+     */
+    private function addToZip($id)
+    {
+        // populate $this->zipped
+        $this->getInfoFromId($id);
+        $this->nameFolder();
+        $this->addAsn1Token($id);
+        $this->addAttachedFiles($id);
+        $this->addPdf($id);
+        $this->addExportTxt($id);
     }
 
     /*

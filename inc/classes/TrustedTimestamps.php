@@ -177,6 +177,7 @@ class TrustedTimestamps
 
     /**
      * Creates a Timestamp Requestfile from a filename
+     * @param string $pdf
      */
     private function createRequestfile($pdf)
     {

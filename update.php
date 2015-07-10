@@ -360,13 +360,15 @@ if (add_field('users', 'chem_editor', "TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' 
 // 20150709 remove export folder
 // first remove content
 $dir = ELAB_ROOT . '/uploads/export';
-$di = new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS);
-$ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
-foreach ($ri as $file) {
-    $file->isDir() ? rmdir($file) : unlink($file);
+if (is_dir($dir)) {
+    $di = new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS);
+    $ri = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::CHILD_FIRST);
+    foreach ($ri as $file) {
+        $file->isDir() ? rmdir($file) : unlink($file);
+    }
+    // and remove folder itself
+    rmdir($dir);
 }
-// and remove folder itself
-rmdir($dir);
 
 // //////////////////////////////////////////
 // INSERT NEW CODE BLOCKS ABOVE THIS LINE //

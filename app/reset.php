@@ -69,8 +69,6 @@ if (isset($_POST['email'])) {
         $result->execute(array(
         'email' => $email));
         $data = $result->fetch();
-        $userid = $data['userid'];
-        $username = $data['username'];
         $numrows = $result->rowCount();
         // Check email exists
         if ($numrows === 1) {
@@ -78,17 +76,17 @@ if (isset($_POST['email'])) {
             $protocol = 'https://';
             $reset_url = $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];
             // Generate unique link
-            $reset_link = $protocol . str_replace('app/reset', 'change-pass', $reset_url) . '?key=' . hash("sha256", uniqid(rand(), true)) . '&userid=' . $userid;
+            $reset_link = $protocol . str_replace('app/reset', 'change-pass', $reset_url) . '?key=' . hash("sha256", uniqid(rand(), true)) . '&userid=' . $data['userid'];
             // Send an email with the reset link
             // Create the message
             $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
             $message = Swift_Message::newInstance()
             // Give the message a subject
-            ->setSubject('[eLabFTW] Password reset')
+            ->setSubject('[eLabFTW] Password reset for ' . $data['username'])
             // Set the From address with an associative array
             ->setFrom(array(get_config('mail_from') => 'eLabFTW'))
             // Set the To addresses with an associative array
-            ->setTo(array($email => 'Dori'))
+            ->setTo(array($email => $data['username']))
             // Give it a body
             ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $u_agent, $reset_link) . $footer);
             // generate Swift_Mailer instance

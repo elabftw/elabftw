@@ -30,54 +30,18 @@ $selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 
-// this is the lines in the csv file
-$list = array();
-
-// Here we populate the first row: it will be the column names
-if ($_GET['type'] === 'experiments') {
-    $list[] = array('id', 'date', 'title', 'content', 'status', 'elabid', 'url');
-    $table = 'experiments';
-} elseif ($_GET['type'] === 'items') {
-    $list[] = array('title', 'description', 'id', 'date', 'type', 'rating', 'url');
-    $table = 'items';
-} else {
-        die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>Bad type", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
+try {
+    $csv = new \Elabftw\Elabftw\MakeCsv($_GET['id'], $_GET['type']);
+} catch (Exception $e) {
+    echo $e->getMessage();
+    exit;
 }
-// loop through the id
-if (isset($_GET['id']) && !empty($_GET['id'])) {
-    $id_arr = explode(" ", $_GET['id']);
-
-    foreach ($id_arr as $id) {
-        // check the quality of id parameter here
-        if (!is_pos_int($id)) {
-            die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>" . _("The id parameter is not valid!"), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
-        }
-        $list[] = make_unique_csv($id, $table, false);
-    }
-
-} else {
-        die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>" . _("The id parameter is not valid!"), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
-}
-
-// make CSV file
-$filename = hash("sha512", uniqid(rand(), true));
-$filepath = 'uploads/tmp/' . $filename;
-
-$fp = fopen($filepath, 'w+');
-// utf8 headers
-fwrite($fp, "\xEF\xBB\xBF");
-
-foreach ($list as $fields) {
-        fputcsv($fp, $fields);
-}
-
-fclose($fp);
 
 // PAGE BEGIN
 echo "<div class='well' style='margin-top:20px'>";
 echo "<p>" . _('Your CSV file is ready:') . "<br>
-        <a href='app/download.php?type=csv&f=" . $filename . "&name=export.elabftw.csv' target='_blank'>
+        <a href='app/download.php?type=csv&f=" . basename($csv->getFilePath()) . "&name=export.elabftw.csv' target='_blank'>
         <img src='img/download.png' alt='download' /> export.elabftw.csv</a>
-        <span class='filesize'>(" . format_bytes(filesize($filepath)) . ")</span></p>";
+        <span class='filesize'>(" . format_bytes(filesize($csv->getFilePath())) . ")</span></p>";
 echo "</div>";
 require_once 'inc/footer.php';

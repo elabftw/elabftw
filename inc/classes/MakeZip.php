@@ -276,7 +276,7 @@ class MakeZip
 
         // add the export.txt file that is helpful for importing
         // first line is title, rest is body
-        $txt = $title . "\n" . $body . "\n";
+        $txt = $pdf->title . "\n" . $body . "\n";
         // fix utf8
         $txt = utf8_encode($txt);
         $txtPath = ELAB_ROOT . 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . '.txt';

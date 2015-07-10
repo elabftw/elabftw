@@ -41,11 +41,9 @@ class MakeZip
     private $zip;
     private $table;
     private $filesToDelete = array();
-    private $zdate;
     private $cleanTitle;
 
     private $zipped;
-    private $tags = null;
 
     private $firstname;
     private $lastname;
@@ -93,7 +91,7 @@ class MakeZip
         $ext = '.elabftw.zip';
 
         if (count($this->idArr) === 1) {
-            return $this->zdate . "-" . $this->cleanTitle . $ext;
+            return $this->zipped['date'] . "-" . $this->cleanTitle . $ext;
         } else {
             return kdate() . $ext;
         }
@@ -197,24 +195,6 @@ class MakeZip
 
         // make a title without special char for folder inside .zip
         $this->cleanTitle = preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($this->zipped['title']));
-        $this->zdate = $this->zipped['date'];
-    }
-
-    /*
-     * Get the tags of an item
-     *
-     */
-    private function getTags($id)
-    {
-        global $pdo;
-
-        $this->tags = null;
-        $sql = "SELECT tag FROM " . $this->table . "_tags WHERE item_id = $id";
-        $req = $pdo->prepare($sql);
-        $req->execute();
-        while ($data = $req->fetch()) {
-            $this->tags .= stripslashes($data['tag']) . ' ';
-        }
     }
 
     // add the .asn1 token to the zip archive if the experiment is timestamped
@@ -238,7 +218,7 @@ class MakeZip
     private function nameFolder()
     {
         if ($this->table === 'experiments') {
-            $this->folder = $this->zdate . "-" . $this->cleanTitle;
+            $this->folder = $this->zipped['date'] . "-" . $this->cleanTitle;
         } else { // items
             $this->folder = $this->zipped['items_typesname'] . " - " . $this->cleanTitle;
         }
@@ -284,7 +264,7 @@ class MakeZip
         $mpdf->SetAuthor($pdf->author);
         $mpdf->SetTitle($pdf->title);
         $mpdf->SetSubject('eLabFTW pdf');
-        $mpdf->SetKeywords($pdf->tags);
+        $mpdf->SetKeywords($pdf->getTags());
         $mpdf->SetCreator('www.elabftw.net');
         $mpdf->WriteHTML($pdf->content);
         $pdfPath = ELAB_ROOT . 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . '.pdf';

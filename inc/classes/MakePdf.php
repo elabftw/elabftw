@@ -105,6 +105,11 @@ class MakePdf
         $req->closeCursor();
     }
 
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
     private function addElabid()
     {
 

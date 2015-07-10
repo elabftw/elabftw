@@ -33,7 +33,7 @@ class Update
     const URL = 'https://get.elabftw.net/updates.ini';
     // ///////////////////////////////
     // UPDATE THIS AFTER RELEASING
-    const INSTALLED_VERSION = '1.1.4-p2';
+    const INSTALLED_VERSION = '1.1.5';
     // ///////////////////////////////
 
     /*

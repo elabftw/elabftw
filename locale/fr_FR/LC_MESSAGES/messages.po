@@ -2,14 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2015-03-04 14:57+0100\n"
-"PO-Revision-Date: 2015-07-09 17:28+0100\n"
+"PO-Revision-Date: 2015-07-11 13:04+0200\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.1\n"
+"X-Generator: Poedit 1.8.2\n"
 "X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -44,7 +44,9 @@ msgstr "Utilisateurs"
 
 #: elabftw/admin.php:81 elabftw/inc/editXP.php:111
 msgid "Status"
-msgstr "Statut"
+msgid_plural "Status"
+msgstr[0] "Statut"
+msgstr[1] "Statuts"
 
 #: elabftw/admin.php:82
 msgid "Types of items"
@@ -56,7 +58,10 @@ msgstr "Modèle d'expériences"
 
 #: elabftw/admin.php:84 elabftw/admin.php:464
 msgid "Import CSV"
-msgstr "Importer le CSV"
+msgstr "Importer un CSV"
+
+msgid "Import ZIP"
+msgstr "Importer un ZIP"
 
 #: elabftw/admin.php:91
 msgid "Configure your team"
@@ -177,6 +182,9 @@ msgstr "Tapez votre mot de passe :"
 #: elabftw/admin.php:231
 msgid "Delete this user!"
 msgstr "Supprimer cet utilisateur !"
+
+msgid "Edit an existing status"
+msgstr "Éditer un statut existant"
 
 #: elabftw/admin.php:240 elabftw/admin.php:250
 msgid "Add a new status"
@@ -1456,3 +1464,21 @@ msgstr "millisecondes"
 
 msgid "seconds"
 msgstr "secondes"
+
+msgid "Help"
+msgstr "Aide"
+
+msgid "An admin account will always be able to delete experiments."
+msgstr "Un compte administrateur pourra toujours supprimer des expériences."
+
+msgid "There is a manual available %shere%s."
+msgstr "Un manuel d'utilisation est disponible %sici%s."
+
+msgid "Order by"
+msgstr "Classer par"
+
+msgid "Sort"
+msgstr "Ordre"
+
+msgid "Reset"
+msgstr "Réinitialiser"

@@ -66,7 +66,7 @@ if (isset($_GET['tag']) && $_GET['tag'] != '') {
                     <select name="order" class="form-control select-order">
                         <option value=''><?php echo _('Order by'); ?></option>
                         <option value='date'<?php checkSelectOrder('date'); ?>><?php echo _('Date'); ?></option>
-                        <option value='status'<?php checkSelectOrder('status'); ?>><?php echo _('Status'); ?></option>
+                        <option value='status'<?php checkSelectOrder('status'); ?>><?php echo ngettext('Status', 'Status', 1); ?></option>
                         <option value='title'<?php checkSelectOrder('title'); ?>><?php echo _('Title'); ?></option>
                     </select>
                     <select name="sort" class="form-control select-sort">

@@ -33,8 +33,8 @@ require_once 'inc/info_box.php';
 <ul>
 <li class='tabhandle' id='tab1'><?php echo _('Members'); ?></li>
 <li class='tabhandle' id='tab2'><?php echo _('Statistics')?></li>
-<li class='tabhandle' id='tab3'><?php echo _('Tips and tricks'); ?></li>
-<li class='tabhandle' id='tab4'><?php echo _('Tools'); ?></li>
+<li class='tabhandle' id='tab3'><?php echo _('Tools'); ?></li>
+<li class='tabhandle' id='tab4'><?php echo _('Help'); ?></li>
 </ul>
 </menu>
 <!-- *********************** -->
@@ -108,9 +108,25 @@ $totals = $count_req->fetch(PDO::FETCH_ASSOC);
 </div>
 
 <!-- *********************** -->
-<div class='divhandle' id='tab3div'>
+<div class='divhandle chemdoodle' id='tab3div'>
+    <h3><?php echo _('Molecule drawer'); ?></h3>
+    <div class='box'>
+        <link rel="stylesheet" href="css/chemdoodle.css" type="text/css">
+        <script src="js/chemdoodle.js"></script>
+        <script src="js/chemdoodle-uis.js"></script>
+        <div class='center'>
+            <script>
+                var sketcher = new ChemDoodle.SketcherCanvas('sketcher', 550, 300, {oneMolecule:true});
+            </script>
+        </div>
+    </div>
+</div>
+
+<!-- *********************** -->
+<div class='divhandle' id='tab4div'>
     <p>
         <ul>
+        <li class='tip'><?php printf(_('There is a manual available %shere%s.'), "<a href='doc/man-elabftw.pdf'>", "</a>"); ?></li>
         <li class='tip'><?php echo _("You can use a TODOlist by pressing 't'."); ?></li>
         <li class='tip'><?php printf(_('You can have experiments templates (%sControl Panel%s).'), "<a href='ucp.php?tab=3'>", "</a>"); ?></li>
         <li class='tip'><?php printf(_('The admin of a team can edit the status and the types of items available (%sAdmin Panel%s).'), "<a href='admin.php?tab=4'>", "</a>"); ?></li>
@@ -123,18 +139,7 @@ $totals = $count_req->fetch(PDO::FETCH_ASSOC);
         </ul>
     </p>
 </div>
-
-<div class='divhandle chemdoodle' id='tab4div'>
-    <h3><?php echo _('Molecule drawer'); ?></h3>
-    <div class='box'>
-        <link rel="stylesheet" href="css/chemdoodle.css" type="text/css">
-        <script src="js/chemdoodle.js"></script>
-        <script src="js/chemdoodle-uis.js"></script>
-        <script>
-            var sketcher = new ChemDoodle.SketcherCanvas('sketcher', 550, 300, {oneMolecule:true});
-        </script>
-    </div>
-</div>
+<!-- *********************** -->
 
 
 <script>

@@ -43,89 +43,14 @@ $users = $req->fetch();
 
 <menu>
     <ul>
-        <li class='tabhandle' id='tab1'><?php echo _('Account'); ?></li>
-        <li class='tabhandle' id='tab2'><?php echo _('Preferences'); ?></li>
+        <li class='tabhandle' id='tab1'><?php echo _('Preferences'); ?></li>
+        <li class='tabhandle' id='tab2'><?php echo _('Account'); ?></li>
         <li class='tabhandle' id='tab3'><?php echo _('Templates'); ?></li>
     </ul>
 </menu>
 
 <!-- *********************** -->
 <div class='divhandle' id='tab1div'>
-    <div class='box'>
-
-    <form method="post" action="app/ucp-exec.php">
-        <div class='row'>
-            <div class='col-md-6'>
-                <h4><?php echo _('Modify your personal informations'); ?></h4>
-                <label class='block' for='currpass'><?php echo _('Enter your password to edit infos.'); ?></label>
-                <input id='currpass' name="currpass" type="password" required />
-            </div>
-            <div class='col-md-6'>
-                <h4><?php echo _('Modify your password'); ?></h4>
-                <label class='block' for='newpass'><?php echo _('New password'); ?></label>
-                <input name="newpass" type="password" />
-                <label class='block' for='cnewpass'><?php echo _('Confirm new password'); ?></label>
-                <input name="cnewpass" type="password" />
-            </div>
-        </div>
-
-        <h4><?php echo _('Modify your identity'); ?></h4>
-
-        <div class='row'>
-            <div class='col-md-6'>
-                <label class='block' for='firstname'><?php echo _('Firstname'); ?></label>
-                <input name="firstname" value='<?php echo $users['firstname']; ?>' cols='20' rows='1' />
-            </div>
-            <div class='col-md-6'>
-                <label class='block' for='username'><?php echo _('Username'); ?></label>
-                <input name="username" value='<?php echo $users['username']; ?>' cols='20' rows='1' />
-            </div>
-
-        </div>
-
-        <div class='row'>
-            <div class='col-md-6'>
-                <label class='block' for='lastname'><?php echo _('Lastname'); ?></label>
-                <input name="lastname" value='<?php echo $users['lastname']; ?>' cols='20' rows='1' />
-            </div>
-            <div class='col-md-6'>
-                <label class='block' for='email'><?php echo _('Email'); ?></label>
-                <input name="email" type="email" value='<?php echo $users['email']; ?>' cols='20' rows='1' />
-            </div>
-        </div>
-
-<br>
-        <h4><?php echo _('Modify your contact information'); ?></h4>
-        <div class='row'>
-            <div class='col-md-6'>
-                <label class='block' for='phone'><?php echo _('Phone'); ?> </label>
-                <input name="phone" value='<?php echo $users['phone']; ?>' cols='20' rows='1' />
-            </div>
-            <div class='col-md-6'>
-                <label class='block' for='cellphone'><?php echo _('Mobile'); ?></label>
-                <input name="cellphone" value='<?php echo $users['cellphone']; ?>' cols='20' rows='1' />
-            </div>
-        </div>
-        <div class='row'>
-            <div class='col-md-6'>
-                <label class='block' for='skype'><?php echo _('Skype'); ?></label>
-                <input name="skype" value='<?php echo $users['skype']; ?>' cols='20' rows='1' />
-            </div>
-            <div class='col-md-6'>
-                <label class='block' for='website'><?php echo _('Website'); ?></label>
-                <input name="website" type="url" value='<?php echo $users['website']; ?>' cols='20' rows='1' />
-            </div>
-        </div>
-
-    </div>
-        <div class='submitButtonDiv'>
-            <button type="submit" name="Submit" class='button'><?php echo _('Update profile'); ?></button>
-        </div>
-    </form>
-
-</div>
-<!-- *********************** -->
-<div class='divhandle' id='tab2div'>
 
     <form action='app/ucp-exec.php' method='post'>
         <section class='box'>
@@ -244,6 +169,81 @@ foreach ($lang_array as $lang) {
         <button type="submit" name="Submit" class='button'><?php echo _('Save'); ?></button>
         </div>
             </p>
+    </form>
+
+</div>
+<!-- *********************** -->
+<div class='divhandle' id='tab2div'>
+    <div class='box'>
+
+    <form method="post" action="app/ucp-exec.php">
+        <div class='row'>
+            <div class='col-md-6'>
+                <h4><?php echo _('Modify your personal informations'); ?></h4>
+                <label class='block' for='currpass'><?php echo _('Enter your password to edit infos.'); ?></label>
+                <input id='currpass' name="currpass" type="password" required />
+            </div>
+            <div class='col-md-6'>
+                <h4><?php echo _('Modify your password'); ?></h4>
+                <label class='block' for='newpass'><?php echo _('New password'); ?></label>
+                <input name="newpass" type="password" />
+                <label class='block' for='cnewpass'><?php echo _('Confirm new password'); ?></label>
+                <input name="cnewpass" type="password" />
+            </div>
+        </div>
+
+        <h4><?php echo _('Modify your identity'); ?></h4>
+
+        <div class='row'>
+            <div class='col-md-6'>
+                <label class='block' for='firstname'><?php echo _('Firstname'); ?></label>
+                <input name="firstname" value='<?php echo $users['firstname']; ?>' cols='20' rows='1' />
+            </div>
+            <div class='col-md-6'>
+                <label class='block' for='username'><?php echo _('Username'); ?></label>
+                <input name="username" value='<?php echo $users['username']; ?>' cols='20' rows='1' />
+            </div>
+
+        </div>
+
+        <div class='row'>
+            <div class='col-md-6'>
+                <label class='block' for='lastname'><?php echo _('Lastname'); ?></label>
+                <input name="lastname" value='<?php echo $users['lastname']; ?>' cols='20' rows='1' />
+            </div>
+            <div class='col-md-6'>
+                <label class='block' for='email'><?php echo _('Email'); ?></label>
+                <input name="email" type="email" value='<?php echo $users['email']; ?>' cols='20' rows='1' />
+            </div>
+        </div>
+
+<br>
+        <h4><?php echo _('Modify your contact information'); ?></h4>
+        <div class='row'>
+            <div class='col-md-6'>
+                <label class='block' for='phone'><?php echo _('Phone'); ?> </label>
+                <input name="phone" value='<?php echo $users['phone']; ?>' cols='20' rows='1' />
+            </div>
+            <div class='col-md-6'>
+                <label class='block' for='cellphone'><?php echo _('Mobile'); ?></label>
+                <input name="cellphone" value='<?php echo $users['cellphone']; ?>' cols='20' rows='1' />
+            </div>
+        </div>
+        <div class='row'>
+            <div class='col-md-6'>
+                <label class='block' for='skype'><?php echo _('Skype'); ?></label>
+                <input name="skype" value='<?php echo $users['skype']; ?>' cols='20' rows='1' />
+            </div>
+            <div class='col-md-6'>
+                <label class='block' for='website'><?php echo _('Website'); ?></label>
+                <input name="website" type="url" value='<?php echo $users['website']; ?>' cols='20' rows='1' />
+            </div>
+        </div>
+
+    </div>
+        <div class='submitButtonDiv'>
+            <button type="submit" name="Submit" class='button'><?php echo _('Update profile'); ?></button>
+        </div>
     </form>
 
 </div>

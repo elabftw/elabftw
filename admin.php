@@ -79,7 +79,7 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
     <ul>
     <li class='tabhandle' id='tab1'><?php echo _('Team'); ?></li>
         <li class='tabhandle' id='tab2'><?php echo _('Users'); ?></li>
-        <li class='tabhandle' id='tab3'><?php echo _('Status'); ?></li>
+        <li class='tabhandle' id='tab3'><?php echo ngettext('Status', 'Status', 2); ?></li>
         <li class='tabhandle' id='tab4'><?php echo _('Types of items'); ?></li>
         <li class='tabhandle' id='tab5'><?php echo _('Experiments template'); ?></li>
         <li class='tabhandle' id='tab6'><?php echo _('Import CSV'); ?></li>
@@ -102,6 +102,7 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
                     if (get_team_config('deletable_xp') == 0) { echo " selected='selected'"; } ?>
                         ><?php echo _('No'); ?></option>
         </select>
+        <span class='smallgray'><?php echo _('An admin account will always be able to delete experiments.'); ?></span>
         </p>
         <p>
         <label for='link_name'><?php echo _('Name of the link in the top menu:'); ?></label>
@@ -118,7 +119,7 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
         </p>
         <p>
         <label for='stampcert'><?php echo _('Chain of certificates of the external timestamping service:'); ?></label>
-        <input type='text' placeholder='vendor/universign-tsa-root.pem' value='<?php echo get_team_config('stampcert'); ?>' name='stampcert' id='stampcert' />
+        <input type='text' placeholder='vendor/pki.dfn.pem' value='<?php echo get_team_config('stampcert'); ?>' name='stampcert' id='stampcert' />
         <span class='smallgray'><?php echo _('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.<br /> Local path relative to eLabFTW installation directory. The file needs to be in <a href="https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail">PEM-encoded (ASCII)</a> format!'); ?></span>
         </p>
         <label for='stamplogin'><?php echo _('Login for external timestamping service:'); ?></label>

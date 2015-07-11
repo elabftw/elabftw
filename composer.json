@@ -6,7 +6,8 @@
         "ext-gettext":"*",
         "ext-mcrypt":"*",
         "ext-curl":"*",
-        "ext-openssl":"*"
+        "ext-openssl":"*",
+        "codeception/codeception": "*"
 
     },
     "autoload": {

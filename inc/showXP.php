@@ -38,7 +38,7 @@ if (isset($_GET['tag']) && $_GET['tag'] != '') {
 <menu class='border'>
     <div class="row">
         <div class="col-md-4">
-            <a href="app/create_item.php?type=exp"><img src="img/add.png" class='bot5px' alt="" /> <?php echo _('Create experiment'); ?></a> |
+            <a href="app/create_item.php?type=exp" id='createExperiment'><img src="img/add.png" class='bot5px' alt="" /> <?php echo _('Create experiment'); ?></a> |
             <a href='#' class='trigger'><img src="img/add-template.png" class='bot5px' alt="" /> <?php echo _('Create from template'); ?></a>
         </div>
         <div class="col-md-8">

@@ -47,6 +47,7 @@ class MakeZip
 
     private $firstname;
     private $lastname;
+    private $folder;
 
 
     /*

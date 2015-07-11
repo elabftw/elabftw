@@ -789,7 +789,7 @@ function q($sql)
 /**
  * Used in sysconfig.php to update config values
  *
- * @param array conf_name => conf_value
+ * @param array $array (conf_name => conf_value)
  * @return bool the return value of execute queries
  */
 function update_config($array)

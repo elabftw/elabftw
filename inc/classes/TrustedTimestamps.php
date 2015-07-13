@@ -95,7 +95,11 @@ class TrustedTimestamps
     {
         $this->pdfFileName = hash("sha512", uniqid(rand(), true)) . ".pdf";
         $this->pdfPath = ELAB_ROOT . 'uploads/' . $this->pdfFileName;
-        $pdf = new \Elabftw\Elabftw\MakePdf($this->id, 'experiments', $this->pdfPath);
+        try {
+            new \Elabftw\Elabftw\MakePdf($this->id, 'experiments', $this->pdfPath);
+        } catch (Exception $e) {
+            throw new Exception('Failed at making the pdf : ' . $e->getMessage());
+        }
     }
 
     /**

@@ -46,7 +46,6 @@ class MakePdf
 
     public function __construct($id, $type, $path = null)
     {
-        // assign and check id
         $this->id = $id;
         $this->validateId();
 

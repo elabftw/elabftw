@@ -108,61 +108,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['type'] === 'csv') {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['type'] === 'zip') {
     // it might take some time and we don't want to be cut in the middle, so set time_limit to ∞
     set_time_limit(0);
-    // OPEN THE ARCHIVE
-    $zip = new ZipArchive;
-    if ($zip->open($_FILES['zipfile']['tmp_name']) && $zip->extractTo('../uploads/tmp/')) {
-        // how many items do we have to import ?
-        // we loop through all the entries
-        for ($i = 0; $i < 20000; $i++) {
-            // MANIFEST will always be the last entry
-            if ($zip->getNameIndex($i) === 'MANIFEST') {
-                break;
-            }
-            $dirs[] = dirname($zip->getNameIndex($i));
-        }
-        $zip->close();
-        // we want to know how many unique item are in the zip
-        $dirs = array_unique($dirs);
 
-        // now for each folder, import the things
-        foreach ($dirs as $dir) {
-            // we need to get title and body from the txt file
-            $file = "../uploads/tmp/" . $dir . "/.export.txt";
-            $content = file_get_contents($file);
-            $lines = explode("\n", $content);
-            $title = $lines[0];
-            $body = implode("\n", array_slice($lines, 1));
-
-            // we need to attach files
-            // TODO
-
-            // get what type we want
-            if (isset($_COOKIE['itemType']) && is_pos_int($_COOKIE['itemType'])) {
-                $type = $_COOKIE['itemType'];
-            } else {
-                die('No cookies found');
-            }
-            // SQL for importing
-            $sql = "INSERT INTO items(team, title, date, body, userid, type) VALUES(:team, :title, :date, :body, :userid, :type)";
-            $req = $pdo->prepare($sql);
-            $result = $req->execute(array(
-                'team' => $_SESSION['team_id'],
-                'title' => $title,
-                'date' => kdate(),
-                'body' => $body,
-                'userid' => $_SESSION['userid'],
-                'type' => $type
-            ));
-            // count the number of inserts
-            if ($result) {
-                $inserted++;
-            } else {
-                $errflag = true;
-            }
-        }
-    } else {
+    try {
+        $import = new \Elabftw\Elabftw\Import();
+    } catch (Exception $e) {
         $errflag = true;
+        $msg_arr[] = $e->getMessage();
     }
+    $inserted = $import->inserted;
 }
 // END CODE TO IMPORT ZIP
 

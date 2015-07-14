@@ -44,6 +44,9 @@ class MakeZip
     private $cleanTitle;
 
     private $zipped;
+    // the path to attached files in the zip
+    private $fileArr = array();
+    private $jsonArr = array();
 
     private $firstname;
     private $lastname;
@@ -74,9 +77,9 @@ class MakeZip
 
     }
     /*
-     * Pretty straightforward
+     * Return the relative path of the zip (uploads/tmp/<hash>.zip)
      *
-     * @return string the path of the zip (uploads/tmp/<hash>.zip)
+     * @return string
      */
     public function getZipRelativePath()
     {
@@ -86,6 +89,7 @@ class MakeZip
     /*
      * This is the name of the file that will get downloaded
      *
+     * @return string
      */
     public function getZipName()
     {
@@ -104,12 +108,11 @@ class MakeZip
      */
     private function createZipArchive()
     {
-
         $this->zip = new \ZipArchive;
+
         if (!$this->zip->open($this->zipAbsolutePath, ZipArchive::CREATE)) {
             throw new Exception('Could not open zip file!');
         }
-
     }
 
     /*
@@ -245,11 +248,13 @@ class MakeZip
         }
 
         // files attached ?
-        $filenb = count($real_name);
-        if ($filenb > 0) {
-            for ($i = 0; $i < $filenb; $i++) {
+        $fileNb = count($real_name);
+        if ($fileNb > 0) {
+            for ($i = 0; $i < $fileNb; $i++) {
                 // add files to archive
                 $this->zip->addFile(ELAB_ROOT . 'uploads/' . $long_name[$i], $this->folder . "/" . $real_name[$i]);
+                // reference them in the json file
+                $this->fileArr[] = $this->folder . "/" . $real_name[$i];
             }
         }
     }
@@ -273,20 +278,17 @@ class MakeZip
         $this->filesToDelete[] = $csv->getFilePath();
     }
 
-    private function addExportTxt($id)
+    private function addJson()
     {
-        // add the export.txt file that is helpful for importing
-        // first line is title, rest is body
-        $txt = stripslashes($this->zipped['title']) . "\n" . stripslashes($this->zipped['body']) . "\n";
-        // fix utf8
-        $txt = utf8_encode($txt);
-        $txtPath = ELAB_ROOT . 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . '.txt';
-        $tf = fopen($txtPath, 'w+');
-        fwrite($tf, $txt);
+        // add a json file that is helpful for importing back the data
+        $json = json_encode($this->jsonArr);
+        $jsonPath = ELAB_ROOT . 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . '.json';
+        $tf = fopen($jsonPath, 'w+');
+        fwrite($tf, $json);
         fclose($tf);
-        // add the export.txt file as hidden file, users don't need to see it
-        $this->zip->addFile($txtPath, $this->folder . "/.export.txt");
-        $this->filesToDelete[] = $txtPath;
+        // add the json file as hidden file, users don't need to see it
+        $this->zip->addFile($jsonPath, ".elabftw.json");
+        $this->filesToDelete[] = $jsonPath;
     }
 
     /*
@@ -302,7 +304,14 @@ class MakeZip
         $this->addAttachedFiles($id);
         $this->addCsv($id);
         $this->addPdf($id);
-        $this->addExportTxt($id);
+        // add an entry to the json file
+        $this->jsonArr[] = array(
+            'type' => $this->table,
+            'title' => stripslashes($this->zipped['title']),
+            'body' => stripslashes($this->zipped['body']),
+            'files' => $this->fileArr
+        );
+        unset($this->fileArr);
     }
 
     /*
@@ -319,7 +328,7 @@ class MakeZip
             }
             $this->addToZip($id);
         }
-        $this->addManifest();
+        $this->addJson();
         $this->zip->close();
     }
 

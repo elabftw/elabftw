@@ -113,14 +113,13 @@ class ImportZip
 
         $sql = "INSERT INTO items(team, title, date, body, userid, type) VALUES(:team, :title, :date, :body, :userid, :type)";
         $req = $pdo->prepare($sql);
-        $req->execute(array(
-            'team' => $_SESSION['team_id'],
-            'title' => $this->title,
-            'date' => kdate(),
-            'body' => $this->body,
-            'userid' => $_SESSION['userid'],
-            'type' => $this->itemType
-        ));
+        $req->bindParam(':team', $_SESSION['team_id'], \PDO::PARAM_INT);
+        $req->bindParam(':title', $this->title);
+        $req->bindParam(':date', kdate());
+        $req->bindParam(':body', $this->body);
+        $req->bindParam(':userid', $_SESSION['userid'], \PDO::PARAM_INT);
+        $req->bindParam(':type', $this->itemType);
+
         if (!$req->execute()) {
             throw new Exception('Cannot import in database!');
         }

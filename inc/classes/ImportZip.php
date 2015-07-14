@@ -46,10 +46,10 @@ class ImportZip
     // we need it for linking attached file(s) to the the new item
     private $newItemId;
 
-    public function __construct()
+    public function __construct($zipfile, $itemType)
     {
-        $this->fileTmpName = $_FILES['zipfile']['tmp_name'];
-        $this->itemType = $_COOKIE['itemType'];
+        $this->fileTmpName = $zipfile;
+        $this->itemType = $itemType;
         // this is where we will extract the zip
         $this->tmpPath = ELAB_ROOT . 'uploads/tmp/' . uniqid();
         if (!mkdir($this->tmpPath)) {

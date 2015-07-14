@@ -105,12 +105,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['type'] === 'csv') {
 // END CODE TO IMPORT CSV
 
 // CODE TO IMPORT ZIP
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['type'] === 'zip') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
+    $_POST['type'] === 'zip' &&
+    is_readable($_FILES['zipfile']['tmp_name']) &&
+    isset($_COOKIE['itemType'])) {
     // it might take some time and we don't want to be cut in the middle, so set time_limit to ∞
     set_time_limit(0);
 
     try {
-        $import = new \Elabftw\Elabftw\ImportZip();
+        $import = new \Elabftw\Elabftw\ImportZip($_FILES['zipfile']['tmp_name'], $_COOKIE['itemType']);
     } catch (Exception $e) {
         $errflag = true;
         $msg_arr[] = $e->getMessage();

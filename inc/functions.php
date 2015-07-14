@@ -31,18 +31,7 @@
  */
 function kdate()
 {
-    $today = getdate();
-    $month = $today['mon'];
-    // add 0 in front of month if needed
-    if (strlen($month) === 1) {
-        $month = '0' . $month;
-    }
-    $day = $today['mday'];
-    // add 0 in front of day if needed
-    if (strlen($day) === 1) {
-        $day = '0' . $day;
-    }
-    return $today['year'] . $month . $day;
+    return date('Ymd');
 }
 
 /**

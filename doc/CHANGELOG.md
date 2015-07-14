@@ -1,4 +1,13 @@
 # Changelog for eLabFTW
+
+# Version 1.1.5
+* add autocompletion to experiments (start with # to get item list) (fix #65)
+* improve zip import now also imports attached files to an item (fix #21)
+* remove MANIFEST file from zip archives
+* remove .export.txt file from zip archives
+* add .elabftw.json file in zip archives (to allow easy reimport)
+* various code improvements
+
 # Version 1.1.4-p2
 * fix INSTALLED_VERSION constant so it displays correctly if an update is available in sysconfig
 

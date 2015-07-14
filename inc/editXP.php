@@ -25,6 +25,7 @@
 ********************************************************************************/
 // inc/editXP.php
 ?>
+<link rel="stylesheet" media="all" href="css/autocomplete.css" />
 <script src="js/tinymce/tinymce.min.js"></script>
 <?php
 // ID
@@ -267,7 +268,7 @@ while ($tag = $getalltags->fetch()) {
     echo "'" . $tag[0] . "',";
 }?>
 		];
-		$( "#addtaginput" ).autocomplete({
+		$("#addtaginput").autocomplete({
 			source: availableTags
 		});
 	});
@@ -310,41 +311,37 @@ function addTagOnEnter(e) { // the argument here is the event (needed to detect 
         })
     } // end if key is enter
 }
-// LINKS AUTOCOMPLETE
-$(function() {
-		var availableLinks = [
 <?php // get all links for autocomplete
+$link_list = "";
+$tinymce_list = "";
 $sql = "SELECT items_types.name,
 items.id AS itemid,
-items.team AS itemteam,
 items.* FROM items
 LEFT JOIN items_types
-ON items.type = items_types.id";
+ON items.type = items_types.id
+WHERE items.team = :team";
 $getalllinks = $pdo->prepare($sql);
-$res = $getalllinks->execute(array(
-        'team' => $_SESSION['team_id']
-    ));
+$getalllinks->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
+if ($getalllinks->execute()) {
 
-if ($res) {
     while ($link = $getalllinks->fetch()) {
-        // we show the item only if it is from the team
-        if ($link['itemteam'] == $_SESSION['team_id']) {
-            $link_type = $link['name'];
-            // html_entity_decode is needed to convert the quotes
-            // str_replace to remove ' because it messes everything up
-            $link_name = str_replace("'", "", html_entity_decode(substr($link['title'], 0, 60), ENT_QUOTES));
-            // remove also the % (see issue #62)
-            $link_name = str_replace("%", "", $link_name);
-            echo "'" . $link['itemid'] . " - " . $link_type . " - " . $link_name . "',";
-        }
+        $link_type = $link['name'];
+        // html_entity_decode is needed to convert the quotes
+        // str_replace to remove ' because it messes everything up
+        $link_name = str_replace("'", "", html_entity_decode(substr($link['title'], 0, 60), ENT_QUOTES));
+        // remove also the % (see issue #62)
+        $link_name = str_replace("%", "", $link_name);
+        $link_list .= "'" . $link['itemid'] . " - " . $link_type . " - " . $link_name . "',";
+        $tinymce_list .= "{ name : \"<a href='database.php?mode=view&id=" . $link['itemid'] . "'>" . $link_name . "</a>\"},";
     }
 }
 ?>
-		];
-		$( "#linkinput" ).autocomplete({
-			source: availableLinks
-		});
-	});
+// LINKS AUTOCOMPLETE
+$(function() {
+    $( "#linkinput" ).autocomplete({
+        source: [<?php echo $link_list; ?>]
+    });
+});
 // DELETE LINK
 function delete_link(id, item_id) {
     var you_sure = confirm('<?php echo _('Delete this?'); ?>');
@@ -457,7 +454,7 @@ $(document).ready(function() {
         mode : "specific_textareas",
         editor_selector : "mceditable",
         content_css : "css/tinymce.css",
-        plugins : "table textcolor searchreplace code fullscreen insertdatetime paste charmap save image link pagebreak",
+        plugins : "table textcolor searchreplace code fullscreen insertdatetime paste charmap save image link pagebreak mention",
         pagebreak_separator: "<pagebreak>",
         toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | image link | save",
         removed_menuitems : "newdocument",
@@ -479,6 +476,10 @@ $(document).ready(function() {
         // keyboard shortcut to insert today's date at cursor in editor
         setup : function(editor) {
             editor.addShortcut("ctrl+shift+d", "add date at cursor", function() { addDateOnCursor(); });
+        },
+        mentions: {
+            source: [<?php echo $tinymce_list; ?>],
+            delimiter: '#'
         },
         language : '<?php echo $_SESSION['prefs']['lang']; ?>'
     });

@@ -1015,7 +1015,7 @@ function get_total_time()
  * Return a string 5+3+6 when feeded an array
  *
  * @param array $array
- * @return string|bool
+ * @return false|string
  */
 function build_string_from_array($array, $delim = '+')
 {

@@ -179,8 +179,8 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
 
 $total_time = get_total_time();
 
-// filter out duplicate ids and reverse the order; items should be sorted by date
-$results_arr = array_reverse(array_unique($results_arr));
+// filter out duplicate ids
+$results_arr = array_unique($results_arr);
 // show number of results found
 if (count($results_arr) === 0 && $search_type != 'none') {
     display_message('error_nocross', _("Sorry. I couldn't find anything :("));

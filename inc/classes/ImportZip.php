@@ -35,10 +35,11 @@ class ImportZip
 {
     // number of item we have inserted
     public $inserted = 0;
-    // this array will contain an array for each item to import
-    private $json = array();
+    private $tmpPath;
+    private $fileTmpName;
+    private $json;
 
-    private $type;
+    private $itemType;
     private $title;
     private $body;
     // the newly created id of the imported item
@@ -47,6 +48,8 @@ class ImportZip
 
     public function __construct()
     {
+        $this->fileTmpName = $_FILES['zipfile']['tmp_name'];
+        $this->itemType = $_COOKIE['itemType'];
         // this is where we will extract the zip
         $this->tmpPath = ELAB_ROOT . 'uploads/tmp/' . uniqid();
         if (!mkdir($this->tmpPath)) {
@@ -55,19 +58,19 @@ class ImportZip
 
         $this->extractZip();
         $this->readJson();
-        $this->setItemType();
+        $this->checkItemType();
         $this->importAll();
     }
 
     /*
      * Extract the zip to the temporary folder
      *
-     * @return bool|null
+     * @return bool
      */
     private function extractZip()
     {
         $zip = new \ZipArchive;
-        if ($zip->open($_FILES['zipfile']['tmp_name']) && $zip->extractTo($this->tmpPath)) {
+        if ($zip->open($this->fileTmpName) && $zip->extractTo($this->tmpPath)) {
             return true;
         } else {
             throw new Exception('Cannot open zip file!');
@@ -90,14 +93,12 @@ class ImportZip
     }
 
     /*
-     * Grab in which item type we want to import
+     * Item type will be a number
      *
      */
-    private function setItemType()
+    private function checkItemType()
     {
-        if (isset($_COOKIE['itemType']) && is_pos_int($_COOKIE['itemType'])) {
-            $this->type = $_COOKIE['itemType'];
-        } else {
+        if (!is_pos_int($this->itemType)) {
             throw new Exception('No cookie found!');
         }
     }
@@ -118,7 +119,7 @@ class ImportZip
             'date' => kdate(),
             'body' => $this->body,
             'userid' => $_SESSION['userid'],
-            'type' => $this->type
+            'type' => $this->itemType
         ));
         if (!$req->execute()) {
             throw new Exception('Cannot import in database!');

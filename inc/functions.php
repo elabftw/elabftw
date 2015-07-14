@@ -372,7 +372,7 @@ function processTimestampPost()
  * @param string $display Can be 'compact' or 'default'
  * @return string|null HTML of the single experiment
  */
-function showXP($id, $display)
+function showXP($id, $display = 'default')
 {
     global $pdo;
     $sql = "SELECT experiments.*, status.color FROM
@@ -458,7 +458,7 @@ function show_stars($rating)
  * @param string $display Can be 'compact' or 'default'
  * @return string|null HTML of the single item
  */
-function showDB($id, $display)
+function showDB($id, $display = 'default')
 {
     global $pdo;
     $sql = "SELECT items.*,

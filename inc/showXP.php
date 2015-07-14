@@ -23,12 +23,10 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+$results_arr = array();
 $load_more_button = "<div class='center'>
         <button class='button' id='loadButton'>"._('Load more') . "</button>
         </div>";
-// array to store results;
-$results_arr = array();
-$searchFlag = false;
 
 // keep tag var in url
 $getTag = '';
@@ -100,10 +98,9 @@ if ($tplreq->rowCount() > 0) {
 </ul></div>
 <?php
 // VIEWING PREFS //
-$display = $_SESSION['prefs']['display'];
-$order = $_SESSION['prefs']['order'];
-$sort = $_SESSION['prefs']['sort'];
-$limit = $_SESSION['prefs']['limit'];
+$order = filter_var($_SESSION['prefs']['order'], FILTER_SANITIZE_STRING);
+$sort = filter_var($_SESSION['prefs']['sort'], FILTER_SANITIZE_STRING);
+$limit = filter_var($_SESSION['prefs']['limit'], FILTER_SANITIZE_STRING);
 $filter = '';
 
 // REPLACE WITH ORDER
@@ -140,7 +137,6 @@ if (isset($_GET['q'])) { // if there is a query
     $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
 
     $results_arr = search_item('xp', $query, $_SESSION['userid']);
-    $searchFlag = true;
 
 // RELATED
 } elseif (isset($_GET['related']) && is_pos_int($_GET['related'])) {// search for related experiments to DB item id
@@ -152,8 +148,9 @@ if (isset($_GET['q'])) { // if there is a query
     $req->execute(array(
         'link_id' => $item_id
     ));
-
-    $searchFlag = true;
+    while ($data = $req->fetch()) {
+        $results_arr[] = $data['item_id'];
+    }
 
 // TAG SEARCH
 } elseif (isset($_GET['tag']) && !empty($_GET['tag'])) {
@@ -174,54 +171,14 @@ if (isset($_GET['q'])) { // if there is a query
     $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
     $req->bindParam(':teamid', $_SESSION['team_id'], PDO::PARAM_INT);
     $req->execute();
-
-    $searchFlag = true;
-}
-
-// if we have a search (q, related or tags) show the time and zip/csv export buttons
-if ($searchFlag) {
-
-    // put resulting ids in the results array
     while ($data = $req->fetch()) {
         $results_arr[] = $data['item_id'];
-    }
-    // clean duplicates
-    $results_arr = array_unique($results_arr);
-
-    $total_time = get_total_time();
-
-    // show number of results found
-    if (count($results_arr) == 0) {
-        display_message('error_nocross', _("Sorry. I couldn't find anything :("));
-    } else {
-        ?>
-        <div class='align_right'>
-            <a name='anchor'></a>
-            <p class='inline'><?php echo _('Export this result:'); ?> </p>
-            <a href='make_zip.php?id=<?php echo build_string_from_array($results_arr); ?>&type=experiments'>
-                <img src='img/zip.png' title='make a zip archive' alt='zip' />
-            </a>
-
-            <a href='make_csv.php?id=<?php echo build_string_from_array($results_arr); ?>&type=experiments'>
-                <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' />
-            </a>
-        </div>
-        <?php
-        echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time['time'] . " " . $total_time['unit'] . ")</p>";
-
-        // loop the results array and display results
-        foreach ($results_arr as $result_id) {
-            showXP($result_id, $display);
-        } // end foreach
-
-        // show load more button if there are more results than the default display number
-        if (count($results_arr) > $limit) {
-            echo $load_more_button;
-        }
     }
 
 // DEFAULT VIEW
 } else {
+    $search_type = 'none';
+
     $sql = "SELECT ex.id, ex.date, ex.title, st.name
         FROM experiments AS ex, status AS st
         WHERE ex.userid = :userid
@@ -234,33 +191,47 @@ if ($searchFlag) {
     $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
     $req->bindParam(':teamid', $_SESSION['team_id'], PDO::PARAM_INT);
     $req->execute();
-    $count = $req->rowCount();
-    // If there are no experiments, display a little message
-    if ($count == 0) {
-        // it might be a fresh install, but it might also be the search filters are too restrictive
-        if (isset($_GET['tag'])) {
-            display_message('error_nocross', _("Sorry. I couldn't find anything :("));
-        } else {
-            display_message('info_nocross', sprintf(_("<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button to get started."), "<img src='img/add.png' alt='' /><a class='alert-link' href='app/create_item.php?type=exp'>", "</a>"));
-        }
-    } else {
-        while ($experiments = $req->fetch()) {
-            $results_arr[] = $experiments['id'];
-        }
-        $req->closeCursor();
-        // loop the results array and display results
-        foreach ($results_arr as $result_id) {
-            showXP($result_id, $display);
-        } // end foreach
+    while ($get_id = $req->fetch()) {
+        $results_arr[] = $get_id['id'];
+    }
+}
 
-        // show load more button if there are more results than the default display number
-        if (count($results_arr) > $limit) {
-            echo $load_more_button;
-        }
+// clean duplicates
+$results_arr = array_unique($results_arr);
+
+$total_time = get_total_time();
+
+if (count($results_arr) === 0 && $search_type != 'none') {
+    display_message('error_nocross', _("Sorry. I couldn't find anything :("));
+// Display message for fresh install
+} elseif (count($results_arr) === 0 && $search_type === 'none') {
+    display_message('info_nocross', sprintf(_("<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button to get started."), "<img src='img/add.png' alt='' /><a class='alert-link' href='app/create_item.php?type=exp'>", "</a>"));
+} else {
+    ?>
+    <div class='align_right'>
+        <a name='anchor'></a>
+        <p class='inline'><?php echo _('Export this result:'); ?> </p>
+        <a href='make_zip.php?id=<?php echo build_string_from_array($results_arr); ?>&type=experiments'>
+            <img src='img/zip.png' title='make a zip archive' alt='zip' />
+        </a>
+
+        <a href='make_csv.php?id=<?php echo build_string_from_array($results_arr); ?>&type=experiments'>
+            <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' />
+        </a>
+    </div>
+    <?php
+    echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time['time'] . " " . $total_time['unit'] . ")</p>";
+    // loop the results array and display results
+    foreach ($results_arr as $result_id) {
+        showXP($result_id, $_SESSION['prefs']['display']);
+    } // end foreach
+
+    // show load more button if there are more results than the default display number
+    if (count($results_arr) > $limit) {
+        echo $load_more_button;
     }
 } // END CONTENT
 ?>
-
 
 <script>
 // READY ? GO !

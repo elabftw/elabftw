@@ -24,13 +24,6 @@
 *                                                                               *
 ********************************************************************************/
 $results_arr = array();
-
-if (isset($_SESSION['prefs']['display'])) {
-    $display = $_SESSION['prefs']['display'];
-} else {
-    $display = 'default';
-}
-
 // keep tag var in url
 $getTag = '';
 if (isset($_GET['tag']) && $_GET['tag'] != '') {
@@ -212,5 +205,5 @@ if (count($results_arr) === 0 && $search_type != 'none') {
 
 // loop the results array and display results
 foreach ($results_arr as $result_id) {
-    showDB($result_id, $display);
+    showDB($result_id, $_SESSION['prefs']['display']);
 }

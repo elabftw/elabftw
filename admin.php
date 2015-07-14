@@ -481,7 +481,7 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
         <div class='import_block'>
         <form enctype="multipart/form-data" action="app/import.php" method="POST">
         <label for='uploader'><?php echo _('2. Select a CSV file to import:'); ?></label>
-            <input id='uploader' name="csvfile" type="file" />
+            <input id='uploader' name="file" type="file" accept='.csv' />
             <input name='type' type='hidden' value='csv' />
             <div class='center'>
             <button type="submit" class='button' value="Upload"><?php echo _('Import CSV'); ?></button>
@@ -519,7 +519,7 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
         <div class='import_block'>
         <form enctype="multipart/form-data" action="app/import.php" method="POST">
         <label for='uploader'><?php echo _('2. Select a ZIP file to import:'); ?></label>
-            <input id='uploader' name="zipfile" type="file" accept='.elabftw.zip' />
+            <input id='uploader' name="file" type="file" accept='.elabftw.zip' />
             <input name='type' type='hidden' value='zip' />
             <div class='center'>
             <button type="submit" class='button' value="Upload"><?php echo _('Import ZIP'); ?></button>

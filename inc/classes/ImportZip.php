@@ -58,7 +58,6 @@ class ImportZip
 
         $this->extractZip();
         $this->readJson();
-        $this->checkItemType();
         $this->importAll();
     }
 
@@ -89,17 +88,6 @@ class ImportZip
         // we can only import database items, not experiments
         if ($this->json[0]['type'] === 'experiments') {
             throw new Exception('Cannot import an experiment!');
-        }
-    }
-
-    /*
-     * Item type will be a number
-     *
-     */
-    private function checkItemType()
-    {
-        if (!is_pos_int($this->itemType)) {
-            throw new Exception('No cookie found!');
         }
     }
 

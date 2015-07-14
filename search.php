@@ -29,6 +29,10 @@ $page_title = _('Search');
 $selected_menu = 'Search';
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
+
+// make array of results id
+$results_arr = array();
+$search_type = '';
 ?>
 
 <!-- Advanced Search page begin -->
@@ -434,47 +438,8 @@ if (isset($_GET)) {
                     'userid' => $_SESSION['userid']
                 ));
             }
-            // This counts the number of results
-            // and if there wasn't any it gives them a little message explaining that
-            $count = $req->rowCount();
-            if ($count > 0) {
-                // make array of results id
-                $results_id = array();
-                while ($get_id = $req->fetch()) {
-                    $results_id[] = $get_id['id'];
-                }
-                // sort by id, biggest (newer item) comes first
-                $results_id = array_reverse($results_id);
-                // construct string for links to export results
-                $results_id_str = "";
-                foreach ($results_id as $id) {
-                    $results_id_str .= $id . "+";
-                }
-                // remove last +
-                $results_id_str = rtrim($results_id_str, '+');
-                    ?>
 
-                <div class='align_right'>
-                    <a name='anchor'></a>
-                    <p class='inline'><?php echo _('Export this result:'); ?> </p>
-                    <a href='make_zip.php?id=<?php echo $results_id_str; ?>&type=experiments'>
-                        <img src='img/zip.png' title='make a zip archive' alt='zip' />
-                    </a>
-
-                    <a href='make_csv.php?id=<?php echo $results_id_str; ?>&type=experiments'>
-                        <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' />
-                    </a>
-                </div>
-    <?php
-                echo "<p id='search_count'>" . $count . " " . ngettext("result found", "results found", $count) . "</p>";
-                // Display results
-                echo "<hr>";
-                foreach ($results_id as $id) {
-                    showXP($id, $_SESSION['prefs']['display']);
-                }
-            } else { // no results
-                display_message('error_nocross', _("Sorry. I couldn't find anything :("));
-            }
+            $search_type = 'experiments';
 
         // DATABASE SEARCH
         } elseif (is_pos_int($_GET['type']) || $_GET['type'] === 'database') {
@@ -512,44 +477,43 @@ if (isset($_GET)) {
                 ));
             }
 
-            $count = $req->rowCount();
-            if ($count > 0) {
-                // make array of results id
-                $results_id = array();
-                while ($get_id = $req->fetch()) {
-                    $results_id[] = $get_id['id'];
-                }
-                // sort by id, biggest (newer item) comes first
-                $results_id = array_reverse($results_id);
-                // construct string for links to export results
-                $results_id_str = "";
-                foreach ($results_id as $id) {
-                    $results_id_str .= $id . "+";
-                }
-                // remove last +
-                $results_id_str = rtrim($results_id_str, '+');
-                    ?>
+            $search_type = 'items';
+        }
 
-                <div class='align_right'><a name='anchor'></a>
+        // BEGIN DISPLAY RESULTS
+
+        if ($req->rowCount() === 0) {
+                display_message('error_nocross', _("Sorry. I couldn't find anything :("));
+        } else {
+            while ($get_id = $req->fetch()) {
+                $results_arr[] = $get_id['id'];
+            }
+            // sort by id, biggest (newer item) comes first
+            $results_arr = array_reverse($results_arr);
+            $total_time = get_total_time();
+            ?>
+            <!-- Export CSV/ZIP -->
+            <div class='align_right'>
+                <a name='anchor'></a>
                 <p class='inline'><?php echo _('Export this result:'); ?> </p>
-                <a href='make_zip.php?id=<?php echo $results_id_str; ?>&type=items'>
-                <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>
+                <a href='make_zip.php?id=<?php echo build_string_from_array($results_arr); ?>&type=<?php echo $search_type; ?>'>
+                    <img src='img/zip.png' title='make a zip archive' alt='zip' />
+                </a>
 
-                    <a href='make_csv.php?id=<?php echo $results_id_str; ?>&type=items'><img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export in spreadsheet file' /></a>
-                </div>
-    <?php
-                if ($count == 1) {
-                    echo "<div id='search_count'>" . $count . " result</div>";
+                <a href='make_csv.php?id=<?php echo build_string_from_array($results_arr); ?>&type=<?php echo $search_type; ?>'>
+                    <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' />
+                </a>
+            </div>
+            <?php
+            echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time['time'] . " " . $total_time['unit'] . ")</p>";
+            // Display results
+            echo "<hr>";
+            foreach ($results_arr as $id) {
+                if ($search_type === 'experiments') {
+                    showXP($id, $_SESSION['prefs']['display']);
                 } else {
-                    echo "<div id='search_count'>" . $count . " results</div>";
-                }
-                // Display results
-                echo "<hr>";
-                foreach ($results_id as $id) {
                     showDB($id, $_SESSION['prefs']['display']);
                 }
-            } else { // no results
-                display_message('error_nocross', _("Sorry. I couldn't find anything :("));
             }
         }
     }

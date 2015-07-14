@@ -28,6 +28,7 @@ $load_more_button = "<div class='center'>
         </div>";
 // array to store results;
 $results_arr = array();
+$searchFlag = false;
 
 // keep tag var in url
 $getTag = '';
@@ -139,24 +140,7 @@ if (isset($_GET['q'])) { // if there is a query
     $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
 
     $results_arr = search_item('xp', $query, $_SESSION['userid']);
-
-    $total_time = get_total_time();
-
-    if (count($results_arr) == 0) {
-        display_message('error_nocross', _("Sorry. I couldn't find anything :("));
-    } else {
-        echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time['time'] . " " . $total_time['unit'] . ")</p>";
-    }
-
-    // loop the results array and display results
-    foreach ($results_arr as $result_id) {
-        showXP($result_id, $display);
-    }
-
-    // show load more button if there are more results than the default display number
-    if (count($results_arr) > $limit) {
-        echo $load_more_button;
-    }
+    $searchFlag = true;
 
 // RELATED
 } elseif (isset($_GET['related']) && is_pos_int($_GET['related'])) {// search for related experiments to DB item id
@@ -169,29 +153,7 @@ if (isset($_GET['q'])) { // if there is a query
         'link_id' => $item_id
     ));
 
-    $total_time = get_total_time();
-
-    // put resulting ids in the results array
-    while ($data = $req->fetch()) {
-        $results_arr[] = $data['item_id'];
-    }
-    $req->closeCursor();
-    // show number of results found
-    if (count($results_arr) == 0) {
-        display_message('error_nocross', _("Sorry. I couldn't find anything :("));
-    } else {
-        echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time['time'] . " " . $total_time['unit'] . ")</p>";
-    }
-
-    // loop the results array and display results
-    foreach ($results_arr as $result_id) {
-        showXP($result_id, $display);
-    } // end foreach
-
-    // show load more button if there are more results than the default display number
-    if (count($results_arr) > $limit) {
-        echo $load_more_button;
-    }
+    $searchFlag = true;
 
 // TAG SEARCH
 } elseif (isset($_GET['tag']) && !empty($_GET['tag'])) {
@@ -213,10 +175,18 @@ if (isset($_GET['q'])) { // if there is a query
     $req->bindParam(':teamid', $_SESSION['team_id'], PDO::PARAM_INT);
     $req->execute();
 
+    $searchFlag = true;
+}
+
+// if we have a search (q, related or tags) show the time and zip/csv export buttons
+if ($searchFlag) {
+
     // put resulting ids in the results array
     while ($data = $req->fetch()) {
         $results_arr[] = $data['item_id'];
     }
+    // clean duplicates
+    $results_arr = array_unique($results_arr);
 
     $total_time = get_total_time();
 
@@ -224,19 +194,30 @@ if (isset($_GET['q'])) { // if there is a query
     if (count($results_arr) == 0) {
         display_message('error_nocross', _("Sorry. I couldn't find anything :("));
     } else {
+        ?>
+        <div class='align_right'>
+            <a name='anchor'></a>
+            <p class='inline'><?php echo _('Export this result:'); ?> </p>
+            <a href='make_zip.php?id=<?php echo build_string_from_array($results_arr); ?>&type=experiments'>
+                <img src='img/zip.png' title='make a zip archive' alt='zip' />
+            </a>
+
+            <a href='make_csv.php?id=<?php echo build_string_from_array($results_arr); ?>&type=experiments'>
+                <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' />
+            </a>
+        </div>
+        <?php
         echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time['time'] . " " . $total_time['unit'] . ")</p>";
-    }
 
-    // clean duplicates
-    $results_arr = array_unique($results_arr);
-    // loop the results array and display results
-    foreach ($results_arr as $result_id) {
-        showXP($result_id, $display);
-    } // end foreach
+        // loop the results array and display results
+        foreach ($results_arr as $result_id) {
+            showXP($result_id, $display);
+        } // end foreach
 
-    // show load more button if there are more results than the default display number
-    if (count($results_arr) > $limit) {
-        echo $load_more_button;
+        // show load more button if there are more results than the default display number
+        if (count($results_arr) > $limit) {
+            echo $load_more_button;
+        }
     }
 
 // DEFAULT VIEW

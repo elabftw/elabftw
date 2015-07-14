@@ -1010,3 +1010,24 @@ function get_total_time()
         'time' => $total_time,
         'unit' => $unit);
 }
+
+/*
+ * Return a string 5+3+6 when feeded an array
+ *
+ * @param array $array
+ * @return string|bool
+ */
+function build_string_from_array($array, $delim = '+')
+{
+    $string = "";
+
+    if (!is_array($array)) {
+        return false;
+    }
+
+    foreach ($array as $i) {
+        $string .= $i . $delim;
+    }
+    // remove last delimiter
+    return rtrim($string, $delim);
+}

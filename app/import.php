@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['type'] === 'zip') {
     set_time_limit(0);
 
     try {
-        $import = new \Elabftw\Elabftw\Import();
+        $import = new \Elabftw\Elabftw\ImportZip();
     } catch (Exception $e) {
         $errflag = true;
         $msg_arr[] = $e->getMessage();

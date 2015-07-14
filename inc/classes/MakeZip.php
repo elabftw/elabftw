@@ -48,8 +48,6 @@ class MakeZip
     private $fileArr = array();
     private $jsonArr = array();
 
-    private $firstname;
-    private $lastname;
     private $folder;
 
 
@@ -71,7 +69,6 @@ class MakeZip
         $this->zipRealName = hash("sha512", uniqid(rand(), true)) . ".zip";
         $this->zipRelativePath = 'uploads/tmp/' . $this->zipRealName;
         $this->zipAbsolutePath = ELAB_ROOT . $this->zipRelativePath;
-        $this->setFirstLastName();
         $this->createZipArchive();
         $this->loopIdArr();
 
@@ -128,45 +125,9 @@ class MakeZip
     }
 
     /*
-     * Add a MANIFEST file at the root of the zip for listing files inside the zip.
+     * Populate $this->zipped
      *
      */
-    private function addManifest()
-    {
-        // add the MANIFEST file that lists the files in archive
-        $manifest = "";
-        for ($i = 0; $i < $this->zip->numFiles; $i++) {
-            $manifest .= $this->zip->getNameIndex($i) . "\n";
-        }
-        // add info about the creator + timestamp
-        $manifest .= "\nZip archive created by " . $this->firstname . " " . $this->lastname . " on " . date('Y.m.d') . " at " . date('H:i:s') . ".\n";
-        $manifest .= "~~~\neLabFTW - Free open source lab manager - http://www.elabftw.net\n";
-        // fix utf8
-        $manifest = utf8_encode($manifest);
-        $manifest = "\xEF\xBB\xBF" . $manifest;
-        $manifestpath = ELAB_ROOT . 'uploads/tmp/manifest-' . uniqid();
-        $tf = fopen($manifestpath, 'w+');
-        fwrite($tf, $manifest);
-        fclose($tf);
-        $this->zip->addFile($manifestpath, "MANIFEST");
-        $this->filesToDelete[] = $manifestpath;
-    }
-
-    private function setFirstLastName()
-    {
-        global $pdo;
-
-        // SQL to get firstname + lastname
-        $sql = "SELECT firstname, lastname FROM users WHERE userid = :userid";
-        $req = $pdo->prepare($sql);
-        $req->bindParam(':userid', $_SESSION['userid']);
-        $req->execute();
-        $users = $req->fetch();
-        $this->firstname = $users['firstname'];
-        $this->lastname = $users['lastname'];
-
-    }
-
     private function getInfoFromId($id)
     {
         global $pdo;

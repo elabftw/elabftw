@@ -25,6 +25,9 @@
 ********************************************************************************/
 namespace Elabftw\Elabftw;
 
+use \mPDF;
+use \Exception;
+
 class MakePdf
 {
 
@@ -33,6 +36,7 @@ class MakePdf
     private $data;
     private $cleanTitle;
     private $body;
+    private $path;
 
     public $author;
     public $title;
@@ -40,24 +44,81 @@ class MakePdf
     public $content;
 
 
-    public function __construct($id, $type)
+    public function __construct($id, $type, $path = null)
     {
+        // assign and check id
         $this->id = $id;
-        $this->type = $type;
+        $this->validateId();
 
+        // assign and check type
+        $this->type = $type;
+        $this->checkType();
+
+        // assign path
+        $this->path = $path;
+
+        // build the pdf content
         $this->initData();
         $this->setAuthor();
         $this->setCleanTitle();
         $this->setTags();
         $this->buildBody();
         $this->buildContent();
+
+        // create the pdf
+        $mpdf = new \mPDF();
+        $mpdf->SetAuthor($this->author);
+        $mpdf->SetTitle($this->title);
+        $mpdf->SetSubject('eLabFTW pdf');
+        $mpdf->SetKeywords($this->tags);
+        $mpdf->SetCreator('www.elabftw.net');
+        $mpdf->WriteHTML($this->content);
+
+        // output
+        if (isset($this->path)) {
+            $mpdf->Output($this->path, 'F');
+        } else {
+            $mpdf->Output($this->getFileName(), 'I');
+        }
     }
 
+    /*
+     * Validate the id we get.
+     *
+     */
+    private function validateId()
+    {
+        if (!is_pos_int($this->id)) {
+            throw new Exception('Bad id!');
+        }
+    }
+
+    /*
+     * Validate the type we have.
+     *
+     */
+    private function checkType()
+    {
+        $correctValuesArr = array('experiments', 'items');
+        if (!in_array($this->type, $correctValuesArr)) {
+            throw new Exception('Bad type!');
+        }
+    }
+
+    /*
+     * Cleantitle.pdf
+     *
+     * @return string The file name of the pdf
+     */
     public function getFileName()
     {
         return $this->cleanTitle . '.pdf';
     }
 
+    /*
+     * Get data about the item we are pdf'ing
+     *
+     */
     private function initData()
     {
         global $pdo;
@@ -92,8 +153,8 @@ class MakePdf
 
     private function setTags()
     {
-
         global $pdo;
+
         // SQL to get tags
         $sql = "SELECT tag FROM " . $this->type . "_tags WHERE item_id = " . $this->id;
         $req = $pdo->prepare($sql);

@@ -2,6 +2,7 @@
 /********************************************************************************
 *                                                                               *
 *  Copyright 2015 Alexander Minges (alexander.minges@gmail.com)                 *
+*  modified by Nicolas CARPi
 *  http://www.elabftw.net/                                                      *
 *                                                                               *
 *  Based on work by David Müller:                                               *
@@ -92,20 +93,9 @@ class TrustedTimestamps
      */
     private function generatePdf()
     {
-
-        $pdf = new \Elabftw\Elabftw\MakePdf($this->id, 'experiments');
-        $mpdf = new \mPDF();
-        $mpdf->SetAuthor($pdf->author);
-        $mpdf->SetTitle($pdf->title);
-        $mpdf->SetSubject('eLabFTW pdf');
-        $mpdf->SetKeywords($pdf->tags);
-        $mpdf->SetCreator('www.elabftw.net');
-        $mpdf->WriteHTML($pdf->content);
-
         $this->pdfFileName = hash("sha512", uniqid(rand(), true)) . ".pdf";
         $this->pdfPath = ELAB_ROOT . 'uploads/' . $this->pdfFileName;
-        // write pdf to file
-        $mpdf->Output($this->pdfPath, 'F');
+        $pdf = new \Elabftw\Elabftw\MakePdf($this->id, 'experiments', $this->pdfPath);
     }
 
     /**

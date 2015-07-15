@@ -88,7 +88,8 @@ if (file_exists('../config.php')) {
     $req = $pdo->prepare($sql);
     $req->bindValue(':db_name', DB_NAME);
     $req->execute();
-    if ($req->rowCount() < 2) {
+    $res = $req->fetch();
+    if ($res[0] < 2) {
         import_sql_structure();
         header('Location: ../register.php');
         exit;

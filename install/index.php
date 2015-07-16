@@ -105,7 +105,7 @@ if (file_exists('../config.php')) {
     } else {
         $message = 'It looks like eLabFTW is already installed. Delete the config file if you wish to reinstall it.';
         display_message('error_nocross', $message);
-        //custom_die();
+        custom_die();
     }
 }
 ?>

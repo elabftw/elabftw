@@ -39,15 +39,15 @@ $crypto = new \Elabftw\Elabftw\Crypto();
 
 $formKey = new \Elabftw\Elabftw\FormKey();
 
+$update = new \Elabftw\Elabftw\Update();
+
 try {
-    $update = new \Elabftw\Elabftw\Update();
+    $update->getUpdatesIni();
 } catch (Exception $e) {
     display_message('error', $e->getMessage());
 }
 
-// if we managed to get a version from the server
-if (is_object($update)) {
-
+if ($update->success === true) {
     // display current and latest version
     echo "<br><p>" . _('Installed version:') . " " . $update::INSTALLED_VERSION . " ";
     // show a little green check if we have latest version

@@ -30,6 +30,8 @@ use \Exception;
 class Update
 {
     public $version;
+    public $success = false;
+
     const URL = 'https://get.elabftw.net/updates.ini';
     const URL_HTTP = 'http://get.elabftw.net/updates.ini';
     // ///////////////////////////////
@@ -37,17 +39,7 @@ class Update
     const INSTALLED_VERSION = '1.1.5';
     // ///////////////////////////////
 
-    /*
-     * Constructor will get what is the latest version available from URL
-     *
-     */
-    public function __construct()
-    {
-        $this->getUpdatesIni();
-        if (!$this->validateVersion()) {
-            throw new Exception('Error getting latest version information from server!');
-        }
-    }
+
     /*
      * Make a get request with cURL, using proxy setting if any
      * @param string $url URL to hit
@@ -92,7 +84,7 @@ class Update
      *
      * @return string|bool|null latest version or false if error
      */
-    private function getUpdatesIni()
+    public function getUpdatesIni()
     {
         $ini = self::get(self::URL);
         // try with http if https failed (see #176)
@@ -103,6 +95,12 @@ class Update
         $versions = parse_ini_string($ini, true);
         // get the latest version (first item in array, an array itself with url and checksum)
         $this->version = array_keys($versions)[0];
+
+        if (!$this->validateVersion()) {
+            throw new Exception('Error getting latest version information from server!');
+        } else {
+            $this->success = true;
+        }
     }
 
     /*

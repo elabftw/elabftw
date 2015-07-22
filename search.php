@@ -85,7 +85,7 @@ $search_type = '';
                     if (isset($_GET['owner']) && is_pos_int($_GET['owner'])) {
                         $userid = $_GET['owner'];
                     } else {
-                        $userid= $_SESSION['userid'];
+                        $userid = $_SESSION['userid'];
                     }
                     $req->bindParam(':userid', $userid, PDO::PARAM_INT);
                     $req->execute();

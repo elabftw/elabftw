@@ -203,7 +203,8 @@ $sql = "INSERT INTO users (
     `usergroup`,
     `salt`,
     `register_date`,
-    `validated`
+    `validated`,
+    `lang`
 ) VALUES (
     :username,
     :firstname,
@@ -214,7 +215,8 @@ $sql = "INSERT INTO users (
     :usergroup,
     :salt,
     :register_date,
-    :validated);";
+    :validated,
+    :lang);";
 $req = $pdo->prepare($sql);
 $req->bindParam(':username', $username);
 $req->bindParam(':firstname', $firstname);
@@ -226,6 +228,7 @@ $req->bindParam(':usergroup', $group);
 $req->bindParam(':salt', $salt);
 $req->bindParam(':register_date', $register_date);
 $req->bindParam(':validated', $validated);
+$req->bindParam(':lang', get_config('lang'));
 
 $result = $req->execute();
 

@@ -31,6 +31,7 @@ class Update
 {
     public $version;
     const URL = 'https://get.elabftw.net/updates.ini';
+    const URL_HTTP = 'http://get.elabftw.net/updates.ini';
     // ///////////////////////////////
     // UPDATE THIS AFTER RELEASING
     const INSTALLED_VERSION = '1.1.5';
@@ -94,6 +95,10 @@ class Update
     private function getUpdatesIni()
     {
         $ini = self::get(self::URL);
+        // try with http if https failed (see #176)
+        if (!$ini) {
+            $ini = self::get(self::URL_HTTP);
+        }
         // convert ini into array. The `true` is for process_sections: to get multidimensionnal array.
         $versions = parse_ini_string($ini, true);
         // get the latest version (first item in array, an array itself with url and checksum)

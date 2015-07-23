@@ -370,6 +370,22 @@ if (is_dir($dir)) {
     rmdir($dir);
 }
 
+// 20150723 add db version
+$sql = "SELECT COUNT(*) AS confcnt FROM config";
+$req = $pdo->prepare($sql);
+$req->execute();
+$confcnt = $req->fetch(PDO::FETCH_ASSOC);
+
+if ($confcnt['confcnt'] < 21) {
+    $sql = "INSERT INTO config (`conf_name`, `conf_value`) VALUES ('schema', '1')";
+    $req = $pdo->prepare($sql);
+    if ($req->execute()) {
+        $msg_arr[] = '>>> Added schema config.';
+    } else {
+        die($die_msg);
+    }
+}
+
 // //////////////////////////////////////////
 // INSERT NEW CODE BLOCKS ABOVE THIS LINE //
 // /////////////////////////////////////////

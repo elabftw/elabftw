@@ -26,10 +26,15 @@
 namespace Elabftw\Elabftw;
 
 use \Exception;
+use \ZipArchive;
 
 class Update
 {
-    public $version;
+    private $version;
+    private $url;
+    private $sha512;
+    private $zipPath = ELAB_ROOT . 'uploads/tmp/latest.zip';
+
     public $success = false;
 
     const URL = 'https://get.elabftw.net/updates.ini';
@@ -43,9 +48,10 @@ class Update
     /*
      * Make a get request with cURL, using proxy setting if any
      * @param string $url URL to hit
+     * @param bool|string $toFile path where we want to save the file
      * @return string|boolean Return true if the download succeeded, else false
      */
-    private function get($url)
+    private function get($url, $toFile = false)
     {
         if (!extension_loaded('curl')) {
             throw new Exception('Please install php5-curl package.');
@@ -73,9 +79,35 @@ class Update
         // we don't want the header
         curl_setopt($ch, CURLOPT_HEADER, 0);
 
+        if ($toFile) {
+            // This is required for curl to give us some progress
+            // if this is not set to false the progress function never
+            // gets called
+            //curl_setopt($ch, CURLOPT_NOPROGRESS, false);
+            // Set up the callback
+            //curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, 'self::progressCallback');
+            // Big buffer less progress info/callbacks
+            // Small buffer more progress info/callbacks
+            //curl_setopt($ch, CURLOPT_BUFFERSIZE, 128);
+
+            $handle = fopen($toFile, 'w');
+            curl_setopt($ch, CURLOPT_FILE, $handle);
+        }
+
         // DO IT!
         return curl_exec($ch);
     }
+
+    private function progressCallback($resource, $download_size, $downloaded, $upload_size, $uploaded)
+    {
+        if ($download_size > 0) {
+            echo $downloaded / $download_size  * 100;
+        }
+        ob_flush();
+        flush();
+        sleep(1); // just to see effect
+    }
+
 
 
     /*
@@ -95,6 +127,8 @@ class Update
         $versions = parse_ini_string($ini, true);
         // get the latest version (first item in array, an array itself with url and checksum)
         $this->version = array_keys($versions)[0];
+        $this->sha512 = substr($versions[$this->version]['sha512'], 0, 128);
+        $this->url = $versions[$this->version]['url'];
 
         if (!$this->validateVersion()) {
             throw new Exception('Error getting latest version information from server!');
@@ -146,4 +180,40 @@ class Update
         return $latest_arr['tag_name'];
     }
      */
+    public function upgrade()
+    {
+        $this->getUpdatesIni();
+        $this->getLatestZip();
+        if (!$this->checksumZip()) {
+            throw new Exception('Cannot validate zip archive!');
+        }
+        $this->extractZip();
+        $this->copyFiles();
+    }
+
+    private function getLatestZip()
+    {
+        self::get($this->url, $this->zipPath);
+    }
+
+    private function checksumZip()
+    {
+        $hash = hash_file('sha512', $this->zipPath);
+        return $hash === $this->sha512;
+    }
+
+    private function extractZip()
+    {
+        $zip = new \ZipArchive;
+        $zip->open($this->zipPath);
+        $zip->extractTo(ELAB_ROOT . 'uploads/tmp/');
+        $zip->close();
+    }
+
+    private function copyFiles()
+    {
+        $cmd = "/bin/mv -v " . ELAB_ROOT . "uploads/tmp/elabftw-" . $this->version . "/ " . ELAB_ROOT;
+        //shell_exec($cmd);
+        //shell_exec("/bin/rm -rf uploads/tmp/*");
+    }
 }

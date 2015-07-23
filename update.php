@@ -215,31 +215,6 @@ foreach ($teams as $team) {
     }
 }
 
-/*
-// if Universign was used either globally or on a per team level, correct the recorded dates for the timestamps in the database
-if ($old_timestamping_global || $old_timestamping_teams) {
-    // check if we have timestamped experiments
-    $sql = "SELECT * FROM experiments";
-    $req = $pdo->prepare($sql);
-    $req->execute();
-    while ($show = $req->fetch()) {
-        if ($show['timestamped'] === '1') {
-            $ts = new Elabftw\Elabftw\TrustedTimestamps();
-            $date = $ts->getResponseTime(ELAB_ROOT . 'uploads/' . $show['timestamptoken']);
-            if ($show['timestampedwhen'] !== $date) {
-                $sql_update = "UPDATE experiments SET timestampedwhen = :date WHERE id = :id";
-                $req_update = $pdo->prepare($sql_update);
-                $res_update = $req_update->execute(array('date' => $date, 'id' => $show['id']));
-                if ($res_update) {
-                    $msg_arr[] = ">>> Corrected timestamp data for experiment #" . $show['id'];
-                } else {
-                    die($die_msg);
-                }
-            }
-        }
-    }
-}
- */
 
 // if Universign.eu was not used, a database update might still be needed; check for that
 if (!$old_timestamping_global) {

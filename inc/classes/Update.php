@@ -140,17 +140,8 @@ class Update
     }
 
     /*
-     * Return the latest version of elabftw using GitHub API
-     * This function is unused but let's keep it.
+     * This does nothing atm
      *
-     * @return string|bool latest version or false if error
-    private function getLatestVersionFromGitHub()
-    {
-        $url = 'https://api.github.com/repos/elabftw/elabftw/releases/latest';
-        $res = get($url);
-        $latest_arr = json_decode($res, true);
-        return $latest_arr['tag_name'];
-    }
      */
     public function runUpdateScript()
     {

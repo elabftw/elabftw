@@ -59,6 +59,15 @@ try {
 require_once ELAB_ROOT . 'inc/functions.php';
 require_once ELAB_ROOT . 'vendor/autoload.php';
 require_once ELAB_ROOT . 'inc/locale.php';
+
+// run the update script if we have the wrong schema version
+$update = new \Elabftw\Elabftw\Update();
+
+if (get_config('schema') < $update::REQUIRED_SCHEMA) {
+    $update = new \Elabftw\Elabftw\Update();
+    $_SESSION['infos'] = $update->runUpdateScript();
+}
+
 $user = new \Elabftw\Elabftw\User();
 
 if (!isset($_SESSION['auth'])) {

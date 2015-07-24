@@ -16,7 +16,7 @@ Welcome to elabftw's documentation!
 
 .. toctree::
     :maxdepth: 2
-    :caption: Developper documentation
+    :caption: Developer documentation
 
     contributing
 

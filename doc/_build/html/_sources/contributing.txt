@@ -21,7 +21,7 @@ Rules to follow
 ---------------
 
 * before doing a pull request, open an issue so we can discuss about it (unless it is obvious that your code should be merged ;).
-* base your PR on the ***next*** branch, which is the development branch. ***Master*** being the "release" branch.
+* base your PR on the **next** branch, which is the development branch; **master** being the *release* branch.
 * most of the code is procedural, but a progressive transition to object oriented code is on the way.
 * classes should be in `inc/classes` with namespace Elabftw\Elabftw
 * a new class will be loaded automagically thanks to the use of PSR-4 with composer

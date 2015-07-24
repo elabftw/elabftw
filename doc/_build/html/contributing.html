@@ -43,6 +43,54 @@
             
   <div class="section" id="contributing">
 <span id="id1"></span><h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
+<p>Ok, so you know a bit of HTML/CSS/JS/PHP and want to participate building a better free and open-source lab notebook software ?</p>
+<p>Then you are in the right place :)</p>
+<div class="section" id="what-can-you-do-to-help-this-project">
+<h2>What can you do to help this project ?<a class="headerlink" href="#what-can-you-do-to-help-this-project" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Have a look at <a class="reference external" href="https://github.com/elabftw/elabftw/issues">the current issues</a></li>
+<li><a class="reference external" href="https://github.com/elabftw/elabftw/wiki/Contributing#translating-i18n">Translate it!</a></li>
+<li>Talk about it to your colleagues, spread the word!</li>
+<li>Read the code and spot places needing improvements (<cite>git grep TODO</cite>)</li>
+<li>Open GitHub issues to discuss bugs or features suggestions</li>
+<li>Star it on GitHub</li>
+</ul>
+</div>
+<div class="section" id="rules-to-follow">
+<h2>Rules to follow<a class="headerlink" href="#rules-to-follow" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>before doing a pull request, open an issue so we can discuss about it (unless it is obvious that your code should be merged ;).</li>
+<li>base your PR on the <strong>*next*</strong> branch, which is the development branch. <strong>*Master*</strong> being the &#8220;release&#8221; branch.</li>
+<li>most of the code is procedural, but a progressive transition to object oriented code is on the way.</li>
+<li>classes should be in <cite>inc/classes</cite> with namespace ElabftwElabftw</li>
+<li>a new class will be loaded automagically thanks to the use of PSR-4 with composer</li>
+<li>for i18n, we use gettext</li>
+<li>if you change a string in gettext _(&#8216;they look like this&#8217;), change it also in a .po file (generally the french one) and generate a .mo file (with poedit)</li>
+<li>same if you add a string shown to the user, it needs to be gettexted</li>
+<li>if you make a change to the SQL stucture, you need to put it in <cite>update.php</cite> and also <cite>install/elabftw.sql</cite></li>
+<li>the <cite>update.php</cite> script is sequential. So add a block of code before the END comment. Make a check to see if you need to alter something, and if yes, do it.</li>
+<li>most of the functions are in <cite>inc/functions.php</cite></li>
+<li>you can use the constant ELAB_ROOT (which ends with a /) to have a full path</li>
+<li>comment your code wisely</li>
+</ul>
+<div class="section" id="code-formatting">
+<h3>Code formatting<a class="headerlink" href="#code-formatting" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>your code must follow <a class="reference external" href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md">the PSR standards</a></li>
+<li>add a plugin to your editor to show trailing whitespaces in red</li>
+<li>add a plugin to your editor to show PSR-1 errors</li>
+<li>remove BOM</li>
+</ul>
+</div>
+</div>
+<div class="section" id="reminders">
+<h2>Reminders<a class="headerlink" href="#reminders" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>update of SwiftMailer and mPDF is done with <cite>composer update</cite></li>
+<li>update of the js components is done with <cite>bower update</cite></li>
+<li>after update of tinymce, lang files need to be downloaded again, and the ones without proper name (ca instead of ca_ES) need to be edited (change first line to ca_ES)</li>
+</ul>
+</div>
 </div>
 
 
@@ -51,6 +99,19 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Contributing</a><ul>
+<li><a class="reference internal" href="#what-can-you-do-to-help-this-project">What can you do to help this project ?</a></li>
+<li><a class="reference internal" href="#rules-to-follow">Rules to follow</a><ul>
+<li><a class="reference internal" href="#code-formatting">Code formatting</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#reminders">Reminders</a></li>
+</ul>
+</li>
+</ul>
+
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/contributing.txt"

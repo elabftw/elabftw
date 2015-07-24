@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Install on GNU/Linux &mdash; elabftw 1.1.5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.1.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="elabftw 1.1.5 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">elabftw 1.1.5 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="install-on-gnu-linux">
+<span id="install-gnulinux"></span><h1>Install on GNU/Linux<a class="headerlink" href="#install-on-gnu-linux" title="Permalink to this headline">¶</a></h1>
+<img alt="_images/gnulinux.png" src="_images/gnulinux.png" />
+<img alt="_images/beastie.png" src="_images/beastie.png" />
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Please refer to your distribution&#8217;s documentation to install :</p>
+<ul class="simple">
+<li>a webserver (like nginx, Apache, lighttpd or cherokee)</li>
+<li>php version &gt; 5.4 with the following extensions : gettext, gd, openssl, hash, curl</li>
+<li>mysql version &gt; 5.5</li>
+<li>git</li>
+</ul>
+<p>If you don&#8217;t know how to do that, have a look at <a class="reference external" href="https://github.com/elabftw/drop-elabftw#how-to-use">installing eLabFTW on a cheap server (drop)</a>.</p>
+<p>I wouldn&#8217;t recommend HHVM because Gettext support is not here yet (see <a class="reference external" href="https://github.com/facebook/hhvm/issues/1228">this issue</a>).</p>
+</div>
+<div class="section" id="getting-the-files">
+<h2>Getting the files<a class="headerlink" href="#getting-the-files" title="Permalink to this headline">¶</a></h2>
+<p>The first part is to get the files composing <cite>eLabFTW</cite> on your server.</p>
+<div class="section" id="option-1-using-git">
+<h3>Option 1 : Using git<a class="headerlink" href="#option-1-using-git" title="Permalink to this headline">¶</a></h3>
+<p>Connect to your server with SSH:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ssh user@12.34.56.78
+</pre></div>
+</div>
+<p><cite>cd</cite> to the public directory where you want <cite>eLabFTW</cite> to be installed (can be /var/www, ~/public_html, or any folder you&#8217;d like, as long as the webserver is configured properly, in doubt use /var/www)</p>
+<div class="highlight-python"><div class="highlight"><pre>$ cd /var/www
+# make the directory writable by your user (if it&#39;s not already the case)
+$ sudo chown `whoami`:`whoami` .
+</pre></div>
+</div>
+<p>Note the <cite>.</cite> at the end that means <cite>current folder</cite>.</p>
+<p>Get latest stable version via git:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git clone --depth 1 https://github.com/elabftw/elabftw.git
+</pre></div>
+</div>
+<p>(this will create a folder <cite>elabftw</cite>)
+The <cite>&#8211;depth 1</cite> option is to avoid downloading the whole history.</p>
+<p>If you cannot connect, try exporting your proxy settings in your shell like so:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ export https_proxy=&quot;proxy.example.com:3128&quot;
+</pre></div>
+</div>
+<p>If you still cannot connect, tell git your proxy:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git config --global http.proxy http://proxy.example.com:8080
+</pre></div>
+</div>
+</div>
+<div class="section" id="option-2-download-archive">
+<h3>Option 2 :&nbsp;Download archive<a class="headerlink" href="#option-2-download-archive" title="Permalink to this headline">¶</a></h3>
+<p>Download the latest release from <a class="reference external" href="https://github.com/elabftw/elabftw/releases/latest">this page</a> as a zip archive or a tarball.</p>
+<p>Copy it to your server with FTP or SCP, or directly wget it from the server.</p>
+</div>
+</div>
+<div class="section" id="sql-part">
+<h2>SQL part<a class="headerlink" href="#sql-part" title="Permalink to this headline">¶</a></h2>
+<p>The second part is putting the database in place.</p>
+<div class="section" id="option-1-command-line-way">
+<h3>Option 1 : Command line way<a class="headerlink" href="#option-1-command-line-way" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre># first we connect to mysql
+$ mysql -u root -p
+# we create the database (note the ; at the end !)
+mysql&gt; create database elabftw;
+# we create the user that will connect to the database.
+mysql&gt; grant usage on *.* to elabftw@localhost identified by &#39;YOUR_PASSWORD&#39;;
+# we give all rights to this user on this database
+mysql&gt; grant all privileges on elabftw.* to elabftw@localhost;
+mysql&gt; exit
+</pre></div>
+</div>
+<p>You will be asked for the password you put after <cite>identified by</cite> three lines above.</p>
+</div>
+<div class="section" id="option-2-graphical-way-with-phpmyadmin">
+<h3>Option 2 : Graphical way with phpmyadmin<a class="headerlink" href="#option-2-graphical-way-with-phpmyadmin" title="Permalink to this headline">¶</a></h3>
+<p>You need to install the package <cite>phpmyadmin</cite> if it&#8217;s not already done.</p>
+<p><strong>Note</strong>: it is not recommended to have phpmyadmin installed on a production server (for security reasons).</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo apt-get install phpmyadmin
+</pre></div>
+</div>
+<p>Now you will connect to the phpmyadmin panel from your browser on your computer. Type the IP address of the server followed by /phpmyadmin.</p>
+<p>Example : <a class="reference external" href="https://12.34.56.78/phpmyadmin">https://12.34.56.78/phpmyadmin</a></p>
+<p>Login with the root user on PhpMyAdmin panel (use the password you setup for mysql root user).</p>
+<p>Create a user <cite>elabftw</cite> with all rights on the database <cite>elabftw</cite></p>
+<p>Now click the <cite>Users</cite> tab and click ![add user](<a class="reference external" href="http://i.imgur.com/SJmdg0Z.png">http://i.imgur.com/SJmdg0Z.png</a>).</p>
+<p>Do like this :</p>
+<img alt="_images/phpmyadmin.png" src="_images/phpmyadmin.png" />
+</div>
+</div>
+<div class="section" id="final-step">
+<h2>Final step<a class="headerlink" href="#final-step" title="Permalink to this headline">¶</a></h2>
+<p>Finally, point your browser to the install folder (install/) and read onscreen instructions.</p>
+<p>For example : <a class="reference external" href="https://12.34.56.78/elabftw/install">https://12.34.56.78/elabftw/install</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Install on GNU/Linux</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#getting-the-files">Getting the files</a><ul>
+<li><a class="reference internal" href="#option-1-using-git">Option 1 : Using git</a></li>
+<li><a class="reference internal" href="#option-2-download-archive">Option 2 :&nbsp;Download archive</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sql-part">SQL part</a><ul>
+<li><a class="reference internal" href="#option-1-command-line-way">Option 1 : Command line way</a></li>
+<li><a class="reference internal" href="#option-2-graphical-way-with-phpmyadmin">Option 2 : Graphical way with phpmyadmin</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#final-step">Final step</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/install-gnulinux.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">elabftw 1.1.5 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Nicolas CARPi.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

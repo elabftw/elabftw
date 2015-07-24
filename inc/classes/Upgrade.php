@@ -37,7 +37,7 @@ class Upgrade extends Update
      * Upgrade the install by downloading latest zip, extracting it and copying files.
      *
      */
-    public function upgrade()
+    public function __construct()
     {
         $this->getUpdatesIni();
         $this->getLatestZip();

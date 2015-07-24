@@ -32,7 +32,7 @@ namespace Elabftw\Elabftw;
 
 use \DateTime;
 use \Exception;
-use Update;
+use \Elabftw\Elabftw\Update;
 
 class TrustedTimestamps
 {

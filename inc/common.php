@@ -43,6 +43,10 @@ if (is_readable('config.php')) {
         Or if you just did a git pull, run php update.php");
 }
 
+// check for maintenance mode
+if (file_exists(ELAB_ROOT . 'maintenance')) {
+    die('Maintenance mode is enabled. Check back later.');
+}
 
 // SQL CONNECT
 try {

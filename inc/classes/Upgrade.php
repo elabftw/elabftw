@@ -39,12 +39,38 @@ class Upgrade extends Update
      */
     public function __construct()
     {
+        if (!$this->checkIsWritable()) {
+            throw new Exception('Cannot write to installation directory. Fix permissions to use auto upgrade feature.');
+        }
+        $this->enableMaintenanceMode();
         $this->getUpdatesIni();
         $this->getLatestZip();
         if (!$this->checksumZip()) {
             throw new Exception('Cannot validate zip archive!');
         }
         $this->extractZip();
+        $this->disableMaintenanceMode();
+    }
+
+    /*
+     * Make sure we can actually write to the install directory
+     *
+     */
+    private function checkIsWritable()
+    {
+        return is_writable(ELAB_ROOT);
+    }
+
+    private function enableMaintenanceMode()
+    {
+        file_put_contents(ELAB_ROOT . 'maintenance', '1');
+    }
+
+    private function disableMaintenanceMode()
+    {
+        if (file_exists(ELAB_ROOT . 'maintenance')) {
+            unlink(ELAB_ROOT . 'maintenance');
+        }
     }
 
     /*
@@ -68,6 +94,7 @@ class Upgrade extends Update
 
     /*
      * Extract the archive.
+     * FIXME
      *
      */
     private function extractZip()

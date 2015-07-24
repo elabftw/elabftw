@@ -142,6 +142,12 @@ if (!function_exists('hash')) {
     custom_die();
 }
 
+// mb_string is required by mPDF
+if (!extension_loaded('mbstring')) {
+    $message = "You are missing the mbstring extension for php. Please install php-mbstring package.";
+    display_message('error_nocross', $message);
+    custom_die();
+}
 
 // UPLOADS DIR
 if (is_writable('../uploads') && is_writable('../uploads/tmp')) {

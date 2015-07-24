@@ -27,6 +27,9 @@ namespace Elabftw\Elabftw;
 
 use \Exception;
 use \ZipArchive;
+use \RecursiveDirectoryIterator;
+use \RecursiveIteratorIterator;
+use \FilesystemIterator;
 
 class Update
 {
@@ -42,6 +45,9 @@ class Update
     // ///////////////////////////////
     // UPDATE THIS AFTER RELEASING
     const INSTALLED_VERSION = '1.1.5';
+    // ///////////////////////////////
+    // UPDATE THIS AFTER ADDING A BLOCK TO runUpdateScript()
+    const REQUIRED_SCHEMA = '1';
     // ///////////////////////////////
 
 
@@ -168,18 +174,28 @@ class Update
     }
 
     /*
-     * Return the latest version of elabftw using GitHub API
-     * This function is unused but let's keep it.
+     * This does nothing atm
      *
-     * @return string|bool latest version or false if error
-    private function getLatestVersionFromGitHub()
-    {
-        $url = 'https://api.github.com/repos/elabftw/elabftw/releases/latest';
-        $res = get($url);
-        $latest_arr = json_decode($res, true);
-        return $latest_arr['tag_name'];
-    }
      */
+    public function runUpdateScript()
+    {
+        $msg_arr = array();
+        $msg_arr[] = "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)";
+        $this->cleanTmp();
+        return $msg_arr;
+    }
+
+    private function cleanTmp()
+    {
+        // cleanup files in tmp
+        $dir = ELAB_ROOT . '/uploads/tmp';
+        $di = new \RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS);
+        $ri = new \RecursiveIteratorIterator($di, \RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ($ri as $file) {
+            $file->isDir() ? rmdir($file) : unlink($file);
+        }
+    }
+
     public function upgrade()
     {
         $this->getUpdatesIni();

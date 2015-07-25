@@ -128,19 +128,3 @@ The server software can be any (nginx, apache, cherokee, lighttpd, …). The dev
 
 **Requirements for the client :**
 - Any operating system with any browser (latest version). Internet Explorer is not recommended for obvious reasons.
-
-
-
-.. blah
-
-
-
-
-
-
-
-
-
-
-
-

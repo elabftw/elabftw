@@ -83,15 +83,3 @@ You can use phpmyadmin, create a new database and import your .sql backup, or us
 
 
 Stay safe ;)
-
-
-
-.. blah
-
-
-
-
-
-
-
-

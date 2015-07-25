@@ -11,18 +11,3 @@ If you know Docker already and want to use a dockerized elabftw, please see `thi
 
 
 More infos coming soon.
-
-
-
-
-
-
-
-.. blah
-
-
-
-
-
-
-

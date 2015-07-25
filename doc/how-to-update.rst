@@ -21,15 +21,3 @@ If you installed it from a .zip or .tar.gz archive
 
 
 That's it :)
-
-
-.. blah
-
-
-
-
-
-
-
-
-

@@ -426,17 +426,3 @@ Version 0.1
 
 * Register / Login
 * Show / view / edit / duplicate :: experiments / protocols
-
-
-
-
-.. blah
-
-
-
-
-
-
-
-
-

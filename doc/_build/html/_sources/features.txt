@@ -78,8 +78,3 @@ user experience
 planned features
 ^^^^^^^^^^^^^^^^
 * a lot
-
-
-.. blah
-
-

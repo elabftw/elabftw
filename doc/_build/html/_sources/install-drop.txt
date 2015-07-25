@@ -43,19 +43,3 @@ The following actions will be performed :
 * Read what is displayed at the end.
 
 ENJOY! :D
-
-
-
-
-.. blah
-
-
-
-
-
-
-
-
-
-
-

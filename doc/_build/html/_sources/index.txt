@@ -37,14 +37,3 @@ Welcome to elabftw's documentation!
 
     changelog
     gnu-licence
-
-
-.. blah
-
-
-
-
-
-
-
-

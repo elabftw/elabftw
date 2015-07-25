@@ -70,22 +70,3 @@ Reminders
 * update of SwiftMailer and mPDF is done with `composer update`
 * update of the js components is done with `bower update`
 * after update of tinymce, lang files need to be downloaded again, and the ones without proper name (ca instead of ca_ES) need to be edited (change first line to ca_ES)
-
-
-
-
-.. blah
-
-
-
-
-
-
-
-
-
-
-
-
-
-

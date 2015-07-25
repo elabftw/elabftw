@@ -31,6 +31,7 @@ By default, all experiments can be viewed by other team members. If you wish to 
 2.4 Status
 
 This useful feature lets you set the 'status' of an experiment. By default you can have :
+
 - Running (selected upon creation)
 - Need to be redone
 - Success
@@ -110,6 +111,7 @@ In view mode, click the link icon to show all experiments linked with this item.
 5. Admin Panel
 
 The admin panel allows the admin of a team to edit :
+
 - status
 - type of items
 - template for experiment (what is in the body upon experiment creation)
@@ -122,6 +124,7 @@ From there, you can also import a .csv (save an Excel file as .csv) into the dat
 6. Sysconfig
 
 The sysconfig page is only available to the sysadmin user(s). From there, you can configure :
+
 - the teams (add or edit)
 - the default language
 - activate or not the debug mode

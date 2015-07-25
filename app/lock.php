@@ -45,7 +45,6 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
 
 switch ($_GET['type']) {
 
-    // Locking experiment
     case 'experiments':
         // Is the user in a group with can_lock set to 1 ?
         // 1. get what is the group of the user
@@ -133,7 +132,6 @@ switch ($_GET['type']) {
         }
         break;
 
-    // Locking item
     case 'items':
 
         $sql = "UPDATE items SET locked = :action WHERE id = :id";

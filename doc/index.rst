@@ -14,11 +14,14 @@ Welcome to elabftw's documentation!
     install-docker
     postinstall
 
+.. toctree::
     :caption: Using
+
     faq
     features
     manual
 
+.. toctree::
     :caption: Community
     contributing
     thanks

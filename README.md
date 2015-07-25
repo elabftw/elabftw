@@ -1,6 +1,6 @@
 ![elabftw logo](http://i.imgur.com/hq6SAZf.png)
 
-###[Official website](http://www.elabftw.net) | [Live demo](https://demo.elabftw.net) | [Wiki](https://github.com/elabftw/elabftw/wiki)
+###[Official website](http://www.elabftw.net) | [Live demo](https://demo.elabftw.net) | [Documentation](https://elabftw.rtfd.org)
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/quality-score.png?b=next)](https://scrutinizer-ci.com/g/elabftw/elabftw/?branch=next)
 [![Build Status](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/build.png?b=next)](https://scrutinizer-ci.com/g/elabftw/elabftw/build-status/next)
@@ -28,20 +28,9 @@ Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM 
 * Create a MySQL database and a MySQL user for elabftw
 * Go to https://your-address.org/elabftw/install
 
-## Install on your computer (Mac OS X only)
-![Mac OS X](https://i.imgur.com/t62AQAi.png)
-[Install locally on Mac](https://github.com/elabftw/elabftw/wiki/installmac)
+## I am not an advanced user
+[Read the documentation](https://elabftw.rtfd.org)
 
-If you want to install it locally on Windows, have a look at [Boot2Docker](http://boot2docker.io/) and the [docker repo](https://github.com/elabftw/docker-elabftw).
-## Install on a digitalocean's drop (easiest/quickest method)
-With this method, you can have a running elabftw server in no time. You need to purchase a `drop` from [DigitalOcean.com](https://www.digitalocean.com/pricing/). It starts at 5$/month. This setup is enough to run eLabFTW for a team or more. And it's very easy to install, all is automatic! |
-
--------------------------------------------------
-
-# Post install things to do
-You should read [this page](https://github.com/elabftw/elabftw/wiki/finalizing) to finish your install (configure email, backup, *etc*…).
-
--------------------------------------------------
 
 Please report bugs on [github](https://github.com/elabftw/elabftw/issues).
 

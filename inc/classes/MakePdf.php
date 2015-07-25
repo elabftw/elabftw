@@ -292,19 +292,14 @@ class MakePdf
         $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
 
         if ($this->type === 'experiments') {
-            if (preg_match('/make_pdf/', $url)) {
-                $url = str_replace('make_pdf.php', 'experiments.php', $url);
-            } else { // call from make_zip or timestamp.php
-                $url = str_replace(array('make_zip.php', 'app/timestamp.php'), 'experiments.php', $url);
-            }
-        } else { //item
-            if (preg_match('/make_pdf/', $url)) {
-                $url = str_replace('make_pdf.php', 'database.php', $url);
-            } else { // call from make_zip
-                $url = str_replace('make_zip.php', 'database.php', $url);
-            }
+            $target = $this->type . '.php';
+        } else {
+            $target = 'database.php';
         }
+
+        $url = str_replace(array('make_pdf.php', 'make_zip.php', 'app/timestamp.php'), $target, $url);
         $full_url = $url . "?mode=view&id=" . $this->id;
+
         $this->content .= "<p class='elabid'>link : <a href='" . $full_url . "'>" . $full_url . "</a></p>";
     }
 

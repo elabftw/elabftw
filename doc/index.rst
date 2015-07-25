@@ -11,6 +11,7 @@ Welcome to elabftw's documentation!
     install-gnulinux
     install-docker
     install-drop
+    install-mac
     postinstall
     backup
     how-to-update
@@ -39,3 +40,11 @@ Welcome to elabftw's documentation!
 
 
 .. blah
+
+
+
+
+
+
+
+

@@ -20,3 +20,7 @@ If you installed it from a .zip or .tar.gz archive
 3. Visit `/update.php` in your browser, logged in as a sysadmin.
 
 
+That's it :)
+
+
+

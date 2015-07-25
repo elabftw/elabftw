@@ -120,3 +120,7 @@ Final step
 Finally, point your browser to the install folder (install/) and read onscreen instructions.
 
 For example : https://12.34.56.78/elabftw/install
+
+
+
+

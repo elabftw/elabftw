@@ -61,7 +61,7 @@ And reload the webserver.
 Setting up backup
 -----------------
 
-See `the backup page <https://github.com/NicolasCARPi/elabftw/wiki/backup>`_.
+See the :ref:`backup` page.
 
 Allowing more memory to php
 ---------------------------
@@ -81,4 +81,8 @@ Updating
 
 It is important to keep your install up to date with the latest bug fixes and new features.
 
-See instructions on updating eLabFTW on :ref:`How-to-update`.
+See instructions on updating eLabFTW on :ref:`how-to-update`.
+
+
+
+

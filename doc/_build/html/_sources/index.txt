@@ -11,6 +11,7 @@ Welcome to elabftw's documentation!
     install-gnulinux
     install-docker
     postinstall
+    backup
     how-to-update
 
 .. toctree::
@@ -26,4 +27,7 @@ Welcome to elabftw's documentation!
     contributing
     thanks
     gnu-licence
+
+ariuteaurtie
+============
 

@@ -137,3 +137,6 @@ To configure emails, I would recommend to setup an account with Mandrill.com, th
 You can export experiments in .zip. If the experiment was timestamped you will find in the archive the timestamped pdf and the corresponding .asn1 token.
 You can export and import items from the database (it can be several items).
 Press 't' to have a TODO list.
+
+
+

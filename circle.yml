@@ -4,4 +4,4 @@ machine:
 
 test:
     override:
-        - php vendor/codeception/codeception/codecept run
+        - php vendor/codeception/codeception/codecept run --skip acceptance

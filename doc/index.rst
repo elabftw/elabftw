@@ -13,6 +13,7 @@ Welcome to elabftw's documentation!
     install-gnulinux
     install-docker
     postinstall
+    faq
 
 .. toctree::
     :maxdepth: 2

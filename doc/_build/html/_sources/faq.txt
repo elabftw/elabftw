@@ -118,13 +118,14 @@ What are the technical specifications ?
 eLabFTW is a server software that should be installed on a server.
 
 **Requirements for the server :**
-- PHP version > 5.4
-- MySQL version > 5
-- HTTPS enabled
-- PHP extensions openssl, gd, hash and zip activated
+
+* PHP version > 5.5
+* MySQL version > 5.5
+* HTTPS enabled
+* PHP extensions openssl, gd, hash and zip activated
 
 The operating system of the server can be any, but GNU/Linux or FreeBSD is recommended for obvious reasons.
-The server software can be any (nginx, apache, cherokee, lighttpd, …). The developpement is made with Apache.
+The server software can be any (nginx, apache, cherokee, lighttpd, …).
 
 **Requirements for the client :**
 - Any operating system with any browser (latest version). Internet Explorer is not recommended for obvious reasons.

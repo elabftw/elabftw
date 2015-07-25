@@ -16,7 +16,7 @@ It is accessed _via_ the browser by the users. Several research teams can be hos
 
 - Want an electronic lab notebook that lets you timestamp legally your experiments ?
 
-- Then you are at the right place !
+Then you are at the right place !
 
 **eLabFTW** is designed to be installed on a server, and people from the team would just log into it from their browser.
 Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM and an old CPU, it's more than enough. Just install a recent GNU/Linux distribution on it and plug it to the intranet.
@@ -28,10 +28,5 @@ Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM 
 * Create a MySQL database and a MySQL user for elabftw
 * Go to https://your-address.org/elabftw/install
 
-## I am not an advanced user
-[Read the documentation](https://elabftw.rtfd.org)
-
-
-Please report bugs on [github](https://github.com/elabftw/elabftw/issues).
-
-~Thank you for using [eLabFTW](http://www.elabftw.net) :)
+## The legendary documentation (for everyone else)
+[Read the documentation, it's very complete](https://elabftw.rtfd.org).

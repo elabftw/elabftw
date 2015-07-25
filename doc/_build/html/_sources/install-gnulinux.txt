@@ -120,13 +120,6 @@ Finally, point your browser to the install folder (install/) and read onscreen i
 
 For example: https://12.34.56.78/elabftw/install
 
+Please report bugs on `github <https://github.com/elabftw/elabftw/issues>`_.
 
-.. blah
-
-
-
-
-
-
-
-
+~Thank you for using `eLabFTW <http://www.elabftw.net>`_ :)

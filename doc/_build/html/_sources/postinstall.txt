@@ -1,7 +1,7 @@
 .. _postinstall:
 
-Post install things to do
-=========================
+Post install
+============
 
 Setting up email
 ----------------
@@ -26,20 +26,7 @@ By default, it is setup to use `pki.dfn.de <https://www.pki.dfn.de/zeitstempeldi
 
 So if you need a stronger certification, you should go with a commercial solution providing an :rfc:`3161` way of timestamping documents. We recommend Universign.eu, as they are one of the most serious and recognized :abbr:`TSA (TimeStampingAuthority)` out there, but feel free to use the one you prefer.
 
-Ok, so how do I setup timestamping if I don't want to use the default setup ?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-1. Create an account on the :abbr:`TSA (TimeStampingAuthority)` website (for Universign it's `this page <https://www.universign.eu/en/signup/>`_)
-2. Go to the sysadmin or admin page of elabftw (sysadmin if you want to use one account for all the teams, or admin panel if you want to set it up just for your team)
-3. The URL is : https://ws.universign.eu/tsa
-4. The chain of certificate is : vendor/universign-tsa-root.pem (eLabFTW already provides the universign certificate in the right format for ease of use)
-
-.. warning:: As of |today| this chain of certificate will NOT work. I tried contacting Universign but got no answers!
-
-5. Login and passwords are the ones you provided on step 1.
-
-Remember: no data is sent to the TSA, only the hash of the data is sent, so no information can leak!
-
+Remember: no data is sent to the `TSA (TimeStampingAuthority)`, only the hash of the data is sent, so no information can leak!
 
 Using other languages
 ---------------------
@@ -64,7 +51,7 @@ And reload the webserver.
 Setting up backup
 -----------------
 
-See the :ref:`backup` page.
+See the :ref:`backup <backup>` page.
 
 Allowing more memory to php
 ---------------------------
@@ -87,14 +74,3 @@ It is important to keep your install up to date with the latest bug fixes and ne
 See instructions on updating eLabFTW on :ref:`how-to-update`.
 
 Watch the repository to receive an email on new updates.
-
-
-
-.. blah
-
-
-
-
-
-
-

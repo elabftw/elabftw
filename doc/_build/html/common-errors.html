@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>How to update &mdash; elabftw 1.1.5 documentation</title>
+  <title>Common errors &mdash; elabftw 1.1.5 documentation</title>
   
 
   
@@ -31,8 +31,8 @@
 
   
     <link rel="top" title="elabftw 1.1.5 documentation" href="index.html"/>
-        <link rel="next" title="Frequently asked questions" href="faq.html"/>
-        <link rel="prev" title="How to backup" href="backup.html"/> 
+        <link rel="next" title="Post install" href="postinstall.html"/>
+        <link rel="prev" title="Install on Mac OS X" href="install-mac.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -96,13 +96,13 @@
 <li class="toctree-l2"><a class="reference internal" href="install-mac.html#final-step">Final step</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="common-errors.html">Common errors</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="common-errors.html#add-the-secret-key">Add the secret key</a></li>
-<li class="toctree-l2"><a class="reference internal" href="common-errors.html#failed-creating-uploads-directory">Failed creating <em>uploads/</em> directory</a></li>
-<li class="toctree-l2"><a class="reference internal" href="common-errors.html#extension-is-not-loaded">Extension is not loaded</a></li>
-<li class="toctree-l2"><a class="reference internal" href="common-errors.html#i-can-t-upload-a-file-bigger-than-2-mb">I can&#8217;t upload a file bigger than 2 Mb</a></li>
-<li class="toctree-l2"><a class="reference internal" href="common-errors.html#i-can-t-export-my-numerous-experiments-in-zip-i-get-an-error-500">I can&#8217;t export my (numerous) experiments in zip, I get an error 500</a></li>
-<li class="toctree-l2"><a class="reference internal" href="common-errors.html#no-thumbnails-on-the-uploaded-images">No thumbnails on the uploaded images</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Common errors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#add-the-secret-key">Add the secret key</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#failed-creating-uploads-directory">Failed creating <em>uploads/</em> directory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#extension-is-not-loaded">Extension is not loaded</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i-can-t-upload-a-file-bigger-than-2-mb">I can&#8217;t upload a file bigger than 2 Mb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i-can-t-export-my-numerous-experiments-in-zip-i-get-an-error-500">I can&#8217;t export my (numerous) experiments in zip, I get an error 500</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#no-thumbnails-on-the-uploaded-images">No thumbnails on the uploaded images</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="postinstall.html">Post install</a><ul>
@@ -122,9 +122,9 @@
 <li class="toctree-l2"><a class="reference internal" href="backup.html#how-to-restore-a-backup">How to restore a backup</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">How to update</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#if-you-installed-it-with-git">If you installed it with git</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#if-you-installed-it-from-a-zip-or-tar-gz-archive">If you installed it from a .zip or .tar.gz archive</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to-update.html">How to update</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="how-to-update.html#if-you-installed-it-with-git">If you installed it with git</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how-to-update.html#if-you-installed-it-from-a-zip-or-tar-gz-archive">If you installed it from a .zip or .tar.gz archive</a></li>
 </ul>
 </li>
 </ul>
@@ -243,11 +243,11 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>How to update</li>
+    <li>Common errors</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/how-to-update.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/common-errors.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -256,24 +256,84 @@
 </div>
           <div role="main" class="document">
             
-  <div class="section" id="how-to-update">
-<span id="id1"></span><h1>How to update<a class="headerlink" href="#how-to-update" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="if-you-installed-it-with-git">
-<h2>If you installed it with git<a class="headerlink" href="#if-you-installed-it-with-git" title="Permalink to this headline">¶</a></h2>
-<p>To update, cd in the <cite>elabftw</cite> folder and do:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ git pull
+  <div class="section" id="common-errors">
+<span id="id1"></span><h1>Common errors<a class="headerlink" href="#common-errors" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="add-the-secret-key">
+<h2>Add the secret key<a class="headerlink" href="#add-the-secret-key" title="Permalink to this headline">¶</a></h2>
+<p>Starting from version 1.1.2 there is a secret key present in the config file. If you have restrictive permissions on it, the webserver won&#8217;t be able to add it when you run the update.php script. To fix this issue, the simplest way is to:</p>
+<div class="highlight-python"><div class="highlight"><pre>chmod a+w config.php
 </pre></div>
 </div>
-<p>Once the new files are here, you need to update the database : visit <cite>/update.php</cite> in your browser, logged in as a sysadmin.</p>
+<p>Then run the /update.php script again. And bring back good permissions afterwards:</p>
+<div class="highlight-python"><div class="highlight"><pre>chmod 400 config.php
+</pre></div>
 </div>
-<div class="section" id="if-you-installed-it-from-a-zip-or-tar-gz-archive">
-<h2>If you installed it from a .zip or .tar.gz archive<a class="headerlink" href="#if-you-installed-it-from-a-zip-or-tar-gz-archive" title="Permalink to this headline">¶</a></h2>
-<ol class="arabic simple">
-<li>Get the <a class="reference external" href="https://github.com/elabftw/elabftw/releases/latest">latest archive</a></li>
-<li>Unpack it on your server, overwriting all the files.</li>
-<li>Visit <cite>/update.php</cite> in your browser, logged in as a sysadmin.</li>
+<p>You might need to use <code class="docutils literal"><span class="pre">sudo</span></code> to achieve these commands.</p>
+</div>
+<div class="section" id="failed-creating-uploads-directory">
+<h2>Failed creating <em>uploads/</em> directory<a class="headerlink" href="#failed-creating-uploads-directory" title="Permalink to this headline">¶</a></h2>
+<p>If eLabFTW couldn&#8217;t create an <em>uploads/</em> folder, that&#8217;s because the httpd user (www-data on Debian/Ubuntu) didn&#8217;t have the necessary rights. To fix it you need to:</p>
+<ol class="arabic">
+<li><p class="first">Find what is the user/group of the web server. There is a good chance that it is www-data. But it might also be something else. To check it you can try something like:</p>
+<div class="highlight-python"><div class="highlight"><pre>ps -ef | grep nginx
+OR
+ps -ef | grep apache
+OR
+ps -ef | grep httpd
+</pre></div>
+</div>
+</li>
 </ol>
-<p>That&#8217;s it :)</p>
+<p>What you want will be in the first column. Possible values are infinite, but it is generally www-data, http, httpdusr, or things like that.</p>
+<p>Now that you know the user/group of the webserver, you can do that (example is shown with www-data, but adapt to your need):</p>
+<div class="highlight-python"><div class="highlight"><pre>cd /path/to/elabftw
+mkdir -p uploads/{export,tmp}
+chown -R www-data:www-data uploads
+chmod -R 755 .
+chmod 644 config.php
+</pre></div>
+</div>
+<p>The last line is to keep your config file secure. It might fail because the file is not there yet. Finish the install and do it after then.</p>
+<p>If you have problems updating (git pull is failing because of permissions), read more about GNU/Linux permissions and groups. For instance, you can add your user to the www-data group:</p>
+<div class="highlight-python"><div class="highlight"><pre>usermod -a -G www-data `whoami`
+</pre></div>
+</div>
+</div>
+<div class="section" id="extension-is-not-loaded">
+<h2>Extension is not loaded<a class="headerlink" href="#extension-is-not-loaded" title="Permalink to this headline">¶</a></h2>
+<p>Install everything needed by elabftw:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo apt-get install php5-openssl php5-gd php5-gettext php5-curl
+</pre></div>
+</div>
+<p>Now reload the Apache server:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo service apache2 reload
+</pre></div>
+</div>
+</div>
+<div class="section" id="i-can-t-upload-a-file-bigger-than-2-mb">
+<h2>I can&#8217;t upload a file bigger than 2 Mb<a class="headerlink" href="#i-can-t-upload-a-file-bigger-than-2-mb" title="Permalink to this headline">¶</a></h2>
+<p>Edit the file php.ini and change the value of upload_max_filesize to something bigger, example:</p>
+<div class="highlight-python"><div class="highlight"><pre>upload_max_filesize = 128M
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Don&#8217;t forget to remove the <cite>;</cite> at the beginning of the line !</p>
+</div>
+</div>
+<div class="section" id="i-can-t-export-my-numerous-experiments-in-zip-i-get-an-error-500">
+<h2>I can&#8217;t export my (numerous) experiments in zip, I get an error 500<a class="headerlink" href="#i-can-t-export-my-numerous-experiments-in-zip-i-get-an-error-500" title="Permalink to this headline">¶</a></h2>
+<p>This is because the script might take too long to execute and php is cutting it.
+To solve this, edit the file <cite>/etc/php5/apache2/php.ini</cite> and increase the value of max_execution_time and max_input_time.
+Then restart your server:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo service apache2 restart
+</pre></div>
+</div>
+</div>
+<div class="section" id="no-thumbnails-on-the-uploaded-images">
+<h2>No thumbnails on the uploaded images<a class="headerlink" href="#no-thumbnails-on-the-uploaded-images" title="Permalink to this headline">¶</a></h2>
+<p>That&#8217;s because the gd extension of php isn&#8217;t activated (deactivated by default on ArchLinux server)
+You need to uncomment ;extension=gd.so in /etc/php.ini and install the package php-gd.</p>
 </div>
 </div>
 
@@ -283,10 +343,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="faq.html" class="btn btn-neutral float-right" title="Frequently asked questions" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="postinstall.html" class="btn btn-neutral float-right" title="Post install" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="backup.html" class="btn btn-neutral" title="How to backup" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="install-mac.html" class="btn btn-neutral" title="Install on Mac OS X" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

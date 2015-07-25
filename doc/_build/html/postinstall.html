@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Post install things to do &mdash; elabftw 1.1.5 documentation</title>
+  <title>Post install &mdash; elabftw 1.1.5 documentation</title>
   
 
   
@@ -31,8 +31,8 @@
 
   
     <link rel="top" title="elabftw 1.1.5 documentation" href="index.html"/>
-        <link rel="next" title="Backup" href="backup.html"/>
-        <link rel="prev" title="Install on Mac OS X" href="install-mac.html"/> 
+        <link rel="next" title="How to backup" href="backup.html"/>
+        <link rel="prev" title="Common errors" href="common-errors.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -96,13 +96,19 @@
 <li class="toctree-l2"><a class="reference internal" href="install-mac.html#final-step">Final step</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Post install things to do</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#setting-up-email">Setting up email</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#setting-up-the-teams">Setting up the teams</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#setting-up-timestamping">Setting up timestamping</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#ok-so-how-do-i-setup-timestamping-if-i-don-t-want-to-use-the-default-setup">Ok, so how do I setup timestamping if I don&#8217;t want to use the default setup ?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="common-errors.html">Common errors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="common-errors.html#add-the-secret-key">Add the secret key</a></li>
+<li class="toctree-l2"><a class="reference internal" href="common-errors.html#failed-creating-uploads-directory">Failed creating <em>uploads/</em> directory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="common-errors.html#extension-is-not-loaded">Extension is not loaded</a></li>
+<li class="toctree-l2"><a class="reference internal" href="common-errors.html#i-can-t-upload-a-file-bigger-than-2-mb">I can&#8217;t upload a file bigger than 2 Mb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="common-errors.html#i-can-t-export-my-numerous-experiments-in-zip-i-get-an-error-500">I can&#8217;t export my (numerous) experiments in zip, I get an error 500</a></li>
+<li class="toctree-l2"><a class="reference internal" href="common-errors.html#no-thumbnails-on-the-uploaded-images">No thumbnails on the uploaded images</a></li>
 </ul>
 </li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Post install</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#setting-up-email">Setting up email</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setting-up-the-teams">Setting up the teams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setting-up-timestamping">Setting up timestamping</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#using-other-languages">Using other languages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#setting-up-backup">Setting up backup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#allowing-more-memory-to-php">Allowing more memory to php</a></li>
@@ -110,7 +116,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#updating">Updating</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="backup.html">Backup</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="backup.html">How to backup</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="backup.html#backup-sql-database">Backup SQL database</a></li>
 <li class="toctree-l2"><a class="reference internal" href="backup.html#making-it-automatic-using-cron">Making it automatic using cron</a></li>
 <li class="toctree-l2"><a class="reference internal" href="backup.html#how-to-restore-a-backup">How to restore a backup</a></li>
@@ -122,7 +128,7 @@
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Using</span></p>
+<p class="caption"><span class="caption-text">Documentation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="faq.html#is-it-totally-free">Is it totally free ?</a></li>
@@ -140,19 +146,16 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="features.html">Features</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="features.html#general">general</a></li>
-<li class="toctree-l2"><a class="reference internal" href="features.html#experiments">experiments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="features.html#database">database</a></li>
-<li class="toctree-l2"><a class="reference internal" href="features.html#security">security</a></li>
-<li class="toctree-l2"><a class="reference internal" href="features.html#intellectual-property">intellectual property</a></li>
-<li class="toctree-l2"><a class="reference internal" href="features.html#user-experience">user experience</a></li>
-<li class="toctree-l2"><a class="reference internal" href="features.html#planned-features">planned features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#general">General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#experiments">Experiments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#database">Database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#security">Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#intellectual-property">Intellectual property</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#user-experience">User experience</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#planned-features">Planned features</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="manual.html">Manual</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Community</span></p>
-<ul>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#what-can-you-do-to-help-this-project">What can you do to help this project ?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#translating">Translating</a></li>
@@ -160,10 +163,10 @@
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#reminders">Reminders</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="thanks.html">Thanks</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Misc</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="thanks.html">Thanks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#version-1-1-5">Version 1.1.5</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#version-1-1-4-p3">Version 1.1.4-p3</a></li>
@@ -240,7 +243,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Post install things to do</li>
+    <li>Post install</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -253,8 +256,8 @@
 </div>
           <div role="main" class="document">
             
-  <div class="section" id="post-install-things-to-do">
-<span id="postinstall"></span><h1>Post install things to do<a class="headerlink" href="#post-install-things-to-do" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="post-install">
+<span id="postinstall"></span><h1>Post install<a class="headerlink" href="#post-install" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="setting-up-email">
 <h2>Setting up email<a class="headerlink" href="#setting-up-email" title="Permalink to this headline">¶</a></h2>
 <p>By default, eLabFTW will try to use the local MTA aka Sendmail. However, it is recommended to use an authenticated SMTP account to avoid the emails going to the spam folders of recipients. That is, unless your MTA is perfectly configured (with DKIM and SPF).</p>
@@ -270,23 +273,7 @@
 <p>eLabFTW provides an easy way to do <a class="reference external" href="https://en.wikipedia.org/wiki/Trusted_timestamping">Trusted Timestamping</a> for your experiments, so you can have strong legal value for your lab notebook.</p>
 <p>By default, it is setup to use <a class="reference external" href="https://www.pki.dfn.de/zeitstempeldienst/">pki.dfn.de</a> as <abbr title="TimeStampingAuthority">TSA</abbr>. It is free for researchers. The only problem, is that they don&#8217;t have ETSI certification for this service (although their PKI infrastructure is certified ETSI TS 102 042).</p>
 <p>So if you need a stronger certification, you should go with a commercial solution providing an <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3161.html"><strong>RFC 3161</strong></a> way of timestamping documents. We recommend Universign.eu, as they are one of the most serious and recognized <abbr title="TimeStampingAuthority">TSA</abbr> out there, but feel free to use the one you prefer.</p>
-<div class="section" id="ok-so-how-do-i-setup-timestamping-if-i-don-t-want-to-use-the-default-setup">
-<h3>Ok, so how do I setup timestamping if I don&#8217;t want to use the default setup ?<a class="headerlink" href="#ok-so-how-do-i-setup-timestamping-if-i-don-t-want-to-use-the-default-setup" title="Permalink to this headline">¶</a></h3>
-<ol class="arabic simple">
-<li>Create an account on the <abbr title="TimeStampingAuthority">TSA</abbr> website (for Universign it&#8217;s <a class="reference external" href="https://www.universign.eu/en/signup/">this page</a>)</li>
-<li>Go to the sysadmin or admin page of elabftw (sysadmin if you want to use one account for all the teams, or admin panel if you want to set it up just for your team)</li>
-<li>The URL is : <a class="reference external" href="https://ws.universign.eu/tsa">https://ws.universign.eu/tsa</a></li>
-<li>The chain of certificate is : vendor/universign-tsa-root.pem (eLabFTW already provides the universign certificate in the right format for ease of use)</li>
-</ol>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">As of July 25, 2015 this chain of certificate will NOT work. I tried contacting Universign but got no answers!</p>
-</div>
-<ol class="arabic simple" start="5">
-<li>Login and passwords are the ones you provided on step 1.</li>
-</ol>
-<p>Remember: no data is sent to the TSA, only the hash of the data is sent, so no information can leak!</p>
-</div>
+<p>Remember: no data is sent to the <cite>TSA (TimeStampingAuthority)</cite>, only the hash of the data is sent, so no information can leak!</p>
 </div>
 <div class="section" id="using-other-languages">
 <h2>Using other languages<a class="headerlink" href="#using-other-languages" title="Permalink to this headline">¶</a></h2>
@@ -309,7 +296,7 @@ Then do:</p>
 </div>
 <div class="section" id="setting-up-backup">
 <h2>Setting up backup<a class="headerlink" href="#setting-up-backup" title="Permalink to this headline">¶</a></h2>
-<p>See the <a class="reference internal" href="backup.html#backup"><span>Backup</span></a> page.</p>
+<p>See the <a class="reference internal" href="backup.html#backup"><span>backup</span></a> page.</p>
 </div>
 <div class="section" id="allowing-more-memory-to-php">
 <h2>Allowing more memory to php<a class="headerlink" href="#allowing-more-memory-to-php" title="Permalink to this headline">¶</a></h2>
@@ -335,10 +322,10 @@ Now that you have located the file and opened it in a text editor, search for <c
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="backup.html" class="btn btn-neutral float-right" title="Backup" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="backup.html" class="btn btn-neutral float-right" title="How to backup" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="install-mac.html" class="btn btn-neutral" title="Install on Mac OS X" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="common-errors.html" class="btn btn-neutral" title="Common errors" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -17,8 +17,8 @@ The people that helped with internationalization:
 
 eLabFTW uses open source code from others. A big thanks to them for making their code available !
 
-* `jQuery <http://jquery.com>`_
-* `jQuery UI <http://jquerui.com>`_
+* `jQuery <https://jquery.com>`_
+* `jQuery UI <https://jqueryui.com>`_
 * `Jeditable <http://www.appelsiini.net/projects/jeditable>`_
 * `Star Rating <http://www.fyneworks.com/jquery/star-rating/>`_
 * `Complexify <http://danpalmer.me/jquery-complexify>`_
@@ -27,7 +27,7 @@ eLabFTW uses open source code from others. A big thanks to them for making their
 * `TinyMCE <http://www.tinymce.com/>`_
 * `Cornify <http://www.cornify.com/>`_
 * `Google Chart Tools <https://developers.google.com/chart/>`_
-* `mPDF <http://mpdf.bpm1.com/>`_
+* `mPDF <http://www.mpdf1.com/mpdf/index.php>`_
 * `Swiftmailer <http://swiftmailer.org>`_
 * `Raphael <http://raphaeljs.com/>`_
 * `Colorwheel <http://jweir.github.com/colorwheel/>`_
@@ -40,25 +40,4 @@ Other resources
 
 * `Icons <http://icons8.com>`_
 * `LeDjamRadio <http://ledjamradio.com>`_ for non stop music during the coding sessions
-* `Vim <http://vim.org>`_
-
-
-
-
-.. blah
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+* `Vim <http://www.vim.org>`_

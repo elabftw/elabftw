@@ -3,7 +3,7 @@
 Features
 --------
 
-general
+General
 ^^^^^^^
 * free (as in speech)
 * free (as in beer)
@@ -13,7 +13,7 @@ general
 * quick search + advanced search
 * git deployement
 
-experiments
+Experiments
 ^^^^^^^^^^^
 * custom status
 * visibility setting
@@ -33,7 +33,7 @@ experiments
 * link with database items
 * molecule drawer (optional)
 
-database
+Database
 ^^^^^^^^
 * import from spreadsheet files
 * export/import zip archives
@@ -44,7 +44,7 @@ database
 * see all experiments linked with this item
 * molecule drawer (optional)
 
-security
+Security
 ^^^^^^^^
 * HTTPS
 * formkeys
@@ -54,7 +54,7 @@ security
 * secure password reset mechanism
 * option for new account admin validation
 
-intellectual property
+Intellectual property
 ^^^^^^^^^^^^^^^^^^^^^
 * timestamping of experiments (pdf export)
 * :rfc:`3161` compliant Trusted Timestamping
@@ -62,7 +62,7 @@ intellectual property
 * revisions system to see history
 * attached files are md5summed and thus timestamped with the experiment
 
-user experience
+User experience
 ^^^^^^^^^^^^^^^
 * lovely design (by Manon Potier)
 * internationalization (several languages available)
@@ -75,6 +75,6 @@ user experience
 * tagcloud
 * TODOlist
 
-planned features
+Planned features
 ^^^^^^^^^^^^^^^^
 * a lot

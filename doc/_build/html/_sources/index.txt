@@ -5,35 +5,28 @@ Welcome to elabftw's documentation!
 ===================================
 
 .. toctree::
-    :maxdepth: 2
     :caption: Installing
 
     install-gnulinux
     install-docker
     install-drop
     install-mac
+    common-errors
     postinstall
     backup
     how-to-update
 
 .. toctree::
-    :maxdepth: 2
-    :caption: Using
+    :caption: Documentation
 
     faq
     features
     manual
-
-.. toctree::
-    :maxdepth: 2
-    :caption: Community
-
     contributing
-    thanks
 
 .. toctree::
-    :maxdepth: 0
     :caption: Misc
 
+    thanks
     changelog
     gnu-licence

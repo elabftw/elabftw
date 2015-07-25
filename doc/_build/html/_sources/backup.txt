@@ -1,7 +1,7 @@
 .. _backup:
 
-Backup
-======
+How to backup
+=============
 
 This page shows you how to backup an existing elabftw installation.
 

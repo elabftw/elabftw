@@ -118,16 +118,14 @@ if (file_exists('../config.php')) {
 if (!using_ssl()) {
     // get the url to display a link to click (without the port)
     $url = 'https://' . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'];
-    $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server
-        (<a href='https://github.com/elabftw/elabftw/wiki/Troubleshooting#wiki-switch-to-https'
-        >see documentation</a>). Or click this link : <a href='$url'>$url</a>";
+    $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or click this link : <a href='$url'>$url</a>";
     display_message('error_nocross', $message);
     custom_die();
 }
 
 // CHECK PHP version
-if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.4', '<')) {
-    $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.4";
+if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.5', '<')) {
+    $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.5";
     display_message('error_nocross', $message);
     custom_die();
 } else {
@@ -164,7 +162,7 @@ if (is_writable('../uploads') && is_writable('../uploads/tmp')) {
     } else { // failed at creating the folder
         $message = "Faild creating <em>uploads/</em> directory. 
             You need to do it manually. 
-            <a href='https://github.com/elabftw/elabftw/wiki/Troubleshooting#failed-creating-uploads-directory-'>Click here to discover how.</a>";
+            <a href='../doc/_build/html/common-errors.html#failed-creating-uploads-directory'>Click here to discover how.</a>";
         display_message('error_nocross', $message);
         custom_die();
     }
@@ -176,7 +174,7 @@ if (extension_loaded("openssl")) {
     display_message('info_nocross', $message);
 } else {
     $message = "The <em>openssl</em> extension is <strong>NOT</strong> loaded.
-            <a href='https://github.com/elabftw/elabftw/wiki/Troubleshooting#the-openssl-extension-is-not-loaded'>Click here to read how to fix this.</a>";
+            <a href='../doc/_build/html/common-errors.html#extension-is-not-loaded'>Click here to read how to fix this.</a>";
     display_message('error_nocross', $message);
     custom_die();
 }
@@ -187,7 +185,7 @@ if (extension_loaded("gd")) {
     display_message('info_nocross', $message);
 } else {
     $message = "The <em>gd</em> extension is <strong>NOT</strong> loaded.
-            <a href='https://github.com/elabftw/elabftw/wiki/Troubleshooting#the-gd-extension-is-not-loaded'>Click here to read how to fix this.</a>";
+            <a href='../doc/_build/html/common-errors.html#extension-is-not-loaded'>Click here to read how to fix this.</a>";
     display_message('error_nocross', $message);
     custom_die();
 }
@@ -198,7 +196,7 @@ if (extension_loaded("gettext")) {
     display_message('info_nocross', $message);
 } else {
     $message = "The <em>gettext</em> extension is <strong>NOT</strong> loaded.
-            <a href='https://github.com/elabftw/elabftw/wiki/Troubleshooting#the-gd-extension-is-not-loaded'>Click here to read how to fix this.</a>";
+            <a href='../doc/_build/html/common-errors.html#extension-is-not-loaded'>Click here to read how to fix this.</a>";
     display_message('error_nocross', $message);
     custom_die();
 }
@@ -209,7 +207,7 @@ if (extension_loaded("curl")) {
     display_message('info_nocross', $message);
 } else {
     $message = "The <em>curl</em> extension is <strong>NOT</strong> loaded.
-            <a href='https://github.com/elabftw/elabftw/wiki/Troubleshooting#the-gd-extension-is-not-loaded'>Click here to read how to fix this.</a>";
+            <a href='../doc/_build/html/common-errors.html#extension-is-not-loaded'>Click here to read how to fix this.</a>";
     display_message('error_nocross', $message);
     custom_die();
 }

@@ -112,8 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team']) && $_POST[
     $result1 = $req->execute(array(
         'team_name' => $new_team_name,
         'deletable_xp' => 1,
-        'link_name' => 'Wiki',
-        'link_href' => 'https://github.com/elabftw/elabftw/wiki'
+        'link_name' => 'Documentation',
+        'link_href' => 'doc/_build/html/'
     ));
     $new_team_id = $pdo->lastInsertId();
     // now we need to insert a new default set of status for the newly created team
@@ -363,12 +363,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
     if (isset($_POST['link_name'])) {
         $link_name = filter_var($_POST['link_name'], FILTER_SANITIZE_STRING);
     } else {
-        $link_name = 'Wiki';
+        $link_name = 'Documentation';
     }
     if (isset($_POST['link_href'])) {
         $link_href = filter_var($_POST['link_href'], FILTER_SANITIZE_STRING);
     } else {
-        $link_href = 'https://github.com/elabftw/elabftw/wiki';
+        $link_href = 'doc/_build/html/';
     }
 
     // SQL

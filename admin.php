@@ -43,10 +43,6 @@ require_once 'inc/info_box.php';
 <script src="js/raphael/raphael-min.js"></script>
 <script src="js/colorwheel/colorwheel.js"></script>
 <?php
-if (strlen(get_config('mail_from')) == 0) {
-    $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://github.com/elabftw/elabftw/wiki/finalizing'>", "</a>");
-    display_message('error', $message);
-}
 
 // MAIN SQL FOR USERS
 $sql = "SELECT * FROM users WHERE validated = :validated AND team = :team";
@@ -110,7 +106,7 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
         </p>
         <p>
         <label for='link_href'><?php echo _('Address where this link should point:'); ?></label>
-        <input type='url' value='<?php echo get_team_config('link_href'); ?>' name='link_href' id='link_href' />
+        <input type='text' value='<?php echo get_team_config('link_href'); ?>' name='link_href' id='link_href' />
         </p>
         <p>
         <label for='stampprovider'><?php echo _('URL for external timestamping service:'); ?></label>

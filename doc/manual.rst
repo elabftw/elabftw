@@ -93,7 +93,6 @@ What happens when you timestamp an experiment :
 
 More info here : https://en.wikipedia.org/wiki/Trusted_timestamping
 eLabFTW uses RFC 3161 for timestamping. So any TSA providing a RFC 3161 compatible way of timestamping will work.
-A guide is here : https://github.com/elabftw/elabftw/wiki/finalizing#setting-up-timestamping
 
 3.7 elabid
 

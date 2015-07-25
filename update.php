@@ -72,7 +72,7 @@ if (!is_writable('config.php')) {
     // check that there is no secret key already
     if (!defined('SECRET_KEY')) {
 
-        $msg_arr[] = "[ERROR] Please allow webserver to write config file, or add SECRET_KEY yourself to config.php. <a href='https://github.com/elabftw/elabftw/wiki/Troubleshooting'>Link to documentation</a>";
+        $msg_arr[] = "[ERROR] Please allow webserver to write config file, or add SECRET_KEY yourself to config.php. <a href='doc/_build/html/common-errors.html#add-the-secret-key'>Link to documentation</a>";
         $_SESSION['errors'] = $msg_arr;
         header('Location: sysconfig.php');
         exit;

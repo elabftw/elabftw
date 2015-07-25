@@ -59,14 +59,14 @@ if ($update->success === true) {
 
     // if we don't have the latest version, show button redirecting to wiki
     if ($update->updateIsAvailable()) {
-        $message = _('A new version is available!') . " <a href='https://github.com/elabftw/elabftw/wiki/How-to-update'>
+        $message = _('A new version is available!') . " <a href='doc/_build/html/how-to-update.html'>
             <button class='submit button'>Update elabftw</button></a>";
         display_message('error', $message);
     }
 }
 
-if (strlen(get_config('mail_method')) == 0) {
-    $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://github.com/elabftw/elabftw/wiki/finalizing'>", "</a>");
+if (get_config('mail_from') === 'notconfigured@example.com') {
+    $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='doc/_build/html/postinstall.html#setting-up-email'>", "</a>");
     display_message('error', $message);
 }
 ?>

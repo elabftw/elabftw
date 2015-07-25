@@ -16,6 +16,7 @@ Welcome to elabftw's documentation!
     how-to-update
 
 .. toctree::
+    :maxdepth: 2
     :caption: Using
 
     faq
@@ -23,10 +24,17 @@ Welcome to elabftw's documentation!
     manual
 
 .. toctree::
+    :maxdepth: 2
     :caption: Community
 
     contributing
     thanks
+
+.. toctree::
+    :maxdepth: 0
+    :caption: Misc
+
+    changelog
     gnu-licence
 
 

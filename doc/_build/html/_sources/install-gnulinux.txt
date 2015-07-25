@@ -29,13 +29,15 @@ The first part is to get the files composing `eLabFTW` on your server.
 Option 1 : Using git
 ^^^^^^^^^^^^^^^^^^^^
 
-Connect to your server with SSH::
+Connect to your server with SSH:
+
+.. code-block:: bash
 
     $ ssh user@12.34.56.78
 
 `cd` to the public directory where you want `eLabFTW` to be installed (can be /var/www, ~/public\_html, or any folder you'd like, as long as the webserver is configured properly, in doubt use /var/www)
 
-::
+.. code-block:: bash
 
     $ cd /var/www
     # make the directory writable by your user (if it's not already the case)
@@ -43,17 +45,21 @@ Connect to your server with SSH::
 
 Note the `.` at the end that means `current folder`.
 
-Get latest stable version via git::
+Get latest stable version via git:
+
+.. code-block:: bash
 
     $ git clone --depth 1 https://github.com/elabftw/elabftw.git
 
 (this will create a folder `elabftw`)
 The `--depth 1` option is to avoid downloading the whole history.
 
-.. tip:: If you cannot connect, it's probably the proxy setting missing; try one of these two commands::
+.. tip:: If you cannot connect, it's probably the proxy setting missing; try one of these two commands:
 
-    $ export https_proxy="proxy.example.com:3128"
-    $ git config --global http.proxy http://proxy.example.com:8080
+    .. code-block:: bash
+
+        $ export https_proxy="proxy.example.com:3128"
+        $ git config --global http.proxy http://proxy.example.com:8080
 
 
 Option 2 : Download archive
@@ -71,7 +77,7 @@ The second part is putting the database in place.
 Option 1 : Command line way
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-::
+.. code-block:: bash
 
     # first we connect to mysql
     $ mysql -u root -p
@@ -93,7 +99,7 @@ You need to install the package `phpmyadmin` if it's not already done.
 
 .. note:: It is not recommended to have phpmyadmin installed on a production server (for security reasons).
 
-::
+.. code-block:: bash
 
     $ sudo apt-get install phpmyadmin
 

@@ -284,18 +284,18 @@
 <div class="section" id="option-1-using-git">
 <h3>Option 1 : Using git<a class="headerlink" href="#option-1-using-git" title="Permalink to this headline">¶</a></h3>
 <p>Connect to your server with SSH:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ssh user@12.34.56.78
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>ssh user@12.34.56.78
 </pre></div>
 </div>
 <p><cite>cd</cite> to the public directory where you want <cite>eLabFTW</cite> to be installed (can be /var/www, ~/public_html, or any folder you&#8217;d like, as long as the webserver is configured properly, in doubt use /var/www)</p>
-<div class="highlight-python"><div class="highlight"><pre>$ cd /var/www
-# make the directory writable by your user (if it&#39;s not already the case)
-$ sudo chown `whoami`:`whoami` .
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">cd</span> /var/www
+<span class="c"># make the directory writable by your user (if it&#39;s not already the case)</span>
+<span class="nv">$ </span>sudo chown <span class="sb">`</span>whoami<span class="sb">`</span>:<span class="sb">`</span>whoami<span class="sb">`</span> .
 </pre></div>
 </div>
 <p>Note the <cite>.</cite> at the end that means <cite>current folder</cite>.</p>
 <p>Get latest stable version via git:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ git clone --depth 1 https://github.com/elabftw/elabftw.git
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git clone --depth <span class="m">1</span> https://github.com/elabftw/elabftw.git
 </pre></div>
 </div>
 <p>(this will create a folder <cite>elabftw</cite>)
@@ -303,8 +303,8 @@ The <cite>&#8211;depth 1</cite> option is to avoid downloading the whole history
 <div class="admonition tip">
 <p class="first admonition-title">Tip</p>
 <p>If you cannot connect, it&#8217;s probably the proxy setting missing; try one of these two commands:</p>
-<div class="last highlight-python"><div class="highlight"><pre>$ export https_proxy=&quot;proxy.example.com:3128&quot;
-$ git config --global http.proxy http://proxy.example.com:8080
+<div class="last highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">export </span><span class="nv">https_proxy</span><span class="o">=</span><span class="s2">&quot;proxy.example.com:3128&quot;</span>
+<span class="nv">$ </span>git config --global http.proxy http://proxy.example.com:8080
 </pre></div>
 </div>
 </div>
@@ -320,15 +320,15 @@ $ git config --global http.proxy http://proxy.example.com:8080
 <p>The second part is putting the database in place.</p>
 <div class="section" id="option-1-command-line-way">
 <h3>Option 1 : Command line way<a class="headerlink" href="#option-1-command-line-way" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-python"><div class="highlight"><pre># first we connect to mysql
-$ mysql -u root -p
-# we create the database (note the ; at the end !)
-mysql&gt; create database elabftw;
-# we create the user that will connect to the database.
-mysql&gt; grant usage on *.* to elabftw@localhost identified by &#39;YOUR_PASSWORD&#39;;
-# we give all rights to this user on this database
-mysql&gt; grant all privileges on elabftw.* to elabftw@localhost;
-mysql&gt; exit
+<div class="highlight-bash"><div class="highlight"><pre><span class="c"># first we connect to mysql</span>
+<span class="nv">$ </span>mysql -u root -p
+<span class="c"># we create the database (note the ; at the end !)</span>
+mysql&gt; create database elabftw<span class="p">;</span>
+<span class="c"># we create the user that will connect to the database.</span>
+mysql&gt; grant usage on *.* to elabftw@localhost identified by <span class="s1">&#39;YOUR_PASSWORD&#39;</span><span class="p">;</span>
+<span class="c"># we give all rights to this user on this database</span>
+mysql&gt; grant all privileges on elabftw.* to elabftw@localhost<span class="p">;</span>
+mysql&gt; <span class="nb">exit</span>
 </pre></div>
 </div>
 <p>You will be asked for the password you put after <cite>identified by</cite> three lines above.</p>
@@ -340,7 +340,7 @@ mysql&gt; exit
 <p class="first admonition-title">Note</p>
 <p class="last">It is not recommended to have phpmyadmin installed on a production server (for security reasons).</p>
 </div>
-<div class="highlight-python"><div class="highlight"><pre>$ sudo apt-get install phpmyadmin
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install phpmyadmin
 </pre></div>
 </div>
 <p>Now you will connect to the phpmyadmin panel from your browser on your computer. Type the IP address of the server followed by /phpmyadmin.</p>

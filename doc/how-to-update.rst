@@ -6,7 +6,9 @@ How to update
 If you installed it with git
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To update, cd in the `elabftw` folder and do::
+To update, cd in the `elabftw` folder and do:
+
+.. code-block:: bash
 
     $ git pull
 

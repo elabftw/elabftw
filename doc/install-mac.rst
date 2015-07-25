@@ -23,7 +23,9 @@ Test that everything is working by going to https://localhost. You should see a 
 
 `Download the latest release <https://github.com/elabftw/elabftw/releases/latest>`_ and extract its content to `/Applications/XAMPP/htdocs/elabftw`.
 
-Now we need to fix the permissions. Open the terminal and type::
+Now we need to fix the permissions. Open the terminal and type:
+
+.. code-block:: bash
 
     cd /Applications/XAMPP/htdocs/elabftw
     mkdir -p uploads/tmp
@@ -46,16 +48,3 @@ Browse to : https://localhost/elabftw/install and follow onscreen instructions.
 .. hint:: There is no password for the mysql user root. So put root as mysql username and no password.
 
 .. note:: Remember to keep your installation :doc:`backuped <backup>` and :doc:`updated <how-to-update>` ;)
-
-
-.. blah
-
-
-
-
-
-
-
-
-
-

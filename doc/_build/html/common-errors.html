@@ -261,11 +261,11 @@
 <div class="section" id="add-the-secret-key">
 <h2>Add the secret key<a class="headerlink" href="#add-the-secret-key" title="Permalink to this headline">¶</a></h2>
 <p>Starting from version 1.1.2 there is a secret key present in the config file. If you have restrictive permissions on it, the webserver won&#8217;t be able to add it when you run the update.php script. To fix this issue, the simplest way is to:</p>
-<div class="highlight-python"><div class="highlight"><pre>chmod a+w config.php
+<div class="highlight-bash"><div class="highlight"><pre>chmod a+w config.php
 </pre></div>
 </div>
 <p>Then run the /update.php script again. And bring back good permissions afterwards:</p>
-<div class="highlight-python"><div class="highlight"><pre>chmod 400 config.php
+<div class="highlight-bash"><div class="highlight"><pre>chmod <span class="m">400</span> config.php
 </pre></div>
 </div>
 <p>You might need to use <code class="docutils literal"><span class="pre">sudo</span></code> to achieve these commands.</p>
@@ -273,47 +273,46 @@
 <div class="section" id="failed-creating-uploads-directory">
 <h2>Failed creating <em>uploads/</em> directory<a class="headerlink" href="#failed-creating-uploads-directory" title="Permalink to this headline">¶</a></h2>
 <p>If eLabFTW couldn&#8217;t create an <em>uploads/</em> folder, that&#8217;s because the httpd user (www-data on Debian/Ubuntu) didn&#8217;t have the necessary rights. To fix it you need to:</p>
-<ol class="arabic">
-<li><p class="first">Find what is the user/group of the web server. There is a good chance that it is www-data. But it might also be something else. To check it you can try something like:</p>
-<div class="highlight-python"><div class="highlight"><pre>ps -ef | grep nginx
+<ol class="arabic simple">
+<li>Find what is the user/group of the web server. There is a good chance that it is www-data. But it might also be something else. To check it you can try something like:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre>ps -ef <span class="p">|</span> grep nginx
 OR
-ps -ef | grep apache
+ps -ef <span class="p">|</span> grep apache
 OR
-ps -ef | grep httpd
+ps -ef <span class="p">|</span> grep httpd
 </pre></div>
 </div>
-</li>
-</ol>
 <p>What you want will be in the first column. Possible values are infinite, but it is generally www-data, http, httpdusr, or things like that.</p>
 <p>Now that you know the user/group of the webserver, you can do that (example is shown with www-data, but adapt to your need):</p>
-<div class="highlight-python"><div class="highlight"><pre>cd /path/to/elabftw
-mkdir -p uploads/{export,tmp}
+<div class="highlight-bash"><div class="highlight"><pre><span class="nb">cd</span> /path/to/elabftw
+mkdir -p uploads/<span class="o">{</span><span class="nb">export</span>,tmp<span class="o">}</span>
 chown -R www-data:www-data uploads
-chmod -R 755 .
-chmod 644 config.php
+chmod -R <span class="m">755</span> .
+chmod <span class="m">644</span> config.php
 </pre></div>
 </div>
 <p>The last line is to keep your config file secure. It might fail because the file is not there yet. Finish the install and do it after then.</p>
 <p>If you have problems updating (git pull is failing because of permissions), read more about GNU/Linux permissions and groups. For instance, you can add your user to the www-data group:</p>
-<div class="highlight-python"><div class="highlight"><pre>usermod -a -G www-data `whoami`
+<div class="highlight-bash"><div class="highlight"><pre>usermod -a -G www-data <span class="sb">`</span>whoami<span class="sb">`</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="extension-is-not-loaded">
 <h2>Extension is not loaded<a class="headerlink" href="#extension-is-not-loaded" title="Permalink to this headline">¶</a></h2>
 <p>Install everything needed by elabftw:</p>
-<div class="highlight-python"><div class="highlight"><pre>sudo apt-get install php5-openssl php5-gd php5-gettext php5-curl
+<div class="highlight-bash"><div class="highlight"><pre>sudo apt-get install php5-openssl php5-gd php5-gettext php5-curl
 </pre></div>
 </div>
 <p>Now reload the Apache server:</p>
-<div class="highlight-python"><div class="highlight"><pre>sudo service apache2 reload
+<div class="highlight-bash"><div class="highlight"><pre>sudo service apache2 reload
 </pre></div>
 </div>
 </div>
 <div class="section" id="i-can-t-upload-a-file-bigger-than-2-mb">
 <h2>I can&#8217;t upload a file bigger than 2 Mb<a class="headerlink" href="#i-can-t-upload-a-file-bigger-than-2-mb" title="Permalink to this headline">¶</a></h2>
 <p>Edit the file php.ini and change the value of upload_max_filesize to something bigger, example:</p>
-<div class="highlight-python"><div class="highlight"><pre>upload_max_filesize = 128M
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">upload_max_filesize</span> <span class="o">=</span> 128M
 </pre></div>
 </div>
 <div class="admonition warning">
@@ -326,7 +325,7 @@ chmod 644 config.php
 <p>This is because the script might take too long to execute and php is cutting it.
 To solve this, edit the file <cite>/etc/php5/apache2/php.ini</cite> and increase the value of max_execution_time and max_input_time.
 Then restart your server:</p>
-<div class="highlight-python"><div class="highlight"><pre>sudo service apache2 restart
+<div class="highlight-bash"><div class="highlight"><pre>sudo service apache2 restart
 </pre></div>
 </div>
 </div>

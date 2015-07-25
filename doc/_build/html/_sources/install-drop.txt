@@ -22,17 +22,23 @@ The following actions will be performed :
 
 * Create a droplet with Ubuntu 14.04 x64 (works also with 14.10, but not with 12.04.5)
 
-* Open a terminal and SSH to your droplet. The IP address can be found in the digitalocean website::
+* Open a terminal and SSH to your droplet. The IP address can be found in the digitalocean website:
+
+.. code-block:: bash
 
     ssh root@12.34.56.78
 
 .. note:: The root password is in your mailbox. It will not echo when you type it, it's normal, don't panic.
 
-* Go inside a tmux session::
+* Go inside a tmux session:
+
+.. code-block:: bash
 
     tmux
 
-* Enter the following command::
+* Enter the following command:
+
+.. code-block:: bash
 
     wget -qO- https://get.elabftw.net|sh
 

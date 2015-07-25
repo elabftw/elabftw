@@ -7,11 +7,16 @@ Common errors
 Add the secret key
 ------------------
 
-Starting from version 1.1.2 there is a secret key present in the config file. If you have restrictive permissions on it, the webserver won't be able to add it when you run the update.php script. To fix this issue, the simplest way is to::
+Starting from version 1.1.2 there is a secret key present in the config file. If you have restrictive permissions on it, the webserver won't be able to add it when you run the update.php script. To fix this issue, the simplest way is to:
+
+.. code-block:: bash
+
 
     chmod a+w config.php
 
-Then run the /update.php script again. And bring back good permissions afterwards::
+Then run the /update.php script again. And bring back good permissions afterwards:
+
+.. code-block:: bash
 
     chmod 400 config.php
 
@@ -22,7 +27,9 @@ Failed creating *uploads/* directory
 
 If eLabFTW couldn't create an *uploads/* folder, that's because the httpd user (www-data on Debian/Ubuntu) didn't have the necessary rights. To fix it you need to:
 
-1. Find what is the user/group of the web server. There is a good chance that it is www-data. But it might also be something else. To check it you can try something like::
+1. Find what is the user/group of the web server. There is a good chance that it is www-data. But it might also be something else. To check it you can try something like:
+
+.. code-block:: bash
 
     ps -ef | grep nginx
     OR
@@ -32,7 +39,9 @@ If eLabFTW couldn't create an *uploads/* folder, that's because the httpd user (
 
 What you want will be in the first column. Possible values are infinite, but it is generally www-data, http, httpdusr, or things like that.
 
-Now that you know the user/group of the webserver, you can do that (example is shown with www-data, but adapt to your need)::
+Now that you know the user/group of the webserver, you can do that (example is shown with www-data, but adapt to your need):
+
+.. code-block:: bash
 
     cd /path/to/elabftw
     mkdir -p uploads/{export,tmp}
@@ -42,25 +51,33 @@ Now that you know the user/group of the webserver, you can do that (example is s
 
 The last line is to keep your config file secure. It might fail because the file is not there yet. Finish the install and do it after then.
 
-If you have problems updating (git pull is failing because of permissions), read more about GNU/Linux permissions and groups. For instance, you can add your user to the www-data group::
+If you have problems updating (git pull is failing because of permissions), read more about GNU/Linux permissions and groups. For instance, you can add your user to the www-data group:
+
+.. code-block:: bash
 
     usermod -a -G www-data `whoami`
 
 Extension is not loaded
 -----------------------
 
-Install everything needed by elabftw::
+Install everything needed by elabftw:
+
+.. code-block:: bash
 
     sudo apt-get install php5-openssl php5-gd php5-gettext php5-curl
 
-Now reload the Apache server::
+Now reload the Apache server:
+
+.. code-block:: bash
 
     sudo service apache2 reload
 
 I can't upload a file bigger than 2 Mb
 --------------------------------------
 
-Edit the file php.ini and change the value of upload_max_filesize to something bigger, example::
+Edit the file php.ini and change the value of upload_max_filesize to something bigger, example:
+
+.. code-block:: bash
 
     upload_max_filesize = 128M
 
@@ -71,7 +88,9 @@ I can't export my (numerous) experiments in zip, I get an error 500
 
 This is because the script might take too long to execute and php is cutting it.
 To solve this, edit the file `/etc/php5/apache2/php.ini` and increase the value of max_execution_time and max_input_time.
-Then restart your server::
+Then restart your server:
+
+.. code-block:: bash
 
     sudo service apache2 restart
 

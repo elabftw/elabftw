@@ -271,33 +271,30 @@
 <p class="first admonition-title">Warning</p>
 <p class="last">This script will work for a fresh drop. If you already have a server running, you should consider a <a class="reference internal" href="install-gnulinux.html#install-gnulinux"><span>normal install</span></a> instead.</p>
 </div>
-<ul>
-<li><p class="first">Create an account on <a class="reference external" href="https://cloud.digitalocean.com/registrations/new">DigitalOcean</a></p>
-</li>
-<li><p class="first">Create a droplet with Ubuntu 14.04 x64 (works also with 14.10, but not with 12.04.5)</p>
-</li>
-<li><p class="first">Open a terminal and SSH to your droplet. The IP address can be found in the digitalocean website:</p>
-<div class="highlight-python"><div class="highlight"><pre>ssh root@12.34.56.78
+<ul class="simple">
+<li>Create an account on <a class="reference external" href="https://cloud.digitalocean.com/registrations/new">DigitalOcean</a></li>
+<li>Create a droplet with Ubuntu 14.04 x64 (works also with 14.10, but not with 12.04.5)</li>
+<li>Open a terminal and SSH to your droplet. The IP address can be found in the digitalocean website:</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre>ssh root@12.34.56.78
 </pre></div>
 </div>
-</li>
-</ul>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">The root password is in your mailbox. It will not echo when you type it, it&#8217;s normal, don&#8217;t panic.</p>
 </div>
-<ul>
-<li><p class="first">Go inside a tmux session:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">tmux</span>
-</pre></div>
-</div>
-</li>
-<li><p class="first">Enter the following command:</p>
-<div class="highlight-python"><div class="highlight"><pre>wget -qO- https://get.elabftw.net|sh
-</pre></div>
-</div>
-</li>
+<ul class="simple">
+<li>Go inside a tmux session:</li>
 </ul>
+<div class="highlight-bash"><div class="highlight"><pre>tmux
+</pre></div>
+</div>
+<ul class="simple">
+<li>Enter the following command:</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre>wget -qO- https://get.elabftw.net<span class="p">|</span>sh
+</pre></div>
+</div>
 <div class="admonition danger">
 <p class="first admonition-title">Danger</p>
 <p class="last">Don&#8217;t get into the habit of executing unknown scripts as root without reading them first!</p>

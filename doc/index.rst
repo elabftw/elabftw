@@ -23,6 +23,7 @@ Welcome to elabftw's documentation!
 
 .. toctree::
     :caption: Community
+
     contributing
     thanks
 

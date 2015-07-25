@@ -3,22 +3,48 @@
 Contributing
 ============
 
-Ok, so you know a bit of HTML/CSS/JS/PHP and want to participate building a better free and open-source lab notebook software ?
-
-Then you are in the right place :)
 
 What can you do to help this project ?
 --------------------------------------
 
 * Have a look at `the current issues <https://github.com/elabftw/elabftw/issues>`_
-* `Translate it! <https://github.com/elabftw/elabftw/wiki/Contributing#translating-i18n>`_
+* Translate it
 * Talk about it to your colleagues, spread the word!
-* Read the code and spot places needing improvements (`git grep TODO`)
-* Open GitHub issues to discuss bugs or features suggestions
+* Open GitHub issues to discuss bugs or suggest features
 * Star it on GitHub
 
-Rules to follow
----------------
+Translating
+-----------
+
+.. image:: img/i18n.png
+
+Do you know several languages? Are you willing to help localize eLabFTW? You're in the right place.
+
+Languages 100% translated:
+
+* British English : en_GB.UTF8
+* Catalan : ca_ES.UTF8
+* German : de_DE.UTF8
+* French : fr_FR.UTF8
+* Italian : it_IT.UTF8
+* Spanish : es_ES.UTF8
+* Brazilian Portuguese : pt_BR.UTF8
+* Simplified Chinese : zh_CN.UTF8
+
+
+How to translate ?
+
+* `Join the project on poeditor.com <https://poeditor.com/join/project?hash=aeeef61cdad663825bfe49bb7cbccb30>`_
+* Select elabftw
+* Add a language (or select an existing one)
+* Start translating
+* Ignore things like `<strong>, <br>, %s, %d` and keep the ponctuation like it was!
+
+Then email me the result, or send a pull request.
+
+
+Contributing to the code
+------------------------
 
 * before doing a pull request, open an issue so we can discuss about it (unless it is obvious that your code should be merged ;).
 * base your PR on the **next** branch, which is the development branch; **master** being the *release* branch.
@@ -44,6 +70,21 @@ Reminders
 * update of SwiftMailer and mPDF is done with `composer update`
 * update of the js components is done with `bower update`
 * after update of tinymce, lang files need to be downloaded again, and the ones without proper name (ca instead of ca_ES) need to be edited (change first line to ca_ES)
+
+
+
+
+.. blah
+
+
+
+
+
+
+
+
+
+
 
 
 

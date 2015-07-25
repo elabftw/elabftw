@@ -74,7 +74,7 @@
               <p class="caption"><span class="caption-text">Installing</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install-gnulinux.html">Install on GNU/Linux</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="install-gnulinux.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install-gnulinux.html#prerequisites">Prerequisites</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install-gnulinux.html#getting-the-files">Getting the files</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="install-gnulinux.html#option-1-using-git">Option 1 : Using git</a></li>
 <li class="toctree-l3"><a class="reference internal" href="install-gnulinux.html#option-2-download-archive">Option 2 :&nbsp;Download archive</a></li>
@@ -89,6 +89,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install-docker.html">Install in a docker container</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-drop.html">Install in a drop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="postinstall.html">Post install things to do</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="postinstall.html#setting-up-email">Setting up email</a></li>
 <li class="toctree-l2"><a class="reference internal" href="postinstall.html#setting-up-the-teams">Setting up the teams</a></li>
@@ -101,6 +102,12 @@
 <li class="toctree-l2"><a class="reference internal" href="postinstall.html#allowing-more-memory-to-php">Allowing more memory to php</a></li>
 <li class="toctree-l2"><a class="reference internal" href="postinstall.html#making-sure-that-the-uploads-folder-cannot-be-accessed">Making sure that the <cite>uploads</cite> folder cannot be accessed</a></li>
 <li class="toctree-l2"><a class="reference internal" href="postinstall.html#updating">Updating</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="backup.html">Backup</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="backup.html#backup-sql-database">Backup SQL database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backup.html#making-it-automatic-using-cron">Making it automatic using cron</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backup.html#how-to-restore-a-backup">How to restore a backup</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="how-to-update.html">How to update</a><ul>
@@ -142,7 +149,8 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="">Contributing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#what-can-you-do-to-help-this-project">What can you do to help this project ?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#rules-to-follow">Rules to follow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#translating">Translating</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#contributing-to-the-code">Contributing to the code</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#reminders">Reminders</a></li>
 </ul>
 </li>
@@ -187,21 +195,43 @@
             
   <div class="section" id="contributing">
 <span id="id1"></span><h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
-<p>Ok, so you know a bit of HTML/CSS/JS/PHP and want to participate building a better free and open-source lab notebook software ?</p>
-<p>Then you are in the right place :)</p>
 <div class="section" id="what-can-you-do-to-help-this-project">
 <h2>What can you do to help this project ?<a class="headerlink" href="#what-can-you-do-to-help-this-project" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>Have a look at <a class="reference external" href="https://github.com/elabftw/elabftw/issues">the current issues</a></li>
-<li><a class="reference external" href="https://github.com/elabftw/elabftw/wiki/Contributing#translating-i18n">Translate it!</a></li>
+<li>Translate it</li>
 <li>Talk about it to your colleagues, spread the word!</li>
-<li>Read the code and spot places needing improvements (<cite>git grep TODO</cite>)</li>
-<li>Open GitHub issues to discuss bugs or features suggestions</li>
+<li>Open GitHub issues to discuss bugs or suggest features</li>
 <li>Star it on GitHub</li>
 </ul>
 </div>
-<div class="section" id="rules-to-follow">
-<h2>Rules to follow<a class="headerlink" href="#rules-to-follow" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="translating">
+<h2>Translating<a class="headerlink" href="#translating" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/i18n.png" src="_images/i18n.png" />
+<p>Do you know several languages? Are you willing to help localize eLabFTW? You&#8217;re in the right place.</p>
+<p>Languages 100% translated:</p>
+<ul class="simple">
+<li>British English : en_GB.UTF8</li>
+<li>Catalan : ca_ES.UTF8</li>
+<li>German : de_DE.UTF8</li>
+<li>French : fr_FR.UTF8</li>
+<li>Italian : it_IT.UTF8</li>
+<li>Spanish : es_ES.UTF8</li>
+<li>Brazilian Portuguese : pt_BR.UTF8</li>
+<li>Simplified Chinese : zh_CN.UTF8</li>
+</ul>
+<p>How to translate ?</p>
+<ul class="simple">
+<li><a class="reference external" href="https://poeditor.com/join/project?hash=aeeef61cdad663825bfe49bb7cbccb30">Join the project on poeditor.com</a></li>
+<li>Select elabftw</li>
+<li>Add a language (or select an existing one)</li>
+<li>Start translating</li>
+<li>Ignore things like <cite>&lt;strong&gt;, &lt;br&gt;, %s, %d</cite> and keep the ponctuation like it was!</li>
+</ul>
+<p>Then email me the result, or send a pull request.</p>
+</div>
+<div class="section" id="contributing-to-the-code">
+<h2>Contributing to the code<a class="headerlink" href="#contributing-to-the-code" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>before doing a pull request, open an issue so we can discuss about it (unless it is obvious that your code should be merged ;).</li>
 <li>base your PR on the <strong>next</strong> branch, which is the development branch; <strong>master</strong> being the <em>release</em> branch.</li>

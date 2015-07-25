@@ -57,7 +57,7 @@ security
 intellectual property
 ^^^^^^^^^^^^^^^^^^^^^
 * timestamping of experiments (pdf export)
-* RFC 3161 compliant Trusted Timestamping
+* :rfc:`3161` compliant Trusted Timestamping
 * allow or not users to delete experiments
 * revisions system to see history
 * attached files are md5summed and thus timestamped with the experiment
@@ -80,5 +80,6 @@ planned features
 * a lot
 
 
+.. blah
 
 

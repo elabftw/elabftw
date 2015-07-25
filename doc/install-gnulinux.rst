@@ -6,19 +6,19 @@ Install on GNU/Linux
 .. image:: img/gnulinux.png
 .. image:: img/beastie.png
 
-Introduction
-------------
+Prerequisites
+-------------
 
 Please refer to your distribution's documentation to install :
 
-* a webserver (like nginx, Apache, lighttpd or cherokee)
-* php version > 5.4 with the following extensions : gettext, gd, openssl, hash, curl
-* mysql version > 5.5
-* git
+* A webserver (like nginx, Apache, lighttpd or cherokee)
+* PHP version > 5.5
+* MySQL version > 5.5
+* Git
 
-If you don't know how to do that, have a look at `installing eLabFTW on a cheap server (drop) <https://github.com/elabftw/drop-elabftw#how-to-use>`_.
+.. tip:: If you don't know how to do that, have a look at :ref:`installing eLabFTW on a drop <install-drop>`.
 
-I wouldn't recommend HHVM because Gettext support is not here yet (see `this issue <https://github.com/facebook/hhvm/issues/1228>`_).
+.. note:: I wouldn't recommend HHVM because Gettext support is not here yet (see `this issue <https://github.com/facebook/hhvm/issues/1228>`_).
 
 Getting the files
 -----------------
@@ -50,12 +50,9 @@ Get latest stable version via git::
 (this will create a folder `elabftw`)
 The `--depth 1` option is to avoid downloading the whole history.
 
-If you cannot connect, try exporting your proxy settings in your shell like so::
+.. tip:: If you cannot connect, it's probably the proxy setting missing; try one of these two commands::
 
     $ export https_proxy="proxy.example.com:3128"
-
-If you still cannot connect, tell git your proxy::
-
     $ git config --global http.proxy http://proxy.example.com:8080
 
 
@@ -94,7 +91,7 @@ Option 2 : Graphical way with phpmyadmin
 
 You need to install the package `phpmyadmin` if it's not already done.
 
-**Note**: it is not recommended to have phpmyadmin installed on a production server (for security reasons).
+.. note:: It is not recommended to have phpmyadmin installed on a production server (for security reasons).
 
 ::
 
@@ -106,11 +103,13 @@ Example : https://12.34.56.78/phpmyadmin
 
 Login with the root user on PhpMyAdmin panel (use the password you setup for mysql root user).
 
-Create a user `elabftw` with all rights on the database `elabftw`
+Create a user `elabftw` with all rights on the database `elabftw`.
 
-Now click the `Users` tab and click ![add user](http://i.imgur.com/SJmdg0Z.png).
+Now click the `Users` tab and click:
 
-Do like this :
+.. image:: img/adduser.png
+
+Do like this:
 
 .. image:: img/phpmyadmin.png
 
@@ -119,7 +118,13 @@ Final step
 
 Finally, point your browser to the install folder (install/) and read onscreen instructions.
 
-For example : https://12.34.56.78/elabftw/install
+For example: https://12.34.56.78/elabftw/install
+
+
+.. blah
+
+
+
 
 
 

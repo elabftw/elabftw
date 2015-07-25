@@ -74,7 +74,7 @@
               <p class="caption"><span class="caption-text">Installing</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install-gnulinux.html">Install on GNU/Linux</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="install-gnulinux.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install-gnulinux.html#prerequisites">Prerequisites</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install-gnulinux.html#getting-the-files">Getting the files</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="install-gnulinux.html#option-1-using-git">Option 1 : Using git</a></li>
 <li class="toctree-l3"><a class="reference internal" href="install-gnulinux.html#option-2-download-archive">Option 2 :&nbsp;Download archive</a></li>
@@ -89,6 +89,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install-docker.html">Install in a docker container</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-drop.html">Install in a drop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="postinstall.html">Post install things to do</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="postinstall.html#setting-up-email">Setting up email</a></li>
 <li class="toctree-l2"><a class="reference internal" href="postinstall.html#setting-up-the-teams">Setting up the teams</a></li>
@@ -101,6 +102,12 @@
 <li class="toctree-l2"><a class="reference internal" href="postinstall.html#allowing-more-memory-to-php">Allowing more memory to php</a></li>
 <li class="toctree-l2"><a class="reference internal" href="postinstall.html#making-sure-that-the-uploads-folder-cannot-be-accessed">Making sure that the <cite>uploads</cite> folder cannot be accessed</a></li>
 <li class="toctree-l2"><a class="reference internal" href="postinstall.html#updating">Updating</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="backup.html">Backup</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="backup.html#backup-sql-database">Backup SQL database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backup.html#making-it-automatic-using-cron">Making it automatic using cron</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backup.html#how-to-restore-a-backup">How to restore a backup</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="how-to-update.html">How to update</a><ul>
@@ -142,7 +149,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#what-can-you-do-to-help-this-project">What can you do to help this project ?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#rules-to-follow">Rules to follow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#translating">Translating</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#contributing-to-the-code">Contributing to the code</a></li>
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#reminders">Reminders</a></li>
 </ul>
 </li>
@@ -250,7 +258,7 @@
 <h2>intellectual property<a class="headerlink" href="#intellectual-property" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>timestamping of experiments (pdf export)</li>
-<li>RFC 3161 compliant Trusted Timestamping</li>
+<li><span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3161.html"><strong>RFC 3161</strong></a> compliant Trusted Timestamping</li>
 <li>allow or not users to delete experiments</li>
 <li>revisions system to see history</li>
 <li>attached files are md5summed and thus timestamped with the experiment</li>

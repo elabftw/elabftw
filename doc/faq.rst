@@ -18,7 +18,7 @@ But more importantly, you cannot trust your data with something that acts like a
 What about patents and intellectual property ?
 ----------------------------------------------
 
-eLabFTW allows rock solid timestamping of your experiments, you can timestamp a pdf export with any TimeStamping Authority.
+eLabFTW allows rock solid `timestamping of your experiments <https://en.wikipedia.org/wiki/Trusted_timestamping#Trusted_.28digital.29_timestamping>`_, you can timestamp a pdf export with any TimeStamping Authority allowing :rfc:`3161` timestamping.
 
 The timestamp system is integrated to eLabFTW and you are just one click away from having a legally certified experiment :)
 
@@ -49,13 +49,13 @@ Why use eLabFTW ?
 * You can prevent users from deleting experiments
 * You can comment on an experiment (if it's not your experiment)
 * You can import your old database stored in an excel file
-* `and much more… <https://github.com/NicolasCARPi/elabftw/blob/master/FEATURES>`_
+* :doc:`and much more… <features>`
 
 
 Is this system stable ? Can I trust my data with it ?
 -----------------------------------------------------
 
-It's still in beta, but you can already start using it. New features are added very often and they don't break what exists already. However, having an automated :ref:`backup` strategy is mandatory in order to be sure **nothing will be lost**.
+It's still in beta, but you can already start using it. New features are added very often and they don't break what exists already. However, having an automated :ref:`backup <backup>` strategy is mandatory in order to be sure **nothing will be lost**.
 
 Being able to do backups is yet another advantage over paper (you can't backup paper !).
 
@@ -71,7 +71,7 @@ Finally, eLabFTW works fully in HTTPS for added security.
 Is eLabFTW still maintained ?
 -----------------------------
 
-As of today, (July 2015) I'm still actively working on it. Improvements are coming in a steady flow. There are good chances that I will continue to do so for a few years. In the unlikely event I'm not able to work on it anymore, anyone can continue the work, as the source code is available and well commented.
+As of |today| I'm still actively working on it. Improvements are coming in a steady flow. There are good chances that I will continue to do so for a few years. In the unlikely event I'm not able to work on it anymore, anyone can continue the work, as the source code is available and well commented.
 
 Will I be able to import my plasmids/antibodies/whatever in the database from a Excel file ?
 --------------------------------------------------------------------------------------------
@@ -128,6 +128,19 @@ The server software can be any (nginx, apache, cherokee, lighttpd, …). The dev
 
 **Requirements for the client :**
 - Any operating system with any browser (latest version). Internet Explorer is not recommended for obvious reasons.
+
+
+
+.. blah
+
+
+
+
+
+
+
+
+
 
 
 

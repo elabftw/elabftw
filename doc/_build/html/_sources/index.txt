@@ -10,6 +10,7 @@ Welcome to elabftw's documentation!
 
     install-gnulinux
     install-docker
+    install-drop
     postinstall
     backup
     how-to-update
@@ -28,6 +29,5 @@ Welcome to elabftw's documentation!
     thanks
     gnu-licence
 
-ariuteaurtie
-============
 
+.. blah

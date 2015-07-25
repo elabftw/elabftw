@@ -22,14 +22,14 @@ Setting up timestamping
 
 eLabFTW provides an easy way to do `Trusted Timestamping <https://en.wikipedia.org/wiki/Trusted_timestamping>`_ for your experiments, so you can have strong legal value for your lab notebook.
 
-By default, it is setup to use `pki.dfn.de <https://www.pki.dfn.de/zeitstempeldienst/>`_ as TSA. It is free for researchers. The only problem, is that they don't have ETSI certification for this service (although their PKI infrastructure is certified ETSI TS 102 042).
+By default, it is setup to use `pki.dfn.de <https://www.pki.dfn.de/zeitstempeldienst/>`_ as :abbr:`TSA (TimeStampingAuthority)`. It is free for researchers. The only problem, is that they don't have ETSI certification for this service (although their PKI infrastructure is certified ETSI TS 102 042).
 
-So if you need a stronger certification, you should go with a commercial solution providing an RFC 3161 way of timestamping documents. We recommend Universign.eu, as they are one of the most serious and recognized TSA out there, but feel free to use the one you prefer.
+So if you need a stronger certification, you should go with a commercial solution providing an RFC 3161 way of timestamping documents. We recommend Universign.eu, as they are one of the most serious and recognized :abbr:`TSA (TimeStampingAuthority)` out there, but feel free to use the one you prefer.
 
 Ok, so how do I setup timestamping if I don't want to use the default setup ?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1. Create an account on the TSA website (for Universign it's `this page <https://www.universign.eu/en/signup/>`_)
+1. Create an account on the :abbr:`TSA (TimeStampingAuthority)` website (for Universign it's `this page <https://www.universign.eu/en/signup/>`_)
 2. Go to the sysadmin or admin page of elabftw (sysadmin if you want to use one account for all the teams, or admin panel if you want to set it up just for your team)
 3. The URL is : https://ws.universign.eu/tsa
 4. The chain of certificate is : vendor/universign-tsa-root.pem (eLabFTW already provides the universign certificate in the right format for ease of use)
@@ -51,7 +51,7 @@ To add a locale, edit the file `/etc/locale.gen` and uncomment (remove the #) th
     locale-gen fr_FR.UTF-8
 
 Replace with the locale you want, of course.
-See `this page <https://github.com/NicolasCARPi/elabftw/wiki/Contributing#languages-100-translated>`_ to see a list of languages supported by eLabFTW.
+See :doc:`here <contributing>` to see a list of languages (and locales) supported by eLabFTW.
 Then do::
 
     sudo locale-gen
@@ -82,6 +82,15 @@ Updating
 It is important to keep your install up to date with the latest bug fixes and new features.
 
 See instructions on updating eLabFTW on :ref:`how-to-update`.
+
+Watch the repository to receive an email on new updates.
+
+
+
+.. blah
+
+
+
 
 
 

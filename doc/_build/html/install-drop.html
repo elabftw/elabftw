@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Backup &mdash; elabftw 1.1.5 documentation</title>
+  <title>Install in a drop &mdash; elabftw 1.1.5 documentation</title>
   
 
   
@@ -31,8 +31,8 @@
 
   
     <link rel="top" title="elabftw 1.1.5 documentation" href="index.html"/>
-        <link rel="next" title="How to update" href="how-to-update.html"/>
-        <link rel="prev" title="Post install things to do" href="postinstall.html"/> 
+        <link rel="next" title="Post install things to do" href="postinstall.html"/>
+        <link rel="prev" title="Install in a docker container" href="install-docker.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -74,7 +74,7 @@
               <p class="caption"><span class="caption-text">Installing</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install-gnulinux.html">Install on GNU/Linux</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="install-gnulinux.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install-gnulinux.html#prerequisites">Prerequisites</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install-gnulinux.html#getting-the-files">Getting the files</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="install-gnulinux.html#option-1-using-git">Option 1 : Using git</a></li>
 <li class="toctree-l3"><a class="reference internal" href="install-gnulinux.html#option-2-download-archive">Option 2 :&nbsp;Download archive</a></li>
@@ -89,7 +89,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install-docker.html">Install in a docker container</a></li>
-<li class="toctree-l1"><a class="reference internal" href="install-drop.html">Install in a drop</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Install in a drop</a></li>
 <li class="toctree-l1"><a class="reference internal" href="postinstall.html">Post install things to do</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="postinstall.html#setting-up-email">Setting up email</a></li>
 <li class="toctree-l2"><a class="reference internal" href="postinstall.html#setting-up-the-teams">Setting up the teams</a></li>
@@ -104,10 +104,10 @@
 <li class="toctree-l2"><a class="reference internal" href="postinstall.html#updating">Updating</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Backup</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#backup-sql-database">Backup SQL database</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#making-it-automatic-using-cron">Making it automatic using cron</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#how-to-restore-a-backup">How to restore a backup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backup.html">Backup</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="backup.html#backup-sql-database">Backup SQL database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backup.html#making-it-automatic-using-cron">Making it automatic using cron</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backup.html#how-to-restore-a-backup">How to restore a backup</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="how-to-update.html">How to update</a><ul>
@@ -149,7 +149,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#what-can-you-do-to-help-this-project">What can you do to help this project ?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#rules-to-follow">Rules to follow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#translating">Translating</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#contributing-to-the-code">Contributing to the code</a></li>
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#reminders">Reminders</a></li>
 </ul>
 </li>
@@ -179,11 +180,11 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Backup</li>
+    <li>Install in a drop</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/backup.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/install-drop.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -192,77 +193,60 @@
 </div>
           <div role="main" class="document">
             
-  <div class="section" id="backup">
-<span id="id1"></span><h1>Backup<a class="headerlink" href="#backup" title="Permalink to this headline">¶</a></h1>
-<p>This page shows you how to backup an existing elabftw installation.</p>
-<p>There is basically two things to backup : the SQL database, and the <cite>elabftw</cite> folder (with your config file and your uploaded files).</p>
-<div class="section" id="backup-sql-database">
-<h2>Backup SQL database<a class="headerlink" href="#backup-sql-database" title="Permalink to this headline">¶</a></h2>
-<p>You&#8217;ll want to have a little script that do the backup automatically.
-Here is the script I&#8217;m using, adapt it to your needs:</p>
-<div class="highlight-python"><div class="highlight"><pre>#!/bin/sh
-# backup.sh - Backup eLabFTW installation
-# -------------
-# Get clean date (make sure your version of date supports this option)
-y=`date --rfc-3339=date |awk -F &#39;-&#39; &#39;{print $1}&#39;|cut -c3-4`
-m=`date --rfc-3339=date |awk -F &#39;-&#39; &#39;{print $2}&#39;`
-d=`date --rfc-3339=date |awk -F &#39;-&#39; &#39;{print $3}&#39;`
-date=$y$m$d
-
-# elab sql backup
-###################
-# make a dump of the database in elabftw.sql file
-mysqldump -u elabftw -p&#39;PUT_YOUR_SQL_PASSWORD_HERE&#39; elabftw &gt; elabftw.sql
-
-# copy this file somewhere else using ssh (scp)
-scp -q elabftw.sql user@192.168.0.3:.backups/sql/elabftw-$date.sql
-
-# move the file to a local backup dir
-mv elabftw.sql /home/pi/.backups/sql/elabftw-$date.sql
-
-# www files backup
-###################
-# make a tarball of www
-tar czf www.tar.gz -C /var/ www
-
-# copy the tarball to somewhere else using ssh (scp)
-scp -q www.tar.gz user@192.168.0.3:.backups/www/www-$date.tar.gz &amp;&amp; rm www.tar.gz
+  <div class="section" id="install-in-a-drop">
+<span id="install-drop"></span><h1>Install in a drop<a class="headerlink" href="#install-in-a-drop" title="Permalink to this headline">¶</a></h1>
+<img alt="_images/digitalocean.jpg" src="_images/digitalocean.jpg" />
+<p>A drop is a cheap server, and you install elabftw on it with one command: everything is automagic!</p>
+<p>The following actions will be performed :</p>
+<ul class="simple">
+<li>install of nginx (web server)</li>
+<li>install of  mariadb (sql server)</li>
+<li>install of elabftw</li>
+<li>get everything up and running</li>
+</ul>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This script will work for a fresh drop. If you already have a server running, you should consider a <a class="reference internal" href="install-gnulinux.html#install-gnulinux"><span>normal install</span></a> instead.</p>
+</div>
+<ul>
+<li><p class="first">Create an account on <a class="reference external" href="https://cloud.digitalocean.com/registrations/new">DigitalOcean</a></p>
+</li>
+<li><p class="first">Create a droplet with Ubuntu 14.04 x64 (works also with 14.10, but not with 12.04.5)</p>
+</li>
+<li><p class="first">Open a terminal and SSH to your droplet. The IP address can be found in the digitalocean website:</p>
+<div class="highlight-python"><div class="highlight"><pre>ssh root@12.34.56.78
 </pre></div>
 </div>
-<p>If you don&#8217;t remember your SQL password, look in the file <cite>elabftw/config.php</cite>!</p>
+</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The root password is in your mailbox. It will not echo when you type it, it&#8217;s normal, don&#8217;t panic.</p>
 </div>
-<div class="section" id="making-it-automatic-using-cron">
-<h2>Making it automatic using cron<a class="headerlink" href="#making-it-automatic-using-cron" title="Permalink to this headline">¶</a></h2>
-<p>A good backup is automatic.</p>
-<p>If you&#8217;re under a GNU/Linux system, try:</p>
-<div class="highlight-python"><div class="highlight"><pre>export EDITOR=nano ; crontab -e
+<ul>
+<li><p class="first">Go inside a tmux session:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">tmux</span>
 </pre></div>
 </div>
-<p>This will open a file.</p>
-<img alt="_images/crontab.png" src="_images/crontab.png" />
-<p>Add this line at the bottom:</p>
-<div class="highlight-python"><div class="highlight"><pre>00 04 * * * sh /path/to/script.sh
+</li>
+<li><p class="first">Enter the following command:</p>
+<div class="highlight-python"><div class="highlight"><pre>wget -qO- https://get.elabftw.net|sh
 </pre></div>
 </div>
-<p>This will run the script everyday at 4 am.</p>
+</li>
+</ul>
+<div class="admonition danger">
+<p class="first admonition-title">Danger</p>
+<p class="last">Don&#8217;t get into the habit of executing unknown scripts as root without reading them first!</p>
 </div>
-<div class="section" id="how-to-restore-a-backup">
-<h2>How to restore a backup<a class="headerlink" href="#how-to-restore-a-backup" title="Permalink to this headline">¶</a></h2>
-<p>Get a fresh elabftw folder, make the required directories, copy the config file:</p>
-<div class="highlight-python"><div class="highlight"><pre>git clone --depth 1 https://github.com/elabftw/elabftw
-mkdir -p elabftw/uploads/{tmp}
-chmod -R 777 elabftw/uploads
-cp -r /path/to/backup/uploads elabftw/
-cp /path/to/backup/config.php elabftw/
-</pre></div>
+<div class="admonition hint">
+<p class="first admonition-title">Hint</p>
+<p class="last">To follow the install progress, open a new pane with Ctrl-b, release and press %. Then enter <code class="docutils literal"><span class="pre">tail</span> <span class="pre">-f</span> <span class="pre">elabftw.log</span></code></p>
 </div>
-<p>Now import your SQL database back</p>
-<p>You can use phpmyadmin, create a new database and import your .sql backup, or use the command line:</p>
-<div class="highlight-python"><div class="highlight"><pre>mysql -uroot -p elabftw &lt; /path/to/backup/elabftw.sql
-</pre></div>
-</div>
-<p>Stay safe ;)</p>
-</div>
+<ul class="simple">
+<li>Read what is displayed at the end.</li>
+</ul>
+<p>ENJOY! :D</p>
 </div>
 
 
@@ -271,10 +255,10 @@ cp /path/to/backup/config.php elabftw/
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="how-to-update.html" class="btn btn-neutral float-right" title="How to update" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="postinstall.html" class="btn btn-neutral float-right" title="Post install things to do" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="postinstall.html" class="btn btn-neutral" title="Post install things to do" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="install-docker.html" class="btn btn-neutral" title="Install in a docker container" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

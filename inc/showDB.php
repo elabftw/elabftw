@@ -23,12 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-if (isset($_SESSION['prefs']['display'])) {
-    $display = $_SESSION['prefs']['display'];
-} else {
-    $display = 'default';
-}
-
+$results_arr = array();
 // keep tag var in url
 $getTag = '';
 if (isset($_GET['tag']) && $_GET['tag'] != '') {
@@ -131,46 +126,30 @@ if (isset($_GET['filter'])) {
     }
 }
 
-$total_time = get_total_time();
-
+// ///////////////////////////////////////////////////////////////////////
 // SQL for showDB
 // TAG SEARCH
 if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
-    $sql = "SELECT it.id, ty.name, ta.item_id 
-    FROM items AS it, items_types AS ty, items_tags AS ta 
-    WHERE it.type = ty.id 
-    AND it.team = :teamid 
-    AND it.id = ta.item_id 
-    AND ta.tag LIKE :tag 
+    $sql = "SELECT it.id, ty.name, ta.item_id
+    FROM items AS it, items_types AS ty, items_tags AS ta
+    WHERE it.type = ty.id
+    AND it.team = :teamid
+    AND it.id = ta.item_id
+    AND ta.tag LIKE :tag
     " . $filter . "
-    ORDER BY $order $sort 
+    ORDER BY $order $sort
     LIMIT 100";
     $req = $pdo->prepare($sql);
     $req->bindParam(':tag', $tag, PDO::PARAM_STR);
     $req->bindParam(':teamid', $_SESSION['team_id'], PDO::PARAM_INT);
     $req->execute();
 
-    $results_arr = array();
     // put resulting ids in the results array
-    while ($data = $req->fetch()) {
-        $results_arr[] = $data['item_id'];
+    while ($get_id = $req->fetch()) {
+        $results_arr[] = $get_id['item_id'];
     }
-
-
-    // show number of results found
-    if (count($results_arr) == 0) {
-        display_message('error_nocross', _("Sorry. I couldn't find anything :("));
-    } else {
-        echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time['time'] . " " . $total_time['unit'] . ")</p>";
-    }
-
-    // clean duplicates
-    $results_arr = array_unique($results_arr);
-    // loop the results array and display results
-    foreach ($results_arr as $result_id) {
-        showDB($result_id, $display);
-    } // end foreach
+    $search_type = 'tag';
 
 // NORMAL SEARCH
 } elseif (isset($_GET['q']) && !empty($_GET['q'])) {
@@ -178,19 +157,8 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     // we make an array for the resulting ids
     $results_arr = array();
     $results_arr = search_item('db', $query, $_SESSION['userid']);
-    // filter out duplicate ids and reverse the order; items should be sorted by date
-    $results_arr = array_reverse(array_unique($results_arr));
-    // show number of results found
-    if (count($results_arr) == 0) {
-        display_message('error_nocross', _("Sorry. I couldn't find anything :("));
-    } else {
-        echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time['time'] . " " . $total_time['unit'] . ")</p>";
-    }
+    $search_type = 'normal';
 
-    // loop the results array and display results
-    foreach ($results_arr as $result_id) {
-        showDB($result_id, $display);
-    }
 // end if there is a search
 } else { // there is no search
     $sql = "SELECT it.id, ty.name
@@ -203,23 +171,39 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     $req = $pdo->prepare($sql);
     $req->bindParam(':teamid', $_SESSION['team_id'], PDO::PARAM_INT);
     $req->execute();
-    $count = $req->rowCount();
-    if ($count == 0) {
-        // it might be a fresh install, but it might also be the search filters are too restrictive
-        if (isset($_GET['tag'])) {
-            display_message('error_nocross', _("Sorry. I couldn't find anything :("));
-        } else {
-            display_message('info', _('<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list to begin filling your database.'));
-        }
-    } else {
-        $results_arr = array();
-        while ($final_query = $req->fetch()) {
-            $results_arr[] = $final_query['id'];
-        }
-        // loop the results array and display results
-        echo "<p>" . _('Showing last uploads:') . "</p>";
-        foreach ($results_arr as $result_id) {
-            showDB($result_id, $display);
-        }
+    while ($get_id = $req->fetch()) {
+        $results_arr[] = $get_id['id'];
     }
+    $search_type = 'none';
+}
+
+$total_time = get_total_time();
+
+// filter out duplicate ids
+$results_arr = array_unique($results_arr);
+// show number of results found
+if (count($results_arr) === 0 && $search_type != 'none') {
+    display_message('error_nocross', _("Sorry. I couldn't find anything :("));
+} elseif (count($results_arr) === 0 && $search_type === 'none') {
+    display_message('info', _('<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list to begin filling your database.'));
+} else {
+    ?>
+    <div class='align_right'>
+        <a name='anchor'></a>
+        <p class='inline'><?php echo _('Export this result:'); ?> </p>
+        <a href='make_zip.php?id=<?php echo build_string_from_array($results_arr); ?>&type=items'>
+            <img src='img/zip.png' title='make a zip archive' alt='zip' />
+        </a>
+
+        <a href='make_csv.php?id=<?php echo build_string_from_array($results_arr); ?>&type=items'>
+            <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' />
+        </a>
+    </div>
+    <?php
+    echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time['time'] . " " . $total_time['unit'] . ")</p>";
+}
+
+// loop the results array and display results
+foreach ($results_arr as $result_id) {
+    showDB($result_id, $_SESSION['prefs']['display']);
 }

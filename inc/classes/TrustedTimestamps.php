@@ -32,6 +32,7 @@ namespace Elabftw\Elabftw;
 
 use \DateTime;
 use \Exception;
+use \Elabftw\Elabftw\Update;
 
 class TrustedTimestamps
 {
@@ -95,7 +96,11 @@ class TrustedTimestamps
     {
         $this->pdfFileName = hash("sha512", uniqid(rand(), true)) . ".pdf";
         $this->pdfPath = ELAB_ROOT . 'uploads/' . $this->pdfFileName;
-        $pdf = new \Elabftw\Elabftw\MakePdf($this->id, 'experiments', $this->pdfPath);
+        try {
+            new \Elabftw\Elabftw\MakePdf($this->id, 'experiments', $this->pdfPath);
+        } catch (Exception $e) {
+            throw new Exception('Failed at making the pdf : ' . $e->getMessage());
+        }
     }
 
     /**
@@ -275,6 +280,9 @@ class TrustedTimestamps
      */
     private function postData()
     {
+        // we need that to get the version that will be in user agent
+        $update = new \Elabftw\Elabftw\Update();
+
         $ch = curl_init();
         // set url of TSA
         curl_setopt($ch, CURLOPT_URL, $this->stampParams['stampprovider']);
@@ -293,7 +301,7 @@ class TrustedTimestamps
         curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents($this->requestfilePath));
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/timestamp-query'));
-        curl_setopt($ch, CURLOPT_USERAGENT, "eLabFTW");
+        curl_setopt($ch, CURLOPT_USERAGENT, "Elabftw/" . $update::INSTALLED_VERSION);
         $binaryResponseString = curl_exec($ch);
         $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);

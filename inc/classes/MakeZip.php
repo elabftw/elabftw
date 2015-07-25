@@ -44,9 +44,10 @@ class MakeZip
     private $cleanTitle;
 
     private $zipped;
+    // the path to attached files in the zip
+    private $fileArr = array();
+    private $jsonArr = array();
 
-    private $firstname;
-    private $lastname;
     private $folder;
 
 
@@ -68,15 +69,14 @@ class MakeZip
         $this->zipRealName = hash("sha512", uniqid(rand(), true)) . ".zip";
         $this->zipRelativePath = 'uploads/tmp/' . $this->zipRealName;
         $this->zipAbsolutePath = ELAB_ROOT . $this->zipRelativePath;
-        $this->setFirstLastName();
         $this->createZipArchive();
         $this->loopIdArr();
 
     }
     /*
-     * Pretty straightforward
+     * Return the relative path of the zip (uploads/tmp/<hash>.zip)
      *
-     * @return string the path of the zip (uploads/tmp/<hash>.zip)
+     * @return string
      */
     public function getZipRelativePath()
     {
@@ -86,6 +86,7 @@ class MakeZip
     /*
      * This is the name of the file that will get downloaded
      *
+     * @return string
      */
     public function getZipName()
     {
@@ -104,12 +105,11 @@ class MakeZip
      */
     private function createZipArchive()
     {
-
         $this->zip = new \ZipArchive;
+
         if (!$this->zip->open($this->zipAbsolutePath, ZipArchive::CREATE)) {
             throw new Exception('Could not open zip file!');
         }
-
     }
 
     /*
@@ -125,45 +125,9 @@ class MakeZip
     }
 
     /*
-     * Add a MANIFEST file at the root of the zip for listing files inside the zip.
+     * Populate $this->zipped
      *
      */
-    private function addManifest()
-    {
-        // add the MANIFEST file that lists the files in archive
-        $manifest = "";
-        for ($i = 0; $i < $this->zip->numFiles; $i++) {
-            $manifest .= $this->zip->getNameIndex($i) . "\n";
-        }
-        // add info about the creator + timestamp
-        $manifest .= "\nZip archive created by " . $this->firstname . " " . $this->lastname . " on " . date('Y.m.d') . " at " . date('H:i:s') . ".\n";
-        $manifest .= "~~~\neLabFTW - Free open source lab manager - http://www.elabftw.net\n";
-        // fix utf8
-        $manifest = utf8_encode($manifest);
-        $manifest = "\xEF\xBB\xBF" . $manifest;
-        $manifestpath = ELAB_ROOT . 'uploads/tmp/manifest-' . uniqid();
-        $tf = fopen($manifestpath, 'w+');
-        fwrite($tf, $manifest);
-        fclose($tf);
-        $this->zip->addFile($manifestpath, "MANIFEST");
-        $this->filesToDelete[] = $manifestpath;
-    }
-
-    private function setFirstLastName()
-    {
-        global $pdo;
-
-        // SQL to get firstname + lastname
-        $sql = "SELECT firstname, lastname FROM users WHERE userid = :userid";
-        $req = $pdo->prepare($sql);
-        $req->bindParam(':userid', $_SESSION['userid']);
-        $req->execute();
-        $users = $req->fetch();
-        $this->firstname = $users['firstname'];
-        $this->lastname = $users['lastname'];
-
-    }
-
     private function getInfoFromId($id)
     {
         global $pdo;
@@ -245,11 +209,13 @@ class MakeZip
         }
 
         // files attached ?
-        $filenb = count($real_name);
-        if ($filenb > 0) {
-            for ($i = 0; $i < $filenb; $i++) {
+        $fileNb = count($real_name);
+        if ($fileNb > 0) {
+            for ($i = 0; $i < $fileNb; $i++) {
                 // add files to archive
                 $this->zip->addFile(ELAB_ROOT . 'uploads/' . $long_name[$i], $this->folder . "/" . $real_name[$i]);
+                // reference them in the json file
+                $this->fileArr[] = $this->folder . "/" . $real_name[$i];
             }
         }
     }
@@ -273,20 +239,17 @@ class MakeZip
         $this->filesToDelete[] = $csv->getFilePath();
     }
 
-    private function addExportTxt($id)
+    private function addJson()
     {
-        // add the export.txt file that is helpful for importing
-        // first line is title, rest is body
-        $txt = stripslashes($this->zipped['title']) . "\n" . stripslashes($this->zipped['body']) . "\n";
-        // fix utf8
-        $txt = utf8_encode($txt);
-        $txtPath = ELAB_ROOT . 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . '.txt';
-        $tf = fopen($txtPath, 'w+');
-        fwrite($tf, $txt);
+        // add a json file that is helpful for importing back the data
+        $json = json_encode($this->jsonArr);
+        $jsonPath = ELAB_ROOT . 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . '.json';
+        $tf = fopen($jsonPath, 'w+');
+        fwrite($tf, $json);
         fclose($tf);
-        // add the export.txt file as hidden file, users don't need to see it
-        $this->zip->addFile($txtPath, $this->folder . "/.export.txt");
-        $this->filesToDelete[] = $txtPath;
+        // add the json file as hidden file, users don't need to see it
+        $this->zip->addFile($jsonPath, ".elabftw.json");
+        $this->filesToDelete[] = $jsonPath;
     }
 
     /*
@@ -302,7 +265,14 @@ class MakeZip
         $this->addAttachedFiles($id);
         $this->addCsv($id);
         $this->addPdf($id);
-        $this->addExportTxt($id);
+        // add an entry to the json file
+        $this->jsonArr[] = array(
+            'type' => $this->table,
+            'title' => stripslashes($this->zipped['title']),
+            'body' => stripslashes($this->zipped['body']),
+            'files' => $this->fileArr
+        );
+        unset($this->fileArr);
     }
 
     /*
@@ -319,7 +289,7 @@ class MakeZip
             }
             $this->addToZip($id);
         }
-        $this->addManifest();
+        $this->addJson();
         $this->zip->close();
     }
 

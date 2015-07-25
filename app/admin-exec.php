@@ -103,116 +103,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
 }
 
 
-/*
-// update coming from ../sysconfig.php
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update']) && $_POST['update'] == '1') {
-    // we don't do a `git pull` because it would mean a lot of tweaking to get it working with the www user
-    // so we use tar.gz and tagged releases.
-    $update_list_url = 'https://www.elabftw.net/updates.ini';
-    $update_zip_file = ELAB_ROOT . 'uploads/tmp/elabftw-latest.zip';
-
-    // 1. get the ini file with the updates
-    // we use curl to be able to input proxy settings
-    $ch = curl_init();
-    // this is to get content
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    // add proxy if there is one
-    if (strlen(get_config('proxy')) > 0) {
-        curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
-    }
-    // set url
-    curl_setopt($ch, CURLOPT_URL, $update_list_url);
-    // options to verify the ssl certificate (we disable check)
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-
-    // add user agent
-    // http://developer.github.com/v3/#user-agent-required
-    curl_setopt($ch, CURLOPT_USERAGENT, "elabftw updater");
-
-    // add a timeout, because if you need proxy, but don't have it, it will mess up things
-    // 5 seconds
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-
-    // DO IT
-    $update = curl_exec($ch);
-    curl_close($ch);
-
-    if ($update === false) {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#1", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: ../sysconfig.php');
-        exit;
-    }
-    // convert ini into array. The `true` is for process_sections: to get multidimensionnal array.
-    $versions = parse_ini_string($update, true);
-    // get the latest version (latest item in array, an array itself with url and checksum)
-    $latest_arr = end($versions);
-
-    // NOW GET THE ARCHIVE
-    $ch = curl_init();
-    // this is to get content
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    // add proxy if there is one
-    if (strlen(get_config('proxy')) > 0) {
-        curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
-    }
-    // set url
-    curl_setopt($ch, CURLOPT_URL, $latest_arr['url']);
-    // options to verify the ssl certificate (we disable check)
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-    // add user agent
-    // http://developer.github.com/v3/#user-agent-required
-    curl_setopt($ch, CURLOPT_USERAGENT, "elabftw");
-    // add a timeout, because if you need proxy, but don't have it, it will mess up things
-    // 5 seconds
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-    // say where we want the file
-    $handle = fopen($update_zip_file, 'w');
-    curl_setopt($ch, CURLOPT_FILE, $handle);
-
-    if (curl_exec($ch) != true) {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#2", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: ../sysconfig.php');
-        exit;
-    }
-    curl_close($ch);
-    fclose($handle);
-
-    // VERIFY MD5SUM
-    if (md5_file($update_zip_file) != $latest_arr['md5']) {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#3", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: ../sysconfig.php');
-        exit;
-    }
-
-    // NOW OPEN THE ARCHIVE
-    $zip = new ZipArchive;
-    if ($zip->open($update_zip_file) && $zip->extractTo('uploads/tmp/')) {
-        // it might take some time and we don't want to be cut in the middle, so set time_limit to ∞
-        set_time_limit(0);
-        // I tried to do something that would work on windows also, but it's too complicated, so this will
-        // work only for GNU/Linux and Mac OS X. The fact is I don't really care for Windows server users.
-        //
-        // The unzipped archive will be a folder elabftw-master, because that's how github does it.
-        // So this means that only update on master branch are supported. If you want to update from next, use git !
-        $cmd = "/bin/cp -rv uploads/tmp/elabftw-master/* " . ELAB_ROOT . " >> /tmp/elabcopy.log 2>&1";
-        //var_dump(shell_exec($cmd));
-        exit;
-        //shell_exec("/bin/rm -rf uploads/tmp/*");
-        $zip->close();
-        $msg_arr[] = _("Congratulations! You are running the latest stable version of eLabFTW :)");
-        $_SESSION['infos'] = $msg_arr;
-        header('Location: update.php');
-    } else {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#4", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: ../sysconfig.php');
-    }
-}
- */
-
 // TEAM CONFIGURATION FORM COMING FROM ../sysconfig.php
 // ADD A NEW TEAM
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team']) && $_POST['new_team'] != '' && $_POST['new_team'] != ' ') {
@@ -222,8 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team']) && $_POST[
     $result1 = $req->execute(array(
         'team_name' => $new_team_name,
         'deletable_xp' => 1,
-        'link_name' => 'Wiki',
-        'link_href' => 'https://github.com/elabftw/elabftw/wiki'
+        'link_name' => 'Documentation',
+        'link_href' => 'doc/_build/html/'
     ));
     $new_team_id = $pdo->lastInsertId();
     // now we need to insert a new default set of status for the newly created team
@@ -473,12 +363,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
     if (isset($_POST['link_name'])) {
         $link_name = filter_var($_POST['link_name'], FILTER_SANITIZE_STRING);
     } else {
-        $link_name = 'Wiki';
+        $link_name = 'Documentation';
     }
     if (isset($_POST['link_href'])) {
         $link_href = filter_var($_POST['link_href'], FILTER_SANITIZE_STRING);
     } else {
-        $link_href = 'https://github.com/elabftw/elabftw/wiki';
+        $link_href = 'doc/_build/html/';
     }
 
     // SQL

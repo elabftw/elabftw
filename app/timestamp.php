@@ -44,9 +44,6 @@ try {
     $_SESSION['errors'][] = $e->getMessage();
 }
 
-// unset $ts to delete associated temporary files
-unset($ts);
-
 // if there was a problem during the timestamping, an error will be inside the $_SESSION['errors'] array
 // and we want to stop there if that is the case.
 if (is_array($_SESSION['errors'])) {

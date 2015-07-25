@@ -24,124 +24,80 @@
 *                                                                               *
 ********************************************************************************/
 require_once '../inc/common.php';
+// it might take some time and we don't want to be cut in the middle, so set time_limit to ∞
+set_time_limit(0);
+
 $inserted = 0;
 $errflag = false;
+$msg_arr = array();
 
-// CODE TO IMPORT CSV
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['type'] === 'csv') {
-    $row = 0;
-    $column = array();
-    // look at mime type. not a trusted source, but it can prevent dumb errors (like uploading a .zip)
-    // there is null in the array because elabftw csv have a null mime type
-    $mimes = array(null, 'application/vnd.ms-excel', 'text/plain', 'text/csv', 'text/tsv');
-    if (!in_array($_FILES['file']['type'], $mimes)) {
-        $errflag = true;
-        $msg_arr[] = _("This doesn't look like a .csv file. Import aborted.");
-    }
-    // open the file
-    $handle = fopen($_FILES['csvfile']['tmp_name'], 'r');
-    if ($handle == false) {
-        $errflag = true;
-        $msg_arr[] = _("Could not open the file.");
-    }
+if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+    die();
+}
 
-    // get what type we want
-    if (isset($_COOKIE['itemType']) && is_pos_int($_COOKIE['itemType'])) {
-        $type = $_COOKIE['itemType'];
-    } else {
-        $errflag = true;
-        $msg_arr[] = _("No cookies found. Import aborted.");
-    }
+// look at mime type. not a trusted source, but it can prevent dumb errors
+$mimes = array(null, 'application/vnd.ms-excel', 'text/plain', 'text/csv', 'text/tsv', 'application/zip', 'application/force-download');
+if (!in_array($_FILES['file']['type'], $mimes)) {
+    $errflag = true;
+    $msg_arr[] = sprintf(_("This doesn't look like a .%s file. Import aborted."), $type);
+}
 
+// try to read the file
+if (!is_readable($_FILES['file']['tmp_name'])) {
+    $errflag = true;
+    $msg_arr[] = _("Could not open the file.");
+}
 
-    if ($errflag) {
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: ../admin.php');
-        exit;
-    }
+// get what type we want
+if (isset($_COOKIE['itemType']) && is_pos_int($_COOKIE['itemType'])) {
+    $itemType = $_COOKIE['itemType'];
+} else {
+    $errflag = true;
+    $msg_arr[] = _("No cookies found. Import aborted.");
+}
 
-    // loop the lines
-    while ($data = fgetcsv($handle, 0, ",")) {
-        $num = count($data);
-        // get the column names (first line)
-        if ($row == 0) {
-            for ($i = 0; $i < $num; $i++) {
-                $column[] = $data[$i];
-            }
-            $row++;
-            continue;
-        }
-        $row++;
+// redirect user on error
+if ($errflag) {
+    $_SESSION['errors'] = $msg_arr;
+    header('Location: ../admin.php');
+    exit;
+}
 
-        $title = $data[0];
-        $body = '';
-        $j = 0;
-        foreach ($data as $line) {
-            $body .= "<p><strong>" . $column[$j] . " :</strong> " . $line . '</p>';
-            $j++;
-        }
-        // clean the body
-        $body = str_replace('<p><strong> :</strong> </p>', '', $body);
+switch($_POST['type']) {
+    case 'csv':
+        // CODE TO IMPORT CSV
+        $row = 0;
+        $column = array();
 
-        // SQL for importing
-        $sql = "INSERT INTO items(team, title, date, body, userid, type) VALUES(:team, :title, :date, :body, :userid, :type)";
-        $req = $pdo->prepare($sql);
-        $result = $req->execute(array(
-            'team' => $_SESSION['team_id'],
-            'title' => $title,
-            'date' => kdate(),
-            'body' => $body,
-            'userid' => $_SESSION['userid'],
-            'type' => $type
-        ));
-        if ($result) {
-            $inserted++;
-        } else {
+        // open file
+        $handle = fopen($_FILES['file']['tmp_name'], 'r');
+        if ($handle === false) {
             $errflag = true;
         }
-    }
-    fclose($handle);
-}
-// END CODE TO IMPORT CSV
 
-// CODE TO IMPORT ZIP
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['type'] === 'zip') {
-    // it might take some time and we don't want to be cut in the middle, so set time_limit to ∞
-    set_time_limit(0);
-    // OPEN THE ARCHIVE
-    $zip = new ZipArchive;
-    if ($zip->open($_FILES['zipfile']['tmp_name']) && $zip->extractTo('../uploads/tmp/')) {
-        // how many items do we have to import ?
-        // we loop through all the entries
-        for ($i = 0; $i < 20000; $i++) {
-            // MANIFEST will always be the last entry
-            if ($zip->getNameIndex($i) === 'MANIFEST') {
-                break;
+        // loop the lines
+        while ($data = fgetcsv($handle, 0, ",")) {
+            $num = count($data);
+            // get the column names (first line)
+            if ($row == 0) {
+                for ($i = 0; $i < $num; $i++) {
+                    $column[] = $data[$i];
+                }
+                $row++;
+                continue;
             }
-            $dirs[] = dirname($zip->getNameIndex($i));
-        }
-        $zip->close();
-        // we want to know how many unique item are in the zip
-        $dirs = array_unique($dirs);
+            $row++;
 
-        // now for each folder, import the things
-        foreach ($dirs as $dir) {
-            // we need to get title and body from the txt file
-            $file = "../uploads/tmp/" . $dir . "/.export.txt";
-            $content = file_get_contents($file);
-            $lines = explode("\n", $content);
-            $title = $lines[0];
-            $body = implode("\n", array_slice($lines, 1));
-
-            // we need to attach files
-            // TODO
-
-            // get what type we want
-            if (isset($_COOKIE['itemType']) && is_pos_int($_COOKIE['itemType'])) {
-                $type = $_COOKIE['itemType'];
-            } else {
-                die('No cookies found');
+            $title = $data[0];
+            $body = '';
+            $j = 0;
+            foreach ($data as $line) {
+                $body .= "<p><strong>" . $column[$j] . " :</strong> " . $line . '</p>';
+                $j++;
             }
+            // clean the body
+            $body = str_replace('<p><strong> :</strong> </p>', '', $body);
+
             // SQL for importing
             $sql = "INSERT INTO items(team, title, date, body, userid, type) VALUES(:team, :title, :date, :body, :userid, :type)";
             $req = $pdo->prepare($sql);
@@ -151,20 +107,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['type'] === 'zip') {
                 'date' => kdate(),
                 'body' => $body,
                 'userid' => $_SESSION['userid'],
-                'type' => $type
+                'type' => $itemType
             ));
-            // count the number of inserts
             if ($result) {
                 $inserted++;
             } else {
                 $errflag = true;
             }
         }
-    } else {
+        fclose($handle);
+        // END CODE TO IMPORT CSV
+        break;
+
+    case 'zip':
+        // CODE TO IMPORT ZIP
+        try {
+            $import = new \Elabftw\Elabftw\ImportZip($_FILES['file']['tmp_name'], $itemType);
+        } catch (Exception $e) {
+            $errflag = true;
+            $msg_arr[] = $e->getMessage();
+        }
+        $inserted = $import->inserted;
+        // END CODE TO IMPORT ZIP
+        break;
+    default:
         $errflag = true;
-    }
 }
-// END CODE TO IMPORT ZIP
+
 
 // REDIRECT
 if (!$errflag) {

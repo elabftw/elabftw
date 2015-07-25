@@ -72,7 +72,7 @@ if (!is_writable('config.php')) {
     // check that there is no secret key already
     if (!defined('SECRET_KEY')) {
 
-        $msg_arr[] = "[ERROR] Please allow webserver to write config file, or add SECRET_KEY yourself to config.php. <a href='https://github.com/elabftw/elabftw/wiki/Troubleshooting'>Link to documentation</a>";
+        $msg_arr[] = "[ERROR] Please allow webserver to write config file, or add SECRET_KEY yourself to config.php. <a href='doc/_build/html/common-errors.html#add-the-secret-key'>Link to documentation</a>";
         $_SESSION['errors'] = $msg_arr;
         header('Location: sysconfig.php');
         exit;
@@ -215,31 +215,6 @@ foreach ($teams as $team) {
     }
 }
 
-/*
-// if Universign was used either globally or on a per team level, correct the recorded dates for the timestamps in the database
-if ($old_timestamping_global || $old_timestamping_teams) {
-    // check if we have timestamped experiments
-    $sql = "SELECT * FROM experiments";
-    $req = $pdo->prepare($sql);
-    $req->execute();
-    while ($show = $req->fetch()) {
-        if ($show['timestamped'] === '1') {
-            $ts = new Elabftw\Elabftw\TrustedTimestamps();
-            $date = $ts->getResponseTime(ELAB_ROOT . 'uploads/' . $show['timestamptoken']);
-            if ($show['timestampedwhen'] !== $date) {
-                $sql_update = "UPDATE experiments SET timestampedwhen = :date WHERE id = :id";
-                $req_update = $pdo->prepare($sql_update);
-                $res_update = $req_update->execute(array('date' => $date, 'id' => $show['id']));
-                if ($res_update) {
-                    $msg_arr[] = ">>> Corrected timestamp data for experiment #" . $show['id'];
-                } else {
-                    die($die_msg);
-                }
-            }
-        }
-    }
-}
- */
 
 // if Universign.eu was not used, a database update might still be needed; check for that
 if (!$old_timestamping_global) {
@@ -368,6 +343,22 @@ if (is_dir($dir)) {
     }
     // and remove folder itself
     rmdir($dir);
+}
+
+// 20150723 add db version
+$sql = "SELECT COUNT(*) AS confcnt FROM config";
+$req = $pdo->prepare($sql);
+$req->execute();
+$confcnt = $req->fetch(\PDO::FETCH_ASSOC);
+
+if ($confcnt['confcnt'] < 21) {
+    $sql = "INSERT INTO config (`conf_name`, `conf_value`) VALUES ('schema', '1')";
+    $req = $pdo->prepare($sql);
+    if ($req->execute()) {
+        $msg_arr[] = '>>> Added schema config.';
+    } else {
+        die($die_msg);
+    }
 }
 
 // //////////////////////////////////////////

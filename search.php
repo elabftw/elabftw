@@ -29,6 +29,10 @@ $page_title = _('Search');
 $selected_menu = 'Search';
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
+
+// make array of results id
+$results_arr = array();
+$search_type = '';
 ?>
 
 <!-- Advanced Search page begin -->
@@ -38,7 +42,7 @@ require_once 'inc/info_box.php';
         <div class='row'>
             <!-- SEARCH IN-->
             <?php
-            if (isset($_GET['type']) && $_GET['type'] == 'database') {
+            if (isset($_GET['type']) && $_GET['type'] === 'database') {
                 $seldb = " selected='selected'";
             } else {
                 $seldb = "";
@@ -74,13 +78,18 @@ require_once 'inc/info_box.php';
                 <select name='tag_exp'>
                     <option value=''><?php echo _('Select a Tag'); ?></option>
                     <?php // Experiments tags
-                    // TODO https://github.com/elabftw/elabftw/issues/135
                     $sql = "SELECT tag, COUNT(id) as nbtag, userid FROM experiments_tags WHERE userid = :userid GROUP BY tag ORDER BY tag ASC";
                     $req = $pdo->prepare($sql);
-                    $req->execute(array(
-                        // TODO here we should replace with whatever userid is selected on the 'searchonly' select
-                        'userid' => $_SESSION['userid']
-                    ));
+                    // we want to show the tags of the selected person in 'search in' dropdown
+                    // so if there is a owner parameter, use it to select tags
+                    if (isset($_GET['owner']) && is_pos_int($_GET['owner'])) {
+                        $userid = $_GET['owner'];
+                    } else {
+                        $userid = $_SESSION['userid'];
+                    }
+                    $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+                    $req->execute();
+
                     while ($exp_tags = $req->fetch()) {
                         echo "<option value='" . $exp_tags['tag'] . "'";
                         // item get selected if it is in the search url
@@ -100,9 +109,9 @@ require_once 'inc/info_box.php';
                     // TODO here we should show only the tags linked with the type of item selected in the 'searchin' select
                     $sql = "SELECT tag, COUNT(id) as nbtag FROM items_tags WHERE team_id = :team GROUP BY tag ORDER BY tag ASC";
                     $req = $pdo->prepare($sql);
-                    $req->execute(array(
-                        'team' => $_SESSION['team_id']
-                    ));
+                    $req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
+                    $req->execute();
+
                     while ($items_types = $req->fetch()) {
                         echo "<option value='" . $items_types['tag'] . "'";
                         // item get selected if it is in the search url
@@ -118,6 +127,7 @@ require_once 'inc/info_box.php';
             <!-- SEARCH ONLY -->
             <div class='col-md-6'>
                 <label for'searchonly'><?php echo _('Search only in experiments owned by:'); ?> </label><br>
+                <!-- when you change this select, you reload the page so the tag selector loads the correct tags -->
                 <select id='searchonly' name='owner'>
                     <option value=''><?php echo _('Yourself'); ?></option>
                     <option disabled>----------------</option>
@@ -434,47 +444,8 @@ if (isset($_GET)) {
                     'userid' => $_SESSION['userid']
                 ));
             }
-            // This counts the number of results
-            // and if there wasn't any it gives them a little message explaining that
-            $count = $req->rowCount();
-            if ($count > 0) {
-                // make array of results id
-                $results_id = array();
-                while ($get_id = $req->fetch()) {
-                    $results_id[] = $get_id['id'];
-                }
-                // sort by id, biggest (newer item) comes first
-                $results_id = array_reverse($results_id);
-                // construct string for links to export results
-                $results_id_str = "";
-                foreach ($results_id as $id) {
-                    $results_id_str .= $id . "+";
-                }
-                // remove last +
-                $results_id_str = rtrim($results_id_str, '+');
-                    ?>
 
-                <div class='align_right'>
-                    <a name='anchor'></a>
-                    <p class='inline'><?php echo _('Export this result:'); ?> </p>
-                    <a href='make_zip.php?id=<?php echo $results_id_str; ?>&type=experiments'>
-                        <img src='img/zip.png' title='make a zip archive' alt='zip' />
-                    </a>
-
-                    <a href='make_csv.php?id=<?php echo $results_id_str; ?>&type=experiments'>
-                        <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' />
-                    </a>
-                </div>
-    <?php
-                echo "<p id='search_count'>" . $count . " " . ngettext("result found", "results found", $count) . "</p>";
-                // Display results
-                echo "<hr>";
-                foreach ($results_id as $id) {
-                    showXP($id, $_SESSION['prefs']['display']);
-                }
-            } else { // no results
-                display_message('error_nocross', _("Sorry. I couldn't find anything :("));
-            }
+            $search_type = 'experiments';
 
         // DATABASE SEARCH
         } elseif (is_pos_int($_GET['type']) || $_GET['type'] === 'database') {
@@ -512,44 +483,43 @@ if (isset($_GET)) {
                 ));
             }
 
-            $count = $req->rowCount();
-            if ($count > 0) {
-                // make array of results id
-                $results_id = array();
-                while ($get_id = $req->fetch()) {
-                    $results_id[] = $get_id['id'];
-                }
-                // sort by id, biggest (newer item) comes first
-                $results_id = array_reverse($results_id);
-                // construct string for links to export results
-                $results_id_str = "";
-                foreach ($results_id as $id) {
-                    $results_id_str .= $id . "+";
-                }
-                // remove last +
-                $results_id_str = rtrim($results_id_str, '+');
-                    ?>
+            $search_type = 'items';
+        }
 
-                <div class='align_right'><a name='anchor'></a>
+        // BEGIN DISPLAY RESULTS
+
+        if ($req->rowCount() === 0) {
+                display_message('error_nocross', _("Sorry. I couldn't find anything :("));
+        } else {
+            while ($get_id = $req->fetch()) {
+                $results_arr[] = $get_id['id'];
+            }
+            // sort by id, biggest (newer item) comes first
+            $results_arr = array_reverse($results_arr);
+            $total_time = get_total_time();
+            ?>
+            <!-- Export CSV/ZIP -->
+            <div class='align_right'>
+                <a name='anchor'></a>
                 <p class='inline'><?php echo _('Export this result:'); ?> </p>
-                <a href='make_zip.php?id=<?php echo $results_id_str; ?>&type=items'>
-                <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>
+                <a href='make_zip.php?id=<?php echo build_string_from_array($results_arr); ?>&type=<?php echo $search_type; ?>'>
+                    <img src='img/zip.png' title='make a zip archive' alt='zip' />
+                </a>
 
-                    <a href='make_csv.php?id=<?php echo $results_id_str; ?>&type=items'><img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export in spreadsheet file' /></a>
-                </div>
-    <?php
-                if ($count == 1) {
-                    echo "<div id='search_count'>" . $count . " result</div>";
+                <a href='make_csv.php?id=<?php echo build_string_from_array($results_arr); ?>&type=<?php echo $search_type; ?>'>
+                    <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' />
+                </a>
+            </div>
+            <?php
+            echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time['time'] . " " . $total_time['unit'] . ")</p>";
+            // Display results
+            echo "<hr>";
+            foreach ($results_arr as $id) {
+                if ($search_type === 'experiments') {
+                    showXP($id, $_SESSION['prefs']['display']);
                 } else {
-                    echo "<div id='search_count'>" . $count . " results</div>";
-                }
-                // Display results
-                echo "<hr>";
-                foreach ($results_id as $id) {
                     showDB($id, $_SESSION['prefs']['display']);
                 }
-            } else { // no results
-                display_message('error_nocross', _("Sorry. I couldn't find anything :("));
             }
         }
     }
@@ -557,6 +527,30 @@ if (isset($_GET)) {
 ?>
 
 <script>
+function insertParamAndReload(key, value) {
+    key = escape(key); value = escape(value);
+
+    var kvp = document.location.search.substr(1).split('&');
+    if (kvp == '') {
+        document.location.search = '?' + key + '=' + value;
+    } else {
+
+        var i = kvp.length; var x; while (i--) {
+            x = kvp[i].split('=');
+
+            if (x[0] == key) {
+                x[1] = value;
+                kvp[i] = x.join('=');
+                break;
+            }
+        }
+
+        if (i < 0) { kvp[kvp.length] = [key, value].join('='); }
+
+        // reload the page
+        document.location.search = kvp.join('&');
+    }
+}
 $(document).ready(function(){
     // DATEPICKER
     $( ".datepicker" ).datepicker({dateFormat: 'yymmdd'});
@@ -568,6 +562,10 @@ $(document).ready(function(){
         echo '$("#tag_exp").hide();';
     }
     ?>
+
+    $('#searchonly').on('change', function() {
+        insertParamAndReload('owner', $('#searchonly').val());
+    });
 
     $('#searchin').on('change', function() {
         if (this.value == 'experiments') {

@@ -31,18 +31,7 @@
  */
 function kdate()
 {
-    $today = getdate();
-    $month = $today['mon'];
-    // add 0 in front of month if needed
-    if (strlen($month) === 1) {
-        $month = '0' . $month;
-    }
-    $day = $today['mday'];
-    // add 0 in front of day if needed
-    if (strlen($day) === 1) {
-        $day = '0' . $day;
-    }
-    return $today['year'] . $month . $day;
+    return date('Ymd');
 }
 
 /**
@@ -372,7 +361,7 @@ function processTimestampPost()
  * @param string $display Can be 'compact' or 'default'
  * @return string|null HTML of the single experiment
  */
-function showXP($id, $display)
+function showXP($id, $display = 'default')
 {
     global $pdo;
     $sql = "SELECT experiments.*, status.color FROM
@@ -458,7 +447,7 @@ function show_stars($rating)
  * @param string $display Can be 'compact' or 'default'
  * @return string|null HTML of the single item
  */
-function showDB($id, $display)
+function showDB($id, $display = 'default')
 {
     global $pdo;
     $sql = "SELECT items.*,
@@ -1009,4 +998,25 @@ function get_total_time()
     return array(
         'time' => $total_time,
         'unit' => $unit);
+}
+
+/*
+ * Return a string 5+3+6 when feeded an array
+ *
+ * @param array $array
+ * @return false|string
+ */
+function build_string_from_array($array, $delim = '+')
+{
+    $string = "";
+
+    if (!is_array($array)) {
+        return false;
+    }
+
+    foreach ($array as $i) {
+        $string .= $i . $delim;
+    }
+    // remove last delimiter
+    return rtrim($string, $delim);
 }

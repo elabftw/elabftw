@@ -43,6 +43,10 @@ if (is_readable('config.php')) {
         Or if you just did a git pull, run php update.php");
 }
 
+// check for maintenance mode
+if (file_exists(ELAB_ROOT . 'maintenance')) {
+    die('Maintenance mode is enabled. Check back later.');
+}
 
 // SQL CONNECT
 try {
@@ -59,6 +63,15 @@ try {
 require_once ELAB_ROOT . 'inc/functions.php';
 require_once ELAB_ROOT . 'vendor/autoload.php';
 require_once ELAB_ROOT . 'inc/locale.php';
+
+// run the update script if we have the wrong schema version
+$update = new \Elabftw\Elabftw\Update();
+
+if (get_config('schema') < $update::REQUIRED_SCHEMA) {
+    $update = new \Elabftw\Elabftw\Update();
+    $_SESSION['infos'] = $update->runUpdateScript();
+}
+
 $user = new \Elabftw\Elabftw\User();
 
 if (!isset($_SESSION['auth'])) {

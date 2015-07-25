@@ -38,7 +38,7 @@ $msg_arr = array();
 $errflag = false;
 
 if (!using_ssl()) {
-    die("eLabFTW works only in HTTPS. Please enable HTTPS on your server (<a href='https://github.com/elabftw/elabftw/wiki/Troubleshooting#wiki-switch-to-https'>see documentation</a>). Or retry with https:// in front of the address.");
+    die("eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or retry with https:// in front of the address.");
 }
 
 // Check the form_key

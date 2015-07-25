@@ -39,15 +39,15 @@ $crypto = new \Elabftw\Elabftw\Crypto();
 
 $formKey = new \Elabftw\Elabftw\FormKey();
 
+$update = new \Elabftw\Elabftw\Update();
+
 try {
-    $update = new \Elabftw\Elabftw\Update();
+    $update->getUpdatesIni();
 } catch (Exception $e) {
     display_message('error', $e->getMessage());
 }
 
-// if we managed to get a version from the server
-if (is_object($update)) {
-
+if ($update->success === true) {
     // display current and latest version
     echo "<br><p>" . _('Installed version:') . " " . $update::INSTALLED_VERSION . " ";
     // show a little green check if we have latest version
@@ -59,14 +59,14 @@ if (is_object($update)) {
 
     // if we don't have the latest version, show button redirecting to wiki
     if ($update->updateIsAvailable()) {
-        $message = _('A new version is available!') . " <a href='https://github.com/elabftw/elabftw/wiki/How-to-update'>
+        $message = _('A new version is available!') . " <a href='doc/_build/html/how-to-update.html'>
             <button class='submit button'>Update elabftw</button></a>";
         display_message('error', $message);
     }
 }
 
-if (strlen(get_config('mail_method')) == 0) {
-    $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://github.com/elabftw/elabftw/wiki/finalizing'>", "</a>");
+if (get_config('mail_from') === 'notconfigured@example.com') {
+    $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='doc/_build/html/postinstall.html#setting-up-email'>", "</a>");
     display_message('error', $message);
 }
 ?>
@@ -170,12 +170,12 @@ foreach ($lang_array as $lang) {
         <p class='smallgray'><?php echo _('You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login infos in the admin panel.'); ?></p>
         <p>
         <label for='stampprovider'><?php echo _('URL for external timestamping service:'); ?></label>
-        <input type='url' placeholder='https://ws.universign.eu/tsa' value='<?php echo get_config('stampprovider'); ?>' name='stampprovider' id='stampprovider' />
+        <input type='url' placeholder='http://zeitstempel.dfn.de/' value='<?php echo get_config('stampprovider'); ?>' name='stampprovider' id='stampprovider' />
         <span class='smallgray'><?php printf(_('This should be the URL used for %sRFC 3161%s-compliant timestamping requests.'), "<a href='https://tools.ietf.org/html/rfc3161'>", "</a>"); ?></span>
         </p>
         <p>
         <label for='stampcert'><?php echo _('Chain of certificates of the external timestamping service:'); ?></label>
-        <input type='text' placeholder='vendor/universign-tsa-root.pem' value='<?php echo get_config('stampcert'); ?>' name='stampcert' id='stampcert' />
+        <input type='text' placeholder='vendor/pki.dfn.pem' value='<?php echo get_config('stampcert'); ?>' name='stampcert' id='stampcert' />
         <span class='smallgray'><?php printf(_('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. The file needs to be in %sPEM-encoded (ASCII)%s format!'), "<br>", "<a href='https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail'>", "</a>"); ?></span>
         </p>
         <label for='stamplogin'><?php echo _('Login for external timestamping service:'); ?></label>

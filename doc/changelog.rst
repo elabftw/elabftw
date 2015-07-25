@@ -6,6 +6,10 @@ Changelog
 Version 1.1.5
 -------------
 
+* move doc to reStructeredText
+* fix 'Error getting latest version from server'
+* new registered users will get the server lang as lang
+* tag list on search page is now filtered by selected user
 * add autocompletion to experiments (start with # to get item list) (fix #65)
 * improve zip import now also imports attached files to an item (fix #21)
 * remove MANIFEST file from zip archives

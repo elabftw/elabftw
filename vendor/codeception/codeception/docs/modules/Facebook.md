@@ -1,6 +1,4 @@
-# Facebook Module
 
-**For additional reference, please review the [source](https://github.com/Codeception/Codeception/tree/2.0/src/Codeception/Module/Facebook.php)**
 
 
 Provides testing for projects integrated with Facebook API.
@@ -77,35 +75,35 @@ $I->see('Welcome, ' . $fbUserFirstName);
  
 Returns the test user access token.
 
-@return string
+ * `return` string
 
 
 ### grabFacebookTestUserEmail
  
 Returns the test user email.
 
-@return string
+ * `return` string
 
 
 ### grabFacebookTestUserId
  
 Returns the test user id.
 
-@return string
+ * `return` string
 
 
 ### grabFacebookTestUserLoginUrl
  
 Returns URL for test user auto-login.
 
-@return string
+ * `return` string
 
 
 ### grabFacebookTestUserName
  
 Returns the test user name.
 
-@return string
+ * `return` string
 
 
 ### grabFacebookTestUserPassword
@@ -125,7 +123,7 @@ Get facebook test user be created.
  
 Get facebook test user be logged in on facebook.
 
- ModuleConfigException
+
 
 
 ### postToFacebookAsTestUser
@@ -142,4 +140,4 @@ Please, note that you must have publish_actions permission to be able to publish
 
  * `param string` $placeId Place identifier to be verified against user published posts
 
-<p>&nbsp;</p><div class="alert alert-warning">Module reference is taken from the source code. <a href="https://github.com/Codeception/Codeception/tree/2.0/src/Codeception/Module/Facebook.php">Help us to improve documentation. Edit module reference</a></div>
+<p>&nbsp;</p><div class="alert alert-warning">Module reference is taken from the source code. <a href="https://github.com/Codeception/Codeception/tree/2.1/src/Codeception/Module/Facebook.php">Help us to improve documentation. Edit module reference</a></div>

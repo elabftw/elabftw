@@ -1,6 +1,4 @@
-# SOAP Module
 
-**For additional reference, please review the [source](https://github.com/Codeception/Codeception/tree/2.0/src/Codeception/Module/SOAP.php)**
 
 
 Module for testing SOAP WSDL web services.
@@ -79,7 +77,7 @@ Element is matched by either CSS or XPath
 @version 1.1
  * `param` $cssOrXPath
  * `param` $attribute
-@return string
+ * `return` string
 
 
 ### grabTextContentFrom
@@ -89,7 +87,7 @@ Element is matched by either CSS or XPath
 
 @version 1.1
  * `param` $cssOrXPath
-@return string
+ * `return` string
 
 
 ### haveSoapHeader
@@ -228,4 +226,4 @@ $I->sendRequest('UpdateUser', \Codeception\Utils\Soap::request()->user
  * `param` $request
  * `param` $body
 
-<p>&nbsp;</p><div class="alert alert-warning">Module reference is taken from the source code. <a href="https://github.com/Codeception/Codeception/tree/2.0/src/Codeception/Module/SOAP.php">Help us to improve documentation. Edit module reference</a></div>
+<p>&nbsp;</p><div class="alert alert-warning">Module reference is taken from the source code. <a href="https://github.com/Codeception/Codeception/tree/2.1/src/Codeception/Module/SOAP.php">Help us to improve documentation. Edit module reference</a></div>

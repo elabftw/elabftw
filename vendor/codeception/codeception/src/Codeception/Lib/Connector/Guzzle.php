@@ -137,7 +137,7 @@ class Guzzle extends Client
                 }
                 if (!isset($partsUri[$key]) || $partsUri[$key] !== $part) {
                     $status = 302;
-                    $headers['Location'] = $uri;
+                    $headers['Location'] = $matchesMeta ? htmlspecialchars_decode($uri) : $uri;
                     break;
                 }
             }
@@ -170,7 +170,7 @@ class Guzzle extends Client
             'headers' => $this->extractHeaders($request)
         ];
 
-        $requestOptions = array_merge_recursive($requestOptions, $this->requestOptions);
+        $requestOptions = array_replace_recursive($requestOptions, $this->requestOptions);
 
         $guzzleRequest = $this->client->createRequest(
             $request->getMethod(),

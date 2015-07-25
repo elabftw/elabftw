@@ -1,6 +1,4 @@
-# Lumen Module
 
-**For additional reference, please review the [source](https://github.com/Codeception/Codeception/tree/2.0/src/Codeception/Module/Lumen.php)**
 
 
 
@@ -30,6 +28,42 @@ Please try it and leave your feedback.
 
 
 
+### _findElements
+
+*hidden API method, expected to be used from Helper classes*
+ 
+Locates element using available Codeception locator types:
+
+* XPath
+* CSS
+* Strict Locator
+
+Use it in Helpers or GroupObject or Extension classes:
+
+```php
+$els = $this->getModule('Lumen')->_findElements('.items');
+$els = $this->getModule('Lumen')->_findElements(['name' => 'username']);
+```
+
+WebDriver module returns `Facebook\WebDriver\Remote\RemoteWebElement` instances
+PhpBrowser and Framework modules return `Symfony\Component\DomCrawler\Crawler` instances
+
+ * `param` $locator
+ * `return` array of interactive elements
+
+
+### _savePageSource
+
+*hidden API method, expected to be used from Helper classes*
+ 
+Saves page source of to a file
+
+```php
+$this->getModule('Lumen')->_savePageSource(codecept_output_dir().'page.html');
+```
+ * `param` $filename
+
+
 ### amHttpAuthenticated
  
 Authenticates user for HTTP_AUTH
@@ -46,7 +80,7 @@ an array of credentials.
 
  * `param`  \Illuminate\Contracts\Auth\User|array $user
  * `param`  string $driver
-@return void
+ * `return` void
 
 
 ### amOnPage
@@ -381,7 +415,7 @@ $I->fillField(['name' => 'email'], 'jon@mail.com');
  
 Provides access the Lumen application object.
 
-@return \Laravel\Lumen\Application
+ * `return` \Laravel\Lumen\Application
 
 
 ### grabAttributeFrom
@@ -490,7 +524,7 @@ $value = $I->grabTextFrom('~<input value=(.*?)]~sgi'); // match with a regex
  
  * `param` $field
 
-@return array|mixed|null|string
+ * `return` array|mixed|null|string
 
 
 ### haveRecord
@@ -730,7 +764,7 @@ Assert that the session has a given list of values.
 
  * `param`  string|array $key
  * `param`  mixed $value
-@return void
+ * `return` void
 
 
 ### seeInTitle
@@ -824,7 +858,7 @@ Checks that response code is equal to value provided.
 Assert that the session has a given list of values.
 
  * `param`  array $bindings
-@return void
+ * `return` void
 
 
 ### selectOption
@@ -959,7 +993,7 @@ For example, given this sample "Sign Up" form:
     <input type="text" name="user[login]" /><br/>
     Password:
     <input type="password" name="user[password]" /><br/>
-    Do you agree to out terms?
+    Do you agree to our terms?
     <input type="checkbox" name="user[agree]" /><br/>
     Select pricing plan:
     <select name="plan">
@@ -1091,4 +1125,4 @@ $I->uncheckOption('#notify');
 
  * `param` $option
 
-<p>&nbsp;</p><div class="alert alert-warning">Module reference is taken from the source code. <a href="https://github.com/Codeception/Codeception/tree/2.0/src/Codeception/Module/Lumen.php">Help us to improve documentation. Edit module reference</a></div>
+<p>&nbsp;</p><div class="alert alert-warning">Module reference is taken from the source code. <a href="https://github.com/Codeception/Codeception/tree/2.1/src/Codeception/Module/Lumen.php">Help us to improve documentation. Edit module reference</a></div>

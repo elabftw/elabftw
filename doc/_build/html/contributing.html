@@ -31,7 +31,8 @@
 
   
     <link rel="top" title="elabftw 1.1.5 documentation" href="index.html"/>
-        <link rel="prev" title="Post install things to do" href="postinstall.html"/> 
+        <link rel="next" title="Thanks" href="thanks.html"/>
+        <link rel="prev" title="Manual" href="manual.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -70,7 +71,7 @@
         
           
           
-              <p class="caption"><span class="caption-text">User documentation</span></p>
+              <p class="caption"><span class="caption-text">Installing</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install-gnulinux.html">Install on GNU/Linux</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="install-gnulinux.html#introduction">Introduction</a></li>
@@ -102,18 +103,50 @@
 <li class="toctree-l2"><a class="reference internal" href="postinstall.html#updating">Updating</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="how-to-update.html">How to update</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="how-to-update.html#if-you-installed-it-with-git">If you installed it with git</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how-to-update.html#if-you-installed-it-from-a-zip-or-tar-gz-archive">If you installed it from a .zip or .tar.gz archive</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Developer documentation</span></p>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Using</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#is-it-totally-free">Is it totally free ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#but-how-is-it-better-than-something-i-can-buy">But how is it better than something I can buy ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#what-about-patents-and-intellectual-property">What about patents and intellectual property ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#why-use-elabftw">Why use eLabFTW ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#is-this-system-stable-can-i-trust-my-data-with-it">Is this system stable ? Can I trust my data with it ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#is-the-data-encrypted">Is the data encrypted ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#is-elabftw-still-maintained">Is eLabFTW still maintained ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#will-i-be-able-to-import-my-plasmids-antibodies-whatever-in-the-database-from-a-excel-file">Will I be able to import my plasmids/antibodies/whatever in the database from a Excel file ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#can-i-try-it-before-i-install-it">Can I try it before I install it ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#but-what-about-the-others-eln-out-there">But what about the others ELN out there ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#what-about-compliance-to-standards">What about compliance to standards ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#what-are-the-technical-specifications">What are the technical specifications ?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features.html#general">general</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#experiments">experiments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#database">database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#security">security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#intellectual-property">intellectual property</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#user-experience">user experience</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#planned-features">planned features</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="manual.html">Manual</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Community</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="">Contributing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#what-can-you-do-to-help-this-project">What can you do to help this project ?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#rules-to-follow">Rules to follow</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#code-formatting">Code formatting</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#rules-to-follow">Rules to follow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#reminders">Reminders</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="thanks.html">Thanks</a></li>
 </ul>
 
           
@@ -182,16 +215,11 @@
 <li>most of the functions are in <cite>inc/functions.php</cite></li>
 <li>you can use the constant ELAB_ROOT (which ends with a /) to have a full path</li>
 <li>comment your code wisely</li>
-</ul>
-<div class="section" id="code-formatting">
-<h3>Code formatting<a class="headerlink" href="#code-formatting" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
 <li>your code must follow <a class="reference external" href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md">the PSR standards</a></li>
 <li>add a plugin to your editor to show trailing whitespaces in red</li>
 <li>add a plugin to your editor to show PSR-1 errors</li>
 <li>remove BOM</li>
 </ul>
-</div>
 </div>
 <div class="section" id="reminders">
 <h2>Reminders<a class="headerlink" href="#reminders" title="Permalink to this headline">¶</a></h2>
@@ -209,8 +237,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="thanks.html" class="btn btn-neutral float-right" title="Thanks" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="postinstall.html" class="btn btn-neutral" title="Post install things to do" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="manual.html" class="btn btn-neutral" title="Manual" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

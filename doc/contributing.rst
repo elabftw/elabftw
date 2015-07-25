@@ -33,10 +33,6 @@ Rules to follow
 * most of the functions are in `inc/functions.php`
 * you can use the constant ELAB_ROOT (which ends with a /) to have a full path
 * comment your code wisely
-
-Code formatting
-^^^^^^^^^^^^^^^
-
 * your code must follow `the PSR standards <https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md>`_
 * add a plugin to your editor to show trailing whitespaces in red
 * add a plugin to your editor to show PSR-1 errors
@@ -48,3 +44,7 @@ Reminders
 * update of SwiftMailer and mPDF is done with `composer update`
 * update of the js components is done with `bower update`
 * after update of tinymce, lang files need to be downloaded again, and the ones without proper name (ca instead of ca_ES) need to be edited (change first line to ca_ES)
+
+
+
+

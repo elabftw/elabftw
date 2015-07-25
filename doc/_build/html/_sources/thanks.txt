@@ -1,7 +1,7 @@
 .. _thanks:
 
-Thank you
-=========
+Thanks
+======
 
 A big thanks to early alpha testers and everyone who contributed through their ideas or
 suggestions to this project.
@@ -41,3 +41,5 @@ Other resources
 * `Icons <http://icons8.com>`_
 * `LeDjamRadio <http://ledjamradio.com>`_ for non stop music during the coding sessions
 * `Vim <http://vim.org>`_
+
+

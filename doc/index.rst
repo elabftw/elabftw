@@ -1,7 +1,5 @@
 .. elabftw documentation master file, created by
    sphinx-quickstart on Fri Jul 24 17:28:23 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
 Welcome to elabftw's documentation!
 ===================================
@@ -13,6 +11,7 @@ Welcome to elabftw's documentation!
     install-gnulinux
     install-docker
     postinstall
+    how-to-update
 
 .. toctree::
     :caption: Using
@@ -26,4 +25,5 @@ Welcome to elabftw's documentation!
 
     contributing
     thanks
-    license
+    gnu-licence
+

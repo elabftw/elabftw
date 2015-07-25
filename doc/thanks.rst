@@ -41,3 +41,5 @@ Other resources
 * `Icons <http://icons8.com>`_
 * `LeDjamRadio <http://ledjamradio.com>`_ for non stop music during the coding sessions
 * `Vim <http://vim.org>`_
+
+

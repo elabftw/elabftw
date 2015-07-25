@@ -8,18 +8,20 @@ Welcome to elabftw's documentation!
 
 .. toctree::
     :maxdepth: 2
-    :caption: User documentation
+    :caption: Installing
 
     install-gnulinux
     install-docker
     postinstall
+
+    :caption: Using
     faq
+    features
+    manual
 
-.. toctree::
-    :maxdepth: 2
-    :caption: Developer documentation
-
+    :caption: Community
     contributing
+    thanks
 
 
 Installation

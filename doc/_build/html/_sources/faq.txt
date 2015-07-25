@@ -31,7 +31,7 @@ Why use eLabFTW ?
 * Everything can be organized in your lab
 * It makes it easy to share information between co-workers or collaborators
 * It is simple to install and to keep up to date
-* **It works for Windows, Mac OS X, Linux, BSD, Solaris, _etc…
+* **It works for Windows, Mac OS X, Linux, BSD, Solaris, _etc…**
 * Protected access with login/password (password is very securely stored as salted SHA-512 sum
 * It can be used by multiple users at the same time
 * **It can be used by multiple teams**

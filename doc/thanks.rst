@@ -1,7 +1,7 @@
 .. _thanks:
 
-Thank you
-=========
+Thanks
+======
 
 A big thanks to early alpha testers and everyone who contributed through their ideas or
 suggestions to this project.

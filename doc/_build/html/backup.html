@@ -264,33 +264,33 @@
 <h2>Backup SQL database<a class="headerlink" href="#backup-sql-database" title="Permalink to this headline">¶</a></h2>
 <p>You&#8217;ll want to have a little script that do the backup automatically.
 Here is the script I&#8217;m using, adapt it to your needs:</p>
-<div class="highlight-python"><div class="highlight"><pre>#!/bin/sh
-# backup.sh - Backup eLabFTW installation
-# -------------
-# Get clean date (make sure your version of date supports this option)
-y=`date --rfc-3339=date |awk -F &#39;-&#39; &#39;{print $1}&#39;|cut -c3-4`
-m=`date --rfc-3339=date |awk -F &#39;-&#39; &#39;{print $2}&#39;`
-d=`date --rfc-3339=date |awk -F &#39;-&#39; &#39;{print $3}&#39;`
-date=$y$m$d
+<div class="highlight-bash"><div class="highlight"><pre><span class="c">#!/bin/sh</span>
+<span class="c"># backup.sh - Backup eLabFTW installation</span>
+<span class="c"># -------------</span>
+<span class="c"># Get clean date (make sure your version of date supports this option)</span>
+<span class="nv">y</span><span class="o">=</span><span class="sb">`</span>date --rfc-3339<span class="o">=</span>date <span class="p">|</span>awk -F <span class="s1">&#39;-&#39;</span> <span class="s1">&#39;{print $1}&#39;</span><span class="p">|</span>cut -c3-4<span class="sb">`</span>
+<span class="nv">m</span><span class="o">=</span><span class="sb">`</span>date --rfc-3339<span class="o">=</span>date <span class="p">|</span>awk -F <span class="s1">&#39;-&#39;</span> <span class="s1">&#39;{print $2}&#39;</span><span class="sb">`</span>
+<span class="nv">d</span><span class="o">=</span><span class="sb">`</span>date --rfc-3339<span class="o">=</span>date <span class="p">|</span>awk -F <span class="s1">&#39;-&#39;</span> <span class="s1">&#39;{print $3}&#39;</span><span class="sb">`</span>
+<span class="nv">date</span><span class="o">=</span><span class="nv">$y$m$d</span>
 
-# elab sql backup
-###################
-# make a dump of the database in elabftw.sql file
-mysqldump -u elabftw -p&#39;PUT_YOUR_SQL_PASSWORD_HERE&#39; elabftw &gt; elabftw.sql
+<span class="c"># elab sql backup</span>
+<span class="c">###################</span>
+<span class="c"># make a dump of the database in elabftw.sql file</span>
+mysqldump -u elabftw -p<span class="s1">&#39;PUT_YOUR_SQL_PASSWORD_HERE&#39;</span> elabftw &gt; elabftw.sql
 
-# copy this file somewhere else using ssh (scp)
-scp -q elabftw.sql user@192.168.0.3:.backups/sql/elabftw-$date.sql
+<span class="c"># copy this file somewhere else using ssh (scp)</span>
+scp -q elabftw.sql user@192.168.0.3:.backups/sql/elabftw-<span class="nv">$date</span>.sql
 
-# move the file to a local backup dir
-mv elabftw.sql /home/pi/.backups/sql/elabftw-$date.sql
+<span class="c"># move the file to a local backup dir</span>
+mv elabftw.sql /home/pi/.backups/sql/elabftw-<span class="nv">$date</span>.sql
 
-# www files backup
-###################
-# make a tarball of www
+<span class="c"># www files backup</span>
+<span class="c">###################</span>
+<span class="c"># make a tarball of www</span>
 tar czf www.tar.gz -C /var/ www
 
-# copy the tarball to somewhere else using ssh (scp)
-scp -q www.tar.gz user@192.168.0.3:.backups/www/www-$date.tar.gz &amp;&amp; rm www.tar.gz
+<span class="c"># copy the tarball to somewhere else using ssh (scp)</span>
+scp -q www.tar.gz user@192.168.0.3:.backups/www/www-<span class="nv">$date</span>.tar.gz <span class="o">&amp;&amp;</span> rm www.tar.gz
 </pre></div>
 </div>
 <p>If you don&#8217;t remember your SQL password, look in the file <cite>elabftw/config.php</cite>!</p>

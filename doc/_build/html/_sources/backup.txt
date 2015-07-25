@@ -11,7 +11,9 @@ Backup SQL database
 -------------------
 
 You'll want to have a little script that do the backup automatically.
-Here is the script I'm using, adapt it to your needs::
+Here is the script I'm using, adapt it to your needs:
+
+.. code-block:: bash
 
     #!/bin/sh
     # backup.sh - Backup eLabFTW installation

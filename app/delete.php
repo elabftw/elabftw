@@ -76,7 +76,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                     $filepath = ELAB_ROOT . 'uploads/' . $uploads['long_name'];
                     unlink($filepath);
                     // remove thumbnail
-                    $ext = get_ext($uploads['real_name']);
+                    $ext = (new \Elabftw\Elabftw\Tools)->getExt($uploads['real_name']);
                     if (file_exists(ELAB_ROOT . 'uploads/' . $uploads['long_name'] . '_th.' . $ext)) {
                         unlink(ELAB_ROOT . 'uploads/' . $uploads['long_name'] . '_th.' . $ext);
                     }
@@ -163,7 +163,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                 $filepath = ELAB_ROOT . 'uploads/' . $uploads['long_name'];
                 unlink($filepath);
                 // remove thumbnail
-                $ext = get_ext($uploads['real_name']);
+                $ext = (new \Elabftw\Elabftw\Tools)->getExt($uploads['real_name']);
                 if (file_exists(ELAB_ROOT . 'uploads/' . $uploads['long_name'] . '_th.' . $ext)) {
                     unlink(ELAB_ROOT . 'uploads/' . $uploads['long_name'] . '_th.' . $ext);
                 }

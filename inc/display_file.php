@@ -55,7 +55,7 @@ if ($count > 0) {
         } // end if it is in edit mode
 
         // get file extension
-        $ext = filter_var(get_ext($uploads_data['real_name']), FILTER_SANITIZE_STRING);
+        $ext = filter_var((new \Elabftw\Elabftw\Tools)->getExt($uploads_data['real_name']), FILTER_SANITIZE_STRING);
         $filepath = 'uploads/' . $uploads_data['long_name'];
         $filesize = filesize('uploads/' . $uploads_data['long_name']);
         $thumbpath = 'uploads/' . $uploads_data['long_name'] . '_th.' . $ext;
@@ -97,7 +97,7 @@ if ($count > 0) {
         // now display the name + comment with icons
         echo "<div class='caption'><img src='img/attached.png' class='bot5px' alt='attached' /> ";
         echo "<a href='app/download.php?f=" . $uploads_data['long_name'] . "&name=" . $uploads_data['real_name'] . "' target='_blank'>" . $uploads_data['real_name'] . "</a>";
-        echo "<span class='smallgray' style='display:inline'> " . format_bytes(filesize('uploads/' . $uploads_data['long_name'])) . "</span><br>";
+        echo "<span class='smallgray' style='display:inline'> " . (new \Elabftw\Elabftw\Tools)->formatBytes(filesize('uploads/' . $uploads_data['long_name'])) . "</span><br>";
         // if we are in view mode, we don't show the comment if it's the default text
         // this is to avoid showing 'Click to add a comment' where in fact you can't click to add a comment because
         // your are in view mode

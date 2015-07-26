@@ -42,6 +42,6 @@ echo "<div class='well' style='margin-top:20px'>";
 echo "<p>" . _('Your CSV file is ready:') . "<br>
         <a href='app/download.php?type=csv&f=" . basename($csv->getFilePath()) . "&name=export.elabftw.csv' target='_blank'>
         <img src='img/download.png' alt='download' /> export.elabftw.csv</a>
-        <span class='filesize'>(" . format_bytes(filesize($csv->getFilePath())) . ")</span></p>";
+        <span class='filesize'>(" . (new \Elabftw\Elabftw\Tools)->formatBytes(filesize($csv->getFilePath())) . ")</span></p>";
 echo "</div>";
 require_once 'inc/footer.php';

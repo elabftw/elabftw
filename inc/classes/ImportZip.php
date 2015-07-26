@@ -128,7 +128,7 @@ class ImportZip
     private function importFile($file)
     {
         // first move the file to the uploads folder
-        $longName = hash("sha512", uniqid(rand(), true)) . '.' . get_ext($file);
+        $longName = hash("sha512", uniqid(rand(), true)) . '.' . (new \Elabftw\Elabftw\Tools)->getExt($file);
         $newPath = ELAB_ROOT . 'uploads/' . $longName;
         if (!rename($this->tmpPath . '/' . $file, $newPath)) {
             throw new Exception('Cannot rename file!');

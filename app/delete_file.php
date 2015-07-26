@@ -50,7 +50,7 @@ if ($_GET['type'] === 'experiments') {
         $filepath = ELAB_ROOT . 'uploads/' . $data['long_name'];
         unlink($filepath);
         // remove thumbnail
-        $ext = get_ext($data['real_name']);
+        $ext = (new \Elabftw\Elabftw\Tools)->getExt($data['real_name']);
         if (file_exists(ELAB_ROOT . 'uploads/' . $data['long_name'] . '_th.' . $ext)) {
             unlink(ELAB_ROOT . 'uploads/' . $data['long_name'] . '_th.' . $ext);
         }

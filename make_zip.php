@@ -43,7 +43,7 @@ echo "<div class='well' style='margin-top:20px'>";
 echo "<p>" . _('Your ZIP archive is ready:') . "<br>
     <img src='img/download.png' alt='download' /> 
     <a href='app/download.php?f=". basename($makezip->getZipRelativePath()) . "&name=" . $makezip->getZipName() . "&type=zip' target='_blank'>" . $makezip->getZipName() . "</a>
-    <span class='filesize'>(".format_bytes(filesize($makezip->getZipRelativePath())) . ")</span></p>";
+    <span class='filesize'>(". (new \Elabftw\Elabftw\Tools)->formatBytes(filesize($makezip->getZipRelativePath())) . ")</span></p>";
 echo "</div>";
 
 require_once 'inc/footer.php';

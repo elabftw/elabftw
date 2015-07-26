@@ -64,7 +64,7 @@ if ($type === 'experiments' || $type == 'items') {
     $realname = preg_replace('/[^A-Za-z0-9]/', '.', $_FILES['file']['name']);
 
     // get extension
-    $ext = get_ext($realname);
+    $ext = (new \Elabftw\Elabftw\Tools)->getExt($realname);
 
     // Create a unique long filename + extension
     $longname = hash("sha512", uniqid(rand(), true)) . "." . $ext;

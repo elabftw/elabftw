@@ -444,7 +444,6 @@ tr:nth-child(odd) {
     border-radius: 10px;
     margin-top: 20px;
 }
-
 /* we need to add a block class, otherwise the search in everyone exp box is messed up */
 label.block {
     display:block;
@@ -893,3 +892,5 @@ code {
     text-decoration:none;
 }
 /* END TODOLIST */
+
+

@@ -230,6 +230,21 @@ $search_type = '';
                     echo check_body($_GET['body']);
                 }
                 ?>'/>
+            <!-- AND / OR -->
+                <select id='andor' name='andor'>
+                <option value='' disabled selected><?php echo _('Space means'); ?></option>
+                <option value='and'
+                <?php if (isset($_GET['andor']) && $_GET['andor'] === 'and') {
+                    echo " selected='selected'";
+                }; ?>
+                ><?php echo _('and'); ?></option>
+
+                <option value='or'
+                <?php if (isset($_GET['andor']) && $_GET['andor'] === 'or') {
+                    echo " selected='selected'";
+                }; ?>
+                ><?php echo _('or'); ?></option>
+                </select>
             </div>
             <!-- END TITLE -->
 
@@ -354,6 +369,13 @@ if (isset($_GET)) {
 
     $sqlGroup = " GROUP BY $tb.id";
 
+    // Space in the query means AND or OR ?
+    if (isset($_GET['andor']) && ($_GET['andor'] === 'and' || $_GET['andor'] === 'or')) {
+        $andor = " " . $_GET['andor'] . " ";
+    } else {
+        $andor = ' AND ';
+    }
+
     // Title search
     if (!empty($title)) {
         $sqlTitle = " AND $tb.title LIKE '%$title%'";
@@ -361,7 +383,7 @@ if (isset($_GET)) {
         $sqlTitle = " AND (";
         foreach ($title_arr as $key => $value) {
             if ($key != 0) {
-                $sqlTitle .= " OR ";
+                $sqlTitle .= $andor;
             }
             $sqlTitle .= "$tb.title LIKE '%$value%'";
         }
@@ -377,7 +399,7 @@ if (isset($_GET)) {
         $sqlBody = " AND (";
         foreach ($body_arr as $key => $value) {
             if ($key != 0) {
-                $sqlBody .= " OR ";
+                $sqlBody .= $andor;
             }
             $sqlBody .= "$tb.body LIKE '%$value%'";
         }

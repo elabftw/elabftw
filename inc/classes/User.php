@@ -181,7 +181,7 @@ class User
      *
      * @return bool True if we have a valid cookie and it is the same token as in the DB
      */
-    public function loginWithCookie($token, $userid)
+    public function loginWithCookie()
     {
         // the token is a md5 sum
         if (!isset($_COOKIE['token']) || strlen($_COOKIE['token']) != 32) {

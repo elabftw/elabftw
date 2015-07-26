@@ -32,6 +32,11 @@ class Db
 {
     protected static $connection;
 
+    /*
+     * Connect to the MySQL database
+     *
+     * @return object $connection The PDO object
+     */
     public function connect()
     {
         if (!isset(self::$connection)) {

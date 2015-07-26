@@ -63,7 +63,7 @@ if ($errflag) {
     exit;
 }
 
-switch($_POST['type']) {
+switch ($_POST['type']) {
     case 'csv':
         // CODE TO IMPORT CSV
         $row = 0;

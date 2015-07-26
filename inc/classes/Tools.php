@@ -98,6 +98,9 @@ class Tools
      */
     public function formatDate($date, $s = '.')
     {
+        if (strlen($date) != 8) {
+            return false;
+        }
         return $date[0] . $date[1] . $date[2] . $date[3] . $s . $date['4'] . $date['5'] . $s . $date['6'] . $date['7'];
     }
 

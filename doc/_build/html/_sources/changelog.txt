@@ -12,10 +12,12 @@ Version 1.1.5
 * tag list on search page is now filtered by selected user
 * add autocompletion to experiments (start with # to get item list) (fix #65)
 * improve zip import now also imports attached files to an item (fix #21)
+* add .elabftw.json file in zip archives (to allow easy reimport)
 * remove MANIFEST file from zip archives
 * remove .export.txt file from zip archives
-* add .elabftw.json file in zip archives (to allow easy reimport)
-* various code improvements
+* add unit and acceptance tests
+* update composer components
+* numerous code improvements
 
 Version 1.1.4-p3
 ----------------

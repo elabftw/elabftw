@@ -110,10 +110,6 @@ if (isset($_GET['order'])) {
             $order = 'st.name';
         } elseif ($_GET['order'] === 'date' || $_GET['order'] === 'rating' || $_GET['order'] === 'title') {
             $order = 'ex.' . $_GET['order'];
-        } else {
-            $message = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#17", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-            display_message('error', $message);
-            exit;
         }
     }
 }

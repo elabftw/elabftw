@@ -25,12 +25,22 @@
 ********************************************************************************/
 namespace Elabftw\Elabftw;
 
+use \Elabftw\Elabftw\Db;
+
 class User
 {
+    private $pdo;
+
     private $salt;
     private $userData;
     private $token;
     private $location;
+
+    public function __construct()
+    {
+        $db = new \Elabftw\Elabftw\Db();
+        $this->pdo = $db->connect();
+    }
 
     /*
      * Get the salt for the user so we can generate a correct hash
@@ -38,10 +48,8 @@ class User
      */
     private function setSalt($username)
     {
-        global $pdo;
-
         $sql = "SELECT salt FROM users WHERE username = :username LIMIT 1";
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':username', $username);
         $req->execute();
         $this->salt = $req->fetchColumn();
@@ -55,14 +63,12 @@ class User
      */
     private function checkCredentials($username, $password)
     {
-        global $pdo;
-
         $this->setSalt($username);
 
         $passwordHash = hash('sha512', $this->salt . $password);
 
         $sql = "SELECT * FROM users WHERE username = :username AND password = :passwordHash AND validated= 1";
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':username', $username);
         $req->bindParam(':passwordHash', $passwordHash);
         //Check whether the query was successful or not
@@ -81,8 +87,6 @@ class User
      */
     private function populateSession()
     {
-        global $pdo;
-
         session_regenerate_id();
         $_SESSION['auth'] = 1;
         $_SESSION['userid'] = $this->userData['userid'];
@@ -91,7 +95,7 @@ class User
         $_SESSION['username'] = $this->userData['username'];
         // load permissions
         $perm_sql = "SELECT * FROM groups WHERE group_id = :group_id LIMIT 1";
-        $perm_req = $pdo->prepare($perm_sql);
+        $perm_req = $this->pdo->prepare($perm_sql);
         $perm_req->bindParam(':group_id', $this->userData['usergroup']);
         $perm_req->execute();
         $group = $perm_req->fetch(\PDO::FETCH_ASSOC);
@@ -117,24 +121,18 @@ class User
     }
 
     /*
-     * Set a $_COOKIE['token'] and update the database with this token
+     * Set a $_COOKIE['token'] and update the database with this token.
+     * Works only in HTTPS, valable for 1 month.
+     * 1 month = 60*60*24*30 =  2592000
      *
      */
     private function setToken()
     {
-        global $pdo;
-        // Cookie validity = 1 month, works only in https
-
-        // Set token cookie
         // setcookie( $name, $value, $expire, $path, $domain, $secure, $httponly )
-        // expiration = 1 month = 60*60*24*30 =  2592000
-        // TODO can we set true for $secure in setcookie() ?
-        // because it might not work if we are in http but using https from haproxy, dunno.
-        // so it's left to false, it's ok for now.
-        setcookie('token', $this->token, time() + 2592000, null, null, false, true);
+        setcookie('token', $this->token, time() + 2592000, '/', null, true, true);
         // Update the token in SQL
         $sql = "UPDATE users SET token = :token WHERE userid = :userid";
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':token', $this->token);
         $req->bindParam(':userid', $this->userData['userid']);
         $req->execute();
@@ -183,10 +181,8 @@ class User
      *
      * @return bool True if we have a valid cookie and it is the same token as in the DB
      */
-    public function loginWithCookie()
+    public function loginWithCookie($token, $userid)
     {
-        global $pdo;
-
         // the token is a md5 sum
         if (!isset($_COOKIE['token']) || strlen($_COOKIE['token']) != 32) {
             return false;
@@ -195,14 +191,17 @@ class User
         $token = filter_var($_COOKIE['token'], FILTER_SANITIZE_STRING);
         // Get token from SQL
         $sql = "SELECT * FROM users WHERE token = :token LIMIT 1";
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':token', $token);
         $req->execute();
+
+        $this->userData = $req->fetch();
+
         if ($req->rowCount() === 1) {
             $this->populateSession();
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 }

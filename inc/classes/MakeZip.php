@@ -26,11 +26,14 @@
 namespace Elabftw\Elabftw;
 
 use \Elabftw\Elabftw\MakePdf;
+use \Elabftw\Elabftw\Db;
 use \ZipArchive;
 use \Exception;
 
 class MakeZip
 {
+    private $pdo;
+
     private $idList;
     private $idArr = array();
 
@@ -57,6 +60,9 @@ class MakeZip
      */
     public function __construct($idList, $type)
     {
+        $db = new \Elabftw\Elabftw\Db();
+        $this->pdo = $db->connect();
+
         // we check first if the zip extension is here
         if (!class_exists('ZipArchive')) {
             throw new Exception("You are missing the ZipArchive class in php. Uncomment the line extension=zip.so in /etc/php/php.ini.");
@@ -130,12 +136,10 @@ class MakeZip
      */
     private function getInfoFromId($id)
     {
-        global $pdo;
-
         // SQL to get info on the item we are zipping
         if ($this->table === 'experiments') {
             $sql = "SELECT * FROM experiments WHERE id = :id LIMIT 1";
-            $req = $pdo->prepare($sql);
+            $req = $this->pdo->prepare($sql);
             $req->bindParam(':id', $id, \PDO::PARAM_INT);
             $req->execute();
             $this->zipped = $req->fetch();
@@ -149,7 +153,7 @@ class MakeZip
                 FROM items
                 LEFT JOIN items_types ON (items.type = items_types.id)
                 WHERE items.id = :id LIMIT 1";
-            $req = $pdo->prepare($sql);
+            $req = $this->pdo->prepare($sql);
             $req->bindParam(':id', $id, \PDO::PARAM_INT);
             $req->execute();
             $this->zipped = $req->fetch();
@@ -165,12 +169,10 @@ class MakeZip
     // add the .asn1 token to the zip archive if the experiment is timestamped
     private function addAsn1Token($id)
     {
-        global $pdo;
-
         if ($this->table === 'experiments' && $this->zipped['timestamped'] == 1) {
             // SQL to get the path of the token
             $sql = "SELECT real_name, long_name FROM uploads WHERE item_id = :id AND type = 'timestamp-token' LIMIT 1";
-            $req = $pdo->prepare($sql);
+            $req = $this->pdo->prepare($sql);
             $req->bindParam(':id', $id);
             $req->execute();
             $token = $req->fetch();
@@ -191,13 +193,12 @@ class MakeZip
 
     private function addAttachedFiles($id)
     {
-        global $pdo;
         $real_name = array();
         $long_name = array();
 
         // SQL to get filesattached (of the right type)
         $sql = "SELECT * FROM uploads WHERE item_id = :id AND (type = :type OR type = 'exp-pdf-timestamp')";
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);
         $req->bindParam(':type', $this->table);
         $req->execute();

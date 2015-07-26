@@ -23,12 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-session_start();
-require_once '../inc/connect.php';
-require_once '../inc/functions.php';
-require_once '../vendor/swiftmailer/swiftmailer/lib/swift_required.php';
-require_once '../inc/locale.php';
-require_once '../vendor/autoload.php';
+require_once '../inc/common.php';
 
 $crypto = new \Elabftw\Elabftw\Crypto();
 

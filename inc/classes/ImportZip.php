@@ -30,9 +30,12 @@ use \ZipArchive;
 use \RecursiveIteratorIterator;
 use \RecursiveDirectoryIterator;
 use \FileSystemIterator;
+use \Elabftw\Elabftw\Db;
 
 class ImportZip
 {
+    private $pdo;
+
     // number of item we have inserted
     public $inserted = 0;
     private $tmpPath;
@@ -48,6 +51,10 @@ class ImportZip
 
     public function __construct($zipfile, $itemType)
     {
+
+        $db = new \Elabftw\Elabftw\Db();
+        $this->pdo = $db->connect();
+
         $this->fileTmpName = $zipfile;
         $this->itemType = $itemType;
         // this is where we will extract the zip
@@ -97,10 +104,8 @@ class ImportZip
      */
     private function importData()
     {
-        global $pdo;
-
         $sql = "INSERT INTO items(team, title, date, body, userid, type) VALUES(:team, :title, :date, :body, :userid, :type)";
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $_SESSION['team_id'], \PDO::PARAM_INT);
         $req->bindParam(':title', $this->title);
         $req->bindParam(':date', kdate());
@@ -112,7 +117,7 @@ class ImportZip
             throw new Exception('Cannot import in database!');
         }
         // needed in importFile()
-        $this->newItemId = $pdo->lastInsertId();
+        $this->newItemId = $this->pdo->lastInsertId();
     }
 
     /*
@@ -122,8 +127,6 @@ class ImportZip
      */
     private function importFile($file)
     {
-        global $pdo;
-
         // first move the file to the uploads folder
         $longName = hash("sha512", uniqid(rand(), true)) . '.' . get_ext($file);
         $newPath = ELAB_ROOT . 'uploads/' . $longName;
@@ -153,7 +156,7 @@ class ImportZip
             :md5
         )";
 
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':real_name', basename($file));
         $req->bindParam(':long_name', $longName);
         $req->bindValue(':comment', 'Click to add a comment');

@@ -26,9 +26,11 @@
 namespace Elabftw\Elabftw;
 
 use \Exception;
+use \Elabftw\Elabftw\Db;
 
 class MakeCsv
 {
+    private $pdo;
 
     // the lines in the csv file
     private $list = array();
@@ -42,6 +44,9 @@ class MakeCsv
 
     public function __construct($idList, $type)
     {
+        $db = new \Elabftw\Elabftw\Db();
+        $this->pdo = $db->connect();
+
         // assign and check id
         $this->idList = $idList;
 
@@ -116,8 +121,6 @@ class MakeCsv
      */
     private function initData($id)
     {
-        global $pdo;
-
         if ($this->table === 'experiments') {
             $sql = "SELECT experiments.*,
                 status.name AS statusname
@@ -132,7 +135,7 @@ class MakeCsv
                 WHERE items.id = :id";
         }
 
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->bindParam('id', $id, \PDO::PARAM_INT);
         $req->execute();
         $this->data = $req->fetch();

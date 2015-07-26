@@ -1,7 +1,7 @@
 <?php
 /******************************************************************************
 *   Copyright 2012 Nicolas CARPi
-*   This file is part of eLabFTW. 
+*   This file is part of eLabFTW.
 *
 *    eLabFTW is free software: you can redistribute it and/or modify
 *    it under the terms of the GNU General Public License as published by
@@ -17,10 +17,8 @@
 *    along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.
 *
 ********************************************************************************/
-session_start();
-require_once 'inc/connect.php';
-require_once 'inc/functions.php';
-require_once 'inc/locale.php';
+$need_auth = false;
+require_once 'inc/common.php';
 $page_title = _('Register');
 $selected_menu = null;
 require_once 'inc/head.php';

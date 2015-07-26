@@ -23,10 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-session_start();
-require_once 'inc/connect.php';
-require_once 'inc/functions.php';
-require_once 'inc/locale.php';
+require_once 'inc/common.php';
 $page_title = _('Reset password');
 $selected_menu = null;
 require_once 'inc/head.php';

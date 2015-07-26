@@ -27,9 +27,11 @@ namespace Elabftw\Elabftw;
 
 use \mPDF;
 use \Exception;
+use \Elabftw\Elabftw\Db;
 
 class MakePdf
 {
+    private $pdo;
 
     private $id;
     private $type;
@@ -46,6 +48,10 @@ class MakePdf
 
     public function __construct($id, $type, $path = null)
     {
+
+        $db = new \Elabftw\Elabftw\Db();
+        $this->pdo = $db->connect();
+
         $this->id = $id;
         $this->validateId();
 
@@ -120,25 +126,21 @@ class MakePdf
      */
     private function initData()
     {
-        global $pdo;
-
-        // title, date, body, elabid, userid, lock
-        $sql = "SELECT * FROM " . $this->type . " WHERE id = " . $this->id;
-        $req = $pdo->prepare($sql);
+        // one cannot use placeholders as table or column identifiers in a prepared statement
+        $sql = "SELECT * FROM " . $this->type . " WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $this->id, \PDO::PARAM_INT);
         $req->execute();
         $this->data = $req->fetch();
     }
 
     private function setAuthor()
     {
-        global $pdo;
-
         // SQL to get firstname + lastname
         $sql = "SELECT firstname,lastname FROM users WHERE userid = :userid";
-        $req = $pdo->prepare($sql);
-        $req->execute(array(
-            'userid' => $this->data['userid']
-        ));
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':userid', $this->data['userid'], \PDO::PARAM_INT);
+        $req->execute();
         $data = $req->fetch();
 
         $this->author = $data['firstname'] . ' ' . $data['lastname'];
@@ -152,11 +154,10 @@ class MakePdf
 
     private function setTags()
     {
-        global $pdo;
-
         // SQL to get tags
-        $sql = "SELECT tag FROM " . $this->type . "_tags WHERE item_id = " . $this->id;
-        $req = $pdo->prepare($sql);
+        $sql = "SELECT tag FROM " . $this->type . "_tags WHERE item_id = :item_id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':item_id', $this->id, \PDO::PARAM_INT);
         $req->execute();
         $this->tags = null;
         while ($data = $req->fetch()) {
@@ -179,10 +180,9 @@ class MakePdf
 
         // LOCK BLOCK
         if ($this->data['locked'] == '1' && $this->type == 'experiments') {
-            global $pdo;
             // get info about the locker
             $sql = "SELECT firstname,lastname FROM users WHERE userid = :userid LIMIT 1";
-            $reqlock = $pdo->prepare($sql);
+            $reqlock = $this->pdo->prepare($sql);
             $reqlock->execute(array(
                 'userid' => $this->data['lockedby']
             ));
@@ -198,8 +198,6 @@ class MakePdf
 
     private function addComments()
     {
-        global $pdo;
-
         // SQL to get comments
         // check if there is something to display first
         // get all comments, and infos on the commenter associated with this experiment
@@ -207,7 +205,7 @@ class MakePdf
             LEFT JOIN users ON (experiments_comments.userid = users.userid)
             WHERE exp_id = :id
             ORDER BY experiments_comments.datetime DESC";
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->execute(array(
             'id' => $this->id
         ));
@@ -244,11 +242,10 @@ class MakePdf
 
     private function addAttachedFiles()
     {
-        global $pdo;
         // ATTACHED FILES
         // SQL to get attached files
         $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $this->id);
         $req->bindParam(':type', $this->type);
         $req->execute();
@@ -306,8 +303,6 @@ class MakePdf
     private function addLinkedItems()
     {
         if ($this->type === 'experiments') {
-            global $pdo;
-
             // SQL to get linked items
             $sql = "SELECT experiments_links.*,
                 experiments_links.link_id AS item_id,
@@ -317,7 +312,7 @@ class MakePdf
                 LEFT JOIN items ON (experiments_links.link_id = items.id)
                 LEFT JOIN items_types ON (items.type = items_types.id)
                 WHERE item_id = :item_id";
-            $req = $pdo->prepare($sql);
+            $req = $this->pdo->prepare($sql);
             $req->bindParam(':item_id', $this->id);
             $req->execute();
             $links_id_arr = array();

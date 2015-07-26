@@ -23,11 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-session_start();
-require_once '../inc/connect.php';
-require_once '../inc/functions.php';
-require_once '../inc/locale.php';
-require_once '../vendor/autoload.php';
+require_once '../inc/common.php';
 
 $formKey = new \Elabftw\Elabftw\FormKey();
 $user = new \Elabftw\Elabftw\User();
@@ -63,7 +59,7 @@ if ((!isset($_POST['password'])) || (empty($_POST['password']))) {
     $errflag = true;
 }
 
-//If there are input validations, redirect back to the login form
+//If there are input validation errors, redirect back to the login form
 if ($errflag) {
     $_SESSION['errors'] = $msg_arr;
     session_write_close();

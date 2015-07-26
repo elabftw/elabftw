@@ -23,25 +23,28 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-/* inc/connect.php - connect to the sql database - used when user isn't logged in and we
- * can't use inc/common.php
- */
-// SQL CONNECT
-if (is_readable('config.php')) {
-    require_once 'config.php';
-} elseif (is_readable('../config.php')) {
-    // we might be called from app folder
-    require_once '../config.php';
-} else {
-    die('No config file found.');
-}
+namespace Elabftw\Elabftw;
 
-try {
-    $pdo_options = array();
-    $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-    $pdo_options[PDO::ATTR_PERSISTENT] = true;
-    $pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
-} catch (Exception $e) {
-    die('Error : ' . $e->getMessage());
+use \PDO;
+use \Exception;
+
+class Db
+{
+    protected static $connection;
+
+    public function connect()
+    {
+        if (!isset(self::$connection)) {
+            $pdo_options = array();
+            $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+            $pdo_options[PDO::ATTR_PERSISTENT] = true;
+            self::$connection = new \PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
+        }
+
+        if (self::$connection === false) {
+            throw new Exception('Cannot connect to database!');
+        }
+
+        return self::$connection;
+    }
 }
-// END SQL CONNECT

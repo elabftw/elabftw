@@ -23,17 +23,11 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-if (!isset($_SESSION)) {
-    session_start();
-}
-require_once 'inc/connect.php';
-require_once 'inc/functions.php';
-require_once 'inc/locale.php';
+require_once 'inc/common.php';
 $page_title = _('Login');
 $selected_menu = null;
 require_once 'inc/head.php';
 require_once 'inc/info_box.php';
-require_once 'vendor/autoload.php';
 
 $formKey = new \Elabftw\Elabftw\FormKey();
 

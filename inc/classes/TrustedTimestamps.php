@@ -33,9 +33,12 @@ namespace Elabftw\Elabftw;
 use \DateTime;
 use \Exception;
 use \Elabftw\Elabftw\Update;
+use \Elabftw\Elabftw\Db;
 
 class TrustedTimestamps
 {
+    private $pdo;
+
     private $id;
 
     // a sha512 hash.pdf
@@ -65,6 +68,9 @@ class TrustedTimestamps
      */
     public function __construct($id)
     {
+        $db = new \Elabftw\Elabftw\Db();
+        $this->pdo = $db->connect();
+
         // will be used in sqlUpdate()
         $this->id = $id;
         $this->generatePdf();
@@ -321,8 +327,6 @@ class TrustedTimestamps
      */
     private function saveToken()
     {
-        global $pdo;
-
         $long_name = hash("sha512", uniqid(rand(), true)) . ".asn1";
         $file_path = ELAB_ROOT . 'uploads/' . $long_name;
         if (!file_put_contents($file_path, $this->binaryResponseString)) {
@@ -334,7 +338,7 @@ class TrustedTimestamps
 
         // keep a trace of where we put the token
         $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, md5) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :md5)";
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':real_name', $real_name);
         $req->bindParam(':long_name', $long_name);
         $req->bindValue(':comment', "Timestamp token");
@@ -393,10 +397,8 @@ class TrustedTimestamps
      */
     private function sqlUpdateExperiment()
     {
-        global $pdo;
-
         $sql = "UPDATE experiments SET timestamped = 1, timestampedby = :userid, timestampedwhen = :timestampedwhen, timestamptoken = :longname WHERE id = :id;";
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':timestampedwhen', $this->responseTime);
         // the date recorded in the db has to match the creation time of the timestamp token
         $req->bindParam(':longname', $this->responsefilePath);
@@ -413,10 +415,8 @@ class TrustedTimestamps
      */
     private function setPdfRealName()
     {
-        global $pdo;
-
         $sql = "SELECT elabid FROM experiments WHERE id = :id";
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $this->id);
         if (!$req->execute()) {
             throw new Exception('Cannot get elabid!');
@@ -431,13 +431,11 @@ class TrustedTimestamps
      */
     private function sqlInsertPdf()
     {
-        global $pdo;
-
         $md5 = hash_file('md5', $this->pdfPath);
 
         // DA REAL SQL
         $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, md5) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :md5)";
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':real_name', $this->pdfRealName);
         $req->bindParam(':long_name', $this->pdfFileName);
         $req->bindValue(':comment', "Timestamped PDF");

@@ -25,8 +25,17 @@
 ********************************************************************************/
 namespace Elabftw\Elabftw;
 
+use \Elabftw\Elabftw\Db;
+
 class Create
 {
+    private $pdo;
+
+    public function __construct()
+    {
+        $db = new \Elabftw\Elabftw\Db();
+        $this->pdo = $db->connect();
+    }
 
     /**
      * Check if we have a template to load for experiments
@@ -46,14 +55,12 @@ class Create
      */
     private function getStatus()
     {
-        global $pdo;
-
         // what will be the status ?
         // go pick what is the default status upon creating experiment
         // there should be only one because upon making a status default,
         // all the others are made not default
         $sql = 'SELECT id FROM status WHERE is_default = true AND team = :team LIMIT 1';
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $_SESSION['team_id']);
         $req->execute();
         $status = $req->fetchColumn();
@@ -62,7 +69,7 @@ class Create
         // we take the first status that come
         if (!$status) {
             $sql = 'SELECT id FROM status WHERE team = :team LIMIT 1';
-            $req = $pdo->prepare($sql);
+            $req = $this->pdo->prepare($sql);
             $req->bindParam(':team', $_SESSION['team_id']);
             $req->execute();
             $status = $req->fetchColumn();
@@ -92,15 +99,13 @@ class Create
      */
     private function copyTags($id, $newId, $type)
     {
-        global $pdo;
-
         // TAGS
         if ($type === 'experiment') {
             $sql = "SELECT tag FROM experiments_tags WHERE item_id = :id";
         } else {
             $sql = "SELECT tag FROM items_tags WHERE item_id = :id";
         }
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);
         $req->execute();
         $tag_number = $req->rowCount();
@@ -109,13 +114,13 @@ class Create
                 // Put them in the new one. here $newId is the new exp created
                 if ($type === 'experiment') {
                     $sql = "INSERT INTO experiments_tags(tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
-                    $reqtag = $pdo->prepare($sql);
+                    $reqtag = $this->pdo->prepare($sql);
                     $reqtag->bindParam(':tag', $tags['tag']);
                     $reqtag->bindParam(':item_id', $newId);
                     $reqtag->bindParam(':userid', $_SESSION['userid']);
                 } else {
                     $sql = "INSERT INTO items_tags(tag, item_id) VALUES(:tag, :item_id)";
-                    $reqtag = $pdo->prepare($sql);
+                    $reqtag = $this->pdo->prepare($sql);
                     $reqtag->bindParam(':tag', $tags['tag']);
                     $reqtag->bindParam(':item_id', $newId);
                 }
@@ -133,17 +138,15 @@ class Create
      */
     private function copyLinks($id, $newId)
     {
-        global $pdo;
-
         // LINKS
         $linksql = "SELECT link_id FROM experiments_links WHERE item_id = :id";
-        $linkreq = $pdo->prepare($linksql);
+        $linkreq = $this->pdo->prepare($linksql);
         $linkreq->bindParam(':id', $id);
         $linkreq->execute();
 
         while ($links = $linkreq->fetch()) {
             $sql = "INSERT INTO experiments_links (link_id, item_id) VALUES(:link_id, :item_id)";
-            $req = $pdo->prepare($sql);
+            $req = $this->pdo->prepare($sql);
             $req->execute(array(
                 'link_id' => $links['link_id'],
                 'item_id' => $newId
@@ -159,14 +162,11 @@ class Create
      */
     public function createExperiment($tpl = null)
     {
-
-        global $pdo;
-
         // do we want template ?
         if ($this->checkTpl($tpl)) {
             // SQL to get template
             $sql = "SELECT name, body FROM experiments_templates WHERE id = :id";
-            $get_tpl = $pdo->prepare($sql);
+            $get_tpl = $this->pdo->prepare($sql);
             $get_tpl->bindParam(':id', $tpl);
             $get_tpl->execute();
             $get_tpl_info = $get_tpl->fetch();
@@ -178,7 +178,7 @@ class Create
             // if there is no template, title is 'Untitled' and the body is the default exp_tpl
             // SQL to get body
             $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team";
-            $get_body = $pdo->prepare($sql);
+            $get_body = $this->pdo->prepare($sql);
             $get_body->bindParam(':team', $_SESSION['team_id']);
             $get_body->execute();
             $experiments_templates = $get_body->fetch();
@@ -189,7 +189,7 @@ class Create
 
         // SQL for create experiments
         $sql = "INSERT INTO experiments(team, title, date, body, status, elabid, visibility, userid) VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->execute(array(
             'team' => $_SESSION['team_id'],
             'title' => $title,
@@ -201,7 +201,7 @@ class Create
             'userid' => $_SESSION['userid']
         ));
 
-        return $pdo->lastInsertId();
+        return $this->pdo->lastInsertId();
     }
 
 
@@ -213,11 +213,9 @@ class Create
      */
     public function duplicateExperiment($id)
     {
-        global $pdo;
-
         // SQL to get data from the experiment we duplicate
         $sql = "SELECT title, body, visibility FROM experiments WHERE id = :id";
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);
         $req->execute();
         $experiments = $req->fetch();
@@ -228,7 +226,7 @@ class Create
 
         // SQL for duplicateXP
         $sql = "INSERT INTO experiments(team, title, date, body, status, elabid, visibility, userid) VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->execute(array(
             'team' => $_SESSION['team_id'],
             'title' => $title,
@@ -238,7 +236,7 @@ class Create
             'elabid' => self::generateElabid(),
             'visibility' => $experiments['visibility'],
             'userid' => $_SESSION['userid']));
-        $newId = $pdo->lastInsertId();
+        $newId = $this->pdo->lastInsertId();
 
         self::copyTags($id, $newId, 'experiment');
         self::copyLinks($id, $newId);
@@ -253,19 +251,16 @@ class Create
      */
     public function createItem($itemType)
     {
-
-        global $pdo;
-
         // SQL to get template
         $sql = "SELECT template FROM items_types WHERE id = :id";
-        $get_tpl = $pdo->prepare($sql);
+        $get_tpl = $this->pdo->prepare($sql);
         $get_tpl->bindParam(':id', $itemType);
         $get_tpl->execute();
         $get_tpl_body = $get_tpl->fetch();
 
         // SQL for create DB item
         $sql = "INSERT INTO items(team, title, date, body, userid, type) VALUES(:team, :title, :date, :body, :userid, :type)";
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->execute(array(
             'team' => $_SESSION['team_id'],
             'title' => 'Untitled',
@@ -275,7 +270,7 @@ class Create
             'type' => $itemType
         ));
 
-        return $pdo->lastInsertId();
+        return $this->pdo->lastInsertId();
     }
 
     /**
@@ -286,18 +281,16 @@ class Create
      */
     public function duplicateItem($id)
     {
-        global $pdo;
-
         // SQL to get data from the item we duplicate
         $sql = "SELECT * FROM items WHERE id = :id";
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);
         $req->execute();
         $items = $req->fetch();
 
         // SQL for duplicateItem
         $sql = "INSERT INTO items(team, title, date, body, userid, type) VALUES(:team, :title, :date, :body, :userid, :type)";
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->execute(array(
             'team' => $items['team'],
             'title' => $items['title'],
@@ -306,7 +299,7 @@ class Create
             'userid' => $_SESSION['userid'],
             'type' => $items['type']
         ));
-        $newId = $pdo->lastInsertId();
+        $newId = $this->pdo->lastInsertId();
 
         self::copyTags($id, $newId, 'item');
         return $newId;

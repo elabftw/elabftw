@@ -48,12 +48,12 @@ if (file_exists(ELAB_ROOT . 'maintenance')) {
     die('Maintenance mode is enabled. Check back later.');
 }
 
+require_once ELAB_ROOT . 'vendor/autoload.php';
+
 // SQL CONNECT
 try {
-    $pdo_options = array();
-    $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-    $pdo_options[PDO::ATTR_PERSISTENT] = true;
-    $pdo = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
+    $connector = new \Elabftw\Elabftw\Db();
+    $pdo = $connector->connect();
 } catch (Exception $e) {
     die('Error connecting to the database : ' . $e->getMessage());
 }
@@ -61,7 +61,6 @@ try {
 
 // require common stuff
 require_once ELAB_ROOT . 'inc/functions.php';
-require_once ELAB_ROOT . 'vendor/autoload.php';
 require_once ELAB_ROOT . 'inc/locale.php';
 
 // run the update script if we have the wrong schema version
@@ -74,7 +73,10 @@ if (get_config('schema') < $update::REQUIRED_SCHEMA) {
 
 $user = new \Elabftw\Elabftw\User();
 
-if (!isset($_SESSION['auth'])) {
+// pages where you don't need login
+$nologin_arr = array('login.php', 'login-exec.php', 'register.php', 'register-exec.php', 'change-pass.php', 'app/reset.php');
+
+if (!isset($_SESSION['auth']) && !in_array(basename($_SERVER['SCRIPT_FILENAME']), $nologin_arr)) {
     // try to login with the cookie
     if (!$user->loginWithCookie()) {
         // maybe we clicked an email link and we want to be redirected to the page upon successful login
@@ -86,26 +88,14 @@ if (!isset($_SESSION['auth'])) {
         }
         $host = $_SERVER['HTTP_HOST'];
         $script = $_SERVER['SCRIPT_NAME'];
-        $params = $_SERVER['QUERY_STRING'];
-        $url = $protocol . '://' . $host . $script . '?' . $params;
+        $params = '?' . $_SERVER['QUERY_STRING'];
+        $url = $protocol . '://' . $host . $script . $params;
+        // remove trailing ? if there was no query string
+        $url = rtrim($url, '?');
 
-        setcookie('redirect', $url, time() + 300, null, null, false, true);
+        setcookie('redirect', $url, time() + 300, '/', null, false, true);
 
-        header('location: login.php');
-        exit;
-    }
-} else { // not auth with session
-
-    // check that the token in session is the same as in SQL
-    // first get the token in sql
-    $sql = "SELECT token FROM users WHERE userid = :userid";
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':userid', $_SESSION['userid']);
-    $req->execute();
-    $token = $req->fetchColumn();
-
-    if ($_SESSION['token'] != $token || !isset($_SESSION['token'])) {
-        header("Location: app/logout.php");
+        header('location: app/logout.php');
         exit;
     }
 }

@@ -152,8 +152,6 @@ class User
 
     public function login($username, $password)
     {
-        global $pdo;
-
         if ($this->checkCredentials($username, $password)) {
             $this->populateSession();
             $this->setToken();

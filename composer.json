@@ -1,4 +1,7 @@
 {
+    "name": "elabftw/elabftw",
+    "description": "Laboratory notebook for research labs",
+    "homepage": "http://www.elabftw.net",
     "require": {
         "swiftmailer/swiftmailer":"@stable",
         "mpdf/mpdf":"@stable",
@@ -12,5 +15,6 @@
     },
     "autoload": {
         "psr-4": {"Elabftw\\Elabftw\\" : "inc/classes/" }
-    }
+    },
+    "license": "AGPL-3.0"
 }

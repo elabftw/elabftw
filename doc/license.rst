@@ -1,4 +1,4 @@
-.. _gnu-licence:
+.. _license:
 
 License
 =======

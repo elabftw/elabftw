@@ -194,7 +194,6 @@ class MakeZip
         global $pdo;
         $real_name = array();
         $long_name = array();
-        $comment = array();
 
         // SQL to get filesattached (of the right type)
         $sql = "SELECT * FROM uploads WHERE item_id = :id AND (type = :type OR type = 'exp-pdf-timestamp')";
@@ -205,7 +204,6 @@ class MakeZip
         while ($uploads = $req->fetch()) {
             $real_name[] = $uploads['real_name'];
             $long_name[] = $uploads['long_name'];
-            $comment[] = $uploads['comment'];
         }
 
         // files attached ?
@@ -223,8 +221,6 @@ class MakeZip
     // add PDF to archive
     private function addPdf($id)
     {
-        global $pdo;
-
         $pdfPath = ELAB_ROOT . 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . '.pdf';
         $pdf = new \Elabftw\Elabftw\MakePdf($id, $this->table, $pdfPath);
         $this->zip->addFile($pdfPath, $this->folder . '/' . $pdf->getFileName());

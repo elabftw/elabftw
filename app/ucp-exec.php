@@ -387,7 +387,8 @@ if (isset($_POST['tpl_form'])) {
         name = :name
         WHERE userid = :userid AND id = :id";
     $req = $pdo->prepare($sql);
-    for ($i = 0; $i < count($_POST['tpl_body']); $i++) {
+    $cnt = count($_POST['tpl_body']);
+    for ($i = 0; $i < $cnt; $i++) {
         $req->execute(array(
             'id' => $tpl_id[$i],
             'body' => $new_tpl_body[$i],

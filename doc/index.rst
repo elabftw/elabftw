@@ -29,4 +29,4 @@ Welcome to elabftw's documentation!
 
     thanks
     changelog
-    gnu-licence
+    license

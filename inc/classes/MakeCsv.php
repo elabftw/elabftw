@@ -40,9 +40,7 @@ class MakeCsv
     private $data;
     private $url;
 
-    private $path;
-
-    public function __construct($idList, $type, $path = null)
+    public function __construct($idList, $type)
     {
         // assign and check id
         $this->idList = $idList;
@@ -50,9 +48,6 @@ class MakeCsv
         // assign and check type
         $this->table = $type;
         $this->checkType();
-
-        // assign path
-        $this->path = $path;
 
         $this->fileName = hash("sha512", uniqid(rand(), true)) . '.csv';
         $this->filePath = ELAB_ROOT . 'uploads/tmp/' . $this->fileName;

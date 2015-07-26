@@ -561,9 +561,9 @@ function check_body($input)
     if ((isset($input)) && (!empty($input))) {
         // we white list the allowed html tags
         return strip_tags($input, "<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol><blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td><code><video><audio><pagebreak>");
-    } else {
-        return '';
     }
+
+    return '';
 }
 
 /**

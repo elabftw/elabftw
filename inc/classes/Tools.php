@@ -94,7 +94,7 @@ class Tools
      *
      * @param string $date Input date '20140302'
      * @param string $s an optionnal param to specify the separator
-     * @return false|string The formatted strng
+     * @return false|string The formatted string
      */
     public function formatDate($date, $s = '.')
     {

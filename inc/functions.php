@@ -283,7 +283,7 @@ function showXP($id, $display = 'default')
         // COMPACT MODE //
         echo "<section class='item_compact' style='border-left: 6px solid #" . $experiments['color'] . "'>";
         echo "<a href='experiments.php?mode=view&id=" . $experiments['id'] . "'>";
-        echo "<span class='date date_compact'>" . format_date($experiments['date']) . "</span> ";
+        echo "<span class='date date_compact'>" . (new \Elabftw\Elabftw\Tools)->formatDate($experiments['date']) . "</span> ";
         echo "<span style='padding-left:10px;'>";
         // show lock if item is locked on viewXP
         if ($experiments['locked']) {
@@ -308,7 +308,7 @@ function showXP($id, $display = 'default')
         // TITLE
         echo stripslashes($experiments['title']) . "</p></a>";
         // DATE
-        echo "<span class='date'><img class='image' src='img/calendar.png' /> " . format_date($experiments['date']) . "</span> ";
+        echo "<span class='date'><img class='image' src='img/calendar.png' /> " . (new \Elabftw\Elabftw\Tools)->formatDate($experiments['date']) . "</span> ";
         // _('Tags')
         echo show_tags($id, 'experiments_tags');
         // show attached if there is a file attached
@@ -400,7 +400,7 @@ function showDB($id, $display = 'default')
         // ITEM TYPE
         echo "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['bgcolor'] . "'>" . $item['name'] . " </span>";
         // DATE
-        echo "<span class='date' style='padding:0 5px;'><img class='image' src='img/calendar.png' /> " . format_date($item['date']) . "</span> ";
+        echo "<span class='date' style='padding:0 5px;'><img class='image' src='img/calendar.png' /> " . (new \Elabftw\Elabftw\Tools)->formatDate($item['date']) . "</span> ";
         // TAGS
         echo show_tags($id, 'items_tags');
         echo "</section>";
@@ -608,18 +608,6 @@ function get_team_config($column)
     return "";
 }
 
-/**
- * Take a 8 digits input and output 2014.08.16
- *
- * @param string $date Input date '20140302'
- * @param string $s an optionnal param to specify the separator
- * @return string The formatted strng
- */
-function format_date($date, $s = '.')
-{
-    return $date[0] . $date[1] . $date[2] . $date[3] . $s . $date['4'] . $date['5'] . $s . $date['6'] . $date['7'];
-}
-
 
 /**
  * Insert a log entry in the logs table
@@ -699,20 +687,6 @@ function update_config($array)
         $result = $req->execute();
     }
     return (bool) $result;
-}
-
-/*
- * Used in login.php, login-exec.php and install/index.php
- * This is needed in the case you run an http server but people are connecting
- * through haproxy with ssl, with a http_x_forwarded_proto header.
- *
- * @return bool
- */
-function using_ssl()
-{
-    return ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on')
-        || (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
-        && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https'));
 }
 
 /*
@@ -906,25 +880,4 @@ function get_total_time()
     return array(
         'time' => $total_time,
         'unit' => $unit);
-}
-
-/*
- * Return a string 5+3+6 when feeded an array
- *
- * @param array $array
- * @return false|string
- */
-function build_string_from_array($array, $delim = '+')
-{
-    $string = "";
-
-    if (!is_array($array)) {
-        return false;
-    }
-
-    foreach ($array as $i) {
-        $string .= $i . $delim;
-    }
-    // remove last delimiter
-    return rtrim($string, $delim);
 }

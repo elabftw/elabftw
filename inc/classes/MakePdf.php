@@ -49,7 +49,7 @@ class MakePdf
     public function __construct($id, $type, $path = null)
     {
 
-        $db = new \Elabftw\Elabftw\Db();
+        $db = new Db();
         $this->pdo = $db->connect();
 
         $this->id = $id;
@@ -360,8 +360,8 @@ class MakePdf
         // build HTML content that will be fed to mpdf->WriteHTML()
         $this->addCss();
         $this->content .= "<h1 style='margin-bottom:5px'>" . stripslashes($this->data['title']) . "</h1>
-            Date : ".format_date($this->data['date']) . "<br />
-            Tags : <em>".$this->tags . "</em><br />
+            Date : " . (new Tools)->formatDate($this->data['date']) . "<br />
+            Tags : <em>". $this->tags . "</em><br />
             Made by : " . $this->author . "
             <hr>" . stripslashes($this->body);
 

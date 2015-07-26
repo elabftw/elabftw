@@ -32,7 +32,7 @@ class Tools
      * Returns 2 if no value is found (using the default setting that was in there previously)
      * It also checks for the post_max_size value and return the lowest value
      * @return int maximum size in MB of files allowed for upload
-    */
+     */
     public function returnMaxUploadSize()
     {
         $max_size = trim(ini_get('upload_max_filesize'));
@@ -90,6 +90,18 @@ class Tools
     }
 
     /**
+     * Take a 8 digits input and output 2014.08.16
+     *
+     * @param string $date Input date '20140302'
+     * @param string $s an optionnal param to specify the separator
+     * @return string The formatted strng
+     */
+    public function formatDate($date, $s = '.')
+    {
+        return $date[0] . $date[1] . $date[2] . $date[3] . $s . $date['4'] . $date['5'] . $s . $date['6'] . $date['7'];
+    }
+
+    /**
      * Get the extension of a file.
      *
      * @param string $filename path of the file
@@ -105,5 +117,40 @@ class Tools
         }
 
         return 'unknown';
+    }
+
+    /**
+     * Used in login.php, login-exec.php and install/index.php
+     * This is needed in the case you run an http server but people are connecting
+     * through haproxy with ssl, with a http_x_forwarded_proto header.
+     *
+     * @return bool
+     */
+    public function usingSsl()
+    {
+        return ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on')
+            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
+            && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) == 'https'));
+    }
+
+    /**
+     * Return a string 5+3+6 when fed an array
+     *
+     * @param array $array
+     * @return false|string
+     */
+    public function buildStringFromArray($array, $delim = '+')
+    {
+        $string = "";
+
+        if (!is_array($array)) {
+            return false;
+        }
+
+        foreach ($array as $i) {
+            $string .= $i . $delim;
+        }
+        // remove last delimiter
+        return rtrim($string, $delim);
     }
 }

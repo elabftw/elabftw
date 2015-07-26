@@ -524,11 +524,11 @@ if (isset($_GET)) {
             <div class='align_right'>
                 <a name='anchor'></a>
                 <p class='inline'><?php echo _('Export this result:'); ?> </p>
-                <a href='make_zip.php?id=<?php echo build_string_from_array($results_arr); ?>&type=<?php echo $search_type; ?>'>
+                <a href='make_zip.php?id=<?php echo (new \Elabftw\Elabftw\Tools)->buildStringFromArray($results_arr); ?>&type=<?php echo $search_type; ?>'>
                     <img src='img/zip.png' title='make a zip archive' alt='zip' />
                 </a>
 
-                <a href='make_csv.php?id=<?php echo build_string_from_array($results_arr); ?>&type=<?php echo $search_type; ?>'>
+                <a href='make_csv.php?id=<?php echo (new \Elabftw\Elabftw\Tools)->buildStringFromArray($results_arr); ?>&type=<?php echo $search_type; ?>'>
                     <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' />
                 </a>
             </div>

@@ -66,7 +66,7 @@ $data = $req->fetch();
 <!-- begin item view -->
 <section class="box">
 
-<span class='date_view'><img src='img/calendar.png' title='date' alt='Date :' /> <?php echo format_date($data['date']); ?></span><br>
+<span class='date_view'><img src='img/calendar.png' title='date' alt='Date :' /> <?php echo (new \Elabftw\Elabftw\Tools)->formatDate($data['date']); ?></span><br>
 <?php
 show_stars($data['rating']);
 // buttons
@@ -109,7 +109,7 @@ id='body_view' class='txt'><?php echo stripslashes($data['body'])?></div>
     <?php
 }
 // SHOW USER
-echo _('Last modified by') . ' ' . $data['firstname'] . " " . $data['lastname'] . ' ' . _('on') . ' ' . format_date($data['date']);
+echo _('Last modified by') . ' ' . $data['firstname'] . " " . $data['lastname'] . ' ' . _('on') . ' ' . (new \Elabftw\Elabftw\Tools)->formatDate($data['date']);
 echo "</section>";
 if ($_SESSION['prefs']['chem_editor']) {
     ?>

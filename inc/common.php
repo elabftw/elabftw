@@ -81,7 +81,7 @@ if (!isset($_SESSION['auth']) && !in_array(basename($_SERVER['SCRIPT_FILENAME'])
     if (!$user->loginWithCookie()) {
         // maybe we clicked an email link and we want to be redirected to the page upon successful login
         // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
-        if (using_ssl()) {
+        if ((new \Elabftw\Elabftw\Tools)->usingSsl()) {
             $protocol = 'https';
         } else {
             $protocol = 'http';

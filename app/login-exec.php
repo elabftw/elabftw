@@ -33,10 +33,6 @@ $msg_arr = array();
 //Validation error flag
 $errflag = false;
 
-if (!using_ssl()) {
-    die("eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or retry with https:// in front of the address.");
-}
-
 // Check the form_key
 if (!isset($_POST['form_key']) || !$formKey->validate()) {
     // form key is invalid

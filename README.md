@@ -22,6 +22,7 @@ Then you are at the right place !
 Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM and an old CPU, it's more than enough. Just install a recent GNU/Linux distribution on it and plug it to the intranet.
 
 # Installation
+
 ## The legendary four steps installation instructions (for advanced users)
 * [Download the latest stable version](https://github.com/elabftw/elabftw/releases/latest/)
 * Extract it on your web server
@@ -30,3 +31,9 @@ Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM 
 
 ## The legendary documentation (for everyone else)
 [Read the documentation, it's very complete](https://elabftw.rtfd.org).
+
+# Support
+
+Please [open a GitHub issue](https://github.com/elabftw/elabftw/issues/new) if you have a problem, want to make a suggestion, ask a question or discuss a feature.
+
+Thank you for using **eLabFTW**, I hope it will bring happiness in your lab ;)

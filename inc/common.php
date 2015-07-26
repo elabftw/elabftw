@@ -93,7 +93,7 @@ if (!isset($_SESSION['auth']) && !in_array(basename($_SERVER['SCRIPT_FILENAME'])
         // remove trailing ? if there was no query string
         $url = rtrim($url, '?');
 
-        setcookie('redirect', $url, time() + 300, '/', null, false, true);
+        setcookie('redirect', $url, time() + 300, '/', null, true, true);
 
         header('location: app/logout.php');
         exit;

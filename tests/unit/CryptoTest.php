@@ -7,8 +7,6 @@ class CryptoTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($crypto);
-        unset($data);
     }
 
     // Test the Crypto class

@@ -64,4 +64,26 @@ if ($errflag) {
 }
 
 // the actual login
-$user->login($username, $_POST['password']);
+if ($user->login($username, $_POST['password'])) {
+    if (isset($_COOKIE['redirect'])) {
+        $location = $_COOKIE['redirect'];
+    } else {
+        $location = '../experiments.php';
+    }
+    header('location: ' . $location);
+    exit;
+} else {
+    // log the attempt if the login failed
+    dblog('Warning', $_SERVER['REMOTE_ADDR'], 'Failed login attempt');
+    // inform the user
+    $msg_arr[] = _("Login failed. Either you mistyped your password or your account isn't activated yet.");
+    if (!isset($_SESSION['failed_attempt'])) {
+        $_SESSION['failed_attempt'] = 1;
+    } else {
+        $_SESSION['failed_attempt'] += 1;
+    }
+    $_SESSION['errors'] = $msg_arr;
+
+    header("location: ../login.php");
+    exit;
+}

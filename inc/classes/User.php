@@ -34,7 +34,6 @@ class User
     private $salt;
     private $userData;
     private $token;
-    private $location;
 
     public function __construct()
     {
@@ -76,9 +75,8 @@ class User
             // populate the userData
             $this->userData = $req->fetch();
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /*
@@ -139,41 +137,19 @@ class User
 
     }
 
-    private function setLocation()
-    {
-        if (isset($_COOKIE['redirect'])) {
-            $this->location = $_COOKIE['redirect'];
-        } else {
-            $this->location = '../experiments.php';
-        }
-    }
-
+    /**
+     * Login with username and password
+     *
+     * @return bool Return true if user provided correct credentials
+     */
     public function login($username, $password)
     {
         if ($this->checkCredentials($username, $password)) {
             $this->populateSession();
             $this->setToken();
-            $this->setLocation();
-            header('Location: ' . $this->location);
-            exit;
-        } else {
-            // login failed
-            // log the attempt
-            dblog('Warning', $_SERVER['REMOTE_ADDR'], 'Failed login attempt');
-
-            // inform the user
-            $msg_arr = array();
-            $msg_arr[] = _("Login failed. Either you mistyped your password or your account isn't activated yet.");
-            if (!isset($_SESSION['failed_attempt'])) {
-                $_SESSION['failed_attempt'] = 1;
-            } else {
-                $_SESSION['failed_attempt'] += 1;
-            }
-            $_SESSION['errors'] = $msg_arr;
-
-            header("location: ../login.php");
-            exit;
+            return true;
         }
+        return false;
     }
 
     /*

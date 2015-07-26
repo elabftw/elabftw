@@ -139,18 +139,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team']) && $_POST[
 
     // now we need to insert a new default experiment template for the newly created team
     $sql = "INSERT INTO `experiments_templates` (`team`, `body`, `name`, `userid`) VALUES
-    ('".$new_team_id . "', '<p><span style=\"font-size: 14pt;\"><strong>Goal :</strong></span></p>
+    (:team, '<p><span style=\"font-size: 14pt;\"><strong>Goal :</strong></span></p>
     <p>&nbsp;</p>
     <p><span style=\"font-size: 14pt;\"><strong>Procedure :</strong></span></p>
     <p>&nbsp;</p>
     <p><span style=\"font-size: 14pt;\"><strong>Results :</strong></span></p><p>&nbsp;</p>', 'default', 0);";
     $req = $pdo->prepare($sql);
-    // FIXME
-    // ok, so you will tell me, why the hell would I put the new_team_id here like that ?
-    // well, for some unknown and weird reason, it kept returning 0 :
-    // even if the value was still the new team id, and there was no error, it went in the DB as 0, not the id of the team
-    // it's weird I know, but at least like that it works.
-    //$req->bindValue(':team', $new_team_id);
+    $req->bindValue(':team', $new_team_id);
     $result4 = $req->execute();
 
     if ($result1 && $result2 && $result3 && $result4) {

@@ -125,9 +125,11 @@ if (get_config('mail_from') === 'notconfigured@example.com') {
             <select id='lang' name="lang">
 <?php
 $lang_array = array('en_GB', 'ca_ES', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pt_BR', 'zh_CN');
+$current_lang = get_config('lang');
+
 foreach ($lang_array as $lang) {
     echo "<option ";
-    if ($_SESSION['prefs']['lang'] === $lang) {
+    if ($current_lang === $lang) {
         echo ' selected ';
     }
     echo "value='" . $lang . "'>" . $lang . "</option>";

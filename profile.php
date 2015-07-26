@@ -29,15 +29,17 @@ $selected_menu = null;
 require_once 'inc/head.php';
 
 // SQL to get number of experiments
-$sql = "SELECT COUNT(*) FROM experiments WHERE userid = " . $_SESSION['userid'];
+$sql = "SELECT COUNT(*) FROM experiments WHERE userid = :userid";
 $req = $pdo->prepare($sql);
+$req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
 $req->execute();
 
 $count = $req->fetch();
 
 // SQL for profile
-$sql = "SELECT * FROM users WHERE userid = " . $_SESSION['userid'];
+$sql = "SELECT * FROM users WHERE userid = :userid";
 $req = $pdo->prepare($sql);
+$req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
 $req->execute();
 $data = $req->fetch();
 

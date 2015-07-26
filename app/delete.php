@@ -184,8 +184,9 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                 'link_id' => $id
             ));
             while ($links = $req->fetch()) {
-                $delete_sql = "DELETE FROM experiments_links WHERE id=" . $links['id'];
+                $delete_sql = "DELETE FROM experiments_links WHERE id = :links_id";
                 $delete_req = $pdo->prepare($delete_sql);
+                $delete_req->bindParam(':links_id', $links['id']);
                 $result[] = $delete_req->execute();
             }
 

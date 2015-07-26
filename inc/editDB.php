@@ -68,8 +68,9 @@ if ($data['locked'] == 1) {
     <div class='tags'>
         <span id='tags_div'>
         <?php
-        $sql = "SELECT id, tag FROM items_tags WHERE item_id = " . $id;
+        $sql = "SELECT id, tag FROM items_tags WHERE item_id = :item_id";
         $tagreq = $pdo->prepare($sql);
+        $tagreq->bindParam(':item_id', $id);
         $tagreq->execute();
         // DISPLAY TAGS
         while ($tags = $tagreq->fetch()) {

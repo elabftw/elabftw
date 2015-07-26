@@ -707,14 +707,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
 
     $userid = $user['userid'];
     // DELETE USER
-    $sql = "DELETE FROM users WHERE userid = " . $userid;
+    $sql = "DELETE FROM users WHERE userid = :userid";
     $req = $pdo->prepare($sql);
+    $req->bindParam(':userid', $userid, PDO::PARAM_INT);
     $req->execute();
-    $sql = "DELETE FROM experiments_tags WHERE userid = " . $userid;
+    $sql = "DELETE FROM experiments_tags WHERE userid = :userid";
     $req = $pdo->prepare($sql);
+    $req->bindParam(':userid', $userid, PDO::PARAM_INT);
     $req->execute();
-    $sql = "DELETE FROM experiments WHERE userid = " . $userid;
+    $sql = "DELETE FROM experiments WHERE userid = :userid";
     $req = $pdo->prepare($sql);
+    $req->bindParam(':userid', $userid, PDO::PARAM_INT);
     $req->execute();
     // get all filenames
     $sql = "SELECT long_name FROM uploads WHERE userid = :userid AND type = :type";
@@ -728,8 +731,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
         $filepath = 'uploads/' . $uploads['long_name'];
         unlink($filepath);
     }
-    $sql = "DELETE FROM uploads WHERE userid = " . $userid;
+    $sql = "DELETE FROM uploads WHERE userid = :userid";
     $req = $pdo->prepare($sql);
+    $req->bindParam(':userid', $userid, PDO::PARAM_INT);
     $req->execute();
     $msg_arr[] = _('Everything was purged successfully.');
     $_SESSION['infos'] = $msg_arr;

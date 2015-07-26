@@ -316,8 +316,9 @@ class MakePdf
                 FROM experiments_links
                 LEFT JOIN items ON (experiments_links.link_id = items.id)
                 LEFT JOIN items_types ON (items.type = items_types.id)
-                WHERE item_id = ".$this->id;
+                WHERE item_id = :item_id";
             $req = $pdo->prepare($sql);
+            $req->bindParam(':item_id', $this->id);
             $req->execute();
             $links_id_arr = array();
             $links_title_arr = array();

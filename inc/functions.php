@@ -447,12 +447,9 @@ function check_date($input)
             && ($dateday > '0')) {
                 // SUCCESS on every test
             return $input;
-        } else {
-            return kdate();
         }
-    } else {
-        return kdate();
     }
+    return kdate();
 }
 
 /**

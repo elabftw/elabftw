@@ -109,7 +109,7 @@ id='body_view' class='txt'><?php echo stripslashes($data['body'])?></div>
     <?php
 }
 // SHOW USER
-echo _('Last modified by') . ' ' . $data['firstname'] . " " . $data['lastname'] . ' ' . _('on') . ' ' . (new \Elabftw\Elabftw\Tools)->formatDate($data['date']);
+echo _('Last modified by') . ' ' . $data['firstname'] . " " . $data['lastname'];
 echo "</section>";
 if ($_SESSION['prefs']['chem_editor']) {
     ?>

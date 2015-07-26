@@ -192,7 +192,7 @@ $search_type = '';
             <div class='col-md-4'>
                 <label class='block' for='status'><?php echo _('And status is'); ?></label>
                 <select id='status' name="status">
-                    <option value='' name='status'><?php echo _('select status'); ?></option>
+                    <option value=''><?php echo _('select status'); ?></option>
                     <?php
                     // put all available status in array
                     $status_arr = array();
@@ -246,17 +246,17 @@ $search_type = '';
                 ><?php echo _('or'); ?></option>
                 </select>
             </div>
-            <!-- END TITLE -->
+            <!-- END TITLE/BODY block -->
 
             <!-- RATING -->
             <div class='col-md-4'>
                 <label class='block' for='rating'><?php echo _('And rating is'); ?></label>
                 <select id='rating' name='rating'>
-                    <option value='' name='rating'><?php echo _('select number of stars'); ?></option>
-                    <option value='no' name='rating'><?php echo _('Unrated'); ?></option>
+                    <option value=''><?php echo _('select number of stars'); ?></option>
+                    <option value='no'><?php echo _('Unrated'); ?></option>
                     <?php
                     for ($i = 1; $i <= 5; $i++) {
-                        echo "<option value='" . $i . "' name='rating'";
+                        echo "<option value='" . $i . "'";
                         // item get selected if it is in the search url
                         if (isset($_GET['rating']) && ($_GET['rating'] == $i)) {
                         echo " selected='selected'";

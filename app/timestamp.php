@@ -37,7 +37,7 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
 }
 
 // timestamping begins
-$ts = new Elabftw\Elabftw\TrustedTimestamps($id);
+$ts = new Elabftw\Elabftw\TrustedTimestamps($id, $connector);
 try {
     $ts->timeStamp();
 } catch (Exception $e) {

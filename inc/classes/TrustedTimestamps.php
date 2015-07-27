@@ -33,7 +33,6 @@ namespace Elabftw\Elabftw;
 use \DateTime;
 use \Exception;
 use \Elabftw\Elabftw\Update;
-use \Elabftw\Elabftw\Db;
 
 class TrustedTimestamps
 {
@@ -66,9 +65,8 @@ class TrustedTimestamps
      * It just needs the id of the experiment
      *
      */
-    public function __construct($id)
+    public function __construct($id, Db $db)
     {
-        $db = new \Elabftw\Elabftw\Db();
         $this->pdo = $db->connect();
 
         // will be used in sqlUpdate()

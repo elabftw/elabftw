@@ -25,15 +25,12 @@
 ********************************************************************************/
 namespace Elabftw\Elabftw;
 
-use \Elabftw\Elabftw\Db;
-
 class Create
 {
     private $pdo;
 
-    public function __construct()
+    public function __construct(Db $db)
     {
-        $db = new \Elabftw\Elabftw\Db();
         $this->pdo = $db->connect();
     }
 

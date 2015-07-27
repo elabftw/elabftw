@@ -26,7 +26,6 @@
 namespace Elabftw\Elabftw;
 
 use \Elabftw\Elabftw\MakePdf;
-use \Elabftw\Elabftw\Db;
 use \ZipArchive;
 use \Exception;
 
@@ -58,9 +57,8 @@ class MakeZip
      * Provide it with the $_GET['id'] and $_GET['type']
      *
      */
-    public function __construct($idList, $type)
+    public function __construct($idList, $type, Db $db)
     {
-        $db = new \Elabftw\Elabftw\Db();
         $this->pdo = $db->connect();
 
         // we check first if the zip extension is here

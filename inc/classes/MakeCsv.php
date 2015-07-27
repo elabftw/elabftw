@@ -44,7 +44,7 @@ class MakeCsv
 
     public function __construct($idList, $type)
     {
-        $db = new \Elabftw\Elabftw\Db();
+        $db = new Db();
         $this->pdo = $db->connect();
 
         // assign and check id

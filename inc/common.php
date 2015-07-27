@@ -74,7 +74,7 @@ if (get_config('schema') < $update::REQUIRED_SCHEMA) {
     }
 }
 
-$user = new \Elabftw\Elabftw\User();
+$user = new \Elabftw\Elabftw\User($connector);
 
 // pages where you don't need to be logged in
 $nologin_arr = array('login.php', 'login-exec.php', 'register.php', 'register-exec.php', 'change-pass.php', 'app/reset.php');

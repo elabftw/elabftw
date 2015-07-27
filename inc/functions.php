@@ -585,7 +585,7 @@ function get_config($conf_name)
 /**
  * Return the config for the team, or just the value of the column asked
  *
- * @param string $column
+ * @param string|null $column
  * @return string|string[]
  */
 function get_team_config($column = null)

@@ -30,7 +30,6 @@ use \ZipArchive;
 use \RecursiveIteratorIterator;
 use \RecursiveDirectoryIterator;
 use \FileSystemIterator;
-use \Elabftw\Elabftw\Db;
 
 class ImportZip
 {
@@ -49,10 +48,9 @@ class ImportZip
     // we need it for linking attached file(s) to the the new item
     private $newItemId;
 
-    public function __construct($zipfile, $itemType)
+    public function __construct($zipfile, $itemType, Db $db)
     {
 
-        $db = new \Elabftw\Elabftw\Db();
         $this->pdo = $db->connect();
 
         $this->fileTmpName = $zipfile;

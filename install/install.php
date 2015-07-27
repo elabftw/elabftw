@@ -92,8 +92,8 @@ define('DB_NAME', '" . $db_name . "');
 define('DB_USER', '" . $db_user . "');
 define('DB_PASSWORD', '" . $db_password . "');
 define('ELAB_ROOT', '" . $elab_root . "');
-define('SECRET_KEY', '" . $crypto->getSecretKey() . "');
-define('IV', '" . bin2hex($crypto->getIv()) . "');
+define('SECRET_KEY', '" . $crypto->secretKey . "');
+define('IV', '" . bin2hex($crypto->iv) . "');
 ";
 
 // we try to write content to file and propose the file for download if we can't write to it

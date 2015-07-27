@@ -6,7 +6,7 @@
  * @copyright 2012 Nicolas CARPi
  * @see http://www.elabftw.net Official website
  * @license AGPL-3.0
- *
+ * @package elabftw
  */
 namespace Elabftw\Elabftw;
 
@@ -22,7 +22,7 @@ class User
     private $salt;
     /** Everything about the user */
     private $userData;
-    /** Used to store the ...token */
+    /** Token that will be in the cookie + db */
     private $token;
 
     /**
@@ -57,7 +57,7 @@ class User
      * @param string $password
      * @return bool True if the login + password are good
      */
-    private function checkCredentials($username, $password)
+    public function checkCredentials($username, $password)
     {
         $this->setSalt($username);
 

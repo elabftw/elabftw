@@ -1,41 +1,30 @@
 <?php
-/********************************************************************************
-*                                                                               *
-*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
-*   http://www.elabftw.net/                                                     *
-*                                                                               *
-********************************************************************************/
-
-/********************************************************************************
-*  This file is part of eLabFTW.                                                *
-*                                                                               *
-*    eLabFTW is free software: you can redistribute it and/or modify            *
-*    it under the terms of the GNU Affero General Public License as             *
-*    published by the Free Software Foundation, either version 3 of             *
-*    the License, or (at your option) any later version.                        *
-*                                                                               *
-*    eLabFTW is distributed in the hope that it will be useful,                 *
-*    but WITHOUT ANY WARRANTY; without even the implied                         *
-*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
-*    PURPOSE.  See the GNU Affero General Public License for more details.      *
-*                                                                               *
-*    You should have received a copy of the GNU Affero General Public           *
-*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
-*                                                                               *
-********************************************************************************/
+/**
+ * \Elabftw\Elabftw\Upgrade
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see http://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 namespace Elabftw\Elabftw;
 
 use \Exception;
 use \ZipArchive;
 
+/**
+ * Use this to upgrade an installation
+ */
 class Upgrade extends Update
 {
+    /** where we will store our zip archive */
     private $zipPath = ELAB_ROOT . 'uploads/tmp/latest.zip';
 
-
-    /*
+    /**
      * Upgrade the install by downloading latest zip, extracting it and copying files.
      *
+     * @throws Exception if unhappy
      */
     public function __construct()
     {
@@ -44,28 +33,40 @@ class Upgrade extends Update
         }
         $this->enableMaintenanceMode();
         $this->getUpdatesIni();
-        $this->getLatestZip();
+        // get the latest zip archive
+        $this->get($this->url, $this->zipPath);
+
+        // verify its integrity
         if (!$this->checksumZip()) {
             throw new Exception('Cannot validate zip archive!');
         }
+
         $this->extractZip();
+
         $this->disableMaintenanceMode();
     }
 
-    /*
+    /**
      * Make sure we can actually write to the install directory
      *
+     * @return bool
      */
     private function checkIsWritable()
     {
         return is_writable(ELAB_ROOT);
     }
 
+    /**
+     * Add the maintenance file, disabling everything
+     */
     private function enableMaintenanceMode()
     {
         file_put_contents(ELAB_ROOT . 'maintenance', '1');
     }
 
+    /**
+     * Open the gates of Science!
+     */
     private function disableMaintenanceMode()
     {
         if (file_exists(ELAB_ROOT . 'maintenance')) {
@@ -73,18 +74,10 @@ class Upgrade extends Update
         }
     }
 
-    /*
-     * Download the latest zip archive.
-     *
-     */
-    private function getLatestZip()
-    {
-        $this->get($this->url, $this->zipPath);
-    }
-
-    /*
+    /**
      * Verify integrity of zip archive with sha512.
      *
+     * @return bool true if the archive has correct checksum
      */
     private function checksumZip()
     {

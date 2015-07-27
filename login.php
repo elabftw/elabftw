@@ -114,7 +114,7 @@ if (!checkCookiesEnabled()) {
             <label class='block' for="password"><?php echo _('Password'); ?></label>
             <input name="password" type="password" required /><br>
             <!-- form key -->
-            <?php $formKey->outputFormkey(); ?>
+            <?php echo $formKey->getFormkey(); ?>
         </p>
         <div id='loginButtonDiv'>
         <button type="submit" class='button' name="Submit"><?php echo _('Login'); ?></button>

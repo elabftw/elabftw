@@ -1,69 +1,60 @@
 <?php
-/********************************************************************************
-*                                                                               *
-*  Copyright 2015 Alexander Minges (alexander.minges@gmail.com)                 *
-*  modified by Nicolas CARPi
-*  http://www.elabftw.net/                                                      *
-*                                                                               *
-*  Based on work by David Müller:                                               *
-*  http://www.d-mueller.de/blog/dealing-with-trusted-timestamps-in-php-rfc-3161 *
-*                                                                               *
-********************************************************************************/
-
-/********************************************************************************
-*  This file is part of eLabFTW.                                                *
-*                                                                               *
-*    eLabFTW is free software: you can redistribute it and/or modify            *
-*    it under the terms of the GNU Affero General Public License as             *
-*    published by the Free Software Foundation, either version 3 of             *
-*    the License, or (at your option) any later version.                        *
-*                                                                               *
-*    eLabFTW is distributed in the hope that it will be useful,                 *
-*    but WITHOUT ANY WARRANTY; without even the implied                         *
-*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
-*    PURPOSE.  See the GNU Affero General Public License for more details.      *
-*                                                                               *
-*    You should have received a copy of the GNU Affero General Public           *
-*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
-*                                                                               *
-*********************************************************************************/
-
+/**
+ * \Elabftw\Elabftw\TrustedTimestamps
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @author Alexander Minges <alexander.minges@gmail.com>
+ * @author David Müller
+ * @copyright 2015 Nicolas CARPi, Alexander Minges
+ * @see http://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 namespace Elabftw\Elabftw;
 
 use \DateTime;
 use \Exception;
 use \Elabftw\Elabftw\Update;
 
+/**
+ * Based on:
+ * http://www.d-mueller.de/blog/dealing-with-trusted-timestamps-in-php-rfc-3161
+ */
 class TrustedTimestamps
 {
+    /** our database connection */
     private $pdo;
 
+    /** the id of the experiment */
     private $id;
 
-    // a sha512 hash.pdf
+    /** a sha512 hash.pdf */
     private $pdfFileName;
-    // ELAB_ROOT . uploads/ . $pdfFileName
+    /** ELAB_ROOT . uploads/ . $pdfFileName */
     private $pdfPath;
-    // elabid-timestamped.pdf
+    /** elabid-timestamped.pdf */
     private $pdfRealName;
 
-    // array with config (url, login, password, cert)
+    /** config (url, login, password, cert) */
     private $stampParams = array();
-    // things that get deleted with destruct method
+    /** things that get deleted with destruct method */
     private $tmpfiles = array();
 
+    /** where we store the request file */
     private $requestfilePath;
+    /** where we store the asn1 token */
     private $responsefilePath;
 
+    /** our answer from TSA */
     private $binaryResponseString;
+    /** the time of the timestamp */
     private $responseTime;
 
-
-
     /**
-     * Class constructor
-     * It just needs the id of the experiment
+     * Give me an experiment id and a db and I make good pdf for you
      *
+     * @param $id The id of the experiment
+     * @param $db an instance of Db
      */
     public function __construct($id, Db $db)
     {
@@ -74,16 +65,12 @@ class TrustedTimestamps
         $this->generatePdf();
 
         // initialize with info from config
-        try {
-            $this->stampParams = $this->getTimestampParameters();
-        } catch (Exception $e) {
-            $_SESSION['errors'][] = $e->getMessage();
-        }
+        $this->stampParams = $this->getTimestampParameters();
     }
 
     /**
-     * Class destructor
-     * Deletes all temporary files created by TrustedTimestamps
+     * Delete all temporary files created by TrustedTimestamps
+     *
      */
     public function __destruct()
     {
@@ -92,9 +79,10 @@ class TrustedTimestamps
         }
     }
 
-    /*
+    /**
      * Generate the pdf to timestamp.
      *
+     * @throws Exception if it cannot make the pdf
      */
     private function generatePdf()
     {
@@ -211,6 +199,7 @@ class TrustedTimestamps
     /**
      * Extracts the unix timestamp from the base64-encoded response string as returned by signRequestfile
      *
+     * @throws Exception if unhappy
      */
     private function setResponseTime()
     {
@@ -227,7 +216,9 @@ class TrustedTimestamps
             throw new Exception("The reply failed: " . implode(", ", $retarray));
         }
 
-        $matches = array();
+        if (!is_array($retarray)) {
+            throw new Exception('$retarray must be an array.');
+        }
 
         /*
          * Format of answer:
@@ -252,10 +243,7 @@ class TrustedTimestamps
          *   TSA: DirName:/CN=Universign Timestamping Unit 012/OU=0002 43912916400026/O=Cryptolog International/C=FR
          *   Extensions:
          */
-
-        if (!is_array($retarray)) {
-            throw new Exception('$retarray must be an array.');
-        }
+        $matches = array();
 
         // loop each line to find the Time stamp line
         foreach ($retarray as $retline) {
@@ -279,7 +267,7 @@ class TrustedTimestamps
         }
     }
 
-    /*
+    /**
      * Contact the TSA and receive a token after successful timestamp
      *
      */
@@ -320,7 +308,7 @@ class TrustedTimestamps
         $this->binaryResponseString = $binaryResponseString;
     }
 
-    /*
+    /**
      * Save the binaryResponseString to a .asn1 file (token)
      *
      */
@@ -390,7 +378,7 @@ class TrustedTimestamps
         throw new Exception("System command failed: " . implode(", ", $retarray));
     }
 
-    /*
+    /**
      * Update SQL
      *
      */
@@ -408,7 +396,7 @@ class TrustedTimestamps
         }
     }
 
-    /*
+    /**
      * The realname is elabid-timestamped.pdf
      *
      */
@@ -423,7 +411,7 @@ class TrustedTimestamps
         $this->pdfRealName = $req->fetch(\PDO::FETCH_COLUMN) . "-timestamped.pdf";
     }
 
-    /*
+    /**
      * Add also our pdf to the attached files of the experiment, this way it is kept safely :)
      * I had this idea when realizing that if you comment an experiment, the hash won't be good anymore. Because the pdf will contain the new comments.
      * Keeping the pdf here is the best way to go, as this leaves room to leave comments.
@@ -447,7 +435,7 @@ class TrustedTimestamps
         }
 
     }
-    /*
+    /**
      * The main function.
      * Request a timestamp and parse the response.
      *

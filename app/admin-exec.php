@@ -558,17 +558,22 @@ if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
 // DELETE USER (we receive a formkey from this form)
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     // Check the form_key
-    if (!isset($_POST['form_key']) || !$formKey->validate()) {
+    if (!isset($_POST['formkey']) || !$formKey->validate()) {
         // form key is invalid
-        die(INVALID_FORMKEY);
+        $msg_arr[] = _("Your session expired. Please retry.");
+        $errflag = true;
     }
+    // check the email is valid
     if (filter_var($_POST['delete_user'], FILTER_VALIDATE_EMAIL)) {
         $email = $_POST['delete_user'];
     } else {
         $msg_arr[] = _("The email is not valid.");
         $errflag = true;
     }
+    // check that we got the good password
     if (isset($_POST['delete_user_confpass']) && !empty($_POST['delete_user_confpass'])) {
+        if (!$user->checkCredentials($_SESSION['username'], filter_var($_POST['delete_user_confpass'], FILTER_SANITIZE_STRING))) {
+            /*
         // get the salt from db
         $sql = "SELECT salt, password FROM users WHERE userid = :userid";
         $req = $pdo->prepare($sql);
@@ -579,6 +584,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
         // check if the given password is good
         $password_hash = hash("sha512", $pass_infos['salt'] . $_POST['delete_user_confpass']);
         if ($password_hash != $pass_infos['password']) {
+             */
             $msg_arr[] = _("Wrong password!");
             $errflag = true;
         }

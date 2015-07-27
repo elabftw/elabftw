@@ -1,95 +1,103 @@
 <?php
-/********************************************************************************
-*                                                                               *
-*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
-*   http://www.elabftw.net/                                                     *
-*                                                                               *
-********************************************************************************/
-
-/********************************************************************************
-*  This file is part of eLabFTW.                                                *
-*                                                                               *
-*    eLabFTW is free software: you can redistribute it and/or modify            *
-*    it under the terms of the GNU Affero General Public License as             *
-*    published by the Free Software Foundation, either version 3 of             *
-*    the License, or (at your option) any later version.                        *
-*                                                                               *
-*    eLabFTW is distributed in the hope that it will be useful,                 *
-*    but WITHOUT ANY WARRANTY; without even the implied                         *
-*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
-*    PURPOSE.  See the GNU Affero General Public License for more details.      *
-*                                                                               *
-*    You should have received a copy of the GNU Affero General Public           *
-*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
-*                                                                               *
-********************************************************************************/
+/**
+ * \Elabftw\Elabftw\Crypto
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see http://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 namespace Elabftw\Elabftw;
 
+/**
+ * Used for decrypting and encrypting passwords
+ */
 class Crypto
 {
+    /** the initialization vector, a string of bytes */
     public $iv;
+    /** size of the iv */
+    private $ivLength = 16;
+
+    /** a sha512 string */
     public $secretKey;
 
-    private $ivLength = 16;
-    private $cryptoStrong = true;
-    private $availableMethods;
+    /** the cipher that will be used */
     private $method;
 
+    /**
+     * Choose a method, set the secretkey and iv
+     */
     public function __construct()
     {
-        $this->setMethod();
-        $this->setSecretKey();
-        $this->setIv();
+        $this->method = $this->getMethod();
+        $this->secretKey = $this->getSecretKey();
+        $this->iv = $this->getIv();
     }
 
-    private function setMethod()
+    /**
+     * Select which method we will use for our crypto stuff
+     *
+     * @return string The selected method that is available
+     */
+    private function getMethod()
     {
-        // select the right method
-        $this->availableMethods = openssl_get_cipher_methods();
+        $availableMethods = openssl_get_cipher_methods();
 
-        if (in_array('AES-256-CBC-HMAC-SHA256', $this->availableMethods)) {
-            $this->method = 'AES-256-CBC-HMAC-SHA256';
-        } elseif (in_array('AES-256-CBC', $this->availableMethods)) {
-            $this->method = 'AES-256-CBC';
-        } else {
-            // just take the first one coming, I guess it's better than nothing.
-            $this->method = $this->availableMethods[0];
+        if (in_array('AES-256-CBC-HMAC-SHA256', $availableMethods)) {
+            return 'AES-256-CBC-HMAC-SHA256';
+        } elseif (in_array('AES-256-CBC', $availableMethods)) {
+            return 'AES-256-CBC';
         }
+        // just take the first one coming, it's better than nothing
+        return $availableMethods[0];
     }
 
-    private function setSecretKey()
+    /**
+     * The secret key is a sha512 sum based on uniqid()
+     *
+     * @return string The secret key taken from config or generated
+     */
+    private function getSecretKey()
     {
         if (defined('SECRET_KEY')) {
-            $this->secretKey = SECRET_KEY;
-        } else {
-            $this->secretKey = hash("sha512", uniqid(rand(), true));
+            return SECRET_KEY;
         }
+        return hash("sha512", uniqid(rand(), true));
     }
 
-    private function setIv()
+    /**
+     * The IV is in binary and stored in hex in config file
+     *
+     * @return string binary IV
+     */
+    private function getIv()
     {
         if (defined('IV')) {
-            $this->iv = hex2bin(IV);
-        } else {
-            $this->iv = openssl_random_pseudo_bytes($this->ivLength, $this->cryptoStrong);
+            return hex2bin(IV);
         }
+        // the true is for crypto_strong switch
+        return openssl_random_pseudo_bytes($this->ivLength, true);
     }
 
-    public function getIv()
-    {
-        return $this->iv;
-    }
-
-    public function getSecretKey()
-    {
-        return $this->secretKey;
-    }
-
+    /**
+     * Encrypt something
+     *
+     * @param string the data to encrypt
+     * @return string encrypted data
+     */
     public function encrypt($data)
     {
         return openssl_encrypt($data, $this->method, $this->secretKey, 0, $this->iv);
     }
 
+    /**
+     * Decrypt something
+     *
+     * @param string the data to decrypt
+     * @return string decrypted data
+     */
     public function decrypt($data)
     {
         return openssl_decrypt($data, $this->method, $this->secretKey, 0, $this->iv);

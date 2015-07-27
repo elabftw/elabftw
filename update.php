@@ -83,7 +83,7 @@ if (!is_writable('config.php')) {
     $crypto = new \Elabftw\Elabftw\Crypto();
     // add generated strings to config file
     // the IV is stored in hex
-    $data_to_add = "\ndefine('SECRET_KEY', '" . $crypto->getSecretKey() . "');\ndefine('IV', '" . bin2hex($crypto->getIv()) . "');\n";
+    $data_to_add = "\ndefine('SECRET_KEY', '" . $crypto->secretKey . "');\ndefine('IV', '" . bin2hex($crypto->iv) . "');\n";
 
     try {
         file_put_contents('config.php', $data_to_add, FILE_APPEND);

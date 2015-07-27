@@ -43,7 +43,6 @@ require_once 'inc/info_box.php';
 <script src="js/raphael/raphael-min.js"></script>
 <script src="js/colorwheel/colorwheel.js"></script>
 <?php
-
 // MAIN SQL FOR USERS
 $sql = "SELECT * FROM users WHERE validated = :validated AND team = :team";
 $user_req = $pdo->prepare($sql);
@@ -55,6 +54,7 @@ $count = $user_req->rowCount();
 if ($count > 0 && strlen(get_config('mail_from')) > 0) {
     $message = _('There are users waiting for validation of their account:');
     $message .= "<form method='post' action='app/admin-exec.php'>";
+    $message .= $formKey->getFormkey();
     $message .= "<ul>";
     while ($data = $user_req->fetch()) {
         $message .= "<li><label>
@@ -65,11 +65,8 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
     $message .= "</ul><div class='center'>
     <button class='button' type='submit'>"._('Submit') . "</button></div>";
     display_message('error', $message);
-    // as this will 'echo', we need to call it at the right moment. It will not go smoothly into $message.
-    $formKey->outputFormkey();
     echo "</form>";
 }
-
 
 // get the team config
 $team = get_team_config();
@@ -227,7 +224,7 @@ $team = get_team_config();
     <h4><strong><?php echo _('Delete an account'); ?></strong></h4>
     <form action='app/admin-exec.php' method='post'>
         <!-- form key -->
-        <?php $formKey->outputFormkey(); ?>
+        <?php echo $formKey->getFormkey(); ?>
         <label for='delete_user'><?php echo _('Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:'); ?></label>
         <input type='email' name='delete_user' id='delete_user' />
         <br>

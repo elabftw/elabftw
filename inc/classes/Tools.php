@@ -1,36 +1,25 @@
 <?php
-/********************************************************************************
-*                                                                               *
-*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
-*   http://www.elabftw.net/                                                     *
-*                                                                               *
-********************************************************************************/
-
-/********************************************************************************
-*  This file is part of eLabFTW.                                                *
-*                                                                               *
-*    eLabFTW is free software: you can redistribute it and/or modify            *
-*    it under the terms of the GNU Affero General Public License as             *
-*    published by the Free Software Foundation, either version 3 of             *
-*    the License, or (at your option) any later version.                        *
-*                                                                               *
-*    eLabFTW is distributed in the hope that it will be useful,                 *
-*    but WITHOUT ANY WARRANTY; without even the implied                         *
-*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
-*    PURPOSE.  See the GNU Affero General Public License for more details.      *
-*                                                                               *
-*    You should have received a copy of the GNU Affero General Public           *
-*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
-*                                                                               *
-********************************************************************************/
+/**
+ * \Elabftw\Elabftw\Tools
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see http://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 namespace Elabftw\Elabftw;
 
+/**
+ * Toolbelt full of useful functions
+ */
 class Tools
 {
     /**
      * Converts the php.ini upload size setting to a numeric value in MB
      * Returns 2 if no value is found (using the default setting that was in there previously)
      * It also checks for the post_max_size value and return the lowest value
+     *
      * @return int maximum size in MB of files allowed for upload
      */
     public function returnMaxUploadSize()
@@ -140,6 +129,7 @@ class Tools
      * Return a string 5+3+6 when fed an array
      *
      * @param array $array
+     * @param string $delim An optionnal delimiter
      * @return false|string
      */
     public function buildStringFromArray($array, $delim = '+')

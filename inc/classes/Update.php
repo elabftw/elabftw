@@ -1,28 +1,13 @@
 <?php
-/********************************************************************************
-*                                                                               *
-*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
-*   http://www.elabftw.net/                                                     *
-*                                                                               *
-********************************************************************************/
-
-/********************************************************************************
-*  This file is part of eLabFTW.                                                *
-*                                                                               *
-*    eLabFTW is free software: you can redistribute it and/or modify            *
-*    it under the terms of the GNU Affero General Public License as             *
-*    published by the Free Software Foundation, either version 3 of             *
-*    the License, or (at your option) any later version.                        *
-*                                                                               *
-*    eLabFTW is distributed in the hope that it will be useful,                 *
-*    but WITHOUT ANY WARRANTY; without even the implied                         *
-*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
-*    PURPOSE.  See the GNU Affero General Public License for more details.      *
-*                                                                               *
-*    You should have received a copy of the GNU Affero General Public           *
-*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
-*                                                                               *
-********************************************************************************/
+/**
+ * \Elabftw\Elabftw\Update
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see http://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 namespace Elabftw\Elabftw;
 
 use \Exception;
@@ -31,34 +16,55 @@ use \RecursiveIteratorIterator;
 use \FilesystemIterator;
 use \Elabftw\Elabftw\Db;
 
+/**
+ * Use this to check for latest version or update the database schema
+ */
 class Update
 {
+    /** 1.1.4 */
     private $version;
+    /** the url line from the updates.ini file with link to archive */
     protected $url;
+    /** sha512sum of the archive we should expect */
     protected $sha512;
+
+    /** our favorite pdo object */
     private $pdo;
 
+    /** this is used to check if we managed to get a version or not */
     public $success = false;
 
+    /** where to get info from */
     const URL = 'https://get.elabftw.net/updates.ini';
+    /** if we can't connect in https for some reason, use http */
     const URL_HTTP = 'http://get.elabftw.net/updates.ini';
-    // ///////////////////////////////
-    // UPDATE THIS AFTER RELEASING
-    const INSTALLED_VERSION = '1.1.5';
-    // ///////////////////////////////
-    // UPDATE THIS AFTER ADDING A BLOCK TO runUpdateScript()
-    const REQUIRED_SCHEMA = '2';
-    // ///////////////////////////////
 
+    /**
+     * ////////////////////////////
+     * UPDATE THIS AFTER RELEASING
+     * ///////////////////////////
+     */
+    const INSTALLED_VERSION = '1.1.5';
+
+    /**
+     * /////////////////////////////////////////////////////
+     * UPDATE THIS AFTER ADDING A BLOCK TO runUpdateScript()
+     * /////////////////////////////////////////////////////
+     */
+    const REQUIRED_SCHEMA = '2';
+
+    /**
+     * Create the pdo object
+     */
     public function __construct()
     {
         $db = new Db();
         $this->pdo = $db->connect();
     }
 
-
-    /*
+    /**
      * Make a get request with cURL, using proxy setting if any
+     *
      * @param string $url URL to hit
      * @param bool|string $toFile path where we want to save the file
      * @return string|boolean Return true if the download succeeded, else false
@@ -100,10 +106,11 @@ class Update
         return curl_exec($ch);
     }
 
-    /*
+    /**
      * Return the latest version of elabftw
      * Will fetch updates.ini file from elabftw.net
      *
+     * @throws Exception the version we have doesn't look like one
      * @return string|bool|null latest version or false if error
      */
     public function getUpdatesIni()
@@ -122,12 +129,11 @@ class Update
 
         if (!$this->validateVersion()) {
             throw new Exception('Error getting latest version information from server!');
-        } else {
-            $this->success = true;
         }
+        $this->success = true;
     }
 
-    /*
+    /**
      * Check if the version string actually looks like a version
      *
      * @return int 1 if version match
@@ -137,7 +143,7 @@ class Update
         return preg_match('/[0-99]+\.[0-99]+\.[0-99]+.*/', $this->version);
     }
 
-    /*
+    /**
      * Return true if there is a new version out there
      *
      * @return bool
@@ -147,7 +153,7 @@ class Update
         return self::INSTALLED_VERSION != $this->version;
     }
 
-    /*
+    /**
      * Return the latest version string
      *
      * @return string|int 1.1.4
@@ -157,7 +163,7 @@ class Update
         return $this->version;
     }
 
-    /*
+    /**
      * Update the database schema if needed.
      *
      * @return string[] $msg_arr
@@ -174,6 +180,9 @@ class Update
         return $msg_arr;
     }
 
+    /**
+     * Delete things in the tmp folder
+     */
     private function cleanTmp()
     {
         // cleanup files in tmp
@@ -189,6 +198,7 @@ class Update
      * Add a default value to deletable_xp.
      * Can't do the same for link_href and link_name because they are text
      *
+     * @throws Exception if there is a problem
      */
     private function schema2()
     {

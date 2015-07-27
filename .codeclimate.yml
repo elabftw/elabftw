@@ -1,7 +1,8 @@
 languages:
   PHP: true
 exclude_paths:
-  - "js/"
-  - "vendor/"
-  - "tests/"
+  - "js/*"
+  - "vendor/*"
+  - "tests/*"
+  - "doc/*
 

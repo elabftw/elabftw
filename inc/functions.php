@@ -583,12 +583,12 @@ function get_config($conf_name)
 }
 
 /**
- * Return the value of asked column
+ * Return the config for the team, or just the value of the column asked
  *
- * @param string $column The configuration we want to read
- * @return string The content of the config for the current team
+ * @param string $column
+ * @return string|string[]
  */
-function get_team_config($column)
+function get_team_config($column = null)
 {
     global $pdo;
 
@@ -600,6 +600,9 @@ function get_team_config($column)
             'team_id' => $_SESSION['team_id']
         ));
         $team_config = $req->fetch();
+        if (is_null($column)) {
+            return $team_config;
+        }
         return $team_config[$column];
     }
     return "";

@@ -118,13 +118,14 @@ class TrustedTimestamps
     {
         $hash_algorithms = array('sha256', 'sha384', 'sha512');
         $crypto = new \Elabftw\Elabftw\Crypto();
+        $team = get_team_config();
 
-        if (strlen(get_team_config('stamplogin')) > 2) {
-            $login = get_team_config('stamplogin');
-            $password = $crypto->decrypt(get_team_config('stamppass'));
-            $provider = get_team_config('stampprovider');
-            $cert = get_team_config('stampcert');
-            $hash = get_team_config('stamphash');
+        if (strlen($team['stamplogin']) > 2) {
+            $login = $team['stamplogin'];
+            $password = $crypto->decrypt($team['stamppass']);
+            $provider = $team['stampprovider'];
+            $cert = $team['stampcert'];
+            $hash = $team['stamphash'];
             if (!in_array($hash, $hash_algorithms)) {
                 $hash = 'sha256';
             }

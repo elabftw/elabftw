@@ -69,7 +69,12 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
     $formKey->outputFormkey();
     echo "</form>";
 }
+
+
+// get the team config
+$team = get_team_config();
 ?>
+
 
 <menu>
     <ul>
@@ -92,39 +97,39 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
         <label for='deletable_xp'><?php echo _('Users can delete experiments:'); ?></label>
         <select name='deletable_xp' id='deletable_xp'>
             <option value='1'<?php
-                if (get_team_config('deletable_xp') == 1) { echo " selected='selected'"; } ?>
+                if ($team['deletable_xp'] == 1) { echo " selected='selected'"; } ?>
                     ><?php echo _('Yes'); ?></option>
             <option value='0'<?php
-                    if (get_team_config('deletable_xp') == 0) { echo " selected='selected'"; } ?>
+                    if ($team['deletable_xp'] == 0) { echo " selected='selected'"; } ?>
                         ><?php echo _('No'); ?></option>
         </select>
         <span class='smallgray'><?php echo _('An admin account will always be able to delete experiments.'); ?></span>
         </p>
         <p>
         <label for='link_name'><?php echo _('Name of the link in the top menu:'); ?></label>
-        <input type='text' value='<?php echo get_team_config('link_name'); ?>' name='link_name' id='link_name' />
+        <input type='text' value='<?php echo $team['link_name']; ?>' name='link_name' id='link_name' />
         </p>
         <p>
         <label for='link_href'><?php echo _('Address where this link should point:'); ?></label>
-        <input type='text' value='<?php echo get_team_config('link_href'); ?>' name='link_href' id='link_href' />
+        <input type='text' value='<?php echo $team['link_href']; ?>' name='link_href' id='link_href' />
         </p>
         <p>
         <label for='stampprovider'><?php echo _('URL for external timestamping service:'); ?></label>
-        <input type='url' value='<?php echo get_team_config('stampprovider'); ?>' name='stampprovider' id='stampprovider' />
+        <input type='url' value='<?php echo $team['stampprovider']; ?>' name='stampprovider' id='stampprovider' />
         <span class='smallgray'><?php echo _('This should be the URL used for <a href="https://tools.ietf.org/html/rfc3161">RFC 3161</a>-compliant timestamping requests.'); ?></span>
         </p>
         <p>
         <label for='stampcert'><?php echo _('Chain of certificates of the external timestamping service:'); ?></label>
-        <input type='text' placeholder='vendor/pki.dfn.pem' value='<?php echo get_team_config('stampcert'); ?>' name='stampcert' id='stampcert' />
+        <input type='text' placeholder='vendor/pki.dfn.pem' value='<?php echo $team['stampcert']; ?>' name='stampcert' id='stampcert' />
         <span class='smallgray'><?php echo _('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.<br /> Local path relative to eLabFTW installation directory. The file needs to be in <a href="https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail">PEM-encoded (ASCII)</a> format!'); ?></span>
         </p>
         <label for='stamplogin'><?php echo _('Login for external timestamping service:'); ?></label>
-        <input type='text' value='<?php echo get_team_config('stamplogin'); ?>' name='stamplogin' id='stamplogin' />
+        <input type='text' value='<?php echo $team['stamplogin']; ?>' name='stamplogin' id='stamplogin' />
         <span class='smallgray'><?php echo _('This should be the login associated with your timestamping service provider'); ?></span>
         </p>
         <p>
         <label for='stamppass'><?php echo _('Password for external timestamping service:'); ?></label>
-        <input type='password' value='<?php echo $crypto->decrypt(get_team_config('stamppass')); ?>' name='stamppass' id='stamppass' />
+        <input type='password' value='<?php echo $crypto->decrypt($team['stamppass']); ?>' name='stamppass' id='stamppass' />
         <span class='smallgray'><?php echo _('Your timestamping service provider password'); ?></span>
         </p>
         <div class='center'>

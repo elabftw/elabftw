@@ -33,9 +33,11 @@ if ($_SESSION['is_admin'] != 1) {
 
 $formKey = new \Elabftw\Elabftw\FormKey();
 $crypto = new \Elabftw\Elabftw\Crypto();
+$sysconfig = new \Elabftw\Elabftw\SysConfig();
 
 $msg_arr = array();
 $errflag = false;
+$tab = '';
 $email = '';
 
 
@@ -103,104 +105,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
 }
 
 
-// TEAM CONFIGURATION FORM COMING FROM ../sysconfig.php
-// ADD A NEW TEAM
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_team']) && $_POST['new_team'] != '' && $_POST['new_team'] != ' ') {
-    $new_team_name = filter_var($_POST['new_team'], FILTER_SANITIZE_STRING);
-    $sql = 'INSERT INTO teams (team_name, deletable_xp, link_name, link_href) VALUES (:team_name, :deletable_xp, :link_name, :link_href)';
-    $req = $pdo->prepare($sql);
-    $result1 = $req->execute(array(
-        'team_name' => $new_team_name,
-        'deletable_xp' => 1,
-        'link_name' => 'Documentation',
-        'link_href' => 'doc/_build/html/'
-    ));
-    $new_team_id = $pdo->lastInsertId();
-    // now we need to insert a new default set of status for the newly created team
-    $sql = "INSERT INTO status (team, name, color, is_default) VALUES
-    (:team, 'Running', '0096ff', 1),
-    (:team, 'Success', '00ac00', 0),
-    (:team, 'Need to be redone', 'c0c0c0', 0),
-    (:team, 'Fail', 'ff0000', 0);";
-    $req = $pdo->prepare($sql);
-    $req->bindValue(':team', $new_team_id);
-    $result2 = $req->execute();
-
-    // now we need to insert a new default set of items_types for the newly created team
-    $sql = "INSERT INTO `items_types` (`team`, `name`, `bgcolor`, `template`) VALUES
-(:team, 'Antibody', '31a700', '<p><strong>Host :</strong></p>\r\n<p><strong>Target :</strong></p>\r\n<p><strong>Dilution to use :</strong></p>\r\n<p>Don''t forget to add the datasheet !</p>'),
-(:team, 'Plasmid', '29AEB9', '<p><strong>Concentration : </strong></p>\r\n<p><strong>Resistances : </strong></p>\r\n<p><strong>Backbone :</strong></p>\r\n<p><strong><br /></strong></p>'),
-(:team, 'siRNA', '0064ff', '<p><strong>Sequence :</strong></p>\r\n<p><strong>Target :</strong></p>\r\n<p><strong>Concentration :</strong></p>\r\n<p><strong>Buffer :</strong></p>'),
-(:team, 'Drugs', 'fd00fe', '<p><strong>Action :</strong> &nbsp;<strong> </strong></p>\r\n<p><strong>Concentration :</strong>&nbsp;</p>\r\n<p><strong>Use at :</strong>&nbsp;</p>\r\n<p><strong>Buffer :</strong> </p>'),
-(:team, 'Crystal', '84ff00', '<p>Edit me</p>');";
-    $req = $pdo->prepare($sql);
-    $req->bindValue(':team', $new_team_id);
-    $result3 = $req->execute();
-
-    // now we need to insert a new default experiment template for the newly created team
-    $sql = "INSERT INTO `experiments_templates` (`team`, `body`, `name`, `userid`) VALUES
-    (:team, '<p><span style=\"font-size: 14pt;\"><strong>Goal :</strong></span></p>
-    <p>&nbsp;</p>
-    <p><span style=\"font-size: 14pt;\"><strong>Procedure :</strong></span></p>
-    <p>&nbsp;</p>
-    <p><span style=\"font-size: 14pt;\"><strong>Results :</strong></span></p><p>&nbsp;</p>', 'default', 0);";
-    $req = $pdo->prepare($sql);
-    $req->bindValue(':team', $new_team_id);
-    $result4 = $req->execute();
-
-    if ($result1 && $result2 && $result3 && $result4) {
-        $msg_arr[] = _('Team added successfully.');
-        $_SESSION['infos'] = $msg_arr;
-        header('Location: ../sysconfig.php');
-        exit;
-    } else {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#5", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: ../sysconfig.php');
-        exit;
-    }
-}
-
-// SERVER SETTINGS
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['debug'])) {
-
-    if (isset($_POST['lang']) && (strlen($_POST['lang']) === 5)) {
-        $lang = $_POST['lang'];
-    } else {
-        $lang = 'en_GB';
-    }
-
-    if ($_POST['debug'] == 1) {
-        $debug = 1;
-    } else {
-        $debug = 0;
-    }
-
-    if (isset($_POST['proxy'])) {
-        $proxy = filter_var($_POST['proxy'], FILTER_SANITIZE_STRING);
-    } else {
-        $proxy = '';
-    }
-
-    // SQL
-    $updates = array(
-        'lang' => $lang,
-        'debug' => $debug,
-        'proxy' => $proxy
-    );
-
-    if (update_config($updates)) {
-        $msg_arr[] = _('Configuration updated successfully.');
-        $_SESSION['infos'] = $msg_arr;
-        header('Location: ../sysconfig.php?tab=2');
-        exit;
-    } else {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#6", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: ../sysconfig.php?tab=2');
-        exit;
-    }
-} // END SERVER SETTINGS
 
 // TIMESTAMP CONFIG
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {

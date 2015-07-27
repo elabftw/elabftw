@@ -67,8 +67,11 @@ require_once ELAB_ROOT . 'inc/locale.php';
 $update = new \Elabftw\Elabftw\Update();
 
 if (get_config('schema') < $update::REQUIRED_SCHEMA) {
-    $update = new \Elabftw\Elabftw\Update();
-    $_SESSION['infos'] = $update->runUpdateScript();
+    try {
+        $_SESSION['infos'] = $update->runUpdateScript();
+    } catch (Exception $e) {
+        $_SESSION['errors'] = $e->getMessage();
+    }
 }
 
 $user = new \Elabftw\Elabftw\User();

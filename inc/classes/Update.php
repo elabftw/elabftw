@@ -29,12 +29,14 @@ use \Exception;
 use \RecursiveDirectoryIterator;
 use \RecursiveIteratorIterator;
 use \FilesystemIterator;
+use \Elabftw\Elabftw\Db;
 
 class Update
 {
     private $version;
     protected $url;
     protected $sha512;
+    private $pdo;
 
     public $success = false;
 
@@ -45,8 +47,14 @@ class Update
     const INSTALLED_VERSION = '1.1.5';
     // ///////////////////////////////
     // UPDATE THIS AFTER ADDING A BLOCK TO runUpdateScript()
-    const REQUIRED_SCHEMA = '1';
+    const REQUIRED_SCHEMA = '2';
     // ///////////////////////////////
+
+    public function __construct()
+    {
+        $db = new Db();
+        $this->pdo = $db->connect();
+    }
 
 
     /*
@@ -150,14 +158,19 @@ class Update
     }
 
     /*
-     * This does nothing atm
+     * Update the database schema if needed.
      *
+     * @return array $msg_arr
      */
     public function runUpdateScript()
     {
+        // 20150727
+        $this->schema2();
+
+        // place new schema functions above this comment
+        $this->cleanTmp();
         $msg_arr = array();
         $msg_arr[] = "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)";
-        $this->cleanTmp();
         return $msg_arr;
     }
 
@@ -169,6 +182,22 @@ class Update
         $ri = new \RecursiveIteratorIterator($di, \RecursiveIteratorIterator::CHILD_FIRST);
         foreach ($ri as $file) {
             $file->isDir() ? rmdir($file) : unlink($file);
+        }
+    }
+
+    /**
+     * Add a default value to deletable_xp.
+     * Can't do the same for link_href and link_name because they are text
+     *
+     */
+    private function schema2()
+    {
+        $config_arr = array('schema' => 2);
+
+        $sql = "ALTER TABLE teams CHANGE deletable_xp deletable_xp TINYINT(1) NOT NULL DEFAULT '1'";
+        $req = $this->pdo->prepare($sql);
+        if (!$req->execute() || !update_config($config_arr)) {
+            throw new Exception('Problem updating!');
         }
     }
 }

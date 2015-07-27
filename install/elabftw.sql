@@ -244,9 +244,9 @@ DROP TABLE IF EXISTS `teams`;
 CREATE TABLE `teams` (
   `team_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `team_name` text NOT NULL,
-  `deletable_xp` tinyint(1) NOT NULL,
-  `link_name` text NOT NULL,
-  `link_href` text NOT NULL,
+  `deletable_xp` tinyint(1) NOT NULL DEFAULT 1,
+  `link_name` text NOT NULL DEFAULT 'Documentation',
+  `link_href` text NOT NULL DEFAULT 'doc/_build/html/',
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `stamplogin` text DEFAULT NULL,
   `stamppass` text DEFAULT NULL,

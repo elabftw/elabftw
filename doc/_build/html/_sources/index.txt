@@ -8,9 +8,9 @@ Welcome to elabftw's documentation!
     :caption: Installing
 
     install-gnulinux
-    install-docker
     install-drop
     install-mac
+    install-docker
     common-errors
     postinstall
     backup

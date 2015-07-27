@@ -84,7 +84,7 @@ class Crypto
     /**
      * Encrypt something
      *
-     * @param string the data to encrypt
+     * @param string $data the data to encrypt
      * @return string encrypted data
      */
     public function encrypt($data)
@@ -95,7 +95,7 @@ class Crypto
     /**
      * Decrypt something
      *
-     * @param string the data to decrypt
+     * @param string $data the data to decrypt
      * @return string decrypted data
      */
     public function decrypt($data)

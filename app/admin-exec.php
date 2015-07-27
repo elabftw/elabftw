@@ -33,7 +33,7 @@ if ($_SESSION['is_admin'] != 1) {
 
 $formKey = new \Elabftw\Elabftw\FormKey();
 $crypto = new \Elabftw\Elabftw\Crypto();
-$sysconfig = new \Elabftw\Elabftw\SysConfig();
+$sysconfig = new \Elabftw\Elabftw\SysConfig($db);
 
 $msg_arr = array();
 $errflag = false;

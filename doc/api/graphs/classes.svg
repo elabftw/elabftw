@@ -21,70 +21,70 @@
 <path fill="none" stroke="gray" d="M36,-24C36,-24 159,-24 159,-24 165,-24 171,-30 171,-36 171,-36 171,-732 171,-732 171,-738 165,-744 159,-744 159,-744 36,-744 36,-744 30,-744 24,-738 24,-732 24,-732 24,-36 24,-36 24,-30 30,-24 36,-24"/>
 <text text-anchor="middle" x="97.5" y="-731.2" font-family="Times,serif" font-size="11.00" fill="gray">Elabftw</text>
 </g>
-<!-- \\Elabftw\\Elabftw\\Crypto -->
-<g id="node1" class="node"><title>\\Elabftw\\Elabftw\\Crypto</title>
-<polygon fill="none" stroke="black" points="126,-716 69,-716 69,-680 126,-680 126,-716"/>
-<text text-anchor="middle" x="97.5" y="-695.2" font-family="Courier,monospace" font-size="11.00">Crypto</text>
-</g>
 <!-- \\Elabftw\\Elabftw\\ImportZip -->
-<g id="node2" class="node"><title>\\Elabftw\\Elabftw\\ImportZip</title>
-<polygon fill="none" stroke="black" points="136,-662 59,-662 59,-626 136,-626 136,-662"/>
-<text text-anchor="middle" x="97.5" y="-641.2" font-family="Courier,monospace" font-size="11.00">ImportZip</text>
+<g id="node1" class="node"><title>\\Elabftw\\Elabftw\\ImportZip</title>
+<polygon fill="none" stroke="black" points="136,-716 59,-716 59,-680 136,-680 136,-716"/>
+<text text-anchor="middle" x="97.5" y="-695.2" font-family="Courier,monospace" font-size="11.00">ImportZip</text>
 </g>
-<!-- \\Elabftw\\Elabftw\\Formkey -->
-<g id="node3" class="node"><title>\\Elabftw\\Elabftw\\Formkey</title>
-<polygon fill="none" stroke="black" points="129.5,-608 65.5,-608 65.5,-572 129.5,-572 129.5,-608"/>
-<text text-anchor="middle" x="97.5" y="-587.2" font-family="Courier,monospace" font-size="11.00">Formkey</text>
+<!-- \\Elabftw\\Elabftw\\TrustedTimestamps -->
+<g id="node2" class="node"><title>\\Elabftw\\Elabftw\\TrustedTimestamps</title>
+<polygon fill="none" stroke="black" points="163,-662 32,-662 32,-626 163,-626 163,-662"/>
+<text text-anchor="middle" x="97.5" y="-641.2" font-family="Courier,monospace" font-size="11.00">TrustedTimestamps</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\Db -->
-<g id="node4" class="node"><title>\\Elabftw\\Elabftw\\Db</title>
-<polygon fill="none" stroke="black" points="124.5,-554 70.5,-554 70.5,-518 124.5,-518 124.5,-554"/>
-<text text-anchor="middle" x="97.5" y="-533.2" font-family="Courier,monospace" font-size="11.00">Db</text>
-</g>
-<!-- \\Elabftw\\Elabftw\\User -->
-<g id="node5" class="node"><title>\\Elabftw\\Elabftw\\User</title>
-<polygon fill="none" stroke="black" points="124.5,-500 70.5,-500 70.5,-464 124.5,-464 124.5,-500"/>
-<text text-anchor="middle" x="97.5" y="-479.2" font-family="Courier,monospace" font-size="11.00">User</text>
+<g id="node3" class="node"><title>\\Elabftw\\Elabftw\\Db</title>
+<polygon fill="none" stroke="black" points="124.5,-608 70.5,-608 70.5,-572 124.5,-572 124.5,-608"/>
+<text text-anchor="middle" x="97.5" y="-587.2" font-family="Courier,monospace" font-size="11.00">Db</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\MakePdf -->
-<g id="node6" class="node"><title>\\Elabftw\\Elabftw\\MakePdf</title>
-<polygon fill="none" stroke="black" points="129.5,-446 65.5,-446 65.5,-410 129.5,-410 129.5,-446"/>
-<text text-anchor="middle" x="97.5" y="-425.2" font-family="Courier,monospace" font-size="11.00">MakePdf</text>
+<g id="node4" class="node"><title>\\Elabftw\\Elabftw\\MakePdf</title>
+<polygon fill="none" stroke="black" points="129.5,-554 65.5,-554 65.5,-518 129.5,-518 129.5,-554"/>
+<text text-anchor="middle" x="97.5" y="-533.2" font-family="Courier,monospace" font-size="11.00">MakePdf</text>
 </g>
-<!-- \\Elabftw\\Elabftw\\Create -->
-<g id="node7" class="node"><title>\\Elabftw\\Elabftw\\Create</title>
-<polygon fill="none" stroke="black" points="126,-392 69,-392 69,-356 126,-356 126,-392"/>
-<text text-anchor="middle" x="97.5" y="-371.2" font-family="Courier,monospace" font-size="11.00">Create</text>
+<!-- \\Elabftw\\Elabftw\\SysConfig -->
+<g id="node5" class="node"><title>\\Elabftw\\Elabftw\\SysConfig</title>
+<polygon fill="none" stroke="black" points="136,-500 59,-500 59,-464 136,-464 136,-500"/>
+<text text-anchor="middle" x="97.5" y="-479.2" font-family="Courier,monospace" font-size="11.00">SysConfig</text>
 </g>
-<!-- \\Elabftw\\Elabftw\\MakeCsv -->
-<g id="node8" class="node"><title>\\Elabftw\\Elabftw\\MakeCsv</title>
-<polygon fill="none" stroke="black" points="129.5,-338 65.5,-338 65.5,-302 129.5,-302 129.5,-338"/>
-<text text-anchor="middle" x="97.5" y="-317.2" font-family="Courier,monospace" font-size="11.00">MakeCsv</text>
+<!-- \\Elabftw\\Elabftw\\User -->
+<g id="node6" class="node"><title>\\Elabftw\\Elabftw\\User</title>
+<polygon fill="none" stroke="black" points="124.5,-446 70.5,-446 70.5,-410 124.5,-410 124.5,-446"/>
+<text text-anchor="middle" x="97.5" y="-425.2" font-family="Courier,monospace" font-size="11.00">User</text>
+</g>
+<!-- \\Elabftw\\Elabftw\\Formkey -->
+<g id="node7" class="node"><title>\\Elabftw\\Elabftw\\Formkey</title>
+<polygon fill="none" stroke="black" points="129.5,-392 65.5,-392 65.5,-356 129.5,-356 129.5,-392"/>
+<text text-anchor="middle" x="97.5" y="-371.2" font-family="Courier,monospace" font-size="11.00">Formkey</text>
+</g>
+<!-- \\Elabftw\\Elabftw\\Update -->
+<g id="node8" class="node"><title>\\Elabftw\\Elabftw\\Update</title>
+<polygon fill="none" stroke="black" points="126,-338 69,-338 69,-302 126,-302 126,-338"/>
+<text text-anchor="middle" x="97.5" y="-317.2" font-family="Courier,monospace" font-size="11.00">Update</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\MakeZip -->
 <g id="node9" class="node"><title>\\Elabftw\\Elabftw\\MakeZip</title>
 <polygon fill="none" stroke="black" points="129.5,-284 65.5,-284 65.5,-248 129.5,-248 129.5,-284"/>
 <text text-anchor="middle" x="97.5" y="-263.2" font-family="Courier,monospace" font-size="11.00">MakeZip</text>
 </g>
-<!-- \\Elabftw\\Elabftw\\TrustedTimestamps -->
-<g id="node10" class="node"><title>\\Elabftw\\Elabftw\\TrustedTimestamps</title>
-<polygon fill="none" stroke="black" points="163,-230 32,-230 32,-194 163,-194 163,-230"/>
-<text text-anchor="middle" x="97.5" y="-209.2" font-family="Courier,monospace" font-size="11.00">TrustedTimestamps</text>
+<!-- \\Elabftw\\Elabftw\\MakeCsv -->
+<g id="node10" class="node"><title>\\Elabftw\\Elabftw\\MakeCsv</title>
+<polygon fill="none" stroke="black" points="129.5,-230 65.5,-230 65.5,-194 129.5,-194 129.5,-230"/>
+<text text-anchor="middle" x="97.5" y="-209.2" font-family="Courier,monospace" font-size="11.00">MakeCsv</text>
 </g>
-<!-- \\Elabftw\\Elabftw\\Update -->
-<g id="node11" class="node"><title>\\Elabftw\\Elabftw\\Update</title>
+<!-- \\Elabftw\\Elabftw\\Create -->
+<g id="node11" class="node"><title>\\Elabftw\\Elabftw\\Create</title>
 <polygon fill="none" stroke="black" points="126,-176 69,-176 69,-140 126,-140 126,-176"/>
-<text text-anchor="middle" x="97.5" y="-155.2" font-family="Courier,monospace" font-size="11.00">Update</text>
-</g>
-<!-- \\Elabftw\\Elabftw\\SysConfig -->
-<g id="node12" class="node"><title>\\Elabftw\\Elabftw\\SysConfig</title>
-<polygon fill="none" stroke="black" points="136,-122 59,-122 59,-86 136,-86 136,-122"/>
-<text text-anchor="middle" x="97.5" y="-101.2" font-family="Courier,monospace" font-size="11.00">SysConfig</text>
+<text text-anchor="middle" x="97.5" y="-155.2" font-family="Courier,monospace" font-size="11.00">Create</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\Tools -->
-<g id="node13" class="node"><title>\\Elabftw\\Elabftw\\Tools</title>
-<polygon fill="none" stroke="black" points="124.5,-68 70.5,-68 70.5,-32 124.5,-32 124.5,-68"/>
-<text text-anchor="middle" x="97.5" y="-47.2" font-family="Courier,monospace" font-size="11.00">Tools</text>
+<g id="node12" class="node"><title>\\Elabftw\\Elabftw\\Tools</title>
+<polygon fill="none" stroke="black" points="124.5,-122 70.5,-122 70.5,-86 124.5,-86 124.5,-122"/>
+<text text-anchor="middle" x="97.5" y="-101.2" font-family="Courier,monospace" font-size="11.00">Tools</text>
+</g>
+<!-- \\Elabftw\\Elabftw\\Crypto -->
+<g id="node13" class="node"><title>\\Elabftw\\Elabftw\\Crypto</title>
+<polygon fill="none" stroke="black" points="126,-68 69,-68 69,-32 126,-32 126,-68"/>
+<text text-anchor="middle" x="97.5" y="-47.2" font-family="Courier,monospace" font-size="11.00">Crypto</text>
 </g>
 </g>
 </svg>

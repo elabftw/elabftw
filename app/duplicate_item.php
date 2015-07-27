@@ -26,7 +26,7 @@
 require_once '../inc/common.php';
 $msg_arr = array();
 
-$creator = new \Elabftw\Elabftw\Create($connector);
+$creator = new \Elabftw\Elabftw\Create($db);
 
 // Check ID
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {

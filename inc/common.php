@@ -52,8 +52,8 @@ require_once ELAB_ROOT . 'vendor/autoload.php';
 
 // SQL CONNECT
 try {
-    $connector = new \Elabftw\Elabftw\Db();
-    $pdo = $connector->connect();
+    $db = new \Elabftw\Elabftw\Db();
+    $pdo = $db->connect();
 } catch (Exception $e) {
     die('Error connecting to the database : ' . $e->getMessage());
 }
@@ -74,7 +74,7 @@ if (get_config('schema') < $update::REQUIRED_SCHEMA) {
     }
 }
 
-$user = new \Elabftw\Elabftw\User($connector);
+$user = new \Elabftw\Elabftw\User($db);
 
 // pages where you don't need to be logged in
 $nologin_arr = array('login.php', 'login-exec.php', 'register.php', 'register-exec.php', 'change-pass.php', 'app/reset.php');

@@ -122,7 +122,7 @@ switch ($_POST['type']) {
     case 'zip':
         // CODE TO IMPORT ZIP
         try {
-            $import = new \Elabftw\Elabftw\ImportZip($_FILES['file']['tmp_name'], $itemType, $connector);
+            $import = new \Elabftw\Elabftw\ImportZip($_FILES['file']['tmp_name'], $itemType, $db);
         } catch (Exception $e) {
             $errflag = true;
             $msg_arr[] = $e->getMessage();

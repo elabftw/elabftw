@@ -30,7 +30,7 @@ require_once ELAB_ROOT . 'inc/head.php';
 require_once ELAB_ROOT . 'inc/info_box.php';
 
 try {
-    $makezip = new \Elabftw\Elabftw\MakeZip($_GET['id'], $_GET['type'], $connector);
+    $makezip = new \Elabftw\Elabftw\MakeZip($_GET['id'], $_GET['type'], $db);
 } catch (Exception $e) {
     display_message('error', $e->getMessage());
     require_once 'inc/footer.php';

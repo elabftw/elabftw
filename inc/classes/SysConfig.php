@@ -81,9 +81,6 @@ class SysConfig
         $req->bindValue(':team', $new_team_id);
         $result4 = $req->execute();
 
-        if ($result1 && $result2 && $result3 && $result4) {
-            return true;
-        }
-        return false;
+        return $result1 && $result2 && $result3 && $result4;
     }
 }

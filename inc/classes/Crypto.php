@@ -77,8 +77,8 @@ class Crypto
         if (defined('IV')) {
             return hex2bin(IV);
         }
-        // the true is for crypto_strong switch
-        return openssl_random_pseudo_bytes($this->ivLength, true);
+        $crypto_strong = true;
+        return openssl_random_pseudo_bytes($this->ivLength, $crypto_strong);
     }
 
     /**

@@ -16,7 +16,7 @@ class CryptoTest extends \PHPUnit_Framework_TestCase
         $crypto = new \Elabftw\Elabftw\Crypto();
 
         $this->assertEquals(16, strlen($crypto->iv));
-        $this->assertEquals(128, strlen($crypto->secretKey()));
+        $this->assertEquals(128, strlen($crypto->secretKey));
         $this->assertEquals($data, $crypto->decrypt($crypto->encrypt($data)));
     }
 }

@@ -1,0 +1,17 @@
+Simple table with row seperators
+================================
+
+===== ======
+Foo   Bar
+===== ======
+Blubb Blubb
+----- ------
+Blubb Bluub
+===== ======
+
+===== ======
+Blubb Blubb
+----- ------
+Blubb Bluub
+===== ======
+

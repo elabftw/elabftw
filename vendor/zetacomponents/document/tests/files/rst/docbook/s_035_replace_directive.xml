@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="replace_directive">
+    <title>Replace directive</title>
+    <para>Yes, reStructuredText is a long word, so I can't blame anyone for wanting to abbreviate it.</para>
+    <para>As reStructuredText doesn't support nested inline markup, the only way to create a reference with styled text is to use substitutions with the "replace" directive:</para>
+    <para>I recommend you try <ulink url="http://www.python.org/">Python, <emphasis>the</emphasis> best language around</ulink>.</para>
+  </section>
+</article>

@@ -1,0 +1,13 @@
+= Complex directives
+
+{{mylogo.jpeg|The larch. }}
+
+{{larch.png}}
+
+This is a paragraph
+
+* Here is a bullet list.
+
+modify at your own risk!
+
+{{larch.png}}

@@ -1,0 +1,8 @@
+Anonymous hyperlink targets
+===========================
+
+Two different__ anonymous `hyperlink targets`__.
+
+__ http://different.org
+.. __: http://target.org
+

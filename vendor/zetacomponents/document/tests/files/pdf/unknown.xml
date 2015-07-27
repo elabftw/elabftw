@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<article xmlns="http://example.org/unknown">
+  <section>
+    <sectioninfo/>
+    <title>Paragraphs with inline markup</title>
+    <para>Paragraphs are separated by blank lines and are left-aligned.</para>
+    <para>Paragraphs are <emphasis>separated</emphasis> by blank lines and are left-aligned.</para>
+    <para>Paragraphs contain text and may contain inline markup: <emphasis>emphasis</emphasis>, <emphasis Role="strong">strong emphasis</emphasis>, or <emphasis>both <emphasis Role="strong">stacked.</emphasis></emphasis>.</para>
+  </section>
+</article>

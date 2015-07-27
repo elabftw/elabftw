@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <sectioninfo/>
+    <itemizedlist>
+      <listitem>
+        <para>TrueType fonts.</para>
+      </listitem>
+      <listitem>
+        <para>PostScript fonts.</para>
+      </listitem>
+    </itemizedlist>
+  </section>
+</article>

@@ -1,0 +1,8 @@
+eZ Components - Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Group and setting identifiers can only contain the characters a to z, A to Z, 0
+to 9, underscore (_), dash (-) and dot (.). The case of settings are preserved,
+but accessing them can be done with any case. This means that you cannot have two
+identical settings identifiers that differ only in case.
+

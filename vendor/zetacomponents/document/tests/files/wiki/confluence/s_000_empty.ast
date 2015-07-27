@@ -1,0 +1,16 @@
+<?php
+
+return ezcDocumentWikiDocumentNode::__set_state(array(
+   'line' => 1,
+   'position' => 1,
+   'nodes' => 
+  array (
+  ),
+   'token' => 
+  ezcDocumentWikiEndOfFileToken::__set_state(array(
+     'content' => NULL,
+     'line' => 1,
+     'position' => 1,
+  )),
+));
+

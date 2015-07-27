@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.2" streamable="true">
+  <g id="pages">
+    <g>
+      <rect x="0mm" y="0mm" width="108mm" height="108mm" style="fill: #ffffff; stroke: #000000; stroke-width: 1px; fill-opacity: 1; stroke-opacity: 1;"/>
+      <text x="0.0000mm" y="8.0000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">Paragraphs</text>
+      <text x="37.8400mm" y="8.0000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">contain</text>
+      <text x="65.3600mm" y="8.0000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">text</text>
+      <text x="82.5600mm" y="8.0000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">and</text>
+      <text x="0.0000mm" y="19.2000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">may</text>
+      <text x="13.7600mm" y="19.2000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">contain</text>
+      <text x="41.2800mm" y="19.2000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">inline</text>
+      <text x="65.3600mm" y="19.2000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">markup:</text>
+      <path d="M 0.0000,79.3701 L 97.5118,79.3701 L 97.5118,119.0551 L 0.0000,119.0551 z " style="stroke: none; fill: #d3d7cf;"/>
+      <path d="M 0.0000,98.2677 L 97.5118,98.2677" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <path d="M 0.0000,79.3701 L 97.5118,79.3701" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <path d="M 0.0000,110.5512 L 97.5118,110.5512" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <text x="0.0000mm" y="30.4000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: bold; stroke: none; fill: #2e3436">emphasis</text>
+      <text x="27.5200mm" y="30.4000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">,</text>
+      <path d="M 121.8898,79.3701 L 195.0236,79.3701 L 195.0236,119.0551 L 121.8898,119.0551 z " style="stroke: none; fill: #d3d7cf;"/>
+      <path d="M 121.8898,98.2677 L 195.0236,98.2677" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <path d="M 121.8898,79.3701 L 195.0236,79.3701" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <path d="M 121.8898,110.5512 L 195.0236,110.5512" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <text x="34.4000mm" y="30.4000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: bold; stroke: none; fill: #2e3436">strong</text>
+      <path d="M 195.0236,79.3701 L 207.2126,79.3701 L 207.2126,119.0551 L 195.0236,119.0551 z " style="stroke: none; fill: #d3d7cf;"/>
+      <path d="M 195.0236,98.2677 L 207.2126,98.2677" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <path d="M 195.0236,79.3701 L 207.2126,79.3701" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <path d="M 195.0236,110.5512 L 207.2126,110.5512" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <path d="M 207.2126,79.3701 L 304.7244,79.3701 L 304.7244,119.0551 L 207.2126,119.0551 z " style="stroke: none; fill: #d3d7cf;"/>
+      <path d="M 207.2126,98.2677 L 304.7244,98.2677" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <path d="M 207.2126,79.3701 L 304.7244,79.3701" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <path d="M 207.2126,110.5512 L 304.7244,110.5512" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <text x="58.4800mm" y="30.4000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: bold; stroke: none; fill: #2e3436">emphasis</text>
+      <text x="86.0000mm" y="30.4000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">,</text>
+      <text x="92.8800mm" y="30.4000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">or</text>
+      <path d="M 0.0000,119.0551 L 48.7559,119.0551 L 48.7559,158.7402 L 0.0000,158.7402 z " style="stroke: none; fill: #d3d7cf;"/>
+      <path d="M 0.0000,137.9528 L 48.7559,137.9528" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <path d="M 0.0000,119.0551 L 48.7559,119.0551" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <path d="M 0.0000,150.2362 L 48.7559,150.2362" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <text x="0.0000mm" y="41.6000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: bold; stroke: none; fill: #2e3436">both</text>
+      <path d="M 48.7559,119.0551 L 60.9449,119.0551 L 60.9449,158.7402 L 48.7559,158.7402 z " style="stroke: none; fill: #d3d7cf;"/>
+      <path d="M 48.7559,137.9528 L 60.9449,137.9528" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <path d="M 48.7559,119.0551 L 60.9449,119.0551" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <path d="M 48.7559,150.2362 L 60.9449,150.2362" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <path d="M 60.9449,119.0551 L 158.4567,119.0551 L 158.4567,158.7402 L 60.9449,158.7402 z " style="stroke: none; fill: #d3d7cf;"/>
+      <path d="M 60.9449,137.9528 L 158.4567,137.9528" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <path d="M 60.9449,119.0551 L 158.4567,119.0551" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <path d="M 60.9449,150.2362 L 158.4567,150.2362" style="stroke: #2e3436; stroke-width: 0.3528mm; fill: none;"/>
+      <text x="17.2000mm" y="41.6000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: bold; stroke: none; fill: #2e3436">stacked.</text>
+    </g>
+  </g>
+  <metadata>
+    <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns">
+      <rdf:Description>
+        <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">eZ Components - Document //autogen//</dc:creator>
+      </rdf:Description>
+    </rdf:RDF>
+  </metadata>
+</svg>

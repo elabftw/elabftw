@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="dense_bullet_list">
+    <title>Dense bullet list</title>
+    <itemizedlist mark="♺">
+      <listitem>
+        <para>List level 1 should have a recycling sign as bullets from "mark" in DocBook</para>
+        <orderedlist numeration="lowerroman">
+          <listitem>
+            <para>Item 1 initial text.</para>
+            <orderedlist numeration="loweralpha">
+              <listitem>
+                <para>Item 1a.</para>
+              </listitem>
+              <listitem>
+                <para>Item 1b.</para>
+              </listitem>
+              <listitem>
+                <itemizedlist>
+                  <listitem>
+                    <para>Item 2a.</para>
+                  </listitem>
+                  <listitem>
+                    <para>Item 2b.</para>
+                  </listitem>
+                </itemizedlist>
+                <para>Paragraph in list...</para>
+              </listitem>
+            </orderedlist>
+          </listitem>
+        </orderedlist>
+      </listitem>
+      <listitem>
+        <para>Continued list level 1</para>
+      </listitem>
+    </itemizedlist>
+    <para>Outside the list…</para>
+  </section>
+</article>

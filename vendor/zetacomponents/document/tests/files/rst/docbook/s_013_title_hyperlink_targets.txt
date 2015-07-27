@@ -1,0 +1,12 @@
+Various types of hyperlink targets
+==================================
+
+1. _`Target` inside a title
+---------------------------
+
+- target_
+- `Multi-element target`_
+
+2. _`Multi-element target`
+--------------------------
+

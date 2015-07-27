@@ -1,0 +1,58 @@
+=================================
+Document component docbook subset
+=================================
+
+The document components only requires a subset of the docbook elements to be
+supported by each markup format conversion. The semantic meaning of these
+elements should be maintained in the destination format.
+
+Other elements may or may not be supported, so you can't expect that their
+semantic meaning is also available in the destination document.
+
+Common subset
+=============
+
+Page level
+----------
+
+- article
+- beginpage
+- section
+  - secinfo
+    - author
+    - pubdate
+    - abstract
+    - copyright
+  - title
+
+Block level element
+-------------------
+
+- para
+- itemizedlist
+  - listitem
+- variablelist
+  - varlistentry
+  - term
+  - listitem
+- literallayout (class)
+- comment
+- table
+  - thead
+  - tbody
+  - row
+  - entry (morerows)
+- blockquote
+  - annotation
+- orderedlist
+
+Inline markup
+-------------
+
+- literal
+- emphasis (role)
+- ulink
+- link
+- anchor
+- footnote
+

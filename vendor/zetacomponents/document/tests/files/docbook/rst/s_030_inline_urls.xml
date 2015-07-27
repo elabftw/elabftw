@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="inline_urls">
+    <sectioninfo/>
+    <title>Inline URLs</title>
+    <para>A paragraph with inline URLs, like <ulink url="http://ezcomponents.org">http://ezcomponents.org</ulink> and inline <emphasis>markup</emphasis>, also with mail links to <ulink url="mailto:mail@example.com">mail@example.com</ulink> and URLs with some different scheme like <ulink url="ftp://user:pass@example.org">ftp://user:pass@example.org</ulink>.</para>
+  </section>
+</article>

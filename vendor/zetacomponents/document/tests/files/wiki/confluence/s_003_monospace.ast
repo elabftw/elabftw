@@ -1,0 +1,59 @@
+<?php
+
+return ezcDocumentWikiDocumentNode::__set_state(array(
+   'line' => 2,
+   'position' => 1,
+   'nodes' => 
+  array (
+    0 => 
+    ezcDocumentWikiParagraphNode::__set_state(array(
+       'line' => 1,
+       'position' => 28,
+       'nodes' => 
+      array (
+        0 => 
+        ezcDocumentWikiMonospaceNode::__set_state(array(
+           'line' => 1,
+           'position' => 1,
+           'nodes' => 
+          array (
+            0 => 
+            ezcDocumentWikiTextNode::__set_state(array(
+               'line' => 1,
+               'position' => 3,
+               'nodes' => 
+              array (
+              ),
+               'token' => 
+              ezcDocumentWikiTextLineToken::__set_state(array(
+                 'content' => 'text will be monospaced',
+                 'line' => 1,
+                 'position' => 3,
+              )),
+            )),
+          ),
+           'token' => 
+          ezcDocumentWikiMonospaceToken::__set_state(array(
+             'content' => '{{',
+             'line' => 1,
+             'position' => 1,
+          )),
+        )),
+      ),
+       'token' => 
+      ezcDocumentWikiNewLineToken::__set_state(array(
+         'content' => '
+',
+         'line' => 1,
+         'position' => 28,
+      )),
+    )),
+  ),
+   'token' => 
+  ezcDocumentWikiEndOfFileToken::__set_state(array(
+     'content' => NULL,
+     'line' => 2,
+     'position' => 1,
+  )),
+));
+

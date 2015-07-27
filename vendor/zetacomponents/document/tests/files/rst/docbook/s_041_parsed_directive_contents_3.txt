@@ -1,0 +1,38 @@
+=========================
+Parsed directive contents
+=========================
+
+Custom "paragraph" directive reparsing tests
+
+.. paragraph::
+  :( x2
+
+.. paragraph::
+  That's instructive :)
+  
+  Should we have it on the PHP-General list as our welcome message? 
+  
+  :)
+
+.. paragraph::
+  I guess my only comment would be 'took you long enough.'
+  
+  :)
+
+.. paragraph::
+  Yeah, php|cruise offered many tough decisions: jet skiing or PHP & OOP, etc. 
+  
+  :D
+
+.. paragraph::
+  I concur:
+  
+  \:(
+
+.. paragraph::
+  @Foo: Yeah, Bar is definitely on the Blubb map :)
+
+
+.. paragraph::
+  ;-(
+

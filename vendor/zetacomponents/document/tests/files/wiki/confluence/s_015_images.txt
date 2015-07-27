@@ -1,0 +1,11 @@
+!http://www.host.com/image.gif!
+or
+!attached-image.gif! 
+
+!spaceKey:pageTitle^image.gif!
+
+!/2007/05/23/My Blog Post^image.gif! 
+
+!image.jpg|thumbnail!
+!image.gif|align=right, vspace=4!
+

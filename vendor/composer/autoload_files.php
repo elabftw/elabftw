@@ -6,8 +6,10 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    $vendorDir . '/swiftmailer/swiftmailer/lib/swift_required.php',
     $vendorDir . '/guzzlehttp/psr7/src/functions.php',
     $vendorDir . '/guzzlehttp/promises/src/functions.php',
+    $vendorDir . '/herrera-io/json/src/lib/json_version.php',
     $vendorDir . '/guzzlehttp/guzzle/src/functions_include.php',
-    $vendorDir . '/swiftmailer/swiftmailer/lib/swift_required.php',
+    $vendorDir . '/herrera-io/phar-update/src/lib/constants.php',
 );

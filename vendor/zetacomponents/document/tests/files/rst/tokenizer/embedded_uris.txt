@@ -1,0 +1,19 @@
+See the `Python home page <http://www.python.org>`_ for info.
+
+See the `Python home page`_ for info.
+
+.. _Python home page: http://www.python.org
+
+`RFC 2396 <http://www.rfc-editor.org/rfc/rfc2396.txt>`__ and `RFC
+2732 <http://www.rfc-editor.org/rfc/rfc2732.txt>`__ together
+define the syntax of URIs.
+
+`RFC 2396`__ and `RFC 2732`__ together define the syntax of URIs.
+
+__ http://www.rfc-editor.org/rfc/rfc2396.txt
+__ http://www.rfc-editor.org/rfc/rfc2732.txt
+
+See `HTML Element: \<a>`_ below.
+
+See `<a_named_relative_link>`_ or `<an_anonymous_relative_link>`__
+for details.

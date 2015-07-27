@@ -1,0 +1,105 @@
+<?php
+
+return ezcDocumentWikiDocumentNode::__set_state(array(
+   'line' => 6,
+   'position' => 1,
+   'nodes' => 
+  array (
+    0 => 
+    ezcDocumentWikiParagraphNode::__set_state(array(
+       'line' => 5,
+       'position' => 15,
+       'nodes' => 
+      array (
+        0 => 
+        ezcDocumentWikiTextNode::__set_state(array(
+           'line' => 1,
+           'position' => 2,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiSpecialCharsToken::__set_state(array(
+             'content' => '#1
+',
+             'line' => 1,
+             'position' => 2,
+          )),
+        )),
+        1 => 
+        ezcDocumentWikiExternalLinkNode::__set_state(array(
+           'line' => 2,
+           'position' => 1,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiExternalLinkToken::__set_state(array(
+             'content' => 'http://www.foo.com/~bar/',
+             'line' => 2,
+             'position' => 1,
+          )),
+        )),
+        2 => 
+        ezcDocumentWikiTextNode::__set_state(array(
+           'line' => 2,
+           'position' => 25,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiNewLineToken::__set_state(array(
+             'content' => '
+http://www.foo.com/
+',
+             'line' => 2,
+             'position' => 25,
+          )),
+        )),
+        3 => 
+        ezcDocumentWikiInternalLinkNode::__set_state(array(
+           'line' => 4,
+           'position' => 1,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiInternalLinkToken::__set_state(array(
+             'content' => 'CamelCaseLink',
+             'line' => 4,
+             'position' => 1,
+          )),
+        )),
+        4 => 
+        ezcDocumentWikiTextNode::__set_state(array(
+           'line' => 4,
+           'position' => 14,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiNewLineToken::__set_state(array(
+             'content' => '
+CamelCaseLink',
+             'line' => 4,
+             'position' => 14,
+          )),
+        )),
+      ),
+       'token' => 
+      ezcDocumentWikiNewLineToken::__set_state(array(
+         'content' => '
+',
+         'line' => 5,
+         'position' => 15,
+      )),
+    )),
+  ),
+   'token' => 
+  ezcDocumentWikiEndOfFileToken::__set_state(array(
+     'content' => NULL,
+     'line' => 6,
+     'position' => 1,
+  )),
+));
+

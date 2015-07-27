@@ -1,0 +1,15 @@
+{code:title=Bar.java|borderStyle=solid}
+// Some comments here
+public String getFoo()
+{
+    return foo;
+}
+{code}
+
+{code:xml}
+<test>
+  <another tag="attribute"/>
+</test>
+{code} 
+
+{calendar:id=myCalendar|title=My Calendar|defaultView=week} 

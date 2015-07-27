@@ -1,0 +1,44 @@
+= Various type sof literal blocks
+
+Paragraph:
+
+<code>
+Literal block, where \ are preserved.
+
+</code>
+Paragraph:
+
+<code>
+Literal block
+
+Which may also contain multiple lines,
+            where
+                    indentation
+      should be maintained.
+
+</code>
+Paragraph:
+
+<code>
+Literal block
+
+    Do handle all types of special characters, just as they are, like those tokenizer regular expressions:
+
+    array (
+      1 => '(\A(?P<value>[ \t]+))S',
+      2 => '(\A(?P<value>\r\n|\r|\n))S',
+      4 => '(\A(?P<value>([!"#$%&\'()*+,./:;<=>?@[\]^_`{|}~-]|\xe2\x80\xa2|\xe2\x80\xa3|\xe2\x81\x83)\2*))S',
+      3 => '(\A(?P<value>\\))S',
+      5 => '(\A(?P<value>(?: [^`*_\\[\]|()"\':.\r\n\t ]|[^`*_\\[\]|()"\':.\r\n\t ])+))S',
+    )
+
+</code>
+John Doe wrote:
+
+<code>
+>> Great idea!
+>
+> Why didn't I think of that?
+
+</code>
+You just did! ;-)

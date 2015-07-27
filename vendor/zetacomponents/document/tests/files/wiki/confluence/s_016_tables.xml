@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <table>
+    <thead>
+      <row>
+        <entry>
+          <para>heading 1</para>
+        </entry>
+        <entry>
+          <para>heading 2</para>
+        </entry>
+        <entry>
+          <para>heading 3</para>
+        </entry>
+      </row>
+    </thead>
+    <tbody>
+      <row>
+        <entry>
+          <para>col A1</para>
+        </entry>
+        <entry>
+          <para>col A2</para>
+        </entry>
+        <entry>
+          <para>col A3</para>
+        </entry>
+      </row>
+      <row>
+        <entry>
+          <para>col B1</para>
+        </entry>
+        <entry>
+          <para>col B2</para>
+        </entry>
+        <entry>
+          <para>col B3</para>
+        </entry>
+      </row>
+    </tbody>
+  </table>
+</article>

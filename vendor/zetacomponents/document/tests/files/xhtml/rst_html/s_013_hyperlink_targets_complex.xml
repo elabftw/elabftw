@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <sectioninfo>
+      <title>Various types of hyperlink targets</title>
+    </sectioninfo>
+    <section>
+      <title><anchor ID="various_types_of_hyperlink_targets"/>Various types of hyperlink targets</title>
+      <para>Clicking on this internal hyperlink will take us to the <ulink url="target">target</ulink> below.</para>
+      <para>The hyperlink target above points to this paragraph.</para>
+      <para>The targets "target1" and "target2" are synonyms; they both point to this paragraph.</para>
+      <para>See the <ulink url="http://www.python.org">Python</ulink> home page or the <ulink url="http://mail.python.org/pipermail/doc-sig/">archive</ulink> for info.</para>
+      <para><ulink url="jdoe@example.com">Write to me</ulink> with your questions.</para>
+      <para>This <ulink url="underscore%5C_">link</ulink> refers to a file called <literal>underscore_</literal>.</para>
+    </section>
+  </section>
+</article>

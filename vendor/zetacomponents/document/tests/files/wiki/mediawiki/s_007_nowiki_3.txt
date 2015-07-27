@@ -1,0 +1,8 @@
+:There is not nowiki.
+:There is <nowiki>nowiki</nowiki>.
+
+#There is not nowiki.
+#There is <nowiki>nowiki</nowiki>.
+
+*There is not nowiki.
+*There is <nowiki>nowiki</nowiki>.

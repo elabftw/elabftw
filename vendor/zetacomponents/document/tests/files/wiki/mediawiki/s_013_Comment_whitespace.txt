@@ -1,0 +1,1 @@
+<!-- returns a single newline, not nothing, since the newline after > is not stripped -->

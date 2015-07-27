@@ -1,0 +1,7 @@
+= Inline URLs
+
+A paragraph with inline URLs, like
+[[http://ezcomponents.org|~http://ezcomponents.org]] and inline //markup//,
+also with mail links to [[mailto:mail@example.com|mail@example.com]] and URLs
+with some different scheme like
+[[ftp://user:pass@example.org|~ftp://user:pass@example.org]].

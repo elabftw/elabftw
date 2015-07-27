@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.2" streamable="true">
+  <g id="pages">
+    <g>
+      <rect x="0mm" y="0mm" width="108mm" height="108mm" style="fill: #ffffff; stroke: #000000; stroke-width: 1px; fill-opacity: 1; stroke-opacity: 1;"/>
+      <text x="0.0000mm" y="8.0000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">Paragraphs</text>
+      <text x="37.8400mm" y="8.0000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">contain</text>
+      <text x="65.3600mm" y="8.0000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">text</text>
+      <text x="82.5600mm" y="8.0000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">and</text>
+      <text x="0.0000mm" y="19.2000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">may</text>
+      <text x="13.7600mm" y="19.2000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">contain</text>
+      <text x="41.2800mm" y="19.2000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">inline</text>
+      <text x="65.3600mm" y="19.2000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">markup:</text>
+      <text x="0.0000mm" y="30.4000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: bold; stroke: none; fill: #2e3436">emphasis</text>
+      <text x="27.5200mm" y="30.4000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">,</text>
+      <text x="34.4000mm" y="30.4000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: bold; stroke: none; fill: #2e3436">strong</text>
+      <text x="58.4800mm" y="30.4000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: bold; stroke: none; fill: #2e3436">emphasis</text>
+      <text x="86.0000mm" y="30.4000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">,</text>
+      <text x="92.8800mm" y="30.4000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #2e3436">or</text>
+      <text x="0.0000mm" y="41.6000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: bold; stroke: none; fill: #2e3436">both</text>
+      <text x="17.2000mm" y="41.6000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: bold; stroke: none; fill: #2e3436">stacked.</text>
+    </g>
+  </g>
+  <metadata>
+    <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns">
+      <rdf:Description>
+        <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">eZ Components - Document //autogen//</dc:creator>
+      </rdf:Description>
+    </rdf:RDF>
+  </metadata>
+</svg>

@@ -1,0 +1,11 @@
+.. _transitions:
+
+===========
+Transitions
+===========
+
+A paragraph.
+
+---------
+
+A paragraph after a page transistion.

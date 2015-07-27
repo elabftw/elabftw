@@ -1,0 +1,144 @@
+<?php
+
+return array (
+  0 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 0,
+     'position' => 1,
+  )),
+  1 => 
+  ezcDocumentWikiQuoteToken::__set_state(array(
+     'content' => '{quote}',
+     'line' => 1,
+     'position' => 0,
+  )),
+  2 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 2,
+     'position' => 7,
+  )),
+  3 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'here',
+     'line' => 3,
+     'position' => 1,
+  )),
+  4 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 3,
+     'position' => 5,
+  )),
+  5 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'is',
+     'line' => 3,
+     'position' => 6,
+  )),
+  6 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 3,
+     'position' => 8,
+  )),
+  7 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'quoteable',
+     'line' => 3,
+     'position' => 9,
+  )),
+  8 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 3,
+     'position' => 18,
+  )),
+  9 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'content',
+     'line' => 4,
+     'position' => 1,
+  )),
+  10 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 4,
+     'position' => 8,
+  )),
+  11 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'to',
+     'line' => 4,
+     'position' => 9,
+  )),
+  12 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 4,
+     'position' => 11,
+  )),
+  13 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'be',
+     'line' => 4,
+     'position' => 12,
+  )),
+  14 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 4,
+     'position' => 14,
+  )),
+  15 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'quoted',
+     'line' => 4,
+     'position' => 15,
+  )),
+  16 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 4,
+     'position' => 21,
+  )),
+  17 => 
+  ezcDocumentWikiQuoteToken::__set_state(array(
+     'content' => '{quote}',
+     'line' => 5,
+     'position' => 0,
+  )),
+  18 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 6,
+     'position' => 7,
+  )),
+  19 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 7,
+     'position' => 1,
+  )),
+  20 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 7,
+     'position' => 1,
+  )),
+  21 => 
+  ezcDocumentWikiEndOfFileToken::__set_state(array(
+     'content' => NULL,
+     'line' => 7,
+     'position' => 1,
+  )),
+);
+

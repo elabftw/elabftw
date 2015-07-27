@@ -1,0 +1,2 @@
+<!-- In SGML every "foo" here would actually show up in the text -- foo -- bar
+-- foo -- funky huh? ... -->

@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <title>Test document</title>
+</head>
+<body>
+<table>
+    <tr>
+      <td>cell 1.1</td>
+      <td>cell 1.2</td>
+    </tr>
+    <tr>
+      <td>cell 2.1</td>
+      <td>cell 2.2</td>
+    </tr>
+</table>
+<table>
+  <caption>Complex table</caption>
+   <thead>
+    <tr>
+      <th>header 1</th>
+      <th>header 2</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr>
+      <td colspan="2">cell 1.1</td><td>cell 2.1</td>
+    </tr>
+    <tr>
+      <td>cell 1.2</td>
+    </tr>
+    <tr>
+      <td rowspan="2">cell 1.3</td>
+    </tr>
+    <tr>
+      <td>cell 1.4</td><td>cell 2.4</td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>

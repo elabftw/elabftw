@@ -1,0 +1,29 @@
+Complex directives
+==================
+
+.. image:: mylogo.jpeg
+   :alt:   My Logo
+
+.. figure:: larch.png
+
+   The larch.
+
+.. note:: This is a paragraph
+
+   - Here is a bullet list.
+
+.. Danger: modify at your own risk!
+
+.. figure:: larch.png
+   :scale: 50
+
+   The larch.
+
+.. my_custom_directive:: param1 param2
+   :option1: Some content
+   :option2: Some content
+
+    Contents,
+	  Which are also
+	    completely preserved.
+

@@ -1,0 +1,44 @@
+Simple tables
+=============
+
+=====  =====  =======
+  A      B    A and B
+=====  =====  =======
+False  False  False
+True   False  False
+False  True   False
+True   True   True
+=====  =====  =======
+
+=====  =====  ======
+   Inputs     Output
+------------  ------
+  A      B    A or B
+=====  =====  ======
+False  False  False
+True   False  True
+False  True   True
+True   True   True
+=====  =====  ======
+
+=====  =====
+col 1  col 2
+=====  =====
+1      Second column of row 1.
+2      Second column of row 2.
+       Second line of paragraph.
+3      - Second column of row 3.
+
+       - Second item in bullet
+         list (row 3, column 2).
+=====  =====
+
+===============  ======================================================
+-a, --all        Do not hide entries starting with .
+--color=WHEN     Control whether color is used to distinguish file types. WHEN
+                 may be never, always, or auto
+-d, --directory  List directory entries instead of contents, and do not
+                 dereference symbolic links
+-l               Use a long listing format
+===============  ======================================================
+

@@ -27,6 +27,7 @@ namespace Elabftw\Elabftw;
 
 class Create
 {
+    /** The PDO object */
     private $pdo;
 
     public function __construct(Db $db)

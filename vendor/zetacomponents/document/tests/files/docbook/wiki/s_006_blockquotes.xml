@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="blockquotes">
+    <sectioninfo/>
+    <title>Blockquotes</title>
+    <para>This is an ordinary paragraph, introducing a block quote.</para>
+    <blockquote>
+      <attribution>
+        <para> Sherlock Holmes</para>
+      </attribution>
+      <para>"It is my business to know things.  That is my trade."</para>
+    </blockquote>
+    <para>Unindented paragraph.</para>
+    <blockquote>
+      <attribution>
+        <para> Attribution 1</para>
+      </attribution>
+      <para>Block quote 1.</para>
+    </blockquote>
+    <blockquote>
+      <para>For testing we also want a multiline blockquote to see if the indentation checking works fo those.</para>
+    </blockquote>
+    <para>..</para>
+    <blockquote>
+      <attribution>
+        <para> Another attribution.</para>
+      </attribution>
+      <para>Blockquotes may also consist of multiple paragraphs, as they need to intentionally seperated by "..".</para>
+      <para>So we add a second paragraph in this blockquote.</para>
+    </blockquote>
+  </section>
+</article>

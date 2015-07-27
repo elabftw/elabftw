@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <sectioninfo/>
+    <literallayout class="monospaced">
+    public static function suite()
+    {
+        return new PHPUnit_Framework_TestSuite( __CLASS__ );
+    }</literallayout>
+  </section>
+</article>

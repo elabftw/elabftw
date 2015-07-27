@@ -1,0 +1,24 @@
+<?php
+
+return array (
+  0 => 
+  ezcDocumentPcssLayoutDirective::__set_state(array(
+     'address' => 
+    array (
+      0 => 'foo',
+      1 => '> bar',
+      2 => '.blubb',
+      3 => 'dumdidelda',
+      4 => '#fumdudel',
+      5 => '> blubb',
+    ),
+     'formats' => 
+    array (
+    ),
+     'file' => 's_007_complex_address.pcss',
+     'line' => 1,
+     'position' => 44,
+     'regularExpression' => NULL,
+  )),
+);
+

@@ -1,0 +1,14 @@
+Blockquote & list
+=================
+
+* First List item
+- Second list item
++ Third list item
+• Fourth list item
+‣ Fifth list item
+⁃ Sixth list item
+
+..
+
+    Block quote 3.
+

@@ -1,0 +1,5 @@
+DokuWiki supports multiple ways of creating links. External links are
+recognized automagically: http://www.google.com or simply www.google.com - You
+can set link text as well: [[http://www.google.com|This Link points to
+google]]. Email addresses like this one: <andi@splitbrain.org> are recognized,
+too.

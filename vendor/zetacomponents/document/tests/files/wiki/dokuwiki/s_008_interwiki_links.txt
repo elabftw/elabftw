@@ -1,0 +1,2 @@
+DokuWiki supports [[doku>Interwiki]] links. These are quick links to other
+Wikis. For example this is a link to Wikipedia's page about Wikis: [[wp>Wiki]].

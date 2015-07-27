@@ -1,0 +1,155 @@
+<?php
+
+return ezcDocumentWikiDocumentNode::__set_state(array(
+   'level' => 0,
+   'line' => 7,
+   'position' => 1,
+   'nodes' => 
+  array (
+    0 => 
+    ezcDocumentWikiSectionNode::__set_state(array(
+       'level' => 3,
+       'line' => 1,
+       'position' => 0,
+       'nodes' => 
+      array (
+        0 => 
+        ezcDocumentWikiTitleNode::__set_state(array(
+           'level' => 3,
+           'line' => 1,
+           'position' => 0,
+           'nodes' => 
+          array (
+            0 => 
+            ezcDocumentWikiTextNode::__set_state(array(
+               'line' => 2,
+               'position' => 4,
+               'nodes' => 
+              array (
+              ),
+               'token' => 
+              ezcDocumentWikiWhitespaceToken::__set_state(array(
+                 'content' => ' Headline Level 3',
+                 'line' => 2,
+                 'position' => 4,
+              )),
+            )),
+          ),
+           'token' => 
+          ezcDocumentWikiTitleToken::__set_state(array(
+             'level' => 3,
+             'content' => '====',
+             'line' => 1,
+             'position' => 0,
+          )),
+        )),
+        1 => 
+        ezcDocumentWikiSectionNode::__set_state(array(
+           'level' => 4,
+           'line' => 3,
+           'position' => 0,
+           'nodes' => 
+          array (
+            0 => 
+            ezcDocumentWikiTitleNode::__set_state(array(
+               'level' => 4,
+               'line' => 3,
+               'position' => 0,
+               'nodes' => 
+              array (
+                0 => 
+                ezcDocumentWikiTextNode::__set_state(array(
+                   'line' => 4,
+                   'position' => 3,
+                   'nodes' => 
+                  array (
+                  ),
+                   'token' => 
+                  ezcDocumentWikiWhitespaceToken::__set_state(array(
+                     'content' => ' Headline Level 4',
+                     'line' => 4,
+                     'position' => 3,
+                  )),
+                )),
+              ),
+               'token' => 
+              ezcDocumentWikiTitleToken::__set_state(array(
+                 'level' => 4,
+                 'content' => '===',
+                 'line' => 3,
+                 'position' => 0,
+              )),
+            )),
+            1 => 
+            ezcDocumentWikiSectionNode::__set_state(array(
+               'level' => 5,
+               'line' => 5,
+               'position' => 0,
+               'nodes' => 
+              array (
+                0 => 
+                ezcDocumentWikiTitleNode::__set_state(array(
+                   'level' => 5,
+                   'line' => 5,
+                   'position' => 0,
+                   'nodes' => 
+                  array (
+                    0 => 
+                    ezcDocumentWikiTextNode::__set_state(array(
+                       'line' => 6,
+                       'position' => 2,
+                       'nodes' => 
+                      array (
+                      ),
+                       'token' => 
+                      ezcDocumentWikiWhitespaceToken::__set_state(array(
+                         'content' => ' Headline Level 5',
+                         'line' => 6,
+                         'position' => 2,
+                      )),
+                    )),
+                  ),
+                   'token' => 
+                  ezcDocumentWikiTitleToken::__set_state(array(
+                     'level' => 5,
+                     'content' => '==',
+                     'line' => 5,
+                     'position' => 0,
+                  )),
+                )),
+              ),
+               'token' => 
+              ezcDocumentWikiTitleToken::__set_state(array(
+                 'level' => 5,
+                 'content' => '==',
+                 'line' => 5,
+                 'position' => 0,
+              )),
+            )),
+          ),
+           'token' => 
+          ezcDocumentWikiTitleToken::__set_state(array(
+             'level' => 4,
+             'content' => '===',
+             'line' => 3,
+             'position' => 0,
+          )),
+        )),
+      ),
+       'token' => 
+      ezcDocumentWikiTitleToken::__set_state(array(
+         'level' => 3,
+         'content' => '====',
+         'line' => 1,
+         'position' => 0,
+      )),
+    )),
+  ),
+   'token' => 
+  ezcDocumentWikiEndOfFileToken::__set_state(array(
+     'content' => NULL,
+     'line' => 7,
+     'position' => 1,
+  )),
+));
+

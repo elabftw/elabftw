@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <sectioninfo>
+      <title>Test with badly formatted HTML</title>
+    </sectioninfo>
+    <section>
+      <title>Test entities and special chars </title>
+      <literallayout class="normal"> Anfuehrungszeichen oben " "
+ Ampersand-Zeichen, kaufmaennisches Und &amp; &amp;
+ oeffnende spitze Klammer &lt; &lt;
+ schlieszende spitze Klammer &gt; &gt;
+ umgekehrtes Ausrufezeichen ¡ ¡
+ Cent-Zeichen ¢ ¢
+ Pfund-Zeichen £ £
+ Waehrungszeichen ¤ ¤
+ Yen-Zeichen ¥ ¥
+ durchbrochener Strich ¦ ¦
+ Paragraph-Zeichen § §
+ Puenktchen oben ¨ ¨
+ Copyright-Zeichen © ©
+ Ordinal-Zeichen weiblich ª ª
+ angewinkelte Anfuehrungszeichen links « «
+ Verneinungs-Zeichen ¬ ¬
+ bedingter Trennstrich ­ ­
+ Registriermarke-Zeichen ® ®
+ Ueberstrich ¯ ¯
+ Grad-Zeichen ° °
+ Plusminus-Zeichen ± ±
+ Hoch-2-Zeichen ² ²
+ Hoch-3-Zeichen ³ ³
+ Akut-Zeichen ´ ´
+ Mikro-Zeichen µ µ
+ Absatz-Zeichen ¶ ¶
+ Mittelpunkt · ·
+ Haekchen unten ¸ ¸
+ Hoch-1-Zeichen ¹ ¹
+ Ordinal-Zeichen maennlich º º
+ angewinkelte Anfuehrungszeichen rechts » »
+ ein Viertel ¼ ¼
+ ein Halb ½ ½
+ drei Viertel ¾ ¾
+ umgekehrtes Fragezeichen ¿ ¿
+ A mit accent grave (Gravis) À À
+ A mit accent aigu (Akut) Á Á
+ A mit Zirkumflex Â Â
+ A mit Tilde Ã Ã
+ A Umlaut Ä Ä
+ A mit Ring Å Å
+ A mit legiertem E Æ Æ
+ C mit Haekchen Ç Ç
+ E mit accent grave (Gravis) È È
+ E mit accent aigu (Akut) É É
+ E mit Zirkumflex Ê Ê
+ E Umlaut Ë Ë
+ I mit accent grave (Gravis) Ì Ì
+ I mit accent aigu (Akut) Í Í
+ I mit Zirkumflex Î Î
+ I Umlaut Ï Ï
+ groszes Eth (islaendisch) Ð Ð
+ N mit Tilde Ñ Ñ
+ O mit accent grave (Gravis) Ò Ò
+ O mit accent aigu (Akut) Ó Ó
+ O mit Zirkumflex Ô Ô
+ O mit Tilde Õ Õ
+ O Umlaut Ö Ö
+ Mal-Zeichen × ×
+ O mit Schraegstrich Ø Ø
+ U mit accent grave (Gravis) Ù Ù
+ U mit accent aigu (Akut) Ú Ú
+ U mit Zirkumflex Û Û
+ U Umlaut Ü Ü
+ Y mit accent aigu (Akut) Ý Ý
+ groszes Thorn (islaendisch) Þ Þ
+ scharfes S ß ß
+ a mit accent grave (Gravis) à à
+ a mit accent aigu (Akut) á á
+ a mit Zirkumflex â â
+ a mit Tilde ã ã
+ a Umlaut ä ä
+ a mit Ring å å
+ a mit legiertem e æ æ
+ c mit Haekchen ç ç
+ e mit accent grave (Gravis) è è
+ e mit accent aigu (Akut) é é
+ e mit Zirkumflex ê ê
+ e Umlaut ë ë
+ i mit accent grave (Gravis) ì ì
+ i mit accent aigu (Akut) í í
+ i mit Zirkumflex î î
+ i Umlaut ï ï
+ kleines Eth (islaendisch) ð ð
+ n mit Tilde ñ ñ
+ o mit accent grave (Gravis) ò ò
+ o mit accent aigu (Akut) ó ó
+ o mit Zirkumflex ô ô
+ o mit Tilde õ õ
+ o Umlaut ö ö
+ Divisions-Zeichen ÷ ÷
+ o mit Schraegstrich ø ø
+ u mit accent grave (Gravis) ù ù
+ u mit accent aigu (Akut) ú ú
+ u mit Zirkumflex û û
+ u Umlaut ü ü
+ y mit accent aigu (Akut) ý ý
+ kleines Thorn (islaendisch) þ þ
+ y Umlaut ÿ ÿ
+ Alpha grosz Α Α
+ alpha klein α α
+ Beta grosz Β Β
+ beta klein β β
+ Gamma grosz Γ Γ
+ gamma klein γ γ
+ Delta grosz Δ Δ
+ delta klein δ δ
+ Epsilon grosz Ε Ε
+ epsilon klein ε ε
+ Zeta grosz Ζ Ζ
+ zeta klein ζ ζ
+ Eta grosz Η Η
+ eta klein η η
+ Theta grosz Θ Θ
+ theta klein θ θ
+ Iota grosz Ι Ι
+ iota klein ι ι
+ Kappa grosz Κ Κ
+ kappa klein κ κ
+ Lambda grosz Λ Λ
+ lambda klein λ λ
+ My grosz Μ Μ
+ my klein μ μ
+ Ny grosz Ν Ν
+ ny klein ν ν
+ Xi grosz Ξ Ξ
+ xi klein ξ ξ
+ Omikron grosz Ο Ο
+ omikron klein ο ο
+ Pi grosz Π Π
+ pi klein π π
+ Rho grosz Ρ Ρ
+ rho klein ρ ρ
+ Sigma grosz Σ Σ
+ Schluss-Sigma ς ς
+ sigma klein σ σ
+ Tau grosz Τ Τ
+ tau klein τ τ
+ Ypsilon grosz Υ Υ
+ ypsilon klein υ υ
+ Phi grosz Φ Φ
+ phi klein φ φ
+ Chi grosz Χ Χ
+ chi klein χ χ
+ Psi grosz Ψ Ψ
+ psi klein ψ ψ
+ Omega grosz Ω Ω
+ omega klein ω ω
+ theta Symbol ϑ ϑ
+ ypsilon mit Haken ϒ ϒ
+ pi Symbol ϖ ϖ
+ fuer alle ∀ ∀
+ partiell ∂ ∂
+ existiert ∃ ∃
+ leere Menge ∅ ∅
+ Nabla ∇ ∇
+ Element von ∈ ∈
+ kein Element von ∉ ∉
+ Element von (gespiegelt) ∋ ∋
+ Produkt ∏ ∏
+ Summe ∑ ∑
+ minus − −
+ Asterisk ∗ ∗
+ Wurzel √ √
+ proportional zu ∝ ∝
+ unendlich ∞ ∞
+ Winkel ∠ ∠
+ und ∧ ∧
+ oder ∨ ∨
+ Schnittmenge ∩ ∩
+ Vereinigungsmenge ∪ ∪
+ Integral ∫ ∫
+ deshalb ∴ ∴
+ aehnlich wie ∼ ∼
+ kongruent ≅ ≅
+ beinahe gleich ≈ ≈
+ ungleich ≠ ≠
+ identisch mit ≡ ≡
+ kleiner gleich ≤ ≤
+ groeszer gleich ≥ ≥
+ Untermenge von ⊂ ⊂
+ Obermenge von ⊃ ⊃
+ keine Untermenge von ⊄ ⊄
+ Untermenge von oder gleich mit ⊆ ⊆
+ Obermenge von oder gleich mit ⊇ ⊇
+ Restklassenaddition ⊕ ⊕
+ Kronecker-Produkt ⊗ ⊗
+ senkrecht zu ⊥ ⊥
+ Punkt-Operator ⋅ ⋅
+ Raute ◊ ◊
+ links oben ⌈ ⌈
+ rechts oben ⌉ ⌉
+ links unten ⌊ ⌊
+ rechts unten ⌋ ⌋
+ spitze Klammer links 〈 〈
+ spitze Klammer rechts 〉 〉
+ Pfeil links ← ←
+ Pfeil oben ↑ ↑
+ Pfeil rechts → →
+ Pfeil unten ↓ ↓
+ Pfeil links/rechts ↔ ↔
+ Pfeil unten-Knick-links ↵ ↵
+ Doppelpfeil links ⇐ ⇐
+ Doppelpfeil oben ⇑ ⇑
+ Doppelpfeil rechts ⇒ ⇒
+ Doppelpfeil unten ⇓ ⇓
+ Doppelpfeil links/rechts ⇔ ⇔
+ Bullet-Zeichen • •
+ Minutenzeichen ′ ′
+ Sekundenzeichen ″ ″
+ Ueberstrich ‾ ‾
+ Bruchstrich ⁄ ⁄
+ Weierstrasz p ℘ ℘
+ Zeichen fuer "imaginaer" ℑ ℑ
+ Zeichen fuer "real" ℜ ℜ
+ Trademark-Zeichen ™ ™
+ Euro-Zeichen € €
+ Alef-Symbol ℵ ℵ
+ Pik-Zeichen ♠ ♠
+ Kreuz-Zeichen ♣ ♣
+ Herz-Zeichen ♥ ♥
+ Karo-Zeichen ♦ ♦
+ OE-Ligatur Œ Œ
+ oe-Ligatur œ œ
+ S mit Hatschek (Caron) Š Š
+ s mit Hatschek (Caron) š š
+ Y Umlaut Ÿ Ÿ
+ Funktion ƒ ƒ
+ Leerzeichen Breite n    
+ Leerzeichen Breite m    
+ Schmales Leerzeichen    
+ null breiter Nichtverbinder ‌ ‌
+ null breiter Verbinder ‍ ‍
+ links-nach-rechts-Zeichen ‎ ‎
+ rechts-nach-links-Zeichen ‏ ‏
+ Gedankenstrich Breite n – –
+ Gedankenstrich Breite m — —
+ einfaches Anfuehrungszeichen links ‘ ‘
+ einfaches Anfuehrungszeichen rechts ’ ’
+ einfaches low-9-Zeichen ‚ ‚
+ doppeltes Anfuehrungszeichen links “ “
+ doppeltes Anfuehrungszeichen rechts ” ”
+ doppeltes low-9-Zeichen rechts „ „
+ Kreuz † †
+ Doppelkreuz ‡ ‡
+ Horizontale Ellipse (Auslassungszeichen) … …
+ Promille ‰ ‰
+ angewinkeltes einzelnes Anf.zeichen links ‹ ‹
+ angewinkeltes einzelnes Anf.zeichen rechts › ›
+ Zirkumflex ˆ ˆ
+ kleine Tilde ˜ ˜
+</literallayout>
+    </section>
+  </section>
+</article>

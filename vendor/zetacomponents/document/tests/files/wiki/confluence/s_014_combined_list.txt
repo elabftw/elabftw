@@ -1,0 +1,13 @@
+# a
+# numbered
+#* with
+#* nested
+#* bullet
+# list
+
+* a
+* bulletted
+*# with
+*# nested
+*# numbered
+* list

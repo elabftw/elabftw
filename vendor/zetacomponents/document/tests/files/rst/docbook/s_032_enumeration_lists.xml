@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="multiple_enumeration_lists">
+    <title>Multiple enumeration lists</title>
+    <para>Those are two different enumeration lists:</para>
+    <orderedlist numeration="arabic">
+      <listitem>
+        <para>First item in first list.</para>
+      </listitem>
+      <listitem>
+        <para>Second item in first list.</para>
+      </listitem>
+    </orderedlist>
+    <orderedlist numeration="loweralpha">
+      <listitem>
+        <para>First item in second list.</para>
+      </listitem>
+      <listitem>
+        <para>Secsond item in second list.</para>
+      </listitem>
+    </orderedlist>
+  </section>
+</article>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <sectioninfo>
+      <title>Literal string</title>
+    </sectioninfo>
+    <section>
+      <title><anchor ID="literal_string"/>Literal string</title>
+      <para>Normally backslashes are used to escape *markup*, or similar. You may still escape a backslash using anonther <emphasis>backslash: \</emphasis>. We can also partially escape <emphasis>special character groups*</emphasis> or completely remove a whitespace with them.</para>
+    </section>
+  </section>
+</article>

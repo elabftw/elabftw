@@ -1,0 +1,4 @@
+[code]echo "This is some code";[/code]
+
+[code]echo "This is some [b]code[/b]";[/code]
+

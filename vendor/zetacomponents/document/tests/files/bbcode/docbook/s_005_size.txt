@@ -1,0 +1,9 @@
+[size=30]SMALL[/size]
+
+will generally be SMALL
+
+whereas:
+
+[size=200]HUGE![/size]
+
+will be HUGE!

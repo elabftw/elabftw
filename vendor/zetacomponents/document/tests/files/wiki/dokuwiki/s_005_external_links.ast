@@ -1,0 +1,170 @@
+<?php
+
+return ezcDocumentWikiDocumentNode::__set_state(array(
+   'line' => 6,
+   'position' => 1,
+   'nodes' => 
+  array (
+    0 => 
+    ezcDocumentWikiParagraphNode::__set_state(array(
+       'line' => 5,
+       'position' => 5,
+       'nodes' => 
+      array (
+        0 => 
+        ezcDocumentWikiTextNode::__set_state(array(
+           'line' => 1,
+           'position' => 1,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiTextLineToken::__set_state(array(
+             'content' => 'DokuWiki supports multiple ways of creating links. External links are
+recognized automagically: ',
+             'line' => 1,
+             'position' => 1,
+          )),
+        )),
+        1 => 
+        ezcDocumentWikiExternalLinkNode::__set_state(array(
+           'line' => 2,
+           'position' => 27,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiExternalLinkToken::__set_state(array(
+             'content' => 'http://www.google.com',
+             'line' => 2,
+             'position' => 27,
+          )),
+        )),
+        2 => 
+        ezcDocumentWikiTextNode::__set_state(array(
+           'line' => 2,
+           'position' => 48,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiWhitespaceToken::__set_state(array(
+             'content' => ' or simply www.google.com - You
+can set link text as well: ',
+             'line' => 2,
+             'position' => 48,
+          )),
+        )),
+        3 => 
+        ezcDocumentWikiLinkNode::__set_state(array(
+           'link' => 
+          array (
+            0 => 
+            ezcDocumentWikiExternalLinkNode::__set_state(array(
+               'line' => 3,
+               'position' => 30,
+               'nodes' => 
+              array (
+              ),
+               'token' => 
+              ezcDocumentWikiExternalLinkToken::__set_state(array(
+                 'content' => 'http://www.google.com',
+                 'line' => 3,
+                 'position' => 30,
+              )),
+            )),
+          ),
+           'title' => 
+          array (
+          ),
+           'description' => 
+          array (
+          ),
+           'line' => 3,
+           'position' => 28,
+           'nodes' => 
+          array (
+            0 => 
+            ezcDocumentWikiTextNode::__set_state(array(
+               'line' => 3,
+               'position' => 52,
+               'nodes' => 
+              array (
+              ),
+               'token' => 
+              ezcDocumentWikiTextLineToken::__set_state(array(
+                 'content' => 'This Link points to
+google',
+                 'line' => 3,
+                 'position' => 52,
+              )),
+            )),
+          ),
+           'token' => 
+          ezcDocumentWikiLinkStartToken::__set_state(array(
+             'content' => '[[',
+             'line' => 3,
+             'position' => 28,
+          )),
+        )),
+        4 => 
+        ezcDocumentWikiTextNode::__set_state(array(
+           'line' => 4,
+           'position' => 9,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiTextLineToken::__set_state(array(
+             'content' => '. Email addresses like this one: ',
+             'line' => 4,
+             'position' => 9,
+          )),
+        )),
+        5 => 
+        ezcDocumentWikiExternalLinkNode::__set_state(array(
+           'line' => 4,
+           'position' => 42,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiExternalLinkToken::__set_state(array(
+             'content' => '<andi@splitbrain.org>',
+             'line' => 4,
+             'position' => 42,
+          )),
+        )),
+        6 => 
+        ezcDocumentWikiTextNode::__set_state(array(
+           'line' => 4,
+           'position' => 63,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiWhitespaceToken::__set_state(array(
+             'content' => ' are recognized,
+too.',
+             'line' => 4,
+             'position' => 63,
+          )),
+        )),
+      ),
+       'token' => 
+      ezcDocumentWikiNewLineToken::__set_state(array(
+         'content' => '
+',
+         'line' => 5,
+         'position' => 5,
+      )),
+    )),
+  ),
+   'token' => 
+  ezcDocumentWikiEndOfFileToken::__set_state(array(
+     'content' => NULL,
+     'line' => 6,
+     'position' => 1,
+  )),
+));
+

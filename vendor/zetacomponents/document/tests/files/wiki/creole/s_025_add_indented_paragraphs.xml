@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <para>This is a normal paragraph.</para>
+  <blockquote>
+    <para>This is an indented</para>
+  </blockquote>
+  <para>paragraph in two lines.</para>
+  <blockquote>
+    <para>This is more indented.</para>
+  </blockquote>
+  <para>This is a normal paragraph.</para>
+  <blockquote>
+    <para>This is an indented</para>
+  </blockquote>
+  <para>paragraph in two lines.</para>
+  <blockquote>
+    <para>This is more indented.</para>
+  </blockquote>
+</article>

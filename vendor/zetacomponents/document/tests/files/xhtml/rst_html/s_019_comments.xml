@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <sectioninfo>
+      <title>Comments</title>
+    </sectioninfo>
+    <section>
+      <title><anchor ID="comments"/>Comments</title>
+      <para>Different types of comments</para>
+      <para>End of comments.</para>
+    </section>
+  </section>
+</article>

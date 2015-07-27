@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="stacked_list">
+    <title>Stacked list</title>
+    <orderedlist numeration="arabic">
+      <listitem>
+        <para>Hey! How are you?</para>
+      </listitem>
+      <listitem>
+        <para>Let's go for a beer.</para>
+      </listitem>
+      <listitem>
+        <para>I heard you killed a lot of USA people in the Twin Towers Attack... well... i really don't care at all... what do you say, go for a beer?</para>
+      </listitem>
+    </orderedlist>
+  </section>
+</article>

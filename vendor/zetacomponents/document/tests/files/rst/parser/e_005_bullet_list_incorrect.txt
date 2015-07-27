@@ -1,0 +1,8 @@
+- This first line is fine.
+A blank line is required between list items and paragraphs.
+(Warning)
+
+- The following line appears to be a new sublist, but it is not:
+  - This is a paragraph continuation, not a sublist (since there's
+    no blank line).  This line is also incorrectly indented.
+  - Warnings may be issued by the implementation.

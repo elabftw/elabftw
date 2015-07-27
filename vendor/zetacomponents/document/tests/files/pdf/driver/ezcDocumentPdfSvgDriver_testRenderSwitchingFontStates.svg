@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.2" streamable="true">
+  <g id="pages">
+    <g>
+      <rect x="0mm" y="0mm" width="210mm" height="297mm" style="fill: #ffffff; stroke: #000000; stroke-width: 1px; fill-opacity: 1; stroke-opacity: 1;"/>
+      <text x="0.0000mm" y="8.0000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #000000">The quick brown fox jumps over the lazy dog</text>
+      <text x="0.0000mm" y="18.0000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: oblique; font-weight: bold; stroke: none; fill: #000000">The quick brown fox jumps over the lazy dog</text>
+      <text x="0.0000mm" y="28.0000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: bold; stroke: none; fill: #000000">The quick brown fox jumps over the lazy dog</text>
+      <text x="0.0000mm" y="38.0000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: normal; stroke: none; fill: #000000">The quick brown fox jumps over the lazy dog</text>
+      <text x="0.0000mm" y="48.0000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans; font-style: normal; font-weight: bold; stroke: none; fill: #000000">The quick brown fox jumps over the lazy dog</text>
+      <text x="0.0000mm" y="58.0000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Serif; font-style: normal; font-weight: bold; stroke: none; fill: #000000">The quick brown fox jumps over the lazy dog</text>
+      <text x="0.0000mm" y="68.0000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Serif; font-style: normal; font-weight: normal; stroke: none; fill: #000000">The quick brown fox jumps over the lazy dog</text>
+      <text x="0.0000mm" y="78.0000mm" style="font-size: 22.68pt; font-family: Symbol; font-style: normal; font-weight: normal; stroke: none; fill: #000000">The quick brown fox jumps over the lazy dog</text>
+      <text x="0.0000mm" y="88.0000mm" style="font-size: 22.68pt; font-family: Symbol; font-style: normal; font-weight: bold; stroke: none; fill: #000000">The quick brown fox jumps over the lazy dog</text>
+      <text x="0.0000mm" y="98.0000mm" style="font-size: 22.68pt; font-family: Symbol; font-style: oblique; font-weight: bold; stroke: none; fill: #000000">The quick brown fox jumps over the lazy dog</text>
+      <text x="0.0000mm" y="108.0000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans Mono; font-style: oblique; font-weight: bold; stroke: none; fill: #000000">The quick brown fox jumps over the lazy dog</text>
+      <text x="0.0000mm" y="118.0000mm" style="font-size: 22.68pt; font-family: Bitstream Vera Sans Mono; font-style: oblique; font-weight: bold; stroke: none; fill: #000000">The quick brown fox jumps over the lazy dog</text>
+    </g>
+  </g>
+  <metadata>
+    <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns">
+      <rdf:Description>
+        <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">eZ Components - Document //autogen//</dc:creator>
+      </rdf:Description>
+    </rdf:RDF>
+  </metadata>
+</svg>

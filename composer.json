@@ -10,7 +10,8 @@
         "ext-mcrypt":"*",
         "ext-curl":"*",
         "ext-openssl":"*",
-        "codeception/codeception": "*"
+        "codeception/codeception": "*",
+        "phpdocumentor/phpdocumentor": "2.*"
 
     },
     "autoload": {

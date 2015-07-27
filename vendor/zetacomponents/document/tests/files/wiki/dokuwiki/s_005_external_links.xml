@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <para>DokuWiki supports multiple ways of creating links. External links are recognized automagically: <ulink url="http://www.google.com">http://www.google.com</ulink> or simply www.google.com - You can set link text as well: <ulink url="http://www.google.com">This Link points to google</ulink>. Email addresses like this one: <ulink url="&lt;andi@splitbrain.org&gt;">&lt;andi@splitbrain.org&gt;</ulink> are recognized, too.</para>
+</article>

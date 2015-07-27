@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <para>Full BBCode example</para>
+  <para>For example using stacked lists:</para>
+  <orderedlist numeration="arabic">
+    <listitem>
+      <para>Go to the shops </para>
+    </listitem>
+    <listitem>
+      <itemizedlist>
+        <listitem>
+          <para>This is second level list item </para>
+        </listitem>
+        <listitem>
+          <para>This is another one </para>
+        </listitem>
+      </itemizedlist>
+    </listitem>
+    <listitem>
+      <para>Swear at <emphasis Role="strong">computer <emphasis>when</emphasis></emphasis> it crashes </para>
+    </listitem>
+  </orderedlist>
+  <para>Whereas for an <ulink url="http://example.com">alphabetical list</ulink> you would use:</para>
+  <literallayout>
+Some code
+  maintaining
+    spaces
+</literallayout>
+  <para>This was a literal block, while this is an <literal>inline literal</literal>.</para>
+</article>

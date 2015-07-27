@@ -1,46 +1,44 @@
 <?php
-/********************************************************************************
-*                                                                               *
-*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
-*   http://www.elabftw.net/                                                     *
-*                                                                               *
-********************************************************************************/
-
-/********************************************************************************
-*  This file is part of eLabFTW.                                                *
-*                                                                               *
-*    eLabFTW is free software: you can redistribute it and/or modify            *
-*    it under the terms of the GNU Affero General Public License as             *
-*    published by the Free Software Foundation, either version 3 of             *
-*    the License, or (at your option) any later version.                        *
-*                                                                               *
-*    eLabFTW is distributed in the hope that it will be useful,                 *
-*    but WITHOUT ANY WARRANTY; without even the implied                         *
-*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
-*    PURPOSE.  See the GNU Affero General Public License for more details.      *
-*                                                                               *
-*    You should have received a copy of the GNU Affero General Public           *
-*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
-*                                                                               *
-********************************************************************************/
+/**
+ * \Elabftw\Elabftw\User
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see http://www.elabftw.net Official website
+ * @license AGPL-3.0
+ *
+ */
 namespace Elabftw\Elabftw;
 
+/**
+ * Provide methods to login a user
+ */
 class User
 {
+    /** Used to store the PDO object */
     private $pdo;
 
+    /** The salt of the user */
     private $salt;
+    /** Everything about the user */
     private $userData;
+    /** Used to store the ...token */
     private $token;
 
+    /**
+     * Just give me the Db object and I'm good to go
+     *
+     * @param object $db An instance of the Db class
+     */
     public function __construct(Db $db)
     {
         $this->pdo = $db->connect();
     }
 
-    /*
+    /**
      * Get the salt for the user so we can generate a correct hash
      *
+     * @param string $username
      */
     private function setSalt($username)
     {
@@ -52,9 +50,11 @@ class User
 
     }
 
-    /*
+    /**
      * Test username and password in the database
      *
+     * @param string $username
+     * @param string $password
      * @return bool True if the login + password are good
      */
     private function checkCredentials($username, $password)
@@ -76,7 +76,7 @@ class User
         return false;
     }
 
-    /*
+    /**
      * Store userid and permissions in $_SESSION
      *
      */
@@ -115,7 +115,7 @@ class User
         session_write_close();
     }
 
-    /*
+    /**
      * Set a $_COOKIE['token'] and update the database with this token.
      * Works only in HTTPS, valable for 1 month.
      * 1 month = 60*60*24*30 =  2592000
@@ -137,6 +137,8 @@ class User
     /**
      * Login with username and password
      *
+     * @param string $username
+     * @param string $password
      * @return bool Return true if user provided correct credentials
      */
     public function login($username, $password)
@@ -149,7 +151,7 @@ class User
         return false;
     }
 
-    /*
+    /**
      * We are not auth, but maybe we have a cookie, try to login with that
      *
      * @return bool True if we have a valid cookie and it is the same token as in the DB

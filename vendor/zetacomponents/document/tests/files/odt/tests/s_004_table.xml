@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <table>
+    <tgroup>
+      <thead>
+        <row>
+          <entry>
+            <para>Head 1,1</para>
+          </entry>
+          <entry>
+            <para>Head 1,2</para>
+          </entry>
+          <entry>
+            <para>Head 1,3</para>
+          </entry>
+          <entry>
+            <para>Head 1,4</para>
+          </entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>
+            <para>Body 2,1</para>
+          </entry>
+          <entry>
+            <para>Body 2,2</para>
+          </entry>
+          <entry>
+            <para>Body 2,3</para>
+          </entry>
+          <entry>
+            <para>Body 2,4</para>
+          </entry>
+        </row>
+        <row>
+          <entry>
+            <para>Body 3,1-2</para>
+          </entry>
+          <entry>
+            <para>Body 3,3</para>
+          </entry>
+          <entry>
+            <para>Body 3,4</para>
+          </entry>
+        </row>
+        <row>
+          <entry>
+            <para>Body 4,1</para>
+          </entry>
+          <entry>
+            <para>Body 4,2</para>
+          </entry>
+          <entry morerows="1">
+            <para>Body 4-5,3</para>
+          </entry>
+          <entry>
+            <para>Body 4,4</para>
+          </entry>
+        </row>
+        <row>
+          <entry>
+            <para>Body 5,1</para>
+          </entry>
+          <entry>
+            <para>Body 5,2</para>
+          </entry>
+          <entry>
+            <para>Body 5,4</para>
+          </entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </table>
+  <para/>
+</article>

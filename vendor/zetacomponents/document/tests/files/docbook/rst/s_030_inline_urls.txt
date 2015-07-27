@@ -1,0 +1,13 @@
+.. _inline_urls:
+
+===========
+Inline URLs
+===========
+
+A paragraph with inline URLs, like `http\://ezcomponents.org`__ and inline
+*markup*, also with mail links to `mail@example.com`__ and URLs with some
+different scheme like `ftp\://user\:pass@example.org`__.
+
+__ http://ezcomponents.org
+__ mailto:mail@example.com
+__ ftp://user:pass@example.org

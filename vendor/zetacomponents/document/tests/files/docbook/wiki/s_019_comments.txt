@@ -1,0 +1,5 @@
+= Comments
+
+Different types of comments
+
+End of comments.

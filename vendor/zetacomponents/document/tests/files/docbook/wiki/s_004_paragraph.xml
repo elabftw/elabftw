@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="paragraph_with_inline_markup">
+    <sectioninfo/>
+    <title>Paragraph with inline markup</title>
+    <para>Paragraphs contain text and may contain inline markup: <emphasis>emphasis</emphasis>, <emphasis Role="strong">strong emphasis</emphasis>, interpreted text, <literal>inline literals</literal>, standalone hyperlinks (<ulink url="http://www.python.org">http://www.python.org</ulink>), external hyperlinks (<ulink url="http://python.org">Python</ulink>), internal cross-references (<ulink url="http://example.org">example</ulink>), substitution references (<inlinemediaobject><imageobject><imagedata fileref="example.png"/></imageobject></inlinemediaobject>), and <anchor ID="inline_internal_targets"/>inline internal targets. There are also <ulink url="http://example.org">anonomyous</ulink> hyperlinks, which also <ulink url="http://example.org">may contain more then one word</ulink>.</para>
+    <para><emphasis>Markup</emphasis> is also allwoed at the very beginning of a paragraph.</para>
+    <para>Paragraphs are separated by blank lines and are left-aligned.</para>
+  </section>
+</article>

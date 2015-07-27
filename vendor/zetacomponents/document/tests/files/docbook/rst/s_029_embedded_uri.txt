@@ -1,0 +1,14 @@
+.. _embedded_urls:
+
+=============
+Embedded URLs
+=============
+
+See the `Python home page`__ for info.
+
+__ http://www.python.org
+
+`RFC 2396`__ and `RFC 2732`__ together define the syntax of URIs.
+
+__ http://www.rfc-editor.org/rfc/rfc2396.txt
+__ http://www.rfc-editor.org/rfc/rfc2732.txt

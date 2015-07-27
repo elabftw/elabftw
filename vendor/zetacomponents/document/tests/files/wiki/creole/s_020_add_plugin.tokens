@@ -1,0 +1,51 @@
+<?php
+
+return array (
+  0 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 0,
+     'position' => 1,
+  )),
+  1 => 
+  ezcDocumentWikiPluginToken::__set_state(array(
+     'type' => 'CurrentTimePlugin',
+     'parameters' => 
+    array (
+      'format' => 'yyyy.MM.dd',
+    ),
+     'text' => NULL,
+     'content' => 'CurrentTimePlugin format=\'yyyy.MM.dd\'',
+     'line' => 1,
+     'position' => 1,
+  )),
+  2 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 1,
+     'position' => 38,
+  )),
+  3 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 2,
+     'position' => 1,
+  )),
+  4 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 2,
+     'position' => 1,
+  )),
+  5 => 
+  ezcDocumentWikiEndOfFileToken::__set_state(array(
+     'content' => NULL,
+     'line' => 2,
+     'position' => 1,
+  )),
+);
+

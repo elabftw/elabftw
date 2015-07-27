@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <sectioninfo>
+      <title>Embedded URLs</title>
+    </sectioninfo>
+    <section>
+      <title><anchor ID="embedded_urls"/>Embedded URLs</title>
+      <para>See the <ulink url="http://www.python.org">Python home page</ulink> for info.</para>
+      <para><ulink url="http://www.rfc-editor.org/rfc/rfc2396.txt">RFC 2396</ulink> and <ulink url="http://www.rfc-editor.org/rfc/rfc2732.txt">RFC 2732</ulink> together define the syntax of URIs.</para>
+    </section>
+  </section>
+</article>

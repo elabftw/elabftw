@@ -1,0 +1,5 @@
+Can I combine formatting tags?
+
+Yes, of course you can, for example to get someones attention you may write:
+
+[size=200][color=red][b]LOOK AT ME![/b][/color][/size]

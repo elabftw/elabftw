@@ -1,0 +1,5 @@
+Title witm umlauts: öüä
+=======================
+
+Should not throw any notices.
+

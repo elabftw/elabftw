@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="section_title_1">
+    <sectioninfo/>
+    <title>Section Title 1</title>
+    <section ID="section_title_2">
+      <sectioninfo/>
+      <title>Section Title 2</title>
+      <section ID="section_title_3">
+        <sectioninfo/>
+        <title>Section Title 3</title>
+        <section ID="section_title_4">
+          <sectioninfo/>
+          <title>Section Title 4</title>
+          <section ID="section_title_5">
+            <sectioninfo/>
+            <title>Section Title 5</title>
+            <section ID="section_title_6">
+              <sectioninfo/>
+              <title>Section Title 6</title>
+            </section>
+          </section>
+          <section ID="section_title_5_2">
+            <sectioninfo/>
+            <title>Section Title 5</title>
+            <section ID="section_title_6_2">
+              <sectioninfo/>
+              <title>Section Title 6</title>
+              <section ID="section_title_7">
+                <sectioninfo/>
+                <title>Section Title 7</title>
+                <section ID="section_title_8">
+                  <sectioninfo/>
+                  <title>Section Title 8</title>
+                </section>
+              </section>
+              <section ID="section_title_7_2">
+                <sectioninfo/>
+                <title>Section Title 7</title>
+                <section ID="section_title_8_2">
+                  <sectioninfo/>
+                  <title>Section Title 8</title>
+                  <section ID="section_title_9">
+                    <sectioninfo/>
+                    <title>Section Title 9</title>
+                    <section ID="section_title_10">
+                      <sectioninfo/>
+                      <title>Section Title 10</title>
+                      <section ID="section_title_11">
+                        <sectioninfo/>
+                        <title>Section Title 11</title>
+                      </section>
+                    </section>
+                  </section>
+                </section>
+              </section>
+            </section>
+          </section>
+        </section>
+      </section>
+      <section ID="section_title_3_2">
+        <sectioninfo/>
+        <title>Section Title 3</title>
+        <section ID="section_title_4_2">
+          <sectioninfo/>
+          <title>Section Title 4</title>
+          <section ID="section_title_5_3">
+            <sectioninfo/>
+            <title>Section Title 5</title>
+          </section>
+        </section>
+      </section>
+    </section>
+  </section>
+</article>

@@ -1,0 +1,14 @@
+Enumerated dense lists
+======================
+
+A deeper dense list
+
+1) Item 1 initial text.
+   a) Item 1a.
+2) Another list item
+3)
+   a) Item 3a.
+   b) Item 3b.
+
+And not in list anymore.
+

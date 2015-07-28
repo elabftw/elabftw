@@ -67,7 +67,8 @@ Contributing to the code
 API Documentation
 -----------------
 
-You can find a PHP Docblock generated documentation on classes in `doc/api`.
+You can find a PHP Docblock generated documentation on classes `here <../../../doc/api/namespaces/Elabftw.Elabftw.html>`_ (local link).
+
 To generate it: `phpdoc -t doc/api -d inc/classes`
 
 Reminders

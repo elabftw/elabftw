@@ -50,8 +50,8 @@ class Db
      */
     public function q($sql)
     {
-        $this->pdo = $this->connect();
-        $req = $this->pdo->prepare($sql);
+        $pdo = $this->connect();
+        $req = $pdo->prepare($sql);
         return $req->execute();
     }
 }

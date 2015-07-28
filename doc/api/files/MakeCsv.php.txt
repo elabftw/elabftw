@@ -11,25 +11,41 @@
 namespace Elabftw\Elabftw;
 
 use \Exception;
-use \Elabftw\Elabftw\Db;
 
+/**
+ * Make a CSV file from a list of id and a type
+ */
 class MakeCsv
 {
+    /** our pdo object */
     private $pdo;
 
-    // the lines in the csv file
+    /** the lines in the csv file */
     private $list = array();
+    /** the input ids */
     private $idList;
+    /** the input ids but in an array */
     private $idArr = array();
+    /** 'experiment' or 'database' */
     private $table;
+    /** name of our csv file */
     private $fileName;
-    private $filePath;
+    /** public because we need it to display download link */
+    public $filePath;
+    /** the content */
     private $data;
+    /** the url of the item */
     private $url;
 
-    public function __construct($idList, $type)
+    /**
+     * Give me a list of id+id+id and a type, I make good csv for you
+     *
+     * @param string $idList 1+4+5+2
+     * @param string $type 'experiments' or 'items'
+     * @param object $db An instance of db
+     */
+    public function __construct($idList, $type, $db)
     {
-        $db = new Db();
         $this->pdo = $db->connect();
 
         // assign and check id
@@ -47,17 +63,8 @@ class MakeCsv
         // main loop
         $this->loopIdArr();
     }
-    /*
-     * Return the full path of the file. The only public function.
-     *
-     * @return string The file path of the csv
-     */
-    public function getFilePath()
-    {
-        return $this->filePath;
-    }
 
-    /*
+    /**
      * Validate the type we have.
      *
      */
@@ -69,7 +76,7 @@ class MakeCsv
         }
     }
 
-    /*
+    /**
      * Here we populate the first row: it will be the column names
      *
      */
@@ -82,7 +89,7 @@ class MakeCsv
         }
     }
 
-    /*
+    /**
      * Main loop
      *
      */
@@ -100,9 +107,10 @@ class MakeCsv
         $this->writeCsv();
     }
 
-    /*
+    /**
      * Get data about the item
      *
+     * @param int $id The id of the current item
      */
     private function initData($id)
     {
@@ -121,14 +129,18 @@ class MakeCsv
         }
 
         $req = $this->pdo->prepare($sql);
-        $req->bindParam('id', $id, \PDO::PARAM_INT);
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
         $req->execute();
         $this->data = $req->fetch();
     }
 
+    /**
+     * Construct URL
+     *
+     * @param int $id The id of the current item
+     */
     private function setUrl($id)
     {
-        // Construct URL
         $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
         $needle = array('make_csv.php', 'make_pdf.php', 'make_zip.php', 'app/timestamp.php');
 
@@ -140,10 +152,12 @@ class MakeCsv
         $this->url = $url . "?mode=view&id=" . $id;
     }
 
+    /**
+     * The column names will be different depending on type
+     */
     private function addLine()
     {
         if ($this->table === 'experiments') {
-            // populate
             $this->list[] = array(
                 $this->data['id'],
                 $this->data['date'],
@@ -154,7 +168,6 @@ class MakeCsv
                 $this->url
             );
         } else {
-            // populate
             $this->list[] = array(
                 htmlspecialchars_decode($this->data['title'], ENT_QUOTES | ENT_COMPAT),
                 html_entity_decode(strip_tags(htmlspecialchars_decode($this->data['body'], ENT_QUOTES | ENT_COMPAT))),
@@ -167,6 +180,9 @@ class MakeCsv
         }
     }
 
+    /**
+     * Write our file
+     */
     private function writeCsv()
     {
         $fp = fopen($this->filePath, 'w+');

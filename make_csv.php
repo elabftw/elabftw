@@ -31,7 +31,7 @@ require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 
 try {
-    $csv = new \Elabftw\Elabftw\MakeCsv($_GET['id'], $_GET['type']);
+    $csv = new \Elabftw\Elabftw\MakeCsv($_GET['id'], $_GET['type'], $db);
 } catch (Exception $e) {
     echo $e->getMessage();
     exit;
@@ -40,8 +40,8 @@ try {
 // PAGE BEGIN
 echo "<div class='well' style='margin-top:20px'>";
 echo "<p>" . _('Your CSV file is ready:') . "<br>
-        <a href='app/download.php?type=csv&f=" . basename($csv->getFilePath()) . "&name=export.elabftw.csv' target='_blank'>
+        <a href='app/download.php?type=csv&f=" . basename($csv->filePath) . "&name=export.elabftw.csv' target='_blank'>
         <img src='img/download.png' alt='download' /> export.elabftw.csv</a>
-        <span class='filesize'>(" . (new \Elabftw\Elabftw\Tools)->formatBytes(filesize($csv->getFilePath())) . ")</span></p>";
+        <span class='filesize'>(" . (new \Elabftw\Elabftw\Tools)->formatBytes(filesize($csv->filePath)) . ")</span></p>";
 echo "</div>";
 require_once 'inc/footer.php';

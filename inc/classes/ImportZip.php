@@ -16,23 +16,42 @@ use \RecursiveIteratorIterator;
 use \RecursiveDirectoryIterator;
 use \FileSystemIterator;
 
+/**
+ * Import a .elabftw.zip file into the database.
+ */
 class ImportZip
 {
+    /** pdo object */
     private $pdo;
 
-    // number of item we have inserted
+    /** number of item we have inserted */
     public $inserted = 0;
+    /** the folder where we extract the zip */
     private $tmpPath;
+    /** the name of the temporary uploaded input zip */
     private $fileTmpName;
+    /** an array with the data we want to import */
     private $json;
 
+    /** the target item type */
     private $itemType;
+    /** title of new item */
     private $title;
+    /** body of new item */
     private $body;
-    // the newly created id of the imported item
-    // we need it for linking attached file(s) to the the new item
+    /**
+     * the newly created id of the imported item
+     * we need it for linking attached file(s) to the the new item
+     */
     private $newItemId;
 
+    /**
+     * Need the path to zip tmp_name, the type and the db object
+     *
+     * @param string $zipfile Path to temporary name of uploaded zip
+     * @param int itemType the type of item we want in the end
+     * @param object $db An instance of the Db class
+     */
     public function __construct($zipfile, $itemType, Db $db)
     {
 
@@ -51,9 +70,10 @@ class ImportZip
         $this->importAll();
     }
 
-    /*
+    /**
      * Extract the zip to the temporary folder
      *
+     * @throws Exception if it cannot open the zip
      * @return bool
      */
     private function extractZip()
@@ -66,9 +86,10 @@ class ImportZip
         }
     }
 
-    /*
+    /**
      * We get all the info we need from the embedded .json file
      *
+     * @throws Exception if we try to import an experiment
      */
     private function readJson()
     {
@@ -81,9 +102,10 @@ class ImportZip
         }
     }
 
-    /*
+    /**
      * The main SQL to create a new item with the title and body we have
      *
+     * @throws Exception if SQL request failed
      */
     private function importData()
     {
@@ -103,9 +125,10 @@ class ImportZip
         $this->newItemId = $this->pdo->lastInsertId();
     }
 
-    /*
+    /**
      * If files are attached we want them!
      *
+     * @throws Exception if it cannot rename the file or SQL request failed
      * @param string $file The path of the file in the archive
      */
     private function importFile($file)
@@ -153,7 +176,7 @@ class ImportZip
         }
     }
 
-    /*
+    /**
      * Loop the json and import the items.
      *
      */
@@ -172,7 +195,7 @@ class ImportZip
         }
     }
 
-    /*
+    /**
      * Cleanup : remove the temporary folder created
      *
      */

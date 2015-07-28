@@ -14,36 +14,57 @@ use \Elabftw\Elabftw\MakePdf;
 use \ZipArchive;
 use \Exception;
 
+/**
+ * Make a zip archive from experiment or db item
+ */
 class MakeZip
 {
+    /** will be given to makepdf */
+    private $db;
+    /** our pdo object */
     private $pdo;
+    /** the zip object */
+    private $zip;
 
+    /** the input ids */
     private $idList;
+    /** the input ids but in an array */
     private $idArr = array();
 
+    /** sha512 hash.zip */
     private $zipRealName;
+    /** uploads/tmp/realname.zip */
     private $zipRelativePath;
+    /** with ELAB_ROOT */
     private $zipAbsolutePath;
 
-    private $zip;
+    /** 'experiments' or 'items' */
     private $table;
+    /** files to be deleted by destructor */
     private $filesToDelete = array();
-    private $cleanTitle;
-
+    /** the data for the current id */
     private $zipped;
-    // the path to attached files in the zip
+    /** a formatted title */
+    private $cleanTitle;
+    /** name of folder */
+    private $folder;
+    /** the path to attached files in the zip */
     private $fileArr = array();
+    /** array that will be converted to json */
     private $jsonArr = array();
 
-    private $folder;
 
-
-    /*
-     * Provide it with the $_GET['id'] and $_GET['type']
+    /**
+     * Give me an id list and a type, I make good zip for you
      *
+     * @param string $idList 1+3+5+8
+     * @param string $type 'experiments' or 'items'
+     * @param object $db An instance of Db
+     * @throws Exception if we don't have ZipArchive extension
      */
     public function __construct($idList, $type, Db $db)
     {
+        $this->db = $db;
         $this->pdo = $db->connect();
 
         // we check first if the zip extension is here
@@ -62,7 +83,7 @@ class MakeZip
         $this->loopIdArr();
 
     }
-    /*
+    /**
      * Return the relative path of the zip (uploads/tmp/<hash>.zip)
      *
      * @return string
@@ -72,7 +93,7 @@ class MakeZip
         return $this->zipRelativePath;
     }
 
-    /*
+    /**
      * This is the name of the file that will get downloaded
      *
      * @return string
@@ -88,7 +109,7 @@ class MakeZip
         }
     }
 
-    /*
+    /**
      * Initiate the zip object and the archive
      *
      */
@@ -101,7 +122,7 @@ class MakeZip
         }
     }
 
-    /*
+    /**
      * Validate the $_GET['type'] we have
      *
      */
@@ -113,13 +134,14 @@ class MakeZip
         }
     }
 
-    /*
+    /**
      * Populate $this->zipped
+     * SQL to get info on the item we are zipping
      *
+     * @param int $id The id of the item we are zipping
      */
     private function getInfoFromId($id)
     {
-        // SQL to get info on the item we are zipping
         if ($this->table === 'experiments') {
             $sql = "SELECT * FROM experiments WHERE id = :id LIMIT 1";
             $req = $this->pdo->prepare($sql);
@@ -149,7 +171,11 @@ class MakeZip
         $this->cleanTitle = preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($this->zipped['title']));
     }
 
-    // add the .asn1 token to the zip archive if the experiment is timestamped
+    /**
+     * Add the .asn1 token to the zip archive if the experiment is timestamped
+     *
+     * @param int $id The id of current item we are zipping
+     */
     private function addAsn1Token($id)
     {
         if ($this->table === 'experiments' && $this->zipped['timestamped'] == 1) {
@@ -164,7 +190,10 @@ class MakeZip
         }
     }
 
-    // folder begin with date for experiments
+    /**
+     * Folder begins with date for experiments
+     *
+     */
     private function nameFolder()
     {
         if ($this->table === 'experiments') {
@@ -174,6 +203,11 @@ class MakeZip
         }
     }
 
+    /**
+     * Add attached files (if any)
+     *
+     * @param int $id The id of the item we are zipping
+     */
     private function addAttachedFiles($id)
     {
         $real_name = array();
@@ -202,39 +236,51 @@ class MakeZip
         }
     }
 
-    // add PDF to archive
+    /**
+     * Add PDF to archive
+     *
+     * @param int $id The id of the item we are zipping
+     */
     private function addPdf($id)
     {
         $pdfPath = ELAB_ROOT . 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . '.pdf';
-        $pdf = new \Elabftw\Elabftw\MakePdf($id, $this->table, $pdfPath);
+        $pdf = new \Elabftw\Elabftw\MakePdf($id, $this->table, $this->db, $pdfPath);
         $this->zip->addFile($pdfPath, $this->folder . '/' . $pdf->getFileName());
         $this->filesToDelete[] = $pdfPath;
     }
 
+    /**
+     * Add a CSV file
+     *
+     * @param int $id The id of the item we are zipping
+     */
     private function addCsv($id)
     {
         // add CSV file to archive
-        $csv = new \Elabftw\Elabftw\MakeCsv($id, $this->table);
-        $this->zip->addFile($csv->getFilePath(), $this->folder . "/" . $this->cleanTitle . ".csv");
-        $this->filesToDelete[] = $csv->getFilePath();
+        $csv = new \Elabftw\Elabftw\MakeCsv($id, $this->table, $this->db);
+        $this->zip->addFile($csv->filePath, $this->folder . "/" . $this->cleanTitle . ".csv");
+        $this->filesToDelete[] = $csv->filePath;
     }
 
+    /**
+     * Add the (hidden) .elabftw.json file useful for reimport
+     *
+     */
     private function addJson()
     {
-        // add a json file that is helpful for importing back the data
         $json = json_encode($this->jsonArr);
         $jsonPath = ELAB_ROOT . 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . '.json';
         $tf = fopen($jsonPath, 'w+');
         fwrite($tf, $json);
         fclose($tf);
-        // add the json file as hidden file, users don't need to see it
         $this->zip->addFile($jsonPath, ".elabftw.json");
         $this->filesToDelete[] = $jsonPath;
     }
 
-    /*
+    /**
      * This is where the magic happens
      *
+     * @param int $id The id of the item we are zipping
      */
     private function addToZip($id)
     {
@@ -255,7 +301,7 @@ class MakeZip
         unset($this->fileArr);
     }
 
-    /*
+    /**
      * Loop on each id and add it to our zip archive
      * This could be called the main function.
      *
@@ -274,7 +320,7 @@ class MakeZip
     }
 
 
-    /*
+    /**
      * Clean up the temporary files (csv, txt and pdf)
      *
      */

@@ -17,11 +17,14 @@ use \Exception;
 use \Elabftw\Elabftw\Update;
 
 /**
+ * Timestamp an experiment with RFC 3161
  * Based on:
  * http://www.d-mueller.de/blog/dealing-with-trusted-timestamps-in-php-rfc-3161
  */
 class TrustedTimestamps
 {
+    /** will be given to makepdf */
+    private $db;
     /** our database connection */
     private $pdo;
 
@@ -58,6 +61,7 @@ class TrustedTimestamps
      */
     public function __construct($id, Db $db)
     {
+        $this->db = $db;
         $this->pdo = $db->connect();
 
         // will be used in sqlUpdate()
@@ -89,7 +93,7 @@ class TrustedTimestamps
         $this->pdfFileName = hash("sha512", uniqid(rand(), true)) . ".pdf";
         $this->pdfPath = ELAB_ROOT . 'uploads/' . $this->pdfFileName;
         try {
-            new \Elabftw\Elabftw\MakePdf($this->id, 'experiments', $this->pdfPath);
+            new \Elabftw\Elabftw\MakePdf($this->id, 'experiments', $this->db, $this->pdfPath);
         } catch (Exception $e) {
             throw new Exception('Failed at making the pdf : ' . $e->getMessage());
         }

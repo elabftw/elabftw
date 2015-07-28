@@ -84,15 +84,10 @@ if (!isset($_SESSION['auth']) && !in_array(basename($_SERVER['SCRIPT_FILENAME'])
     if (!$user->loginWithCookie()) {
         // maybe we clicked an email link and we want to be redirected to the page upon successful login
         // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
-        if ((new \Elabftw\Elabftw\Tools)->usingSsl()) {
-            $protocol = 'https';
-        } else {
-            $protocol = 'http';
-        }
         $host = $_SERVER['HTTP_HOST'];
         $script = $_SERVER['SCRIPT_NAME'];
         $params = '?' . $_SERVER['QUERY_STRING'];
-        $url = $protocol . '://' . $host . $script . $params;
+        $url = 'https://' . $host . $script . $params;
         // remove trailing ? if there was no query string
         $url = rtrim($url, '?');
 

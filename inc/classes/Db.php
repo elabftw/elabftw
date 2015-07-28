@@ -77,6 +77,16 @@ final class Db
     }
 
     /**
+     * Return the last id inserted
+     *
+     * @return int
+     */
+    public function lastInsertId()
+    {
+        return $this->connection->lastInsertId();
+    }
+
+    /**
      * Disallow cloning the class
      */
     private function __clone()

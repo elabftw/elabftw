@@ -64,6 +64,12 @@ Contributing to the code
 * add a plugin to your editor to show PSR-1 errors
 * remove BOM
 
+API Documentation
+-----------------
+
+You can find a PHP Docblock generated documentation on classes in `doc/api`.
+To generate it: `phpdoc -t doc/api -d inc/classes`
+
 Reminders
 ---------
 

@@ -54,7 +54,7 @@ if (isset($_POST['new_team']) &&
 // END TAB 1
 
 // TAB 2 : SERVER
-if (isset($_POST['debug'])) {
+if (isset($_POST['lang'])) {
     $tab = '2';
 
     if (isset($_POST['lang']) && (strlen($_POST['lang']) === 5)) {

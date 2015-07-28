@@ -26,7 +26,7 @@
 require_once '../inc/common.php';
 $msg_arr = array();
 
-$creator = new \Elabftw\Elabftw\Create($db);
+$creator = new \Elabftw\Elabftw\Create();
 
 
 // What do we create ?

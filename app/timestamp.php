@@ -38,7 +38,7 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
 
 // timestamping begins
 try {
-    $ts = new Elabftw\Elabftw\TrustedTimestamps($id, $db);
+    $ts = new Elabftw\Elabftw\TrustedTimestamps($id);
     $ts->timeStamp();
 } catch (Exception $e) {
     $_SESSION['errors'][] = $e->getMessage();

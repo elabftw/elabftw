@@ -16,7 +16,7 @@ use \Exception;
 /**
  * Connect to the database with a singleton class
  */
-class Db
+final class Db
 {
     /** our connection */
     private static $connection = null;
@@ -54,6 +54,12 @@ class Db
         return self::$instance;
     }
 
+    /**
+     * Prepare a query
+     *
+     * @param string $sql The SQL query
+     * @return \PDOStatement
+     */
     public function prepare($sql)
     {
         return $this->connection->prepare($sql);
@@ -63,7 +69,7 @@ class Db
      * Make a simple query
      *
      * @param string $sql The SQL query
-     * @return boolean the return value of execute
+     * @return \PDOStatement
      */
     public function q($sql)
     {
@@ -77,7 +83,10 @@ class Db
     {
         return false;
     }
-    public function __wakeup()
+    /**
+     * Disallow wakeup also
+     */
+    private function __wakeup()
     {
         return false;
     }

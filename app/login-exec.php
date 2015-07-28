@@ -26,7 +26,7 @@
 require_once '../inc/common.php';
 
 $formKey = new \Elabftw\Elabftw\FormKey();
-$user = new \Elabftw\Elabftw\User($db);
+$user = new \Elabftw\Elabftw\User();
 
 //Array to store validation errors
 $msg_arr = array();

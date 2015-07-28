@@ -31,7 +31,7 @@ $errflag = false;
 $wantUpdatePassword = false;
 $tab = '1';
 
-$user = new \Elabftw\Elabftw\User($db);
+$user = new \Elabftw\Elabftw\User();
 
 // TAB 1 : PREFERENCES
 if (isset($_POST['display'])) {

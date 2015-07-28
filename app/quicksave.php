@@ -28,7 +28,7 @@ if (is_pos_int($_POST['id'])) {
 
 // we update the name of a team via sysconfig.php
 if (isset($_POST['team_name'])) {
-    $sysconfig = new \Elabftw\Elabftw\SysConfig($db);
+    $sysconfig = new \Elabftw\Elabftw\SysConfig();
     if (!$sysconfig->editTeam($id, $_POST['team_name'])) {
         echo 'Error updating team name';
     }

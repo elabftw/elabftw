@@ -274,7 +274,7 @@ class TrustedTimestamps
     private function postData()
     {
         // we need that to get the version that will be in user agent
-        $update = new \Elabftw\Elabftw\Update($this->db);
+        $update = new \Elabftw\Elabftw\Update();
 
         $ch = curl_init();
         // set url of TSA

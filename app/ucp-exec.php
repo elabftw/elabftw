@@ -28,224 +28,26 @@ require_once '../inc/common.php';
 // INFO BOX
 $msg_arr = array();
 $errflag = false;
-$infoflag = false;
-$email = '';
-$username = '';
-$firstname = '';
-$lastname = '';
-$website = '';
+$wantUpdatePassword = false;
+$tab = '1';
 
+$user = new \Elabftw\Elabftw\User($db);
 
-// Form 1 User infos
-if (isset($_POST['currpass'])) {
-    // 1. Check that we were given a good password
-    // Get salt
-    $sql = "SELECT salt FROM users WHERE userid = :userid LIMIT 1";
-    $salt = $pdo->prepare($sql);
-    $salt->bindParam(':userid', $_SESSION['userid']);
-    $salt->execute();
-    $salt = $salt->fetchColumn();
-    // Create hash
-    $passwordHash = hash("sha512", $salt . $_POST['currpass']);
-    $sql = "SELECT userid FROM users WHERE userid = :userid AND password = :password LIMIT 1";
-    $req = $pdo->prepare($sql);
-    $result = $req->execute(array(
-        'userid' => $_SESSION['userid'],
-        'password' => $passwordHash));
-    $numrows = $req->rowCount();
-    if (($result) && ($numrows === 1)) {
-        // Old password is good. Continue
-
-        // PASSWORD CHANGE
-        if ((isset($_POST['cnewpass'])) && (!empty($_POST['cnewpass']))) {
-            $cpassword = filter_var($_POST['cnewpass'], FILTER_SANITIZE_STRING);
-            if ((isset($_POST['newpass'])) && (!empty($_POST['newpass']))) {
-                // Good to go
-                $password = filter_var($_POST['newpass'], FILTER_SANITIZE_STRING);
-                // Check for password length
-                if (strlen($password) <= 7) {
-                    $msg_arr[] = _('Password must contain at least 8 characters.');
-                    $errflag = true;
-                }
-                if (strcmp($password, $cpassword) != 0) {
-                    $msg_arr[] = _('The passwords do not match!');
-                    $errflag = true;
-                }
-                // Create salt
-                $salt = hash("sha512", uniqid(rand(), true));
-                // Create hash
-                $passwordHash = hash("sha512", $salt . $password);
-                $sql = "UPDATE users SET salt = :salt, 
-                    password = :password 
-                    WHERE userid = :userid";
-                $req = $pdo->prepare($sql);
-                $result = $req->execute(array(
-                    'salt' => $salt,
-                    'password' => $passwordHash,
-                    'userid' => $_SESSION['userid']));
-                if ($result) {
-                    $msg_arr[] = _('Configuration updated successfully.');
-                    $infoflag = true;
-                } else {
-                    die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
-                }
-            }
-        }
-        // Check USERNAME (sanitize and validate)
-        if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
-            $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
-            // Check for duplicate username in DB
-            $sql = "SELECT * FROM users WHERE username = :username";
-            $req = $pdo->prepare($sql);
-            $req->bindParam(':username', $username);
-            $result = $req->execute();
-            $numrows = $req->rowCount();
-            $data = $req->fetch();
-            if ($result) {
-                if ($numrows > 0) {
-                    if ($data['userid'] != $_SESSION['userid']) {
-                        $msg_arr[] = _('Username already in use!');
-                        $errflag = true;
-                    }
-                }
-            }
-        } else {
-            $msg_arr[] = _('A mandatory field is missing!');
-            $errflag = true;
-        }
-        // Check FIRSTNAME (sanitize only)
-        if ((isset($_POST['firstname'])) && (!empty($_POST['firstname']))) {
-            $firstname = filter_var($_POST['firstname'], FILTER_SANITIZE_STRING);
-        } else {
-            $msg_arr[] = _('A mandatory field is missing!');
-            $errflag = true;
-        }
-        // Check LASTNAME (sanitize only)
-        if ((isset($_POST['lastname'])) && (!empty($_POST['lastname']))) {
-            $lastname = filter_var($_POST['lastname'], FILTER_SANITIZE_STRING);
-        } else {
-            $msg_arr[] = _('A mandatory field is missing!');
-            $errflag = true;
-        }
-
-        // Check EMAIL (sanitize and validate)
-        if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
-            $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $msg_arr[] = _("The email is not valid.");
-                $errflag = true;
-            } else {
-                // Check for duplicate email in DB
-                $sql = "SELECT * FROM users WHERE email = :email";
-                $req = $pdo->prepare($sql);
-                $req->bindParam(':email', $email);
-                $result = $req->execute();
-                $numrows = $req->rowCount();
-                $data = $req->fetch();
-                if ($result) {
-                    if ($numrows > 0) {
-                        if ($data['userid'] != $_SESSION['userid']) {
-                            $msg_arr[] = _('Someone is already using that email address!');
-                            $errflag = true;
-                        }
-                    }
-                }
-            }
-        } else {
-            $msg_arr[] = _('A mandatory field is missing!');
-            $errflag = true;
-        }
-        // Check phone
-        if (isset($_POST['phone']) && !empty($_POST['phone'])) {
-            $phone = filter_var($_POST['phone'], FILTER_SANITIZE_STRING);
-        } else {
-            $phone = null;
-        }
-        // Check cellphone
-        if (isset($_POST['cellphone']) && !empty($_POST['cellphone'])) {
-            $cellphone = filter_var($_POST['cellphone'], FILTER_SANITIZE_STRING);
-        } else {
-            $cellphone = null;
-        }
-        // Check skype
-        if (isset($_POST['skype']) && !empty($_POST['skype'])) {
-            $skype = filter_var($_POST['skype'], FILTER_SANITIZE_STRING);
-        } else {
-            $skype = null;
-        }
-        // Check website
-        if (isset($_POST['website']) && !empty($_POST['website'])) {
-            if (filter_var($_POST['website'], FILTER_VALIDATE_URL)) {
-                $website = $_POST['website'];
-            } else { // do not validate as url
-                $msg_arr[] = _('A mandatory field is missing!');
-                $errflag = true;
-            }
-        } else {
-            $website = null;
-        }
-
-        //If there are input validations, redirect back to the registration form
-        if ($errflag) {
-            $_SESSION['errors'] = $msg_arr;
-            session_write_close();
-            header("location: ../ucp.php");
-            exit;
-        }
-
-        // SQL for update profile
-        $sql = "UPDATE users SET
-            salt = :salt,
-            password = :password,
-            email = :email,
-            username = :username,
-            firstname = :firstname,
-            lastname = :lastname,
-            phone = :phone,
-            cellphone = :cellphone,
-            skype = :skype,
-            website = :website
-            WHERE userid = :userid";
-        $req = $pdo->prepare($sql);
-        $result = $req->execute(array(
-            'salt' => $salt,
-            'password' => $passwordHash,
-            'email' => $email,
-            'username' => $username,
-            'firstname' => $firstname,
-            'lastname' => $lastname,
-            'phone' => $phone,
-            'cellphone' => $cellphone,
-            'skype' => $skype,
-            'website' => $website,
-            'userid' => $_SESSION['userid']));
-        if ($result) {
-            $msg_arr[] = _('Profile updated.');
-            $infoflag = true;
-        } else {
-            die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
-        }
-    } else { //end if result and numrow > 1
-        $msg_arr[] = _('Enter your passsword to edit anything.');
-        $errflag = true;
-    }
-}// end if first form submitted
-
-// FORM 2. PREFERENCES
+// TAB 1 : PREFERENCES
 if (isset($_POST['display'])) {
     if ($_POST['display'] === 'default') {
         $new_display = 'default';
     } elseif ($_POST['display'] === 'compact') {
         $new_display = 'compact';
     } else {
-        die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
+        $new_display = 'default';
     }
 
     // ORDER
     if ($_POST['order'] === 'date' || $_POST['order'] === 'id' || $_POST['order'] === 'title') {
         $new_order = $_POST['order'];
     } else {
-        die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
+        $new_order = 'id';
     }
 
     // SORT
@@ -254,7 +56,7 @@ if (isset($_POST['display'])) {
     } elseif ($_POST['sort'] === 'desc') {
         $new_sort = $_POST['sort'];
     } else {
-        die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
+        $new_sort = 'desc';
     }
 
     // LIMIT
@@ -336,12 +138,172 @@ if (isset($_POST['display'])) {
     $_SESSION['prefs']['chem_editor'] = $new_chem_editor;
     $_SESSION['prefs']['lang'] = $new_lang;
     $msg_arr[] = _('Preferences updated.');
-    $infoflag = true;
 }
+// END TAB 1
 
-// EXPERIMENTS TEMPLATES
+// TAB 2 : ACCOUNT
+if (isset($_POST['currpass'])) {
+    $tab = '2';
+
+    // check that we got the good password
+    if (!$user->checkCredentials($_SESSION['username'], $_POST['currpass'])) {
+        $msg_arr[] = _("Please input your current password!");
+        $errflag = true;
+        $_SESSION['errors'] = $msg_arr;
+        header("location: ../ucp.php?tab=" . $tab);
+        exit;
+    }
+    // Check USERNAME (sanitize and validate)
+    if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
+        $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
+        // Check for duplicate username in DB
+        $sql = "SELECT * FROM users WHERE username = :username";
+        $req = $pdo->prepare($sql);
+        $req->bindParam(':username', $username);
+        $result = $req->execute();
+        $data = $req->fetch();
+        if ($result && $req->rowCount() > 0) {
+            if ($data['userid'] != $_SESSION['userid']) {
+                $msg_arr[] = _('Username already in use!');
+                $errflag = true;
+            }
+        }
+    }
+    // Check FIRSTNAME (sanitize only)
+    if ((isset($_POST['firstname'])) && (!empty($_POST['firstname']))) {
+        $firstname = filter_var($_POST['firstname'], FILTER_SANITIZE_STRING);
+    } else {
+        $msg_arr[] = _('A mandatory field is missing!');
+        $errflag = true;
+    }
+    // Check LASTNAME (sanitize only)
+    if ((isset($_POST['lastname'])) && (!empty($_POST['lastname']))) {
+        $lastname = filter_var($_POST['lastname'], FILTER_SANITIZE_STRING);
+    } else {
+        $msg_arr[] = _('A mandatory field is missing!');
+        $errflag = true;
+    }
+
+    // Check EMAIL (sanitize and validate)
+    if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
+        $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $msg_arr[] = _("The email is not valid.");
+            $errflag = true;
+        } else {
+            // Check for duplicate email in DB
+            $sql = "SELECT * FROM users WHERE email = :email";
+            $req = $pdo->prepare($sql);
+            $req->bindParam(':email', $email);
+            $result = $req->execute();
+            $numrows = $req->rowCount();
+            $data = $req->fetch();
+            if ($result) {
+                if ($numrows > 0) {
+                    if ($data['userid'] != $_SESSION['userid']) {
+                        $msg_arr[] = _('Someone is already using that email address!');
+                        $errflag = true;
+                    }
+                }
+            }
+        }
+    } else {
+        $msg_arr[] = _('A mandatory field is missing!');
+        $errflag = true;
+    }
+    // Check phone
+    if (isset($_POST['phone']) && !empty($_POST['phone'])) {
+        $phone = filter_var($_POST['phone'], FILTER_SANITIZE_STRING);
+    } else {
+        $phone = null;
+    }
+    // Check cellphone
+    if (isset($_POST['cellphone']) && !empty($_POST['cellphone'])) {
+        $cellphone = filter_var($_POST['cellphone'], FILTER_SANITIZE_STRING);
+    } else {
+        $cellphone = null;
+    }
+    // Check skype
+    if (isset($_POST['skype']) && !empty($_POST['skype'])) {
+        $skype = filter_var($_POST['skype'], FILTER_SANITIZE_STRING);
+    } else {
+        $skype = null;
+    }
+    // Check website
+    if (isset($_POST['website']) && !empty($_POST['website'])) {
+        if (filter_var($_POST['website'], FILTER_VALIDATE_URL)) {
+            $website = $_POST['website'];
+        } else { // do not validate as url
+            $msg_arr[] = _('A mandatory field is missing!');
+            $errflag = true;
+        }
+    } else {
+        $website = null;
+    }
+
+    // PASSWORD CHANGE
+    if (isset($_POST['cnewpass']) &&
+        !empty($_POST['cnewpass']) &&
+        isset($_POST['newpass']) &&
+        !empty($_POST['newpass'])) {
+
+        $password = $_POST['newpass'];
+        $cpassword = $_POST['cnewpass'];
+
+        // check confirmation password
+        if (strcmp($password, $cpassword) != 0) {
+            $msg_arr[] = _('The passwords do not match!');
+            $errflag = true;
+        }
+        // update the password only if there is no error before
+        if (!$errflag) {
+            try {
+                $user->updatePassword($password);
+            } catch (Exception $e) {
+                $msg_arr[] = $e->getMessage();
+                $errflag = true;
+            }
+        }
+    }
+
+    // MAIN SQL
+    if (!$errflag) {
+        // SQL for update preferences
+        $sql = "UPDATE users SET
+            email = :email,
+            username = :username,
+            firstname = :firstname,
+            lastname = :lastname,
+            phone = :phone,
+            cellphone = :cellphone,
+            skype = :skype,
+            website = :website
+            WHERE userid = :userid";
+        $req = $pdo->prepare($sql);
+        $result = $req->execute(array(
+            'email' => $email,
+            'username' => $username,
+            'firstname' => $firstname,
+            'lastname' => $lastname,
+            'phone' => $phone,
+            'cellphone' => $cellphone,
+            'skype' => $skype,
+            'website' => $website,
+            'userid' => $_SESSION['userid']));
+        if ($result) {
+            $msg_arr[] = _('Profile updated.');
+        } else {
+            $errflag = true;
+        }
+    }
+
+}// END TAB 2
+
+// TAB 3 : EXPERIMENTS TEMPLATES
 // add new tpl
 if (isset($_POST['new_tpl_form'])) {
+    $tab = '3';
+
     // do nothing if the template name is empty
     if (empty($_POST['new_tpl_name'])) {
         $msg_arr[] = _('You must specify a name for the template!');
@@ -362,12 +324,13 @@ if (isset($_POST['new_tpl_form'])) {
             'userid' => $_SESSION['userid']
         ));
         $msg_arr[] = _('Experiment template successfully added.');
-        $infoflag = true;
     }
 }
 
 // edit templates
 if (isset($_POST['tpl_form'])) {
+    $tab = '3';
+
     $tpl_id = array();
     foreach ($_POST['tpl_id'] as $id) {
         $tpl_id[] = $id;
@@ -397,20 +360,15 @@ if (isset($_POST['tpl_form'])) {
         ));
     }
     $msg_arr[] = _('Template successfully edited.');
-    $infoflag = true;
 }
-
 
 // INFO BOX
 if ($errflag) {
     $_SESSION['errors'] = $msg_arr;
-    header("location: ../ucp.php");
-    exit;
-} elseif ($infoflag) {
-    $_SESSION['infos'] = $msg_arr;
-    header("location: ../ucp.php");
+    header("location: ../ucp.php?tab=" . $tab);
     exit;
 } else {
-    header("location: ../ucp.php");
+    $_SESSION['infos'] = $msg_arr;
+    header("location: ../ucp.php?tab=" . $tab);
     exit;
 }

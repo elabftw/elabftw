@@ -197,9 +197,6 @@ $team = get_team_config();
         <label for='users_reset_password'><?php echo _('Reset user password:'); ?></label>
         <input id='users_reset_password' type='password' value='' name='new_password' />
         <br>
-        <label for='users_reset_cpassword'><?php echo _('Repeat new password:'); ?></label>
-        <input id='users_reset_cpassword' type='password' value='' name='confirm_new_password' />
-        <br>
         <br>
         <div class='center'>
         <button type='submit' class='button'><?php echo _('Edit this user'); ?></button>

@@ -10,11 +10,15 @@
  */
 namespace Elabftw\Elabftw;
 
+use \Exception;
+
 /**
  * Provide methods to login a user
  */
 class User
 {
+    /** the minimum password length */
+    const MIN_PASSWORD_LENGTH = 8;
     /** Used to store the PDO object */
     private $pdo;
 
@@ -75,6 +79,49 @@ class User
         }
         return false;
     }
+
+    /**
+     * Update the password for a user, or for ourself if none provided
+     *
+     * @param string $password The new password
+     * @param int|null $userid The user we want to update
+     * @throws Exception if invalid character length
+     * @return bool True if password is updated
+     */
+    public function updatePassword($password, $userid = null)
+    {
+        if (is_null($userid)) {
+            $userid = $_SESSION['userid'];
+        }
+        if (!$this->checkPasswordLength($password)) {
+            $error = sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH);
+            throw new Exception($error);
+        }
+        // Create a new salt
+        $salt = hash("sha512", uniqid(rand(), true));
+        $passwordHash = hash("sha512", $salt . $password);
+
+        $sql = "UPDATE users SET salt = :salt, password = :password WHERE userid = :userid";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':salt', $salt);
+        $req->bindParam(':password', $passwordHash);
+        $req->bindParam(':userid', $userid);
+        return $req->execute();
+    }
+
+    /**
+     * Check the number of character of a password
+     *
+     * @param string $password The password to check
+     * @return bool true if the length is enough
+     */
+    private function checkPasswordLength($password)
+    {
+        return strlen($password) >= self::MIN_PASSWORD_LENGTH;
+    }
+
+
+
 
     /**
      * Store userid and permissions in $_SESSION

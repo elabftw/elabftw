@@ -191,32 +191,12 @@ if (isset($_POST['userid'])) {
         $usergroup = '4';
     }
     // reset password
-    if (isset($_POST['new_password']) && !empty($_POST['new_password']) && isset($_POST['confirm_new_password'])) {
-        // check if passwords match
-        if ($_POST['new_password'] == $_POST['confirm_new_password']) {
-            // Good to go
-            // Create salt
-            $salt = hash("sha512", uniqid(rand(), true));
-            // Create hash
-            $passwordHash = hash("sha512", $salt . $_POST['new_password']);
-
-            $sql = "UPDATE users SET password = :password, salt = :salt WHERE userid = :userid";
-            $req = $pdo->prepare($sql);
-            $result = $req->execute(array(
-                'userid' => $userid,
-                'password' => $passwordHash,
-                'salt' => $salt
-            ));
-            if ($result) {
-                $msg_arr[] = _('Configuration updated successfully.');
-                $_SESSION['infos'] = $msg_arr;
-            } else {
-                $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#11", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-                $_SESSION['errors'] = $msg_arr;
-            }
-        } else { // passwords do not match
-            $msg_arr[] = _('The passwords do not match!');
-            $_SESSION['errors'] = $msg_arr;
+    if (isset($_POST['new_password']) && !empty($_POST['new_password'])) {
+        try {
+            $user->updatePassword($_POST['new_password'], $userid);
+        } catch (Exception $e) {
+            $msg_arr[] = $e->getMessage();
+            $errflag = true;
         }
     }
 
@@ -469,9 +449,8 @@ if ($errflag) {
     $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#" . $error, "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
     $_SESSION['errors'] = $msg_arr;
     header('Location: ../admin.php?tab=' . $tab);
-    exit;
+} else {
+    $msg_arr[] = _('Configuration updated successfully.');
+    $_SESSION['infos'] = $msg_arr;
+    header('Location: ../admin.php?tab=' . $tab);
 }
-
-$msg_arr[] = _('Configuration updated successfully.');
-$_SESSION['infos'] = $msg_arr;
-header('Location: ../admin.php?tab=' . $tab);

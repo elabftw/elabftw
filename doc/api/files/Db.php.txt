@@ -41,5 +41,18 @@ class Db
 
         return self::$connection;
     }
+
+    /**
+     * Make a simple query
+     *
+     * @param string $sql The SQL query
+     * @return boolean the return value of execute
+     */
+    public function q($sql)
+    {
+        $this->pdo = $this->connect();
+        $req = $this->pdo->prepare($sql);
+        return $req->execute();
+    }
 }
 

@@ -6,7 +6,8 @@ Changelog
 Version 1.1.5
 -------------
 
-* move doc to reStructeredText
+* add API documentation (in doc/api)
+* move doc to reStructeredText (in doc/_build/html)
 * fix 'Error getting latest version from server'
 * fix bug related to deletion of files upon user deletion
 * new registered users will get the server lang as lang

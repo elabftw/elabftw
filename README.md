@@ -4,6 +4,7 @@
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/quality-score.png?b=next)](https://scrutinizer-ci.com/g/elabftw/elabftw/?branch=next)
 [![Build Status](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/build.png?b=next)](https://scrutinizer-ci.com/g/elabftw/elabftw/build-status/next)
+[![Codeclimate](https://d3s6mut3hikguw.cloudfront.net/github/elabftw/elabftw/badges/gpa.svg)](https://codeclimate.com/github/elabftw/elabftw)
 
 # Description
 

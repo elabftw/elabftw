@@ -32,6 +32,7 @@ if (php_sapi_name() == 'cli' || empty($_SERVER['REMOTE_ADDR'])) {
 }
 
 require_once 'inc/common.php';
+$db = new \Elabftw\Elabftw\Db();
 
 // die if you are not sysadmin
 if ($_SESSION['is_sysadmin'] != 1) {
@@ -54,7 +55,7 @@ while ($show = $req->fetch()) {
 }
 
 if (!$table_is_here) {
-    q(
+    $db->q(
         "CREATE TABLE IF NOT EXISTS `items_revisions` (
         `id` int(10) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
         `item_id` int(10) unsigned NOT NULL,

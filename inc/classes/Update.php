@@ -14,7 +14,6 @@ use \Exception;
 use \RecursiveDirectoryIterator;
 use \RecursiveIteratorIterator;
 use \FilesystemIterator;
-use \Elabftw\Elabftw\Db;
 
 /**
  * Use this to check for latest version or update the database schema
@@ -30,6 +29,8 @@ class Update
 
     /** our favorite pdo object */
     private $pdo;
+    /** our db object */
+    private $db;
 
     /** this is used to check if we managed to get a version or not */
     public $success = false;
@@ -56,10 +57,10 @@ class Update
     /**
      * Create the pdo object
      */
-    public function __construct()
+    public function __construct(Db $db)
     {
-        $db = new Db();
-        $this->pdo = $db->connect();
+        $this->db = $db;
+        $this->pdo = $this->db->connect();
     }
 
     /**
@@ -170,12 +171,13 @@ class Update
      */
     public function runUpdateScript()
     {
-        // 20150728
-        $this->schema3();
         // 20150727
         $this->schema2();
+        // 20150728
+        $this->schema3();
 
         // place new schema functions above this comment
+        $this->updateSchema();
         $this->cleanTmp();
         $msg_arr = array();
         $msg_arr[] = "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)";
@@ -197,6 +199,18 @@ class Update
     }
 
     /**
+     * Update the schema value in config to latest because we did the update functions before
+     *
+     */
+    private function updateSchema()
+    {
+        $config_arr = array('schema' => self::REQUIRED_SCHEMA);
+        if (!update_config($config_arr)) {
+            throw new Exception('Failed at updating the schema!');
+        }
+    }
+
+    /**
      * Add a default value to deletable_xp.
      * Can't do the same for link_href and link_name because they are text
      *
@@ -204,11 +218,8 @@ class Update
      */
     private function schema2()
     {
-        $config_arr = array('schema' => 2);
-
         $sql = "ALTER TABLE teams CHANGE deletable_xp deletable_xp TINYINT(1) NOT NULL DEFAULT '1'";
-        $req = $this->pdo->prepare($sql);
-        if (!$req->execute() || !update_config($config_arr)) {
+        if (!$this->db->q($sql)) {
             throw new Exception('Problem updating!');
         }
     }
@@ -220,11 +231,8 @@ class Update
      */
     private function schema3()
     {
-        $config_arr = array('schema' => 3);
-
         $sql = "ALTER TABLE experiments_revisions CHANGE exp_id item_id INT(10) UNSIGNED NOT NULL";
-        $req = $this->pdo->prepare($sql);
-        if (!$req->execute() || !update_config($config_arr)) {
+        if (!$this->db->q($sql)) {
             throw new Exception('Problem updating!');
         }
     }

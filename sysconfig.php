@@ -39,7 +39,7 @@ $crypto = new \Elabftw\Elabftw\Crypto();
 
 $formKey = new \Elabftw\Elabftw\FormKey();
 
-$update = new \Elabftw\Elabftw\Update();
+$update = new \Elabftw\Elabftw\Update($db);
 
 try {
     $update->getUpdatesIni();

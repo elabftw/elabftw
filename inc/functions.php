@@ -651,25 +651,6 @@ function custom_die()
 }
 
 /**
- * Make a simple query
- *
- * @param string $sql The SQL query
- * @return boolean|string the return value of execute
- */
-function q($sql)
-{
-    global $pdo;
-    try {
-        $req = $pdo->prepare($sql);
-        $req->execute();
-        return true;
-    } catch (PDOException $e) {
-        dblog('Error', 'mysql', $e->getMessage());
-        return $e->getMessage();
-    }
-}
-
-/**
  * Used in sysconfig.php to update config values
  *
  * @param array $array (conf_name => conf_value)

@@ -226,11 +226,11 @@ $team = get_team_config();
         <!-- form key -->
         <?php echo $formKey->getFormkey(); ?>
         <label for='delete_user'><?php echo _('Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:'); ?></label>
-        <input type='email' name='delete_user' id='delete_user' />
+        <input type='email' name='delete_user' id='delete_user' required />
         <br>
         <br>
         <label for='delete_user_confpass'><?php echo _('Type your password:'); ?></label>
-        <input type='password' name='delete_user_confpass' id='delete_user_confpass' />
+        <input type='password' name='delete_user_confpass' id='delete_user_confpass' required />
     <div class='center'>
         <button type='submit' class='button submit'><?php echo _('Delete this user!'); ?></button>
     </div>

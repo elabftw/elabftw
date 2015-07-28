@@ -8,6 +8,7 @@ Version 1.1.5
 
 * move doc to reStructeredText
 * fix 'Error getting latest version from server'
+* fix bug related to deletion of files upon user deletion
 * new registered users will get the server lang as lang
 * tag list on search page is now filtered by selected user
 * add autocompletion to experiments (start with # to get item list) (fix #65)

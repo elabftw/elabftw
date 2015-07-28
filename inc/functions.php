@@ -678,15 +678,15 @@ function q($sql)
 function update_config($array)
 {
     global $pdo;
-    $result = false;
+    $result = array();
     foreach ($array as $name => $value) {
         $sql = "UPDATE config SET conf_value = :value WHERE conf_name = :name";
         $req = $pdo->prepare($sql);
         $req->bindParam(':value', $value);
         $req->bindParam(':name', $name);
-        $result = $req->execute();
+        $result[] = $req->execute();
     }
-    return (bool) $result;
+    return !in_array(0, $result);
 }
 
 /*

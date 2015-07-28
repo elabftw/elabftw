@@ -120,7 +120,7 @@ if (get_config('mail_from') === 'notconfigured@example.com') {
 
 <!-- TAB 2 -->
 <div class='divhandle' id='tab2div'>
-    <form method='post' action='app/admin-exec.php'>
+    <form method='post' action='app/sysconfig-exec.php'>
         <h3><?php echo _('Language'); ?></h3>
             <select id='lang' name="lang">
 <?php
@@ -137,16 +137,18 @@ foreach ($lang_array as $lang) {
 ?>
             </select>
         <h3><?php echo _('Under the hood'); ?></h3>
-        <label for='debug'><?php echo _('Activate debug mode:'); ?></label>
+        <!-- disabled because it does nothing atm
+        <label for='debug'><?php //echo _('Activate debug mode:'); ?></label>
         <select name='debug' id='debug'>
             <option value='1'<?php
-                if (get_config('debug') == 1) { echo " selected='selected'"; } ?>
-            ><?php echo _('Yes'); ?></option>
+                //if (get_config('debug') == 1) { echo " selected='selected'"; } ?>
+            ><?php //echo _('Yes'); ?></option>
             <option value='0'<?php
-                    if (get_config('debug') == 0) { echo " selected='selected'"; } ?>
-            ><?php echo _('No'); ?></option>
+                    //if (get_config('debug') == 0) { echo " selected='selected'"; } ?>
+            ><?php //echo _('No'); ?></option>
         </select>
-        <p class='smallgray'><?php echo _('Content of SESSION and COOKIES array will be displayed in the footer for admins.'); ?></p>
+        <p class='smallgray'><?php //echo _('Content of SESSION and COOKIES array will be displayed in the footer for admins.'); ?></p>
+        -->
         <label for='proxy'><?php echo _('Address of the proxy:'); ?></label>
         <input type='text' value='<?php echo get_config('proxy'); ?>' name='proxy' id='proxy' />
         <p class='smallgray'><?php echo _('If you are behind a firewall/proxy, enter the address here. Example : http://proxy.example.com:3128'); ?></p>
@@ -159,7 +161,7 @@ foreach ($lang_array as $lang) {
 <!-- TAB 3 -->
 <div class='divhandle' id='tab3div'>
     <h3><?php echo _('Timestamping configuration'); ?></h3>
-    <form method='post' action='app/admin-exec.php'>
+    <form method='post' action='app/sysconfig-exec.php'>
         <label for='stampshare'><?php echo _('The teams can use the credentials below to timestamp:'); ?></label>
         <select name='stampshare' id='stampshare'>
             <option value='1'<?php
@@ -194,7 +196,7 @@ foreach ($lang_array as $lang) {
 <!-- TAB 4 -->
 <div class='divhandle' id='tab4div'>
     <h3><?php echo _('Security settings'); ?></h3>
-    <form method='post' action='app/admin-exec.php'>
+    <form method='post' action='app/sysconfig-exec.php'>
     <label for='admin_validate'><?php echo _('Users need validation by admin after registration:'); ?></label>
         <select name='admin_validate' id='admin_validate'>
             <option value='1'<?php
@@ -243,7 +245,7 @@ switch ($mail_method) {
         $disable_smtp = true;
         $disable_php = true;
 } ?>
-    <form method='post' action='app/admin-exec.php'>
+    <form method='post' action='app/sysconfig-exec.php'>
         <p><?php echo _("Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mandrill.com (or gmail account and add the infos here."); ?></p>
         <p>
         <label for='mail_method'><?php echo _('Send e-mails via:'); ?></label>
@@ -358,11 +360,17 @@ function updateTeam(team_id) {
         type: "POST",
         url: "app/quicksave.php",
         data: {
-        id : team_id,
-        team_name : new_team_name,
+            id : team_id,
+            team_name : new_team_name,
         }
-    }).done(function() {
-        document.getElementById('button_'+team_id).value = '<?php echo _('Saved')?>';
+    }).done(function(returnValue) {
+        // we will get output on error
+        if (returnValue != '') {
+            document.getElementById('button_'+team_id).value = returnValue;
+            document.getElementById('button_'+team_id).style.color = 'red';
+        } else {
+            document.getElementById('button_'+team_id).value = '<?php echo _('Saved')?>';
+        }
         document.getElementById('button_'+team_id).disabled = true;
     });
 }

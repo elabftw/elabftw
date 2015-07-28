@@ -27,7 +27,7 @@
 require_once '../inc/common.php';
 
 // only admin can use this
-if ($_SESSION['is_admin'] != 1) {
+if ($_SESSION['is_admin'] != 1 || $_SERVER['REQUEST_METHOD'] != 'POST') {
     die(_('This section is out of your reach.'));
 }
 
@@ -37,12 +37,12 @@ $sysconfig = new \Elabftw\Elabftw\SysConfig($db);
 
 $msg_arr = array();
 $errflag = false;
-$tab = '';
+$tab = '1';
 $email = '';
 
 
 // VALIDATE USERS
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
+if (!empty($_POST['validate'])) {
     // sql to validate users
     $sql = "UPDATE users SET validated = 1 WHERE userid = :userid";
     $req = $pdo->prepare($sql);
@@ -103,153 +103,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['validate'])) {
     header('Location: ../admin.php');
     exit;
 }
+// END VALIDATE USERS
 
-
-
-// TIMESTAMP CONFIG
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['stampshare'])) {
-    $post_stamp = processTimestampPost();
-
-    // SQL
-    $updates = array(
-        'stampprovider' => $post_stamp['stampprovider'],
-        'stampcert' => $post_stamp['stampcert'],
-        'stampshare' => $post_stamp['stampshare'],
-        'stamplogin' => $post_stamp['stamplogin'],
-        'stamppass' => $post_stamp['stamppass']
-    );
-
-    if (update_config($updates)) {
-        $msg_arr[] = _('Configuration updated successfully.');
-        $_SESSION['infos'] = $msg_arr;
-        header('Location: ../sysconfig.php?tab=3');
-        exit;
-    } else {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#7", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: ../sysconfig.php?tab=3');
-        exit;
-    }
-} // END TIMESTAMP CONFIG
-
-// SECURITY
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['admin_validate'])) {
-
-    if ($_POST['admin_validate'] == 1) {
-        $admin_validate = 1;
-    } else {
-        $admin_validate = 0;
-    }
-    if (isset($_POST['login_tries'])) {
-        $login_tries = filter_var($_POST['login_tries'], FILTER_SANITIZE_STRING);
-    } else {
-        $login_tries = '3';
-    }
-    if (isset($_POST['ban_time'])) {
-        $ban_time = filter_var($_POST['ban_time'], FILTER_SANITIZE_STRING);
-    } else {
-        $ban_time = '30';
-    }
-
-    // SQL
-    $updates = array(
-        'admin_validate' => $admin_validate,
-        'login_tries' => $login_tries,
-        'ban_time' => $ban_time
-    );
-
-    if (update_config($updates)) {
-        $msg_arr[] = _('Configuration updated successfully.');
-        $_SESSION['infos'] = $msg_arr;
-        header('Location: ../sysconfig.php?tab=4');
-        exit;
-    } else {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#8", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: ../sysconfig.php?tab=4');
-        exit;
-    }
-} // END SECURITY
-
-// EMAIL
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['mail_method'])) {
-
-    // Whitelist for valid mailing methods
-    $valid_mail_methods = array('smtp', 'php', 'sendmail');
-
-    // Check if POST variable for mail_method is white-listed
-    if (in_array($_POST['mail_method'], $valid_mail_methods)) {
-        $mail_method = $_POST['mail_method'];
-    // if not, fall back to sendmail method
-    } else {
-        $mail_method = 'sendmail';
-    }
-
-    if (isset($_POST['sendmail_path'])) {
-        $sendmail_path = filter_var($_POST['sendmail_path'], FILTER_SANITIZE_STRING);
-    } else {
-        $sendmail_path = '';
-    }
-    if (isset($_POST['mail_from'])) {
-        $mail_from = filter_var($_POST['mail_from'], FILTER_SANITIZE_EMAIL);
-    } else {
-        $mail_from = '';
-    }
-    if (isset($_POST['smtp_address'])) {
-        $smtp_address = filter_var($_POST['smtp_address'], FILTER_SANITIZE_STRING);
-    } else {
-        $smtp_address = '';
-    }
-    if (isset($_POST['smtp_encryption'])) {
-        $smtp_encryption = filter_var($_POST['smtp_encryption'], FILTER_SANITIZE_STRING);
-    } else {
-        $smtp_encryption = '';
-    }
-    if (isset($_POST['smtp_port']) && is_pos_int($_POST['smtp_port'])) {
-        $smtp_port = $_POST['smtp_port'];
-    } else {
-        $smtp_port = '';
-    }
-    if (isset($_POST['smtp_username'])) {
-        $smtp_username = filter_var($_POST['smtp_username'], FILTER_SANITIZE_STRING);
-    } else {
-        $smtp_username = '';
-    }
-    if (isset($_POST['smtp_password'])) {
-        // the password is stored encrypted in the SQL
-        $smtp_password = $crypto->encrypt(filter_var($_POST['smtp_password'], FILTER_SANITIZE_STRING));
-    } else {
-        $smtp_password = '';
-    }
-
-    // SQL
-    $updates = array(
-        'smtp_address' => $smtp_address,
-        'smtp_encryption' => $smtp_encryption,
-        'smtp_port' => $smtp_port,
-        'smtp_username' => $smtp_username,
-        'smtp_password' => $smtp_password,
-        'mail_method' => $mail_method,
-        'mail_from' => $mail_from,
-        'sendmail_path' => $sendmail_path
-    );
-
-    if (update_config($updates)) {
-        $msg_arr[] = _('Configuration updated successfully.');
-        $_SESSION['infos'] = $msg_arr;
-        header('Location: ../sysconfig.php?tab=5');
-        exit;
-    } else {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#9", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: ../sysconfig.php?tab=5');
-        exit;
-    }
-
-} // END EMAIL
-
-// TEAM CONFIGURATION COMING FROM ../admin.php
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
+// TAB 1 : TEAM CONFIG
+if (isset($_POST['deletable_xp'])) {
+    $tab = '1';
 
     $post_stamp = processTimestampPost();
 
@@ -270,7 +128,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
         $link_href = 'doc/_build/html/';
     }
 
-    // SQL
     $sql = "UPDATE teams SET
         deletable_xp = :deletable_xp,
         link_name = :link_name,
@@ -290,33 +147,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deletable_xp'])) {
     $req->bindParam(':stampcert', $post_stamp['stampcert']);
     $req->bindParam(':team_id', $_SESSION['team_id']);
 
-    try {
-
-        $req->execute();
-
-    } catch (PDOException $e) {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#10", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-        $msg_arr[] = $e->getMessage();
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: ../admin.php');
-        exit;
+    if (!$req->execute()) {
+        $errflag = true;
+        $error = '10';
     }
-
-    $msg_arr[] = _('Configuration updated successfully.');
-    $_SESSION['infos'] = $msg_arr;
-    header('Location: ../admin.php');
-    exit;
 }
 
-// EDIT USER
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
+// TAB 2 : EDIT USERS
+if (isset($_POST['userid'])) {
+    $tab = '2';
+
     if (!is_pos_int($_POST['userid'])) {
-        $msg_arr[] = _("Userid is not valid.");
+        $error = _("Userid is not valid.");
         $errflag = true;
     }
     if ($errflag) {
         $_SESSION['errors'] = $msg_arr;
-        header("location: ../admin.php?tab=2");
+        header("location: ../admin.php?tab=" . $tab);
         exit;
     }
 
@@ -327,6 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
     $lastname = strtoupper(filter_var($_POST['lastname'], FILTER_SANITIZE_STRING));
     $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+
     if ($_POST['validated'] == 1) {
         $validated = 1;
     } else {
@@ -390,26 +238,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['userid'])) {
         'validated' => $validated,
         'userid' => $userid
     ));
-    if ($result) {
-        if (empty($msg_arr)) {
-            $msg_arr[] = _('Configuration updated successfully.');
-            $_SESSION['infos'] = $msg_arr;
-            header('Location: ../admin.php?tab=2');
-            exit;
-        } else {
-            header('Location: ../admin.php');
-            exit;
-        }
-    } else { //sql fail
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#12", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: ../admin.php?tab=2');
-        exit;
+    if (!$result) {
+        $errflag = true;
+        $error = '12';
     }
 }
 
-// STATUS
+// TAB 3 : STATUS
 if (isset($_POST['status_name']) && is_pos_int($_POST['status_id']) && !empty($_POST['status_name'])) {
+    $tab = '3';
+
     $status_id = $_POST['status_id'];
     $status_name = filter_var($_POST['status_name'], FILTER_SANITIZE_STRING);
     // we remove the # of the hexacode and sanitize string
@@ -428,7 +266,6 @@ if (isset($_POST['status_name']) && is_pos_int($_POST['status_id']) && !empty($_
         $status_is_default = false;
     }
 
-
     // now we update the status
     $sql = "UPDATE status SET
         name = :name,
@@ -442,53 +279,37 @@ if (isset($_POST['status_name']) && is_pos_int($_POST['status_id']) && !empty($_
         'is_default' => $status_is_default,
         'id' => $status_id
     ));
-    if ($result) {
-        $msg_arr[] = _('Configuration updated successfully.');
-        $_SESSION['infos'] = $msg_arr;
-        header('Location: ../admin.php?tab=3');
-        exit;
-    } else { //sql fail
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#13", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: ../admin.php?tab=3');
-        exit;
+    if (!$result) {
+        $errflag = true;
+        $error = '13';
     }
 }
-// add new status
-if (isset($_POST['new_status_name'])) {
-    if (!empty($_POST['new_status_name'])) {
-        $status_name = filter_var($_POST['new_status_name'], FILTER_SANITIZE_STRING);
-        // we remove the # of the hexacode and sanitize string
-        $status_color = filter_var(substr($_POST['new_status_color'], 1, 6), FILTER_SANITIZE_STRING);
-        $sql = "INSERT INTO status(name, color, team, is_default) VALUES(:name, :color, :team, :is_default)";
-        $req = $pdo->prepare($sql);
-        $result = $req->execute(array(
-            'name' => $status_name,
-            'color' => $status_color,
-            'team' => $_SESSION['team_id'],
-            'is_default' => 0
-        ));
-        if ($result) {
-            $msg_arr[] = _('Configuration updated successfully.');
-            $_SESSION['infos'] = $msg_arr;
-            header('Location: ../admin.php?tab=3');
-            exit;
-        } else { //sql fail
-            $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#14", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-            $_SESSION['errors'] = $msg_arr;
-            header('Location: ../admin.php?tab=3');
-            exit;
-        }
-    } else {
-        $msg_arr[] = _('A mandatory field is missing!');
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: ../admin.php?tab=3');
-        exit;
+
+// ADD NEW STATUS
+if (isset($_POST['new_status_name']) && !empty($_POST['new_status_name'])) {
+    $tab = '3';
+
+    $status_name = filter_var($_POST['new_status_name'], FILTER_SANITIZE_STRING);
+    // we remove the # of the hexacode and sanitize string
+    $status_color = filter_var(substr($_POST['new_status_color'], 1, 6), FILTER_SANITIZE_STRING);
+    $sql = "INSERT INTO status(name, color, team, is_default) VALUES(:name, :color, :team, :is_default)";
+    $req = $pdo->prepare($sql);
+    $result = $req->execute(array(
+        'name' => $status_name,
+        'color' => $status_color,
+        'team' => $_SESSION['team_id'],
+        'is_default' => 0
+    ));
+    if (!$result) {
+        $errflag = true;
+        $error = '14';
     }
 }
 
 // ITEMS TYPES
 if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
+    $tab = '4';
+
     $item_type_id = $_POST['item_type_id'];
     $item_type_name = filter_var($_POST['item_type_name'], FILTER_SANITIZE_STRING);
     // we remove the # of the hexacode and sanitize string
@@ -508,26 +329,19 @@ if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
         'template' => $item_type_template,
         'id' => $item_type_id
     ));
-    if ($result) {
-        $msg_arr[] = _('Configuration updated successfully.');
-        $_SESSION['infos'] = $msg_arr;
-        header('Location: ../admin.php?tab=4');
-        exit;
-    } else { //sql fail
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#14", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: ../admin.php?tab=4');
-        exit;
+    if (!$result) {
+        $errflag = true;
+        $error = '14';
     }
 }
+
 // ADD NEW ITEM TYPE
 if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
+    $tab = '4';
+
     $item_type_name = filter_var($_POST['new_item_type_name'], FILTER_SANITIZE_STRING);
     if (strlen($item_type_name) < 1) {
-        $msg_arr[] = _('You need to put a title!');
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: ../admin.php?tab=4');
-        exit;
+        $item_type_name = 'Unnamed';
     }
 
     // we remove the # of the hexacode and sanitize string
@@ -541,22 +355,14 @@ if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
         'bgcolor' => $item_type_bgcolor,
         'template' => $item_type_template
     ));
-    if ($result) {
-        $msg_arr[] = _('Configuration updated successfully.');
-        $_SESSION['infos'] = $msg_arr;
-        header('Location: ../admin.php?tab=4');
-        exit;
-    } else { //sql fail
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#15", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: ../admin.php?tab=4');
-        exit;
+    if (!$result) {
+        $errflag = true;
+        $error = '15';
     }
 }
 
 // DELETE USER (we receive a formkey from this form)
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
+if (isset($_POST['delete_user']) && isset($_POST['delete_user_confpass'])) {
     // Check the form_key
     if (!isset($_POST['formkey']) || !$formKey->validate()) {
         // form key is invalid
@@ -571,28 +377,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
         $errflag = true;
     }
     // check that we got the good password
-    if (isset($_POST['delete_user_confpass']) && !empty($_POST['delete_user_confpass'])) {
-        if (!$user->checkCredentials($_SESSION['username'], filter_var($_POST['delete_user_confpass'], FILTER_SANITIZE_STRING))) {
-            /*
-        // get the salt from db
-        $sql = "SELECT salt, password FROM users WHERE userid = :userid";
-        $req = $pdo->prepare($sql);
-        $req->bindParam(':userid', $_SESSION['userid']);
-        $req->execute();
-        $pass_infos = $req->fetch();
-
-        // check if the given password is good
-        $password_hash = hash("sha512", $pass_infos['salt'] . $_POST['delete_user_confpass']);
-        if ($password_hash != $pass_infos['password']) {
-             */
-            $msg_arr[] = _("Wrong password!");
-            $errflag = true;
-        }
-
-    } else {
-        $msg_arr[] = _('You need to put a password!');
+    if (!$user->checkCredentials($_SESSION['username'], filter_var($_POST['delete_user_confpass'], FILTER_SANITIZE_STRING))) {
+        $msg_arr[] = _("Wrong password!");
         $errflag = true;
     }
+
+
+    // here we store all the results of the different sql requests
+    $result = array();
     // look which user has this email address and make sure it is in the same team as admin
     $sql = "SELECT userid FROM users WHERE email LIKE :email AND team = :team";
     $req = $pdo->prepare($sql);
@@ -607,7 +399,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
         $errflag = true;
     }
 
-
     // Check for errors and redirect if there is one
     if ($errflag) {
         $_SESSION['errors'] = $msg_arr;
@@ -620,38 +411,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_user'])) {
     $sql = "DELETE FROM users WHERE userid = :userid";
     $req = $pdo->prepare($sql);
     $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $req->execute();
+    $result[] = $req->execute();
     $sql = "DELETE FROM experiments_tags WHERE userid = :userid";
     $req = $pdo->prepare($sql);
     $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $req->execute();
+    $result[] = $req->execute();
     $sql = "DELETE FROM experiments WHERE userid = :userid";
     $req = $pdo->prepare($sql);
     $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $req->execute();
+    $result[] = $req->execute();
     // get all filenames
     $sql = "SELECT long_name FROM uploads WHERE userid = :userid AND type = :type";
     $req = $pdo->prepare($sql);
     $req->execute(array(
         'userid' => $userid,
-        'type' => 'exp'
+        'type' => 'experiments'
     ));
     while ($uploads = $req->fetch()) {
         // Delete file
-        $filepath = 'uploads/' . $uploads['long_name'];
-        unlink($filepath);
+        $filepath = ELAB_ROOT . 'uploads/' . $uploads['long_name'];
+        $result[] = unlink($filepath);
     }
     $sql = "DELETE FROM uploads WHERE userid = :userid";
     $req = $pdo->prepare($sql);
     $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $req->execute();
-    $msg_arr[] = _('Everything was purged successfully.');
-    $_SESSION['infos'] = $msg_arr;
-    header('Location: ../admin.php?tab=2');
-    exit;
+    $result[] = $req->execute();
+    if (in_array(0, $result)) {
+        $errflag = true;
+        $error = '17';
+    } else {
+        $msg_arr[] = _('Everything was purged successfully.');
+        $_SESSION['infos'] = $msg_arr;
+        header('Location: ../admin.php?tab=' . $tab);
+        exit;
+    }
 }
 // DEFAULT EXPERIMENT TEMPLATE
 if (isset($_POST['default_exp_tpl'])) {
+    $tab = '5';
+
     $default_exp_tpl = check_body($_POST['default_exp_tpl']);
     $sql = "UPDATE experiments_templates SET
         name = 'default',
@@ -659,19 +457,21 @@ if (isset($_POST['default_exp_tpl'])) {
         body = :body
         WHERE userid = 0 AND team = :team";
     $req = $pdo->prepare($sql);
-    try {
-        $req->execute(array(
-        'body' => $default_exp_tpl,
-        'team' => $_SESSION['team_id']
-        ));
-    } catch (PDOException $e) {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#16", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-        $_SESSION['errors'] = $msg_arr;
-        header('Location: ../admin.php?tab=5');
-        exit;
+    $req->bindParam(':team', $_SESSION['team_id']);
+    $req->bindParam(':body', $default_exp_tpl);
+    if (!$req->execute()) {
+        $errflag = true;
+        $error = '16';
     }
-    $msg_arr[] = _('Configuration updated successfully.');
-    $_SESSION['infos'] = $msg_arr;
-    header('Location: ../admin.php?tab=5');
+}
+// REDIRECT USER
+if ($errflag) {
+    $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#" . $error, "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+    $_SESSION['errors'] = $msg_arr;
+    header('Location: ../admin.php?tab=' . $tab);
     exit;
 }
+
+$msg_arr[] = _('Configuration updated successfully.');
+$_SESSION['infos'] = $msg_arr;
+header('Location: ../admin.php?tab=' . $tab);

@@ -25,7 +25,6 @@ class SysConfig
      */
     public function __construct(Db $db)
     {
-        $db = new Db();
         $this->pdo = $db->connect();
     }
 
@@ -80,5 +79,25 @@ class SysConfig
         $result4 = $req->execute();
 
         return $result1 && $result2 && $result3 && $result4;
+    }
+
+    /**
+     * Edit the name of a team, called by ajax in app/quicksave.php
+     *
+     * @param int $id The id of the team
+     * @param string $name The new name we want
+     * @return bool true on success
+     */
+    public function editTeam($id, $name)
+    {
+        $name = filter_var($name, FILTER_SANITIZE_STRING);
+        $sql = "UPDATE teams
+            SET team_name = :name
+            WHERE team_id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':name', $name);
+        $req->bindParam(':id', $id);
+        return $req->execute();
+
     }
 }

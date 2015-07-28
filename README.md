@@ -5,6 +5,7 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/quality-score.png?b=next)](https://scrutinizer-ci.com/g/elabftw/elabftw/?branch=next)
 [![Build Status](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/build.png?b=next)](https://scrutinizer-ci.com/g/elabftw/elabftw/build-status/next)
 [![Codeclimate](https://d3s6mut3hikguw.cloudfront.net/github/elabftw/elabftw/badges/gpa.svg)](https://codeclimate.com/github/elabftw/elabftw)
+[![Codacy Badge](https://www.codacy.com/project/badge/9942fbe6c6f14f488be69e51e93a1c10)](https://www.codacy.com/app/elabftw/elabftw)
 
 # Description
 

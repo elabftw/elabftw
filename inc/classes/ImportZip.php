@@ -50,7 +50,7 @@ class ImportZip
      *
      * @param string $zipfile Path to temporary name of uploaded zip
      * @param int itemType the type of item we want in the end
-     * @param object $db An instance of the Db class
+     * @param Db $db An instance of the Db class
      */
     public function __construct($zipfile, $itemType, Db $db)
     {

@@ -42,7 +42,7 @@ class MakeCsv
      *
      * @param string $idList 1+4+5+2
      * @param string $type 'experiments' or 'items'
-     * @param object $db An instance of db
+     * @param Db $db An instance of the Db class
      */
     public function __construct($idList, $type, $db)
     {

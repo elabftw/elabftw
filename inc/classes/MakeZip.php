@@ -59,7 +59,7 @@ class MakeZip
      *
      * @param string $idList 1+3+5+8
      * @param string $type 'experiments' or 'items'
-     * @param object $db An instance of Db
+     * @param Db $db An instance of the Db class
      * @throws Exception if we don't have ZipArchive extension
      */
     public function __construct($idList, $type, Db $db)

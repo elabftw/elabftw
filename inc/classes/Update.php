@@ -56,6 +56,8 @@ class Update
 
     /**
      * Create the pdo object
+     *
+     * @param Db $db An instance of Db
      */
     public function __construct(Db $db)
     {

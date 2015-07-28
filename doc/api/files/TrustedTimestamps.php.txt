@@ -57,7 +57,7 @@ class TrustedTimestamps
      * Give me an experiment id and a db and I make good pdf for you
      *
      * @param $id The id of the experiment
-     * @param $db an instance of Db
+     * @param Db $db An instance of the Db class
      */
     public function __construct($id, Db $db)
     {

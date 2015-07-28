@@ -49,7 +49,7 @@ class MakePdf
      *
      * @param int $id The id of the item we want
      * @param string $type 'experiments' or 'items'
-     * @param object $db An instance of Db
+     * @param Db $db An instance of Db
      * @param string $path Path to where we want the pdf written
      */
     public function __construct($id, $type, Db $db, $path = null)

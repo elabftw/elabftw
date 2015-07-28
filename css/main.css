@@ -130,7 +130,7 @@ input, select {
 
 
 /* GENERAL */
-img.bot5px {
+.bot5px {
     margin-bottom: 5px;
 }
 .inline {
@@ -242,13 +242,13 @@ nav .navleft a:hover {
 }
 
 /* search bar in head.php ; nav */
-form#big_search {
+#big_search {
     width:25%;
     float:right;
     margin-right: 30px;
     text-align:right;
 }
-form#big_search input {
+#big_search input {
     background:#555 url(../img/search.png) no-repeat scroll right 10px center;
     border: none;
     border-radius: 20px;
@@ -376,7 +376,7 @@ menu.border a:hover {
 
 /* REGISTER */
 /* the team name can be long and destroy the view */
-form#regform select {
+#regform select {
     max-width: 240px;
 }
 
@@ -654,9 +654,6 @@ a[class*='trigger_']:hover {
     font-size:  160%;
     margin: 0 20px 0 0;
     padding-left: 20px;
-}
-p.title {
-  /*  width:100%; */
 }
 
 .title_view {

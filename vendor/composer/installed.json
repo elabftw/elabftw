@@ -4090,17 +4090,17 @@
     },
     {
         "name": "phpdocumentor/phpdocumentor",
-        "version": "v2.8.4",
-        "version_normalized": "2.8.4.0",
+        "version": "v2.8.5",
+        "version_normalized": "2.8.5.0",
         "source": {
             "type": "git",
             "url": "https://github.com/phpDocumentor/phpDocumentor2.git",
-            "reference": "6d8f4c6381283dd2ae21efae30080adde9bfb1ba"
+            "reference": "adfb4affa80e8cc0134616f2d2d264dd25c243eb"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/phpDocumentor/phpDocumentor2/zipball/6d8f4c6381283dd2ae21efae30080adde9bfb1ba",
-            "reference": "6d8f4c6381283dd2ae21efae30080adde9bfb1ba",
+            "url": "https://api.github.com/repos/phpDocumentor/phpDocumentor2/zipball/adfb4affa80e8cc0134616f2d2d264dd25c243eb",
+            "reference": "adfb4affa80e8cc0134616f2d2d264dd25c243eb",
             "shasum": ""
         },
         "require": {
@@ -4142,7 +4142,7 @@
             "ext-twig": "Enabling the twig extension improves the generation of twig based templates.",
             "ext-xslcache": "Enabling the XSLCache extension improves the generation of xml based templates."
         },
-        "time": "2015-07-03 10:23:02",
+        "time": "2015-07-28 06:36:40",
         "bin": [
             "bin/phpdoc.php",
             "bin/phpdoc"

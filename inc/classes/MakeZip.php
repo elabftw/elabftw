@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use \Elabftw\Elabftw\MakePdf;
+use \Elabftw\Elabftw\MakeCsv;
 use \ZipArchive;
 use \Exception;
 
@@ -19,8 +20,6 @@ use \Exception;
  */
 class MakeZip
 {
-    /** will be given to makepdf */
-    private $db;
     /** our pdo object */
     private $pdo;
     /** the zip object */
@@ -59,13 +58,11 @@ class MakeZip
      *
      * @param string $idList 1+3+5+8
      * @param string $type 'experiments' or 'items'
-     * @param Db $db An instance of the Db class
      * @throws Exception if we don't have ZipArchive extension
      */
-    public function __construct($idList, $type, Db $db)
+    public function __construct($idList, $type)
     {
-        $this->db = $db;
-        $this->pdo = $db->connect();
+        $this->pdo = Db::getConnection();
 
         // we check first if the zip extension is here
         if (!class_exists('ZipArchive')) {
@@ -244,7 +241,7 @@ class MakeZip
     private function addPdf($id)
     {
         $pdfPath = ELAB_ROOT . 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . '.pdf';
-        $pdf = new \Elabftw\Elabftw\MakePdf($id, $this->table, $this->db, $pdfPath);
+        $pdf = new \Elabftw\Elabftw\MakePdf($id, $this->table, $pdfPath);
         $this->zip->addFile($pdfPath, $this->folder . '/' . $pdf->getFileName());
         $this->filesToDelete[] = $pdfPath;
     }
@@ -257,7 +254,7 @@ class MakeZip
     private function addCsv($id)
     {
         // add CSV file to archive
-        $csv = new \Elabftw\Elabftw\MakeCsv($id, $this->table, $this->db);
+        $csv = new \Elabftw\Elabftw\MakeCsv($id, $this->table);
         $this->zip->addFile($csv->filePath, $this->folder . "/" . $this->cleanTitle . ".csv");
         $this->filesToDelete[] = $csv->filePath;
     }

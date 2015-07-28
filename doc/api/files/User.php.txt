@@ -34,9 +34,9 @@ class User
      *
      * @param object $db An instance of the Db class
      */
-    public function __construct(Db $db)
+    public function __construct()
     {
-        $this->pdo = $db->connect();
+        $this->pdo = Db::getConnection();
     }
 
     /**

@@ -50,12 +50,11 @@ class ImportZip
      *
      * @param string $zipfile Path to temporary name of uploaded zip
      * @param int itemType the type of item we want in the end
-     * @param Db $db An instance of the Db class
      */
-    public function __construct($zipfile, $itemType, Db $db)
+    public function __construct($zipfile, $itemType)
     {
 
-        $this->pdo = $db->connect();
+        $this->pdo = Db::getConnection();
 
         $this->fileTmpName = $zipfile;
         $this->itemType = $itemType;

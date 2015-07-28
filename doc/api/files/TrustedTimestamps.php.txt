@@ -23,8 +23,6 @@ use \Elabftw\Elabftw\Update;
  */
 class TrustedTimestamps
 {
-    /** will be given to makepdf */
-    private $db;
     /** our database connection */
     private $pdo;
 
@@ -57,12 +55,10 @@ class TrustedTimestamps
      * Give me an experiment id and a db and I make good pdf for you
      *
      * @param $id The id of the experiment
-     * @param Db $db An instance of the Db class
      */
-    public function __construct($id, Db $db)
+    public function __construct($id)
     {
-        $this->db = $db;
-        $this->pdo = $db->connect();
+        $this->pdo = Db::getConnection();
 
         // will be used in sqlUpdate()
         $this->id = $id;
@@ -93,7 +89,7 @@ class TrustedTimestamps
         $this->pdfFileName = hash("sha512", uniqid(rand(), true)) . ".pdf";
         $this->pdfPath = ELAB_ROOT . 'uploads/' . $this->pdfFileName;
         try {
-            new \Elabftw\Elabftw\MakePdf($this->id, 'experiments', $this->db, $this->pdfPath);
+            new \Elabftw\Elabftw\MakePdf($this->id, 'experiments', $this->pdfPath);
         } catch (Exception $e) {
             throw new Exception('Failed at making the pdf : ' . $e->getMessage());
         }

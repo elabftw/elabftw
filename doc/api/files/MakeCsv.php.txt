@@ -42,11 +42,10 @@ class MakeCsv
      *
      * @param string $idList 1+4+5+2
      * @param string $type 'experiments' or 'items'
-     * @param Db $db An instance of the Db class
      */
-    public function __construct($idList, $type, $db)
+    public function __construct($idList, $type)
     {
-        $this->pdo = $db->connect();
+        $this->pdo = Db::getConnection();
 
         // assign and check id
         $this->idList = $idList;

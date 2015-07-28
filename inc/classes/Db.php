@@ -14,32 +14,49 @@ use \PDO;
 use \Exception;
 
 /**
- * Connect to the database
+ * Connect to the database with a singleton class
  */
 class Db
 {
     /** our connection */
-    protected static $connection;
+    private static $connection = null;
+    /** store the single instance of the class */
+    private static $instance = null;
 
     /**
-     * Connect to the MySQL database
+     * Construct of a singleton is private
      *
-     * @return object $connection The PDO object
+     * @throws Exception If it cannot connect to the database
      */
-    public function connect()
+    private function __construct()
     {
-        if (!isset(self::$connection)) {
+        try {
             $pdo_options = array();
             $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
             $pdo_options[PDO::ATTR_PERSISTENT] = true;
-            self::$connection = new \PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
+            $this->connection = new \PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    /**
+     * Return the instance of the class
+     *
+     * @return object $instance The instance of the class
+     */
+    public function getConnection()
+    {
+        if (is_null(self::$instance)) {
+            self::$instance = new Db();
         }
 
-        if (self::$connection === false) {
-            throw new Exception('Cannot connect to database!');
-        }
+        return self::$instance;
+    }
 
-        return self::$connection;
+    public function prepare($sql)
+    {
+        return $this->connection->prepare($sql);
     }
 
     /**
@@ -50,8 +67,18 @@ class Db
      */
     public function q($sql)
     {
-        $pdo = $this->connect();
-        $req = $pdo->prepare($sql);
-        return $req->execute();
+        return $this->connection->query($sql);
+    }
+
+    /**
+     * Disallow cloning the class
+     */
+    private function __clone()
+    {
+        return false;
+    }
+    public function __wakeup()
+    {
+        return false;
     }
 }

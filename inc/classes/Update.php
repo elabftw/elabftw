@@ -29,8 +29,6 @@ class Update
 
     /** our favorite pdo object */
     private $pdo;
-    /** our db object */
-    private $db;
 
     /** this is used to check if we managed to get a version or not */
     public $success = false;
@@ -57,12 +55,10 @@ class Update
     /**
      * Create the pdo object
      *
-     * @param Db $db An instance of Db
      */
-    public function __construct(Db $db)
+    public function __construct()
     {
-        $this->db = $db;
-        $this->pdo = $this->db->connect();
+        $this->pdo = Db::getConnection();
     }
 
     /**
@@ -221,7 +217,7 @@ class Update
     private function schema2()
     {
         $sql = "ALTER TABLE teams CHANGE deletable_xp deletable_xp TINYINT(1) NOT NULL DEFAULT '1'";
-        if (!$this->db->q($sql)) {
+        if (!$this->pdo->q($sql)) {
             throw new Exception('Problem updating!');
         }
     }
@@ -234,7 +230,7 @@ class Update
     private function schema3()
     {
         $sql = "ALTER TABLE experiments_revisions CHANGE exp_id item_id INT(10) UNSIGNED NOT NULL";
-        if (!$this->db->q($sql)) {
+        if (!$this->pdo->q($sql)) {
             throw new Exception('Problem updating!');
         }
     }

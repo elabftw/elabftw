@@ -52,8 +52,7 @@ require_once ELAB_ROOT . 'vendor/autoload.php';
 
 // SQL CONNECT
 try {
-    $db = new \Elabftw\Elabftw\Db();
-    $pdo = $db->connect();
+    $pdo = \Elabftw\Elabftw\Db::getConnection();
 } catch (Exception $e) {
     die('Error connecting to the database : ' . $e->getMessage());
 }
@@ -64,7 +63,7 @@ require_once ELAB_ROOT . 'inc/functions.php';
 require_once ELAB_ROOT . 'inc/locale.php';
 
 // run the update script if we have the wrong schema version
-$update = new \Elabftw\Elabftw\Update($db);
+$update = new \Elabftw\Elabftw\Update();
 
 if (get_config('schema') < $update::REQUIRED_SCHEMA) {
     try {
@@ -74,7 +73,7 @@ if (get_config('schema') < $update::REQUIRED_SCHEMA) {
     }
 }
 
-$user = new \Elabftw\Elabftw\User($db);
+$user = new \Elabftw\Elabftw\User();
 
 // pages where you don't need to be logged in
 $nologin_arr = array('login.php', 'login-exec.php', 'register.php', 'register-exec.php', 'change-pass.php', 'app/reset.php');

@@ -19,13 +19,12 @@ class Create
     private $pdo;
 
     /**
-     * Just give me the Db object and I'm good to go
+     * Constructor
      *
-     * @param Db $db An instance of the Db class
      */
-    public function __construct(Db $db)
+    public function __construct()
     {
-        $this->pdo = $db->connect();
+        $this->pdo = Db::getConnection();
     }
 
     /**

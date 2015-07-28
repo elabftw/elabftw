@@ -31,7 +31,7 @@ if ($_SESSION['is_sysadmin'] != 1 || $_SERVER['REQUEST_METHOD'] != 'POST') {
     die(_('This section is out of your reach.'));
 }
 
-$sysconfig = new \Elabftw\Elabftw\SysConfig($db);
+$sysconfig = new \Elabftw\Elabftw\SysConfig();
 $crypto = new \Elabftw\Elabftw\Crypto();
 
 $msg_arr = array();

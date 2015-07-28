@@ -35,7 +35,7 @@ $results_arr = array();
 $search_type = '';
 ?>
 
-<!-- Advanced Search page begin -->
+<!-- Search page begin -->
 <menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' class='bot5px' alt='' /> <?php echo _('Back to experiments listing'); ?></a></menu>
 <section class='searchform box'>
     <form name="search" method="get" action="search.php">
@@ -276,11 +276,10 @@ $search_type = '';
 
 
 <?php
-/*
+/**
  * Here the search begins
+ * If there is a search, there will be get parameters, so this is our main switch
  */
-
-// If there is a search, there will be get parameters, so this is our main switch
 if (isset($_GET)) {
     // assign variables from get
     // TITLE

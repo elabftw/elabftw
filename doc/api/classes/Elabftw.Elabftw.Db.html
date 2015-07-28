@@ -114,7 +114,7 @@
                         <ul class="dropdown-menu">
                             <li>
                                 <a href="../reports/errors.html">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">1</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">4</span>
                                 </a>
                             </li>
                             <li>
@@ -144,28 +144,28 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-254558940"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-434701782"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-254558940" class="accordion-body collapse in">
+            <div id="namespace-434701782" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1121170715"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1568270813"></a>
                                 <a href="../namespaces/Elabftw.html" style="margin-left: 30px; padding-left: 0">Elabftw</a>
             </div>
-            <div id="namespace-1121170715" class="accordion-body collapse ">
+            <div id="namespace-1568270813" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1146874676"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-191533447"></a>
                                 <a href="../namespaces/Elabftw.Elabftw.html" style="margin-left: 30px; padding-left: 0">Elabftw</a>
             </div>
-            <div id="namespace-1146874676" class="accordion-body collapse ">
+            <div id="namespace-191533447" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                     
@@ -217,7 +217,7 @@
                     <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
 
                     <h1><small>\Elabftw\Elabftw</small>Db</h1>
-                    <p><em>Connect to the database</em></p>
+                    <p><em>Connect to the database with a singleton class</em></p>
                     
                     
                                         
@@ -236,8 +236,10 @@
                         </section>
                         <section class="row-fluid public">
                             <section class="span4">
-                                                                    <a href="../classes/Elabftw.Elabftw.Db.html#method_connect" class="">connect()</a><br />
+                                                                    <a href="../classes/Elabftw.Elabftw.Db.html#method_getConnection" class="">getConnection()</a><br />
+                                                                    <a href="../classes/Elabftw.Elabftw.Db.html#method_prepare" class="">prepare()</a><br />
                                                                     <a href="../classes/Elabftw.Elabftw.Db.html#method_q" class="">q()</a><br />
+                                                                    <a href="../classes/Elabftw.Elabftw.Db.html#method___wakeup" class="">__wakeup()</a><br />
                                                             </section>
                             <section class="span4">
                                                                     <em>No public properties found</em>
@@ -251,7 +253,7 @@
                                                                     <em>No protected methods found</em>
                                                             </section>
                             <section class="span4">
-                                                                    <a href="../classes/Elabftw.Elabftw.Db.html#property_connection" class="">$connection</a><br />
+                                                                    <em>No protected properties found</em>
                                                             </section>
                             <section class="span4">
                                 <em>N/A</em>
@@ -259,10 +261,12 @@
                         </section>
                         <section class="row-fluid private">
                             <section class="span4">
-                                                                    <em>No private methods found</em>
+                                                                    <a href="../classes/Elabftw.Elabftw.Db.html#method___construct" class="">__construct()</a><br />
+                                                                    <a href="../classes/Elabftw.Elabftw.Db.html#method___clone" class="">__clone()</a><br />
                                                             </section>
                             <section class="span4">
-                                                                    <em>No private properties found</em>
+                                                                    <a href="../classes/Elabftw.Elabftw.Db.html#property_connection" class="">$connection</a><br />
+                                                                    <a href="../classes/Elabftw.Elabftw.Db.html#property_instance" class="">$instance</a><br />
                                                             </section>
                             <section class="span4">
                                 <em>N/A</em>
@@ -304,11 +308,11 @@
                 <aside class="span4 detailsbar"></aside>
             </div>
 
-                                                    <div class="row-fluid">
+                                                                    <div class="row-fluid">
         <div class="span8 content class">
             <a id="property_connection" name="property_connection" class="anchor"></a>
             <article class="property">
-                <h3 class="protected ">$connection</h3>
+                <h3 class="private ">$connection</h3>
                 <pre class="signature">$connection : </pre>
                 <p><em>our connection</em></p>
                 
@@ -328,7 +332,31 @@
         </aside>
     </div>
 
-                                            
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_instance" name="property_instance" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$instance</h3>
+                <pre class="signature">$instance : </pre>
+                <p><em>store the single instance of the class</em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                            
                                     <a id="methods" name="methods"></a>
             <div class="row-fluid">
                 <div class="span8 content class"><h2>Methods</h2></div>
@@ -337,20 +365,54 @@
 
                                     <div class="row-fluid">
         <div class="span8 content class">
-            <a id="method_connect" name="method_connect" class="anchor"></a>
+            <a id="method_getConnection" name="method_getConnection" class="anchor"></a>
             <article class="method">
-                <h3 class="public ">connect()</h3>
+                <h3 class="public ">getConnection()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">connect() : object</pre>
-                <p><em>Connect to the MySQL database</em></p>
+                <pre class="signature" style="margin-right: 54px;">getConnection() : object</pre>
+                <p><em>Return the instance of the class</em></p>
                 
 
                 
                 
                                     <h4>Returns</h4>
                     object
-                                            &mdash; <p>$connection The PDO object</p>
+                                            &mdash; <p>$instance The instance of the class</p>
                                     				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_prepare" name="method_prepare" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">prepare()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">prepare(  <span class="argument">$sql</span>) </pre>
+                <p><em></em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$sql </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
                             </article>
         </div>
         <aside class="span4 detailsbar">
@@ -401,7 +463,90 @@
         </aside>
     </div>
 
-                                                                    </div>
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___wakeup" name="method___wakeup" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__wakeup()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__wakeup() </pre>
+                <p><em></em></p>
+                
+
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___construct" name="method___construct" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">__construct()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__construct() </pre>
+                <p><em>Construct of a singleton is private</em></p>
+                
+
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd><p>If it cannot connect to the database</p></dd>
+                                                                    </dl>
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___clone" name="method___clone" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">__clone()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__clone() </pre>
+                <p><em>Disallow cloning the class</em></p>
+                
+
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    </div>
     </section>
 
     <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
@@ -451,7 +596,7 @@
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on July 28th, 2015 at 20:25.
+                    on July 28th, 2015 at 23:49.
                 </section>
             </section>
         </section>

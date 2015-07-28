@@ -141,13 +141,7 @@ while ($tags = $tagreq->fetch()) {
 <br>
 <h4><?php echo _('Title'); ?></h4><br>
 <input id='title_input' name='title' rows="1" value="
-<?php
-if (empty($_SESSION['errors'])) {
-    echo stripslashes($experiment['title']);
-} else {
-    echo stripslashes($_SESSION['new_title']);
-}
-?>
+<?php echo stripslashes($experiment['title']); ?>
 " required />
 
 <br>
@@ -201,16 +195,16 @@ if (empty($_SESSION['errors'])) {
 <span class='align_right'>
 <?php
 // get the list of revisions
-$sql = "SELECT COUNT(id) FROM experiments_revisions WHERE exp_id = :exp_id AND userid = :userid ORDER BY savedate DESC";
+$sql = "SELECT COUNT(id) FROM experiments_revisions WHERE item_id = :item_id AND userid = :userid ORDER BY savedate DESC";
 $req = $pdo->prepare($sql);
 $req->execute(array(
-    'exp_id' => $id,
+    'item_id' => $id,
     'userid' => $_SESSION['userid']
 ));
 $rev_count = $req->fetch();
 $count = intval($rev_count[0]);
 if ($count > 0) {
-    echo $count . " " . ngettext('revision available.', 'revisions available.', $count) . " <a href='revision.php?exp_id=" . $id . "'>" . _('Show history') . "</a>";
+    echo $count . " " . ngettext('revision available.', 'revisions available.', $count) . " <a href='revision.php?type=experiments&item_id=" . $id . "'>" . _('Show history') . "</a>";
 }
 ?>
 </span>

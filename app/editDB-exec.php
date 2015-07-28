@@ -46,51 +46,43 @@ $title = check_title($_POST['title']);
 $date = check_date($_POST['date']);
 $body = check_body($_POST['body']);
 
-// Store stuff in Session to get it back if error input
-$_SESSION['new_title'] = $title;
-$_SESSION['new_date'] = $date;
+if (!$errflag) {
+    // SQL for editDB
+        $sql = "UPDATE items 
+            SET title = :title, 
+            date = :date, 
+            body = :body, 
+            userid = :userid 
+            WHERE id = :id";
+    $req = $pdo->prepare($sql);
+    $result1 = $req->execute(array(
+        'title' => $title,
+        'date' => $date,
+        'body' => $body,
+        'userid' => $_SESSION['userid'],
+        'id' => $id
+    ));
+
+    // we add a revision to the revision table
+    $sql = "INSERT INTO items_revisions (item_id, body, userid) VALUES(:item_id, :body, :userid)";
+    $req = $pdo->prepare($sql);
+    $result2 = $req->execute(array(
+        'item_id' => $id,
+        'body' => $body,
+        'userid' => $_SESSION['userid']
+    ));
+
+    // Check if insertion is successful
+    if ($result1 && $result2) {
+        header("location: ../database.php?mode=view&id=" . $id);
+    } else {
+        $errflag = true;
+        $msg_arr[] = "Error in the database!";
+    }
+}
 
 // If input errors, redirect back to the edit form
 if ($errflag) {
     $_SESSION['errors'] = $msg_arr;
-    session_write_close();
     header("location: ../database.php?mode=edit&id=" . $id);
-    exit;
-}
-
-// SQL for editDB
-    $sql = "UPDATE items 
-        SET title = :title, 
-        date = :date, 
-        body = :body, 
-        userid = :userid 
-        WHERE id = :id";
-$req = $pdo->prepare($sql);
-$result = $req->execute(array(
-    'title' => $title,
-    'date' => $date,
-    'body' => $body,
-    'userid' => $_SESSION['userid'],
-    'id' => $id
-));
-
-// we add a revision to the revision table
-$sql = "INSERT INTO items_revisions (item_id, body, userid) VALUES(:item_id, :body, :userid)";
-$req = $pdo->prepare($sql);
-$result = $req->execute(array(
-    'item_id' => $id,
-    'body' => $body,
-    'userid' => $_SESSION['userid']
-));
-
-// Check if insertion is successful
-if ($result) {
-    // unset session variables
-    unset($_SESSION['new_title']);
-    unset($_SESSION['new_date']);
-    unset($_SESSION['errors']);
-    header("location: ../database.php?mode=view&id=" . $id);
-    exit;
-} else {
-    die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
 }

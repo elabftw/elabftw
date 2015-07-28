@@ -98,7 +98,7 @@ CREATE TABLE `experiments_links` (
 DROP TABLE IF EXISTS `experiments_revisions`;
 CREATE TABLE `experiments_revisions` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `exp_id` int(10) unsigned NOT NULL,
+  `item_id` int(10) unsigned NOT NULL,
   `body` text NOT NULL,
   `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `userid` int(11) NOT NULL,

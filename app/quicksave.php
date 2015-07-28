@@ -94,10 +94,10 @@ if (isset($_POST['status'])) {
         ));
 
         // we add a revision to the revision table
-        $sql = "INSERT INTO experiments_revisions (exp_id, body, userid) VALUES(:exp_id, :body, :userid)";
+        $sql = "INSERT INTO experiments_revisions (item_id, body, userid) VALUES(:item_id, :body, :userid)";
         $req = $pdo->prepare($sql);
         $result = $req->execute(array(
-            'exp_id' => $id,
+            'item_id' => $id,
             'body' => $body,
             'userid' => $_SESSION['userid']
         ));

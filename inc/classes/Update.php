@@ -51,7 +51,7 @@ class Update
      * UPDATE THIS AFTER ADDING A BLOCK TO runUpdateScript()
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '2';
+    const REQUIRED_SCHEMA = '3';
 
     /**
      * Create the pdo object
@@ -170,6 +170,8 @@ class Update
      */
     public function runUpdateScript()
     {
+        // 20150728
+        $this->schema3();
         // 20150727
         $this->schema2();
 
@@ -205,6 +207,22 @@ class Update
         $config_arr = array('schema' => 2);
 
         $sql = "ALTER TABLE teams CHANGE deletable_xp deletable_xp TINYINT(1) NOT NULL DEFAULT '1'";
+        $req = $this->pdo->prepare($sql);
+        if (!$req->execute() || !update_config($config_arr)) {
+            throw new Exception('Problem updating!');
+        }
+    }
+
+    /**
+     * Change the experiments_revisions structure to allow code reuse
+     *
+     * @throws Exception if there is a problem
+     */
+    private function schema3()
+    {
+        $config_arr = array('schema' => 3);
+
+        $sql = "ALTER TABLE experiments_revisions CHANGE exp_id item_id INT(10) UNSIGNED NOT NULL";
         $req = $this->pdo->prepare($sql);
         if (!$req->execute() || !update_config($config_arr)) {
             throw new Exception('Problem updating!');

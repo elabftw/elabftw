@@ -43,14 +43,9 @@ $title = check_title($_POST['title']);
 $date = check_date($_POST['date']);
 $body = check_body($_POST['body']);
 
-// Store stuff in Session to get it back if error input
-$_SESSION['new_title'] = $title;
-$_SESSION['new_date'] = $date;
 
 // If input errors, redirect back to the experiment form
 if ($errflag) {
-    $_SESSION['errors'] = $msg_arr;
-    session_write_close();
     header("location: ../experiments.php?mode=show&id=" . $id);
     exit;
 }
@@ -72,10 +67,10 @@ $result = $req->execute(array(
 ));
 
 // we add a revision to the revision table
-$sql = "INSERT INTO experiments_revisions (exp_id, body, userid) VALUES(:exp_id, :body, :userid)";
+$sql = "INSERT INTO experiments_revisions (item_id, body, userid) VALUES(:item_id, :body, :userid)";
 $req = $pdo->prepare($sql);
 $result = $req->execute(array(
-    'exp_id' => $id,
+    'item_id' => $id,
     'body' => $body,
     'userid' => $_SESSION['userid']
 ));

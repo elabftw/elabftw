@@ -27,7 +27,7 @@ require_once 'inc/common.php';
 
 // pdf output is browser window
 try {
-    $pdf = new \Elabftw\Elabftw\MakePdf($_GET['id'], $_GET['type'], $db);
+    $pdf = new \Elabftw\Elabftw\MakePdf($_GET['id'], $_GET['type']);
 } catch (Exception $e) {
     display_message('error', $e->getMessage());
 }

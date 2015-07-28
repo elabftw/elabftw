@@ -49,7 +49,7 @@ class MakePdf
      *
      * @param int $id The id of the item we want
      * @param string $type 'experiments' or 'items'
-     * @param string $path Path to where we want the pdf written
+     * @param string|null $path Path to where we want the pdf written
      */
     public function __construct($id, $type, $path = null)
     {
@@ -291,7 +291,7 @@ class MakePdf
                     $this->content .= " (" . stripslashes(htmlspecialchars_decode($comment[$i])) . ")";
                 }
                 // add md5 sum ? don't add if we don't have it
-                if (strlen($md5[$i]) === '32') { // we have md5 sum
+                if (strlen($md5[$i]) === 32) { // we have md5 sum
                     $this->content .= "<br>md5 : " . $md5[$i];
                 }
                 $this->content .= "</li>";

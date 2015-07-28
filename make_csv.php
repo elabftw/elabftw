@@ -31,7 +31,7 @@ require_once 'inc/head.php';
 require_once 'inc/info_box.php';
 
 try {
-    $csv = new \Elabftw\Elabftw\MakeCsv($_GET['id'], $_GET['type'], $db);
+    $csv = new \Elabftw\Elabftw\MakeCsv($_GET['id'], $_GET['type']);
 } catch (Exception $e) {
     echo $e->getMessage();
     exit;

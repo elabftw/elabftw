@@ -126,7 +126,7 @@ $totals = $count_req->fetch(PDO::FETCH_ASSOC);
 <div class='divhandle' id='tab4div'>
     <p>
         <ul>
-        <li class='tip'><?php printf(_('There is a manual available %shere%s.'), "<a href='doc/man-elabftw.pdf'>", "</a>"); ?></li>
+        <li class='tip'><?php printf(_('There is a manual available %shere%s.'), "<a href='doc/_build/html/manual.html'>", "</a>"); ?></li>
         <li class='tip'><?php echo _("You can use a TODOlist by pressing 't'."); ?></li>
         <li class='tip'><?php printf(_('You can have experiments templates (%sControl Panel%s).'), "<a href='ucp.php?tab=3'>", "</a>"); ?></li>
         <li class='tip'><?php printf(_('The admin of a team can edit the status and the types of items available (%sAdmin Panel%s).'), "<a href='admin.php?tab=4'>", "</a>"); ?></li>

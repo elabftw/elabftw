@@ -17,6 +17,21 @@ use \Exception;
  */
 class Make
 {
+    /** the name of the file on disk */
+    public $fileName;
+    /** the relative path of this file */
+    public $filePath;
+
+    /**
+     * Generate the long file name and path
+     *
+     */
+    protected function generateFileName()
+    {
+        $this->fileName = hash("sha512", uniqid(rand(), true));
+        $this->filePath = ELAB_ROOT . 'uploads/tmp/' . $this->fileName;
+    }
+
     /**
      * Validate the type we have.
      *

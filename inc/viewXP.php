@@ -108,7 +108,7 @@ echo "<span class='date_view'><img src='img/calendar.png' class='bot5px' title='
     <a href='experiments.php?mode=edit&id=".$data['expid'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a>
 <a href='app/duplicate_item.php?id=".$data['expid'] . "&type=exp'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a>
 <a href='make_pdf.php?id=".$data['expid'] . "&type=experiments'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a>
-<a href='make_zip.php?id=".$data['expid'] . "&type=experiments'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a> ";
+<a href='make.php?what=zip&id=".$data['expid'] . "&type=experiments'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a> ";
 // lock
 if ($data['locked'] == 0) {
     echo "<a href='app/lock.php?id=" . $data['expid'] . "&action=lock&type=experiments'><img src='img/unlock.png' title='lock experiment' alt='lock' /></a>";

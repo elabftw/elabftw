@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2015-03-04 14:57+0100\n"
-"PO-Revision-Date: 2015-07-29 20:52+0200\n"
+"PO-Revision-Date: 2015-07-30 00:22+0200\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -936,16 +936,12 @@ msgid "Export to spreadsheet"
 msgstr "Exporter en tableur"
 
 #: elabftw/make_csv.php:126
-msgid "Your CSV file is ready:"
-msgstr "Le fichier CSV est prêt :"
+msgid "Your file is ready:"
+msgstr "Le fichier est prêt :"
 
 #: elabftw/make_zip.php:28
 msgid "Make zip archive"
 msgstr "Créer une archive ZIP"
-
-#: elabftw/make_zip.php:195
-msgid "Your ZIP archive is ready:"
-msgstr "Votre archive ZIP est prête :"
 
 #: elabftw/profile.php:49
 msgid "experiments done since"

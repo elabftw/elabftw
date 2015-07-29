@@ -24,12 +24,22 @@
 *                                                                               *
 ********************************************************************************/
 require_once 'inc/common.php';
-$page_title = _('Make zip archive');
+$page_title = _('Export');
 $selected_menu = null;
-require_once ELAB_ROOT . 'inc/head.php';
+require_once 'inc/head.php';
 
 try {
-    $makezip = new \Elabftw\Elabftw\MakeZip($_GET['id'], $_GET['type']);
+    switch($_GET['what']) {
+        case 'csv':
+            $make = new \Elabftw\Elabftw\MakeCsv($_GET['id'], $_GET['type']);
+            break;
+
+        case 'zip':
+            $make = new \Elabftw\Elabftw\MakeZip($_GET['id'], $_GET['type']);
+            break;
+        default:
+            throw new Exception(_('Bad type!'));
+    }
 } catch (Exception $e) {
     display_message('error', $e->getMessage());
     require_once 'inc/footer.php';
@@ -38,11 +48,9 @@ try {
 
 // PAGE BEGIN
 echo "<div class='well' style='margin-top:20px'>";
-// Display download link (with attribute type=zip for download.php)
-echo "<p>" . _('Your ZIP archive is ready:') . "<br>
-    <img src='img/download.png' alt='download' /> 
-    <a href='app/download.php?f=". basename($makezip->getZipRelativePath()) . "&name=" . $makezip->getZipName() . "&type=zip' target='_blank'>" . $makezip->getZipName() . "</a>
-    <span class='filesize'>(". (new \Elabftw\Elabftw\Tools)->formatBytes(filesize($makezip->getZipRelativePath())) . ")</span></p>";
+echo "<p>" . _('Your file is ready:') . "<br>
+        <a href='app/download.php?type=" . $_GET['what'] . "&f=" . $make->fileName . "&name=" . $make->getCleanName() . "' target='_blank'>
+        <img src='img/download.png' alt='download' /> " . $make->getCleanName() . "</a>
+        <span class='filesize'>(" . (new \Elabftw\Elabftw\Tools)->formatBytes(filesize($make->filePath)) . ")</span></p>";
 echo "</div>";
-
 require_once 'inc/footer.php';

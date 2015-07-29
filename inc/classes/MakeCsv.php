@@ -28,14 +28,13 @@ class MakeCsv extends Make
     private $idArr = array();
     /** 'experiment' or 'items' */
     private $type;
-    /** name of our csv file */
-    private $fileName;
-    /** public because we need it to display download link */
-    public $filePath;
+    public $cleanName;
     /** the content */
     private $data;
     /** the url of the item */
     private $url;
+
+    public $filePath;
 
     /**
      * Give me a list of id+id+id and a type, I make good csv for you
@@ -53,8 +52,9 @@ class MakeCsv extends Make
         // assign and check type
         $this->type = $this->checkType($type);
 
-        $this->fileName = hash("sha512", uniqid(rand(), true)) . '.csv';
-        $this->filePath = ELAB_ROOT . 'uploads/tmp/' . $this->fileName;
+        $this->cleanName = 'export.elabftw.csv';
+
+        $this->generateFileName();
 
         $this->list[] = $this->populateFirstLine();
 
@@ -62,6 +62,10 @@ class MakeCsv extends Make
         $this->loopIdArr();
     }
 
+    public function getCleanName()
+    {
+        return $this->cleanName;
+    }
     /**
      * Here we populate the first row: it will be the column names
      *
@@ -127,7 +131,7 @@ class MakeCsv extends Make
     private function setUrl($id)
     {
         $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
-        $needle = array('make_csv.php', 'make_pdf.php', 'make_zip.php', 'app/timestamp.php');
+        $needle = array('make_pdf.php', 'make.php', 'app/timestamp.php');
 
         if ($this->type === 'experiments') {
             $url = str_replace($needle, 'experiments.php', $url);

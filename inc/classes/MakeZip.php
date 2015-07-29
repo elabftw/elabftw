@@ -30,13 +30,6 @@ class MakeZip extends Make
     /** the input ids but in an array */
     private $idArr = array();
 
-    /** sha512 hash.zip */
-    private $zipRealName;
-    /** uploads/tmp/realname.zip */
-    private $zipRelativePath;
-    /** with ELAB_ROOT */
-    private $zipAbsolutePath;
-
     /** 'experiments' or 'items' */
     private $type;
     /** files to be deleted by destructor */
@@ -72,21 +65,9 @@ class MakeZip extends Make
         $this->idList = $idList;
         $this->type = $this->checkType($type);
 
-        $this->zipRealName = hash("sha512", uniqid(rand(), true)) . ".zip";
-        $this->zipRelativePath = 'uploads/tmp/' . $this->zipRealName;
-        $this->zipAbsolutePath = ELAB_ROOT . $this->zipRelativePath;
         $this->createZipArchive();
         $this->loopIdArr();
 
-    }
-    /**
-     * Return the relative path of the zip (uploads/tmp/<hash>.zip)
-     *
-     * @return string
-     */
-    public function getZipRelativePath()
-    {
-        return $this->zipRelativePath;
     }
 
     /**
@@ -94,15 +75,14 @@ class MakeZip extends Make
      *
      * @return string
      */
-    public function getZipName()
+    public function getCleanName()
     {
         $ext = '.elabftw.zip';
 
         if (count($this->idArr) === 1) {
             return $this->zipped['date'] . "-" . $this->cleanTitle . $ext;
-        } else {
-            return kdate() . $ext;
         }
+        return kdate() . $ext;
     }
 
     /**
@@ -113,7 +93,7 @@ class MakeZip extends Make
     {
         $this->zip = new \ZipArchive;
 
-        if (!$this->zip->open($this->zipAbsolutePath, ZipArchive::CREATE)) {
+        if (!$this->zip->open($this->filePath, ZipArchive::CREATE)) {
             throw new Exception('Could not open zip file!');
         }
     }
@@ -303,7 +283,7 @@ class MakeZip extends Make
         $this->addJson();
         $this->zip->close();
         // check if it failed for some reason
-        if (!is_file($this->zipAbsolutePath)) {
+        if (!is_file($this->filePath)) {
             throw new Exception(_('Error making the zip archive!'));
         }
     }

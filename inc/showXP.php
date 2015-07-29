@@ -1,14 +1,14 @@
 <?php
 /**
- * inc/showXP
+ * inc/showXP.php
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see http://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
- *
  */
+
 $results_arr = array();
 $load_more_button = "<div class='center'>
         <button class='button' id='loadButton'>"._('Load more') . "</button>

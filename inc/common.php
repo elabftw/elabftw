@@ -1,29 +1,18 @@
 <?php
-/********************************************************************************
-*                                                                               *
-*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
-*   http://www.elabftw.net/                                                     *
-*                                                                               *
-********************************************************************************/
+/**
+ * inc/common.php
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see http://www.elabftw.net Official website
+ * @license AGPL-3.0
+ */
 
-/********************************************************************************
-*  This file is part of eLabFTW.                                                *
-*                                                                               *
-*    eLabFTW is free software: you can redistribute it and/or modify            *
-*    it under the terms of the GNU Affero General Public License as             *
-*    published by the Free Software Foundation, either version 3 of             *
-*    the License, or (at your option) any later version.                        *
-*                                                                               *
-*    eLabFTW is distributed in the hope that it will be useful,                 *
-*    but WITHOUT ANY WARRANTY; without even the implied                         *
-*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
-*    PURPOSE.  See the GNU Affero General Public License for more details.      *
-*                                                                               *
-*    You should have received a copy of the GNU Affero General Public           *
-*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
-*                                                                               *
-********************************************************************************/
-/* auth + connect + functions*/
+/**
+ * This must be included on top of every page.
+ * It loads the config file, connects to the database,
+ * includes functions and locale, tries to update the db schema and redirects anonymous visitors.
+ */
 if (!isset($_SESSION)) {
     session_start();
 }
@@ -60,7 +49,19 @@ try {
 
 // require common stuff
 require_once ELAB_ROOT . 'inc/functions.php';
-require_once ELAB_ROOT . 'inc/locale.php';
+
+// i18n (gettext)
+if (isset($_SESSION['prefs']['lang'])) {
+    $locale = $_SESSION['prefs']['lang'] . '.utf8';
+} else {
+    $locale = get_config('lang') . '.utf8';
+}
+$domain = 'messages';
+putenv("LC_ALL=$locale");
+$res = setlocale(LC_ALL, $locale);
+bindtextdomain($domain, ELAB_ROOT . "locale");
+textdomain($domain);
+// END i18n
 
 // run the update script if we have the wrong schema version
 $update = new \Elabftw\Elabftw\Update();

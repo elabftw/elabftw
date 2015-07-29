@@ -1,12 +1,11 @@
 <?php
 /**
- * Edit an item of the database.
+ * inc/editDb.php
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see http://www.elabftw.net Official website
  * @license AGPL-3.0
- *
  */
 
 // ID

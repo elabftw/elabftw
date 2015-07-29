@@ -57,7 +57,7 @@ class MakeCsv
         $this->fileName = hash("sha512", uniqid(rand(), true)) . '.csv';
         $this->filePath = ELAB_ROOT . 'uploads/tmp/' . $this->fileName;
 
-        $this->populateFirstLine();
+        $this->list[] = $this->populateFirstLine();
 
         // main loop
         $this->loopIdArr();
@@ -82,10 +82,9 @@ class MakeCsv
     private function populateFirstLine()
     {
         if ($this->table === 'experiments') {
-            $this->list[] = array('id', 'date', 'title', 'content', 'status', 'elabid', 'url');
-        } else {
-            $this->list[] = array('title', 'description', 'id', 'date', 'type', 'rating', 'url');
+            return array('id', 'date', 'title', 'content', 'status', 'elabid', 'url');
         }
+        return  array('title', 'description', 'id', 'date', 'type', 'rating', 'url');
     }
 
     /**

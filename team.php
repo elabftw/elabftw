@@ -27,7 +27,6 @@ require_once 'inc/common.php';
 $page_title = _('Team');
 $selected_menu = 'Team';
 require_once 'inc/head.php';
-require_once 'inc/info_box.php';
 ?>
 <menu>
 <ul>

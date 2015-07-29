@@ -27,7 +27,7 @@ require_once 'inc/common.php';
 $page_title = _('Reset password');
 $selected_menu = null;
 require_once 'inc/head.php';
-require_once 'inc/info_box.php';
+
 // get the unique key
 if (isset($_GET['key']) && strlen($_GET['key']) === 64 && isset($_GET['userid'])) {
     $key = filter_var($_GET['key'], FILTER_SANITIZE_STRING);

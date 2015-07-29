@@ -28,7 +28,6 @@ require_once 'inc/common.php';
 $page_title = _('Search');
 $selected_menu = 'Search';
 require_once 'inc/head.php';
-require_once 'inc/info_box.php';
 
 // make array of results id
 $results_arr = array();

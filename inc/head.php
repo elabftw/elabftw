@@ -6,7 +6,6 @@
  * @copyright 2012 Nicolas CARPi
  * @see http://www.elabftw.net Official website
  * @license AGPL-3.0
- *
  */
 // Random title
 $ftw_arr = array();
@@ -153,3 +152,19 @@ if (isset($_SESSION['auth'])) {
 </noscript>
 <!-- TITLE -->
 <h2><?php echo $page_title; ?></h2>
+
+<?php
+// INFO BOX
+if (isset($_SESSION['errors']) && is_array($_SESSION['errors']) && count($_SESSION['errors']) > 0) {
+    foreach ($_SESSION['errors'] as $msg) {
+        display_message('error', $msg);
+    }
+    unset($_SESSION['errors']);
+}
+
+if (isset($_SESSION['infos']) && is_array($_SESSION['infos']) && count($_SESSION['infos']) > 0) {
+    foreach ($_SESSION['infos'] as $msg) {
+        display_message('info', $msg);
+    }
+    unset($_SESSION['infos']);
+}

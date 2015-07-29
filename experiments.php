@@ -27,7 +27,6 @@ require_once 'inc/common.php';
 $page_title = ngettext('Experiment', 'Experiments', 2);
 $selected_menu = 'Experiments';
 require_once 'inc/head.php';
-require_once 'inc/info_box.php';
 
 // add the chemdoodle stuff if we want it
 if (isset($_SESSION) && $_SESSION['prefs']['chem_editor']) {

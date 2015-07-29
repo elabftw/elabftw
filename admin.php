@@ -37,7 +37,6 @@ $crypto = new \Elabftw\Elabftw\Crypto();
 $page_title = _('Admin panel');
 $selected_menu = null;
 require_once 'inc/head.php';
-require_once 'inc/info_box.php';
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
 <script src="js/raphael/raphael-min.js"></script>

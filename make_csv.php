@@ -28,7 +28,6 @@ require_once 'inc/common.php';
 $page_title = _('Export to spreadsheet');
 $selected_menu = null;
 require_once 'inc/head.php';
-require_once 'inc/info_box.php';
 
 try {
     $csv = new \Elabftw\Elabftw\MakeCsv($_GET['id'], $_GET['type']);

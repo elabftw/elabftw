@@ -27,7 +27,6 @@ require_once 'inc/common.php';
 $page_title = _('User Control Panel');
 $selected_menu = null;
 require_once('inc/head.php');
-require_once('inc/info_box.php');
 
 // SQL for UCP
 $sql = "SELECT * FROM users WHERE userid = :userid";

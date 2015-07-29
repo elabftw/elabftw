@@ -22,7 +22,6 @@ require_once 'inc/common.php';
 $page_title = _('Register');
 $selected_menu = null;
 require_once 'inc/head.php';
-require_once 'inc/info_box.php';
 // Check if we're logged in
 if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
     display_message('error', sprintf(_('Please %slogout%s before you register another account.'), "<a style='alert-link' href='app/logout.php'>", "</a>"));

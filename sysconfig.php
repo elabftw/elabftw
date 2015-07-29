@@ -33,7 +33,6 @@ if ($_SESSION['is_sysadmin'] != 1) {
 $page_title = _('eLabFTW configuration');
 $selected_menu = null;
 require_once 'inc/head.php';
-require_once 'inc/info_box.php';
 
 $crypto = new \Elabftw\Elabftw\Crypto();
 

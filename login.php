@@ -27,7 +27,6 @@ require_once 'inc/common.php';
 $page_title = _('Login');
 $selected_menu = null;
 require_once 'inc/head.php';
-require_once 'inc/info_box.php';
 
 // Check if already logged in
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {

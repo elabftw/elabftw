@@ -15,7 +15,7 @@ use \Exception;
 /**
  * Make a CSV file from a list of id and a type
  */
-class MakeCsv
+class MakeCsv extends Make
 {
     /** our pdo object */
     private $pdo;
@@ -26,8 +26,8 @@ class MakeCsv
     private $idList;
     /** the input ids but in an array */
     private $idArr = array();
-    /** 'experiment' or 'database' */
-    private $table;
+    /** 'experiment' or 'items' */
+    private $type;
     /** name of our csv file */
     private $fileName;
     /** public because we need it to display download link */
@@ -51,8 +51,7 @@ class MakeCsv
         $this->idList = $idList;
 
         // assign and check type
-        $this->table = $type;
-        $this->checkType();
+        $this->type = $this->checkType($type);
 
         $this->fileName = hash("sha512", uniqid(rand(), true)) . '.csv';
         $this->filePath = ELAB_ROOT . 'uploads/tmp/' . $this->fileName;
@@ -64,24 +63,12 @@ class MakeCsv
     }
 
     /**
-     * Validate the type we have.
-     *
-     */
-    private function checkType()
-    {
-        $correctValuesArr = array('experiments', 'items');
-        if (!in_array($this->table, $correctValuesArr)) {
-            throw new Exception('Bad type!');
-        }
-    }
-
-    /**
      * Here we populate the first row: it will be the column names
      *
      */
     private function populateFirstLine()
     {
-        if ($this->table === 'experiments') {
+        if ($this->type === 'experiments') {
             return array('id', 'date', 'title', 'content', 'status', 'elabid', 'url');
         }
         return  array('title', 'description', 'id', 'date', 'type', 'rating', 'url');
@@ -112,7 +99,7 @@ class MakeCsv
      */
     private function initData($id)
     {
-        if ($this->table === 'experiments') {
+        if ($this->type === 'experiments') {
             $sql = "SELECT experiments.*,
                 status.name AS statusname
                 FROM experiments
@@ -142,7 +129,7 @@ class MakeCsv
         $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
         $needle = array('make_csv.php', 'make_pdf.php', 'make_zip.php', 'app/timestamp.php');
 
-        if ($this->table === 'experiments') {
+        if ($this->type === 'experiments') {
             $url = str_replace($needle, 'experiments.php', $url);
         } else { //item
             $url = str_replace($needle, 'database.php', $url);
@@ -155,7 +142,7 @@ class MakeCsv
      */
     private function addLine()
     {
-        if ($this->table === 'experiments') {
+        if ($this->type === 'experiments') {
             $this->list[] = array(
                 $this->data['id'],
                 $this->data['date'],

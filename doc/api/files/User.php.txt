@@ -32,7 +32,6 @@ class User
     /**
      * Just give me the Db object and I'm good to go
      *
-     * @param object $db An instance of the Db class
      */
     public function __construct()
     {

@@ -18,7 +18,7 @@ use \Exception;
 /**
  * Make a zip archive from experiment or db item
  */
-class MakeZip
+class MakeZip extends Make
 {
     /** our pdo object */
     private $pdo;
@@ -38,7 +38,7 @@ class MakeZip
     private $zipAbsolutePath;
 
     /** 'experiments' or 'items' */
-    private $table;
+    private $type;
     /** files to be deleted by destructor */
     private $filesToDelete = array();
     /** the data for the current id */
@@ -70,8 +70,7 @@ class MakeZip
         }
 
         $this->idList = $idList;
-        $this->table = $type;
-        $this->checkTable();
+        $this->type = $this->checkType($type);
 
         $this->zipRealName = hash("sha512", uniqid(rand(), true)) . ".zip";
         $this->zipRelativePath = 'uploads/tmp/' . $this->zipRealName;
@@ -120,18 +119,6 @@ class MakeZip
     }
 
     /**
-     * Validate the $_GET['type'] we have
-     *
-     */
-    private function checkTable()
-    {
-        $correctValuesArr = array('experiments', 'items');
-        if (!in_array($this->table, $correctValuesArr)) {
-            throw new Exception('Bad type!');
-        }
-    }
-
-    /**
      * Populate $this->zipped
      * SQL to get info on the item we are zipping
      *
@@ -139,7 +126,7 @@ class MakeZip
      */
     private function getInfoFromId($id)
     {
-        if ($this->table === 'experiments') {
+        if ($this->type === 'experiments') {
             $sql = "SELECT * FROM experiments WHERE id = :id LIMIT 1";
             $req = $this->pdo->prepare($sql);
             $req->bindParam(':id', $id, \PDO::PARAM_INT);
@@ -175,7 +162,7 @@ class MakeZip
      */
     private function addAsn1Token($id)
     {
-        if ($this->table === 'experiments' && $this->zipped['timestamped'] == 1) {
+        if ($this->type === 'experiments' && $this->zipped['timestamped'] == 1) {
             // SQL to get the path of the token
             $sql = "SELECT real_name, long_name FROM uploads WHERE item_id = :id AND type = 'timestamp-token' LIMIT 1";
             $req = $this->pdo->prepare($sql);
@@ -193,7 +180,7 @@ class MakeZip
      */
     private function nameFolder()
     {
-        if ($this->table === 'experiments') {
+        if ($this->type === 'experiments') {
             $this->folder = $this->zipped['date'] . "-" . $this->cleanTitle;
         } else { // items
             $this->folder = $this->zipped['items_typesname'] . " - " . $this->cleanTitle;
@@ -214,7 +201,7 @@ class MakeZip
         $sql = "SELECT * FROM uploads WHERE item_id = :id AND (type = :type OR type = 'exp-pdf-timestamp')";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);
-        $req->bindParam(':type', $this->table);
+        $req->bindParam(':type', $this->type);
         $req->execute();
         while ($uploads = $req->fetch()) {
             $real_name[] = $uploads['real_name'];
@@ -241,7 +228,7 @@ class MakeZip
     private function addPdf($id)
     {
         $pdfPath = ELAB_ROOT . 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . '.pdf';
-        $pdf = new \Elabftw\Elabftw\MakePdf($id, $this->table, $pdfPath);
+        $pdf = new \Elabftw\Elabftw\MakePdf($id, $this->type, $pdfPath);
         $this->zip->addFile($pdfPath, $this->folder . '/' . $pdf->getFileName());
         $this->filesToDelete[] = $pdfPath;
     }
@@ -254,7 +241,7 @@ class MakeZip
     private function addCsv($id)
     {
         // add CSV file to archive
-        $csv = new \Elabftw\Elabftw\MakeCsv($id, $this->table);
+        $csv = new \Elabftw\Elabftw\MakeCsv($id, $this->type);
         $this->zip->addFile($csv->filePath, $this->folder . "/" . $this->cleanTitle . ".csv");
         $this->filesToDelete[] = $csv->filePath;
     }
@@ -290,7 +277,7 @@ class MakeZip
         $this->addPdf($id);
         // add an entry to the json file
         $this->jsonArr[] = array(
-            'type' => $this->table,
+            'type' => $this->type,
             'title' => stripslashes($this->zipped['title']),
             'body' => stripslashes($this->zipped['body']),
             'files' => $this->fileArr

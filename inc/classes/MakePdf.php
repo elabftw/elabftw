@@ -16,15 +16,15 @@ use \Exception;
 /**
  * Create a pdf given an id and a type
  */
-class MakePdf
+class MakePdf extends Make
 {
     /** our favorite pdo object */
     private $pdo;
 
     /** the id of the item we want */
     private $id;
-    /** experiment or database item */
-    private $type;
+    /** 'experiments' or 'items' */
+    protected $type;
     /** everything about the item */
     private $data;
     /** a formatted title for our pdf */
@@ -59,8 +59,7 @@ class MakePdf
         $this->validateId();
 
         // assign and check type
-        $this->type = $type;
-        $this->checkType();
+        $this->type = $this->checkType($type);
 
         // assign path
         $this->path = $path;
@@ -99,19 +98,6 @@ class MakePdf
     {
         if (!is_pos_int($this->id)) {
             throw new Exception('Bad id!');
-        }
-    }
-
-    /**
-     * Validate the type we have.
-     *
-     * @throws Exception on bad type
-     */
-    private function checkType()
-    {
-        $correctValuesArr = array('experiments', 'items');
-        if (!in_array($this->type, $correctValuesArr)) {
-            throw new Exception('Bad type!');
         }
     }
 

@@ -21,54 +21,54 @@
     <script src="../js/jquery.smooth-scroll.js"></script>
     <script src="../js/prism.min.js"></script>
     <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
-        <script type="text/javascript">
-        function loadExternalCodeSnippets() {
-            Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
-                var src = pre.getAttribute('data-src');
-                var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
-                var language = 'php';
+    <script type="text/javascript">
+    function loadExternalCodeSnippets() {
+        Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+            var src = pre.getAttribute('data-src');
+            var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+            var language = 'php';
 
-                var code = document.createElement('code');
-                code.className = 'language-' + language;
+            var code = document.createElement('code');
+            code.className = 'language-' + language;
 
-                pre.textContent = '';
+            pre.textContent = '';
 
-                code.textContent = 'Loading…';
+            code.textContent = 'Loading…';
 
-                pre.appendChild(code);
+            pre.appendChild(code);
 
-                var xhr = new XMLHttpRequest();
+            var xhr = new XMLHttpRequest();
 
-                xhr.open('GET', src, true);
+            xhr.open('GET', src, true);
 
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState == 4) {
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
 
-                        if (xhr.status < 400 && xhr.responseText) {
-                            code.textContent = xhr.responseText;
+                    if (xhr.status < 400 && xhr.responseText) {
+                        code.textContent = xhr.responseText;
 
-                            Prism.highlightElement(code);
-                        }
-                        else if (xhr.status >= 400) {
-                            code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
-                        }
-                        else {
-                            code.textContent = '✖ Error: File does not exist or is empty';
-                        }
+                        Prism.highlightElement(code);
                     }
-                };
+                    else if (xhr.status >= 400) {
+                        code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                    }
+                    else {
+                        code.textContent = '✖ Error: File does not exist or is empty';
+                    }
+                }
+            };
 
-                xhr.send(null);
-            });
-        }
-
-        $(document).ready(function(){
-            loadExternalCodeSnippets();
+            xhr.send(null);
         });
-        $('#source-view').on('shown', function () {
-            loadExternalCodeSnippets();
-        })
-    </script>
+    }
+
+    $(document).ready(function(){
+        loadExternalCodeSnippets();
+    });
+    $('#source-view').on('shown', function () {
+        loadExternalCodeSnippets();
+    })
+</script>
 
     <link rel="shortcut icon" href="../images/favicon.ico"/>
     <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
@@ -144,28 +144,28 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1829008874"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-815852430"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1829008874" class="accordion-body collapse in">
+            <div id="namespace-815852430" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-351653021"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1709541617"></a>
                                 <a href="../namespaces/Elabftw.html" style="margin-left: 30px; padding-left: 0">Elabftw</a>
             </div>
-            <div id="namespace-351653021" class="accordion-body collapse ">
+            <div id="namespace-1709541617" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1460365423"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1993301568"></a>
                                 <a href="../namespaces/Elabftw.Elabftw.html" style="margin-left: 30px; padding-left: 0">Elabftw</a>
             </div>
-            <div id="namespace-1460365423" class="accordion-body collapse ">
+            <div id="namespace-1993301568" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                     
@@ -211,78 +211,142 @@
     <section class="row-fluid">
         <div class="span10 offset2">
             <div class="row-fluid">
-                <div class="span8 content file">
+                <div class="span8 content class">
                     <nav>
-                                                                    </nav>
-
+                                                <a href="../namespaces/Elabftw.Elabftw.html">\Elabftw\Elabftw</a> <i class="icon-level-up"></i>
+                                            </nav>
                     <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
-                    <h1><small></small>Tools.php</h1>
-                    <p><em>\Elabftw\Elabftw\Tools</em></p>
-                    
 
+                    <h1><small>\Elabftw\Elabftw</small>Make</h1>
+                    <p><em>Mother class of MakeCsv, MakePdf and MakeZip</em></p>
                     
                     
-                                        <h2>Classes</h2>
-                    <table class="table table-hover">
-                                            <tr>
-                            <td><a href="../classes/Elabftw.Elabftw.Tools.html">Tools</a></td>
-                            <td><em>Toolbelt full of useful functions</em></td>
-                        </tr>
-                                        </table>
-                                    </div>
-
+                                        
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span4">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#properties">Properties</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span4">
+                                                                    <em>No public methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No public properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No constants found</em>
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span4">
+                                                                    <a href="../classes/Elabftw.Elabftw.Make.html#method_checkType" class="">checkType()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No protected properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span4">
+                                                                    <em>No private methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No private properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
                 <aside class="span4 detailsbar">
+                                        
+                    
                     <dl>
-                                                    <dt>Package</dt>
-                            <dd><div class="namespace-wrapper">\elabftw</div></dd>
+                        <dt>File</dt>
+                            <dd><a href="../files/Make.html"><div class="path-wrapper">Make.php</div></a></dd>
+                                                <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">elabftw</div></dd>
+                                                <dt>Class hierarchy</dt>
+                            <dd class="hierarchy">
+                                                                                                                                                                    <div class="namespace-wrapper">\Elabftw\Elabftw\Make</div>
+                            </dd>
+
                         
-                                                                                    <dt>See also</dt>
-                                                                                        <dd><a href=""><div class="namespace-wrapper">Official website</div></a></dd>
-                                                    
-                    </dl>
+                        
+                        
+                        
+                                                                        </dl>
                     <h2>Tags</h2>
                     <table class="table table-condensed">
-                                                    <tr>
-                                <th>
-                                    author
-                                </th>
-                                <td>
-                                                                            <p>Nicolas CARPi <a href="mailto:nicolas.carpi@curie.fr">nicolas.carpi@curie.fr</a></p>
-                                                                    </td>
-                            </tr>
-                                                    <tr>
-                                <th>
-                                    copyright
-                                </th>
-                                <td>
-                                                                            <p>2012 Nicolas CARPi</p>
-                                                                    </td>
-                            </tr>
-                                                    <tr>
-                                <th>
-                                    license
-                                </th>
-                                <td>
-                                                                            <p>AGPL-3.0</p>
-                                                                    </td>
-                            </tr>
-                                            </table>
-
+                                            <tr><td colspan="2"><em>None found</em></td></tr>
+                                        </table>
                 </aside>
             </div>
 
-            
-            
+                        
+                        
+                                    <a id="methods" name="methods"></a>
+            <div class="row-fluid">
+                <div class="span8 content class"><h2>Methods</h2></div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_checkType" name="method_checkType" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">checkType()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">checkType(  <span class="argument">$type</span>) </pre>
+                <p><em>Validate the type we have.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$type </td>
+                                <td><p>The type (experiments or items)</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
         </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                    </div>
     </section>
 
     <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="source-view-label"></h3>
+            <h3 id="source-view-label">Make.php</h3>
         </div>
         <div class="modal-body">
-            <pre data-src="../files/Tools.php.txt" class="language-php line-numbers"></pre>
+            <pre data-src="../files/Make.php.txt" class="language-php line-numbers"></pre>
         </div>
     </div>
 

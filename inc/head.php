@@ -6,6 +6,7 @@
  * @copyright 2012 Nicolas CARPi
  * @see http://www.elabftw.net Official website
  * @license AGPL-3.0
+ *
  */
 // Random title
 $ftw_arr = array();

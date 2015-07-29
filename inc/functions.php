@@ -704,6 +704,8 @@ function checkSelectFilter($val)
  */
 function import_sql_structure()
 {
+    global $pdo;
+
     $sqlfile = 'elabftw.sql';
 
     // temporary variable, used to store current query
@@ -722,7 +724,7 @@ function import_sql_structure()
         // If it has a semicolon at the end, it's the end of the query
         if (substr(trim($line), -1, 1) == ';') {
             // Perform the query
-            q($queryline);
+            $pdo->query($queryline);
             // Reset temp variable to empty
             $queryline = '';
         }

@@ -289,6 +289,7 @@ class MakeZip extends Make
      * Loop on each id and add it to our zip archive
      * This could be called the main function.
      *
+     * @throws Exception If the zip failed
      */
     private function loopIdArr()
     {
@@ -301,8 +302,11 @@ class MakeZip extends Make
         }
         $this->addJson();
         $this->zip->close();
+        // check if it failed for some reason
+        if (!is_file($this->zipAbsolutePath)) {
+            throw new Exception(_('Error making the zip archive!'));
+        }
     }
-
 
     /**
      * Clean up the temporary files (csv, txt and pdf)

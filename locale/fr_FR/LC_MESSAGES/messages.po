@@ -1485,3 +1485,6 @@ msgstr "Réinitialiser"
 
 msgid "Please configure Timestamping in the admin panel."
 msgstr "Configurez d'abord l'horodatage dans le panneau d'administration."
+
+msgid "Error making the zip archive!"
+msgstr "Une erreur s'est produite durant la génération de l'archive zip !"

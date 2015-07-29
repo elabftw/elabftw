@@ -29,7 +29,7 @@ $selected_menu = null;
 require_once 'inc/head.php';
 
 try {
-    switch($_GET['what']) {
+    switch ($_GET['what']) {
         case 'csv':
             $make = new \Elabftw\Elabftw\MakeCsv($_GET['id'], $_GET['type']);
             break;

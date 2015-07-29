@@ -36,6 +36,7 @@ class Make
      * Validate the type we have.
      *
      * @param $type The type (experiments or items)
+     * @return string
      */
     protected function checkType($type)
     {

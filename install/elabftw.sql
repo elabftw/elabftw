@@ -314,11 +314,7 @@ CREATE TABLE `users` (
 -- ELABFTW
 /* the default item_types */
 INSERT INTO `items_types` (`team`, `id`, `name`, `bgcolor`, `template`) VALUES
-(1, 1, 'Antibody', '31a700', '<p><strong>Host :</strong></p>\r\n<p><strong>Target :</strong></p>\r\n<p><strong>Dilution to use :</strong></p>\r\n<p>Don''t forget to add the datasheet !</p>'),
-(1, 2, 'Plasmid', '29AEB9', '<p><strong>Concentration : </strong></p>\r\n<p><strong>Resistances : </strong></p>\r\n<p><strong>Backbone :</strong></p>\r\n<p><strong><br /></strong></p>'),
-(1, 3, 'siRNA', '0064ff', '<p><strong>Sequence :</strong></p>\r\n<p><strong>Target :</strong></p>\r\n<p><strong>Concentration :</strong></p>\r\n<p><strong>Buffer :</strong></p>'),
-(1, 4, 'Drugs', 'fd00fe', '<p><strong>Action :</strong> &nbsp;<strong> </strong></p>\r\n<p><strong>Concentration :</strong>&nbsp;</p>\r\n<p><strong>Use at :</strong>&nbsp;</p>\r\n<p><strong>Buffer :</strong> </p>'),
-(1, 5, 'Crystal', '84ff00', '<p>Edit me</p>');
+(1, 1, 'Edit me', '32a100', '<p>Go to the admin panel to edit/add more items types!</p>');
 
 /* the default status */
 INSERT INTO `status` (`team`, `id`, `name`, `color`, `is_default`) VALUES

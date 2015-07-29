@@ -32,7 +32,6 @@ if (php_sapi_name() == 'cli' || empty($_SERVER['REMOTE_ADDR'])) {
 }
 
 require_once 'inc/common.php';
-$db = new \Elabftw\Elabftw\Db();
 
 // die if you are not sysadmin
 if ($_SESSION['is_sysadmin'] != 1) {
@@ -55,7 +54,7 @@ while ($show = $req->fetch()) {
 }
 
 if (!$table_is_here) {
-    $db->q(
+    $pdo->q(
         "CREATE TABLE IF NOT EXISTS `items_revisions` (
         `id` int(10) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
         `item_id` int(10) unsigned NOT NULL,
@@ -157,9 +156,9 @@ if ($req->rowCount() > 0) {
 // 20150304 : add rfc 3161 timestamping/generic timestamping providers
 
 // add stampprovider, stampcert and stamphash to teams table
-add_field('teams', 'stampprovider', "TEXT NULL DEFAULT NULL");
-add_field('teams', 'stampcert', "TEXT NULL DEFAULT NULL");
-add_field('teams', 'stamphash', "VARCHAR(10) NULL DEFAULT 'sha256'");
+$pdo->addField('teams', 'stampprovider', "TEXT NULL DEFAULT NULL");
+$pdo->addField('teams', 'stampcert', "TEXT NULL DEFAULT NULL");
+$pdo->addField('teams', 'stamphash', "VARCHAR(10) NULL DEFAULT 'sha256'");
 
 // check if stamppass and stamplogin are set globally but not stampprovider => old-style timestamping using Universign
 $sql = "SELECT conf_name FROM config";
@@ -304,14 +303,14 @@ while ($experiment = $req->fetch()) {
 }
 
 // 20150705 add ordering to experiments_templates, status and items types
-if (add_field('experiments_templates', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL")) {
+if ($pdo->addField('experiments_templates', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL")) {
     $msg_arr[] = '>>> Added ordering to experiments templates.';
 }
-if (add_field('status', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL")) {
+if ($pdo->addField('status', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL")) {
     $msg_arr[] = '>>> Added ordering to status.';
 }
 
-if (add_field('items_types', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL")) {
+if ($pdo->addField('items_types', 'ordering', "INT(10) UNSIGNED NULL DEFAULT NULL")) {
     $msg_arr[] = '>>> Added ordering to items types.';
 }
 
@@ -329,7 +328,7 @@ if (get_config('stampprovider') == 'https://ws.universign.eu/tsa' && !get_config
 
 // 20150708
 // add chem_editor pref
-if (add_field('users', 'chem_editor', "TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `close_warning`")) {
+if ($pdo->addField('users', 'chem_editor', "TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `close_warning`")) {
     $msg_arr[] = '>>> Added Chem editor pref to users.';
 }
 

@@ -29,9 +29,8 @@ $selected_menu = null;
 require_once 'inc/head.php';
 
 // get the unique key
-if (isset($_GET['key']) && strlen($_GET['key']) === 64 && isset($_GET['userid'])) {
+if (isset($_GET['key']) && isset($_GET['userid'])) {
     $key = filter_var($_GET['key'], FILTER_SANITIZE_STRING);
-    $_SESSION['key'] = $key;
     $userid = filter_var($_GET['userid'], FILTER_VALIDATE_INT);
 } else {
     header('Location:login.php');
@@ -42,16 +41,18 @@ if (isset($_GET['key']) && strlen($_GET['key']) === 64 && isset($_GET['userid'])
 <section class='center'>
     <form method="post" class='loginform' action="app/reset.php">
         <p>
+            <!-- output the key and userid as hidden fields -->
+            <input type="hidden" name="key" value="<?php echo $key; ?>" />
+            <input type="hidden" name="userid" value="<?php echo $userid; ?>" />
+
             <label class='block' for='passwordtxt'><?php echo _('New password'); ?></label>
             <input name="password" type="password" title='<?php echo _('8 characters minimum'); ?>' id="password" pattern=".{8,}" required />
             <label class='block' for='cpasswordtxt'><?php echo _('Type it again'); ?></label>
             <input name="cpassword" type="password" title='<?php echo _('8 characters minimum'); ?>' id="cpassword" pattern=".{8,}" required />
             <label class='block' for='complexity'><?php echo _('Complexity'); ?></label>
             <input id='complexity' disabled />
-
             <div id="checkPasswordMatchDiv"><p><?php echo _('The passwords do not match!'); ?></p></div>
-            <input type="hidden" name="key" value="<?php echo $key; ?>" />
-            <input type="hidden" name="userid" value="<?php echo $userid; ?>" />
+
         </p>
     </form>
 </section>

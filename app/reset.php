@@ -26,14 +26,9 @@
 require_once '../inc/common.php';
 
 $crypto = new \Elabftw\Elabftw\Crypto();
+$user = new \Elabftw\Elabftw\User();
 
 $errflag = false;
-
-// Only POST requests here.
-if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-    header('Location: ../login.php');
-    exit;
-}
 
 /*
  * FIRST PART
@@ -68,10 +63,14 @@ if (isset($_POST['email'])) {
         // Check email exists
         if ($numrows === 1) {
             // Get info to build the URL
+
+            // the key is the encrypted user's mail address
+            // so you need to have access to the secretkey and iv in config.php to get the key.
+            $key = $crypto->encrypt($email);
+
             $protocol = 'https://';
             $reset_url = $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];
-            // Generate unique link
-            $reset_link = $protocol . str_replace('app/reset', 'change-pass', $reset_url) . '?key=' . hash("sha256", uniqid(rand(), true)) . '&userid=' . $data['userid'];
+            $reset_link = $protocol . str_replace('app/reset', 'change-pass', $reset_url) . '?key=' . $key . '&userid=' . $data['userid'];
             // Send an email with the reset link
             // Create the message
             $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
@@ -123,18 +122,19 @@ if (isset($_POST['email'])) {
 if (isset($_POST['password']) &&
     isset($_POST['cpassword']) &&
     isset($_POST['key']) &&
+    isset($_POST['userid']) &&
     $_POST['password'] === $_POST['cpassword']) {
 
+    // get email of user
+    $sql = "SELECT email FROM users WHERE userid = :userid";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':userid', $_POST['userid'], PDO::PARAM_INT);
+    $req->execute();
     // Validate key
-    if ($_POST['key'] != $_SESSION['key']) {
+    if ($req->fetchColumn() != $crypto->decrypt($_POST['key'])) {
         die('Bad key.');
     }
 
-    // BUILD PASSWORD
-    // Create salt
-    $salt = hash("sha512", uniqid(rand(), true));
-    // Create hash
-    $passwordHash = hash("sha512", $salt . $_POST['password']);
     // Get userid
     if (filter_var($_POST['userid'], FILTER_VALIDATE_INT)) {
         $userid = $_POST['userid'];
@@ -142,19 +142,13 @@ if (isset($_POST['password']) &&
         die(_("Userid is not valid."));
     }
     // Replace new password in database
-    $sql = "UPDATE users
-            SET password = :password,
-            salt = :salt
-            WHERE userid = :userid";
-    $req = $pdo->prepare($sql);
-    $result = $req->execute(array(
-        'password' => $passwordHash,
-        'salt' => $salt,
-        'userid' => $userid));
-    if ($result) {
+    if ($user->updatePassword($_POST['password'], $userid)) {
         dblog('Info', $userid, 'Password was changed for this user.');
         $msg_arr[] = _('New password updated. You can now login.');
         $_SESSION['infos'] = $msg_arr;
-        header("location: ../login.php");
+    } else {
+        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#452A" . $error, "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+        $_SESSION['errors'] = $msg_arr;
     }
+    header("location: ../login.php");
 }

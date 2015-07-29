@@ -60,7 +60,7 @@ body:before {
     width: 100%;
     height: 10px;
     z-index: 100;
-    box-shadow: 0px 0px 10px rgba(0,0,0,.8);
+    box-shadow: 0 0 10px rgba(0,0,0,.8);
 }
 
 /* set background image */
@@ -702,7 +702,7 @@ a[class*='trigger_']:hover {
     font:  12px Courier,Arial,sans-serif;
     line-height: 200%;
     padding: 5px;
-    margin: 10px 0px 10px 25px;
+    margin: 10px 0 10px 25px;
 }
 .tags_compact a{
     text-decoration: none;
@@ -845,8 +845,8 @@ code {
     background:#343434;
     display:none;
     position:absolute;
-    top: 0px;
-    left: 0px;
+    top: 0;
+    left: 0;
     width:20%;
     min-width:300px;
     padding:20px;

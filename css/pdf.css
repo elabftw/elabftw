@@ -234,7 +234,7 @@ p.title {
 
 .tags {
     line-height: 200%;
-    margin: 10px 0px 10px 5px;
+    margin: 10px 0 10px 5px;
     padding: 3px;
     width: 90%;
 }
@@ -256,7 +256,7 @@ p.title {
     font:  12px Courier,Arial,sans-serif;
     line-height: 200%;
     padding: 5px;
-    margin: 10px 0px 10px 25px;
+    margin: 10px 0 10px 25px;
 }
 .tags_compact a{
     text-decoration: none;

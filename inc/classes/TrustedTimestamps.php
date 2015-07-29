@@ -107,12 +107,12 @@ class TrustedTimestamps
 
         // if there is a config in the team, use that
         // otherwise use the general config if we can
-        if (strlen($team['stampprovider']) > 2) {
+        if (strlen(get_team_config('stampprovider')) > 2) {
             $config = get_team_config();
         } elseif (get_config('stampshare')) {
             $config = get_config();
         } else {
-            throw new Exception(_('No valid credentials were found for Time Stamping.'));
+            throw new Exception(_('Please configure Timestamping in the admin panel.'));
         }
 
         $login = $config['stamplogin'];

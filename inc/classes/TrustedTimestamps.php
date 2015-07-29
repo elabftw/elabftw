@@ -273,9 +273,6 @@ class TrustedTimestamps
      */
     private function postData()
     {
-        // we need that to get the version that will be in user agent
-        $update = new \Elabftw\Elabftw\Update();
-
         $ch = curl_init();
         // set url of TSA
         curl_setopt($ch, CURLOPT_URL, $this->stampParams['stampprovider']);
@@ -294,7 +291,7 @@ class TrustedTimestamps
         curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents($this->requestfilePath));
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/timestamp-query'));
-        curl_setopt($ch, CURLOPT_USERAGENT, "Elabftw/" . $update::INSTALLED_VERSION);
+        curl_setopt($ch, CURLOPT_USERAGENT, "Elabftw/" . Update::INSTALLED_VERSION);
         $binaryResponseString = curl_exec($ch);
         $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);

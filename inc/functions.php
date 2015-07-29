@@ -560,15 +560,23 @@ function item_is_in_team($id, $team_id)
  * @param string $conf_name The configuration we want to read
  * @return string The config_value
  */
-function get_config($conf_name)
+function get_config($conf_name = null)
 {
     global $pdo;
+    $final = array();
 
     $sql = "SELECT * FROM config";
     $req = $pdo->prepare($sql);
     $req->execute();
     $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
-    return $config[$conf_name][0];
+    if ($conf_name) {
+        return $config[$conf_name][0];
+    }
+    // we want an associative array
+    foreach ($config as $name => $value) {
+        $final[$name] = $value[0];
+    }
+    return $final;
 }
 
 /**

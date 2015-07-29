@@ -104,36 +104,31 @@ class TrustedTimestamps
     {
         $hash_algorithms = array('sha256', 'sha384', 'sha512');
         $crypto = new \Elabftw\Elabftw\Crypto();
-        $team = get_team_config();
 
-        if (strlen($team['stamplogin']) > 2) {
-            $login = $team['stamplogin'];
-            $password = $crypto->decrypt($team['stamppass']);
-            $provider = $team['stampprovider'];
-            $cert = $team['stampcert'];
-            $hash = $team['stamphash'];
-            if (!in_array($hash, $hash_algorithms)) {
-                $hash = 'sha256';
-            }
+        // if there is a config in the team, use that
+        // otherwise use the general config if we can
+        if (strlen($team['stampprovider']) > 2) {
+            $config = get_team_config();
         } elseif (get_config('stampshare')) {
-            $login = get_config('stamplogin');
-            $password = $crypto->decrypt(get_config('stamppass'));
-            $provider = get_config('stampprovider');
-            $cert = get_config('stampcert');
-            $hash = get_config('stamphash');
-            if (!in_array($hash, $hash_algorithms)) {
-                $hash = 'sha256';
-            }
-            // otherwise assume no login or password is needed
+            $config = get_config();
         } else {
             throw new Exception(_('No valid credentials were found for Time Stamping.'));
         }
 
+        $login = $config['stamplogin'];
+        $password = $crypto->decrypt($config['stamppass']);
+        $provider = $config['stampprovider'];
+        $cert = $config['stampcert'];
+        $hash = $config['stamphash'];
+        if (!in_array($hash, $hash_algorithms)) {
+            $hash = 'sha256';
+        }
+
         return array('stamplogin' => $login,
-                        'stamppassword' => $password,
-                        'stampprovider' => $provider,
-                        'stampcert' => $cert,
-                        'hash' => $hash);
+                    'stamppassword' => $password,
+                    'stampprovider' => $provider,
+                    'stampcert' => $cert,
+                    'hash' => $hash);
     }
 
     /**
@@ -277,7 +272,7 @@ class TrustedTimestamps
         // set url of TSA
         curl_setopt($ch, CURLOPT_URL, $this->stampParams['stampprovider']);
         // if login and password are set, pass them to curl
-        if (!is_null($this->stampParams['stamplogin']) && !is_null($this->stampParams['stamppassword'])) {
+        if ($this->stampParams['stamplogin'] && $this->stampParams['stamppassword']) {
             curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
             curl_setopt($ch, CURLOPT_USERPWD, $this->stampParams['stamplogin'] . ":" . $this->stampParams['stamppassword']);
         }

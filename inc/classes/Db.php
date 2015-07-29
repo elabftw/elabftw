@@ -79,7 +79,7 @@ final class Db
     /**
      * Return the last id inserted
      *
-     * @return int
+     * @return string
      */
     public function lastInsertId()
     {

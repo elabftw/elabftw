@@ -102,18 +102,16 @@
 <li class="toctree-l2"><a class="reference internal" href="common-errors.html#extension-is-not-loaded">Extension is not loaded</a></li>
 <li class="toctree-l2"><a class="reference internal" href="common-errors.html#i-can-t-upload-a-file-bigger-than-2-mb">I can&#8217;t upload a file bigger than 2 Mb</a></li>
 <li class="toctree-l2"><a class="reference internal" href="common-errors.html#i-can-t-export-my-numerous-experiments-in-zip-i-get-an-error-500">I can&#8217;t export my (numerous) experiments in zip, I get an error 500</a></li>
-<li class="toctree-l2"><a class="reference internal" href="common-errors.html#no-thumbnails-on-the-uploaded-images">No thumbnails on the uploaded images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="common-errors.html#languages-don-t-work">Languages don&#8217;t work</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Post install</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#setting-up-email">Setting up email</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#setting-up-the-teams">Setting up the teams</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#setting-up-timestamping">Setting up timestamping</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#using-other-languages">Using other languages</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#setting-up-backup">Setting up backup</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#allowing-more-memory-to-php">Allowing more memory to php</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#making-sure-that-the-uploads-folder-cannot-be-accessed">Making sure that the <cite>uploads</cite> folder cannot be accessed</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#updating">Updating</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#make-sure-that-the-uploads-folder-cannot-be-accessed">Make sure that the <cite>uploads</cite> folder cannot be accessed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#set-up-backup">Set up backup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#set-up-the-teams-optionnal">Set up the teams <sup>(optionnal)</sup></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#set-up-timestamping-optionnal">Set up timestamping <sup>(optionnal)</sup></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#update-often">Update often</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="backup.html">How to backup</a><ul>
@@ -265,55 +263,29 @@
 <p>Go to the Sysadmin panel (<cite>elabftw/sysconfig.php</cite>) and add the requested infos.</p>
 <p>If you don&#8217;t know what to do, register a new account on <a class="reference external" href="http://www.mandrill.com">Mandrill</a> or <a class="reference external" href="http://www.mailgun.com">Mailgun</a>. These services will give you a free SMTP account. :)</p>
 </div>
-<div class="section" id="setting-up-the-teams">
-<h2>Setting up the teams<a class="headerlink" href="#setting-up-the-teams" title="Permalink to this headline">¶</a></h2>
-<p>The Sysadmin panel (<cite>elabftw/sysconfig.php</cite>) allows you to add another team to your install.</p>
+<div class="section" id="make-sure-that-the-uploads-folder-cannot-be-accessed">
+<h2>Make sure that the <cite>uploads</cite> folder cannot be accessed<a class="headerlink" href="#make-sure-that-the-uploads-folder-cannot-be-accessed" title="Permalink to this headline">¶</a></h2>
+<p>Just visit <cite>/uploads/</cite> (add this at the end of the URL) and see if you see the files there (or at least the <cite>tmp</cite> folder). If you see a white page, all is good. If not, either configure Apache to AllowOverride All (so the .htaccess will work), or put an empty index.php file in the folder.</p>
 </div>
-<div class="section" id="setting-up-timestamping">
-<h2>Setting up timestamping<a class="headerlink" href="#setting-up-timestamping" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="set-up-backup">
+<h2>Set up backup<a class="headerlink" href="#set-up-backup" title="Permalink to this headline">¶</a></h2>
+<p>See the <a class="reference internal" href="backup.html#backup"><span>backup</span></a> page.</p>
+</div>
+<div class="section" id="set-up-the-teams-optionnal">
+<h2>Set up the teams <sup>(optionnal)</sup><a class="headerlink" href="#set-up-the-teams-optionnal" title="Permalink to this headline">¶</a></h2>
+<p>The Sysadmin panel (<cite>elabftw/sysconfig.php</cite>) allows you to add another team to your install. You should also edit your team name.</p>
+</div>
+<div class="section" id="set-up-timestamping-optionnal">
+<h2>Set up timestamping <sup>(optionnal)</sup><a class="headerlink" href="#set-up-timestamping-optionnal" title="Permalink to this headline">¶</a></h2>
 <p>eLabFTW provides an easy way to do <a class="reference external" href="https://en.wikipedia.org/wiki/Trusted_timestamping">Trusted Timestamping</a> for your experiments, so you can have strong legal value for your lab notebook.</p>
 <p>By default, it is setup to use <a class="reference external" href="https://www.pki.dfn.de/zeitstempeldienst/">pki.dfn.de</a> as <abbr title="TimeStampingAuthority">TSA</abbr>. It is free for researchers. The only problem, is that they don&#8217;t have ETSI certification for this service (although their PKI infrastructure is certified ETSI TS 102 042).</p>
 <p>So if you need a stronger certification, you should go with a commercial solution providing an <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3161.html"><strong>RFC 3161</strong></a> way of timestamping documents. We recommend Universign.eu, as they are one of the most serious and recognized <abbr title="TimeStampingAuthority">TSA</abbr> out there, but feel free to use the one you prefer.</p>
 <p>Remember: no data is sent to the <cite>TSA (TimeStampingAuthority)</cite>, only the hash of the data is sent, so no information can leak!</p>
 </div>
-<div class="section" id="using-other-languages">
-<h2>Using other languages<a class="headerlink" href="#using-other-languages" title="Permalink to this headline">¶</a></h2>
-<p>eLabFTW uses <cite>gettext &lt;https://en.wikipedia.org/wiki/Gettext&gt;</cite> to translate text. This means that you need to have the associated locales on the server.
-To see what locale you have:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">locale</span> <span class="o">-</span><span class="n">a</span>
-</pre></div>
-</div>
-<p>To add a locale, edit the file <cite>/etc/locale.gen</cite> and uncomment (remove the #) the locales you want. If you don&#8217;t find this file you can try directly the command:</p>
-<div class="highlight-python"><div class="highlight"><pre>locale-gen fr_FR.UTF-8
-</pre></div>
-</div>
-<p>Replace with the locale you want, of course.
-See <a class="reference internal" href="contributing.html"><em>here</em></a> to see a list of languages (and locales) supported by eLabFTW.
-Then do:</p>
-<div class="highlight-python"><div class="highlight"><pre>sudo locale-gen
-</pre></div>
-</div>
-<p>And reload the webserver.</p>
-</div>
-<div class="section" id="setting-up-backup">
-<h2>Setting up backup<a class="headerlink" href="#setting-up-backup" title="Permalink to this headline">¶</a></h2>
-<p>See the <a class="reference internal" href="backup.html#backup"><span>backup</span></a> page.</p>
-</div>
-<div class="section" id="allowing-more-memory-to-php">
-<h2>Allowing more memory to php<a class="headerlink" href="#allowing-more-memory-to-php" title="Permalink to this headline">¶</a></h2>
-<p>By default the amount of memory a script (page loading) can take is quite low compared to how much memory any modern computer has. It is a good idea to increase this value in order to prevent future errors (when you try to export a lot of experiments for instance).</p>
-<p>Edit the file <cite>/etc/php/php.ini</cite> or any file called php.ini somewhere on your filesystem. Try <cite>sudo updatedb;locate php.ini</cite>. For XAMPP install, it is in the config folder of XAMPP.
-Now that you have located the file and opened it in a text editor, search for <cite>memory_limit</cite> and increase it to what you wish. <a class="reference external" href="http://php.net/manual/en/ini.core.php#ini.memory-limit">Official documentation on memory_limit</a>.</p>
-</div>
-<div class="section" id="making-sure-that-the-uploads-folder-cannot-be-accessed">
-<h2>Making sure that the <cite>uploads</cite> folder cannot be accessed<a class="headerlink" href="#making-sure-that-the-uploads-folder-cannot-be-accessed" title="Permalink to this headline">¶</a></h2>
-<p>Just visit <cite>/uploads/</cite> (add this at the end of the URL) and see if you see the files there (or at least the <cite>tmp</cite> folder). If you see a white page, all is good. If not, either configure Apache to AllowOverride All (so the .htaccess will work), or put an empty index.php file in the folder.</p>
-</div>
-<div class="section" id="updating">
-<h2>Updating<a class="headerlink" href="#updating" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="update-often">
+<h2>Update often<a class="headerlink" href="#update-often" title="Permalink to this headline">¶</a></h2>
 <p>It is important to keep your install up to date with the latest bug fixes and new features.</p>
 <p>See instructions on updating eLabFTW on <a class="reference internal" href="how-to-update.html#how-to-update"><span>How to update</span></a>.</p>
-<p>Watch the repository to receive an email on new updates.</p>
 </div>
 </div>
 

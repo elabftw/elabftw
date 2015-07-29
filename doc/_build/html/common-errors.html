@@ -102,18 +102,16 @@
 <li class="toctree-l2"><a class="reference internal" href="#extension-is-not-loaded">Extension is not loaded</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i-can-t-upload-a-file-bigger-than-2-mb">I can&#8217;t upload a file bigger than 2 Mb</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i-can-t-export-my-numerous-experiments-in-zip-i-get-an-error-500">I can&#8217;t export my (numerous) experiments in zip, I get an error 500</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#no-thumbnails-on-the-uploaded-images">No thumbnails on the uploaded images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#languages-don-t-work">Languages don&#8217;t work</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="postinstall.html">Post install</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="postinstall.html#setting-up-email">Setting up email</a></li>
 <li class="toctree-l2"><a class="reference internal" href="postinstall.html#setting-up-the-teams">Setting up the teams</a></li>
 <li class="toctree-l2"><a class="reference internal" href="postinstall.html#setting-up-timestamping">Setting up timestamping</a></li>
-<li class="toctree-l2"><a class="reference internal" href="postinstall.html#using-other-languages">Using other languages</a></li>
-<li class="toctree-l2"><a class="reference internal" href="postinstall.html#setting-up-backup">Setting up backup</a></li>
-<li class="toctree-l2"><a class="reference internal" href="postinstall.html#allowing-more-memory-to-php">Allowing more memory to php</a></li>
-<li class="toctree-l2"><a class="reference internal" href="postinstall.html#making-sure-that-the-uploads-folder-cannot-be-accessed">Making sure that the <cite>uploads</cite> folder cannot be accessed</a></li>
-<li class="toctree-l2"><a class="reference internal" href="postinstall.html#updating">Updating</a></li>
+<li class="toctree-l2"><a class="reference internal" href="postinstall.html#make-sure-that-the-uploads-folder-cannot-be-accessed">Make sure that the <cite>uploads</cite> folder cannot be accessed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="postinstall.html#set-up-backup">Set up backup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="postinstall.html#update-often">Update often</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="backup.html">How to backup</a><ul>
@@ -323,17 +321,32 @@ chmod <span class="m">644</span> config.php
 </div>
 <div class="section" id="i-can-t-export-my-numerous-experiments-in-zip-i-get-an-error-500">
 <h2>I can&#8217;t export my (numerous) experiments in zip, I get an error 500<a class="headerlink" href="#i-can-t-export-my-numerous-experiments-in-zip-i-get-an-error-500" title="Permalink to this headline">¶</a></h2>
-<p>This is because the script might take too long to execute and php is cutting it.
-To solve this, edit the file <cite>/etc/php5/apache2/php.ini</cite> and increase the value of max_execution_time and max_input_time.
-Then restart your server:</p>
+<p>Edit the file <cite>/etc/php/php.ini</cite> or any file called php.ini somewhere on your filesystem. Try <cite>sudo updatedb;locate php.ini</cite>. For XAMPP install, it is in the config folder of XAMPP.
+Now that you have located the file and opened it in a text editor, search for <cite>memory_limit</cite> and increase it to what you wish. <a class="reference external" href="http://php.net/manual/en/ini.core.php#ini.memory-limit">Official documentation on memory_limit</a>.</p>
+<p>You can also increase the value of max_execution_time and max_input_time.
+Then restart your webserver:</p>
 <div class="highlight-bash"><div class="highlight"><pre>sudo service apache2 restart
 </pre></div>
 </div>
 </div>
-<div class="section" id="no-thumbnails-on-the-uploaded-images">
-<h2>No thumbnails on the uploaded images<a class="headerlink" href="#no-thumbnails-on-the-uploaded-images" title="Permalink to this headline">¶</a></h2>
-<p>That&#8217;s because the gd extension of php isn&#8217;t activated (deactivated by default on ArchLinux server)
-You need to uncomment ;extension=gd.so in /etc/php.ini and install the package php-gd.</p>
+<div class="section" id="languages-don-t-work">
+<h2>Languages don&#8217;t work<a class="headerlink" href="#languages-don-t-work" title="Permalink to this headline">¶</a></h2>
+<p>eLabFTW uses <a class="reference external" href="https://en.wikipedia.org/wiki/Gettext">gettext</a> to translate text. This means that you need to have the associated locales on the server.
+To see what locale you have:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">locale</span> <span class="o">-</span><span class="n">a</span>
+</pre></div>
+</div>
+<p>To add a locale, edit the file <cite>/etc/locale.gen</cite> and uncomment (remove the #) the locales you want. If you don&#8217;t find this file you can try directly the command:</p>
+<div class="highlight-python"><div class="highlight"><pre>locale-gen fr_FR.UTF-8
+</pre></div>
+</div>
+<p>Replace with the locale you want, of course.
+See <a class="reference internal" href="contributing.html"><em>here</em></a> to see a list of languages (and locales) supported by eLabFTW.
+Then do:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo locale-gen
+</pre></div>
+</div>
+<p>And reload the webserver.</p>
 </div>
 </div>
 

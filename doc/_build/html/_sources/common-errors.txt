@@ -86,16 +86,32 @@ Edit the file php.ini and change the value of upload_max_filesize to something b
 I can't export my (numerous) experiments in zip, I get an error 500
 -------------------------------------------------------------------
 
-This is because the script might take too long to execute and php is cutting it.
-To solve this, edit the file `/etc/php5/apache2/php.ini` and increase the value of max_execution_time and max_input_time.
-Then restart your server:
+Edit the file `/etc/php/php.ini` or any file called php.ini somewhere on your filesystem. Try `sudo updatedb;locate php.ini`. For XAMPP install, it is in the config folder of XAMPP.
+Now that you have located the file and opened it in a text editor, search for `memory_limit` and increase it to what you wish. `Official documentation on memory_limit <http://php.net/manual/en/ini.core.php#ini.memory-limit>`_.
+
+You can also increase the value of max_execution_time and max_input_time.
+Then restart your webserver:
 
 .. code-block:: bash
 
     sudo service apache2 restart
 
-No thumbnails on the uploaded images
-------------------------------------
+Languages don't work
+--------------------
 
-That's because the gd extension of php isn't activated (deactivated by default on ArchLinux server)
-You need to uncomment ;extension=gd.so in /etc/php.ini and install the package php-gd.
+eLabFTW uses `gettext <https://en.wikipedia.org/wiki/Gettext>`_ to translate text. This means that you need to have the associated locales on the server.
+To see what locale you have::
+
+    locale -a
+
+To add a locale, edit the file `/etc/locale.gen` and uncomment (remove the #) the locales you want. If you don't find this file you can try directly the command::
+
+    locale-gen fr_FR.UTF-8
+
+Replace with the locale you want, of course.
+See :doc:`here <contributing>` to see a list of languages (and locales) supported by eLabFTW.
+Then do::
+
+    sudo locale-gen
+
+And reload the webserver.

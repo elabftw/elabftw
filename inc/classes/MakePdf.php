@@ -372,7 +372,7 @@ class MakePdf extends Make
     {
         $this->addCss();
         $this->content .= "<h1 style='margin-bottom:5px'>" . stripslashes($this->data['title']) . "</h1>
-            Date : " . (new Tools)->formatDate($this->data['date']) . "<br />
+            Date : " . Tools::formatDate($this->data['date']) . "<br />
             Tags : <em>". $this->tags . "</em><br />
             Made by : " . $this->author . "
             <hr>" . stripslashes($this->body);

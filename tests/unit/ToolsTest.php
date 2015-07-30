@@ -11,26 +11,23 @@ class ToolsTest extends \PHPUnit_Framework_TestCase
 
     public function testFormatDate()
     {
-        $tools = new \Elabftw\Elabftw\Tools();
-        $this->assertEquals('1969.07.21', $tools->formatDate('19690721'));
-        $this->assertEquals('1969-07-21', $tools->formatDate('19690721', '-'));
-        $this->assertFalse($tools->formatDate('196907211'));
+        $this->assertEquals('1969.07.21', \Elabftw\Elabftw\Tools::formatDate('19690721'));
+        $this->assertEquals('1969-07-21', \Elabftw\Elabftw\Tools::formatDate('19690721', '-'));
+        $this->assertFalse(\Elabftw\Elabftw\Tools::formatDate('196907211'));
     }
 
     public function testGetExt()
     {
-        $tools = new \Elabftw\Elabftw\Tools();
-        $this->assertEquals('gif', $tools->getExt('myfile.gif'));
-        $this->assertEquals('gif', $tools->getExt('/path/to/myfile.gif'));
-        $this->assertEquals('unknown', $tools->getExt('/path/to/myfilegif'));
+        $this->assertEquals('gif', \Elabftw\Elabftw\Tools::getExt('myfile.gif'));
+        $this->assertEquals('gif', \Elabftw\Elabftw\Tools::getExt('/path/to/myfile.gif'));
+        $this->assertEquals('unknown', \Elabftw\Elabftw\Tools::getExt('/path/to/myfilegif'));
     }
 
     public function testBuildStringFromArray()
     {
-        $tools = new \Elabftw\Elabftw\Tools();
         $array = array(1, 2, 42);
-        $this->assertEquals('1+2+42', $tools->buildStringFromArray($array));
-        $this->assertEquals('1-2-42', $tools->buildStringFromArray($array, '-'));
-        $this->assertFalse($tools->buildStringFromArray('pwet'));
+        $this->assertEquals('1+2+42', \Elabftw\Elabftw\Tools::buildStringFromArray($array));
+        $this->assertEquals('1-2-42', \Elabftw\Elabftw\Tools::buildStringFromArray($array, '-'));
+        $this->assertFalse(\Elabftw\Elabftw\Tools::buildStringFromArray('pwet'));
     }
 }

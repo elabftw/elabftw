@@ -116,7 +116,7 @@ if (file_exists('../config.php')) {
 <br />
 <?php
 // CHECK WE ARE WITH HTTPS
-if (!(new \Elabftw\Elabftw\Tools)->usingSsl()) {
+if (!\Elabftw\Elabftw\Tools::usingSsl()) {
     // get the url to display a link to click (without the port)
     $url = 'https://' . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'];
     $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or click this link : <a href='$url'>$url</a>";

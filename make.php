@@ -51,6 +51,6 @@ echo "<div class='well' style='margin-top:20px'>";
 echo "<p>" . _('Your file is ready:') . "<br>
         <a href='app/download.php?type=" . $_GET['what'] . "&f=" . $make->fileName . "&name=" . $make->getCleanName() . "' target='_blank'>
         <img src='img/download.png' alt='download' /> " . $make->getCleanName() . "</a>
-        <span class='filesize'>(" . (new \Elabftw\Elabftw\Tools)->formatBytes(filesize($make->filePath)) . ")</span></p>";
+        <span class='filesize'>(" . \Elabftw\Elabftw\Tools::formatBytes(filesize($make->filePath)) . ")</span></p>";
 echo "</div>";
 require_once 'inc/footer.php';

@@ -22,7 +22,7 @@ class Tools
      *
      * @return int maximum size in MB of files allowed for upload
      */
-    public function returnMaxUploadSize()
+    public static function returnMaxUploadSize()
     {
         $max_size = trim(ini_get('upload_max_filesize'));
         $post_max_size = trim(ini_get('post_max_size'));
@@ -60,7 +60,7 @@ class Tools
      * @param int $bytes size in bytes
      * @return string
      */
-    public function formatBytes($bytes)
+    public static function formatBytes($bytes)
     {
         // nice display of filesize
         if ($bytes < 1024) {
@@ -85,7 +85,7 @@ class Tools
      * @param string $s an optionnal param to specify the separator
      * @return false|string The formatted string
      */
-    public function formatDate($date, $s = '.')
+    public static function formatDate($date, $s = '.')
     {
         if (strlen($date) != 8) {
             return false;
@@ -99,7 +99,7 @@ class Tools
      * @param string $filename path of the file
      * @return string file extension
      */
-    public function getExt($filename)
+    public static function getExt($filename)
     {
         // Get file extension
         $path_info = pathinfo($filename);
@@ -118,7 +118,7 @@ class Tools
      *
      * @return bool
      */
-    public function usingSsl()
+    public static function usingSsl()
     {
         return ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on')
             || (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
@@ -132,7 +132,7 @@ class Tools
      * @param string $delim An optionnal delimiter
      * @return false|string
      */
-    public function buildStringFromArray($array, $delim = '+')
+    public static function buildStringFromArray($array, $delim = '+')
     {
         $string = "";
 

@@ -50,7 +50,7 @@ var item_id = '<?php echo $id; ?>';
 Dropzone.options.elabftwDropzone = {
     // i18n message to user
     dictDefaultMessage: '<?php echo _('Drop files here to upload'); ?>',
-    maxFilesize: '<?php echo (new \Elabftw\Elabftw\Tools)->returnMaxUploadSize(); ?>', // MB
+    maxFilesize: '<?php echo \Elabftw\Elabftw\Tools::returnMaxUploadSize(); ?>', // MB
     init: function() {
         this.on("complete", function() {
             // reload the #filesdiv once the file is uploaded

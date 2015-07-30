@@ -21,13 +21,24 @@ abstract class Make
     abstract protected function getCleanName();
 
     /**
-     * Generate the long file name and path
+     * Generate a long and unique filename
      *
+     * @return string a sha512 hash of uniqid()
      */
-    protected function generateFileName()
+    protected function getFileName()
     {
-        $this->fileName = hash("sha512", uniqid(rand(), true));
-        $this->filePath = ELAB_ROOT . 'uploads/tmp/' . $this->fileName;
+        return hash("sha512", uniqid(rand(), true));
+    }
+
+    /**
+     * Attach the absolute path to a filename
+     *
+     * @param string $filename
+     * @return string Absolute path
+     */
+    protected function getFilePath($fileName)
+    {
+        return ELAB_ROOT . 'uploads/tmp/' . $fileName;
     }
 
     /**

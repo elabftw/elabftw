@@ -15,28 +15,26 @@ use \Exception;
 /**
  * Mother class of MakeCsv, MakePdf and MakeZip
  */
-class Make
+abstract class Make
 {
-    /** the name of the file on disk */
-    public $fileName;
-    /** the relative path of this file */
-    public $filePath;
+    /** child classes need to implement that */
+    abstract protected function getCleanName();
 
-    /**
-     * Generate the long file name and path
-     *
-     */
-    protected function generateFileName()
+    protected function getFileName()
     {
-        $this->fileName = hash("sha512", uniqid(rand(), true));
-        $this->filePath = ELAB_ROOT . 'uploads/tmp/' . $this->fileName;
+        return hash("sha512", uniqid(rand(), true));
+    }
+
+    protected function getFilePath($fileName)
+    {
+        return ELAB_ROOT . 'uploads/tmp/' . $fileName;
     }
 
     /**
      * Validate the type we have.
      *
      * @param $type The type (experiments or items)
-     * @return string
+     * @return string The valid type
      */
     protected function checkType($type)
     {

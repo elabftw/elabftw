@@ -20,6 +20,11 @@ class MakeCsv extends Make
     /** our pdo object */
     private $pdo;
 
+    /** a sha512 sum */
+    public $fileName;
+    /** the full path of the file */
+    public $filePath;
+
     /** the lines in the csv file */
     private $list = array();
     /** the input ids */
@@ -33,8 +38,6 @@ class MakeCsv extends Make
     /** the url of the item */
     private $url;
 
-    public $filePath;
-
     /**
      * Give me a list of id+id+id and a type, I make good csv for you
      *
@@ -45,20 +48,26 @@ class MakeCsv extends Make
     {
         $this->pdo = Db::getConnection();
 
-        // assign and check id
+        $this->fileName = $this->getFileName();
+        $this->filePath = $this->getFilePath($this->fileName);
+
         $this->idList = $idList;
 
         // assign and check type
         $this->type = $this->checkType($type);
 
-        $this->generateFileName();
-
+        // set the column names
         $this->list[] = $this->populateFirstLine();
 
         // main loop
         $this->loopIdArr();
     }
 
+    /**
+     * Return a nice name for the file
+     *
+     * @return string
+     */
     public function getCleanName()
     {
         return 'export.elabftw.csv';

@@ -38,6 +38,10 @@ class MakeZip extends Make
     private $zipped;
     /** a formatted title */
     private $cleanTitle;
+    /** a sha512 sum */
+    public $fileName;
+    /** full path of file */
+    public $filePath;
     /** name of folder */
     private $folder;
     /** the path to attached files in the zip */
@@ -65,7 +69,8 @@ class MakeZip extends Make
         $this->idList = $idList;
         $this->type = $this->checkType($type);
 
-        $this->generateFileName();
+        $this->fileName = $this->getFileName();
+        $this->filePath = $this->getFilePath($this->fileName);
 
         $this->createZipArchive();
         $this->loopIdArr();

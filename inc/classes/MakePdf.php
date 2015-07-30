@@ -31,8 +31,11 @@ class MakePdf extends Make
     private $cleanTitle;
     /** content of item */
     private $body;
-    /** if we want to write it to a file */
-    private $path;
+
+    /** a sha512 sum */
+    private $fileName;
+    /** full path of file */
+    public $filePath;
 
     /** who */
     public $author;
@@ -51,7 +54,7 @@ class MakePdf extends Make
      * @param string $type 'experiments' or 'items'
      * @param string|null $path Path to where we want the pdf written
      */
-    public function __construct($id, $type, $path = null)
+    public function __construct($id, $type, $toFile = false)
     {
         $this->pdo = Db::getConnection();
 
@@ -60,9 +63,6 @@ class MakePdf extends Make
 
         // assign and check type
         $this->type = $this->checkType($type);
-
-        // assign path
-        $this->path = $path;
 
         // build the pdf content
         $this->initData();
@@ -82,8 +82,10 @@ class MakePdf extends Make
         $mpdf->WriteHTML($this->content);
 
         // output
-        if (isset($this->path)) {
-            $mpdf->Output($this->path, 'F');
+        if ($toFile) {
+            $this->fileName = $this->getFileName();
+            $this->filePath = $this->getFilePath($this->fileName);
+            $mpdf->Output($this->filePath, 'F');
         } else {
             $mpdf->Output($this->getCleanName(), 'I');
         }

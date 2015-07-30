@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2015-03-04 14:57+0100\n"
-"PO-Revision-Date: 2015-07-30 00:22+0200\n"
+"PO-Revision-Date: 2015-07-30 14:25+0200\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -1484,3 +1484,9 @@ msgstr "Configurez d'abord l'horodatage dans le panneau d'administration."
 
 msgid "Error making the zip archive!"
 msgstr "Une erreur s'est produite durant la génération de l'archive zip !"
+
+msgid "You are missing the ZipArchive class in php. Uncomment the line extension=zip.so in php.ini file."
+msgstr "L'extension ZipArchive n'est pas activée. Décommentez la line exension=zip.so dans le fichier php.ini."
+
+msgid "You are trying to download an experiment you don't own!"
+msgstr "Vous ne pouvez pas télécharger une expérience qui ne vous appartient pas!"

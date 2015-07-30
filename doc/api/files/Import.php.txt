@@ -80,3 +80,4 @@ abstract class Import
         throw new Exception(_("This doesn't look like the right kind of file. Import aborted."));
     }
 }
+

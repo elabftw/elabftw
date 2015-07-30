@@ -19,7 +19,7 @@ use \FileSystemIterator;
 /**
  * Import a .elabftw.zip file into the database.
  */
-class ImportZip
+class ImportZip extends Import
 {
     /** pdo object */
     private $pdo;
@@ -28,8 +28,6 @@ class ImportZip
     public $inserted = 0;
     /** the folder where we extract the zip */
     private $tmpPath;
-    /** the name of the temporary uploaded input zip */
-    private $fileTmpName;
     /** an array with the data we want to import */
     private $json;
 
@@ -48,23 +46,22 @@ class ImportZip
     /**
      * Need the path to zip tmp_name, the type and the db object
      *
-     * @param string $zipfile Path to temporary name of uploaded zip
-     * @param int itemType the type of item we want in the end
      */
-    public function __construct($zipfile, $itemType)
+    public function __construct()
     {
 
         $this->pdo = Db::getConnection();
 
-        $this->fileTmpName = $zipfile;
-        $this->itemType = $itemType;
+        $this->checkFileReadable();
+        $this->checkMimeType();
+        $this->itemType = $this->getItemType();
         // this is where we will extract the zip
         $this->tmpPath = ELAB_ROOT . 'uploads/tmp/' . uniqid();
         if (!mkdir($this->tmpPath)) {
             throw new Exception('Cannot create temporary folder');
         }
 
-        $this->extractZip();
+        $this->openFile();
         $this->readJson();
         $this->importAll();
     }
@@ -75,10 +72,10 @@ class ImportZip
      * @throws Exception if it cannot open the zip
      * @return bool
      */
-    private function extractZip()
+    protected function openFile()
     {
         $zip = new \ZipArchive;
-        if ($zip->open($this->fileTmpName) && $zip->extractTo($this->tmpPath)) {
+        if ($zip->open($this->getFilePath()) && $zip->extractTo($this->tmpPath)) {
             return true;
         } else {
             throw new Exception('Cannot open zip file!');

@@ -214,10 +214,9 @@ class MakeZip extends Make
      */
     private function addPdf($id)
     {
-        $pdfPath = ELAB_ROOT . 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . '.pdf';
-        $pdf = new \Elabftw\Elabftw\MakePdf($id, $this->type, $pdfPath);
-        $this->zip->addFile($pdfPath, $this->folder . '/' . $pdf->getCleanName());
-        $this->filesToDelete[] = $pdfPath;
+        $pdf = new MakePdf($id, $this->type, true);
+        $this->zip->addFile($pdf->filePath, $this->folder . '/' . $pdf->getCleanName());
+        $this->filesToDelete[] = $pdf->filePath;
     }
 
     /**
@@ -228,7 +227,7 @@ class MakeZip extends Make
     private function addCsv($id)
     {
         // add CSV file to archive
-        $csv = new \Elabftw\Elabftw\MakeCsv($id, $this->type);
+        $csv = new MakeCsv($id, $this->type);
         $this->zip->addFile($csv->filePath, $this->folder . "/" . $this->cleanTitle . ".csv");
         $this->filesToDelete[] = $csv->filePath;
     }

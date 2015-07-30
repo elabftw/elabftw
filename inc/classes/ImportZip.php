@@ -46,8 +46,6 @@ class ImportZip extends Import
     /**
      * Need the path to zip tmp_name, the type and the db object
      *
-     * @param string $zipfile Path to temporary name of uploaded zip
-     * @param int itemType the type of item we want in the end
      */
     public function __construct()
     {

@@ -31,8 +31,11 @@ class MakePdf extends Make
     private $cleanTitle;
     /** content of item */
     private $body;
-    /** if we want to write it to a file */
-    private $path;
+
+    /** a sha512 sum */
+    private $fileName;
+    /** full path of file */
+    public $filePath;
 
     /** who */
     public $author;
@@ -51,7 +54,7 @@ class MakePdf extends Make
      * @param string $type 'experiments' or 'items'
      * @param string|null $path Path to where we want the pdf written
      */
-    public function __construct($id, $type, $path = null)
+    public function __construct($id, $type, $toFile = false)
     {
         $this->pdo = Db::getConnection();
 
@@ -60,9 +63,6 @@ class MakePdf extends Make
 
         // assign and check type
         $this->type = $this->checkType($type);
-
-        // assign path
-        $this->path = $path;
 
         // build the pdf content
         $this->initData();
@@ -82,8 +82,10 @@ class MakePdf extends Make
         $mpdf->WriteHTML($this->content);
 
         // output
-        if (isset($this->path)) {
-            $mpdf->Output($this->path, 'F');
+        if ($toFile) {
+            $this->fileName = $this->getFileName();
+            $this->filePath = $this->getFilePath($this->fileName);
+            $mpdf->Output($this->filePath, 'F');
         } else {
             $mpdf->Output($this->getCleanName(), 'I');
         }
@@ -299,7 +301,7 @@ class MakePdf extends Make
             $target = 'database.php';
         }
 
-        $url = str_replace(array('make_pdf.php', 'make.php', 'app/timestamp.php'), $target, $url);
+        $url = str_replace(array('make.php', 'app/timestamp.php'), $target, $url);
         $full_url = $url . "?mode=view&id=" . $this->id;
 
         $this->content .= "<p class='elabid'>link : <a href='" . $full_url . "'>" . $full_url . "</a></p>";
@@ -347,7 +349,7 @@ class MakePdf extends Make
                 $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
                 for ($i = 0; $i < $row_cnt; $i++) {
 
-                    $item_url = str_replace(array('make_pdf.php', 'make.php', 'app/timestamp.php'), 'database.php', $url);
+                    $item_url = str_replace(array('make.php', 'app/timestamp.php'), 'database.php', $url);
                     $full_item_url = $item_url . "?mode=view&id=" . $links_id_arr[$i];
 
                     $this->content .= "<li>[" . $links_type_arr[$i] . "] - <a href='" . $full_item_url . "'>" . $links_title_arr[$i] . "</a></li>";

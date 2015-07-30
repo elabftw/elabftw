@@ -85,7 +85,7 @@ class MakePdf extends Make
         if (isset($this->path)) {
             $mpdf->Output($this->path, 'F');
         } else {
-            $mpdf->Output($this->getFileName(), 'I');
+            $mpdf->Output($this->getCleanName(), 'I');
         }
     }
 
@@ -106,7 +106,7 @@ class MakePdf extends Make
      *
      * @return string The file name of the pdf
      */
-    public function getFileName()
+    public function getCleanName()
     {
         return $this->cleanTitle . '.pdf';
     }

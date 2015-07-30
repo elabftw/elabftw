@@ -15,12 +15,15 @@ use \Exception;
 /**
  * Mother class of MakeCsv, MakePdf and MakeZip
  */
-class Make
+abstract class Make
 {
     /** the name of the file on disk */
     public $fileName;
     /** the relative path of this file */
     public $filePath;
+
+    /** child classes need to implement that */
+    abstract protected function getCleanName();
 
     /**
      * Generate the long file name and path

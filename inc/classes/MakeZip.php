@@ -211,7 +211,7 @@ class MakeZip extends Make
     {
         $pdfPath = ELAB_ROOT . 'uploads/tmp/' . hash("sha512", uniqid(rand(), true)) . '.pdf';
         $pdf = new \Elabftw\Elabftw\MakePdf($id, $this->type, $pdfPath);
-        $this->zip->addFile($pdfPath, $this->folder . '/' . $pdf->getFileName());
+        $this->zip->addFile($pdfPath, $this->folder . '/' . $pdf->getCleanName());
         $this->filesToDelete[] = $pdfPath;
     }
 

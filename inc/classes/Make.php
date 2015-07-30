@@ -33,7 +33,7 @@ abstract class Make
     /**
      * Attach the absolute path to a filename
      *
-     * @param string $filename
+     * @param string $fileName
      * @return string Absolute path
      */
     protected function getFilePath($fileName)
@@ -44,7 +44,7 @@ abstract class Make
     /**
      * Validate the type we have.
      *
-     * @param $type The type (experiments or items)
+     * @param string $type The type (experiments or items)
      * @return string The valid type
      */
     protected function checkType($type)

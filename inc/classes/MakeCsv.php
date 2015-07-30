@@ -28,7 +28,6 @@ class MakeCsv extends Make
     private $idArr = array();
     /** 'experiment' or 'items' */
     private $type;
-    public $cleanName;
     /** the content */
     private $data;
     /** the url of the item */
@@ -52,8 +51,6 @@ class MakeCsv extends Make
         // assign and check type
         $this->type = $this->checkType($type);
 
-        $this->cleanName = 'export.elabftw.csv';
-
         $this->generateFileName();
 
         $this->list[] = $this->populateFirstLine();
@@ -64,7 +61,7 @@ class MakeCsv extends Make
 
     public function getCleanName()
     {
-        return $this->cleanName;
+        return 'export.elabftw.csv';
     }
     /**
      * Here we populate the first row: it will be the column names

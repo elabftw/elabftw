@@ -65,6 +65,8 @@ class MakeZip extends Make
         $this->idList = $idList;
         $this->type = $this->checkType($type);
 
+        $this->generateFileName();
+
         $this->createZipArchive();
         $this->loopIdArr();
 

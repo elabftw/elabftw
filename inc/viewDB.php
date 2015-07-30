@@ -57,7 +57,7 @@ show_stars($data['rating']);
 // buttons
 echo "<a href='database.php?mode=edit&id=" . $data['itemid'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a> 
 <a href='app/duplicate_item.php?id=".$data['itemid'] . "&type=db'><img src='img/duplicate.png' title='duplicate item' alt='duplicate' /></a> 
-<a href='make_pdf.php?id=".$data['itemid'] . "&type=items'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a> 
+<a href='make.php?what=pdf&id=".$data['itemid'] . "&type=items'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a> 
 <a href='make.php?what=zip&id=".$data['itemid'] . "&type=items'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a>
 <a href='experiments.php?mode=show&related=".$data['itemid'] . "'><img src='img/link.png' alt='Linked experiments' title='Linked experiments' /></a> ";
 // lock

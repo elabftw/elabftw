@@ -26,7 +26,6 @@
 require_once 'inc/common.php';
 $page_title = _('Export');
 $selected_menu = null;
-require_once 'inc/head.php';
 
 try {
     switch ($_GET['what']) {
@@ -37,20 +36,31 @@ try {
         case 'zip':
             $make = new \Elabftw\Elabftw\MakeZip($_GET['id'], $_GET['type']);
             break;
+
+        case 'pdf':
+            $make = new \Elabftw\Elabftw\MakePdf($_GET['id'], $_GET['type']);
+            break;
+
         default:
             throw new Exception(_('Bad type!'));
     }
 } catch (Exception $e) {
+    require_once 'inc/head.php';
     display_message('error', $e->getMessage());
     require_once 'inc/footer.php';
     exit;
 }
 
-// PAGE BEGIN
-echo "<div class='well' style='margin-top:20px'>";
-echo "<p>" . _('Your file is ready:') . "<br>
-        <a href='app/download.php?type=" . $_GET['what'] . "&f=" . $make->fileName . "&name=" . $make->getCleanName() . "' target='_blank'>
-        <img src='img/download.png' alt='download' /> " . $make->getCleanName() . "</a>
-        <span class='filesize'>(" . \Elabftw\Elabftw\Tools::formatBytes(filesize($make->filePath)) . ")</span></p>";
-echo "</div>";
-require_once 'inc/footer.php';
+// the pdf is shown directly, but for csv or zip we want a download page
+if ($_GET['what'] === 'csv' || $_GET['what'] === 'zip') {
+    require_once 'inc/head.php';
+
+    echo "<div class='well' style='margin-top:20px'>";
+    echo "<p>" . _('Your file is ready:') . "<br>
+            <a href='app/download.php?type=" . $_GET['what'] . "&f=" . $make->fileName . "&name=" . $make->getCleanName() . "' target='_blank'>
+            <img src='img/download.png' alt='download' /> " . $make->getCleanName() . "</a>
+            <span class='filesize'>(" . \Elabftw\Elabftw\Tools::formatBytes(filesize($make->filePath)) . ")</span></p>";
+    echo "</div>";
+
+    require_once 'inc/footer.php';
+}

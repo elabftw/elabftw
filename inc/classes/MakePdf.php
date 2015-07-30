@@ -301,7 +301,7 @@ class MakePdf extends Make
             $target = 'database.php';
         }
 
-        $url = str_replace(array('make_pdf.php', 'make.php', 'app/timestamp.php'), $target, $url);
+        $url = str_replace(array('make.php', 'app/timestamp.php'), $target, $url);
         $full_url = $url . "?mode=view&id=" . $this->id;
 
         $this->content .= "<p class='elabid'>link : <a href='" . $full_url . "'>" . $full_url . "</a></p>";
@@ -349,7 +349,7 @@ class MakePdf extends Make
                 $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
                 for ($i = 0; $i < $row_cnt; $i++) {
 
-                    $item_url = str_replace(array('make_pdf.php', 'make.php', 'app/timestamp.php'), 'database.php', $url);
+                    $item_url = str_replace(array('make.php', 'app/timestamp.php'), 'database.php', $url);
                     $full_item_url = $item_url . "?mode=view&id=" . $links_id_arr[$i];
 
                     $this->content .= "<li>[" . $links_type_arr[$i] . "] - <a href='" . $full_item_url . "'>" . $links_title_arr[$i] . "</a></li>";

@@ -17,11 +17,6 @@ use \Exception;
  */
 abstract class Make
 {
-    /** the name of the file on disk */
-    public $fileName;
-    /** the relative path of this file */
-    public $filePath;
-
     /** child classes need to implement that */
     abstract protected function getCleanName();
 
@@ -39,7 +34,7 @@ abstract class Make
      * Validate the type we have.
      *
      * @param $type The type (experiments or items)
-     * @return string
+     * @return string The valid type
      */
     protected function checkType($type)
     {

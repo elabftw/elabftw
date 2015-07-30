@@ -63,6 +63,11 @@ class MakeCsv extends Make
         $this->loopIdArr();
     }
 
+    /**
+     * Return a nice name for the file
+     *
+     * @return string
+     */
     public function getCleanName()
     {
         return 'export.elabftw.csv';

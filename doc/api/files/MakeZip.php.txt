@@ -63,7 +63,7 @@ class MakeZip extends Make
 
         // we check first if the zip extension is here
         if (!class_exists('ZipArchive')) {
-            throw new Exception("You are missing the ZipArchive class in php. Uncomment the line extension=zip.so in /etc/php/php.ini.");
+            throw new Exception(_("You are missing the ZipArchive class in php. Uncomment the line extension=zip.so in php.ini file."));
         }
 
         $this->idList = $idList;

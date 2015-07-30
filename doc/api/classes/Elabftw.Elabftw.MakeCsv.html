@@ -114,7 +114,7 @@
                         <ul class="dropdown-menu">
                             <li>
                                 <a href="../reports/errors.html">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">5</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">1</span>
                                 </a>
                             </li>
                             <li>
@@ -144,28 +144,28 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1319755085"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1166661630"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1319755085" class="accordion-body collapse in">
+            <div id="namespace-1166661630" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-341465415"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1701249142"></a>
                                 <a href="../namespaces/Elabftw.html" style="margin-left: 30px; padding-left: 0">Elabftw</a>
             </div>
-            <div id="namespace-341465415" class="accordion-body collapse ">
+            <div id="namespace-1701249142" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1894471241"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1421805216"></a>
                                 <a href="../namespaces/Elabftw.Elabftw.html" style="margin-left: 30px; padding-left: 0">Elabftw</a>
             </div>
-            <div id="namespace-1894471241" class="accordion-body collapse ">
+            <div id="namespace-1421805216" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                     
@@ -550,13 +550,15 @@
             <article class="method">
                 <h3 class="public ">getCleanName()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">getCleanName() </pre>
-                <p><em>child classes need to implement that</em></p>
+                <pre class="signature" style="margin-right: 54px;">getCleanName() : string</pre>
+                <p><em>Return a nice name for the file</em></p>
                 
 
                 
                 
-                				
+                                    <h4>Returns</h4>
+                    string
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
@@ -615,13 +617,16 @@
             <article class="method">
                 <h3 class="protected ">getFileName()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">getFileName() </pre>
-                <p><em></em></p>
+                <pre class="signature" style="margin-right: 54px;">getFileName() : string</pre>
+                <p><em>Generate a long and unique filename</em></p>
                 
 
                 
                 
-                				
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>a sha512 hash of uniqid()</p>
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
@@ -643,21 +648,24 @@
             <article class="method">
                 <h3 class="protected ">getFilePath()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">getFilePath(  <span class="argument">$fileName</span>) </pre>
-                <p><em></em></p>
+                <pre class="signature" style="margin-right: 54px;">getFilePath(string  <span class="argument">$fileName</span>) : string</pre>
+                <p><em>Attach the absolute path to a filename</em></p>
                 
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$fileName </td>
                                 <td></td>
                             </tr>
                                             </table>
                 
                 
-                				
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>Absolute path</p>
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
@@ -679,14 +687,14 @@
             <article class="method">
                 <h3 class="protected ">checkType()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">checkType(  <span class="argument">$type</span>) : string</pre>
+                <pre class="signature" style="margin-right: 54px;">checkType(string  <span class="argument">$type</span>) : string</pre>
                 <p><em>Validate the type we have.</em></p>
                 
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$type </td>
                                 <td><p>The type (experiments or items)</p></td>
                             </tr>
@@ -934,7 +942,7 @@
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on July 30th, 2015 at 14:13.
+                    on July 30th, 2015 at 14:27.
                 </section>
             </section>
         </section>

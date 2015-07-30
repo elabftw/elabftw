@@ -20,11 +20,22 @@ abstract class Make
     /** child classes need to implement that */
     abstract protected function getCleanName();
 
+    /**
+     * Generate a long and unique filename
+     *
+     * @return string a sha512 hash of uniqid()
+     */
     protected function getFileName()
     {
         return hash("sha512", uniqid(rand(), true));
     }
 
+    /**
+     * Attach the absolute path to a filename
+     *
+     * @param string $fileName
+     * @return string Absolute path
+     */
     protected function getFilePath($fileName)
     {
         return ELAB_ROOT . 'uploads/tmp/' . $fileName;
@@ -33,7 +44,7 @@ abstract class Make
     /**
      * Validate the type we have.
      *
-     * @param $type The type (experiments or items)
+     * @param string $type The type (experiments or items)
      * @return string The valid type
      */
     protected function checkType($type)

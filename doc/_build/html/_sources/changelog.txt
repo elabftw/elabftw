@@ -8,6 +8,7 @@ Version 1.1.5
 
 * add API documentation (in doc/api)
 * move doc to reStructeredText (in doc/_build/html)
+* fix bug on pdf generation: md5 sum of files not showing
 * fix 'Error getting latest version from server'
 * fix bug related to deletion of files upon user deletion
 * new registered users will get the server lang as lang
@@ -19,7 +20,7 @@ Version 1.1.5
 * remove .export.txt file from zip archives
 * add unit and acceptance tests
 * update composer components
-* numerous code improvements
+* numerous code improvements (see git log)
 
 Version 1.1.4-p3
 ----------------

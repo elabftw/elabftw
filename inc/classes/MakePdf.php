@@ -19,7 +19,7 @@ use \Exception;
 class MakePdf extends Make
 {
     /** our favorite pdo object */
-    private $pdo;
+    protected $pdo;
 
     /** the id of the item we want */
     private $id;
@@ -63,6 +63,7 @@ class MakePdf extends Make
 
         // assign and check type
         $this->type = $this->checkType($type);
+        $this->checkVisibility($this->id);
 
         // build the pdf content
         $this->initData();

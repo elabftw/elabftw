@@ -38,8 +38,12 @@ class ImportZip extends Import
     /** body of new item */
     private $body;
 
-    /** experiment or item */
-    private $type;
+    /** experiments or items */
+    private $category;
+
+    /** date of the item we import */
+    private $date;
+
     /**
      * the newly created id of the imported item
      * we need it for linking attached file(s) to the the new item
@@ -113,6 +117,11 @@ class ImportZip extends Import
         return $category;
     }
 
+    /**
+     * Select a status for our experiments.
+     *
+     * @return int The default status of the team
+     */
     private function getDefaultStatus()
     {
         $sql = 'SELECT id FROM status WHERE team = :team AND is_default = 1';

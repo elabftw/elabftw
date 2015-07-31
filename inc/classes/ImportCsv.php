@@ -39,7 +39,7 @@ class ImportCsv extends Import
 
         $this->checkFileReadable();
         $this->checkMimeType();
-        $this->itemType = $this->getItemType();
+        $this->itemType = $this->getTarget();
         $this->openFile();
         $this->readCsv();
     }

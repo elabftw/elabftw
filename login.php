@@ -106,6 +106,9 @@ if (!checkCookiesEnabled()) {
             <input name="password" type="password" required /><br>
             <!-- form key -->
             <?php echo $formKey->getFormkey(); ?>
+        <br>
+        <label for='rememberme'><?php echo _('Remember me'); ?></label>
+        <input type='checkbox' name='rememberme' id='rememberme' />
         </p>
         <div id='loginButtonDiv'>
         <button type="submit" class='button' name="Submit"><?php echo _('Login'); ?></button>

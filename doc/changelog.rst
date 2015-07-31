@@ -11,6 +11,7 @@ Version 1.1.5
 * fix bug on pdf generation: md5 sum of files not showing
 * fix 'Error getting latest version from server'
 * fix bug related to deletion of files upon user deletion
+* add Remember me button on login page
 * new registered users will get the server lang as lang
 * tag list on search page is now filtered by selected user
 * add autocompletion to experiments (start with # to get item list) (fix #65)

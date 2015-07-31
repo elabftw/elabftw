@@ -64,7 +64,7 @@ if ($errflag) {
 }
 
 // the actual login
-if ($user->login($username, $_POST['password'])) {
+if ($user->login($username, $_POST['password'], $_POST['rememberme'])) {
     if (isset($_COOKIE['redirect'])) {
         $location = $_COOKIE['redirect'];
     } else {

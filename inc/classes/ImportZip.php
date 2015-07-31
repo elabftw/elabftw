@@ -32,11 +32,14 @@ class ImportZip extends Import
     private $json;
 
     /** the target item type */
-    private $itemType;
+    private $target;
     /** title of new item */
     private $title;
     /** body of new item */
     private $body;
+
+    /** experiment or item */
+    private $type;
     /**
      * the newly created id of the imported item
      * we need it for linking attached file(s) to the the new item
@@ -54,7 +57,7 @@ class ImportZip extends Import
 
         $this->checkFileReadable();
         $this->checkMimeType();
-        $this->itemType = $this->getItemType();
+        $this->target = $this->getTarget();
         // this is where we will extract the zip
         $this->tmpPath = ELAB_ROOT . 'uploads/tmp/' . uniqid();
         if (!mkdir($this->tmpPath)) {
@@ -92,11 +95,33 @@ class ImportZip extends Import
         $file = $this->tmpPath . "/.elabftw.json";
         $content = file_get_contents($file);
         $this->json = json_decode($content, true);
-        // we can only import database items, not experiments
-        if ($this->json[0]['type'] === 'experiments') {
-            throw new Exception('Cannot import an experiment!');
-        }
+        $this->category = $this->checkCategory($this->json[0]['type']);
     }
+
+    /**
+     * Validate the category we have.
+     *
+     * @param string $category experiments or items
+     * @return string The valid category
+     */
+    private function checkCategory($category)
+    {
+        $correctValuesArr = array('experiments', 'items');
+        if (!in_array($category, $correctValuesArr)) {
+            throw new Exception('Bad category!');
+        }
+        return $category;
+    }
+
+    private function getDefaultStatus()
+    {
+        $sql = 'SELECT id FROM status WHERE team = :team AND is_default = 1';
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':team', $_SESSION['team_id']);
+        $req->execute();
+        return $req->fetchColumn();
+    }
+
 
     /**
      * The main SQL to create a new item with the title and body we have
@@ -105,14 +130,25 @@ class ImportZip extends Import
      */
     private function importData()
     {
-        $sql = "INSERT INTO items(team, title, date, body, userid, type) VALUES(:team, :title, :date, :body, :userid, :type)";
+        if ($this->category === 'experiments') {
+            $sql = "INSERT into experiments(team, title, date, body, userid, visibility, status) VALUES(:team, :title, :date, :body, :userid, :visibility, :status)";
+        } else {
+            $sql = "INSERT INTO items(team, title, date, body, userid, type) VALUES(:team, :title, :date, :body, :userid, :type)";
+        }
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $_SESSION['team_id'], \PDO::PARAM_INT);
         $req->bindParam(':title', $this->title);
-        $req->bindParam(':date', kdate());
+        $req->bindParam(':date', $this->date);
         $req->bindParam(':body', $this->body);
-        $req->bindParam(':userid', $_SESSION['userid'], \PDO::PARAM_INT);
-        $req->bindParam(':type', $this->itemType);
+        if ($this->category === 'items') {
+            $req->bindParam(':userid', $_SESSION['userid'], \PDO::PARAM_INT);
+            $req->bindParam(':type', $this->target);
+        } else {
+            $req->bindValue(':visibility', 'team');
+            $req->bindParam(':status', $this->getDefaultStatus());
+            $req->bindParam(':userid', $this->target, \PDO::PARAM_INT);
+        }
+
 
         if (!$req->execute()) {
             throw new Exception('Cannot import in database!');
@@ -164,7 +200,7 @@ class ImportZip extends Import
         $req->bindValue(':comment', 'Click to add a comment');
         $req->bindParam(':item_id', $this->newItemId);
         $req->bindParam(':userid', $_SESSION['userid']);
-        $req->bindValue(':type', 'items');
+        $req->bindValue(':type', $this->category);
         $req->bindParam(':md5', $md5);
 
         if (!$req->execute()) {
@@ -181,6 +217,7 @@ class ImportZip extends Import
         foreach ($this->json as $item) {
             $this->title = $item['title'];
             $this->body = $item['body'];
+            $this->date = $item['date'];
             $this->importData();
             if (is_array($item['files'])) {
                 foreach ($item['files'] as $file) {

@@ -486,16 +486,29 @@ $team = get_team_config();
     $req = $pdo->prepare($sql);
     $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
     $req->execute();
+
+    // sql to get team members names
+    $sql = "SELECT firstname, lastname, userid FROM users WHERE team = :team";
+    $reqTeam = $pdo->prepare($sql);
+    $reqTeam->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
+    $reqTeam->execute();
+
     ?>
         <p style='text-align:justify'><?php echo _("This page will allow you to import a .elabftw.zip archive."); ?>
 <br><span class='strong'><?php echo _('You should make a backup of your database before importing thousands of items!'); ?></span></p>
 
-        <label for='item_selector'><?php echo _('1. Select a type of item to import to:'); ?></label>
-        <select id='item_selector' onchange='goNext(this.value)'><option value=''>--------</option>
+        <label for='item_selector'><?php echo _('1. Select where to import:'); ?></label>
+        <select id='item_selector' onchange='goNext(this.value)'><option value='' disabled>Import items</option>
         <?php
         while ($items_types = $req->fetch()) {
             echo "<option value='" . $items_types['id'] . "' name='type' ";
             echo ">" . $items_types['name'] . "</option>";
+        }
+        echo "<option value='' disabled>Import experiments</option>";
+
+        while ($users = $reqTeam->fetch()) {
+            echo "<option value='" . $users['userid'] . "' name='type' ";
+            echo ">" . $users['firstname'] . " " . $users['lastname'] . "</option>";
         }
         ?>
         </select><br>

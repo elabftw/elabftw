@@ -267,6 +267,7 @@ class MakeZip extends Make
             'type' => $this->type,
             'title' => stripslashes($this->zipped['title']),
             'body' => stripslashes($this->zipped['body']),
+            'date' => $this->zipped['date'],
             'files' => $this->fileArr
         );
         unset($this->fileArr);

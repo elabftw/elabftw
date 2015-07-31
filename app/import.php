@@ -52,7 +52,7 @@ try {
 if (!$errflag) {
     $msg_arr[] = $import->inserted . ' ' . ngettext('item imported successfully.', 'items imported successfully.', $import->inserted);
     $_SESSION['infos'] = $msg_arr;
-    header('Location: ../database.php');
+    header('Location: ../admin.php');
 } else {
     $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#17", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
     $_SESSION['errors'] = $msg_arr;

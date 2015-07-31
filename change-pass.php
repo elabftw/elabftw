@@ -1,32 +1,21 @@
 <?php
-/********************************************************************************
-*                                                                               *
-*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
-*   http://www.elabftw.net/                                                     *
-*                                                                               *
-********************************************************************************/
+/**
+ * change-pass.php
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see http://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 
-/********************************************************************************
-*  This file is part of eLabFTW.                                                *
-*                                                                               *
-*    eLabFTW is free software: you can redistribute it and/or modify            *
-*    it under the terms of the GNU Affero General Public License as             *
-*    published by the Free Software Foundation, either version 3 of             *
-*    the License, or (at your option) any later version.                        *
-*                                                                               *
-*    eLabFTW is distributed in the hope that it will be useful,                 *
-*    but WITHOUT ANY WARRANTY; without even the implied                         *
-*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
-*    PURPOSE.  See the GNU Affero General Public License for more details.      *
-*                                                                               *
-*    You should have received a copy of the GNU Affero General Public           *
-*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
-*                                                                               *
-********************************************************************************/
+/**
+ * Form to reset the password.
+ *
+ */
 require_once 'inc/common.php';
 $page_title = _('Reset password');
 $selected_menu = null;
-require_once 'inc/head.php';
 
 // get the unique key
 if (isset($_GET['key']) && isset($_GET['userid'])) {
@@ -36,6 +25,7 @@ if (isset($_GET['key']) && isset($_GET['userid'])) {
     header('Location:login.php');
     exit;
 }
+require_once 'inc/head.php';
 ?>
 
 <section class='center'>

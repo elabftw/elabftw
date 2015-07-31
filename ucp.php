@@ -1,28 +1,18 @@
 <?php
-/********************************************************************************
-*                                                                               *
-*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
-*   http://www.elabftw.net/                                                     *
-*                                                                               *
-********************************************************************************/
+/**
+ * ucp.php
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see http://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 
-/********************************************************************************
-*  This file is part of eLabFTW.                                                *
-*                                                                               *
-*    eLabFTW is free software: you can redistribute it and/or modify            *
-*    it under the terms of the GNU Affero General Public License as             *
-*    published by the Free Software Foundation, either version 3 of             *
-*    the License, or (at your option) any later version.                        *
-*                                                                               *
-*    eLabFTW is distributed in the hope that it will be useful,                 *
-*    but WITHOUT ANY WARRANTY; without even the implied                         *
-*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
-*    PURPOSE.  See the GNU Affero General Public License for more details.      *
-*                                                                               *
-*    You should have received a copy of the GNU Affero General Public           *
-*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
-*                                                                               *
-********************************************************************************/
+/**
+ * User Control Panel
+ *
+ */
 require_once 'inc/common.php';
 $page_title = _('User Control Panel');
 $selected_menu = null;
@@ -293,16 +283,16 @@ foreach ($lang_array as $lang) {
         <form action='app/ucp-exec.php' method='post'>
         <input type='hidden' name='tpl_form' />
         <?php
-            echo "<input type='hidden' name='tpl_id[]' value='" . $exp_tpl['id'] . "' />";
-            echo "<input name='tpl_name[]' value='" . stripslashes($exp_tpl['name']) . "' /><br />";
-            echo "<textarea id='" . $exp_tpl['id'] . "' name='tpl_body[]' class='mceditable' style='height:500px;'>" . stripslashes($exp_tpl['body']) . "</textarea><br />";
-            echo "<div class='center'>";
-            echo "<button type='submit' name='Submit' class='button'>" . _('Edit template') . "</button>";
-            echo "</div>";
-            echo "</form>";
-            echo "</div>";
-            $i++;
-        }
+        echo "<input type='hidden' name='tpl_id[]' value='" . $exp_tpl['id'] . "' />";
+        echo "<input name='tpl_name[]' value='" . stripslashes($exp_tpl['name']) . "' /><br />";
+        echo "<textarea id='" . $exp_tpl['id'] . "' name='tpl_body[]' class='mceditable' style='height:500px;'>" . stripslashes($exp_tpl['body']) . "</textarea><br />";
+        echo "<div class='center'>";
+        echo "<button type='submit' name='Submit' class='button'>" . _('Edit template') . "</button>";
+        echo "</div>";
+        echo "</form>";
+        echo "</div>";
+        $i++;
+    }
         ?>
     </div>
 </div>

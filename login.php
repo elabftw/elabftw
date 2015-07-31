@@ -1,32 +1,21 @@
 <?php
-/********************************************************************************
-*                                                                               *
-*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
-*   http://www.elabftw.net/                                                     *
-*                                                                               *
-********************************************************************************/
+/**
+ * login.php
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see http://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 
-/********************************************************************************
-*  This file is part of eLabFTW.                                                *
-*                                                                               *
-*    eLabFTW is free software: you can redistribute it and/or modify            *
-*    it under the terms of the GNU Affero General Public License as             *
-*    published by the Free Software Foundation, either version 3 of             *
-*    the License, or (at your option) any later version.                        *
-*                                                                               *
-*    eLabFTW is distributed in the hope that it will be useful,                 *
-*    but WITHOUT ANY WARRANTY; without even the implied                         *
-*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
-*    PURPOSE.  See the GNU Affero General Public License for more details.      *
-*                                                                               *
-*    You should have received a copy of the GNU Affero General Public           *
-*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
-*                                                                               *
-********************************************************************************/
+/**
+ * Login page
+ *
+ */
 require_once 'inc/common.php';
 $page_title = _('Login');
 $selected_menu = null;
-require_once 'inc/head.php';
 
 // Check if already logged in
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
@@ -34,7 +23,10 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     exit;
 }
 
+require_once 'inc/head.php';
+
 $formKey = new \Elabftw\Elabftw\FormKey();
+
 
 // if we are not in https, die saying we work only in https
 if (!\Elabftw\Elabftw\Tools::usingSsl()) {
@@ -127,7 +119,6 @@ if (!checkCookiesEnabled()) {
     </form>
     </div>
 </section>
-<?php require_once 'inc/footer.php'; ?>
 <!-- BEGIN PASSSWORD RESET FORM -->
 <script>
 $(document).ready(function(){
@@ -137,3 +128,4 @@ $(document).ready(function(){
 	});
 });
 </script>
+<?php require_once 'inc/footer.php';

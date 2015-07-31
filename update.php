@@ -1,29 +1,20 @@
 <?php
-/********************************************************************************
-*                                                                               *
-*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
-*   http://www.elabftw.net/                                                     *
-*                                                                               *
-********************************************************************************/
+/**
+ * update.php
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see http://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 
-/********************************************************************************
-*  This file is part of eLabFTW.                                                *
-*                                                                               *
-*    eLabFTW is free software: you can redistribute it and/or modify            *
-*    it under the terms of the GNU Affero General Public License as             *
-*    published by the Free Software Foundation, either version 3 of             *
-*    the License, or (at your option) any later version.                        *
-*                                                                               *
-*    eLabFTW is distributed in the hope that it will be useful,                 *
-*    but WITHOUT ANY WARRANTY; without even the implied                         *
-*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
-*    PURPOSE.  See the GNU Affero General Public License for more details.      *
-*                                                                               *
-*    You should have received a copy of the GNU Affero General Public           *
-*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
-*                                                                               *
-********************************************************************************/
-// elabftw update file. Access it after each git pull.
+/**
+ * Update the SQL structure if needed. Must be run after each code update. Deprecated because now it all happens
+ * automatically in Update class.
+ *
+ * @deprecated
+ */
 
 // check if it's run from cli or web; tell it must be called from web now
 if (php_sapi_name() == 'cli' || empty($_SERVER['REMOTE_ADDR'])) {

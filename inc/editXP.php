@@ -83,16 +83,29 @@ while ($tags = $tagreq->fetch()) {
         <img src='img/eye.png' class='bot5px' alt='visibility' />
         <h4><?php echo _('Visibility'); ?></h4><br>
         <select id="visibility_form" name="visibility" onchange="update_visibility(this.value)">
-            <option id='option_team' value="organization" <?php if ($experiment['visibility'] === 'organization') {
+            <option value="organization" <?php if ($experiment['visibility'] === 'organization') {
     echo "selected";
 }?>><?php echo _('Everyone with an account'); ?></option>
-            <option id='option_team' value="team" <?php if ($experiment['visibility'] === 'team') {
+            <option value="team" <?php if ($experiment['visibility'] === 'team') {
     echo "selected";
 }?>><?php echo _('Only the team'); ?></option>
-            <option id='option_user' value="user" <?php if ($experiment['visibility'] === 'user') {
+            <option value="user" <?php if ($experiment['visibility'] === 'user') {
     echo "selected";
 }
 ?>><?php echo _('Only me'); ?></option>
+<?php
+$sql = "SELECT id, name FROM team_groups WHERE team = :team";
+$req = $pdo->prepare($sql);
+$req->bindParam(':team', $_SESSION['team_id']);
+$req->execute();
+while ($team_groups = $req->fetch()) {
+    echo "<option value='" . $team_groups['id'] . "'";
+    if ($experiment['visibility'] === $team_groups['id']) {
+        echo " selected";
+    }
+    echo ">Only " . $team_groups['name'] . "</option>";
+}
+?>
         </select>
         <span id='visibility_msg_div'><?php echo _('Updated!'); ?></span>
     </div>

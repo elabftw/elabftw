@@ -472,12 +472,11 @@ function check_visibility($input)
         'team',
         'user');
 
-    if (isset($input) && !empty($input) && in_array($input, $valid_visibility)) {
+    if (in_array($input, $valid_visibility) || is_pos_int($input)) {
         return $input;
-    } else {
-        // default is team
-        return 'team';
     }
+    // default is team
+    return 'team';
 }
 
 /**

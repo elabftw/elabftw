@@ -41,13 +41,31 @@ if ($row_count === 0) {
 
 $data = $req->fetch();
 
-// Check id is owned by connected user to present comment div if not
+
+// Check id is owned by connected user to show read only message if not
 if ($data['userid'] != $_SESSION['userid']) {
     // Can the user see this experiment which is not his ?
     if ($data['visibility'] == 'user') {
         display_message('error', _("<strong>Access forbidden:</strong> the visibility setting of this experiment is set to 'owner only'."));
         require_once 'inc/footer.php';
         exit;
+    } elseif (is_pos_int($data['visibility'])) {
+        // the visibility of this experiment is set to a group
+        // we must check if current user is in this group
+        $sql = "SELECT userid FROM users2team_groups WHERE groupid = :groupid";
+        $team_group_req = $pdo->prepare($sql);
+        $team_group_req->bindParam(':groupid', $data['visibility']);
+        $team_group_req->execute();
+        $auth_users_arr = array();
+        while ($auth_users = $team_group_req->fetch()) {
+            $auth_users_arr[] = $auth_users['userid'];
+        }
+        if (!in_array($_SESSION['userid'], $auth_users_arr)) {
+            display_message('error', _("<strong>Access forbidden:</strong> you don't have the rights to access this."));
+            require_once 'inc/footer.php';
+            exit;
+        }
+
     } else {
         // get who owns the experiment
         $sql = 'SELECT firstname, lastname, team FROM users WHERE userid = :userid';

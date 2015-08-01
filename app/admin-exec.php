@@ -444,6 +444,48 @@ if (isset($_POST['default_exp_tpl'])) {
         $error = '16';
     }
 }
+
+// CREATE TEAM GROUP
+if (isset($_POST['teamgroup_name']) && !empty($_POST['teamgroup_name'])) {
+    $tab = '8';
+
+    $group_name = filter_var($_POST['teamgroup_name'], FILTER_SANITIZE_STRING);
+    $sql = "INSERT INTO team_groups(name, team) VALUES(:name, :team)";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':name', $group_name);
+    $req->bindParam(':team', $_SESSION['team_id']);
+    if (!$req->execute()) {
+        $errflag = true;
+        $error = 'efab5';
+    }
+}
+
+// ADD USER TO TEAM GROUP
+if (isset($_POST['teamgroup_user'])) {
+    $tab = '8';
+    // TODO check user and group exist
+    $sql = "INSERT INTO users2team_groups(userid, groupid) VALUES(:userid, :groupid)";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':userid', $_POST['teamgroup_user'], PDO::PARAM_INT);
+    $req->bindParam(':groupid', $_POST['teamgroup_group'], PDO::PARAM_INT);
+    if (!$req->execute()) {
+        $errflag = true;
+        $error = 'tun1b5';
+    }
+}
+
+// REMOVE USER FROM TEAM GROUP
+if (isset($_POST['teamgroup_user_rm'])) {
+    $tab = '8';
+    $sql = "DELETE FROM users2team_groups WHERE userid = :userid AND groupid = :groupid";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':userid', $_POST['teamgroup_user_rm'], PDO::PARAM_INT);
+    $req->bindParam(':groupid', $_POST['teamgroup_group'], PDO::PARAM_INT);
+    if (!$req->execute()) {
+        $errflag = true;
+        $error = 'pan1e4';
+    }
+}
 // REDIRECT USER
 if ($errflag) {
     $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#" . $error, "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");

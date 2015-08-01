@@ -70,10 +70,11 @@ $team = get_team_config();
         <li class='tabhandle' id='tab5'><?php echo _('Experiments template'); ?></li>
         <li class='tabhandle' id='tab6'><?php echo _('Import CSV'); ?></li>
         <li class='tabhandle' id='tab7'><?php echo _('Import ZIP'); ?></li>
+        <li class='tabhandle' id='tab8'><?php echo _('Groups'); ?></li>
     </ul>
 </menu>
 
-<!-- TABS 1 -->
+<!-- TAB 1 -->
 <div class='divhandle' id='tab1div'>
 
 <h3><?php echo _('Configure your team'); ?></h3>
@@ -124,7 +125,7 @@ $team = get_team_config();
 
 </div>
 
-<!-- TABS 2 USERS -->
+<!-- TAB 2 USERS -->
 <div class='divhandle' id='tab2div'>
 
     <h3><?php echo _('Edit users'); ?></h3>
@@ -232,9 +233,9 @@ $team = get_team_config();
 
     <?php
     // SQL to get all status
-    $sql = "SELECT * from status WHERE team = :team_id ORDER BY ordering ASC";
+    $sql = "SELECT * from status WHERE team = :team ORDER BY ordering ASC";
     $req = $pdo->prepare($sql);
-    $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
+    $req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
     $req->execute();
 
     while ($status = $req->fetch()) {
@@ -410,7 +411,7 @@ $team = get_team_config();
 
 </div>
 
-<!-- TABS 5 -->
+<!-- TAB 5 -->
 <div class='divhandle' id='tab5div'>
 
     <h3><?php echo _('Common experiment template'); ?></h3>
@@ -435,7 +436,7 @@ $team = get_team_config();
     </form>
 </div>
 
-<!-- TABS 6 -->
+<!-- TAB 6 -->
 <div class='divhandle' id='tab6div'>
 
     <h3><?php echo _('Import a CSV file'); ?></h3>
@@ -444,9 +445,9 @@ $team = get_team_config();
     // file upload block
     // show select of type
     // SQL to get items names
-    $sql = "SELECT * FROM items_types WHERE team = :team_id";
+    $sql = "SELECT * FROM items_types WHERE team = :team";
     $req = $pdo->prepare($sql);
-    $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
+    $req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
     $req->execute();
     ?>
         <p style='text-align:justify'><?php echo _("This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file."); ?>
@@ -473,7 +474,7 @@ $team = get_team_config();
     </div>
 </div>
 
-<!-- TABS 7 -->
+<!-- TAB 7 -->
 <div class='divhandle' id='tab7div'>
 
     <h3><?php echo _('Import a ZIP file'); ?></h3>
@@ -482,9 +483,9 @@ $team = get_team_config();
     // file upload block
     // show select of type
     // SQL to get items names
-    $sql = "SELECT * FROM items_types WHERE team = :team_id";
+    $sql = "SELECT * FROM items_types WHERE team = :team";
     $req = $pdo->prepare($sql);
-    $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
+    $req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
     $req->execute();
 
     // sql to get team members names
@@ -522,6 +523,97 @@ $team = get_team_config();
             </div>
         </form>
     </div>
+</div>
+
+<!-- TAB 8 -->
+<div class='divhandle' id='tab8div'>
+    <h3><?php echo _('Groups of users'); ?></h3>
+<?php
+// get a list of team_groups for this team
+$sql = "SELECT * FROM team_groups WHERE team = :team";
+$req = $pdo->prepare($sql);
+$req->bindParam(':team', $_SESSION['team_id']);
+$req->execute();
+// get all users again
+$user_req->execute();
+
+
+?>
+<form action='app/admin-exec.php' method='POST'>
+<label for='teamgroup_name'><?php echo _('Create a group'); ?></label>
+    <input name="teamgroup_name" type="text" required />
+    <button type='submit' class='button'><?php echo _('Create'); ?></button>
+</form>
+
+<form action='app/admin-exec.php' method='POST'>
+    <label for='teamgroup_user'><?php echo _('Add this user'); ?></label>
+    <select name='teamgroup_user'>
+    <?php
+    while ($users = $user_req->fetch()) {
+        echo "<option value='" . $users['userid'] . "'>";
+        echo $users['firstname'] . $users['lastname'] . "</option>";
+    }
+    ?>
+    </select>
+
+    <label for='teamgroup_group_select'><?php echo _('to this group'); ?></label>
+    <select name='teamgroup_group'>
+    <?php
+    while ($team_groups = $req->fetch()) {
+        echo "<option value='" . $team_groups['id'] . "'>";
+        echo $team_groups['name'] . "</option>";
+    }
+    ?>
+    </select>
+    <button type="submit" class='button'><?php echo _('Go'); ?></button>
+</form>
+
+<form action='app/admin-exec.php' method='POST'>
+    <label for='teamgroup_user_rm'><?php echo _('Remove this user'); ?></label>
+    <select name='teamgroup_user_rm'>
+    <?php
+    $user_req->execute();
+    while ($users = $user_req->fetch()) {
+        echo "<option value='" . $users['userid'] . "'>";
+        echo $users['firstname'] . $users['lastname'] . "</option>";
+    }
+    ?>
+    </select>
+
+    <label for='teamgroup_group_select'><?php echo _('from this group'); ?></label>
+    <select name='teamgroup_group'>
+    <?php
+    $req->execute();
+    while ($team_groups = $req->fetch()) {
+        echo "<option value='" . $team_groups['id'] . "'>";
+        echo $team_groups['name'] . "</option>";
+    }
+    ?>
+    </select>
+    <button type="submit" class='button'><?php echo _('Go'); ?></button>
+</form>
+<?php
+// show available team groups
+$sql = "SELECT id, name FROM team_groups WHERE team = :team";
+$req = $pdo->prepare($sql);
+$req->bindParam(':team', $_SESSION['team_id']);
+$req->execute();
+$sql  = "SELECT DISTINCT users.firstname, users.lastname FROM users CROSS JOIN users2team_groups ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
+while ($res = $req->fetch()) {
+    echo "<h4>" . $res['name']. "</h4><ul>";
+    $req2 = $pdo->prepare($sql);
+    $req2->bindParam(':groupid', $res['id']);
+    $req2->execute();
+    while ($res2 = $req2->fetch()) {
+        echo "<li>" . $res2['firstname'] . " " . $res2['lastname'] . "</li>";
+    }
+    echo "</ul>";
+
+    echo "</p>";
+}
+?>
+
+
 </div>
 
 <script>

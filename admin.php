@@ -527,96 +527,121 @@ $team = get_team_config();
 
 <!-- TAB 8 -->
 <div class='divhandle' id='tab8div'>
-    <h3><?php echo _('Groups of users'); ?></h3>
+    <h3><?php echo _('Manage groups of users'); ?></h3>
+<!-- CREATE A GROUP -->
+<label for='create_teamgroup'><?php echo _('Create a group'); ?></label>
+    <input id='create_teamgroup' name="create_teamgroup" type="text" />
+    <button type='submit' onclick='create_teamgroup()' class='button'><?php echo _('Create'); ?></button>
+<!-- END CREATE GROUP -->
+
 <?php
 // get a list of team_groups for this team
 $sql = "SELECT * FROM team_groups WHERE team = :team";
-$req = $pdo->prepare($sql);
-$req->bindParam(':team', $_SESSION['team_id']);
-$req->execute();
+$team_groups_req = $pdo->prepare($sql);
+$team_groups_req->bindParam(':team', $_SESSION['team_id']);
+$team_groups_req->execute();
 // get all users again
-$user_req->execute();
 
-
-?>
-<form action='app/admin-exec.php' method='POST'>
-<label for='teamgroup_name'><?php echo _('Create a group'); ?></label>
-    <input name="teamgroup_name" type="text" required />
-    <button type='submit' class='button'><?php echo _('Create'); ?></button>
-</form>
-
-<form action='app/admin-exec.php' method='POST'>
-    <label for='teamgroup_user'><?php echo _('Add this user'); ?></label>
-    <select name='teamgroup_user'>
-    <?php
-    while ($users = $user_req->fetch()) {
-        echo "<option value='" . $users['userid'] . "'>";
-        echo $users['firstname'] . $users['lastname'] . "</option>";
-    }
-    ?>
-    </select>
-
-    <label for='teamgroup_group_select'><?php echo _('to this group'); ?></label>
-    <select name='teamgroup_group'>
-    <?php
-    while ($team_groups = $req->fetch()) {
-        echo "<option value='" . $team_groups['id'] . "'>";
-        echo $team_groups['name'] . "</option>";
-    }
-    ?>
-    </select>
-    <button type="submit" class='button'><?php echo _('Go'); ?></button>
-</form>
-
-<form action='app/admin-exec.php' method='POST'>
-    <label for='teamgroup_user_rm'><?php echo _('Remove this user'); ?></label>
-    <select name='teamgroup_user_rm'>
-    <?php
+if ($team_groups_req->rowCount() > 0) {
     $user_req->execute();
-    while ($users = $user_req->fetch()) {
-        echo "<option value='" . $users['userid'] . "'>";
-        echo $users['firstname'] . $users['lastname'] . "</option>";
-    }
-    ?>
-    </select>
+?>
+    <div id='team_groups_div'>
+<div class='well'>
+    <form action='app/admin-exec.php' method='POST'>
+        <label for='teamgroup_user'><?php echo _('Add this user'); ?></label>
+        <select name='teamgroup_user'>
+        <?php
+        while ($users = $user_req->fetch()) {
+            echo "<option value='" . $users['userid'] . "'>";
+            echo $users['firstname'] . " " . $users['lastname'] . "</option>";
+        }
+        ?>
+        </select>
 
-    <label for='teamgroup_group_select'><?php echo _('from this group'); ?></label>
-    <select name='teamgroup_group'>
+        <label for='teamgroup_group_select'><?php echo _('to this group'); ?></label>
+        <select name='teamgroup_group'>
+        <?php
+        while ($team_groups = $team_groups_req->fetch()) {
+            echo "<option value='" . $team_groups['id'] . "'>";
+            echo $team_groups['name'] . "</option>";
+        }
+        ?>
+        </select>
+        <button type="submit" class='button'><?php echo _('Go'); ?></button>
+    </form>
+
+    <form action='app/admin-exec.php' method='POST'>
+        <label for='teamgroup_user_rm'><?php echo _('Remove this user'); ?></label>
+        <select name='teamgroup_user_rm'>
+        <?php
+        $user_req->execute();
+        while ($users = $user_req->fetch()) {
+            echo "<option value='" . $users['userid'] . "'>";
+            echo $users['firstname'] . " " . $users['lastname'] . "</option>";
+        }
+        ?>
+        </select>
+
+        <label for='teamgroup_group_select'><?php echo _('from this group'); ?></label>
+        <select name='teamgroup_group'>
+        <?php
+        $team_groups_req->execute();
+        while ($team_groups = $team_groups_req->fetch()) {
+            echo "<option value='" . $team_groups['id'] . "'>";
+            echo $team_groups['name'] . "</option>";
+        }
+        ?>
+        </select>
+        <button type="submit" class='button'><?php echo _('Go'); ?></button>
+    </form>
+    </div>
+
     <?php
-    $req->execute();
-    while ($team_groups = $req->fetch()) {
-        echo "<option value='" . $team_groups['id'] . "'>";
-        echo $team_groups['name'] . "</option>";
+    // show available team groups
+    echo "<h3>" .  _('Existing groups') . "</h3>";
+    $sql  = "SELECT DISTINCT users.firstname, users.lastname FROM users CROSS JOIN users2team_groups ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
+    $team_groups_req->execute();
+    while ($res = $team_groups_req->fetch()) {
+        echo "<img onclick='delete_teamgroup(" . $res['id'] . ")' src='img/small-trash.png' alt='trash' title='Remove this group' /><p class='inline teamgroup_name' id='teamgroup_" . $res['id'] . "'>" . $res['name']. "</p><ul>";
+        $req2 = $pdo->prepare($sql);
+        $req2->bindParam(':groupid', $res['id']);
+        $req2->execute();
+        while ($res2 = $req2->fetch()) {
+            echo "<li>" . $res2['firstname'] . " " . $res2['lastname'] . "</li>";
+        }
+        echo "</ul>";
     }
-    ?>
-    </select>
-    <button type="submit" class='button'><?php echo _('Go'); ?></button>
-</form>
-<?php
-// show available team groups
-$sql = "SELECT id, name FROM team_groups WHERE team = :team";
-$req = $pdo->prepare($sql);
-$req->bindParam(':team', $_SESSION['team_id']);
-$req->execute();
-$sql  = "SELECT DISTINCT users.firstname, users.lastname FROM users CROSS JOIN users2team_groups ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
-while ($res = $req->fetch()) {
-    echo "<h4>" . $res['name']. "</h4><ul>";
-    $req2 = $pdo->prepare($sql);
-    $req2->bindParam(':groupid', $res['id']);
-    $req2->execute();
-    while ($res2 = $req2->fetch()) {
-        echo "<li>" . $res2['firstname'] . " " . $res2['lastname'] . "</li>";
-    }
-    echo "</ul>";
-
-    echo "</p>";
 }
 ?>
 
 
+    </div>
 </div>
 
 <script>
+function create_teamgroup() {
+    var name = $('#create_teamgroup').val();
+    if (name.length > 0) {
+        $.post('app/admin-ajax.php', {
+            create_teamgroup: name
+        }).success(function () {
+            $('#create_teamgroup').val('');
+            $('#team_groups_div').load('admin.php? #team_groups_div');
+        })
+    }
+}
+function delete_teamgroup(id) {
+    var you_sure = confirm('<?php echo _('Delete this?'); ?>');
+    if (you_sure == true) {
+        $.post('app/delete.php', {
+            type: 'teamgroup',
+            id: id
+        }).success(function () {
+            $("#team_groups_div").load("admin.php? #team_groups_div");
+        })
+    }
+    return false;
+}
 // used on import csv/zip to go to next step
 function goNext(x) {
     if(x == '') {
@@ -633,6 +658,26 @@ function color_wheel(div_name) {
 }
 
 $(document).ready(function() {
+    // validate on enter
+    $('#create_teamgroup').keypress(function (e) {
+        var keynum;
+        if (e.which) {
+            keynum = e.which;
+        }
+        if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
+            create_teamgroup();
+        }
+    });
+    // edit the team group name
+    $('p.teamgroup_name').editable('app/admin-ajax.php', {
+     tooltip : 'Click to edit',
+     indicator : 'Saving...',
+     name : 'teamgroup',
+     submit : 'Save',
+     cancel : 'Cancel',
+     style : 'display:inline'
+
+    });
     // SORTABLE for STATUS
     $('.sortable_status').sortable({
         // limit to horizontal dragging

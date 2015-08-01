@@ -445,21 +445,6 @@ if (isset($_POST['default_exp_tpl'])) {
     }
 }
 
-// CREATE TEAM GROUP
-if (isset($_POST['teamgroup_name']) && !empty($_POST['teamgroup_name'])) {
-    $tab = '8';
-
-    $group_name = filter_var($_POST['teamgroup_name'], FILTER_SANITIZE_STRING);
-    $sql = "INSERT INTO team_groups(name, team) VALUES(:name, :team)";
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':name', $group_name);
-    $req->bindParam(':team', $_SESSION['team_id']);
-    if (!$req->execute()) {
-        $errflag = true;
-        $error = 'efab5';
-    }
-}
-
 // ADD USER TO TEAM GROUP
 if (isset($_POST['teamgroup_user'])) {
     $tab = '8';

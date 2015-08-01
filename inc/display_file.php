@@ -109,7 +109,6 @@ if ($_GET['mode'] === 'edit') {
         $('.thumbnail p.editable').editable('app/editinplace.php', {
          tooltip : 'Click to edit',
          indicator : 'Saving...',
-         id   : 'id',
          name : 'filecomment',
          submit : 'Save',
          cancel : 'Cancel',

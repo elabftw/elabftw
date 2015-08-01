@@ -66,7 +66,6 @@ textdomain($domain);
 // run the update script if we have the wrong schema version
 $update = new \Elabftw\Elabftw\Update();
 
-//$update->runUpdateScript();
 if (get_config('schema') < $update::REQUIRED_SCHEMA) {
     try {
         $_SESSION['infos'] = $update->runUpdateScript();

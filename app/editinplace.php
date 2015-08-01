@@ -158,6 +158,4 @@ if (isset($_POST['filecomment'])) {
             }
         }
     }
-} else {
-    die('Wrong comment_type');
 }

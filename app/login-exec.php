@@ -64,7 +64,14 @@ if ($errflag) {
 }
 
 // the actual login
-if ($user->login($username, $_POST['password'], $_POST['rememberme'])) {
+
+// this is here to avoid a notice Undefined index
+if (isset($_POST['rememberme'])) {
+    $rememberme = $_POST['rememberme'];
+} else {
+    $rememberme = 'off';
+}
+if ($user->login($username, $_POST['password'], $rememberme)) {
     if (isset($_COOKIE['redirect'])) {
         $location = $_COOKIE['redirect'];
     } else {

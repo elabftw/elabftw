@@ -531,7 +531,7 @@ $team = get_team_config();
 <!-- CREATE A GROUP -->
 <label for='create_teamgroup'><?php echo _('Create a group'); ?></label>
     <input id='create_teamgroup' name="create_teamgroup" type="text" />
-    <button type='submit' onclick='create_teamgroup()' class='button'><?php echo _('Create'); ?></button>
+    <button type='submit' onclick='createTeamgroup()' class='button'><?php echo _('Create'); ?></button>
 <!-- END CREATE GROUP -->
 
 <?php
@@ -542,14 +542,15 @@ $team_groups_req->bindParam(':team', $_SESSION['team_id']);
 $team_groups_req->execute();
 // get all users again
 
+echo "<div id='team_groups_div'>";
 if ($team_groups_req->rowCount() > 0) {
     $user_req->execute();
-?>
-    <div id='team_groups_div'>
-<div class='well'>
-    <form action='app/admin-exec.php' method='POST'>
-        <label for='teamgroup_user'><?php echo _('Add this user'); ?></label>
-        <select name='teamgroup_user'>
+    ?>
+    <div class='well'>
+    <section>
+    <!-- ADD USER TO GROUP -->
+        <label for='add_teamgroup_user'><?php echo _('Add this user'); ?></label>
+        <select name='add_teamgroup_user' id='add_teamgroup_user'>
         <?php
         while ($users = $user_req->fetch()) {
             echo "<option value='" . $users['userid'] . "'>";
@@ -558,8 +559,8 @@ if ($team_groups_req->rowCount() > 0) {
         ?>
         </select>
 
-        <label for='teamgroup_group_select'><?php echo _('to this group'); ?></label>
-        <select name='teamgroup_group'>
+        <label for='add_teamgroup_group'><?php echo _('to this group'); ?></label>
+        <select name='add_teamgroup_group' id='add_teamgroup_group'>
         <?php
         while ($team_groups = $team_groups_req->fetch()) {
             echo "<option value='" . $team_groups['id'] . "'>";
@@ -567,12 +568,13 @@ if ($team_groups_req->rowCount() > 0) {
         }
         ?>
         </select>
-        <button type="submit" class='button'><?php echo _('Go'); ?></button>
-    </form>
+        <button type="submit" onclick="manageTeamgroup('add')" class='button'><?php echo _('Go'); ?></button>
 
-    <form action='app/admin-exec.php' method='POST'>
-        <label for='teamgroup_user_rm'><?php echo _('Remove this user'); ?></label>
-        <select name='teamgroup_user_rm'>
+    </section>
+    <section>
+    <!-- RM USER FROM GROUP -->
+        <label for='rm_teamgroup_user'><?php echo _('Remove this user'); ?></label>
+        <select name='rm_teamgroup_user' id='rm_teamgroup_user'>
         <?php
         $user_req->execute();
         while ($users = $user_req->fetch()) {
@@ -582,8 +584,8 @@ if ($team_groups_req->rowCount() > 0) {
         ?>
         </select>
 
-        <label for='teamgroup_group_select'><?php echo _('from this group'); ?></label>
-        <select name='teamgroup_group'>
+        <label for='rm_teamgroup_group'><?php echo _('from this group'); ?></label>
+        <select name='rm_teamgroup_group' id='rm_teamgroup_group'>
         <?php
         $team_groups_req->execute();
         while ($team_groups = $team_groups_req->fetch()) {
@@ -592,8 +594,8 @@ if ($team_groups_req->rowCount() > 0) {
         }
         ?>
         </select>
-        <button type="submit" class='button'><?php echo _('Go'); ?></button>
-    </form>
+        <button type="submit" onclick="manageTeamgroup('rm')" class='button'><?php echo _('Go'); ?></button>
+    </section>
     </div>
 
     <?php
@@ -602,7 +604,7 @@ if ($team_groups_req->rowCount() > 0) {
     $sql  = "SELECT DISTINCT users.firstname, users.lastname FROM users CROSS JOIN users2team_groups ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
     $team_groups_req->execute();
     while ($res = $team_groups_req->fetch()) {
-        echo "<img onclick='delete_teamgroup(" . $res['id'] . ")' src='img/small-trash.png' alt='trash' title='Remove this group' /><p class='inline editable teamgroup_name' id='teamgroup_" . $res['id'] . "'>" . $res['name']. "</p><ul>";
+        echo "<img onclick='deleteTeamgroup(" . $res['id'] . ")' src='img/small-trash.png' alt='trash' title='Remove this group' /><p class='inline editable teamgroup_name' id='teamgroup_" . $res['id'] . "'>" . $res['name']. "</p><ul>";
         $req2 = $pdo->prepare($sql);
         $req2->bindParam(':groupid', $res['id']);
         $req2->execute();
@@ -619,29 +621,49 @@ if ($team_groups_req->rowCount() > 0) {
 </div>
 
 <script>
-function create_teamgroup() {
+// TEAM GROUP
+function manageTeamgroup(action) {
+    if (action === 'add') {
+        var userid = $('#add_teamgroup_user').val();
+        var groupid = $('#add_teamgroup_group').val();
+    } else {
+        var userid = $('#rm_teamgroup_user').val();
+        var groupid = $('#rm_teamgroup_group').val();
+    }
+    $.post('app/admin-ajax.php', {
+        action: action,
+        teamgroup_user: userid,
+        teamgroup_group: groupid
+    }).success(function () {
+        $('#team_groups_div').load('admin.php #team_groups_div');
+    })
+}
+
+function createTeamgroup() {
     var name = $('#create_teamgroup').val();
     if (name.length > 0) {
         $.post('app/admin-ajax.php', {
             create_teamgroup: name
         }).success(function () {
+            $('#team_groups_div').load('admin.php #team_groups_div');
             $('#create_teamgroup').val('');
-            $('#team_groups_div').load('admin.php? #team_groups_div');
         })
     }
 }
-function delete_teamgroup(id) {
+function deleteTeamgroup(id) {
     var you_sure = confirm('<?php echo _('Delete this?'); ?>');
     if (you_sure == true) {
         $.post('app/delete.php', {
             type: 'teamgroup',
             id: id
         }).success(function () {
-            $("#team_groups_div").load("admin.php? #team_groups_div");
+            $("#team_groups_div").load("admin.php #team_groups_div");
         })
     }
     return false;
 }
+// END TEAM GROUP
+
 // used on import csv/zip to go to next step
 function goNext(x) {
     if(x == '') {
@@ -665,7 +687,7 @@ $(document).ready(function() {
             keynum = e.which;
         }
         if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
-            create_teamgroup();
+            createTeamgroup();
         }
     });
     // edit the team group name

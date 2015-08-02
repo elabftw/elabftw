@@ -600,11 +600,11 @@ if ($team_groups_req->rowCount() > 0) {
 
     <?php
     // show available team groups
-    echo "<h3>" .  _('Existing groups') . "</h3>";
-    $sql  = "SELECT DISTINCT users.firstname, users.lastname FROM users CROSS JOIN users2team_groups ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
+    echo "<h3>" . _('Existing groups') . "</h3>";
+    $sql = "SELECT DISTINCT users.firstname, users.lastname FROM users CROSS JOIN users2team_groups ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
     $team_groups_req->execute();
     while ($res = $team_groups_req->fetch()) {
-        echo "<div class='well'><img onclick='deleteTeamgroup(" . $res['id'] . ")' src='img/small-trash.png' style='float:right' alt='trash' title='Remove this group' /><h3 class='inline editable teamgroup_name' id='teamgroup_" . $res['id'] . "'>" . $res['name']. "</h3><ul>";
+        echo "<div class='well'><img onclick='deleteTeamgroup(" . $res['id'] . ")' src='img/small-trash.png' style='float:right' alt='trash' title='Remove this group' /><h3 class='inline editable teamgroup_name' id='teamgroup_" . $res['id'] . "'>" . $res['name'] . "</h3><ul>";
         $req2 = $pdo->prepare($sql);
         $req2->bindParam(':groupid', $res['id']);
         $req2->execute();

@@ -114,7 +114,7 @@
                         <ul class="dropdown-menu">
                             <li>
                                 <a href="../reports/errors.html">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">1</span>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">3</span>
                                 </a>
                             </li>
                             <li>
@@ -144,28 +144,28 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-2056237220"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1262548720"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-2056237220" class="accordion-body collapse in">
+            <div id="namespace-1262548720" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-222967888"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-660861984"></a>
                                 <a href="../namespaces/Elabftw.html" style="margin-left: 30px; padding-left: 0">Elabftw</a>
             </div>
-            <div id="namespace-222967888" class="accordion-body collapse ">
+            <div id="namespace-660861984" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1689851486"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-422722930"></a>
                                 <a href="../namespaces/Elabftw.Elabftw.html" style="margin-left: 30px; padding-left: 0">Elabftw</a>
             </div>
-            <div id="namespace-1689851486" class="accordion-body collapse ">
+            <div id="namespace-422722930" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                     
@@ -254,6 +254,7 @@
                                                                     <a href="../classes/Elabftw.Elabftw.Make.html#method_getFileName" class="">getFileName()</a><br />
                                                                     <a href="../classes/Elabftw.Elabftw.Make.html#method_getFilePath" class="">getFilePath()</a><br />
                                                                     <a href="../classes/Elabftw.Elabftw.Make.html#method_checkType" class="">checkType()</a><br />
+                                                                    <a href="../classes/Elabftw.Elabftw.Make.html#method_checkVisibility" class="">checkVisibility()</a><br />
                                                             </section>
                             <section class="span4">
                                                                     <em>No protected properties found</em>
@@ -315,13 +316,15 @@
             <article class="method">
                 <h3 class="protected ">getCleanName()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">getCleanName() </pre>
+                <pre class="signature" style="margin-right: 54px;">getCleanName() : string</pre>
                 <p><em>child classes need to implement that</em></p>
                 
 
                 
                 
-                				
+                                    <h4>Returns</h4>
+                    string
+                                    				
                             </article>
         </div>
         <aside class="span4 detailsbar">
@@ -439,6 +442,43 @@
         </aside>
     </div>
 
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_checkVisibility" name="method_checkVisibility" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">checkVisibility()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">checkVisibility(  <span class="argument">$id</span>) : boolean</pre>
+                <p><em>Verify we can see the id</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$id </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                            &mdash; <p>True if user has reading rights</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
                                                     </div>
     </section>
 
@@ -489,7 +529,7 @@
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on July 30th, 2015 at 22:19.
+                    on August 2nd, 2015 at 02:19.
                 </section>
             </section>
         </section>

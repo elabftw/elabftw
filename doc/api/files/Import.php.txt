@@ -39,7 +39,7 @@ abstract class Import
      *
      * @return int The type of item
      */
-    protected function getItemType()
+    protected function getTarget()
     {
         if (isset($_COOKIE['itemType']) && is_pos_int($_COOKIE['itemType'])) {
             return $_COOKIE['itemType'];

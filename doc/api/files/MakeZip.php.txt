@@ -21,7 +21,7 @@ use \Exception;
 class MakeZip extends Make
 {
     /** our pdo object */
-    private $pdo;
+    protected $pdo;
     /** the zip object */
     private $zip;
 
@@ -31,7 +31,7 @@ class MakeZip extends Make
     private $idArr = array();
 
     /** 'experiments' or 'items' */
-    private $type;
+    protected $type;
     /** files to be deleted by destructor */
     private $filesToDelete = array();
     /** the data for the current id */
@@ -254,6 +254,7 @@ class MakeZip extends Make
      */
     private function addToZip($id)
     {
+        $this->checkVisibility($id);
         // populate $this->zipped
         $this->getInfoFromId($id);
         $this->nameFolder();
@@ -266,6 +267,7 @@ class MakeZip extends Make
             'type' => $this->type,
             'title' => stripslashes($this->zipped['title']),
             'body' => stripslashes($this->zipped['body']),
+            'date' => $this->zipped['date'],
             'files' => $this->fileArr
         );
         unset($this->fileArr);

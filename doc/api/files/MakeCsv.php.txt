@@ -18,7 +18,7 @@ use \Exception;
 class MakeCsv extends Make
 {
     /** our pdo object */
-    private $pdo;
+    protected $pdo;
 
     /** a sha512 sum */
     public $fileName;
@@ -32,7 +32,7 @@ class MakeCsv extends Make
     /** the input ids but in an array */
     private $idArr = array();
     /** 'experiment' or 'items' */
-    private $type;
+    protected $type;
     /** the content */
     private $data;
     /** the url of the item */
@@ -95,6 +95,7 @@ class MakeCsv extends Make
             if (!is_pos_int($id)) {
                 throw new Exception('Bad id.');
             }
+            $this->checkVisibility($id);
             $this->initData($id);
             $this->setUrl($id);
             $this->addLine();

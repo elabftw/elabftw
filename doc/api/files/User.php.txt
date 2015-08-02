@@ -187,11 +187,13 @@ class User
      * @param string $password
      * @return bool Return true if user provided correct credentials
      */
-    public function login($username, $password)
+    public function login($username, $password, $setCookie = 'on')
     {
         if ($this->checkCredentials($username, $password)) {
             $this->populateSession();
-            $this->setToken();
+            if ($setCookie === 'on') {
+                $this->setToken();
+            }
             return true;
         }
         return false;

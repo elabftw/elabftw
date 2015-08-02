@@ -50,7 +50,7 @@ class Update
      * UPDATE THIS AFTER ADDING A BLOCK TO runUpdateScript()
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '3';
+    const REQUIRED_SCHEMA = '4';
 
     /**
      * Create the pdo object
@@ -169,10 +169,20 @@ class Update
      */
     public function runUpdateScript()
     {
-        // 20150727
-        $this->schema2();
-        // 20150728
-        $this->schema3();
+        $current_schema = get_config('schema');
+
+        if ($current_schema < 2) {
+            // 20150727
+            $this->schema2();
+        }
+        if ($current_schema < 3) {
+            // 20150728
+            $this->schema3();
+        }
+        if ($current_schema < 4) {
+            // 20150801
+            $this->schema4();
+        }
 
         // place new schema functions above this comment
         $this->updateSchema();
@@ -231,6 +241,20 @@ class Update
     {
         $sql = "ALTER TABLE experiments_revisions CHANGE exp_id item_id INT(10) UNSIGNED NOT NULL";
         if (!$this->pdo->q($sql)) {
+            throw new Exception('Problem updating!');
+        }
+    }
+
+    /**
+     * Add user groups
+     *
+     * @throws Exception if there is a problem
+     */
+    private function schema4()
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS `team_groups` ( `id` INT UNSIGNED NOT NULL AUTO_INCREMENT , `name` VARCHAR(255) NOT NULL , `team` INT UNSIGNED NOT NULL , PRIMARY KEY (`id`));";
+        $sql2 = "CREATE TABLE IF NOT EXISTS `users2team_groups` ( `userid` INT UNSIGNED NOT NULL , `groupid` INT UNSIGNED NOT NULL );";
+        if (!$this->pdo->q($sql) || !$this->pdo->q($sql2)) {
             throw new Exception('Problem updating!');
         }
     }

@@ -52,7 +52,7 @@ if ($data['userid'] != $_SESSION['userid']) {
     } elseif (is_pos_int($data['visibility'])) {
         // the visibility of this experiment is set to a group
         // we must check if current user is in this group
-        $sql = "SELECT userid FROM users2team_groups WHERE groupid = :groupid";
+        $sql = "SELECT DISTINCT userid FROM users2team_groups WHERE groupid = :groupid";
         $team_group_req = $pdo->prepare($sql);
         $team_group_req->bindParam(':groupid', $data['visibility']);
         $team_group_req->execute();

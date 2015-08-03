@@ -7,6 +7,7 @@
  * @see http://www.elabftw.net Official website
  * @license AGPL-3.0
  */
+use \Elabftw\Elabftw\Tools as Tools;
 
 $results_arr = array();
 // keep tag var in url
@@ -172,11 +173,11 @@ if (count($results_arr) === 0 && $search_type != 'none') {
     <div class='align_right'>
         <a name='anchor'></a>
         <p class='inline'><?php echo _('Export this result:'); ?> </p>
-        <a href='make.php?what=zip&id=<?php echo \Elabftw\Elabftw\Tools::buildStringFromArray($results_arr); ?>&type=items'>
+        <a href='make.php?what=zip&id=<?php echo Tools::buildStringFromArray($results_arr); ?>&type=items'>
             <img src='img/zip.png' title='make a zip archive' alt='zip' />
         </a>
 
-        <a href='make.php?what=csv&id=<?php echo \Elabftw\Elabftw\Tools::buildStringFromArray($results_arr); ?>&type=items'>
+        <a href='make.php?what=csv&id=<?php echo Tools::buildStringFromArray($results_arr); ?>&type=items'>
             <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' />
         </a>
     </div>

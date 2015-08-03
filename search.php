@@ -13,6 +13,8 @@
  * The search page
  *
  */
+use \Elabftw\Elabftw\Tools as Tools;
+
 require_once 'inc/common.php';
 $page_title = _('Search');
 $selected_menu = 'Search';
@@ -511,11 +513,11 @@ if (isset($_GET)) {
             <div class='align_right'>
                 <a name='anchor'></a>
                 <p class='inline'><?php echo _('Export this result:'); ?> </p>
-                <a href='make.php?what=zip&id=<?php echo \Elabftw\Elabftw\Tools::buildStringFromArray($results_arr); ?>&type=<?php echo $search_type; ?>'>
+                <a href='make.php?what=zip&id=<?php echo Tools::buildStringFromArray($results_arr); ?>&type=<?php echo $search_type; ?>'>
                     <img src='img/zip.png' title='make a zip archive' alt='zip' />
                 </a>
 
-                <a href='make.php?what=csv&id=<?php echo \Elabftw\Elabftw\Tools::buildStringFromArray($results_arr); ?>&type=<?php echo $search_type; ?>'>
+                <a href='make.php?what=csv&id=<?php echo Tools::buildStringFromArray($results_arr); ?>&type=<?php echo $search_type; ?>'>
                     <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' />
                 </a>
             </div>

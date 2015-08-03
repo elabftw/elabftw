@@ -12,6 +12,7 @@
  * This file holds global functions available everywhere.
  *
  */
+use \Elabftw\Elabftw\Tools as Tools;
 
 /**
  * Return the date as YYYYMMDD format.
@@ -276,7 +277,7 @@ function showXP($id, $display = 'default')
         // COMPACT MODE //
         echo "<section class='item_compact' style='border-left: 6px solid #" . $experiments['color'] . "'>";
         echo "<a href='experiments.php?mode=view&id=" . $experiments['id'] . "'>";
-        echo "<span class='date date_compact'>" . \Elabftw\Elabftw\Tools::formatDate($experiments['date']) . "</span> ";
+        echo "<span class='date date_compact'>" . Tools::formatDate($experiments['date']) . "</span> ";
         echo "<span style='padding-left:10px;'>";
         // show lock if item is locked on viewXP
         if ($experiments['locked']) {
@@ -301,7 +302,7 @@ function showXP($id, $display = 'default')
         // TITLE
         echo stripslashes($experiments['title']) . "</p></a>";
         // DATE
-        echo "<span class='date'><img class='image' src='img/calendar.png' /> " . \Elabftw\Elabftw\Tools::formatDate($experiments['date']) . "</span> ";
+        echo "<span class='date'><img class='image' src='img/calendar.png' /> " . Tools::formatDate($experiments['date']) . "</span> ";
         // _('Tags')
         echo show_tags($id, 'experiments_tags');
         // show attached if there is a file attached
@@ -393,7 +394,7 @@ function showDB($id, $display = 'default')
         // ITEM TYPE
         echo "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['bgcolor'] . "'>" . $item['name'] . " </span>";
         // DATE
-        echo "<span class='date' style='padding:0 5px;'><img class='image' src='img/calendar.png' /> " . \Elabftw\Elabftw\Tools::formatDate($item['date']) . "</span> ";
+        echo "<span class='date' style='padding:0 5px;'><img class='image' src='img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
         // TAGS
         echo show_tags($id, 'items_tags');
         echo "</section>";

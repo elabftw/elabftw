@@ -8,6 +8,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+use \Elabftw\Elabftw\Tools as Tools;
 
 // ID
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
@@ -51,7 +52,7 @@ $data = $req->fetch();
 <!-- begin item view -->
 <section class="box">
 
-<span class='date_view'><img src='img/calendar.png' title='date' alt='Date :' /> <?php echo \Elabftw\Elabftw\Tools::formatDate($data['date']); ?></span><br>
+<span class='date_view'><img src='img/calendar.png' title='date' alt='Date :' /> <?php echo Tools::formatDate($data['date']); ?></span><br>
 <?php
 show_stars($data['rating']);
 // buttons

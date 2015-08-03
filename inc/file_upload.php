@@ -7,6 +7,7 @@
  * @see http://www.elabftw.net Official website
  * @license AGPL-3.0
  */
+use \Elabftw\Elabftw\Tools as Tools;
 
 // where are we, on experiments or items (database) page ?
 if (strpos($_SERVER['SCRIPT_FILENAME'], 'experiments')) {
@@ -50,7 +51,7 @@ var item_id = '<?php echo $id; ?>';
 Dropzone.options.elabftwDropzone = {
     // i18n message to user
     dictDefaultMessage: '<?php echo _('Drop files here to upload'); ?>',
-    maxFilesize: '<?php echo \Elabftw\Elabftw\Tools::returnMaxUploadSize(); ?>', // MB
+    maxFilesize: '<?php echo Tools::returnMaxUploadSize(); ?>', // MB
     init: function() {
         this.on("complete", function() {
             // reload the #filesdiv once the file is uploaded

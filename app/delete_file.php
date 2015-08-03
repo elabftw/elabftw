@@ -23,6 +23,8 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+use \Elabftw\Elabftw\Tools as Tools;
+
 require_once '../inc/common.php';
 // Check id is valid and assign it to $id
 if (isset($_GET['id']) && is_pos_int($_GET['id'])) {
@@ -50,7 +52,7 @@ if ($_GET['type'] === 'experiments') {
         $filepath = ELAB_ROOT . 'uploads/' . $data['long_name'];
         unlink($filepath);
         // remove thumbnail
-        $ext = \Elabftw\Elabftw\Tools::getExt($data['real_name']);
+        $ext = Tools::getExt($data['real_name']);
         if (file_exists(ELAB_ROOT . 'uploads/' . $data['long_name'] . '_th.' . $ext)) {
             unlink(ELAB_ROOT . 'uploads/' . $data['long_name'] . '_th.' . $ext);
         }

@@ -25,6 +25,8 @@
 ********************************************************************************/
 // delete.php
 // This page is called with POST requests containing an id and a type.
+use \Elabftw\Elabftw\Tools as Tools;
+
 require_once '../inc/common.php';
 
 // Check id is valid and assign it to $id
@@ -76,7 +78,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                     $filepath = ELAB_ROOT . 'uploads/' . $uploads['long_name'];
                     unlink($filepath);
                     // remove thumbnail
-                    $ext = \Elabftw\Elabftw\Tools::getExt($uploads['real_name']);
+                    $ext = Tools::getExt($uploads['real_name']);
                     if (file_exists(ELAB_ROOT . 'uploads/' . $uploads['long_name'] . '_th.' . $ext)) {
                         unlink(ELAB_ROOT . 'uploads/' . $uploads['long_name'] . '_th.' . $ext);
                     }
@@ -163,7 +165,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                 $filepath = ELAB_ROOT . 'uploads/' . $uploads['long_name'];
                 unlink($filepath);
                 // remove thumbnail
-                $ext = \Elabftw\Elabftw\Tools::getExt($uploads['real_name']);
+                $ext = Tools::getExt($uploads['real_name']);
                 if (file_exists(ELAB_ROOT . 'uploads/' . $uploads['long_name'] . '_th.' . $ext)) {
                     unlink(ELAB_ROOT . 'uploads/' . $uploads['long_name'] . '_th.' . $ext);
                 }

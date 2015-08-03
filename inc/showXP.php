@@ -8,6 +8,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+use \Elabftw\Elabftw\Tools as Tools;
 
 $results_arr = array();
 $load_more_button = "<div class='center'>
@@ -193,11 +194,11 @@ if (count($results_arr) === 0 && $search_type != 'none') {
     <div class='align_right'>
         <a name='anchor'></a>
         <p class='inline'><?php echo _('Export this result:'); ?> </p>
-        <a href='make.php?what=zip&id=<?php echo \Elabftw\Elabftw\Tools::buildStringFromArray($results_arr); ?>&type=experiments'>
+        <a href='make.php?what=zip&id=<?php echo Tools::buildStringFromArray($results_arr); ?>&type=experiments'>
             <img src='img/zip.png' title='make a zip archive' alt='zip' />
         </a>
 
-        <a href='make.php?what=csv&id=<?php echo \Elabftw\Elabftw\Tools::buildStringFromArray($results_arr); ?>&type=experiments'>
+        <a href='make.php?what=csv&id=<?php echo Tools::buildStringFromArray($results_arr); ?>&type=experiments'>
             <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' />
         </a>
     </div>

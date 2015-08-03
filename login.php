@@ -13,6 +13,8 @@
  * Login page
  *
  */
+use \Elabftw\Elabftw\Tools as Tools;
+
 require_once 'inc/common.php';
 $page_title = _('Login');
 $selected_menu = null;
@@ -29,7 +31,7 @@ $formKey = new \Elabftw\Elabftw\FormKey();
 
 
 // if we are not in https, die saying we work only in https
-if (!\Elabftw\Elabftw\Tools::usingSsl()) {
+if (!Tools::usingSsl()) {
     // get the url to display a link to click (without the port)
     $url = 'https://' . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'];
     $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or click this link : <a href='$url'>$url</a>";

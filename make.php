@@ -13,6 +13,8 @@
  * Create a csv, zip or pdf file
  *
  */
+use \Elabftw\Elabftw\Tools as Tools;
+
 require_once 'inc/common.php';
 $page_title = _('Export');
 $selected_menu = null;
@@ -49,7 +51,7 @@ if ($_GET['what'] === 'csv' || $_GET['what'] === 'zip') {
     echo "<p>" . _('Your file is ready:') . "<br>
             <a href='app/download.php?type=" . $_GET['what'] . "&f=" . $make->fileName . "&name=" . $make->getCleanName() . "' target='_blank'>
             <img src='img/download.png' alt='download' /> " . $make->getCleanName() . "</a>
-            <span class='filesize'>(" . \Elabftw\Elabftw\Tools::formatBytes(filesize($make->filePath)) . ")</span></p>";
+            <span class='filesize'>(" . Tools::formatBytes(filesize($make->filePath)) . ")</span></p>";
     echo "</div>";
 
     require_once 'inc/footer.php';

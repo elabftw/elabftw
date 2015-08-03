@@ -6,22 +6,42 @@ Changelog
 Version 1.1.5
 -------------
 
-* add API documentation (in doc/api)
-* move doc to reStructeredText (in doc/_build/html)
-* fix bug on pdf generation: md5 sum of files not showing
-* fix 'Error getting latest version from server'
-* fix bug related to deletion of files upon user deletion
-* add Remember me button on login page
-* new registered users will get the server lang as lang
-* tag list on search page is now filtered by selected user
-* add autocompletion to experiments (start with # to get item list) (fix #65)
-* improve zip import now also imports attached files to an item (fix #21)
-* add .elabftw.json file in zip archives (to allow easy reimport)
-* remove MANIFEST file from zip archives
-* remove .export.txt file from zip archives
-* add unit and acceptance tests
-* update composer components
-* numerous code improvements (see git log)
+* Bug fixes
+
+    * fix bug on pdf generation: md5 sum of files not showing
+    * fix 'Error getting latest version from server'
+    * fix cookies not working properly
+    * fix bug related to deletion of files upon user deletion
+
+* New features
+
+    * add user groups (check it out in the admin panel: visibility of experiments can now be set on a group of team members
+    * add Remember me button on login page
+    * add autocompletion to experiments (write # to get item list) (fix #65)
+
+* Enhancements
+
+    * new registered users will get the server lang as lang
+    * tag list on search page is now filtered by selected user
+    * improve zip import now also imports attached files to an item (fix #21)
+    * add .elabftw.json file in zip archives (to allow easy reimport)
+    * remove MANIFEST file from zip archives
+    * remove .export.txt file from zip archives
+
+* Documentation
+
+    * move doc to reStructeredText (in doc/_build/html)
+    * documentation is hosted at https://elabftw.rtfd.org
+    * remove clutter on README.md (and add BADGES!!)
+
+* Developer corner
+    * add unit and acceptance tests
+    * update composer components
+    * use `Defuse/php-encryption <https://github.com/defuse/php-encryption/>`_ for encryption library
+    * add API documentation (in doc/api)
+    * class Db is a singleton
+    * numerous code improvements (see git log)
+
 
 Version 1.1.4-p3
 ----------------

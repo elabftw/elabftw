@@ -259,23 +259,60 @@
 <span id="id1"></span><h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="version-1-1-5">
 <h2>Version 1.1.5<a class="headerlink" href="#version-1-1-5" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>add API documentation (in doc/api)</li>
-<li>move doc to reStructeredText (in doc/_build/html)</li>
+<ul>
+<li><p class="first">Bug fixes</p>
+<blockquote>
+<div><ul class="simple">
 <li>fix bug on pdf generation: md5 sum of files not showing</li>
 <li>fix &#8216;Error getting latest version from server&#8217;</li>
+<li>fix cookies not working properly</li>
 <li>fix bug related to deletion of files upon user deletion</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">New features</p>
+<blockquote>
+<div><ul class="simple">
+<li>add user groups (check it out in the admin panel: visibility of experiments can now be set on a group of team members</li>
 <li>add Remember me button on login page</li>
+<li>add autocompletion to experiments (write # to get item list) (fix #65)</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Enhancements</p>
+<blockquote>
+<div><ul class="simple">
 <li>new registered users will get the server lang as lang</li>
 <li>tag list on search page is now filtered by selected user</li>
-<li>add autocompletion to experiments (start with # to get item list) (fix #65)</li>
 <li>improve zip import now also imports attached files to an item (fix #21)</li>
 <li>add .elabftw.json file in zip archives (to allow easy reimport)</li>
 <li>remove MANIFEST file from zip archives</li>
 <li>remove .export.txt file from zip archives</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Documentation</p>
+<blockquote>
+<div><ul class="simple">
+<li>move doc to reStructeredText (in doc/_build/html)</li>
+<li>documentation is hosted at <a class="reference external" href="https://elabftw.rtfd.org">https://elabftw.rtfd.org</a></li>
+<li>remove clutter on README.md (and add BADGES!!)</li>
+</ul>
+</div></blockquote>
+</li>
+<li><dl class="first docutils">
+<dt>Developer corner</dt>
+<dd><ul class="first last simple">
 <li>add unit and acceptance tests</li>
 <li>update composer components</li>
+<li>use <a class="reference external" href="https://github.com/defuse/php-encryption/">Defuse/php-encryption</a> for encryption library</li>
+<li>add API documentation (in doc/api)</li>
+<li>class Db is a singleton</li>
 <li>numerous code improvements (see git log)</li>
+</ul>
+</dd>
+</dl>
+</li>
 </ul>
 </div>
 <div class="section" id="version-1-1-4-p3">

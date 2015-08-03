@@ -1,4 +1,5 @@
 # .htaccess for elabftw
+# http://www.elabftw.net
 # AllowOverride must be set to All in Apache config
 # FORCE HTTPS
 #RewriteEngine On

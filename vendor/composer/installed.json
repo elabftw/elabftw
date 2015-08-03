@@ -3236,57 +3236,6 @@
         ]
     },
     {
-        "name": "defuse/php-encryption",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/defuse/php-encryption.git",
-            "reference": "d2c33279e31d5f3d4b74a82139b6ce56d551965b"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/defuse/php-encryption/zipball/d2c33279e31d5f3d4b74a82139b6ce56d551965b",
-            "reference": "d2c33279e31d5f3d4b74a82139b6ce56d551965b",
-            "shasum": ""
-        },
-        "require": {
-            "ext-openssl": "*",
-            "php": ">=5.4.0"
-        },
-        "time": "2015-07-23 17:01:53",
-        "type": "library",
-        "installation-source": "source",
-        "autoload": {
-            "files": [
-                "autoload.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Taylor Hornby",
-                "email": "havoc@defuse.ca"
-            }
-        ],
-        "description": "Secure PHP Encryption Library",
-        "keywords": [
-            "aes",
-            "authenticated encryption",
-            "cipher",
-            "crypto",
-            "cryptography",
-            "encrypt",
-            "encryption",
-            "openssl",
-            "security",
-            "symmetric key cryptography"
-        ]
-    },
-    {
         "name": "symfony/dom-crawler",
         "version": "v2.7.3",
         "version_normalized": "2.7.3.0",
@@ -4228,6 +4177,57 @@
             "coverage",
             "testing",
             "xunit"
+        ]
+    },
+    {
+        "name": "defuse/php-encryption",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/defuse/php-encryption.git",
+            "reference": "d2c33279e31d5f3d4b74a82139b6ce56d551965b"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/defuse/php-encryption/zipball/d2c33279e31d5f3d4b74a82139b6ce56d551965b",
+            "reference": "d2c33279e31d5f3d4b74a82139b6ce56d551965b",
+            "shasum": ""
+        },
+        "require": {
+            "ext-openssl": "*",
+            "php": ">=5.4.0"
+        },
+        "time": "2015-07-23 17:01:53",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "files": [
+                "autoload.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Taylor Hornby",
+                "email": "havoc@defuse.ca"
+            }
+        ],
+        "description": "Secure PHP Encryption Library",
+        "keywords": [
+            "aes",
+            "authenticated encryption",
+            "cipher",
+            "crypto",
+            "cryptography",
+            "encrypt",
+            "encryption",
+            "openssl",
+            "security",
+            "symmetric key cryptography"
         ]
     }
 ]

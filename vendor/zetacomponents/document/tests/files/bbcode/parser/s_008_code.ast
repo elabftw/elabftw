@@ -1,0 +1,144 @@
+<?php
+
+return ezcDocumentBBCodeDocumentNode::__set_state(array(
+   'line' => 6,
+   'position' => 1,
+   'nodes' => 
+  array (
+    0 => 
+    ezcDocumentBBCodeParagraphNode::__set_state(array(
+       'line' => 1,
+       'position' => 59,
+       'nodes' => 
+      array (
+        0 => 
+        ezcDocumentBBCodeTextNode::__set_state(array(
+           'line' => 1,
+           'position' => 1,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentBBCodeTextLineToken::__set_state(array(
+             'content' => 'This is an inline code example: ',
+             'line' => 1,
+             'position' => 1,
+          )),
+        )),
+        1 => 
+        ezcDocumentBBCodeInlineLiteralNode::__set_state(array(
+           'line' => 1,
+           'position' => 33,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentBBCodeLiteralBlockToken::__set_state(array(
+             'content' => 'echo "This is some code";',
+             'line' => 1,
+             'position' => 33,
+          )),
+        )),
+        2 => 
+        ezcDocumentBBCodeTextNode::__set_state(array(
+           'line' => 1,
+           'position' => 58,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentBBCodeTextLineToken::__set_state(array(
+             'content' => '.',
+             'line' => 1,
+             'position' => 58,
+          )),
+        )),
+      ),
+       'token' => 
+      ezcDocumentBBCodeNewLineToken::__set_state(array(
+         'content' => '
+',
+         'line' => 1,
+         'position' => 59,
+      )),
+    )),
+    1 => 
+    ezcDocumentBBCodeLiteralBlockNode::__set_state(array(
+       'line' => 3,
+       'position' => 1,
+       'nodes' => 
+      array (
+      ),
+       'token' => 
+      ezcDocumentBBCodeLiteralBlockToken::__set_state(array(
+         'content' => 'echo "This is some [b]code[/b] in a literal block";',
+         'line' => 3,
+         'position' => 1,
+      )),
+    )),
+    2 => 
+    ezcDocumentBBCodeParagraphNode::__set_state(array(
+       'line' => 5,
+       'position' => 39,
+       'nodes' => 
+      array (
+        0 => 
+        ezcDocumentBBCodeInlineLiteralNode::__set_state(array(
+           'line' => 5,
+           'position' => 1,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentBBCodeLiteralBlockToken::__set_state(array(
+             'content' => 'Hello world',
+             'line' => 5,
+             'position' => 1,
+          )),
+        )),
+        1 => 
+        ezcDocumentBBCodeTextNode::__set_state(array(
+           'line' => 5,
+           'position' => 12,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentBBCodeWhitespaceToken::__set_state(array(
+             'content' => ' ',
+             'line' => 5,
+             'position' => 12,
+          )),
+        )),
+        2 => 
+        ezcDocumentBBCodeTextNode::__set_state(array(
+           'line' => 5,
+           'position' => 13,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentBBCodeTextLineToken::__set_state(array(
+             'content' => 'is again some inline code.',
+             'line' => 5,
+             'position' => 13,
+          )),
+        )),
+      ),
+       'token' => 
+      ezcDocumentBBCodeNewLineToken::__set_state(array(
+         'content' => '
+',
+         'line' => 5,
+         'position' => 39,
+      )),
+    )),
+  ),
+   'token' => 
+  ezcDocumentBBCodeEndOfFileToken::__set_state(array(
+     'content' => NULL,
+     'line' => 6,
+     'position' => 1,
+  )),
+));
+

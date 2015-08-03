@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <sectioninfo>
+      <title>heise online - 30.07.08 - Kernel-Log: 2.6.25.13 korrigiert SicherheitslÃ¼cke, Probleme rund um ACPI</title>
+      <date>2008-07-30T14:15:44</date>
+      <abstract>
+        <para>2.6.25.13 korrigiert eine SicherheitslÃ¼cke im PPP-Code, ohne dass die Kernel-Entwickler explizit darauf hinweisen; ACPI-Probleme bereiten derweil Anwendern und Entwicklern Schwierigkeiten, die bereits zu GerÃ¼chten Ã¼ber Blockaden durch Foxconn fÃ¼hrten.</para>
+      </abstract>
+    </sectioninfo>
+    <section>
+      <title> Kernel-Log: 2.6.25.13 korrigiert SicherheitslÃ¼cke, Probleme rund um ACPI <ulink url="/newsticker/meldung/audio/113560"/><inlinemediaobject><imageobject><imagedata fileref="/icons/ho/vorlesen.gif" width="64" depth="13"/></imageobject><textobject><para>Meldung vorlesen</para></textobject></inlinemediaobject></title>
+      <para> Die Betreuer der <ulink url="/glossar/entry/ea8d3c7097639206">Stable-Kernel-Series</ulink> haben die Kernel-Versionen <ulink url="http://thread.gmane.org/gmane.linux.kernel/711370">2.6.25.12</ulink> und <ulink url="http://thread.gmane.org/gmane.linux.kernel/712767">2.6.25.13</ulink> freigegeben. Erstere enthÃ¤lt knapp fÃ¼nfzig Korrekturen in verschiedenen Bereichen des Linux-Kernels; die neuen Ãnderungen bei 2.6.25.13 sind hingegen vornehmlich im Netzwerk-Subsystem angesiedelt. Die Freigabe-Mails der beiden jÃ¼ngsten Linux-Versionen der 25er-Serie erwÃ¤hnen weder CVE-Nummern noch Sicherheitskorrekturen explizit; in beiden Mails rÃ¤t Greg Kroah-Hartman den Anwendern von selbst kompilierten 2.6.25-Kerneln aber zum Update auf die neuen Versionen ("<emphasis>Any users of the 2.6.25 kernel series should upgrade to this version</emphasis>"). </para>
+      <para>Das heiÃt aber nicht, dass die neuen Versionen nicht doch Sicherheitskorrekturen enthalten; einige der Kernel-Entwickler haben erst kÃ¼rzlich in einer lÃ¤ngeren Diskussion (<ulink url="http://thread.gmane.org/gmane.linux.kernel/701694/">1</ulink>, <ulink url="http://thread.gmane.org/gmane.linux.kernel/701694/">2</ulink>) durchblicken lassen, dass sie zwar durchaus bereit sind, Ã¶ffentlich zu (sicherheitsrelevanten) Fehlern und deren Korrektur zu stehen. Mit dem in Sicherheitskreisen Ã¼blichen Drumherum â etwa dem Schreiben detaillierter Fehlerberichte oder die Freigabekoordination mit Linux-Distributoren â wollen sich zumindest einige der Kernel-Entwickler aber nicht herumschlagen. So scheint es auch bei 2.6.25.13 zu sein, denn zumindest <ulink url="http://git.kernel.org/?p=linux/kernel/git/stable/linux-2.6.25.y.git;a=commitdiff;h=0c9b216d1ce5c322631c21bd6656ec35047ffc87">eine</ulink> Ãnderungen am PPP-Code korrigiert eine SicherheitslÃ¼cke, die derzeit als <ulink url="http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2008-2750">CVE-2008-2750</ulink> diskutiert wird; Fedora, OpenSuse und Ubuntu haben das Problem in den vergangenen Tagen bereits durch Kernel-Updates behoben.</para>
+      <para>Das zeigt wieder einmal, dass Anwender, die die Kernel-Entwicklung nicht intensiv verfolgen, mit einem Distributions-Kernel meist am besten bedient sind. Ãhnlich hatte es auch Greg Kroah-Hartman kÃ¼rzlich in einer Mail <ulink url="http://thread.gmane.org/gmane.linux.kernel/707127/focus=707604">durchblicken lassen</ulink>. Anwender, die anhand der von ihm bei der VerÃ¶ffentlichung mitgegebenen Informationen nicht entscheiden kÃ¶nnten, ob sie das Kernel-Update einspielen mÃ¼ssen oder nicht, sollten besser einer Firma das Bereitstellen von Updates Ã¼berlassen und nicht selbst Kernel einspielen. ("<emphasis>Take a look at the words I used, if someone can't determine if they should upgrade or not based on that, then they need to rely on a company to provide updates for them, and not be running their own kernels because they really have no clue about system management.</emphasis>").</para>
+      <beginpage/>
+      <para>Durch einige Foren und Webseiten geisterte in den vergangenen Tagen die Nachricht, Foxconn hÃ¤tte das BIOS und speziell deren ACPI-Tabellen eines Mainboards absichtlich so manipuliert, dass die Boards nicht mit Linux zusammenarbeiten. <ulink url="/glossar/entry/5c3ed590f974758c">Kernel-Hacker</ulink> Matthew Garrett erklÃ¤rt in zwei Blog-Posts (<ulink url="http://mjg59.livejournal.com/94905.html">1</ulink>, <ulink url="http://mjg59.livejournal.com/94998.html">2</ulink>) die Problematik genauer und stellte dabei klar, dass kein Vorsatz seitens Foxconn vorliegt; vielmehr seien auch Fehler im Linux-Kernel fÃ¼r die mit dem Foxconn-Board auftretenden Probleme mitverantwortlich. </para>
+      <para>Auch auf der Linux-Kernel Mailing Liste (LKML) gab es in den vergangenen Wochen wieder allerlei Diskussionen um ACPI. AusgelÃ¶st wurden die durch die von Suse-Entwickler Thomas Renninger <ulink url="http://thread.gmane.org/gmane.linux.acpi.devel/33039">gefundenes und analysiertes</ulink> Ãberhitzungsprobleme beim Einsatz von Linux auf einem HP-Notebook. Daraufhin schlug Renninger einige Ãnderungen und <ulink url="http://article.gmane.org/gmane.linux.acpi.devel/33040">ACPI BIOS Guidelines for Linux</ulink> vor. Len Brown, der Verwalter des Linux-ACPI-Subsystems, ist mit einigen der LÃ¶sungsvorschlÃ¤ge und Ideen aber nicht ganz einverstanden. </para>
+      <beginpage/>
+      <para>
+        <emphasis Role="strong">Kernel-Log-Staccato</emphasis>
+      </para>
+      <itemizedlist>
+        <listitem>
+          <para>Elias Oltmanns hat auf der LKML </para>
+          <para><ulink url="http://thread.gmane.org/gmane.linux.ide/33099">Patches</ulink> vorgestellt, durch die der Kernel die Schreib-/LesekÃ¶pfe von Festplatten zÃ¼gig parkt, falls etwa das Notebook zu stark beschleunigt wird ("Disk shock protection").</para>
+        </listitem>
+      </itemizedlist>
+      <itemizedlist>
+        <listitem>
+          <para>Kurz nachdem VIA Harald Welte als Open-Source-Berater </para>
+          <para><ulink url="http://www.heise.de/open/VIA-setzt-auf-Harald-Welte-als-Open-Source-Berater--/news/meldung/113318">engagierte</ulink>, hat das Unternehmen Dokumentation zu zwei ChipsÃ¤tzen und der Padlock-Engine neuerer VIA-CPUs auf VIAs im FrÃ¼hjahr gestarteten <ulink url="http://linux.via.com.tw/">Linux-Portal</ulink> verÃ¶ffentlicht. </para>
+        </listitem>
+      </itemizedlist>
+      <itemizedlist>
+        <listitem>
+          <para>Die Entwickler des </para>
+          <para><ulink url="http://hplip.sourceforge.net/">Hplip-Projekts</ulink> haben die Version 2.8.6b der Hplip-Treiber fÃ¼r HP-Drucker und -MultifunktionsgerÃ¤te <ulink url="http://sourceforge.net/forum/forum.php?forum_id=849275">verÃ¶ffentlicht</ulink>.</para>
+        </listitem>
+      </itemizedlist>
+      <para>
+        <emphasis>Weitere HintergrÃ¼nde und Informationen rund um Entwicklungen im Linux-Kernel und dessen Umfeld finden sich auch in den vorangegangen Ausgaben des <ulink url="/glossar/entry/09d9fae15978a6a8">Kernel-Logs</ulink> auf heise open:</emphasis>
+      </para>
+      <itemizedlist>
+        <listitem>
+          <para>29.07.2008:</para>
+          <para>Erste Vorabversion von 2.6.27 beendet heiÃe Entwicklungsphase</para>
+        </listitem>
+        <listitem>
+          <para>28.07.2008:</para>
+          <para>Aus der Praxis fÃ¼r die Praxis - Hintergrund- und Vorabinformationen zu Linux vom OLS</para>
+        </listitem>
+        <listitem>
+          <para>22.07.2008:</para>
+          <para>Centrino-2-WLAN-Treiber iwl-5000 und Webcam-Treiber gscpa in Linux 2.6.27</para>
+        </listitem>
+      </itemizedlist>
+      <itemizedlist>
+        <listitem>
+          <para>21.07.2008:</para>
+          <para>Ath9k-Treiber fÃ¼r neue Atheros-WLAN-Chips, Diskussionen um Nvidia-Treiber</para>
+        </listitem>
+        <listitem>
+          <para>16.07.2008:</para>
+          <para>Keine Unstable-Series, Linux 2008.7, Umgang mit Sicherheitskorrekturen</para>
+        </listitem>
+        <listitem>
+          <para>16.07.2008:</para>
+          <para>Entwicklung von 2.6.27 lÃ¤uft flott an, Alsa 1.0.17 freigegeben</para>
+        </listitem>
+      </itemizedlist>
+      <itemizedlist>
+        <listitem>
+          <para>14.07.2008:</para>
+          <para>Zur Freigabe von 2.6.26: Feinschliff und Anbauten â Die Neuerungen von Linux 2.6.26</para>
+        </listitem>
+        <listitem>
+          <para>10.07.2008:</para>
+          <para>USB-Kamera-Treiber in 2.6.26, neue 2.6.25-Variante verÃ¶ffentlicht</para>
+        </listitem>
+        <listitem>
+          <para>02.07.2008:</para>
+          <para>Neue Grafiktreiber, Treiber-Enwicklungsmodell erklÃ¤rt, Nebeneffekte durch Stromsparen</para>
+        </listitem>
+      </itemizedlist>
+      <literallayout class="normal"><emphasis>Ãltere <ulink url="/glossar/entry/09d9fae15978a6a8">Kernel-Logs</ulink> finden sich Ã¼ber <ulink url="http://www.heise.de/open/news/archiv/">das Archiv</ulink> oder <ulink url="http://www.heise.de/open/suche?sort=d;rm=search;q=Kernel-Log;channel=open">die Suchfunktion</ulink> von <ulink url="http://www.heise.de/open/">heise open</ulink>.</emphasis>(<ulink url="mailto:thl@ct.heise.de">thl</ulink>/c't)
+</literallayout>
+      <table>
+        <tbody>
+          <row>
+            <entry>
+              <emphasis Role="strong">
+                <ulink url="/newsticker/meldung/print/113560">Version zum Drucken</ulink>
+              </emphasis>
+              <para> | <emphasis Role="strong"><ulink url="/newsticker/meldung/mail/113560">Per E-Mail versenden</ulink></emphasis></para>
+            </entry>
+            <entry>
+              <para> &lt;&lt; </para>
+              <para><ulink url="/newsticker/meldung/113558">Vorige</ulink> | <ulink url="/newsticker/meldung/113563">Nächste</ulink> &gt;&gt; </para>
+            </entry>
+          </row>
+        </tbody>
+      </table>
+      <table>
+        <tbody>
+          <row>
+            <entry>
+              <section>
+                <title><ulink url="/security/news/foren/go.shtml?list=1&amp;amp;forum_id=141504"><emphasis Role="strong">Kommentare lesen (26 Beiträge)</emphasis></ulink>
+</title>
+              </section>
+            </entry>
+            <entry>
+              <section>
+                <title>Themen-Forum <ulink url="/open/foren/go.shtml?list=1&amp;amp;forum_id=93835">Betriebssysteme</ulink></title>
+              </section>
+            </entry>
+          </row>
+        </tbody>
+      </table>
+    </section>
+  </section>
+</article>

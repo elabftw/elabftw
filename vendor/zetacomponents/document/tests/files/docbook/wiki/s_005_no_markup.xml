@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="no_markup">
+    <sectioninfo/>
+    <title>No markup</title>
+    <para>asterisks: * "*" '*' (*) (* [*] {*} 1*x BOM32_* double asterisks: ** a**b O(N**2) etc. backquotes: ` `` etc. underscores: _ __ __init__ __init__() etc. vertical bars: | || etc.</para>
+  </section>
+</article>

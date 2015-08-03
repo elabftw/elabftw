@@ -1,0 +1,6 @@
+Paragraph with recursive inline markup
+======================================
+
+We *want to also `handle`__ **recursive markup* properly**. Even the docutils
+parser doesn't.
+

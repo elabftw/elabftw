@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <itemizedlist>
+    <listitem>
+      <para><emphasis Role="strong">bold</emphasis> item</para>
+    </listitem>
+    <listitem>
+      <para><emphasis>italic</emphasis> item</para>
+    </listitem>
+  </itemizedlist>
+  <orderedlist>
+    <listitem>
+      <para>item about a <ulink url="certain page">certain page</ulink></para>
+    </listitem>
+    <listitem>
+      <para>
+        <literal> //this// is **not** [[processed]] </literal>
+      </para>
+    </listitem>
+  </orderedlist>
+</article>

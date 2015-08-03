@@ -1,0 +1,148 @@
+<?php
+
+return ezcDocumentWikiDocumentNode::__set_state(array(
+   'line' => 3,
+   'position' => 1,
+   'nodes' => 
+  array (
+    0 => 
+    ezcDocumentWikiParagraphNode::__set_state(array(
+       'line' => 2,
+       'position' => 80,
+       'nodes' => 
+      array (
+        0 => 
+        ezcDocumentWikiTextNode::__set_state(array(
+           'line' => 1,
+           'position' => 1,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiTextLineToken::__set_state(array(
+             'content' => 'DokuWiki supports ',
+             'line' => 1,
+             'position' => 1,
+          )),
+        )),
+        1 => 
+        ezcDocumentWikiLinkNode::__set_state(array(
+           'link' => 
+          array (
+            0 => 
+            ezcDocumentWikiInterWikiLinkNode::__set_state(array(
+               'line' => 1,
+               'position' => 21,
+               'nodes' => 
+              array (
+              ),
+               'token' => 
+              ezcDocumentWikiInterWikiLinkToken::__set_state(array(
+                 'content' => 'doku>Interwiki',
+                 'line' => 1,
+                 'position' => 21,
+              )),
+            )),
+          ),
+           'title' => 
+          array (
+          ),
+           'description' => 
+          array (
+          ),
+           'line' => 1,
+           'position' => 19,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiLinkStartToken::__set_state(array(
+             'content' => '[[',
+             'line' => 1,
+             'position' => 19,
+          )),
+        )),
+        2 => 
+        ezcDocumentWikiTextNode::__set_state(array(
+           'line' => 1,
+           'position' => 37,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiWhitespaceToken::__set_state(array(
+             'content' => ' links. These are quick links to other
+Wikis. For example this is a link to Wikipedia\'s page about Wikis: ',
+             'line' => 1,
+             'position' => 37,
+          )),
+        )),
+        3 => 
+        ezcDocumentWikiLinkNode::__set_state(array(
+           'link' => 
+          array (
+            0 => 
+            ezcDocumentWikiInterWikiLinkNode::__set_state(array(
+               'line' => 2,
+               'position' => 70,
+               'nodes' => 
+              array (
+              ),
+               'token' => 
+              ezcDocumentWikiInterWikiLinkToken::__set_state(array(
+                 'content' => 'wp>Wiki',
+                 'line' => 2,
+                 'position' => 70,
+              )),
+            )),
+          ),
+           'title' => 
+          array (
+          ),
+           'description' => 
+          array (
+          ),
+           'line' => 2,
+           'position' => 68,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiLinkStartToken::__set_state(array(
+             'content' => '[[',
+             'line' => 2,
+             'position' => 68,
+          )),
+        )),
+        4 => 
+        ezcDocumentWikiTextNode::__set_state(array(
+           'line' => 2,
+           'position' => 79,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiTextLineToken::__set_state(array(
+             'content' => '.',
+             'line' => 2,
+             'position' => 79,
+          )),
+        )),
+      ),
+       'token' => 
+      ezcDocumentWikiNewLineToken::__set_state(array(
+         'content' => '
+',
+         'line' => 2,
+         'position' => 80,
+      )),
+    )),
+  ),
+   'token' => 
+  ezcDocumentWikiEndOfFileToken::__set_state(array(
+     'content' => NULL,
+     'line' => 3,
+     'position' => 1,
+  )),
+));
+

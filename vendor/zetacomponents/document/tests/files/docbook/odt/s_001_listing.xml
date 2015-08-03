@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <title>Some listing</title>
+    <literallayout>    if ( $foo == $bar )
+{
+    $foo = 123;
+  $bar = 23;
+	$tab = 1;
+		$tab2 = 2;
+}</literallayout>
+  </section>
+</article>

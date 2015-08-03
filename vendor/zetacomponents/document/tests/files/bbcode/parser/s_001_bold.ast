@@ -1,0 +1,60 @@
+<?php
+
+return ezcDocumentBBCodeDocumentNode::__set_state(array(
+   'line' => 2,
+   'position' => 1,
+   'nodes' => 
+  array (
+    0 => 
+    ezcDocumentBBCodeParagraphNode::__set_state(array(
+       'line' => 1,
+       'position' => 8,
+       'nodes' => 
+      array (
+        0 => 
+        ezcDocumentBBCodeTagNode::__set_state(array(
+           'line' => 1,
+           'position' => 1,
+           'nodes' => 
+          array (
+            0 => 
+            ezcDocumentBBCodeTextNode::__set_state(array(
+               'line' => 1,
+               'position' => 2,
+               'nodes' => 
+              array (
+              ),
+               'token' => 
+              ezcDocumentBBCodeTextLineToken::__set_state(array(
+                 'content' => 'Hello',
+                 'line' => 1,
+                 'position' => 2,
+              )),
+            )),
+          ),
+           'token' => 
+          ezcDocumentBBCodeTagOpenToken::__set_state(array(
+             'parameters' => NULL,
+             'content' => 'b',
+             'line' => 1,
+             'position' => 1,
+          )),
+        )),
+      ),
+       'token' => 
+      ezcDocumentBBCodeNewLineToken::__set_state(array(
+         'content' => '
+',
+         'line' => 1,
+         'position' => 8,
+      )),
+    )),
+  ),
+   'token' => 
+  ezcDocumentBBCodeEndOfFileToken::__set_state(array(
+     'content' => NULL,
+     'line' => 2,
+     'position' => 1,
+  )),
+));
+

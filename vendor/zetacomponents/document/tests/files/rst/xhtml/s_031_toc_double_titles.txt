@@ -1,0 +1,19 @@
+=================================
+Dublicate section titles with TOC
+=================================
+
+.. contents::
+
+-------------
+Section Title
+-------------
+
+Section Title
+=============
+
+Different Title
+===============
+
+Section Title
+-------------
+

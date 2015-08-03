@@ -1,0 +1,509 @@
+<?php
+
+return array (
+  0 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 5,
+     'content' => 'If',
+     'line' => 1,
+     'position' => 1,
+     'escaped' => false,
+  )),
+  1 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 1,
+     'content' => ' ',
+     'line' => 1,
+     'position' => 3,
+     'escaped' => false,
+  )),
+  2 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '[',
+     'line' => 1,
+     'position' => 4,
+     'escaped' => false,
+  )),
+  3 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '#',
+     'line' => 1,
+     'position' => 5,
+     'escaped' => false,
+  )),
+  4 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 5,
+     'content' => 'note',
+     'line' => 1,
+     'position' => 6,
+     'escaped' => false,
+  )),
+  5 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => ']',
+     'line' => 1,
+     'position' => 10,
+     'escaped' => false,
+  )),
+  6 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '_',
+     'line' => 1,
+     'position' => 11,
+     'escaped' => false,
+  )),
+  7 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 1,
+     'content' => ' ',
+     'line' => 1,
+     'position' => 12,
+     'escaped' => false,
+  )),
+  8 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 5,
+     'content' => 'is the first footnote reference, it will show up as',
+     'line' => 1,
+     'position' => 13,
+     'escaped' => false,
+  )),
+  9 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 2,
+     'content' => '
+',
+     'line' => 1,
+     'position' => 64,
+     'escaped' => false,
+  )),
+  10 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '"',
+     'line' => 2,
+     'position' => 1,
+     'escaped' => false,
+  )),
+  11 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '[',
+     'line' => 2,
+     'position' => 2,
+     'escaped' => false,
+  )),
+  12 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 5,
+     'content' => '1',
+     'line' => 2,
+     'position' => 3,
+     'escaped' => false,
+  )),
+  13 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => ']',
+     'line' => 2,
+     'position' => 4,
+     'escaped' => false,
+  )),
+  14 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '"',
+     'line' => 2,
+     'position' => 5,
+     'escaped' => false,
+  )),
+  15 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '.',
+     'line' => 2,
+     'position' => 6,
+     'escaped' => false,
+  )),
+  16 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 1,
+     'content' => '  ',
+     'line' => 2,
+     'position' => 7,
+     'escaped' => false,
+  )),
+  17 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 5,
+     'content' => 'We can refer to it again as',
+     'line' => 2,
+     'position' => 9,
+     'escaped' => false,
+  )),
+  18 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 1,
+     'content' => ' ',
+     'line' => 2,
+     'position' => 36,
+     'escaped' => false,
+  )),
+  19 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '[',
+     'line' => 2,
+     'position' => 37,
+     'escaped' => false,
+  )),
+  20 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '#',
+     'line' => 2,
+     'position' => 38,
+     'escaped' => false,
+  )),
+  21 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 5,
+     'content' => 'note',
+     'line' => 2,
+     'position' => 39,
+     'escaped' => false,
+  )),
+  22 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => ']',
+     'line' => 2,
+     'position' => 43,
+     'escaped' => false,
+  )),
+  23 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '_',
+     'line' => 2,
+     'position' => 44,
+     'escaped' => false,
+  )),
+  24 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 1,
+     'content' => ' ',
+     'line' => 2,
+     'position' => 45,
+     'escaped' => false,
+  )),
+  25 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 5,
+     'content' => 'and again see',
+     'line' => 2,
+     'position' => 46,
+     'escaped' => false,
+  )),
+  26 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 2,
+     'content' => '
+',
+     'line' => 2,
+     'position' => 59,
+     'escaped' => false,
+  )),
+  27 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '"',
+     'line' => 3,
+     'position' => 1,
+     'escaped' => false,
+  )),
+  28 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '[',
+     'line' => 3,
+     'position' => 2,
+     'escaped' => false,
+  )),
+  29 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 5,
+     'content' => '1',
+     'line' => 3,
+     'position' => 3,
+     'escaped' => false,
+  )),
+  30 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => ']',
+     'line' => 3,
+     'position' => 4,
+     'escaped' => false,
+  )),
+  31 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '"',
+     'line' => 3,
+     'position' => 5,
+     'escaped' => false,
+  )),
+  32 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '.',
+     'line' => 3,
+     'position' => 6,
+     'escaped' => false,
+  )),
+  33 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 1,
+     'content' => '  ',
+     'line' => 3,
+     'position' => 7,
+     'escaped' => false,
+  )),
+  34 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 5,
+     'content' => 'We can also refer to it as note',
+     'line' => 3,
+     'position' => 9,
+     'escaped' => false,
+  )),
+  35 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '_',
+     'line' => 3,
+     'position' => 40,
+     'escaped' => false,
+  )),
+  36 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 1,
+     'content' => ' ',
+     'line' => 3,
+     'position' => 41,
+     'escaped' => false,
+  )),
+  37 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '(',
+     'line' => 3,
+     'position' => 42,
+     'escaped' => false,
+  )),
+  38 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 5,
+     'content' => 'an ordinary internal',
+     'line' => 3,
+     'position' => 43,
+     'escaped' => false,
+  )),
+  39 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 2,
+     'content' => '
+',
+     'line' => 3,
+     'position' => 63,
+     'escaped' => false,
+  )),
+  40 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 5,
+     'content' => 'hyperlink reference',
+     'line' => 4,
+     'position' => 1,
+     'escaped' => false,
+  )),
+  41 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => ')',
+     'line' => 4,
+     'position' => 20,
+     'escaped' => false,
+  )),
+  42 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '.',
+     'line' => 4,
+     'position' => 21,
+     'escaped' => false,
+  )),
+  43 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 2,
+     'content' => '
+',
+     'line' => 4,
+     'position' => 22,
+     'escaped' => false,
+  )),
+  44 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 2,
+     'content' => '
+',
+     'line' => 5,
+     'position' => 1,
+     'escaped' => false,
+  )),
+  45 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '..',
+     'line' => 6,
+     'position' => 1,
+     'escaped' => false,
+  )),
+  46 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 1,
+     'content' => ' ',
+     'line' => 6,
+     'position' => 3,
+     'escaped' => false,
+  )),
+  47 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '[',
+     'line' => 6,
+     'position' => 4,
+     'escaped' => false,
+  )),
+  48 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '#',
+     'line' => 6,
+     'position' => 5,
+     'escaped' => false,
+  )),
+  49 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 5,
+     'content' => 'note',
+     'line' => 6,
+     'position' => 6,
+     'escaped' => false,
+  )),
+  50 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => ']',
+     'line' => 6,
+     'position' => 10,
+     'escaped' => false,
+  )),
+  51 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 1,
+     'content' => ' ',
+     'line' => 6,
+     'position' => 11,
+     'escaped' => false,
+  )),
+  52 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 5,
+     'content' => 'This is the footnote labeled',
+     'line' => 6,
+     'position' => 12,
+     'escaped' => false,
+  )),
+  53 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 1,
+     'content' => ' ',
+     'line' => 6,
+     'position' => 40,
+     'escaped' => false,
+  )),
+  54 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '"',
+     'line' => 6,
+     'position' => 41,
+     'escaped' => false,
+  )),
+  55 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 5,
+     'content' => 'note',
+     'line' => 6,
+     'position' => 42,
+     'escaped' => false,
+  )),
+  56 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '"',
+     'line' => 6,
+     'position' => 46,
+     'escaped' => false,
+  )),
+  57 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '.',
+     'line' => 6,
+     'position' => 47,
+     'escaped' => false,
+  )),
+  58 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 2,
+     'content' => '
+',
+     'line' => 6,
+     'position' => 48,
+     'escaped' => false,
+  )),
+  59 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 2,
+     'content' => '
+',
+     'line' => 7,
+     'position' => 1,
+     'escaped' => false,
+  )),
+  60 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 2,
+     'content' => '
+',
+     'line' => 7,
+     'position' => 1,
+     'escaped' => false,
+  )),
+  61 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 6,
+     'content' => NULL,
+     'line' => 7,
+     'position' => 1,
+     'escaped' => false,
+  )),
+);
+

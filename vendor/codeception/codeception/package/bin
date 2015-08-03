@@ -1,0 +1,34 @@
+<?php
+/**
+ * Codeception CLI
+ */
+
+use Symfony\Component\Console\Application,
+    Symfony\Component\Console\Input\InputInterface,
+    Symfony\Component\Console\Input\InputDefinition,
+    Symfony\Component\Console\Input\InputOption;
+
+ $app = new Application('Codeception', Codeception\Codecept::VERSION);
+ $app->add(new Codeception\Command\Build('build'));
+ $app->add(new Codeception\Command\Run('run'));
+ $app->add(new Codeception\Command\Bootstrap('bootstrap'));
+ $app->add(new Codeception\Command\Console('console'));
+ $app->add(new Codeception\Command\GenerateCept('generate:cept'));
+ $app->add(new Codeception\Command\GenerateCest('generate:cest'));
+ $app->add(new Codeception\Command\GenerateTest('generate:test'));
+ $app->add(new Codeception\Command\GeneratePhpUnit('generate:phpunit'));
+ $app->add(new Codeception\Command\GenerateSuite('generate:suite'));
+ $app->add(new Codeception\Command\GenerateHelper('generate:helper'));
+ $app->add(new Codeception\Command\GenerateScenarios('generate:scenarios'));
+ $app->add(new Codeception\Command\Clean('clean'));
+ $app->add(new Codeception\Command\GenerateGroup('generate:group'));
+ $app->add(new Codeception\Command\GeneratePageObject('generate:pageobject'));
+ $app->add(new Codeception\Command\GenerateStepObject('generate:stepobject'));
+ $app->add(new Codeception\Command\GenerateEnvironment('generate:environment'));
+
+ // add only if within a phar archive.
+ if ('phar:' === substr(__FILE__, 0, 5)) {
+	 $app->add(new Codeception\Command\SelfUpdate('self-update'));
+ }
+
+ $app->run();

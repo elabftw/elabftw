@@ -1,0 +1,106 @@
+default namespace = "http://ez.no/namespaces/ezpublish3"
+namespace image   = "http://ez.no/namespaces/ezpublish3/image/"
+namespace xhtml   = "http://ez.no/namespaces/ezpublish3/xhtml/"
+namespace custom  = "http://ez.no/namespaces/ezpublish3/custom/"
+
+grammar {
+	start = element section { sectionContent* }
+
+	sectionContent =
+		element section { sectionContent+ } |
+		element paragraph { paragraphContent } |
+		element header { headerContent }
+	
+	headerContent =
+			attribute anchor_name { string }?,
+			attribute level { string }?,
+			attribute class { string }?,
+			text
+	
+	paragraphContent =
+		attribute class { string }?,
+		(	inlineContent |
+			element line { inlineContent } |
+			element embed { embedAttributes } |
+			element ol { listContent } |
+			element ul { listContent } |
+			element custom {
+				attribute name { string }
+			} |
+			element literal {
+				attribute class { string }?,
+				text
+			} |
+			element table { tableContent }
+		)+
+	
+	listContent =
+		attribute class { string }?,
+		element li {
+			attribute class { string }?,
+			element paragraph { paragraphContent }+
+		}+
+	
+	tableContent =
+		attribute class { string }?,
+		attribute width { string }?,
+		attribute border { string }?,
+		element tr {
+			attribute class { string }?,
+			(	element td { tableCellContent }+ |
+				element th { tableCellContent }+
+			)
+		}+
+
+	tableCellContent =
+		attribute class { string }?,
+		attribute xhtml:width { string }?,
+		attribute xhtml:colspan { string }?,
+		attribute xhtml:rowspan { string }?,
+		(	sectionContent |
+			element table { tableContent }
+		)*
+	
+	inlineContent =
+		(	text |
+			element embed { embedAttributes } |
+			element embed-inline { embedAttributes } |
+			element strong { inlineElementContent } |
+			element emphasize { inlineElementContent } |
+			element link { linkContent } |
+			element anchor {
+				attribute name { string }?,
+				inlineContent
+			}
+		)*
+
+	inlineElementContent =
+		attribute class { string }?,
+		inlineContent
+	
+	embedAttributes =
+		attribute id { string }?,
+		attribute object_id { string }?,
+		attribute node_id { string }?,
+		attribute show_path { string }?,
+		attribute size { string }?,
+		attribute align { string }?,
+		attribute view { string }?,
+		attribute xhtml:id { string }?,
+		attribute class { string }?,
+		attribute target { string }?
+	
+	linkContent =
+		attribute class { string }?,
+		attribute xhtml:id { string }?,
+		attribute target { string }?,
+		attribute xhtml:title { string }?,
+		attribute object_id { string }?,
+		attribute node_id { string }?,
+		attribute show_path { string }?,
+		attribute anchor_name { string }?,
+		attribute url_id { string }?,
+		attribute id { string }?,
+		attribute view { string }?,
+		inlineContent
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <para>Real size: <inlinemediaobject><imageobject><imagedata fileref="wiki:dokuwiki-128.png"/></imageobject></inlinemediaobject> Resize to given width: <inlinemediaobject><imageobject><imagedata fileref="wiki:dokuwiki-128.png" width="50"/></imageobject></inlinemediaobject> Resize to given width and height: <inlinemediaobject><imageobject><imagedata fileref="wiki:dokuwiki-128.png" width="200" depth="50"/></imageobject></inlinemediaobject> Resized external image: <inlinemediaobject><imageobject><imagedata fileref="http://de3.php.net/images/php.gif" width="200" depth="50"/></imageobject></inlinemediaobject></para>
+  <para><inlinemediaobject><imageobject><imagedata fileref="wiki:dokuwiki-128.png" align="right"/></imageobject></inlinemediaobject> <inlinemediaobject><imageobject><imagedata fileref="wiki:dokuwiki-128.png" align="left"/></imageobject></inlinemediaobject> <inlinemediaobject><imageobject><imagedata fileref="wiki:dokuwiki-128.png" align="center"/></imageobject></inlinemediaobject></para>
+  <para>
+    <inlinemediaobject>
+      <imageobject>
+        <imagedata fileref="wiki:dokuwiki-128.png" align="center"/>
+      </imageobject>
+      <textobject>This is the caption</textobject>
+    </inlinemediaobject>
+  </para>
+</article>

@@ -1,0 +1,16 @@
+= Various types of hyperlink targets
+
+Clicking on this internal hyperlink will take us to the [[target|target]]
+below.
+
+The hyperlink target above points to this paragraph.
+
+The targets "target1" and "target2" are synonyms; they both point to this
+paragraph.
+
+See the [[http://www.python.org|Python]] home page or the
+[[http://mail.python.org/pipermail/doc-sig/|archive]] for info.
+
+[[jdoe@example.com|Write to me]] with your questions.
+
+This [[underscore\_|link]] refers to a file called {{{underscore_}}}.

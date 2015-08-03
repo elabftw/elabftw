@@ -1,0 +1,8 @@
+Text roles
+==========
+
+There are a lot different text roles, like: `emphasis`:emphasis:,
+`literal`:literal:, `strong`:strong:, `subscript`:subscript:, `sub`:sub:,
+`superscript`:superscript:, `sup`:sup:, `title-reference`:title_reference:,
+`title`:title: and `t`:t:.
+

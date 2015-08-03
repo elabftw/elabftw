@@ -1,0 +1,13 @@
+= Paragraph with inline markup
+
+Paragraphs contain text and may contain inline markup: //emphasis//, **strong
+emphasis**, interpreted text, {{{inline literals}}}, standalone hyperlinks (
+[[http://www.python.org|~http://www.python.org]]), external hyperlinks (
+[[http://python.org|Python]]), internal cross-references (
+[[http://example.org|example]]), substitution references ({{example.png}}),
+and inline internal targets. There are also [[http://example.org|anonomyous]]
+hyperlinks, which also [[http://example.org|may contain more then one word]].
+
+//Markup// is also allwoed at the very beginning of a paragraph.
+
+Paragraphs are separated by blank lines and are left-aligned.

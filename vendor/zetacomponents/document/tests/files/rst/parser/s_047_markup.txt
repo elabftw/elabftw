@@ -1,0 +1,14 @@
+Lorem ipsum
+-----------
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+
+- Sed do eiusmod tempor
+  
+  *Notes:*
+  
+  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+  aliquip ex ea commodo consequat.
+
+- *Edge cases:* where markup is also **allowed.**
+

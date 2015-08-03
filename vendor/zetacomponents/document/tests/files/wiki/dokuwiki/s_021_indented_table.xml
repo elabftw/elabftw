@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <para>Table rows have to start and end with a <literal>|</literal> for normal rows or a <literal>^</literal> for headers.</para>
+  <literallayout>  ^ Heading 1      ^ Heading 2       ^ Heading 3          ^
+  | Row 1 Col 1    | Row 1 Col 2     | Row 1 Col 3        |
+  | Row 2 Col 1    | some colspan (note the double pipe) ||
+  | Row 3 Col 1    | Row 2 Col 2     | Row 2 Col 3        |
+</literallayout>
+</article>

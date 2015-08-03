@@ -1,0 +1,374 @@
+<?xml version="1.0"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="grid_tables">
+    <sectioninfo/>
+    <title>Grid tables</title>
+    <table>
+      <tgroup>
+        <thead>
+          <row>
+            <entry>
+              <para>Header row, column 1   </para>
+            </entry>
+            <entry>
+              <para>Header 2   </para>
+            </entry>
+            <entry>
+              <para>Header 3 </para>
+            </entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>
+              <para>body row 1, column 1   </para>
+            </entry>
+            <entry>
+              <para>column 2   </para>
+            </entry>
+            <entry>
+              <para>column 3 </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>body row 2             </para>
+            </entry>
+            <entry>
+              <para>Cells may span        </para>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <table>
+      <tgroup>
+        <thead>
+          <row>
+            <entry>
+              <para>Header row, column 1    (header rows optional) </para>
+            </entry>
+            <entry>
+              <para>Header 2   </para>
+            </entry>
+            <entry>
+              <para>Header 3 </para>
+            </entry>
+            <entry>
+              <para>Header 4 </para>
+            </entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>
+              <para>body row 1, column 1   </para>
+            </entry>
+            <entry>
+              <para>column 2   </para>
+            </entry>
+            <entry>
+              <para>column 3 </para>
+            </entry>
+            <entry>
+              <para>column 4 </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>body row 2             </para>
+            </entry>
+            <entry>
+              <para>Cells may span columns.          </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>body row 3             </para>
+            </entry>
+            <entry morerows="1">
+              <para>Cells may   span rows. </para>
+            </entry>
+            <entry morerows="1">
+              <para>- Table cells       </para>
+              <para>- contain           </para>
+              <para>- body elements.    </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>body row 4             </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>body row 5             </para>
+            </entry>
+            <entry morerows="1">
+              <para>Cells may span rows <emphasis>and</emphasis>        </para>
+              <para>columns.                         </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>body row 6             </para>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <table>
+      <tgroup>
+        <thead>
+          <row>
+            <entry>
+              <para>row 1, col 1 </para>
+            </entry>
+            <entry>
+              <para>column 2 </para>
+            </entry>
+            <entry>
+              <para>column 3  </para>
+            </entry>
+            <entry>
+              <para>column 4  </para>
+            </entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry/>
+            <entry/>
+            <entry/>
+            <entry/>
+          </row>
+          <row>
+            <entry>
+              <para>row 2        </para>
+            </entry>
+            <entry>
+              <para>             +---+               </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>row 3        </para>
+            </entry>
+            <entry>
+              <para>         </para>
+            </entry>
+            <entry>
+              <para>   +===+  </para>
+            </entry>
+            <entry>
+              <para>          </para>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <table>
+      <tgroup>
+        <thead>
+          <row>
+            <entry>
+              <para>row 1, col 1 </para>
+            </entry>
+            <entry>
+              <para>column 2 </para>
+            </entry>
+            <entry>
+              <para>column 3  </para>
+            </entry>
+            <entry>
+              <para>column 4  </para>
+            </entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry/>
+            <entry/>
+            <entry/>
+            <entry/>
+          </row>
+          <row>
+            <entry morerows="1">
+              <para>row 2         text...       text...      </para>
+            </entry>
+            <entry morerows="1">
+              <para>Content </para>
+              <blockquote>
+                <para>-----------</para>
+              </blockquote>
+            </entry>
+            <entry>
+              <itemizedlist>
+                <listitem/>
+              </itemizedlist>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <literallayout class="normal">        
+</literallayout>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <table>
+      <tgroup>
+        <thead>
+          <row>
+            <entry>
+              <para>row 1, col 1 </para>
+            </entry>
+            <entry>
+              <para>column 2 </para>
+            </entry>
+            <entry>
+              <para>column 3  </para>
+            </entry>
+            <entry>
+              <para>column 4  </para>
+            </entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry/>
+            <entry/>
+            <entry/>
+            <entry/>
+          </row>
+          <row>
+            <entry>
+              <para>row 2        </para>
+            </entry>
+            <entry>
+              <para>Use the command ``ls </para>
+            </entry>
+            <entry>
+              <para>more``.   </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>row 3        </para>
+            </entry>
+            <entry>
+              <para>         </para>
+            </entry>
+            <entry>
+              <para>          </para>
+            </entry>
+            <entry>
+              <para>          </para>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <table>
+      <tgroup>
+        <thead>
+          <row>
+            <entry>
+              <para>row 1, col 1 </para>
+            </entry>
+            <entry>
+              <para>column 2 </para>
+            </entry>
+            <entry>
+              <para>column 3  </para>
+            </entry>
+            <entry>
+              <para>column 4  </para>
+            </entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry/>
+            <entry/>
+            <entry/>
+            <entry/>
+          </row>
+          <row>
+            <entry>
+              <para>row 2        </para>
+            </entry>
+            <entry>
+              <para> Use the command <literal>ls | more</literal>.  </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>row 3        </para>
+            </entry>
+            <entry>
+              <para>         </para>
+            </entry>
+            <entry>
+              <para>          </para>
+            </entry>
+            <entry>
+              <para>          </para>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+    <table>
+      <tgroup>
+        <thead>
+          <row>
+            <entry>
+              <para>row 1, col 1 </para>
+            </entry>
+            <entry>
+              <para>column 2 </para>
+            </entry>
+            <entry>
+              <para>column 3  </para>
+            </entry>
+            <entry>
+              <para>column 4  </para>
+            </entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry/>
+            <entry/>
+            <entry/>
+            <entry/>
+          </row>
+          <row>
+            <entry>
+              <para>row 2        </para>
+            </entry>
+            <entry>
+              <para>Use the command <literal>ls | more</literal>.   </para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>row 3        </para>
+            </entry>
+            <entry>
+              <para>         </para>
+            </entry>
+            <entry>
+              <para>          </para>
+            </entry>
+            <entry>
+              <para>          </para>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </section>
+</article>

@@ -1,0 +1,5 @@
+Custom text role
+================
+
+You can also define `custom roles`:my_role:.
+

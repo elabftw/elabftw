@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <sectioninfo>
+      <title>Simple tables</title>
+    </sectioninfo>
+    <section>
+      <title><anchor ID="simple_tables"/>Simple tables</title>
+      <table>
+        <thead>
+          <row>
+            <entry>
+              <para> A </para>
+            </entry>
+            <entry>
+              <para>B </para>
+            </entry>
+            <entry>
+              <para>A and B</para>
+            </entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>
+              <para>False </para>
+            </entry>
+            <entry>
+              <para>False </para>
+            </entry>
+            <entry>
+              <para>False</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>True </para>
+            </entry>
+            <entry>
+              <para>False </para>
+            </entry>
+            <entry>
+              <para>False</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>False </para>
+            </entry>
+            <entry>
+              <para>True </para>
+            </entry>
+            <entry>
+              <para>False</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>True </para>
+            </entry>
+            <entry>
+              <para>True </para>
+            </entry>
+            <entry>
+              <para>True</para>
+            </entry>
+          </row>
+        </tbody>
+      </table>
+      <table>
+        <thead>
+          <row>
+            <entry>
+              <para> Inputs</para>
+            </entry>
+            <entry/>
+            <entry>
+              <para>Output</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para> A </para>
+            </entry>
+            <entry>
+              <para>B </para>
+            </entry>
+            <entry>
+              <para>A or B</para>
+            </entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>
+              <para>False </para>
+            </entry>
+            <entry>
+              <para>False </para>
+            </entry>
+            <entry>
+              <para>False</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>True </para>
+            </entry>
+            <entry>
+              <para>False </para>
+            </entry>
+            <entry>
+              <para>True</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>False </para>
+            </entry>
+            <entry>
+              <para>True </para>
+            </entry>
+            <entry>
+              <para>True</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>True </para>
+            </entry>
+            <entry>
+              <para>True </para>
+            </entry>
+            <entry>
+              <para>True</para>
+            </entry>
+          </row>
+        </tbody>
+      </table>
+      <table>
+        <thead>
+          <row>
+            <entry>
+              <para>Number</para>
+            </entry>
+            <entry>
+              <para>Text</para>
+            </entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>
+              <para>1 </para>
+            </entry>
+            <entry>
+              <para>Second column of row 1.</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>2 </para>
+            </entry>
+            <entry>
+              <para>Second column of row 2. Second line of paragraph.</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>3 </para>
+            </entry>
+            <entry>
+              <itemizedlist>
+                <listitem>
+                  <para>Second column of row 3.</para>
+                </listitem>
+                <listitem>
+                  <para>Second item in bullet list (row 3, column 2).</para>
+                </listitem>
+              </itemizedlist>
+            </entry>
+          </row>
+        </tbody>
+      </table>
+    </section>
+  </section>
+</article>

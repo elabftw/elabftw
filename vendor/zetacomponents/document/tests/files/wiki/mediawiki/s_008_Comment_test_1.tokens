@@ -1,0 +1,51 @@
+<?php
+
+return array (
+  0 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 0,
+     'position' => 1,
+  )),
+  1 => 
+  ezcDocumentWikiLiteralLineToken::__set_state(array(
+     'content' => ' ',
+     'line' => 1,
+     'position' => 0,
+  )),
+  2 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'asdf',
+     'line' => 2,
+     'position' => 1,
+  )),
+  3 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 2,
+     'position' => 5,
+  )),
+  4 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 3,
+     'position' => 1,
+  )),
+  5 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 3,
+     'position' => 1,
+  )),
+  6 => 
+  ezcDocumentWikiEndOfFileToken::__set_state(array(
+     'content' => NULL,
+     'line' => 3,
+     'position' => 1,
+  )),
+);
+

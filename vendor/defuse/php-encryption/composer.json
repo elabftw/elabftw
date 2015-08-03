@@ -1,0 +1,20 @@
+{
+    "name": "defuse/php-encryption",
+    "description": "Secure PHP Encryption Library",
+    "license": "MIT",
+    "version": "2.0.0",
+    "keywords": ["security", "encryption", "AES", "openssl", "cipher", "cryptography", "symmetric key cryptography", "crypto", "encrypt", "authenticated encryption"],
+    "authors": [
+        {
+            "name": "Taylor Hornby",
+            "email": "havoc@defuse.ca"
+        }
+    ],
+    "autoload": {
+        "files": ["autoload.php"]
+    },
+    "require": {
+        "php":  ">=5.4.0",
+        "ext-openssl": "*"
+    }
+}

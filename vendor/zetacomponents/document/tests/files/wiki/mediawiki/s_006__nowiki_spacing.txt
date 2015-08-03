@@ -1,0 +1,7 @@
+<nowiki>Lorem ipsum dolor
+
+sed abit.
+  sed nullum.
+
+:and a colon
+</nowiki>

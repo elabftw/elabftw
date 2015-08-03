@@ -1,0 +1,7 @@
+:Hello: This field has a short field name, so aligning the field
+        body with the first line is feasible.
+
+:Number-of-African-swallows-required-to-carry-a-coconut: It would
+    be very difficult to align the field body with the left edge
+    of the first line.  It may even be preferable not to begin the
+    body on the same line as the marker.

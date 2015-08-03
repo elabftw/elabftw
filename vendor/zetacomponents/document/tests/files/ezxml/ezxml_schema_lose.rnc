@@ -1,0 +1,213 @@
+default namespace = "http://ez.no/namespaces/ezpublish3"
+namespace image   = "http://ez.no/namespaces/ezpublish3/image/"
+namespace xhtml   = "http://ez.no/namespaces/ezpublish3/xhtml/"
+namespace custom  = "http://ez.no/namespaces/ezpublish3/custom/"
+
+grammar {
+	start = element section { sectionContent* }
+
+	sectionContent =
+		# From documentation
+		element h { headerContent } |
+		element p { paragraphContent } |
+		# From ezxml schema
+		element section { sectionContent+ } |
+		element paragraph { paragraphContent } |
+		element header { headerContent } |
+		# Not documented at all, but some documents do not contain wrapping paragraphs
+		inlineContent
+	
+	headerContent =
+			# From documentation
+			attribute custom_parameter { string }?,
+			attribute anchor { string }?,
+			# From ezxml schema
+			attribute anchor_name { string }?,
+			attribute level { string }?,
+			attribute class { string }?,
+			(
+				# Not documented at all
+				inlineContent |
+				# From ezxml schema
+				text
+			)
+	
+	paragraphContent =
+		# From documentation
+		attribute custom_parameter { string }?,
+		# From ezxml schema
+		attribute class { string }?,
+		(	
+			# Not documented at all
+			element object { embedAttributes } |
+			element custom { customContent } |
+			# From ezxml schema
+			inlineContent |
+			element line { inlineContent } |
+			element embed { embedAttributes } |
+			element ol { listContent } |
+			element ul { listContent } |
+			element custom { customContent } |
+			element literal {
+				# From ezxml schema
+				attribute class { string }?,
+				text
+			} |
+			element table { tableContent }
+		)+
+	
+	customContent =
+		# Just guessed, not documented at all:
+		attribute custom_parameter { string }?,
+		attribute name { string },
+		attribute custom:header { string }?,
+		attribute custom:link { string }?,
+		attribute custom:class { string }?,
+		attribute custom:package_name { string }?,
+		attribute custom:version { string }?,
+		attribute custom:type { string }?,
+		attribute custom:summary { string }?,
+		attribute custom:description { string }?,
+		attribute custom:url { string }?,
+		attribute custom:thumbnail_url { string }?,
+		attribute custom:min-version { string }?,
+		attribute custom:feedurl { string }?,
+		attribute custom:siteurl { string }?,
+		attribute custom:limit { string }?,
+		attribute custom:preselect { string }?,
+		(
+			# More or less anything...
+			element h { headerContent } |
+			element p { paragraphContent } |
+			element section { sectionContent+ } |
+			element paragraph { paragraphContent } |
+			element header { headerContent } |
+			inlineContent
+		)*
+		
+
+	listContent =
+		attribute custom_parameter { string }?,
+		attribute class { string }?,
+		element li {
+			attribute custom_parameter { string }?,
+			attribute class { string }?,
+			(	
+				# Not documented at all
+				element line { inlineContent } |
+				# From documentation
+				element p { paragraphContent } |
+				# From ezxml schema
+				element paragraph { paragraphContent } |
+				inlineContent
+			# Seldom, but sometimes those elements are even mixed.
+			)+
+		# Yes, empty lists are possible.
+		}*
+	
+	tableContent =
+		attribute class { string }?,
+		attribute width { string }?,
+		attribute border { string }?,
+		element tr {
+			attribute class { string }?,
+			(	element td { tableCellContent } |
+				element th { tableCellContent }
+			# Table headers and cells can be mixed in one row.
+			# And there are empty rows used sometimes
+			)*
+		}+
+
+	tableCellContent =
+		attribute class { string }?,
+		attribute xhtml:width { string }?,
+		attribute xhtml:colspan { string }?,
+		attribute xhtml:rowspan { string }?,
+		(	sectionContent |
+			element table { tableContent }
+		)*
+	
+	inlineContent =
+		(	
+			# Not dcumented at all
+			element custom { customContent } |
+			element object { embedAttributes } |
+			element literal {
+				attribute class { string }?,
+				text
+			} |
+			# From documentation
+			element b { inlineElementContent } |
+			element bold { inlineElementContent } |
+			element i { inlineElementContent } |
+			element em { inlineElementContent } |
+			element a { linkContent } |
+			# From ezxml schema
+			element embed { embedAttributes } |
+			element embed-inline { embedAttributes } |
+			element strong { inlineElementContent } |
+			element emphasize { inlineElementContent } |
+			element link { linkContent } |
+			element anchor {
+				attribute custom_parameter { string }?,
+				attribute name { string }?,
+				inlineContent
+			} |
+			text
+		)*
+
+	inlineElementContent =
+		# From documentation
+		attribute custom_parameter { string }?,
+		# From ezxml schema
+		attribute class { string }?,
+		inlineContent
+
+	
+	embedAttributes =
+		# Not documented at all
+		attribute custom:size { string }?,
+		attribute custom:nolink { string }?,
+		attribute custom:image_size { string }?,
+		attribute custom:image_class { string }?,
+		attribute custom:type { string }?,
+		attribute custom:link { string }?,
+		attribute custom:hide_header { string }?,
+		attribute custom:limit { string }?,
+		attribute custom:country { string }?,
+		attribute image:ezurl_target { string }?,
+		attribute image:ezurl_id { string }?,
+		# From documentation
+		attribute custom_parameter { string }?,
+		attribute id { string }?,
+		attribute href { string }?,
+		# From ezxml schema
+		attribute object_id { string }?,
+		attribute node_id { string }?,
+		attribute show_path { string }?,
+		attribute size { string }?,
+		attribute align { string }?,
+		attribute view { string }?,
+		attribute xhtml:id { string }?,
+		attribute class { string }?,
+		attribute target { string }?
+	
+	linkContent =
+		# From documentation
+		attribute custom_parameter { string }?,
+		attribute href { string }?,
+		attribute title { string }?,
+		# From ezxml schema
+		attribute class { string }?,
+		attribute xhtml:id { string }?,
+		attribute target { string }?,
+		attribute xhtml:title { string }?,
+		attribute object_id { string }?,
+		attribute node_id { string }?,
+		attribute show_path { string }?,
+		attribute anchor_name { string }?,
+		attribute url_id { string }?,
+		attribute id { string }?,
+		attribute view { string }?,
+		inlineContent
+}

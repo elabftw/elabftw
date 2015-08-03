@@ -1,0 +1,31 @@
+Nähere Beschreibung:
+--------------------
+
+http://docs.google.com/censored/the/url
+
+Zusätzliche Informationen:
+--------------------------
+
+Ein nicht weiter relevanter Absatz mit anonymisiertem Text, Lorem Ipsum und so weiter.
+
+EVC_Model_DebitRetry
+Blindtext: Links zwo drei, rechts zwo drei
+
+-----
+
+Lalala Lorem Ipsum immer noch Blindtext:
+Eine weitere Zeile mit Blindtext
+Hier kommt die angekündigte Liste:
+- something (mit noch etwas Text in Klammern dazu for good measure)
+- nested (hier drunter soll eine eingerückte Liste kommen) 
+
+  1) "in Klammern"
+  2) "auch in Klammern"
+  3) "Klammerstuff"
+  4) "klammerig"
+  5) "Klammeraffe"
+  
+-----
+
+Hier ist die geschachtelte (oder auch nicht) "Liste" vorbei (puuh), welche die Exception geworfen hat. Die Schachtelung hat in gefühlt 100 Varianten ja auch nicht funktioniert, was vielleicht nochmal nen zusützlichen Bugreport rechtfertigen würde. result = "fail"
+

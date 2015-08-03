@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <sectioninfo>
+      <title>Enumerated lists</title>
+    </sectioninfo>
+    <section>
+      <title><anchor ID="enumerated_lists"/>Enumerated lists</title>
+      <orderedlist>
+        <listitem>
+          <para>This is an enumerated list.</para>
+        </listitem>
+        <listitem>
+          <para>Enumerators may be arabic numbers, letters, or roman numerals.</para>
+        </listitem>
+      </orderedlist>
+      <para>And a deeper list:</para>
+      <orderedlist numeration="lowerroman">
+        <listitem>
+          <para>Item 1 initial text.</para>
+          <orderedlist numeration="loweralpha">
+            <listitem>
+              <para>Item 1a.</para>
+            </listitem>
+            <listitem>
+              <para>Item 1b.</para>
+            </listitem>
+            <listitem>
+              <orderedlist numeration="loweralpha">
+                <listitem>
+                  <para>Item 2a.</para>
+                </listitem>
+                <listitem>
+                  <para>Item 2b.</para>
+                </listitem>
+              </orderedlist>
+              <para>Paragraph in list...</para>
+            </listitem>
+          </orderedlist>
+        </listitem>
+      </orderedlist>
+      <para>And not in list anymore.</para>
+    </section>
+  </section>
+</article>

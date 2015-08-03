@@ -1,0 +1,10 @@
+=====================
+Multinamed references
+=====================
+
+Paragraph with `three`_ `references`_ to the `same stuff`_.
+
+.. _three:
+.. _`same stuff`:
+.. _references: http://example.com
+

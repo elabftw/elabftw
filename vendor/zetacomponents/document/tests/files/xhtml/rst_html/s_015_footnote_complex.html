@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta name="generator" content="eZ Components; http://ezcomponents.org"/>
+    <title>Complex footnotes</title>
+  </head>
+  <body>
+    <h1>
+      <a name="complex_footnotes">Complex footnotes</a>
+    </h1>
+    <p><a href="#footnote_0_2" class="footnote">2</a> will be "2" (manually numbered), <a href="#footnote_0_3" class="footnote">3</a> will be "3" (anonymous auto-numbered), and <a href="#footnote_label_1" class="footnote">1</a> will be "1" (labeled auto-numbered).</p>
+    <ul class="footnotes">
+      <li>
+        <a name="footnote_0_2">2</a>
+        <p>This footnote is labeled manually, so its number is fixed.</p>
+      </li>
+      <li>
+        <a name="footnote_0_3">3</a>
+        <p>This footnote will be labeled "3".  It is the second auto-numbered footnote, but footnote label "2" is already used.</p>
+      </li>
+    </ul>
+    <ul class="footnotes">
+      <li>
+        <a name="footnote_label_1">1</a>
+        <p>This autonumber-labeled footnote will be labeled "1". It is the first auto-numbered footnote and no other footnote with label "1" exists.  The order of the footnotes is used to determine numbering, not the order of the footnote references.</p>
+      </li>
+    </ul>
+  </body>
+</html>

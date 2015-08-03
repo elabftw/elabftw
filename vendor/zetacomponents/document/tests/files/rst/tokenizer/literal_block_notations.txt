@@ -1,0 +1,13 @@
+Paragraph:
+
+::
+
+    Literal block
+
+Paragraph: ::
+
+    Literal block
+
+Paragraph::
+
+    Literal block

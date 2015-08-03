@@ -1,0 +1,20 @@
+Header
+======
+
+Paragraph 1
+
+Subheader 1
+-----------
+
+This text was missing in the generated document.
+
+Sub-subheader 1
+~~~~~~~~~~~~~~~
+
+Some text...
+
+Subheader 2
+-----------
+
+More text...
+

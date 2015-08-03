@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <sectioninfo>
+      <abstract>
+        <para>Personal homepage of Kore Nordmann. Contains information about his mainly PHP related projects with some political rants in his blog.</para>
+      </abstract>
+      <author>Kore Nordmann</author>
+      <date>Sat, 28 Jun 2008 21:17:17 +0200</date>
+      <title>Detecting URLs with PCRE</title>
+      <author>Kore Nordmann</author>
+      <date>Sat, 28 Jun 2008 21:17:17 +0200</date>
+      <copyright>CC by-sa</copyright>
+      <title>Detecting URLs with PCRE - Kore Nordmann - PHP / Projects / Politics</title>
+    </sectioninfo>
+    <section>
+      <title>Detecting URLs with PCRE</title>
+      <para>From time to time I experience the issue that I should detect URLs in some text, while neither the URLs are standard conform (regarding the used characters), nor the URLs are strictly separated from other stuff by whitespaces or something. Now <ulink url="http://www.derickrethans.nl/">Derick</ulink> asked me to provide him with a regular expression for that, and I finally wrote some, which should work in most cases:</para>
+      <literallayout>(
+    (?:^|[\s,.!?])
+        (?# Ignore matching braces around the URL)
+        (&lt;)?
+            (\[)?
+                (\()?
+                    (?# Ignore quoting around the URL)
+                    ([\'"]?)
+
+                        (?# Actually match the URL)
+                        (?P&lt;url&gt;https?://[^\s]*?)
+                     \4
+                (?(3)\))
+            (?(2)\])
+        (?(1)&gt;)
+
+    (?# Ignore common punctuation after the URL)
+    [.,?!]?(?:\s|$)
+)xm</literallayout>
+      <para>Sadly invalid characters are not always encoded, and also you can't expect to have only matching braces in the URLs, but still user like to write something like:</para>
+      <blockquote>
+        <para>Check out my Blog ($url)!</para>
+      </blockquote>
+      <para>In which case the braces are obviously not part of the actual URL so you should skip them, the same for the other brace types.</para>
+      <para>The regular expression uses conditional subpatterns to check for those matching braces before and after an URL and ignores them, when they are found. The same for quotes. Often URLs are followed by some markup, which also shouldn't be included in the actual URL, which is also ignored by this regular expression, but still - even not valid - characters like commas are included in the URL, if used there.</para>
+      <section>
+        <title>Issues</title>
+        <para>There are two issues, which are still not really solveable by a regular expression I think, but additions and suggestions would be really welcome:</para>
+        <orderedlist>
+          <listitem>
+            <para>PCRE does not reuse the end markers (?:\s|$) as start markers for the next URL, and I see no way to get the regular expression working without them. This means, that two URLs, only separated by one whitespace, would be detected when calling preg_match_all. You can still call preg_match() in a while-loop, though and remove all URLs from the text, after you found them.</para>
+          </listitem>
+          <listitem>
+            <para>Some users tend to use braces for subsentences, where one brace may end right after the URL, like this:</para>
+            <blockquote>
+              <para>Hi there (Check out my blog at $url)!</para>
+            </blockquote>
+            <para>Where the closing brace after the URL won't be removed, because there is no opening URL right before the URL.</para>
+            <para>I don't think this is fixable, because you can't expect the user to have only matching braces in his sentences, nor can you expect that for URLs itself. So we can just guess, what will be there more common problem - ignoring closing braces at the end of URLs, or users writing such sentences...</para>
+          </listitem>
+        </orderedlist>
+        <para>Still I think this regular expression might be useful to you, feel free to use it where ever you might find it useful. As a german I am not allowed to put something under public domain, but I grant anyone the right to use this for any purpose, without any conditions, unless such conditions are required by law.</para>
+      </section>
+    </section>
+  </section>
+</article>

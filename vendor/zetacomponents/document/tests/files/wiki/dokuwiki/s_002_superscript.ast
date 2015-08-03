@@ -1,0 +1,129 @@
+<?php
+
+return ezcDocumentWikiDocumentNode::__set_state(array(
+   'line' => 2,
+   'position' => 1,
+   'nodes' => 
+  array (
+    0 => 
+    ezcDocumentWikiParagraphNode::__set_state(array(
+       'line' => 1,
+       'position' => 66,
+       'nodes' => 
+      array (
+        0 => 
+        ezcDocumentWikiTextNode::__set_state(array(
+           'line' => 1,
+           'position' => 1,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiTextLineToken::__set_state(array(
+             'content' => 'You can use ',
+             'line' => 1,
+             'position' => 1,
+          )),
+        )),
+        1 => 
+        ezcDocumentWikiSubscriptNode::__set_state(array(
+           'line' => 1,
+           'position' => 13,
+           'nodes' => 
+          array (
+            0 => 
+            ezcDocumentWikiTextNode::__set_state(array(
+               'line' => 1,
+               'position' => 18,
+               'nodes' => 
+              array (
+              ),
+               'token' => 
+              ezcDocumentWikiTextLineToken::__set_state(array(
+                 'content' => 'subscript',
+                 'line' => 1,
+                 'position' => 18,
+              )),
+            )),
+          ),
+           'token' => 
+          ezcDocumentWikiSubscriptToken::__set_state(array(
+             'content' => '<sub>',
+             'line' => 1,
+             'position' => 13,
+          )),
+        )),
+        2 => 
+        ezcDocumentWikiTextNode::__set_state(array(
+           'line' => 1,
+           'position' => 33,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiWhitespaceToken::__set_state(array(
+             'content' => ' and ',
+             'line' => 1,
+             'position' => 33,
+          )),
+        )),
+        3 => 
+        ezcDocumentWikiSuperscriptNode::__set_state(array(
+           'line' => 1,
+           'position' => 38,
+           'nodes' => 
+          array (
+            0 => 
+            ezcDocumentWikiTextNode::__set_state(array(
+               'line' => 1,
+               'position' => 43,
+               'nodes' => 
+              array (
+              ),
+               'token' => 
+              ezcDocumentWikiTextLineToken::__set_state(array(
+                 'content' => 'superscript',
+                 'line' => 1,
+                 'position' => 43,
+              )),
+            )),
+          ),
+           'token' => 
+          ezcDocumentWikiSuperscriptToken::__set_state(array(
+             'content' => '<sup>',
+             'line' => 1,
+             'position' => 38,
+          )),
+        )),
+        4 => 
+        ezcDocumentWikiTextNode::__set_state(array(
+           'line' => 1,
+           'position' => 60,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiSpecialCharsToken::__set_state(array(
+             'content' => ', too.',
+             'line' => 1,
+             'position' => 60,
+          )),
+        )),
+      ),
+       'token' => 
+      ezcDocumentWikiNewLineToken::__set_state(array(
+         'content' => '
+',
+         'line' => 1,
+         'position' => 66,
+      )),
+    )),
+  ),
+   'token' => 
+  ezcDocumentWikiEndOfFileToken::__set_state(array(
+     'content' => NULL,
+     'line' => 2,
+     'position' => 1,
+  )),
+));
+

@@ -1,0 +1,21 @@
+.. _title_references:
+
+================
+Title references
+================
+
+The text contains references to the `Subtitle`__ and even to the document
+title\: `Title references`__.
+
+__ subtitle_
+__ title_references_
+
+.. _subtitle:
+
+--------
+Subtitle
+--------
+
+This refernces, like\: `Subtitle`__ may occur multiple times, of course.
+
+__ subtitle_

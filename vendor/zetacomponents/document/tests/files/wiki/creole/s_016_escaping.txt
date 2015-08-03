@@ -1,0 +1,5 @@
+~#1
+http://www.foo.com/~bar/
+~http://www.foo.com/
+CamelCaseLink
+~CamelCaseLink

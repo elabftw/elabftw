@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://ez.no/namespaces/ezpublish3" xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
+  <section>
+    <header>Complex footnotes</header>
+    <paragraph><link class="footnote" anchor_name="__footnote_1">1</link> will be "2" (manually numbered), <link class="footnote" anchor_name="__footnote_2">2</link> will be "3" (anonymous auto-numbered), and <link class="footnote" anchor_name="__footnote_3">3</link> will be "1" (labeled auto-numbered).</paragraph>
+    <paragraph>
+      <ul class="footnotes">
+        <li>
+          <paragraph><anchor name="__footnote_1">1</anchor>This footnote is labeled manually, so its number is fixed.</paragraph>
+        </li>
+        <li>
+          <paragraph><anchor name="__footnote_2">2</anchor>This footnote will be labeled "3".  It is the second auto-numbered footnote, but footnote label "2" is already used.</paragraph>
+        </li>
+        <li>
+          <paragraph><anchor name="__footnote_3">3</anchor>This autonumber-labeled footnote will be labeled "1". It is the first auto-numbered footnote and no other footnote with label "1" exists.  The order of the footnotes is used to determine numbering, not the order of the footnote references.</paragraph>
+        </li>
+      </ul>
+    </paragraph>
+  </section>
+</section>

@@ -1,0 +1,10 @@
+Text roles
+==========
+
+Text roles can be used :strong:`before the text`, or `right behind the
+text`:strong:.
+
+If no explicit `role` is given, the default role is used.
+
+This :foo bar:`paragraph` does not :contain: text roles.
+

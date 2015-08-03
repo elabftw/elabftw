@@ -1,0 +1,426 @@
+<?php
+
+return array (
+  0 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 0,
+     'position' => 1,
+  )),
+  1 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'Internal',
+     'line' => 1,
+     'position' => 1,
+  )),
+  2 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 1,
+     'position' => 9,
+  )),
+  3 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'links',
+     'line' => 1,
+     'position' => 10,
+  )),
+  4 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 1,
+     'position' => 15,
+  )),
+  5 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'are',
+     'line' => 1,
+     'position' => 16,
+  )),
+  6 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 1,
+     'position' => 19,
+  )),
+  7 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'created',
+     'line' => 1,
+     'position' => 20,
+  )),
+  8 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 1,
+     'position' => 27,
+  )),
+  9 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'by',
+     'line' => 1,
+     'position' => 28,
+  )),
+  10 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 1,
+     'position' => 30,
+  )),
+  11 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'using',
+     'line' => 1,
+     'position' => 31,
+  )),
+  12 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 1,
+     'position' => 36,
+  )),
+  13 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'square',
+     'line' => 1,
+     'position' => 37,
+  )),
+  14 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 1,
+     'position' => 43,
+  )),
+  15 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'brackets.',
+     'line' => 1,
+     'position' => 44,
+  )),
+  16 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 1,
+     'position' => 53,
+  )),
+  17 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'You',
+     'line' => 1,
+     'position' => 54,
+  )),
+  18 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 1,
+     'position' => 57,
+  )),
+  19 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'can',
+     'line' => 1,
+     'position' => 58,
+  )),
+  20 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 1,
+     'position' => 61,
+  )),
+  21 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'either',
+     'line' => 1,
+     'position' => 62,
+  )),
+  22 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 1,
+     'position' => 68,
+  )),
+  23 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'just',
+     'line' => 1,
+     'position' => 69,
+  )),
+  24 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 1,
+     'position' => 73,
+  )),
+  25 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'give',
+     'line' => 1,
+     'position' => 74,
+  )),
+  26 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 1,
+     'position' => 78,
+  )),
+  27 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'a',
+     'line' => 2,
+     'position' => 1,
+  )),
+  28 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 2,
+     'position' => 2,
+  )),
+  29 => 
+  ezcDocumentWikiLinkStartToken::__set_state(array(
+     'content' => '[[',
+     'line' => 2,
+     'position' => 3,
+  )),
+  30 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'pagename',
+     'line' => 2,
+     'position' => 5,
+  )),
+  31 => 
+  ezcDocumentWikiLinkEndToken::__set_state(array(
+     'content' => ']]',
+     'line' => 2,
+     'position' => 13,
+  )),
+  32 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 2,
+     'position' => 15,
+  )),
+  33 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'or',
+     'line' => 2,
+     'position' => 16,
+  )),
+  34 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 2,
+     'position' => 18,
+  )),
+  35 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'use',
+     'line' => 2,
+     'position' => 19,
+  )),
+  36 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 2,
+     'position' => 22,
+  )),
+  37 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'an',
+     'line' => 2,
+     'position' => 23,
+  )),
+  38 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 2,
+     'position' => 25,
+  )),
+  39 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'additional',
+     'line' => 2,
+     'position' => 26,
+  )),
+  40 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 2,
+     'position' => 36,
+  )),
+  41 => 
+  ezcDocumentWikiLinkStartToken::__set_state(array(
+     'content' => '[[',
+     'line' => 2,
+     'position' => 37,
+  )),
+  42 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'pagename',
+     'line' => 2,
+     'position' => 39,
+  )),
+  43 => 
+  ezcDocumentWikiSeparatorToken::__set_state(array(
+     'content' => '|',
+     'line' => 2,
+     'position' => 47,
+  )),
+  44 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'link',
+     'line' => 2,
+     'position' => 48,
+  )),
+  45 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 2,
+     'position' => 52,
+  )),
+  46 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'text',
+     'line' => 2,
+     'position' => 53,
+  )),
+  47 => 
+  ezcDocumentWikiLinkEndToken::__set_state(array(
+     'content' => ']]',
+     'line' => 2,
+     'position' => 57,
+  )),
+  48 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => '.',
+     'line' => 2,
+     'position' => 59,
+  )),
+  49 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 2,
+     'position' => 60,
+  )),
+  50 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 3,
+     'position' => 1,
+  )),
+  51 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'This',
+     'line' => 4,
+     'position' => 1,
+  )),
+  52 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 4,
+     'position' => 5,
+  )),
+  53 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'links',
+     'line' => 4,
+     'position' => 6,
+  )),
+  54 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 4,
+     'position' => 11,
+  )),
+  55 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'to',
+     'line' => 4,
+     'position' => 12,
+  )),
+  56 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 4,
+     'position' => 14,
+  )),
+  57 => 
+  ezcDocumentWikiLinkStartToken::__set_state(array(
+     'content' => '[[',
+     'line' => 4,
+     'position' => 15,
+  )),
+  58 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'syntax#internal',
+     'line' => 4,
+     'position' => 17,
+  )),
+  59 => 
+  ezcDocumentWikiSeparatorToken::__set_state(array(
+     'content' => '|',
+     'line' => 4,
+     'position' => 32,
+  )),
+  60 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'this',
+     'line' => 4,
+     'position' => 33,
+  )),
+  61 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 4,
+     'position' => 37,
+  )),
+  62 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'Section',
+     'line' => 4,
+     'position' => 38,
+  )),
+  63 => 
+  ezcDocumentWikiLinkEndToken::__set_state(array(
+     'content' => ']]',
+     'line' => 4,
+     'position' => 45,
+  )),
+  64 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => '.',
+     'line' => 4,
+     'position' => 47,
+  )),
+  65 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 4,
+     'position' => 48,
+  )),
+  66 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 5,
+     'position' => 1,
+  )),
+  67 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 5,
+     'position' => 1,
+  )),
+  68 => 
+  ezcDocumentWikiEndOfFileToken::__set_state(array(
+     'content' => NULL,
+     'line' => 5,
+     'position' => 1,
+  )),
+);
+

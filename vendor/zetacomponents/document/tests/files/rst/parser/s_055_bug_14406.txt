@@ -1,0 +1,10 @@
+Cairo driver
+------------
+
+	Cairo is a software library used to provide a vector graphics-based,
+	device-independent API for software developers. It is designed to provide
+	primitives for 2-dimensional drawing across a number of different
+	backends. Cairo is designed to use hardware acceleration when available.
+
+	.. Wikipedia
+

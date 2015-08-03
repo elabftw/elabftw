@@ -1,0 +1,10 @@
+References with special chars
+=============================
+
+For more information, visit `http://phpvikinger.org/`_ , where you will also
+find information on how to register and some links to `pictures`_ of last
+year's PHP Vikinger.
+
+.. _`http://phpvikinger.org/`: http://phpvikinger.org/
+.. _`pictures`: http://flickr.com
+

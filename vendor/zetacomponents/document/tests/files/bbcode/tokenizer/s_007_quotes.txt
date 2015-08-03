@@ -1,0 +1,3 @@
+For example to quote a piece of text Mr. Blobby wrote you would enter:
+
+[quote="Mr. Blobby"]The text Mr. Blobby wrote would go here[/quote]

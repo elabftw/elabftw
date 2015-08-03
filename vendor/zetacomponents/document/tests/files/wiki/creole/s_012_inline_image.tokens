@@ -1,0 +1,108 @@
+<?php
+
+return array (
+  0 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 0,
+     'position' => 1,
+  )),
+  1 => 
+  ezcDocumentWikiImageStartToken::__set_state(array(
+     'width' => NULL,
+     'height' => NULL,
+     'alignement' => NULL,
+     'content' => '{{',
+     'line' => 1,
+     'position' => 1,
+  )),
+  2 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'myimage.png',
+     'line' => 1,
+     'position' => 3,
+  )),
+  3 => 
+  ezcDocumentWikiSeparatorToken::__set_state(array(
+     'content' => '|',
+     'line' => 1,
+     'position' => 14,
+  )),
+  4 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'this',
+     'line' => 1,
+     'position' => 15,
+  )),
+  5 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 1,
+     'position' => 19,
+  )),
+  6 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'is',
+     'line' => 1,
+     'position' => 20,
+  )),
+  7 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 1,
+     'position' => 22,
+  )),
+  8 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'my',
+     'line' => 1,
+     'position' => 23,
+  )),
+  9 => 
+  ezcDocumentWikiWhitespaceToken::__set_state(array(
+     'content' => ' ',
+     'line' => 1,
+     'position' => 25,
+  )),
+  10 => 
+  ezcDocumentWikiTextLineToken::__set_state(array(
+     'content' => 'image',
+     'line' => 1,
+     'position' => 26,
+  )),
+  11 => 
+  ezcDocumentWikiImageEndToken::__set_state(array(
+     'content' => '}}',
+     'line' => 1,
+     'position' => 31,
+  )),
+  12 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 1,
+     'position' => 33,
+  )),
+  13 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 2,
+     'position' => 1,
+  )),
+  14 => 
+  ezcDocumentWikiNewLineToken::__set_state(array(
+     'content' => '
+',
+     'line' => 2,
+     'position' => 1,
+  )),
+  15 => 
+  ezcDocumentWikiEndOfFileToken::__set_state(array(
+     'content' => NULL,
+     'line' => 2,
+     'position' => 1,
+  )),
+);
+

@@ -1,0 +1,3 @@
+//[[Important page|this link is italicized]]//
+**[[Important page]]**
+//**[[Important page]]**//

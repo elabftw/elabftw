@@ -1,0 +1,4 @@
+Internal links are created by using square brackets. You can either just give
+a [[pagename]] or use an additional [[pagename|link text]].
+
+This links to [[syntax#internal|this Section]].

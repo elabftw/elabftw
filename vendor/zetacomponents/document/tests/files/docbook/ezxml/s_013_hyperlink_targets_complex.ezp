@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://ez.no/namespaces/ezpublish3" xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
+  <section>
+    <header>Various types of hyperlink targets</header>
+    <paragraph>Clicking on this internal hyperlink will take us to the <link anchor_name="target">target</link> below.</paragraph>
+    <paragraph>The hyperlink target above points to this paragraph.</paragraph>
+    <paragraph>The targets "target1" and "target2" are synonyms; they both point to this paragraph.</paragraph>
+    <paragraph>See the <link url_id="23">Python</link> home page or the <link url_id="23">archive</link> for info.</paragraph>
+    <paragraph><link url_id="23">Write to me</link> with your questions.</paragraph>
+    <paragraph>This <link url_id="23">link</link> refers to a file called <literal>underscore_</literal>.</paragraph>
+  </section>
+</section>

@@ -1,0 +1,9 @@
+Base
+====
+
+Purpose
+-------
+This is the base package of the eZ publish components, offering the basic
+support that all Components need. In the first version this will be the
+autoload support.
+

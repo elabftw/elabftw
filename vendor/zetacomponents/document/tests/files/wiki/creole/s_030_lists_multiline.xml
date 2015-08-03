@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <itemizedlist>
+    <listitem>
+      <para>Item 1 with <emphasis Role="strong">multiple</emphasis> lines.</para>
+    </listitem>
+    <listitem>
+      <para>Item 2</para>
+    </listitem>
+    <listitem>
+      <itemizedlist>
+        <listitem>
+          <para>Item 2.1 has also multiple lines.</para>
+        </listitem>
+      </itemizedlist>
+    </listitem>
+    <listitem>
+      <para>Item 3</para>
+    </listitem>
+  </itemizedlist>
+</article>

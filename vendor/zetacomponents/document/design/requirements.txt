@@ -1,0 +1,112 @@
+eZ publish Enterprise Component: Document, Requirements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+:Author:   Kirill Subbotin
+:Revision: $Revision: $
+:Date:     $Date: $
+
+Introduction
+============
+
+Description
+-----------
+The purpose of the Document component is to provide an easy and universal way to
+deal with structured text documents of any format.
+
+Current implementation
+----------------------
+In eZ publish 3 there is a datatype 'ezxmltext' that stores structured text in
+it's own internal XML format, but this format has some disadvantages. The main
+weak point is that it's scheme is very different from XHTML, which makes 
+it hard to present it in WYSIWYG editors and has a negative impact on the
+performance. The main things are:
+- All content is wrapped in paragraphs, even "block" elements like tables,
+  which is not allowed in XHTML.
+- Using sections instead of plain headers like in XHTML 1.*.
+- Using "line" tags with line's content instead of single "br".
+- "Custom" element's placement in the schema depends on it's attribute, which is
+  not compatible with XML schema definitions.
+
+This datatype can take input in some formats including 'simplified XML' and basic
+HTML (for OE) and produces output in HTML and PDF using eZ publish's templates.
+
+Also there is an ODF extension for eZ publish that can convert simple documents
+in Oasis Open Document format to the internal format of 'ezxmltext' datatype and
+back. It uses the custom code plus OpenOffice.org in daemon mode for conversion.
+
+
+Requirements
+============
+The main task of the component is to take an input in one of the supported
+formats and convert it to another. There should be always a way to convert
+one format to another, it could be a direct conversion, or chain conversion,
+that involves one or more intermediate formats.
+
+There should be one special format that is recommended to use as intermediate
+format in complex conversions, unless there are reasons to peek another. This
+format is called "internal format".
+
+Additionally the next features should be implemented:
+*  Validating the input document according to the given schema
+*  Auto-fix (tidy) incorrect input.
+*  Generate/edit a document in internal format using PHP API.
+
+Main formats the component deal with include:
+*  Simple text markup formats (ReST, BBcode, WikiText, 'simplified XML')
+*  XML-based formats (XHTML, DocBook, eZ publish 4 XML text)
+*  Complex formats that include styles and additional info (doc, odt, pdf)
+
+The purpose of the component is to present document's structured content only,
+so all styling information that comes from the input will be ignored. But if
+some semantics is coded with styles in the input document, it should be
+possible to convert it properly.
+
+
+Design goals
+============
+The component should be able to:
+
+* Take an input and present it as a DOM tree internally.
+* Validate it by the schema of it's format and report about errors or tidy
+  document automatically.
+* Transform to another formats using one of the available methods.
+* Provide an interface to create/edit a document in the internal format.
+
+Internal format should have a schema that is rich enough to present any document.
+There should always be a away to convert from any of the supported formats to
+the internal format. This rule guarantees that there is always a way between
+any formats.
+
+XML transformations can be done with XSL templates. Thus XSL extension for
+PHP 5 is required for this component.
+
+Design document should contain a list of formats we are willing to support in
+the first release and the ways they can be processed.
+
+
+Formats
+=======
+
+The good candidate for the inner document format is DocBook (http://docbook.org/)
+This is open format that has a lot of features while not being too complex.
+Also there are a lot of already existing tools that support this format, so
+we can use some of them if it is allowed by the license.
+
+In the first release we will most likely support a subset of this format, so it
+probably has a sense to use an already existing subset called Simplified DocBook
+(http://docbook.org/schemas/simplified).
+
+Other document formats that will defenitely supported in some way:
+
+- ReST
+- Wikitext
+- HTML
+- XHTML
+- OpenDocument
+- PDF
+- eZ publish 4 XML text
+- eZ publish 4 simplified XML text
+
+The attached diagram (document-formats.svg) shows which formats will be
+supported in the first release of the component and possible directions of
+transforming from one format to anthoer.
+

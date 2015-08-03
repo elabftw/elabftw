@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://ez.no/namespaces/ezpublish3" xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
+  <section>
+    <header>Dense bullet list</header>
+    <paragraph>
+      <ul>
+        <li>
+          <paragraph>This is a special case for bullet lists, where</paragraph>
+          <paragraph>
+            <ul>
+              <li>
+                <paragraph>And also wth some other on the same level.</paragraph>
+              </li>
+              <li>
+                <paragraph>only one newline is required, but still should work, even with multiline paragraphs</paragraph>
+              </li>
+            </ul>
+          </paragraph>
+        </li>
+        <li>
+          <paragraph>And they may of course also be on a higher level without additional newlines.</paragraph>
+        </li>
+      </ul>
+    </paragraph>
+    <paragraph>This paragraph is obviously not part of the list.</paragraph>
+  </section>
+</section>

@@ -1,0 +1,42 @@
+Line blocks
+===========
+
+| Lend us a couple of bob till Thursday.
+| I'm absolutely skint.
+| But I'm expecting a postal order and I can pay you back
+  as soon as it comes.
+| Love, Ewan.
+
+Another one:
+
+| This is a line block.  It ends with a blank line.
+|     New lines begin with a vertical bar ("|").
+|     Line breaks and initial indent are significant, and preserved.
+|         Continuation lines are also possible.  A long line that is intended
+          to wrap should begin with a space in place of the vertical bar.
+|     The left edge of a continuation line need not be aligned with
+  the left edge of the text above it.
+
+| This is a second line block.
+|
+| Blank lines are permitted internally, but they must begin with a "|".
+
+Take it away, Eric the Orchestra Leader!
+
+    | A one, two, a one two three four
+    |
+    | Half a bee, philosophically,
+    |     must, *ipso facto*, half not be.
+    | But half the bee has got to be,
+    |     *vis a vis* its entity.
+      D'you see?
+    |
+    | But can a bee be said to be
+    |     or not to be an entire bee,
+    |         when half the bee is not a bee,
+    |             due to some ancient injury?
+    |
+    | Singing...
+
+The end.
+

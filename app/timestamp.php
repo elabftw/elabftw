@@ -39,14 +39,9 @@ try {
     $ts = new Elabftw\Elabftw\TrustedTimestamps($id);
     $ts->timeStamp();
 } catch (Exception $e) {
-    $_SESSION['errors'][] = $e->getMessage();
-}
-
-// if there was a problem during the timestamping, an error will be inside the $_SESSION['errors'] array
-// and we want to stop there if that is the case.
-if (is_array($_SESSION['errors'])) {
-    header("Location: ../experiments.php?mode=view&id=" . $id);
-    exit;
+    $msg_arr = array();
+    $msg_arr[] = $e->getMessage();
+    $_SESSION['errors'] = $msg_arr;
 }
 
 // redirect

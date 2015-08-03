@@ -25,6 +25,25 @@ require_once 'inc/head.php';
 
 $formKey = new \Elabftw\Elabftw\FormKey();
 $crypto = new \Elabftw\Elabftw\CryptoWrapper();
+
+$stamppass = get_config('stamppass');
+$smtppass = get_config('smtp_password');
+
+if (strlen($stamppass) > 0) {
+    try {
+        $stamppass = $crypto->decrypt($stamppass);
+    } catch (Exception $e) {
+        display_message('error', $e->getMessage());
+    }
+}
+if (strlen($smtppass) > 0) {
+    try {
+        $smtppass = $crypto->decrypt($smtppass);
+    } catch (Exception $e) {
+        display_message('error', $e->getMessage());
+    }
+}
+
 $update = new \Elabftw\Elabftw\Update();
 
 try {
@@ -172,7 +191,7 @@ foreach ($lang_array as $lang) {
         <input type='text' value='<?php echo get_config('stamplogin'); ?>' name='stamplogin' id='stamplogin' />
         <p class='smallgray'><?php echo _('Login for external timestamping service:'); ?></p>
         <label for='stamppass'><?php echo _('Password for external timestamping service:'); ?></label>
-        <input type='password' value='<?php echo $crypto->decrypt(get_config('stamppass')); ?>' name='stamppass' id='stamppass' />
+        <input type='password' value='<?php echo $stamppass; ?>' name='stamppass' id='stamppass' />
         <div class='center'>
         <button type='submit' name='submit_config' class='submit button'><?php echo _('Save'); ?></button>
         </div>
@@ -285,7 +304,7 @@ switch ($mail_method) {
             </p>
             <p>
             <label for='smtp_password'><?php echo _('SMTP password'); ?></label>
-            <input type='password' value='<?php echo $crypto->decrypt(get_config('smtp_password')); ?>' name='smtp_password' id='smtp_password' />
+            <input type='password' value='<?php echo $smtppass; ?>' name='smtp_password' id='smtp_password' />
             </p>
         </div>
         <div class='center'>

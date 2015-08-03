@@ -24,12 +24,8 @@ if (is_readable('config.php')) {
     // we might be called from app folder
     require_once '../config.php';
 } else {
-    die("No readable config file found. Make sure the server has permissions to read it. Try :<br />
-        <hr>
-        chmod 644 config.php
-        <hr>
-        Or if eLabFTW is not yet installed, head to the <a href='install'>install folder</a><br>
-        Or if you just did a git pull, run php update.php");
+    header('Location: install');
+    exit;
 }
 
 // check for maintenance mode

@@ -172,18 +172,20 @@ class Update
     public function runUpdateScript()
     {
         $current_schema = get_config('schema');
-
         if ($current_schema < 2) {
             // 20150727
             $this->schema2();
+            $this->updateSchema(2);
         }
         if ($current_schema < 3) {
             // 20150728
             $this->schema3();
+            $this->updateSchema(3);
         }
         if ($current_schema < 4) {
             // 20150801
             $this->schema4();
+            $this->updateSchema(4);
         }
         if ($current_schema < 5) {
             // 20150803
@@ -192,9 +194,9 @@ class Update
             } catch (Exception $e) {
                 die($e->getMessage());
             }
+            $this->updateSchema(5);
         }
         // place new schema functions above this comment
-        $this->updateSchema();
         $this->cleanTmp();
         $msg_arr = array();
         $msg_arr[] = "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)";
@@ -219,9 +221,12 @@ class Update
      * Update the schema value in config to latest because we did the update functions before
      *
      */
-    private function updateSchema()
+    private function updateSchema($schema = null)
     {
-        $config_arr = array('schema' => self::REQUIRED_SCHEMA);
+        if (is_null($schema)) {
+            $schema = self::REQUIRED_SCHEMA;
+        }
+        $config_arr = array('schema' => $schema);
         if (!update_config($config_arr)) {
             throw new Exception('Failed at updating the schema!');
         }

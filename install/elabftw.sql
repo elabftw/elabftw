@@ -317,11 +317,22 @@ CREATE TABLE `users` (
 --
 
 CREATE TABLE IF NOT EXISTS `team_groups` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL,
   `name` varchar(255) NOT NULL,
-  `team` int(10) unsigned NOT NULL,
-  PRIMARY_KEY(`id`)
+  `team` int(10) unsigned NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Indexes for table `team_groups`
+--
+ALTER TABLE `team_groups`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for table `team_groups`
+--
+ALTER TABLE `team_groups`
+  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
 
 CREATE TABLE IF NOT EXISTS `users2team_groups` (
   `userid` int(10) unsigned NOT NULL,

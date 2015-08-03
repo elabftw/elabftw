@@ -166,7 +166,7 @@ class Update
     /**
      * Update the database schema if needed.
      *
-     * @return string[] $msg_arr
+     * @return string[]|null $msg_arr
      */
     public function runUpdateScript()
     {
@@ -283,12 +283,8 @@ class Update
         // our new key (raw binary string)
         try {
             $new_secret_key = Crypto::CreateNewRandomKey();
-            // WARNING: Do NOT encode $key with bin2hex() or base64_encode(),
-            // they may leak the key to the attacker through side channels.
-        } catch (CryptoTestFailedException $ex) {
-            die('Cannot safely create a key');
-        } catch (CannotPerformOperationException $ex) {
-            die('Cannot safely create a key');
+        } catch (Exception $e) {
+            die($e->getMessage());
         }
 
         $new_smtp_password = '';
@@ -324,7 +320,7 @@ define('ELAB_ROOT', '" . ELAB_ROOT . "');
 define('SECRET_KEY', '" . Crypto::binTohex($new_secret_key) . "');
 ";
 
-        if (file_put_contents('config.php', $contents) === 'false') {
+        if (file_put_contents('config.php', $contents) == 'false') {
             throw new Exception('There was a problem writing the file!');
         }
     }

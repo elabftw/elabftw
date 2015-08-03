@@ -12,6 +12,7 @@
 namespace Elabftw\Elabftw;
 
 use \Defuse\Crypto\Crypto as Crypto;
+use \Exception;
 
 /**
  * Used for decrypting and encrypting passwords

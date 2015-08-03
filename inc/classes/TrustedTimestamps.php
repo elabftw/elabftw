@@ -30,12 +30,12 @@ class TrustedTimestamps
     /** the id of the experiment */
     private $id;
 
-    /** a sha512 hash.pdf */
-    private $pdfFileName;
     /** ELAB_ROOT . uploads/ . $pdfFileName */
     private $pdfPath;
     /** elabid-timestamped.pdf */
     private $pdfRealName;
+    /* a hash */
+    private $pdfLongName;
 
     /** config (url, login, password, cert) */
     private $stampParams = array();
@@ -171,7 +171,8 @@ class TrustedTimestamps
 
     /**
      * Creates a Timestamp Requestfile from a filename
-     * @param string $pdf
+     *
+     * @throws Exception
      */
     private function createRequestfile()
     {

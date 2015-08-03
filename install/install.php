@@ -87,10 +87,8 @@ $elab_root = substr(realpath(__FILE__), 0, -20) . '/';
 // make a new secret key
 try {
     $new_secret_key = Crypto::CreateNewRandomKey();
-} catch (CryptoTestFailedException $ex) {
-    die('Cannot safely create a key');
-} catch (CannotPerformOperationException $ex) {
-    die('Cannot safely create a key');
+} catch (Exception $e) {
+    die($e->getMessage());
 }
 
 // what we will write in the file

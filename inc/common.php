@@ -63,7 +63,7 @@ textdomain($domain);
 $update = new \Elabftw\Elabftw\Update();
 
 // don't run it if we didn't run the update.php script yet
-if (isset(get_config('schema'))) {
+if (!is_null((get_config('schema')))) {
 
     if (get_config('schema') < $update::REQUIRED_SCHEMA) {
         try {

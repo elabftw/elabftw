@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <title>Itemized list</title>
+    <itemizedlist>
+      <listitem>
+        <para>Level 1, item 1</para>
+      </listitem>
+      <listitem>
+        <para>Level 1, item 2</para>
+        <itemizedlist>
+          <listitem>
+            <para>Level 2, item 1</para>
+          </listitem>
+          <listitem>
+            <para>Level 2, item 2</para>
+            <itemizedlist>
+              <listitem>
+                <para>Level 3, item 1</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+          <listitem>
+            <para>Level 2, item 3</para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+      <listitem>
+        <para>Level 1, item 3</para>
+        <itemizedlist>
+          <listitem>
+            <itemizedlist>
+              <listitem>
+                <para>Level 3, item 2</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+          <listitem>
+            <para>Level 2, item 4</para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+      <listitem>
+        <para>Level 1, item 4</para>
+        <itemizedlist>
+          <listitem>
+            <itemizedlist>
+              <listitem>
+                <itemizedlist>
+                  <listitem>
+                    <para>Level 4, item 1</para>
+                  </listitem>
+                </itemizedlist>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+          <listitem>
+            <para>Level 2, item 5</para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+    </itemizedlist>
+  </section>
+  <section>
+    <title>Numbered list</title>
+    <orderedlist>
+      <listitem>
+        <para>Level 1, item 1</para>
+      </listitem>
+      <listitem>
+        <para>Level 1, item 2</para>
+        <orderedlist>
+          <listitem>
+            <para>Level 2, item 1</para>
+          </listitem>
+          <listitem>
+            <para>Level 2, item 2</para>
+            <orderedlist>
+              <listitem>
+                <para>Level 3, item 1</para>
+              </listitem>
+            </orderedlist>
+          </listitem>
+          <listitem>
+            <para>Level 2, item 3</para>
+          </listitem>
+        </orderedlist>
+      </listitem>
+      <listitem>
+        <para>Level 1, item 3</para>
+        <orderedlist>
+          <listitem>
+            <orderedlist>
+              <listitem>
+                <para>Level 3, item 2</para>
+              </listitem>
+            </orderedlist>
+          </listitem>
+          <listitem>
+            <para>Level 2, item 4</para>
+          </listitem>
+        </orderedlist>
+      </listitem>
+      <listitem>
+        <para>Level 1, item 4</para>
+        <orderedlist>
+          <listitem>
+            <orderedlist>
+              <listitem>
+                <orderedlist>
+                  <listitem>
+                    <para>Level 4, item 1</para>
+                  </listitem>
+                </orderedlist>
+              </listitem>
+            </orderedlist>
+          </listitem>
+          <listitem>
+            <para>Level 2, item 5</para>
+          </listitem>
+        </orderedlist>
+      </listitem>
+    </orderedlist>
+  </section>
+</article>

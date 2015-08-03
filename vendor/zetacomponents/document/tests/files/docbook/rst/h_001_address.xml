@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="address_example">
+    <sectioninfo/>
+    <title>Address example</title>
+    <address>
+      <personname> John Doe</personname>
+      <street> Some Lane 42</street>
+    </address>
+  </section>
+</article>

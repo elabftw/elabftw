@@ -1,0 +1,1 @@
+You can use [[some:namespaces]] by using a colon in the pagename.

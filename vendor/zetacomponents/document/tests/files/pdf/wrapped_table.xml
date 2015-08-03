@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="simple_tables">
+    <sectioninfo/>
+    <title>Simple tables</title>
+    <table>
+      <tgroup>
+        <thead>
+          <row>
+            <entry>
+              <para>Text</para>
+            </entry>
+            <entry>
+              <para>Text</para>
+            </entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>
+              <para>A Olórin i yáresse Mentaner i Númeherui Tírien i Rómenóri, Maiaron i oiosaila Manan elye etevanne Nórie i malanelye? Ú-reniathach i amar galen I reniad lín ne môr, nuithannen In gwidh ristennin, i fae narchannen I Lach Anor ed ardhon gwannen Calad veleg, ethuiannen. Melme nóren sina núra ala Eäro. Ilfirin nairelma ullume nucuvalme Nauva i nauva.</para>
+              <para>A Olórin i yáresse Mentaner i Númeherui Tírien i Rómenóri, Maiaron i oiosaila Manan elye etevanne Nórie i malanelye? Ú-reniathach i amar galen I reniad lín ne môr, nuithannen In gwidh ristennin, i fae narchannen I Lach Anor ed ardhon gwannen Calad veleg, ethuiannen. Melme nóren sina núra ala Eäro. Ilfirin nairelma ullume nucuvalme Nauva i nauva.</para>
+            </entry>
+            <entry>
+              <para>A Olórin i yáresse Mentaner i Númeherui Tírien i Rómenóri, Maiaron i oiosaila Manan elye etevanne Nórie i malanelye? Ú-reniathach i amar galen I reniad lín ne môr, nuithannen In gwidh ristennin, i fae narchannen I Lach Anor ed ardhon gwannen Calad veleg, ethuiannen. Melme nóren sina núra ala Eäro. Ilfirin nairelma ullume nucuvalme Nauva i nauva.</para>
+              <para>A Olórin i yáresse Mentaner i Númeherui Tírien i Rómenóri, Maiaron i oiosaila Manan elye etevanne Nórie i malanelye? Ú-reniathach i amar galen I reniad lín ne môr, nuithannen In gwidh ristennin, i fae narchannen I Lach Anor ed ardhon gwannen Calad veleg, ethuiannen. Melme nóren sina núra ala Eäro. Ilfirin nairelma ullume nucuvalme Nauva i nauva.</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>A Olórin i yáresse Mentaner i Númeherui Tírien i Rómenóri, Maiaron i oiosaila Manan elye etevanne Nórie i malanelye? Ú-reniathach i amar galen I reniad lín ne môr, nuithannen In gwidh ristennin, i fae narchannen I Lach Anor ed ardhon gwannen Calad veleg, ethuiannen. Melme nóren sina núra ala Eäro. Ilfirin nairelma ullume nucuvalme Nauva i nauva.</para>
+              <para>A Olórin i yáresse Mentaner i Númeherui Tírien i Rómenóri, Maiaron i oiosaila Manan elye etevanne Nórie i malanelye? Ú-reniathach i amar galen I reniad lín ne môr, nuithannen In gwidh ristennin, i fae narchannen I Lach Anor ed ardhon gwannen Calad veleg, ethuiannen. Melme nóren sina núra ala Eäro. Ilfirin nairelma ullume nucuvalme Nauva i nauva.</para>
+            </entry>
+            <entry>
+              <para>A Olórin i yáresse Mentaner i Númeherui Tírien i Rómenóri, Maiaron i oiosaila Manan elye etevanne Nórie i malanelye? Ú-reniathach i amar galen I reniad lín ne môr, nuithannen In gwidh ristennin, i fae narchannen I Lach Anor ed ardhon gwannen Calad veleg, ethuiannen. Melme nóren sina núra ala Eäro. Ilfirin nairelma ullume nucuvalme Nauva i nauva.</para>
+              <para>A Olórin i yáresse Mentaner i Númeherui Tírien i Rómenóri, Maiaron i oiosaila Manan elye etevanne Nórie i malanelye? Ú-reniathach i amar galen I reniad lín ne môr, nuithannen In gwidh ristennin, i fae narchannen I Lach Anor ed ardhon gwannen Calad veleg, ethuiannen. Melme nóren sina núra ala Eäro. Ilfirin nairelma ullume nucuvalme Nauva i nauva.</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>A Olórin i yáresse Mentaner i Númeherui Tírien i Rómenóri, Maiaron i oiosaila Manan elye etevanne Nórie i malanelye? Ú-reniathach i amar galen I reniad lín ne môr, nuithannen In gwidh ristennin, i fae narchannen I Lach Anor ed ardhon gwannen Calad veleg, ethuiannen. Melme nóren sina núra ala Eäro. Ilfirin nairelma ullume nucuvalme Nauva i nauva.</para>
+              <para>A Olórin i yáresse Mentaner i Númeherui Tírien i Rómenóri, Maiaron i oiosaila Manan elye etevanne Nórie i malanelye? Ú-reniathach i amar galen I reniad lín ne môr, nuithannen In gwidh ristennin, i fae narchannen I Lach Anor ed ardhon gwannen Calad veleg, ethuiannen. Melme nóren sina núra ala Eäro. Ilfirin nairelma ullume nucuvalme Nauva i nauva.</para>
+            </entry>
+            <entry>
+              <para>A Olórin i yáresse Mentaner i Númeherui Tírien i Rómenóri, Maiaron i oiosaila Manan elye etevanne Nórie i malanelye? Ú-reniathach i amar galen I reniad lín ne môr, nuithannen In gwidh ristennin, i fae narchannen I Lach Anor ed ardhon gwannen Calad veleg, ethuiannen. Melme nóren sina núra ala Eäro. Ilfirin nairelma ullume nucuvalme Nauva i nauva.</para>
+              <para>A Olórin i yáresse Mentaner i Númeherui Tírien i Rómenóri, Maiaron i oiosaila Manan elye etevanne Nórie i malanelye? Ú-reniathach i amar galen I reniad lín ne môr, nuithannen In gwidh ristennin, i fae narchannen I Lach Anor ed ardhon gwannen Calad veleg, ethuiannen. Melme nóren sina núra ala Eäro. Ilfirin nairelma ullume nucuvalme Nauva i nauva.</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>A Olórin i yáresse Mentaner i Númeherui Tírien i Rómenóri, Maiaron i oiosaila Manan elye etevanne Nórie i malanelye? Ú-reniathach i amar galen I reniad lín ne môr, nuithannen In gwidh ristennin, i fae narchannen I Lach Anor ed ardhon gwannen Calad veleg, ethuiannen. Melme nóren sina núra ala Eäro. Ilfirin nairelma ullume nucuvalme Nauva i nauva.</para>
+              <para>A Olórin i yáresse Mentaner i Númeherui Tírien i Rómenóri, Maiaron i oiosaila Manan elye etevanne Nórie i malanelye? Ú-reniathach i amar galen I reniad lín ne môr, nuithannen In gwidh ristennin, i fae narchannen I Lach Anor ed ardhon gwannen Calad veleg, ethuiannen. Melme nóren sina núra ala Eäro. Ilfirin nairelma ullume nucuvalme Nauva i nauva.</para>
+            </entry>
+            <entry>
+              <para>A Olórin i yáresse Mentaner i Númeherui Tírien i Rómenóri, Maiaron i oiosaila Manan elye etevanne Nórie i malanelye? Ú-reniathach i amar galen I reniad lín ne môr, nuithannen In gwidh ristennin, i fae narchannen I Lach Anor ed ardhon gwannen Calad veleg, ethuiannen. Melme nóren sina núra ala Eäro. Ilfirin nairelma ullume nucuvalme Nauva i nauva.</para>
+              <para>A Olórin i yáresse Mentaner i Númeherui Tírien i Rómenóri, Maiaron i oiosaila Manan elye etevanne Nórie i malanelye? Ú-reniathach i amar galen I reniad lín ne môr, nuithannen In gwidh ristennin, i fae narchannen I Lach Anor ed ardhon gwannen Calad veleg, ethuiannen. Melme nóren sina núra ala Eäro. Ilfirin nairelma ullume nucuvalme Nauva i nauva.</para>
+            </entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </section>
+</article>

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="field_lists">
+    <sectioninfo>
+      <date> 2001-08-16
+</date>
+      <releaseinfo> 1
+</releaseinfo>
+      <authors> Some guy.
+</authors>
+    </sectioninfo>
+    <title>Field lists</title>
+  </section>
+</article>

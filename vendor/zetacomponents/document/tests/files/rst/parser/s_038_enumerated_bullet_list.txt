@@ -1,0 +1,16 @@
+Enumerated bullet lists
+=======================
+
+1) Hello
+   - world.
+2) Hallo
+   - Welt.
+
+Paragraph.
+
+- Hello
+  1) world.
+- Hallo
+  2) Welt.
+
+

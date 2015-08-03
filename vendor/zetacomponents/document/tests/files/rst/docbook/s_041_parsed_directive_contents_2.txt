@@ -1,0 +1,16 @@
+=========================
+Prrsed directive contents
+=========================
+
+A directive with parsed sub-contents:
+
+.. paragraph::
+   :class: warning
+    This is *directive* with parsed `sub contents`__.
+
+    And new lines…
+
+    __ http://example.org/
+
+And some normal text again.
+

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <literallayout class="normal">This is some text with some linebreaks
+ Note that the two backslashes are only recognized at the end of a line
+ or followed by
+ a whitespace \\this happens without it.</literallayout>
+</article>

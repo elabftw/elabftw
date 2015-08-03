@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <sectioninfo/>
+    <title><anchor id="top"/>Paragraphs with lots of cross links</title>
+    <para>Paragraphs <link linked="third">are</link> separated by blank <link linked="third">lines</link> and are left-aligned.</para>
+    <para>Paragraphs are separated by blank lines and are left-aligned.</para>
+    <para><anchor id="first"/>Paragraphs are separated by blank lines and are left-aligned.</para>
+    <para>Paragraphs are separated by blank lines and are left-aligned.</para>
+    <para>Paragraphs are separated by blank <link linked="unknown">lines</link> and are left-aligned.</para>
+    <para>Paragraphs are separated by blank lines and are left-aligned.</para>
+    <para><anchor id="second"/>Paragraphs are separated by blank lines and are left-aligned.</para>
+    <para>Paragraphs are separated by blank lines and are left-aligned.</para>
+    <para>Paragraphs are separated by blank lines and are left-aligned.</para>
+    <para>Paragraphs are separated by blank lines and are left-aligned.</para>
+    <para>Paragraphs are separated by blank lines and are left-aligned.</para>
+    <para>Paragraphs are separated by blank lines and are left-aligned.</para>
+    <para>Paragraphs are separated by blank lines <link linked="first">and</link> <link linked="second">are</link> left-aligned.</para>
+    <para>Paragraphs are separated by blank lines and are left-aligned.</para>
+    <para><anchor id="third"/>Paragraphs are separated by blank <link linked="top">lines</link> and are left-aligned.</para>
+  </section>
+</article>

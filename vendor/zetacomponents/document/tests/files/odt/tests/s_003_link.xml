@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <para>This is a sentence with a web <ulink url="http://ezcomponents.org/">link</ulink>. And another one with an email <ulink url="mailto:ts@ez.no?subject=Document ODT test">link</ulink>. A third sentence with a <ulink url="http://ez.no/">web link targeting the parent frame</ulink>, for whatever reason.</para>
+</article>

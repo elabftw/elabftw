@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Test document</title>
+  </head>
+  <body>
+    <h1>Code markup block</h1>
+<div class="wp_syntax"><div class="code"><pre class="sql"><span style="color: #993333; font-weight: bold;">SELECT</span> DATE_FORMAT<span style="color: #66cc66;">&#40;</span>invoice.date, <span style="color: #ff0000;">'%M'</span><span style="color: #66cc66;">&#41;</span> <span style="color: #993333; font-weight: bold;">AS</span> <span style="color: #ff0000;">`month`</span>, COUNT<span style="color: #66cc66;">&#40;</span>*<span style="color: #66cc66;">&#41;</span> <span style="color: #993333; font-weight: bold;">AS</span> <span style="color: #ff0000;">`invoice_count`</span>, SUM<span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">`invoice`</span>.<span style="color: #ff0000;">`amount`</span><span style="color: #66cc66;">&#41;</span> <span style="color: #993333; font-weight: bold;">AS</span> <span style="color: #ff0000;">`turnover`</span>
+<span style="color: #993333; font-weight: bold;">FROM</span> <span style="color: #ff0000;">`invoice`</span>
+<span style="color: #993333; font-weight: bold;">WHERE</span> <span style="color: #ff0000;">`date`</span> <span style="color: #993333; font-weight: bold;">BETWEEN</span> <span style="color: #ff0000;">'2008-01-01'</span> <span style="color: #993333; font-weight: bold;">AND</span> <span style="color: #ff0000;">'2008-12-31'</span>
+<span style="color: #993333; font-weight: bold;">GROUP</span> <span style="color: #993333; font-weight: bold;">BY</span> MONTH<span style="color: #66cc66;">&#40;</span><span style="color: #ff0000;">`invoice`</span>.<span style="color: #ff0000;">`date`</span><span style="color: #66cc66;">&#41;</span></pre></div></div>
+  </body>
+</html>

@@ -1,0 +1,148 @@
+<?php
+
+return ezcDocumentBBCodeDocumentNode::__set_state(array(
+   'line' => 6,
+   'position' => 1,
+   'nodes' => 
+  array (
+    0 => 
+    ezcDocumentBBCodeParagraphNode::__set_state(array(
+       'line' => 1,
+       'position' => 31,
+       'nodes' => 
+      array (
+        0 => 
+        ezcDocumentBBCodeTextNode::__set_state(array(
+           'line' => 1,
+           'position' => 1,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentBBCodeTextLineToken::__set_state(array(
+             'content' => 'Can I combine formatting tags?',
+             'line' => 1,
+             'position' => 1,
+          )),
+        )),
+      ),
+       'token' => 
+      ezcDocumentBBCodeNewLineToken::__set_state(array(
+         'content' => '
+',
+         'line' => 1,
+         'position' => 31,
+      )),
+    )),
+    1 => 
+    ezcDocumentBBCodeParagraphNode::__set_state(array(
+       'line' => 3,
+       'position' => 77,
+       'nodes' => 
+      array (
+        0 => 
+        ezcDocumentBBCodeTextNode::__set_state(array(
+           'line' => 3,
+           'position' => 1,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentBBCodeTextLineToken::__set_state(array(
+             'content' => 'Yes, of course you can, for example to get someones attention you may write:',
+             'line' => 3,
+             'position' => 1,
+          )),
+        )),
+      ),
+       'token' => 
+      ezcDocumentBBCodeNewLineToken::__set_state(array(
+         'content' => '
+',
+         'line' => 3,
+         'position' => 77,
+      )),
+    )),
+    2 => 
+    ezcDocumentBBCodeParagraphNode::__set_state(array(
+       'line' => 5,
+       'position' => 32,
+       'nodes' => 
+      array (
+        0 => 
+        ezcDocumentBBCodeTagNode::__set_state(array(
+           'line' => 5,
+           'position' => 1,
+           'nodes' => 
+          array (
+            0 => 
+            ezcDocumentBBCodeTagNode::__set_state(array(
+               'line' => 5,
+               'position' => 5,
+               'nodes' => 
+              array (
+                0 => 
+                ezcDocumentBBCodeTagNode::__set_state(array(
+                   'line' => 5,
+                   'position' => 10,
+                   'nodes' => 
+                  array (
+                    0 => 
+                    ezcDocumentBBCodeTextNode::__set_state(array(
+                       'line' => 5,
+                       'position' => 11,
+                       'nodes' => 
+                      array (
+                      ),
+                       'token' => 
+                      ezcDocumentBBCodeTextLineToken::__set_state(array(
+                         'content' => 'LOOK AT ME!',
+                         'line' => 5,
+                         'position' => 11,
+                      )),
+                    )),
+                  ),
+                   'token' => 
+                  ezcDocumentBBCodeTagOpenToken::__set_state(array(
+                     'parameters' => NULL,
+                     'content' => 'b',
+                     'line' => 5,
+                     'position' => 10,
+                  )),
+                )),
+              ),
+               'token' => 
+              ezcDocumentBBCodeTagOpenToken::__set_state(array(
+                 'parameters' => 'red',
+                 'content' => 'color',
+                 'line' => 5,
+                 'position' => 5,
+              )),
+            )),
+          ),
+           'token' => 
+          ezcDocumentBBCodeTagOpenToken::__set_state(array(
+             'parameters' => '200',
+             'content' => 'size',
+             'line' => 5,
+             'position' => 1,
+          )),
+        )),
+      ),
+       'token' => 
+      ezcDocumentBBCodeNewLineToken::__set_state(array(
+         'content' => '
+',
+         'line' => 5,
+         'position' => 32,
+      )),
+    )),
+  ),
+   'token' => 
+  ezcDocumentBBCodeEndOfFileToken::__set_state(array(
+     'content' => NULL,
+     'line' => 6,
+     'position' => 1,
+  )),
+));
+

@@ -1,0 +1,7 @@
+= Title references
+
+The text contains references to the and even to the document title: .
+
+== Subtitle
+
+This refernces, like: may occur multiple times, of course.

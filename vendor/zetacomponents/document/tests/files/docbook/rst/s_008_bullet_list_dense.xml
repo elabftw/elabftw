@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="dense_bullet_list">
+    <sectioninfo/>
+    <title>Dense bullet list</title>
+    <itemizedlist>
+      <listitem>
+        <para>This is a special case for bullet lists, where</para>
+        <itemizedlist>
+          <listitem>
+            <para>And also wth some other on the same level.</para>
+          </listitem>
+          <listitem>
+            <para>only one newline is required, but still should work, even with multiline paragraphs</para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+      <listitem>
+        <para>And they may of course also be on a higher level without additional newlines.</para>
+      </listitem>
+    </itemizedlist>
+    <para>This paragraph is obviously not part of the list.</para>
+  </section>
+</article>

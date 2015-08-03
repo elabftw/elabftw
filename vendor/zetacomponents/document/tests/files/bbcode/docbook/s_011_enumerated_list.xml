@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <para>For example:</para>
+  <orderedlist numeration="arabic">
+    <listitem>
+      <para>Go to the shops </para>
+    </listitem>
+    <listitem>
+      <para>Buy a new computer </para>
+    </listitem>
+    <listitem>
+      <para>Swear at computer when it crashes </para>
+    </listitem>
+  </orderedlist>
+  <para>Whereas for an alphabetical list you would use:</para>
+  <orderedlist numeration="loweralpha">
+    <listitem>
+      <para>The first possible answer </para>
+    </listitem>
+    <listitem>
+      <para>The second possible answer </para>
+    </listitem>
+    <listitem>
+      <para>The third possible answer </para>
+    </listitem>
+  </orderedlist>
+</article>

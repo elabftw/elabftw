@@ -1,0 +1,45 @@
+All known directives
+====================
+
+.. contents:: Table of contents
+   :depth: 2
+
+.. note:: Just a note!
+
+.. Notice:: You might want to use these more!
+
+.. Warning:: Be careful about this!
+
+.. Attention:: Do not overdo it!
+
+.. Danger:: May have a bad impact on userexperience.
+
+	Lets get something colorful!
+
+.. image:: test.png
+   :align: right
+   :width: 256
+   :height: 23
+   :alt: Some alternative text.
+
+	Figures may contain addition text!
+
+.. figure:: test.png
+   :align: right
+   :width: 256
+   :height: 23
+   :alt: Some alternative text.
+
+    The figure actually shows nothing.
+
+And you can even inline other RST files.
+
+.. include:: s_003_simple_text.txt
+
+but perhaps you want prevent them from being parsed...
+
+.. include:: s_003_simple_text.txt
+   :literal:
+
+That's all for now.
+

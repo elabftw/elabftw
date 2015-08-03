@@ -1,0 +1,27 @@
+List block elements
+===================
+
+- A list containing various stuff
+
+  ::
+
+    A literal block
+
+  .. directive:: A directive
+
+  Another paragraph...
+
+  .. a comment!
+
+  - A sublist:
+
+    ::
+
+      Another literal block.
+
+    .. directive:: A directive
+
+    Another paragraph...
+
+    .. a comment!
+

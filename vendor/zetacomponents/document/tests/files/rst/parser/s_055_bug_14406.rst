@@ -1,0 +1,184 @@
+<?php
+
+return ezcDocumentRstDocumentNode::__set_state(array(
+   'depth' => 0,
+   'line' => 0,
+   'position' => 0,
+   'type' => 1,
+   'nodes' => 
+  array (
+    0 => 
+    ezcDocumentRstSectionNode::__set_state(array(
+       'title' => 
+      ezcDocumentRstTitleNode::__set_state(array(
+         'line' => 2,
+         'position' => 1,
+         'type' => 2,
+         'nodes' => 
+        array (
+          0 => 
+          ezcDocumentRstTextLineNode::__set_state(array(
+             'line' => 1,
+             'position' => 1,
+             'type' => 4,
+             'nodes' => 
+            array (
+            ),
+             'token' => 
+            ezcDocumentRstToken::__set_state(array(
+               'type' => 5,
+               'content' => 'Cairo driver',
+               'line' => 1,
+               'position' => 1,
+               'escaped' => false,
+            )),
+             'identifier' => NULL,
+          )),
+          1 => 
+          ezcDocumentRstTextLineNode::__set_state(array(
+             'line' => 1,
+             'position' => 13,
+             'type' => 4,
+             'nodes' => 
+            array (
+            ),
+             'token' => 
+            ezcDocumentRstToken::__set_state(array(
+               'type' => 2,
+               'content' => '',
+               'line' => 1,
+               'position' => 13,
+               'escaped' => false,
+            )),
+             'identifier' => NULL,
+          )),
+        ),
+         'token' => 
+        ezcDocumentRstToken::__set_state(array(
+           'type' => 4,
+           'content' => '------------',
+           'line' => 2,
+           'position' => 1,
+           'escaped' => false,
+        )),
+         'identifier' => NULL,
+      )),
+       'depth' => 1,
+       'reference' => NULL,
+       'line' => 2,
+       'position' => 1,
+       'type' => 1,
+       'nodes' => 
+      array (
+        0 => 
+        ezcDocumentRstBlockquoteNode::__set_state(array(
+           'annotation' => NULL,
+           'closed' => false,
+           'indentation' => 0,
+           'line' => 4,
+           'position' => 9,
+           'type' => 5,
+           'nodes' => 
+          array (
+            0 => 
+            ezcDocumentRstParagraphNode::__set_state(array(
+               'indentation' => 8,
+               'line' => 7,
+               'position' => 81,
+               'type' => 3,
+               'nodes' => 
+              array (
+                0 => 
+                ezcDocumentRstTextLineNode::__set_state(array(
+                   'line' => 4,
+                   'position' => 9,
+                   'type' => 4,
+                   'nodes' => 
+                  array (
+                  ),
+                   'token' => 
+                  ezcDocumentRstToken::__set_state(array(
+                     'type' => 5,
+                     'content' => 'Cairo is a software library used to provide a vector graphics-based, device-independent API for software developers. It is designed to provide primitives for 2-dimensional drawing across a number of different backends. Cairo is designed to use hardware acceleration when available.',
+                     'line' => 4,
+                     'position' => 9,
+                     'escaped' => false,
+                  )),
+                   'identifier' => NULL,
+                )),
+              ),
+               'token' => 
+              ezcDocumentRstToken::__set_state(array(
+                 'type' => 2,
+                 'content' => '
+',
+                 'line' => 7,
+                 'position' => 81,
+                 'escaped' => false,
+              )),
+               'identifier' => NULL,
+            )),
+          ),
+           'token' => 
+          ezcDocumentRstToken::__set_state(array(
+             'type' => 5,
+             'content' => 'Cairo is a software library used to provide a vector graphics-based, device-independent API for software developers. It is designed to provide primitives for 2-dimensional drawing across a number of different backends. Cairo is designed to use hardware acceleration when available.',
+             'line' => 4,
+             'position' => 9,
+             'escaped' => false,
+          )),
+           'identifier' => NULL,
+        )),
+        1 => 
+        ezcDocumentRstCommentNode::__set_state(array(
+           'indentation' => 8,
+           'line' => 9,
+           'position' => 9,
+           'type' => 8,
+           'nodes' => 
+          array (
+            0 => 
+            ezcDocumentRstLiteralNode::__set_state(array(
+               'line' => 9,
+               'position' => 12,
+               'type' => 50,
+               'nodes' => 
+              array (
+              ),
+               'token' => 
+              ezcDocumentRstToken::__set_state(array(
+                 'type' => 5,
+                 'content' => 'Wikipedia',
+                 'line' => 9,
+                 'position' => 12,
+                 'escaped' => false,
+              )),
+               'identifier' => NULL,
+            )),
+          ),
+           'token' => 
+          ezcDocumentRstToken::__set_state(array(
+             'type' => 4,
+             'content' => '..',
+             'line' => 9,
+             'position' => 9,
+             'escaped' => false,
+          )),
+           'identifier' => NULL,
+        )),
+      ),
+       'token' => 
+      ezcDocumentRstToken::__set_state(array(
+         'type' => 4,
+         'content' => '------------',
+         'line' => 2,
+         'position' => 1,
+         'escaped' => false,
+      )),
+       'identifier' => NULL,
+    )),
+  ),
+   'token' => NULL,
+   'identifier' => NULL,
+));
+

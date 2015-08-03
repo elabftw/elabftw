@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<phpunit bootstrap="vendor/autoload.php" colors="true" strict="true">
+    <testsuites>
+        <testsuite name="phpDocumentor Fileset">
+            <directory>./tests/</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">.</directory>
+            <exclude>
+                <directory suffix=".php">build</directory>
+                <directory suffix=".php">tests</directory>
+                <directory suffix=".php">vendor</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+    <logging>
+        <log type="coverage-html"
+            title="phpDocumentor Fileset"
+            target="build/coverage"
+            charset="UTF-8"
+            yui="true"
+            highlight="false"
+            lowUpperBound="35"
+            highLowerBound="70" />
+        <log type="coverage-clover" target="build/logs/clover.xml" />
+        <log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false" />
+    </logging>
+</phpunit>

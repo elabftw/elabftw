@@ -1,0 +1,5 @@
+Reference with underscores
+==========================
+
+A reference_containing_underscores_ and one=with-other_chars_. But it should not aggregate (braces_).
+

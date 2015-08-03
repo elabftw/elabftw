@@ -1,0 +1,909 @@
+========================
+eZ Components - Document
+========================
+
+.. contents:: Table of Contents
+   :depth: 3
+
+Introduction
+============
+
+The document component offers transformations between different semantic markup
+languages, like:
+
+- `ReStructured text`__
+- `XHTML`__
+- `Docbook`__
+- `eZ Publish XML markup`__
+- Wiki markup languages, like: Creole__, Dokuwiki__ and Confluence__
+- `Open Document Text`__ as used by `OpenOffice.org`__ and other office suites
+
+Like shown in figure 1, each format supports conversions from and to docbook
+as a central intermediate format and may implement additional shortcuts for
+conversions from and to other formats. Not each format can express the same
+semantics, so there may be some information lost, which is `documented in a
+dedicated document`__.
+
+.. figure:: img/document-architecture.png
+   :alt:    Conversion architecture in document component
+    Figure 1: Conversion architecture in document component
+
+There are central handler classes for each markup language, which follow a
+common conversion interface ezcDocument and all implement the methods
+getAsDocbook() and createFromDocbook().
+
+Additionally the document component can render documents in the following
+output formats. Those formats cannot be read, but just generated:
+
+- PDF
+
+__ http://docutils.sourceforge.net/rst.html
+__ http://www.w3.org/TR/xhtml1/
+__ http://www.docbook.org/
+__ Document_conversion.html
+__ http://doc.ez.no/eZ-Publish/Technical-manual/4.x/Reference/XML-tags
+__ http://www.wikicreole.org/
+__ http://www.dokuwiki.org/dokuwiki
+__ http://confluence.atlassian.com/renderer/notationhelp.action?section=all
+__ http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=office
+__ http://www.openoffice.org/
+
+Markup languages
+================
+
+The following markup languages are currently handled by the document
+component.
+
+ReStructured text
+-----------------
+
+`RsStructured Text`__ (RST) is a simple text based markup language, intended
+to be easy to read and write by humans. Examples can be found in the
+`documentation of RST`__.
+
+The transformation of a simple RST document to docbook can be done just like
+this:
+
+.. include:: tutorial/00_00_convert_rst.php
+   :literal:
+
+In line 3 the document is actually loaded and parsed into an internal abstract
+syntax tree. In line 5 the internal structure is then transformed back to a
+docbook document. In the last line the resulting document is returned as a
+string, so that you can echo or store it.
+
+__ http://docutils.sourceforge.net/rst.html
+__ http://docutils.sourceforge.net/docs/user/rst/quickstart.html
+
+Error handling
+^^^^^^^^^^^^^^
+
+By default each parsing or compiling error will be transformed into an
+exception, so that you are noticed about those errors. The error reporting
+settings can be modified like for all other document handlers::
+
+    <?php
+    $document = new ezcDocumentRst();
+    $document->options->errorReporting = E_PARSE | E_ERROR | E_WARNING;
+    $document->loadFile( '../tutorial.txt' );
+
+    $docbook = $document->getAsDocbook();
+    echo $docbook->save();
+    ?>
+
+Where the setting in line 3 causes, that only warnings, errors and fatal errors
+are transformed to exceptions now, while the notices are only collected, but
+ignored. This setting affects both, the parsing of the source document and the
+compiling into the destination language.
+
+Directives
+^^^^^^^^^^
+
+`RST directives`__ are elements in the RST documents with parameters, optional
+named options and optional content. The document component implements a well
+known subset of the `directives implemented in the docutils RST parser`__. You
+may register custom directive handlers, or overwrite existing directive
+handlers using your own implementation. A directive in RST markup with
+parameters, options and content could look like::
+
+    My document
+    ===========
+
+    The custom directive:
+
+    .. my_directive:: parameters
+        :option: value
+
+        Some indented text...
+
+For such a directive you should register a handler on the RST document, like::
+
+    <?php
+    $document = new ezcDocumentRst();
+    $document->registerDirective( 'my_directive', 'myCustomDirective' );
+    $document->loadFile( $from );
+
+    $docbook = $document->getAsDocbook();
+    $xml = $docbook->save();
+    ?>
+
+The class myCustomDirective must extend the class ezcDocumentRstDirective, and
+implement the method toDocbook(). For rendering you get access to the full AST,
+the contents of the current directive and the base path, where the document
+resist in the file system - which is necessary for accessing external files.
+
+__ http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#directives
+__ http://docutils.sourceforge.net/docs/ref/rst/directives.html
+
+Directive example
+`````````````````
+
+A full example for a custom directive, where we want to embed real world
+addresses into our RST document and maintain the semantics in the resulting
+docbook, could look like::
+
+    Address example
+    ===============
+
+    .. address:: John Doe
+        :street: Some Lane 42
+
+We would possibly add more information, like the ZIP code, city and state, but
+skip this to keep the code short. The implemented directive then would just
+need to take these information and transform it into valid docbook XML using
+the DOM extension.
+
+.. include:: tutorial/00_01_address_directive.php
+   :literal:
+
+The AST node, which should be rendered, is passed to the constructor of the
+custom directive visitor and available in the class property $node. The
+complete DOMDocument and the current DOMNode are passed to the method. In this
+case we just create a `address node`__ with the optional child nodes street and
+personname, depending on the existence of the respective values.
+
+You can now render the RST document after you registered you custom directive
+handler as shown above:
+
+.. include:: tutorial/00_02_custom_directive.php
+   :literal:
+
+The output will then look like::
+
+    <?xml version="1.0"?>
+    <article xmlns="http://docbook.org/ns/docbook">
+      <section id="address_example">
+        <sectioninfo/>
+        <title>Address example</title>
+        <address>
+          <personname> John Doe</personname>
+          <street> Some Lane 42</street>
+        </address>
+      </section>
+    </article>
+
+__ http://docbook.org/tdg/en/html/address.html
+
+XHTML rendering
+^^^^^^^^^^^^^^^
+
+For RST a conversion shortcut has been implemented, so that you don't need to
+convert the RST to docbook and the docbook to XHTML. This saves conversion time
+and enables you to prevent from information loss during multiple conversions::
+
+    <?php
+    $document = new ezcDocumentRst();
+    $document->loadFile( $from );
+
+    $xhtml = $document->getAsXhtml();
+    $xml = $xhtml->save();
+    ?>
+
+The default XHTML compiler generates complete XHTML documents, including header
+and meta-data in the header. If you want to in-line the result, you may specify
+another XHTML compiler, which just creates a XHTML block level element, which
+can be embedded in your source code::
+
+    <?php
+    $document = new ezcDocumentRst();
+    $document->options->xhtmlVisitor = 'ezcDocumentRstXhtmlBodyVisitor';
+    $document->loadFile( $from );
+
+    $xhtml = $document->getAsXhtml();
+    $xml = $xhtml->save();
+    ?>
+
+You can of course also use the predefined and custom directives for XHTML
+rendering. The directives used during XHTML generation also need to implement
+the interface ezcDocumentRstXhtmlDirective.
+
+Modification of XHTML rendering
+```````````````````````````````
+
+You can modify the generated output of the XHTML visitor by creating a custom
+visitor for the RST AST. The easiest way probably is to extend from one of the
+existing XHTML visitors and reusing it. For example you may want to fill the
+type attribute in bullet lists, like known from HTML, which isn't valid XHTML,
+though::
+
+    class myDocumentRstXhtmlVisitor extends ezcDocumentRstXhtmlVisitor
+    {
+        protected function visitBulletList( DOMNode $root, ezcDocumentRstNode $node )
+        {
+            $list = $this->document->createElement( 'ul' );
+            $root->appendChild( $list );
+
+            $listTypes = array(
+                '*'            => 'circle',
+                '+'            => 'disc',
+                '-'            => 'square',
+                "\xe2\x80\xa2" => 'disc',
+                "\xe2\x80\xa3" => 'circle',
+                "\xe2\x81\x83" => 'square',
+            );
+            // Not allowed in XHTML strict
+            $list->setAttribute( 'type', $listTypes[$node->token->content] );
+
+            // Decoratre blockquote contents
+            foreach ( $node->nodes as $child )
+            {
+                $this->visitNode( $list, $child );
+            }
+        }
+    }
+
+The structure, which is not enforced for visitors, but used in the docbook and
+XHTML visitors, is to call special methods for each node type in the AST to
+decorate the AST recursively. This method will be called for all bullet list
+nodes in the AST which contain the actual list items. As the first parameter
+the current position in the XHTML DOM tree is also provided to the method.
+
+To create the XHTML we can now just create a new list node (<ul>) in the
+current DOMNode, set the new attribute, and recursively decorate all
+descendants using the general visitor dispatching method visitNode() for all
+children in the AST. For the AST children being also rendered as children in
+the XML tree, we pass the just created DOMNode (<ul>) as the new root node to
+the visitNode() method.
+
+After defining such a class, you could use the custom visitor like shown
+above::
+
+    <?php
+    $document = new ezcDocumentRst();
+    $document->options->xhtmlVisitor = 'myDocumentRstXhtmlVisitor';
+    $document->loadFile( $from );
+
+    $xhtml = $document->getAsXhtml();
+    $xml = $xhtml->save();
+    ?>
+
+Now the lists in the generated XHTML will also the type attribute set.
+
+Writing RST
+^^^^^^^^^^^
+
+Writing a RST document from an existing docbook document, or a
+ezcDocumentDocbook object generated from some other source, is trivial:
+
+.. include:: tutorial/00_03_write_rst.php
+   :literal:
+
+For the conversion internally the ezcDocumentDocbookToRstConverter class is
+used, which can also be called directly, like::
+
+    $converter = new ezcDocumentDocbookToRstConverter();
+    $rst = $converter->convert( $docbook );
+
+Using this you can configure the converter to your wishes, or extend the
+convert to handle yet unhandled docbook elements. The converter is, as usaul
+configured using its option property, and the options are defined in the
+ezcDocumentDocbookToRstConverterOptions class. There you may configure the
+header underlines used, the bullet types or the line wrapping.
+
+Extending RST writing
+`````````````````````
+
+As said before, not all existing docbook elements might already be handled by
+the converter. But its handler based mechanism makes it easy to extend or
+overwrite existing behaviour.
+
+Similar to the example above we can convert the <address> docbook element back
+to the address RST directive.
+
+.. include:: tutorial/00_04_address_element.php
+   :literal:
+
+The handler classes are assigned to XML elements in some namespace, "docbook"
+in this case. It is registered in line 18 for the element "address". The class
+itself has to extend from the ezcDocumentElementVisitorHandler class, which is
+in this case already extended by ezcDocumentDocbookToRstBaseHandler, which
+provides some convenience methods for RST creation, like renderDirective() used
+in this example.
+
+The handler is called, whenever the element, it has been registered for, occurs
+in the docbook XML tree. In this case it has to append the generated RST part
+for this element to the RST document - and may call the general conversion
+handler again for its child elements. This example converts the above shown
+docbook XML back to::
+
+    .. _address_example:
+
+    ===============
+    Address example
+    ===============
+
+    .. address:: 
+           John Doe
+           Some Lane 42
+
+Which ignores any special address sub elements for the simplicity of the
+example. For more examples on element handlers check the existing
+implementations.
+
+XHTML
+-----
+
+Converting XHTML or HTML to a document markup language is a non trivial task,
+because XHTML elements are often used for layout, ignoring the actual semantics
+of the element. Therefore the document component allows to stack a set of
+filters, which each performs a specific conversion task. The default filter
+stack may work fine, but you may want to also implement custom filters
+depending on the contents of the filtered website, or to cover additional
+sources of meta data information, like RDF, Microformats or similar.
+
+The available filters are:
+
+- ezcDocumentXhtmlElementFilter
+
+  This filter just maintains the common semantics of XHTML elements by
+  converting them to their docbook equivalents. It ignores common class names.
+  This filter is the most basic and you probably want to always add this one to
+  the filter stack.
+
+- ezcDocumentXhtmlXpathFilter
+
+  The XPath filter takes a XPath expression to locate the root of the document
+  contents. It makes no sense to use this one together with the content locator
+  filter. This is a more static, but also more precise way to tell the
+  converter where to find the actual contents.
+
+- ezcDocumentXhtmlMetadataFilter
+  
+  This filter extracts common meta data from the XHTML head, and converts it
+  into docbook section info elements.
+
+- ezcDocumentXhtmlTablesFilter
+
+  HTML tables are especially often used for layout markup. This filter takes a
+  threshold, and if the table text factor drops below this threshold the table
+  is ignored. The same is true for stacked tables.
+
+- ezcDocumentXhtmlContentLocatorFilter
+
+  The content locator filter tries to find the actual article in the markup of
+  a website, ignoring the surrounding layout markup. This seems to work well
+  for example for common news sites.
+
+By default just the element and meta data filters are used. So the conversion
+of a common website, like the `introduction article`__ from ezcomponents.org,
+results in a docbook document containing all lists for the navigation, etc..
+
+.. include:: tutorial/01_00_read_html.php
+   :literal:
+
+So let's additionally use the XPath filter to pass the location of the actual
+content to the conversion:
+
+.. include:: tutorial/01_01_read_html_filtered.php
+   :literal:
+
+With this additional filter, the contents are correctly found and converted
+properly.
+
+__ http://ezcomponents.org/introduction
+
+Writing XHTML
+^^^^^^^^^^^^^
+
+Writing XHTML from docbook is very similar to the approach used for writing
+RST: It the same handler based mechanism, so you may want to check that chapter
+to learn how to extend it for unhandled docbook elements.
+
+.. include:: tutorial/01_02_write_html.php
+   :literal:
+
+As you can see, it happens the same way, as for other conversion from Docbook
+to any other format.
+
+HTML styles
+^^^^^^^^^^^
+
+By default inline CSS is embedded in all generated HTML, to create a more
+appealing default experience. This may of course be deactivated and you may
+also reference custom style sheets to be included in the generated HTML.
+
+.. include:: tutorial/01_03_write_html_styled.php
+   :literal:
+
+For this we again use the converted directly to be able to configure it as we
+like.
+
+eZ Xml
+------
+
+eZ XML describes the markup format used internally by `eZ Publish`__ for
+storing markup in content objects. The format is roughly specified in the `eZ
+Publish documentation`__.
+
+Modules are often register custom elements, which are not specified anywhere,
+so there might be several elements not handled by default.
+
+__ http://ez.no/ezpublish
+__ http://ez.no/doc/ez_publish/technical_manual/4_0/reference/xml_tags
+
+Reading eZ XML
+^^^^^^^^^^^^^^
+
+Reading eZ XML is basically the same as for all other formats:
+
+.. include:: tutorial/02_00_read_ezxml.php
+   :literal:
+
+As always the document object is either constructed from an input string or
+file. To convert into docbook you may just use the method getAsDocbook().
+
+Link handling
+`````````````
+
+Inside eZ XML documents link URIs are replaced with IDs, which reference the
+links inside the eZ Publish database, to ensure that a changed link is update
+globally. The replacing of such links is handled by a class extending from
+ezcDocumentEzXmlLinkProvider. By default dummy URLs are added to the documents.
+
+URLs are either referenced directly by their ID, a node ID, or an object ID.
+Those parameters are passed to the link provide, which then should return an
+URL for that.
+
+.. include:: tutorial/02_01_link_provider.php
+   :literal:
+
+The link provider is only implemented as a trivial stub, but you can establish
+a database connection there and actually fetch the required data. I this case
+the generated docbook document look like::
+
+    <?xml version="1.0"?>
+    <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+    <article xmlns="http://docbook.org/ns/docbook">
+      <section>
+        <title>Paragraph</title>
+        <para>Some content, with a <ulink url="http://host/path/1">link</ulink>.</para>
+      </section>
+    </article>
+
+The link provider is set again as a option of the converter. Like shown for the
+docbook conversions of the other handlers, you can register element handlers
+for yet unhandled eZ XML elements on the converter, too.
+
+Wrting eZ XML
+^^^^^^^^^^^^^
+
+Writing eZ XML works nearly the same as reading. It again uses a XML based
+element handled, like shown in the Docbook to RST conversion in more detail.
+For the link conversion an object extending from ezcDocumentEzXmlLinkConverter
+is used, which returns an array with the attributes of the link in the eZ XML
+document.
+
+Wiki markup
+-----------
+
+Wiki markup has no central standard, but is used as a term to describe some
+common subset with lots of different extensions. Most wiki markup languages
+only support a quite trivial markup with severe limitations on the recursion of
+markup blocks. For example no markup really tables containing lists, or
+especially not tables containing other tables.
+
+The document component implements a generic parser to support multiple wiki
+markup languages. For each different markup syntax a tokenizer has to be
+implemented, which converts the implemented markup into a unified token stream,
+which can then be handled by the generic parser.
+
+The document component currently supports reading three wiki markup languages,
+but new ones are added easily by implementing another tokenizer. Supported are:
+
+- Creole__, developed by a initiative with the intention to create a unified
+  wiki markup standard. This is the default wiki language, and currently the
+  only one which can be written.
+
+  Creole currently only supports a very limited set of markup__, all further
+  markup additions are still up to discussion.
+
+- Dokuwiki__ is a popular wiki system, for example used on `wiki.php.net`__
+  with a quite different syntax, and the most complete markup support, even
+  including something like footnotes.
+
+- Confluence__ is a common Java based wiki with an entirely different and most
+  uncommon syntax, which has mainly been implemented to prove the generic
+  nature of the parser.
+
+All markup languages are tested against all examples from the respective
+markup language documentation, there might still be cases where the parsers of
+the default implementation behaves slightly different from the implementation
+in the document component.
+
+__ http://www.wikicreole.org/
+__ http://www.wikicreole.org/wiki/Elements
+__ http://www.dokuwiki.org/dokuwiki
+__ http://wiki.php.net/
+__ http://confluence.atlassian.com/renderer/notationhelp.action?section=all
+
+Reading wiki markup
+^^^^^^^^^^^^^^^^^^^
+
+Reading wiki texts basically works like for any other markup language:
+
+.. include:: tutorial/03_00_read_wiki.php
+   :literal:
+
+As said, by default the Creoletokenizer is used. The same result can be
+produced with dokuwiki markup and switching the tokenizer:
+
+.. include:: tutorial/03_01_read_wiki_confluence.php
+   :literal:
+
+Writing wiki markup
+^^^^^^^^^^^^^^^^^^^
+
+Until now only writing of creole wiki markup is supported. Since creole does
+not support a lot of the markup available in docbook, not all documents might
+get converted properly. Because it does not even support explicit internal
+references, we cannot even simulate footnotes like in HTML.
+
+If you want to add support for such conversions, it works exactly like the
+docbook RST conversion and can be extended the same way.
+
+.. include:: tutorial/03_02_write_wiki.php
+   :literal:
+
+PDF
+---
+
+PDF (Portable Document Format) has been developed to provide a document
+format, which can be presented software and system independent. Because of
+this it is often used as a pre-print document exchange format.
+
+The document componen can generate PDF document from all other input formats
+and offers a language very similar to CSS to apply custom styling to the
+generated output. Additionally it supports adding custom parts, like footers
+and headers, to the PDF document.
+
+Reading PDF
+^^^^^^^^^^^
+
+The document component for now does not support reading PDF documents.
+
+Writing PDF
+^^^^^^^^^^^
+
+Writing PDF basically works like writing any other format supported by the
+document component, like the basic example shows:
+
+.. include:: tutorial/04_01_create_pdf.php
+   :literal:
+
+First we include some RST file to create a Docbook file from it, because, like
+described before, Docbook is the central conversion format.
+
+Afterwards the Docbook document is loaded by the PDF class and saved. When
+converting the document to a string the PDF is renderer using the default
+options and the default driver. The result of this rendering call can be
+watched here: `04_01_create_pdf.pdf`__.
+
+__ 04_01_create_pdf.pdf
+
+Output writers
+``````````````
+
+Since there are numerous different PDF renderers in the PHP world and the
+available ones might depend on the current environment, the document component
+supports different PDF driver, as wrapper around different existent libraries.
+
+For now two implementation exist for pecl/haru and TCPDF, but it is fairly easy
+to write another one, for another PDF class.
+
+Haru
+""""
+
+libharu__ is a open source PDF generation library, written in C, and wrapped
+by the haru PHP extension, available from PECL__. If PEAR is correctly setup
+on your machine it should install as easy as::
+
+    pear install pecl/haru
+
+The Haru driver is pretty fast, but currently has issues with some special
+characters. It is the default driver, but can be explicitly used by setting
+the driver option on the PDF class, like::
+
+    $pdf = new ezcDocumentPdf();
+    $pdf->options->driver = new ezcDocumentPdfHaruDriver();
+
+__ http://libharu.org
+__ http://pecl.php.net/package/haru
+
+TCPDF
+"""""
+
+TCPDF is a pure PHP based PDF generation library, available from
+`tcpdf.org`__. To use the TCPDF driver you need to download and include its
+main class before rendering the PDF. It supports all aspects of PDF rendering
+required by the document component, but has some bad coding practices, like:
+
+- Throws lots of warnings and notices, which you might want to silence by
+  temporarily changing the error reporting level
+- Reads and writes several global variables, which might or might not
+  interfere with your application code
+- Uses eval() in several places, which results in non-cacheable OP-Codes.
+
+The TCPDF driver can be used after including the TCPDF source code, using::
+
+    $pdf = new ezcDocumentPdf();
+    $pdf->options->driver = new ezcDocumentPdfTcpdfDriver();
+
+__ http://tcpdf.org
+
+Styling the PDF
+```````````````
+
+The PDF output can be styled using a CSS like language, which assigns styles
+based on the Docbook XML structure. The default styling rules are defined in
+the `default.css`__.
+
+__ https://svn.apache.org/repos/asf/incubator/zetacomponents/trunk/Document/src/pcss/style/default.css
+
+The first most relevant part are the general layout options, which can be
+defined for the common article root node in the Docbook XML file. You can set
+global font options there, like::
+
+    article {
+        // Basic font style definitions
+        font-size:   "12pt";
+        font-family: "serif";
+        font-weight: "normal";
+        font-style:  "normal";
+        line-height: "1.4";
+        text-align:  "left";
+
+        // Basic page layout definitions
+        text-columns: "1";
+        text-column-spacing: "10mm";
+
+        // General text layout options
+        orphans: "3";
+        widows:  "3";
+    }
+
+The meaning of the first set of options should be obvious from CSS. We require
+each value to be wrapped by quotes for easier parsing, though.
+
+The second set of options defines options for multi-column layouts, which are
+not available in the web, but quite common in generated PDF documents. You can
+specify the number of text columns, as well as the distance between the text
+columns here.
+
+The third set in this example defines lesser known text layout options like
+the handling of `orphans and widows`__, which specify the handling of
+overlapping parts of paragraphs on page wrapping.
+
+You can, of course, apply those styles to any elements in your document, using
+the common CSS addressing rules, like::
+
+    // Emphasis node anywhere in the document
+    emphasis { ... }
+
+    // Title element directly below a section element
+    section > title { ... }
+
+    // Title element anywhere below a section element
+    section title { ... }
+
+    // Title element with the ID "first_title"
+    title#first_title { ... }
+
+    // Title element with the class "foo"
+    title.foo { ... }
+
+    // emphasis node directly below a title with class "foo", anywhere in a
+    // section with the ID "first"
+    section#first title.foo > emphasis { ... }
+
+The values and `measures`__ for the properties are very similar to the
+properties in CSS. For example the margin and padding properties accept one-
+to four-tuples of values, with the same respective meaning like in CSS.
+
+Another central formatting element, which is special to the PDF generation, is
+the virtual element "page"::
+
+    page {
+        page-size: "A4";
+        page-orientation: "portrait";
+        padding: "22mm 16mm";
+    }
+
+The page-size property accepts several known page size identifiers and the
+page-orientation defines the orientation of a page. You can also address any
+page directly by its ID, which will be 'page_1' for the first page, or its
+class, which will be "right", or "left", depending on the current page number.
+
+A detailed description of all available `PDF style options`__ is available
+here__.
+
+__ http://en.wikipedia.org/wiki/Widows_and_orphans 
+__ measures
+__ Document_styles.html
+__ Document_styles.html
+
+Measures
+""""""""
+
+The properties in the PDF component accept different measures, which are:
+
+- "mm", Millimeters, the default measure, if none is specified
+- "pt", Points, 72 points per inch
+- "px", Pixel, depends on the set resolution, by default also 72 points per
+  inch
+- "in", Inch
+
+The unit "Points" is most common for font sizes, while millimeters or inches
+will probably more useful for page paddings. You are free to choose any of
+them and can even combine different units in one tuple, like::
+
+    para {
+        // Top margin: 12 mm; Right margin: .1 inch; Bottom margin: 10 points,
+        // Left margin: 1 pixel
+        margin: "12 .1in 10pt 1px";
+    }
+
+PDF parts
+`````````
+
+PDF parts are additional parts in a rendered document, like headers and
+footers. You can implement and register them yourself, and they are activated
+by different triggers, like:
+
+- on document creation
+- on page creation
+- when a document has been finished
+
+The default implementation for headers and footers is triggered on page
+creation and renders the title of the document, its author and a page number
+in the header or the footer. To develop a custom PDF part you should extend
+from the ezcDocumentPdfPart class.
+
+For the following document we are using a set of custom styles, as well as a
+header and a footer to customize the rendered PDF document. The additional
+custom CSS changes the default font and the page border:
+
+.. include:: tutorial/custom.css
+   :literal:
+
+The code using the custom CSS and headers and footers then looks like:
+
+.. include:: tutorial/04_02_create_pdf_styled.php
+   :literal:
+
+The first part, the creation of a Docbook document from a RST document is just
+the same like in the first example.
+
+Afterwards we load the above mentioned custom.css as an additional style. You
+can load as many styles as you want. If multiple styles are loaded, the latter
+ones always (partly) redefine the first styles. 
+
+After that two custom PDF parts are registered using their respective option
+class to configure their skin. The footer should only show the page number,
+while the header should display all parts (title and author), but the page
+number.
+
+At the end of the example the document is created as usual, and looks like
+this: `04_02_create_pdf_styled.pdf`__ Since the source document does not
+include any author information, this information is also not rendered in the
+header.
+
+__ 04_02_create_pdf_styled.pdf
+
+Hyphenating
+```````````
+
+Proper hyphenation is crucial for nice text rendering especially for justified
+paragraph formatting. Since hyphenation is highly language dependent you can
+create and use your own custom hyphenator - the default one doesn't do any
+hyphenation by default, but just keeps every word as it is.
+
+Custom hyphenators can be implemented by extending from the abstract class
+ezcDocumentPdfHyphenator. The only need to implement one Method,
+```splitWord()```, which should return possible splitting points of the given
+word, as documented in the ezcDocumentPdfHyphenator class.
+
+The custom hyphenator can be configured in the ezcDocumentPdfOptions class,
+like this::
+
+    $pdf = new ezcDocumentPdf();
+    $pdf->options->hyphenator = new myHyphenator();
+
+The hyphenator will then be used by all text renderers during the rendering
+process.
+
+Open Document Text
+------------------
+
+The Open Document Text (ODT) format is natively provided by the
+`OpenOffice.org`__ office application suite and supported by other common word
+processing tools. The Document component supports importing, exporting and
+styling of ODT files.
+
+.. note:: By now only im- and export of flat ODT (.fodt) files is possible.
+          These can be processed by OpenOffice.org natively. To store FODT,
+          simply choose the file type from the save dialog.
+
+
+Reading ODT
+^^^^^^^^^^^
+
+The ODT document class reads FODT files and converts them into the internal
+Docbook representation of the Document component:
+
+.. include:: tutorial/05_00_read_fodt.php
+   :literal:
+
+You can generate any of the supported document formats from the Docbook
+representation.
+
+FODT files may contain embedded media files, i.e. usually images, which will be
+extracted during the import process. You can specify the directory where these images will
+be stored through the ```imageDir``` option::
+
+    <?php
+    $odt->options->imageDir = '/path/to/your/images';
+    ?>
+
+The default is your systems temporary directory.
+
+Since Open Document only contains few semantical information compared to
+Docbook, the import mechanism performs heuristic detection of information like
+emphasized text.  This mechanism is quite rudimentary by now and will be made
+available as a public API as it matured.
+
+Writing ODT
+^^^^^^^^^^^^^
+
+FODT files can be written similar to any of the other formats supported by the
+Document component:
+
+.. include:: tutorial/05_01_write_fodt.php
+   :literal:
+
+Styling ODT
+^^^^^^^^^^^
+
+FODT output can be styled using a CSS like language similar to `Styling the
+PDF`_. Using simplified CSS you assign style rules to Docbook XML elements,
+which are generated into automatic styles in the resulting Open Document. The
+default styling rules (`default.css`__) are the same as for PDF.
+
+__ https://svn.apache.org/repos/asf/incubator/zetacomponents/trunk/Document/src/pcss/style/default.css
+
+Applying custom styles can be done as follows:
+
+.. include:: tutorial/05_02_write_fodt_styled.php
+   :literal:
+
+A detailed description of the available `style options` is available `here`__.
+
+__ Document_styles.html
+__ Document_styles.html
+
+
+..
+   Local Variables:
+   mode: rst
+   fill-column: 79
+   End:
+   vim: et syn=rst tw=79

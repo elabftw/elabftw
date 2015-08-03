@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <sectioninfo>
+      <title>Main Title</title>
+    </sectioninfo>
+    <section>
+      <title><anchor ID="main_title"/>Main Title</title>
+      <para>Hello world</para>
+      <section>
+        <title><anchor ID="subsection"/>Subsection</title>
+        <para>A bit more text, which exceeds one line to test for a simple paragraph with more then one line.</para>
+      </section>
+    </section>
+  </section>
+</article>

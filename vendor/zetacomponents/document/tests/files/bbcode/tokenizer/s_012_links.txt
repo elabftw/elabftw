@@ -1,0 +1,5 @@
+[url=http://www.phpbb.com/]Visit phpBB![/url]
+
+[url]http://www.phpbb.com/[/url]
+
+[email]no.one@domain.adr[/email]

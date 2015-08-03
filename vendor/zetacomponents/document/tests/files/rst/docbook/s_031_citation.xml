@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="citations">
+    <title>Citations</title>
+    <para>Here is a citation reference: <citation>This is the citation.  It's just like a footnote, except the label is textual.</citation>.</para>
+  </section>
+</article>

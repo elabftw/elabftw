@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="n_here_beschreibung">
+    <title>N&#xE4;here Beschreibung:</title>
+    <para><ulink url="http://docs.google.com/censored/the/url">http://docs.google.com/censored/the/url</ulink></para>
+  </section>
+  <section ID="zus_tzliche_informationen">
+    <title>Zus&#xE4;tzliche Informationen:</title>
+    <para>Ein nicht weiter relevanter Absatz mit anonymisiertem Text, Lorem Ipsum und so weiter.</para>
+    <para>EVC_Model_DebitRetry Blindtext: Links zwo drei, rechts zwo drei</para>
+    <beginpage/>
+    <para>Lalala Lorem Ipsum immer noch Blindtext: Eine weitere Zeile mit Blindtext Hier kommt die angek&#xFC;ndigte Liste:</para>
+    <itemizedlist>
+      <listitem>
+        <para>something (mit noch etwas Text in Klammern dazu for good measure)</para>
+      </listitem>
+      <listitem>
+        <para>nested (hier drunter soll eine einger&#xFC;ckte Liste kommen)</para>
+      </listitem>
+    </itemizedlist>
+    <orderedlist numeration="arabic">
+      <listitem>
+        <para>"in Klammern"</para>
+      </listitem>
+      <listitem>
+        <para>"auch in Klammern"</para>
+      </listitem>
+      <listitem>
+        <para>"Klammerstuff"</para>
+      </listitem>
+      <listitem>
+        <para>"klammerig"</para>
+      </listitem>
+      <listitem>
+        <para>"Klammeraffe"</para>
+      </listitem>
+    </orderedlist>
+    <beginpage/>
+    <para>Hier ist die geschachtelte (oder auch nicht) "Liste" vorbei (puuh), welche die Exception geworfen hat. Die Schachtelung hat in gef&#xFC;hlt 100 Varianten ja auch nicht funktioniert, was vielleicht nochmal nen zus&#xFC;tzlichen Bugreport rechtfertigen w&#xFC;rde. result = "fail"</para>
+  </section>
+</article>

@@ -1,0 +1,1107 @@
+<html lang="de">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+	<title>Kickfire beschleunigt MySQL - Golem.de</title>
+<link rel="alternate" type="application/rss+xml" title="Golem.de RSS Feed" href="http://rss.golem.de/rss.php?feed=RSS1.0" />
+<link rel="alternate" type="application/atom+xml" title="Golem.de ATOM Feed" href="http://rss.golem.de/rss.php?feed=ATOM1.0" />
+<link rel="alternate" type="application/rss+xml" title="Golem.de Wirtschaft RSS Feed" href="http://rss.golem.de/rss.php?tp=wirtschaft&amp;feed=RSS1.0" />
+<link rel="alternate" type="application/atom+xml" title="Golem.de Wirtschaft ATOM Feed" href="http://rss.golem.de/rss.php?tp=wirtschaft&amp;feed=ATOM1.0" />
+<script language="JavaScript" type="text/javascript">
+GWP_ord = Math.random()*10000000000000000;
+</script>
+<link href="/GvHsb.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" language="javascript" src="/GvHsb.js">
+</script>
+
+<link href="/stylesns4.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+@import "/styles.css";
+-->
+</style>
+
+</head>
+<body topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0">
+<!-- google_ad_section_start(weight=ignore) -->
+<!-- IVW VERSION="1.4" --> 
+<SCRIPT LANGUAGE="JavaScript"> <!-- 
+ var IVW="http://golem.ivwbox.de/cgi-bin/ivw/CP/G_WIRTSCHAFT"; 
+ document.write("<IMG SRC=\"" + IVW + "?r=" + escape(document.referrer) + "&d=" + (Math.random()*100000) + "\" WIDTH=\"1\" HEIGHT=\"1\" ALIGN=\"right\">");
+// -->
+</SCRIPT> 
+<NOSCRIPT> 
+   <IMG SRC="http://golem.ivwbox.de/cgi-bin/ivw/CP/G_WIRTSCHAFT" WIDTH="1" HEIGHT="1" align="right">
+</NOSCRIPT> 
+<!-- /IVW -->
+<!-- SZMFRABO VERSION="1.1" -->
+<script language="JavaScript">
+var szmvars="golem//CP//G_WIRTSCHAFT";
+</script>
+<script src="http://golem.ivwbox.de/2004/01/survey.js" language="JavaScript">
+</script>
+<!-- /SZMFRABO -->
+<!-- BT -->
+<script type="text/javascript" language="JavaScript">
+  var n_pbt = "";
+  var p_gwp1 = "";
+  var p_gwp2 = "";
+  var p_gwp3 = "";
+  var p_gwp4 = "";
+  var p_gwp5 = "";
+</script>
+<script type="text/javascript" src="http://gwp.nuggad.net/rc?nuggn=223088769&nuggsid=2088753725&nuggtg=G_WIRTSCHAFT">
+</script>
+<!-- /BT -->
+<div id="big"><!-- begin ad tag -->
+<script language="JavaScript" type="text/javascript">
+document.write('<script language="JavaScript" src="http://ad.doubleclick.net/adj/golem/artikel;kw=wirtschaft,apps,mysql,datenbank,entscheider;tile=1;' + n_pbt + ';' + p_gwp1 + ';' + p_gwp2 + ';' + p_gwp3 + ';' + p_gwp4 + ';' + p_gwp5 + ';dcopt=ist;sz=728x90;ord=' + GWP_ord + '?" type="text/javascript"></scr' + 'ipt>');
+</script>
+<noscript><a href="http://ad.doubleclick.net/jump/golem/artikel;kw=wirtschaft,apps,mysql,datenbank,entscheider;tile=1;dcopt=ist;sz=728x90;ord=1217494358?" target="_blank"><img src="http://ad.doubleclick.net/ad/golem/artikel;kw=wirtschaft,apps,mysql,datenbank,entscheider;tile=1;dcopt=ist;sz=728x90;ord=1217494358?" border="0" alt=""></a></noscript>
+<!-- End ad tag -->
+</div><a name="top"></a><div class="centered"><table border="0" cellpadding="0" cellspacing="0" width="972" class="all">
+	<tr>
+		<td width="29" bgcolor="#4a5a74" height="24"><img src="/_img/no.gif" alt="" width="29" height="24" border="0"></td>
+		<td width="189" bgcolor="#4a5a74" valign="bottom"><a href="/"><img src="/_img/logo_top.gif" alt="Golem.de" width="189" height="18" border="0"></a></td>
+
+				<td width="546" bgcolor="#4a5a74" colspan="6" valign="bottom"><div style="margin-left: -5px;">
+		<table border="0" cellpadding="4" cellspacing="0" height="22">
+   <tr>
+      <td class="navbgoff"><a href="http://www.golem.de/ticker/" class="navoff">Ticker</a></td>
+      <td class="navbgoff"><a href="http://www.golem.de/0402/29672.html" class="navoff">RSS</a></td>
+      <td class="navbgoff"><a href="http://forum.golem.de" class="navoff">Forum</a></td>
+      <td class="navbgoff"><a href="http://markt.golem.de" class="navoff">Markt</a></td>
+      <td class="navbgoff"><a href="http://www.golem.de/0407/32162.html" class="navoff">Zusatz-Dienste</a></td>
+      <td class="navbgoff"><a href="http://jobs.golem.de" class="navoff">Jobs</a></td>
+      <td class="navbgoff"><a href="http://www.golem.de/sonstiges/werbung.html" class="navoff">Werbung</a></td>
+      <td class="navbgoff"><a href="http://www.golem.de/sonstiges/impressum.html" class="navoff">Impressum</a></td>
+   </tr>
+</table>		</div></td>
+		
+		<td bgcolor="#4a5a74"><img src="/_img/no.gif" alt="" width="8" height="24" border="0"></td>
+
+
+<td width="200" rowspan="5" valign="top"><div id="sky"><!-- begin ad tag -->
+<script language="JavaScript" type="text/javascript">
+document.write('<script language="JavaScript" src="http://ad.doubleclick.net/adj/golem/artikel;kw=wirtschaft,apps,mysql,datenbank,entscheider;tile=2;' + n_pbt + ';' + p_gwp1 + ';' + p_gwp2 + ';' + p_gwp3 + ';' + p_gwp4 + ';' + p_gwp5 + ';sz=120x600;ord=' + GWP_ord + '?" type="text/javascript"></scr' + 'ipt>');
+</script>
+<noscript><a href="http://ad.doubleclick.net/jump/golem/artikel;kw=wirtschaft,apps,mysql,datenbank,entscheider;tile=2;sz=120x600;ord=1217494358?" target="_blank"><img src="http://ad.doubleclick.net/ad/golem/artikel;kw=wirtschaft,apps,mysql,datenbank,entscheider;tile=2;sz=120x600;ord=1217494358?" border="0" alt=""></a></noscript>
+<!-- End ad tag -->
+</div>&nbsp;</td>
+		
+	</tr>
+	<tr>
+		<td class="headerbg" bgcolor="#e8e8e8" height="60"><img src="/_img/no.gif" alt="" width="29" height="60" border="0"></td>
+		<td class="headerbg" bgcolor="#e8e8e8" valign="top"><a href="/"><img src="/_img/logo_bottom.gif" alt="" width="189" height="60" border="0"></a></td>
+                <td class="headerbg" bgcolor="#e8e8e8" width="137">
+		
+		<!-- SEARCH FORM -->
+		
+		<form method="post" action="http://suche.golem.de/search.php" name="su">
+				<table border="0" cellpadding="0" cellspacing="0" align="right">
+					<tr>
+						<td colspan="2"><img src="/_img/suchen.gif" alt="Suchen bei Golem.de" width="110" height="12" border="0"></td>
+					</tr>
+					<tr>
+						<td>
+							<input name="q" type="text" size="12" tabindex="1" class="formfieldhead" value="SUCHEN" onClick="document.su.q.value=''" onFocus="document.su.q.value=''" maxlength="255">
+						</td>
+						<td>
+						   	<input type="hidden" name="l" value="10">
+							<input type="image" value="submit" title="Suche starten!" tabindex="2" src="/_img/icon_search.gif" width="16" height="16" border="0" alt="Suche starten!">
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2"><img src="/_img/no.gif" alt="" width="110" height="2" border="0"></td>
+					</tr>
+				</table>
+			</form>
+		</td>
+		<td class="headerbg" bgcolor="#e8e8e8" valign="bottom"><img src="/_img/divider_head.gif" alt="" width="16" height="60" border="0"></td>
+		<td class="headerbg" bgcolor="#e8e8e8" align="right">
+		
+		<!-- NEWSLETTER FORM -->
+		
+		<form action="http://nl.golem.de/newsletter.php" name="nl" method="post">
+		    <input type="hidden" name="source" value="1">
+		    <input type="hidden" name="default" value="2">
+		    <input type="hidden" name="action" value="create">
+				<table border="0" cellpadding="0" cellspacing="0" align="right">
+					<tr>
+						<td colspan="2" align=left><img src="/_img/newsletterabo.gif" alt="Golem.de Newsletter-Abo" width="110" height="12" border="0"></td>
+					</tr>
+					<tr>
+						<td>
+							<input name="email" type="text" size="12" tabindex="11" class="formfieldhead" value="ihre@e-mail.de" onClick="document.nl.email.value=''" onFocus="document.nl.email.value=''" maxlength="255">
+						</td>
+						<td>
+							<input type="image" value="submit" title="Abo anmelden!" tabindex="12" src="/_img/arrow_rt.gif" width="16" height="16" border="0" alt="Abo anmelden!">
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2"><img src="/_img/no.gif" alt="" width="110" height="2" border="0"></td>
+					</tr>
+				</table>
+			</form>
+		</td>
+		<td class="headerbg" bgcolor="#e8e8e8" valign="bottom" align="right"><img src="/_img/divider_head_cap.gif" alt="" width="11" height="60" border="0"></td>
+		<td rowspan="3" class="headerbg" bgcolor="#e8e8e8"><img src="/_img/no.gif" alt="" width="9" height="60" border="0"></td>
+
+		<td rowspan="3" class="headerbg" bgcolor="#e8e8e8" valign="top">
+		
+		
+		<!-- ############# -->
+		<!-- RECHTE SPALTE -->
+		<!-- ############# -->
+
+		<img src="/_img/no.gif" alt="" width="11" height="8" border="0">
+
+                <!--ERASEIF rubrik1=1 OR rubrik1=7-->
+
+                <!--ENDERASE-->
+<!-- VCO: no product mapping --><img src="http://www.golem.de/_img/no.gif" alt="" width="11" height="8" border="0"><div style="width: 234px;">
+<h5 class="rightcolhead"><a href="http://jobs.golem.de/" class="rlink"><b>Stellenmarkt</b></a></h5>
+<p class="lmtext" style="margin-top:6px; margin-bottom:4px;">
+<a href="http://www.jobware.de/view/aWQ9MjQ5ODM5fGNpX3R5cGU9MHxwZj0xfG9yaWc9SVQtTkVXUy1UT1BKT0JTfHVoPTB8ZDpzcGVjaWFscz1jZmclMkZmb2xsb3clMkNub3Jlc2l6ZSUyRmZvbGxvd3xkOmNmZz1pdC1uZXdzfA%3D%3D/index.html" class="lm" rel="nofollow" target="_blank">Leiter Plattformservice &amp; Qualitätssicherung (m/w) </a><br/>
+<span class="small">QUELLE GmbH, Fürth/Nürnberg</span>
+</p>
+<p class="lmtext" style="margin-top:6px; margin-bottom:4px;">
+<a href="http://www.jobware.de/view/aWQ9MjQ5NTA2fGNpX3R5cGU9MHxwZj0xfG9yaWc9SVQtTkVXUy1UT1BKT0JTfHVoPTB8ZDpzcGVjaWFscz1jZmclMkZmb2xsb3clMkNub3Jlc2l6ZSUyRmZvbGxvd3xkOmNmZz1pdC1uZXdzfA%3D%3D/index.html" class="lm" rel="nofollow" target="_blank">System Software Engineer (m/w) </a><br/>
+<span class="small">AWTC Europe S.A., Unterschleißheim</span>
+</p>
+</div>
+<div style="width: 234px;">
+<form name="jwsearch" action="http://jobs.golem.de/index.php" method="get" style="display:inline;">
+<input type=hidden name="ty" value="199" style="display:none;">
+<input type=hidden name="hy" value="117" style="display:none;">
+<input type=hidden name="nx" value=1 style="display:none;">
+<input type=hidden name=sq value="1" style="display:none;">
+<input type=hidden name=ps value="0" style="display:none;">
+<div style="width:234px;text-align:right;"> 
+    <a class="lm" href="http://www.jobware.de/" style="cursor:default;font-size:10px;" onmouseover="window.status='';return true;" target="_blank">powered by Jobware</a>
+</div>
+<select name="bf[]" style="width:234px;margin-top:5px;font-weight: normal; font-family: Verdana, 'Geneva', Lucida, Lucidux, 'Lucida Sans', Arial, Helvetica, sans-serif; font-size: 11px; ">
+<option value="1" selected>Alle Berufsfelder</option>
+<option value="2">Bildung, Schulung, Training</option>
+<option value="5">Consulting, Beratung</option>
+<option value="10">IT/TK Softwareentwicklung</option>
+<option value="274">IT/TK Hardwareentw., embed. Syst.</option>
+<option value="275">IT/TK Consulting, Vertrieb</option>
+<option value="276">IT/TK Netzwerke, Systeme</option>
+<option value="33">Management, Leitung</option>
+<option value="73">Marketing, PR, Werbung</option>
+<option value="82">Medien, Grafik, Design, Druck</option>
+<option value="106">Techn. Entwicklung, Konstruktion</option>
+<option value="229">Techn. Management, Projektplanung</option>
+<option value="278">Fertigung, Inbetriebn., Qualit&auml;tsw.</option>
+<option value="279">Technischer Vertrieb</option>
+<option value="126">Forschung &amp; Entwicklung</option>
+<option value="161">Trainee-Programme</option>
+<option value="197">&Ouml;ffentl.Dienst, Verwaltung</option>
+</select>
+<select name="re[]" style="width:234px;margin:5px 0px;font-weight: normal; font-family: Verdana, 'Geneva', Lucida, Lucidux, 'Lucida Sans', Arial, Helvetica, sans-serif; font-size: 11px; ">
+<option value="1" selected>Alle Regionen</option>
+<option value="20">Baden-W&uuml;rttemberg</option>
+<option value="21">Bayern</option>
+<option value="10">Berlin</option>
+<option value="11">Brandenburg</option>
+<option value="7">Bremen</option>
+<option value="8">Hamburg</option>
+<option value="17">Hessen</option>
+<option value="9">Mecklenburg-Vorpommern</option>
+<option value="12">Niedersachsen</option>
+<option value="13">Nordrhein-Westfalen</option>
+<option value="18">Rheinland-Pfalz</option>
+<option value="19">Saarland</option>
+<option value="14">Sachsen</option>
+<option value="15">Sachsen-Anhalt</option>
+<option value="6">Schleswig-Holstein</option>
+<option value="16">Th&uuml;ringen</option>
+</select>
+<table cellpadding=0 cellspacing=0 width="100%" border=0><tr>
+<td style="vertical-align:top;padding-top:1px;"><a href="http://jobs.golem.de/" class="lm">Detailsuche</a>
+</td>
+<td style="text-align:right;vertical-align:top;">
+<input type="image" src="http://www.jobware.de/service/koop/it-news/img/suchen_suchbox.gif" value="Suchen"  />
+</td></tr></table><div style="padding:5px 0px 0px 0px;"></div>
+</form>
+</div>
+<div id="experteer_box" style="background-color:ffffff; border:1px solid #b2cd0e; width:235px; margin-top: 8px; margin-bottom: 10px;">
+<h2 style="background-color:#b2cd0e; font:bold 12px Arial, Helvetica, sans-serif; text-transform: uppercase; margin:0; padding:3px 4px;">
+<a href="http://ads.golem.de/nl.php?id=experteer_direct" target="_blank" style="color:#ffffff; text-decoration: none; font-weight: bold;" rel="nofollow">Experteer-Stellenangebote</a>
+</h2>
+
+<form action="http://experteer.golem.de" id="search" method="POST" target="_blank" name="search" style="margin:0; padding:0">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td style="font:11px Arial, Helvetica, sans-serif; padding:5px">Funktion:</td>
+      <td style="padding:5px">
+        <select name="search[function_ids][0]" style="color:#0a0199; font:11px Arial, Helvetica, sans-serif; width:140px;">
+          <option id="function_1" value="1">Management</option>
+          <option id="function_2" value="2">Strategie, M&amp;A</option>
+          <option id="function_3" value="3">Planung, Controlling</option>
+          <option id="function_4" value="4">Finanzen</option>
+          <option id="function_11" value="11">Marketing</option>
+          <option id="function_10" value="10">Vertrieb</option>
+          <option id="function_16" value="16">Consulting</option>
+          <option id="function_9" value="9">Produktion, Herstellung</option>
+          <option id="function_8" value="8">Einkauf, Logistik</option>
+          <option id="function_13" value="13">IT, Telekommunikation</option>
+          <option id="function_12" value="12">PR, Öffentlichkeitsarbeit</option>
+          <option id="function_14" value="14">R&amp;D, F&amp;E</option>
+          <option id="function_15" value="15">Kundendienst</option>
+          <option id="function_7" value="7">Organisation</option>
+          <option id="function_6" value="6">Personal</option>
+          <option id="function_5" value="5">Recht</option>
+          <option id="function_17" value="17">Grafik, Design, Gestaltung</option>
+          <option id="function_18" value="18">Redaktion, Dokumentation</option>
+          <option id="function_19" value="19">Medizin</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td style="font:11px Arial, Helvetica, sans-serif; padding:5px">Ort / PLZ:</td>
+      <td style="padding:5px">
+        <input type="text" id="search_location" name="search[location]" size="20" value="Berlin" style="font:11px Arial, Helvetica, sans-serif; color:#525b75; width:132px;" /> <input type="hidden" name="search[location_country_id]" value="44" /> <input type="hidden" name="search[salary_slider_min]" value="60" /> <input type="hidden" name="search[salary_slider_max]" value="150" /> <input type="hidden" name="search[distance_slider]" value="100"> <input type="hidden" name="search[page_size]" value="25" /> <input type="hidden" name="encoding" value="latin1">
+      </td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td style="color:#525b65; padding:5px">
+        <input type="image" src="http://www.experteer.de/images/deu/btn_search_submit.gif" alt="suchen">
+      </td>
+    </tr>
+  </table>
+</form>
+<!--
+<div style="font:11px Arial, Helvetica, sans-serif; padding:5px">
+    <a href="http://ads.golem.de/nl.php?id=experteer_direct" target="_blank" style="color:#ff7c21" rel="nofollow">Stellenangebote</a> ab 60.000 Euro bei Experteer.de
+</div>
+-->
+</div>
+
+<img src="http://www.golem.de/_img/no.gif" alt="" width="11" height="8" border="0">              
+<h5 class="rightcolhead"><a href="http://www.golem.de/ticker/" class="rlink"><b>Letzte Meldungen</b></a></h5>
+<p class="lmtext"><a href="http://www.golem.de/0807/61433.html" class="lm">
+Banshee 1.2 &uuml;bernimmt Amarok-Daten
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61429.html" class="lm">
+Wird Super Mario bald holographisch gespeichert?
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61432.html" class="lm">
+Garmins Navigationshandy N&uuml;vifone kommt sp&auml;ter
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61431.html" class="lm">
+TDK will Epcos kaufen
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61428.html" class="lm">
+Google kauft Omnisio
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61430.html" class="lm">
+Kickfire beschleunigt MySQL
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61427.html" class="lm">
+Google will Geld in Start-ups stecken
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61426.html" class="lm">
+Online-Backupdienst f&uuml;r MacOS X
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61425.html" class="lm">
+Tamron baut 15fach-Zoomobjektiv f&uuml;r Spiegelreflexkameras 
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61424.html" class="lm">
+Maus mit Auflagefl&auml;che f&uuml;r die gesamte Hand
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61423.html" class="lm">
+Siemens findet K&auml;ufer f&uuml;r Telekommunikationssparte SEN
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61421.html" class="lm">
+Midori - arbeitet Microsoft am Windows-Nachfolger?
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61422.html" class="lm">
+IOC akzeptiert Internetzensur in Peking
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61420.html" class="lm">
+Sensorfasern erkennen Ver&auml;nderungen in Textilnetzen
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61419.html" class="lm">
+China setzt weiter auf modifizierte HD-DVD
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61413.html" class="lm">
+Regierung will unerlaubte Telefonwerbung strenger bestrafen
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61416.html" class="lm">
+Infos zum &quot;RPB&quot;-Rollenspiel von Piranha Bytes
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61415.html" class="lm">
+Base Gold: Der Rundum-Sorglos-Tarif f&uuml;rs Handy
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61418.html" class="lm">
+Erste Beta von Mandriva 2009.0
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61411.html" class="lm">
+Handy-TV-Anbieter Mobile 3.0 am Abgrund
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61410.html" class="lm">
+Bei Nintendo brummt der Laden
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61409.html" class="lm">
+US-Musiker setzen sich f&uuml;r Netzneutralit&auml;t ein
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61408.html" class="lm">
+Mehr Verkehr bei O2: O2 und Telef&oacute;nica koppeln ihr Netz
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61407.html" class="lm">
+W3C ebnet den Weg f&uuml;r Internetstandards auf dem Handy
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61406.html" class="lm">
+Auftaktparty des Wacken-Festivals doch kostenlos per Stream
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61401.html" class="lm">
+Wikileaks ver&ouml;ffentlicht neues Dokument zu ACTA
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61404.html" class="lm">
+Warhammer Online: &quot;Das Spiel ist fertig&quot;
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61403.html" class="lm">
+MobileMe bereitete neue Probleme
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61402.html" class="lm">
+Oracle reagiert auf schwere Sicherheitsl&uuml;cke
+</a></p>
+
+
+<p class="lmtext"><a href="http://www.golem.de/0807/61399.html" class="lm">
+Amazon startet Paypal-Konkurrenten
+</a></p>
+
+
+<p class="small">
+    <a href="http://www.golem.de/ticker/" rel="nofollow"><b>Weitere News</b></a>
+</p>
+
+<hr width="235" size="1" align="left">
+
+<p class="small">
+Haben wir etwas &uuml;bersehen?
+Dann Mail an <a href="mailto:news@golem.de" rel="nofollow">news@golem.de</a>.
+</p>
+
+<script type="text/javascript">
+<!--
+var GvHsbSettings = {
+    direction: "up left",
+    x0: 7, y0: 0,
+    x1: -1, y1: 0,
+    pfeilRechts: ''
+}
+//-->
+</script> 
+  
+<form method="get" name="GvHserviceButton" target="_blank"></form>
+<div id="GvHserviceButton_div">  
+<ul id="GvHserviceButton_menu">
+<li class="main">
+    <a href="#" class="mainhead">Verlagsangebote</a>
+    <ul style="display:none">
+    
+      
+    <li class="kategorie"><span class="fett">Auto</span>
+        <ul>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Autoanzeigen.de</a>
+        <span>Kfz-Markt in Tageszeitung und Internet</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">MeinAuto.de</a>
+        <span>Neuwagenpreisvergleich, Service, uvm.</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Autoplenum.de</a>
+        <span>Erfahrungsberichte, Werkstatt-Empfehlungen und Kaufberatung</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Motoso.de</a>
+        <span>Internetmarktplatz f&uuml;r Teile, Tuning und Service</span>
+        </li>
+        </ul>
+    </li>
+    
+    <li class="kategorie"><span class="fett">Beruf / Karriere</span>
+        <ul>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Cleverapply.de</a>
+        <span>Tipps und Tricks rund um die Online-Bewerbung</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Karriere.de</a>
+        <span>Webportal der Handelsblatt Junge Karriere f&uuml;r Studenten und Absolventen</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Hochschule.Fischerverlage.de</a>
+        <span>Das Fischer-Hochschulportal mit den besten Sachb&uuml;chern aus Natur-, Geistes- und Wirtschaftswissenschaften</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Experteer.de</a>
+        <span>Onlineplattform f&uuml;r Premium-Stellenangebote ab 60.000 &euro;</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Stellenanzeigen.de</a>
+        <span>Stellenanzeigen-Portal f&uuml;r Fach- und F&uuml;hrungskr&auml;fte</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">BusinessLive.de</a>
+        <span>Professionelle Karriere- und Kontaktplattform f&uuml;r Bewerber und Recruiter</span>
+        </li>
+        </ul>
+    </li>
+    
+    <li class="kategorie"><span class="fett">B&uuml;cher</span>
+        <ul>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Bookya.de</a>
+        <span>Lokale B&uuml;cherb&ouml;rse f&uuml;r Studenten</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Buecher.de</a>
+        <span>Online-Versandhandel mit B&uuml;chern, Software, Filme, Musik, Elektronik uvm.</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">LovelyBooks.de</a>
+        <span>Online-Community f&uuml;r Literaturbegeisterte</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Audible.de</a>
+        <span>F&uuml;hrendes Portal f&uuml;r H&ouml;rb&uuml;cher und Audiomagazine</span>
+        </li>
+        </ul>
+    </li>
+    
+    <li class="kategorie"><span class="fett">Community</span>
+        <ul>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Platinnetz.de</a>
+        <span>Online-Netzwerk f&uuml;r aktive und unternehmenslustige Menschen ab 50</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Groops.de</a>
+        <span>Hier finden Sie die richtige Gruppe f&uuml;r Ihre Freizeitaktivit&auml;ten</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">MeinVZ.net</a>
+        <span>Online-Netzwerk f&uuml;r alle ehemaligen Studenten</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">VirtualNights.de</a>
+        <span>Community rund um das Nachtleben in Deiner Stadt oder Region</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">StudiVZ.net</a>
+        <span>Die gr&ouml;&szlig;te deutsche Online Community f&uuml;r alle Studenten</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">SchuelerVZ.net</a>
+        <span>Die gr&ouml;&szlig;te deutsche Plattform f&uuml;r alle Sch&uuml;ler</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">LovelyBooks.de</a>
+        <span>Online-Community f&uuml;r Literaturbegeisterte</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">BusinessLive.de</a>
+        <span>Professionelle Karriere- und Kontaktplattform f&uuml;r Bewerber und Recruiter</span>
+        </li>
+        </ul>
+    </li>
+    
+    <li class="kategorie"><span class="fett">Familie / Kinder</span>
+        <ul>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Betreut.de</a>
+        <span>Professioneller Vermittlungsservice f&uuml;r qualifizierte Betreuer aus Ihrer Gegend</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Panfu.de</a>
+        <span>Liebevoll gestaltete und werbefreie virtuelle Welt f&uuml;r Kinder</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Mamily.de</a>
+        <span>Online-Plattform f&uuml;r alle M&uuml;tter und Schwangere</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Tutoria.de</a>
+        <span>Service f&uuml;r Einzelnachhilfe vor Ort</span>
+        </li>
+        </ul>
+    </li>
+    
+    <li class="kategorie"><span class="fett">Gesundheit</span>
+        <ul>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">BitterePillen.de</a>
+        <span>Offizielle Internetpr&auml;senz des Buchklassikers &quot;Bittere Pillen&quot;</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Arzt-Preisvergleich.de</a>
+        <span>Kostenloser Preisvergleich von &Auml;rzten</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Gesundheit-heute.de</a>
+        <span>Portal f&uuml;r unabh&auml;ngigen &auml;rztlichen Rat</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Helpster.de</a>
+        <span>Hilfe bei der Arztsuche und der Recherche von Krankheiten sowie Therapien</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Netdoktor.de</a>
+        <span>Gesundheitsportal mit Informationen zu Krankheiten, Heilungsmethoden, Pr&auml;ventionsm&ouml;glichkeiten, uvm.</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Pflegekritik.de</a>
+        <span>Neutrale Bewertungen von Pflegeheimen, Wissensaustausch und Berichte rund um das Thema Pflege</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Betreut.de</a>
+        <span>Professioneller Vermittlungsservice f&uuml;r qualifizierte Betreuer aus Ihrer Gegend</span>
+        </li>
+        </ul>
+    </li>
+    
+    <li class="kategorie"><span class="fett">Marktplatz</span>
+        <ul>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">My-Hammer.de</a>
+        <span>Portal f&uuml;r private und professionelle Auftraggeber</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Erento.com</a>
+        <span>Plattform f&uuml;r Mietangebote aller Art</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Seatwave.de</a>
+        <span>Ticketb&ouml;rse von Fan zu Fan f&uuml;r alle Events und Veranstaltungen</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">DaWanda.de</a>
+        <span>Online Marktplatz f&uuml;r Selbstgemachtes und Besonderes</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Immowelt.de</a>
+        <span>Immobilien- und Wohnungsanzeigen f&uuml;r Vermieter, Mieter, K&auml;ufer und Verk&auml;ufer</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Markt.de</a>
+        <span>Kostenloses Portal f&uuml;r Kleinanzeigen aus ganz Deutschland</span>
+        </li>
+        </ul>
+    </li>
+
+    <li class="kategorie"><span class="fett">Nachrichten</span>  
+        <ul>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Handelsblatt.com</a>
+        <span>Eine der f&uuml;hrenden deutschen Nachrichtenseiten zu Wirtschaft und Politik</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)" title="zeit.de">ZEITonline</a>
+        <span>Das Onlineangebot der gro&szlig;en deutschen Wochenzeitung DIE ZEIT</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Tagesspiegel.de</a>
+        <span>Der Internetauftritt des Berliner Tagesspiegels</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Zoomer.de</a>
+        <span>Nachrichtenportal, bei dem die Leser mitbestimmen, was Ihnen wichtig ist</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Webnews.de</a>
+        <span>Aktuelle Nachrichten und Videos</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Golem.de</a>
+        <span>Onlineportal f&uuml;r professionelle Computeranwender</span>
+        </li>
+        </ul>
+    </li>
+
+    <li class="kategorie"><span class="fett">Partnersuche</span>
+        <ul>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">PARSHIP.de</a>
+        <span>Partneragentur f&uuml;r anspruchsvolle Singles</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">KissNoFrog.com</a>
+        <span>Speeddating-Plattform im Internet</span>
+        </li>
+        </ul>
+    </li>
+
+    <li class="kategorie"><span class="fett">Ratgeber</span>
+        <ul>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">GuteFrage.net</a>
+        <span>Umfassende Ratgeber-Community im Internet</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">TopTarif.de</a>
+        <span>Online Vergleichsservice f&uuml;r Vertr&auml;ge zu Telefon, Strom, Gas, uvm.</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Netdoktor.de</a>
+        <span>Gesundheitsportal mit Informationen zu Krankheiten, Heilungsmethoden, Pr&auml;ventionsm&ouml;glichkeiten, uvm.</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Trauer.de</a>
+        <span>Ratgeber f&uuml;r Trauernde</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Konz-Steuertipps.de</a>
+        <span>Informationen rund um das Thema Steuern</span>
+        </li>
+        </ul>
+    </li>
+
+    <li class="kategorie"><span class="fett">Regionales</span>
+        <ul>
+        <li class="portal"><a onclick="javascript:GvHsb(this)" title="mainpost.de">Main-Post</a>
+        <span>Das Nachrichtenportal der Main Post f&uuml;r Mainfranken</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)" title="saarbruecker-zeitung.de">Saarbr&uuml;cker Zeitung</a>
+        <span>Das Internetportal des Medienhauses Saarbr&uuml;cker Zeitung</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)" title="volksfreund.de">Trierischer Volksfreund</a>
+        <span>Nachrichten aus der Region Trier, Deutschland und der ganzen Welt</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)" title="suedkurier.de">S&uuml;dkurier</a>
+        <span>Nachrichtenportal des S&uuml;dkuriers</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)" title="lr-online.de">Lausitzer Rundschau</a>
+        <span>Nachrichtenportal der Lausitzer Rundschau</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">MeineStadt.de</a>
+        <span>Das lokale Suchportal f&uuml;r alle St&auml;dte Deutschlands</span>
+        </li>
+        </ul>
+    </li>
+
+    <li class="kategorie"><span class="fett">Reise / Kultur</span>
+        <ul>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Weltkunst.de</a>
+        <span>Online-Portal der gleichnamigen Zeitschrift f&uuml;r Kunst und Antiquit&auml;ten</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Bodenseeferien.de</a>
+        <span>Informationen zu Ihrem Urlaub in der Erlebnisregion Bodensee</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Reise.de</a>
+        <span>Das Online-Reiseb&uuml;ro mit attraktiven und preiswerten Angeboten</span>
+        </li>
+        </ul>
+    </li>
+
+    <li class="kategorie"><span class="fett">Shopping</span>
+        <ul>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Audible.de</a>
+        <span>F&uuml;hrendes Portal f&uuml;r H&ouml;rb&uuml;cher und Audiomagazine</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">brands4friends.de</a>
+        <span>Online-Shopping-Club f&uuml;r Lifestyle Markenprodukte</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Buecher.de</a>
+        <span>Online-Versandhandel mit B&uuml;chern, Software, Filme, Musik, Elektronik uvm.</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Guut.de</a>
+        <span>Live-Shopping-Community</span>
+        </li>
+        </ul>
+    </li>
+
+    <li class="kategorie"><span class="fett">Sport / Freizeit</span>
+        <ul>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">jogmap.de</a>
+        <span>Online Community f&uuml;r Laufbegeisterte</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Pointoo.de</a>
+        <span>Location Bookmark Service</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Myphotobook.de</a>
+        <span>Erstellung und Anfertigung eines pers&ouml;nlichen Fotoalbums</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Gameduell.de</a>
+        <span>Deutschlands gr&ouml;&szlig;te Onlinespiele-Seite</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Whooka.com</a>
+        <span>Community f&uuml;r Sportbegeisterte</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Mangaka.de</a>
+        <span>Portal f&uuml;r Manga-Fans und Manga-Zeichner</span>
+        </li>
+        </ul>
+    </li>
+
+    <li class="kategorie"><span class="fett">Wirtschaft</span>
+        <ul>
+        <li class="portal"><a onclick="javascript:GvHsb(this)" title="zeit.de">ZEITonline</a>
+        <span>Das Onlineangebot der gro&szlig;en deutschen Wochenzeitung DIE ZEIT</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Handelsblatt.com</a>
+        <span>Eine der f&uuml;hrenden deutschen Nachrichtenseiten zu Wirtschaft und Politik</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">WiWo.de</a>
+        <span>Internet-Auftritt des gr&ouml;&szlig;ten deutschen Wirtschaftsmagazins - der Wirtschaftswoche</span>
+        </li>
+        <li class="portal"><a onclick="javascript:GvHsb(this)">Konz-Steuertipps.de</a>
+        <span>Informationen rund um das Thema Steuern</span>
+        </li>
+        </ul>
+    </li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+</ul>
+</div>
+
+
+
+		</td>
+		<td rowspan="3" class="headerbg" bgcolor="#e8e8e8"><img src="/_img/no.gif" alt="" width="8" height="60" border="0"></td>
+	</tr>
+	
+	<!-- Navigation -->
+	
+
+    <tr>
+
+    	<td class="midbgnav2home" height="24" bgcolor="#4a5a74" align="right" nowrap valign="bottom"><a href="http://www.golem.de" rel="nofollow"><img src="/_img/no.gif" alt="HOME" width="21" height="24" border="0"></a></td>
+	<td class="midbgnav2" height="24" bgcolor="#4a5a74" colspan="5" nowrap valign="bottom">
+
+<table border="0" cellpadding="4" cellspacing="0" height="22">
+   <tr>
+<td class="navbgoff2"><a href="/audio-video/" class="navoff2">Audio/Video</a></td>
+<td class="navbgoff2"><a href="/foto/" class="navoff2">Foto</a></td>
+<td class="navbgoff2"><a href="/games/" class="navoff2">Games</a></td>
+<td class="navbgoff2"><a href="/handy/" class="navoff2">Handy</a></td>
+<td class="navbgoff2"><a href="/internet/" class="navoff2">Internet</a></td>
+<td class="navbgoff2"><a href="/mobil/" class="navoff2">Mobil</a></td>
+<td class="navbgoff2"><a href="/oss/" class="navoff2">OSS</a></td>
+<td class="navbgoff2"><a href="/security/" class="navoff2">Security</a></td>
+   </tr>
+</table>
+
+	</td>
+	<!--<td class="midbgnav2" height="24"><img src="/_img/no.gif" alt="" width="11" height="25" border="0"></td>-->
+<!-- google_ad_section_end -->
+<!-- google_ad_section_start -->
+
+    </tr>
+
+	<tr>
+		<td bgcolor="white" class="leftedge" valign="top"><div class="leanzeige"></div><img src="/_img/no.gif" alt="" width="29" height="3600" border="0"></td>
+		<td bgcolor="white" valign="top" colspan="4">
+		<img src="/_img/no.gif" alt="" width="16" height="2" border="0"><br>
+		<!-- ############## -->
+		<!-- NEWS/LIVE AREA -->
+		<!-- ############## -->
+		
+<br><table border="0" cellpadding="4" cellspacing="0" width="480" style="border: solid 1px #4a5a74">
+	<tr>
+		<td valign="top"><span class="xsmall"><b>Hardware / 31.07.2008 / 09:35</b><img src="/_img/no.gif" alt="" width="2" height="14" border="0"></span></td>
+		<!--<td align="right" nowrap><span class="xsmall"><a href="http://www.golem.de/mail.php?a=61430" class="nobold" target="_blank">Artikel versenden&nbsp;<img src="/_img/emailen.gif" alt="" width="14" height="14" border="0"></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.golem.de/print.php?a=61430" class="nobold" target="_blank">Druckansicht&nbsp;<img src="/_img/drucken.gif" alt="" width="14" height="14" border="0"></a></span></td>-->
+		<td align="right" nowrap><span class="xsmall"><a href="http://www.golem.de/trackback/61430" class="nobold" target="_blank">Trackback&nbsp;<img src="/_img/trackback.gif" alt="" width="14" height="14" border="0"></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.golem.de/mail.php?a=61430" class="nobold" target="_blank">Versenden&nbsp;<img src="/_img/emailen.gif" alt="" width="14" height="14" border="0"></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.golem.de/print.php?a=61430" class="nobold" target="_blank">Druck&nbsp;<img src="/_img/drucken.gif" alt="" width="14" height="14" border="0"></a></span></td></td>
+		
+	</tr>
+</table>
+
+<!--
+<table border="0" cellpadding="4" cellspacing="0" style="border: solid 1px #4a5a74; border-top-style:none;" width="480">
+        <tr>
+                <td valign="top" width="100%"><span class="xsmall">
+-->     
+<!-- 
+                <a href="">Kickfire beschleunigt MySQL</a></span></td>
+-->     
+<!--
+                <a href="/0807/61430.html">Kickfire beschleunigt MySQL</a></span></td>            
+-->
+<!--
+                <td valign="top"><span class="xsmall"><b>Seiten</b></span></td>
+  <td valign="top" class="navbgoff"><span
+class="xsmallb"><b>1</b></span></td>                 
+        </tr>
+</table>
+-->
+
+<h3 class="artikelhead">
+Kickfire beschleunigt MySQL
+</h3>
+
+<h4 class="artikelsubhead">
+<!--content-->20 Millionen US-Dollar f&uuml;r Datenbank-Appliances<!--/content-->
+</h4>
+
+<p class="teaser">
+<!--content-->Mit seinen Datenbank-Appliances f&uuml;r MySQL verspricht Kickfire, Abfragen auf gro&szlig;e Datenbanken enorm zu beschleunigen. Daf&uuml;r sorgt unter anderem ein spezieller SQL-Chip, der in den Ger&auml;ten zum Einsatz kommt. Zum Ausbau des Gesch&auml;fts erhielt Kickfire jetzt 20 Millionen US-Dollar Risikokapital.<!--/content-->
+</p>
+
+
+<!-- BANNER -->
+<div id="contentad" style="clear:both;" align="center">
+<!-- begin ad tag -->
+<script language="JavaScript" type="text/javascript">
+document.write('<script language="JavaScript" src="http://ad.doubleclick.net/adj/golem/artikel;kw=wirtschaft,apps,mysql,datenbank,entscheider;tile=3;' + n_pbt + ';' + p_gwp1 + ';' + p_gwp2 + ';' + p_gwp3 + ';' + p_gwp4 + ';' + p_gwp5 + ';sz=300x250;ord=' + GWP_ord + '?" type="text/javascript"></scr' + 'ipt>');
+</script>
+<noscript><a href="http://ad.doubleclick.net/jump/golem/artikel;kw=wirtschaft,apps,mysql,datenbank,entscheider;tile=3;sz=300x250;ord=1217494358?" target="_blank"><img src="http://ad.doubleclick.net/ad/golem/artikel;kw=wirtschaft,apps,mysql,datenbank,entscheider;tile=3;sz=300x250;ord=1217494358?" border="0" alt=""></a></noscript>
+<!-- End ad tag -->
+
+</div>
+
+<div class="artikeltext" style="margin-top: 12px;">
+<!--content-->Kickfire hat eine zweite Finanzierungsrunde abgeschlossen. Unter der F&uuml;hrung von Pinnacle Ventures investierten auch Accel Partners, Greylock Partners und der Mayfield Fund, die schon in der ersten Runde dabei waren. Mit dem Geld sollen vor allem Vertrieb und Marketing ausgebaut werden.
+<BR><BR>
+<TABLE border=0 align="center" width="10"><TR><TD><IMG SRC="http://www.golem.de/0807/61430-kf_prod.jpg" HSPACE="10" alt="Kickfire-Appliance"><table border="0" cellspacing="0" cellpadding="0" align="center"><tr><td class="xsmall">Kickfire-Appliance</td></tr></table></TD></TR></TABLE><BR clear=all>
+Das Unternehmen bietet einen Datenbank-Appliance an, der auf Linux 
+und MySQL basiert. Dieser arbeitet mit einem speziellen SQL-Chip, der mit gro&szlig;em On-Board-Speicher von bis zu 256 GByte ausgestattet ist, auf den dieser ohne Umweg &uuml;ber Register oder Cache zugreifen kann. Die Daten werden dabei spaltenweise in komprimierter Form abgelegt, was die zu &uuml;bertragende Datenmenge bei Abfragen um bis zu 95 Prozent reduzieren soll. Zudem werden automatisch Indizes angelegt und es kommt ein auf den SQL-Chip optimierter Query-Optimierer zum Einsatz.
+
+<BR><BR>
+Damit erreicht des Kickfire-Modell 2400 im TPC-H-Benchmark
+54,895 QphH@300GB (Abfragen pro Stunde bei einer 300 GByte gro&szlig;en Datenbank) bei einem Preis von 0,89 US-Dollar je QphH@300GB. Die Gesamtkosten f&uuml;r ein entsprechendes System sollen betrachtet &uuml;ber einen Zeitraum von drei Jahren bei knapp 49.000 US-Dollar liegen.
+<BR><BR>
+Eine Betaversion des Kickfire Database Appliance soll ab 14. Oktober f&uuml;r Tests angefordert werden k&ouml;nnen.<!--/content-->  
+
+<a href="/sonstiges/impressum.html" rel="nofollow">(ji)</a>
+</div>
+
+
+<!--
+<table border="0" cellpadding="4" cellspacing="0" style="border: solid 1px #4a5a74" width="480">
+        <tr>
+                <td valign="top" width="100%"><span class="xsmall">
+-->     
+<!-- 
+                <a href="">Kickfire beschleunigt MySQL</a></span></td>
+-->     
+<!--
+                <a href="/0807/61430.html">Kickfire beschleunigt MySQL</a></span></td>            
+-->
+<!--
+                <td valign="top"><span class="xsmall"><b>Seiten</b></span></td>
+  <td valign="top" class="navbgoff"><span
+class="xsmallb"><b>1</b></span></td>                 
+        </tr>
+</table><br>  
+-->
+
+<!-- KOMMENTARE -->
+
+<div id="contentad2" style="clear:both; margin-top: 8px;" align="center"><!-- begin ad tag -->
+<script language="JavaScript" type="text/javascript">
+document.write('<script language="JavaScript" src="http://ad.doubleclick.net/adj/golem/artikel;kw=wirtschaft,apps,mysql,datenbank,entscheider;tile=4;' + n_pbt + ';' + p_gwp1 + ';' + p_gwp2 + ';' + p_gwp3 + ';' + p_gwp4 + ';' + p_gwp5 + ';sz=480x60;ord=' + GWP_ord + '?" type="text/javascript"></scr' + 'ipt>');
+</script>
+<noscript><a href="http://ad.doubleclick.net/jump/golem/artikel;kw=wirtschaft,apps,mysql,datenbank,entscheider;tile=4;sz=480x60;ord=1217494358?" target="_blank"><img src="http://ad.doubleclick.net/ad/golem/artikel;kw=wirtschaft,apps,mysql,datenbank,entscheider;tile=4;sz=480x60;ord=1217494358?" border="0" alt=""></a></noscript>
+<!-- End ad tag -->
+</div>
+<!-- google_ad_section_end -->
+<!-- FORUM -->
+<table border="0" cellpadding="2" cellspacing="0" width="480" style="margin-top: 8px; margin-bottom: 16px; clear: both;">
+   <tr>
+      <td><h5 class="leftcolhead"><a href="http://forum.golem.de/read.php?26817" class="rlink"><b>Kommentar-&Uuml;bersicht</b></a> / <a href="http://forum.golem.de/post.php?26817" class="rlink"><b>Kommentieren</b></a>:</h5></td>
+   </tr>
+   <tr>
+      <td><img src="/_img/no.gif" width="476" height="2" alt="" border="0"></td>
+   </tr>
+         <tr>
+      <td valign="top" class="forumentry" style="padding-left:6px;">
+         <a href="http://forum.golem.de/read.php?26817,1402608,1402647#msg-1402647" class="nobold">Re: 95 Prozent Datenreduzierung</a> (hhhhh, 31.07.08 10:25)
+      </td>
+   </tr>
+            <tr>
+      <td valign="top" class="forumentry" style="padding-left:6px;">
+         <a href="http://forum.golem.de/read.php?26817,1402573,1402620#msg-1402620" class="nobold">Re: SQL Chip</a> (Karl-Heinz, 31.07.08 10:07)
+      </td>
+   </tr>
+            <tr>
+      <td valign="top" class="forumentry" style="padding-left:6px;">
+         <a href="http://forum.golem.de/read.php?26817,1402573,1402617#msg-1402617" class="nobold">Re: SQL Chip</a> (Lextar, 31.07.08 10:05)
+      </td>
+   </tr>
+            <tr>
+      <td valign="top" class="forumentry" style="padding-left:6px;">
+         <a href="http://forum.golem.de/read.php?26817,1402608,1402608#msg-1402608" class="nobold">95 Prozent Datenreduzierung</a> (Tyler Durden, 31.07.08 10:00)
+      </td>
+   </tr>
+            <tr>
+      <td valign="top" class="forumentry" style="padding-left:6px;">
+         <a href="http://forum.golem.de/read.php?26817,1402573,1402604#msg-1402604" class="nobold">Re: SQL Chip</a> (vielschreiber, 31.07.08 09:56)
+      </td>
+   </tr>
+      </table>
+<!-- / FORUM --><!--
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+         xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
+<rdf:Description
+    rdf:about="http://www.golem.de/0807/61430.html"
+    trackback:ping="http://www.golem.de/trackback/61430"
+    dc:title="Kickfire beschleunigt MySQL"
+    dc:identifier="http://www.golem.de/0807/61430.html"
+    dc:creator="Golem.de" />
+</rdf:RDF>
+-->
+<!-- TRACKBACKS -->
+<table border="0" cellpadding="2" cellspacing="0" width="480" style="clear: both; margin-bottom:12px;">
+   <tr>
+      <td><h5 class="leftcolhead"><a href="http://www.golem.de/trackback/61430" class="rlink"><b>Trackback:</b></a></h5></td>
+   </tr>
+   <tr><td width="476"><img src="/_img/no.gif" width="476" height="2" alt="" border="0"></td></tr>
+   </table>
+<!-- VERWANDTE LINKS / LINKS ZUM ARTIKEL -->
+
+<table border="0" cellpadding="0" cellspacing="0" width="480" style="margin-bottom: 12px;">
+	<tr>
+		<td width="234" valign="top">
+<h5 class="leftcolhead">Links zum Artikel</h5>
+<div style="margin-bottom: 20px;">
+<p class="lmtext" style="margin-top: 6px;">
+    <a href="http://www.kickfire.com" class="lm" target="_blank">Kickfire (.com)</a>
+</p>
+</div><table cellpadding="0" cellspacing="0" border="0" width="100%" style="border:1px solid #4A5A74; border-top: none;">
+<tr style="background-color:#4A5A74;">
+   <td style="font-family: Verdana, Geneva, Lucida, Lucidux, Lucida Sans, Arial, Helvetica, sans-serif; font-size: 0.65em; font-weight: bold; color: white; text-transform: uppercase; padding: 4px; padding-left: 3px;">Mehr zum Thema</td>
+   <td style="font-family: Verdana, Geneva, Lucida, Lucidux, Lucida Sans, Arial, Helvetica, sans-serif; font-size: 0.65em; font-weight: bold; color: white; text-transform: uppercase; padding: 4px; text-align:center;"><a class="rlink" style="font-weight:bold;" href="http://www.golem.de/0402/29672.html">RSS</a></td>
+   <td style="font-family: Verdana, Geneva, Lucida, Lucidux, Lucida Sans, Arial, Helvetica, sans-serif; font-size: 0.65em; font-weight: bold; color: white; text-transform: uppercase; padding: 4px; text-align:center;"><a class="rlink" style="font-weight:bold;" href="http://www.golem.de/0402/29672.html">ATOM</a></td>
+</tr>
+<tr>
+   <td class="forumentry" style="padding-left:2px; background-color:#E6E6E6; border: 1px solid #FFFFFF;"><a href="/wirtschaft/">Wirtschaft</a></td>
+   <td style="text-align:center; background-color:#FFD59A; border: 1px solid #FFFFFF;"><a class="lm" href="http://rss.golem.de/rss.php?feed=RSS2.0&amp;tp=wirtschaft">2.0</a></td>
+   <td style="text-align:center; background-color:#C7D8EB; border: 1px solid #FFFFFF;"><a class="lm" href="http://rss.golem.de/rss.php?feed=ATOM1.0&amp;tp=wirtschaft">1.0</a></td>
+</tr>
+<tr>
+   <td class="forumentry" style="padding-left:2px; background-color:#E6E6E6; border: 1px solid #FFFFFF;"><a href="/desktop-applikationen/">Applikationen</a></td>
+   <td style="text-align:center; background-color:#FFD59A; border: 1px solid #FFFFFF;"><a class="lm" href="http://rss.golem.de/rss.php?feed=RSS2.0&amp;tp=apps">2.0</a></td>
+   <td style="text-align:center; background-color:#C7D8EB; border: 1px solid #FFFFFF;"><a class="lm" href="http://rss.golem.de/rss.php?feed=ATOM1.0&amp;tp=apps">1.0</a></td>
+</tr>
+<tr>
+   <td class="forumentry" style="padding-left:2px; background-color:#E6E6E6; border: 1px solid #FFFFFF;"><a href="/specials/serverapps/">Server-Applikationen</a></td>
+   <td style="text-align:center; background-color:#FFD59A; border: 1px solid #FFFFFF;"><a class="lm" href="http://rss.golem.de/rss.php?feed=RSS2.0&amp;ms=serverapps">2.0</a></td>
+   <td style="text-align:center; background-color:#C7D8EB; border: 1px solid #FFFFFF;"><a class="lm" href="http://rss.golem.de/rss.php?feed=ATOM1.0&amp;ms=serverapps">1.0</a></td>
+</tr>
+<tr>
+   <td class="forumentry" style="padding-left:2px; background-color:#E6E6E6; border: 1px solid #FFFFFF;"><a href="/specials/datenbank/">Datenbank</a></td>
+   <td style="text-align:center; background-color:#FFD59A; border: 1px solid #FFFFFF;"><a class="lm" href="http://rss.golem.de/rss.php?feed=RSS2.0&amp;ms=datenbank">2.0</a></td>
+   <td style="text-align:center; background-color:#C7D8EB; border: 1px solid #FFFFFF;"><a class="lm" href="http://rss.golem.de/rss.php?feed=ATOM1.0&amp;ms=datenbank">1.0</a></td>
+</tr>
+<tr>
+   <td class="forumentry" style="padding-left:2px; background-color:#E6E6E6; border: 1px solid #FFFFFF;"><a href="/specials/mysql/">MySQL</a></td>
+   <td style="text-align:center; background-color:#FFD59A; border: 1px solid #FFFFFF;"><a class="lm" href="http://rss.golem.de/rss.php?feed=RSS2.0&amp;ms=mysql">2.0</a></td>
+   <td style="text-align:center; background-color:#C7D8EB; border: 1px solid #FFFFFF;"><a class="lm" href="http://rss.golem.de/rss.php?feed=ATOM1.0&amp;ms=mysql">1.0</a></td>
+</tr>
+<tr>
+   <td class="forumentry" style="padding-left:2px; background-color:#E6E6E6; border: 1px solid #FFFFFF;">Alle News</td>
+   <td style="text-align:center; background-color:#FFD59A; border: 1px solid #FFFFFF;"><a class="lm" href="http://rss.golem.de/rss.php?feed=RSS2.0">2.0</a></td>
+   <td style="text-align:center; background-color:#C7D8EB; border: 1px solid #FFFFFF;"><a class="lm" href="http://rss.golem.de/rss.php?feed=ATOM1.0">1.0</a></td>
+</tr>
+</table>		</td>
+		<td width="12" bgcolor="#ffffff"><img src="/_img/no.gif" width="12" height="2" alt="" border="0"></td>
+		<td width="234" valign="top">
+<h5 class="leftcolhead">Bookmarks:</h5>
+<div class="small" style="margin: 3px;">
+<a href="http://ads.golem.de/nl.php?id=bm_mrwong&amp;qsa=1&amp;action=addurl&amp;bm_url=http%3A%2F%2Fwww.golem.de%2F0807%2F61430.html&amp;bm_description=Kickfire+beschleunigt+MySQL" target="_blank" rel="nofollow"><img src="/_img/link_wong.png" alt="Artikel bei Mister Wong ablegen" title="Artikel bei Mister Wong ablegen" width="16" height="16" border="0"></a>
+<a href="http://ads.golem.de/nl.php?id=bm_yigg&amp;qsa=1&amp;exturl=http%3A%2F%2Fwww.golem.de%2F0807%2F61430.html&amp;exttitle=Kickfire+beschleunigt+MySQL" target="_blank" rel="nofollow"><img src="/_img/link_yigg.png" alt="Artikel bei Yigg ablegen" title="Artikel bei Yigg ablegen" width="16" height="16" border="0"></a>
+<a href="http://ads.golem.de/nl.php?id=bm_linkarena&amp;qsa=1&amp;url=http%3A%2F%2Fwww.golem.de%2F0807%2F61430.html&amp;title=Kickfire+beschleunigt+MySQL" target="_blank" rel="nofollow"><img src="/_img/link_linkarena.png" alt="Artikel bei Linkarena ablegen" title="Artikel bei Linkarena ablegen" width="16" height="16" border="0"></a>
+<a href="http://ads.golem.de/nl.php?id=bm_google&amp;qsa=1&amp;op=add&amp;hl=de&amp;bkmk=http%3A%2F%2Fwww.golem.de%2F0807%2F61430.html&amp;title=Kickfire+beschleunigt+MySQL" target="_blank" rel="nofollow"><img src="/_img/link_google.png" alt="Artikel bei Google ablegen" title="Artikel bei Google ablegen" width="16" height="16" border="0"></a>
+<a href="http://ads.golem.de/nl.php?id=bm_delicious&amp;qsa=1&amp;url=http%3A%2F%2Fwww.golem.de%2F0807%2F61430.html&amp;title=Kickfire+beschleunigt+MySQL" target="_blank" rel="nofollow"><img src="/_img/link_delicious.png" alt="Artikel bei del.icio.us ablegen" title="Artikel bei del.icio.us ablegen" width="16" height="16"  border="0"></a>
+<a href="http://ads.golem.de/nl.php?id=bm_webnews&amp;qsa=1&amp;url=http%3A%2F%2Fwww.golem.de%2F0807%2F61430.html&amp;title=Kickfire+beschleunigt+MySQL" target="_blank" rel="nofollow"><img src="/_img/link_webnews.png" alt="Artikel bei Webnews ablegen" title="Artikel bei Webnews ablegen" width="16" height="16" border="0"></a>
+</div>
+<h5 class="leftcolhead">Verwandte Artikel</h5>
+<div style="margin-bottom: 20px;">
+<p class="lmtext" style="margin-top: 6px;">
+    <a href="http://www.golem.de/0807/61290.html" class="lm">Sun bietet Web-Stack f&uuml;r Unternehmen an</a>
+</p>
+<p class="lmtext">
+    <a href="http://www.golem.de/0807/61257.html" class="lm">Drizzle will MySQL f&uuml;r Web-Applikationen neu erfinden</a>
+</p>
+<p class="lmtext">
+    <a href="http://www.golem.de/0807/61131.html" class="lm">MySQL 5.1 fast fertig - oder doch nicht?</a>
+</p>
+<p class="lmtext">
+    <a href="http://www.golem.de/0807/61100.html" class="lm">Freie Replikationserweiterung f&uuml;r PostgreSQL</a>
+</p>
+<p class="lmtext">
+    <a href="http://www.golem.de/0807/60814.html" class="lm">SAP-Chef Kagermann: &quot;Oracle ist gut f&uuml;r uns&quot;</a>
+</p>
+</div>		</td>
+	</tr>
+</table>
+
+<!--
+<table cellspacing="0" cellpadding="0" border="0" width="480">
+<tr>
+<td valign="top" width="12"><img src="/_img/anzeige.gif" alt="ANZEIGE" width="12" height="60" border="0"></td>
+<td valign="top" border="0" width="468" height="60">
+<table cellspacing="0" cellpadding="0" border="0" width="468" height="60"><tr><td valign="top" border="0" width="468" height="60">
+</td></tr></table>
+</td>
+</tr>
+</table>
+-->
+<div style="margin-top: 10px; clear: both;" align="center">
+<script type="text/javascript" src="http://a.ligatus.de/?ids=6946&t=js"></script>
+
+</div>
+<!-- STANDARDS/FOOTER -->
+
+<h5 class="leftcolhead">&nbsp;</h5>
+
+<p class="footertext">
+<a href="http://www.golem.de/audio-video/">Audio/Video</a> | <a href="http://www.golem.de/desktop-applikationen/">Desktop-Applikationen</a> | <a href="http://www.golem.de/foto/">Foto</a> | <a href="http://www.golem.de/games/">Games</a> | <a href="http://www.golem.de/handy/">Handy</a> | <a href="http://www.golem.de/internet/">Internet</a> | <a href="http://www.golem.de/mobil/">Mobil</a> | <a href="http://www.golem.de/oss/">OSS</a> | <a href="http://www.golem.de/pc-hardware/">PC-Hardware</a> | <a href="http://www.golem.de/politik-recht/">Politik/Recht</a> | <a href="http://www.golem.de/security/">Security</a> | <a href="http://www.golem.de/software-entwicklung/">Software-Entwicklung</a> | <a href="http://www.golem.de/wirtschaft/">Wirtschaft</a> | <a href="http://www.golem.de/wissenschaft/">Wissenschaft</a>
+</p>
+
+<p class="footertext">
+<a href="http://www.golem.de/ticker/">Ticker</a> | <a href="http://www.golem.de/0402/29672.html">RSS</a> | <a href="http://forum.golem.de">Forum</a> | <a href="http://www.golem.de/0407/32162.html">Zusatz-Dienste</a> | <a href="http://markt.golem.de">Markt</a> | <a href="http://jobs.golem.de">Jobs</a> | <a href="http://events.golem.de">IT-Events</a>
+</p>
+
+<!--<p class="footertext">
+<a href="http://www.golem.de/a.html">Archiv</a> | <a href="http://forum.golem.de/phorum/index.php">Forum</a> | <a href="http://www.golem.de/pda/index1.html">Golem2Go</a> | <a href="http://www.golem.de/0202/12315.html">News-Feeds</a> | <a href="http://markt.golem.de">Markt&uuml;bersicht</a> | <a href="http://www.golem.de/events/">IT-Events</a>
+</p>-->
+
+<p class="footertext">
+<a href="http://www.golem.de">Home</a> | <a href="http://www.golem.de/sonstiges/impressum.html">Impressum</a> | <a href="http://www.golem.de/sonstiges/werbung.html">Werbung</a> | <a href="http://www.golem.de/microsite/freugol/index.html">Freunde</a> 
+</p>
+
+<p class="footertext">
+Copyright &copy; 1997 - 2008 <a href="http://www.golem.de">Golem.de</a>. Alle Rechte vorbehalten.
+</p>
+
+<p>&nbsp;</p>
+                </td>
+                <td class="midbg" bgcolor="white"><img src="/_img/no.gif" width="11" 
+height="1" alt="" border="0"></td>
+                <!-- (td rowspan 2) -->
+                <!-- (td rowspan 2) -->
+                <!-- (td rowspan 2) -->
+        </tr>
+        <tr>
+                <td colspan="5" bgcolor="white"><img src="/_img/no.gif" width="509" 
+height="1" alt="" border="0"></td>
+                <td class="midbg" bgcolor="white"><img src="/_img/no.gif" width="11" 
+height="1" alt="" border="0"></td>
+                <td colspan="3" bgcolor="#e8e8e8"><img src="/_img/no.gif" alt="" 
+width="252" height="11" border="0"></td>
+        </tr> 
+        
+</table></div>
+<div style="position: absolute; left: 772px; top: 0px;">
+</div>
+<img src="http://h1043340.serverkompetenz.net/cpx.php?class=1&amp;aid=61430&amp;page=1&amp;ts=1217494358" alt="" width="1" height="1" />
+
+</body>
+</html>
+

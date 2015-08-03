@@ -1,0 +1,8 @@
+Mediawiki test files
+====================
+
+The tests for the mediawiki parser are available in their SVN and can be
+extracted from this [1]_ file. To extract the test files, run the script
+`./extractParserTests.php`.
+
+.. [1]: http://svn.wikimedia.org/viewvc/mediawiki/trunk/phase3/maintenance/parserTests.txt

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="references_with_special_chars">
+    <title>References with special chars</title>
+    <para>For more information, visit <ulink url="http://phpvikinger.org/">http://phpvikinger.org/</ulink> , where you will also find information on how to register and some links to <ulink url="http://flickr.com">pictures</ulink> of last year's PHP Vikinger.</para>
+  </section>
+</article>

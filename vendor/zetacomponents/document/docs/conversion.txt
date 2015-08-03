@@ -1,0 +1,83 @@
+====================
+Document conversions
+====================
+
+This document aims to document a list of semantic markup elements, which can
+not be converted into one or another markup language, so you have to expect
+loss in the semantic document information during conversions.
+
+Source RST
+==========
+
+Conversion loss, when the source is a RST document.
+
+Docbook
+-------
+
+- Strong emphasis
+
+  There is no strong emphasis markup in Docbook, so we use <emphasis
+  role="strong"/> for this, while the role may be lost during further
+  conversions.
+
+- Table colspan
+
+  Table colspan are available in Docbook, but the markup is rather unintuitive
+  and hard to read. These information may be lost during further conversions.
+
+- Footnote enumeration
+
+  In docbook footnote do not have any user assigned enumeration, while in RST
+  there may be multiple footnotes with the same (labeled) user assigned
+  number. This information is completely lost during conversion.
+
+- Substitutions
+  
+  The substitution references are not preserved, but just substituted during
+  the conversion process. The information about the parts which were
+  substituted is completely lost.
+
+- Line blocks / literal blocks
+ 
+  Line blocks and literal blocks are converted to <literalblock> elements,
+  only differing by the given class attribute.
+
+- Bullet list tokens
+
+  The information which kind of bullet list token has been used is completely
+  omitted during the conversion.
+
+XHTML
+-----
+
+- Headers
+ 
+  XHtml only allows a specification of header levels from 1 to 6. All headers
+  with a depth of ≥ 6 contain a class attribute specifying their real depth.
+
+- Blockquote annotations
+
+  There is no XHtml element for blockquote annotations, so that they are
+  transformed to <div class="annotation"/> elements containing <cite>
+  elements, which may be considered as a citation source. This information may
+  be lost during further processing. The cite attribute of blockquotes only
+  accept URIs. 
+
+- Bullet list & ordered list types
+
+  XHtml strict does not allow to specify the type of bullet lists or ordered
+  lists, so that this information is lost during conversion.
+
+- Footnotes
+
+  There is no dedicated XHtml element for footnotes, so that footnotes are
+  referenced inside the text by internal links with the class "footnote", and
+  the actual footnotes are added below the document in lists of the class
+  footnote with the proper reference targets.
+
+- Line blocks
+
+  Line blocks are transformed into paragraphs, where the lines are seperated
+  by <br /> elements. This causes the right formatting, but may lose semantic
+  information.
+

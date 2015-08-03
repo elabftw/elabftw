@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="parsed_directive_contents">
+    <title>Parsed directive contents</title>
+    <para>Custom "paragraph" directive reparsing tests</para>
+    <para>:( x2</para>
+    <para>That's instructive :)</para>
+    <para>Should we have it on the PHP-General list as our welcome message?</para>
+    <para>:)</para>
+    <para>I guess my only comment would be 'took you long enough.'</para>
+    <para>:)</para>
+    <para>Yeah, php|cruise offered many tough decisions: jet skiing or PHP &amp; OOP, etc.</para>
+    <para>:D</para>
+    <para>I concur:</para>
+    <para>:(</para>
+    <para>@Foo: Yeah, Bar is definitely on the Blubb map :)</para>
+    <para>;-(</para>
+  </section>
+</article>

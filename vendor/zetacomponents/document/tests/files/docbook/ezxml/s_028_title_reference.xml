@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <sectioninfo/>
+    <title ID="title_references">Title references</title>
+    <para>The text contains references to the <link linked="subtitle">Subtitle</link> and even to the document title: <link linked="title_references">Title references</link>.</para>
+    <section>
+      <sectioninfo/>
+      <title ID="subtitle">Subtitle</title>
+      <para>This refernces, like: <link linked="subtitle">Subtitle</link> may occur multiple times, of course.</para>
+    </section>
+  </section>
+</article>

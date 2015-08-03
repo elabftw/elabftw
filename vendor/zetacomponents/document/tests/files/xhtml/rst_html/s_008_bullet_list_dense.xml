@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <sectioninfo>
+      <title>Dense bullet list</title>
+    </sectioninfo>
+    <section>
+      <title><anchor ID="dense_bullet_list"/>Dense bullet list</title>
+      <itemizedlist>
+        <listitem>
+          <para>This is a special case for bullet lists, where</para>
+          <itemizedlist>
+            <listitem>
+              <para>And also wth some other on the same level.</para>
+            </listitem>
+            <listitem>
+              <para>only one newline is required, but still should work, even with multiline paragraphs</para>
+            </listitem>
+          </itemizedlist>
+        </listitem>
+        <listitem>
+          <para>And they may of course also be on a higher level without additional newlines.</para>
+        </listitem>
+      </itemizedlist>
+      <para>This paragraph is obviously not part of the list.</para>
+    </section>
+  </section>
+</article>

@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <para><ulink url="link">link</ulink> <ulink url="MyBigPage">Go to my page</ulink> <ulink url="http://www.wikicreole.org/">http://www.wikicreole.org/</ulink> <ulink url="http://www.rawlink.org/">http://www.rawlink.org/</ulink>, <ulink url="http://www.another.rawlink.org">http://www.another.rawlink.org</ulink> <ulink url="http://www.wikicreole.org/">Visit the <ulink url="WikiCreole">WikiCreole</ulink> website</ulink> <ulink url="Weird Stuff"><emphasis Role="strong">Weird</emphasis> <emphasis>Stuff</emphasis></ulink> <ulink url="Ohana:WikiFamily">Ohana:WikiFamily</ulink></para>
+</article>

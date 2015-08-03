@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <sectioninfo>
+      <title>Test document</title>
+    </sectioninfo>
+    <section>
+      <title>Tables test</title>
+      <table>
+        <tbody>
+          <row>
+            <entry>
+              <para>Hello</para>
+            </entry>
+            <entry>
+              <para>World!</para>
+            </entry>
+          </row>
+        </tbody>
+      </table>
+      <table>
+        <tbody>
+          <row>
+            <entry>
+              <para>Hello</para>
+            </entry>
+            <entry>
+              <para>World 1!</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>Hello</para>
+            </entry>
+            <entry>
+              <para>World 2!</para>
+            </entry>
+          </row>
+        </tbody>
+      </table>
+      <table>
+        <tbody>
+          <row>
+            <entry>
+              <para>Hello</para>
+            </entry>
+            <entry>
+              <para>World 1!</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>Hello</para>
+            </entry>
+            <entry>
+              <para>World 2!</para>
+            </entry>
+          </row>
+          <row>
+            <entry>
+              <para>Hello</para>
+            </entry>
+            <entry>
+              <para>World 3!</para>
+            </entry>
+          </row>
+        </tbody>
+      </table>
+    </section>
+  </section>
+</article>

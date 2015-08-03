@@ -1,0 +1,222 @@
+<?php
+
+return array (
+  0 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 5,
+     'content' => 'John Doe wrote',
+     'line' => 1,
+     'position' => 1,
+     'escaped' => false,
+  )),
+  1 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '::',
+     'line' => 1,
+     'position' => 15,
+     'escaped' => false,
+  )),
+  2 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 2,
+     'content' => '
+',
+     'line' => 1,
+     'position' => 17,
+     'escaped' => false,
+  )),
+  3 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 2,
+     'content' => '
+',
+     'line' => 2,
+     'position' => 1,
+     'escaped' => false,
+  )),
+  4 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '>>',
+     'line' => 3,
+     'position' => 1,
+     'escaped' => false,
+  )),
+  5 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 1,
+     'content' => ' ',
+     'line' => 3,
+     'position' => 3,
+     'escaped' => false,
+  )),
+  6 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 5,
+     'content' => 'Great idea!',
+     'line' => 3,
+     'position' => 4,
+     'escaped' => false,
+  )),
+  7 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 2,
+     'content' => '
+',
+     'line' => 3,
+     'position' => 15,
+     'escaped' => false,
+  )),
+  8 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '>',
+     'line' => 4,
+     'position' => 1,
+     'escaped' => false,
+  )),
+  9 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 2,
+     'content' => '
+',
+     'line' => 4,
+     'position' => 2,
+     'escaped' => false,
+  )),
+  10 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '>',
+     'line' => 5,
+     'position' => 1,
+     'escaped' => false,
+  )),
+  11 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 1,
+     'content' => ' ',
+     'line' => 5,
+     'position' => 2,
+     'escaped' => false,
+  )),
+  12 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 5,
+     'content' => 'Why didn',
+     'line' => 5,
+     'position' => 3,
+     'escaped' => false,
+  )),
+  13 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '\'',
+     'line' => 5,
+     'position' => 11,
+     'escaped' => false,
+  )),
+  14 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 5,
+     'content' => 't I think of that?',
+     'line' => 5,
+     'position' => 12,
+     'escaped' => false,
+  )),
+  15 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 2,
+     'content' => '
+',
+     'line' => 5,
+     'position' => 30,
+     'escaped' => false,
+  )),
+  16 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 2,
+     'content' => '
+',
+     'line' => 6,
+     'position' => 1,
+     'escaped' => false,
+  )),
+  17 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 5,
+     'content' => 'You just did!',
+     'line' => 7,
+     'position' => 1,
+     'escaped' => false,
+  )),
+  18 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 1,
+     'content' => '  ',
+     'line' => 7,
+     'position' => 14,
+     'escaped' => false,
+  )),
+  19 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => ';',
+     'line' => 7,
+     'position' => 16,
+     'escaped' => false,
+  )),
+  20 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => '-',
+     'line' => 7,
+     'position' => 17,
+     'escaped' => false,
+  )),
+  21 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 4,
+     'content' => ')',
+     'line' => 7,
+     'position' => 18,
+     'escaped' => false,
+  )),
+  22 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 2,
+     'content' => '
+',
+     'line' => 7,
+     'position' => 19,
+     'escaped' => false,
+  )),
+  23 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 2,
+     'content' => '
+',
+     'line' => 8,
+     'position' => 1,
+     'escaped' => false,
+  )),
+  24 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 2,
+     'content' => '
+',
+     'line' => 8,
+     'position' => 1,
+     'escaped' => false,
+  )),
+  25 => 
+  ezcDocumentRstToken::__set_state(array(
+     'type' => 6,
+     'content' => NULL,
+     'line' => 8,
+     'position' => 1,
+     'escaped' => false,
+  )),
+);
+

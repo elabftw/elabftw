@@ -1,0 +1,30 @@
+<?php
+
+return ezcDocumentWikiDocumentNode::__set_state(array(
+   'line' => 3,
+   'position' => 1,
+   'nodes' => 
+  array (
+    0 => 
+    ezcDocumentWikiPageBreakNode::__set_state(array(
+       'line' => 1,
+       'position' => 0,
+       'nodes' => 
+      array (
+      ),
+       'token' => 
+      ezcDocumentWikiPageBreakToken::__set_state(array(
+         'content' => '----',
+         'line' => 1,
+         'position' => 0,
+      )),
+    )),
+  ),
+   'token' => 
+  ezcDocumentWikiEndOfFileToken::__set_state(array(
+     'content' => NULL,
+     'line' => 3,
+     'position' => 1,
+  )),
+));
+

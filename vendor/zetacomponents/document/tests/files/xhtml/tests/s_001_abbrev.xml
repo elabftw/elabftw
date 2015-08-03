@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <sectioninfo>
+      <title>Test document</title>
+    </sectioninfo>
+    <section>
+      <title>Spaces test</title>
+      <para>Some <abbrev>abbreviation</abbrev>.</para>
+    </section>
+  </section>
+</article>

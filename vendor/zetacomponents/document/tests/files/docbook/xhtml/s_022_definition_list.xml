@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="definition_lists">
+    <sectioninfo/>
+    <title>Definition lists</title>
+    <variablelist>
+      <varlistentry>
+        <term>what</term>
+        <listitem>
+          <para>Definition lists associate a term with a definition.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>how</term>
+        <listitem>
+          <para>The term is a one-line phrase, and the definition is one or more paragraphs or body elements, indented relative to the term.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>term 1</term>
+        <listitem>
+          <para>Definition 1.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>term 2</term>
+        <listitem>
+          <para>Definition 2, paragraph 1.</para>
+          <para>Definition 2, paragraph 2.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>term 3 : classifier</term>
+        <listitem>
+          <para>Definition 3.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>term 4 : classifier one : classifier two</term>
+        <listitem>
+          <para>Definition 4.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </section>
+</article>

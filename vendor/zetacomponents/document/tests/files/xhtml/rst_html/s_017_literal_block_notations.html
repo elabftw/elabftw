@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta name="generator" content="eZ Components; http://ezcomponents.org"/>
+    <title>Various type sof literal blocks</title>
+  </head>
+  <body>
+    <h1>
+      <a name="various_type_sof_literal_blocks">Various type sof literal blocks</a>
+    </h1>
+    <p>Paragraph:</p>
+    <pre>Literal block, where \ are preserved.
+
+</pre>
+    <p>Paragraph: </p>
+    <pre>Literal block
+
+Which may also contain multiple lines,
+            where
+                    indentation
+      should be maintained.
+
+</pre>
+    <p>Paragraph:</p>
+    <pre>Literal block
+
+    Do handle all types of special characters, just as they are, like those tokenizer regular expressions:
+
+    array (
+      1 =&gt; '(\A(?P&lt;value&gt;[ \t]+))S',
+      2 =&gt; '(\A(?P&lt;value&gt;\r\n|\r|\n))S',
+      4 =&gt; '(\A(?P&lt;value&gt;([!"#$%&amp;\'()*+,./:;&lt;=&gt;?@[\]^_`{|}~-]|\xe2\x80\xa2|\xe2\x80\xa3|\xe2\x81\x83)\2*))S',
+      3 =&gt; '(\A(?P&lt;value&gt;\\))S',
+      5 =&gt; '(\A(?P&lt;value&gt;(?: [^`*_\\[\]|()"\':.\r\n\t ]|[^`*_\\[\]|()"\':.\r\n\t ])+))S',
+    )
+
+</pre>
+    <p>John Doe wrote:</p>
+    <pre>&gt;&gt; Great idea!
+&gt;
+&gt; Why didn't I think of that?
+
+</pre>
+    <p>You just did!  ;-)</p>
+  </body>
+</html>

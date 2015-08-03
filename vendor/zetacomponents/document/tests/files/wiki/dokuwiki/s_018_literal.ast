@@ -1,0 +1,131 @@
+<?php
+
+return ezcDocumentWikiDocumentNode::__set_state(array(
+   'line' => 5,
+   'position' => 1,
+   'nodes' => 
+  array (
+    0 => 
+    ezcDocumentWikiParagraphNode::__set_state(array(
+       'line' => 3,
+       'position' => 37,
+       'nodes' => 
+      array (
+        0 => 
+        ezcDocumentWikiTextNode::__set_state(array(
+           'line' => 1,
+           'position' => 1,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiTextLineToken::__set_state(array(
+             'content' => 'To let the parser ignore an area completely (ie. do no formatting on it),
+enclose the area either with ',
+             'line' => 1,
+             'position' => 1,
+          )),
+        )),
+        1 => 
+        ezcDocumentWikiMonospaceNode::__set_state(array(
+           'line' => 2,
+           'position' => 30,
+           'nodes' => 
+          array (
+            0 => 
+            ezcDocumentWikiTextNode::__set_state(array(
+               'line' => 2,
+               'position' => 32,
+               'nodes' => 
+              array (
+              ),
+               'token' => 
+              ezcDocumentWikiTextLineToken::__set_state(array(
+                 'content' => 'nowiki',
+                 'line' => 2,
+                 'position' => 32,
+              )),
+            )),
+          ),
+           'token' => 
+          ezcDocumentWikiMonospaceToken::__set_state(array(
+             'content' => '\'\'',
+             'line' => 2,
+             'position' => 30,
+          )),
+        )),
+        2 => 
+        ezcDocumentWikiTextNode::__set_state(array(
+           'line' => 2,
+           'position' => 40,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiWhitespaceToken::__set_state(array(
+             'content' => ' tags or even simpler, with double
+percent signs ',
+             'line' => 2,
+             'position' => 40,
+          )),
+        )),
+        3 => 
+        ezcDocumentWikiMonospaceNode::__set_state(array(
+           'line' => 3,
+           'position' => 15,
+           'nodes' => 
+          array (
+            0 => 
+            ezcDocumentWikiInlineLiteralNode::__set_state(array(
+               'line' => 3,
+               'position' => 17,
+               'nodes' => 
+              array (
+              ),
+               'token' => 
+              ezcDocumentWikiInlineLiteralToken::__set_state(array(
+                 'content' => '%%',
+                 'line' => 3,
+                 'position' => 17,
+              )),
+            )),
+          ),
+           'token' => 
+          ezcDocumentWikiMonospaceToken::__set_state(array(
+             'content' => '\'\'',
+             'line' => 3,
+             'position' => 15,
+          )),
+        )),
+        4 => 
+        ezcDocumentWikiTextNode::__set_state(array(
+           'line' => 3,
+           'position' => 21,
+           'nodes' => 
+          array (
+          ),
+           'token' => 
+          ezcDocumentWikiSpecialCharsToken::__set_state(array(
+             'content' => ', like <nowiki>.',
+             'line' => 3,
+             'position' => 21,
+          )),
+        )),
+      ),
+       'token' => 
+      ezcDocumentWikiNewLineToken::__set_state(array(
+         'content' => '
+',
+         'line' => 3,
+         'position' => 37,
+      )),
+    )),
+  ),
+   'token' => 
+  ezcDocumentWikiEndOfFileToken::__set_state(array(
+     'content' => NULL,
+     'line' => 5,
+     'position' => 1,
+  )),
+));
+

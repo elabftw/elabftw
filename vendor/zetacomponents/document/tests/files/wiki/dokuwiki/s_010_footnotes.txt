@@ -1,0 +1,1 @@
+You can add footnotes ((This is a footnote)) by using double parentheses.

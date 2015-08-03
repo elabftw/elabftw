@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <sectioninfo>
+      <abstract>
+        <para>Personal homepage of Kore Nordmann. Contains information about his mainly PHP related projects with some political rants in his blog.</para>
+      </abstract>
+      <author>Kore Nordmann</author>
+      <date>Sat, 28 Jun 2008 21:17:17 +0200</date>
+      <title>Detecting URLs with PCRE</title>
+      <author>Kore Nordmann</author>
+      <date>Sat, 28 Jun 2008 21:17:17 +0200</date>
+      <copyright>CC by-sa</copyright>
+      <title>Detecting URLs with PCRE - Kore Nordmann - PHP / Projects / Politics</title>
+    </sectioninfo>
+    <para><ulink url="/.html">Start</ulink> » <ulink url="/blog.html">Blog</ulink> » <ulink url="/blog/detect_url_in_texts.html">Detecting URLs with PCRE</ulink></para>
+    <para><ulink url="/blog/detect_url_in_texts.rdf"> RDF </ulink> | <ulink url="/blog/detect_url_in_texts.html"> HTML </ulink> | <ulink url="/blog/detect_url_in_texts.txt"> Text </ulink> | <ulink url="/blog/detect_url_in_texts.rss"> Feed </ulink></para>
+    <section>
+      <title>Detecting URLs with PCRE</title>
+      <para>From time to time I experience the issue that I should detect URLs in some text, while neither the URLs are standard conform (regarding the used characters), nor the URLs are strictly separated from other stuff by whitespaces or something. Now <ulink url="http://www.derickrethans.nl/">Derick</ulink> asked me to provide him with a regular expression for that, and I finally wrote some, which should work in most cases:</para>
+      <literallayout>(
+    (?:^|[\s,.!?])
+        (?# Ignore matching braces around the URL)
+        (&lt;)?
+            (\[)?
+                (\()?
+                    (?# Ignore quoting around the URL)
+                    ([\'"]?)
+
+                        (?# Actually match the URL)
+                        (?P&lt;url&gt;https?://[^\s]*?)
+                     \4
+                (?(3)\))
+            (?(2)\])
+        (?(1)&gt;)
+
+    (?# Ignore common punctuation after the URL)
+    [.,?!]?(?:\s|$)
+)xm</literallayout>
+      <para>Sadly invalid characters are not always encoded, and also you can't expect to have only matching braces in the URLs, but still user like to write something like:</para>
+      <blockquote>
+        <para>Check out my Blog ($url)!</para>
+      </blockquote>
+      <para>In which case the braces are obviously not part of the actual URL so you should skip them, the same for the other brace types.</para>
+      <para>The regular expression uses conditional subpatterns to check for those matching braces before and after an URL and ignores them, when they are found. The same for quotes. Often URLs are followed by some markup, which also shouldn't be included in the actual URL, which is also ignored by this regular expression, but still - even not valid - characters like commas are included in the URL, if used there.</para>
+      <section>
+        <title>Issues</title>
+        <para>There are two issues, which are still not really solveable by a regular expression I think, but additions and suggestions would be really welcome:</para>
+        <orderedlist>
+          <listitem>
+            <para>PCRE does not reuse the end markers (?:\s|$) as start markers for the next URL, and I see no way to get the regular expression working without them. This means, that two URLs, only separated by one whitespace, would be detected when calling preg_match_all. You can still call preg_match() in a while-loop, though and remove all URLs from the text, after you found them.</para>
+          </listitem>
+          <listitem>
+            <para>Some users tend to use braces for subsentences, where one brace may end right after the URL, like this:</para>
+            <blockquote>
+              <para>Hi there (Check out my blog at $url)!</para>
+            </blockquote>
+            <para>Where the closing brace after the URL won't be removed, because there is no opening URL right before the URL.</para>
+            <para>I don't think this is fixable, because you can't expect the user to have only matching braces in his sentences, nor can you expect that for URLs itself. So we can just guess, what will be there more common problem - ignoring closing braces at the end of URLs, or users writing such sentences...</para>
+          </listitem>
+        </orderedlist>
+        <para>Still I think this regular expression might be useful to you, feel free to use it where ever you might find it useful. As a german I am not allowed to put something under public domain, but I grant anyone the right to use this for any purpose, without any conditions, unless such conditions are required by law.</para>
+      </section>
+    </section>
+    <itemizedlist>
+      <listitem>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="/images/favicons/delicious.png" width="16" depth="16"/>
+          </imageobject>
+          <textobject>
+            <para>Bookmark at del.icio.us</para>
+          </textobject>
+        </mediaobject>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="/images/favicons/digg.png" width="16" depth="16"/>
+          </imageobject>
+          <textobject>
+            <para>Digg it!</para>
+          </textobject>
+        </mediaobject>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="/images/favicons/yiggit.png" width="16" depth="16"/>
+          </imageobject>
+          <textobject>
+            <para>Yigg it!</para>
+          </textobject>
+        </mediaobject>
+      </listitem>
+    </itemizedlist>
+    <section>
+      <title>Comments</title>
+      <itemizedlist>
+        <listitem>
+          <section>
+            <title><ulink url="http://enobrev.com/"><emphasis Role="strong">Mark Armendariz</emphasis></ulink> at Sat, 21 Jun 2008 23:19:47 +0200 </title>
+            <literallayout class="normal"> I've been using this for years, which has been incredibly successful for me:
+
+ '/(?P&lt;protocol&gt;(?:(?:f|ht)tp|https):\/\/)?
+ (?P&lt;domain&gt;(?:(?!-)
+ (?P&lt;sld&gt;[a-zA-Z\d\-]+)(?&lt;!-)
+ [\.]){1,2}
+ (?P&lt;tld&gt;(?:[a-zA-Z]{2,}\.?){1,}){1,}
+ |
+ (?P&lt;ip&gt;(?:(?(?&lt;!\/)\.)(?:25[0-5]|2[0-4]\d|[01]?\d?\d)){4})
+ )
+ (?::(?P&lt;port&gt;\d{2,5}))?
+ (?:\/
+ (?P&lt;script&gt;[~a-zA-Z\/.0-9-_]*)?
+ (?:\?(?P&lt;parameters&gt;[=a-zA-Z+%&amp;0-9,.\/_ -]*))?
+ )?
+ (?:\#(?P&lt;anchor&gt;[=a-zA-Z+%&amp;0-9._]*))?/x';
+
+ it has an optional protocol (which you can make mandatory by removing the ? at the end of the 1st line), and names all the parts (protocol, domain, sld, tld, ip, port, script, parameters, anchor).
+
+ You can include internal ones using a 'servername' like so:
+ '|(?P&lt;servername&gt;[a-zA-Z\d\-]*[a-zA-Z\d][^:\/]?)'
+
+ after the '&lt;ip&gt;' line.
+
+ Mark
+</literallayout>
+            <para>
+              <link linked="comment_1"> Link to comment </link>
+            </para>
+          </section>
+        </listitem>
+        <listitem>
+          <section>
+            <title><ulink url="http://kore-nordmann.de"><emphasis Role="strong">Kore</emphasis></ulink> at Sat, 21 Jun 2008 23:43:46 +0200 </title>
+            <literallayout class="normal"> I wrote similar ones following the specification of relevant RFC, but this is actually not the point of the regular expression mentioned above.
+
+ The above one does not try to detect the parts of regular expressions, I found the PHP function parse_url() more useful (and more readable) for that task, but from filtering URLs out of random text. Your regular expression misses that part and does not accept quite common URL chrarcters like () and ;.
+
+ But anyways - thanks for sharing that regular expression. </literallayout>
+            <para>
+              <link linked="comment_2"> Link to comment </link>
+            </para>
+          </section>
+        </listitem>
+        <listitem>
+          <section>
+            <title><ulink url="http://enobrev.com/"><emphasis Role="strong">Mark Armendariz</emphasis></ulink> at Mon, 23 Jun 2008 03:05:04 +0200 </title>
+            <literallayout class="normal"> Good call about the extra characters. I had recently added semicolons and commas, but hadn't thought to add parentheses (thanks for the suggestion!). The regex I gave can be used to filter them out, but now i realize what you're showing in your post. I'd originally misread it (sorry).
+
+ As for punctuation surrounding a url, I imagine you could get rid of anything that is "touching" a url. Any surrounding text that is not a \s (or even \b) would likely be associated with that url and would likely do well to be filtered out as well. </literallayout>
+            <para>
+              <link linked="comment_3"> Link to comment </link>
+            </para>
+          </section>
+        </listitem>
+      </itemizedlist>
+      <emphasis Role="strong">Author:</emphasis>
+      <para>Homepage:</para>
+      <para><emphasis Role="strong">Comment:</emphasis>Submit:</para>
+      <para>Add new comment</para>
+      <para> Fields with bold names are mandatory. </para>
+    </section>
+  </section>
+</article>

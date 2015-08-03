@@ -1,0 +1,6 @@
+Missing role
+============
+
+No handler is registered for `this text role`:no-handler-registered:, which
+should throw an error.
+

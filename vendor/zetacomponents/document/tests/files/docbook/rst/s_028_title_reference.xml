@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="title_references">
+    <sectioninfo/>
+    <title>Title references</title>
+    <para>The text contains references to the <link linked="subtitle">Subtitle</link> and even to the document title: <link linked="title_references">Title references</link>.</para>
+    <section ID="subtitle">
+      <sectioninfo/>
+      <title>Subtitle</title>
+      <para>This refernces, like: <link linked="subtitle">Subtitle</link> may occur multiple times, of course.</para>
+    </section>
+  </section>
+</article>

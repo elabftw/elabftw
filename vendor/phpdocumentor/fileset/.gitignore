@@ -1,0 +1,10 @@
+.idea
+
+# composer & builds
+build
+vendor
+
+# Eclipse 
+.buildpath
+.project
+.settings

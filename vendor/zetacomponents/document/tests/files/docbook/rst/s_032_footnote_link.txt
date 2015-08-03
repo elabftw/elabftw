@@ -1,0 +1,15 @@
+==============================
+eZ Components example document
+==============================
+
+This is an example FODT document for the eZ Document component.
+
+---------------------
+Second level headline
+---------------------
+
+cubilia Curae; `Cras fermentum ipsum`__ nec est entum[#]_ ac accumsan.
+
+__ http://ezcomponents.org/
+
+.. [#] A little footnote

@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <itemizedlist>
+    <listitem>
+      <para>This is a list</para>
+    </listitem>
+    <listitem>
+      <para>The second item</para>
+    </listitem>
+    <listitem>
+      <itemizedlist>
+        <listitem>
+          <para>You may have different levels</para>
+        </listitem>
+      </itemizedlist>
+    </listitem>
+    <listitem>
+      <para>Another item</para>
+    </listitem>
+  </itemizedlist>
+  <orderedlist>
+    <listitem>
+      <para>The same list but ordered</para>
+    </listitem>
+    <listitem>
+      <para>Another item</para>
+    </listitem>
+    <listitem>
+      <orderedlist>
+        <listitem>
+          <para>Just use indention for deeper levels</para>
+        </listitem>
+      </orderedlist>
+    </listitem>
+    <listitem>
+      <para>That's it</para>
+    </listitem>
+  </orderedlist>
+</article>

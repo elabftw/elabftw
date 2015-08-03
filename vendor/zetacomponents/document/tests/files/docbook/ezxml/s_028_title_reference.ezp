@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://ez.no/namespaces/ezpublish3" xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
+  <section>
+    <header anchor_name="title_references">Title references</header>
+    <paragraph>The text contains references to the <link anchor_name="subtitle">Subtitle</link> and even to the document title: <link anchor_name="title_references">Title references</link>.</paragraph>
+    <section>
+      <header anchor_name="subtitle">Subtitle</header>
+      <paragraph>This refernces, like: <link anchor_name="subtitle">Subtitle</link> may occur multiple times, of course.</paragraph>
+    </section>
+  </section>
+</section>

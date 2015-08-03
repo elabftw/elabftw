@@ -1,0 +1,69 @@
+eZ Components 2008.2
+====================
+
+*Expected release date:* End of 2008
+
+Mission
+-------
+
+In this release our main focus is to add MVC support to the eZ Components.
+Besides this main focus, we will also enhance some of the critical components
+that the upcoming version of `eZ Publish`_ will require.
+
+.. _`eZ Publish`: http://ez.no/ezpublish
+
+New components
+--------------
+
+We are planning the following new components:
+
+MvcTools
+~~~~~~~~
+
+Where most frameworks dedicate a specific router, controller and view, the
+MVC implementation in eZ Components will only consist of very loosely based
+parts. For each of the specific parts of MVC we will provide one or more
+default implementations, as well as detailed information on how to write
+your own implementations of a Model, View and Controller. Of course most
+of those implementations will be done through Tie-in components.
+
+
+Enhancing existing components
+-----------------------------
+
+Additionally, the existing components will be improved further. 
+Major parts here are the following:
+
+Developer Mode
+~~~~~~~~~~~~~~
+
+- A configuration switch in the Base component that all other components will
+  use as well. The switch switches between "development mode", where all the
+  possible checks are being made; and "production mode", where as many 
+  safety checks are omitted to increase performance.
+
+Document
+~~~~~~~~
+
+- More supported formats, such as the `eZ Publish`_ format, writing ReST_
+  files, reading XHTML files and wiki formats.
+
+.. _ReST: http://docutils.sourceforge.net/docs/user/rst/quickstart.html
+
+WebDav
+~~~~~~
+
+- Support for authentication and locking. (ie. Make it work with Finder_).
+
+.. _Finder: http://en.wikipedia.org/wiki/Finder_(software)
+
+Template
+~~~~~~~~
+
+- Updated contexts_ support to allow for proper JavaScript escaping.
+
+.. _contexts: http://ezcomponents.org/docs/api/latest/introduction_Template.html#contexts
+
+
+For the full list: http://issues.ez.no/RoadMap.php?Id=824&ProjectId=1 and
+http://issues.ez.no/FilterApply.php?Filter=72&ProjectId=1 .

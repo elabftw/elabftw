@@ -1,0 +1,37 @@
+<?php
+
+return array (
+  0 => 
+  ezcDocumentPcssLayoutDirective::__set_state(array(
+     'address' => 
+    array (
+      0 => 'foo',
+      1 => '> bar',
+    ),
+     'formats' => 
+    array (
+      'font-size' => '9pt',
+    ),
+     'file' => 's_006_rules_commented.pcss',
+     'line' => 5,
+     'position' => 10,
+     'regularExpression' => NULL,
+  )),
+  1 => 
+  ezcDocumentPcssLayoutDirective::__set_state(array(
+     'address' => 
+    array (
+      0 => 'foo',
+      1 => '#bar',
+    ),
+     'formats' => 
+    array (
+      'margin' => '0em',
+    ),
+     'file' => 's_006_rules_commented.pcss',
+     'line' => 19,
+     'position' => 8,
+     'regularExpression' => NULL,
+  )),
+);
+

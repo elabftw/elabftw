@@ -1,0 +1,10 @@
+[#anchor]
+[^attachment.ext]
+or
+[pagetitle]
+[pagetitle#anchor]
+[pagetitle^attachment.ext]
+or
+[spacekey:pagetitle]
+[spacekey:pagetitle#anchor]
+[spacekey:pagetitle^attachment.ext] 

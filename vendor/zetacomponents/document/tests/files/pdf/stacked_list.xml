@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<article xmlns="http://docbook.org/ns/docbook">
+  <section>
+    <sectioninfo/>
+    <orderedlist>
+      <listitem>
+        <para>Paragraph.</para>
+        <itemizedlist>
+          <listitem>
+            <para>List item 1.</para>
+          </listitem>
+          <listitem>
+            <para>List item 2.</para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+      <listitem>
+        <para>PostScript fonts.</para>
+      </listitem>
+    </orderedlist>
+  </section>
+</article>

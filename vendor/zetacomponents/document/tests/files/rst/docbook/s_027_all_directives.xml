@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<article xmlns="http://docbook.org/ns/docbook">
+  <section ID="all_known_directives">
+    <title>All known directives</title>
+    <note>
+      <para> Just a note!</para>
+    </note>
+    <tip>
+      <para> You might want to use these more!</para>
+    </tip>
+    <warning>
+      <para> Be careful about this!</para>
+    </warning>
+    <important>
+      <para> Do not overdo it!</para>
+    </important>
+    <caution>
+      <para> May have a bad impact on userexperience.</para>
+    </caution>
+    <blockquote>
+      <para>Lets get something colorful!</para>
+    </blockquote>
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="test.png" width="256" depth="23" align="right"/>
+      </imageobject>
+      <textobject> Some alternative text.</textobject>
+      <caption>
+        <para>The figure actually shows nothing.</para>
+      </caption>
+    </mediaobject>
+    <blockquote>
+      <para>Figures may contain addition text!</para>
+    </blockquote>
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="test.png" width="256" depth="23" align="right"/>
+      </imageobject>
+      <textobject> Some alternative text.</textobject>
+    </mediaobject>
+    <para>And you can even inline other RST files.</para>
+    <section ID="main_title">
+      <title>Main Title</title>
+      <para>Hello world</para>
+      <section ID="subsection">
+        <title>Subsection</title>
+        <para>A bit more text, which exceeds one line to test for a simple paragraph with more then one line.</para>
+      </section>
+    </section>
+    <para>but perhaps you want prevent them from being parsed...</para>
+    <literallayout>==========
+Main Title
+==========
+
+Hello world
+
+Subsection
+==========
+
+A bit more text, which exceeds one line to test for a simple paragraph with
+more then one line.
+
+</literallayout>
+    <para>That's all for now.</para>
+  </section>
+</article>

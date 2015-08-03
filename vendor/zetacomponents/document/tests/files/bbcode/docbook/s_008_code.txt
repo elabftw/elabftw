@@ -1,0 +1,5 @@
+This is an inline code example: [code]echo "This is some code";[/code].
+
+[code]echo "This is some [b]code[/b] in a literal block";[/code]
+
+[code]Hello world[/code] is again some inline code.

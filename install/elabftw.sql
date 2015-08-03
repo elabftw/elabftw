@@ -311,6 +311,23 @@ CREATE TABLE `users` (
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+--
+-- Table structure for table `team_groups`
+--
+
+CREATE TABLE IF NOT EXISTS `team_groups` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `team` int(10) unsigned NOT NULL,
+  PRIMARY_KEY(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `users2team_groups` (
+  `userid` int(10) unsigned NOT NULL,
+  `groupid` int(10) unsigned NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- ELABFTW
 /* the default item_types */
 INSERT INTO `items_types` (`team`, `id`, `name`, `bgcolor`, `template`) VALUES

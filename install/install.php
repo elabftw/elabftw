@@ -86,7 +86,7 @@ $config_file = '../config.php';
 $elab_root = substr(realpath(__FILE__), 0, -20) . '/';
 // make a new secret key
 try {
-    $new_secret_key = Crypto::CreateNewRandomKey();
+    $new_secret_key = \Defuse\Crypto\Crypto::CreateNewRandomKey();
 } catch (Exception $e) {
     die($e->getMessage());
 }

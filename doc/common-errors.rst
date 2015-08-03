@@ -44,7 +44,7 @@ Now that you know the user/group of the webserver, you can do that (example is s
 .. code-block:: bash
 
     cd /path/to/elabftw
-    mkdir -p uploads/{export,tmp}
+    mkdir -p uploads/tmp
     chown -R www-data:www-data uploads
     chmod -R 755 .
     chmod 644 config.php

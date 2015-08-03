@@ -1,5 +1,0 @@
-.. _Python: http://www.python.org
-
-.. _example:
-
-The "_example" target above points to this paragraph.

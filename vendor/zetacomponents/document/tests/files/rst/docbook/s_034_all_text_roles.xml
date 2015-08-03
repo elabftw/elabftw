@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<article xmlns="http://docbook.org/ns/docbook">
-  <section ID="text_roles">
-    <title>Text roles</title>
-    <para>There are a lot different text roles, like: <emphasis>emphasis</emphasis>, <literal>literal</literal>, <emphasis Role="strong">strong</emphasis>, <subscript>subscript</subscript>, <subscript>sub</subscript>, <superscript>superscript</superscript>, <superscript>sup</superscript>, <citetitle>title-reference</citetitle>, <citetitle>title</citetitle> and <citetitle>t</citetitle>.</para>
-  </section>
-</article>

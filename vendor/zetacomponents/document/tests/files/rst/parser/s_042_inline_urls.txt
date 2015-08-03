@@ -1,7 +1,0 @@
-Inline URLs
-===========
-
-A paragraph with inline URLs, like http://ezcomponents.org and inline
-*markup*, also with mail links to mail@example.com and URLs with some
-different scheme like ftp://user:pass@example.org.
-

@@ -1,9 +1,0 @@
-h1. Biggest heading
-h2. Bigger heading
-h3. Big Heading
-h4. Normal Heading
-h5. Small Heading
-h6. Smallest Heading
-h2. Bigger heading
-h3. Big Heading
-

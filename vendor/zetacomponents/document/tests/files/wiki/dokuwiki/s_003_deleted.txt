@@ -1,1 +1,0 @@
-You can mark something as <del>deleted</del> as well.

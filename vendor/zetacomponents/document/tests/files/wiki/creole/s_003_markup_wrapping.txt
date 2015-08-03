@@ -1,6 +1,0 @@
-Bold and italics should //be
-able// to cross lines.
-
-But, should //not be...
-
-...able// to cross paragraphs.

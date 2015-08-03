@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<article xmlns="http://docbook.org/ns/docbook">
-  <section>
-    <sectioninfo/>
-    <para>This is one single paragraph, which should be wrapped, due to its length exceeding a single page. To exceed the space with this short statement, the page needs to be kinda small, of course.</para>
-  </section>
-</article>

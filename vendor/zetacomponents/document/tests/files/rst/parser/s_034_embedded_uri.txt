@@ -1,9 +1,0 @@
-Embedded URLs
-=============
-
-See the `Python home page <http://www.python.org>`_ for info.
-
-`RFC 2396 <http://www.rfc-editor.org/rfc/rfc2396.txt>`__ and `RFC
-2732 <http://www.rfc-editor.org/rfc/rfc2732.txt>`__ together
-define the syntax of URIs.
-

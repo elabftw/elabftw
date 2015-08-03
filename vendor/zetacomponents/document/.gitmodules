@@ -1,3 +1,0 @@
-[submodule "setup"]
-	path = setup
-	url = git://github.com/Qafoo/build-commons.git

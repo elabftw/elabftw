@@ -1,5 +1,0 @@
-Inline literals
-===============
-
-Inline literals like ``PHP_*`` may contain any arbitrary characters, like: ``[+-]?(\d+(\.\d*)?|\.\d+)``. When there is no closing equivalent for ``, it is just skipped as text.
-

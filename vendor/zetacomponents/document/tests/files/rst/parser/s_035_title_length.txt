@@ -1,9 +1,0 @@
-==============
-Space in title
-==============
-
-Title with appended space 
--------------------------
-
-Do not remove the whitespace after "space"!
-

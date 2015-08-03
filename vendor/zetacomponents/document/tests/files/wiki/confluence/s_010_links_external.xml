@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<article xmlns="http://docbook.org/ns/docbook">
-  <para><ulink url="/2004/01/12/My Blog Post">/2004/01/12/My Blog Post</ulink> <ulink url="spacekey:/2004/01/12/My Blog Post">spacekey:/2004/01/12/My Blog Post</ulink> <ulink url="/2004/01/12">/2004/01/12</ulink> <ulink url="spacekey:/2004/01/12">spacekey:/2004/01/12</ulink> or <ulink url="/2004/01/12">my link name</ulink> <ulink url="spacekey:/2004/01/12">my link name</ulink> <ulink url="http://confluence.atlassian.com">http://confluence.atlassian.com</ulink> <ulink url="http://atlassian.com">Atlassian</ulink> <ulink url="mailto:legendaryservice@atlassian.com">mailto:legendaryservice@atlassian.com</ulink></para>
-</article>

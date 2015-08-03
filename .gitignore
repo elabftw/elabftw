@@ -8,3 +8,4 @@ Session.vim
 /nbproject/private/
 .DS_Store
 tests/_output/*
+vendor/.git

@@ -1,9 +1,0 @@
-* This is a list
-* The second item
-  * You may have different levels
-* Another item
-
-- The same list but ordered
-- Another item
-  - Just use indention for deeper levels
-- That's it

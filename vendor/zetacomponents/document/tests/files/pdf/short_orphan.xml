@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<article xmlns="http://docbook.org/ns/docbook">
-  <section>
-    <sectioninfo/>
-    <para>This is one short paragraph, which serves as an offset for the second one, so that it covers the last line.</para>
-    <para>Second paragraph, with 2 lines.</para>
-  </section>
-</article>

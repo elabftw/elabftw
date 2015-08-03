@@ -1,5 +1,0 @@
-[color=red]Hello![/color]
-
-or
-
-[color=#FF0000]Hello![/color]

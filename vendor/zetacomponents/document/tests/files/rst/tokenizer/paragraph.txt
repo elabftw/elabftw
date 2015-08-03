@@ -1,9 +1,0 @@
-Paragraphs contain text and may contain inline markup:
-*emphasis*, **strong emphasis**, `interpreted text`, ``inline
-literals``, standalone hyperlinks (http://www.python.org),
-external hyperlinks (Python_), internal cross-references
-(example_), footnote references ([1]_), citation references
-([CIT2002]_), substitution references (|example|), and _`inline
-internal targets`.
-
-Paragraphs are separated by blank lines and are left-aligned.

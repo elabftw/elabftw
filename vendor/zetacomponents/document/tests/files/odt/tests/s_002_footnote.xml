@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<article xmlns="http://docbook.org/ns/docbook">
-  <para>Here is a footnote<footnote label="1"><para>Test footnote 1. Auto numbered.</para></footnote>. Here is an end note<footnote label="i"><para>This is an end note 1.</para></footnote>. And a not auto-numbered foot note<footnote label="x"><para>Test footnote x. Not auto-numbered.</para></footnote></para>
-</article>

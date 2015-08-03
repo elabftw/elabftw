@@ -1,9 +1,0 @@
-Hyperlink list
-==============
-
-A list with internal links:
-
-- `Internal link 1`_
-- `Internal link 2`_
-- `Internal link 3`_
-

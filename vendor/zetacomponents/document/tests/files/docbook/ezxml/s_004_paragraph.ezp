@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<section xmlns="http://ez.no/namespaces/ezpublish3" xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
-  <section>
-    <header>Paragraph with inline markup</header>
-    <paragraph>Paragraphs contain text and may contain inline markup: <emphasize>emphasis</emphasize>, <strong>strong emphasis</strong>, interpreted text, <literal>inline literals</literal>, standalone hyperlinks (<link url_id="23">http://www.python.org</link>), external hyperlinks (<link url_id="23">Python</link>), internal cross-references (<link url_id="23">example</link>), substitution references (Just some text.), and <anchor name="inline_internal_targets"></anchor>inline internal targets. There are also <link url_id="23">anonomyous</link> hyperlinks, which also <link url_id="23">may contain more then one word</link>.</paragraph>
-    <paragraph><emphasize>Markup</emphasize> is also allwoed at the very beginning of a paragraph.</paragraph>
-    <paragraph>Paragraphs are separated by blank lines and are left-aligned.</paragraph>
-  </section>
-</section>

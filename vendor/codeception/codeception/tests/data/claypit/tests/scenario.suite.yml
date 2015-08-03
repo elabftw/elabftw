@@ -1,3 +1,0 @@
-class_name: ScenarioGuy
-modules:
-    enabled: [Filesystem, \Helper\Scenario]

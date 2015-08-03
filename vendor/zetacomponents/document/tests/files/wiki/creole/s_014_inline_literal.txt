@@ -1,1 +1,0 @@
-Some examples of markup are: {{{** <i>this</i> ** }}}, this is also inline literal markup: {{{{{if (a>b) { b = a; }}}}}}.

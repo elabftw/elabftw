@@ -1,9 +1,0 @@
-No markup
-=========
-
-asterisks: * "*" '*' (*) (* [*] {*} 1*x BOM32_*
-double asterisks: ** a**b O(N**2) etc.
-backquotes: ` `` etc.
-underscores: _ __ __init__ __init__() etc.
-vertical bars: | || etc.
-

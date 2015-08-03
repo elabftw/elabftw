@@ -5,15 +5,17 @@
 
 Better Markdown Parser in PHP
 
-[See Demo](http://parsedown.org/demo)
+[Demo](http://parsedown.org/demo) |
+[Benchmarks](http://parsedown.org/speed) |
+[Tests](http://parsedown.org/tests/) |
+[Documentation](https://github.com/erusev/parsedown/wiki/)
 
 ### Features
 
-* [Fast](http://parsedown.org/speed)
-* [Consistent](http://parsedown.org/consistency)
+* Super Fast
 * [GitHub flavored](https://help.github.com/articles/github-flavored-markdown)
-* [Tested](http://parsedown.org/tests/) in PHP 5.3, 5.4, 5.5, 5.6 and [HHVM](http://www.hhvm.com/)
-* [Extensible](https://github.com/erusev/parsedown/wiki/Writing-Extensions)
+* Extensible
+* Tested in 5.3 to 5.6
 * [Markdown Extra extension](https://github.com/erusev/parsedown-extra)
 
 ### Installation
@@ -28,7 +30,7 @@ $Parsedown = new Parsedown();
 echo $Parsedown->text('Hello _Parsedown_!'); # prints: <p>Hello <em>Parsedown</em>!</p>
 ```
 
-More examples in [the wiki](https://github.com/erusev/parsedown/wiki/Usage) and in [this video tutorial](http://youtu.be/wYZBY8DEikI).
+More examples in [the wiki](https://github.com/erusev/parsedown/wiki/) and in [this video tutorial](http://youtu.be/wYZBY8DEikI).
 
 ### Questions
 
@@ -48,4 +50,4 @@ It passes most of the CommonMark tests. Most of the tests that don't pass deal w
 
 **How can I help?**
 
-Use it, star it, share it and if you feel generous, [donate some money](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=528P3NZQMP8N2).
+Use it, star it, share it and if you feel generous, [donate](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=528P3NZQMP8N2).

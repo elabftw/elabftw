@@ -25,8 +25,6 @@
 ********************************************************************************/
 require_once '../inc/common.php';
 
-$crypto = new \Elabftw\Elabftw\Crypto();
-
 //Array to store validation errors
 $msg_arr = array();
 //Validation error flag

@@ -14,6 +14,7 @@ use \Exception;
 use \RecursiveDirectoryIterator;
 use \RecursiveIteratorIterator;
 use \FilesystemIterator;
+use \Defuse\Crypto\Crypto as Crypto;
 
 /**
  * Use this to check for latest version or update the database schema
@@ -50,7 +51,7 @@ class Update
      * UPDATE THIS AFTER ADDING A BLOCK TO runUpdateScript()
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '4';
+    const REQUIRED_SCHEMA = '5';
 
     /**
      * Create the pdo object
@@ -183,7 +184,14 @@ class Update
             // 20150801
             $this->schema4();
         }
-
+        if ($current_schema < 5) {
+            // 20150803
+            try {
+                $this->schema5();
+            } catch (Exception $e) {
+                die($e->getMessage());
+            }
+        }
         // place new schema functions above this comment
         $this->updateSchema();
         $this->cleanTmp();
@@ -256,6 +264,68 @@ class Update
         $sql2 = "CREATE TABLE IF NOT EXISTS `users2team_groups` ( `userid` INT UNSIGNED NOT NULL , `groupid` INT UNSIGNED NOT NULL );";
         if (!$this->pdo->q($sql) || !$this->pdo->q($sql2)) {
             throw new Exception('Problem updating!');
+        }
+    }
+
+    /**
+     * Switch the crypto lib to defuse/php-encryption
+     *
+     * @throws Exception
+     */
+    private function schema5()
+    {
+        if (!is_writable(ELAB_ROOT . 'config.php')) {
+            throw new Exception('Please make your config file writable by server for this update.');
+        }
+
+        $legacy = new \Elabftw\Elabftw\LegacyCrypto();
+
+        // our new key (raw binary string)
+        try {
+            $new_secret_key = Crypto::CreateNewRandomKey();
+            // WARNING: Do NOT encode $key with bin2hex() or base64_encode(),
+            // they may leak the key to the attacker through side channels.
+        } catch (CryptoTestFailedException $ex) {
+            die('Cannot safely create a key');
+        } catch (CannotPerformOperationException $ex) {
+            die('Cannot safely create a key');
+        }
+
+        $new_smtp_password = '';
+        $new_stamp_password = '';
+
+        if (strlen(get_config('smtp_password')) > 0) {
+            $old_smtp_password = $legacy->decrypt(get_config('smtp_password'));
+            $new_smtp_password = Crypto::binTohex(Crypto::encrypt($old_smtp_password, $new_secret_key));
+        }
+
+        if (strlen(get_config('stamppass')) > 0) {
+            // get the old passwords
+            $old_stamp_password = $legacy->decrypt(get_config('stamppass'));
+            $new_stamp_password = Crypto::binTohex(Crypto::encrypt($old_stamp_password, $new_secret_key));
+        }
+
+        $updates = array(
+            'smtp_password' => $new_smtp_password,
+            'stamppass' => $new_stamp_password
+        );
+
+        if (!update_config($updates)) {
+            throw new Exception('Error updating config with new passwords!');
+        }
+
+        // we will rewrite the config file with the new key
+        $contents = "<?php
+define('DB_HOST', '" . DB_HOST . "');
+define('DB_NAME', '" . DB_NAME . "');
+define('DB_USER', '" . DB_USER . "');
+define('DB_PASSWORD', '" . DB_PASSWORD . "');
+define('ELAB_ROOT', '" . ELAB_ROOT . "');
+define('SECRET_KEY', '" . Crypto::binTohex($new_secret_key) . "');
+";
+
+        if (file_put_contents('config.php', $contents) === 'false') {
+            throw new Exception('There was a problem writing the file!');
         }
     }
 }

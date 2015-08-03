@@ -93,7 +93,7 @@ access the variable attribute:
     don't put the braces around them.
 
 If a variable or attribute does not exist, you will receive a ``null`` value
-when the ``strict_variables`` option is set to ``false``; alternatively, if ``strict_variables`` 
+when the ``strict_variables`` option is set to ``false``; alternatively, if ``strict_variables``
 is set, Twig will throw an error (see :ref:`environment options<environment_options>`).
 
 .. sidebar:: Implementation
@@ -540,6 +540,9 @@ macro call:
     {% macro input(name, value = "", type = "text", size = 20) %}
         <input type="{{ type }}" name="{{ name }}" value="{{ value|e }}" size="{{ size }}" />
     {% endmacro %}
+
+If extra positional arguments are passed to a macro call, they end up in the
+special ``varargs`` variable as a list of values.
 
 .. _twig-expressions:
 

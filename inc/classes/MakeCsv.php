@@ -49,7 +49,7 @@ class MakeCsv extends Make
         $this->pdo = Db::getConnection();
 
         $this->fileName = $this->getFileName();
-        $this->filePath = $this->getFilePath($this->fileName);
+        $this->filePath = $this->getTempFilePath($this->fileName);
 
         $this->idList = $idList;
 

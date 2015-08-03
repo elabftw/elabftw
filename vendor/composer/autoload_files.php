@@ -12,4 +12,5 @@ return array(
     $vendorDir . '/herrera-io/json/src/lib/json_version.php',
     $vendorDir . '/guzzlehttp/guzzle/src/functions_include.php',
     $vendorDir . '/herrera-io/phar-update/src/lib/constants.php',
+    $vendorDir . '/defuse/php-encryption/autoload.php',
 );

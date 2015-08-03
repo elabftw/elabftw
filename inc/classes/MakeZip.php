@@ -70,7 +70,7 @@ class MakeZip extends Make
         $this->type = $this->checkType($type);
 
         $this->fileName = $this->getFileName();
-        $this->filePath = $this->getFilePath($this->fileName);
+        $this->filePath = $this->getTempFilePath($this->fileName);
 
         $this->createZipArchive();
         $this->loopIdArr();

@@ -209,7 +209,7 @@ function show_tags($item_id, $table)
      */
 function processTimestampPost()
 {
-    $crypto = new \Elabftw\Elabftw\Crypto();
+    $crypto = new \Elabftw\Elabftw\CryptoWrapper();
 
     if (isset($_POST['stampprovider'])) {
         $stampprovider = filter_var($_POST['stampprovider'], FILTER_VALIDATE_URL);
@@ -237,7 +237,11 @@ function processTimestampPost()
         $stamplogin = '';
     }
     if (isset($_POST['stamppass'])) {
-        $stamppass = $crypto->encrypt(filter_var($_POST['stamppass'], FILTER_SANITIZE_STRING));
+        try {
+            $stamppass = $crypto->encrypt($_POST['stamppass']);
+        } catch (Exception $e) {
+            $stamppass = '';
+        }
     } else {
         $stamppass = '';
     }
@@ -733,7 +737,6 @@ function import_sql_structure()
  */
 function getMailer()
 {
-    $crypto = new \Elabftw\Elabftw\Crypto();
     // Choose mail transport method; either smtp or sendmail
     $mail_method = get_config('mail_method');
 
@@ -747,7 +750,7 @@ function getMailer()
                 get_config('smtp_encryption')
             )
             ->setUsername(get_config('smtp_username'))
-            ->setPassword($crypto->decrypt(get_config('smtp_password')));
+            ->setPassword(\Defuse\Crypto\Crypto::decrypt(get_config('smtp_password'), getSecretKey()));
             break;
 
         // Use php mail function

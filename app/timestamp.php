@@ -25,8 +25,6 @@
 ********************************************************************************/
 require_once '../inc/common.php';
 
-$crypto = new \Elabftw\Elabftw\Crypto();
-
 // ID
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];

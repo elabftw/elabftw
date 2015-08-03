@@ -15,6 +15,7 @@ namespace Elabftw\Elabftw;
 use \DateTime;
 use \Exception;
 use \Elabftw\Elabftw\Update;
+use \Elabftw\Elabftw\CryptoWrapper as Crypto;
 
 /**
  * Timestamp an experiment with RFC 3161
@@ -86,10 +87,10 @@ class TrustedTimestamps
      */
     private function generatePdf()
     {
-        $this->pdfFileName = hash("sha512", uniqid(rand(), true)) . ".pdf";
-        $this->pdfPath = ELAB_ROOT . 'uploads/' . $this->pdfFileName;
         try {
-            new \Elabftw\Elabftw\MakePdf($this->id, 'experiments', $this->pdfPath);
+            $pdf = new MakePdf($this->id, 'experiments', true);
+            $this->pdfPath = $pdf->filePath;
+            $this->pdfLongName = $pdf->fileName;
         } catch (Exception $e) {
             throw new Exception('Failed at making the pdf : ' . $e->getMessage());
         }
@@ -102,8 +103,8 @@ class TrustedTimestamps
      */
     public function getTimestampParameters()
     {
+        $crypto = new Crypto();
         $hash_algorithms = array('sha256', 'sha384', 'sha512');
-        $crypto = new \Elabftw\Elabftw\Crypto();
 
         // if there is a config in the team, use that
         // otherwise use the general config if we can
@@ -172,10 +173,13 @@ class TrustedTimestamps
      * Creates a Timestamp Requestfile from a filename
      * @param string $pdf
      */
-    private function createRequestfile($pdf)
+    private function createRequestfile()
     {
+        if (!is_file($this->pdfPath)) {
+            throw new Exception('Pdf not found! This is a bug!');
+        }
         $outfilepath = $this->createTempFile();
-        $cmd = "ts -query -data " . escapeshellarg($pdf) . " -cert -" . $this->stampParams['hash'] . " -no_nonce -out " . escapeshellarg($outfilepath);
+        $cmd = "ts -query -data " . escapeshellarg($this->pdfPath) . " -cert -" . $this->stampParams['hash'] . " -no_nonce -out " . escapeshellarg($outfilepath);
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];
         $retcode = $opensslResult['retcode'];
@@ -416,7 +420,7 @@ class TrustedTimestamps
         $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, md5) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :md5)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':real_name', $this->pdfRealName);
-        $req->bindParam(':long_name', $this->pdfFileName);
+        $req->bindParam(':long_name', $this->pdfLongName);
         $req->bindValue(':comment', "Timestamped PDF");
         $req->bindParam(':item_id', $this->id);
         $req->bindParam(':userid', $_SESSION['userid']);
@@ -436,7 +440,7 @@ class TrustedTimestamps
     public function timeStamp()
     {
         // first we create the request file
-        $this->createRequestfile($this->pdfPath);
+        $this->createRequestfile();
 
         // make the request to the TSA
         $this->postData();

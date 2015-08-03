@@ -32,7 +32,6 @@ if ($_SESSION['is_admin'] != 1 || $_SERVER['REQUEST_METHOD'] != 'POST') {
 }
 
 $formKey = new \Elabftw\Elabftw\FormKey();
-$crypto = new \Elabftw\Elabftw\Crypto();
 $sysconfig = new \Elabftw\Elabftw\SysConfig();
 
 $msg_arr = array();

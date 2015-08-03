@@ -23,10 +23,8 @@ $page_title = _('eLabFTW configuration');
 $selected_menu = null;
 require_once 'inc/head.php';
 
-$crypto = new \Elabftw\Elabftw\Crypto();
-
 $formKey = new \Elabftw\Elabftw\FormKey();
-
+$crypto = new \Elabftw\Elabftw\CryptoWrapper();
 $update = new \Elabftw\Elabftw\Update();
 
 try {

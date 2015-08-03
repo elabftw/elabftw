@@ -25,8 +25,8 @@
 ********************************************************************************/
 require_once '../inc/common.php';
 
-$crypto = new \Elabftw\Elabftw\Crypto();
 $user = new \Elabftw\Elabftw\User();
+$crypto = new \Elabftw\Elabftw\CryptoWrapper();
 
 $errflag = false;
 

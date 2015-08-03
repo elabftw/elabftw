@@ -21,7 +21,7 @@ if ($_SESSION['is_admin'] != 1) {
 }
 
 $formKey = new \Elabftw\Elabftw\FormKey();
-$crypto = new \Elabftw\Elabftw\Crypto();
+$crypto = new \Elabftw\Elabftw\CryptoWrapper();
 
 $page_title = _('Admin panel');
 $selected_menu = null;
@@ -58,6 +58,15 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
 
 // get the team config
 $team = get_team_config();
+
+$stamppass = '';
+if (!empty($team['stamppass'])) {
+    try {
+        $stamppass = $crypto->decrypt($team['stamppass']);
+    } catch (Exception $e) {
+        $stamppass = '';
+    }
+}
 ?>
 
 
@@ -115,7 +124,7 @@ $team = get_team_config();
         </p>
         <p>
         <label for='stamppass'><?php echo _('Password for external timestamping service:'); ?></label>
-        <input type='password' value='<?php echo $crypto->decrypt($team['stamppass']); ?>' name='stamppass' id='stamppass' />
+        <input type='password' value='<?php echo $stamppass; ?>' name='stamppass' id='stamppass' />
         <span class='smallgray'><?php echo _('Your timestamping service provider password'); ?></span>
         </p>
         <div class='center'>

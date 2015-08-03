@@ -33,7 +33,7 @@ class MakePdf extends Make
     private $body;
 
     /** a sha512 sum */
-    private $fileName;
+    public $fileName;
     /** full path of file */
     public $filePath;
 

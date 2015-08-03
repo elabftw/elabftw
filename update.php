@@ -71,7 +71,7 @@ if (!is_writable('config.php')) {
 
 } elseif (is_writable('config.php') && !defined('SECRET_KEY')) {
 
-    $crypto = new \Elabftw\Elabftw\Crypto();
+    $crypto = new \Elabftw\Elabftw\LegacyCrypto();
     // add generated strings to config file
     // the IV is stored in hex
     $data_to_add = "\ndefine('SECRET_KEY', '" . $crypto->secretKey . "');\ndefine('IV', '" . bin2hex($crypto->iv) . "');\n";

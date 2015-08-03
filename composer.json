@@ -11,7 +11,8 @@
         "ext-curl":"*",
         "ext-openssl":"*",
         "codeception/codeception": "*",
-        "phpdocumentor/phpdocumentor": "2.*"
+        "phpdocumentor/phpdocumentor": "2.*",
+        "defuse/php-encryption": "dev-master"
 
     },
     "autoload": {

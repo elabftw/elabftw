@@ -84,16 +84,23 @@ import_sql_structure();
 // the new file to write to
 $config_file = '../config.php';
 $elab_root = substr(realpath(__FILE__), 0, -20) . '/';
-$crypto = new \Elabftw\Elabftw\Crypto();
-// what we will write
+// make a new secret key
+try {
+    $new_secret_key = Crypto::CreateNewRandomKey();
+} catch (CryptoTestFailedException $ex) {
+    die('Cannot safely create a key');
+} catch (CannotPerformOperationException $ex) {
+    die('Cannot safely create a key');
+}
+
+// what we will write in the file
 $config = "<?php
 define('DB_HOST', '" . $db_host . "');
 define('DB_NAME', '" . $db_name . "');
 define('DB_USER', '" . $db_user . "');
 define('DB_PASSWORD', '" . $db_password . "');
 define('ELAB_ROOT', '" . $elab_root . "');
-define('SECRET_KEY', '" . $crypto->secretKey . "');
-define('IV', '" . bin2hex($crypto->iv) . "');
+define('SECRET_KEY', '" . \Defuse\Crypto\Crypto::binToHex($new_secret_key) . "');
 ";
 
 // we try to write content to file and propose the file for download if we can't write to it

@@ -32,7 +32,7 @@ if ($_SESSION['is_sysadmin'] != 1 || $_SERVER['REQUEST_METHOD'] != 'POST') {
 }
 
 $sysconfig = new \Elabftw\Elabftw\SysConfig();
-$crypto = new \Elabftw\Elabftw\Crypto();
+$crypto = new \Elabftw\Elabftw\CryptoWrapper();
 
 $msg_arr = array();
 $errflag = false;
@@ -182,8 +182,8 @@ if (isset($_POST['mail_method'])) {
         $smtp_username = '';
     }
     if (isset($_POST['smtp_password'])) {
-        // the password is stored encrypted in the SQL
-        $smtp_password = $crypto->encrypt(filter_var($_POST['smtp_password'], FILTER_SANITIZE_STRING));
+        // the password is stored encrypted in the database
+        $smtp_password = $crypto->encrypt($_POST['smtp_password']);
     } else {
         $smtp_password = '';
     }

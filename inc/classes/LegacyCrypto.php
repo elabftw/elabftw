@@ -1,19 +1,20 @@
 <?php
 /**
- * \Elabftw\Elabftw\Crypto
+ * \Elabftw\Elabftw\LegacyCrypto
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
  * @see http://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
+ * @deprecated now we use defuse/php-encryption
  */
 namespace Elabftw\Elabftw;
 
 /**
  * Used for decrypting and encrypting passwords
  */
-class Crypto
+class LegacyCrypto
 {
     /** the initialization vector, a string of bytes */
     public $iv;

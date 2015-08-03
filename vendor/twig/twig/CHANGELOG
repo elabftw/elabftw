@@ -1,3 +1,13 @@
+* 1.19.0 (2015-07-31)
+
+ * fixed wrong error message when including an undefined template in a child template
+ * added support for variadic filters, functions, and tests
+ * added support for extra positional arguments in macros
+ * added ignore_missing flag to the source function
+ * fixed batch filter with zero items
+ * deprecated Twig_Environment::clearTemplateCache()
+ * fixed sandbox disabling when using the include function
+
 * 1.18.2 (2015-06-06)
 
  * fixed template/line guessing in exceptions for nested templates

@@ -1,2 +1,0 @@
-DokuWiki supports **bold**, //italic//, __underlined__ and ''monospaced''
-texts. Of course you can **__//''combine''//__** all these.

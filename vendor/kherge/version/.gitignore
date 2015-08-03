@@ -1,5 +1,0 @@
-.*
-!.gitignore
-!.travis.yml
-composer.lock
-coverage/

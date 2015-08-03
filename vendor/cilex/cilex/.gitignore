@@ -1,7 +1,0 @@
-vendor
-phpunit.xml
-cilex.phar
-.idea
-composer.phar
-.vagrant
-docs/.build

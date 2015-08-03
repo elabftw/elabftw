@@ -1,9 +1,0 @@
-This is a paragraph.  The lines of
-this paragraph are aligned at the left.
-
-    This paragraph has problems.  The
-lines are not left-aligned.  In addition
-  to potential misinterpretation, warning
-    and/or error messages will be generated
-  by the parser.
-

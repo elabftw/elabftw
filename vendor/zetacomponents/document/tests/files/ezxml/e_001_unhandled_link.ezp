@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<section xmlns="http://ez.no/namespaces/ezpublish3"
-         xmlns:image="http://ez.no/namespaces/ezpublish3/image/"
-         xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/"
-         xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
-	<paragraph><link>link</link></paragraph>
-</section>

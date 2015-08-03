@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<article xmlns="http://docbook.org/ns/docbook">
-  <section ID="literal_string">
-    <title>Literal string</title>
-    <para>Normally backslashes are used to escape *markup*, or similar. You may still escape a backslash using anonther <emphasis>backslash: \</emphasis>. We can also partially escape <emphasis>special character groups*</emphasis> or completely remove a whitespace with them.</para>
-  </section>
-</article>

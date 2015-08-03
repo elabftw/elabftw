@@ -1,4 +1,0 @@
-{quote}
-here is quoteable
-content to be quoted
-{quote} 

@@ -1,9 +1,0 @@
-[/2004/01/12/My Blog Post] [spacekey:/2004/01/12/My Blog Post] 
-[/2004/01/12]
-[spacekey:/2004/01/12]
-or
-[my link name|/2004/01/12]
-[my link name|spacekey:/2004/01/12] 
-[http://confluence.atlassian.com]
-[Atlassian|http://atlassian.com]
-[mailto:legendaryservice@atlassian.com]

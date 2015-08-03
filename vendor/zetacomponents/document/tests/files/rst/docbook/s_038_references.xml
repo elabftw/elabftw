@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<article xmlns="http://docbook.org/ns/docbook">
-  <section ID="references_with_special_chars">
-    <title>References with special chars</title>
-    <para>I will be manning <ulink url="http://ez.no">eZ systems'</ulink> booth to answer questions and demo eZ publish to the attendees.</para>
-    <para>Our book <ulink url="http://example.com">"PHP 5 Power Programming"</ulink> is now available free of charge as part of the <ulink url="http://example.com">Bruce Perens' Open Source Series</ulink> under the OPL. Enjoy! If you like it, consider buying the book to award it's authors though.</para>
-  </section>
-</article>

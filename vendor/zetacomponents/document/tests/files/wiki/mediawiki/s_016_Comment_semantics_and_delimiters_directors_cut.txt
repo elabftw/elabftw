@@ -1,4 +1,0 @@
-<!-- ... However we like to keep things simple and somewhat XML-ish so we eat
-everything starting with < followed by !-- until the first -- and > we see,
-that wouldn't be valid XML however, since in XML -- has to terminate a comment
--->-->

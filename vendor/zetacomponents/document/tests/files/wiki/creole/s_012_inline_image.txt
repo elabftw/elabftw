@@ -1,1 +1,0 @@
-{{myimage.png|this is my image}}

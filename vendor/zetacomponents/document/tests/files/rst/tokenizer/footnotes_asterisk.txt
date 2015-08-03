@@ -1,3 +1,0 @@
-Here is a symbolic footnote reference: [*]_.
-
-.. [*] This is the footnote.

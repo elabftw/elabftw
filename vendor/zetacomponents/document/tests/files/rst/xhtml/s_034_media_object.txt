@@ -1,8 +1,0 @@
-Media object
-============
-
-.. image::  media.svg
-   :width:  200
-   :height: 300
-   :alt:    Some random media object
-

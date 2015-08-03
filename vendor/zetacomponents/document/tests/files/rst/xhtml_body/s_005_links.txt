@@ -1,8 +1,0 @@
-======================
-Test escaping of links
-======================
-
-An inline url http://example.com/?foo=bar&blubb and an anonymous reference__.
-
-__ http://example.com/?foo=bar&blubb
-

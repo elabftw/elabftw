@@ -1,4 +1,0 @@
-* **bold** item
-* //italic// item
-# item about a [[certain page]]
-# {{{ //this// is **not** [[processed]] }}}

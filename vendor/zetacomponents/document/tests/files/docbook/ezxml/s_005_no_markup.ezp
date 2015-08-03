@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<section xmlns="http://ez.no/namespaces/ezpublish3" xmlns:image="http://ez.no/namespaces/ezpublish3/image/" xmlns:xhtml="http://ez.no/namespaces/ezpublish3/xhtml/" xmlns:custom="http://ez.no/namespaces/ezpublish3/custom/">
-  <section>
-    <header>No markup</header>
-    <paragraph>asterisks: * "*" '*' (*) (* [*] {*} 1*x BOM32_* double asterisks: ** a**b O(N**2) etc. backquotes: ` `` etc. underscores: _ __ __init__ __init__() etc. vertical bars: | || etc.</paragraph>
-  </section>
-</section>

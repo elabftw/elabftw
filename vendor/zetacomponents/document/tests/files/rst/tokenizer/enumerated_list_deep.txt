@@ -1,7 +1,0 @@
-1. Item 1 initial text.
-
-   a) Item 1a.
-   b) Item 1b.
-
-2. a) Item 2a.
-   b) Item 2b.

@@ -1,8 +1,0 @@
-Missing directive
-=================
-
-No handler is registered for the following directive, which should throw an 
-error:
-
-.. missing_directive_dclaration:: No declared!
-

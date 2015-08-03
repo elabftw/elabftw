@@ -77,7 +77,11 @@ try {
 }
 
 // now import the structure
-import_sql_structure();
+try {
+    import_sql_structure();
+} catch (Exception $e) {
+    die('Error importing the SQL structure: ' . $e->getMessage());
+}
 
 // BUILD CONFIG FILE
 

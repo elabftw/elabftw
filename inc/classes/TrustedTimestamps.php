@@ -117,7 +117,13 @@ class TrustedTimestamps
         }
 
         $login = $config['stamplogin'];
-        $password = $crypto->decrypt($config['stamppass']);
+
+
+        if (strlen($config['stamppass']) > 0) {
+            $password = $crypto->decrypt($config['stamppass']);
+        } else {
+            $password = '';
+        }
         $provider = $config['stampprovider'];
         $cert = $config['stampcert'];
         $hash = $config['stamphash'];

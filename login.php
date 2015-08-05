@@ -103,7 +103,12 @@ if (!checkCookiesEnabled()) {
         <h2><?php echo _('Sign in to your account'); ?></h2>
         <p>
         <label class='block' for="username"><?php echo _('Username'); ?></label>
-            <input name="username" type="text" required /><br>
+        <input name="username" type="text" value='<?php
+            // put the username in the field if we just registered
+            if (isset($_SESSION['username'])) {
+                echo $_SESSION['username'];
+            }
+            ?>' required /><br>
             <label class='block' for="password"><?php echo _('Password'); ?></label>
             <input name="password" type="password" required /><br>
             <!-- form key -->

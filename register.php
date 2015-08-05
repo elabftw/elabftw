@@ -52,18 +52,6 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
                 </select>
             </div>
             <div class='col-md-4'>
-                <label class='block' for="username"><?php echo _('Username'); ?></label>
-                <input name="username" type="text" id="username" required />
-            </div>
-
-            <div class='col-md-4'>
-                <label class='block' for="email"><?php echo _('Email'); ?></label>
-                <input name="email" type="email" id="email" required />
-            </div>
-        </div>
-
-        <div class='row'>
-            <div class='col-md-4'>
                 <label class='block' for="firstname"><?php echo _('Firstname'); ?></label>
                 <input name="firstname" type="text" id="firstname" required />
             </div>
@@ -72,22 +60,29 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
                 <label class='block' for="lastname"><?php echo _('Lastname'); ?></label>
                 <input name="lastname" type="text" id="lastname" required />
             </div>
+        </div>
+
+        <div class='row'>
+            <div class='col-md-4'>
+                <label class='block' for="email"><?php echo _('Email'); ?></label>
+                <input name="email" type="email" id="email" required />
+            </div>
+            <div class='col-md-4'>
+                <label class='block' for="username"><?php echo _('Username'); ?></label>
+                <input name="username" type="text" id="username" required />
+            </div>
             <div class='col-md-4'>
                 <label class='block' for="password"><?php echo _('Password'); ?></label>
                 <input name="password" type="password" title='8 characters minimum' id="password" pattern=".{8,}" required />
             </div>
         </div>
-
         <div class='row'>
-            <div class='col-md-4'>
-                <label class='block' for="cpassword"><?php echo _('Confirm password'); ?></label>
-                <input name="cpassword" type="password" id="cpassword" pattern=".{8,}" required />
-            </div>
-            <div class='col-md-4'>
-                <label class='block' for='comlexity'><?php echo _('Password complexity'); ?></label>
+            <div class='col-md-12'>
+                <label class='block' for='complexity'><?php echo _('Password complexity'); ?></label>
                 <input id="complexity" disabled />
             </div>
         </div>
+
         <div class='submitButtonDiv'>
             <button type="submit" name="Submit" class='submit button'><?php echo _('create'); ?></button>
         </div>
@@ -103,7 +98,7 @@ function validatePassword(){
         document.getElementById("cpassword").setCustomValidity("<?php echo _('The passwords do not match!'); ?>");
     } else {
         //empty string means no validation error
-        document.getElementById("cpassword").setCustomValidity(''); 
+        document.getElementById("cpassword").setCustomValidity('');
     }
 }
 

@@ -112,29 +112,15 @@ if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
     $errflag = true;
 }
 
-// Check PASSWORDS
-if ((isset($_POST['cpassword'])) && (!empty($_POST['cpassword']))) {
-    if ((isset($_POST['password'])) && (!empty($_POST['password']))) {
-        // Create salt
-        $salt = hash("sha512", uniqid(rand(), true));
-        // Create hash
-        $passwordHash = hash("sha512", $salt . $_POST['password']);
-        // Check for password length
-        if (strlen($_POST['password']) <= 7) {
-            $msg_arr[] = _('Password must contain at least 8 characters.');
-            $errflag = true;
-        }
-        // Check confirm password is same as password
-        if (strcmp($_POST['password'], $_POST['cpassword']) != 0) {
-            $msg_arr[] = _('The passwords do not match!');
-            $errflag = true;
-        }
-    } else {
-        $msg_arr[] = _('A mandatory field is missing!');
-        $errflag = true;
-    }
-} else {
+// Check PASSWORD
+if (!isset($_POST['password']) || empty($_POST['password'])) {
     $msg_arr[] = _('A mandatory field is missing!');
+    $errflag = true;
+}
+
+// Check for password length
+if (strlen($_POST['password']) < 8) {
+    $msg_arr[] = _('Password must contain at least 8 characters.');
     $errflag = true;
 }
 
@@ -145,6 +131,11 @@ if ($errflag) {
     header("location: ../register.php");
     exit;
 }
+
+// Create salt
+$salt = hash("sha512", uniqid(rand(), true));
+// Create hash
+$passwordHash = hash("sha512", $salt . $_POST['password']);
 
 // Registration date is stored in epoch
 $register_date = time();
@@ -229,8 +220,8 @@ $result = $req->execute();
 //Check whether the query was successful or not
 if ($result) {
     $msg_arr = array();
-    // only send an email if validation is needed and smtp config is set
-    if (get_config('admin_validate') == '1' && $group == '4' && get_config('smtp_password') != '') {
+    // only send an email if validation is needed
+    if (get_config('admin_validate') == '1' && $group == '4') {
         // we send an email to the admin so he can validate the user
         // get email of the admin of the team (there might be several admins, but we send only to the first one we find)
         $sql = "SELECT * FROM users WHERE (`usergroup` = 1 OR `usergroup` = 2) AND `team` = :team LIMIT 1";

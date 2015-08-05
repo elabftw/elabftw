@@ -285,7 +285,7 @@ ps -ef <span class="p">|</span> grep httpd
 <p>What you want will be in the first column. Possible values are infinite, but it is generally www-data, http, httpdusr, or things like that.</p>
 <p>Now that you know the user/group of the webserver, you can do that (example is shown with www-data, but adapt to your need):</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nb">cd</span> /path/to/elabftw
-mkdir -p uploads/<span class="o">{</span><span class="nb">export</span>,tmp<span class="o">}</span>
+mkdir -p uploads/tmp
 chown -R www-data:www-data uploads
 chmod -R <span class="m">755</span> .
 chmod <span class="m">644</span> config.php

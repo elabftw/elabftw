@@ -7,7 +7,14 @@ Install in a docker container
 
 .. image:: img/docker.png
 
-If you know Docker already and want to use a dockerized elabftw, please see `this repo <https://github.com/elabftw/docker-elabftw>`_.
+This is for people who are familiar with docker.
 
+.. code-block:: bash
 
-More infos coming soon.
+    git clone https://github.com/elabftw/docker-elabftw
+    cd docker-elabftw
+    cp docker-compose.yml-EXAMPLE docker-compose.yml
+    $EDITOR docker-compose.yml
+    docker-compose up
+
+If you need an image without MySQL, check out `this repository <https://github.com/NicolasCARPi/elabftw-docker-nosql>`_.

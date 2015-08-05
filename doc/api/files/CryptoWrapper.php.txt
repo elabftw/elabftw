@@ -56,3 +56,4 @@ class CryptoWrapper
         return Crypto::binToHex(Crypto::encrypt($cleartext, $this->getSecretKey()));
     }
 }
+

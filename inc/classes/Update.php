@@ -220,6 +220,7 @@ class Update
     /**
      * Update the schema value in config to latest because we did the update functions before
      *
+     * @param string|null $schema the version we want to update
      */
     private function updateSchema($schema = null)
     {

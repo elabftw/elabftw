@@ -185,6 +185,7 @@ class User
      *
      * @param string $username
      * @param string $password
+     * @param string $setCookie will be here if the user ticked the remember me checkbox
      * @return bool Return true if user provided correct credentials
      */
     public function login($username, $password, $setCookie = 'on')

@@ -72,7 +72,8 @@ abstract class Make
     /**
      * Verify we can see the id
      *
-     * @return bool True if user has reading rights
+     * @param int $id
+     * @return bool|null True if user has reading rights
      */
     protected function checkVisibility($id)
     {

@@ -34,7 +34,7 @@ class TrustedTimestamps
     private $pdfPath;
     /** elabid-timestamped.pdf */
     private $pdfRealName;
-    /* a hash */
+    /** a hash */
     private $pdfLongName;
 
     /** config (url, login, password, cert) */

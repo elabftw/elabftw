@@ -23,7 +23,7 @@ Set up backup
 See the :ref:`backup <backup>` page.
 
 Set up the teams :sup:`(optionnal)`
----------------------------------
+-----------------------------------
 
 The Sysadmin panel (`elabftw/sysconfig.php`) allows you to add another team to your install. You should also edit your team name.
 

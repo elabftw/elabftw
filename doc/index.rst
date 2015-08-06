@@ -9,8 +9,9 @@ Welcome to elabftw's documentation!
 
     install-gnulinux
     install-drop
-    install-mac
     install-docker
+    install-mac
+    install-windows
     common-errors
     postinstall
     backup

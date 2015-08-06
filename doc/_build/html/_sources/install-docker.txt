@@ -1,6 +1,6 @@
 .. _install-docker:
 
-Install in a docker container
+Install in a Docker container
 =============================
 
 .. warning:: This is experimental!

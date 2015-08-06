@@ -32,6 +32,11 @@ if ($_SESSION['is_sysadmin'] != 1) {
 $die_msg = "There was a problem in the database update :/ Please report a bug : https://github.com/elabftw/elabftw/issues?state=open";
 
 // START //
+// 20150806
+// add chem_editor pref because it was forgotten or something so I add it again here
+if ($pdo->addField('users', 'close_warning', "TINYINT(1) UNSIGNED NOT NULL DEFAULT '0'")) {
+    $msg_arr[] = '>>> Added Close Warning pref to users.';
+}
 
 // 20150227 : add items_revisions
 $sql = "SHOW TABLES";

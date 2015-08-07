@@ -142,18 +142,6 @@ foreach ($lang_array as $lang) {
 ?>
             </select>
         <h3><?php echo _('Under the hood'); ?></h3>
-        <!-- disabled because it does nothing atm
-        <label for='debug'><?php //echo _('Activate debug mode:'); ?></label>
-        <select name='debug' id='debug'>
-            <option value='1'<?php
-                //if (get_config('debug') == 1) { echo " selected='selected'"; } ?>
-            ><?php //echo _('Yes'); ?></option>
-            <option value='0'<?php
-                    //if (get_config('debug') == 0) { echo " selected='selected'"; } ?>
-            ><?php //echo _('No'); ?></option>
-        </select>
-        <p class='smallgray'><?php //echo _('Content of SESSION and COOKIES array will be displayed in the footer for admins.'); ?></p>
-        -->
         <label for='proxy'><?php echo _('Address of the proxy:'); ?></label>
         <input type='text' value='<?php echo get_config('proxy'); ?>' name='proxy' id='proxy' />
         <p class='smallgray'><?php echo _('If you are behind a firewall/proxy, enter the address here. Example : http://proxy.example.com:3128'); ?></p>

@@ -17,6 +17,11 @@ use \Exception;
  */
 abstract class Make
 {
+    /** pdo object */
+    protected $pdo;
+    /** type can be experiments or items */
+    protected $type;
+
     /** child classes need to implement that
      *
      * @return string

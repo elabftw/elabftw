@@ -44,7 +44,7 @@ class Update
      * UPDATE THIS AFTER RELEASING
      * ///////////////////////////
      */
-    const INSTALLED_VERSION = '1.1.5';
+    const INSTALLED_VERSION = '1.1.6';
 
     /**
      * /////////////////////////////////////////////////////

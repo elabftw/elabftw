@@ -242,27 +242,43 @@ require_once 'inc/file_upload.php';
 require_once 'inc/display_file.php';
 ?>
 
-
-
-<script>
-// JAVASCRIPT
-// TAGS AUTOCOMPLETE
-$(function() {
-		var availableTags = [
-<?php // get all user's tag for autocomplete
+<?php
+// TAG AUTOCOMPLETE
 $sql = "SELECT DISTINCT tag FROM experiments_tags WHERE userid = :userid ORDER BY id DESC LIMIT 500";
 $getalltags = $pdo->prepare($sql);
-$getalltags->execute(array(
-    'userid' => $_SESSION['userid']
-));
+$getalltags->bindParam(':userid', $_SESSION['userid']);
+$getalltags->execute();
+$tag_list = "";
 while ($tag = $getalltags->fetch()) {
-    echo "'" . $tag[0] . "',";
-}?>
-		];
-		$("#addtaginput").autocomplete({
-			source: availableTags
-		});
-	});
+    $tag_list .= "'" . $tag[0] . "',";
+}
+
+// LINK AUTOCOMPLETE
+$link_list = "";
+$tinymce_list = "";
+$sql = "SELECT items_types.name,
+items.id AS itemid,
+items.* FROM items
+LEFT JOIN items_types
+ON items.type = items_types.id
+WHERE items.team = :team";
+$getalllinks = $pdo->prepare($sql);
+$getalllinks->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
+if ($getalllinks->execute()) {
+
+    while ($link = $getalllinks->fetch()) {
+        $link_type = $link['name'];
+        // html_entity_decode is needed to convert the quotes
+        // str_replace to remove ' because it messes everything up
+        $link_name = str_replace("'", "", html_entity_decode(substr($link['title'], 0, 60), ENT_QUOTES));
+        // remove also the % (see issue #62)
+        $link_name = str_replace("%", "", $link_name);
+        $link_list .= "'" . $link['itemid'] . " - " . $link_type . " - " . $link_name . "',";
+        $tinymce_list .= "{ name : \"<a href='database.php?mode=view&id=" . $link['itemid'] . "'>" . $link_name . "</a>\"},";
+    }
+}
+?>
+<script>
 // DELETE TAG
 function delete_tag(tag_id, item_id) {
     var you_sure = confirm('<?php echo _('Delete this?'); ?>');
@@ -302,37 +318,7 @@ function addTagOnEnter(e) { // the argument here is the event (needed to detect 
         })
     } // end if key is enter
 }
-<?php // get all links for autocomplete
-$link_list = "";
-$tinymce_list = "";
-$sql = "SELECT items_types.name,
-items.id AS itemid,
-items.* FROM items
-LEFT JOIN items_types
-ON items.type = items_types.id
-WHERE items.team = :team";
-$getalllinks = $pdo->prepare($sql);
-$getalllinks->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
-if ($getalllinks->execute()) {
 
-    while ($link = $getalllinks->fetch()) {
-        $link_type = $link['name'];
-        // html_entity_decode is needed to convert the quotes
-        // str_replace to remove ' because it messes everything up
-        $link_name = str_replace("'", "", html_entity_decode(substr($link['title'], 0, 60), ENT_QUOTES));
-        // remove also the % (see issue #62)
-        $link_name = str_replace("%", "", $link_name);
-        $link_list .= "'" . $link['itemid'] . " - " . $link_type . " - " . $link_name . "',";
-        $tinymce_list .= "{ name : \"<a href='database.php?mode=view&id=" . $link['itemid'] . "'>" . $link_name . "</a>\"},";
-    }
-}
-?>
-// LINKS AUTOCOMPLETE
-$(function() {
-    $( "#linkinput" ).autocomplete({
-        source: [<?php echo $link_list; ?>]
-    });
-});
 // DELETE LINK
 function delete_link(id, item_id) {
     var you_sure = confirm('<?php echo _('Delete this?'); ?>');
@@ -417,6 +403,15 @@ $(document).ready(function() {
     key('<?php echo $_SESSION['prefs']['shortcuts']['create']; ?>', function(){location.href = 'app/create_item.php?type=exp'});
     key('<?php echo $_SESSION['prefs']['shortcuts']['submit']; ?>', function(){document.forms['editXP'].submit()});
 
+    // autocomplete the tags
+    $("#addtaginput").autocomplete({
+        source: [<?php echo $tag_list; ?>]
+    });
+
+    // autocomplete the links
+    $( "#linkinput" ).autocomplete({
+        source: [<?php echo $link_list; ?>]
+    });
     // hide the little 'Updated !' message
     $('#visibility_msg_div').hide();
 

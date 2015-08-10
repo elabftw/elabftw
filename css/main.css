@@ -468,10 +468,10 @@ textarea {
 }
 /* overlay to say it's saved */
 .overlay {
-    background-color: #000;
+    background-color: #29AEB9;
     position: fixed;
     opacity: 0.8;
-    top: 10px;
+    top: 107px;
     width: 100%;
     height: 20px;
     z-index: 10;
@@ -481,9 +481,6 @@ textarea {
     color:#fff;
     display:inline;
 }
-
-
-
 
 /* save and go back button */
 #saveButton {

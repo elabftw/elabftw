@@ -127,30 +127,19 @@ if ($_SESSION['prefs']['chem_editor']) {
 require_once 'inc/file_upload.php';
 // DISPLAY FILES
 require_once 'inc/display_file.php';
-?>
 
-<?php
-// unset session variables
-unset($_SESSION['errors']);
+// TAG AUTOCOMPLETE
+$sql = "SELECT DISTINCT tag FROM items_tags WHERE team_id = :team_id ORDER BY id DESC LIMIT 500";
+$getalltags = $pdo->prepare($sql);
+$getalltags->bindParam(':team_id', $_SESSION['team_id']);
+$getalltags->execute();
+$tag_list = "";
+while ($tag = $getalltags->fetch()) {
+    $tag_list .= "'" . $tag[0] . "',";
+}
 ?>
 
 <script>
-// JAVASCRIPT
-// TAGS AUTOCOMPLETE LIST
-$(function() {
-		var availableTags = [
-<?php // get all user's tag for autocomplete
-$sql = "SELECT DISTINCT tag FROM items_tags ORDER BY id DESC LIMIT 500";
-$getalltags = $pdo->prepare($sql);
-$getalltags->execute();
-while ($tag = $getalltags->fetch()) {
-    echo "'" . $tag[0] . "',";
-}?>
-		];
-		$( "#addtaginput" ).autocomplete({
-			source: availableTags
-		});
-	});
 // DELETE TAG
 function delete_tag(tag_id,item_id){
     var you_sure = confirm('<?php echo _('Delete this?'); ?>');
@@ -206,6 +195,12 @@ $(document).ready(function() {
     $('#addtaginput').keypress(function (e) {
         addTagOnEnter(e);
     });
+
+    // autocomplete the tags
+    $("#addtaginput").autocomplete({
+        source: [<?php echo $tag_list; ?>]
+    });
+
     // EDITOR
     tinymce.init({
         mode : "specific_textareas",

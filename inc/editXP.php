@@ -44,183 +44,171 @@ if ($experiment['locked'] == 1) {
 ?>
 <link rel="stylesheet" media="all" href="css/autocomplete.css" />
 <script src="js/tinymce/tinymce.min.js"></script>
-    <menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' class='bot5px' alt='' /> <?php echo _('Back to experiments listing'); ?></a></menu>
+<menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' class='bot5px' alt='' /> <?php echo _('Back to experiments listing'); ?></a></menu>
+
 <section class='box' id='main_section' style='border-left: 6px solid #<?php echo $experiment['color']; ?>'>
-<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id; ?>','exp', 'experiments.php')" />
-<!-- ADD TAG FORM -->
-<img src='img/tags.png' class='bot5px' alt='tags' /> <h4><?php echo _('Tags'); ?></h4><span class='smallgray'> (<?php echo _('Click a tag to remove it'); ?>)</span>
-<div class='tags'>
-<span id='tags_div'>
-<?php
-$sql = "SELECT id, tag FROM experiments_tags WHERE item_id = :item_id";
-$tagreq = $pdo->prepare($sql);
-$tagreq->bindParam(':item_id', $id);
-$tagreq->execute();
-// DISPLAY TAGS
-while ($tags = $tagreq->fetch()) {
-    echo "<span class='tag'><a onclick='delete_tag(" . $tags['id'] . "," . $id . ")'>";
-    echo stripslashes($tags['tag']) . "</a></span>";
-} //end while tags
-?>
-</span>
-<input type="text" name="tag" id="addtaginput" placeholder="<?php echo _('Add a tag'); ?>" />
-</div>
-<!-- END ADD TAG -->
-<!-- BEGIN EDITXP FORM -->
-<form id="editXP" name="editXP" method="post" action="app/editXP-exec.php" enctype='multipart/form-data'>
-<input name='item_id' type='hidden' value='<?php echo $id; ?>' />
+    <img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id; ?>','exp', 'experiments.php')" />
 
-<div class='row'>
+    <?php
+    // TAGS
+    echo displayTags('experiments', $id);
+    ?>
 
-    <div class='col-md-4'>
-        <img src='img/calendar.png' class='bot5px' title='date' alt='calendar' />
-        <h4><?php echo _('Date'); ?></h4><br>
-        <!-- TODO if firefox has support for it: type = date -->
-        <input name='date' id='datepicker' size='8' type='text' value='<?php echo $experiment['date']; ?>' />
-    </div>
+    <!-- BEGIN EDITXP FORM -->
+    <form id="editXP" name="editXP" method="post" action="app/editXP-exec.php" enctype='multipart/form-data'>
+    <input name='item_id' type='hidden' value='<?php echo $id; ?>' />
 
-    <div class='col-md-4'>
-        <img src='img/eye.png' class='bot5px' alt='visibility' />
-        <h4><?php echo _('Visibility'); ?></h4><br>
-        <select id="visibility_form" name="visibility" onchange="update_visibility(this.value)">
-            <option value="organization" <?php if ($experiment['visibility'] === 'organization') {
-    echo "selected";
-}?>><?php echo _('Everyone with an account'); ?></option>
-            <option value="team" <?php if ($experiment['visibility'] === 'team') {
-    echo "selected";
-}?>><?php echo _('Only the team'); ?></option>
-            <option value="user" <?php if ($experiment['visibility'] === 'user') {
-    echo "selected";
-}
-?>><?php echo _('Only me'); ?></option>
-<?php
-$sql = "SELECT id, name FROM team_groups WHERE team = :team";
-$req = $pdo->prepare($sql);
-$req->bindParam(':team', $_SESSION['team_id']);
-$req->execute();
-while ($team_groups = $req->fetch()) {
-    echo "<option value='" . $team_groups['id'] . "'";
-    if ($experiment['visibility'] === $team_groups['id']) {
-        echo " selected";
+    <div class='row'>
+
+        <div class='col-md-4'>
+            <img src='img/calendar.png' class='bot5px' title='date' alt='calendar' />
+            <h4><?php echo _('Date'); ?></h4><br>
+            <!-- TODO if firefox has support for it: type = date -->
+            <input name='date' id='datepicker' size='8' type='text' value='<?php echo $experiment['date']; ?>' />
+        </div>
+
+        <div class='col-md-4'>
+            <img src='img/eye.png' class='bot5px' alt='visibility' />
+            <h4><?php echo _('Visibility'); ?></h4><br>
+            <select id="visibility_form" name="visibility" onchange="update_visibility(this.value)">
+                <option value="organization" <?php if ($experiment['visibility'] === 'organization') {
+        echo "selected";
+    }?>><?php echo _('Everyone with an account'); ?></option>
+                <option value="team" <?php if ($experiment['visibility'] === 'team') {
+        echo "selected";
+    }?>><?php echo _('Only the team'); ?></option>
+                <option value="user" <?php if ($experiment['visibility'] === 'user') {
+        echo "selected";
     }
-    echo ">Only " . $team_groups['name'] . "</option>";
-}
-?>
-        </select>
-        <span id='visibility_msg_div'><?php echo _('Updated!'); ?></span>
-    </div>
-
-    <div class='col-md-4'>
-        <img src='img/status.png' class='bot5px' alt='status' /> <h4><?php echo ngettext('Status', 'Status', 1); ?></h4><br>
-        <script>
-        // this array is used by updateStatus() to get the color of new status
-        var status_arr = Array();
-        </script>
-
-        <?php
-        // put all available status in array
-        $status_arr = array();
-        // SQL to get all the status of the team
-        $sql = 'SELECT id, name, color FROM status WHERE team = :team ORDER BY ordering ASC';
-        $req = $pdo->prepare($sql);
-        $req->execute(array(
-            'team' => $_SESSION['team_id']
-        ));
-
-        while ($status = $req->fetch()) {
-            $status_arr[$status['id']] = $status['name'];
-            // get also a JS array for update_status() that needs the color to set the border immediately
-            echo "<script>
-                status_arr['".$status['id'] . "'] =  '" . $status['color'] . "';
-                </script>";
+    ?>><?php echo _('Only me'); ?></option>
+    <?php
+    $sql = "SELECT id, name FROM team_groups WHERE team = :team";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':team', $_SESSION['team_id']);
+    $req->execute();
+    while ($team_groups = $req->fetch()) {
+        echo "<option value='" . $team_groups['id'] . "'";
+        if ($experiment['visibility'] === $team_groups['id']) {
+            echo " selected";
         }
-        ?>
-        <select name="status" onchange="updateStatus(this.value)">
-        <?php
-        // now display all possible values of status in select menu
-        foreach ($status_arr as $key => $value) {
-            echo "<option ";
-            if ($experiment['status'] == $key) {
-                echo "selected ";
+        echo ">Only " . $team_groups['name'] . "</option>";
+    }
+    ?>
+            </select>
+            <span id='visibility_msg_div'><?php echo _('Updated!'); ?></span>
+        </div>
+
+        <div class='col-md-4'>
+            <img src='img/status.png' class='bot5px' alt='status' /> <h4><?php echo ngettext('Status', 'Status', 1); ?></h4><br>
+            <script>
+            // this array is used by updateStatus() to get the color of new status
+            var status_arr = Array();
+            </script>
+
+            <?php
+            // put all available status in array
+            $status_arr = array();
+            // SQL to get all the status of the team
+            $sql = 'SELECT id, name, color FROM status WHERE team = :team ORDER BY ordering ASC';
+            $req = $pdo->prepare($sql);
+            $req->execute(array(
+                'team' => $_SESSION['team_id']
+            ));
+
+            while ($status = $req->fetch()) {
+                $status_arr[$status['id']] = $status['name'];
+                // get also a JS array for update_status() that needs the color to set the border immediately
+                echo "<script>
+                    status_arr['".$status['id'] . "'] =  '" . $status['color'] . "';
+                    </script>";
             }
-            echo "value='" . $key . "'>" . $value . "</option>";
-        }
-        ?>
-        </select>
+            ?>
+            <select name="status" onchange="updateStatus(this.value)">
+            <?php
+            // now display all possible values of status in select menu
+            foreach ($status_arr as $key => $value) {
+                echo "<option ";
+                if ($experiment['status'] == $key) {
+                    echo "selected ";
+                }
+                echo "value='" . $key . "'>" . $value . "</option>";
+            }
+            ?>
+            </select>
+        </div>
+
     </div>
 
-</div>
+    <br>
+    <h4><?php echo _('Title'); ?></h4><br>
+    <input id='title_input' name='title' rows="1" value="
+    <?php echo stripslashes($experiment['title']); ?>
+    " required />
 
-<br>
-<h4><?php echo _('Title'); ?></h4><br>
-<input id='title_input' name='title' rows="1" value="
-<?php echo stripslashes($experiment['title']); ?>
-" required />
+    <br>
+    <h4><?php echo ngettext('Experiment', 'Experiments', 1); ?></h4><br>
+    <textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">
+        <?php echo stripslashes($experiment['body']); ?>
+    </textarea>
 
-<br>
-<h4><?php echo ngettext('Experiment', 'Experiments', 1); ?></h4><br>
-<textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">
-    <?php echo stripslashes($experiment['body']); ?>
-</textarea>
-
-<!-- SUBMIT BUTTON -->
-<div id='saveButton'>
-    <button type="submit" name="Submit" class='button'><?php echo _('Save and go back'); ?></button>
-</div>
-</form><!-- end editXP form -->
-
-<!-- LINKED ITEMS -->
-<section>
-    <img src='img/link.png' class='bot5px' class='bot5px'> <h4 style='display:inline'><?php echo _('Linked items'); ?></h4>
-    <div id='links_div'>
-        <?php
-        // DISPLAY LINKED ITEMS
-        $sql = "SELECT items.id AS itemid,
-            experiments_links.id AS linkid,
-            experiments_links.*,
-            items.*,
-            items_types.*
-            FROM experiments_links
-            LEFT JOIN items ON (experiments_links.link_id = items.id)
-            LEFT JOIN items_types ON (items.type = items_types.id)
-            WHERE experiments_links.item_id = :id";
-        $req = $pdo->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->execute();
-        // Check there is at least one link to display
-        if ($req->rowcount() > 0) {
-            echo "<ul>";
-            while ($links = $req->fetch()) {
-                echo "<li>- [" . $links['name'] . "] - <a href='database.php?mode=view&id=" . $links['itemid'] . "'>" .
-                    stripslashes($links['title']) . "</a>";
-                echo "<a onclick='delete_link(" . $links['linkid'] . ", " . $id . ")'>
-                <img src='img/small-trash.png' title='delete' alt='delete' /></a></li>";
-            } // end while
-            echo "</ul>";
-        } else { // end if link exist
-            echo "<br />";
-        }
-        ?>
+    <!-- SUBMIT BUTTON -->
+    <div id='saveButton'>
+        <button type="submit" name="Submit" class='button'><?php echo _('Save and go back'); ?></button>
     </div>
-    <p class='inline'><?php echo _('Add a link'); ?></p>
-    <input id='linkinput' size='60' type="text" name="link" placeholder="<?php echo _('from the database'); ?>" />
-</section>
-<span class='align_right'>
-<?php
-// get the list of revisions
-$sql = "SELECT COUNT(id) FROM experiments_revisions WHERE item_id = :item_id AND userid = :userid ORDER BY savedate DESC";
-$req = $pdo->prepare($sql);
-$req->execute(array(
-    'item_id' => $id,
-    'userid' => $_SESSION['userid']
-));
-$rev_count = $req->fetch();
-$count = intval($rev_count[0]);
-if ($count > 0) {
-    echo $count . " " . ngettext('revision available.', 'revisions available.', $count) . " <a href='revision.php?type=experiments&item_id=" . $id . "'>" . _('Show history') . "</a>";
-}
-?>
-</span>
+    </form><!-- end editXP form -->
+
+    <!-- LINKED ITEMS -->
+    <section>
+        <img src='img/link.png' class='bot5px' class='bot5px'> <h4 style='display:inline'><?php echo _('Linked items'); ?></h4>
+        <div id='links_div'>
+            <?php
+            // DISPLAY LINKED ITEMS
+            $sql = "SELECT items.id AS itemid,
+                experiments_links.id AS linkid,
+                experiments_links.*,
+                items.*,
+                items_types.*
+                FROM experiments_links
+                LEFT JOIN items ON (experiments_links.link_id = items.id)
+                LEFT JOIN items_types ON (items.type = items_types.id)
+                WHERE experiments_links.item_id = :id";
+            $req = $pdo->prepare($sql);
+            $req->bindParam(':id', $id, PDO::PARAM_INT);
+            $req->execute();
+            // Check there is at least one link to display
+            if ($req->rowcount() > 0) {
+                echo "<ul>";
+                while ($links = $req->fetch()) {
+                    echo "<li>- [" . $links['name'] . "] - <a href='database.php?mode=view&id=" . $links['itemid'] . "'>" .
+                        stripslashes($links['title']) . "</a>";
+                    echo "<a onclick='delete_link(" . $links['linkid'] . ", " . $id . ")'>
+                    <img src='img/small-trash.png' title='delete' alt='delete' /></a></li>";
+                } // end while
+                echo "</ul>";
+            } else { // end if link exist
+                echo "<br />";
+            }
+            ?>
+        </div>
+        <p class='inline'><?php echo _('Add a link'); ?></p>
+        <input id='linkinput' size='60' type="text" name="link" placeholder="<?php echo _('from the database'); ?>" />
+    </section>
+    <span class='align_right'>
+    <?php
+    // get the list of revisions
+    $sql = "SELECT COUNT(id) FROM experiments_revisions WHERE item_id = :item_id AND userid = :userid ORDER BY savedate DESC";
+    $req = $pdo->prepare($sql);
+    $req->execute(array(
+        'item_id' => $id,
+        'userid' => $_SESSION['userid']
+    ));
+    $rev_count = $req->fetch();
+    $count = intval($rev_count[0]);
+    if ($count > 0) {
+        echo $count . " " . ngettext('revision available.', 'revisions available.', $count) . " <a href='revision.php?type=experiments&item_id=" . $id . "'>" . _('Show history') . "</a>";
+    }
+    ?>
+    </span>
 
 </section>
 <?php

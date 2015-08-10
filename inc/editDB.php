@@ -45,25 +45,10 @@ if ($data['locked'] == 1) {
     <!-- TRASH -->
     <img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id; ?>','item', 'database.php')" />
 
-    <!-- ADD TAG FORM -->
-    <img src='img/tags.png' class='bot5px' alt='tags' /><label for='addtaginput'><?php echo _('Tags'); ?></label>
-    <div class='tags'>
-        <span id='tags_div'>
-        <?php
-        $sql = "SELECT id, tag FROM items_tags WHERE item_id = :item_id";
-        $tagreq = $pdo->prepare($sql);
-        $tagreq->bindParam(':item_id', $id);
-        $tagreq->execute();
-        // DISPLAY TAGS
-        while ($tags = $tagreq->fetch()) {
-            echo "<span class='tag'><a onclick='delete_tag(" . $tags['id'] . "," . $id . ")'>";
-            echo stripslashes($tags['tag']) . "</a></span>";
-        } //end while tags
-        ?>
-        </span>
-        <input type="text" name="tag" id="addtaginput" placeholder="<?php echo _('Add a tag'); ?>" />
-    </div>
-    <!-- END ADD TAG -->
+    <?php
+    // TAGS
+    echo displayTags('items', $id);
+    ?>
 
     <!-- BEGIN 2ND FORM -->
     <form method="post" action="app/editDB-exec.php" enctype='multipart/form-data'>

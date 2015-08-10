@@ -7,7 +7,7 @@ Install on Windows (in Docker)
 
 As Windows is a huge pile of shit, we cannot install eLabFTW directly on it. We need a layer of sanity, called a Virtual Machine running GNU/Linux with Docker.
 
-Being familiar with the Docker concepts is required. This guide is not complete. You might face some unexpected errors. You have been warned.
+Being familiar with the Docker concepts is required. This guide is not complete. You might face some unexpected errors. You need 64 bits Windows. You have been warned.
 
 Also, installing it in a Ubuntu VM will be easier. Docker is very nice when it works, but there are literally hundreds of way for it to fail.
 

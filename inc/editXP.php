@@ -382,45 +382,34 @@ function addLinkOnEnter(e) { // the argument here is the event (needed to detect
 
 // This function is activated with the select element and send a post request to quicksave.php
 function updateStatus(status) {
-            var jqxhr = $.ajax({
-                type: "POST",
-                url: "app/quicksave.php",
-                data: {
-                id : <?php echo $id; ?>,
-                status : status,
-                }
-                // change the color of the item border
-            }).done(function() {
-                // we first remove any status class
-                $("#main_section").css('border', null);
-                // and we add our new border color
-                // first : get what is the color of the new status
-                var css = '6px solid #' + status_arr[status];
-                $("#main_section").css('border-left', css);Untitled
-            });
+    $.post("app/quicksave.php", {
+        id : <?php echo $id; ?>,
+        status : status
+        // change the color of the item border
+    }).done(function() {
+        // we first remove any status class
+        $("#main_section").css('border', null);
+        // and we add our new border color
+        // first : get what is the color of the new status
+        var css = '6px solid #' + status_arr[status];
+        $("#main_section").css('border-left', css);
+    });
 }
 
 // This function is activated with the select element and send a post request to quicksave.php
 function update_visibility(visibility) {
-            var jqxhr = $.ajax({
-                type: "POST",
-                url: "app/quicksave.php",
-                data: {
-                id : <?php echo $id; ?>,
-                visibility : visibility,
-                }
-            }).done(function() {
-                // once it's update we show a message for some time before making it disappear
-                $("#visibility_msg_div").show(0, function() {
-                    setTimeout(
-                        function() {
-                            $("#visibility_msg_div").hide(500);
-                        }, 1500)
-
-                });
-            });
+    $.post("app/quicksave.php", {
+        id : <?php echo $id; ?>,
+        visibility : visibility
+    }).done(function() {
+        // once it's update we show a message for some time before making it disappear
+        $("#visibility_msg_div").show(0, function() {
+            setTimeout(function() {
+                $("#visibility_msg_div").hide(500);
+            }, 1500)
+        });
+    });
 }
-
 
 // READY ? GO !!
 $(document).ready(function() {

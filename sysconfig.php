@@ -347,15 +347,12 @@ function toggleMailMethod(value) {
     }
 }
 
+// update the name of a team
 function updateTeam(team_id) {
     var new_team_name = document.getElementById('team_'+team_id).value;
-    var jqxhr = $.ajax({
-        type: "POST",
-        url: "app/quicksave.php",
-        data: {
-            id : team_id,
-            team_name : new_team_name,
-        }
+    $.post("app/quicksave.php", {
+        id : team_id,
+        team_name : new_team_name
     }).done(function(returnValue) {
         // we will get output on error
         if (returnValue != '') {

@@ -808,6 +808,6 @@ function displayTags($type, $id)
     while ($tags = $tagreq->fetch()) {
         $html .= "<span class='tag'><a onclick='delete_tag(" . $tags['id'] . "," . $id . ")'>" . stripslashes($tags['tag']) . "</a></span>";
     }
-    $html .= "</span><input type='text' name='tag' id='addtaginput' placeholder='" .  _('Add a tag') . "' /></div>";
+    $html .= "</span><input type='text' name='tag' id='addtaginput' placeholder='" . _('Add a tag') . "' /></div>";
     return $html;
 }

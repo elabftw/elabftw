@@ -42,6 +42,18 @@ if ($row_count === 0) {
 
 $data = $req->fetch();
 
+// if visibility of experiment is an int, it is a team_groups
+// so we want to display the name of the group
+if (is_pos_int($data['visibility'])) {
+    $sql = "SELECT name FROM team_groups WHERE id = :id";
+    $visreq = $pdo->prepare($sql);
+    $visreq->bindParam(':id', $data['visibility']);
+    $visreq->execute();
+    $visibility = $visreq->fetchColumn();
+} else {
+    $visibility = $data['visibility'];
+}
+
 
 // Check id is owned by connected user to show read only message if not
 if ($data['userid'] != $_SESSION['userid']) {
@@ -121,7 +133,7 @@ if ($data['timestamped'] == 1) {
 // Display experiment
 ?>
     <section class="item" style='padding:15px;border-left: 6px solid #<?php echo $data['color']; ?>'>
-    <span class='top_right_status'><img src='img/status.png'><?php echo $data['name']; ?><img src='img/eye.png' alt='eye' /><?php echo $data['visibility']; ?></span>
+    <span class='top_right_status'><img src='img/status.png'><?php echo $data['name']; ?><img src='img/eye.png' alt='eye' /><?php echo $visibility; ?></span>
 <?php
 echo "<span class='date_view'><img src='img/calendar.png' class='bot5px' title='date' alt='Date :' /> " . Tools::formatDate($data['date']) . "</span><br />
     <a href='experiments.php?mode=edit&id=".$data['expid'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a>

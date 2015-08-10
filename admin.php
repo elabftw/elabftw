@@ -238,7 +238,7 @@ if (!empty($team['stamppass'])) {
 <!-- TAB 3 STATUS -->
 <div class='divhandle' id='tab3div'>
     <h3><?php echo _('Edit an existing status'); ?></h3>
-    <ul class='sortable_status list-group'>
+    <ul class='draggable sortable_status list-group'>
 
     <?php
     // SQL to get all status
@@ -332,7 +332,7 @@ if (!empty($team['stamppass'])) {
 <!-- TAB 4 ITEMS TYPES-->
 <div class='divhandle' id='tab4div'>
     <h3><?php echo _('Database items types'); ?></h3>
-    <ul class='sortable_itemstypes list-group'>
+    <ul class='draggable sortable_itemstypes list-group'>
 
     <?php
     // SQL to get all items type
@@ -721,7 +721,7 @@ $(document).ready(function() {
 
             $.post("app/order.php", {
                 'ordering_status' : ordering
-            });
+            }).done(showSaved());
         }
     });
 
@@ -737,7 +737,7 @@ $(document).ready(function() {
 
             $.post("app/order.php", {
                 'ordering_itemstypes' : ordering
-            });
+            }).done(showSaved());
         }
     });
     // IMPORT

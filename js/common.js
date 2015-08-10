@@ -1,4 +1,4 @@
-/* 
+/*
  * Common functions used by eLabFTW
  */
 
@@ -53,7 +53,9 @@ function showSaved() {
 }
 
 function removeSaved() {
-       document.body.removeChild(document.getElementById('overlay'));
+    $('#overlay').fadeOut(500, function() {
+        $(this).remove();
+    });
 }
 /* for menus on team, admin, sysconfig and ucp */
 
@@ -107,5 +109,5 @@ function go_url(x) {
     if (x == '') {
         return;
     }
-    location = x;
+    window.location = x;
 }

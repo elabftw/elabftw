@@ -527,6 +527,9 @@ a[class*='trigger_']:hover {
     cursor:pointer;
 }
 
+.draggable {
+    cursor: move;
+}
 
 .config_form input, .config_form select {
     float:right;
@@ -889,5 +892,3 @@ code {
     text-decoration:none;
 }
 /* END TODOLIST */
-
-

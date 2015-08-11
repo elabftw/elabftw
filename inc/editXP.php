@@ -139,13 +139,8 @@ if ($experiment['locked'] == 1) {
 
     </div>
 
-    <br>
     <h4><?php echo _('Title'); ?></h4><br>
-    <input id='title_input' name='title' rows="1" value="
-    <?php echo stripslashes($experiment['title']); ?>
-    " required />
-
-    <br>
+    <input id='title_input' name='title' rows="1" value="<?php echo stripslashes($experiment['title']); ?>" required />
     <h4><?php echo ngettext('Experiment', 'Experiments', 1); ?></h4><br>
     <textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">
         <?php echo stripslashes($experiment['body']); ?>

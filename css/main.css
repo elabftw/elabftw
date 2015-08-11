@@ -66,7 +66,6 @@ body:before {
 /* set background image */
 body {
     background:url(images/bg.png) no-repeat center center fixed;
-    -moz-background-size:cover;
     background-size: cover;
 }
 
@@ -124,7 +123,6 @@ input, select {
 .form-control:focus{
     border-color:#29AEB9;
     box-shadow:inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(41,174,185,.6);
-    -webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(41,174,185,.6);
 }
 
 
@@ -227,18 +225,14 @@ nav .navleft{
 
 nav .navleft a.selected {
     border-bottom:6px #29AEB9 solid;
-    padding-bottom:11px;
-    -moz-padding-bottom:12px;
+    padding-bottom:10px;
     color:white;
 }
 
 
 nav .navleft a:hover {
     color:#29AEB9;
-    -moz-transition-duration: 500ms;
-    -webkit-transition-duration: 500ms;
-    -o-transition-duration: 500ms;
-    -ms-transition-duration: 500ms;
+    transition-duration: 500ms;
 }
 
 /* search bar in head.php ; nav */
@@ -298,10 +292,7 @@ menu.border a {
 }
 menu.border a:hover {
     color: black;
-    -moz-transition-duration: 1500ms;
-    -webkit-transition-duration: 1500ms;
-    -o-transition-duration: 1500ms;
-    -ms-transition-duration: 1500ms;
+    transition-duration: 1500ms;
 }
 
 /* ALERT */

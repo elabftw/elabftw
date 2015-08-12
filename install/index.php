@@ -27,7 +27,9 @@
 session_start();
 require_once '../vendor/autoload.php';
 require_once '../inc/functions.php';
+$errflag = false;
 ?>
+
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -111,9 +113,7 @@ if (file_exists('../config.php')) {
 }
 ?>
 
-<h4>Preliminary checks</h4>
-<br />
-<br />
+<h3>Preliminary checks</h3>
 <?php
 // CHECK WE ARE WITH HTTPS
 if (!\Elabftw\Elabftw\Tools::usingSsl()) {
@@ -128,10 +128,7 @@ if (!\Elabftw\Elabftw\Tools::usingSsl()) {
 if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.5', '<')) {
     $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.5";
     display_message('error_nocross', $message);
-    custom_die();
-} else {
-    $message = "Your version of PHP is recent enough.";
-    display_message('info_nocross', $message);
+    $errflag = true;
 }
 
 // Check for hash function
@@ -141,18 +138,8 @@ if (!function_exists('hash')) {
     custom_die();
 }
 
-// mb_string is required by mPDF
-if (!extension_loaded('mbstring')) {
-    $message = "You are missing the mbstring extension for php. Please install php-mbstring package.";
-    display_message('error_nocross', $message);
-    custom_die();
-}
-
 // UPLOADS DIR
-if (is_writable('../uploads') && is_writable('../uploads/tmp')) {
-    $message = 'The <em>uploads/</em> folder and its subdirectory are here and I can write to it.';
-    display_message('info_nocross', $message);
-} else {
+if (!is_writable('../uploads') || !is_writable('../uploads/tmp')) {
     // create the folders
     mkdir('../uploads');
     mkdir('../uploads/tmp');
@@ -161,71 +148,39 @@ if (is_writable('../uploads') && is_writable('../uploads/tmp')) {
         $message = "The <em>uploads/</em> folder and its subdirectory were created successfully.";
         display_message('info_nocross', $message);
     } else { // failed at creating the folder
-        $message = "Faild creating <em>uploads/</em> directory. 
-            You need to do it manually. 
+        $message = "Faild creating <em>uploads/</em> directory. You need to do it manually. 
             <a href='../doc/_build/html/common-errors.html#failed-creating-uploads-directory'>Click here to discover how.</a>";
         display_message('error_nocross', $message);
-        custom_die();
+        $errflag = true;
     }
 }
 
-// CHECK ssl extension
-if (extension_loaded("openssl")) {
-    $message = 'The <em>openssl</em> extension is loaded.';
-    display_message('info_nocross', $message);
-} else {
-    $message = "The <em>openssl</em> extension is <strong>NOT</strong> loaded.
-            <a href='../doc/_build/html/common-errors.html#extension-is-not-loaded'>Click here to read how to fix this.</a>";
-    display_message('error_nocross', $message);
-    custom_die();
+// Check for required php extensions
+$extensionArr = array('curl', 'gettext', 'gd', 'openssl', 'mbstring');
+foreach ($extensionArr as $ext) {
+    if (!extension_loaded($ext)) {
+        $message = "The <em>" . $ext . "</em> extension is <strong>NOT</strong> loaded.
+                <a href='../doc/_build/html/common-errors.html#extension-is-not-loaded'>Click here to read how to fix this.</a>";
+        display_message('error_nocross', $message);
+        $errflag = true;
+    }
 }
-
-// CHECK gd extension
-if (extension_loaded("gd")) {
-    $message = 'The <em>gd</em> extension is loaded.';
-    display_message('info_nocross', $message);
-} else {
-    $message = "The <em>gd</em> extension is <strong>NOT</strong> loaded.
-            <a href='../doc/_build/html/common-errors.html#extension-is-not-loaded'>Click here to read how to fix this.</a>";
-    display_message('error_nocross', $message);
+// we die here and not before so we have display of several errors
+if ($errflag) {
     custom_die();
-}
-
-// CHECK gettext extension
-if (extension_loaded("gettext")) {
-    $message = 'The <em>gettext</em> extension is loaded.';
-    display_message('info_nocross', $message);
 } else {
-    $message = "The <em>gettext</em> extension is <strong>NOT</strong> loaded.
-            <a href='../doc/_build/html/common-errors.html#extension-is-not-loaded'>Click here to read how to fix this.</a>";
-    display_message('error_nocross', $message);
-    custom_die();
-}
-
-// CHECK curl extension
-if (extension_loaded("curl")) {
-    $message = 'The <em>curl</em> extension is loaded.';
+    $message = 'Everything is good on your server. You can install eLabFTW :)';
     display_message('info_nocross', $message);
-} else {
-    $message = "The <em>curl</em> extension is <strong>NOT</strong> loaded.
-            <a href='../doc/_build/html/common-errors.html#extension-is-not-loaded'>Click here to read how to fix this.</a>";
-    display_message('error_nocross', $message);
-    custom_die();
 }
 
 ?>
-
-<br />
-<br />
-<h4>Configuration</h4>
-<br />
-<br />
+<h3>Configuration</h3>
 
 <!-- MYSQL -->
 <form action='install.php' method='post'>
 <fieldset>
 <legend><strong>MySQL</strong></legend>
-<p>MySQL is the database that will store everything. eLabFTW need to connect to it with a username/password. This is <strong>NOT</strong> your account with which you'll use eLabFTW. If you followed the README you should have created a database <em>elabftw</em> with a user <em>elabftw</em> that have all the rights on it.</p>
+<p>MySQL is the database that will store everything. eLabFTW need to connect to it with a username/password. This is <strong>NOT</strong> your account with which you'll use eLabFTW. If you followed the installation instructions, you should have created a database <em>elabftw</em> with a user <em>elabftw</em> that have all the rights on it.</p>
 
 <p>
 <label for='db_host'>Host for mysql database:</label><br />
@@ -236,7 +191,7 @@ if (extension_loaded("curl")) {
 <p>
 <label for='db_name'>Name of the database:</label><br />
 <input id='db_name' name='db_name' type='text' value='elabftw' />
-<span class='install_hint'>(should be 'elabftw' if you followed the README file)</span>
+<span class='install_hint'>(should be 'elabftw' if you followed the instructions)</span>
 </p>
 
 <p>

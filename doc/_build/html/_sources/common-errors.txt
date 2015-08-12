@@ -64,7 +64,7 @@ Install everything needed by elabftw:
 
 .. code-block:: bash
 
-    sudo apt-get install php5-openssl php5-gd php5-gettext php5-curl
+    sudo apt-get install php5-openssl php5-gd php5-gettext php5-curl php5-mbstring
 
 Now reload the Apache server:
 

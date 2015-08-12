@@ -176,8 +176,7 @@ foreach ($lang_array as $lang) {
         <span class='smallgray'><?php printf(_('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. The file needs to be in %sPEM-encoded (ASCII)%s format!'), "<br>", "<a href='https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail'>", "</a>"); ?></span>
         </p>
         <label for='stamplogin'><?php echo _('Login for external timestamping service:'); ?></label>
-        <input type='text' value='<?php echo get_config('stamplogin'); ?>' name='stamplogin' id='stamplogin' />
-        <p class='smallgray'><?php echo _('Login for external timestamping service:'); ?></p>
+        <input type='text' value='<?php echo get_config('stamplogin'); ?>' name='stamplogin' id='stamplogin' /><br>
         <label for='stamppass'><?php echo _('Password for external timestamping service:'); ?></label>
         <input type='password' value='<?php echo $stamppass; ?>' name='stamppass' id='stamppass' />
         <div class='center'>

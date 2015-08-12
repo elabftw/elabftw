@@ -92,7 +92,6 @@ class ImportZip extends Import
     /**
      * We get all the info we need from the embedded .json file
      *
-     * @throws Exception if we try to import an experiment
      */
     private function readJson()
     {

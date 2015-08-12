@@ -811,3 +811,20 @@ function displayTags($type, $id)
     $html .= "</span><input type='text' name='tag' id='addtaginput' placeholder='" . _('Add a tag') . "' /></div>";
     return $html;
 }
+
+/**
+ * Inject the script/css for chemdoodle
+ *
+ * @return string|null
+ */
+function addChemdoodle()
+{
+    if ($_SESSION['prefs']['chem_editor']) {
+        $html = "<link rel='stylesheet' href='css/chemdoodle.css' type='text/css'>";
+        $html .= "<script src='js/chemdoodle.js'></script>";
+        $html .= "<script src='js/chemdoodle-uis.js'></script>";
+        $html .= "<script>ChemDoodle.iChemLabs.useHTTPS();</script>";
+        return $html;
+    }
+    return null;
+}

@@ -19,18 +19,9 @@ $selected_menu = 'Database';
 require_once 'inc/head.php';
 
 // add the chemdoodle stuff if we want it
-if (isset($_SESSION) && $_SESSION['prefs']['chem_editor']) {
-    ?>
-    <link rel="stylesheet" href="css/chemdoodle.css" type="text/css">
-    <script src="js/chemdoodle.js"></script>
-    <script src="js/chemdoodle-uis.js"></script>
-    <script>
-        ChemDoodle.iChemLabs.useHTTPS();
-    </script>
-    <?php
-}
+echo addChemdoodle();
 
-if (!isset($_GET['mode']) || (empty($_GET['mode'])) || ($_GET['mode'] === 'show')) {
+if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
     require_once 'inc/showDB.php';
 } elseif ($_GET['mode'] === 'view') {
     require_once 'inc/viewDB.php';

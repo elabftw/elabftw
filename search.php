@@ -43,7 +43,7 @@ $search_type = '';
                 <select name='type' id='searchin'>
                     <option value='experiments'><?php echo ngettext('Experiment', 'Experiments', 2); ?></option>
                     <option disabled>----------------</option>
-                    <option value='database' <?php echo $seldb; ?>><?php echo _('Database'); ?></option>
+                    <option value='database'<?php echo $seldb; ?>><?php echo _('Database'); ?></option>
                     <?php // Database items types
                     $sql = "SELECT * FROM items_types WHERE team = :team ORDER BY name ASC";
                     $req = $pdo->prepare($sql);
@@ -56,7 +56,7 @@ $search_type = '';
                         if (isset($_GET['type']) && $items_types['id'] == $_GET['type']) {
                             echo " selected='selected'";
                         }
-                        echo "> - " . $items_types['name'] . "</option>";
+                        echo ">- " . $items_types['name'] . "</option>";
                     }
                     ?>
                 </select>
@@ -143,7 +143,7 @@ $search_type = '';
                     if (isset($_GET['all'])) {
                         echo "checked=checked";
                     }
-?>>
+                ?>>
                 <label for='all_experiments_chkbx'><?php echo _("search in everyone's experiments"); ?> </label>
             </div>
             <!-- END SEARCH ONLY -->

@@ -99,7 +99,7 @@ if (!checkCookiesEnabled()) {
     <menu class='border' style='color:#29AEB9'><?php echo _('Note: you need cookies enabled to log in.'); ?></menu>
 <section class='center'>
     <!-- Login form -->
-    <form id='login' method="post" action="app/login-exec.php" autocomplete="off">
+    <form method="post" action="app/login-exec.php" autocomplete="off">
         <h2><?php echo _('Sign in to your account'); ?></h2>
         <p>
         <label class='block' for="username"><?php echo _('Username'); ?></label>

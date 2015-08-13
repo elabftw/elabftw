@@ -355,7 +355,7 @@ menu.border a:hover {
     display:block;
 }
 
-#login input, #login select {
+.center input, .center select {
     text-align:center;
 }
 #loginButtonDiv {

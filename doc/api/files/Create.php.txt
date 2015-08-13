@@ -155,15 +155,17 @@ class Create
         // do we want template ?
         if ($this->checkTpl($tpl)) {
             // SQL to get template
-            $sql = "SELECT name, body FROM experiments_templates WHERE id = :id";
+            $sql = "SELECT name, body FROM experiments_templates WHERE id = :id AND team = :team";
             $get_tpl = $this->pdo->prepare($sql);
             $get_tpl->bindParam(':id', $tpl);
+            $get_tpl->bindParam(':team', $_SESSION['team_id']);
             $get_tpl->execute();
             $get_tpl_info = $get_tpl->fetch();
 
             // the title is the name of the template
             $title = $get_tpl_info['name'];
             $body = $get_tpl_info['body'];
+
         } else {
             // if there is no template, title is 'Untitled' and the body is the default exp_tpl
             // SQL to get body
@@ -171,10 +173,8 @@ class Create
             $get_body = $this->pdo->prepare($sql);
             $get_body->bindParam(':team', $_SESSION['team_id']);
             $get_body->execute();
-            $experiments_templates = $get_body->fetch();
-
+            $body = $get_body->fetchColumn();
             $title = _('Untitled');
-            $body = $experiments_templates['body'];
         }
 
         // SQL for create experiments
@@ -204,9 +204,10 @@ class Create
     public function duplicateExperiment($id)
     {
         // SQL to get data from the experiment we duplicate
-        $sql = "SELECT title, body, visibility FROM experiments WHERE id = :id";
+        $sql = "SELECT title, body, visibility FROM experiments WHERE id = :id AND team = :team";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);
+        $req->bindParam(':team', $_SESSION['team_id']);
         $req->execute();
         $experiments = $req->fetch();
 
@@ -222,8 +223,8 @@ class Create
             'title' => $title,
             'date' => kdate(),
             'body' => $experiments['body'],
-            'status' => self::getStatus(),
-            'elabid' => self::generateElabid(),
+            'status' => $this->getStatus(),
+            'elabid' => $this->generateElabid(),
             'visibility' => $experiments['visibility'],
             'userid' => $_SESSION['userid']));
         $newId = $this->pdo->lastInsertId();
@@ -272,9 +273,10 @@ class Create
     public function duplicateItem($id)
     {
         // SQL to get data from the item we duplicate
-        $sql = "SELECT * FROM items WHERE id = :id";
+        $sql = "SELECT * FROM items WHERE id = :id AND team = :team";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);
+        $req->bindParam(':team', $_SESSION['team_id']);
         $req->execute();
         $items = $req->fetch();
 

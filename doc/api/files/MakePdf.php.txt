@@ -52,7 +52,7 @@ class MakePdf extends Make
      *
      * @param int $id The id of the item we want
      * @param string $type 'experiments' or 'items'
-     * @param string|null $path Path to where we want the pdf written
+     * @param bool|null $toFile Do we want to write it to a file ?
      */
     public function __construct($id, $type, $toFile = false)
     {

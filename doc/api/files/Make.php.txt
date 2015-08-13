@@ -17,6 +17,11 @@ use \Exception;
  */
 abstract class Make
 {
+    /** pdo object */
+    protected $pdo;
+    /** type can be experiments or items */
+    protected $type;
+
     /** child classes need to implement that
      *
      * @return string
@@ -73,7 +78,7 @@ abstract class Make
      * Verify we can see the id
      *
      * @param int $id
-     * @return bool True if user has reading rights
+     * @return bool|null True if user has reading rights
      */
     protected function checkVisibility($id)
     {

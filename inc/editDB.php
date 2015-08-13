@@ -61,17 +61,23 @@ if ($data['locked'] == 1) {
     <input id='star5' name="star" type="radio" class="star" value='5' <?php if ($data['rating'] == 5) { echo "checked=checked "; }?>/>
     </div><!-- END STAR RATING -->
     <input name='item_id' type='hidden' value='<?php echo $id; ?>' />
-    <img src='img/calendar.png' class='bot5px' title='date' alt='Date :' />
-    <label for='datepicker'><?php echo _('Date'); ?></label>
-    <!-- TODO if firefox has support for it: type = date -->
-    <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date']; ?>' />
-    <label class='block' for='title_input'><?php echo _('Title'); ?></label>
+    <div class='row'>
+
+        <div class='col-md-4'>
+        <img src='img/calendar.png' class='bot5px' title='date' alt='Date :' />
+        <label for='datepicker'><?php echo _('Date'); ?></label>
+        <!-- TODO if firefox has support for it: type = date -->
+        <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date']; ?>' />
+        </div>
+    </div>
+
+    <h4><?php echo _('Title'); ?></h4>
     <input id='title_input' name='title' rows="1" value='<?php echo stripslashes($data['title']); ?>' required />
-    <label for='body_area' class='block'><?php echo _('Infos'); ?></label>
-    <textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">
+    <h4><?php echo _('Infos'); ?></h4>
+    <textarea class='mceditable' name='body' rows="15" cols="80">
         <?php echo stripslashes($data['body']); ?>
     </textarea>
-    <!-- _('Submit') BUTTON -->
+    <!-- SUBMIT BUTTON -->
     <div class='center' id='saveButton'>
         <button type="submit" name="Submit" class='button'><?php echo _('Save and go back'); ?></button>
     </div>
@@ -186,6 +192,13 @@ $(document).ready(function() {
         source: [<?php echo $tag_list; ?>]
     });
 
+    // If the title is 'Untitled', clear it on focus
+    $("#title_input").focus(function(){
+        if ($(this).val() === 'Untitled') {
+            $("#title_input").val('');
+        }
+    });
+
     // EDITOR
     tinymce.init({
         mode : "specific_textareas",
@@ -234,10 +247,6 @@ $(document).ready(function() {
     });
     $('#star5').click(function() {
         updateRating(5);
-    });
-    // SELECT ALL TXT WHEN FOCUS ON TITLE INPUT
-    $("#title_input").focus(function(){
-        $("#title_input").select();
     });
     // fix for the ' and "
     title = "<?php echo $data['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");

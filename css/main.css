@@ -161,7 +161,6 @@ hr {
 
 /* TITLES */
 h2 {
-    margin-bottom:0;
     font-weight:normal;
     color: #797979;
     font-size: 30px;
@@ -175,7 +174,6 @@ h3 {
 
 h4 {
     font-size: 150%;
-    display: inline;
     font-weight:normal;
     color: #797979;
 }
@@ -347,23 +345,24 @@ menu.border a:hover {
     background-color: #dcdddc;
 }
 
-
-
-/* LOGIN.PHP */
-.loginform input, .loginform select {
-    text-align:center;
-}
-#loginButtonDiv {
-    border-top: 1px solid #e3e3e3;
-    padding-top:30px;
-    margin-top: 30px;
-}
-
 .submitButtonDiv {
     margin-top: 30px;
     text-align:center;
 }
 
+/* LOGIN.PHP */
+.block {
+    display:block;
+}
+
+#login input, #login select {
+    text-align:center;
+}
+#loginButtonDiv {
+    border-top: 1px solid #e3e3e3;
+    padding-top:30px;
+    margin: 30px 0 20px 0;
+}
 
 /* REGISTER */
 /* the team name can be long and destroy the view */
@@ -730,11 +729,8 @@ a[class*='trigger_']:hover {
     padding: 5px;
 }
 
-/* title on editXP -- fix for firefox */
+/* title on editXP */
 #title_input {
-    border-radius: 5px;
-    margin: 5px 0 10px 0;
-    border: 1px solid #dcdddc;
     width:95%;
 }
 
@@ -743,15 +739,6 @@ a[class*='trigger_']:hover {
     text-align:right;
     color: #797979;
     font-size: 11px;
-}
-
-/* PROFILE PAGE */
-#tagcloud {
-    text-align: center;
-}
-
-.cursor {
-    cursor:pointer;
 }
 
 /* FOOTER */

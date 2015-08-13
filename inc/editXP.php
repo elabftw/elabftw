@@ -55,22 +55,22 @@ if ($experiment['locked'] == 1) {
     ?>
 
     <!-- BEGIN EDITXP FORM -->
-    <form id="editXP" name="editXP" method="post" action="app/editXP-exec.php" enctype='multipart/form-data'>
+    <form id="editXP" method="post" action="app/editXP-exec.php" enctype='multipart/form-data'>
     <input name='item_id' type='hidden' value='<?php echo $id; ?>' />
 
     <div class='row'>
 
         <div class='col-md-4'>
             <img src='img/calendar.png' class='bot5px' title='date' alt='calendar' />
-            <h4><?php echo _('Date'); ?></h4><br>
+            <label for='datepicker'><?php echo _('Date'); ?></label>
             <!-- TODO if firefox has support for it: type = date -->
             <input name='date' id='datepicker' size='8' type='text' value='<?php echo $experiment['date']; ?>' />
         </div>
 
         <div class='col-md-4'>
             <img src='img/eye.png' class='bot5px' alt='visibility' />
-            <h4><?php echo _('Visibility'); ?></h4><br>
-            <select id="visibility_form" name="visibility" onchange="update_visibility(this.value)">
+            <label for='visibility_select'><?php echo _('Visibility'); ?></label>
+            <select id="visibility_select" name="visibility" onchange="update_visibility(this.value)">
                 <option value="organization" <?php if ($experiment['visibility'] === 'organization') {
         echo "selected";
     }?>><?php echo _('Everyone with an account'); ?></option>
@@ -99,7 +99,8 @@ if ($experiment['locked'] == 1) {
         </div>
 
         <div class='col-md-4'>
-            <img src='img/status.png' class='bot5px' alt='status' /> <h4><?php echo ngettext('Status', 'Status', 1); ?></h4><br>
+            <img src='img/status.png' class='bot5px' alt='status' />
+            <label for='status_select'><?php echo ngettext('Status', 'Status', 1); ?></label>
             <script>
             // this array is used by updateStatus() to get the color of new status
             var status_arr = Array();
@@ -123,7 +124,7 @@ if ($experiment['locked'] == 1) {
                     </script>";
             }
             ?>
-            <select name="status" onchange="updateStatus(this.value)">
+            <select id='status_select' name="status" onchange="updateStatus(this.value)">
             <?php
             // now display all possible values of status in select menu
             foreach ($status_arr as $key => $value) {
@@ -139,9 +140,9 @@ if ($experiment['locked'] == 1) {
 
     </div>
 
-    <h4><?php echo _('Title'); ?></h4><br>
+    <h4><?php echo _('Title'); ?></h4>
     <input id='title_input' name='title' rows="1" value="<?php echo stripslashes($experiment['title']); ?>" required />
-    <h4><?php echo ngettext('Experiment', 'Experiments', 1); ?></h4><br>
+    <h4><?php echo ngettext('Experiment', 'Experiments', 1); ?></h4>
     <textarea id='body_area' class='mceditable' name='body' rows="15" cols="80">
         <?php echo stripslashes($experiment['body']); ?>
     </textarea>
@@ -155,7 +156,7 @@ if ($experiment['locked'] == 1) {
     <!-- LINKED ITEMS -->
     <section>
         <img src='img/link.png' class='bot5px' class='bot5px'> <h4 style='display:inline'><?php echo _('Linked items'); ?></h4>
-        <div id='links_div'>
+        <span id='links_div'>
             <?php
             // DISPLAY LINKED ITEMS
             $sql = "SELECT items.id AS itemid,
@@ -184,7 +185,7 @@ if ($experiment['locked'] == 1) {
                 echo "<br />";
             }
             ?>
-        </div>
+        </span>
         <p class='inline'><?php echo _('Add a link'); ?></p>
         <input id='linkinput' size='60' type="text" name="link" placeholder="<?php echo _('from the database'); ?>" />
     </section>
@@ -403,9 +404,11 @@ $(document).ready(function() {
     document.title = title;
     // DATEPICKER
     $( "#datepicker" ).datepicker({dateFormat: 'yymmdd'});
-    // SELECT ALL TXT WHEN FOCUS ON TITLE INPUT
+    // If the title is 'Untitled', clear it on focus
     $("#title_input").focus(function(){
-        $("#title_input").select();
+        if ($(this).val() === 'Untitled') {
+            $("#title_input").val('');
+        }
     });
     // EDITOR
     tinymce.init({

@@ -10,7 +10,7 @@
 
 echo "<section class='box'>";
 echo "<img src='img/cloud.png' alt='' /> <h4>" . _('Tag cloud') . "</h4>";
-echo "<div id='tagcloud'>";
+echo "<div class='center'>";
 // 1. Create an array with tag -> count
 $sql = "SELECT tag, COUNT(id) AS total
     FROM experiments_tags

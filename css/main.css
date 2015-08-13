@@ -101,7 +101,7 @@ ul, li {
     list-style: none;
 }
 
-li.tip:before {
+.tip:before {
     content: "☺ ";
     font-size:120%;
     color: #29AEB9;
@@ -252,7 +252,7 @@ nav .navleft a:hover {
     color: white;
     transition:width 1s;
 }
-form#big_search input:focus {
+#big_search input:focus {
     width:90%;
 }
 /*  MENU is below main nav */
@@ -377,7 +377,7 @@ menu.border a:hover {
 }
 /* body in view mode is black for more lisibility
 github issue #52 */
-div#body_view p {
+#body_view p {
     color:black;
 }
 
@@ -430,20 +430,6 @@ tr:nth-child(odd) {
         background-color: #f2f2f2;
 }
 /* SEARCH.PHP */
-#searchDiv {
-    border: 1px solid #e3e3e3;
-    border-radius: 10px;
-    margin-top: 20px;
-}
-/* we need to add a block class, otherwise the search in everyone exp box is messed up */
-label.block {
-    display:block;
-}
-
-.searchform input, .searchform select {
-    margin:10px 0;
-}
-
 .searchform input#title, .searchform input#body {
     width: 100%;
 }
@@ -451,8 +437,6 @@ label.block {
 .searchform p {
     font-size: 115%;
 }
-
-
 
 textarea {
     font: 100% 'Lato', Verdana, Arial, Helvetica, sans-serif;

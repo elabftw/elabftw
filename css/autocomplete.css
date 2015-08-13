@@ -1,7 +1,7 @@
 .rte-autocomplete{
     position: absolute;
-    top: 0px;
-    left: 0px;
+    top: 0;
+    left: 0;
     display: block;
     z-index: 1000;
     float: left;

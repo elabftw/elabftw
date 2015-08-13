@@ -180,7 +180,7 @@ $search_type = '';
             </div>
             <!-- STATUS -->
             <div class='col-md-4'>
-                <label class='block' for='status'><?php echo _('And status is'); ?></label>
+                <label for='status'><?php echo _('And status is'); ?></label>
                 <select id='status' name="status">
                     <option value=''><?php echo _('select status'); ?></option>
                     <?php
@@ -240,7 +240,7 @@ $search_type = '';
 
             <!-- RATING -->
             <div class='col-md-4'>
-                <label class='block' for='rating'><?php echo _('And rating is'); ?></label>
+                <label for='rating'><?php echo _('And rating is'); ?></label>
                 <select id='rating' name='rating'>
                     <option value=''><?php echo _('select number of stars'); ?></option>
                     <option value='no'><?php echo _('Unrated'); ?></option>

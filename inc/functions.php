@@ -741,6 +741,8 @@ function getMailer()
     // Choose mail transport method; either smtp or sendmail
     $mail_method = get_config('mail_method');
 
+    $crypto = new \Elabftw\Elabftw\CryptoWrapper();
+
     switch ($mail_method) {
 
         // Use SMTP Server
@@ -751,7 +753,7 @@ function getMailer()
                 get_config('smtp_encryption')
             )
             ->setUsername(get_config('smtp_username'))
-            ->setPassword(\Defuse\Crypto\Crypto::decrypt(get_config('smtp_password'), getSecretKey()));
+            ->setPassword($crypto->decrypt(get_config('smtp_password')));
             break;
 
         // Use php mail function

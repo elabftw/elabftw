@@ -3,6 +3,16 @@
 Changelog
 =========
 
+Version 1.1.5-p2
+----------------
+
+* Hotfix : fix bug in permissions on DB items export (zip/pdf) (#183)
+
+Version 1.1.5-p1
+----------------
+
+* Hotfix : fix bug in smtp password encryption (#182)
+
 Version 1.1.5
 -------------
 

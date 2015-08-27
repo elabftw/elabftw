@@ -86,15 +86,22 @@ abstract class Make
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id, \PDO::PARAM_INT);
         $req->execute();
-        $userid = $req->fetchColumn();
+        $theUser = $req->fetchColumn();
 
         if ($this->type === 'experiments') {
             $comparator = $_SESSION['userid'];
         } else {
+            // get the team of the userid of the item
+            $sql = "SELECT team FROM users WHERE userid = :userid";
+            $req = $this->pdo->prepare($sql);
+            $req->bindParam(':userid', $theUser, \PDO::PARAM_INT);
+            $req->execute();
+            $theUser = $req->fetchColumn();
+            // we will compare the teams for DB items
             $comparator = $_SESSION['team_id'];
         }
 
-        if ($userid != $comparator) {
+        if ($theUser != $comparator) {
             throw new Exception(_("You don't have sufficient rights to access this item."));
         }
     }

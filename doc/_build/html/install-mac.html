@@ -104,6 +104,8 @@
 <li class="toctree-l2"><a class="reference internal" href="common-errors.html#i-can-t-upload-a-file-bigger-than-2-mb">I can&#8217;t upload a file bigger than 2 Mb</a></li>
 <li class="toctree-l2"><a class="reference internal" href="common-errors.html#i-can-t-export-my-numerous-experiments-in-zip-i-get-an-error-500">I can&#8217;t export my (numerous) experiments in zip, I get an error 500</a></li>
 <li class="toctree-l2"><a class="reference internal" href="common-errors.html#languages-don-t-work">Languages don&#8217;t work</a></li>
+<li class="toctree-l2"><a class="reference internal" href="common-errors.html#warning-array-keys-expects-parameter-1-to-be-array-boolean-given-in-home-www-elabftw-inc-classes-update-php-on-line-127">Warning: array_keys() expects parameter 1 to be array, boolean given in /home/www/elabftw/inc/classes/Update.php on line 127</a></li>
+<li class="toctree-l2"><a class="reference internal" href="common-errors.html#warning-syntax-error-unexpected-in-unknown-on-line-1-in-home-www-elabftw-inc-classes-update-php-on-line-125">Warning: syntax error, unexpected &#8216;!&#8217; in Unknown on line 1 in /home/www/elabftw/inc/classes/Update.php on line 125</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="postinstall.html">Post install</a><ul>
@@ -271,12 +273,12 @@
 <li>Select MySQL Database</li>
 <li>Click Start</li>
 </ul>
-<p>Test that everything is working by going to <a class="reference external" href="https://localhost">https://localhost</a>. You should see a warning that the certificate is not signed and cannot be trusted, which is normal.</p>
+<p>Test that everything is working by going to <a class="reference external" href="https://localhost">https://localhost</a>. You should see a warning that the certificate is not signed and cannot be trusted, which is normal. If it doesn&#8217;t work, try telling your browser to avoid proxy for local addresses.</p>
 <p><a class="reference external" href="https://github.com/elabftw/elabftw/releases/latest">Download the latest release</a> and extract its content to <cite>/Applications/XAMPP/htdocs/elabftw</cite>.</p>
 <p>Now we need to fix the permissions. Open the terminal and type:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nb">cd</span> /Applications/XAMPP/htdocs/elabftw
 mkdir -p uploads/tmp
-chmod -R <span class="m">777</span> .
+sudo chmod -R <span class="m">777</span> .
 </pre></div>
 </div>
 </div>

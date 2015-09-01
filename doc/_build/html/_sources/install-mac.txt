@@ -19,7 +19,7 @@ Once it's installed, you let it start XAMPP. On the application manager (/Applic
 * Select MySQL Database
 * Click Start
 
-Test that everything is working by going to https://localhost. You should see a warning that the certificate is not signed and cannot be trusted, which is normal.
+Test that everything is working by going to https://localhost. You should see a warning that the certificate is not signed and cannot be trusted, which is normal. If it doesn't work, try telling your browser to avoid proxy for local addresses.
 
 `Download the latest release <https://github.com/elabftw/elabftw/releases/latest>`_ and extract its content to `/Applications/XAMPP/htdocs/elabftw`.
 
@@ -29,7 +29,7 @@ Now we need to fix the permissions. Open the terminal and type:
 
     cd /Applications/XAMPP/htdocs/elabftw
     mkdir -p uploads/tmp
-    chmod -R 777 .
+    sudo chmod -R 777 .
 
 Setup a database
 ----------------

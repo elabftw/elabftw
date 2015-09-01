@@ -115,3 +115,13 @@ Then do::
     sudo locale-gen
 
 And reload the webserver.
+
+
+Warning: syntax error, unexpected '!' in Unknown on line 1 in /home/www/elabftw/inc/classes/Update.php on line 125
+
+Warning: array_keys() expects parameter 1 to be array, boolean given in /home/www/elabftw/inc/classes/Update.php on line 127
+----------------------------------------------------------------------------------------------------------------------------
+Warning: syntax error, unexpected '!' in Unknown on line 1 in /home/www/elabftw/inc/classes/Update.php on line 125
+------------------------------------------------------------------------------------------------------------------
+
+To fix these errors, update your php version to 5.5 at least.

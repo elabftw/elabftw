@@ -227,7 +227,27 @@ $(document).ready(function() {
         setup : function(editor) {
             editor.addShortcut("ctrl+shift+d", "add date at cursor", function() { addDateOnCursor(); });
         },
-        language : '<?php echo $_SESSION['prefs']['lang']; ?>'
+        language : '<?php echo $_SESSION['prefs']['lang']; ?>',
+        style_formats_merge: true,
+        style_formats: [
+            {
+                title: 'Image Left',
+                selector: 'img',
+                styles: {
+                    'float': 'left',
+                    'margin': '0 10px 0 10px'
+                }
+             },
+             {
+                 title: 'Image Right',
+                 selector: 'img',
+                 styles: {
+                     'float': 'right',
+                     'margin': '0 0 10px 10px'
+                 }
+             }
+        ]
+
     });
     // DATEPICKER
     $( "#datepicker" ).datepicker({dateFormat: 'yymmdd'});

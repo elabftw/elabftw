@@ -442,7 +442,26 @@ $(document).ready(function() {
             source: [<?php echo $tinymce_list; ?>],
             delimiter: '#'
         },
-        language : '<?php echo $_SESSION['prefs']['lang']; ?>'
+        language : '<?php echo $_SESSION['prefs']['lang']; ?>',
+        style_formats_merge: true,
+        style_formats: [
+            {
+                title: 'Image Left',
+                selector: 'img',
+                styles: {
+                    'float': 'left',
+                    'margin': '0 10px 0 10px'
+                }
+             },
+             {
+                 title: 'Image Right',
+                 selector: 'img',
+                 styles: {
+                     'float': 'right',
+                     'margin': '0 0 10px 10px'
+                 }
+             }
+        ]
     });
 
     // ADD TAG JS

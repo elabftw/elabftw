@@ -1,0 +1,36 @@
+{
+  "name": "Vanderlee Colorpicker",
+  "version": "1.1.2",
+  "homepage": "https://github.com/vanderlee/colorpicker",
+  "authors": [
+    "Martijn van der Lee <martijn@vanderlee.com>"
+  ],
+  "description": "JQuery colorpicker with themeroller styling, RGB, HSL, CMYK and L*A*B support. Standard look & feel, configurable layout. Works as a popup or inline.",
+  "main": "jquery.colorpicker.js",
+  "keywords": [
+    "jquery",
+    "colorpicker"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": ">=1.5",
+    "jquery-ui": ">=1.7"
+  },
+  "_release": "1.1.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.1.2",
+    "commit": "952d6b4f2b258a5e7e37f5b00b7a96277f14711b"
+  },
+  "_source": "https://github.com/vanderlee/colorpicker.git",
+  "_target": "~1.1.2",
+  "_originalSource": "colorpicker",
+  "_direct": true
+}

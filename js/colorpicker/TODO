@@ -1,0 +1,28 @@
+$.undelegate and remove keydown methods for opening upon close()
+Separate into a pure dialog and a "caller" plugin.
+Implement a getColor method.
+	Use preconfigured/default output color.
+	Allow optional manual specification of color.
+Fix the weird one-pixel vertical shift bug.
+	Caused by ui-widget class.
+	Only happens in Chrome and only on some, not all.
+	Disappears and re-appears at different zoom levels.
+In hex input, accept (and strip) '#' symbol on copy/past.
+Completely destroy object when closed.
+Enabled/disabled
+isRTL? What to RTL, besides button?
+Disable selection in MSIE: this.dialog.on('selectstart', function(event) { return false; })
+Special rendering mode for color_none? Use [X] images?
+Fix parsing from input with websafe colors
+Recognize "transparent" color name.
+Limit number of events triggered.
+Small size variant (128x128)
+isRTL? What to RTL, besides button?
+Undo/redo memory?
+ARIA support.
+Allow only set (dec/hex) characters in inputs
+Most-recently-used swatches
+HSL/HSV distance calculations should take into account cyclic hue.
+Support CSS4 color format draft proposals: http://dev.w3.org/csswg/css-color/
+Add more swatches; i.e. http://en.wikipedia.org/wiki/List_of_8-bit_computer_hardware_palettes
+Allow Cancel button to be enabled even when no change. Extra value for `showCancelButton`?

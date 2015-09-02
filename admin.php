@@ -28,8 +28,8 @@ $selected_menu = null;
 require_once 'inc/head.php';
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
-<script src="js/raphael/raphael-min.js"></script>
-<script src="js/colorwheel/colorwheel.js"></script>
+<script src="js/colorpicker/jquery.colorpicker.js"></script>
+<link href="js/colorpicker/jquery.colorpicker.css" rel="stylesheet" type="text/css" />
 <?php
 // MAIN SQL FOR USERS
 $sql = "SELECT * FROM users WHERE validated = :validated AND team = :team";
@@ -285,8 +285,7 @@ if (!empty($team['stamppass'])) {
             }
             ?>>
             <div id='colorwheel_div_edit_status_<?php echo $status['id']; ?>'>
-            <div class='colorwheel inline'></div>
-            <input type='text' name='status_color' value='#<?php echo $status['color']; ?>' />
+            <input class='colorpicker' type='text' name='status_color' value='<?php echo $status['color']; ?>' />
             </div>
             <input type='hidden' name='status_id' value='<?php echo $status['id']; ?>' />
             <br>
@@ -316,8 +315,7 @@ if (!empty($team['stamppass'])) {
         <label for='new_status_name'><?php echo _('Add a new status'); ?></label>
         <input type='text' id='new_status_name' name='new_status_name' required />
         <div id='colorwheel_div_new_status'>
-            <div class='colorwheel inline'></div>
-            <input type='text' name='new_status_color' value='#000000' />
+            <input class='colorpicker' type='text' name='new_status_color' value='000000' />
         </div>
         <div class='center'>
             <button type='submit' class='submit button'><?php echo _('Save'); ?></button>
@@ -373,8 +371,7 @@ if (!empty($team['stamppass'])) {
                 <input type='hidden' name='item_type_id' value='<?php echo $items_types['id']; ?>' />
 
                 <div id='colorwheel_div_<?php echo $items_types['id']; ?>'>
-                    <div class='colorwheel inline'></div>
-                    <input type='text' name='item_type_bgcolor' value='#<?php echo $items_types['bgcolor']; ?>'/>
+                    <input class='colorpicker' type='text' name='item_type_bgcolor' value='<?php echo $items_types['bgcolor']; ?>'/>
                 </div><br><br><br>
                 <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']); ?></textarea><br>
                 <div class='center'>
@@ -407,8 +404,7 @@ if (!empty($team['stamppass'])) {
         <input required type='text' id='new_item_type_name' name='new_item_type_name' />
         <input type='hidden' name='new_item_type' value='1' />
         <div id='colorwheel_div_new'>
-            <div class='colorwheel inline'></div>
-            <input type='text' name='new_item_type_bgcolor' value='#000000' />
+            <input class='colorpicker' type='text' name='new_item_type_bgcolor' value='000000' />
         </div><br><br><br><br>
         <textarea class='mceditable' name='new_item_type_template' /></textarea>
         <div class='center submitButtonDiv'>
@@ -684,8 +680,6 @@ function goNext(x) {
 
 // color wheel
 function color_wheel(div_name) {
-        var cw = Raphael.colorwheel($(div_name)[0], 80);
-            cw.input($(div_name+" input" )[0]);
 }
 
 $(document).ready(function() {
@@ -771,9 +765,12 @@ $(document).ready(function() {
     $("a.trigger_users_<?php echo $users['userid']; ?>").click(function(){
         $('div.toggle_users_<?php echo $users['userid']; ?>').slideToggle(1);
     });
-    // COLOR WHEEL
-    color_wheel('#colorwheel_div_new');
-    color_wheel('#colorwheel_div_new_status');
+    // COLORPICKER
+    $('.colorpicker').colorpicker({
+        hsv: false,
+        okOnEnter: true,
+        rgb: false
+    });
     // EDITOR
     tinymce.init({
         mode : "specific_textareas",

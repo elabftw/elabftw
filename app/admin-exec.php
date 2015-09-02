@@ -229,8 +229,7 @@ if (isset($_POST['status_name']) && is_pos_int($_POST['status_id']) && !empty($_
 
     $status_id = $_POST['status_id'];
     $status_name = filter_var($_POST['status_name'], FILTER_SANITIZE_STRING);
-    // we remove the # of the hexacode and sanitize string
-    $status_color = filter_var(substr($_POST['status_color'], 1, 6), FILTER_SANITIZE_STRING);
+    $status_color = filter_var($_POST['status_color'], FILTER_SANITIZE_STRING);
     if (isset($_POST['status_is_default']) && $_POST['status_is_default'] === 'on') {
         $status_is_default = true;
         // if we set true to status_is_default somewhere, it's best to remove all other default

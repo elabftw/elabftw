@@ -301,7 +301,6 @@ if (!empty($team['stamppass'])) {
                 // disable sortable behavior
                 $('.sortable_status').sortable("disable");
             });
-            color_wheel('#colorwheel_div_edit_status_<?php echo $status['id']; ?>')
         });</script></div></li>
         <?php
     }
@@ -386,7 +385,6 @@ if (!empty($team['stamppass'])) {
                 // disable sortable behavior
                 $('.sortable_itemstypes').sortable("disable");
             });
-            color_wheel('#colorwheel_div_<?php echo $items_types['id']; ?>')
         });</script>
         </div>
         </li>
@@ -676,10 +674,6 @@ function goNext(x) {
     }
     document.cookie = 'itemType='+x;
     $('.import_block').show();
-}
-
-// color wheel
-function color_wheel(div_name) {
 }
 
 $(document).ready(function() {

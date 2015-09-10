@@ -33,6 +33,11 @@ if (isset($_GET['tag']) && $_GET['tag'] != '') {
                     <input type="hidden" name="mode" value="show" />
                     <input type="hidden" name="tag" value="<?php echo $getTag; ?>" />
                     <!-- FILTER STATUS dropdown menu -->
+										<select name="view" class="form-control select-filter-status">
+                        <option value="own"><?php echo _('Own'); ?></option>
+                        <option value="team"><?php echo _('Team'); ?></option>
+										</select>
+                    <button class="btn btn-elab submit-filter"><?php echo _('Filter'); ?></button>
                     <select name="filter" class="form-control select-filter-status">
                         <option value=''><?php echo _('Filter status'); ?></option>
                     <?php
@@ -156,6 +161,22 @@ if (isset($_GET['q'])) { // if there is a query
     $req->execute();
     while ($data = $req->fetch()) {
         $results_arr[] = $data['item_id'];
+    }
+
+// TEAM VIEW
+} elseif (isset($_GET['view']) && !empty($_GET['view']) && $_GET['view'] == 'team' ) {
+    $sql = "SELECT ex.id, ex.date, ex.title, st.name
+        FROM experiments AS ex, status AS st
+        WHERE ex.status = st.id
+        AND st.team = :teamid
+        " . $filter . "
+        ORDER BY $order $sort
+        LIMIT 100";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':teamid', $_SESSION['team_id'], PDO::PARAM_INT);
+    $req->execute();
+    while ($get_id = $req->fetch()) {
+        $results_arr[] = $get_id['id'];
     }
 
 // DEFAULT VIEW

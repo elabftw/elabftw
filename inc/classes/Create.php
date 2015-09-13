@@ -49,7 +49,7 @@ class Create
         // go pick what is the default status upon creating experiment
         // there should be only one because upon making a status default,
         // all the others are made not default
-        $sql = 'SELECT id FROM status WHERE is_default = true AND team = :team LIMIT 1';
+        $sql = 'SELECT id FROM status WHERE is_default = \'1\' AND team = :team LIMIT 1';
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $_SESSION['team_id']);
         $req->execute();

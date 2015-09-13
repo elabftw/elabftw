@@ -192,7 +192,7 @@ if ($experiment['locked'] == 1) {
     <span class='align_right'>
     <?php
     // get the list of revisions
-    $sql = "SELECT COUNT(id) FROM experiments_revisions WHERE item_id = :item_id AND userid = :userid ORDER BY savedate DESC";
+    $sql = "SELECT COUNT(id) FROM experiments_revisions WHERE item_id = :item_id AND userid = :userid GROUP BY savedate ORDER BY savedate DESC";
     $req = $pdo->prepare($sql);
     $req->execute(array(
         'item_id' => $id,
@@ -228,7 +228,7 @@ require_once 'inc/display_file.php';
 
 <?php
 // TAG AUTOCOMPLETE
-$sql = "SELECT DISTINCT tag FROM experiments_tags WHERE userid = :userid ORDER BY id DESC LIMIT 500";
+$sql = "SELECT DISTINCT tag , id FROM experiments_tags WHERE userid = :userid ORDER BY id DESC LIMIT 500";
 $getalltags = $pdo->prepare($sql);
 $getalltags->bindParam(':userid', $_SESSION['userid']);
 $getalltags->execute();

@@ -67,7 +67,7 @@ if (!empty($_POST['validate'])) {
         $user = $req_email->fetch();
         // now let's get the URL so we can have a nice link in the email
         $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
-        $url = str_replace('admin-exec.php', 'login.php', $url);
+        $url = str_replace('app/admin-exec.php', 'login.php', $url);
         // we send an email to each validated new user
         $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
         // Create the message

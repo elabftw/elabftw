@@ -236,31 +236,6 @@ $tag_list = "";
 while ($tag = $getalltags->fetch()) {
     $tag_list .= "'" . $tag[0] . "',";
 }
-
-// LINK AUTOCOMPLETE
-$link_list = "";
-$tinymce_list = "";
-$sql = "SELECT items_types.name,
-items.id AS itemid,
-items.* FROM items
-LEFT JOIN items_types
-ON items.type = items_types.id
-WHERE items.team = :team";
-$getalllinks = $pdo->prepare($sql);
-$getalllinks->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
-if ($getalllinks->execute()) {
-
-    while ($link = $getalllinks->fetch()) {
-        $link_type = $link['name'];
-        // html_entity_decode is needed to convert the quotes
-        // str_replace to remove ' because it messes everything up
-        $link_name = str_replace("'", "", html_entity_decode(substr($link['title'], 0, 60), ENT_QUOTES));
-        // remove also the % (see issue #62)
-        $link_name = str_replace("%", "", $link_name);
-        $link_list .= "'" . $link['itemid'] . " - " . $link_type . " - " . $link_name . "',";
-        $tinymce_list .= "{ name : \"<a href='database.php?mode=view&id=" . $link['itemid'] . "'>" . $link_name . "</a>\"},";
-    }
-}
 ?>
 <script>
 // DELETE TAG
@@ -394,7 +369,7 @@ $(document).ready(function() {
 
     // autocomplete the links
     $( "#linkinput" ).autocomplete({
-        source: [<?php echo $link_list; ?>]
+        source: [<?php echo getDbList('default'); ?>]
     });
     // hide the little 'Updated !' message
     $('#visibility_msg_div').hide();
@@ -439,7 +414,7 @@ $(document).ready(function() {
             editor.addShortcut("ctrl+shift+d", "add date at cursor", function() { addDateOnCursor(); });
         },
         mentions: {
-            source: [<?php echo $tinymce_list; ?>],
+            source: [<?php echo getDbList('mention'); ?>],
             delimiter: '#'
         },
         language : '<?php echo $_SESSION['prefs']['lang']; ?>',
@@ -477,13 +452,13 @@ $(document).ready(function() {
 
     // ask the user if he really wants to navigate out of the page
 <?php
-    if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
-        echo "
-    window.onbeforeunload = function (e) {
-          e = e || window.event;
-          return '"._('Do you want to navigate away from this page? Unsaved changes will be lost!') . "';
-    };";
-    }
+if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
+    echo "
+window.onbeforeunload = function (e) {
+      e = e || window.event;
+      return '"._('Do you want to navigate away from this page? Unsaved changes will be lost!') . "';
+};";
+}
 ?>
 });
 </script>

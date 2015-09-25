@@ -830,3 +830,46 @@ function addChemdoodle()
     }
     return null;
 }
+
+/**
+ * Generate a JS list of DB items to use for links or # autocomplete
+ *
+ * @param $format string ask if you want the default list for links, or the one for the mentions
+ * @return string
+ */
+function getDbList($format = 'default')
+{
+    global $pdo;
+
+    $link_list = "";
+    $tinymce_list = "";
+    $sql = "SELECT items_types.name,
+    items.id AS itemid,
+    items.* FROM items
+    LEFT JOIN items_types
+    ON items.type = items_types.id
+    WHERE items.team = :team";
+    $getalllinks = $pdo->prepare($sql);
+    $getalllinks->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
+    if ($getalllinks->execute()) {
+
+        while ($link = $getalllinks->fetch()) {
+            $link_type = $link['name'];
+            // html_entity_decode is needed to convert the quotes
+            // str_replace to remove ' because it messes everything up
+            $link_name = str_replace("'", "", html_entity_decode(substr($link['title'], 0, 60), ENT_QUOTES));
+            // remove also the % (see issue #62)
+            $link_name = str_replace("%", "", $link_name);
+
+            // now build the list in both formats
+            $link_list .= "'" . $link['itemid'] . " - " . $link_type . " - " . $link_name . "',";
+            $tinymce_list .= "{ name : \"<a href='database.php?mode=view&id=" . $link['itemid'] . "'>" . $link_name . "</a>\"},";
+        }
+    }
+
+    if ($format === 'default') {
+        return $link_list;
+    } else {
+        return $tinymce_list;
+    }
+}

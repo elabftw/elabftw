@@ -204,7 +204,7 @@ $(document).ready(function() {
         mode : "specific_textareas",
         editor_selector : "mceditable",
         content_css : "css/tinymce.css",
-        plugins : "table textcolor searchreplace code fullscreen insertdatetime paste charmap save image link pagebreak",
+        plugins : "table textcolor searchreplace code fullscreen insertdatetime paste charmap save image link pagebreak mention",
         pagebreak_separator: "<pagebreak>",
         toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | image link | save",
         removed_menuitems : "newdocument",
@@ -228,6 +228,10 @@ $(document).ready(function() {
             editor.addShortcut("ctrl+shift+d", "add date at cursor", function() { addDateOnCursor(); });
         },
         language : '<?php echo $_SESSION['prefs']['lang']; ?>',
+        mentions: {
+            source: [<?php echo getDbList('mention'); ?>],
+            delimiter: '#'
+        },
         style_formats_merge: true,
         style_formats: [
             {

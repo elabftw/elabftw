@@ -863,7 +863,7 @@ function getDbList($format = 'default')
 
             // now build the list in both formats
             $link_list .= "'" . $link['itemid'] . " - " . $link_type . " - " . $link_name . "',";
-            $tinymce_list .= "{ name : \"<a href='database.php?mode=view&id=" . $link['itemid'] . "'>" . $link_name . "</a>\"},";
+            $tinymce_list .= "{ name : \"<a href='database.php?mode=view&id=" . $link['itemid'] . "'>" . str_replace(array("'", "\""), "", html_entity_decode(substr($link_name, 0, 60), ENT_QUOTES)) . "</a>\"},";
         }
     }
 

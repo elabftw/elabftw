@@ -25,7 +25,7 @@ function kdate()
 }
 
 /**
- * Create a thumbnail from images of type jpg, png or gif.
+ * Create a jpg thumbnail from images of type jpg, png or gif.
  *
  * @param string $src Path to the original file
  * @param string $ext Extension of the file
@@ -35,16 +35,23 @@ function kdate()
  */
 function make_thumb($src, $ext, $dest, $desired_width)
 {
+    // we don't want to work on too big images
+    // put the limit to 5 Mbytes
+    if (filesize($src) > 5000000) {
+        return false;
+    }
+
     // the used fonction is different depending on extension
-    if ($ext === 'jpg' || $ext === 'JPEG' || $ext === 'JPG' || $ext === 'jpeg') {
+    if (preg_match('/(jpg|jpeg)$/i', $ext)) {
         $source_image = imagecreatefromjpeg($src);
-    } elseif ($ext === 'png') {
+    } elseif (preg_match('/(png)$/i', $ext)) {
         $source_image = imagecreatefrompng($src);
-    } elseif ($ext === 'gif') {
+    } elseif (preg_match('/(gif)$/i', $ext)) {
         $source_image = imagecreatefromgif($src);
     } else {
         return false;
     }
+
     $width = imagesx($source_image);
     $height = imagesy($source_image);
 

@@ -296,7 +296,15 @@ function showXP($id, $display = 'default')
         ?>
         <section class="item" style='border-left: 6px solid #<?php echo $experiments['color']; ?>'>
         <?php
-        echo "<a href='experiments.php?mode=view&id=" . $experiments['id'] . "'>";
+        // we show the abstract of the experiment on mouse hover with the title attribute
+        // we check if it is our experiment. It would be best to check if we have visibility rights on it
+        // but atm there is no such function. So we limit this feature to experiments we own, for simplicity.
+        if (is_owned_by_user($id, 'experiments', $_SESSION['userid'])) {
+            $body_abstract = str_replace("'", "", substr(strip_tags($experiments['body']), 0, 100));
+        } else {
+            $body_abstract = '';
+        }
+        echo "<a title='" . $body_abstract . "' href='experiments.php?mode=view&id=" . $experiments['id'] . "'>";
         // show stamp if experiment is timestamped
         if ($experiments['timestamped']) {
             echo "<img class='align_right' src='img/stamp.png' alt='stamp' title='experiment timestamped' />";

@@ -430,7 +430,7 @@ function check_title($input)
         // remove linebreak to avoid problem in javascript link list generation on editXP
         return str_replace(array("\r\n", "\n", "\r"), ' ', $title);
     } else {
-        return '';
+        return 'Untitled';
     }
 }
 

@@ -87,7 +87,7 @@ if (!empty($team['stamppass'])) {
 <div class='divhandle' id='tab1div'>
 
 <h3><?php echo _('Configure your team'); ?></h3>
-    <form method='post' action='app/admin-exec.php'>
+    <form method='post' action='app/admin-exec.php' autocomplete='off'>
         <p>
         <label for='deletable_xp'><?php echo _('Users can delete experiments:'); ?></label>
         <select name='deletable_xp' id='deletable_xp'>

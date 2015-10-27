@@ -43,22 +43,18 @@ if ($count > 0) {
         // get file extension
         $ext = filter_var(Tools::getExt($uploads_data['real_name']), FILTER_SANITIZE_STRING);
         $filepath = 'uploads/' . $uploads_data['long_name'];
-        $filesize = filesize('uploads/' . $uploads_data['long_name']);
-        $thumbpath = 'uploads/' . $uploads_data['long_name'] . '_th.' . $ext;
+        $thumbpath = $filepath . '_th.jpg';
 
-        // list of image type we can deal with the GD lib
-        $image_extensions = array('jpg', 'jpeg', 'JPG', 'JPEG', 'png', 'PNG', 'gif', 'GIF');
         // list of extensions with a corresponding img/thumb-*.png image
         $common_extensions = array('avi', 'csv', 'doc', 'docx', 'mov', 'pdf', 'ppt', 'rar', 'xls', 'xlsx', 'zip');
 
-        // Make thumbnail only if it isn't done already and if size < 2 Mbytes and if it's an image
-        if (!file_exists($thumbpath)
-            && $filesize <= 2000000
-            && in_array($ext, $image_extensions)) {
+        // Make thumbnail only if it isn't done already
+        if (!file_exists($thumbpath)) {
             make_thumb($filepath, $ext, $thumbpath, 100);
         }
+
         // only display the thumbnail if the file is here
-        if (file_exists($thumbpath) && in_array($ext, $image_extensions)) {
+        if (file_exists($thumbpath) && preg_match('/(jpg|jpeg|png|gif)$/i', $ext)) {
             // we add rel='gallery' to the images for fancybox to display it as an album (possibility to go next/previous)
             echo "<a href='uploads/" . $uploads_data['long_name'] . "' class='fancybox' rel='gallery' ";
             if ($uploads_data['comment'] != 'Click to add a comment') {
@@ -66,9 +62,11 @@ if ($count > 0) {
             }
             echo "><img class='thumb' src='" . $thumbpath . "' alt='thumbnail' /></a>";
 
+        // not an image
         } elseif (in_array($ext, $common_extensions)) {
             echo "<img class='thumb' src='img/thumb-" . $ext . ".png' alt='' />";
 
+        // special case for mol files
         } elseif ($ext === 'mol' && $_SESSION['prefs']['chem_editor'] && $_GET['mode'] === 'view') {
             // we need to escape \n in the mol file or we get unterminated string literal error in JS
             $mol = str_replace("\n", "\\n", file_get_contents(ELAB_ROOT . 'uploads/' . $uploads_data['long_name']));

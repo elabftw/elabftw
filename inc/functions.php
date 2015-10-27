@@ -25,7 +25,7 @@ function kdate()
 }
 
 /**
- * Create a thumbnail from images of type jpg, png or gif.
+ * Create a jpg thumbnail from images of type jpg, png or gif.
  *
  * @param string $src Path to the original file
  * @param string $ext Extension of the file
@@ -35,16 +35,23 @@ function kdate()
  */
 function make_thumb($src, $ext, $dest, $desired_width)
 {
+    // we don't want to work on too big images
+    // put the limit to 5 Mbytes
+    if (filesize($src) > 5000000) {
+        return false;
+    }
+
     // the used fonction is different depending on extension
-    if ($ext === 'jpg' || $ext === 'JPEG' || $ext === 'JPG' || $ext === 'jpeg') {
+    if (preg_match('/(jpg|jpeg)$/i', $ext)) {
         $source_image = imagecreatefromjpeg($src);
-    } elseif ($ext === 'png') {
+    } elseif (preg_match('/(png)$/i', $ext)) {
         $source_image = imagecreatefrompng($src);
-    } elseif ($ext === 'gif') {
+    } elseif (preg_match('/(gif)$/i', $ext)) {
         $source_image = imagecreatefromgif($src);
     } else {
         return false;
     }
+
     $width = imagesx($source_image);
     $height = imagesy($source_image);
 
@@ -289,7 +296,15 @@ function showXP($id, $display = 'default')
         ?>
         <section class="item" style='border-left: 6px solid #<?php echo $experiments['color']; ?>'>
         <?php
-        echo "<a href='experiments.php?mode=view&id=" . $experiments['id'] . "'>";
+        // we show the abstract of the experiment on mouse hover with the title attribute
+        // we check if it is our experiment. It would be best to check if we have visibility rights on it
+        // but atm there is no such function. So we limit this feature to experiments we own, for simplicity.
+        if (is_owned_by_user($id, 'experiments', $_SESSION['userid'])) {
+            $body_abstract = str_replace("'", "", substr(strip_tags($experiments['body']), 0, 100));
+        } else {
+            $body_abstract = '';
+        }
+        echo "<a title='" . $body_abstract . "' href='experiments.php?mode=view&id=" . $experiments['id'] . "'>";
         // show stamp if experiment is timestamped
         if ($experiments['timestamped']) {
             echo "<img class='align_right' src='img/stamp.png' alt='stamp' title='experiment timestamped' />";
@@ -415,7 +430,7 @@ function check_title($input)
         // remove linebreak to avoid problem in javascript link list generation on editXP
         return str_replace(array("\r\n", "\n", "\r"), ' ', $title);
     } else {
-        return '';
+        return 'Untitled';
     }
 }
 

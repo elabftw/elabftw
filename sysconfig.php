@@ -66,7 +66,7 @@ if ($update->success === true) {
     if ($update->updateIsAvailable()) {
         $message = _('A new version is available!') . " <a href='doc/_build/html/how-to-update.html'>
             <button class='submit button'>Update elabftw</button></a>";
-        display_message('error', $message);
+        display_message('warning', $message);
     }
 }
 

@@ -2,14 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2015-03-04 14:57+0100\n"
-"PO-Revision-Date: 2015-07-31 11:56+0200\n"
+"PO-Revision-Date: 2015-10-27 14:07+0100\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.2\n"
+"X-Generator: Poedit 1.8.5\n"
 "X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -431,9 +431,8 @@ msgstr "Le fichier %s a été supprimé avec succès."
 #: elabftw/app/editXP-exec.php:39 elabftw/app/lock.php:33
 #: elabftw/app/quicksave.php:26 elabftw/app/timestamp.php:35
 #: elabftw/inc/editDB.php:37 elabftw/inc/editXP.php:34
-#: elabftw/inc/viewDB.php:34 elabftw/inc/viewXP.php:35
-#: elabftw/make_csv.php:104 elabftw/make_pdf.php:34 elabftw/make_zip.php:206
-#: elabftw/revision.php:51
+#: elabftw/inc/viewDB.php:34 elabftw/inc/viewXP.php:35 elabftw/make_csv.php:104
+#: elabftw/make_pdf.php:34 elabftw/make_zip.php:206 elabftw/revision.php:51
 msgid "The id parameter is not valid!"
 msgstr "Le paramètre id n'est pas valide !"
 
@@ -1454,6 +1453,9 @@ msgstr "Aucune information de connexion n'a été trouvée pour le Time Stamping
 
 msgid "Download timestamped pdf"
 msgstr "Télécharger le pdf horodaté"
+
+msgid "Download token"
+msgstr "Télécharger le jeton d'horodatage"
 
 msgid "milliseconds"
 msgstr "millisecondes"

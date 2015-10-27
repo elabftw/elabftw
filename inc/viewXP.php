@@ -118,12 +118,20 @@ if ($data['timestamped'] == 1) {
     $req_stamper->execute();
     $uploads = $req_stamper->fetch();
 
+    // display a link to download the .asn1 token also
+    $sql = "SELECT * FROM uploads WHERE type = 'timestamp-token' AND item_id = :item_id LIMIT 1";
+    $req_stamper = $pdo->prepare($sql);
+    $req_stamper->bindParam(':item_id', $id);
+    $req_stamper->execute();
+    $token = $req_stamper->fetch();
+
     $date = new DateTime($data['timestampedwhen']);
 
+    // there is a \" in title attribute of img to prevent ' (apostrophe) cutting the string for french translation
     display_message(
         'info_nocross',
         _('Experiment was timestamped by') . " " . $timestamper['firstname'] . " " . $timestamper['lastname'] . " " . _('on') . " " . $date->format('Y-m-d') . " " . _('at') . " " . $date->format('H:i:s') . " "
-        . $date->getTimezone()->getName() . " <a href='uploads/" . $uploads['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='" . _('Download timestamped pdf') . "' alt='pdf' /></a>"
+        . $date->getTimezone()->getName() . " <a href='uploads/" . $uploads['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='" . _('Download timestamped pdf') . "' alt='pdf' /></a><a href='uploads/" . $token['long_name'] . "'> <img src='img/download.png' title=\"" . _('Download token') . "\" alt='token' class='bot5px' /></a>"
     );
 
     unset($timestamper);

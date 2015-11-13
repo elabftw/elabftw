@@ -100,33 +100,32 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     }
     ?>' />
     </form>
-    <span class='navleft'>
     <span id='logonav'>elab<span class='strong' style='color:white;'>FTW</span></span>
     <?php
     echo "<a href='experiments.php?mode=show'";
     if ($selected_menu == 'Experiments') {
         echo " class='selected'";
     }
-    echo ">" . ngettext('Experiment', 'Experiments', 2) . "</a>";
+    echo ">" . ngettext('Experiment', 'Experiments', 2) . "</a> ";
     echo "<a href='database.php?mode=show'";
     if ($selected_menu == 'Database') {
         echo " class='selected'";
     }
-    echo ">" . _('Database') . "</a>";
+    echo ">" . _('Database') . "</a> ";
 
     echo "<a href='team.php'";
     if ($selected_menu == 'Team') {
         echo " class='selected'";
     }
-    echo ">" . _('Team') . "</a>";
+    echo ">" . _('Team') . "</a> ";
 
     echo "<a href='search.php'";
     if ($selected_menu == 'Search') {
         echo " class='selected'";
     }
-    echo ">" . _('Search') . "</a>";
+    echo ">" . _('Search') . "</a> ";
 
-    echo "<a href='" . get_team_config('link_href') . "' target='_blank'>" . get_team_config('link_name') . "</a></span>";
+    echo "<a href='" . get_team_config('link_href') . "' target='_blank'>" . get_team_config('link_name') . "</a>";
 
     echo "</nav>";
 } else { // not logged in, show only logo, no menu

@@ -197,11 +197,11 @@ nav {
     line-height: 3;
 }
 
-nav .navleft a {
+nav a {
     font-size:90%;
     font-weight:bold;
     text-transform:uppercase;
-    margin:5px 1%;
+    margin:1%;
     color: #888;
     text-decoration: none;
 }
@@ -212,17 +212,13 @@ nav .navleft a {
     margin-left: 5%;
 }
 
-nav .navleft{
-    width:75%;
-}
-
-nav .navleft a.selected {
+nav a.selected {
     border-bottom:6px #29AEB9 solid;
     padding-bottom:10px;
     color:white;
 }
 
-nav .navleft a:hover {
+nav a:hover {
     color:#29AEB9;
     transition-duration: 500ms;
 }
@@ -231,7 +227,7 @@ nav .navleft a:hover {
 #big_search {
     width:25%;
     float:right;
-    margin-right: 30px;
+    margin-right: 5%;
     text-align:right;
 }
 #big_search input {
@@ -240,12 +236,12 @@ nav .navleft a:hover {
     border-radius: 20px;
     width:50%;
     height:2em;
-    margin: 13px 10px 0 0;
+    margin: 13px 0 0 0;
     color: white;
     transition:width 1s;
 }
 #big_search input:focus {
-    width:90%;
+    width:100%;
 }
 /*  MENU is below main nav */
 menu {

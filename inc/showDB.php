@@ -26,7 +26,7 @@ $req->execute();
 
 <menu class='border'>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-2">
             <form class="form-inline pull-left">
                 <?php
                 // CREATE NEW dropdown menu
@@ -40,7 +40,7 @@ $req->execute();
                 ?>
             </form>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-10">
             <form class="form-inline pull-right">
                 <div class="form-group">
                     <input type="hidden" name="mode" value="show" />

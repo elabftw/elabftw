@@ -80,15 +80,6 @@ body {
     padding: 10px 5%;
 }
 
-/*
-@media (min-width: 100px) {
-    #real_container {
-        padding: 10px 0px;
-    }
-}
-*/
-
-
 /* LINKS */
 a {
     color: #29AEB9;
@@ -98,7 +89,6 @@ a:hover {
     color:#29AEB9;
     text-decoration:none;
 }
-
 
 /* LISTS */
 .list-group-item {
@@ -202,12 +192,10 @@ label {
 }
 
 /* HEAD */
-
 nav {
     background-color:#343434;
     line-height: 3;
 }
-
 
 nav .navleft a {
     font-size:90%;
@@ -233,7 +221,6 @@ nav .navleft a.selected {
     padding-bottom:10px;
     color:white;
 }
-
 
 nav .navleft a:hover {
     color:#29AEB9;

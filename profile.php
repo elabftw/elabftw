@@ -34,7 +34,7 @@ $req->execute();
 $data = $req->fetch();
 
 echo "<section class='box'>";
-echo "<img src='img/user.png' alt='user' /> <h4>" . _('Infos') . "</h4>";
+echo "<img src='img/user.png' alt='user' class='bot5px' /> <h4 style='display:inline'>" . _('Infos') . "</h4>";
 echo "<div class='center'>
     <p>".$data['firstname'] . " " . $data['lastname'] . " (" . $data['email'] . ")</p>
     <p>".$count[0] . " " . _('experiments done since') . " " . date("l jS \of F Y", $data['register_date'])

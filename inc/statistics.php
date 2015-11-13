@@ -57,7 +57,7 @@ if ($total == 0) {
     }
 
     // BEGIN CONTENT
-    echo "<img src='img/statistics.png' alt='' /> <h4>" . _('Statistics') . "</h4>";
+    echo "<img src='img/statistics.png' alt='' class='bot5px' /> <h4 style='display:inline'>" . _('Statistics') . "</h4>";
     ?>
      <!--Load the AJAX API-->
     <script src="https://www.google.com/jsapi"></script>

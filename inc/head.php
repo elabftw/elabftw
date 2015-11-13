@@ -81,7 +81,7 @@ echo "<title>" . (isset($page_title) ? $page_title : "Lab manager") . " - eLab "
 </head>
 
 <body>
-<section id="container">
+<section id="container" class='container'>
 
 <?php
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {

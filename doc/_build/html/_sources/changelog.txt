@@ -3,6 +3,32 @@
 Changelog
 =========
 
+Version 1.1.6
+-------------
+
+* Bug fixes
+
+    * fix bug on capitalized images extensions (fix #195)
+    * fix bug where quotes could break the mention plugin
+    * fix bad login url sent to validated users (thx Joke)
+
+* Enhancements
+
+    * Better view on low resolution display (fix #204)
+    * Disallow empty title in quicksave
+    * add autocomplete to DB items (fix #190)
+    * Change new version available banner color
+    * Add absract display on mouse hover (fix #196)
+    * Add download .asn1 button on timestamped experiments
+    * Add autocomplete=off on admin page form
+    * Add possibility to have floating images (fix #186)
+
+* Documentation
+    * Better manual
+
+* Developer corner
+    * use colorpicker instead of colorwheel, remove raphael.js dependance
+
 Version 1.1.5-p2
 ----------------
 

@@ -29,8 +29,7 @@ eLabFTW uses open source code from others. A big thanks to them for making their
 * `Google Chart Tools <https://developers.google.com/chart/>`_
 * `mPDF <http://www.mpdf1.com/mpdf/index.php>`_
 * `Swiftmailer <http://swiftmailer.org>`_
-* `Raphael <http://raphaeljs.com/>`_
-* `Colorwheel <http://jweir.github.com/colorwheel/>`_
+* `Colorpicker <https://github.com/vanderlee/colorpicker>`_
 * `File upload <http://www.dropzonejs.com/>`_
 * `ChemDoodle <http://web.chemdoodle.com/>`_
 * `FileSaver.js <https://github.com/eligrey/FileSaver.js/>`_

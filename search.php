@@ -65,10 +65,10 @@ $search_type = '';
             <!-- SEARCH WITH TAG -->
             <div class='col-md-3' id='tag_exp'>
                 <label for='tag_exp'><?php echo _('With the tag'); ?></label>
-                <select name='tag_exp'>
+                <select name='tag_exp' style='max-width:80%'>
                     <option value=''><?php echo _('Select a Tag'); ?></option>
                     <?php // Experiments tags
-                    $sql = "SELECT tag, COUNT(id) as nbtag, userid FROM experiments_tags WHERE userid = :userid GROUP BY tag ORDER BY tag ASC";
+                    $sql = "SELECT tag, COUNT(id) as nbtag FROM experiments_tags WHERE userid = :userid GROUP BY tag ORDER BY tag ASC";
                     $req = $pdo->prepare($sql);
                     // we want to show the tags of the selected person in 'search in' dropdown
                     // so if there is a owner parameter, use it to select tags

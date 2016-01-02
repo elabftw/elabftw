@@ -86,7 +86,7 @@ if ($data['locked'] == 1) {
 <span class='align_right'>
 <?php
 // get the list of revisions
-$sql = "SELECT COUNT(id) FROM items_revisions WHERE item_id = :item_id ORDER BY savedate DESC";
+$sql = "SELECT COUNT(*) FROM items_revisions WHERE item_id = :item_id ORDER BY savedate DESC";
 $req = $pdo->prepare($sql);
 $req->execute(array(
     'item_id' => $id

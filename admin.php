@@ -251,7 +251,7 @@ if (!empty($team['stamppass'])) {
         // count the experiments with this status
         // don't allow deletion if experiments with this status exist
         // but instead display a message to explain
-        $count_exp_sql = "SELECT COUNT(id) FROM experiments WHERE status = :status AND team = :team";
+        $count_exp_sql = "SELECT COUNT(*) FROM experiments WHERE status = :status AND team = :team";
         $count_exp_req = $pdo->prepare($count_exp_sql);
         $count_exp_req->bindParam(':status', $status['id'], PDO::PARAM_INT);
         $count_exp_req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
@@ -348,7 +348,7 @@ if (!empty($team['stamppass'])) {
             // count the items with this type
             // don't allow deletion if items with this type exist
             // but instead display a message to explain
-            $count_db_sql = "SELECT COUNT(id) FROM items WHERE type = :type";
+            $count_db_sql = "SELECT COUNT(*) FROM items WHERE type = :type";
             $count_db_req = $pdo->prepare($count_db_sql);
             $count_db_req->bindParam(':type', $items_types['id'], PDO::PARAM_INT);
             $count_db_req->execute();

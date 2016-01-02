@@ -63,10 +63,12 @@
 	}
 
 	function expose(ids) {
-		for (var i = 0; i < ids.length; i++) {
-			var target = exports;
-			var id = ids[i];
-			var fragments = id.split(/[.\/]/);
+		var i, target, id, fragments, privateModules;
+
+		for (i = 0; i < ids.length; i++) {
+			target = exports;
+			id = ids[i];
+			fragments = id.split(/[.\/]/);
 
 			for (var fi = 0; fi < fragments.length - 1; ++fi) {
 				if (target[fragments[fi]] === undefined) {
@@ -78,6 +80,21 @@
 
 			target[fragments[fragments.length - 1]] = modules[id];
 		}
+		
+		// Expose private modules for unit tests
+		if (exports.AMDLC_TESTS) {
+			privateModules = exports.privateModules || {};
+
+			for (id in modules) {
+				privateModules[id] = modules[id];
+			}
+
+			for (i = 0; i < ids.length; i++) {
+				delete privateModules[ids[i]];
+			}
+
+			exports.privateModules = privateModules;
+		}
 	}
 
 // Included from: js/tinymce/plugins/spellchecker/classes/DomTextMatcher.js
@@ -85,8 +102,8 @@
 /**
  * DomTextMatcher.js
  *
- * Copyright, Moxiecode Systems AB
  * Released under LGPL License.
+ * Copyright (c) 1999-2015 Ephox Corp. All rights reserved
  *
  * License: http://www.tinymce.com/license
  * Contributing: http://www.tinymce.com/contributing
@@ -101,6 +118,10 @@
  * @private
  */
 define("tinymce/spellcheckerplugin/DomTextMatcher", [], function() {
+	function isContentEditableFalse(node) {
+		return node && node.nodeType == 1 && node.contentEditable === "false";
+	}
+
 	// Based on work developed by: James Padolsey http://james.padolsey.com
 	// released under UNLICENSE that is compatible with LGPL
 	// TODO: Handle contentEditable edgecase:
@@ -137,6 +158,10 @@ define("tinymce/spellcheckerplugin/DomTextMatcher", [], function() {
 				return '';
 			}
 
+			if (isContentEditableFalse(node)) {
+				return '\n';
+			}
+
 			txt = '';
 
 			if (blockElementsMap[node.nodeName] || shortEndedElementsMap[node.nodeName]) {
@@ -165,7 +190,7 @@ define("tinymce/spellcheckerplugin/DomTextMatcher", [], function() {
 			matchLocation = matches.shift();
 
 			out: while (true) {
-				if (blockElementsMap[curNode.nodeName] || shortEndedElementsMap[curNode.nodeName]) {
+				if (blockElementsMap[curNode.nodeName] || shortEndedElementsMap[curNode.nodeName] || isContentEditableFalse(curNode)) {
 					atIndex++;
 				}
 
@@ -213,9 +238,11 @@ define("tinymce/spellcheckerplugin/DomTextMatcher", [], function() {
 						break; // no more matches
 					}
 				} else if ((!hiddenTextElementsMap[curNode.nodeName] || blockElementsMap[curNode.nodeName]) && curNode.firstChild) {
-					// Move down
-					curNode = curNode.firstChild;
-					continue;
+					if (!isContentEditableFalse(curNode)) {
+						// Move down
+						curNode = curNode.firstChild;
+						continue;
+					}
 				} else if (curNode.nextSibling) {
 					// Move forward:
 					curNode = curNode.nextSibling;
@@ -285,34 +312,34 @@ define("tinymce/spellcheckerplugin/DomTextMatcher", [], function() {
 					node.parentNode.removeChild(node);
 
 					return el;
-				} else {
-					// Replace startNode -> [innerNodes...] -> endNode (in that order)
-					before = doc.createTextNode(startNode.data.substring(0, range.startNodeIndex));
-					after = doc.createTextNode(endNode.data.substring(range.endNodeIndex));
-					var elA = makeReplacementNode(startNode.data.substring(range.startNodeIndex), matchIndex);
-					var innerEls = [];
-
-					for (var i = 0, l = range.innerNodes.length; i < l; ++i) {
-						var innerNode = range.innerNodes[i];
-						var innerEl = makeReplacementNode(innerNode.data, matchIndex);
-						innerNode.parentNode.replaceChild(innerEl, innerNode);
-						innerEls.push(innerEl);
-					}
-
-					var elB = makeReplacementNode(endNode.data.substring(0, range.endNodeIndex), matchIndex);
-
-					parentNode = startNode.parentNode;
-					parentNode.insertBefore(before, startNode);
-					parentNode.insertBefore(elA, startNode);
-					parentNode.removeChild(startNode);
-
-					parentNode = endNode.parentNode;
-					parentNode.insertBefore(elB, endNode);
-					parentNode.insertBefore(after, endNode);
-					parentNode.removeChild(endNode);
-
-					return elB;
 				}
+
+				// Replace startNode -> [innerNodes...] -> endNode (in that order)
+				before = doc.createTextNode(startNode.data.substring(0, range.startNodeIndex));
+				after = doc.createTextNode(endNode.data.substring(range.endNodeIndex));
+				var elA = makeReplacementNode(startNode.data.substring(range.startNodeIndex), matchIndex);
+				var innerEls = [];
+
+				for (var i = 0, l = range.innerNodes.length; i < l; ++i) {
+					var innerNode = range.innerNodes[i];
+					var innerEl = makeReplacementNode(innerNode.data, matchIndex);
+					innerNode.parentNode.replaceChild(innerEl, innerNode);
+					innerEls.push(innerEl);
+				}
+
+				var elB = makeReplacementNode(endNode.data.substring(0, range.endNodeIndex), matchIndex);
+
+				parentNode = startNode.parentNode;
+				parentNode.insertBefore(before, startNode);
+				parentNode.insertBefore(elA, startNode);
+				parentNode.removeChild(startNode);
+
+				parentNode = endNode.parentNode;
+				parentNode.insertBefore(elB, endNode);
+				parentNode.insertBefore(after, endNode);
+				parentNode.removeChild(endNode);
+
+				return elB;
 			};
 		}
 
@@ -558,8 +585,8 @@ define("tinymce/spellcheckerplugin/DomTextMatcher", [], function() {
 /**
  * Plugin.js
  *
- * Copyright, Moxiecode Systems AB
  * Released under LGPL License.
+ * Copyright (c) 1999-2015 Ephox Corp. All rights reserved
  *
  * License: http://www.tinymce.com/license
  * Contributing: http://www.tinymce.com/contributing
@@ -745,15 +772,19 @@ define("tinymce/spellcheckerplugin/Plugin", [
 					result = JSON.parse(result);
 
 					if (!result) {
-						errorCallback("Sever response wasn't proper JSON.");
+						var message = editor.translate("Server response wasn't proper JSON.");
+						errorCallback(message);
 					} else if (result.error) {
 						errorCallback(result.error);
 					} else {
 						doneCallback(result);
 					}
 				},
-				error: function(type, xhr) {
-					errorCallback("Spellchecker request error: " + xhr.status);
+				error: function() {
+					var message = editor.translate("The spelling service was not found: (") +
+							settings.spellchecker_rpc_url +
+							editor.translate(")");
+					errorCallback(message);
 				}
 			});
 		}
@@ -764,15 +795,12 @@ define("tinymce/spellcheckerplugin/Plugin", [
 		}
 
 		function spellcheck() {
-			if (started) {
-				finish();
+			if (finish()) {
 				return;
-			} else {
-				finish();
 			}
 
 			function errorCallback(message) {
-				editor.windowManager.alert(message);
+				editor.notificationManager.open({text: message, type: 'error'});
 				editor.setProgressState(false);
 				finish();
 			}
@@ -796,7 +824,7 @@ define("tinymce/spellcheckerplugin/Plugin", [
 				editor.dom.remove(spans, true);
 				checkIfFinished();
 			}, function(message) {
-				editor.windowManager.alert(message);
+				editor.notificationManager.open({text: message, type: 'error'});
 				editor.setProgressState(false);
 			});
 		}
@@ -824,6 +852,7 @@ define("tinymce/spellcheckerplugin/Plugin", [
 			if (started) {
 				started = false;
 				editor.fire('SpellcheckEnd');
+				return true;
 			}
 		}
 
@@ -926,7 +955,8 @@ define("tinymce/spellcheckerplugin/Plugin", [
 			editor.setProgressState(false);
 
 			if (isEmpty(suggestions)) {
-				editor.windowManager.alert('No misspellings found');
+				var message = editor.translate('No misspellings found.');
+				editor.notificationManager.open({text: message, type: 'info'});
 				started = false;
 				return;
 			}

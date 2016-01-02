@@ -3,6 +3,19 @@
 Changelog
 =========
 
+Version 1.1.7
+-------------
+
+* Bug fixes
+
+  * fix bug where list text size was incorrect (fixed upstream by tinymce devs; #158)
+
+* Enhancements
+
+  * You can now link experiments directly in text with the `#` autocomplete (fix #191)
+  * Updated components to latest stable version
+
+
 Version 1.1.6
 -------------
 

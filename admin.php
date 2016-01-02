@@ -370,8 +370,9 @@ if (!empty($team['stamppass'])) {
                 <input type='hidden' name='item_type_id' value='<?php echo $items_types['id']; ?>' />
 
                 <div id='colorwheel_div_<?php echo $items_types['id']; ?>'>
-                    <input class='colorpicker' type='text' name='item_type_bgcolor' value='<?php echo $items_types['bgcolor']; ?>'/>
-                </div><br><br><br>
+            <label><?php echo _('Edit color'); ?></label>
+                    <input class='colorpicker' type='text' style='display:inline' name='item_type_bgcolor' value='<?php echo $items_types['bgcolor']; ?>'/>
+                </div>
                 <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']); ?></textarea><br>
                 <div class='center'>
                     <button type='submit' class='button'><?php echo _('Edit') . ' ' . stripslashes($items_types['name']); ?></button><br>
@@ -402,8 +403,9 @@ if (!empty($team['stamppass'])) {
         <input required type='text' id='new_item_type_name' name='new_item_type_name' />
         <input type='hidden' name='new_item_type' value='1' />
         <div id='colorwheel_div_new'>
+            <label><?php echo _('Edit color'); ?></label>
             <input class='colorpicker' type='text' name='new_item_type_bgcolor' value='000000' />
-        </div><br><br><br><br>
+        </div>
         <textarea class='mceditable' name='new_item_type_template' /></textarea>
         <div class='center submitButtonDiv'>
         <button type='submit' class='button'><?php echo _('Save'); ?></button>

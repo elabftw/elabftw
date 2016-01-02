@@ -4,9 +4,12 @@ namespace Codeception;
 
 use Codeception\Event\Suite;
 use Codeception\Event\SuiteEvent;
+use Codeception\Exception\ConfigurationException;
+use Codeception\Exception\TestRuntimeException;
 use Codeception\Lib\Di;
 use Codeception\Lib\GroupManager;
 use Codeception\Lib\ModuleContainer;
+use Codeception\Lib\Notification;
 use Codeception\Lib\TestLoader;
 use Codeception\TestCase\Interfaces\ScenarioDriven;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -68,10 +71,10 @@ class SuiteManager
             $this->moduleContainer->create($moduleName);
         }
         $this->moduleContainer->validateConflicts();
-        $this->suite = $this->createSuite($name);
         if (isset($settings['current_environment'])) {
             $this->env = $settings['current_environment'];
         }
+        $this->suite = $this->createSuite($name);
     }
 
     public function initialize()
@@ -81,7 +84,7 @@ class SuiteManager
             $module->_initialize();
         }
         if (!file_exists(Configuration::supportDir() . $this->settings['class_name'] . '.php')) {
-            throw new Exception\ConfigurationException($this->settings['class_name'] . " class doesn't exists in suite folder.\nRun the 'build' command to generate it");
+            throw new Exception\ConfigurationException($this->settings['class_name'] . " class doesn't exist in suite folder.\nRun the 'build' command to generate it");
         }
         $this->dispatcher->dispatch(Events::SUITE_INIT, new SuiteEvent($this->suite, null, $this->settings));
         ini_set('xdebug.show_exception_trace', 0); // Issue https://github.com/symfony/symfony/issues/7646
@@ -113,19 +116,20 @@ class SuiteManager
             }
         }
 
-        if ($test instanceof TestCase) {
-            if (!$this->isCurrentEnvironment($test->getEnvironment())) {
-                return; // skip tests from other environments
-            }
-        }
         if ($test instanceof ScenarioDriven) {
             $test->preload();
+        }
+        if ($test instanceof TestCase) {
+            $this->checkEnvironmentExists($test);
+            if (!$this->isExecutedInCurrentEnvironment($test)) {
+                return; // skip tests from other environments
+            }
         }
 
         $groups = $this->groupManager->groupsForTest($test);
         $this->suite->addTest($test, $groups);
 
-        if (!empty($groups) && $test instanceof TestCase\Interfaces\ScenarioDriven && null !== $test->getScenario()) {
+        if (!empty($groups) && $test instanceof TestCase) {
             $test->getScenario()->group($groups);
         }
     }
@@ -170,19 +174,35 @@ class SuiteManager
     protected function getActor()
     {
         return $this->settings['namespace']
-            ? $this->settings['namespace'] . '\\' . $this->settings['class_name']
+            ? rtrim($this->settings['namespace'], '\\') . '\\' . $this->settings['class_name']
             : $this->settings['class_name'];
     }
 
-    protected function isCurrentEnvironment($envs)
+    protected function checkEnvironmentExists(\Codeception\TestCase $test)
     {
+        $envs = $test->getEnvironment();
+        if (empty($envs)) {
+            return;
+        }
+        if (!isset($this->settings['env'])) {
+            Notification::warning("Environments are not configured", TestCase::getTestFullName($test));
+            return;
+        }
+        $availableEnvironments = array_keys($this->settings['env']);
+        $listedEnvironments = explode(',', implode(',', $test->getEnvironment()));
+        foreach ($listedEnvironments as $env) {
+            if (!in_array($env, $availableEnvironments)) {
+                Notification::warning("Environment $env was not configured but used in test", TestCase::getTestFullName($test));
+            }
+        }
+    }
+
+    protected function isExecutedInCurrentEnvironment(\Codeception\TestCase $test)
+    {
+        $envs = $test->getEnvironment();
         if (empty($envs)) {
             return true;
         }
-        if (!$this->env) {
-            return false;
-        }
-
         $currentEnvironments = explode(',', $this->env);
         foreach ($envs as $envList) {
             $envList = explode(',', $envList);
@@ -205,8 +225,8 @@ class SuiteManager
         $t->configDispatcher($this->dispatcher);
         $t->configActor($this->getActor());
         $t->configEnv($this->env);
-        $t->configDi($this->di);
         $t->configModules($this->moduleContainer);
+        $t->configDi($this->di);
         $t->initConfig();
         $this->di->injectDependencies($t);
     }

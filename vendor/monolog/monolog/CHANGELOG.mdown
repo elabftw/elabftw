@@ -1,3 +1,33 @@
+### 1.17.2 (2015-10-14)
+
+  * Fixed ErrorHandler compatibility with non-Monolog PSR-3 loggers
+  * Fixed SlackHandler handling to use slack functionalities better
+  * Fixed SwiftMailerHandler bug when sending multiple emails they all had the same id
+  * Fixed 5.3 compatibility regression
+
+### 1.17.1 (2015-08-31)
+
+  * Fixed RollbarHandler triggering PHP notices
+
+### 1.17.0 (2015-08-30)
+
+  * Added support for `checksum` and `release` context/extra values in RavenHandler
+  * Added better support for exceptions in RollbarHandler
+  * Added UidProcessor::getUid
+  * Added support for showing the resource type in NormalizedFormatter
+  * Fixed IntrospectionProcessor triggering PHP notices
+
+### 1.16.0 (2015-08-09)
+
+  * Added IFTTTHandler to notify ifttt.com triggers
+  * Added Logger::setHandlers() to allow setting/replacing all handlers
+  * Added $capSize in RedisHandler to cap the log size
+  * Fixed StreamHandler creation of directory to only trigger when the first log write happens
+  * Fixed bug in the handling of curl failures
+  * Fixed duplicate logging of fatal errors when both error and fatal error handlers are registered in monolog's ErrorHandler
+  * Fixed missing fatal errors records with handlers that need to be closed to flush log records
+  * Fixed TagProcessor::addTags support for associative arrays
+
 ### 1.15.0 (2015-07-12)
 
   * Added addTags and setTags methods to change a TagProcessor

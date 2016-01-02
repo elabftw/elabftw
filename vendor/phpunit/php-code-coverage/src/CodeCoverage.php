@@ -340,6 +340,14 @@ class PHP_CodeCoverage
      */
     public function merge(PHP_CodeCoverage $that)
     {
+        $this->filter->setBlacklistedFiles(
+            array_merge($this->filter->getBlacklistedFiles(), $that->filter()->getBlacklistedFiles())
+        );
+
+        $this->filter->setWhitelistedFiles(
+            array_merge($this->filter->getWhitelistedFiles(), $that->filter()->getWhitelistedFiles())
+        );
+
         foreach ($that->data as $file => $lines) {
             if (!isset($this->data[$file])) {
                 if (!$this->filter->isFiltered($file)) {
@@ -364,13 +372,6 @@ class PHP_CodeCoverage
 
         $this->tests = array_merge($this->tests, $that->getTests());
 
-        $this->filter->setBlacklistedFiles(
-            array_merge($this->filter->getBlacklistedFiles(), $that->filter()->getBlacklistedFiles())
-        );
-
-        $this->filter->setWhitelistedFiles(
-            array_merge($this->filter->getWhitelistedFiles(), $that->filter()->getWhitelistedFiles())
-        );
     }
 
     /**
@@ -908,7 +909,9 @@ class PHP_CodeCoverage
             throw new PHP_CodeCoverage_Exception('No code coverage driver available');
         }
 
-        if ($runtime->isPHPDBG()) {
+        if ($runtime->isHHVM()) {
+            return new PHP_CodeCoverage_Driver_HHVM;
+        } elseif ($runtime->isPHPDBG()) {
             return new PHP_CodeCoverage_Driver_PHPDBG;
         } else {
             return new PHP_CodeCoverage_Driver_Xdebug;

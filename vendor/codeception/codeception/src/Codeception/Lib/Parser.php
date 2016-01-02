@@ -1,6 +1,7 @@
 <?php
 namespace Codeception\Lib;
 
+use Codeception\Exception\TestParseException;
 use Codeception\Scenario;
 use Codeception\Step;
 use Codeception\Util\Annotation;
@@ -54,14 +55,12 @@ class Parser
             }
             foreach ($matches[0] as $line) {
                 // run $scenario->group or $scenario->env
-                \Codeception\Lib\Deprecation::add("\$scenario->$call() is deprecated in favor of annotation: // @$call",
+                \Codeception\Lib\Notification::deprecate("\$scenario->$call() is deprecated in favor of annotation: // @$call",
                     $this->scenario->getFeature()
                 );
                 eval($line);
             }
-
         }
-
     }
 
     public function attachMetadata($comments)
@@ -125,18 +124,40 @@ class Parser
         $this->scenario->addStep(new \Codeception\Step\Comment($comment, []));
     }
 
+    public static function validate($file)
+    {
+        exec("php -l $file 2>&1", $output, $code);
+        if ($code !== 0) {
+            throw new TestParseException($file, implode("\n", $output));
+        }
+    }
+
+    public static function load($file)
+    {
+        if (PHP_MAJOR_VERSION < 7) {
+            self::validate($file);
+        }
+        try {
+            self::includeFile($file);
+        } catch (\ParseError $e) {
+            throw new TestParseException($file, $e->getMessage());
+        } catch (\Exception $e) {
+            // file is valid otherwise
+        }
+    }
+
     public static function getClassesFromFile($file)
     {
-        self::includeFile($file);
         $sourceCode = file_get_contents($file);
         $classes = [];
         $tokens = token_get_all($sourceCode);
+        $tokenCount = count($tokens);
         $namespace = '';
 
-        for ($i = 0; $i < count($tokens); $i++) {
+        for ($i = 0; $i < $tokenCount; $i++) {
             if ($tokens[$i][0] === T_NAMESPACE) {
                 $namespace = '';
-                for ($j = $i + 1; $j < count($tokens); $j++) {
+                for ($j = $i + 1; $j < $tokenCount; $j++) {
                     if ($tokens[$j][0] === T_STRING) {
                         $namespace .= $tokens[$j][1] . '\\';
                     } else {

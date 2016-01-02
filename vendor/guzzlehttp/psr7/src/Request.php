@@ -26,8 +26,8 @@ class Request implements RequestInterface
 
     /**
      * @param null|string $method HTTP method for the request.
-     * @param null|string $uri URI for the request.
-     * @param array  $headers Headers for the message.
+     * @param null|string|UriInterface $uri URI for the request.
+     * @param array $headers Headers for the message.
      * @param string|resource|StreamInterface $body Message body.
      * @param string $protocolVersion HTTP protocol version.
      *

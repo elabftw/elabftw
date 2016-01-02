@@ -611,7 +611,32 @@ class PHP_Token_CARET extends PHP_Token {}
 class PHP_Token_CASE extends PHP_Token {}
 class PHP_Token_CATCH extends PHP_Token {}
 class PHP_Token_CHARACTER extends PHP_Token {}
-class PHP_Token_CLASS extends PHP_Token_INTERFACE {}
+
+class PHP_Token_CLASS extends PHP_Token_INTERFACE
+{
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        $next = $this->tokenStream[$this->id + 1];
+
+        if ($next instanceof PHP_Token_WHITESPACE) {
+            $next = $this->tokenStream[$this->id + 2];
+        }
+
+        if ($next instanceof PHP_Token_STRING) {
+            return (string) $next;
+        }
+
+        if ($next instanceof PHP_Token_OPEN_CURLY ||
+            $next instanceof PHP_Token_EXTENDS ||
+            $next instanceof PHP_Token_IMPLEMENTS) {
+            return 'anonymous class';
+        }
+    }
+}
+
 class PHP_Token_CLASS_C extends PHP_Token {}
 class PHP_Token_CLASS_NAME_CONSTANT extends PHP_Token {}
 class PHP_Token_CLONE extends PHP_Token {}
@@ -794,8 +819,11 @@ class PHP_Token_SPACESHIP extends PHP_Token {}
 class PHP_Token_YIELD_FROM extends PHP_Token {}
 
 // Tokens introduced in HackLang / HHVM
+class PHP_Token_ASYNC extends PHP_Token {}
+class PHP_Token_AWAIT extends PHP_Token {}
 class PHP_Token_COMPILER_HALT_OFFSET extends PHP_Token {}
 class PHP_Token_ENUM extends PHP_Token {}
+class PHP_Token_EQUALS extends PHP_Token {}
 class PHP_Token_IN extends PHP_Token {}
 class PHP_Token_JOIN extends PHP_Token {}
 class PHP_Token_LAMBDA_ARROW extends PHP_Token {}
@@ -806,6 +834,7 @@ class PHP_Token_SHAPE extends PHP_Token {}
 class PHP_Token_TYPE extends PHP_Token {}
 class PHP_Token_TYPELIST_GT extends PHP_Token {}
 class PHP_Token_TYPELIST_LT extends PHP_Token {}
+class PHP_Token_WHERE extends PHP_Token {}
 class PHP_Token_XHP_ATTRIBUTE extends PHP_Token {}
 class PHP_Token_XHP_CATEGORY extends PHP_Token {}
 class PHP_Token_XHP_CATEGORY_LABEL extends PHP_Token {}

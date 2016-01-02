@@ -50,7 +50,7 @@ Checks if file exists
 
 ### assertFileNotExists
  
-Checks if file doesn't exists
+Checks if file doesn't exist
  
  * `param string` $filename
  * `param string` $message
@@ -76,12 +76,12 @@ Checks that actual is greater or equal than expected
 
 ### assertGreaterThen
  
-@deprecated
+ * `deprecated` 
 
 
 ### assertGreaterThenOrEqual
  
-@deprecated
+ * `deprecated` 
 
 
 ### assertLessThan

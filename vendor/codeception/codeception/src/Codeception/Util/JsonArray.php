@@ -110,7 +110,6 @@ class JsonArray
         if ($this->arrayIsSequential($arr1) && $this->arrayIsSequential($arr2)) {
             return $this->sequentialArrayIntersect($arr1, $arr2);
         }
-
         return $this->associativeArrayIntersect($arr1, $arr2);
     }
 
@@ -139,13 +138,18 @@ class JsonArray
         $matchedKeys = [];
         foreach ($arr1 as $key1 => $value1) {
             foreach ($arr2 as $key2 => $value2) {
-                $return = $this->arrayIntersectRecursive($value1, $value2);
-                if ($return) {
-                    $ret[$key1] = $return;
+                if (isset($matchedKeys[$key2])) {
                     continue;
                 }
 
-                if ($value1 === $value2 && !isset($matchedKeys[$key2])) {
+                $return = $this->arrayIntersectRecursive($value1, $value2);
+                if ($return !== false && $return == $value1) {
+                    $ret[$key1] = $return;
+                    $matchedKeys[$key2] = true;
+                    continue;
+                }
+
+                if ($this->isEqualValue($value1, $value2)) {
                     $ret[$key1] = $value1;
                     $matchedKeys[$key2] = true;
                     break;
@@ -173,8 +177,7 @@ class JsonArray
                 $ret[$key] = $return;
                 continue;
             }
-
-            if ($arr1[$key] === $arr2[$key]) {
+            if ($this->isEqualValue($arr1[$key], $arr2[$key])) {
                 $ret[$key] = $arr1[$key];
             }
         }
@@ -211,5 +214,18 @@ class JsonArray
                 $subNode->nodeValue = (string)$value;
             }
         }
+    }
+
+    private function isEqualValue($val1, $val2)
+    {
+        if (is_numeric($val1)) {
+            $val1 = (string) $val1;
+        }
+
+        if (is_numeric($val2)) {
+            $val2 = (string) $val2;
+        }
+
+        return $val1 === $val2;
     }
 }

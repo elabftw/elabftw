@@ -15,8 +15,6 @@ namespace Symfony\Component\Yaml\Exception;
  * Exception class thrown when an error occurs during parsing.
  *
  * @author Fabien Potencier <fabien@symfony.com>
- *
- * @api
  */
 class ParseException extends RuntimeException
 {
@@ -125,12 +123,7 @@ class ParseException extends RuntimeException
         }
 
         if (null !== $this->parsedFile) {
-            if (PHP_VERSION_ID >= 50400) {
-                $jsonOptions = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
-            } else {
-                $jsonOptions = 0;
-            }
-            $this->message .= sprintf(' in %s', json_encode($this->parsedFile, $jsonOptions));
+            $this->message .= sprintf(' in %s', json_encode($this->parsedFile, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
         }
 
         if ($this->parsedLine >= 0) {

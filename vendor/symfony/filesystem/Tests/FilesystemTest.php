@@ -11,24 +11,11 @@
 
 namespace Symfony\Component\Filesystem\Tests;
 
-use Symfony\Component\Filesystem\Filesystem;
-
 /**
  * Test class for Filesystem.
  */
 class FilesystemTest extends FilesystemTestCase
 {
-    /**
-     * @var \Symfony\Component\Filesystem\Filesystem
-     */
-    private $filesystem = null;
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->filesystem = new Filesystem();
-    }
-
     public function testCopyCreatesNewFile()
     {
         $sourceFilePath = $this->workspace.DIRECTORY_SEPARATOR.'copy_source_file';
@@ -496,6 +483,22 @@ class FilesystemTest extends FilesystemTestCase
         $this->assertFilePermissions(753, $directory);
     }
 
+    public function testChmodChangesZeroModeOnSubdirectoriesOnRecursive()
+    {
+        $this->markAsSkippedIfChmodIsMissing();
+
+        $directory = $this->workspace.DIRECTORY_SEPARATOR.'directory';
+        $subdirectory = $directory.DIRECTORY_SEPARATOR.'subdirectory';
+
+        mkdir($directory);
+        mkdir($subdirectory);
+        chmod($subdirectory, 0000);
+
+        $this->filesystem->chmod($directory, 0753, 0000, true);
+
+        $this->assertFilePermissions(753, $subdirectory);
+    }
+
     public function testChown()
     {
         $this->markAsSkippedIfPosixIsMissing();
@@ -681,7 +684,9 @@ class FilesystemTest extends FilesystemTestCase
 
     public function testSymlink()
     {
-        $this->markAsSkippedIfSymlinkIsMissing();
+        if ('\\' === DIRECTORY_SEPARATOR) {
+            $this->markTestSkipped('Windows does not support creating "broken" symlinks');
+        }
 
         $file = $this->workspace.DIRECTORY_SEPARATOR.'file';
         $link = $this->workspace.DIRECTORY_SEPARATOR.'link';
@@ -801,6 +806,8 @@ class FilesystemTest extends FilesystemTestCase
             array('/a/aab/bb', '/a/aa/', '../aab/bb/'),
             array('/a/aab/bb/', '/a/aa', '../aab/bb/'),
             array('/a/aab/bb/', '/a/aa/', '../aab/bb/'),
+            array('/a/aab/bb/', '/', 'a/aab/bb/'),
+            array('/a/aab/bb/', '/b/aab', '../../a/aab/bb/'),
         );
 
         if ('\\' === DIRECTORY_SEPARATOR) {
@@ -926,7 +933,7 @@ class FilesystemTest extends FilesystemTestCase
         $this->assertTrue(is_dir($targetPath));
         $this->assertFileEquals($sourcePath.'/nested/file1.txt', $targetPath.DIRECTORY_SEPARATOR.'link1/file1.txt');
         $this->assertTrue(is_link($targetPath.DIRECTORY_SEPARATOR.'link1'));
-        $this->assertEquals($sourcePath.'nested', readlink($targetPath.DIRECTORY_SEPARATOR.'link1'));
+        $this->assertEquals('\\' === DIRECTORY_SEPARATOR ? realpath($sourcePath.'\nested') : 'nested', readlink($targetPath.DIRECTORY_SEPARATOR.'link1'));
     }
 
     /**
@@ -955,40 +962,115 @@ class FilesystemTest extends FilesystemTestCase
         );
     }
 
+    public function testTempnam()
+    {
+        $dirname = $this->workspace;
+
+        $filename = $this->filesystem->tempnam($dirname, 'foo');
+
+        $this->assertFileExists($filename);
+    }
+
+    public function testTempnamWithFileScheme()
+    {
+        $scheme = 'file://';
+        $dirname = $scheme.$this->workspace;
+
+        $filename = $this->filesystem->tempnam($dirname, 'foo');
+
+        $this->assertStringStartsWith($scheme, $filename);
+        $this->assertFileExists($filename);
+    }
+
+    public function testTempnamWithMockScheme()
+    {
+        stream_wrapper_register('mock', 'Symfony\Component\Filesystem\Tests\Fixtures\MockStream\MockStream');
+
+        $scheme = 'mock://';
+        $dirname = $scheme.$this->workspace;
+
+        $filename = $this->filesystem->tempnam($dirname, 'foo');
+
+        $this->assertStringStartsWith($scheme, $filename);
+        $this->assertFileExists($filename);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Filesystem\Exception\IOException
+     */
+    public function testTempnamWithZlibSchemeFails()
+    {
+        $scheme = 'compress.zlib://';
+        $dirname = $scheme.$this->workspace;
+
+        // The compress.zlib:// stream does not support mode x: creates the file, errors "failed to open stream: operation failed" and returns false
+        $this->filesystem->tempnam($dirname, 'bar');
+
+    }
+
+    public function testTempnamWithPHPTempSchemeFails()
+    {
+        $scheme = 'php://temp';
+        $dirname = $scheme;
+
+        $filename = $this->filesystem->tempnam($dirname, 'bar');
+
+        $this->assertStringStartsWith($scheme, $filename);
+
+        // The php://temp stream deletes the file after close
+        $this->assertFileNotExists($filename);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Filesystem\Exception\IOException
+     */
+    public function testTempnamWithPharSchemeFails()
+    {
+        // Skip test if Phar disabled phar.readonly must be 0 in php.ini
+        if (!\Phar::canWrite()) {
+            $this->markTestSkipped('This test cannot run when phar.readonly is 1.');
+        }
+
+        $scheme = 'phar://';
+        $dirname = $scheme.$this->workspace;
+        $pharname = 'foo.phar';
+
+        new \Phar($this->workspace.'/'.$pharname, 0, $pharname);
+        // The phar:// stream does not support mode x: fails to create file, errors "failed to open stream: phar error: "$filename" is not a file in phar "$pharname"" and returns false
+        $this->filesystem->tempnam($dirname, $pharname.'/bar');
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Filesystem\Exception\IOException
+     */
+    public function testTempnamWithHTTPSchemeFails()
+    {
+        $scheme = 'http://';
+        $dirname = $scheme.$this->workspace;
+
+        // The http:// scheme is read-only
+        $this->filesystem->tempnam($dirname, 'bar');
+    }
+
+    public function testTempnamOnUnwritableFallsBackToSysTmp()
+    {
+        $scheme = 'file://';
+        $dirname = $scheme.$this->workspace.DIRECTORY_SEPARATOR.'does_not_exist';
+
+        $filename = $this->filesystem->tempnam($dirname, 'bar');
+        $realTempDir = realpath(sys_get_temp_dir());
+        $this->assertStringStartsWith(rtrim($scheme.$realTempDir, DIRECTORY_SEPARATOR), $filename);
+        $this->assertFileExists($filename);
+
+        // Tear down
+        @unlink($filename);
+    }
+
     public function testDumpFile()
     {
         $filename = $this->workspace.DIRECTORY_SEPARATOR.'foo'.DIRECTORY_SEPARATOR.'baz.txt';
 
         $this->filesystem->dumpFile($filename, 'bar');
-
-        $this->assertFileExists($filename);
-        $this->assertSame('bar', file_get_contents($filename));
-    }
-
-    /**
-     * @group legacy
-     */
-    public function testDumpFileAndSetPermissions()
-    {
-        $filename = $this->workspace.DIRECTORY_SEPARATOR.'foo'.DIRECTORY_SEPARATOR.'baz.txt';
-
-        $this->filesystem->dumpFile($filename, 'bar', 0753);
-
-        $this->assertFileExists($filename);
-        $this->assertSame('bar', file_get_contents($filename));
-
-        // skip mode check on Windows
-        if ('\\' !== DIRECTORY_SEPARATOR) {
-            $this->assertFilePermissions(753, $filename);
-        }
-    }
-
-    public function testDumpFileWithNullMode()
-    {
-        $filename = $this->workspace.DIRECTORY_SEPARATOR.'foo'.DIRECTORY_SEPARATOR.'baz.txt';
-
-        $this->filesystem->dumpFile($filename, 'bar', null);
-
         $this->assertFileExists($filename);
         $this->assertSame('bar', file_get_contents($filename));
 
@@ -1009,8 +1091,37 @@ class FilesystemTest extends FilesystemTestCase
         $this->assertSame('bar', file_get_contents($filename));
     }
 
+    public function testDumpFileWithFileScheme()
+    {
+        if (defined('HHVM_VERSION')) {
+            $this->markTestSkipped('HHVM does not handle the file:// scheme correctly');
+        }
+
+        $scheme = 'file://';
+        $filename = $scheme.$this->workspace.DIRECTORY_SEPARATOR.'foo'.DIRECTORY_SEPARATOR.'baz.txt';
+
+        $this->filesystem->dumpFile($filename, 'bar', null);
+
+        $this->assertFileExists($filename);
+        $this->assertSame('bar', file_get_contents($filename));
+    }
+
+    public function testDumpFileWithZlibScheme()
+    {
+        $scheme = 'compress.zlib://';
+        $filename = $this->workspace.DIRECTORY_SEPARATOR.'foo'.DIRECTORY_SEPARATOR.'baz.txt';
+
+        $this->filesystem->dumpFile($filename, 'bar', null);
+
+        // Zlib stat uses file:// wrapper so remove scheme
+        $this->assertFileExists(str_replace($scheme, '', $filename));
+        $this->assertSame('bar', file_get_contents($filename));
+    }
+
     public function testCopyShouldKeepExecutionPermission()
     {
+        $this->markAsSkippedIfChmodIsMissing();
+
         $sourceFilePath = $this->workspace.DIRECTORY_SEPARATOR.'copy_source_file';
         $targetFilePath = $this->workspace.DIRECTORY_SEPARATOR.'copy_target_file';
 

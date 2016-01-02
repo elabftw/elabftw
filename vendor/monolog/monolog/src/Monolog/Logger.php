@@ -157,6 +157,7 @@ class Logger implements LoggerInterface
     public function pushHandler(HandlerInterface $handler)
     {
         array_unshift($this->handlers, $handler);
+
         return $this;
     }
 
@@ -172,6 +173,24 @@ class Logger implements LoggerInterface
         }
 
         return array_shift($this->handlers);
+    }
+
+    /**
+     * Set handlers, replacing all existing ones.
+     *
+     * If a map is passed, keys will be ignored.
+     *
+     * @param HandlerInterface[] $handlers
+     * @return $this
+     */
+    public function setHandlers(array $handlers)
+    {
+        $this->handlers = array();
+        foreach (array_reverse($handlers) as $handler) {
+            $this->pushHandler($handler);
+        }
+
+        return $this;
     }
 
     /**
@@ -194,6 +213,7 @@ class Logger implements LoggerInterface
             throw new \InvalidArgumentException('Processors must be valid callables (callback or object with an __invoke method), '.var_export($callback, true).' given');
         }
         array_unshift($this->processors, $callback);
+
         return $this;
     }
 

@@ -160,7 +160,7 @@ class MemcachedResourceManager
         // merge and add servers (with persistence id servers could be added already)
         $servers = array_udiff($resource['servers'], $memc->getServerList(), [$this, 'compareServers']);
         if ($servers) {
-            $memc->addServers($servers);
+            $memc->addServers(array_values(array_map('array_values', $servers)));
         }
 
         // buffer and return

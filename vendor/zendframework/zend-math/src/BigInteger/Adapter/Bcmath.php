@@ -313,7 +313,12 @@ class Bcmath implements AdapterInterface
             $decimal = '0';
             for ($i = 0, $len  = strlen($operand); $i < $len; $i++) {
                 $decimal = bcmul($decimal, $fromBase);
-                $decimal = bcadd($decimal, strpos($chars, $operand[$i]));
+
+                $remainder = ($fromBase <= 36)
+                    ? base_convert($operand[$i], $fromBase, 10)
+                    : strpos($chars, $operand[$i]);
+
+                $decimal = bcadd($decimal, $remainder);
             }
         }
 
@@ -326,7 +331,12 @@ class Bcmath implements AdapterInterface
         do {
             $remainder = bcmod($decimal, $toBase);
             $decimal   = bcdiv($decimal, $toBase);
-            $result    = $chars[$remainder] . $result;
+
+            $intermediate = ($toBase <= 36)
+                ? base_convert($remainder, 10, $toBase)
+                : $chars[$remainder];
+
+            $result = $intermediate . $result;
         } while (bccomp($decimal, '0'));
 
         return $sign . $result;

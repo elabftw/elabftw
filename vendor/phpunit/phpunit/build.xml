@@ -45,6 +45,12 @@
         <exec executable="gpg" failonerror="true">
             <arg value="--armor" />
             <arg value="--detach-sign" />
+            <arg path="${basedir}/build/phpunit-library-${version}.phar" />
+        </exec>
+
+        <exec executable="gpg" failonerror="true">
+            <arg value="--armor" />
+            <arg value="--detach-sign" />
             <arg path="${basedir}/build/phpunit-${version}.phar" />
         </exec>
     </target>
@@ -193,7 +199,7 @@
             </fileset>
         </copy>
 
-        <copy file="${basedir}/vendor/symfony/yaml/LICENSE" tofile="${basedir}/build/phar/symfony/LICENSE"/>
+        <copy file="${basedir}/vendor/symfony/yaml/Symfony/Component/Yaml/LICENSE" tofile="${basedir}/build/phar/symfony/LICENSE"/>
         <copy todir="${basedir}/build/phar/symfony">
             <fileset dir="${basedir}/vendor/symfony">
                 <include name="**/*.php" />
@@ -248,14 +254,30 @@
             <arg value="${version}" />
         </exec>
 
-        <exec executable="phpab">
+        <exec executable="${basedir}/build/bin/phpab">
+            <arg value="--all" />
+            <arg value="--static" />
+            <arg value="--once" />
+            <arg value="--phar" />
+            <arg value="--hash" />
+            <arg value="SHA-1" />
+            <arg value="--output" />
+            <arg path="${basedir}/build/phpunit-library-${_version}.phar" />
+            <arg value="--template" />
+            <arg path="${basedir}/build/library-phar-autoload.php.in" />
+            <arg path="${basedir}/build/phar" />
+        </exec>
+
+        <exec executable="${basedir}/build/bin/phpab">
             <arg value="--all" />
             <arg value="--static" />
             <arg value="--phar" />
+            <arg value="--hash" />
+            <arg value="SHA-1" />
             <arg value="--output" />
             <arg path="${basedir}/build/phpunit-${_version}.phar" />
             <arg value="--template" />
-            <arg path="${basedir}/build/phar-autoload.php.in" />
+            <arg path="${basedir}/build/binary-phar-autoload.php.in" />
             <arg path="${basedir}/build/phar" />
         </exec>
 

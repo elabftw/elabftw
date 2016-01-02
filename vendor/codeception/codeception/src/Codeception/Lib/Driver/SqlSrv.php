@@ -48,62 +48,50 @@ class SqlSrv extends Db
         );
     }
 
-    public function select($column, $table, array &$criteria)
+    protected function generateWhereClause(array &$criteria)
     {
-        $where = $criteria ? "where %s" : '';
-        $query = "select %s from " . $this->getQuotedName('%s') . " $where";
-        $params = [];
-
-        foreach ($criteria as $k => $v) {
-            $params[] = $this->getQuotedName($k) . " = ? ";
+        if (empty($criteria)) {
+            return '';
         }
 
-        $params = implode('AND ', $params);
+        $params = [];
+        foreach ($criteria as $k => $v) {
+            $params[] = $this->getQuotedName($k) . " = ? ";        }
 
-        return sprintf($query, $column, $table, $params);
+        return 'WHERE ' . implode('AND ', $params);
     }
 
     public function getQuotedName($name)
     {
         return '[' . $name . ']';
     }
-    
-    public function deleteQuery($table, $id, $primaryKey = 'id')
-    {
-        $query = "delete from "
-            . $this->getQuotedName($table)
-            . " where " . $this->getQuotedName($primaryKey) . " = $id";
-        
-        $this->sqlQuery($query);
-    }
-    
+
     /**
-     * Get a primary column name of a table.
-     *
      * @param string $tableName
-     * @throws \Exception
-     * @return string of a primary column name.
+     *
+     * @return array[string]
      */
-    public function getPrimaryColumn($tableName)
+    public function getPrimaryKey($tableName)
     {
-    	if (false === isset($this->primaryColumns[$tableName])) {
-    		$stmt = $this->getDbh()->query("
-SELECT Col.Column_Name from
-	INFORMATION_SCHEMA.TABLE_CONSTRAINTS Tab,
-	INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE Col
-WHERE
-	Col.Constraint_Name = Tab.Constraint_Name
-    AND Col.Table_Name = Tab.Table_Name
-    AND Constraint_Type = 'PRIMARY KEY' AND Col.Table_Name = '" . $tableName . "'");
-    		$columnInformation = $stmt->fetch(\PDO::FETCH_ASSOC);
-    
-    		if (true === empty($columnInformation)) { // Need a primary key
-    			throw new \Exception('Table ' . $tableName . ' is not valid or doesn\'t have no primary key');
-    		}
-    
-    		$this->primaryColumns[$tableName] = $columnInformation['Column_Name'];
-    	}
-    
-    	return $this->primaryColumns[$tableName];
+        if (!isset($this->primaryKeys[$tableName])) {
+            $primaryKey = [];
+            $query = "
+                SELECT Col.Column_Name from
+                    INFORMATION_SCHEMA.TABLE_CONSTRAINTS Tab,
+                    INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE Col
+                WHERE
+                    Col.Constraint_Name = Tab.Constraint_Name
+                    AND Col.Table_Name = Tab.Table_Name
+                    AND Constraint_Type = 'PRIMARY KEY' AND Col.Table_Name = ?";
+            $stmt = $this->executeQuery($query, [$tableName]);
+            $columns = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            foreach ($columns as $column) {
+                $primaryKey []= $column['Column_Name'];
+            }
+            $this->primaryKeys[$tableName] = $primaryKey;
+        }
+
+        return $this->primaryKeys[$tableName];
     }
 }

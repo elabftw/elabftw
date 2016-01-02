@@ -19,7 +19,7 @@ if (strpos($_SERVER['SCRIPT_FILENAME'], 'experiments')) {
 <section class='box'>
     <!-- FILE UPLOAD BLOCK -->
     <script src="js/dropzone/dist/min/dropzone.min.js"></script>
-    <link rel="stylesheet" media="all" href="js/dropzone/dist/dropzone.css" />
+    <link rel="stylesheet" media="all" href="js/dropzone/dist/min/dropzone.min.css" />
     <!-- fix some css here -->
     <style>
     .dropzone {

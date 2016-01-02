@@ -850,6 +850,7 @@ function addChemdoodle()
  * Generate a JS list of DB items to use for links or # autocomplete
  *
  * @param $format string ask if you want the default list for links, or the one for the mentions
+ * @since 1.1.7 it adds the XP of user
  * @return string
  */
 function getDbList($format = 'default')
@@ -872,19 +873,34 @@ function getDbList($format = 'default')
             $link_type = $link['name'];
             // html_entity_decode is needed to convert the quotes
             // str_replace to remove ' because it messes everything up
-            $link_name = str_replace("'", "", html_entity_decode(substr($link['title'], 0, 60), ENT_QUOTES));
+            $link_name = str_replace(array("'", "\""), "", html_entity_decode(substr($link['title'], 0, 60), ENT_QUOTES));
             // remove also the % (see issue #62)
             $link_name = str_replace("%", "", $link_name);
 
             // now build the list in both formats
             $link_list .= "'" . $link['itemid'] . " - " . $link_type . " - " . $link_name . "',";
-            $tinymce_list .= "{ name : \"<a href='database.php?mode=view&id=" . $link['itemid'] . "'>" . str_replace(array("'", "\""), "", html_entity_decode(substr($link_name, 0, 60), ENT_QUOTES)) . "</a>\"},";
+            $tinymce_list .= "{ name : \"<a href='database.php?mode=view&id=" . $link['itemid'] . "'>" . $link_name . "</a>\"},";
         }
     }
 
     if ($format === 'default') {
         return $link_list;
     } else {
+        // complete the list with experiments (only for tinymce)
+        // fix #191
+        $sql = "SELECT id, title FROM experiments WHERE userid = :userid";
+        $getalllinks = $pdo->prepare($sql);
+        $getalllinks->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
+        if ($getalllinks->execute()) {
+
+            while ($link = $getalllinks->fetch()) {
+                $link_name = str_replace(array("'", "\""), "", html_entity_decode(substr($link['title'], 0, 60), ENT_QUOTES));
+                // remove also the % (see issue #62)
+                $link_name = str_replace("%", "", $link_name);
+                $tinymce_list .= "{ name : \"<a href='experiments.php?mode=view&id=" . $link['id'] . "'>" . $link_name . "</a>\"},";
+            }
+        }
+
         return $tinymce_list;
     }
 }

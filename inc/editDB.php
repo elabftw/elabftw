@@ -43,9 +43,7 @@ if ($data['locked'] == 1) {
 <script src='js/tinymce/tinymce.min.js'></script>
 <section class='box' style='border-left: 6px solid #<?php echo $data['bgcolor']; ?>'>
     <!-- TRASH -->
-    <div class='text-right'>
-        <img src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id; ?>','item', 'database.php')" />
-    </div>
+    <img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id; ?>','item', 'database.php')" />
 
     <?php
     // TAGS

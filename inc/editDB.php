@@ -43,7 +43,9 @@ if ($data['locked'] == 1) {
 <script src='js/tinymce/tinymce.min.js'></script>
 <section class='box' style='border-left: 6px solid #<?php echo $data['bgcolor']; ?>'>
     <!-- TRASH -->
-    <img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id; ?>','item', 'database.php')" />
+    <div class='text-right'>
+        <img src='img/big-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $id; ?>','item', 'database.php')" />
+    </div>
 
     <?php
     // TAGS
@@ -52,14 +54,6 @@ if ($data['locked'] == 1) {
 
     <!-- BEGIN 2ND FORM -->
     <form method="post" action="app/editDB-exec.php" enctype='multipart/form-data'>
-    <!-- STAR RATING via ajax request -->
-    <div class='align_right'>
-    <input id='star1' name="star" type="radio" class="star" value='1' <?php if ($data['rating'] == 1) { echo "checked=checked "; }?>/>
-    <input id='star2' name="star" type="radio" class="star" value='2' <?php if ($data['rating'] == 2) { echo "checked=checked "; }?>/>
-    <input id='star3' name="star" type="radio" class="star" value='3' <?php if ($data['rating'] == 3) { echo "checked=checked "; }?>/>
-    <input id='star4' name="star" type="radio" class="star" value='4' <?php if ($data['rating'] == 4) { echo "checked=checked "; }?>/>
-    <input id='star5' name="star" type="radio" class="star" value='5' <?php if ($data['rating'] == 5) { echo "checked=checked "; }?>/>
-    </div><!-- END STAR RATING -->
     <input name='item_id' type='hidden' value='<?php echo $id; ?>' />
     <div class='row'>
 
@@ -70,6 +64,15 @@ if ($data['locked'] == 1) {
         <input name='date' id='datepicker' size='8' type='text' value='<?php echo $data['date']; ?>' />
         </div>
     </div>
+
+    <!-- STAR RATING via ajax request -->
+    <div class='align_right'>
+    <input id='star1' name="star" type="radio" class="star" value='1' <?php if ($data['rating'] == 1) { echo "checked=checked "; }?>/>
+    <input id='star2' name="star" type="radio" class="star" value='2' <?php if ($data['rating'] == 2) { echo "checked=checked "; }?>/>
+    <input id='star3' name="star" type="radio" class="star" value='3' <?php if ($data['rating'] == 3) { echo "checked=checked "; }?>/>
+    <input id='star4' name="star" type="radio" class="star" value='4' <?php if ($data['rating'] == 4) { echo "checked=checked "; }?>/>
+    <input id='star5' name="star" type="radio" class="star" value='5' <?php if ($data['rating'] == 5) { echo "checked=checked "; }?>/>
+    </div><!-- END STAR RATING -->
 
     <h4><?php echo _('Title'); ?></h4>
     <input id='title_input' name='title' rows="1" value='<?php echo stripslashes($data['title']); ?>' required />

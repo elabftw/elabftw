@@ -16,7 +16,7 @@ Version 1.1.7
 
 * Developer corner
 
-  * use grunt to minify all the JS files in one
+  * use grunt to minify all the JS and CSS files in one
   * updated composer and bower components
 
 Version 1.1.6

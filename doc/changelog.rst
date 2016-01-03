@@ -13,8 +13,11 @@ Version 1.1.7
 * Enhancements
 
   * You can now link experiments directly in text with the `#` autocomplete (fix #191)
-  * Updated components to latest stable version
 
+* Developer corner
+
+  * use grunt to minify all the JS files in one
+  * updated composer and bower components
 
 Version 1.1.6
 -------------

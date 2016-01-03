@@ -58,10 +58,6 @@
     <?php echo _('Page generated in') . ' '; ?><span class='strong'><?php echo round((microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]), 5); ?> seconds</span></div>
 </footer>
 
-<!-- todolist -->
-<script src="js/todolist.min.js"></script>
-<!-- konami code and unicorns -->
-<script src="js/cornify.min.js"></script>
 <!-- advanced search div -->
 <script>
 $('#adv_search').hide();

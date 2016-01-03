@@ -68,14 +68,8 @@ echo "<title>" . (isset($page_title) ? $page_title : "Lab manager") . " - eLab "
 <!-- JAVASCRIPT -->
 <script src="js/jquery/dist/jquery.min.js"></script>
 <script src="js/jquery-ui/jquery-ui.min.js"></script>
-<!-- for editable comments -->
-<script src="js/jeditable/jquery.jeditable.js"></script>
-<!-- for keyboard shortcuts -->
-<script src='js/keymaster/keymaster.min.js'></script>
-<!-- for stars rating -->
-<script src='js/jquery.rating.min.js'></script>
-<!-- common stuff -->
-<script src="js/common.min.js"></script>
+<!-- see Gruntfile.js to see what gets inside this -->
+<script src="js/elabftw.min.js"></script>
 <!-- bootstrap JS -->
 <script src="js/bootstrap/js/alert.js"></script>
 </head>

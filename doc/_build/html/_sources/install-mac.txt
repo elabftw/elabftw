@@ -9,7 +9,7 @@ This guide assumes you want to install eLabFTW locally for your personnal use (n
 Install XAMPP
 -------------
 
-Download `XAMPP for OS X <http://www.apachefriends.org/download.html>`_. Take the greatest version number (second link).
+Download `XAMPP for OS X <https://www.apachefriends.org/download.html>`_. Take the greatest version number (second link).
 
 Now that it's downloaded, double click it and open the installer. You can untick the XAMPP Developer Files and Learn more about Bitnami checkboxes.
 

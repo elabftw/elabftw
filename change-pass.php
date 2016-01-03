@@ -47,9 +47,6 @@ require_once 'inc/head.php';
     </form>
 </section>
 
-<!-- Password complexity visualizer -->
-<script src="js/jquery.complexify.js/jquery.complexify.js"></script>
-<script src="js/jquery.complexify.js/jquery.complexify.banlist.js"></script>
 <script>
 // we check for password match here
 function checkPasswordMatch() {

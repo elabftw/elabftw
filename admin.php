@@ -28,7 +28,6 @@ $selected_menu = null;
 require_once 'inc/head.php';
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
-<script src="js/colorpicker/jquery.colorpicker.min.js"></script>
 <link href="js/colorpicker/jquery.colorpicker.css" rel="stylesheet" type="text/css" />
 <?php
 // MAIN SQL FOR USERS

@@ -11,3 +11,6 @@ modules:
             url: https://localhost/elabftw
             browser: firefox
         - \Helper\Acceptance
+        - Db:
+            populate: true
+            cleanup: true

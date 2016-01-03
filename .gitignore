@@ -9,3 +9,4 @@ Session.vim
 .DS_Store
 tests/_output/*
 vendor/defuse/php-encryption/.git
+node_modules/*

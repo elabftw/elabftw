@@ -1,6 +1,6 @@
 <?php
 $I = new AcceptanceTester($scenario);
-$I->wantTo('test login');
+$I->wantTo('Test login form');
+testLogin($I);
 $I->amOnPage('/');
-$I->submitForm('#login', ['username' => 'testguy', 'password' => 'testtest']);
 $I->see('Howdy');

@@ -38,7 +38,7 @@ module.exports = function(grunt) {
         command: 'phpdoc run -d inc/classes -t doc/api'
       },
       runtests: {
-        command: 'php vendor/bin/codecept run --skip acceptance'
+        command: 'php vendor/bin/codecept run'
       }
     }
   });

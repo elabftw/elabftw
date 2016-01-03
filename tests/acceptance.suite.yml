@@ -7,6 +7,7 @@
 class_name: AcceptanceTester
 modules:
     enabled:
-        - PhpBrowser:
+        - WebDriver:
             url: https://localhost/elabftw
+            browser: firefox
         - \Helper\Acceptance

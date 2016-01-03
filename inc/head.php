@@ -61,10 +61,8 @@ echo "<title>" . (isset($page_title) ? $page_title : "Lab manager") . " - eLab "
 <!-- CSS -->
 <!-- Bootstrap -->
 <link rel="stylesheet" media="all" href="js/bootstrap/dist/css/bootstrap.min.css">
-<link rel="stylesheet" media="all" href="css/main.css" />
-<link rel="stylesheet" media="all" href="css/tagcloud.css" />
+<link rel="stylesheet" media="all" href="css/main.min.css" />
 <link rel="stylesheet" media="all" href="js/jquery-ui/themes/smoothness/jquery-ui.min.css" />
-<link rel="stylesheet" media="all" href="css/jquery.rating.css" />
 <!-- JAVASCRIPT -->
 <script src="js/jquery/dist/jquery.min.js"></script>
 <script src="js/jquery-ui/jquery-ui.min.js"></script>

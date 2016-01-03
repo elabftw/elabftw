@@ -16,12 +16,20 @@ module.exports = function(grunt) {
     watch: {
       files: ['<%= uglify.files %>'],
       tasks: ['uglify']
+    },
+    cssmin: {
+      target: {
+        files: {
+          'css/main.min.css': ['css/main.css', 'css/tagcloud.css', 'css/jquery.rating.css']
+        }
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
 
-  grunt.registerTask('default', ['uglify']);
+  grunt.registerTask('default', ['uglify', 'cssmin']);
 
 };

@@ -10,6 +10,7 @@
 
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . '_files' . DIRECTORY_SEPARATOR . 'BeforeAndAfterTest.php';
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . '_files' . DIRECTORY_SEPARATOR . 'BeforeClassAndAfterClassTest.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . '_files' . DIRECTORY_SEPARATOR . 'TestWithTest.php';
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . '_files' . DIRECTORY_SEPARATOR . 'DataProviderSkippedTest.php';
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . '_files' . DIRECTORY_SEPARATOR . 'DataProviderIncompleteTest.php';
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . '_files' . DIRECTORY_SEPARATOR . 'InheritedTestCase.php';
@@ -48,6 +49,7 @@ class Framework_SuiteTest extends PHPUnit_Framework_TestCase
         $suite->addTest(new self('testShadowedTests'));
         $suite->addTest(new self('testBeforeClassAndAfterClassAnnotations'));
         $suite->addTest(new self('testBeforeAnnotation'));
+        $suite->addTest(new self('testTestWithAnnotation'));
         $suite->addTest(new self('testSkippedTestDataProvider'));
         $suite->addTest(new self('testIncompleteTestDataProvider'));
         $suite->addTest(new self('testRequirementsBeforeClassHook'));
@@ -178,6 +180,18 @@ class Framework_SuiteTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(2, BeforeAndAfterTest::$beforeWasRun);
         $this->assertEquals(2, BeforeAndAfterTest::$afterWasRun);
+    }
+
+    public function testTestWithAnnotation()
+    {
+        $test = new PHPUnit_Framework_TestSuite(
+            'TestWithTest'
+        );
+
+        BeforeAndAfterTest::resetProperties();
+        $result = $test->run();
+
+        $this->assertEquals(4, count($result->passed()));
     }
 
     public function testSkippedTestDataProvider()

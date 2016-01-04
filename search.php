@@ -68,7 +68,7 @@ $search_type = '';
                 <select name='tag_exp' style='max-width:80%'>
                     <option value=''><?php echo _('Select a Tag'); ?></option>
                     <?php // Experiments tags
-                    $sql = "SELECT tag, COUNT(id) as nbtag FROM experiments_tags WHERE userid = :userid GROUP BY tag ORDER BY tag ASC";
+                    $sql = "SELECT tag, COUNT(*) as nbtag FROM experiments_tags WHERE userid = :userid GROUP BY tag ORDER BY tag ASC";
                     $req = $pdo->prepare($sql);
                     // we want to show the tags of the selected person in 'search in' dropdown
                     // so if there is a owner parameter, use it to select tags
@@ -97,7 +97,7 @@ $search_type = '';
                     <option value=''><?php echo _('Select a tag'); ?></option>
                     <?php // Database items types
                     // TODO here we should show only the tags linked with the type of item selected in the 'searchin' select
-                    $sql = "SELECT tag, COUNT(id) as nbtag FROM items_tags WHERE team_id = :team GROUP BY tag ORDER BY tag ASC";
+                    $sql = "SELECT tag, COUNT(*) as nbtag FROM items_tags WHERE team_id = :team GROUP BY tag ORDER BY tag ASC";
                     $req = $pdo->prepare($sql);
                     $req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
                     $req->execute();

@@ -192,7 +192,7 @@ if ($experiment['locked'] == 1) {
     <span class='align_right'>
     <?php
     // get the list of revisions
-    $sql = "SELECT COUNT(id) FROM experiments_revisions WHERE item_id = :item_id AND userid = :userid ORDER BY savedate DESC";
+    $sql = "SELECT COUNT(*) FROM experiments_revisions WHERE item_id = :item_id AND userid = :userid ORDER BY savedate DESC";
     $req = $pdo->prepare($sql);
     $req->execute(array(
         'item_id' => $id,

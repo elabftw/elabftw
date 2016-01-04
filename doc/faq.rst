@@ -108,9 +108,9 @@ What about compliance to standards ?
 eLabFTW tries to comply to the following standards :
 
 * `Code of Federal Regulations Title 21, paragraph 11 <http://www.accessdata.fda.gov/scripts/cdrh/cfdocs/cfcfr/CFRSearch.cfm?CFRPart=11>`_
-* `FERPA <http://www.ed.gov/policy/gen/guid/fpco/ferpa/index.html>`_
+* `FERPA <http://www2.ed.gov/policy/gen/guid/fpco/ferpa/index.html>`_
 * `HIPAA <http://www.hhs.gov/ocr/privacy/>`_
-* `FISMA <http://en.wikipedia.org/wiki/Federal_Information_Security_Management_Act_of_2002#Compliance_framework_defined_by_FISMA_and_supporting_standards>`_
+* `FISMA <https://en.wikipedia.org/wiki/Federal_Information_Security_Management_Act_of_2002#Compliance_framework_defined_by_FISMA_and_supporting_standards>`_
 
 What are the technical specifications ?
 ----------------------------------------

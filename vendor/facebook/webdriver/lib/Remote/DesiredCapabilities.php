@@ -18,6 +18,7 @@ namespace Facebook\WebDriver\Remote;
 use Exception;
 use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\Firefox\FirefoxDriver;
+use Facebook\WebDriver\Firefox\FirefoxPreferences;
 use Facebook\WebDriver\Firefox\FirefoxProfile;
 use Facebook\WebDriver\WebDriverCapabilities;
 use Facebook\WebDriver\WebDriverPlatform;
@@ -115,6 +116,7 @@ class DesiredCapabilities implements WebDriverCapabilities {
    * This is a htmlUnit-only option.
    *
    * @param bool $enabled
+   * @throws Exception
    * @return DesiredCapabilities
    * @see https://code.google.com/p/selenium/wiki/DesiredCapabilities#Read-write_capabilities
    */
@@ -195,10 +197,17 @@ class DesiredCapabilities implements WebDriverCapabilities {
    * @return DesiredCapabilities
    */
   public static function firefox() {
-    return new DesiredCapabilities(array(
+    $caps = new DesiredCapabilities(array(
       WebDriverCapabilityType::BROWSER_NAME => WebDriverBrowserType::FIREFOX,
       WebDriverCapabilityType::PLATFORM => WebDriverPlatform::ANY,
     ));
+
+    // disable the "Reader View" help tooltip, which can hide elements in the window.document
+    $profile = new FirefoxProfile();
+    $profile->setPreference(FirefoxPreferences::READER_PARSE_ON_LOAD_ENABLED, false);
+    $caps->setCapability(FirefoxDriver::PROFILE, $profile);
+
+    return $caps;
   }
 
   /**

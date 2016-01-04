@@ -438,6 +438,28 @@ EOF;
         $this->assertEquals(array('foo' => null, 'bar' => 1), $this->parser->parse($input), '->parse() does not parse objects');
     }
 
+    public function testObjectForMapEnabledWithMapping()
+    {
+        $yaml = <<<EOF
+foo:
+    fiz: [cat]
+EOF;
+        $result = $this->parser->parse($yaml, false, false, true);
+
+        $this->assertInstanceOf('stdClass', $result);
+        $this->assertInstanceOf('stdClass', $result->foo);
+        $this->assertEquals(array('cat'), $result->foo->fiz);
+    }
+
+    public function testObjectForMapEnabledWithInlineMapping()
+    {
+        $result = $this->parser->parse('{ "foo": "bar", "fiz": "cat" }', false, false, true);
+
+        $this->assertInstanceOf('stdClass', $result);
+        $this->assertEquals('bar', $result->foo);
+        $this->assertEquals('cat', $result->fiz);
+    }
+
     /**
      * @expectedException \Symfony\Component\Yaml\Exception\ParseException
      */
@@ -446,14 +468,11 @@ EOF;
         $this->parser->parse('foo: !!php/object:O:30:"Symfony\Tests\Component\Yaml\B":1:{s:1:"b";s:3:"foo";}', true, false);
     }
 
+    /**
+     * @requires extension iconv
+     */
     public function testNonUtf8Exception()
     {
-        if (!function_exists('iconv')) {
-            $this->markTestSkipped('Exceptions for non-utf8 charsets require the iconv() function.');
-
-            return;
-        }
-
         $yamls = array(
             iconv('UTF-8', 'ISO-8859-1', "foo: 'äöüß'"),
             iconv('UTF-8', 'ISO-8859-15', "euro: '€'"),
@@ -575,8 +594,6 @@ EOF
      *
      * @see http://yaml.org/spec/1.2/spec.html#id2759572
      * @see http://yaml.org/spec/1.1/#id932806
-     *
-     * @covers \Symfony\Component\Yaml\Parser::parse
      */
     public function testMappingDuplicateKeyBlock()
     {
@@ -596,9 +613,6 @@ EOD;
         $this->assertSame($expected, Yaml::parse($input));
     }
 
-    /**
-     * @covers \Symfony\Component\Yaml\Inline::parseMapping
-     */
     public function testMappingDuplicateKeyFlow()
     {
         $input = <<<EOD
@@ -620,6 +634,32 @@ hash:
 EOF;
 
         $this->assertEquals(array('hash' => null), Yaml::parse($input));
+    }
+
+    public function testCommentAtTheRootIndent()
+    {
+        $this->assertEquals(array(
+            'services' => array(
+                'app.foo_service' => array(
+                    'class' => 'Foo',
+                ),
+                'app/bar_service' => array(
+                    'class' => 'Bar',
+                ),
+            ),
+        ), Yaml::parse(<<<EOF
+# comment 1
+services:
+# comment 2
+    # comment 3
+    app.foo_service:
+        class: Foo
+# comment 4
+    # comment 5
+    app/bar_service:
+        class: Bar
+EOF
+        ));
     }
 
     public function testStringBlockWithComments()
@@ -746,6 +786,192 @@ foo: 1
 bar: 2
 EOF;
         $this->assertEquals(array('foo' => 1, 'bar' => 2), $this->parser->parse($yaml));
+    }
+
+    public function testFloatKeys()
+    {
+        $yaml = <<<EOF
+foo:
+    1.2: "bar"
+    1.3: "baz"
+EOF;
+
+        $expected = array(
+            'foo' => array(
+                '1.2' => 'bar',
+                '1.3' => 'baz',
+            ),
+        );
+
+        $this->assertEquals($expected, $this->parser->parse($yaml));
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Yaml\Exception\ParseException
+     * @expectedExceptionMessage A colon cannot be used in an unquoted mapping value
+     */
+    public function testColonInMappingValueException()
+    {
+        $yaml = <<<EOF
+foo: bar: baz
+EOF;
+
+        $this->parser->parse($yaml);
+    }
+
+    public function testColonInMappingValueExceptionNotTriggeredByColonInComment()
+    {
+        $yaml = <<<EOT
+foo:
+    bar: foobar # Note: a comment after a colon
+EOT;
+
+        $this->assertSame(array('foo' => array('bar' => 'foobar')), $this->parser->parse($yaml));
+    }
+
+    /**
+     * @dataProvider getCommentLikeStringInScalarBlockData
+     */
+    public function testCommentLikeStringsAreNotStrippedInBlockScalars($yaml, $expectedParserResult)
+    {
+        $this->assertSame($expectedParserResult, $this->parser->parse($yaml));
+    }
+
+    public function getCommentLikeStringInScalarBlockData()
+    {
+        $yaml1 = <<<EOT
+pages:
+    -
+        title: some title
+        content: |
+            # comment 1
+            header
+
+                # comment 2
+                <body>
+                    <h1>title</h1>
+                </body>
+
+            footer # comment3
+EOT;
+        $expected1 = array(
+            'pages' => array(
+                array(
+                    'title' => 'some title',
+                    'content' => <<<EOT
+# comment 1
+header
+
+    # comment 2
+    <body>
+        <h1>title</h1>
+    </body>
+
+footer # comment3
+EOT
+                    ,
+                ),
+            ),
+        );
+
+        $yaml2 = <<<EOT
+test: |
+    foo
+    # bar
+    baz
+collection:
+    - one: |
+        foo
+        # bar
+        baz
+    - two: |
+        foo
+        # bar
+        baz
+EOT;
+        $expected2 = array(
+            'test' => <<<EOT
+foo
+# bar
+baz
+
+EOT
+            ,
+            'collection' => array(
+                array(
+                    'one' => <<<EOT
+foo
+# bar
+baz
+EOT
+                    ,
+                ),
+                array(
+                    'two' => <<<EOT
+foo
+# bar
+baz
+EOT
+                    ,
+                ),
+            ),
+        );
+
+        return array(
+            array($yaml1, $expected1),
+            array($yaml2, $expected2),
+        );
+    }
+
+    public function testBlankLinesAreParsedAsNewLinesInFoldedBlocks()
+    {
+        $yaml = <<<EOT
+test: >
+    <h2>A heading</h2>
+
+    <ul>
+    <li>a list</li>
+    <li>may be a good example</li>
+    </ul>
+EOT;
+
+        $this->assertSame(
+            array(
+                'test' => <<<EOT
+<h2>A heading</h2>
+<ul> <li>a list</li> <li>may be a good example</li> </ul>
+EOT
+                ,
+            ),
+            $this->parser->parse($yaml)
+        );
+    }
+
+    public function testAdditionallyIndentedLinesAreParsedAsNewLinesInFoldedBlocks()
+    {
+        $yaml = <<<EOT
+test: >
+    <h2>A heading</h2>
+
+    <ul>
+      <li>a list</li>
+      <li>may be a good example</li>
+    </ul>
+EOT;
+
+        $this->assertSame(
+            array(
+                'test' => <<<EOT
+<h2>A heading</h2>
+<ul>
+  <li>a list</li>
+  <li>may be a good example</li>
+</ul>
+EOT
+                ,
+            ),
+            $this->parser->parse($yaml)
+        );
     }
 }
 

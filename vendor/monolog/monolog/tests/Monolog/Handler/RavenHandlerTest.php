@@ -85,6 +85,20 @@ class RavenHandlerTest extends TestCase
         $this->assertEquals($tags, $ravenClient->lastData['tags']);
     }
 
+    public function testExtraParameters()
+    {
+        $ravenClient = $this->getRavenClient();
+        $handler = $this->getHandler($ravenClient);
+
+        $checksum = '098f6bcd4621d373cade4e832627b4f6';
+        $release = '05a671c66aefea124cc08b76ea6d30bb';
+        $record = $this->getRecord(Logger::INFO, 'test', array('checksum' => $checksum, 'release' => $release));
+        $handler->handle($record);
+
+        $this->assertEquals($checksum, $ravenClient->lastData['checksum']);
+        $this->assertEquals($release, $ravenClient->lastData['release']);
+    }
+
     public function testUserContext()
     {
         $ravenClient = $this->getRavenClient();
@@ -103,7 +117,7 @@ class RavenHandlerTest extends TestCase
         $ravenClient->user_context(array('id' => 'test_user_id'));
         // handle context
         $handler->handle($recordWithContext);
-        $this->assertEquals($user, $ravenClient->lastData['sentry.interfaces.User']);
+        $this->assertEquals($user, $ravenClient->lastData['user']);
 
         // check to see if its reset
         $handler->handle($recordWithNoContext);
@@ -113,7 +127,7 @@ class RavenHandlerTest extends TestCase
         // handle with null context
         $ravenClient->user_context(null);
         $handler->handle($recordWithContext);
-        $this->assertEquals($user, $ravenClient->lastData['sentry.interfaces.User']);
+        $this->assertEquals($user, $ravenClient->lastData['user']);
 
         // check to see if its reset
         $handler->handle($recordWithNoContext);

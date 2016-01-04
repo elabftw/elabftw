@@ -13,7 +13,7 @@
         }
     },
     "require": {
-        "php": ">=5.3.23"
+        "php": ">=5.5"
     },
     "suggest": {
         "ext-bcmath": "If using the bcmath functionality",

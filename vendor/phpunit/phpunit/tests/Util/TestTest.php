@@ -16,6 +16,9 @@ if (!defined('TEST_FILES_PATH')) {
     );
 }
 
+require TEST_FILES_PATH . 'CoverageNamespacedFunctionTest.php';
+require TEST_FILES_PATH . 'NamespaceCoveredFunction.php';
+
 /**
  * @since      Class available since Release 3.3.6
  */
@@ -23,6 +26,7 @@ class Util_TestTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @covers PHPUnit_Util_Test::getExpectedException
+     *
      * @todo   Split up in separate tests
      */
     public function testGetExpectedException()
@@ -131,16 +135,16 @@ class Util_TestTest extends PHPUnit_Framework_TestCase
     {
         return array(
             array('testOne',    array()),
-            array('testTwo',    array('PHPUnit' => '1.0')),
-            array('testThree',  array('PHP' => '2.0')),
-            array('testFour',   array('PHPUnit'=>'2.0', 'PHP' => '1.0')),
-            array('testFive',   array('PHP' => '5.4.0RC6')),
-            array('testSix',    array('PHP' => '5.4.0-alpha1')),
-            array('testSeven',  array('PHP' => '5.4.0beta2')),
-            array('testEight',  array('PHP' => '5.4-dev')),
-            array('testNine',   array('functions' => array('testFunc'))),
+            array('testTwo',    array('PHPUnit'    => '1.0')),
+            array('testThree',  array('PHP'        => '2.0')),
+            array('testFour',   array('PHPUnit'    => '2.0', 'PHP' => '1.0')),
+            array('testFive',   array('PHP'        => '5.4.0RC6')),
+            array('testSix',    array('PHP'        => '5.4.0-alpha1')),
+            array('testSeven',  array('PHP'        => '5.4.0beta2')),
+            array('testEight',  array('PHP'        => '5.4-dev')),
+            array('testNine',   array('functions'  => array('testFunc'))),
             array('testTen',    array('extensions' => array('testExt'))),
-            array('testEleven', array('OS' => '/Linux/i')),
+            array('testEleven', array('OS'         => '/Linux/i')),
             array(
               'testSpace',
               array(
@@ -227,6 +231,7 @@ class Util_TestTest extends PHPUnit_Framework_TestCase
 
     /**
      * @coversNothing
+     *
      * @todo   This test does not really test functionality of PHPUnit_Util_Test
      */
     public function testGetProvidedDataRegEx()
@@ -253,7 +258,104 @@ class Util_TestTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers PHPUnit_Util_Test::getDataFromTestWithAnnotation
+     */
+    public function testTestWithEmptyAnnotation()
+    {
+        $result = PHPUnit_Util_Test::getDataFromTestWithAnnotation("/**\n * @anotherAnnotation\n */");
+        $this->assertNull($result);
+    }
+
+    /**
+     * @covers PHPUnit_Util_Test::getDataFromTestWithAnnotation
+     */
+    public function testTestWithSimpleCase()
+    {
+        $result = PHPUnit_Util_Test::getDataFromTestWithAnnotation('/**
+                                                                     * @testWith [1]
+                                                                     */');
+        $this->assertEquals(array(array(1)), $result);
+    }
+
+    /**
+     * @covers PHPUnit_Util_Test::getDataFromTestWithAnnotation
+     */
+    public function testTestWithMultiLineMultiParameterCase()
+    {
+        $result = PHPUnit_Util_Test::getDataFromTestWithAnnotation('/**
+                                                                     * @testWith [1, 2]
+                                                                     * [3, 4]
+                                                                     */');
+        $this->assertEquals(array(array(1, 2), array(3, 4)), $result);
+    }
+
+    /**
+     * @covers PHPUnit_Util_Test::getDataFromTestWithAnnotation
+     */
+    public function testTestWithVariousTypes()
+    {
+        $result = PHPUnit_Util_Test::getDataFromTestWithAnnotation('/**
+            * @testWith ["ab"]
+            *           [true]
+            *           [null]
+         */');
+        $this->assertEquals(array(array('ab'), array(true), array(null)), $result);
+    }
+
+    /**
+     * @covers PHPUnit_Util_Test::getDataFromTestWithAnnotation
+     */
+    public function testTestWithAnnotationAfter()
+    {
+        $result = PHPUnit_Util_Test::getDataFromTestWithAnnotation('/**
+                                                                     * @testWith [1]
+                                                                     *           [2]
+                                                                     * @annotation
+                                                                     */');
+        $this->assertEquals(array(array(1), array(2)), $result);
+    }
+
+    /**
+     * @covers PHPUnit_Util_Test::getDataFromTestWithAnnotation
+     */
+    public function testTestWithSimpleTextAfter()
+    {
+        $result = PHPUnit_Util_Test::getDataFromTestWithAnnotation('/**
+                                                                     * @testWith [1]
+                                                                     *           [2]
+                                                                     * blah blah
+                                                                     */');
+        $this->assertEquals(array(array(1), array(2)), $result);
+    }
+
+    /**
+     * @covers PHPUnit_Util_Test::getDataFromTestWithAnnotation
+     */
+    public function testTestWithCharacterEscape()
+    {
+        $result = PHPUnit_Util_Test::getDataFromTestWithAnnotation('/**
+                                                                     * @testWith ["\"", "\""]
+                                                                     */');
+        $this->assertEquals(array(array('"', '"')), $result);
+    }
+
+    /**
+     * @covers PHPUnit_Util_Test::getDataFromTestWithAnnotation
+     */
+    public function testTestWithThrowsProperExceptionIfDatasetCannotBeParsed()
+    {
+        $this->setExpectedExceptionRegExp(
+            'PHPUnit_Framework_Exception',
+            '/^The dataset for the @testWith annotation cannot be parsed.$/'
+        );
+        PHPUnit_Util_Test::getDataFromTestWithAnnotation('/**
+                                                           * @testWith [s]
+                                                           */');
+    }
+
+    /**
      * @covers PHPUnit_Util_Test::getDependencies
+     *
      * @todo   Not sure what this test tests (name is misleading at least)
      */
     public function testParseAnnotation()
@@ -267,6 +369,7 @@ class Util_TestTest extends PHPUnit_Framework_TestCase
     /**
      * @depends Foo
      * @depends ほげ
+     *
      * @todo    Remove fixture from test class
      */
     public function methodForTestParseAnnotation()
@@ -445,6 +548,23 @@ class Util_TestTest extends PHPUnit_Framework_TestCase
             PHPUnit_Util_Test::getLinesToBeCovered(
                 'CoverageMethodParenthesesWhitespaceTest',
                 'testSomething'
+            )
+        );
+    }
+
+    /**
+     * @covers PHPUnit_Util_Test::getLinesToBeCovered
+     * @covers PHPUnit_Util_Test::getLinesToBeCoveredOrUsed
+     */
+    public function testNamespacedFunctionCanBeCoveredOrUsed()
+    {
+        $this->assertEquals(
+            array(
+                TEST_FILES_PATH . 'NamespaceCoveredFunction.php' => range(4, 7)
+            ),
+            PHPUnit_Util_Test::getLinesToBeCovered(
+                'CoverageNamespacedFunctionTest',
+                'testFunc'
             )
         );
     }

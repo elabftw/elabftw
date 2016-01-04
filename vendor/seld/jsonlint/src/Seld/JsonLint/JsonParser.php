@@ -393,7 +393,7 @@ class JsonParser
                     $errStr = 'Parse error on line ' . ($yylineno+1) . ":\n";
                     $errStr .= $this->lexer->showPosition() . "\n";
                     $errStr .= "Duplicate key: ".$tokens[$len][0];
-                    throw new ParsingException($errStr);
+                    throw new DuplicateKeyException($errStr, $tokens[$len][0], array('line' => $yylineno+1));
                 } elseif (($this->flags & self::ALLOW_DUPLICATE_KEYS) && isset($tokens[$len-2][$key])) {
                     $duplicateCount = 1;
                     do {
@@ -409,7 +409,7 @@ class JsonParser
                     $errStr = 'Parse error on line ' . ($yylineno+1) . ":\n";
                     $errStr .= $this->lexer->showPosition() . "\n";
                     $errStr .= "Duplicate key: ".$tokens[$len][0];
-                    throw new ParsingException($errStr);
+                    throw new DuplicateKeyException($errStr, $tokens[$len][0], array('line' => $yylineno+1));
                 } elseif (($this->flags & self::ALLOW_DUPLICATE_KEYS) && isset($tokens[$len-2]->{$key})) {
                     $duplicateCount = 1;
                     do {

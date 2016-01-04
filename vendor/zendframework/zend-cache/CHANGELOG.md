@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.5.3 - TBD
+## 2.5.3 - 2015-09-15
 
 ### Added
 
@@ -18,7 +18,16 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#15](https://github.com/zendframework/zend-cache/pull/15) fixes an issue
+  observed on HHVM when merging a list of memcached servers to add to the
+  storage resource.
+- [#17](https://github.com/zendframework/zend-cache/pull/17) Composer: moved
+  `zendframework/zend-serializer` from `require` to `require-dev` as using the
+  serializer is optional.
+- A fix was provided for [ZF2015-07](http://framework.zend.com/security/advisory/ZF2015-07),
+  ensuring that any directories or files created by the component use umask 0002
+  in order to prevent arbitrary local execution and/or local privilege
+  escalation.
 
 ## 2.5.2 - 2015-07-16
 

@@ -47,11 +47,6 @@ class Twig_Node_Module extends Twig_Node
         $this->setAttribute('index', $index);
     }
 
-    /**
-     * Compiles the node to PHP.
-     *
-     * @param Twig_Compiler $compiler A Twig_Compiler instance
-     */
     public function compile(Twig_Compiler $compiler)
     {
         $this->compileTemplate($compiler);
@@ -402,22 +397,7 @@ class Twig_Node_Module extends Twig_Node
                 ->raw(");\n")
             ;
         } else {
-            $compiler
-                ->write(sprintf('%s = ', $var))
-                ->subcompile($node)
-                ->raw(";\n")
-                ->write(sprintf('if (!%s', $var))
-                ->raw(" instanceof Twig_Template) {\n")
-                ->indent()
-                ->write(sprintf('%s = $this->loadTemplate(%s')
-                ->raw(', ')
-                ->repr($compiler->getFilename())
-                ->raw(', ')
-                ->repr($node->getLine())
-                ->raw(");\n", $var, $var))
-                ->outdent()
-                ->write("}\n")
-            ;
+            throw new LogicException('Trait templates can only be constant nodes');
         }
     }
 }

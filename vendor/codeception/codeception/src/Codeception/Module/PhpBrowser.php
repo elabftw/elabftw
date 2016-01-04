@@ -34,7 +34,7 @@ use GuzzleHttp\Client as GuzzleClient;
  * * cookies - ...
  * * auth - ...
  * * verify - ...
- * * .. those and other [Guzzle Request options](http://docs.guzzlephp.org/en/latest/clients.html#request-options)
+ * * .. those and other [Guzzle Request options](http://docs.guzzlephp.org/en/latest/request-options.html)
  *
  *
  * ### Example (`acceptance.suite.yml`)
@@ -241,18 +241,20 @@ class PhpBrowser extends InnerBrowser implements Remote, MultiSession
     public function _initializeSession()
     {
         $defaults = array_intersect_key($this->config, array_flip($this->guzzleConfigFields));
-        $defaults['config']['curl'] = $this->config['curl'];
+        $curlOptions = [];
 
         foreach ($this->config['curl'] as $key => $val) {
             if (defined($key)) {
-                $defaults['config']['curl'][constant($key)] = $val;
+                $curlOptions[constant($key)] = $val;
             }
         }
 
         if ($this->isGuzzlePsr7) {
             $defaults['base_uri'] = $this->config['url'];
+            $defaults['curl'] = $curlOptions;
             $this->guzzle = new GuzzleClient($defaults);
         } else {
+            $defaults['config']['curl'] = $curlOptions;
             $this->guzzle = new GuzzleClient(['base_url' => $this->config['url'], 'defaults' => $defaults]);
             $this->client->setBaseUri($this->config['url']);
         }

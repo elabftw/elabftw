@@ -419,7 +419,7 @@ tr:nth-child(odd) {
         background-color: #f2f2f2;
 }
 /* SEARCH.PHP */
-.searchform input#title, .searchform input#body {
+.searchform #title, .searchform #body {
     width: 100%;
 }
 

@@ -3,6 +3,22 @@
 Changelog
 =========
 
+Version 1.1.7
+-------------
+
+* Bug fixes
+
+  * fix bug where list text size was incorrect (fixed upstream by tinymce devs; #158)
+
+* Enhancements
+
+  * You can now link experiments directly in text with the `#` autocomplete (fix #191)
+
+* Developer corner
+
+  * use grunt to minify all the JS and CSS files in one
+  * updated composer and bower components
+
 Version 1.1.6
 -------------
 

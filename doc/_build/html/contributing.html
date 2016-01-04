@@ -103,6 +103,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#translating">Translating</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#contributing-to-the-code">Contributing to the code</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#api-documentation">API Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#automation">Automation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#reminders">Reminders</a></li>
 </ul>
 </li>
@@ -220,12 +221,28 @@
 <p>You can find a PHP Docblock generated documentation on classes <a class="reference external" href="../../../doc/api/namespaces/Elabftw.Elabftw.html">here</a> (local link).</p>
 <p>To generate it: <cite>phpdoc -t doc/api -d inc/classes</cite></p>
 </div>
+<div class="section" id="automation">
+<h2>Automation<a class="headerlink" href="#automation" title="Permalink to this headline">¶</a></h2>
+<p>Since version 1.1.7, elabftw uses <a class="reference external" href="http://gruntjs.com/">grunt</a> to minify and concatenate files (JS and CSS). Have a look at Gruntfile.js to see what it does. Install grunt-cli and run it if you make changes to any of those files.
+Grunt can also be used to build the documentation or run the tests.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>grunt <span class="c"># will minify and concatenate JS and CSS</span>
+<span class="nv">$ </span>grunt doc <span class="c"># will build this documentation</span>
+<span class="nv">$ </span>grunt api <span class="c"># will build the API documentation</span>
+<span class="nv">$ </span>grunt <span class="nb">test</span> <span class="c"># will run the tests with codeception</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You need to have a running <a class="reference external" href="http://docs.seleniumhq.org/download/">Selenium server</a> to do the acceptance tests</p>
+</div>
+</div>
 <div class="section" id="reminders">
 <h2>Reminders<a class="headerlink" href="#reminders" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>update of SwiftMailer and mPDF is done with <cite>composer update</cite></li>
 <li>update of the js components is done with <cite>bower update</cite></li>
 <li>after update of tinymce, lang files need to be downloaded again, and the ones without proper name (ca instead of ca_ES) need to be edited (change first line to ca_ES)</li>
+<li>for a new version, one needs to edit inc/classes/Update.php, package.json and doc/conf.py</li>
 </ul>
 </div>
 </div>

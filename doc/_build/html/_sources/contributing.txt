@@ -71,9 +71,26 @@ You can find a PHP Docblock generated documentation on classes `here <../../../d
 
 To generate it: `phpdoc -t doc/api -d inc/classes`
 
+Automation
+----------
+
+Since version 1.1.7, elabftw uses `grunt <http://gruntjs.com/>`_ to minify and concatenate files (JS and CSS). Have a look at Gruntfile.js to see what it does. Install grunt-cli and run it if you make changes to any of those files.
+Grunt can also be used to build the documentation or run the tests.
+
+.. code-block:: bash
+
+    $ grunt # will minify and concatenate JS and CSS
+    $ grunt doc # will build this documentation
+    $ grunt api # will build the API documentation
+    $ grunt test # will run the tests with codeception
+
+.. note:: You need to have a running `Selenium server <http://docs.seleniumhq.org/download/>`_ to do the acceptance tests
+
+
 Reminders
 ---------
 
 * update of SwiftMailer and mPDF is done with `composer update`
 * update of the js components is done with `bower update`
 * after update of tinymce, lang files need to be downloaded again, and the ones without proper name (ca instead of ca_ES) need to be edited (change first line to ca_ES)
+* for a new version, one needs to edit inc/classes/Update.php, package.json and doc/conf.py

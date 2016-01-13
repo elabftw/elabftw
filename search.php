@@ -63,11 +63,19 @@ $search_type = '';
             </div>
             <!-- END SEARCH IN -->
             <!-- SEARCH WITH TAG -->
-            <div class='col-md-3' id='tag_exp'>
-                <label for='tag_exp'><?php echo _('With the tag'); ?></label>
-                <select name='tag_exp' style='max-width:80%'>
-                    <option value=''><?php echo _('Select a Tag'); ?></option>
-                    <?php // Experiments tags
+                <?php
+                // get the list of tags to display
+
+                // we want the tags of everyone in the team if we search for the whole team's experiments
+                if (isset($_GET['owner']) && $_GET['owner'] === '0') {
+
+                    $sql = "SELECT tag, COUNT(*) as nbtag FROM experiments_tags INNER JOIN users ON (experiments_tags.userid = users.userid) WHERE users.team = :team  GROUP BY tag ORDER BY tag ASC";
+                    $req = $pdo->prepare($sql);
+                    $req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
+                    $req->execute();
+
+                } else {
+
                     $sql = "SELECT tag, COUNT(*) as nbtag FROM experiments_tags WHERE userid = :userid GROUP BY tag ORDER BY tag ASC";
                     $req = $pdo->prepare($sql);
                     // we want to show the tags of the selected person in 'search in' dropdown
@@ -79,7 +87,13 @@ $search_type = '';
                     }
                     $req->bindParam(':userid', $userid, PDO::PARAM_INT);
                     $req->execute();
-
+                }
+            ?>
+            <div class='col-md-3' id='tag_exp'>
+                <label for='tag_exp'><?php echo _('With the tag'); ?></label>
+                <select name='tag_exp' style='max-width:80%'>
+                    <option value=''><?php echo _('Select a Tag'); ?></option>
+                    <?php
                     while ($exp_tags = $req->fetch()) {
                         echo "<option value='" . $exp_tags['tag'] . "'";
                         // item get selected if it is in the search url
@@ -91,6 +105,7 @@ $search_type = '';
                     ?>
                 </select>
             </div>
+
             <div class='col-md-3' id='tag_db'>
                 <label for='tag_db'><?php echo _('With the tag'); ?></label>
                 <select name='tag_db'>
@@ -114,12 +129,19 @@ $search_type = '';
                 </select>
             </div>
             <!-- END SEARCH WITH TAG -->
+
             <!-- SEARCH ONLY -->
             <div class='col-md-6'>
                 <label for'searchonly'><?php echo _('Search only in experiments owned by:'); ?> </label><br>
                 <!-- when you change this select, you reload the page so the tag selector loads the correct tags -->
                 <select id='searchonly' name='owner'>
                     <option value=''><?php echo _('Yourself'); ?></option>
+                    <!-- add an option to search in the whole team (owner = 0) -->
+                    <option value='0'
+                    <?php if (isset($_GET['owner']) && $_GET['owner'] === '0') {
+                        echo " selected='selected'";
+                    }
+                    echo ">" . _("All the team"); ?></option>
                     <option disabled>----------------</option>
                     <?php
                     $users_sql = "SELECT userid, firstname, lastname FROM users WHERE team = :team ORDER BY firstname ASC";
@@ -137,14 +159,6 @@ $search_type = '';
                     }
                     ?>
                 </select><br>
-                <!-- search everyone box -->
-                <input name="all" id='all_experiments_chkbx' value="y" type="checkbox" <?php
-                    // keep the box checked if it was checked
-                    if (isset($_GET['all'])) {
-                        echo "checked=checked";
-                    }
-                ?>>
-                <label for='all_experiments_chkbx'><?php echo _("search in everyone's experiments"); ?> </label>
             </div>
             <!-- END SEARCH ONLY -->
         </div>
@@ -433,7 +447,7 @@ if (isset($_GET)) {
     if (isset($_GET['type'])) {
         if ($_GET['type'] === 'experiments') {
 
-            if (isset($_GET['all']) && !empty($_GET['all'])) {
+            if (isset($_GET['owner']) && $_GET['owner'] === '0') {
                 $sqlFirst = " $tb.team = " . $_SESSION['team_id'];
             } else {
                 $sqlFirst = " $tb.userid = :userid";
@@ -575,7 +589,7 @@ $(document).ready(function(){
     ?>
 
     $('#searchonly').on('change', function() {
-        insertParamAndReload('owner', $('#searchonly').val());
+        insertParamAndReload('owner', $(this).val());
     });
 
     $('#searchin').on('change', function() {

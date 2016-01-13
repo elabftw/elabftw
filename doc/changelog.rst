@@ -13,6 +13,7 @@ Version 1.1.7
 * Enhancements
 
   * You can now link experiments directly in text with the `#` autocomplete (fix #191)
+  * Search page: when searching for experiments of the whole team, you'll get a list of tags from the whole team
 
 * Developer corner
 

@@ -9,6 +9,7 @@ Version 1.1.7
 * Bug fixes
 
   * fix bug where list text size was incorrect (fixed upstream by tinymce devs; #158)
+  * fix bug where color of items/status was wrong after editing it
 
 * Enhancements
 

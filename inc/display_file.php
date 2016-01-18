@@ -50,7 +50,7 @@ if ($count > 0) {
         $common_extensions = array('avi', 'csv', 'doc', 'docx', 'mov', 'pdf', 'ppt', 'rar', 'xls', 'xlsx', 'zip');
 
         // list of extensions understood by 3Dmol.js
-        $mol_extensions = array('pdb', 'sdf', 'mol2');
+        $mol_extensions = array('pdb', 'sdf', 'mol2', 'mmcif', 'cif');
 
         // Make thumbnail only if it isn't done already
         if (!file_exists($thumbpath)) {

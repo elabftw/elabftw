@@ -8,6 +8,7 @@
  * @license AGPL-3.0
  */
 use \Elabftw\Elabftw\Tools as Tools;
+use \Elabftw\Elabftw\MolViewer as MolViewer;
 
 echo "<div id='filesdiv'>";
 // What type of item we are displaying the files of ?
@@ -29,7 +30,7 @@ if ($count > 1) {
 }
 if ($count > 0) {
     echo "<div class='box'>";
-    echo "<img src='img/attached.png' class='bot5px'> <h3 style='display:inline'>" . ngettext('Attached file', 'Attached files', $count) . "</h3>";
+    echo "<img src='img/attached.png' class='bot5px'>the i <h3 style='display:inline'>" . ngettext('Attached file', 'Attached files', $count) . "</h3>";
     echo "<div class='row'>";
     while ($uploads_data = $req->fetch()) {
         echo "<div class='col-md-4 col-sm-6'>";
@@ -79,20 +80,9 @@ if ($count > 0) {
 
             // if this is something 3Dmol.js can handle
         } elseif (in_array($ext, $mol_extensions)) {
-            $mol_style = "cartoon:color=spectrum";
-            $mol_name = "3dmol_" . $id;
+            $molviewer = new MolViewer($id, $filepath);
+            echo $molviewer->getViewerDiv();
 
-            echo "<button class='btn btn-default btn-xs align_right' onClick=\"$3Dmol.viewers['" . $mol_name . "'].setStyle({hetflag:false},{cartoon:{color: 'spectrum'}}); $3Dmol.viewers['" . $mol_name . "'].removeAllSurfaces(); $3Dmol.viewers['" . $mol_name . "'].render();\">";
-            echo "Cartoon";
-            echo "</button>";
-            echo "<button class='btn btn-default btn-xs align_right' onClick=\"$3Dmol.viewers['" . $mol_name . "'].setStyle({},{stick:{}}); $3Dmol.viewers['" . $mol_name . "'].removeAllSurfaces(); $3Dmol.viewers['" . $mol_name . "'].render();\">";
-            echo "Sticks";
-            echo "</button>";
-            echo "<button class='btn btn-default btn-xs align_right' onClick=\"$3Dmol.viewers['" . $mol_name . "'].removeAllSurfaces(); $3Dmol.viewers['" . $mol_name . "'].addSurface($3Dmol.SurfaceType.SAS, {}, {hetflag:false}, {hetflag:false}); $3Dmol.viewers['" . $mol_name . "'].render();\">";
-            echo "Surface";
-            echo "</button>";
-
-            echo "<div id='3dmol_" . $id . "' style='height: 100px; width: 100px; position: relative;' class='center viewer_3Dmoljs' data-style='" . $mol_style . "' data-backgroundcolor='0xffffff' data-href='" . $filepath . "'></div>";
         } else {
             // uncommon extension without a nice image to display
             echo "<img class='thumb' src='img/thumb.png' alt='' />";

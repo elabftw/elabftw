@@ -80,9 +80,11 @@ class MolViewer
     {
         $nav = "<div class='col-xs-6 col-md-4' id='{$this->div_id}_controls'>";
 
-        $nav .= "<button class='btn btn-default btn-xs align_right' style='width: 100%;' onClick=\"$3Dmol.viewers['{$this->div_id}'].setStyle({hetflag:false},{cartoon:{color: 'spectrum'}}); $3Dmol.viewers['{$this->div_id}'].removeAllSurfaces(); $3Dmol.viewers['{$this->div_id}'].render();\">Cartoon</button>\n";
-        $nav .= "<button class='btn btn-default btn-xs align_right' style='width: 100%;' onClick=\"$3Dmol.viewers['{$this->div_id}'].setStyle({},{stick:{}}); $3Dmol.viewers['{$this->div_id}'].removeAllSurfaces(); $3Dmol.viewers['{$this->div_id}'].render();\">Sticks</button>\n";
-        $nav .= "<button class='btn btn-default btn-xs align_right' style='width: 100%;' onClick=\"$3Dmol.viewers['{$this->div_id}'].removeAllSurfaces(); $3Dmol.viewers['{$this->div_id}'].addSurface($3Dmol.SurfaceType.SAS, {opacity:0.7,color:0xffffff}, {hetflag:false}, {hetflag:false}); $3Dmol.viewers['{$this->div_id}'].render();\">SAS</button>\n";
+        $nav .= "<button class='btn btn-default btn-xs align_right' style='width: 100%;' onClick=\"$3Dmol.viewers['{$this->div_id}'].setStyle({hetflag:false},{cartoon:{color: 'spectrum'}}); $3Dmol.viewers['{$this->div_id}'].render();\">C</button>\n";
+        $nav .= "<button class='btn btn-default btn-xs align_right' style='width: 100%;' onClick=\"$3Dmol.viewers['{$this->div_id}'].setStyle({},{stick:{}}); $3Dmol.viewers['{$this->div_id}'].render();\">S</button>\n";
+        $nav .= "<button class='btn btn-default btn-xs align_right' style='width: 100%;' onClick=\"$3Dmol.viewers['{$this->div_id}'].addSurface($3Dmol.SurfaceType.MS, {opacity:1,color:0xffffff}, {hetflag:false}, {hetflag:false}); $3Dmol.viewers['{$this->div_id}'].render();\">SS</button>\n";
+        $nav .= "<button class='btn btn-default btn-xs align_right' style='width: 100%;' onClick=\"$3Dmol.viewers['{$this->div_id}'].addSurface($3Dmol.SurfaceType.MS, {opacity:.7,color:0xffffff}, {hetflag:false}, {hetflag:false}); $3Dmol.viewers['{$this->div_id}'].render();\">TS</button>\n";
+        $nav .= "<button class='btn btn-default btn-xs align_right' style='width: 100%;' onClick=\"$3Dmol.viewers['{$this->div_id}'].removeAllSurfaces(); $3Dmol.viewers['{$this->div_id}'].render();\">RS</button>\n";
 
         $nav .= "</div>";
 

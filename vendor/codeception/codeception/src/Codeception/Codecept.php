@@ -7,7 +7,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class Codecept
 {
-    const VERSION = "2.1.1";
+    const VERSION = "2.1.5";
 
     /**
      * @var \Codeception\PHPUnit\Runner
@@ -187,7 +187,10 @@ class Codecept
             if (empty($config)) {
                 continue;
             }
-            $suiteToRun = "{$suite}-{$envList}";
+            $suiteToRun = $suite;
+            if (!empty($envList)) {
+                $suiteToRun .= ' (' . implode(', ', $envArray) . ')';
+            }
             $this->runSuite($config, $suiteToRun, $test);
         }
     }
@@ -195,10 +198,9 @@ class Codecept
     public function runSuite($settings, $suite, $test = null)
     {
         $suiteManager = new SuiteManager($this->dispatcher, $suite, $settings);
-        $suiteManager->initialize();
         $suiteManager->loadTests($test);
+        $suiteManager->initialize();
         $suiteManager->run($this->runner, $this->result, $this->options);
-
         return $this->result;
     }
 

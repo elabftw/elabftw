@@ -175,7 +175,7 @@ if ($data['body'] != '') {
     if ($ro === false && $data['locked'] == 0) {
         echo "OnClick=\"document.location='experiments.php?mode=edit&id=" . $data['expid'] . "'\"";
     }
-    echo "class='txt'>" . stripslashes($data['body']) . "</div>";
+    echo " class='txt'>" . stripslashes($data['body']) . "</div>";
     echo "<br>";
 }
 

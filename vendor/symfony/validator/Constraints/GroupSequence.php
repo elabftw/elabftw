@@ -54,8 +54,6 @@ use Symfony\Component\Validator\Exception\OutOfBoundsException;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  *
- * @api
- *
  * Implementing \ArrayAccess, \IteratorAggregate and \Countable is @deprecated since 2.5 and will be removed in 3.0.
  */
 class GroupSequence implements \ArrayAccess, \IteratorAggregate, \Countable
@@ -102,7 +100,6 @@ class GroupSequence implements \ArrayAccess, \IteratorAggregate, \Countable
      * @return \Traversable The iterator
      *
      * @see \IteratorAggregate::getIterator()
-     *
      * @deprecated since version 2.5, to be removed in 3.0.
      */
     public function getIterator()

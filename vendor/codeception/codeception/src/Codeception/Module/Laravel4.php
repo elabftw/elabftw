@@ -1,28 +1,27 @@
 <?php
 namespace Codeception\Module;
 
+use Codeception\Configuration;
 use Codeception\Exception\ModuleConfig;
 use Codeception\Lib\Connector\Laravel4 as LaravelConnector;
 use Codeception\Lib\Framework;
 use Codeception\Lib\Interfaces\ActiveRecord;
 use Codeception\Lib\Interfaces\PartedModule;
 use Codeception\Lib\ModuleContainer;
-use Codeception\Configuration;
-use Codeception\TestCase;
 use Codeception\Step;
 use Codeception\Subscriber\ErrorHandler;
-use Illuminate\Support\Facades\Facade;
+use Codeception\Util\ReflectionHelper;
+use Codeception\TestCase;
+use Illuminate\Auth\UserInterface;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\ClassLoader;
 use Illuminate\Workbench\Starter;
-use Illuminate\Foundation\Application;
-use Illuminate\Auth\UserInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
 
 /**
  *
  * This module allows you to run functional tests for Laravel 4.
- * Please try it and leave your feedback.
- * The original author of this module is Davert.
+ * It should **not** be used for acceptance tests.
  *
  * ## Demo Project
  *
@@ -38,7 +37,6 @@ use Symfony\Component\Console\Output\BufferedOutput;
  *
  * * Maintainer: **Jan-Henk Gerritsen**
  * * Stability: **stable**
- * * Contact: janhenkgerritsen@gmail.com
  *
  * ## Config
  *
@@ -52,11 +50,12 @@ use Symfony\Component\Console\Output\BufferedOutput;
  * ## API
  *
  * * app - `Illuminate\Foundation\Application` instance
- * * client - `BrowserKit` client
+ * * client - `\Symfony\Component\BrowserKit\Client` instance
  *
  * ## Parts
  *
  * * ORM - include only haveRecord/grabRecord/seeRecord/dontSeeRecord actions
+ *
  *
  */
 class Laravel4 extends Framework implements ActiveRecord, PartedModule
@@ -72,18 +71,24 @@ class Laravel4 extends Framework implements ActiveRecord, PartedModule
      */
     public $config = [];
 
+    /**
+     * Constructor.
+     *
+     * @param ModuleContainer $container
+     * @param null $config
+     */
     public function __construct(ModuleContainer $container, $config = null)
     {
         $this->config = array_merge(
             [
-                'cleanup'     => true,
-                'unit'        => true,
+                'cleanup' => true,
+                'unit' => true,
                 'environment' => 'testing',
                 'start' => 'bootstrap' . DIRECTORY_SEPARATOR . 'start.php',
                 'root' => '',
                 'filters' => false,
             ],
-            (array) $config
+            (array)$config
         );
 
         $projectDir = explode('workbench', Configuration::projectDir())[0];
@@ -96,6 +101,14 @@ class Laravel4 extends Framework implements ActiveRecord, PartedModule
     }
 
     /**
+     * @return array
+     */
+    public function _parts()
+    {
+        return ['framework', 'orm'];
+    }
+
+    /**
      * Initialize hook.
      */
     public function _initialize()
@@ -103,18 +116,6 @@ class Laravel4 extends Framework implements ActiveRecord, PartedModule
         $this->checkStartFileExists();
         $this->registerAutoloaders();
         $this->revertErrorHandler();
-        $this->client = new LaravelConnector($this);
-    }
-
-    public function _parts()
-    {
-        return ['framework', 'orm'];
-    }
-
-    protected function revertErrorHandler()
-    {
-        $handler = new ErrorHandler();
-        set_error_handler([$handler, 'errorHandler']);
     }
 
     /**
@@ -125,12 +126,14 @@ class Laravel4 extends Framework implements ActiveRecord, PartedModule
      */
     public function _before(TestCase $test)
     {
-        if ($this->config['filters']) {
-            $this->haveEnabledFilters();
-        }
+        $this->client = new LaravelConnector($this);
 
         if ($this->app['db'] && $this->cleanupDatabase()) {
             $this->app['db']->beginTransaction();
+        }
+
+        if ($this->config['filters']) {
+            $this->haveEnabledFilters();
         }
     }
 
@@ -144,34 +147,23 @@ class Laravel4 extends Framework implements ActiveRecord, PartedModule
         if ($this->app['db'] && $this->cleanupDatabase()) {
             $this->app['db']->rollback();
         }
-    }
 
-    /**
-     * Before step hook.
-     *
-     * @param \Codeception\Step $step
-     */
-    public function _beforeStep(Step $step)
-    {
-        parent::_beforeStep($step);
-
-        $session = $this->app['session.store'];
-        if (! $session->isStarted()) {
-            $session->start();
+        if ($this->app['auth']) {
+            $this->app['auth']->logout();
         }
-    }
 
-    /**
-     * After step hook.
-     *
-     * @param \Codeception\Step $step
-     */
-    public function _afterStep(Step $step)
-    {
-        parent::_beforeStep($step);
+        if ($this->app['session']) {
+            $this->app['session']->flush();
+        }
 
-        $this->app['session.store']->save();
-        Facade::clearResolvedInstances();
+        if ($this->app['cache']) {
+            $this->app['cache']->flush();
+        }
+
+        // disconnect from DB to prevent "Too many connections" issue
+        if ($this->app['db']) {
+            $this->app['db']->disconnect();
+        }
     }
 
     /**
@@ -179,11 +171,11 @@ class Laravel4 extends Framework implements ActiveRecord, PartedModule
      *
      * @throws ModuleConfig
      */
-    public function checkStartFileExists()
+    protected function checkStartFileExists()
     {
         $startFile = $this->config['start_file'];
 
-        if (! file_exists($startFile)) {
+        if (!file_exists($startFile)) {
             throw new ModuleConfig(
                 $this,
                 "Laravel bootstrap start.php file not found in $startFile.\n"
@@ -207,13 +199,23 @@ class Laravel4 extends Framework implements ActiveRecord, PartedModule
     }
 
     /**
+     * Revert back to the Codeception error handler,
+     * becauses Laravel registers it's own error handler.
+     */
+    protected function revertErrorHandler()
+    {
+        $handler = new ErrorHandler();
+        set_error_handler([$handler, 'errorHandler']);
+    }
+
+    /**
      * Should database cleanup be performed?
      *
      * @return bool
      */
     protected function cleanupDatabase()
     {
-        if (! $this->databaseTransactionsSupported()) {
+        if (!$this->databaseTransactionsSupported()) {
             return false;
         }
 
@@ -279,7 +281,7 @@ class Laravel4 extends Framework implements ActiveRecord, PartedModule
     public function amOnRoute($route, $params = [])
     {
         $domain = $this->app['router']->getRoutes()->getByName($route)->domain();
-        $absolute = ! is_null($domain);
+        $absolute = !is_null($domain);
 
         $url = $this->app['url']->route($route, $params, $absolute);
         $this->amOnPage($url);
@@ -300,7 +302,7 @@ class Laravel4 extends Framework implements ActiveRecord, PartedModule
     public function amOnAction($action, $params = [])
     {
         $domain = $this->app['router']->getRoutes()->getByAction($action)->domain();
-        $absolute = ! is_null($domain);
+        $absolute = !is_null($domain);
 
         $url = $this->app['url']->action($action, $params, $absolute);
         $this->amOnPage($url);
@@ -357,6 +359,7 @@ class Laravel4 extends Framework implements ActiveRecord, PartedModule
     {
         if (is_array($key)) {
             $this->seeSessionHasValues($key);
+
             return;
         }
 
@@ -586,11 +589,11 @@ class Laravel4 extends Framework implements ActiveRecord, PartedModule
      */
     public function haveRecord($tableName, $attributes = array())
     {
-        $id = $this->app['db']->table($tableName)->insertGetId($attributes);
-        if (!$id) {
-            $this->fail("Couldn't insert record into table $tableName");
+        try {
+            return $this->app['db']->table($tableName)->insertGetId($attributes);
+        } catch (\Exception $e) {
+            $this->fail("Couldn't insert record into table $tableName: " . $e->getMessage());
         }
-        return $id;
     }
 
     /**
@@ -670,14 +673,15 @@ class Laravel4 extends Framework implements ActiveRecord, PartedModule
         foreach ($attributes as $key => $value) {
             $query->where($key, $value);
         }
+
         return $query->first();
     }
 
     /**
      * Calls an Artisan command and returns output as a string
      *
-     * @param string $command       The name of the command as displayed in the artisan command list
-     * @param array  $parameters    An associative array of command arguments
+     * @param string $command The name of the command as displayed in the artisan command list
+     * @param array $parameters An associative array of command arguments
      *
      * @return string
      */
@@ -691,4 +695,49 @@ class Laravel4 extends Framework implements ActiveRecord, PartedModule
 
         return $output->fetch();
     }
+
+    /**
+     * Returns a list of recognized domain names.
+     * This elements of this list are regular expressions.
+     *
+     * @return array
+     */
+    protected function getInternalDomains()
+    {
+        $internalDomains = [$this->getApplicationDomainRegex()];
+
+        foreach ($this->app['router']->getRoutes() as $route) {
+            if (!is_null($route->domain())) {
+                $internalDomains[] = $this->getDomainRegex($route);
+            }
+        }
+
+        return array_unique($internalDomains);
+    }
+
+    /**
+     * @return string
+     */
+    private function getApplicationDomainRegex()
+    {
+        $server = ReflectionHelper::readPrivateProperty($this->client, 'server');
+        $domain = $server['HTTP_HOST'];
+
+        return '/^' . str_replace('.', '\.', $domain) . '$/';
+    }
+
+    /**
+     * Get the regex for matching the domain part of this route.
+     *
+     * @param \Illuminate\Routing\Route $route
+     * @return string
+     */
+    private function getDomainRegex($route)
+    {
+        ReflectionHelper::invokePrivateMethod($route, 'compileRoute');
+        $compiledRoute = ReflectionHelper::readPrivateProperty($route, 'compiled');
+
+        return $compiledRoute->getHostRegex();
+    }
+
 }

@@ -117,7 +117,7 @@ class RangeValidatorTest extends AbstractConstraintValidatorTest
         $this->buildViolation('myMessage')
             ->setParameter('{{ value }}', $formattedValue)
             ->setParameter('{{ limit }}', 10)
-            ->setCode(Range::BELOW_RANGE_ERROR)
+            ->setCode(Range::TOO_LOW_ERROR)
             ->assertRaised();
     }
 
@@ -136,7 +136,7 @@ class RangeValidatorTest extends AbstractConstraintValidatorTest
         $this->buildViolation('myMessage')
             ->setParameter('{{ value }}', $formattedValue)
             ->setParameter('{{ limit }}', 20)
-            ->setCode(Range::BEYOND_RANGE_ERROR)
+            ->setCode(Range::TOO_HIGH_ERROR)
             ->assertRaised();
     }
 
@@ -157,7 +157,7 @@ class RangeValidatorTest extends AbstractConstraintValidatorTest
         $this->buildViolation('myMaxMessage')
             ->setParameter('{{ value }}', $formattedValue)
             ->setParameter('{{ limit }}', 20)
-            ->setCode(Range::BEYOND_RANGE_ERROR)
+            ->setCode(Range::TOO_HIGH_ERROR)
             ->assertRaised();
     }
 
@@ -178,7 +178,7 @@ class RangeValidatorTest extends AbstractConstraintValidatorTest
         $this->buildViolation('myMinMessage')
             ->setParameter('{{ value }}', $formattedValue)
             ->setParameter('{{ limit }}', 10)
-            ->setCode(Range::BELOW_RANGE_ERROR)
+            ->setCode(Range::TOO_LOW_ERROR)
             ->assertRaised();
     }
 
@@ -194,7 +194,7 @@ class RangeValidatorTest extends AbstractConstraintValidatorTest
             array(new \DateTime('March 20, 2014')),
         );
 
-        if (version_compare(PHP_VERSION, '5.5.0-dev', '>=')) {
+        if (PHP_VERSION_ID >= 50500) {
             $tests[] = array(new \DateTimeImmutable('March 10, 2014'));
             $tests[] = array(new \DateTimeImmutable('March 15, 2014'));
             $tests[] = array(new \DateTimeImmutable('March 20, 2014'));
@@ -216,7 +216,7 @@ class RangeValidatorTest extends AbstractConstraintValidatorTest
             array(new \DateTime('March 9, 2014'), 'Mar 9, 2014, 12:00 AM'),
         );
 
-        if (version_compare(PHP_VERSION, '5.5.0-dev', '>=')) {
+        if (PHP_VERSION_ID >= 50500) {
             $tests[] = array(new \DateTimeImmutable('March 20, 2013'), 'Mar 20, 2013, 12:00 AM');
             $tests[] = array(new \DateTimeImmutable('March 9, 2014'), 'Mar 9, 2014, 12:00 AM');
         }
@@ -237,7 +237,7 @@ class RangeValidatorTest extends AbstractConstraintValidatorTest
             array(new \DateTime('March 9, 2015'), 'Mar 9, 2015, 12:00 AM'),
         );
 
-        if (version_compare(PHP_VERSION, '5.5.0-dev', '>=')) {
+        if (PHP_VERSION_ID >= 50500) {
             $tests[] = array(new \DateTimeImmutable('March 21, 2014'), 'Mar 21, 2014, 12:00 AM');
             $tests[] = array(new \DateTimeImmutable('March 9, 2015'), 'Mar 9, 2015, 12:00 AM');
         }
@@ -299,7 +299,7 @@ class RangeValidatorTest extends AbstractConstraintValidatorTest
         $this->buildViolation('myMessage')
             ->setParameter('{{ value }}', $dateTimeAsString)
             ->setParameter('{{ limit }}', 'Mar 10, 2014, 12:00 AM')
-            ->setCode(Range::BELOW_RANGE_ERROR)
+            ->setCode(Range::TOO_LOW_ERROR)
             ->assertRaised();
     }
 
@@ -322,7 +322,7 @@ class RangeValidatorTest extends AbstractConstraintValidatorTest
         $this->buildViolation('myMessage')
             ->setParameter('{{ value }}', $dateTimeAsString)
             ->setParameter('{{ limit }}', 'Mar 20, 2014, 12:00 AM')
-            ->setCode(Range::BEYOND_RANGE_ERROR)
+            ->setCode(Range::TOO_HIGH_ERROR)
             ->assertRaised();
     }
 
@@ -347,7 +347,7 @@ class RangeValidatorTest extends AbstractConstraintValidatorTest
         $this->buildViolation('myMaxMessage')
             ->setParameter('{{ value }}', $dateTimeAsString)
             ->setParameter('{{ limit }}', 'Mar 20, 2014, 12:00 AM')
-            ->setCode(Range::BEYOND_RANGE_ERROR)
+            ->setCode(Range::TOO_HIGH_ERROR)
             ->assertRaised();
     }
 
@@ -372,7 +372,7 @@ class RangeValidatorTest extends AbstractConstraintValidatorTest
         $this->buildViolation('myMinMessage')
             ->setParameter('{{ value }}', $dateTimeAsString)
             ->setParameter('{{ limit }}', 'Mar 10, 2014, 12:00 AM')
-            ->setCode(Range::BELOW_RANGE_ERROR)
+            ->setCode(Range::TOO_LOW_ERROR)
             ->assertRaised();
     }
 
@@ -397,7 +397,7 @@ class RangeValidatorTest extends AbstractConstraintValidatorTest
 
         $this->buildViolation('myMessage')
             ->setParameter('{{ value }}', '"abcd"')
-            ->setCode(Range::INVALID_VALUE_ERROR)
+            ->setCode(Range::INVALID_CHARACTERS_ERROR)
             ->assertRaised();
     }
 }

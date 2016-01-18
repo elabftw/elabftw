@@ -453,4 +453,5 @@ class Lumen extends Framework implements ActiveRecord
         }
         return $query->first();
     }
+
 }

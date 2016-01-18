@@ -6,10 +6,9 @@ use Codeception\Event\StepEvent;
 use Codeception\Event\SuiteEvent;
 use Codeception\Event\TestEvent;
 use Codeception\Events;
-use Codeception\Exception\ConditionalAssertionFailed;
 use Codeception\Lib\Console\Message;
 use Codeception\Lib\Console\Output;
-use Codeception\Lib\Deprecation;
+use Codeception\Lib\Notification;
 use Codeception\Lib\Suite;
 use Codeception\Step;
 use Codeception\Step\Comment;
@@ -60,6 +59,7 @@ class Console implements EventSubscriberInterface
     protected $output;
     protected $options;
     protected $fails = [];
+    protected $reports = [];
     protected $namespace = '';
 
     public function __construct($options)
@@ -71,6 +71,18 @@ class Console implements EventSubscriberInterface
         $this->output = new Output($options);
         if ($this->debug) {
             Debug::setOutput($this->output);
+        }
+
+        foreach (['html', 'xml', 'tap', 'json'] as $report) {
+            if (!$this->options[$report]) {
+                continue;
+            }
+            $path = $this->absolutePath($this->options[$report]);
+            $this->reports[] = sprintf(
+                "- <bold>%s</bold> report generated in <comment>file://%s</comment>",
+                strtoupper($report),
+                $path
+            );
         }
     }
 
@@ -135,22 +147,17 @@ class Console implements EventSubscriberInterface
 
     public function afterResult()
     {
-        if ($this->options['html']) {
-            $path = codecept_output_dir().$this->options['html'];
-            $this->output->writeln("- <bold>HTML</bold> report generated in <comment>file://$path</comment>");
+        foreach ($this->reports as $message) {
+            $this->output->writeln($message);
         }
-        if ($this->options['xml']) {
-            $path = codecept_output_dir().$this->options['xml'];
-            $this->output->writeln("- <bold>XML</bold> report generated in <comment>$path</comment>");
+    }
+
+    private function absolutePath($path)
+    {
+        if ((strpos($path, '/') === 0) or (strpos($path, ':') === 1)) { // absolute path
+            return $path;
         }
-        if ($this->options['tap']) {
-            $path = codecept_output_dir().$this->options['tap'];
-            $this->output->writeln("- <bold>TAP</bold> report generated in <comment>$path</comment>");
-        }
-        if ($this->options['json']) {
-            $path = codecept_output_dir().$this->options['json'];
-            $this->output->writeln("- <bold>JSON</bold> report generated in <comment>$path</comment>");
-        }
+        return codecept_output_dir() . $path;
     }
 
     public function testSuccess(TestEvent $e)
@@ -241,9 +248,9 @@ class Console implements EventSubscriberInterface
     public function afterSuite(SuiteEvent $e)
     {
         $this->message()->width(array_sum($this->columns), '-')->writeln();
-        $deprecationMessages = Deprecation::all();
+        $deprecationMessages = Notification::all();
         foreach ($deprecationMessages as $message) {
-            $this->output->deprecate($message);
+            $this->output->notification($message);
         }
     }
 
@@ -339,10 +346,6 @@ class Console implements EventSubscriberInterface
     public function printExceptionTrace(\Exception $e)
     {
         static $limit = 10;
-
-        $class = $e instanceof \PHPUnit_Framework_ExceptionWrapper
-            ? $e->getClassname()
-            : get_class($e);
 
         if ($this->rawStackTrace) {
             $this->message(\PHPUnit_Util_Filter::getFilteredStacktrace($e, true, false))->writeln();
@@ -462,7 +465,7 @@ class Console implements EventSubscriberInterface
                 $test = $test->testAt(0);
                 $output_length = $test instanceof TestCase
                     ? strlen($test->getFeature()) + strlen($test->getFileName())
-                    : $test->toString();
+                    : strlen($test->toString());
 
                 $this->columns[0] = max(
                     $this->columns[0],
@@ -529,7 +532,7 @@ class Console implements EventSubscriberInterface
             return $className;
         }
         if (strpos($className, $this->namespace) === 0) {
-            return substr($className, strlen($this->namespace));
+            return substr($className, strlen($this->namespace)+1);
         }
         return $className;
     }

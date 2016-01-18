@@ -1,8 +1,8 @@
 /**
  * plugin.js
  *
- * Copyright, Moxiecode Systems AB
  * Released under LGPL License.
+ * Copyright (c) 1999-2015 Ephox Corp. All rights reserved
  *
  * License: http://www.tinymce.com/license
  * Contributing: http://www.tinymce.com/contributing
@@ -34,7 +34,8 @@ tinymce.PluginManager.add('template', function(editor) {
 		var win, values = [], templateHtml;
 
 		if (!templateList || templateList.length === 0) {
-			editor.windowManager.alert('No templates defined');
+			var message = editor.translate('No templates defined.');
+			editor.notificationManager.open({text: message, type: 'info'});
 			return;
 		}
 
@@ -183,9 +184,11 @@ tinymce.PluginManager.add('template', function(editor) {
 
 	function replaceTemplateValues(html, templateValuesOptionName) {
 		each(editor.getParam(templateValuesOptionName), function(v, k) {
-			if (typeof v != 'function') {
-				html = html.replace(new RegExp('\\{\\$' + k + '\\}', 'g'), v);
+			if (typeof v == 'function') {
+				v = v(k);
 			}
+
+			html = html.replace(new RegExp('\\{\\$' + k + '\\}', 'g'), v);
 		});
 
 		return html;

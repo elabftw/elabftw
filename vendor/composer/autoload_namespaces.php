@@ -17,7 +17,6 @@ return array(
     'PHPParser' => array($vendorDir . '/nikic/php-parser/lib'),
     'Metadata\\' => array($vendorDir . '/jms/metadata/src'),
     'KevinGH\\Version' => array($vendorDir . '/kherge/version/src/lib'),
-    'JsonSchema' => array($vendorDir . '/justinrainbow/json-schema/src'),
     'JMS\\Serializer' => array($vendorDir . '/jms/serializer/src'),
     'JMS\\' => array($vendorDir . '/jms/parser-lib/src'),
     'Herrera\\Phar\\Update' => array($vendorDir . '/herrera-io/phar-update/src/lib'),

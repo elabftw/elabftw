@@ -9,6 +9,7 @@ use Codeception\Lib\InnerBrowser;
 use Codeception\Lib\Interfaces\DependsOnModule;
 use Codeception\Lib\Interfaces\PartedModule;
 use Codeception\Util\JsonArray;
+use Codeception\Util\JsonType;
 use Codeception\Util\XmlStructure;
 use Symfony\Component\BrowserKit\Cookie;
 use Codeception\Util\Soap as XmlUtils;
@@ -17,10 +18,9 @@ use Codeception\Util\Soap as XmlUtils;
  * Module for testing REST WebService.
  *
  * This module can be used either with frameworks or PHPBrowser.
- * It tries to guess the framework is is attached to.
+ * If a framework module is connected, the testing will occur in the application directly.
+ * Otherwise, a PHPBrowser should be specified as a dependency to send requests and receive responses from a server.
  *
- * Whether framework is used it operates via standard framework modules.
- * Otherwise sends raw HTTP requests to url via PHPBrowser.
  *
  * ## Status
  *
@@ -80,6 +80,10 @@ EOF;
      */
     public $client = null;
     public $isFunctional = false;
+
+    /**
+     * @var InnerBrowser
+     */
     protected $connectionModule;
 
     public $headers = [];
@@ -136,7 +140,7 @@ EOF;
 
     private function getRunningClient()
     {
-        if ($this->client->getHistory()->isEmpty()) {
+        if ($this->client->getInternalRequest() === null) {
             throw new ModuleException($this, "Response is empty. Use `\$I->sendXXX()` methods to send HTTP request");
         }
         return $this->client;
@@ -474,12 +478,17 @@ EOF;
                 $this->debugSection("Request", "$method $url " . json_encode($parameters));
             }
             $this->client->request($method, $url, $parameters, $files);
-
         } else {
-            $this->debugSection("Request", "$method $url " . $parameters);
+            $requestData = $parameters;
+            if (!ctype_print($requestData) && false === mb_detect_encoding($requestData, mb_detect_order(), true)) {
+                // if the request data has non-printable bytes and it is not a valid unicode string, reformat the
+                // display string to signify the presence of request data
+                $requestData = '[binary-data length:'.strlen($requestData).' md5:'.md5($requestData).']';
+            }
+            $this->debugSection("Request", "$method $url " . $requestData);
             $this->client->request($method, $url, [], $files, [], $parameters);
         }
-        $this->response = (string)$this->client->getInternalResponse()->getContent();
+        $this->response = (string)$this->connectionModule->_getResponseContent();
         $this->debugSection("Response", $this->response);
 
         if (count($this->client->getInternalRequest()->getCookies())) {
@@ -492,7 +501,7 @@ EOF;
     protected function encodeApplicationJson($method, $parameters)
     {
         if ($method !== 'GET' && array_key_exists('Content-Type', $this->headers)
-            && ($this->headers['Content-Type'] === 'application/json' 
+            && ($this->headers['Content-Type'] === 'application/json'
                 || preg_match('!^application/.+\+json$!', $this->headers['Content-Type'])
             )
         ) {
@@ -515,12 +524,17 @@ EOF;
      */
     public function seeResponseIsJson()
     {
-        json_decode($this->response);
+        json_decode($this->connectionModule->_getResponseContent());
         $errorCode = json_last_error();
+        $errorMessage = json_last_error_msg();
         \PHPUnit_Framework_Assert::assertEquals(
             JSON_ERROR_NONE,
             $errorCode,
-            "json decoding error #$errorCode, see http://php.net/manual/en/function.json-last-error.php"
+            sprintf(
+                "Invalid json: %s. System message: %s.",
+                $this->connectionModule->_getResponseContent(),
+                json_last_error_msg()
+            )
         );
     }
 
@@ -533,7 +547,7 @@ EOF;
      */
     public function seeResponseContains($text)
     {
-        $this->assertContains($text, $this->response, "REST response contains");
+        $this->assertContains($text, $this->connectionModule->_getResponseContent(), "REST response contains");
     }
 
     /**
@@ -545,7 +559,7 @@ EOF;
      */
     public function dontSeeResponseContains($text)
     {
-        $this->assertNotContains($text, $this->response, "REST response contains");
+        $this->assertNotContains($text, $this->connectionModule->_getResponseContent(), "REST response contains");
     }
 
     /**
@@ -574,7 +588,7 @@ EOF;
      */
     public function seeResponseContainsJson($json = [])
     {
-        $jsonResponseArray = new JsonArray($this->response);
+        $jsonResponseArray = new JsonArray($this->connectionModule->_getResponseContent());
         \PHPUnit_Framework_Assert::assertTrue(
             $jsonResponseArray->containsArray($json),
             "Response JSON contains provided\n"
@@ -602,7 +616,7 @@ EOF;
      */
     public function grabResponse()
     {
-        return $this->response;
+        return $this->connectionModule->_getResponseContent();
     }
 
     /**
@@ -617,20 +631,20 @@ EOF;
      * ``` php
      * <?php
      * // match the first `user.id` in json
-     * $firstUser = $I->grabDataFromJsonResponse('$..users[0].id');
-     * $I->sendPUT('/user', array('id' => $firstUser[0], 'name' => 'davert'));
+     * $firstUserId = $I->grabDataFromResponseByJsonPath('$..users[0].id');
+     * $I->sendPUT('/user', array('id' => $firstUserId[0], 'name' => 'davert'));
      * ?>
      * ```
      *
-     * @param $jsonPath
-     * @return array
+     * @param string $jsonPath
+     * @return array Array of matching items
      * @version 2.0.9
      * @throws \Exception
      * @part json
      */
     public function grabDataFromResponseByJsonPath($jsonPath)
     {
-        return (new JsonArray($this->response))->filterByJsonPath($jsonPath);
+        return (new JsonArray($this->connectionModule->_getResponseContent()))->filterByJsonPath($jsonPath);
     }
 
     /**
@@ -675,9 +689,10 @@ EOF;
      */
     public function seeResponseJsonMatchesXpath($xpath)
     {
+        $response = $this->connectionModule->_getResponseContent();
         $this->assertGreaterThan(
-            0, (new JsonArray($this->response))->filterByXPath($xpath)->length,
-            "Received JSON did not match the XPath `$xpath`.\nJson Response: \n" . $this->response
+            0, (new JsonArray($response))->filterByXPath($xpath)->length,
+            "Received JSON did not match the XPath `$xpath`.\nJson Response: \n" . $response
         );
     }
 
@@ -726,9 +741,10 @@ EOF;
      */
     public function seeResponseJsonMatchesJsonPath($jsonPath)
     {
+        $response = $this->connectionModule->_getResponseContent();
         $this->assertNotEmpty(
-            (new JsonArray($this->response))->filterByJsonPath($jsonPath),
-            "Received JSON did not match the JsonPath provided\n" . $this->response
+            (new JsonArray($response))->filterByJsonPath($jsonPath),
+            "Received JSON did not match the JsonPath provided\n" . $response
         );
     }
 
@@ -740,9 +756,10 @@ EOF;
      */
     public function dontSeeResponseJsonMatchesJsonPath($jsonPath)
     {
+        $response = $this->connectionModule->_getResponseContent();
         $this->assertEmpty(
-            (new JsonArray($this->response))->filterByJsonPath($jsonPath),
-            "Received JSON did (but should not) match the JsonPath provided\n" . $this->response
+            (new JsonArray($response))->filterByJsonPath($jsonPath),
+            "Received JSON did (but should not) match the JsonPath provided\n" . $response
         );
     }
 
@@ -754,13 +771,121 @@ EOF;
      */
     public function dontSeeResponseContainsJson($json = [])
     {
-        $jsonResponseArray = new JsonArray($this->response);
-        \PHPUnit_Framework_Assert::assertFalse(
+        $jsonResponseArray = new JsonArray($this->connectionModule->_getResponseContent());
+        $this->assertFalse(
             $jsonResponseArray->containsArray($json),
             "Response JSON does not contain JSON provided\n"
             . "- <info>" . var_export($json, true) . "</info>\n"
             . "+ " . var_export($jsonResponseArray->toArray(), true)
         );
+    }
+
+    /**
+     * Checks that Json matches provided types.
+     * In case you don't know the actual values of JSON data returned you can match them by type.
+     * Starts check with a root element. If JSON data is array it will check the first element of an array.
+     * You can specify the path in the json which should be checked with JsonPath
+     *
+     * Basic example:
+     *
+     * ```php
+     * <?php
+     * // {'user_id': 1, 'name': 'davert', 'is_active': false}
+     * $I->seeResponseIsJsonType([
+     *      'user_id' => 'integer',
+     *      'name' => 'string|null',
+     *      'is_active' => 'boolean'
+     * ]);
+     *
+     * // narrow down matching with JsonPath:
+     * // {"users": [{ "name": "davert"}, {"id": 1}]}
+     * $I->seeResponseMatchesJsonType(['name' => 'string'], '$.users[0]');
+     * ?>
+     * ```
+     *
+     * In this case you can match that record contains fields with data types you expected.
+     * The list of possible data types:
+     *
+     * * string
+     * * integer
+     * * float
+     * * array (json object is array as well)
+     * * boolean
+     *
+     * You can also use nested data type structures:
+     *
+     * ```php
+     * <?php
+     * // {'user_id': 1, 'name': 'davert', 'company': {'name': 'Codegyre'}}
+     * $I->seeResponseIsJsonType([
+     *      'user_id' => 'integer|string', // multiple types
+     *      'company' => ['name' => 'string']
+     * ]);
+     * ?>
+     * ```
+     *
+     * You can also apply filters to check values. Filter can be applied with `:` char after the type declatation.
+     *
+     * Here is the list of possible filters:
+     *
+     * * `integer:>{val}` - checks that integer is greater than {val} (works with float and string types too).
+     * * `integer:<{val}` - checks that integer is lower than {val} (works with float and string types too).
+     * * `string:url` - checks that value is valid url.
+     * * `string:date` - checks that value is date in JavaScript format: https://weblog.west-wind.com/posts/2014/Jan/06/JavaScript-JSON-Date-Parsing-and-real-Dates
+     * * `string:email` - checks that value is a valid email according to http://emailregex.com/
+     * * `string:regex({val})` - checks that string matches a regex provided with {val}
+     *
+     * This is how filters can be used:
+     *
+     * ```php
+     * <?php
+     * // {'user_id': 1, 'email' => 'davert@codeception.com'}
+     * $I->seeResponseIsJsonType([
+     *      'user_id' => 'string:>0:<1000', // multiple filters can be used
+     *      'email' => 'string:regex(~\@~)' // we just check that @ char is included
+     * ]);
+     *
+     * // {'user_id': '1'}
+     * $I->seeResponseIsJsonType([
+     *      'user_id' => 'string:>0', // works with strings as well
+     * }
+     * ?>
+     * ```
+     *
+     * You can also add custom filters y accessing `JsonType::addCustomFilter` method.
+     * See [JsonType reference](http://codeception.com/docs/reference/JsonType).
+     *
+     * @part json
+     * @version 2.1.3
+     * @param array $jsonType
+     */
+    public function seeResponseMatchesJsonType(array $jsonType, $jsonPath = null)
+    {
+        $jsonArray = new JsonArray($this->connectionModule->_getResponseContent());
+        if ($jsonPath) {
+            $jsonArray = $jsonArray->filterByJsonPath($jsonPath);
+        }
+        $matched = (new JsonType($jsonArray))->matches($jsonType);
+        $this->assertTrue($matched, $matched);
+    }
+
+    /**
+     * Opposite to `seeResponseMatchesJsonType`.
+     *
+     * @part json
+     * @see seeResponseMatchesJsonType
+     * @param $jsonType jsonType structure
+     * @param null $jsonPath optionally set specific path to structure with JsonPath
+     * @version 2.1.3
+     */
+    public function dontSeeResponseMatchesJsonType($jsonType, $jsonPath = null)
+    {
+        $jsonArray = new JsonArray($this->connectionModule->_getResponseContent());
+        if ($jsonPath) {
+            $jsonArray = $jsonArray->filterByJsonPath($jsonPath);
+        }
+        $matched = (new JsonType($jsonArray))->matches($jsonType);
+        $this->assertNotEquals(true, $matched, sprintf("Unexpectedly the response matched the %s data type", var_export($jsonType, true)));
     }
 
     /**
@@ -770,9 +895,9 @@ EOF;
      * @part xml
      * @param $response
      */
-    public function seeResponseEquals($response)
+    public function seeResponseEquals($expected)
     {
-        $this->assertEquals($response, $this->response);
+        $this->assertEquals($expected, $this->connectionModule->_getResponseContent());
     }
 
     /**
@@ -808,7 +933,7 @@ EOF;
     public function seeResponseIsXml()
     {
         libxml_use_internal_errors(true);
-        $doc = simplexml_load_string($this->response);
+        $doc = simplexml_load_string($this->connectionModule->_getResponseContent());
         $num = "";
         $title = "";
         if ($doc === false) {
@@ -837,7 +962,7 @@ EOF;
      */
     public function seeXmlResponseMatchesXpath($xpath)
     {
-        $structure = new XmlStructure($this->response);
+        $structure = new XmlStructure($this->connectionModule->_getResponseContent());
         $this->assertTrue($structure->matchesXpath($xpath), 'xpath not matched');
     }
 
@@ -853,7 +978,7 @@ EOF;
      */
     public function dontSeeXmlResponseMatchesXpath($xpath)
     {
-        $structure = new XmlStructure($this->response);
+        $structure = new XmlStructure($this->connectionModule->_getResponseContent());
         $this->assertTrue($structure->matchesXpath($xpath), 'accidentally matched xpath');
     }
 
@@ -867,7 +992,7 @@ EOF;
      */
     public function grabTextContentFromXmlElement($cssOrXPath)
     {
-        $el = (new XmlStructure($this->response))->matchElement($cssOrXPath);
+        $el = (new XmlStructure($this->connectionModule->_getResponseContent()))->matchElement($cssOrXPath);
         return $el->textContent;
     }
 
@@ -882,7 +1007,7 @@ EOF;
      */
     public function grabAttributeFrom($cssOrXPath, $attribute)
     {
-        $el = (new XmlStructure($this->response))->matchElement($cssOrXPath);
+        $el = (new XmlStructure($this->connectionModule->_getResponseContent()))->matchElement($cssOrXPath);
         if (!$el->hasAttribute($attribute)) {
             $this->fail("Attribute not found in element matched by '$cssOrXPath'");
         }
@@ -900,7 +1025,7 @@ EOF;
      */
     public function seeXmlResponseEquals($xml)
     {
-        \PHPUnit_Framework_Assert::assertXmlStringEqualsXmlString($this->response, $xml);
+        \PHPUnit_Framework_Assert::assertXmlStringEqualsXmlString($this->connectionModule->_getResponseContent(), $xml);
     }
 
 
@@ -915,7 +1040,7 @@ EOF;
      */
     public function dontSeeXmlResponseEquals($xml)
     {
-        \PHPUnit_Framework_Assert::assertXmlStringNotEqualsXmlString($this->response, $xml);
+        \PHPUnit_Framework_Assert::assertXmlStringNotEqualsXmlString($this->connectionModule->_getResponseContent(), $xml);
     }
 
     /**
@@ -935,7 +1060,7 @@ EOF;
      */
     public function seeXmlResponseIncludes($xml)
     {
-        $this->assertContains(XmlUtils::toXml($xml)->C14N(), XmlUtils::toXml($this->response)->C14N(), "found in XML Response");
+        $this->assertContains(XmlUtils::toXml($xml)->C14N(), XmlUtils::toXml($this->connectionModule->_getResponseContent())->C14N(), "found in XML Response");
     }
 
     /**
@@ -948,10 +1073,12 @@ EOF;
      */
     public function dontSeeXmlResponseIncludes($xml)
     {
-        $this->assertNotContains(XmlUtils::toXml($xml)->C14N(), XmlUtils::toXml($this->response)->C14N(), "found in XML Response");
+        $this->assertNotContains(XmlUtils::toXml($xml)->C14N(), XmlUtils::toXml($this->connectionModule->_getResponseContent())->C14N(), "found in XML Response");
     }
 
     /**
+     * Deprecated since 2.0.9 and removed since 2.1.0
+     *
      * @param $path
      * @throws ModuleException
      * @deprecated

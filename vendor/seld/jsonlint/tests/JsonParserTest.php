@@ -11,6 +11,7 @@
 
 use Seld\JsonLint\JsonParser;
 use Seld\JsonLint\ParsingException;
+use Seld\JsonLint\DuplicateKeyException;
 
 class JsonParserTest extends PHPUnit_Framework_TestCase
 {
@@ -142,8 +143,10 @@ bar"}');
         try {
             $parser->parse('{"a":"b", "a":"c"}', JsonParser::DETECT_KEY_CONFLICTS);
             $this->fail('Duplicate keys should not be allowed');
-        } catch (ParsingException $e) {
+        } catch (DuplicateKeyException $e) {
             $this->assertContains('Duplicate key: a', $e->getMessage());
+            $this->assertSame('a', $e->getKey());
+            $this->assertSame(array('line' => 1, 'key' => 'a'), $e->getDetails());
         }
     }
 
@@ -154,8 +157,10 @@ bar"}');
         try {
             $parser->parse('{"":"b", "_empty_":"a"}', JsonParser::DETECT_KEY_CONFLICTS);
             $this->fail('Duplicate keys should not be allowed');
-        } catch (ParsingException $e) {
+        } catch (DuplicateKeyException $e) {
             $this->assertContains('Duplicate key: _empty_', $e->getMessage());
+            $this->assertSame('_empty_', $e->getKey());
+            $this->assertSame(array('line' => 1, 'key' => '_empty_'), $e->getDetails());
         }
     }
 

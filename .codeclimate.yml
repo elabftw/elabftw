@@ -1,7 +1,29 @@
-languages:
-  PHP: true
+---
+engines:
+  csslint:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - javascript
+      - php
+  fixme:
+    enabled: true
+  phpmd:
+    enabled: true
+ratings:
+  paths:
+  - "**.css"
+  - "**.inc"
+  - "**.js"
+  - "**.jsx"
+  - "**.module"
+  - "**.php"
+  - "**.py"
+  - "**.rb"
 exclude_paths:
-  - "js/*"
-  - "vendor/*"
-  - "tests/*"
-  - "doc/*"
+- js/*
+- vendor/*
+- tests/*
+- doc/*

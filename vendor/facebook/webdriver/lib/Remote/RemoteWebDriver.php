@@ -74,7 +74,7 @@ class RemoteWebDriver implements WebDriver, JavaScriptExecutor {
   ) {
     $url = preg_replace('#/+$#', '', $url);
 
-    // Passing DesiredCapabilities as $desired_capabilities is encourged but
+    // Passing DesiredCapabilities as $desired_capabilities is encouraged but
     // array is also accepted for legacy reason.
     if ($desired_capabilities instanceof DesiredCapabilities) {
       $desired_capabilities = $desired_capabilities->toArray();
@@ -430,7 +430,7 @@ class RemoteWebDriver implements WebDriver, JavaScriptExecutor {
    * @param string $id The id of the element to be created.
    * @return RemoteWebElement
    */
-  private function newElement($id) {
+  protected function newElement($id) {
     return new RemoteWebElement($this->getExecuteMethod(), $id);
   }
 

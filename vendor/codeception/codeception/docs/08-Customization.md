@@ -11,7 +11,7 @@ Place `codeception.yml` file into root folder of your project and specify paths 
 
 ``` yaml
 include:
-  - frontend
+  - frontend/src/*Bundle
   - admin
   - api/rest
 paths:
@@ -20,7 +20,12 @@ settings:
   colors: false
 ```
 
+
 You should also specify path to `log` directory, where the reports and logs will be stored.
+
+<div class="alert alert-notice">
+Wildcards (*) can be used to specify multiple directories at once.
+</div>
 
 ### Namespaces
 
@@ -64,7 +69,7 @@ It allows you to rerun failed tests with `-g failed` option:
 php codecept.phar run -g failed
 ```
 
-Codeception comes with bundled extensions located in `ext` directory. For instance, you can enable Logger extension to log test exection with Monolog 
+Codeception comes with bundled extensions located in `ext` directory. For instance, you can enable Logger extension to log test execution with Monolog
 
 ```yaml
 extensions:

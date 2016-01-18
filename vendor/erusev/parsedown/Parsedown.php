@@ -17,7 +17,7 @@ class Parsedown
 {
     # ~
 
-    const version = '1.5.4';
+    const version = '1.6.0';
 
     # ~
 
@@ -1476,7 +1476,7 @@ class Parsedown
             return self::$instances[$name];
         }
 
-        $instance = new self();
+        $instance = new static();
 
         self::$instances[$name] = $instance;
 

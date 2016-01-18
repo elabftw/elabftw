@@ -24,11 +24,11 @@ Resources
 
 Silex integration:
 
-https://github.com/fabpot/Silex/blob/master/src/Silex/Provider/TranslationServiceProvider.php
+https://github.com/silexphp/Silex/blob/master/src/Silex/Provider/TranslationServiceProvider.php
 
 Documentation:
 
-https://symfony.com/doc/2.7/book/translation.html
+https://symfony.com/doc/3.0/book/translation.html
 
 You can run the unit tests with the following command:
 

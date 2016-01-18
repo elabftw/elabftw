@@ -5,6 +5,7 @@ use Codeception\Lib\Framework;
 use Codeception\Exception\ModuleConfigException;
 use Codeception\TestCase;
 use Codeception\Lib\Connector\Yii1 as Yii1Connector;
+use Codeception\Util\ReflectionHelper;
 use Yii;
 
 /**
@@ -145,6 +146,7 @@ class Yii1 extends Framework
     public function _createClient()
     {
         $this->client = new Yii1Connector();
+        $this->client->setServerParameter("HTTP_HOST", parse_url($this->config['url'], PHP_URL_HOST));
         $this->client->appPath = $this->config['appPath'];
         $this->client->url = $this->config['url'];
         $this->client->appSettings = [
@@ -167,5 +169,47 @@ class Yii1 extends Framework
         $_REQUEST = [];
         Yii::app()->session->close();
         parent::_after($test);
+    }
+
+    /**
+     * Getting domain regex from rule template and parameters
+     *
+     * @param string $template
+     * @param array $parameters
+     * @return string
+     */
+    private function getDomainRegex($template, $parameters = [])
+    {
+        if (preg_match('#https?://(.*?)/#', $template, $matches)) {
+            $template = $matches[1];
+        }
+        if (strpos($template, '<') !== false) {
+            $template = str_replace(['<', '>'], '#', $template);
+        }
+        $template = preg_quote($template);
+        foreach ($parameters as $name => $value) {
+            $template = str_replace("#$name#", $value, $template);
+        }
+        return '/^' . $template . '$/u';
+    }
+
+
+    /**
+     * Returns a list of regex patterns for recognized domain names
+     *
+     * @return array
+     */
+    public function getInternalDomains()
+    {
+        $domains = [$this->getDomainRegex(Yii::app()->request->getHostInfo())];
+        if (Yii::app()->urlManager->urlFormat === 'path') {
+            $rules = ReflectionHelper::readPrivateProperty(Yii::app()->urlManager, '_rules');
+            foreach ($rules as $rule) {
+                if ($rule->hasHostInfo === true) {
+                    $domains[] = $this->getDomainRegex($rule->template, $rule->params);
+                }
+            }
+        }
+        return array_unique($domains);
     }
 }

@@ -12,7 +12,7 @@ echo "<section class='box'>";
 echo "<img src='img/cloud.png' alt='' class='bot5px' /> <h4 style='display:inline'>" . _('Tag cloud') . "</h4>";
 echo "<div class='center'>";
 // 1. Create an array with tag -> count
-$sql = "SELECT tag, COUNT(id) AS total
+$sql = "SELECT tag, COUNT(*) AS total
     FROM experiments_tags
     WHERE userid = :userid
     GROUP BY tag ORDER BY total DESC";
@@ -29,7 +29,7 @@ if ($count > 10) {
     $minoccur = $full[$count - 1][1];
 
     // 2nd SQL to get the tags unsorted
-    $sql = "SELECT tag, COUNT(id) AS total FROM experiments_tags WHERE userid = :userid GROUP BY tag";
+    $sql = "SELECT tag, COUNT(*) AS total FROM experiments_tags WHERE userid = :userid GROUP BY tag";
     $req = $pdo->prepare($sql);
     $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
     $req->execute();

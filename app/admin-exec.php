@@ -269,7 +269,7 @@ if (isset($_POST['new_status_name']) && !empty($_POST['new_status_name'])) {
 
     $status_name = filter_var($_POST['new_status_name'], FILTER_SANITIZE_STRING);
     // we remove the # of the hexacode and sanitize string
-    $status_color = filter_var(substr($_POST['new_status_color'], 1, 6), FILTER_SANITIZE_STRING);
+    $status_color = filter_var(substr($_POST['new_status_color'], 0, 6), FILTER_SANITIZE_STRING);
     $sql = "INSERT INTO status(name, color, team, is_default) VALUES(:name, :color, :team, :is_default)";
     $req = $pdo->prepare($sql);
     $result = $req->execute(array(
@@ -291,7 +291,7 @@ if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
     $item_type_id = $_POST['item_type_id'];
     $item_type_name = filter_var($_POST['item_type_name'], FILTER_SANITIZE_STRING);
     // we remove the # of the hexacode and sanitize string
-    $item_type_bgcolor = filter_var(substr($_POST['item_type_bgcolor'], 1, 6), FILTER_SANITIZE_STRING);
+    $item_type_bgcolor = filter_var(substr($_POST['item_type_bgcolor'], 0, 6), FILTER_SANITIZE_STRING);
     $item_type_template = check_body($_POST['item_type_template']);
     $sql = "UPDATE items_types SET
         name = :name,
@@ -323,7 +323,7 @@ if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
     }
 
     // we remove the # of the hexacode and sanitize string
-    $item_type_bgcolor = filter_var(substr($_POST['new_item_type_bgcolor'], 1, 6), FILTER_SANITIZE_STRING);
+    $item_type_bgcolor = filter_var(substr($_POST['new_item_type_bgcolor'], 0, 6), FILTER_SANITIZE_STRING);
     $item_type_template = check_body($_POST['new_item_type_template']);
     $sql = "INSERT INTO items_types(name, team, bgcolor, template) VALUES(:name, :team, :bgcolor, :template)";
     $req = $pdo->prepare($sql);

@@ -65,8 +65,6 @@ $('#big_search_input').click(function() {
     $('#adv_search').show();
 });
 </script>
-<!-- 3Dmol.js -->
-<script src="js/3Dmol-nojquery-min.js"></script>
 <?php
 if (isset($_SESSION['auth'])) {
 	// show TODOlist

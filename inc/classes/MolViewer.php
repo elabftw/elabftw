@@ -95,22 +95,30 @@ class MolViewer
      */
     private function buildControls()
     {
-        // Tooltips of the buttons
-        $cartoon_text = _('Cartoon');
-        $stick_text = _('Stick');
-        $solid_surface_text = _('Solid Surface');
-        $transparent_surface_text = _('Transparent Surface');
-        $remove_surfaces_text = _('Remove all surfaces');
+        // Array holding list of styles for the dropdown list.
+        // Each item consists of its label als translatable string and a corresponding javascript function
+        // that is executet if the item is clicked.
+        $styles = array(
+                        'cartoon' => array(_('Cartoon'), 'show_cartoon(\'' . $this->div_id . '\');'),
+                        'stick' => array(_('Stick'), 'show_stick(\'' . $this->div_id . '\');'),
+                        'surface_solid' => array(_('Solid Surface'), 'show_surface(\'' . $this->div_id . '\');'),
+                        'surface_transparent' => array(_('Transparent Surface'), 'show_surface(\'' . $this->div_id . '\', .7, \'0xffffff\');')
+                        );
 
-        $controls = "<div class='row' style='padding-bottom: 5px;' id='{$this->div_id}_controls'>";
+        // Label of dropdown list and clean button
+        $style_text = _('Style');
+        $remove_surfaces_text = _('Remove Surfaces');
 
-        $controls .= "<button class='btn btn-default btn-xs align_left' data-toggle='tooltip' data-placement='bottom' title='{$cartoon_text}' onClick=\"show_cartoon('{$this->div_id}');\">C</button>\n";
-        $controls .= "<button class='btn btn-default btn-xs data-toggle='tooltip' data-placement='bottom' title='{$stick_text}' align_left' onClick=\"show_stick('{$this->div_id}');\">S</button>\n";
-        $controls .= "<button class='btn btn-default btn-xs align_left' data-toggle='tooltip' data-placement='bottom' title='{$solid_surface_text}' onClick=\"show_surface('{$this->div_id}');\">SS</button>\n";
-        $controls .= "<button class='btn btn-default btn-xs align_left' data-toggle='tooltip' data-placement='bottom' title='{$transparent_surface_text}' onClick=\"show_surface('{$this->div_id}', .7, '0xffffff');\">TS</button>\n";
-        $controls .= "<button class='btn btn-default btn-xs align_left' data-toggle='tooltip' data-placement='bottom' title='{$remove_surfaces_text}' onClick=\"remove_surfaces('{$this->div_id}');\"><span class='glyphicon glyphicon-erase'></span></button>\n";
+        $controls = "<div style=\"padding-bottom: 5px\" class=\"btn-group\">\n";
+        $controls .= "<button type=\"button\" class=\"btn btn-default btn-xs dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">{$style_text}<span class=\"caret\"></span></button>\n";
+        $controls .= "<ul class=\"dropdown-menu\">\n";
 
-        $controls .= "</div>";
+        // Build dropdown menu
+        foreach($styles as $style=>$props) {
+            $controls .= "<li><a href=\"#\" onClick=\"{$props[1]}\">{$props[0]}</a></li>\n";
+        }
+        $controls .= "</ul>\n";
+        $controls .= "<button class='btn btn-default btn-xs align_left' data-toggle='tooltip' data-placement='bottom' title='{$remove_surfaces_text}' onClick=\"remove_surfaces('{$this->div_id}');\"><span class='glyphicon glyphicon-erase'></span></button></div>\n";
 
         return $controls;
     }
@@ -122,7 +130,7 @@ class MolViewer
      */
     public function getViewerDiv()
     {
-        $output = "<div class='center' style='margin-left: 15px; '>{$this->buildControls()}<div style='height: 250px; width: 100%; position: relative;' class='row viewer_3Dmoljs' {$this->getDataString()} id={$this->div_id}></div></div>";
+        $output = "{$this->buildControls()}<div style='margin-left: 25px;' class='center'><div style='height: 250px; width: 100%; position: relative;' class='row viewer_3Dmoljs' {$this->getDataString()} id={$this->div_id}></div></div>";
         return $output;
     }
 

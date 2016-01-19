@@ -30,7 +30,7 @@ if ($count > 1) {
 }
 if ($count > 0) {
     echo "<div class='box'>";
-    echo "<img src='img/attached.png' class='bot5px'>the i <h3 style='display:inline'>" . ngettext('Attached file', 'Attached files', $count) . "</h3>";
+    echo "<img src='img/attached.png' class='bot5px'><h3 style='display:inline'>" . ngettext('Attached file', 'Attached files', $count) . "</h3>";
     echo "<div class='row'>";
     while ($uploads_data = $req->fetch()) {
         echo "<div class='col-md-4 col-sm-6'>";

@@ -14,7 +14,10 @@ function remove_surfaces(id) {
 // Show molecule as cartoon representation and re-render. Color can be passed
 // optionally. If no color is given, spectrum is assumed.
 function show_cartoon(id, color) {
-    var color = typeof color !== 'string' ? color : 'spectrum';
+    if (typeof color !== 'string') {
+        color = 'spectrum';
+    }
+
     var view = $3Dmol.viewers[id];
     view.setStyle(
                   {hetflag:false},

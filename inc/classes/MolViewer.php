@@ -115,7 +115,7 @@ class MolViewer
 
         // Build dropdown menu
         foreach($styles as $style=>$props) {
-            $controls .= "<li><a href=\"#\" onClick=\"{$props[1]}\">{$props[0]}</a></li>\n";
+            $controls .= "<li><a href=\"#{$this->div_id}\" onClick=\"{$props[1]}\">{$props[0]}</a></li>\n";
         }
         $controls .= "</ul>\n";
         $controls .= "<button class='btn btn-default btn-xs align_left' data-toggle='tooltip' data-placement='bottom' title='{$remove_surfaces_text}' onClick=\"remove_surfaces('{$this->div_id}');\"><span class='glyphicon glyphicon-erase'></span></button></div>\n";

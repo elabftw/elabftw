@@ -22,7 +22,7 @@ class MolViewer
     private $id;
 
     /** if true, $id is handled as a PDB ID */
-    private $is_pdb_id;
+    private $is_pdb;
 
     /** the generated <div> will have this id */
     private $div_id;
@@ -33,6 +33,9 @@ class MolViewer
     /** Background color of canvas */
     private $backgroundcolor;
 
+    /** Path to data file */
+    private $filepath;
+
     /**
      * Simple Molecule Viewer
      * Give me some data and I will do a nice 3D representation
@@ -41,10 +44,9 @@ class MolViewer
      * @param str $filepath Path to data file
      * @param bool $is_pdb True if $id is a PDB ID. Defaults to False
      * @param str $data_style Representation of molecule. Defaults to "cartoon:color=spectrum"
-     * @param $str $backgroundcolor Background color in hex notation
-     * @return str $output
+     * @param str $backgroundcolor Background color in hex notation
      */
-    public function __construct($id, $filepath="", $is_pdb=False, $data_surface="", $data_style="cartoon:color=spectrum", $backgroundcolor="0xffffff")
+    public function __construct($id, $filepath="", $is_pdb=False, $data_style="cartoon:color=spectrum", $backgroundcolor="0xffffff")
     {
         // Check for proper use:
         // We always want either is_pdb to be true or a valid filepath!

@@ -4,8 +4,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
-"POT-Creation-Date: 2016-01-21 00:44+0100\n"
-"PO-Revision-Date: 2016-01-21 00:44+0100\n"
+"POT-Creation-Date: 2016-01-21 00:53+0100\n"
+"PO-Revision-Date: 2016-01-21 00:59+0100\n"
 "Last-Translator: Alexander Minges <alexander.minges@gmail.com>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -697,25 +697,29 @@ msgstr "Datei konnte nicht geöffnet werden."
 
 #: elabftw/inc/classes/Import.php:80
 msgid "This doesn't look like the right kind of file. Import aborted."
-msgstr ""
+msgstr "Das scheint nicht der richtige Dateityp zu sein. Import abgebrochen."
 
 #: elabftw/inc/classes/Make.php:105
 msgid "You don't have sufficient rights to access this item."
 msgstr ""
+"Sie haben nicht die nötigen Zugriffsrechte, um auf diesen Eintrag "
+"zuzugreifen."
 
 #: elabftw/inc/classes/MakeZip.php:66
 msgid ""
 "You are missing the ZipArchive class in php. Uncomment the line "
 "extension=zip.so in php.ini file."
 msgstr ""
+"Die ZipArchive-Klasse aus php ist nicht verfügbar. Zum Beheben, die Zeile "
+"extension=zip.so in der Datei php.ini auskommentieren."
 
 #: elabftw/inc/classes/MakeZip.php:123
 msgid "You are trying to download an experiment you don't own!"
-msgstr ""
+msgstr "Sie versuchen ein Experiment herunterzuladen, das Ihnen nicht gehört!"
 
 #: elabftw/inc/classes/MakeZip.php:137
 msgid "You are trying to download an item you don't own!"
-msgstr ""
+msgstr "Sie versuchen einen Eintrag herunterzuladen, das Ihnen nicht gehört!"
 
 #: elabftw/inc/classes/MakeZip.php:295
 msgid "Error making the zip archive!"
@@ -821,7 +825,7 @@ msgstr "Sichtbarkeit"
 
 #: elabftw/inc/editXP.php:76
 msgid "Everyone with an account"
-msgstr ""
+msgstr "Jeder mit einem Benutzerkonto"
 
 #: elabftw/inc/editXP.php:79
 msgid "Only the team"
@@ -1043,6 +1047,8 @@ msgstr ""
 msgid ""
 "<strong>Access forbidden:</strong> you don't have the rights to access this."
 msgstr ""
+"<strong>Zugang verboten:</strong> Sie haben nicht die nötigen Rechte zum "
+"Zugriff."
 
 #: elabftw/inc/viewXP.php:97
 msgid "<strong>Read-only mode:</strong> this experiment is owned by"
@@ -1160,7 +1166,7 @@ msgstr ""
 
 #: elabftw/make.php:51
 msgid "Your file is ready:"
-msgstr ""
+msgstr "Ihre Datei steht bereit:"
 
 #: elabftw/profile.php:40
 msgid "experiments done since"

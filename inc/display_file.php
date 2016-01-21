@@ -22,7 +22,7 @@ $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
 $req = $pdo->prepare($sql);
 $req->execute(array(
     'id' => $id,
-    'type' => $type,
+    'type' => $type
 ));
 $count = $req->rowCount();
 if ($count > 1) {
@@ -66,11 +66,11 @@ if ($count > 0) {
             }
             echo "><img class='thumb' src='" . $thumbpath . "' alt='thumbnail' /></a>";
 
-            // not an image
+        // not an image
         } elseif (in_array($ext, $common_extensions)) {
             echo "<img class='thumb' src='img/thumb-" . $ext . ".png' alt='' />";
 
-            // special case for mol files
+        // special case for mol files
         } elseif ($ext === 'mol' && $_SESSION['prefs']['chem_editor'] && $_GET['mode'] === 'view') {
             // we need to escape \n in the mol file or we get unterminated string literal error in JS
             $mol = str_replace("\n", "\\n", file_get_contents(ELAB_ROOT . 'uploads/' . $uploads_data['long_name']));
@@ -78,7 +78,7 @@ if ($count > 0) {
                   showMol('" . $mol . "');
                   </script></div>";
 
-            // if this is something 3Dmol.js can handle
+        // if this is something 3Dmol.js can handle
         } elseif (in_array($ext, $mol_extensions)) {
             $molviewer = new MolViewer($id, $filepath);
             echo $molviewer->getViewerDiv();

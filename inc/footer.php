@@ -32,29 +32,29 @@
     </a>
     <span>
     <?php
-    if (isset($_SESSION['auth']) && $_SESSION['is_sysadmin'] === '1') {
-        ?>
+if (isset($_SESSION['auth']) && $_SESSION['is_sysadmin'] === '1') {
+	?>
         <!-- SYSADMIN MENU -->
         <span class='strong'>
         <a href='sysconfig.php'><?php echo _('Sysadmin panel'); ?></a>
     <?php
-    }
-    if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
-        echo "<a href='admin.php'>" . _('Admin panel');
-        // show counter of unvalidated users
-        $sql = "SELECT count(validated) FROM users WHERE validated = 0 AND team = :team";
-        $req = $pdo->prepare($sql);
-        $req->bindValue(':team', $_SESSION['team_id']);
-        $req->execute();
-        $unvalidated = $req->fetchColumn();
-        if ($unvalidated > 0) {
-            echo " <span class='badge'>" . $unvalidated . "</span>";
-        }
-        echo "</a>";
-    }
-    echo "</span></p><div class='footer_right'>";
-    echo _('Powered by') . " <a href='http://www.elabftw.net'>eLabFTW</a><br>";
-    ?>
+}
+if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
+	echo "<a href='admin.php'>" . _('Admin panel');
+	// show counter of unvalidated users
+	$sql = "SELECT count(validated) FROM users WHERE validated = 0 AND team = :team";
+	$req = $pdo->prepare($sql);
+	$req->bindValue(':team', $_SESSION['team_id']);
+	$req->execute();
+	$unvalidated = $req->fetchColumn();
+	if ($unvalidated > 0) {
+		echo " <span class='badge'>" . $unvalidated . "</span>";
+	}
+	echo "</a>";
+}
+echo "</span></p><div class='footer_right'>";
+echo _('Powered by') . " <a href='http://www.elabftw.net'>eLabFTW</a><br>";
+?>
     <?php echo _('Page generated in') . ' '; ?><span class='strong'><?php echo round((microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]), 5); ?> seconds</span></div>
 </footer>
 
@@ -67,9 +67,9 @@ $('#big_search_input').click(function() {
 </script>
 <?php
 if (isset($_SESSION['auth'])) {
-    // show TODOlist
-    echo "<script>
-    key('".$_SESSION['prefs']['shortcuts']['todo'] . "', function(){
+	// show TODOlist
+	echo "<script>
+    key('" . $_SESSION['prefs']['shortcuts']['todo'] . "', function(){
         showPanel();
     });
     </script>";

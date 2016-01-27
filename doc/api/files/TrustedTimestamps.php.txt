@@ -255,13 +255,15 @@ class TrustedTimestamps
         foreach ($retarray as $retline) {
             if (preg_match("~^Time\sstamp\:\s(.*)~", $retline, $matches)) {
                 // try to automatically convert time to unique unix timestamp
-                $responseTime = strtotime($matches[1]);
+                // and then convert it to proper format
+                $this->responseTime = date("Y-m-d H:i:s", strtotime($matches[1]));
+
                 // workaround for faulty php strtotime function, that does not handle times in format "Feb 25 23:29:13.331 2015 GMT"
                 // currently this accounts for the format used presumably by Universign.eu
-                if (!$responseTime) {
+                if (!$this->responseTime) {
                     $date = DateTime::createFromFormat("M j H:i:s.u Y T", $matches[1]);
                     if ($date) {
-                        // Return formatted time as this is, what we will store in the database.
+                        // Return formatted time as this is what we will store in the database.
                         // PHP will take care of correct timezone conversions (if configured correctly)
                         $this->responseTime = date("Y-m-d H:i:s", $date->getTimestamp());
                     } else {

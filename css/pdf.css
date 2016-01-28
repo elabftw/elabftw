@@ -51,11 +51,11 @@ body {
 
 a {
     color: #29AEB9;
-    text-decoration:none;
+    text-decoration: none;
 }
 
 .elabid {
-    text-align:right;
+    text-align: right;
     color: black;
     font-size: 8pt;
 }
@@ -81,12 +81,12 @@ a {
 
 #footer {
     position: absolute;
-    bottom:0;
-    left:0;
-    background-color:#e2e2e2;
+    bottom: 0;
+    left: 0;
+    background-color: #e2e2e2;
     padding: 10px 0;
     width: 100%;
     font-size: 80%;
-    text-align:center;
+    text-align: center;
 }
 

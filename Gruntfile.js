@@ -26,7 +26,8 @@ module.exports = function(grunt) {
     cssmin: {
       target: {
         files: {
-          'css/main.min.css': ['css/main.css', 'css/tagcloud.css', 'css/jquery.rating.css']
+          'css/main.min.css': ['css/main.css', 'css/tagcloud.css', 'css/jquery.rating.css'],
+          'css/pdf.min.css': ['css/pdf.css']
         }
       }
     },

@@ -418,7 +418,10 @@ class MakePdf extends Make
                             Created by: ' . $this->author . '<br />
                         </p>
                     </div>
-                </htmlpageheader>';
+                </htmlpageheader>
+                <htmlpagefooter name="footer">
+                <div id=footer>PDF generated with <a href="http://www.elabftw.net">elabftw</a>, a free and open source lab notebook</div>
+                </htmlpagefooter>';
 
         $this->content .= $header;
     }

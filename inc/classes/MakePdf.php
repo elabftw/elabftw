@@ -269,7 +269,7 @@ class MakePdf extends Make
         }
         // do we have files attached ?
         if ($req->rowCount() > 0) {
-            $this->content .= "<section>";
+            $this->content .= "<section class='no_break'>";
             if ($req->rowCount() === 1) {
                 $this->content .= "<h3>Attached file :</h3>";
             } else {
@@ -396,7 +396,7 @@ class MakePdf extends Make
     private function buildBody()
     {
         $this->content .= str_replace("src=\"uploads/", "src=\"" . ELAB_ROOT . "uploads/", $this->data['body']);
-        $this->content .= "</div>";
+        //$this->content .= "</div>";
     }
 
     /**
@@ -404,7 +404,10 @@ class MakePdf extends Make
     */
     private function buildInfoBlock()
     {
-        $this->content .= "<table id='infoblock'><tr><td><barcode code='" . $this->getUrl() . "' type='QR' class='barcode' size='0.8' error='M' /></td><td>" . $this->addElabid() . $this->addLockinfo() . $this->addUrl() . "</td></tr></table>";
+        $this->content .= "<table id='infoblock'><tr><td>
+                           <barcode code='" . $this->getUrl() . "' type='QR' class='barcode' size='0.8' error='M' />
+                           </td><td>" . $this->addElabid() . $this->addLockinfo() . $this->addUrl() . "</td></tr>
+                           </table>";
     }
 
     /**
@@ -421,16 +424,22 @@ class MakePdf extends Make
                 <htmlpageheader name="header">
                     <div id="header">
                         <h1>' . $this->data['title'] . '</h1>
-                        <p>
+                        <p style="float:left; width:90%;">
                             Date: ' . Tools::formatDate($this->data['date']) . '<br />
                             Tags: <em>'. $this->tags .'</em> <br />
-                            Created by: ' . $this->author . '<br />
+                            Created by: ' . $this->author . '
+                        </p>
+                        <p style="float:right; width:10%;"><br /><br />
+                            {PAGENO} / {nbpg}
                         </p>
                     </div>
                 </htmlpageheader>
                 <htmlpagefooter name="footer">
-                <div id=footer>PDF generated with <a href="http://www.elabftw.net">elabftw</a>, a free and open source lab notebook</div>
-                </htmlpagefooter><div id="body_text">';
+                    <div id="footer">
+                        PDF generated with <a href="http://www.elabftw.net">elabftw</a>, a free and open source lab notebook
+                        <p style="font-size:6pt;">File generated on {DATE j-m-Y H:m}</p>
+                    </div>
+                </htmlpagefooter>'; //<div id="body_text">';
 
         $this->content .= $header;
     }

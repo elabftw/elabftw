@@ -54,6 +54,15 @@ a {
     text-decoration: none;
 }
 
+code {
+    border: 1px dotted #ccc;
+    background-color:#eee;
+}
+
+.no_break {
+    page-break-inside: avoid;
+}
+
 .elabid {
     text-align: right;
     color: black;
@@ -74,6 +83,10 @@ a {
 
 }
 
+#body_text {
+    page-break-after: always;
+}
+
 #infoblock {
     border: 1px solid #dcdddc;
     border-radius: 5px;
@@ -92,14 +105,12 @@ a {
 }
 
 #footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
     background-color: #e2e2e2;
     padding: 10px 0;
     width: 100%;
     font-size: 80%;
     text-align: center;
     border-top: 1px solid #dcdddc;
+    border-radius: 5mm;
 }
 

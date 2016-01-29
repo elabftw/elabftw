@@ -357,6 +357,15 @@ if ($confcnt['confcnt'] < 21) {
     }
 }
 
+// 20160129 change body column in experiments and items to mediumtext
+$sql = "ALTER TABLE experiments MODIFY body MEDIUMTEXT; ALTER TABLE items MODIFY body MEDIUMTEXT";
+$req = $pdo->prepare($sql);
+if ($req->execute()) {
+    $msg_arr[] = '>>> Changed column type of body in items and experiments to "MEDIUMTEXT".';
+} else {
+    die($die_msg);
+}
+
 // //////////////////////////////////////////
 // INSERT NEW CODE BLOCKS ABOVE THIS LINE //
 // /////////////////////////////////////////

@@ -245,7 +245,7 @@ class MakePdf extends Make
 
     /**
      * Reference the attached files (if any) in the pdf
-     * Add also the md5 sum
+     * Add also the hash sum
      */
     private function addAttachedFiles()
     {
@@ -257,11 +257,12 @@ class MakePdf extends Make
         $req->execute();
         $real_name = array();
         $comment = array();
-        $md5 = array();
+        $hash = array();
         while ($uploads = $req->fetch()) {
             $real_name[] = $uploads['real_name'];
             $comment[] = $uploads['comment'];
-            $md5[] = $uploads['md5'];
+            $hash[] = $uploads['hash'];
+            $hash_algorithm[] = $uploads['hash_algorithm'];
         }
         // do we have files attached ?
         if ($req->rowCount() > 0) {
@@ -279,9 +280,10 @@ class MakePdf extends Make
                 if ($comment[$i] != 'Click to add a comment') {
                     $this->content .= " (" . stripslashes(htmlspecialchars_decode($comment[$i])) . ")";
                 }
-                // add md5 sum ? don't add if we don't have it
-                if (strlen($md5[$i]) === 32) { // we have md5 sum
-                    $this->content .= "<br>md5 : " . $md5[$i];
+                // add hash ? don't add if we don't have it
+                // length must be greater (sha2 hashes) or equal (md5) 32 bits
+                if (strlen($hash[$i]) >= 32) { // we have hash
+                    $this->content .= "<br>" . $hash_algorithm[$i] . " : " . $hash[$i];
                 }
                 $this->content .= "</li>";
             }

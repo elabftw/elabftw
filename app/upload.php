@@ -73,8 +73,18 @@ if ($type === 'experiments' || $type == 'items') {
     if (rename($_FILES['file']['tmp_name'], ELAB_ROOT . 'uploads/' . $longname)) {
 
         // generate a sha256sum of the file if it's not too big
+        // do that in chunks of (64 KB) to prevent using to much memory
         if ($_FILES['file']['size'] < 5000000) {
-            $hash = hash_file('sha256', ELAB_ROOT . 'uploads/' . $longname);
+            $chunk_size = 65536;
+            $fp = ELAB_ROOT . 'uploads/' . $longname;
+            $ctx = hash_init('sha256');
+            while (!feof($fp))
+            {
+                $buffer = fgets($fp, $chunk_size);
+                hash_update($ctx, $buffer);
+            }
+            $hash = hash_final(ctx, true);
+            $fclose($fp);
         } else {
             $hash = null;
         }

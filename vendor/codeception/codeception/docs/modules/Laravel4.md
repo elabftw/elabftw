@@ -55,8 +55,12 @@ Locates element using available Codeception locator types:
 Use it in Helpers or GroupObject or Extension classes:
 
 ```php
+<?php
 $els = $this->getModule('Laravel4')->_findElements('.items');
 $els = $this->getModule('Laravel4')->_findElements(['name' => 'username']);
+
+$editLinks = $this->getModule('Laravel4')->_findElements(['link' => 'Edit']);
+// now you can iterate over $editLinks and check that all them have valid hrefs
 ```
 
 WebDriver module returns `Facebook\WebDriver\Remote\RemoteWebElement` instances
@@ -64,6 +68,62 @@ PhpBrowser and Framework modules return `Symfony\Component\DomCrawler\Crawler` i
 
  * `param` $locator
  * `return` array of interactive elements
+
+
+### _loadPage
+
+*hidden API method, expected to be used from Helper classes*
+ 
+Opens a page with arbitrary request parameters.
+Useful for testing multi-step forms on a specific step.
+
+```php
+<?php
+// in Helper class
+public function openCheckoutFormStep2($orderId) {
+    $this->getModule('Laravel4')->_loadPage('POST', '/checkout/step2', ['order' => $orderId]);
+}
+?>
+```
+
+ * `param` $method
+ * `param` $uri
+ * `param array` $parameters
+ * `param array` $files
+ * `param array` $server
+ * `param null` $content
+
+
+### _request
+
+*hidden API method, expected to be used from Helper classes*
+ 
+Send custom request to a backend using method, uri, parameters, etc.
+Use it in Helpers to create special request actions, like accessing API
+Returns a string with response body.
+
+```php
+<?php
+// in Helper class
+public function createUserByApi($name) {
+    $userData = $this->getModule('Laravel4')->_request('POST', '/api/v1/users', ['name' => $name]);
+    $user = json_decode($userData);
+    return $user->id;
+}
+?>
+```
+Does not load the response into the module so you can't interact with response page (click, fill forms).
+To load arbitrary page for interaction, use `_loadPage` method.
+
+ * `param` $method
+ * `param` $uri
+ * `param array` $parameters
+ * `param array` $files
+ * `param array` $server
+ * `param null` $content
+ * `return` mixed|Crawler
+ * `throws`  ExternalUrlException
+ * `see`  `_loadPage`
 
 
 ### _savePageSource
@@ -93,8 +153,8 @@ Takes either `UserInterface` instance or array of credentials.
 
  * `param`  \Illuminate\Auth\UserInterface|array $user
  * `param`  string $driver
-@return void
-@part framework
+ * `return` void
+ * `[Part]` framework
 
 
 ### amOnAction
@@ -103,7 +163,7 @@ Opens web page by action name
 
 ``` php
 <?php
-$I->amOnAction('PostsController@index');
+$I->amOnAction('PostsController * `index');` 
 ?>
 ```
 
@@ -148,7 +208,7 @@ Attaches a file relative to the Codeception data directory to the given file upl
 ``` php
 <?php
 // file is stored in 'tests/_data/prices.xls'
-$I->attachFile('input[@type="file"]', 'prices.xls');
+$I->attachFile('input[ * `type="file"]',`  'prices.xls');
 ?>
 ```
 
@@ -183,7 +243,7 @@ $I->checkOption('#agree');
  
 Make sure the Laravel start file exists.
 
-
+ * `throws`  ModuleConfig
 
 
 ### click
@@ -207,7 +267,7 @@ $I->click('Submit');
 // CSS button
 $I->click('#form input[type=submit]');
 // XPath
-$I->click('//form/*[@type=submit]');
+$I->click('//form/*[ * `type=submit]');` 
 // link in context
 $I->click('Logout', '#nav');
 // using strict locator
@@ -336,7 +396,7 @@ $I->dontSeeInField('Body','Type your comment here');
 $I->dontSeeInField('form textarea[name=body]','Type your comment here');
 $I->dontSeeInField('form input[type=hidden]','hidden_value');
 $I->dontSeeInField('#searchform input','Search');
-$I->dontSeeInField('//form/*[@name=search]','Search');
+$I->dontSeeInField('//form/*[ * `name=search]','Search');` 
 $I->dontSeeInField(['name' => 'search'], 'Search');
 ?>
 ```
@@ -439,8 +499,8 @@ $I->dontSeeRecord('users', array('name' => 'davert'));
 
  * `param` $tableName
  * `param array` $attributes
-@part orm
-@part framework
+ * `[Part]` orm
+ * `[Part]` framework
 
 
 ### fillField
@@ -449,8 +509,8 @@ Fills a text field or textarea with the given string.
 
 ``` php
 <?php
-$I->fillField("//input[@type='text']", "Hello World!");
-$I->fillField(['name' => 'email'], 'jon@mail.com');
+$I->fillField("//input[ * `type='text']",`  "Hello World!");
+$I->fillField(['name' => 'email'], 'jon * `mail.com');` 
 ?>
 ```
 
@@ -510,7 +570,29 @@ $uri = $I->grabFromCurrentUrl();
 
 
 ### grabMultiple
-__not documented__
+ 
+Grabs either the text content, or attribute values, of nodes
+matched by $cssOrXpath and returns them as an array.
+
+```html
+<a href="#first">First</a>
+<a href="#second">Second</a>
+<a href="#third">Third</a>
+```
+
+```php
+<?php
+// would return ['First', 'Second', 'Third']
+$aLinkText = $I->grabMultiple('a');
+
+// would return ['#first', '#second', '#third']
+$aLinks = $I->grabMultiple('a', 'href');
+?>
+```
+
+ * `param` $cssOrXpath
+ * `param` $attribute
+ * `return` string[]
 
 
 ### grabRecord
@@ -525,8 +607,8 @@ $category = $I->grabRecord('users', array('name' => 'davert'));
 
  * `param` $tableName
  * `param array` $attributes
-@part ORM
-@part framework
+ * `[Part]` ORM
+ * `[Part]` framework
 
 
 ### grabService
@@ -551,7 +633,7 @@ $service = $I->grabService('foo');
 ```
 
  * `param`  string $class
-@part framework
+ * `[Part]` framework
 
 
 ### grabTextFrom
@@ -600,14 +682,14 @@ $user_id = $I->haveRecord('users', array('name' => 'Davert'));
 
  * `param` $tableName
  * `param array` $attributes
-@part orm
-@part framework
+ * `[Part]` orm
+ * `[Part]` framework
 
 
 ### logout
  
 Logs user out
-@part framework
+ * `[Part]` framework
 
 
 ### resetCookie
@@ -640,7 +722,7 @@ $I->see('Sign Up','//body/h1'); // with XPath
 ### seeAuthentication
  
 Checks that user is authenticated
-@part framework
+ * `[Part]` framework
 
 
 ### seeCheckboxIsChecked
@@ -651,7 +733,7 @@ Checks that the specified checkbox is checked.
 <?php
 $I->seeCheckboxIsChecked('#agree'); // I suppose user agreed to terms
 $I->seeCheckboxIsChecked('#signup_form input[type=checkbox]'); // I suppose user agreed to terms, If there is only one checkbox in form.
-$I->seeCheckboxIsChecked('//form/input[@type=checkbox and @name=agree]');
+$I->seeCheckboxIsChecked('//form/input[ * `type=checkbox`  and  * `name=agree]');` 
 ?>
 ```
 
@@ -679,7 +761,7 @@ Checks that current url matches action
 
 ``` php
 <?php
-$I->seeCurrentActionIs('PostsController@index');
+$I->seeCurrentActionIs('PostsController * `index');` 
 ?>
 ```
 
@@ -748,7 +830,7 @@ $I->seeElement(['css' => 'form input'], ['name' => 'login']);
 
  * `param` $selector
  * `param array` $attributes
-@return
+ * `return` 
 
 
 ### seeFormErrorMessage
@@ -828,7 +910,7 @@ $I->seeInField('Body','Type your comment here');
 $I->seeInField('form textarea[name=body]','Type your comment here');
 $I->seeInField('form input[type=hidden]','hidden_value');
 $I->seeInField('#searchform input','Search');
-$I->seeInField('//form/*[@name=search]','Search');
+$I->seeInField('//form/*[ * `name=search]','Search');` 
 $I->seeInField(['name' => 'search'], 'Search');
 ?>
 ```
@@ -890,9 +972,9 @@ $form = [
      'checkbox1' => true,
      // ...
 ];
-$I->submitForm('//form[@id=my-form]', $form, 'submitButton');
+$I->submitForm('//form[ * `id=my-form]',`  $form, 'submitButton');
 // $I->amOnPage('/path/to/form-page') may be needed
-$I->seeInFormFields('//form[@id=my-form]', $form);
+$I->seeInFormFields('//form[ * `id=my-form]',`  $form);
 ?>
 ```
 
@@ -994,8 +1076,8 @@ $I->seeRecord('users', array('name' => 'davert'));
 
  * `param` $tableName
  * `param array` $attributes
-@part orm
-@part framework
+ * `[Part]` orm
+ * `[Part]` framework
 
 
 ### seeResponseCodeIs
@@ -1023,7 +1105,7 @@ $I->seeSessionErrorMessage(array('username'=>'Invalid Username'));
 ?>
 ```
  * `param array` $bindings
-@deprecated
+ * `deprecated` 
 
 
 ### seeSessionHasErrors
@@ -1036,8 +1118,8 @@ $I->seeSessionHasErrors();
 ?>
 ```
 
-@return bool
-@deprecated
+ * `return` bool
+ * `deprecated` 
 
 
 ### seeSessionHasValues
@@ -1063,7 +1145,7 @@ Selects an option in a select tag or in radio button group.
 <?php
 $I->selectOption('form select[name=account]', 'Premium');
 $I->selectOption('form input[name=payment]', 'Monthly');
-$I->selectOption('//form/select[@name=account]', 'Monthly');
+$I->selectOption('//form/select[ * `name=account]',`  'Monthly');
 ?>
 ```
 
@@ -1249,9 +1331,9 @@ $form = [
      'checkbox1' => true,
      // ...
 ];
-$I->submitForm('//form[@id=my-form]', $form, 'submitButton');
+$I->submitForm('//form[ * `id=my-form]',`  $form, 'submitButton');
 // $I->amOnPage('/path/to/form-page') may be needed
-$I->seeInFormFields('//form[@id=my-form]', $form);
+$I->seeInFormFields('//form[ * `id=my-form]',`  $form);
 ?>
 ```
 
@@ -1310,6 +1392,24 @@ $I->submitForm('#my-form', [
  * `param` $selector
  * `param` $params
  * `param` $button
+
+
+### switchToIframe
+ 
+Switch to iframe or frame on the page.
+
+Example:
+``` html
+<iframe name="another_frame" src="http://example.com">
+```
+
+``` php
+<?php
+# switch to iframe
+$I->switchToIframe("another_frame");
+```
+
+ * `param string` $name
 
 
 ### uncheckOption

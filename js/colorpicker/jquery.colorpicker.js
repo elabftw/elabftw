@@ -11,8 +11,19 @@
  * Most images from jPicker by Christopher T. Tillman.
  * Sourcecode created from scratch by Martijn W. van der Lee.
  */
+(function( factory ) {
+	if ( typeof define === "function" && define.amd ) {
 
-;(function ($) {
+		// AMD. Register as an anonymous module.
+		define([
+			"jquery"
+		], factory );
+	} else {
+
+		// Browser globals
+		factory( jQuery );
+	}
+} (function ($) {
 	"use strict";
 
 	var _colorpicker_index = 0,
@@ -22,7 +33,7 @@
 		_container_inline = '<div class="ui-colorpicker ui-colorpicker-inline"></div>',
 
 		_intToHex = function (dec) {
-			var result = Math.floor(dec).toString(16);
+			var result = Math.round(dec).toString(16);
 			if (result.length === 1) {
 				result = ('0' + result);
 			}
@@ -329,9 +340,9 @@
 						}
 		,	'HEX3':		function(color, that) {
 							var rgb = color.getRGB(),
-								r = Math.floor(rgb.r * 255),
-								g = Math.floor(rgb.g * 255),
-								b = Math.floor(rgb.b * 255);
+								r = Math.round(rgb.r * 255),
+								g = Math.round(rgb.g * 255),
+								b = Math.round(rgb.b * 255);
 
 							if (((r >>> 4) === (r &= 0xf))
 							 && ((g >>> 4) === (g &= 0xf))
@@ -351,7 +362,7 @@
 							return that._formatColor('rxgxbxax', color);
 						}		
 		,	'HEXA4':		function(color, that) {
-							var a = Math.floor(color.getAlpha() * 255);
+							var a = Math.round(color.getAlpha() * 255);
 						
 							if ((a >>> 4) === (a &= 0xf)) {
 								return $.colorpicker.writers.HEX3(color, that)+a.toString(16);
@@ -1200,9 +1211,9 @@
 
 				this.repaint = function () {
 					var rgb = inst.color.getRGB();
-					inputs.r.val(Math.floor(rgb.r * 255));
-					inputs.g.val(Math.floor(rgb.g * 255));
-					inputs.b.val(Math.floor(rgb.b * 255));
+					inputs.r.val(Math.round(rgb.r * 255));
+					inputs.g.val(Math.round(rgb.g * 255));
+					inputs.b.val(Math.round(rgb.b * 255));
 				};
 
 				this.update = function () {
@@ -1438,8 +1449,8 @@
 			footer: function (inst) {
 				var that = this,
 					part = null,
-					id_transparent = 'ui-colorpicker-special-transparent-'+_colorpicker_index,
-					id_none = 'ui-colorpicker-special-none-'+_colorpicker_index,
+					id_transparent = 'ui-colorpicker-special-transparent-' + inst.colorpicker_index,
+					id_none = 'ui-colorpicker-special-none-' + inst.colorpicker_index,
 					html = function () {
 						var html = '';
 
@@ -1846,7 +1857,7 @@
 					spaces.rgb.b = _clip(b);
 				}
 				this.set = true;
-
+				
 				return this;
 			};
 
@@ -2151,7 +2162,7 @@
 			var that = this,
 				text;
 
-			++_colorpicker_index;
+			that.colorpicker_index = _colorpicker_index++;
 
 			that.widgetEventPrefix = 'colorpicker';
 
@@ -2521,23 +2532,7 @@
 					element = $('<div/>').insertBefore(that.element);
 				} else {
 					element = that.element;
-				}
-				
-				if (that.options.position) {
-					position = $.extend({}, that.options.position);
-					if (position.of === 'element') {
-						position.of = element;
-					}
-				} else {					
-					position = {
-						my:			'left top',
-						at:			'left bottom',
-						of:			element,
-						collision:	'flip'
-					};
-				}
-				
-				that.dialog.position(position);				
+				}			
 				
 				if (that.element.is(':hidden')) {
 					element.remove();
@@ -2587,6 +2582,22 @@
 				}
 
 				that._effectShow(this.dialog);
+
+				if (that.options.position) {
+					position = $.extend({}, that.options.position);
+					if (position.of === 'element') {
+						position.of = element;
+					}
+				} else {
+					position = {
+						my:			'left top',
+						at:			'left bottom',
+						of:			element,
+						collision:	'flip'
+					};
+				}
+				that.dialog.position(position);
+				
 				that.opened = true;
 				that._callback('open', true);
 
@@ -2824,7 +2835,7 @@
 				,	p:	function() {return '([0-9]*\\.?[0-9]*)';}
 				},
 				typeConverters = {
-					x:	function(v)	{return parseInt(v, 16);}
+					x:	function(v)	{return parseInt(v, 16) / 255.;}
 				,	d:	function(v)	{return v / 255.;}
 				,	f:	function(v)	{return v;}
 				,	p:	function(v)	{return v * 0.01;}
@@ -2860,6 +2871,7 @@
 			pattern = format.replace(/[()\\^$.|?*+[\]]/g, function(m) {
 				return '\\'+m;
 			});
+
 
 			pattern = pattern.replace(/\\?[argbhsvcmykLAB][xdfp]/g, function(variable) {
 				if (variable.match(/^\\/)) {
@@ -2906,7 +2918,7 @@
 			var formats = $.isArray(that.options.colorFormat)
 					? that.options.colorFormat
 					: [ that.options.colorFormat ];
-			
+
 			$.each(formats, function(index, format) {
 				if ($.colorpicker.parsers[format]) {
 					color = $.colorpicker.parsers[format](text, that);
@@ -2973,7 +2985,7 @@
 			var that		= this,
 				text		= null,
 				types		= {	'x':	function(v) {return _intToHex(v * 255);}
-							,	'd':	function(v) {return Math.floor(v * 255);}
+							,	'd':	function(v) {return Math.round(v * 255);}
 							,	'f':	function(v) {return v;}
 							,	'p':	function(v) {return v * 100.;}
 							},
@@ -3001,4 +3013,5 @@
 			return text;
 		}
 	});
-}(jQuery));
+	return $.vanderlee.colorpicker;
+}));

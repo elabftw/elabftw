@@ -1,5 +1,6 @@
 /*
  * Common functions used by eLabFTW
+ * http://www.elabftw.net
  */
 
 // The main function to delete stuff

@@ -16,6 +16,7 @@
 namespace Facebook\WebDriver\Firefox;
 
 use Facebook\WebDriver\Exception\WebDriverException;
+use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ZipArchive;
@@ -33,6 +34,16 @@ class FirefoxProfile {
   private $extensions = array();
 
   /**
+   * @var array
+   */
+  private $extensions_datas = array();
+
+  /**
+   * @var string
+   */
+  private $rdf_file;
+
+  /**
    * @param string $extension The path to the xpi extension.
    * @return FirefoxProfile
    */
@@ -42,9 +53,36 @@ class FirefoxProfile {
   }
 
   /**
+   * @param string $extension_datas The path to the folder containing the datas to add to the extension
+   * @return FirefoxProfile
+   */
+  public function addExtensionDatas($extension_datas) {
+    if (!is_dir($extension_datas)) {
+      return;
+    }
+
+    $this->extensions_datas[basename($extension_datas)] = $extension_datas;
+    return $this;
+  }
+
+  /**
+   * @param string $rdf_file The path to the rdf file
+   * @return FirefoxProfile
+   */
+  public function setRdfFile($rdf_file) {
+    if (!is_file($rdf_file)) {
+      return;
+    }
+
+    $this->rdf_file = $rdf_file;
+    return $this;
+  }
+
+  /**
    * @param string $key
    * @param string|bool|int $value
    * @return FirefoxProfile
+   * @throws WebDriverException
    */
   public function setPreference($key, $value) {
     if (is_string($value)) {
@@ -62,13 +100,42 @@ class FirefoxProfile {
   }
 
   /**
+   * @param $key
+   * @return mixed
+   */
+  public function getPreference($key)
+  {
+    if (array_key_exists($key, $this->preferences)) {
+      return $this->preferences[$key];
+    }
+
+    return null;
+  }
+
+  /**
    * @return string
    */
   public function encode() {
     $temp_dir = $this->createTempDirectory('WebDriverFirefoxProfile');
 
+    if (isset($this->rdf_file)) {
+      copy($this->rdf_file, $temp_dir . DIRECTORY_SEPARATOR . "mimeTypes.rdf");
+    }
+
     foreach ($this->extensions as $extension) {
       $this->installExtension($extension, $temp_dir);
+    }
+
+    foreach ($this->extensions_datas as $dirname => $extension_datas) {
+      mkdir($temp_dir . DIRECTORY_SEPARATOR . $dirname);
+      $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($extension_datas, RecursiveDirectoryIterator::SKIP_DOTS), RecursiveIteratorIterator::SELF_FIRST);
+      foreach ($iterator as $item) {
+        if ($item->isDir()) {
+	  mkdir($temp_dir . DIRECTORY_SEPARATOR . $dirname . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+	} else {
+	  copy($item, $temp_dir . DIRECTORY_SEPARATOR . $dirname . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+	}
+      }
     }
 
     $content = "";
@@ -78,7 +145,7 @@ class FirefoxProfile {
     file_put_contents($temp_dir.'/user.js', $content);
 
     $zip = new ZipArchive();
-    $temp_zip = tempnam('', 'WebDriverFirefoxProfileZip');
+    $temp_zip = tempnam(sys_get_temp_dir(), 'WebDriverFirefoxProfileZip');
     $zip->open($temp_zip, ZipArchive::CREATE);
 
     $dir = new RecursiveDirectoryIterator($temp_dir);
@@ -98,6 +165,11 @@ class FirefoxProfile {
     $zip->close();
 
     $profile = base64_encode(file_get_contents($temp_zip));
+
+    // clean up
+    $this->deleteDirectory($temp_dir);
+    unlink($temp_zip);
+
     return $profile;
   }
 
@@ -107,7 +179,7 @@ class FirefoxProfile {
    * @return string The path to the directory of this extension.
    */
   private function installExtension($extension, $profile_dir) {
-    $temp_dir = $this->createTempDirectory();
+    $temp_dir = $this->createTempDirectory('WebDriverFirefoxProfileExtension');
 
     $this->extractTo($extension, $temp_dir);
 
@@ -122,6 +194,10 @@ class FirefoxProfile {
     mkdir($ext_dir, 0777, true);
 
     $this->extractTo($extension, $ext_dir);
+
+    // clean up
+    $this->deleteDirectory($temp_dir);
+
     return $ext_dir;
   }
 
@@ -132,7 +208,7 @@ class FirefoxProfile {
    * @throws WebDriverException
    */
   private function createTempDirectory($prefix = '') {
-    $temp_dir = tempnam('', $prefix);
+    $temp_dir = tempnam(sys_get_temp_dir(), $prefix);
     if (file_exists($temp_dir)) {
       unlink($temp_dir);
       mkdir($temp_dir);
@@ -141,6 +217,24 @@ class FirefoxProfile {
       }
     }
     return $temp_dir;
+  }
+
+  /**
+   * @param string $directory The path to the directory.
+   */
+  private function deleteDirectory($directory) {
+    $dir = new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS);
+    $paths = new RecursiveIteratorIterator($dir, RecursiveIteratorIterator::CHILD_FIRST);
+
+    foreach ($paths as $path) {
+      if ($path->isDir() && !$path->isLink()) {
+        rmdir($path->getPathname());
+      } else {
+        unlink($path->getPathname());
+      }
+    }
+
+    rmdir($directory);
   }
 
   /**

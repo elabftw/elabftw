@@ -19,7 +19,7 @@ use \Exception;
 final class Db
 {
     /** our connection */
-    private static $connection = null;
+    private $connection = null;
     /** store the single instance of the class */
     private static $instance = null;
 

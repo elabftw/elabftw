@@ -3,6 +3,26 @@
 Changelog
 =========
 
+Version 1.1.7
+-------------
+
+* Bug fixes
+
+  * fix bug where list text size was incorrect (fixed upstream by tinymce devs; #158)
+  * fix bug where color of items/status was wrong after editing it
+
+* Enhancements
+
+  * You can now link experiments directly in text with the `#` autocomplete (fix #191)
+  * Search page: when searching for experiments of the whole team, you'll get a list of tags from the whole team
+  * Tags autocomplete: now showing completion from the team's tags
+  * Molecular structure files (PDB/MOL2/SDF/mmCIF) are previewed using 3Dmol.js (fix #213) Thanks @Athemis.
+
+* Developer corner
+
+  * use grunt to minify all the JS and CSS files in one
+  * updated composer and bower components
+
 Version 1.1.6
 -------------
 

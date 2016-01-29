@@ -332,7 +332,7 @@ class RemoteWebElement implements WebDriverElement, WebDriverLocatable {
     }
 
     // Create a temporary file in the system temp directory.
-    $temp_zip = tempnam('', 'WebDriverZip');
+    $temp_zip = tempnam(sys_get_temp_dir(), 'WebDriverZip');
     $zip = new ZipArchive();
     if ($zip->open($temp_zip, ZipArchive::CREATE) !== true) {
       return false;
@@ -416,8 +416,7 @@ class RemoteWebElement implements WebDriverElement, WebDriverLocatable {
    *
    * @return RemoteWebElement
    */
-  private function newElement($id) {
-    $class = get_class($this);
-    return new $class($this->executor, $id);
+  protected function newElement($id) {
+    return new static($this->executor, $id);
   }
 }

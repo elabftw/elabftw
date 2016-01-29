@@ -20,27 +20,29 @@ class MySql extends Db
         $this->dbh->exec('SET FOREIGN_KEY_CHECKS=1;');
     }
 
-    public function select($column, $table, array &$criteria)
-    {
-        $where = $criteria ? "where %s" : '';
-        $table = $this->getQuotedName($table);
-        $query = "select %s from %s $where";
-        $params = [];
-        foreach ($criteria as $k => $v) {
-            $k = $this->getQuotedName($k);
-            if ($v === null) {
-                $params[] = "$k IS ?";
-            } else {
-                $params[] = "$k = ?";
-            }
-        }
-        $sparams = implode(' AND ', $params);
-
-        return sprintf($query, $column, $table, $sparams);
-    }
-
     public function getQuotedName($name)
     {
         return '`' . str_replace('.', '`.`', $name) . '`';
+    }
+
+    /**
+     * @param string $tableName
+     *
+     * @return array[string]
+     */
+    public function getPrimaryKey($tableName)
+    {
+        if (!isset($this->primaryKeys[$tableName])) {
+            $primaryKey = [];
+            $stmt = $this->getDbh()->query('SHOW KEYS FROM ' . $this->getQuotedName($tableName) . ' WHERE Key_name = "PRIMARY"');
+            $columns = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            foreach ($columns as $column) {
+                $primaryKey []= $column['Column_name'];
+            }
+            $this->primaryKeys[$tableName] = $primaryKey;
+        }
+
+        return $this->primaryKeys[$tableName];
     }
 }

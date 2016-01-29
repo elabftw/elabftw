@@ -50,6 +50,28 @@ abstract class Option implements IteratorAggregate
     }
 
     /**
+     * Creates an option from an array's value.
+     *
+     * If the key does not exist in the array, the array is not actually an array, or the
+     * array's value at the given key is null, None is returned.
+     *
+     * Otherwise, Some is returned wrapping the value at the given key.
+     *
+     * @param mixed $array a potential array value
+     * @param string $key the key to check
+     *
+     * @return Option
+     */
+    public static function fromArraysValue($array, $key)
+    {
+        if ( ! isset($array[$key])) {
+            return None::create();
+        }
+
+        return new Some($array[$key]);
+    }
+
+    /**
      * Creates a lazy-option with the given callback.
      *
      * This is also a helper constructor for lazy-consuming existing APIs where
@@ -74,6 +96,37 @@ abstract class Option implements IteratorAggregate
 
             return new Some($return);
         });
+    }
+
+    /**
+     * Option factory, which creates new option based on passed value.
+     * If value is already an option, it simply returns
+     * If value is a \Closure, LazyOption with passed callback created and returned. If Option returned from callback,
+     * it returns directly (flatMap-like behaviour)
+     * On other case value passed to Option::fromValue() method
+     *
+     * @param Option|\Closure|mixed $value
+     * @param null $noneValue used when $value is mixed or Closure, for None-check
+     *
+     * @return Option
+     */
+    public static function ensure($value, $noneValue = null)
+    {
+        if ($value instanceof Option) {
+            return $value;
+        } elseif ($value instanceof \Closure) {
+            return new LazyOption(function() use ($value, $noneValue) {
+                $return = $value();
+
+                if ($return instanceof Option) {
+                    return $return;
+                } else {
+                    return Option::fromValue($return, $noneValue);
+                }
+            });
+        } else {
+            return Option::fromValue($value, $noneValue);
+        }
     }
 
     /**
@@ -259,11 +312,49 @@ abstract class Option implements IteratorAggregate
      * a shallow comparison ===), then None is returned; otherwise, the Option is
      * returned.
      *
-     * In other words, this will let all values through expect the passed value.
-     * 
+     * In other words, this will let all values through except the passed value.
+     *
      * @param mixed $value
      *
      * @return Option
      */
     abstract public function reject($value);
+
+    /**
+     * Binary operator for the initial value and the option's value.
+     *
+     * If empty, the initial value is returned.
+     * If non-empty, the callable receives the initial value and the option's value as arguments
+     *
+     * ```php
+     *
+     *     $some = new Some(5);
+     *     $none = None::create();
+     *     $result = $some->foldLeft(1, function($a, $b) { return $a + $b; }); // int(6)
+     *     $result = $none->foldLeft(1, function($a, $b) { return $a + $b; }); // int(1)
+     *
+     *     // This can be used instead of something like the following:
+     *     $option = Option::fromValue($integerOrNull);
+     *     $result = 1;
+     *     if ( ! $option->isEmpty()) {
+     *         $result += $option->get();
+     *     }
+     * ```
+     *
+     * @param mixed $initialValue
+     * @param callable $callable function(initialValue, callable): result
+     *
+     * @return mixed
+     */
+    abstract public function foldLeft($initialValue, $callable);
+
+    /**
+     * foldLeft() but with reversed arguments for the callable.
+     *
+     * @param mixed $initialValue
+     * @param callable $callable function(callable, initialValue): result
+     *
+     * @return mixed
+     */
+    abstract public function foldRight($initialValue, $callable);
 }

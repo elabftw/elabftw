@@ -9,6 +9,8 @@ class PostgreSql extends Db
 
     protected $connection = null;
 
+    protected $searchPath = null;
+
     public function load($sql)
     {
         $query = '';
@@ -28,8 +30,15 @@ class PostgreSql extends Db
                 continue;
             }
 
-            if (strpos(trim($sqlLine), '$$') === 0) {
-                $dollarsOpen = !$dollarsOpen;
+            if (!preg_match('/\'.*\$\$.*\'/', $sqlLine)) { // Ignore $$ inside SQL standard string syntax such as in INSERT statements.
+                $pos = strpos($sqlLine, '$$');
+                if (($pos !== false) && ($pos >= 0)) {
+                    $dollarsOpen = !$dollarsOpen;
+                }
+            }
+
+            if (preg_match('/SET search_path = .*/i', $sqlLine, $match)) {
+                $this->searchPath = $match[0];
             }
 
             $query .= "\n" . rtrim($sqlLine);
@@ -94,29 +103,16 @@ class PostgreSql extends Db
             $constring .= ' user=' . $this->user;
             $constring .= ' password=' . $this->password;
             $this->connection = pg_connect($constring);
+
+            if ($this->searchPath !== null) {
+                pg_query($this->connection, $this->searchPath);
+            }
+
             pg_query($this->connection, $query);
             $this->putline = true;
         } else {
             $this->dbh->exec($query);
         }
-    }
-
-    public function select($column, $table, array &$criteria)
-    {
-        $where = $criteria ? "where %s" : '';
-        $query = 'select %s from "%s" ' . $where;
-        $params = [];
-        foreach ($criteria as $k => $v) {
-            if ($v === null) {
-                $params[] = "$k IS NULL ";
-                unset($criteria[$k]);
-            } else {
-                $params[] = "$k = ? ";
-            }
-        }
-        $sparams = implode('AND ', $params);
-
-        return sprintf($query, $column, $table, $sparams);
     }
 
     public function lastInsertId($table)
@@ -137,15 +133,31 @@ class PostgreSql extends Db
         );
         return implode('.', $name);
     }
-    
+
     /**
      * @param string $tableName
      *
-     * @return string
+     * @return array[string]
      */
-    public function getPrimaryColumn($tableName)
+    public function getPrimaryKey($tableName)
     {
-        // @TODO: Implement this for PostgreSQL later
-        return 'id';
+        if (!isset($this->primaryKeys[$tableName])) {
+            $primaryKey = [];
+            $query = 'SELECT a.attname
+                FROM   pg_index i
+                JOIN   pg_attribute a ON a.attrelid = i.indrelid
+                                     AND a.attnum = ANY(i.indkey)
+                WHERE  i.indrelid = ?::regclass
+                AND    i.indisprimary';
+            $stmt = $this->executeQuery($query, [$tableName]);
+            $columns = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            foreach ($columns as $column) {
+                $primaryKey []= $column['attname'];
+            }
+            $this->primaryKeys[$tableName] = $primaryKey;
+        }
+
+        return $this->primaryKeys[$tableName];
     }
 }

@@ -18,6 +18,7 @@ class Listener implements \PHPUnit_Framework_TestListener
     protected $dispatcher;
 
     protected $unsuccessfulTests = [];
+    protected $skippedTests = [];
     protected $startedTests = [];
 
     public function __construct(EventDispatcher $dispatcher)
@@ -51,14 +52,22 @@ class Listener implements \PHPUnit_Framework_TestListener
 
     public function addIncompleteTest(\PHPUnit_Framework_Test $test, \Exception $e, $time)
     {
+        if (in_array($test, $this->skippedTests)) {
+            return;
+        }
         $this->unsuccessfulTests[] = spl_object_hash($test);
         $this->fire(Events::TEST_INCOMPLETE, new FailEvent($test, $e));
+        $this->skippedTests[] = $test;
     }
 
     public function addSkippedTest(\PHPUnit_Framework_Test $test, \Exception $e, $time)
     {
+        if (in_array(spl_object_hash($test), $this->skippedTests)) {
+            return;
+        }
         $this->unsuccessfulTests[] = spl_object_hash($test);
         $this->fire(Events::TEST_SKIPPED, new FailEvent($test, $e));
+        $this->skippedTests[] = spl_object_hash($test);
     }
 
     public function startTestSuite(\PHPUnit_Framework_TestSuite $suite)
@@ -79,15 +88,13 @@ class Listener implements \PHPUnit_Framework_TestListener
         }
         try {
             $test->getScenario()->stopIfBlocked();
+            $this->startedTests[] = spl_object_hash($test);
+            $this->fire(Events::TEST_BEFORE, new TestEvent($test));
         } catch (\PHPUnit_Framework_IncompleteTestError $e) {
             $this->addIncompleteTest($test, $e, 0);
-            return;
         } catch (\PHPUnit_Framework_SkippedTestError $e) {
             $this->addSkippedTest($test, $e, 0);
-            return;
         }
-        $this->startedTests[] = spl_object_hash($test);
-        $this->fire(Events::TEST_BEFORE, new TestEvent($test));
     }
 
     public function endTest(\PHPUnit_Framework_Test $test, $time)

@@ -1,6 +1,0 @@
-.. _install_gnulinux
-
-Install on GNU/Linux
-====================
-
-blouh.

@@ -8,6 +8,7 @@
  * @license AGPL-3.0
  */
 use \Elabftw\Elabftw\Tools as Tools;
+use \Elabftw\Elabftw\MolViewer as MolViewer;
 
 echo "<div id='filesdiv'>";
 // What type of item we are displaying the files of ?
@@ -48,6 +49,9 @@ if ($count > 0) {
         // list of extensions with a corresponding img/thumb-*.png image
         $common_extensions = array('avi', 'csv', 'doc', 'docx', 'mov', 'pdf', 'ppt', 'rar', 'xls', 'xlsx', 'zip');
 
+        // list of extensions understood by 3Dmol.js
+        $mol_extensions = array('pdb', 'sdf', 'mol2', 'mmcif', 'cif');
+
         // Make thumbnail only if it isn't done already
         if (!file_exists($thumbpath)) {
             make_thumb($filepath, $ext, $thumbpath, 100);
@@ -74,7 +78,13 @@ if ($count > 0) {
                   showMol('" . $mol . "');
                   </script></div>";
 
-        } else { // uncommon extension without a nice image to display
+        // if this is something 3Dmol.js can handle
+        } elseif (in_array($ext, $mol_extensions)) {
+            $molviewer = new MolViewer($id, $filepath);
+            echo $molviewer->getViewerDiv();
+
+        } else {
+            // uncommon extension without a nice image to display
             echo "<img class='thumb' src='img/thumb.png' alt='' />";
         }
 
@@ -86,8 +96,8 @@ if ($count > 0) {
         // this is to avoid showing 'Click to add a comment' where in fact you can't click to add a comment because
         // your are in view mode
         $comment = "<img src='img/comment.png' class='bot5px' alt='comment' />
-                    <p class='editable inline' id='filecomment_".$uploads_data['id'] . "'>" .
-                    stripslashes($uploads_data['comment']) . "</p>";
+                    <p class='editable inline' id='filecomment_" . $uploads_data['id'] . "'>" .
+        stripslashes($uploads_data['comment']) . "</p>";
 
         if ($_GET['mode'] === 'edit' || $uploads_data['comment'] != 'Click to add a comment') {
             echo $comment;

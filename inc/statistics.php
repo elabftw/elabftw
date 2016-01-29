@@ -25,7 +25,7 @@ while ($status = $req->fetch()) {
 }
 
 foreach ($status_arr as $key => $value) {
-    $sql = "SELECT COUNT(id)
+    $sql = "SELECT COUNT(*)
         FROM experiments
         WHERE userid = :userid
         AND status = :status";
@@ -37,7 +37,7 @@ foreach ($status_arr as $key => $value) {
 }
 
 // MAKE TOTAL
-$sql = "SELECT COUNT(id) FROM experiments WHERE userid = :userid";
+$sql = "SELECT COUNT(*) FROM experiments WHERE userid = :userid";
 $req = $pdo->prepare($sql);
 $req->bindParam(':userid', $_SESSION['userid']);
 $req->execute();

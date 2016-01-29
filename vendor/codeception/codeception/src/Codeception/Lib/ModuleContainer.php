@@ -30,6 +30,7 @@ class ModuleContainer
     public function __construct(Di $di, $config)
     {
         $this->di = $di;
+        $this->di->set($this);
         $this->config = $config;
     }
 
@@ -50,7 +51,7 @@ class ModuleContainer
         }
 
         // helper
-        $hasNamespace = (mb_strpos($moduleName, '\\') !== false);
+        $hasNamespace = (strpos($moduleName, '\\') !== false);
         if ($hasNamespace) {
             return $this->instantiate($moduleName, $moduleName, $config);
         }

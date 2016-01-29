@@ -419,8 +419,11 @@ class WebDriverTest extends TestsForBrowsers
     public function testCreateCeptScreenshotFail()
     {
         $fakeWd = Stub::make('\Facebook\WebDriver\Remote\RemoteWebDriver', [
-                'takeScreenshot' => Stub::once(function() {}),
-                'getPageSource' => Stub::once(function() {})
+            'takeScreenshot' => Stub::once(function() {}),
+            'getPageSource' => Stub::once(function() {}),
+            'manage' => Stub::make('\Facebook\WebDriver\WebDriverOptions', [
+                'getAvailableLogTypes' => Stub::atLeastOnce(function() { return []; }),
+            ]),
         ]);
         $this->module->webDriver = $fakeWd;
         $cept = (new \Codeception\TestCase\Cept())->configName('loginCept.php');
@@ -433,7 +436,10 @@ class WebDriverTest extends TestsForBrowsers
             'takeScreenshot' => Stub::once(function($filename) {
                 PHPUnit_Framework_Assert::assertEquals(codecept_log_dir('stdClass.login.fail.png'), $filename);
             }),
-            'getPageSource' => Stub::once(function() {})
+            'getPageSource' => Stub::once(function() {}),
+            'manage' => Stub::make('\Facebook\WebDriver\WebDriverOptions', [
+                'getAvailableLogTypes' => Stub::atLeastOnce(function() { return []; }),
+            ]),
         ]);
         $this->module->webDriver = $fakeWd;
         $cest = (new \Codeception\TestCase\Cest())
@@ -449,7 +455,10 @@ class WebDriverTest extends TestsForBrowsers
             'takeScreenshot' => Stub::once(function($filename) use ($test) {
                 PHPUnit_Framework_Assert::assertEquals(codecept_log_dir(get_class($test).'.testLogin.fail.png'), $filename);
             }),
-            'getPageSource' => Stub::once(function() {})
+            'getPageSource' => Stub::once(function() {}),
+            'manage' => Stub::make('\Facebook\WebDriver\WebDriverOptions', [
+                'getAvailableLogTypes' => Stub::atLeastOnce(function() { return []; }),
+            ]),
         ]);
         $this->module->webDriver = $fakeWd;
         $this->module->_failed($test, new PHPUnit_Framework_AssertionFailedError());
@@ -537,4 +546,71 @@ class WebDriverTest extends TestsForBrowsers
         $this->module->seeCookie('PHPSESSID');
     }
 
+    public function testSaveSessionSnapshotsExcludeInvalidCookieDomains()
+    {
+        $fakeWdOptions = Stub::make('\Facebook\WebDriver\WebDriverOptions', [
+            'getCookies' => Stub::atLeastOnce(function() {
+                return [
+                    [
+                        'name' => 'PHPSESSID',
+                        'value' => '123456',
+                        'path' => '/',
+                    ],
+                    [
+                        'name' => '3rdParty',
+                        'value' => '_value_',
+                        'path' => '/',
+                        'domain' => '.3rd-party.net',
+                    ]
+                ];
+            }),
+        ]);
+
+        $fakeWd = Stub::make('\Facebook\WebDriver\Remote\RemoteWebDriver', [
+            'manage' => Stub::atLeastOnce(function() use ($fakeWdOptions) {
+                return $fakeWdOptions;
+            }),
+        ]);
+
+        // Mock the WebDriverOptions::getCookies() method on the first call to introduce a 3rd-party cookie
+        // which has to be ignored when saving a snapshot.
+        $originalWebDriver = $this->module->webDriver;
+        $this->module->webDriver = $fakeWd;
+
+        $this->module->seeCookie('PHPSESSID');
+        $this->module->seeCookie('3rdParty');
+        $this->module->saveSessionSnapshot('login');
+
+        // Restore the original WebDriver
+        $this->module->webDriver = $originalWebDriver;
+
+        $this->webDriver->manage()->deleteAllCookies();
+        $this->module->dontSeeCookie('PHPSESSID');
+        $this->module->dontSeeCookie('3rdParty');
+        $this->module->loadSessionSnapshot('login');
+        $this->module->seeCookie('PHPSESSID');
+        $this->module->dontSeeCookie('3rdParty');
+    }
+
+    public function testSeeInFieldTextarea()
+    {
+        $this->module->amOnPage('/form/textarea');
+        //make sure we see 'sunrise' which is the default text in the textarea
+        $this->module->seeInField('#description', 'sunrise');
+        //fill in some new text and see if we can see it
+        $textarea_value = 'test string';
+        $this->module->fillField('#description', $textarea_value);
+        $this->module->seeInField('#description', $textarea_value);
+    }
+
+    public function testAppendFieldDiv()
+    {
+        $this->module->amOnPage('/form/div_content_editable');
+        //make sure we see 'sunrise' which is the default text in the textarea
+        $this->module->see('sunrise', '#description');
+        //fill in some new text and see if we can see it
+        $textarea_value = 'moonrise';
+        $this->module->appendField('#description', $textarea_value);
+        $this->module->see('sunrise' . $textarea_value, '#description');
+    }
 }

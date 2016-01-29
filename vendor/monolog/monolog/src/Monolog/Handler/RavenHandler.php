@@ -145,6 +145,14 @@ class RavenHandler extends AbstractProcessingHandler
         } else {
             $options['logger'] = $record['channel'];
         }
+        foreach ($this->getExtraParameters() as $key) {
+            foreach (array('extra', 'context') as $source) {
+                if (!empty($record[$source][$key])) {
+                    $options[$key] = $record[$source][$key];
+                    unset($record[$source][$key]);
+                }
+            }
+        }
         if (!empty($record['context'])) {
             $options['extra']['context'] = $record['context'];
             if (!empty($record['context']['user'])) {
@@ -167,7 +175,6 @@ class RavenHandler extends AbstractProcessingHandler
         if ($previousUserContext !== false) {
             $this->ravenClient->user_context($previousUserContext);
         }
-
     }
 
     /**
@@ -186,5 +193,15 @@ class RavenHandler extends AbstractProcessingHandler
     protected function getDefaultBatchFormatter()
     {
         return new LineFormatter();
+    }
+
+    /**
+     * Gets extra parameters supported by Raven that can be found in "extra" and "context"
+     *
+     * @return array
+     */
+    protected function getExtraParameters()
+    {
+        return array('checksum', 'release');
     }
 }

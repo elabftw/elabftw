@@ -17,6 +17,11 @@ use ReflectionClass;
  * A handler for an event, event, filterchain, etc. Abstracts PHP callbacks,
  * primarily to allow for lazy-loading and ensuring availability of default
  * arguments (currying).
+ *
+ * This was primarily used in zend-eventmanager for managing listeners; as that
+ * component removes its usage of this class for v3, it is deprecated.
+ *
+ * @deprecated as of v2.7.4.
  */
 class CallbackHandler
 {

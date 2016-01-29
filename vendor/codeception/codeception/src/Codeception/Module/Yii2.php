@@ -70,21 +70,11 @@ class Yii2 extends Framework implements ActiveRecord, PartedModule
         $mainConfig = Configuration::config();
         if (isset($mainConfig['config']) && isset($mainConfig['config']['test_entry_url'])){
             $this->client->setServerParameter(
-                'HTTP_HOST',
-                (string) parse_url(
-                    $mainConfig['config']['test_entry_url'],
-                    PHP_URL_HOST
-                )
-            );
-            $this->client->setServerParameter(
                 'HTTPS',
-                ((string) parse_url(
-                    $mainConfig['config']['test_entry_url'],
-                    PHP_URL_SCHEME
-                )) === 'https'
+                parse_url($mainConfig['config']['test_entry_url'], PHP_URL_SCHEME) === 'https'
             );
         }
-        $this->app = $this->client->startApp();
+        $this->app = $this->client->getApplication();
 
         if ($this->config['cleanup'] && isset($this->app->db)) {
             $this->transaction = $this->app->db->beginTransaction();
@@ -102,6 +92,8 @@ class Yii2 extends Framework implements ActiveRecord, PartedModule
         if ($this->transaction && $this->config['cleanup']) {
             $this->transaction->rollback();
         }
+        
+        \yii\web\UploadedFile::reset();
 
         if (Yii::$app) {
             Yii::$app->session->destroy();
@@ -221,15 +213,15 @@ class Yii2 extends Framework implements ActiveRecord, PartedModule
 
     /**
      * Converting $page to valid Yii 2 URL
-     * 
+     *
      * Allows input like:
-     * 
+     *
      * ```php
      * $I->amOnPage(['site/view','page'=>'about']);
      * $I->amOnPage('index-test.php?site/index');
      * $I->amOnPage('http://localhost/index-test.php?site/index');
      * ```
-     * 
+     *
      * @param $page string|array parameter for \yii\web\UrlManager::createUrl()
      */
     public function amOnPage($page)
@@ -239,4 +231,53 @@ class Yii2 extends Framework implements ActiveRecord, PartedModule
         }
         parent::amOnPage($page);
     }
+
+    /**
+     * Getting domain regex from rule host template
+     *
+     * @param string $template
+     * @return string
+     */
+    private function getDomainRegex($template)
+    {
+        if (preg_match('#https?://(.*)#', $template, $matches)) {
+            $template = $matches[1];
+        }
+        $parameters = [];
+        if (strpos($template, '<') !== false) {
+            $template = preg_replace_callback(
+                '/<(?:\w+):?([^>]+)?>/u',
+                function ($matches) use (&$parameters) {
+                    $key = '#' . count($parameters) . '#';
+                    $parameters[$key] = isset($matches[1]) ? $matches[1] : '\w+';
+                    return $key;
+                },
+                $template
+            );
+        }
+        $template = preg_quote($template);
+        $template = strtr($template, $parameters);
+        return '/^' . $template . '$/u';
+    }
+
+    /**
+     * Returns a list of regex patterns for recognized domain names
+     *
+     * @return array
+     */
+    public function getInternalDomains()
+    {
+        $domains = [$this->getDomainRegex(Yii::$app->urlManager->hostInfo)];
+
+        if (Yii::$app->urlManager->enablePrettyUrl) {
+            foreach (Yii::$app->urlManager->rules as $rule) {
+                /** @var \yii\web\UrlRule $rule */
+                if ($rule->host !== null) {
+                    $domains[] = $this->getDomainRegex($rule->host);
+                }
+            }
+        }
+        return array_unique($domains);
+    }
 }
+

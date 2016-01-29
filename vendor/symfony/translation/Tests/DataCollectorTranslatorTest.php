@@ -17,12 +17,6 @@ use Symfony\Component\Translation\Loader\ArrayLoader;
 
 class DataCollectorTranslatorTest extends \PHPUnit_Framework_TestCase
 {
-    protected function setUp()
-    {
-        if (!class_exists('Symfony\Component\HttpKernel\DataCollector\DataCollector')) {
-            $this->markTestSkipped('The "DataCollector" is not available');
-        }
-    }
     public function testCollectMessages()
     {
         $collector = $this->createCollector();
@@ -32,6 +26,7 @@ class DataCollectorTranslatorTest extends \PHPUnit_Framework_TestCase
         $collector->trans('bar');
         $collector->transChoice('choice', 0);
         $collector->trans('bar_ru');
+        $collector->trans('bar_ru', array('foo' => 'bar'));
 
         $expectedMessages = array();
         $expectedMessages[] = array(
@@ -40,6 +35,8 @@ class DataCollectorTranslatorTest extends \PHPUnit_Framework_TestCase
               'locale' => 'en',
               'domain' => 'messages',
               'state' => DataCollectorTranslator::MESSAGE_DEFINED,
+              'parameters' => array(),
+              'transChoiceNumber' => null,
         );
         $expectedMessages[] = array(
               'id' => 'bar',
@@ -47,6 +44,8 @@ class DataCollectorTranslatorTest extends \PHPUnit_Framework_TestCase
               'locale' => 'fr',
               'domain' => 'messages',
               'state' => DataCollectorTranslator::MESSAGE_EQUALS_FALLBACK,
+              'parameters' => array(),
+              'transChoiceNumber' => null,
         );
         $expectedMessages[] = array(
               'id' => 'choice',
@@ -54,6 +53,8 @@ class DataCollectorTranslatorTest extends \PHPUnit_Framework_TestCase
               'locale' => 'en',
               'domain' => 'messages',
               'state' => DataCollectorTranslator::MESSAGE_MISSING,
+              'parameters' => array(),
+              'transChoiceNumber' => 0,
         );
         $expectedMessages[] = array(
               'id' => 'bar_ru',
@@ -61,6 +62,17 @@ class DataCollectorTranslatorTest extends \PHPUnit_Framework_TestCase
               'locale' => 'ru',
               'domain' => 'messages',
               'state' => DataCollectorTranslator::MESSAGE_EQUALS_FALLBACK,
+              'parameters' => array(),
+              'transChoiceNumber' => null,
+        );
+        $expectedMessages[] = array(
+              'id' => 'bar_ru',
+              'translation' => 'bar (ru)',
+              'locale' => 'ru',
+              'domain' => 'messages',
+              'state' => DataCollectorTranslator::MESSAGE_EQUALS_FALLBACK,
+              'parameters' => array('foo' => 'bar'),
+              'transChoiceNumber' => null,
         );
 
         $this->assertEquals($expectedMessages, $collector->getCollectedMessages());

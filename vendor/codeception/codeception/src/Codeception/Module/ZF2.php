@@ -5,6 +5,7 @@ use Codeception\Lib\Framework;
 use Codeception\TestCase;
 use Codeception\Configuration;
 use Codeception\Lib\Interfaces\DoctrineProvider;
+use Codeception\Util\ReflectionHelper;
 use Zend\Console\Console;
 use Zend\EventManager\StaticEventManager;
 use Zend\Mvc\Application;
@@ -61,11 +62,14 @@ class ZF2 extends Framework implements DoctrineProvider
     protected $queries = 0;
     protected $time = 0;
 
+    /**
+     * @var array Used to collect domains while recusively traversing route tree
+     */
+    private $domainCollector = [];
+
     public function _initialize()
     {
         require Configuration::projectDir() . 'init_autoloader.php';
-
-        $this->client = new ZF2Connector();
 
         $this->applicationConfig = require Configuration::projectDir() . $this->config['config'];
         if (isset($applicationConfig['module_listener_options']['config_cache_enabled'])) {
@@ -76,6 +80,8 @@ class ZF2 extends Framework implements DoctrineProvider
 
     public function _before(TestCase $test)
     {
+        $this->client = new ZF2Connector();
+
         $this->application = Application::init($this->applicationConfig);
         $events = $this->application->getEventManager();
         $events->detach($this->application->getServiceManager()->get('SendResponseListener'));
@@ -104,11 +110,113 @@ class ZF2 extends Framework implements DoctrineProvider
         }
         $this->queries = 0;
         $this->time = 0;
+
+        parent::_after($test);
     }
 
     public function _getEntityManager()
     {
-        $serviceLocator = Application::init($this->applicationConfig)->getServiceManager();
-        return $serviceLocator->get('Doctrine\ORM\EntityManager');
+        return $this->grabServiceFromContainer('Doctrine\ORM\EntityManager');
+    }
+
+    /**
+     * Grabs a service from ZF2 container.
+     * Recommended to use for unit testing.
+     *
+     * ``` php
+     * <?php
+     * $em = $I->grabServiceFromContainer('Doctrine\ORM\EntityManager');
+     * ?>
+     * ```
+     *
+     * @param $service
+     * @return mixed
+     */
+    public function grabServiceFromContainer($service)
+    {
+        $serviceLocator = $this->application
+            ? $this->application->getServiceManager()
+            : Application::init($this->applicationConfig)->getServiceManager();
+        if (!$serviceLocator->has($service)) {
+            $this->fail("Service $service is not available in container");
+        }
+        return $serviceLocator->get($service);
+    }
+
+    /**
+     * Opens web page using route name and parameters.
+     *
+     * ``` php
+     * <?php
+     * $I->amOnRoute('posts.create');
+     * $I->amOnRoute('posts.show', array('id' => 34));
+     * ?>
+     * ```
+     *
+     * @param $routeName
+     * @param array $params
+     */
+    public function amOnRoute($routeName, array $params = [])
+    {
+        $router = $this->application->getServiceManager()->get('router');
+        $url = $router->assemble($params, ['name' => $routeName]);
+        $this->amOnPage($url);
+    }
+
+    /**
+     * Checks that current url matches route.
+     *
+     * ``` php
+     * <?php
+     * $I->seeCurrentRouteIs('posts.index');
+     * $I->seeCurrentRouteIs('posts.show', ['id' => 8]));
+     * ?>
+     * ```
+     *
+     * @param $routeName
+     * @param array $params
+     */
+    public function seeCurrentRouteIs($routeName, array $params = [])
+    {
+        $router = $this->application->getServiceManager()->get('router');
+        $url = $router->assemble($params, ['name' => $routeName]);
+        $this->seeCurrentUrlEquals($url);
+    }
+
+    protected function getInternalDomains()
+    {
+        /**
+         * @var Zend\Mvc\Router\Http\TreeRouteStack
+         */
+        $router = $this->application->getServiceManager()->get('router');
+        $this->domainCollector = [];
+        $this->addInternalDomainsFromRoutes($router->getRoutes());
+        return array_unique($this->domainCollector);
+    }
+
+    private function addInternalDomainsFromRoutes($routes)
+    {
+        foreach ($routes as $name => $route) {
+            if ($route instanceof \Zend\Mvc\Router\Http\Hostname) {
+                $this->addInternalDomain($route);
+            } elseif ($route instanceof \Zend\Mvc\Router\Http\Part) {
+                $parentRoute = ReflectionHelper::readPrivateProperty($route, 'route');
+                if ($parentRoute instanceof \Zend\Mvc\Router\Http\Hostname) {
+                    $this->addInternalDomain($parentRoute);
+                }
+                // this is necessary to instantiate child routes
+                try {
+                    $route->assemble([], []);
+                } catch (\Exception $e) {
+                }
+                $this->addInternalDomainsFromRoutes($route->getRoutes());
+            }
+        }
+    }
+
+    private function addInternalDomain(\Zend\Mvc\Router\Http\Hostname $route)
+    {
+        $regex = ReflectionHelper::readPrivateProperty($route, 'regex');
+        $this->domainCollector []= '/^' . $regex . '$/';
     }
 }

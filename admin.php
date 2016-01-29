@@ -28,7 +28,6 @@ $selected_menu = null;
 require_once 'inc/head.php';
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
-<script src="js/colorpicker/jquery.colorpicker.js"></script>
 <link href="js/colorpicker/jquery.colorpicker.css" rel="stylesheet" type="text/css" />
 <?php
 // MAIN SQL FOR USERS
@@ -251,7 +250,7 @@ if (!empty($team['stamppass'])) {
         // count the experiments with this status
         // don't allow deletion if experiments with this status exist
         // but instead display a message to explain
-        $count_exp_sql = "SELECT COUNT(id) FROM experiments WHERE status = :status AND team = :team";
+        $count_exp_sql = "SELECT COUNT(*) FROM experiments WHERE status = :status AND team = :team";
         $count_exp_req = $pdo->prepare($count_exp_sql);
         $count_exp_req->bindParam(':status', $status['id'], PDO::PARAM_INT);
         $count_exp_req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
@@ -348,7 +347,7 @@ if (!empty($team['stamppass'])) {
             // count the items with this type
             // don't allow deletion if items with this type exist
             // but instead display a message to explain
-            $count_db_sql = "SELECT COUNT(id) FROM items WHERE type = :type";
+            $count_db_sql = "SELECT COUNT(*) FROM items WHERE type = :type";
             $count_db_req = $pdo->prepare($count_db_sql);
             $count_db_req->bindParam(':type', $items_types['id'], PDO::PARAM_INT);
             $count_db_req->execute();
@@ -370,8 +369,9 @@ if (!empty($team['stamppass'])) {
                 <input type='hidden' name='item_type_id' value='<?php echo $items_types['id']; ?>' />
 
                 <div id='colorwheel_div_<?php echo $items_types['id']; ?>'>
-                    <input class='colorpicker' type='text' name='item_type_bgcolor' value='<?php echo $items_types['bgcolor']; ?>'/>
-                </div><br><br><br>
+            <label><?php echo _('Edit color'); ?></label>
+                    <input class='colorpicker' type='text' style='display:inline' name='item_type_bgcolor' value='<?php echo $items_types['bgcolor']; ?>'/>
+                </div>
                 <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']); ?></textarea><br>
                 <div class='center'>
                     <button type='submit' class='button'><?php echo _('Edit') . ' ' . stripslashes($items_types['name']); ?></button><br>
@@ -402,8 +402,9 @@ if (!empty($team['stamppass'])) {
         <input required type='text' id='new_item_type_name' name='new_item_type_name' />
         <input type='hidden' name='new_item_type' value='1' />
         <div id='colorwheel_div_new'>
+            <label><?php echo _('Edit color'); ?></label>
             <input class='colorpicker' type='text' name='new_item_type_bgcolor' value='000000' />
-        </div><br><br><br><br>
+        </div>
         <textarea class='mceditable' name='new_item_type_template' /></textarea>
         <div class='center submitButtonDiv'>
         <button type='submit' class='button'><?php echo _('Save'); ?></button>

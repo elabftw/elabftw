@@ -80,6 +80,7 @@ a {
     background-color: #f2f2f2;
     padding-right: 15px;
     width: 100%;
+    margin-top: 1em;
 }
 
 #header, #footer, h1, h2, h3, h4, table {
@@ -87,7 +88,7 @@ a {
 }
 
 #header {
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #dcdddc;
 }
 
 #footer {
@@ -99,5 +100,6 @@ a {
     width: 100%;
     font-size: 80%;
     text-align: center;
+    border-top: 1px solid #dcdddc;
 }
 

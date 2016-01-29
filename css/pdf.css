@@ -60,6 +60,37 @@ code {
     background-color:#eee;
 }
 
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #797979;
+}
+
+table td {
+    padding: 5px;
+}
+
+table th {
+    background-color:#dcdddc;
+    color: #797979;
+    text-transform: uppercase;
+    font-size: 90%;
+    padding: 5px;
+    text-align:left;
+    width: 150px;
+}
+
+/* color one row every other row */
+tr:nth-child(even) {
+        background-color: #fff;
+}
+
+tr:nth-child(odd) {
+        background-color: #f2f2f2;
+}
+
 .no_break {
     page-break-inside: avoid;
 }
@@ -83,6 +114,10 @@ code {
     border: 1px solid #dcdddc;
     margin-top: .5em;
 
+}
+
+.noborder {
+    border: none;
 }
 
 #body_text {

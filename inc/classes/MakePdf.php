@@ -402,9 +402,9 @@ class MakePdf extends Make
     */
     private function buildInfoBlock()
     {
-        $this->content .= "<table id='infoblock'><tr><td>
+        $this->content .= "<table id='infoblock'><tr><td class='noborder'>
                            <barcode code='" . $this->getUrl() . "' type='QR' class='barcode' size='0.8' error='M' />
-                           </td><td>" . $this->addElabid() . $this->addLockinfo() . $this->addUrl() . "</td></tr>
+                           </td><td class='noborder'>" . $this->addElabid() . $this->addLockinfo() . $this->addUrl() . "</td></tr>
                            </table>";
     }
 
@@ -413,6 +413,9 @@ class MakePdf extends Make
     */
     private function buildHeader()
     {
+
+        $date = date_create($this->data['date']);
+        $date_str = date_format($date, 'Y-m-d');
         $header = '
                 <html>
                     <head>
@@ -423,9 +426,9 @@ class MakePdf extends Make
                     <div id="header">
                         <h1>' . $this->data['title'] . '</h1>
                         <p style="float:left; width:90%;">
-                            Date: ' . Tools::formatDate($this->data['date']) . '<br />
-                            Tags: <em>'. $this->tags .'</em> <br />
-                            Created by: ' . $this->author . '
+                            <strong>Date:</strong> ' . $date_str . '<br />
+                            <strong>Tags:</strong> <em>'. $this->tags .'</em> <br />
+                            <strong>Created by:</strong> ' . $this->author . '
                         </p>
                         <p style="float:right; width:10%;"><br /><br />
                             {PAGENO} / {nbpg}

@@ -73,18 +73,10 @@ if ($type === 'experiments' || $type == 'items') {
     if (rename($_FILES['file']['tmp_name'], ELAB_ROOT . 'uploads/' . $longname)) {
 
         // generate a sha256sum of the file if it's not too big
-        // do that in chunks of (64 KB) to prevent using to much memory
         if ($_FILES['file']['size'] < 5000000) {
-            $chunk_size = 65536;
             $fp = ELAB_ROOT . 'uploads/' . $longname;
-            $ctx = hash_init('sha256');
-            while (!feof($fp))
-            {
-                $buffer = fgets($fp, $chunk_size);
-                hash_update($ctx, $buffer);
-            }
-            $hash = hash_final(ctx, true);
-            $fclose($fp);
+            $hash_algorithm = 'sha256';
+            $hash = hash_file($hash_algorithm, $fp);
         } else {
             $hash = null;
         }
@@ -121,7 +113,7 @@ if ($type === 'experiments' || $type == 'items') {
             'userid' => $_SESSION['userid'],
             'type' => $type,
             'hash' => $hash,
-            'hash_algorithm' => 'sha256'
+            'hash_algorithm' => $hash_algorithm
         ));
     } else {
         die('Cannot move the file.');

@@ -394,7 +394,6 @@ class MakePdf extends Make
     private function buildBody()
     {
         $this->content .= str_replace("src=\"uploads/", "src=\"" . ELAB_ROOT . "uploads/", $this->data['body']);
-        //$this->content .= "</div>";
     }
 
     /**
@@ -440,7 +439,7 @@ class MakePdf extends Make
                         PDF generated with <a href="http://www.elabftw.net">elabftw</a>, a free and open source lab notebook
                         <p style="font-size:6pt;">File generated on {DATE j-m-Y H:m}</p>
                     </div>
-                </htmlpagefooter>'; //<div id="body_text">';
+                </htmlpagefooter>';
 
         $this->content .= $header;
     }

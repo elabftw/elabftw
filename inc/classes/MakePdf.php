@@ -73,8 +73,6 @@ class MakePdf extends Make
         $this->buildContent();
         // create the pdf
         $mpdf = new \mPDF('utf-8', 'A4');
-        // create a PDF/A1-b compliant PDF file
-        $mpdf->PDFA = true;
         // make sure header and footer are not overlapping the body text
         $mpdf->setAutoTopMargin = 'stretch';
         $mpdf->setAutoBottomMargin = 'stretch';

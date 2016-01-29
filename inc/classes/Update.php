@@ -197,6 +197,15 @@ class Update
             }
             $this->updateSchema(5);
         }
+        if ($current_schema < 6) {
+            // 20160129
+            try {
+                $this->schema6();
+            } catch (Exception $e) {
+                die($e->getMessage());
+            }
+            $this->updateSchema(6);
+        }
         // place new schema functions above this comment
         $this->cleanTmp();
         $msg_arr = array();
@@ -330,6 +339,24 @@ define('SECRET_KEY', '" . Crypto::binTohex($new_secret_key) . "');
 
         if (file_put_contents('config.php', $contents) == 'false') {
             throw new Exception('There was a problem writing the file!');
+        }
+    }
+
+    /**
+    * Change column type of body in 'items' and 'experiments' to 'mediumtext'
+    *
+    * @throws Exception
+    */
+    private function schema6()
+    {
+        $sql = "ALTER TABLE experiments MODIFY body MEDIUMTEXT";
+        $sql2 = "ALTER TABLE items MODIFY body MEDIUMTEXT";
+        $req = $pdo->prepare($sql);
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Cannot change type of column "body" in table "experiments"!');
+        }
+        if (!$this->pdo->q($sql2)) {
+            throw new Exception('Cannot change type of column "body" in table "items"!');
         }
     }
 }

@@ -242,7 +242,7 @@ class MakePdf extends Make
      */
     private function addCss()
     {
-        $css = file_get_contents(ELAB_ROOT . '/css/pdf.min.css');
+        $css = file_get_contents(ELAB_ROOT . '/css/pdf.css');
         return $css;
     }
 
@@ -263,6 +263,7 @@ class MakePdf extends Make
         $md5 = array();
         while ($uploads = $req->fetch()) {
             $real_name[] = $uploads['real_name'];
+            $long_name[] = $uploads['long_name'];
             $comment[] = $uploads['comment'];
             $md5[] = $uploads['md5'];
         }
@@ -284,7 +285,14 @@ class MakePdf extends Make
                 }
                 // add md5 sum ? don't add if we don't have it
                 if (strlen($md5[$i]) === 32) { // we have md5 sum
-                    $this->content .= "<br>md5 : " . $md5[$i];
+                    $this->content .= "<br />md5 : " . $md5[$i];
+                }
+                // if this is an image file, add the thumbnail picture
+                $ext = filter_var(Tools::getExt($real_name[$i]), FILTER_SANITIZE_STRING);
+                $filepath = 'uploads/' . $long_name[$i];
+
+                if (file_exists($filepath) && preg_match('/(jpg|jpeg|png|gif)$/i', $ext)) {
+                    $this->content .= "<br /><img class='attached_image' src='" . $filepath . "' alt='attached image' />";
                 }
                 $this->content .= "</li>";
             }
@@ -410,7 +418,7 @@ class MakePdf extends Make
                     </head>
                 <body>
                 <htmlpageheader name="header">
-                    <div id="header" style="border-bottom: 1px solid black;">
+                    <div id="header">
                         <h1>' . $this->data['title'] . '</h1>
                         <p>
                             Date: ' . Tools::formatDate($this->data['date']) . '<br />

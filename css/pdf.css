@@ -67,6 +67,13 @@ a {
     color: #000000;
 }
 
+.attached_image {
+    max-width: 100%;
+    max-height: 5cm;
+    border: 1px solid #dcdddc;
+
+}
+
 #infoblock {
     border: 1px solid #dcdddc;
     border-radius: 5px;
@@ -77,6 +84,10 @@ a {
 
 #header, #footer, h1, h2, h3, h4, table {
     font-family: "Dejavu Sans", sans-serif, sans;
+}
+
+#header {
+    border-bottom: 1px solid black;
 }
 
 #footer {

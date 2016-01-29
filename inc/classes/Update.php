@@ -197,6 +197,15 @@ class Update
             }
             $this->updateSchema(5);
         }
+        if ($current_schema < 6) {
+            // 20160129
+            try {
+                $this->schema6();
+            } catch (Exception $e) {
+                die($e->getMessage());
+            }
+            $this->updateSchema(6);
+        }
         // place new schema functions above this comment
         $this->cleanTmp();
         $msg_arr = array();
@@ -331,5 +340,33 @@ define('SECRET_KEY', '" . Crypto::binTohex($new_secret_key) . "');
         if (file_put_contents('config.php', $contents) == 'false') {
             throw new Exception('There was a problem writing the file!');
         }
+    }
+
+    /**
+     * Change md5 to generic hash column in uploads
+     * Create column to store the used algorithm type
+     *
+     * @throws Exception if there is a problem
+     */
+    private function schema6()
+    {
+        // First rename the column and then change its type to VARCHAR(128).
+        // This column will be able to keep any sha2 hash up to sha512.
+        // Add a hash_algorithm column to store the algorithm used to create
+        // the hash.
+        $sql = "ALTER TABLE `uploads` CHANGE `md5` `hash` VARCHAR(32);";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Error renaming column "md5" in table "uploads"!');
+        }
+        $sql2 = "ALTER TABLE `uploads` MODIFY `hash` VARCHAR(128);";
+        if (!$this->pdo->q($sql2)) {
+            throw new Exception('Error changing column type of "hash" in table "uploads"!');
+        }
+        // Already existing hashes are exclusively md5
+        $sql3 = "ALTER TABLE `uploads` ADD `hash_algorithm` VARCHAR(10) DEFAULT NULL; UPDATE `uploads` SET `hash_algorithm`='md5' WHERE `hash` IS NOT NULL;";
+        if (!$this->pdo->q($sql3)) {
+            throw new Exception('Error setting hash algorithm for existing entries!');
+        }
+
     }
 }

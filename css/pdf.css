@@ -46,7 +46,7 @@
 }
 
 body {
-    font-style: "Dejavu Serif", serif;
+    font-family: "Lato", sans-serif;
 }
 
 a {
@@ -97,7 +97,7 @@ code {
 }
 
 #header, #footer, h1, h2, h3, h4, table {
-    font-family: "Dejavu Sans", sans-serif, sans;
+    font-family: "Lato", sans-serif;
 }
 
 #header {

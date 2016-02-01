@@ -53,7 +53,7 @@ class Update
      * UPDATE IT ALSO IN INSTALL/ELABFTW.SQL (last line)
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '5';
+    const REQUIRED_SCHEMA = '6';
 
     /**
      * Create the pdo object

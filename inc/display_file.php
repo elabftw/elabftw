@@ -80,7 +80,7 @@ if ($count > 0) {
 
         // if this is something 3Dmol.js can handle
         } elseif (in_array($ext, $mol_extensions)) {
-            $molviewer = new MolViewer($id, $filepath);
+            $molviewer = new MolViewer($uploads_data['id'], $filepath);
             echo $molviewer->getViewerDiv();
 
         } else {

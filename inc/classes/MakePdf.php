@@ -240,8 +240,7 @@ class MakePdf extends Make
      */
     private function addCss()
     {
-        $css = file_get_contents(ELAB_ROOT . '/css/pdf.min.css');
-        return $css;
+        return file_get_contents(ELAB_ROOT . '/css/pdf.min.css');
     }
 
     /**

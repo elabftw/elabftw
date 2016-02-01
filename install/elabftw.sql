@@ -48,7 +48,7 @@ CREATE TABLE `experiments` (
   `team` int(10) unsigned NOT NULL,
   `title` varchar(255) NOT NULL,
   `date` int(10) unsigned NOT NULL,
-  `body` text,
+  `body` mediumtext,
   `status` varchar(255) NOT NULL,
   `links` varchar(255) DEFAULT NULL,
   `userid` int(10) unsigned NOT NULL,
@@ -171,7 +171,7 @@ CREATE TABLE `items` (
   `team` int(10) unsigned NOT NULL,
   `title` varchar(255) DEFAULT NULL,
   `date` int(10) unsigned NOT NULL,
-  `body` text,
+  `body` mediumtext,
   `rating` tinyint(10) DEFAULT '0',
   `type` int(10) unsigned NOT NULL,
   `locked` tinyint(3) unsigned DEFAULT NULL,
@@ -389,4 +389,4 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('stampprovider', 'http://zeitstempel.dfn.de/'),
 ('stampcert', 'vendor/pki.dfn.pem'),
 ('stamphash', 'sha256'),
-('schema', '5');
+('schema', '6');

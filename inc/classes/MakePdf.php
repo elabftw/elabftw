@@ -70,11 +70,13 @@ class MakePdf extends Make
         $this->setAuthor();
         $this->setCleanTitle();
         $this->setTags();
-        $this->buildBody();
         $this->buildContent();
-
         // create the pdf
-        $mpdf = new \mPDF();
+        $mpdf = new \mPDF('utf-8', 'A4');
+        // make sure header and footer are not overlapping the body text
+        $mpdf->setAutoTopMargin = 'stretch';
+        $mpdf->setAutoBottomMargin = 'stretch';
+        // set meta data
         $mpdf->SetAuthor($this->author);
         $mpdf->SetTitle($this->title);
         $mpdf->SetSubject('eLabFTW pdf');
@@ -175,7 +177,7 @@ class MakePdf extends Make
     private function addElabid()
     {
         if ($this->type === 'experiments') {
-            $this->content .= "<p class='elabid'>elabid : " . $this->data['elabid'] . "</p>";
+            return "<p class='elabid'>elabid : " . $this->data['elabid'] . "</p>";
         }
     }
 
@@ -194,7 +196,7 @@ class MakePdf extends Make
 
             // separate the date and time
             $lockdate = explode(' ', $this->data['lockedwhen']);
-            $this->content .= "<p class='elabid'>locked by " . $lockuser['firstname'] . " " . $lockuser['lastname'] . " on " . $lockdate[0] . " at " . $lockdate[1] . ".</p>";
+            return "<p class='elabid'>locked by " . $lockuser['firstname'] . " " . $lockuser['lastname'] . " on " . $lockdate[0] . " at " . $lockdate[1] . ".</p>";
         }
     }
 
@@ -234,13 +236,11 @@ class MakePdf extends Make
     }
 
     /**
-     * The css is added here directly instead of loading it from the css/pdf.css file
-     * to avoid path problems
-     * this css is the minified version of css/pdf.css
+     * Load the contents of css/pdf.min.css and add to the content.
      */
     private function addCss()
     {
-        $this->content .= "<style>a{color:#29AEB9;text-decoration:none}li,ul{color:#797979}.align_right{float:right}.align_left{text-align:left}.strong{font-weight:700}.three-columns{width:60%}.two-columns{-moz-columns:2 250px;-webkit-columns:2 250px;columns:2 250px}.column-left{float:left;width:20%}.column-right{float:right;width:20%}.column-center{display:inline-block;width:20%}p{color:#797979}p a{text-decoration:none}label{color:#797979;font-size:120%}hr{margin:10px 0;color:#dcdddc}li.inline{display:inline}div.txt ol li{list-style-type:decimal!important}div.txt li{list-style-type:square!important}div.txt table,div.txt table td{border:1px solid #000}h2{color:#797979;font-size:30px}h3{color:#797979;font-size:150%;margin:0 auto 10px}.mceditable{height:500px}h4{display:inline;font-size:110%;color:#797979}.inline{display:inline}img{border:none;position:relative;top:3px}section.item div.txt{overflow:hidden}.item{border:1px solid #dcdddc;border-radius:5px;margin:10px auto;padding:10px 0;overflow:hidden}.item a:hover{color:#29AEB9}.box{border:1px solid #dcdddc;border-radius:5px;padding:20px}.newexpcomment{background-color:#f2f2f2;border-radius:5px;color:#797979;margin:2px;padding:10px}.expcomment_box{background-color:#f2f2f2;border-radius:5px;margin-top:5px;padding:10px}.expcomment_box p{margin:5px 0;padding:5px;border-radius:5 0 5px;border-left:3px solid #797979}.expcomment_box p:hover{background-color:#555;color:#fff}.title{font-size:160%;margin:0;padding-left:20px}p.title{width:100%}.title_view{font-size:160%}.date,.date_compact{color:#5d5d5d;margin:15px auto;padding-left:20px}.date_view{padding-left:0}.date_compact{border-right:1px dotted #ccd}.tags{line-height:200%;margin:10px 0 10px 5px;padding:3px;width:90%}.tags a{text-decoration:none;color:#29AEB9}.tags a:hover{color:#343434}.tag a:hover{color:red}.tags_compact{background-color:#fff;border:1px solid #AAA;color:#000;border-radius:15px;font:12px Courier,Arial,sans-serif;line-height:200%;padding:5px;margin:10px 0 10px 25px}.tags_compact a{text-decoration:none}.tags_compact a:hover{color:red}#tagdiv{background-color:#fff;border:3px solid #CCC;padding:5px}.tag{font:700 13px Verdana,Arial,Helvetica,sans-serif;line-height:160%}.tag a{padding:5px;text-decoration:none}.smallgray{display:block;color:gray;font-size:80%}.filediv{margin-top:20px}.filediv a{font-size:14px;text-decoration:none}.filesize{color:grey;font-size:10px}.elabid{text-align:right;color:#797979;font-size:11px}code{border:1px dotted #ccc;padding:3px;background-color:#eee}footer{position:absolute;bottom:0;left:0;background-color:#e2e2e2;padding:10px 0;width:100%;font-size:80%;text-align:center}</style>";
+        return file_get_contents(ELAB_ROOT . '/css/pdf.min.css');
     }
 
     /**
@@ -260,13 +260,14 @@ class MakePdf extends Make
         $hash = array();
         while ($uploads = $req->fetch()) {
             $real_name[] = $uploads['real_name'];
+            $long_name[] = $uploads['long_name'];
             $comment[] = $uploads['comment'];
             $hash[] = $uploads['hash'];
             $hash_algorithm[] = $uploads['hash_algorithm'];
         }
         // do we have files attached ?
         if ($req->rowCount() > 0) {
-            $this->content .= "<section>";
+            $this->content .= "<section class='no_break'>";
             if ($req->rowCount() === 1) {
                 $this->content .= "<h3>Attached file :</h3>";
             } else {
@@ -285,6 +286,13 @@ class MakePdf extends Make
                 if (strlen($hash[$i]) >= 32) { // we have hash
                     $this->content .= "<br>" . $hash_algorithm[$i] . " : " . $hash[$i];
                 }
+                // if this is an image file, add the thumbnail picture
+                $ext = filter_var(Tools::getExt($real_name[$i]), FILTER_SANITIZE_STRING);
+                $filepath = 'uploads/' . $long_name[$i];
+
+                if (file_exists($filepath) && preg_match('/(jpg|jpeg|png|gif)$/i', $ext)) {
+                    $this->content .= "<br /><img class='attached_image' src='" . $filepath . "' alt='attached image' />";
+                }
                 $this->content .= "</li>";
             }
             $this->content .= "</ul></section>";
@@ -292,12 +300,22 @@ class MakePdf extends Make
     }
 
     /**
-     * A url to click is always nice
-     */
-    private function addUrl()
+    * Return the url of the item or experiment
+    *
+    * @return string url to the item/experiment
+    */
+    private function getUrl()
     {
-        $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
+        // This is a workaround for PHP sometimes returning "localhost" in a LAN
+        // environment. In that case, try to get the IP address to generate the correct
+        // links.
+        if ($_SERVER['SERVER_NAME'] === 'localhost') {
+            $server_address = $_SERVER['SERVER_ADDR'];
+        } else {
+            $server_address = $_SERVER['SERVER_NAME'];
+        }
 
+        $url = 'https://' . $server_address . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
         if ($this->type === 'experiments') {
             $target = $this->type . '.php';
         } else {
@@ -307,7 +325,16 @@ class MakePdf extends Make
         $url = str_replace(array('make.php', 'app/timestamp.php'), $target, $url);
         $full_url = $url . "?mode=view&id=" . $this->id;
 
-        $this->content .= "<p class='elabid'>link : <a href='" . $full_url . "'>" . $full_url . "</a></p>";
+        return $full_url;
+    }
+
+    /**
+     * A url to click is always nice
+     */
+    private function addUrl()
+    {
+        $full_url = $this->getUrl();
+        return "<p class='elabid'>link : <a href='" . $full_url . "'>" . $full_url . "</a></p>";
     }
 
     /**
@@ -367,7 +394,55 @@ class MakePdf extends Make
      */
     private function buildBody()
     {
-        $this->body = str_replace("src=\"uploads/", "src=\"" . ELAB_ROOT . "uploads/", $this->data['body']);
+        $this->content .= str_replace("src=\"uploads/", "src=\"" . ELAB_ROOT . "uploads/", $this->data['body']);
+    }
+
+    /**
+    * Build info box containing elabid and permalink
+    */
+    private function buildInfoBlock()
+    {
+        $this->content .= "<table id='infoblock'><tr><td class='noborder'>
+                           <barcode code='" . $this->getUrl() . "' type='QR' class='barcode' size='0.8' error='M' />
+                           </td><td class='noborder'>" . $this->addElabid() . $this->addLockinfo() . $this->addUrl() . "</td></tr>
+                           </table>";
+    }
+
+    /**
+    * Build the header of the HTML code that will be used to build the PDF.
+    */
+    private function buildHeader()
+    {
+
+        $date = date_create($this->data['date']);
+        $date_str = date_format($date, 'Y-m-d');
+        $header = '
+                <html>
+                    <head>
+                        <style>' . $this->addCss() . '</style>
+                    </head>
+                <body>
+                <htmlpageheader name="header">
+                    <div id="header">
+                        <h1>' . $this->data['title'] . '</h1>
+                        <p style="float:left; width:90%;">
+                            <strong>Date:</strong> ' . $date_str . '<br />
+                            <strong>Tags:</strong> <em>'. $this->tags .'</em> <br />
+                            <strong>Created by:</strong> ' . $this->author . '
+                        </p>
+                        <p style="float:right; width:10%;"><br /><br />
+                            {PAGENO} / {nbpg}
+                        </p>
+                    </div>
+                </htmlpageheader>
+                <htmlpagefooter name="footer">
+                    <div id="footer">
+                        PDF generated with <a href="http://www.elabftw.net">elabftw</a>, a free and open source lab notebook
+                        <p style="font-size:6pt;">File generated on {DATE j-m-Y H:m}</p>
+                    </div>
+                </htmlpagefooter>';
+
+        $this->content .= $header;
     }
 
     /**
@@ -375,19 +450,11 @@ class MakePdf extends Make
      */
     private function buildContent()
     {
-        $this->addCss();
-        $this->content .= "<h1 style='margin-bottom:5px'>" . stripslashes($this->data['title']) . "</h1>
-            Date : " . Tools::formatDate($this->data['date']) . "<br />
-            Tags : <em>". $this->tags . "</em><br />
-            Made by : " . $this->author . "
-            <hr>" . stripslashes($this->body);
-
+        $this->buildHeader();
+        $this->buildBody();
         $this->addLinkedItems();
         $this->addAttachedFiles();
         $this->addComments();
-        $this->addElabid();
-        $this->addLockinfo();
-        $this->addUrl();
-        $this->content .= "<footer>PDF generated with <a href='http://www.elabftw.net'>elabftw</a>, a free and open source lab notebook</footer>";
+        $this->buildInfoBlock();
     }
 }

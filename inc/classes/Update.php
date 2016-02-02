@@ -53,7 +53,7 @@ class Update
      * UPDATE IT ALSO IN INSTALL/ELABFTW.SQL (last line)
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '5';
+    const REQUIRED_SCHEMA = '6';
 
     /**
      * Create the pdo object
@@ -339,6 +339,24 @@ define('SECRET_KEY', '" . Crypto::binTohex($new_secret_key) . "');
 
         if (file_put_contents('config.php', $contents) == 'false') {
             throw new Exception('There was a problem writing the file!');
+        }
+    }
+
+    /**
+    * Change column type of body in 'items' and 'experiments' to 'mediumtext'
+    *
+    * @throws Exception
+    */
+    private function schema6()
+    {
+        $sql = "ALTER TABLE experiments MODIFY body MEDIUMTEXT";
+        $sql2 = "ALTER TABLE items MODIFY body MEDIUMTEXT";
+        $req = $this->pdo->prepare($sql);
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Cannot change type of column "body" in table "experiments"!');
+        }
+        if (!$this->pdo->q($sql2)) {
+            throw new Exception('Cannot change type of column "body" in table "items"!');
         }
     }
 

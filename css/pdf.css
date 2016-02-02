@@ -39,291 +39,115 @@
  *
  */
 
-/* LINKS */
+@page {
+    size: auto;
+    header: header;
+    footer: footer;
+}
+
+body {
+    font-family: "Lato", sans-serif;
+    font-kerning: normal;
+}
+
 a {
     color: #29AEB9;
-    text-decoration:none;
-}
-
-/* LISTS */
-ul, li {
-    color: #797979;
-}
-
-/* GENERAL */
-
-.align_right{
-    float: right;
-}
-
-.align_left{
-    text-align: left;
-}
-
-.strong {
-    font-weight: bold;
-}
-
-.three-columns {
-    width: 60%;
-}
-.two-columns {
-    -moz-columns:2 250px;
-    -webkit-columns:2 250px;
-    columns: 2 250px;
-}
-
-.column-left{ float: left; width: 20%; }
-.column-right{ float: right; width: 20%; }
-.column-center{ display: inline-block; width: 20%; }
-
-/* paragraphs */
-p {
-    color:#797979;
-}
-
-p a {
     text-decoration: none;
 }
 
-label {
-    color:#797979;
-    font-size:120%;
-}
-
-/* hr */
-hr {
-    margin: 10px 0 10px 0;
-    color: #dcdddc;
-}
-
-li.inline {
-    display: inline;
-}
-/* fix the list in the body */
-div.txt ol li {
-    /* !important because there is a list-style-type:none in jquery-ui */
-    list-style-type:decimal !important;
-}
-
-div.txt li {
-    /* !important because there is a list-style-type:none in jquery-ui */
-    list-style-type:square !important;
-}
-
-/* prettier tables in mceditable area */
-div.txt table, div.txt table td {
-    border: 1px solid black;
-}
-
-
-/* TITLES */
-h2 {
-    color: #797979;
-    font-size: 30px;
-}
-
-h3 {
-    color: #797979;
-    font-size: 150%;
-    margin: 0 auto 10px auto;
-}
-
-/* bigger space to enter experiment */
-.mceditable {
-    height:500px;
-}
-h4 {
-    display: inline;
-    font-size: 110%;
-    color: #797979;
-}
-
-.inline {
-    display: inline;
-}
-
-img {
-    border: none;
-    position: relative;
-    top: 3px;
-}
-
-
-/* ITEMS */
-
-/* fix for big images uploaded in the text */
-section.item div.txt {
-    overflow:hidden;
-}
-
-.item {
-    border:  1px solid #dcdddc;
-    border-radius: 5px;
-    margin: 10px auto;
-    padding: 10px 0;
-    overflow:hidden;
-}
-
-
-.item a:hover {
-    color:#29AEB9;
-}
-
-.box {
-    border: 1px solid #dcdddc;
-    border-radius: 5px;
-    padding: 20px;
-}
-
-
-/* COMMENTS FOR EXPERIMENTS COMMENTS BOX */
-.newexpcomment {
-    background-color: #f2f2f2;
-    border-radius: 5px;
-    color: #797979;
-    margin:2px;
-    padding: 10px;
-}
-
-.expcomment_box {
-    background-color: #f2f2f2;
-    border-radius: 5px;
-    margin-top:5px;
-    padding: 10px;
-}
-
-.expcomment_box p {
-    margin: 5px 0;
-    padding: 5px;
-    border-radius: 5 0 5px 0;
-    border-left: 3px solid #797979;
-}
-.expcomment_box p:hover {
-    background-color:#555;
-    color:#fff;
-}
-
-/* END COMMENTS */
-
-.title {
-    font-size:  160%;
-    margin: 0;
-    padding-left: 20px;
-}
-p.title {
-    width:100%;
-}
-
-.title_view {
-    font-size:  160%;
-}
-
-.date, .date_compact {
-    color: #5d5d5d;
-    margin:15px auto;
-    padding-left: 20px;
-}
-.date_view {
-    padding-left: 0;
-}
-
-.date_compact {
-    border-right:1px dotted #ccd;
-}
-
-.tags {
-    line-height: 200%;
-    margin: 10px 0 10px 5px;
-    padding: 3px;
-    width: 90%;
-}
-.tags a {
-    text-decoration: none;
-    color:#29AEB9;
-}
-.tags a:hover {
-    color: #343434;
-}
-.tag a:hover {
-    color: red;
-}
-.tags_compact {
-    background-color:white;
-    border:1px solid #AAA;
-    color:black;
-    border-radius: 15px;
-    font:  12px Courier,Arial,sans-serif;
-    line-height: 200%;
-    padding: 5px;
-    margin: 10px 0 10px 25px;
-}
-.tags_compact a{
-    text-decoration: none;
-}
-.tags_compact a:hover {
-    color:red;
-}
-#tagdiv{
-    background-color:white;
-    border:3px solid #CCC;
-    padding: 5px;
-}
-
-.tag {
-    font: bold 13px Verdana, Arial, Helvetica, sans-serif;
-    line-height: 160%;
-}
-.tag a {
-    padding: 5px 5px 5px 5px;
-    text-decoration: none;
-}
-
-.smallgray{
-    display:block;
-    color:gray;
-    font-size: 80%;
-}
-
-/* ucp.php */
-
-
-.filediv {
-    margin-top:20px;
-}
-.filediv a {
-    font-size: 14px;
-    text-decoration: none;
-}
-.filesize{
-    color:grey;
-    font-size: 10px;
-}
-
-
-/* elabid */
-.elabid {
-    text-align:right;
-    color: #797979;
-    font-size: 11px;
-}
-
-
-/* prettier code */
 code {
     border: 1px dotted #ccc;
-    padding:3px;
     background-color:#eee;
 }
 
-footer {
-    position: absolute;
-    bottom:0;
-    left:0;
-    background-color:#e2e2e2;
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #797979;
+}
+
+table td {
+    padding: 5px;
+}
+
+table th {
+    background-color:#dcdddc;
+    color: #797979;
+    text-transform: uppercase;
+    font-size: 90%;
+    padding: 5px;
+    text-align:left;
+    width: 150px;
+}
+
+/* color one row every other row */
+tr:nth-child(even) {
+        background-color: #fff;
+}
+
+tr:nth-child(odd) {
+        background-color: #f2f2f2;
+}
+
+.no_break {
+    page-break-inside: avoid;
+}
+
+.elabid {
+    text-align: right;
+    color: black;
+    font-size: 8pt;
+}
+
+.barcode {
+    padding: 1.5mm;
+    margin: 0;
+    vertical-align: middle;
+    color: #000000;
+}
+
+.attached_image {
+    max-width: 100%;
+    max-height: 5cm;
+    border: 1px solid #dcdddc;
+    margin-top: .5em;
+
+}
+
+.noborder {
+    border: none;
+}
+
+#body_text {
+    page-break-after: always;
+}
+
+#infoblock {
+    border: 1px solid #dcdddc;
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding-right: 15px;
+    width: 100%;
+    margin-top: 1em;
+}
+
+#header, #footer, h1, h2, h3, h4, table {
+    font-family: "Lato", sans-serif;
+}
+
+#header {
+    border-bottom: 1px solid #dcdddc;
+}
+
+#footer {
+    background-color: #e2e2e2;
     padding: 10px 0;
     width: 100%;
     font-size: 80%;
-    text-align:center;
+    text-align: center;
+    border-top: 1px solid #dcdddc;
+    border-radius: 5mm;
 }
 

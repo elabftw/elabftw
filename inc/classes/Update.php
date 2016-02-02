@@ -353,7 +353,6 @@ define('SECRET_KEY', '" . Crypto::binTohex($new_secret_key) . "');
     {
         $sql = "ALTER TABLE experiments MODIFY body MEDIUMTEXT";
         $sql2 = "ALTER TABLE items MODIFY body MEDIUMTEXT";
-        $req = $this->pdo->prepare($sql);
         if (!$this->pdo->q($sql)) {
             throw new Exception('Cannot change type of column "body" in table "experiments"!');
         }

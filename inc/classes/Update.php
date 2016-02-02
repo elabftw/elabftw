@@ -344,6 +344,8 @@ define('SECRET_KEY', '" . Crypto::binTohex($new_secret_key) . "');
 
     /**
     * Change column type of body in 'items' and 'experiments' to 'mediumtext'
+    * Change md5 to generic hash column in uploads
+    * Create column to store the used algorithm type
     *
     * @throws Exception
     */
@@ -358,31 +360,22 @@ define('SECRET_KEY', '" . Crypto::binTohex($new_secret_key) . "');
         if (!$this->pdo->q($sql2)) {
             throw new Exception('Cannot change type of column "body" in table "items"!');
         }
-    }
 
-    /**
-     * Change md5 to generic hash column in uploads
-     * Create column to store the used algorithm type
-     *
-     * @throws Exception if there is a problem
-     */
-    private function schema6()
-    {
         // First rename the column and then change its type to VARCHAR(128).
         // This column will be able to keep any sha2 hash up to sha512.
         // Add a hash_algorithm column to store the algorithm used to create
         // the hash.
-        $sql = "ALTER TABLE `uploads` CHANGE `md5` `hash` VARCHAR(32);";
-        if (!$this->pdo->q($sql)) {
+        $sql3 = "ALTER TABLE `uploads` CHANGE `md5` `hash` VARCHAR(32);";
+        if (!$this->pdo->q($sql3)) {
             throw new Exception('Error renaming column "md5" in table "uploads"!');
         }
-        $sql2 = "ALTER TABLE `uploads` MODIFY `hash` VARCHAR(128);";
-        if (!$this->pdo->q($sql2)) {
+        $sql4 = "ALTER TABLE `uploads` MODIFY `hash` VARCHAR(128);";
+        if (!$this->pdo->q($sql4)) {
             throw new Exception('Error changing column type of "hash" in table "uploads"!');
         }
         // Already existing hashes are exclusively md5
-        $sql3 = "ALTER TABLE `uploads` ADD `hash_algorithm` VARCHAR(10) DEFAULT NULL; UPDATE `uploads` SET `hash_algorithm`='md5' WHERE `hash` IS NOT NULL;";
-        if (!$this->pdo->q($sql3)) {
+        $sql5 = "ALTER TABLE `uploads` ADD `hash_algorithm` VARCHAR(10) DEFAULT NULL; UPDATE `uploads` SET `hash_algorithm`='md5' WHERE `hash` IS NOT NULL;";
+        if (!$this->pdo->q($sql5)) {
             throw new Exception('Error setting hash algorithm for existing entries!');
         }
 

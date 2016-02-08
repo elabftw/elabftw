@@ -390,4 +390,4 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('stampprovider', 'http://zeitstempel.dfn.de/'),
 ('stampcert', 'vendor/pki.dfn.pem'),
 ('stamphash', 'sha256'),
-('schema', '6');
+('schema', '7');

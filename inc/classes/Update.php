@@ -53,7 +53,7 @@ class Update
      * UPDATE IT ALSO IN INSTALL/ELABFTW.SQL (last line)
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '6';
+    const REQUIRED_SCHEMA = '7';
 
     /**
      * Create the pdo object
@@ -206,6 +206,15 @@ class Update
             }
             $this->updateSchema(6);
         }
+        if ($current_schema < 7) {
+            // 20160209
+            try {
+                $this->schema7();
+            } catch (Exception $e) {
+                die($e->getMessage());
+            }
+            $this->updateSchema(7);
+        }
         // place new schema functions above this comment
         $this->cleanTmp();
         $msg_arr = array();
@@ -344,8 +353,6 @@ define('SECRET_KEY', '" . Crypto::binTohex($new_secret_key) . "');
 
     /**
     * Change column type of body in 'items' and 'experiments' to 'mediumtext'
-    * Change md5 to generic hash column in uploads
-    * Create column to store the used algorithm type
     *
     * @throws Exception
     */
@@ -360,7 +367,16 @@ define('SECRET_KEY', '" . Crypto::binTohex($new_secret_key) . "');
         if (!$this->pdo->q($sql2)) {
             throw new Exception('Cannot change type of column "body" in table "items"!');
         }
+    }
 
+    /**
+    * Change md5 to generic hash column in uploads
+    * Create column to store the used algorithm type
+    *
+    * @throws Exception
+    */
+    private function schema7()
+    {
         // First rename the column and then change its type to VARCHAR(128).
         // This column will be able to keep any sha2 hash up to sha512.
         // Add a hash_algorithm column to store the algorithm used to create

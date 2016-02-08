@@ -17,6 +17,7 @@ Version 1.1.7
   * Search page: when searching for experiments of the whole team, you'll get a list of tags from the whole team
   * Tags autocomplete: now showing completion from the team's tags
   * Molecular structure files (PDB/MOL2/SDF/mmCIF) are previewed using 3Dmol.js (fix #213) Thanks @Athemis.
+  * Default hashing algorithm for files changed from md5 to sha256 (thanks @Athemis)
 
 * Developer corner
 

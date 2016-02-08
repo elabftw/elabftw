@@ -270,7 +270,8 @@ CREATE TABLE `uploads` (
   `userid` text NOT NULL,
   `type` varchar(255) NOT NULL,
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `md5` varchar(32) DEFAULT NULL,
+  `hash` varchar(128) DEFAULT NULL,
+  `hash_algorithm` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -389,4 +390,4 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('stampprovider', 'http://zeitstempel.dfn.de/'),
 ('stampcert', 'vendor/pki.dfn.pem'),
 ('stamphash', 'sha256'),
-('schema', '6');
+('schema', '7');

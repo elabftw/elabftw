@@ -72,11 +72,13 @@ if ($type === 'experiments' || $type == 'items') {
     // Try to move the file to its final place
     if (rename($_FILES['file']['tmp_name'], ELAB_ROOT . 'uploads/' . $longname)) {
 
-        // generate a md5sum of the file if it's not too big
+        // generate a sha256sum of the file if it's not too big
         if ($_FILES['file']['size'] < 5000000) {
-            $md5 = hash_file('md5', ELAB_ROOT . 'uploads/' . $longname);
+            $fp = ELAB_ROOT . 'uploads/' . $longname;
+            $hash_algorithm = 'sha256';
+            $hash = hash_file($hash_algorithm, $fp);
         } else {
-            $md5 = null;
+            $hash = null;
         }
 
         // SQL TO PUT FILE IN UPLOADS TABLE
@@ -87,7 +89,8 @@ if ($type === 'experiments' || $type == 'items') {
             item_id,
             userid,
             type,
-            md5
+            hash,
+            hash_algorithm
         ) VALUES(
             :real_name,
             :long_name,
@@ -95,7 +98,8 @@ if ($type === 'experiments' || $type == 'items') {
             :item_id,
             :userid,
             :type,
-            :md5
+            :hash,
+            :hash_algorithm
         )";
 
         $req = $pdo->prepare($sql);
@@ -108,7 +112,8 @@ if ($type === 'experiments' || $type == 'items') {
             'item_id' => $item_id,
             'userid' => $_SESSION['userid'],
             'type' => $type,
-            'md5' => $md5
+            'hash' => $hash,
+            'hash_algorithm' => $hash_algorithm
         ));
     } else {
         die('Cannot move the file.');

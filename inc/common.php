@@ -60,7 +60,11 @@ textdomain($domain);
 // END i18n
 
 // run the update script if we have the wrong schema version
-$update = new \Elabftw\Elabftw\Update();
+try {
+    $update = new \Elabftw\Elabftw\Update();
+} catch (Exception $e) {
+    die($e->getMessage());
+}
 
 // don't run it if we didn't run the update.php script yet
 if (!is_null((get_config('schema')))) {

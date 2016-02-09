@@ -117,12 +117,14 @@ if (isset($_GET['filter'])) {
 // reminder : order by and sort must be passed to the prepare(), not during execute()
 // SEARCH
 if (isset($_GET['q'])) { // if there is a query
+    $search_type = 'query';
     $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
 
     $results_arr = search_item('xp', $query, $_SESSION['userid']);
 
 // RELATED
 } elseif (isset($_GET['related']) && is_pos_int($_GET['related'])) {// search for related experiments to DB item id
+    $search_type = 'related';
     $item_id = $_GET['related'];
     // search in title date and body
     $sql = "SELECT item_id FROM experiments_links
@@ -137,6 +139,7 @@ if (isset($_GET['q'])) { // if there is a query
 
 // TAG SEARCH
 } elseif (isset($_GET['tag']) && !empty($_GET['tag'])) {
+    $search_type = 'tag';
     $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
     $sql = "SELECT ex.id, ex.date, ex.title, st.name, ta.item_id
         FROM experiments AS ex, experiments_tags AS ta, status AS st

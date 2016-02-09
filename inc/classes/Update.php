@@ -45,7 +45,7 @@ class Update
      * UPDATE IT ALSO IN DOC/CONF.PY
      * ///////////////////////////
      */
-    const INSTALLED_VERSION = '1.1.7';
+    const INSTALLED_VERSION = '1.1.8';
 
     /**
      * /////////////////////////////////////////////////////

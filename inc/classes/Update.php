@@ -352,10 +352,10 @@ define('SECRET_KEY', '" . Crypto::binTohex($new_secret_key) . "');
     }
 
     /**
-    * Change column type of body in 'items' and 'experiments' to 'mediumtext'
-    *
-    * @throws Exception
-    */
+     * Change column type of body in 'items' and 'experiments' to 'mediumtext'
+     *
+     * @throws Exception
+     */
     private function schema6()
     {
         $sql = "ALTER TABLE experiments MODIFY body MEDIUMTEXT";
@@ -370,11 +370,11 @@ define('SECRET_KEY', '" . Crypto::binTohex($new_secret_key) . "');
     }
 
     /**
-    * Change md5 to generic hash column in uploads
-    * Create column to store the used algorithm type
-    *
-    * @throws Exception
-    */
+     * Change md5 to generic hash column in uploads
+     * Create column to store the used algorithm type
+     *
+     * @throws Exception
+     */
     private function schema7()
     {
         // First rename the column and then change its type to VARCHAR(128).

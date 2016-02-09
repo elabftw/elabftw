@@ -43,7 +43,7 @@
 }
 
 .rte-autocomplete > li.loading {
-	background: url("http://www.ajaxload.info/cache/FF/FF/FF/00/00/00/1-0.gif") center no-repeat;
+	background: url(../img/ajax-loader.gif) center no-repeat;
 	height: 16px;
 }
 

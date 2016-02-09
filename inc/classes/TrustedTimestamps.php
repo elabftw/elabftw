@@ -185,7 +185,7 @@ class TrustedTimestamps
      */
     private function createRequestfile()
     {
-        if (!is_file($this->pdfPath)) {
+        if (!is_readable($this->pdfPath)) {
             throw new Exception('Pdf not found! This is a bug!');
         }
         $outfilepath = $this->createTempFile();

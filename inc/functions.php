@@ -226,7 +226,7 @@ function processTimestampPost()
     }
     if (isset($_POST['stampcert'])) {
         $cert_chain = filter_var($_POST['stampcert'], FILTER_SANITIZE_STRING);
-        if (is_file(realpath(ELAB_ROOT . $cert_chain)) || realpath($cert_chain)) {
+        if (is_readable(realpath(ELAB_ROOT . $cert_chain)) || realpath($cert_chain)) {
             $stampcert = $cert_chain;
         } else {
             $stampcert = '';

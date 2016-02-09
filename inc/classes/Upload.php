@@ -84,7 +84,7 @@ class Upload extends Make
      */
     public function uploadLocalFile($file)
     {
-        if (!is_file($file)) {
+        if (!is_readable($file)) {
             throw new Exception('No file here!');
         }
 

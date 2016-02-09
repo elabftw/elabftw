@@ -176,49 +176,6 @@ class ImportZip extends Import
     {
         $upload = new Upload($this->category, $this->newItemId);
         $upload->uploadLocalFile($this->tmpPath . '/' . $file);
-        /*
-        // first move the file to the uploads folder
-        $longName = hash("sha512", uniqid(rand(), true)) . '.' . \Elabftw\Elabftw\Tools::getExt($file);
-        $newPath = ELAB_ROOT . 'uploads/' . $longName;
-        if (!rename($this->tmpPath . '/' . $file, $newPath)) {
-            throw new Exception('Cannot rename file!');
-        }
-
-        // make sha sum
-        $hash = hash_file('md5', $newPath);
-
-        // now insert it in sql
-        $sql = "INSERT INTO uploads(
-            real_name,
-            long_name,
-            comment,
-            item_id,
-            userid,
-            type,
-            md5
-        ) VALUES(
-            :real_name,
-            :long_name,
-            :comment,
-            :item_id,
-            :userid,
-            :type,
-            :md5
-        )";
-
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':real_name', basename($file));
-        $req->bindParam(':long_name', $longName);
-        $req->bindValue(':comment', 'Click to add a comment');
-        $req->bindParam(':item_id', $this->newItemId);
-        $req->bindParam(':userid', $_SESSION['userid']);
-        $req->bindValue(':type', $this->category);
-        $req->bindParam(':md5', $md5);
-
-        if (!$req->execute()) {
-            throw new Exception('Cannot import in database!');
-        }
-         */
     }
 
     /**

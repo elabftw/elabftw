@@ -59,19 +59,19 @@
 </g>
 <!-- \\Elabftw\\Elabftw\\Make -->
 <g id="node6" class="node"><title>\\Elabftw\\Elabftw\\Make</title>
-<polygon fill="none" stroke="black" points="116,-446 32,-446 32,-410 116,-410 116,-446"/>
-<text text-anchor="start" x="40" y="-431.2" font-family="Courier,monospace" font-size="11.00">«abstract»</text>
-<text text-anchor="start" x="60" y="-419.2" font-family="Courier,monospace" font-size="11.00">Make</text>
+<polygon fill="none" stroke="black" points="116,-365 32,-365 32,-329 116,-329 116,-365"/>
+<text text-anchor="start" x="40" y="-350.2" font-family="Courier,monospace" font-size="11.00">«abstract»</text>
+<text text-anchor="start" x="60" y="-338.2" font-family="Courier,monospace" font-size="11.00">Make</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\MakePdf -->
 <g id="node7" class="node"><title>\\Elabftw\\Elabftw\\MakePdf</title>
-<polygon fill="none" stroke="black" points="285.5,-446 221.5,-446 221.5,-410 285.5,-410 285.5,-446"/>
-<text text-anchor="middle" x="253.5" y="-425.2" font-family="Courier,monospace" font-size="11.00">MakePdf</text>
+<polygon fill="none" stroke="black" points="285.5,-554 221.5,-554 221.5,-518 285.5,-518 285.5,-554"/>
+<text text-anchor="middle" x="253.5" y="-533.2" font-family="Courier,monospace" font-size="11.00">MakePdf</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\MakePdf&#45;&gt;\\Elabftw\\Elabftw\\Make -->
 <g id="edge2" class="edge"><title>\\Elabftw\\Elabftw\\MakePdf&#45;&gt;\\Elabftw\\Elabftw\\Make</title>
-<path fill="none" stroke="black" d="M221.175,-428C194.887,-428 156.818,-428 126.12,-428"/>
-<polygon fill="none" stroke="black" points="126.02,-424.5 116.02,-428 126.02,-431.5 126.02,-424.5"/>
+<path fill="none" stroke="black" d="M221.348,-527.011C210.071,-522.758 197.73,-516.853 188,-509 141.414,-471.398 105.814,-409.739 87.882,-374.323"/>
+<polygon fill="none" stroke="black" points="90.8742,-372.479 83.2984,-365.072 84.6018,-375.586 90.8742,-372.479"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\Create -->
 <g id="node8" class="node"><title>\\Elabftw\\Elabftw\\Create</title>
@@ -80,13 +80,13 @@
 </g>
 <!-- \\Elabftw\\Elabftw\\MakeCsv -->
 <g id="node9" class="node"><title>\\Elabftw\\Elabftw\\MakeCsv</title>
-<polygon fill="none" stroke="black" points="285.5,-284 221.5,-284 221.5,-248 285.5,-248 285.5,-284"/>
-<text text-anchor="middle" x="253.5" y="-263.2" font-family="Courier,monospace" font-size="11.00">MakeCsv</text>
+<polygon fill="none" stroke="black" points="285.5,-446 221.5,-446 221.5,-410 285.5,-410 285.5,-446"/>
+<text text-anchor="middle" x="253.5" y="-425.2" font-family="Courier,monospace" font-size="11.00">MakeCsv</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\MakeCsv&#45;&gt;\\Elabftw\\Elabftw\\Make -->
 <g id="edge3" class="edge"><title>\\Elabftw\\Elabftw\\MakeCsv&#45;&gt;\\Elabftw\\Elabftw\\Make</title>
-<path fill="none" stroke="black" d="M221.38,-275.581C210.232,-279.875 197.967,-285.654 188,-293 146.973,-323.239 111.45,-371.362 91.6673,-401.241"/>
-<polygon fill="none" stroke="black" points="88.5617,-399.597 86.0446,-409.889 94.4301,-403.413 88.5617,-399.597"/>
+<path fill="none" stroke="black" d="M221.2,-415.262C210.609,-410.856 198.746,-405.813 188,-401 165.716,-391.019 141.237,-379.403 120.778,-369.507"/>
+<polygon fill="none" stroke="black" points="122.208,-366.311 111.683,-365.094 119.152,-372.609 122.208,-366.311"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\CryptoWrapper -->
 <g id="node10" class="node"><title>\\Elabftw\\Elabftw\\CryptoWrapper</title>
@@ -95,13 +95,13 @@
 </g>
 <!-- \\Elabftw\\Elabftw\\MakeZip -->
 <g id="node11" class="node"><title>\\Elabftw\\Elabftw\\MakeZip</title>
-<polygon fill="none" stroke="black" points="285.5,-554 221.5,-554 221.5,-518 285.5,-518 285.5,-554"/>
-<text text-anchor="middle" x="253.5" y="-533.2" font-family="Courier,monospace" font-size="11.00">MakeZip</text>
+<polygon fill="none" stroke="black" points="285.5,-284 221.5,-284 221.5,-248 285.5,-248 285.5,-284"/>
+<text text-anchor="middle" x="253.5" y="-263.2" font-family="Courier,monospace" font-size="11.00">MakeZip</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\MakeZip&#45;&gt;\\Elabftw\\Elabftw\\Make -->
 <g id="edge4" class="edge"><title>\\Elabftw\\Elabftw\\MakeZip&#45;&gt;\\Elabftw\\Elabftw\\Make</title>
-<path fill="none" stroke="black" d="M221.318,-524.601C210.517,-520.224 198.493,-514.858 188,-509 158.286,-492.411 127.027,-469.526 104.938,-452.312"/>
-<polygon fill="none" stroke="black" points="106.965,-449.453 96.9428,-446.017 102.634,-454.953 106.965,-449.453"/>
+<path fill="none" stroke="black" d="M221.2,-278.738C210.609,-283.144 198.746,-288.187 188,-293 165.716,-302.981 141.237,-314.597 120.778,-324.493"/>
+<polygon fill="none" stroke="black" points="119.152,-321.391 111.683,-328.906 122.208,-327.689 119.152,-321.391"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\TrustedTimestamps -->
 <g id="node13" class="node"><title>\\Elabftw\\Elabftw\\TrustedTimestamps</title>
@@ -142,6 +142,11 @@
 <g id="node19" class="node"><title>\\Elabftw\\Elabftw\\Upload</title>
 <polygon fill="none" stroke="black" points="282,-68 225,-68 225,-32 282,-32 282,-68"/>
 <text text-anchor="middle" x="253.5" y="-47.2" font-family="Courier,monospace" font-size="11.00">Upload</text>
+</g>
+<!-- \\Elabftw\\Elabftw\\Upload&#45;&gt;\\Elabftw\\Elabftw\\Make -->
+<g id="edge6" class="edge"><title>\\Elabftw\\Elabftw\\Upload&#45;&gt;\\Elabftw\\Elabftw\\Make</title>
+<path fill="none" stroke="black" d="M224.985,-56.353C212.378,-60.4537 198.043,-66.9565 188,-77 118.442,-146.564 89.4648,-265.322 79.4707,-319.089"/>
+<polygon fill="none" stroke="black" points="76.0235,-318.484 77.7186,-328.942 82.9154,-319.71 76.0235,-318.484"/>
 </g>
 </g>
 </svg>

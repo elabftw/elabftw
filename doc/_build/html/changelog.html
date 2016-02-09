@@ -211,6 +211,8 @@
 <li>Bug fixes<ul>
 <li>fix bug where list text size was incorrect (fixed upstream by tinymce devs; #158)</li>
 <li>fix bug where color of items/status was wrong after editing it</li>
+<li>fix bug in Docker implementation missing SECRET_KEY value in config file</li>
+<li>fix bug in SQL syntax of the show action for tags</li>
 </ul>
 </li>
 <li>Enhancements<ul>
@@ -219,11 +221,13 @@
 <li>Tags autocomplete: now showing completion from the team&#8217;s tags</li>
 <li>Molecular structure files (PDB/MOL2/SDF/mmCIF) are previewed using 3Dmol.js (fix #213) Thanks &#64;Athemis.</li>
 <li>Default hashing algorithm for files changed from md5 to sha256 (thanks &#64;Athemis)</li>
+<li>Add a pretty loader for autocomplete</li>
 </ul>
 </li>
 <li>Developer corner<ul>
 <li>use grunt to minify all the JS and CSS files in one</li>
 <li>updated composer and bower components</li>
+<li>created the Upload class</li>
 </ul>
 </li>
 </ul>

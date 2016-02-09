@@ -24,7 +24,7 @@ use \Elabftw\Elabftw\Tools as Tools;
  *   error : 0
  *   size 134482
  */
-class Upload
+class Upload extends Make
 {
     /** the id of the item we upload to */
     protected $itemId;
@@ -36,7 +36,7 @@ class Upload
     protected $hashAlgorithm = 'sha256';
 
     /** our favorite pdo object */
-    private $pdo;
+    protected $pdo;
 
     /**
      * Create the pdo object and check itemType and id
@@ -48,7 +48,7 @@ class Upload
     {
         $this->pdo = Db::getConnection();
 
-        $this->checkTypes($itemType);
+        $this->itemType = $this->checkType($itemType);
         $this->checkItemId($itemId);
     }
 
@@ -66,8 +66,8 @@ class Upload
         // check we own the experiment we upload to
         $this->checkPermission();
 
-        $realName = $this->getCleanName($file['file']['name']);
-        $longName = $this->getLongName($realName);
+        $realName = $this->getSanitizedName($file['file']['name']);
+        $longName = $this->getCleanName . "." . Tools::getExt($realName);
         $fullPath = ELAB_ROOT . 'uploads/' . $longName;
 
         // Try to move the file to its final place
@@ -89,29 +89,12 @@ class Upload
         }
 
         $realName = basename($file);
-        $longName = $this->getLongName($realName);
-
+        $longName = $this->getCleanName . "." . Tools::getExt($realName);
         $fullPath = ELAB_ROOT . 'uploads/' . $longName;
 
         $this->moveFile($file, $fullPath);
 
         $this->dbInsert($realName, $longName, $this->getHash($fullPath));
-    }
-
-    /**
-     * Verify the type is good
-     *
-     * @param string $itemType type of item
-     * @throws Exception If type if bad
-     */
-    private function checkTypes($itemType)
-    {
-        $typeWhitelist = array('experiments', 'items');
-        if (in_array($itemType, $typeWhitelist)) {
-            $this->itemType = $itemType;
-        } else {
-            throw new Exception('Bad type');
-        }
     }
 
     /**
@@ -151,7 +134,7 @@ class Upload
      * @param string $rawName The name of the file as it was on the user's computer
      * @return string The cleaned filename
      */
-    private function getCleanName($rawName)
+    private function getSanitizedName($rawName)
     {
         return preg_replace('/[^A-Za-z0-9]/', '.', $rawName);
     }
@@ -186,14 +169,13 @@ class Upload
     }
 
     /**
-     * Create a unique long filename + extension
+     * Create a unique long filename
      *
-     * @param string $realName The name of the original file (we only care about the extension)
-     * @return string Return a random string with extension of file at the end
+     * @return string Return a random string
      */
-    private function getLongName($realName)
+    protected function getCleanName()
     {
-        return hash("sha512", uniqid(rand(), true)) . "." . Tools::getExt($realName);
+        return hash("sha512", uniqid(rand(), true));
     }
 
     /**
@@ -204,9 +186,8 @@ class Upload
      * @param string $hash The hash string of our file
      * @throws Exception if request fail
      */
-    private function dbInsert($realName, $longName, $hash) {
-
-        // SQL TO PUT FILE IN UPLOADS TABLE
+    private function dbInsert($realName, $longName, $hash)
+    {
         $sql = "INSERT INTO uploads(
             real_name,
             long_name,

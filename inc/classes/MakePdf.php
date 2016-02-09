@@ -255,9 +255,13 @@ class MakePdf extends Make
         $req->bindParam(':id', $this->id);
         $req->bindParam(':type', $this->type);
         $req->execute();
+
         $real_name = array();
+        $long_name = array();
         $comment = array();
         $hash = array();
+        $hash_algorithm = array();
+
         while ($uploads = $req->fetch()) {
             $real_name[] = $uploads['real_name'];
             $long_name[] = $uploads['long_name'];

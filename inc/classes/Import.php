@@ -74,7 +74,6 @@ abstract class Import
             'text/csv', 'text/tsv',
             'application/zip', 'application/force-download', 'application/x-zip-compressed');
 
-//        throw new Exception($_FILES['file']['type']);
         if (in_array($_FILES['file']['type'], $mimes)) {
             return true;
         }

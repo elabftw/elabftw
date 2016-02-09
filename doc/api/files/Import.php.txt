@@ -72,8 +72,9 @@ abstract class Import
     {
         $mimes = array(null, 'application/vnd.ms-excel', 'text/plain',
             'text/csv', 'text/tsv',
-            'application/zip', 'application/force-download');
+            'application/zip', 'application/force-download', 'application/x-zip-compressed');
 
+//        throw new Exception($_FILES['file']['type']);
         if (in_array($_FILES['file']['type'], $mimes)) {
             return true;
         }

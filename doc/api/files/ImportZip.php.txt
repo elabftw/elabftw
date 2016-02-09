@@ -15,6 +15,7 @@ use \ZipArchive;
 use \RecursiveIteratorIterator;
 use \RecursiveDirectoryIterator;
 use \FileSystemIterator;
+use \Elabftw\Elabftw\Upload as Upload;
 
 /**
  * Import a .elabftw.zip file into the database.
@@ -153,7 +154,7 @@ class ImportZip extends Import
             $req->bindParam(':type', $this->target);
         } else {
             $req->bindValue(':visibility', 'team');
-            $req->bindParam(':status', $this->getDefaultStatus());
+            $req->bindValue(':status', $this->getDefaultStatus());
             $req->bindParam(':userid', $this->target, \PDO::PARAM_INT);
         }
 
@@ -168,11 +169,14 @@ class ImportZip extends Import
     /**
      * If files are attached we want them!
      *
-     * @throws Exception if it cannot rename the file or SQL request failed
+     * @throws Exception in case of error
      * @param string $file The path of the file in the archive
      */
     private function importFile($file)
     {
+        $upload = new Upload($this->category, $this->newItemId);
+        $upload->uploadLocalFile($this->tmpPath . '/' . $file);
+        /*
         // first move the file to the uploads folder
         $longName = hash("sha512", uniqid(rand(), true)) . '.' . \Elabftw\Elabftw\Tools::getExt($file);
         $newPath = ELAB_ROOT . 'uploads/' . $longName;
@@ -180,8 +184,8 @@ class ImportZip extends Import
             throw new Exception('Cannot rename file!');
         }
 
-        // make md5sum
-        $md5 = hash_file('md5', $newPath);
+        // make sha sum
+        $hash = hash_file('md5', $newPath);
 
         // now insert it in sql
         $sql = "INSERT INTO uploads(
@@ -214,6 +218,7 @@ class ImportZip extends Import
         if (!$req->execute()) {
             throw new Exception('Cannot import in database!');
         }
+         */
     }
 
     /**

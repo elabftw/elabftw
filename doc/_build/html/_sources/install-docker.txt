@@ -42,6 +42,4 @@ Now put it in your docker-compose.yml for the next time you want to relaunch the
         - DB_PASSWORD=secr3t
         - SECRET_KEY=ddc467e42f72535636e87029656ab662
 
-That's it!
-
-If you need an image without MySQL, check out `this repository <https://github.com/NicolasCARPi/elabftw-docker-nosql>`_.
+That's all folks!

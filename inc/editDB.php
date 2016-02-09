@@ -121,7 +121,7 @@ require_once 'inc/file_upload.php';
 require_once 'inc/display_file.php';
 
 // TAG AUTOCOMPLETE
-$sql = "SELECT DISTINCT tag FROM items_tags WHERE team_id = :team_id ORDER BY id DESC LIMIT 500";
+$sql = "SELECT DISTINCT tag, id FROM items_tags WHERE team_id = :team_id ORDER BY id DESC LIMIT 500";
 $getalltags = $pdo->prepare($sql);
 $getalltags->bindParam(':team_id', $_SESSION['team_id']);
 $getalltags->execute();

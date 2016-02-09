@@ -228,7 +228,7 @@ require_once 'inc/display_file.php';
 
 <?php
 // TAG AUTOCOMPLETE
-$sql = "SELECT DISTINCT tag FROM experiments_tags INNER JOIN users ON (experiments_tags.userid = users.userid) WHERE users.team = :team ORDER BY id DESC LIMIT 500";
+$sql = "SELECT DISTINCT tag, id FROM experiments_tags INNER JOIN users ON (experiments_tags.userid = users.userid) WHERE users.team = :team ORDER BY id DESC LIMIT 500";
 $getalltags = $pdo->prepare($sql);
 $getalltags->bindParam(':team', $_SESSION['team_id']);
 $getalltags->execute();

@@ -31,10 +31,7 @@ if (strpos($_SERVER['SCRIPT_FILENAME'], 'experiments')) {
     }
     </style>
     <img src='img/attached.png' class='bot5px'> <h3 style='display:inline'><?php echo _('Attach a file'); ?></h3>
-    <!-- additionnal parameters are added as GET params -->
-    <form action="app/upload.php?item_id=<?php echo $id; ?>&type=<?php echo $type; ?>"
-        method="post"
-        enctype="multipart/form-data"
+    <form action="app/upload.php"
         class="dropzone"
         id='elabftw-dropzone'>
     </form>
@@ -53,7 +50,19 @@ Dropzone.options.elabftwDropzone = {
     dictDefaultMessage: '<?php echo _('Drop files here to upload'); ?>',
     maxFilesize: '<?php echo Tools::returnMaxUploadSize(); ?>', // MB
     init: function() {
-        this.on("complete", function() {
+
+        // add additionnal parameters (id and type)
+        this.on("sending", function(file, xhr, formData) {
+            formData.append("item_id", "<?php echo $id; ?>");
+            formData.append("type", "<?php echo $type; ?>");
+        });
+
+        // once it is done
+        this.on("complete", function(answer) {
+            // check the answer we get back from app/uploads.php
+            if (answer.xhr.responseText != 0) {
+                alert("Upload failed: " + answer.xhr.responseText);
+            }
             // reload the #filesdiv once the file is uploaded
             if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
                 $("#filesdiv").load(type + '.php?mode=edit&id=' + item_id + ' #filesdiv', function() {

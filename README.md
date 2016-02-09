@@ -1,4 +1,4 @@
-![elabftw logo](http://i.imgur.com/hq6SAZf.png)
+![elabftw logo](https://i.imgur.com/hq6SAZf.png)
 
 ###[Official website](http://www.elabftw.net) | [Live demo](https://demo.elabftw.net) | [Documentation](https://elabftw.rtfd.org)
 

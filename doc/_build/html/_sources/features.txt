@@ -60,7 +60,7 @@ Intellectual property
 * :rfc:`3161` compliant Trusted Timestamping
 * allow or not users to delete experiments
 * revisions system to see history
-* attached files are md5summed and thus timestamped with the experiment
+* attached files are sha256summed and thus timestamped with the experiment
 
 User experience
 ^^^^^^^^^^^^^^^

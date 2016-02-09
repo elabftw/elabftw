@@ -17,4 +17,31 @@ This is for people who are familiar with docker.
     $EDITOR docker-compose.yml
     docker-compose up
 
+At the first startup, a private key will be generated. You need to get it from the running container to store it in your docker-compose.yml file.
+
+Grab the CONTAINER ID of the elabftw container
+
+.. code-block:: bash
+
+    $ docker ps
+
+Grab the secret key
+
+.. code-block:: bash
+
+    $ docker exec -t 733d32c1de22 grep KEY /elabftw/config.php
+    # replace the ID with yours, tab completion should work
+
+Now put it in your docker-compose.yml for the next time you want to relaunch the container.
+
+.. code-block:: yaml
+
+    environment:
+        - DB_NAME=elabftw
+        - DB_USER=elabftw
+        - DB_PASSWORD=secr3t
+        - SECRET_KEY=ddc467e42f72535636e87029656ab662
+
+That's it!
+
 If you need an image without MySQL, check out `this repository <https://github.com/NicolasCARPi/elabftw-docker-nosql>`_.

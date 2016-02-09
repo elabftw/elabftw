@@ -19,7 +19,5 @@ If you installed it from a .zip or .tar.gz archive
 
 1. Get the `latest archive <https://github.com/elabftw/elabftw/releases/latest>`_
 2. Unpack it on your server, overwriting all the files.
-3. Visit `/update.php` in your browser, logged in as a sysadmin.
-
 
 That's it :)

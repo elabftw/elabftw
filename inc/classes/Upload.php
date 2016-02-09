@@ -67,7 +67,7 @@ class Upload extends Make
         $this->checkPermission();
 
         $realName = $this->getSanitizedName($file['file']['name']);
-        $longName = $this->getCleanName . "." . Tools::getExt($realName);
+        $longName = $this->getCleanName() . "." . Tools::getExt($realName);
         $fullPath = ELAB_ROOT . 'uploads/' . $longName;
 
         // Try to move the file to its final place
@@ -89,7 +89,7 @@ class Upload extends Make
         }
 
         $realName = basename($file);
-        $longName = $this->getCleanName . "." . Tools::getExt($realName);
+        $longName = $this->getCleanName() . "." . Tools::getExt($realName);
         $fullPath = ELAB_ROOT . 'uploads/' . $longName;
 
         $this->moveFile($file, $fullPath);

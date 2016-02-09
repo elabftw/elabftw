@@ -73,7 +73,8 @@ if (!is_null((get_config('schema')))) {
         try {
             $_SESSION['infos'] = $update->runUpdateScript();
         } catch (Exception $e) {
-            $_SESSION['errors'] = $e->getMessage();
+            $msg_arr[] = 'Error updating the database: ' . $e->getMessage();
+            $_SESSION['errors'] = $msg_arr;
         }
     }
 }

@@ -190,31 +190,20 @@ class Update
         }
         if ($current_schema < 5) {
             // 20150803
-            try {
-                $this->schema5();
-            } catch (Exception $e) {
-                die($e->getMessage());
-            }
+            $this->schema5();
             $this->updateSchema(5);
         }
         if ($current_schema < 6) {
             // 20160129
-            try {
-                $this->schema6();
-            } catch (Exception $e) {
-                die($e->getMessage());
-            }
+            $this->schema6();
             $this->updateSchema(6);
         }
         if ($current_schema < 7) {
             // 20160209
-            try {
-                $this->schema7();
-            } catch (Exception $e) {
-                die($e->getMessage());
-            }
+            $this->schema7();
             $this->updateSchema(7);
         }
+
         // place new schema functions above this comment
         $this->cleanTmp();
         $msg_arr = array();

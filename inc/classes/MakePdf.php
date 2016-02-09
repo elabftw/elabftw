@@ -29,8 +29,6 @@ class MakePdf extends Make
     private $data;
     /** a formatted title for our pdf */
     private $cleanTitle;
-    /** content of item */
-    private $body;
 
     /** a sha512 sum */
     public $fileName;

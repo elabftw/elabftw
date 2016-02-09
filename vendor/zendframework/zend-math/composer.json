@@ -13,20 +13,19 @@
         }
     },
     "require": {
-        "php": ">=5.5"
+        "php": "^5.5 || ^7.0"
     },
     "suggest": {
         "ext-bcmath": "If using the bcmath functionality",
         "ext-gmp": "If using the gmp functionality",
-        "ircmaxell/random-lib": "Fallback random byte generator for Zend\\Math\\Rand if OpenSSL/Mcrypt extensions are unavailable",
-        "zendframework/zend-servicemanager": ">= current version, if using the BigInteger::factory functionality"
+        "ircmaxell/random-lib": "Fallback random byte generator for Zend\\Math\\Rand if OpenSSL/Mcrypt extensions are unavailable"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-master": "2.5-dev",
-            "dev-develop": "2.6-dev"
+            "dev-master": "2.6-dev",
+            "dev-develop": "2.7-dev"
         }
     },
     "autoload-dev": {
@@ -37,7 +36,6 @@
     "require-dev": {
         "fabpot/php-cs-fixer": "1.7.*",
         "ircmaxell/random-lib": "~1.1",
-        "phpunit/PHPUnit": "~4.0",
-        "zendframework/zend-servicemanager": "~2.5"
+        "phpunit/PHPUnit": "~4.0"
     }
 }

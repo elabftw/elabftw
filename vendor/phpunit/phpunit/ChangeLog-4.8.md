@@ -2,6 +2,13 @@
 
 All notable changes of the PHPUnit 4.8 release series are documented in this file using the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
+## [4.8.22] - 2016-02-02
+
+### Changed
+
+* Fixed [#2050](https://github.com/sebastianbergmann/phpunit/issues/2050): `PHPUnit_Util_XML::load()` raises exception with empty message when XML string is empty
+* Fixed a bug in `PHPUnit_Runner_Version::series()`
+
 ## [4.8.21] - 2015-12-12
 
 ### Changed
@@ -156,6 +163,7 @@ New PHAR release due to updated dependencies
 * Made the argument check of `assertContains()` and `assertNotContains()` more strict to prevent undefined behavior such as [#1808](https://github.com/sebastianbergmann/phpunit/issues/1808)
 * Changed the name of the default group from `__nogroup__` to `default`
 
+[4.8.22]: https://github.com/sebastianbergmann/phpunit/compare/4.8.21...4.8.22
 [4.8.21]: https://github.com/sebastianbergmann/phpunit/compare/4.8.20...4.8.21
 [4.8.20]: https://github.com/sebastianbergmann/phpunit/compare/4.8.19...4.8.20
 [4.8.19]: https://github.com/sebastianbergmann/phpunit/compare/4.8.18...4.8.19

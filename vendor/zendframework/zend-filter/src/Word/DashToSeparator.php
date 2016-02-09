@@ -23,6 +23,6 @@ class DashToSeparator extends AbstractSeparator
             return $value;
         }
 
-        return preg_replace('#-#', $this->separator, $value);
+        return str_replace('-', $this->separator, $value);
     }
 }

@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 1.2.2 - 2016-01-22
+
+* Added support for URIs without any authority.
+* Added support for HTTP 451 'Unavailable For Legal Reasons.'
+* Added support for using '0' as a filename.
+* Added support for including non-standard ports in Host headers.
+
 ## 1.2.1 - 2015-11-02
 
 * Now supporting negative offsets when seeking to SEEK_END.

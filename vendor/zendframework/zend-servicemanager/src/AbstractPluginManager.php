@@ -9,6 +9,7 @@
 
 namespace Zend\ServiceManager;
 
+use Interop\Container\ContainerInterface;
 use Exception as BaseException;
 
 /**
@@ -57,11 +58,56 @@ abstract class AbstractPluginManager extends ServiceManager implements ServiceLo
      * Add a default initializer to ensure the plugin is valid after instance
      * creation.
      *
-     * @param null|ConfigInterface $configuration
+     * Additionally, the constructor provides forwards compatibility with v3 by
+     * overloading the initial argument. v2 usage expects either null or a
+     * ConfigInterface instance, and will ignore any other arguments. v3 expects
+     * a ContainerInterface instance, and will use an array of configuration to
+     * seed the current instance with services. In most cases, you can ignore the
+     * constructor unless you are writing a specialized factory for your plugin
+     * manager or overriding it.
+     *
+     * @param null|ConfigInterface|ContainerInterface $configOrContainerInstance
+     * @param array $v3config If $configOrContainerInstance is a container, this
+     *     value will be passed to the parent constructor.
+     * @throws Exception\InvalidArgumentException if $configOrContainerInstance
+     *     is neither null, nor a ConfigInterface, nor a ContainerInterface.
      */
-    public function __construct(ConfigInterface $configuration = null)
+    public function __construct($configOrContainerInstance = null, array $v3config = [])
     {
-        parent::__construct($configuration);
+        if (null !== $configOrContainerInstance
+            && ! $configOrContainerInstance instanceof ConfigInterface
+            && ! $configOrContainerInstance instanceof ContainerInterface
+        ) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                '%s expects a ConfigInterface instance or ContainerInterface instance; received %s',
+                get_class($this),
+                (is_object($configOrContainerInstance)
+                    ? get_class($configOrContainerInstance)
+                    : gettype($configOrContainerInstance)
+                )
+            ));
+        }
+
+        if ($configOrContainerInstance instanceof ContainerInterface) {
+            if (property_exists($this, 'serviceLocator')) {
+                if (! empty($v3config)) {
+                    parent::__construct(new Config($v3config));
+                }
+                $this->serviceLocator = $configOrContainerInstance;
+            }
+
+            if (property_exists($this, 'creationContext')) {
+                if (! empty($v3config)) {
+                    parent::__construct($v3config);
+                }
+                $this->creationContext = $configOrContainerInstance;
+            }
+        }
+
+        if ($configOrContainerInstance instanceof ConfigInterface) {
+            parent::__construct($configOrContainerInstance);
+        }
+
         $this->addInitializer(function ($instance) {
             if ($instance instanceof ServiceLocatorAwareInterface) {
                 $instance->setServiceLocator($this);
@@ -272,8 +318,9 @@ abstract class AbstractPluginManager extends ServiceManager implements ServiceLo
             $factory = reset($callable);
         }
 
+        // duck-type MutableCreationOptionsInterface for forward compatibility
         if (isset($factory)
-            && ($factory instanceof MutableCreationOptionsInterface)
+            && method_exists($factory, 'setCreationOptions')
             && is_array($this->creationOptions)
             && !empty($this->creationOptions)
         ) {

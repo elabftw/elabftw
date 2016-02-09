@@ -244,4 +244,38 @@ class UriTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foo', $uri->getPath());
         $this->assertEquals('bar.com/foo', (string) $uri);
     }
+
+    /**
+     * @dataProvider pathTestNoAuthority
+     */
+    public function testNoAuthority($input)
+    {
+        $uri = new Uri($input);
+
+        $this->assertEquals($input, (string) $uri);
+    }
+
+    public function pathTestNoAuthority()
+    {
+        return [
+            // path-rootless
+            ['urn:example:animal:ferret:nose'],
+            // path-absolute
+            ['urn:/example:animal:ferret:nose'],
+            ['urn:/'],
+            // path-empty
+            ['urn:'],
+            ['urn'],
+        ];
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Unable to parse URI
+     */
+    public function testNoAuthorityWithInvalidPath()
+    {
+        $input = 'urn://example:animal:ferret:nose';
+        $uri = new Uri($input);
+    }
 }

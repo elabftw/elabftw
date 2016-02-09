@@ -9,5 +9,5 @@ accessing this configuration data within application code. The configuration
 data may come from a variety of media supporting hierarchical data storage.
 
 
-- File issues at https://github.com/zendframework/zend-code/issues
-- Documentation is at http://framework.zend.com/manual/current/en/index.html#zend-code
+- File issues at https://github.com/zendframework/zend-config/issues
+- Documentation is at https://zendframework.github.io/zend-config/

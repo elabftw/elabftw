@@ -9,6 +9,8 @@
 
 namespace Zend\Filter;
 
+use Zend\ServiceManager\ServiceManager;
+
 class StaticFilter
 {
     /**
@@ -24,10 +26,6 @@ class StaticFilter
      */
     public static function setPluginManager(FilterPluginManager $manager = null)
     {
-        // Don't share by default to allow different arguments on subsequent calls
-        if ($manager instanceof FilterPluginManager) {
-            $manager->setShareByDefault(false);
-        }
         static::$plugins = $manager;
     }
 
@@ -39,8 +37,9 @@ class StaticFilter
     public static function getPluginManager()
     {
         if (null === static::$plugins) {
-            static::setPluginManager(new FilterPluginManager());
+            static::setPluginManager(new FilterPluginManager(new ServiceManager()));
         }
+
         return static::$plugins;
     }
 
@@ -60,7 +59,7 @@ class StaticFilter
      * @return mixed
      * @throws Exception\ExceptionInterface
      */
-    public static function execute($value, $classBaseName, array $args = array())
+    public static function execute($value, $classBaseName, array $args = [])
     {
         $plugins = static::getPluginManager();
 

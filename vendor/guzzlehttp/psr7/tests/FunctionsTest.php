@@ -546,6 +546,16 @@ class FunctionsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('www.foo.com', (string) $r2->getHeaderLine('host'));
     }
 
+    public function testCanModifyRequestWithUriAndPort()
+    {
+        $r1 = new Psr7\Request('GET', 'http://foo.com:8000');
+        $r2 = Psr7\modify_request($r1, [
+            'uri' => new Psr7\Uri('http://www.foo.com:8000')
+        ]);
+        $this->assertEquals('http://www.foo.com:8000', (string) $r2->getUri());
+        $this->assertEquals('www.foo.com:8000', (string) $r2->getHeaderLine('host'));
+    }
+
     public function testCanModifyRequestWithCaseInsensitiveHeader()
     {
         $r1 = new Psr7\Request('GET', 'http://foo.com', ['User-Agent' => 'foo']);

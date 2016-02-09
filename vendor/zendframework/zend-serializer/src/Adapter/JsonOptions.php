@@ -14,13 +14,13 @@ use Zend\Serializer\Exception;
 
 class JsonOptions extends AdapterOptions
 {
-    /**
-     * @var int
-     */
+    /** @var bool */
     protected $cycleCheck = false;
 
+    /** @var bool */
     protected $enableJsonExprFinder = false;
 
+    /** @var int */
     protected $objectDecodeType = ZendJson::TYPE_ARRAY;
 
     /**

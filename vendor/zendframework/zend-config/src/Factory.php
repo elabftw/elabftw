@@ -9,6 +9,7 @@
 
 namespace Zend\Config;
 
+use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\ArrayUtils;
 
 class Factory
@@ -33,13 +34,13 @@ class Factory
      *
      * @var array
      */
-    protected static $extensions = array(
+    protected static $extensions = [
         'ini'         => 'ini',
         'json'        => 'json',
         'xml'         => 'xml',
         'yaml'        => 'yaml',
         'properties'  => 'javaproperties',
-    );
+    ];
 
     /**
      * Register config file extensions for writing
@@ -47,13 +48,13 @@ class Factory
      *
      * @var array
      */
-    protected static $writerExtensions = array(
+    protected static $writerExtensions = [
         'php'  => 'php',
         'ini'  => 'ini',
         'json' => 'json',
         'xml'  => 'xml',
         'yaml' => 'yaml',
-    );
+    ];
 
     /**
      * Read a config from a file.
@@ -114,7 +115,7 @@ class Factory
                 static::$extensions[$extension] = $reader;
             }
 
-            /** @var Reader\ReaderInterface $reader  */
+            /* @var Reader\ReaderInterface $reader */
             $config = $reader->fromFile($filepath);
         } else {
             throw new Exception\RuntimeException(sprintf(
@@ -136,7 +137,7 @@ class Factory
      */
     public static function fromFiles(array $files, $returnConfigObject = false, $useIncludePath = false)
     {
-        $config = array();
+        $config = [];
 
         foreach ($files as $file) {
             $config = ArrayUtils::merge($config, static::fromFile($file, false, $useIncludePath));
@@ -156,9 +157,8 @@ class Factory
      */
     public static function toFile($filename, $config)
     {
-        if (
-            (is_object($config) && !($config instanceof Config)) ||
-            (!is_object($config) && !is_array($config))
+        if ((is_object($config) && !($config instanceof Config))
+            || (!is_object($config) && !is_array($config))
         ) {
             throw new Exception\InvalidArgumentException(
                 __METHOD__." \$config should be an array or instance of Zend\\Config\\Config"
@@ -220,7 +220,7 @@ class Factory
     public static function getReaderPluginManager()
     {
         if (static::$readers === null) {
-            static::$readers = new ReaderPluginManager();
+            static::$readers = new ReaderPluginManager(new ServiceManager());
         }
         return static::$readers;
     }
@@ -244,7 +244,7 @@ class Factory
     public static function getWriterPluginManager()
     {
         if (static::$writers === null) {
-            static::$writers = new WriterPluginManager();
+            static::$writers = new WriterPluginManager(new ServiceManager());
         }
 
         return static::$writers;

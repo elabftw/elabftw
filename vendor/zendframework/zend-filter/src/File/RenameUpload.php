@@ -18,13 +18,13 @@ class RenameUpload extends AbstractFilter
     /**
      * @var array
      */
-    protected $options = array(
+    protected $options = [
         'target'               => null,
         'use_upload_name'      => false,
         'use_upload_extension' => false,
         'overwrite'            => false,
         'randomize'            => false,
-    );
+    ];
 
     /**
      * Store already filtered values, so we can filter multiple
@@ -33,14 +33,14 @@ class RenameUpload extends AbstractFilter
      *
      * @var array
      */
-    protected $alreadyFiltered = array();
+    protected $alreadyFiltered = [];
 
     /**
      * Constructor
      *
      * @param array|string $targetOrOptions The target file path or an options array
      */
-    public function __construct($targetOrOptions)
+    public function __construct($targetOrOptions = [])
     {
         if (is_array($targetOrOptions)) {
             $this->setOptions($targetOrOptions);
@@ -174,10 +174,10 @@ class RenameUpload extends AbstractFilter
             $uploadData = $value;
             $sourceFile = $value['tmp_name'];
         } else {
-            $uploadData = array(
+            $uploadData = [
                 'tmp_name' => $value,
                 'name'     => $value,
-            );
+            ];
             $sourceFile = $value;
         }
 

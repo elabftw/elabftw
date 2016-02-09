@@ -10,6 +10,7 @@
 namespace Zend\Serializer;
 
 use Zend\Serializer\Adapter\AdapterInterface as Adapter;
+use Zend\ServiceManager\ServiceManager;
 
 abstract class Serializer
 {
@@ -39,7 +40,6 @@ abstract class Serializer
         if ($adapterName instanceof Adapter) {
             return $adapterName; // $adapterName is already an adapter object
         }
-
         return static::getAdapterPluginManager()->get($adapterName, $adapterOptions);
     }
 
@@ -62,7 +62,7 @@ abstract class Serializer
     public static function getAdapterPluginManager()
     {
         if (static::$adapters === null) {
-            static::$adapters = new AdapterPluginManager();
+            static::$adapters = new AdapterPluginManager(new ServiceManager);
         }
         return static::$adapters;
     }
@@ -74,7 +74,7 @@ abstract class Serializer
      */
     public static function resetAdapterPluginManager()
     {
-        static::$adapters = new AdapterPluginManager();
+        static::$adapters = new AdapterPluginManager(new ServiceManager);
         return static::$adapters;
     }
 

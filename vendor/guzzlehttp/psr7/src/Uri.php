@@ -477,20 +477,27 @@ class Uri implements UriInterface
         $uri = '';
 
         if (!empty($scheme)) {
-            $uri .= $scheme . '://';
+            $uri .= $scheme . ':';
         }
 
+        $hierPart = '';
+
         if (!empty($authority)) {
-            $uri .= $authority;
+            if (!empty($scheme)) {
+                $hierPart .= '//';
+            }
+            $hierPart .= $authority;
         }
 
         if ($path != null) {
             // Add a leading slash if necessary.
-            if ($uri && substr($path, 0, 1) !== '/') {
-                $uri .= '/';
+            if ($hierPart && substr($path, 0, 1) !== '/') {
+                $hierPart .= '/';
             }
-            $uri .= $path;
+            $hierPart .= $path;
         }
+
+        $uri .= $hierPart;
 
         if ($query != null) {
             $uri .= '?' . $query;

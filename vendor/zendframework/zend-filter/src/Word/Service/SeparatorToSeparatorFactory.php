@@ -2,52 +2,60 @@
 
 namespace Zend\Filter\Word\Service;
 
+use Interop\Container\ContainerInterface;
 use Zend\Filter\Word\SeparatorToSeparator;
+use Zend\ServiceManager\Exception\InvalidServiceException;
 use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\MutableCreationOptionsInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class SeparatorToSeparatorFactory implements
-    FactoryInterface,
-    MutableCreationOptionsInterface
+class SeparatorToSeparatorFactory implements FactoryInterface
 {
     /**
-     * @var array
-     */
-    protected $creationOptions = array();
-
-    /**
-     * Set creation options
+     * Options to pass to the constructor (when used in v2), if any.
      *
-     * @param array $creationOptions
-     * @return void
+     * @param null|array
      */
-    public function setCreationOptions(array $creationOptions)
+    private $creationOptions = [];
+
+    public function __construct($creationOptions = null)
     {
+        if (null === $creationOptions) {
+            return;
+        }
+
+        if ($creationOptions instanceof Traversable) {
+            $creationOptions = iterator_to_array($creationOptions);
+        }
+
+        if (! is_array($creationOptions)) {
+            throw new InvalidServiceException(sprintf(
+                '%s cannot use non-array, non-traversable creation options; received %s',
+                __CLASS__,
+                (is_object($creationOptions) ? get_class($creationOptions) : gettype($creationOptions))
+            ));
+        }
+
         $this->creationOptions = $creationOptions;
     }
 
     /**
-     * Get creation options
-     *
-     * @return array
-     */
-    public function getCreationOptions()
-    {
-        return $this->creationOptions;
-    }
-
-    /**
      * {@inheritDoc}
-     *
-     * @return SeparatorToSeparator
-     * @throws ServiceNotCreatedException if Controllermanager service is not found in application service locator
      */
-    public function createService(ServiceLocatorInterface $plugins)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         return new SeparatorToSeparator(
-            isset($this->creationOptions['search_separator']) ? $this->creationOptions['search_separator'] : ' ',
-            isset($this->creationOptions['replacement_separator']) ? $this->creationOptions['replacement_separator'] : '-'
+            isset($options['search_separator']) ? $options['search_separator'] : ' ',
+            isset($options['replacement_separator']) ? $options['replacement_separator'] : '-'
         );
+    }
+
+    public function createService(ServiceLocatorInterface $serviceLocator)
+    {
+        return $this($serviceLocator, self::class, $this->creationOptions);
+    }
+
+    public function setCreationOptions(array $options)
+    {
+        $this->creationOptions = $options;
     }
 }

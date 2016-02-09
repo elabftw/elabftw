@@ -168,7 +168,7 @@ class Update
     /**
      * Update the database schema if needed.
      *
-     * @return string[]|null $msg_arr
+     * @return string[] $msg_arr
      */
     public function runUpdateScript()
     {

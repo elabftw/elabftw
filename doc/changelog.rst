@@ -9,6 +9,15 @@ Version 1.1.8
 * Bug fixes
 
   * fix bug where elabid wasn't properly imported from zip archive
+  * fix bug in docker where secret_key was absent from config file
+
+* Documentation
+
+  * clarified the Docker installation
+
+* Enhancements
+
+  * improved the docker distribution
 
 Version 1.1.7
 -------------

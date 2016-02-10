@@ -136,6 +136,8 @@ class MakeZip extends Make
             if ($this->zipped['team'] != $_SESSION['team_id']) {
                 throw new Exception(_("You are trying to download an item you don't own!"));
             }
+            // fill the elabid for items
+            $this->zipped['elabid'] = 'placeholder';
         }
 
         // make a title without special char for folder inside .zip
@@ -268,6 +270,7 @@ class MakeZip extends Make
             'title' => stripslashes($this->zipped['title']),
             'body' => stripslashes($this->zipped['body']),
             'date' => $this->zipped['date'],
+            'elabid' => $this->zipped['elabid'],
             'files' => $this->fileArr
         );
         unset($this->fileArr);

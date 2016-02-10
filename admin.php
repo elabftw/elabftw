@@ -503,7 +503,9 @@ if (!empty($team['stamppass'])) {
 <br><span class='strong'><?php echo _('You should make a backup of your database before importing thousands of items!'); ?></span></p>
 
         <label for='item_selector'><?php echo _('1. Select where to import:'); ?></label>
-        <select id='item_selector' onchange='goNext(this.value)'><option value='' disabled>Import items</option>
+        <select id='item_selector' onchange='goNext(this.value)'>
+            <option value='' selected>-------</option>
+            <option value='' disabled>Import items</option>
         <?php
         while ($items_types = $req->fetch()) {
             echo "<option value='" . $items_types['id'] . "' name='type' ";

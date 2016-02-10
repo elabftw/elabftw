@@ -156,30 +156,17 @@
 <p class="last">This is experimental!</p>
 </div>
 <img alt="_images/docker.png" src="_images/docker.png" />
-<p>This is for people who are familiar with docker.</p>
-<div class="highlight-bash"><div class="highlight"><pre>git clone https://github.com/elabftw/docker-elabftw
-<span class="nb">cd </span>docker-elabftw
-cp docker-compose.yml-EXAMPLE docker-compose.yml
+<p>Using Docker allows you to run elabftw without touching the configuration of your server.
+It ships with nginx + php-fpm with elabftw installed and configured properly with all the php extensions needed.
+An official MySQL docker image is used for the database.</p>
+<p>Step 1 : install <a class="reference external" href="https://docs.docker.com/engine/installation/">docker</a> and <a class="reference external" href="https://docs.docker.com/compose/install/">docker-compose</a></p>
+<p>Step 2 :&nbsp;enter the following three commands:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="c"># get the config file</span>
+wget https://raw.githubusercontent.com/elabftw/docker-elabftw/master/docker-compose.yml-EXAMPLE -O docker-compose.yml
+<span class="c"># edit it and add the secret key, change default passwords, change mount points for volumes, change ports mapping</span>
 <span class="nv">$EDITOR</span> docker-compose.yml
+<span class="c"># fire up everything</span>
 docker-compose up
-</pre></div>
-</div>
-<p>At the first startup, a private key will be generated. You need to get it from the running container to store it in your docker-compose.yml file.</p>
-<p>Grab the CONTAINER ID of the elabftw container</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>docker ps
-</pre></div>
-</div>
-<p>Grab the secret key</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>docker <span class="nb">exec</span> -t 733d32c1de22 grep KEY /elabftw/config.php
-<span class="c"># replace the ID with yours, tab completion should work</span>
-</pre></div>
-</div>
-<p>Now put it in your docker-compose.yml for the next time you want to relaunch the container.</p>
-<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">environment</span><span class="p-Indicator">:</span>
-    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">DB_NAME=elabftw</span>
-    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">DB_USER=elabftw</span>
-    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">DB_PASSWORD=secr3t</span>
-    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">SECRET_KEY=ddc467e42f72535636e87029656ab662</span>
 </pre></div>
 </div>
 <p>That&#8217;s all folks!</p>

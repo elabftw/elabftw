@@ -3,6 +3,13 @@
 Changelog
 =========
 
+Version 1.1.8
+-------------
+
+* Bug fixes
+
+  * fix bug where elabid wasn't properly imported from zip archive
+
 Version 1.1.7
 -------------
 

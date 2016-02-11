@@ -32,7 +32,7 @@ Why use eLabFTW ?
 * It makes it easy to share information between co-workers or collaborators
 * It is simple to install and to keep up to date
 * **It works for Windows, Mac OS X, Linux, BSD, Solaris, _etc…**
-* Protected access with login/password (password is very securely stored as salted SHA-512 sum
+* Protected access with login/password (password is very securely stored as salted SHA-512 sum)
 * It can be used by multiple users at the same time
 * **It can be used by multiple teams**
 * You can have templates for experiments you do often
@@ -55,7 +55,7 @@ Why use eLabFTW ?
 Is this system stable ? Can I trust my data with it ?
 -----------------------------------------------------
 
-It's still in beta, but you can already start using it. New features are added very often and they don't break what exists already. However, having an automated :ref:`backup <backup>` strategy is mandatory in order to be sure **nothing will be lost**.
+New features are added very often and they don't break what exists already. However, having an automated :ref:`backup <backup>` strategy is mandatory in order to be sure **nothing will be lost**.
 
 Being able to do backups is yet another advantage over paper (you can't backup paper !).
 
@@ -128,4 +128,4 @@ The operating system of the server can be any, but GNU/Linux or FreeBSD is recom
 The server software can be any (nginx, apache, cherokee, lighttpd, …).
 
 **Requirements for the client :**
-- Any operating system with any browser (latest version). Internet Explorer is not recommended for obvious reasons.
+- Any operating system with any browser (latest version). Internet Explorer/Edge is not recommended for obvious reasons.

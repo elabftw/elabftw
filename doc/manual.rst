@@ -91,12 +91,17 @@ Duplicating an experiment allows you to create a new item with the same Title, t
 
 Clicking this will create a pdf from your experiment. The generated pdf will contain all the information related to the experiment.
 
-3.4 Lock
+3.4 Make a zip archive
+~~~~~~~~~~~~~~~~~~~~~~
+
+A zip archive will contain the generated pdf of the experiment + any attached files present.
+
+3.5 Lock
 ~~~~~~~~
 
 Once locked, an experiment cannot be modified anymore. Unless you unlock it. If it is locked by someone with locking powers (the PI), you will not be able to unlock it. Once locked, a new action appears :
 
-3.5 Timestamp
+3.6 Timestamp
 ~~~~~~~~~~~~~
 
 A locked experiment can be timestamped. Once timestamped it cannot be edited anymore.
@@ -113,7 +118,7 @@ More info here : https://en.wikipedia.org/wiki/Trusted_timestamping
 
 eLabFTW uses :rfc:`3161` for timestamping. So any TSA providing a :rfc:`3161` compatible way of timestamping will work.
 
-3.7 elabid
+3.8 elabid
 ~~~~~~~~~~
 
 In the bottom right part of the experiment, you can see something like : «Unique elabid : 20150526-e72646c3ecf59b4f72147a52707629150bca0f91». This number is unique to each experiment. You can use it to reference an experiment with an external database.
@@ -167,3 +172,5 @@ You can export experiments in .zip. If the experiment was timestamped you will f
 You can export and import items from the database (it can be several items).
 
 Press 't' to have a TODO list.
+
+In the editor, press Ctrl+shift+d to get today's date inserted at cursor position.

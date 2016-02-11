@@ -91,7 +91,7 @@
 <li class="toctree-l1"><a class="reference internal" href="common-errors.html">Common errors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="postinstall.html">Post install</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">How to backup</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#backup-sql-database">Backup SQL database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-a-script">Using a script</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#making-it-automatic-using-cron">Making it automatic using cron</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-to-restore-a-backup">How to restore a backup</a></li>
 </ul>
@@ -156,42 +156,20 @@
             
   <div class="section" id="how-to-backup">
 <span id="backup"></span><h1>How to backup<a class="headerlink" href="#how-to-backup" title="Permalink to this headline">¶</a></h1>
-<p>This page shows you how to backup an existing elabftw installation.</p>
-<p>There is basically two things to backup : the SQL database, and the <cite>elabftw</cite> folder (with your config file and your uploaded files).</p>
-<div class="section" id="backup-sql-database">
-<h2>Backup SQL database<a class="headerlink" href="#backup-sql-database" title="Permalink to this headline">¶</a></h2>
+<p>This page shows you how to backup an existing elabftw installation. It is important that you take the time to make sure that your backups are working properly.</p>
+<img alt="_images/didyoubackup.jpg" src="_images/didyoubackup.jpg" />
+<p>There is basically three things to backup :</p>
+<ul class="simple">
+<li>the MySQL database</li>
+<li>your <cite>config.php</cite> file</li>
+<li>the uploaded files (in <cite>uploads/</cite> folder)</li>
+</ul>
+<div class="section" id="using-a-script">
+<h2>Using a script<a class="headerlink" href="#using-a-script" title="Permalink to this headline">¶</a></h2>
 <p>You&#8217;ll want to have a little script that do the backup automatically.
-Here is the script I&#8217;m using, adapt it to your needs:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="c">#!/bin/sh</span>
-<span class="c"># backup.sh - Backup eLabFTW installation</span>
-<span class="c"># -------------</span>
-<span class="c"># Get clean date (make sure your version of date supports this option)</span>
-<span class="nv">y</span><span class="o">=</span><span class="sb">`</span>date --rfc-3339<span class="o">=</span>date <span class="p">|</span>awk -F <span class="s1">&#39;-&#39;</span> <span class="s1">&#39;{print $1}&#39;</span><span class="p">|</span>cut -c3-4<span class="sb">`</span>
-<span class="nv">m</span><span class="o">=</span><span class="sb">`</span>date --rfc-3339<span class="o">=</span>date <span class="p">|</span>awk -F <span class="s1">&#39;-&#39;</span> <span class="s1">&#39;{print $2}&#39;</span><span class="sb">`</span>
-<span class="nv">d</span><span class="o">=</span><span class="sb">`</span>date --rfc-3339<span class="o">=</span>date <span class="p">|</span>awk -F <span class="s1">&#39;-&#39;</span> <span class="s1">&#39;{print $3}&#39;</span><span class="sb">`</span>
-<span class="nv">date</span><span class="o">=</span><span class="nv">$y$m$d</span>
-
-<span class="c"># elab sql backup</span>
-<span class="c">###################</span>
-<span class="c"># make a dump of the database in elabftw.sql file</span>
-mysqldump -u elabftw -p<span class="s1">&#39;PUT_YOUR_SQL_PASSWORD_HERE&#39;</span> elabftw &gt; elabftw.sql
-
-<span class="c"># copy this file somewhere else using ssh (scp)</span>
-scp -q elabftw.sql user@192.168.0.3:.backups/sql/elabftw-<span class="nv">$date</span>.sql
-
-<span class="c"># move the file to a local backup dir</span>
-mv elabftw.sql /home/pi/.backups/sql/elabftw-<span class="nv">$date</span>.sql
-
-<span class="c"># www files backup</span>
-<span class="c">###################</span>
-<span class="c"># make a tarball of www</span>
-tar czf www.tar.gz -C /var/ www
-
-<span class="c"># copy the tarball to somewhere else using ssh (scp)</span>
-scp -q www.tar.gz user@192.168.0.3:.backups/www/www-<span class="nv">$date</span>.tar.gz <span class="o">&amp;&amp;</span> rm www.tar.gz
-</pre></div>
-</div>
-<p>If you don&#8217;t remember your SQL password, look in the file <cite>elabftw/config.php</cite>!</p>
+Here is one way to do it. Adapt it to your needs: <a class="reference external" href="https://gist.github.com/NicolasCARPi/5d9e2599857a148a54b0">see script</a>.</p>
+<p>If you don&#8217;t remember your SQL user/password, look in the file <cite>elabftw/config.php</cite>!</p>
+<p>Make sure to synchronize your files to another computer. Because backuping to the same machine is only half useful.</p>
 </div>
 <div class="section" id="making-it-automatic-using-cron">
 <h2>Making it automatic using cron<a class="headerlink" href="#making-it-automatic-using-cron" title="Permalink to this headline">¶</a></h2>
@@ -200,27 +178,28 @@ scp -q www.tar.gz user@192.168.0.3:.backups/www/www-<span class="nv">$date</span
 <div class="highlight-python"><div class="highlight"><pre>export EDITOR=nano ; crontab -e
 </pre></div>
 </div>
-<p>This will open a file.</p>
+<p>This will open a file:</p>
 <img alt="_images/crontab.png" src="_images/crontab.png" />
 <p>Add this line at the bottom:</p>
-<div class="highlight-python"><div class="highlight"><pre>00 04 * * * sh /path/to/script.sh
+<div class="highlight-python"><div class="highlight"><pre>00 04 * * * sh /path/to/backup.sh
 </pre></div>
 </div>
-<p>This will run the script everyday at 4 am.</p>
+<p>This will run the script everyday at 4am.</p>
 </div>
 <div class="section" id="how-to-restore-a-backup">
 <h2>How to restore a backup<a class="headerlink" href="#how-to-restore-a-backup" title="Permalink to this headline">¶</a></h2>
 <p>Get a fresh elabftw folder, make the required directories, copy the config file:</p>
-<div class="highlight-python"><div class="highlight"><pre>git clone --depth 1 https://github.com/elabftw/elabftw
-mkdir -p elabftw/uploads/{tmp}
-chmod -R 777 elabftw/uploads
+<div class="highlight-bash"><div class="highlight"><pre>git clone --depth <span class="m">1</span> https://github.com/elabftw/elabftw
+mkdir -p elabftw/uploads/tmp
+chmod -R <span class="m">777</span> elabftw/uploads
 cp -r /path/to/backup/uploads elabftw/
 cp /path/to/backup/config.php elabftw/
 </pre></div>
 </div>
 <p>Now import your SQL database back</p>
 <p>You can use phpmyadmin, create a new database and import your .sql backup, or use the command line:</p>
-<div class="highlight-python"><div class="highlight"><pre>mysql -uroot -p elabftw &lt; /path/to/backup/elabftw.sql
+<div class="highlight-bash"><div class="highlight"><pre>gunzip /path/to/backup/elabftw.sql.gz
+mysql -uroot -p elabftw &lt; /path/to/backup/elabftw.sql
 </pre></div>
 </div>
 <p>Stay safe ;)</p>

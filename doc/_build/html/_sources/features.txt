@@ -7,11 +7,12 @@ General
 ^^^^^^^
 * free (as in speech)
 * free (as in beer)
-* multi-plateform (server or client)
+* multi-platform (server or client)
 * web based (no install necessary on client)
 * multiple teams
 * quick search + advanced search
-* git deployement
+* git deployment
+* docker image available
 
 Experiments
 ^^^^^^^^^^^
@@ -22,7 +23,7 @@ Experiments
 * upload multiple files
 * duplicate experiments
 * export as pdf
-* export as zip archive
+* export/import as zip archive
 * general default experiment template
 * user templates
 * export/import user templates to files
@@ -32,6 +33,8 @@ Experiments
 * attached mol files will display the molecule in the thumbnail
 * link with database items
 * molecule drawer (optional)
+* molecular structure files are previewed
+* user groups to restrict read access among a team
 
 Database
 ^^^^^^^^
@@ -50,7 +53,7 @@ Security
 * formkeys
 * anti bruteforce system
 * log system
-* secure storage of password (sha512)
+* secure storage of password (salted sha512)
 * secure password reset mechanism
 * option for new account admin validation
 

@@ -46,30 +46,33 @@ Then email me the result, or send a pull request.
 Contributing to the code
 ------------------------
 
-* before doing a pull request, open an issue so we can discuss about it (unless it is obvious that your code should be merged ;).
-* base your PR on the **next** branch, which is the development branch; **master** being the *release* branch.
-* most of the code is procedural, but a progressive transition to object oriented code is on the way.
+* before doing a pull request, open an issue so we can discuss about it
+* base your PR on the **hypernext** branch, which is the development branch; **master** being the *release* branch
+* most of the code is procedural, but a progressive transition to object oriented code is on the way
 * classes should be in `inc/classes` with namespace Elabftw\\Elabftw
 * a new class will be loaded automagically thanks to the use of PSR-4 with composer
 * for i18n, we use gettext
 * if you change a string in gettext _('they look like this'), change it also in a .po file (generally the french one) and generate a .mo file (with poedit)
 * same if you add a string shown to the user, it needs to be gettexted
-* if you make a change to the SQL stucture, you need to put it in `update.php` and also `install/elabftw.sql`
-* the `update.php` script is sequential. So add a block of code before the END comment. Make a check to see if you need to alter something, and if yes, do it.
+* if you make a change to the SQL stucture, you need to put add an update function in `inc/classes/Update.php` and also modify `install/elabftw.sql` accordingly
 * most of the functions are in `inc/functions.php`
+* instead of adding your functions to `inc/functions.php`, create a proper class
 * you can use the constant ELAB_ROOT (which ends with a /) to have a full path
 * comment your code wisely
 * your code must follow `the PSR standards <https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md>`_
 * add a plugin to your editor to show trailing whitespaces in red
 * add a plugin to your editor to show PSR-1 errors
 * remove BOM
+* if you make a change to the documentation, you can regenerate the HTML with `grunt doc`
 
 API Documentation
 -----------------
 
 You can find a PHP Docblock generated documentation on classes `here <../../../doc/api/namespaces/Elabftw.Elabftw.html>`_ (local link).
 
-To generate it: `phpdoc -t doc/api -d inc/classes`
+Have a look at the errors report to check that you commented all functions properly.
+
+To generate it: `grunt api`
 
 Automation
 ----------

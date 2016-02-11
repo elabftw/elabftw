@@ -114,9 +114,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#edit">3.1 Edit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#duplicate">3.2 Duplicate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#make-a-pdf">3.3 Make a pdf</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#lock">3.4 Lock</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#timestamp">3.5 Timestamp</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#elabid">3.7 elabid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#make-a-zip-archive">3.4 Make a zip archive</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lock">3.5 Lock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#timestamp">3.6 Timestamp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#elabid">3.8 elabid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#comments">3.8 Comments</a></li>
 </ul>
 </li>
@@ -248,12 +249,16 @@ Paste it. Press OK. That&#8217;s it, you have an image inside your main text.</p
 <h3>3.3 Make a pdf<a class="headerlink" href="#make-a-pdf" title="Permalink to this headline">¶</a></h3>
 <p>Clicking this will create a pdf from your experiment. The generated pdf will contain all the information related to the experiment.</p>
 </div>
+<div class="section" id="make-a-zip-archive">
+<h3>3.4 Make a zip archive<a class="headerlink" href="#make-a-zip-archive" title="Permalink to this headline">¶</a></h3>
+<p>A zip archive will contain the generated pdf of the experiment + any attached files present.</p>
+</div>
 <div class="section" id="lock">
-<h3>3.4 Lock<a class="headerlink" href="#lock" title="Permalink to this headline">¶</a></h3>
+<h3>3.5 Lock<a class="headerlink" href="#lock" title="Permalink to this headline">¶</a></h3>
 <p>Once locked, an experiment cannot be modified anymore. Unless you unlock it. If it is locked by someone with locking powers (the PI), you will not be able to unlock it. Once locked, a new action appears :</p>
 </div>
 <div class="section" id="timestamp">
-<h3>3.5 Timestamp<a class="headerlink" href="#timestamp" title="Permalink to this headline">¶</a></h3>
+<h3>3.6 Timestamp<a class="headerlink" href="#timestamp" title="Permalink to this headline">¶</a></h3>
 <p>A locked experiment can be timestamped. Once timestamped it cannot be edited anymore.</p>
 <p>What happens when you timestamp an experiment :</p>
 <ul class="simple">
@@ -267,7 +272,7 @@ Paste it. Press OK. That&#8217;s it, you have an image inside your main text.</p
 <p>eLabFTW uses <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3161.html"><strong>RFC 3161</strong></a> for timestamping. So any TSA providing a <span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3161.html"><strong>RFC 3161</strong></a> compatible way of timestamping will work.</p>
 </div>
 <div class="section" id="elabid">
-<h3>3.7 elabid<a class="headerlink" href="#elabid" title="Permalink to this headline">¶</a></h3>
+<h3>3.8 elabid<a class="headerlink" href="#elabid" title="Permalink to this headline">¶</a></h3>
 <p>In the bottom right part of the experiment, you can see something like : «Unique elabid : 20150526-e72646c3ecf59b4f72147a52707629150bca0f91». This number is unique to each experiment. You can use it to reference an experiment with an external database.</p>
 </div>
 <div class="section" id="comments">
@@ -312,6 +317,7 @@ Paste it. Press OK. That&#8217;s it, you have an image inside your main text.</p
 <p>You can export experiments in .zip. If the experiment was timestamped you will find in the archive the timestamped pdf and the corresponding .asn1 token.</p>
 <p>You can export and import items from the database (it can be several items).</p>
 <p>Press &#8216;t&#8217; to have a TODO list.</p>
+<p>In the editor, press Ctrl+shift+d to get today&#8217;s date inserted at cursor position.</p>
 </div>
 </div>
 

@@ -13,7 +13,7 @@ The people that helped with internationalization:
 * zh-CN : Suyoung Wang
 * it-IT : Maddalena Nano, Paolo Maiuri
 * es-ES : Elena, Arnau Montagud, Amaya Blesa Siemann, Jesus
-* de-DE : Marko Storch, Timo Betz, Christian Wunder, Doug Morse
+* de-DE : @Athemis, Marko Storch, Timo Betz, Christian Wunder, Doug Morse
 
 eLabFTW uses open source code from others. A big thanks to them for making their code available !
 

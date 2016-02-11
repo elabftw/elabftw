@@ -12,8 +12,6 @@ To update, cd in the `elabftw` folder and do:
 
     $ git pull
 
-Once the new files are here, you need to update the database : visit `/update.php` in your browser, logged in as a sysadmin.
-
 If you installed it from a .zip or .tar.gz archive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

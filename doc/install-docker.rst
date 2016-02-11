@@ -24,4 +24,6 @@ Step 2 : enter the following three commands:
     # fire up everything
     docker-compose up
 
+Now visit https://YOUR.IP.ADDRESS/install. You will be redirected to the register page to create the sysadmin account.
+
 That's all folks!

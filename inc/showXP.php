@@ -128,7 +128,7 @@ if (isset($_GET['q'])) { // if there is a query
     $item_id = $_GET['related'];
     // search in title date and body
     $sql = "SELECT item_id FROM experiments_links
-        WHERE link_id = :link_id LIMIT 100";
+        WHERE link_id = :link_id";
     $req = $pdo->prepare($sql);
     $req->execute(array(
         'link_id' => $item_id
@@ -150,8 +150,7 @@ if (isset($_GET['q'])) { // if there is a query
         AND ex.id = ta.item_id
         AND ta.tag LIKE :tag
         " . $filter . "
-        ORDER BY $order $sort
-        LIMIT 100";
+        ORDER BY $order $sort";
     $req = $pdo->prepare($sql);
     $req->bindParam(':tag', $tag, PDO::PARAM_STR);
     $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
@@ -171,8 +170,7 @@ if (isset($_GET['q'])) { // if there is a query
         AND ex.status = st.id
         AND st.team = :teamid
         " . $filter . "
-        ORDER BY $order $sort
-        LIMIT 100";
+        ORDER BY $order $sort";
     $req = $pdo->prepare($sql);
     $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
     $req->bindParam(':teamid', $_SESSION['team_id'], PDO::PARAM_INT);

@@ -119,7 +119,7 @@ function search_item($type, $query, $userid)
     if ($type === 'xp') {
         // search in title date and body
         $sql = "SELECT id FROM experiments
-            WHERE userid = :userid AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
+            WHERE userid = :userid AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%')";
         $req = $pdo->prepare($sql);
         $req->execute(array(
             'userid' => $userid
@@ -129,7 +129,7 @@ function search_item($type, $query, $userid)
             $results_arr[] = $data['id'];
         }
         // now we search in tags, and append the found ids to our result array
-        $sql = "SELECT item_id FROM experiments_tags WHERE userid = :userid AND tag LIKE '%$query%' LIMIT 100";
+        $sql = "SELECT item_id FROM experiments_tags WHERE userid = :userid AND tag LIKE '%$query%'";
         $req = $pdo->prepare($sql);
         $req->execute(array(
             'userid' => $userid
@@ -138,7 +138,7 @@ function search_item($type, $query, $userid)
             $results_arr[] = $data['item_id'];
         }
         // now we search in file comments and filenames
-        $sql = "SELECT item_id FROM uploads WHERE userid = :userid AND (comment LIKE '%$query%' OR real_name LIKE '%$query%') AND type = 'experiment' LIMIT 100";
+        $sql = "SELECT item_id FROM uploads WHERE userid = :userid AND (comment LIKE '%$query%' OR real_name LIKE '%$query%') AND type = 'experiment'";
         $req = $pdo->prepare($sql);
         $req->execute(array(
             'userid' => $userid
@@ -151,7 +151,7 @@ function search_item($type, $query, $userid)
     } elseif ($type === 'db') {
         // search in title date and body
         $sql = "SELECT id FROM items
-            WHERE (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%') LIMIT 100";
+            WHERE (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%')";
         $req = $pdo->prepare($sql);
         $req->execute();
         // put resulting ids in the results array
@@ -160,7 +160,7 @@ function search_item($type, $query, $userid)
         }
         $req->closeCursor();
         // now we search in tags, and append the found ids to our result array
-        $sql = "SELECT item_id FROM items_tags WHERE tag LIKE '%$query%' LIMIT 100";
+        $sql = "SELECT item_id FROM items_tags WHERE tag LIKE '%$query%'";
         $req = $pdo->prepare($sql);
         $req->execute(array(
             'userid' => $_SESSION['userid']
@@ -169,7 +169,7 @@ function search_item($type, $query, $userid)
             $results_arr[] = $data['item_id'];
         }
         // now we search in file comments and filenames
-        $sql = "SELECT item_id FROM uploads WHERE (comment LIKE '%$query%' OR real_name LIKE '%$query%') AND type = 'database' LIMIT 100";
+        $sql = "SELECT item_id FROM uploads WHERE (comment LIKE '%$query%' OR real_name LIKE '%$query%') AND type = 'database'";
         $req = $pdo->prepare($sql);
         $req->execute();
         while ($data = $req->fetch()) {

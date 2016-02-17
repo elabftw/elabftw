@@ -120,8 +120,7 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     AND it.id = ta.item_id
     AND ta.tag LIKE :tag
     " . $filter . "
-    ORDER BY $order $sort
-    LIMIT 100";
+    ORDER BY $order $sort";
     $req = $pdo->prepare($sql);
     $req->bindParam(':tag', $tag, PDO::PARAM_STR);
     $req->bindParam(':teamid', $_SESSION['team_id'], PDO::PARAM_INT);
@@ -148,8 +147,7 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
     WHERE it.type = ty.id
     AND it.team = :teamid
     " . $filter . "
-    ORDER BY $order $sort
-    LIMIT 100";
+    ORDER BY $order $sort";
     $req = $pdo->prepare($sql);
     $req->bindParam(':teamid', $_SESSION['team_id'], PDO::PARAM_INT);
     $req->execute();

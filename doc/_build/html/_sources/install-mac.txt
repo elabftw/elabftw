@@ -3,8 +3,11 @@
 Install on Mac OS X
 ===================
 
+You don't have the possibility to use a server, you don't have the possibility to a free operating system, and you want to use eLabFTW locally on your Mac OS X computer.
 
-This guide assumes you want to install eLabFTW locally for your personnal use (not shared with other team members). As eLabFTW is designed with a client <=> server architecture in mind, we'll need to install a server on your computer. Don't worry though, it's easy :)
+I am very sad that you have to `use malware <https://www.gnu.org/proprietary/malware-apple.html>`_ for your computing needs. You should try your best to convince whoever is stopping you from using a free operating system that they are wrong, whatever reasons they invoke.
+
+That being said, we're here to install eLabFTW on Mac. So let's get to it.
 
 Install XAMPP
 -------------

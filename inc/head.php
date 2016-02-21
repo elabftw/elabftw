@@ -54,6 +54,7 @@ $ftw = $ftw_arr[0];
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="author" content="Nicolas CARPi" />
+<meta name='referrer' content='origin'>
 <link rel="icon" type="image/ico" href="img/favicon.ico" />
 <?php
 echo "<title>" . (isset($page_title) ? $page_title : "Lab manager") . " - eLab " . $ftw . "</title>";

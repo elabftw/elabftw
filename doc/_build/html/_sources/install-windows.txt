@@ -3,30 +3,13 @@
 Install on Windows (in Docker)
 ==============================
 
-.. warning:: This is experimental!
+You don't have the possibility to use a server, you don't have the possibility to use Mac OS or any free operating system, and you want to use eLabFTW locally on your Windows computer.
 
-As Windows is a huge pile of shit, we cannot install eLabFTW directly on it. We need a layer of sanity, called a Virtual Machine running GNU/Linux with Docker.
+I am very sad that you have to `use malware <https://www.gnu.org/philosophy/malware-microsoft.html>`_ for your computing needs. You should try your best to convince whoever is stopping you from using a free operating system that they are wrong, whatever reasons they invoke.
 
-Being familiar with the Docker concepts is required. This guide is not complete. You might face some unexpected errors. You need 64 bits Windows. You have been warned.
+That being said, we're here to install eLabFTW on Windows. So let's get to it.
 
-Also, installing it in a Ubuntu VM will be easier. Docker is very nice when it works, but there are literally hundreds of way for it to fail.
+Follow the two steps below to install eLabFTW on your system:
 
-
-#. Download and run **docker-install.exe** from `this page <https://github.com/boot2docker/windows-installer/releases>`_
-#. Use the defaults in the installer (install everything)
-#. Run the boot2docker application
-#. Execute the command: `boot2docker ssh`
-#. Install docker-compose for windows (`see here <https://stackoverflow.com/questions/29289785/how-to-install-docker-compose-on-windows>`_)
-#. Make sure to have the right permissions so the docker container can read/write where it wants to
-
-.. code-block:: bash
-
-    git clone https://github.com/elabftw/docker-elabftw
-    cd docker-elabftw
-    cp docker-compose.yml-EXAMPLE docker-compose.yml
-    $EDITOR docker-compose.yml
-    docker-compose up
-
-* Go to https://localhost:9000/install
-
-You might need to change the networking setting of boot2docker VM from NAT to bridged or use port forwarding.
+#. Read the documentation and install `Docker on Windows <https://docs.docker.com/windows/>`_
+#. Install :doc:`eLabFTW in Docker <install-docker>`

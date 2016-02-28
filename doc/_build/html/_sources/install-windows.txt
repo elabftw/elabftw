@@ -3,7 +3,9 @@
 Install on Windows (in Docker)
 ==============================
 
-You don't have the possibility to use a server, you don't have the possibility to a free operating system, and you want to use eLabFTW locally on your Windows computer.
+.. image:: img/windows.png
+    :align: center
+    :alt: windows
 
 I am very sad that you have to `use malware <https://www.gnu.org/philosophy/malware-microsoft.html>`_ for your computing needs. You should try your best to convince whoever is stopping you from using a free operating system that they are wrong, whatever reasons they invoke.
 

@@ -3,8 +3,6 @@
 Install in a Docker container
 =============================
 
-.. warning:: This is experimental!
-
 .. image:: img/docker.png
 
 Using Docker allows you to run elabftw without touching the configuration of your server.

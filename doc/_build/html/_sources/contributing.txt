@@ -3,20 +3,25 @@
 Contributing
 ============
 
+.. image:: img/contributing.png
+    :align: center
+    :alt: contributing
+    :target: http://mimiandeunice.com/
 
 What can you do to help this project ?
 --------------------------------------
 
-* Have a look at `the current issues <https://github.com/elabftw/elabftw/issues>`_
-* Translate it
+* `Star it on GitHub <https://github.com/elabftw/elabftw>`_
 * Talk about it to your colleagues, spread the word!
+* Have a look at `the current issues <https://github.com/elabftw/elabftw/issues>`_
+* Help with the translation
 * Open GitHub issues to discuss bugs or suggest features
-* Star it on GitHub
+
+.. image:: img/i18n.png
+    :align: right
 
 Translating
 -----------
-
-.. image:: img/i18n.png
 
 Do you know several languages? Are you willing to help localize eLabFTW? You're in the right place.
 

@@ -4,6 +4,8 @@ Install in a Docker container
 =============================
 
 .. image:: img/docker.png
+    :align: center
+    :alt: docker
 
 Using Docker allows you to run elabftw without touching the configuration of your server.
 It ships with nginx + php-fpm with elabftw installed and configured properly with all the php extensions needed.

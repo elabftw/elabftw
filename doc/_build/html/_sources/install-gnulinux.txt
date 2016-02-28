@@ -4,7 +4,11 @@ Install on GNU/Linux
 ====================
 
 .. image:: img/gnulinux.png
+    :align: center
+    :alt: gnulinux
 .. image:: img/beastie.png
+    :align: right
+    :alt: beastie
 
 Prerequisites
 -------------
@@ -14,7 +18,7 @@ Please refer to your distribution's documentation to install :
 * A webserver (like nginx, Apache, lighttpd or cherokee)
 * PHP version > 5.5
 * MySQL version > 5.5
-* Git
+* Git (optional)
 
 .. tip:: If you don't know how to do that, have a look at :ref:`installing eLabFTW on a drop <install-drop>`.
 
@@ -28,6 +32,8 @@ The first part is to get the files composing `eLabFTW` on your server.
 
 Option 1 : Using git
 ^^^^^^^^^^^^^^^^^^^^
+
+This is the preferred method as it allows easier updating.
 
 Connect to your server with SSH:
 

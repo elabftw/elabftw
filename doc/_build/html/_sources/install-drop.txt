@@ -3,7 +3,9 @@
 Install in a drop
 =================
 
-.. image:: img/digitalocean.jpg
+.. image:: img/digitalocean.png
+    :align: center
+    :alt: digitalocean
 
 
 A drop is a cheap server, and you install elabftw on it with one command: everything is automagic!

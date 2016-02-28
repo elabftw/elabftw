@@ -10,7 +10,6 @@
 use \Elabftw\Elabftw\Tools as Tools;
 use \Elabftw\Elabftw\MolViewer as MolViewer;
 
-echo "<div id='filesdiv'>";
 // What type of item we are displaying the files of ?
 $type_arr = explode('.', basename($_SERVER['PHP_SELF']));
 $type = $type_arr[0];
@@ -25,9 +24,14 @@ $req->execute(array(
     'type' => $type
 ));
 $count = $req->rowCount();
+
+// this is for the plural of the ngettext function below
 if ($count > 1) {
     $count = 2;
 }
+
+echo "<div id='filesdiv'>";
+
 if ($count > 0) {
     echo "<div class='box'>";
     echo "<img src='img/attached.png' class='bot5px'> <h3 style='display:inline'>" . ngettext('Attached file', 'Attached files', $count) . "</h3>";

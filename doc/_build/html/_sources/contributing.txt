@@ -102,3 +102,28 @@ Reminders
 * update of the js components is done with `bower update`
 * after update of tinymce, lang files need to be downloaded again, and the ones without proper name (ca instead of ca_ES) need to be edited (change first line to ca_ES)
 * for a new version, one needs to edit inc/classes/Update.php, package.json and doc/conf.py
+
+Make a gif
+----------
+
+* make a capture with xvidcap, it outputs .xwd
+
+* convert .xwd to gif:
+
+.. code-block:: bash
+
+    $ convert -define registry:temporary-path=/path/tmp -limit memory 2G \*.xwd out.gif
+
+* generate a palette with ffmpeg:
+
+.. code-block:: bash
+
+    $ ffmpeg -i out.gif -vf fps=10,scale=600:-1:flags=lanczos,palettegen palette.png
+
+* make a lighter gif:
+
+.. code-block:: bash
+
+    $ ffmpeg -i out.gif -i palette.png -filter_complex "fps=10,scale=320:-1:flags=lanczos[x];[x][1:v]paletteuse" out-final.gif
+
+* upload to original one to gfycat and the smaller one to imgur

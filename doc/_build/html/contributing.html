@@ -105,6 +105,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#api-documentation">API Documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#automation">Automation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#reminders">Reminders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#make-a-gif">Make a gif</a></li>
 </ul>
 </li>
 </ul>
@@ -246,6 +247,31 @@ Grunt can also be used to build the documentation or run the tests.</p>
 <li>update of the js components is done with <cite>bower update</cite></li>
 <li>after update of tinymce, lang files need to be downloaded again, and the ones without proper name (ca instead of ca_ES) need to be edited (change first line to ca_ES)</li>
 <li>for a new version, one needs to edit inc/classes/Update.php, package.json and doc/conf.py</li>
+</ul>
+</div>
+<div class="section" id="make-a-gif">
+<h2>Make a gif<a class="headerlink" href="#make-a-gif" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>make a capture with xvidcap, it outputs .xwd</li>
+<li>convert .xwd to gif:</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>convert -define registry:temporary-path<span class="o">=</span>/path/tmp -limit memory 2G <span class="se">\*</span>.xwd out.gif
+</pre></div>
+</div>
+<ul class="simple">
+<li>generate a palette with ffmpeg:</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>ffmpeg -i out.gif -vf <span class="nv">fps</span><span class="o">=</span>10,scale<span class="o">=</span>600:-1:flags<span class="o">=</span>lanczos,palettegen palette.png
+</pre></div>
+</div>
+<ul class="simple">
+<li>make a lighter gif:</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>ffmpeg -i out.gif -i palette.png -filter_complex <span class="s2">&quot;fps=10,scale=320:-1:flags=lanczos[x];[x][1:v]paletteuse&quot;</span> out-final.gif
+</pre></div>
+</div>
+<ul class="simple">
+<li>upload to original one to gfycat and the smaller one to imgur</li>
 </ul>
 </div>
 </div>

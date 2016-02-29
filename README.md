@@ -37,7 +37,7 @@ Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM 
 * Go to https://your-address.org/elabftw/install
 
 ## The legendary documentation (for everyone else)
-[Read the documentation, it's very complete](https://elabftw.rtfd.org).
+[Read the documentation, it's very complete](https://elabftw.readthedocs.org).
 
 # Support
 

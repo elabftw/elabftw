@@ -43,4 +43,7 @@ Update often
 
 It is important to keep your install up to date with the latest bug fixes and new features.
 
+`Subscribe to the newsletter <http://eepurl.com/bShrgD>`_ to be warned when a new release is out.
+
 See instructions on updating eLabFTW on :ref:`how-to-update`.
+

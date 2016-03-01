@@ -295,7 +295,6 @@ foreach ($lang_array as $lang) {
     }
         ?>
     </div>
-</div>
 <!-- *********************** -->
 
 <?php require_once('inc/footer.php'); ?>

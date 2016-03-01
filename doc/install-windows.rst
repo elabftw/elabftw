@@ -15,3 +15,10 @@ Follow the two steps below to install eLabFTW on your system:
 
 #. Read the documentation and install `Docker on Windows <https://docs.docker.com/windows/>`_
 #. Install :doc:`eLabFTW in Docker <install-docker>`
+
+Once the containers are running, you can start Kitematic to check what IP address you need to use to access eLabFTW.
+
+.. image:: img/kitematic.png
+    :align: center
+    :alt: kitematic
+

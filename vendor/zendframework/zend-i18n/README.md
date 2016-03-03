@@ -13,4 +13,4 @@ to it is optional. A translator without any translations will actually do nothin
 but just return the given message IDs.
 
 - File issues at https://github.com/zendframework/zend-i18n/issues
-- Documentation is at http://framework.zend.com/manual/current/en/index.html#zend-i18n
+- Documentation is at https://zendframework.github.io/zend-i18n/

@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -47,12 +47,10 @@ class RedisResourceManager
      */
     public function getMajorVersion($id)
     {
-        if (!$this->hasResource($id)) {
-            throw new Exception\RuntimeException("No resource with id '{$id}'");
-        }
+        // check resource id and initialize the resource
+        $this->getResource($id);
 
-        $resource = & $this->resources[$id];
-        return (int) $resource['version'];
+        return (int) $this->resources[$id]['version'];
     }
 
     /**
@@ -334,7 +332,7 @@ class RedisResourceManager
             $resource = array_merge(
                 $defaults,
                 [
-                    'resource' => $resource,
+                    'resource'    => $resource,
                     'initialized' => isset($resource->socket),
                 ]
             );
@@ -631,15 +629,21 @@ class RedisResourceManager
      */
     public function setDatabase($id, $database)
     {
+        $database = (int) $database;
+
         if (!$this->hasResource($id)) {
             return $this->setResource($id, [
-                'database' => (int) $database,
+                'database' => $database,
             ]);
         }
 
         $resource = & $this->resources[$id];
-        $resource['database']    = $database;
-        $resource['initialized'] = false;
+        if ($resource['resource'] instanceof RedisResource && $resource['initialized']) {
+            $resource['resource']->select($database);
+        }
+
+        $resource['database'] = $database;
+
         return $this;
     }
 }

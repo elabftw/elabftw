@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 1.2.3 - 2016-02-18
+
+* Fixed support in `GuzzleHttp\Psr7\CachingStream` for seeking forward on remote
+  streams, which can sometimes return fewer bytes than requested with `fread`.
+* Fixed handling of gzipped responses with FNAME headers.
+
 ## 1.2.2 - 2016-01-22
 
 * Added support for URIs without any authority.

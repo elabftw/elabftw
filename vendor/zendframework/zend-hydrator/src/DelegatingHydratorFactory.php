@@ -9,21 +9,61 @@
 
 namespace Zend\Hydrator;
 
+use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class DelegatingHydratorFactory implements FactoryInterface
 {
     /**
-     * Creates DelegatingHydrator
+     * Creates DelegatingHydrator (v2)
      *
      * @param  ServiceLocatorInterface $serviceLocator
      * @return DelegatingHydrator
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        // Assume that this factory is registered with the HydratorManager,
-        // and just pass it directly on.
-        return new DelegatingHydrator($serviceLocator);
+        return $this($serviceLocator, '');
+    }
+
+    /**
+     * Creates DelegatingHydrator (v3)
+     *
+     * @param ContainerInterface $container
+     * @param string $requestedName
+     * @param array|null $options
+     * @return DelegatingHydrator
+     */
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        $container = $this->marshalHydratorPluginManager($container);
+        return new DelegatingHydrator($container);
+    }
+
+    /**
+     * Locate and return a HydratorPluginManager instance.
+     *
+     * @param ContainerInterface $container
+     * @return HydratorPluginManager
+     */
+    private function marshalHydratorPluginManager(ContainerInterface $container)
+    {
+        // Already one? Return it.
+        if ($container instanceof HydratorPluginManager) {
+            return $container;
+        }
+
+        // As typically registered with v3 (FQCN)
+        if ($container->has(HydratorPluginManager::class)) {
+            return $container->get(HydratorPluginManager::class);
+        }
+
+        // As registered by zend-mvc
+        if ($container->has('HydratorManager')) {
+            return $container->get('HydratorManager');
+        }
+
+        // Fallback: create one
+        return new HydratorPluginManager($container);
     }
 }

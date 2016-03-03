@@ -172,8 +172,8 @@ EOF;
     {
         if ($value !== null) {
             $this->assertEquals(
-                $this->getRunningClient()->getInternalResponse()->getHeader($name),
-                $value
+                $value,
+                $this->getRunningClient()->getInternalResponse()->getHeader($name)
             );
             return;
         }
@@ -193,8 +193,8 @@ EOF;
     {
         if ($value !== null) {
             $this->assertNotEquals(
-                $this->getRunningClient()->getInternalResponse()->getHeader($name),
-                $value
+                $value,
+                $this->getRunningClient()->getInternalResponse()->getHeader($name)
             );
             return;
         }
@@ -448,11 +448,6 @@ EOF;
             $header = str_replace('-', '_', strtoupper($header));
             $this->client->setServerParameter("HTTP_$header", $val);
 
-            // Issue #1650 - Symfony BrowserKit changes HOST header to request URL
-            if ($header === 'HOST') {
-                $this->client->setServerParameter("HTTP_ HOST", $val);
-            }
-
             // Issue #827 - symfony foundation requires 'CONTENT_TYPE' without HTTP_
             if ($this->isFunctional && $header === 'CONTENT_TYPE') {
                 $this->client->setServerParameter($header, $val);
@@ -591,7 +586,7 @@ EOF;
         $jsonResponseArray = new JsonArray($this->connectionModule->_getResponseContent());
         \PHPUnit_Framework_Assert::assertTrue(
             $jsonResponseArray->containsArray($json),
-            "Response JSON contains provided\n"
+            "Response JSON does not contain the provided JSON\n"
             . "- <info>" . var_export($json, true) . "</info>\n"
             . "+ " . var_export($jsonResponseArray->toArray(), true)
         );
@@ -774,7 +769,7 @@ EOF;
         $jsonResponseArray = new JsonArray($this->connectionModule->_getResponseContent());
         $this->assertFalse(
             $jsonResponseArray->containsArray($json),
-            "Response JSON does not contain JSON provided\n"
+            "Response JSON contains provided JSON\n"
             . "- <info>" . var_export($json, true) . "</info>\n"
             . "+ " . var_export($jsonResponseArray->toArray(), true)
         );
@@ -1057,6 +1052,7 @@ EOF;
      * ```
      *
      * @param $xml
+     * @part xml
      */
     public function seeXmlResponseIncludes($xml)
     {
@@ -1087,4 +1083,21 @@ EOF;
     {
         throw new ModuleException($this, "This action was deprecated in Codeception 2.0.9 and removed in 2.1. Please use `grabDataFromResponseByJsonPath` instead");
     }
+
+    /**
+     * Prevents automatic redirects to be followed by the client
+     */
+    public function stopFollowingRedirects()
+    {
+        $this->client->followRedirects(false);
+    }
+
+    /**
+     * Enables automatic redirects to be followed by the client
+     */
+    public function startFollowingRedirects()
+    {
+        $this->client->followRedirects(true);
+    }
+
 }

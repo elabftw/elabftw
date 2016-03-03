@@ -154,7 +154,7 @@ class UriTest extends \PHPUnit_Framework_TestCase
             [self::RFC3986_BASE, 'g;x=1/../y',    'http://a/b/c/y'],
             ['http://u@a/b/c/d;p?q', '.',         'http://u@a/b/c/'],
             ['http://u:p@a/b/c/d;p?q', '.',       'http://u:p@a/b/c/'],
-            //[self::RFC3986_BASE, 'http:g',        'http:g'],
+            ['http://a/b/c/d/', 'e',              'http://a/b/c/d/e'],
         ];
     }
 

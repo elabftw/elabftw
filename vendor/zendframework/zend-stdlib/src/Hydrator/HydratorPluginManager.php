@@ -20,4 +20,34 @@ use Zend\Hydrator\HydratorPluginManager as BaseHydratorPluginManager;
  */
 class HydratorPluginManager extends BaseHydratorPluginManager
 {
+    /**
+     * Default aliases
+     *
+     * @var array
+     */
+    protected $aliases = [
+        'delegatinghydrator' => 'Zend\Stdlib\Hydrator\DelegatingHydrator',
+    ];
+
+    /**
+     * Default set of adapters
+     *
+     * @var array
+     */
+    protected $invokableClasses = [
+        'arrayserializable' => 'Zend\Stdlib\Hydrator\ArraySerializable',
+        'classmethods'      => 'Zend\Stdlib\Hydrator\ClassMethods',
+        'objectproperty'    => 'Zend\Stdlib\Hydrator\ObjectProperty',
+        'reflection'        => 'Zend\Stdlib\Hydrator\Reflection'
+    ];
+
+    /**
+     * Default factory-based adapters
+     *
+     * @var array
+     */
+    protected $factories = [
+        'Zend\Stdlib\Hydrator\DelegatingHydrator' => 'Zend\Stdlib\Hydrator\DelegatingHydratorFactory',
+        'zendstdlibhydratordelegatinghydrator'    => 'Zend\Stdlib\Hydrator\DelegatingHydratorFactory',
+    ];
 }

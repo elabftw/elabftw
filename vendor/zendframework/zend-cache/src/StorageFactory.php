@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -12,6 +12,7 @@ namespace Zend\Cache;
 use Traversable;
 use Zend\EventManager\EventsCapableInterface;
 use Zend\Stdlib\ArrayUtils;
+use Zend\ServiceManager\ServiceManager;
 
 abstract class StorageFactory
 {
@@ -118,7 +119,9 @@ abstract class StorageFactory
                 }
 
                 $plugin = static::pluginFactory($pluginName, $pluginOptions);
-                $adapter->addPlugin($plugin, $pluginPrio);
+                if (! $adapter->hasPlugin($plugin)) {
+                    $adapter->addPlugin($plugin, $pluginPrio);
+                }
             }
         }
 
@@ -157,7 +160,7 @@ abstract class StorageFactory
     public static function getAdapterPluginManager()
     {
         if (static::$adapters === null) {
-            static::$adapters = new Storage\AdapterPluginManager();
+            static::$adapters = new Storage\AdapterPluginManager(new ServiceManager);
         }
         return static::$adapters;
     }
@@ -219,7 +222,7 @@ abstract class StorageFactory
     public static function getPluginManager()
     {
         if (static::$plugins === null) {
-            static::$plugins = new Storage\PluginManager();
+            static::$plugins = new Storage\PluginManager(new ServiceManager);
         }
         return static::$plugins;
     }

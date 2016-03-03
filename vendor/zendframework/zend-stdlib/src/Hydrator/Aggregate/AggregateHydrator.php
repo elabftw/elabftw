@@ -19,4 +19,27 @@ use Zend\Stdlib\Hydrator\HydratorInterface;
  */
 class AggregateHydrator extends BaseAggregateHydrator implements HydratorInterface
 {
+    /**
+     * {@inheritDoc}
+     */
+    public function extract($object)
+    {
+        $event = new ExtractEvent($this, $object);
+
+        $this->getEventManager()->triggerEvent($event);
+
+        return $event->getExtractedData();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hydrate(array $data, $object)
+    {
+        $event = new HydrateEvent($this, $object, $data);
+
+        $this->getEventManager()->triggerEvent($event);
+
+        return $event->getHydratedObject();
+    }
 }

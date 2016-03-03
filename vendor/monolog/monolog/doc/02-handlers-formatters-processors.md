@@ -105,6 +105,8 @@
 - _PsrHandler_: Can be used to forward log records to an existing PSR-3 logger
 - _TestHandler_: Used for testing, it records everything that is sent to it and
   has accessors to read out the information.
+- _HandlerWrapper_: A simple handler wrapper you can inherit from to create
+ your own wrappers easily.
 
 ## Formatters
 
@@ -124,6 +126,7 @@
 
 ## Processors
 
+- _PsrLogMessageProcessor_: Processes a log record's message according to PSR-3 rules, replacing `{foo}` with the value from `$context['foo']`.
 - _IntrospectionProcessor_: Adds the line/file/class/method from which the log call originated.
 - _WebProcessor_: Adds the current request URI, request method and client IP to a log record.
 - _MemoryUsageProcessor_: Adds the current memory usage to a log record.

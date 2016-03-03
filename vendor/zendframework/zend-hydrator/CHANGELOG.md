@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 1.1.0 - 2016-02-18
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#24](https://github.com/zendframework/zend-hydrator/pull/24) updates the code
+  to be forwards-compatible with the v3 releases of zend-stdlib,
+  zend-eventmanager, and zend-servicemanager.
+
 ## 1.0.0 - 2015-09-17
 
 Initial release. This ports all hydrator classes and functionality from

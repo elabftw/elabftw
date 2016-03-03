@@ -24,7 +24,7 @@ class HtmlFormatter extends NormalizerFormatter
     /**
      * Translates Monolog log levels to html color priorities.
      */
-    private $logLevels = array(
+    protected $logLevels = array(
         Logger::DEBUG     => '#cccccc',
         Logger::INFO      => '#468847',
         Logger::NOTICE    => '#3a87ad',
@@ -64,8 +64,8 @@ class HtmlFormatter extends NormalizerFormatter
     /**
      * Create a HTML h1 tag
      *
-     * @param  string  $title Text to be in the h1
-     * @param  integer $level Error level
+     * @param  string $title Text to be in the h1
+     * @param  int    $level Error level
      * @return string
      */
     private function addTitle($title, $level)
@@ -74,6 +74,7 @@ class HtmlFormatter extends NormalizerFormatter
 
         return '<h1 style="background: '.$this->logLevels[$level].';color: #ffffff;padding: 5px;" class="monolog-output">'.$title.'</h1>';
     }
+
     /**
      * Formats a log record.
      *

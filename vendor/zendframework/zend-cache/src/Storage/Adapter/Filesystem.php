@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -1272,36 +1272,6 @@ class Filesystem extends AbstractAdapter implements
         }
 
         return $this->lastFileSpec;
-    }
-
-    /**
-     * Read info file
-     *
-     * @param  string  $file
-     * @param  bool $nonBlocking Don't block script if file is locked
-     * @param  bool $wouldblock  The optional argument is set to TRUE if the lock would block
-     * @return array|bool The info array or false if file wasn't found
-     * @throws Exception\RuntimeException
-     */
-    protected function readInfoFile($file, $nonBlocking = false, & $wouldblock = null)
-    {
-        if (!file_exists($file)) {
-            return false;
-        }
-
-        $content = $this->getFileContent($file, $nonBlocking, $wouldblock);
-        if ($nonBlocking && $wouldblock) {
-            return false;
-        }
-
-        ErrorHandler::start();
-        $ifo = unserialize($content);
-        $err = ErrorHandler::stop();
-        if (!is_array($ifo)) {
-            throw new Exception\RuntimeException("Corrupted info file '{$file}'", 0, $err);
-        }
-
-        return $ifo;
     }
 
     /**

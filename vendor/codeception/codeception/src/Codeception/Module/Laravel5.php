@@ -43,6 +43,7 @@ use Illuminate\Support\Facades\Facade;
  * * packages: `string`, default `workbench` - Root path of application packages (if any).
  * * disable_middleware: `boolean`, default `false` - disable all middleware.
  * * disable_events: `boolean`, default `false` - disable all events.
+ * * url: `string`, default `` - The application URL.
  *
  * ## API
  *
@@ -615,23 +616,33 @@ class Laravel5 extends Framework implements ActiveRecord, PartedModule
      * $I->amLoggedAs(['username' => 'jane@example.com', 'password' => 'password']);
      *
      * // provide User object
-     * $I->amLoggesAs( new User );
+     * $I->amLoggedAs( new User );
      *
      * // can be verified with $I->seeAuthentication();
      * ?>
      * ```
      * @param  \Illuminate\Contracts\Auth\User|array $user
-     * @param  string|null $driver 'eloquent', 'database', or custom driver
+     * @param  string|null $driver The authentication driver for Laravel <= 5.1.*, guard name for Laravel >= 5.2
      * @return void
      */
     public function amLoggedAs($user, $driver = null)
     {
+        $guard = $auth = $this->app['auth'];
+
+        if (method_exists($auth, 'driver')) {
+            $guard = $auth->driver($driver);
+        }
+
+        if (method_exists($auth, 'guard')) {
+            $guard = $auth->guard($driver);
+        }
+
         if ($user instanceof Authenticatable) {
-            $this->app['auth']->driver($driver)->setUser($user);
+            $guard->setUser($user);
             return;
         }
 
-        if (! $this->app['auth']->driver($driver)->attempt($user)) {
+        if (! $guard->attempt($user)) {
             $this->fail("Failed to login with credentials " . json_encode($user));
         }
     }

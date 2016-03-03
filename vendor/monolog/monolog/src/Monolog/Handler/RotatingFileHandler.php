@@ -33,8 +33,8 @@ class RotatingFileHandler extends StreamHandler
 
     /**
      * @param string   $filename
-     * @param integer  $maxFiles       The maximal amount of files to keep (0 means unlimited)
-     * @param integer  $level          The minimum logging level at which this handler will be triggered
+     * @param int      $maxFiles       The maximal amount of files to keep (0 means unlimited)
+     * @param int      $level          The minimum logging level at which this handler will be triggered
      * @param Boolean  $bubble         Whether the messages that are handled can bubble up the stack or not
      * @param int|null $filePermission Optional file permissions (default (0644) are only for owner read/write)
      * @param Boolean  $useLocking     Try to lock log file before doing any writes
@@ -115,7 +115,11 @@ class RotatingFileHandler extends StreamHandler
 
         foreach (array_slice($logFiles, $this->maxFiles) as $file) {
             if (is_writable($file)) {
+                // suppress errors here as unlink() might fail if two processes
+                // are cleaning up/rotating at the same time
+                set_error_handler(function ($errno, $errstr, $errfile, $errline) {});
                 unlink($file);
+                restore_error_handler();
             }
         }
 

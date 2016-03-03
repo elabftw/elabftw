@@ -38,7 +38,7 @@ echo $composed(); // abc, 123. Above all listen to me.
 
 `GuzzleHttp\Psr7\BufferStream`
 
-Provides a buffer stream that can be written to to fill a buffer, and read
+Provides a buffer stream that can be written to fill a buffer, and read
 from to remove bytes from the buffer.
 
 This stream returns a "hwm" metadata value that tells upstream consumers
@@ -106,7 +106,7 @@ echo $stream; // 0123456789
 
 Compose stream implementations based on a hash of functions.
 
-Allows for easy testing and extension of a provided stream without needing to
+Allows for easy testing and extension of a provided stream without needing 
 to create a concrete class for a simple extension point.
 
 ```php

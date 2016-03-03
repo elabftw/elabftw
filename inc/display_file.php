@@ -64,7 +64,7 @@ if ($count > 0) {
         // only display the thumbnail if the file is here
         if (file_exists($thumbpath) && preg_match('/(jpg|jpeg|png|gif)$/i', $ext)) {
             // we add rel='gallery' to the images for fancybox to display it as an album (possibility to go next/previous)
-            echo "<a href='uploads/" . $uploads_data['long_name'] . "' class='fancybox' rel='gallery' ";
+            echo "<a href='app/download.php?f=" . $uploads_data['long_name'] . "' class='fancybox' rel='gallery' ";
             if ($uploads_data['comment'] != 'Click to add a comment') {
                 echo "title='" . $uploads_data['comment'] . "'";
             }

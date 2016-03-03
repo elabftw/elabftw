@@ -3,6 +3,26 @@
 Changelog
 =========
 
+Version 1.1.8-p1
+----------------
+
+* Bug fixes
+
+  * Fix footer of profile page incorrect
+
+* Documentation
+
+  * Better doc for everything
+
+* Enhancements
+
+  * Remove 'LIMIT 100' on some SQL requests
+  * Use download.php to display images. Fix #232
+
+* Developer corner
+
+  * Remove update.php script
+
 Version 1.1.8
 -------------
 

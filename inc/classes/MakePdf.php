@@ -396,7 +396,7 @@ class MakePdf extends Make
      */
     private function buildBody()
     {
-        $this->content .= str_replace("src=\"uploads/", "src=\"" . ELAB_ROOT . "uploads/", $this->data['body']);
+        $this->content .= str_replace("src=\"app/download.php?f=", "src=\"" . ELAB_ROOT . "uploads/", $this->data['body']);
     }
 
     /**

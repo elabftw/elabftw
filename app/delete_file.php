@@ -53,8 +53,9 @@ if ($_GET['type'] === 'experiments') {
         unlink($filepath);
         // remove thumbnail
         $ext = Tools::getExt($data['real_name']);
-        if (file_exists(ELAB_ROOT . 'uploads/' . $data['long_name'] . '_th.' . $ext)) {
-            unlink(ELAB_ROOT . 'uploads/' . $data['long_name'] . '_th.' . $ext);
+        $thumb_path = ELAB_ROOT . 'uploads/' . $data['long_name'] . '_th.jpg';
+        if (file_exists($thumb_path)) {
+            unlink($thumb_path);
         }
         // Redirect to the viewXP
         $msg_arr = array();

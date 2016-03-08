@@ -42,10 +42,11 @@ class Update
     /**
      * ////////////////////////////
      * UPDATE THIS AFTER RELEASING
-     * UPDATE IT ALSO IN DOC/CONF.PY
+     * UPDATE IT ALSO IN doc/conf.py
+     * AND package.json
      * ///////////////////////////
      */
-    const INSTALLED_VERSION = '1.1.8-p1';
+    const INSTALLED_VERSION = '1.1.8-p2';
 
     /**
      * /////////////////////////////////////////////////////

@@ -43,6 +43,6 @@ Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM 
 
 Please [open a GitHub issue](https://github.com/elabftw/elabftw/issues/new) if you have a problem, want to make a suggestion, ask a question or discuss a feature.
 
-[Subscribe to the newsletter](http://eepurl.com/bShrgD) to be warned when a new release is out!
+[Subscribe to the newsletter](http://eepurl.com/bTjcMj) to be warned when a new release is out!
 
 Thank you for using **eLabFTW**, I hope it will bring happiness in your lab ;)

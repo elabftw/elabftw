@@ -3,6 +3,15 @@
 Changelog
 =========
 
+Version 1.1.8-p2
+----------------
+
+* Bug fixes
+
+  * fix deletion of thumbnails for non jpg images
+  * fix name of timestamp pdf
+  * fix image display in pdf (fix #234)
+
 Version 1.1.8-p1
 ----------------
 

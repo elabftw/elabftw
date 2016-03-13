@@ -15,6 +15,7 @@ The following actions will be performed :
 - install of nginx (web server)
 - install of  mariadb (sql server)
 - install of elabftw
+- install of a proper SSL certificate issued by Let's Encrypt
 - get everything up and running
 
 .. warning:: This script will work for a fresh drop. If you already have a server running, you should consider a :ref:`normal install <install-gnulinux>` instead.
@@ -42,7 +43,7 @@ The following actions will be performed :
 
 .. code-block:: bash
 
-    wget -qO- https://get.elabftw.net|sh
+    wget -qO- https://get.elabftw.net > install-elabftw.sh && sh install-elabftw.sh
 
 .. danger:: Don't get into the habit of executing unknown scripts as root without reading them first!
 

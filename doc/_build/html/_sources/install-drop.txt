@@ -7,23 +7,24 @@ Install in a drop
     :align: center
     :alt: digitalocean
 
-
 A drop is a cheap server, and you install elabftw on it with one command: everything is automagic!
 
 The following actions will be performed :
 
-- install of nginx (web server)
-- install of  mariadb (sql server)
-- install of elabftw
-- install of a proper SSL certificate issued by Let's Encrypt
-- get everything up and running
+- Install of Nginx (web server)
+- Install of  MySQL (database)
+- Install of elabftw
+- Install of a proper SSL certificate issued by `Let's Encrypt <https://letsencrypt.org/>`_
+- Get everything up and running
 
 .. warning:: This script will work for a fresh drop. If you already have a server running, you should consider a :ref:`normal install <install-gnulinux>` instead.
 
 
 * Create an account on `DigitalOcean <https://cloud.digitalocean.com/registrations/new>`_
 
-* Create a droplet with Ubuntu 14.04 x64 (works also with 14.10, but not with 12.04.5)
+* Add your SSH public key to your profile (`documentation <https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets>`_)
+
+* Create a droplet with Ubuntu 14.04 x64 (works also with 14.10, but not with 12.04.5). Make sure to select your public key
 
 * Open a terminal and SSH to your droplet. The IP address can be found in the digitalocean website:
 
@@ -31,15 +32,13 @@ The following actions will be performed :
 
     ssh root@12.34.56.78
 
-.. note:: The root password is in your mailbox. It will not echo when you type it, it's normal, don't panic.
-
 * Go inside a tmux session:
 
 .. code-block:: bash
 
     tmux
 
-* Enter the following command:
+* Enter the following magical command:
 
 .. code-block:: bash
 

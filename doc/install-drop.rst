@@ -24,7 +24,7 @@ The following actions will be performed :
 
 * Add your SSH public key to your profile (`documentation <https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets>`_)
 
-* Create a droplet with Ubuntu 14.04 x64 (works also with 14.10, but not with 12.04.5). Make sure to select your public key
+* Create a droplet with Ubuntu 14.04 x64 (works also with 14.10, 15.04 and 15.10, but not with 12.04.5). Make sure to select your public key
 
 * Open a terminal and SSH to your droplet. The IP address can be found in the digitalocean website:
 

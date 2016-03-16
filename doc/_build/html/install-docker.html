@@ -85,7 +85,11 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install-gnulinux.html">Install on GNU/Linux</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-drop.html">Install in a drop</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Install in a Docker container</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Install in a Docker container</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install">Install</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="install-mac.html">Install on Mac OS X</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-windows.html">Install on Windows (in Docker)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common-errors.html">Common errors</a></li>
@@ -152,21 +156,31 @@
   <div class="section" id="install-in-a-docker-container">
 <span id="install-docker"></span><h1>Install in a Docker container<a class="headerlink" href="#install-in-a-docker-container" title="Permalink to this headline">¶</a></h1>
 <img alt="docker" class="align-center" src="_images/docker.png" />
-<p>Using Docker allows you to run elabftw without touching the configuration of your server.
-It ships with nginx + php-fpm with elabftw installed and configured properly with all the php extensions needed.
-An official MySQL docker image is used for the database.</p>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>Using Docker allows you to run elabftw without touching the configuration of your server or computer. By using this docker image you don&#8217;t have to worry about missing php extensions or misconfigurations of the server because all was done for you beforehand.</p>
+<ul class="simple">
+<li>This docker image is using <a class="reference external" href="https://alpinelinux.org/">Alpine Linux</a> as a base OS, so we get a lightweight and secure base.</li>
+<li>PHP 7 is used so we get an up to date and fast PHP.</li>
+<li>Nginx is used so we get the best webserver out there running our app.</li>
+<li>An official MySQL docker image is used for the database.</li>
+</ul>
+</div>
+<div class="section" id="install">
+<h2>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h2>
 <p>Step 1 : install <a class="reference external" href="https://docs.docker.com/engine/installation/">docker</a> and <a class="reference external" href="https://docs.docker.com/compose/install/">docker-compose</a></p>
 <p>Step 2 :&nbsp;enter the following three commands:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="c"># get the config file</span>
-wget https://raw.githubusercontent.com/elabftw/docker-elabftw/master/docker-compose.yml-EXAMPLE -O docker-compose.yml
+wget https://raw.githubusercontent.com/elabftw/docker-elabftw/master/src/docker-compose.yml-EXAMPLE -O docker-compose.yml
 <span class="c"># edit it and add the secret key, change default passwords, change mount points for volumes, change ports mapping</span>
 <span class="nv">$EDITOR</span> docker-compose.yml
 <span class="c"># fire up everything</span>
-docker-compose up
+docker-compose up -d
 </pre></div>
 </div>
 <p>Now visit <a class="reference external" href="https://YOUR.IP.ADDRESS/install">https://YOUR.IP.ADDRESS/install</a>. You will be redirected to the register page to create the sysadmin account.</p>
 <p>That&#8217;s all folks!</p>
+</div>
 </div>
 
 

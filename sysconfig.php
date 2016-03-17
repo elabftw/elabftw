@@ -238,7 +238,7 @@ switch ($mail_method) {
         $disable_php = true;
 } ?>
     <form method='post' action='app/sysconfig-exec.php'>
-        <p><?php echo _("Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mandrill.com (or gmail account and add the infos here."); ?></p>
+        <p><?php echo _("Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mailgun.com (or gmail account and add the infos here."); ?></p>
         <p>
         <label for='mail_method'><?php echo _('Send e-mails via:'); ?></label>
         <select onchange='toggleMailMethod($("#toggle_main_method").val())' name='mail_method' id='toggle_main_method'>
@@ -275,7 +275,7 @@ switch ($mail_method) {
             <input type='text' value='<?php echo get_config('smtp_address'); ?>' name='smtp_address' id='smtp_address' />
             </p>
             <p>
-            <span class='smallgray'>smtp.mandrillapp.com</span>
+            <span class='smallgray'>smtp.mailgun.com</span>
             <label for='smtp_encryption'><?php echo _('SMTP encryption (can be TLS or STARTSSL):'); ?></label>
             <input type='text' value='<?php echo get_config('smtp_encryption'); ?>' name='smtp_encryption' id='smtp_encryption' />
             </p>

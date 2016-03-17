@@ -379,7 +379,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('mail_method', 'sendmail'),
 ('proxy', ''),
 ('sendmail_path', '/usr/sbin/sendmail'),
-('smtp_address', 'smtp.mandrillapp.com'),
+('smtp_address', 'smtp.mailgun.org'),
 ('smtp_encryption', 'tls'),
 ('smtp_password', ''),
 ('smtp_port', '587'),

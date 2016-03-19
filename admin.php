@@ -23,6 +23,8 @@ if ($_SESSION['is_admin'] != 1) {
 $formKey = new \Elabftw\Elabftw\FormKey();
 $crypto = new \Elabftw\Elabftw\CryptoWrapper();
 
+$admin = new \Elabftw\Elabftw\Admin();
+
 $page_title = _('Admin panel');
 $selected_menu = null;
 require_once 'inc/head.php';
@@ -415,32 +417,19 @@ if (!empty($team['stamppass'])) {
 
 </div>
 
-<!-- TAB 5 -->
+<!-- TAB 5 COMMON EXPERIMENT TEMPLATE -->
 <div class='divhandle' id='tab5div'>
-
     <h3><?php echo _('Common experiment template'); ?></h3>
-    <?php
-    // get what is the default experiment template
-    $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1";
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
-    $req->execute();
-    $exp_tpl = $req->fetch();
-    ?>
     <p><?php echo _('This is the default text when someone creates an experiment.'); ?></p>
-    <form action='app/admin-exec.php' method='post'>
-        <input type='hidden' name='default_exp_tpl' value='1' />
-        <textarea class='mceditable' name='default_exp_tpl' />
-        <?php
-        echo $exp_tpl['body'];
-        ?></textarea>
-        <div class='center submitButtonDiv'>
-        <button type='submit' class='button'><?php echo _('Edit'); ?></button>
-        </div>
-    </form>
+    <textarea class='mceditable' id='commonTplBody' />
+        <?php echo $admin->commonTplRead(); ?>
+    </textarea>
+    <div class='center submitButtonDiv'>
+        <button type='submit' class='button' onClick='commonTplUpdate()'><?php echo _('Save'); ?></button>
+    </div>
 </div>
 
-<!-- TAB 6 -->
+<!-- TAB 6 IMPORT CSV -->
 <div class='divhandle' id='tab6div'>
 
     <h3><?php echo _('Import a CSV file'); ?></h3>

@@ -58,3 +58,13 @@ if (isset($_POST['destroy_teamgroup'])) {
         dblog('Error', $_SESSION['userid'], $e->getMessage());
     }
 }
+// DEFAULT EXPERIMENT TEMPLATE
+if (isset($_POST['commonTplUpdate'])) {
+    try {
+        $admin = new \Elabftw\Elabftw\Admin();
+        $admin->commonTplUpdate($_POST['commonTplUpdate']);
+    } catch (Exception $e) {
+        dblog('Error', $_SESSION['userid'], $e->getMessage());
+    }
+}
+

@@ -424,24 +424,6 @@ if (isset($_POST['delete_user']) && isset($_POST['delete_user_confpass'])) {
         exit;
     }
 }
-// DEFAULT EXPERIMENT TEMPLATE
-if (isset($_POST['default_exp_tpl'])) {
-    $tab = '5';
-
-    $default_exp_tpl = check_body($_POST['default_exp_tpl']);
-    $sql = "UPDATE experiments_templates SET
-        name = 'default',
-        team = :team,
-        body = :body
-        WHERE userid = 0 AND team = :team";
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':team', $_SESSION['team_id']);
-    $req->bindParam(':body', $default_exp_tpl);
-    if (!$req->execute()) {
-        $errflag = true;
-        $error = '16';
-    }
-}
 
 // REDIRECT USER
 if ($errflag) {

@@ -16,7 +16,7 @@ use \Exception;
 /**
  * Everything related to the team groups
  */
-class TeamGroups
+class TeamGroups extends Admin
 {
     /** The PDO object */
     private $pdo;
@@ -31,16 +31,6 @@ class TeamGroups
         if (!$this->checkPermission()) {
             throw new Exception('Only admin can access this!');
         }
-    }
-
-    /**
-     * Only admin can use this
-     *
-     * @return int 1 if is_admin
-     */
-    private function checkPermission()
-    {
-        return $_SESSION['is_admin'];
     }
 
     /**

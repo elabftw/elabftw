@@ -123,6 +123,16 @@ function go_url(x) {
 // admin.php
 // =========
 
+// COMMON TEMPLATE
+function commonTplUpdate() {
+    body = tinymce.activeEditor.getContent();
+    $.post('app/admin-ajax.php', {
+        commonTplUpdate: body
+    }).success(function() {
+        notif('Saved', 'ok');
+    });
+}
+
 // TEAM GROUP
 function teamGroupUpdate(action) {
     if (action === 'add') {

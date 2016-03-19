@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2015-03-04 14:57+0100\n"
-"PO-Revision-Date: 2016-03-19 23:20+0100\n"
+"PO-Revision-Date: 2016-03-19 23:53+0100\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -185,10 +185,6 @@ msgstr "Réinitialiser le mot de passe utilisateur :"
 #: elabftw/admin.php:198
 msgid "Repeat new password:"
 msgstr "Répéter le nouveau mot de passe :"
-
-#: elabftw/admin.php:203
-msgid "Edit this user"
-msgstr "Éditer cet utilisateur"
 
 #: elabftw/admin.php:219
 msgid "DANGER ZONE"

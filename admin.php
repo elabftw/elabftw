@@ -19,13 +19,12 @@ require_once 'inc/common.php';
 try {
     $formKey = new \Elabftw\Elabftw\FormKey();
     $crypto = new \Elabftw\Elabftw\CryptoWrapper();
-    $admin = new \Elabftw\Elabftw\Admin();
-    $teamGroups = new \Elabftw\Elabftw\TeamGroups();
-    $commonTpl = new \Elabftw\Elabftw\CommonTpl();
-    $itemsTypes = new \Elabftw\Elabftw\ItemsTypes();
-    $itemsTypesView = new \Elabftw\Elabftw\ItemsTypesView();
     $status = new \Elabftw\Elabftw\Status();
     $statusView = new \Elabftw\Elabftw\StatusView();
+    $itemsTypes = new \Elabftw\Elabftw\ItemsTypes();
+    $itemsTypesView = new \Elabftw\Elabftw\ItemsTypesView();
+    $commonTpl = new \Elabftw\Elabftw\CommonTpl();
+    $teamGroups = new \Elabftw\Elabftw\TeamGroups();
 } catch (Exception $e) {
     die($e->getMessage());
 }
@@ -144,7 +143,7 @@ if (!empty($team['stamppass'])) {
 <div class='divhandle' id='tab2div'>
 
     <h3><?php echo _('Edit users'); ?></h3>
-    <ul class='list-group'>
+    <ul>
     <?php
     // we show only the validated users here
     $user_req->bindValue(':validated', 1);
@@ -153,67 +152,55 @@ if (!empty($team['stamppass'])) {
     foreach($usersArr as $users) {
         ?>
             <li class='list-group-item'>
-            <a class='trigger_users_<?php echo $users['userid']; ?>'><?php echo $users['firstname'] . " " . $users['lastname']; ?></a>
-            <div class='toggle_users_<?php echo $users['userid']; ?>'>
-        <br>
-                <form method='post' action='app/admin-exec.php' id='admin_user_form'>
+                <form method='post' action='app/admin-exec.php'>
                     <input type='hidden' value='<?php echo $users['userid']; ?>' name='userid' />
-                    <label class='block' for='edituser_firstname'><?php echo _('Firstname'); ?></label>
-                    <input  id='edituser_firstname' type='text' value='<?php echo $users['firstname']; ?>' name='firstname' />
-                    <label class='block' for='edituser_lastname'><?php echo _('Lastname'); ?></label>
-                    <input  id='edituser_lastname' type='text' value='<?php echo $users['lastname']; ?>' name='lastname' />
-                    <label class='block' for='edituser_username'><?php echo _('Username'); ?></label>
-                    <input  id='edituser_username' type='text' value='<?php echo $users['username']; ?>' name='username' />
+                    <ul class='list-inline'>
+                    <li><label class='block' for='edituser_firstname'><?php echo _('Firstname'); ?></label>
+                    <input  id='edituser_firstname' type='text' value='<?php echo $users['firstname']; ?>' name='firstname' /></li>
+                    <li><label class='block' for='edituser_lastname'><?php echo _('Lastname'); ?></label>
+                    <input  id='edituser_lastname' type='text' value='<?php echo $users['lastname']; ?>' name='lastname' /></li>
+                    <li><label class='block' for='edituser_username'><?php echo _('Username'); ?></label>
+                    <input  id='edituser_username' type='text' value='<?php echo $users['username']; ?>' name='username' /></li>
+                    <li>
                     <label class='block' for='edituser_email'><?php echo _('Email'); ?></label>
-                    <input id='edituser_email' type='email' value='<?php echo $users['email']; ?>' name='email' /><br>
-        <br>
-        <label for='validated'><?php echo _('Has an active account?'); ?></label>
-        <select name='validated' id='validated'>
-            <option value='1'<?php
-                    if ($users['validated'] == 1) { echo " selected='selected'"; } ?>
-                        ><?php echo _('Yes'); ?></option>
-            <option value='0'<?php
-                if ($users['validated'] == 0) { echo " selected='selected'"; } ?>
-                    ><?php echo _('No'); ?></option>
-        </select>
-        <br>
-        <label for='usergroup'><?php echo _('Group:'); ?></label>
-        <select name='usergroup' id='usergroup'>
-<?php
-            if ($_SESSION['is_sysadmin'] == 1) {
-?>
-                <option value='1'<?php
-                        if ($users['usergroup'] == 1) { echo " selected='selected'"; } ?>
-                >Sysadmins</option>
-<?php
-            }
-?>
-            <option value='2'<?php
-                    if ($users['usergroup'] == 2) { echo " selected='selected'"; } ?>
-            >Admins</option>
-            <option value='3'<?php
-                    if ($users['usergroup'] == 3) { echo " selected='selected'"; } ?>
-            >Admin + Lock power</option>
-            <option value='4'<?php
-                    if ($users['usergroup'] == 4) { echo " selected='selected'"; } ?>
-            >Users</option>
-        </select>
-        <br>
-        <label for='users_reset_password'><?php echo _('Reset user password:'); ?></label>
-        <input id='users_reset_password' type='password' value='' name='new_password' />
-        <br>
-        <br>
-        <div class='submitButtonDiv'>
-        <button type='submit' class='button'><?php echo _('Edit this user'); ?></button>
-        </div>
+                    <input id='edituser_email' type='email' value='<?php echo $users['email']; ?>' name='email' /></li>
+                    <li>
+                    <label class='block' for='validated'><?php echo _('Has an active account?'); ?></label>
+                    <select name='validated' id='validated'>
+                        <option value='1'<?php
+                                if ($users['validated'] == 1) { echo " selected='selected'"; } ?>
+                                    ><?php echo _('Yes'); ?></option>
+                        <option value='0'<?php
+                            if ($users['validated'] == 0) { echo " selected='selected'"; } ?>
+                                ><?php echo _('No'); ?></option>
+                    </select>
+                    </li>
+                    <li><label class='block' for='usergroup'><?php echo _('Group:'); ?></label>
+                    <select name='usergroup' id='usergroup'>
+            <?php
+                        if ($_SESSION['is_sysadmin'] == 1) {
+            ?>
+                            <option value='1'<?php
+                                    if ($users['usergroup'] == 1) { echo " selected='selected'"; } ?>
+                            >Sysadmins</option>
+            <?php
+                        }
+            ?>
+                        <option value='2'<?php
+                                if ($users['usergroup'] == 2) { echo " selected='selected'"; } ?>
+                        >Admins</option>
+                        <option value='3'<?php
+                                if ($users['usergroup'] == 3) { echo " selected='selected'"; } ?>
+                        >Admin + Lock power</option>
+                        <option value='4'<?php
+                                if ($users['usergroup'] == 4) { echo " selected='selected'"; } ?>
+                        >Users</option>
+                    </select></li>
+                    <li><label class='block' for='users_reset_password'><?php echo _('Reset user password:'); ?></label>
+                    <input id='users_reset_password' type='password' value='' name='new_password' /></li>
+                    <li><button type='submit' class='button'><?php echo _('Save'); ?></button></li>
+                </ul>
             </form>
-        <script>
-                $(".toggle_users_<?php echo $users['userid']; ?>").hide();
-                $("a.trigger_users_<?php echo $users['userid']; ?>").click(function(){
-                    $('div.toggle_users_<?php echo $users['userid']; ?>').slideToggle(1);
-                });
-        </script>
-        </div>
         </li>
         <?php
     }
@@ -246,8 +233,7 @@ if (!empty($team['stamppass'])) {
 
 <div class='divhandle' id='tab3div'>
     <?php
-    $statusArr = $status->read($_SESSION['team_id']);
-    echo $statusView->show($statusArr, $_SESSION['team_id']);
+    echo $statusView->show($status->read($_SESSION['team_id']), $_SESSION['team_id']);
     echo $statusView->showCreate();
     ?>
 </div>
@@ -256,6 +242,7 @@ if (!empty($team['stamppass'])) {
 
 <div class='divhandle' id='tab4div'>
     <?php
+    // this is used below
     $itemsTypesArr = $itemsTypes->read($_SESSION['team_id']);
     echo $itemsTypesView->show($itemsTypesArr);
     echo $itemsTypesView->showCreate();
@@ -511,11 +498,6 @@ $(document).ready(function() {
         $(tabhandle).addClass('selected');
     });
     // END TABS
-    // TOGGLE
-    $(".toggle_users_<?php echo $users['userid']; ?>").hide();
-    $("a.trigger_users_<?php echo $users['userid']; ?>").click(function(){
-        $('div.toggle_users_<?php echo $users['userid']; ?>').slideToggle(1);
-    });
     // COLORPICKER
     $('.colorpicker').colorpicker({
         hsv: false,

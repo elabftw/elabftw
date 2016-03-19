@@ -51,7 +51,7 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
             value='".$data['userid'] . "'> " . $data['firstname'] . " " . $data['lastname'] . " (" . $data['email'] . ")
             </label></li>";
     }
-    $message .= "</ul><div class='center'>
+    $message .= "</ul><div class='submitButtonDiv'>
     <button class='button' type='submit'>"._('Submit') . "</button></div>";
     display_message('error', $message);
     echo "</form>";
@@ -128,7 +128,7 @@ if (!empty($team['stamppass'])) {
         <input type='password' value='<?php echo $stamppass; ?>' name='stamppass' id='stamppass' />
         <span class='smallgray'><?php echo _('Your timestamping service provider password'); ?></span>
         </p>
-        <div class='center'>
+        <div class='submitButtonDiv'>
             <button type='submit' name='submit_config' class='submit button'>Save</button>
         </div>
     </form>
@@ -197,7 +197,7 @@ if (!empty($team['stamppass'])) {
         <input id='users_reset_password' type='password' value='' name='new_password' />
         <br>
         <br>
-        <div class='center'>
+        <div class='submitButtonDiv'>
         <button type='submit' class='button'><?php echo _('Edit this user'); ?></button>
         </div>
             </form>
@@ -228,7 +228,7 @@ if (!empty($team['stamppass'])) {
         <label for='delete_user_confpass'><?php echo _('Type your password:'); ?></label>
         <input type='password' name='delete_user_confpass' id='delete_user_confpass' required />
     <div class='center'>
-        <button type='submit' class='button submit'><?php echo _('Delete this user!'); ?></button>
+        <button type='submitButtonDiv' class='button submit'><?php echo _('Delete this user!'); ?></button>
     </div>
     </form>
 </li>
@@ -291,7 +291,7 @@ if (!empty($team['stamppass'])) {
             <input type='hidden' name='status_id' value='<?php echo $status['id']; ?>' />
             <br>
 
-            <div class='center'>
+            <div class='submitButtonDiv'>
                 <button type='submit' class='button'><?php echo _('Edit') . ' ' . stripslashes($status['name']); ?></button><br>
             </div>
         </form>
@@ -317,7 +317,7 @@ if (!empty($team['stamppass'])) {
         <div id='colorwheel_div_new_status'>
             <input class='colorpicker' type='text' name='new_status_color' value='000000' />
         </div>
-        <div class='center'>
+        <div class='submitButtonDiv'>
             <button type='submit' class='submit button'><?php echo _('Save'); ?></button>
         </div>
         <br>
@@ -370,7 +370,7 @@ foreach ($itemsTypesArr as $items_types) {
                     <input class='colorpicker' type='text' style='display:inline' name='item_type_bgcolor' value='<?php echo $items_types['bgcolor']; ?>'/>
                 </div>
                 <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']); ?></textarea><br>
-                <div class='center'>
+                <div class='submitButtonDiv'>
                     <button type='submit' class='button'><?php echo _('Edit') . ' ' . stripslashes($items_types['name']); ?></button><br>
                 </div>
             </form>
@@ -403,8 +403,8 @@ foreach ($itemsTypesArr as $items_types) {
             <input class='colorpicker' type='text' name='new_item_type_bgcolor' value='000000' />
         </div>
         <textarea class='mceditable' name='new_item_type_template' /></textarea>
-        <div class='center submitButtonDiv'>
-        <button type='submit' class='button'><?php echo _('Save'); ?></button>
+        <div class='submitButtonDiv'>
+            <button type='submit' class='button'><?php echo _('Save'); ?></button>
         </div>
     </form>
 </li>
@@ -419,40 +419,33 @@ foreach ($itemsTypesArr as $items_types) {
     <textarea class='mceditable' id='commonTplBody' />
         <?php echo $admin->commonTplRead(); ?>
     </textarea>
-    <div class='center submitButtonDiv'>
+    <div class='submitButtonDiv'>
         <button type='submit' class='button' onClick='commonTplUpdate()'><?php echo _('Save'); ?></button>
     </div>
 </div>
 
 <!-- TAB 6 IMPORT CSV -->
 <div class='divhandle' id='tab6div'>
-
     <h3><?php echo _('Import a CSV file'); ?></h3>
+    <p style='text-align:justify'><?php echo _("This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file."); ?>
+    <span class='strong'><?php echo _('You should make a backup of your database before importing thousands of items!'); ?></span></p>
+
+    <label for='item_selector'><?php echo _('1. Select a type of item to import to:'); ?></label>
+    <select id='item_selector' onchange='goNext(this.value)'><option value=''>--------</option>
     <?php
-
-    // file upload block
-    // show select of type
-    // SQL to get items names
+    foreach ($itemsTypesArr as $items_types) {
+        echo "<option value='" . $items_types['id'] . "' name='type' ";
+        echo ">" . $items_types['name'] . "</option>";
+    }
     ?>
-        <p style='text-align:justify'><?php echo _("This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file."); ?>
-<span class='strong'><?php echo _('You should make a backup of your database before importing thousands of items!'); ?></span></p>
-
-        <label for='item_selector'><?php echo _('1. Select a type of item to import to:'); ?></label>
-        <select id='item_selector' onchange='goNext(this.value)'><option value=''>--------</option>
-        <?php
-        foreach ($itemsTypesArr as $items_types) {
-            echo "<option value='" . $items_types['id'] . "' name='type' ";
-            echo ">" . $items_types['name'] . "</option>";
-        }
-        ?>
-        </select><br>
-        <div class='import_block'>
+    </select>
+    <div class='import_block'>
         <form enctype="multipart/form-data" action="app/import.php" method="POST">
         <label for='uploader'><?php echo _('2. Select a CSV file to import:'); ?></label>
             <input id='uploader' name="file" type="file" accept='.csv' />
             <input name='type' type='hidden' value='csv' />
-            <div class='center'>
-            <button type="submit" class='button' value="Upload"><?php echo _('Import CSV'); ?></button>
+            <div class='submitButtonDiv'>
+                <button type="submit" class='button' value="Upload"><?php echo _('Import CSV'); ?></button>
             </div>
         </form>
     </div>
@@ -463,9 +456,6 @@ foreach ($itemsTypesArr as $items_types) {
 
     <h3><?php echo _('Import a ZIP file'); ?></h3>
     <?php
-
-    // file upload block
-    // show select of type
 
     // sql to get team members names
     $sql = "SELECT firstname, lastname, userid FROM users WHERE team = :team";
@@ -499,8 +489,8 @@ foreach ($itemsTypesArr as $items_types) {
         <label for='uploader'><?php echo _('2. Select a ZIP file to import:'); ?></label>
             <input id='uploader' name="file" type="file" accept='.elabftw.zip' />
             <input name='type' type='hidden' value='zip' />
-            <div class='center'>
-            <button type="submit" class='button' value="Upload"><?php echo _('Import ZIP'); ?></button>
+            <div class='submitButtonDiv'>
+                <button type="submit" class='button' value="Upload"><?php echo _('Import ZIP'); ?></button>
             </div>
         </form>
     </div>

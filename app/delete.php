@@ -275,19 +275,6 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             $_SESSION['infos'] = $msg_arr;
             break;
 
-        case 'teamgroup':
-            $delete_sql = "DELETE FROM team_groups WHERE id = :id";
-            $delete_req = $pdo->prepare($delete_sql);
-            $delete_req->bindParam(':id', $id, PDO::PARAM_INT);
-            $delete_req->execute();
-
-            $delete_sql = "DELETE FROM users2team_groups WHERE groupid = :id";
-            $delete_req = $pdo->prepare($delete_sql);
-            $delete_req->bindParam(':id', $id, PDO::PARAM_INT);
-            $delete_req->execute();
-            break;
-
-
         // END
         default:
             $err_flag = true;

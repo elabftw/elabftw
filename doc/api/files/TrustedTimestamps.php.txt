@@ -52,6 +52,9 @@ class TrustedTimestamps
     /** the time of the timestamp */
     private $responseTime;
 
+    /** hash algo for file */
+    private $hashAlgorithm = 'sha256';
+
     /**
      * Give me an experiment id and a db and I make good pdf for you
      *
@@ -90,7 +93,7 @@ class TrustedTimestamps
         try {
             $pdf = new MakePdf($this->id, 'experiments', true);
             $this->pdfPath = $pdf->filePath;
-            $this->pdfLongName = $pdf->fileName;
+            $this->pdfLongName = $pdf->fileName . '.pdf';
         } catch (Exception $e) {
             throw new Exception('Failed at making the pdf : ' . $e->getMessage());
         }
@@ -182,7 +185,7 @@ class TrustedTimestamps
      */
     private function createRequestfile()
     {
-        if (!is_file($this->pdfPath)) {
+        if (!is_readable($this->pdfPath)) {
             throw new Exception('Pdf not found! This is a bug!');
         }
         $outfilepath = $this->createTempFile();
@@ -314,6 +317,20 @@ class TrustedTimestamps
     }
 
     /**
+     * Get the hash of a file
+     *
+     * @param $file Path to the file
+     * @throws Exception if file is not readable
+     * @return string Hash of the file
+     */
+    private function getHash($file)
+    {
+        if (!is_readable($file)) {
+            throw new Exception('Not a file!');
+        }
+        return hash_file($this->hashAlgorithm, $file);
+    }
+    /**
      * Save the binaryResponseString to a .asn1 file (token)
      *
      */
@@ -325,11 +342,12 @@ class TrustedTimestamps
             throw new Exception('Cannot save token to disk!');
         }
         $this->responsefilePath = $file_path;
-        $md5 = hash_file('md5', $this->responsefilePath);
+
         $real_name = $this->pdfRealName . '.asn1';
 
         // keep a trace of where we put the token
-        $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, md5) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :md5)";
+        $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, hash, hash_algorithm)
+            VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :hash, :hash_algorithm)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':real_name', $real_name);
         $req->bindParam(':long_name', $long_name);
@@ -337,7 +355,8 @@ class TrustedTimestamps
         $req->bindParam(':item_id', $this->id);
         $req->bindParam(':userid', $_SESSION['userid']);
         $req->bindValue(':type', 'timestamp-token');
-        $req->bindParam(':md5', $md5);
+        $req->bindParam(':hash', $this->getHash($this->responsefilePath));
+        $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
         if (!$req->execute()) {
             throw new Exception('Cannot insert into SQL!');
         }
@@ -423,10 +442,7 @@ class TrustedTimestamps
      */
     private function sqlInsertPdf()
     {
-        $md5 = hash_file('md5', $this->pdfPath);
-
-        // DA REAL SQL
-        $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, md5) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :md5)";
+        $sql = "INSERT INTO uploads(real_name, long_name, comment, item_id, userid, type, hash, hash_algorithm) VALUES(:real_name, :long_name, :comment, :item_id, :userid, :type, :hash, :hash_algorithm)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':real_name', $this->pdfRealName);
         $req->bindParam(':long_name', $this->pdfLongName);
@@ -434,7 +450,9 @@ class TrustedTimestamps
         $req->bindParam(':item_id', $this->id);
         $req->bindParam(':userid', $_SESSION['userid']);
         $req->bindValue(':type', 'exp-pdf-timestamp');
-        $req->bindParam(':md5', $md5);
+        $req->bindParam(':hash', $this->getHash($this->pdfPath));
+        $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
+
         if (!$req->execute()) {
             throw new Exception('Cannot insert into SQL!');
         }

@@ -15,6 +15,7 @@ use \ZipArchive;
 
 /**
  * Use this to upgrade an installation
+ *
  */
 class Upgrade extends Update
 {

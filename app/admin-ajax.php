@@ -1,55 +1,60 @@
 <?php
+/**
+ * app/admin-ajax.php
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see http://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
+/**
+ * Deal with ajax requests sent from the admin page
+ *
+ */
 require_once '../inc/common.php';
 
-// only admin can use this
-if ($_SESSION['is_admin'] != 1 || $_SERVER['REQUEST_METHOD'] != 'POST') {
-    die(_('This section is out of your reach.'));
+// the constructor will check for admin rights
+try {
+    $teamGroups = new \Elabftw\Elabftw\TeamGroups();
+} catch (Exception $e) {
+    die($e->getMessage());
 }
 
 // CREATE TEAM GROUP
-if (isset($_POST['create_teamgroup']) && !empty($_POST['create_teamgroup'])) {
-    $group_name = filter_var($_POST['create_teamgroup'], FILTER_SANITIZE_STRING);
-    $sql = "INSERT INTO team_groups(name, team) VALUES(:name, :team)";
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':name', $group_name);
-    $req->bindParam(':team', $_SESSION['team_id']);
-    if ($req->execute()) {
-        echo '1';
-    } else {
-        echo '0';
+if (isset($_POST['create_teamgroup'])) {
+    try {
+        $teamGroups->create(filter_var($_POST['create_teamgroup'], FILTER_SANITIZE_STRING));
+    } catch (Exception $e) {
+        dblog('Error', $_SESSION['userid'], $e->getMessage());
     }
 }
 
 // EDIT TEAM GROUP NAME FROM JEDITABLE
-if (isset($_POST['teamgroup']) && !empty($_POST['teamgroup'])) {
-    $name = filter_var($_POST['teamgroup'], FILTER_SANITIZE_STRING);
-    $id_arr = explode('_', $_POST['id']);
-    if ($id_arr[0] === 'teamgroup' && is_pos_int($id_arr[1])) {
-        // SQL to update single exp comment
-        $sql = "UPDATE team_groups SET name = :name WHERE id = :id AND team = :team";
-        $req = $pdo->prepare($sql);
-        $req->bindParam(':name', $name);
-        $req->bindParam(':team', $_SESSION['team_id']);
-        $req->bindParam(':id', $id_arr[1], PDO::PARAM_INT);
-        if ($req->execute()) {
-            echo stripslashes($name);
-        }
+if (isset($_POST['update_teamgroup'])) {
+    try {
+        // the output is echoed so it gets back into jeditable input field
+        echo $teamGroups->update(filter_var($_POST['update_teamgroup'], FILTER_SANITIZE_STRING), $_POST['id']);
+    } catch (Exception $e) {
+        dblog('Error', $_SESSION['userid'], $e->getMessage());
     }
 }
 
 // ADD OR REMOVE USER TO/FROM TEAM GROUP
 if (isset($_POST['teamgroup_user'])) {
-    if ($_POST['action'] === 'add') {
-        $sql = "INSERT INTO users2team_groups(userid, groupid) VALUES(:userid, :groupid)";
-    } else {
-        $sql = "DELETE FROM users2team_groups WHERE userid = :userid AND groupid = :groupid";
+    try {
+        $teamGroups->updateMember($_POST['teamgroup_user'], $_POST['teamgroup_group'], $_POST['action']);
+    } catch (Exception $e) {
+        dblog('Error', $_SESSION['userid'], $e->getMessage());
     }
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':userid', $_POST['teamgroup_user'], PDO::PARAM_INT);
-    $req->bindParam(':groupid', $_POST['teamgroup_group'], PDO::PARAM_INT);
-    if ($req->execute()) {
-        echo '1';
-    } else {
-        echo '0';
+}
+
+// DESTROY TEAM GROUP
+if (isset($_POST['destroy_teamgroup'])) {
+    try {
+        $teamGroups->destroy($_POST['teamgroup_group']);
+    } catch (Exception $e) {
+        dblog('Error', $_SESSION['userid'], $e->getMessage());
     }
 }

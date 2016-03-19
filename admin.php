@@ -656,12 +656,12 @@ function createTeamgroup() {
         })
     }
 }
-function deleteTeamgroup(id) {
+function deleteTeamgroup(groupid) {
     var you_sure = confirm('<?php echo _('Delete this?'); ?>');
     if (you_sure == true) {
-        $.post('app/delete.php', {
-            type: 'teamgroup',
-            id: id
+        $.post('app/admin-ajax.php', {
+            destroy_teamgroup: true,
+            teamgroup_group: groupid
         }).success(function() {
             $("#team_groups_div").load("admin.php #team_groups_div");
         })
@@ -694,7 +694,7 @@ $(document).ready(function() {
     $('h3.teamgroup_name').editable('app/admin-ajax.php', {
      tooltip : 'Click to edit',
      indicator : 'Saving...',
-     name : 'teamgroup',
+     name : 'update_teamgroup',
      submit : 'Save',
      cancel : 'Cancel',
      style : 'display:inline'

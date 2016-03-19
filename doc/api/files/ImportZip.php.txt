@@ -45,6 +45,9 @@ class ImportZip extends Import
     /** date of the item we import */
     private $date;
 
+    /** unique identifier of the experiment */
+    private $elabid;
+
     /**
      * the newly created id of the imported item
      * we need it for linking attached file(s) to the the new item
@@ -137,10 +140,10 @@ class ImportZip extends Import
      *
      * @throws Exception if SQL request failed
      */
-    private function importData()
+    private function dbInsert()
     {
         if ($this->category === 'experiments') {
-            $sql = "INSERT into experiments(team, title, date, body, userid, visibility, status) VALUES(:team, :title, :date, :body, :userid, :visibility, :status)";
+            $sql = "INSERT into experiments(team, title, date, body, userid, visibility, status, elabid) VALUES(:team, :title, :date, :body, :userid, :visibility, :status, :elabid)";
         } else {
             $sql = "INSERT INTO items(team, title, date, body, userid, type) VALUES(:team, :title, :date, :body, :userid, :type)";
         }
@@ -156,6 +159,7 @@ class ImportZip extends Import
             $req->bindValue(':visibility', 'team');
             $req->bindValue(':status', $this->getDefaultStatus());
             $req->bindParam(':userid', $this->target, \PDO::PARAM_INT);
+            $req->bindParam(':elabid', $this->elabid);
         }
 
 
@@ -185,10 +189,12 @@ class ImportZip extends Import
     private function importAll()
     {
         foreach ($this->json as $item) {
+
             $this->title = $item['title'];
             $this->body = $item['body'];
             $this->date = $item['date'];
-            $this->importData();
+            $this->elabid = $item['elabid'];
+            $this->dbInsert();
             if (is_array($item['files'])) {
                 foreach ($item['files'] as $file) {
                     $this->importFile($file);

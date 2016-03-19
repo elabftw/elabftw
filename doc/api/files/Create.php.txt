@@ -185,8 +185,8 @@ class Create
             'title' => $title,
             'date' => kdate(),
             'body' => $body,
-            'status' => self::getStatus(),
-            'elabid' => self::generateElabid(),
+            'status' => $this->getStatus(),
+            'elabid' => $this->generateElabid(),
             'visibility' => 'team',
             'userid' => $_SESSION['userid']
         ));

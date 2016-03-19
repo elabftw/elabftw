@@ -21,6 +21,8 @@ try {
     $crypto = new \Elabftw\Elabftw\CryptoWrapper();
     $admin = new \Elabftw\Elabftw\Admin();
     $teamGroups = new \Elabftw\Elabftw\TeamGroups();
+    $commonTpl = new \Elabftw\Elabftw\CommonTpl();
+    $itemsTypes = new \Elabftw\Elabftw\ItemsTypes();
 } catch (Exception $e) {
     die($e->getMessage());
 }
@@ -333,83 +335,82 @@ if (!empty($team['stamppass'])) {
 <!-- TAB 4 ITEMS TYPES-->
 <div class='divhandle' id='tab4div'>
     <h3><?php echo _('Database items types'); ?></h3>
-    <ul class='draggable sortable_itemstypes list-group'>
+    <div id='itemsTypesDiv'>
+        <ul class='draggable sortable_itemstypes list-group'>
 
-<?php
-$itemsTypesArr = $admin->itemsTypesRead($_SESSION['team_id']);
+    <?php
+    $itemsTypesArr = $itemsTypes->read($_SESSION['team_id']);
 
-foreach ($itemsTypesArr as $items_types) {
-    ?>
-        <li id='itemstypes_<?php echo $items_types['id']; ?>' class='list-group-item'>
-            <a class='trigger_<?php echo $items_types['id']; ?>'><?php echo _('Edit') . ' ' . $items_types['name']; ?></a>
-            <div class='toggle_container_<?php echo $items_types['id']; ?>'>
-            <?php
-            // count the items with this type
-            // don't allow deletion if items with this type exist
-            // but instead display a message to explain
-            $count_db_sql = "SELECT COUNT(*) FROM items WHERE type = :type";
-            $count_db_req = $pdo->prepare($count_db_sql);
-            $count_db_req->bindParam(':type', $items_types['id'], PDO::PARAM_INT);
-            $count_db_req->execute();
-            $count = $count_db_req->fetchColumn();
-            if ($count == 0) {
+    foreach ($itemsTypesArr as $items_types) {
+        ?>
+            <li id='itemstypes_<?php echo $items_types['id']; ?>' class='list-group-item'>
+                <a class='trigger_<?php echo $items_types['id']; ?>'><?php echo _('Edit') . ' ' . $items_types['name']; ?></a>
+                <div class='toggle_container_<?php echo $items_types['id']; ?>'>
+                <?php
+                // count the items with this type
+                // don't allow deletion if items with this type exist
+                // but instead display a message to explain
+                $count_db_sql = "SELECT COUNT(*) FROM items WHERE type = :type";
+                $count_db_req = $pdo->prepare($count_db_sql);
+                $count_db_req->bindParam(':type', $items_types['id'], PDO::PARAM_INT);
+                $count_db_req->execute();
+                $count = $count_db_req->fetchColumn();
+                if ($count == 0) {
+                    ?>
+                    <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $items_types['id']; ?>','item_type', 'admin.php')" />
+                <?php
+                } else {
+                    ?>
+                    <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert('<?php echo _('Remove all database items with this type before deleting this type.'); ?>')" />
+                <?php
+                }
                 ?>
-                <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $items_types['id']; ?>','item_type', 'admin.php')" />
+
+                <form action='app/admin-exec.php' method='post'>
+                <label><?php echo _('Edit name'); ?></label>
+                    <input required type='text' name='item_type_name' value='<?php echo stripslashes($items_types['name']); ?>' />
+                    <input type='hidden' name='item_type_id' value='<?php echo $items_types['id']; ?>' />
+
+                    <div id='colorwheel_div_<?php echo $items_types['id']; ?>'>
+                <label><?php echo _('Edit color'); ?></label>
+                        <input class='colorpicker' type='text' style='display:inline' name='item_type_bgcolor' value='<?php echo $items_types['bgcolor']; ?>'/>
+                    </div>
+                    <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']); ?></textarea><br>
+                    <div class='submitButtonDiv'>
+                        <button type='submit' class='button'><?php echo _('Edit') . ' ' . stripslashes($items_types['name']); ?></button><br>
+                    </div>
+                </form>
+
+            <script>$(document).ready(function() {
+                $(".toggle_container_<?php echo $items_types['id']; ?>").hide();
+                $("a.trigger_<?php echo $items_types['id']; ?>").click(function(){
+                    $('div.toggle_container_<?php echo $items_types['id']; ?>').slideToggle(100);
+                    // disable sortable behavior
+                    $('.sortable_itemstypes').sortable("disable");
+                });
+            });</script>
+            </div>
+            </li>
             <?php
-            } else {
-                ?>
-                <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert('<?php echo _('Remove all database items with this type before deleting this type.'); ?>')" />
-            <?php
-            }
-            ?>
+        } // end generation of items_types
+        ?>
 
-            <form action='app/admin-exec.php' method='post'>
-            <label><?php echo _('Edit name'); ?></label>
-                <input required type='text' name='item_type_name' value='<?php echo stripslashes($items_types['name']); ?>' />
-                <input type='hidden' name='item_type_id' value='<?php echo $items_types['id']; ?>' />
-
-                <div id='colorwheel_div_<?php echo $items_types['id']; ?>'>
-            <label><?php echo _('Edit color'); ?></label>
-                    <input class='colorpicker' type='text' style='display:inline' name='item_type_bgcolor' value='<?php echo $items_types['bgcolor']; ?>'/>
-                </div>
-                <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']); ?></textarea><br>
-                <div class='submitButtonDiv'>
-                    <button type='submit' class='button'><?php echo _('Edit') . ' ' . stripslashes($items_types['name']); ?></button><br>
-                </div>
-            </form>
-
-        <script>$(document).ready(function() {
-            $(".toggle_container_<?php echo $items_types['id']; ?>").hide();
-            $("a.trigger_<?php echo $items_types['id']; ?>").click(function(){
-                $('div.toggle_container_<?php echo $items_types['id']; ?>').slideToggle(100);
-                // disable sortable behavior
-                $('.sortable_itemstypes').sortable("disable");
-            });
-        });</script>
-        </div>
-        </li>
-        <?php
-    } // end generation of items_types
-    ?>
-
-</ul>
+    </ul>
+</div>
 
 <!-- ADD NEW TYPE OF ITEM -->
 <ul class='list-group'>
 <li class='list-group-item'>
-    <form action='app/admin-exec.php' method='post'>
-        <label for='new_item_type_name'><?php echo _('Add a new type of item:'); ?></label>
-        <input required type='text' id='new_item_type_name' name='new_item_type_name' />
-        <input type='hidden' name='new_item_type' value='1' />
-        <div id='colorwheel_div_new'>
-            <label><?php echo _('Edit color'); ?></label>
-            <input class='colorpicker' type='text' name='new_item_type_bgcolor' value='000000' />
-        </div>
-        <textarea class='mceditable' name='new_item_type_template' /></textarea>
-        <div class='submitButtonDiv'>
-            <button type='submit' class='button'><?php echo _('Save'); ?></button>
-        </div>
-    </form>
+    <label for='itemsTypesName'><?php echo _('Add a new type of item:'); ?></label>
+    <input required type='text' id='itemsTypesName' />
+    <div id='colorwheel_div_new'>
+        <label><?php echo _('Edit color'); ?></label>
+        <input class='colorpicker' type='text' id='itemsTypesColor' value='29AEB9' />
+    </div>
+    <textarea class='mceditable' id='itemsTypesTemplate' /></textarea>
+    <div class='submitButtonDiv'>
+        <button type='submit' onClick='itemsTypesCreate()' class='button'><?php echo _('Save'); ?></button>
+    </div>
 </li>
 </ul>
 
@@ -419,8 +420,8 @@ foreach ($itemsTypesArr as $items_types) {
 <div class='divhandle' id='tab5div'>
     <h3><?php echo _('Common experiment template'); ?></h3>
     <p><?php echo _('This is the default text when someone creates an experiment.'); ?></p>
-    <textarea class='mceditable' id='commonTplBody' />
-        <?php echo $admin->commonTplRead(); ?>
+    <textarea style='height:400px' class='mceditable' id='commonTplTemplate' />
+        <?php echo $commonTpl->commonTplRead(); ?>
     </textarea>
     <div class='submitButtonDiv'>
         <button type='submit' class='button' onClick='commonTplUpdate()'><?php echo _('Save'); ?></button>
@@ -499,12 +500,12 @@ foreach ($itemsTypesArr as $items_types) {
     </div>
 </div>
 
-<!-- TAB 8 -->
+<!-- TAB 8 TEAM GROUPS -->
 <div class='divhandle' id='tab8div'>
     <h3><?php echo _('Manage groups of users'); ?></h3>
 <!-- CREATE A GROUP -->
-<label for='create_teamgroup'><?php echo _('Create a group'); ?></label>
-    <input id='create_teamgroup' name="create_teamgroup" type="text" />
+<label for='teamGroupCreate'><?php echo _('Create a group'); ?></label>
+    <input id='teamGroupCreate' type="text" />
     <button type='submit' onclick='teamGroupCreate()' class='button'><?php echo _('Create'); ?></button>
 <!-- END CREATE GROUP -->
 
@@ -515,8 +516,8 @@ $teamGroupsArr = $teamGroups->read($_SESSION['team_id']);
     <div class='well'>
     <section>
     <!-- ADD USER TO GROUP -->
-        <label for='add_teamgroup_user'><?php echo _('Add this user'); ?></label>
-        <select name='add_teamgroup_user' id='add_teamgroup_user'>
+        <label for='teamGroupUserAdd'><?php echo _('Add this user'); ?></label>
+        <select id='teamGroupUserAdd'>
         <?php
         foreach ($usersArr as $users) {
             echo "<option value='" . $users['userid'] . "'>";
@@ -525,8 +526,8 @@ $teamGroupsArr = $teamGroups->read($_SESSION['team_id']);
         ?>
         </select>
 
-        <label for='add_teamgroup_group'><?php echo _('to this group'); ?></label>
-        <select name='add_teamgroup_group' id='add_teamgroup_group'>
+        <label for='teamGroupGroupAdd'><?php echo _('to this group'); ?></label>
+        <select id='teamGroupGroupAdd'>
         <?php
         foreach ($teamGroupsArr as $team_groups) {
             echo "<option value='" . $team_groups['id'] . "'>";
@@ -539,8 +540,8 @@ $teamGroupsArr = $teamGroups->read($_SESSION['team_id']);
     </section>
     <section>
     <!-- RM USER FROM GROUP -->
-        <label for='rm_teamgroup_user'><?php echo _('Remove this user'); ?></label>
-        <select name='rm_teamgroup_user' id='rm_teamgroup_user'>
+        <label for='teamGroupUserRm'><?php echo _('Remove this user'); ?></label>
+        <select id='teamGroupUserRm'>
         <?php
         foreach ($usersArr as $users) {
             echo "<option value='" . $users['userid'] . "'>";
@@ -549,8 +550,8 @@ $teamGroupsArr = $teamGroups->read($_SESSION['team_id']);
         ?>
         </select>
 
-        <label for='rm_teamgroup_group'><?php echo _('from this group'); ?></label>
-        <select name='rm_teamgroup_group' id='rm_teamgroup_group'>
+        <label for='teamGroupGroupRm'><?php echo _('from this group'); ?></label>
+        <select id='teamGroupGroupRm'>
         <?php
         foreach ($teamGroupsArr as $team_groups) {
             echo "<option value='" . $team_groups['id'] . "'>";
@@ -562,24 +563,10 @@ $teamGroupsArr = $teamGroups->read($_SESSION['team_id']);
     </section>
     </div>
 
-<?php
-// show available team groups
-echo "<h3>" . _('Existing groups') . "</h3>";
-$sql = "SELECT DISTINCT users.firstname, users.lastname
-    FROM users CROSS JOIN users2team_groups
-    ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
+    <!-- SHOW -->
+    <h3><?php echo _('Existing groups'); ?></h3>
+    <?php echo $teamGroups->show($teamGroupsArr); ?>
 
-foreach ($teamGroupsArr as $team_groups) {
-    echo "<div class='well'><img onclick=\"teamGroupDestroy(" . $team_groups['id'] . ", '" . str_replace(array("\"", "'"), '', _('Delete this?')) . "')\" src='img/small-trash.png' style='float:right' alt='trash' title='Remove this group' /><h3 class='inline editable teamgroup_name' id='teamgroup_" . $team_groups['id'] . "'>" . $team_groups['name'] . "</h3><ul>";
-    $req2 = $pdo->prepare($sql);
-    $req2->bindParam(':groupid', $team_groups['id']);
-    $req2->execute();
-    while ($res2 = $req2->fetch()) {
-        echo "<li>" . $res2['firstname'] . " " . $res2['lastname'] . "</li>";
-    }
-    echo "</ul></div>";
-}
-?>
     </div>
 </div>
 

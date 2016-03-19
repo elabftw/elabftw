@@ -27,7 +27,7 @@ $GLOBALS['i']  = 'i';
  */
 class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
 {
-    protected $backupGlobalsBlacklist = array('i', 'singleton');
+    protected $backupGlobalsBlacklist = ['i', 'singleton'];
 
     /**
      * Used be testStaticAttributesBackupPre
@@ -188,6 +188,28 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
     {
         $test = new ThrowExceptionTestCase('test');
         $test->setExpectedException('RuntimeException');
+
+        $result = $test->run();
+
+        $this->assertEquals(1, count($result));
+        $this->assertTrue($result->wasSuccessful());
+    }
+
+    public function testExceptionWithEmptyMessage()
+    {
+        $test = new ThrowExceptionTestCase('test');
+        $test->setExpectedException('RuntimeException', '');
+
+        $result = $test->run();
+
+        $this->assertEquals(1, count($result));
+        $this->assertTrue($result->wasSuccessful());
+    }
+
+    public function testExceptionWithNullMessage()
+    {
+        $test = new ThrowExceptionTestCase('test');
+        $test->setExpectedException('RuntimeException', NULL);
 
         $result = $test->run();
 
@@ -483,6 +505,17 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testSkipsIfRequiresExtensionWithAMinimumVersion()
+    {
+        $test   = new RequirementsTest('testSpecificExtensionVersion');
+        $result = $test->run();
+
+        $this->assertEquals(
+            'Extension testExt 1.8.0 (or later) is required.',
+            $test->getStatusMessage()
+        );
+    }
+
     public function testSkipsProvidesMessagesForAllSkippingReasons()
     {
         $test   = new RequirementsTest('testAllPossibleRequirements');
@@ -495,7 +528,8 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
             'Function testFuncOne is required.' . PHP_EOL .
             'Function testFuncTwo is required.' . PHP_EOL .
             'Extension testExtOne is required.' . PHP_EOL .
-            'Extension testExtTwo is required.',
+            'Extension testExtTwo is required.' . PHP_EOL .
+            'Extension testExtThree 2.0 (or later) is required.',
             $test->getStatusMessage()
         );
     }

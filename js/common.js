@@ -123,44 +123,60 @@ function go_url(x) {
 // admin.php
 // =========
 
+// ITEMS TYPES
+function itemsTypesCreate() {
+    name = $('#itemsTypesName').val();
+    color = $('#itemsTypesColor').val();
+    template = tinymce.get('itemsTypesTemplate').getContent();
+    $.post('app/admin-ajax.php', {
+        itemsTypesCreate: true,
+        itemsTypesName: name,
+        itemsTypesColor: color,
+        itemsTypesTemplate: template
+    }).success(function() {
+        notif('Saved', 'ok');
+        window.location.replace('admin.php?tab=4');
+    });
+}
+
 // COMMON TEMPLATE
 function commonTplUpdate() {
-    body = tinymce.activeEditor.getContent();
+    template = tinymce.get('commonTplTemplate').getContent();
     $.post('app/admin-ajax.php', {
-        commonTplUpdate: body
+        commonTplUpdate: template
     }).success(function() {
         notif('Saved', 'ok');
     });
 }
 
 // TEAM GROUP
+function teamGroupCreate() {
+    var name = $('#teamGroupCreate').val();
+    if (name.length > 0) {
+        $.post('app/admin-ajax.php', {
+            teamGroupCreate: name
+        }).success(function() {
+            $('#team_groups_div').load('admin.php #team_groups_div');
+            $('#teamGroupCreate').val('');
+        });
+    }
+}
+
 function teamGroupUpdate(action) {
     if (action === 'add') {
-        userid = $('#add_teamgroup_user').val();
-        groupid = $('#add_teamgroup_group').val();
+        user = $('#teamGroupUserAdd').val();
+        group = $('#teamGroupGroupAdd').val();
     } else {
-        userid = $('#rm_teamgroup_user').val();
-        groupid = $('#rm_teamgroup_group').val();
+        user = $('#teamGroupUserRm').val();
+        group = $('#teamGroupGroupRm').val();
     }
     $.post('app/admin-ajax.php', {
         action: action,
-        teamgroup_user: userid,
-        teamgroup_group: groupid
+        teamGroupUser: user,
+        teamGroupGroup: group
     }).success(function() {
         $('#team_groups_div').load('admin.php #team_groups_div');
     });
-}
-
-function teamGroupCreate() {
-    var name = $('#create_teamgroup').val();
-    if (name.length > 0) {
-        $.post('app/admin-ajax.php', {
-            create_teamgroup: name
-        }).success(function() {
-            $('#team_groups_div').load('admin.php #team_groups_div');
-            $('#create_teamgroup').val('');
-        });
-    }
 }
 
 function teamGroupDestroy(groupid, confirmText) {

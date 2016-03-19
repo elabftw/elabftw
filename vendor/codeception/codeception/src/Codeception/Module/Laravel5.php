@@ -41,6 +41,7 @@ use Illuminate\Support\Facades\Facade;
  * * bootstrap: `string`, default `bootstrap/app.php` - Relative path to app.php config file.
  * * root: `string`, default `` - Root path of our application.
  * * packages: `string`, default `workbench` - Root path of application packages (if any).
+ * * disable_exception_handling: `boolean`, default `true` - disable Laravel exception handling
  * * disable_middleware: `boolean`, default `false` - disable all middleware.
  * * disable_events: `boolean`, default `false` - disable all events.
  * * url: `string`, default `` - The application URL.
@@ -96,6 +97,7 @@ class Laravel5 extends Framework implements ActiveRecord, PartedModule
                 'bootstrap' => 'bootstrap' . DIRECTORY_SEPARATOR . 'app.php',
                 'root' => '',
                 'packages' => 'workbench',
+                'disable_exception_handling' => true,
                 'disable_middleware' => false,
                 'disable_events' => false,
             ],
@@ -225,6 +227,34 @@ class Laravel5 extends Framework implements ActiveRecord, PartedModule
     public function setApplication($app)
     {
         $this->app = $app;
+    }
+
+    /**
+     * Enable Laravel exception handling.
+     *
+     * ``` php
+     * <?php
+     * $I->enableExceptionHandling();
+     * ?>
+     * ```
+     */
+    public function enableExceptionHandling()
+    {
+        $this->client->enableExceptionHandling();
+    }
+
+    /**
+     * Disable Laravel exception handling.
+     *
+     * ``` php
+     * <?php
+     * $I->disableExceptionHandling();
+     * ?>
+     * ```
+     */
+    public function disableExceptionHandling()
+    {
+        $this->client->disableExceptionHandling();
     }
 
     /**
@@ -638,7 +668,7 @@ class Laravel5 extends Framework implements ActiveRecord, PartedModule
         }
 
         if ($user instanceof Authenticatable) {
-            $guard->setUser($user);
+            $guard->login($user);
             return;
         }
 
@@ -656,22 +686,38 @@ class Laravel5 extends Framework implements ActiveRecord, PartedModule
     }
 
     /**
-     * Checks that a user is authenticated
+     * Checks that a user is authenticated.
+     * You can specify the guard that should be use for Laravel >= 5.2.
+     * @param string|null $guard
      */
-    public function seeAuthentication()
+    public function seeAuthentication($guard = null)
     {
-        if (! $this->app['auth']->check()) {
+        $auth = $this->app['auth'];
+
+        if (method_exists($auth, 'guard')) {
+            $auth = $auth->guard($guard);
+        }
+
+        if (! $auth->check()) {
             $this->fail("There is no authenticated user");
         }
     }
 
     /**
-     * Check that user is not authenticated
+     * Check that user is not authenticated.
+     * You can specify the guard that should be use for Laravel >= 5.2.
+     * @param string|null $guard
      */
-    public function dontSeeAuthentication()
+    public function dontSeeAuthentication($guard = null)
     {
-        if ($this->app['auth']->check()) {
-            $this->fail("There is an authenticated user");
+        $auth = $this->app['auth'];
+
+        if (method_exists($auth, 'guard')) {
+            $auth = $auth->guard($guard);
+        }
+
+        if ($auth->check()) {
+            $this->fail("There is no authenticated user");
         }
     }
 

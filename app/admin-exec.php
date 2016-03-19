@@ -313,32 +313,6 @@ if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
     }
 }
 
-// ADD NEW ITEM TYPE
-if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
-    $tab = '4';
-
-    $item_type_name = filter_var($_POST['new_item_type_name'], FILTER_SANITIZE_STRING);
-    if (strlen($item_type_name) < 1) {
-        $item_type_name = 'Unnamed';
-    }
-
-    // we remove the # of the hexacode and sanitize string
-    $item_type_bgcolor = filter_var(substr($_POST['new_item_type_bgcolor'], 0, 6), FILTER_SANITIZE_STRING);
-    $item_type_template = check_body($_POST['new_item_type_template']);
-    $sql = "INSERT INTO items_types(name, team, bgcolor, template) VALUES(:name, :team, :bgcolor, :template)";
-    $req = $pdo->prepare($sql);
-    $result = $req->execute(array(
-        'name' => $item_type_name,
-        'team' => $_SESSION['team_id'],
-        'bgcolor' => $item_type_bgcolor,
-        'template' => $item_type_template
-    ));
-    if (!$result) {
-        $errflag = true;
-        $error = '15';
-    }
-}
-
 // DELETE USER (we receive a formkey from this form)
 if (isset($_POST['delete_user']) && isset($_POST['delete_user_confpass'])) {
     // Check the form_key

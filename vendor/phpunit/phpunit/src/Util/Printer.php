@@ -90,7 +90,7 @@ class PHPUnit_Util_Printer
                 $this->outTarget,
                 tidy_repair_file(
                     $this->outTarget,
-                    array('indent' => true, 'wrap' => 0),
+                    ['indent' => true, 'wrap' => 0],
                     'utf8'
                 )
             );
@@ -127,7 +127,7 @@ class PHPUnit_Util_Printer
                 $this->incrementalFlush();
             }
         } else {
-            if (PHP_SAPI != 'cli') {
+            if (PHP_SAPI != 'cli' && PHP_SAPI != 'phpdbg') {
                 $buffer = htmlspecialchars($buffer);
             }
 

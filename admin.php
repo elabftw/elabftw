@@ -332,16 +332,11 @@ if (!empty($team['stamppass'])) {
     <h3><?php echo _('Database items types'); ?></h3>
     <ul class='draggable sortable_itemstypes list-group'>
 
-    <?php
-    // SQL to get all items type
-    $sql = "SELECT * from items_types WHERE team = :team ORDER BY ordering ASC";
-    $req = $pdo->prepare($sql);
-    $req->execute(array(
-        'team' => $_SESSION['team_id']
-    ));
+<?php
+$itemsTypesArr = $admin->itemsTypesRead($_SESSION['team_id']);
 
-    while ($items_types = $req->fetch()) {
-        ?>
+foreach ($itemsTypesArr as $items_types) {
+    ?>
         <li id='itemstypes_<?php echo $items_types['id']; ?>' class='list-group-item'>
             <a class='trigger_<?php echo $items_types['id']; ?>'><?php echo _('Edit') . ' ' . $items_types['name']; ?></a>
             <div class='toggle_container_<?php echo $items_types['id']; ?>'>
@@ -438,10 +433,6 @@ if (!empty($team['stamppass'])) {
     // file upload block
     // show select of type
     // SQL to get items names
-    $sql = "SELECT * FROM items_types WHERE team = :team";
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
-    $req->execute();
     ?>
         <p style='text-align:justify'><?php echo _("This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file."); ?>
 <span class='strong'><?php echo _('You should make a backup of your database before importing thousands of items!'); ?></span></p>
@@ -449,7 +440,7 @@ if (!empty($team['stamppass'])) {
         <label for='item_selector'><?php echo _('1. Select a type of item to import to:'); ?></label>
         <select id='item_selector' onchange='goNext(this.value)'><option value=''>--------</option>
         <?php
-        while ($items_types = $req->fetch()) {
+        foreach ($itemsTypesArr as $items_types) {
             echo "<option value='" . $items_types['id'] . "' name='type' ";
             echo ">" . $items_types['name'] . "</option>";
         }
@@ -475,11 +466,6 @@ if (!empty($team['stamppass'])) {
 
     // file upload block
     // show select of type
-    // SQL to get items names
-    $sql = "SELECT * FROM items_types WHERE team = :team";
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
-    $req->execute();
 
     // sql to get team members names
     $sql = "SELECT firstname, lastname, userid FROM users WHERE team = :team";
@@ -496,7 +482,7 @@ if (!empty($team['stamppass'])) {
             <option value='' selected>-------</option>
             <option value='' disabled>Import items</option>
         <?php
-        while ($items_types = $req->fetch()) {
+        foreach ($itemsTypesArr as $items_types) {
             echo "<option value='" . $items_types['id'] . "' name='type' ";
             echo ">" . $items_types['name'] . "</option>";
         }

@@ -72,4 +72,19 @@ class Admin
         $req->bindParam(':body', $body);
         return $req->execute();
     }
+
+    /**
+     * SQL to get all items type
+     *
+     * @param int team id
+     * @return array
+     */
+    public function itemsTypesRead($team)
+    {
+        $sql = "SELECT * from items_types WHERE team = :team ORDER BY ordering ASC";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':team', $team, \PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetchAll();
+    }
 }

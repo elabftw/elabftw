@@ -25,7 +25,7 @@ try {
 // CREATE TEAM GROUP
 if (isset($_POST['create_teamgroup'])) {
     try {
-        $teamGroups->create(filter_var($_POST['create_teamgroup'], FILTER_SANITIZE_STRING));
+        $teamGroups->create(filter_var($_POST['create_teamgroup'], FILTER_SANITIZE_STRING), $_SESSION['team_id']);
     } catch (Exception $e) {
         dblog('Error', $_SESSION['userid'], $e->getMessage());
     }
@@ -67,4 +67,3 @@ if (isset($_POST['commonTplUpdate'])) {
         dblog('Error', $_SESSION['userid'], $e->getMessage());
     }
 }
-

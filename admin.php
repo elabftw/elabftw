@@ -15,15 +15,16 @@
  */
 require_once 'inc/common.php';
 
-// only admin can use this
-if ($_SESSION['is_admin'] != 1) {
-    die(_('This section is out of your reach.'));
+// the constructor will check for admin rights
+try {
+    $formKey = new \Elabftw\Elabftw\FormKey();
+    $crypto = new \Elabftw\Elabftw\CryptoWrapper();
+    $admin = new \Elabftw\Elabftw\Admin();
+    $teamGroups = new \Elabftw\Elabftw\TeamGroups();
+} catch (Exception $e) {
+    die($e->getMessage());
 }
 
-$formKey = new \Elabftw\Elabftw\FormKey();
-$crypto = new \Elabftw\Elabftw\CryptoWrapper();
-
-$admin = new \Elabftw\Elabftw\Admin();
 
 $page_title = _('Admin panel');
 $selected_menu = null;
@@ -39,6 +40,7 @@ $user_req->bindValue(':validated', 0);
 $user_req->bindValue(':team', $_SESSION['team_id']);
 $user_req->execute();
 $count = $user_req->rowCount();
+
 // only show the frame if there is some users to validate and there is an email config
 if ($count > 0 && strlen(get_config('mail_from')) > 0) {
     $message = _('There are users waiting for validation of their account:');
@@ -144,7 +146,8 @@ if (!empty($team['stamppass'])) {
     // we show only the validated users here
     $user_req->bindValue(':validated', 1);
     $user_req->execute();
-    while ($users = $user_req->fetch()) {
+    $usersArr = $user_req->fetchAll();
+    foreach($usersArr as $users) {
         ?>
             <li class='list-group-item'>
             <a class='trigger_users_<?php echo $users['userid']; ?>'><?php echo $users['firstname'] . " " . $users['lastname']; ?></a>
@@ -505,25 +508,17 @@ foreach ($itemsTypesArr as $items_types) {
     <button type='submit' onclick='teamGroupCreate()' class='button'><?php echo _('Create'); ?></button>
 <!-- END CREATE GROUP -->
 
+<div id='team_groups_div'>
 <?php
-// get a list of team_groups for this team
-$sql = "SELECT * FROM team_groups WHERE team = :team";
-$team_groups_req = $pdo->prepare($sql);
-$team_groups_req->bindParam(':team', $_SESSION['team_id']);
-$team_groups_req->execute();
-// get all users again
-
-echo "<div id='team_groups_div'>";
-if ($team_groups_req->rowCount() > 0) {
-    $user_req->execute();
-    ?>
+$teamGroupsArr = $teamGroups->read($_SESSION['team_id']);
+?>
     <div class='well'>
     <section>
     <!-- ADD USER TO GROUP -->
         <label for='add_teamgroup_user'><?php echo _('Add this user'); ?></label>
         <select name='add_teamgroup_user' id='add_teamgroup_user'>
         <?php
-        while ($users = $user_req->fetch()) {
+        foreach ($usersArr as $users) {
             echo "<option value='" . $users['userid'] . "'>";
             echo $users['firstname'] . " " . $users['lastname'] . "</option>";
         }
@@ -533,7 +528,7 @@ if ($team_groups_req->rowCount() > 0) {
         <label for='add_teamgroup_group'><?php echo _('to this group'); ?></label>
         <select name='add_teamgroup_group' id='add_teamgroup_group'>
         <?php
-        while ($team_groups = $team_groups_req->fetch()) {
+        foreach ($teamGroupsArr as $team_groups) {
             echo "<option value='" . $team_groups['id'] . "'>";
             echo $team_groups['name'] . "</option>";
         }
@@ -547,8 +542,7 @@ if ($team_groups_req->rowCount() > 0) {
         <label for='rm_teamgroup_user'><?php echo _('Remove this user'); ?></label>
         <select name='rm_teamgroup_user' id='rm_teamgroup_user'>
         <?php
-        $user_req->execute();
-        while ($users = $user_req->fetch()) {
+        foreach ($usersArr as $users) {
             echo "<option value='" . $users['userid'] . "'>";
             echo $users['firstname'] . " " . $users['lastname'] . "</option>";
         }
@@ -558,8 +552,7 @@ if ($team_groups_req->rowCount() > 0) {
         <label for='rm_teamgroup_group'><?php echo _('from this group'); ?></label>
         <select name='rm_teamgroup_group' id='rm_teamgroup_group'>
         <?php
-        $team_groups_req->execute();
-        while ($team_groups = $team_groups_req->fetch()) {
+        foreach ($teamGroupsArr as $team_groups) {
             echo "<option value='" . $team_groups['id'] . "'>";
             echo $team_groups['name'] . "</option>";
         }
@@ -569,25 +562,24 @@ if ($team_groups_req->rowCount() > 0) {
     </section>
     </div>
 
-    <?php
-    // show available team groups
-    echo "<h3>" . _('Existing groups') . "</h3>";
-    $sql = "SELECT DISTINCT users.firstname, users.lastname FROM users CROSS JOIN users2team_groups ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
-    $team_groups_req->execute();
-    while ($res = $team_groups_req->fetch()) {
-        echo "<div class='well'><img onclick=\"teamGroupDestroy(" . $res['id'] . ", '" . str_replace(array("\"", "'"), '', _('Delete this?')) . "')\" src='img/small-trash.png' style='float:right' alt='trash' title='Remove this group' /><h3 class='inline editable teamgroup_name' id='teamgroup_" . $res['id'] . "'>" . $res['name'] . "</h3><ul>";
-        $req2 = $pdo->prepare($sql);
-        $req2->bindParam(':groupid', $res['id']);
-        $req2->execute();
-        while ($res2 = $req2->fetch()) {
-            echo "<li>" . $res2['firstname'] . " " . $res2['lastname'] . "</li>";
-        }
-        echo "</ul></div>";
+<?php
+// show available team groups
+echo "<h3>" . _('Existing groups') . "</h3>";
+$sql = "SELECT DISTINCT users.firstname, users.lastname
+    FROM users CROSS JOIN users2team_groups
+    ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
+
+foreach ($teamGroupsArr as $team_groups) {
+    echo "<div class='well'><img onclick=\"teamGroupDestroy(" . $team_groups['id'] . ", '" . str_replace(array("\"", "'"), '', _('Delete this?')) . "')\" src='img/small-trash.png' style='float:right' alt='trash' title='Remove this group' /><h3 class='inline editable teamgroup_name' id='teamgroup_" . $team_groups['id'] . "'>" . $team_groups['name'] . "</h3><ul>";
+    $req2 = $pdo->prepare($sql);
+    $req2->bindParam(':groupid', $team_groups['id']);
+    $req2->execute();
+    while ($res2 = $req2->fetch()) {
+        echo "<li>" . $res2['firstname'] . " " . $res2['lastname'] . "</li>";
     }
+    echo "</ul></div>";
 }
 ?>
-
-
     </div>
 </div>
 

@@ -36,16 +36,30 @@ class TeamGroups extends Admin
     /**
      * Create a team group
      *
-     * @param string $groupname Name of the group
+     * @param string $groupName Name of the group
      * @return bool true if sql is successful
      */
-    public function create($groupName)
+    public function create($groupName, $teamId)
     {
         $sql = "INSERT INTO team_groups(name, team) VALUES(:name, :team)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $groupName);
-        $req->bindParam(':team', $_SESSION['team_id']);
+        $req->bindParam(':team', $teamId);
         return $req->execute();
+    }
+
+    /**
+     * Read team groups
+     *
+     * @return array all team groups
+     */
+    public function read($teamId)
+    {
+        $sql = "SELECT * FROM team_groups WHERE team = :team";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':team', $teamId);
+        $req->execute();
+        return $req->fetchAll();
     }
 
     /**
@@ -55,7 +69,7 @@ class TeamGroups extends Admin
      * @param string $groupName Name of the group
      * @param string $groupId Id of the group
      * @throws Exception if sql fail
-     * @return string $groupName Name of the group if success
+     * @return string|null $groupName Name of the group if success
      */
     public function update($groupName, $groupId)
     {

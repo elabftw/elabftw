@@ -71,4 +71,27 @@ class ItemsTypes extends Admin
         $req->execute();
         return $req->fetchAll();
     }
+
+    public function update($id, $name, $color, $template, $team)
+    {
+        $name = filter_var($name, FILTER_SANITIZE_STRING);
+        $color = filter_var($color, FILTER_SANITIZE_STRING);
+        $template = check_body($template);
+        $sql = "UPDATE items_types SET
+            name = :name,
+            team = :team,
+            bgcolor = :bgcolor,
+            template = :template
+            WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        return $req->execute(array(
+            'id' => $id,
+            'name' => $name,
+            'bgcolor' => $color,
+            'template' => $template,
+            'team' => $team,
+        ));
+    }
+
+
 }

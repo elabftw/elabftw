@@ -38,11 +38,11 @@ class CommonTpl extends Admin
      *
      * @return string body of the common template
      */
-    public function commonTplRead()
+    public function commonTplRead($team)
     {
         $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $_SESSION['team_id'], \PDO::PARAM_INT);
+        $req->bindParam(':team', $team, \PDO::PARAM_INT);
         $req->execute();
         return $req->fetchColumn();
     }
@@ -52,7 +52,7 @@ class CommonTpl extends Admin
      *
      * @return bool true if sql success
      */
-    public function commonTplUpdate($body)
+    public function commonTplUpdate($body, $team)
     {
         $body = check_body($body);
         $sql = "UPDATE experiments_templates SET
@@ -61,7 +61,7 @@ class CommonTpl extends Admin
             body = :body
             WHERE userid = 0 AND team = :team";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $_SESSION['team_id']);
+        $req->bindParam(':team', $team);
         $req->bindParam(':body', $body);
         return $req->execute();
     }

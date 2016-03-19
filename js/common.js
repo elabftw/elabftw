@@ -123,6 +123,37 @@ function go_url(x) {
 // admin.php
 // =========
 
+// STATUS
+function statusCreate() {
+    name = $('#statusName').val();
+    color = $('#statusColor').val();
+    $.post('app/admin-ajax.php', {
+        statusCreate: true,
+        statusName: name,
+        statusColor: color
+    }).success(function() {
+        notif('Saved', 'ok');
+        window.location.replace('admin.php?tab=3');
+    });
+}
+
+function statusUpdate(id) {
+    name = $('#statusName_' + id).val();
+    color = $('#statusColor_' + id).val();
+    defaultBox = $('#statusDefault_' + id).val(); // 'on' if checked
+
+    $.post('app/admin-ajax.php', {
+        statusUpdate: true,
+        statusId: id,
+        statusName: name,
+        statusColor: color,
+        statusDefault: defaultBox
+    }).success(function() {
+        notif('Saved', 'ok');
+        window.location.replace('admin.php?tab=3');
+    });
+}
+
 // ITEMS TYPES
 function itemsTypesCreate() {
     name = $('#itemsTypesName').val();
@@ -138,6 +169,23 @@ function itemsTypesCreate() {
         window.location.replace('admin.php?tab=4');
     });
 }
+
+function itemsTypesUpdate(id) {
+    name = $('#itemsTypesName_' + id).val();
+    color = $('#itemsTypesColor_' + id).val();
+    template = tinymce.get('itemsTypesTemplate_' + id).getContent();
+    $.post('app/admin-ajax.php', {
+        itemsTypesUpdate: true,
+        itemsTypesId: id,
+        itemsTypesName: name,
+        itemsTypesColor: color,
+        itemsTypesTemplate: template
+    }).success(function() {
+        notif('Saved', 'ok');
+        window.location.replace('admin.php?tab=4');
+    });
+}
+
 
 // COMMON TEMPLATE
 function commonTplUpdate() {
@@ -171,6 +219,7 @@ function teamGroupUpdate(action) {
         group = $('#teamGroupGroupRm').val();
     }
     $.post('app/admin-ajax.php', {
+        teamGroupUpdate: true,
         action: action,
         teamGroupUser: user,
         teamGroupGroup: group
@@ -183,8 +232,8 @@ function teamGroupDestroy(groupid, confirmText) {
     var you_sure = confirm(confirmText);
     if (you_sure === true) {
         $.post('app/admin-ajax.php', {
-            destroy_teamgroup: true,
-            teamgroup_group: groupid
+            teamGroupDestroy: true,
+            teamGroupGroup: groupid
         }).success(function() {
             $("#team_groups_div").load("admin.php #team_groups_div");
         });

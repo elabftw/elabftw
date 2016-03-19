@@ -23,11 +23,12 @@ try {
     $teamGroups = new \Elabftw\Elabftw\TeamGroups();
     $commonTpl = new \Elabftw\Elabftw\CommonTpl();
     $itemsTypes = new \Elabftw\Elabftw\ItemsTypes();
+    $itemsTypesView = new \Elabftw\Elabftw\ItemsTypesView();
+    $status = new \Elabftw\Elabftw\Status();
+    $statusView = new \Elabftw\Elabftw\StatusView();
 } catch (Exception $e) {
     die($e->getMessage());
 }
-
-
 $page_title = _('Admin panel');
 $selected_menu = null;
 require_once 'inc/head.php';
@@ -242,177 +243,50 @@ if (!empty($team['stamppass'])) {
 </div>
 
 <!-- TAB 3 STATUS -->
+<?php $statusArr = $status->read($_SESSION['team_id']); ?>
+
 <div class='divhandle' id='tab3div'>
     <h3><?php echo _('Edit an existing status'); ?></h3>
-    <ul class='draggable sortable_status list-group'>
+    <?php echo $statusView->show($statusArr, $_SESSION['team_id']); ?>
 
-    <?php
-    // SQL to get all status
-    $sql = "SELECT * from status WHERE team = :team ORDER BY ordering ASC";
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
-    $req->execute();
-
-    while ($status = $req->fetch()) {
-        // count the experiments with this status
-        // don't allow deletion if experiments with this status exist
-        // but instead display a message to explain
-        $count_exp_sql = "SELECT COUNT(*) FROM experiments WHERE status = :status AND team = :team";
-        $count_exp_req = $pdo->prepare($count_exp_sql);
-        $count_exp_req->bindParam(':status', $status['id'], PDO::PARAM_INT);
-        $count_exp_req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
-        $count_exp_req->execute();
-        $count = $count_exp_req->fetchColumn();
-        ?>
-
-        <li id='status_<?php echo $status['id']; ?>' class='list-group-item'>
-        <a class='trigger_status_<?php echo $status['id']; ?>'><?php echo $status['name']; ?></a>
-        <div class='toggle_container_status_<?php echo $status['id']; ?>'>
-        <?php
-        if ($count == 0) {
-            ?>
-            <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $status['id']; ?>','status', 'admin.php')" />
-        <?php
-        } else {
-            ?>
-                <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert('<?php echo _('Remove all experiments with this status before deleting this status.'); ?>')" />
-        <?php
-        }
-        ?>
-
-        <form action='app/admin-exec.php' method='post'>
-            <input type='text' name='status_name' value='<?php echo stripslashes($status['name']); ?>' />
-            <label for='default_checkbox'><?php echo _('Default status'); ?></label>
-            <input type='checkbox' name='status_is_default' id='default_checkbox'
-            <?php
-            // check the box if the status is already default
-            if ($status['is_default'] == 1) {
-                echo " checked";
-            }
-            ?>>
-            <div id='colorwheel_div_edit_status_<?php echo $status['id']; ?>'>
-            <input class='colorpicker' type='text' name='status_color' value='<?php echo $status['color']; ?>' />
-            </div>
-            <input type='hidden' name='status_id' value='<?php echo $status['id']; ?>' />
-            <br>
-
-            <div class='submitButtonDiv'>
-                <button type='submit' class='button'><?php echo _('Edit') . ' ' . stripslashes($status['name']); ?></button><br>
-            </div>
-        </form>
-        <script>$(document).ready(function() {
-            $(".toggle_container_status_<?php echo $status['id']; ?>").hide();
-            $("a.trigger_status_<?php echo $status['id']; ?>").click(function(){
-                $('div.toggle_container_status_<?php echo $status['id']; ?>').slideToggle(100);
-                // disable sortable behavior
-                $('.sortable_status').sortable("disable");
-            });
-        });</script></div></li>
-        <?php
-    }
-    ?>
-</ul>
-
-<!-- ADD NEW STATUS -->
-<ul class='list-group'>
-<li class='list-group-item'>
-    <form action='app/admin-exec.php' method='post'>
-        <label for='new_status_name'><?php echo _('Add a new status'); ?></label>
-        <input type='text' id='new_status_name' name='new_status_name' required />
+    <!-- ADD NEW STATUS -->
+    <ul class='list-group'>
+    <li class='list-group-item'>
+        <label for='statusName'><?php echo _('Add a new status'); ?></label>
+        <input type='text' id='statusName' />
         <div id='colorwheel_div_new_status'>
-            <input class='colorpicker' type='text' name='new_status_color' value='000000' />
+            <input class='colorpicker' type='text' id='statusColor' value='000000' />
         </div>
         <div class='submitButtonDiv'>
-            <button type='submit' class='submit button'><?php echo _('Save'); ?></button>
+            <button type='submit' onClick='statusCreate()' class='button'><?php echo _('Save'); ?></button>
         </div>
-        <br>
-    </form>
-</li>
-</ul>
+    </li>
+    </ul>
 
 </div>
 
 <!-- TAB 4 ITEMS TYPES-->
+<?php $itemsTypesArr = $itemsTypes->read($_SESSION['team_id']); ?>
+
 <div class='divhandle' id='tab4div'>
     <h3><?php echo _('Database items types'); ?></h3>
-    <div id='itemsTypesDiv'>
-        <ul class='draggable sortable_itemstypes list-group'>
+    <?php echo $itemsTypesView->show($itemsTypesArr); ?>
 
-    <?php
-    $itemsTypesArr = $itemsTypes->read($_SESSION['team_id']);
-
-    foreach ($itemsTypesArr as $items_types) {
-        ?>
-            <li id='itemstypes_<?php echo $items_types['id']; ?>' class='list-group-item'>
-                <a class='trigger_<?php echo $items_types['id']; ?>'><?php echo _('Edit') . ' ' . $items_types['name']; ?></a>
-                <div class='toggle_container_<?php echo $items_types['id']; ?>'>
-                <?php
-                // count the items with this type
-                // don't allow deletion if items with this type exist
-                // but instead display a message to explain
-                $count_db_sql = "SELECT COUNT(*) FROM items WHERE type = :type";
-                $count_db_req = $pdo->prepare($count_db_sql);
-                $count_db_req->bindParam(':type', $items_types['id'], PDO::PARAM_INT);
-                $count_db_req->execute();
-                $count = $count_db_req->fetchColumn();
-                if ($count == 0) {
-                    ?>
-                    <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $items_types['id']; ?>','item_type', 'admin.php')" />
-                <?php
-                } else {
-                    ?>
-                    <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="alert('<?php echo _('Remove all database items with this type before deleting this type.'); ?>')" />
-                <?php
-                }
-                ?>
-
-                <form action='app/admin-exec.php' method='post'>
-                <label><?php echo _('Edit name'); ?></label>
-                    <input required type='text' name='item_type_name' value='<?php echo stripslashes($items_types['name']); ?>' />
-                    <input type='hidden' name='item_type_id' value='<?php echo $items_types['id']; ?>' />
-
-                    <div id='colorwheel_div_<?php echo $items_types['id']; ?>'>
-                <label><?php echo _('Edit color'); ?></label>
-                        <input class='colorpicker' type='text' style='display:inline' name='item_type_bgcolor' value='<?php echo $items_types['bgcolor']; ?>'/>
-                    </div>
-                    <textarea class='mceditable' name='item_type_template' /><?php echo stripslashes($items_types['template']); ?></textarea><br>
-                    <div class='submitButtonDiv'>
-                        <button type='submit' class='button'><?php echo _('Edit') . ' ' . stripslashes($items_types['name']); ?></button><br>
-                    </div>
-                </form>
-
-            <script>$(document).ready(function() {
-                $(".toggle_container_<?php echo $items_types['id']; ?>").hide();
-                $("a.trigger_<?php echo $items_types['id']; ?>").click(function(){
-                    $('div.toggle_container_<?php echo $items_types['id']; ?>').slideToggle(100);
-                    // disable sortable behavior
-                    $('.sortable_itemstypes').sortable("disable");
-                });
-            });</script>
-            </div>
-            </li>
-            <?php
-        } // end generation of items_types
-        ?>
-
+    <!-- ADD NEW TYPE OF ITEM -->
+    <ul class='list-group'>
+    <li class='list-group-item'>
+        <label for='itemsTypesName'><?php echo _('Add a new type of item:'); ?></label>
+        <input required type='text' id='itemsTypesName' />
+        <div id='colorwheel_div_new'>
+            <label><?php echo _('Edit color'); ?></label>
+            <input class='colorpicker' type='text' id='itemsTypesColor' value='29AEB9' />
+        </div>
+        <textarea class='mceditable' id='itemsTypesTemplate' /></textarea>
+        <div class='submitButtonDiv'>
+            <button type='submit' onClick='itemsTypesCreate()' class='button'><?php echo _('Save'); ?></button>
+        </div>
+    </li>
     </ul>
-</div>
-
-<!-- ADD NEW TYPE OF ITEM -->
-<ul class='list-group'>
-<li class='list-group-item'>
-    <label for='itemsTypesName'><?php echo _('Add a new type of item:'); ?></label>
-    <input required type='text' id='itemsTypesName' />
-    <div id='colorwheel_div_new'>
-        <label><?php echo _('Edit color'); ?></label>
-        <input class='colorpicker' type='text' id='itemsTypesColor' value='29AEB9' />
-    </div>
-    <textarea class='mceditable' id='itemsTypesTemplate' /></textarea>
-    <div class='submitButtonDiv'>
-        <button type='submit' onClick='itemsTypesCreate()' class='button'><?php echo _('Save'); ?></button>
-    </div>
-</li>
-</ul>
 
 </div>
 
@@ -421,7 +295,7 @@ if (!empty($team['stamppass'])) {
     <h3><?php echo _('Common experiment template'); ?></h3>
     <p><?php echo _('This is the default text when someone creates an experiment.'); ?></p>
     <textarea style='height:400px' class='mceditable' id='commonTplTemplate' />
-        <?php echo $commonTpl->commonTplRead(); ?>
+        <?php echo $commonTpl->commonTplRead($_SESSION['team_id']); ?>
     </textarea>
     <div class='submitButtonDiv'>
         <button type='submit' class='button' onClick='commonTplUpdate()'><?php echo _('Save'); ?></button>
@@ -455,7 +329,7 @@ if (!empty($team['stamppass'])) {
     </div>
 </div>
 
-<!-- TAB 7 -->
+<!-- TAB 7 IMPORT ZIP -->
 <div class='divhandle' id='tab7div'>
 
     <h3><?php echo _('Import a ZIP file'); ?></h3>
@@ -501,6 +375,8 @@ if (!empty($team['stamppass'])) {
 </div>
 
 <!-- TAB 8 TEAM GROUPS -->
+<?php $teamGroupsArr = $teamGroups->read($_SESSION['team_id']); ?>
+
 <div class='divhandle' id='tab8div'>
     <h3><?php echo _('Manage groups of users'); ?></h3>
 <!-- CREATE A GROUP -->
@@ -510,9 +386,6 @@ if (!empty($team['stamppass'])) {
 <!-- END CREATE GROUP -->
 
 <div id='team_groups_div'>
-<?php
-$teamGroupsArr = $teamGroups->read($_SESSION['team_id']);
-?>
     <div class='well'>
     <section>
     <!-- ADD USER TO GROUP -->
@@ -569,6 +442,7 @@ $teamGroupsArr = $teamGroups->read($_SESSION['team_id']);
 
     </div>
 </div>
+<!-- END TEAM GROUPS -->
 
 <script>
 $(document).ready(function() {
@@ -586,7 +460,7 @@ $(document).ready(function() {
     $('h3.teamgroup_name').editable('app/admin-ajax.php', {
      tooltip : 'Click to edit',
      indicator : 'Saving...',
-     name : 'update_teamgroup',
+     name : 'teamGroupUpdateName',
      submit : 'Save',
      cancel : 'Cancel',
      style : 'display:inline'

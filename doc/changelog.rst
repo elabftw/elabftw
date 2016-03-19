@@ -3,6 +3,17 @@
 Changelog
 =========
 
+Version 1.1.9
+-------------
+
+* Enhancements
+
+  * Add a way to test email configuration directly from config page
+
+* Documentation
+
+  * Better doc for install on Drop
+
 Version 1.1.8-p2
 ----------------
 

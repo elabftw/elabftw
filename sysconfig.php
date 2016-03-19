@@ -298,20 +298,12 @@ switch ($mail_method) {
             <button type='submit' name='submit_config' class='submit button'><?php echo _('Save'); ?></button>
         </div>
     </form>
-        <p>
-    <?php
-    $sql = 'SELECT email FROM users WHERE userid = :userid';
-    $req = $pdo->prepare($sql);
-    $my_email = $req->fetchColumn();
-    ?>
+    <p>
         <label for='testemail'><?php echo _('Send a test email'); ?>:</label>
-        <input type='email' value='<?php echo $my_email; ?>' name='testemail' id='testemail' />
-            <button type='submit' id='submit_testemail' onClick='sendTestEmail()' class='submit button'><?php echo _('Send'); ?></button>
-        </p>
-
+        <input type='email' placeholder='you@email.com' name='testemail' id='testemail' />
+        <button type='submit' id='submit_testemail' onClick='sendTestEmail()' class='submit button'><?php echo _('Send'); ?></button>
+    </p>
 </div>
-<script>
-</script>
 
 <!-- TAB 6 -->
 <div class='divhandle' id='tab6div'>

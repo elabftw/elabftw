@@ -640,7 +640,7 @@ function manageTeamgroup(action) {
         action: action,
         teamgroup_user: userid,
         teamgroup_group: groupid
-    }).success(function () {
+    }).success(function() {
         $('#team_groups_div').load('admin.php #team_groups_div');
     })
 }
@@ -650,7 +650,7 @@ function createTeamgroup() {
     if (name.length > 0) {
         $.post('app/admin-ajax.php', {
             create_teamgroup: name
-        }).success(function () {
+        }).success(function() {
             $('#team_groups_div').load('admin.php #team_groups_div');
             $('#create_teamgroup').val('');
         })
@@ -662,7 +662,7 @@ function deleteTeamgroup(id) {
         $.post('app/delete.php', {
             type: 'teamgroup',
             id: id
-        }).success(function () {
+        }).success(function() {
             $("#team_groups_div").load("admin.php #team_groups_div");
         })
     }
@@ -712,7 +712,13 @@ $(document).ready(function() {
 
             $.post("app/order.php", {
                 'ordering_status' : ordering
-            }).done(showSaved());
+            }).success(function(data) {
+                if (data == 1) {
+                    notif("<?php echo _('Saved'); ?>", "ok");
+                } else {
+                    notif("<?php echo _('Something went wrong! :('); ?>", "ko");
+                }
+            });
         }
     });
 
@@ -728,7 +734,13 @@ $(document).ready(function() {
 
             $.post("app/order.php", {
                 'ordering_itemstypes' : ordering
-            }).done(showSaved());
+            }).success(function(data) {
+                if (data == 1) {
+                    notif("<?php echo _('Saved'); ?>", "ok");
+                } else {
+                    notif("<?php echo _('Something went wrong! :('); ?>", "ko");
+                }
+            });
         }
     });
     // IMPORT

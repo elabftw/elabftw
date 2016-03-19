@@ -39,25 +39,32 @@ function addDateOnCursor() {
     tinyMCE.activeEditor.execCommand('mceInsertContent', false, year + "-" + month + "-" + day + " ");
 }
 
-// show and remove 'Saved !'
-function showSaved() {
-    var text = '<center><p>Saved !</p></center>';
+// notifications
+function notif(text, cssClass) {
+    var htmlText = '<p>' + text + '</p>';
+    if (cssClass == 'ok') {
+        overlayClass = 'overlay-ok';
+    } else {
+        overlayClass = 'overlay-ko';
+    }
     var overlay = document.createElement('div');
        overlay.setAttribute('id','overlay');
-       overlay.setAttribute('class', 'overlay');
+       overlay.setAttribute('class', 'overlay ' + overlayClass);
        // show the overlay
        document.body.appendChild(overlay);
        // add text inside
-       document.getElementById('overlay').innerHTML = text;
+       document.getElementById('overlay').innerHTML = htmlText;
        // wait a bit and make it disappear
-       window.setTimeout(removeSaved, 2000);
+       window.setTimeout(removeNotif, 2500);
 }
 
-function removeSaved() {
+function removeNotif() {
     $('#overlay').fadeOut(500, function() {
         $(this).remove();
     });
 }
+
+
 /* for menus on team, admin, sysconfig and ucp */
 
 /* parse the $_GET from the url */
@@ -111,4 +118,58 @@ function go_url(x) {
         return;
     }
     window.location = x;
+}
+
+// sysconfig.php
+// =============
+
+// called when mail_method selector is changed; enables/disables the config for the selected/unselected method
+function toggleMailMethod(value) {
+    if (value == 'sendmail') {
+        $('#smtp_config').hide();
+        $('#sendmail_config').show();
+    } else if (value == 'smtp') {
+        $('#smtp_config').show();
+        $('#sendmail_config').hide();
+    } else if (value == 'php') {
+        $('#smtp_config').hide();
+        $('#sendmail_config').hide();
+        $('#general_mail_config').show();
+    } else {
+        $('#smtp_config').hide();
+        $('#sendmail_config').hide();
+        $('#general_mail_config').hide();
+    }
+}
+
+// send a test email to provided adress
+function sendTestEmail() {
+    var testemail = $('#testemail').val();
+    $.post('app/sysconfig-ajax.php', {
+        testemail: testemail
+    }).success(function(data) {
+        if (data == 1) {
+            notif('Email sent!', 'ok');
+        } else {
+            notif('Something went wrong! :(', 'ko');
+        }
+    });
+}
+
+// update the name of a team
+function updateTeam(team_id) {
+    var new_team_name = document.getElementById('team_'+team_id).value;
+    $.post("app/quicksave.php", {
+        id : team_id,
+        team_name : new_team_name
+    }).done(function(returnValue) {
+        // we will get output on error
+        if (returnValue !== '') {
+            document.getElementById('button_'+team_id).value = returnValue;
+            document.getElementById('button_'+team_id).style.color = 'red';
+        } else {
+            document.getElementById('button_'+team_id).value = "<?php echo _('Saved'); ?>";
+        }
+        document.getElementById('button_'+team_id).disabled = true;
+    });
 }

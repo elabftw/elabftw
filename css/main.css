@@ -436,6 +436,7 @@ tr:nth-child(even) {
 tr:nth-child(odd) {
         background-color: #f2f2f2;
 }
+
 /* SEARCH.PHP */
 .searchform #title, .searchform #body {
     width: 100%;
@@ -448,27 +449,38 @@ tr:nth-child(odd) {
 textarea {
     font: 100% 'Lato', Verdana, Arial, Helvetica, sans-serif;
 }
-/* overlay to say it's saved */
+
+/* OVERLAY */
 .overlay {
-    background-color: #29AEB9;
+    display: flex;
+    padding: 0 10px;
     position: fixed;
-    opacity: 0.8;
-    top: 107px;
-    width: 100%;
-    height: 20px;
-    z-index: 10;
+    opacity: 0.9;
+    top: 10px;
+    left: 10px;
+    border-radius: 5px;
+    line-height: 50px;
 }
 
 .overlay p {
-    color:#fff;
-    display:inline;
+    font-weight: bold;
+    vertical-align: middle;
+    color: #fff;
 }
+
+.overlay-ok {
+    background-color: #29AEB9;
+}
+
+.overlay-ko {
+    background-color: #ffc1b7;
+}
+/* END OVERLAY */
 
 /* save and go back button */
 #saveButton {
     margin:20px 0;
     text-align:right;
-
 }
 
 /* ITEMS */

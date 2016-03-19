@@ -298,7 +298,20 @@ switch ($mail_method) {
             <button type='submit' name='submit_config' class='submit button'><?php echo _('Save'); ?></button>
         </div>
     </form>
+        <p>
+    <?php
+    $sql = 'SELECT email FROM users WHERE userid = :userid';
+    $req = $pdo->prepare($sql);
+    $my_email = $req->fetchColumn();
+    ?>
+        <label for='testemail'><?php echo _('Send a test email'); ?>:</label>
+        <input type='email' value='<?php echo $my_email; ?>' name='testemail' id='testemail' />
+            <button type='submit' id='submit_testemail' onClick='sendTestEmail()' class='submit button'><?php echo _('Send'); ?></button>
+        </p>
+
 </div>
+<script>
+</script>
 
 <!-- TAB 6 -->
 <div class='divhandle' id='tab6div'>
@@ -317,53 +330,13 @@ switch ($mail_method) {
 </div>
 
 <script>
-// we need to add this otherwise the button will stay disabled with the browser's cache (Firefox)
-var input_list = document.getElementsByTagName('input');
-for (var i=0; i < input_list.length; i++) {
-    var input = input_list[i];
-    input.disabled = false;
-}
-
-// honor already saved mail_method setting and hide unused options accordingly
-toggleMailMethod(<?php echo json_encode($mail_method); ?>);
-
-// called when mail_method selector is changed; enables/disables the config for the selected/unselected method
-function toggleMailMethod(value) {
-    if (value == 'sendmail') {
-        $('#smtp_config').hide();
-        $('#sendmail_config').show();
-    } else if (value == 'smtp') {
-        $('#smtp_config').show();
-        $('#sendmail_config').hide();
-    } else if (value == 'php') {
-        $('#smtp_config').hide();
-        $('#sendmail_config').hide();
-        $('#general_mail_config').show();
-    } else {
-        $('#smtp_config').hide();
-        $('#sendmail_config').hide();
-        $('#general_mail_config').hide();
-    }
-}
-
-// update the name of a team
-function updateTeam(team_id) {
-    var new_team_name = document.getElementById('team_'+team_id).value;
-    $.post("app/quicksave.php", {
-        id : team_id,
-        team_name : new_team_name
-    }).done(function(returnValue) {
-        // we will get output on error
-        if (returnValue != '') {
-            document.getElementById('button_'+team_id).value = returnValue;
-            document.getElementById('button_'+team_id).style.color = 'red';
-        } else {
-            document.getElementById('button_'+team_id).value = '<?php echo _('Saved')?>';
-        }
-        document.getElementById('button_'+team_id).disabled = true;
-    });
-}
 $(document).ready(function() {
+    // we need to add this otherwise the button will stay disabled with the browser's cache (Firefox)
+    var input_list = document.getElementsByTagName('input');
+    for (var i=0; i < input_list.length; i++) {
+        var input = input_list[i];
+        input.disabled = false;
+    }
     // TABS
     // get the tab=X parameter in the url
     var params = getGetParameters();
@@ -387,6 +360,8 @@ $(document).ready(function() {
         $(tabhandle).addClass('selected');
     });
     // END TABS
+    // honor already saved mail_method setting and hide unused options accordingly
+    toggleMailMethod(<?php echo json_encode($mail_method); ?>);
 });
 </script>
 

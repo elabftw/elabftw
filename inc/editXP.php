@@ -396,18 +396,20 @@ $(document).ready(function() {
         removed_menuitems : "newdocument",
         // save button :
         save_onsavecallback: function() {
-            $.ajax({
-                type: "POST",
-                url: "app/quicksave.php",
-                data: {
+            $.post("app/quicksave.php", {
                 id : <?php echo $id; ?>,
                 type : 'experiments',
                 // we need this to get the updated content
                 title : document.getElementById('title_input').value,
                 date : document.getElementById('datepicker').value,
                 body : tinymce.activeEditor.getContent()
+            }).success(function(data) {
+                if (data == 1) {
+                    notif("<?php echo _('Saved'); ?>", "ok");
+                } else {
+                    notif("<?php echo _('Something went wrong! :('); ?>", "ko");
                 }
-            }).done(showSaved());
+            });
         },
         // keyboard shortcut to insert today's date at cursor in editor
         setup : function(editor) {

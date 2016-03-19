@@ -29,6 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST' || !isset($_POST)) {
     exit;
 }
 
+// track the sql request results
+$success = array();
+
 foreach ($_POST as $key => $value) {
     switch ($key) {
         case 'ordering_templates':
@@ -52,7 +55,13 @@ foreach ($_POST as $key => $value) {
                 $req = $pdo->prepare($sql);
                 $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
                 $req->bindParam(':id', $id, PDO::PARAM_INT);
-                $req->execute();
+                try {
+                    $success[] = $req->execute();
+                } catch (Exception $e) {
+                    dblog('Error', $_SESSION['userid'], $e->getMessage());
+                    echo 0;
+                    exit;
+                }
             }
             break;
 
@@ -75,7 +84,14 @@ foreach ($_POST as $key => $value) {
                 $req = $pdo->prepare($sql);
                 $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
                 $req->bindParam(':id', $id, PDO::PARAM_INT);
-                $req->execute();
+                try {
+                    $success[] = $req->execute();
+                } catch (Exception $e) {
+                    dblog('Error', $_SESSION['userid'], $e->getMessage());
+                    echo 0;
+                    exit;
+                }
+
             }
             break;
 
@@ -98,11 +114,24 @@ foreach ($_POST as $key => $value) {
                 $req = $pdo->prepare($sql);
                 $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
                 $req->bindParam(':id', $id, PDO::PARAM_INT);
-                $req->execute();
+                try {
+                    $success[] = $req->execute();
+                } catch (Exception $e) {
+                    dblog('Error', $_SESSION['userid'], $e->getMessage());
+                    echo 0;
+                    exit;
+                }
+
             }
             break;
 
         default:
             exit;
+    }
+
+    if (in_array(false, $success)) {
+        echo 0;
+    } else {
+        echo 1;
     }
 }

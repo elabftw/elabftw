@@ -610,7 +610,7 @@ if ($team_groups_req->rowCount() > 0) {
     $sql = "SELECT DISTINCT users.firstname, users.lastname FROM users CROSS JOIN users2team_groups ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
     $team_groups_req->execute();
     while ($res = $team_groups_req->fetch()) {
-        echo "<div class='well'><img onclick=\"teamGroupDestroy(" . $res['id'] . ", '" . _('Delete this?') . "')\" src='img/small-trash.png' style='float:right' alt='trash' title='Remove this group' /><h3 class='inline editable teamgroup_name' id='teamgroup_" . $res['id'] . "'>" . $res['name'] . "</h3><ul>";
+        echo "<div class='well'><img onclick=\"teamGroupDestroy(" . $res['id'] . ", '" . str_replace(array("\"", "'"), '', _('Delete this?')) . "')\" src='img/small-trash.png' style='float:right' alt='trash' title='Remove this group' /><h3 class='inline editable teamgroup_name' id='teamgroup_" . $res['id'] . "'>" . $res['name'] . "</h3><ul>";
         $req2 = $pdo->prepare($sql);
         $req2->bindParam(':groupid', $res['id']);
         $req2->execute();

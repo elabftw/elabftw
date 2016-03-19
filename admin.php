@@ -537,7 +537,7 @@ if (!empty($team['stamppass'])) {
 <!-- CREATE A GROUP -->
 <label for='create_teamgroup'><?php echo _('Create a group'); ?></label>
     <input id='create_teamgroup' name="create_teamgroup" type="text" />
-    <button type='submit' onclick='createTeamgroup()' class='button'><?php echo _('Create'); ?></button>
+    <button type='submit' onclick='teamGroupCreate()' class='button'><?php echo _('Create'); ?></button>
 <!-- END CREATE GROUP -->
 
 <?php
@@ -574,7 +574,7 @@ if ($team_groups_req->rowCount() > 0) {
         }
         ?>
         </select>
-        <button type="submit" onclick="manageTeamgroup('add')" class='button'><?php echo _('Go'); ?></button>
+        <button type="submit" onclick="teamGroupUpdate('add')" class='button'><?php echo _('Go'); ?></button>
 
     </section>
     <section>
@@ -600,7 +600,7 @@ if ($team_groups_req->rowCount() > 0) {
         }
         ?>
         </select>
-        <button type="submit" onclick="manageTeamgroup('rm')" class='button'><?php echo _('Go'); ?></button>
+        <button type="submit" onclick="teamGroupUpdate('rm')" class='button'><?php echo _('Go'); ?></button>
     </section>
     </div>
 
@@ -610,7 +610,7 @@ if ($team_groups_req->rowCount() > 0) {
     $sql = "SELECT DISTINCT users.firstname, users.lastname FROM users CROSS JOIN users2team_groups ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
     $team_groups_req->execute();
     while ($res = $team_groups_req->fetch()) {
-        echo "<div class='well'><img onclick='deleteTeamgroup(" . $res['id'] . ")' src='img/small-trash.png' style='float:right' alt='trash' title='Remove this group' /><h3 class='inline editable teamgroup_name' id='teamgroup_" . $res['id'] . "'>" . $res['name'] . "</h3><ul>";
+        echo "<div class='well'><img onclick=\"teamGroupDestroy(" . $res['id'] . ", '" . _('Delete this?') . "')\" src='img/small-trash.png' style='float:right' alt='trash' title='Remove this group' /><h3 class='inline editable teamgroup_name' id='teamgroup_" . $res['id'] . "'>" . $res['name'] . "</h3><ul>";
         $req2 = $pdo->prepare($sql);
         $req2->bindParam(':groupid', $res['id']);
         $req2->execute();
@@ -627,58 +627,6 @@ if ($team_groups_req->rowCount() > 0) {
 </div>
 
 <script>
-// TEAM GROUP
-function manageTeamgroup(action) {
-    if (action === 'add') {
-        var userid = $('#add_teamgroup_user').val();
-        var groupid = $('#add_teamgroup_group').val();
-    } else {
-        var userid = $('#rm_teamgroup_user').val();
-        var groupid = $('#rm_teamgroup_group').val();
-    }
-    $.post('app/admin-ajax.php', {
-        action: action,
-        teamgroup_user: userid,
-        teamgroup_group: groupid
-    }).success(function() {
-        $('#team_groups_div').load('admin.php #team_groups_div');
-    })
-}
-
-function createTeamgroup() {
-    var name = $('#create_teamgroup').val();
-    if (name.length > 0) {
-        $.post('app/admin-ajax.php', {
-            create_teamgroup: name
-        }).success(function() {
-            $('#team_groups_div').load('admin.php #team_groups_div');
-            $('#create_teamgroup').val('');
-        })
-    }
-}
-function deleteTeamgroup(groupid) {
-    var you_sure = confirm('<?php echo _('Delete this?'); ?>');
-    if (you_sure == true) {
-        $.post('app/admin-ajax.php', {
-            destroy_teamgroup: true,
-            teamgroup_group: groupid
-        }).success(function() {
-            $("#team_groups_div").load("admin.php #team_groups_div");
-        })
-    }
-    return false;
-}
-// END TEAM GROUP
-
-// used on import csv/zip to go to next step
-function goNext(x) {
-    if(x == '') {
-        return;
-    }
-    document.cookie = 'itemType='+x;
-    $('.import_block').show();
-}
-
 $(document).ready(function() {
     // validate on enter
     $('#create_teamgroup').keypress(function (e) {
@@ -687,7 +635,7 @@ $(document).ready(function() {
             keynum = e.which;
         }
         if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
-            createTeamgroup();
+            teamGroupCreate();
         }
     });
     // edit the team group name

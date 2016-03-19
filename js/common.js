@@ -120,6 +120,62 @@ function go_url(x) {
     window.location = x;
 }
 
+// admin.php
+// =========
+
+// TEAM GROUP
+function teamGroupUpdate(action) {
+    if (action === 'add') {
+        userid = $('#add_teamgroup_user').val();
+        groupid = $('#add_teamgroup_group').val();
+    } else {
+        userid = $('#rm_teamgroup_user').val();
+        groupid = $('#rm_teamgroup_group').val();
+    }
+    $.post('app/admin-ajax.php', {
+        action: action,
+        teamgroup_user: userid,
+        teamgroup_group: groupid
+    }).success(function() {
+        $('#team_groups_div').load('admin.php #team_groups_div');
+    });
+}
+
+function teamGroupCreate() {
+    var name = $('#create_teamgroup').val();
+    if (name.length > 0) {
+        $.post('app/admin-ajax.php', {
+            create_teamgroup: name
+        }).success(function() {
+            $('#team_groups_div').load('admin.php #team_groups_div');
+            $('#create_teamgroup').val('');
+        });
+    }
+}
+
+function teamGroupDestroy(groupid, confirmText) {
+    var you_sure = confirm(confirmText);
+    if (you_sure === true) {
+        $.post('app/admin-ajax.php', {
+            destroy_teamgroup: true,
+            teamgroup_group: groupid
+        }).success(function() {
+            $("#team_groups_div").load("admin.php #team_groups_div");
+        });
+    }
+    return false;
+}
+// END TEAM GROUP
+
+// used on import csv/zip to go to next step
+function goNext(x) {
+    if(x === '') {
+        return;
+    }
+    document.cookie = 'itemType='+x;
+    $('.import_block').show();
+}
+
 // sysconfig.php
 // =============
 

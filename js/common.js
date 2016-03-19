@@ -127,7 +127,7 @@ function go_url(x) {
 function statusCreate() {
     name = $('#statusName').val();
     color = $('#statusColor').val();
-    $.post('app/admin-ajax.php', {
+    $.post('app/controllers/StatusController.php', {
         statusCreate: true,
         statusName: name,
         statusColor: color
@@ -142,7 +142,7 @@ function statusUpdate(id) {
     color = $('#statusColor_' + id).val();
     defaultBox = $('#statusDefault_' + id).val(); // 'on' if checked
 
-    $.post('app/admin-ajax.php', {
+    $.post('app/controllers/StatusController.php', {
         statusUpdate: true,
         statusId: id,
         statusName: name,
@@ -159,7 +159,7 @@ function itemsTypesCreate() {
     name = $('#itemsTypesName').val();
     color = $('#itemsTypesColor').val();
     template = tinymce.get('itemsTypesTemplate').getContent();
-    $.post('app/admin-ajax.php', {
+    $.post('app/controllers/ItemsTypesController.php', {
         itemsTypesCreate: true,
         itemsTypesName: name,
         itemsTypesColor: color,
@@ -170,11 +170,15 @@ function itemsTypesCreate() {
     });
 }
 
+function itemsTypesShowEditor(id) {
+    $('#itemsTypesEditor_' + id).toggle();
+}
+
 function itemsTypesUpdate(id) {
     name = $('#itemsTypesName_' + id).val();
     color = $('#itemsTypesColor_' + id).val();
     template = tinymce.get('itemsTypesTemplate_' + id).getContent();
-    $.post('app/admin-ajax.php', {
+    $.post('app/controllers/ItemsTypesController.php', {
         itemsTypesUpdate: true,
         itemsTypesId: id,
         itemsTypesName: name,
@@ -190,7 +194,7 @@ function itemsTypesUpdate(id) {
 // COMMON TEMPLATE
 function commonTplUpdate() {
     template = tinymce.get('commonTplTemplate').getContent();
-    $.post('app/admin-ajax.php', {
+    $.post('app/controllers/commonTplController.php', {
         commonTplUpdate: template
     }).success(function() {
         notif('Saved', 'ok');
@@ -201,7 +205,7 @@ function commonTplUpdate() {
 function teamGroupCreate() {
     var name = $('#teamGroupCreate').val();
     if (name.length > 0) {
-        $.post('app/admin-ajax.php', {
+        $.post('app/controllers/TeamGroupsController.php', {
             teamGroupCreate: name
         }).success(function() {
             $('#team_groups_div').load('admin.php #team_groups_div');
@@ -218,7 +222,7 @@ function teamGroupUpdate(action) {
         user = $('#teamGroupUserRm').val();
         group = $('#teamGroupGroupRm').val();
     }
-    $.post('app/admin-ajax.php', {
+    $.post('app/controllers/TeamGroupsController.php', {
         teamGroupUpdate: true,
         action: action,
         teamGroupUser: user,
@@ -231,7 +235,7 @@ function teamGroupUpdate(action) {
 function teamGroupDestroy(groupid, confirmText) {
     var you_sure = confirm(confirmText);
     if (you_sure === true) {
-        $.post('app/admin-ajax.php', {
+        $.post('app/controllers/TeamGroupsController.php', {
             teamGroupDestroy: true,
             teamGroupGroup: groupid
         }).success(function() {

@@ -68,8 +68,6 @@ foreach ($_POST as $key => $value) {
         case 'ordering_status':
             // loop the array and update sql
             foreach ($_POST['ordering_status'] as $ordering => $id) {
-                $id = explode('_', $id);
-                $id = $id[1];
                 // check we own it
                 $sql = "SELECT team FROM status WHERE id = :id";
                 $req = $pdo->prepare($sql);

@@ -243,50 +243,23 @@ if (!empty($team['stamppass'])) {
 </div>
 
 <!-- TAB 3 STATUS -->
-<?php $statusArr = $status->read($_SESSION['team_id']); ?>
 
 <div class='divhandle' id='tab3div'>
-    <h3><?php echo _('Edit an existing status'); ?></h3>
-    <?php echo $statusView->show($statusArr, $_SESSION['team_id']); ?>
-
-    <!-- ADD NEW STATUS -->
-    <ul class='list-group'>
-    <li class='list-group-item'>
-        <label for='statusName'><?php echo _('Add a new status'); ?></label>
-        <input type='text' id='statusName' />
-        <div id='colorwheel_div_new_status'>
-            <input class='colorpicker' type='text' id='statusColor' value='000000' />
-        </div>
-        <div class='submitButtonDiv'>
-            <button type='submit' onClick='statusCreate()' class='button'><?php echo _('Save'); ?></button>
-        </div>
-    </li>
-    </ul>
-
+    <?php
+    $statusArr = $status->read($_SESSION['team_id']);
+    echo $statusView->show($statusArr, $_SESSION['team_id']);
+    echo $statusView->showCreate();
+    ?>
 </div>
 
 <!-- TAB 4 ITEMS TYPES-->
-<?php $itemsTypesArr = $itemsTypes->read($_SESSION['team_id']); ?>
 
 <div class='divhandle' id='tab4div'>
-    <h3><?php echo _('Database items types'); ?></h3>
-    <?php echo $itemsTypesView->show($itemsTypesArr); ?>
-
-    <!-- ADD NEW TYPE OF ITEM -->
-    <ul class='list-group'>
-    <li class='list-group-item'>
-        <label for='itemsTypesName'><?php echo _('Add a new type of item:'); ?></label>
-        <input required type='text' id='itemsTypesName' />
-        <div id='colorwheel_div_new'>
-            <label><?php echo _('Edit color'); ?></label>
-            <input class='colorpicker' type='text' id='itemsTypesColor' value='29AEB9' />
-        </div>
-        <textarea class='mceditable' id='itemsTypesTemplate' /></textarea>
-        <div class='submitButtonDiv'>
-            <button type='submit' onClick='itemsTypesCreate()' class='button'><?php echo _('Save'); ?></button>
-        </div>
-    </li>
-    </ul>
+    <?php
+    $itemsTypesArr = $itemsTypes->read($_SESSION['team_id']);
+    echo $itemsTypesView->show($itemsTypesArr);
+    echo $itemsTypesView->showCreate();
+    ?>
 
 </div>
 
@@ -457,7 +430,7 @@ $(document).ready(function() {
         }
     });
     // edit the team group name
-    $('h3.teamgroup_name').editable('app/admin-ajax.php', {
+    $('h3.teamgroup_name').editable('app/controllers/TeamGroupsController.php', {
      tooltip : 'Click to edit',
      indicator : 'Saving...',
      name : 'teamGroupUpdateName',
@@ -475,6 +448,7 @@ $(document).ready(function() {
         update: function(event, ui) {
             // send the orders as an array
             var ordering = $(".sortable_status").sortable("toArray");
+            console.log(ordering);
 
             $.post("app/order.php", {
                 'ordering_status' : ordering
@@ -487,6 +461,8 @@ $(document).ready(function() {
             });
         }
     });
+
+    $('.itemsTypesEditor').hide();
 
     // SORTABLE for ITEMS TYPES
     $('.sortable_itemstypes').sortable({

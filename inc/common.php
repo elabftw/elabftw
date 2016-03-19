@@ -23,6 +23,8 @@ if (is_readable('config.php')) {
 } elseif (is_readable('../config.php')) {
     // we might be called from app folder
     require_once '../config.php';
+} elseif (is_readable('../../config.php')) {
+    require_once '../../config.php';
 } else {
     header('Location: install');
     exit;

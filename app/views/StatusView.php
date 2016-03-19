@@ -31,14 +31,10 @@ class StatusView
 
     public function show($statusArr, $team)
     {
-        $html ="<ul class='draggable sortable_status list-group'>";
+        $html = "<h3>" . _('Edit an existing status') . "</h3>";
+        $html .= "<ul class='draggable sortable_status'>";
 
         foreach ($statusArr as $status) {
-            $html .= "<li id='_" . $status['id'] . "' class='list-group-item'>";
-            $html .= "<a class='trigger_" . $status['id'] . "'>" . _('Edit') . ' ' . $status['name'] . "</a>";
-            $html .= "<div class='toggle_container_" . $status['id'] . "'>";
-            $html .= "<img class='align_right' src='img/small-trash.png' title='delete' alt='delete' ";
-
             // count the experiments with this status
             // don't allow deletion if experiments with this status exist
             // but instead display a message to explain
@@ -49,39 +45,49 @@ class StatusView
             $count_exp_req->execute();
             $count = $count_exp_req->fetchColumn();
 
-            if ($count === 0) {
-                $html .= "onClick=\"deleteThis('" . $status['id'] . "','status', 'admin.php')\"";
-            } else {
-                $html .= "onClick=\"alert('" . _('Remove all experiments with this status before deleting this status.') . "')\"";
-            }
-            $html .= " />";
+            $html .= "<li id='" . $status['id'] . "' class='list-group-item center' style='border-color:#" . $status['color'] . "'>";
 
-            $html .= "<label>" .  _('Edit name') . "</label>";
-            $html .= "<input required type='text' id='statusName_" . $status['id'] . "' value='" . $status['name'] . "' />";
-            $html .= "<label for='default_checkbox'>" . _('Default status') . "</label>";
-            $html .= "<input type='checkbox' id='statusDefault_" . $status['id'] . "'";
+
+            $html .= "<ul class='list-inline'>";
+
+            $html .= "<li>" . _('Name') . " <input required type='text' id='statusName_" . $status['id'] . "' value='" . $status['name'] . "' /></li>";
+            $html .= "<li>" . _('Color') . " <input class='colorpicker' type='text' maxlength='6' id='statusColor_" . $status['id'] . "' value='" . $status['color'] . "' />";
+            $html .= "</li>";
+            $html .= "<li>" . _('Default status') . " <input type='checkbox' id='statusDefault_" . $status['id'] . "'";
             // check the box if the status is already default
             if ($status['is_default'] == 1) {
                 $html .= " checked";
             }
-            $html .= ">";
-            $html .= "<div id='colorwheel_div_" . $status['id'] . "'>";
-            $html .= "<label>" . _('Edit color') . "</label>";
-            $html .= "<input class='colorpicker' type='text' style='display:inline' id='statusColor_" . $status['id'] . "' value='" . $status['color'] . "' />";
-            $html .= "</div>";
-            $html .= "<div class='submitButtonDiv'>
-                    <button type='submit' onClick='statusUpdate(" . $status['id'] . ")' class='button'>" . _('Edit') . ' ' . $status['name'] . "</button>
-                </div>";
+            $html .= "></li>";
 
-            $html .= "<script>$(document).ready(function() {
-            $('.toggle_container_" . $status['id'] . "').hide();
-            $('a.trigger_" . $status['id'] . "').click(function(){
-            $('div.toggle_container_" . $status['id'] . "').slideToggle(100);";
-            // disable sortable behavior
-            $html .= "$('.sortable_status').sortable('disable');";
-            $html .= "});});</script></div></li>";
+
+            $html .= "<li><button onClick='statusUpdate(" . $status['id'] . ")' class='button'>" . _('Save') . "</button></li>";
+
+            $html .= "<li><button class='button' ";
+            if ($count == 0) {
+                $html .= "onClick=\"deleteThis('" . $status['id'] . "','status', 'admin.php')\"";
+            } else {
+                $html .= "onClick=\"alert('" . _('Remove all experiments with this status before deleting this status.') . "')\"";
+            }
+            $html .= ">" . _('Delete') . "</button></li>";
+
+            $html .= "</ul></li>";
         }
         $html .= "</ul>";
+
+        return $html;
+    }
+
+    public function showCreate()
+    {
+        $html = "<h3>" . _('Add a new status') . "</h3>";
+        $html .= "<ul><li class='list-group-item center'>";
+        $html .= "<ul class='list-inline'>";
+        $html .= "<li>" . _('Name') . " <input type='text' id='statusName' /></li>";
+        $html .= "<li>" . _('Color') . " <input class='colorpicker' type='text' id='statusColor' value='000000' /></li>";
+        $html .= "<li><button type='submit' onClick='statusCreate()' class='button'>" . _('Save') . "</button></li>";
+        $html .= "</ul>";
+
         return $html;
     }
 }

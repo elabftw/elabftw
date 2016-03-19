@@ -343,6 +343,7 @@ menu.border a:hover {
     font-weight: bold;
     text-transform: uppercase;
     background-color: #29AEB9;
+    margin: 0 5px;
 }
 
 .button:hover {

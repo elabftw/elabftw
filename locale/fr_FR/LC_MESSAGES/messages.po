@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2015-03-04 14:57+0100\n"
-"PO-Revision-Date: 2016-03-19 04:59+0100\n"
+"PO-Revision-Date: 2016-03-19 23:20+0100\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -237,10 +237,6 @@ msgstr "Catégories d'items de la base de données"
 #: elabftw/admin.php:357
 msgid "Remove all database items with this type before deleting this type."
 msgstr "Supprimez tous les items de la base de données de cette catégorie avant de supprimer cette catégorie."
-
-#: elabftw/admin.php:363
-msgid "Edit name"
-msgstr "Éditer le nom"
 
 #: elabftw/admin.php:393
 msgid "Add a new type of item:"
@@ -1469,6 +1465,12 @@ msgstr "Ajouter un modèle"
 msgid "Edit template"
 msgstr "Éditer un modèle"
 
+msgid "Edit the template"
+msgstr "Éditer le modèle"
+
+msgid "Delete"
+msgstr "Supprimer"
+
 msgid "Select a tag"
 msgstr "Choisir un tag"
 
@@ -1526,8 +1528,8 @@ msgstr "Rester connecté"
 msgid "This doesn't look like the right kind of file. Import aborted."
 msgstr "Mauvais type de fichier. Importation arrêtée."
 
-msgid "Edit color"
-msgstr "Editer la couleur"
+msgid "Color"
+msgstr "Couleur"
 
 msgid "All the team"
 msgstr "Toute l'équipe"

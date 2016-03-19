@@ -31,14 +31,10 @@ class ItemsTypesView
 
     public function show($itemsTypesArr)
     {
-        $html ="<ul class='draggable sortable_itemstypes list-group'>";
+        $html = "<h3>" . _('Database items types') . "</h3>";
+        $html .= "<ul class='draggable sortable_itemstypes'>";
 
         foreach ($itemsTypesArr as $itemType) {
-            $html .= "<li id='itemstypes_" . $itemType['id'] . "' class='list-group-item'>";
-            $html .= "<a class='trigger_" . $itemType['id'] . "'>" . _('Edit') . ' ' . $itemType['name'] . "</a>";
-            $html .= "<div class='toggle_container_" . $itemType['id'] . "'>";
-            $html .= "<img class='align_right' src='img/small-trash.png' title='delete' alt='delete' ";
-
             // count the items with this type
             // don't allow deletion if items with this type exist
             // but instead display a message to explain
@@ -48,33 +44,43 @@ class ItemsTypesView
             $count_db_req->execute();
             $count = $count_db_req->fetchColumn();
 
-            if ($count === 0) {
+            $html .= "<li id='itemstypes_" . $itemType['id'] . "' class='list-group-item center' style='border-color:#" . $itemType['bgcolor'] . "'>";
+
+
+            $html .= "<ul class='list-inline'>";
+
+            $html .= "<li>" . _('Name') . " <input type='text' id='itemsTypesName_" . $itemType['id'] . "' value='" . $itemType['name'] . "' /></li>";
+            $html .= "<li>" . _('Color') . " <input class='colorpicker' type='text' style='display:inline' id='itemsTypesColor_" . $itemType['id'] . "' value='" . $itemType['bgcolor'] . "' /></li>";
+            $html .= "<li><button onClick='itemsTypesShowEditor(" . $itemType['id'] . ")' class='button'>" . _('Edit the template') . "</button></li>";
+            $html .= "<li><button onClick='itemsTypesUpdate(" . $itemType['id'] . ")' class='button'>" . _('Save') . "</button></li>";
+            $html .= "<li><button class='button' ";
+            if ($count == 0) {
                 $html .= "onClick=\"deleteThis('" . $itemType['id'] . "','item_type', 'admin.php')\"";
             } else {
                 $html .= "onClick=\"alert('" . _('Remove all database items with this type before deleting this type.') . "')\"";
             }
-            $html .= " />";
+            $html .= ">" . _('Delete') . "</button></li>";
 
-            $html .= "<label>" .  _('Edit name') . "</label>";
-            $html .= "<input required type='text' id='itemsTypesName_" . $itemType['id'] . "' value='" . $itemType['name'] . "' />";
-            $html .= "<div id='colorwheel_div_" . $itemType['id'] . "'>";
-            $html .= "<label>" . _('Edit color') . "</label>";
-            $html .= "<input class='colorpicker' type='text' style='display:inline' id='itemsTypesColor_" . $itemType['id'] . "' value='" . $itemType['bgcolor'] . "' />";
-            $html .= "</div>";
-            $html .= "<textarea class='mceditable' id='itemsTypesTemplate_" . $itemType['id'] . "' />" . $itemType['template'] . "</textarea>";
-            $html .= "<div class='submitButtonDiv'>
-                    <button type='submit' onClick='itemsTypesUpdate(" . $itemType['id'] . ")' class='button'>" . _('Edit') . ' ' . $itemType['name'] . "</button>
-                </div>";
-
-            $html .= "<script>$(document).ready(function() {
-            $('.toggle_container_" . $itemType['id'] . "').hide();
-            $('a.trigger_" . $itemType['id'] . "').click(function(){
-            $('div.toggle_container_" . $itemType['id'] . "').slideToggle(100);";
-            // disable sortable behavior
-            $html .= "$('.sortable_itemstypes').sortable('disable');";
-            $html .= "});});</script></div></li>";
+            $html .= "</li>";
+            $html .= "<li class='itemsTypesEditor' id='itemsTypesEditor_" . $itemType['id'] . "'><textarea class='mceditable' style='height:50px' id='itemsTypesTemplate_" . $itemType['id'] . "' />" . $itemType['template'] . "</textarea></li>";
+            $html .= "</ul>";
         }
         $html .= "</ul>";
         return $html;
+    }
+
+    public function showCreate()
+    {
+        $html = "<h3>" . _('Add a new type of item:') . "</h3>";
+        $html .= "<ul><li class='list-group-item'>";
+        $html .= "<ul class='list-inline'>";
+        $html .= "<li>" . _('Name') . " <input type='text' id='itemsTypesName' /></li>";
+        $html .= "<li>" . _('Color') . " <input class='colorpicker' type='text' id='itemsTypesColor' value='29AEB9' /></li></ul>";
+        $html .= "<textarea class='mceditable' id='itemsTypesTemplate' /></textarea>";
+        $html .= "<div class='submitButtonDiv'><button onClick='itemsTypesCreate()' class='button'>" . _('Save') . "</button></div>";
+        $html .= "</li></ul>";
+
+        return $html;
+
     }
 }

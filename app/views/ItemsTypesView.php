@@ -30,6 +30,26 @@ class ItemsTypesView
     }
 
     /**
+     * Output html for create new item type
+     *
+     * @return string $html
+     */
+    public function showCreate()
+    {
+        $html = "<h3>" . _('Add a new type of item') . "</h3>";
+        $html .= "<ul><li class='list-group-item'>";
+        $html .= "<ul class='list-inline'>";
+        $html .= "<li>" . _('Name') . " <input type='text' id='itemsTypesName' /></li>";
+        $html .= "<li>" . _('Color') . " <input class='colorpicker' type='text' id='itemsTypesColor' value='29AEB9' /></li></ul>";
+        $html .= "<textarea class='mceditable' id='itemsTypesTemplate' /></textarea>";
+        $html .= "<div class='submitButtonDiv'><button onClick='itemsTypesCreate()' class='button'>" . _('Save') . "</button></div>";
+        $html .= "</li></ul>";
+
+        return $html;
+
+    }
+
+    /**
      * List the items types
      *
      * @param string $itemsTypesArr output of read()
@@ -61,7 +81,7 @@ class ItemsTypesView
             $html .= "<li><button onClick='itemsTypesUpdate(" . $itemType['id'] . ")' class='button'>" . _('Save') . "</button></li>";
             $html .= "<li><button class='button' ";
             if ($count == 0) {
-                $html .= "onClick=\"deleteThis('" . $itemType['id'] . "','item_type', 'admin.php')\"";
+                $html .= "onClick=\"deleteThis('" . $itemType['id'] . "','item_type', 'admin.php?tab=4')\"";
             } else {
                 $html .= "onClick=\"alert('" . _('Remove all database items with this type before deleting this type.') . "')\"";
             }
@@ -73,25 +93,5 @@ class ItemsTypesView
         }
         $html .= "</ul>";
         return $html;
-    }
-
-    /**
-     * Output html for create new item type
-     *
-     * @return string $html
-     */
-    public function showCreate()
-    {
-        $html = "<h3>" . _('Add a new type of item') . "</h3>";
-        $html .= "<ul><li class='list-group-item'>";
-        $html .= "<ul class='list-inline'>";
-        $html .= "<li>" . _('Name') . " <input type='text' id='itemsTypesName' /></li>";
-        $html .= "<li>" . _('Color') . " <input class='colorpicker' type='text' id='itemsTypesColor' value='29AEB9' /></li></ul>";
-        $html .= "<textarea class='mceditable' id='itemsTypesTemplate' /></textarea>";
-        $html .= "<div class='submitButtonDiv'><button onClick='itemsTypesCreate()' class='button'>" . _('Save') . "</button></div>";
-        $html .= "</li></ul>";
-
-        return $html;
-
     }
 }

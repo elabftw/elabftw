@@ -172,9 +172,13 @@ function statusCreate() {
         statusCreate: true,
         statusName: name,
         statusColor: color
-    }).success(function() {
-        notif('Saved', 'ok');
-        window.location.replace('admin.php?tab=3');
+    }).success(function(data) {
+        if (data) {
+            notif('Saved', 'ok');
+            window.location.replace('admin.php?tab=3');
+        } else {
+            notif('Error', 'ko');
+        }
     });
 }
 
@@ -189,9 +193,13 @@ function statusUpdate(id) {
         statusName: name,
         statusColor: color,
         statusDefault: defaultBox
-    }).success(function() {
-        notif('Saved', 'ok');
-        window.location.replace('admin.php?tab=3');
+    }).success(function(data) {
+        if (data) {
+            notif('Saved', 'ok');
+            window.location.replace('admin.php?tab=3');
+        } else {
+            notif('Error', 'ko');
+        }
     });
 }
 

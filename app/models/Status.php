@@ -56,7 +56,7 @@ class Status extends Panel
         $req->bindParam(':name', $name);
         $req->bindParam(':color', $color);
         $req->bindParam(':team', $team, \PDO::PARAM_INT);
-        $req->bindValue(':id_default', 0);
+        $req->bindValue(':is_default', 0);
 
         return $req->execute();
     }

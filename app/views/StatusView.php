@@ -30,6 +30,24 @@ class StatusView
     }
 
     /**
+     * Output HTML to display the create new status block
+     *
+     * @return string $html
+     */
+    public function showCreate()
+    {
+        $html = "<h3>" . _('Add a new status') . "</h3>";
+        $html .= "<ul><li class='list-group-item center'>";
+        $html .= "<ul class='list-inline'>";
+        $html .= "<li>" . _('Name') . " <input type='text' id='statusName' /></li>";
+        $html .= "<li>" . _('Color') . " <input class='colorpicker' type='text' id='statusColor' value='000000' /></li>";
+        $html .= "<li><button onClick='statusCreate()' class='button'>" . _('Save') . "</button></li>";
+        $html .= "</ul></li></ul>";
+
+        return $html;
+    }
+
+    /**
      * Output HTML with all the status
      *
      * @param array $statusArr The output of the read() function
@@ -72,7 +90,7 @@ class StatusView
 
             $html .= "<li><button class='button' ";
             if ($count == 0) {
-                $html .= "onClick=\"deleteThis('" . $status['id'] . "','status', 'admin.php')\"";
+                $html .= "onClick=\"deleteThis('" . $status['id'] . "','status', 'admin.php?tab=3')\"";
             } else {
                 $html .= "onClick=\"alert('" . _('Remove all experiments with this status before deleting this status.') . "')\"";
             }
@@ -81,24 +99,6 @@ class StatusView
             $html .= "</ul></li>";
         }
         $html .= "</ul>";
-
-        return $html;
-    }
-
-    /**
-     * Output HTML to display the create new status block
-     *
-     * @return string $html
-     */
-    public function showCreate()
-    {
-        $html = "<h3>" . _('Add a new status') . "</h3>";
-        $html .= "<ul><li class='list-group-item center'>";
-        $html .= "<ul class='list-inline'>";
-        $html .= "<li>" . _('Name') . " <input type='text' id='statusName' /></li>";
-        $html .= "<li>" . _('Color') . " <input class='colorpicker' type='text' id='statusColor' value='000000' /></li>";
-        $html .= "<li><button type='submit' onClick='statusCreate()' class='button'>" . _('Save') . "</button></li>";
-        $html .= "</ul></li></ul>";
 
         return $html;
     }

@@ -80,7 +80,7 @@ $result = $req->execute(array(
 if ($result) {
     unset($_SESSION['new_title']);
     unset($_SESSION['new_date']);
-    unset($_SESSION['errors']);
+    unset($_SESSION['ko']);
     header("location: ../experiments.php?mode=view&id=" . $id);
     exit;
 } else {

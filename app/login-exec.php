@@ -57,7 +57,7 @@ if ((!isset($_POST['password'])) || (empty($_POST['password']))) {
 
 //If there are input validation errors, redirect back to the login form
 if ($errflag) {
-    $_SESSION['errors'] = $msg_arr;
+    $_SESSION['ko'] = $msg_arr;
     session_write_close();
     header("location: ../login.php");
     exit;
@@ -89,7 +89,7 @@ if ($user->login($username, $_POST['password'], $rememberme)) {
     } else {
         $_SESSION['failed_attempt'] += 1;
     }
-    $_SESSION['errors'] = $msg_arr;
+    $_SESSION['ko'] = $msg_arr;
 
     header("location: ../login.php");
     exit;

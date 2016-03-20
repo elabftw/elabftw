@@ -60,7 +60,7 @@ if ($_GET['type'] === 'experiments') {
         // Redirect to the viewXP
         $msg_arr = array();
         $msg_arr [] = sprintf(_('File %s deleted successfully.'), $data['real_name']);
-        $_SESSION['infos'] = $msg_arr;
+        $_SESSION['ok'] = $msg_arr;
         header("location: ../experiments.php?mode=edit&id=" . $data['item_id']);
     } else {
         die();
@@ -89,7 +89,7 @@ if ($_GET['type'] === 'experiments') {
     // Redirect to the viewDB
     $msg_arr = array();
         $msg_arr [] = sprintf(_('File %s deleted successfully.'), $data['real_name']);
-    $_SESSION['infos'] = $msg_arr;
+    $_SESSION['ok'] = $msg_arr;
     header("location: ../database.php?mode=edit&id=" . $data['item_id']);
 
 } else {

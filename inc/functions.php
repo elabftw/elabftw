@@ -502,24 +502,24 @@ function check_visibility($input)
 /**
  * For displaying messages using jquery ui highlight/error messages
  *
- * @param string $type Can be 'info', 'info_nocross' or 'error', 'error_nocross'
+ * @param string $type Can be 'ok', 'ko' or 'warning', with or without _nocross
  * @param string $message The message to display
  * @return boolean Will echo the HTML of the message
  */
 function display_message($type, $message)
 {
-    if ($type === 'info') {
+    if ($type === 'ok') {
 
         echo "<div class='alert alert-success'><a href='#' class='close' data-dismiss='alert'>&times</a><p>$message</p></div>";
 
-    } elseif ($type === 'info_nocross') {
+    } elseif ($type === 'ok_nocross') {
         echo "<div class='alert alert-success'><p>$message</p></div>";
 
-    } elseif ($type === 'error') {
+    } elseif ($type === 'ko') {
 
         echo "<div class='alert alert-danger'><a href='#' class='close' data-dismiss='alert'>&times</a><p>$message</p></div>";
 
-    } elseif ($type === 'error_nocross') {
+    } elseif ($type === 'ko_nocross') {
         echo "<div class='alert alert-danger'><p>$message</p></div>";
 
     } elseif ($type === 'warning') {

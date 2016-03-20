@@ -47,7 +47,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                 !$_SESSION['is_admin']) ||
                 !is_owned_by_user($id, 'experiments', $_SESSION['userid'])) {
                 $msg_arr[] = _("You don't have the rights to delete this experiment.");
-                $_SESSION['errors'] = $msg_arr;
+                $_SESSION['ko'] = $msg_arr;
                 exit;
 
             } else {
@@ -104,7 +104,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                 ));
 
                 $msg_arr[] = _('Experiment was deleted successfully.');
-                $_SESSION['infos'] = $msg_arr;
+                $_SESSION['ok'] = $msg_arr;
                 exit;
 
             }
@@ -120,7 +120,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             ));
             if ($result) {
                 $msg_arr[] = _('Template was deleted successfully.');
-                $_SESSION['infos'] = $msg_arr;
+                $_SESSION['ok'] = $msg_arr;
             }
             break;
 
@@ -195,10 +195,10 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             // test if there was an error somewhere
             if (in_array(false, $result)) {
                 $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-                $_SESSION['errors'] = $msg_arr;
+                $_SESSION['ko'] = $msg_arr;
             } else {
                 $msg_arr[] = _('Item was deleted successfully.');
-                $_SESSION['infos'] = $msg_arr;
+                $_SESSION['ok'] = $msg_arr;
             }
 
 
@@ -215,7 +215,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
 
             if ($result) {
                 $msg_arr[] = _('Item type was deleted successfully.');
-                $_SESSION['infos'] = $msg_arr;
+                $_SESSION['ok'] = $msg_arr;
             }
 
 
@@ -272,7 +272,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
                 'id' => $id
             ));
             $msg_arr[] = _('Status was deleted successfully.');
-            $_SESSION['infos'] = $msg_arr;
+            $_SESSION['ok'] = $msg_arr;
             break;
 
         // END

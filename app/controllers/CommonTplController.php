@@ -10,7 +10,7 @@
  */
 
 /**
- * Deal with ajax requests sent from the admin page
+ * Controller for the common experiment template
  *
  */
 require_once '../../inc/common.php';

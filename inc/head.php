@@ -148,16 +148,16 @@ if (isset($_SESSION['auth'])) {
 
 <?php
 // INFO BOX
-if (isset($_SESSION['errors']) && is_array($_SESSION['errors']) && count($_SESSION['errors']) > 0) {
-    foreach ($_SESSION['errors'] as $msg) {
-        display_message('error', $msg);
+if (isset($_SESSION['ko']) && is_array($_SESSION['ko']) && count($_SESSION['ko']) > 0) {
+    foreach ($_SESSION['ko'] as $msg) {
+        display_message('ko', $msg);
     }
-    unset($_SESSION['errors']);
+    unset($_SESSION['ko']);
 }
 
-if (isset($_SESSION['infos']) && is_array($_SESSION['infos']) && count($_SESSION['infos']) > 0) {
-    foreach ($_SESSION['infos'] as $msg) {
-        display_message('info', $msg);
+if (isset($_SESSION['ok']) && is_array($_SESSION['ok']) && count($_SESSION['ok']) > 0) {
+    foreach ($_SESSION['ok'] as $msg) {
+        display_message('ok', $msg);
     }
-    unset($_SESSION['infos']);
+    unset($_SESSION['ok']);
 }

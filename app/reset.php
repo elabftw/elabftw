@@ -96,18 +96,18 @@ if (isset($_POST['email'])) {
             if ($errflag) {
                 // problem
                 $msg_arr[] = _('There was a problem sending the email! Error was logged.');
-                $_SESSION['errors'] = $msg_arr;
+                $_SESSION['ko'] = $msg_arr;
             } else { // no problem
                 $msg_arr[] = _('Email sent. Check your INBOX.');
-                $_SESSION['infos'] = $msg_arr;
+                $_SESSION['ok'] = $msg_arr;
             }
         } else {
             $msg_arr[] = _('Email not found in database!');
-            $_SESSION['errors'] = $msg_arr;
+            $_SESSION['ko'] = $msg_arr;
         }
     } else {
         $msg_arr[] = _("The email is not valid.");
-        $_SESSION['errors'] = $msg_arr;
+        $_SESSION['ko'] = $msg_arr;
     }
     header("location: ../login.php");
     exit;
@@ -145,10 +145,10 @@ if (isset($_POST['password']) &&
     if ($user->updatePassword($_POST['password'], $userid)) {
         dblog('Info', $userid, 'Password was changed for this user.');
         $msg_arr[] = _('New password updated. You can now login.');
-        $_SESSION['infos'] = $msg_arr;
+        $_SESSION['ok'] = $msg_arr;
     } else {
         $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#452A" . $error, "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-        $_SESSION['errors'] = $msg_arr;
+        $_SESSION['ko'] = $msg_arr;
     }
     header("location: ../login.php");
 }

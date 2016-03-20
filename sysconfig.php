@@ -30,7 +30,7 @@ try {
     $crypto = new \Elabftw\Elabftw\CryptoWrapper();
     $teamsView = new \Elabftw\Elabftw\TeamsView();
     $update = new \Elabftw\Elabftw\Update();
-    $logsView = new \Elabftw\Elabftw\LogsView();
+    $sysconfigView = new \Elabftw\Elabftw\SysconfigView();
 } catch (Exception $e) {
     die($e->getMessage());
 }
@@ -300,17 +300,14 @@ switch ($mail_method) {
         </form>
     </div>
 
-    <div class='box'>
-        <label for='testemail'><?php echo _('Send a test email'); ?>:</label>
-        <input type='email' placeholder='you@email.com' name='testemail' id='testemail' />
-        <button id='testemailButton' onClick='sendTestEmail()' class='button'><?php echo _('Send'); ?></button>
-    </div>
+    <!-- TEST EMAIL -->
+    <?php echo $sysconfigView->testemailShow(); ?>
 
 </div>
 
 <!-- TAB 6 LOGS -->
 <div class='divhandle' id='tab6div'>
-    <?php echo $logsView->show(); ?>
+    <?php echo $sysconfigView->logsShow(); ?>
 </div>
 
 <script>

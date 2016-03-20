@@ -83,6 +83,6 @@ if (!$errflag) {
 
 // If input errors, redirect back to the edit form
 if ($errflag) {
-    $_SESSION['errors'] = $msg_arr;
+    $_SESSION['ko'] = $msg_arr;
     header("location: ../database.php?mode=edit&id=" . $id);
 }

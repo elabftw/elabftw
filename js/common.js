@@ -398,19 +398,24 @@ function toggleMailMethod(value) {
 }
 
 // send a test email to provided adress
-function sendTestEmail() {
-    // disable button on click
-    document.getElementById('testemailButton').disabled = true;
-    var testemail = $('#testemail').val();
-    $.post('app/sysconfig-ajax.php', {
-        testemail: testemail
-    }).success(function(data) {
-        if (data == 1) {
-            notif('Email sent!', 'ok');
-        } else {
-            notif('Something went wrong! :(', 'ko');
-        }
-    });
+function testemailSend() {
+    email = $('#testemailEmail').val();
+    // check the email loosely
+    if (/\S+@\S+\.\S+/.test(email)) {
+        document.getElementById('testemailButton').disabled = true;
+        $.post('app/controllers/Sysconfig.php', {
+            testemailSend: true,
+            testemailEmail: email
+        }).success(function(data) {
+            if (data === '1') {
+                notif('Email sent!', 'ok');
+            } else {
+                notif('Something went wrong! :(', 'ko');
+            }
+        });
+    } else {
+        notif('Email address looks weird', 'ko');
+    }
 }
 
 // LOGS

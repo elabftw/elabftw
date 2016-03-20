@@ -1,6 +1,6 @@
 <?php
 /**
- * \Elabftw\Elabftw\LogsView
+ * \Elabftw\Elabftw\SysconfigView
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -11,9 +11,9 @@
 namespace Elabftw\Elabftw;
 
 /**
- * HTML for the teams
+ * HTML for the sysconfig page
  */
-class LogsView extends Logs
+class SysconfigView
 {
     /** the Logs class */
     protected $logs;
@@ -28,11 +28,27 @@ class LogsView extends Logs
     }
 
     /**
-     * Output HTML for dispaying the logs
+     * Output HTML for displaying the test email block
      *
      * @return string $html
      */
-    public function show()
+    public function testemailShow()
+    {
+        $html = "<div class='box'>";
+        $html .= "<label for='testemailEmail'>" . _('Send a test email') . "</label>";
+        $html .= " <input type='email' placeholder='you@email.com' id='testemailEmail' />";
+        $html .= "<button id='testemailButton' onClick='testemailSend()' class='button'>" . _('Send') . "</button>";
+        $html .= "</div>";
+
+        return $html;
+    }
+
+    /**
+     * Output HTML for displaying the logs
+     *
+     * @return string $html
+     */
+    public function logsShow()
     {
         $logsArr = $this->logs->read();
         $html = "<div id='logsDiv'>";

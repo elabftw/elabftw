@@ -73,10 +73,10 @@ if (!is_null((get_config('schema')))) {
 
     if (get_config('schema') < $update::REQUIRED_SCHEMA) {
         try {
-            $_SESSION['infos'] = $update->runUpdateScript();
+            $_SESSION['ok'] = $update->runUpdateScript();
         } catch (Exception $e) {
             $msg_arr[] = 'Error updating the database: ' . $e->getMessage();
-            $_SESSION['errors'] = $msg_arr;
+            $_SESSION['ko'] = $msg_arr;
         }
     }
 }

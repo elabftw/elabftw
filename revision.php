@@ -117,6 +117,6 @@ if (!$errflag) {
 
     require_once 'inc/footer.php';
 } else {
-    $_SESSION['errors'] = $msg_arr;
+    $_SESSION['ko'] = $msg_arr;
     header('Location: experiments.php');
 }

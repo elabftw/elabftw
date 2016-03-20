@@ -93,12 +93,12 @@ if (!empty($_POST['validate'])) {
         }
         if ($errflag) {
             $msg_arr[] = _('There was a problem sending the email! Error was logged.');
-            $_SESSION['errors'] = $msg_arr;
+            $_SESSION['ko'] = $msg_arr;
             header('location: ../admin.php');
             exit;
         }
     }
-    $_SESSION['infos'] = $msg_arr;
+    $_SESSION['ok'] = $msg_arr;
     header('Location: ../admin.php');
     exit;
 }
@@ -161,7 +161,7 @@ if (isset($_POST['userid'])) {
         $errflag = true;
     }
     if ($errflag) {
-        $_SESSION['errors'] = $msg_arr;
+        $_SESSION['ko'] = $msg_arr;
         header("location: ../admin.php?tab=" . $tab);
         exit;
     }
@@ -263,7 +263,7 @@ if (isset($_POST['delete_user']) && isset($_POST['delete_user_confpass'])) {
 
     // Check for errors and redirect if there is one
     if ($errflag) {
-        $_SESSION['errors'] = $msg_arr;
+        $_SESSION['ko'] = $msg_arr;
         header("location: ../admin.php");
         exit;
     }
@@ -303,7 +303,7 @@ if (isset($_POST['delete_user']) && isset($_POST['delete_user_confpass'])) {
         $error = '17';
     } else {
         $msg_arr[] = _('Everything was purged successfully.');
-        $_SESSION['infos'] = $msg_arr;
+        $_SESSION['ok'] = $msg_arr;
         header('Location: ../admin.php?tab=' . $tab);
         exit;
     }
@@ -312,10 +312,10 @@ if (isset($_POST['delete_user']) && isset($_POST['delete_user_confpass'])) {
 // REDIRECT USER
 if ($errflag) {
     $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#" . $error, "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-    $_SESSION['errors'] = $msg_arr;
+    $_SESSION['ko'] = $msg_arr;
     header('Location: ../admin.php?tab=' . $tab);
 } else {
     $msg_arr[] = _('Configuration updated successfully.');
-    $_SESSION['infos'] = $msg_arr;
+    $_SESSION['ok'] = $msg_arr;
     header('Location: ../admin.php?tab=' . $tab);
 }

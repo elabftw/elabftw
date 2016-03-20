@@ -41,7 +41,7 @@ try {
 } catch (Exception $e) {
     $msg_arr = array();
     $msg_arr[] = $e->getMessage();
-    $_SESSION['errors'] = $msg_arr;
+    $_SESSION['ko'] = $msg_arr;
 }
 
 // redirect

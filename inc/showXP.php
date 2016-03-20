@@ -184,10 +184,10 @@ $results_arr = array_unique($results_arr);
 $total_time = get_total_time();
 
 if (count($results_arr) === 0 && $search_type != 'none') {
-    display_message('error_nocross', _("Sorry. I couldn't find anything :("));
+    display_message('ko_nocross', _("Sorry. I couldn't find anything :("));
 // Display message for fresh install
 } elseif (count($results_arr) === 0 && $search_type === 'none') {
-    display_message('info_nocross', sprintf(_("<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button to get started."), "<img src='img/add.png' alt='' /><a class='alert-link' href='app/create_item.php?type=exp'>", "</a>"));
+    display_message('ok_nocross', sprintf(_("<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button to get started."), "<img src='img/add.png' alt='' /><a class='alert-link' href='app/create_item.php?type=exp'>", "</a>"));
 } else {
     ?>
     <div class='align_right'>

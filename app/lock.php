@@ -73,7 +73,7 @@ switch ($_GET['type']) {
             // we are trying to lock an XP which is not ours, and we don't have can_lock, show error
             if ($userid != $_SESSION['userid']) {
                 $err_arr[] = _("You don't have the rights to lock/unlock this.");
-                $_SESSION['errors'] = $err_arr;
+                $_SESSION['ko'] = $err_arr;
                 header("Location: ../experiments.php?mode=view&id=" . $id);
                 exit();
             }
@@ -97,7 +97,7 @@ switch ($_GET['type']) {
                 ));
                 $locker_name = $req->fetchColumn();
                 $err_arr[] = _('This experiment was locked by') . ' ' . $locker_name . '. ' . _("You don't have the rights to lock/unlock this.");
-                $_SESSION['errors'] = $err_arr;
+                $_SESSION['ko'] = $err_arr;
                 header("Location: ../experiments.php?mode=view&id=" . $id);
                 exit();
             }
@@ -111,7 +111,7 @@ switch ($_GET['type']) {
         $timestamped = $req->fetchColumn();
         if ($action === 0 && $timestamped) {
                 $err_arr[] = _('You cannot unlock or edit in any way a timestamped experiment.');
-                $_SESSION['errors'] = $err_arr;
+                $_SESSION['ko'] = $err_arr;
                 header("Location: ../experiments.php?mode=view&id=" . $id);
                 exit;
         }

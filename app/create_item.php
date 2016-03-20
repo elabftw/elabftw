@@ -44,7 +44,7 @@ if (isset($_GET['type']) && !empty($_GET['type']) && is_pos_int($_GET['type'])) 
 
 } else {
     $msg_arr[] = _('Wrong item type!');
-    $_SESSION['infos'] = $msg_arr;
+    $_SESSION['ok'] = $msg_arr;
     header('location: ../index.php');
     exit;
 }
@@ -54,7 +54,7 @@ if (isset($_GET['type']) && !empty($_GET['type']) && is_pos_int($_GET['type'])) 
 if (is_pos_int($new_id)) {
     // info box
     $msg_arr[] = _('New item created successfully.');
-    $_SESSION['infos'] = $msg_arr;
+    $_SESSION['ko'] = $msg_arr;
     if ($_GET['type'] === 'exp') {
         header('location: ../experiments.php?mode=edit&id=' . $new_id . '');
         exit;

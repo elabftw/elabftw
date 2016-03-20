@@ -194,10 +194,10 @@ if (isset($_POST['mail_method'])) {
 // REDIRECT USER
 if ($errflag) {
     $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#" . $error, "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-    $_SESSION['errors'] = $msg_arr;
+    $_SESSION['ko'] = $msg_arr;
     header('Location: ../sysconfig.php?tab=' . $tab);
 } else {
     $msg_arr[] = _('Configuration updated successfully.');
-    $_SESSION['infos'] = $msg_arr;
+    $_SESSION['ok'] = $msg_arr;
     header('Location: ../sysconfig.php?tab=' . $tab);
 }

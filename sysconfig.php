@@ -27,6 +27,7 @@ try {
     $formKey = new \Elabftw\Elabftw\FormKey();
     $crypto = new \Elabftw\Elabftw\CryptoWrapper();
     $teams = new \Elabftw\Elabftw\Teams();
+    $teamsView = new \Elabftw\Elabftw\TeamsView();
     $update = new \Elabftw\Elabftw\Update();
 } catch (Exception $e) {
     die($e->getMessage());
@@ -92,38 +93,14 @@ if (get_config('mail_from') === 'notconfigured@example.com') {
     </ul>
 </menu>
 
-<!-- TAB 1 -->
+<!-- TAB 1 TEAMS -->
 <div class='divhandle' id='tab1div'>
-    <p>
-    <h3><?php echo _('Add a new team'); ?></h3>
-    <form method='post' action='app/sysconfig-exec.php'>
-        <input required type='text' placeholder='Enter new team name' name='new_team' id='new_team' />
-        <button type='submit' class='submit button'>Add</button>
-    </form>
-    </p>
-
-    <p>
-    <h3><?php echo _('Edit existing teams'); ?></h3>
+<div id='teamsDiv'>
     <?php
-    // a lil' bit of stats can't hurt
-    $count_sql = "SELECT
-    (SELECT COUNT(users.userid) FROM users WHERE users.team = :team) AS totusers,
-    (SELECT COUNT(items.id) FROM items WHERE items.team = :team) AS totdb,
-    (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.team = :team) AS totxp";
-    $count_req = $pdo->prepare($count_sql);
-
-    $teamsArr = $teams->read();
-
-    foreach($teamsArr as $team) {
-        $count_req->bindParam(':team', $team['team_id']);
-        $count_req->execute();
-        $count = $count_req->fetch(PDO::FETCH_NAMED);
-        echo " <input type='text' name='edit_team_name' value='" . $team['team_name'] . "' id='team_" . $team['team_id'] . "' />";
-        echo " <input id='button_" . $team['team_id'] . "' onClick=\"updateTeam('" . $team['team_id'] . "')\" type='submit' class='button' value='Save' />";
-        echo "<p>" . _('Members') . ": " . $count['totusers'] . " − " . ngettext('Experiment', 'Experiments', $count['totxp']) . ": " . $count['totxp'] . " − " . _('Items') . ": " . $count['totdb'] . " − " . _('Created') . ": " . $team['datetime'] . "<p>";
-    }
+    echo $teamsView->showCreate();
+    echo $teamsView->show($teams->read());
     ?>
-    </p>
+</div>
 </div>
 
 <!-- TAB 2 -->

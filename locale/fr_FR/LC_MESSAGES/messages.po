@@ -235,8 +235,8 @@ msgid "Remove all database items with this type before deleting this type."
 msgstr "Supprimez tous les items de la base de données de cette catégorie avant de supprimer cette catégorie."
 
 #: elabftw/admin.php:393
-msgid "Add a new type of item:"
-msgstr "Ajouter une nouvelle catégorie d'items :"
+msgid "Add a new type of item"
+msgstr "Ajouter une nouvelle catégorie d'items"
 
 #: elabftw/admin.php:402 elabftw/inc/viewXP.php:259 elabftw/sysconfig.php:164
 #: elabftw/sysconfig.php:200 elabftw/sysconfig.php:226

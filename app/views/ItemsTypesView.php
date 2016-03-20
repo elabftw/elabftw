@@ -82,7 +82,7 @@ class ItemsTypesView
      */
     public function showCreate()
     {
-        $html = "<h3>" . _('Add a new type of item:') . "</h3>";
+        $html = "<h3>" . _('Add a new type of item') . "</h3>";
         $html .= "<ul><li class='list-group-item'>";
         $html .= "<ul class='list-inline'>";
         $html .= "<li>" . _('Name') . " <input type='text' id='itemsTypesName' /></li>";

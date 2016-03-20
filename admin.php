@@ -234,8 +234,8 @@ if (!empty($team['stamppass'])) {
 
 <div class='divhandle' id='tab3div'>
     <?php
-    echo $statusView->show($status->read($_SESSION['team_id']), $_SESSION['team_id']);
     echo $statusView->showCreate();
+    echo $statusView->show($status->read($_SESSION['team_id']), $_SESSION['team_id']);
     ?>
 </div>
 
@@ -243,10 +243,10 @@ if (!empty($team['stamppass'])) {
 
 <div class='divhandle' id='tab4div'>
     <?php
+    echo $itemsTypesView->showCreate();
     // this is used below
     $itemsTypesArr = $itemsTypes->read($_SESSION['team_id']);
     echo $itemsTypesView->show($itemsTypesArr);
-    echo $itemsTypesView->showCreate();
     ?>
 
 </div>

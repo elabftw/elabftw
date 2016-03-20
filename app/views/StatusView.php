@@ -98,7 +98,7 @@ class StatusView
         $html .= "<li>" . _('Name') . " <input type='text' id='statusName' /></li>";
         $html .= "<li>" . _('Color') . " <input class='colorpicker' type='text' id='statusColor' value='000000' /></li>";
         $html .= "<li><button type='submit' onClick='statusCreate()' class='button'>" . _('Save') . "</button></li>";
-        $html .= "</ul>";
+        $html .= "</ul></li></ul>";
 
         return $html;
     }

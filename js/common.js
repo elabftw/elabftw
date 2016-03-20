@@ -258,6 +258,49 @@ function goNext(x) {
 // sysconfig.php
 // =============
 
+// TEAMS
+function teamsCreate() {
+    name = $('#teamsName').val();
+    $.post('app/controllers/TeamsController.php', {
+        teamsCreate: true,
+        teamsName: name
+    }).success(function() {
+        $('#teamsDiv').load('sysconfig.php #teamsDiv');
+    });
+}
+
+function teamsUpdate(id) {
+    name = $('#team_' + id).val();
+    $.post("app/controllers/TeamsController.php", {
+        teamsUpdate: true,
+        teamsUpdateId : id,
+        teamsUpdateName : name
+    }).success(function(returnValue) {
+        // we will get output on error
+        if (returnValue !== '') {
+            document.getElementById('button_'+team_id).value = returnValue;
+            document.getElementById('button_'+team_id).style.color = 'red';
+        } else {
+            document.getElementById('button_'+team_id).value = "<?php echo _('Saved'); ?>";
+        }
+        document.getElementById('button_'+team_id).disabled = true;
+    });
+}
+
+function teamsDestroy(id) {
+    $.post("app/controllers/TeamsController.php", {
+        teamsDestroy: true,
+        teamsDestroyId: id
+    }).success(function(data) {
+        if (data) {
+            notif('Team removed', 'ok');
+            $('#teamsDiv').load('sysconfig.php #teamsDiv');
+        } else {
+            notif('Team not removed because not empty!', 'ko');
+        }
+    });
+}
+
 // called when mail_method selector is changed; enables/disables the config for the selected/unselected method
 function toggleMailMethod(value) {
     if (value == 'sendmail') {
@@ -288,23 +331,5 @@ function sendTestEmail() {
         } else {
             notif('Something went wrong! :(', 'ko');
         }
-    });
-}
-
-// update the name of a team
-function updateTeam(team_id) {
-    var new_team_name = document.getElementById('team_'+team_id).value;
-    $.post("app/quicksave.php", {
-        id : team_id,
-        team_name : new_team_name
-    }).done(function(returnValue) {
-        // we will get output on error
-        if (returnValue !== '') {
-            document.getElementById('button_'+team_id).value = returnValue;
-            document.getElementById('button_'+team_id).style.color = 'red';
-        } else {
-            document.getElementById('button_'+team_id).value = "<?php echo _('Saved'); ?>";
-        }
-        document.getElementById('button_'+team_id).disabled = true;
     });
 }

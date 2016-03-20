@@ -26,15 +26,6 @@ if (is_pos_int($_POST['id'])) {
     die(_("The id parameter is not valid!"));
 }
 
-// we update the name of a team via sysconfig.php
-if (isset($_POST['team_name'])) {
-    $sysconfig = new \Elabftw\Elabftw\SysConfig();
-    if (!$sysconfig->editTeam($id, $_POST['team_name'])) {
-        echo 'Error updating team name';
-    }
-    exit;
-}
-
 // track the sql requests success/failure
 $success = array();
 

@@ -6,7 +6,7 @@ if ($_SESSION['is_sysadmin'] != 1 || $_SERVER['REQUEST_METHOD'] != 'POST') {
     die(_('This section is out of your reach.'));
 }
 
-// CREATE TEAM GROUP
+// TEST EMAIL
 if (isset($_POST['testemail']) && !empty($_POST['testemail']) && filter_var($_POST['testemail'], FILTER_VALIDATE_EMAIL)) {
         $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
         $message = Swift_Message::newInstance()

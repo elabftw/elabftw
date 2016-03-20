@@ -42,6 +42,8 @@ class Teams extends Panel
      */
     public function create($name)
     {
+        $name = filter_var($name, FILTER_SANITIZE_STRING);
+
         // add to the teams table
         $sql = 'INSERT INTO teams (team_name, link_name, link_href) VALUES (:team_name, :link_name, :link_href)';
         $req = $this->pdo->prepare($sql);
@@ -63,7 +65,8 @@ class Teams extends Panel
         $result2 = $req->execute();
 
         // insert only one item type with editme name
-        $sql = "INSERT INTO `items_types` (`team`, `name`, `bgcolor`, `template`) VALUES (:team, 'Edit me', '32a100', '<p>Go to the admin panel to edit/add more items types!</p>');";
+        $sql = "INSERT INTO `items_types` (`team`, `name`, `bgcolor`, `template`)
+            VALUES (:team, 'Edit me', '32a100', '<p>Go to the admin panel to edit/add more items types!</p>');";
         $req = $this->pdo->prepare($sql);
         $req->bindValue(':team', $new_team_id);
         $result3 = $req->execute();
@@ -92,6 +95,7 @@ class Teams extends Panel
         $sql = "SELECT * FROM teams";
         $req = $this->pdo->prepare($sql);
         $req->execute();
+
         return $req->fetchAll();
     }
 
@@ -116,13 +120,60 @@ class Teams extends Panel
     }
 
     /**
-     * Delete a team
+     * Delete a team on if all the stats are at zero
      *
-     * @param int $id ID of the team to delete
-     * @return bool true if success
+     * @param int $team ID of the team to delete
+     * @return bool true if success, false if the team is not brand new
      */
-    public function destroy($id)
+    public function destroy($team)
     {
-        // TODO
+        // check for stats, should be 0
+        $count = $this->getStats($team);
+
+        if ($count['totxp'] == 0 && $count['totdb'] == 0 && $count['totusers'] == 0) {
+
+            $sql = "DELETE FROM teams WHERE team_id = :team_id";
+            $req = $this->pdo->prepare($sql);
+            $req->bindParam(':team_id', $team, \PDO::PARAM_INT);
+            $result1 = $req->execute();
+
+            $sql = "DELETE FROM status WHERE team = :team_id";
+            $req = $this->pdo->prepare($sql);
+            $req->bindParam(':team_id', $team, \PDO::PARAM_INT);
+            $result2 = $req->execute();
+
+            $sql = "DELETE FROM items_types WHERE team = :team_id";
+            $req = $this->pdo->prepare($sql);
+            $req->bindParam(':team_id', $team, \PDO::PARAM_INT);
+            $result3 = $req->execute();
+
+            $sql = "DELETE FROM experiments_templates WHERE team = :team_id";
+            $req = $this->pdo->prepare($sql);
+            $req->bindParam(':team_id', $team, \PDO::PARAM_INT);
+            $result4 = $req->execute();
+
+            return $result1 && $result2 && $result3 && $result4;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Get statistics from a team
+     *
+     * @param int $team Id of the team
+     * @return array
+     */
+    public function getStats($team)
+    {
+        $sql = "SELECT
+        (SELECT COUNT(users.userid) FROM users WHERE users.team = :team) AS totusers,
+        (SELECT COUNT(items.id) FROM items WHERE items.team = :team) AS totdb,
+        (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.team = :team) AS totxp";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':team', $team, \PDO::PARAM_INT);
+        $req->execute();
+
+        return $req->fetch(\PDO::FETCH_NAMED);
     }
 }

@@ -31,26 +31,12 @@ if ($_SESSION['is_sysadmin'] != 1 || $_SERVER['REQUEST_METHOD'] != 'POST') {
     die(_('This section is out of your reach.'));
 }
 
-$sysconfig = new \Elabftw\Elabftw\SysConfig();
 $crypto = new \Elabftw\Elabftw\CryptoWrapper();
 
 $msg_arr = array();
 $errflag = false;
 $tab = '1';
 
-// TAB 1 : ADD A NEW TEAM
-if (isset($_POST['new_team']) &&
-    $_POST['new_team'] != '' &&
-    $_POST['new_team'] != ' ') {
-
-    $tab = '1';
-
-    if (!$sysconfig->create(filter_var($_POST['new_team'], FILTER_SANITIZE_STRING))) {
-        $errflag = true;
-        $errnum = '5';
-    }
-}
-// END TAB 1
 
 // TAB 2 : SERVER
 if (isset($_POST['lang'])) {

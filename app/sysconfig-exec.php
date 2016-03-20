@@ -47,11 +47,6 @@ if (isset($_POST['lang'])) {
     } else {
         $lang = 'en_GB';
     }
-    if ($_POST['debug'] == 1) {
-        $debug = 1;
-    } else {
-        $debug = 0;
-    }
     if (isset($_POST['proxy'])) {
         $proxy = filter_var($_POST['proxy'], FILTER_SANITIZE_STRING);
     } else {
@@ -60,7 +55,6 @@ if (isset($_POST['lang'])) {
     // SQL
     $updates = array(
         'lang' => $lang,
-        'debug' => $debug,
         'proxy' => $proxy
     );
     if (!update_config($updates)) {

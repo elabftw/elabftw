@@ -358,6 +358,10 @@ function teamsDestroy(id) {
     });
 }
 
+function teamsUpdateButtonEnable(id) {
+    button = document.getElementById('teamsUpdateButton_' + id).disabled = false
+};
+
 function teamsArchive(id) {
     // disable button on click
     document.getElementById('teamsArchiveButton_' + id).disabled = true;

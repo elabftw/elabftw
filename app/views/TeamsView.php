@@ -62,8 +62,8 @@ class TeamsView extends Teams
 
         foreach ($teamsArr as $team) {
             $count = $this->getStats($team['team_id']);
-            $html .= " <input type='text' value='" . $team['team_name'] . "' id='team_" . $team['team_id'] . "' />";
-            $html .= " <button id='teamsUpdateButton_" . $team['team_id'] . "' onClick='teamsUpdate(" . $team['team_id'] . ")' class='button'>" . ('Edit') . "</button>";
+            $html .= " <input onKeyPress='teamsUpdateButtonEnable(" . $team['team_id'] . ")' type='text' value='" . $team['team_name'] . "' id='team_" . $team['team_id'] . "' />";
+            $html .= " <button disabled id='teamsUpdateButton_" . $team['team_id'] . "' onClick='teamsUpdate(" . $team['team_id'] . ")' class='button'>" . ('Save') . "</button>";
             if ($count['totusers'] == 0) {
                 $html .= " <button id='teamsDestroyButton_" . $team['team_id'] . "' onClick='teamsDestroy(" . $team['team_id'] . ")' class='button'>" . ('Delete') . "</button>";
             } else {

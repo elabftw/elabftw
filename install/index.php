@@ -125,8 +125,8 @@ if (!\Elabftw\Elabftw\Tools::usingSsl()) {
 }
 
 // CHECK PHP version
-if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.5', '<')) {
-    $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.5";
+if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.6', '<')) {
+    $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.6";
     display_message('error_nocross', $message);
     $errflag = true;
 }

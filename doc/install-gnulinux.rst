@@ -16,7 +16,7 @@ Prerequisites
 Please refer to your distribution's documentation to install :
 
 * A webserver (like nginx, Apache, lighttpd or cherokee)
-* PHP version > 5.5
+* PHP version > 5.6
 * MySQL version > 5.5
 * Git (optional)
 

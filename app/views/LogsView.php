@@ -34,12 +34,20 @@ class LogsView extends Logs
     public function show()
     {
         $logsArr = $this->logs->read();
-        $html = "<div class='well'><ul>";
-        foreach ($logsArr as $logs) {
-            $html .= "<li>" . $logs['datetime'] . " [" . $logs['type'] . "] " .
-                $logs['body'] . " (" . $logs['user'] . ")</li>";
+        $html = "<div id='logsDiv'>";
+        $html .= "<div class='well'><ul>";
+        if (empty($logsArr)) {
+            $html .= "<li><p>" . _('Nothing to display') . ".</p></li>";
+        } else {
+            foreach ($logsArr as $logs) {
+                $html .= "<li>" . $logs['datetime'] . " [" . $logs['type'] . "] " .
+                    $logs['body'] . " (" . $logs['user'] . ")</li>";
+            }
         }
         $html .= "</ul></div>";
+        $html .= "<div class='submitButtonDiv'>";
+        $html .= "<button id='logsDestroyButton' onClick='logsDestroy()' class='button'>" .
+            ('Clear all logs') . "</button></div></div>";
 
         return $html;
     }

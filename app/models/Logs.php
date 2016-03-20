@@ -47,4 +47,21 @@ class Logs extends Panel
 
         return $req->fetchAll();
     }
+
+    /**
+     * Clear the logs
+     *
+     * @return bool
+     */
+    public function destroy()
+    {
+        $sql = "DELETE FROM logs";
+        $req = $this->pdo->prepare($sql);
+
+        if ($req->execute()) {
+            echo '1';
+        } else {
+            echo '0';
+        }
+    }
 }

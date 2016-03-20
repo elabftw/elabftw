@@ -1,6 +1,6 @@
 <?php
 /**
- * app/controllers/LogsController.php
+ * app/controllers/CommonTplController.php
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -15,12 +15,13 @@
  */
 require_once '../../inc/common.php';
 
+// the constructor will check for admin rights
 try {
-    $commonTpl = new \Elabftw\Elabftw\CommonTpl();
+    $logs = new \Elabftw\Elabftw\Logs();
 
-    // DEFAULT EXPERIMENT TEMPLATE
-    if (isset($_POST['commonTplUpdate'])) {
-        $commonTpl->update($_POST['commonTplUpdate'], $_SESSION['team_id']);
+    // DESTROY
+    if (isset($_POST['logsDestroy'])) {
+        $logs->destroy();
     }
 
 } catch (Exception $e) {

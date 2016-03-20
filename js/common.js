@@ -363,3 +363,19 @@ function sendTestEmail() {
         }
     });
 }
+
+// LOGS
+function logsDestroy() {
+    // disable button on click
+    document.getElementById('logsDestroyButton').disabled = true;
+    $.post('app/controllers/LogsController.php', {
+        logsDestroy: true
+    }).success(function(data) {
+        if (data == 1) {
+            notif('All logs cleared', 'ok');
+        } else {
+            notif('Something went wrong! :(', 'ko');
+        }
+        $('#logsDiv').load('sysconfig.php #logsDiv');
+    });
+}

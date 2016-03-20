@@ -194,7 +194,7 @@ function itemsTypesUpdate(id) {
 // COMMON TEMPLATE
 function commonTplUpdate() {
     template = tinymce.get('commonTplTemplate').getContent();
-    $.post('app/controllers/commonTplController.php', {
+    $.post('app/controllers/CommonTplController.php', {
         commonTplUpdate: template
     }).success(function() {
         notif('Saved', 'ok');

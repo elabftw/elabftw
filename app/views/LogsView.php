@@ -15,6 +15,7 @@ namespace Elabftw\Elabftw;
  */
 class LogsView extends Logs
 {
+    /** the Logs class */
     protected $logs;
 
     /**

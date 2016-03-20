@@ -908,7 +908,8 @@ function getDbList($format = 'default')
 
 /**
  * Get the size of a dir
- * @param directory $directory
+ *
+ * @param string $directory
  * @return integer
  */
 function dirSize($directory)
@@ -920,11 +921,17 @@ function dirSize($directory)
     return $size;
 }
 
+/**
+ * Get the number of files in a dir
+ *
+ * @param string $directory
+ * @return int number of files in dir
+ */
 function dirNum($directory)
 {
     $num = 0;
     foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
-        $num += 1;
+        $num++;
     }
     return $num;
 }

@@ -42,6 +42,8 @@ class Teams extends Panel
      */
     public function create($name)
     {
+        $name = filter_var($name, FILTER_SANITIZE_STRING);
+
         // add to the teams table
         $sql = 'INSERT INTO teams (team_name, link_name, link_href) VALUES (:team_name, :link_name, :link_href)';
         $req = $this->pdo->prepare($sql);
@@ -63,7 +65,8 @@ class Teams extends Panel
         $result2 = $req->execute();
 
         // insert only one item type with editme name
-        $sql = "INSERT INTO `items_types` (`team`, `name`, `bgcolor`, `template`) VALUES (:team, 'Edit me', '32a100', '<p>Go to the admin panel to edit/add more items types!</p>');";
+        $sql = "INSERT INTO `items_types` (`team`, `name`, `bgcolor`, `template`)
+            VALUES (:team, 'Edit me', '32a100', '<p>Go to the admin panel to edit/add more items types!</p>');";
         $req = $this->pdo->prepare($sql);
         $req->bindValue(':team', $new_team_id);
         $result3 = $req->execute();
@@ -79,7 +82,11 @@ class Teams extends Panel
         $req->bindValue(':team', $new_team_id);
         $result4 = $req->execute();
 
-        return $result1 && $result2 && $result3 && $result4;
+        if ($result1 && $result2 && $result3 && $result4) {
+            echo '1';
+        } else {
+            echo '0';
+        }
     }
 
     /**
@@ -89,9 +96,10 @@ class Teams extends Panel
      */
     public function read()
     {
-        $sql = "SELECT * FROM teams";
+        $sql = "SELECT * FROM teams ORDER BY datetime DESC";
         $req = $this->pdo->prepare($sql);
         $req->execute();
+
         return $req->fetchAll();
     }
 
@@ -100,7 +108,7 @@ class Teams extends Panel
      *
      * @param int $id The id of the team
      * @param string $name The new name we want
-     * @return bool true on success
+     * @return string echo 1 or 0
      */
     public function update($id, $name)
     {
@@ -110,20 +118,90 @@ class Teams extends Panel
             WHERE team_id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
-        $req->bindParam(':id', $id);
-        return $req->execute();
-
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
+        if ($req->execute()) {
+            echo '1';
+        } else {
+            echo '0';
+        }
     }
 
     /**
-     * Delete a team
+     * Delete a team on if all the stats are at zero
      *
-     * @param int $id ID of the team to delete
-     * @return bool true if success
+     * @param int $team ID of the team to delete
+     * @return bool true if success, false if the team is not brand new
      */
-    public function destroy($id)
+    public function destroy($team)
     {
-        // TODO
+        // check for stats, should be 0
+        $count = $this->getStats($team);
+
+        if ($count['totxp'] == 0 && $count['totdb'] == 0 && $count['totusers'] == 0) {
+
+            $sql = "DELETE FROM teams WHERE team_id = :team_id";
+            $req = $this->pdo->prepare($sql);
+            $req->bindParam(':team_id', $team, \PDO::PARAM_INT);
+            $result1 = $req->execute();
+
+            $sql = "DELETE FROM status WHERE team = :team_id";
+            $req = $this->pdo->prepare($sql);
+            $req->bindParam(':team_id', $team, \PDO::PARAM_INT);
+            $result2 = $req->execute();
+
+            $sql = "DELETE FROM items_types WHERE team = :team_id";
+            $req = $this->pdo->prepare($sql);
+            $req->bindParam(':team_id', $team, \PDO::PARAM_INT);
+            $result3 = $req->execute();
+
+            $sql = "DELETE FROM experiments_templates WHERE team = :team_id";
+            $req = $this->pdo->prepare($sql);
+            $req->bindParam(':team_id', $team, \PDO::PARAM_INT);
+            $result4 = $req->execute();
+
+            return $result1 && $result2 && $result3 && $result4;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Get statistics from a team or from the whole install
+     *
+     * @param int|null $team Id of the team, leave empty to get full stats
+     * @return array
+     */
+    public function getStats($team = null)
+    {
+        if (!is_null($team)) {
+            $sql = "SELECT
+            (SELECT COUNT(users.userid) FROM users WHERE users.team = :team) AS totusers,
+            (SELECT COUNT(items.id) FROM items WHERE items.team = :team) AS totdb,
+            (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.team = :team) AS totxp";
+            $req = $this->pdo->prepare($sql);
+            $req->bindParam(':team', $team, \PDO::PARAM_INT);
+        } else {
+            $sql = "SELECT
+            (SELECT COUNT(users.userid) FROM users) AS totusers,
+            (SELECT COUNT(items.id) FROM items) AS totdb,
+            (SELECT COUNT(teams.team_id) FROM teams) AS totteams,
+            (SELECT COUNT(experiments.id) FROM experiments) AS totxp";
+            $req = $this->pdo->prepare($sql);
+        }
+        $req->execute();
+
+        return $req->fetch(\PDO::FETCH_NAMED);
+    }
+
+    /**
+     * Toggle archived status for a team
+     *
+     * @param int $team the team id
+     * @return bool
+     */
+    public function archive($team)
+    {
+        // TODO Archive the teams
     }
 }
 

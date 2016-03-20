@@ -1,6 +1,6 @@
 <?php
 /**
- * app/controllers/CommonTplController.php
+ * app/controllers/LogsController.php
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -15,7 +15,6 @@
  */
 require_once '../../inc/common.php';
 
-// the constructor will check for admin rights
 try {
     $commonTpl = new \Elabftw\Elabftw\CommonTpl();
 
@@ -27,5 +26,4 @@ try {
 } catch (Exception $e) {
     dblog('Error', $_SESSION['userid'], $e->getMessage());
 }
-
 

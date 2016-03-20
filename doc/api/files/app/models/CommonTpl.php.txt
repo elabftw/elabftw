@@ -45,6 +45,7 @@ class CommonTpl extends Panel
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $team, \PDO::PARAM_INT);
         $req->execute();
+
         return $req->fetchColumn();
     }
 
@@ -66,6 +67,7 @@ class CommonTpl extends Panel
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $team, \PDO::PARAM_INT);
         $req->bindParam(':body', $body);
+
         return $req->execute();
     }
 }

@@ -168,7 +168,7 @@ class Teams extends Panel
     /**
      * Get statistics from a team or from the whole install
      *
-     * @param int $team Id of the team
+     * @param int|null $team Id of the team, leave empty to get full stats
      * @return array
      */
     public function getStats($team = null)

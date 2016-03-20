@@ -1,6 +1,6 @@
 <?php
 /**
- * app/controllers/LogsController.php
+ * app/controllers/CommenTplController.php
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi

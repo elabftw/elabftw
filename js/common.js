@@ -12,7 +12,7 @@ function deleteThis(id, type, redirect) {
             id:id,
             type:type
         })
-        .success(function() {
+        .done(function() {
             window.location = redirect;
         });
     } else {
@@ -129,7 +129,7 @@ function experimentsUpdateVisibility(id, visibility) {
         experimentsUpdateVisibility: true,
         experimentsUpdateVisibilityId : id,
         experimentsUpdateVisibilityVisibility : visibility
-    }).success(function(data) {
+    }).done(function(data) {
         if (data === '0') {
             notif('There was an error!');
         } else {
@@ -144,7 +144,7 @@ function experimentsUpdateStatus(id, status) {
         experimentsUpdateStatus: true,
         experimentsUpdateStatusId : id,
         experimentsUpdateStatusStatus : status
-    }).success(function(data) {
+    }).done(function(data) {
         if (data === '0') {
             notif('There was an error!');
         } else { // it returns the color
@@ -160,7 +160,79 @@ function experimentsUpdateStatus(id, status) {
     });
 }
 
+// CREATE LINK
+function experimentsCreateLink(e, item_id) { // the argument here is the event (needed to detect which key is pressed)
+    var keynum;
+    if (e.which) {
+        keynum = e.which;
+    }
+    if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
+        // get link
+        link_id = decodeURIComponent($('#linkinput').val());
+        // fix for user pressing enter with no input
+        if (link_id.length > 0) {
+            // parseint will get the id, and not the rest (in case there is number in title)
+            link_id = parseInt(link_id, 10);
+            if (isNaN(link_id) != true) {
+                // POST request
+                $.post('app/controllers/ExperimentsController.php', {
+                    experimentsCreateLink: true,
+                    link_id: link_id,
+                    item_id: item_id
+                })
+                // reload the link list
+                .done(function () {
+                    $("#links_div").load("experiments.php?mode=edit&id=" + item_id + " #links_div");
+                    // clear input field
+                    $("#linkinput").val("");
+                    return false;
+                })
+            } // end if input is bad
+        } // end if input < 0
+    } // end if key is enter
+}
 
+// DESTROY LINK
+function experimentsDestroyLink(link_id, item_id, confirmText) {
+    var youSure = confirm(confirmText);
+    if (youSure === true) {
+        $.post('app/controllers/ExperimentsController.php', {
+            experimentsDestroyLink: true,
+            experimentsDestroyLinkId: link_id,
+            experimentsDestroyLinkItem : item_id
+        }).done(function (data) {
+            if (data === '1') {
+                notif('Link removed', 'ok');
+                $("#links_div").load("experiments.php?mode=edit&id=" + item_id + " #links_div");
+            } else {
+                notif('Something went wrong! :(', 'ko');
+            }
+        })
+    }
+    return false;
+}
+
+// COMMENTS
+function commentsCreateButtonDivShow() {
+    $('#commentsCreateButtonDiv').show();
+}
+
+function commentsCreate(id) {
+    document.getElementById('commentsCreateButton').disabled = true;
+    comment = $('#commentsCreateArea').val();
+    $.post('app/controllers/CommentsController.php', {
+        commentsCreate: true,
+        commentsCreateComment: comment,
+        commentsCreateId: id
+    }).done(function(data) {
+        if (data) {
+            notif('Comment added', 'ok');
+            window.location.replace('experiments.php?mode=view&id=' + id);
+        } else {
+            notif('There was an error!');
+        }
+    });
+}
 // admin.php
 // =========
 
@@ -172,7 +244,7 @@ function statusCreate() {
         statusCreate: true,
         statusName: name,
         statusColor: color
-    }).success(function(data) {
+    }).done(function(data) {
         if (data) {
             notif('Saved', 'ok');
             window.location.replace('admin.php?tab=3');
@@ -193,7 +265,7 @@ function statusUpdate(id) {
         statusName: name,
         statusColor: color,
         statusDefault: defaultBox
-    }).success(function(data) {
+    }).done(function(data) {
         if (data) {
             notif('Saved', 'ok');
             window.location.replace('admin.php?tab=3');
@@ -213,7 +285,7 @@ function itemsTypesCreate() {
         itemsTypesName: name,
         itemsTypesColor: color,
         itemsTypesTemplate: template
-    }).success(function() {
+    }).done(function() {
         notif('Saved', 'ok');
         window.location.replace('admin.php?tab=4');
     });
@@ -233,7 +305,7 @@ function itemsTypesUpdate(id) {
         itemsTypesName: name,
         itemsTypesColor: color,
         itemsTypesTemplate: template
-    }).success(function() {
+    }).done(function() {
         notif('Saved', 'ok');
         window.location.replace('admin.php?tab=4');
     });
@@ -245,7 +317,7 @@ function commonTplUpdate() {
     template = tinymce.get('commonTplTemplate').getContent();
     $.post('app/controllers/CommonTplController.php', {
         commonTplUpdate: template
-    }).success(function() {
+    }).done(function() {
         notif('Saved', 'ok');
     });
 }
@@ -256,7 +328,7 @@ function teamGroupCreate() {
     if (name.length > 0) {
         $.post('app/controllers/TeamGroupsController.php', {
             teamGroupCreate: name
-        }).success(function() {
+        }).done(function() {
             $('#team_groups_div').load('admin.php #team_groups_div');
             $('#teamGroupCreate').val('');
         });
@@ -276,7 +348,7 @@ function teamGroupUpdate(action) {
         action: action,
         teamGroupUser: user,
         teamGroupGroup: group
-    }).success(function() {
+    }).done(function() {
         $('#team_groups_div').load('admin.php #team_groups_div');
     });
 }
@@ -287,7 +359,7 @@ function teamGroupDestroy(groupid, confirmText) {
         $.post('app/controllers/TeamGroupsController.php', {
             teamGroupDestroy: true,
             teamGroupGroup: groupid
-        }).success(function() {
+        }).done(function() {
             $("#team_groups_div").load("admin.php #team_groups_div");
         });
     }
@@ -315,7 +387,7 @@ function teamsCreate() {
     $.post('app/controllers/TeamsController.php', {
         teamsCreate: true,
         teamsName: name
-    }).success(function(data) {
+    }).done(function(data) {
         if (data) {
             notif('Team created', 'ok');
             $('#teamsDiv').load('sysconfig.php #teamsDiv');
@@ -332,7 +404,7 @@ function teamsUpdate(id) {
         teamsUpdate: true,
         teamsUpdateId : id,
         teamsUpdateName : name
-    }).success(function(data) {
+    }).done(function(data) {
         if (data) {
             notif('Name updated', 'ok');
             $('#teamsDiv').load('sysconfig.php #teamsDiv');
@@ -348,7 +420,7 @@ function teamsDestroy(id) {
     $.post("app/controllers/TeamsController.php", {
         teamsDestroy: true,
         teamsDestroyId: id
-    }).success(function(data) {
+    }).done(function(data) {
         if (data) {
             notif('Team removed', 'ok');
             $('#teamsDiv').load('sysconfig.php #teamsDiv');
@@ -368,7 +440,7 @@ function teamsArchive(id) {
     $.post("app/controllers/TeamsController.php", {
         teamsArchive: true,
         teamsArchiveId: id
-    }).success(function(data) {
+    }).done(function(data) {
         notif('Feature not yet implemented :)');
     document.getElementById('teamsArchiveButton_' + id).disabled = false;
         /*
@@ -410,7 +482,7 @@ function testemailSend() {
         $.post('app/controllers/Sysconfig.php', {
             testemailSend: true,
             testemailEmail: email
-        }).success(function(data) {
+        }).done(function(data) {
             if (data === '1') {
                 notif('Email sent!', 'ok');
                 document.getElementById('testemailButton').disabled = false;
@@ -429,7 +501,7 @@ function logsDestroy() {
     document.getElementById('logsDestroyButton').disabled = true;
     $.post('app/controllers/LogsController.php', {
         logsDestroy: true
-    }).success(function(data) {
+    }).done(function(data) {
         if (data == 1) {
             notif('All logs cleared', 'ok');
         } else {

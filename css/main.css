@@ -641,6 +641,14 @@ a[class*='trigger_']:hover {
     background-color: #1F8591;
 }
 
+#commentsCreateArea {
+    border: 1px solid #ccc;
+    width: 100%;
+    border-radius: 5px;
+    margin: 10px 0;
+    padding: 20px;
+}
+
 /* END COMMENTS */
 
 .title {

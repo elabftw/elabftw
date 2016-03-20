@@ -10,6 +10,9 @@
  */
 use \Elabftw\Elabftw\Tools as Tools;
 
+$status = new \Elabftw\Elabftw\Status();
+$statusArr = $status->read($_SESSION['team_id']);
+
 $results_arr = array();
 $load_more_button = "<div class='center'>
         <button class='button' id='loadButton'>"._('Load more') . "</button>
@@ -36,12 +39,7 @@ if (isset($_GET['tag']) && $_GET['tag'] != '') {
                     <select name="filter" class="form-control select-filter-status">
                         <option value=''><?php echo _('Filter status'); ?></option>
                     <?php
-                    $sql = "SELECT id, name FROM status WHERE team = :team_id ORDER BY name ASC";
-                    $req = $pdo->prepare($sql);
-                    $req->execute(array(
-                        'team_id' => $_SESSION['team_id']
-                    ));
-                    while ($status = $req->fetch()) {
+                    foreach ($statusArr as $status) {
                         echo "
                         <option value='" . $status['id'] . "'" . checkSelectFilter($status['id']) . ">" . $status['name'] . "</option>";
                     }

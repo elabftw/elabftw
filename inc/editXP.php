@@ -18,13 +18,11 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     exit;
 }
 
-// SQL for editXP
-$sql = "SELECT experiments.*, status.color FROM experiments LEFT JOIN status ON experiments.status = status.id
-    WHERE experiments.id = :id ";
-$req = $pdo->prepare($sql);
-$req->bindParam(':id', $id, PDO::PARAM_INT);
-$req->execute();
-$experiment = $req->fetch();
+$statusClass = new \Elabftw\Elabftw\Status();
+$experimentsClass = new \Elabftw\Elabftw\Experiments();
+
+$statusArr = $statusClass->read($_SESSION['team_id']);
+$experiment = $experimentsClass->read($id);
 
 // Check id is owned by connected user
 if ($experiment['userid'] != $_SESSION['userid']) {
@@ -101,40 +99,17 @@ if ($experiment['locked'] == 1) {
         <div class='col-md-4'>
             <img src='img/status.png' class='bot5px' alt='status' />
             <label for='status_select'><?php echo ngettext('Status', 'Status', 1); ?></label>
-            <script>
-            // this array is used by updateStatus() to get the color of new status
-            var status_arr = Array();
-            </script>
-
-            <?php
-            // put all available status in array
-            $status_arr = array();
-            // SQL to get all the status of the team
-            $sql = 'SELECT id, name, color FROM status WHERE team = :team ORDER BY ordering ASC';
-            $req = $pdo->prepare($sql);
-            $req->execute(array(
-                'team' => $_SESSION['team_id']
-            ));
-
-            while ($status = $req->fetch()) {
-                $status_arr[$status['id']] = $status['name'];
-                // get also a JS array for update_status() that needs the color to set the border immediately
-                echo "<script>
-                    status_arr['".$status['id'] . "'] =  '" . $status['color'] . "';
-                    </script>";
-            }
-            ?>
-            <select id='status_select' name="status" onchange="updateStatus(this.value)">
-            <?php
-            // now display all possible values of status in select menu
-            foreach ($status_arr as $key => $value) {
-                echo "<option ";
-                if ($experiment['status'] == $key) {
-                    echo "selected ";
-                }
-                echo "value='" . $key . "'>" . $value . "</option>";
-            }
-            ?>
+                <select id='status_select' name="status" onchange="experimentsUpdateStatus(<?php echo $id; ?>, this.value)">
+<?php
+// now display all possible values of status in select menu
+foreach ($statusArr as $status) {
+    echo "<option ";
+    if ($experiment['status'] === $status['id']) {
+        echo "selected ";
+    }
+    echo "value='" . $status['id'] . "'>" . $status['name'] . "</option>";
+}
+?>
             </select>
         </div>
 
@@ -323,22 +298,6 @@ function addLinkOnEnter(e) { // the argument here is the event (needed to detect
             } // end if input is bad
         } // end if input < 0
     } // end if key is enter
-}
-
-// This function is activated with the select element and send a post request to quicksave.php
-function updateStatus(status) {
-    $.post("app/quicksave.php", {
-        id : <?php echo $id; ?>,
-        status : status
-        // change the color of the item border
-    }).done(function() {
-        // we first remove any status class
-        $("#main_section").css('border', null);
-        // and we add our new border color
-        // first : get what is the color of the new status
-        var css = '6px solid #' + status_arr[status];
-        $("#main_section").css('border-left', css);
-    });
 }
 
 // This function is activated with the select element and send a post request to quicksave.php

@@ -29,32 +29,8 @@ if (is_pos_int($_POST['id'])) {
 // track the sql requests success/failure
 $success = array();
 
-// we only update status
-if (isset($_POST['status'])) {
-    if (is_pos_int($_POST['status'])) {
-        $status = $_POST['status'];
-    } else {
-        exit;
-    }
-    $sql = "UPDATE experiments
-        SET status = :status
-        WHERE userid = :userid
-        AND id = :id";
-    $req = $pdo->prepare($sql);
-    try {
-        $success[] = $req->execute(array(
-            'status' => $status,
-            'userid' => $_SESSION['userid'],
-            'id' => $id
-        ));
-    } catch (Exception $e) {
-        dblog('Error', $_SESSION['userid'], $e->getMessage());
-        echo 0;
-        exit;
-    }
-
 // we only update visibility
-} elseif (isset($_POST['visibility'])) {
+if (isset($_POST['visibility'])) {
     // will return 'team' in case of wrong visibility
     $visibility = check_visibility($_POST['visibility']);
     $sql = "UPDATE experiments

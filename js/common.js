@@ -120,6 +120,31 @@ function go_url(x) {
     window.location = x;
 }
 
+// experiments.php
+
+// STATUS
+function experimentsUpdateStatus(id, status) {
+    $.post("app/controllers/ExperimentsController.php", {
+        experimentsUpdateStatus: true,
+        experimentsUpdateStatusId : id,
+        experimentsUpdateStatusStatus : status
+    }).success(function(data) {
+        if (data === '0') {
+            notif('There was an error!');
+        } else { // it returns the color
+            notif('Status updated', 'ok');
+            // change the color of the item border
+            // we first remove any status class
+            $("#main_section").css('border', null);
+            // and we add our new border color
+            // first : get what is the color of the new status
+            css = '6px solid #' + data;
+            $("#main_section").css('border-left', css);
+        }
+    });
+}
+
+
 // admin.php
 // =========
 

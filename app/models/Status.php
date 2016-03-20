@@ -77,6 +77,16 @@ class Status extends Panel
         return $req->fetchAll();
     }
 
+    public function readColor($status)
+    {
+        $sql = "SELECT color FROM status WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $status, \PDO::PARAM_INT);
+        $req->execute();
+
+        return $req->fetchColumn();
+    }
+
     /**
      * Remove all the default status for a team.
      * If we set true to is_default somewhere, it's best to remove all other default

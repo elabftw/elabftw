@@ -409,6 +409,7 @@ function testemailSend() {
         }).success(function(data) {
             if (data === '1') {
                 notif('Email sent!', 'ok');
+                document.getElementById('testemailButton').disabled = false;
             } else {
                 notif('Something went wrong! :(', 'ko');
             }

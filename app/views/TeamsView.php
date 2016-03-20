@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use \PDO;
+use \Elabftw\Elabftw\Teams;
 
 /**
  * HTML for the teams
@@ -20,13 +21,17 @@ class TeamsView extends Teams
     /** The PDO object */
     protected $pdo;
 
+    /** The Teams class */
+    protected $teams;
+
     /**
      * Constructor
      *
      */
     public function __construct()
     {
-        $this->pdo = Db::getConnection();
+        $this->teams = new \Elabftw\Elabftw\Teams;
+        $this->pdo = $this->teams->pdo;
     }
 
     /**
@@ -49,8 +54,10 @@ class TeamsView extends Teams
      * @param array $teamsArr The output of the read() function
      * @return string $html
      */
-    public function show($teamsArr)
+    public function show()
     {
+        $teamsArr = $this->teams->read();
+
         $html = "<h3>" . _('Edit existing teams') . "</h3>";
 
         foreach ($teamsArr as $team) {

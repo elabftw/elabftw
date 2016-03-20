@@ -29,6 +29,7 @@ try {
     $teams = new \Elabftw\Elabftw\Teams();
     $teamsView = new \Elabftw\Elabftw\TeamsView();
     $update = new \Elabftw\Elabftw\Update();
+    $logsView = new \Elabftw\Elabftw\LogsView();
 } catch (Exception $e) {
     die($e->getMessage());
 }
@@ -285,20 +286,9 @@ switch ($mail_method) {
     </p>
 </div>
 
-<!-- TAB 6 -->
+<!-- TAB 6 LOGS -->
 <div class='divhandle' id='tab6div'>
-    <div class='well'>
-        <ul>
-        <?php
-        $sql = "SELECT * FROM logs ORDER BY id DESC LIMIT 100";
-        $req = $pdo->prepare($sql);
-        $req->execute();
-        while ($logs = $req->fetch()) {
-            echo "<li>" . $logs['datetime'] . " [" . $logs['type'] . "] " . $logs['body'] . " (" . $logs['user'] . ")</li>";
-        }
-        ?>
-        </ul>
-    </div>
+    <?php echo $logsView->show(); ?>
 </div>
 
 <script>

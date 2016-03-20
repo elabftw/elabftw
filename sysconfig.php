@@ -73,7 +73,7 @@ if ($update->success === true) {
     // if we don't have the latest version, show button redirecting to wiki
     if ($update->updateIsAvailable()) {
         $message = _('A new version is available!') . " <a href='doc/_build/html/how-to-update.html'>
-            <button class='submit button'>Update elabftw</button></a>";
+            <button class='button'>Update elabftw</button></a>";
         display_message('warning', $message);
     }
 }
@@ -294,8 +294,8 @@ switch ($mail_method) {
                 <input type='password' value='<?php echo $smtppass; ?>' name='smtp_password' id='smtp_password' />
                 </p>
             </div>
-            <div class='center'>
-                <button type='submit' name='submit_config' class='submit button'><?php echo _('Save'); ?></button>
+            <div class='submitButtonDiv'>
+                <button type='submit' name='submit_config' class='button'><?php echo _('Save'); ?></button>
             </div>
         </form>
     </div>

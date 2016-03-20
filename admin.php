@@ -134,7 +134,7 @@ if (!empty($team['stamppass'])) {
         <span class='smallgray'><?php echo _('Your timestamping service provider password'); ?></span>
         </p>
         <div class='submitButtonDiv'>
-            <button type='submit' name='submit_config' class='submit button'>Save</button>
+            <button type='submit' name='submit_config' class='button'>Save</button>
         </div>
     </form>
 

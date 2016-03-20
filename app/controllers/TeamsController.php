@@ -26,7 +26,7 @@ try {
 
     // UPDATE
     if (isset($_POST['teamsUpdate'])) {
-        $teams->update($id, $_POST['teamUpdateName']);
+        $teams->update($_POST['teamsUpdateId'], $_POST['teamsUpdateName']);
     }
 
     // DESTROY

@@ -82,7 +82,11 @@ class Teams extends Panel
         $req->bindValue(':team', $new_team_id);
         $result4 = $req->execute();
 
-        return $result1 && $result2 && $result3 && $result4;
+        if ($result1 && $result2 && $result3 && $result4) {
+            echo '1';
+        } else {
+            echo '0';
+        }
     }
 
     /**
@@ -92,7 +96,7 @@ class Teams extends Panel
      */
     public function read()
     {
-        $sql = "SELECT * FROM teams";
+        $sql = "SELECT * FROM teams ORDER BY datetime DESC";
         $req = $this->pdo->prepare($sql);
         $req->execute();
 
@@ -104,7 +108,7 @@ class Teams extends Panel
      *
      * @param int $id The id of the team
      * @param string $name The new name we want
-     * @return bool true on success
+     * @return string echo 1 or 0
      */
     public function update($id, $name)
     {
@@ -114,9 +118,12 @@ class Teams extends Panel
             WHERE team_id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
-        $req->bindParam(':id', $id);
-        return $req->execute();
-
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
+        if ($req->execute()) {
+            echo '1';
+        } else {
+            echo '0';
+        }
     }
 
     /**
@@ -175,5 +182,15 @@ class Teams extends Panel
         $req->execute();
 
         return $req->fetch(\PDO::FETCH_NAMED);
+    }
+
+    /**
+     * Toggle archived status for a team
+     *
+     * @param int $team the team id
+     * @return bool
+     */
+    public function archive($team)
+    {
     }
 }

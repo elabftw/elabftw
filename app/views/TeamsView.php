@@ -38,7 +38,7 @@ class TeamsView extends Teams
     {
         $html = "<h3>" . _('Add a new team') . "</h3>";
         $html .= "<input required type='text' placeholder='Enter new team name' id='teamsName' />";
-        $html .= "<button onClick='teamsCreate()' class='button'>" . ('Save') . "</button>";
+        $html .= "<button id='teamsCreateButton' onClick='teamsCreate()' class='button'>" . ('Save') . "</button>";
 
         return $html;
     }
@@ -56,9 +56,11 @@ class TeamsView extends Teams
         foreach ($teamsArr as $team) {
             $count = $this->getStats($team['team_id']);
             $html .= " <input type='text' value='" . $team['team_name'] . "' id='team_" . $team['team_id'] . "' />";
-            $html .= " <button onClick='teamsUpdate(" . $team['team_id'] . ")' class='button'>" . ('Save') . "</button>";
+            $html .= " <button id='teamsUpdateButton_" . $team['team_id'] . "' onClick='teamsUpdate(" . $team['team_id'] . ")' class='button'>" . ('Edit') . "</button>";
             if ($count['totusers'] == 0) {
-                $html .= " <button onClick='teamsDestroy(" . $team['team_id'] . ")' class='button'>" . ('Delete') . "</button>";
+                $html .= " <button id='teamsDestroyButton_" . $team['team_id'] . "' onClick='teamsDestroy(" . $team['team_id'] . ")' class='button'>" . ('Delete') . "</button>";
+            } else {
+                $html .= " <button id='teamsArchiveButton_" . $team['team_id'] . "' onClick='teamsArchive(" . $team['team_id'] . ")' class='button'>" . ('Archive') . "</button>";
             }
             $html .= "<p>" . _('Members') . ": " . $count['totusers'] . " − " . ngettext('Experiment', 'Experiments', $count['totxp']) . ": " . $count['totxp'] . " − " . _('Items') . ": " . $count['totdb'] . " − " . _('Created') . ": " . $team['datetime'] . "<p>";
         }

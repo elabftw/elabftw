@@ -281,7 +281,7 @@ switch ($mail_method) {
     <p>
         <label for='testemail'><?php echo _('Send a test email'); ?>:</label>
         <input type='email' placeholder='you@email.com' name='testemail' id='testemail' />
-        <button type='submit' id='submit_testemail' onClick='sendTestEmail()' class='submit button'><?php echo _('Send'); ?></button>
+        <button id='testemailButton' onClick='sendTestEmail()' class='button'><?php echo _('Send'); ?></button>
     </p>
 </div>
 

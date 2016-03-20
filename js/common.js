@@ -55,11 +55,11 @@ function notif(text, cssClass) {
        // add text inside
        document.getElementById('overlay').innerHTML = htmlText;
        // wait a bit and make it disappear
-       window.setTimeout(removeNotif, 2500);
+       window.setTimeout(removeNotif, 2733);
 }
 
 function removeNotif() {
-    $('#overlay').fadeOut(500, function() {
+    $('#overlay').fadeOut(763, function() {
         $(this).remove();
     });
 }
@@ -260,34 +260,42 @@ function goNext(x) {
 
 // TEAMS
 function teamsCreate() {
+    // disable button on click
+    document.getElementById('teamsCreateButton').disabled = true;
     name = $('#teamsName').val();
     $.post('app/controllers/TeamsController.php', {
         teamsCreate: true,
         teamsName: name
-    }).success(function() {
-        $('#teamsDiv').load('sysconfig.php #teamsDiv');
+    }).success(function(data) {
+        if (data) {
+            notif('Team created', 'ok');
+            $('#teamsDiv').load('sysconfig.php #teamsDiv');
+        } else {
+            notif('There was an error!');
+        }
     });
 }
 
 function teamsUpdate(id) {
+    document.getElementById('teamsUpdateButton_' + id).disabled = true;
     name = $('#team_' + id).val();
     $.post("app/controllers/TeamsController.php", {
         teamsUpdate: true,
         teamsUpdateId : id,
         teamsUpdateName : name
-    }).success(function(returnValue) {
-        // we will get output on error
-        if (returnValue !== '') {
-            document.getElementById('button_'+team_id).value = returnValue;
-            document.getElementById('button_'+team_id).style.color = 'red';
+    }).success(function(data) {
+        if (data) {
+            notif('Name updated', 'ok');
+            $('#teamsDiv').load('sysconfig.php #teamsDiv');
         } else {
-            document.getElementById('button_'+team_id).value = "<?php echo _('Saved'); ?>";
+            notif('Error', 'ko');
         }
-        document.getElementById('button_'+team_id).disabled = true;
     });
 }
 
 function teamsDestroy(id) {
+    // disable button on click
+    document.getElementById('teamsDestroyButton_' + id).disabled = true;
     $.post("app/controllers/TeamsController.php", {
         teamsDestroy: true,
         teamsDestroyId: id
@@ -298,6 +306,26 @@ function teamsDestroy(id) {
         } else {
             notif('Team not removed because not empty!', 'ko');
         }
+    });
+}
+
+function teamsArchive(id) {
+    // disable button on click
+    document.getElementById('teamsArchiveButton_' + id).disabled = true;
+    $.post("app/controllers/TeamsController.php", {
+        teamsArchive: true,
+        teamsArchiveId: id
+    }).success(function(data) {
+        notif('Feature not yet implemented :)');
+    document.getElementById('teamsArchiveButton_' + id).disabled = false;
+        /*
+        if (data) {
+            notif('Team archived', 'ok');
+            $('#teamsDiv').load('sysconfig.php #teamsDiv');
+        } else {
+            notif('Team not archived', 'ko');
+        }
+        */
     });
 }
 
@@ -322,6 +350,8 @@ function toggleMailMethod(value) {
 
 // send a test email to provided adress
 function sendTestEmail() {
+    // disable button on click
+    document.getElementById('testemailButton').disabled = true;
     var testemail = $('#testemail').val();
     $.post('app/sysconfig-ajax.php', {
         testemail: testemail

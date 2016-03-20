@@ -473,8 +473,9 @@ textarea {
     background-color: #29AEB9;
 }
 
-.overlay-ko {
+.overlay-ko, .overlay-ko p {
     background-color: #ffc1b7;
+    color: #000;
 }
 /* END OVERLAY */
 

@@ -36,7 +36,7 @@ module.exports = function(grunt) {
         command: 'cd doc; make html'
       },
       buildapi: {
-        command: 'phpdoc run -d inc/classes -t doc/api'
+        command: 'phpdoc run -d inc/classes -d app/models -d app/controllers -d app/views -t doc/api'
       },
       runtests: {
         command: '~/.bin/selenium-server.sh; php vendor/bin/codecept run'

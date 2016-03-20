@@ -16,7 +16,7 @@ use \Exception;
 /**
  * Things related to status in admin panel
  */
-class Status extends Admin
+class Status extends Panel
 {
     /** The PDO object */
     private $pdo;
@@ -28,7 +28,7 @@ class Status extends Admin
     public function __construct()
     {
         $this->pdo = Db::getConnection();
-        if (!$this->checkPermission()) {
+        if (!$this->isAdmin()) {
             throw new Exception('Only admin can access this!');
         }
     }
@@ -36,6 +36,10 @@ class Status extends Admin
     /**
      * Create a new status
      *
+     * @param string $name
+     * @param string $color
+     * @param int $team
+     * @return bool true if sql success
      */
     public function create($name, $color, $team)
     {
@@ -49,19 +53,19 @@ class Status extends Admin
 
         $sql = "INSERT INTO status(name, color, team, is_default) VALUES(:name, :color, :team, :is_default)";
         $req = $this->pdo->prepare($sql);
-        return $req->execute(array(
-            'name' => $name,
-            'color' => $color,
-            'team' => $team,
-            'is_default' => 0
-        ));
+        $req->bindParam(':name', $name);
+        $req->bindParam(':color', $color);
+        $req->bindParam(':team', $team, \PDO::PARAM_INT);
+        $req->bindValue(':id_default', 0);
+
+        return $req->execute();
     }
 
     /**
      * SQL to get all status from team
      *
      * @param int team id
-     * @return array
+     * @return array All status from the team
      */
     public function read($team)
     {
@@ -69,19 +73,37 @@ class Status extends Admin
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $team, \PDO::PARAM_INT);
         $req->execute();
+
         return $req->fetchAll();
     }
 
-    // if we set true to status_is_default somewhere, it's best to remove all other default
-    // in the team so we won't have two default status
+    /**
+     * Remove all the default status for a team.
+     * If we set true to is_default somewhere, it's best to remove all other default
+     * in the team so we won't have two default status
+     *
+     * @param int $team Team ID
+     * @return bool true if sql success
+     */
     public function setDefaultFalse($team)
     {
         $sql = "UPDATE status SET is_default = 0 WHERE team = :team";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
+
         return $req->execute();
     }
 
+    /**
+     * Update a status
+     *
+     * @param int $id ID of the status
+     * @param string $name New name
+     * @param string $color New color
+     * @param string $defaultBox
+     * @param int $team
+     * @return bool true if sql success
+     */
     public function update($id, $name, $color, $defaultBox, $team)
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);

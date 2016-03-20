@@ -44,9 +44,8 @@ if (isset($_POST['new_team']) &&
     $_POST['new_team'] != ' ') {
 
     $tab = '1';
-    $new_team_name = filter_var($_POST['new_team'], FILTER_SANITIZE_STRING);
 
-    if (!$sysconfig->addTeam($new_team_name)) {
+    if (!$sysconfig->create(filter_var($_POST['new_team'], FILTER_SANITIZE_STRING))) {
         $errflag = true;
         $errnum = '5';
     }

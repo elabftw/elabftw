@@ -29,6 +29,12 @@ class ItemsTypesView
         $this->pdo = Db::getConnection();
     }
 
+    /**
+     * List the items types
+     *
+     * @param string $itemsTypesArr output of read()
+     * @return string $html
+     */
     public function show($itemsTypesArr)
     {
         $html = "<h3>" . _('Database items types') . "</h3>";
@@ -69,6 +75,11 @@ class ItemsTypesView
         return $html;
     }
 
+    /**
+     * Output html for create new item type
+     *
+     * @return string $html
+     */
     public function showCreate()
     {
         $html = "<h3>" . _('Add a new type of item:') . "</h3>";

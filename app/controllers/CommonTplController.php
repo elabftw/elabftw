@@ -21,7 +21,7 @@ try {
 
     // DEFAULT EXPERIMENT TEMPLATE
     if (isset($_POST['commonTplUpdate'])) {
-        $commonTpl->commonTplUpdate($_POST['commonTplUpdate'], $_SESSION['team_id']);
+        $commonTpl->update($_POST['commonTplUpdate'], $_SESSION['team_id']);
     }
 
 } catch (Exception $e) {

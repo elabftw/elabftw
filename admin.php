@@ -25,6 +25,7 @@ try {
     $itemsTypesView = new \Elabftw\Elabftw\ItemsTypesView();
     $commonTpl = new \Elabftw\Elabftw\CommonTpl();
     $teamGroups = new \Elabftw\Elabftw\TeamGroups();
+    $teamGroupsView = new \Elabftw\Elabftw\TeamGroupsView();
 } catch (Exception $e) {
     die($e->getMessage());
 }
@@ -255,7 +256,7 @@ if (!empty($team['stamppass'])) {
     <h3><?php echo _('Common experiment template'); ?></h3>
     <p><?php echo _('This is the default text when someone creates an experiment.'); ?></p>
     <textarea style='height:400px' class='mceditable' id='commonTplTemplate' />
-        <?php echo $commonTpl->commonTplRead($_SESSION['team_id']); ?>
+        <?php echo $commonTpl->read($_SESSION['team_id']); ?>
     </textarea>
     <div class='submitButtonDiv'>
         <button type='submit' class='button' onClick='commonTplUpdate()'><?php echo _('Save'); ?></button>
@@ -398,7 +399,7 @@ if (!empty($team['stamppass'])) {
 
     <!-- SHOW -->
     <h3><?php echo _('Existing groups'); ?></h3>
-    <?php echo $teamGroups->show($teamGroupsArr); ?>
+    <?php echo $teamGroupsView->show($teamGroupsArr); ?>
 
     </div>
 </div>

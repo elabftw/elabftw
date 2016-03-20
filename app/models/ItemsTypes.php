@@ -16,7 +16,7 @@ use \Exception;
 /**
  * The kind of items you can have in the database for a team
  */
-class ItemsTypes extends Admin
+class ItemsTypes extends Panel
 {
     /** The PDO object */
     private $pdo;
@@ -24,11 +24,12 @@ class ItemsTypes extends Admin
     /**
      * Constructor
      *
+     * @throws Exception if user is not admin
      */
     public function __construct()
     {
         $this->pdo = Db::getConnection();
-        if (!$this->checkPermission()) {
+        if (!$this->isAdmin()) {
             throw new Exception('Only admin can access this!');
         }
     }
@@ -36,6 +37,11 @@ class ItemsTypes extends Admin
     /**
      * Create an item type
      *
+     * @param string $name New name
+     * @param string $color hexadecimal color code
+     * @param string $template html for new body
+     * @param int $team team ID
+     * @return bool true if sql success
      */
     public function create($name, $color, $template, $team)
     {
@@ -47,21 +53,21 @@ class ItemsTypes extends Admin
         // we remove the # of the hexacode and sanitize string
         $color = filter_var(substr($color, 0, 6), FILTER_SANITIZE_STRING);
         $template = check_body($template);
-        $sql = "INSERT INTO items_types(name, team, bgcolor, template) VALUES(:name, :team, :bgcolor, :template)";
+        $sql = "INSERT INTO items_types(name, bgcolor, template, team) VALUES(:name, :bgcolor, :template, :team)";
         $req = $this->pdo->prepare($sql);
-        return $req->execute(array(
-            'name' => $name,
-            'team' => $team,
-            'bgcolor' => $color,
-            'template' => $template
-        ));
+        $req->bindParam(':name', $name);
+        $req->bindParam(':bgcolor', $color);
+        $req->bindParam(':template', $template);
+        $req->bindParam(':team', $team, \PDO::PARAM_INT);
+
+        return $req->execute();
     }
 
     /**
      * SQL to get all items type
      *
-     * @param int team id
-     * @return array
+     * @param int $team team ID
+     * @return array all the items types for the team
      */
     public function read($team)
     {
@@ -69,9 +75,20 @@ class ItemsTypes extends Admin
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $team, \PDO::PARAM_INT);
         $req->execute();
+
         return $req->fetchAll();
     }
 
+    /**
+     * Update an item type
+     *
+     * @param int $id The ID of the item type
+     * @param string $name name
+     * @param string $color hexadecimal color
+     * @param string $template html for the body
+     * @param int $team Team ID
+     * @return bool true if sql success
+     */
     public function update($id, $name, $color, $template, $team)
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
@@ -84,14 +101,12 @@ class ItemsTypes extends Admin
             template = :template
             WHERE id = :id";
         $req = $this->pdo->prepare($sql);
-        return $req->execute(array(
-            'id' => $id,
-            'name' => $name,
-            'bgcolor' => $color,
-            'template' => $template,
-            'team' => $team,
-        ));
+        $req->bindParam(':name', $name);
+        $req->bindParam(':bgcolor', $color);
+        $req->bindParam(':template', $template);
+        $req->bindParam(':team', $team, \PDO::PARAM_INT);
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
+
+        return $req->execute();
     }
-
-
 }

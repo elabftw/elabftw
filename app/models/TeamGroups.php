@@ -16,7 +16,7 @@ use \Exception;
 /**
  * Everything related to the team groups
  */
-class TeamGroups extends Admin
+class TeamGroups extends Panel
 {
     /** The PDO object */
     private $pdo;
@@ -24,11 +24,12 @@ class TeamGroups extends Admin
     /**
      * Constructor
      *
+     * @throws Exception if user is not admin
      */
     public function __construct()
     {
         $this->pdo = Db::getConnection();
-        if (!$this->checkPermission()) {
+        if (!$this->isAdmin()) {
             throw new Exception('Only admin can access this!');
         }
     }
@@ -46,20 +47,23 @@ class TeamGroups extends Admin
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':team', $team);
+
         return $req->execute();
     }
 
     /**
      * Read team groups
      *
+     * @param int $team
      * @return array all team groups
      */
-    public function read($teamId)
+    public function read($team)
     {
         $sql = "SELECT * FROM team_groups WHERE team = :team";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $teamId);
+        $req->bindParam(':team', $team, \PDO::PARAM_INT);
         $req->execute();
+
         return $req->fetchAll();
     }
 
@@ -67,23 +71,25 @@ class TeamGroups extends Admin
      * Update the name of the group
      * The request comes from jeditable
      *
-     * @param string $groupName Name of the group
-     * @param string $groupId Id of the group
+     * @param string $name Name of the group
+     * @param string $id Id of the group
+     * @param int $team
      * @throws Exception if sql fail
-     * @return string|null $groupName Name of the group if success
+     * @return string|null $name Name of the group if success
      */
-    public function update($groupName, $groupId)
+    public function update($name, $id, $team)
     {
-        $idArr = explode('_', $groupId);
+        $idArr = explode('_', $id);
         if ($idArr[0] === 'teamgroup' && is_pos_int($idArr[1])) {
             $sql = "UPDATE team_groups SET name = :name WHERE id = :id AND team = :team";
             $req = $this->pdo->prepare($sql);
-            $req->bindParam(':name', $groupName);
-            $req->bindParam(':team', $_SESSION['team_id']);
+            $req->bindParam(':name', $name);
+            $req->bindParam(':team', $team, \PDO::PARAM_INT);
             $req->bindParam(':id', $idArr[1], \PDO::PARAM_INT);
+
             if ($req->execute()) {
                 // the group name is returned so it gets back into jeditable input field
-                return $groupName;
+                return $name;
             } else {
                 throw new Exception('Cannot update team group!');
             }
@@ -140,32 +146,5 @@ class TeamGroups extends Admin
         } else {
             return true;
         }
-    }
-
-    /**
-     * Output html for displaying a list of existing team groups
-     *
-     * @param array $teamGroupsArr The full array from read()
-     * @return string $html The HTML listing groups and users
-     */
-    public function show($teamGroupsArr)
-    {
-        $sql = "SELECT DISTINCT users.firstname, users.lastname
-            FROM users CROSS JOIN users2team_groups
-            ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
-
-        $html = '';
-
-        foreach ($teamGroupsArr as $teamGroup) {
-            $html .= "<div class='well'><img onclick=\"teamGroupDestroy(" . $teamGroup['id'] . ", '" . str_replace(array("\"", "'"), '', _('Delete this?')) . "')\" src='img/small-trash.png' style='float:right' alt='trash' title='Remove this group' /><h3 class='inline editable teamgroup_name' id='teamgroup_" . $teamGroup['id'] . "'>" . $teamGroup['name'] . "</h3><ul>";
-            $req = $this->pdo->prepare($sql);
-            $req->bindParam(':groupid', $teamGroup['id']);
-            $req->execute();
-            while ($user = $req->fetch()) {
-                $html .= "<li>" . $user['firstname'] . " " . $user['lastname'] . "</li>";
-            }
-            $html .= "</ul></div>";
-        }
-        return $html;
     }
 }

@@ -29,6 +29,13 @@ class StatusView
         $this->pdo = Db::getConnection();
     }
 
+    /**
+     * Output HTML with all the status
+     *
+     * @param array $statusArr The output of the read() function
+     * @param int $team
+     * @return string $html
+     */
     public function show($statusArr, $team)
     {
         $html = "<h3>" . _('Edit an existing status') . "</h3>";
@@ -78,6 +85,11 @@ class StatusView
         return $html;
     }
 
+    /**
+     * Output HTML to display the create new status block
+     *
+     * @return string $html
+     */
     public function showCreate()
     {
         $html = "<h3>" . _('Add a new status') . "</h3>";

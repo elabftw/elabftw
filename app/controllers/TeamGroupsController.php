@@ -31,7 +31,11 @@ try {
     if (isset($_POST['teamGroupUpdateName'])) {
         try {
             // the output is echoed so it gets back into jeditable input field
-            echo $teamGroups->update(filter_var($_POST['teamGroupUpdateName'], FILTER_SANITIZE_STRING), $_POST['id']);
+            echo $teamGroups->update(
+                filter_var($_POST['teamGroupUpdateName'], FILTER_SANITIZE_STRING),
+                $_POST['id'],
+                $_SESSION['team_id']
+            );
         } catch (Exception $e) {
             dblog('Error', $_SESSION['userid'], $e->getMessage());
         }

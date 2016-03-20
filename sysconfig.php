@@ -23,8 +23,14 @@ $page_title = _('eLabFTW configuration');
 $selected_menu = null;
 require_once 'inc/head.php';
 
-$formKey = new \Elabftw\Elabftw\FormKey();
-$crypto = new \Elabftw\Elabftw\CryptoWrapper();
+try {
+    $formKey = new \Elabftw\Elabftw\FormKey();
+    $crypto = new \Elabftw\Elabftw\CryptoWrapper();
+    $teams = new \Elabftw\Elabftw\Teams();
+    $update = new \Elabftw\Elabftw\Update();
+} catch (Exception $e) {
+    die($e->getMessage());
+}
 
 $stamppass = get_config('stamppass');
 $smtppass = get_config('smtp_password');
@@ -44,7 +50,6 @@ if (strlen($smtppass) > 0) {
     }
 }
 
-$update = new \Elabftw\Elabftw\Update();
 
 try {
     $update->getUpdatesIni();
@@ -87,6 +92,7 @@ if (get_config('mail_from') === 'notconfigured@example.com') {
     </ul>
 </menu>
 
+<!-- TAB 1 -->
 <div class='divhandle' id='tab1div'>
     <p>
     <h3><?php echo _('Add a new team'); ?></h3>
@@ -106,12 +112,9 @@ if (get_config('mail_from') === 'notconfigured@example.com') {
     (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.team = :team) AS totxp";
     $count_req = $pdo->prepare($count_sql);
 
-    $sql = "SELECT * FROM teams";
-    $req = $pdo->prepare($sql);
+    $teamsArr = $teams->read();
 
-    $req->execute();
-
-    while ($team = $req->fetch()) {
+    foreach($teamsArr as $team) {
         $count_req->bindParam(':team', $team['team_id']);
         $count_req->execute();
         $count = $count_req->fetch(PDO::FETCH_NAMED);

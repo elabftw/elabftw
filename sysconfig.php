@@ -15,6 +15,8 @@
  */
 require_once 'inc/common.php';
 
+use \Elabftw\Elabftw\Tools as Tools;
+
 if ($_SESSION['is_sysadmin'] != 1) {
     die(_('This section is out of your reach.'));
 }
@@ -26,7 +28,6 @@ require_once 'inc/head.php';
 try {
     $formKey = new \Elabftw\Elabftw\FormKey();
     $crypto = new \Elabftw\Elabftw\CryptoWrapper();
-    $teams = new \Elabftw\Elabftw\Teams();
     $teamsView = new \Elabftw\Elabftw\TeamsView();
     $update = new \Elabftw\Elabftw\Update();
     $logsView = new \Elabftw\Elabftw\LogsView();
@@ -98,17 +99,19 @@ if (get_config('mail_from') === 'notconfigured@example.com') {
 <div class='divhandle' id='tab1div'>
 <div id='teamsDiv'>
     <?php
+    echo $teamsView->showStats();
     echo $teamsView->showCreate();
-    echo $teamsView->show($teams->read());
+    echo $teamsView->show();
     ?>
 </div>
 </div>
 
 <!-- TAB 2 -->
 <div class='divhandle' id='tab2div'>
-    <form method='post' action='app/sysconfig-exec.php'>
-        <h3><?php echo _('Language'); ?></h3>
-            <select id='lang' name="lang">
+    <form class='box' method='post' action='app/sysconfig-exec.php'>
+        <h3><?php echo _('Under the hood'); ?></h3>
+        <label for='lang'><?php echo _('Language'); ?></label>
+        <select id='lang' name="lang">
 <?php
 $lang_array = array('en_GB', 'ca_ES', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pt_BR', 'zh_CN');
 $current_lang = get_config('lang');
@@ -121,21 +124,34 @@ foreach ($lang_array as $lang) {
     echo "value='" . $lang . "'>" . $lang . "</option>";
 }
 ?>
-            </select>
-        <h3><?php echo _('Under the hood'); ?></h3>
+        </select><br>
+
         <label for='proxy'><?php echo _('Address of the proxy:'); ?></label>
         <input type='text' value='<?php echo get_config('proxy'); ?>' name='proxy' id='proxy' />
         <p class='smallgray'><?php echo _('If you are behind a firewall/proxy, enter the address here. Example : http://proxy.example.com:3128'); ?></p>
-        <div class='center'>
-            <button type='submit' name='submit_config' class='submit button'><?php echo _('Save'); ?></button>
+
+        <div class='submitButtonDiv'>
+            <button type='submit' name='submit_config' class='button'><?php echo _('Save'); ?></button>
         </div>
     </form>
+
+    <div class='box'>
+        <h3><?php echo _('Informations'); ?></h3>
+        <ul>
+            <li><p><?php echo _('Operating System') . ': ' . PHP_OS; ?></p></li>
+            <li><p><?php echo _('PHP Version') . ': ' . PHP_VERSION; ?></p></li>
+            <li><p><?php echo _('Size of the uploads folder') . ': ' . Tools::formatBytes(dirSize(ELAB_ROOT . 'uploads')) .
+                ' (' . dirNum(ELAB_ROOT . 'uploads') . ' files)'; ?></p></li>
+            <li><p><?php echo _('Largest integer supported') . ': ' . PHP_INT_MAX; ?></p></li>
+            <li><p><?php echo _('PHP configuration directory') . ': ' . PHP_SYSCONFDIR; ?></p></li>
+        </ul>
+    </div>
 </div>
 
-<!-- TAB 3 -->
+<!-- TAB 3 TIMESTAMP -->
 <div class='divhandle' id='tab3div'>
-    <h3><?php echo _('Timestamping configuration'); ?></h3>
-    <form method='post' action='app/sysconfig-exec.php'>
+    <form class='box' method='post' action='app/sysconfig-exec.php'>
+        <h3><?php echo _('Timestamping configuration'); ?></h3>
         <label for='stampshare'><?php echo _('The teams can use the credentials below to timestamp:'); ?></label>
         <select name='stampshare' id='stampshare'>
             <option value='1'<?php
@@ -160,41 +176,44 @@ foreach ($lang_array as $lang) {
         <input type='text' value='<?php echo get_config('stamplogin'); ?>' name='stamplogin' id='stamplogin' /><br>
         <label for='stamppass'><?php echo _('Password for external timestamping service:'); ?></label>
         <input type='password' value='<?php echo $stamppass; ?>' name='stamppass' id='stamppass' />
-        <div class='center'>
-        <button type='submit' name='submit_config' class='submit button'><?php echo _('Save'); ?></button>
+        <div class='submitButtonDiv'>
+        <button type='submit' name='submit_config' class='button'><?php echo _('Save'); ?></button>
         </div>
     </form>
 </div>
 
-<!-- TAB 4 -->
+<!-- TAB 4 SECURITY -->
 <div class='divhandle' id='tab4div'>
-    <h3><?php echo _('Security settings'); ?></h3>
-    <form method='post' action='app/sysconfig-exec.php'>
-    <label for='admin_validate'><?php echo _('Users need validation by admin after registration:'); ?></label>
-        <select name='admin_validate' id='admin_validate'>
-            <option value='1'<?php
-                if (get_config('admin_validate') == 1) { echo " selected='selected'"; } ?>
-            ><?php echo _('Yes'); ?></option>
-            <option value='0'<?php
-                    if (get_config('admin_validate') == 0) { echo " selected='selected'"; } ?>
-            ><?php echo _('No'); ?></option>
-        </select>
-        <p class='smallgray'><?php echo _('Set to yes for added security.'); ?></p>
-        <label for='login_tries'><?php echo _('Number of allowed login attempts:'); ?></label>
-        <input type='text' value='<?php echo get_config('login_tries'); ?>' name='login_tries' id='login_tries' />
-        <p class='smallgray'><?php echo _('3 might be too few. See for yourself :)'); ?></p>
-        <label for='ban_time'><?php echo _('Time of the ban after failed login attempts (in minutes:'); ?></label>
-        <input type='text' value='<?php echo get_config('ban_time'); ?>' name='ban_time' id='ban_time' />
-        <p class='smallgray'><?php echo _('To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems.'); ?></p>
-        <div class='center'>
-            <button type='submit' name='submit_config' class='submit button'><?php echo _('Save'); ?></button>
-        </div>
-    </form>
+    <div class='box'>
+        <h3><?php echo _('Security settings'); ?></h3>
+        <form method='post' action='app/sysconfig-exec.php'>
+        <label for='admin_validate'><?php echo _('Users need validation by admin after registration:'); ?></label>
+            <select name='admin_validate' id='admin_validate'>
+                <option value='1'<?php
+                    if (get_config('admin_validate') == 1) { echo " selected='selected'"; } ?>
+                ><?php echo _('Yes'); ?></option>
+                <option value='0'<?php
+                        if (get_config('admin_validate') == 0) { echo " selected='selected'"; } ?>
+                ><?php echo _('No'); ?></option>
+            </select>
+            <p class='smallgray'><?php echo _('Set to yes for added security.'); ?></p>
+            <label for='login_tries'><?php echo _('Number of allowed login attempts:'); ?></label>
+            <input type='text' value='<?php echo get_config('login_tries'); ?>' name='login_tries' id='login_tries' />
+            <p class='smallgray'><?php echo _('3 might be too few. See for yourself :)'); ?></p>
+            <label for='ban_time'><?php echo _('Time of the ban after failed login attempts (in minutes:'); ?></label>
+            <input type='text' value='<?php echo get_config('ban_time'); ?>' name='ban_time' id='ban_time' />
+            <p class='smallgray'><?php echo _('To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems.'); ?></p>
+            <div class='submitButtonDiv'>
+                <button type='submit' name='submit_config' class='button'><?php echo _('Save'); ?></button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <!-- TAB 5 -->
 <div class='divhandle' id='tab5div'>
-    <h3><?php echo _('E-mail settings'); ?></h3>
+    <div class='box'>
+        <h3><?php echo _('E-mail settings'); ?></h3>
 <?php
 $mail_method = get_config('mail_method');
 switch ($mail_method) {
@@ -218,72 +237,75 @@ switch ($mail_method) {
         $disable_smtp = true;
         $disable_php = true;
 } ?>
-    <form method='post' action='app/sysconfig-exec.php'>
-        <p><?php echo _("Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mandrill.com (or gmail account and add the infos here."); ?></p>
-        <p>
-        <label for='mail_method'><?php echo _('Send e-mails via:'); ?></label>
-        <select onchange='toggleMailMethod($("#toggle_main_method").val())' name='mail_method' id='toggle_main_method'>
-            <option value=''><?php echo _('Select mailing method...'); ?></option>
-            <option value='sendmail' <?php if (!$disable_sendmail) {
-    echo 'selected="selected"';
-}
-?>><?php echo _('Local MTA (default)'); ?></option>
-            <option value='smtp' <?php if (!$disable_smtp) {
-    echo 'selected="selected"';
-}
-?>><?php echo _('SMTP'); ?></option>
-            <option value='php' <?php if (!$disable_php) {
-    echo 'selected="selected"';
-}
-?>><?php echo _('PHP'); ?></option>
-        </select>
-        </p>
-        <div id='general_mail_config'>
+        <form method='post' action='app/sysconfig-exec.php'>
+            <p><?php echo _("Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mandrill.com (or gmail account and add the infos here."); ?></p>
             <p>
-            <label for='mail_from'><?php echo _('Sender address:'); ?></label>
-            <input type='text' value='<?php echo get_config('mail_from'); ?>' name='mail_from' id='mail_from' />
+            <label for='mail_method'><?php echo _('Send e-mails via:'); ?></label>
+            <select onchange='toggleMailMethod($("#toggle_main_method").val())' name='mail_method' id='toggle_main_method'>
+                <option value=''><?php echo _('Select mailing method...'); ?></option>
+                <option value='sendmail' <?php if (!$disable_sendmail) {
+        echo 'selected="selected"';
+    }
+    ?>><?php echo _('Local MTA (default)'); ?></option>
+                <option value='smtp' <?php if (!$disable_smtp) {
+        echo 'selected="selected"';
+    }
+    ?>><?php echo _('SMTP'); ?></option>
+                <option value='php' <?php if (!$disable_php) {
+        echo 'selected="selected"';
+    }
+    ?>><?php echo _('PHP'); ?></option>
+            </select>
             </p>
-        </div>
-        <div id='sendmail_config'>
-            <p>
-            <label for='sendmail_path'><?php echo _('Path to sendmail:'); ?></label>
-            <input type='text' placeholder='/usr/bin/sendmail' value='<?php echo get_config('sendmail_path'); ?>' name='sendmail_path' id='sendmail_path' />
-            </p>
-        </div>
-        <div id='smtp_config'>
-            <p>
-            <label for='smtp_address'><?php echo _('Address of the SMTP server:'); ?></label>
-            <input type='text' value='<?php echo get_config('smtp_address'); ?>' name='smtp_address' id='smtp_address' />
-            </p>
-            <p>
-            <span class='smallgray'>smtp.mandrillapp.com</span>
-            <label for='smtp_encryption'><?php echo _('SMTP encryption (can be TLS or STARTSSL):'); ?></label>
-            <input type='text' value='<?php echo get_config('smtp_encryption'); ?>' name='smtp_encryption' id='smtp_encryption' />
-            </p>
-            <p>
-            <span class='smallgray'><?php echo _('Probably TLS'); ?></span>
-            <label for='smtp_port'><?php echo _('SMTP Port:'); ?></label>
-            <input type='text' value='<?php echo get_config('smtp_port'); ?>' name='smtp_port' id='smtp_port' />
-            </p>
-            <p>
-            <span class='smallgray'><?php echo _('Default is 587.'); ?></span>
-            <label for='smtp_username'><?php echo _('SMTP username:'); ?></label>
-            <input type='text' value='<?php echo get_config('smtp_username'); ?>' name='smtp_username' id='smtp_username' />
-            </p>
-            <p>
-            <label for='smtp_password'><?php echo _('SMTP password'); ?></label>
-            <input type='password' value='<?php echo $smtppass; ?>' name='smtp_password' id='smtp_password' />
-            </p>
-        </div>
-        <div class='center'>
-            <button type='submit' name='submit_config' class='submit button'><?php echo _('Save'); ?></button>
-        </div>
-    </form>
-    <p>
+            <div id='general_mail_config'>
+                <p>
+                <label for='mail_from'><?php echo _('Sender address:'); ?></label>
+                <input type='text' value='<?php echo get_config('mail_from'); ?>' name='mail_from' id='mail_from' />
+                </p>
+            </div>
+            <div id='sendmail_config'>
+                <p>
+                <label for='sendmail_path'><?php echo _('Path to sendmail:'); ?></label>
+                <input type='text' placeholder='/usr/bin/sendmail' value='<?php echo get_config('sendmail_path'); ?>' name='sendmail_path' id='sendmail_path' />
+                </p>
+            </div>
+            <div id='smtp_config'>
+                <p>
+                <label for='smtp_address'><?php echo _('Address of the SMTP server:'); ?></label>
+                <input type='text' value='<?php echo get_config('smtp_address'); ?>' name='smtp_address' id='smtp_address' />
+                </p>
+                <p>
+                <span class='smallgray'>smtp.mandrillapp.com</span>
+                <label for='smtp_encryption'><?php echo _('SMTP encryption (can be TLS or STARTSSL):'); ?></label>
+                <input type='text' value='<?php echo get_config('smtp_encryption'); ?>' name='smtp_encryption' id='smtp_encryption' />
+                </p>
+                <p>
+                <span class='smallgray'><?php echo _('Probably TLS'); ?></span>
+                <label for='smtp_port'><?php echo _('SMTP Port:'); ?></label>
+                <input type='text' value='<?php echo get_config('smtp_port'); ?>' name='smtp_port' id='smtp_port' />
+                </p>
+                <p>
+                <span class='smallgray'><?php echo _('Default is 587.'); ?></span>
+                <label for='smtp_username'><?php echo _('SMTP username:'); ?></label>
+                <input type='text' value='<?php echo get_config('smtp_username'); ?>' name='smtp_username' id='smtp_username' />
+                </p>
+                <p>
+                <label for='smtp_password'><?php echo _('SMTP password'); ?></label>
+                <input type='password' value='<?php echo $smtppass; ?>' name='smtp_password' id='smtp_password' />
+                </p>
+            </div>
+            <div class='center'>
+                <button type='submit' name='submit_config' class='submit button'><?php echo _('Save'); ?></button>
+            </div>
+        </form>
+    </div>
+
+    <div class='box'>
         <label for='testemail'><?php echo _('Send a test email'); ?>:</label>
         <input type='email' placeholder='you@email.com' name='testemail' id='testemail' />
         <button id='testemailButton' onClick='sendTestEmail()' class='button'><?php echo _('Send'); ?></button>
-    </p>
+    </div>
+
 </div>
 
 <!-- TAB 6 LOGS -->

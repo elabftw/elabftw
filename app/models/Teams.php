@@ -166,19 +166,28 @@ class Teams extends Panel
     }
 
     /**
-     * Get statistics from a team
+     * Get statistics from a team or from the whole install
      *
      * @param int $team Id of the team
      * @return array
      */
-    public function getStats($team)
+    public function getStats($team = null)
     {
-        $sql = "SELECT
-        (SELECT COUNT(users.userid) FROM users WHERE users.team = :team) AS totusers,
-        (SELECT COUNT(items.id) FROM items WHERE items.team = :team) AS totdb,
-        (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.team = :team) AS totxp";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $team, \PDO::PARAM_INT);
+        if (!is_null($team)) {
+            $sql = "SELECT
+            (SELECT COUNT(users.userid) FROM users WHERE users.team = :team) AS totusers,
+            (SELECT COUNT(items.id) FROM items WHERE items.team = :team) AS totdb,
+            (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.team = :team) AS totxp";
+            $req = $this->pdo->prepare($sql);
+            $req->bindParam(':team', $team, \PDO::PARAM_INT);
+        } else {
+            $sql = "SELECT
+            (SELECT COUNT(users.userid) FROM users) AS totusers,
+            (SELECT COUNT(items.id) FROM items) AS totdb,
+            (SELECT COUNT(teams.team_id) FROM teams) AS totteams,
+            (SELECT COUNT(experiments.id) FROM experiments) AS totxp";
+            $req = $this->pdo->prepare($sql);
+        }
         $req->execute();
 
         return $req->fetch(\PDO::FETCH_NAMED);
@@ -192,5 +201,6 @@ class Teams extends Panel
      */
     public function archive($team)
     {
+        // TODO Archive the teams
     }
 }

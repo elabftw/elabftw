@@ -41,9 +41,9 @@ class TeamsView extends Teams
      */
     public function showCreate()
     {
-        $html = "<h3>" . _('Add a new team') . "</h3>";
+        $html = "<div class='box'><h3>" . _('Add a new team') . "</h3>";
         $html .= "<input required type='text' placeholder='Enter new team name' id='teamsName' />";
-        $html .= "<button id='teamsCreateButton' onClick='teamsCreate()' class='button'>" . ('Save') . "</button>";
+        $html .= "<button id='teamsCreateButton' onClick='teamsCreate()' class='button'>" . ('Save') . "</button></div>";
 
         return $html;
     }
@@ -58,7 +58,7 @@ class TeamsView extends Teams
     {
         $teamsArr = $this->teams->read();
 
-        $html = "<h3>" . _('Edit existing teams') . "</h3>";
+        $html = "<div class='box'><h3>" . _('Edit existing teams') . "</h3>";
 
         foreach ($teamsArr as $team) {
             $count = $this->getStats($team['team_id']);
@@ -71,6 +71,25 @@ class TeamsView extends Teams
             }
             $html .= "<p>" . _('Members') . ": " . $count['totusers'] . " − " . ngettext('Experiment', 'Experiments', $count['totxp']) . ": " . $count['totxp'] . " − " . _('Items') . ": " . $count['totdb'] . " − " . _('Created') . ": " . $team['datetime'] . "<p>";
         }
+        $html .= "</div>";
+        return $html;
+    }
+
+    /**
+     * Output HTML with stats
+     *
+     */
+    public function showStats()
+    {
+        $count = $this->teams->getStats();
+
+        $html = "<div class='box'><h3>" . _('Usage statistics') . "</h3>";
+        $html .= "<p>" .
+            _('Teams') . ": " . $count['totteams'] . " − " .
+            _('Total members') . ": " . $count['totusers'] . " − " .
+            ngettext('Total experiment', 'Total experiments', $count['totxp']) . ": " . $count['totxp'] . " − " .
+            _('Total items') . ": " . $count['totdb'] . "<p></div>";
+
         return $html;
     }
 }

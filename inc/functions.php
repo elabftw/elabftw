@@ -904,3 +904,27 @@ function getDbList($format = 'default')
         return $tinymce_list;
     }
 }
+
+
+/**
+ * Get the size of a dir
+ * @param directory $directory
+ * @return integer
+ */
+function dirSize($directory)
+{
+    $size = 0;
+    foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
+        $size += $file->getSize();
+    }
+    return $size;
+}
+
+function dirNum($directory)
+{
+    $num = 0;
+    foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
+        $num += 1;
+    }
+    return $num;
+}

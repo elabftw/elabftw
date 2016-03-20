@@ -37,10 +37,10 @@ class LogsView extends Logs
         $html = "<div id='logsDiv'>";
         $html .= "<div class='well'><ul>";
         if (empty($logsArr)) {
-            $html .= "<li><p>" . _('Nothing to display') . ".</p></li>";
+            $html .= "<li>" . _('Nothing to display') . ".</li>";
         } else {
             foreach ($logsArr as $logs) {
-                $html .= "<li>" . $logs['datetime'] . " [" . $logs['type'] . "] " .
+                $html .= "<li>✪ " . $logs['datetime'] . " [" . $logs['type'] . "] " .
                     $logs['body'] . " (" . $logs['user'] . ")</li>";
             }
         }

@@ -120,7 +120,23 @@ function go_url(x) {
     window.location = x;
 }
 
-// experiments.php
+// EXPERIMENTS.PHP
+// ===============
+
+// VISIBILITY
+function experimentsUpdateVisibility(id, visibility) {
+    $.post("app/controllers/ExperimentsController.php", {
+        experimentsUpdateVisibility: true,
+        experimentsUpdateVisibilityId : id,
+        experimentsUpdateVisibilityVisibility : visibility
+    }).success(function(data) {
+        if (data === '0') {
+            notif('There was an error!');
+        } else {
+            notif('Visibility updated', 'ok');
+        }
+    });
+}
 
 // STATUS
 function experimentsUpdateStatus(id, status) {

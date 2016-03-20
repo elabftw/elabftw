@@ -27,6 +27,19 @@ try {
         );
     }
 
+    // UPDATE VISIBILITY
+    if (isset($_POST['experimentsUpdateVisibility'])) {
+        if ($experiments->updateVisibility(
+            $_POST['experimentsUpdateVisibilityId'],
+            $_POST['experimentsUpdateVisibilityVisibility'],
+            $_SESSION['userid']
+        )) {
+            echo '1';
+        } else {
+            echo '0';
+        }
+    }
+
 } catch (Exception $e) {
     dblog('Error', $_SESSION['userid'], $e->getMessage());
 }

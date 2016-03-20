@@ -48,6 +48,25 @@ class Experiments
     }
 
     /**
+     * Update the visibility for an experiment
+     *
+     * @param int $experiment Id of the experiment
+     * @param string $visibility
+     * @param int $userid Id of current user
+     * @return bool
+     */
+    public function updateVisibility($experiment, $visibility, $userid)
+    {
+        $sql = "UPDATE experiments SET visibility = :visibility WHERE userid = :userid AND id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':visibility', $visibility, \PDO::PARAM_INT);
+        $req->bindParam(':userid', $userid, \PDO::PARAM_INT);
+        $req->bindParam(':id', $experiment, \PDO::PARAM_INT);
+
+        return $req->execute();
+    }
+
+    /**
      * Update the status for an experiment
      *
      * @param int $experiment Id of the experiment

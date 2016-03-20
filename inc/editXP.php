@@ -68,7 +68,7 @@ if ($experiment['locked'] == 1) {
         <div class='col-md-4'>
             <img src='img/eye.png' class='bot5px' alt='visibility' />
             <label for='visibility_select'><?php echo _('Visibility'); ?></label>
-            <select id="visibility_select" name="visibility" onchange="update_visibility(this.value)">
+            <select id="visibility_select" name="visibility" onchange="experimentsUpdateVisibility(<?php echo $id; ?>, this.value)">
                 <option value="organization" <?php if ($experiment['visibility'] === 'organization') {
         echo "selected";
     }?>><?php echo _('Everyone with an account'); ?></option>
@@ -93,7 +93,6 @@ if ($experiment['locked'] == 1) {
     }
     ?>
             </select>
-            <span id='visibility_msg_div'><?php echo _('Updated!'); ?></span>
         </div>
 
         <div class='col-md-4'>
@@ -300,21 +299,6 @@ function addLinkOnEnter(e) { // the argument here is the event (needed to detect
     } // end if key is enter
 }
 
-// This function is activated with the select element and send a post request to quicksave.php
-function update_visibility(visibility) {
-    $.post("app/quicksave.php", {
-        id : <?php echo $id; ?>,
-        visibility : visibility
-    }).done(function() {
-        // once it's update we show a message for some time before making it disappear
-        $("#visibility_msg_div").show(0, function() {
-            setTimeout(function() {
-                $("#visibility_msg_div").hide(500);
-            }, 1500)
-        });
-    });
-}
-
 // READY ? GO !!
 $(document).ready(function() {
     // KEYBOARD SHORTCUTS
@@ -330,8 +314,6 @@ $(document).ready(function() {
     $( "#linkinput" ).autocomplete({
         source: [<?php echo getDbList('default'); ?>]
     });
-    // hide the little 'Updated !' message
-    $('#visibility_msg_div').hide();
 
     // fix for the ' and "
     title = "<?php echo $experiment['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");

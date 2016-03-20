@@ -37,7 +37,7 @@ class ItemsTypesView
     public function showCreate()
     {
         $html = "<h3>" . _('Add a new type of item') . "</h3>";
-        $html .= "<ul><li class='list-group-item'>";
+        $html .= "<ul class='list-group'><li class='list-group-item'>";
         $html .= "<ul class='list-inline'>";
         $html .= "<li>" . _('Name') . " <input type='text' id='itemsTypesName' /></li>";
         $html .= "<li>" . _('Color') . " <input class='colorpicker' type='text' id='itemsTypesColor' value='29AEB9' /></li></ul>";
@@ -58,7 +58,7 @@ class ItemsTypesView
     public function show($itemsTypesArr)
     {
         $html = "<h3>" . _('Database items types') . "</h3>";
-        $html .= "<ul class='draggable sortable_itemstypes'>";
+        $html .= "<ul class='draggable sortable_itemstypes list-group'>";
 
         foreach ($itemsTypesArr as $itemType) {
             // count the items with this type
@@ -70,13 +70,13 @@ class ItemsTypesView
             $count_db_req->execute();
             $count = $count_db_req->fetchColumn();
 
-            $html .= "<li id='itemstypes_" . $itemType['id'] . "' class='list-group-item center' style='border-color:#" . $itemType['bgcolor'] . "'>";
+            $html .= "<li id='itemstypes_" . $itemType['id'] . "' class='list-group-item center'>";
 
 
             $html .= "<ul class='list-inline'>";
 
             $html .= "<li>" . _('Name') . " <input type='text' id='itemsTypesName_" . $itemType['id'] . "' value='" . $itemType['name'] . "' /></li>";
-            $html .= "<li>" . _('Color') . " <input class='colorpicker' type='text' style='display:inline' id='itemsTypesColor_" . $itemType['id'] . "' value='" . $itemType['bgcolor'] . "' /></li>";
+            $html .= "<li style='color:#" . $itemType['bgcolor'] . "'>" . _('Color') . " <input class='colorpicker' type='text' style='display:inline' id='itemsTypesColor_" . $itemType['id'] . "' value='" . $itemType['bgcolor'] . "' /></li>";
             $html .= "<li><button onClick='itemsTypesShowEditor(" . $itemType['id'] . ")' class='button'>" . _('Edit the template') . "</button></li>";
             $html .= "<li><button onClick='itemsTypesUpdate(" . $itemType['id'] . ")' class='button'>" . _('Save') . "</button></li>";
             $html .= "<li><button class='button' ";

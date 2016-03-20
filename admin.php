@@ -93,6 +93,7 @@ if (!empty($team['stamppass'])) {
 <div class='divhandle' id='tab1div'>
 
 <h3><?php echo _('Configure your team'); ?></h3>
+<div class='box'>
     <form method='post' action='app/admin-exec.php' autocomplete='off'>
         <p>
         <label for='deletable_xp'><?php echo _('Users can delete experiments:'); ?></label>
@@ -139,12 +140,13 @@ if (!empty($team['stamppass'])) {
     </form>
 
 </div>
+</div>
 
 <!-- TAB 2 USERS -->
 <div class='divhandle' id='tab2div'>
 
     <h3><?php echo _('Edit users'); ?></h3>
-    <ul>
+    <ul class='list-group'>
     <?php
     // we show only the validated users here
     $user_req->bindValue(':validated', 1);

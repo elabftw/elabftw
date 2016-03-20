@@ -37,7 +37,7 @@ class StatusView
     public function showCreate()
     {
         $html = "<h3>" . _('Add a new status') . "</h3>";
-        $html .= "<ul><li class='list-group-item center'>";
+        $html .= "<ul class='list-group'><li class='list-group-item center'>";
         $html .= "<ul class='list-inline'>";
         $html .= "<li>" . _('Name') . " <input type='text' id='statusName' /></li>";
         $html .= "<li>" . _('Color') . " <input class='colorpicker' type='text' id='statusColor' value='000000' /></li>";
@@ -57,7 +57,7 @@ class StatusView
     public function show($statusArr, $team)
     {
         $html = "<h3>" . _('Edit an existing status') . "</h3>";
-        $html .= "<ul class='draggable sortable_status'>";
+        $html .= "<ul class='draggable sortable_status list-group'>";
 
         foreach ($statusArr as $status) {
             // count the experiments with this status
@@ -70,13 +70,13 @@ class StatusView
             $count_exp_req->execute();
             $count = $count_exp_req->fetchColumn();
 
-            $html .= "<li id='" . $status['id'] . "' class='list-group-item center' style='border-color:#" . $status['color'] . "'>";
+            $html .= "<li id='" . $status['id'] . "' class='list-group-item center'>";
 
 
             $html .= "<ul class='list-inline'>";
 
             $html .= "<li>" . _('Name') . " <input required type='text' id='statusName_" . $status['id'] . "' value='" . $status['name'] . "' /></li>";
-            $html .= "<li>" . _('Color') . " <input class='colorpicker' type='text' maxlength='6' id='statusColor_" . $status['id'] . "' value='" . $status['color'] . "' />";
+            $html .= "<li style='color:#" . $status['color'] . "'>" . _('Color') . " <input class='colorpicker' type='text' maxlength='6' id='statusColor_" . $status['id'] . "' value='" . $status['color'] . "' />";
             $html .= "</li>";
             $html .= "<li>" . _('Default status') . " <input type='checkbox' id='statusDefault_" . $status['id'] . "'";
             // check the box if the status is already default

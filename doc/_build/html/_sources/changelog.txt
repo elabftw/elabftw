@@ -3,6 +3,34 @@
 Changelog
 =========
 
+Version 1.2.0
+-------------
+
+* New features
+
+  * Add possibility to delete an empty team
+  * Add a way to test email configuration directly from config page
+  * Add possibility to clear the logs
+  * Show usage statistics on sysconfig page
+  * Show informations about the server on sysconfig page
+
+* Enhancements
+
+  * Improved layout for displaying users, status and items types
+  * Improved translation for french, add terms
+  * Better notification system
+
+* Documentation
+
+  * Better doc for install on Drop
+
+* Developer corner
+
+  * A lot of things changed under the hood, with the creation of app/models, views and controllers
+  * Code moved around to try to have something that looks like an MVC seen from very far away
+  * Optimize page load by doing less useless SQL requests
+  * Add asynchronous calls everywhere
+
 Version 1.1.8-p2
 ----------------
 

@@ -537,12 +537,6 @@ a[class*='trigger_']:hover {
     margin: 0 5px 5px 25px;
 }
 
-/* logs on sysconfig.php */
-.well, .well li {
-    background-color: #222;
-    color: #65ff4f;
-}
-
 /* EXPERIMENTS/DATABASE - FILTER & ORDER */
 .select-order, .select-filter-status, .select-filter-cat {
     float:left;

@@ -146,4 +146,20 @@ class Tools
         // remove last delimiter
         return rtrim($string, $delim);
     }
+
+    /**
+     * Check ID is valid (pos int)
+     *
+     * @param int $id
+     * @throws Exception if input is not valid
+     * @return int $id if pos int
+     */
+    public static function checkId($id)
+    {
+        $filter_options = array(
+            'options' => array(
+                'min_range' => 1
+            ));
+        return filter_var($id, FILTER_VALIDATE_INT, $filter_options);
+    }
 }

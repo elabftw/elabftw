@@ -194,20 +194,21 @@ function show_tags($item_id, $table)
     $sql = "SELECT tag FROM $table WHERE item_id = $item_id";
     $req = $pdo->prepare($sql);
     $req->execute();
+
+    $html = '';
     $tagcount = $req->rowCount();
     if ($tagcount > 0) {
-        echo "<span class='tags'><img src='img/tags.png' alt='tags' /> ";
+        $html = "<span class='tags'><img src='img/tags.png' alt='tags' /> ";
         while ($tags = $req->fetch()) {
             if ($table === 'experiments_tags') {
-                echo "<a href='experiments.php?mode=show&tag=" . urlencode(stripslashes($tags['tag'])) . "'>" . stripslashes($tags['tag']) . "</a> ";
+                $html .= "<a href='experiments.php?mode=show&tag=" . urlencode(stripslashes($tags['tag'])) . "'>" . stripslashes($tags['tag']) . "</a> ";
             } else { // table is items_tags
-                echo "<a href='database.php?mode=show&tag=" . urlencode(stripslashes($tags['tag'])) . "'>" . stripslashes($tags['tag']) . "</a> ";
+                $html .= "<a href='database.php?mode=show&tag=" . urlencode(stripslashes($tags['tag'])) . "'>" . stripslashes($tags['tag']) . "</a> ";
             }
         }
-        echo "</span>";
-    } else {
-        return false;
+        $html .= "</span>";
     }
+    return $html;
 }
 /**
      * Validate POST variables containing login/validation data for the TSP;

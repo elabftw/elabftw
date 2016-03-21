@@ -67,7 +67,7 @@ class Experiments
     {
         $sql = "UPDATE experiments SET visibility = :visibility WHERE userid = :userid AND id = :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':visibility', $visibility, PDO::PARAM_INT);
+        $req->bindParam(':visibility', $visibility);
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
         $req->bindParam(':id', $experiment, PDO::PARAM_INT);
 

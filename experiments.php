@@ -27,25 +27,17 @@ if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
 // VIEW
 } elseif ($_GET['mode'] === 'view') {
 
-    // ID
-    if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
-        $id = $_GET['id'];
-    } else {
-        display_message('ko', _("The id parameter is not valid!"));
-        require_once 'inc/footer.php';
-        exit;
-    }
-
-    $experimentsView = new \Elabftw\Elabftw\ExperimentsView($id);
-
     try {
-        echo $experimentsView->generateHTML();
+        $experimentsView = new \Elabftw\Elabftw\ExperimentsView($_GET['id']);
+        echo $experimentsView->view();
     } catch (Exception $e) {
         display_message('ko', $e->getMessage());
         require_once 'inc/footer.php';
         exit;
     }
 
+    // TODO
+    $id = $_GET['id'];
     // DISPLAY FILES
     require_once 'inc/display_file.php';
 
@@ -88,9 +80,17 @@ if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
         setInterval(commentsUpdate, 50);
     });
     </script>
-<?php
+    <?php
 } elseif ($_GET['mode'] === 'edit') {
-    require_once 'inc/editXP.php';
+    try {
+        $experimentsView = new \Elabftw\Elabftw\ExperimentsView($_GET['id']);
+        echo $experimentsView->edit();
+        require_once 'inc/editXP.php';
+    } catch (Exception $e) {
+        display_message('ko', $e->getMessage());
+        require_once 'inc/footer.php';
+        exit;
+    }
 } else {
     require_once 'inc/showXP.php';
 }

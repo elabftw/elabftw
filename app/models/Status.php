@@ -28,9 +28,6 @@ class Status extends Panel
     public function __construct()
     {
         $this->pdo = Db::getConnection();
-        if (!$this->isAdmin()) {
-            throw new Exception('Only admin can access this!');
-        }
     }
 
     /**
@@ -43,6 +40,9 @@ class Status extends Panel
      */
     public function create($name, $color, $team)
     {
+        if (!$this->isAdmin()) {
+            throw new Exception('Only admin can access this!');
+        }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         // we remove the # of the hexacode and sanitize string
         $color = filter_var(substr($color, 0, 6), FILTER_SANITIZE_STRING);
@@ -97,6 +97,9 @@ class Status extends Panel
      */
     public function setDefaultFalse($team)
     {
+        if (!$this->isAdmin()) {
+            throw new Exception('Only admin can access this!');
+        }
         $sql = "UPDATE status SET is_default = 0 WHERE team = :team";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
@@ -116,6 +119,9 @@ class Status extends Panel
      */
     public function update($id, $name, $color, $defaultBox, $team)
     {
+        if (!$this->isAdmin()) {
+            throw new Exception('Only admin can access this!');
+        }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $color = filter_var($color, FILTER_SANITIZE_STRING);
 

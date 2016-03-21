@@ -68,7 +68,7 @@ if ($data['locked'] == 0) {
     echo "<a href='app/lock.php?id=" . $data['itemid'] . "&action=unlock&type=items'><img src='img/lock-gray.png' title='unlock item' alt='unlock' /></a>";
 }
 // TAGS
-show_tags($id, 'items_tags');
+echo show_tags($id, 'items_tags');
 // TITLE : click on it to go to edit mode
 ?>
 <div

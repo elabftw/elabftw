@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use \PDO;
+use \Exception;
 use \Datetime;
 
 /**
@@ -44,13 +45,25 @@ class ExperimentsView
 
     /**
      * Need an ID of an experiment
+     *
+     * @param int $id Experiment id from GET[]
+     * @throws Exception
      */
     public function __construct($id)
     {
-        $this->id = $id;
-        $this->experiments = new Experiments();
-        $this->comments = new Comments();
         $this->pdo = Db::getConnection();
+        $this->id = Tools::checkId($id);
+        if ($this->id === false) {
+            throw new Exception(_('The id parameter is not valid!'));
+        }
+        $this->experiments = new Experiments();
+        $this->status = new Status();
+        $this->comments = new Comments();
+
+        // get data of experiment
+        $this->experiment = $this->experiments->read($this->id);
+        // visibility can be a string, or number if teamgroup
+        $this->visibility = $this->setVisibility();
     }
 
     /**
@@ -58,17 +71,167 @@ class ExperimentsView
      *
      * @return string HTML for viewXP
      */
-    public function generateHTML()
+    public function view()
     {
-        $this->experiment = $this->experiments->read($this->id);
-        $this->visibility = $this->setVisibility();
         $this->ro = $this->isReadOnly();
         if ($this->isTimestamped()) {
             $this->html .= $this->showTimestamp();
         }
-        $this->html .= $this->showMain();
+        $this->html .= $this->viewMain();
         return $this->html;
     }
+    /**
+     * Edit experiment
+     *
+     * @return string $this->html
+     */
+    public function edit()
+    {
+        // only owner can edit an experiment
+        if (!$this->isOwner()) {
+            throw new Exception(_('<strong>Cannot edit:</strong> this experiment is not yours!'));
+        }
+
+        // a locked experiment cannot be edited
+        if ($this->experiment['locked']) {
+            throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
+        }
+        $this->html .= $this->editMain();
+        return $this->html;
+
+    }
+
+    private function editMain()
+    {
+        // load tinymce
+        $html = "<script src='js/tinymce/tinymce.min.js'></script>";
+        $html .= "<menu class='border'><a href='experiments.php?mode=show'>";
+        $html .= "<img src='img/arrow-left-blue.png' class='bot5px' alt='' /> " . _('Back to experiments listing') . "</a></menu>";
+
+        $html .= "<section class='box' id='main_section' style='border-left: 6px solid #" . $this->experiment['color'] . "'>";
+        $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"deleteThis($this->id,'exp', 'experiments.php')\" />";
+
+        $html .=  displayTags('experiments', $this->id);
+        $html .= "<form method='post' action='app/editXP-exec.php' enctype='multipart/form-data'>";
+        $html .= "<input name='item_id' type='hidden' value='" . $this->id . "' />";
+
+        $html .= "<div class='row'><div class='col-md-4'>";
+        $html .= "<img src='img/calendar.png' class='bot5px' title='date' alt='calendar' />";
+        $html .= "<label for='datepicker'>" . _('Date') . "</label>";
+        // TODO if firefox has support for it: type = date
+        $html .= "<input name='date' id='datepicker' size='8' type='text' value='" . $this->experiment['date'] . "' />";
+        $html .= "</div>";
+
+        // VISIBILITY
+        $html .= "<div class='col-md-4'>";
+        $html .= "<img src='img/eye.png' class='bot5px' alt='visibility' />";
+        $html .= "<label for='visibility_select'>" . _('Visibility') . "</label>";
+        $html .= "<select id='visibility_select' name='visibility' onchange='experimentsUpdateVisibility(" . $this->id . ", this.value)'>";
+        $html .= "<option value='organization' ";
+        if ($this->visibility === 'organization') {
+            $html .= "selected";
+        }
+        $html .= ">" . _('Everyone with an account') . "</option>";
+        $html .= "<option value='team' ";
+        if ($this->visibility === 'team') {
+            $html .= "selected";
+        }
+        $html .= ">" . _('Only the team') . "</option>";
+        $html .= "<option value='user' ";
+        if ($this->visibility === 'user') {
+            $html .= "selected";
+        }
+        $html .= ">" . _('Only me') . "</option>";
+
+        // Teamgroups
+        $teamGroups = new TeamGroups();
+        $teamGroupsArr = $teamGroups->read($_SESSION['team_id']);
+        foreach ($teamGroupsArr as $teamGroup) {
+            $html .= "<option value='" . $teamGroup['id'] . "' ";
+            if ($this->experiment['visibility'] === $teamGroup['id']) {
+                $html .= "selected";
+            }
+            $html .= ">Only " . $teamGroup['name'] . "</option>";
+        }
+        $html .= "</select></div>";
+
+        // STATUS
+        $html .= "<div class='col-md-4'>";
+        $html .= "<img src='img/status.png' class='bot5px' alt='status' />";
+        $html .= "<label for='status_select'>" . ngettext('Status', 'Status', 1) . "</label>";
+        $html .= "<select id='status_select' name='status' onchange='experimentsUpdateStatus(" . $this->id . ", this.value)'>";
+
+        $statusArr = $this->status->read($_SESSION['team_id']);
+
+        foreach ($statusArr as $status) {
+            $html .= "<option ";
+            if ($this->experiment['status'] === $status['id']) {
+                $html .= "selected ";
+            }
+            $html .= "value='" . $status['id'] . "'>" . $status['name'] . "</option>";
+        }
+        $html .= "</select></div></div>";
+
+        // TITLE
+        $html .= "<h4>" . _('Title') . "</h4>";
+        $html .= "<input id='title_input' name='title' rows='1' value='" . stripslashes($this->experiment['title']) . "' required />";
+
+        // BODY
+        $html .= "<h4>". ngettext('Experiment', 'Experiments', 1) . "</h4>";
+        $html .= "<textarea id='body_area' class='mceditable' name='body' rows='15' cols='80'>";
+        $html .= stripslashes($this->experiment['body']) . "</textarea>";
+
+        $html .= "<div id='saveButton'>
+            <button type='submit' name='Submit' class='button'>" ._('Save and go back') . "</button>
+            </div></form>";
+
+        // LINKS
+        $html .= "<section>
+                <img src='img/link.png' class='bot5px' class='bot5px'> <h4 style='display:inline'>" . _('Linked items') . "</h4><br>";
+        $html .= "<span id='links_div'>";
+        $html .= $this->showLinks($this->id, 'edit');
+        $html .= "</span>";
+        $html .= "<p class='inline'>" . _('Add a link') . "</p>";
+        $html .= "<input id='linkinput' size='60' type='text' name='link' placeholder='" . _('from the database') . "' />";
+        $html .= "</section>";
+
+        // REVISIONS
+        // TODO
+        // get the list of revisions
+        $sql = "SELECT COUNT(*) FROM experiments_revisions WHERE item_id = :item_id AND userid = :userid ORDER BY savedate DESC";
+        $req = $this->pdo->prepare($sql);
+        $req->execute(array(
+            'item_id' => $id,
+            'userid' => $_SESSION['userid']
+        ));
+        $rev_count = $req->fetch();
+        $count = intval($rev_count[0]);
+        if ($count > 0) {
+            $html .= "<span class='align_right'>";
+            $html .= $count . " " . ngettext('revision available.', 'revisions available.', $count);
+            $html .= " <a href='revision.php?type=experiments&item_id=" . $this->id . "'>" . _('Show history') . "</a>";
+            $html .= "</span>";
+        }
+
+        $html .= "</section>";
+        if ($_SESSION['prefs']['chem_editor']) {
+            $html .= "<div class='box chemdoodle'>";
+            $html .= "<h3>" . _('Molecule drawer') . "</h3>";
+            $html .= "<div class='center'>
+                        <script>
+                            var sketcher = new ChemDoodle.SketcherCanvas('sketcher', 550, 300, {oneMolecule:true});
+                        </script>
+                    </div>
+            </div>";
+        }
+        return $html;
+    }
+
+    private function isOwner()
+    {
+        return $this->experiment['userid'] == $_SESSION['userid'];
+    }
+
 
     private function setVisibility()
     {
@@ -84,11 +247,18 @@ class ExperimentsView
         return $this->experiment['visibility'];
     }
 
+    /**
+     * Check if user is in a team group
+     *
+     * @param int $userid
+     * @param int $groupid
+     * @return bool
+     */
     private function isInTeamGroup($userid, $groupid)
     {
         $sql = "SELECT DISTINCT userid FROM users2team_groups WHERE groupid = :groupid";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':groupid', $this->visibility);
+        $req->bindParam(':groupid', $groupid);
         $req->execute();
         $authUsersArr = array();
         while ($authUsers = $req->fetch()) {
@@ -96,17 +266,6 @@ class ExperimentsView
         }
 
         return in_array($userid, $authUsersArr);
-    }
-
-    private function getOwnerInfos()
-    {
-        // get who owns the experiment
-        $sql = 'SELECT firstname, lastname, team FROM users WHERE userid = :userid';
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':userid', $this->experiment['userid']);
-        $req->execute();
-
-        return $req->fetch();
     }
 
     private function isReadOnly()
@@ -118,15 +277,16 @@ class ExperimentsView
 
                 throw new Exception(_("<strong>Access forbidden:</strong> the visibility setting of this experiment is set to 'owner only'."));
 
-            } elseif (is_pos_int($this->visibility)) {
+            } elseif (is_pos_int($this->experiment['visibility'])) {
                 // the visibility of this experiment is set to a group
                 // we must check if current user is in this group
-                if (!$this->isInTeamGroup($_SESSION['userid'], $this->visibility)) {
+                if (!$this->isInTeamGroup($_SESSION['userid'], $this->experiment['visibility'])) {
                     throw new Exception(_("<strong>Access forbidden:</strong> you don't have the rights to access this."));
                 }
 
             } else {
-                $owner = $this->getOwnerInfos($this->experiment['userid']);
+                $users = new Users();
+                $owner = $users->read($this->experiment['userid']);
 
                 if ($owner['team'] != $_SESSION['team_id']) {
                     // the experiment needs to be organization for us to see it as we are not in the team of the owner
@@ -182,7 +342,7 @@ class ExperimentsView
         );
     }
 
-    private function showMain()
+    private function viewMain()
     {
 
             $html = "<section class='item' style='padding:15px;border-left: 6px solid #" . $this->experiment['color'] . "'>";
@@ -204,8 +364,8 @@ class ExperimentsView
             }
         }
 
-        // TAGS
-        //$html .= show_tags($id, 'experiments_tags');
+        // TAGS TODO
+        $html .= show_tags($this->id, 'experiments_tags');
         // TITLE : click on it to go to edit mode only if we are not in read only mode
         $html .=  "<div ";
         if ($this->ro === false && $this->experiment['locked'] == 0) {

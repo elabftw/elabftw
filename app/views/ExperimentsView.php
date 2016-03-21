@@ -11,30 +11,56 @@
 namespace Elabftw\Elabftw;
 
 use \PDO;
+use \Datetime;
 
 /**
- * Experiments
+ * Experiments View
  */
 class ExperimentsView
 {
+    /** object holding class Experiments */
+    private $experiments;
+
+    /** the experiment array with data */
     private $experiment;
+
+    /** can be int or string. Int is team groups */
     private $visibility;
+
+    /** Read only switch */
     private $ro = false;
+
+    /** HTML that will be outputed */
     private $html = '';
 
+    /** object holding class Comments */
+    private $comments;
+
+    /** ID of the experiment we want to view */
+    private $id;
+
+    /** TODO remove */
+    private $pdo;
+
+    /**
+     * Need an ID of an experiment
+     */
     public function __construct($id)
     {
         $this->id = $id;
-        $this->experiments = new Experiments($this->id);
+        $this->experiments = new Experiments();
+        $this->comments = new Comments();
+        $this->pdo = Db::getConnection();
     }
 
     /**
      * View experiment
      *
+     * @return string HTML for viewXP
      */
-    public function showView()
+    public function generateHTML()
     {
-        $this->experiment = $this->experiments->read();
+        $this->experiment = $this->experiments->read($this->id);
         $this->visibility = $this->setVisibility();
         $this->ro = $this->isReadOnly();
         if ($this->isTimestamped()) {
@@ -116,42 +142,44 @@ class ExperimentsView
     }
 
     private function isTimestamped() {
-
         return $this->experiment['timestamped'];
     }
 
+    /**
+     * Show info on timestamp
+     * TODO put in a model and remove pdo from this class
+     */
     private function showTimestamp()
     {
-        // SHOW INFO ON TIMESTAMP
-            // who what when ?
-            $sql = 'SELECT firstname, lastname FROM users WHERE userid = :userid';
-            $req_stamper = $this->pdo->prepare($sql);
-            $req_stamper->bindParam(':userid', $this->experiment['timestampedby']);
-            $req_stamper->execute();
-            $timestamper = $req_stamper->fetch();
+        // who what when ?
+        $sql = 'SELECT firstname, lastname FROM users WHERE userid = :userid';
+        $req_stamper = $this->pdo->prepare($sql);
+        $req_stamper->bindParam(':userid', $this->experiment['timestampedby']);
+        $req_stamper->execute();
+        $timestamper = $req_stamper->fetch();
 
-            // display timestamped pdf download link
-            $sql = "SELECT * FROM uploads WHERE type = 'exp-pdf-timestamp' AND item_id = :item_id LIMIT 1";
-            $req_stamper = $this->pdo->prepare($sql);
-            $req_stamper->bindParam(':item_id', $this->id);
-            $req_stamper->execute();
-            $uploads = $req_stamper->fetch();
+        // display timestamped pdf download link
+        $sql = "SELECT * FROM uploads WHERE type = 'exp-pdf-timestamp' AND item_id = :item_id LIMIT 1";
+        $req_stamper = $this->pdo->prepare($sql);
+        $req_stamper->bindParam(':item_id', $this->id);
+        $req_stamper->execute();
+        $uploads = $req_stamper->fetch();
 
-            // display a link to download the .asn1 token also
-            $sql = "SELECT * FROM uploads WHERE type = 'timestamp-token' AND item_id = :item_id LIMIT 1";
-            $req_stamper = $this->pdo->prepare($sql);
-            $req_stamper->bindParam(':item_id', $this->id);
-            $req_stamper->execute();
-            $token = $req_stamper->fetch();
+        // display a link to download the .asn1 token also
+        $sql = "SELECT * FROM uploads WHERE type = 'timestamp-token' AND item_id = :item_id LIMIT 1";
+        $req_stamper = $this->pdo->prepare($sql);
+        $req_stamper->bindParam(':item_id', $this->id);
+        $req_stamper->execute();
+        $token = $req_stamper->fetch();
 
-            $date = new DateTime($this->experiment['timestampedwhen']);
+        $date = new DateTime($this->experiment['timestampedwhen']);
 
-            // there is a \" in title attribute of img to prevent ' (apostrophe) cutting the string for french translation
-            return display_message(
-                'ok_nocross',
-                _('Experiment was timestamped by') . " " . $timestamper['firstname'] . " " . $timestamper['lastname'] . " " . _('on') . " " . $date->format('Y-m-d') . " " . _('at') . " " . $date->format('H:i:s') . " "
-                . $date->getTimezone()->getName() . " <a href='uploads/" . $uploads['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='" . _('Download timestamped pdf') . "' alt='pdf' /></a> <a href='uploads/" . $token['long_name'] . "'><img src='img/download.png' title=\"" . _('Download token') . "\" alt='token' class='bot5px' /></a>"
-            );
+        // there is a \" in title attribute of img to prevent ' (apostrophe) cutting the string for french translation
+        return display_message(
+            'ok_nocross',
+            _('Experiment was timestamped by') . " " . $timestamper['firstname'] . " " . $timestamper['lastname'] . " " . _('on') . " " . $date->format('Y-m-d') . " " . _('at') . " " . $date->format('H:i:s') . " "
+            . $date->getTimezone()->getName() . " <a href='uploads/" . $uploads['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='" . _('Download timestamped pdf') . "' alt='pdf' /></a> <a href='uploads/" . $token['long_name'] . "'><img src='img/download.png' title=\"" . _('Download token') . "\" alt='token' class='bot5px' /></a>"
+        );
     }
 
     private function showMain()
@@ -238,10 +266,9 @@ class ExperimentsView
      * Display comments for an experiment
      *
      */
-    public function showComments($id)
+    public function showComments()
     {
-        $commentsClass = new Comments();
-        $commentsArr = $commentsClass->read($id);
+        $commentsArr = $this->comments->read($this->id);
 
         //  we need to add a container here so the reload function in the callback of .editable() doesn't mess things up
         $html = "<section id='expcomment_container'>";
@@ -255,7 +282,7 @@ class ExperimentsView
                     $comment['firstname'] = '[deleted]';
                 }
                 $html .= "<div class='expcomment_box'>
-                    <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick=\"commentsDestroy(".$comment['id'] . ", " . $id . ", '" .  _('Delete this?') . "')\" />";
+                    <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick=\"commentsDestroy(".$comment['id'] . ", " . $this->id . ", '" .  _('Delete this?') . "')\" />";
                 $html .= "<span class='smallgray'>On " . $comment['datetime'] . " " . $comment['firstname'] . " " . $comment['lastname'] . " wrote :</span><br />";
                 $html .= "<p class='editable' id='" . $comment['id'] . "'>" . $comment['comment'] . "</p></div>";
             }
@@ -263,12 +290,14 @@ class ExperimentsView
         return $html;
     }
 
-    public function showCommentsCreate($id)
+    /**
+     * HTML for the add new comment block
+     */
+    public function showCommentsCreate()
     {
-
         $html = "<textarea onFocus='commentsCreateButtonDivShow()' id='commentsCreateArea' placeholder='" . _('Add a comment') . "'></textarea>";
         $html .= "<div id='commentsCreateButtonDiv' class='submitButtonDiv'>";
-        $html .= "<button class='button' id='commentsCreateButton' onClick='commentsCreate(" . $id . ")'>" . _('Save') . "</button></div></div></section>";
+        $html .= "<button class='button' id='commentsCreateButton' onClick='commentsCreate(" . $this->id . ")'>" . _('Save') . "</button></div></div></section>";
 
         return $html;
     }

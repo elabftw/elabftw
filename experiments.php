@@ -36,11 +36,10 @@ if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
         exit;
     }
 
-    $commentsClass = new \Elabftw\Elabftw\Comments();
     $experimentsView = new \Elabftw\Elabftw\ExperimentsView($id);
 
     try {
-        echo $experimentsView->showView();
+        echo $experimentsView->generateHTML();
     } catch (Exception $e) {
         display_message('ko', $e->getMessage());
         require_once 'inc/footer.php';

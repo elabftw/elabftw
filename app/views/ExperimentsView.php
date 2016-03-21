@@ -87,10 +87,10 @@ class ExperimentsView
         }
 
         $html .= $this->buildView();
-        $html .= $this->buildUploads('view');
+        $html .= $this->uploads->buildUploads($this->id, 'view');
         $html .= $this->buildComments();
         $html .= $this->buildCommentsCreate();
-        $html .= $this->buildJs();
+        $html .= $this->buildViewJs();
 
         return $html;
     }
@@ -111,7 +111,9 @@ class ExperimentsView
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
         $html = $this->buildEdit();
-        $html .= $this->buildUploads('edit');
+        $html .= $this->uploads->buildUploadForm($this->id, 'experiments');
+        $html .= $this->uploads->buildUploads($this->id, 'edit');
+        $html .= $this->buildEditJs();
 
         return $html;
     }
@@ -434,6 +436,158 @@ class ExperimentsView
     }
 
     /**
+     * Build the JS code for edit mode
+     *
+     * @return string
+     */
+    private function buildEditJs()
+    {
+        $tags = new Tags();
+
+        $html = "<script>
+            function delete_tag(tag_id, item_id) {
+                var you_sure = confirm('" . _('Delete this?') . "');
+                if (you_sure == true) {
+                    $.post('app/delete.php', {
+                        id: tag_id,
+                        item_id: item_id,
+                        type: 'exptag'
+                    }).done(function () {
+                        $('#tags_div').load('experiments.php?mode=edit&id=' + item_id + ' #tags_div');
+                    })
+                }
+                return false;
+            }
+
+            // ADD TAG
+            function addTagOnEnter(e) { // the argument here is the event (needed to detect which key is pressed)
+                var keynum;
+                if (e.which) {
+                    keynum = e.which;
+                }
+                if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
+                    // get tag
+                    var tag = $('#addtaginput').val();
+                    // POST request
+                    $.post('app/add.php', {
+                        tag: tag,
+                        item_id: " . $this->id . ",
+                        type: 'exptag'
+                    })
+                    // reload the tags list
+        .done(function () {
+            $('#tags_div').load('experiments.php?mode=edit&id=" . $this->id . " #tags_div');
+            // clear input field
+            $('#addtaginput').val('');
+            return false;
+        })
+    } // end if key is enter
+}
+
+
+    // READY ? GO !!
+    $(document).ready(function() {
+        // KEYBOARD SHORTCUTS
+        key('" . $_SESSION['prefs']['shortcuts']['create'] . "', function(){location.href = 'app/create_item.php?type=exp'});
+        key('" . $_SESSION['prefs']['shortcuts']['submit'] . "', function(){document.forms['editXP'].submit()});
+
+        // autocomplete the tags
+        $('#addtaginput').autocomplete({
+            source: [" . $tags->generateTagList() . "]
+        });
+
+        // autocomplete the links
+        $( '#linkinput' ).autocomplete({
+            source: [" . getDbList('default') . "]
+        });
+
+        // DATEPICKER
+        $( '#datepicker' ).datepicker({dateFormat: 'yymmdd'});
+        // If the title is 'Untitled', clear it on focus
+        $('#title_input').focus(function(){
+            if ($(this).val() === 'Untitled') {
+                $('#title_input').val('');
+            }
+        });
+        // EDITOR
+        tinymce.init({
+            mode : 'specific_textareas',
+            editor_selector : 'mceditable',
+            content_css : 'css/tinymce.css',
+            plugins : 'table textcolor searchreplace code fullscreen insertdatetime paste charmap save image link pagebreak mention',
+            pagebreak_separator: '<pagebreak>',
+            toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | image link | save',
+            removed_menuitems : 'newdocument',
+            // save button :
+            save_onsavecallback: function() {
+                $.post('app/quicksave.php', {
+                    id : " . $this->id . ",
+                    type : 'experiments',
+                    // we need this to get the updated content
+                    title : document.getElementById('title_input').value,
+                    date : document.getElementById('datepicker').value,
+                    body : tinymce.activeEditor.getContent()
+                }).done(function(data) {
+                    if (data == 1) {
+                        notif('" . _('Saved') . "', 'ok');
+                    } else {
+                        notif('" . _('Something went wrong! :(') . "', 'ko');
+                    }
+                });
+            },
+            // keyboard shortcut to insert today's date at cursor in editor
+            setup : function(editor) {
+                editor.addShortcut('ctrl+shift+d', 'add date at cursor', function() { addDateOnCursor(); });
+            },
+            mentions: {
+                source: [" . getDbList('mention') . "],
+                delimiter: '#'
+            },
+            language : '" . $_SESSION['prefs']['lang'] . "',
+            style_formats_merge: true,
+            style_formats: [
+                {
+                    title: 'Image Left',
+                    selector: 'img',
+                    styles: {
+                        'float': 'left',
+                        'margin': '0 10px 0 10px'
+                    }
+                 },
+                 {
+                     title: 'Image Right',
+                     selector: 'img',
+                     styles: {
+                         'float': 'right',
+                         'margin': '0 0 10px 10px'
+                     }
+                 }
+            ]
+        });
+
+            // ADD TAG JS
+            // listen keypress, add tag when it's enter
+            $('#addtaginput').keypress(function (e) {
+                addTagOnEnter(e);
+            });
+            // ADD LINK JS
+            // listen keypress, add link when it's enter
+            $('#linkinput').keypress(function (e) {
+                experimentsCreateLink(e, " . $this->id . ");
+            });";
+
+        // ask the user if he really wants to navigate out of the page
+        if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
+            $html .= "window.onbeforeunload = function (e) {
+                  e = e || window.event;
+                  return '" . _('Do you want to navigate away from this page? Unsaved changes will be lost!') . "';};";
+        }
+        $html .= "});</script>";
+
+        return $html;
+    }
+
+    /**
      * Output html for displaying links
      *
      * @param int $id Experiment id
@@ -465,134 +619,11 @@ class ExperimentsView
     }
 
     /**
-     * Generate HTML for displaying uploaded files
+     * Build JS for view mode
      *
-     * @param string $mode edit or view
-     * @return string html
+     * @return string
      */
-    private function buildUploads($mode)
-    {
-        $uploadsArr = $this->uploads->read($this->id, 'experiments');
-
-        $count = count($uploadsArr);
-        if ($count < 1) {
-            // return the empty div so it can be reloaded upon file upload
-            return "<div id='filesdiv'></div>";
-        }
-
-        // this is for the plural of the ngettext function below
-        if ($count > 1) {
-            $count = 2;
-        }
-
-        // begin HTML build
-        $html .= "<div id='filesdiv'>";
-        $html .= "<div class='box'>";
-        $html .= "<img src='img/attached.png' class='bot5px'> <h3 style='display:inline'>" .
-            ngettext('Attached file', 'Attached files', $count) . "</h3>";
-        $html .= "<div class='row'>";
-        foreach ($uploadsArr as $upload) {
-            $html .= "<div class='col-md-4 col-sm-6'>";
-            $html .= "<div class='thumbnail'>";
-            // show the delete button only in edit mode, not in view mode
-            if ($mode === 'edit') {
-                $html .= "<a class='align_right' href='app/delete_file.php?id=" . $upload['id'] . "&type=" .
-                    $upload['type'] . "&item_id=" . $upload['item_id'] .
-                    "' onClick=\"return confirm('Delete this file ?');\">";
-                $html .= "<img src='img/small-trash.png' title='delete' alt='delete' /></a>";
-            } // end if it is in edit mode
-
-            // get file extension
-            $ext = Tools::getExt($upload['real_name']);
-            $filepath = 'uploads/' . $upload['long_name'];
-            $thumbpath = $filepath . '_th.jpg';
-
-            // list of extensions with a corresponding img/thumb-*.png image
-            $commonExtensions = array('avi', 'csv', 'doc', 'docx', 'mov', 'pdf', 'ppt', 'rar', 'xls', 'xlsx', 'zip');
-
-            // list of extensions understood by 3Dmol.js
-            $molExtensions = array('pdb', 'sdf', 'mol2', 'mmcif', 'cif');
-
-            // Make thumbnail only if it isn't done already
-            if (!file_exists($thumbpath)) {
-                make_thumb($filepath, $ext, $thumbpath, 100);
-            }
-
-            // only display the thumbnail if the file is here
-            if (file_exists($thumbpath) && preg_match('/(jpg|jpeg|png|gif)$/i', $ext)) {
-                // we add rel='gallery' to the images for fancybox to display it as an album
-                // (possibility to go next/previous)
-                $html .= "<a href='app/download.php?f=" . $upload['long_name'] . "' class='fancybox' rel='gallery' ";
-                if ($upload['comment'] != 'Click to add a comment') {
-                    $html .= "title='" . $upload['comment'] . "'";
-                }
-                $html .= "><img class='thumb' src='" . $thumbpath . "' alt='thumbnail' /></a>";
-
-            // not an image
-            } elseif (in_array($ext, $commonExtensions)) {
-                $html .= "<img class='thumb' src='img/thumb-" . $ext . ".png' alt='' />";
-
-            // special case for mol files, only in view mode
-            } elseif ($ext === 'mol' && $_SESSION['prefs']['chem_editor'] && $mode === 'view') {
-                // we need to escape \n in the mol file or we get unterminated string literal error in JS
-                $mol = str_replace("\n", "\\n", file_get_contents($filepath));
-                $html .= "<div class='center'><script>
-                      showMol('" . $mol . "');
-                      </script></div>";
-
-            // if this is something 3Dmol.js can handle
-            } elseif (in_array($ext, $molExtensions)) {
-                $molviewer = new MolViewer($upload['id'], $filepath);
-                $html .= $molviewer->getViewerDiv();
-
-            } else {
-                // uncommon extension without a nice image to display
-                $html .= "<img class='thumb' src='img/thumb.png' alt='' />";
-            }
-
-            // now display the name + comment with icons
-            $html .= "<div class='caption'><img src='img/attached.png' class='bot5px' alt='attached' /> ";
-            $html .= "<a href='app/download.php?f=" . $upload['long_name'] .
-                "&name=" . $upload['real_name'] . "' target='_blank'>" . $upload['real_name'] . "</a>";
-            $html .= "<span class='smallgray' style='display:inline'> " .
-                Tools::formatBytes(filesize('uploads/' . $upload['long_name'])) . "</span><br>";
-            // if we are in view mode, we don't show the comment if it's the default text
-            // this is to avoid showing 'Click to add a comment' where in fact you can't click to add a comment because
-            // your are in view mode
-
-            if ($mode === 'edit' || ($upload['comment'] != 'Click to add a comment')) {
-                $comment = "<img src='img/comment.png' class='bot5px' alt='comment' />
-                            <p class='editable inline' id='filecomment_" . $upload['id'] . "'>" .
-                stripslashes($upload['comment']) . "</p>";
-                $html .= $comment;
-            }
-            $html .= "</div></div></div>";
-        } // end foreach
-        $html .= "</div></div></div>";
-
-        // add fancy stuff in edit mode
-        if ($mode === 'edit') {
-            $html .= "<script>
-                $('.thumbnail').on('mouseover', '.editable', function(){
-                $('.thumbnail p.editable').editable('app/editinplace.php', {
-                 tooltip : 'Click to edit',
-                 indicator : 'Saving...',
-                 name : 'filecomment',
-                 submit : 'Save',
-                 cancel : 'Cancel',
-                 style : 'display:inline'
-                });
-            });
-            $(document).ready(function() {
-                // we use fancybox to display thumbnails
-                $('a.fancybox').fancybox();
-            });
-            </script>";
-        }
-        return $html;
-    }
-
-    private function buildJs()
+    private function buildViewJs()
     {
         $html = "<script>
             function commentsUpdate() {

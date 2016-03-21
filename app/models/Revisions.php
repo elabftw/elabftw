@@ -33,6 +33,11 @@ class Revisions
         $this->pdo = Db::getConnection();
     }
 
+    /**
+     * Get how many revisions we have
+     *
+     * @param int $experiment ID of the experiment
+     */
     public function readCount($experiment)
     {
         $sql = "SELECT COUNT(*) FROM experiments_revisions

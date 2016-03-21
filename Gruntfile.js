@@ -15,7 +15,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'js/elabftw.min.js': ['js/common.js', 'js/cornify.js', 'js/jquery.rating.js', 'js/keymaster/keymaster.js', 'js/todolist.js', 'js/fancybox/source/jquery.fancybox.pack.js', 'js/colorpicker/jquery.colorpicker.js', 'js/jeditable/jquery.jeditable.js', 'js/jquery.complexify.js/jquery.complexify.js', 'js/jquery.complexify.js/jquery.complexify.banlist.js', 'js/3Dmol-nojquery.js', 'js/3dmol_helpers.js'],
+          'js/elabftw.min.js': ['js/common.js', 'js/cornify.js', 'js/jquery.rating.js', 'js/keymaster/keymaster.js', 'js/todolist.js', 'js/fancybox/source/jquery.fancybox.pack.js', 'js/colorpicker/jquery.colorpicker.js', 'js/jeditable/jquery.jeditable.js', 'js/jquery.complexify.js/jquery.complexify.js', 'js/jquery.complexify.js/jquery.complexify.banlist.js', 'js/3Dmol-nojquery.js', 'js/3dmol_helpers.js', 'js/dropzone/dist/min/dropzone.min.js'],
         }
       }
     },
@@ -26,7 +26,7 @@ module.exports = function(grunt) {
     cssmin: {
       target: {
         files: {
-          'css/main.min.css': ['css/main.css', 'css/tagcloud.css', 'css/jquery.rating.css', 'css/autocomplete.css', 'js/fancybox/source/jquery.fancybox.css'],
+          'css/main.min.css': ['css/tagcloud.css', 'css/jquery.rating.css', 'css/autocomplete.css', 'js/fancybox/source/jquery.fancybox.css', 'js/dropzone/dist/min/dropzone.min.css', 'css/main.css'],
           'css/pdf.min.css': ['css/pdf.css']
         }
       }

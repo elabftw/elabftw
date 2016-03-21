@@ -878,3 +878,13 @@ code {
     text-decoration:none;
 }
 /* END TODOLIST */
+
+/* fix dropzone css */
+.dropzone {
+    border: 1px solid #fff;
+    border-radius: 5px;
+}
+.dropzone:hover {
+    border: 1px solid #29AEB9;
+    border-radius: 5px;
+}

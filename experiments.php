@@ -32,13 +32,11 @@ try {
         $experimentsView = new \Elabftw\Elabftw\ExperimentsView($_GET['id']);
         echo $experimentsView->view();
 
+    // EDIT
     } elseif ($_GET['mode'] === 'edit') {
 
         $experimentsView = new \Elabftw\Elabftw\ExperimentsView($_GET['id']);
         echo $experimentsView->edit();
-
-    } else {
-        require_once 'inc/showXP.php';
     }
 
     require_once 'inc/footer.php';

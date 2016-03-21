@@ -43,6 +43,9 @@ class ExperimentsView
     /** TODO remove */
     private $pdo;
 
+    /** the Uploads class */
+    private $uploads;
+
     /**
      * Need an ID of an experiment
      *
@@ -60,6 +63,7 @@ class ExperimentsView
         $this->status = new Status();
         $this->revisions = new Revisions();
         $this->comments = new Comments();
+        $this->uploads = new Uploads();
 
         // get data of experiment
         $this->experiment = $this->experiments->read($this->id);
@@ -82,7 +86,12 @@ class ExperimentsView
             $html .= $this->showTimestamp();
         }
 
-        $html .= $this->viewMain();
+        $html .= $this->buildView();
+        $html .= $this->buildUploads('view');
+        $html .= $this->buildComments();
+        $html .= $this->buildCommentsCreate();
+        $html .= $this->buildJs();
+
         return $html;
     }
     /**
@@ -101,7 +110,8 @@ class ExperimentsView
         if ($this->experiment['locked']) {
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
-        $html .= $this->editMain();
+        $html = $this->buildEdit();
+        $html .= $this->buildUploads('edit');
 
         return $html;
     }
@@ -111,7 +121,7 @@ class ExperimentsView
      *
      * @return string $html
      */
-    private function editMain()
+    private function buildEdit()
     {
         // load tinymce
         $html = "<script src='js/tinymce/tinymce.min.js'></script>";
@@ -371,17 +381,18 @@ class ExperimentsView
      * Output HTML for viewing an experiment
      *
      */
-    private function viewMain()
+    private function buildView()
     {
 
         $html = "<section class='item' style='padding:15px;border-left: 6px solid #" . $this->experiment['color'] . "'>";
         $html .= "<span class='top_right_status'><img src='img/status.png'>" . $this->experiment['name'] .
             "<img src='img/eye.png' alt='eye' />" . $this->visibility . "</span>";
-        $html .=  "<span class='date_view'><img src='img/calendar.png' class='bot5px' title='date' alt='Date :' /> " . Tools::formatDate($this->experiment['date']) . "</span><br />
-        <a href='experiments.php?mode=edit&id=".$this->experiment['id'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a>
-    <a href='app/duplicate_item.php?id=".$this->experiment['id'] . "&type=exp'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a>
-    <a href='make.php?what=pdf&id=".$this->experiment['id'] . "&type=experiments'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a>
-    <a href='make.php?what=zip&id=".$this->experiment['id'] . "&type=experiments'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a> ";
+        $html .=  "<span class='date_view'><img src='img/calendar.png' class='bot5px' title='date' alt='Date :' /> " .
+            Tools::formatDate($this->experiment['date']) . "</span><br />
+        <a href='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a>
+    <a href='app/duplicate_item.php?id=" . $this->experiment['id'] . "&type=exp'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a>
+    <a href='make.php?what=pdf&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a>
+    <a href='make.php?what=zip&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a> ";
 
         if ($this->experiment['locked'] == 0) {
             $html .= "<a href='app/lock.php?id=" . $this->experiment['id'] . "&action=lock&type=experiments'><img src='img/unlock.png' title='lock experiment' alt='lock' /></a>";
@@ -413,7 +424,7 @@ class ExperimentsView
             $html .= "<br>";
         }
 
-        $html .= $this->showLinks($id, 'view');
+        $html .= $this->showLinks($this->id, 'view');
 
         // DISPLAY eLabID
         $html .= "<p class='elabid'>" . _('Unique eLabID:') . " " . $this->experiment['elabid'];
@@ -454,10 +465,179 @@ class ExperimentsView
     }
 
     /**
+     * Generate HTML for displaying uploaded files
+     *
+     * @param string $mode edit or view
+     * @return string html
+     */
+    private function buildUploads($mode)
+    {
+        $uploadsArr = $this->uploads->read($this->id, 'experiments');
+
+        $count = count($uploadsArr);
+        if ($count < 1) {
+            // return the empty div so it can be reloaded upon file upload
+            return "<div id='filesdiv'></div>";
+        }
+
+        // this is for the plural of the ngettext function below
+        if ($count > 1) {
+            $count = 2;
+        }
+
+        // begin HTML build
+        $html .= "<div id='filesdiv'>";
+        $html .= "<div class='box'>";
+        $html .= "<img src='img/attached.png' class='bot5px'> <h3 style='display:inline'>" .
+            ngettext('Attached file', 'Attached files', $count) . "</h3>";
+        $html .= "<div class='row'>";
+        foreach ($uploadsArr as $upload) {
+            $html .= "<div class='col-md-4 col-sm-6'>";
+            $html .= "<div class='thumbnail'>";
+            // show the delete button only in edit mode, not in view mode
+            if ($mode === 'edit') {
+                $html .= "<a class='align_right' href='app/delete_file.php?id=" . $upload['id'] . "&type=" .
+                    $upload['type'] . "&item_id=" . $upload['item_id'] .
+                    "' onClick=\"return confirm('Delete this file ?');\">";
+                $html .= "<img src='img/small-trash.png' title='delete' alt='delete' /></a>";
+            } // end if it is in edit mode
+
+            // get file extension
+            $ext = Tools::getExt($upload['real_name']);
+            $filepath = 'uploads/' . $upload['long_name'];
+            $thumbpath = $filepath . '_th.jpg';
+
+            // list of extensions with a corresponding img/thumb-*.png image
+            $commonExtensions = array('avi', 'csv', 'doc', 'docx', 'mov', 'pdf', 'ppt', 'rar', 'xls', 'xlsx', 'zip');
+
+            // list of extensions understood by 3Dmol.js
+            $molExtensions = array('pdb', 'sdf', 'mol2', 'mmcif', 'cif');
+
+            // Make thumbnail only if it isn't done already
+            if (!file_exists($thumbpath)) {
+                make_thumb($filepath, $ext, $thumbpath, 100);
+            }
+
+            // only display the thumbnail if the file is here
+            if (file_exists($thumbpath) && preg_match('/(jpg|jpeg|png|gif)$/i', $ext)) {
+                // we add rel='gallery' to the images for fancybox to display it as an album
+                // (possibility to go next/previous)
+                $html .= "<a href='app/download.php?f=" . $upload['long_name'] . "' class='fancybox' rel='gallery' ";
+                if ($upload['comment'] != 'Click to add a comment') {
+                    $html .= "title='" . $upload['comment'] . "'";
+                }
+                $html .= "><img class='thumb' src='" . $thumbpath . "' alt='thumbnail' /></a>";
+
+            // not an image
+            } elseif (in_array($ext, $commonExtensions)) {
+                $html .= "<img class='thumb' src='img/thumb-" . $ext . ".png' alt='' />";
+
+            // special case for mol files, only in view mode
+            } elseif ($ext === 'mol' && $_SESSION['prefs']['chem_editor'] && $mode === 'view') {
+                // we need to escape \n in the mol file or we get unterminated string literal error in JS
+                $mol = str_replace("\n", "\\n", file_get_contents($filepath));
+                $html .= "<div class='center'><script>
+                      showMol('" . $mol . "');
+                      </script></div>";
+
+            // if this is something 3Dmol.js can handle
+            } elseif (in_array($ext, $molExtensions)) {
+                $molviewer = new MolViewer($upload['id'], $filepath);
+                $html .= $molviewer->getViewerDiv();
+
+            } else {
+                // uncommon extension without a nice image to display
+                $html .= "<img class='thumb' src='img/thumb.png' alt='' />";
+            }
+
+            // now display the name + comment with icons
+            $html .= "<div class='caption'><img src='img/attached.png' class='bot5px' alt='attached' /> ";
+            $html .= "<a href='app/download.php?f=" . $upload['long_name'] .
+                "&name=" . $upload['real_name'] . "' target='_blank'>" . $upload['real_name'] . "</a>";
+            $html .= "<span class='smallgray' style='display:inline'> " .
+                Tools::formatBytes(filesize('uploads/' . $upload['long_name'])) . "</span><br>";
+            // if we are in view mode, we don't show the comment if it's the default text
+            // this is to avoid showing 'Click to add a comment' where in fact you can't click to add a comment because
+            // your are in view mode
+
+            if ($mode === 'edit' || ($upload['comment'] != 'Click to add a comment')) {
+                $comment = "<img src='img/comment.png' class='bot5px' alt='comment' />
+                            <p class='editable inline' id='filecomment_" . $upload['id'] . "'>" .
+                stripslashes($upload['comment']) . "</p>";
+                $html .= $comment;
+            }
+            $html .= "</div></div></div>";
+        } // end foreach
+        $html .= "</div></div></div>";
+
+        // add fancy stuff in edit mode
+        if ($mode === 'edit') {
+            $html .= "<script>
+                $('.thumbnail').on('mouseover', '.editable', function(){
+                $('.thumbnail p.editable').editable('app/editinplace.php', {
+                 tooltip : 'Click to edit',
+                 indicator : 'Saving...',
+                 name : 'filecomment',
+                 submit : 'Save',
+                 cancel : 'Cancel',
+                 style : 'display:inline'
+                });
+            });
+            $(document).ready(function() {
+                // we use fancybox to display thumbnails
+                $('a.fancybox').fancybox();
+            });
+            </script>";
+        }
+        return $html;
+    }
+
+    private function buildJs()
+    {
+        $html = "<script>
+            function commentsUpdate() {
+                // Experiment comment is editable
+                $('div#expcomment').on('mouseover', '.editable', function(){
+                    $('div#expcomment p.editable').editable('app/controllers/CommentsController.php', {
+                        name: 'commentsUpdateComment',
+                        tooltip : 'Click to edit',
+                        indicator : '" ._('Saving') . "',
+                        commentsUpdate: true,
+                        submit : '" . _('Save') . "',
+                        cancel : '" . _('Cancel') . "',
+                        style : 'display:inline',
+                        callback : function() {
+                            // now we reload the comments part to show the comment we just submitted
+                            $('#expcomment_container').load('experiments.php?mode=view&id=" .
+                            $this->id . " #expcomment');
+                            // we reload the function so editable zones are editable again
+                            commentsUpdate();
+                        }
+                    })
+                });
+            }
+
+            // READY ? GO !!
+            $(document).ready(function() {
+                $('#commentsCreateButtonDiv').hide();
+
+                // Keyboard shortcuts
+                key('" . $_SESSION['prefs']['shortcuts']['create'] .
+                    "', function(){location.href = 'app/create_item.php?type=exp'});
+                key('" . $_SESSION['prefs']['shortcuts']['edit'] .
+                    "', function(){location.href = 'experiments.php?mode=edit&id=" . $this->id . "'});
+                // make editable
+                setInterval(commentsUpdate, 50);
+            });
+            </script>";
+        return $html;
+    }
+
+    /**
      * Display comments for an experiment
      *
      */
-    public function showComments()
+    private function buildComments()
     {
         $commentsArr = $this->comments->read($this->id);
 
@@ -473,8 +653,11 @@ class ExperimentsView
                     $comment['firstname'] = '[deleted]';
                 }
                 $html .= "<div class='expcomment_box'>
-                    <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick=\"commentsDestroy(".$comment['id'] . ", " . $this->id . ", '" .  _('Delete this?') . "')\" />";
-                $html .= "<span class='smallgray'>On " . $comment['datetime'] . " " . $comment['firstname'] . " " . $comment['lastname'] . " wrote :</span><br />";
+                    <img class='align_right' src='img/small-trash.png' ";
+                $html .= "title='delete' alt='delete' onClick=\"commentsDestroy(".
+                    $comment['id'] . ", " . $this->id . ", '" .  _('Delete this?') . "')\" />";
+                $html .= "<span class='smallgray'>On " . $comment['datetime'] . " " . $comment['firstname'] . " " .
+                    $comment['lastname'] . " wrote :</span><br />";
                 $html .= "<p class='editable' id='" . $comment['id'] . "'>" . $comment['comment'] . "</p></div>";
             }
         }
@@ -484,11 +667,13 @@ class ExperimentsView
     /**
      * HTML for the add new comment block
      */
-    public function showCommentsCreate()
+    private function buildCommentsCreate()
     {
-        $html = "<textarea onFocus='commentsCreateButtonDivShow()' id='commentsCreateArea' placeholder='" . _('Add a comment') . "'></textarea>";
+        $html = "<textarea onFocus='commentsCreateButtonDivShow()' id='commentsCreateArea' placeholder='" .
+            _('Add a comment') . "'></textarea>";
         $html .= "<div id='commentsCreateButtonDiv' class='submitButtonDiv'>";
-        $html .= "<button class='button' id='commentsCreateButton' onClick='commentsCreate(" . $this->id . ")'>" . _('Save') . "</button></div></div></section>";
+        $html .= "<button class='button' id='commentsCreateButton' onClick='commentsCreate(" .
+            $this->id . ")'>" . _('Save') . "</button></div></div></section>";
 
         return $html;
     }

@@ -16,7 +16,7 @@ $id = $_GET['id'];
 // FILE UPLOAD
 require_once 'inc/file_upload.php';
 // DISPLAY FILES
-require_once 'inc/display_file.php';
+//require_once 'inc/display_file.php';
 ?>
 
 <?php
@@ -89,7 +89,7 @@ $(document).ready(function() {
     });
 
     // fix for the ' and "
-    //title = "<?php echo $experiment['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
+    //title = "<?php //echo $experiment['title']; ?>".replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
     //document.title = title;
     // DATEPICKER
     $( "#datepicker" ).datepicker({dateFormat: 'yymmdd'});

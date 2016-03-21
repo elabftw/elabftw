@@ -90,7 +90,7 @@ class ExperimentsView
         }
 
         $html .= $this->buildView();
-        $html .= $this->uploads->buildUploads($this->id, 'view');
+        $html .= $this->uploads->buildUploads($this->id, 'view', 'experiments');
         $html .= $this->buildComments();
         $html .= $this->buildCommentsCreate();
         $html .= $this->buildViewJs();
@@ -115,7 +115,7 @@ class ExperimentsView
         }
         $html = $this->buildEdit();
         $html .= $this->uploads->buildUploadForm($this->id, 'experiments');
-        $html .= $this->uploads->buildUploads($this->id, 'edit');
+        $html .= $this->uploads->buildUploads($this->id, 'edit', 'experiments');
         $html .= $this->buildEditJs();
 
         return $html;

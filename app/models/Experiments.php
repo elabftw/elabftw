@@ -129,7 +129,7 @@ class Experiments
      * Get links for an experiments
      *
      * @param int $experiment
-     * @return array|false
+     * @return array
      */
     public function readLink($experiment)
     {
@@ -155,6 +155,7 @@ class Experiments
      * @param int $link ID of our link
      * @param int $experiment ID of the experiment
      * @param int $userid used to check we own the experiment
+     * @return bool
      */
     public function destroyLink($link, $experiment, $userid)
     {

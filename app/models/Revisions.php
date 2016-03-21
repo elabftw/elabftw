@@ -21,9 +21,6 @@ class Revisions
     /** pdo object */
     private $pdo;
 
-    /** id of the experiment */
-    private $id;
-
     /**
      * Constructor
      *

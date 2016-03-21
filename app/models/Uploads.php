@@ -97,7 +97,7 @@ class Uploads
      *
      * @param int $id ID of the item
      * @param string $type
-     * @return array|false
+     * @return array
      */
     public function read($id, $type)
     {

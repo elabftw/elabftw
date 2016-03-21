@@ -58,7 +58,7 @@ if ($count > 0 && strlen(get_config('mail_from')) > 0) {
     }
     $message .= "</ul><div class='submitButtonDiv'>
     <button class='button' type='submit'>"._('Submit') . "</button></div>";
-    display_message('error', $message);
+    display_message('ko', $message);
     echo "</form>";
 }
 
@@ -214,18 +214,19 @@ if (!empty($team['stamppass'])) {
 <li class='list-group-item' style='border-color:red;background-color:#FFC1B7;'>
     <h3><?php echo _('DANGER ZONE'); ?></h3>
     <h4><strong><?php echo _('Delete an account'); ?></strong></h4>
-    <form action='app/admin-exec.php' method='post'>
+    <form action='app/controllers/UsersController.php' method='post'>
         <!-- form key -->
         <?php echo $formKey->getFormkey(); ?>
-        <label for='delete_user'><?php echo _('Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:'); ?></label>
-        <input type='email' name='delete_user' id='delete_user' required />
+        <input type='hidden' name='usersDestroy' value='true'/>
+        <label for='usersDestroyEmail'><?php echo _('Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:'); ?></label>
+        <input type='email' name='usersDestroyEmail' id='usersDestroyEmail' required />
         <br>
         <br>
-        <label for='delete_user_confpass'><?php echo _('Type your password:'); ?></label>
-        <input type='password' name='delete_user_confpass' id='delete_user_confpass' required />
-    <div class='center'>
-        <button type='submitButtonDiv' class='button submit'><?php echo _('Delete this user!'); ?></button>
-    </div>
+        <label for='usersDestroyPassword'><?php echo _('Type your password:'); ?></label>
+        <input type='password' name='usersDestroyPassword' id='usersDestroyPassword' required />
+        <div class='center'>
+            <button type='submitButtonDiv' class='button'><?php echo _('Delete this user!'); ?></button>
+        </div>
     </form>
 </li>
 </ul>

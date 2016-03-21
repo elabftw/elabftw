@@ -77,6 +77,11 @@ class Status extends Panel
         return $req->fetchAll();
     }
 
+    /**
+     * Get the color of a status
+     *
+     * @param int $status ID of the status
+     */
     public function readColor($status)
     {
         $sql = "SELECT color FROM status WHERE id = :id";

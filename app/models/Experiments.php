@@ -36,6 +36,7 @@ class Experiments
     /**
      * Read an experiment
      *
+     * @param int $id ID of the experiment
      * @throws Exception if empty results
      * @return array
      */
@@ -102,27 +103,33 @@ class Experiments
     /**
      * Add a link to an experiment
      *
+     * @param int $link ID of database item
+     * @param int $experiment ID of the experiment
+     * @param int $userid used to check we own the experiment
+     * @throws Exception
+     * @return bool
      */
-    public function createLink($link, $item, $userid)
+    public function createLink($link, $experiment, $userid)
     {
         // check link is int and experiment is owned by user
-        /*
         if (!is_pos_int($link) ||
-            !is_owned_by_user($item, 'experiments', $userid)) {
+            !is_owned_by_user($experiment, 'experiments', $userid)) {
             throw new Exception('Error adding link');
         }
-         */
 
         $sql = "INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':item_id', $item, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $experiment, PDO::PARAM_INT);
         $req->bindParam(':link_id', $link, PDO::PARAM_INT);
+
         return $req->execute();
     }
 
     /**
      * Get links for an experiments
      *
+     * @param int $experiment
+     * @return array|false
      */
     public function readLink($experiment)
     {
@@ -145,17 +152,20 @@ class Experiments
     /**
      * Delete a link
      *
+     * @param int $link ID of our link
+     * @param int $experiment ID of the experiment
+     * @param int $userid used to check we own the experiment
      */
-    public function destroyLink($linkId, $item, $userid)
+    public function destroyLink($link, $experiment, $userid)
     {
-        if (!is_pos_int($linkId) ||
-            !is_pos_int($item) ||
-            !is_owned_by_user($item, 'experiments', $userid)) {
+        if (!is_pos_int($link) ||
+            !is_pos_int($experiment) ||
+            !is_owned_by_user($experiment, 'experiments', $userid)) {
             throw new Exception('Error removing link');
         }
         $sql = "DELETE FROM experiments_links WHERE id= :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $linkId, PDO::PARAM_INT);
+        $req->bindParam(':id', $link, PDO::PARAM_INT);
 
         return $req->execute();
     }

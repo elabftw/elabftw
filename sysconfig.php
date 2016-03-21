@@ -42,14 +42,14 @@ if (strlen($stamppass) > 0) {
     try {
         $stamppass = $crypto->decrypt($stamppass);
     } catch (Exception $e) {
-        display_message('error', $e->getMessage());
+        display_message('ko', $e->getMessage());
     }
 }
 if (strlen($smtppass) > 0) {
     try {
         $smtppass = $crypto->decrypt($smtppass);
     } catch (Exception $e) {
-        display_message('error', $e->getMessage());
+        display_message('ko', $e->getMessage());
     }
 }
 
@@ -57,7 +57,7 @@ if (strlen($smtppass) > 0) {
 try {
     $update->getUpdatesIni();
 } catch (Exception $e) {
-    display_message('error', $e->getMessage());
+    display_message('ko', $e->getMessage());
 }
 
 if ($update->success === true) {
@@ -80,7 +80,7 @@ if ($update->success === true) {
 
 if (get_config('mail_from') === 'notconfigured@example.com') {
     $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='doc/_build/html/postinstall.html#setting-up-email'>", "</a>");
-    display_message('error', $message);
+    display_message('ko', $message);
 }
 ?>
 

@@ -15,7 +15,7 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
         die(_('This section is out of your reach.'));
     }
 } else {
-    display_message('error', _("The id parameter is not valid!"));
+    display_message('ko', _("The id parameter is not valid!"));
     require_once 'inc/footer.php';
     exit;
 }
@@ -33,7 +33,7 @@ $data = $req->fetch();
 
 // Check for lock
 if ($data['locked'] == 1) {
-    display_message('error', _('<strong>This item is locked.</strong> You cannot edit it.'));
+    display_message('ko', _('<strong>This item is locked.</strong> You cannot edit it.'));
     require_once 'inc/footer.php';
     exit;
 }

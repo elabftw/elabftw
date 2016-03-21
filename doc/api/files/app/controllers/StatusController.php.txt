@@ -21,18 +21,30 @@ try {
 
     // CREATE STATUS
     if (isset($_POST['statusCreate'])) {
-        $status->create($_POST['statusName'], $_POST['statusColor'], $_SESSION['team_id']);
+        if ($status->create(
+            $_POST['statusName'],
+            $_POST['statusColor'],
+            $_SESSION['team_id']
+        )) {
+            echo '1';
+        } else {
+            echo '0';
+        }
     }
 
     // UPDATE STATUS
     if (isset($_POST['statusUpdate'])) {
-        $status->update(
+        if ($status->update(
             $_POST['statusId'],
             $_POST['statusName'],
             $_POST['statusColor'],
             $_POST['statusDefault'],
             $_SESSION['team_id']
-        );
+        )) {
+            echo '1';
+        } else {
+            echo '0';
+        }
     }
 
 } catch (Exception $e) {

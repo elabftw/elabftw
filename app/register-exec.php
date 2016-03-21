@@ -213,7 +213,7 @@ $req->bindParam(':usergroup', $group);
 $req->bindParam(':salt', $salt);
 $req->bindParam(':register_date', $register_date);
 $req->bindParam(':validated', $validated);
-$req->bindParam(':lang', get_config('lang'));
+$req->bindValue(':lang', get_config('lang'));
 
 $result = $req->execute();
 

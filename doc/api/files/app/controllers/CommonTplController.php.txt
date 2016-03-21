@@ -1,6 +1,6 @@
 <?php
 /**
- * app/controllers/LogsController.php
+ * app/controllers/CommenTplController.php
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -10,7 +10,7 @@
  */
 
 /**
- * Deal with ajax requests sent from the admin page
+ * Controller for the common experiment template
  *
  */
 require_once '../../inc/common.php';

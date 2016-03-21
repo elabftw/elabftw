@@ -159,7 +159,7 @@ $results_arr = array_unique($results_arr);
 if (count($results_arr) === 0 && $search_type != 'none') {
     display_message('ko_nocross', _("Sorry. I couldn't find anything :("));
 } elseif (count($results_arr) === 0 && $search_type === 'none') {
-    display_message('info', _('<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list to begin filling your database.'));
+    display_message('ok', _('<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list to begin filling your database.'));
 } else {
     ?>
     <div class='align_right'>

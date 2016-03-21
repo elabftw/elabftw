@@ -101,6 +101,11 @@ class ExperimentsView
 
     }
 
+    /**
+     * Generate HTML for edit experiment
+     *
+     * @return string $html
+     */
     private function editMain()
     {
         // load tinymce
@@ -227,16 +232,24 @@ class ExperimentsView
         return $html;
     }
 
+    /**
+     * Check we own the experiment
+     *
+     * @return bool
+     */
     private function isOwner()
     {
         return $this->experiment['userid'] == $_SESSION['userid'];
     }
 
 
+    /**
+     * If int, get the name of the team group instead of a number
+     *
+     * @return string
+     */
     private function setVisibility()
     {
-        // if visibility of experiment is an int, it is a team_groups
-        // so we want to display the name of the group
         if (is_pos_int($this->experiment['visibility'])) {
             $sql = "SELECT name FROM team_groups WHERE id = :id";
             $req = $this->pdo->prepare($sql);
@@ -268,6 +281,11 @@ class ExperimentsView
         return in_array($userid, $authUsersArr);
     }
 
+    /**
+     * Check if we have writing rights
+     *
+     * @return bool
+     */
     private function isReadOnly()
     {
         // Check id is owned by connected user to show read only message if not
@@ -301,7 +319,13 @@ class ExperimentsView
         return false;
     }
 
-    private function isTimestamped() {
+    /**
+     * Check if experiment is timestamped
+     *
+     * @return bool
+     */
+    private function isTimestamped()
+    {
         return $this->experiment['timestamped'];
     }
 
@@ -342,17 +366,21 @@ class ExperimentsView
         );
     }
 
+    /**
+     * Output HTML for viewing an experiment
+     *
+     */
     private function viewMain()
     {
 
-            $html = "<section class='item' style='padding:15px;border-left: 6px solid #" . $this->experiment['color'] . "'>";
-            $html .= "<span class='top_right_status'><img src='img/status.png'>" . $this->experiment['name'] .
-                "<img src='img/eye.png' alt='eye' />" . $this->visibility . "</span>";
-            $html .=  "<span class='date_view'><img src='img/calendar.png' class='bot5px' title='date' alt='Date :' /> " . Tools::formatDate($this->experiment['date']) . "</span><br />
-            <a href='experiments.php?mode=edit&id=".$this->experiment['id'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a>
-        <a href='app/duplicate_item.php?id=".$this->experiment['id'] . "&type=exp'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a>
-        <a href='make.php?what=pdf&id=".$this->experiment['id'] . "&type=experiments'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a>
-        <a href='make.php?what=zip&id=".$this->experiment['id'] . "&type=experiments'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a> ";
+        $html = "<section class='item' style='padding:15px;border-left: 6px solid #" . $this->experiment['color'] . "'>";
+        $html .= "<span class='top_right_status'><img src='img/status.png'>" . $this->experiment['name'] .
+            "<img src='img/eye.png' alt='eye' />" . $this->visibility . "</span>";
+        $html .=  "<span class='date_view'><img src='img/calendar.png' class='bot5px' title='date' alt='Date :' /> " . Tools::formatDate($this->experiment['date']) . "</span><br />
+        <a href='experiments.php?mode=edit&id=".$this->experiment['id'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a>
+    <a href='app/duplicate_item.php?id=".$this->experiment['id'] . "&type=exp'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a>
+    <a href='make.php?what=pdf&id=".$this->experiment['id'] . "&type=experiments'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a>
+    <a href='make.php?what=zip&id=".$this->experiment['id'] . "&type=experiments'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a> ";
 
         if ($this->experiment['locked'] == 0) {
             $html .= "<a href='app/lock.php?id=" . $this->experiment['id'] . "&action=lock&type=experiments'><img src='img/unlock.png' title='lock experiment' alt='lock' /></a>";
@@ -396,6 +424,8 @@ class ExperimentsView
     /**
      * Output html for displaying links
      *
+     * @param int $id Experiment id
+     * @param string $mode edit or view
      * @return string $html
      */
     public function showLinks($id, $mode)

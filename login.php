@@ -35,7 +35,7 @@ if (!Tools::usingSsl()) {
     // get the url to display a link to click (without the port)
     $url = 'https://' . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'];
     $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or click this link : <a href='$url'>$url</a>";
-    display_message('error', $message);
+    display_message('ko', $message);
     require_once 'inc/footer.php';
     exit;
 }
@@ -51,7 +51,7 @@ while ($banned_users = $req->fetch()) {
     $banned_users_arr[] = $banned_users['user_infos'];
 }
 if (in_array(md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']), $banned_users_arr)) {
-    display_message('error', _('You cannot login now because of too many failed login attempts.'));
+    display_message('ko', _('You cannot login now because of too many failed login attempts.'));
     require_once 'inc/footer.php';
     exit;
 }
@@ -60,7 +60,7 @@ if (in_array(md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']), $banned
 if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] < get_config('login_tries')) {
     $number_of_tries_left = get_config('login_tries') - $_SESSION['failed_attempt'];
     $message = _('Number of login attempt left before being banned for') . ' ' . get_config('ban_time') . ' ' . _('minutes:') . ' ' . $number_of_tries_left;
-    display_message('error', $message);
+    display_message('ko', $message);
 }
 
 // disable login if too much failed_attempts
@@ -74,7 +74,7 @@ if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] >= get_con
         'user_infos' => $user_infos
     ));
     unset($_SESSION['failed_attempt']);
-    display_message('error', _('You cannot login now because of too many failed login attempts.'));
+    display_message('ko', _('You cannot login now because of too many failed login attempts.'));
     require_once 'inc/footer.php';
     exit;
 }

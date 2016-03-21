@@ -222,6 +222,7 @@ if (isset($_POST['userid'])) {
     }
 }
 
+/*
 // DELETE USER (we receive a formkey from this form)
 if (isset($_POST['delete_user']) && isset($_POST['delete_user_confpass'])) {
     // Check the form_key
@@ -307,6 +308,7 @@ if (isset($_POST['delete_user']) && isset($_POST['delete_user_confpass'])) {
         exit;
     }
 }
+ */
 
 // REDIRECT USER
 if ($errflag) {

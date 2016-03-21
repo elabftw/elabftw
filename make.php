@@ -38,7 +38,7 @@ try {
     }
 } catch (Exception $e) {
     require_once 'inc/head.php';
-    display_message('error', $e->getMessage());
+    display_message('ko', $e->getMessage());
     require_once 'inc/footer.php';
     exit;
 }

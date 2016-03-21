@@ -29,7 +29,7 @@ require_once '../inc/common.php';
 if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
     $id = $_GET['id'];
 } else {
-    display_message('error', _("The id parameter is not valid!"));
+    display_message('ko', _("The id parameter is not valid!"));
     require_once '../inc/footer.php';
     exit;
 }

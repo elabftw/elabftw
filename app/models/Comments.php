@@ -62,8 +62,8 @@ class Comments
      * Send an email to the experiment owner to alert a comment was posted
      * (issue #160)
      *
-     / @param int $userid Id of the commenter
      * @param int $id Id of the experiment
+     * @param int $userid Id of the commenter
      */
     private function alertOwner($id, $userid)
     {

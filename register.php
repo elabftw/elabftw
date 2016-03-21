@@ -20,7 +20,7 @@ require_once 'inc/head.php';
 
 // Check if we're logged in
 if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
-    display_message('error', sprintf(_('Please %slogout%s before you register another account.'), "<a style='alert-link' href='app/logout.php'>", "</a>"));
+    display_message('ko', sprintf(_('Please %slogout%s before you register another account.'), "<a style='alert-link' href='app/logout.php'>", "</a>"));
     require_once 'inc/footer.php';
     exit;
 }

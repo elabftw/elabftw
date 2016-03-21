@@ -17,7 +17,7 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
         die(_('This section is out of your reach.'));
     }
 } else {
-    display_message('error', _("The id parameter is not valid!"));
+    display_message('ko', _("The id parameter is not valid!"));
     require_once 'inc/footer.php';
     exit;
 }
@@ -41,7 +41,7 @@ $req->execute();
 // got results ?
 $row_count = $req->rowCount();
 if ($row_count === 0) {
-    display_message('error', _('Nothing to show with this ID.'));
+    display_message('ko', _('Nothing to show with this ID.'));
     require_once 'inc/footer.php';
     exit;
 }

@@ -115,7 +115,7 @@ if (file_put_contents($config_file, $config)) {
     $infos_arr = array();
     $infos_arr[] = 'Congratulations, you successfully installed eLabFTW, 
     now you need to <strong>register</strong> your account (you will have admin rights).';
-    $_SESSION['infos'] = $infos_arr;
+    $_SESSION['ok'] = $infos_arr;
     header('Location: ../register.php');
     exit;
 

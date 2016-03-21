@@ -162,7 +162,7 @@ The sysconfig page is only available to the sysadmin user(s). From there, you ca
 - some security configs
 - email config
 
-To configure emails, I would recommend to setup an account with Mandrill.com, they provide free SMTP access and it works very well.
+To configure emails, I would recommend to setup an account with Mailgun.com, they provide free SMTP access and it works very well.
 
 7. Miscellaneous
 ----------------

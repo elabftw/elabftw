@@ -81,7 +81,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
         </div>
 
         <div class='submitButtonDiv'>
-            <button type="submit" name="Submit" class='submit button'><?php echo _('create'); ?></button>
+            <button type="submit" name="Submit" class='button'><?php echo _('create'); ?></button>
         </div>
     </form>
     <!-- end register form -->

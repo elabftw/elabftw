@@ -71,7 +71,7 @@ if (file_exists('../config.php')) {
     if (!is_readable('../config.php')) {
         $message = "No readable config file found. Make sure the server has permissions to read it. Try :<br />
             chmod 644 config.php<br />";
-        display_message('error_nocross', $message);
+        display_message('ko_nocross', $message);
         custom_die();
     }
 
@@ -107,7 +107,7 @@ if (file_exists('../config.php')) {
         header('Location: ../register.php');
     } else {
         $message = 'It looks like eLabFTW is already installed. Delete the config file if you wish to reinstall it.';
-        display_message('error_nocross', $message);
+        display_message('ko_nocross', $message);
         custom_die();
     }
 }
@@ -120,21 +120,21 @@ if (!\Elabftw\Elabftw\Tools::usingSsl()) {
     // get the url to display a link to click (without the port)
     $url = 'https://' . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'];
     $message = "eLabFTW works only in HTTPS. Please enable HTTPS on your server. Or click this link : <a href='$url'>$url</a>";
-    display_message('error_nocross', $message);
+    display_message('ko_nocross', $message);
     custom_die();
 }
 
 // CHECK PHP version
-if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.5', '<')) {
-    $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.5";
-    display_message('error_nocross', $message);
+if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.6', '<')) {
+    $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.6";
+    display_message('ko_nocross', $message);
     $errflag = true;
 }
 
 // Check for hash function
 if (!function_exists('hash')) {
     $message = "You don't have the hash function. On Freebsd it's in /usr/ports/security/php5-hash.";
-    display_message('error_nocross', $message);
+    display_message('ko_nocross', $message);
     custom_die();
 }
 
@@ -146,11 +146,11 @@ if (!is_writable('../uploads') || !is_writable('../uploads/tmp')) {
     // check the folders
     if (is_writable('../uploads') && is_writable('../uploads/tmp')) {
         $message = "The <em>uploads/</em> folder and its subdirectory were created successfully.";
-        display_message('info_nocross', $message);
+        display_message('ok_nocross', $message);
     } else { // failed at creating the folder
         $message = "Faild creating <em>uploads/</em> directory. You need to do it manually. 
             <a href='../doc/_build/html/common-errors.html#failed-creating-uploads-directory'>Click here to discover how.</a>";
-        display_message('error_nocross', $message);
+        display_message('ko_nocross', $message);
         $errflag = true;
     }
 }
@@ -161,7 +161,7 @@ foreach ($extensionArr as $ext) {
     if (!extension_loaded($ext)) {
         $message = "The <em>" . $ext . "</em> extension is <strong>NOT</strong> loaded.
                 <a href='../doc/_build/html/common-errors.html#extension-is-not-loaded'>Click here to read how to fix this.</a>";
-        display_message('error_nocross', $message);
+        display_message('ko_nocross', $message);
         $errflag = true;
     }
 }
@@ -170,7 +170,7 @@ if ($errflag) {
     custom_die();
 } else {
     $message = 'Everything is good on your server. You can install eLabFTW :)';
-    display_message('info_nocross', $message);
+    display_message('ok_nocross', $message);
 }
 
 ?>

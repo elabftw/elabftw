@@ -28,7 +28,7 @@ require_once 'inc/head.php';
 </menu>
 <!-- *********************** -->
 <div class='divhandle' id='tab1div'>
-<?php display_message('info_nocross', sprintf(_('You belong to the %s team.'), get_team_config('team_name'))); ?>
+<?php display_message('ok_nocross', sprintf(_('You belong to the %s team.'), get_team_config('team_name'))); ?>
 <table id='teamtable' class='table'>
     <tr>
         <th><?php echo _('Name'); ?></th>

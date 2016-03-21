@@ -514,7 +514,7 @@ if (isset($_GET)) {
         // BEGIN DISPLAY RESULTS
 
         if ($req->rowCount() === 0) {
-                display_message('error_nocross', _("Sorry. I couldn't find anything :("));
+                display_message('ko_nocross', _("Sorry. I couldn't find anything :("));
         } else {
             while ($get_id = $req->fetch()) {
                 $results_arr[] = $get_id['id'];

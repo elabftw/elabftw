@@ -12,7 +12,7 @@ function deleteThis(id, type, redirect) {
             id:id,
             type:type
         })
-        .success(function() {
+        .done(function() {
             window.location = redirect;
         });
     } else {
@@ -39,25 +39,32 @@ function addDateOnCursor() {
     tinyMCE.activeEditor.execCommand('mceInsertContent', false, year + "-" + month + "-" + day + " ");
 }
 
-// show and remove 'Saved !'
-function showSaved() {
-    var text = '<center><p>Saved !</p></center>';
+// notifications
+function notif(text, cssClass) {
+    var htmlText = '<p>' + text + '</p>';
+    if (cssClass == 'ok') {
+        overlayClass = 'overlay-ok';
+    } else {
+        overlayClass = 'overlay-ko';
+    }
     var overlay = document.createElement('div');
        overlay.setAttribute('id','overlay');
-       overlay.setAttribute('class', 'overlay');
+       overlay.setAttribute('class', 'overlay ' + overlayClass);
        // show the overlay
        document.body.appendChild(overlay);
        // add text inside
-       document.getElementById('overlay').innerHTML = text;
+       document.getElementById('overlay').innerHTML = htmlText;
        // wait a bit and make it disappear
-       window.setTimeout(removeSaved, 2000);
+       window.setTimeout(removeNotif, 2733);
 }
 
-function removeSaved() {
-    $('#overlay').fadeOut(500, function() {
+function removeNotif() {
+    $('#overlay').fadeOut(763, function() {
         $(this).remove();
     });
 }
+
+
 /* for menus on team, admin, sysconfig and ucp */
 
 /* parse the $_GET from the url */
@@ -111,4 +118,395 @@ function go_url(x) {
         return;
     }
     window.location = x;
+}
+
+// EXPERIMENTS.PHP
+// ===============
+
+// VISIBILITY
+function experimentsUpdateVisibility(id, visibility) {
+    $.post("app/controllers/ExperimentsController.php", {
+        experimentsUpdateVisibility: true,
+        experimentsUpdateVisibilityId : id,
+        experimentsUpdateVisibilityVisibility : visibility
+    }).done(function(data) {
+        if (data === '0') {
+            notif('There was an error!');
+        } else {
+            notif('Visibility updated', 'ok');
+        }
+    });
+}
+
+// STATUS
+function experimentsUpdateStatus(id, status) {
+    $.post("app/controllers/ExperimentsController.php", {
+        experimentsUpdateStatus: true,
+        experimentsUpdateStatusId : id,
+        experimentsUpdateStatusStatus : status
+    }).done(function(data) {
+        if (data === '0') {
+            notif('There was an error!');
+        } else { // it returns the color
+            notif('Status updated', 'ok');
+            // change the color of the item border
+            // we first remove any status class
+            $("#main_section").css('border', null);
+            // and we add our new border color
+            // first : get what is the color of the new status
+            css = '6px solid #' + data;
+            $("#main_section").css('border-left', css);
+        }
+    });
+}
+
+// CREATE LINK
+function experimentsCreateLink(e, item_id) { // the argument here is the event (needed to detect which key is pressed)
+    var keynum;
+    if (e.which) {
+        keynum = e.which;
+    }
+    if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
+        // get link
+        link_id = decodeURIComponent($('#linkinput').val());
+        // fix for user pressing enter with no input
+        if (link_id.length > 0) {
+            // parseint will get the id, and not the rest (in case there is number in title)
+            link_id = parseInt(link_id, 10);
+            if (isNaN(link_id) != true) {
+                // POST request
+                $.post('app/controllers/ExperimentsController.php', {
+                    experimentsCreateLink: true,
+                    link_id: link_id,
+                    item_id: item_id
+                })
+                // reload the link list
+                .done(function () {
+                    $("#links_div").load("experiments.php?mode=edit&id=" + item_id + " #links_div");
+                    // clear input field
+                    $("#linkinput").val("");
+                    return false;
+                })
+            } // end if input is bad
+        } // end if input < 0
+    } // end if key is enter
+}
+
+// DESTROY LINK
+function experimentsDestroyLink(link_id, item_id, confirmText) {
+    var youSure = confirm(confirmText);
+    if (youSure === true) {
+        $.post('app/controllers/ExperimentsController.php', {
+            experimentsDestroyLink: true,
+            experimentsDestroyLinkId: link_id,
+            experimentsDestroyLinkItem : item_id
+        }).done(function (data) {
+            if (data === '1') {
+                notif('Link removed', 'ok');
+                $("#links_div").load("experiments.php?mode=edit&id=" + item_id + " #links_div");
+            } else {
+                notif('Something went wrong! :(', 'ko');
+            }
+        })
+    }
+    return false;
+}
+
+// COMMENTS
+function commentsCreateButtonDivShow() {
+    $('#commentsCreateButtonDiv').show();
+}
+
+function commentsCreate(id) {
+    document.getElementById('commentsCreateButton').disabled = true;
+    comment = $('#commentsCreateArea').val();
+    $.post('app/controllers/CommentsController.php', {
+        commentsCreate: true,
+        commentsCreateComment: comment,
+        commentsCreateId: id
+    }).done(function(data) {
+        if (data) {
+            notif('Comment added', 'ok');
+            window.location.replace('experiments.php?mode=view&id=' + id);
+        } else {
+            notif('There was an error!');
+        }
+    });
+}
+// admin.php
+// =========
+
+// STATUS
+function statusCreate() {
+    name = $('#statusName').val();
+    color = $('#statusColor').val();
+    $.post('app/controllers/StatusController.php', {
+        statusCreate: true,
+        statusName: name,
+        statusColor: color
+    }).done(function(data) {
+        if (data) {
+            notif('Saved', 'ok');
+            window.location.replace('admin.php?tab=3');
+        } else {
+            notif('Error', 'ko');
+        }
+    });
+}
+
+function statusUpdate(id) {
+    name = $('#statusName_' + id).val();
+    color = $('#statusColor_' + id).val();
+    defaultBox = $('#statusDefault_' + id).val(); // 'on' if checked
+
+    $.post('app/controllers/StatusController.php', {
+        statusUpdate: true,
+        statusId: id,
+        statusName: name,
+        statusColor: color,
+        statusDefault: defaultBox
+    }).done(function(data) {
+        if (data) {
+            notif('Saved', 'ok');
+            window.location.replace('admin.php?tab=3');
+        } else {
+            notif('Error', 'ko');
+        }
+    });
+}
+
+// ITEMS TYPES
+function itemsTypesCreate() {
+    name = $('#itemsTypesName').val();
+    color = $('#itemsTypesColor').val();
+    template = tinymce.get('itemsTypesTemplate').getContent();
+    $.post('app/controllers/ItemsTypesController.php', {
+        itemsTypesCreate: true,
+        itemsTypesName: name,
+        itemsTypesColor: color,
+        itemsTypesTemplate: template
+    }).done(function() {
+        notif('Saved', 'ok');
+        window.location.replace('admin.php?tab=4');
+    });
+}
+
+function itemsTypesShowEditor(id) {
+    $('#itemsTypesEditor_' + id).toggle();
+}
+
+function itemsTypesUpdate(id) {
+    name = $('#itemsTypesName_' + id).val();
+    color = $('#itemsTypesColor_' + id).val();
+    template = tinymce.get('itemsTypesTemplate_' + id).getContent();
+    $.post('app/controllers/ItemsTypesController.php', {
+        itemsTypesUpdate: true,
+        itemsTypesId: id,
+        itemsTypesName: name,
+        itemsTypesColor: color,
+        itemsTypesTemplate: template
+    }).done(function() {
+        notif('Saved', 'ok');
+        window.location.replace('admin.php?tab=4');
+    });
+}
+
+
+// COMMON TEMPLATE
+function commonTplUpdate() {
+    template = tinymce.get('commonTplTemplate').getContent();
+    $.post('app/controllers/CommonTplController.php', {
+        commonTplUpdate: template
+    }).done(function() {
+        notif('Saved', 'ok');
+    });
+}
+
+// TEAM GROUP
+function teamGroupCreate() {
+    var name = $('#teamGroupCreate').val();
+    if (name.length > 0) {
+        $.post('app/controllers/TeamGroupsController.php', {
+            teamGroupCreate: name
+        }).done(function() {
+            $('#team_groups_div').load('admin.php #team_groups_div');
+            $('#teamGroupCreate').val('');
+        });
+    }
+}
+
+function teamGroupUpdate(action) {
+    if (action === 'add') {
+        user = $('#teamGroupUserAdd').val();
+        group = $('#teamGroupGroupAdd').val();
+    } else {
+        user = $('#teamGroupUserRm').val();
+        group = $('#teamGroupGroupRm').val();
+    }
+    $.post('app/controllers/TeamGroupsController.php', {
+        teamGroupUpdate: true,
+        action: action,
+        teamGroupUser: user,
+        teamGroupGroup: group
+    }).done(function() {
+        $('#team_groups_div').load('admin.php #team_groups_div');
+    });
+}
+
+function teamGroupDestroy(groupid, confirmText) {
+    var you_sure = confirm(confirmText);
+    if (you_sure === true) {
+        $.post('app/controllers/TeamGroupsController.php', {
+            teamGroupDestroy: true,
+            teamGroupGroup: groupid
+        }).done(function() {
+            $("#team_groups_div").load("admin.php #team_groups_div");
+        });
+    }
+    return false;
+}
+// END TEAM GROUP
+
+// used on import csv/zip to go to next step
+function goNext(x) {
+    if(x === '') {
+        return;
+    }
+    document.cookie = 'itemType='+x;
+    $('.import_block').show();
+}
+
+// sysconfig.php
+// =============
+
+// TEAMS
+function teamsCreate() {
+    // disable button on click
+    document.getElementById('teamsCreateButton').disabled = true;
+    name = $('#teamsName').val();
+    $.post('app/controllers/TeamsController.php', {
+        teamsCreate: true,
+        teamsName: name
+    }).done(function(data) {
+        if (data) {
+            notif('Team created', 'ok');
+            $('#teamsDiv').load('sysconfig.php #teamsDiv');
+        } else {
+            notif('There was an error!');
+        }
+    });
+}
+
+function teamsUpdate(id) {
+    document.getElementById('teamsUpdateButton_' + id).disabled = true;
+    name = $('#team_' + id).val();
+    $.post("app/controllers/TeamsController.php", {
+        teamsUpdate: true,
+        teamsUpdateId : id,
+        teamsUpdateName : name
+    }).done(function(data) {
+        if (data) {
+            notif('Name updated', 'ok');
+            $('#teamsDiv').load('sysconfig.php #teamsDiv');
+        } else {
+            notif('Error', 'ko');
+        }
+    });
+}
+
+function teamsDestroy(id) {
+    // disable button on click
+    document.getElementById('teamsDestroyButton_' + id).disabled = true;
+    $.post("app/controllers/TeamsController.php", {
+        teamsDestroy: true,
+        teamsDestroyId: id
+    }).done(function(data) {
+        if (data) {
+            notif('Team removed', 'ok');
+            $('#teamsDiv').load('sysconfig.php #teamsDiv');
+        } else {
+            notif('Team not removed because not empty!', 'ko');
+        }
+    });
+}
+
+function teamsUpdateButtonEnable(id) {
+    button = document.getElementById('teamsUpdateButton_' + id).disabled = false
+};
+
+function teamsArchive(id) {
+    // disable button on click
+    document.getElementById('teamsArchiveButton_' + id).disabled = true;
+    $.post("app/controllers/TeamsController.php", {
+        teamsArchive: true,
+        teamsArchiveId: id
+    }).done(function(data) {
+        notif('Feature not yet implemented :)');
+    document.getElementById('teamsArchiveButton_' + id).disabled = false;
+        /*
+        if (data) {
+            notif('Team archived', 'ok');
+            $('#teamsDiv').load('sysconfig.php #teamsDiv');
+        } else {
+            notif('Team not archived', 'ko');
+        }
+        */
+    });
+}
+
+// called when mail_method selector is changed; enables/disables the config for the selected/unselected method
+function toggleMailMethod(value) {
+    if (value == 'sendmail') {
+        $('#smtp_config').hide();
+        $('#sendmail_config').show();
+    } else if (value == 'smtp') {
+        $('#smtp_config').show();
+        $('#sendmail_config').hide();
+    } else if (value == 'php') {
+        $('#smtp_config').hide();
+        $('#sendmail_config').hide();
+        $('#general_mail_config').show();
+    } else {
+        $('#smtp_config').hide();
+        $('#sendmail_config').hide();
+        $('#general_mail_config').hide();
+    }
+}
+
+// send a test email to provided adress
+function testemailSend() {
+    email = $('#testemailEmail').val();
+    // check the email loosely
+    if (/\S+@\S+\.\S+/.test(email)) {
+        document.getElementById('testemailButton').disabled = true;
+        $.post('app/controllers/Sysconfig.php', {
+            testemailSend: true,
+            testemailEmail: email
+        }).done(function(data) {
+            if (data === '1') {
+                notif('Email sent!', 'ok');
+                document.getElementById('testemailButton').disabled = false;
+            } else {
+                notif('Something went wrong! :(', 'ko');
+            }
+        });
+    } else {
+        notif('Email address looks weird', 'ko');
+    }
+}
+
+// LOGS
+function logsDestroy() {
+    // disable button on click
+    document.getElementById('logsDestroyButton').disabled = true;
+    $.post('app/controllers/LogsController.php', {
+        logsDestroy: true
+    }).done(function(data) {
+        if (data == 1) {
+            notif('All logs cleared', 'ok');
+        } else {
+            notif('Something went wrong! :(', 'ko');
+        }
+        $('#logsDiv').load('sysconfig.php #logsDiv');
+    });
 }

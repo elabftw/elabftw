@@ -9,19 +9,15 @@
  */
 use \Elabftw\Elabftw\Tools as Tools;
 
+$itemsTypes = new \Elabftw\Elabftw\ItemsTypes();
+$itemsTypesArr = $itemsTypes->read($_SESSION['team_id']);
+
 $results_arr = array();
 // keep tag var in url
 $getTag = '';
 if (isset($_GET['tag']) && $_GET['tag'] != '') {
     $getTag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
 }
-
-
-// SQL to get items name
-$sql = "SELECT * FROM items_types WHERE team = :team ORDER BY ordering ASC";
-$req = $pdo->prepare($sql);
-$req->bindParam('team', $_SESSION['team_id']);
-$req->execute();
 ?>
 
 <menu class='border'>
@@ -32,7 +28,7 @@ $req->execute();
                 // CREATE NEW dropdown menu
                 echo "<select class='form-control select-create-db' onchange='go_url(this.value)'>
                 <option value=''>" . _('Create new') . "</option>";
-                while ($items_types = $req->fetch()) {
+                foreach ($itemsTypesArr as $items_types) {
                     echo "<option value='app/create_item.php?type=" . $items_types['id'] . "' name='type' ";
                     echo ">" . $items_types['name'] . "</option>";
                 }
@@ -49,9 +45,7 @@ $req->execute();
                     <select name="filter" class="form-control select-filter-cat">
                         <option value=""><?php echo _('Filter type'); ?></option>
                     <?php
-                    // we do the request again to get the list again
-                    $req->execute();
-                    while ($items_types = $req->fetch()) {
+                    foreach ($itemsTypesArr as $items_types) {
                         echo "
                         <option value='" . $items_types['id'] . "'" . checkSelectFilter($items_types['id']) . ">" . $items_types['name'] . "</option>";
                     }
@@ -163,7 +157,7 @@ $total_time = get_total_time();
 $results_arr = array_unique($results_arr);
 // show number of results found
 if (count($results_arr) === 0 && $search_type != 'none') {
-    display_message('error_nocross', _("Sorry. I couldn't find anything :("));
+    display_message('ko_nocross', _("Sorry. I couldn't find anything :("));
 } elseif (count($results_arr) === 0 && $search_type === 'none') {
     display_message('info', _('<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list to begin filling your database.'));
 } else {

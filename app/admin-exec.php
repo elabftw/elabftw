@@ -93,12 +93,12 @@ if (!empty($_POST['validate'])) {
         }
         if ($errflag) {
             $msg_arr[] = _('There was a problem sending the email! Error was logged.');
-            $_SESSION['errors'] = $msg_arr;
+            $_SESSION['ko'] = $msg_arr;
             header('location: ../admin.php');
             exit;
         }
     }
-    $_SESSION['infos'] = $msg_arr;
+    $_SESSION['ok'] = $msg_arr;
     header('Location: ../admin.php');
     exit;
 }
@@ -161,7 +161,7 @@ if (isset($_POST['userid'])) {
         $errflag = true;
     }
     if ($errflag) {
-        $_SESSION['errors'] = $msg_arr;
+        $_SESSION['ko'] = $msg_arr;
         header("location: ../admin.php?tab=" . $tab);
         exit;
     }
@@ -223,122 +223,6 @@ if (isset($_POST['userid'])) {
     }
 }
 
-// TAB 3 : STATUS
-if (isset($_POST['status_name']) && is_pos_int($_POST['status_id']) && !empty($_POST['status_name'])) {
-    $tab = '3';
-
-    $status_id = $_POST['status_id'];
-    $status_name = filter_var($_POST['status_name'], FILTER_SANITIZE_STRING);
-    $status_color = filter_var($_POST['status_color'], FILTER_SANITIZE_STRING);
-    if (isset($_POST['status_is_default']) && $_POST['status_is_default'] === 'on') {
-        $status_is_default = true;
-        // if we set true to status_is_default somewhere, it's best to remove all other default
-        // in the team so we won't have two default status
-        $sql = "UPDATE status
-                SET is_default = false
-                WHERE team = :team_id";
-        $req = $pdo->prepare($sql);
-        $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
-        $res = $req->execute();
-    } else {
-        $status_is_default = false;
-    }
-
-    // now we update the status
-    $sql = "UPDATE status SET
-        name = :name,
-        color = :color,
-        is_default = :is_default
-        WHERE id = :id";
-    $req = $pdo->prepare($sql);
-    $result = $req->execute(array(
-        'name' => $status_name,
-        'color' => $status_color,
-        'is_default' => $status_is_default,
-        'id' => $status_id
-    ));
-    if (!$result) {
-        $errflag = true;
-        $error = '13';
-    }
-}
-
-// ADD NEW STATUS
-if (isset($_POST['new_status_name']) && !empty($_POST['new_status_name'])) {
-    $tab = '3';
-
-    $status_name = filter_var($_POST['new_status_name'], FILTER_SANITIZE_STRING);
-    // we remove the # of the hexacode and sanitize string
-    $status_color = filter_var(substr($_POST['new_status_color'], 0, 6), FILTER_SANITIZE_STRING);
-    $sql = "INSERT INTO status(name, color, team, is_default) VALUES(:name, :color, :team, :is_default)";
-    $req = $pdo->prepare($sql);
-    $result = $req->execute(array(
-        'name' => $status_name,
-        'color' => $status_color,
-        'team' => $_SESSION['team_id'],
-        'is_default' => 0
-    ));
-    if (!$result) {
-        $errflag = true;
-        $error = '14';
-    }
-}
-
-// ITEMS TYPES
-if (isset($_POST['item_type_name']) && is_pos_int($_POST['item_type_id'])) {
-    $tab = '4';
-
-    $item_type_id = $_POST['item_type_id'];
-    $item_type_name = filter_var($_POST['item_type_name'], FILTER_SANITIZE_STRING);
-    // we remove the # of the hexacode and sanitize string
-    $item_type_bgcolor = filter_var(substr($_POST['item_type_bgcolor'], 0, 6), FILTER_SANITIZE_STRING);
-    $item_type_template = check_body($_POST['item_type_template']);
-    $sql = "UPDATE items_types SET
-        name = :name,
-        team = :team,
-        bgcolor = :bgcolor,
-        template = :template
-        WHERE id = :id";
-    $req = $pdo->prepare($sql);
-    $result = $req->execute(array(
-        'name' => $item_type_name,
-        'team' => $_SESSION['team_id'],
-        'bgcolor' => $item_type_bgcolor,
-        'template' => $item_type_template,
-        'id' => $item_type_id
-    ));
-    if (!$result) {
-        $errflag = true;
-        $error = '14';
-    }
-}
-
-// ADD NEW ITEM TYPE
-if (isset($_POST['new_item_type']) && is_pos_int($_POST['new_item_type'])) {
-    $tab = '4';
-
-    $item_type_name = filter_var($_POST['new_item_type_name'], FILTER_SANITIZE_STRING);
-    if (strlen($item_type_name) < 1) {
-        $item_type_name = 'Unnamed';
-    }
-
-    // we remove the # of the hexacode and sanitize string
-    $item_type_bgcolor = filter_var(substr($_POST['new_item_type_bgcolor'], 0, 6), FILTER_SANITIZE_STRING);
-    $item_type_template = check_body($_POST['new_item_type_template']);
-    $sql = "INSERT INTO items_types(name, team, bgcolor, template) VALUES(:name, :team, :bgcolor, :template)";
-    $req = $pdo->prepare($sql);
-    $result = $req->execute(array(
-        'name' => $item_type_name,
-        'team' => $_SESSION['team_id'],
-        'bgcolor' => $item_type_bgcolor,
-        'template' => $item_type_template
-    ));
-    if (!$result) {
-        $errflag = true;
-        $error = '15';
-    }
-}
-
 // DELETE USER (we receive a formkey from this form)
 if (isset($_POST['delete_user']) && isset($_POST['delete_user_confpass'])) {
     // Check the form_key
@@ -379,7 +263,7 @@ if (isset($_POST['delete_user']) && isset($_POST['delete_user_confpass'])) {
 
     // Check for errors and redirect if there is one
     if ($errflag) {
-        $_SESSION['errors'] = $msg_arr;
+        $_SESSION['ko'] = $msg_arr;
         header("location: ../admin.php");
         exit;
     }
@@ -419,37 +303,19 @@ if (isset($_POST['delete_user']) && isset($_POST['delete_user_confpass'])) {
         $error = '17';
     } else {
         $msg_arr[] = _('Everything was purged successfully.');
-        $_SESSION['infos'] = $msg_arr;
+        $_SESSION['ok'] = $msg_arr;
         header('Location: ../admin.php?tab=' . $tab);
         exit;
-    }
-}
-// DEFAULT EXPERIMENT TEMPLATE
-if (isset($_POST['default_exp_tpl'])) {
-    $tab = '5';
-
-    $default_exp_tpl = check_body($_POST['default_exp_tpl']);
-    $sql = "UPDATE experiments_templates SET
-        name = 'default',
-        team = :team,
-        body = :body
-        WHERE userid = 0 AND team = :team";
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':team', $_SESSION['team_id']);
-    $req->bindParam(':body', $default_exp_tpl);
-    if (!$req->execute()) {
-        $errflag = true;
-        $error = '16';
     }
 }
 
 // REDIRECT USER
 if ($errflag) {
     $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#" . $error, "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-    $_SESSION['errors'] = $msg_arr;
+    $_SESSION['ko'] = $msg_arr;
     header('Location: ../admin.php?tab=' . $tab);
 } else {
     $msg_arr[] = _('Configuration updated successfully.');
-    $_SESSION['infos'] = $msg_arr;
+    $_SESSION['ok'] = $msg_arr;
     header('Location: ../admin.php?tab=' . $tab);
 }

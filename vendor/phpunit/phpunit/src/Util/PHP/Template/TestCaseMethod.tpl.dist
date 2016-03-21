@@ -41,8 +41,9 @@ function __phpunit_run_isolated_test()
 
     $result->beStrictAboutTestsThatDoNotTestAnything({isStrictAboutTestsThatDoNotTestAnything});
     $result->beStrictAboutOutputDuringTests({isStrictAboutOutputDuringTests});
-    $result->beStrictAboutTestSize({isStrictAboutTestSize});
+    $result->enforceTimeLimit({enforcesTimeLimit});
     $result->beStrictAboutTodoAnnotatedTests({isStrictAboutTodoAnnotatedTests});
+    $result->beStrictAboutResourceUsageDuringSmallTests({isStrictAboutResourceUsageDuringSmallTests});
 
     $test = new {className}('{methodName}', unserialize('{data}'), '{dataName}');
     $test->setDependencyInput(unserialize('{dependencyInput}'));
@@ -75,6 +76,7 @@ $configurationFilePath = '{configurationFilePath}';
 if ('' !== $configurationFilePath) {
     $configuration = PHPUnit_Util_Configuration::getInstance($configurationFilePath);
     $configuration->handlePHPConfiguration();
+    unset($configuration);
 }
 
 {constants}

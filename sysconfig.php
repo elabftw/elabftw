@@ -15,6 +15,8 @@
  */
 require_once 'inc/common.php';
 
+use \Elabftw\Elabftw\Tools as Tools;
+
 if ($_SESSION['is_sysadmin'] != 1) {
     die(_('This section is out of your reach.'));
 }
@@ -23,8 +25,15 @@ $page_title = _('eLabFTW configuration');
 $selected_menu = null;
 require_once 'inc/head.php';
 
-$formKey = new \Elabftw\Elabftw\FormKey();
-$crypto = new \Elabftw\Elabftw\CryptoWrapper();
+try {
+    $formKey = new \Elabftw\Elabftw\FormKey();
+    $crypto = new \Elabftw\Elabftw\CryptoWrapper();
+    $teamsView = new \Elabftw\Elabftw\TeamsView();
+    $update = new \Elabftw\Elabftw\Update();
+    $sysconfigView = new \Elabftw\Elabftw\SysconfigView();
+} catch (Exception $e) {
+    die($e->getMessage());
+}
 
 $stamppass = get_config('stamppass');
 $smtppass = get_config('smtp_password');
@@ -44,7 +53,6 @@ if (strlen($smtppass) > 0) {
     }
 }
 
-$update = new \Elabftw\Elabftw\Update();
 
 try {
     $update->getUpdatesIni();
@@ -65,7 +73,7 @@ if ($update->success === true) {
     // if we don't have the latest version, show button redirecting to wiki
     if ($update->updateIsAvailable()) {
         $message = _('A new version is available!') . " <a href='doc/_build/html/how-to-update.html'>
-            <button class='submit button'>Update elabftw</button></a>";
+            <button class='button'>Update elabftw</button></a>";
         display_message('warning', $message);
     }
 }
@@ -87,47 +95,23 @@ if (get_config('mail_from') === 'notconfigured@example.com') {
     </ul>
 </menu>
 
+<!-- TAB 1 TEAMS -->
 <div class='divhandle' id='tab1div'>
-    <p>
-    <h3><?php echo _('Add a new team'); ?></h3>
-    <form method='post' action='app/sysconfig-exec.php'>
-        <input required type='text' placeholder='Enter new team name' name='new_team' id='new_team' />
-        <button type='submit' class='submit button'>Add</button>
-    </form>
-    </p>
-
-    <p>
-    <h3><?php echo _('Edit existing teams'); ?></h3>
+<div id='teamsDiv'>
     <?php
-    // a lil' bit of stats can't hurt
-    $count_sql = "SELECT
-    (SELECT COUNT(users.userid) FROM users WHERE users.team = :team) AS totusers,
-    (SELECT COUNT(items.id) FROM items WHERE items.team = :team) AS totdb,
-    (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.team = :team) AS totxp";
-    $count_req = $pdo->prepare($count_sql);
-
-    $sql = "SELECT * FROM teams";
-    $req = $pdo->prepare($sql);
-
-    $req->execute();
-
-    while ($team = $req->fetch()) {
-        $count_req->bindParam(':team', $team['team_id']);
-        $count_req->execute();
-        $count = $count_req->fetch(PDO::FETCH_NAMED);
-        echo " <input type='text' name='edit_team_name' value='" . $team['team_name'] . "' id='team_" . $team['team_id'] . "' />";
-        echo " <input id='button_" . $team['team_id'] . "' onClick=\"updateTeam('" . $team['team_id'] . "')\" type='submit' class='button' value='Save' />";
-        echo "<p>" . _('Members') . ": " . $count['totusers'] . " − " . ngettext('Experiment', 'Experiments', $count['totxp']) . ": " . $count['totxp'] . " − " . _('Items') . ": " . $count['totdb'] . " − " . _('Created') . ": " . $team['datetime'] . "<p>";
-    }
+    echo $teamsView->showStats();
+    echo $teamsView->showCreate();
+    echo $teamsView->show();
     ?>
-    </p>
+</div>
 </div>
 
 <!-- TAB 2 -->
 <div class='divhandle' id='tab2div'>
-    <form method='post' action='app/sysconfig-exec.php'>
-        <h3><?php echo _('Language'); ?></h3>
-            <select id='lang' name="lang">
+    <form class='box' method='post' action='app/sysconfig-exec.php'>
+        <h3><?php echo _('Under the hood'); ?></h3>
+        <label for='lang'><?php echo _('Language'); ?></label>
+        <select id='lang' name="lang">
 <?php
 $lang_array = array('en_GB', 'ca_ES', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pt_BR', 'zh_CN');
 $current_lang = get_config('lang');
@@ -140,21 +124,34 @@ foreach ($lang_array as $lang) {
     echo "value='" . $lang . "'>" . $lang . "</option>";
 }
 ?>
-            </select>
-        <h3><?php echo _('Under the hood'); ?></h3>
+        </select><br>
+
         <label for='proxy'><?php echo _('Address of the proxy:'); ?></label>
         <input type='text' value='<?php echo get_config('proxy'); ?>' name='proxy' id='proxy' />
         <p class='smallgray'><?php echo _('If you are behind a firewall/proxy, enter the address here. Example : http://proxy.example.com:3128'); ?></p>
-        <div class='center'>
-            <button type='submit' name='submit_config' class='submit button'><?php echo _('Save'); ?></button>
+
+        <div class='submitButtonDiv'>
+            <button type='submit' name='submit_config' class='button'><?php echo _('Save'); ?></button>
         </div>
     </form>
+
+    <div class='box'>
+        <h3><?php echo _('Informations'); ?></h3>
+        <ul>
+            <li><p><?php echo _('Operating System') . ': ' . PHP_OS; ?></p></li>
+            <li><p><?php echo _('PHP Version') . ': ' . PHP_VERSION; ?></p></li>
+            <li><p><?php echo _('Size of the uploads folder') . ': ' . Tools::formatBytes(dirSize(ELAB_ROOT . 'uploads')) .
+                ' (' . dirNum(ELAB_ROOT . 'uploads') . ' files)'; ?></p></li>
+            <li><p><?php echo _('Largest integer supported') . ': ' . PHP_INT_MAX; ?></p></li>
+            <li><p><?php echo _('PHP configuration directory') . ': ' . PHP_SYSCONFDIR; ?></p></li>
+        </ul>
+    </div>
 </div>
 
-<!-- TAB 3 -->
+<!-- TAB 3 TIMESTAMP -->
 <div class='divhandle' id='tab3div'>
-    <h3><?php echo _('Timestamping configuration'); ?></h3>
-    <form method='post' action='app/sysconfig-exec.php'>
+    <form class='box' method='post' action='app/sysconfig-exec.php'>
+        <h3><?php echo _('Timestamping configuration'); ?></h3>
         <label for='stampshare'><?php echo _('The teams can use the credentials below to timestamp:'); ?></label>
         <select name='stampshare' id='stampshare'>
             <option value='1'<?php
@@ -179,41 +176,44 @@ foreach ($lang_array as $lang) {
         <input type='text' value='<?php echo get_config('stamplogin'); ?>' name='stamplogin' id='stamplogin' /><br>
         <label for='stamppass'><?php echo _('Password for external timestamping service:'); ?></label>
         <input type='password' value='<?php echo $stamppass; ?>' name='stamppass' id='stamppass' />
-        <div class='center'>
-        <button type='submit' name='submit_config' class='submit button'><?php echo _('Save'); ?></button>
+        <div class='submitButtonDiv'>
+        <button type='submit' name='submit_config' class='button'><?php echo _('Save'); ?></button>
         </div>
     </form>
 </div>
 
-<!-- TAB 4 -->
+<!-- TAB 4 SECURITY -->
 <div class='divhandle' id='tab4div'>
-    <h3><?php echo _('Security settings'); ?></h3>
-    <form method='post' action='app/sysconfig-exec.php'>
-    <label for='admin_validate'><?php echo _('Users need validation by admin after registration:'); ?></label>
-        <select name='admin_validate' id='admin_validate'>
-            <option value='1'<?php
-                if (get_config('admin_validate') == 1) { echo " selected='selected'"; } ?>
-            ><?php echo _('Yes'); ?></option>
-            <option value='0'<?php
-                    if (get_config('admin_validate') == 0) { echo " selected='selected'"; } ?>
-            ><?php echo _('No'); ?></option>
-        </select>
-        <p class='smallgray'><?php echo _('Set to yes for added security.'); ?></p>
-        <label for='login_tries'><?php echo _('Number of allowed login attempts:'); ?></label>
-        <input type='text' value='<?php echo get_config('login_tries'); ?>' name='login_tries' id='login_tries' />
-        <p class='smallgray'><?php echo _('3 might be too few. See for yourself :)'); ?></p>
-        <label for='ban_time'><?php echo _('Time of the ban after failed login attempts (in minutes:'); ?></label>
-        <input type='text' value='<?php echo get_config('ban_time'); ?>' name='ban_time' id='ban_time' />
-        <p class='smallgray'><?php echo _('To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems.'); ?></p>
-        <div class='center'>
-            <button type='submit' name='submit_config' class='submit button'><?php echo _('Save'); ?></button>
-        </div>
-    </form>
+    <div class='box'>
+        <h3><?php echo _('Security settings'); ?></h3>
+        <form method='post' action='app/sysconfig-exec.php'>
+        <label for='admin_validate'><?php echo _('Users need validation by admin after registration:'); ?></label>
+            <select name='admin_validate' id='admin_validate'>
+                <option value='1'<?php
+                    if (get_config('admin_validate') == 1) { echo " selected='selected'"; } ?>
+                ><?php echo _('Yes'); ?></option>
+                <option value='0'<?php
+                        if (get_config('admin_validate') == 0) { echo " selected='selected'"; } ?>
+                ><?php echo _('No'); ?></option>
+            </select>
+            <p class='smallgray'><?php echo _('Set to yes for added security.'); ?></p>
+            <label for='login_tries'><?php echo _('Number of allowed login attempts:'); ?></label>
+            <input type='text' value='<?php echo get_config('login_tries'); ?>' name='login_tries' id='login_tries' />
+            <p class='smallgray'><?php echo _('3 might be too few. See for yourself :)'); ?></p>
+            <label for='ban_time'><?php echo _('Time of the ban after failed login attempts (in minutes:'); ?></label>
+            <input type='text' value='<?php echo get_config('ban_time'); ?>' name='ban_time' id='ban_time' />
+            <p class='smallgray'><?php echo _('To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems.'); ?></p>
+            <div class='submitButtonDiv'>
+                <button type='submit' name='submit_config' class='button'><?php echo _('Save'); ?></button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <!-- TAB 5 -->
 <div class='divhandle' id='tab5div'>
-    <h3><?php echo _('E-mail settings'); ?></h3>
+    <div class='box'>
+        <h3><?php echo _('E-mail settings'); ?></h3>
 <?php
 $mail_method = get_config('mail_method');
 switch ($mail_method) {
@@ -293,77 +293,31 @@ switch ($mail_method) {
             <label for='smtp_password'><?php echo _('SMTP password'); ?></label>
             <input type='password' value='<?php echo $smtppass; ?>' name='smtp_password' id='smtp_password' />
             </p>
-        </div>
-        <div class='center'>
-            <button type='submit' name='submit_config' class='submit button'><?php echo _('Save'); ?></button>
-        </div>
-    </form>
+            </div>
+            <div class='submitButtonDiv'>
+                <button type='submit' name='submit_config' class='button'><?php echo _('Save'); ?></button>
+            </div>
+        </form>
+    </div>
+
+    <!-- TEST EMAIL -->
+    <?php echo $sysconfigView->testemailShow(); ?>
+
 </div>
 
-<!-- TAB 6 -->
+<!-- TAB 6 LOGS -->
 <div class='divhandle' id='tab6div'>
-    <div class='well'>
-        <ul>
-        <?php
-        $sql = "SELECT * FROM logs ORDER BY id DESC LIMIT 100";
-        $req = $pdo->prepare($sql);
-        $req->execute();
-        while ($logs = $req->fetch()) {
-            echo "<li>" . $logs['datetime'] . " [" . $logs['type'] . "] " . $logs['body'] . " (" . $logs['user'] . ")</li>";
-        }
-        ?>
-        </ul>
-    </div>
+    <?php echo $sysconfigView->logsShow(); ?>
 </div>
 
 <script>
-// we need to add this otherwise the button will stay disabled with the browser's cache (Firefox)
-var input_list = document.getElementsByTagName('input');
-for (var i=0; i < input_list.length; i++) {
-    var input = input_list[i];
-    input.disabled = false;
-}
-
-// honor already saved mail_method setting and hide unused options accordingly
-toggleMailMethod(<?php echo json_encode($mail_method); ?>);
-
-// called when mail_method selector is changed; enables/disables the config for the selected/unselected method
-function toggleMailMethod(value) {
-    if (value == 'sendmail') {
-        $('#smtp_config').hide();
-        $('#sendmail_config').show();
-    } else if (value == 'smtp') {
-        $('#smtp_config').show();
-        $('#sendmail_config').hide();
-    } else if (value == 'php') {
-        $('#smtp_config').hide();
-        $('#sendmail_config').hide();
-        $('#general_mail_config').show();
-    } else {
-        $('#smtp_config').hide();
-        $('#sendmail_config').hide();
-        $('#general_mail_config').hide();
-    }
-}
-
-// update the name of a team
-function updateTeam(team_id) {
-    var new_team_name = document.getElementById('team_'+team_id).value;
-    $.post("app/quicksave.php", {
-        id : team_id,
-        team_name : new_team_name
-    }).done(function(returnValue) {
-        // we will get output on error
-        if (returnValue != '') {
-            document.getElementById('button_'+team_id).value = returnValue;
-            document.getElementById('button_'+team_id).style.color = 'red';
-        } else {
-            document.getElementById('button_'+team_id).value = '<?php echo _('Saved')?>';
-        }
-        document.getElementById('button_'+team_id).disabled = true;
-    });
-}
 $(document).ready(function() {
+    // we need to add this otherwise the button will stay disabled with the browser's cache (Firefox)
+    var input_list = document.getElementsByTagName('input');
+    for (var i=0; i < input_list.length; i++) {
+        var input = input_list[i];
+        input.disabled = false;
+    }
     // TABS
     // get the tab=X parameter in the url
     var params = getGetParameters();
@@ -387,6 +341,8 @@ $(document).ready(function() {
         $(tabhandle).addClass('selected');
     });
     // END TABS
+    // honor already saved mail_method setting and hide unused options accordingly
+    toggleMailMethod(<?php echo json_encode($mail_method); ?>);
 });
 </script>
 

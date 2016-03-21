@@ -31,27 +31,12 @@ if ($_SESSION['is_sysadmin'] != 1 || $_SERVER['REQUEST_METHOD'] != 'POST') {
     die(_('This section is out of your reach.'));
 }
 
-$sysconfig = new \Elabftw\Elabftw\SysConfig();
 $crypto = new \Elabftw\Elabftw\CryptoWrapper();
 
 $msg_arr = array();
 $errflag = false;
 $tab = '1';
 
-// TAB 1 : ADD A NEW TEAM
-if (isset($_POST['new_team']) &&
-    $_POST['new_team'] != '' &&
-    $_POST['new_team'] != ' ') {
-
-    $tab = '1';
-    $new_team_name = filter_var($_POST['new_team'], FILTER_SANITIZE_STRING);
-
-    if (!$sysconfig->addTeam($new_team_name)) {
-        $errflag = true;
-        $errnum = '5';
-    }
-}
-// END TAB 1
 
 // TAB 2 : SERVER
 if (isset($_POST['lang'])) {
@@ -62,11 +47,6 @@ if (isset($_POST['lang'])) {
     } else {
         $lang = 'en_GB';
     }
-    if ($_POST['debug'] == 1) {
-        $debug = 1;
-    } else {
-        $debug = 0;
-    }
     if (isset($_POST['proxy'])) {
         $proxy = filter_var($_POST['proxy'], FILTER_SANITIZE_STRING);
     } else {
@@ -75,7 +55,6 @@ if (isset($_POST['lang'])) {
     // SQL
     $updates = array(
         'lang' => $lang,
-        'debug' => $debug,
         'proxy' => $proxy
     );
     if (!update_config($updates)) {
@@ -209,10 +188,10 @@ if (isset($_POST['mail_method'])) {
 // REDIRECT USER
 if ($errflag) {
     $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#" . $error, "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-    $_SESSION['errors'] = $msg_arr;
+    $_SESSION['ko'] = $msg_arr;
     header('Location: ../sysconfig.php?tab=' . $tab);
 } else {
     $msg_arr[] = _('Configuration updated successfully.');
-    $_SESSION['infos'] = $msg_arr;
+    $_SESSION['ok'] = $msg_arr;
     header('Location: ../sysconfig.php?tab=' . $tab);
 }

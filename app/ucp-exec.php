@@ -149,7 +149,7 @@ if (isset($_POST['currpass'])) {
     if (!$user->checkCredentials($_SESSION['username'], $_POST['currpass'])) {
         $msg_arr[] = _("Please input your current password!");
         $errflag = true;
-        $_SESSION['errors'] = $msg_arr;
+        $_SESSION['ko'] = $msg_arr;
         header("location: ../ucp.php?tab=" . $tab);
         exit;
     }
@@ -364,11 +364,11 @@ if (isset($_POST['tpl_form'])) {
 
 // INFO BOX
 if ($errflag) {
-    $_SESSION['errors'] = $msg_arr;
+    $_SESSION['ko'] = $msg_arr;
     header("location: ../ucp.php?tab=" . $tab);
     exit;
 } else {
-    $_SESSION['infos'] = $msg_arr;
+    $_SESSION['ok'] = $msg_arr;
     header("location: ../ucp.php?tab=" . $tab);
     exit;
 }

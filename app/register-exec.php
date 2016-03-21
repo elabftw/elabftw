@@ -126,7 +126,7 @@ if (strlen($_POST['password']) < 8) {
 
 // If there are input validations, redirect back to the registration form
 if ($errflag) {
-    $_SESSION['errors'] = $msg_arr;
+    $_SESSION['ko'] = $msg_arr;
     session_write_close();
     header("location: ../register.php");
     exit;
@@ -248,7 +248,7 @@ if ($result) {
         } catch (Exception $e) {
             dblog('Error', 'smtp', $e->getMessage());
             $msg_arr[] = _('Could not send email to inform admin. Error was logged. Contact an admin directly to validate your account.');
-            $_SESSION['errors'] = $msg_arr;
+            $_SESSION['ko'] = $msg_arr;
             header('Location: ../register.php');
             exit;
         }
@@ -256,7 +256,7 @@ if ($result) {
     } else {
         $msg_arr[] = _('Registration successful :)<br>Welcome to eLabFTW o/');
     }
-    $_SESSION['infos'] = $msg_arr;
+    $_SESSION['ok'] = $msg_arr;
     $_SESSION['username'] = $username;
     header("location: ../login.php");
     exit;

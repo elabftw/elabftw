@@ -8,8 +8,6 @@
  * file that was distributed with this source code.
  */
 
-use SebastianBergmann\Environment\Runtime;
-
 /**
  * Default utility for PHP sub-processes.
  *
@@ -27,22 +25,15 @@ class PHPUnit_Util_PHP_Default extends PHPUnit_Util_PHP
      *
      * @throws PHPUnit_Framework_Exception
      */
-    public function runJob($job, array $settings = array())
+    public function runJob($job, array $settings = [])
     {
-        $runtime = new Runtime;
-        $runtime = $runtime->getBinary() . $this->settingsToParameters($settings);
-
-        if ('phpdbg' === PHP_SAPI) {
-            $runtime .= ' -qrr ' . escapeshellarg(__DIR__ . '/eval-stdin.php');
-        }
-
         $process = proc_open(
-            $runtime,
-            array(
-            0 => array('pipe', 'r'),
-            1 => array('pipe', 'w'),
-            2 => array('pipe', 'w')
-            ),
+            $this->getCommand($settings),
+            [
+                0 => ['pipe', 'r'],
+                1 => ['pipe', 'w'],
+                2 => ['pipe', 'w']
+            ],
             $pipes
         );
 
@@ -64,7 +55,7 @@ class PHPUnit_Util_PHP_Default extends PHPUnit_Util_PHP
         proc_close($process);
         $this->cleanup();
 
-        return array('stdout' => $stdout, 'stderr' => $stderr);
+        return ['stdout' => $stdout, 'stderr' => $stderr];
     }
 
     /**

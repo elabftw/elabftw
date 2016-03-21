@@ -138,7 +138,7 @@ EOF;
         }
     }
 
-    private function getRunningClient()
+    protected function getRunningClient()
     {
         if ($this->client->getInternalRequest() === null) {
             throw new ModuleException($this, "Response is empty. Use `\$I->sendXXX()` methods to send HTTP request");
@@ -440,7 +440,7 @@ EOF;
         $this->execute('UNLINK', $url);
     }
 
-    protected function execute($method = 'GET', $url, $parameters = [], $files = [])
+    protected function execute($method, $url, $parameters = [], $files = [])
     {
         $this->debugSection("Request headers", $this->headers);
 
@@ -786,7 +786,7 @@ EOF;
      * ```php
      * <?php
      * // {'user_id': 1, 'name': 'davert', 'is_active': false}
-     * $I->seeResponseIsJsonType([
+     * $I->seeResponseMatchesJsonType([
      *      'user_id' => 'integer',
      *      'name' => 'string|null',
      *      'is_active' => 'boolean'
@@ -812,7 +812,7 @@ EOF;
      * ```php
      * <?php
      * // {'user_id': 1, 'name': 'davert', 'company': {'name': 'Codegyre'}}
-     * $I->seeResponseIsJsonType([
+     * $I->seeResponseMatchesJsonType([
      *      'user_id' => 'integer|string', // multiple types
      *      'company' => ['name' => 'string']
      * ]);
@@ -835,13 +835,13 @@ EOF;
      * ```php
      * <?php
      * // {'user_id': 1, 'email' => 'davert@codeception.com'}
-     * $I->seeResponseIsJsonType([
+     * $I->seeResponseMatchesJsonType([
      *      'user_id' => 'string:>0:<1000', // multiple filters can be used
      *      'email' => 'string:regex(~\@~)' // we just check that @ char is included
      * ]);
      *
      * // {'user_id': '1'}
-     * $I->seeResponseIsJsonType([
+     * $I->seeResponseMatchesJsonType([
      *      'user_id' => 'string:>0', // works with strings as well
      * }
      * ?>
@@ -853,6 +853,7 @@ EOF;
      * @part json
      * @version 2.1.3
      * @param array $jsonType
+     * @param string $jsonPath
      */
     public function seeResponseMatchesJsonType(array $jsonType, $jsonPath = null)
     {
@@ -974,7 +975,7 @@ EOF;
     public function dontSeeXmlResponseMatchesXpath($xpath)
     {
         $structure = new XmlStructure($this->connectionModule->_getResponseContent());
-        $this->assertTrue($structure->matchesXpath($xpath), 'accidentally matched xpath');
+        $this->assertFalse($structure->matchesXpath($xpath), 'accidentally matched xpath');
     }
 
     /**

@@ -16,11 +16,11 @@ Prerequisites
 Please refer to your distribution's documentation to install :
 
 * A webserver (like nginx, Apache, lighttpd or cherokee)
-* PHP version > 5.5
+* PHP version > 5.6
 * MySQL version > 5.5
 * Git (optional)
 
-.. tip:: If you don't know how to do that, have a look at :ref:`installing eLabFTW on a drop <install-drop>`.
+.. tip:: If you don't know how to do that, or can't update php, have a look at :ref:`installing eLabFTW on a drop <install-drop>` or :ref:`in a docker container <install-docker>`.
 
 .. note:: I wouldn't recommend HHVM because Gettext support is not here yet (see `this issue <https://github.com/facebook/hhvm/issues/1228>`_).
 

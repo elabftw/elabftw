@@ -46,18 +46,18 @@ if ($_GET['type'] === 'exp') {
 if (is_pos_int($new_id)) {
     if ($_GET['type'] === 'exp') {
         $msg_arr[] = _('Experiment successfully duplicated.');
-        $_SESSION['infos'] = $msg_arr;
+        $_SESSION['ok'] = $msg_arr;
         header('location: ../experiments.php?mode=edit&id=' . $new_id . '');
         exit;
     } else {
         $msg_arr[] = _('Database entry successfully duplicated.');
-        $_SESSION['infos'] = $msg_arr;
+        $_SESSION['ok'] = $msg_arr;
         header('location: ../database.php?mode=edit&id=' . $new_id . '');
         exit;
     }
 } else {
     $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-    $_SESSION['errors'] = $msg_arr;
+    $_SESSION['ko'] = $msg_arr;
     header('location: ../experiments.php');
     exit;
 }

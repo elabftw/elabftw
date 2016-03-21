@@ -68,6 +68,42 @@ class TeamGroups extends Panel
     }
 
     /**
+     * Get the name of a group
+     *
+     * @param int $id
+     * @return string|false
+     */
+    public function readName($id)
+    {
+        $sql = "SELECT name FROM team_groups WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetchColumn();
+    }
+
+    /**
+     * Check if user is in a team group
+     *
+     * @param int $userid
+     * @param int $groupid
+     * @return bool
+     */
+    public function isInTeamGroup($userid, $groupid)
+    {
+        $sql = "SELECT DISTINCT userid FROM users2team_groups WHERE groupid = :groupid";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':groupid', $groupid);
+        $req->execute();
+        $authUsersArr = array();
+        while ($authUsers = $req->fetch()) {
+            $authUsersArr[] = $authUsers['userid'];
+        }
+
+        return in_array($userid, $authUsersArr);
+    }
+
+    /**
      * Update the name of the group
      * The request comes from jeditable
      *

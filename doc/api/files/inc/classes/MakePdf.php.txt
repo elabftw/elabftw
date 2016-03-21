@@ -84,7 +84,7 @@ class MakePdf extends Make
 
         // output
         if ($toFile) {
-            $this->fileName = $this->getFileName();
+            $this->fileName = $this->getFileName() . '.pdf';
             $this->filePath = $this->getFilePath($this->fileName);
             $mpdf->Output($this->filePath, 'F');
         } else {

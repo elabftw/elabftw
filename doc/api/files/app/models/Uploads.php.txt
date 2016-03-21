@@ -95,7 +95,7 @@ class Uploads
     /**
      * Read infos about an upload
      *
-     * @param int $id
+     * @param int $id ID of the item
      * @param string $type
      * @return array|false
      */
@@ -114,13 +114,14 @@ class Uploads
     /**
      * Generate HTML for displaying uploaded files
      *
-     * @param int $id Id of the experiment
+     * @param int $id Id of the item
      * @param string $mode edit or view
+     * @param string $type type of upload
      * @return string html
      */
-    public function buildUploads($id, $mode)
+    public function buildUploads($id, $mode, $type)
     {
-        $uploadsArr = $this->read($id, 'experiments');
+        $uploadsArr = $this->read($id, $type);
 
         $count = count($uploadsArr);
         if ($count < 1) {

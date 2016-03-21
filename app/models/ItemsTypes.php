@@ -29,9 +29,6 @@ class ItemsTypes extends Panel
     public function __construct()
     {
         $this->pdo = Db::getConnection();
-        if (!$this->isAdmin()) {
-            throw new Exception('Only admin can access this!');
-        }
     }
 
     /**
@@ -45,6 +42,9 @@ class ItemsTypes extends Panel
      */
     public function create($name, $color, $template, $team)
     {
+        if (!$this->isAdmin()) {
+            throw new Exception('Only admin can access this!');
+        }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         if (strlen($name) < 1) {
             $name = 'Unnamed';
@@ -91,6 +91,9 @@ class ItemsTypes extends Panel
      */
     public function update($id, $name, $color, $template, $team)
     {
+        if (!$this->isAdmin()) {
+            throw new Exception('Only admin can access this!');
+        }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $color = filter_var($color, FILTER_SANITIZE_STRING);
         $template = check_body($template);

@@ -10,7 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
 use \Exception;
 use \Datetime;
 
@@ -40,11 +39,14 @@ class ExperimentsView
     /** ID of the experiment we want to view */
     private $id;
 
-    /** TODO remove */
-    private $pdo;
-
     /** the Uploads class */
     private $uploads;
+
+    /** the teamGroups clas */
+    private $teamGroups;
+
+    /** the Users class */
+    private $users;
 
     /**
      * Need an ID of an experiment
@@ -54,7 +56,6 @@ class ExperimentsView
      */
     public function __construct($id)
     {
-        $this->pdo = Db::getConnection();
         $this->id = Tools::checkId($id);
         if ($this->id === false) {
             throw new Exception(_('The id parameter is not valid!'));
@@ -64,11 +65,13 @@ class ExperimentsView
         $this->revisions = new Revisions();
         $this->comments = new Comments();
         $this->uploads = new Uploads();
+        $this->users = new Users();
+        $this->teamGroups = new TeamGroups();
 
         // get data of experiment
         $this->experiment = $this->experiments->read($this->id);
         // visibility can be a string, or number if teamgroup
-        $this->visibility = $this->setVisibility();
+        $this->visibility = $this->getVisGroupName();
     }
 
     /**
@@ -95,7 +98,7 @@ class ExperimentsView
         return $html;
     }
     /**
-     * Generate HTML for edit mode
+     * Edit experiment
      *
      * @return string
      */
@@ -167,8 +170,7 @@ class ExperimentsView
         $html .= ">" . _('Only me') . "</option>";
 
         // Teamgroups
-        $teamGroups = new TeamGroups();
-        $teamGroupsArr = $teamGroups->read($_SESSION['team_id']);
+        $teamGroupsArr = $this->teamGroups->read($_SESSION['team_id']);
         foreach ($teamGroupsArr as $teamGroup) {
             $html .= "<option value='" . $teamGroup['id'] . "' ";
             if ($this->experiment['visibility'] === $teamGroup['id']) {
@@ -261,37 +263,12 @@ class ExperimentsView
      *
      * @return string
      */
-    private function setVisibility()
+    private function getVisGroupName()
     {
         if (is_pos_int($this->experiment['visibility'])) {
-            $sql = "SELECT name FROM team_groups WHERE id = :id";
-            $req = $this->pdo->prepare($sql);
-            $req->bindParam(':id', $this->experiment['visibility'], PDO::PARAM_INT);
-            $req->execute();
-            return $req->fetchColumn();
+            return $this->teamGroups->readName($this->experiment['visibility']);
         }
         return $this->experiment['visibility'];
-    }
-
-    /**
-     * Check if user is in a team group
-     *
-     * @param int $userid
-     * @param int $groupid
-     * @return bool
-     */
-    private function isInTeamGroup($userid, $groupid)
-    {
-        $sql = "SELECT DISTINCT userid FROM users2team_groups WHERE groupid = :groupid";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':groupid', $groupid);
-        $req->execute();
-        $authUsersArr = array();
-        while ($authUsers = $req->fetch()) {
-            $authUsersArr[] = $authUsers['userid'];
-        }
-
-        return in_array($userid, $authUsersArr);
     }
 
     /**
@@ -311,7 +288,7 @@ class ExperimentsView
             } elseif (is_pos_int($this->experiment['visibility'])) {
                 // the visibility of this experiment is set to a group
                 // we must check if current user is in this group
-                if (!$this->isInTeamGroup($_SESSION['userid'], $this->experiment['visibility'])) {
+                if (!$this->teamGroups->isInTeamGroup($_SESSION['userid'], $this->experiment['visibility'])) {
                     throw new Exception(_("<strong>Access forbidden:</strong> you don't have the rights to access this."));
                 }
 
@@ -344,38 +321,18 @@ class ExperimentsView
 
     /**
      * Show info on timestamp
-     * TODO put in a model and remove pdo from this class
      */
     private function showTimestamp()
     {
-        // who what when ?
-        $sql = 'SELECT firstname, lastname FROM users WHERE userid = :userid';
-        $req_stamper = $this->pdo->prepare($sql);
-        $req_stamper->bindParam(':userid', $this->experiment['timestampedby']);
-        $req_stamper->execute();
-        $timestamper = $req_stamper->fetch();
-
-        // display timestamped pdf download link
-        $sql = "SELECT * FROM uploads WHERE type = 'exp-pdf-timestamp' AND item_id = :item_id LIMIT 1";
-        $req_stamper = $this->pdo->prepare($sql);
-        $req_stamper->bindParam(':item_id', $this->id);
-        $req_stamper->execute();
-        $uploads = $req_stamper->fetch();
-
-        // display a link to download the .asn1 token also
-        $sql = "SELECT * FROM uploads WHERE type = 'timestamp-token' AND item_id = :item_id LIMIT 1";
-        $req_stamper = $this->pdo->prepare($sql);
-        $req_stamper->bindParam(':item_id', $this->id);
-        $req_stamper->execute();
-        $token = $req_stamper->fetch();
-
+        $timestamper = $this->users->read($this->experiment['timestampedby']);
+        $upload = $this->uploads->read($this->id, 'exp-pdf-timestamp');
+        $token = $this->uploads->read($this->id, 'timestamp-token');
         $date = new DateTime($this->experiment['timestampedwhen']);
 
-        // there is a \" in title attribute of img to prevent ' (apostrophe) cutting the string for french translation
         return display_message(
             'ok_nocross',
             _('Experiment was timestamped by') . " " . $timestamper['firstname'] . " " . $timestamper['lastname'] . " " . _('on') . " " . $date->format('Y-m-d') . " " . _('at') . " " . $date->format('H:i:s') . " "
-            . $date->getTimezone()->getName() . " <a href='uploads/" . $uploads['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='" . _('Download timestamped pdf') . "' alt='pdf' /></a> <a href='uploads/" . $token['long_name'] . "'><img src='img/download.png' title=\"" . _('Download token') . "\" alt='token' class='bot5px' /></a>"
+            . $date->getTimezone()->getName() . " <a href='uploads/" . $upload[0]['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='" . _('Download timestamped pdf') . "' alt='pdf' /></a> <a href='uploads/" . $token[0]['long_name'] . "'><img src='img/download.png' title=\"" . _('Download token') . "\" alt='token' class='bot5px' /></a>"
         );
     }
 

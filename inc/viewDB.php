@@ -108,7 +108,9 @@ if ($_SESSION['prefs']['chem_editor']) {
     <?php
 }
 // DISPLAY FILES
-require_once 'inc/display_file.php';
+//require_once 'inc/display_file.php';
+        $uploads = new \Elabftw\Elabftw\Uploads();
+        echo $uploads->buildUploads($id, 'edit', 'items');
 ?>
 <script>
 // change title

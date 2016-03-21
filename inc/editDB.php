@@ -116,9 +116,12 @@ if ($_SESSION['prefs']['chem_editor']) {
     <?php
 }
 // FILE UPLOAD
-require_once 'inc/file_upload.php';
+//require_once 'inc/file_upload.php';
+        $uploads = new \Elabftw\Elabftw\Uploads();
+        echo $uploads->buildUploads($id, 'edit', 'items');
+        echo $uploads->buildUploadForm($id, 'items');
 // DISPLAY FILES
-require_once 'inc/display_file.php';
+//require_once 'inc/display_file.php';
 
 // TAG AUTOCOMPLETE
 $sql = "SELECT DISTINCT tag, id FROM items_tags WHERE team_id = :team_id ORDER BY id DESC LIMIT 500";

@@ -93,7 +93,7 @@ class TrustedTimestamps
         try {
             $pdf = new MakePdf($this->id, 'experiments', true);
             $this->pdfPath = $pdf->filePath;
-            $this->pdfLongName = $pdf->fileName . '.pdf';
+            $this->pdfLongName = $pdf->fileName;
         } catch (Exception $e) {
             throw new Exception('Failed at making the pdf : ' . $e->getMessage());
         }
@@ -458,6 +458,7 @@ class TrustedTimestamps
         }
 
     }
+
     /**
      * The main function.
      * Request a timestamp and parse the response.

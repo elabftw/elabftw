@@ -25,7 +25,7 @@
 ********************************************************************************/
 require_once '../inc/common.php';
 
-$user = new \Elabftw\Elabftw\User();
+$auth = new \Elabftw\Elabftw\Auth();
 $crypto = new \Elabftw\Elabftw\CryptoWrapper();
 
 $errflag = false;
@@ -142,7 +142,7 @@ if (isset($_POST['password']) &&
         die(_("Userid is not valid."));
     }
     // Replace new password in database
-    if ($user->updatePassword($_POST['password'], $userid)) {
+    if ($auth->updatePassword($_POST['password'], $userid)) {
         dblog('Info', $userid, 'Password was changed for this user.');
         $msg_arr[] = _('New password updated. You can now login.');
         $_SESSION['ok'] = $msg_arr;

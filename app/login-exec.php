@@ -26,7 +26,7 @@
 require_once '../inc/common.php';
 
 $formKey = new \Elabftw\Elabftw\FormKey();
-$user = new \Elabftw\Elabftw\User();
+$auth = new \Elabftw\Elabftw\Auth();
 
 //Array to store validation errors
 $msg_arr = array();
@@ -71,7 +71,7 @@ if (isset($_POST['rememberme'])) {
 } else {
     $rememberme = 'off';
 }
-if ($user->login($username, $_POST['password'], $rememberme)) {
+if ($auth->login($username, $_POST['password'], $rememberme)) {
     if (isset($_COOKIE['redirect'])) {
         $location = $_COOKIE['redirect'];
     } else {

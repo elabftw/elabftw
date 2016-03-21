@@ -81,7 +81,7 @@ if (!is_null((get_config('schema')))) {
     }
 }
 
-$user = new \Elabftw\Elabftw\User();
+$auth = new \Elabftw\Elabftw\Auth();
 
 // pages where you don't need to be logged in
 // reset.php is in fact app/reset.php but we use basename so...
@@ -89,7 +89,7 @@ $nologin_arr = array('login.php', 'login-exec.php', 'register.php', 'register-ex
 
 if (!isset($_SESSION['auth']) && !in_array(basename($_SERVER['SCRIPT_FILENAME']), $nologin_arr)) {
     // try to login with the cookie
-    if (!$user->loginWithCookie()) {
+    if (!$auth->loginWithCookie()) {
         // maybe we clicked an email link and we want to be redirected to the page upon successful login
         // so we store the url in a cookie expiring in 5 minutes to redirect to it after login
         $host = $_SERVER['HTTP_HOST'];

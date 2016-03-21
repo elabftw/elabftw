@@ -31,8 +31,8 @@ class ExperimentsView
     /** Read only switch */
     private $ro = false;
 
-    /** HTML that will be outputed */
-    private $html = '';
+    /** revisions class */
+    private $revisions;
 
     /** object holding class Comments */
     private $comments;
@@ -58,6 +58,7 @@ class ExperimentsView
         }
         $this->experiments = new Experiments();
         $this->status = new Status();
+        $this->revisions = new Revisions();
         $this->comments = new Comments();
 
         // get data of experiment
@@ -73,17 +74,21 @@ class ExperimentsView
      */
     public function view()
     {
+        $html = '';
+
         $this->ro = $this->isReadOnly();
+
         if ($this->isTimestamped()) {
-            $this->html .= $this->showTimestamp();
+            $html .= $this->showTimestamp();
         }
-        $this->html .= $this->viewMain();
-        return $this->html;
+
+        $html .= $this->viewMain();
+        return $html;
     }
     /**
-     * Edit experiment
+     * Generate HTML for edit mode
      *
-     * @return string $this->html
+     * @return string
      */
     public function edit()
     {
@@ -96,9 +101,9 @@ class ExperimentsView
         if ($this->experiment['locked']) {
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
-        $this->html .= $this->editMain();
-        return $this->html;
+        $html .= $this->editMain();
 
+        return $html;
     }
 
     /**
@@ -124,6 +129,7 @@ class ExperimentsView
         $html .= "<img src='img/calendar.png' class='bot5px' title='date' alt='calendar' />";
         $html .= "<label for='datepicker'>" . _('Date') . "</label>";
         // TODO if firefox has support for it: type = date
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=825294
         $html .= "<input name='date' id='datepicker' size='8' type='text' value='" . $this->experiment['date'] . "' />";
         $html .= "</div>";
 
@@ -190,6 +196,15 @@ class ExperimentsView
             <button type='submit' name='Submit' class='button'>" ._('Save and go back') . "</button>
             </div></form>";
 
+        // REVISIONS
+        $count = $this->revisions->readCount($this->id);
+        if ($count > 0) {
+            $html .= "<span class='align_right'>";
+            $html .= $count . " " . ngettext('revision available.', 'revisions available.', $count);
+            $html .= " <a href='revision.php?type=experiments&item_id=" . $this->id . "'>" . _('Show history') . "</a>";
+            $html .= "</span>";
+        }
+
         // LINKS
         $html .= "<section>
                 <img src='img/link.png' class='bot5px' class='bot5px'> <h4 style='display:inline'>" . _('Linked items') . "</h4><br>";
@@ -200,25 +215,10 @@ class ExperimentsView
         $html .= "<input id='linkinput' size='60' type='text' name='link' placeholder='" . _('from the database') . "' />";
         $html .= "</section>";
 
-        // REVISIONS
-        // TODO
-        // get the list of revisions
-        $sql = "SELECT COUNT(*) FROM experiments_revisions WHERE item_id = :item_id AND userid = :userid ORDER BY savedate DESC";
-        $req = $this->pdo->prepare($sql);
-        $req->execute(array(
-            'item_id' => $id,
-            'userid' => $_SESSION['userid']
-        ));
-        $rev_count = $req->fetch();
-        $count = intval($rev_count[0]);
-        if ($count > 0) {
-            $html .= "<span class='align_right'>";
-            $html .= $count . " " . ngettext('revision available.', 'revisions available.', $count);
-            $html .= " <a href='revision.php?type=experiments&item_id=" . $this->id . "'>" . _('Show history') . "</a>";
-            $html .= "</span>";
-        }
-
+        // end main section
         $html .= "</section>";
+
+        // CHEM EDITOR
         if ($_SESSION['prefs']['chem_editor']) {
             $html .= "<div class='box chemdoodle'>";
             $html .= "<h3>" . _('Molecule drawer') . "</h3>";
@@ -229,6 +229,7 @@ class ExperimentsView
                     </div>
             </div>";
         }
+
         return $html;
     }
 

@@ -31,7 +31,7 @@ $errflag = false;
 $wantUpdatePassword = false;
 $tab = '1';
 
-$user = new \Elabftw\Elabftw\User();
+$auth = new \Elabftw\Elabftw\Auth();
 
 // TAB 1 : PREFERENCES
 if (isset($_POST['display'])) {
@@ -146,7 +146,7 @@ if (isset($_POST['currpass'])) {
     $tab = '2';
 
     // check that we got the good password
-    if (!$user->checkCredentials($_SESSION['username'], $_POST['currpass'])) {
+    if (!$auth->checkCredentials($_SESSION['username'], $_POST['currpass'])) {
         $msg_arr[] = _("Please input your current password!");
         $errflag = true;
         $_SESSION['ko'] = $msg_arr;
@@ -258,7 +258,7 @@ if (isset($_POST['currpass'])) {
         // update the password only if there is no error before
         if (!$errflag) {
             try {
-                $user->updatePassword($password);
+                $auth->updatePassword($password);
             } catch (Exception $e) {
                 $msg_arr[] = $e->getMessage();
                 $errflag = true;

@@ -73,8 +73,8 @@ class Users
     public function destroy($email, $password)
     {
         // check that we got the good password
-        $user = new User();
-        if (!$user->checkCredentials($_SESSION['username'], $password)) {
+        $auth = new Auth();
+        if (!$auth->checkCredentials($_SESSION['username'], $password)) {
             throw new Exception(_("Wrong password!"));
         }
         // check the user is in our team and also get the userid

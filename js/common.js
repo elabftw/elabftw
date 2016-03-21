@@ -123,6 +123,12 @@ function go_url(x) {
 // EXPERIMENTS.PHP
 // ===============
 
+// VIEW
+function confirmStamp(confirmText) {
+    youSure = confirm(confirmText);
+    return youSure;
+}
+
 // VISIBILITY
 function experimentsUpdateVisibility(id, visibility) {
     $.post("app/controllers/ExperimentsController.php", {
@@ -220,6 +226,13 @@ function commentsCreateButtonDivShow() {
 function commentsCreate(id) {
     document.getElementById('commentsCreateButton').disabled = true;
     comment = $('#commentsCreateArea').val();
+    // check length
+    if (comment.length < 2) {
+        notif('Comment too short!');
+        document.getElementById('commentsCreateButton').disabled = false;
+        return false;
+    }
+
     $.post('app/controllers/CommentsController.php', {
         commentsCreate: true,
         commentsCreateComment: comment,
@@ -227,12 +240,34 @@ function commentsCreate(id) {
     }).done(function(data) {
         if (data) {
             notif('Comment added', 'ok');
-            window.location.replace('experiments.php?mode=view&id=' + id);
+            // now we reload the comments part to show the comment we just submitted
+            $('#expcomment_container').load("experiments.php?mode=view&id=" + id + " #expcomment");
+            //window.location.replace('experiments.php?mode=view&id=' + id);
         } else {
             notif('There was an error!');
         }
     });
 }
+
+function commentsDestroy(id, expId, confirmText) {
+    var you_sure = confirm(confirmText);
+    if (you_sure == true) {
+        $.post('app/controllers/CommentsController.php', {
+            commentsDestroy: true,
+            commentsDestroyId: id
+        }).done(function(data) {
+             if (data == 1) {
+                 notif('Comment deleted', 'ok');
+                 $('#expcomment_container').load("experiments.php?mode=view&id=" + expId + " #expcomment");
+             } else {
+                 notif('Error while deleting comment', 'ko');
+             }
+        });
+    } else {
+        return false;
+    }
+}
+
 // admin.php
 // =========
 

@@ -23,8 +23,73 @@ echo addChemdoodle();
 
 if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
     require_once 'inc/showXP.php';
+
+// VIEW
 } elseif ($_GET['mode'] === 'view') {
-    require_once 'inc/viewXP.php';
+
+    // ID
+    if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
+        $id = $_GET['id'];
+    } else {
+        display_message('ko', _("The id parameter is not valid!"));
+        require_once 'inc/footer.php';
+        exit;
+    }
+
+    $commentsClass = new \Elabftw\Elabftw\Comments();
+    $experimentsView = new \Elabftw\Elabftw\ExperimentsView($id);
+
+    try {
+        echo $experimentsView->showView();
+    } catch (Exception $e) {
+        display_message('ko', $e->getMessage());
+        require_once 'inc/footer.php';
+        exit;
+    }
+
+    // DISPLAY FILES
+    require_once 'inc/display_file.php';
+
+    echo $experimentsView->showComments($id);
+    echo $experimentsView->showCommentsCreate($id);
+    ?>
+    <script>
+    function commentsUpdate() {
+        // Experiment comment is editable
+        $('div#expcomment').on("mouseover", ".editable", function(){
+            $('div#expcomment p.editable').editable('app/controllers/CommentsController.php', {
+                name: 'commentsUpdateComment',
+                tooltip : 'Click to edit',
+                indicator : '<?php echo _('Saving'); ?>',
+                commentsUpdate: true,
+                submit : '<?php echo _('Save'); ?>',
+                cancel : '<?php echo _('Cancel'); ?>',
+                style : 'display:inline',
+                callback : function() {
+                    // now we reload the comments part to show the comment we just submitted
+                    $('#expcomment_container').load("experiments.php?mode=view&id=<?php echo $id; ?> #expcomment");
+                    // we reload the function so editable zones are editable again
+                    commentsUpdate();
+                }
+            })
+        });
+    }
+
+    // READY ? GO !!
+    $(document).ready(function() {
+        $('#commentsCreateButtonDiv').hide();
+
+        // change title
+        // fix for the ' and "
+        //$('.title_view').replace(/\&#39;/g, "'").replace(/\&#34;/g, "\"");
+        // Keyboard shortcuts
+        key('<?php echo $_SESSION['prefs']['shortcuts']['create']; ?>', function(){location.href = 'app/create_item.php?type=exp'});
+        key('<?php echo $_SESSION['prefs']['shortcuts']['edit']; ?>', function(){location.href = 'experiments.php?mode=edit&id=<?php echo $id; ?>'});
+        // make editable
+        setInterval(commentsUpdate, 50);
+    });
+    </script>
+<?php
 } elseif ($_GET['mode'] === 'edit') {
     require_once 'inc/editXP.php';
 } else {

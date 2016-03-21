@@ -19,7 +19,7 @@ if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
 }
 
 $statusClass = new \Elabftw\Elabftw\Status();
-$experimentsClass = new \Elabftw\Elabftw\Experiments();
+$experimentsClass = new \Elabftw\Elabftw\Experiments($id);
 $experimentsView = new \Elabftw\Elabftw\ExperimentsView();
 
 $statusArr = $statusClass->read($_SESSION['team_id']);

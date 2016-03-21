@@ -34,6 +34,9 @@ class Comments
     /**
      * Create a comment
      *
+     * @param int $id Id of the experiment
+     * @param string $comment Content for the comment
+     * @param int $userid Id of the commenter
      * @return bool
      */
     public function create($id, $comment, $userid)
@@ -52,21 +55,22 @@ class Comments
             throw new Exception('Error inserting comment!');
         }
 
-        return $this->alertOwner($id);
+        return $this->alertOwner($id, $userid);
     }
 
     /**
      * Send an email to the experiment owner to alert a comment was posted
      * (issue #160)
      *
+     / @param int $userid Id of the commenter
      * @param int $id Id of the experiment
      */
-    private function alertOwner($id)
+    private function alertOwner($id, $userid)
     {
         // get the first and lastname of the commenter
         $sql = "SELECT firstname, lastname FROM users WHERE userid = :userid";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':userid', $_SESSION['userid']);
+        $req->bindParam(':userid', $userid);
         $req->execute();
         $commenter = $req->fetch();
 
@@ -79,7 +83,7 @@ class Comments
         $users = $req->fetch();
 
         // don't send an email if we are commenting on our own XP
-        if ($users['userid'] === $_SESSION['userid']) {
+        if ($users['userid'] === $userid) {
             return true;
         }
 
@@ -107,5 +111,68 @@ class Comments
         $mailer = getMailer();
 
         return $mailer->send($message);
+    }
+
+    /**
+     * Read comments for an experiments id
+     *
+     * @param int $id Id of the experiment
+     * @return array|false results or false if no comments
+     */
+    public function read($id)
+    {
+        $sql = "SELECT * FROM experiments_comments
+            LEFT JOIN users ON (experiments_comments.userid = users.userid)
+            WHERE exp_id = :id ORDER BY experiments_comments.datetime ASC";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->execute();
+        if ($req->rowCount() > 0) {
+            return $req->fetchAll();
+        }
+
+        return false;
+    }
+
+    /**
+     * Update a comment
+     *
+     * @param int $id Id of the comment to update
+     * @param string $comment New content for the comment
+     * @param int $userid Used to check we own the comment and can update it
+     * @return bool
+     */
+    public function update($id, $comment, $userid)
+    {
+        $comment = filter_var($comment, FILTER_SANITIZE_STRING);
+        // check length
+        if (strlen($comment) < 2) {
+            return false;
+        }
+
+        $sql = "UPDATE experiments_comments SET
+            comment = :comment
+            WHERE id = :id AND userid = :userid";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':comment', $comment);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+
+        return $req->execute();
+    }
+
+    /**
+     * Destroy a comment
+     *
+     * @param int $id Id of the comment
+     * @return bool
+     */
+    public function destroy($id)
+    {
+        $sql = "DELETE FROM experiments_comments WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+
+        return $req->execute();
     }
 }

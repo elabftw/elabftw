@@ -124,17 +124,6 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
             }
             break;
 
-        // DELETE EXPERIMENT COMMENT
-        case 'expcomment':
-            // this is called by deleteThisAndReload
-            // it reloads part of the page, so no need to put session['infos']
-            $delete_sql = "DELETE FROM experiments_comments WHERE id = :id";
-            $delete_req = $pdo->prepare($delete_sql);
-            $result = $delete_req->execute(array(
-                'id' => $id
-            ));
-            break;
-
         // DELETE ITEM
         case 'item':
             // to store the outcome of sql

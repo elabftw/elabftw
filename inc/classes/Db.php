@@ -45,7 +45,7 @@ final class Db
      *
      * @return object $instance The instance of the class
      */
-    public function getConnection()
+    public static function getConnection()
     {
         if (is_null(self::$instance)) {
             self::$instance = new Db();

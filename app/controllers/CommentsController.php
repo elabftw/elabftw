@@ -31,6 +31,28 @@ try {
         }
     }
 
+    // UPDATE
+    if (isset($_POST['commentsUpdateComment'])) {
+        if ($comments->update(
+            $_POST['id'],
+            $_POST['commentsUpdateComment'],
+            $_SESSION['userid']
+        )) {
+            echo '1';
+        } else {
+            echo '0';
+        }
+    }
+
+    // DESTROY
+    if (isset($_POST['commentsDestroy'])) {
+        if ($comments->destroy($_POST['commentsDestroyId'])) {
+            echo '1';
+        } else {
+            echo '0';
+        }
+    }
+
 } catch (Exception $e) {
     dblog('Error', $_SESSION['userid'], $e->getMessage());
 }

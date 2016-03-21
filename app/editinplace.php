@@ -54,9 +54,10 @@ if (isset($_POST['filecomment'])) {
             }
         }
     }
+}
 
 
-
+/*
 } elseif (isset($_POST['expcomment'])) {
 // we are editing a comment on an xp
     // Check ID
@@ -159,3 +160,4 @@ if (isset($_POST['filecomment'])) {
         }
     }
 }
+ */

@@ -130,10 +130,10 @@ function confirmStamp(confirmText) {
 }
 
 // VISIBILITY
-function experimentsUpdateVisibility(id, visibility) {
+function experimentsUpdateVisibility(item, visibility) {
     $.post("app/controllers/ExperimentsController.php", {
         experimentsUpdateVisibility: true,
-        experimentsUpdateVisibilityId : id,
+        experimentsId: item,
         experimentsUpdateVisibilityVisibility : visibility
     }).done(function(data) {
         if (data === '0') {
@@ -145,10 +145,10 @@ function experimentsUpdateVisibility(id, visibility) {
 }
 
 // STATUS
-function experimentsUpdateStatus(id, status) {
+function experimentsUpdateStatus(item, status) {
     $.post("app/controllers/ExperimentsController.php", {
         experimentsUpdateStatus: true,
-        experimentsUpdateStatusId : id,
+        experimentsId: item,
         experimentsUpdateStatusStatus : status
     }).done(function(data) {
         if (data === '0') {
@@ -167,28 +167,28 @@ function experimentsUpdateStatus(id, status) {
 }
 
 // CREATE LINK
-function experimentsCreateLink(e, item_id) { // the argument here is the event (needed to detect which key is pressed)
+function experimentsCreateLink(e, item) { // the argument here is the event (needed to detect which key is pressed)
     var keynum;
     if (e.which) {
         keynum = e.which;
     }
     if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
         // get link
-        link_id = decodeURIComponent($('#linkinput').val());
+        link = decodeURIComponent($('#linkinput').val());
         // fix for user pressing enter with no input
-        if (link_id.length > 0) {
+        if (link.length > 0) {
             // parseint will get the id, and not the rest (in case there is number in title)
-            link_id = parseInt(link_id, 10);
-            if (isNaN(link_id) != true) {
+            link = parseInt(link, 10);
+            if (isNaN(link) != true) {
                 // POST request
                 $.post('app/controllers/ExperimentsController.php', {
                     experimentsCreateLink: true,
-                    link_id: link_id,
-                    item_id: item_id
+                    experimentsId: item,
+                    experimentsCreateLinkId: link
                 })
                 // reload the link list
                 .done(function () {
-                    $("#links_div").load("experiments.php?mode=edit&id=" + item_id + " #links_div");
+                    $("#links_div").load("experiments.php?mode=edit&id=" + item + " #links_div");
                     // clear input field
                     $("#linkinput").val("");
                     return false;
@@ -199,17 +199,17 @@ function experimentsCreateLink(e, item_id) { // the argument here is the event (
 }
 
 // DESTROY LINK
-function experimentsDestroyLink(link_id, item_id, confirmText) {
+function experimentsDestroyLink(link, item, confirmText) {
     var youSure = confirm(confirmText);
     if (youSure === true) {
         $.post('app/controllers/ExperimentsController.php', {
             experimentsDestroyLink: true,
-            experimentsDestroyLinkId: link_id,
-            experimentsDestroyLinkItem : item_id
+            experimentsId: item,
+            experimentsDestroyLinkId: link
         }).done(function (data) {
             if (data === '1') {
                 notif('Link removed', 'ok');
-                $("#links_div").load("experiments.php?mode=edit&id=" + item_id + " #links_div");
+                $("#links_div").load("experiments.php?mode=edit&id=" + item + " #links_div");
             } else {
                 notif('Something went wrong! :(', 'ko');
             }

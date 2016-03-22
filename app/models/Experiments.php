@@ -24,13 +24,19 @@ class Experiments
     /** id of the experiment */
     private $id;
 
+    /** current user */
+    private $userid;
+
     /**
      * Constructor
      *
      */
     public function __construct($id, $userid)
     {
-        $this->id = $id;
+        $this->id = Tools::checkId($id);
+        if ($this->id === false) {
+            throw new Exception(_('The id parameter is not valid!'));
+        }
         $this->userid = $userid;
 
         $this->pdo = Db::getConnection();

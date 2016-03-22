@@ -16,24 +16,18 @@
 require_once '../../inc/common.php';
 
 try {
-    $experiments = new \Elabftw\Elabftw\Experiments();
+    $experiments = new \Elabftw\Elabftw\Experiments($_POST['experimentsId'], $_SESSION['userid']);
 
     // UPDATE STATUS
     if (isset($_POST['experimentsUpdateStatus'])) {
-        echo $experiments->updateStatus(
-            $_POST['experimentsUpdateStatusId'],
-            $_POST['experimentsUpdateStatusStatus'],
-            $_SESSION['userid']
-        );
+        echo $experiments->updateStatus($_POST['experimentsUpdateStatusStatus']);
     }
 
     // UPDATE VISIBILITY
     if (isset($_POST['experimentsUpdateVisibility'])) {
         if ($experiments->updateVisibility(
-            $_POST['experimentsUpdateVisibilityId'],
-            $_POST['experimentsUpdateVisibilityVisibility'],
-            $_SESSION['userid']
-        )) {
+            $_POST['experimentsUpdateVisibilityVisibility']))
+        {
             echo '1';
         } else {
             echo '0';
@@ -42,11 +36,8 @@ try {
 
     // CREATE LINK
     if (isset($_POST['experimentsCreateLink'])) {
-        if ($experiments->createLink(
-            $_POST['link_id'],
-            $_POST['item_id'],
-            $_SESSION['userid']
-        )) {
+        if ($experiments->createLink($_POST['experimentsCreateLinkId']))
+        {
             echo '1';
         } else {
             echo '0';
@@ -55,17 +46,13 @@ try {
 
     // DESTROY LINK
     if (isset($_POST['experimentsDestroyLink'])) {
-        if ($experiments->destroyLink(
-            $_POST['experimentsDestroyLinkId'],
-            $_POST['experimentsDestroyLinkItem'],
-            $_SESSION['userid']
-        )) {
+        if ($experiments->destroyLink($_POST['experimentsDestroyLinkId']))
+        {
             echo '1';
         } else {
             echo '0';
         }
     }
-
 
 } catch (Exception $e) {
     dblog('Error', $_SESSION['userid'], $e->getMessage());

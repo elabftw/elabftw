@@ -23,7 +23,8 @@ try {
         if ($database->update(
             $_POST['databaseUpdateTitle'],
             $_POST['databaseUpdateDate'],
-            $_POST['databaseUpdateBody']
+            $_POST['databaseUpdateBody'],
+            $_SESSION['userid']
         )) {
             echo 'ok';
             header("location: ../../database.php?mode=view&id=" . $_POST['databaseId']);

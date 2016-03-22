@@ -119,7 +119,7 @@ class Database
 
         // add a revision
         $revisions = new Revisions($this->id, 'items');
-        if (!$revisions->create('items', $this->id, $body, $this->userid)) {
+        if (!$revisions->create($body, $userid)) {
             throw new Exception(_('Error inserting revision.'));
         }
 

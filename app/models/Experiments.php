@@ -94,7 +94,7 @@ class Experiments
 
         // add a revision
         $revisions = new Revisions($this->id, 'experiments');
-        if (!$revisions->create('experiments', $this->id, $body, $this->userid)) {
+        if (!$revisions->create($body, $this->userid)) {
             throw new Exception(_('Error inserting revision.'));
         }
 

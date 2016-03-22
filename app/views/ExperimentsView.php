@@ -62,7 +62,7 @@ class ExperimentsView
         }
         $this->experiments = new Experiments();
         $this->status = new Status();
-        $this->revisions = new Revisions();
+        $this->revisions = new Revisions($this->id, 'experiments');
         $this->comments = new Comments();
         $this->uploads = new Uploads();
         $this->users = new Users();
@@ -211,13 +211,7 @@ class ExperimentsView
             </div></form>";
 
         // REVISIONS
-        $count = $this->revisions->readCount($this->id);
-        if ($count > 0) {
-            $html .= "<span class='align_right'>";
-            $html .= $count . " " . ngettext('revision available.', 'revisions available.', $count);
-            $html .= " <a href='revision.php?type=experiments&item_id=" . $this->id . "'>" . _('Show history') . "</a>";
-            $html .= "</span>";
-        }
+        $html .= $this->revisions->show();
 
         // LINKS
         $html .= "<section>
@@ -450,7 +444,7 @@ class ExperimentsView
 
         // autocomplete the tags
         $('#addtaginput').autocomplete({
-            source: [" . $tags->generateTagList() . "]
+            source: [" . $tags->generateTagList('experiments') . "]
         });
 
         // autocomplete the links

@@ -21,14 +21,28 @@ require_once 'inc/head.php';
 // add the chemdoodle stuff if we want it
 echo addChemdoodle();
 
-if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
-    require_once 'inc/showDB.php';
-} elseif ($_GET['mode'] === 'view') {
-    require_once 'inc/viewDB.php';
-} elseif ($_GET['mode'] === 'edit') {
-    require_once 'inc/editDB.php';
-} else {
-    require_once 'inc/showDB.php';
-}
+try {
 
-require_once 'inc/footer.php';
+    if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
+        require_once 'inc/showDB.php';
+
+    // VIEW
+    } elseif ($_GET['mode'] === 'view') {
+
+        $databaseView = new \Elabftw\Elabftw\DatabaseView($_GET['id'], $_SESSION['team_id']);
+        echo $databaseView->view();
+
+    // EDIT
+    } elseif ($_GET['mode'] === 'edit') {
+
+        $databaseView = new \Elabftw\Elabftw\DatabaseView($_GET['id'], $_SESSION['team_id']);
+        echo $databaseView->edit();
+    }
+
+    require_once 'inc/footer.php';
+
+} catch (Exception $e) {
+    display_message('ko', $e->getMessage());
+    require_once 'inc/footer.php';
+    exit;
+}

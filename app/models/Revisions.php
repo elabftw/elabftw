@@ -21,28 +21,55 @@ class Revisions
     /** pdo object */
     private $pdo;
 
+    /** experiments or items */
+    private $type;
+
     /**
      * Constructor
      *
      */
-    public function __construct()
+    public function __construct($id, $type)
     {
+        $this->id = Tools::checkId($id);
+        if ($this->id === false) {
+            throw new Exception(_('The id parameter is not valid!'));
+        }
         $this->pdo = Db::getConnection();
+        $this->type = $type;
     }
 
     /**
      * Get how many revisions we have
      *
-     * @param int $experiment ID of the experiment
      */
-    public function readCount($experiment)
+    public function readCount()
     {
-        $sql = "SELECT COUNT(*) FROM experiments_revisions
-            WHERE item_id = :item_id ORDER BY savedate DESC";
+        if ($this->type === 'experiments') {
+            $sql = "SELECT COUNT(*) FROM experiments_revisions
+                WHERE item_id = :item_id ORDER BY savedate DESC";
+        } else {
+            $sql = "SELECT COUNT(*) FROM items_revisions
+                WHERE item_id = :item_id ORDER BY savedate DESC";
+        }
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':item_id', $experiment);
+        $req->bindParam(':item_id', $this->id);
         $req->execute();
 
         return (int) $req->fetchColumn();
+    }
+
+    public function show()
+    {
+        $html = '';
+        $count = $this->readCount();
+
+        if ($count > 0) {
+            $html .= "<span class='align_right'>";
+            $html .= $count . " " . ngettext('revision available.', 'revisions available.', $count);
+            $html .= " <a href='revision.php?type=" . $this->type . "&item_id=" . $this->id . "'>" . _('Show history') . "</a>";
+            $html .= "</span>";
+        }
+
+        return $html;
     }
 }

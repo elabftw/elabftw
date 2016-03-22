@@ -50,9 +50,10 @@ class Database
 
     /**
      * Check if the item we want to view is in the team
+     * Called by the constructor
      *
      */
-    public function isInTeam()
+    private function isInTeam()
     {
         $sql = "SELECT team FROM items WHERE id = :id";
         $req = $this->pdo->prepare($sql);
@@ -92,4 +93,37 @@ class Database
 
         return $req->fetch();
     }
+
+    /**
+     * Update a database item
+     *
+     */
+    public function update($title, $date, $body, $userid)
+    {
+        $title = check_title($title);
+        $date = check_date($date);
+        $body = check_body($body);
+
+        $sql = "UPDATE items
+            SET title = :title,
+            date = :date,
+            body = :body,
+            userid = :userid
+            WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':title', $title);
+        $req->bindParam(':date', $date);
+        $req->bindParam(':body', $body);
+        $req->bindParam(':userid', $userid);
+        $req->bindParam(':id', $this->id);
+
+        // add a revision
+        $revisions = new Revisions($this->id, 'items');
+        if (!$revisions->create('items', $this->id, $body, $this->userid)) {
+            throw new Exception(_('Error inserting revision.'));
+        }
+
+        return $req->execute();
+    }
+
 }

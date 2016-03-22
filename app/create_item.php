@@ -44,7 +44,7 @@ if (isset($_GET['type']) && !empty($_GET['type']) && is_pos_int($_GET['type'])) 
 
 } else {
     $msg_arr[] = _('Wrong item type!');
-    $_SESSION['ok'] = $msg_arr;
+    $_SESSION['ko'] = $msg_arr;
     header('location: ../index.php');
     exit;
 }

@@ -18,6 +18,20 @@ require_once '../../inc/common.php';
 try {
     $experiments = new \Elabftw\Elabftw\Experiments($_POST['experimentsId'], $_SESSION['userid']);
 
+    // UPDATE
+    if (isset($_POST['experimentsUpdate'])) {
+        if ($experiments->update(
+            $_POST['experimentsUpdateTitle'],
+            $_POST['experimentsUpdateDate'],
+            $_POST['experimentsUpdateBody']
+        )) {
+        echo 'ok';
+            header("location: ../../experiments.php?mode=view&id=" . $_POST['experimentsId']);
+        } else {
+            die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
+        }
+    }
+
     // UPDATE STATUS
     if (isset($_POST['experimentsUpdateStatus'])) {
         echo $experiments->updateStatus($_POST['experimentsUpdateStatusStatus']);

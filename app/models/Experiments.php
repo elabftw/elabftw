@@ -30,6 +30,8 @@ class Experiments
     /**
      * Constructor
      *
+     * @param int $id
+     * @param int $userid
      */
     public function __construct($id, $userid)
     {
@@ -65,11 +67,44 @@ class Experiments
     }
 
     /**
+     * Update an experiment
+     *
+     * @param string $title
+     * @param string $date
+     * @param string $body
+     */
+    public function update($title, $date, $body)
+    {
+        $title = check_title($title);
+        $date = check_date($date);
+        $body = check_body($body);
+
+        $sql = "UPDATE experiments SET
+            title = :title,
+            date = :date,
+            body = :body
+            WHERE userid = :userid
+            AND id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':title', $title);
+        $req->bindParam(':date', $date);
+        $req->bindParam(':body', $body);
+        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':id', $this->id);
+
+        // add a revision
+        $revisions = new Revisions($this->id, 'experiments');
+        if (!$revisions->create('experiments', $this->id, $body, $this->userid)) {
+            throw new Exception(_('Error inserting revision.'));
+        }
+
+        return $req->execute();
+    }
+
+    /**
      * Update the visibility for an experiment
      *
-     * @param int $experiment Id of the experiment
      * @param string $visibility
-     * @param int $userid Id of current user
      * @return bool
      */
     public function updateVisibility($visibility)

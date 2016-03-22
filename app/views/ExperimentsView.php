@@ -52,6 +52,7 @@ class ExperimentsView
      * Need an ID of an experiment
      *
      * @param int $id Experiment id from GET[]
+     * @param int $userid
      * @throws Exception
      */
     public function __construct($id, $userid)
@@ -138,22 +139,24 @@ class ExperimentsView
         $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"deleteThis($this->id,'exp', 'experiments.php')\" />";
 
         $html .=  displayTags('experiments', $this->id);
-        $html .= "<form method='post' action='app/editXP-exec.php' enctype='multipart/form-data'>";
-        $html .= "<input name='item_id' type='hidden' value='" . $this->id . "' />";
+        $html .= "<form method='post' action='app/controllers/ExperimentsController.php' enctype='multipart/form-data'>";
+        $html .= "<input name='experimentsUpdate' type='hidden' value='true' />";
+        $html .= "<input name='experimentsId' type='hidden' value='" . $this->id . "' />";
 
+        // DATE
         $html .= "<div class='row'><div class='col-md-4'>";
         $html .= "<img src='img/calendar.png' class='bot5px' title='date' alt='calendar' />";
         $html .= "<label for='datepicker'>" . _('Date') . "</label>";
         // TODO if firefox has support for it: type = date
         // https://bugzilla.mozilla.org/show_bug.cgi?id=825294
-        $html .= "<input name='date' id='datepicker' size='8' type='text' value='" . $this->experiment['date'] . "' />";
+        $html .= "<input name='experimentsUpdateDate' id='datepicker' size='8' type='text' value='" . $this->experiment['date'] . "' />";
         $html .= "</div>";
 
         // VISIBILITY
         $html .= "<div class='col-md-4'>";
         $html .= "<img src='img/eye.png' class='bot5px' alt='visibility' />";
         $html .= "<label for='visibility_select'>" . _('Visibility') . "</label>";
-        $html .= "<select id='visibility_select' name='visibility' onchange='experimentsUpdateVisibility(" . $this->id . ", this.value)'>";
+        $html .= "<select id='visibility_select' onchange='experimentsUpdateVisibility(" . $this->id . ", this.value)'>";
         $html .= "<option value='organization' ";
         if ($this->visibility === 'organization') {
             $html .= "selected";
@@ -200,11 +203,11 @@ class ExperimentsView
 
         // TITLE
         $html .= "<h4>" . _('Title') . "</h4>";
-        $html .= "<input id='title_input' name='title' rows='1' value='" . stripslashes($this->experiment['title']) . "' required />";
+        $html .= "<input id='title_input' name='experimentsUpdateTitle' rows='1' value='" . stripslashes($this->experiment['title']) . "' required />";
 
         // BODY
         $html .= "<h4>". ngettext('Experiment', 'Experiments', 1) . "</h4>";
-        $html .= "<textarea id='body_area' class='mceditable' name='body' rows='15' cols='80'>";
+        $html .= "<textarea id='body_area' class='mceditable' name='experimentsUpdateBody' rows='15' cols='80'>";
         $html .= stripslashes($this->experiment['body']) . "</textarea>";
 
         $html .= "<div id='saveButton'>

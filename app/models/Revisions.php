@@ -30,6 +30,8 @@ class Revisions
     /**
      * Constructor
      *
+     * @param int $id
+     * @param string $type
      */
     public function __construct($id, $type)
     {
@@ -39,6 +41,28 @@ class Revisions
         }
         $this->pdo = Db::getConnection();
         $this->type = $type;
+    }
+
+    /**
+     * Add a revision
+     *
+     * @param string $body
+     * @param int $userid
+     */
+    public function create($body, $userid)
+    {
+        if ($this->type === 'experiments') {
+            $sql = "INSERT INTO experiments_revisions (item_id, body, userid) VALUES(:item_id, :body, :userid)";
+        } else {
+            $sql = "INSERT INTO items_revisions (item_id, body, userid) VALUES(:item_id, :body, :userid)";
+        }
+
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':item_id', $this->id);
+        $req->bindParam(':body', $body);
+        $req->bindParam(':userid', $userid);
+
+        return $req->execute();
     }
 
     /**
@@ -61,6 +85,11 @@ class Revisions
         return (int) $req->fetchColumn();
     }
 
+
+    /**
+     * Output HTML for displaying revisions
+     *
+     */
     public function show()
     {
         $html = '';

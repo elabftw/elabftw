@@ -28,8 +28,10 @@ class Database
     private $team;
 
     /**
-     * Constructor
+     * Constructor, give me an id for an item and a team id
      *
+     * @param int $id
+     * @param int $team
      */
     public function __construct($id, $team)
     {

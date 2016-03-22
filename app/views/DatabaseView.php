@@ -44,6 +44,7 @@ class DatabaseView
      * Need an ID of an item
      *
      * @param int $id Item id from GET[]
+     * @param int $team
      * @throws Exception
      */
     public function __construct($id, $team)
@@ -97,6 +98,11 @@ class DatabaseView
         return $html;
     }
 
+    /**
+     * Generate HTML for view DB
+     *
+     * @return string
+     */
     private function buildView()
     {
         $itemArr = $this->database->read();
@@ -145,6 +151,11 @@ class DatabaseView
         return $html;
     }
 
+    /**
+     * Generate JS code for view DB
+     *
+     * @return string
+     */
     private function buildViewJs()
     {
         $html = '';
@@ -160,6 +171,11 @@ class DatabaseView
         return $html;
     }
 
+    /**
+     * Generate HTML for edit DB
+     *
+     * @return string
+     */
     private function buildEdit()
     {
         $itemArr = $this->database->read();

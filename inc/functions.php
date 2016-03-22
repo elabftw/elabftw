@@ -389,7 +389,7 @@ function showDB($id, $display = 'default')
             <span style='margin-left:7px'><?php echo stripslashes($item['title']); ?></span>
         <?php
         // STAR RATING read only
-        show_stars($item['rating']);
+        echo show_stars($item['rating']);
         echo "</a></section>";
 
     } else { // NOT COMPACT
@@ -401,7 +401,7 @@ function showDB($id, $display = 'default')
             echo "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
         }
         // STARS
-        show_stars($item['rating']);
+        echo show_stars($item['rating']);
         echo "<p class='title'>";
         // show lock if item is locked on viewDB
         if ($item['locked'] == 1) {

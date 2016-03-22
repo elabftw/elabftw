@@ -24,6 +24,9 @@ class Revisions
     /** experiments or items */
     private $type;
 
+    /** id of the item/exp */
+    private $id;
+
     /**
      * Constructor
      *

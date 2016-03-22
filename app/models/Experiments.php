@@ -28,25 +28,27 @@ class Experiments
      * Constructor
      *
      */
-    public function __construct()
+    public function __construct($id, $userid)
     {
+        $this->id = $id;
+        $this->userid = $userid;
+
         $this->pdo = Db::getConnection();
     }
 
     /**
      * Read an experiment
      *
-     * @param int $id ID of the experiment
      * @throws Exception if empty results
      * @return array
      */
-    public function read($id)
+    public function read()
     {
         $sql = "SELECT experiments.*, status.color, status.name FROM experiments
             LEFT JOIN status ON experiments.status = status.id
             WHERE experiments.id = :id ";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->execute();
 
         if ($req->rowCount() === 0) {
@@ -64,13 +66,13 @@ class Experiments
      * @param int $userid Id of current user
      * @return bool
      */
-    public function updateVisibility($experiment, $visibility, $userid)
+    public function updateVisibility($visibility)
     {
         $sql = "UPDATE experiments SET visibility = :visibility WHERE userid = :userid AND id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':visibility', $visibility);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $req->bindParam(':id', $experiment, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -83,13 +85,13 @@ class Experiments
      * @param int $userid Id of current user
      * @return string 0 on fail and color of new status on success
      */
-    public function updateStatus($experiment, $status, $userid)
+    public function updateStatus($status)
     {
         $sql = "UPDATE experiments SET status = :status WHERE userid = :userid AND id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':status', $status, PDO::PARAM_INT);
-        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-        $req->bindParam(':id', $experiment, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         if ($req->execute()) {
             // get the color of the status to return and update the css
@@ -109,17 +111,17 @@ class Experiments
      * @throws Exception
      * @return bool
      */
-    public function createLink($link, $experiment, $userid)
+    public function createLink($link)
     {
         // check link is int and experiment is owned by user
         if (!is_pos_int($link) ||
-            !is_owned_by_user($experiment, 'experiments', $userid)) {
+            !is_owned_by_user($this->id, 'experiments', $this->userid)) {
             throw new Exception('Error adding link');
         }
 
         $sql = "INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':item_id', $experiment, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':link_id', $link, PDO::PARAM_INT);
 
         return $req->execute();
@@ -131,7 +133,7 @@ class Experiments
      * @param int $experiment
      * @return array
      */
-    public function readLink($experiment)
+    public function readLink()
     {
         $sql = "SELECT items.id AS itemid,
             experiments_links.id AS linkid,
@@ -143,7 +145,7 @@ class Experiments
             LEFT JOIN items_types ON (items.type = items_types.id)
             WHERE experiments_links.item_id = :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $experiment, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchAll();
@@ -157,11 +159,10 @@ class Experiments
      * @param int $userid used to check we own the experiment
      * @return bool
      */
-    public function destroyLink($link, $experiment, $userid)
+    public function destroyLink($link)
     {
         if (!is_pos_int($link) ||
-            !is_pos_int($experiment) ||
-            !is_owned_by_user($experiment, 'experiments', $userid)) {
+            !is_owned_by_user($this->id, 'experiments', $this->userid)) {
             throw new Exception('Error removing link');
         }
         $sql = "DELETE FROM experiments_links WHERE id= :id";

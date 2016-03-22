@@ -29,13 +29,13 @@ try {
     // VIEW
     } elseif ($_GET['mode'] === 'view') {
 
-        $experimentsView = new \Elabftw\Elabftw\ExperimentsView($_GET['id']);
+        $experimentsView = new \Elabftw\Elabftw\ExperimentsView($_GET['id'], $_SESSION['userid']);
         echo $experimentsView->view();
 
     // EDIT
     } elseif ($_GET['mode'] === 'edit') {
 
-        $experimentsView = new \Elabftw\Elabftw\ExperimentsView($_GET['id']);
+        $experimentsView = new \Elabftw\Elabftw\ExperimentsView($_GET['id'], $_SESSION['userid']);
         echo $experimentsView->edit();
     }
 

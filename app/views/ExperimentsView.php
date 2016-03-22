@@ -54,13 +54,14 @@ class ExperimentsView
      * @param int $id Experiment id from GET[]
      * @throws Exception
      */
-    public function __construct($id)
+    public function __construct($id, $userid)
     {
+        // check ID
         $this->id = Tools::checkId($id);
         if ($this->id === false) {
             throw new Exception(_('The id parameter is not valid!'));
         }
-        $this->experiments = new Experiments();
+        $this->experiments = new Experiments($this->id, $userid);
         $this->status = new Status();
         $this->revisions = new Revisions($this->id, 'experiments');
         $this->comments = new Comments();

@@ -33,8 +33,11 @@ class DatabaseView
     /** the Users class */
     private $users;
 
-    /** revisions class */
+    /** Revisions class */
     private $revisions;
+
+    /** the Status class */
+    private $status;
 
 
     /**
@@ -56,7 +59,7 @@ class DatabaseView
         $this->revisions = new Revisions($this->id, 'items');
 
         // get data of item
-        $this->item = $this->database->read($this->id);
+        $this->item = $this->database->read();
     }
 
     /**

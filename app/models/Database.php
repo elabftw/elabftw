@@ -35,7 +35,10 @@ class Database
      */
     public function __construct($id, $team)
     {
-        $this->id = $id;
+        $this->id = Tools::checkId($id);
+        if ($this->id === false) {
+            throw new Exception(_('The id parameter is not valid!'));
+        }
         $this->team = $team;
 
         $this->pdo = Db::getConnection();
@@ -125,5 +128,4 @@ class Database
 
         return $req->execute();
     }
-
 }

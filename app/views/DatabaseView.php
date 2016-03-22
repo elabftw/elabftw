@@ -231,7 +231,7 @@ class DatabaseView
         $html .= _('Save and go back') . "</button></div></form>";
 
         // revisions
-        $html .= $this->revisions->show();
+        $html .= $this->revisions->showCount();
 
         $html .= "</section>";
 

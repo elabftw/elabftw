@@ -10,6 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
+use \Exception;
+
 /**
  * Create a csv, zip or pdf file
  *

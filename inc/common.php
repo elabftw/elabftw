@@ -9,6 +9,7 @@
  */
 namespace Elabftw\Elabftw;
 
+use \Exception;
 
 /**
  * This must be included on top of every page.

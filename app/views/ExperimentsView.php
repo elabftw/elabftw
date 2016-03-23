@@ -314,6 +314,8 @@ class ExperimentsView
 
     /**
      * Show info on timestamp
+     *
+     * @return string
      */
     private function showTimestamp()
     {

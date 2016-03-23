@@ -174,7 +174,7 @@ class Revisions
             throw new Exception(_('You cannot restore a revision of a locked item!'));
         }
 
-        $revision = $this->read($revId);
+        $revision = $this->readRev($revId);
         if ($revision['userid'] != $_SESSION['userid']) {
             throw new Exception(_('This section is out of your reach.'));
         }

@@ -17,6 +17,10 @@ use \Exception;
  */
 class Entity
 {
+
+    /** id of our entity */
+    protected $id;
+
     /**
      * Check and set id
      *

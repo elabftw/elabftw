@@ -9,6 +9,7 @@
  */
 namespace Elabftw\Elabftw;
 
+use \Exception;
 use \PDO;
 use \Swift_Mailer;
 use \Swift_SmtpTransport;

@@ -30,9 +30,6 @@ class DatabaseView
     /** the Uploads class */
     private $uploads;
 
-    /** the Users class */
-    private $users;
-
     /** Revisions class */
     private $revisions;
 
@@ -44,7 +41,6 @@ class DatabaseView
      * Need an ID of an item
      *
      * @param Database $database
-     * @param int|null $id
      * @throws Exception
      */
     public function __construct(Database $database)

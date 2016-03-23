@@ -61,7 +61,7 @@ class ItemsTypes extends Panel
         $req->bindParam(':name', $name);
         $req->bindParam(':bgcolor', $color);
         $req->bindParam(':template', $template);
-        $req->bindParam(':team', $team, \PDO::PARAM_INT);
+        $req->bindParam(':team', $this->team, \PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -108,8 +108,8 @@ class ItemsTypes extends Panel
         $req->bindParam(':name', $name);
         $req->bindParam(':bgcolor', $color);
         $req->bindParam(':template', $template);
-        $req->bindParam(':team', $team, \PDO::PARAM_INT);
-        $req->bindParam(':id', $id, \PDO::PARAM_INT);
+        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
 
         return $req->execute();
     }

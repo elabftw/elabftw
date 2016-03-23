@@ -7,12 +7,19 @@
  * @see http://www.elabftw.net Official website
  * @license AGPL-3.0
  */
+namespace Elabftw\Elabftw;
+
+use \PDO;
+use \Swift_Mailer;
+use \Swift_SmtpTransport;
+use \Swift_MailTransport;
+use \Swift_SendmailTransport;
 
 /**
  * This file holds global functions available everywhere.
  *
+ * @deprecated
  */
-use \Elabftw\Elabftw\Tools as Tools;
 
 /**
  * Return the date as YYYYMMDD format.
@@ -66,21 +73,6 @@ function make_thumb($src, $ext, $dest, $desired_width)
 
     // create the physical thumbnail image to its destination (85% quality)
     imagejpeg($virtual_image, $dest, 85);
-}
-
-/**
- * Check in input is a positive integer.
- *
- * @param integer $int The int to check
- * @return bool Return false if it's not an int
- */
-function is_pos_int($int)
-{
-    $filter_options = array(
-        'options' => array(
-            'min_range' => 1
-        ));
-    return filter_var($int, FILTER_VALIDATE_INT, $filter_options);
 }
 
 /**
@@ -218,7 +210,7 @@ function show_tags($item_id, $table)
  */
 function processTimestampPost()
 {
-    $crypto = new \Elabftw\Elabftw\CryptoWrapper();
+    $crypto = new CryptoWrapper();
 
     if (isset($_POST['stampprovider'])) {
         $stampprovider = filter_var($_POST['stampprovider'], FILTER_VALIDATE_URL);
@@ -449,7 +441,7 @@ function check_date($input)
     if ((isset($input))
         && (!empty($input))
         && ((strlen($input) == '8'))
-        && is_pos_int($input)) {
+        && Tools::checkId($input)) {
         // Check if day/month are good
         $datemonth = substr($input, 4, 2);
         $dateday = substr($input, 6, 2);
@@ -495,7 +487,7 @@ function check_visibility($input)
         'team',
         'user');
 
-    if (in_array($input, $valid_visibility) || is_pos_int($input)) {
+    if (in_array($input, $valid_visibility) || Tools::checkId($input)) {
         return $input;
     }
     // default is team
@@ -739,7 +731,7 @@ function getMailer()
     // Choose mail transport method; either smtp or sendmail
     $mail_method = get_config('mail_method');
 
-    $crypto = new \Elabftw\Elabftw\CryptoWrapper();
+    $crypto = new CryptoWrapper();
 
     switch ($mail_method) {
 

@@ -7,9 +7,11 @@
  * @see http://www.elabftw.net Official website
  * @license AGPL-3.0
  */
-use \Elabftw\Elabftw\Tools as Tools;
+namespace Elabftw\Elabftw;
 
-$itemsTypes = new \Elabftw\Elabftw\ItemsTypes($_SESSION['team_id']);
+use \PDO;
+
+$itemsTypes = new ItemsTypes($_SESSION['team_id']);
 $itemsTypesArr = $itemsTypes->read();
 
 $results_arr = array();
@@ -97,7 +99,7 @@ if (isset($_GET['sort'])) {
 }
 
 if (isset($_GET['filter'])) {
-    if ($_GET['filter'] != '' && is_pos_int($_GET['filter'])) {
+    if ($_GET['filter'] != '' && Tools::checkId($_GET['filter'])) {
         $filter = "AND ty.id = '" . $_GET['filter'] . "' ";
     }
 }

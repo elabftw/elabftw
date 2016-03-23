@@ -26,13 +26,15 @@
 /* star-rating.php - for items rating
  * called from post request from editDB
  */
+namespace Elabftw\Elabftw;
+
 
 require_once '../inc/common.php';
 
 if (isset($_POST['star']) &&
     isset($_POST['item_id']) &&
-    is_pos_int($_POST['star']) &&
-    is_pos_int($_POST['item_id'])) {
+    Tools::checkId($_POST['star']) &&
+    Tools::checkId($_POST['item_id'])) {
 
     $sql = 'UPDATE items SET rating = :rating WHERE id = :id';
     $req = $pdo->prepare($sql);

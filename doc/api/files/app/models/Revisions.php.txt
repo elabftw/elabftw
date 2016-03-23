@@ -35,10 +35,12 @@ class Revisions
      */
     public function __construct($id, $type)
     {
-        $this->id = Tools::checkId($id);
+        $this->id = $id;
+        /*
         if ($this->id === false) {
             throw new Exception(_('The id parameter is not valid!'));
         }
+         */
         $this->pdo = Db::getConnection();
         $this->type = $type;
     }

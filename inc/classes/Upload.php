@@ -105,7 +105,7 @@ class Upload extends Make
      */
     private function checkItemId($itemId)
     {
-        if (is_pos_int($itemId)) {
+        if (Tools::checkId($itemId)) {
             $this->itemId = $itemId;
         } else {
             throw new Exception('Bad item id');

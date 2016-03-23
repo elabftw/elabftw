@@ -11,6 +11,8 @@
 
 namespace Elabftw\Elabftw;
 
+use \PDO;
+
 /**
  * Administrate elabftw install
  *

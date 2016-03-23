@@ -23,6 +23,8 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+namespace Elabftw\Elabftw;
+
 /* sysconfig-exec.php - for the sysadmin */
 require_once '../inc/common.php';
 
@@ -31,7 +33,7 @@ if ($_SESSION['is_sysadmin'] != 1 || $_SERVER['REQUEST_METHOD'] != 'POST') {
     die(_('This section is out of your reach.'));
 }
 
-$crypto = new \Elabftw\Elabftw\CryptoWrapper();
+$crypto = new CryptoWrapper();
 
 $msg_arr = array();
 $errflag = false;
@@ -150,7 +152,7 @@ if (isset($_POST['mail_method'])) {
     } else {
         $smtp_encryption = '';
     }
-    if (isset($_POST['smtp_port']) && is_pos_int($_POST['smtp_port'])) {
+    if (isset($_POST['smtp_port']) && Tools::checkId($_POST['smtp_port'])) {
         $smtp_port = $_POST['smtp_port'];
     } else {
         $smtp_port = '';

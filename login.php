@@ -8,12 +8,15 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+namespace Elabftw\Elabftw;
+
+use \PDO;
 
 /**
  * Login page
  *
  */
-use \Elabftw\Elabftw\Tools as Tools;
+
 
 require_once 'inc/common.php';
 $page_title = _('Login');
@@ -25,9 +28,10 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     exit;
 }
 
+
 require_once 'inc/head.php';
 
-$formKey = new \Elabftw\Elabftw\FormKey();
+$formKey = new FormKey();
 
 
 // if we are not in https, die saying we work only in https

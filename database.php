@@ -33,13 +33,13 @@ try {
     // VIEW
     } elseif ($_GET['mode'] === 'view') {
 
-        $databaseView = new DatabaseView(new Database($_SESSION['team_id']), $_GET['id']);
+        $databaseView = new DatabaseView(new Database($_SESSION['team_id'], $_GET['id']));
         echo $databaseView->view();
 
     // EDIT
     } elseif ($_GET['mode'] === 'edit') {
 
-        $databaseView = new DatabaseView(new Database($_SESSION['team_id']), $_GET['id']);
+        $databaseView = new DatabaseView(new Database($_SESSION['team_id'], $_GET['id']));
         echo $databaseView->edit();
     }
 

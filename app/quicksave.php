@@ -20,7 +20,7 @@
 require_once '../inc/common.php';
 
 // check id
-if (is_pos_int($_POST['id'])) {
+if (Tools::checkId($_POST['id'])) {
     $id = $_POST['id'];
 } else {
     die(_("The id parameter is not valid!"));

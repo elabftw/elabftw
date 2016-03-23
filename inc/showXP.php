@@ -8,9 +8,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-use \Elabftw\Elabftw\Tools as Tools;
 
-$status = new \Elabftw\Elabftw\Status();
+namespace Elabftw\Elabftw;
+
+use \PDO;
+
+$status = new Status();
 $statusArr = $status->read($_SESSION['team_id']);
 
 $results_arr = array();
@@ -106,7 +109,7 @@ if (isset($_GET['sort'])) {
 }
 
 if (isset($_GET['filter'])) {
-    if ($_GET['filter'] != '' && is_pos_int($_GET['filter'])) {
+    if ($_GET['filter'] != '' && Tools::checkId($_GET['filter'])) {
         $filter = "AND st.id = '" . $_GET['filter'] . "' ";
     }
 }
@@ -121,7 +124,7 @@ if (isset($_GET['q'])) { // if there is a query
     $results_arr = search_item('xp', $query, $_SESSION['userid']);
 
 // RELATED
-} elseif (isset($_GET['related']) && is_pos_int($_GET['related'])) {// search for related experiments to DB item id
+} elseif (isset($_GET['related']) && Tools::checkId($_GET['related'])) {// search for related experiments to DB item id
     $search_type = 'related';
     $item_id = $_GET['related'];
     // search in title date and body

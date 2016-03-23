@@ -41,7 +41,7 @@ abstract class Import
      */
     protected function getTarget()
     {
-        if (isset($_COOKIE['itemType']) && is_pos_int($_COOKIE['itemType'])) {
+        if (isset($_COOKIE['itemType']) && Tools::checkId($_COOKIE['itemType'])) {
             return $_COOKIE['itemType'];
         }
         throw new Exception('No cookies found. Import aborted.');

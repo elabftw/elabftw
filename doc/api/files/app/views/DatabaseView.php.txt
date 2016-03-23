@@ -47,12 +47,12 @@ class DatabaseView
      * @param int|null $id
      * @throws Exception
      */
-    public function __construct(Database $database, $id = null)
+    public function __construct(Database $database)
     {
         $this->database = $database;
+
         $this->status = new Status();
         $this->uploads = new Uploads();
-        $this->users = new Users();
         $this->revisions = new Revisions($this->database->id, 'items');
     }
 

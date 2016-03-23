@@ -23,6 +23,11 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+namespace Elabftw\Elabftw;
+
+use \PDO;
+use \Swift_Message;
+
 require_once '../inc/common.php';
 
 // TODO remove completely username

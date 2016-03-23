@@ -8,12 +8,14 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+namespace Elabftw\Elabftw;
+
+use \PDO;
 
 /**
  * The search page
  *
  */
-use \Elabftw\Elabftw\Tools as Tools;
 
 require_once 'inc/common.php';
 $page_title = _('Search');
@@ -80,7 +82,7 @@ $search_type = '';
                     $req = $pdo->prepare($sql);
                     // we want to show the tags of the selected person in 'search in' dropdown
                     // so if there is a owner parameter, use it to select tags
-                    if (isset($_GET['owner']) && is_pos_int($_GET['owner'])) {
+                    if (isset($_GET['owner']) && Tools::checkId($_GET['owner'])) {
                         $userid = $_GET['owner'];
                     } else {
                         $userid = $_SESSION['userid'];
@@ -335,7 +337,7 @@ if (isset($_GET)) {
     }
 
     // STATUS
-    if (isset($_GET['status']) && !empty($_GET['status']) && is_pos_int($_GET['status'])) {
+    if (isset($_GET['status']) && !empty($_GET['status']) && Tools::checkId($_GET['status'])) {
         $status = $_GET['status'];
     } else {
         $status = '';
@@ -353,7 +355,7 @@ if (isset($_GET)) {
     }
 
     // OWNER
-    if (isset($_GET['owner']) && !empty($_GET['owner']) && is_pos_int($_GET['owner'])) {
+    if (isset($_GET['owner']) && !empty($_GET['owner']) && Tools::checkId($_GET['owner'])) {
         $owner_search = true;
         $owner = $_GET['owner'];
     } else {
@@ -473,7 +475,7 @@ if (isset($_GET)) {
             $search_type = 'experiments';
 
         // DATABASE SEARCH
-        } elseif (is_pos_int($_GET['type']) || $_GET['type'] === 'database') {
+        } elseif (Tools::checkId($_GET['type']) || $_GET['type'] === 'database') {
             // we want only stuff from our team
             $sqlTeam = " AND i.team = " . $_SESSION['team_id'];
 

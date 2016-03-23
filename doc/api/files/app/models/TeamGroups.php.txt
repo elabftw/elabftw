@@ -119,7 +119,7 @@ class TeamGroups extends Panel
             throw new Exception('Only admin can access this!');
         }
         $idArr = explode('_', $id);
-        if ($idArr[0] === 'teamgroup' && is_pos_int($idArr[1])) {
+        if ($idArr[0] === 'teamgroup' && Tools::checkId($idArr[1])) {
             $sql = "UPDATE team_groups SET name = :name WHERE id = :id AND team = :team";
             $req = $this->pdo->prepare($sql);
             $req->bindParam(':name', $name);

@@ -258,7 +258,7 @@ class ExperimentsView
      */
     private function getVisGroupName()
     {
-        if (is_pos_int($this->experiment['visibility'])) {
+        if (Tools::checkId($this->experiment['visibility'])) {
             return $this->teamGroups->readName($this->experiment['visibility']);
         }
         return $this->experiment['visibility'];
@@ -278,7 +278,7 @@ class ExperimentsView
 
                 throw new Exception(_("<strong>Access forbidden:</strong> the visibility setting of this experiment is set to 'owner only'."));
 
-            } elseif (is_pos_int($this->experiment['visibility'])) {
+            } elseif (Tools::checkId($this->experiment['visibility'])) {
                 // the visibility of this experiment is set to a group
                 // we must check if current user is in this group
                 if (!$this->teamGroups->isInTeamGroup($_SESSION['userid'], $this->experiment['visibility'])) {

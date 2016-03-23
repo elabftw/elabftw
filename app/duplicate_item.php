@@ -29,7 +29,7 @@ $msg_arr = array();
 $creator = new \Elabftw\Elabftw\Create();
 
 // Check ID
-if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
+if (isset($_GET['id']) && !empty($_GET['id']) && Tools::checkId($_GET['id'])) {
     $id = $_GET['id'];
 } else {
     die(_("The id parameter is not valid!"));
@@ -43,7 +43,7 @@ if ($_GET['type'] === 'exp') {
     die(_("The type parameter is not valid."));
 }
 
-if (is_pos_int($new_id)) {
+if (Tools::checkId($new_id)) {
     if ($_GET['type'] === 'exp') {
         $msg_arr[] = _('Experiment successfully duplicated.');
         $_SESSION['ok'] = $msg_arr;

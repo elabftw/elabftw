@@ -99,7 +99,7 @@ class MakePdf extends Make
      */
     private function validateId()
     {
-        if (!is_pos_int($this->id)) {
+        if (!Tools::checkId($this->id)) {
             throw new Exception('Bad id!');
         }
     }

@@ -286,8 +286,8 @@ class MakeZip extends Make
     {
         $this->idArr = explode(" ", $this->idList);
         foreach ($this->idArr as $id) {
-            if (!is_pos_int($id)) {
-                throw new Exception('Bad id.');
+            if (!Tools::checkId($id)) {
+                throw new Exception('The id parameter is invalid!');
             }
             $this->addToZip($id);
         }

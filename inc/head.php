@@ -7,6 +7,8 @@
  * @see http://www.elabftw.net Official website
  * @license AGPL-3.0
  */
+namespace Elabftw\Elabftw;
+
 // Random title
 $ftw_arr = array();
 // Lots of 'For The World' so the other ones appear more rarely

@@ -23,10 +23,12 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+namespace Elabftw\Elabftw;
+
 require_once '../inc/common.php';
 
 // ID
-if (isset($_GET['id']) && !empty($_GET['id']) && is_pos_int($_GET['id'])) {
+if (isset($_GET['id']) && !empty($_GET['id']) && Tools::checkId($_GET['id'])) {
     $id = $_GET['id'];
 } else {
     display_message('ko', _("The id parameter is not valid!"));

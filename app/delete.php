@@ -30,7 +30,7 @@ use \Elabftw\Elabftw\Tools as Tools;
 require_once '../inc/common.php';
 
 // Check id is valid and assign it to $id
-if (isset($_POST['id']) && is_pos_int($_POST['id'])) {
+if (isset($_POST['id']) && Tools::checkId($_POST['id'])) {
     $id = $_POST['id'];
 } else {
     die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
@@ -195,7 +195,7 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
 
         // DELETE TAGS
         case 'exptag':
-            if (is_pos_int($_POST['item_id'])) {
+            if (Tools::checkId($_POST['item_id'])) {
                 $item_id = $_POST['item_id'];
             } else {
                 die();

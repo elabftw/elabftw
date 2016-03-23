@@ -41,26 +41,6 @@ class Database extends Entity
         if (!is_null($id)) {
             $this->setId($id);
         }
-
-    }
-
-    /**
-     * Check and set id
-     *
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        if (Tools::checkId($id) === false) {
-            throw new Exception(_('The id parameter is not valid!'));
-        }
-        $this->id = $id;
-
-        // permission check
-        // you can only see items from your team
-        if (!$this->isInTeam()) {
-            throw new Exception(_('This section is out of your reach.'));
-        }
     }
 
     /**
@@ -119,6 +99,12 @@ class Database extends Entity
      */
     public function read()
     {
+        // permission check
+        // you can only see items from your team
+        if (!$this->isInTeam()) {
+            throw new Exception(_('This section is out of your reach.'));
+        }
+
         $sql = "SELECT items.id AS itemid,
             experiments_links.id AS linkid,
             experiments_links.*,
@@ -153,6 +139,11 @@ class Database extends Entity
      */
     public function update($title, $date, $body, $userid)
     {
+        // permission check
+        // you can only see items from your team
+        if (!$this->isInTeam()) {
+            throw new Exception(_('This section is out of your reach.'));
+        }
         $title = check_title($title);
         $date = check_date($date);
         $body = check_body($body);

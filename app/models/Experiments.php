@@ -46,19 +46,6 @@ class Experiments extends Entity
     }
 
     /**
-     * Check and set id
-     *
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        if (Tools::checkId($id) === false) {
-            throw new Exception(_('The id parameter is not valid!'));
-        }
-        $this->id = $id;
-    }
-
-    /**
      * Create an experiment
      *
      * @param int|null $tpl the template on which to base the experiment
@@ -225,9 +212,8 @@ class Experiments extends Entity
         if ($link === false) {
             throw new Exception('The id parameter is invalid!');
         }
-        if (!is_pos_int($link) ||
-            !is_owned_by_user($this->id, 'experiments', $this->userid)) {
-            throw new Exception('Error adding link');
+        if (!is_owned_by_user($this->id, 'experiments', $this->userid)) {
+            throw new Exception('This section is out of your reach!');
         }
 
         $sql = "INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)";
@@ -272,7 +258,7 @@ class Experiments extends Entity
      */
     public function destroyLink($link)
     {
-        if (!is_pos_int($link) ||
+        if (!Tools::checkId($link) ||
             !is_owned_by_user($this->id, 'experiments', $this->userid)) {
             throw new Exception('Error removing link');
         }
@@ -281,17 +267,6 @@ class Experiments extends Entity
         $req->bindParam(':id', $link, PDO::PARAM_INT);
 
         return $req->execute();
-    }
-
-    /**
-     * Check if we have a template to load for experiments
-     *
-     * @param int $tpl The template ID
-     * @return bool
-     */
-    private function checkTpl($tpl)
-    {
-        return is_pos_int($tpl);
     }
 
     /**

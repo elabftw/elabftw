@@ -8,6 +8,9 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+namespace Elabftw\Elabftw;
+
+use \PDO;
 
 /**
  * The team page

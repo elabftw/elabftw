@@ -92,7 +92,7 @@ class MakeCsv extends Make
     {
         $this->idArr = explode(" ", $this->idList);
         foreach ($this->idArr as $id) {
-            if (!is_pos_int($id)) {
+            if (!Tools::checkId($id)) {
                 throw new Exception('Bad id.');
             }
             $this->checkVisibility($id);

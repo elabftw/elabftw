@@ -7,6 +7,8 @@
  * @see http://www.elabftw.net Official website
  * @license AGPL-3.0
  */
+namespace Elabftw\Elabftw;
+
 
 /**
  * This must be included on top of every page.
@@ -39,7 +41,7 @@ require_once ELAB_ROOT . 'vendor/autoload.php';
 
 // SQL CONNECT
 try {
-    $pdo = \Elabftw\Elabftw\Db::getConnection();
+    $pdo = Db::getConnection();
 } catch (Exception $e) {
     die('Error connecting to the database : ' . $e->getMessage());
 }

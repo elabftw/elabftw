@@ -43,7 +43,8 @@ class Users extends Auth
         if ($userid === false) {
             throw new Exception(_('The id parameter is not valid!'));
         }
-        // only admin can edit users
+
+        // permission check
         if (!isset($_SESSION['is_admin'])) {
             throw new Exception(_('This section is out of your reach.'));
         }

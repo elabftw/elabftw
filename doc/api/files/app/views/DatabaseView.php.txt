@@ -191,8 +191,9 @@ class DatabaseView
         $html .= displayTags('items', $this->id);
 
         // main form
-        $html .= "<form method='post' action='app/editDB-exec.php' enctype='multipart/form-data'>";
-        $html .= "<input name='item_id' type='hidden' value='" . $this->id . "' />";
+        $html .= "<form method='post' action='app/controllers/DatabaseController.php' enctype='multipart/form-data'>";
+        $html .= "<input name='databaseUpdate' type='hidden' value='true' />";
+        $html .= "<input name='databaseId' type='hidden' value='" . $this->id . "' />";
 
         // date
         $html .= "<div class='row'>";
@@ -200,7 +201,7 @@ class DatabaseView
         $html .= "<img src='img/calendar.png' class='bot5px' title='date' alt='Date :' />";
         $html .= "<label for='datepicker'>" . _('Date') . "</label>";
         // TODO if firefox has support for it: type = date
-        $html .= "<input name='date' id='datepicker' size='8' type='text' value='" . $itemArr['date'] . "' />";
+        $html .= "<input name='databaseUpdateDate' id='datepicker' size='8' type='text' value='" . $itemArr['date'] . "' />";
         $html .= "</div></div>";
 
         // star rating
@@ -216,11 +217,11 @@ class DatabaseView
 
         // title
         $html .= "<h4>" . _('Title') . "</h4>";
-        $html .= "<input id='title_input' name='title' rows='1' value='" . stripslashes($itemArr['title']) . "' required />";
+        $html .= "<input id='title_input' name='databaseUpdateTitle' rows='1' value='" . stripslashes($itemArr['title']) . "' required />";
 
         // body
         $html .= "<h4>" . _('Infos') . "</h4>";
-        $html .= "<textarea class='mceditable' name='body' rows='15' cols='80'>";
+        $html .= "<textarea class='mceditable' name='databaseUpdateBody' rows='15' cols='80'>";
         $html .= stripslashes($itemArr['body']);
         $html .= "</textarea>";
 
@@ -230,7 +231,7 @@ class DatabaseView
         $html .= _('Save and go back') . "</button></div></form>";
 
         // revisions
-        $html .= $this->revisions->show();
+        $html .= $this->revisions->showCount();
 
         $html .= "</section>";
 

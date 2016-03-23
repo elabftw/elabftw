@@ -215,7 +215,7 @@ class ExperimentsView
             </div></form>";
 
         // REVISIONS
-        $html .= $this->revisions->show();
+        $html .= $this->revisions->showCount();
 
         // LINKS
         $html .= "<section>

@@ -90,7 +90,7 @@ class Revisions
      * Output HTML for displaying revisions
      *
      */
-    public function show()
+    public function showCount()
     {
         $html = '';
         $count = $this->readCount();
@@ -98,11 +98,85 @@ class Revisions
         if ($count > 0) {
             $html .= "<span class='align_right'>";
             $html .= $count . " " . ngettext('revision available.', 'revisions available.', $count);
-            $html .= " <a href='revision.php?type=" . $this->type . "&item_id=" . $this->id . "'>" . _('Show history') . "</a>";
+            $html .= " <a href='revisions.php?type=" . $this->type . "&item_id=" . $this->id . "'>" . _('Show history') . "</a>";
             $html .= "</span>";
         }
 
         return $html;
+    }
+
+    /**
+     * Read all revisions for an item
+     *
+     */
+    public function read()
+    {
+        $sql = "SELECT * FROM " . $this->type . "_revisions WHERE item_id = :item_id AND userid = :userid ORDER BY savedate DESC";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':item_id', $this->id);
+        $req->bindParam(':userid', $_SESSION['userid']);
+        $req->execute();
+
+        return $req->fetchAll();
+    }
+
+    /**
+     * Get the body of a revision
+     *
+     */
+    private function readRev($revId)
+    {
+        $sql = "SELECT body, userid FROM " . $this->type . "_revisions WHERE id = :rev_id AND userid = :userid";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':rev_id', $revId, PDO::PARAM_INT);
+        $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetch();
+    }
+
+    /**
+     * Check if item is locked before restoring it
+     *
+     * TODO this should be part of experiment/database model
+     */
+    private function isLocked()
+    {
+        $sql = "SELECT locked FROM " . $this->type . " WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->execute();
+        $locked = $req->fetch();
+
+        if ($locked['locked'] == 1) {
+            throw new Exception(_('You cannot restore a revision of a locked item!'));
+        }
+    }
+
+    /**
+     * Restore a revision
+     *
+     * @param int $revId The id of the revision we want to restore
+     */
+    public function restore($revId)
+    {
+        $revId = Tools::checkId($revId);
+        if ($revId === false) {
+            throw new Exception(_('The id parameter is not valid!'));
+        }
+        // check for lock
+        $this->isLocked();
+
+        $revision = $this->read($revId);
+        if ($revision['userid'] != $_SESSION['userid']) {
+            throw new Exception(_('This section is out of your reach.'));
+        }
+
+        $sql = "UPDATE " . $this->type . " SET body = :body WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':body', $revision['body']);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+
+        return $req->execute();
     }
 }
 

@@ -140,7 +140,8 @@ class Users extends Auth
             throw new Exception(_("Wrong password!"));
         }
         // check the user is in our team and also get the userid
-        $userid = $this->emailInTeam($email, $_SESSION['team_id']);
+        $useridArr = $this->emailInTeam($email, $_SESSION['team_id']);
+        $userid = $useridArr['userid'];
 
         if (!$userid) {
             throw new Exception(_('No user with this email or user not in your team'));

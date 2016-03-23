@@ -156,7 +156,7 @@ if (!empty($team['stamppass'])) {
     foreach($usersArr as $users) {
         ?>
             <li class='list-group-item'>
-                <form method='post' action='app/controllers/AdminController.php'>
+                <form method='post' action='app/controllers/UsersController.php'>
                     <input type='hidden' value='true' name='usersUpdate' />
                     <input type='hidden' value='<?php echo $users['userid']; ?>' name='usersUpdateId' />
                     <ul class='list-inline'>

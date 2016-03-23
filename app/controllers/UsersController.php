@@ -18,6 +18,24 @@ $formKey = new \Elabftw\Elabftw\FormKey();
 try {
     $users = new \Elabftw\Elabftw\Users();
 
+    // UPDATE USERS
+    if (isset($_POST['usersUpdate'])) {
+        $tab = 2;
+
+        if ($users->update(
+            $_POST['usersUpdateId'],
+            $_POST['usersUpdateFirstname'],
+            $_POST['usersUpdateLastname'],
+            $_POST['usersUpdateUsername'],
+            $_POST['usersUpdateEmail'],
+            $_POST['usersUpdateValidated'],
+            $_POST['usersUpdateUsergroup'],
+            $_POST['usersUpdatePassword']
+        )) {
+            $_SESSION['ok'][] =  _('Configuration updated successfully.');
+        }
+    }
+
     // DESTROY
     if (isset($_POST['formkey'])
         && $formKey->validate()
@@ -34,8 +52,7 @@ try {
     }
 } catch (Exception $e) {
     dblog('Error', $_SESSION['userid'], $e->getMessage());
-    $msg_arr[] = $e->getMessage();
-    $_SESSION['ko'] = $msg_arr;
+    $_SESSION['ko'][] = $e->getMessage();
 } finally {
     header('Location: ../../admin.php?tab=' . $tab);
 }

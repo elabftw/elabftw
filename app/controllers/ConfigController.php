@@ -1,6 +1,6 @@
 <?php
 /**
- * app/controllers/SysconfigController.php
+ * app/controllers/ConfigController.php
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -18,11 +18,9 @@ namespace Elabftw\Elabftw;
 require_once '../../inc/common.php';
 
 try {
-    $sysconfig = new Sysconfig();
-    // the constructor will check for sysadmin rights
     $teams = new Teams();
 
-    // CREATE
+    // CREATE TEAM
     if (isset($_POST['teamsCreate'])) {
         if ($teams->create($_POST['teamsName'])) {
             echo '1';
@@ -31,7 +29,7 @@ try {
         }
     }
 
-    // UPDATE
+    // UPDATE TEAM NAME
     if (isset($_POST['teamsUpdate'])) {
         if ($teams->updateName($_POST['teamsUpdateId'], $_POST['teamsUpdateName'])) {
             echo '1';
@@ -40,7 +38,7 @@ try {
         }
     }
 
-    // DESTROY
+    // DESTROY TEAM
     if (isset($_POST['teamsDestroy'])) {
         if ($teams->destroy($_POST['teamsDestroyId'])) {
             echo '1';
@@ -49,8 +47,19 @@ try {
         }
     }
 
+    // UPDATE TEAM
+    if (isset($_POST['teamsUpdateFull'])) {
+        if ($teams->update($_POST)) {
+            $_SESSION['ok'][] = _('Configuration updated successfully!');
+        } else {
+            $_SESSION['ko'][] = _('An error occurred!');
+        }
+        header('Location: ../../admin.php?tab=1');
+    }
+
     // SEND TEST EMAIL
     if (isset($_POST['testemailSend'])) {
+        $sysconfig = new Sysconfig();
         if ($sysconfig->testemailSend($_POST['testemailEmail'])) {
             echo '1';
         } else {

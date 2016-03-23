@@ -29,9 +29,6 @@ class Teams extends Panel
     public function __construct()
     {
         $this->pdo = Db::getConnection();
-        if (!$this->isSysAdmin()) {
-            throw new Exception('Only admin can access this!');
-        }
     }
 
     /**
@@ -42,6 +39,9 @@ class Teams extends Panel
      */
     public function create($name)
     {
+        if (!$this->isSysAdmin()) {
+            throw new Exception('Only admin can access this!');
+        }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
 
         // add to the teams table
@@ -92,11 +92,62 @@ class Teams extends Panel
      */
     public function read()
     {
+        if (!$this->isSysAdmin()) {
+            throw new Exception('Only admin can access this!');
+        }
         $sql = "SELECT * FROM teams ORDER BY datetime DESC";
         $req = $this->pdo->prepare($sql);
         $req->execute();
 
         return $req->fetchAll();
+    }
+
+    /**
+     * Update team
+     *
+     */
+    public function update($params)
+    {
+
+        $post_stamp = processTimestampPost();
+
+        // CHECKS
+        if ($params['deletable_xp'] == 1) {
+            $deletable_xp = 1;
+        } else {
+            $deletable_xp = 0;
+        }
+        if (isset($params['link_name'])) {
+            $link_name = filter_var($_POST['link_name'], FILTER_SANITIZE_STRING);
+        } else {
+            $link_name = 'Documentation';
+        }
+        if (isset($params['link_href'])) {
+            $link_href = filter_var($params['link_href'], FILTER_SANITIZE_STRING);
+        } else {
+            $link_href = 'doc/_build/html/';
+        }
+
+        $sql = "UPDATE teams SET
+            deletable_xp = :deletable_xp,
+            link_name = :link_name,
+            link_href = :link_href,
+            stamplogin = :stamplogin,
+            stamppass = :stamppass,
+            stampprovider = :stampprovider,
+            stampcert = :stampcert
+            WHERE team_id = :team_id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':deletable_xp', $deletable_xp);
+        $req->bindParam(':link_name', $link_name);
+        $req->bindParam(':link_href', $link_href);
+        $req->bindParam(':stamplogin', $post_stamp['stamplogin']);
+        $req->bindParam(':stamppass', $post_stamp['stamppass']);
+        $req->bindParam(':stampprovider', $post_stamp['stampprovider']);
+        $req->bindParam(':stampcert', $post_stamp['stampcert']);
+        $req->bindParam(':team_id', $_SESSION['team_id']);
+
+        return $req->execute();
     }
 
     /**
@@ -108,6 +159,9 @@ class Teams extends Panel
      */
     public function updateName($id, $name)
     {
+        if (!$this->isSysAdmin()) {
+            throw new Exception('Only admin can access this!');
+        }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $sql = "UPDATE teams
             SET team_name = :name
@@ -127,6 +181,9 @@ class Teams extends Panel
      */
     public function destroy($team)
     {
+        if (!$this->isSysAdmin()) {
+            throw new Exception('Only admin can access this!');
+        }
         // check for stats, should be 0
         $count = $this->getStats($team);
 
@@ -166,6 +223,9 @@ class Teams extends Panel
      */
     public function getStats($team = null)
     {
+        if (!$this->isSysAdmin()) {
+            throw new Exception('Only admin can access this!');
+        }
         if (!is_null($team)) {
             $sql = "SELECT
             (SELECT COUNT(users.userid) FROM users WHERE users.team = :team) AS totusers,

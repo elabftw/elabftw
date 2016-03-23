@@ -15,16 +15,20 @@ namespace Elabftw\Elabftw;
  */
 class SysconfigView
 {
-    /** the Logs class */
+    /** instance of Logs */
     private $logs;
+
+    /** instance of Update */
+    public $update;
 
     /**
      * Constructor
      *
      */
-    public function __construct()
+    public function __construct(Update $update, Logs $logs)
     {
-        $this->logs = new Logs();
+        $this->logs = $logs;
+        $this->update = $update;
     }
 
     /**

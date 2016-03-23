@@ -456,7 +456,7 @@ function teamsCreate() {
     // disable button on click
     document.getElementById('teamsCreateButton').disabled = true;
     name = $('#teamsName').val();
-    $.post('app/controllers/SysconfigController.php', {
+    $.post('app/controllers/ConfigController.php', {
         teamsCreate: true,
         teamsName: name
     }).done(function(data) {
@@ -472,7 +472,7 @@ function teamsCreate() {
 function teamsUpdate(id) {
     document.getElementById('teamsUpdateButton_' + id).disabled = true;
     name = $('#team_' + id).val();
-    $.post("app/controllers/SysconfigController.php", {
+    $.post("app/controllers/ConfigController.php", {
         teamsUpdate: true,
         teamsUpdateId : id,
         teamsUpdateName : name
@@ -489,7 +489,7 @@ function teamsUpdate(id) {
 function teamsDestroy(id) {
     // disable button on click
     document.getElementById('teamsDestroyButton_' + id).disabled = true;
-    $.post("app/controllers/SysconfigController.php", {
+    $.post("app/controllers/ConfigController.php", {
         teamsDestroy: true,
         teamsDestroyId: id
     }).done(function(data) {
@@ -509,7 +509,7 @@ function teamsUpdateButtonEnable(id) {
 function teamsArchive(id) {
     // disable button on click
     document.getElementById('teamsArchiveButton_' + id).disabled = true;
-    $.post("app/controllers/SysconfigController.php", {
+    $.post("app/controllers/ConfigController.php", {
         teamsArchive: true,
         teamsArchiveId: id
     }).done(function(data) {
@@ -551,7 +551,7 @@ function testemailSend() {
     // check the email loosely
     if (/\S+@\S+\.\S+/.test(email)) {
         document.getElementById('testemailButton').disabled = true;
-        $.post('app/controllers/SysconfigController.php', {
+        $.post('app/controllers/ConfigController.php', {
             testemailSend: true,
             testemailEmail: email
         }).done(function(data) {

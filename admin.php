@@ -99,7 +99,8 @@ if (!empty($team['stamppass'])) {
 
 <h3><?php echo _('Configure your team'); ?></h3>
 <div class='box'>
-    <form method='post' action='app/admin-exec.php' autocomplete='off'>
+    <form method='post' action='app/controllers/ConfigController.php' autocomplete='off'>
+        <input type='hidden' value='true' name='teamsUpdateFull' />
         <p>
         <label for='deletable_xp'><?php echo _('Users can delete experiments:'); ?></label>
         <select name='deletable_xp' id='deletable_xp'>

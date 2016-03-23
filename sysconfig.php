@@ -9,13 +9,13 @@
  * @package elabftw
  */
 
+namespace Elabftw\Elabftw;
+
 /**
  * Administrate elabftw install
  *
  */
 require_once 'inc/common.php';
-
-use \Elabftw\Elabftw\Tools as Tools;
 
 if ($_SESSION['is_sysadmin'] != 1) {
     die(_('This section is out of your reach.'));
@@ -26,11 +26,10 @@ $selected_menu = null;
 require_once 'inc/head.php';
 
 try {
-    $formKey = new \Elabftw\Elabftw\FormKey();
-    $crypto = new \Elabftw\Elabftw\CryptoWrapper();
-    $teamsView = new \Elabftw\Elabftw\TeamsView();
-    $update = new \Elabftw\Elabftw\Update();
-    $sysconfigView = new \Elabftw\Elabftw\SysconfigView();
+    $formKey = new FormKey();
+    $crypto = new CryptoWrapper();
+    $teamsView = new TeamsView();
+    $sysconfigView = new SysconfigView(new Update(), new Logs());
 } catch (Exception $e) {
     die($e->getMessage());
 }
@@ -55,23 +54,23 @@ if (strlen($smtppass) > 0) {
 
 
 try {
-    $update->getUpdatesIni();
+    $sysconfigView->update->getUpdatesIni();
 } catch (Exception $e) {
     display_message('ko', $e->getMessage());
 }
 
-if ($update->success === true) {
+if ($sysconfigView->update->success === true) {
     // display current and latest version
-    echo "<br><p>" . _('Installed version:') . " " . $update::INSTALLED_VERSION . " ";
+    echo "<br><p>" . _('Installed version:') . " " . $sysconfigView->update::INSTALLED_VERSION . " ";
     // show a little green check if we have latest version
-    if (!$update->updateIsAvailable()) {
+    if (!$sysconfigView->update->updateIsAvailable()) {
         echo "<img src='img/check.png' width='16px' length='16px' title='latest' style='position:relative;bottom:8px' alt='OK' />";
     }
     // display latest version
-    echo "<br>" . _('Latest version:') . " " . $update->getLatestVersion() . "</p>";
+    echo "<br>" . _('Latest version:') . " " . $sysconfigView->update->getLatestVersion() . "</p>";
 
     // if we don't have the latest version, show button redirecting to wiki
-    if ($update->updateIsAvailable()) {
+    if ($sysconfigView->update->updateIsAvailable()) {
         $message = _('A new version is available!') . " <a href='doc/_build/html/how-to-update.html'>
             <button class='button'>Update elabftw</button></a>";
         display_message('warning', $message);

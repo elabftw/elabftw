@@ -344,7 +344,7 @@ class ExperimentsView
         $html .=  "<span class='date_view'><img src='img/calendar.png' class='bot5px' title='date' alt='Date :' /> " .
             Tools::formatDate($this->experiment['date']) . "</span><br />
         <a href='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a>
-    <a href='app/duplicate_item.php?id=" . $this->experiment['id'] . "&type=exp'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a>
+    <a href='app/controllers/ExperimentsController.php?experimentsDuplicateId=" . $this->experiment['id'] . "'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a>
     <a href='make.php?what=pdf&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a>
     <a href='make.php?what=zip&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a> ";
 

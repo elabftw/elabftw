@@ -102,9 +102,9 @@ class DatabaseView
         $html .= show_stars($itemArr['rating']);
         // buttons
         $html .=  "<a href='database.php?mode=edit&id=" . $itemArr['itemid'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a> 
-        <a href='app/duplicate_item.php?id=".$itemArr['itemid'] . "&type=db'><img src='img/duplicate.png' title='duplicate item' alt='duplicate' /></a> 
-        <a href='make.php?what=pdf&id=".$itemArr['itemid'] . "&type=items'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a> 
-        <a href='make.php?what=zip&id=".$itemArr['itemid'] . "&type=items'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a>
+        <a href='app/controllers/DatabaseController.php?databaseDuplicateId=" . $itemArr['itemid'] . "'><img src='img/duplicate.png' title='duplicate item' alt='duplicate' /></a> 
+        <a href='make.php?what=pdf&id=" . $itemArr['itemid'] . "&type=items'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a> 
+        <a href='make.php?what=zip&id=" . $itemArr['itemid'] . "&type=items'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a>
         <a href='experiments.php?mode=show&related=".$itemArr['itemid'] . "'><img src='img/link.png' alt='Linked experiments' title='Linked experiments' /></a> ";
         // lock
         if ($itemArr['locked'] == 0) {

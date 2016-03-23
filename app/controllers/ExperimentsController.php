@@ -46,6 +46,14 @@ try {
         }
     }
 
+    // DUPLICATE
+    if (isset($_GET['experimentsDuplicateId'])) {
+        $experiments = new Experiments($_SESSION['userid'], $_GET['experimentsDuplicateId']);
+        $id = $experiments->duplicate();
+        $mode = 'edit';
+        header("location: ../../experiments.php?mode=" . $mode . "&id=" . $id);
+    }
+
     // UPDATE STATUS
     if (isset($_POST['experimentsUpdateStatus'])) {
         $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);

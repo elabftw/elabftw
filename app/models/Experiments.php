@@ -310,4 +310,63 @@ class Experiments extends Entity
         return $date . "-" . sha1(uniqid($date, true));
     }
 
+    /**
+     * Duplicate an experiment.
+     *
+     * @param int $id The id of the experiment to duplicate
+     * @return int Will return the ID of the new item
+     */
+    public function duplicate()
+    {
+        $experiment = $this->read();
+
+        // let's add something at the end of the title to show it's a duplicate
+        // capital i looks good enough
+        $title = $experiment['title'] . ' I';
+
+        $sql = "INSERT INTO experiments(team, title, date, body, status, elabid, visibility, userid)
+            VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
+        $req = $this->pdo->prepare($sql);
+        $req->execute(array(
+            'team' => $_SESSION['team_id'],
+            'title' => $title,
+            'date' => kdate(),
+            'body' => $experiment['body'],
+            'status' => $this->getStatus(),
+            'elabid' => $this->generateElabid(),
+            'visibility' => $experiment['visibility'],
+            'userid' => $_SESSION['userid']));
+        $newId = $this->pdo->lastInsertId();
+
+        $tags = new Tags('experiments');
+        $tags->copyTags($this->id, $newId);
+        $this->copyLinks($this->id, $newId);
+
+        return $newId;
+    }
+
+    /**
+     * Copy the links from one experiment to an other.
+     *
+     * @param int $id The id of the original experiment
+     * @param int $newId The id of the new experiment that will receive the links
+     * @return null
+     */
+    private function copyLinks($id, $newId)
+    {
+        // LINKS
+        $linksql = "SELECT link_id FROM experiments_links WHERE item_id = :id";
+        $linkreq = $this->pdo->prepare($linksql);
+        $linkreq->bindParam(':id', $id);
+        $linkreq->execute();
+
+        while ($links = $linkreq->fetch()) {
+            $sql = "INSERT INTO experiments_links (link_id, item_id) VALUES(:link_id, :item_id)";
+            $req = $this->pdo->prepare($sql);
+            $req->execute(array(
+                'link_id' => $links['link_id'],
+                'item_id' => $newId
+            ));
+        }
+    }
 }

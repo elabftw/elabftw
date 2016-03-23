@@ -47,6 +47,13 @@ try {
         }
     }
 
+    // DUPLICATE
+    if (isset($_GET['databaseDuplicateId'])) {
+        $database = new Database($_SESSION['team_id'], $_GET['databaseDuplicateId']);
+        $id = $database->duplicate();
+        $mode = 'edit';
+    }
+
 } catch (Exception $e) {
     dblog('Error', $_SESSION['userid'], $e->getMessage());
     $_SESSION['ko'][] = $e->getMessage();

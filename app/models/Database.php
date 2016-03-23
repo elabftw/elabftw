@@ -169,4 +169,33 @@ class Database extends Entity
 
         return $req->execute();
     }
+
+    /**
+     * Duplicate an item.
+     *
+     * @param int $id The id of the item to duplicate
+     * @return int $newId The id of the newly created item
+     */
+    public function duplicate()
+    {
+        $item = $this->read();
+
+        $sql = "INSERT INTO items(team, title, date, body, userid, type)
+            VALUES(:team, :title, :date, :body, :userid, :type)";
+        $req = $this->pdo->prepare($sql);
+        $req->execute(array(
+            'team' => $item['team'],
+            'title' => $item['title'],
+            'date' => kdate(),
+            'body' => $item['body'],
+            'userid' => $_SESSION['userid'],
+            'type' => $item['type']
+        ));
+        $newId = $this->pdo->lastInsertId();
+
+        $tags = new Tags('items');
+        $tags->copyTags($this->id, $newId);
+
+        return $newId;
+    }
 }

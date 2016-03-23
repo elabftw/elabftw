@@ -151,10 +151,7 @@ class Revisions
         $req->execute();
         $locked = $req->fetch();
 
-        if ($locked['locked'] == 1) {
-            return true;
-        }
-        return false;
+        return $locked['locked'] == 1;
     }
 
     /**

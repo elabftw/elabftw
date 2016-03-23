@@ -22,7 +22,7 @@ class Experiments
     protected $pdo;
 
     /** id of the experiment */
-    private $id;
+    public $id;
 
     /** current user */
     private $userid;
@@ -155,6 +155,10 @@ class Experiments
     public function createLink($link)
     {
         // check link is int and experiment is owned by user
+        $link = Tools::checkId($link);
+        if ($link === false) {
+            throw new Exception('The id parameter is invalid!');
+        }
         if (!is_pos_int($link) ||
             !is_owned_by_user($this->id, 'experiments', $this->userid)) {
             throw new Exception('Error adding link');

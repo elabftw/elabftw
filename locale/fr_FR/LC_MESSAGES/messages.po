@@ -1530,3 +1530,6 @@ msgstr "Toute l'équipe"
 
 msgid "Space means"
 msgstr "Espace signifie"
+
+msgid "Tag is too short!"
+msgstr "Le tag est trop court!"

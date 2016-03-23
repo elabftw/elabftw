@@ -257,7 +257,8 @@ class DatabaseView
      */
     private function buildEditJs()
     {
-        $tags = new Tags();
+        $tags = new Tags('items');
+
         $html = "<script>
         // DELETE TAG
         function delete_tag(tag_id,item_id){
@@ -273,29 +274,6 @@ class DatabaseView
                 })
             }
             return false;
-        }
-        // ADD TAG
-        function addTagOnEnter(e){ // the argument here is the event (needed to detect which key is pressed)
-            var keynum;
-            if(e.which)
-                { keynum = e.which;}
-            if(keynum == 13){  // if the key that was pressed was Enter (ascii code 13)
-                // get tag
-                var tag = $('#addtaginput').val();
-                // POST request
-                $.post('app/add.php', {
-                    tag: tag,
-                    item_id: " . $this->id . ",
-                    type: 'itemtag'
-                })
-                // reload the tags list
-                .success(function() {
-                    $('#tags_div').load('database.php?mode=edit&id=" . $this->id . " #tags_div');
-            // clear input field
-            $('#addtaginput').val('');
-            return false;
-                })
-            } // end if key is enter
         }
         // STAR RATINGS
         function updateRating(rating) {
@@ -314,12 +292,12 @@ class DatabaseView
         $(document).ready(function() {
             // ADD TAG JS
             // listen keypress, add tag when it's enter
-            $('#addtaginput').keypress(function (e) {
-                addTagOnEnter(e);
+            $('#createTagInput').keypress(function (e) {
+                createTag(e, " . $this->id . ", 'items');
             });
 
             // autocomplete the tags
-            $('#addtaginput').autocomplete({
+            $('#createTagInput').autocomplete({
                 source: [" . $tags->generateTagList('items') . "]
             });
 

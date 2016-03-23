@@ -25,7 +25,7 @@ try {
             $_POST['experimentsUpdateDate'],
             $_POST['experimentsUpdateBody']
         )) {
-        echo 'ok';
+            echo 'ok';
             header("location: ../../experiments.php?mode=view&id=" . $_POST['experimentsId']);
         } else {
             die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
@@ -39,9 +39,7 @@ try {
 
     // UPDATE VISIBILITY
     if (isset($_POST['experimentsUpdateVisibility'])) {
-        if ($experiments->updateVisibility(
-            $_POST['experimentsUpdateVisibilityVisibility']))
-        {
+        if ($experiments->updateVisibility($_POST['experimentsUpdateVisibilityVisibility'])) {
             echo '1';
         } else {
             echo '0';
@@ -50,8 +48,7 @@ try {
 
     // CREATE LINK
     if (isset($_POST['experimentsCreateLink'])) {
-        if ($experiments->createLink($_POST['experimentsCreateLinkId']))
-        {
+        if ($experiments->createLink($_POST['experimentsCreateLinkId'])) {
             echo '1';
         } else {
             echo '0';
@@ -60,8 +57,7 @@ try {
 
     // DESTROY LINK
     if (isset($_POST['experimentsDestroyLink'])) {
-        if ($experiments->destroyLink($_POST['experimentsDestroyLinkId']))
-        {
+        if ($experiments->destroyLink($_POST['experimentsDestroyLinkId'])) {
             echo '1';
         } else {
             echo '0';

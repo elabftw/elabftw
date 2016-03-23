@@ -166,6 +166,33 @@ function experimentsUpdateStatus(item, status) {
     });
 }
 
+// CREATE TAG
+function createTag(e, item_id, type) { // the argument here is the event (needed to detect which key is pressed)
+    var keynum;
+    if (e.which) {
+        keynum = e.which;
+    }
+    if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
+        // get tag
+        tag = $('#createTagInput').val();
+        // POST request
+        $.post('app/controllers/EntityController.php', {
+            createTag: true,
+            createTagTag: tag,
+            createTagId: item_id,
+            createTagType: type
+        }).done(function () {
+            if (type === 'experiments') {
+                $('#tags_div').load('experiments.php?mode=edit&id=' + item_id + ' #tags_div');
+            } else {
+                $('#tags_div').load('database.php?mode=edit&id=' + item_id + ' #tags_div');
+            }
+            // clear input field
+            $('#createTagInput').val('');
+        });
+    } // end if key is enter
+}
+
 // CREATE LINK
 function experimentsCreateLink(e, item) { // the argument here is the event (needed to detect which key is pressed)
     var keynum;

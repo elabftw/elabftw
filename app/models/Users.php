@@ -140,7 +140,7 @@ class Users extends Auth
     /**
      * Validate a user
      *
-     * @param array $validateArr we get an array of ID to validate
+     * @param int userid
      */
     public function validate($userid)
     {
@@ -165,6 +165,8 @@ class Users extends Auth
         // validate the user
         if ($req->execute()) {
             $msg = _('Validated user with ID :') . ' ' . $userid;
+        } else {
+            $msg = _('Error validating user!');
         }
         // now let's get the URL so we can have a nice link in the email
         $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];

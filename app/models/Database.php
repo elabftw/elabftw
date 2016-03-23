@@ -22,7 +22,7 @@ class Database
     private $pdo;
 
     /** id of the item */
-    private $id;
+    public $id;
 
     /** id of the team */
     private $team;

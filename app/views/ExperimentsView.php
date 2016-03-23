@@ -397,7 +397,7 @@ class ExperimentsView
      */
     private function buildEditJs()
     {
-        $tags = new Tags();
+        $tags = new Tags('experiments');
 
         $html = "<script>
             function delete_tag(tag_id, item_id) {
@@ -414,32 +414,6 @@ class ExperimentsView
                 return false;
             }
 
-            // ADD TAG
-            function addTagOnEnter(e) { // the argument here is the event (needed to detect which key is pressed)
-                var keynum;
-                if (e.which) {
-                    keynum = e.which;
-                }
-                if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
-                    // get tag
-                    var tag = $('#addtaginput').val();
-                    // POST request
-                    $.post('app/add.php', {
-                        tag: tag,
-                        item_id: " . $this->id . ",
-                        type: 'exptag'
-                    })
-                    // reload the tags list
-        .done(function () {
-            $('#tags_div').load('experiments.php?mode=edit&id=" . $this->id . " #tags_div');
-            // clear input field
-            $('#addtaginput').val('');
-            return false;
-        })
-    } // end if key is enter
-}
-
-
     // READY ? GO !!
     $(document).ready(function() {
         // KEYBOARD SHORTCUTS
@@ -447,13 +421,24 @@ class ExperimentsView
         key('" . $_SESSION['prefs']['shortcuts']['submit'] . "', function(){document.forms['editXP'].submit()});
 
         // autocomplete the tags
-        $('#addtaginput').autocomplete({
-            source: [" . $tags->generateTagList('experiments') . "]
+        $('#createTagInput').autocomplete({
+            source: [" . $tags->generateTagList() . "]
         });
 
         // autocomplete the links
         $( '#linkinput' ).autocomplete({
             source: [" . getDbList('default') . "]
+        });
+
+        // CREATE TAG
+        // listen keypress, add tag when it's enter
+        $('#createTagInput').keypress(function (e) {
+            createTag(e, " . $this->id . ", 'experiments');
+        });
+        // CREATE LINK
+        // listen keypress, add link when it's enter
+        $('#linkinput').keypress(function (e) {
+            experimentsCreateLink(e, " . $this->id . ");
         });
 
         // DATEPICKER
@@ -518,18 +503,8 @@ class ExperimentsView
                      }
                  }
             ]
-        });
+        });";
 
-            // ADD TAG JS
-            // listen keypress, add tag when it's enter
-            $('#addtaginput').keypress(function (e) {
-                addTagOnEnter(e);
-            });
-            // ADD LINK JS
-            // listen keypress, add link when it's enter
-            $('#linkinput').keypress(function (e) {
-                experimentsCreateLink(e, " . $this->id . ");
-            });";
 
         // ask the user if he really wants to navigate out of the page
         if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {

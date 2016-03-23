@@ -1,6 +1,6 @@
 <?php
 /**
- * app/controllers/TeamsController.php
+ * app/controllers/SysconfigController.php
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -16,7 +16,7 @@
 require_once '../../inc/common.php';
 
 try {
-    /*
+    $sysconfig = new \Elabftw\Elabftw\Sysconfig();
     // the constructor will check for sysadmin rights
     $teams = new \Elabftw\Elabftw\Teams();
 
@@ -47,7 +47,15 @@ try {
         }
     }
 
+    // SEND TEST EMAIL
+    if (isset($_POST['testemailSend'])) {
+        if ($sysconfig->testemailSend($_POST['testemailEmail'])) {
+            echo '1';
+        } else {
+            echo '0';
+        }
+    }
+
 } catch (Exception $e) {
     dblog('Error', $_SESSION['userid'], $e->getMessage());
-     */
 }

@@ -18,6 +18,16 @@ $formKey = new \Elabftw\Elabftw\FormKey();
 try {
     $users = new \Elabftw\Elabftw\Users();
 
+    // VALIDATE
+    if (isset($_POST['usersValidate'])) {
+        $tab = 2;
+        // loop the array
+        foreach ($_POST['usersValidateIdArr'] as $userid) {
+            $_SESSION['ok'][] = $users->validate($userid);
+        }
+    }
+
+
     // UPDATE USERS
     if (isset($_POST['usersUpdate'])) {
         $tab = 2;

@@ -40,6 +40,7 @@ $tab = '1';
 $email = '';
 
 
+/*
 // VALIDATE USERS
 if (!empty($_POST['validate'])) {
     // sql to validate users
@@ -103,6 +104,7 @@ if (!empty($_POST['validate'])) {
     exit;
 }
 // END VALIDATE USERS
+ */
 
 // TAB 1 : TEAM CONFIG
 if (isset($_POST['deletable_xp'])) {

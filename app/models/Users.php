@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use \PDO;
 use \Exception;
+use \Swift_Message;
 
 /**
  * Users
@@ -124,6 +125,63 @@ class Users extends Auth
         $req->bindParam(':userid', $userid);
 
         return $req->execute();
+    }
+
+    /**
+     * Validate a user
+     *
+     * @param array $validateArr we get an array of ID to validate
+     */
+    public function validate($userid)
+    {
+        $userid = Tools::checkId($userid);
+        if ($userid === false) {
+            throw new Exception('The id parameter is not valid!');
+        }
+
+        // permission check
+        if (!isset($_SESSION['is_admin'])) {
+            throw new Exception(_('This section is out of your reach.'));
+        }
+
+        $sql = "UPDATE users SET validated = 1 WHERE userid = :userid";
+        $req = $this->pdo->prepare($sql);
+
+        // we read to get email of user
+        $userArr = $this->read($userid);
+
+        $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+
+        // validate the user
+        if ($req->execute()) {
+            $msg = _('Validated user with ID :') . ' ' . $userid;
+        }
+        // now let's get the URL so we can have a nice link in the email
+        $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
+        $url = str_replace('app/controllers/UsersController.php', 'login.php', $url);
+        // we send an email to each validated new user
+        $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
+        // Create the message
+        $message = Swift_Message::newInstance()
+        // Give the message a subject
+        // no i18n here
+        ->setSubject('[eLabFTW] Account validated')
+        // Set the From address with an associative array
+        ->setFrom(array(get_config('mail_from') => 'eLabFTW'))
+        // Set the To addresses with an associative array
+        ->setTo(array($userArr['email'] => 'eLabFTW'))
+        // Give it a body
+        ->setBody('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login : ' . $url . $footer);
+        // generate Swift_Mailer instance
+        $mailer = getMailer();
+        // now we try to send the email
+        try {
+            $mailer->send($message);
+        } catch (Exception $e) {
+            throw new Exception(_('There was a problem sending the email! Error was logged.'));
+        }
+
+        return $msg;
     }
 
     /**

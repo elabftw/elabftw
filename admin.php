@@ -48,12 +48,13 @@ $count = $user_req->rowCount();
 // only show the frame if there is some users to validate and there is an email config
 if ($count > 0 && strlen(get_config('mail_from')) > 0) {
     $message = _('There are users waiting for validation of their account:');
-    $message .= "<form method='post' action='app/admin-exec.php'>";
+    $message .= "<form method='post' action='app/controllers/UsersController.php'>";
+    $message .= "<input type='hidden' name='usersValidate' value='true' />";
     $message .= $formKey->getFormkey();
     $message .= "<ul>";
     while ($data = $user_req->fetch()) {
         $message .= "<li><label>
-            <input type='checkbox' name='validate[]'
+            <input type='checkbox' name='usersValidateIdArr[]'
             value='".$data['userid'] . "'> " . $data['firstname'] . " " . $data['lastname'] . " (" . $data['email'] . ")
             </label></li>";
     }

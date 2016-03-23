@@ -9,6 +9,8 @@
  * @package elabftw
  */
 
+namespace Elabftw\Elabftw;
+
 /**
  * Experiments
  *
@@ -16,7 +18,7 @@
 require_once '../../inc/common.php';
 
 try {
-    $experiments = new \Elabftw\Elabftw\Experiments($_POST['experimentsId'], $_SESSION['userid']);
+    $experiments = new Experiments($_POST['experimentsId'], $_SESSION['userid']);
 
     // UPDATE
     if (isset($_POST['experimentsUpdate'])) {

@@ -373,6 +373,16 @@ function itemsTypesUpdate(id) {
     });
 }
 
+function itemsTypesDestroy(id) {
+    $.post('app/controllers/ItemsTypesController.php', {
+        itemsTypesDestroy: true,
+        itemsTypesId: id
+    }).done(function() {
+        notif('Deleted', 'ok');
+        window.location.replace('admin.php?tab=4');
+    });
+}
+
 
 // COMMON TEMPLATE
 function commonTplUpdate() {

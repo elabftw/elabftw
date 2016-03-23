@@ -9,14 +9,16 @@
  * @package elabftw
  */
 
+namespace Elabftw\Elabftw;
+
 /**
  * Users
  */
 require_once '../../inc/common.php';
-$formKey = new \Elabftw\Elabftw\FormKey();
+$formKey = new FormKey();
 
 try {
-    $users = new \Elabftw\Elabftw\Users();
+    $users = new Users();
 
     // VALIDATE
     if (isset($_POST['usersValidate'])) {

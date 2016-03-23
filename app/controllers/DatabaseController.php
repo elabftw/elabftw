@@ -9,6 +9,8 @@
  * @package elabftw
  */
 
+namespace Elabftw\Elabftw;
+
 /**
  * Database
  *
@@ -16,7 +18,7 @@
 require_once '../../inc/common.php';
 
 try {
-    $database = new \Elabftw\Elabftw\Database($_POST['databaseId'], $_SESSION['team_id']);
+    $database = new Database($_POST['databaseId'], $_SESSION['team_id']);
 
     // UPDATE
     if (isset($_POST['databaseUpdate'])) {

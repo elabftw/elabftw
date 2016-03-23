@@ -21,14 +21,18 @@ class ItemsTypes extends Panel
     /** The PDO object */
     private $pdo;
 
+    /** our team passed to constructor from session */
+    private $team;
+
     /**
      * Constructor
      *
      * @throws Exception if user is not admin
      */
-    public function __construct()
+    public function __construct($team)
     {
         $this->pdo = Db::getConnection();
+        $this->team = $team;
     }
 
     /**
@@ -37,13 +41,12 @@ class ItemsTypes extends Panel
      * @param string $name New name
      * @param string $color hexadecimal color code
      * @param string $template html for new body
-     * @param int $team team ID
      * @return bool true if sql success
      */
-    public function create($name, $color, $template, $team)
+    public function create($name, $color, $template)
     {
         if (!$this->isAdmin()) {
-            throw new Exception('Only admin can access this!');
+            throw new Exception('This section is out of your reach!');
         }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         if (strlen($name) < 1) {
@@ -66,14 +69,13 @@ class ItemsTypes extends Panel
     /**
      * SQL to get all items type
      *
-     * @param int $team team ID
      * @return array all the items types for the team
      */
-    public function read($team)
+    public function read()
     {
         $sql = "SELECT * from items_types WHERE team = :team ORDER BY ordering ASC";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $team, \PDO::PARAM_INT);
+        $req->bindParam(':team', $this->team, \PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchAll();
@@ -86,13 +88,12 @@ class ItemsTypes extends Panel
      * @param string $name name
      * @param string $color hexadecimal color
      * @param string $template html for the body
-     * @param int $team Team ID
      * @return bool true if sql success
      */
-    public function update($id, $name, $color, $template, $team)
+    public function update($id, $name, $color, $template)
     {
         if (!$this->isAdmin()) {
-            throw new Exception('Only admin can access this!');
+            throw new Exception('This section is out of your reach!');
         }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $color = filter_var($color, FILTER_SANITIZE_STRING);
@@ -109,6 +110,25 @@ class ItemsTypes extends Panel
         $req->bindParam(':template', $template);
         $req->bindParam(':team', $team, \PDO::PARAM_INT);
         $req->bindParam(':id', $id, \PDO::PARAM_INT);
+
+        return $req->execute();
+    }
+
+    /**
+     * Destroy an item type
+     *
+     * @param int $id
+     */
+    public function destroy($id)
+    {
+        if (!$this->isAdmin()) {
+            throw new Exception('This section is out of your reach!');
+        }
+
+        $sql = "DELETE FROM items_types WHERE id = :id AND team = :team";
+        $req = $pdo->prepare($sql);
+        $req->bindParam(':id', $id);
+        $req->bindParam(':team', $this->team);
 
         return $req->execute();
     }

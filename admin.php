@@ -9,6 +9,10 @@
  * @package elabftw
  */
 
+namespace Elabftw\Elabftw;
+
+use \PDO;
+
 /**
  * Administration of a team
  *
@@ -17,16 +21,15 @@ require_once 'inc/common.php';
 
 // the constructor will check for admin rights
 try {
-    $formKey = new \Elabftw\Elabftw\FormKey();
-    $crypto = new \Elabftw\Elabftw\CryptoWrapper();
-    $status = new \Elabftw\Elabftw\Status();
-    $statusView = new \Elabftw\Elabftw\StatusView();
-    $itemsTypes = new \Elabftw\Elabftw\ItemsTypes();
-    $itemsTypesView = new \Elabftw\Elabftw\ItemsTypesView();
-    $commonTpl = new \Elabftw\Elabftw\CommonTpl();
-    $teamGroups = new \Elabftw\Elabftw\TeamGroups();
-    $teamGroupsView = new \Elabftw\Elabftw\TeamGroupsView();
-    $auth = new \Elabftw\Elabftw\Auth();
+    $formKey = new FormKey();
+    $crypto = new CryptoWrapper();
+    $status = new Status();
+    $statusView = new StatusView();
+    $itemsTypesView = new ItemsTypesView(new ItemsTypes($_SESSION['team_id']));
+    $commonTpl = new CommonTpl();
+    $teamGroups = new TeamGroups();
+    $teamGroupsView = new TeamGroupsView();
+    $auth = new Auth();
 } catch (Exception $e) {
     die($e->getMessage());
 }
@@ -252,8 +255,7 @@ if (!empty($team['stamppass'])) {
     <?php
     echo $itemsTypesView->showCreate();
     // this is used below
-    $itemsTypesArr = $itemsTypes->read($_SESSION['team_id']);
-    echo $itemsTypesView->show($itemsTypesArr);
+    echo $itemsTypesView->show();
     ?>
 
 </div>
@@ -271,6 +273,7 @@ if (!empty($team['stamppass'])) {
 </div>
 
 <!-- TAB 6 IMPORT CSV -->
+<?php $itemsTypesArr = $itemsTypesView->itemsTypes->read(); ?>
 <div class='divhandle' id='tab6div'>
     <h3><?php echo _('Import a CSV file'); ?></h3>
     <p style='text-align:justify'><?php echo _("This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file."); ?>

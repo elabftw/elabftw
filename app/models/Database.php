@@ -16,10 +16,10 @@ use \Exception;
 /**
  * All about the database items
  */
-class Database
+class Database extends Entity
 {
     /** pdo object */
-    private $pdo;
+    protected $pdo;
 
     /** id of the item */
     public $id;
@@ -35,13 +35,12 @@ class Database
      */
     public function __construct($id, $team)
     {
+        $this->pdo = Db::getConnection();
         $this->id = Tools::checkId($id);
         if ($this->id === false) {
             throw new Exception(_('The id parameter is not valid!'));
         }
         $this->team = $team;
-
-        $this->pdo = Db::getConnection();
 
         // permission check
         // you can only see items from your team

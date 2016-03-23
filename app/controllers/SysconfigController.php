@@ -9,6 +9,8 @@
  * @package elabftw
  */
 
+namespace Elabftw\Elabftw;
+
 /**
  * Deal with ajax requests sent from the sysconfig page
  *
@@ -16,9 +18,9 @@
 require_once '../../inc/common.php';
 
 try {
-    $sysconfig = new \Elabftw\Elabftw\Sysconfig();
+    $sysconfig = new Sysconfig();
     // the constructor will check for sysadmin rights
-    $teams = new \Elabftw\Elabftw\Teams();
+    $teams = new Teams();
 
     // CREATE
     if (isset($_POST['teamsCreate'])) {

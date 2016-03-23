@@ -16,7 +16,7 @@ use \Exception;
 /**
  * All about the experiments
  */
-class Experiments
+class Experiments extends Entity
 {
     /** pdo object */
     protected $pdo;
@@ -35,13 +35,12 @@ class Experiments
      */
     public function __construct($id, $userid)
     {
+        $this->pdo = Db::getConnection();
         $this->id = Tools::checkId($id);
         if ($this->id === false) {
             throw new Exception(_('The id parameter is not valid!'));
         }
         $this->userid = $userid;
-
-        $this->pdo = Db::getConnection();
     }
 
     /**

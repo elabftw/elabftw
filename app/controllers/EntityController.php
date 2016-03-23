@@ -9,6 +9,8 @@
  * @package elabftw
  */
 
+namespace Elabftw\Elabftw;
+
 /**
  * oO
  *
@@ -20,11 +22,11 @@ try {
     // CREATE TAG
     if (isset($_POST['createTag'])) {
         if ($_POST['createTagType'] === 'experiments') {
-            $entity = new \Elabftw\Elabftw\Experiments($_POST['createTagId'], $_SESSION['userid']);
+            $entity = new Experiments($_POST['createTagId'], $_SESSION['userid']);
         } else {
-            $entity = new \Elabftw\Elabftw\Database($_POST['createTagId'], $_SESSION['team_id']);
+            $entity = new Database($_POST['createTagId'], $_SESSION['team_id']);
         }
-        $tags = new \Elabftw\Elabftw\Tags($_POST['createTagType']);
+        $tags = new Tags($_POST['createTagType']);
         $tags->create($_POST['createTagTag'], $entity->id);
     }
 } catch (Exception $e) {

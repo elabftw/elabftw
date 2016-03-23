@@ -193,23 +193,6 @@ if (isset($_POST['type']) && !empty($_POST['type'])) {
 
             break;
 
-        // DELETE ITEMS TYPES
-        case 'item_type':
-
-            $sql = "DELETE FROM items_types WHERE id = :id";
-            $req = $pdo->prepare($sql);
-            $result = $req->execute(array(
-                'id' => $id
-            ));
-
-            if ($result) {
-                $msg_arr[] = _('Item type was deleted successfully.');
-                $_SESSION['ok'] = $msg_arr;
-            }
-
-
-            break;
-
         // DELETE TAGS
         case 'exptag':
             if (is_pos_int($_POST['item_id'])) {

@@ -9,6 +9,8 @@
  * @package elabftw
  */
 
+namespace Elabftw\Elabftw;
+
 /**
  * Deal with ajax requests sent from the admin page
  *
@@ -17,7 +19,7 @@ require_once '../../inc/common.php';
 
 // the constructor will check for admin rights
 try {
-    $status = new \Elabftw\Elabftw\Status();
+    $status = new Status();
 
     // CREATE STATUS
     if (isset($_POST['statusCreate'])) {

@@ -20,12 +20,15 @@ class ItemsTypesView
     /** The PDO object */
     private $pdo;
 
+    /** instance of ItemsTypes */
+    public $itemsTypes;
     /**
      * Constructor
      *
      */
-    public function __construct()
+    public function __construct(ItemsTypes  $itemsTypes)
     {
+        $this->itemsTypes = $itemsTypes;
         $this->pdo = Db::getConnection();
     }
 
@@ -55,8 +58,10 @@ class ItemsTypesView
      * @param string $itemsTypesArr output of read()
      * @return string $html
      */
-    public function show($itemsTypesArr)
+    public function show()
     {
+        $itemsTypesArr = $this->itemsTypes->read();
+
         $html = "<h3>" . _('Database items types') . "</h3>";
         $html .= "<ul class='draggable sortable_itemstypes list-group'>";
 
@@ -81,7 +86,7 @@ class ItemsTypesView
             $html .= "<li><button onClick='itemsTypesUpdate(" . $itemType['id'] . ")' class='button'>" . _('Save') . "</button></li>";
             $html .= "<li><button class='button' ";
             if ($count == 0) {
-                $html .= "onClick=\"deleteThis('" . $itemType['id'] . "','item_type', 'admin.php?tab=4')\"";
+                $html .= "onClick=\"itemsTypesDestroy(" . $itemType['id'] . ")\"";
             } else {
                 $html .= "onClick=\"alert('" . _('Remove all database items with this type before deleting this type.') . "')\"";
             }
@@ -92,6 +97,7 @@ class ItemsTypesView
             $html .= "</ul>";
         }
         $html .= "</ul>";
+
         return $html;
     }
 }

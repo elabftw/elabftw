@@ -37,20 +37,13 @@ class Users extends Auth
     /**
      * Update user
      *
-     * @param int $userid
-     * @param string $firstname
-     * @param string $lastname
-     * @param string $username
-     * @param string $email
-     * @param string $validated
-     * @param string $usergroup
-     * @param string $password
+     * @param array $params POST
      * @throws Exception
      * @return bool
      */
-    public function update($userid, $firstname, $lastname, $username, $email, $validated, $usergroup, $password)
+    public function update($params)
     {
-        $userid = Tools::checkId($userid);
+        $userid = Tools::checkId($params['userid']);
         if ($userid === false) {
             throw new Exception(_('The id parameter is not valid!'));
         }
@@ -61,18 +54,18 @@ class Users extends Auth
         }
 
         // Put everything lowercase and first letter uppercase
-        $firstname = ucwords(strtolower(filter_var($firstname, FILTER_SANITIZE_STRING)));
+        $firstname = ucwords(strtolower(filter_var($params['firstname'], FILTER_SANITIZE_STRING)));
         // Lastname in uppercase
-        $lastname = strtoupper(filter_var($lastname, FILTER_SANITIZE_STRING));
-        $username = filter_var($username, FILTER_SANITIZE_STRING);
-        $email = filter_var($email, FILTER_SANITIZE_EMAIL);
+        $lastname = strtoupper(filter_var($params['lastname'], FILTER_SANITIZE_STRING));
+        $username = filter_var($params['username'], FILTER_SANITIZE_STRING);
+        $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
 
-        if ($validated == 1) {
+        if ($params['validated'] == 1) {
             $validated = 1;
         } else {
             $validated = 0;
         }
-        $usergroup = Tools::checkId($usergroup);
+        $usergroup = Tools::checkId($params['usergroup']);
         if ($usergroup === false) {
             throw new Exception(_('The id parameter is not valid!'));
         }
@@ -82,8 +75,8 @@ class Users extends Auth
             throw new Exception(_('Only a sysadmin can put someone sysadmin.'));
         }
 
-        if (strlen($password) > 1) {
-            $this->updatePassword($password, $userid);
+        if (strlen($params['password']) > 1) {
+            $this->updatePassword($params['password'], $userid);
         }
 
         $sql = "UPDATE users SET

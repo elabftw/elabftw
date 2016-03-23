@@ -163,20 +163,20 @@ if (!empty($team['stamppass'])) {
             <li class='list-group-item'>
                 <form method='post' action='app/controllers/UsersController.php'>
                     <input type='hidden' value='true' name='usersUpdate' />
-                    <input type='hidden' value='<?php echo $users['userid']; ?>' name='usersUpdateId' />
+                    <input type='hidden' value='<?php echo $users['userid']; ?>' name='userid' />
                     <ul class='list-inline'>
                     <li><label class='block' for='usersUpdateFirstname'><?php echo _('Firstname'); ?></label>
-                    <input  id='usersUpdateFirstname' type='text' value='<?php echo $users['firstname']; ?>' name='usersUpdateFirstname' /></li>
+                    <input  id='usersUpdateFirstname' type='text' value='<?php echo $users['firstname']; ?>' name='firstname' /></li>
                     <li><label class='block' for='usersUpdateLastname'><?php echo _('Lastname'); ?></label>
-                    <input  id='usersUpdateLastname' type='text' value='<?php echo $users['lastname']; ?>' name='usersUpdateLastname' /></li>
+                    <input  id='usersUpdateLastname' type='text' value='<?php echo $users['lastname']; ?>' name='lastname' /></li>
                     <li><label class='block' for='usersUpdateUsername'><?php echo _('Username'); ?></label>
-                    <input  id='usersUpdateUsername' type='text' value='<?php echo $users['username']; ?>' name='usersUpdateUsername' /></li>
+                    <input  id='usersUpdateUsername' type='text' value='<?php echo $users['username']; ?>' name='username' /></li>
                     <li>
                     <label class='block' for='usersUpdateEmail'><?php echo _('Email'); ?></label>
-                    <input id='usersUpdateEmail' type='email' value='<?php echo $users['email']; ?>' name='usersUpdateEmail' /></li>
+                    <input id='usersUpdateEmail' type='email' value='<?php echo $users['email']; ?>' name='email' /></li>
                     <li>
                     <label class='block' for='usersUpdateValidated'><?php echo _('Has an active account?'); ?></label>
-                    <select name='usersUpdateValidated' id='usersUpdateValidated'>
+                    <select name='validated' id='usersUpdateValidated'>
                         <option value='1'<?php
                                 if ($users['validated'] == 1) { echo " selected='selected'"; } ?>
                                     ><?php echo _('Yes'); ?></option>
@@ -186,7 +186,7 @@ if (!empty($team['stamppass'])) {
                     </select>
                     </li>
                     <li><label class='block' for='usersUpdateUsergroup'><?php echo _('Group'); ?></label>
-                    <select name='usersUpdateUsergroup' id='usersUpdateUsergroup'>
+                    <select name='usergroup' id='usersUpdateUsergroup'>
             <?php
                         if ($_SESSION['is_sysadmin'] == 1) {
             ?>
@@ -208,7 +208,7 @@ if (!empty($team['stamppass'])) {
                     </select></li>
                     <li><label class='block' for='usersUpdatePassword'><?php echo _('Reset user password') .
                         " <span class='smallgray'>" . $auth::MIN_PASSWORD_LENGTH . " " . _('characters minimum'); ?></span></label>
-                    <input id='usersUpdatePassword' type='password' pattern='.{0}|.{<?php echo $auth::MIN_PASSWORD_LENGTH; ?>,}' value='' name='usersUpdatePassword' /></li>
+                    <input id='usersUpdatePassword' type='password' pattern='.{0}|.{<?php echo $auth::MIN_PASSWORD_LENGTH; ?>,}' value='' name='password' /></li>
                     <li><button type='submit' class='button'><?php echo _('Save'); ?></button></li>
                 </ul>
             </form>

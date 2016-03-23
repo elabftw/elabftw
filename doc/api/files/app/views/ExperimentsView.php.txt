@@ -51,27 +51,22 @@ class ExperimentsView
     /**
      * Need an ID of an experiment
      *
-     * @param int $id Experiment id from GET[]
-     * @param int $userid
+     * @param Experiments $experiments
      * @throws Exception
      */
-    public function __construct($id, $userid)
+    public function __construct(Experiments $experiments)
     {
-        // check ID
-        $this->id = Tools::checkId($id);
-        if ($this->id === false) {
-            throw new Exception(_('The id parameter is not valid!'));
-        }
-        $this->experiments = new Experiments($this->id, $userid);
+        $this->experiments = $experiments;
+
         $this->status = new Status();
-        $this->revisions = new Revisions($this->id, 'experiments');
+        $this->revisions = new Revisions($this->experiments->id, 'experiments');
         $this->comments = new Comments();
         $this->uploads = new Uploads();
         $this->users = new Users();
         $this->teamGroups = new TeamGroups();
 
         // get data of experiment
-        $this->experiment = $this->experiments->read($this->id);
+        $this->experiment = $this->experiments->read();
         // visibility can be a string, or number if teamgroup
         $this->visibility = $this->getVisGroupName();
     }
@@ -92,7 +87,7 @@ class ExperimentsView
         }
 
         $html .= $this->buildView();
-        $html .= $this->uploads->buildUploads($this->id, 'view', 'experiments');
+        $html .= $this->uploads->buildUploads($this->experiments->id, 'view', 'experiments');
         $html .= $this->buildComments();
         $html .= $this->buildCommentsCreate();
         $html .= $this->buildViewJs();
@@ -116,8 +111,8 @@ class ExperimentsView
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
         $html = $this->buildEdit();
-        $html .= $this->uploads->buildUploadForm($this->id, 'experiments');
-        $html .= $this->uploads->buildUploads($this->id, 'edit', 'experiments');
+        $html .= $this->uploads->buildUploadForm($this->experiments->id, 'experiments');
+        $html .= $this->uploads->buildUploads($this->experiments->id, 'edit', 'experiments');
         $html .= $this->buildEditJs();
 
         return $html;
@@ -136,12 +131,12 @@ class ExperimentsView
         $html .= "<img src='img/arrow-left-blue.png' class='bot5px' alt='' /> " . _('Back to experiments listing') . "</a></menu>";
 
         $html .= "<section class='box' id='main_section' style='border-left: 6px solid #" . $this->experiment['color'] . "'>";
-        $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"deleteThis($this->id,'exp', 'experiments.php')\" />";
+        $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"deleteThis(" . $this->experiments->id . ",'exp', 'experiments.php')\" />";
 
-        $html .=  displayTags('experiments', $this->id);
+        $html .=  displayTags('experiments', $this->experiments->id);
         $html .= "<form method='post' action='app/controllers/ExperimentsController.php' enctype='multipart/form-data'>";
         $html .= "<input name='experimentsUpdate' type='hidden' value='true' />";
-        $html .= "<input name='experimentsId' type='hidden' value='" . $this->id . "' />";
+        $html .= "<input name='experimentsId' type='hidden' value='" . $this->experiments->id . "' />";
 
         // DATE
         $html .= "<div class='row'><div class='col-md-4'>";
@@ -156,7 +151,7 @@ class ExperimentsView
         $html .= "<div class='col-md-4'>";
         $html .= "<img src='img/eye.png' class='bot5px' alt='visibility' />";
         $html .= "<label for='visibility_select'>" . _('Visibility') . "</label>";
-        $html .= "<select id='visibility_select' onchange='experimentsUpdateVisibility(" . $this->id . ", this.value)'>";
+        $html .= "<select id='visibility_select' onchange='experimentsUpdateVisibility(" . $this->experiments->id . ", this.value)'>";
         $html .= "<option value='organization' ";
         if ($this->visibility === 'organization') {
             $html .= "selected";
@@ -188,7 +183,7 @@ class ExperimentsView
         $html .= "<div class='col-md-4'>";
         $html .= "<img src='img/status.png' class='bot5px' alt='status' />";
         $html .= "<label for='status_select'>" . ngettext('Status', 'Status', 1) . "</label>";
-        $html .= "<select id='status_select' name='status' onchange='experimentsUpdateStatus(" . $this->id . ", this.value)'>";
+        $html .= "<select id='status_select' name='status' onchange='experimentsUpdateStatus(" . $this->experiments->id . ", this.value)'>";
 
         $statusArr = $this->status->read($_SESSION['team_id']);
 
@@ -221,7 +216,7 @@ class ExperimentsView
         $html .= "<section>
                 <img src='img/link.png' class='bot5px' class='bot5px'> <h4 style='display:inline'>" . _('Linked items') . "</h4><br>";
         $html .= "<span id='links_div'>";
-        $html .= $this->showLinks($this->id, 'edit');
+        $html .= $this->showLinks($this->experiments->id, 'edit');
         $html .= "</span>";
         $html .= "<p class='inline'>" . _('Add a link') . "</p>";
         $html .= "<input id='linkinput' size='60' type='text' name='link' placeholder='" . _('from the database') . "' />";
@@ -323,8 +318,8 @@ class ExperimentsView
     private function showTimestamp()
     {
         $timestamper = $this->users->read($this->experiment['timestampedby']);
-        $upload = $this->uploads->read($this->id, 'exp-pdf-timestamp');
-        $token = $this->uploads->read($this->id, 'timestamp-token');
+        $upload = $this->uploads->read($this->experiments->id, 'exp-pdf-timestamp');
+        $token = $this->uploads->read($this->experiments->id, 'timestamp-token');
         $date = new DateTime($this->experiment['timestampedwhen']);
 
         return display_message(
@@ -362,7 +357,7 @@ class ExperimentsView
         }
 
         // TAGS TODO
-        $html .= show_tags($this->id, 'experiments_tags');
+        $html .= show_tags($this->experiments->id, 'experiments_tags');
         // TITLE : click on it to go to edit mode only if we are not in read only mode
         $html .=  "<div ";
         if ($this->ro === false && $this->experiment['locked'] == 0) {
@@ -381,7 +376,7 @@ class ExperimentsView
             $html .= "<br>";
         }
 
-        $html .= $this->showLinks($this->id, 'view');
+        $html .= $this->showLinks($this->experiments->id, 'view');
 
         // DISPLAY eLabID
         $html .= "<p class='elabid'>" . _('Unique eLabID:') . " " . $this->experiment['elabid'];
@@ -397,7 +392,7 @@ class ExperimentsView
      */
     private function buildEditJs()
     {
-        $tags = new Tags();
+        $tags = new Tags('experiments');
 
         $html = "<script>
             function delete_tag(tag_id, item_id) {
@@ -414,46 +409,31 @@ class ExperimentsView
                 return false;
             }
 
-            // ADD TAG
-            function addTagOnEnter(e) { // the argument here is the event (needed to detect which key is pressed)
-                var keynum;
-                if (e.which) {
-                    keynum = e.which;
-                }
-                if (keynum == 13) { // if the key that was pressed was Enter (ascii code 13)
-                    // get tag
-                    var tag = $('#addtaginput').val();
-                    // POST request
-                    $.post('app/add.php', {
-                        tag: tag,
-                        item_id: " . $this->id . ",
-                        type: 'exptag'
-                    })
-                    // reload the tags list
-        .done(function () {
-            $('#tags_div').load('experiments.php?mode=edit&id=" . $this->id . " #tags_div');
-            // clear input field
-            $('#addtaginput').val('');
-            return false;
-        })
-    } // end if key is enter
-}
-
-
     // READY ? GO !!
     $(document).ready(function() {
         // KEYBOARD SHORTCUTS
-        key('" . $_SESSION['prefs']['shortcuts']['create'] . "', function(){location.href = 'app/create_item.php?type=exp'});
+        key('" . $_SESSION['prefs']['shortcuts']['create'] . "', function(){location.href = 'app/controllers/ExperimentsController?experimentsCreate=true'});
         key('" . $_SESSION['prefs']['shortcuts']['submit'] . "', function(){document.forms['editXP'].submit()});
 
         // autocomplete the tags
-        $('#addtaginput').autocomplete({
-            source: [" . $tags->generateTagList('experiments') . "]
+        $('#createTagInput').autocomplete({
+            source: [" . $tags->generateTagList() . "]
         });
 
         // autocomplete the links
         $( '#linkinput' ).autocomplete({
             source: [" . getDbList('default') . "]
+        });
+
+        // CREATE TAG
+        // listen keypress, add tag when it's enter
+        $('#createTagInput').keypress(function (e) {
+            createTag(e, " . $this->experiments->id . ", 'experiments');
+        });
+        // CREATE LINK
+        // listen keypress, add link when it's enter
+        $('#linkinput').keypress(function (e) {
+            experimentsCreateLink(e, " . $this->experiments->id . ");
         });
 
         // DATEPICKER
@@ -476,7 +456,7 @@ class ExperimentsView
             // save button :
             save_onsavecallback: function() {
                 $.post('app/quicksave.php', {
-                    id : " . $this->id . ",
+                    id : " . $this->experiments->id . ",
                     type : 'experiments',
                     // we need this to get the updated content
                     title : document.getElementById('title_input').value,
@@ -518,18 +498,8 @@ class ExperimentsView
                      }
                  }
             ]
-        });
+        });";
 
-            // ADD TAG JS
-            // listen keypress, add tag when it's enter
-            $('#addtaginput').keypress(function (e) {
-                addTagOnEnter(e);
-            });
-            // ADD LINK JS
-            // listen keypress, add link when it's enter
-            $('#linkinput').keypress(function (e) {
-                experimentsCreateLink(e, " . $this->id . ");
-            });";
 
         // ask the user if he really wants to navigate out of the page
         if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
@@ -595,7 +565,7 @@ class ExperimentsView
                         callback : function() {
                             // now we reload the comments part to show the comment we just submitted
                             $('#expcomment_container').load('experiments.php?mode=view&id=" .
-                            $this->id . " #expcomment');
+                            $this->experiments->id . " #expcomment');
                             // we reload the function so editable zones are editable again
                             commentsUpdate();
                         }
@@ -609,9 +579,9 @@ class ExperimentsView
 
                 // Keyboard shortcuts
                 key('" . $_SESSION['prefs']['shortcuts']['create'] .
-                    "', function(){location.href = 'app/create_item.php?type=exp'});
+                    "', function(){location.href = 'app/controllers/ExperimentsController?experimentsCreate=true'});
                 key('" . $_SESSION['prefs']['shortcuts']['edit'] .
-                    "', function(){location.href = 'experiments.php?mode=edit&id=" . $this->id . "'});
+                    "', function(){location.href = 'experiments.php?mode=edit&id=" . $this->experiments->id . "'});
                 // make editable
                 setInterval(commentsUpdate, 50);
             });
@@ -625,7 +595,7 @@ class ExperimentsView
      */
     private function buildComments()
     {
-        $commentsArr = $this->comments->read($this->id);
+        $commentsArr = $this->comments->read($this->experiments->id);
 
         //  we need to add a container here so the reload function in the callback of .editable() doesn't mess things up
         $html = "<section id='expcomment_container'>";
@@ -641,7 +611,7 @@ class ExperimentsView
                 $html .= "<div class='expcomment_box'>
                     <img class='align_right' src='img/small-trash.png' ";
                 $html .= "title='delete' alt='delete' onClick=\"commentsDestroy(".
-                    $comment['id'] . ", " . $this->id . ", '" .  _('Delete this?') . "')\" />";
+                    $comment['id'] . ", " . $this->experiments->id . ", '" .  _('Delete this?') . "')\" />";
                 $html .= "<span class='smallgray'>On " . $comment['datetime'] . " " . $comment['firstname'] . " " .
                     $comment['lastname'] . " wrote :</span><br />";
                 $html .= "<p class='editable' id='" . $comment['id'] . "'>" . $comment['comment'] . "</p></div>";
@@ -659,7 +629,7 @@ class ExperimentsView
             _('Add a comment') . "'></textarea>";
         $html .= "<div id='commentsCreateButtonDiv' class='submitButtonDiv'>";
         $html .= "<button class='button' id='commentsCreateButton' onClick='commentsCreate(" .
-            $this->id . ")'>" . _('Save') . "</button></div></div></section>";
+            $this->experiments->id . ")'>" . _('Save') . "</button></div></div></section>";
 
         return $html;
     }

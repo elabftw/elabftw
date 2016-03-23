@@ -18,10 +18,22 @@ namespace Elabftw\Elabftw;
 require_once '../../inc/common.php';
 
 try {
-    $experiments = new Experiments($_POST['experimentsId'], $_SESSION['userid']);
+
+    // CREATE
+    if (isset($_GET['experimentsCreate'])) {
+        $experiments = new Experiments($_SESSION['userid']);
+        if (isset($_GET['tpl']) && !empty($_GET['tpl'])) {
+            $id = $experiments->create($_GET['tpl']);
+        } else {
+            $id = $experiments->create();
+        }
+        header("location: ../../experiments.php?mode=edit&id=" . $id);
+        exit;
+    }
 
     // UPDATE
     if (isset($_POST['experimentsUpdate'])) {
+        $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
         if ($experiments->update(
             $_POST['experimentsUpdateTitle'],
             $_POST['experimentsUpdateDate'],
@@ -36,11 +48,13 @@ try {
 
     // UPDATE STATUS
     if (isset($_POST['experimentsUpdateStatus'])) {
+        $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
         echo $experiments->updateStatus($_POST['experimentsUpdateStatusStatus']);
     }
 
     // UPDATE VISIBILITY
     if (isset($_POST['experimentsUpdateVisibility'])) {
+        $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
         if ($experiments->updateVisibility($_POST['experimentsUpdateVisibilityVisibility'])) {
             echo '1';
         } else {
@@ -50,6 +64,7 @@ try {
 
     // CREATE LINK
     if (isset($_POST['experimentsCreateLink'])) {
+        $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
         if ($experiments->createLink($_POST['experimentsCreateLinkId'])) {
             echo '1';
         } else {
@@ -59,6 +74,7 @@ try {
 
     // DESTROY LINK
     if (isset($_POST['experimentsDestroyLink'])) {
+        $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
         if ($experiments->destroyLink($_POST['experimentsDestroyLinkId'])) {
             echo '1';
         } else {

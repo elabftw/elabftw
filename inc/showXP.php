@@ -27,7 +27,7 @@ if (isset($_GET['tag']) && $_GET['tag'] != '') {
 <menu class='border'>
     <div class="row">
         <div class="col-md-5">
-            <a href="app/create_item.php?type=exp" id='createExperiment'><img src="img/add.png" class='bot5px' alt="" /> <?php echo _('Create experiment'); ?></a> |
+            <a href="app/controllers/ExperimentsController.php?experimentsCreate=true" id='createExperiment'><img src="img/add.png" class='bot5px' alt="" /> <?php echo _('Create experiment'); ?></a> |
             <a href='#' class='trigger'><img src="img/add-template.png" class='bot5px' alt="" /> <?php echo _('Create from template'); ?></a>
         </div>
         <div class="col-md-12">
@@ -74,7 +74,7 @@ $tplreq->bindParam(':userid', $_SESSION['userid']);
 $tplreq->execute();
 if ($tplreq->rowCount() > 0) {
     while ($tpl = $tplreq->fetch()) {
-        echo "<a href='app/create_item.php?type=exp&tpl=" . $tpl['id'] . "' class='badge'>" . $tpl['name'] . "</a>";
+        echo "<a href='app/controllers/ExperimentsController.php?experimentsCreate=true&tpl=" . $tpl['id'] . "' class='badge'>" . $tpl['name'] . "</a>";
     }
 } else { // user has no templates
     display_message('warning_nocross', sprintf(_("<strong>You do not have any templates yet.</strong> Go to %syour control panel%s to make one !"), "<a class='alert-link' href='ucp.php?tab=3'>", "</a>"));
@@ -187,7 +187,7 @@ if (count($results_arr) === 0 && $search_type != 'none') {
     display_message('ko_nocross', _("Sorry. I couldn't find anything :("));
 // Display message for fresh install
 } elseif (count($results_arr) === 0 && $search_type === 'none') {
-    display_message('ok_nocross', sprintf(_("<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button to get started."), "<img src='img/add.png' alt='' /><a class='alert-link' href='app/create_item.php?type=exp'>", "</a>"));
+    display_message('ok_nocross', sprintf(_("<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button to get started."), "<img src='img/add.png' alt='' /><a class='alert-link' href='app/controllers/ExperimentsController.php?experimentsCreate=true'>", "</a>"));
 } else {
     ?>
     <div class='align_right'>
@@ -237,7 +237,7 @@ $(document).ready(function(){
 	});
     // KEYBOARD SHORTCUTS
     key('<?php echo $_SESSION['prefs']['shortcuts']['create']; ?>', function(){
-        location.href = 'app/create_item.php?type=exp'
+        location.href = 'app/controllers/ExperimentsController.php?experimentsCreate=true'
         });
     });
 </script>

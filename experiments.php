@@ -9,6 +9,10 @@
  * @package elabftw
  */
 
+namespace Elabftw\Elabftw;
+
+use \Exception;
+
 /**
  * Entry point for all experiment stuff
  *
@@ -29,13 +33,13 @@ try {
     // VIEW
     } elseif ($_GET['mode'] === 'view') {
 
-        $experimentsView = new \Elabftw\Elabftw\ExperimentsView($_GET['id'], $_SESSION['userid']);
+        $experimentsView = new ExperimentsView(new Experiments($_SESSION['userid'], $_GET['id']));
         echo $experimentsView->view();
 
     // EDIT
     } elseif ($_GET['mode'] === 'edit') {
 
-        $experimentsView = new \Elabftw\Elabftw\ExperimentsView($_GET['id'], $_SESSION['userid']);
+        $experimentsView = new ExperimentsView(new Experiments($_SESSION['userid'], $_GET['id']));
         echo $experimentsView->edit();
     }
 

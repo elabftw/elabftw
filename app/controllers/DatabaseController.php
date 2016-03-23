@@ -11,30 +11,45 @@
 
 namespace Elabftw\Elabftw;
 
+use \Exception;
+
 /**
  * Database
  *
  */
 require_once '../../inc/common.php';
 
+$mode = 'show';
+
 try {
-    $database = new Database($_POST['databaseId'], $_SESSION['team_id']);
+
+    // CREATE
+    if (isset($_GET['databaseCreateItemId'])) {
+        $database = new Database($_SESSION['team_id']);
+        $id = $database->create($_GET['']);
+        $mode = 'edit';
+    }
 
     // UPDATE
     if (isset($_POST['databaseUpdate'])) {
+        $database = new Database($_SESSION['team_id']);
+        $database->setId($_POST['databaseId']);
         if ($database->update(
             $_POST['databaseUpdateTitle'],
             $_POST['databaseUpdateDate'],
             $_POST['databaseUpdateBody'],
             $_SESSION['userid']
         )) {
-            echo 'ok';
-            header("location: ../../database.php?mode=view&id=" . $_POST['databaseId']);
+            $id = $database->id;
+            $mode = 'view';
         } else {
-            die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
+            throw new Exception('Error');
         }
     }
 
 } catch (Exception $e) {
     dblog('Error', $_SESSION['userid'], $e->getMessage());
+    $_SESSION['ko'][] = $e->getMessage();
+} finally {
+    header("location: ../../database.php?mode=" . $mode . "&id=" . $id);
 }

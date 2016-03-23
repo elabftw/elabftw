@@ -24,7 +24,8 @@ try {
         if ($_POST['createTagType'] === 'experiments') {
             $entity = new Experiments($_POST['createTagId'], $_SESSION['userid']);
         } else {
-            $entity = new Database($_POST['createTagId'], $_SESSION['team_id']);
+            $entity = new Database($_SESSION['team_id']);
+            $entity->setId($_POST['createTagId']);
         }
         $tags = new Tags($_POST['createTagType']);
         $tags->create($_POST['createTagTag'], $entity->id);

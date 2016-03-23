@@ -9,6 +9,8 @@
  * @package elabftw
  */
 
+namespace Elabftw\Elabftw;
+
 /**
  * Experiments
  *
@@ -16,16 +18,28 @@
 require_once '../../inc/common.php';
 
 try {
-    $experiments = new \Elabftw\Elabftw\Experiments($_POST['experimentsId'], $_SESSION['userid']);
+
+    // CREATE
+    if (isset($_GET['experimentsCreate'])) {
+        $experiments = new Experiments($_SESSION['userid']);
+        if (isset($_GET['tpl']) && !empty($_GET['tpl'])) {
+            $id = $experiments->create($_GET['tpl']);
+        } else {
+            $id = $experiments->create();
+        }
+        header("location: ../../experiments.php?mode=edit&id=" . $id);
+        exit;
+    }
 
     // UPDATE
     if (isset($_POST['experimentsUpdate'])) {
+        $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
         if ($experiments->update(
             $_POST['experimentsUpdateTitle'],
             $_POST['experimentsUpdateDate'],
             $_POST['experimentsUpdateBody']
         )) {
-        echo 'ok';
+            echo 'ok';
             header("location: ../../experiments.php?mode=view&id=" . $_POST['experimentsId']);
         } else {
             die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
@@ -34,14 +48,14 @@ try {
 
     // UPDATE STATUS
     if (isset($_POST['experimentsUpdateStatus'])) {
+        $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
         echo $experiments->updateStatus($_POST['experimentsUpdateStatusStatus']);
     }
 
     // UPDATE VISIBILITY
     if (isset($_POST['experimentsUpdateVisibility'])) {
-        if ($experiments->updateVisibility(
-            $_POST['experimentsUpdateVisibilityVisibility']))
-        {
+        $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
+        if ($experiments->updateVisibility($_POST['experimentsUpdateVisibilityVisibility'])) {
             echo '1';
         } else {
             echo '0';
@@ -50,8 +64,8 @@ try {
 
     // CREATE LINK
     if (isset($_POST['experimentsCreateLink'])) {
-        if ($experiments->createLink($_POST['experimentsCreateLinkId']))
-        {
+        $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
+        if ($experiments->createLink($_POST['experimentsCreateLinkId'])) {
             echo '1';
         } else {
             echo '0';
@@ -60,8 +74,8 @@ try {
 
     // DESTROY LINK
     if (isset($_POST['experimentsDestroyLink'])) {
-        if ($experiments->destroyLink($_POST['experimentsDestroyLinkId']))
-        {
+        $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
+        if ($experiments->destroyLink($_POST['experimentsDestroyLinkId'])) {
             echo '1';
         } else {
             echo '0';

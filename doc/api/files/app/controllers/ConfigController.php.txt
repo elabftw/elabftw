@@ -1,0 +1,73 @@
+<?php
+/**
+ * app/controllers/ConfigController.php
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see http://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
+namespace Elabftw\Elabftw;
+
+/**
+ * Deal with ajax requests sent from the sysconfig page
+ *
+ */
+require_once '../../inc/common.php';
+
+try {
+    $teams = new Teams();
+
+    // CREATE TEAM
+    if (isset($_POST['teamsCreate'])) {
+        if ($teams->create($_POST['teamsName'])) {
+            echo '1';
+        } else {
+            echo '0';
+        }
+    }
+
+    // UPDATE TEAM NAME
+    if (isset($_POST['teamsUpdate'])) {
+        if ($teams->updateName($_POST['teamsUpdateId'], $_POST['teamsUpdateName'])) {
+            echo '1';
+        } else {
+            echo '0';
+        }
+    }
+
+    // DESTROY TEAM
+    if (isset($_POST['teamsDestroy'])) {
+        if ($teams->destroy($_POST['teamsDestroyId'])) {
+            echo '1';
+        } else {
+            echo '0';
+        }
+    }
+
+    // UPDATE TEAM
+    if (isset($_POST['teamsUpdateFull'])) {
+        if ($teams->update($_POST)) {
+            $_SESSION['ok'][] = _('Configuration updated successfully!');
+        } else {
+            $_SESSION['ko'][] = _('An error occurred!');
+        }
+        header('Location: ../../admin.php?tab=1');
+    }
+
+    // SEND TEST EMAIL
+    if (isset($_POST['testemailSend'])) {
+        $sysconfig = new Sysconfig();
+        if ($sysconfig->testemailSend($_POST['testemailEmail'])) {
+            echo '1';
+        } else {
+            echo '0';
+        }
+    }
+
+} catch (Exception $e) {
+    dblog('Error', $_SESSION['userid'], $e->getMessage());
+}
+

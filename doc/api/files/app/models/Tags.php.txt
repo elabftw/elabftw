@@ -19,23 +19,56 @@ use \Exception;
 class Tags
 {
     /** pdo object */
-    protected $pdo;
+    private $pdo;
+
+    /** experiments or items */
+    private $type;
 
     /**
      * Constructor
      *
+     * @param string $type experiments or items
      */
-    public function __construct()
+    public function __construct($type)
     {
+        $this->type = $type;
         $this->pdo = Db::getConnection();
     }
 
     /**
      * Create a tag
      *
+     * @param string $tag
+     * @param int $id
      */
-    public function create()
+    public function create($tag, $id)
     {
+        // Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
+        $tag = strtr(filter_var($tag, FILTER_SANITIZE_STRING), '\\', '');
+
+        // check for string length and if user owns the experiment
+        if (strlen($tag) < 1) {
+            throw new Exception(_('Tag is too short!'));
+        }
+
+        if ($this->type === 'experiments' && !is_owned_by_user($id, $this->type, $_SESSION['userid'])) {
+            throw new Exception(_('This section is out of your reach!'));
+        }
+
+        // TODO change userid for team because now the tags are not personnal but shared with team
+        if ($this->type === 'experiments') {
+            $sql = "INSERT INTO " . $this->type . "_tags (tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
+            $req = $this->pdo->prepare($sql);
+            $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
+        } else {
+            $sql = "INSERT INTO " . $this->type . "_tags (tag, item_id, team_id) VALUES(:tag, :item_id, :team_id)";
+            $req = $this->pdo->prepare($sql);
+            $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
+        }
+        $req->bindParam(':tag', $tag, PDO::PARAM_STR);
+        $req->bindParam(':item_id', $id, PDO::PARAM_INT);
+
+        return $req->execute();
     }
 
     /**
@@ -44,14 +77,14 @@ class Tags
      * @param string $type
      * @return string
      */
-    public function generateTagList($type)
+    public function generateTagList()
     {
-        if ($type === 'experiments') {
-        $sql = "SELECT DISTINCT tag, id FROM experiments_tags
-            INNER JOIN users ON (experiments_tags.userid = users.userid)
-            WHERE users.team = :team ORDER BY id DESC LIMIT 500";
+        if ($this->type === 'experiments') {
+            $sql = "SELECT DISTINCT tag, id FROM experiments_tags
+                INNER JOIN users ON (experiments_tags.userid = users.userid)
+                WHERE users.team = :team ORDER BY id DESC";
         } else {
-            $sql = "SELECT DISTINCT tag, id FROM items_tags WHERE team_id = :team ORDER BY id DESC LIMIT 500";
+            $sql = "SELECT DISTINCT tag, id FROM items_tags WHERE team_id = :team ORDER BY id DESC";
         }
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $_SESSION['team_id']);

@@ -25,6 +25,7 @@ class ItemsTypesView
     /**
      * Constructor
      *
+     * @param ItemsTypes $itemsTypes
      */
     public function __construct(ItemsTypes  $itemsTypes)
     {

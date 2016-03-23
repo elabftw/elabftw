@@ -105,10 +105,11 @@ class Teams extends Panel
     /**
      * Update team
      *
+     * @param array $params POST
+     * @return bool
      */
     public function update($params)
     {
-
         $post_stamp = processTimestampPost();
 
         // CHECKS

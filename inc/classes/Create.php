@@ -26,59 +26,6 @@ class Create
     {
         $this->pdo = Db::getConnection();
     }
-
-    /**
-     * Check if we have a template to load for experiments
-     *
-     * @param int $tpl The template ID
-     * @return bool
-     */
-    private function checkTpl($tpl)
-    {
-        return is_pos_int($tpl);
-    }
-
-    /**
-     * Select what will be the status for the experiment
-     *
-     * @return int The status ID
-     */
-    private function getStatus()
-    {
-        // what will be the status ?
-        // go pick what is the default status upon creating experiment
-        // there should be only one because upon making a status default,
-        // all the others are made not default
-        $sql = 'SELECT id FROM status WHERE is_default = true AND team = :team LIMIT 1';
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $_SESSION['team_id']);
-        $req->execute();
-        $status = $req->fetchColumn();
-
-        // if there is no is_default status
-        // we take the first status that come
-        if (!$status) {
-            $sql = 'SELECT id FROM status WHERE team = :team LIMIT 1';
-            $req = $this->pdo->prepare($sql);
-            $req->bindParam(':team', $_SESSION['team_id']);
-            $req->execute();
-            $status = $req->fetchColumn();
-        }
-        return $status;
-    }
-
-    /**
-     * Generate unique elabID.
-     * This function is called during the creation of an experiment.
-     *
-     * @return string unique elabid with date in front of it
-     */
-    private function generateElabid()
-    {
-        $date = kdate();
-        return $date . "-" . sha1(uniqid($date, true));
-    }
-
     /**
      * Copy the tags from one experiment/item to an other.
      *
@@ -145,57 +92,6 @@ class Create
     }
 
     /**
-     * Create an experiment.
-     *
-     * @param int|null $tpl the template on which to base the experiment
-     * @return int the new id of the experiment
-     */
-    public function createExperiment($tpl = null)
-    {
-        // do we want template ?
-        if ($this->checkTpl($tpl)) {
-            // SQL to get template
-            $sql = "SELECT name, body FROM experiments_templates WHERE id = :id AND team = :team";
-            $get_tpl = $this->pdo->prepare($sql);
-            $get_tpl->bindParam(':id', $tpl);
-            $get_tpl->bindParam(':team', $_SESSION['team_id']);
-            $get_tpl->execute();
-            $get_tpl_info = $get_tpl->fetch();
-
-            // the title is the name of the template
-            $title = $get_tpl_info['name'];
-            $body = $get_tpl_info['body'];
-
-        } else {
-            // if there is no template, title is 'Untitled' and the body is the default exp_tpl
-            // SQL to get body
-            $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team";
-            $get_body = $this->pdo->prepare($sql);
-            $get_body->bindParam(':team', $_SESSION['team_id']);
-            $get_body->execute();
-            $body = $get_body->fetchColumn();
-            $title = _('Untitled');
-        }
-
-        // SQL for create experiments
-        $sql = "INSERT INTO experiments(team, title, date, body, status, elabid, visibility, userid) VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
-        $req = $this->pdo->prepare($sql);
-        $req->execute(array(
-            'team' => $_SESSION['team_id'],
-            'title' => $title,
-            'date' => kdate(),
-            'body' => $body,
-            'status' => $this->getStatus(),
-            'elabid' => $this->generateElabid(),
-            'visibility' => 'team',
-            'userid' => $_SESSION['userid']
-        ));
-
-        return $this->pdo->lastInsertId();
-    }
-
-
-    /**
      * Duplicate an experiment.
      *
      * @param int $id The id of the experiment to duplicate
@@ -232,36 +128,6 @@ class Create
         self::copyTags($id, $newId, 'experiment');
         self::copyLinks($id, $newId);
         return $newId;
-    }
-
-    /**
-     * Create an item.
-     *
-     * @param int $itemType What kind of item we want to create.
-     * @return int the new id of the item
-     */
-    public function createItem($itemType)
-    {
-        // SQL to get template
-        $sql = "SELECT template FROM items_types WHERE id = :id";
-        $get_tpl = $this->pdo->prepare($sql);
-        $get_tpl->bindParam(':id', $itemType);
-        $get_tpl->execute();
-        $get_tpl_body = $get_tpl->fetch();
-
-        // SQL for create DB item
-        $sql = "INSERT INTO items(team, title, date, body, userid, type) VALUES(:team, :title, :date, :body, :userid, :type)";
-        $req = $this->pdo->prepare($sql);
-        $req->execute(array(
-            'team' => $_SESSION['team_id'],
-            'title' => 'Untitled',
-            'date' => kdate(),
-            'body' => $get_tpl_body['template'],
-            'userid' => $_SESSION['userid'],
-            'type' => $itemType
-        ));
-
-        return $this->pdo->lastInsertId();
     }
 
     /**

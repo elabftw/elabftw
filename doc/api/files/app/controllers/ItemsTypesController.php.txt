@@ -9,6 +9,8 @@
  * @package elabftw
  */
 
+namespace Elabftw\Elabftw;
+
 /**
  * Deal with ajax requests sent from the admin page
  *
@@ -17,15 +19,14 @@ require_once '../../inc/common.php';
 
 // the constructor will check for admin rights
 try {
-    $itemsTypes = new \Elabftw\Elabftw\ItemsTypes();
+    $itemsTypes = new ItemsTypes($_SESSION['team_id']);
 
     // CREATE ITEMS TYPES
     if (isset($_POST['itemsTypesCreate'])) {
         $itemsTypes->create(
             $_POST['itemsTypesName'],
             $_POST['itemsTypesColor'],
-            $_POST['itemsTypesTemplate'],
-            $_SESSION['team_id']
+            $_POST['itemsTypesTemplate']
         );
     }
 
@@ -35,9 +36,13 @@ try {
             $_POST['itemsTypesId'],
             $_POST['itemsTypesName'],
             $_POST['itemsTypesColor'],
-            $_POST['itemsTypesTemplate'],
-            $_SESSION['team_id']
+            $_POST['itemsTypesTemplate']
         );
+    }
+
+    // DESTROY ITEM TYPE
+    if (isset($_POST['itemsTypesDestroy'])) {
+        $itemsTypes->destroy($_POST['itemsTypesId']);
     }
 
 } catch (Exception $e) {

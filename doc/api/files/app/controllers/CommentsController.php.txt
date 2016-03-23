@@ -9,6 +9,8 @@
  * @package elabftw
  */
 
+namespace Elabftw\Elabftw;
+
 /**
  * Controller for the experiments comments
  *
@@ -16,7 +18,7 @@
 require_once '../../inc/common.php';
 
 try {
-    $comments = new \Elabftw\Elabftw\Comments();
+    $comments = new Comments();
 
     // CREATE
     if (isset($_POST['commentsCreate'])) {

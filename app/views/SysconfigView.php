@@ -24,6 +24,8 @@ class SysconfigView
     /**
      * Constructor
      *
+     * @param Update $update
+     * @param Logs $logs
      */
     public function __construct(Update $update, Logs $logs)
     {

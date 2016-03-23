@@ -27,6 +27,7 @@ class ItemsTypes extends Panel
     /**
      * Constructor
      *
+     * @param int $team
      * @throws Exception if user is not admin
      */
     public function __construct($team)

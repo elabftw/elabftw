@@ -9,14 +9,16 @@
  * @package elabftw
  */
 
+namespace Elabftw\Elabftw;
+
 /**
  * Users
  */
 require_once '../../inc/common.php';
-$formKey = new \Elabftw\Elabftw\FormKey();
+$formKey = new FormKey();
 
 try {
-    $users = new \Elabftw\Elabftw\Users();
+    $users = new Users();
 
     // VALIDATE
     if (isset($_POST['usersValidate'])) {
@@ -32,16 +34,7 @@ try {
     if (isset($_POST['usersUpdate'])) {
         $tab = 2;
 
-        if ($users->update(
-            $_POST['usersUpdateId'],
-            $_POST['usersUpdateFirstname'],
-            $_POST['usersUpdateLastname'],
-            $_POST['usersUpdateUsername'],
-            $_POST['usersUpdateEmail'],
-            $_POST['usersUpdateValidated'],
-            $_POST['usersUpdateUsergroup'],
-            $_POST['usersUpdatePassword']
-        )) {
+        if ($users->update($_POST)) {
             $_SESSION['ok'][] =  _('Configuration updated successfully.');
         }
     }

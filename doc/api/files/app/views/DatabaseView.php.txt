@@ -43,24 +43,17 @@ class DatabaseView
     /**
      * Need an ID of an item
      *
-     * @param int $id Item id from GET[]
-     * @param int $team
+     * @param Database $database
+     * @param int|null $id
      * @throws Exception
      */
-    public function __construct($id, $team)
+    public function __construct(Database $database, $id = null)
     {
-        $this->id = Tools::checkId($id);
-        if ($this->id === false) {
-            throw new Exception(_('The id parameter is not valid!'));
-        }
-        $this->database = new Database($this->id, $team);
+        $this->database = $database;
         $this->status = new Status();
         $this->uploads = new Uploads();
         $this->users = new Users();
-        $this->revisions = new Revisions($this->id, 'items');
-
-        // get data of item
-        $this->item = $this->database->read();
+        $this->revisions = new Revisions($this->database->id, 'items');
     }
 
     /**
@@ -73,7 +66,7 @@ class DatabaseView
         $html = '';
 
         $html .= $this->buildView();
-        $html .= $this->uploads->buildUploads($this->id, 'view', 'items');
+        $html .= $this->uploads->buildUploads($this->database->id, 'view', 'items');
         $html .= $this->buildViewJs();
 
         return $html;
@@ -91,8 +84,8 @@ class DatabaseView
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
         $html = $this->buildEdit();
-        $html .= $this->uploads->buildUploadForm($this->id, 'items');
-        $html .= $this->uploads->buildUploads($this->id, 'edit', 'items');
+        $html .= $this->uploads->buildUploadForm($this->database->id, 'items');
+        $html .= $this->uploads->buildUploads($this->database->id, 'edit', 'items');
         $html .= $this->buildEditJs();
 
         return $html;
@@ -124,7 +117,7 @@ class DatabaseView
             $html .= "<a href='app/lock.php?id=" . $itemArr['itemid'] . "&action=unlock&type=items'><img src='img/lock-gray.png' title='unlock item' alt='unlock' /></a>";
         }
         // TAGS
-        $html .= " " . show_tags($this->id, 'items_tags');
+        $html .= " " . show_tags($this->database->id, 'items_tags');
 
         // TITLE : click on it to go to edit mode
         $html .= "<div ";
@@ -185,15 +178,15 @@ class DatabaseView
 
         // begin page
         $html .= "<section class='box' style='border-left: 6px solid #" . $itemArr['bgcolor'] . "'>";
-        $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"deleteThis('" . $this->id . "','item', 'database.php')\" />";
+        $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"deleteThis('" . $this->database->id . "','item', 'database.php')\" />";
 
         // tags
-        $html .= displayTags('items', $this->id);
+        $html .= displayTags('items', $this->database->id);
 
         // main form
         $html .= "<form method='post' action='app/controllers/DatabaseController.php' enctype='multipart/form-data'>";
         $html .= "<input name='databaseUpdate' type='hidden' value='true' />";
-        $html .= "<input name='databaseId' type='hidden' value='" . $this->id . "' />";
+        $html .= "<input name='databaseId' type='hidden' value='" . $this->database->id . "' />";
 
         // date
         $html .= "<div class='row'>";
@@ -257,7 +250,8 @@ class DatabaseView
      */
     private function buildEditJs()
     {
-        $tags = new Tags();
+        $tags = new Tags('items');
+
         $html = "<script>
         // DELETE TAG
         function delete_tag(tag_id,item_id){
@@ -274,35 +268,12 @@ class DatabaseView
             }
             return false;
         }
-        // ADD TAG
-        function addTagOnEnter(e){ // the argument here is the event (needed to detect which key is pressed)
-            var keynum;
-            if(e.which)
-                { keynum = e.which;}
-            if(keynum == 13){  // if the key that was pressed was Enter (ascii code 13)
-                // get tag
-                var tag = $('#addtaginput').val();
-                // POST request
-                $.post('app/add.php', {
-                    tag: tag,
-                    item_id: " . $this->id . ",
-                    type: 'itemtag'
-                })
-                // reload the tags list
-                .success(function() {
-                    $('#tags_div').load('database.php?mode=edit&id=" . $this->id . " #tags_div');
-            // clear input field
-            $('#addtaginput').val('');
-            return false;
-                })
-            } // end if key is enter
-        }
         // STAR RATINGS
         function updateRating(rating) {
             // POST request
             $.post('app/star-rating.php', {
                 star: rating,
-                item_id: " . $this->id . "
+                item_id: " . $this->database->id . "
             })
             // reload the div
             .success(function () {
@@ -314,12 +285,12 @@ class DatabaseView
         $(document).ready(function() {
             // ADD TAG JS
             // listen keypress, add tag when it's enter
-            $('#addtaginput').keypress(function (e) {
-                addTagOnEnter(e);
+            $('#createTagInput').keypress(function (e) {
+                createTag(e, " . $this->database->id . ", 'items');
             });
 
             // autocomplete the tags
-            $('#addtaginput').autocomplete({
+            $('#createTagInput').autocomplete({
                 source: [" . $tags->generateTagList('items') . "]
             });
 
@@ -342,7 +313,7 @@ class DatabaseView
                 // save button :
                 save_onsavecallback: function() {
                     $.post('app/quicksave.php', {
-                        id : " . $this->id . ",
+                        id : " . $this->database->id . ",
                         type : 'items',
                         // we need this to get the updated content
                         title : document.getElementById('title_input').value,

@@ -9,6 +9,8 @@
  * @package elabftw
  */
 
+namespace Elabftw\Elabftw;
+
 /**
  * Controller for the common experiment template
  *
@@ -16,7 +18,7 @@
 require_once '../../inc/common.php';
 
 try {
-    $commonTpl = new \Elabftw\Elabftw\CommonTpl();
+    $commonTpl = new CommonTpl();
 
     // DEFAULT EXPERIMENT TEMPLATE
     if (isset($_POST['commonTplUpdate'])) {

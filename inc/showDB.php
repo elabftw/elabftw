@@ -9,8 +9,8 @@
  */
 use \Elabftw\Elabftw\Tools as Tools;
 
-$itemsTypes = new \Elabftw\Elabftw\ItemsTypes();
-$itemsTypesArr = $itemsTypes->read($_SESSION['team_id']);
+$itemsTypes = new \Elabftw\Elabftw\ItemsTypes($_SESSION['team_id']);
+$itemsTypesArr = $itemsTypes->read();
 
 $results_arr = array();
 // keep tag var in url
@@ -29,7 +29,7 @@ if (isset($_GET['tag']) && $_GET['tag'] != '') {
                 echo "<select class='form-control select-create-db' onchange='go_url(this.value)'>
                 <option value=''>" . _('Create new') . "</option>";
                 foreach ($itemsTypesArr as $items_types) {
-                    echo "<option value='app/create_item.php?type=" . $items_types['id'] . "' name='type' ";
+                    echo "<option value='app/controllers/DatabaseController.php?databaseCreateItemId=" . $items_types['id'] . "'";
                     echo ">" . $items_types['name'] . "</option>";
                 }
                 echo "</select>";

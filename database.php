@@ -9,6 +9,10 @@
  * @package elabftw
  */
 
+namespace Elabftw\Elabftw;
+
+use \Exception;
+
 /**
  * Entry point for database things
  *
@@ -29,13 +33,13 @@ try {
     // VIEW
     } elseif ($_GET['mode'] === 'view') {
 
-        $databaseView = new \Elabftw\Elabftw\DatabaseView($_GET['id'], $_SESSION['team_id']);
+        $databaseView = new DatabaseView(new Database($_SESSION['team_id']), $_GET['id']);
         echo $databaseView->view();
 
     // EDIT
     } elseif ($_GET['mode'] === 'edit') {
 
-        $databaseView = new \Elabftw\Elabftw\DatabaseView($_GET['id'], $_SESSION['team_id']);
+        $databaseView = new DatabaseView(new Database($_SESSION['team_id']), $_GET['id']);
         echo $databaseView->edit();
     }
 

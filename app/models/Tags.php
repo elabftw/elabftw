@@ -27,6 +27,7 @@ class Tags
     /**
      * Constructor
      *
+     * @param string $type experiments or items
      */
     public function __construct($type)
     {
@@ -37,6 +38,8 @@ class Tags
     /**
      * Create a tag
      *
+     * @param string $tag
+     * @param int $id
      */
     public function create($tag, $id)
     {

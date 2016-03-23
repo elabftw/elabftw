@@ -15,18 +15,27 @@
  */
 require_once '../../inc/common.php';
 
-// the constructor will check for sysadmin rights
 try {
+    /*
+    // the constructor will check for sysadmin rights
     $teams = new \Elabftw\Elabftw\Teams();
 
     // CREATE
     if (isset($_POST['teamsCreate'])) {
-        $teams->create($_POST['teamsName']);
+        if ($teams->create($_POST['teamsName'])) {
+            echo '1';
+        } else {
+            echo '0';
+        }
     }
 
     // UPDATE
     if (isset($_POST['teamsUpdate'])) {
-        $teams->update($_POST['teamsUpdateId'], $_POST['teamsUpdateName']);
+        if ($teams->updateName($_POST['teamsUpdateId'], $_POST['teamsUpdateName'])) {
+            echo '1';
+        } else {
+            echo '0';
+        }
     }
 
     // DESTROY
@@ -40,5 +49,6 @@ try {
 
 } catch (Exception $e) {
     dblog('Error', $_SESSION['userid'], $e->getMessage());
+     */
 }
 

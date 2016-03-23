@@ -37,6 +37,16 @@ class Users extends Auth
     /**
      * Update user
      *
+     * @param int $userid
+     * @param string $firstname
+     * @param string $lastname
+     * @param string $username
+     * @param string $email
+     * @param string $validated
+     * @param string $usergroup
+     * @param string $password
+     * @throws Exception
+     * @return bool
      */
     public function update($userid, $firstname, $lastname, $username, $email, $validated, $usergroup, $password)
     {

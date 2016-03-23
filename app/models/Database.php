@@ -100,6 +100,11 @@ class Database
     /**
      * Update a database item
      *
+     * @param string $title
+     * @param string $date
+     * @param string $body
+     * @param int $userid
+     * @return bool
      */
     public function update($title, $date, $body, $userid)
     {

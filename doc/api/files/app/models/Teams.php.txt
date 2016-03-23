@@ -29,7 +29,7 @@ class Teams extends Panel
     public function __construct()
     {
         $this->pdo = Db::getConnection();
-        if (!$this->isAdmin()) {
+        if (!$this->isSysAdmin()) {
             throw new Exception('Only admin can access this!');
         }
     }
@@ -82,11 +82,7 @@ class Teams extends Panel
         $req->bindValue(':team', $new_team_id);
         $result4 = $req->execute();
 
-        if ($result1 && $result2 && $result3 && $result4) {
-            echo '1';
-        } else {
-            echo '0';
-        }
+        return $result1 && $result2 && $result3 && $result4;
     }
 
     /**
@@ -104,13 +100,13 @@ class Teams extends Panel
     }
 
     /**
-     * Edit the name of a team, called by ajax in app/quicksave.php
+     * Edit the name of a team, called by ajax
      *
      * @param int $id The id of the team
      * @param string $name The new name we want
-     * @return string echo 1 or 0
+     * @return bool
      */
-    public function update($id, $name)
+    public function updateName($id, $name)
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $sql = "UPDATE teams
@@ -118,12 +114,9 @@ class Teams extends Panel
             WHERE team_id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
-        $req->bindParam(':id', $id, \PDO::PARAM_INT);
-        if ($req->execute()) {
-            echo '1';
-        } else {
-            echo '0';
-        }
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
+
+        return $req->execute();
     }
 
     /**

@@ -16,7 +16,7 @@ namespace Elabftw\Elabftw;
 class SysconfigView
 {
     /** the Logs class */
-    protected $logs;
+    private $logs;
 
     /**
      * Constructor

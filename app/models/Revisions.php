@@ -123,6 +123,8 @@ class Revisions
     /**
      * Get the body of a revision
      *
+     * @param int $revId The id of the revision
+     * @return array
      */
     private function readRev($revId)
     {
@@ -138,6 +140,8 @@ class Revisions
      * Check if item is locked before restoring it
      *
      * TODO this should be part of experiment/database model
+     * @throws Exception
+     * @return bool
      */
     private function isLocked()
     {
@@ -148,14 +152,17 @@ class Revisions
         $locked = $req->fetch();
 
         if ($locked['locked'] == 1) {
-            throw new Exception(_('You cannot restore a revision of a locked item!'));
+            return true;
         }
+        return false;
     }
 
     /**
      * Restore a revision
      *
      * @param int $revId The id of the revision we want to restore
+     * @throws Exception
+     * @return bool
      */
     public function restore($revId)
     {
@@ -164,7 +171,9 @@ class Revisions
             throw new Exception(_('The id parameter is not valid!'));
         }
         // check for lock
-        $this->isLocked();
+        if ($this->isLocked()) {
+            throw new Exception(_('You cannot restore a revision of a locked item!'));
+        }
 
         $revision = $this->read($revId);
         if ($revision['userid'] != $_SESSION['userid']) {

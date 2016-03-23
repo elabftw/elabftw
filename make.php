@@ -8,12 +8,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+namespace Elabftw\Elabftw;
 
 /**
  * Create a csv, zip or pdf file
  *
  */
-use \Elabftw\Elabftw\Tools as Tools;
 
 require_once 'inc/common.php';
 $page_title = _('Export');
@@ -22,15 +22,15 @@ $selected_menu = null;
 try {
     switch ($_GET['what']) {
         case 'csv':
-            $make = new \Elabftw\Elabftw\MakeCsv($_GET['id'], $_GET['type']);
+            $make = new MakeCsv($_GET['id'], $_GET['type']);
             break;
 
         case 'zip':
-            $make = new \Elabftw\Elabftw\MakeZip($_GET['id'], $_GET['type']);
+            $make = new MakeZip($_GET['id'], $_GET['type']);
             break;
 
         case 'pdf':
-            $make = new \Elabftw\Elabftw\MakePdf($_GET['id'], $_GET['type']);
+            $make = new MakePdf($_GET['id'], $_GET['type']);
             break;
 
         default:

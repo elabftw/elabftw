@@ -10,7 +10,7 @@ By default, eLabFTW will try to use the local MTA aka Sendmail. However, it is r
 
 Go to the Sysadmin panel (`elabftw/sysconfig.php`) and add the requested infos.
 
-If you don't know what to do, register a new account on `Mandrill <http://www.mandrill.com>`_ or `Mailgun <http://www.mailgun.com>`_. These services will give you a free SMTP account. :)
+If you don't know what to do, register a new account on `Mailgun <http://www.mailgun.com>`_. This service will give you a free SMTP account that you can use for eLabFTW. :)
 
 Make sure that the `uploads` folder cannot be accessed
 ------------------------------------------------------

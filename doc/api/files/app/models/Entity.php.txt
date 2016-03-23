@@ -10,11 +10,10 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
 use \Exception;
 
 /**
- * The mother class of experiments and items
+ * The mother class of Experiments and Database
  */
 class Entity
 {

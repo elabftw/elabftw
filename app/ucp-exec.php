@@ -32,6 +32,7 @@ $wantUpdatePassword = false;
 $tab = '1';
 
 $auth = new \Elabftw\Elabftw\Auth();
+$users = new \Elabftw\Elabftw\Users();
 
 // TAB 1 : PREFERENCES
 if (isset($_POST['display'])) {
@@ -258,7 +259,7 @@ if (isset($_POST['currpass'])) {
         // update the password only if there is no error before
         if (!$errflag) {
             try {
-                $auth->updatePassword($password);
+                $users->updatePassword($password);
             } catch (Exception $e) {
                 $msg_arr[] = $e->getMessage();
                 $errflag = true;

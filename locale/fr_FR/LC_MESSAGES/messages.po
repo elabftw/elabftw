@@ -175,16 +175,15 @@ msgid "Has an active account?"
 msgstr "Compte activé ?"
 
 #: elabftw/admin.php:173
-msgid "Group:"
-msgstr "Groupe :"
+msgid "Group"
+msgstr "Groupe"
 
 #: elabftw/admin.php:195
-msgid "Reset user password:"
-msgstr "Réinitialiser le mot de passe utilisateur :"
+msgid "Reset user password"
+msgstr "Réinitialiser le mot de passe utilisateur"
 
-#: elabftw/admin.php:198
-msgid "Repeat new password:"
-msgstr "Répéter le nouveau mot de passe :"
+msgid "characters minimum"
+msgstr "caractères au minimum"
 
 #: elabftw/admin.php:219
 msgid "DANGER ZONE"
@@ -334,10 +333,6 @@ msgstr "Équipe ajoutée avec succès."
 #: elabftw/app/ucp-exec.php:88
 msgid "Configuration updated successfully."
 msgstr "Configuration mise à jour avec succès."
-
-#: elabftw/app/admin-exec.php:551 elabftw/app/reset.php:159
-msgid "Userid is not valid."
-msgstr "L'id utilisateur n'est pas valide."
 
 #: elabftw/app/admin-exec.php:576
 msgid "Only a sysadmin can put someone sysadmin."

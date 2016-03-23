@@ -556,26 +556,6 @@ function is_owned_by_user($id, $table, $userid)
     return $result === $userid;
 }
 
-/*
- * Can we edit/view this item ?
- *
- * @param int $id
- * @param int $team_id
- * @return bool
- */
-function item_is_in_team($id, $team_id)
-{
-    global $pdo;
-    // get what is the team id of that item
-    $sql = "SELECT team FROM items WHERE id = :id";
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':id', $id, PDO::PARAM_INT);
-    $req->execute();
-    $item_team = $req->fetchColumn();
-    // check we are in this team
-    return $item_team == $team_id;
-}
-
 /**
  * Return conf_value of asked conf_name or the whole config as an associative array.
  *

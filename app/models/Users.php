@@ -16,7 +16,7 @@ use \Exception;
 /**
  * Users
  */
-class Users
+class Users extends Auth
 {
     /** The PDO object */
     private $pdo;
@@ -46,21 +46,99 @@ class Users
     }
 
     /**
-     * Check if a user is in our team
+     * Update user
      *
-     * @param string $email
-     * @param int $team
-     * @return int|bool
      */
-    private function emailInTeam($email, $team)
+    public function update($userid, $firstname, $lastname, $username, $email, $validated, $usergroup, $password)
     {
-        $sql = "SELECT userid FROM users WHERE email LIKE :email AND team = :team";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':email', $email);
-        $req->bindParam(':team', $team);
-        $req->execute();
+        $userid = Tools::checkId($userid);
+        if ($userid === false) {
+            throw new Exception(_('The id parameter is not valid!'));
+        }
+        // only admin can edit users
+        if (!isset($_SESSION['is_admin'])) {
+            throw new Exception(_('This section is out of your reach.'));
+        }
 
-        return $req->fetch();
+        // Put everything lowercase and first letter uppercase
+        $firstname = ucwords(strtolower(filter_var($firstname, FILTER_SANITIZE_STRING)));
+        // Lastname in uppercase
+        $lastname = strtoupper(filter_var($lastname, FILTER_SANITIZE_STRING));
+        $username = filter_var($username, FILTER_SANITIZE_STRING);
+        $email = filter_var($email, FILTER_SANITIZE_EMAIL);
+
+        if ($validated == 1) {
+            $validated = 1;
+        } else {
+            $validated = 0;
+        }
+        $usergroup = Tools::checkId($usergroup);
+        if ($usergroup === false) {
+            throw new Exception(_('The id parameter is not valid!'));
+        }
+
+        // a non sysadmin cannot put someone sysadmin
+        if ($usergroup == 1 && $_SESSION['is_sysadmin'] != 1) {
+            throw new Exception(_('Only a sysadmin can put someone sysadmin.'));
+        }
+
+        if (strlen($password) > 1) {
+            if (!$this->checkPasswordLength($password)) {
+                $error = sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH);
+                throw new Exception($error);
+            }
+            $this->updatePassword($password, $userid);
+        }
+
+        $sql = "UPDATE users SET
+            firstname = :firstname,
+            lastname = :lastname,
+            username = :username,
+            email = :email,
+            usergroup = :usergroup,
+            validated = :validated
+            WHERE userid = :userid";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':firstname', $firstname);
+        $req->bindParam(':lastname', $lastname);
+        $req->bindParam(':username', $username);
+        $req->bindParam(':email', $email);
+        $req->bindParam(':validated', $validated);
+        $req->bindParam(':usergroup', $usergroup);
+        $req->bindParam(':userid', $userid);
+
+        return $req->execute();
+    }
+
+    /**
+     * Update the password for a user, or for ourself if none provided
+     *
+     * @param string $password The new password
+     * @param int|null $userid The user we want to update
+     * @throws Exception if invalid character length
+     * @return bool True if password is updated
+     */
+    public function updatePassword($password, $userid = null)
+    {
+
+        if (is_null($userid)) {
+            $userid = $_SESSION['userid'];
+        }
+        if (!$this->checkPasswordLength($password)) {
+            $error = sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH);
+            throw new Exception($error);
+        }
+        // Create a new salt
+        $salt = hash("sha512", uniqid(rand(), true));
+        $passwordHash = hash("sha512", $salt . $password);
+
+        $sql = "UPDATE users SET salt = :salt, password = :password WHERE userid = :userid";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':salt', $salt);
+        $req->bindParam(':password', $passwordHash);
+        $req->bindParam(':userid', $userid);
+
+        return $req->execute();
     }
 
     /**
@@ -73,8 +151,7 @@ class Users
     public function destroy($email, $password)
     {
         // check that we got the good password
-        $auth = new Auth();
-        if (!$auth->checkCredentials($_SESSION['username'], $password)) {
+        if (!$this->checkCredentials($_SESSION['username'], $password)) {
             throw new Exception(_("Wrong password!"));
         }
         // check the user is in our team and also get the userid
@@ -120,5 +197,23 @@ class Users
         $result[] = $req->execute();
 
         return !in_array(0, $result);
+    }
+
+    /**
+     * Check if a user is in our team
+     *
+     * @param string $email
+     * @param int $team
+     * @return int|bool
+     */
+    private function emailInTeam($email, $team)
+    {
+        $sql = "SELECT userid FROM users WHERE email LIKE :email AND team = :team";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':email', $email);
+        $req->bindParam(':team', $team);
+        $req->execute();
+
+        return $req->fetch();
     }
 }

@@ -26,6 +26,7 @@ try {
     $commonTpl = new \Elabftw\Elabftw\CommonTpl();
     $teamGroups = new \Elabftw\Elabftw\TeamGroups();
     $teamGroupsView = new \Elabftw\Elabftw\TeamGroupsView();
+    $auth = new \Elabftw\Elabftw\Auth();
 } catch (Exception $e) {
     die($e->getMessage());
 }
@@ -155,21 +156,22 @@ if (!empty($team['stamppass'])) {
     foreach($usersArr as $users) {
         ?>
             <li class='list-group-item'>
-                <form method='post' action='app/admin-exec.php'>
-                    <input type='hidden' value='<?php echo $users['userid']; ?>' name='userid' />
+                <form method='post' action='app/controllers/AdminController.php'>
+                    <input type='hidden' value='true' name='usersUpdate' />
+                    <input type='hidden' value='<?php echo $users['userid']; ?>' name='usersUpdateId' />
                     <ul class='list-inline'>
-                    <li><label class='block' for='edituser_firstname'><?php echo _('Firstname'); ?></label>
-                    <input  id='edituser_firstname' type='text' value='<?php echo $users['firstname']; ?>' name='firstname' /></li>
-                    <li><label class='block' for='edituser_lastname'><?php echo _('Lastname'); ?></label>
-                    <input  id='edituser_lastname' type='text' value='<?php echo $users['lastname']; ?>' name='lastname' /></li>
-                    <li><label class='block' for='edituser_username'><?php echo _('Username'); ?></label>
-                    <input  id='edituser_username' type='text' value='<?php echo $users['username']; ?>' name='username' /></li>
+                    <li><label class='block' for='usersUpdateFirstname'><?php echo _('Firstname'); ?></label>
+                    <input  id='usersUpdateFirstname' type='text' value='<?php echo $users['firstname']; ?>' name='usersUpdateFirstname' /></li>
+                    <li><label class='block' for='usersUpdateLastname'><?php echo _('Lastname'); ?></label>
+                    <input  id='usersUpdateLastname' type='text' value='<?php echo $users['lastname']; ?>' name='usersUpdateLastname' /></li>
+                    <li><label class='block' for='usersUpdateUsername'><?php echo _('Username'); ?></label>
+                    <input  id='usersUpdateUsername' type='text' value='<?php echo $users['username']; ?>' name='usersUpdateUsername' /></li>
                     <li>
-                    <label class='block' for='edituser_email'><?php echo _('Email'); ?></label>
-                    <input id='edituser_email' type='email' value='<?php echo $users['email']; ?>' name='email' /></li>
+                    <label class='block' for='usersUpdateEmail'><?php echo _('Email'); ?></label>
+                    <input id='usersUpdateEmail' type='email' value='<?php echo $users['email']; ?>' name='usersUpdateEmail' /></li>
                     <li>
-                    <label class='block' for='validated'><?php echo _('Has an active account?'); ?></label>
-                    <select name='validated' id='validated'>
+                    <label class='block' for='usersUpdateValidated'><?php echo _('Has an active account?'); ?></label>
+                    <select name='usersUpdateValidated' id='usersUpdateValidated'>
                         <option value='1'<?php
                                 if ($users['validated'] == 1) { echo " selected='selected'"; } ?>
                                     ><?php echo _('Yes'); ?></option>
@@ -178,8 +180,8 @@ if (!empty($team['stamppass'])) {
                                 ><?php echo _('No'); ?></option>
                     </select>
                     </li>
-                    <li><label class='block' for='usergroup'><?php echo _('Group:'); ?></label>
-                    <select name='usergroup' id='usergroup'>
+                    <li><label class='block' for='usersUpdateUsergroup'><?php echo _('Group'); ?></label>
+                    <select name='usersUpdateUsergroup' id='usersUpdateUsergroup'>
             <?php
                         if ($_SESSION['is_sysadmin'] == 1) {
             ?>
@@ -199,8 +201,9 @@ if (!empty($team['stamppass'])) {
                                 if ($users['usergroup'] == 4) { echo " selected='selected'"; } ?>
                         >Users</option>
                     </select></li>
-                    <li><label class='block' for='users_reset_password'><?php echo _('Reset user password:'); ?></label>
-                    <input id='users_reset_password' type='password' value='' name='new_password' /></li>
+                    <li><label class='block' for='usersUpdatePassword'><?php echo _('Reset user password') .
+                        " <span class='smallgray'>" . $auth::MIN_PASSWORD_LENGTH . " " . _('characters minimum'); ?></span></label>
+                    <input id='usersUpdatePassword' type='password' pattern='.{0}|.{<?php echo $auth::MIN_PASSWORD_LENGTH; ?>,}' value='' name='usersUpdatePassword' /></li>
                     <li><button type='submit' class='button'><?php echo _('Save'); ?></button></li>
                 </ul>
             </form>

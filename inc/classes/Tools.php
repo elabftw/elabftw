@@ -10,6 +10,9 @@
  */
 namespace Elabftw\Elabftw;
 
+use \RecursiveIteratorIterator;
+use \RecursiveDirectoryIterator;
+
 /**
  * Toolbelt full of useful functions
  */
@@ -161,5 +164,35 @@ class Tools
                 'min_range' => 1
             ));
         return filter_var($id, FILTER_VALIDATE_INT, $filter_options);
+    }
+
+    /**
+     * Get the size of a dir
+     *
+     * @param string $directory
+     * @return integer
+     */
+    public static function dirSize($directory)
+    {
+        $size = 0;
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
+            $size += $file->getSize();
+        }
+        return $size;
+    }
+
+    /**
+     * Get the number of files in a dir
+     *
+     * @param string $directory
+     * @return int number of files in dir
+     */
+    public static function dirNum($directory)
+    {
+        $num = 0;
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
+            $num++;
+        }
+        return $num;
     }
 }

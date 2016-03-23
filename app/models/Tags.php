@@ -31,8 +31,8 @@ class Tags
      */
     public function __construct($type)
     {
-        $this->type = $type;
         $this->pdo = Db::getConnection();
+        $this->type = $type;
     }
 
     /**

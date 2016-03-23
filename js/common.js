@@ -387,7 +387,7 @@ function itemsTypesDestroy(id) {
 // COMMON TEMPLATE
 function commonTplUpdate() {
     template = tinymce.get('commonTplTemplate').getContent();
-    $.post('app/controllers/CommonTplController.php', {
+    $.post('app/controllers/ConfigController.php', {
         commonTplUpdate: template
     }).done(function() {
         notif('Saved', 'ok');
@@ -571,7 +571,7 @@ function testemailSend() {
 function logsDestroy() {
     // disable button on click
     document.getElementById('logsDestroyButton').disabled = true;
-    $.post('app/controllers/LogsController.php', {
+    $.post('app/controllers/ConfigController.php', {
         logsDestroy: true
     }).done(function(data) {
         if (data == 1) {

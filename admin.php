@@ -26,7 +26,7 @@ try {
     $status = new Status();
     $statusView = new StatusView();
     $itemsTypesView = new ItemsTypesView(new ItemsTypes($_SESSION['team_id']));
-    $commonTpl = new CommonTpl();
+    $templates = new Templates($_SESSION['team_id']);
     $teamGroups = new TeamGroups();
     $teamGroupsView = new TeamGroupsView();
     $auth = new Auth();
@@ -266,7 +266,7 @@ if (!empty($team['stamppass'])) {
     <h3><?php echo _('Common experiment template'); ?></h3>
     <p><?php echo _('This is the default text when someone creates an experiment.'); ?></p>
     <textarea style='height:400px' class='mceditable' id='commonTplTemplate' />
-        <?php echo $commonTpl->read($_SESSION['team_id']); ?>
+        <?php echo $templates->readCommon(); ?>
     </textarea>
     <div class='submitButtonDiv'>
         <button type='submit' class='button' onClick='commonTplUpdate()'><?php echo _('Save'); ?></button>

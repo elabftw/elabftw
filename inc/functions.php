@@ -881,34 +881,3 @@ function getDbList($format = 'default')
         return $tinymce_list;
     }
 }
-
-
-/**
- * Get the size of a dir
- *
- * @param string $directory
- * @return integer
- */
-function dirSize($directory)
-{
-    $size = 0;
-    foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
-        $size += $file->getSize();
-    }
-    return $size;
-}
-
-/**
- * Get the number of files in a dir
- *
- * @param string $directory
- * @return int number of files in dir
- */
-function dirNum($directory)
-{
-    $num = 0;
-    foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
-        $num++;
-    }
-    return $num;
-}

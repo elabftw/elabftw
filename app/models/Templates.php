@@ -1,6 +1,6 @@
 <?php
 /**
- * \Elabftw\Elabftw\CommonTpl
+ * \Elabftw\Elabftw\Templates
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -11,39 +11,53 @@
 namespace Elabftw\Elabftw;
 
 use \PDO;
-use \Exception;
 
 /**
- * The common experiment template for the team
+ * All about the templates
  */
-class CommonTpl extends Panel
+class Templates
 {
-    /** The PDO object */
+    /** pdo object */
     private $pdo;
 
     /**
-     * Constructor
+     * Give me the team on init
      *
+     * @param int $team
      */
-    public function __construct()
+    public function __construct($team)
     {
         $this->pdo = Db::getConnection();
-        if (!$this->isAdmin()) {
-            throw new Exception('Only admin can access this!');
-        }
+        $this->team = $team;
+    }
+
+    /**
+     * Read a template
+     *
+     * @param int $id
+     * @return array
+     */
+    public function read($id)
+    {
+        $sql = "SELECT name, body FROM experiments_templates WHERE id = :id AND team = :team";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $id);
+        $req->bindParam(':team', $this->team);
+        $req->execute();
+
+        return $req->fetch();
     }
 
     /**
      * Get the body of the default experiment template
      *
-     * @param int $team Team ID
      * @return string body of the common template
      */
-    public function read($team)
+    public function readCommon()
     {
         $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $team, \PDO::PARAM_INT);
+        $req->bindParam(':team', $this->team);
         $req->execute();
 
         return $req->fetchColumn();
@@ -53,10 +67,9 @@ class CommonTpl extends Panel
      * Update the template
      *
      * @param string $body Content of the template
-     * @param int $team Team ID
      * @return bool true if sql success
      */
-    public function update($body, $team)
+    public function update($body)
     {
         $body = check_body($body);
         $sql = "UPDATE experiments_templates SET
@@ -65,7 +78,7 @@ class CommonTpl extends Panel
             body = :body
             WHERE userid = 0 AND team = :team";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $team, \PDO::PARAM_INT);
+        $req->bindParam(':team', $this->team);
         $req->bindParam(':body', $body);
 
         return $req->execute();

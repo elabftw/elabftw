@@ -54,9 +54,9 @@ if (isset($_POST['visibility'])) {
 } else {
     $title = check_title($_POST['title']);
 
-    $body = check_body($_POST['body']);
+    $body = Tools::checkBody($_POST['body']);
 
-    $date = check_date($_POST['date']);
+    $date = Tools::kdate($_POST['date']);
 
     // SQL for quicksave
     // we do a usercheck for experiments

@@ -164,7 +164,7 @@ class Uploads
 
             // Make thumbnail only if it isn't done already
             if (!file_exists($thumbpath)) {
-                make_thumb($filepath, $ext, $thumbpath, 100);
+                $this->makeThumb($filepath, $ext, $thumbpath, 100);
             }
 
             // only display the thumbnail if the file is here
@@ -239,5 +239,48 @@ class Uploads
             </script>";
         }
         return $html;
+    }
+    /**
+     * Create a jpg thumbnail from images of type jpg, png or gif.
+     *
+     * @param string $src Path to the original file
+     * @param string $ext Extension of the file
+     * @param string $dest Path to the place to save the thumbnail
+     * @param int $desired_width Width of the thumbnail (height is automatic depending on width)
+     * @return null|false
+     */
+    private function makeThumb($src, $ext, $dest, $desired_width)
+    {
+        // we don't want to work on too big images
+        // put the limit to 5 Mbytes
+        if (filesize($src) > 5000000) {
+            return false;
+        }
+
+        // the used fonction is different depending on extension
+        if (preg_match('/(jpg|jpeg)$/i', $ext)) {
+            $source_image = imagecreatefromjpeg($src);
+        } elseif (preg_match('/(png)$/i', $ext)) {
+            $source_image = imagecreatefrompng($src);
+        } elseif (preg_match('/(gif)$/i', $ext)) {
+            $source_image = imagecreatefromgif($src);
+        } else {
+            return false;
+        }
+
+        $width = imagesx($source_image);
+        $height = imagesy($source_image);
+
+        // find the "desired height" of this thumbnail, relative to the desired width
+        $desired_height = floor($height * ($desired_width / $width));
+
+        // create a new, "virtual" image
+        $virtual_image = imagecreatetruecolor($desired_width, $desired_height);
+
+        // copy source image at a resized size
+        imagecopyresized($virtual_image, $source_image, 0, 0, 0, 0, $desired_width, $desired_height, $width, $height);
+
+        // create the physical thumbnail image to its destination (85% quality)
+        imagejpeg($virtual_image, $dest, 85);
     }
 }

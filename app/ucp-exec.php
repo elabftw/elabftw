@@ -23,7 +23,12 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+namespace Elabftw\Elabftw;
+
 require_once '../inc/common.php';
+
+use PDO;
+use Exception;
 
 // INFO BOX
 $msg_arr = array();
@@ -31,8 +36,8 @@ $errflag = false;
 $wantUpdatePassword = false;
 $tab = '1';
 
-$auth = new \Elabftw\Elabftw\Auth();
-$users = new \Elabftw\Elabftw\Users();
+$auth = new Auth();
+$users = new Users();
 
 // TAB 1 : PREFERENCES
 if (isset($_POST['display'])) {
@@ -315,7 +320,7 @@ if (isset($_POST['new_tpl_form'])) {
         $errflag = true;
     } else {
         $tpl_name = filter_var($_POST['new_tpl_name'], FILTER_SANITIZE_STRING);
-        $tpl_body = check_body($_POST['new_tpl_body']);
+        $tpl_body = Tools::checkBody($_POST['new_tpl_body']);
         $sql = "INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)";
         $req = $pdo->prepare($sql);
         $result = $req->execute(array(

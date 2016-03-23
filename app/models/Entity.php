@@ -33,4 +33,21 @@ class Entity
         }
         $this->id = $id;
     }
+
+    /**
+     * Check if an item has a file attached.
+     *
+     * @return bool Return false if there is now file attached
+     */
+    public function hasAttachment($type)
+    {
+        $sql = "SELECT id FROM uploads
+            WHERE item_id = :item_id AND type = :type LIMIT 1";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':item_id', $this->id);
+        $req->bindParam(':type', $type);
+        $req->execute();
+
+        return $req->rowCount() > 0;
+    }
 }

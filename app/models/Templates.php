@@ -20,6 +20,9 @@ class Templates
     /** pdo object */
     private $pdo;
 
+    /** our team */
+    private $team;
+
     /**
      * Give me the team on init
      *
@@ -71,7 +74,7 @@ class Templates
      */
     public function update($body)
     {
-        $body = check_body($body);
+        $body = Tools::checkBody($body);
         $sql = "UPDATE experiments_templates SET
             name = 'default',
             team = :team,

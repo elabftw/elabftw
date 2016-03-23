@@ -95,7 +95,7 @@ class ImportCsv extends Import
             $result = $req->execute(array(
                 'team' => $_SESSION['team_id'],
                 'title' => $title,
-                'date' => kdate(),
+                'date' => Tools::kdate(),
                 'body' => $body,
                 'userid' => $_SESSION['userid'],
                 'type' => $this->itemType

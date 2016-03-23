@@ -66,7 +66,7 @@ class Database extends Entity
         $req->execute(array(
             'team' => $_SESSION['team_id'],
             'title' => 'Untitled',
-            'date' => kdate(),
+            'date' => Tools::kdate(),
             'body' => $get_tpl_body['template'],
             'userid' => $_SESSION['userid'],
             'type' => $itemType
@@ -145,8 +145,8 @@ class Database extends Entity
             throw new Exception(_('This section is out of your reach.'));
         }
         $title = check_title($title);
-        $date = check_date($date);
-        $body = check_body($body);
+        $date = Tools::kdate($date);
+        $body = Tools::checkBody($body);
 
         $sql = "UPDATE items
             SET title = :title,
@@ -173,7 +173,6 @@ class Database extends Entity
     /**
      * Duplicate an item.
      *
-     * @param int $id The id of the item to duplicate
      * @return int $newId The id of the newly created item
      */
     public function duplicate()
@@ -186,7 +185,7 @@ class Database extends Entity
         $req->execute(array(
             'team' => $item['team'],
             'title' => $item['title'],
-            'date' => kdate(),
+            'date' => Tools::kdate(),
             'body' => $item['body'],
             'userid' => $_SESSION['userid'],
             'type' => $item['type']

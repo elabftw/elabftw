@@ -84,7 +84,7 @@ class Experiments extends Entity
         $req->execute(array(
             'team' => $_SESSION['team_id'],
             'title' => $title,
-            'date' => kdate(),
+            'date' => Tools::kdate(),
             'body' => $body,
             'status' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
@@ -129,8 +129,8 @@ class Experiments extends Entity
     public function update($title, $date, $body)
     {
         $title = check_title($title);
-        $date = check_date($date);
-        $body = check_body($body);
+        $date = Tools::kdate($date);
+        $body = Tools::checkBody($body);
 
         $sql = "UPDATE experiments SET
             title = :title,
@@ -227,7 +227,6 @@ class Experiments extends Entity
     /**
      * Get links for an experiments
      *
-     * @param int $experiment
      * @return array
      */
     public function readLink()
@@ -306,14 +305,13 @@ class Experiments extends Entity
      */
     private function generateElabid()
     {
-        $date = kdate();
+        $date = Tools::kdate();
         return $date . "-" . sha1(uniqid($date, true));
     }
 
     /**
      * Duplicate an experiment.
      *
-     * @param int $id The id of the experiment to duplicate
      * @return int Will return the ID of the new item
      */
     public function duplicate()
@@ -330,7 +328,7 @@ class Experiments extends Entity
         $req->execute(array(
             'team' => $_SESSION['team_id'],
             'title' => $title,
-            'date' => kdate(),
+            'date' => Tools::kdate(),
             'body' => $experiment['body'],
             'status' => $this->getStatus(),
             'elabid' => $this->generateElabid(),

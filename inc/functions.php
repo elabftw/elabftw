@@ -23,80 +23,6 @@ use \Swift_SendmailTransport;
  */
 
 /**
- * Return the date as YYYYMMDD format.
- *
- * @return string
- */
-function kdate()
-{
-    return date('Ymd');
-}
-
-/**
- * Create a jpg thumbnail from images of type jpg, png or gif.
- *
- * @param string $src Path to the original file
- * @param string $ext Extension of the file
- * @param string $dest Path to the place to save the thumbnail
- * @param int $desired_width Width of the thumbnail (height is automatic depending on width)
- * @return null|false
- */
-function make_thumb($src, $ext, $dest, $desired_width)
-{
-    // we don't want to work on too big images
-    // put the limit to 5 Mbytes
-    if (filesize($src) > 5000000) {
-        return false;
-    }
-
-    // the used fonction is different depending on extension
-    if (preg_match('/(jpg|jpeg)$/i', $ext)) {
-        $source_image = imagecreatefromjpeg($src);
-    } elseif (preg_match('/(png)$/i', $ext)) {
-        $source_image = imagecreatefrompng($src);
-    } elseif (preg_match('/(gif)$/i', $ext)) {
-        $source_image = imagecreatefromgif($src);
-    } else {
-        return false;
-    }
-
-    $width = imagesx($source_image);
-    $height = imagesy($source_image);
-
-    // find the "desired height" of this thumbnail, relative to the desired width
-    $desired_height = floor($height * ($desired_width / $width));
-
-    // create a new, "virtual" image
-    $virtual_image = imagecreatetruecolor($desired_width, $desired_height);
-
-    // copy source image at a resized size
-    imagecopyresized($virtual_image, $source_image, 0, 0, 0, 0, $desired_width, $desired_height, $width, $height);
-
-    // create the physical thumbnail image to its destination (85% quality)
-    imagejpeg($virtual_image, $dest, 85);
-}
-
-/**
- * Check if an item has a file attached.
- *
- * @param int $id ID of the item to check
- * @param string $type
- * @return bool Return false if there is now file attached
- */
-function has_attachement($id, $type)
-{
-    global $pdo;
-    $sql = "SELECT id FROM uploads
-        WHERE item_id = :item_id AND type = :type LIMIT 1";
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':item_id', $id);
-    $req->bindParam(':type', $type);
-    $req->execute();
-    return $req->rowCount() > 0;
-}
-
-
-/**
  * Main function to search for something
  *
  * @param string $type Can be 'xp' or 'db'
@@ -264,58 +190,51 @@ function processTimestampPost()
  */
 function showXP($id, $display = 'default')
 {
-    global $pdo;
-    $sql = "SELECT experiments.*, status.color FROM
-        experiments LEFT JOIN
-        status ON (experiments.status = status.id)
-        WHERE experiments.id = :id";
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':id', $id, PDO::PARAM_INT);
-    $req->execute();
-    $experiments = $req->fetch();
+    $experiments = new Experiments($_SESSION['userid'], $id);
+    $experiment = $experiments->read();
 
     if ($display === 'compact') {
         // COMPACT MODE //
-        echo "<section class='item_compact' style='border-left: 6px solid #" . $experiments['color'] . "'>";
-        echo "<a href='experiments.php?mode=view&id=" . $experiments['id'] . "'>";
-        echo "<span class='date date_compact'>" . Tools::formatDate($experiments['date']) . "</span> ";
+        echo "<section class='item_compact' style='border-left: 6px solid #" . $experiment['color'] . "'>";
+        echo "<a href='experiments.php?mode=view&id=" . $experiment['id'] . "'>";
+        echo "<span class='date date_compact'>" . Tools::formatDate($experiment['date']) . "</span> ";
         echo "<span style='padding-left:10px;'>";
         // show lock if item is locked on viewXP
-        if ($experiments['locked']) {
+        if ($experiment['locked']) {
             echo "<img src='img/lock-blue.png' alt='lock' title='Locked' />";
         }
-        echo stripslashes($experiments['title']);
+        echo stripslashes($experiment['title']);
         echo "</a></span></section>";
     } else { // NOT COMPACT
         ?>
-        <section class="item" style='border-left: 6px solid #<?php echo $experiments['color']; ?>'>
+        <section class="item" style='border-left: 6px solid #<?php echo $experiment['color']; ?>'>
         <?php
         // we show the abstract of the experiment on mouse hover with the title attribute
         // we check if it is our experiment. It would be best to check if we have visibility rights on it
         // but atm there is no such function. So we limit this feature to experiments we own, for simplicity.
         if (is_owned_by_user($id, 'experiments', $_SESSION['userid'])) {
-            $body_abstract = str_replace("'", "", substr(strip_tags($experiments['body']), 0, 100));
+            $body_abstract = str_replace("'", "", substr(strip_tags($experiment['body']), 0, 100));
         } else {
             $body_abstract = '';
         }
-        echo "<a title='" . $body_abstract . "' href='experiments.php?mode=view&id=" . $experiments['id'] . "'>";
+        echo "<a title='" . $body_abstract . "' href='experiments.php?mode=view&id=" . $experiment['id'] . "'>";
         // show stamp if experiment is timestamped
-        if ($experiments['timestamped']) {
+        if ($experiment['timestamped']) {
             echo "<img class='align_right' src='img/stamp.png' alt='stamp' title='experiment timestamped' />";
         }
         echo "<p class='title'>";
         // show lock if item is locked on viewXP
-        if ($experiments['locked']) {
+        if ($experiment['locked']) {
             echo "<img style='padding-bottom:3px;' src='img/lock-blue.png' alt='lock' title='Locked' /> ";
         }
         // TITLE
-        echo stripslashes($experiments['title']) . "</p></a>";
+        echo stripslashes($experiment['title']) . "</p></a>";
         // DATE
-        echo "<span class='date'><img class='image' src='img/calendar.png' /> " . Tools::formatDate($experiments['date']) . "</span> ";
+        echo "<span class='date'><img class='image' src='img/calendar.png' /> " . Tools::formatDate($experiment['date']) . "</span> ";
         // _('Tags')
         echo show_tags($id, 'experiments_tags');
         // show attached if there is a file attached
-        if (has_attachement($experiments['id'], 'experiments')) {
+        if ($experiments->hasAttachment('experiments')) {
             echo "<img class='align_right' src='img/attached.png' alt='file attached' />";
         }
         echo "</section>";
@@ -360,23 +279,14 @@ function show_stars($rating)
  */
 function showDB($id, $display = 'default')
 {
-    global $pdo;
-    $sql = "SELECT items.*,
-        items_types.bgcolor,
-        items_types.name
-        FROM items
-        LEFT JOIN items_types ON (items.type = items_types.id)
-        WHERE items.id = :id";
-    $req = $pdo->prepare($sql);
-    $req->execute(array(
-        'id' => $id
-    ));
-    $item = $req->fetch();
+    $database = new Database($_SESSION['team_id'], $id);
+    $item = $database->read();
+
     if ($display === 'compact') {
         // COMPACT MODE //
         ?>
             <section class='item_compact' style='border-left: 6px solid #<?php echo $item['bgcolor']; ?>'>
-            <a href='database.php?mode=view&id=<?php echo $item['id']; ?>'>
+            <a href='database.php?mode=view&id=<?php $id; ?>'>
             <span class='date date_compact'><?php echo $item['date']; ?></span>
             <h4 style='padding-left:10px;border-right:1px dotted #ccd;color:#<?php echo $item['bgcolor']; ?>'><?php echo $item['name']; ?> </h4>
             <span style='margin-left:7px'><?php echo stripslashes($item['title']); ?></span>
@@ -388,9 +298,9 @@ function showDB($id, $display = 'default')
     } else { // NOT COMPACT
 
         echo "<section class='item' style='border-left: 6px solid #" . $item['bgcolor'] . "'>";
-        echo "<a href='database.php?mode=view&id=" . $item['id'] . "'>";
+        echo "<a href='database.php?mode=view&id=" . $id . "'>";
         // show attached if there is a file attached
-        if (has_attachement($item['id'], 'items')) {
+        if ($database->hasAttachment('items')) {
             echo "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
         }
         // STARS
@@ -428,50 +338,6 @@ function check_title($input)
     } else {
         return 'Untitled';
     }
-}
-
-/**
- * Check if the date is valid.
- *
- * @param int $input The date to check
- * @return integer|string $input The input date if it's valid, or the date of today if not
- */
-function check_date($input)
-{
-    // Check DATE (is != null ? is 8 in length ? is int ? is valable ?)
-    if ((isset($input))
-        && (!empty($input))
-        && ((strlen($input) == '8'))
-        && Tools::checkId($input)) {
-        // Check if day/month are good
-        $datemonth = substr($input, 4, 2);
-        $dateday = substr($input, 6, 2);
-        if (($datemonth <= '12')
-            && ($dateday <= '31')
-            && ($datemonth > '0')
-            && ($dateday > '0')) {
-                // SUCCESS on every test
-            return $input;
-        }
-    }
-    return kdate();
-}
-
-/**
- * Sanitize body with a white list of allowed html tags.
- *
- * @param string $input Body to sanitize
- * @return string The sanitized body or empty string if there is no input
- */
-function check_body($input)
-{
-    // Check BODY (sanitize only);
-    if ((isset($input)) && (!empty($input))) {
-        // we white list the allowed html tags
-        return strip_tags($input, "<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol><blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td><code><video><audio><pagebreak>");
-    }
-
-    return '';
 }
 
 /**

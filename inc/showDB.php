@@ -31,7 +31,7 @@ if (isset($_GET['tag']) && $_GET['tag'] != '') {
                 echo "<select class='form-control select-create-db' onchange='go_url(this.value)'>
                 <option value=''>" . _('Create new') . "</option>";
                 foreach ($itemsTypesArr as $items_types) {
-                    echo "<option value='app/controllers/DatabaseController.php?databaseCreateItemId=" . $items_types['id'] . "'";
+                    echo "<option value='app/controllers/DatabaseController.php?databaseCreateId=" . $items_types['id'] . "'";
                     echo ">" . $items_types['name'] . "</option>";
                 }
                 echo "</select>";

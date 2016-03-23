@@ -24,9 +24,9 @@ $mode = 'show';
 try {
 
     // CREATE
-    if (isset($_GET['databaseCreateItemId'])) {
+    if (isset($_GET['databaseCreateId'])) {
         $database = new Database($_SESSION['team_id']);
-        $id = $database->create($_GET['']);
+        $id = $database->create($_GET['databaseCreateId']);
         $mode = 'edit';
     }
 

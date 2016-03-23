@@ -171,13 +171,13 @@ $search_type = '';
                 <label for='from'><?php echo _('Where date is between'); ?></label>
                 <input id='from' name='from' type='text' size='8' class='datepicker' value='<?php
                 if (isset($_GET['from']) && !empty($_GET['from'])) {
-                    echo check_date($_GET['from']);
+                    echo Tools::kdate($_GET['from']);
                 }
                 ?>'/>
                 <label span style='margin:0 10px;' for='to'> <?php echo _('and'); ?> </label>
                 <input id='to' name='to' type='text' size='8' class='datepicker' value='<?php
                     if (isset($_GET['to']) && !empty($_GET['to'])) {
-                        echo check_date($_GET['to']);
+                        echo Tools::kdate($_GET['to']);
                     }
                 ?>'/>
             </div>
@@ -233,7 +233,7 @@ $search_type = '';
             <label for='body'><?php echo _('And body contains'); ?></label>
             <input id='body' name='body' type='text' value='<?php
                 if (isset($_GET['body']) && !empty($_GET['body'])) {
-                    echo check_body($_GET['body']);
+                    echo Tools::checkBody($_GET['body']);
                 }
                 ?>'/>
             <!-- AND / OR -->
@@ -307,7 +307,7 @@ if (isset($_GET)) {
             $body_arr = explode(' ', trim($_GET['body']));
             $body = '';
         } else {
-            $body = filter_var(check_body(trim($_GET['body'])), FILTER_SANITIZE_STRING);
+            $body = filter_var(Tools::checkBody(trim($_GET['body'])), FILTER_SANITIZE_STRING);
         }
     } else { // no body input
         $body = '';
@@ -315,14 +315,14 @@ if (isset($_GET)) {
 
     // FROM
     if (isset($_GET['from']) && !empty($_GET['from'])) {
-        $from = check_date($_GET['from']);
+        $from = Tools::kdate($_GET['from']);
     } else {
         $from = '';
     }
 
     // TO
     if (isset($_GET['to']) && !empty($_GET['to'])) {
-        $to = check_date($_GET['to']);
+        $to = Tools::kdate($_GET['to']);
     } else {
         $to = '';
     }

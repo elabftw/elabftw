@@ -20,7 +20,7 @@ class Auth
     /** the minimum password length */
     const MIN_PASSWORD_LENGTH = 8;
     /** Used to store the PDO object */
-    private $pdo;
+    protected $pdo;
 
     /** The salt of the user */
     private $salt;

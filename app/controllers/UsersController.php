@@ -29,16 +29,13 @@ try {
             $_POST['usersDestroyEmail'],
             $_POST['usersDestroyPassword']
         )) {
-            $msg_arr[] = _('Everything was purged successfully.');
+            $_SESSION['ok'][] = _('Everything was purged successfully.');
         }
     }
-
-    $_SESSION['ok'] = $msg_arr;
-    header('Location: ../../admin.php?tab=' . $tab);
-
 } catch (Exception $e) {
     dblog('Error', $_SESSION['userid'], $e->getMessage());
     $msg_arr[] = $e->getMessage();
     $_SESSION['ko'] = $msg_arr;
+} finally {
     header('Location: ../../admin.php?tab=' . $tab);
 }

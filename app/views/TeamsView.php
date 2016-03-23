@@ -18,22 +18,6 @@ use \Elabftw\Elabftw\Teams;
  */
 class TeamsView extends Teams
 {
-    /** The PDO object */
-    protected $pdo;
-
-    /** The Teams class */
-    protected $teams;
-
-    /**
-     * Constructor
-     *
-     */
-    public function __construct()
-    {
-        $this->teams = new \Elabftw\Elabftw\Teams;
-        $this->pdo = $this->teams->pdo;
-    }
-
     /**
      * Output HTML for creating a team
      *
@@ -56,7 +40,7 @@ class TeamsView extends Teams
      */
     public function show()
     {
-        $teamsArr = $this->teams->read();
+        $teamsArr = $this->read();
 
         $html = "<div class='box'><h3>" . _('Edit existing teams') . "</h3>";
 
@@ -81,7 +65,7 @@ class TeamsView extends Teams
      */
     public function showStats()
     {
-        $count = $this->teams->getStats();
+        $count = $this->getStats();
 
         $html = "<div class='box'><h3>" . _('Usage statistics') . "</h3>";
         $html .= "<p>" .

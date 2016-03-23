@@ -18,18 +18,6 @@ use \Exception;
  */
 class Users extends Auth
 {
-    /** The PDO object */
-    private $pdo;
-
-    /**
-     * Constructor
-     *
-     */
-    public function __construct()
-    {
-        $this->pdo = Db::getConnection();
-    }
-
     /**
      * Get info about a user
      *
@@ -83,10 +71,6 @@ class Users extends Auth
         }
 
         if (strlen($password) > 1) {
-            if (!$this->checkPasswordLength($password)) {
-                $error = sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH);
-                throw new Exception($error);
-            }
             $this->updatePassword($password, $userid);
         }
 

@@ -19,13 +19,16 @@ class Auth
 {
     /** the minimum password length */
     const MIN_PASSWORD_LENGTH = 8;
+
     /** Used to store the PDO object */
     protected $pdo;
 
     /** The salt of the user */
     private $salt;
+
     /** Everything about the user */
     private $userData;
+
     /** Token that will be in the cookie + db */
     private $token;
 

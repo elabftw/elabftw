@@ -29,7 +29,7 @@ try {
     $templates = new Templates($_SESSION['team_id']);
     $teamGroups = new TeamGroups();
     $teamGroupsView = new TeamGroupsView();
-    $auth = new Auth();
+    $Auth = new Auth();
 } catch (Exception $e) {
     die($e->getMessage());
 }
@@ -38,7 +38,6 @@ $selected_menu = null;
 require_once 'inc/head.php';
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
-<link href="js/colorpicker/jquery.colorpicker.css" rel="stylesheet" type="text/css" />
 <?php
 // MAIN SQL FOR USERS
 $sql = "SELECT * FROM users WHERE validated = :validated AND team = :team";
@@ -207,8 +206,8 @@ if (!empty($team['stamppass'])) {
                         >Users</option>
                     </select></li>
                     <li><label class='block' for='usersUpdatePassword'><?php echo _('Reset user password') .
-                        " <span class='smallgray'>" . $auth::MIN_PASSWORD_LENGTH . " " . _('characters minimum'); ?></span></label>
-                    <input id='usersUpdatePassword' type='password' pattern='.{0}|.{<?php echo $auth::MIN_PASSWORD_LENGTH; ?>,}' value='' name='password' /></li>
+                        " <span class='smallgray'>" . $Auth::MIN_PASSWORD_LENGTH . " " . _('characters minimum'); ?></span></label>
+                    <input id='usersUpdatePassword' type='password' pattern='.{0}|.{<?php echo $Auth::MIN_PASSWORD_LENGTH; ?>,}' value='' name='password' /></li>
                     <li><button type='submit' class='button'><?php echo _('Save'); ?></button></li>
                 </ul>
             </form>

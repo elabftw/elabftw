@@ -36,8 +36,8 @@ $errflag = false;
 $wantUpdatePassword = false;
 $tab = '1';
 
-$auth = new Auth();
-$users = new Users();
+$Auth = new Auth();
+$Users = new Users();
 
 // TAB 1 : PREFERENCES
 if (isset($_POST['display'])) {
@@ -152,7 +152,7 @@ if (isset($_POST['currpass'])) {
     $tab = '2';
 
     // check that we got the good password
-    if (!$auth->checkCredentials($_SESSION['username'], $_POST['currpass'])) {
+    if (!$Auth->checkCredentials($_SESSION['username'], $_POST['currpass'])) {
         $msg_arr[] = _("Please input your current password!");
         $errflag = true;
         $_SESSION['ko'] = $msg_arr;
@@ -264,7 +264,7 @@ if (isset($_POST['currpass'])) {
         // update the password only if there is no error before
         if (!$errflag) {
             try {
-                $users->updatePassword($password);
+                $Users->updatePassword($password);
             } catch (Exception $e) {
                 $msg_arr[] = $e->getMessage();
                 $errflag = true;

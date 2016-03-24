@@ -23,10 +23,12 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+namespace Elabftw\Elabftw;
+
 require_once '../inc/common.php';
 
-$formKey = new \Elabftw\Elabftw\FormKey();
-$auth = new \Elabftw\Elabftw\Auth();
+$formKey = new FormKey();
+$Auth = new Auth();
 
 //Array to store validation errors
 $msg_arr = array();
@@ -71,7 +73,7 @@ if (isset($_POST['rememberme'])) {
 } else {
     $rememberme = 'off';
 }
-if ($auth->login($username, $_POST['password'], $rememberme)) {
+if ($Auth->login($username, $_POST['password'], $rememberme)) {
     if (isset($_COOKIE['redirect'])) {
         $location = $_COOKIE['redirect'];
     } else {

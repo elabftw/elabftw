@@ -275,7 +275,7 @@ class Uploads
         $desiredHeight = floor($height * ($desiredWidth / $width));
 
         // create a new, "virtual" image
-        $virtualImage = imagecreatetruecolor($desiredWidth, $desiredWeight);
+        $virtualImage = imagecreatetruecolor($desiredWidth, $desiredHeight);
 
         // copy source image at a resized size
         imagecopyresized($virtualImage, $sourceImage, 0, 0, 0, 0, $desiredWidth, $desiredHeight, $width, $height);

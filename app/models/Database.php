@@ -146,6 +146,7 @@ class Database extends Entity
         $req->execute();
 
 
+        $resultsArr = array();
         while ($item = $req->fetch()) {
             $resultsArr[] = $item['id'];
         }

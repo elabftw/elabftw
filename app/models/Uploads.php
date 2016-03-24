@@ -246,10 +246,10 @@ class Uploads
      * @param string $src Path to the original file
      * @param string $ext Extension of the file
      * @param string $dest Path to the place to save the thumbnail
-     * @param int $desired_width Width of the thumbnail (height is automatic depending on width)
+     * @param int $desiredWidth Width of the thumbnail (height is automatic depending on width)
      * @return null|false
      */
-    private function makeThumb($src, $ext, $dest, $desired_width)
+    private function makeThumb($src, $ext, $dest, $desiredWidth)
     {
         // we don't want to work on too big images
         // put the limit to 5 Mbytes
@@ -259,28 +259,28 @@ class Uploads
 
         // the used fonction is different depending on extension
         if (preg_match('/(jpg|jpeg)$/i', $ext)) {
-            $source_image = imagecreatefromjpeg($src);
+            $sourceImage = imagecreatefromjpeg($src);
         } elseif (preg_match('/(png)$/i', $ext)) {
-            $source_image = imagecreatefrompng($src);
+            $sourceImage = imagecreatefrompng($src);
         } elseif (preg_match('/(gif)$/i', $ext)) {
-            $source_image = imagecreatefromgif($src);
+            $sourceImage = imagecreatefromgif($src);
         } else {
             return false;
         }
 
-        $width = imagesx($source_image);
-        $height = imagesy($source_image);
+        $width = imagesx($sourceImage);
+        $height = imagesy($sourceImage);
 
         // find the "desired height" of this thumbnail, relative to the desired width
-        $desired_height = floor($height * ($desired_width / $width));
+        $desiredHeight = floor($height * ($desiredWidth / $width));
 
         // create a new, "virtual" image
-        $virtual_image = imagecreatetruecolor($desired_width, $desired_height);
+        $virtualImage = imagecreatetruecolor($desiredWidth, $desiredWeight);
 
         // copy source image at a resized size
-        imagecopyresized($virtual_image, $source_image, 0, 0, 0, 0, $desired_width, $desired_height, $width, $height);
+        imagecopyresized($virtualImage, $sourceImage, 0, 0, 0, 0, $desiredWidth, $desiredHeight, $width, $height);
 
         // create the physical thumbnail image to its destination (85% quality)
-        imagejpeg($virtual_image, $dest, 85);
+        imagejpeg($virtualImage, $dest, 85);
     }
 }

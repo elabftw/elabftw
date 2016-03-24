@@ -21,6 +21,9 @@ class Entity
     /** id of our entity */
     protected $id;
 
+    /** pdo object */
+    protected $pdo;
+
     /**
      * Check and set id
      *

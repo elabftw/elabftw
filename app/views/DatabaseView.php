@@ -19,7 +19,7 @@ use \Datetime;
 class DatabaseView
 {
     /** object holding class Database */
-    private $database;
+    public $database;
 
     /** the database array with data */
     private $item;

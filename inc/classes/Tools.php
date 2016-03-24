@@ -29,7 +29,7 @@ class Tools
         // Check DATE (is != null ? is 8 in length ? is int ? is valable ?)
         if (!is_null($input)
             && ((strlen($input) == '8'))
-            && Tools::checkId($input)) {
+            && self::checkId($input)) {
             // Check if day/month are good
             $datemonth = substr($input, 4, 2);
             $dateday = substr($input, 6, 2);

@@ -54,7 +54,7 @@ class Experiments extends Entity
     public function create($tpl = null)
     {
         // do we want template ?
-        if (Tools::checkId($tpl) != false) {
+        if (Tools::checkId($tpl) !== false) {
             // SQL to get template
             $sql = "SELECT name, body FROM experiments_templates WHERE id = :id AND team = :team";
             $get_tpl = $this->pdo->prepare($sql);

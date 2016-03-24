@@ -53,6 +53,18 @@ class DatabaseView
     }
 
     /**
+     * Show item
+     *
+     * @return string HTML for viewDB
+     */
+    public function show()
+    {
+        // FIXME we should have buildShowMenu here
+        // but the menu get at bottom :/
+        return $this->buildShow();
+    }
+
+    /**
      * View item
      *
      * @return string HTML for viewDB
@@ -83,6 +95,101 @@ class DatabaseView
         $html .= $this->uploads->buildUploadForm($this->database->id, 'items');
         $html .= $this->uploads->buildUploads($this->database->id, 'edit', 'items');
         $html .= $this->buildEditJs();
+
+        return $html;
+    }
+
+    /**
+     * Generate HTML for show DB
+     *
+     * @return string
+     */
+    private function buildShow()
+    {
+        $html = '';
+
+        $search_type = 'none';
+        $itemsIds = $this->database->readAll();
+
+        $total_time = get_total_time();
+
+        // show number of results found
+        if (count($itemsIds) === 0 && $search_type != 'none') {
+            $html .= display_message('ko_nocross', _("Sorry. I couldn't find anything :("));
+        } elseif (count($itemsIds) === 0 && $search_type === 'none') {
+            $html .= display_message('ok', _('<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list to begin filling your database.'));
+        } else {
+            $html .= "<div class='align_right'>";
+            $html .= "<a name='anchor'></a>";
+            $html .= "<p class='inline'>" . _('Export this result:') . " </p>";
+            $html .= "<a href='make.php?what=zip&id=" . Tools::buildStringFromArray($itemsIds) . "&type=items'>";
+            $html .= "<img src='img/zip.png' title='make a zip archive' alt='zip' /></a>";
+            $html .= "<a href='make.php?what=csv&id=" . Tools::buildStringFromArray($itemsIds) . "&type=items'>";
+            $html .= "<img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' /></a></div>";
+            $html .= "<p class='smallgray'>" . count($itemsIds) . " " .
+                ngettext("result found", "results found", count($itemsIds)) . " (" .
+                $total_time['time'] . " " . $total_time['unit'] . ")</p>";
+        }
+        // loop the results array and display results
+        foreach ($itemsIds as $id) {
+            $html .= showDB($id, $_SESSION['prefs']['display']);
+        }
+
+        //return $html;
+    }
+
+    public function buildShowMenu()
+    {
+        $itemsTypes = new ItemsTypes($this->database->team);
+        $itemsTypesArr = $itemsTypes->read();
+
+        $html = "<menu class='border'>";
+        $html .= "<div class='row'>";
+        $html .= "<div class='col-md-2'>";
+        $html .= "<form class='form-inline pull-left'>";
+        // CREATE NEW dropdown menu
+        $html .= "<select class='form-control select-create-db' onchange='go_url(this.value)'>";
+        $html .= "<option value=''>" . _('Create new') . "</option>";
+        foreach ($itemsTypesArr as $itemType) {
+            $html .= "<option value='app/controllers/DatabaseController.php?databaseCreateId=" . $itemType['id'] . "'";
+            $html .= ">" . $itemType['name'] . "</option>";
+        }
+        $html .= "</select></form></div>";
+
+        // FILTER
+        $html .= "<div class='col-md-10'>";
+        $html .= "<form class='form-inline pull-right'>";
+        $html .= "<div class='form-group'>";
+        $html .= "<input type='hidden' name='mode' value='show' />";
+        $html .= "<input type='hidden' name='tag' value='" . $this->database->tag . "' />";
+        $html .= "<select name='filter' class='form-control select-filter-cat'>";
+        $html .= "<option value=''>" . _('Filter type') . "</option>";
+        foreach ($itemsTypesArr as $itemType) {
+            $html .= "<option value='" . $itemType['id'] . "'" . checkSelectFilter($itemType['id']) . ">" . $itemType['name'] . "</option>";
+        }
+        $html .= "</select>";
+        $html .= "<button class='btn btn-elab submit-filter'>" . _('Filter') . "</button>";
+
+        // ORDER
+        $html .= "<select name='order' class='form-control select-order'>";
+        $html .= "<option value=''>" . _('Order by') . "</option>";
+        $html .= "<option value='cat'" . checkSelectOrder('cat') . ">" . _('Category') . "</option>";
+        $html .= "<option value='date'" . checkSelectOrder('date') . ">" . _('Date') . "</option>";
+        $html .= "<option value='rating'" .checkSelectOrder('rating') . ">" . _('Rating') . "</option>";
+        $html .= "<option value='title'" . checkSelectOrder('title') . ">" . _('Title') . "</option>";
+        $html .= "</select>";
+
+        // SORT
+        $html .= "<select name='sort' class='form-control select-sort'>";
+        $html .= "<option value=''>" . _('Sort') . "</option>";
+        $html .= "<option value='desc'" . checkSelectSort('desc') . ">" . _('DESC') . "</option>";
+        $html .= "<option value='asc'" . checkSelectSort('asc') . ">" . _('ASC') . "</option>";
+        $html .= "</select>";
+        $html .= "<button class='btn btn-elab submit-order'>" . _('Order') . "</button>";
+        $html .= "<button type='reset' class='btn btn-danger submit-reset' onclick='javascript:location.href='database.php?mode=show&tag=" .
+            $this->database->tag . "';'>" . _('Reset') . "</button></div></form></div>";
+
+        $html .= "</div></menu>";
 
         return $html;
     }

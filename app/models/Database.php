@@ -25,7 +25,12 @@ class Database extends Entity
     public $id;
 
     /** id of the team */
-    private $team;
+    public $team;
+
+    public $filter = '';
+    public $sort = 'DESC';
+    public $order = 'items.id';
+    public $tag = '';
 
     /**
      * Give me the team on init
@@ -126,6 +131,25 @@ class Database extends Entity
         }
 
         return $req->fetch();
+    }
+
+    public function readAll()
+    {
+        $sql = "SELECT items.id, items_types.name
+        FROM items, items_types
+        WHERE items.type = items_types.id
+        AND items.team = :teamid
+        " . $this->filter . "
+        ORDER BY $this->order $this->sort";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':teamid', $this->team);
+        $req->execute();
+
+
+        while ($item = $req->fetch()) {
+            $resultsArr[] = $item['id'];
+        }
+        return $resultsArr;
     }
 
     /**

@@ -538,14 +538,14 @@ function update_config($array)
 function checkSelectOrder($val)
 {
     if (isset($_GET['order']) && $_GET['order'] === $val) {
-        echo " selected";
+        return " selected";
     }
 }
 
 function checkSelectSort($val)
 {
     if (isset($_GET['sort']) && $_GET['sort'] === $val) {
-        echo " selected";
+        return " selected";
     }
 }
 

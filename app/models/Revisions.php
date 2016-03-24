@@ -36,11 +36,6 @@ class Revisions
     public function __construct($id, $type)
     {
         $this->id = $id;
-        /*
-        if ($this->id === false) {
-            throw new Exception(_('The id parameter is not valid!'));
-        }
-         */
         $this->pdo = Db::getConnection();
         $this->type = $type;
     }

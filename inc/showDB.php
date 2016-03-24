@@ -22,11 +22,12 @@ if (isset($_GET['tag']) && $_GET['tag'] != '') {
 }
 ?>
 
+<!--
 <menu class='border'>
     <div class="row">
         <div class="col-md-2">
             <form class="form-inline pull-left">
-                <?php
+                <?php/*
                 // CREATE NEW dropdown menu
                 echo "<select class='form-control select-create-db' onchange='go_url(this.value)'>
                 <option value=''>" . _('Create new') . "</option>";
@@ -77,11 +78,13 @@ if (isset($_GET['tag']) && $_GET['tag'] != '') {
 <!-- end menu -->
 
 <?php
+                /*
 $order = 'it.id';
 $sort = 'DESC';
 $filter = '';
 
 // REPLACE WITH ORDER
+/*
 if (isset($_GET['order'])) {
     if ($_GET['order'] != '') {
         if ($_GET['order'] === 'cat') {
@@ -104,6 +107,7 @@ if (isset($_GET['filter'])) {
     }
 }
 
+ */
 // ///////////////////////////////////////////////////////////////////////
 // SQL for showDB
 // TAG SEARCH
@@ -138,6 +142,7 @@ if (isset($_GET['tag']) && !empty($_GET['tag'])) {
 
 // end if there is a search
 } else { // there is no search
+    /*
     $sql = "SELECT it.id, ty.name
     FROM items AS it, items_types AS ty
     WHERE it.type = ty.id
@@ -183,3 +188,4 @@ if (count($results_arr) === 0 && $search_type != 'none') {
 foreach ($results_arr as $result_id) {
     showDB($result_id, $_SESSION['prefs']['display']);
 }
+     */

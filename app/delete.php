@@ -25,7 +25,10 @@
 ********************************************************************************/
 // delete.php
 // This page is called with POST requests containing an id and a type.
-use \Elabftw\Elabftw\Tools as Tools;
+namespace Elabftw\Elabftw;
+
+use PDO;
+use Exception;
 
 require_once '../inc/common.php';
 

@@ -211,6 +211,9 @@ if (count($results_arr) === 0 && $search_type != 'none') {
         showXP($result_id, $_SESSION['prefs']['display']);
     } // end foreach
 
+$load_more_button = "<div class='center'>
+        <button class='button' id='loadButton'>"._('Load more') . "</button>
+        </div>";
     // show load more button if there are more results than the default display number
     if (count($results_arr) > $limit) {
         echo $load_more_button;

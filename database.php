@@ -64,7 +64,7 @@ try {
         }
 
         echo $databaseView->buildShowMenu();
-        echo $databaseView->buildshow();
+        echo $databaseView->buildShow();
 
     // VIEW
     } elseif ($_GET['mode'] === 'view') {

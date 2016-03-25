@@ -27,6 +27,17 @@ class Experiments extends Entity
     /** current user */
     private $userid;
 
+    public $filter = '';
+    public $statusFilter = '';
+    public $searchType = '';
+    public $tag = '';
+    public $tagFilter = '';
+    public $query = '';
+    public $queryFilter = '';
+
+    public $order = 'experiments.id';
+    public $sort = 'DESC';
+
     /**
      * Constructor
      *
@@ -105,7 +116,8 @@ class Experiments extends Entity
      */
     public function read()
     {
-        $sql = "SELECT experiments.*, status.color, status.name FROM experiments
+        $sql = "SELECT experiments.*, status.color, status.name
+            FROM experiments
             LEFT JOIN status ON experiments.status = status.id
             WHERE experiments.id = :id ";
         $req = $this->pdo->prepare($sql);
@@ -117,6 +129,37 @@ class Experiments extends Entity
         }
 
         return $req->fetch();
+    }
+
+    public function readAll()
+    {
+        // broken one
+        $sql = "SELECT experiments.*, status.color, status.name, experiments_tags.item_id
+            FROM experiments
+            LEFT JOIN status
+            LEFT JOIN experiments_tags ON (experiments_tags.userid = :userid)
+            WHERE experiments.userid = :userid
+            " . $this->statusFilter . "
+            " . $this->tagFilter . "
+            " . $this->queryFilter . "
+            ORDER BY " . $this->order . " " . $this->sort;
+
+
+        // working one without tags TODO
+        $sql = "SELECT experiments.*, status.color, status.name
+            FROM experiments
+            LEFT JOIN status ON (status.team = experiments.team)
+            AND experiments.status = status.id
+            WHERE experiments.userid = :userid
+            " . $this->statusFilter . "
+            " . $this->tagFilter . "
+            " . $this->queryFilter . "
+            ORDER BY " . $this->order . " " . $this->sort;
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
+        $req->execute();
+
+        return $req->fetchAll();
     }
 
     /**

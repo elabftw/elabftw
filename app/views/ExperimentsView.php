@@ -19,7 +19,7 @@ use \Datetime;
 class ExperimentsView extends EntityView
 {
     /** object holding class Experiments */
-    private $experiments;
+    public $experiments;
 
     /** the experiment array with data */
     private $experiment;
@@ -30,23 +30,20 @@ class ExperimentsView extends EntityView
     /** Read only switch */
     private $ro = false;
 
-    /** revisions class */
-    private $revisions;
-
-    /** object holding class Comments */
-    private $comments;
-
     /** ID of the experiment we want to view */
     private $id;
 
-    /** the Uploads class */
+    /** the Uploads object */
     private $uploads;
 
-    /** the teamGroups clas */
+    /** instance of TeamGroups */
     private $teamGroups;
 
-    /** the Users class */
+    /** instance of Users */
     private $users;
+
+    /** number of items to show */
+    public $limit;
 
     /**
      * Need an ID of an experiment
@@ -57,16 +54,9 @@ class ExperimentsView extends EntityView
     public function __construct(Experiments $experiments)
     {
         $this->experiments = $experiments;
+        $this->limit = $_SESSION['prefs']['limit'];
 
-        $this->status = new Status();
-        $this->revisions = new Revisions('experiments', $this->experiments->id);
-        $this->comments = new Comments();
-        $this->uploads = new Uploads('experiments', $this->experiments->id);
-        $this->users = new Users();
         $this->teamGroups = new TeamGroups();
-
-        // get data of experiment
-        $this->experiment = $this->experiments->read();
         // visibility can be a string, or number if teamgroup
         $this->visibility = $this->getVisGroupName();
     }
@@ -78,6 +68,10 @@ class ExperimentsView extends EntityView
      */
     public function view()
     {
+        // get data of experiment
+        $this->experiment = $this->experiments->read();
+        $this->uploads = new Uploads('experiments', $this->experiment['id']);
+
         $html = '';
 
         $this->ro = $this->isReadOnly();
@@ -103,6 +97,10 @@ class ExperimentsView extends EntityView
      */
     public function edit()
     {
+        // get data of experiment
+        $this->experiment = $this->experiments->read();
+        $this->uploads = new Uploads('experiments', $this->experiment['id']);
+
         // only owner can edit an experiment
         if (!$this->isOwner()) {
             throw new Exception(_('<strong>Cannot edit:</strong> this experiment is not yours!'));
@@ -119,6 +117,202 @@ class ExperimentsView extends EntityView
 
         return $html;
     }
+
+    /**
+     * Generate HTML for show XP
+     * we have html and html2 because to build html we need the idArr
+     * from html2
+     *
+     * @return string
+     */
+    public function buildShow()
+    {
+        $html = '';
+        $html2 = '';
+
+        // get all XP items for the team
+        $itemsArr = $this->experiments->readAll();
+
+        $total_time = get_total_time();
+
+        // loop the results array and display results
+        $idArr = array();
+        foreach ($itemsArr as $item) {
+
+            // fill an array with the ID of each item to use in the csv/zip export menu
+            $idArr[] = $item['id'];
+
+            $html2 .= "<section class='item" . $this->display . "' style='border-left: 6px solid #" . $item['color'] . "'>";
+            $html2 .= "<a href='experiments.php?mode=view&id=" . $item['id'] . "'>";
+
+            // show attached if there is a file attached
+            // we need an id to look for attachment
+            $this->experiments->id = $item['id'];
+            if ($this->experiments->hasAttachment('experiments')) {
+                $html2 .= "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
+            }
+            // we show the abstract of the experiment on mouse hover with the title attribute
+            // we check if it is our experiment. It would be best to check if we have visibility rights on it
+            // but atm there is no such function. So we limit this feature to experiments we own, for simplicity.
+            if (is_owned_by_user($item['id'], 'experiments', $_SESSION['userid'])) {
+                $bodyAbstract = str_replace("'", "", substr(strip_tags($item['body']), 0, 100));
+            } else {
+                $bodyAbstract = '';
+            }
+            $html2 .= "<a title='" . $body_abstract . "' href='experiments.php?mode=view&id=" . $item['id'] . "'>";
+            $html2 .= "<p class='title'>";
+            // LOCK
+            if ($item['locked'] == 1) {
+                $html2 .= "<img style='padding-bottom:3px;' src='img/lock-blue.png' alt='lock' />";
+            }
+            // TITLE
+            $html2 .= stripslashes($item['title']) . "</p></a>";
+            // STATUS
+            $html2 .= "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['color'] . "'>" . $item['name'] . " </span>";
+            // DATE
+            $html2 .= "<span class='date' style='padding:0 5px;'><img class='image' src='img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
+            // TAGS
+            $html2 .= show_tags($item['id'], 'experiments_tags');
+
+            $html2 .= "</section>";
+        }
+
+        // show number of results found
+        $count = count($itemsArr);
+        if ($count === 0 && $this->experiments->searchType != 'none') {
+            return display_message('ko_nocross', _("Sorry. I couldn't find anything :("));
+        } elseif ($count === 0 && $this->experiments->searchType === '') {
+            return display_message('ok_nocross', sprintf(_("<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button to get started."), "<img src='img/add.png' alt='' /><a class='alert-link' href='app/controllers/ExperimentsController.php?experimentsCreate=true'>", "</a>"));
+        } else {
+            $html .= "<div class='align_right'>";
+            $html .= "<a name='anchor'></a>";
+            $html .= "<p class='inline'>" . _('Export this result:') . " </p>";
+            $html .= "<a href='make.php?what=zip&id=" . Tools::buildStringFromArray($idArr) . "&type=items'>";
+            $html .= " <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>";
+            $html .= "<a href='make.php?what=csv&id=" . Tools::buildStringFromArray($idArr) . "&type=items'>";
+            $html .= " <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' /></a></div>";
+            $html .= "<p class='smallgray'>" . $count . " " .
+                ngettext("result found", "results found", $count) . " (" .
+                $total_time['time'] . " " . $total_time['unit'] . ")</p>";
+        }
+        $load_more_button = "<div class='center'>
+            <button class='button' id='loadButton'>" . _('Load more') . "</button>
+            <button class='button' id='loadAllButton'>". _('Load all') . "</button>
+            </div>";
+        // show load more button if there are more results than the default display number
+        if ($count > $this->limit) {
+            $html2 .= $load_more_button;
+        }
+        $html .= $this->buildShowJs();
+        return $html . $html2;
+    }
+
+    public function buildShowMenu()
+    {
+        $Status = new Status();
+        $statusArr = $Status->read($_SESSION['team_id']);
+
+        $html = "<menu class='border'>";
+        $html .= "<div class='row'>";
+        $html .= "<div class='col-md-5'>";
+        $html .= "<a href='app/controllers/ExperimentsController.php?experimentsCreate=true' id='createExperiment'><img src='img/add.png' class='bot5px' alt='' />";
+        $html .= _('Create experiment') . "</a> | <a href='#' class='trigger'><img src='img/add-template.png' class='bot5px' alt='' /> ";
+        $html .= _('Create from template') . "</a>";
+        $html .= "</div>";
+        $html .= "<div class='col-md-12'>";
+        $html .= "<form class='form-inline pull-right'>";
+        $html .= "<div class='form-group'>";
+        $html .= "<input type='hidden' name='mode' value='show' />";
+        $html .= "<input type='hidden' name='tag' value='" . $this->experiments->tag . "' />";
+        // FILTER STATUS DROPDOWN MENU
+        $html .= "<select name='filter' class='form-control select-filter-status'>";
+        $html .= "<option value=''>" . _('Filter status') . "</option>";
+        foreach ($statusArr as $status) {
+            $html .= "<option value='" . $status['id'] . "'" . checkSelectFilter($status['id']) . ">" . $status['name'] . "</option>";
+        }
+        $html .= "</select>";
+        $html .= "<input type='hidden' name='mode' value='show' />";
+        $html .= "<input type='hidden' name='tag' value='" . $this->experiments->tag . "' />";
+        $html .= "<input type='hidden' name='q' value='" . $this->experiments->query . "' />";
+        $html .= "<button class='btn btn-elab submit-filter'>" . _('Filter') . "</button>";
+
+        // ORDER
+        $html .= "<select name='order' class='form-control select-order'>";
+        $html .= "<option value=''>" . _('Order by') . "</option>";
+        $html .= "<option value='cat'" . checkSelectOrder('cat') . ">" . _('Category') . "</option>";
+        $html .= "<option value='date'" . checkSelectOrder('date') . ">" . _('Date') . "</option>";
+        $html .= "<option value='rating'" . checkSelectOrder('rating') . ">" . _('Rating') . "</option>";
+        $html .= "<option value='title'" . checkSelectOrder('title') . ">" . _('Title') . "</option>";
+        $html .= "</select>";
+
+        // SORT
+        $html .= "<select name='sort' class='form-control select-sort'>";
+        $html .= "<option value=''>" . _('Sort') . "</option>";
+        $html .= "<option value='desc'" . checkSelectSort('desc') . ">" . _('DESC') . "</option>";
+        $html .= "<option value='asc'" . checkSelectSort('asc') . ">" . _('ASC') . "</option>";
+        $html .= "</select>";
+        $html .= "<button class='btn btn-elab submit-order'>" . _('Order') . "</button>";
+        $html .= "<button type='reset' class='btn btn-danger submit-reset' onclick=\"javascript:location.href='experiments.php?mode=show&tag="
+            . $this->experiments->tag . "&q="
+            . $this->experiments->query . "&filter="
+            . $this->experiments->filter . "';\">" . _('Reset') . "</button></div></form></div>";
+
+        $html .= "</div></menu>";
+
+        // ADD TEMPLATE CONTAINER
+        $html .= "<div class='toggle_container'><ul>";
+        $Templates = new Templates($_SESSION['team_id']);
+        $templatesArr = $Templates->readFromUserid($_SESSION['userid']);
+        if (is_array($templatesArr)) {
+            foreach ($templatesArr as $tpl) {
+                $html .= "<a href='app/controllers/ExperimentsController.php?experimentsCreate=true&tpl=" . $tpl['id'] . "' class='badge'>" . $tpl['name'] . "</a>";
+            }
+        } else { // user has no templates
+            $html .= display_message('warning_nocross', sprintf(_("<strong>You do not have any templates yet.</strong> Go to %syour control panel%s to make one !"), "<a class='alert-link' href='ucp.php?tab=3'>", "</a>"));
+        }
+        $html .= "</ul></div>";
+
+        return $html;
+    }
+
+    private function buildShowJs()
+    {
+        $html = "<script>
+        $(document).ready(function(){
+
+            // SHOW MORE EXPERIMENTS BUTTON
+            $('section.item').hide(); // hide everyone
+            $('section.item').slice(0, " . $this->limit . ").show(); // show only the default at the beginning
+            $('#loadButton').click(function(e){ // click to load more
+                e.preventDefault();
+                $('section.item:hidden').slice(0, " . $this->limit . ").show();
+                if ($('section.item:hidden').length == 0) { // check if there are more exp to show
+                    $('#loadButton').hide(); // hide load button when there is nothing more to show
+                    $('#loadAllButton').hide(); // hide load button when there is nothing more to show
+                }
+            });
+            $('#loadAllButton').click(function(e){ // click to load more
+                e.preventDefault();
+                $('section.item:hidden').show();
+                $('#loadAllButton').hide(); // hide load button when there is nothing more to show
+                $('#loadButton').hide(); // hide load button when there is nothing more to show
+            });
+
+            // EXPERIMENTS TEMPLATE HIDDEN DIV
+            $('.toggle_container').hide();
+            $('a.trigger').click(function(){
+                $('div.toggle_container').slideToggle(1);
+            });
+            // KEYBOARD SHORTCUTS
+            key('" . $_SESSION['prefs']['shortcuts']['create'] . "', function(){
+                location.href = 'app/controllers/ExperimentsController.php?experimentsCreate=true'
+                });
+            });
+        </script>";
+
+        return $html;
+    }
+
 
     /**
      * Generate HTML for edit experiment
@@ -187,7 +381,8 @@ class ExperimentsView extends EntityView
         $html .= "<label for='status_select'>" . ngettext('Status', 'Status', 1) . "</label>";
         $html .= "<select id='status_select' name='status' onchange='experimentsUpdateStatus(" . $this->experiments->id . ", this.value)'>";
 
-        $statusArr = $this->status->read($_SESSION['team_id']);
+        $Status = new Status();
+        $statusArr = $Status->read($_SESSION['team_id']);
 
         foreach ($statusArr as $status) {
             $html .= "<option ";
@@ -212,7 +407,8 @@ class ExperimentsView extends EntityView
             </div></form>";
 
         // REVISIONS
-        $html .= $this->revisions->showCount();
+        $Revisions = new Revisions('experiments', $this->experiment['id']);
+        $html .= $Revisions->showCount();
 
         // LINKS
         $html .= "<section>
@@ -301,7 +497,8 @@ class ExperimentsView extends EntityView
      */
     private function showTimestamp()
     {
-        $timestamper = $this->users->read($this->experiment['timestampedby']);
+        $Users = new Users();
+        $timestamper = $Users->read($this->experiment['timestampedby']);
 
         $this->uploads->type = 'exp-pdf-timestamp';
         $pdf = $this->uploads->read();
@@ -327,7 +524,7 @@ class ExperimentsView extends EntityView
 
         $html = "<section class='item' style='padding:15px;border-left: 6px solid #" . $this->experiment['color'] . "'>";
         $html .= "<span class='top_right_status'><img src='img/status.png'>" . $this->experiment['name'] .
-            "<img src='img/eye.png' alt='eye' />" . $this->visibility . "</span>";
+            "<img src='img/eye.png' alt='eye' />" . $this->getVisGroupName() . "</span>";
         $html .=  "<span class='date_view'><img src='img/calendar.png' class='bot5px' title='date' alt='Date :' /> " .
             Tools::formatDate($this->experiment['date']) . "</span><br />
         <a href='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a>
@@ -578,7 +775,8 @@ class ExperimentsView extends EntityView
      */
     private function buildComments()
     {
-        $commentsArr = $this->comments->read($this->experiments->id);
+        $Comments = new Comments();
+        $commentsArr = $Comments->read($this->experiments->id);
 
         //  we need to add a container here so the reload function in the callback of .editable() doesn't mess things up
         $html = "<section id='expcomment_container'>";

@@ -322,7 +322,7 @@ class DatabaseView extends EntityView
         // star rating
         $html .= "<div class='align_right'>";
         for ($i = 1; $i < 6; $i++) {
-            $html .= "<input id='star" . $i . "' name='star' type='radio' class='star' value='" . $i ."'";
+            $html .= "<input id='star" . $i . "' name='star' type='radio' class='star' value='" . $i . "'";
             if ($itemArr['rating'] == $i) {
                 $html .= 'checked=checked';
             }
@@ -391,7 +391,7 @@ class DatabaseView extends EntityView
 
             // autocomplete the tags
             $('#createTagInput').autocomplete({
-                source: [" . $tags->generateTagList('items') . "]
+                source: [" . $tags->generateTagList() . "]
             });
 
             // If the title is 'Untitled', clear it on focus

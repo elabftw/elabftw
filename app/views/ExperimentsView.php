@@ -16,7 +16,7 @@ use \Datetime;
 /**
  * Experiments View
  */
-class ExperimentsView
+class ExperimentsView extends EntityView
 {
     /** object holding class Experiments */
     private $experiments;
@@ -227,17 +227,7 @@ class ExperimentsView
         // end main section
         $html .= "</section>";
 
-        // CHEM EDITOR
-        if ($_SESSION['prefs']['chem_editor']) {
-            $html .= "<div class='box chemdoodle'>";
-            $html .= "<h3>" . _('Molecule drawer') . "</h3>";
-            $html .= "<div class='center'>
-                        <script>
-                            var sketcher = new ChemDoodle.SketcherCanvas('sketcher', 550, 300, {oneMolecule:true});
-                        </script>
-                    </div>
-            </div>";
-        }
+        $html .= $this->injectChemEditor();
 
         return $html;
     }
@@ -499,13 +489,7 @@ class ExperimentsView
             ]
         });";
 
-
-        // ask the user if he really wants to navigate out of the page
-        if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
-            $html .= "window.onbeforeunload = function (e) {
-                  e = e || window.event;
-                  return '" . _('Do you want to navigate away from this page? Unsaved changes will be lost!') . "';};";
-        }
+        $html .= $this->injectCloseWarning();
         $html .= "});</script>";
 
         return $html;

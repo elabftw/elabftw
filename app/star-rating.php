@@ -28,6 +28,7 @@
  */
 namespace Elabftw\Elabftw;
 
+use PDO;
 
 require_once '../inc/common.php';
 

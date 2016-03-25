@@ -16,13 +16,10 @@ use \Datetime;
 /**
  * Database View
  */
-class DatabaseView
+class DatabaseView extends EntityView
 {
     /** object holding class Database */
     public $database;
-
-    /** the database array with data */
-    private $item;
 
     /** ID of the item we want to view */
     private $id;
@@ -138,7 +135,7 @@ class DatabaseView
             // TAGS
             $html2 .= show_tags($item['id'], 'items_tags');
 
-            $html2 .=  "</section>";
+            $html2 .= "</section>";
         }
 
         // show number of results found
@@ -200,7 +197,7 @@ class DatabaseView
         $html .= "<option value=''>" . _('Order by') . "</option>";
         $html .= "<option value='cat'" . checkSelectOrder('cat') . ">" . _('Category') . "</option>";
         $html .= "<option value='date'" . checkSelectOrder('date') . ">" . _('Date') . "</option>";
-        $html .= "<option value='rating'" .checkSelectOrder('rating') . ">" . _('Rating') . "</option>";
+        $html .= "<option value='rating'" . checkSelectOrder('rating') . ">" . _('Rating') . "</option>";
         $html .= "<option value='title'" . checkSelectOrder('title') . ">" . _('Title') . "</option>";
         $html .= "</select>";
 
@@ -235,7 +232,7 @@ class DatabaseView
         $html .= Tools::formatDate($itemArr['date']) . "</span><br>";
         $html .= show_stars($itemArr['rating']);
         // buttons
-        $html .=  "<a href='database.php?mode=edit&id=" . $itemArr['itemid'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a> 
+        $html .= "<a href='database.php?mode=edit&id=" . $itemArr['itemid'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a> 
         <a href='app/controllers/DatabaseController.php?databaseDuplicateId=" . $itemArr['itemid'] . "'><img src='img/duplicate.png' title='duplicate item' alt='duplicate' /></a> 
         <a href='make.php?what=pdf&id=" . $itemArr['itemid'] . "&type=items'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a> 
         <a href='make.php?what=zip&id=" . $itemArr['itemid'] . "&type=items'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a>
@@ -260,16 +257,12 @@ class DatabaseView
         $html .= "</div>";
         // BODY (show only if not empty)
         if ($itemArr['body'] != '') {
-            // TODO don't put js in here but bottom of page
-            $html .= "<div ";
-            if ($itemArr['locked'] == 0) {
-                $html .=  " onClick=\"document.location='database.php?mode=edit&id=" . $itemArr['itemid'] . "'\" ";
-            }
-            $html .= "id='body_view' class='txt'>" . stripslashes($itemArr['body']) . "</div>";
+            $html .= "<div onClick='go_url(\"database.php?mode=edit&id=" . $itemArr['itemid'] . "\")'";
+            $html .= " id='body_view' class='txt'>" . stripslashes($itemArr['body']) . "</div>";
         }
         // SHOW USER
-        $html .=  _('Last modified by') . ' ' . $itemArr['firstname'] . " " . $itemArr['lastname'];
-        $html .=  "</section>";
+        $html .= _('Last modified by') . ' ' . $itemArr['firstname'] . " " . $itemArr['lastname'];
+        $html .= "</section>";
 
         return $html;
     }
@@ -282,7 +275,6 @@ class DatabaseView
     private function buildViewJs()
     {
         $html = '';
-        // TODO same as in experimentsview
         if ($_SESSION['prefs']['chem_editor']) {
             $html .= "<script src='js/chemdoodle.js'></script>
             <script src='js/chemdoodle-uis.js'></script>
@@ -329,7 +321,7 @@ class DatabaseView
 
         // star rating
         $html .= "<div class='align_right'>";
-        for ($i = 1;$i < 6;$i++) {
+        for ($i = 1; $i < 6; $i++) {
             $html .= "<input id='star" . $i . "' name='star' type='radio' class='star' value='" . $i ."'";
             if ($itemArr['rating'] == $i) {
                 $html .= 'checked=checked';
@@ -358,17 +350,7 @@ class DatabaseView
 
         $html .= "</section>";
 
-        // CHEM EDITOR
-        if ($_SESSION['prefs']['chem_editor']) {
-            $html .= "<div class='box chemdoodle'>";
-            $html .= "<h3>" . _('Molecule drawer') . "</h3>";
-            $html .= "<div class='center'>
-                        <script>
-                            var sketcher = new ChemDoodle.SketcherCanvas('sketcher', 550, 300, {oneMolecule:true});
-                        </script>
-                    </div>
-            </div>";
-        }
+        $html .= $this->injectChemEditor();
 
         return $html;
     }
@@ -397,18 +379,6 @@ class DatabaseView
                 })
             }
             return false;
-        }
-        // STAR RATINGS
-        function updateRating(rating) {
-            // POST request
-            $.post('app/star-rating.php', {
-                star: rating,
-                item_id: " . $this->database->id . "
-            })
-            // reload the div
-            .success(function () {
-                return false;
-            })
         }
 
         // READY ? GO !
@@ -490,29 +460,14 @@ class DatabaseView
         // DATEPICKER
         $( '#datepicker' ).datepicker({dateFormat: 'yymmdd'});
         // STARS
-        $('input.star').rating();
-        $('#star1').click(function() {
-            updateRating(1);
-        });
-        $('#star2').click(function() {
-            updateRating(2);
-        });
-        $('#star3').click(function() {
-            updateRating(3);
-        });
-        $('#star4').click(function() {
-            updateRating(4);
-        });
-        $('#star5').click(function() {
-            updateRating(5);
+        $('input.star').rating();";
+        for ($i = 1; $i < 6; $i++) {
+            $html .= "$('#star" . $i . "').click(function() {
+            updateRating(" . $i . ", " . $this->database->id . ");
         });";
-        // ask the user if he really wants to navigate out of the page
-        if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
-            $html .= "window.onbeforeunload = function (e) {
-                      e = e || window.event;
-                      return '"._('Do you want to navigate away from this page? Unsaved changes will be lost!') . "';
-                };";
         }
+
+        $html .= $this->injectCloseWarning();
         $html .= "});</script>";
 
         return $html;

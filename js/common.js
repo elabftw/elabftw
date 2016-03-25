@@ -605,3 +605,12 @@ function uploadsDestroy(id, type, item_id, confirmText) {
         });
     }
 }
+
+// STAR RATINGS
+function updateRating(rating, id) {
+    // POST request
+    $.post('app/star-rating.php', {
+        star: rating,
+        item_id: id
+    })
+}

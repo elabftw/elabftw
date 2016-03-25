@@ -115,6 +115,7 @@ class DatabaseView extends EntityView
 
             // show attached if there is a file attached
             // we need an id to look for attachment
+            // TODO use setId here, make setId look for permissions
             $this->database->id = $item['id'];
             if ($this->database->hasAttachment('items')) {
                 $html2 .= "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
@@ -145,13 +146,8 @@ class DatabaseView extends EntityView
         } elseif ($count === 0 && $this->database->searchType === '') {
             return display_message('ok', _('<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list to begin filling your database.'));
         } else {
-            $html .= "<div class='align_right'>";
-            $html .= "<a name='anchor'></a>";
-            $html .= "<p class='inline'>" . _('Export this result:') . " </p>";
-            $html .= "<a href='make.php?what=zip&id=" . Tools::buildStringFromArray($idArr) . "&type=items'>";
-            $html .= " <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>";
-            $html .= "<a href='make.php?what=csv&id=" . Tools::buildStringFromArray($idArr) . "&type=items'>";
-            $html .= " <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' /></a></div>";
+            $html .= $this->buildExportMenu($idArr, 'items');
+
             $html .= "<p class='smallgray'>" . $count . " " .
                 ngettext("result found", "results found", $count) . " (" .
                 $total_time['time'] . " " . $total_time['unit'] . ")</p>";

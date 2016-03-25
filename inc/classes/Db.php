@@ -34,7 +34,10 @@ final class Db
             $pdo_options = array();
             $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
             $pdo_options[PDO::ATTR_PERSISTENT] = true;
-            $this->connection = new \PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
+            $pdo_options[PDO::ATTR_DEFAULT_FETCH_MODE] = PDO::FETCH_ASSOC;
+            $this->connection = new \PDO(
+                'mysql:host=' . DB_HOST . ';dbname=' .
+                DB_NAME, DB_USER, DB_PASSWORD, $pdo_options);
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }

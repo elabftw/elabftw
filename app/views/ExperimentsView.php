@@ -186,13 +186,8 @@ class ExperimentsView extends EntityView
         } elseif ($count === 0 && $this->experiments->searchType === '') {
             return display_message('ok_nocross', sprintf(_("<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button to get started."), "<img src='img/add.png' alt='' /><a class='alert-link' href='app/controllers/ExperimentsController.php?experimentsCreate=true'>", "</a>"));
         } else {
-            $html .= "<div class='align_right'>";
-            $html .= "<a name='anchor'></a>";
-            $html .= "<p class='inline'>" . _('Export this result:') . " </p>";
-            $html .= "<a href='make.php?what=zip&id=" . Tools::buildStringFromArray($idArr) . "&type=experiments'>";
-            $html .= " <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>";
-            $html .= "<a href='make.php?what=csv&id=" . Tools::buildStringFromArray($idArr) . "&type=experiments'>";
-            $html .= " <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' /></a></div>";
+            $html .= $this->buildExportMenu($idArr, 'experiments');
+
             $html .= "<p class='smallgray'>" . $count . " " .
                 ngettext("result found", "results found", $count) . " (" .
                 $total_time['time'] . " " . $total_time['unit'] . ")</p>";

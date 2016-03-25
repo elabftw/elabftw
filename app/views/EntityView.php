@@ -18,6 +18,7 @@ class EntityView
     /**
      * Add chemdoodle JS
      *
+     * @return string
      */
     public function injectChemEditor()
     {
@@ -39,6 +40,7 @@ class EntityView
     /**
      * Ask the user if he really wants to navigate out of the page
      *
+     * @return string
      */
     public function injectCloseWarning()
     {
@@ -49,5 +51,25 @@ class EntityView
                   return '" . _('Do you want to navigate away from this page? Unsaved changes will be lost!') . "';};";
         }
         return $js;
+    }
+
+    /**
+     * Generate html for zip/csv export buttons
+     *
+     * @param array $idArr
+     * @param string $type items or experiments
+     * @return string
+     */
+    public function buildExportMenu($idArr, $type)
+    {
+            $html = "<div class='align_right'>";
+            $html .= "<a name='anchor'></a>";
+            $html .= "<p class='inline'>" . _('Export this result:') . " </p>";
+            $html .= "<a href='make.php?what=zip&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";
+            $html .= " <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>";
+            $html .= "<a href='make.php?what=csv&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";
+            $html .= " <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' /></a></div>";
+
+            return $html;
     }
 }

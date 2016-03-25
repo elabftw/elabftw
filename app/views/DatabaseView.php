@@ -143,18 +143,18 @@ class DatabaseView
 
         // show number of results found
         $count = count($itemsArr);
-        if ($count === 0 && $searchType != 'none') {
+        if ($count === 0 && $this->database->searchType != 'none') {
             return display_message('ko_nocross', _("Sorry. I couldn't find anything :("));
-        } elseif ($count === 0 && $searchType === 'none') {
+        } elseif ($count === 0 && $this->database->searchType === '') {
             return display_message('ok', _('<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list to begin filling your database.'));
         } else {
             $html .= "<div class='align_right'>";
             $html .= "<a name='anchor'></a>";
             $html .= "<p class='inline'>" . _('Export this result:') . " </p>";
             $html .= "<a href='make.php?what=zip&id=" . Tools::buildStringFromArray($idArr) . "&type=items'>";
-            $html .= "<img src='img/zip.png' title='make a zip archive' alt='zip' /></a>";
+            $html .= " <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>";
             $html .= "<a href='make.php?what=csv&id=" . Tools::buildStringFromArray($idArr) . "&type=items'>";
-            $html .= "<img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' /></a></div>";
+            $html .= " <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' /></a></div>";
             $html .= "<p class='smallgray'>" . $count . " " .
                 ngettext("result found", "results found", $count) . " (" .
                 $total_time['time'] . " " . $total_time['unit'] . ")</p>";
@@ -185,7 +185,7 @@ class DatabaseView
         $html .= "<form class='form-inline pull-right'>";
         $html .= "<div class='form-group'>";
         $html .= "<input type='hidden' name='mode' value='show' />";
-        $html .= "<input type='hidden' name='tag' value='" . $this->database->tagFilter . "' />";
+        $html .= "<input type='hidden' name='tag' value='" . $this->database->tag . "' />";
         $html .= "<input type='hidden' name='q' value='" . $this->database->query . "' />";
         $html .= "<select name='filter' class='form-control select-filter-cat'>";
         $html .= "<option value=''>" . _('Filter type') . "</option>";

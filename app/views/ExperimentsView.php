@@ -189,9 +189,9 @@ class ExperimentsView extends EntityView
             $html .= "<div class='align_right'>";
             $html .= "<a name='anchor'></a>";
             $html .= "<p class='inline'>" . _('Export this result:') . " </p>";
-            $html .= "<a href='make.php?what=zip&id=" . Tools::buildStringFromArray($idArr) . "&type=items'>";
+            $html .= "<a href='make.php?what=zip&id=" . Tools::buildStringFromArray($idArr) . "&type=experiments'>";
             $html .= " <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>";
-            $html .= "<a href='make.php?what=csv&id=" . Tools::buildStringFromArray($idArr) . "&type=items'>";
+            $html .= "<a href='make.php?what=csv&id=" . Tools::buildStringFromArray($idArr) . "&type=experiments'>";
             $html .= " <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' /></a></div>";
             $html .= "<p class='smallgray'>" . $count . " " .
                 ngettext("result found", "results found", $count) . " (" .

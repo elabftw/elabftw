@@ -38,7 +38,7 @@ function search_item($type, $query, $userid)
     if ($type === 'xp') {
         // search in title date and body
         $sql = "SELECT id FROM experiments
-            WHERE userid = :userid AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%')";
+            WHERE userid = :userid AND";
         $req = $pdo->prepare($sql);
         $req->execute(array(
             'userid' => $userid

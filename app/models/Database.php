@@ -28,9 +28,15 @@ class Database extends Entity
     public $team;
 
     public $filter = '';
-    public $sort = 'DESC';
-    public $order = 'items.id';
+    public $itemTypeFilter = '';
+    public $searchType;
     public $tag = '';
+    public $tagFilter = '';
+    public $query = '';
+    public $queryFilter = '';
+
+    public $order = 'items.id';
+    public $sort = 'DESC';
 
     /**
      * Give me the team on init
@@ -133,24 +139,29 @@ class Database extends Entity
         return $req->fetch();
     }
 
+    /**
+     * Read all items for a team
+     * Optionally with filters
+     *
+     * @return array
+     */
     public function readAll()
     {
-        $sql = "SELECT items.id, items_types.name
-        FROM items, items_types
-        WHERE items.type = items_types.id
-        AND items.team = :teamid
-        " . $this->filter . "
+        $sql = "SELECT items.*, items_types.name, items_types.bgcolor
+        FROM items
+        LEFT JOIN items_types ON (items.type = items_types.id)
+        LEFT JOIN items_tags ON (items.id = items_tags.item_id)
+        WHERE items.team = :teamid
+        " . $this->itemTypeFilter . "
+        " . $this->tagFilter . "
+        " . $this->queryFilter . "
         ORDER BY $this->order $this->sort";
+
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':teamid', $this->team);
         $req->execute();
 
-
-        $resultsArr = array();
-        while ($item = $req->fetch()) {
-            $resultsArr[] = $item['id'];
-        }
-        return $resultsArr;
+        return $req->fetchAll();
     }
 
     /**

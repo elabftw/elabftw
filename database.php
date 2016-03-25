@@ -29,7 +29,25 @@ try {
 
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
         $databaseView = new DatabaseView(new Database($_SESSION['team_id']));
-        $searchType = 'none';
+        // ITEM TYPE FILTER
+        if (isset($_GET['filter']) && !empty($_GET['filter'])) {
+            if (Tools::checkId($_GET['filter'])) {
+                $databaseView->database->itemTypeFilter = "AND items_types.id = " . $_GET['filter'];
+            }
+        }
+        // TAG FILTER
+        if (isset($_GET['tag']) && $_GET['tag'] != '') {
+            $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
+            $databaseView->database->tag = $tag;
+            echo $tag;
+            $databaseView->database->tagFilter = "AND items_tags.tag LIKE '" . $tag . "'";
+        }
+        // QUERY FILTER
+        if (isset($_GET['q']) && !empty($_GET['q'])) {
+            $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
+            $databaseView->database->queryFilter = "AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%')";
+            $databaseView->database->query = $query;
+        }
         // ORDER
         if (isset($_GET['order'])) {
             if ($_GET['order'] === 'cat') {
@@ -44,31 +62,9 @@ try {
                 $databaseView->database->sort = $_GET['sort'];
             }
         }
-        // FILTER
-        if (isset($_GET['filter'])) {
-            if (Tools::checkId($_GET['filter'])) {
-                $databaseView->database->filter = "AND items_types.id = " . $_GET['filter'];
-            }
-        }
-        // TAG
-        if (isset($_GET['tag']) && $_GET['tag'] != '') {
-            $databaseView->database->tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
-            $searchType = 'tag';
-        }
-        if (isset($_GET['q']) && !empty($_GET['q'])) {
-            $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
-            // we make an array for the resulting ids
-            //$results_arr = array();
-            //$results_arr = search_item('db', $query, $_SESSION['userid']);
-            $searchType = 'normal';
-        }
 
-        // for some reason, if it is inside the class, the menu get at bottom of page :/
-        // so I made the method public
-        // FIXME
         echo $databaseView->buildShowMenu();
         echo $databaseView->buildshow($searchType);
-        //require_once 'inc/showDB.php';
 
     // VIEW
     } elseif ($_GET['mode'] === 'view') {

@@ -669,12 +669,12 @@ a[class*='trigger_']:hover {
 .date_view {
     padding-left: 0;
 }
-.item_compact {
+.itemcompact {
     padding: 5px;
     margin: 5px;
 }
 
-.date_compact {
+.datecompact {
     margin: 0 10px 0 0;
     padding: 0;
     float:right;

@@ -131,26 +131,19 @@ class Experiments extends Entity
         return $req->fetch();
     }
 
+    /**
+     * Read all experiments for current user
+     *
+     * @return array
+     */
     public function readAll()
     {
-        // broken one
-        $sql = "SELECT experiments.*, status.color, status.name, experiments_tags.item_id
-            FROM experiments
-            LEFT JOIN status
-            LEFT JOIN experiments_tags ON (experiments_tags.userid = :userid)
-            WHERE experiments.userid = :userid
-            " . $this->statusFilter . "
-            " . $this->tagFilter . "
-            " . $this->queryFilter . "
-            ORDER BY " . $this->order . " " . $this->sort;
-
-
-        // working one without tags TODO
-        $sql = "SELECT experiments.*, status.color, status.name
+        $sql = "SELECT DISTINCT experiments.*, status.color, status.name
             FROM experiments
             LEFT JOIN status ON (status.team = experiments.team)
-            AND experiments.status = status.id
+            LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
             WHERE experiments.userid = :userid
+            AND experiments.status = status.id
             " . $this->statusFilter . "
             " . $this->tagFilter . "
             " . $this->queryFilter . "

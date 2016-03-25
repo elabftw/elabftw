@@ -297,7 +297,7 @@ menu.border a:hover {
     border-color: #dd1e00;
 }
 
-/* DROPDOWN MENU */
+/* DROPDOWN MENU *
 .dropdown-menu > li > a:hover,
 .dropdown-menu > li > a:focus {
     background-color: #e8e8e8;
@@ -314,6 +314,7 @@ menu.border a:hover {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff337ab7', endColorstr='#ff2e6da4', GradientType=0);
     background-repeat: repeat-x;
 }
+*/
 
 /* BADGE */
 .badge {
@@ -546,7 +547,7 @@ a[class*='trigger_']:hover {
     border-bottom-right-radius:0;
 }
 
-.select-create-db {
+.select-create {
     float:left;
     margin-left: 0;
 }
@@ -578,6 +579,13 @@ a[class*='trigger_']:hover {
     background-color:#29AEB9;
     border-color:#01929e;
 }
+
+.btn-elab-white {
+    color: #555;
+    background-color: #fff;
+    border-color:#ccc;
+}
+
 
 .btn-elab.active, .btn-elab.focus, .btn-elab:active, .btn-elab:focus, .btn-elab:hover{
     color:#fff;

@@ -209,18 +209,55 @@ class ExperimentsView extends EntityView
         $Status = new Status();
         $statusArr = $Status->read($_SESSION['team_id']);
 
+        $html = "<menu class='border row'>";
+        $html .= "<div class='btn-group col-md-2'>";
+        $html .= "<button type='button' class='btn btn-elab-white'>" . _('Create new') . "</button>";
+        $html .= "<button type='button' class='btn btn-elab dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>";
+        $html .= "<b class='caret'></b>";
+        $html .= "</button>";
+        $html .= "<ul class='dropdown-menu'>";
+        $html .= "<li class='dropdown-item'><a href='app/controllers/ExperimentsController.php?experimentsCreate=true'>";
+        $html .= ngettext('Experiment', 'Experiments', 1) . "</a></li>";
+
+        $Templates = new Templates($_SESSION['team_id']);
+        $templatesArr = $Templates->readFromUserid($_SESSION['userid']);
+        if (count($templatesArr) > 0) {
+            foreach ($templatesArr as $tpl) {
+                $html .= "<li class='dropdown-item'><a href='app/controllers/ExperimentsController.php?experimentsCreate=true&tpl"
+                    . $tpl['id'] . "'>"
+                    . $tpl['name'] . "</a></li>";
+            }
+        }
+        $html .= "</ul></div>";
+        /*
         $html = "<menu class='border'>";
         $html .= "<div class='row'>";
-        $html .= "<div class='col-md-5'>";
-        $html .= "<a href='app/controllers/ExperimentsController.php?experimentsCreate=true' id='createExperiment'><img src='img/add.png' class='bot5px' alt='' />";
-        $html .= _('Create experiment') . "</a> | <a href='#' class='trigger'><img src='img/add-template.png' class='bot5px' alt='' /> ";
-        $html .= _('Create from template') . "</a>";
+        $html .= "<div class='col-md-2'>";
+        $html .= "<form class='form-inline pull-left'>";
+        // CREATE NEW dropdown menu
+        $html .= "<select class='form-control select-create' onchange='go_url(this.value)'>";
+        $html .= "<option value=''>" . _('Create new') . "</option>";
+        $html .= "<option value='app/controllers/ExperimentsController.php?experimentsCreate=true'>" . _('From scratch') . "</option>";
+        $html .= "<option value='' disabled>" . _('From template') . "</option>";
+        $Templates = new Templates($_SESSION['team_id']);
+        $templatesArr = $Templates->readFromUserid($_SESSION['userid']);
+        if (count($templatesArr) > 0) {
+            foreach ($templatesArr as $tpl) {
+                $html .= "<option value='app/controllers/ExperimentsController.php?experimentsCreate=true&tpl=" . $tpl['id'] . "'";
+                $html .= ">" . $tpl['name'] . "</option>";
+            }
+        } else {
+            $html .= "<option value='' disabled>" . _('No templates found!') . "</option>";
+        }
+        $html .= "</select></form>";
         $html .= "</div>";
-        $html .= "<div class='col-md-12'>";
+         */
+        $html .= "<div class='col-md-10'>";
         $html .= "<form class='form-inline pull-right'>";
         $html .= "<div class='form-group'>";
         $html .= "<input type='hidden' name='mode' value='show' />";
         $html .= "<input type='hidden' name='tag' value='" . $this->experiments->tag . "' />";
+        $html .= "<input type='hidden' name='q' value='" . $this->experiments->query . "' />";
         // FILTER STATUS DROPDOWN MENU
         $html .= "<select name='filter' class='form-control select-filter-status'>";
         $html .= "<option value=''>" . _('Filter status') . "</option>";
@@ -229,8 +266,6 @@ class ExperimentsView extends EntityView
         }
         $html .= "</select>";
         $html .= "<input type='hidden' name='mode' value='show' />";
-        $html .= "<input type='hidden' name='tag' value='" . $this->experiments->tag . "' />";
-        $html .= "<input type='hidden' name='q' value='" . $this->experiments->query . "' />";
         $html .= "<button class='btn btn-elab submit-filter'>" . _('Filter') . "</button>";
 
         // ORDER
@@ -254,20 +289,7 @@ class ExperimentsView extends EntityView
             . $this->experiments->query . "&filter="
             . $this->experiments->filter . "';\">" . _('Reset') . "</button></div></form></div>";
 
-        $html .= "</div></menu>";
-
-        // ADD TEMPLATE CONTAINER
-        $html .= "<div class='toggle_container'><ul>";
-        $Templates = new Templates($_SESSION['team_id']);
-        $templatesArr = $Templates->readFromUserid($_SESSION['userid']);
-        if (is_array($templatesArr)) {
-            foreach ($templatesArr as $tpl) {
-                $html .= "<a href='app/controllers/ExperimentsController.php?experimentsCreate=true&tpl=" . $tpl['id'] . "' class='badge'>" . $tpl['name'] . "</a>";
-            }
-        } else { // user has no templates
-            $html .= display_message('warning_nocross', sprintf(_("<strong>You do not have any templates yet.</strong> Go to %syour control panel%s to make one !"), "<a class='alert-link' href='ucp.php?tab=3'>", "</a>"));
-        }
-        $html .= "</ul></div>";
+        $html .= "</menu>";
 
         return $html;
     }
@@ -295,11 +317,6 @@ class ExperimentsView extends EntityView
                 $('#loadButton').hide(); // hide load button when there is nothing more to show
             });
 
-            // EXPERIMENTS TEMPLATE HIDDEN DIV
-            $('.toggle_container').hide();
-            $('a.trigger').click(function(){
-                $('div.toggle_container').slideToggle(1);
-            });
             // KEYBOARD SHORTCUTS
             key('" . $_SESSION['prefs']['shortcuts']['create'] . "', function(){
                 location.href = 'app/controllers/ExperimentsController.php?experimentsCreate=true'

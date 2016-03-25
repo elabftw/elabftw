@@ -160,18 +160,36 @@ class DatabaseView extends EntityView
         $itemsTypes = new ItemsTypes($this->database->team);
         $itemsTypesArr = $itemsTypes->read();
 
-        $html = "<menu class='border'>";
-        $html .= "<div class='row'>";
-        $html .= "<div class='col-md-2'>";
-        $html .= "<form class='form-inline pull-left'>";
-        // CREATE NEW dropdown menu
-        $html .= "<select class='form-control select-create-db' onchange='go_url(this.value)'>";
-        $html .= "<option value=''>" . _('Create new') . "</option>";
+        $html = "<menu class='border row'>";
+        $html .= "<div class='btn-group col-md-2'>";
+        $html .= "<button type='button' class='btn btn-elab-white'>" . _('Create new') . "</button>";
+        $html .= "<button type='button' class='btn btn-elab dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>";
+        $html .= "<b class='caret'></b>";
+        $html .= "</button>";
+        $html .= "<ul class='dropdown-menu'>";
         foreach ($itemsTypesArr as $itemType) {
-            $html .= "<option value='app/controllers/DatabaseController.php?databaseCreateId=" . $itemType['id'] . "'";
-            $html .= ">" . $itemType['name'] . "</option>";
+            $html .= "<li class='dropdown-item'><a style='color:#" . $itemType['bgcolor'] . "' href='app/controllers/DatabaseController.php?databaseCreateId=" . $itemType['id'] . "'>"
+                . $itemType['name'] . "</a></li>";
         }
-        $html .= "</select></form></div>";
+        $html .= "</ul></div>";
+
+    //<li class='dropdown-item' href='#'>Another action</a></li>
+
+
+
+
+
+        //$html .= "<div class='row'>";
+        //$html .= "<div class='col-md-2'>";
+        //$html .= "<form class='form-inline pull-left'>";
+        // CREATE NEW dropdown menu
+        //$html .= "<select class='form-control select-create'  data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' onchange='go_url(this.value)'>";
+        //$html .= "<option value=''>" . _('Create new') . "</option>";
+        //foreach ($itemsTypesArr as $itemType) {
+        //    $html .= "<option value='app/controllers/DatabaseController.php?databaseCreateId=" . $itemType['id'] . "'";
+        //    $html .= ">" . $itemType['name'] . "</option>";
+        //}
+        //$html .= "</select></form></div>";
 
         // FILTER
         $html .= "<div class='col-md-10'>";
@@ -209,7 +227,7 @@ class DatabaseView extends EntityView
             . $this->database->query . "&filter="
             . $this->database->filter . "';\">" . _('Reset') . "</button></div></form></div>";
 
-        $html .= "</div></menu>";
+        $html .= "</menu>";
 
         return $html;
     }

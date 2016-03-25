@@ -39,7 +39,6 @@ try {
         if (isset($_GET['tag']) && $_GET['tag'] != '') {
             $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
             $experimentsView->experiments->tag = $tag;
-            echo $tag;
             $experimentsView->experiments->tagFilter = "AND experiments_tags.tag LIKE '" . $tag . "'";
         }
         // QUERY FILTER

@@ -131,7 +131,7 @@ class Tags
 
         $tagList = "";
         while ($tag = $req->fetch()) {
-            $tagList .= "'" . $tag[0] . "',";
+            $tagList .= "'" . $tag['tag'] . "',";
         }
 
         return $tagList;

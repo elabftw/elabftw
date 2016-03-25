@@ -582,3 +582,26 @@ function logsDestroy() {
         $('#logsDiv').load('sysconfig.php #logsDiv');
     });
 }
+
+// UPLOADS DESTROY
+function uploadsDestroy(id, type, item_id, confirmText) {
+    var youSure = confirm(confirmText);
+    if (youSure === true) {
+        $.post('app/controllers/UploadsController.php', {
+            uploadsDestroy: true,
+            id: id,
+            item_id: item_id,
+            type: type
+        }).done(function (data) {
+            if (data === '1') {
+                notif('File removed', 'ok');
+                if (type === 'items') {
+                    type = 'database';
+                }
+                $("#filesdiv").load(type + ".php?mode=edit&id=" + item_id + " #filesdiv");
+            } else {
+                notif('Something went wrong! :(', 'ko');
+            }
+        });
+    }
+}

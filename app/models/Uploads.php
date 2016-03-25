@@ -16,27 +16,37 @@ use \Exception;
 /**
  * All about the file uploads
  */
-class Uploads
+class Uploads extends Entity
 {
     /** pdo object */
-    private $pdo;
+    protected $pdo;
+
+    private $type;
+
+    private $itemId;
+
+    protected $id;
 
     /**
      * Constructor
      *
      */
-    public function __construct()
+    public function __construct($type, $itemId, $id = null)
     {
         $this->pdo = Db::getConnection();
+        $this->type = $type;
+        $this->itemId = $itemId;
+
+        if (!is_null($id)) {
+            $this->setId($id);
+        }
     }
 
     /**
      * Generate html for the upload form
      *
-     * @param int $id
-     * @param string $type
      */
-    public function buildUploadForm($id, $type)
+    public function buildUploadForm()
     {
         $html = "<section class='box'>";
         $html .= "<img src='img/attached.png' class='bot5px'> ";
@@ -46,11 +56,11 @@ class Uploads
 
         $html .= "<script>
         // we need this to reload the #filesdiv (div displaying uploaded files)
-        var type = '" . $type . "';
+        var type = '" . $this->type . "';
         if (type == 'items') {
             type = 'database';
         }
-        var item_id = '" . $id . "';
+        var item_id = '" . $this->itemId . "';
 
         // config for dropzone, id is camelCased.
         Dropzone.options.elabftwDropzone = {
@@ -61,8 +71,8 @@ class Uploads
 
                 // add additionnal parameters (id and type)
                 this.on('sending', function(file, xhr, formData) {
-                    formData.append('item_id', '" . $id . "');
-                    formData.append('type', '" . $type . "');
+                    formData.append('item_id', '" . $this->itemId . "');
+                    formData.append('type', '" . $this->type . "');
                 });
 
                 // once it is done
@@ -99,17 +109,30 @@ class Uploads
      * @param string $type
      * @return array
      */
-    public function read($id, $type)
+    public function read()
     {
         // Check that the item we view has attached files
         $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $id);
-        $req->bindParam(':type', $type);
+        $req->bindParam(':id', $this->itemId);
+        $req->bindParam(':type', $this->type);
         $req->execute();
 
         return $req->fetchAll();
     }
+
+    public function readId()
+    {
+        // Check that the item we view has attached files
+        $sql = "SELECT * FROM uploads WHERE id = :id AND type = :type";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $this->id);
+        $req->bindParam(':type', $this->type);
+        $req->execute();
+
+        return $req->fetch();
+    }
+
 
     /**
      * Generate HTML for displaying uploaded files
@@ -119,9 +142,9 @@ class Uploads
      * @param string $type type of upload
      * @return string html
      */
-    public function buildUploads($id, $mode, $type)
+    public function buildUploads($mode)
     {
-        $uploadsArr = $this->read($id, $type);
+        $uploadsArr = $this->read();
 
         $count = count($uploadsArr);
         if ($count < 1) {
@@ -145,9 +168,8 @@ class Uploads
             $html .= "<div class='thumbnail'>";
             // show the delete button only in edit mode, not in view mode
             if ($mode === 'edit') {
-                $html .= "<a class='align_right' href='app/delete_file.php?id=" . $upload['id'] . "&type=" .
-                    $upload['type'] . "&item_id=" . $upload['item_id'] .
-                    "' onClick=\"return confirm('Delete this file ?');\">";
+                $html .= "<a class='align_right' onClick=\"uploadsDestroy(" . $upload['id'] . "
+                    , '" . $upload['type'] . "', " . $upload['item_id'] . ", '" . _('Delete this?') . "')\">";
                 $html .= "<img src='img/small-trash.png' title='delete' alt='delete' /></a>";
             } // end if it is in edit mode
 
@@ -282,5 +304,45 @@ class Uploads
 
         // create the physical thumbnail image to its destination (85% quality)
         imagejpeg($virtualImage, $dest, 85);
+    }
+
+    /**
+     * Destroy an upload
+     *
+     */
+    public function destroy()
+    {
+        $uploadArr = $this->readId();
+
+        if ($this->type === 'experiments') {
+            // Check file id is owned by connected user
+            if ($uploadArr['userid'] =! $_SESSION['userid']) {
+                throw new Exception('This section is out of your reach!');
+            }
+        } else {
+            $User = new User();
+            $userArr = $User->read($_SESSION['userid']);
+            if ($userArr['team'] != $_SESSION['team_id']) {
+                throw new Exception('This section is out of your reach!');
+            }
+        }
+
+        // remove thumbnail
+        $thumbPath = ELAB_ROOT . 'uploads/' . $uploadArr['long_name'] . '_th.jpg';
+        if (file_exists($thumbPath)) {
+            unlink($thumbPath);
+        }
+        // now delete file from filesystem
+        $filePath = ELAB_ROOT . 'uploads/' . $uploadArr['long_name'];
+        unlink($filePath);
+
+        // Delete SQL entry (and verify the type)
+        // to avoid someone deleting files saying it's DB whereas it's exp
+        $sql = "DELETE FROM uploads WHERE id = :id AND type = :type";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $this->id);
+        $req->bindParam(':type', $this->type);
+
+        return $req->execute();
     }
 }

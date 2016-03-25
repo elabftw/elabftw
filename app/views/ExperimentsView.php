@@ -59,9 +59,9 @@ class ExperimentsView
         $this->experiments = $experiments;
 
         $this->status = new Status();
-        $this->revisions = new Revisions($this->experiments->id, 'experiments');
+        $this->revisions = new Revisions('experiments', $this->experiments->id);
         $this->comments = new Comments();
-        $this->uploads = new Uploads();
+        $this->uploads = new Uploads('experiments', $this->experiments->id);
         $this->users = new Users();
         $this->teamGroups = new TeamGroups();
 
@@ -87,7 +87,7 @@ class ExperimentsView
         }
 
         $html .= $this->buildView();
-        $html .= $this->uploads->buildUploads($this->experiments->id, 'view', 'experiments');
+        $html .= $this->uploads->buildUploads('view');
         $html .= $this->buildComments();
         $html .= $this->buildCommentsCreate();
         $html .= $this->buildViewJs();
@@ -111,8 +111,8 @@ class ExperimentsView
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
         $html = $this->buildEdit();
-        $html .= $this->uploads->buildUploadForm($this->experiments->id, 'experiments');
-        $html .= $this->uploads->buildUploads($this->experiments->id, 'edit', 'experiments');
+        $html .= $this->uploads->buildUploadForm();
+        $html .= $this->uploads->buildUploads('edit');
         $html .= $this->buildEditJs();
 
         return $html;

@@ -33,7 +33,7 @@ class Revisions
      * @param int $id
      * @param string $type
      */
-    public function __construct($id, $type)
+    public function __construct($type, $id)
     {
         $this->id = $id;
         $this->pdo = Db::getConnection();

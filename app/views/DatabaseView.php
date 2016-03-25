@@ -48,8 +48,8 @@ class DatabaseView
         $this->database = $database;
 
         $this->status = new Status();
-        $this->uploads = new Uploads();
-        $this->revisions = new Revisions($this->database->id, 'items');
+        $this->uploads = new Uploads('items', $this->database->id);
+        $this->revisions = new Revisions('items', $this->database->id);
     }
 
     /**
@@ -74,7 +74,7 @@ class DatabaseView
         $html = '';
 
         $html .= $this->buildView();
-        $html .= $this->uploads->buildUploads($this->database->id, 'view', 'items');
+        $html .= $this->uploads->buildUploads('view');
         $html .= $this->buildViewJs();
 
         return $html;
@@ -92,8 +92,8 @@ class DatabaseView
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
         $html = $this->buildEdit();
-        $html .= $this->uploads->buildUploadForm($this->database->id, 'items');
-        $html .= $this->uploads->buildUploads($this->database->id, 'edit', 'items');
+        $html .= $this->uploads->buildUploadForm();
+        $html .= $this->uploads->buildUploads('edit');
         $html .= $this->buildEditJs();
 
         return $html;

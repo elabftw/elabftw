@@ -196,8 +196,8 @@ class ExperimentsView extends EntityView
                 $total_time['time'] . " " . $total_time['unit'] . ")</p>";
         }
         $load_more_button = "<div class='center'>
-            <button class='button' id='loadButton'>" . _('Load more') . "</button>
-            <button class='button' id='loadAllButton'>". _('Load all') . "</button>
+            <button class='button' id='loadButton'>" . sprintf(_('Show %s more'), $this->limit) . "</button>
+            <button class='button' id='loadAllButton'>". _('Show all') . "</button>
             </div>";
         // show load more button if there are more results than the default display number
         if ($count > $this->limit) {

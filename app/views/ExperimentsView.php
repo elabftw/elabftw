@@ -82,7 +82,7 @@ class ExperimentsView
 
         $this->ro = $this->isReadOnly();
 
-        if ($this->isTimestamped()) {
+        if ($this->experiment['timestamped']) {
             $html .= $this->showTimestamp();
         }
 
@@ -303,16 +303,6 @@ class ExperimentsView
     }
 
     /**
-     * Check if experiment is timestamped
-     *
-     * @return bool
-     */
-    private function isTimestamped()
-    {
-        return $this->experiment['timestamped'];
-    }
-
-    /**
      * Show info on timestamp
      *
      * @return string
@@ -320,14 +310,19 @@ class ExperimentsView
     private function showTimestamp()
     {
         $timestamper = $this->users->read($this->experiment['timestampedby']);
-        $upload = $this->uploads->read('exp-pdf-timestamp');
-        $token = $this->uploads->read('timestamp-token');
+
+        $this->uploads->type = 'exp-pdf-timestamp';
+        $pdf = $this->uploads->read();
+
+        $this->uploads->type = 'timestamp-token';
+        $token = $this->uploads->read();
+
         $date = new DateTime($this->experiment['timestampedwhen']);
 
         return display_message(
             'ok_nocross',
             _('Experiment was timestamped by') . " " . $timestamper['firstname'] . " " . $timestamper['lastname'] . " " . _('on') . " " . $date->format('Y-m-d') . " " . _('at') . " " . $date->format('H:i:s') . " "
-            . $date->getTimezone()->getName() . " <a href='uploads/" . $upload[0]['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='" . _('Download timestamped pdf') . "' alt='pdf' /></a> <a href='uploads/" . $token[0]['long_name'] . "'><img src='img/download.png' title=\"" . _('Download token') . "\" alt='token' class='bot5px' /></a>"
+            . $date->getTimezone()->getName() . " <a href='uploads/" . $pdf[0]['long_name'] . "'><img src='img/pdf.png' class='bot5px' title='" . _('Download timestamped pdf') . "' alt='pdf' /></a> <a href='uploads/" . $token[0]['long_name'] . "'><img src='img/download.png' title=\"" . _('Download token') . "\" alt='token' class='bot5px' /></a>"
         );
     }
 
@@ -353,7 +348,7 @@ class ExperimentsView
         } else { // experiment is locked
             $html .= "<a href='app/lock.php?id=" . $this->experiment['id'] . "&action=unlock&type=experiments'><img src='img/lock-gray.png' title='unlock experiment' alt='unlock' /></a>";
             // show timestamp button if it's not timestamped already
-            if (!$this->isTimestamped()) {
+            if (!$this->experiment['timestamped']) {
                 $html .= "<a onClick=\"return confirmStamp('" . _('Once timestamped an experiment cannot be edited anymore ! Are you sure you want to do this ?') . "')\" href='app/timestamp.php?id=" . $this->experiment['id'] . "'><img src='img/stamp.png' title='timestamp experiment' alt='timestamp' /></a>";
             }
         }

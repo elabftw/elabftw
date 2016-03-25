@@ -21,9 +21,9 @@ class Uploads extends Entity
     /** pdo object */
     protected $pdo;
 
-    private $type;
+    public $type;
 
-    private $itemId;
+    public $itemId;
 
     protected $id;
 
@@ -32,7 +32,7 @@ class Uploads extends Entity
      *
      * @param string $type experiment or items
      * @param int $itemId
-     * @param int $id ID of a single file
+     * @param int|null $id ID of a single file
      */
     public function __construct($type, $itemId, $id = null)
     {
@@ -47,16 +47,15 @@ class Uploads extends Entity
 
     /**
      * Read infos about an upload
-     * allow override of type (for timestamps pdf and token)
      *
      * @return array
      */
-    public function read($type = null)
+    public function read()
     {
         $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $this->itemId);
-        $req->bindParam(':type', $type);
+        $req->bindParam(':type', $this->type);
         $req->execute();
 
         return $req->fetchAll();

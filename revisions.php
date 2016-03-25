@@ -26,7 +26,7 @@ require_once 'inc/head.php';
 try {
     if ($_GET['type'] === 'experiments') {
 
-        $experiment = new \Elabftw\Elabftw\Experiments($_GET['item_id'], $_SESSION['userid']);
+        $experiment = new Experiments($_GET['item_id'], $_SESSION['userid']);
 
         // only experiment owner can change or see revisions
         if (!is_owned_by_user($_GET['item_id'], 'experiments', $_SESSION['userid'])) {
@@ -38,13 +38,13 @@ try {
     } elseif ($_GET['type'] === 'items') {
 
         // the constructor will check if we are in the same team as item
-        $database = new \Elabftw\Elabftw\Database($_GET['item_id'], $_SESSION['team_id']);
+        $database = new Database($_GET['item_id'], $_SESSION['team_id']);
         $location = 'database';
     } else {
         throw new Exception('Bad type!');
     }
 
-    $revisions = new \Elabftw\Elabftw\Revisions($_GET['item_id'], $_GET['type']);
+    $revisions = new Revisions($_GET['type'], $_GET['item_id']);
 
     // THE RESTORE ACTION
     if (isset($_GET['action']) && $_GET['action'] === 'restore') {

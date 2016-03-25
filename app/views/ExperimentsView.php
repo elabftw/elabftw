@@ -84,6 +84,8 @@ class ExperimentsView
 
         if ($this->experiment['timestamped']) {
             $html .= $this->showTimestamp();
+            // FIXME showTimestamp is changing the type
+            $this->uploads->type = 'experiments';
         }
 
         $html .= $this->buildView();

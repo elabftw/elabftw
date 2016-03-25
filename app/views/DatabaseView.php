@@ -56,12 +56,12 @@ class DatabaseView
      * Show item
      *
      * @return string HTML for viewDB
-     */
+     *
     public function show()
     {
         // FIXME we should have buildShowMenu here
         // but the menu get at bottom :/
-        return $this->buildShow();
+        return $this->buildShow($searchType);
     }
 
     /**
@@ -104,19 +104,18 @@ class DatabaseView
      *
      * @return string
      */
-    private function buildShow()
+    public function buildShow($searchType)
     {
         $html = '';
 
-        $search_type = 'none';
         $itemsIds = $this->database->readAll();
 
         $total_time = get_total_time();
 
         // show number of results found
-        if (count($itemsIds) === 0 && $search_type != 'none') {
+        if (count($itemsIds) === 0 && $searchType != 'none') {
             $html .= display_message('ko_nocross', _("Sorry. I couldn't find anything :("));
-        } elseif (count($itemsIds) === 0 && $search_type === 'none') {
+        } elseif (count($itemsIds) === 0 && $searchType === 'none') {
             $html .= display_message('ok', _('<strong>Welcome to eLabFTW.</strong> Select an item in the «Create new» list to begin filling your database.'));
         } else {
             $html .= "<div class='align_right'>";

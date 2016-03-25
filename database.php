@@ -29,6 +29,7 @@ try {
 
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
         $databaseView = new DatabaseView(new Database($_SESSION['team_id']));
+        $searchType = 'none';
         // ORDER
         if (isset($_GET['order'])) {
             if ($_GET['order'] === 'cat') {
@@ -52,12 +53,21 @@ try {
         // TAG
         if (isset($_GET['tag']) && $_GET['tag'] != '') {
             $databaseView->database->tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
+            $searchType = 'tag';
         }
+        if (isset($_GET['q']) && !empty($_GET['q'])) {
+            $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
+            // we make an array for the resulting ids
+            //$results_arr = array();
+            //$results_arr = search_item('db', $query, $_SESSION['userid']);
+            $searchType = 'normal';
+        }
+
         // for some reason, if it is inside the class, the menu get at bottom of page :/
         // so I made the method public
         // FIXME
         echo $databaseView->buildShowMenu();
-        echo $databaseView->show();
+        echo $databaseView->buildshow($searchType);
         //require_once 'inc/showDB.php';
 
     // VIEW

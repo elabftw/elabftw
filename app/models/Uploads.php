@@ -30,6 +30,9 @@ class Uploads extends Entity
     /**
      * Constructor
      *
+     * @param string $type experiment or items
+     * @param int $itemId
+     * @param int $id ID of a single file
      */
     public function __construct($type, $itemId, $id = null)
     {
@@ -40,6 +43,126 @@ class Uploads extends Entity
         if (!is_null($id)) {
             $this->setId($id);
         }
+    }
+
+    /**
+     * Read infos about an upload
+     * allow override of type (for timestamps pdf and token)
+     *
+     * @return array
+     */
+    public function read($type = null)
+    {
+        $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $this->itemId);
+        $req->bindParam(':type', $type);
+        $req->execute();
+
+        return $req->fetchAll();
+    }
+
+    /**
+     * Read infos from an upload ID
+     *
+     * @return array
+     */
+    private function readId()
+    {
+        // Check that the item we view has attached files
+        $sql = "SELECT * FROM uploads WHERE id = :id AND type = :type";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $this->id);
+        $req->bindParam(':type', $this->type);
+        $req->execute();
+
+        return $req->fetch();
+    }
+
+
+    /**
+     * Create a jpg thumbnail from images of type jpg, png or gif.
+     *
+     * @param string $src Path to the original file
+     * @param string $ext Extension of the file
+     * @param string $dest Path to the place to save the thumbnail
+     * @param int $desiredWidth Width of the thumbnail (height is automatic depending on width)
+     * @return null|false
+     */
+    private function makeThumb($src, $ext, $dest, $desiredWidth)
+    {
+        // we don't want to work on too big images
+        // put the limit to 5 Mbytes
+        if (filesize($src) > 5000000) {
+            return false;
+        }
+
+        // the used fonction is different depending on extension
+        if (preg_match('/(jpg|jpeg)$/i', $ext)) {
+            $sourceImage = imagecreatefromjpeg($src);
+        } elseif (preg_match('/(png)$/i', $ext)) {
+            $sourceImage = imagecreatefrompng($src);
+        } elseif (preg_match('/(gif)$/i', $ext)) {
+            $sourceImage = imagecreatefromgif($src);
+        } else {
+            return false;
+        }
+
+        $width = imagesx($sourceImage);
+        $height = imagesy($sourceImage);
+
+        // find the "desired height" of this thumbnail, relative to the desired width
+        $desiredHeight = floor($height * ($desiredWidth / $width));
+
+        // create a new, "virtual" image
+        $virtualImage = imagecreatetruecolor($desiredWidth, $desiredHeight);
+
+        // copy source image at a resized size
+        imagecopyresized($virtualImage, $sourceImage, 0, 0, 0, 0, $desiredWidth, $desiredHeight, $width, $height);
+
+        // create the physical thumbnail image to its destination (85% quality)
+        imagejpeg($virtualImage, $dest, 85);
+    }
+
+    /**
+     * Destroy an upload
+     *
+     * @return bool
+     */
+    public function destroy()
+    {
+        $uploadArr = $this->readId();
+
+        if ($this->type === 'experiments') {
+            // Check file id is owned by connected user
+            if ($uploadArr['userid'] =! $_SESSION['userid']) {
+                throw new Exception(_('This section is out of your reach!'));
+            }
+        } else {
+            $User = new Users();
+            $userArr = $User->read($_SESSION['userid']);
+            if ($userArr['team'] != $_SESSION['team_id']) {
+                throw new Exception(_('This section is out of your reach!'));
+            }
+        }
+
+        // remove thumbnail
+        $thumbPath = ELAB_ROOT . 'uploads/' . $uploadArr['long_name'] . '_th.jpg';
+        if (file_exists($thumbPath)) {
+            unlink($thumbPath);
+        }
+        // now delete file from filesystem
+        $filePath = ELAB_ROOT . 'uploads/' . $uploadArr['long_name'];
+        unlink($filePath);
+
+        // Delete SQL entry (and verify the type)
+        // to avoid someone deleting files saying it's DB whereas it's exp
+        $sql = "DELETE FROM uploads WHERE id = :id AND type = :type";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $this->id);
+        $req->bindParam(':type', $this->type);
+
+        return $req->execute();
     }
 
     /**
@@ -103,43 +226,9 @@ class Uploads extends Entity
     }
 
     /**
-     * Read infos about an upload
-     *
-     * @param int $id ID of the item
-     * @param string $type
-     * @return array
-     */
-    public function read()
-    {
-        // Check that the item we view has attached files
-        $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->itemId);
-        $req->bindParam(':type', $this->type);
-        $req->execute();
-
-        return $req->fetchAll();
-    }
-
-    public function readId()
-    {
-        // Check that the item we view has attached files
-        $sql = "SELECT * FROM uploads WHERE id = :id AND type = :type";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id);
-        $req->bindParam(':type', $this->type);
-        $req->execute();
-
-        return $req->fetch();
-    }
-
-
-    /**
      * Generate HTML for displaying uploaded files
      *
-     * @param int $id Id of the item
      * @param string $mode edit or view
-     * @param string $type type of upload
      * @return string html
      */
     public function buildUploads($mode)
@@ -261,88 +350,5 @@ class Uploads extends Entity
             </script>";
         }
         return $html;
-    }
-    /**
-     * Create a jpg thumbnail from images of type jpg, png or gif.
-     *
-     * @param string $src Path to the original file
-     * @param string $ext Extension of the file
-     * @param string $dest Path to the place to save the thumbnail
-     * @param int $desiredWidth Width of the thumbnail (height is automatic depending on width)
-     * @return null|false
-     */
-    private function makeThumb($src, $ext, $dest, $desiredWidth)
-    {
-        // we don't want to work on too big images
-        // put the limit to 5 Mbytes
-        if (filesize($src) > 5000000) {
-            return false;
-        }
-
-        // the used fonction is different depending on extension
-        if (preg_match('/(jpg|jpeg)$/i', $ext)) {
-            $sourceImage = imagecreatefromjpeg($src);
-        } elseif (preg_match('/(png)$/i', $ext)) {
-            $sourceImage = imagecreatefrompng($src);
-        } elseif (preg_match('/(gif)$/i', $ext)) {
-            $sourceImage = imagecreatefromgif($src);
-        } else {
-            return false;
-        }
-
-        $width = imagesx($sourceImage);
-        $height = imagesy($sourceImage);
-
-        // find the "desired height" of this thumbnail, relative to the desired width
-        $desiredHeight = floor($height * ($desiredWidth / $width));
-
-        // create a new, "virtual" image
-        $virtualImage = imagecreatetruecolor($desiredWidth, $desiredHeight);
-
-        // copy source image at a resized size
-        imagecopyresized($virtualImage, $sourceImage, 0, 0, 0, 0, $desiredWidth, $desiredHeight, $width, $height);
-
-        // create the physical thumbnail image to its destination (85% quality)
-        imagejpeg($virtualImage, $dest, 85);
-    }
-
-    /**
-     * Destroy an upload
-     *
-     */
-    public function destroy()
-    {
-        $uploadArr = $this->readId();
-
-        if ($this->type === 'experiments') {
-            // Check file id is owned by connected user
-            if ($uploadArr['userid'] =! $_SESSION['userid']) {
-                throw new Exception('This section is out of your reach!');
-            }
-        } else {
-            $User = new User();
-            $userArr = $User->read($_SESSION['userid']);
-            if ($userArr['team'] != $_SESSION['team_id']) {
-                throw new Exception('This section is out of your reach!');
-            }
-        }
-
-        // remove thumbnail
-        $thumbPath = ELAB_ROOT . 'uploads/' . $uploadArr['long_name'] . '_th.jpg';
-        if (file_exists($thumbPath)) {
-            unlink($thumbPath);
-        }
-        // now delete file from filesystem
-        $filePath = ELAB_ROOT . 'uploads/' . $uploadArr['long_name'];
-        unlink($filePath);
-
-        // Delete SQL entry (and verify the type)
-        // to avoid someone deleting files saying it's DB whereas it's exp
-        $sql = "DELETE FROM uploads WHERE id = :id AND type = :type";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id);
-        $req->bindParam(':type', $this->type);
-
-        return $req->execute();
     }
 }

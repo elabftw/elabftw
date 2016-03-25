@@ -600,7 +600,7 @@ function uploadsDestroy(id, type, item_id, confirmText) {
                 }
                 $("#filesdiv").load(type + ".php?mode=edit&id=" + item_id + " #filesdiv");
             } else {
-                notif('Something went wrong! :(', 'ko');
+                notif('Something went wrong! :(<br>' + data, 'ko');
             }
         });
     }

@@ -40,7 +40,7 @@ if (isset($_GET['id']) && !empty($_GET['id']) && Tools::checkId($_GET['id'])) {
 
 // timestamping begins
 try {
-    $ts = new Elabftw\Elabftw\TrustedTimestamps($id);
+    $ts = new TrustedTimestamps($id);
     $ts->timeStamp();
 } catch (Exception $e) {
     $msg_arr = array();

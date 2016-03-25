@@ -25,6 +25,8 @@
 ********************************************************************************/
 namespace Elabftw\Elabftw;
 
+use \PDO;
+
 // lock.php
 require_once '../inc/common.php';
 // Check id is valid and assign it to $id

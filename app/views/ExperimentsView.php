@@ -320,8 +320,8 @@ class ExperimentsView
     private function showTimestamp()
     {
         $timestamper = $this->users->read($this->experiment['timestampedby']);
-        $upload = $this->uploads->read($this->experiments->id, 'exp-pdf-timestamp');
-        $token = $this->uploads->read($this->experiments->id, 'timestamp-token');
+        $upload = $this->uploads->read('exp-pdf-timestamp');
+        $token = $this->uploads->read('timestamp-token');
         $date = new DateTime($this->experiment['timestampedwhen']);
 
         return display_message(

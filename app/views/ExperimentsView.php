@@ -45,6 +45,8 @@ class ExperimentsView extends EntityView
     /** number of items to show */
     public $limit;
 
+    public $display;
+
     /**
      * Need an ID of an experiment
      *
@@ -159,7 +161,7 @@ class ExperimentsView extends EntityView
             } else {
                 $bodyAbstract = '';
             }
-            $html2 .= "<a title='" . $body_abstract . "' href='experiments.php?mode=view&id=" . $item['id'] . "'>";
+            $html2 .= "<a title='" . $bodyAbstract . "' href='experiments.php?mode=view&id=" . $item['id'] . "'>";
             $html2 .= "<p class='title'>";
             // LOCK
             if ($item['locked'] == 1) {

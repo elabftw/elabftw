@@ -179,11 +179,10 @@ class ExperimentsView extends EntityView
         } elseif ($count === 0 && $this->experiments->searchType === '') {
             return display_message('ok_nocross', sprintf(_("<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button to get started."), "<img src='img/add.png' alt='' /><a class='alert-link' href='app/controllers/ExperimentsController.php?experimentsCreate=true'>", "</a>"));
         } else {
-            $html .= "<div class='row'>";
             $html .= $this->buildExportMenu($idArr, 'experiments');
 
             $total_time = get_total_time();
-            $html .= "<p class='col-md-10 smallgray'>" . $count . " " .
+            $html .= "<p class='smallgray'>" . $count . " " .
                 ngettext("result found", "results found", $count) . " (" .
                 $total_time['time'] . " " . $total_time['unit'] . ")</p>";
         }
@@ -195,7 +194,6 @@ class ExperimentsView extends EntityView
         if ($count > $this->limit) {
             $html2 .= $load_more_button;
         }
-        $html .= "</div>";
         $html .= $this->buildShowJs('experiments');
         return $html . $html2;
     }

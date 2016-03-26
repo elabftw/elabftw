@@ -67,7 +67,7 @@ class EntityView
      */
     public function buildExportMenu($idArr, $type)
     {
-            $html = "<div class='col-md-2 pull-right'>";
+            $html = "<div class='align_right'>";
             $html .= "<a name='anchor'></a>";
             $html .= "<p class='inline'>" . _('Export this result:') . " </p>";
             $html .= "<a href='make.php?what=zip&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";

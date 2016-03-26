@@ -18,9 +18,6 @@ use \Datetime;
  */
 class DatabaseView extends EntityView
 {
-    /** object holding class Database */
-    public $database;
-
     /** ID of the item we want to view */
     private $id;
 
@@ -34,9 +31,6 @@ class DatabaseView extends EntityView
     private $status;
 
     public $display = '';
-
-    /** number of items to show */
-    public $limit;
 
 
     /**

@@ -18,9 +18,6 @@ use \Datetime;
  */
 class ExperimentsView extends EntityView
 {
-    /** object holding class Experiments */
-    public $experiments;
-
     /** the experiment array with data */
     private $experiment;
 
@@ -41,9 +38,6 @@ class ExperimentsView extends EntityView
 
     /** instance of Users */
     private $users;
-
-    /** number of items to show */
-    public $limit;
 
     public $display;
 

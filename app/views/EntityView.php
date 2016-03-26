@@ -15,6 +15,11 @@ namespace Elabftw\Elabftw;
  */
 class EntityView
 {
+
+    public $experiments;
+    public $database;
+    public $limit;
+
     /**
      * Add chemdoodle JS
      *

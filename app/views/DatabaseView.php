@@ -35,6 +35,9 @@ class DatabaseView extends EntityView
 
     public $display = '';
 
+    /** number of items to show */
+    public $limit;
+
 
     /**
      * Need an ID of an item
@@ -45,6 +48,7 @@ class DatabaseView extends EntityView
     public function __construct(Database $database)
     {
         $this->database = $database;
+        $this->limit = $_SESSION['prefs']['limit'];
 
         $this->status = new Status();
         $this->uploads = new Uploads('items', $this->database->id);
@@ -152,84 +156,16 @@ class DatabaseView extends EntityView
                 ngettext("result found", "results found", $count) . " (" .
                 $total_time['time'] . " " . $total_time['unit'] . ")</p>";
         }
+        $load_more_button = "<div class='center'>
+            <button class='button' id='loadButton'>" . sprintf(_('Show %s more'), $this->limit) . "</button>
+            <button class='button' id='loadAllButton'>". _('Show all') . "</button>
+            </div>";
+        // show load more button if there are more results than the default display number
+        if ($count > $this->limit) {
+            $html2 .= $load_more_button;
+        }
+        $html .= $this->buildShowJs('database');
         return $html . $html2;
-    }
-
-    public function buildShowMenu()
-    {
-        $itemsTypes = new ItemsTypes($this->database->team);
-        $itemsTypesArr = $itemsTypes->read();
-
-        $html = "<menu class='border row'>";
-        $html .= "<div class='btn-group col-md-2'>";
-        $html .= "<button type='button' class='btn btn-elab-white'>" . _('Create new') . "</button>";
-        $html .= "<button type='button' class='btn btn-elab dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>";
-        $html .= "<b class='caret'></b>";
-        $html .= "</button>";
-        $html .= "<ul class='dropdown-menu'>";
-        foreach ($itemsTypesArr as $itemType) {
-            $html .= "<li class='dropdown-item'><a style='color:#" . $itemType['bgcolor'] . "' href='app/controllers/DatabaseController.php?databaseCreateId=" . $itemType['id'] . "'>"
-                . $itemType['name'] . "</a></li>";
-        }
-        $html .= "</ul></div>";
-
-    //<li class='dropdown-item' href='#'>Another action</a></li>
-
-
-
-
-
-        //$html .= "<div class='row'>";
-        //$html .= "<div class='col-md-2'>";
-        //$html .= "<form class='form-inline pull-left'>";
-        // CREATE NEW dropdown menu
-        //$html .= "<select class='form-control select-create'  data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' onchange='go_url(this.value)'>";
-        //$html .= "<option value=''>" . _('Create new') . "</option>";
-        //foreach ($itemsTypesArr as $itemType) {
-        //    $html .= "<option value='app/controllers/DatabaseController.php?databaseCreateId=" . $itemType['id'] . "'";
-        //    $html .= ">" . $itemType['name'] . "</option>";
-        //}
-        //$html .= "</select></form></div>";
-
-        // FILTER
-        $html .= "<div class='col-md-10'>";
-        $html .= "<form class='form-inline pull-right'>";
-        $html .= "<div class='form-group'>";
-        $html .= "<input type='hidden' name='mode' value='show' />";
-        $html .= "<input type='hidden' name='tag' value='" . $this->database->tag . "' />";
-        $html .= "<input type='hidden' name='q' value='" . $this->database->query . "' />";
-        $html .= "<select name='filter' class='form-control select-filter-cat'>";
-        $html .= "<option value=''>" . _('Filter type') . "</option>";
-        foreach ($itemsTypesArr as $itemType) {
-            $html .= "<option value='" . $itemType['id'] . "'" . checkSelectFilter($itemType['id']) . ">" . $itemType['name'] . "</option>";
-        }
-        $html .= "</select>";
-        $html .= "<button class='btn btn-elab submit-filter'>" . _('Filter') . "</button>";
-
-        // ORDER
-        $html .= "<select name='order' class='form-control select-order'>";
-        $html .= "<option value=''>" . _('Order by') . "</option>";
-        $html .= "<option value='cat'" . checkSelectOrder('cat') . ">" . _('Category') . "</option>";
-        $html .= "<option value='date'" . checkSelectOrder('date') . ">" . _('Date') . "</option>";
-        $html .= "<option value='rating'" . checkSelectOrder('rating') . ">" . _('Rating') . "</option>";
-        $html .= "<option value='title'" . checkSelectOrder('title') . ">" . _('Title') . "</option>";
-        $html .= "</select>";
-
-        // SORT
-        $html .= "<select name='sort' class='form-control select-sort'>";
-        $html .= "<option value=''>" . _('Sort') . "</option>";
-        $html .= "<option value='desc'" . checkSelectSort('desc') . ">" . _('DESC') . "</option>";
-        $html .= "<option value='asc'" . checkSelectSort('asc') . ">" . _('ASC') . "</option>";
-        $html .= "</select>";
-        $html .= "<button class='btn btn-elab submit-order'>" . _('Order') . "</button>";
-        $html .= "<button type='reset' class='btn btn-danger submit-reset' onclick=\"javascript:location.href='database.php?mode=show&tag="
-            . $this->database->tag . "&q="
-            . $this->database->query . "&filter="
-            . $this->database->filter . "';\">" . _('Reset') . "</button></div></form></div>";
-
-        $html .= "</menu>";
-
-        return $html;
     }
 
     /**

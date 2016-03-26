@@ -62,7 +62,7 @@ try {
             }
         }
 
-        echo $experimentsView->buildShowMenu();
+        echo $experimentsView->buildShowMenu('experiments');
         echo $experimentsView->buildShow();
 
     // VIEW

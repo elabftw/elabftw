@@ -63,7 +63,7 @@ try {
             }
         }
 
-        echo $databaseView->buildShowMenu();
+        echo $databaseView->buildShowMenu('database');
         echo $databaseView->buildShow();
 
     // VIEW

@@ -61,7 +61,7 @@ if ($count > 10) {
         } else {
             $class = 'c10';
         }
-        echo "<a href='experiments.php?mode=show&q=" . $data[0] . "' class='" . $class . "'>" . stripslashes($data[0]) . "</a> ";
+        echo "<a href='experiments.php?mode=show&q=" . $data['tag'] . "' class='" . $class . "'>" . stripslashes($data['tag']) . "</a> ";
     }
     // TAGCLOUD
     echo "</div>";

@@ -46,27 +46,11 @@ class Uploads extends Entity
     }
 
     /**
-     * Read infos about an upload
-     *
-     * @return array
-     */
-    public function read()
-    {
-        $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->itemId);
-        $req->bindParam(':type', $this->type);
-        $req->execute();
-
-        return $req->fetchAll();
-    }
-
-    /**
      * Read infos from an upload ID
      *
      * @return array
      */
-    private function readId()
+    private function read()
     {
         // Check that the item we view has attached files
         $sql = "SELECT * FROM uploads WHERE id = :id AND type = :type";
@@ -76,6 +60,22 @@ class Uploads extends Entity
         $req->execute();
 
         return $req->fetch();
+    }
+
+    /**
+     * Read all uploads for an item
+     *
+     * @return array
+     */
+    public function readAll()
+    {
+        $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $this->itemId);
+        $req->bindParam(':type', $this->type);
+        $req->execute();
+
+        return $req->fetchAll();
     }
 
 
@@ -130,7 +130,7 @@ class Uploads extends Entity
      */
     public function destroy()
     {
-        $uploadArr = $this->readId();
+        $uploadArr = $this->read();
 
         if ($this->type === 'experiments') {
             // Check file id is owned by connected user
@@ -232,7 +232,7 @@ class Uploads extends Entity
      */
     public function buildUploads($mode)
     {
-        $uploadsArr = $this->read();
+        $uploadsArr = $this->readAll();
 
         $count = count($uploadsArr);
         if ($count < 1) {

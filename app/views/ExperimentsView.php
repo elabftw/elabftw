@@ -71,8 +71,6 @@ class ExperimentsView extends EntityView
 
         if ($this->experiment['timestamped']) {
             $html .= $this->showTimestamp();
-            // FIXME showTimestamp is changing the type
-            $this->uploads->type = 'experiments';
         }
 
         $html .= $this->buildView();
@@ -153,8 +151,11 @@ class ExperimentsView extends EntityView
             }
             $html2 .= "<a title='" . $bodyAbstract . "' href='experiments.php?mode=view&id=" . $item['id'] . "'>";
             $html2 .= "<p class='title'>";
+            if ($item['timestamped']) {
+                $html2 .= "<img class='align_right' src='img/stamp.png' alt='stamp' title='experiment timestamped' />";
+            }
             // LOCK
-            if ($item['locked'] == 1) {
+            if ($item['locked']) {
                 $html2 .= "<img style='padding-bottom:3px;' src='img/lock-blue.png' alt='lock' />";
             }
             // TITLE
@@ -382,10 +383,13 @@ class ExperimentsView extends EntityView
         $timestamper = $Users->read($this->experiment['timestampedby']);
 
         $this->uploads->type = 'exp-pdf-timestamp';
-        $pdf = $this->uploads->read();
+        $pdf = $this->uploads->readAll();
 
         $this->uploads->type = 'timestamp-token';
-        $token = $this->uploads->read();
+        $token = $this->uploads->readAll();
+
+        // set the type back to the correct one
+        $this->uploads->type = 'experiments';
 
         $date = new DateTime($this->experiment['timestampedwhen']);
 

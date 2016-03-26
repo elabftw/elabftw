@@ -122,7 +122,7 @@ class DatabaseView extends EntityView
             $html2 .= show_stars($item['rating']);
             $html2 .= "<p class='title'>";
             // LOCK
-            if ($item['locked'] == 1) {
+            if ($item['locked']) {
                 $html2 .= "<img style='padding-bottom:3px;' src='img/lock-blue.png' alt='lock' />";
             }
             // TITLE

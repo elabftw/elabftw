@@ -80,7 +80,6 @@ if ($Auth->login($username, $_POST['password'], $rememberme)) {
         $location = '../experiments.php';
     }
     header('location: ' . $location);
-    exit;
 } else {
     // log the attempt if the login failed
     dblog('Warning', $_SERVER['REMOTE_ADDR'], 'Failed login attempt');
@@ -94,5 +93,4 @@ if ($Auth->login($username, $_POST['password'], $rememberme)) {
     $_SESSION['ko'] = $msg_arr;
 
     header("location: ../login.php");
-    exit;
 }

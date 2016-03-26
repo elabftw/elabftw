@@ -172,10 +172,10 @@ class ExperimentsView extends EntityView
 
         // show number of results found
         $count = count($itemsArr);
-        if ($count === 0 && $this->experiments->searchType != 'none') {
+        if ($count === 0 && $this->experiments->searchType != '') {
             return display_message('ko_nocross', _("Sorry. I couldn't find anything :("));
         } elseif ($count === 0 && $this->experiments->searchType === '') {
-            return display_message('ok_nocross', sprintf(_("<strong>Welcome to eLabFTW.</strong> Click the %sCreate experiment%s button to get started."), "<img src='img/add.png' alt='' /><a class='alert-link' href='app/controllers/ExperimentsController.php?experimentsCreate=true'>", "</a>"));
+            return display_message('ok_nocross', sprintf(_("Welcome to eLabFTW. %sClick here%s to create your first experiment."), "<a href='app/controllers/ExperimentsController.php?experimentsCreate=true'>", "</a>"));
         } else {
             $html .= $this->buildExportMenu($idArr, 'experiments');
 

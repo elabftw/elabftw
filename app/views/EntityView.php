@@ -89,6 +89,7 @@ class EntityView
             $categoryArr = $Status->read($_SESSION['team_id']);
             $createItem .= "<li class='dropdown-item'><a href='app/controllers/ExperimentsController.php?experimentsCreate=true'>";
             $createItem .= ngettext('Experiment', 'Experiments', 1) . "</a></li>";
+            $createItem .= "<li role='separator' class='divider'></li>";
             $Templates = new Templates($_SESSION['team_id']);
             $templatesArr = $Templates->readFromUserid($_SESSION['userid']);
             if (count($templatesArr) > 0) {
@@ -97,6 +98,8 @@ class EntityView
                         . $tpl['id'] . "'>"
                         . $tpl['name'] . "</a></li>";
                 }
+            } else { //user has no templates
+                $templates .= "<li class='dropdown-item disabled'><a href='#'>" . _('No templates found') . "</a></li>";
             }
             $tag = "<input type='hidden' name='tag' value='" . $this->experiments->tag . "' />";
             $query = "<input type='hidden' name='q' value='" . $this->experiments->query . "' />";
@@ -114,19 +117,19 @@ class EntityView
 
         }
 
-        $html = "<menu class='border row'>";
-        $html .= "<div class='row'><div class='col-md-12'>";
 
         // LEFT MENU - CREATE NEW
-        $html .= "<div class='btn-group col-md-2 select-filter-status'>";
-        $html .= "<button type='button' class='btn btn-elab-white'>" . _('Create new') . "</button>";
-        $html .= "<button type='button' class='btn btn-elab dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>";
-        $html .= "<b class='caret'></b>";
+        $html = "<div class='row'>";
+        $html .= "<div class='col-md-2'>";
+        $html .= "<div class='dropdown'>";
+        $html .= "<button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>";
+        $html .=  _('Create new');
+        $html .= " <span class='caret'></span>";
         $html .= "</button>";
-        $html .= "<ul class='dropdown-menu'>";
-        $html .= $createItem;
-        $html .= $templates;
-        $html .= "</ul></div>";
+        $html .= "<ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>";
+        $html .= $createItem . $templates;
+        $html .= "</ul>";
+        $html .= "</div></div>";
 
         // RIGHT MENU - FILTERS
         $html .= "<div class='col-md-10'>";
@@ -164,8 +167,7 @@ class EntityView
         $html .= "<button type='reset' class='btn btn-danger submit-reset' onClick=\"javascript:location.href='" . $type . ".php?mode=show'\">";
         $html .= _('Reset') . "</button></div></form></div>";
 
-        $html .= "</div></div>";
-        $html .= "</menu>";
+        $html .= "</div><hr>";
 
         return $html;
     }

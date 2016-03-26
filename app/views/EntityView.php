@@ -123,7 +123,7 @@ class EntityView
         $html .= "<div class='col-md-2'>";
         $html .= "<div class='dropdown'>";
         $html .= "<button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>";
-        $html .=  _('Create new');
+        $html .= _('Create new');
         $html .= " <span class='caret'></span>";
         $html .= "</button>";
         $html .= "<ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>";

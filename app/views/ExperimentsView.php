@@ -298,7 +298,7 @@ class ExperimentsView extends EntityView
         $html .= "<span id='links_div'>";
         $html .= $this->showLinks($this->experiments->id, 'edit');
         $html .= "</span>";
-        $html .= "<p class='inline'>" . _('Add a link') . "</p>";
+        $html .= "<p class='inline'>" . _('Add a link') . "</p> ";
         $html .= "<input id='linkinput' size='60' type='text' name='link' placeholder='" . _('from the database') . "' />";
         $html .= "</section>";
 
@@ -594,12 +594,12 @@ class ExperimentsView extends EntityView
             $html .= "<ul class='list-group'>";
             foreach ($linksArr as $link) {
                 if ($mode === 'edit') {
-                    $html .= "<li>- [" . $link['name'] . "] - <a href='database.php?mode=view&id=" . $link['itemid'] . "'>" .
+                    $html .= "<li class='list-group-item'>" . $link['name'] . " - <a href='database.php?mode=view&id=" . $link['itemid'] . "'>" .
                         stripslashes($link['title']) . "</a>";
                     $html .= "<a onClick=\"experimentsDestroyLink(" . $link['linkid'] . ", " . $id . ", '" . _('Delete this?') . "')\">
-                    <img src='img/small-trash.png' title='delete' alt='delete' /></a></li>";
+                    <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' /></a></li>";
                 } else {
-                    $html .= "<li><img src='img/link.png'> [" . $link['name'] . "] - <a href='database.php?mode=view&id=" . $link['itemid'] . "'>" .
+                    $html .= "<li class='list-group-item'><img src='img/link.png'> " . $link['name'] . " - <a href='database.php?mode=view&id=" . $link['itemid'] . "'>" .
                     stripslashes($link['title']) . "</a></li>";
                 }
             }

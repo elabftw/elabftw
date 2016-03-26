@@ -36,9 +36,6 @@ class ExperimentsView extends EntityView
     /** instance of TeamGroups */
     private $teamGroups;
 
-    /** instance of Users */
-    private $users;
-
     public $display;
 
     /**
@@ -585,7 +582,7 @@ class ExperimentsView extends EntityView
      */
     public function showLinks($id, $mode)
     {
-        $linksArr = $this->experiments->readLink($id);
+        $linksArr = $this->experiments->readLink();
         $html = '';
 
         // Check there is at least one link to display

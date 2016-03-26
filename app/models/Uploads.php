@@ -341,13 +341,13 @@ class Uploads extends Entity
                  cancel : 'Cancel',
                  style : 'display:inline'
                 });
-            });
-            $(document).ready(function() {
+            });</script>";
+        }
+        $html .= "<script>$(document).ready(function() {
                 // we use fancybox to display thumbnails
                 $('a.fancybox').fancybox();
             });
             </script>";
-        }
         return $html;
     }
 }

@@ -67,7 +67,7 @@ class EntityView
      */
     public function buildExportMenu($idArr, $type)
     {
-            $html = "<div class='align_right'>";
+            $html = "<div class='col-md-2 pull-right'>";
             $html .= "<a name='anchor'></a>";
             $html .= "<p class='inline'>" . _('Export this result:') . " </p>";
             $html .= "<a href='make.php?what=zip&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";
@@ -115,10 +115,10 @@ class EntityView
         }
 
         $html = "<menu class='border row'>";
+        $html .= "<div class='row'><div class='col-md-12'>";
 
         // LEFT MENU - CREATE NEW
-
-        $html .= "<div class='row'><div class='col-md-12'><div class='btn-group col-md-2'>";
+        $html .= "<div class='btn-group col-md-2 select-filter-status'>";
         $html .= "<button type='button' class='btn btn-elab-white'>" . _('Create new') . "</button>";
         $html .= "<button type='button' class='btn btn-elab dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>";
         $html .= "<b class='caret'></b>";
@@ -135,6 +135,7 @@ class EntityView
         $html .= "<input type='hidden' name='mode' value='show' />";
         $html .= $tag . $query;
 
+        // CATEGORY
         $html .= "<select name='filter' class='form-control select-filter-status'>";
         $html .= "<option value=''>" . _('Filter status') . "</option>";
         foreach ($categoryArr as $category) {
@@ -163,7 +164,8 @@ class EntityView
         $html .= "<button type='reset' class='btn btn-danger submit-reset' onClick=\"javascript:location.href='" . $type . ".php?mode=show'\">";
         $html .= _('Reset') . "</button></div></form></div>";
 
-        $html .= "</div></div></menu>";
+        $html .= "</div></div>";
+        $html .= "</menu>";
 
         return $html;
     }

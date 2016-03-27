@@ -29,6 +29,7 @@ try {
 
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
         $databaseView = new DatabaseView(new Database($_SESSION['team_id']));
+        $databaseView->display = $_SESSION['prefs']['display'];
         // ITEM TYPE FILTER
         if (isset($_GET['filter']) && !empty($_GET['filter'])) {
             if (Tools::checkId($_GET['filter'])) {

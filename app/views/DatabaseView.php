@@ -30,7 +30,6 @@ class DatabaseView extends EntityView
     /** the Status class */
     private $status;
 
-    public $display = '';
     public $searchType = '';
 
 
@@ -109,7 +108,7 @@ class DatabaseView extends EntityView
             // fill an array with the ID of each item to use in the csv/zip export menu
             $idArr[] = $item['id'];
 
-            $html2 .= "<section class='item" . $this->display . "' style='border-left: 6px solid #" . $item['bgcolor'] . "'>";
+            $html2 .= "<section class='item " . $this->display . "' style='border-left: 6px solid #" . $item['bgcolor'] . "'>";
             $html2 .= "<a href='database.php?mode=view&id=" . $item['id'] . "'>";
 
             // show attached if there is a file attached
@@ -131,7 +130,7 @@ class DatabaseView extends EntityView
             // ITEM TYPE
             $html2 .= "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['bgcolor'] . "'>" . $item['name'] . " </span>";
             // DATE
-            $html2 .= "<span class='date' style='padding:0 5px;'><img class='image' src='img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
+            $html2 .= "<span class='date'><img class='image' src='img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
             // TAGS
             $html2 .= show_tags($item['id'], 'items_tags');
 
@@ -173,8 +172,8 @@ class DatabaseView extends EntityView
         $itemArr = $this->database->read();
 
         $html = "<section class='box'>";
-        $html .= "<span class='date_view'><img src='img/calendar.png' title='date' alt='Date :' /> ";
-        $html .= Tools::formatDate($itemArr['date']) . "</span><br>";
+        $html .= "<div><img src='img/calendar.png' title='date' alt='Date :' /> ";
+        $html .= Tools::formatDate($itemArr['date']) . "</div>";
         $html .= $this->showStars($itemArr['rating']);
         // buttons
         $html .= "<a href='database.php?mode=edit&id=" . $itemArr['itemid'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a> 

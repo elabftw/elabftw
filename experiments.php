@@ -29,6 +29,7 @@ try {
 
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
         $experimentsView = new ExperimentsView(new Experiments($_SESSION['userid']));
+        $experimentsView->display = $_SESSION['prefs']['display'];
         // STATUS FILTER
         if (isset($_GET['filter']) && !empty($_GET['filter'])) {
             if (Tools::checkId($_GET['filter'])) {

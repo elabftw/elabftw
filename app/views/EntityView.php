@@ -19,6 +19,7 @@ class EntityView
     public $experiments;
     public $database;
     public $limit;
+    public $display = '';
 
     /**
      * Add chemdoodle JS

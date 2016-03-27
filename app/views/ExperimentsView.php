@@ -36,7 +36,6 @@ class ExperimentsView extends EntityView
     /** instance of TeamGroups */
     private $teamGroups;
 
-    public $display;
     public $searchType = '';
 
     /**
@@ -133,7 +132,7 @@ class ExperimentsView extends EntityView
             // fill an array with the ID of each item to use in the csv/zip export menu
             $idArr[] = $item['id'];
 
-            $html2 .= "<section class='item" . $this->display . "' style='border-left: 6px solid #" . $item['color'] . "'>";
+            $html2 .= "<section class='item " . $this->display . "' style='border-left: 6px solid #" . $item['color'] . "'>";
             $html2 .= "<a href='experiments.php?mode=view&id=" . $item['id'] . "'>";
 
             // show attached if there is a file attached
@@ -164,7 +163,7 @@ class ExperimentsView extends EntityView
             // STATUS
             $html2 .= "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['color'] . "'>" . $item['name'] . " </span>";
             // DATE
-            $html2 .= "<span class='date' style='padding:0 5px;'><img class='image' src='img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
+            $html2 .= "<span class='date'><img class='image' src='img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
             // TAGS
             $html2 .= show_tags($item['id'], 'experiments_tags');
 
@@ -411,8 +410,8 @@ class ExperimentsView extends EntityView
         $html = "<section class='item' style='padding:15px;border-left: 6px solid #" . $this->experiment['color'] . "'>";
         $html .= "<span class='top_right_status'><img src='img/status.png'>" . $this->experiment['name'] .
             "<img src='img/eye.png' alt='eye' />" . $this->getVisGroupName() . "</span>";
-        $html .=  "<span class='date_view'><img src='img/calendar.png' class='bot5px' title='date' alt='Date :' /> " .
-            Tools::formatDate($this->experiment['date']) . "</span><br />
+        $html .=  "<div><img src='img/calendar.png' class='bot5px' title='date' alt='Date :' /> " .
+            Tools::formatDate($this->experiment['date']) . "</div>
         <a href='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a>
     <a href='app/controllers/ExperimentsController.php?experimentsDuplicateId=" . $this->experiment['id'] . "'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a>
     <a href='make.php?what=pdf&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a>

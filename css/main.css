@@ -578,26 +578,10 @@ a[class*='trigger_']:hover {
     border-color:#01929e;
 }
 
-.btn-elab-white {
-    color: #555;
-    background-color: #fff;
-    border-color:#ccc;
-}
-
-
 .btn-elab.active, .btn-elab.focus, .btn-elab:active, .btn-elab:focus, .btn-elab:hover{
     color:#fff;
     background-color:#01929e;
     border-color:#017079;
-}
-
-/* COMMENTS FOR EXPERIMENTS COMMENTS BOX */
-.newexpcomment {
-    background-color: #f2f2f2;
-    border: 1px solid #dcdddc;
-    border-radius: 5px;
-    color: #797979;
-    padding: 10px;
 }
 
 /* fix for bootstrap's thumbnail class */
@@ -670,20 +654,12 @@ a[class*='trigger_']:hover {
 .date {
     color: #5d5d5d;
     margin:15px auto;
-    padding-left: 20px;
-}
-.date_view {
-    padding-left: 0;
-}
-.itemcompact {
-    padding: 5px;
-    margin: 5px;
+    padding: 0 5px;
 }
 
-.datecompact {
-    margin: 0 10px 0 0;
-    padding: 0;
-    float:right;
+.compact {
+    margin: 0 0 5px 0;
+    padding: 1px;
 }
 
 .tags {
@@ -700,27 +676,6 @@ a[class*='trigger_']:hover {
 }
 .tag a:hover {
     color: red;
-}
-.tags_compact {
-    background-color:white;
-    border:1px solid #AAA;
-    color:black;
-    border-radius: 15px;
-    font:  12px Courier,Arial,sans-serif;
-    line-height: 200%;
-    padding: 5px;
-    margin: 10px 0 10px 25px;
-}
-.tags_compact a{
-    text-decoration: none;
-}
-.tags_compact a:hover {
-    color:red;
-}
-#tagdiv{
-    background-color:white;
-    border:3px solid #CCC;
-    padding: 5px;
 }
 
 .tag {

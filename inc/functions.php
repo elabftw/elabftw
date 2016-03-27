@@ -669,7 +669,7 @@ function displayTags($type, $id)
  */
 function addChemdoodle()
 {
-    if ($_SESSION['prefs']['chem_editor']) {
+    if (isset($_SESSION['prefs']['chem_editor']) && $_SESSION['prefs']['chem_editor']) {
         $html = "<link rel='stylesheet' href='css/chemdoodle.css' type='text/css'>";
         $html .= "<script src='js/chemdoodle.js'></script>";
         $html .= "<script src='js/chemdoodle-uis.js'></script>";

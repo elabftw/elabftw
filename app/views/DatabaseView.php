@@ -120,7 +120,7 @@ class DatabaseView extends EntityView
                 $html2 .= "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
             }
             // STARS
-            $html2 .= show_stars($item['rating']);
+            $html2 .= $this->showStars($item['rating']);
             $html2 .= "<p class='title'>";
             // LOCK
             if ($item['locked']) {
@@ -175,7 +175,7 @@ class DatabaseView extends EntityView
         $html = "<section class='box'>";
         $html .= "<span class='date_view'><img src='img/calendar.png' title='date' alt='Date :' /> ";
         $html .= Tools::formatDate($itemArr['date']) . "</span><br>";
-        $html .= show_stars($itemArr['rating']);
+        $html .= $this->showStars($itemArr['rating']);
         // buttons
         $html .= "<a href='database.php?mode=edit&id=" . $itemArr['itemid'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a> 
         <a href='app/controllers/DatabaseController.php?databaseDuplicateId=" . $itemArr['itemid'] . "'><img src='img/duplicate.png' title='duplicate item' alt='duplicate' /></a> 
@@ -417,5 +417,26 @@ class DatabaseView extends EntityView
 
         return $html;
 
+    }
+
+    /**
+     * Display the stars rating for a DB item
+     *
+     * @param int $rating The number of stars to display
+     * @return string HTML of the stars
+     */
+    private function showStars($rating)
+    {
+        $html = "<span class='align_right'>";
+
+        $green = "<img src='img/star-green.png' alt='☻' />";
+        $gray = "<img src='img/star-gray.png' alt='☺' />";
+
+        $html .= str_repeat($green, $rating);
+        $html .= str_repeat($gray, (5 - $rating));
+
+        $html .= "</span>";
+
+        return $html;
     }
 }

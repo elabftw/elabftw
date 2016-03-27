@@ -244,27 +244,20 @@ function showXP($id, $display = 'default')
 /**
  * Display the stars rating for a DB item.
  *
+ * @deprecated
  * @param int $rating The number of stars to display
  * @return string HTML of the stars
  */
 function show_stars($rating)
 {
     $html = "<span class='align_right'>";
-    if ($rating == 1) {
-        $html .=  "<img src='img/star-green.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' />";
-    }
-    if ($rating == 2) {
-        $html .= "<img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' />";
-    }
-    if ($rating == 3) {
-        $html .= "<img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-gray.png' alt='1' /><img src='img/star-gray.png' alt='1' />";
-    }
-    if ($rating == 4) {
-        $html .= "<img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-gray.png' alt='1' />";
-    }
-    if ($rating == 5) {
-        $html .= "<img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' /><img src='img/star-green.png' alt='1' />";
-    }
+
+    $green = "<img src='img/star-green.png' alt='☻' />";
+    $gray = "<img src='img/star-gray.png' alt='☺' />";
+
+    $html .= str_repeat($green, $rating);
+    $html .= str_repeat($gray, (5 - $rating));
+
     $html .= "</span>";
 
     return $html;
@@ -273,6 +266,7 @@ function show_stars($rating)
 /**
  * Display a DB item (in mode=show).
  *
+ * @deprecated
  * @param int $id The ID of the item to show
  * @param string $display Can be 'compact' or 'default'
  * @return string|null HTML of the single item

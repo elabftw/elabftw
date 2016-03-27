@@ -63,7 +63,7 @@ foreach ($lang_array as $lang) {
 
             <h3><?php echo _('DISPLAY'); ?></h3>
             <hr>
-            <p id='display'>
+            <p>
             <label for='radio_view_default'><?php echo _('Default'); ?></label>
             <input id='radio_view_default' type='radio' name='display' value='default' 
             <?php echo ($_SESSION['prefs']['display'] === 'default') ? "checked" : ""; ?>

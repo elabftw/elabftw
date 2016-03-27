@@ -539,10 +539,10 @@ a[class*='trigger_']:hover {
 }
 
 /* EXPERIMENTS/DATABASE - FILTER & ORDER */
-.select-order, .select-filter-status, .select-filter-cat {
+.select-order, .select-filter-status, .select-filter-cat, .select-sort {
     float:left;
     border-right: 0;
-    margin-right: 0;
+    margin: 0;
     border-top-right-radius:0;
     border-bottom-right-radius:0;
 }
@@ -563,14 +563,12 @@ a[class*='trigger_']:hover {
 .submit-order, .submit-filter {
     float:left;
     border-right: 0;
-    margin:6px 0;
     border-top-left-radius:0;
     border-bottom-left-radius:0;
 }
 
 .submit-reset {
     float:left;
-    margin:6px 0 0 6px;
 }
 
 /* Bootstrap fixes */
@@ -743,12 +741,6 @@ a[class*='trigger_']:hover {
 /* ucp.php */
 
 /* on ucp.php */
-#display {
-    margin-top:20px;
-}
-#display > input, select {
-    margin: 6px;
-}
 #currpass {
     background-color: #c4f9ff;
     border: 1px solid #29AEB9;

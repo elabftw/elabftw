@@ -78,6 +78,7 @@ echo "<title>" . (isset($page_title) ? $page_title : "Lab manager") . " - eLab "
 <!-- bootstrap JS -->
 <script src="js/bootstrap/js/alert.js"></script>
 <script src="js/bootstrap/js/dropdown.js"></script>
+<script src="js/bootstrap/js/button.js"></script>
 </head>
 
 <body>

@@ -101,25 +101,35 @@ class EntityView
             } else { //user has no templates
                 $templates .= "<li class='dropdown-item disabled'><a href='#'>" . _('No templates found') . "</a></li>";
             }
+
+            // FILTER BY
+            $filterTitle = _('Filter status');
+
             $tag = "<input type='hidden' name='tag' value='" . $this->experiments->tag . "' />";
             $query = "<input type='hidden' name='q' value='" . $this->experiments->query . "' />";
 
         } else {
 
+            // filter by type list
             $itemsTypes = new ItemsTypes($this->database->team);
             $categoryArr = $itemsTypes->read();
             foreach ($categoryArr as $category) {
                 $templates .= "<li class='dropdown-item'><a style='color:#" . $category['bgcolor'] . "' href='app/controllers/DatabaseController.php?databaseCreateId=" . $category['id'] . "'>"
                     . $category['name'] . "</a></li>";
             }
+
             $tag = "<input type='hidden' name='tag' value='" . $this->database->tag . "' />";
             $query = "<input type='hidden' name='q' value='" . $this->database->query . "' />";
+
+            // FILTER BY
+            $filterTitle = _('Filter by type');
 
         }
 
 
-        // LEFT MENU - CREATE NEW
         $html = "<div class='row'>";
+
+        // LEFT MENU - CREATE NEW
         $html .= "<div class='col-md-2'>";
         $html .= "<div class='dropdown'>";
         $html .= "<button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>";
@@ -131,16 +141,19 @@ class EntityView
         $html .= "</ul>";
         $html .= "</div></div>";
 
-        // RIGHT MENU - FILTERS
+        // RIGHT MENU
         $html .= "<div class='col-md-10'>";
-        $html .= "<form class='form-inline pull-right'>";
+
+        // FILTERS
+        $html .= "<div style='margin-right:-15px' class='col-md-10 align_right'>";
+        $html .= "<form class='form-inline align_right'>";
         $html .= "<div class='form-group'>";
         $html .= "<input type='hidden' name='mode' value='show' />";
         $html .= $tag . $query;
 
         // CATEGORY
         $html .= "<select name='filter' class='form-control select-filter-status'>";
-        $html .= "<option value=''>" . _('Filter status') . "</option>";
+        $html .= "<option value=''>" . $filterTitle . "</option>";
         foreach ($categoryArr as $category) {
             $html .= "<option value='" . $category['id'] . "'" . checkSelectFilter($category['id']) . ">" . $category['name'] . "</option>";
         }
@@ -153,7 +166,9 @@ class EntityView
         $html .= "<option value=''>" . _('Order by') . "</option>";
         $html .= "<option value='cat'" . checkSelectOrder('cat') . ">" . _('Category') . "</option>";
         $html .= "<option value='date'" . checkSelectOrder('date') . ">" . _('Date') . "</option>";
-        $html .= "<option value='rating'" . checkSelectOrder('rating') . ">" . _('Rating') . "</option>";
+        if ($type === 'database') {
+            $html .= "<option value='rating'" . checkSelectOrder('rating') . ">" . _('Rating') . "</option>";
+        }
         $html .= "<option value='title'" . checkSelectOrder('title') . ">" . _('Title') . "</option>";
         $html .= "</select>";
 
@@ -167,7 +182,7 @@ class EntityView
         $html .= "<button type='reset' class='btn btn-danger submit-reset' onClick=\"javascript:location.href='" . $type . ".php?mode=show'\">";
         $html .= _('Reset') . "</button></div></form></div>";
 
-        $html .= "</div><hr>";
+        $html .= "</div></div><hr>";
 
         return $html;
     }

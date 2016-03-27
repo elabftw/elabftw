@@ -38,6 +38,8 @@ class ExperimentsView extends EntityView
 
     public $searchType = '';
 
+    public $related = false;
+
     /**
      * Need an ID of an experiment
      *
@@ -120,10 +122,33 @@ class ExperimentsView extends EntityView
     {
         $html = '';
         $html2 = '';
+        $itemsArr = array();
 
-        // get all XP items for the team
-        $itemsArr = $this->experiments->readAll();
+        // RELATED SEARCH (links)
+        if ($this->related) {
 
+            $relatedIds = array();
+
+            // get the id of related experiments
+            $sql = "SELECT item_id FROM experiments_links
+                WHERE link_id = :link_id";
+            $req = $this->experiments->pdo->prepare($sql);
+            $req->bindParam(':link_id', $this->related);
+            $req->execute();
+            while ($data = $req->fetch()) {
+                $relatedIds[] = $data['item_id'];
+            }
+            // now read for each id
+            foreach ($relatedIds as $id) {
+                $this->experiments->id = $id;
+                $itemsArr[] = $this->experiments->read();
+            }
+        } else {
+
+            // get all XP items for the user
+            $itemsArr = $this->experiments->readAll();
+
+        }
 
         // loop the results array and display results
         $idArr = array();

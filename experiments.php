@@ -51,6 +51,11 @@ try {
             $experimentsView->searchType = 'query';
             $experimentsView->experiments->query = $query;
         }
+        // RELATED FILTER
+        if (isset($_GET['related']) && Tools::checkId($_GET['related'])) {// search for related experiments to DB item id
+            $experimentsView->related = $_GET['related'];
+            $experimentsView->searchType = 'related';
+        }
         // ORDER
         if (isset($_GET['order'])) {
             if ($_GET['order'] === 'cat') {

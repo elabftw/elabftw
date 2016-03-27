@@ -19,7 +19,7 @@ use \Exception;
 class Experiments extends Entity
 {
     /** pdo object */
-    protected $pdo;
+    public $pdo;
 
     /** id of the experiment */
     public $id;
@@ -115,9 +115,10 @@ class Experiments extends Entity
      */
     public function read()
     {
-        $sql = "SELECT experiments.*, status.color, status.name
+        $sql = "SELECT DISTINCT experiments.*, status.color, status.name
             FROM experiments
             LEFT JOIN status ON experiments.status = status.id
+            LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
             WHERE experiments.id = :id ";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

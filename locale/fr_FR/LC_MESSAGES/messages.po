@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2015-03-04 14:57+0100\n"
-"PO-Revision-Date: 2016-03-20 04:23+0100\n"
+"PO-Revision-Date: 2016-03-27 21:22+0200\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -808,11 +808,6 @@ msgstr "Créer depuis un modèle"
 #: elabftw/inc/showXP.php:38
 msgid "Filter status"
 msgstr "Filtrer les statuts"
-
-#: elabftw/inc/showXP.php:65
-#, php-format
-msgid "<strong>You do not have any templates yet.</strong> Go to %syour control panel%s to make one !"
-msgstr "<strong>Vous n'avez pas encore créé de modèles.</strong> Rendez-vous dans %svotre panneau de contrôle%s pour en ajouter !"
 
 #: elabftw/inc/showXP.php:139
 msgid "results."

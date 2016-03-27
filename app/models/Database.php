@@ -29,7 +29,6 @@ class Database extends Entity
 
     public $filter = '';
     public $itemTypeFilter = '';
-    public $searchType = '';
     public $tag = '';
     public $tagFilter = '';
     public $query = '';

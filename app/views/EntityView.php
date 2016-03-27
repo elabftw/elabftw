@@ -142,17 +142,18 @@ class EntityView
         $html .= "</div></div>";
 
         // RIGHT MENU
-        $html .= "<div class='col-md-10'>";
+        // padding 0 is necessary to get the menu fully to the right
+        $html .= "<div class='col-md-10' style='padding:0'>";
 
         // FILTERS
-        $html .= "<div style='margin-right:-15px' class='col-md-10 align_right'>";
+        $html .= "<div class='col-md-10 align_right'>";
         $html .= "<form class='form-inline align_right'>";
         $html .= "<div class='form-group'>";
         $html .= "<input type='hidden' name='mode' value='show' />";
         $html .= $tag . $query;
 
         // CATEGORY
-        $html .= "<select name='filter' class='form-control select-filter-status'>";
+        $html .= "<select name='filter' style='-moz-appearance:none' class='form-control select-filter-status'>";
         $html .= "<option value=''>" . $filterTitle . "</option>";
         foreach ($categoryArr as $category) {
             $html .= "<option value='" . $category['id'] . "'" . checkSelectFilter($category['id']) . ">" . $category['name'] . "</option>";
@@ -162,7 +163,7 @@ class EntityView
         $html .= "<button class='btn btn-elab submit-filter'>" . _('Filter') . "</button>";
 
         // ORDER
-        $html .= "<select name='order' class='form-control select-order'>";
+        $html .= "<select name='order' style='-moz-appearance:none' class='form-control select-order'>";
         $html .= "<option value=''>" . _('Order by') . "</option>";
         $html .= "<option value='cat'" . checkSelectOrder('cat') . ">" . _('Category') . "</option>";
         $html .= "<option value='date'" . checkSelectOrder('date') . ">" . _('Date') . "</option>";
@@ -173,7 +174,7 @@ class EntityView
         $html .= "</select>";
 
         // SORT
-        $html .= "<select name='sort' class='form-control select-sort'>";
+        $html .= "<select name='sort' style='-moz-appearance:none' class='form-control select-sort'>";
         $html .= "<option value=''>" . _('Sort') . "</option>";
         $html .= "<option value='desc'" . checkSelectSort('desc') . ">" . _('DESC') . "</option>";
         $html .= "<option value='asc'" . checkSelectSort('asc') . ">" . _('ASC') . "</option>";

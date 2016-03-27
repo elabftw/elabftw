@@ -29,7 +29,6 @@ class Experiments extends Entity
 
     public $filter = '';
     public $statusFilter = '';
-    public $searchType = '';
     public $tag = '';
     public $tagFilter = '';
     public $query = '';

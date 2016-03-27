@@ -37,6 +37,7 @@ class ExperimentsView extends EntityView
     private $teamGroups;
 
     public $display;
+    public $searchType = '';
 
     /**
      * Need an ID of an experiment
@@ -172,9 +173,9 @@ class ExperimentsView extends EntityView
 
         // show number of results found
         $count = count($itemsArr);
-        if ($count === 0 && $this->experiments->searchType != '') {
+        if ($count === 0 && $this->searchType != '') {
             return display_message('ko_nocross', _("Sorry. I couldn't find anything :("));
-        } elseif ($count === 0 && $this->experiments->searchType === '') {
+        } elseif ($count === 0 && $this->searchType === '') {
             return display_message('ok_nocross', sprintf(_("Welcome to eLabFTW. %sClick here%s to create your first experiment."), "<a href='app/controllers/ExperimentsController.php?experimentsCreate=true'>", "</a>"));
         } else {
             $html .= $this->buildExportMenu($idArr, 'experiments');

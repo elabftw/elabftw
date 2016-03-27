@@ -31,6 +31,7 @@ class DatabaseView extends EntityView
     private $status;
 
     public $display = '';
+    public $searchType = '';
 
 
     /**
@@ -139,9 +140,9 @@ class DatabaseView extends EntityView
 
         // show number of results found
         $count = count($itemsArr);
-        if ($count === 0 && $this->database->searchType != '') {
+        if ($count === 0 && $this->searchType != '') {
             return display_message('ko_nocross', _("Sorry. I couldn't find anything :("));
-        } elseif ($count === 0 && $this->database->searchType === '') {
+        } elseif ($count === 0 && $this->searchType === '') {
             return display_message('ok_nocross', sprintf(_('Welcome to eLabFTW. Head to the %sAdmin Panel%s to create a new type of item.'), "<a href='admin.php?tab=4'>", "</a>"));
         } else {
             $html .= $this->buildExportMenu($idArr, 'items');

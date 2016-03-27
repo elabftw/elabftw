@@ -33,19 +33,21 @@ try {
         if (isset($_GET['filter']) && !empty($_GET['filter'])) {
             if (Tools::checkId($_GET['filter'])) {
                 $experimentsView->experiments->statusFilter = "AND status.id = " . $_GET['filter'];
-                $experimentsView->experiments->searchType = 'category';
+                $experimentsView->searchType = 'filter';
             }
         }
         // TAG FILTER
         if (isset($_GET['tag']) && $_GET['tag'] != '') {
             $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
             $experimentsView->experiments->tag = $tag;
+            $experimentsView->searchType = 'tag';
             $experimentsView->experiments->tagFilter = "AND experiments_tags.tag LIKE '" . $tag . "'";
         }
         // QUERY FILTER
         if (isset($_GET['q']) && !empty($_GET['q'])) {
             $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
             $experimentsView->experiments->queryFilter = "AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%')";
+            $experimentsView->searchType = 'query';
             $experimentsView->experiments->query = $query;
         }
         // ORDER

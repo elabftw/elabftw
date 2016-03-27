@@ -33,19 +33,21 @@ try {
         if (isset($_GET['filter']) && !empty($_GET['filter'])) {
             if (Tools::checkId($_GET['filter'])) {
                 $databaseView->database->itemTypeFilter = "AND items_types.id = " . $_GET['filter'];
+                $databaseView->searchType = 'filter';
             }
         }
         // TAG FILTER
         if (isset($_GET['tag']) && $_GET['tag'] != '') {
             $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
             $databaseView->database->tag = $tag;
-            echo $tag;
+            $databaseView->searchType = 'tag';
             $databaseView->database->tagFilter = "AND items_tags.tag LIKE '" . $tag . "'";
         }
         // QUERY FILTER
         if (isset($_GET['q']) && !empty($_GET['q'])) {
             $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
             $databaseView->database->queryFilter = "AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%')";
+            $databaseView->searchType = 'query';
             $databaseView->database->query = $query;
         }
         // ORDER

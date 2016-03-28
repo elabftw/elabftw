@@ -73,7 +73,7 @@ try {
     // CREATE LINK
     if (isset($_POST['experimentsCreateLink'])) {
         $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
-        if ($experiments->createLink($_POST['experimentsCreateLinkId'])) {
+        if ($experiments->links->create($_POST['experimentsCreateLinkId'])) {
             echo '1';
         } else {
             echo '0';
@@ -83,7 +83,17 @@ try {
     // DESTROY LINK
     if (isset($_POST['experimentsDestroyLink'])) {
         $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
-        if ($experiments->destroyLink($_POST['experimentsDestroyLinkId'])) {
+        if ($experiments->links->destroy($_POST['experimentsDestroyLinkId'])) {
+            echo '1';
+        } else {
+            echo '0';
+        }
+    }
+
+    // DESTROY
+    if (isset($_POST['experimenstDestroy'])) {
+        $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
+        if ($experiments->destroy()) {
             echo '1';
         } else {
             echo '0';

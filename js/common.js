@@ -250,6 +250,7 @@ function commentsCreateButtonDivShow() {
     $('#commentsCreateButtonDiv').show();
 }
 
+// create
 function commentsCreate(id) {
     document.getElementById('commentsCreateButton').disabled = true;
     comment = $('#commentsCreateArea').val();
@@ -262,32 +263,52 @@ function commentsCreate(id) {
 
     $.post('app/controllers/CommentsController.php', {
         commentsCreate: true,
-        commentsCreateComment: comment,
-        commentsCreateId: id
+        comment: comment,
+        itemId: id
     }).done(function(data) {
         if (data) {
             notif('Comment added', 'ok');
             // now we reload the comments part to show the comment we just submitted
             $('#expcomment_container').load("experiments.php?mode=view&id=" + id + " #expcomment");
-            //window.location.replace('experiments.php?mode=view&id=' + id);
         } else {
             notif('There was an error!');
         }
     });
 }
 
+// destroy
 function commentsDestroy(id, expId, confirmText) {
     var you_sure = confirm(confirmText);
-    if (you_sure == true) {
+    if (you_sure === true) {
         $.post('app/controllers/CommentsController.php', {
             commentsDestroy: true,
-            commentsDestroyId: id
+            id: id
         }).done(function(data) {
              if (data == 1) {
                  notif('Comment deleted', 'ok');
                  $('#expcomment_container').load("experiments.php?mode=view&id=" + expId + " #expcomment");
              } else {
                  notif('Error while deleting comment', 'ko');
+             }
+        });
+    } else {
+        return false;
+    }
+}
+
+// EXPERIMENTS
+function experimentsDestroy(id, confirmText) {
+    var you_sure = confirm(confirmText);
+    if (you_sure === true) {
+        $.post('app/controllers/ExperimentsController.php', {
+            experimentsDestroy: true,
+            experimentsId: id
+        }).done(function(data) {
+             if (data == 1) {
+                 notif('Experiment deleted', 'ok');
+                window.location.replace('experiments.php');
+             } else {
+                 notif('Error while deleting experiment', 'ko');
              }
         });
     } else {

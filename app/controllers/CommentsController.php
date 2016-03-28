@@ -18,15 +18,11 @@ namespace Elabftw\Elabftw;
 require_once '../../inc/common.php';
 
 try {
-    $comments = new Comments();
 
     // CREATE
     if (isset($_POST['commentsCreate'])) {
-        if ($comments->create(
-            $_POST['commentsCreateId'],
-            $_POST['commentsCreateComment'],
-            $_SESSION['userid']
-        )) {
+        $comments = new Comments(new Experiments($_SESSION['userid'], $_POST['itemId']));
+        if ($comments->create($_POST['comment'])) {
             echo '1';
         } else {
             echo '0';
@@ -35,11 +31,8 @@ try {
 
     // UPDATE
     if (isset($_POST['commentsUpdateComment'])) {
-        if ($comments->update(
-            $_POST['id'],
-            $_POST['commentsUpdateComment'],
-            $_SESSION['userid']
-        )) {
+        $comments = new Comments(new Experiments($_SESSION['userid']), $_POST['id']);
+        if ($comments->update($_POST['commentsUpdateComment'])) {
             echo '1';
         } else {
             echo '0';
@@ -47,8 +40,9 @@ try {
     }
 
     // DESTROY
+    $comments = new Comments(new Experiments($_SESSION['userid']), $_POST['id']);
     if (isset($_POST['commentsDestroy'])) {
-        if ($comments->destroy($_POST['commentsDestroyId'])) {
+        if ($comments->destroy()) {
             echo '1';
         } else {
             echo '0';

@@ -135,4 +135,18 @@ class Tags
 
         return $tagList;
     }
+
+    public function destroy($itemId)
+    {
+        if ($this->type === 'experiments') {
+            $sql = "DELETE FROM experiments_tags WHERE item_id = :id";
+        } else {
+            $sql = "DELETE FROM items_tags WHERE item_id = :id";
+        }
+
+        $req = $pdo->prepare($sql);
+        $req->bindParam(':id', $itemId);
+
+        return $req->execute();
+    }
 }

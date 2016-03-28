@@ -22,10 +22,16 @@ class Experiments extends Entity
     public $pdo;
 
     /** current user */
-    private $userid;
+    public $userid;
 
     /** our team */
-    private $team;
+    public $team;
+
+    /** instance of Links */
+    public $Links;
+
+    /** instance of Comments */
+    public $Comments;
 
     /**
      * Constructor
@@ -44,6 +50,9 @@ class Experiments extends Entity
         if (!is_null($id)) {
             $this->setId($id);
         }
+
+        $this->Links = new Links($this);
+        $this->Comments = new Comments($this);
 
     }
 
@@ -237,78 +246,6 @@ class Experiments extends Entity
     }
 
     /**
-     * Add a link to an experiment
-     *
-     * @param int $link ID of database item
-     * @param int $experiment ID of the experiment
-     * @param int $userid used to check we own the experiment
-     * @throws Exception
-     * @return bool
-     */
-    public function createLink($link)
-    {
-        // check link is int and experiment is owned by user
-        $link = Tools::checkId($link);
-        if ($link === false) {
-            throw new Exception('The id parameter is invalid!');
-        }
-        if (!is_owned_by_user($this->id, 'experiments', $this->userid)) {
-            throw new Exception('This section is out of your reach!');
-        }
-
-        $sql = "INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':item_id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':link_id', $link, PDO::PARAM_INT);
-
-        return $req->execute();
-    }
-
-    /**
-     * Get links for an experiments
-     *
-     * @return array
-     */
-    public function readLink()
-    {
-        $sql = "SELECT items.id AS itemid,
-            experiments_links.id AS linkid,
-            experiments_links.*,
-            items.*,
-            items_types.*
-            FROM experiments_links
-            LEFT JOIN items ON (experiments_links.link_id = items.id)
-            LEFT JOIN items_types ON (items.type = items_types.id)
-            WHERE experiments_links.item_id = :id";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->execute();
-
-        return $req->fetchAll();
-    }
-
-    /**
-     * Delete a link
-     *
-     * @param int $link ID of our link
-     * @param int $experiment ID of the experiment
-     * @param int $userid used to check we own the experiment
-     * @return bool
-     */
-    public function destroyLink($link)
-    {
-        if (!Tools::checkId($link) ||
-            !is_owned_by_user($this->id, 'experiments', $this->userid)) {
-            throw new Exception('Error removing link');
-        }
-        $sql = "DELETE FROM experiments_links WHERE id= :id";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $link, PDO::PARAM_INT);
-
-        return $req->execute();
-    }
-
-    /**
      * Select what will be the status for the experiment
      *
      * @return int The status ID
@@ -378,33 +315,33 @@ class Experiments extends Entity
 
         $tags = new Tags('experiments');
         $tags->copyTags($this->id, $newId);
-        $this->copyLinks($this->id, $newId);
+        $links = new Links();
+        $links->duplicate($this->id, $newId);
 
         return $newId;
     }
 
-    /**
-     * Copy the links from one experiment to an other.
-     *
-     * @param int $id The id of the original experiment
-     * @param int $newId The id of the new experiment that will receive the links
-     * @return null
-     */
-    private function copyLinks($id, $newId)
+    public function destroy()
     {
-        // LINKS
-        $linksql = "SELECT link_id FROM experiments_links WHERE item_id = :id";
-        $linkreq = $this->pdo->prepare($linksql);
-        $linkreq->bindParam(':id', $id);
-        $linkreq->execute();
-
-        while ($links = $linkreq->fetch()) {
-            $sql = "INSERT INTO experiments_links (link_id, item_id) VALUES(:link_id, :item_id)";
-            $req = $this->pdo->prepare($sql);
-            $req->execute(array(
-                'link_id' => $links['link_id'],
-                'item_id' => $newId
-            ));
+        if (((get_team_config('deletable_xp') == '0') &&
+            !$_SESSION['is_admin']) ||
+            !is_owned_by_user($this->id, 'experiments', $_SESSION['userid'])) {
+            throw new Exception(_("You don't have the rights to delete this experiment."));
         }
+        // delete the experiment
+        $sql = "DELETE FROM experiments WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $this->id);
+        $req->execute();
+
+        $tags = new Tags('experimnts');
+        $tags->destroy($this->id);
+
+        $uploads = new Uploads('experiments', $this->id);
+        $uploads->destroy();
+
+        $this->Links->destroyAllLinks();
+
+        $this->Comments->destroyAllComments();
     }
 }

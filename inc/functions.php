@@ -484,21 +484,6 @@ function dblog($type, $user, $body)
 }
 
 /**
- * Display the end of page.
- * Only used in install/index.php
- *
- * @return string|null The HTML of the end of the page
- */
-function custom_die()
-{
-    echo "
-    </section>
-    </body>
-    </html>";
-    die();
-}
-
-/**
  * Used in sysconfig.php to update config values
  *
  * @param array $array (conf_name => conf_value)

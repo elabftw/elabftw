@@ -67,7 +67,6 @@ echo "<title>" . (isset($page_title) ? $page_title : "Lab manager") . " - eLab "
 <link rel="stylesheet" media="all" href="css/main.min.css" />
 <link rel="stylesheet" media="all" href="js/colorpicker/jquery.colorpicker.css" />
 <link rel="stylesheet" media="all" href="js/fancybox/source/jquery.fancybox.css" />
-<link rel="stylesheet" media="all" href="css/main.min.css" />
 
 <link rel="stylesheet" media="all" href="js/jquery-ui/themes/smoothness/jquery-ui.min.css" />
 <!-- JAVASCRIPT -->

@@ -23,6 +23,16 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+namespace Elabftw\Elabftw;
+
+use Exception;
+use PDO;
+
+/* install/index.php to get an installation up and running */
+session_start();
+require_once '../vendor/autoload.php';
+require_once '../inc/functions.php';
+
 /* install/install.php to get an installation up and running */
 /* this script will :
  * 1. read the sql infos given through POST
@@ -32,12 +42,6 @@
 
 // we disable errors to avoid having notice and warning polluting our file
 error_reporting(E_ERROR);
-
-if (!isset($_SESSION)) {
-    session_start();
-}
-require_once '../inc/functions.php';
-require_once '../vendor/autoload.php';
 
 // Check if there is already a config file, redirect to index if yes.
 if (file_exists('../config.php')) {
@@ -114,14 +118,12 @@ if (file_put_contents($config_file, $config)) {
     }
     $infos_arr = array();
     $infos_arr[] = 'Congratulations, you successfully installed eLabFTW, 
-    now you need to <strong>register</strong> your account (you will have admin rights).';
+    now you need to <strong>register</strong> your account (you will have full admin rights).';
     $_SESSION['ok'] = $infos_arr;
     header('Location: ../register.php');
-    exit;
 
 } else {
     header('Content-Type: text/x-delimtext; name="config.php"');
     header('Content-disposition: attachment; filename=config.php');
     echo $config;
-    exit;
 }

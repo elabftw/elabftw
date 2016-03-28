@@ -19,10 +19,25 @@ class Entity
 {
 
     /** id of our entity */
-    protected $id;
+    public $id;
 
     /** pdo object */
     protected $pdo;
+
+    /** inserted in sql */
+    public $categoryFilter = '';
+
+    /** inserted in sql */
+    public $tagFilter = '';
+
+    /** inserted in sql */
+    public $queryFilter = '';
+
+    /** inserted in sql */
+    public $order = 'id';
+
+    /** inserted in sql */
+    public $sort = 'DESC';
 
     /**
      * Check and set id
@@ -40,6 +55,7 @@ class Entity
     /**
      * Check if an item has a file attached.
      *
+     * @param string type of item
      * @return bool Return false if there is now file attached
      */
     public function hasAttachment($type)

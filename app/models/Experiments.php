@@ -21,21 +21,8 @@ class Experiments extends Entity
     /** pdo object */
     public $pdo;
 
-    /** id of the experiment */
-    public $id;
-
     /** current user */
     private $userid;
-
-    public $filter = '';
-    public $statusFilter = '';
-    public $tag = '';
-    public $tagFilter = '';
-    public $query = '';
-    public $queryFilter = '';
-
-    public $order = 'experiments.id';
-    public $sort = 'DESC';
 
     /**
      * Constructor
@@ -144,7 +131,7 @@ class Experiments extends Entity
             LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
             WHERE experiments.userid = :userid
             AND experiments.status = status.id
-            " . $this->statusFilter . "
+            " . $this->categoryFilter . "
             " . $this->tagFilter . "
             " . $this->queryFilter . "
             ORDER BY " . $this->order . " " . $this->sort;
@@ -185,6 +172,7 @@ class Experiments extends Entity
      * @param string $title
      * @param string $date
      * @param string $body
+     * @return bool
      */
     public function update($title, $date, $body)
     {

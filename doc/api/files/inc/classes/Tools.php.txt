@@ -10,11 +10,56 @@
  */
 namespace Elabftw\Elabftw;
 
+use \RecursiveIteratorIterator;
+use \RecursiveDirectoryIterator;
+
 /**
  * Toolbelt full of useful functions
  */
 class Tools
 {
+    /**
+     * Return the date as YYYYMMDD format if no input
+     * return input if it is valid
+     *
+     * @param string 20160521
+     * @return string
+     */
+    public static function kdate($input = null)
+    {
+        // Check DATE (is != null ? is 8 in length ? is int ? is valable ?)
+        if (!is_null($input)
+            && ((strlen($input) == '8'))
+            && self::checkId($input)) {
+            // Check if day/month are good (badly)
+            $datemonth = substr($input, 4, 2);
+            $dateday = substr($input, 6, 2);
+            if (($datemonth <= '12')
+                && ($dateday <= '31')
+                && ($datemonth > '0')
+                && ($dateday > '0')) {
+                    // SUCCESS on every test
+                return $input;
+            }
+        }
+        return date('Ymd');
+    }
+
+    /**
+     * Sanitize body with a white list of allowed html tags.
+     *
+     * @param string $input Body to sanitize
+     * @return string The sanitized body or empty string if there is no input
+     */
+    public static function checkBody($input)
+    {
+        return strip_tags(
+            $input,
+            "<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol>
+            <blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td><code><video><audio><pagebreak>"
+        );
+    }
+
     /**
      * Converts the php.ini upload size setting to a numeric value in MB
      * Returns 2 if no value is found (using the default setting that was in there previously)
@@ -161,6 +206,36 @@ class Tools
                 'min_range' => 1
             ));
         return filter_var($id, FILTER_VALIDATE_INT, $filter_options);
+    }
+
+    /**
+     * Get the size of a dir
+     *
+     * @param string $directory
+     * @return integer
+     */
+    public static function dirSize($directory)
+    {
+        $size = 0;
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
+            $size += $file->getSize();
+        }
+        return $size;
+    }
+
+    /**
+     * Get the number of files in a dir
+     *
+     * @param string $directory
+     * @return int number of files in dir
+     */
+    public static function dirNum($directory)
+    {
+        $num = 0;
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
+            $num++;
+        }
+        return $num;
     }
 }
 

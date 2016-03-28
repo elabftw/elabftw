@@ -17,6 +17,28 @@ use \Exception;
  */
 class Entity
 {
+
+    /** id of our entity */
+    public $id;
+
+    /** pdo object */
+    protected $pdo;
+
+    /** inserted in sql */
+    public $categoryFilter = '';
+
+    /** inserted in sql */
+    public $tagFilter = '';
+
+    /** inserted in sql */
+    public $queryFilter = '';
+
+    /** inserted in sql */
+    public $order = 'id';
+
+    /** inserted in sql */
+    public $sort = 'DESC';
+
     /**
      * Check and set id
      *
@@ -28,6 +50,24 @@ class Entity
             throw new Exception(_('The id parameter is not valid!'));
         }
         $this->id = $id;
+    }
+
+    /**
+     * Check if an item has a file attached.
+     *
+     * @param string type of item
+     * @return bool Return false if there is now file attached
+     */
+    public function hasAttachment($type)
+    {
+        $sql = "SELECT id FROM uploads
+            WHERE item_id = :item_id AND type = :type LIMIT 1";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':item_id', $this->id);
+        $req->bindParam(':type', $type);
+        $req->execute();
+
+        return $req->rowCount() > 0;
     }
 }
 

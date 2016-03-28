@@ -18,6 +18,9 @@ use \Datetime;
  */
 class ExperimentsView extends EntityView
 {
+    /** our Experiments instance */
+    public $experiments;
+
     /** the experiment array with data */
     private $experiment;
 
@@ -36,8 +39,10 @@ class ExperimentsView extends EntityView
     /** instance of TeamGroups */
     private $teamGroups;
 
+    /** can be tag, query or filter */
     public $searchType = '';
 
+    /** are we looking for exp related to an item ? */
     public $related = 0;
 
     /**

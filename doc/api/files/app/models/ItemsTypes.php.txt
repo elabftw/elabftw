@@ -56,7 +56,7 @@ class ItemsTypes extends Panel
 
         // we remove the # of the hexacode and sanitize string
         $color = filter_var(substr($color, 0, 6), FILTER_SANITIZE_STRING);
-        $template = check_body($template);
+        $template = Tools::checkBody($template);
         $sql = "INSERT INTO items_types(name, bgcolor, template, team) VALUES(:name, :bgcolor, :template, :team)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
@@ -98,7 +98,7 @@ class ItemsTypes extends Panel
         }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $color = filter_var($color, FILTER_SANITIZE_STRING);
-        $template = check_body($template);
+        $template = Tools::checkBody($template);
         $sql = "UPDATE items_types SET
             name = :name,
             team = :team,

@@ -35,6 +35,7 @@ class Sysconfig
      * Send a test email
      *
      * @param string $email
+     * @return bool
      */
     public function testemailSend($email)
     {

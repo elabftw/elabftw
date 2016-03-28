@@ -11,15 +11,25 @@
 namespace Elabftw\Elabftw;
 
 /**
- * Entity View
+ * Entity View to show/view/edit experiments or DB items
  */
 class EntityView
 {
 
-    public $experiments;
-    public $database;
-    public $limit;
+    /** number of items to display per page */
+    public $limit = 15;
+
+    /** can be compact */
     public $display = '';
+
+    /** filter by item type or status */
+    public $filter = '';
+
+    /** the tag searched */
+    public $tag = '';
+
+    /** the query entered */
+    public $query = '';
 
     /**
      * Add chemdoodle JS
@@ -79,6 +89,12 @@ class EntityView
             return $html;
     }
 
+    /**
+     * The menu on top
+     *
+     * @param string $type experiments or items
+     * @return string
+     */
     public function buildShowMenu($type)
     {
         $templates = '';
@@ -106,9 +122,6 @@ class EntityView
             // FILTER BY
             $filterTitle = _('Filter status');
 
-            $tag = "<input type='hidden' name='tag' value='" . $this->experiments->tag . "' />";
-            $query = "<input type='hidden' name='q' value='" . $this->experiments->query . "' />";
-
         } else {
 
             // filter by type list
@@ -119,15 +132,12 @@ class EntityView
                     . $category['name'] . "</a></li>";
             }
 
-            $tag = "<input type='hidden' name='tag' value='" . $this->database->tag . "' />";
-            $query = "<input type='hidden' name='q' value='" . $this->database->query . "' />";
-
             // FILTER BY
             $filterTitle = _('Filter by type');
 
         }
 
-
+        // BEGIN
         $html = "<div class='row'>";
 
         // LEFT MENU - CREATE NEW
@@ -151,7 +161,9 @@ class EntityView
         $html .= "<form class='form-inline align_right'>";
         $html .= "<div class='form-group'>";
         $html .= "<input type='hidden' name='mode' value='show' />";
-        $html .= $tag . $query;
+        $html .= "<input type='hidden' name='filter' value='" . $this->filter . "' />";
+        $html .= "<input type='hidden' name='tag' value='" . $this->tag . "' />";
+        $html .= "<input type='hidden' name='q' value='" . $this->query . "' />";
 
         // CATEGORY
         $html .= "<select name='filter' style='-moz-appearance:none' class='form-control select-filter-status'>";
@@ -189,6 +201,12 @@ class EntityView
         return $html;
     }
 
+    /**
+     * JS for show
+     *
+     * @param string $type experiments or items
+     * @return string
+     */
     protected function buildShowJs($type)
     {
         if ($type === 'experiments') {

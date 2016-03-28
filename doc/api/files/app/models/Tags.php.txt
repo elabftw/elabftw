@@ -31,8 +31,8 @@ class Tags
      */
     public function __construct($type)
     {
-        $this->type = $type;
         $this->pdo = Db::getConnection();
+        $this->type = $type;
     }
 
     /**
@@ -72,6 +72,45 @@ class Tags
     }
 
     /**
+     * Copy the tags from one experiment/item to an other.
+     *
+     * @param int $id The id of the original experiment/item
+     * @param int $newId The id of the new experiment/item that will receive the tags
+     * @return null
+     */
+    public function copyTags($id, $newId)
+    {
+        // TAGS
+        if ($this->type === 'experiments') {
+            $sql = "SELECT tag FROM experiments_tags WHERE item_id = :id";
+        } else {
+            $sql = "SELECT tag FROM items_tags WHERE item_id = :id";
+        }
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $id);
+        $req->execute();
+        if ($req->rowCount() > 0) {
+            while ($tags = $req->fetch()) {
+                // Put them in the new one. here $newId is the new exp created
+                if ($this->type === 'experiments') {
+                    $sql = "INSERT INTO experiments_tags(tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
+                    $reqtag = $this->pdo->prepare($sql);
+                    $reqtag->bindParam(':tag', $tags['tag']);
+                    $reqtag->bindParam(':item_id', $newId);
+                    $reqtag->bindParam(':userid', $_SESSION['userid']);
+                } else {
+                    $sql = "INSERT INTO items_tags(tag, item_id) VALUES(:tag, :item_id)";
+                    $reqtag = $this->pdo->prepare($sql);
+                    $reqtag->bindParam(':tag', $tags['tag']);
+                    $reqtag->bindParam(':item_id', $newId);
+                }
+                $reqtag->execute();
+            }
+        }
+    }
+
+
+    /**
      * Generate a JS list for tags autocomplete
      *
      * @param string $type
@@ -92,7 +131,7 @@ class Tags
 
         $tagList = "";
         while ($tag = $req->fetch()) {
-            $tagList .= "'" . $tag[0] . "',";
+            $tagList .= "'" . $tag['tag'] . "',";
         }
 
         return $tagList;

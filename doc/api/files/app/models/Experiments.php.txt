@@ -19,10 +19,7 @@ use \Exception;
 class Experiments extends Entity
 {
     /** pdo object */
-    protected $pdo;
-
-    /** id of the experiment */
-    public $id;
+    public $pdo;
 
     /** current user */
     private $userid;
@@ -54,7 +51,7 @@ class Experiments extends Entity
     public function create($tpl = null)
     {
         // do we want template ?
-        if (Tools::checkId($tpl) != false) {
+        if (Tools::checkId($tpl) !== false) {
             // SQL to get template
             $sql = "SELECT name, body FROM experiments_templates WHERE id = :id AND team = :team";
             $get_tpl = $this->pdo->prepare($sql);
@@ -84,7 +81,7 @@ class Experiments extends Entity
         $req->execute(array(
             'team' => $_SESSION['team_id'],
             'title' => $title,
-            'date' => kdate(),
+            'date' => Tools::kdate(),
             'body' => $body,
             'status' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
@@ -105,8 +102,10 @@ class Experiments extends Entity
      */
     public function read()
     {
-        $sql = "SELECT experiments.*, status.color, status.name FROM experiments
+        $sql = "SELECT DISTINCT experiments.*, status.color, status.name
+            FROM experiments
             LEFT JOIN status ON experiments.status = status.id
+            LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
             WHERE experiments.id = :id ";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -120,17 +119,66 @@ class Experiments extends Entity
     }
 
     /**
+     * Read all experiments for current user
+     *
+     * @return array
+     */
+    public function readAll()
+    {
+        $sql = "SELECT DISTINCT experiments.*, status.color, status.name
+            FROM experiments
+            LEFT JOIN status ON (status.team = experiments.team)
+            LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
+            WHERE experiments.userid = :userid
+            AND experiments.status = status.id
+            " . $this->categoryFilter . "
+            " . $this->tagFilter . "
+            " . $this->queryFilter . "
+            ORDER BY " . $this->order . " " . $this->sort;
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
+        $req->execute();
+
+        return $req->fetchAll();
+    }
+
+    /**
+     * Read all experiments related to a DB item
+     *
+     * @param int $itemId the DB item
+     * @return array
+     */
+    public function readRelated($itemId)
+    {
+        $itemsArr = array();
+
+        // get the id of related experiments
+        $sql = "SELECT item_id FROM experiments_links
+            WHERE link_id = :link_id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':link_id', $itemId);
+        $req->execute();
+        while ($data = $req->fetch()) {
+            $this->setId($data['item_id']);
+            $itemsArr[] = $this->read();
+        }
+
+        return $itemsArr;
+    }
+
+    /**
      * Update an experiment
      *
      * @param string $title
      * @param string $date
      * @param string $body
+     * @return bool
      */
     public function update($title, $date, $body)
     {
         $title = check_title($title);
-        $date = check_date($date);
-        $body = check_body($body);
+        $date = Tools::kdate($date);
+        $body = Tools::checkBody($body);
 
         $sql = "UPDATE experiments SET
             title = :title,
@@ -227,7 +275,6 @@ class Experiments extends Entity
     /**
      * Get links for an experiments
      *
-     * @param int $experiment
      * @return array
      */
     public function readLink()
@@ -306,9 +353,67 @@ class Experiments extends Entity
      */
     private function generateElabid()
     {
-        $date = kdate();
+        $date = Tools::kdate();
         return $date . "-" . sha1(uniqid($date, true));
     }
 
+    /**
+     * Duplicate an experiment.
+     *
+     * @return int Will return the ID of the new item
+     */
+    public function duplicate()
+    {
+        $experiment = $this->read();
+
+        // let's add something at the end of the title to show it's a duplicate
+        // capital i looks good enough
+        $title = $experiment['title'] . ' I';
+
+        $sql = "INSERT INTO experiments(team, title, date, body, status, elabid, visibility, userid)
+            VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
+        $req = $this->pdo->prepare($sql);
+        $req->execute(array(
+            'team' => $_SESSION['team_id'],
+            'title' => $title,
+            'date' => Tools::kdate(),
+            'body' => $experiment['body'],
+            'status' => $this->getStatus(),
+            'elabid' => $this->generateElabid(),
+            'visibility' => $experiment['visibility'],
+            'userid' => $_SESSION['userid']));
+        $newId = $this->pdo->lastInsertId();
+
+        $tags = new Tags('experiments');
+        $tags->copyTags($this->id, $newId);
+        $this->copyLinks($this->id, $newId);
+
+        return $newId;
+    }
+
+    /**
+     * Copy the links from one experiment to an other.
+     *
+     * @param int $id The id of the original experiment
+     * @param int $newId The id of the new experiment that will receive the links
+     * @return null
+     */
+    private function copyLinks($id, $newId)
+    {
+        // LINKS
+        $linksql = "SELECT link_id FROM experiments_links WHERE item_id = :id";
+        $linkreq = $this->pdo->prepare($linksql);
+        $linkreq->bindParam(':id', $id);
+        $linkreq->execute();
+
+        while ($links = $linkreq->fetch()) {
+            $sql = "INSERT INTO experiments_links (link_id, item_id) VALUES(:link_id, :item_id)";
+            $req = $this->pdo->prepare($sql);
+            $req->execute(array(
+                'link_id' => $links['link_id'],
+                'item_id' => $newId
+            ));
+        }
+    }
 }
 

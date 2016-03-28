@@ -64,6 +64,7 @@ class Comments
      *
      * @param int $id Id of the experiment
      * @param int $userid Id of the commenter
+     * @return bool
      */
     private function alertOwner($id, $userid)
     {

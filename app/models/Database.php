@@ -21,21 +21,8 @@ class Database extends Entity
     /** pdo object */
     protected $pdo;
 
-    /** id of the item */
-    public $id;
-
     /** id of the team */
     public $team;
-
-    public $filter = '';
-    public $itemTypeFilter = '';
-    public $tag = '';
-    public $tagFilter = '';
-    public $query = '';
-    public $queryFilter = '';
-
-    public $order = 'items.id';
-    public $sort = 'DESC';
 
     /**
      * Give me the team on init
@@ -46,11 +33,13 @@ class Database extends Entity
     public function __construct($team, $id = null)
     {
         $this->pdo = Db::getConnection();
+
         $this->team = $team;
 
         if (!is_null($id)) {
             $this->setId($id);
         }
+
     }
 
     /**
@@ -151,7 +140,7 @@ class Database extends Entity
         LEFT JOIN items_types ON (items.type = items_types.id)
         LEFT JOIN items_tags ON (items.id = items_tags.item_id)
         WHERE items.team = :teamid
-        " . $this->itemTypeFilter . "
+        " . $this->categoryFilter . "
         " . $this->tagFilter . "
         " . $this->queryFilter . "
         ORDER BY $this->order $this->sort";

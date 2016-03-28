@@ -33,7 +33,7 @@ try {
         // STATUS FILTER
         if (isset($_GET['filter']) && !empty($_GET['filter'])) {
             if (Tools::checkId($_GET['filter'])) {
-                $experimentsView->experiments->statusFilter = "AND status.id = " . $_GET['filter'];
+                $experimentsView->experiments->categoryFilter = "AND status.id = " . $_GET['filter'];
                 $experimentsView->searchType = 'filter';
             }
         }

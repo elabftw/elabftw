@@ -51,6 +51,12 @@ class Templates
         return $req->fetch();
     }
 
+    /**
+     * Read templates for a user
+     *
+     * @param int $userid
+     * @return array
+     */
     public function readFromUserid($userid)
     {
         $sql = "SELECT id, name FROM experiments_templates WHERE userid = :userid ORDER BY ordering ASC";

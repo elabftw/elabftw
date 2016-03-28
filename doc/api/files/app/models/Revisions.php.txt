@@ -30,19 +30,15 @@ class Revisions
     /**
      * Constructor
      *
-     * @param int $id
      * @param string $type
+     * @param int $id
      */
-    public function __construct($id, $type)
+    public function __construct($type, $id)
     {
-        $this->id = $id;
-        /*
-        if ($this->id === false) {
-            throw new Exception(_('The id parameter is not valid!'));
-        }
-         */
         $this->pdo = Db::getConnection();
+
         $this->type = $type;
+        $this->id = $id;
     }
 
     /**
@@ -174,7 +170,7 @@ class Revisions
             throw new Exception(_('You cannot restore a revision of a locked item!'));
         }
 
-        $revision = $this->read($revId);
+        $revision = $this->readRev($revId);
         if ($revision['userid'] != $_SESSION['userid']) {
             throw new Exception(_('This section is out of your reach.'));
         }

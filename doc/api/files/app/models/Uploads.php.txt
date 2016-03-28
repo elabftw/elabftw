@@ -16,27 +16,159 @@ use \Exception;
 /**
  * All about the file uploads
  */
-class Uploads
+class Uploads extends Entity
 {
     /** pdo object */
-    private $pdo;
+    protected $pdo;
+
+    /** experiments or items */
+    public $type;
+
+    /** our item */
+    public $itemId;
 
     /**
      * Constructor
      *
+     * @param string $type experiment or items
+     * @param int $itemId
+     * @param int|null $id ID of a single file
      */
-    public function __construct()
+    public function __construct($type, $itemId, $id = null)
     {
         $this->pdo = Db::getConnection();
+        $this->type = $type;
+        $this->itemId = $itemId;
+
+        if (!is_null($id)) {
+            $this->setId($id);
+        }
+    }
+
+    /**
+     * Read infos from an upload ID
+     *
+     * @return array
+     */
+    private function read()
+    {
+        // Check that the item we view has attached files
+        $sql = "SELECT * FROM uploads WHERE id = :id AND type = :type";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $this->id);
+        $req->bindParam(':type', $this->type);
+        $req->execute();
+
+        return $req->fetch();
+    }
+
+    /**
+     * Read all uploads for an item
+     *
+     * @return array
+     */
+    public function readAll()
+    {
+        $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $this->itemId);
+        $req->bindParam(':type', $this->type);
+        $req->execute();
+
+        return $req->fetchAll();
+    }
+
+
+    /**
+     * Create a jpg thumbnail from images of type jpg, png or gif.
+     *
+     * @param string $src Path to the original file
+     * @param string $ext Extension of the file
+     * @param string $dest Path to the place to save the thumbnail
+     * @param int $desiredWidth Width of the thumbnail (height is automatic depending on width)
+     * @return null|false
+     */
+    private function makeThumb($src, $ext, $dest, $desiredWidth)
+    {
+        // we don't want to work on too big images
+        // put the limit to 5 Mbytes
+        if (filesize($src) > 5000000) {
+            return false;
+        }
+
+        // the used fonction is different depending on extension
+        if (preg_match('/(jpg|jpeg)$/i', $ext)) {
+            $sourceImage = imagecreatefromjpeg($src);
+        } elseif (preg_match('/(png)$/i', $ext)) {
+            $sourceImage = imagecreatefrompng($src);
+        } elseif (preg_match('/(gif)$/i', $ext)) {
+            $sourceImage = imagecreatefromgif($src);
+        } else {
+            return false;
+        }
+
+        $width = imagesx($sourceImage);
+        $height = imagesy($sourceImage);
+
+        // find the "desired height" of this thumbnail, relative to the desired width
+        $desiredHeight = floor($height * ($desiredWidth / $width));
+
+        // create a new, "virtual" image
+        $virtualImage = imagecreatetruecolor($desiredWidth, $desiredHeight);
+
+        // copy source image at a resized size
+        imagecopyresized($virtualImage, $sourceImage, 0, 0, 0, 0, $desiredWidth, $desiredHeight, $width, $height);
+
+        // create the physical thumbnail image to its destination (85% quality)
+        imagejpeg($virtualImage, $dest, 85);
+    }
+
+    /**
+     * Destroy an upload
+     *
+     * @return bool
+     */
+    public function destroy()
+    {
+        $uploadArr = $this->read();
+
+        if ($this->type === 'experiments') {
+            // Check file id is owned by connected user
+            if ($uploadArr['userid'] =! $_SESSION['userid']) {
+                throw new Exception(_('This section is out of your reach!'));
+            }
+        } else {
+            $User = new Users();
+            $userArr = $User->read($_SESSION['userid']);
+            if ($userArr['team'] != $_SESSION['team_id']) {
+                throw new Exception(_('This section is out of your reach!'));
+            }
+        }
+
+        // remove thumbnail
+        $thumbPath = ELAB_ROOT . 'uploads/' . $uploadArr['long_name'] . '_th.jpg';
+        if (file_exists($thumbPath)) {
+            unlink($thumbPath);
+        }
+        // now delete file from filesystem
+        $filePath = ELAB_ROOT . 'uploads/' . $uploadArr['long_name'];
+        unlink($filePath);
+
+        // Delete SQL entry (and verify the type)
+        // to avoid someone deleting files saying it's DB whereas it's exp
+        $sql = "DELETE FROM uploads WHERE id = :id AND type = :type";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $this->id);
+        $req->bindParam(':type', $this->type);
+
+        return $req->execute();
     }
 
     /**
      * Generate html for the upload form
      *
-     * @param int $id
-     * @param string $type
      */
-    public function buildUploadForm($id, $type)
+    public function buildUploadForm()
     {
         $html = "<section class='box'>";
         $html .= "<img src='img/attached.png' class='bot5px'> ";
@@ -46,11 +178,11 @@ class Uploads
 
         $html .= "<script>
         // we need this to reload the #filesdiv (div displaying uploaded files)
-        var type = '" . $type . "';
+        var type = '" . $this->type . "';
         if (type == 'items') {
             type = 'database';
         }
-        var item_id = '" . $id . "';
+        var item_id = '" . $this->itemId . "';
 
         // config for dropzone, id is camelCased.
         Dropzone.options.elabftwDropzone = {
@@ -61,8 +193,8 @@ class Uploads
 
                 // add additionnal parameters (id and type)
                 this.on('sending', function(file, xhr, formData) {
-                    formData.append('item_id', '" . $id . "');
-                    formData.append('type', '" . $type . "');
+                    formData.append('item_id', '" . $this->itemId . "');
+                    formData.append('type', '" . $this->type . "');
                 });
 
                 // once it is done
@@ -93,35 +225,14 @@ class Uploads
     }
 
     /**
-     * Read infos about an upload
-     *
-     * @param int $id ID of the item
-     * @param string $type
-     * @return array
-     */
-    public function read($id, $type)
-    {
-        // Check that the item we view has attached files
-        $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $id);
-        $req->bindParam(':type', $type);
-        $req->execute();
-
-        return $req->fetchAll();
-    }
-
-    /**
      * Generate HTML for displaying uploaded files
      *
-     * @param int $id Id of the item
      * @param string $mode edit or view
-     * @param string $type type of upload
      * @return string html
      */
-    public function buildUploads($id, $mode, $type)
+    public function buildUploads($mode)
     {
-        $uploadsArr = $this->read($id, $type);
+        $uploadsArr = $this->readAll();
 
         $count = count($uploadsArr);
         if ($count < 1) {
@@ -145,9 +256,8 @@ class Uploads
             $html .= "<div class='thumbnail'>";
             // show the delete button only in edit mode, not in view mode
             if ($mode === 'edit') {
-                $html .= "<a class='align_right' href='app/delete_file.php?id=" . $upload['id'] . "&type=" .
-                    $upload['type'] . "&item_id=" . $upload['item_id'] .
-                    "' onClick=\"return confirm('Delete this file ?');\">";
+                $html .= "<a class='align_right' onClick=\"uploadsDestroy(" . $upload['id'] . "
+                    , '" . $upload['type'] . "', " . $upload['item_id'] . ", '" . _('Delete this?') . "')\">";
                 $html .= "<img src='img/small-trash.png' title='delete' alt='delete' /></a>";
             } // end if it is in edit mode
 
@@ -164,7 +274,7 @@ class Uploads
 
             // Make thumbnail only if it isn't done already
             if (!file_exists($thumbpath)) {
-                make_thumb($filepath, $ext, $thumbpath, 100);
+                $this->makeThumb($filepath, $ext, $thumbpath, 100);
             }
 
             // only display the thumbnail if the file is here
@@ -231,13 +341,13 @@ class Uploads
                  cancel : 'Cancel',
                  style : 'display:inline'
                 });
-            });
-            $(document).ready(function() {
+            });</script>";
+        }
+        $html .= "<script>$(document).ready(function() {
                 // we use fancybox to display thumbnails
                 $('a.fancybox').fancybox();
             });
             </script>";
-        }
         return $html;
     }
 }

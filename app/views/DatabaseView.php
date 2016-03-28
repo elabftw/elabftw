@@ -18,6 +18,9 @@ use \Datetime;
  */
 class DatabaseView extends EntityView
 {
+    /** our Database instance */
+    public $database;
+
     /** ID of the item we want to view */
     private $id;
 
@@ -30,6 +33,7 @@ class DatabaseView extends EntityView
     /** the Status class */
     private $status;
 
+    /** can be tag, query or filter */
     public $searchType = '';
 
 

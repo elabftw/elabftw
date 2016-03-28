@@ -57,6 +57,12 @@ try {
         header('Location: ../../admin.php?tab=1');
     }
 
+    // UPDATE COMMON TEMPLATE
+    if (isset($_POST['commonTplUpdate'])) {
+        $templates = new Templates($_SESSION['team_id']);
+        $templates->update($_POST['commonTplUpdate']);
+    }
+
     // SEND TEST EMAIL
     if (isset($_POST['testemailSend'])) {
         $sysconfig = new Sysconfig();
@@ -65,6 +71,12 @@ try {
         } else {
             echo '0';
         }
+    }
+
+    // DESTROY LOGS
+    if (isset($_POST['logsDestroy'])) {
+        $logs = new Logs();
+        $logs->destroy();
     }
 
 } catch (Exception $e) {

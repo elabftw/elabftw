@@ -89,7 +89,7 @@ class MakeZip extends Make
         if (count($this->idArr) === 1) {
             return $this->zipped['date'] . "-" . $this->cleanTitle . $ext;
         }
-        return kdate() . $ext;
+        return Tools::kdate() . $ext;
     }
 
     /**

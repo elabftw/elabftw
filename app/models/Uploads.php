@@ -21,11 +21,11 @@ class Uploads extends Entity
     /** pdo object */
     protected $pdo;
 
+    /** experiments or items */
     public $type;
 
+    /** our item */
     public $itemId;
-
-    protected $id;
 
     /**
      * Constructor

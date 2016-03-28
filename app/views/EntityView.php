@@ -15,15 +15,14 @@ namespace Elabftw\Elabftw;
  */
 class EntityView
 {
+    /** our Database instance */
+    public $database;
 
     /** number of items to display per page */
     public $limit = 15;
 
     /** can be compact */
     public $display = '';
-
-    /** filter by item type or status */
-    public $filter = '';
 
     /** the tag searched */
     public $tag = '';
@@ -160,8 +159,6 @@ class EntityView
         $html .= "<div class='col-md-10 align_right'>";
         $html .= "<form class='form-inline align_right'>";
         $html .= "<div class='form-group'>";
-        $html .= "<input type='hidden' name='mode' value='show' />";
-        $html .= "<input type='hidden' name='filter' value='" . $this->filter . "' />";
         $html .= "<input type='hidden' name='tag' value='" . $this->tag . "' />";
         $html .= "<input type='hidden' name='q' value='" . $this->query . "' />";
 

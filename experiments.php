@@ -30,29 +30,28 @@ try {
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
         $experimentsView = new ExperimentsView(new Experiments($_SESSION['userid']));
         $experimentsView->display = $_SESSION['prefs']['display'];
-        // STATUS FILTER
-        if (isset($_GET['filter']) && !empty($_GET['filter'])) {
-            if (Tools::checkId($_GET['filter'])) {
-                $experimentsView->experiments->categoryFilter = "AND status.id = " . $_GET['filter'];
-                $experimentsView->searchType = 'filter';
-            }
+
+        // CATEGORY FILTER
+        if (isset($_GET['filter']) && !empty($_GET['filter']) && Tools::checkId($_GET['filter'])) {
+            $experimentsView->experiments->categoryFilter = "AND status.id = " . $_GET['filter'];
+            $experimentsView->searchType = 'filter';
         }
         // TAG FILTER
         if (isset($_GET['tag']) && $_GET['tag'] != '') {
             $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
-            $experimentsView->experiments->tag = $tag;
-            $experimentsView->searchType = 'tag';
+            $experimentsView->tag = $tag;
             $experimentsView->experiments->tagFilter = "AND experiments_tags.tag LIKE '" . $tag . "'";
+            $experimentsView->searchType = 'tag';
         }
         // QUERY FILTER
         if (isset($_GET['q']) && !empty($_GET['q'])) {
             $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
+            $experimentsView->query = $query;
             $experimentsView->experiments->queryFilter = "AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%')";
             $experimentsView->searchType = 'query';
-            $experimentsView->experiments->query = $query;
         }
         // RELATED FILTER
-        if (isset($_GET['related']) && Tools::checkId($_GET['related'])) {// search for related experiments to DB item id
+        if (isset($_GET['related']) && Tools::checkId($_GET['related'])) {
             $experimentsView->related = $_GET['related'];
             $experimentsView->searchType = 'related';
         }
@@ -87,10 +86,8 @@ try {
         echo $experimentsView->edit();
     }
 
-    require_once 'inc/footer.php';
-
 } catch (Exception $e) {
     display_message('ko', $e->getMessage());
+} finally {
     require_once 'inc/footer.php';
-    exit;
 }

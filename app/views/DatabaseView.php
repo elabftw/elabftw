@@ -18,9 +18,6 @@ use \Datetime;
  */
 class DatabaseView extends EntityView
 {
-    /** our Database instance */
-    public $database;
-
     /** ID of the item we want to view */
     private $id;
 

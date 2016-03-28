@@ -30,9 +30,9 @@ try {
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
         $databaseView = new DatabaseView(new Database($_SESSION['team_id']));
         $databaseView->display = $_SESSION['prefs']['display'];
-        // ITEM TYPE FILTER
+
+        // CATEGORY FILTER
         if (isset($_GET['filter']) && !empty($_GET['filter']) && Tools::checkId($_GET['filter'])) {
-            $databaseView->filter = $_GET['filter'];
             $databaseView->database->categoryFilter = "AND items_types.id = " . $_GET['filter'];
             $databaseView->searchType = 'filter';
         }

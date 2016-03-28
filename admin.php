@@ -261,7 +261,10 @@ try {
         <h3><?php echo _('Common experiment template'); ?></h3>
         <p><?php echo _('This is the default text when someone creates an experiment.'); ?></p>
         <textarea style='height:400px' class='mceditable' id='commonTplTemplate' />
-            <?php echo $templates->readCommon(); ?>
+    <?php
+        $templatesArr = $templates->readCommon();
+        echo $templatesArr['body']
+    ?>
         </textarea>
         <div class='submitButtonDiv'>
             <button type='submit' class='button' onClick='commonTplUpdate()'><?php echo _('Save'); ?></button>

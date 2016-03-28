@@ -75,12 +75,12 @@ class Templates
      */
     public function readCommon()
     {
-        $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1";
+        $sql = "SELECT * FROM experiments_templates WHERE userid = 0 AND team = :team LIMIT 1";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $this->team);
         $req->execute();
 
-        return $req->fetchColumn();
+        return $req->fetch();
     }
 
     /**

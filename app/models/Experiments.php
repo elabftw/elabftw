@@ -86,8 +86,6 @@ class Experiments extends Entity
         return $this->pdo->lastInsertId();
     }
 
-
-
     /**
      * Read an experiment
      *

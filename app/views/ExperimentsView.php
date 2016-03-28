@@ -38,7 +38,7 @@ class ExperimentsView extends EntityView
 
     public $searchType = '';
 
-    public $related = false;
+    public $related = 0;
 
     /**
      * Need an ID of an experiment
@@ -441,7 +441,7 @@ class ExperimentsView extends EntityView
         $html .= show_tags($this->experiments->id, 'experiments_tags');
         // TITLE : click on it to go to edit mode only if we are not in read only mode
         $html .=  "<div ";
-        if ($this->ro === false && $this->experiment['locked'] == 0) {
+        if (!$this->ro && !$this->experiment['locked']) {
             $html .=  "OnClick=\"document.location='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'\"";
         }
         $html .=  " class='title_view'>";
@@ -450,7 +450,7 @@ class ExperimentsView extends EntityView
         if ($this->experiment['body'] != '') {
             $html .= "<div id='body_view' ";
             // make the body clickable only if we are not in read only
-            if ($this->ro === false && $this->experiment['locked'] == 0) {
+            if (!$this->ro && !$this->experiment['locked']) {
                 $html .= "OnClick=\"document.location='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'\"";
             }
             $html .= " class='txt'>" . stripslashes($this->experiment['body']) . "</div>";

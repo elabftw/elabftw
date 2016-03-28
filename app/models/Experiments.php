@@ -134,7 +134,6 @@ class Experiments extends Entity
     /**
      * Read all experiments for current user
      *
-     * LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
      * @return array
      */
     public function readAll()
@@ -142,6 +141,7 @@ class Experiments extends Entity
         $sql = "SELECT DISTINCT experiments.*, status.color, status.name
             FROM experiments
             LEFT JOIN status ON (status.team = experiments.team)
+            LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
             WHERE experiments.userid = :userid
             AND experiments.status = status.id
             " . $this->statusFilter . "

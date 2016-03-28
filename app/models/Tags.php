@@ -55,7 +55,6 @@ class Tags
             throw new Exception(_('This section is out of your reach!'));
         }
 
-        // TODO change userid for team because now the tags are not personnal but shared with team
         if ($this->type === 'experiments') {
             $sql = "INSERT INTO " . $this->type . "_tags (tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
             $req = $this->pdo->prepare($sql);

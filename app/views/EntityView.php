@@ -126,7 +126,7 @@ class EntityView
 
             // filter by type list
             $itemsTypes = new ItemsTypes($this->database->team);
-            $categoryArr = $itemsTypes->read();
+            $categoryArr = $itemsTypes->readAll();
             foreach ($categoryArr as $category) {
                 $templates .= "<li class='dropdown-item'><a style='color:#" . $category['bgcolor'] . "' href='app/controllers/DatabaseController.php?databaseCreateId=" . $category['id'] . "'>"
                     . $category['name'] . "</a></li>";

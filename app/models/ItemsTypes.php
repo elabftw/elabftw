@@ -62,9 +62,26 @@ class ItemsTypes extends Panel
         $req->bindParam(':name', $name);
         $req->bindParam(':bgcolor', $color);
         $req->bindParam(':template', $template);
-        $req->bindParam(':team', $this->team, \PDO::PARAM_INT);
+        $req->bindParam(':team', $this->team);
 
         return $req->execute();
+    }
+
+    /**
+     * Read from an id
+     *
+     * @param int $id
+     * @return array
+     */
+    public function read($id)
+    {
+        $sql = "SELECT template FROM items_types WHERE id = :id AND team = :team";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $id);
+        $req->bindParam(':team', $this->team);
+        $req->execute();
+
+        return $req->fetchColumn();
     }
 
     /**
@@ -72,7 +89,7 @@ class ItemsTypes extends Panel
      *
      * @return array all the items types for the team
      */
-    public function read()
+    public function readAll()
     {
         $sql = "SELECT * from items_types WHERE team = :team ORDER BY ordering ASC";
         $req = $this->pdo->prepare($sql);

@@ -61,7 +61,7 @@ class ItemsTypesView
      */
     public function show()
     {
-        $itemsTypesArr = $this->itemsTypes->read();
+        $itemsTypesArr = $this->itemsTypes->readAll();
 
         $html = "<h3>" . _('Database items types') . "</h3>";
         $html .= "<ul class='draggable sortable_itemstypes list-group'>";

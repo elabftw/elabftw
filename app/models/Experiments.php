@@ -24,6 +24,9 @@ class Experiments extends Entity
     /** current user */
     private $userid;
 
+    /** our team */
+    private $team;
+
     /**
      * Constructor
      *
@@ -35,6 +38,8 @@ class Experiments extends Entity
         $this->pdo = Db::getConnection();
 
         $this->userid = $userid;
+
+        $this->team = $_SESSION['team_id'];
 
         if (!is_null($id)) {
             $this->setId($id);
@@ -50,28 +55,17 @@ class Experiments extends Entity
      */
     public function create($tpl = null)
     {
-        // do we want template ?
-        if (Tools::checkId($tpl) !== false) {
-            // SQL to get template
-            $sql = "SELECT name, body FROM experiments_templates WHERE id = :id AND team = :team";
-            $get_tpl = $this->pdo->prepare($sql);
-            $get_tpl->bindParam(':id', $tpl);
-            $get_tpl->bindParam(':team', $_SESSION['team_id']);
-            $get_tpl->execute();
-            $get_tpl_info = $get_tpl->fetch();
+        $templates = new Templates($this->team);
 
-            // the title is the name of the template
-            $title = $get_tpl_info['name'];
-            $body = $get_tpl_info['body'];
+        // do we want template ?
+        if (Tools::checkId($tpl)) {
+
+            $templatesArr = $templates->read($tpl);
+            $title = $templatesArr['name'];
 
         } else {
-            // if there is no template, title is 'Untitled' and the body is the default exp_tpl
-            // SQL to get body
-            $sql = "SELECT body FROM experiments_templates WHERE userid = 0 AND team = :team";
-            $get_body = $this->pdo->prepare($sql);
-            $get_body->bindParam(':team', $_SESSION['team_id']);
-            $get_body->execute();
-            $body = $get_body->fetchColumn();
+
+            $templatesArr = $templates->readCommon();
             $title = _('Untitled');
         }
 
@@ -79,14 +73,14 @@ class Experiments extends Entity
         $sql = "INSERT INTO experiments(team, title, date, body, status, elabid, visibility, userid) VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
         $req = $this->pdo->prepare($sql);
         $req->execute(array(
-            'team' => $_SESSION['team_id'],
+            'team' => $this->team,
             'title' => $title,
             'date' => Tools::kdate(),
-            'body' => $body,
+            'body' => $templatesArr['body'],
             'status' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
             'visibility' => 'team',
-            'userid' => $_SESSION['userid']
+            'userid' => $this->userid
         ));
 
         return $this->pdo->lastInsertId();

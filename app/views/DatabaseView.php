@@ -117,7 +117,6 @@ class DatabaseView extends EntityView
 
             // show attached if there is a file attached
             // we need an id to look for attachment
-            // TODO use setId here, make setId look for permissions
             $this->database->id = $item['id'];
             if ($this->database->hasAttachment('items')) {
                 $html2 .= "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";

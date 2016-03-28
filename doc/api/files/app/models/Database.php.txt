@@ -50,23 +50,17 @@ class Database extends Entity
      */
     public function create($itemType)
     {
-        // SQL to get template
-        // TODO mv to template class
-        $sql = "SELECT template FROM items_types WHERE id = :id";
-        $get_tpl = $this->pdo->prepare($sql);
-        $get_tpl->bindParam(':id', $itemType);
-        $get_tpl->execute();
-        $get_tpl_body = $get_tpl->fetch();
+        $itemsTypes = new ItemsTypes($this->team);
 
         // SQL for create DB item
         $sql = "INSERT INTO items(team, title, date, body, userid, type)
             VALUES(:team, :title, :date, :body, :userid, :type)";
         $req = $this->pdo->prepare($sql);
         $req->execute(array(
-            'team' => $_SESSION['team_id'],
-            'title' => 'Untitled',
+            'team' => $this->team,
+            'title' => _('Untitled'),
             'date' => Tools::kdate(),
-            'body' => $get_tpl_body['template'],
+            'body' => $itemsTypes->read($itemType),
             'userid' => $_SESSION['userid'],
             'type' => $itemType
         ));

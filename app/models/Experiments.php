@@ -134,6 +134,7 @@ class Experiments extends Entity
     /**
      * Read all experiments for current user
      *
+     * LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
      * @return array
      */
     public function readAll()
@@ -141,7 +142,6 @@ class Experiments extends Entity
         $sql = "SELECT DISTINCT experiments.*, status.color, status.name
             FROM experiments
             LEFT JOIN status ON (status.team = experiments.team)
-            LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
             WHERE experiments.userid = :userid
             AND experiments.status = status.id
             " . $this->statusFilter . "
@@ -153,6 +153,30 @@ class Experiments extends Entity
         $req->execute();
 
         return $req->fetchAll();
+    }
+
+    /**
+     * Read all experiments related to a DB item
+     *
+     * @param int $itemId the DB item
+     * @return array
+     */
+    public function readRelated($itemId)
+    {
+        $itemsArr = array();
+
+        // get the id of related experiments
+        $sql = "SELECT item_id FROM experiments_links
+            WHERE link_id = :link_id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':link_id', $itemId);
+        $req->execute();
+        while ($data = $req->fetch()) {
+            $this->setId($data['item_id']);
+            $itemsArr[] = $this->read();
+        }
+
+        return $itemsArr;
     }
 
     /**

@@ -21,11 +21,11 @@ try {
 
     // CREATE
     if (isset($_GET['experimentsCreate'])) {
-        $experiments = new Experiments($_SESSION['userid']);
+        $Experiments = new Experiments($_SESSION['userid']);
         if (isset($_GET['tpl']) && !empty($_GET['tpl'])) {
-            $id = $experiments->create($_GET['tpl']);
+            $id = $Experiments->create($_GET['tpl']);
         } else {
-            $id = $experiments->create();
+            $id = $Experiments->create();
         }
         header("location: ../../experiments.php?mode=edit&id=" . $id);
         exit;
@@ -33,8 +33,8 @@ try {
 
     // UPDATE
     if (isset($_POST['experimentsUpdate'])) {
-        $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
-        if ($experiments->update(
+        $Experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
+        if ($Experiments->update(
             $_POST['experimentsUpdateTitle'],
             $_POST['experimentsUpdateDate'],
             $_POST['experimentsUpdateBody']
@@ -48,22 +48,22 @@ try {
 
     // DUPLICATE
     if (isset($_GET['experimentsDuplicateId'])) {
-        $experiments = new Experiments($_SESSION['userid'], $_GET['experimentsDuplicateId']);
-        $id = $experiments->duplicate();
+        $Experiments = new Experiments($_SESSION['userid'], $_GET['experimentsDuplicateId']);
+        $id = $Experiments->duplicate();
         $mode = 'edit';
         header("location: ../../experiments.php?mode=" . $mode . "&id=" . $id);
     }
 
     // UPDATE STATUS
     if (isset($_POST['experimentsUpdateStatus'])) {
-        $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
-        echo $experiments->updateStatus($_POST['experimentsUpdateStatusStatus']);
+        $Experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
+        echo $Experiments->updateStatus($_POST['experimentsUpdateStatusStatus']);
     }
 
     // UPDATE VISIBILITY
     if (isset($_POST['experimentsUpdateVisibility'])) {
-        $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
-        if ($experiments->updateVisibility($_POST['experimentsUpdateVisibilityVisibility'])) {
+        $Experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
+        if ($Experiments->updateVisibility($_POST['experimentsUpdateVisibilityVisibility'])) {
             echo '1';
         } else {
             echo '0';
@@ -72,8 +72,8 @@ try {
 
     // CREATE LINK
     if (isset($_POST['experimentsCreateLink'])) {
-        $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
-        if ($experiments->links->create($_POST['experimentsCreateLinkId'])) {
+        $Experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
+        if ($Experiments->Links->create($_POST['experimentsCreateLinkId'])) {
             echo '1';
         } else {
             echo '0';
@@ -82,8 +82,8 @@ try {
 
     // DESTROY LINK
     if (isset($_POST['experimentsDestroyLink'])) {
-        $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
-        if ($experiments->links->destroy($_POST['experimentsDestroyLinkId'])) {
+        $Experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
+        if ($Experiments->Links->destroy($_POST['experimentsDestroyLinkId'])) {
             echo '1';
         } else {
             echo '0';
@@ -92,8 +92,8 @@ try {
 
     // DESTROY
     if (isset($_POST['experimenstDestroy'])) {
-        $experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
-        if ($experiments->destroy()) {
+        $Experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
+        if ($Experiments->destroy()) {
             echo '1';
         } else {
             echo '0';

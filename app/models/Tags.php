@@ -136,6 +136,12 @@ class Tags
         return $tagList;
     }
 
+    /**
+     * Destroy all the tags for an item ID
+     *
+     * @param int $itemId
+     * @return bool
+     */
     public function destroy($itemId)
     {
         if ($this->type === 'experiments') {
@@ -144,7 +150,7 @@ class Tags
             $sql = "DELETE FROM items_tags WHERE item_id = :id";
         }
 
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $itemId);
 
         return $req->execute();

@@ -133,7 +133,7 @@ class Links
      *
      * @return bool
      */
-    private function destroyAllLinks()
+    public function destroyAllLinks()
     {
         $sql = "DELETE FROM experiments_links WHERE item_id = :item_id";
         $req = $this->pdo->prepare($sql);

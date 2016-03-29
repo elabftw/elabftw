@@ -315,8 +315,7 @@ class Experiments extends Entity
 
         $tags = new Tags('experiments');
         $tags->copyTags($this->id, $newId);
-        $links = new Links();
-        $links->duplicate($this->id, $newId);
+        $this->Links->duplicate($this->id, $newId);
 
         return $newId;
     }

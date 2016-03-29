@@ -23,7 +23,7 @@ class Comments extends Entity
     protected $pdo;
 
     /** instance of Experiments */
-    public $experiments;
+    public $Experiments;
 
     /**
      * Constructor
@@ -95,7 +95,7 @@ class Comments extends Entity
         // Create the message
         $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
         $url = str_replace('app/controllers/CommentsController.php', 'experiments.php', $url);
-        $full_url = $url . "?mode=view&id=" . $id;
+        $full_url = $url . "?mode=view&id=" . $this->Experiments->id;
 
         $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
 

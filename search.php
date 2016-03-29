@@ -10,13 +10,12 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
+use PDO;
 
 /**
  * The search page
  *
  */
-
 require_once 'inc/common.php';
 $page_title = _('Search');
 $selected_menu = 'Search';
@@ -541,12 +540,22 @@ if (isset($_GET)) {
             echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time['time'] . " " . $total_time['unit'] . ")</p>";
             // Display results
             echo "<hr>";
+            if ($search_type === 'experiments') {
+                $EntityView = new ExperimentsView(new Experiments($_SESSION['userid']));
+            } else {
+                $EntityView = new DatabaseView(new Database($_SESSION['team_id']));
+            }
+
             foreach ($results_arr as $id) {
                 if ($search_type === 'experiments') {
-                    showXP($id, $_SESSION['prefs']['display']);
+                    $EntityView->Experiments->id = $id;
+                    $item = $EntityView->Experiments->read();
                 } else {
-                    showDB($id, $_SESSION['prefs']['display']);
+                    $EntityView->Database->id = $id;
+                    $item = $EntityView->Database->read();
                 }
+
+                echo $EntityView->showUnique($item);
             }
         }
     }

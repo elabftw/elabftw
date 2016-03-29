@@ -11,13 +11,17 @@
 
 namespace Elabftw\Elabftw;
 
-use \PDO;
+use PDO;
 
 /**
  * Administration of a team
  *
  */
 require_once 'inc/common.php';
+$page_title = _('Admin panel');
+$selected_menu = null;
+require_once 'inc/head.php';
+
 
 // the constructor will check for admin rights
 try {
@@ -30,10 +34,6 @@ try {
     $teamGroups = new TeamGroups();
     $teamGroupsView = new TeamGroupsView();
     $Auth = new Auth();
-
-    $page_title = _('Admin panel');
-    $selected_menu = null;
-    require_once 'inc/head.php';
 
     // MAIN SQL FOR USERS
     $sql = "SELECT * FROM users WHERE validated = :validated AND team = :team";

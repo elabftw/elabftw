@@ -91,7 +91,7 @@ try {
     }
 
     // DESTROY
-    if (isset($_POST['experimenstDestroy'])) {
+    if (isset($_POST['experimentsDestroy'])) {
         $Experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
         if ($Experiments->destroy()) {
             echo '1';

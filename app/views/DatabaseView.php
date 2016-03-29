@@ -42,12 +42,12 @@ class DatabaseView extends EntityView
      */
     public function __construct(Database $database)
     {
-        $this->database = $database;
+        $this->Database = $database;
         $this->limit = $_SESSION['prefs']['limit'];
 
         $this->status = new Status();
-        $this->uploads = new Uploads('items', $this->database->id);
-        $this->revisions = new Revisions('items', $this->database->id);
+        $this->uploads = new Uploads('items', $this->Database->id);
+        $this->revisions = new Revisions('items', $this->Database->id);
     }
 
     /**
@@ -72,7 +72,7 @@ class DatabaseView extends EntityView
      */
     public function edit()
     {
-        $itemArr = $this->database->read();
+        $itemArr = $this->Database->read();
         // a locked item cannot be edited
         if ($itemArr['locked']) {
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
@@ -98,7 +98,7 @@ class DatabaseView extends EntityView
         $html2 = '';
 
         // get all DB items for the team
-        $itemsArr = $this->database->readAll();
+        $itemsArr = $this->Database->readAll();
 
         $total_time = get_total_time();
 
@@ -107,34 +107,9 @@ class DatabaseView extends EntityView
         foreach ($itemsArr as $item) {
 
             // fill an array with the ID of each item to use in the csv/zip export menu
-            $idArr[] = $item['id'];
+            $idArr[] = $item['itemid'];
 
-            $html2 .= "<section class='item " . $this->display . "' style='border-left: 6px solid #" . $item['bgcolor'] . "'>";
-            $html2 .= "<a href='database.php?mode=view&id=" . $item['id'] . "'>";
-
-            // show attached if there is a file attached
-            // we need an id to look for attachment
-            $this->database->id = $item['id'];
-            if ($this->database->hasAttachment('items')) {
-                $html2 .= "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
-            }
-            // STARS
-            $html2 .= $this->showStars($item['rating']);
-            $html2 .= "<p class='title'>";
-            // LOCK
-            if ($item['locked']) {
-                $html2 .= "<img style='padding-bottom:3px;' src='img/lock-blue.png' alt='lock' />";
-            }
-            // TITLE
-            $html2 .= stripslashes($item['title']) . "</p></a>";
-            // ITEM TYPE
-            $html2 .= "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['bgcolor'] . "'>" . $item['name'] . " </span>";
-            // DATE
-            $html2 .= "<span class='date'><img class='image' src='img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
-            // TAGS
-            $html2 .= $this->showTags('items', $item['id']);
-
-            $html2 .= "</section>";
+            $html2 .= $this->showUnique($item);
         }
 
         // show number of results found
@@ -162,6 +137,38 @@ class DatabaseView extends EntityView
         return $html . $html2;
     }
 
+    public function showUnique($item)
+    {
+        $html = "<section class='item " . $this->display . "' style='border-left: 6px solid #" . $item['bgcolor'] . "'>";
+        $html .= "<a href='database.php?mode=view&id=" . $item['itemid'] . "'>";
+
+        // show attached if there is a file attached
+        // we need an id to look for attachment
+        $this->Database->id = $item['itemid'];
+        if ($this->Database->hasAttachment('items')) {
+            $html .= "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
+        }
+        // STARS
+        $html .= $this->showStars($item['rating']);
+        $html .= "<p class='title'>";
+        // LOCK
+        if ($item['locked']) {
+            $html .= "<img style='padding-bottom:3px;' src='img/lock-blue.png' alt='lock' />";
+        }
+        // TITLE
+        $html .= stripslashes($item['title']) . "</p></a>";
+        // ITEM TYPE
+        $html .= "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['bgcolor'] . "'>" . $item['name'] . " </span>";
+        // DATE
+        $html .= "<span class='date'><img class='image' src='img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
+        // TAGS
+        $html .= $this->showTags('items', $item['itemid']);
+
+        $html .= "</section>";
+
+        return $html;
+    }
+
     /**
      * Generate HTML for view DB
      *
@@ -169,7 +176,7 @@ class DatabaseView extends EntityView
      */
     private function buildView()
     {
-        $itemArr = $this->database->read();
+        $itemArr = $this->Database->read();
 
         $html = "<section class='box'>";
         $html .= "<div><img src='img/calendar.png' title='date' alt='Date :' /> ";
@@ -188,7 +195,7 @@ class DatabaseView extends EntityView
             $html .= "<a href='app/lock.php?id=" . $itemArr['itemid'] . "&action=unlock&type=items'><img src='img/lock-gray.png' title='unlock item' alt='unlock' /></a>";
         }
         // TAGS
-        $html .= " " . $this->showTags('items', $this->database->id);
+        $html .= " " . $this->showTags('items', $this->Database->id);
 
         // TITLE : click on it to go to edit mode
         $html .= "<div ";
@@ -237,22 +244,22 @@ class DatabaseView extends EntityView
      */
     private function buildEdit()
     {
-        $itemArr = $this->database->read();
+        $itemArr = $this->Database->read();
 
         // load tinymce
         $html = "<script src='js/tinymce/tinymce.min.js'></script>";
 
         // begin page
         $html .= "<section class='box' style='border-left: 6px solid #" . $itemArr['bgcolor'] . "'>";
-        $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"deleteThis('" . $this->database->id . "','item', 'database.php')\" />";
+        $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"deleteThis('" . $this->Database->id . "','item', 'database.php')\" />";
 
         // tags
-        $html .= displayTags('items', $this->database->id);
+        $html .= displayTags('items', $this->Database->id);
 
         // main form
         $html .= "<form method='post' action='app/controllers/DatabaseController.php' enctype='multipart/form-data'>";
         $html .= "<input name='databaseUpdate' type='hidden' value='true' />";
-        $html .= "<input name='databaseId' type='hidden' value='" . $this->database->id . "' />";
+        $html .= "<input name='databaseId' type='hidden' value='" . $this->Database->id . "' />";
 
         // date
         $html .= "<div class='row'>";
@@ -330,7 +337,7 @@ class DatabaseView extends EntityView
             // ADD TAG JS
             // listen keypress, add tag when it's enter
             $('#createTagInput').keypress(function (e) {
-                createTag(e, " . $this->database->id . ", 'items');
+                createTag(e, " . $this->Database->id . ", 'items');
             });
 
             // autocomplete the tags
@@ -357,7 +364,7 @@ class DatabaseView extends EntityView
                 // save button :
                 save_onsavecallback: function() {
                     $.post('app/quicksave.php', {
-                        id : " . $this->database->id . ",
+                        id : " . $this->Database->id . ",
                         type : 'items',
                         // we need this to get the updated content
                         title : document.getElementById('title_input').value,
@@ -407,7 +414,7 @@ class DatabaseView extends EntityView
         $('input.star').rating();";
         for ($i = 1; $i < 6; $i++) {
             $html .= "$('#star" . $i . "').click(function() {
-            updateRating(" . $i . ", " . $this->database->id . ");
+            updateRating(" . $i . ", " . $this->Database->id . ");
         });";
         }
 

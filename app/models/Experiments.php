@@ -338,7 +338,7 @@ class Experiments extends Entity
         $req->bindParam(':id', $this->id);
         $req->execute();
 
-        $tags = new Tags('experimnts');
+        $tags = new Tags('experiments');
         $tags->destroy($this->id);
 
         $uploads = new Uploads('experiments', $this->id);
@@ -347,5 +347,7 @@ class Experiments extends Entity
         $this->Links->destroyAllLinks();
 
         $this->Comments->destroyAllComments();
+
+        return true;
     }
 }

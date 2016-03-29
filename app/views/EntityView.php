@@ -16,7 +16,7 @@ namespace Elabftw\Elabftw;
 class EntityView
 {
     /** our Database instance */
-    public $database;
+    public $Database;
 
     /** number of items to display per page */
     public $limit = 15;
@@ -124,7 +124,7 @@ class EntityView
         } else {
 
             // filter by type list
-            $itemsTypes = new ItemsTypes($this->database->team);
+            $itemsTypes = new ItemsTypes($this->Database->team);
             $categoryArr = $itemsTypes->readAll();
             foreach ($categoryArr as $category) {
                 $templates .= "<li class='dropdown-item'><a style='color:#" . $category['bgcolor'] . "' href='app/controllers/DatabaseController.php?databaseCreateId=" . $category['id'] . "'>"

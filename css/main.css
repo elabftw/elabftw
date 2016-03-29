@@ -266,23 +266,6 @@ menu ul li.selected {
     padding-bottom:4px;
 }
 
-/* MENU with .border is on showXP and showDB */
-
-menu.border {
-    border-bottom: 1px solid #dcdddc;
-    margin-bottom: 5px;
-    margin-top: 0;
-    padding-bottom: 19px;
-}
-menu.border a {
-    color:#36b1c0;
-    padding-right:7px;
-}
-menu.border a:hover {
-    color: black;
-    transition-duration: 1500ms;
-}
-
 /* ALERT */
 .alert {
     margin-top:20px;
@@ -290,6 +273,7 @@ menu.border a:hover {
 
 .alert-success {
     background-color: #C4F9FF;
+    color: green;
 }
 
 .alert-danger {

@@ -98,7 +98,7 @@ class Database extends Entity
             throw new Exception(_('This section is out of your reach.'));
         }
 
-        $sql = "SELECT items.id AS itemid,
+        $sql = "SELECT DISTINCT items.id AS itemid,
             experiments_links.id AS linkid,
             experiments_links.*,
             items.*,
@@ -129,7 +129,7 @@ class Database extends Entity
      */
     public function readAll()
     {
-        $sql = "SELECT DISTINCT items.*, items_types.name, items_types.bgcolor
+        $sql = "SELECT DISTINCT items.id AS itemid, items.*, items_types.name, items_types.bgcolor
         FROM items
         LEFT JOIN items_types ON (items.type = items_types.id)
         LEFT JOIN items_tags ON (items.id = items_tags.item_id)

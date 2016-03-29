@@ -146,43 +146,8 @@ class ExperimentsView extends EntityView
 
             // fill an array with the ID of each item to use in the csv/zip export menu
             $idArr[] = $item['id'];
+            $html2 .= $this->showUnique($item);
 
-            $html2 .= "<section class='item " . $this->display . "' style='border-left: 6px solid #" . $item['color'] . "'>";
-            $html2 .= "<a href='experiments.php?mode=view&id=" . $item['id'] . "'>";
-
-            // show attached if there is a file attached
-            // we need an id to look for attachment
-            $this->Experiments->id = $item['id'];
-            if ($this->Experiments->hasAttachment('experiments')) {
-                $html2 .= "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
-            }
-            // we show the abstract of the experiment on mouse hover with the title attribute
-            // we check if it is our experiment. It would be best to check if we have visibility rights on it
-            // but atm there is no such function. So we limit this feature to experiments we own, for simplicity.
-            if (is_owned_by_user($item['id'], 'experiments', $_SESSION['userid'])) {
-                $bodyAbstract = str_replace("'", "", substr(strip_tags($item['body']), 0, 100));
-            } else {
-                $bodyAbstract = '';
-            }
-            $html2 .= "<a title='" . $bodyAbstract . "' href='experiments.php?mode=view&id=" . $item['id'] . "'>";
-            $html2 .= "<p class='title'>";
-            if ($item['timestamped']) {
-                $html2 .= "<img class='align_right' src='img/stamp.png' alt='stamp' title='experiment timestamped' />";
-            }
-            // LOCK
-            if ($item['locked']) {
-                $html2 .= "<img style='padding-bottom:3px;' src='img/lock-blue.png' alt='lock' />";
-            }
-            // TITLE
-            $html2 .= stripslashes($item['title']) . "</p></a>";
-            // STATUS
-            $html2 .= "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['color'] . "'>" . $item['name'] . " </span>";
-            // DATE
-            $html2 .= "<span class='date'><img class='image' src='img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
-            // TAGS
-            $html2 .= $this->showTags('experiments', $item['id']);
-
-            $html2 .= "</section>";
         }
 
         // show number of results found
@@ -211,6 +176,48 @@ class ExperimentsView extends EntityView
         return $html . $html2;
     }
 
+    public function showUnique($item)
+    {
+        $html = "<section class='item " . $this->display . "' style='border-left: 6px solid #" . $item['color'] . "'>";
+        $html .= "<a href='experiments.php?mode=view&id=" . $item['id'] . "'>";
+
+        // show attached if there is a file attached
+        // we need an id to look for attachment
+        $this->Experiments->id = $item['id'];
+        if ($this->Experiments->hasAttachment('experiments')) {
+            $html .= "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
+        }
+        // we show the abstract of the experiment on mouse hover with the title attribute
+        // we check if it is our experiment. It would be best to check if we have visibility rights on it
+        // but atm there is no such function. So we limit this feature to experiments we own, for simplicity.
+        if (is_owned_by_user($item['id'], 'experiments', $_SESSION['userid'])) {
+            $bodyAbstract = str_replace("'", "", substr(strip_tags($item['body']), 0, 100));
+        } else {
+            $bodyAbstract = '';
+        }
+        $html .= "<a title='" . $bodyAbstract . "' href='experiments.php?mode=view&id=" . $item['id'] . "'>";
+        $html .= "<p class='title'>";
+        if ($item['timestamped']) {
+            $html .= "<img class='align_right' src='img/stamp.png' alt='stamp' title='experiment timestamped' />";
+        }
+        // LOCK
+        if ($item['locked']) {
+            $html .= "<img style='padding-bottom:3px;' src='img/lock-blue.png' alt='lock' />";
+        }
+        // TITLE
+        $html .= stripslashes($item['title']) . "</p></a>";
+        // STATUS
+        $html .= "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['color'] . "'>" . $item['name'] . " </span>";
+        // DATE
+        $html .= "<span class='date'><img class='image' src='img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
+        // TAGS
+        $html .= $this->showTags('experiments', $item['id']);
+
+        $html .= "</section>";
+
+        return $html;
+    }
+
     /**
      * Generate HTML for edit experiment
      *
@@ -224,7 +231,7 @@ class ExperimentsView extends EntityView
         $html .= "<img src='img/arrow-left-blue.png' class='bot5px' alt='' /> " . _('Back to experiments listing') . "</a></menu>";
 
         $html .= "<section class='box' id='main_section' style='border-left: 6px solid #" . $this->experiment['color'] . "'>";
-        $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"deleteThis(" . $this->Experiments->id . ")\" />";
+        $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"experimentsDestroy(" . $this->Experiments->id . ", '" . _('Delete this?') . "')\" />";
 
         $html .=  displayTags('experiments', $this->Experiments->id);
         $html .= "<form method='post' action='app/controllers/ExperimentsController.php' enctype='multipart/form-data'>";

@@ -71,6 +71,22 @@ class Tags
     }
 
     /**
+     * Read tags for an item
+     *
+     * @param int $id
+     * @return array
+     */
+    public function read($id)
+    {
+        $sql = "SELECT tag FROM " . $this->type . "_tags WHERE item_id = :item_id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':item_id', $id);
+        $req->execute();
+
+        return $req->fetchAll();
+    }
+
+    /**
      * Copy the tags from one experiment/item to an other.
      *
      * @param int $id The id of the original experiment/item

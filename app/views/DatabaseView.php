@@ -132,7 +132,7 @@ class DatabaseView extends EntityView
             // DATE
             $html2 .= "<span class='date'><img class='image' src='img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
             // TAGS
-            $html2 .= show_tags($item['id'], 'items_tags');
+            $html2 .= $this->showTags('items', $item['id']);
 
             $html2 .= "</section>";
         }
@@ -188,7 +188,7 @@ class DatabaseView extends EntityView
             $html .= "<a href='app/lock.php?id=" . $itemArr['itemid'] . "&action=unlock&type=items'><img src='img/lock-gray.png' title='unlock item' alt='unlock' /></a>";
         }
         // TAGS
-        $html .= " " . show_tags($this->database->id, 'items_tags');
+        $html .= " " . $this->showTags('items', $this->database->id);
 
         // TITLE : click on it to go to edit mode
         $html .= "<div ";

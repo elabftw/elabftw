@@ -180,7 +180,7 @@ class ExperimentsView extends EntityView
             // DATE
             $html2 .= "<span class='date'><img class='image' src='img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
             // TAGS
-            $html2 .= show_tags($item['id'], 'experiments_tags');
+            $html2 .= $this->showTags('experiments', $item['id']);
 
             $html2 .= "</section>";
         }
@@ -442,8 +442,7 @@ class ExperimentsView extends EntityView
             }
         }
 
-        // TAGS TODO
-        $html .= show_tags($this->Experiments->id, 'experiments_tags');
+        $html .= $this->showTags('experiments', $this->Experiments->id);
         // TITLE : click on it to go to edit mode only if we are not in read only mode
         $html .=  "<div ";
         if (!$this->ro && !$this->experiment['locked']) {

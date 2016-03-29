@@ -239,4 +239,32 @@ class EntityView
 
         return $html;
     }
+
+    /**
+     * Display the tags
+     *
+     * @param int $item_id The ID of the item for which we want the tags
+     * @param string $table The table can be experiments_tags or items_tags
+     * @return null|false Will show the HTML for tags or false if there is no tags
+     */
+    protected function showTags($type, $item_id)
+    {
+        $Tags = new Tags($type);
+        $tagList = $Tags->read($item_id);
+
+        $html = '';
+
+        if (count($tagList) > 0) {
+            $html = "<span class='tags'><img src='img/tags.png' alt='tags' /> ";
+            foreach ($tagList as $tag) {
+                if ($type === 'experiments') {
+                    $html .= "<a href='experiments.php?mode=show&tag=" . urlencode(stripslashes($tag['tag'])) . "'>" . stripslashes($tag['tag']) . "</a> ";
+                } else { // type is items
+                    $html .= "<a href='database.php?mode=show&tag=" . urlencode(stripslashes($tag['tag'])) . "'>" . stripslashes($tag['tag']) . "</a> ";
+                }
+            }
+            $html .= "</span>";
+        }
+        return $html;
+    }
 }

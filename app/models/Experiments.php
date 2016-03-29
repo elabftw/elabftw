@@ -275,7 +275,7 @@ class Experiments extends Entity
     }
 
     /**
-     * Generate unique elabID.
+     * Generate unique elabID
      * This function is called during the creation of an experiment.
      *
      * @return string unique elabid with date in front of it
@@ -287,7 +287,7 @@ class Experiments extends Entity
     }
 
     /**
-     * Duplicate an experiment.
+     * Duplicate an experiment
      *
      * @return int Will return the ID of the new item
      */
@@ -320,6 +320,11 @@ class Experiments extends Entity
         return $newId;
     }
 
+    /**
+     * Destroy an experiment and all associated data
+     *
+     * @return null
+     */
     public function destroy()
     {
         if (((get_team_config('deletable_xp') == '0') &&

@@ -28,6 +28,8 @@ class Comments extends Entity
     /**
      * Constructor
      *
+     * @param Experiments
+     * @param int|null $id
      */
     public function __construct(Experiments $experiments, $id = null)
     {

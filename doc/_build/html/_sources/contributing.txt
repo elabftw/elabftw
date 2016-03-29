@@ -54,13 +54,12 @@ Contributing to the code
 * before doing a pull request, open an issue so we can discuss about it
 * base your PR on the **hypernext** branch, which is the development branch; **master** being the *release* branch
 * most of the code is procedural, but a progressive transition to object oriented code is on the way
-* classes should be in `inc/classes` with namespace Elabftw\\Elabftw
+* classes should be in `app/{models, views, classes}` with namespace Elabftw\\Elabftw
 * a new class will be loaded automagically thanks to the use of PSR-4 with composer
 * for i18n, we use gettext
 * if you change a string in gettext _('they look like this'), change it also in a .po file (generally the french one) and generate a .mo file (with poedit)
 * same if you add a string shown to the user, it needs to be gettexted
-* if you make a change to the SQL stucture, you need to put add an update function in `inc/classes/Update.php` and also modify `install/elabftw.sql` accordingly
-* most of the functions are in `inc/functions.php`
+* if you make a change to the SQL stucture, you need to put add an update function in `app/classes/Update.php` and also modify `install/elabftw.sql` accordingly
 * instead of adding your functions to `inc/functions.php`, create a proper class
 * you can use the constant ELAB_ROOT (which ends with a /) to have a full path
 * comment your code wisely
@@ -101,7 +100,7 @@ Reminders
 * update of SwiftMailer and mPDF is done with `composer update`
 * update of the js components is done with `bower update`
 * after update of tinymce, lang files need to be downloaded again, and the ones without proper name (ca instead of ca_ES) need to be edited (change first line to ca_ES)
-* for a new version, one needs to edit inc/classes/Update.php, package.json and doc/conf.py
+* for a new version, one needs to edit app/classes/Update.php, package.json and doc/conf.py
 
 Make a gif
 ----------

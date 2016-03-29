@@ -33,11 +33,6 @@ if (is_readable('config.php')) {
     exit;
 }
 
-// check for maintenance mode
-if (file_exists(ELAB_ROOT . 'maintenance')) {
-    die('Maintenance mode is enabled. Check back later.');
-}
-
 require_once ELAB_ROOT . 'vendor/autoload.php';
 
 // SQL CONNECT

@@ -5,7 +5,8 @@ Manual
 
 This guide assumes you already have a working installation of eLabFTW on a server.
 
-The first person to register an account will be 'Sysadmin' and will have access to the 'sysconfig' page.
+The first person to register an account will be 'Sysadmin' and will have access to the 'sysconfig' page, from there you can change settings impacting every team hosted on the server.
+
 The first person to register an account in a Team will be 'Admin' of this team and have access to the 'Admin panel' page.
 An admin can deal with all aspects related to team management, change the defaults, add status, types of items, default template, etc…
 

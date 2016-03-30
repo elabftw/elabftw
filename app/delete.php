@@ -235,6 +235,7 @@ try {
             default:
                 throw new Exception('who cares, this code will disappear');
         }
+    }
 
 } catch (Exception $e) {
     dblog('Error', $_SESSION['userid'], $e->getMessage());

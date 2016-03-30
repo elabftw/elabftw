@@ -342,7 +342,7 @@ class Experiments extends Entity
         $tags->destroy($this->id);
 
         $uploads = new Uploads('experiments', $this->id);
-        $uploads->destroy();
+        $uploads->destroyAllUploads();
 
         $this->Links->destroyAllLinks();
 

@@ -350,4 +350,14 @@ class Uploads extends Entity
             </script>";
         return $html;
     }
+
+    public function destroyAllUploads()
+    {
+        $uploadArr = $this->readAll();
+
+        foreach($uploadArr as $upload) {
+            $this->id = $upload['id'];
+            $this->destroy();
+        }
+    }
 }

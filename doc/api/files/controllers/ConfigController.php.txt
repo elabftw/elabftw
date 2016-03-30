@@ -11,6 +11,8 @@
 
 namespace Elabftw\Elabftw;
 
+use Exception;
+
 /**
  * Deal with ajax requests sent from the sysconfig page
  *

@@ -11,6 +11,8 @@
 
 namespace Elabftw\Elabftw;
 
+use Exception;
+
 /**
  * oO
  *

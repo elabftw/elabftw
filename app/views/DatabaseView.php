@@ -18,17 +18,11 @@ use \Datetime;
  */
 class DatabaseView extends EntityView
 {
-    /** ID of the item we want to view */
-    private $id;
-
     /** the Uploads class */
     private $uploads;
 
     /** Revisions class */
     private $revisions;
-
-    /** the Status class */
-    private $status;
 
     /** can be tag, query or filter */
     public $searchType = '';
@@ -45,7 +39,6 @@ class DatabaseView extends EntityView
         $this->Database = $database;
         $this->limit = $_SESSION['prefs']['limit'];
 
-        $this->status = new Status();
         $this->uploads = new Uploads('items', $this->Database->id);
         $this->revisions = new Revisions('items', $this->Database->id);
     }

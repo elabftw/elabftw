@@ -10,7 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
 use \Exception;
 use \Swift_Message;
 
@@ -19,18 +18,6 @@ use \Swift_Message;
  */
 class Sysconfig
 {
-    /** The PDO object */
-    private $pdo;
-
-    /**
-     * Constructor
-     *
-     */
-    public function __construct()
-    {
-        $this->pdo = Db::getConnection();
-    }
-
     /**
      * Send a test email
      *

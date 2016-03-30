@@ -27,9 +27,6 @@ class ExperimentsView extends EntityView
     /** Read only switch */
     private $ro = false;
 
-    /** ID of the experiment we want to view */
-    private $id;
-
     /** the Uploads object */
     private $uploads;
 

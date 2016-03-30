@@ -19,6 +19,8 @@
 ********************************************************************************/
 namespace Elabftw\Elabftw;
 
+use Exception;
+
 require_once '../inc/common.php';
 
 // check id

@@ -11,6 +11,8 @@
 
 namespace Elabftw\Elabftw;
 
+use Exception;
+
 /**
  * Controller for the experiments comments
  *

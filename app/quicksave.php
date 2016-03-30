@@ -17,6 +17,8 @@
 *    along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.
 *
 ********************************************************************************/
+namespace Elabftw\Elabftw;
+
 require_once '../inc/common.php';
 
 // check id

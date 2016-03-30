@@ -30,7 +30,6 @@ try {
             $id = $Experiments->create();
         }
         header("location: ../../experiments.php?mode=edit&id=" . $id);
-        exit;
     }
 
     // UPDATE
@@ -41,10 +40,9 @@ try {
             $_POST['experimentsUpdateDate'],
             $_POST['experimentsUpdateBody']
         )) {
-            echo 'ok';
             header("location: ../../experiments.php?mode=view&id=" . $_POST['experimentsId']);
         } else {
-            die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
+            printf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
         }
     }
 

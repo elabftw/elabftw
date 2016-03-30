@@ -766,7 +766,7 @@ code {
 }
 
 /* TODOLIST */
-#slide-panel {
+#todoList{
     font: 100% 'Lato', Verdana, Arial, Helvetica, sans-serif;
     text-align:center;
     overflow:hidden;
@@ -782,15 +782,15 @@ code {
     margin:10px;
     border: 1px solid #fff;
 }
-#slide-panel a, a:link {
+#todoList a, a:link {
     outline: none;
 }
 
-#slide-panel ul {
+#todoList ul {
     margin-top:30px;
     width: 80%;
 }
-#slide-panel ul li {
+#todoList ul li {
     list-style-type: none;
     font-size: 18px;
     cursor: move;
@@ -799,20 +799,20 @@ code {
     padding: 10px;
     text-align: left;
 }
-#slide-panel ul li {
+#todoList ul li {
     cursor: auto;
 }
-#slide-panel ul li a,
-#slide-panel ul li a:link {
+#todoList ul li a,
+#todoList ul li a:link {
     float: right;
     display: none;
     text-decoration: none;
     color: #303030;
 }
-#slide-panel ul li a:hover {
+#todoList ul li a:hover {
     color:red;
 }
-#slide-panel #clear-all, #slide-panel #close {
+#todoList #clear-all, #todoList #close {
     color: white;
     text-decoration:none;
 }

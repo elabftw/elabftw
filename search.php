@@ -563,30 +563,6 @@ if (isset($_GET)) {
 ?>
 
 <script>
-function insertParamAndReload(key, value) {
-    key = escape(key); value = escape(value);
-
-    var kvp = document.location.search.substr(1).split('&');
-    if (kvp == '') {
-        document.location.search = '?' + key + '=' + value;
-    } else {
-
-        var i = kvp.length; var x; while (i--) {
-            x = kvp[i].split('=');
-
-            if (x[0] == key) {
-                x[1] = value;
-                kvp[i] = x.join('=');
-                break;
-            }
-        }
-
-        if (i < 0) { kvp[kvp.length] = [key, value].join('='); }
-
-        // reload the page
-        document.location.search = kvp.join('&');
-    }
-}
 $(document).ready(function(){
     // DATEPICKER
     $( ".datepicker" ).datepicker({dateFormat: 'yymmdd'});

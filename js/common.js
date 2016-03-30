@@ -88,16 +88,16 @@ function isInt(n) {
     return n % 1 === 0;
 }
 
-// To show the todolist
-function showPanel() {
-    var panel = $('#slide-panel');
-    if (panel.css('display') == 'none') {
-        panel.css('display', 'inline');
+// show/hide the todolist
+function toggleTodoList() {
+    todoList = $('#todoList');
+    if (todoList.css('display') === 'none') {
+        todoList.css('display', 'inline');
     } else {
-        panel.css('display', 'none');
+        todoList.css('display', 'none');
     }
-    return false;
 }
+
 // display mol files
 function showMol(molFileContent) {
     // the first parameter is a random id
@@ -112,6 +112,7 @@ function showMol(molFileContent) {
     var mol = ChemDoodle.readMOL(molFileContent);
     viewer.loadMolecule(mol);
 }
+
 // go to url
 function go_url(x) {
     if (x == '') {
@@ -122,12 +123,6 @@ function go_url(x) {
 
 // EXPERIMENTS.PHP
 // ===============
-
-// VIEW
-function confirmStamp(confirmText) {
-    youSure = confirm(confirmText);
-    return youSure;
-}
 
 // VISIBILITY
 function experimentsUpdateVisibility(item, visibility) {
@@ -634,4 +629,30 @@ function updateRating(rating, id) {
         star: rating,
         item_id: id
     })
+}
+
+// SEARCH PAGE
+function insertParamAndReload(key, value) {
+    key = escape(key); value = escape(value);
+
+    var kvp = document.location.search.substr(1).split('&');
+    if (kvp == '') {
+        document.location.search = '?' + key + '=' + value;
+    } else {
+
+        var i = kvp.length; var x; while (i--) {
+            x = kvp[i].split('=');
+
+            if (x[0] == key) {
+                x[1] = value;
+                kvp[i] = x.join('=');
+                break;
+            }
+        }
+
+        if (i < 0) { kvp[kvp.length] = [key, value].join('='); }
+
+        // reload the page
+        document.location.search = kvp.join('&');
+    }
 }

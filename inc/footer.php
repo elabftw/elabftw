@@ -9,17 +9,18 @@
  */
 ?>
 <!-- TODOLIST -->
-<div id='slide-panel'>
+<div id='todoList'>
     <form id="todo-form">
         <input id="todo" type="text" />
         <input id="submit" type="submit" class='button' value="TODOfy">
     </form>
    <ul id="show-items"></ul>
     <br><br>
-    <a class='button' href="#" onClick='showPanel()'>Close</a>
+    <a class='button' href="#" onClick='toggleTodoList()'>Close</a>
     <br><br>
     <a href="#" style='float:left' id="clear-all">Clear All</a>
 </div>
+<!-- END TODOLIST -->
 
 <footer>
 
@@ -32,30 +33,30 @@
     </a>
     <span>
         <span class='strong'>
-    <?php
+<?php
 if (isset($_SESSION['auth']) && $_SESSION['is_sysadmin'] === '1') {
-	?>
+    ?>
         <!-- SYSADMIN MENU -->
         <a href='sysconfig.php'><?php echo _('Sysadmin panel'); ?></a>
     <?php
 }
 if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
-	echo "<a href='admin.php'>" . _('Admin panel');
-	// show counter of unvalidated users
-	$sql = "SELECT count(validated) FROM users WHERE validated = 0 AND team = :team";
-	$req = $pdo->prepare($sql);
-	$req->bindValue(':team', $_SESSION['team_id']);
-	$req->execute();
-	$unvalidated = $req->fetchColumn();
-	if ($unvalidated > 0) {
-		echo " <span class='badge'>" . $unvalidated . "</span>";
-	}
-	echo "</a>";
+    echo "<a href='admin.php'>" . _('Admin panel');
+    // show counter of unvalidated users
+    $sql = "SELECT count(validated) FROM users WHERE validated = 0 AND team = :team";
+    $req = $pdo->prepare($sql);
+    $req->bindValue(':team', $_SESSION['team_id']);
+    $req->execute();
+    $unvalidated = $req->fetchColumn();
+    if ($unvalidated > 0) {
+        echo " <span class='badge'>" . $unvalidated . "</span>";
+    }
+    echo "</a>";
 }
 echo "</span></p><div class='footer_right'>";
 echo _('Powered by') . " <a href='http://www.elabftw.net'>eLabFTW</a><br>";
-?>
-    <?php echo _('Page generated in') . ' '; ?><span class='strong'><?php echo round((microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]), 5); ?> seconds</span></div>
+echo _('Page generated in') . ' '; ?>
+<span class='strong'><?php echo round((microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]), 5); ?> seconds</span></div>
 </footer>
 
 <!-- advanced search div -->
@@ -67,10 +68,10 @@ $('#big_search_input').click(function() {
 </script>
 <?php
 if (isset($_SESSION['auth'])) {
-	// show TODOlist
-	echo "<script>
+    // show TODOlist
+    echo "<script>
     key('" . $_SESSION['prefs']['shortcuts']['todo'] . "', function(){
-        showPanel();
+        toggleTodoList();
     });
     </script>";
 }

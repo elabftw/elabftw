@@ -24,9 +24,6 @@ class ExperimentsView extends EntityView
     /** the experiment array with data */
     private $experiment;
 
-    /** can be int or string. Int is team groups */
-    private $visibility;
-
     /** Read only switch */
     private $ro = false;
 
@@ -57,8 +54,6 @@ class ExperimentsView extends EntityView
         $this->limit = $_SESSION['prefs']['limit'];
 
         $this->teamGroups = new TeamGroups();
-        // visibility can be a string, or number if teamgroup
-        $this->visibility = $this->getVisGroupName();
     }
 
     /**
@@ -253,17 +248,17 @@ class ExperimentsView extends EntityView
         $html .= "<label for='visibility_select'>" . _('Visibility') . "</label>";
         $html .= "<select id='visibility_select' onchange='experimentsUpdateVisibility(" . $this->Experiments->id . ", this.value)'>";
         $html .= "<option value='organization' ";
-        if ($this->visibility === 'organization') {
+        if ($this->experiment['visibility'] === 'organization') {
             $html .= "selected";
         }
         $html .= ">" . _('Everyone with an account') . "</option>";
         $html .= "<option value='team' ";
-        if ($this->visibility === 'team') {
+        if ($this->experiment['visibility'] === 'team') {
             $html .= "selected";
         }
         $html .= ">" . _('Only the team') . "</option>";
         $html .= "<option value='user' ";
-        if ($this->visibility === 'user') {
+        if ($this->experiment['visibility'] === 'user') {
             $html .= "selected";
         }
         $html .= ">" . _('Only me') . "</option>";
@@ -348,7 +343,7 @@ class ExperimentsView extends EntityView
      *
      * @return string
      */
-    private function getVisGroupName()
+    private function getVisibility()
     {
         if (Tools::checkId($this->experiment['visibility'])) {
             return $this->teamGroups->readName($this->experiment['visibility']);
@@ -366,7 +361,7 @@ class ExperimentsView extends EntityView
         // Check id is owned by connected user to show read only message if not
         if ($this->experiment['userid'] != $_SESSION['userid']) {
             // Can the user see this experiment which is not his ?
-            if ($this->visibility === 'user') {
+            if ($this->experiment['visibility'] === 'user') {
 
                 throw new Exception(_("<strong>Access forbidden:</strong> the visibility setting of this experiment is set to 'owner only'."));
 
@@ -383,7 +378,7 @@ class ExperimentsView extends EntityView
 
                 if ($owner['team'] != $_SESSION['team_id']) {
                     // the experiment needs to be organization for us to see it as we are not in the team of the owner
-                    if ($this->visibility != 'organization') {
+                    if ($this->experiment['visibility'] != 'organization') {
                         throw new Exception(_("<strong>Access forbidden:</strong> you don't have the rights to access this."));
                     }
                 }
@@ -431,7 +426,7 @@ class ExperimentsView extends EntityView
 
         $html = "<section class='item' style='padding:15px;border-left: 6px solid #" . $this->experiment['color'] . "'>";
         $html .= "<span class='top_right_status'><img src='img/status.png'>" . $this->experiment['name'] .
-            "<img src='img/eye.png' alt='eye' />" . $this->getVisGroupName() . "</span>";
+            "<img src='img/eye.png' alt='eye' />" . $this->getVisibility() . "</span>";
         $html .=  "<div><img src='img/calendar.png' class='bot5px' title='date' alt='Date :' /> " .
             Tools::formatDate($this->experiment['date']) . "</div>
         <a href='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a>

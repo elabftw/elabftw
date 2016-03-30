@@ -12,6 +12,7 @@
 namespace Elabftw\Elabftw;
 
 use PDO;
+use Exception;
 
 /**
  * Administration of a team

@@ -8,6 +8,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+namespace Elabftw\Elabftw;
 
 /**
  * User Control Panel
@@ -18,12 +19,8 @@ $page_title = _('User Control Panel');
 $selected_menu = null;
 require_once('inc/head.php');
 
-// SQL for UCP
-$sql = "SELECT * FROM users WHERE userid = :userid";
-$req = $pdo->prepare($sql);
-$req->bindParam(':userid', $_SESSION['userid']);
-$req->execute();
-$users = $req->fetch();
+$Users = new Users();
+$user = $Users->read($_SESSION['userid']);
 
 // BEGIN UCP PAGE
 ?>
@@ -81,15 +78,18 @@ foreach ($lang_array as $lang) {
                 <option
                 <?php
                 if ($_SESSION['prefs']['order'] === 'date') {
-                    echo ' selected '; }?>value="date"><?php echo _('Date'); ?></option>
+                    echo ' selected ';
+                }?>value="date"><?php echo _('Date'); ?></option>
                 <option
                 <?php
                 if ($_SESSION['prefs']['order'] === 'id') {
-                    echo ' selected '; }?>value="id">ID</option>
+                    echo ' selected ';
+                }?>value="id">ID</option>
                 <option
                 <?php
                 if ($_SESSION['prefs']['order'] === 'title') {
-                    echo ' selected '; }?>value="title"><?php echo _('Title'); ?></option>
+                    echo ' selected ';
+                }?>value="title"><?php echo _('Title'); ?></option>
             </select>
 
             <?php echo _('with'); ?>
@@ -97,11 +97,13 @@ foreach ($lang_array as $lang) {
                 <option
                 <?php
                 if ($_SESSION['prefs']['sort'] === 'desc') {
-                    echo ' selected '; }?>value="desc"><?php echo _('newer first'); ?></option>
+                    echo ' selected ';
+                }?>value="desc"><?php echo _('newer first'); ?></option>
                 <option
                 <?php
                 if ($_SESSION['prefs']['sort'] === 'asc') {
-                    echo ' selected '; }?>value="asc"><?php echo _('older first'); ?></option>
+                    echo ' selected ';
+                }?>value="asc"><?php echo _('older first'); ?></option>
             </select>
 
             <p style='margin-top:20px;'>
@@ -115,7 +117,8 @@ foreach ($lang_array as $lang) {
             <hr>
             <p>
                 <table>
-                <tr><th><?php echo _('Action'); ?></th><th><?php echo _('Shortcut'); ?></th></tr>
+                <tr><th><?php echo _('Action'); ?></th>
+                    <th><?php echo _('Shortcut'); ?></th></tr>
 
                 <tr><td><?php echo _('Create'); ?></td><td>
                     <input id='create' type='text' size='1' maxlength='1' value='<?php echo $_SESSION['prefs']['shortcuts']['create']; ?>' name='create' />
@@ -186,11 +189,11 @@ foreach ($lang_array as $lang) {
         <div class='row'>
             <div class='col-md-6'>
                 <label class='block' for='firstname'><?php echo _('Firstname'); ?></label>
-                <input name="firstname" value='<?php echo $users['firstname']; ?>' cols='20' rows='1' />
+                <input name="firstname" value='<?php echo $user['firstname']; ?>' cols='20' rows='1' />
             </div>
             <div class='col-md-6'>
                 <label class='block' for='username'><?php echo _('Username'); ?></label>
-                <input name="username" value='<?php echo $users['username']; ?>' cols='20' rows='1' />
+                <input name="username" value='<?php echo $user['username']; ?>' cols='20' rows='1' />
             </div>
 
         </div>
@@ -198,11 +201,11 @@ foreach ($lang_array as $lang) {
         <div class='row'>
             <div class='col-md-6'>
                 <label class='block' for='lastname'><?php echo _('Lastname'); ?></label>
-                <input name="lastname" value='<?php echo $users['lastname']; ?>' cols='20' rows='1' />
+                <input name="lastname" value='<?php echo $user['lastname']; ?>' cols='20' rows='1' />
             </div>
             <div class='col-md-6'>
                 <label class='block' for='email'><?php echo _('Email'); ?></label>
-                <input name="email" type="email" value='<?php echo $users['email']; ?>' cols='20' rows='1' />
+                <input name="email" type="email" value='<?php echo $user['email']; ?>' cols='20' rows='1' />
             </div>
         </div>
 
@@ -211,21 +214,21 @@ foreach ($lang_array as $lang) {
         <div class='row'>
             <div class='col-md-6'>
                 <label class='block' for='phone'><?php echo _('Phone'); ?> </label>
-                <input name="phone" value='<?php echo $users['phone']; ?>' cols='20' rows='1' />
+                <input name="phone" value='<?php echo $user['phone']; ?>' cols='20' rows='1' />
             </div>
             <div class='col-md-6'>
                 <label class='block' for='cellphone'><?php echo _('Mobile'); ?></label>
-                <input name="cellphone" value='<?php echo $users['cellphone']; ?>' cols='20' rows='1' />
+                <input name="cellphone" value='<?php echo $user['cellphone']; ?>' cols='20' rows='1' />
             </div>
         </div>
         <div class='row'>
             <div class='col-md-6'>
                 <label class='block' for='skype'><?php echo _('Skype'); ?></label>
-                <input name="skype" value='<?php echo $users['skype']; ?>' cols='20' rows='1' />
+                <input name="skype" value='<?php echo $user['skype']; ?>' cols='20' rows='1' />
             </div>
             <div class='col-md-6'>
                 <label class='block' for='website'><?php echo _('Website'); ?></label>
-                <input name="website" type="url" value='<?php echo $users['website']; ?>' cols='20' rows='1' />
+                <input name="website" type="url" value='<?php echo $user['website']; ?>' cols='20' rows='1' />
             </div>
         </div>
 
@@ -239,25 +242,21 @@ foreach ($lang_array as $lang) {
 <!-- *********************** -->
 <div class='divhandle' id='tab3div'>
 
-    <?php // SQL TO GET TEMPLATES
-    $sql = "SELECT id, body, name FROM experiments_templates WHERE userid = :userid ORDER BY ordering ASC";
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':userid', $_SESSION['userid']);
-    $req->execute();
+<?php // SQL TO GET TEMPLATES
+$Templates = new Templates($_SESSION['team_id']);
+$templatesArr = $Templates->readFromUserid($_SESSION['userid']);
 
-    echo "<ul class='nav nav-pills' role='tablist'>";
-    // tabs titles
-    echo "<li class='subtabhandle badge badgetab badgetabactive' id='subtab_1'>" . _('Create new') . "</li>";
-    $i = 2;
-    while ($exp_tpl = $req->fetch()) {
-        echo "<li class='sortable subtabhandle badge badgetab' id='subtab_" . $exp_tpl['id'] . "'>" . stripslashes($exp_tpl['name']) . "</li>";
-        $i++;
-    }
-    echo "</ul>";
-    ?>
+echo "<ul class='nav nav-pills' role='tablist'>";
+// tabs titles
+echo "<li class='subtabhandle badge badgetab badgetabactive' id='subtab_1'>" . _('Create new') . "</li>";
+foreach ($templatesArr as $template) {
+    echo "<li class='sortable subtabhandle badge badgetab' id='subtab_" . $template['id'] . "'>" . stripslashes($template['name']) . "</li>";
+}
+echo "</ul>";
+?>
     <!-- CREATE NEW TPL TAB -->
     <div class='subdivhandle' id='subtab_1div'>
-    <p onClick="toggleUpload()"><img src='img/add.png' title='import template' alt='import' /><?php echo _('Import from file'); ?></p>
+    <p onClick="$('#import_tpl').toggle()"><img src='img/add.png' title='import template' alt='import' /><?php echo _('Import from file'); ?></p>
         <form action='app/ucp-exec.php' method='post'>
             <input type='hidden' name='new_tpl_form' />
             <input type='file' accept='.elabftw.tpl' id='import_tpl'>
@@ -273,27 +272,26 @@ foreach ($lang_array as $lang) {
 
     <?php
     // tabs content
-    $req->execute();
-    $i = 2;
-    while ($exp_tpl = $req->fetch()) {
-    ?>
-    <div class='subdivhandle' id='subtab_<?php echo $exp_tpl['id']; ?>div'>
-    <img class='align_right' src='img/download.png' title='export template' alt='export' onClick="exportTpl('<?php echo $exp_tpl['name']; ?>', '<?php echo $exp_tpl['id']; ?>')" />
-        <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' onClick="deleteThis('<?php echo $exp_tpl['id']; ?>','tpl', 'ucp.php')" />
-        <form action='app/ucp-exec.php' method='post'>
-        <input type='hidden' name='tpl_form' />
-        <?php
-        echo "<input type='hidden' name='tpl_id[]' value='" . $exp_tpl['id'] . "' />";
-        echo "<input name='tpl_name[]' value='" . stripslashes($exp_tpl['name']) . "' /><br />";
-        echo "<textarea id='" . $exp_tpl['id'] . "' name='tpl_body[]' class='mceditable' style='height:500px;'>" . stripslashes($exp_tpl['body']) . "</textarea><br />";
+
+    foreach ($templatesArr as $template) {
+        echo "<div class='subdivhandle' id='subtab_" . $template['id'] . "div'>";
+        echo "<img class='align_right' src='img/download.png' title='export template' alt='export' ";
+        echo "onClick=\"exportTpl('" . $template['name'] . "', " . $template['id'] . ")\" />";
+        echo "<img class='align_right' src='img/small-trash.png' title='delete' alt='delete' ";
+        echo "onClick=\"deleteThis(" . $template['id'] . ",'tpl', 'ucp.php')\" />";
+        echo "<form action='app/ucp-exec.php' method='post'>";
+        echo "<input type='hidden' name='tpl_form' />";
+        echo "<input type='hidden' name='tpl_id[]' value='" . $template['id'] . "' />";
+        echo "<input name='tpl_name[]' value='" . stripslashes($template['name']) . "' /><br />";
+        echo "<textarea id='" . $template['id'] . "' name='tpl_body[]' class='mceditable' style='height:500px;'>" .
+            stripslashes($template['body']) . "</textarea><br />";
         echo "<div class='center'>";
         echo "<button type='submit' name='Submit' class='button'>" . _('Edit template') . "</button>";
         echo "</div>";
         echo "</form>";
         echo "</div>";
-        $i++;
     }
-        ?>
+    ?>
     </div>
 <!-- *********************** -->
 
@@ -302,41 +300,20 @@ foreach ($lang_array as $lang) {
 <!-- to export templates -->
 <script src='js/file-saver.js/FileSaver.js'></script>
 <script>
-function toggleUpload() {
-    $('#import_tpl').toggle();
-}
-
-$('#import_tpl').on('change', function(e){
-    var title = document.getElementById('import_tpl').value.replace(".elabftw.tpl", "");
-    readFile(this.files[0], function(e) {
-        tinyMCE.get('new_tpl_txt').setContent(e.target.result);
-        $('#new_tpl_name').val(title);
-        $('#import_tpl').hide();
-    });
-});
-
-function readFile(file, onLoadCallback){
-    // check for the various File API support
-    if (!window.FileReader) {
-        alert('Please use a modern web browser. Import aborted.');
-        return false;
-    }
-    var reader = new FileReader();
-    reader.onload = onLoadCallback;
-    reader.readAsText(file);
-}
-
-function exportTpl(name, id) {
-    // we have the name of the template used for filename
-    // and we have the id of the editor to get the content from
-    // we don't use activeEditor because it requires a click inside the editing area
-    var content = tinyMCE.get(id).getContent()
-    var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
-    saveAs(blob, name + ".elabftw.tpl");
-}
-
 // READY ? GO !!
 $(document).ready(function() {
+
+    // hide the file input
+    $('#import_tpl').hide();
+    $('#import_tpl').on('change', function(e){
+        var title = document.getElementById('import_tpl').value.replace(".elabftw.tpl", "");
+        readFile(this.files[0], function(e) {
+            tinyMCE.get('new_tpl_txt').setContent(e.target.result);
+            $('#new_tpl_name').val(title);
+            $('#import_tpl').hide();
+        });
+    });
+
     $('.nav-pills').sortable({
         // limit to horizontal dragging
         axis : 'x',
@@ -353,8 +330,6 @@ $(document).ready(function() {
             });
         }
     });
-    // hide the file input
-    $('#import_tpl').hide();
 
     // TABS
     // get the tab=X parameter in the url
@@ -397,8 +372,7 @@ $(document).ready(function() {
         $(tabhandle).addClass('badgetabactive');
     });
     // END SUB TABS
-    // Give focus to password field
-    document.getElementById('currpass').focus();
+
     // TinyMCE
     tinymce.init({
         mode : "specific_textareas",

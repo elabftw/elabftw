@@ -656,3 +656,26 @@ function insertParamAndReload(key, value) {
         document.location.search = kvp.join('&');
     }
 }
+
+// UCP
+
+// for importing user template
+function readFile(file, onLoadCallback){
+    // check for the various File API support
+    if (!window.FileReader) {
+        alert('Please use a modern web browser. Import aborted.');
+        return false;
+    }
+    var reader = new FileReader();
+    reader.onload = onLoadCallback;
+    reader.readAsText(file);
+}
+
+function exportTpl(name, id) {
+    // we have the name of the template used for filename
+    // and we have the id of the editor to get the content from
+    // we don't use activeEditor because it requires a click inside the editing area
+    var content = tinyMCE.get(id).getContent()
+    var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, name + ".elabftw.tpl");
+}

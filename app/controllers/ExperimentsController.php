@@ -102,4 +102,5 @@ try {
 
 } catch (Exception $e) {
     dblog('Error', $_SESSION['userid'], $e->getMessage());
+    $_SESSION['ko'][] = Tools::error();
 }

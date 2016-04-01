@@ -56,7 +56,7 @@ try {
 
 } catch (Exception $e) {
     dblog('Error', $_SESSION['userid'], $e->getMessage());
-    $_SESSION['ko'][] = $e->getMessage();
+    $_SESSION['ko'][] = Tools::error();
 } finally {
     header("location: ../../database.php?mode=" . $mode . "&id=" . $id);
 }

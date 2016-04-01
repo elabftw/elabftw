@@ -180,7 +180,7 @@ class Database extends Entity
         $req->bindParam(':id', $this->id);
 
         // add a revision
-        $revisions = new Revisions($this->id, 'items');
+        $revisions = new Revisions('items', $this->id);
         if (!$revisions->create($body, $userid)) {
             throw new Exception(_('Error inserting revision.'));
         }

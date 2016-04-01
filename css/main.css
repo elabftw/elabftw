@@ -95,7 +95,7 @@ input, select {
     padding:7px;
     background-color:#F2F2F2;
     color:#797979;
-    border-radius: 10px;
+    border-radius: 4px;
     border: 1px #e3e3e3 solid;
     margin:5px 0;
 }
@@ -733,7 +733,7 @@ code {
     width:20%;
     min-width:300px;
     padding:20px;
-    border-radius: 10px;
+    border-radius: 4px;
     margin:10px;
     border: 1px solid #fff;
 }

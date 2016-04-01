@@ -55,6 +55,7 @@ body {
     background: #fff;
     padding:0;
     font: 100% 'Lato', Verdana, Arial, Helvetica, sans-serif;
+    font-weight: 500;
 }
 
 #real_container {
@@ -178,7 +179,6 @@ nav {
 
 nav a {
     font-size:90%;
-    font-weight:bold;
     text-transform:uppercase;
     padding-bottom:10px;
     margin:1%;
@@ -236,7 +236,6 @@ menu ul li {
     display:inline;
     margin-right: 2%;
     text-transform: uppercase;
-    font-weight:bold;
     color: #797979;
     cursor: pointer;
 }
@@ -516,6 +515,7 @@ a[class*='trigger_']:hover {
     color:#fff;
     background-color:#29AEB9;
     border-color:#01929e;
+    margin-right: 10px;
 }
 
 .btn-elab.active, .btn-elab.focus, .btn-elab:active, .btn-elab:focus, .btn-elab:hover{

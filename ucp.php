@@ -246,6 +246,8 @@ foreach ($lang_array as $lang) {
 $Templates = new Templates($_SESSION['team_id']);
 $templatesArr = $Templates->readFromUserid($_SESSION['userid']);
 
+echo "<h3>" . _('Experiments templates') . "</h3>";
+echo "<div class='box'>";
 echo "<ul class='nav nav-pills' role='tablist'>";
 // tabs titles
 echo "<li class='subtabhandle badge badgetab badgetabactive' id='subtab_1'>" . _('Create new') . "</li>";
@@ -292,6 +294,7 @@ echo "</ul>";
         echo "</div>";
     }
     ?>
+    </div>
     </div>
 <!-- *********************** -->
 

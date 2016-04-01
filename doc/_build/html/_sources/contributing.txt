@@ -68,6 +68,13 @@ Contributing to the code
 * add a plugin to your editor to show PSR-1 errors
 * remove BOM
 * if you make a change to the documentation, you can regenerate the HTML with `grunt doc`
+* install grunt with :
+
+.. code-block:: bash
+
+    $ npm install grunt grunt-contrib-uglify grunt-contrib-watch grunt-contrib-cssmin grunt-shell
+    $ npm install -g grunt-cli
+
 
 API Documentation
 -----------------

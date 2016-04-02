@@ -61,15 +61,15 @@ foreach ($lang_array as $lang) {
             <h3><?php echo _('DISPLAY'); ?></h3>
             <hr>
             <p>
-            <label for='radio_view_default'><?php echo _('Default'); ?></label>
             <input id='radio_view_default' type='radio' name='display' value='default' 
             <?php echo ($_SESSION['prefs']['display'] === 'default') ? "checked" : ""; ?>
              />
+            <label for='radio_view_default'><?php echo _('Default'); ?></label>
 
-                 <label for='radio_view_compact'><?php echo _('Compact'); ?></label>
             <input id='radio_view_compact' type='radio' name='display' value='compact' 
             <?php echo ($_SESSION['prefs']['display'] === 'compact') ? "checked" : ""; ?>
              />
+            <label for='radio_view_compact'><?php echo _('Compact'); ?></label>
             </p>
 
             <p style='margin-top:20px;'>
@@ -143,17 +143,17 @@ foreach ($lang_array as $lang) {
             <h3><?php echo _('Miscellaneous'); ?></h3>
             <hr>
             <p>
-            <label for='close_warning'><?php echo _('Display a warning before closing an edit window/tab ?'); ?></label>
             <input id='close_warning' type='checkbox' name='close_warning' <?php
             if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
                 echo "checked='checked'  ";
             };?> />
+            <label for='close_warning'><?php echo _('Display a warning before closing an edit window/tab ?'); ?></label>
             <br>
-            <label for='chem_editor'><?php echo _('Display the molecule drawer in edit mode?'); ?></label>
             <input id='chem_editor' type='checkbox' name='chem_editor' <?php
             if (isset($_SESSION['prefs']['chem_editor']) && $_SESSION['prefs']['chem_editor'] === 1) {
                 echo "checked='checked'  ";
             };?> />
+            <label for='chem_editor'><?php echo _('Display the molecule drawer in edit mode?'); ?></label>
             </p>
         </section>
 

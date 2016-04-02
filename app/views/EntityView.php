@@ -103,14 +103,14 @@ class EntityView
 
             $Status = new Status();
             $categoryArr = $Status->read($_SESSION['team_id']);
-            $createItem .= "<li class='dropdown-item'><a href='app/controllers/ExperimentsController.php?experimentsCreate=true'>";
+            $createItem .= "<li class='dropdown-item'><a href='app/controllers/ExperimentsController.php?create=true'>";
             $createItem .= ngettext('Experiment', 'Experiments', 1) . "</a></li>";
             $createItem .= "<li role='separator' class='divider'></li>";
             $Templates = new Templates($_SESSION['team_id']);
             $templatesArr = $Templates->readFromUserid($_SESSION['userid']);
             if (count($templatesArr) > 0) {
                 foreach ($templatesArr as $tpl) {
-                    $templates .= "<li class='dropdown-item'><a href='app/controllers/ExperimentsController.php?experimentsCreate=true&tpl="
+                    $templates .= "<li class='dropdown-item'><a href='app/controllers/ExperimentsController.php?create=true&tpl="
                         . $tpl['id'] . "'>"
                         . $tpl['name'] . "</a></li>";
                 }
@@ -210,7 +210,7 @@ class EntityView
             $shortcut = "
             // KEYBOARD SHORTCUTS
             key('" . $_SESSION['prefs']['shortcuts']['create'] . "', function(){
-                location.href = 'app/controllers/ExperimentsController.php?experimentsCreate=true'
+                location.href = 'app/controllers/ExperimentsController.php?create=true'
                 });";
         } else {
             $shortcut = '';

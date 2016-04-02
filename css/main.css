@@ -306,6 +306,7 @@ menu ul li.selected {
 /* LOGIN.PHP */
 .block {
     display:block;
+    margin: 5px 0 0;
 }
 
 .center input, .center select {

@@ -195,7 +195,7 @@ class Experiments extends Entity
         $req->bindParam(':id', $this->id);
 
         // add a revision
-        $revisions = new Revisions($this->id, 'experiments');
+        $revisions = new Revisions('experiments', $this->id);
         if (!$revisions->create($body, $this->userid)) {
             throw new Exception(_('Error inserting revision.'));
         }

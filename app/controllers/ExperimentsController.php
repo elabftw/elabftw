@@ -42,7 +42,7 @@ try {
         )) {
             header("location: ../../experiments.php?mode=view&id=" . $_POST['experimentsId']);
         } else {
-            printf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+            throw new Exception('Error updating experiment');
         }
     }
 
@@ -103,4 +103,5 @@ try {
 } catch (Exception $e) {
     dblog('Error', $_SESSION['userid'], $e->getMessage());
     $_SESSION['ko'][] = Tools::error();
+    header('Location: ../../experiments.php');
 }

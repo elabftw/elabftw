@@ -42,7 +42,7 @@ function addDateOnCursor() {
 // notifications
 function notif(text, cssClass) {
     var htmlText = '<p>' + text + '</p>';
-    if (cssClass == 'ok') {
+    if (cssClass === 'ok') {
         overlayClass = 'overlay-ok';
     } else {
         overlayClass = 'overlay-ko';
@@ -70,7 +70,7 @@ function removeNotif() {
 /* parse the $_GET from the url */
 function getGetParameters() {
     var prmstr = window.location.search.substr(1);
-    return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
+    return prmstr !== null && prmstr !== "" ? transformToAssocArray(prmstr) : {};
 }
 
 /* put the $_GET in array */
@@ -103,8 +103,8 @@ function showMol(molFileContent) {
     // the first parameter is a random id
     // otherwise several .mol files will clash
     var viewer = new ChemDoodle.ViewerCanvas(Math.random(), 100, 100);
-    viewer.specs.bonds_width_2D = .6;
-    viewer.specs.bonds_saturationWidth_2D = .18;
+    viewer.specs.bonds_width_2D = 0.6;
+    viewer.specs.bonds_saturationWidth_2D = 0.18;
     viewer.specs.bonds_hashSpacing_2D = 2.5;
     viewer.specs.atoms_font_size_2D = 10;
     viewer.specs.atoms_font_families_2D = ['Helvetica', 'Arial', 'sans-serif'];
@@ -115,7 +115,7 @@ function showMol(molFileContent) {
 
 // go to url
 function go_url(x) {
-    if (x == '') {
+    if (x === '') {
         return;
     }
     window.location = x;
@@ -125,14 +125,14 @@ function go_url(x) {
 // ===============
 
 // VISIBILITY
-function experimentsUpdateVisibility(item, visibility) {
+function updateVisibility(item, visibility) {
     $.post("app/controllers/ExperimentsController.php", {
-        experimentsUpdateVisibility: true,
-        experimentsId: item,
-        experimentsUpdateVisibilityVisibility : visibility
+        updateVisibility: true,
+        id: item,
+        visibility: visibility
     }).done(function(data) {
         if (data === '0') {
-            notif('There was an error!');
+            notif('There was an error!', 'ko');
         } else {
             notif('Visibility updated', 'ok');
         }
@@ -140,11 +140,11 @@ function experimentsUpdateVisibility(item, visibility) {
 }
 
 // STATUS
-function experimentsUpdateStatus(item, status) {
+function updateStatus(item, status) {
     $.post("app/controllers/ExperimentsController.php", {
-        experimentsUpdateStatus: true,
-        experimentsId: item,
-        experimentsUpdateStatusStatus : status
+        updateStatus: true,
+        id: item,
+        status : status
     }).done(function(data) {
         if (data === '0') {
             notif('There was an error!');
@@ -201,12 +201,12 @@ function experimentsCreateLink(e, item) { // the argument here is the event (nee
         if (link.length > 0) {
             // parseint will get the id, and not the rest (in case there is number in title)
             link = parseInt(link, 10);
-            if (isNaN(link) != true) {
+            if (isNaN(link) !== true) {
                 // POST request
                 $.post('app/controllers/ExperimentsController.php', {
-                    experimentsCreateLink: true,
-                    experimentsId: item,
-                    experimentsCreateLinkId: link
+                    createLink: true,
+                    id: item,
+                    linkId: link
                 })
                 // reload the link list
                 .done(function () {
@@ -214,7 +214,7 @@ function experimentsCreateLink(e, item) { // the argument here is the event (nee
                     // clear input field
                     $("#linkinput").val("");
                     return false;
-                })
+                });
             } // end if input is bad
         } // end if input < 0
     } // end if key is enter
@@ -225,9 +225,9 @@ function experimentsDestroyLink(link, item, confirmText) {
     var youSure = confirm(confirmText);
     if (youSure === true) {
         $.post('app/controllers/ExperimentsController.php', {
-            experimentsDestroyLink: true,
-            experimentsId: item,
-            experimentsDestroyLinkId: link
+            destroyLink: true,
+            id: item,
+            linkId: link
         }).done(function (data) {
             if (data === '1') {
                 notif('Link removed', 'ok');
@@ -235,7 +235,7 @@ function experimentsDestroyLink(link, item, confirmText) {
             } else {
                 notif('Something went wrong! :(', 'ko');
             }
-        })
+        });
     }
     return false;
 }
@@ -296,8 +296,8 @@ function experimentsDestroy(id, confirmText) {
     var you_sure = confirm(confirmText);
     if (you_sure === true) {
         $.post('app/controllers/ExperimentsController.php', {
-            experimentsDestroy: true,
-            experimentsId: id
+            destroy: true,
+            id: id
         }).done(function(data) {
              if (data == 1) {
                  notif('Experiment deleted', 'ok');
@@ -519,8 +519,8 @@ function teamsDestroy(id) {
 }
 
 function teamsUpdateButtonEnable(id) {
-    button = document.getElementById('teamsUpdateButton_' + id).disabled = false
-};
+    button = document.getElementById('teamsUpdateButton_' + id).disabled = false;
+}
 
 function teamsArchive(id) {
     // disable button on click
@@ -628,7 +628,7 @@ function updateRating(rating, id) {
     $.post('app/star-rating.php', {
         star: rating,
         item_id: id
-    })
+    });
 }
 
 // SEARCH PAGE
@@ -636,7 +636,7 @@ function insertParamAndReload(key, value) {
     key = escape(key); value = escape(value);
 
     var kvp = document.location.search.substr(1).split('&');
-    if (kvp == '') {
+    if (kvp === '') {
         document.location.search = '?' + key + '=' + value;
     } else {
 
@@ -675,7 +675,7 @@ function exportTpl(name, id) {
     // we have the name of the template used for filename
     // and we have the id of the editor to get the content from
     // we don't use activeEditor because it requires a click inside the editing area
-    var content = tinyMCE.get(id).getContent()
+    var content = tinyMCE.get(id).getContent();
     var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
     saveAs(blob, name + ".elabftw.tpl");
 }

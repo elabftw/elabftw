@@ -147,7 +147,7 @@ class ExperimentsView extends EntityView
         if ($count === 0 && $this->searchType != '') {
             return display_message('ko_nocross', _("Sorry. I couldn't find anything :("));
         } elseif ($count === 0 && $this->searchType === '') {
-            return display_message('ok_nocross', sprintf(_("Welcome to eLabFTW. %sClick here%s to create your first experiment."), "<a href='app/controllers/ExperimentsController.php?experimentsCreate=true'>", "</a>"));
+            return display_message('ok_nocross', sprintf(_("Welcome to eLabFTW. %sClick here%s to create your first experiment."), "<a href='app/controllers/ExperimentsController.php?create=true'>", "</a>"));
         } else {
             $html .= $this->buildExportMenu($idArr, 'experiments');
 
@@ -227,8 +227,8 @@ class ExperimentsView extends EntityView
 
         $html .=  displayTags('experiments', $this->Experiments->id);
         $html .= "<form method='post' action='app/controllers/ExperimentsController.php' enctype='multipart/form-data'>";
-        $html .= "<input name='experimentsUpdate' type='hidden' value='true' />";
-        $html .= "<input name='experimentsId' type='hidden' value='" . $this->Experiments->id . "' />";
+        $html .= "<input name='update' type='hidden' value='true' />";
+        $html .= "<input name='id' type='hidden' value='" . $this->Experiments->id . "' />";
 
         // DATE
         $html .= "<div class='row'><div class='col-md-4'>";
@@ -236,14 +236,14 @@ class ExperimentsView extends EntityView
         $html .= "<label for='datepicker'>" . _('Date') . "</label>";
         // TODO if firefox has support for it: type = date
         // https://bugzilla.mozilla.org/show_bug.cgi?id=825294
-        $html .= "<input name='experimentsUpdateDate' id='datepicker' size='8' type='text' value='" . $this->experiment['date'] . "' />";
+        $html .= "<input name='date' id='datepicker' size='8' type='text' value='" . $this->experiment['date'] . "' />";
         $html .= "</div>";
 
         // VISIBILITY
         $html .= "<div class='col-md-4'>";
         $html .= "<img src='img/eye.png' class='bot5px' alt='visibility' />";
         $html .= "<label for='visibility_select'>" . _('Visibility') . "</label>";
-        $html .= "<select id='visibility_select' onchange='experimentsUpdateVisibility(" . $this->Experiments->id . ", this.value)'>";
+        $html .= "<select id='visibility_select' onchange='updateVisibility(" . $this->Experiments->id . ", this.value)'>";
         $html .= "<option value='organization' ";
         if ($this->experiment['visibility'] === 'organization') {
             $html .= "selected";
@@ -275,7 +275,7 @@ class ExperimentsView extends EntityView
         $html .= "<div class='col-md-4'>";
         $html .= "<img src='img/status.png' class='bot5px' alt='status' />";
         $html .= "<label for='status_select'>" . ngettext('Status', 'Status', 1) . "</label>";
-        $html .= "<select id='status_select' name='status' onchange='experimentsUpdateStatus(" . $this->Experiments->id . ", this.value)'>";
+        $html .= "<select id='status_select' name='status' onchange='updateStatus(" . $this->Experiments->id . ", this.value)'>";
 
         $Status = new Status();
         $statusArr = $Status->read($_SESSION['team_id']);
@@ -291,11 +291,11 @@ class ExperimentsView extends EntityView
 
         // TITLE
         $html .= "<h4>" . _('Title') . "</h4>";
-        $html .= "<input id='title_input' name='experimentsUpdateTitle' rows='1' value='" . stripslashes($this->experiment['title']) . "' required />";
+        $html .= "<input id='title_input' name='title' rows='1' value='" . stripslashes($this->experiment['title']) . "' required />";
 
         // BODY
         $html .= "<h4>". ngettext('Experiment', 'Experiments', 1) . "</h4>";
-        $html .= "<textarea id='body_area' class='mceditable' name='experimentsUpdateBody' rows='15' cols='80'>";
+        $html .= "<textarea id='body_area' class='mceditable' name='body' rows='15' cols='80'>";
         $html .= stripslashes($this->experiment['body']) . "</textarea>";
 
         $html .= "<div id='saveButton'>
@@ -427,7 +427,7 @@ class ExperimentsView extends EntityView
         $html .=  "<div><img src='img/calendar.png' class='bot5px' title='date' alt='Date :' /> " .
             Tools::formatDate($this->experiment['date']) . "</div>
         <a href='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a>
-    <a href='app/controllers/ExperimentsController.php?experimentsDuplicateId=" . $this->experiment['id'] . "'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a>
+    <a href='app/controllers/ExperimentsController.php?duplicateId=" . $this->experiment['id'] . "'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a>
     <a href='make.php?what=pdf&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a>
     <a href='make.php?what=zip&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a> ";
 
@@ -496,7 +496,7 @@ class ExperimentsView extends EntityView
     // READY ? GO !!
     $(document).ready(function() {
         // KEYBOARD SHORTCUTS
-        key('" . $_SESSION['prefs']['shortcuts']['create'] . "', function(){location.href = 'app/controllers/ExperimentsController?experimentsCreate=true'});
+        key('" . $_SESSION['prefs']['shortcuts']['create'] . "', function(){location.href = 'app/controllers/ExperimentsController?create=true'});
         key('" . $_SESSION['prefs']['shortcuts']['submit'] . "', function(){document.forms['editXP'].submit()});
 
         // autocomplete the tags
@@ -657,7 +657,7 @@ class ExperimentsView extends EntityView
 
                 // Keyboard shortcuts
                 key('" . $_SESSION['prefs']['shortcuts']['create'] .
-                    "', function(){location.href = 'app/controllers/ExperimentsController?experimentsCreate=true'});
+                    "', function(){location.href = 'app/controllers/ExperimentsController?create=true'});
                 key('" . $_SESSION['prefs']['shortcuts']['edit'] .
                     "', function(){location.href = 'experiments.php?mode=edit&id=" . $this->Experiments->id . "'});
                 // make editable

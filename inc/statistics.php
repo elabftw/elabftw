@@ -7,19 +7,20 @@
  * @see http://www.elabftw.net Official website
  * @license AGPL-3.0
  */
+namespace Elabftw\Elabftw;
+
+use PDO;
 
 // Count number of experiments for each status
 // get all status name and id
-$sql = "SELECT * FROM status WHERE team = :team";
-$req = $pdo->prepare($sql);
-$req->bindParam(':team', $_SESSION['team_id']);
-$req->execute();
+$Status = new Status();
+$statusArr = $Status->read($_SESSION['team_id']);
 
 $status_arr = array();
 $status_colors = array();
 $count_arr = array();
 
-while ($status = $req->fetch()) {
+foreach ($statusArr as $status) {
     $status_arr[$status['id']] = $status['name'];
     $status_colors[] = $status['color'];
 }
@@ -36,24 +37,17 @@ foreach ($status_arr as $key => $value) {
     $count_arr[$key] = $req->fetchColumn();
 }
 
-// MAKE TOTAL
-$sql = "SELECT COUNT(*) FROM experiments WHERE userid = :userid";
-$req = $pdo->prepare($sql);
-$req->bindParam(':userid', $_SESSION['userid']);
-$req->execute();
-$total = $req->fetchColumn();
-
 $percent_arr = array();
 
 // BEGIN PAGE
 echo "<section class='box'>";
 
 // Make percentage
-if ($total == 0) {
+if ($count === 0) {
     echo _('No statistics available yet.'); // fix division by zero
 } else {
     foreach ($status_arr as $key => $value) {
-        $percent_arr[$value] = round(($count_arr[$key] / $total) * 100);
+        $percent_arr[$value] = round(($count_arr[$key] / $count) * 100);
     }
 
     // BEGIN CONTENT
@@ -69,30 +63,31 @@ if ($total == 0) {
             data.addColumn('string', 'status');
             data.addColumn('number', 'Experiments number');
             data.addRows([
-            <?php
-                foreach ($percent_arr as $name => $percent) {
-                    // as we replace all the quotes (ENT_QUOTES), we need to translate ' to \'
-                    // otherwise the js code is broken
-                    $name = str_replace("'", "\'", html_entity_decode($name, ENT_QUOTES));
-                    echo "['$name', $percent],";
-                }
-            ?>
-                          ]);
+    <?php
+    foreach ($percent_arr as $name => $percent) {
+        // as we replace all the quotes (ENT_QUOTES), we need to translate ' to \'
+        // otherwise the js code is broken
+        $name = str_replace("'", "\'", html_entity_decode($name, ENT_QUOTES));
+        echo "['$name', $percent],";
+    }
+    ?>
+            ]);
 
             var options = {
                 title: '<?php echo _('Experiments for') . ' ' . $_SESSION['username']; ?>',
                 backgroundColor: '#fff',
                 colors: [
-                <?php
-                // string that will hold the list of colors correctly formatted
-                $color_list = "";
-                foreach ($status_colors as $color) {
-                    $color_list .= "'#" . $color . "',";
-                }
-                // remove last ,
-                $color_list = rtrim($color_list, ",");
-                echo $color_list; ?>]
-            }
+    <?php
+    // string that will hold the list of colors correctly formatted
+    $color_list = "";
+    foreach ($status_colors as $color) {
+        $color_list .= "'#" . $color . "',";
+    }
+    // remove last ,
+    $color_list = rtrim($color_list, ",");
+    echo $color_list;
+    ?>
+            ]};
             var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
             chart.draw(data, options);
           }

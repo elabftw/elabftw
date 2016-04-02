@@ -25,6 +25,7 @@ require_once 'inc/head.php';
 try {
     $Experiments = new Experiments($_SESSION['userid']);
     $expArr = $Experiments->readAll();
+    $count = count($expArr);
 
     $Users = new Users();
     $user = $Users->read($_SESSION['userid']);
@@ -33,7 +34,7 @@ try {
     echo "<img src='img/user.png' alt='user' class='bot5px' /> <h4 style='display:inline'>" . _('Infos') . "</h4>";
     echo "<div class='center'>
         <p>".$user['firstname'] . " " . $user['lastname'] . " (" . $user['email'] . ")</p>
-        <p>". count($expArr) . " " . _('experiments done since') . " " . date("l jS \of F Y", $user['register_date'])
+        <p>". $count . " " . _('experiments done since') . " " . date("l jS \of F Y", $user['register_date'])
         ."<p><a href='ucp.php'>" . _('Go to user control panel') . "</a>";
     echo "</div>";
     echo "</section>";

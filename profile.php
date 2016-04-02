@@ -8,6 +8,10 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+namespace Elabftw\Elabftw;
+
+use Exception;
+use PDO;
 
 /**
  * Display profile of current user
@@ -18,29 +22,26 @@ $page_title = _('Profile');
 $selected_menu = null;
 require_once 'inc/head.php';
 
-// SQL to get number of experiments
-$sql = "SELECT COUNT(*) FROM experiments WHERE userid = :userid";
-$req = $pdo->prepare($sql);
-$req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
-$req->execute();
+try {
+    $Experiments = new Experiments($_SESSION['userid']);
+    $expArr = $Experiments->readAll();
 
-$count = $req->fetch();
+    $Users = new Users();
+    $user = $Users->read($_SESSION['userid']);
 
-// SQL for profile
-$sql = "SELECT * FROM users WHERE userid = :userid";
-$req = $pdo->prepare($sql);
-$req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
-$req->execute();
-$data = $req->fetch();
+    echo "<section class='box'>";
+    echo "<img src='img/user.png' alt='user' class='bot5px' /> <h4 style='display:inline'>" . _('Infos') . "</h4>";
+    echo "<div class='center'>
+        <p>".$user['firstname'] . " " . $user['lastname'] . " (" . $user['email'] . ")</p>
+        <p>". count($expArr) . " " . _('experiments done since') . " " . date("l jS \of F Y", $user['register_date'])
+        ."<p><a href='ucp.php'>" . _('Go to user control panel') . "</a>";
+    echo "</div>";
+    echo "</section>";
+    require_once 'inc/statistics.php';
+    require_once 'inc/tagcloud.php';
 
-echo "<section class='box'>";
-echo "<img src='img/user.png' alt='user' class='bot5px' /> <h4 style='display:inline'>" . _('Infos') . "</h4>";
-echo "<div class='center'>
-    <p>".$data['firstname'] . " " . $data['lastname'] . " (" . $data['email'] . ")</p>
-    <p>".$count[0] . " " . _('experiments done since') . " " . date("l jS \of F Y", $data['register_date'])
-    ."<p><a href='ucp.php'>" . _('Go to user control panel') . "</a>";
-echo "</div>";
-echo "</section>";
-require_once 'inc/statistics.php';
-require_once 'inc/tagcloud.php';
-require_once 'inc/footer.php';
+} catch (Exception $e) {
+    dblog('Error', $_SESSION['userid'], $e->getMessage());
+} finally {
+    require_once 'inc/footer.php';
+}

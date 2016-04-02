@@ -137,7 +137,7 @@ class Experiments extends Entity
             " . $this->queryFilter . "
             ORDER BY " . $this->order . " " . $this->sort;
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchAll();

@@ -30,8 +30,7 @@ try {
 
     $formKey = new FormKey();
     $crypto = new CryptoWrapper();
-    $teamsView = new TeamsView();
-    $sysconfigView = new SysconfigView(new Update(), new Logs());
+    $SysconfigView = new SysconfigView(new Update(), new Logs(), new TeamsView());
 
     $stamppass = get_config('stamppass');
     $smtppass = get_config('smtp_password');
@@ -46,23 +45,23 @@ try {
     try {
         // we put another try here because an exception here would end the page
         // and not getting the latest version is not a big deal
-        $sysconfigView->update->getUpdatesIni();
+        $SysconfigView->Update->getUpdatesIni();
     } catch (Exception $e) {
         display_message('ko_nocross', $e->getMessage());
     }
 
-    if ($sysconfigView->update->success === true) {
+    if ($SysconfigView->Update->success === true) {
         // display current and latest version
-        echo "<br><p>" . _('Installed version:') . " " . $sysconfigView->update::INSTALLED_VERSION . " ";
+        echo "<br><p>" . _('Installed version:') . " " . $SysconfigView->Update::INSTALLED_VERSION . " ";
         // show a little green check if we have latest version
-        if (!$sysconfigView->update->updateIsAvailable()) {
+        if (!$SysconfigView->Update->updateIsAvailable()) {
             echo "<img src='img/check.png' width='16px' length='16px' title='latest' style='position:relative;bottom:8px' alt='OK' />";
         }
         // display latest version
-        echo "<br>" . _('Latest version:') . " " . $sysconfigView->update->getLatestVersion() . "</p>";
+        echo "<br>" . _('Latest version:') . " " . $SysconfigView->Update->getLatestVersion() . "</p>";
 
         // if we don't have the latest version, show button redirecting to wiki
-        if ($sysconfigView->update->updateIsAvailable()) {
+        if ($SysconfigView->Update->updateIsAvailable()) {
             $message = _('A new version is available!') . " <a href='doc/_build/html/how-to-update.html'>
                 <button class='button'>Update elabftw</button></a>";
             display_message('warning', $message);
@@ -90,9 +89,9 @@ try {
     <div class='divhandle' id='tab1div'>
     <div id='teamsDiv'>
         <?php
-        echo $teamsView->showStats();
-        echo $teamsView->showCreate();
-        echo $teamsView->show();
+        echo $SysconfigView->TeamsView->showStats();
+        echo $SysconfigView->TeamsView->showCreate();
+        echo $SysconfigView->TeamsView->show();
         ?>
     </div>
     </div>
@@ -292,13 +291,13 @@ try {
         </div>
 
         <!-- TEST EMAIL -->
-        <?php echo $sysconfigView->testemailShow(); ?>
+        <?php echo $SysconfigView->testemailShow(); ?>
 
     </div>
 
     <!-- TAB 6 LOGS -->
     <div class='divhandle' id='tab6div'>
-        <?php echo $sysconfigView->logsShow(); ?>
+        <?php echo $SysconfigView->logsShow(); ?>
     </div>
 
     <script>

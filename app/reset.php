@@ -23,10 +23,16 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
+namespace Elabftw\Elabftw;
+
+use Swift_Message;
+use Exception;
+use PDO;
+
 require_once '../inc/common.php';
 
-$users = new \Elabftw\Elabftw\Users();
-$crypto = new \Elabftw\Elabftw\CryptoWrapper();
+$users = new Users();
+$crypto = new CryptoWrapper();
 
 $errflag = false;
 

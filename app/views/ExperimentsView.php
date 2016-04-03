@@ -10,8 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
-use \Exception;
-use \Datetime;
+use Exception;
+use Datetime;
 
 /**
  * Experiments View
@@ -27,8 +27,8 @@ class ExperimentsView extends EntityView
     /** Read only switch */
     private $ro = false;
 
-    /** the Uploads object */
-    private $uploads;
+    /** the UploadsView object */
+    private $UploadsView;
 
     /** instance of TeamGroups */
     private $teamGroups;
@@ -62,7 +62,7 @@ class ExperimentsView extends EntityView
     {
         // get data of experiment
         $this->experiment = $this->Experiments->read();
-        $this->uploads = new Uploads('experiments', $this->experiment['id']);
+        $this->UploadsView = new UploadsView(new Uploads('experiments', $this->experiment['id']));
 
         $html = '';
 
@@ -73,7 +73,7 @@ class ExperimentsView extends EntityView
         }
 
         $html .= $this->buildView();
-        $html .= $this->uploads->buildUploads('view');
+        $html .= $this->UploadsView->buildUploads('view');
         $html .= $this->buildComments();
         $html .= $this->buildCommentsCreate();
         $html .= $this->buildViewJs();
@@ -89,7 +89,7 @@ class ExperimentsView extends EntityView
     {
         // get data of experiment
         $this->experiment = $this->Experiments->read();
-        $this->uploads = new Uploads('experiments', $this->experiment['id']);
+        $this->UploadsView = new UploadsView(new Uploads('experiments', $this->experiment['id']));
 
         // only owner can edit an experiment
         if (!$this->isOwner()) {
@@ -101,8 +101,8 @@ class ExperimentsView extends EntityView
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
         $html = $this->buildEdit();
-        $html .= $this->uploads->buildUploadForm();
-        $html .= $this->uploads->buildUploads('edit');
+        $html .= $this->UploadsView->buildUploadForm();
+        $html .= $this->UploadsView->buildUploads('edit');
         $html .= $this->buildEditJs();
 
         return $html;
@@ -405,14 +405,14 @@ class ExperimentsView extends EntityView
         $Users = new Users();
         $timestamper = $Users->read($this->experiment['timestampedby']);
 
-        $this->uploads->type = 'exp-pdf-timestamp';
-        $pdf = $this->uploads->readAll();
+        $this->UploadsView->Uploads->type = 'exp-pdf-timestamp';
+        $pdf = $this->UploadsView->Uploads->readAll();
 
-        $this->uploads->type = 'timestamp-token';
-        $token = $this->uploads->readAll();
+        $this->UploadsView->Uploads->type = 'timestamp-token';
+        $token = $this->UploadView->Uploads->readAll();
 
         // set the type back to the correct one
-        $this->uploads->type = 'experiments';
+        $this->UploadsView->Uploads->type = 'experiments';
 
         $date = new DateTime($this->experiment['timestampedwhen']);
 

@@ -35,8 +35,8 @@ try {
 
     // UPLOAD
     if (isset($_POST['upload'])) {
-        $Upload = new Upload($_POST['type'], $_POST['item_id']);
-        $Upload->uploadFile($_FILES);
+        $Upload = new Uploads($_POST['type'], $_POST['item_id']);
+        $Upload->create($_FILES);
     }
 } catch (Exception $e) {
     echo $e->getMessage();

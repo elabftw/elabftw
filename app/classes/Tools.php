@@ -269,4 +269,52 @@ class Tools
             "</a>"
         );
     }
+
+    /**
+     * Return a value for the signification of FTW
+     *
+     * @return string
+     */
+    public static function getFtw()
+    {
+        $ftwArr = array();
+        // Lots of 'For The World' so the other ones appear more rarely
+        for ($i = 0; $i < 200; $i++) {
+            $ftwArr[] = 'For The World';
+        }
+        // Now the fun ones
+        $ftwArr[] = 'For Those Wondering';
+        $ftwArr[] = 'For The Worms';
+        $ftwArr[] = 'Forever Two Wheels';
+        $ftwArr[] = 'Free The Wookies';
+        $ftwArr[] = 'Forward The Word';
+        $ftwArr[] = 'Forever Together Whenever';
+        $ftwArr[] = 'Face The World';
+        $ftwArr[] = 'Forget The World';
+        $ftwArr[] = 'Free To Watch';
+        $ftwArr[] = 'Feed The World';
+        $ftwArr[] = 'Feel The Wind';
+        $ftwArr[] = 'Feel The Wrath';
+        $ftwArr[] = 'Fight To Win';
+        $ftwArr[] = 'Find The Waldo';
+        $ftwArr[] = 'Finding The Way';
+        $ftwArr[] = 'Flying Training Wing';
+        $ftwArr[] = 'Follow The Way';
+        $ftwArr[] = 'For The Wii';
+        $ftwArr[] = 'For The Win';
+        $ftwArr[] = 'For The Wolf';
+        $ftwArr[] = 'Free The Weed';
+        $ftwArr[] = 'Free The Whales';
+        $ftwArr[] = 'From The Wilderness';
+        $ftwArr[] = 'Freedom To Work';
+        $ftwArr[] = 'For The Warriors';
+        $ftwArr[] = 'Full Time Workers';
+        $ftwArr[] = 'Fabricated To Win';
+        $ftwArr[] = 'Furiously Taunted Wookies';
+        $ftwArr[] = 'Flash The Watch';
+
+        shuffle($ftwArr);
+
+        return $ftwArr[0];
+    }
 }

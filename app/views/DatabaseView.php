@@ -161,7 +161,7 @@ class DatabaseView extends EntityView
         // DATE
         $html .= "<span class='date'><img class='image' src='img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
         // TAGS
-        $html .= $this->showTags('items', $item['itemid']);
+        $html .= $this->showTags('items', 'view', $item['itemid']);
 
         $html .= "</section>";
 
@@ -194,7 +194,7 @@ class DatabaseView extends EntityView
             $html .= "<a href='app/lock.php?id=" . $itemArr['itemid'] . "&type=database'><img src='img/lock-gray.png' title='unlock item' alt='unlock' /></a>";
         }
         // TAGS
-        $html .= " " . $this->showTags('items', $this->Database->id);
+        $html .= " " . $this->showTags('items', 'view', $this->Database->id);
 
         // TITLE : click on it to go to edit mode
         $html .= "<div ";
@@ -253,7 +253,7 @@ class DatabaseView extends EntityView
         $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"databaseDestroy(" . $this->Database->id . ", '" . _('Delete this?') . "')\" />";
 
         // tags
-        $html .= displayTags('items', $this->Database->id);
+        $html .= $this->showTags('items', 'edit', $this->Database->id);
 
         // main form
         $html .= "<form method='post' action='app/controllers/DatabaseController.php' enctype='multipart/form-data'>";

@@ -415,6 +415,12 @@ class Experiments extends Entity
         return true;
     }
 
+    /**
+     * Lock/unlock
+     *
+     * @throws Exception
+     * @return bool
+     */
     public function toggleLock()
     {
         // Is the user in a group with can_lock set to 1 ?

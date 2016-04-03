@@ -344,29 +344,6 @@ function get_total_time()
 }
 
 /**
- * Display the tags
- *
- * @return string HTML
- */
-function displayTags($type, $id)
-{
-    global $pdo;
-    $sql = "SELECT id, tag FROM " . $type . "_tags WHERE item_id = :item_id";
-    $tagreq = $pdo->prepare($sql);
-    $tagreq->bindParam(':item_id', $id);
-    $tagreq->execute();
-
-    $html = "<img src='img/tags.png' class='bot5px' alt='tags' /><label for='addtaginput'>" . _('Tags') . "</label>";
-    $html .= "<div class='tags'><span id='tags_div'>";
-    while ($tags = $tagreq->fetch()) {
-        $html .= "<span class='tag'><a onclick='delete_tag(" . $tags['id'] . "," . $id . ")'>" . stripslashes($tags['tag']) . "</a></span>";
-    }
-    $html .= "</span><input type='text' id='createTagInput' placeholder='" . _('Add a tag') . "' /></div>";
-
-    return $html;
-}
-
-/**
  * Inject the script/css for chemdoodle
  *
  * @return string|null

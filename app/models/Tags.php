@@ -79,7 +79,7 @@ class Tags extends Entity
      */
     public function read()
     {
-        $sql = "SELECT tag FROM " . $this->type . "_tags WHERE item_id = :item_id";
+        $sql = "SELECT * FROM " . $this->type . "_tags WHERE item_id = :item_id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':item_id', $this->id);
         $req->execute();

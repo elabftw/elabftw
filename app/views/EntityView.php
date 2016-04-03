@@ -244,17 +244,23 @@ class EntityView
      * Display the tags
      *
      * @param string $type experiments or items
+     * @param string $mode edit or view
      * @param int $item_id The ID of the item for which we want the tags
      * @return null|false Will show the HTML for tags or false if there is no tags
      */
-    protected function showTags($type, $item_id)
+    protected function showTags($type, $mode, $item_id)
     {
         $Tags = new Tags($type, $item_id);
         $tagList = $Tags->read();
 
         $html = '';
 
-        if (count($tagList) > 0) {
+        if (count($tagList) === 0) {
+            return $html;
+        }
+
+        if ($mode === 'view') {
+
             $html = "<span class='tags'><img src='img/tags.png' alt='tags' /> ";
             foreach ($tagList as $tag) {
                 if ($type === 'experiments') {
@@ -264,7 +270,19 @@ class EntityView
                 }
             }
             $html .= "</span>";
+
+            return $html;
         }
+
+
+        $html = "<img src='img/tags.png' class='bot5px' alt='tags' /><label for='addtaginput'>" . _('Tags') . "</label>";
+        $html .= "<div class='tags'><span id='tags_div'>";
+
+        foreach ($tagList as $tag) {
+            $html .= "<span class='tag'><a onclick='delete_tag(" . $tag['id'] . "," . $item_id . ")'>" . stripslashes($tag['tag']) . "</a></span>";
+        }
+        $html .= "</span><input type='text' id='createTagInput' placeholder='" . _('Add a tag') . "' /></div>";
+
         return $html;
     }
 }

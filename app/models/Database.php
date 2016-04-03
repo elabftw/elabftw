@@ -268,6 +268,7 @@ class Database extends Entity
     /**
      * Lock or unlock an item
      *
+     * @throws Exception
      * @return bool
      */
     public function toggleLock()
@@ -288,6 +289,7 @@ class Database extends Entity
             $locked = 1;
         }
 
+        // toggle
         $sql = "UPDATE items SET locked = :locked WHERE id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindValue(':locked', $locked);

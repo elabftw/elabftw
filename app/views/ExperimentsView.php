@@ -209,7 +209,7 @@ class ExperimentsView extends EntityView
         // DATE
         $html .= "<span class='date'><img class='image' src='img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
         // TAGS
-        $html .= $this->showTags('experiments', $item['id']);
+        $html .= $this->showTags('experiments', 'view', $item['id']);
 
         $html .= "</section>";
 
@@ -231,7 +231,10 @@ class ExperimentsView extends EntityView
         $html .= "<section class='box' id='main_section' style='border-left: 6px solid #" . $this->experiment['color'] . "'>";
         $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"experimentsDestroy(" . $this->Experiments->id . ", '" . _('Delete this?') . "')\" />";
 
-        $html .=  displayTags('experiments', $this->Experiments->id);
+        // tags
+        $html .= $this->showTags('experiments', 'edit', $this->Experiments->id);
+
+        // main form
         $html .= "<form method='post' action='app/controllers/ExperimentsController.php' enctype='multipart/form-data'>";
         $html .= "<input name='update' type='hidden' value='true' />";
         $html .= "<input name='id' type='hidden' value='" . $this->Experiments->id . "' />";
@@ -453,7 +456,7 @@ class ExperimentsView extends EntityView
             }
         }
 
-        $html .= $this->showTags('experiments', $this->Experiments->id);
+        $html .= $this->showTags('experiments', 'view', $this->Experiments->id);
         // TITLE : click on it to go to edit mode only if we are not in read only mode
         $html .=  "<div ";
         if (!$this->ro && !$this->experiment['locked']) {

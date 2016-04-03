@@ -33,10 +33,19 @@ try {
         $Tags->create($_POST['createTagTag']);
     }
 
-    // UPLOAD
+    // CREATE UPLOAD
     if (isset($_POST['upload'])) {
         $Upload = new Uploads($_POST['type'], $_POST['item_id']);
         $Upload->create($_FILES);
+    }
+    // DESTROY UPLOAD
+    if (isset($_POST['uploadsDestroy'])) {
+        $Uploads = new Uploads($_POST['type'], $_POST['item_id'], $_POST['id']);
+        if ($Uploads->destroy()) {
+            echo '1';
+        } else {
+            echo '0';
+        }
     }
 } catch (Exception $e) {
     echo $e->getMessage();

@@ -10,8 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
-use \Exception;
+use PDO;
+use Exception;
 
 /**
  * All about the file uploads
@@ -28,7 +28,7 @@ class Uploads extends Entity
     public $itemId;
 
     /** what algo for hashing */
-    protected $hashAlgorithm = 'sha256';
+    private $hashAlgorithm = 'sha256';
 
     /**
      * Constructor
@@ -52,7 +52,7 @@ class Uploads extends Entity
      * Main method for normal file upload
      *
      * @param string|array $file Either pass it the $_FILES array or the string of the local file path
-     *
+     * @return bool
      */
     public function create($file)
     {
@@ -70,13 +70,14 @@ class Uploads extends Entity
         $this->moveFile($file['file']['tmp_name'], $fullPath);
 
         // final sql
-        $this->dbInsert($realName, $longName, $this->getHash($fullPath));
+        return $this->dbInsert($realName, $longName, $this->getHash($fullPath));
     }
 
     /**
      * Called from ImportZip class
      *
      * @param string $file The string of the local file path stored in .elabftw.json of the zip archive
+     * @return bool
      */
     public function createFromLocalFile($file)
     {
@@ -90,7 +91,7 @@ class Uploads extends Entity
 
         $this->moveFile($file, $fullPath);
 
-        $this->dbInsert($realName, $longName, $this->getHash($fullPath));
+        return $this->dbInsert($realName, $longName, $this->getHash($fullPath));
     }
 
     /**
@@ -190,21 +191,18 @@ class Uploads extends Entity
         )";
 
         $req = $this->pdo->prepare($sql);
+        $req->bindParam(':real_name', $realName);
+        $req->bindParam(':long_name', $longName);
+        // comment can be edited after upload
+        // not i18n friendly because it is used somewhere else (not a valid reason, but for the moment that will do)
+        $req->bindValue(':comment', 'Click to add a comment');
+        $req->bindParam(':item_id', $this->itemId);
+        $req->bindParam(':userid', $_SESSION['userid']);
+        $req->bindParam(':type', $this->type);
+        $req->bindParam(':hash', $hash);
+        $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
 
-        if (!$req->execute(array(
-            'real_name' => $realName,
-            'long_name' => $longName,
-            // comment can be edited after upload
-            // not i18n friendly because it is used somewhere else (not a valid reason, but for the moment that will do)
-            'comment' => 'Click to add a comment',
-            'item_id' => $this->itemId,
-            'userid' => $_SESSION['userid'],
-            'type' => $this->type,
-            'hash' => $hash,
-            'hash_algorithm' => $this->hashAlgorithm
-        ))) {
-            throw new Exception('Cannot add to SQL database!');
-        }
+        return $req->execute();
     }
 
     /**

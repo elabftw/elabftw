@@ -621,7 +621,7 @@ function logsDestroy() {
 function uploadsDestroy(id, type, item_id, confirmText) {
     var youSure = confirm(confirmText);
     if (youSure === true) {
-        $.post('app/controllers/UploadsController.php', {
+        $.post('app/controllers/EntityController.php', {
             uploadsDestroy: true,
             id: id,
             item_id: item_id,

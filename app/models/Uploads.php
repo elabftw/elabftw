@@ -134,7 +134,7 @@ class Uploads extends Entity
 
         if ($this->type === 'experiments') {
             // Check file id is owned by connected user
-            if ($uploadArr['userid'] =! $_SESSION['userid']) {
+            if ($uploadArr['userid'] != $_SESSION['userid']) {
                 throw new Exception(_('This section is out of your reach!'));
             }
         } else {
@@ -356,7 +356,7 @@ class Uploads extends Entity
      *
      * @return bool
      */
-    public function destroyAllUploads()
+    public function destroyAll()
     {
         $uploadArr = $this->readAll();
         $resultsArr = array();

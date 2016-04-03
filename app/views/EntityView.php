@@ -249,8 +249,8 @@ class EntityView
      */
     protected function showTags($type, $item_id)
     {
-        $Tags = new Tags($type);
-        $tagList = $Tags->read($item_id);
+        $Tags = new Tags($type, $item_id);
+        $tagList = $Tags->read();
 
         $html = '';
 

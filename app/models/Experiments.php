@@ -313,8 +313,9 @@ class Experiments extends Entity
             'userid' => $_SESSION['userid']));
         $newId = $this->pdo->lastInsertId();
 
-        $tags = new Tags('experiments');
-        $tags->copyTags($this->id, $newId);
+        $tags = new Tags('experiments', $this->id);
+        $tags->copyTags($newId);
+
         $this->Links->duplicate($this->id, $newId);
 
         return $newId;
@@ -338,15 +339,15 @@ class Experiments extends Entity
         $req->bindParam(':id', $this->id);
         $req->execute();
 
-        $tags = new Tags('experiments');
-        $tags->destroy($this->id);
+        $tags = new Tags('experiments', $this->id);
+        $tags->destroyAll();
 
         $uploads = new Uploads('experiments', $this->id);
-        $uploads->destroyAllUploads();
+        $uploads->destroyAll();
 
-        $this->Links->destroyAllLinks();
+        $this->Links->destroyAll();
 
-        $this->Comments->destroyAllComments();
+        $this->Comments->destroyAll();
 
         return true;
     }

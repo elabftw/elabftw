@@ -476,7 +476,7 @@ class ExperimentsView extends EntityView
      */
     private function buildEditJs()
     {
-        $tags = new Tags('experiments');
+        $tags = new Tags('experiments', $this->Experiments->id);
 
         $html = "<script>
             function delete_tag(tag_id, item_id) {

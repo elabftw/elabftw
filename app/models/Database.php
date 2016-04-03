@@ -189,7 +189,7 @@ class Database extends Entity
     }
 
     /**
-     * Duplicate an item.
+     * Duplicate an item
      *
      * @return int $newId The id of the newly created item
      */
@@ -210,8 +210,8 @@ class Database extends Entity
         ));
         $newId = $this->pdo->lastInsertId();
 
-        $tags = new Tags('items');
-        $tags->copyTags($this->id, $newId);
+        $tags = new Tags('items', $this->id);
+        $tags->copyTags($newId);
 
         return $newId;
     }
@@ -226,7 +226,7 @@ class Database extends Entity
     {
         // we can only delete items from our team
         if (!$this->isInTeam()) {
-            throw new Exception("You don't have sufficient rights.");
+            throw new Exception(_('This section is out of your reach.'));
         }
 
         // to store the outcome of sql
@@ -238,11 +238,11 @@ class Database extends Entity
         $req->bindParam(':id', $this->id);
         $result[] = $req->execute();
 
-        $tags = new Tags('items');
-        $result[] = $tags->destroy($this->id);
+        $tags = new Tags('items', $this->id);
+        $result[] = $tags->destroyAll();
 
         $uploads = new Uploads('items', $this->id);
-        $result[] = $uploads->destroyAllUploads();
+        $result[] = $uploads->destroyAll();
 
         // delete links of this item in experiments with this item linked
         // get all experiments with that item linked

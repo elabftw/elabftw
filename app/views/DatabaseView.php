@@ -306,7 +306,7 @@ class DatabaseView extends EntityView
      */
     private function buildEditJs()
     {
-        $tags = new Tags('items');
+        $tags = new Tags('items', $this->Database->id);
 
         $html = "<script>
         // DELETE TAG

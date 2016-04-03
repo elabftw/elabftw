@@ -41,6 +41,7 @@ class Tags extends Entity
      * Create a tag
      *
      * @param string $tag
+     * @return bool
      */
     public function create($tag)
     {

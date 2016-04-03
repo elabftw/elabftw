@@ -264,4 +264,35 @@ class Database extends Entity
 
         return true;
     }
+
+    /**
+     * Lock or unlock an item
+     *
+     * @return bool
+     */
+    public function toggleLock()
+    {
+        if (!$this->isInTeam()) {
+            throw new Exception(_('This section is out of your reach.'));
+        }
+
+        // get what is the current state
+        $sql = "SELECT locked FROM items WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $this->id);
+        $req->execute();
+        $locked = (int) $req->fetchColumn();
+        if ($locked === 1) {
+            $locked = 0;
+        } else {
+            $locked = 1;
+        }
+
+        $sql = "UPDATE items SET locked = :locked WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindValue(':locked', $locked);
+        $req->bindParam(':id', $this->id);
+
+        return $req->execute();
+    }
 }

@@ -409,7 +409,7 @@ class ExperimentsView extends EntityView
         $pdf = $this->UploadsView->Uploads->readAll();
 
         $this->UploadsView->Uploads->type = 'timestamp-token';
-        $token = $this->UploadView->Uploads->readAll();
+        $token = $this->UploadsView->Uploads->readAll();
 
         // set the type back to the correct one
         $this->UploadsView->Uploads->type = 'experiments';

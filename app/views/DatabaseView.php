@@ -18,8 +18,8 @@ use \Datetime;
  */
 class DatabaseView extends EntityView
 {
-    /** the Uploads class */
-    private $Uploads;
+    /** the UploadsView class */
+    private $UploadsView;
 
     /** Revisions class */
     private $Revisions;
@@ -39,7 +39,7 @@ class DatabaseView extends EntityView
         $this->Database = $database;
         $this->limit = $_SESSION['prefs']['limit'];
 
-        $this->Uploads = new Uploads('items', $this->Database->id);
+        $this->UploadsView = new UploadsView(new Uploads('items', $this->Database->id));
         $this->Revisions = new Revisions('items', $this->Database->id);
     }
 
@@ -53,7 +53,7 @@ class DatabaseView extends EntityView
         $html = '';
 
         $html .= $this->buildView();
-        $html .= $this->Uploads->buildUploads('view');
+        $html .= $this->UploadsView->Uploads->buildUploads('view');
         $html .= $this->buildViewJs();
 
         return $html;
@@ -71,8 +71,8 @@ class DatabaseView extends EntityView
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
         $html = $this->buildEdit();
-        $html .= $this->Uploads->buildUploadForm();
-        $html .= $this->Uploads->buildUploads('edit');
+        $html .= $this->UploadsView->Uploads->buildUploadForm();
+        $html .= $this->UploadsView->Uploads->buildUploads('edit');
         $html .= $this->buildEditJs();
 
         return $html;

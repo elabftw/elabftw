@@ -27,7 +27,6 @@ namespace Elabftw\Elabftw;
 
 require_once '../inc/common.php';
 
-use PDO;
 use Exception;
 
 // INFO BOX

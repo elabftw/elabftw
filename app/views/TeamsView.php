@@ -10,9 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
-use \Elabftw\Elabftw\Teams;
-
 /**
  * HTML for the teams
  */

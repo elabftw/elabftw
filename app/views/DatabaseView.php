@@ -10,8 +10,7 @@
  */
 namespace Elabftw\Elabftw;
 
-use \Exception;
-use \Datetime;
+use Exception;
 
 /**
  * Database View

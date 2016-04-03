@@ -26,7 +26,6 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
-use PDO;
 
 /* install/index.php to get an installation up and running */
 session_start();

@@ -10,8 +10,7 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
-use \Exception;
+use Exception;
 
 /**
  * All about the teams

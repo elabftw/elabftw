@@ -11,7 +11,6 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
-use PDO;
 
 /**
  * Display profile of current user

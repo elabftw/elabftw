@@ -9,8 +9,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use PDO;
-
 // Count number of experiments for each status
 // get all status name and id
 $Status = new Status();

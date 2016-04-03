@@ -173,7 +173,7 @@ class Uploads extends Entity
         $html = "<section class='box'>";
         $html .= "<img src='img/attached.png' class='bot5px'> ";
         $html .= "<h3 style='display:inline'>" . _('Attach a file') . "</h3>";
-        $html .= "<form action='app/upload.php' class='dropzone' id='elabftw-dropzone'></form>";
+        $html .= "<form action='app/controllers/EntityController.php' class='dropzone' id='elabftw-dropzone'></form>";
         $html .= "</section>";
 
         $html .= "<script>
@@ -193,6 +193,7 @@ class Uploads extends Entity
 
                 // add additionnal parameters (id and type)
                 this.on('sending', function(file, xhr, formData) {
+                    formData.append('upload', true);
                     formData.append('item_id', '" . $this->itemId . "');
                     formData.append('type', '" . $this->type . "');
                 });

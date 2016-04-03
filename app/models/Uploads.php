@@ -351,13 +351,25 @@ class Uploads extends Entity
         return $html;
     }
 
+    /**
+     * Delete all uploaded files for an entity
+     *
+     * @return bool
+     */
     public function destroyAllUploads()
     {
         $uploadArr = $this->readAll();
+        $resultsArr = array();
 
-        foreach($uploadArr as $upload) {
+        foreach ($uploadArr as $upload) {
             $this->id = $upload['id'];
-            $this->destroy();
+            $resultsArr[] = $this->destroy();
         }
+
+        if (in_array(false, $resultsArr)) {
+            throw new Exception('Error deleting uploads.');
+        }
+
+        return true;
     }
 }

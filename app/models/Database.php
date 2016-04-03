@@ -215,4 +215,53 @@ class Database extends Entity
 
         return $newId;
     }
+
+    /**
+     * Destroy a DB item
+     *
+     * @throws Exception
+     * @return bool
+     */
+    public function destroy()
+    {
+        // we can only delete items from our team
+        if (!$this->isInTeam()) {
+            throw new Exception("You don't have sufficient rights.");
+        }
+
+        // to store the outcome of sql
+        $result = array();
+
+        // delete the database item
+        $sql = "DELETE FROM items WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $this->id);
+        $result[] = $req->execute();
+
+        $tags = new Tags('items');
+        $result[] = $tags->destroy($this->id);
+
+        $uploads = new Uploads('items', $this->id);
+        $result[] = $uploads->destroyAllUploads();
+
+        // delete links of this item in experiments with this item linked
+        // get all experiments with that item linked
+        $sql = "SELECT id FROM experiments_links WHERE link_id = :link_id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':link_id', $this->id);
+        $result[] = $req->execute();
+
+        while ($links = $req->fetch()) {
+            $delete_sql = "DELETE FROM experiments_links WHERE id = :links_id";
+            $delete_req = $this->pdo->prepare($delete_sql);
+            $delete_req->bindParam(':links_id', $links['id']);
+            $result[] = $delete_req->execute();
+        }
+
+        if (in_array(false, $result)) {
+            throw new Exception('Error deleting item.');
+        }
+
+        return true;
+    }
 }

@@ -294,21 +294,39 @@ function commentsDestroy(id, expId, confirmText) {
 // EXPERIMENTS
 function experimentsDestroy(id, confirmText) {
     var you_sure = confirm(confirmText);
-    if (you_sure === true) {
-        $.post('app/controllers/ExperimentsController.php', {
-            destroy: true,
-            id: id
-        }).done(function(data) {
-             if (data == 1) {
-                 notif('Experiment deleted', 'ok');
-                window.location.replace('experiments.php');
-             } else {
-                 notif('Error while deleting experiment', 'ko');
-             }
-        });
-    } else {
+    if (you_sure !== true) {
         return false;
     }
+    $.post('app/controllers/ExperimentsController.php', {
+        destroy: true,
+        id: id
+    }).done(function(data) {
+         if (data == 1) {
+             notif('Experiment deleted', 'ok');
+            window.location.replace('experiments.php');
+         } else {
+             notif('Error while deleting experiment', 'ko');
+         }
+    });
+}
+
+// DATABASE
+function databaseDestroy(id, confirmText) {
+    var you_sure = confirm(confirmText);
+    if (you_sure !== true) {
+        return false;
+    }
+    $.post('app/controllers/DatabaseController.php', {
+        destroy: true,
+        id: id
+    }).done(function(data) {
+         if (data == 1) {
+             notif('Item deleted', 'ok');
+            window.location.replace('database.php');
+         } else {
+             notif('Error while deleting item', 'ko');
+         }
+    });
 }
 
 // admin.php

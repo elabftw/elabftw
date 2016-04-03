@@ -244,15 +244,15 @@ class DatabaseView extends EntityView
 
         // begin page
         $html .= "<section class='box' style='border-left: 6px solid #" . $itemArr['bgcolor'] . "'>";
-        $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"deleteThis('" . $this->Database->id . "','item', 'database.php')\" />";
+        $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"databaseDestroy(" . $this->Database->id . ", '" . _('Delete this?') . "')\" />";
 
         // tags
         $html .= displayTags('items', $this->Database->id);
 
         // main form
         $html .= "<form method='post' action='app/controllers/DatabaseController.php' enctype='multipart/form-data'>";
-        $html .= "<input name='databaseUpdate' type='hidden' value='true' />";
-        $html .= "<input name='databaseId' type='hidden' value='" . $this->Database->id . "' />";
+        $html .= "<input name='update' type='hidden' value='true' />";
+        $html .= "<input name='id' type='hidden' value='" . $this->Database->id . "' />";
 
         // date
         $html .= "<div class='row'>";
@@ -260,7 +260,7 @@ class DatabaseView extends EntityView
         $html .= "<img src='img/calendar.png' class='bot5px' title='date' alt='Date :' />";
         $html .= "<label for='datepicker'>" . _('Date') . "</label>";
         // if one day firefox has support for it: type = date
-        $html .= "<input name='databaseUpdateDate' id='datepicker' size='8' type='text' value='" . $itemArr['date'] . "' />";
+        $html .= "<input name='date' id='datepicker' size='8' type='text' value='" . $itemArr['date'] . "' />";
         $html .= "</div></div>";
 
         // star rating
@@ -276,11 +276,11 @@ class DatabaseView extends EntityView
 
         // title
         $html .= "<h4>" . _('Title') . "</h4>";
-        $html .= "<input id='title_input' name='databaseUpdateTitle' rows='1' value='" . stripslashes($itemArr['title']) . "' required />";
+        $html .= "<input id='title_input' name='title' rows='1' value='" . stripslashes($itemArr['title']) . "' required />";
 
         // body
         $html .= "<h4>" . _('Infos') . "</h4>";
-        $html .= "<textarea class='mceditable' name='databaseUpdateBody' rows='15' cols='80'>";
+        $html .= "<textarea class='mceditable' name='body' rows='15' cols='80'>";
         $html .= stripslashes($itemArr['body']);
         $html .= "</textarea>";
 

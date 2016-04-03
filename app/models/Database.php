@@ -162,7 +162,7 @@ class Database extends Entity
         if (!$this->isInTeam()) {
             throw new Exception(_('This section is out of your reach.'));
         }
-        $title = check_title($title);
+        $title = Tools::checkTitle($title);
         $date = Tools::kdate($date);
         $body = Tools::checkBody($body);
 

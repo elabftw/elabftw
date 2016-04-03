@@ -45,6 +45,24 @@ class Tools
         return date('Ymd');
     }
 
+
+    /**
+     * Sanitize title with a filter_var and remove the line breaks.
+     *
+     * @param string $input The title to sanitize
+     * @return string Will return empty string if there is no input.
+     */
+    public static function checkTitle($input)
+    {
+        if ((isset($input)) && (!empty($input))) {
+            $title = filter_var($input, FILTER_SANITIZE_STRING);
+            // remove linebreak to avoid problem in javascript link list generation on editXP
+            return str_replace(array("\r\n", "\n", "\r"), ' ', $title);
+        } else {
+            return _('Untitled');
+        }
+    }
+
     /**
      * Sanitize body with a white list of allowed html tags.
      *
@@ -238,6 +256,11 @@ class Tools
         return $num;
     }
 
+    /**
+     * Display a generic error message
+     *
+     * @return string
+     */
     public static function error()
     {
         return sprintf(

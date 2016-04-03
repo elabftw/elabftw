@@ -57,6 +57,22 @@ class Experiments extends Entity
     }
 
     /**
+     * Check if we own the experiment
+     *
+     * @return bool
+     */
+    private function isWritable()
+    {
+        $sql = "SELECT userid FROM experiments WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $this->id);
+        $req->execute();
+
+        return $req->fetchColumn() === $this->userid;
+    }
+
+
+    /**
      * Create an experiment
      *
      * @param int|null $tpl the template on which to base the experiment
@@ -177,7 +193,11 @@ class Experiments extends Entity
      */
     public function update($title, $date, $body)
     {
-        $title = check_title($title);
+        if (!$this->isWritable()) {
+            throw new Exception(_('This section is out of your reach.'));
+        }
+
+        $title = Tools::checkTitle($title);
         $date = Tools::kdate($date);
         $body = Tools::checkBody($body);
 
@@ -204,6 +224,33 @@ class Experiments extends Entity
     }
 
     /**
+     * Check if we have a correct value
+     *
+     * @param string $visibility
+     * @return bool
+     */
+    private function checkVisibility($visibility)
+    {
+        $validArr = array(
+            'public',
+            'organization',
+            'team',
+            'user'
+        );
+
+        if (in_array($visibility, $validArr)) {
+            return true;
+        }
+
+        // or we might have a TeamGroup, so an int
+        if (Tools::checkId($visibility)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Update the visibility for an experiment
      *
      * @param string $visibility
@@ -211,6 +258,14 @@ class Experiments extends Entity
      */
     public function updateVisibility($visibility)
     {
+        if (!$this->isWritable()) {
+            throw new Exception(_('This section is out of your reach.'));
+        }
+
+        if (!$this->checkVisibility($visibility)) {
+            throw new Exception('Bad visibility argument');
+        }
+
         $sql = "UPDATE experiments SET visibility = :visibility WHERE userid = :userid AND id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':visibility', $visibility);
@@ -230,6 +285,10 @@ class Experiments extends Entity
      */
     public function updateStatus($status)
     {
+        if (!$this->isWritable()) {
+            throw new Exception(_('This section is out of your reach.'));
+        }
+
         $sql = "UPDATE experiments SET status = :status WHERE userid = :userid AND id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':status', $status, PDO::PARAM_INT);
@@ -328,6 +387,10 @@ class Experiments extends Entity
      */
     public function destroy()
     {
+        if (!$this->isWritable()) {
+            throw new Exception(_('This section is out of your reach.'));
+        }
+
         if (((get_team_config('deletable_xp') == '0') &&
             !$_SESSION['is_admin']) ||
             !is_owned_by_user($this->id, 'experiments', $_SESSION['userid'])) {

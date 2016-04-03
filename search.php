@@ -189,7 +189,7 @@ $search_type = '';
             <label for='title'><?php echo _('And title contains'); ?></label>
             <input id='title' name='title' type='text' value='<?php
                 if (isset($_GET['title']) && !empty($_GET['title'])) {
-                    echo check_title($_GET['title']);
+                    echo Tools::checkTitle($_GET['title']);
                 }
                 ?>'/>
             </div>

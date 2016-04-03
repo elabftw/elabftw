@@ -19,10 +19,10 @@ use \Datetime;
 class DatabaseView extends EntityView
 {
     /** the Uploads class */
-    private $uploads;
+    private $Uploads;
 
     /** Revisions class */
-    private $revisions;
+    private $Revisions;
 
     /** can be tag, query or filter */
     public $searchType = '';
@@ -39,8 +39,8 @@ class DatabaseView extends EntityView
         $this->Database = $database;
         $this->limit = $_SESSION['prefs']['limit'];
 
-        $this->uploads = new Uploads('items', $this->Database->id);
-        $this->revisions = new Revisions('items', $this->Database->id);
+        $this->Uploads = new Uploads('items', $this->Database->id);
+        $this->Revisions = new Revisions('items', $this->Database->id);
     }
 
     /**
@@ -53,7 +53,7 @@ class DatabaseView extends EntityView
         $html = '';
 
         $html .= $this->buildView();
-        $html .= $this->uploads->buildUploads('view');
+        $html .= $this->Uploads->buildUploads('view');
         $html .= $this->buildViewJs();
 
         return $html;
@@ -71,8 +71,8 @@ class DatabaseView extends EntityView
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
         $html = $this->buildEdit();
-        $html .= $this->uploads->buildUploadForm();
-        $html .= $this->uploads->buildUploads('edit');
+        $html .= $this->Uploads->buildUploadForm();
+        $html .= $this->Uploads->buildUploads('edit');
         $html .= $this->buildEditJs();
 
         return $html;
@@ -130,6 +130,12 @@ class DatabaseView extends EntityView
         return $html . $html2;
     }
 
+    /**
+     * Show an item
+     *
+     * @param int $item ID of the item to show
+     * @return string
+     */
     public function showUnique($item)
     {
         $html = "<section class='item " . $this->display . "' style='border-left: 6px solid #" . $item['bgcolor'] . "'>";
@@ -290,7 +296,7 @@ class DatabaseView extends EntityView
         $html .= _('Save and go back') . "</button></div></form>";
 
         // revisions
-        $html .= $this->revisions->showCount();
+        $html .= $this->Revisions->showCount();
 
         $html .= "</section>";
 

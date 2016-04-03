@@ -184,7 +184,7 @@ class Comments extends Entity
      *
      * @return bool
      */
-    public function destroyAllComments()
+    public function destroyAll()
     {
         $sql = "DELETE FROM experiments_comments WHERE exp_id = :id";
         $req = $this->pdo->prepare($sql);

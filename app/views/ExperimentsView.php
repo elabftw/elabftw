@@ -168,6 +168,12 @@ class ExperimentsView extends EntityView
         return $html . $html2;
     }
 
+    /**
+     * Show an experiment
+     *
+     * @param int $item ID of the experiment to show
+     * @return string
+     */
     public function showUnique($item)
     {
         $html = "<section class='item " . $this->display . "' style='border-left: 6px solid #" . $item['color'] . "'>";
@@ -234,7 +240,7 @@ class ExperimentsView extends EntityView
         $html .= "<div class='row'><div class='col-md-4'>";
         $html .= "<img src='img/calendar.png' class='bot5px' title='date' alt='calendar' />";
         $html .= "<label for='datepicker'>" . _('Date') . "</label>";
-        // TODO if firefox has support for it: type = date
+        // if firefox has support for it: type = date
         // https://bugzilla.mozilla.org/show_bug.cgi?id=825294
         $html .= "<input name='date' id='datepicker' size='8' type='text' value='" . $this->experiment['date'] . "' />";
         $html .= "</div>";

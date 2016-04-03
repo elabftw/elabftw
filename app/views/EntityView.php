@@ -243,8 +243,8 @@ class EntityView
     /**
      * Display the tags
      *
+     * @param string $type experiments or items
      * @param int $item_id The ID of the item for which we want the tags
-     * @param string $table The table can be experiments_tags or items_tags
      * @return null|false Will show the HTML for tags or false if there is no tags
      */
     protected function showTags($type, $item_id)

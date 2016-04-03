@@ -75,45 +75,6 @@ function processTimestampPost()
 }
 
 /**
- * Sanitize title with a filter_var and remove the line breaks.
- *
- * @param string $input The title to sanitize
- * @return string Will return empty string if there is no input.
- */
-function check_title($input)
-{
-    // Check TITLE, what else ?
-    if ((isset($input)) && (!empty($input))) {
-        $title = filter_var($input, FILTER_SANITIZE_STRING);
-        // remove linebreak to avoid problem in javascript link list generation on editXP
-        return str_replace(array("\r\n", "\n", "\r"), ' ', $title);
-    } else {
-        return 'Untitled';
-    }
-}
-
-/**
- * Check visibility for an experiment.
- *
- * @param string $input The visibility
- * @return string Will return team if the visibility is wrong
- */
-function check_visibility($input)
-{
-    $valid_visibility = array(
-        'public',
-        'organization',
-        'team',
-        'user');
-
-    if (in_array($input, $valid_visibility) || Tools::checkId($input)) {
-        return $input;
-    }
-    // default is team
-    return 'team';
-}
-
-/**
  * For displaying messages using jquery ui highlight/error messages
  *
  * @param string $type Can be 'ok', 'ko' or 'warning', with or without _nocross

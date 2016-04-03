@@ -255,7 +255,14 @@ class Teams extends Panel
      */
     public function archive($team)
     {
-        // TODO Archive the teams
+        /*
+          _______ ____  _____   ____
+         |__   __/ __ \|  __ \ / __ \
+            | | | |  | | |  | | |  | |
+            | | | |  | | |  | | |  | |
+            | | | |__| | |__| | |__| |
+            |_|  \____/|_____/ \____/
+         */
     }
 }
 

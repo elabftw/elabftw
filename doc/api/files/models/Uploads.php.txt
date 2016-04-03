@@ -134,7 +134,7 @@ class Uploads extends Entity
 
         if ($this->type === 'experiments') {
             // Check file id is owned by connected user
-            if ($uploadArr['userid'] =! $_SESSION['userid']) {
+            if ($uploadArr['userid'] != $_SESSION['userid']) {
                 throw new Exception(_('This section is out of your reach!'));
             }
         } else {
@@ -351,14 +351,26 @@ class Uploads extends Entity
         return $html;
     }
 
-    public function destroyAllUploads()
+    /**
+     * Delete all uploaded files for an entity
+     *
+     * @return bool
+     */
+    public function destroyAll()
     {
         $uploadArr = $this->readAll();
+        $resultsArr = array();
 
-        foreach($uploadArr as $upload) {
+        foreach ($uploadArr as $upload) {
             $this->id = $upload['id'];
-            $this->destroy();
+            $resultsArr[] = $this->destroy();
         }
+
+        if (in_array(false, $resultsArr)) {
+            throw new Exception('Error deleting uploads.');
+        }
+
+        return true;
     }
 }
 

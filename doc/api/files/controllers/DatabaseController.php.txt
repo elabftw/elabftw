@@ -20,28 +20,32 @@ use \Exception;
 require_once '../../inc/common.php';
 
 $mode = 'show';
+$id = '1';
+$redirect = false;
 
 try {
 
+    $Database = new Database($_SESSION['team_id']);
+
     // CREATE
     if (isset($_GET['databaseCreateId'])) {
-        $database = new Database($_SESSION['team_id']);
-        $id = $database->create($_GET['databaseCreateId']);
+        $id = $Database->create($_GET['databaseCreateId']);
         $mode = 'edit';
+        $redirect = true;
     }
 
     // UPDATE
-    if (isset($_POST['databaseUpdate'])) {
-        $database = new Database($_SESSION['team_id']);
-        $database->setId($_POST['databaseId']);
-        if ($database->update(
-            $_POST['databaseUpdateTitle'],
-            $_POST['databaseUpdateDate'],
-            $_POST['databaseUpdateBody'],
+    if (isset($_POST['update'])) {
+        $Database->setId($_POST['id']);
+        if ($Database->update(
+            $_POST['title'],
+            $_POST['date'],
+            $_POST['body'],
             $_SESSION['userid']
         )) {
-            $id = $database->id;
+            $id = $Database->id;
             $mode = 'view';
+            $redirect = true;
         } else {
             throw new Exception('Error');
         }
@@ -49,15 +53,28 @@ try {
 
     // DUPLICATE
     if (isset($_GET['databaseDuplicateId'])) {
-        $database = new Database($_SESSION['team_id'], $_GET['databaseDuplicateId']);
-        $id = $database->duplicate();
+        $Database->setId($_GET['databaseDuplicateId']);
+        $id = $Database->duplicate();
         $mode = 'edit';
+        $redirect = true;
+    }
+
+    // DESTROY
+    if (isset($_POST['destroy'])) {
+        $Database->setId($_POST['id']);
+        if ($Database->destroy()) {
+            echo '1';
+        } else {
+            echo '0';
+        }
     }
 
 } catch (Exception $e) {
     dblog('Error', $_SESSION['userid'], $e->getMessage());
-    $_SESSION['ko'][] = $e->getMessage();
+    $_SESSION['ko'][] = Tools::error();
 } finally {
-    header("location: ../../database.php?mode=" . $mode . "&id=" . $id);
+    if ($redirect) {
+        header("location: ../../database.php?mode=" . $mode . "&id=" . $id);
+    }
 }
 

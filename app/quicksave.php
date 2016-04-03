@@ -19,124 +19,27 @@
 ********************************************************************************/
 namespace Elabftw\Elabftw;
 
-use Exception;
-
 require_once '../inc/common.php';
 
-// check id
-if (Tools::checkId($_POST['id'])) {
-    $id = $_POST['id'];
-} else {
-    die(_("The id parameter is not valid!"));
+$title = Tools::checkTitle($_POST['title']);
+
+$body = Tools::checkBody($_POST['body']);
+
+$date = Tools::kdate($_POST['date']);
+
+if ($_POST['type'] == 'experiments') {
+
+    $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
+    $result = $Experiments->update($title, $date, $body);
+
+} elseif ($_POST['type'] == 'items') {
+
+    $Database = new Database($_SESSION['team_id'], $_POST['id']);
+    $result = $Database->update($title, $date, $body, $_SESSION['userid']);
 }
 
-// track the sql requests success/failure
-$success = array();
-
-// we only update visibility
-if (isset($_POST['visibility'])) {
-    // will return 'team' in case of wrong visibility
-    $visibility = check_visibility($_POST['visibility']);
-    $sql = "UPDATE experiments
-        SET visibility = :visibility
-        WHERE userid = :userid
-        AND id = :id";
-    $req = $pdo->prepare($sql);
-    try {
-        $success[] = $req->execute(array(
-            'visibility' => $visibility,
-            'userid' => $_SESSION['userid'],
-            'id' => $id
-        ));
-    } catch (Exception $e) {
-        dblog('Error', $_SESSION['userid'], $e->getMessage());
-        echo 0;
-        exit;
-    }
-
-// or we update date, title, and body
-} else {
-    $title = check_title($_POST['title']);
-
-    $body = Tools::checkBody($_POST['body']);
-
-    $date = Tools::kdate($_POST['date']);
-
-    // SQL for quicksave
-    // we do a usercheck for experiments
-    if ($_POST['type'] == 'experiments') {
-        // we update the real experiment
-        $sql = "UPDATE experiments
-            SET title = :title, date = :date, body = :body
-            WHERE userid = :userid
-            AND id = :id";
-        $req = $pdo->prepare($sql);
-        try {
-            $success[] = $req->execute(array(
-                'title' => $title,
-                'date' => $date,
-                'body' => $body,
-                'userid' => $_SESSION['userid'],
-                'id' => $id
-            ));
-        } catch (Exception $e) {
-            dblog('Error', $_SESSION['userid'], $e->getMessage());
-            echo 0;
-            exit;
-        }
-
-        // we add a revision to the revision table
-        $sql = "INSERT INTO experiments_revisions (item_id, body, userid) VALUES(:item_id, :body, :userid)";
-        $req = $pdo->prepare($sql);
-        try {
-            $success[] = $req->execute(array(
-                'item_id' => $id,
-                'body' => $body,
-                'userid' => $_SESSION['userid']
-            ));
-        } catch (Exception $e) {
-            dblog('Error', $_SESSION['userid'], $e->getMessage());
-            echo 0;
-            exit;
-        }
-
-    } elseif ($_POST['type'] == 'items') {
-        $sql = "UPDATE items
-            SET title = :title, date = :date, body = :body
-            WHERE id = :id";
-        $req = $pdo->prepare($sql);
-        try {
-            $success[] = $req->execute(array(
-                'title' => $title,
-                'date' => $date,
-                'body' => $body,
-                'id' => $id
-            ));
-        } catch (Exception $e) {
-            dblog('Error', $_SESSION['userid'], $e->getMessage());
-            echo 0;
-            exit;
-        }
-
-        // we add a revision to the revision table
-        $sql = "INSERT INTO items_revisions (item_id, body, userid) VALUES(:item_id, :body, :userid)";
-        $req = $pdo->prepare($sql);
-        try {
-            $success[] = $req->execute(array(
-                'item_id' => $id,
-                'body' => $body,
-                'userid' => $_SESSION['userid']
-            ));
-        } catch (Exception $e) {
-            dblog('Error', $_SESSION['userid'], $e->getMessage());
-            echo 0;
-            exit;
-        }
-    }
-}
-
-if (in_array(false, $success)) {
-    echo 0;
-} else {
+if ($result) {
     echo 1;
+} else {
+    echo 0;
 }

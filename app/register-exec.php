@@ -31,8 +31,6 @@ use \Exception;
 
 require_once '../inc/common.php';
 
-// TODO remove completely username
-
 //Array to store validation errors
 $msg_arr = array();
 //Validation error flag

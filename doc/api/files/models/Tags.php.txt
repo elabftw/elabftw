@@ -16,10 +16,10 @@ use \Exception;
 /**
  * All about the tag
  */
-class Tags
+class Tags extends Entity
 {
     /** pdo object */
-    private $pdo;
+    protected $pdo;
 
     /** experiments or items */
     private $type;
@@ -28,20 +28,21 @@ class Tags
      * Constructor
      *
      * @param string $type experiments or items
+     * @param int $id id of our entity
      */
-    public function __construct($type)
+    public function __construct($type, $id)
     {
         $this->pdo = Db::getConnection();
         $this->type = $type;
+        $this->setId($id);
     }
 
     /**
      * Create a tag
      *
      * @param string $tag
-     * @param int $id
      */
-    public function create($tag, $id)
+    public function create($tag)
     {
         // Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
         $tag = strtr(filter_var($tag, FILTER_SANITIZE_STRING), '\\', '');
@@ -51,7 +52,7 @@ class Tags
             throw new Exception(_('Tag is too short!'));
         }
 
-        if ($this->type === 'experiments' && !is_owned_by_user($id, $this->type, $_SESSION['userid'])) {
+        if ($this->type === 'experiments' && !is_owned_by_user($this->id, $this->type, $_SESSION['userid'])) {
             throw new Exception(_('This section is out of your reach!'));
         }
 
@@ -65,7 +66,7 @@ class Tags
             $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
         }
         $req->bindParam(':tag', $tag, PDO::PARAM_STR);
-        $req->bindParam(':item_id', $id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -73,14 +74,13 @@ class Tags
     /**
      * Read tags for an item
      *
-     * @param int $id
      * @return array
      */
-    public function read($id)
+    public function read()
     {
         $sql = "SELECT tag FROM " . $this->type . "_tags WHERE item_id = :item_id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':item_id', $id);
+        $req->bindParam(':item_id', $this->id);
         $req->execute();
 
         return $req->fetchAll();
@@ -89,11 +89,10 @@ class Tags
     /**
      * Copy the tags from one experiment/item to an other.
      *
-     * @param int $id The id of the original experiment/item
      * @param int $newId The id of the new experiment/item that will receive the tags
      * @return null
      */
-    public function copyTags($id, $newId)
+    public function copyTags($newId)
     {
         // TAGS
         if ($this->type === 'experiments') {
@@ -102,7 +101,7 @@ class Tags
             $sql = "SELECT tag FROM items_tags WHERE item_id = :id";
         }
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $id);
+        $req->bindParam(':id', $this->id);
         $req->execute();
         if ($req->rowCount() > 0) {
             while ($tags = $req->fetch()) {
@@ -155,10 +154,9 @@ class Tags
     /**
      * Destroy all the tags for an item ID
      *
-     * @param int $itemId
      * @return bool
      */
-    public function destroy($itemId)
+    public function destroyAll()
     {
         if ($this->type === 'experiments') {
             $sql = "DELETE FROM experiments_tags WHERE item_id = :id";
@@ -167,7 +165,7 @@ class Tags
         }
 
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $itemId);
+        $req->bindParam(':id', $this->id);
 
         return $req->execute();
     }

@@ -29,8 +29,8 @@ try {
             $entity = new Database($_SESSION['team_id']);
             $entity->setId($_POST['createTagId']);
         }
-        $tags = new Tags($_POST['createTagType']);
-        $tags->create($_POST['createTagTag'], $entity->id);
+        $tags = new Tags($_POST['createTagType'], $entity->id);
+        $tags->create($_POST['createTagTag']);
     }
 } catch (Exception $e) {
     //      _                      _______                      _

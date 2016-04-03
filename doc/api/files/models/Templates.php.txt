@@ -59,7 +59,7 @@ class Templates
      */
     public function readFromUserid($userid)
     {
-        $sql = "SELECT id, name FROM experiments_templates WHERE userid = :userid ORDER BY ordering ASC";
+        $sql = "SELECT id, body, name FROM experiments_templates WHERE userid = :userid ORDER BY ordering ASC";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':userid', $userid);
         $req->execute();

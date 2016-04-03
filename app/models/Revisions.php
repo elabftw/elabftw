@@ -137,7 +137,6 @@ class Revisions
     /**
      * Check if item is locked before restoring it
      *
-     * TODO this should be part of experiment/database model
      * @throws Exception
      * @return bool
      */

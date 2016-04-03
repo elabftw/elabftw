@@ -22,7 +22,7 @@ require_once '../../inc/common.php';
 try {
 
     // CREATE
-    if (isset($_GET['experimentsCreate'])) {
+    if (isset($_GET['create'])) {
         $Experiments = new Experiments($_SESSION['userid']);
         if (isset($_GET['tpl']) && !empty($_GET['tpl'])) {
             $id = $Experiments->create($_GET['tpl']);
@@ -33,37 +33,37 @@ try {
     }
 
     // UPDATE
-    if (isset($_POST['experimentsUpdate'])) {
-        $Experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
+    if (isset($_POST['update'])) {
+        $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
         if ($Experiments->update(
-            $_POST['experimentsUpdateTitle'],
-            $_POST['experimentsUpdateDate'],
-            $_POST['experimentsUpdateBody']
+            $_POST['title'],
+            $_POST['date'],
+            $_POST['body']
         )) {
-            header("location: ../../experiments.php?mode=view&id=" . $_POST['experimentsId']);
+            header("location: ../../experiments.php?mode=view&id=" . $_POST['id']);
         } else {
-            printf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
+            throw new Exception('Error updating experiment');
         }
     }
 
     // DUPLICATE
-    if (isset($_GET['experimentsDuplicateId'])) {
-        $Experiments = new Experiments($_SESSION['userid'], $_GET['experimentsDuplicateId']);
+    if (isset($_GET['duplicateId'])) {
+        $Experiments = new Experiments($_SESSION['userid'], $_GET['duplicateId']);
         $id = $Experiments->duplicate();
         $mode = 'edit';
         header("location: ../../experiments.php?mode=" . $mode . "&id=" . $id);
     }
 
     // UPDATE STATUS
-    if (isset($_POST['experimentsUpdateStatus'])) {
-        $Experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
-        echo $Experiments->updateStatus($_POST['experimentsUpdateStatusStatus']);
+    if (isset($_POST['updateStatus'])) {
+        $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
+        echo $Experiments->updateStatus($_POST['status']);
     }
 
     // UPDATE VISIBILITY
-    if (isset($_POST['experimentsUpdateVisibility'])) {
-        $Experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
-        if ($Experiments->updateVisibility($_POST['experimentsUpdateVisibilityVisibility'])) {
+    if (isset($_POST['updateVisibility'])) {
+        $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
+        if ($Experiments->updateVisibility($_POST['visibility'])) {
             echo '1';
         } else {
             echo '0';
@@ -71,9 +71,9 @@ try {
     }
 
     // CREATE LINK
-    if (isset($_POST['experimentsCreateLink'])) {
-        $Experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
-        if ($Experiments->Links->create($_POST['experimentsCreateLinkId'])) {
+    if (isset($_POST['createLink'])) {
+        $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
+        if ($Experiments->Links->create($_POST['linkId'])) {
             echo '1';
         } else {
             echo '0';
@@ -81,9 +81,9 @@ try {
     }
 
     // DESTROY LINK
-    if (isset($_POST['experimentsDestroyLink'])) {
-        $Experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
-        if ($Experiments->Links->destroy($_POST['experimentsDestroyLinkId'])) {
+    if (isset($_POST['destroyLink'])) {
+        $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
+        if ($Experiments->Links->destroy($_POST['linkId'])) {
             echo '1';
         } else {
             echo '0';
@@ -91,8 +91,8 @@ try {
     }
 
     // DESTROY
-    if (isset($_POST['experimentsDestroy'])) {
-        $Experiments = new Experiments($_SESSION['userid'], $_POST['experimentsId']);
+    if (isset($_POST['destroy'])) {
+        $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
         if ($Experiments->destroy()) {
             echo '1';
         } else {
@@ -102,5 +102,7 @@ try {
 
 } catch (Exception $e) {
     dblog('Error', $_SESSION['userid'], $e->getMessage());
+    $_SESSION['ko'][] = Tools::error();
+    header('Location: ../../experiments.php');
 }
 

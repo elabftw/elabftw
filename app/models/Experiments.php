@@ -414,4 +414,57 @@ class Experiments extends Entity
 
         return true;
     }
+
+    public function toggleLock()
+    {
+        // Is the user in a group with can_lock set to 1 ?
+        // 1. get what is the group of the user
+        $Users = new Users();
+        $userArr = $Users->read($this->userid);
+
+        // 2. check if this group has locking rights
+        $sql = "SELECT can_lock FROM groups WHERE group_id = :usergroup";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':usergroup', $userArr['usergroup']);
+        $req->execute();
+        $can_lock = (int) $req->fetchColumn(); // can be 0 or 1
+
+        // We don't have can_lock, but maybe it's our XP, so we can lock it
+        if ($can_lock === 0 && !$this->isWritable()) {
+            throw new Exception(_("You don't have the rights to lock/unlock this."));
+        }
+
+        $expArr = $this->read();
+        $locked = (int) $expArr['locked'];
+
+        // if we try to unlock something we didn't lock
+        if ($locked === 1 && ($expArr['lockedby'] != $_SESSION['userid'])) {
+            // Get the first name of the locker to show in error message
+            $sql = "SELECT firstname FROM users WHERE userid = :userid";
+            $req = $this->pdo->prepare($sql);
+            $req->bindParam(':userid', $expArr['lockedby']);
+            $req->execute();
+            throw new Exception(_('This experiment was locked by') . ' ' . $req->fetchColumn() . '. ' . _("You don't have the rights to lock/unlock this."));
+        }
+
+        // check if the experiment is timestamped. Disallow unlock in this case.
+        if ($locked === 1 && $expArr['timestamped']) {
+            throw new Exception(_('You cannot unlock or edit in any way a timestamped experiment.'));
+        }
+
+        // toggle
+        if ($locked === 1) {
+            $locked = 0;
+        } else {
+            $locked = 1;
+        }
+        $sql = "UPDATE experiments
+            SET locked = :locked, lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':locked', $locked);
+        $req->bindParam(':lockedby', $this->userid);
+        $req->bindParam(':id', $this->id);
+
+        return $req->execute();
+    }
 }

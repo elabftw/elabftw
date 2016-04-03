@@ -426,8 +426,14 @@ class ExperimentsView extends EntityView
      */
     private function buildView()
     {
+        $html = '';
 
-        $html = "<section class='item' style='padding:15px;border-left: 6px solid #" . $this->experiment['color'] . "'>";
+        if ($this->ro) {
+            $message = _('Read-only mode.');
+            $html .= display_message('ok', $message);
+        }
+
+        $html .= "<section class='item' style='padding:15px;border-left: 6px solid #" . $this->experiment['color'] . "'>";
         $html .= "<span class='top_right_status'><img src='img/status.png'>" . $this->experiment['name'] .
             "<img src='img/eye.png' alt='eye' />" . $this->getVisibility() . "</span>";
         $html .=  "<div><img src='img/calendar.png' class='bot5px' title='date' alt='Date :' /> " .
@@ -438,9 +444,9 @@ class ExperimentsView extends EntityView
     <a href='make.php?what=zip&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a> ";
 
         if ($this->experiment['locked'] == 0) {
-            $html .= "<a href='app/lock.php?id=" . $this->experiment['id'] . "&action=lock&type=experiments'><img src='img/unlock.png' title='lock experiment' alt='lock' /></a>";
+            $html .= "<a href='app/lock.php?id=" . $this->experiment['id'] . "&type=experiments'><img src='img/unlock.png' title='lock experiment' alt='lock' /></a>";
         } else { // experiment is locked
-            $html .= "<a href='app/lock.php?id=" . $this->experiment['id'] . "&action=unlock&type=experiments'><img src='img/lock-gray.png' title='unlock experiment' alt='unlock' /></a>";
+            $html .= "<a href='app/lock.php?id=" . $this->experiment['id'] . "&type=experiments'><img src='img/lock-gray.png' title='unlock experiment' alt='unlock' /></a>";
             // show timestamp button if it's not timestamped already
             if (!$this->experiment['timestamped']) {
                 $html .= "<a onClick=\"return confirm('" . _('Once timestamped an experiment cannot be edited anymore ! Are you sure you want to do this ?') . "')\" href='app/timestamp.php?id=" . $this->experiment['id'] . "'><img src='img/stamp.png' title='timestamp experiment' alt='timestamp' /></a>";

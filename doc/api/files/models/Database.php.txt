@@ -189,6 +189,26 @@ class Database extends Entity
     }
 
     /**
+     * Update the rating of an item
+     *
+     * @param int $rating
+     * @return bool
+     */
+    public function updateRating($rating)
+    {
+        if (!$this->isInTeam()) {
+            throw new Exception(_('This section is out of your reach.'));
+        }
+
+        $sql = 'UPDATE items SET rating = :rating WHERE id = :id';
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':rating', $rating, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->id);
+
+        return $req->execute();
+    }
+
+    /**
      * Duplicate an item
      *
      * @return int $newId The id of the newly created item

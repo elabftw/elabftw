@@ -10,8 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
-use \Exception;
+use PDO;
+use Exception;
 
 /**
  * All about the file uploads
@@ -26,6 +26,9 @@ class Uploads extends Entity
 
     /** our item */
     public $itemId;
+
+    /** what algo for hashing */
+    private $hashAlgorithm = 'sha256';
 
     /**
      * Constructor
@@ -43,6 +46,164 @@ class Uploads extends Entity
         if (!is_null($id)) {
             $this->setId($id);
         }
+    }
+
+    /**
+     * Main method for normal file upload
+     *
+     * @param string|array $file Either pass it the $_FILES array or the string of the local file path
+     * @return bool
+     */
+    public function create($file)
+    {
+        if (!is_array($file) || count($file) === 0) {
+            throw new Exception('No files received');
+        }
+        // check we own the experiment we upload to
+        $this->checkPermission();
+
+        $realName = $this->getSanitizedName($file['file']['name']);
+        $longName = $this->getCleanName() . "." . Tools::getExt($realName);
+        $fullPath = ELAB_ROOT . 'uploads/' . $longName;
+
+        // Try to move the file to its final place
+        $this->moveFile($file['file']['tmp_name'], $fullPath);
+
+        // final sql
+        return $this->dbInsert($realName, $longName, $this->getHash($fullPath));
+    }
+
+    /**
+     * Called from ImportZip class
+     *
+     * @param string $file The string of the local file path stored in .elabftw.json of the zip archive
+     * @return bool
+     */
+    public function createFromLocalFile($file)
+    {
+        if (!is_readable($file)) {
+            throw new Exception('No file here!');
+        }
+
+        $realName = basename($file);
+        $longName = $this->getCleanName() . "." . Tools::getExt($realName);
+        $fullPath = ELAB_ROOT . 'uploads/' . $longName;
+
+        $this->moveFile($file, $fullPath);
+
+        return $this->dbInsert($realName, $longName, $this->getHash($fullPath));
+    }
+
+    /**
+     * Can we upload to that experiment?
+     * Make sure we own it.
+     *
+     * @throws Exception if we cannot upload file to this experiment
+     */
+    private function checkPermission()
+    {
+        if ($this->type === 'experiments') {
+            if (!is_owned_by_user($this->itemId, 'experiments', $_SESSION['userid'])) {
+                throw new Exception('Not your experiment!');
+            }
+        }
+    }
+
+    /**
+     * Create a clean filename
+     * Remplace all non letters/numbers by '.' (this way we don't lose the file extension)
+     *
+     * @param string $rawName The name of the file as it was on the user's computer
+     * @return string The cleaned filename
+     */
+    private function getSanitizedName($rawName)
+    {
+        return preg_replace('/[^A-Za-z0-9]/', '.', $rawName);
+    }
+
+    /**
+     * Place a file somewhere
+     *
+     * @param $string orig from
+     * @param string dest to
+     * @throws Exception if cannot move the file
+     */
+    private function moveFile($orig, $dest)
+    {
+        if (!rename($orig, $dest)) {
+            throw new Exception('Error while moving the file. Check folder permissons!');
+        }
+    }
+
+    /**
+     * Generate the hash based on selected algorithm
+     *
+     * @param string $file The full path to the file
+     * @return string|null the hash or null if file is too big
+     */
+    private function getHash($file)
+    {
+        if (filesize($file) < 5000000) {
+            return hash_file($this->hashAlgorithm, $file);
+        }
+
+        return null;
+    }
+
+    /**
+     * Create a unique long filename
+     *
+     * @return string Return a random string
+     */
+    protected function getCleanName()
+    {
+        return hash("sha512", uniqid(rand(), true));
+    }
+
+    /**
+     * Make the final SQL request to store the file
+     *
+     * @param string $realName The clean name of the file
+     * @param string $longName The sha512 name
+     * @param string $hash The hash string of our file
+     * @throws Exception if request fail
+     * @return bool
+     */
+    private function dbInsert($realName, $longName, $hash)
+    {
+        $sql = "INSERT INTO uploads(
+            real_name,
+            long_name,
+            comment,
+            item_id,
+            userid,
+            type,
+            hash,
+            hash_algorithm
+        ) VALUES(
+            :real_name,
+            :long_name,
+            :comment,
+            :item_id,
+            :userid,
+            :type,
+            :hash,
+            :hash_algorithm
+        )";
+
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':real_name', $realName);
+        $req->bindParam(':long_name', $longName);
+        // comment can be edited after upload
+        // not i18n friendly because it is used somewhere else (not a valid reason, but for the moment that will do)
+        $req->bindValue(':comment', 'Click to add a comment');
+        $req->bindParam(':item_id', $this->itemId);
+        $req->bindParam(':userid', $_SESSION['userid']);
+        $req->bindParam(':type', $this->type);
+        $req->bindParam(':hash', $hash);
+        $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
+
+        return $req->execute();
     }
 
     /**
@@ -88,7 +249,7 @@ class Uploads extends Entity
      * @param int $desiredWidth Width of the thumbnail (height is automatic depending on width)
      * @return null|false
      */
-    private function makeThumb($src, $ext, $dest, $desiredWidth)
+    public function makeThumb($src, $ext, $dest, $desiredWidth)
     {
         // we don't want to work on too big images
         // put the limit to 5 Mbytes
@@ -162,193 +323,6 @@ class Uploads extends Entity
         $req->bindParam(':type', $this->type);
 
         return $req->execute();
-    }
-
-    /**
-     * Generate html for the upload form
-     *
-     */
-    public function buildUploadForm()
-    {
-        $html = "<section class='box'>";
-        $html .= "<img src='img/attached.png' class='bot5px'> ";
-        $html .= "<h3 style='display:inline'>" . _('Attach a file') . "</h3>";
-        $html .= "<form action='app/upload.php' class='dropzone' id='elabftw-dropzone'></form>";
-        $html .= "</section>";
-
-        $html .= "<script>
-        // we need this to reload the #filesdiv (div displaying uploaded files)
-        var type = '" . $this->type . "';
-        if (type == 'items') {
-            type = 'database';
-        }
-        var item_id = '" . $this->itemId . "';
-
-        // config for dropzone, id is camelCased.
-        Dropzone.options.elabftwDropzone = {
-            // i18n message to user
-            dictDefaultMessage: '" . _('Drop files here to upload') . "',
-            maxFilesize: '" . Tools::returnMaxUploadSize() . "', // MB
-            init: function() {
-
-                // add additionnal parameters (id and type)
-                this.on('sending', function(file, xhr, formData) {
-                    formData.append('item_id', '" . $this->itemId . "');
-                    formData.append('type', '" . $this->type . "');
-                });
-
-                // once it is done
-                this.on('complete', function(answer) {
-                    // check the answer we get back from app/uploads.php
-                    if (answer.xhr.responseText != 0) {
-                        alert('Upload failed: ' + answer.xhr.responseText);
-                    }
-                    // reload the #filesdiv once the file is uploaded
-                    if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-                        $('#filesdiv').load(type + '.php?mode=edit&id=' + item_id + ' #filesdiv', function() {
-                            // make the comment zone editable (fix issue #54)
-                            $('.thumbnail p.editable').editable('app/editinplace.php', {
-                             indicator : 'Saving...',
-                             id   : 'id',
-                             name : 'filecomment',
-                             submit : 'Save',
-                             cancel : 'Cancel',
-                             style : 'display:inline'
-                            });
-                        });
-                    }
-                });
-            }
-        };
-        </script>";
-        return $html;
-    }
-
-    /**
-     * Generate HTML for displaying uploaded files
-     *
-     * @param string $mode edit or view
-     * @return string html
-     */
-    public function buildUploads($mode)
-    {
-        $uploadsArr = $this->readAll();
-
-        $count = count($uploadsArr);
-        if ($count < 1) {
-            // return the empty div so it can be reloaded upon file upload
-            return "<div id='filesdiv'></div>";
-        }
-
-        // this is for the plural of the ngettext function below
-        if ($count > 1) {
-            $count = 2;
-        }
-
-        // begin HTML build
-        $html = "<div id='filesdiv'>";
-        $html .= "<div class='box'>";
-        $html .= "<img src='img/attached.png' class='bot5px'> <h3 style='display:inline'>" .
-            ngettext('Attached file', 'Attached files', $count) . "</h3>";
-        $html .= "<div class='row'>";
-        foreach ($uploadsArr as $upload) {
-            $html .= "<div class='col-md-4 col-sm-6'>";
-            $html .= "<div class='thumbnail'>";
-            // show the delete button only in edit mode, not in view mode
-            if ($mode === 'edit') {
-                $html .= "<a class='align_right' onClick=\"uploadsDestroy(" . $upload['id'] . "
-                    , '" . $upload['type'] . "', " . $upload['item_id'] . ", '" . _('Delete this?') . "')\">";
-                $html .= "<img src='img/small-trash.png' title='delete' alt='delete' /></a>";
-            } // end if it is in edit mode
-
-            // get file extension
-            $ext = Tools::getExt($upload['real_name']);
-            $filepath = 'uploads/' . $upload['long_name'];
-            $thumbpath = $filepath . '_th.jpg';
-
-            // list of extensions with a corresponding img/thumb-*.png image
-            $commonExtensions = array('avi', 'csv', 'doc', 'docx', 'mov', 'pdf', 'ppt', 'rar', 'xls', 'xlsx', 'zip');
-
-            // list of extensions understood by 3Dmol.js
-            $molExtensions = array('pdb', 'sdf', 'mol2', 'mmcif', 'cif');
-
-            // Make thumbnail only if it isn't done already
-            if (!file_exists($thumbpath)) {
-                $this->makeThumb($filepath, $ext, $thumbpath, 100);
-            }
-
-            // only display the thumbnail if the file is here
-            if (file_exists($thumbpath) && preg_match('/(jpg|jpeg|png|gif)$/i', $ext)) {
-                // we add rel='gallery' to the images for fancybox to display it as an album
-                // (possibility to go next/previous)
-                $html .= "<a href='app/download.php?f=" . $upload['long_name'] . "' class='fancybox' rel='gallery' ";
-                if ($upload['comment'] != 'Click to add a comment') {
-                    $html .= "title='" . $upload['comment'] . "'";
-                }
-                $html .= "><img class='thumb' src='" . $thumbpath . "' alt='thumbnail' /></a>";
-
-            // not an image
-            } elseif (in_array($ext, $commonExtensions)) {
-                $html .= "<img class='thumb' src='img/thumb-" . $ext . ".png' alt='' />";
-
-            // special case for mol files, only in view mode
-            } elseif ($ext === 'mol' && $_SESSION['prefs']['chem_editor'] && $mode === 'view') {
-                // we need to escape \n in the mol file or we get unterminated string literal error in JS
-                $mol = str_replace("\n", "\\n", file_get_contents($filepath));
-                $html .= "<div class='center'><script>
-                      showMol('" . $mol . "');
-                      </script></div>";
-
-            // if this is something 3Dmol.js can handle
-            } elseif (in_array($ext, $molExtensions)) {
-                $molviewer = new MolViewer($upload['id'], $filepath);
-                $html .= $molviewer->getViewerDiv();
-
-            } else {
-                // uncommon extension without a nice image to display
-                $html .= "<img class='thumb' src='img/thumb.png' alt='' />";
-            }
-
-            // now display the name + comment with icons
-            $html .= "<div class='caption'><img src='img/attached.png' class='bot5px' alt='attached' /> ";
-            $html .= "<a href='app/download.php?f=" . $upload['long_name'] .
-                "&name=" . $upload['real_name'] . "' target='_blank'>" . $upload['real_name'] . "</a>";
-            $html .= "<span class='smallgray' style='display:inline'> " .
-                Tools::formatBytes(filesize('uploads/' . $upload['long_name'])) . "</span><br>";
-            // if we are in view mode, we don't show the comment if it's the default text
-            // this is to avoid showing 'Click to add a comment' where in fact you can't click to add a comment because
-            // your are in view mode
-
-            if ($mode === 'edit' || ($upload['comment'] != 'Click to add a comment')) {
-                $comment = "<img src='img/comment.png' class='bot5px' alt='comment' />
-                            <p class='editable inline' id='filecomment_" . $upload['id'] . "'>" .
-                stripslashes($upload['comment']) . "</p>";
-                $html .= $comment;
-            }
-            $html .= "</div></div></div>";
-        } // end foreach
-        $html .= "</div></div></div>";
-
-        // add fancy stuff in edit mode
-        if ($mode === 'edit') {
-            $html .= "<script>
-                $('.thumbnail').on('mouseover', '.editable', function(){
-                $('.thumbnail p.editable').editable('app/editinplace.php', {
-                 tooltip : 'Click to edit',
-                 indicator : 'Saving...',
-                 name : 'filecomment',
-                 submit : 'Save',
-                 cancel : 'Cancel',
-                 style : 'display:inline'
-                });
-            });</script>";
-        }
-        $html .= "<script>$(document).ready(function() {
-                // we use fancybox to display thumbnails
-                $('a.fancybox').fancybox();
-            });
-            </script>";
-        return $html;
     }
 
     /**

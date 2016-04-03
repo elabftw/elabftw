@@ -24,15 +24,31 @@ try {
     // CREATE TAG
     if (isset($_POST['createTag'])) {
         if ($_POST['createTagType'] === 'experiments') {
-            $entity = new Experiments($_SESSION['userid'], $_POST['createTagId']);
+            $Entity = new Experiments($_SESSION['userid'], $_POST['createTagId']);
         } else {
-            $entity = new Database($_SESSION['team_id']);
-            $entity->setId($_POST['createTagId']);
+            $Entity = new Database($_SESSION['team_id']);
+            $Entity->setId($_POST['createTagId']);
         }
-        $tags = new Tags($_POST['createTagType'], $entity->id);
-        $tags->create($_POST['createTagTag']);
+        $Tags = new Tags($_POST['createTagType'], $Entity->id);
+        $Tags->create($_POST['createTagTag']);
+    }
+
+    // CREATE UPLOAD
+    if (isset($_POST['upload'])) {
+        $Upload = new Uploads($_POST['type'], $_POST['item_id']);
+        $Upload->create($_FILES);
+    }
+    // DESTROY UPLOAD
+    if (isset($_POST['uploadsDestroy'])) {
+        $Uploads = new Uploads($_POST['type'], $_POST['item_id'], $_POST['id']);
+        if ($Uploads->destroy()) {
+            echo '1';
+        } else {
+            echo '0';
+        }
     }
 } catch (Exception $e) {
+    echo $e->getMessage();
     //      _                      _______                      _
     //   _dMMMb._              .adOOOOOOOOOba.              _,dMMMb_
     //  dP'  ~YMMb            dOOOOOOOOOOOOOOOb            aMMP~  `Yb

@@ -10,12 +10,11 @@
  */
 namespace Elabftw\Elabftw;
 
-use \Exception;
-use \ZipArchive;
-use \RecursiveIteratorIterator;
-use \RecursiveDirectoryIterator;
-use \FileSystemIterator;
-use \Elabftw\Elabftw\Upload as Upload;
+use Exception;
+use ZipArchive;
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
+use FileSystemIterator;
 
 /**
  * Import a .elabftw.zip file into the database.
@@ -85,7 +84,7 @@ class ImportZip extends Import
      */
     protected function openFile()
     {
-        $zip = new \ZipArchive;
+        $zip = new ZipArchive;
         if ($zip->open($this->getFilePath()) && $zip->extractTo($this->tmpPath)) {
             return true;
         } else {
@@ -178,8 +177,8 @@ class ImportZip extends Import
      */
     private function importFile($file)
     {
-        $upload = new Upload($this->category, $this->newItemId);
-        $upload->uploadLocalFile($this->tmpPath . '/' . $file);
+        $Upload = new Uploads($this->category, $this->newItemId);
+        $Upload->createFromLocalFile($this->tmpPath . '/' . $file);
     }
 
     /**

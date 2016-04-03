@@ -167,6 +167,7 @@ class Uploads extends Entity
      * @param string $longName The sha512 name
      * @param string $hash The hash string of our file
      * @throws Exception if request fail
+     * @return bool
      */
     private function dbInsert($realName, $longName, $hash)
     {

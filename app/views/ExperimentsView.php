@@ -405,14 +405,14 @@ class ExperimentsView extends EntityView
         $Users = new Users();
         $timestamper = $Users->read($this->experiment['timestampedby']);
 
-        $this->UploadsView->Uploads->type = 'exp-pdf-timestamp';
-        $pdf = $this->UploadsView->Uploads->readAll();
+        // we clone the object so we don't mess with the type
+        $ClonedUploads = clone $this->UploadsView->Uploads;
 
-        $this->UploadsView->Uploads->type = 'timestamp-token';
-        $token = $this->UploadsView->Uploads->readAll();
+        $ClonedUploads->type = 'exp-pdf-timestamp';
+        $pdf = $ClonedUploads->readAll();
 
-        // set the type back to the correct one
-        $this->UploadsView->Uploads->type = 'experiments';
+        $ClonedUploads->type = 'timestamp-token';
+        $token = $ClonedUploads->readAll();
 
         $date = new DateTime($this->experiment['timestampedwhen']);
 

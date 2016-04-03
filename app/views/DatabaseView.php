@@ -53,7 +53,7 @@ class DatabaseView extends EntityView
         $html = '';
 
         $html .= $this->buildView();
-        $html .= $this->UploadsView->Uploads->buildUploads('view');
+        $html .= $this->UploadsView->buildUploads('view');
         $html .= $this->buildViewJs();
 
         return $html;
@@ -71,8 +71,8 @@ class DatabaseView extends EntityView
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
         $html = $this->buildEdit();
-        $html .= $this->UploadsView->Uploads->buildUploadForm();
-        $html .= $this->UploadsView->Uploads->buildUploads('edit');
+        $html .= $this->UploadsView->buildUploadForm();
+        $html .= $this->UploadsView->buildUploads('edit');
         $html .= $this->buildEditJs();
 
         return $html;

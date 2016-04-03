@@ -71,10 +71,10 @@ class Database extends Entity
 
     /**
      * Check if the item we want to view is in the team
-     * Called by the constructor
      *
+     * @return bool
      */
-    private function isInTeam()
+    public function isInTeam()
     {
         $sql = "SELECT team FROM items WHERE id = :id";
         $req = $this->pdo->prepare($sql);

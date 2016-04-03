@@ -26,30 +26,31 @@ require_once 'inc/head.php';
 try {
     if ($_GET['type'] === 'experiments') {
 
-        $experiment = new Experiments($_GET['item_id'], $_SESSION['userid']);
-
         // only experiment owner can change or see revisions
         if (!is_owned_by_user($_GET['item_id'], 'experiments', $_SESSION['userid'])) {
             throw new Exception(_('This section is out of your reach.'));
         }
-
         $location = 'experiments';
 
     } elseif ($_GET['type'] === 'items') {
 
-        // the constructor will check if we are in the same team as item
-        $database = new Database($_GET['item_id'], $_SESSION['team_id']);
+        // check if item is in team
+        $Database = new Database($_SESSION['team_id'], $_GET['item_id']);
+        if (!$Database->isInTeam()) {
+            throw new Exception(_('This section is out of your reach.'));
+        }
         $location = 'database';
+
     } else {
         throw new Exception('Bad type!');
     }
 
-    $revisions = new Revisions($_GET['type'], $_GET['item_id']);
+    $Revisions = new Revisions($_GET['type'], $_GET['item_id']);
 
     // THE RESTORE ACTION
     if (isset($_GET['action']) && $_GET['action'] === 'restore') {
 
-        $revisions->restore($_GET['rev_id']);
+        $Revisions->restore($_GET['rev_id']);
 
         header("Location: " . $location . ".php?mode=view&id=" . $_GET['item_id'] . "");
         exit;
@@ -57,7 +58,7 @@ try {
 
     // BEGIN PAGE
     echo "<a href='" . $location . ".php?mode=view&id=" . $_GET['item_id'] . "'><h4><img src='img/undo.png' alt='<--' /> " . _('Go back') . "</h4></a>";
-    $revisionArr = $revisions->read();
+    $revisionArr = $Revisions->read();
     foreach ($revisionArr as $revision) {
         echo "<div class='item'>" . _('Saved on:') . " " . $revision['savedate'] . " <a href='revisions.php?item_id=" . $_GET['item_id'] . "&type=" . $_GET['type'] . "&action=restore&rev_id=" . $revision['id'] . "'>" . _('Restore') . "</a><br>";
         echo $revision['body'] . "</div>";

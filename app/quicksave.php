@@ -1,45 +1,42 @@
 <?php
-/******************************************************************************
-*   Copyright 2012 Nicolas CARPi
-*   This file is part of eLabFTW.
-*
-*    eLabFTW is free software: you can redistribute it and/or modify
-*    it under the terms of the GNU General Public License as published by
-*    the Free Software Foundation, either version 3 of the License, or
-*    (at your option) any later version.
-*
-*    eLabFTW is distributed in the hope that it will be useful,
-*    but WITHOUT ANY WARRANTY; without even the implied warranty of
-*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*    GNU General Public License for more details.
-*
-*    You should have received a copy of the GNU General Public License
-*    along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.
-*
-********************************************************************************/
+/**
+ * app/quicksave.php
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see http://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 namespace Elabftw\Elabftw;
 
 require_once '../inc/common.php';
 
-$title = Tools::checkTitle($_POST['title']);
+try {
 
-$body = Tools::checkBody($_POST['body']);
+    $title = Tools::checkTitle($_POST['title']);
 
-$date = Tools::kdate($_POST['date']);
+    $body = Tools::checkBody($_POST['body']);
 
-if ($_POST['type'] == 'experiments') {
+    $date = Tools::kdate($_POST['date']);
 
-    $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
-    $result = $Experiments->update($title, $date, $body);
+    if ($_POST['type'] == 'experiments') {
 
-} elseif ($_POST['type'] == 'items') {
+        $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
+        $result = $Experiments->update($title, $date, $body);
 
-    $Database = new Database($_SESSION['team_id'], $_POST['id']);
-    $result = $Database->update($title, $date, $body, $_SESSION['userid']);
-}
+    } elseif ($_POST['type'] == 'items') {
 
-if ($result) {
-    echo 1;
-} else {
-    echo 0;
+        $Database = new Database($_SESSION['team_id'], $_POST['id']);
+        $result = $Database->update($title, $date, $body, $_SESSION['userid']);
+    }
+
+    if ($result) {
+        echo 1;
+    } else {
+        echo 0;
+    }
+
+} catch (Exception $e) {
+    echo $e->getMessage();
 }

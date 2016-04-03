@@ -45,12 +45,8 @@ try {
 
             // DELETE EXPERIMENTS TEMPLATES
             case 'tpl':
-                $delete_sql = "DELETE FROM experiments_templates WHERE id = :id";
-                $delete_req = $pdo->prepare($delete_sql);
-                $result = $delete_req->execute(array(
-                    'id' => $id
-                ));
-                if ($result) {
+                $Templates = new Templates($_SESSION['team_id']);
+                if ($Templates->destroy($_POST['id'])) {
                     $msg_arr[] = _('Template was deleted successfully.');
                     $_SESSION['ok'] = $msg_arr;
                 }

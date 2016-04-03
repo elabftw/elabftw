@@ -71,7 +71,6 @@ if (isset($_POST['email'])) {
             // Get info to build the URL
 
             // the key is the encrypted user's mail address
-            // so you need to have access to the secretkey and iv in config.php to get the key.
             $key = $crypto->encrypt($email);
 
             $protocol = 'https://';

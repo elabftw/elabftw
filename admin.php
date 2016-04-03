@@ -8,11 +8,10 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-
 namespace Elabftw\Elabftw;
 
-use PDO;
 use Exception;
+use PDO;
 
 /**
  * Administration of a team
@@ -23,9 +22,11 @@ $page_title = _('Admin panel');
 $selected_menu = null;
 require_once 'inc/head.php';
 
-
-// the constructor will check for admin rights
 try {
+    if (!$_SESSION['is_admin']) {
+        throw new Exception(_('This section is out of your reach.'));
+    }
+
     $formKey = new FormKey();
     $crypto = new CryptoWrapper();
     $status = new Status();

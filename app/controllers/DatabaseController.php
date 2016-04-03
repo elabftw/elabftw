@@ -59,6 +59,16 @@ try {
         $redirect = true;
     }
 
+    // UPDATE RATING
+    if (isset($_POST['rating'])) {
+        $Database->setId($_POST['id']);
+        if ($Database->updateRating($_POST['rating'])) {
+            echo '1';
+        } else {
+            echo '0';
+        }
+    }
+
     // DESTROY
     if (isset($_POST['destroy'])) {
         $Database->setId($_POST['id']);

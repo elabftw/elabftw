@@ -626,7 +626,7 @@ function uploadsDestroy(id, type, item_id, confirmText) {
             id: id,
             item_id: item_id,
             type: type
-        }).done(function (data) {
+        }).done(function(data) {
             if (data === '1') {
                 notif('File removed', 'ok');
                 if (type === 'items') {
@@ -642,10 +642,15 @@ function uploadsDestroy(id, type, item_id, confirmText) {
 
 // STAR RATINGS
 function updateRating(rating, id) {
-    // POST request
-    $.post('app/star-rating.php', {
-        star: rating,
-        item_id: id
+    $.post('app/controllers/DatabaseController.php', {
+        rating: rating,
+        id: id
+    }).done(function(data) {
+        if (data === '1') {
+            notif('Rating updated', 'ok');
+        } else {
+            notif('Something went wrong! :(', 'ko');
+        }
     });
 }
 

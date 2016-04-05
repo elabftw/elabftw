@@ -20,11 +20,16 @@ The following actions will be performed :
 .. warning:: This script will work for a fresh drop. If you already have a server running, you should consider a :ref:`normal install <install-gnulinux>` instead.
 
 
+.. warning:: You need to have a domain name pointing to the drop. Otherwise the letsencrypt script will not work.
+
+
 * Create an account on `DigitalOcean <https://cloud.digitalocean.com/registrations/new>`_
 
 * Add your SSH public key to your profile (`documentation <https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets>`_)
 
 * Create a droplet with Ubuntu 14.04 x64 (works also with 14.10, 15.04 and 15.10, but not with 12.04.5). Make sure to select your public key
+
+* Point the A field of your domain to the IP address of your drop. It might take a bit of time for the DNS to propagate.
 
 * Open a terminal and SSH to your droplet. The IP address can be found in the digitalocean website:
 

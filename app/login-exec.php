@@ -82,15 +82,15 @@ if ($Auth->login($username, $_POST['password'], $rememberme)) {
     header('location: ' . $location);
 } else {
     // log the attempt if the login failed
-    dblog('Warning', $_SERVER['REMOTE_ADDR'], 'Failed login attempt');
+    $Logs = new Logs();
+    $Logs->create('Warning', $_SERVER['REMOTE_ADDR'], 'Failed login attempt');
     // inform the user
-    $msg_arr[] = _("Login failed. Either you mistyped your password or your account isn't activated yet.");
+    $_SESSION['ko'][] = _("Login failed. Either you mistyped your password or your account isn't activated yet.");
     if (!isset($_SESSION['failed_attempt'])) {
         $_SESSION['failed_attempt'] = 1;
     } else {
         $_SESSION['failed_attempt'] += 1;
     }
-    $_SESSION['ko'] = $msg_arr;
 
     header("location: ../login.php");
 }

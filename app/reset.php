@@ -95,7 +95,8 @@ if (isset($_POST['email'])) {
                 $mailer->send($message);
             } catch (Exception $e) {
                 // log the error
-                dblog('Error', $_SERVER['REMOTE_ADDR'], $e->getMessage());
+                $Logs = new Logs();
+                $Logs->create('Error', $_SERVER['REMOTE_ADDR'], $e->getMessage());
                 $errflag = true;
             }
             if ($errflag) {
@@ -148,12 +149,11 @@ if (isset($_POST['password']) &&
     }
     // Replace new password in database
     if ($users->updatePassword($_POST['password'], $userid)) {
-        dblog('Info', $userid, 'Password was changed for this user.');
-        $msg_arr[] = _('New password updated. You can now login.');
-        $_SESSION['ok'] = $msg_arr;
+        $Logs = new Logs();
+        $Logs->create('Info', $userid, 'Password was changed for this user.');
+        $_SESSION['ok'][] = _('New password updated. You can now login.');
     } else {
-        $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#452A" . $error, "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-        $_SESSION['ko'] = $msg_arr;
+        $_SESSION['ko'][] = Tools::error();
     }
     header("location: ../login.php");
 }

@@ -48,5 +48,6 @@ try {
     }
 
 } catch (Exception $e) {
-    dblog('Error', $_SESSION['userid'], $e->getMessage());
+    $Logs = new Logs();
+    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
 }

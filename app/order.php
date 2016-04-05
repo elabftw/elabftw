@@ -25,10 +25,6 @@
 ********************************************************************************/
 require_once '../inc/common.php';
 
-if ($_SERVER['REQUEST_METHOD'] != 'POST' || !isset($_POST)) {
-    exit;
-}
-
 // track the sql request results
 $success = array();
 
@@ -58,9 +54,9 @@ foreach ($_POST as $key => $value) {
                 try {
                     $success[] = $req->execute();
                 } catch (Exception $e) {
-                    dblog('Error', $_SESSION['userid'], $e->getMessage());
+                    $Logs = new Logs();
+                    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
                     echo 0;
-                    exit;
                 }
             }
             break;
@@ -85,9 +81,9 @@ foreach ($_POST as $key => $value) {
                 try {
                     $success[] = $req->execute();
                 } catch (Exception $e) {
-                    dblog('Error', $_SESSION['userid'], $e->getMessage());
+                    $Logs = new Logs();
+                    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
                     echo 0;
-                    exit;
                 }
 
             }
@@ -115,16 +111,16 @@ foreach ($_POST as $key => $value) {
                 try {
                     $success[] = $req->execute();
                 } catch (Exception $e) {
-                    dblog('Error', $_SESSION['userid'], $e->getMessage());
+                    $Logs = new Logs();
+                    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
                     echo 0;
-                    exit;
                 }
 
             }
             break;
 
         default:
-            exit;
+            $success[] = false;
     }
 
     if (in_array(false, $success)) {

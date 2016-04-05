@@ -175,33 +175,6 @@ function get_team_config($column = null)
     return "";
 }
 
-
-/**
- * Insert a log entry in the logs table
- *
- * @param string $type The type of the log. Can be 'Error', 'Warning', 'Info'
- * @param string $body The content of the log
- * @param string $user
- * @return bool Will return true if the query is successfull
- */
-function dblog($type, $user, $body)
-{
-    global $pdo;
-
-    // no need to check the params are they come from the code
-    $sql = "INSERT INTO logs (type, user, body) VALUES (:type, :user, :body)";
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':type', $type);
-    $req->bindParam(':user', $user);
-    $req->bindParam(':body', $body);
-    try {
-        $req->execute();
-    } catch (Exception $e) {
-        return false;
-    }
-    return true;
-}
-
 /**
  * Used in sysconfig.php to update config values
  *

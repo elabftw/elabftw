@@ -337,7 +337,8 @@ try {
     </script>
     <?php
 } catch (Exception $e) {
-    dblog('Error', $_SESSION['userid'], $e->getMessage());
+    $Logs = new Logs();
+    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
     display_message('ko', $e->getMessage());
 } finally {
     require_once 'inc/footer.php';

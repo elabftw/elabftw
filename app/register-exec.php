@@ -251,9 +251,9 @@ if ($result) {
         try {
             $mailer->send($message);
         } catch (Exception $e) {
-            dblog('Error', 'smtp', $e->getMessage());
-            $msg_arr[] = _('Could not send email to inform admin. Error was logged. Contact an admin directly to validate your account.');
-            $_SESSION['ko'] = $msg_arr;
+            $Logs = new Logs();
+            $Logs->create('Error', 'smtp', $e->getMessage());
+            $_SESSION['ko'][] = _('Could not send email to inform admin. Error was logged. Contact an admin directly to validate your account.');
             header('Location: ../register.php');
             exit;
         }
@@ -263,8 +263,7 @@ if ($result) {
     }
     $_SESSION['ok'] = $msg_arr;
     $_SESSION['username'] = $username;
-    header("location: ../login.php");
-    exit;
 } else {
-    die(sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."), "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>"));
+    $_SESSION['ko'][] = Tools::error();
 }
+header("location: ../login.php");

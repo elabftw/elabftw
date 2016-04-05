@@ -10,7 +10,7 @@
  */
 namespace Elabftw\Elabftw;
 
-use \Exception;
+use Exception;
 
 /**
  * The mother class of Experiments and Database

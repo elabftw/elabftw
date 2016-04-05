@@ -41,7 +41,8 @@ try {
     require_once 'inc/tagcloud.php';
 
 } catch (Exception $e) {
-    dblog('Error', $_SESSION['userid'], $e->getMessage());
+    $Logs = new Logs();
+    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
 } finally {
     require_once 'inc/footer.php';
 }

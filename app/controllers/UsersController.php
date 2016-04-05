@@ -56,7 +56,8 @@ try {
         }
     }
 } catch (Exception $e) {
-    dblog('Error', $_SESSION['userid'], $e->getMessage());
+    $Logs = new Logs();
+    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
     $_SESSION['ko'][] = $e->getMessage();
 } finally {
     header('Location: ../../admin.php?tab=' . $tab);

@@ -10,8 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
-use \Exception;
-use \Swift_Message;
+use Exception;
+use Swift_Message;
 
 /**
  * Sysadmin configuration

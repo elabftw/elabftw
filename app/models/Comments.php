@@ -10,9 +10,9 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
-use \Exception;
-use \Swift_Message;
+use PDO;
+use Exception;
+use Swift_Message;
 
 /**
  * All about the comments

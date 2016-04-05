@@ -10,8 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
-use \Exception;
+use PDO;
+use Exception;
 
 /**
  * Things related to status in admin panel

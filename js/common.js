@@ -259,7 +259,7 @@ function commentsCreate(id) {
     $.post('app/controllers/CommentsController.php', {
         commentsCreate: true,
         comment: comment,
-        itemId: id
+        id: id
     }).done(function(data) {
         if (data) {
             notif('Comment added', 'ok');

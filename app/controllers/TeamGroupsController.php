@@ -8,7 +8,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-
 namespace Elabftw\Elabftw;
 
 use Exception;
@@ -17,11 +16,9 @@ use Exception;
  * Deal with ajax requests sent from the admin page
  *
  */
-require_once '../../inc/common.php';
-
-// the constructor will check for admin rights
 try {
-    $teamGroups = new TeamGroups();
+    require_once '../../inc/common.php';
+    $TeamGroups = new TeamGroups();
     // CREATE TEAM GROUP
     if (isset($_POST['teamGroupCreate'])) {
         $teamGroups->create(filter_var($_POST['teamGroupCreate'], FILTER_SANITIZE_STRING), $_SESSION['team_id']);

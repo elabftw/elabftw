@@ -8,7 +8,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-
 namespace Elabftw\Elabftw;
 
 use Exception;
@@ -16,49 +15,49 @@ use Exception;
 /**
  * Users
  */
-require_once '../../inc/common.php';
-$formKey = new FormKey();
-
 try {
-    $users = new Users();
+    require_once '../../inc/common.php';
+    $FormKey = new FormKey();
+    $Users = new Users();
 
     // VALIDATE
     if (isset($_POST['usersValidate'])) {
         $tab = 2;
         // loop the array
         foreach ($_POST['usersValidateIdArr'] as $userid) {
-            $_SESSION['ok'][] = $users->validate($userid);
+            $_SESSION['ok'][] = $Users->validate($userid);
         }
     }
-
 
     // UPDATE USERS
     if (isset($_POST['usersUpdate'])) {
         $tab = 2;
 
-        if ($users->update($_POST)) {
+        if ($Users->update($_POST)) {
             $_SESSION['ok'][] =  _('Configuration updated successfully.');
         }
     }
 
     // DESTROY
     if (isset($_POST['formkey'])
-        && $formKey->validate()
+        && $FormKey->validate()
         && isset($_POST['usersDestroy'])) {
 
         $tab = 2;
 
-        if ($users->destroy(
+        if ($Users->destroy(
             $_POST['usersDestroyEmail'],
             $_POST['usersDestroyPassword']
         )) {
             $_SESSION['ok'][] = _('Everything was purged successfully.');
         }
     }
+
 } catch (Exception $e) {
     $Logs = new Logs();
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
     $_SESSION['ko'][] = $e->getMessage();
+
 } finally {
     header('Location: ../../admin.php?tab=' . $tab);
 }

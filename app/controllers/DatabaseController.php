@@ -83,6 +83,7 @@ try {
     $Logs = new Logs();
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
     $_SESSION['ko'][] = Tools::error();
+
 } finally {
     if ($redirect) {
         header("location: ../../database.php?mode=" . $mode . "&id=" . $id);

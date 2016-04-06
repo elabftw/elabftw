@@ -2,6 +2,9 @@
 
 <phpunit backupGlobals="false"
          backupStaticAttributes="false"
+         bootstrap="vendor/autoload.php"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutTestsThatDoNotTestAnything="true"
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
@@ -9,8 +12,6 @@
          processIsolation="false"
          stopOnFailure="true"
          syntaxCheck="true"
-         bootstrap="vendor/autoload.php"
-         strict="true"
 >
     <testsuites>
         <testsuite name="phpDocumentor\GraphViz">

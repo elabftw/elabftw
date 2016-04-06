@@ -453,7 +453,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(1, $result->skippedCount());
         $this->assertEquals(
-            'PHPUnit 1111111 (or later) is required.',
+            'PHPUnit >= 1111111 is required.',
             $test->getStatusMessage()
         );
     }
@@ -465,7 +465,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(1, $result->skippedCount());
         $this->assertEquals(
-            'PHP 9999999 (or later) is required.',
+            'PHP >= 9999999 is required.',
             $test->getStatusMessage()
         );
     }
@@ -511,7 +511,7 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
         $result = $test->run();
 
         $this->assertEquals(
-            'Extension testExt 1.8.0 (or later) is required.',
+            'Extension testExt >= 1.8.0 is required.',
             $test->getStatusMessage()
         );
     }
@@ -522,14 +522,14 @@ class Framework_TestCaseTest extends PHPUnit_Framework_TestCase
         $result = $test->run();
 
         $this->assertEquals(
-            'PHP 99-dev (or later) is required.' . PHP_EOL .
-            'PHPUnit 9-dev (or later) is required.' . PHP_EOL .
+            'PHP >= 99-dev is required.' . PHP_EOL .
+            'PHPUnit >= 9-dev is required.' . PHP_EOL .
             'Operating system matching /DOESNOTEXIST/i is required.' . PHP_EOL .
             'Function testFuncOne is required.' . PHP_EOL .
             'Function testFuncTwo is required.' . PHP_EOL .
             'Extension testExtOne is required.' . PHP_EOL .
             'Extension testExtTwo is required.' . PHP_EOL .
-            'Extension testExtThree 2.0 (or later) is required.',
+            'Extension testExtThree >= 2.0 is required.',
             $test->getStatusMessage()
         );
     }

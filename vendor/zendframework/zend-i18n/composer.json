@@ -9,8 +9,12 @@
     "homepage": "https://github.com/zendframework/zend-i18n",
     "extra": {
         "branch-alias": {
-            "dev-master": "2.6-dev",
-            "dev-develop": "2.7-dev"
+            "dev-master": "2.7-dev",
+            "dev-develop": "2.8-dev"
+        },
+        "zf": {
+            "component": "Zend\\I18n",
+            "config-provider": "Zend\\I18n\\ConfigProvider"
         }
     },
     "require": {
@@ -18,13 +22,13 @@
         "zendframework/zend-stdlib": "^2.7 || ^3.0"
     },
     "require-dev": {
-        "zendframework/zend-cache": "^2.5",
+        "zendframework/zend-cache": "^2.6.1",
         "zendframework/zend-config": "^2.6",
         "zendframework/zend-eventmanager": "^2.6.2 || ^3.0",
         "zendframework/zend-filter": "^2.6.1",
         "zendframework/zend-servicemanager": "^2.7.5 || ^3.0.3",
-        "zendframework/zend-validator": "^2.5",
-        "zendframework/zend-view": "^2.5",
+        "zendframework/zend-validator": "^2.6",
+        "zendframework/zend-view": "^2.6.3",
         "fabpot/php-cs-fixer": "1.7.*",
         "phpunit/PHPUnit": "~4.0"
     },

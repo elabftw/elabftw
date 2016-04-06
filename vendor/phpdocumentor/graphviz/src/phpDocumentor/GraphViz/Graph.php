@@ -24,7 +24,7 @@ namespace phpDocumentor\GraphViz;
  * @copyright 2010-2011 Mike van Riel / Naenius (http://www.naenius.com)
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
- * 
+ *
  * @method Graph setRankSep(string $rankSep)
  * @method Graph setCenter(string $center)
  * @method Graph setRank(string $rank)
@@ -41,6 +41,9 @@ class Graph
     /** @var string Type of this graph; may be digraph, graph or subgraph */
     protected $type = 'digraph';
 
+    /** @var bool If the graph is strict then multiple edges are not allowed between the same pairs of nodes */
+    protected $strict = false;
+
     /** @var \phpDocumentor\GraphViz\Attribute[] A list of attributes for this Graph */
     protected $attributes = array();
 
@@ -53,6 +56,7 @@ class Graph
     /** @var \phpDocumentor\GraphViz\Edge[] A list of edges / arrows for this Graph */
     protected $edges = array();
 
+    /** @var string The path to execute dot from */
     protected $path = '';
 
     /**
@@ -146,6 +150,28 @@ class Graph
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * Set if the Graph should be strict. If the graph is strict then
+     * multiple edges are not allowed between the same pairs of nodes
+     *
+     * @param bool $isStrict
+     *
+     * @return \phpDocumentor\GraphViz\Graph
+     */
+    public function setStrict($isStrict)
+    {
+        $this->strict = $isStrict;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isStrict()
+    {
+        return $this->strict;
     }
 
     /**
@@ -375,8 +401,10 @@ class Graph
         }
         $attributes = implode(PHP_EOL, $attributes);
 
+        $strict = ($this->isStrict() ? 'strict ' : '');
+
         return <<<DOT
-{$this->getType()} "{$this->getName()}" {
+{$strict}{$this->getType()} "{$this->getName()}" {
 $attributes
 }
 DOT;

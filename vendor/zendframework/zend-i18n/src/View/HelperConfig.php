@@ -15,6 +15,8 @@ use Zend\ServiceManager\ServiceManager;
 
 /**
  * Service manager configuration for i18n view helpers.
+ *
+ * @deprecated since 2.7.0; replaced by ConfigProvider and Module class.
  */
 class HelperConfig implements ConfigInterface
 {

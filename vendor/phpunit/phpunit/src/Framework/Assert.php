@@ -992,17 +992,6 @@ abstract class PHPUnit_Framework_Assert
     }
 
     /**
-     * Asserts that a variable is not null.
-     *
-     * @param mixed  $actual
-     * @param string $message
-     */
-    public static function assertNotNull($actual, $message = '')
-    {
-        self::assertThat($actual, self::logicalNot(self::isNull()), $message);
-    }
-
-    /**
      * Asserts that a variable is null.
      *
      * @param mixed  $actual
@@ -1011,6 +1000,17 @@ abstract class PHPUnit_Framework_Assert
     public static function assertNull($actual, $message = '')
     {
         self::assertThat($actual, self::isNull(), $message);
+    }
+
+    /**
+     * Asserts that a variable is not null.
+     *
+     * @param mixed  $actual
+     * @param string $message
+     */
+    public static function assertNotNull($actual, $message = '')
+    {
+        self::assertThat($actual, self::logicalNot(self::isNull()), $message);
     }
 
     /**
@@ -2080,35 +2080,6 @@ abstract class PHPUnit_Framework_Assert
     }
 
     /**
-     * Asserts that two JSON files are not equal.
-     *
-     * @param string $expectedFile
-     * @param string $actualFile
-     * @param string $message
-     */
-    public static function assertJsonFileNotEqualsJsonFile($expectedFile, $actualFile, $message = '')
-    {
-        self::assertFileExists($expectedFile, $message);
-        self::assertFileExists($actualFile, $message);
-
-        $actualJson   = file_get_contents($actualFile);
-        $expectedJson = file_get_contents($expectedFile);
-
-        self::assertJson($expectedJson, $message);
-        self::assertJson($actualJson, $message);
-
-        // call constraint
-        $constraintExpected = new PHPUnit_Framework_Constraint_JsonMatches(
-            $expectedJson
-        );
-
-        $constraintActual = new PHPUnit_Framework_Constraint_JsonMatches($actualJson);
-
-        self::assertThat($expectedJson, new PHPUnit_Framework_Constraint_Not($constraintActual), $message);
-        self::assertThat($actualJson, new PHPUnit_Framework_Constraint_Not($constraintExpected), $message);
-    }
-
-    /**
      * Asserts that two JSON files are equal.
      *
      * @param string $expectedFile
@@ -2135,6 +2106,35 @@ abstract class PHPUnit_Framework_Assert
 
         self::assertThat($expectedJson, $constraintActual, $message);
         self::assertThat($actualJson, $constraintExpected, $message);
+    }
+
+    /**
+     * Asserts that two JSON files are not equal.
+     *
+     * @param string $expectedFile
+     * @param string $actualFile
+     * @param string $message
+     */
+    public static function assertJsonFileNotEqualsJsonFile($expectedFile, $actualFile, $message = '')
+    {
+        self::assertFileExists($expectedFile, $message);
+        self::assertFileExists($actualFile, $message);
+
+        $actualJson   = file_get_contents($actualFile);
+        $expectedJson = file_get_contents($expectedFile);
+
+        self::assertJson($expectedJson, $message);
+        self::assertJson($actualJson, $message);
+
+        // call constraint
+        $constraintExpected = new PHPUnit_Framework_Constraint_JsonMatches(
+            $expectedJson
+        );
+
+        $constraintActual = new PHPUnit_Framework_Constraint_JsonMatches($actualJson);
+
+        self::assertThat($expectedJson, new PHPUnit_Framework_Constraint_Not($constraintActual), $message);
+        self::assertThat($actualJson, new PHPUnit_Framework_Constraint_Not($constraintExpected), $message);
     }
 
     /**

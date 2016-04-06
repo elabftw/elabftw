@@ -30,6 +30,19 @@ class PHPUnit_Framework_MockObject_InvocationMocker implements PHPUnit_Framework
     protected $builderMap = [];
 
     /**
+     * @var string[]
+     */
+    private $configurableMethods = [];
+
+    /**
+     * @param array $configurableMethods
+     */
+    public function __construct(array $configurableMethods)
+    {
+        $this->configurableMethods = $configurableMethods;
+    }
+
+    /**
      * @param PHPUnit_Framework_MockObject_Matcher_Invocation $matcher
      */
     public function addMatcher(PHPUnit_Framework_MockObject_Matcher_Invocation $matcher)
@@ -52,7 +65,8 @@ class PHPUnit_Framework_MockObject_InvocationMocker implements PHPUnit_Framework
     }
 
     /**
-     * @param  mixed     $id
+     * @param mixed $id
+     *
      * @return bool|null
      */
     public function lookupId($id)
@@ -65,14 +79,15 @@ class PHPUnit_Framework_MockObject_InvocationMocker implements PHPUnit_Framework
     }
 
     /**
-     * @param  mixed                                      $id
-     * @param  PHPUnit_Framework_MockObject_Builder_Match $builder
-     * @throws PHPUnit_Framework_Exception
+     * @param mixed                                      $id
+     * @param PHPUnit_Framework_MockObject_Builder_Match $builder
+     *
+     * @throws PHPUnit_Framework_MockObject_RuntimeException
      */
     public function registerId($id, PHPUnit_Framework_MockObject_Builder_Match $builder)
     {
         if (isset($this->builderMap[$id])) {
-            throw new PHPUnit_Framework_Exception(
+            throw new PHPUnit_Framework_MockObject_RuntimeException(
                 'Match builder with id <' . $id . '> is already registered.'
             );
         }
@@ -81,19 +96,22 @@ class PHPUnit_Framework_MockObject_InvocationMocker implements PHPUnit_Framework
     }
 
     /**
-     * @param  PHPUnit_Framework_MockObject_Matcher_Invocation       $matcher
+     * @param PHPUnit_Framework_MockObject_Matcher_Invocation $matcher
+     *
      * @return PHPUnit_Framework_MockObject_Builder_InvocationMocker
      */
     public function expects(PHPUnit_Framework_MockObject_Matcher_Invocation $matcher)
     {
         return new PHPUnit_Framework_MockObject_Builder_InvocationMocker(
             $this,
-            $matcher
+            $matcher,
+            $this->configurableMethods
         );
     }
 
     /**
-     * @param  PHPUnit_Framework_MockObject_Invocation $invocation
+     * @param PHPUnit_Framework_MockObject_Invocation $invocation
+     *
      * @return mixed
      */
     public function invoke(PHPUnit_Framework_MockObject_Invocation $invocation)
@@ -131,7 +149,8 @@ class PHPUnit_Framework_MockObject_InvocationMocker implements PHPUnit_Framework
     }
 
     /**
-     * @param  PHPUnit_Framework_MockObject_Invocation $invocation
+     * @param PHPUnit_Framework_MockObject_Invocation $invocation
+     *
      * @return bool
      */
     public function matches(PHPUnit_Framework_MockObject_Invocation $invocation)

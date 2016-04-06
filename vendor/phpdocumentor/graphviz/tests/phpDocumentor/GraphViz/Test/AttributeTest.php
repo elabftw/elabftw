@@ -159,6 +159,35 @@ class AttributeTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests whether the toString provides a valid GraphViz attribute string.
+     *
+     * @covers \phpDocumentor\GraphViz\Attribute::__toString
+     * @covers \phpDocumentor\GraphViz\Attribute::encodeSpecials
+     *
+     * @return void
+     */
+    public function testToStringWithSpecials()
+    {
+        $this->fixture = new Attribute('a', 'b');
+
+        $this->fixture->setValue('a\la');
+        $this->assertSame(
+            'a="a\la"', (string)$this->fixture,
+            'Specials should not be escaped'
+        );
+        $this->fixture->setValue('a\l"a');
+        $this->assertSame(
+            'a="a\l\"a"', (string)$this->fixture,
+            'Specials should not be escaped, but quotes should'
+        );
+        $this->fixture->setValue('a\\\\l"a');
+        $this->assertSame(
+            'a="a\\\\l\"a"', (string)$this->fixture,
+            'Double backslashes should stay the same'
+        );
+    }
+
+    /**
      * Tests whether the isValueContainingSpecials function
      *
      * @covers \phpDocumentor\GraphViz\Attribute::isValueContainingSpecials
@@ -173,4 +202,6 @@ class AttributeTest extends \PHPUnit_Framework_TestCase
         $this->fixture->setValue('+ ship(): boolean');
         $this->assertFalse($this->fixture->isValueContainingSpecials());
     }
+
+    
 }

@@ -685,6 +685,12 @@ class PHPUnit_Framework_TestResult implements Countable
             } else {
                 $test->runBare();
             }
+        } catch (PHPUnit_Framework_MockObject_Exception $e) {
+            $e = new PHPUnit_Framework_Warning(
+                $e->getMessage()
+            );
+
+            $warning = true;
         } catch (PHPUnit_Framework_AssertionFailedError $e) {
             $failure = true;
 
@@ -786,6 +792,14 @@ class PHPUnit_Framework_TestResult implements Countable
                     new PHPUnit_Framework_CoveredCodeNotExecutedException(
                         'This test did not execute all the code that is listed as code to be covered:' .
                         PHP_EOL . $cce->getMessage()
+                    ),
+                    $time
+                );
+            } catch (PHP_CodeCoverage_MissingCoversAnnotationException $cce) {
+                $this->addFailure(
+                    $test,
+                    new PHPUnit_Framework_MissingCoversAnnotationException(
+                        'This test does not have a @covers annotation but is expected to have one'
                     ),
                     $time
                 );

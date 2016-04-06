@@ -144,6 +144,39 @@ class GraphTest extends \PHPUnit_Framework_TestCase {
         );
     }
 
+    public function testSetStrict()
+    {
+        $this->assertSame(
+            $this->fixture, $this->fixture->setStrict(true),
+            'Expecting a fluent interface'
+        );
+        $this->assertSame(
+            $this->fixture, $this->fixture->setStrict(false),
+            'Expecting a fluent interface'
+        );
+    }
+
+    public function testIsStrict()
+    {
+        $this->assertSame(
+            $this->fixture->isStrict(),
+            false
+        );
+        $this->fixture->setStrict(true);
+        $this->assertSame(
+            $this->fixture->isStrict(),
+            true
+        );
+    }
+
+    public function testSetPath()
+    {
+        $this->assertSame(
+            $this->fixture, $this->fixture->setPath(__DIR__),
+            'Expecting a fluent interface'
+        );
+    }
+
     /**
      * @covers phpDocumentor\GraphViz\Graph::__call
      */
@@ -316,6 +349,12 @@ class GraphTest extends \PHPUnit_Framework_TestCase {
         $this->assertSame(
             (string) $graph,
             ('digraph "My First Graph" {' . PHP_EOL . 'label="PigeonPost"' . PHP_EOL . '}')
+        );
+
+        $graph->setStrict(true);
+        $this->assertSame(
+            (string) $graph,
+            ('strict digraph "My First Graph" {' . PHP_EOL . 'label="PigeonPost"' . PHP_EOL . '}')
         );
     }
 

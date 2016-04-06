@@ -99,7 +99,9 @@ class Attribute
         }
 
         $value = $this->getValue();
-        if (!$this->isValueInHtml() || $this->isValueContainingSpecials()) {
+        if ($this->isValueContainingSpecials()) {
+            $value = '"' . $this->encodeSpecials() . '"';
+        } elseif (!$this->isValueInHtml()) {
             $value = '"' . addslashes($value) . '"';
         }
         return $key . '=' . $value;
@@ -125,5 +127,18 @@ class Attribute
     public function isValueContainingSpecials()
     {
         return strstr($this->getValue(), "\\") !== false;
+    }
+
+    /**
+     * Encode special characters so the escape sequences aren't removed
+     *
+     * @see http://www.graphviz.org/doc/info/attrs.html#k:escString
+     * @return string
+     */
+    protected function encodeSpecials()
+    {
+        $value = $this->getValue();
+        $regex = '(\'|"|\\x00|\\\\(?![\\\\NGETHLnlr]))';
+        return preg_replace($regex, '\\\\$0', $value);
     }
 }

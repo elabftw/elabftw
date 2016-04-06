@@ -2,6 +2,58 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.1 - 2016-03-30
+
+### Added
+
+- [#41](https://github.com/zendframework/zend-i18n/pull/41) adds
+  `Zend\I18n\Module::init()`, which registers a specification for the translator
+  loader plugin manager with `Zend\ModuleManager\Listener\ServiceListener`.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 2.7.0 - 2016-03-30
+
+### Added
+
+- [#40](https://github.com/zendframework/zend-i18n/pull/40) adds:
+  - `Zend\I18n\Translator\LoaderPluginManagerFactory`, which provides a factory
+    for container-interop-compatible containers (including zend-servicemanager)
+    for creating and returning a `LoaderPluginManager` instance.
+  - `Zend\I18n\ConfigProvider` (which provides an invokable configuration
+    provider class; this could be used with zend-expressive) and
+    `Zend\I18n\Module` (which provides a zend-mvc/zend-modulemanager module
+    providing service configuration for ZF applications); these provide
+    configuration for zend-i18n services, including filters, validators, and
+    view helpers.
+
+### Deprecated
+
+- [#40](https://github.com/zendframework/zend-i18n/pull/40) deprecates
+  `Zend\I18n\View\HelperConfig`, as the functionality is made obsolete by the
+  new `Module` class. The class will be removed with the 3.0 release.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#35](https://github.com/zendframework/zend-i18n/pull/35) updates the
+  dependencies for zend-validator and zend-cache to use versions that are
+  forwards-compatible with zend-servicemanager v3, and re-enables their tests
+  during continuous integration.
+
 ## 2.6.0 - 2016-02-10
 
 ### Added

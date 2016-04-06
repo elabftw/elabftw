@@ -123,7 +123,7 @@ $totals = $count_req->fetch(PDO::FETCH_ASSOC);
         <li class='tip'><?php printf(_('You can have experiments templates (%sControl Panel%s).'), "<a href='ucp.php?tab=3'>", "</a>"); ?></li>
         <li class='tip'><?php printf(_('The admin of a team can edit the status and the types of items available (%sAdmin Panel%s).'), "<a href='admin.php?tab=4'>", "</a>"); ?></li>
         <li class='tip'><?php echo _('If you press Ctrl Shift D in the editor, the date will appear under the cursor.'); ?></li>
-        <li class='tip'><?php printf(_('Custom shortcuts are available (%sControl Panel%s).'), "<a href='ucp.php?tab=2'>", "</a>"); ?></li>
+        <li class='tip'><?php printf(_('Custom shortcuts are available (%sControl Panel%s).'), "<a href='ucp.php?tab=1'>", "</a>"); ?></li>
         <li class='tip'><?php echo _('You can duplicate experiments in one click.'); ?></li>
         <li class='tip'><?php echo _('Click a tag to list all items with this tag.'); ?></li>
         <li class='tip'><?php echo _('Only a locked experiment can be timestamped.'); ?></li>

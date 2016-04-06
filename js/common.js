@@ -403,7 +403,6 @@ function itemsTypesUpdate(id) {
         itemsTypesTemplate: template
     }).done(function() {
         notif('Saved', 'ok');
-        window.location.replace('admin.php?tab=4');
     });
 }
 
@@ -413,7 +412,7 @@ function itemsTypesDestroy(id) {
         itemsTypesId: id
     }).done(function() {
         notif('Deleted', 'ok');
-        window.location.replace('admin.php?tab=4');
+        $('#itemstypes_' + id).hide();
     });
 }
 

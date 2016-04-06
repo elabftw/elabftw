@@ -144,7 +144,7 @@ class ItemsTypes extends Panel
         }
 
         $sql = "DELETE FROM items_types WHERE id = :id AND team = :team";
-        $req = $pdo->prepare($sql);
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);
         $req->bindParam(':team', $this->team);
 

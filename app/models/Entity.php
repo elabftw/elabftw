@@ -60,13 +60,13 @@ class Entity
      */
     public function hasAttachment($type)
     {
-        $sql = "SELECT id FROM uploads
+        $sql = "SELECT COUNT(*) FROM uploads
             WHERE item_id = :item_id AND type = :type LIMIT 1";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':item_id', $this->id);
         $req->bindParam(':type', $type);
         $req->execute();
 
-        return $req->rowCount() > 0;
+        return $req->fetchColumn() != 0;
     }
 }

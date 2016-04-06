@@ -1,60 +1,43 @@
 <?php
-/********************************************************************************
-*                                                                               *
-*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
-*   http://www.elabftw.net/                                                     *
-*                                                                               *
-********************************************************************************/
+/**
+ * app/import.php
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see http://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+namespace Elabftw\Elabftw;
 
-/********************************************************************************
-*  This file is part of eLabFTW.                                                *
-*                                                                               *
-*    eLabFTW is free software: you can redistribute it and/or modify            *
-*    it under the terms of the GNU Affero General Public License as             *
-*    published by the Free Software Foundation, either version 3 of             *
-*    the License, or (at your option) any later version.                        *
-*                                                                               *
-*    eLabFTW is distributed in the hope that it will be useful,                 *
-*    but WITHOUT ANY WARRANTY; without even the implied                         *
-*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
-*    PURPOSE.  See the GNU Affero General Public License for more details.      *
-*                                                                               *
-*    You should have received a copy of the GNU Affero General Public           *
-*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
-*                                                                               *
-********************************************************************************/
-require_once '../inc/common.php';
-// it might take some time and we don't want to be cut in the middle, so set time_limit to ∞
-set_time_limit(0);
+use Exception;
 
-$errflag = false;
-$msg_arr = array();
-
+/**
+ * Import a zip or a csv
+ *
+ */
 try {
-    switch ($_POST['type']) {
-        case 'csv':
-            $import = new \Elabftw\Elabftw\ImportCsv();
-            break;
+    require_once '../inc/common.php';
+    // it might take some time and we don't want to be cut in the middle, so set time_limit to ∞
+    set_time_limit(0);
 
-        case 'zip':
-            $import = new \Elabftw\Elabftw\ImportZip();
-            break;
-        default:
-            $errflag = true;
+    if ($_POST['type'] === 'csv') {
+        $Import = new ImportCsv();
+    } elseif ($_POST['type'] === 'zip') {
+        $Import = new ImportZip();
+    } else {
+        throw new Exception('Invalid argument');
     }
+
+    $msg = $Import->inserted . ' ' .
+        ngettext('item imported successfully.', 'items imported successfully.', $Import->inserted);
+    $_SESSION['ok'][] = $msg;
+
 } catch (Exception $e) {
-    $errflag = true;
-    $msg_arr[] = $e->getMessage();
-}
+    $_SESSION['ko'][] = Tools::error();
+    $Logs = new Logs();
+    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
 
-
-// REDIRECT
-if (!$errflag) {
-    $msg_arr[] = $import->inserted . ' ' . ngettext('item imported successfully.', 'items imported successfully.', $import->inserted);
-    $_SESSION['ok'] = $msg_arr;
-    header('Location: ../admin.php');
-} else {
-    $msg_arr[] = sprintf(_("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug.") . "<br>E#17", "<a href='https://github.com/elabftw/elabftw/issues/'>", "</a>");
-    $_SESSION['ko'] = $msg_arr;
+} finally {
     header('Location: ../admin.php');
 }

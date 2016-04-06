@@ -39,6 +39,9 @@ class Entity
     /** inserted in sql */
     public $sort = 'DESC';
 
+    /** limit for sql */
+    public $limit = '';
+
     /**
      * Check and set id
      *
@@ -68,5 +71,16 @@ class Entity
         $req->execute();
 
         return $req->fetchColumn() != 0;
+    }
+
+    /**
+     * Set a limit for sql read
+     *
+     * @param int $num
+     * @return string
+     */
+    public function setLimit($num)
+    {
+        $this->limit = 'LIMIT ' . (int) $num;
     }
 }

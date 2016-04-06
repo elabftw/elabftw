@@ -137,7 +137,7 @@ class Database extends Entity
         " . $this->categoryFilter . "
         " . $this->tagFilter . "
         " . $this->queryFilter . "
-        ORDER BY $this->order $this->sort";
+        ORDER BY $this->order $this->sort $this->limit";
 
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':teamid', $this->team);

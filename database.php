@@ -66,6 +66,12 @@ try {
         }
 
         echo $DatabaseView->buildShowMenu('database');
+
+        // limit the number of items to show if there is no search parameters
+        // because with a big database this can be expensive
+        if (!isset($_GET['q']) && !isset($_GET['tag']) && !isset($_GET['filter'])) {
+            $DatabaseView->Database->setLimit(50);
+        }
         echo $DatabaseView->buildShow();
 
     // VIEW

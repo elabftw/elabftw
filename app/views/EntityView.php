@@ -255,7 +255,7 @@ class EntityView
 
         $html = '';
 
-        if (count($tagList) === 0) {
+        if (count($tagList) === 0 && $mode != 'edit') {
             return $html;
         }
 

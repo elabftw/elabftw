@@ -13,12 +13,14 @@ Version 1.2.0
   * Add possibility to clear the logs
   * Show usage statistics on sysconfig page
   * Show informations about the server on sysconfig page
+  * Add buttons to show more or show all items
 
 * Enhancements
 
   * Improved layout for displaying users, status and items types
   * Improved translation for french, add terms
   * Better notification system
+  * Improved "Create new" menus
 
 * Documentation
 
@@ -30,6 +32,11 @@ Version 1.2.0
   * Code moved around to try to have something that looks like an MVC seen from very far away
   * Optimize page load by doing less useless SQL requests
   * Add asynchronous calls everywhere
+  * Updated composer components
+  * Removed some duplicated code
+  * Removed useless code
+  * Better CSS code
+  * Replace die and exit by Exceptions
 
 Version 1.1.8-p2
 ----------------

@@ -20,26 +20,25 @@ $req = $pdo->prepare($sql);
 $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
 $req->execute();
 $full = $req->fetchAll();
-$count = count($full);
-// need at least 10 tags to make a cloud
-if ($count > 10) {
-    // max occurence = first result in array
-    $maxoccur = $full[0][1];
-    // min occurenc = last result in array
-    $minoccur = $full[$count - 1][1];
 
-    // 2nd SQL to get the tags unsorted
-    $sql = "SELECT tag, COUNT(*) AS total FROM experiments_tags WHERE userid = :userid GROUP BY tag";
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
-    $req->execute();
-    $spread = $maxoccur - $minoccur;
+// need at least 10 tags to make a cloud
+if (count($full) > 10) {
+
+    // calculate the spread, max number of tag occurence - min number of tag occurence
+    $first = reset($full);
+    $last = end($full);
+    $spread = $first['total'] - $last['total'];
     if ($spread === 0) {
         $spread = 1;
     }
-    while ($data = $req->fetch()) {
+
+    // randomize the tags
+    shuffle($full);
+
+    foreach ($full as $tag) {
         // Calculate ratio
-        $ratio = floor((($data[1] - $minoccur) / $spread) * 100);
+        $ratio = floor((($tag['total'] - $last['total']) / $spread) * 100);
+
         if ($ratio < 10) {
             $class = 'c1';
         } elseif ($ratio >= 10 && $ratio < 20) {
@@ -61,12 +60,13 @@ if ($count > 10) {
         } else {
             $class = 'c10';
         }
-        echo "<a href='experiments.php?mode=show&q=" . $data['tag'] . "' class='" . $class . "'>" . stripslashes($data['tag']) . "</a> ";
+
+        echo "<a href='experiments.php?mode=show&tag=" . $tag['tag'] . "' class='" . $class . "'>" . stripslashes($tag['tag']) . "</a> ";
     }
     // TAGCLOUD
     echo "</div>";
 } else {
     echo _('Not enough tags to make a tagcloud.');
-}// end fix division by zero
+}
 ?>
 </section>

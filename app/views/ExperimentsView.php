@@ -245,14 +245,14 @@ class ExperimentsView extends EntityView
         $html .= "<label for='datepicker'>" . _('Date') . "</label>";
         // if firefox has support for it: type = date
         // https://bugzilla.mozilla.org/show_bug.cgi?id=825294
-        $html .= "<input name='date' id='datepicker' size='8' type='text' value='" . $this->experiment['date'] . "' />";
+        $html .= " <input name='date' id='datepicker' size='8' type='text' value='" . $this->experiment['date'] . "' />";
         $html .= "</div>";
 
         // VISIBILITY
         $html .= "<div class='col-md-4'>";
         $html .= "<img src='img/eye.png' class='bot5px' alt='visibility' />";
         $html .= "<label for='visibility_select'>" . _('Visibility') . "</label>";
-        $html .= "<select id='visibility_select' onchange='updateVisibility(" . $this->Experiments->id . ", this.value)'>";
+        $html .= " <select id='visibility_select' onchange='updateVisibility(" . $this->Experiments->id . ", this.value)'>";
         $html .= "<option value='organization' ";
         if ($this->experiment['visibility'] === 'organization') {
             $html .= "selected";
@@ -284,7 +284,7 @@ class ExperimentsView extends EntityView
         $html .= "<div class='col-md-4'>";
         $html .= "<img src='img/status.png' class='bot5px' alt='status' />";
         $html .= "<label for='status_select'>" . ngettext('Status', 'Status', 1) . "</label>";
-        $html .= "<select id='status_select' name='status' onchange='updateStatus(" . $this->Experiments->id . ", this.value)'>";
+        $html .= " <select id='status_select' name='status' onchange='updateStatus(" . $this->Experiments->id . ", this.value)'>";
 
         $Status = new Status();
         $statusArr = $Status->read($_SESSION['team_id']);

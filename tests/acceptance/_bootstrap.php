@@ -8,7 +8,7 @@ function testLogin($I)
     }
     // logging in
     $I->amOnPage('/login.php');
-    $I->submitForm('#login', ['username' => 'tester', 'password' => 'testtest']);
+    $I->submitForm('#login', ['username' => 'sysadmin', 'password' => 'sysadmin']);
     // saving snapshot
     $I->saveSessionSnapshot('login');
 }

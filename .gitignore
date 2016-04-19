@@ -8,6 +8,6 @@ Session.vim
 /nbproject/private/
 .DS_Store
 tests/_output/*
-tests/_data/dump.sql
+tests/_data/*
 vendor/defuse/php-encryption/.git
 node_modules/*

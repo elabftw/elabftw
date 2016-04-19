@@ -3,5 +3,6 @@ $I = new AcceptanceTester($scenario);
 $I->wantTo('Test creating an item');
 testLogin($I);
 $I->amOnPage('/database.php');
-$I->click('/html/body/section/div/menu/div/div[1]/form/select/option[2]');
-$I->see('successfully.');
+$I->click('#dropdownMenu1');
+$I->click("id('real_container')/x:div[2]/x:div[1]/x:div/x:ul/x:li/x:a");
+$I->see('Tags');

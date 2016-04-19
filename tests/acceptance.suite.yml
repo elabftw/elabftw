@@ -9,6 +9,8 @@ modules:
     enabled:
         - WebDriver:
             url: https://localhost/elabftw
-            browser: firefox
+            browser: phantomjs
+            capabilities:
+               phantomjs.cli.args: ['--ignore-ssl-errors=true']
         - \Helper\Acceptance
         - Db

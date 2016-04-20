@@ -47,7 +47,7 @@ try {
         if (isset($_GET['q']) && !empty($_GET['q'])) {
             $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
             $ExperimentsView->query = $query;
-            $ExperimentsView->Experiments->queryFilter = "AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%')";
+            $ExperimentsView->Experiments->queryFilter = "AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%' OR elabid LIKE '%$query%')";
             $ExperimentsView->searchType = 'query';
         }
         // RELATED FILTER

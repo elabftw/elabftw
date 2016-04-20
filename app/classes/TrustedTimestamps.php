@@ -22,13 +22,13 @@ use \Elabftw\Elabftw\CryptoWrapper as Crypto;
  * Based on:
  * http://www.d-mueller.de/blog/dealing-with-trusted-timestamps-in-php-rfc-3161
  */
-class TrustedTimestamps
+class TrustedTimestamps extends Entity
 {
     /** our database connection */
-    private $pdo;
+    protected $pdo;
 
     /** the id of the experiment */
-    private $id;
+    public $id;
 
     /** ELAB_ROOT . uploads/ . $pdfFileName */
     private $pdfPath;
@@ -65,7 +65,8 @@ class TrustedTimestamps
         $this->pdo = Db::getConnection();
 
         // will be used in sqlUpdate()
-        $this->id = $id;
+        $this->setId($id);
+
         $this->generatePdf();
 
         // initialize with info from config

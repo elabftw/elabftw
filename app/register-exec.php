@@ -1,6 +1,6 @@
 <?php
 /**
- * register.php
+ * register-exec.php
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -10,7 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use Swift_Message;
 use Exception;
 
 try {
@@ -53,9 +52,11 @@ try {
     } else {
         $_SESSION['ko'][] = Tools::error();
     }
+
 } catch (Exception $e) {
     $_SESSION['ko'][] = $e->getMessage();
     $location = '../register.php';
+
 } finally {
     header("location: $location");
 }

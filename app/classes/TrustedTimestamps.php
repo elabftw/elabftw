@@ -397,7 +397,11 @@ class TrustedTimestamps
             if (stripos($retline, "message imprint mismatch") !== false) {
                             return false;
             }
+            if (stripos($retline, "TS_CHECK_SIGNING_CERTS")) {
+                throw new Exception("Validation of the timestamp failed because of <a href='https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182'>this bug in openssl library</a>");
+            }
         }
+
 
         throw new Exception("System command failed: " . implode(", ", $retarray));
     }
@@ -484,9 +488,7 @@ class TrustedTimestamps
         $this->setResponseTime();
 
         // validate everything so we are sure it is OK
-        // disable validation for the time being, until openssl is patched
-        // see https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182
-        //$this->validate();
+        $this->validate();
 
         // SQL
         $this->sqlUpdateExperiment();

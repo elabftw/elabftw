@@ -179,7 +179,7 @@ if (isset($_POST['currpass'])) {
     $firstname = $Users->purifyFirstname($_POST['firstname']);
     $lastname = $Users->purifyLastname($_POST['lastname']);
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-    if ($Users->isDuplicateEmail($email)) {
+    if ($Users->isDuplicateEmail($email) && ($email != $me['email'])) {
         $msg_arr[] = _('Someone is already using that email address!');
         $errflag = true;
     }

@@ -148,7 +148,7 @@ class Users extends Auth
      * @param string $email
      * @return bool true if there is a duplicate
      */
-    private function isDuplicateEmail($email)
+    public function isDuplicateEmail($email)
     {
         $sql = "SELECT email FROM users WHERE email = :email";
         $req = $this->pdo->prepare($sql);
@@ -212,7 +212,7 @@ class Users extends Auth
      * @param string $firstname
      * @return string
      */
-    private function purifyFirstname($firstname)
+    public function purifyFirstname($firstname)
     {
         return ucwords(strtolower(filter_var($firstname, FILTER_SANITIZE_STRING)));
     }
@@ -223,7 +223,7 @@ class Users extends Auth
      * @param string $lastname
      * @return string
      */
-    private function purifyLastname($lastname)
+    public function purifyLastname($lastname)
     {
         return strtoupper(filter_var($lastname, FILTER_SANITIZE_STRING));
     }

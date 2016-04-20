@@ -191,11 +191,6 @@ foreach ($lang_array as $lang) {
                 <label class='block' for='firstname'><?php echo _('Firstname'); ?></label>
                 <input name="firstname" value='<?php echo $user['firstname']; ?>' cols='20' rows='1' />
             </div>
-            <div class='col-md-6'>
-                <label class='block' for='username'><?php echo _('Username'); ?></label>
-                <input name="username" value='<?php echo $user['username']; ?>' cols='20' rows='1' />
-            </div>
-
         </div>
 
         <div class='row'>

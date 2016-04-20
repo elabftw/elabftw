@@ -66,7 +66,7 @@ class Auth
 
         $passwordHash = hash('sha512', $this->salt . $password);
 
-        $sql = "SELECT * FROM users WHERE email = :email AND password = :passwordHash AND validated= 1";
+        $sql = "SELECT * FROM users WHERE email = :email AND password = :passwordHash AND validated = 1";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':email', $email);
         $req->bindParam(':passwordHash', $passwordHash);

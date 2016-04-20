@@ -484,7 +484,9 @@ class TrustedTimestamps
         $this->setResponseTime();
 
         // validate everything so we are sure it is OK
-        $this->validate();
+        // disable validation for the time being, until openssl is patched
+        // see https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182
+        //$this->validate();
 
         // SQL
         $this->sqlUpdateExperiment();

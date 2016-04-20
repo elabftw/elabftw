@@ -42,6 +42,8 @@ if (isset($_GET['id']) && !empty($_GET['id']) && Tools::checkId($_GET['id'])) {
 try {
     $ts = new TrustedTimestamps($id);
     $ts->timeStamp();
+    // TEMPORARY
+    $_SESSION['ko'][] = "Validation of the timestamp was not done because of <a href='https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182'>this bug in openssl library</a>";
 } catch (Exception $e) {
     $msg_arr = array();
     $msg_arr[] = $e->getMessage();

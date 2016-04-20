@@ -295,6 +295,11 @@ class Users extends Auth
      */
     public function promoteSysadmin($email)
     {
+        // only sysadmin can do that
+        if (!$_SESSION['is_sysadmin']) {
+            throw new Exception('This section is out of your reach.');
+        }
+
         // check we have a valid email
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new Exception('Email malformed');

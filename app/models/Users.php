@@ -27,6 +27,7 @@ class Users extends Auth
      * @param int $team
      * @param string $firstname
      * @param string $lastname
+     * @return bool
      */
     public function create($email, $password, $team, $firstname, $lastname)
     {
@@ -115,7 +116,6 @@ class Users extends Auth
      *
      * @param int $team
      * @throws Exception
-     * @return bool
      */
     public function alertAdmin($team)
     {

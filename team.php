@@ -50,30 +50,30 @@ $req->execute(array(
 
 while ($data = $req->fetch()) {
     echo "<tr>";
-    echo "<td><a href='mailto:" . $data['email'] . "'><span";
+    echo "<td><a href='mailto:".$data['email']."'><span";
     // put sysadmin, admin and chiefs in bold
     if ($data['usergroup'] == 3 || $data['usergroup'] == 1 || $data['usergroup'] == 2) {
         echo " style='font-weight:bold'";
     }
-    echo ">" . $data['firstname'] . " " . $data['lastname'] . "</span></a>";
+    echo ">".$data['firstname']." ".$data['lastname']."</span></a>";
     echo "</td>";
     if (!empty($data['phone'])) {
-        echo "<td>" . $data['phone'] . "</td>";
+        echo "<td>".$data['phone']."</td>";
     } else {
         echo "<td>&nbsp;</td>"; // Placeholder
     }
     if (!empty($data['cellphone'])) {
-        echo "<td>" . $data['cellphone'] . "</td>";
+        echo "<td>".$data['cellphone']."</td>";
     } else {
         echo "<td>&nbsp;</td>";
     }
     if (!empty($data['website'])) {
-        echo "<td><a href='" . $data['website'] . "'>" . $data['website'] . "</a></td>";
+        echo "<td><a href='".$data['website']."'>".$data['website']."</a></td>";
     } else {
         echo "<td>&nbsp;</td>";
     }
     if (!empty($data['skype'])) {
-        echo "<td>" . $data['skype'] . "</td>";
+        echo "<td>".$data['skype']."</td>";
     } else {
         echo "<td>&nbsp;</td>";
     }
@@ -95,7 +95,7 @@ $count_req->execute();
 $totals = $count_req->fetch(PDO::FETCH_ASSOC);
 ?>
     <p><?php echo sprintf(ngettext('There is a total of %d experiment', 'There is a total of %d experiments', $totals['totxp']), $totals['totxp']);
-                echo ' ' . sprintf(ngettext('by %d different user.', 'by %d different users', $totals['totusers']), $totals['totusers']); ?></p>
+                echo ' '.sprintf(ngettext('by %d different user.', 'by %d different users', $totals['totusers']), $totals['totusers']); ?></p>
     <p><?php echo sprintf(ngettext('There is a total of %d item in the database.', 'There is a total of %d items in the database.', $totals['totdb']), $totals['totdb']); ?></p>
 </div>
 

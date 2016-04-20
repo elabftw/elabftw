@@ -60,7 +60,7 @@ if (isset($_POST['email'])) {
     // Is email in database ?
     if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
         // Get associated userid
-        $sql = "SELECT userid,username FROM users WHERE email = :email";
+        $sql = "SELECT userid, firstname, lastname FROM users WHERE email = :email";
         $result = $pdo->prepare($sql);
         $result->execute(array(
         'email' => $email));
@@ -81,11 +81,11 @@ if (isset($_POST['email'])) {
             $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
             $message = Swift_Message::newInstance()
             // Give the message a subject
-            ->setSubject('[eLabFTW] Password reset for ' . $data['username'])
+            ->setSubject('[eLabFTW] Password reset for ' . $data['firstname'] . ' ' . $data['lastname'])
             // Set the From address with an associative array
             ->setFrom(array(get_config('mail_from') => 'eLabFTW'))
             // Set the To addresses with an associative array
-            ->setTo(array($email => $data['username']))
+            ->setTo(array($email => $data['firstname'] . ' ' . $data['lastname']))
             // Give it a body
             ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $u_agent, $reset_link) . $footer);
             // generate Swift_Mailer instance

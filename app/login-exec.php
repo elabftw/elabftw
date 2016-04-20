@@ -41,8 +41,8 @@ try {
         throw new Exception(_("Your session expired. Please retry."));
     }
 
-    // Check username
-    if ((!isset($_POST['username'])) || (empty($_POST['username']))) {
+    // Check email
+    if ((!isset($_POST['email'])) || (empty($_POST['email']))) {
         throw new Exception(_('A mandatory field is missing!'));
     }
 
@@ -60,7 +60,7 @@ try {
         $rememberme = 'off';
     }
 
-    if ($Auth->login($_POST['username'], $_POST['password'], $rememberme)) {
+    if ($Auth->login($_POST['email'], $_POST['password'], $rememberme)) {
         if (isset($_COOKIE['redirect'])) {
             $location = $_COOKIE['redirect'];
         } else {

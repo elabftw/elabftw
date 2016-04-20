@@ -10,15 +10,224 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
-use \Exception;
-use \Swift_Message;
+use PDO;
+use Exception;
+use Swift_Message;
 
 /**
  * Users
  */
 class Users extends Auth
 {
+    /**
+     * Create a new user
+     *
+     * @param string $email
+     * @param string $password
+     * @param int $team
+     * @param string $firstname
+     * @param string $lastname
+     */
+    public function create($email, $password, $team, $firstname, $lastname)
+    {
+        // check for duplicate of email
+        if ($this->isDuplicateEmail($email)) {
+            throw new Exception(_('Someone is already using that email address!'));
+        }
+
+        if (!$this->checkPasswordLength($password)) {
+            $error = sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH);
+            throw new Exception($error);
+        }
+
+        // Put firstname lowercase and first letter uppercase
+        $firstname = $this->purifyFirstname($firstname);
+        // lastname is uppercase
+        $lastname = $this->purifyLastname($lastname);
+
+        // Create salt
+        $salt = hash("sha512", uniqid(rand(), true));
+        // Create hash
+        $passwordHash = hash("sha512", $salt . $_POST['password']);
+
+        // Registration date is stored in epoch
+        $registerDate = time();
+
+        // what group do we set for this user ?
+        // 1 = sysadmin if it's the first user ever
+        // 2 = admin for first user in a team
+        // 4 = normal user
+        if ($this->isFirstUser()) {
+            $group = 1;
+        } elseif ($this->isFirstUserInTeam($team)) {
+            $group = 2;
+        } else {
+            $group = 4;
+        }
+
+        // WILL NEW USER BE VALIDATED ?
+        // here an admin or sysadmin won't need validation
+        if (get_config('admin_validate') === 1 && $group === 4) { // validation is required for normal user
+            $validated = 0; // so new user will need validation
+        } else {
+            $validated = 1;
+        }
+
+        $sql = "INSERT INTO users (
+            `email`,
+            `password`,
+            `firstname`,
+            `lastname`,
+            `team`,
+            `usergroup`,
+            `salt`,
+            `register_date`,
+            `validated`,
+            `lang`
+        ) VALUES (
+            :email,
+            :password,
+            :firstname,
+            :lastname,
+            :team,
+            :usergroup,
+            :salt,
+            :register_date,
+            :validated,
+            :lang);";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':email', $email);
+        $req->bindParam(':password', $passwordHash);
+        $req->bindParam(':firstname', $firstname);
+        $req->bindParam(':lastname', $lastname);
+        $req->bindParam(':team', $team);
+        $req->bindParam(':usergroup', $group);
+        $req->bindParam(':salt', $salt);
+        $req->bindParam(':register_date', $registerDate);
+        $req->bindParam(':validated', $validated);
+        $req->bindValue(':lang', get_config('lang'));
+
+        return $req->execute();
+    }
+
+    /**
+     * Send an email to the admin if user is not validated
+     *
+     * @param int $team
+     * @throws Exception
+     * @return bool
+     */
+    public function alertAdmin($team)
+    {
+        // Create the message
+        $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
+        $message = Swift_Message::newInstance()
+        // Give the message a subject
+        ->setSubject(_('[eLabFTW] New user registered'))
+        // Set the From address with an associative array
+        ->setFrom(array(get_config('mail_from') => 'eLabFTW'))
+        // Set the To addresses with an associative array
+        ->setTo(array($this->getAdminEmail($team) => 'Admin eLabFTW'))
+        // Give it a body
+        ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account.') . $footer);
+        // generate Swift_Mailer instance
+        $mailer = getMailer();
+        // SEND EMAIL
+        try {
+            $mailer->send($message);
+        } catch (Exception $e) {
+            $Logs = new Logs();
+            $Logs->create('Error', 'smtp', $e->getMessage());
+            throw new Exception(_('Could not send email to inform admin. Error was logged. Contact an admin directly to validate your account.'));
+        }
+    }
+
+    /**
+     * Check we have not a duplicate email in DB
+     *
+     * @param string $email
+     * @return bool true if there is a duplicate
+     */
+    private function isDuplicateEmail($email)
+    {
+        $sql = "SELECT email FROM users WHERE email = :email";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':email', $email);
+        $req->execute();
+
+        return (bool) $req->rowCount();
+    }
+
+    /**
+     * Do we have users in the DB ?
+     *
+     * @return bool
+     */
+    private function isFirstUser()
+    {
+        $sql = "SELECT COUNT(*) AS usernb FROM users";
+        $req = $this->pdo->prepare($sql);
+        $req->execute();
+        $test = $req->fetch();
+
+        return $test['usernb'] === 0;
+    }
+
+    /**
+     * Are we the first user to register in a team ?
+     *
+     * @param int $team
+     * @return bool
+     */
+    private function isFirstUserInTeam($team)
+    {
+        $sql = "SELECT COUNT(*) AS usernb FROM users WHERE team = :team";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':team', $team);
+        $req->execute();
+        $test = $req->fetch();
+
+        return $test['usernb'] === 0;
+    }
+
+    /**
+     * Fetch the email of the admin for a team
+     *
+     * @param int $team
+     * @return string
+     */
+    private function getAdminEmail($team)
+    {
+        $sql = "SELECT email FROM users WHERE (`usergroup` = 1 OR `usergroup` = 2) AND `team` = :team LIMIT 1";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':team', $team);
+        $req->execute();
+
+        return $req->fetchColumn();
+    }
+
+    /**
+     * Put firstname lowercase and first letter uppercase
+     *
+     * @param string $firstname
+     * @return string
+     */
+    private function purifyFirstname($firstname)
+    {
+        return ucwords(strtolower(filter_var($firstname, FILTER_SANITIZE_STRING)));
+    }
+
+    /**
+     * Put lastname in capital letters
+     *
+     * @param string $lastname
+     * @return string
+     */
+    private function purifyLastname($lastname)
+    {
+        return strtoupper(filter_var($lastname, FILTER_SANITIZE_STRING));
+    }
+
     /**
      * Get info about a user
      *
@@ -57,7 +266,6 @@ class Users extends Auth
         $firstname = ucwords(strtolower(filter_var($params['firstname'], FILTER_SANITIZE_STRING)));
         // Lastname in uppercase
         $lastname = strtoupper(filter_var($params['lastname'], FILTER_SANITIZE_STRING));
-        $username = filter_var($params['username'], FILTER_SANITIZE_STRING);
         $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
 
         if ($params['validated'] == 1) {
@@ -82,7 +290,6 @@ class Users extends Auth
         $sql = "UPDATE users SET
             firstname = :firstname,
             lastname = :lastname,
-            username = :username,
             email = :email,
             usergroup = :usergroup,
             validated = :validated
@@ -90,7 +297,6 @@ class Users extends Auth
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':firstname', $firstname);
         $req->bindParam(':lastname', $lastname);
-        $req->bindParam(':username', $username);
         $req->bindParam(':email', $email);
         $req->bindParam(':validated', $validated);
         $req->bindParam(':usergroup', $usergroup);
@@ -220,7 +426,8 @@ class Users extends Auth
     public function destroy($email, $password)
     {
         // check that we got the good password
-        if (!$this->checkCredentials($_SESSION['username'], $password)) {
+        $me = $this->read($_SESSION['userid']);
+        if (!$this->checkCredentials($me['email'], $password)) {
             throw new Exception(_("Wrong password!"));
         }
         // check the user is in our team and also get the userid

@@ -66,10 +66,6 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
                 <input name="email" type="email" id="email" required />
             </div>
             <div class='col-md-4'>
-                <label class='block' for="username"><?php echo _('Username'); ?></label>
-                <input name="username" type="text" id="username" required />
-            </div>
-            <div class='col-md-4'>
                 <label class='block' for="password"><?php echo _('Password'); ?></label>
                 <input name="password" type="password" title='8 characters minimum' id="password" pattern=".{8,}" required />
             </div>
@@ -143,19 +139,6 @@ $(document).ready(function() {
         }
         //$("#complexity").html(Math.round(complexity) + '%');
     });
-	// propose username by combining firstname's first letter and lastname
-	$("#username").focus(function() {
-		var firstname = $("#firstname").val();
-		var lastname = $("#lastname").val();
-		if(firstname && lastname && !this.value) {
-			var username = firstname.charAt(0) + lastname;
-			this.value = username.toLowerCase();
-		}
-	});
-    // check if both passwords are the same
-    document.getElementById("password").onchange = validatePassword;
-    document.getElementById("cpassword").onchange = validatePassword;
-
 });
 </script>
 <?php require_once 'inc/footer.php';

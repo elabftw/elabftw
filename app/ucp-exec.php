@@ -151,71 +151,39 @@ if (isset($_POST['currpass'])) {
     $tab = '2';
 
     // check that we got the good password
-    if (!$Auth->checkCredentials($_SESSION['username'], $_POST['currpass'])) {
+    $Users = new Users();
+    $me = $Users->read($_SESSION['userid']);
+    if (!$Auth->checkCredentials($me['email'], $_POST['currpass'])) {
         $msg_arr[] = _("Please input your current password!");
         $errflag = true;
         $_SESSION['ko'] = $msg_arr;
         header("location: ../ucp.php?tab=" . $tab);
         exit;
     }
-    // Check USERNAME (sanitize and validate)
-    if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
-        $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
-        // Check for duplicate username in DB
-        $sql = "SELECT * FROM users WHERE username = :username";
-        $req = $pdo->prepare($sql);
-        $req->bindParam(':username', $username);
-        $result = $req->execute();
-        $data = $req->fetch();
-        if ($result && $req->rowCount() > 0) {
-            if ($data['userid'] != $_SESSION['userid']) {
-                $msg_arr[] = _('Username already in use!');
-                $errflag = true;
-            }
+
+    try {
+        if (!isset($_POST['firstname']) ||
+            empty($_POST['firstname']) ||
+            !isset($_POST['lastname']) ||
+            empty($_POST['lastname']) ||
+            !isset($_POST['email']) ||
+            empty($_POST['email']) ||
+            !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+
+            throw new Exception(_('A mandatory field is missing!'));
         }
+    } catch (Exception $e) {
+        $_SESSION['ko'][] = $e->getMessage();
     }
-    // Check FIRSTNAME (sanitize only)
-    if ((isset($_POST['firstname'])) && (!empty($_POST['firstname']))) {
-        $firstname = filter_var($_POST['firstname'], FILTER_SANITIZE_STRING);
-    } else {
-        $msg_arr[] = _('A mandatory field is missing!');
-        $errflag = true;
-    }
-    // Check LASTNAME (sanitize only)
-    if ((isset($_POST['lastname'])) && (!empty($_POST['lastname']))) {
-        $lastname = filter_var($_POST['lastname'], FILTER_SANITIZE_STRING);
-    } else {
-        $msg_arr[] = _('A mandatory field is missing!');
+
+    $firstname = $Users->purifyFirstname($_POST['firstname']);
+    $lastname = $Users->purifyLastname($_POST['lastname']);
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    if ($Users->isDuplicateEmail($email)) {
+        $msg_arr[] = _('Someone is already using that email address!');
         $errflag = true;
     }
 
-    // Check EMAIL (sanitize and validate)
-    if ((isset($_POST['email'])) && (!empty($_POST['email']))) {
-        $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $msg_arr[] = _("The email is not valid.");
-            $errflag = true;
-        } else {
-            // Check for duplicate email in DB
-            $sql = "SELECT * FROM users WHERE email = :email";
-            $req = $pdo->prepare($sql);
-            $req->bindParam(':email', $email);
-            $result = $req->execute();
-            $numrows = $req->rowCount();
-            $data = $req->fetch();
-            if ($result) {
-                if ($numrows > 0) {
-                    if ($data['userid'] != $_SESSION['userid']) {
-                        $msg_arr[] = _('Someone is already using that email address!');
-                        $errflag = true;
-                    }
-                }
-            }
-        }
-    } else {
-        $msg_arr[] = _('A mandatory field is missing!');
-        $errflag = true;
-    }
     // Check phone
     if (isset($_POST['phone']) && !empty($_POST['phone'])) {
         $phone = filter_var($_POST['phone'], FILTER_SANITIZE_STRING);
@@ -276,7 +244,6 @@ if (isset($_POST['currpass'])) {
         // SQL for update preferences
         $sql = "UPDATE users SET
             email = :email,
-            username = :username,
             firstname = :firstname,
             lastname = :lastname,
             phone = :phone,
@@ -287,7 +254,6 @@ if (isset($_POST['currpass'])) {
         $req = $pdo->prepare($sql);
         $result = $req->execute(array(
             'email' => $email,
-            'username' => $username,
             'firstname' => $firstname,
             'lastname' => $lastname,
             'phone' => $phone,

@@ -166,10 +166,7 @@ try {
                         <input  id='usersUpdateFirstname' type='text' value='<?php echo $users['firstname']; ?>' name='firstname' /></li>
                         <li><label class='block' for='usersUpdateLastname'><?php echo _('Lastname'); ?></label>
                         <input  id='usersUpdateLastname' type='text' value='<?php echo $users['lastname']; ?>' name='lastname' /></li>
-                        <li><label class='block' for='usersUpdateUsername'><?php echo _('Username'); ?></label>
-                        <input  id='usersUpdateUsername' type='text' value='<?php echo $users['username']; ?>' name='username' /></li>
-                        <li>
-                        <label class='block' for='usersUpdateEmail'><?php echo _('Email'); ?></label>
+                        <li><label class='block' for='usersUpdateEmail'><?php echo _('Email'); ?></label>
                         <input id='usersUpdateEmail' type='email' value='<?php echo $users['email']; ?>' name='email' /></li>
                         <li>
                         <label class='block' for='usersUpdateValidated'><?php echo _('Has an active account?'); ?></label>

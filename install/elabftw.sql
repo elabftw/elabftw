@@ -282,7 +282,6 @@ CREATE TABLE `uploads` (
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `userid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) NOT NULL,
   `salt` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `team` int(10) unsigned NOT NULL,
@@ -390,4 +389,4 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('stampprovider', 'http://zeitstempel.dfn.de/'),
 ('stampcert', 'vendor/pki.dfn.pem'),
 ('stamphash', 'sha256'),
-('schema', '7');
+('schema', '8');

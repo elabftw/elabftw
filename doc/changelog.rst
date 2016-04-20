@@ -6,6 +6,18 @@ Changelog
 Version 1.2.0
 -------------
 
+* Big changes
+
+  * The username is no more! Login with your email. That happened because:
+     * Usernames were not used
+     * People tend to forget the username they picked, but always remember their email
+     * It simplifies the code by removing clutter
+
+  * Timestamping with the default TSA does not work currently!
+     * See `this issue <https://github.com/elabftw/elabftw/issues/242>`_
+     * TL;DR It is due to a bug in the OpenSSL library and a change on how the default TSA replies
+     * Previous timestamps are still valid
+
 * New features
 
   * Add possibility to promote a user to SysAdmin
@@ -14,6 +26,7 @@ Version 1.2.0
   * Add possibility to clear the logs
   * Show usage statistics on sysconfig page
   * Show informations about the server on sysconfig page
+  * Allow searching for elabid
   * Add buttons to show more or show all items
 
 * Enhancements

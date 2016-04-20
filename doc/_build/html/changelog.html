@@ -211,30 +211,67 @@
 <span id="id1"></span><h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="version-1-2-0">
 <h2>Version 1.2.0<a class="headerlink" href="#version-1-2-0" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">Big changes</p>
+<ul>
+<li><dl class="first docutils">
+<dt>The username is no more! Login with your email. That happened because:</dt>
+<dd><ul class="first last simple">
+<li>Usernames were not used</li>
+<li>People tend to forget the username they picked, but always remember their email</li>
+<li>It simplifies the code by removing clutter</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Timestamping with the default TSA does not work currently!</dt>
+<dd><ul class="first last simple">
+<li>See <a class="reference external" href="https://github.com/elabftw/elabftw/issues/242">this issue</a></li>
+<li>TL;DR It is due to a bug in the OpenSSL library and a change on how the default TSA replies</li>
+<li>Previous timestamps are still valid</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</li>
+<li><p class="first">New features</p>
 <ul class="simple">
-<li>New features<ul>
+<li>Add possibility to promote a user to SysAdmin</li>
 <li>Add possibility to delete an empty team</li>
 <li>Add a way to test email configuration directly from config page</li>
 <li>Add possibility to clear the logs</li>
 <li>Show usage statistics on sysconfig page</li>
 <li>Show informations about the server on sysconfig page</li>
+<li>Allow searching for elabid</li>
+<li>Add buttons to show more or show all items</li>
 </ul>
 </li>
-<li>Enhancements<ul>
+<li><p class="first">Enhancements</p>
+<ul class="simple">
 <li>Improved layout for displaying users, status and items types</li>
 <li>Improved translation for french, add terms</li>
 <li>Better notification system</li>
+<li>Improved &#8220;Create new&#8221; menus</li>
 </ul>
 </li>
-<li>Documentation<ul>
+<li><p class="first">Documentation</p>
+<ul class="simple">
 <li>Better doc for install on Drop</li>
 </ul>
 </li>
-<li>Developer corner<ul>
+<li><p class="first">Developer corner</p>
+<ul class="simple">
 <li>A lot of things changed under the hood, with the creation of app/models, views and controllers</li>
 <li>Code moved around to try to have something that looks like an MVC seen from very far away</li>
 <li>Optimize page load by doing less useless SQL&nbsp;requests</li>
 <li>Add asynchronous calls everywhere</li>
+<li>Updated composer components</li>
+<li>Removed some duplicated code</li>
+<li>Removed useless code</li>
+<li>Better CSS code</li>
+<li>Replace die and exit by Exceptions</li>
 </ul>
 </li>
 </ul>

@@ -30,6 +30,19 @@ class TeamsView extends Teams
     }
 
     /**
+     * Output HTML for making someone sysadmin
+     *
+     */
+    public function showPromoteSysadmin()
+    {
+        $html = "<div class='box'><h3>" . _('Promote someone to sysadmin') . "</h3>";
+        $html .= "<input required type='text' placeholder='Enter email address of user' id='promoteSysadmin' />";
+        $html .= "<button id='promoteSysadminButton' onClick='promoteSysadmin()' class='button'>" . ('Save') . "</button></div>";
+
+        return $html;
+    }
+
+    /**
      * Output HTML with all the teams
      *
      * @param array $teamsArr The output of the read() function

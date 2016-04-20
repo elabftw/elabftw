@@ -265,4 +265,24 @@ class Users extends Auth
 
         return $req->fetch();
     }
+
+    /**
+     * Make a user sysadmin
+     *
+     * @param string $email Email of user to promote
+     * @return bool
+     */
+    public function promoteSysadmin($email)
+    {
+        // check we have a valid email
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new Exception('Email malformed');
+        }
+
+        $sql = "UPDATE users SET usergroup = 1 WHERE email = :email";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':email', $email);
+
+        return $req->execute();
+    }
 }

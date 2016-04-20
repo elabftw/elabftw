@@ -484,6 +484,24 @@ function goNext(x) {
 // sysconfig.php
 // =============
 
+// PROMOTE SYSADMIN
+function promoteSysadmin() {
+    // disable button on click
+    document.getElementById('promoteSysadminButton').disabled = true;
+    email = $('#promoteSysadmin').val();
+    $.post('app/controllers/ConfigController.php', {
+        promoteSysadmin: true,
+        email: email
+    }).done(function(data) {
+        if (data) {
+            notif('User promoted', 'ok');
+            $('#teamsDiv').load('sysconfig.php #teamsDiv');
+        } else {
+            notif('There was an error!');
+        }
+    });
+}
+
 // TEAMS
 function teamsCreate() {
     // disable button on click

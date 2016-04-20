@@ -8,6 +8,7 @@ Version 1.2.0
 
 * New features
 
+  * Add possibility to promote a user to SysAdmin
   * Add possibility to delete an empty team
   * Add a way to test email configuration directly from config page
   * Add possibility to clear the logs

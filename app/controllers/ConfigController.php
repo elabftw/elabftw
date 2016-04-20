@@ -20,6 +20,16 @@ try {
     require_once '../../inc/common.php';
     $Teams = new Teams();
 
+    // PROMOTE SYSADMIN
+    if (isset($_POST['promoteSysadmin'])) {
+        $Users = new Users();
+        if ($Users->promoteSysadmin($_POST['email'])) {
+            echo '1';
+        } else {
+            echo '0';
+        }
+    }
+
     // CREATE TEAM
     if (isset($_POST['teamsCreate'])) {
         if ($Teams->create($_POST['teamsName'])) {

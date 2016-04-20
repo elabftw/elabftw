@@ -90,6 +90,7 @@ try {
     <div id='teamsDiv'>
         <?php
         echo $SysconfigView->TeamsView->showStats();
+        echo $SysconfigView->TeamsView->showPromoteSysadmin();
         echo $SysconfigView->TeamsView->showCreate();
         echo $SysconfigView->TeamsView->show();
         ?>

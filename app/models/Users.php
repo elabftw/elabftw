@@ -113,11 +113,12 @@ class Users extends Auth
         if (is_null($userid)) {
             $userid = $_SESSION['userid'];
         }
+
         if (!$this->checkPasswordLength($password)) {
             $error = sprintf(_('Password must contain at least %s characters.'), self::MIN_PASSWORD_LENGTH);
             throw new Exception($error);
         }
-        // Create a new salt
+
         $salt = hash("sha512", uniqid(rand(), true));
         $passwordHash = hash("sha512", $salt . $password);
 
@@ -125,6 +126,26 @@ class Users extends Auth
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':salt', $salt);
         $req->bindParam(':password', $passwordHash);
+        $req->bindParam(':userid', $userid);
+
+        // remove token for this user
+        if (!$this->invalidateToken($userid)) {
+            throw new Exception('Cannot invalidate token');
+        }
+
+        return $req->execute();
+    }
+
+    /**
+     * Invalidate token for a user
+     *
+     * @param int $userid
+     * @return bool
+     */
+    private function invalidateToken($userid)
+    {
+        $sql = "UPDATE users SET token = null WHERE userid = :userid";
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':userid', $userid);
 
         return $req->execute();

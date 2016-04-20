@@ -25,72 +25,61 @@
 ********************************************************************************/
 namespace Elabftw\Elabftw;
 
-require_once '../inc/common.php';
+use Exception;
 
-$formKey = new FormKey();
-$Auth = new Auth();
+try {
+    require_once '../inc/common.php';
 
-//Array to store validation errors
-$msg_arr = array();
-//Validation error flag
-$errflag = false;
+    // default location for redirect
+    $location = '../login.php';
 
-// Check the form_key
-if (!isset($_POST['formkey']) || !$formKey->validate()) {
-    // form key is invalid
-    $msg_arr[] = _("Your session expired. Please retry.");
-    $errflag = true;
-}
+    $formKey = new FormKey();
+    $Auth = new Auth();
 
-// Check username (sanitize and validate)
-if ((isset($_POST['username'])) && (!empty($_POST['username']))) {
-    $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
-} else {
-    $username = '';
-    $msg_arr[] = _('A mandatory field is missing!');
-    $errflag = true;
-}
-
-// Check password is sent
-if ((!isset($_POST['password'])) || (empty($_POST['password']))) {
-    $msg_arr[] = _('A mandatory field is missing!');
-    $errflag = true;
-}
-
-//If there are input validation errors, redirect back to the login form
-if ($errflag) {
-    $_SESSION['ko'] = $msg_arr;
-    session_write_close();
-    header("location: ../login.php");
-    exit;
-}
-
-// the actual login
-
-// this is here to avoid a notice Undefined index
-if (isset($_POST['rememberme'])) {
-    $rememberme = $_POST['rememberme'];
-} else {
-    $rememberme = 'off';
-}
-if ($Auth->login($username, $_POST['password'], $rememberme)) {
-    if (isset($_COOKIE['redirect'])) {
-        $location = $_COOKIE['redirect'];
-    } else {
-        $location = '../experiments.php';
-    }
-    header('location: ' . $location);
-} else {
-    // log the attempt if the login failed
-    $Logs = new Logs();
-    $Logs->create('Warning', $_SERVER['REMOTE_ADDR'], 'Failed login attempt');
-    // inform the user
-    $_SESSION['ko'][] = _("Login failed. Either you mistyped your password or your account isn't activated yet.");
-    if (!isset($_SESSION['failed_attempt'])) {
-        $_SESSION['failed_attempt'] = 1;
-    } else {
-        $_SESSION['failed_attempt'] += 1;
+    // Check the form_key
+    if (!isset($_POST['formkey']) || !$formKey->validate()) {
+        throw new Exception(_("Your session expired. Please retry."));
     }
 
-    header("location: ../login.php");
+    // Check username
+    if ((!isset($_POST['username'])) || (empty($_POST['username']))) {
+        throw new Exception(_('A mandatory field is missing!'));
+    }
+
+    // Check password is sent
+    if ((!isset($_POST['password'])) || (empty($_POST['password']))) {
+        throw new Exception(_('A mandatory field is missing!'));
+    }
+
+    // the actual login
+
+    // this is here to avoid a notice Undefined index
+    if (isset($_POST['rememberme'])) {
+        $rememberme = $_POST['rememberme'];
+    } else {
+        $rememberme = 'off';
+    }
+
+    if ($Auth->login($_POST['username'], $_POST['password'], $rememberme)) {
+        if (isset($_COOKIE['redirect'])) {
+            $location = $_COOKIE['redirect'];
+        } else {
+            $location = '../experiments.php';
+        }
+    } else {
+        // log the attempt if the login failed
+        $Logs = new Logs();
+        $Logs->create('Warning', $_SERVER['REMOTE_ADDR'], 'Failed login attempt');
+        // inform the user
+        $_SESSION['ko'][] = _("Login failed. Either you mistyped your password or your account isn't activated yet.");
+        if (!isset($_SESSION['failed_attempt'])) {
+            $_SESSION['failed_attempt'] = 1;
+        } else {
+            $_SESSION['failed_attempt'] += 1;
+        }
+    }
+} catch (Exception $e) {
+    $_SESSION['ko'][] = $e->getMessage();
+} finally {
+    header("location: $location");
 }

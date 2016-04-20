@@ -47,8 +47,7 @@ try {
             case 'tpl':
                 $Templates = new Templates($_SESSION['team_id']);
                 if ($Templates->destroy($_POST['id'])) {
-                    $msg_arr[] = _('Template was deleted successfully.');
-                    $_SESSION['ok'] = $msg_arr;
+                    $_SESSION['ok'][] = _('Template was deleted successfully.');
                 }
                 break;
 
@@ -85,8 +84,7 @@ try {
                 $delete_req->execute(array(
                     'id' => $id
                 ));
-                $msg_arr[] = _('Status was deleted successfully.');
-                $_SESSION['ok'] = $msg_arr;
+                $_SESSION['ok'][] = _('Status was deleted successfully.');
                 break;
 
             // END

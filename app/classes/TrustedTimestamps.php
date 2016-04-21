@@ -152,8 +152,21 @@ class TrustedTimestamps extends Entity
         $retarray = array();
         exec("openssl " . $cmd . " 2>&1", $retarray, $retcode);
 
-        return array("retarray" => $retarray,
-                        "retcode" => $retcode);
+        return array(
+            "retarray" => $retarray,
+            "retcode" => $retcode
+        );
+    }
+
+    private function runSh($cmd)
+    {
+        $retarray = array();
+        exec("sh -c " . $cmd . " 2>&1", $retarray, $retcode);
+
+        return array(
+            "retarray" => $retarray,
+            "retcode" => $retcode
+        );
     }
 
     /**
@@ -399,12 +412,38 @@ class TrustedTimestamps extends Entity
                             return false;
             }
             if (stripos($retline, "TS_CHECK_SIGNING_CERTS")) {
-                throw new Exception("Validation of the timestamp failed because of <a href='https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182'>this bug in openssl library</a>");
+                // we are facing the OpenSSL bug discussed here:
+                // https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182
+                return $this->validateWithJava();
             }
         }
 
 
         throw new Exception("System command failed: " . implode(", ", $retarray));
+    }
+
+    private function isJavaInstalled()
+    {
+        $res = $this->runSh("java");
+        if (stripos($res['retarray'][0], 'class')) {
+            return true;
+        }
+        return false;
+    }
+
+    private function validateWithJava()
+    {
+        if (!$this->isJavaInstalled()) {
+            throw new Exception("Could not validate the timestamp du to a bug in OpenSSL library. See <a href='https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182'>issue #242</a>. Tried to validate with failsafe method but Java is not installed.");
+        }
+
+        chdir("../vendor/dfn-cert/timestampverifier/");
+        $cmd = "./verify.sh " . $this->requestfilePath . " " . $this->responsefilePath;
+        $javaRes = $this->runSh($cmd);
+        if (stripos($javaRes['retarray'][0], 'matches')) {
+            return true;
+        }
+        throw new Exception('Could not validate the timestamp with java failsafe method. Please report this bug on Github.');
     }
 
     /**

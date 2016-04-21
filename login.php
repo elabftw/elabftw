@@ -105,7 +105,7 @@ if (!checkCookiesEnabled()) {
         <h2><?php echo _('Sign in to your account'); ?></h2>
         <p>
         <label class='block' for="email"><?php echo _('Email'); ?></label>
-        <input name="email" type="text" value='<?php
+        <input name="email" type="email" value='<?php
             // put the email in the field if we just registered
             if (isset($_SESSION['email'])) {
                 echo $_SESSION['email'];

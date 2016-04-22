@@ -80,7 +80,7 @@ class TrustedTimestamps extends Entity
     public function __destruct()
     {
         foreach ($this->tmpfiles as $file) {
-            unlink($file);
+            //unlink($file);
         }
     }
 
@@ -161,7 +161,7 @@ class TrustedTimestamps extends Entity
     private function runSh($cmd)
     {
         $retarray = array();
-        exec("sh -c " . $cmd . " 2>&1", $retarray, $retcode);
+        exec("sh -c \"" . $cmd . "\" 2>&1", $retarray, $retcode);
 
         return array(
             "retarray" => $retarray,

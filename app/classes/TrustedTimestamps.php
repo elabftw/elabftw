@@ -434,7 +434,7 @@ class TrustedTimestamps extends Entity
     private function validateWithJava()
     {
         if (!$this->isJavaInstalled()) {
-            throw new Exception("Could not validate the timestamp du to a bug in OpenSSL library. See <a href='https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182'>issue #242</a>. Tried to validate with failsafe method but Java is not installed.");
+            throw new Exception("Could not validate the timestamp due to a bug in OpenSSL library. See <a href='https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182'>issue #242</a>. Tried to validate with failsafe method but Java is not installed.");
         }
 
         chdir("../vendor/dfn-cert/timestampverifier/");

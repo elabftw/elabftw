@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Runs the TimeStampVerifier
 # modified for use in eLabFTW
 

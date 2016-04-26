@@ -34,13 +34,13 @@
     <span>
         <span class='strong'>
 <?php
-if (isset($_SESSION['auth']) && $_SESSION['is_sysadmin'] === '1') {
+if (isset($_SESSION['auth']) && $_SESSION['is_sysadmin']) {
     ?>
         <!-- SYSADMIN MENU -->
         <a href='sysconfig.php'><?php echo _('Sysadmin panel'); ?></a>
     <?php
 }
-if (isset($_SESSION['auth']) && $_SESSION['is_admin'] === '1') {
+if (isset($_SESSION['auth']) && $_SESSION['is_admin']) {
     echo "<a href='admin.php'>" . _('Admin panel');
     // show counter of unvalidated users
     $sql = "SELECT count(validated) FROM users WHERE validated = 0 AND team = :team";

@@ -36,26 +36,22 @@ try {
     $teamGroups = new TeamGroups();
     $teamGroupsView = new TeamGroupsView();
     $Auth = new Auth();
+    $Users = new Users();
 
-    // MAIN SQL FOR USERS
-    $sql = "SELECT * FROM users WHERE validated = :validated AND team = :team";
-    $user_req = $pdo->prepare($sql);
-    $user_req->bindValue(':validated', 0);
-    $user_req->bindValue(':team', $_SESSION['team_id']);
-    $user_req->execute();
-    $count = $user_req->rowCount();
+    // VALIDATE USERS BLOCK
+    $unvalidatedUsersArr = $Users->readAll(0);
 
     // only show the frame if there is some users to validate and there is an email config
-    if ($count > 0 && strlen(get_config('mail_from')) > 0) {
+    if (count($unvalidatedUsersArr) != 0 && get_config('mail_from') != 'notconfigured@example.com') {
         $message = _('There are users waiting for validation of their account:');
         $message .= "<form method='post' action='app/controllers/UsersController.php'>";
         $message .= "<input type='hidden' name='usersValidate' value='true' />";
         $message .= $formKey->getFormkey();
         $message .= "<ul>";
-        while ($data = $user_req->fetch()) {
+        foreach($unvalidatedUsersArr as $user) {
             $message .= "<li><label>
                 <input type='checkbox' name='usersValidateIdArr[]'
-                value='".$data['userid'] . "'> " . $data['firstname'] . " " . $data['lastname'] . " (" . $data['email'] . ")
+                value='".$user['userid'] . "'> " . $user['firstname'] . " " . $user['lastname'] . " (" . $user['email'] . ")
                 </label></li>";
         }
         $message .= "</ul><div class='submitButtonDiv'>
@@ -63,8 +59,24 @@ try {
         display_message('ko', $message);
         echo "</form>";
     }
+    // END VALIDATE USERS BLOCK
+    ?>
 
-    // get the team config
+    <menu>
+        <ul>
+        <li class='tabhandle' id='tab1'><?= _('Team') ?></li>
+            <li class='tabhandle' id='tab2'><?= _('Users') ?></li>
+            <li class='tabhandle' id='tab3'><?= ngettext('Status', 'Status', 2) ?></li>
+            <li class='tabhandle' id='tab4'><?= _('Types of items') ?></li>
+            <li class='tabhandle' id='tab5'><?= _('Experiments template') ?></li>
+            <li class='tabhandle' id='tab6'><?= _('Import CSV') ?></li>
+            <li class='tabhandle' id='tab7'><?= _('Import ZIP') ?></li>
+            <li class='tabhandle' id='tab8'><?= _('Groups') ?></li>
+        </ul>
+    </menu>
+
+    <!-- TAB 1 TEAM CONFIG -->
+    <?php
     $team = get_team_config();
 
     $stamppass = '';
@@ -77,65 +89,50 @@ try {
     }
     ?>
 
-
-    <menu>
-        <ul>
-        <li class='tabhandle' id='tab1'><?php echo _('Team'); ?></li>
-            <li class='tabhandle' id='tab2'><?php echo _('Users'); ?></li>
-            <li class='tabhandle' id='tab3'><?php echo ngettext('Status', 'Status', 2); ?></li>
-            <li class='tabhandle' id='tab4'><?php echo _('Types of items'); ?></li>
-            <li class='tabhandle' id='tab5'><?php echo _('Experiments template'); ?></li>
-            <li class='tabhandle' id='tab6'><?php echo _('Import CSV'); ?></li>
-            <li class='tabhandle' id='tab7'><?php echo _('Import ZIP'); ?></li>
-            <li class='tabhandle' id='tab8'><?php echo _('Groups'); ?></li>
-        </ul>
-    </menu>
-
-    <!-- TAB 1 -->
     <div class='divhandle' id='tab1div'>
 
-    <h3><?php echo _('Configure your team'); ?></h3>
+    <h3><?= _('Configure your team') ?></h3>
     <div class='box'>
         <form method='post' action='app/controllers/ConfigController.php' autocomplete='off'>
             <input type='hidden' value='true' name='teamsUpdateFull' />
             <p>
-            <label for='deletable_xp'><?php echo _('Users can delete experiments:'); ?></label>
+            <label for='deletable_xp'><?= _('Users can delete experiments:') ?></label>
             <select name='deletable_xp' id='deletable_xp'>
                 <option value='1'<?php
-                    if ($team['deletable_xp'] == 1) { echo " selected='selected'"; } ?>
-                        ><?php echo _('Yes'); ?></option>
+                    if ($team['deletable_xp']) { echo " selected='selected'"; } ?>
+                        ><?= _('Yes') ?></option>
                 <option value='0'<?php
-                        if ($team['deletable_xp'] == 0) { echo " selected='selected'"; } ?>
-                            ><?php echo _('No'); ?></option>
+                        if (!$team['deletable_xp']) { echo " selected='selected'"; } ?>
+                            ><?= _('No') ?></option>
             </select>
-            <span class='smallgray'><?php echo _('An admin account will always be able to delete experiments.'); ?></span>
+            <span class='smallgray'><?= _('An admin account will always be able to delete experiments.') ?></span>
             </p>
             <p>
-            <label for='link_name'><?php echo _('Name of the link in the top menu:'); ?></label>
-            <input type='text' value='<?php echo $team['link_name']; ?>' name='link_name' id='link_name' />
+            <label for='link_name'><?= _('Name of the link in the top menu:') ?></label>
+            <input type='text' value='<?= $team['link_name'] ?>' name='link_name' id='link_name' />
             </p>
             <p>
-            <label for='link_href'><?php echo _('Address where this link should point:'); ?></label>
-            <input type='text' value='<?php echo $team['link_href']; ?>' name='link_href' id='link_href' />
+            <label for='link_href'><?= _('Address where this link should point:') ?></label>
+            <input type='text' value='<?= $team['link_href'] ?>' name='link_href' id='link_href' />
             </p>
             <p>
-            <label for='stampprovider'><?php echo _('URL for external timestamping service:'); ?></label>
-            <input type='url' value='<?php echo $team['stampprovider']; ?>' name='stampprovider' id='stampprovider' />
-            <span class='smallgray'><?php echo _('This should be the URL used for <a href="https://tools.ietf.org/html/rfc3161">RFC 3161</a>-compliant timestamping requests.'); ?></span>
+            <label for='stampprovider'><?= _('URL for external timestamping service:') ?></label>
+            <input type='url' value='<?= $team['stampprovider'] ?>' name='stampprovider' id='stampprovider' />
+            <span class='smallgray'><?= _('This should be the URL used for <a href="https://tools.ietf.org/html/rfc3161">RFC 3161</a>-compliant timestamping requests.') ?></span>
             </p>
             <p>
-            <label for='stampcert'><?php echo _('Chain of certificates of the external timestamping service:'); ?></label>
-            <input type='text' placeholder='vendor/pki.dfn.pem' value='<?php echo $team['stampcert']; ?>' name='stampcert' id='stampcert' />
-            <span class='smallgray'><?php echo _('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.<br /> Local path relative to eLabFTW installation directory. The file needs to be in <a href="https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail">PEM-encoded (ASCII)</a> format!'); ?></span>
+            <label for='stampcert'><?= _('Chain of certificates of the external timestamping service:') ?></label>
+            <input type='text' placeholder='vendor/pki.dfn.pem' value='<?= $team['stampcert'] ?>' name='stampcert' id='stampcert' />
+            <span class='smallgray'><?= _('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.<br /> Local path relative to eLabFTW installation directory. The file needs to be in <a href="https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail">PEM-encoded (ASCII)</a> format!') ?></span>
             </p>
-            <label for='stamplogin'><?php echo _('Login for external timestamping service:'); ?></label>
-            <input type='text' value='<?php echo $team['stamplogin']; ?>' name='stamplogin' id='stamplogin' />
-            <span class='smallgray'><?php echo _('This should be the login associated with your timestamping service provider'); ?></span>
+            <label for='stamplogin'><?= _('Login for external timestamping service:') ?></label>
+            <input type='text' value='<?= $team['stamplogin'] ?>' name='stamplogin' id='stamplogin' />
+            <span class='smallgray'><?= _('This should be the login associated with your timestamping service provider') ?></span>
             </p>
             <p>
-            <label for='stamppass'><?php echo _('Password for external timestamping service:'); ?></label>
-            <input type='password' value='<?php echo $stamppass; ?>' name='stamppass' id='stamppass' />
-            <span class='smallgray'><?php echo _('Your timestamping service provider password'); ?></span>
+            <label for='stamppass'><?= _('Password for external timestamping service:') ?></label>
+            <input type='password' value='<?= $stamppass ?>' name='stamppass' id='stamppass' />
+            <span class='smallgray'><?= _('Your timestamping service provider password') ?></span>
             </p>
             <div class='submitButtonDiv'>
                 <button type='submit' name='submit_config' class='button'>Save</button>
@@ -148,62 +145,56 @@ try {
     <!-- TAB 2 USERS -->
     <div class='divhandle' id='tab2div'>
 
-        <h3><?php echo _('Edit users'); ?></h3>
+        <h3><?= _('Edit users') ?></h3>
         <ul class='list-group'>
         <?php
-        // we show only the validated users here
-        $user_req->bindValue(':validated', 1);
-        $user_req->execute();
-        $usersArr = $user_req->fetchAll();
-        foreach($usersArr as $users) {
+        // get all validated users
+        $usersArr = $Users->readAll();
+        foreach($usersArr as $user) {
             ?>
                 <li class='list-group-item'>
                     <form method='post' action='app/controllers/UsersController.php'>
                         <input type='hidden' value='true' name='usersUpdate' />
-                        <input type='hidden' value='<?php echo $users['userid']; ?>' name='userid' />
+                        <input type='hidden' value='<?= $user['userid'] ?>' name='userid' />
                         <ul class='list-inline'>
-                        <li><label class='block' for='usersUpdateFirstname'><?php echo _('Firstname'); ?></label>
-                        <input  id='usersUpdateFirstname' type='text' value='<?php echo $users['firstname']; ?>' name='firstname' /></li>
-                        <li><label class='block' for='usersUpdateLastname'><?php echo _('Lastname'); ?></label>
-                        <input  id='usersUpdateLastname' type='text' value='<?php echo $users['lastname']; ?>' name='lastname' /></li>
-                        <li><label class='block' for='usersUpdateEmail'><?php echo _('Email'); ?></label>
-                        <input id='usersUpdateEmail' type='email' value='<?php echo $users['email']; ?>' name='email' /></li>
+                        <li><label class='block' for='usersUpdateFirstname'><?= _('Firstname') ?></label>
+                        <input  id='usersUpdateFirstname' type='text' value='<?= $user['firstname'] ?>' name='firstname' /></li>
+                        <li><label class='block' for='usersUpdateLastname'><?= _('Lastname') ?></label>
+                        <input  id='usersUpdateLastname' type='text' value='<?= $user['lastname'] ?>' name='lastname' /></li>
+                        <li><label class='block' for='usersUpdateEmail'><?= _('Email') ?></label>
+                        <input id='usersUpdateEmail' type='email' value='<?= $user['email'] ?>' name='email' /></li>
                         <li>
-                        <label class='block' for='usersUpdateValidated'><?php echo _('Has an active account?'); ?></label>
+                        <label class='block' for='usersUpdateValidated'><?= _('Has an active account?') ?></label>
                         <select name='validated' id='usersUpdateValidated'>
-                            <option value='1'<?php
-                                    if ($users['validated'] == 1) { echo " selected='selected'"; } ?>
-                                        ><?php echo _('Yes'); ?></option>
-                            <option value='0'<?php
-                                if ($users['validated'] == 0) { echo " selected='selected'"; } ?>
-                                    ><?php echo _('No'); ?></option>
+                            <option value='1' selected='selected'><?= _('Yes') ?></option>
+                            <option value='0'><?= _('No') ?></option>
                         </select>
                         </li>
-                        <li><label class='block' for='usersUpdateUsergroup'><?php echo _('Group'); ?></label>
+                        <li><label class='block' for='usersUpdateUsergroup'><?= _('Group') ?></label>
                         <select name='usergroup' id='usersUpdateUsergroup'>
                 <?php
-                            if ($_SESSION['is_sysadmin'] == 1) {
+                            if ($_SESSION['is_sysadmin']) {
                 ?>
                                 <option value='1'<?php
-                                        if ($users['usergroup'] == 1) { echo " selected='selected'"; } ?>
+                                        if ($user['usergroup'] == 1) { echo " selected='selected'"; } ?>
                                 >Sysadmins</option>
                 <?php
                             }
                 ?>
                             <option value='2'<?php
-                                    if ($users['usergroup'] == 2) { echo " selected='selected'"; } ?>
+                                    if ($user['usergroup'] == 2) { echo " selected='selected'"; } ?>
                             >Admins</option>
                             <option value='3'<?php
-                                    if ($users['usergroup'] == 3) { echo " selected='selected'"; } ?>
+                                    if ($user['usergroup'] == 3) { echo " selected='selected'"; } ?>
                             >Admin + Lock power</option>
                             <option value='4'<?php
-                                    if ($users['usergroup'] == 4) { echo " selected='selected'"; } ?>
+                                    if ($user['usergroup'] == 4) { echo " selected='selected'"; } ?>
                             >Users</option>
                         </select></li>
-                        <li><label class='block' for='usersUpdatePassword'><?php echo _('Reset user password') .
-                            " <span class='smallgray'>" . $Auth::MIN_PASSWORD_LENGTH . " " . _('characters minimum'); ?></span></label>
-                        <input id='usersUpdatePassword' type='password' pattern='.{0}|.{<?php echo $Auth::MIN_PASSWORD_LENGTH; ?>,}' value='' name='password' /></li>
-                        <li><button type='submit' class='button'><?php echo _('Save'); ?></button></li>
+                        <li><label class='block' for='usersUpdatePassword'><?= _('Reset user password') .
+                            " <span class='smallgray'>" . $Auth::MIN_PASSWORD_LENGTH . " " . _('characters minimum') ?></span></label>
+                        <input id='usersUpdatePassword' type='password' pattern='.{0}|.{<?= $Auth::MIN_PASSWORD_LENGTH ?>,}' value='' name='password' /></li>
+                        <li><button type='submit' class='button'><?= _('Save') ?></button></li>
                     </ul>
                 </form>
             </li>
@@ -211,32 +202,31 @@ try {
         }
         ?>
 
-    <!-- DELETE USER -->
-    <ul class='list-group'>
-    <li class='list-group-item' style='border-color:red;background-color:#FFC1B7;'>
-        <h3><?php echo _('DANGER ZONE'); ?></h3>
-        <h4><strong><?php echo _('Delete an account'); ?></strong></h4>
-        <form action='app/controllers/UsersController.php' method='post'>
-            <!-- form key -->
-            <?php echo $formKey->getFormkey(); ?>
-            <input type='hidden' name='usersDestroy' value='true'/>
-            <label for='usersDestroyEmail'><?php echo _('Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:'); ?></label>
-            <input type='email' name='usersDestroyEmail' id='usersDestroyEmail' required />
-            <br>
-            <br>
-            <label for='usersDestroyPassword'><?php echo _('Type your password:'); ?></label>
-            <input type='password' name='usersDestroyPassword' id='usersDestroyPassword' required />
-            <div class='center'>
-                <button type='submitButtonDiv' class='button'><?php echo _('Delete this user!'); ?></button>
-            </div>
-        </form>
-    </li>
-    </ul>
+        <!-- DELETE USER -->
+        <ul class='list-group'>
+            <li class='list-group-item' style='border-color:red;background-color:#FFC1B7;'>
+                <h3><?= _('DANGER ZONE') ?></h3>
+                <h4><strong><?= _('Delete an account') ?></strong></h4>
+                <form action='app/controllers/UsersController.php' method='post'>
+                    <!-- form key -->
+                    <?= $formKey->getFormkey() ?>
+                    <input type='hidden' name='usersDestroy' value='true'/>
+                    <label for='usersDestroyEmail'><?= _('Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:') ?></label>
+                    <input type='email' name='usersDestroyEmail' id='usersDestroyEmail' required />
+                    <br>
+                    <br>
+                    <label for='usersDestroyPassword'><?= _('Type your password:') ?></label>
+                    <input type='password' name='usersDestroyPassword' id='usersDestroyPassword' required />
+                    <div class='center'>
+                        <button type='submitButtonDiv' class='button'><?= _('Delete this user!') ?></button>
+                    </div>
+                </form>
+            </li>
+        </ul>
 
     </div>
 
     <!-- TAB 3 STATUS -->
-
     <div class='divhandle' id='tab3div'>
         <?php
         echo $statusView->showCreate();
@@ -245,20 +235,17 @@ try {
     </div>
 
     <!-- TAB 4 ITEMS TYPES-->
-
     <div class='divhandle' id='tab4div'>
         <?php
         echo $itemsTypesView->showCreate();
-        // this is used below
         echo $itemsTypesView->show();
         ?>
-
     </div>
 
     <!-- TAB 5 COMMON EXPERIMENT TEMPLATE -->
     <div class='divhandle' id='tab5div'>
-        <h3><?php echo _('Common experiment template'); ?></h3>
-        <p><?php echo _('This is the default text when someone creates an experiment.'); ?></p>
+        <h3><?= _('Common experiment template') ?></h3>
+        <p><?= _('This is the default text when someone creates an experiment.') ?></p>
         <textarea style='height:400px' class='mceditable' id='commonTplTemplate' />
     <?php
         $templatesArr = $templates->readCommon();
@@ -266,18 +253,18 @@ try {
     ?>
         </textarea>
         <div class='submitButtonDiv'>
-            <button type='submit' class='button' onClick='commonTplUpdate()'><?php echo _('Save'); ?></button>
+            <button type='submit' class='button' onClick='commonTplUpdate()'><?= _('Save') ?></button>
         </div>
     </div>
 
     <!-- TAB 6 IMPORT CSV -->
-    <?php $itemsTypesArr = $itemsTypesView->itemsTypes->readAll(); ?>
+    <?php $itemsTypesArr = $itemsTypesView->itemsTypes->readAll() ?>
     <div class='divhandle' id='tab6div'>
-        <h3><?php echo _('Import a CSV file'); ?></h3>
-        <p style='text-align:justify'><?php echo _("This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file."); ?>
-        <span class='strong'><?php echo _('You should make a backup of your database before importing thousands of items!'); ?></span></p>
+        <h3><?= _('Import a CSV file') ?></h3>
+        <p style='text-align:justify'><?= _("This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file.") ?>
+        <span class='strong'><?= _('You should make a backup of your database before importing thousands of items!') ?></span></p>
 
-        <label for='item_selector'><?php echo _('1. Select a type of item to import to:'); ?></label>
+        <label for='item_selector'><?= _('1. Select a type of item to import to:') ?></label>
         <select id='item_selector' onchange='goNext(this.value)'><option value=''>--------</option>
         <?php
         foreach ($itemsTypesArr as $items_types) {
@@ -288,11 +275,11 @@ try {
         </select>
         <div class='import_block'>
             <form enctype="multipart/form-data" action="app/import.php" method="POST">
-            <label for='uploader'><?php echo _('2. Select a CSV file to import:'); ?></label>
+            <label for='uploader'><?= _('2. Select a CSV file to import:') ?></label>
                 <input id='uploader' name="file" type="file" accept='.csv' />
                 <input name='type' type='hidden' value='csv' />
                 <div class='submitButtonDiv'>
-                    <button type="submit" class='button' value="Upload"><?php echo _('Import CSV'); ?></button>
+                    <button type="submit" class='button' value="Upload"><?= _('Import CSV') ?></button>
                 </div>
             </form>
         </div>
@@ -301,20 +288,11 @@ try {
     <!-- TAB 7 IMPORT ZIP -->
     <div class='divhandle' id='tab7div'>
 
-        <h3><?php echo _('Import a ZIP file'); ?></h3>
-        <?php
+        <h3><?= _('Import a ZIP file') ?></h3>
+        <p><?= _("This page will allow you to import a .elabftw.zip archive.") ?>
+    <br><span class='strong'><?= _('You should make a backup of your database before importing thousands of items!') ?></span></p>
 
-        // sql to get team members names
-        $sql = "SELECT firstname, lastname, userid FROM users WHERE team = :team";
-        $reqTeam = $pdo->prepare($sql);
-        $reqTeam->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
-        $reqTeam->execute();
-
-        ?>
-            <p style='text-align:justify'><?php echo _("This page will allow you to import a .elabftw.zip archive."); ?>
-    <br><span class='strong'><?php echo _('You should make a backup of your database before importing thousands of items!'); ?></span></p>
-
-            <label for='item_selector'><?php echo _('1. Select where to import:'); ?></label>
+            <label for='item_selector'><?= _('1. Select where to import:') ?></label>
             <select id='item_selector' onchange='goNext(this.value)'>
                 <option value='' selected>-------</option>
                 <option value='' disabled>Import items</option>
@@ -325,19 +303,19 @@ try {
             }
             echo "<option value='' disabled>Import experiments</option>";
 
-            while ($users = $reqTeam->fetch()) {
-                echo "<option value='" . $users['userid'] . "' name='type' ";
-                echo ">" . $users['firstname'] . " " . $users['lastname'] . "</option>";
+            foreach($usersArr as $user) {
+                echo "<option value='" . $user['userid'] . "' name='type' ";
+                echo ">" . $user['firstname'] . " " . $user['lastname'] . "</option>";
             }
             ?>
             </select><br>
             <div class='import_block'>
             <form enctype="multipart/form-data" action="app/import.php" method="POST">
-            <label for='uploader'><?php echo _('2. Select a ZIP file to import:'); ?></label>
+            <label for='uploader'><?= _('2. Select a ZIP file to import:') ?></label>
                 <input id='uploader' name="file" type="file" accept='.elabftw.zip' />
                 <input name='type' type='hidden' value='zip' />
                 <div class='submitButtonDiv'>
-                    <button type="submit" class='button' value="Upload"><?php echo _('Import ZIP'); ?></button>
+                    <button type="submit" class='button' value="Upload"><?= _('Import ZIP') ?></button>
                 </div>
             </form>
         </div>
@@ -347,18 +325,18 @@ try {
     <?php $teamGroupsArr = $teamGroups->read($_SESSION['team_id']); ?>
 
     <div class='divhandle' id='tab8div'>
-        <h3><?php echo _('Manage groups of users'); ?></h3>
+        <h3><?= _('Manage groups of users') ?></h3>
     <!-- CREATE A GROUP -->
-    <label for='teamGroupCreate'><?php echo _('Create a group'); ?></label>
+    <label for='teamGroupCreate'><?= _('Create a group') ?></label>
         <input id='teamGroupCreate' type="text" />
-        <button type='submit' onclick='teamGroupCreate()' class='button'><?php echo _('Create'); ?></button>
+        <button type='submit' onclick='teamGroupCreate()' class='button'><?= _('Create') ?></button>
     <!-- END CREATE GROUP -->
 
     <div id='team_groups_div'>
         <div class='well'>
         <section>
         <!-- ADD USER TO GROUP -->
-            <label for='teamGroupUserAdd'><?php echo _('Add this user'); ?></label>
+            <label for='teamGroupUserAdd'><?= _('Add this user') ?></label>
             <select id='teamGroupUserAdd'>
             <?php
             foreach ($usersArr as $users) {
@@ -368,7 +346,7 @@ try {
             ?>
             </select>
 
-            <label for='teamGroupGroupAdd'><?php echo _('to this group'); ?></label>
+            <label for='teamGroupGroupAdd'><?= _('to this group') ?></label>
             <select id='teamGroupGroupAdd'>
             <?php
             foreach ($teamGroupsArr as $team_groups) {
@@ -377,12 +355,12 @@ try {
             }
             ?>
             </select>
-            <button type="submit" onclick="teamGroupUpdate('add')" class='button'><?php echo _('Go'); ?></button>
+            <button type="submit" onclick="teamGroupUpdate('add')" class='button'><?= _('Go') ?></button>
 
         </section>
         <section>
         <!-- RM USER FROM GROUP -->
-            <label for='teamGroupUserRm'><?php echo _('Remove this user'); ?></label>
+            <label for='teamGroupUserRm'><?= _('Remove this user') ?></label>
             <select id='teamGroupUserRm'>
             <?php
             foreach ($usersArr as $users) {
@@ -392,7 +370,7 @@ try {
             ?>
             </select>
 
-            <label for='teamGroupGroupRm'><?php echo _('from this group'); ?></label>
+            <label for='teamGroupGroupRm'><?= _('from this group') ?></label>
             <select id='teamGroupGroupRm'>
             <?php
             foreach ($teamGroupsArr as $team_groups) {
@@ -401,13 +379,13 @@ try {
             }
             ?>
             </select>
-            <button type="submit" onclick="teamGroupUpdate('rm')" class='button'><?php echo _('Go'); ?></button>
+            <button type="submit" onclick="teamGroupUpdate('rm')" class='button'><?= _('Go') ?></button>
         </section>
         </div>
 
         <!-- SHOW -->
-        <h3><?php echo _('Existing groups'); ?></h3>
-        <?php echo $teamGroupsView->show($teamGroupsArr); ?>
+        <h3><?= _('Existing groups') ?></h3>
+        <?= $teamGroupsView->show($teamGroupsArr) ?>
 
         </div>
     </div>
@@ -451,9 +429,9 @@ try {
                     'ordering_status' : ordering
                 }).success(function(data) {
                     if (data == 1) {
-                        notif("<?php echo _('Saved'); ?>", "ok");
+                        notif("<?= _('Saved') ?>", "ok");
                     } else {
-                        notif("<?php echo _('Something went wrong! :('); ?>", "ko");
+                        notif("<?= _('Something went wrong! :(') ?>", "ko");
                     }
                 });
             }
@@ -475,9 +453,9 @@ try {
                     'ordering_itemstypes' : ordering
                 }).success(function(data) {
                     if (data == 1) {
-                        notif("<?php echo _('Saved'); ?>", "ok");
+                        notif("<?= _('Saved') ?>", "ok");
                     } else {
-                        notif("<?php echo _('Something went wrong! :('); ?>", "ko");
+                        notif("<?= _('Something went wrong! :(') ?>", "ko");
                     }
                 });
             }

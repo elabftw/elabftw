@@ -244,6 +244,23 @@ class Users extends Auth
     }
 
     /**
+     * Read all users
+     *
+     * @param int validated
+     * @return array
+     */
+    public function readAll($validated = 1)
+    {
+        $sql = "SELECT * FROM users WHERE validated = :validated AND team = :team";
+        $req = $this->pdo->prepare($sql);
+        $req->bindValue(':validated', $validated);
+        $req->bindValue(':team', $_SESSION['team_id']);
+        $req->execute();
+
+        return $req->fetchAll();
+    }
+
+    /**
      * Update user
      *
      * @param array $params POST

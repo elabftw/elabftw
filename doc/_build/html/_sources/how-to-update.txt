@@ -18,4 +18,13 @@ If you installed it from a .zip or .tar.gz archive
 1. Get the `latest archive <https://github.com/elabftw/elabftw/releases/latest>`_
 2. Unpack it on your server, overwriting all the files.
 
-That's it :)
+If you are using Docker
+^^^^^^^^^^^^^^^^^^^^^^^
+
+In the directory where you have the `docker-compose.yml` file:
+
+.. code-block:: bash
+
+    $ docker-compose down
+    $ docker pull elabftw/docker-elabftw
+    $ docker-compose up

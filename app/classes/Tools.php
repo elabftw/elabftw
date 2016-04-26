@@ -50,17 +50,16 @@ class Tools
      * Sanitize title with a filter_var and remove the line breaks.
      *
      * @param string $input The title to sanitize
-     * @return string Will return empty string if there is no input.
+     * @return string Will return Untitled if there is no input.
      */
     public static function checkTitle($input)
     {
-        if ((isset($input)) && (!empty($input))) {
-            $title = filter_var($input, FILTER_SANITIZE_STRING);
-            // remove linebreak to avoid problem in javascript link list generation on editXP
-            return str_replace(array("\r\n", "\n", "\r"), ' ', $title);
-        } else {
+        if (empty($input)) {
             return _('Untitled');
         }
+        $title = filter_var($input, FILTER_SANITIZE_STRING);
+        // remove linebreak to avoid problem in javascript link list generation on editXP
+        return str_replace(array("\r\n", "\n", "\r"), ' ', $title);
     }
 
     /**
@@ -71,11 +70,9 @@ class Tools
      */
     public static function checkBody($input)
     {
-        return strip_tags(
-            $input,
-            "<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol>
-            <blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td><code><video><audio><pagebreak>"
-        );
+        $whitelist = "<div><br><br /><p><sub><img><sup><strong><b><em><u><a><s><font><span><ul><li><ol>
+            <blockquote><h1><h2><h3><h4><h5><h6><hr><table><tr><td><code><video><audio><pagebreak>";
+        return strip_tags($input, $whitelist);
     }
 
     /**

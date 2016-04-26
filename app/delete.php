@@ -53,7 +53,7 @@ try {
 
             // DELETE TAGS
             case 'exptag':
-                if (Tools::checkId($_POST['item_id'] === false)) {
+                if (Tools::checkId($_POST['item_id']) === false) {
                     throw new Exception(_('The id parameter is invalid.'));
                 }
 

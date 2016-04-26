@@ -128,7 +128,6 @@ class Tags extends Entity
     /**
      * Generate a JS list for tags autocomplete
      *
-     * @param string $type
      * @return string
      */
     public function generateTagList()

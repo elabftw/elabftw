@@ -136,6 +136,7 @@ class ItemsTypes extends Panel
      * Destroy an item type
      *
      * @param int $id
+     * @return bool
      */
     public function destroy($id)
     {

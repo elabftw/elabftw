@@ -53,13 +53,11 @@ try {
 
             // DELETE TAGS
             case 'exptag':
-                if (Tools::checkId($_POST['item_id'])) {
-                    $item_id = $_POST['item_id'];
-                } else {
-                    // pwet
+                if (Tools::checkId($_POST['item_id'] === false)) {
+                    throw new Exception(_('The id parameter is invalid.'));
                 }
 
-                if (is_owned_by_user($item_id, 'experiments', $_SESSION['userid'])) {
+                if (is_owned_by_user($_POST['item_id'], 'experiments', $_SESSION['userid'])) {
 
                     $delete_sql = "DELETE FROM experiments_tags WHERE id = :id";
                     $delete_req = $pdo->prepare($delete_sql);

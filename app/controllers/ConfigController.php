@@ -86,7 +86,11 @@ try {
     // DESTROY LOGS
     if (isset($_POST['logsDestroy'])) {
         $Logs = new Logs();
-        $Logs->destroy();
+        if ($Logs->destroy()) {
+            echo '1';
+        } else {
+            echo '0';
+        }
     }
 
 } catch (Exception $e) {

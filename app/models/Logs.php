@@ -81,10 +81,6 @@ class Logs extends Panel
         $sql = "DELETE FROM logs";
         $req = $this->pdo->prepare($sql);
 
-        if ($req->execute()) {
-            echo '1';
-        } else {
-            echo '0';
-        }
+        return $req->execute();
     }
 }

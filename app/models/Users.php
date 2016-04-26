@@ -232,6 +232,7 @@ class Users extends Auth
      * Get info about a user
      *
      * @param int $userid
+     * @return array
      */
     public function read($userid)
     {
@@ -377,7 +378,8 @@ class Users extends Auth
     /**
      * Validate a user
      *
-     * @param int userid
+     * @param int $userid
+     * @return string
      */
     public function validate($userid)
     {

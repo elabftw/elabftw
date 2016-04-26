@@ -80,7 +80,7 @@ class TrustedTimestamps extends Entity
     public function __destruct()
     {
         foreach ($this->tmpfiles as $file) {
-            //unlink($file);
+            unlink($file);
         }
     }
 

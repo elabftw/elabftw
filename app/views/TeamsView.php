@@ -45,7 +45,6 @@ class TeamsView extends Teams
     /**
      * Output HTML with all the teams
      *
-     * @param array $teamsArr The output of the read() function
      * @return string $html
      */
     public function show()

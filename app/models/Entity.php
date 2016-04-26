@@ -77,7 +77,7 @@ class Entity
      * Set a limit for sql read
      *
      * @param int $num
-     * @return string
+     * @return null
      */
     public function setLimit($num)
     {

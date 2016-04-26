@@ -81,6 +81,7 @@ class Status extends Panel
      * Get the color of a status
      *
      * @param int $status ID of the status
+     * @return string
      */
     public function readColor($status)
     {

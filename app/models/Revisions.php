@@ -46,6 +46,7 @@ class Revisions
      *
      * @param string $body
      * @param int $userid
+     * @return bool
      */
     public function create($body, $userid)
     {
@@ -106,6 +107,7 @@ class Revisions
     /**
      * Read all revisions for an item
      *
+     * @return array
      */
     public function read()
     {

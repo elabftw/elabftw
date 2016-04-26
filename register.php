@@ -34,6 +34,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
     <form id='regform' method="post" class='loginform' autocomplete="off" action="app/register-exec.php">
 
         <input style='display:none' type='text' name='bot' value=''>
+
         <div class='row'>
             <div class='col-md-4'>
                 <label class='block' for="team"><?php echo _('Team'); ?></label>
@@ -50,18 +51,6 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
                 </select>
             </div>
             <div class='col-md-4'>
-                <label class='block' for="firstname"><?php echo _('Firstname'); ?></label>
-                <input name="firstname" type="text" id="firstname" required />
-            </div>
-
-            <div class='col-md-4'>
-                <label class='block' for="lastname"><?php echo _('Lastname'); ?></label>
-                <input name="lastname" type="text" id="lastname" required />
-            </div>
-        </div>
-
-        <div class='row'>
-            <div class='col-md-4'>
                 <label class='block' for="email"><?php echo _('Email'); ?></label>
                 <input name="email" type="email" id="email" required />
             </div>
@@ -70,8 +59,19 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
                 <input name="password" type="password" title='8 characters minimum' id="password" pattern=".{8,}" required />
             </div>
         </div>
+
         <div class='row'>
-            <div class='col-md-12'>
+            <div class='col-md-4'>
+                <label class='block' for="firstname"><?php echo _('Firstname'); ?></label>
+                <input name="firstname" type="text" id="firstname" required />
+            </div>
+
+            <div class='col-md-4'>
+                <label class='block' for="lastname"><?php echo _('Lastname'); ?></label>
+                <input name="lastname" type="text" id="lastname" required />
+            </div>
+
+            <div class='col-md-4'>
                 <label class='block' for='complexity'><?php echo _('Password complexity'); ?></label>
                 <input id="complexity" disabled />
             </div>
@@ -85,17 +85,6 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
 </section>
 
 <script>
-function validatePassword(){
-    var pass=document.getElementById("password").value;
-    var cpass=document.getElementById("cpassword").value;
-    if (pass != cpass) {
-        document.getElementById("cpassword").setCustomValidity("<?php echo _('The passwords do not match!'); ?>");
-    } else {
-        //empty string means no validation error
-        document.getElementById("cpassword").setCustomValidity('');
-    }
-}
-
 $(document).ready(function() {
     // give focus to the first field on page load
     document.getElementById("team").focus();
@@ -104,40 +93,39 @@ $(document).ready(function() {
         if (complexity < 20) {
             $('#complexity').css({'background-color':'red'});
             $('#complexity').css({'color':'white'});
-            $('#complexity').val('<?php echo _('Weak password'); ?>');
+            $('#complexity').val('<?= _('Weak password') ?>');
             $('#complexity').css({'border-color' : '#e3e3e3'});
             $('#complexity').css({'box-shadow': '0 0  yellow'});
             $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
         } else if (complexity < 30) {
             $('#complexity').css({'color':'#white'});
             $('#complexity').css({'background-color':'orange'});
-            $('#complexity').val('<?php echo _('Average password'); ?>');
+            $('#complexity').val('<?= _('Average password') ?>');
             $('#complexity').css({'box-shadow': '0 0  yellow'});
             $('#complexity').css({'border-color' : '#e3e3e3'});
             $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
         } else if (complexity < 50) {
             $('#complexity').css({'color':'white'});
-            $('#complexity').val('<?php echo _('Good password'); ?>');
+            $('#complexity').val('<?= _('Good password') ?>');
             $('#complexity').css({'background-color':'green'});
             $('#complexity').css({'box-shadow': '0 0  yellow'});
             $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
             $('#complexity').css({'border-color' : '#e3e3e3'});
         } else if (complexity < 99) {
             $('#complexity').css({'color':'black'});
-            $('#complexity').val('<?php echo _('Strong password'); ?>');
+            $('#complexity').val('<?= _('Strong password') ?>');
             $('#complexity').css({'background-color':'#ffd700'});
             $('#complexity').css({'box-shadow': '0px 0px 15px 5px #ffd700'});
             $('#complexity').css({'border' : 'none'});
             $('#complexity').css({'-moz-box-shadow': '0px 0px 15px 5px #ffd700'});
         } else {
             $('#complexity').css({'color':'#797979'});
-            $('#complexity').val('<?php echo _('No way that is your real password!'); ?>');
+            $('#complexity').val('<?= _('No way that is your real password!') ?>');
             $('#complexity').css({'background-color':'#e3e3e3'});
             $('#complexity').css({'box-shadow': '0 0  yellow'});
             $('#complexity').css({'-moz-box-shadow': '0 0 yellow'});
             $('#complexity').css({'border-color' : '#e3e3e3'});
         }
-        //$("#complexity").html(Math.round(complexity) + '%');
     });
 });
 </script>

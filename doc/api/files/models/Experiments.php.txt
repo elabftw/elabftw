@@ -10,8 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
-use \Exception;
+use PDO;
+use Exception;
 
 /**
  * All about the experiments
@@ -243,11 +243,7 @@ class Experiments extends Entity
         }
 
         // or we might have a TeamGroup, so an int
-        if (Tools::checkId($visibility)) {
-            return true;
-        }
-
-        return false;
+        return (bool) Tools::checkId($visibility);
     }
 
     /**
@@ -278,9 +274,7 @@ class Experiments extends Entity
     /**
      * Update the status for an experiment
      *
-     * @param int $experiment Id of the experiment
      * @param int $status Id of the status
-     * @param int $userid Id of current user
      * @return string 0 on fail and color of new status on success
      */
     public function updateStatus($status)
@@ -383,7 +377,7 @@ class Experiments extends Entity
     /**
      * Destroy an experiment and all associated data
      *
-     * @return null
+     * @return bool
      */
     public function destroy()
     {

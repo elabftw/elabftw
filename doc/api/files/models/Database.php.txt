@@ -10,8 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
-use \Exception;
+use PDO;
+use Exception;
 
 /**
  * All about the database items
@@ -71,10 +71,10 @@ class Database extends Entity
 
     /**
      * Check if the item we want to view is in the team
-     * Called by the constructor
      *
+     * @return bool
      */
-    private function isInTeam()
+    public function isInTeam()
     {
         $sql = "SELECT team FROM items WHERE id = :id";
         $req = $this->pdo->prepare($sql);
@@ -137,7 +137,7 @@ class Database extends Entity
         " . $this->categoryFilter . "
         " . $this->tagFilter . "
         " . $this->queryFilter . "
-        ORDER BY $this->order $this->sort";
+        ORDER BY $this->order $this->sort $this->limit";
 
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':teamid', $this->team);

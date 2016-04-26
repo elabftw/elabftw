@@ -10,7 +10,7 @@
  */
 namespace Elabftw\Elabftw;
 
-use \Exception;
+use Exception;
 
 /**
  * The mother class of Experiments and Database
@@ -39,6 +39,9 @@ class Entity
     /** inserted in sql */
     public $sort = 'DESC';
 
+    /** limit for sql */
+    public $limit = '';
+
     /**
      * Check and set id
      *
@@ -60,14 +63,25 @@ class Entity
      */
     public function hasAttachment($type)
     {
-        $sql = "SELECT id FROM uploads
+        $sql = "SELECT COUNT(*) FROM uploads
             WHERE item_id = :item_id AND type = :type LIMIT 1";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':item_id', $this->id);
         $req->bindParam(':type', $type);
         $req->execute();
 
-        return $req->rowCount() > 0;
+        return $req->fetchColumn() != 0;
+    }
+
+    /**
+     * Set a limit for sql read
+     *
+     * @param int $num
+     * @return null
+     */
+    public function setLimit($num)
+    {
+        $this->limit = 'LIMIT ' . (int) $num;
     }
 }
 

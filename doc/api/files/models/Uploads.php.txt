@@ -10,7 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use PDO;
 use Exception;
 
 /**

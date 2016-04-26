@@ -10,8 +10,7 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
-use \Exception;
+use Exception;
 
 /**
  * All about the teams
@@ -29,9 +28,25 @@ class Logs extends Panel
     public function __construct()
     {
         $this->pdo = Db::getConnection();
-        if (!$this->isSysAdmin()) {
-            throw new Exception('Only admin can access this!');
-        }
+    }
+
+    /**
+     * Insert a log entry in the logs table
+     *
+     * @param string $type The type of the log. Can be 'Error', 'Warning', 'Info'
+     * @param string $user id of an user or ip address if not auth
+     * @param string $body The content of the log
+     * @return bool Will return true if the query is successfull
+     */
+    public function create($type, $user, $body)
+    {
+        $sql = "INSERT INTO logs (type, user, body) VALUES (:type, :user, :body)";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':type', $type);
+        $req->bindParam(':user', $user);
+        $req->bindParam(':body', $body);
+
+        return $req->execute();
     }
 
     /**
@@ -41,6 +56,10 @@ class Logs extends Panel
      */
     public function read()
     {
+        if (!$this->isSysAdmin()) {
+            throw new Exception('Only admin can access this!');
+        }
+
         $sql = "SELECT * FROM logs ORDER BY id DESC LIMIT 100";
         $req = $this->pdo->prepare($sql);
         $req->execute();
@@ -55,14 +74,14 @@ class Logs extends Panel
      */
     public function destroy()
     {
+        if (!$this->isSysAdmin()) {
+            throw new Exception('Only admin can access this!');
+        }
+
         $sql = "DELETE FROM logs";
         $req = $this->pdo->prepare($sql);
 
-        if ($req->execute()) {
-            echo '1';
-        } else {
-            echo '0';
-        }
+        return $req->execute();
     }
 }
 

@@ -22,13 +22,13 @@ use \Elabftw\Elabftw\CryptoWrapper as Crypto;
  * Based on:
  * http://www.d-mueller.de/blog/dealing-with-trusted-timestamps-in-php-rfc-3161
  */
-class TrustedTimestamps
+class TrustedTimestamps extends Entity
 {
     /** our database connection */
-    private $pdo;
+    protected $pdo;
 
     /** the id of the experiment */
-    private $id;
+    public $id;
 
     /** ELAB_ROOT . uploads/ . $pdfFileName */
     private $pdfPath;
@@ -65,7 +65,8 @@ class TrustedTimestamps
         $this->pdo = Db::getConnection();
 
         // will be used in sqlUpdate()
-        $this->id = $id;
+        $this->setId($id);
+
         $this->generatePdf();
 
         // initialize with info from config
@@ -151,8 +152,27 @@ class TrustedTimestamps
         $retarray = array();
         exec("openssl " . $cmd . " 2>&1", $retarray, $retcode);
 
-        return array("retarray" => $retarray,
-                        "retcode" => $retcode);
+        return array(
+            "retarray" => $retarray,
+            "retcode" => $retcode
+        );
+    }
+
+    /**
+     * Run a shell command
+     *
+     * @param string $cmd
+     * @return array
+     */
+    private function runSh($cmd)
+    {
+        $retarray = array();
+        exec("sh -c \"" . $cmd . "\" 2>&1", $retarray, $retcode);
+
+        return array(
+            "retarray" => $retarray,
+            "retcode" => $retcode
+        );
     }
 
     /**
@@ -397,9 +417,51 @@ class TrustedTimestamps
             if (stripos($retline, "message imprint mismatch") !== false) {
                             return false;
             }
+            if (stripos($retline, "TS_CHECK_SIGNING_CERTS")) {
+                // we are facing the OpenSSL bug discussed here:
+                // https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182
+                return $this->validateWithJava();
+            }
         }
 
+
         throw new Exception("System command failed: " . implode(", ", $retarray));
+    }
+
+    /**
+     * Check if we have java
+     *
+     * @return bool
+     */
+    private function isJavaInstalled()
+    {
+        $res = $this->runSh("java");
+        if (stripos($res['retarray'][0], 'class')) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Validate the timestamp with java and BouncyCastle lib
+     * We need this because of the openssl bug
+     *
+     * @throws Exception
+     * @return bool|null
+     */
+    private function validateWithJava()
+    {
+        if (!$this->isJavaInstalled()) {
+            throw new Exception("Could not validate the timestamp due to a bug in OpenSSL library. See <a href='https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182'>issue #242</a>. Tried to validate with failsafe method but Java is not installed.");
+        }
+
+        chdir("../vendor/dfn-cert/timestampverifier/");
+        $cmd = "./verify.sh " . $this->requestfilePath . " " . $this->responsefilePath;
+        $javaRes = $this->runSh($cmd);
+        if (stripos($javaRes['retarray'][0], 'matches')) {
+            return true;
+        }
+        throw new Exception('Could not validate the timestamp with java failsafe method. Please report this bug on Github.');
     }
 
     /**

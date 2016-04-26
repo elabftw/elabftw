@@ -54,7 +54,7 @@ class Update
      * UPDATE IT ALSO IN INSTALL/ELABFTW.SQL (last line)
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '7';
+    const REQUIRED_SCHEMA = '8';
 
     /**
      * Create the pdo object
@@ -203,6 +203,11 @@ class Update
             // 20160209
             $this->schema7();
             $this->updateSchema(7);
+        }
+        if ($current_schema < 8) {
+            // 20160420
+            $this->schema8();
+            $this->updateSchema(8);
         }
 
         // place new schema functions above this comment
@@ -385,6 +390,19 @@ define('SECRET_KEY', '" . Crypto::binTohex($new_secret_key) . "');
             throw new Exception('Error setting hash algorithm for existing entries!');
         }
 
+    }
+
+    /**
+     * Remove username from users
+     *
+     * @throws Exception
+     */
+    private function schema8()
+    {
+        $sql = "ALTER TABLE `users` DROP `username`";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Error removing username column');
+        }
     }
 }
 

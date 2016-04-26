@@ -56,7 +56,6 @@ class ItemsTypesView
     /**
      * List the items types
      *
-     * @param string $itemsTypesArr output of read()
      * @return string $html
      */
     public function show()

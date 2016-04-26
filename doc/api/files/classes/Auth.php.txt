@@ -10,8 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use \Exception;
-
 /**
  * Provide methods to login a user
  */
@@ -44,34 +42,33 @@ class Auth
     /**
      * Get the salt for the user so we can generate a correct hash
      *
-     * @param string $username
+     * @param string $email
      */
-    private function setSalt($username)
+    private function setSalt($email)
     {
-        $sql = "SELECT salt FROM users WHERE username = :username LIMIT 1";
+        $sql = "SELECT salt FROM users WHERE email = :email";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':username', $username);
+        $req->bindParam(':email', $email);
         $req->execute();
         $this->salt = $req->fetchColumn();
-
     }
 
     /**
-     * Test username and password in the database
+     * Test email and password in the database
      *
-     * @param string $username
+     * @param string $email
      * @param string $password
      * @return bool True if the login + password are good
      */
-    public function checkCredentials($username, $password)
+    public function checkCredentials($email, $password)
     {
-        $this->setSalt($username);
+        $this->setSalt($email);
 
         $passwordHash = hash('sha512', $this->salt . $password);
 
-        $sql = "SELECT * FROM users WHERE username = :username AND password = :passwordHash AND validated= 1";
+        $sql = "SELECT * FROM users WHERE email = :email AND password = :passwordHash AND validated = 1";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':username', $username);
+        $req->bindParam(':email', $email);
         $req->bindParam(':passwordHash', $passwordHash);
         //Check whether the query was successful or not
         if ($req->execute() && $req->rowCount() === 1) {
@@ -104,7 +101,7 @@ class Auth
         $_SESSION['userid'] = $this->userData['userid'];
         $_SESSION['team_id'] = $this->userData['team'];
         // Used in the menu
-        $_SESSION['username'] = $this->userData['username'];
+        $_SESSION['firstname'] = $this->userData['firstname'];
         // load permissions
         $perm_sql = "SELECT * FROM groups WHERE group_id = :group_id LIMIT 1";
         $perm_req = $this->pdo->prepare($perm_sql);
@@ -152,16 +149,16 @@ class Auth
     }
 
     /**
-     * Login with username and password
+     * Login with email and password
      *
-     * @param string $username
+     * @param string $email
      * @param string $password
      * @param string $setCookie will be here if the user ticked the remember me checkbox
      * @return bool Return true if user provided correct credentials
      */
-    public function login($username, $password, $setCookie = 'on')
+    public function login($email, $password, $setCookie = 'on')
     {
-        if ($this->checkCredentials($username, $password)) {
+        if ($this->checkCredentials($email, $password)) {
             $this->populateSession();
             if ($setCookie === 'on') {
                 $this->setToken();

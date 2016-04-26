@@ -10,8 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
-use \Exception;
+use PDO;
+use Exception;
 
 /**
  * All about the teams
@@ -188,32 +188,32 @@ class Teams extends Panel
         // check for stats, should be 0
         $count = $this->getStats($team);
 
-        if ($count['totxp'] == 0 && $count['totdb'] == 0 && $count['totusers'] == 0) {
+        if ($count['totxp'] === '0' && $count['totdb'] === '0' && $count['totusers'] === '0') {
 
             $sql = "DELETE FROM teams WHERE team_id = :team_id";
             $req = $this->pdo->prepare($sql);
-            $req->bindParam(':team_id', $team, \PDO::PARAM_INT);
+            $req->bindParam(':team_id', $team, PDO::PARAM_INT);
             $result1 = $req->execute();
 
             $sql = "DELETE FROM status WHERE team = :team_id";
             $req = $this->pdo->prepare($sql);
-            $req->bindParam(':team_id', $team, \PDO::PARAM_INT);
+            $req->bindParam(':team_id', $team, PDO::PARAM_INT);
             $result2 = $req->execute();
 
             $sql = "DELETE FROM items_types WHERE team = :team_id";
             $req = $this->pdo->prepare($sql);
-            $req->bindParam(':team_id', $team, \PDO::PARAM_INT);
+            $req->bindParam(':team_id', $team, PDO::PARAM_INT);
             $result3 = $req->execute();
 
             $sql = "DELETE FROM experiments_templates WHERE team = :team_id";
             $req = $this->pdo->prepare($sql);
-            $req->bindParam(':team_id', $team, \PDO::PARAM_INT);
+            $req->bindParam(':team_id', $team, PDO::PARAM_INT);
             $result4 = $req->execute();
 
             return $result1 && $result2 && $result3 && $result4;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**

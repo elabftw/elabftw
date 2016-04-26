@@ -8,7 +8,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-
 namespace Elabftw\Elabftw;
 
 use Exception;
@@ -17,14 +16,14 @@ use Exception;
  * Controller for the experiments comments
  *
  */
-require_once '../../inc/common.php';
-
 try {
+    require_once '../../inc/common.php';
+    $Comments = new Comments(new Experiments($_SESSION['userid']), $_POST['id']);
 
     // CREATE
     if (isset($_POST['commentsCreate'])) {
-        $comments = new Comments(new Experiments($_SESSION['userid'], $_POST['itemId']));
-        if ($comments->create($_POST['comment'])) {
+        $Comments->Experiments->setId($_POST['id']);
+        if ($Comments->create($_POST['comment'])) {
             echo '1';
         } else {
             echo '0';
@@ -33,8 +32,7 @@ try {
 
     // UPDATE
     if (isset($_POST['commentsUpdateComment'])) {
-        $comments = new Comments(new Experiments($_SESSION['userid']), $_POST['id']);
-        if ($comments->update($_POST['commentsUpdateComment'])) {
+        if ($Comments->update($_POST['commentsUpdateComment'])) {
             echo '1';
         } else {
             echo '0';
@@ -42,9 +40,8 @@ try {
     }
 
     // DESTROY
-    $comments = new Comments(new Experiments($_SESSION['userid']), $_POST['id']);
     if (isset($_POST['commentsDestroy'])) {
-        if ($comments->destroy()) {
+        if ($Comments->destroy()) {
             echo '1';
         } else {
             echo '0';
@@ -52,6 +49,7 @@ try {
     }
 
 } catch (Exception $e) {
-    dblog('Error', $_SESSION['userid'], $e->getMessage());
+    $Logs = new Logs();
+    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
 }
 

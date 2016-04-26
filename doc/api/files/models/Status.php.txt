@@ -10,8 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
-use \Exception;
+use PDO;
+use Exception;
 
 /**
  * Things related to status in admin panel
@@ -81,6 +81,7 @@ class Status extends Panel
      * Get the color of a status
      *
      * @param int $status ID of the status
+     * @return string
      */
     public function readColor($status)
     {

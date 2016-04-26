@@ -15,22 +15,27 @@ namespace Elabftw\Elabftw;
  */
 class SysconfigView
 {
-    /** instance of Logs */
-    private $logs;
-
     /** instance of Update */
-    public $update;
+    public $Update;
+
+    /** instance of Logs */
+    private $Logs;
+
+    /** instance of TeamsView */
+    public $TeamsView;
 
     /**
      * Constructor
      *
      * @param Update $update
      * @param Logs $logs
+     * @param TeamsView $teamsview
      */
-    public function __construct(Update $update, Logs $logs)
+    public function __construct(Update $update, Logs $logs, TeamsView $teamsview)
     {
-        $this->logs = $logs;
-        $this->update = $update;
+        $this->Update = $update;
+        $this->Logs = $logs;
+        $this->TeamsView = $teamsview;
     }
 
     /**
@@ -56,7 +61,7 @@ class SysconfigView
      */
     public function logsShow()
     {
-        $logsArr = $this->logs->read();
+        $logsArr = $this->Logs->read();
         $html = "<div id='logsDiv'>";
         $html .= "<div class='well'><ul>";
         if (empty($logsArr)) {

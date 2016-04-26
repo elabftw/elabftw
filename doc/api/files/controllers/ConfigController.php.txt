@@ -8,7 +8,6 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-
 namespace Elabftw\Elabftw;
 
 use Exception;
@@ -17,14 +16,23 @@ use Exception;
  * Deal with ajax requests sent from the sysconfig page
  *
  */
-require_once '../../inc/common.php';
-
 try {
-    $teams = new Teams();
+    require_once '../../inc/common.php';
+    $Teams = new Teams();
+
+    // PROMOTE SYSADMIN
+    if (isset($_POST['promoteSysadmin'])) {
+        $Users = new Users();
+        if ($Users->promoteSysadmin($_POST['email'])) {
+            echo '1';
+        } else {
+            echo '0';
+        }
+    }
 
     // CREATE TEAM
     if (isset($_POST['teamsCreate'])) {
-        if ($teams->create($_POST['teamsName'])) {
+        if ($Teams->create($_POST['teamsName'])) {
             echo '1';
         } else {
             echo '0';
@@ -33,7 +41,7 @@ try {
 
     // UPDATE TEAM NAME
     if (isset($_POST['teamsUpdate'])) {
-        if ($teams->updateName($_POST['teamsUpdateId'], $_POST['teamsUpdateName'])) {
+        if ($Teams->updateName($_POST['teamsUpdateId'], $_POST['teamsUpdateName'])) {
             echo '1';
         } else {
             echo '0';
@@ -42,7 +50,7 @@ try {
 
     // DESTROY TEAM
     if (isset($_POST['teamsDestroy'])) {
-        if ($teams->destroy($_POST['teamsDestroyId'])) {
+        if ($Teams->destroy($_POST['teamsDestroyId'])) {
             echo '1';
         } else {
             echo '0';
@@ -51,7 +59,7 @@ try {
 
     // UPDATE TEAM
     if (isset($_POST['teamsUpdateFull'])) {
-        if ($teams->update($_POST)) {
+        if ($Teams->update($_POST)) {
             $_SESSION['ok'][] = _('Configuration updated successfully!');
         } else {
             $_SESSION['ko'][] = _('An error occurred!');
@@ -61,14 +69,14 @@ try {
 
     // UPDATE COMMON TEMPLATE
     if (isset($_POST['commonTplUpdate'])) {
-        $templates = new Templates($_SESSION['team_id']);
-        $templates->update($_POST['commonTplUpdate']);
+        $Templates = new Templates($_SESSION['team_id']);
+        $Templates->update($_POST['commonTplUpdate']);
     }
 
     // SEND TEST EMAIL
     if (isset($_POST['testemailSend'])) {
-        $sysconfig = new Sysconfig();
-        if ($sysconfig->testemailSend($_POST['testemailEmail'])) {
+        $Sysconfig = new Sysconfig();
+        if ($Sysconfig->testemailSend($_POST['testemailEmail'])) {
             echo '1';
         } else {
             echo '0';
@@ -77,11 +85,16 @@ try {
 
     // DESTROY LOGS
     if (isset($_POST['logsDestroy'])) {
-        $logs = new Logs();
-        $logs->destroy();
+        $Logs = new Logs();
+        if ($Logs->destroy()) {
+            echo '1';
+        } else {
+            echo '0';
+        }
     }
 
 } catch (Exception $e) {
-    dblog('Error', $_SESSION['userid'], $e->getMessage());
+    $Logs = new Logs();
+    $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
 }
 

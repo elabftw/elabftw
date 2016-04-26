@@ -10,7 +10,7 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
+use Exception;
 
 /**
  * All about the templates

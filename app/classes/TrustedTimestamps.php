@@ -158,6 +158,12 @@ class TrustedTimestamps extends Entity
         );
     }
 
+    /**
+     * Run a shell command
+     *
+     * @param string $cmd
+     * @return array
+     */
     private function runSh($cmd)
     {
         $retarray = array();
@@ -422,6 +428,11 @@ class TrustedTimestamps extends Entity
         throw new Exception("System command failed: " . implode(", ", $retarray));
     }
 
+    /**
+     * Check if we have java
+     *
+     * @return bool
+     */
     private function isJavaInstalled()
     {
         $res = $this->runSh("java");
@@ -431,6 +442,13 @@ class TrustedTimestamps extends Entity
         return false;
     }
 
+    /**
+     * Validate the timestamp with java and BouncyCastle lib
+     * We need this because of the openssl bug
+     *
+     * @throws Exception
+     * @return bool|null
+     */
     private function validateWithJava()
     {
         if (!$this->isJavaInstalled()) {

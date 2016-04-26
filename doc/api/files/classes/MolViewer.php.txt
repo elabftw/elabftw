@@ -11,7 +11,7 @@
  */
 namespace Elabftw\Elabftw;
 
-use \Exception;
+use Exception;
 
 /**
  * Simple viewer for molecular structures based on 3Dmol.js
@@ -46,12 +46,16 @@ class MolViewer
      * @param str $dataStyle Representation of molecule. Defaults to "cartoon:color=spectrum"
      * @param str $backgroundColor Background color in hex notation
      */
-    public function __construct($id, $filePath="", $isPdb=False, $dataStyle="cartoon:color=spectrum", $backgroundColor="0xffffff")
-    {
+    public function __construct(
+        $id,
+        $filePath = '',
+        $isPdb = false,
+        $dataStyle = 'cartoon:color=spectrum',
+        $backgroundColor = '0xffffff'
+    ) {
         // Check for proper use:
         // We always want either is_pdb to be true or a valid filepath!
-        if ($filePath === "" && !$isPdb)
-        {
+        if ($filePath === "" && !$isPdb) {
             throw new Exception('If $id is not a PDB ID ($isPdb=False) then a valid file path must be passed!');
         }
         $this->id = $id;
@@ -72,8 +76,7 @@ class MolViewer
     {
         // If we deal with a PDB code, just pass data=$this->id to 3Dmol.js.
         // It will handle it just fine.
-        if ($this->isPdb)
-        {
+        if ($this->isPdb) {
             $dataString = "data={$this->id}";
         // Otherwise we need to pass the filepath with data-href
         } elseif ($this->filePath != "") {
@@ -101,11 +104,11 @@ class MolViewer
         // Each item consists of its label als translatable string and a corresponding javascript function
         // that is executet if the item is clicked.
         $styles = array(
-                        'cartoon' => array(_('Cartoon'), 'show_cartoon(\'' . $this->divId . '\');'),
-                        'stick' => array(_('Stick'), 'show_stick(\'' . $this->divId . '\');'),
-                        'surface_solid' => array(_('Solid Surface'), 'show_surface(\'' . $this->divId . '\');'),
-                        'surface_transparent' => array(_('Transparent Surface'), 'show_surface(\'' . $this->divId . '\', .7, \'0xffffff\');')
-                        );
+            'cartoon' => array(_('Cartoon'), 'show_cartoon(\'' . $this->divId . '\');'),
+            'stick' => array(_('Stick'), 'show_stick(\'' . $this->divId . '\');'),
+            'surface_solid' => array(_('Solid Surface'), 'show_surface(\'' . $this->divId . '\');'),
+            'surface_transparent' => array(_('Transparent Surface'), 'show_surface(\'' . $this->divId . '\', .7, \'0xffffff\');')
+        );
 
         // Label of dropdown list and clean button
         $styleText = _('Style');
@@ -116,7 +119,7 @@ class MolViewer
         $controls .= "<ul class=\"dropdown-menu\">\n";
 
         // Build dropdown menu
-        foreach($styles as $style=>$props) {
+        foreach ($styles as $style => $props) {
             $controls .= "<li><a href=\"#{$this->divId}\" onClick=\"{$props[1]}\">{$props[0]}</a></li>\n";
         }
         $controls .= "</ul>\n";
@@ -135,8 +138,5 @@ class MolViewer
         $output = "{$this->buildControls()}<div style='margin-left: 25px;' class='center'><div style='height: 250px; width: 100%; position: relative;' class='row viewer_3Dmoljs' {$this->getDataString()} id={$this->divId}></div></div>";
         return $output;
     }
-
-
-
 }
 

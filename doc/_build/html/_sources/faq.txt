@@ -82,7 +82,6 @@ Can I try it before I install it ?
 ----------------------------------
 
 Sure, there is a demo online here : `eLabFTW live DEMO <https://demo.elabftw.net>`_
-Login with username : **demo** and password **demo**
 
 But what about the others ELN out there ?
 -----------------------------------------

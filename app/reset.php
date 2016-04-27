@@ -31,8 +31,9 @@ use PDO;
 
 require_once '../inc/common.php';
 
-$users = new Users();
-$crypto = new CryptoWrapper();
+$Users = new Users();
+$Logs = new Logs();
+$Crypto = new CryptoWrapper();
 
 $errflag = false;
 
@@ -71,7 +72,7 @@ if (isset($_POST['email'])) {
             // Get info to build the URL
 
             // the key is the encrypted user's mail address
-            $key = $crypto->encrypt($email);
+            $key = $Crypto->encrypt($email);
 
             $protocol = 'https://';
             $reset_url = $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];
@@ -131,29 +132,30 @@ if (isset($_POST['password']) &&
     isset($_POST['userid']) &&
     $_POST['password'] === $_POST['cpassword']) {
 
-    // get email of user
-    $sql = "SELECT email FROM users WHERE userid = :userid";
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':userid', $_POST['userid'], PDO::PARAM_INT);
-    $req->execute();
-    // Validate key
-    if ($req->fetchColumn() != $crypto->decrypt($_POST['key'])) {
-        die('Bad key.');
-    }
+    try {
+        if (Tools::checkId($_POST['userid']) === false) {
+            throw new Exception('The id parameter is invalid');
+        }
 
-    // Get userid
-    if (filter_var($_POST['userid'], FILTER_VALIDATE_INT)) {
-        $userid = $_POST['userid'];
-    } else {
-        die(_("Userid is not valid."));
-    }
-    // Replace new password in database
-    if ($users->updatePassword($_POST['password'], $userid)) {
-        $Logs = new Logs();
-        $Logs->create('Info', $userid, 'Password was changed for this user.');
-        $_SESSION['ok'][] = _('New password updated. You can now login.');
-    } else {
+        $userArr = $Users->read($_POST['userid']);
+
+        // Validate key
+        if ($userArr['email'] != $Crypto->decrypt($_POST['key'])) {
+            throw new Exception('Wrong key for resetting password');
+        }
+
+        // Replace new password in database
+        if (!$Users->updatePassword($_POST['password'], $_POST['userid'])) {
+            throw new Exception('Error updating password');
+        }
+
+        $Logs->create('Info', $_POST['userid'], 'Password was changed for this user.');
+        $_SESSION['ok'][] = _('New password inserted. You can now login.');
+
+    } catch (Exception $e) {
+        $Logs->create('Warning', $_POST['userid'], $e->getMessage());
         $_SESSION['ko'][] = Tools::error();
+    } finally {
+        header("location: ../login.php");
     }
-    header("location: ../login.php");
 }

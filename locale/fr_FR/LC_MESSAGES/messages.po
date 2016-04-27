@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2015-03-04 14:57+0100\n"
-"PO-Revision-Date: 2016-04-20 12:44+0200\n"
+"PO-Revision-Date: 2016-04-27 12:13+0200\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -529,7 +529,7 @@ msgid "Email not found in database!"
 msgstr "Cette adresse email n'est pas dans la base de données !"
 
 #: elabftw/app/reset.php:173
-msgid "New password updated. You can now login."
+msgid "New password created. You can now login."
 msgstr "Nouveau mot de passe mis à jour. Vous pouvez vous connecter désormais."
 
 #: elabftw/app/timestamp.php:93 elabftw/app/timestamp.php:107

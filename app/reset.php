@@ -27,7 +27,6 @@ namespace Elabftw\Elabftw;
 
 use Swift_Message;
 use Exception;
-use PDO;
 
 require_once '../inc/common.php';
 

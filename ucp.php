@@ -257,7 +257,7 @@ echo "</ul>";
         <form action='app/ucp-exec.php' method='post'>
             <input type='hidden' name='new_tpl_form' />
             <input type='file' accept='.elabftw.tpl' id='import_tpl'>
-            <input required type='text' name='new_tpl_name' id='new_tpl_name' placeholder='<?php echo _('Name of the template'); ?>' />
+            <input required type='text' name='new_tpl_name' id='new_tpl_name' pattern='.{3,}' placeholder='<?php echo _('Name of the template'); ?>' />
             <br>
             <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='mceditable' rows='50' cols='60'></textarea>
             <br>

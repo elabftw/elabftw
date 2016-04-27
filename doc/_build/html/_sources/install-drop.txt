@@ -11,18 +11,12 @@ A drop is a server in the cloud, and is pretty cheap. You can install elabftw on
 
 Your elabftw installation will run in a docker container.
 
-The following actions will be performed :
-
-- Install of elabftw in docker
-- Install of a proper SSL certificate issued by `Let's Encrypt <https://letsencrypt.org/>`_
-- Get everything up and running
-
 .. warning:: This script will work for a fresh drop. If you already have a server running, you should consider a :ref:`normal install <install-gnulinux>` instead.
 
 
 .. warning:: You need to have a domain name pointing to the drop. Otherwise the letsencrypt script will not work.
 
-* Point the A field of your domain to the IP address of your drop. It might take a bit of time for the DNS to propagate.
+* Point your domain to the IP address of your drop. It might take a bit of time for the DNS to propagate.
 
 * Create an account on `DigitalOcean <https://cloud.digitalocean.com/registrations/new>`_
 
@@ -48,7 +42,7 @@ The following actions will be performed :
 
 .. code-block:: bash
 
-    wget -qO- https://get.elabftw.net > install-elabftw.sh && sh install-elabftw.sh
+    wget -qO- https://get.elabftw.net > install-elabftw.sh && bash install-elabftw.sh
 
 .. danger:: Don't get into the habit of executing unknown scripts as root without reading them first!
 

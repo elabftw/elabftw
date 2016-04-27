@@ -42,7 +42,7 @@ Your elabftw installation will run in a docker container.
 
 .. code-block:: bash
 
-    wget -qO- https://get.elabftw.net > install-elabftw.sh && sh install-elabftw.sh
+    wget -qO- https://get.elabftw.net > install-elabftw.sh && bash install-elabftw.sh
 
 .. danger:: Don't get into the habit of executing unknown scripts as root without reading them first!
 

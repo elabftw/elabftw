@@ -154,12 +154,6 @@
 <img alt="digitalocean" class="align-center" src="_images/digitalocean.png" />
 <p>A drop is a server in the cloud, and is pretty cheap. You can install elabftw on it with one command: everything is automagic!</p>
 <p>Your elabftw installation will run in a docker container.</p>
-<p>The following actions will be performed :</p>
-<ul class="simple">
-<li>Install of elabftw in docker</li>
-<li>Install of a proper SSL certificate issued by <a class="reference external" href="https://letsencrypt.org/">Let&#8217;s Encrypt</a></li>
-<li>Get everything up and running</li>
-</ul>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">This script will work for a fresh drop. If you already have a server running, you should consider a <a class="reference internal" href="install-gnulinux.html#install-gnulinux"><span>normal install</span></a> instead.</p>
@@ -169,7 +163,7 @@
 <p class="last">You need to have a domain name pointing to the drop. Otherwise the letsencrypt script will not work.</p>
 </div>
 <ul class="simple">
-<li>Point the A field of your domain to the IP address of your drop. It might take a bit of time for the DNS to propagate.</li>
+<li>Point your domain to the IP address of your drop. It might take a bit of time for the DNS to propagate.</li>
 <li>Create an account on <a class="reference external" href="https://cloud.digitalocean.com/registrations/new">DigitalOcean</a></li>
 <li>Create a droplet with Docker (from the One-click Apps tab), select a size and a region.</li>
 <li>It might be a good idea to enable backups</li>
@@ -188,7 +182,7 @@
 <ul class="simple">
 <li>Enter the following magical command:</li>
 </ul>
-<div class="highlight-bash"><div class="highlight"><pre>wget -qO- https://get.elabftw.net &gt; install-elabftw.sh <span class="o">&amp;&amp;</span> sh install-elabftw.sh
+<div class="highlight-bash"><div class="highlight"><pre>wget -qO- https://get.elabftw.net &gt; install-elabftw.sh <span class="o">&amp;&amp;</span> bash install-elabftw.sh
 </pre></div>
 </div>
 <div class="admonition danger">

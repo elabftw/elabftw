@@ -152,12 +152,11 @@
   <div class="section" id="install-in-a-drop">
 <span id="install-drop"></span><h1>Install in a drop<a class="headerlink" href="#install-in-a-drop" title="Permalink to this headline">¶</a></h1>
 <img alt="digitalocean" class="align-center" src="_images/digitalocean.png" />
-<p>A drop is a cheap server, and you install elabftw on it with one command: everything is automagic!</p>
+<p>A drop is a server in the cloud, and is pretty cheap. You can install elabftw on it with one command: everything is automagic!</p>
+<p>Your elabftw installation will run in a docker container.</p>
 <p>The following actions will be performed :</p>
 <ul class="simple">
-<li>Install of Nginx (web server)</li>
-<li>Install of  MySQL (database)</li>
-<li>Install of elabftw</li>
+<li>Install of elabftw in docker</li>
 <li>Install of a proper SSL certificate issued by <a class="reference external" href="https://letsencrypt.org/">Let&#8217;s Encrypt</a></li>
 <li>Get everything up and running</li>
 </ul>
@@ -170,11 +169,12 @@
 <p class="last">You need to have a domain name pointing to the drop. Otherwise the letsencrypt script will not work.</p>
 </div>
 <ul class="simple">
-<li>Create an account on <a class="reference external" href="https://cloud.digitalocean.com/registrations/new">DigitalOcean</a></li>
-<li>Add your SSH public key to your profile (<a class="reference external" href="https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets">documentation</a>)</li>
-<li>Create a droplet with Ubuntu 14.04 x64 (works also with 14.10, 15.04 and 15.10, but not with 12.04.5). Make sure to select your public key</li>
 <li>Point the A field of your domain to the IP address of your drop. It might take a bit of time for the DNS to propagate.</li>
-<li>Open a terminal and SSH to your droplet. The IP address can be found in the digitalocean website:</li>
+<li>Create an account on <a class="reference external" href="https://cloud.digitalocean.com/registrations/new">DigitalOcean</a></li>
+<li>Create a droplet with Docker (from the One-click Apps tab), select a size and a region.</li>
+<li>It might be a good idea to enable backups</li>
+<li>Add your SSH key (<a class="reference external" href="https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets">documentation</a>)</li>
+<li>Once created, open a terminal and SSH to your new server. The IP address can be found on the digitalocean website:</li>
 </ul>
 <div class="highlight-bash"><div class="highlight"><pre>ssh root@12.34.56.78
 </pre></div>

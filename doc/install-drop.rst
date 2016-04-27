@@ -7,31 +7,26 @@ Install in a drop
     :align: center
     :alt: digitalocean
 
-A drop is a cheap server, and you install elabftw on it with one command: everything is automagic!
+A drop is a server in the cloud, and is pretty cheap. You can install elabftw on it with one command: everything is automagic!
 
-The following actions will be performed :
-
-- Install of Nginx (web server)
-- Install of  MySQL (database)
-- Install of elabftw
-- Install of a proper SSL certificate issued by `Let's Encrypt <https://letsencrypt.org/>`_
-- Get everything up and running
+Your elabftw installation will run in a docker container.
 
 .. warning:: This script will work for a fresh drop. If you already have a server running, you should consider a :ref:`normal install <install-gnulinux>` instead.
 
 
 .. warning:: You need to have a domain name pointing to the drop. Otherwise the letsencrypt script will not work.
 
+* Point your domain to the IP address of your drop. It might take a bit of time for the DNS to propagate.
 
 * Create an account on `DigitalOcean <https://cloud.digitalocean.com/registrations/new>`_
 
-* Add your SSH public key to your profile (`documentation <https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets>`_)
+* Create a droplet with Docker (from the One-click Apps tab), select a size and a region.
 
-* Create a droplet with Ubuntu 14.04 x64 (works also with 14.10, 15.04 and 15.10, but not with 12.04.5). Make sure to select your public key
+* It might be a good idea to enable backups
 
-* Point the A field of your domain to the IP address of your drop. It might take a bit of time for the DNS to propagate.
+* Add your SSH key (`documentation <https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets>`_)
 
-* Open a terminal and SSH to your droplet. The IP address can be found in the digitalocean website:
+* Once created, open a terminal and SSH to your new server. The IP address can be found on the digitalocean website:
 
 .. code-block:: bash
 

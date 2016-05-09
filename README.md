@@ -1,6 +1,6 @@
 ![elabftw logo](https://i.imgur.com/hq6SAZf.png)
 
-###[Official website](http://www.elabftw.net) | [Live demo](https://demo.elabftw.net) | [Documentation](https://elabftw.readthedocs.org)
+###[Official website](http://www.elabftw.net) | [Live demo](https://demo.elabftw.net) | [Documentation](https://elabftw.readthedocs.io)
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/elabftw/elabftw/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/elabftw/elabftw/badges/build.png?b=master)](https://scrutinizer-ci.com/g/elabftw/elabftw/build-status/master)
@@ -37,7 +37,7 @@ Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM 
 * Go to https://your-address.org/elabftw/install
 
 ## The legendary documentation (for everyone else)
-[Read the documentation, it's very complete](https://elabftw.readthedocs.org).
+[Read the documentation, it's very complete](https://elabftw.readthedocs.io).
 
 # Support
 

@@ -153,7 +153,7 @@
 <span id="install-drop"></span><h1>Install in a drop<a class="headerlink" href="#install-in-a-drop" title="Permalink to this headline">¶</a></h1>
 <img alt="digitalocean" class="align-center" src="_images/digitalocean.png" />
 <p>A drop is a server in the cloud, and is pretty cheap. You can install elabftw on it with one command: everything is automagic!</p>
-<p>Your elabftw installation will run in a docker container.</p>
+<p>Your elabftw installation will run in a docker container. The SSL certificate will be provided by <a class="reference external" href="https://letsencrypt.org">LetsEncrypt</a>. Everything will be configured properly (php, nginx, docker, etc…).</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">This script will work for a fresh drop. If you already have a server running, you should consider a <a class="reference internal" href="install-gnulinux.html#install-gnulinux"><span>normal install</span></a> instead.</p>
@@ -182,7 +182,7 @@
 <ul class="simple">
 <li>Enter the following magical command:</li>
 </ul>
-<div class="highlight-bash"><div class="highlight"><pre>wget -qO- https://get.elabftw.net &gt; install-elabftw.sh <span class="o">&amp;&amp;</span> bash install-elabftw.sh
+<div class="highlight-bash"><div class="highlight"><pre>wget -qO- https://get.elabftw.net &gt; drop-elabftw.sh <span class="o">&amp;&amp;</span> bash drop-elabftw.sh
 </pre></div>
 </div>
 <div class="admonition danger">

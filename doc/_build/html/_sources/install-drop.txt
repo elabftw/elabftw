@@ -9,7 +9,7 @@ Install in a drop
 
 A drop is a server in the cloud, and is pretty cheap. You can install elabftw on it with one command: everything is automagic!
 
-Your elabftw installation will run in a docker container.
+Your elabftw installation will run in a docker container. The SSL certificate will be provided by `LetsEncrypt <https://letsencrypt.org>`_. Everything will be configured properly (php, nginx, docker, etc…).
 
 .. warning:: This script will work for a fresh drop. If you already have a server running, you should consider a :ref:`normal install <install-gnulinux>` instead.
 
@@ -42,7 +42,7 @@ Your elabftw installation will run in a docker container.
 
 .. code-block:: bash
 
-    wget -qO- https://get.elabftw.net > install-elabftw.sh && bash install-elabftw.sh
+    wget -qO- https://get.elabftw.net > drop-elabftw.sh && bash drop-elabftw.sh
 
 .. danger:: Don't get into the habit of executing unknown scripts as root without reading them first!
 

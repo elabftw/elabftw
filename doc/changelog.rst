@@ -13,10 +13,10 @@ Version 1.2.0
      * People tend to forget the username they picked, but always remember their email
      * It simplifies the code by removing clutter
 
-  * Timestamping with the default TSA does not work currently!
+  * Timestamping with openssl has a bug! So we use Java.
      * See `this issue <https://github.com/elabftw/elabftw/issues/242>`_
      * TL;DR It is due to a bug in the OpenSSL library and a change on how the default TSA replies
-     * Previous timestamps are still valid
+     * If you install Java you can continue to timestamp
 
 * New features
 

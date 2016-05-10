@@ -84,7 +84,7 @@
                 <p class="caption"><span class="caption-text">Installing</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install-gnulinux.html">Install on GNU/Linux</a></li>
-<li class="toctree-l1"><a class="reference internal" href="install-drop.html">Install in a drop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-drop.html">Install in the cloud</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-docker.html">Install in a Docker container</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-mac.html">Install on Mac OS X</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-windows.html">Install on Windows (in Docker)</a></li>
@@ -225,11 +225,11 @@
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>Timestamping with the default TSA does not work currently!</dt>
+<dt>Timestamping with openssl has a bug! So we use Java.</dt>
 <dd><ul class="first last simple">
 <li>See <a class="reference external" href="https://github.com/elabftw/elabftw/issues/242">this issue</a></li>
 <li>TL;DR It is due to a bug in the OpenSSL library and a change on how the default TSA replies</li>
-<li>Previous timestamps are still valid</li>
+<li>If you install Java you can continue to timestamp</li>
 </ul>
 </dd>
 </dl>

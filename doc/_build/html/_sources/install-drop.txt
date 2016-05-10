@@ -9,13 +9,13 @@ Install in a drop
 
 Some people make you pay to have a 'cloud service'. What I'm providing here is a very simple way to install eLabFTW on your own server (drop).
 
-This way you get to keep total control over your data. It will cost you less than 5$ a month. No setup fee, no annual licence, welcome to open source software ;)
+This way you get to keep total control over your data. It will cost you less than 5$ a month. No setup fee, no annual licence, no overpriced features, welcome to open source software ;)
 
 Your eLabFTW installation will run in a `Docker <https://www.docker.com>`_ container. Privacy over the wire (HTTPS) will be provided by `Let's Encrypt <https://letsencrypt.org>`_.
 
 Everything will be configured properly and automagically.
 
-.. warning:: You need to have a domain name pointing to the drop. Otherwise the Let's Encrypt script WILL NOT work.
+.. warning:: You must own a domain name (or subdomain). Otherwise the Let's Encrypt script will not work.
 
 If you don't have a (sub)domain already, you can get one from `OVH <https://www.ovh.com>`_, `Gandi <https://www.gandi.net>`_, `1&1 <https://www.1and1.com>`_ or any other domain name registrar. It's about 5$ a year.
 

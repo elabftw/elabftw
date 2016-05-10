@@ -7,16 +7,22 @@ Install in a drop
     :align: center
     :alt: digitalocean
 
-A drop is a server in the cloud, and is pretty cheap. You can install elabftw on it with one command: everything is automagic!
+Some people make you pay to have a 'cloud service'. What I'm providing here is a very simple way to install eLabFTW on your own server (drop).
 
-Your elabftw installation will run in a docker container. The SSL certificate will be provided by `LetsEncrypt <https://letsencrypt.org>`_. Everything will be configured properly (php, nginx, docker, etc…).
+This way you get to keep total control over your data. It will cost you less than 5$ a month. No setup fee, no annual licence, welcome to open source software ;)
+
+Very minimal technical knowledge is required to follow the instructions (you know what is a domain name? you know how to open a terminal? you're good to go).
+
+Your eLabFTW installation will run in a `Docker <https://www.docker.com>`_ container. Privacy over the wire (HTTPS) will be provided by `Let's Encrypt <https://letsencrypt.org>`_.
+
+Everything will be configured properly and automagically.
+
+Create your drop
+----------------
 
 .. warning:: This script will work for a fresh drop. If you already have a server running, you should consider a :ref:`normal install <install-gnulinux>` instead.
 
 
-.. warning:: You need to have a domain name pointing to the drop. Otherwise the letsencrypt script will not work.
-
-* Point your domain to the IP address of your drop. It might take a bit of time for the DNS to propagate.
 
 * Create an account on `DigitalOcean <https://cloud.digitalocean.com/registrations/new>`_
 
@@ -26,7 +32,18 @@ Your elabftw installation will run in a docker container. The SSL certificate wi
 
 * Add your SSH key (`documentation <https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets>`_)
 
-* Once created, open a terminal and SSH to your new server. The IP address can be found on the digitalocean website:
+* Create the drop (it takes a minute)
+
+* Copy the IP address
+
+* Go to the control panel of your domain name provider. Point your domain to the IP address of your drop. It might take a bit of time for the DNS to propagate (a few hours).
+
+.. warning:: You need to have a domain name pointing to the drop. Otherwise the Let's Encrypt script WILL NOT work.
+
+Install everything
+------------------
+
+* Open a terminal and connect to your new server.
 
 .. code-block:: bash
 

@@ -84,7 +84,11 @@
                 <p class="caption"><span class="caption-text">Installing</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install-gnulinux.html">Install on GNU/Linux</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Install in a drop</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Install in a drop</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#create-your-drop">Create your drop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-everything">Install everything</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="install-docker.html">Install in a Docker container</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-mac.html">Install on Mac OS X</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-windows.html">Install on Windows (in Docker)</a></li>
@@ -152,23 +156,35 @@
   <div class="section" id="install-in-a-drop">
 <span id="install-drop"></span><h1>Install in a drop<a class="headerlink" href="#install-in-a-drop" title="Permalink to this headline">¶</a></h1>
 <img alt="digitalocean" class="align-center" src="_images/digitalocean.png" />
-<p>A drop is a server in the cloud, and is pretty cheap. You can install elabftw on it with one command: everything is automagic!</p>
-<p>Your elabftw installation will run in a docker container. The SSL certificate will be provided by <a class="reference external" href="https://letsencrypt.org">LetsEncrypt</a>. Everything will be configured properly (php, nginx, docker, etc…).</p>
+<p>Some people make you pay to have a &#8216;cloud service&#8217;. What I&#8217;m providing here is a very simple way to install eLabFTW on your own server (drop).</p>
+<p>This way you get to keep total control over your data. It will cost you less than 5$ a month. No setup fee, no annual licence, welcome to open source software ;)</p>
+<p>Very minimal technical knowledge is required to follow the instructions (you know what is a domain name? you know how to open a terminal? you&#8217;re good to go).</p>
+<p>Your eLabFTW installation will run in a <a class="reference external" href="https://www.docker.com">Docker</a> container. Privacy over the wire (HTTPS) will be provided by <a class="reference external" href="https://letsencrypt.org">Let&#8217;s Encrypt</a>.</p>
+<p>Everything will be configured properly and automagically.</p>
+<div class="section" id="create-your-drop">
+<h2>Create your drop<a class="headerlink" href="#create-your-drop" title="Permalink to this headline">¶</a></h2>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">This script will work for a fresh drop. If you already have a server running, you should consider a <a class="reference internal" href="install-gnulinux.html#install-gnulinux"><span>normal install</span></a> instead.</p>
 </div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">You need to have a domain name pointing to the drop. Otherwise the letsencrypt script will not work.</p>
-</div>
 <ul class="simple">
-<li>Point your domain to the IP address of your drop. It might take a bit of time for the DNS to propagate.</li>
 <li>Create an account on <a class="reference external" href="https://cloud.digitalocean.com/registrations/new">DigitalOcean</a></li>
 <li>Create a droplet with Docker (from the One-click Apps tab), select a size and a region.</li>
 <li>It might be a good idea to enable backups</li>
 <li>Add your SSH key (<a class="reference external" href="https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets">documentation</a>)</li>
-<li>Once created, open a terminal and SSH to your new server. The IP address can be found on the digitalocean website:</li>
+<li>Create the drop (it takes a minute)</li>
+<li>Copy the IP address</li>
+<li>Go to the control panel of your domain name provider. Point your domain to the IP address of your drop. It might take a bit of time for the DNS to propagate (a few hours).</li>
+</ul>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">You need to have a domain name pointing to the drop. Otherwise the Let&#8217;s Encrypt script WILL NOT work.</p>
+</div>
+</div>
+<div class="section" id="install-everything">
+<h2>Install everything<a class="headerlink" href="#install-everything" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Open a terminal and connect to your new server.</li>
 </ul>
 <div class="highlight-bash"><div class="highlight"><pre>ssh root@12.34.56.78
 </pre></div>
@@ -197,6 +213,7 @@
 <li>Read what is displayed at the end.</li>
 </ul>
 <p>ENJOY! :D</p>
+</div>
 </div>
 
 

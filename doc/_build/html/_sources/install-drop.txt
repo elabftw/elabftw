@@ -1,17 +1,13 @@
 .. _install-drop:
 
-Install in a drop
-=================
-
-.. image:: img/digitalocean.png
-    :align: center
-    :alt: digitalocean
+Install in the cloud
+====================
 
 Some people make you pay to have a 'cloud service'. What I'm providing here is a very simple way to install eLabFTW on your own server (drop).
 
 This way you get to keep total control over your data. It will cost you less than 5$ a month. No setup fee, no annual licence, no overpriced features, welcome to open source software ;)
 
-Your eLabFTW installation will run in a `Docker <https://www.docker.com>`_ container. Privacy over the wire (HTTPS) will be provided by `Let's Encrypt <https://letsencrypt.org>`_.
+Your eLabFTW installation will run in a `Docker <https://www.docker.com>`_ container. Privacy over the wire (HTTPS) will be provided by `Let's Encrypt <https://letsencrypt.org>`_. The webserver will be `nginx <http://nginx.org>`_. Operating systems will be `Ubuntu <http://www.ubuntu.com>`_ (`GNU <https://www.gnu.org>`_/`Linux <https://kernel.org>`_) and `Alpine Linux <https://alpinelinux.org/>`_.
 
 Everything will be configured properly and automagically.
 
@@ -26,7 +22,15 @@ Create your drop
 
 * Create an account on `DigitalOcean <https://cloud.digitalocean.com/registrations/new>`_
 
+.. image:: img/digitalocean.png
+    :align: center
+    :alt: digitalocean
+
 * Create a droplet with Docker (from the One-click Apps tab), select a size and a region.
+
+.. image:: img/do-create.png
+    :align: center
+    :alt: digitalocean
 
 * Optional: enable backups (might be a good idea)
 

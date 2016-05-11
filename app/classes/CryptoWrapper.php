@@ -7,7 +7,6 @@
  * @see http://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
- * @deprecated now we use defuse/php-encryption
  */
 namespace Elabftw\Elabftw;
 

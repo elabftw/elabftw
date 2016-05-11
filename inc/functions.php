@@ -42,6 +42,7 @@ function processTimestampPost()
         if (is_readable(realpath(ELAB_ROOT . $cert_chain)) || realpath($cert_chain)) {
             $stampcert = $cert_chain;
         } else {
+            throw new Exception('Cannot read provided certificate file.');
             $stampcert = '';
         }
     } else {
@@ -57,12 +58,8 @@ function processTimestampPost()
     } else {
         $stamplogin = '';
     }
-    if (isset($_POST['stamppass'])) {
-        try {
-            $stamppass = $crypto->encrypt($_POST['stamppass']);
-        } catch (Exception $e) {
-            $stamppass = '';
-        }
+    if (isset($_POST['stamppass']) && !empty($_POST['stamppass'])) {
+        $stamppass = $crypto->encrypt($_POST['stamppass']);
     } else {
         $stamppass = '';
     }

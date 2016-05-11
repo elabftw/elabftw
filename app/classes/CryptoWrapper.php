@@ -11,8 +11,7 @@
  */
 namespace Elabftw\Elabftw;
 
-use \Defuse\Crypto\Crypto as Crypto;
-use \Exception;
+use Defuse\Crypto\Crypto as Crypto;
 
 /**
  * Used for decrypting and encrypting passwords
@@ -22,16 +21,11 @@ class CryptoWrapper
     /**
      * Load the binary secret key from config.php
      *
-     * @throws Exception
      * @return string raw binary string
      */
     private function getSecretKey()
     {
-        try {
-            return Crypto::hexToBin(SECRET_KEY);
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
+        return Crypto::hexToBin(SECRET_KEY);
     }
 
     /**

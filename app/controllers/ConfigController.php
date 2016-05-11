@@ -19,6 +19,7 @@ use Exception;
 try {
     require_once '../../inc/common.php';
     $Teams = new Teams();
+    $redirect = false;
 
     // PROMOTE SYSADMIN
     if (isset($_POST['promoteSysadmin'])) {
@@ -59,12 +60,12 @@ try {
 
     // UPDATE TEAM
     if (isset($_POST['teamsUpdateFull'])) {
+        $redirect = true;
         if ($Teams->update($_POST)) {
             $_SESSION['ok'][] = _('Configuration updated successfully!');
         } else {
             $_SESSION['ko'][] = _('An error occurred!');
         }
-        header('Location: ../../admin.php?tab=1');
     }
 
     // UPDATE COMMON TEMPLATE
@@ -96,4 +97,9 @@ try {
 } catch (Exception $e) {
     $Logs = new Logs();
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
+    $_SESSION['ko'][] = Tools::error();
+} finally {
+    if ($redirect) {
+        header('Location: ../../admin.php?tab=1');
+    }
 }

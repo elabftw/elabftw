@@ -17,6 +17,7 @@ Version 1.2.0
      * See `this issue <https://github.com/elabftw/elabftw/issues/242>`_
      * TL;DR It is due to a bug in the OpenSSL library and a change on how the default TSA replies
      * If you install Java you can continue to timestamp
+     * If you use Docker, updating the container is enough
 
 * New features
 
@@ -35,6 +36,8 @@ Version 1.2.0
   * Improved translation for french, add terms
   * Better notification system
   * Improved "Create new" menus
+  * Users using a docker container can now use Let's Encrypt certificates easily
+  * Install on a drop is now using a Docker image, and automatic Let's Encrypt certificates
 
 * Documentation
 

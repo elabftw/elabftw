@@ -11,8 +11,6 @@ Your eLabFTW installation will run in a `Docker <https://www.docker.com>`_ conta
 
 Everything will be configured properly and automagically.
 
-.. warning:: You must own a domain name (or subdomain). Otherwise the Let's Encrypt script will not work.
-
 If you don't have a (sub)domain already, you can get one from `OVH <https://www.ovh.com>`_, `Gandi <https://www.gandi.net>`_, `1&1 <https://www.1and1.com>`_ or any other domain name registrar. It's about 5$ a year.
 
 Create your drop
@@ -40,7 +38,9 @@ Create your drop
 
 * Copy the IP address
 
-* Go to the control panel of your domain name provider. Point your domain (or subdomain) to the IP address of your drop. It might take a bit of time for the DNS to propagate (a few hours).
+* Optional: go to the control panel of your domain name provider. Point your domain (or subdomain) to the IP address of your drop. It might take a bit of time for the DNS to propagate (a few hours).
+
+.. note:: Without a domain pointing to the drop, you will have a self signed certificate (so users will have a warning), whereas if you have a domain name, you will get a proper SSL certificate from Let's Encrypt.
 
 
 Install everything

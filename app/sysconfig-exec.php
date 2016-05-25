@@ -147,7 +147,7 @@ try {
         } else {
             $smtp_username = '';
         }
-        if (isset($_POST['smtp_password'])) {
+        if (isset($_POST['smtp_password']) && !empty($_POST['smtp_password'])) {
             // the password is stored encrypted in the database
             $smtp_password = $crypto->encrypt($_POST['smtp_password']);
         } else {

@@ -79,6 +79,9 @@ class ImportCsv extends Import
             $row++;
 
             $title = $data[0];
+            if (empty($title)) {
+                $title = _('Untitled');
+            }
             $body = '';
             $j = 0;
             foreach ($data as $line) {

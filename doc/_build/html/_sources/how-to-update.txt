@@ -25,6 +25,6 @@ In the directory where you have the `docker-compose.yml` file:
 
 .. code-block:: bash
 
+    $ docker-compose pull
     $ docker-compose down
-    $ docker pull elabftw/docker-elabftw
-    $ docker-compose up
+    $ docker-compose up -d

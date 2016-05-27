@@ -46,7 +46,7 @@ class Update
      * AND package.json
      * ///////////////////////////
      */
-    const INSTALLED_VERSION = '1.2.0';
+    const INSTALLED_VERSION = '1.2.0-p1';
 
     /**
      * /////////////////////////////////////////////////////
@@ -63,6 +63,16 @@ class Update
     public function __construct()
     {
         $this->pdo = Db::getConnection();
+    }
+
+    /**
+     * Return the installed version of elabftw
+     *
+     * @return string
+     */
+    public function getInstalledVersion()
+    {
+        return self::INSTALLED_VERSION;
     }
 
     /**

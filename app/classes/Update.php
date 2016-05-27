@@ -66,6 +66,16 @@ class Update
     }
 
     /**
+     * Return the installed version of elabftw
+     *
+     * @return string
+     */
+    public function getInstalledVersion()
+    {
+        return self::INSTALLED_VERSION;
+    }
+
+    /**
      * Make a get request with cURL, using proxy setting if any
      *
      * @param string $url URL to hit

@@ -52,7 +52,7 @@ try {
 
     if ($SysconfigView->Update->success === true) {
         // display current and latest version
-        echo "<br><p>" . _('Installed version:') . " " . $SysconfigView->Update::INSTALLED_VERSION . " ";
+        echo "<br><p>" . _('Installed version:') . " " . $SysconfigView->Update->getInstalledVersion() . " ";
         // show a little green check if we have latest version
         if (!$SysconfigView->Update->updateIsAvailable()) {
             echo "<img src='img/check.png' width='16px' length='16px' title='latest' style='position:relative;bottom:8px' alt='OK' />";

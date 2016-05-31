@@ -72,7 +72,7 @@ if ($count === 0) {
             ]);
 
             var options = {
-                title: '<?php echo _('Experiments for') . ' ' . $_SESSION['username']; ?>',
+                title: '<?= ngettext('Experiment', 'Experiments', 2) ?>',
                 backgroundColor: '#fff',
                 colors: [
     <?php

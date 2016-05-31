@@ -20,6 +20,12 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
+// add check for php version here also
+if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.6', '<')) {
+    $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.6";
+    die($message);
+}
+
 // check that the config file is here and readable
 if (is_readable('config.php')) {
     require_once 'config.php';

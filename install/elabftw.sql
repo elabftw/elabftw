@@ -21,7 +21,6 @@
 DROP TABLE IF EXISTS `banned_users`;
 CREATE TABLE `banned_users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `ieuieuie` int(11) NOT NULL,
   `user_infos` text NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)

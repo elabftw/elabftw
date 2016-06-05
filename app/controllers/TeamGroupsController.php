@@ -21,13 +21,13 @@ try {
     $TeamGroups = new TeamGroups();
     // CREATE TEAM GROUP
     if (isset($_POST['teamGroupCreate'])) {
-        $teamGroups->create(filter_var($_POST['teamGroupCreate'], FILTER_SANITIZE_STRING), $_SESSION['team_id']);
+        $TeamGroups->create(filter_var($_POST['teamGroupCreate'], FILTER_SANITIZE_STRING), $_SESSION['team_id']);
     }
 
     // EDIT TEAM GROUP NAME FROM JEDITABLE
     if (isset($_POST['teamGroupUpdateName'])) {
         // the output is echoed so it gets back into jeditable input field
-        echo $teamGroups->update(
+        echo $TeamGroups->update(
             filter_var($_POST['teamGroupUpdateName'], FILTER_SANITIZE_STRING),
             $_POST['id'],
             $_SESSION['team_id']
@@ -36,12 +36,12 @@ try {
 
     // ADD OR REMOVE USER TO/FROM TEAM GROUP
     if (isset($_POST['teamGroupUser'])) {
-        $teamGroups->updateMember($_POST['teamGroupUser'], $_POST['teamGroupGroup'], $_POST['action']);
+        $TeamGroups->updateMember($_POST['teamGroupUser'], $_POST['teamGroupGroup'], $_POST['action']);
     }
 
     // DESTROY TEAM GROUP
     if (isset($_POST['teamGroupDestroy'])) {
-        $teamGroups->destroy($_POST['teamGroupGroup']);
+        $TeamGroups->destroy($_POST['teamGroupGroup']);
     }
 
 } catch (Exception $e) {

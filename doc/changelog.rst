@@ -3,6 +3,20 @@
 Changelog
 =========
 
+Version 1.2.0-p2
+----------------
+
+* fix install
+* fix team groups
+* remove wrong column in banned_users table
+* remove username mention on statistics page
+
+Version 1.2.0-p1
+----------------
+
+* fix imported csv without a title
+* fix error in php 5.6 preventing sysconfig.php to show up
+
 Version 1.2.0
 -------------
 

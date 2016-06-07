@@ -73,6 +73,17 @@ final class Db
     }
 
     /**
+     * Temporary workaround for #256
+     *
+     * @param string $sql The SQL query
+     * @return \PDOStatement
+     */
+    public function query($sql)
+    {
+        return $this->connection->query($sql);
+    }
+
+    /**
      * Make a simple query
      *
      * @param string $sql The SQL query

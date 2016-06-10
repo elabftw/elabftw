@@ -1,7 +1,7 @@
 {
 	"name": "tinymce",
 	"description": "Web based JavaScript HTML WYSIWYG editor control.",
-	"license": "http://www.tinymce.com/license",
+	"license": "LGPL-2.1",
 	"keywords": [
 		"editor",
 		"wysiwyg",
@@ -14,6 +14,8 @@
 	"ignore": [
 		"readme.md",
 		"composer.json",
-		"package.json"
+		"package.json",
+		".npmignore",
+		"changelog.txt"
 	]
 }

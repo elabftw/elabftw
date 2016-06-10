@@ -1,104 +1,94 @@
-/**
- * Compiled inline version. (Library mode)
- */
+(function () {
 
-/*jshint smarttabs:true, undef:true, latedef:true, curly:true, bitwise:true, camelcase:true */
-/*globals $code */
+var defs = {}; // id -> {dependencies, definition, instance (possibly undefined)}
 
-(function(exports, undefined) {
-	"use strict";
+// Used when there is no 'main' module.
+// The name is probably (hopefully) unique so minification removes for releases.
+var register_3795 = function (id) {
+  var module = dem(id);
+  var fragments = id.split('.');
+  var target = Function('return this;')();
+  for (var i = 0; i < fragments.length - 1; ++i) {
+    if (target[fragments[i]] === undefined)
+      target[fragments[i]] = {};
+    target = target[fragments[i]];
+  }
+  target[fragments[fragments.length - 1]] = module;
+};
 
-	var modules = {};
+var instantiate = function (id) {
+  var actual = defs[id];
+  var dependencies = actual.deps;
+  var definition = actual.defn;
+  var len = dependencies.length;
+  var instances = new Array(len);
+  for (var i = 0; i < len; ++i)
+    instances[i] = dem(dependencies[i]);
+  var defResult = definition.apply(null, instances);
+  if (defResult === undefined)
+     throw 'module [' + id + '] returned undefined';
+  actual.instance = defResult;
+};
 
-	function require(ids, callback) {
-		var module, defs = [];
+var def = function (id, dependencies, definition) {
+  if (typeof id !== 'string')
+    throw 'module id must be a string';
+  else if (dependencies === undefined)
+    throw 'no dependencies for ' + id;
+  else if (definition === undefined)
+    throw 'no definition function for ' + id;
+  defs[id] = {
+    deps: dependencies,
+    defn: definition,
+    instance: undefined
+  };
+};
 
-		for (var i = 0; i < ids.length; ++i) {
-			module = modules[ids[i]] || resolve(ids[i]);
-			if (!module) {
-				throw 'module definition dependecy not found: ' + ids[i];
-			}
+var dem = function (id) {
+  var actual = defs[id];
+  if (actual === undefined)
+    throw 'module [' + id + '] was undefined';
+  else if (actual.instance === undefined)
+    instantiate(id);
+  return actual.instance;
+};
 
-			defs.push(module);
-		}
+var req = function (ids, callback) {
+  var len = ids.length;
+  var instances = new Array(len);
+  for (var i = 0; i < len; ++i)
+    instances.push(dem(ids[i]));
+  callback.apply(null, callback);
+};
 
-		callback.apply(null, defs);
-	}
+var ephox = {};
 
-	function define(id, dependencies, definition) {
-		if (typeof id !== 'string') {
-			throw 'invalid module definition, module id must be defined and be a string';
-		}
+ephox.bolt = {
+  module: {
+    api: {
+      define: def,
+      require: req,
+      demand: dem
+    }
+  }
+};
 
-		if (dependencies === undefined) {
-			throw 'invalid module definition, dependencies must be specified';
-		}
-
-		if (definition === undefined) {
-			throw 'invalid module definition, definition function must be specified';
-		}
-
-		require(dependencies, function() {
-			modules[id] = definition.apply(null, arguments);
-		});
-	}
-
-	function defined(id) {
-		return !!modules[id];
-	}
-
-	function resolve(id) {
-		var target = exports;
-		var fragments = id.split(/[.\/]/);
-
-		for (var fi = 0; fi < fragments.length; ++fi) {
-			if (!target[fragments[fi]]) {
-				return;
-			}
-
-			target = target[fragments[fi]];
-		}
-
-		return target;
-	}
-
-	function expose(ids) {
-		var i, target, id, fragments, privateModules;
-
-		for (i = 0; i < ids.length; i++) {
-			target = exports;
-			id = ids[i];
-			fragments = id.split(/[.\/]/);
-
-			for (var fi = 0; fi < fragments.length - 1; ++fi) {
-				if (target[fragments[fi]] === undefined) {
-					target[fragments[fi]] = {};
-				}
-
-				target = target[fragments[fi]];
-			}
-
-			target[fragments[fragments.length - 1]] = modules[id];
-		}
-		
-		// Expose private modules for unit tests
-		if (exports.AMDLC_TESTS) {
-			privateModules = exports.privateModules || {};
-
-			for (id in modules) {
-				privateModules[id] = modules[id];
-			}
-
-			for (i = 0; i < ids.length; i++) {
-				delete privateModules[ids[i]];
-			}
-
-			exports.privateModules = privateModules;
-		}
-	}
-
-// Included from: js/tinymce/plugins/imagetools/classes/Canvas.js
-
+var define = def;
+var require = req;
+var demand = dem;
+// this helps with minificiation when using a lot of global references
+var defineGlobal = function (id, ref) {
+  define(id, [], function () { return ref; });
+};
+/*jsc
+["tinymce/imagetoolsplugin/Plugin","global!tinymce.PluginManager","global!tinymce.Env","global!tinymce.util.Promise","global!tinymce.util.URI","global!tinymce.util.Tools","global!tinymce.util.Delay","ephox/imagetools/api/ImageTransformations","ephox/imagetools/api/BlobConversions","tinymce/imagetoolsplugin/Dialog","tinymce/imagetoolsplugin/ImageSize","tinymce/imagetoolsplugin/Proxy","ephox/imagetools/transformations/Filters","ephox/imagetools/transformations/ImageTools","ephox/imagetools/util/Conversions","global!tinymce.dom.DOMUtils","global!tinymce.ui.Factory","global!tinymce.ui.Form","global!tinymce.ui.Container","tinymce/imagetoolsplugin/ImagePanel","tinymce/imagetoolsplugin/UndoStack","tinymce/imagetoolsplugin/Utils","ephox/imagetools/util/Canvas","ephox/imagetools/util/ImageSize","ephox/imagetools/util/Promise","ephox/imagetools/util/Mime","ephox/imagetools/transformations/ColorMatrix","global!tinymce.ui.Control","global!tinymce.ui.DragHelper","global!tinymce.geom.Rect","tinymce/imagetoolsplugin/CropRect","global!tinymce.dom.DomQuery","global!tinymce.util.Observable","global!tinymce.util.VK"]
+jsc*/
+defineGlobal("global!tinymce.PluginManager", tinymce.PluginManager);
+defineGlobal("global!tinymce.Env", tinymce.Env);
+defineGlobal("global!tinymce.util.Promise", tinymce.util.Promise);
+defineGlobal("global!tinymce.util.URI", tinymce.util.URI);
+defineGlobal("global!tinymce.util.Tools", tinymce.util.Tools);
+defineGlobal("global!tinymce.util.Delay", tinymce.util.Delay);
 /**
  * Canvas.js
  *
@@ -112,76 +102,28 @@
 /**
  * Contains various canvas functions.
  */
-define("tinymce/imagetoolsplugin/Canvas", [], function() {
-	function create(width, height) {
-		return resize(document.createElement('canvas'), width, height);
-	}
+define("ephox/imagetools/util/Canvas", [], function() {
+  function create(width, height) {
+    return resize(document.createElement('canvas'), width, height);
+  }
 
-	function get2dContext(canvas) {
-		return canvas.getContext("2d");
-	}
+  function get2dContext(canvas) {
+    return canvas.getContext("2d");
+  }
 
-	function resize(canvas, width, height) {
-		canvas.width = width;
-		canvas.height = height;
+  function resize(canvas, width, height) {
+    canvas.width = width;
+    canvas.height = height;
 
-		return canvas;
-	}
+    return canvas;
+  }
 
-	return {
-		create: create,
-		resize: resize,
-		get2dContext: get2dContext
-	};
+  return {
+    create: create,
+    resize: resize,
+    get2dContext: get2dContext
+  };
 });
-
-// Included from: js/tinymce/plugins/imagetools/classes/Mime.js
-
-/**
- * Mime.js
- *
- * Released under LGPL License.
- * Copyright (c) 1999-2015 Ephox Corp. All rights reserved
- *
- * License: http://www.tinymce.com/license
- * Contributing: http://www.tinymce.com/contributing
- */
-
-/**
- * Returns mime types for uris.
- */
-define("tinymce/imagetoolsplugin/Mime", [], function() {
-	function getUriPathName(uri) {
-		var a = document.createElement('a');
-
-		a.href = uri;
-
-		return a.pathname;
-	}
-
-	function guessMimeType(uri) {
-		var parts = getUriPathName(uri).split('.'),
-			ext = parts[parts.length - 1],
-			mimes = {
-				'jpg': 'image/jpeg',
-				'jpeg': 'image/jpeg',
-				'png': 'image/png'
-			};
-
-		if (ext) {
-			ext = ext.toLowerCase();
-		}
-
-		return mimes[ext];
-	}
-
-	return {
-		guessMimeType: guessMimeType
-	};
-});
-
-// Included from: js/tinymce/plugins/imagetools/classes/ImageSize.js
-
 /**
  * ImageSize.js
  *
@@ -195,23 +137,262 @@ define("tinymce/imagetoolsplugin/Mime", [], function() {
 /**
  * Returns the size of images.
  */
-define("tinymce/imagetoolsplugin/ImageSize", [], function() {
-	function getWidth(image) {
-		return image.naturalWidth || image.width;
-	}
+define("ephox/imagetools/util/ImageSize", [], function() {
+  function getWidth(image) {
+    return image.naturalWidth || image.width;
+  }
 
-	function getHeight(image) {
-		return image.naturalHeight || image.height;
-	}
+  function getHeight(image) {
+    return image.naturalHeight || image.height;
+  }
 
-	return {
-		getWidth: getWidth,
-		getHeight: getHeight
-	};
+  return {
+    getWidth: getWidth,
+    getHeight: getHeight
+  };
+});
+/**
+ * Promise.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2015 Ephox Corp. All rights reserved
+ *
+ * Promise polyfill under MIT license: https://github.com/taylorhakes/promise-polyfill
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
+
+/* eslint-disable */
+/* jshint ignore:start */
+
+/**
+ * Modifed to be a feature fill and wrapped as tinymce module.
+ */
+define("ephox/imagetools/util/Promise", [], function() {
+  if (window.Promise) {
+    return window.Promise;
+  }
+
+  // Use polyfill for setImmediate for performance gains
+  var asap = Promise.immediateFn || (typeof setImmediate === 'function' && setImmediate) ||
+    function(fn) { setTimeout(fn, 1); };
+
+  // Polyfill for Function.prototype.bind
+  function bind(fn, thisArg) {
+    return function() {
+      fn.apply(thisArg, arguments);
+    };
+  }
+
+  var isArray = Array.isArray || function(value) { return Object.prototype.toString.call(value) === "[object Array]"; };
+
+  function Promise(fn) {
+    if (typeof this !== 'object') throw new TypeError('Promises must be constructed via new');
+    if (typeof fn !== 'function') throw new TypeError('not a function');
+    this._state = null;
+    this._value = null;
+    this._deferreds = [];
+
+    doResolve(fn, bind(resolve, this), bind(reject, this));
+  }
+
+  function handle(deferred) {
+    var me = this;
+    if (this._state === null) {
+      this._deferreds.push(deferred);
+      return;
+    }
+    asap(function() {
+      var cb = me._state ? deferred.onFulfilled : deferred.onRejected;
+      if (cb === null) {
+        (me._state ? deferred.resolve : deferred.reject)(me._value);
+        return;
+      }
+      var ret;
+      try {
+        ret = cb(me._value);
+      }
+      catch (e) {
+        deferred.reject(e);
+        return;
+      }
+      deferred.resolve(ret);
+    });
+  }
+
+  function resolve(newValue) {
+    try { //Promise Resolution Procedure: https://github.com/promises-aplus/promises-spec#the-promise-resolution-procedure
+      if (newValue === this) throw new TypeError('A promise cannot be resolved with itself.');
+      if (newValue && (typeof newValue === 'object' || typeof newValue === 'function')) {
+        var then = newValue.then;
+        if (typeof then === 'function') {
+          doResolve(bind(then, newValue), bind(resolve, this), bind(reject, this));
+          return;
+        }
+      }
+      this._state = true;
+      this._value = newValue;
+      finale.call(this);
+    } catch (e) { reject.call(this, e); }
+  }
+
+  function reject(newValue) {
+    this._state = false;
+    this._value = newValue;
+    finale.call(this);
+  }
+
+  function finale() {
+    for (var i = 0, len = this._deferreds.length; i < len; i++) {
+      handle.call(this, this._deferreds[i]);
+    }
+    this._deferreds = null;
+  }
+
+  function Handler(onFulfilled, onRejected, resolve, reject){
+    this.onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : null;
+    this.onRejected = typeof onRejected === 'function' ? onRejected : null;
+    this.resolve = resolve;
+    this.reject = reject;
+  }
+
+  /**
+   * Take a potentially misbehaving resolver function and make sure
+   * onFulfilled and onRejected are only called once.
+   *
+   * Makes no guarantees about asynchrony.
+   */
+  function doResolve(fn, onFulfilled, onRejected) {
+    var done = false;
+    try {
+      fn(function (value) {
+        if (done) return;
+        done = true;
+        onFulfilled(value);
+      }, function (reason) {
+        if (done) return;
+        done = true;
+        onRejected(reason);
+      });
+    } catch (ex) {
+      if (done) return;
+      done = true;
+      onRejected(ex);
+    }
+  }
+
+  Promise.prototype['catch'] = function (onRejected) {
+    return this.then(null, onRejected);
+  };
+
+  Promise.prototype.then = function(onFulfilled, onRejected) {
+    var me = this;
+    return new Promise(function(resolve, reject) {
+      handle.call(me, new Handler(onFulfilled, onRejected, resolve, reject));
+    });
+  };
+
+  Promise.all = function () {
+    var args = Array.prototype.slice.call(arguments.length === 1 && isArray(arguments[0]) ? arguments[0] : arguments);
+
+    return new Promise(function (resolve, reject) {
+      if (args.length === 0) return resolve([]);
+      var remaining = args.length;
+      function res(i, val) {
+        try {
+          if (val && (typeof val === 'object' || typeof val === 'function')) {
+            var then = val.then;
+            if (typeof then === 'function') {
+              then.call(val, function (val) { res(i, val); }, reject);
+              return;
+            }
+          }
+          args[i] = val;
+          if (--remaining === 0) {
+            resolve(args);
+          }
+        } catch (ex) {
+          reject(ex);
+        }
+      }
+      for (var i = 0; i < args.length; i++) {
+        res(i, args[i]);
+      }
+    });
+  };
+
+  Promise.resolve = function (value) {
+    if (value && typeof value === 'object' && value.constructor === Promise) {
+      return value;
+    }
+
+    return new Promise(function (resolve) {
+      resolve(value);
+    });
+  };
+
+  Promise.reject = function (value) {
+    return new Promise(function (resolve, reject) {
+      reject(value);
+    });
+  };
+
+  Promise.race = function (values) {
+    return new Promise(function (resolve, reject) {
+      for(var i = 0, len = values.length; i < len; i++) {
+        values[i].then(resolve, reject);
+      }
+    });
+  };
+
+  return Promise;
 });
 
-// Included from: js/tinymce/plugins/imagetools/classes/Conversions.js
+/* jshint ignore:end */
+/* eslint-enable */
+/**
+ * Mime.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2015 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
 
+/**
+ * Returns mime types for uris.
+ */
+define("ephox/imagetools/util/Mime", [], function() {
+  function getUriPathName(uri) {
+    var a = document.createElement('a');
+
+    a.href = uri;
+
+    return a.pathname;
+  }
+
+  function guessMimeType(uri) {
+    var parts = getUriPathName(uri).split('.'),
+      ext = parts[parts.length - 1],
+      mimes = {
+        'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg',
+        'png': 'image/png'
+      };
+
+    if (ext) {
+      ext = ext.toLowerCase();
+    }
+
+    return mimes[ext];
+  }
+
+  return {
+    guessMimeType: guessMimeType
+  };
+});
 /**
  * Conversions.js
  *
@@ -225,182 +406,635 @@ define("tinymce/imagetoolsplugin/ImageSize", [], function() {
 /**
  * Converts blob/uris/images back and forth.
  */
-define("tinymce/imagetoolsplugin/Conversions", [
-	"tinymce/util/Promise",
-	"tinymce/imagetoolsplugin/Canvas",
-	"tinymce/imagetoolsplugin/Mime",
-	"tinymce/imagetoolsplugin/ImageSize"
+define("ephox/imagetools/util/Conversions", [
+  "ephox/imagetools/util/Promise",
+  "ephox/imagetools/util/Canvas",
+  "ephox/imagetools/util/Mime",
+  "ephox/imagetools/util/ImageSize"
 ], function(Promise, Canvas, Mime, ImageSize) {
-	function loadImage(image) {
-		return new Promise(function(resolve) {
-			function loaded() {
-				image.removeEventListener('load', loaded);
-				resolve(image);
-			}
+  function loadImage(image) {
+    return new Promise(function(resolve) {
+      function loaded() {
+        image.removeEventListener('load', loaded);
+        resolve(image);
+      }
 
-			if (image.complete) {
-				resolve(image);
-			} else {
-				image.addEventListener('load', loaded);
-			}
-		});
-	}
+      if (image.complete) {
+        resolve(image);
+      } else {
+        image.addEventListener('load', loaded);
+      }
+    });
+  }
 
-	function imageToCanvas(image) {
-		return loadImage(image).then(function(image) {
-			var context, canvas;
+  function imageToCanvas(image) {
+    return loadImage(image).then(function(image) {
+      var context, canvas;
 
-			canvas = Canvas.create(ImageSize.getWidth(image), ImageSize.getHeight(image));
-			context = Canvas.get2dContext(canvas);
-			context.drawImage(image, 0, 0);
+      canvas = Canvas.create(ImageSize.getWidth(image), ImageSize.getHeight(image));
+      context = Canvas.get2dContext(canvas);
+      context.drawImage(image, 0, 0);
 
-			return canvas;
-		});
-	}
+      return canvas;
+    });
+  }
 
-	function imageToBlob(image) {
-		return loadImage(image).then(function(image) {
-			var src = image.src;
+  function imageToBlob(image) {
+    return loadImage(image).then(function(image) {
+      var src = image.src;
 
-			if (src.indexOf('blob:') === 0) {
-				return blobUriToBlob(src);
-			}
+      if (src.indexOf('blob:') === 0) {
+        return blobUriToBlob(src);
+      }
 
-			if (src.indexOf('data:') === 0) {
-				return dataUriToBlob(src);
-			}
+      if (src.indexOf('data:') === 0) {
+        return dataUriToBlob(src);
+      }
 
-			return imageToCanvas(image).then(function(canvas) {
-				return dataUriToBlob(canvas.toDataURL(Mime.guessMimeType(src)));
-			});
-		});
-	}
+      return imageToCanvas(image).then(function(canvas) {
+        return dataUriToBlob(canvas.toDataURL(Mime.guessMimeType(src)));
+      });
+    });
+  }
 
-	function blobToImage(blob) {
-		return new Promise(function(resolve) {
-			var image = new Image();
+  function blobToImage(blob) {
+    return new Promise(function(resolve) {
+      var image = new Image();
 
-			function loaded() {
-				image.removeEventListener('load', loaded);
-				resolve(image);
-			}
+      function loaded() {
+        image.removeEventListener('load', loaded);
+        resolve(image);
+      }
 
-			image.addEventListener('load', loaded);
-			image.src = URL.createObjectURL(blob);
+      image.addEventListener('load', loaded);
+      image.src = URL.createObjectURL(blob);
 
-			if (image.complete) {
-				loaded();
-			}
-		});
-	}
+      if (image.complete) {
+        loaded();
+      }
+    });
+  }
 
-	function blobUriToBlob(url) {
-		return new Promise(function(resolve) {
-			var xhr = new XMLHttpRequest();
+  function blobUriToBlob(url) {
+    return new Promise(function(resolve) {
+      var xhr = new XMLHttpRequest();
 
-			xhr.open('GET', url, true);
-			xhr.responseType = 'blob';
+      xhr.open('GET', url, true);
+      xhr.responseType = 'blob';
 
-			xhr.onload = function() {
-				if (this.status == 200) {
-					resolve(this.response);
-				}
-			};
+      xhr.onload = function() {
+        if (this.status == 200) {
+          resolve(this.response);
+        }
+      };
 
-			xhr.send();
-		});
-	}
+      xhr.send();
+    });
+  }
 
-	function dataUriToBlob(uri) {
-		return new Promise(function(resolve) {
-			var str, arr, i, matches, type, blobBuilder;
+  function dataUriToBlob(uri) {
+    return new Promise(function(resolve) {
+      var str, arr, i, matches, type, blobBuilder;
 
-			uri = uri.split(',');
+      uri = uri.split(',');
 
-			matches = /data:([^;]+)/.exec(uri[0]);
-			if (matches) {
-				type = matches[1];
-			}
+      matches = /data:([^;]+)/.exec(uri[0]);
+      if (matches) {
+        type = matches[1];
+      }
 
-			str = atob(uri[1]);
+      str = atob(uri[1]);
 
-			if (window.WebKitBlobBuilder) {
-				/*globals WebKitBlobBuilder:false */
-				blobBuilder = new WebKitBlobBuilder();
+      if (window.WebKitBlobBuilder) {
+        /*globals WebKitBlobBuilder:false */
+        blobBuilder = new WebKitBlobBuilder();
 
-				arr = new ArrayBuffer(str.length);
-				for (i = 0; i < arr.length; i++) {
-					arr[i] = str.charCodeAt(i);
-				}
+        arr = new ArrayBuffer(str.length);
+        for (i = 0; i < arr.length; i++) {
+          arr[i] = str.charCodeAt(i);
+        }
 
-				blobBuilder.append(arr);
+        blobBuilder.append(arr);
 
-				resolve(blobBuilder.getBlob(type));
-				return;
-			}
+        resolve(blobBuilder.getBlob(type));
+        return;
+      }
 
-			arr = new Uint8Array(str.length);
+      arr = new Uint8Array(str.length);
 
-			for (i = 0; i < arr.length; i++) {
-				arr[i] = str.charCodeAt(i);
-			}
+      for (i = 0; i < arr.length; i++) {
+        arr[i] = str.charCodeAt(i);
+      }
 
-			resolve(new Blob([arr], {type: type}));
-		});
-	}
+      resolve(new Blob([arr], {type: type}));
+    });
+  }
 
-	function uriToBlob(url) {
-		if (url.indexOf('blob:') === 0) {
-			return blobUriToBlob(url);
-		}
+  function uriToBlob(url) {
+    if (url.indexOf('blob:') === 0) {
+      return blobUriToBlob(url);
+    }
 
-		if (url.indexOf('data:') === 0) {
-			return dataUriToBlob(url);
-		}
+    if (url.indexOf('data:') === 0) {
+      return dataUriToBlob(url);
+    }
 
-		return null;
-	}
+    return null;
+  }
 
-	function canvasToBlob(canvas, type) {
-		return dataUriToBlob(canvas.toDataURL(type));
-	}
+  function canvasToBlob(canvas, type) {
+    return dataUriToBlob(canvas.toDataURL(type));
+  }
 
-	function blobToDataUri(blob) {
-		return new Promise(function(resolve) {
-			var reader = new FileReader();
+  function blobToDataUri(blob) {
+    return new Promise(function(resolve) {
+      var reader = new FileReader();
 
-			reader.onloadend = function() {
-				resolve(reader.result);
-			};
+      reader.onloadend = function() {
+        resolve(reader.result);
+      };
 
-			reader.readAsDataURL(blob);
-		});
-	}
+      reader.readAsDataURL(blob);
+    });
+  }
 
-	function blobToBase64(blob) {
-		return blobToDataUri(blob).then(function(dataUri) {
-			return dataUri.split(',')[1];
-		});
-	}
+  function blobToBase64(blob) {
+    return blobToDataUri(blob).then(function(dataUri) {
+      return dataUri.split(',')[1];
+    });
+  }
 
-	function revokeImageUrl(image) {
-		URL.revokeObjectURL(image.src);
-	}
+  function revokeImageUrl(image) {
+    URL.revokeObjectURL(image.src);
+  }
 
-	return {
-		blobToImage: blobToImage,
-		imageToBlob: imageToBlob,
-		uriToBlob: uriToBlob,
-		blobToDataUri: blobToDataUri,
-		blobToBase64: blobToBase64,
-		imageToCanvas: imageToCanvas,
-		canvasToBlob: canvasToBlob,
-		revokeImageUrl: revokeImageUrl
-	};
+  return {
+    // used outside
+    blobToImage: blobToImage,
+    // used outside
+    imageToBlob: imageToBlob,
+    // used outside
+    blobToDataUri: blobToDataUri,
+    // used outside
+    blobToBase64: blobToBase64,
+
+    // helper method
+    imageToCanvas: imageToCanvas,
+
+    // helper method
+    canvasToBlob: canvasToBlob,
+
+    // helper method
+    revokeImageUrl: revokeImageUrl,
+
+     // helper method
+    uriToBlob: uriToBlob
+
+  };
 });
+/**
+ * ImageTools.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2015 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ *
+ * Some of the matrix calculations and constants are from the EaselJS library released under MIT:
+ * https://github.com/CreateJS/EaselJS/blob/master/src/easeljs/filters/ColorMatrix.js
+ */
 
-// Included from: js/tinymce/plugins/imagetools/classes/ImageTools.js
+/**
+ * Various operations for color matrices.
+ */
+define("ephox/imagetools/transformations/ColorMatrix", [], function() {
+  function clamp(value, min, max) {
+    value = parseFloat(value);
 
+    if (value > max) {
+      value = max;
+    } else if (value < min) {
+      value = min;
+    }
+
+    return value;
+  }
+
+  function identity() {
+    return [
+      1, 0, 0, 0, 0,
+      0, 1, 0, 0, 0,
+      0, 0, 1, 0, 0,
+      0, 0, 0, 1, 0,
+      0, 0, 0, 0, 1
+    ];
+  }
+
+  var DELTA_INDEX = [
+    0, 0.01, 0.02, 0.04, 0.05, 0.06, 0.07, 0.08, 0.1, 0.11,
+    0.12, 0.14, 0.15, 0.16, 0.17, 0.18, 0.20, 0.21, 0.22, 0.24,
+    0.25, 0.27, 0.28, 0.30, 0.32, 0.34, 0.36, 0.38, 0.40, 0.42,
+    0.44, 0.46, 0.48, 0.5, 0.53, 0.56, 0.59, 0.62, 0.65, 0.68,
+    0.71, 0.74, 0.77, 0.80, 0.83, 0.86, 0.89, 0.92, 0.95, 0.98,
+    1.0, 1.06, 1.12, 1.18, 1.24, 1.30, 1.36, 1.42, 1.48, 1.54,
+    1.60, 1.66, 1.72, 1.78, 1.84, 1.90, 1.96, 2.0, 2.12, 2.25,
+    2.37, 2.50, 2.62, 2.75, 2.87, 3.0, 3.2, 3.4, 3.6, 3.8,
+    4.0, 4.3, 4.7, 4.9, 5.0, 5.5, 6.0, 6.5, 6.8, 7.0,
+    7.3, 7.5, 7.8, 8.0, 8.4, 8.7, 9.0, 9.4, 9.6, 9.8,
+    10.0
+  ];
+
+  function multiply(matrix1, matrix2) {
+    var i, j, k, val, col = [], out = new Array(10);
+
+    for (i = 0; i < 5; i++) {
+      for (j = 0; j < 5; j++) {
+        col[j] = matrix2[j + i * 5];
+      }
+
+      for (j = 0; j < 5; j++) {
+        val = 0;
+
+        for (k = 0; k < 5; k++) {
+          val += matrix1[j + k * 5] * col[k];
+        }
+
+        out[j + i * 5] = val;
+      }
+    }
+
+    return out;
+  }
+
+  function adjust(matrix, adjustValue) {
+    adjustValue = clamp(adjustValue, 0, 1);
+
+    return matrix.map(function(value, index) {
+      if (index % 6 === 0) {
+        value = 1.0 - ((1 - value) * adjustValue);
+      } else {
+        value *= adjustValue;
+      }
+
+      return clamp(value, 0, 1);
+    });
+  }
+
+  function adjustContrast(matrix, value) {
+    var x;
+
+    value = clamp(value, -1, 1);
+    value *= 100;
+
+    if (value < 0) {
+      x = 127 + value / 100 * 127;
+    } else {
+      x = value % 1;
+
+      if (x === 0) {
+        x = DELTA_INDEX[value];
+      } else {
+        // use linear interpolation for more granularity.
+        x = DELTA_INDEX[(Math.floor(value))] * (1 - x) + DELTA_INDEX[(Math.floor(value)) + 1] * x;
+      }
+
+      x = x * 127 + 127;
+    }
+
+    return multiply(matrix, [
+      x / 127, 0, 0, 0, 0.5 * (127 - x),
+      0, x / 127, 0, 0, 0.5 * (127 - x),
+      0, 0, x / 127, 0, 0.5 * (127 - x),
+      0, 0, 0, 1, 0,
+      0, 0, 0, 0, 1
+    ]);
+  }
+
+  function adjustSaturation(matrix, value) {
+    var x, lumR, lumG, lumB;
+
+    value = clamp(value, -1, 1);
+    x = 1 + ((value > 0) ? 3 * value : value);
+    lumR = 0.3086;
+    lumG = 0.6094;
+    lumB = 0.0820;
+
+    return multiply(matrix, [
+      lumR * (1 - x) + x, lumG * (1 - x), lumB * (1 - x), 0, 0,
+      lumR * (1 - x), lumG * (1 - x) + x, lumB * (1 - x), 0, 0,
+      lumR * (1 - x), lumG * (1 - x), lumB * (1 - x) + x, 0, 0,
+      0, 0, 0, 1, 0,
+      0, 0, 0, 0, 1
+    ]);
+  }
+
+  function adjustHue(matrix, angle) {
+    var cosVal, sinVal, lumR, lumG, lumB;
+
+    angle = clamp(angle, -180, 180) / 180 * Math.PI;
+    cosVal = Math.cos(angle);
+    sinVal = Math.sin(angle);
+    lumR = 0.213;
+    lumG = 0.715;
+    lumB = 0.072;
+
+    return multiply(matrix, [
+      lumR + cosVal * (1 - lumR) + sinVal * (-lumR), lumG + cosVal * (-lumG) + sinVal * (-lumG),
+      lumB + cosVal * (-lumB) + sinVal * (1 - lumB), 0, 0,
+      lumR + cosVal * (-lumR) + sinVal * (0.143), lumG + cosVal * (1 - lumG) + sinVal * (0.140),
+      lumB + cosVal * (-lumB) + sinVal * (-0.283), 0, 0,
+      lumR + cosVal * (-lumR) + sinVal * (-(1 - lumR)), lumG + cosVal * (-lumG) + sinVal * (lumG),
+      lumB + cosVal * (1 - lumB) + sinVal * (lumB), 0, 0,
+      0, 0, 0, 1, 0,
+      0, 0, 0, 0, 1
+    ]);
+  }
+
+  function adjustBrightness(matrix, value) {
+    value = clamp(255 * value, -255, 255);
+
+    return multiply(matrix, [
+      1, 0, 0, 0, value,
+      0, 1, 0, 0, value,
+      0, 0, 1, 0, value,
+      0, 0, 0, 1, 0,
+      0, 0, 0, 0, 1
+    ]);
+  }
+
+  function adjustColors(matrix, adjustR, adjustG, adjustB) {
+    adjustR = clamp(adjustR, 0, 2);
+    adjustG = clamp(adjustG, 0, 2);
+    adjustB = clamp(adjustB, 0, 2);
+
+    return multiply(matrix, [
+      adjustR, 0, 0, 0, 0,
+      0, adjustG, 0, 0, 0,
+      0, 0, adjustB, 0, 0,
+      0, 0, 0, 1, 0,
+      0, 0, 0, 0, 1
+    ]);
+  }
+
+  function adjustSepia(matrix, value) {
+    value = clamp(value, 0, 1);
+
+    return multiply(matrix, adjust([
+      0.393, 0.769, 0.189, 0, 0,
+      0.349, 0.686, 0.168, 0, 0,
+      0.272, 0.534, 0.131, 0, 0,
+      0, 0, 0, 1, 0,
+      0, 0, 0, 0, 1
+    ], value));
+  }
+
+  function adjustGrayscale(matrix, value) {
+    value = clamp(value, 0, 1);
+
+    return multiply(matrix, adjust([
+      0.33, 0.34, 0.33, 0, 0,
+      0.33, 0.34, 0.33, 0, 0,
+      0.33, 0.34, 0.33, 0, 0,
+      0, 0, 0, 1, 0,
+      0, 0, 0, 0, 1
+    ], value));
+  }
+
+  return {
+    identity: identity,
+    adjust: adjust,
+    multiply: multiply,
+    adjustContrast: adjustContrast,
+    adjustBrightness: adjustBrightness,
+    adjustSaturation: adjustSaturation,
+    adjustHue: adjustHue,
+    adjustColors: adjustColors,
+    adjustSepia: adjustSepia,
+    adjustGrayscale: adjustGrayscale
+  };
+});
+/**
+ * Filters.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2015 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
+
+/**
+ * Applies various filters to blobs.
+ */
+define("ephox/imagetools/transformations/Filters", [
+  "ephox/imagetools/util/Canvas",
+  "ephox/imagetools/util/ImageSize",
+  "ephox/imagetools/util/Conversions",
+  "ephox/imagetools/transformations/ColorMatrix"
+], function(Canvas, ImageSize, Conversions, ColorMatrix) {
+  var revokeImageUrl = Conversions.revokeImageUrl;
+
+  function colorFilter(blob, matrix) {
+    return Conversions.blobToImage(blob).then(function(image) {
+      var canvas = Canvas.create(ImageSize.getWidth(image), ImageSize.getHeight(image)),
+        context = Canvas.get2dContext(canvas),
+        pixels;
+
+      function applyMatrix(pixels, m) {
+        var d = pixels.data, r, g, b, a, i,
+          m0 = m[0], m1 = m[1], m2 = m[2], m3 = m[3], m4 = m[4],
+          m5 = m[5], m6 = m[6], m7 = m[7], m8 = m[8], m9 = m[9],
+          m10 = m[10], m11 = m[11], m12 = m[12], m13 = m[13], m14 = m[14],
+          m15 = m[15], m16 = m[16], m17 = m[17], m18 = m[18], m19 = m[19];
+
+        for (i = 0; i < d.length; i += 4) {
+          r = d[i];
+          g = d[i + 1];
+          b = d[i + 2];
+          a = d[i + 3];
+
+          d[i] = r * m0 + g * m1 + b * m2 + a * m3 + m4;
+          d[i + 1] = r * m5 + g * m6 + b * m7 + a * m8 + m9;
+          d[i + 2] = r * m10 + g * m11 + b * m12 + a * m13 + m14;
+          d[i + 3] = r * m15 + g * m16 + b * m17 + a * m18 + m19;
+        }
+
+        return pixels;
+      }
+
+      context.drawImage(image, 0, 0);
+      revokeImageUrl(image);
+      pixels = applyMatrix(context.getImageData(0, 0, canvas.width, canvas.height), matrix);
+      context.putImageData(pixels, 0, 0);
+
+      return Conversions.canvasToBlob(canvas);
+    });
+  }
+
+  function convoluteFilter(blob, matrix) {
+    return Conversions.blobToImage(blob).then(function(image) {
+      var canvas = Canvas.create(ImageSize.getWidth(image), ImageSize.getHeight(image)),
+        context = Canvas.get2dContext(canvas),
+        pixelsIn, pixelsOut;
+
+      function applyMatrix(pixelsIn, pixelsOut, matrix) {
+        var rgba, drgba, side, halfSide, x, y, r, g, b,
+          cx, cy, scx, scy, offset, wt, w, h;
+
+        function clamp(value, min, max) {
+          if (value > max) {
+            value = max;
+          } else if (value < min) {
+            value = min;
+          }
+
+          return value;
+        }
+
+        // Calc side and half side of matrix
+        side = Math.round(Math.sqrt(matrix.length));
+        halfSide = Math.floor(side / 2);
+        rgba = pixelsIn.data;
+        drgba = pixelsOut.data;
+        w = pixelsIn.width;
+        h = pixelsIn.height;
+
+        // Apply convolution matrix to pixels
+        for (y = 0; y < h; y++) {
+          for (x = 0; x < w; x++) {
+            r = g = b = 0;
+
+            for (cy = 0; cy < side; cy++) {
+              for (cx = 0; cx < side; cx++) {
+                // Calc relative x, y based on matrix
+                scx = clamp(x + cx - halfSide, 0, w - 1);
+                scy = clamp(y + cy - halfSide, 0, h - 1);
+
+                // Calc r, g, b
+                offset = (scy * w + scx) * 4;
+                wt = matrix[cy * side + cx];
+                r += rgba[offset] * wt;
+                g += rgba[offset + 1] * wt;
+                b += rgba[offset + 2] * wt;
+              }
+            }
+
+            // Set new RGB to destination buffer
+            offset = (y * w + x) * 4;
+            drgba[offset] = clamp(r, 0, 255);
+            drgba[offset + 1] = clamp(g, 0, 255);
+            drgba[offset + 2] = clamp(b, 0, 255);
+          }
+        }
+
+        return pixelsOut;
+      }
+
+      context.drawImage(image, 0, 0);
+      revokeImageUrl(image);
+      pixelsIn = context.getImageData(0, 0, canvas.width, canvas.height);
+      pixelsOut = context.getImageData(0, 0, canvas.width, canvas.height);
+      pixelsOut = applyMatrix(pixelsIn, pixelsOut, matrix);
+      context.putImageData(pixelsOut, 0, 0);
+
+      return Conversions.canvasToBlob(canvas);
+    });
+  }
+
+  function functionColorFilter(colorFn) {
+    return function(blob, value) {
+      return Conversions.blobToImage(blob).then(function(image) {
+        var canvas = Canvas.create(ImageSize.getWidth(image), ImageSize.getHeight(image)),
+          context = Canvas.get2dContext(canvas),
+          pixels, i, lookup = new Array(256);
+
+        function applyLookup(pixels, lookup) {
+          var d = pixels.data, i;
+
+          for (i = 0; i < d.length; i += 4) {
+            d[i] = lookup[d[i]];
+            d[i + 1] = lookup[d[i + 1]];
+            d[i + 2] = lookup[d[i + 2]];
+          }
+
+          return pixels;
+        }
+
+        for (i = 0; i < lookup.length; i++) {
+          lookup[i] = colorFn(i, value);
+        }
+
+        context.drawImage(image, 0, 0);
+        revokeImageUrl(image);
+        pixels = applyLookup(context.getImageData(0, 0, canvas.width, canvas.height), lookup);
+        context.putImageData(pixels, 0, 0);
+
+        return Conversions.canvasToBlob(canvas);
+      });
+    };
+  }
+
+  function complexAdjustableColorFilter(matrixAdjustFn) {
+    return function(blob, adjust) {
+      return colorFilter(blob, matrixAdjustFn(ColorMatrix.identity(), adjust));
+    };
+  }
+
+  function basicColorFilter(matrix) {
+    return function(blob) {
+      return colorFilter(blob, matrix);
+    };
+  }
+
+  function basicConvolutionFilter(kernel) {
+    return function(blob) {
+      return convoluteFilter(blob, kernel);
+    };
+  }
+
+  return {
+    invert: basicColorFilter([
+      -1, 0, 0, 0, 255,
+      0, -1, 0, 0, 255,
+      0, 0, -1, 0, 255,
+      0, 0, 0, 1, 0
+    ]),
+
+    brightness: complexAdjustableColorFilter(ColorMatrix.adjustBrightness),
+    hue: complexAdjustableColorFilter(ColorMatrix.adjustHue),
+    saturate: complexAdjustableColorFilter(ColorMatrix.adjustSaturation),
+    contrast: complexAdjustableColorFilter(ColorMatrix.adjustContrast),
+    grayscale: complexAdjustableColorFilter(ColorMatrix.adjustGrayscale),
+    sepia: complexAdjustableColorFilter(ColorMatrix.adjustSepia),
+    colorize: function(blob, adjustR, adjustG, adjustB) {
+      return colorFilter(blob, ColorMatrix.adjustColors(ColorMatrix.identity(), adjustR, adjustG, adjustB));
+    },
+
+    sharpen: basicConvolutionFilter([
+      0, -1, 0,
+      -1, 5, -1,
+      0, -1, 0
+    ]),
+
+    emboss: basicConvolutionFilter([
+      -2, -1, 0,
+      -1, 1, 1,
+      0, 1, 2
+    ]),
+
+    gamma: functionColorFilter(function(color, value) {
+      return Math.pow(color / 255, 1 - value) * 255;
+    }),
+
+    exposure: functionColorFilter(function(color, value) {
+      return 255 * (1 - Math.exp(-(color / 255) * value));
+    }),
+
+    colorFilter: colorFilter,
+    convoluteFilter: convoluteFilter
+  };
+});
 /**
  * ImageTools.js
  *
@@ -414,100 +1048,238 @@ define("tinymce/imagetoolsplugin/Conversions", [
 /**
  * Modifies image blobs.
  */
-define("tinymce/imagetoolsplugin/ImageTools", [
-	"tinymce/imagetoolsplugin/Conversions",
-	"tinymce/imagetoolsplugin/Canvas",
-	"tinymce/imagetoolsplugin/ImageSize"
+define("ephox/imagetools/transformations/ImageTools", [
+  "ephox/imagetools/util/Conversions",
+  "ephox/imagetools/util/Canvas",
+  "ephox/imagetools/util/ImageSize"
 ], function(Conversions, Canvas, ImageSize) {
-	var revokeImageUrl = Conversions.revokeImageUrl;
+  var revokeImageUrl = Conversions.revokeImageUrl;
 
-	function rotate(blob, angle) {
-		return Conversions.blobToImage(blob).then(function(image) {
-			var canvas = Canvas.create(ImageSize.getWidth(image), ImageSize.getHeight(image)),
-				context = Canvas.get2dContext(canvas),
-				translateX = 0, translateY = 0;
+  function rotate(blob, angle) {
+    return Conversions.blobToImage(blob).then(function(image) {
+      var canvas = Canvas.create(ImageSize.getWidth(image), ImageSize.getHeight(image)),
+        context = Canvas.get2dContext(canvas),
+        translateX = 0, translateY = 0;
 
-			angle = angle < 0 ? 360 + angle : angle;
+      angle = angle < 0 ? 360 + angle : angle;
 
-			if (angle == 90 || angle == 270) {
-				Canvas.resize(canvas, canvas.height, canvas.width);
-			}
+      if (angle == 90 || angle == 270) {
+        Canvas.resize(canvas, canvas.height, canvas.width);
+      }
 
-			if (angle == 90 || angle == 180) {
-				translateX = canvas.width;
-			}
+      if (angle == 90 || angle == 180) {
+        translateX = canvas.width;
+      }
 
-			if (angle == 270 || angle == 180) {
-				translateY = canvas.height;
-			}
+      if (angle == 270 || angle == 180) {
+        translateY = canvas.height;
+      }
 
-			context.translate(translateX, translateY);
-			context.rotate(angle * Math.PI / 180);
-			context.drawImage(image, 0, 0);
-			revokeImageUrl(image);
+      context.translate(translateX, translateY);
+      context.rotate(angle * Math.PI / 180);
+      context.drawImage(image, 0, 0);
+      revokeImageUrl(image);
 
-			return Conversions.canvasToBlob(canvas, blob.type);
-		});
-	}
+      return Conversions.canvasToBlob(canvas, blob.type);
+    });
+  }
 
-	function flip(blob, axis) {
-		return Conversions.blobToImage(blob).then(function(image) {
-			var canvas = Canvas.create(ImageSize.getWidth(image), ImageSize.getHeight(image)),
-				context = Canvas.get2dContext(canvas);
+  function flip(blob, axis) {
+    return Conversions.blobToImage(blob).then(function(image) {
+      var canvas = Canvas.create(ImageSize.getWidth(image), ImageSize.getHeight(image)),
+        context = Canvas.get2dContext(canvas);
 
-			if (axis == 'v') {
-				context.scale(1, -1);
-				context.drawImage(image, 0, -canvas.height);
-			} else {
-				context.scale(-1, 1);
-				context.drawImage(image, -canvas.width, 0);
-			}
+      if (axis == 'v') {
+        context.scale(1, -1);
+        context.drawImage(image, 0, -canvas.height);
+      } else {
+        context.scale(-1, 1);
+        context.drawImage(image, -canvas.width, 0);
+      }
 
-			revokeImageUrl(image);
+      revokeImageUrl(image);
 
-			return Conversions.canvasToBlob(canvas);
-		});
-	}
+      return Conversions.canvasToBlob(canvas);
+    });
+  }
 
-	function crop(blob, x, y, w, h) {
-		return Conversions.blobToImage(blob).then(function(image) {
-			var canvas = Canvas.create(w, h),
-				context = Canvas.get2dContext(canvas);
+  function crop(blob, x, y, w, h) {
+    return Conversions.blobToImage(blob).then(function(image) {
+      var canvas = Canvas.create(w, h),
+        context = Canvas.get2dContext(canvas);
 
-			context.drawImage(image, -x, -y);
-			revokeImageUrl(image);
+      context.drawImage(image, -x, -y);
+      revokeImageUrl(image);
 
-			return Conversions.canvasToBlob(canvas);
-		});
-	}
+      return Conversions.canvasToBlob(canvas);
+    });
+  }
 
-	function resize(blob, w, h) {
-		return Conversions.blobToImage(blob).then(function(image) {
-			var canvas = Canvas.create(w, h),
-				context = Canvas.get2dContext(canvas);
+  function resize(blob, w, h) {
+    return Conversions.blobToImage(blob).then(function(image) {
+      var canvas = Canvas.create(w, h),
+        context = Canvas.get2dContext(canvas);
 
-			context.drawImage(image, 0, 0, w, h);
-			revokeImageUrl(image);
+      context.drawImage(image, 0, 0, w, h);
+      revokeImageUrl(image);
 
-			return Conversions.canvasToBlob(canvas, blob.type);
-		});
-	}
+      return Conversions.canvasToBlob(canvas, blob.type);
+    });
+  }
 
-	return {
-		rotate: rotate,
-		flip: flip,
-		crop: crop,
-		resize: resize
-	};
+  return {
+    rotate: rotate,
+    flip: flip,
+    crop: crop,
+    resize: resize
+  };
 });
 
-// Included from: js/tinymce/plugins/imagetools/classes/CropRect.js
+define(
+  'ephox/imagetools/api/ImageTransformations',
 
+  [
+    'ephox/imagetools/transformations/Filters',
+    'ephox/imagetools/transformations/ImageTools'
+  ],
+
+  function (Filters, ImageTools) {
+    var invert = function (blob) {
+      return Filters.invert(blob);
+    };
+
+    var sharpen = function (blob) {
+      return Filters.sharpen(blob);
+    };
+
+    var emboss = function (blob) {
+      return Filters.emboss(blob);
+    };
+
+    var gamma = function (blob, value) {
+      return Filters.gamma(blob, value);
+    };
+
+    var exposure = function (blob, value) {
+      return Filters.exposure(blob, value);
+    };
+
+    var colorize = function (blob, adjustR, adjustG, adjustB) {
+      return Filters.colorize(blob, adjustR, adjustG, adjustB);
+    };
+
+    var brightness = function (blob, adjust) {
+      return Filters.brightness(blob, adjust);
+    };
+
+    var hue = function (blob, adjust) {
+      return Filters.hue(blob, adjust);
+    };
+
+    var saturate = function (blob, adjust) {
+      return Filters.saturate(blob, adjust);
+    };
+
+    var contrast = function (blob, adjust) {
+      return Filters.contrast(blob, adjust);
+    };
+
+    var grayscale = function (blob, adjust) {
+      return Filters.grayscale(blob, adjust);
+    };
+
+    var sepia = function (blob, adjust) {
+      return Filters.sepia(blob, adjust);
+    };
+
+    var flip = function (blob, axis) {
+      return ImageTools.flip(blob, axis);
+    };
+
+    var crop = function (blob, x, y, w, h) {
+      return ImageTools.crop(blob, x, y, w, h);
+    };
+
+    var resize = function (blob, w, h) {
+      return ImageTools.resize(blob, w, h);
+    };
+
+    var rotate = function (blob, angle) {
+      return ImageTools.rotate(blob, angle);
+    };
+
+    return {
+      invert: invert,
+      sharpen: sharpen,
+      emboss: emboss,
+      brightness: brightness,
+      hue: hue,
+      saturate: saturate,
+      contrast: contrast,
+      grayscale: grayscale,
+      sepia: sepia,
+      colorize: colorize,
+      gamma: gamma,
+      exposure: exposure,
+
+      flip: flip,
+      crop: crop,
+      resize: resize,
+      rotate: rotate
+    };
+  }
+);
+define(
+  'ephox/imagetools/api/BlobConversions',
+
+  [
+    'ephox/imagetools/util/Conversions'
+  ],
+
+  function (Conversions) {
+    var blobToImage = function (image) {
+      return Conversions.blobToImage(image);
+    };
+
+    var imageToBlob = function (blob) {
+      return Conversions.imageToBlob(blob);
+    };
+
+    var blobToDataUri = function (blob) {
+      return Conversions.blobToDataUri(blob);
+    };
+
+    var blobToBase64 = function (blob) {
+      return Conversions.blobToBase64(blob);
+    };
+
+    return {
+      // used outside
+      blobToImage: blobToImage,
+      // used outside
+      imageToBlob: imageToBlob,
+      // used outside
+      blobToDataUri: blobToDataUri,
+      // used outside
+      blobToBase64: blobToBase64
+    };
+  }
+);
+defineGlobal("global!tinymce.dom.DOMUtils", tinymce.dom.DOMUtils);
+defineGlobal("global!tinymce.ui.Factory", tinymce.ui.Factory);
+defineGlobal("global!tinymce.ui.Form", tinymce.ui.Form);
+defineGlobal("global!tinymce.ui.Container", tinymce.ui.Container);
+defineGlobal("global!tinymce.ui.Control", tinymce.ui.Control);
+defineGlobal("global!tinymce.ui.DragHelper", tinymce.ui.DragHelper);
+defineGlobal("global!tinymce.geom.Rect", tinymce.geom.Rect);
+defineGlobal("global!tinymce.dom.DomQuery", tinymce.dom.DomQuery);
+defineGlobal("global!tinymce.util.Observable", tinymce.util.Observable);
+defineGlobal("global!tinymce.util.VK", tinymce.util.VK);
 /**
  * CropRect.js
  *
  * Released under LGPL License.
- * Copyright (c) 1999-2015 Ephox Corp. All rights reserved
+ * Copyright (c) 1999-2016 Ephox Corp. All rights reserved
  *
  * License: http://www.tinymce.com/license
  * Contributing: http://www.tinymce.com/contributing
@@ -517,23 +1289,24 @@ define("tinymce/imagetoolsplugin/ImageTools", [
  * ...
  */
 define("tinymce/imagetoolsplugin/CropRect", [
-	"tinymce/dom/DomQuery",
-	"tinymce/ui/DragHelper",
-	"tinymce/geom/Rect",
-	"tinymce/util/Tools",
-	"tinymce/util/Observable"
-], function($, DragHelper, Rect, Tools, Observable) {
+	"global!tinymce.dom.DomQuery",
+	"global!tinymce.ui.DragHelper",
+	"global!tinymce.geom.Rect",
+	"global!tinymce.util.Tools",
+	"global!tinymce.util.Observable",
+	"global!tinymce.util.VK"
+], function($, DragHelper, Rect, Tools, Observable, VK) {
 	var count = 0;
 
-	return function(currentRect, viewPortRect, clampRect, containerElm) {
+	return function(currentRect, viewPortRect, clampRect, containerElm, action) {
 		var instance, handles, dragHelpers, blockers, prefix = 'mce-', id = prefix + 'crid-' + (count++);
 
 		handles = [
-			{name: 'move', xMul: 0, yMul: 0, deltaX: 1, deltaY: 1, deltaW: 0, deltaH: 0},
-			{name: 'nw', xMul: 0, yMul: 0, deltaX: 1, deltaY: 1, deltaW: -1, deltaH: -1},
-			{name: 'ne', xMul: 1, yMul: 0, deltaX: 0, deltaY: 1, deltaW: 1, deltaH: -1},
-			{name: 'sw', xMul: 0, yMul: 1, deltaX: 1, deltaY: 0, deltaW: -1, deltaH: 1},
-			{name: 'se', xMul: 1, yMul: 1, deltaX: 0, deltaY: 0, deltaW: 1, deltaH: 1}
+			{name: 'move', xMul: 0, yMul: 0, deltaX: 1, deltaY: 1, deltaW: 0, deltaH: 0, label: 'Crop Mask'},
+			{name: 'nw', xMul: 0, yMul: 0, deltaX: 1, deltaY: 1, deltaW: -1, deltaH: -1, label: 'Top Left Crop Handle'},
+			{name: 'ne', xMul: 1, yMul: 0, deltaX: 0, deltaY: 1, deltaW: 1, deltaH: -1, label: 'Top Right Crop Handle'},
+			{name: 'sw', xMul: 0, yMul: 1, deltaX: 1, deltaY: 0, deltaW: -1, deltaH: 1, label: 'Bottom Left Crop Handle'},
+			{name: 'se', xMul: 1, yMul: 1, deltaX: 0, deltaY: 0, deltaW: 1, deltaH: 1, label: 'Bottom Right Crop Handle'}
 		];
 
 		blockers = ["top", "right", "bottom", "left"];
@@ -560,6 +1333,34 @@ define("tinymce/imagetoolsplugin/CropRect", [
 			return getRelativeRect(clampRect, currentRect);
 		}
 
+		function moveRect(handle, startRect, deltaX, deltaY) {
+			var x, y, w, h, rect;
+
+			x = startRect.x;
+			y = startRect.y;
+			w = startRect.w;
+			h = startRect.h;
+
+			x += deltaX * handle.deltaX;
+			y += deltaY * handle.deltaY;
+			w += deltaX * handle.deltaW;
+			h += deltaY * handle.deltaH;
+
+			if (w < 20) {
+				w = 20;
+			}
+
+			if (h < 20) {
+				h = 20;
+			}
+
+			rect = currentRect = Rect.clamp({x: x, y: y, w: w, h: h}, clampRect, handle.name == 'move');
+			rect = getRelativeRect(clampRect, rect);
+
+			instance.fire('updateRect', {rect: rect});
+			setInnerRect(rect);
+		}
+
 		function render() {
 			function createDragHelper(handle) {
 				var startRect;
@@ -573,36 +1374,15 @@ define("tinymce/imagetoolsplugin/CropRect", [
 					},
 
 					drag: function(e) {
-						var x, y, w, h, rect;
-
-						x = startRect.x;
-						y = startRect.y;
-						w = startRect.w;
-						h = startRect.h;
-
-						x += e.deltaX * handle.deltaX;
-						y += e.deltaY * handle.deltaY;
-						w += e.deltaX * handle.deltaW;
-						h += e.deltaY * handle.deltaH;
-
-						if (w < 20) {
-							w = 20;
-						}
-
-						if (h < 20) {
-							h = 20;
-						}
-
-						rect = currentRect = Rect.clamp({x: x, y: y, w: w, h: h}, clampRect, handle.name == 'move');
-						rect = getRelativeRect(clampRect, rect);
-
-						instance.fire('updateRect', {rect: rect});
-						setInnerRect(rect);
+						moveRect(handle, startRect, e.deltaX, e.deltaY);
 					}
 				});
 			}
 
-			$('<div id="' + id + '" class="' + prefix + 'croprect-container" data-mce-bogus="all">').appendTo(containerElm);
+			$(
+				'<div id="' + id + '" class="' + prefix + 'croprect-container"' +
+				' role="grid" aria-dropeffect="execute">'
+			).appendTo(containerElm);
 
 			Tools.each(blockers, function(blocker) {
 				$('#' + id, containerElm).append(
@@ -613,13 +1393,61 @@ define("tinymce/imagetoolsplugin/CropRect", [
 			Tools.each(handles, function(handle) {
 				$('#' + id, containerElm).append(
 					'<div id="' + id + '-' + handle.name + '" class="' + prefix +
-						'croprect-handle ' + prefix + 'croprect-handle-' + handle.name + '" style="display: none" data-mce-bogus="all">'
+						'croprect-handle ' + prefix + 'croprect-handle-' + handle.name + '"' +
+						'style="display: none" data-mce-bogus="all" role="gridcell" tabindex="-1"' +
+						' aria-label="' + handle.label + '" aria-grabbed="false">'
 				);
 			});
 
 			dragHelpers = Tools.map(handles, createDragHelper);
 
 			repaint(currentRect);
+
+			$(containerElm).on('focusin focusout', function(e) {
+				$(e.target).attr('aria-grabbed', e.type === 'focus');
+			});
+
+			$(containerElm).on('keydown', function(e) {
+				var activeHandle;
+
+				Tools.each(handles, function(handle) {
+					if (e.target.id == id + '-' + handle.name) {
+						activeHandle = handle;
+						return false;
+					}
+				});
+
+				function moveAndBlock(evt, handle, startRect, deltaX, deltaY) {
+					evt.stopPropagation();
+					evt.preventDefault();
+
+					moveRect(activeHandle, startRect, deltaX, deltaY);
+				}
+
+				switch (e.keyCode) {
+					case VK.LEFT:
+						moveAndBlock(e, activeHandle, currentRect, -10, 0);
+						break;
+
+					case VK.RIGHT:
+						moveAndBlock(e, activeHandle, currentRect, 10, 0);
+						break;
+
+					case VK.UP:
+						moveAndBlock(e, activeHandle, currentRect, 0, -10);
+						break;
+
+					case VK.DOWN:
+						moveAndBlock(e, activeHandle, currentRect, 0, 10);
+						break;
+
+					case VK.ENTER:
+					case VK.SPACEBAR:
+						e.preventDefault();
+						action();
+						break;
+				}
+			});
 		}
 
 		function toggleVisibility(state) {
@@ -718,13 +1546,11 @@ define("tinymce/imagetoolsplugin/CropRect", [
 	};
 });
 
-// Included from: js/tinymce/plugins/imagetools/classes/ImagePanel.js
-
 /**
  * ImagePanel.js
  *
  * Released under LGPL License.
- * Copyright (c) 1999-2015 Ephox Corp. All rights reserved
+ * Copyright (c) 1999-2016 Ephox Corp. All rights reserved
  *
  * License: http://www.tinymce.com/license
  * Contributing: http://www.tinymce.com/contributing
@@ -736,11 +1562,11 @@ define("tinymce/imagetoolsplugin/CropRect", [
  * @-x-less ImagePanel.less
  */
 define("tinymce/imagetoolsplugin/ImagePanel", [
-	"tinymce/ui/Control",
-	"tinymce/ui/DragHelper",
-	"tinymce/geom/Rect",
-	"tinymce/util/Tools",
-	"tinymce/util/Promise",
+	"global!tinymce.ui.Control",
+	"global!tinymce.ui.DragHelper",
+	"global!tinymce.geom.Rect",
+	"global!tinymce.util.Tools",
+	"global!tinymce.util.Promise",
 	"tinymce/imagetoolsplugin/CropRect"
 ], function(Control, DragHelper, Rect, Tools, Promise, CropRect) {
 	function loadImage(image) {
@@ -898,7 +1724,10 @@ define("tinymce/imagetoolsplugin/ImagePanel", [
 					rect,
 					self.state.get('viewRect'),
 					self.state.get('viewRect'),
-					self.getEl()
+					self.getEl(),
+					function() {
+						self.fire('crop');
+					}
 				);
 
 				self.cropRect.on('updateRect', function(e) {
@@ -939,462 +1768,11 @@ define("tinymce/imagetoolsplugin/ImagePanel", [
 	});
 });
 
-// Included from: js/tinymce/plugins/imagetools/classes/ColorMatrix.js
-
-/**
- * ImageTools.js
- *
- * Released under LGPL License.
- * Copyright (c) 1999-2015 Ephox Corp. All rights reserved
- *
- * License: http://www.tinymce.com/license
- * Contributing: http://www.tinymce.com/contributing
- *
- * Some of the matrix calculations and constants are from the EaselJS library released under MIT:
- * https://github.com/CreateJS/EaselJS/blob/master/src/easeljs/filters/ColorMatrix.js
- */
-
-/**
- * Various operations for color matrices.
- */
-define("tinymce/imagetoolsplugin/ColorMatrix", [], function() {
-	function clamp(value, min, max) {
-		value = parseFloat(value);
-
-		if (value > max) {
-			value = max;
-		} else if (value < min) {
-			value = min;
-		}
-
-		return value;
-	}
-
-	function identity() {
-		return [
-			1, 0, 0, 0, 0,
-			0, 1, 0, 0, 0,
-			0, 0, 1, 0, 0,
-			0, 0, 0, 1, 0,
-			0, 0, 0, 0, 1
-		];
-	}
-
-	var DELTA_INDEX = [
-		0, 0.01, 0.02, 0.04, 0.05, 0.06, 0.07, 0.08, 0.1, 0.11,
-		0.12, 0.14, 0.15, 0.16, 0.17, 0.18, 0.20, 0.21, 0.22, 0.24,
-		0.25, 0.27, 0.28, 0.30, 0.32, 0.34, 0.36, 0.38, 0.40, 0.42,
-		0.44, 0.46, 0.48, 0.5, 0.53, 0.56, 0.59, 0.62, 0.65, 0.68,
-		0.71, 0.74, 0.77, 0.80, 0.83, 0.86, 0.89, 0.92, 0.95, 0.98,
-		1.0, 1.06, 1.12, 1.18, 1.24, 1.30, 1.36, 1.42, 1.48, 1.54,
-		1.60, 1.66, 1.72, 1.78, 1.84, 1.90, 1.96, 2.0, 2.12, 2.25,
-		2.37, 2.50, 2.62, 2.75, 2.87, 3.0, 3.2, 3.4, 3.6, 3.8,
-		4.0, 4.3, 4.7, 4.9, 5.0, 5.5, 6.0, 6.5, 6.8, 7.0,
-		7.3, 7.5, 7.8, 8.0, 8.4, 8.7, 9.0, 9.4, 9.6, 9.8,
-		10.0
-	];
-
-	function multiply(matrix1, matrix2) {
-		var i, j, k, val, col = [], out = new Array(10);
-
-		for (i = 0; i < 5; i++) {
-			for (j = 0; j < 5; j++) {
-				col[j] = matrix2[j + i * 5];
-			}
-
-			for (j = 0; j < 5; j++) {
-				val = 0;
-
-				for (k = 0; k < 5; k++) {
-					val += matrix1[j + k * 5] * col[k];
-				}
-
-				out[j + i * 5] = val;
-			}
-		}
-
-		return out;
-	}
-
-	function adjust(matrix, adjustValue) {
-		adjustValue = clamp(adjustValue, 0, 1);
-
-		return matrix.map(function(value, index) {
-			if (index % 6 === 0) {
-				value = 1.0 - ((1 - value) * adjustValue);
-			} else {
-				value *= adjustValue;
-			}
-
-			return clamp(value, 0, 1);
-		});
-	}
-
-	function adjustContrast(matrix, value) {
-		var x;
-
-		value = clamp(value, -1, 1);
-		value *= 100;
-
-		if (value < 0) {
-			x = 127 + value / 100 * 127;
-		} else {
-			x = value % 1;
-
-			if (x === 0) {
-				x = DELTA_INDEX[value];
-			} else {
-				// use linear interpolation for more granularity.
-				x = DELTA_INDEX[(Math.floor(value))] * (1 - x) + DELTA_INDEX[(Math.floor(value)) + 1] * x;
-			}
-
-			x = x * 127 + 127;
-		}
-
-		return multiply(matrix, [
-			x / 127, 0, 0, 0, 0.5 * (127 - x),
-			0, x / 127, 0, 0, 0.5 * (127 - x),
-			0, 0, x / 127, 0, 0.5 * (127 - x),
-			0, 0, 0, 1, 0,
-			0, 0, 0, 0, 1
-		]);
-	}
-
-	function adjustSaturation(matrix, value) {
-		var x, lumR, lumG, lumB;
-
-		value = clamp(value, -1, 1);
-		x = 1 + ((value > 0) ? 3 * value : value);
-		lumR = 0.3086;
-		lumG = 0.6094;
-		lumB = 0.0820;
-
-		return multiply(matrix, [
-			lumR * (1 - x) + x, lumG * (1 - x), lumB * (1 - x), 0, 0,
-			lumR * (1 - x), lumG * (1 - x) + x, lumB * (1 - x), 0, 0,
-			lumR * (1 - x), lumG * (1 - x), lumB * (1 - x) + x, 0, 0,
-			0, 0, 0, 1, 0,
-			0, 0, 0, 0, 1
-		]);
-	}
-
-	function adjustHue(matrix, angle) {
-		var cosVal, sinVal, lumR, lumG, lumB;
-
-		angle = clamp(angle, -180, 180) / 180 * Math.PI;
-		cosVal = Math.cos(angle);
-		sinVal = Math.sin(angle);
-		lumR = 0.213;
-		lumG = 0.715;
-		lumB = 0.072;
-
-		return multiply(matrix, [
-			lumR + cosVal * (1 - lumR) + sinVal * (-lumR), lumG + cosVal * (-lumG) + sinVal * (-lumG),
-			lumB + cosVal * (-lumB) + sinVal * (1 - lumB), 0, 0,
-			lumR + cosVal * (-lumR) + sinVal * (0.143), lumG + cosVal * (1 - lumG) + sinVal * (0.140),
-			lumB + cosVal * (-lumB) + sinVal * (-0.283), 0, 0,
-			lumR + cosVal * (-lumR) + sinVal * (-(1 - lumR)), lumG + cosVal * (-lumG) + sinVal * (lumG),
-			lumB + cosVal * (1 - lumB) + sinVal * (lumB), 0, 0,
-			0, 0, 0, 1, 0,
-			0, 0, 0, 0, 1
-		]);
-	}
-
-	function adjustBrightness(matrix, value) {
-		value = clamp(255 * value, -255, 255);
-
-		return multiply(matrix, [
-			1, 0, 0, 0, value,
-			0, 1, 0, 0, value,
-			0, 0, 1, 0, value,
-			0, 0, 0, 1, 0,
-			0, 0, 0, 0, 1
-		]);
-	}
-
-	function adjustColors(matrix, adjustR, adjustG, adjustB) {
-		adjustR = clamp(adjustR, 0, 2);
-		adjustG = clamp(adjustG, 0, 2);
-		adjustB = clamp(adjustB, 0, 2);
-
-		return multiply(matrix, [
-			adjustR, 0, 0, 0, 0,
-			0, adjustG, 0, 0, 0,
-			0, 0, adjustB, 0, 0,
-			0, 0, 0, 1, 0,
-			0, 0, 0, 0, 1
-		]);
-	}
-
-	function adjustSepia(matrix, value) {
-		value = clamp(value, 0, 1);
-
-		return multiply(matrix, adjust([
-			0.393, 0.769, 0.189, 0, 0,
-			0.349, 0.686, 0.168, 0, 0,
-			0.272, 0.534, 0.131, 0, 0,
-			0, 0, 0, 1, 0,
-			0, 0, 0, 0, 1
-		], value));
-	}
-
-	function adjustGrayscale(matrix, value) {
-		value = clamp(value, 0, 1);
-
-		return multiply(matrix, adjust([
-			0.33, 0.34, 0.33, 0, 0,
-			0.33, 0.34, 0.33, 0, 0,
-			0.33, 0.34, 0.33, 0, 0,
-			0, 0, 0, 1, 0,
-			0, 0, 0, 0, 1
-		], value));
-	}
-
-	return {
-		identity: identity,
-		adjust: adjust,
-		multiply: multiply,
-		adjustContrast: adjustContrast,
-		adjustBrightness: adjustBrightness,
-		adjustSaturation: adjustSaturation,
-		adjustHue: adjustHue,
-		adjustColors: adjustColors,
-		adjustSepia: adjustSepia,
-		adjustGrayscale: adjustGrayscale
-	};
-});
-
-// Included from: js/tinymce/plugins/imagetools/classes/Filters.js
-
-/**
- * Filters.js
- *
- * Released under LGPL License.
- * Copyright (c) 1999-2015 Ephox Corp. All rights reserved
- *
- * License: http://www.tinymce.com/license
- * Contributing: http://www.tinymce.com/contributing
- */
-
-/**
- * Applies various filters to blobs.
- */
-define("tinymce/imagetoolsplugin/Filters", [
-	"tinymce/imagetoolsplugin/Canvas",
-	"tinymce/imagetoolsplugin/ImageSize",
-	"tinymce/imagetoolsplugin/Conversions",
-	"tinymce/imagetoolsplugin/ColorMatrix"
-], function(Canvas, ImageSize, Conversions, ColorMatrix) {
-	var revokeImageUrl = Conversions.revokeImageUrl;
-
-	function colorFilter(blob, matrix) {
-		return Conversions.blobToImage(blob).then(function(image) {
-			var canvas = Canvas.create(ImageSize.getWidth(image), ImageSize.getHeight(image)),
-				context = Canvas.get2dContext(canvas),
-				pixels;
-
-			function applyMatrix(pixels, m) {
-				var d = pixels.data, r, g, b, a, i,
-					m0 = m[0], m1 = m[1], m2 = m[2], m3 = m[3], m4 = m[4],
-					m5 = m[5], m6 = m[6], m7 = m[7], m8 = m[8], m9 = m[9],
-					m10 = m[10], m11 = m[11], m12 = m[12], m13 = m[13], m14 = m[14],
-					m15 = m[15], m16 = m[16], m17 = m[17], m18 = m[18], m19 = m[19];
-
-				for (i = 0; i < d.length; i += 4) {
-					r = d[i];
-					g = d[i + 1];
-					b = d[i + 2];
-					a = d[i + 3];
-
-					d[i] = r * m0 + g * m1 + b * m2 + a * m3 + m4;
-					d[i + 1] = r * m5 + g * m6 + b * m7 + a * m8 + m9;
-					d[i + 2] = r * m10 + g * m11 + b * m12 + a * m13 + m14;
-					d[i + 3] = r * m15 + g * m16 + b * m17 + a * m18 + m19;
-				}
-
-				return pixels;
-			}
-
-			context.drawImage(image, 0, 0);
-			revokeImageUrl(image);
-			pixels = applyMatrix(context.getImageData(0, 0, canvas.width, canvas.height), matrix);
-			context.putImageData(pixels, 0, 0);
-
-			return Conversions.canvasToBlob(canvas);
-		});
-	}
-
-	function convoluteFilter(blob, matrix) {
-		return Conversions.blobToImage(blob).then(function(image) {
-			var canvas = Canvas.create(ImageSize.getWidth(image), ImageSize.getHeight(image)),
-				context = Canvas.get2dContext(canvas),
-				pixelsIn, pixelsOut;
-
-			function applyMatrix(pixelsIn, pixelsOut, matrix) {
-				var rgba, drgba, side, halfSide, x, y, r, g, b,
-					cx, cy, scx, scy, offset, wt, w, h;
-
-				function clamp(value, min, max) {
-					if (value > max) {
-						value = max;
-					} else if (value < min) {
-						value = min;
-					}
-
-					return value;
-				}
-
-				// Calc side and half side of matrix
-				side = Math.round(Math.sqrt(matrix.length));
-				halfSide = Math.floor(side / 2);
-				rgba = pixelsIn.data;
-				drgba = pixelsOut.data;
-				w = pixelsIn.width;
-				h = pixelsIn.height;
-
-				// Apply convolution matrix to pixels
-				for (y = 0; y < h; y++) {
-					for (x = 0; x < w; x++) {
-						r = g = b = 0;
-
-						for (cy = 0; cy < side; cy++) {
-							for (cx = 0; cx < side; cx++) {
-								// Calc relative x, y based on matrix
-								scx = clamp(x + cx - halfSide, 0, w - 1);
-								scy = clamp(y + cy - halfSide, 0, h - 1);
-
-								// Calc r, g, b
-								offset = (scy * w + scx) * 4;
-								wt = matrix[cy * side + cx];
-								r += rgba[offset] * wt;
-								g += rgba[offset + 1] * wt;
-								b += rgba[offset + 2] * wt;
-							}
-						}
-
-						// Set new RGB to destination buffer
-						offset = (y * w + x) * 4;
-						drgba[offset] = clamp(r, 0, 255);
-						drgba[offset + 1] = clamp(g, 0, 255);
-						drgba[offset + 2] = clamp(b, 0, 255);
-					}
-				}
-
-				return pixelsOut;
-			}
-
-			context.drawImage(image, 0, 0);
-			revokeImageUrl(image);
-			pixelsIn = context.getImageData(0, 0, canvas.width, canvas.height);
-			pixelsOut = context.getImageData(0, 0, canvas.width, canvas.height);
-			pixelsOut = applyMatrix(pixelsIn, pixelsOut, matrix);
-			context.putImageData(pixelsOut, 0, 0);
-
-			return Conversions.canvasToBlob(canvas);
-		});
-	}
-
-	function functionColorFilter(colorFn) {
-		return function(blob, value) {
-			return Conversions.blobToImage(blob).then(function(image) {
-				var canvas = Canvas.create(ImageSize.getWidth(image), ImageSize.getHeight(image)),
-					context = Canvas.get2dContext(canvas),
-					pixels, i, lookup = new Array(256);
-
-				function applyLookup(pixels, lookup) {
-					var d = pixels.data, i;
-
-					for (i = 0; i < d.length; i += 4) {
-						d[i] = lookup[d[i]];
-						d[i + 1] = lookup[d[i + 1]];
-						d[i + 2] = lookup[d[i + 2]];
-					}
-
-					return pixels;
-				}
-
-				for (i = 0; i < lookup.length; i++) {
-					lookup[i] = colorFn(i, value);
-				}
-
-				context.drawImage(image, 0, 0);
-				revokeImageUrl(image);
-				pixels = applyLookup(context.getImageData(0, 0, canvas.width, canvas.height), lookup);
-				context.putImageData(pixels, 0, 0);
-
-				return Conversions.canvasToBlob(canvas);
-			});
-		};
-	}
-
-	function complexAdjustableColorFilter(matrixAdjustFn) {
-		return function(blob, adjust) {
-			return colorFilter(blob, matrixAdjustFn(ColorMatrix.identity(), adjust));
-		};
-	}
-
-	function basicColorFilter(matrix) {
-		return function(blob) {
-			return colorFilter(blob, matrix);
-		};
-	}
-
-	function basicConvolutionFilter(kernel) {
-		return function(blob) {
-			return convoluteFilter(blob, kernel);
-		};
-	}
-
-	return {
-		invert: basicColorFilter([
-			-1, 0, 0, 0, 255,
-			0, -1, 0, 0, 255,
-			0, 0, -1, 0, 255,
-			0, 0, 0, 1, 0
-		]),
-
-		brightness: complexAdjustableColorFilter(ColorMatrix.adjustBrightness),
-		hue: complexAdjustableColorFilter(ColorMatrix.adjustHue),
-		saturate: complexAdjustableColorFilter(ColorMatrix.adjustSaturation),
-		contrast: complexAdjustableColorFilter(ColorMatrix.adjustContrast),
-		grayscale: complexAdjustableColorFilter(ColorMatrix.adjustGrayscale),
-		sepia: complexAdjustableColorFilter(ColorMatrix.adjustSepia),
-		colorize: function(blob, adjustR, adjustG, adjustB) {
-			return colorFilter(blob, ColorMatrix.adjustColors(ColorMatrix.identity(), adjustR, adjustG, adjustB));
-		},
-
-		sharpen: basicConvolutionFilter([
-			0, -1, 0,
-			-1, 5, -1,
-			0, -1, 0
-		]),
-
-		emboss: basicConvolutionFilter([
-			-2, -1, 0,
-			-1, 1, 1,
-			0, 1, 2
-		]),
-
-		gamma: functionColorFilter(function(color, value) {
-			return Math.pow(color / 255, 1 - value) * 255;
-		}),
-
-		exposure: functionColorFilter(function(color, value) {
-			return 255 * (1 - Math.exp(-(color / 255) * value));
-		}),
-
-		colorFilter: colorFilter,
-		convoluteFilter: convoluteFilter
-	};
-});
-
-// Included from: js/tinymce/plugins/imagetools/classes/UndoStack.js
-
 /**
  * UndoStack.js
  *
  * Released under LGPL License.
- * Copyright (c) 1999-2015 Ephox Corp. All rights reserved
+ * Copyright (c) 1999-2016 Ephox Corp. All rights reserved
  *
  * License: http://www.tinymce.com/license
  * Contributing: http://www.tinymce.com/contributing
@@ -1448,13 +1826,11 @@ define("tinymce/imagetoolsplugin/UndoStack", [
 	};
 });
 
-// Included from: js/tinymce/plugins/imagetools/classes/Dialog.js
-
 /**
  * Dialog.js
  *
  * Released under LGPL License.
- * Copyright (c) 1999-2015 Ephox Corp. All rights reserved
+ * Copyright (c) 1999-2016 Ephox Corp. All rights reserved
  *
  * License: http://www.tinymce.com/license
  * Contributing: http://www.tinymce.com/contributing
@@ -1464,18 +1840,17 @@ define("tinymce/imagetoolsplugin/UndoStack", [
  * ...
  */
 define("tinymce/imagetoolsplugin/Dialog", [
-	"tinymce/dom/DOMUtils",
-	"tinymce/util/Tools",
-	"tinymce/util/Promise",
-	"tinymce/ui/Factory",
-	"tinymce/ui/Form",
-	"tinymce/ui/Container",
+	"global!tinymce.dom.DOMUtils",
+	"global!tinymce.util.Tools",
+	"global!tinymce.util.Promise",
+	"global!tinymce.ui.Factory",
+	"global!tinymce.ui.Form",
+	"global!tinymce.ui.Container",
 	"tinymce/imagetoolsplugin/ImagePanel",
-	"tinymce/imagetoolsplugin/ImageTools",
-	"tinymce/imagetoolsplugin/Filters",
-	"tinymce/imagetoolsplugin/Conversions",
+	"ephox/imagetools/api/ImageTransformations",
+	"ephox/imagetools/api/BlobConversions",
 	"tinymce/imagetoolsplugin/UndoStack"
-], function(DOMUtils, Tools, Promise, Factory, Form, Container, ImagePanel, ImageTools, Filters, Conversions, UndoStack) {
+], function(DOMUtils, Tools, Promise, Factory, Form, Container, ImagePanel, ImageTransformations, BlobConversions, UndoStack) {
 	function createState(blob) {
 		return {
 			blob: blob,
@@ -1555,6 +1930,7 @@ define("tinymce/imagetoolsplugin/Dialog", [
 				});
 
 				targetPanel.show();
+				targetPanel.focus();
 			};
 		}
 
@@ -1573,7 +1949,7 @@ define("tinymce/imagetoolsplugin/Dialog", [
 		function crop() {
 			var rect = imagePanel.selection();
 
-			ImageTools.crop(currentState.blob, rect.x, rect.y, rect.w, rect.h).then(function(blob) {
+			ImageTransformations.crop(currentState.blob, rect.x, rect.y, rect.w, rect.h).then(function(blob) {
 				addBlobState(blob);
 				cancel();
 			});
@@ -1786,34 +2162,34 @@ define("tinymce/imagetoolsplugin/Dialog", [
 
 			e.preventDefault();
 
-			action(ImageTools.resize, width, height)();
+			action(ImageTransformations.resize, width, height)();
 			cancel();
 		}).on('show', disableUndoRedo);
 
 		flipRotatePanel = createPanel([
 			{text: 'Back', onclick: cancel},
 			{type: 'spacer', flex: 1},
-			{icon: 'fliph', tooltip: 'Flip horizontally', onclick: tempAction(ImageTools.flip, 'h')},
-			{icon: 'flipv', tooltip: 'Flip vertically', onclick: tempAction(ImageTools.flip, 'v')},
-			{icon: 'rotateleft', tooltip: 'Rotate counterclockwise', onclick: tempAction(ImageTools.rotate, -90)},
-			{icon: 'rotateright', tooltip: 'Rotate clockwise', onclick: tempAction(ImageTools.rotate, 90)},
+			{icon: 'fliph', tooltip: 'Flip horizontally', onclick: tempAction(ImageTransformations.flip, 'h')},
+			{icon: 'flipv', tooltip: 'Flip vertically', onclick: tempAction(ImageTransformations.flip, 'v')},
+			{icon: 'rotateleft', tooltip: 'Rotate counterclockwise', onclick: tempAction(ImageTransformations.rotate, -90)},
+			{icon: 'rotateright', tooltip: 'Rotate clockwise', onclick: tempAction(ImageTransformations.rotate, 90)},
 			{type: 'spacer', flex: 1},
 			{text: 'Apply', subtype: 'primary', onclick: applyTempState}
 		]).hide().on('show', disableUndoRedo);
 
-		invertPanel = createFilterPanel("Invert", Filters.invert);
-		sharpenPanel = createFilterPanel("Sharpen", Filters.sharpen);
-		embossPanel = createFilterPanel("Emboss", Filters.emboss);
+		invertPanel = createFilterPanel("Invert", ImageTransformations.invert);
+		sharpenPanel = createFilterPanel("Sharpen", ImageTransformations.sharpen);
+		embossPanel = createFilterPanel("Emboss", ImageTransformations.emboss);
 
-		brightnessPanel = createVariableFilterPanel("Brightness", Filters.brightness, 0, -1, 1);
-		huePanel = createVariableFilterPanel("Hue", Filters.hue, 180, 0, 360);
-		saturatePanel = createVariableFilterPanel("Saturate", Filters.saturate, 0, -1, 1);
-		contrastPanel = createVariableFilterPanel("Contrast", Filters.contrast, 0, -1, 1);
-		grayscalePanel = createVariableFilterPanel("Grayscale", Filters.grayscale, 0, 0, 1);
-		sepiaPanel = createVariableFilterPanel("Sepia", Filters.sepia, 0, 0, 1);
-		colorizePanel = createRgbFilterPanel("Colorize", Filters.colorize);
-		gammaPanel = createVariableFilterPanel("Gamma", Filters.gamma, 0, -1, 1);
-		exposurePanel = createVariableFilterPanel("Exposure", Filters.exposure, 1, 0, 2);
+		brightnessPanel = createVariableFilterPanel("Brightness", ImageTransformations.brightness, 0, -1, 1);
+		huePanel = createVariableFilterPanel("Hue", ImageTransformations.hue, 180, 0, 360);
+		saturatePanel = createVariableFilterPanel("Saturate", ImageTransformations.saturate, 0, -1, 1);
+		contrastPanel = createVariableFilterPanel("Contrast", ImageTransformations.contrast, 0, -1, 1);
+		grayscalePanel = createVariableFilterPanel("Grayscale", ImageTransformations.grayscale, 0, 0, 1);
+		sepiaPanel = createVariableFilterPanel("Sepia", ImageTransformations.sepia, 0, 0, 1);
+		colorizePanel = createRgbFilterPanel("Colorize", ImageTransformations.colorize);
+		gammaPanel = createVariableFilterPanel("Gamma", ImageTransformations.gamma, 0, -1, 1);
+		exposurePanel = createVariableFilterPanel("Exposure", ImageTransformations.exposure, 1, 0, 2);
 
 		filtersPanel = createPanel([
 			{text: 'Back', onclick: cancel},
@@ -1922,6 +2298,8 @@ define("tinymce/imagetoolsplugin/Dialog", [
 			win.find('#w').value(width);
 			win.find('#h').value(height);
 		});
+
+		imagePanel.on('crop', crop);
 	}
 
 	function edit(blob) {
@@ -1937,13 +2315,246 @@ define("tinymce/imagetoolsplugin/Dialog", [
 	};
 });
 
-// Included from: js/tinymce/plugins/imagetools/classes/Plugin.js
+/**
+ * ImageSize.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2016 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
+
+define("tinymce/imagetoolsplugin/ImageSize", [
+], function() {
+	function getImageSize(img) {
+		var width, height;
+
+		function isPxValue(value) {
+			return /^[0-9\.]+px$/.test(value);
+		}
+
+		width = img.style.width;
+		height = img.style.height;
+		if (width || height) {
+			if (isPxValue(width) && isPxValue(height)) {
+				return {
+					w: parseInt(width, 10),
+					h: parseInt(height, 10)
+				};
+			}
+
+			return null;
+		}
+
+		width = img.width;
+		height = img.height;
+
+		if (width && height) {
+			return {
+				w: parseInt(width, 10),
+				h: parseInt(height, 10)
+			};
+		}
+
+		return null;
+	}
+
+	function setImageSize(img, size) {
+		var width, height;
+
+		if (size) {
+			width = img.style.width;
+			height = img.style.height;
+
+			if (width || height) {
+				img.style.width = size.w + 'px';
+				img.style.height = size.h + 'px';
+				img.removeAttribute('data-mce-style');
+			}
+
+			width = img.width;
+			height = img.height;
+
+			if (width || height) {
+				img.setAttribute('width', size.w);
+				img.setAttribute('height', size.h);
+			}
+		}
+	}
+
+	function getNaturalImageSize(img) {
+		return {
+			w: img.naturalWidth,
+			h: img.naturalHeight
+		};
+	}
+
+	return {
+		getImageSize: getImageSize,
+		setImageSize: setImageSize,
+		getNaturalImageSize: getNaturalImageSize
+	};
+});
+
+/**
+ * Utils.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2016 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
+
+define("tinymce/imagetoolsplugin/Utils", [
+	"global!tinymce.util.Promise",
+	"global!tinymce.util.Tools"
+], function(Promise, Tools) {
+	var isValue = function (obj) {
+		return obj !== null && obj !== undefined;
+	};
+
+	var traverse = function (json, path) {
+		var value;
+
+		value = path.reduce(function(result, key) {
+			return isValue(result) ? result[key] : undefined;
+		}, json);
+
+		return isValue(value) ? value : null;
+	};
+
+	var requestUrlAsBlob = function (url, headers) {
+		return new Promise(function(resolve) {
+			var xhr;
+
+			xhr = new XMLHttpRequest();
+
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState === 4) {
+					resolve({
+						status: xhr.status,
+						blob: this.response
+					});
+				}
+			};
+
+			xhr.open('GET', url, true);
+
+			Tools.each(headers, function (value, key) {
+				xhr.setRequestHeader(key, value);
+			});
+
+			xhr.responseType = 'blob';
+			xhr.send();
+		});
+	};
+
+	var readBlob = function (blob) {
+		return new Promise(function(resolve) {
+			var fr = new FileReader();
+
+			fr.onload = function (e) {
+				var data = e.target;
+				resolve(data.result);
+			};
+
+			fr.readAsText(blob);
+		});
+	};
+
+	var parseJson = function (text) {
+		var json;
+
+		try {
+			json = JSON.parse(text);
+		} catch (ex) {
+			// Ignore
+		}
+
+		return json;
+	};
+
+	return {
+		traverse: traverse,
+		readBlob: readBlob,
+		requestUrlAsBlob: requestUrlAsBlob,
+		parseJson: parseJson
+	};
+});
+
+/**
+ * Proxy.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2016 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
+
+/**
+ * Handles loading images though a proxy for working around cors.
+ */
+define("tinymce/imagetoolsplugin/Proxy", [
+	"global!tinymce.util.Promise",
+	"global!tinymce.util.Tools",
+	"tinymce/imagetoolsplugin/Utils"
+], function(Promise, Tools, Utils) {
+	var isServiceErrorCode = function (code) {
+		return code === 400 || code === 403 || code === 500;
+	};
+
+	var handleHttpError = function (status) {
+		return Promise.reject("ImageProxy HTTP error: " + status);
+	};
+
+	var proxyServiceError = function (error) {
+		Promise.reject("ImageProxy Service error: " + error);
+	};
+
+	var handleServiceError = function (status, blob) {
+		return Utils.readBlob(blob).then(function(text) {
+			var serviceError = Utils.parseJson(text);
+			var errorType = Utils.traverse(serviceError, ['error', 'type']);
+			return errorType ? proxyServiceError(errorType) : proxyServiceError('Invalid JSON');
+		});
+	};
+
+	var handleServiceErrorResponse = function (status, blob) {
+		return isServiceErrorCode(status) ? handleServiceError(status, blob) : handleHttpError(status);
+	};
+
+	var requestServiceBlob = function (url, apiKey) {
+		return Utils.requestUrlAsBlob(url, {
+			'Content-Type': 'application/json;charset=UTF-8',
+			'tiny-api-key': apiKey
+		}).then(function (result) {
+			return result.status >= 400 ? handleServiceErrorResponse(result.status, result.blob) : Promise.resolve(result.blob);
+		});
+	};
+
+	function requestBlob(url) {
+		return Utils.requestUrlAsBlob(url, {}).then(function (result) {
+			return result.status >= 400 ? handleHttpError(result.status) : Promise.resolve(result.blob);
+		});
+	}
+
+	var getUrl = function (url, apiKey) {
+		return apiKey ? requestServiceBlob(url, apiKey) : requestBlob(url);
+	};
+
+	return {
+		getUrl: getUrl
+	};
+});
 
 /**
  * Plugin.js
  *
  * Released under LGPL License.
- * Copyright (c) 1999-2015 Ephox Corp. All rights reserved
+ * Copyright (c) 1999-2016 Ephox Corp. All rights reserved
  *
  * License: http://www.tinymce.com/license
  * Contributing: http://www.tinymce.com/contributing
@@ -1957,121 +2568,30 @@ define("tinymce/imagetoolsplugin/Dialog", [
  *  imagetools_toolbar - Toolbar items to render when an editable image is selected.
  */
 define("tinymce/imagetoolsplugin/Plugin", [
-	"tinymce/PluginManager",
-	"tinymce/Env",
-	"tinymce/util/Promise",
-	"tinymce/util/URI",
-	"tinymce/util/Tools",
-	"tinymce/util/Delay",
-	"tinymce/imagetoolsplugin/ImageTools",
-	"tinymce/imagetoolsplugin/Conversions",
-	"tinymce/imagetoolsplugin/Dialog"
-], function(PluginManager, Env, Promise, URI, Tools, Delay, ImageTools, Conversions, Dialog) {
-	PluginManager.add('imagetools', function(editor) {
+	"global!tinymce.PluginManager",
+	"global!tinymce.Env",
+	"global!tinymce.util.Promise",
+	"global!tinymce.util.URI",
+	"global!tinymce.util.Tools",
+	"global!tinymce.util.Delay",
+	"ephox/imagetools/api/ImageTransformations",
+	"ephox/imagetools/api/BlobConversions",
+	"tinymce/imagetoolsplugin/Dialog",
+	"tinymce/imagetoolsplugin/ImageSize",
+	"tinymce/imagetoolsplugin/Proxy"
+], function(PluginManager, Env, Promise, URI, Tools, Delay, ImageTransformations, BlobConversions, Dialog, ImageSize, Proxy) {
+	var plugin = function(editor) {
 		var count = 0, imageUploadTimer, lastSelectedImage;
 
 		if (!Env.fileApi) {
 			return;
 		}
 
-		/*
-		function startCrop() {
-			var imageRect, viewPortRect;
-
-			imageRect = getSelectedImage().getBoundingClientRect();
-
-			imageRect = {
-				x: imageRect.left,
-				y: imageRect.top,
-				w: imageRect.width,
-				h: imageRect.height
-			};
-
-			viewPortRect = {
-				x: 0,
-				y: 0,
-				w: editor.getBody().scrollWidth,
-				h: editor.getBody().scrollHeight
-			};
-
-			cropRect = new CropRect(imageRect, viewPortRect, imageRect, editor.getBody());
-			cropRect.toggleVisibility(true);
-
-			editor.selection.getSel().removeAllRanges();
-			editor.nodeChanged();
-		}
-
-		function stopCrop() {
-			if (cropRect) {
-				cropRect.destroy();
-				cropRect = null;
-			}
-		}
-		*/
-
-		function getImageSize(img) {
-			var width, height;
-
-			function isPxValue(value) {
-				return value.indexOf('px') == value.length - 2;
-			}
-
-			width = img.style.width;
-			height = img.style.height;
-			if (width || height) {
-				if (isPxValue(width) && isPxValue(height)) {
-					return {
-						w: parseInt(width, 10),
-						h: parseInt(height, 10)
-					};
-				}
-
-				return null;
-			}
-
-			width = editor.$(img).attr('width');
-			height = editor.$(img).attr('height');
-			if (width && height) {
-				return {
-					w: parseInt(width, 10),
-					h: parseInt(height, 10)
-				};
-			}
-
-			return null;
-		}
-
-		function setImageSize(img, size) {
-			var width, height;
-
-			if (size) {
-				width = img.style.width;
-				height = img.style.height;
-
-				if (width || height) {
-					editor.$(img).css({
-						width: size.w,
-						height: size.h
-					}).removeAttr('data-mce-style');
-				}
-
-				width = img.width;
-				height = img.height;
-
-				if (width || height) {
-					editor.$(img).attr({
-						width: size.w,
-						height: size.h
-					});
-				}
-			}
-		}
-
-		function getNaturalImageSize(img) {
-			return {
-				w: img.naturalWidth,
-				h: img.naturalHeight
-			};
+		function displayError(error) {
+			editor.notificationManager.open({
+				text: error,
+				type: 'error'
+			});
 		}
 
 		function getSelectedImage() {
@@ -2092,54 +2612,36 @@ define("tinymce/imagetoolsplugin/Plugin", [
 			return Tools.inArray(editor.settings.imagetools_cors_hosts, new URI(img.src).host) !== -1;
 		}
 
-		function requestUrlAsBlob(url) {
-			// Needs to be XHR for IE 10 compatibility
-			return new Promise(function(resolve) {
-				var xhr = new XMLHttpRequest();
-
-				xhr.onload = function() {
-					resolve(this.response);
-				};
-
-				xhr.open('GET', url, true);
-				xhr.responseType = 'blob';
-				xhr.send();
-			});
+		function getApiKey() {
+			return editor.settings.api_key || editor.settings.imagetools_api_key;
 		}
 
 		function imageToBlob(img) {
-			var src = img.src;
+			var src = img.src, apiKey;
 
 			if (isCorsImage(img)) {
-				return requestUrlAsBlob(img.src);
+				return Proxy.getUrl(img.src, null);
 			}
 
 			if (!isLocalImage(img)) {
 				src = editor.settings.imagetools_proxy;
 				src += (src.indexOf('?') === -1 ? '?' : '&') + 'url=' + encodeURIComponent(img.src);
-				img = new Image();
-				img.src = src;
+				apiKey = getApiKey();
+				return Proxy.getUrl(src, apiKey);
 			}
 
-			return Conversions.imageToBlob(img);
+			return BlobConversions.imageToBlob(img);
 		}
 
-		function findSelectedBlobInfo() {
+		function findSelectedBlob() {
 			var blobInfo;
 
 			blobInfo = editor.editorUpload.blobCache.getByUri(getSelectedImage().src);
 			if (blobInfo) {
-				return blobInfo;
+				return blobInfo.blob();
 			}
 
-			return imageToBlob(getSelectedImage()).then(function(blob) {
-				return Conversions.blobToBase64(blob).then(function(base64) {
-					var blobCache = editor.editorUpload.blobCache;
-					var blobInfo = blobCache.create(createId(), blob, base64);
-					blobCache.add(blobInfo);
-					return blobInfo;
-				});
-			});
+			return imageToBlob(getSelectedImage());
 		}
 
 		function startTimedUpload() {
@@ -2153,7 +2655,7 @@ define("tinymce/imagetoolsplugin/Plugin", [
 		}
 
 		function updateSelectedImage(blob, uploadImmediately) {
-			return Conversions.blobToDataUri(blob).then(function(dataUri) {
+			return BlobConversions.blobToDataUri(blob).then(function(dataUri) {
 				var id, base64, blobCache, blobInfo, selectedImage;
 
 				selectedImage = getSelectedImage();
@@ -2190,59 +2692,64 @@ define("tinymce/imagetoolsplugin/Plugin", [
 
 		function selectedImageOperation(fn) {
 			return function() {
-				return editor._scanForImages().then(findSelectedBlobInfo).then(fn).then(updateSelectedImage);
+				return editor._scanForImages().then(findSelectedBlob).then(fn).then(updateSelectedImage, displayError);
 			};
 		}
 
 		function rotate(angle) {
 			return function() {
-				return selectedImageOperation(function(blobInfo) {
-					var size = getImageSize(getSelectedImage());
+				return selectedImageOperation(function(blob) {
+					var size = ImageSize.getImageSize(getSelectedImage());
 
 					if (size) {
-						setImageSize(getSelectedImage(), {
+						ImageSize.setImageSize(getSelectedImage(), {
 							w: size.h,
 							h: size.w
 						});
 					}
 
-					return ImageTools.rotate(blobInfo.blob(), angle);
+					return ImageTransformations.rotate(blob, angle);
 				})();
 			};
 		}
 
 		function flip(axis) {
 			return function() {
-				return selectedImageOperation(function(blobInfo) {
-					return ImageTools.flip(blobInfo.blob(), axis);
+				return selectedImageOperation(function(blob) {
+					return ImageTransformations.flip(blob, axis);
 				})();
 			};
 		}
 
 		function editImageDialog() {
-			var img = getSelectedImage(), originalSize = getNaturalImageSize(img);
+			var img = getSelectedImage(), originalSize = ImageSize.getNaturalImageSize(img);
+			var handleDialogBlob = function(blob) {
+				return new Promise(function(resolve) {
+					BlobConversions.blobToImage(blob).then(function(newImage) {
+						var newSize = ImageSize.getNaturalImageSize(newImage);
 
-			if (img) {
-				imageToBlob(img).then(Dialog.edit).then(function(blob) {
-					return new Promise(function(resolve) {
-						Conversions.blobToImage(blob).then(function(newImage) {
-							var newSize = getNaturalImageSize(newImage);
-
-							if (originalSize.w != newSize.w || originalSize.h != newSize.h) {
-								if (getImageSize(img)) {
-									setImageSize(img, newSize);
-								}
+						if (originalSize.w != newSize.w || originalSize.h != newSize.h) {
+							if (ImageSize.getImageSize(img)) {
+								ImageSize.setImageSize(img, newSize);
 							}
+						}
 
-							URL.revokeObjectURL(newImage.src);
-							resolve(blob);
-						});
+						URL.revokeObjectURL(newImage.src);
+						resolve(blob);
 					});
-				}).then(function(blob) {
+				});
+			};
+
+			var openDialog = function (blob) {
+				return Dialog.edit(blob).then(handleDialogBlob).then(function(blob) {
 					updateSelectedImage(blob, true);
-				}, function() {
+				}, function () {
 					// Close dialog
 				});
+			};
+
+			if (img) {
+				imageToBlob(img).then(openDialog, displayError);
 			}
 		}
 
@@ -2328,8 +2835,12 @@ define("tinymce/imagetoolsplugin/Plugin", [
 		addEvents();
 
 		editor.addCommand('mceEditImage', editImageDialog);
-	});
+	};
+
+	PluginManager.add('imagetools', plugin);
+
+	return function() {};
 });
 
-expose(["tinymce/imagetoolsplugin/Canvas","tinymce/imagetoolsplugin/Mime","tinymce/imagetoolsplugin/ImageSize","tinymce/imagetoolsplugin/Conversions","tinymce/imagetoolsplugin/ImageTools","tinymce/imagetoolsplugin/CropRect","tinymce/imagetoolsplugin/ImagePanel","tinymce/imagetoolsplugin/ColorMatrix","tinymce/imagetoolsplugin/Filters","tinymce/imagetoolsplugin/UndoStack","tinymce/imagetoolsplugin/Dialog","tinymce/imagetoolsplugin/Plugin"]);
-})(this);
+dem('tinymce/imagetoolsplugin/Plugin')();
+})();

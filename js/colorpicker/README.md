@@ -1,8 +1,8 @@
 jQuery.colorpicker
 ==================
-Version 1.1.7
+Version 1.2.1
 
-Copyright &copy; 2011-2015 Martijn W. van der Lee.
+Copyright &copy; 2011-2016 Martijn W. van der Lee.
 Licensed under the MIT.
 
 Full-featured colorpicker for jQueryUI with full theming support.
@@ -33,6 +33,7 @@ Features
 		memory for colors.
 -	Documented
 -	Limited Unit tests (QUnit-based)
+-	Disable/enable
 
 Download
 --------
@@ -63,12 +64,13 @@ To use the demo page included in the documentation, you must add:
 
 Browser support
 ---------------
-Tested with v1.0.7
+Tested various versions of this plugin with the following browsers:
 
--	Chrome 31
--	FireFox 25
--	Opera 17
--	Internet Explorer 10
+-	Chrome 31-47
+-	FireFox 25-43
+-	Opera 17-34
+-	Internet Explorer 10-11
+-	Edge 20
 
 Documentation
 =============
@@ -190,6 +192,14 @@ predefined formats HEX3 and EXACT. For example, this array will output
 HEX3 format if possible or HEX format otherwise:
 
 *	``['HEX3', 'HEX']``
+
+###	disabled (false)
+Disable or enable the colorpicker and all it's controls by setting this option.
+
+If you disable the `input` using the `disabled` HTML attribute before attaching
+a colorpicker, it will automatically be disabled.
+
+You can change this option using the `option` method call.
 
 ###	draggable (true)
 Make the dialog draggable if the header is visible and the dialog is

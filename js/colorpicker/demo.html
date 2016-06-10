@@ -61,6 +61,7 @@
 			  <li><a href="#tab-128">128-pixel map and bar</a></li>
 			  <li><a href="#tab-customcolor">Custom color format</a></li>
 			  <li><a href="#tab-position">Centered in window</a></li>
+			  <li><a href="#tab-disable">Disable/enable</a></li>
 			</ul>
 
 			<div id="tab-input">
@@ -566,6 +567,51 @@
 					});
 				</script>
 			</div>
+
+			<div id="tab-disable">
+				<h2>Disable/enable</h2>
+				<label for="toggle-cp-disable">Enabled: <input type="checkbox" id="toggle-cp-disable"/></label>
+				<br/>
+				Disabled by default:
+				<input type="text" class="cp-disable" value="186aa7" disabled="disabled"/>
+				<br/>
+				Disabled using option:
+				<input type="text" class="cp-disable-option" value="186aa7"/>
+				<br/>
+				<span class="cp-disable-option" style="display: inline-block; vertical-align: top;"></span>
+
+				<script>
+					$(function() {
+						$('.cp-disable').colorpicker({
+							showOn: 'both',
+							buttonColorize: true
+						});
+
+						$('.cp-disable-option').colorpicker({
+							parts: 'full',
+//							parts:	['header', 'preview', 'hex', 'rgbslider', 'memory', 'swatches', 'swatchesswitcher', 'footer'],
+//							layout: {
+//								preview:			[0, 0, 1, 1],
+//								hex:				[1, 0, 1, 1],
+//								rgbslider:			[0, 1, 2, 1],
+//								memory:				[0, 2, 2, 1],
+//								swatchesswitcher:	[2, 0, 1, 1],
+//								swatches:			[2, 1, 1, 2]
+//							},
+							showOn: 'both',
+							disabled: true,
+							buttonColorize: true,
+							alpha: true
+
+						});
+
+						$('#toggle-cp-disable').click(function() {
+							$('.cp-disable, .cp-disable-option').colorpicker($(this).is(':checked') ? 'enable' : 'disable');
+						});
+					});
+				</script>
+			</div>
+
 		</div>
     </body>
 </html>

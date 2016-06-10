@@ -13,14 +13,17 @@
 							var $node = $('<div/>').addClass('ui-colorpicker-swatch').css('backgroundColor', color);
 							$node.mousedown(function(e) {
 								e.stopPropagation();
-								switch (e.which) {
-									case 1:	
-										selectNode(this);
-										break;
-									case 3:
-										deleteNode($node);
-										setMemory();
-										break;
+
+								if (!inst.options.disabled) {
+									switch (e.which) {
+										case 1:
+											selectNode(this);
+											break;
+										case 3:
+											deleteNode($node);
+											setMemory();
+											break;
+									}
 								}
 							}).bind('contextmenu', function(e) {
 								e.preventDefault();								
@@ -67,8 +70,10 @@
 			});
 
 			container.mousedown(function(e) {
-				addNode(inst.color.toCSS());
-				setMemory();
+				if (!inst.options.disabled) {
+					addNode(inst.color.toCSS());
+					setMemory();
+				}
 			});
 		};
 	};

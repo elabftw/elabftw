@@ -77,5 +77,11 @@
 		this.update = function () {
 			this.repaint();
 		};
+		
+		this.disable = function (disabled) {
+			sliders.r.slider(disabled ? 'disable' : 'enable');
+			sliders.g.slider(disabled ? 'disable' : 'enable');
+			sliders.b.slider(disabled ? 'disable' : 'enable');
+		};
 	};
 });

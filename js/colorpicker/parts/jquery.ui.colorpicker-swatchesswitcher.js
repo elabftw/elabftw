@@ -1,15 +1,18 @@
 ;jQuery(function($) {	
 	$.colorpicker.parts.swatchesswitcher = function (inst) {
-		var that	= this;
+		var that = this,
+			part = null;
 
 		this.init	= function () {
 			var names = $.map($.colorpicker.swatches, function(v, name) { return name; }).sort(),
 				current = inst.options.swatches || 'html',
-				container	= $('<div/>')
-								.addClass('ui-colorpicker-swatchesswitcher')
-								.css('text-align', 'center')
-								.appendTo($('.ui-colorpicker-swatchesswitcher-container', inst.dialog)),
-				select		= $('<select>').width(inst.options.swatchesWidth + 2).appendTo(container);
+				select = $('<select>').width(inst.options.swatchesWidth + 2);
+
+			part	= $('<div/>')
+					.addClass('ui-colorpicker-swatchesswitcher')
+					.css('text-align', 'center')
+					.appendTo($('.ui-colorpicker-swatchesswitcher-container', inst.dialog));
+			select.appendTo(part);
 			
 			$.each(names, function(x, name) {
 				var label	= $.colorpicker.swatchesNames[name]
@@ -23,6 +26,10 @@
 			select.change(function() {
 				inst.option('swatches', $(this).val());
 			});
+		};
+		
+		this.disable = function (disabled) {
+			$('select', part).prop('disabled', disabled);
 		};
 	};
 });

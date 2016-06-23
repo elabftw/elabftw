@@ -215,28 +215,32 @@
 <span id="id1"></span><h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="version-1-2-1">
 <h2>Version 1.2.1<a class="headerlink" href="#version-1-2-1" title="Permalink to this headline">¶</a></h2>
-<ul>
-<li><p class="first">update the crypto lib to 2.0</p>
+<ul class="simple">
+<li>update the crypto lib to 2.0</li>
+</ul>
 <p>WARNING DOCKER USERS !!!!! IMPORTANT READ BELOW:</p>
 <p>Once you pull the new version and visit a page, the config file will be updated with a new secret key. You need to copy it from inside the container to your docker-compose.yml file!</p>
 <ol class="arabic simple">
-<li>Use <cite>docker ps</cite> to check the ID of the container</li>
-<li>Use <cite>docker exec -it $ID grep SECRET /elabftw/config.php| awk -F \&#8217; &#8216;{print $4}&#8217; &gt;&gt; docker-compose.yml</cite> to copy the key to the end of the yml file</li>
+<li>Use <cite>docker ps</cite> to check the ID of the container (or use its name)</li>
+<li>Copy it from inside to your config file:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre>docker <span class="nb">exec</span> -it <span class="nv">$ID</span> grep SECRET /elabftw/config.php<span class="p">|</span> awk -F <span class="se">\&#39;</span> <span class="s1">&#39;{print $4}&#39;</span> &gt;&gt; docker-compose.yml
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
 <li>Edit <cite>docker-compose.yml</cite> to replace the old SECRET_KEY value by the new one at the end of the file.</li>
 </ol>
+<p>Like shown on this image:</p>
+<img alt="update config" class="align-center" src="_images/1.2.1.png" />
 <p>For normal users (no docker):</p>
 <p>If you have a message asking you to make your config file readable, use this: <cite>chmod 777 config.php</cite>. Execute this command from inside the <cite>elabftw</cite> folder.
 Refresh the page to retry. You can put back restrictive permissions after the update is done.</p>
 <p>This update is a major update from the php-encryption project. So we need to change how the key is. This key is used to encrypt the SMTP and timestamping passwords.</p>
-</li>
-<li><p class="first">update a lot of composer components</p>
-</li>
-<li><p class="first">update JS components</p>
-</li>
-<li><p class="first">fix bug leading to new users being always validated</p>
-</li>
-<li><p class="first">add in-depth documentation for docker install</p>
-</li>
+<ul class="simple">
+<li>update a lot of composer components</li>
+<li>update JS components</li>
+<li>fix bug leading to new users being always validated</li>
+<li>add in-depth documentation for docker install</li>
 </ul>
 </div>
 <div class="section" id="version-1-2-0-p3">

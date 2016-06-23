@@ -8,30 +8,34 @@ function &a($b) {}
 array(
     0: Stmt_Function(
         byRef: false
+        name: a
         params: array(
             0: Param(
-                name: b
-                default: null
                 type: null
                 byRef: true
+                variadic: false
+                name: b
+                default: null
             )
         )
+        returnType: null
         stmts: array(
         )
-        name: a
     )
     1: Stmt_Function(
         byRef: true
+        name: a
         params: array(
             0: Param(
-                name: b
-                default: null
                 type: null
                 byRef: false
+                variadic: false
+                name: b
+                default: null
             )
         )
+        returnType: null
         stmts: array(
         )
-        name: a
     )
 )

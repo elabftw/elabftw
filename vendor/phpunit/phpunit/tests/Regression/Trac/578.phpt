@@ -4,7 +4,7 @@
 <?php
 $_SERVER['argv'][1] = '--no-configuration';
 $_SERVER['argv'][2] = 'Issue578Test';
-$_SERVER['argv'][3] = dirname(__FILE__) . '/578/Issue578Test.php';
+$_SERVER['argv'][3] = __DIR__ . '/578/Issue578Test.php';
 
 require __DIR__ . '/../../bootstrap.php';
 PHPUnit_TextUI_Command::main();
@@ -14,7 +14,7 @@ PHPUnit %s by Sebastian Bergmann and contributors.
 
 EEE                                                                 3 / 3 (100%)
 
-Time: %s, Memory: %sMb
+Time: %s, Memory: %s
 
 There were 3 errors:
 
@@ -33,5 +33,5 @@ Exception: Double printed exception
 
 %sIssue578Test.php:%i
 
-FAILURES!
+ERRORS!
 Tests: 3, Assertions: 0, Errors: 3.

@@ -12,7 +12,8 @@
 namespace phpDocumentor\Reflection;
 
 use phpDocumentor\Reflection\DocBlock\Context;
-use PHPParser_Node_Stmt_Class;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -55,7 +56,7 @@ class ClassReflectorTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($class_reflector->isAbstract());
 
-        $node->type = PHPParser_Node_Stmt_Class::MODIFIER_ABSTRACT;
+        $node->type = Class_::MODIFIER_ABSTRACT;
         $this->assertTrue($class_reflector->isAbstract());
     }
 
@@ -76,7 +77,7 @@ class ClassReflectorTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($class_reflector->isFinal());
 
-        $node->type = PHPParser_Node_Stmt_Class::MODIFIER_FINAL;
+        $node->type = Class_::MODIFIER_FINAL;
         $this->assertTrue($class_reflector->isFinal());
     }
 
@@ -160,7 +161,7 @@ class ClassReflectorTest extends PHPUnit_Framework_TestCase
     public function testGetMethod()
     {
         $node = new NodeStmtMock();
-        $node->stmts = array(new \PHPParser_Node_Stmt_ClassMethod('someMethod'));
+        $node->stmts = array(new ClassMethod('someMethod'));
         $class_reflector = new ClassReflectorMock(
             $node,
             new Context()

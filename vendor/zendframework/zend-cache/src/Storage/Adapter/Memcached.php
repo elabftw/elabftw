@@ -24,13 +24,6 @@ class Memcached extends AbstractAdapter implements
     TotalSpaceCapableInterface
 {
     /**
-     * Major version of ext/memcached
-     *
-     * @var null|int
-     */
-    protected static $extMemcachedMajorVersion;
-
-    /**
      * Has this instance be initialized
      *
      * @var bool
@@ -66,12 +59,7 @@ class Memcached extends AbstractAdapter implements
      */
     public function __construct($options = null)
     {
-        if (static::$extMemcachedMajorVersion === null) {
-            $v = (string) phpversion('memcached');
-            static::$extMemcachedMajorVersion = ($v !== '') ? (int) $v[0] : 0;
-        }
-
-        if (static::$extMemcachedMajorVersion < 1) {
+        if (phpversion('memcached') < 1) {
             throw new Exception\ExtensionNotLoadedException('Need ext/memcached version >= 1.0.0');
         }
 
@@ -256,12 +244,18 @@ class Memcached extends AbstractAdapter implements
             throw $this->getExceptionByResultCode($memc->getResultCode());
         }
 
+        // if $result is empty the loop below can be avouded
+        // and HHVM returns NULL instead of an empty array in this case
+        if (empty($result)) {
+            return [];
+        }
+
         // remove namespace prefix from result
-        if ($result && $this->namespacePrefix !== '') {
+        if ($this->namespacePrefix !== '') {
             $tmp            = [];
             $nsPrefixLength = strlen($this->namespacePrefix);
-            foreach ($result as $internalKey => & $value) {
-                $tmp[substr($internalKey, $nsPrefixLength)] = & $value;
+            foreach ($result as $internalKey => $value) {
+                $tmp[substr($internalKey, $nsPrefixLength)] = $value;
             }
             $result = $tmp;
         }
@@ -303,29 +297,7 @@ class Memcached extends AbstractAdapter implements
      */
     protected function internalHasItems(array & $normalizedKeys)
     {
-        $memc = $this->getMemcachedResource();
-
-        foreach ($normalizedKeys as & $normalizedKey) {
-            $normalizedKey = $this->namespacePrefix . $normalizedKey;
-        }
-
-        $result = $memc->getMulti($normalizedKeys);
-        if ($result === false) {
-            throw $this->getExceptionByResultCode($memc->getResultCode());
-        }
-
-        // Convert to a simgle list
-        $result = array_keys($result);
-
-        // remove namespace prefix
-        if ($result && $this->namespacePrefix !== '') {
-            $nsPrefixLength = strlen($this->namespacePrefix);
-            foreach ($result as & $internalKey) {
-                $internalKey = substr($internalKey, $nsPrefixLength);
-            }
-        }
-
-        return $result;
+        return array_keys($this->internalGetItems($normalizedKeys));
     }
 
     /**
@@ -337,32 +309,7 @@ class Memcached extends AbstractAdapter implements
      */
     protected function internalGetMetadatas(array & $normalizedKeys)
     {
-        $memc = $this->getMemcachedResource();
-
-        foreach ($normalizedKeys as & $normalizedKey) {
-            $normalizedKey = $this->namespacePrefix . $normalizedKey;
-        }
-
-        $result = $memc->getMulti($normalizedKeys);
-        if ($result === false) {
-            throw $this->getExceptionByResultCode($memc->getResultCode());
-        }
-
-        // remove namespace prefix and use an empty array as metadata
-        if ($this->namespacePrefix !== '') {
-            $tmp            = [];
-            $nsPrefixLength = strlen($this->namespacePrefix);
-            foreach (array_keys($result) as $internalKey) {
-                $tmp[substr($internalKey, $nsPrefixLength)] = [];
-            }
-            $result = $tmp;
-        } else {
-            foreach ($result as & $value) {
-                $value = [];
-            }
-        }
-
-        return $result;
+        return array_fill_keys(array_keys($this->internalGetItems($normalizedKeys)), []);
     }
 
     /* writing */
@@ -399,8 +346,8 @@ class Memcached extends AbstractAdapter implements
         $expiration = $this->expirationTime();
 
         $namespacedKeyValuePairs = [];
-        foreach ($normalizedKeyValuePairs as $normalizedKey => & $value) {
-            $namespacedKeyValuePairs[$this->namespacePrefix . $normalizedKey] = & $value;
+        foreach ($normalizedKeyValuePairs as $normalizedKey => $value) {
+            $namespacedKeyValuePairs[$this->namespacePrefix . $normalizedKey] = $value;
         }
 
         if (!$memc->setMulti($namespacedKeyValuePairs, $expiration)) {
@@ -515,26 +462,25 @@ class Memcached extends AbstractAdapter implements
      */
     protected function internalRemoveItems(array & $normalizedKeys)
     {
+        $memc = $this->getMemcachedResource();
+
         // support for removing multiple items at once has been added in ext/memcached-2.0.0
-        if (static::$extMemcachedMajorVersion < 2) {
+        // and HHVM doesn't support this feature yet
+        if (!method_exists($memc, 'deleteMulti')) {
             return parent::internalRemoveItems($normalizedKeys);
         }
-
-        $memc = $this->getMemcachedResource();
 
         foreach ($normalizedKeys as & $normalizedKey) {
             $normalizedKey = $this->namespacePrefix . $normalizedKey;
         }
 
-        $rsCodes = $memc->deleteMulti($normalizedKeys);
-
         $missingKeys = [];
-        foreach ($rsCodes as $key => $rsCode) {
+        foreach ($memc->deleteMulti($normalizedKeys) as $normalizedKey => $rsCode) {
             if ($rsCode !== true && $rsCode != MemcachedResource::RES_SUCCESS) {
                 if ($rsCode != MemcachedResource::RES_NOTFOUND) {
                     throw $this->getExceptionByResultCode($rsCode);
                 }
-                $missingKeys[] = $key;
+                $missingKeys[] = $normalizedKey;
             }
         }
 

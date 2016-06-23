@@ -19,7 +19,33 @@ Docker works really well for isolating testing environments.
 By the time of writing this chapter, we didn't have an awesome tool like it. This chapter demonstrates how to manage parallel execution manually. As you will see we spend too much effort trying to isolate tests which Docker does for free. Today we **recommend using Docker** for parallel testing.
 </div>
 
-## What to do
+
+## Docker
+
+> :construction: Section is under construction
+
+### Requirements
+
+ - `docker` or [Docker Toolbox](https://www.docker.com/products/docker-toolbox)
+
+
+### Using Codeception Docker image
+
+Run Docker image
+
+    docker run codeception/codeception    
+
+Running tests from a project, by mounting the current path as a host-volume into the container.
+The default working directory in the container is `/project`.
+    
+    docker run -v ${PWD}:/project codeception/codeception run
+
+For local testing of the Codeception repository with Docker and `docker-copmose`, please refer to the [testing documentation](../tests/README.md). 
+
+
+## Robo
+
+### What to do
 
 Parallel Test Execution consists of 3 steps:
 
@@ -34,7 +60,7 @@ To conclude, we need:
 * [Robo](http://robo.li), a task runner.
 * [robo-paracept](https://github.com/Codeception/robo-paracept) - Codeception tasks for parallel execution.
 
-## Preparing Robo
+### Preparing Robo
 
 `Robo` is recommended to be installed globally. You can either do [a global install with Composer](https://getcomposer.org/doc/03-cli.md#global) or download `robo.phar` and put it somewhere in PATH.
 
@@ -54,7 +80,7 @@ class RoboFile extends \Robo\Tasks
 {
     // define public methods as commands
 }
-?>
+
 ```
 
 Install `codeception/robo-paracept` via Composer and include it into your RoboFile.
@@ -85,7 +111,7 @@ class Robofile extends \Robo\Tasks
 
     }
 }
-?>
+
 ```
 
 If you run `robo`, you can see the respective commands:
@@ -103,7 +129,7 @@ parallel
   parallel:split-tests     
 ```
 
-## Sample Project
+### Sample Project
 
 Let's say we have long running acceptance tests and we want to split them into 5 processes. To make tests not be conflicting with each other they should use different hosts and databases. Thus, before proceeding we need to configure 5 different hosts in Apache/Nginx (or just run application on different ports in PHP Built-in web server). Based on host our application should use corresponding databases.
 
@@ -113,7 +139,7 @@ You can also think about running your tests on remote hosts using SSH. `Robo` ha
 
 In current example we assume that we have prepared 5 databases and 5 independent hosts for our application.
 
-### Step 1: Split Tests
+#### Step 1: Split Tests
 
 Codeception can organize tests into [groups](http://codeception.com/docs/07-AdvancedUsage#Groups). Starting from 2.0 it can load information about a group from a files. Sample text file with a list of file names can be treated as a dynamically configured group. Take a look into sample group file:
 
@@ -142,7 +168,7 @@ Tasks from `\Codeception\Task\SplitTestsByGroups` will generate non-intersecting
             ->groupsTo('tests/_log/p')
             ->run();
     }    
-?>
+
 ```
 
 In second case `Codeception\TestLoader` class will be used and test classes will be loaded into memory.
@@ -170,10 +196,10 @@ groups:
 Let's try to execute tests from the second group:
 
 ```bash
-$ php codecept.phar run functional -g p2
+$ php codecept run functional -g p2
 ```
 
-### Step 2: Running Tests
+#### Step 2: Running Tests
 
 As it was mentioned, Robo has `ParallelExec` task to spawn background processes. But you should not think of it as the only option. For instance, you can execute tests remotely via SSH, or spawn processes with Gearman, RabbitMQ, etc. But in our example we will use 5 background processes:
 
@@ -192,7 +218,7 @@ As it was mentioned, Robo has `ParallelExec` task to spawn background processes.
         }
         return $parallel->run();
     }
-?>    
+    
 ```
 
 We missed something really important. We forgot to define different databases for different processes. This can be done using [Environments](http://codeception.com/docs/07-AdvancedUsage#Environments). Let's define 5 new environments in `acceptance.suite.yml`:
@@ -266,7 +292,7 @@ Now, we should update our `parallelRun` method to use corresponding environment:
         }
         return $parallel->run();
     }
-?>    
+    
 ```
 
 Now, we can execute tests with
@@ -275,7 +301,7 @@ Now, we can execute tests with
 $ robo parallel:run
 ```
 
-### Step 3: Merge Results
+#### Step 3: Merge Results
 
 We should not rely on console output when running our tests. In case of `parallelExec` task, some text can be missed. We recommend to save results as JUnit XML, which can be merged and plugged into Continuous Integration server.
 
@@ -290,12 +316,12 @@ We should not rely on console output when running our tests. In case of `paralle
         $merge->into("/tests/_log/result.xml")
             ->run();
     }
-?>
+
 ```
 
 `result.xml` file will be generated. It can be processed and analyzed.
 
-### All Together
+#### All Together
 
 To create one command to rule them all we can define new public method `parallelAll` and execute all commands. We will save the result of `parallelRun` and use it for our final exit code:
 
@@ -308,8 +334,9 @@ To create one command to rule them all we can define new public method `parallel
         $this->parallelMergeResults();
         return $result;
     }
-?>
+
 ```
+
 
 ## Conclusion
 

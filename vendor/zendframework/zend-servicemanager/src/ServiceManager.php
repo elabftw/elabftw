@@ -9,9 +9,7 @@
 
 namespace Zend\ServiceManager;
 
-use Interop\Container\ContainerInterface;
-
-class ServiceManager implements ServiceLocatorInterface, ContainerInterface
+class ServiceManager implements ServiceLocatorInterface
 {
     /**@#+
      * Constants

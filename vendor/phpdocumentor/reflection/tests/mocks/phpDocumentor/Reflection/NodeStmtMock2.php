@@ -11,12 +11,12 @@
  */
 namespace phpDocumentor\Reflection;
 
-use PHPParser_Node_Stmt;
+use PhpParser\Node\Stmt;
 
 /**
- * Class for testing PHPParser_Node_Stmt.
+ * Class for testing PhpParser_Node_Stmt.
  *
- * Extends the PHPParser_Node_Stmt so properties and abstract methods can be mocked,
+ * Extends the PhpParser_Node_Stmt so properties and abstract methods can be mocked,
  * and therefore tested.
  *
  * @author    Erik Baars <baarserik@hotmail.com>
@@ -24,7 +24,7 @@ use PHPParser_Node_Stmt;
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
-class NodeStmtMock2 extends PHPParser_Node_Stmt
+class NodeStmtMock2 extends Stmt
 {
     public $type = null;
 

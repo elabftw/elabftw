@@ -24,20 +24,24 @@ use Zend\ServiceManager\Factory\InvokableFactory;
 class PluginManager extends AbstractPluginManager
 {
     protected $aliases = [
-        'clearexpiredbyfactor' => Plugin\ClearExpiredByFactor::class,
-        'clearExpiredByFactor' => Plugin\ClearExpiredByFactor::class,
-        'ClearExpiredByFactor' => Plugin\ClearExpiredByFactor::class,
-        'exceptionhandler'     => Plugin\ExceptionHandler::class,
-        'exceptionHandler'     => Plugin\ExceptionHandler::class,
-        'ExceptionHandler'     => Plugin\ExceptionHandler::class,
-        'ignoreuserabort'      => Plugin\IgnoreUserAbort::class,
-        'ignoreUserAbort'      => Plugin\IgnoreUserAbort::class,
-        'IgnoreUserAbort'      => Plugin\IgnoreUserAbort::class,
-        'optimizebyfactor'     => Plugin\OptimizeByFactor::class,
-        'optimizeByFactor'     => Plugin\OptimizeByFactor::class,
-        'OptimizeByFactor'     => Plugin\OptimizeByFactor::class,
-        'serializer'           => Plugin\Serializer::class,
-        'Serializer'           => Plugin\Serializer::class
+        'clear_expired_by_factor' => Plugin\ClearExpiredByFactor::class,
+        'clearexpiredbyfactor'    => Plugin\ClearExpiredByFactor::class,
+        'clearExpiredByFactor'    => Plugin\ClearExpiredByFactor::class,
+        'ClearExpiredByFactor'    => Plugin\ClearExpiredByFactor::class,
+        'exception_handler'       => Plugin\ExceptionHandler::class,
+        'exceptionhandler'        => Plugin\ExceptionHandler::class,
+        'exceptionHandler'        => Plugin\ExceptionHandler::class,
+        'ExceptionHandler'        => Plugin\ExceptionHandler::class,
+        'ignore_user_abort'       => Plugin\IgnoreUserAbort::class,
+        'ignoreuserabort'         => Plugin\IgnoreUserAbort::class,
+        'ignoreUserAbort'         => Plugin\IgnoreUserAbort::class,
+        'IgnoreUserAbort'         => Plugin\IgnoreUserAbort::class,
+        'optimize_by_factor'      => Plugin\OptimizeByFactor::class,
+        'optimizebyfactor'        => Plugin\OptimizeByFactor::class,
+        'optimizeByFactor'        => Plugin\OptimizeByFactor::class,
+        'OptimizeByFactor'        => Plugin\OptimizeByFactor::class,
+        'serializer'              => Plugin\Serializer::class,
+        'Serializer'              => Plugin\Serializer::class
     ];
 
     protected $factories = [

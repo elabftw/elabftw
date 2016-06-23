@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.6 - 2016-04-27
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#116](https://github.com/zendframework/zend-servicemanager/pull/116) updates
+  `ServiceLocatorInterface` to extend container-interop's `ContainerInterface`,
+  as the definitions are compatible. This change will mean that implementing
+  `ServiceLocatorInterface` will provide a `ContainerInterface` implementation.
+
 ## 2.7.5 - 2016-02-02
 
 ### Added

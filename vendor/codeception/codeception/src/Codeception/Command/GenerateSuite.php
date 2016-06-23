@@ -10,7 +10,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 
-
 /**
  * Create new test suite. Requires suite name and actor name
  *
@@ -30,7 +29,6 @@ class GenerateSuite extends Command
         $this->setDefinition([
             new InputArgument('suite', InputArgument::REQUIRED, 'suite to be generated'),
             new InputArgument('actor', InputArgument::OPTIONAL, 'name of new actor class'),
-            new InputOption('config', 'c', InputOption::VALUE_OPTIONAL, 'Use custom path for config'),
         ]);
     }
 
@@ -70,7 +68,10 @@ class GenerateSuite extends Command
         );
         $actorName = $this->removeSuffix($actor, $config['actor']);
 
-        $file = $this->buildPath(\Codeception\Configuration::supportDir() . "Helper", "$actorName.php") . "$actorName.php";
+        $file = $this->buildPath(
+            \Codeception\Configuration::supportDir() . "Helper",
+            "$actorName.php"
+        ) . "$actorName.php";
 
         $gen = new Helper($actorName, $config['namespace']);
         // generate helper
@@ -86,10 +87,12 @@ modules:
         - {{helper}}
 EOF;
 
-        $this->save($dir . $suite . '.suite.yml', (new Template($conf))
-            ->place('actor', $actorName . $config['actor'])
-            ->place('helper', $gen->getHelperName())
-            ->produce()
+        $this->save(
+            $dir . $suite . '.suite.yml',
+            (new Template($conf))
+                ->place('actor', $actorName . $config['actor'])
+                ->place('helper', $gen->getHelperName())
+                ->produce()
         );
 
         $output->writeln("<info>Suite $suite generated</info>");

@@ -7,7 +7,7 @@ $_SERVER['argv'][1] = '--no-configuration';
 $_SERVER['argv'][2] = '--repeat';
 $_SERVER['argv'][3] = '50';
 $_SERVER['argv'][4] = 'BankAccountTest';
-$_SERVER['argv'][5] = dirname(dirname(dirname(__FILE__))) . '/_files/BankAccountTest.php';
+$_SERVER['argv'][5] = dirname(dirname(__DIR__)) . '/_files/BankAccountTest.php';
 
 require __DIR__ . '/../../bootstrap.php';
 PHPUnit_TextUI_Command::main();
@@ -19,6 +19,6 @@ PHPUnit %s by Sebastian Bergmann and contributors.
 ............................................................... 126 / 150 ( 84%)
 ........................                                        150 / 150 (100%)
 
-Time: %s, Memory: %sMb
+Time: %s, Memory: %s
 
 OK (150 tests, 150 assertions)

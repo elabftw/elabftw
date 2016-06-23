@@ -26,7 +26,6 @@ class GenerateCept extends Command
         $this->setDefinition([
             new InputArgument('suite', InputArgument::REQUIRED, 'suite to be tested'),
             new InputArgument('test', InputArgument::REQUIRED, 'test to be run'),
-            new InputOption('config', 'c', InputOption::VALUE_OPTIONAL, 'Use custom path for config'),
         ]);
     }
 
@@ -46,7 +45,7 @@ class GenerateCept extends Command
         $filename = $this->completeSuffix($filename, 'Cept');
         $gen = new Cept($config);
 
-        $full_path = rtrim( $config['path'], DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR . $filename;
+        $full_path = rtrim($config['path'], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $filename;
         $res = $this->save($full_path, $gen->produce());
         if (!$res) {
             $output->writeln("<error>Test $filename already exists</error>");

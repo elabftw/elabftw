@@ -23,6 +23,14 @@ use Zend\Stdlib\ErrorHandler;
 class AdapterOptions extends AbstractOptions
 {
     /**
+     * Prioritized properties ordered by prio to be set first
+     * in case a bulk of options sets set at once
+     *
+     * @var string[]
+     */
+    protected $__prioritizedProperties__ = [];
+
+    /**
      * The adapter using these options
      *
      * @var null|StorageInterface
@@ -79,7 +87,7 @@ class AdapterOptions extends AbstractOptions
     /**
      * Set key pattern
      *
-     * @param  null|string $keyPattern
+     * @param  string $keyPattern
      * @throws Exception\InvalidArgumentException
      * @return AdapterOptions
      */
@@ -260,5 +268,72 @@ class AdapterOptions extends AbstractOptions
         if ($ttl < 0) {
             throw new Exception\InvalidArgumentException("TTL can't be negative");
         }
+    }
+
+    /**
+     * Cast to array
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        $array = [];
+        $transform = function ($letters) {
+            $letter = array_shift($letters);
+            return '_' . strtolower($letter);
+        };
+        foreach ($this as $key => $value) {
+            if ($key === '__strictMode__' || $key === '__prioritizedProperties__') {
+                continue;
+            }
+            $normalizedKey = preg_replace_callback('/([A-Z])/', $transform, $key);
+            $array[$normalizedKey] = $value;
+        }
+        return $array;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * NOTE: This method was overwritten just to support prioritized properties
+     *       {@link https://github.com/zendframework/zf2/issues/6381}
+     *
+     * @param  array|Traversable|AbstractOptions $options
+     * @throws Exception\InvalidArgumentException
+     * @return AbstractOptions Provides fluent interface
+     */
+    public function setFromArray($options)
+    {
+        if ($this->__prioritizedProperties__) {
+            if ($options instanceof AbstractOptions) {
+                $options = $options->toArray();
+            }
+
+            if ($options instanceof Traversable) {
+                $options = iterator_to_array($options);
+            } elseif (!is_array($options)) {
+                throw new Exception\InvalidArgumentException(
+                    sprintf(
+                        'Parameter provided to %s must be an %s, %s or %s',
+                        __METHOD__,
+                        'array',
+                        'Traversable',
+                        'Zend\Stdlib\AbstractOptions'
+                    )
+                );
+            }
+
+            // Sort prioritized options to top
+            $options = array_change_key_case($options, CASE_LOWER);
+            foreach (array_reverse($this->__prioritizedProperties__) as $key) {
+                if (isset($options[$key])) {
+                    $options = [$key => $options[$key]] + $options;
+                } elseif (isset($options[($key = str_replace('_', '', $key))])) {
+                    $options = [$key => $options[$key]] + $options;
+                }
+            }
+        }
+
+        return parent::setFromArray($options);
     }
 }

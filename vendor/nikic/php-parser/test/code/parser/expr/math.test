@@ -19,6 +19,7 @@ $a * $b;
 $a + $b;
 $a << $b;
 $a >> $b;
+$a ** $b;
 
 // associativity
 $a * $b * $c;
@@ -27,6 +28,10 @@ $a * ($b * $c);
 // precedence
 $a + $b * $c;
 ($a + $b) * $c;
+
+// pow is special
+$a ** $b ** $c;
+($a ** $b) ** $c;
 -----
 array(
     0: Expr_BitwiseNot(
@@ -44,7 +49,7 @@ array(
             name: a
         )
     )
-    3: Expr_BitwiseAnd(
+    3: Expr_BinaryOp_BitwiseAnd(
         left: Expr_Variable(
             name: a
         )
@@ -52,7 +57,7 @@ array(
             name: b
         )
     )
-    4: Expr_BitwiseOr(
+    4: Expr_BinaryOp_BitwiseOr(
         left: Expr_Variable(
             name: a
         )
@@ -60,7 +65,7 @@ array(
             name: b
         )
     )
-    5: Expr_BitwiseXor(
+    5: Expr_BinaryOp_BitwiseXor(
         left: Expr_Variable(
             name: a
         )
@@ -68,7 +73,7 @@ array(
             name: b
         )
     )
-    6: Expr_Concat(
+    6: Expr_BinaryOp_Concat(
         left: Expr_Variable(
             name: a
         )
@@ -76,7 +81,7 @@ array(
             name: b
         )
     )
-    7: Expr_Div(
+    7: Expr_BinaryOp_Div(
         left: Expr_Variable(
             name: a
         )
@@ -84,7 +89,7 @@ array(
             name: b
         )
     )
-    8: Expr_Minus(
+    8: Expr_BinaryOp_Minus(
         left: Expr_Variable(
             name: a
         )
@@ -92,7 +97,7 @@ array(
             name: b
         )
     )
-    9: Expr_Mod(
+    9: Expr_BinaryOp_Mod(
         left: Expr_Variable(
             name: a
         )
@@ -100,7 +105,7 @@ array(
             name: b
         )
     )
-    10: Expr_Mul(
+    10: Expr_BinaryOp_Mul(
         left: Expr_Variable(
             name: a
         )
@@ -108,7 +113,7 @@ array(
             name: b
         )
     )
-    11: Expr_Plus(
+    11: Expr_BinaryOp_Plus(
         left: Expr_Variable(
             name: a
         )
@@ -116,7 +121,7 @@ array(
             name: b
         )
     )
-    12: Expr_ShiftLeft(
+    12: Expr_BinaryOp_ShiftLeft(
         left: Expr_Variable(
             name: a
         )
@@ -124,7 +129,7 @@ array(
             name: b
         )
     )
-    13: Expr_ShiftRight(
+    13: Expr_BinaryOp_ShiftRight(
         left: Expr_Variable(
             name: a
         )
@@ -132,8 +137,16 @@ array(
             name: b
         )
     )
-    14: Expr_Mul(
-        left: Expr_Mul(
+    14: Expr_BinaryOp_Pow(
+        left: Expr_Variable(
+            name: a
+        )
+        right: Expr_Variable(
+            name: b
+        )
+    )
+    15: Expr_BinaryOp_Mul(
+        left: Expr_BinaryOp_Mul(
             left: Expr_Variable(
                 name: a
             )
@@ -145,11 +158,11 @@ array(
             name: c
         )
     )
-    15: Expr_Mul(
+    16: Expr_BinaryOp_Mul(
         left: Expr_Variable(
             name: a
         )
-        right: Expr_Mul(
+        right: Expr_BinaryOp_Mul(
             left: Expr_Variable(
                 name: b
             )
@@ -158,11 +171,11 @@ array(
             )
         )
     )
-    16: Expr_Plus(
+    17: Expr_BinaryOp_Plus(
         left: Expr_Variable(
             name: a
         )
-        right: Expr_Mul(
+        right: Expr_BinaryOp_Mul(
             left: Expr_Variable(
                 name: b
             )
@@ -171,8 +184,34 @@ array(
             )
         )
     )
-    17: Expr_Mul(
-        left: Expr_Plus(
+    18: Expr_BinaryOp_Mul(
+        left: Expr_BinaryOp_Plus(
+            left: Expr_Variable(
+                name: a
+            )
+            right: Expr_Variable(
+                name: b
+            )
+        )
+        right: Expr_Variable(
+            name: c
+        )
+    )
+    19: Expr_BinaryOp_Pow(
+        left: Expr_Variable(
+            name: a
+        )
+        right: Expr_BinaryOp_Pow(
+            left: Expr_Variable(
+                name: b
+            )
+            right: Expr_Variable(
+                name: c
+            )
+        )
+    )
+    20: Expr_BinaryOp_Pow(
+        left: Expr_BinaryOp_Pow(
             left: Expr_Variable(
                 name: a
             )

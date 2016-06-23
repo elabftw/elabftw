@@ -13,12 +13,11 @@
 namespace phpDocumentor\Reflection\ClassReflector;
 
 use phpDocumentor\Reflection\FunctionReflector;
-use PHPParser_Node_Stmt_Class;
-use PHPParser_Node_Stmt_ClassMethod;
+use PhpParser\Node\Stmt\Class_;
 
 class MethodReflector extends FunctionReflector
 {
-    /** @var PHPParser_Node_Stmt_ClassMethod */
+    /** @var \PhpParser\Node\Stmt\ClassMethod */
     protected $node;
 
     /**
@@ -37,10 +36,10 @@ class MethodReflector extends FunctionReflector
      */
     public function getVisibility()
     {
-        if ($this->node->type & PHPParser_Node_Stmt_Class::MODIFIER_PROTECTED) {
+        if ($this->node->type & Class_::MODIFIER_PROTECTED) {
             return 'protected';
         }
-        if ($this->node->type & PHPParser_Node_Stmt_Class::MODIFIER_PRIVATE) {
+        if ($this->node->type & Class_::MODIFIER_PRIVATE) {
             return 'private';
         }
 
@@ -54,7 +53,7 @@ class MethodReflector extends FunctionReflector
      */
     public function isAbstract()
     {
-        return (bool) ($this->node->type & PHPParser_Node_Stmt_Class::MODIFIER_ABSTRACT);
+        return (bool) ($this->node->type & Class_::MODIFIER_ABSTRACT);
     }
 
     /**
@@ -64,7 +63,7 @@ class MethodReflector extends FunctionReflector
      */
     public function isStatic()
     {
-        return (bool) ($this->node->type & PHPParser_Node_Stmt_Class::MODIFIER_STATIC);
+        return (bool) ($this->node->type & Class_::MODIFIER_STATIC);
     }
 
     /**
@@ -74,6 +73,6 @@ class MethodReflector extends FunctionReflector
      */
     public function isFinal()
     {
-        return (bool) ($this->node->type & PHPParser_Node_Stmt_Class::MODIFIER_FINAL);
+        return (bool) ($this->node->type & Class_::MODIFIER_FINAL);
     }
 }

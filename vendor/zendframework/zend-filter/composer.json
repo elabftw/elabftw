@@ -34,8 +34,12 @@
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-master": "2.6-dev",
-            "dev-develop": "2.7-dev"
+            "dev-master": "2.7-dev",
+            "dev-develop": "2.8-dev"
+        },
+        "zf": {
+            "component": "Zend\\Filter",
+            "config-provider": "Zend\\Filter\\ConfigProvider"
         }
     },
     "autoload-dev": {

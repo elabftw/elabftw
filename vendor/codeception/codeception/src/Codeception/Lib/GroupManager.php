@@ -2,8 +2,10 @@
 namespace Codeception\Lib;
 
 use Codeception\Configuration;
-use Codeception\TestCase\Interfaces\Reported;
-use Codeception\TestCase\Interfaces\ScenarioDriven;
+use Codeception\Test\Interfaces\Reported;
+use Codeception\Test\Interfaces\Configurable;
+use Codeception\Test\Descriptor;
+use Codeception\TestInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -71,7 +73,9 @@ class GroupManager
                         // if the current line is blank then we need to move to the next line
                         // otherwise the current codeception directory becomes part of the group
                         // which causes every single test to run
-                        if (trim($test) === '') continue;
+                        if (trim($test) === '') {
+                            continue;
+                        }
 
                         $file = trim(Configuration::projectDir() . $test);
                         $file = str_replace(['/', '\\'], [DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR], $file);
@@ -79,8 +83,6 @@ class GroupManager
                     }
                     fclose($handle);
                 }
-            } else {
-                codecept_debug("Group '$group' is empty, no tests are loaded");
             }
         }
     }
@@ -88,8 +90,9 @@ class GroupManager
     public function groupsForTest(\PHPUnit_Framework_Test $test)
     {
         $groups = [];
-        if ($test instanceof ScenarioDriven) {
-            $groups = $test->getScenario()->getGroups();
+        $filename = Descriptor::getTestFileName($test);
+        if ($test instanceof TestInterface) {
+            $groups = $test->getMetadata()->getGroups();
         }
         if ($test instanceof Reported) {
             $info = $test->getReportFields();
@@ -97,9 +100,9 @@ class GroupManager
                 $groups = array_merge($groups, \PHPUnit_Util_Test::getGroups($info['class'], $info['name']));
             }
             $filename = str_replace(['\\\\', '//'], ['\\', '/'], $info['file']);
-        } else {
+        }
+        if ($test instanceof \PHPUnit_Framework_TestCase) {
             $groups = array_merge($groups, \PHPUnit_Util_Test::getGroups(get_class($test), $test->getName(false)));
-            $filename = (new \ReflectionClass($test))->getFileName();
         }
 
         foreach ($this->testsInGroups as $group => $tests) {

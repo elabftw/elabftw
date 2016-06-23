@@ -10,3 +10,15 @@ storage adapters (DB, File, Memcache, etc).
 
 - File issues at https://github.com/zendframework/zend-cache/issues
 - Documentation is at https://zendframework.github.io/zend-cache/
+
+## Benchmarks
+
+We provide scripts for benchmarking zend-cache using the
+[PHPBench](https://github.com/phpbench/phpbench) framework; these can be
+found in the `benchmark/` directory.
+
+To execute the benchmarks you can run the following command:
+
+```bash
+$ vendor/bin/phpbench run --report=aggregate
+```

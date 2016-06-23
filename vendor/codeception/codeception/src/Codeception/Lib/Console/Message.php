@@ -18,20 +18,19 @@ class Message
     {
         $args = array_merge([$this->message], func_get_args());
         $this->message = call_user_func_array('sprintf', $args);
-
         return $this;
     }
 
     public function style($name)
     {
         $this->message = sprintf('<%s>%s</%s>', $name, $this->message, $name);
-
         return $this;
     }
 
     public function width($length, $char = ' ')
     {
-        $message_length = strlen(strip_tags($this->message));
+        $message_length = $this->getLength();
+
         if ($message_length < $length) {
             $this->message .= str_repeat($char, $length - $message_length);
         }
@@ -40,7 +39,7 @@ class Message
 
     public function cut($length)
     {
-        $this->message = substr($this->message, 0, $length);
+        $this->message = mb_substr($this->message, 0, $length, 'utf-8');
         return $this;
     }
 
@@ -106,12 +105,9 @@ class Message
         return $this;
     }
 
-    public function getLength()
+    public function getLength($includeTags = false)
     {
-        if (function_exists('mb_strlen')) {
-            return mb_strlen($this->message, 'utf-8');
-        }
-        return strlen($this->message);
+        return mb_strwidth($includeTags ? $this->message : strip_tags($this->message), 'utf-8');
     }
 
     public function __toString()

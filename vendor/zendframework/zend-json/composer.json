@@ -9,26 +9,21 @@
     "homepage": "https://github.com/zendframework/zend-json",
     "extra": {
         "branch-alias": {
-            "dev-master": "2.6-dev",
-            "dev-develop": "2.7-dev"
+            "dev-master": "3.0-dev",
+            "dev-develop": "3.1-dev"
         }
     },
     "require": {
         "php": "^5.5 || ^7.0"
     },
     "require-dev": {
-        "zendframework/zend-http": "^2.5.4",
-        "zendframework/zend-server": "^2.6.1",
-        "zendframework/zend-stdlib": "^2.5 || ^3.0",
-        "zendframework/zendxml": "^1.0.2",
-        "fabpot/php-cs-fixer": "1.7.*",
+        "zendframework/zend-stdlib": "^2.7 || ^3.0",
+        "squizlabs/php_codesniffer": "^2.3",
         "phpunit/PHPUnit": "~4.0"
     },
     "suggest": {
-        "zendframework/zend-http": "Zend\\Http component, required to use Zend\\Json\\Server",
-        "zendframework/zend-server": "Zend\\Server component, required to use Zend\\Json\\Server",
-        "zendframework/zend-stdlib": "Zend\\Stdlib component, for use with caching Zend\\Json\\Server responses",
-        "zendframework/zendxml": "To support Zend\\Json\\Json::fromXml() usage"
+        "zendframework/zend-json-server": "For implementing JSON-RPC servers",
+        "zendframework/zend-xml2json": "For converting XML documents to JSON"
     },
     "autoload": {
         "psr-4": {
@@ -39,5 +34,16 @@
         "psr-4": {
             "ZendTest\\Json\\": "test/"
         }
+    },
+    "scripts": {
+        "check": [
+            "@cs-check",
+            "@test"
+        ],
+        "upload-coverage": "coveralls",
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf fix -v",
+        "test": "phpunit",
+        "test-coverage": "phpunit --coverage-clover clover.xml"
     }
 }

@@ -16,6 +16,10 @@ $a *= $b;
 $a += $b;
 $a <<= $b;
 $a >>= $b;
+$a **= $b;
+
+// chained assign
+$a = $b *= $c **= $d;
 
 // by ref assign
 $a =& $b;
@@ -41,7 +45,7 @@ array(
             name: b
         )
     )
-    1: Expr_AssignBitwiseAnd(
+    1: Expr_AssignOp_BitwiseAnd(
         var: Expr_Variable(
             name: a
         )
@@ -49,7 +53,7 @@ array(
             name: b
         )
     )
-    2: Expr_AssignBitwiseOr(
+    2: Expr_AssignOp_BitwiseOr(
         var: Expr_Variable(
             name: a
         )
@@ -57,7 +61,7 @@ array(
             name: b
         )
     )
-    3: Expr_AssignBitwiseXor(
+    3: Expr_AssignOp_BitwiseXor(
         var: Expr_Variable(
             name: a
         )
@@ -65,7 +69,7 @@ array(
             name: b
         )
     )
-    4: Expr_AssignConcat(
+    4: Expr_AssignOp_Concat(
         var: Expr_Variable(
             name: a
         )
@@ -73,7 +77,7 @@ array(
             name: b
         )
     )
-    5: Expr_AssignDiv(
+    5: Expr_AssignOp_Div(
         var: Expr_Variable(
             name: a
         )
@@ -81,7 +85,7 @@ array(
             name: b
         )
     )
-    6: Expr_AssignMinus(
+    6: Expr_AssignOp_Minus(
         var: Expr_Variable(
             name: a
         )
@@ -89,7 +93,7 @@ array(
             name: b
         )
     )
-    7: Expr_AssignMod(
+    7: Expr_AssignOp_Mod(
         var: Expr_Variable(
             name: a
         )
@@ -97,7 +101,7 @@ array(
             name: b
         )
     )
-    8: Expr_AssignMul(
+    8: Expr_AssignOp_Mul(
         var: Expr_Variable(
             name: a
         )
@@ -105,7 +109,7 @@ array(
             name: b
         )
     )
-    9: Expr_AssignPlus(
+    9: Expr_AssignOp_Plus(
         var: Expr_Variable(
             name: a
         )
@@ -113,7 +117,7 @@ array(
             name: b
         )
     )
-    10: Expr_AssignShiftLeft(
+    10: Expr_AssignOp_ShiftLeft(
         var: Expr_Variable(
             name: a
         )
@@ -121,7 +125,7 @@ array(
             name: b
         )
     )
-    11: Expr_AssignShiftRight(
+    11: Expr_AssignOp_ShiftRight(
         var: Expr_Variable(
             name: a
         )
@@ -129,7 +133,7 @@ array(
             name: b
         )
     )
-    12: Expr_AssignRef(
+    12: Expr_AssignOp_Pow(
         var: Expr_Variable(
             name: a
         )
@@ -137,7 +141,33 @@ array(
             name: b
         )
     )
-    13: Expr_AssignRef(
+    13: Expr_Assign(
+        var: Expr_Variable(
+            name: a
+        )
+        expr: Expr_AssignOp_Mul(
+            var: Expr_Variable(
+                name: b
+            )
+            expr: Expr_AssignOp_Pow(
+                var: Expr_Variable(
+                    name: c
+                )
+                expr: Expr_Variable(
+                    name: d
+                )
+            )
+        )
+    )
+    14: Expr_AssignRef(
+        var: Expr_Variable(
+            name: a
+        )
+        expr: Expr_Variable(
+            name: b
+        )
+    )
+    15: Expr_AssignRef(
         var: Expr_Variable(
             name: a
         )
@@ -151,7 +181,7 @@ array(
             )
         )
     )
-    14: Expr_Assign(
+    16: Expr_Assign(
         var: Expr_List(
             vars: array(
                 0: Expr_Variable(
@@ -163,7 +193,7 @@ array(
             name: b
         )
     )
-    15: Expr_Assign(
+    17: Expr_Assign(
         var: Expr_List(
             vars: array(
                 0: Expr_Variable(
@@ -179,7 +209,7 @@ array(
             name: c
         )
     )
-    16: Expr_Assign(
+    18: Expr_Assign(
         var: Expr_List(
             vars: array(
                 0: Expr_Variable(
@@ -202,22 +232,22 @@ array(
             name: e
         )
     )
-    17: Expr_PreInc(
+    19: Expr_PreInc(
         var: Expr_Variable(
             name: a
         )
     )
-    18: Expr_PostInc(
+    20: Expr_PostInc(
         var: Expr_Variable(
             name: a
         )
     )
-    19: Expr_PreDec(
+    21: Expr_PreDec(
         var: Expr_Variable(
             name: a
         )
     )
-    20: Expr_PostDec(
+    22: Expr_PostDec(
         var: Expr_Variable(
             name: a
         )

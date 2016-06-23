@@ -254,7 +254,7 @@ class Apc extends AbstractAdapter implements
         // remove namespace prefix
         $prefixL = strlen($prefix);
         $result  = [];
-        foreach ($fetch as $internalKey => & $value) {
+        foreach ($fetch as $internalKey => $value) {
             $result[substr($internalKey, $prefixL)] = $value;
         }
 
@@ -432,9 +432,9 @@ class Apc extends AbstractAdapter implements
 
         $prefix                = $namespace . $options->getNamespaceSeparator();
         $internalKeyValuePairs = [];
-        foreach ($normalizedKeyValuePairs as $normalizedKey => &$value) {
+        foreach ($normalizedKeyValuePairs as $normalizedKey => $value) {
             $internalKey = $prefix . $normalizedKey;
-            $internalKeyValuePairs[$internalKey] = &$value;
+            $internalKeyValuePairs[$internalKey] = $value;
         }
 
         $failedKeys = apc_store($internalKeyValuePairs, null, $options->getTtl());

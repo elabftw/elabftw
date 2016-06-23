@@ -8,7 +8,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
 /**
  * Generates skeleton for unit test as in classical PHPUnit.
  *
@@ -27,7 +26,6 @@ class GeneratePhpUnit extends Command
         $this->setDefinition([
             new InputArgument('suite', InputArgument::REQUIRED, 'suite where tests will be put'),
             new InputArgument('class', InputArgument::REQUIRED, 'class name'),
-            new InputOption('config', 'c', InputOption::VALUE_OPTIONAL, 'Use custom path for config'),
         ]);
         parent::configure();
     }

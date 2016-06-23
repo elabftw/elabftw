@@ -4,6 +4,8 @@ namespace Codeception\PHPUnit\ResultPrinter;
 use Codeception\PHPUnit\ResultPrinter as CodeceptionResultPrinter;
 use Codeception\Step;
 use Codeception\Step\Meta;
+use Codeception\Test\Descriptor;
+use Codeception\Test\Interfaces\ScenarioDriven;
 
 class HTML extends CodeceptionResultPrinter
 {
@@ -46,8 +48,7 @@ class HTML extends CodeceptionResultPrinter
 
         $this->templatePath = sprintf(
             '%s%stemplate%s',
-
-            dirname(__FILE__),
+            __DIR__,
             DIRECTORY_SEPARATOR,
             DIRECTORY_SEPARATOR
         );
@@ -62,23 +63,34 @@ class HTML extends CodeceptionResultPrinter
     {
     }
 
-    /**
-     * Handler for 'on test' event.
-     *
-     * @param  string $name
-     * @param  boolean $success
-     * @param  array $steps
-     */
-    protected function onTest($name, $success = true, array $steps = [], $time = 0)
+    public function endTest(\PHPUnit_Framework_Test $test, $time)
     {
+        $steps = [];
+        $success = ($this->testStatus == \PHPUnit_Runner_BaseTestRunner::STATUS_PASSED);
+        if ($success) {
+            $this->successful++;
+        }
+
+        if ($test instanceof ScenarioDriven) {
+            $steps = $test->getScenario()->getSteps();
+        }
         $this->timeTaken += $time;
 
         switch ($this->testStatus) {
-            case \PHPUnit_Runner_BaseTestRunner::STATUS_FAILURE: $scenarioStatus = 'scenarioFailed'; break;
-            case \PHPUnit_Runner_BaseTestRunner::STATUS_SKIPPED: $scenarioStatus = 'scenarioSkipped'; break;
-            case \PHPUnit_Runner_BaseTestRunner::STATUS_INCOMPLETE: $scenarioStatus = 'scenarioIncomplete'; break;
-            case \PHPUnit_Runner_BaseTestRunner::STATUS_ERROR: $scenarioStatus = 'scenarioFailed'; break;
-            default: $scenarioStatus = 'scenarioSuccess';
+            case \PHPUnit_Runner_BaseTestRunner::STATUS_FAILURE:
+                $scenarioStatus = 'scenarioFailed';
+                break;
+            case \PHPUnit_Runner_BaseTestRunner::STATUS_SKIPPED:
+                $scenarioStatus = 'scenarioSkipped';
+                break;
+            case \PHPUnit_Runner_BaseTestRunner::STATUS_INCOMPLETE:
+                $scenarioStatus = 'scenarioIncomplete';
+                break;
+            case \PHPUnit_Runner_BaseTestRunner::STATUS_ERROR:
+                $scenarioStatus = 'scenarioFailed';
+                break;
+            default:
+                $scenarioStatus = 'scenarioSuccess';
         }
 
         $stepsBuffer = '';
@@ -110,6 +122,7 @@ class HTML extends CodeceptionResultPrinter
         );
 
         $failure = '';
+        $name = Descriptor::getTestSignature($test);
         if (isset($this->failures[$name])) {
             $failTemplate = new \Text_Template(
                 $this->templatePath . 'fail.html'
@@ -118,12 +131,15 @@ class HTML extends CodeceptionResultPrinter
             $failure = $failTemplate->render();
         }
 
+        $toggle = $stepsBuffer ? '<span class="toggle">+</span>' : '';
+
         $scenarioTemplate->setVar(
             [
                 'id'             => ++$this->id,
-                'name'           => ucfirst($name),
+                'name'           => ucfirst(Descriptor::getTestAsString($test)),
                 'scenarioStatus' => $scenarioStatus,
                 'steps'          => $stepsBuffer,
+                'toggle'         => $toggle,
                 'failure'        => $failure,
                 'time'           => round($time, 2)
             ]
@@ -137,25 +153,28 @@ class HTML extends CodeceptionResultPrinter
         $suiteTemplate = new \Text_Template(
             $this->templatePath . 'suite.html'
         );
+        if (!$suite->getName()) {
+            return;
+        }
 
         $suiteTemplate->setVar(['suite' => ucfirst($suite->getName())]);
 
         $this->scenarios .= $suiteTemplate->render();
-
     }
 
     /**
      * Handler for 'end run' event.
-     *
      */
     protected function endRun()
     {
-
         $scenarioHeaderTemplate = new \Text_Template(
             $this->templatePath . 'scenario_header.html'
         );
 
-        $status = !$this->failed ? '<span style="color: green">OK</span>' : '<span style="color: #e74c3c">FAILED</span>';
+        $status = !$this->failed
+            ? '<span style="color: green">OK</span>'
+            : '<span style="color: #e74c3c">FAILED</span>';
+
 
         $scenarioHeaderTemplate->setVar(
             [
@@ -194,7 +213,7 @@ class HTML extends CodeceptionResultPrinter
      */
     public function addError(\PHPUnit_Framework_Test $test, \Exception $e, $time)
     {
-        $this->failures[$test->toString()] = $e->getMessage();
+        $this->failures[Descriptor::getTestSignature($test)] = $this->cleanMessage($e);
         parent::addError($test, $e, $time);
     }
 
@@ -207,7 +226,7 @@ class HTML extends CodeceptionResultPrinter
      */
     public function addFailure(\PHPUnit_Framework_Test $test, \PHPUnit_Framework_AssertionFailedError $e, $time)
     {
-        $this->failures[$test->toString()] = $e->getMessage();
+        $this->failures[Descriptor::getTestSignature($test)] = $this->cleanMessage($e);
         parent::addFailure($test, $e, $time);
     }
 
@@ -231,7 +250,14 @@ class HTML extends CodeceptionResultPrinter
     protected function renderSubsteps(Meta $metaStep, $substepsBuffer)
     {
         $metaTemplate = new \Text_Template($this->templatePath . 'substeps.html');
-        $metaTemplate->setVar(['metaStep' => $metaStep, 'steps' => $substepsBuffer, 'id' => uniqid()]);
+        $metaTemplate->setVar(['metaStep' => $metaStep, 'error' => $metaStep->hasFailed() ? 'failedStep' : '', 'steps' => $substepsBuffer, 'id' => uniqid()]);
         return $metaTemplate->render();
+    }
+
+    private function cleanMessage($exception)
+    {
+        $msg = $exception->getMessage();
+        $msg = str_replace(['<info>','</info>','<bold>','</bold>'], ['','','',''], $msg);
+        return htmlentities($msg);
     }
 }

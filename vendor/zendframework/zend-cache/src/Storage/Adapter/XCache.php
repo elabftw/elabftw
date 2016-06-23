@@ -54,9 +54,9 @@ class XCache extends AbstractAdapter implements
             throw new Exception\ExtensionNotLoadedException('Missing ext/xcache');
         }
 
-        if (PHP_SAPI == 'cli') {
+        if (PHP_SAPI == 'cli' && version_compare(phpversion('xcache'), '3.1.0') < 0) {
             throw new Exception\ExtensionNotLoadedException(
-                "ext/xcache isn't available on SAPI 'cli'"
+                "ext/xcache isn't available on SAPI 'cli' for versions less than 3.1.0"
             );
         }
 
@@ -341,9 +341,16 @@ class XCache extends AbstractAdapter implements
     {
         $options     = $this->getOptions();
         $namespace   = $options->getNamespace();
-        $prefix      = ($options === '') ? '' : $namespace . $options->getNamespaceSeparator();
+        $prefix      = ($namespace === '') ? '' : $namespace . $options->getNamespaceSeparator();
         $internalKey = $prefix . $normalizedKey;
         $ttl         = $options->getTtl();
+
+        if (is_object($value) || is_resource($value)) {
+            throw new Exception\InvalidArgumentException(sprintf(
+                "Cannot store data of type %s",
+                gettype($value)
+            ));
+        }
 
         if (!xcache_set($internalKey, $value, $ttl)) {
             $type = is_object($value) ? get_class($value) : gettype($value);
@@ -434,7 +441,7 @@ class XCache extends AbstractAdapter implements
                         'double'   => true,
                         'string'   => true,
                         'array'    => true,
-                        'object'   => 'object',
+                        'object'   => false,
                         'resource' => false,
                     ],
                     'supportedMetadata' => [

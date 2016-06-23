@@ -30,6 +30,11 @@ class PHPUnit_Framework_MockObject_Matcher_Parameters extends PHPUnit_Framework_
     protected $invocation;
 
     /**
+     * @var PHPUnit_Framework_ExpectationFailedException
+     */
+    private $parameterVerificationResult;
+
+    /**
      * @param array $parameters
      */
     public function __construct(array $parameters)
@@ -70,9 +75,18 @@ class PHPUnit_Framework_MockObject_Matcher_Parameters extends PHPUnit_Framework_
      */
     public function matches(PHPUnit_Framework_MockObject_Invocation $invocation)
     {
-        $this->invocation = $invocation;
+        $this->invocation                  = $invocation;
+        $this->parameterVerificationResult = null;
 
-        return $this->verify();
+        try {
+            $this->parameterVerificationResult = $this->verify();
+
+            return $this->parameterVerificationResult;
+        } catch (PHPUnit_Framework_ExpectationFailedException $e) {
+            $this->parameterVerificationResult = $e;
+
+            throw $this->parameterVerificationResult;
+        }
     }
 
     /**
@@ -80,16 +94,16 @@ class PHPUnit_Framework_MockObject_Matcher_Parameters extends PHPUnit_Framework_
      * does the matcher will get the invoked() method called which should check
      * if an expectation is met.
      *
-     * @param PHPUnit_Framework_MockObject_Invocation $invocation
-     *                                                            Object containing information on a mocked or stubbed method which
-     *                                                            was invoked.
-     *
      * @return bool
      *
      * @throws PHPUnit_Framework_ExpectationFailedException
      */
     public function verify()
     {
+        if (isset($this->parameterVerificationResult)) {
+            return $this->guardAgainstDuplicateEvaluationOfParameterConstraints();
+        }
+
         if ($this->invocation === null) {
             throw new PHPUnit_Framework_ExpectationFailedException(
                 'Mocked method does not exist.'
@@ -126,5 +140,19 @@ class PHPUnit_Framework_MockObject_Matcher_Parameters extends PHPUnit_Framework_
         }
 
         return true;
+    }
+
+    /**
+     * @return bool
+     *
+     * @throws PHPUnit_Framework_ExpectationFailedException
+     */
+    private function guardAgainstDuplicateEvaluationOfParameterConstraints()
+    {
+        if ($this->parameterVerificationResult instanceof Exception) {
+            throw $this->parameterVerificationResult;
+        }
+
+        return (bool) $this->parameterVerificationResult;
     }
 }

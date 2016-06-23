@@ -328,7 +328,16 @@ class Filesystem extends AbstractAdapter implements
         $glob = new GlobIterator($path, $flags);
 
         foreach ($glob as $pathname) {
-            $diff = array_diff($tags, explode("\n", $this->getFileContent($pathname)));
+            try {
+                $diff = array_diff($tags, explode("\n", $this->getFileContent($pathname)));
+            } catch (Exception\RuntimeException $exception) {
+                // ignore missing files because of possible raise conditions
+                // e.g. another process already deleted that item
+                if (!file_exists($pathname)) {
+                    continue;
+                }
+                throw $exception;
+            }
 
             $rem  = false;
             if ($disjunction && count($diff) < $tagCount) {

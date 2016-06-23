@@ -23,18 +23,24 @@ class Output extends ConsoleOutput
 
     protected $isInteractive = false;
 
-    function __construct($config)
+    public function __construct($config)
     {
         $this->config = array_merge($this->config, $config);
 
         // enable interactive output mode for CLI
-        $this->isInteractive = $this->config['interactive'] && isset($_SERVER['TERM']) && php_sapi_name() == 'cli' && $_SERVER['TERM'] != 'linux';
+        $this->isInteractive = $this->config['interactive']
+            && isset($_SERVER['TERM'])
+            && php_sapi_name() == 'cli'
+            && $_SERVER['TERM'] != 'linux';
 
         $formatter = new OutputFormatter($this->config['colors']);
+        $formatter->setStyle('default', new OutputFormatterStyle());
         $formatter->setStyle('bold', new OutputFormatterStyle(null, null, ['bold']));
         $formatter->setStyle('focus', new OutputFormatterStyle('magenta', null, ['bold']));
-        $formatter->setStyle('ok', new OutputFormatterStyle('white', 'magenta'));
-        $formatter->setStyle('error', new OutputFormatterStyle('white', 'red'));
+        $formatter->setStyle('ok', new OutputFormatterStyle('green', null, ['bold']));
+        $formatter->setStyle('error', new OutputFormatterStyle('white', 'red', ['bold']));
+        $formatter->setStyle('fail', new OutputFormatterStyle('red', null, ['bold']));
+        $formatter->setStyle('pending', new OutputFormatterStyle('yellow', null, ['bold']));
         $formatter->setStyle('debug', new OutputFormatterStyle('cyan'));
         $formatter->setStyle('comment', new OutputFormatterStyle('yellow'));
         $formatter->setStyle('info', new OutputFormatterStyle('green'));
@@ -69,7 +75,7 @@ class Output extends ConsoleOutput
         $this->writeln("<debug>  $message</debug>");
     }
 
-    function message($message)
+    public function message($message)
     {
         $message = call_user_func_array('sprintf', func_get_args());
         return new Message($message, $this);

@@ -19,25 +19,25 @@ use phpDocumentor\Reflection\DocBlock\Context;
 use phpDocumentor\Reflection\DocBlock\Location;
 use phpDocumentor\Reflection\Event\PostDocBlockExtractionEvent;
 use phpDocumentor\Reflection\Exception;
+use PhpParser\Node\Stmt\ClassMethod;
 use Psr\Log\LogLevel;
-use PHPParser_Comment_Doc;
-use PHPParser_Node;
-use PHPParser_Node_Const;
-use PHPParser_Node_Expr_FuncCall;
-use PHPParser_Node_Expr_Include;
-use PHPParser_Node_Name;
-use PHPParser_Node_Stmt_Class;
-use PHPParser_Node_Stmt_ClassConst;
-use PHPParser_Node_Stmt_ClassMethod;
-use PHPParser_Node_Stmt_Const;
-use PHPParser_Node_Stmt_Function;
-use PHPParser_Node_Stmt_InlineHTML;
-use PHPParser_Node_Stmt_Interface;
-use PHPParser_Node_Stmt_Property;
-use PHPParser_Node_Stmt_PropertyProperty;
-use PHPParser_Node_Stmt_Trait;
-use PHPParser_Node_Stmt_UseUse;
-use PHPParser_NodeVisitor;
+use PhpParser\Comment\Doc;
+use PhpParser\Node;
+use PhpParser\Node\Const_;
+use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\Include_;
+use PhpParser\Node\Name;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassConst;
+use PhpParser\Node\Stmt\Const_ as ConstStmt;
+use PhpParser\Node\Stmt\Function_;
+use PhpParser\Node\Stmt\InlineHTML;
+use PhpParser\Node\Stmt\Interface_;
+use PhpParser\Node\Stmt\Property;
+use PhpParser\Node\Stmt\PropertyProperty;
+use PhpParser\Node\Stmt\Trait_;
+use PhpParser\Node\Stmt\UseUse;
+use PhpParser\NodeVisitor;
 
 /**
  * Reflection class for a full file.
@@ -47,7 +47,7 @@ use PHPParser_NodeVisitor;
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
-class FileReflector extends ReflectionAbstract implements PHPParser_NodeVisitor
+class FileReflector extends ReflectionAbstract implements NodeVisitor
 {
     /** @var string An MD5 hashed representation of the contents of this file */
     protected $hash;
@@ -218,7 +218,7 @@ class FileReflector extends ReflectionAbstract implements PHPParser_NodeVisitor
         $node = null;
         $key = 0;
         foreach ($nodes as $k => $n) {
-            if (!$n instanceof PHPParser_Node_Stmt_InlineHTML) {
+            if (!$n instanceof InlineHTML) {
                 $node = $n;
                 $key = $k;
                 break;
@@ -233,7 +233,7 @@ class FileReflector extends ReflectionAbstract implements PHPParser_NodeVisitor
                 array_filter(
                     $comments,
                     function ($comment) {
-                        return $comment instanceof PHPParser_Comment_Doc;
+                        return $comment instanceof Doc;
                     }
                 )
             );
@@ -253,8 +253,8 @@ class FileReflector extends ReflectionAbstract implements PHPParser_NodeVisitor
                     // * it precedes a non-documentable element (thus no include,
                     //   require, class, function, define, const)
                     if (count($comments) > 1
-                        || (!$node instanceof PHPParser_Node_Stmt_Class
-                        && !$node instanceof PHPParser_Node_Stmt_Interface
+                        || (!$node instanceof Class_
+                        && !$node instanceof Interface_
                         && $docblock->hasTag('package'))
                         || !$this->isNodeDocumentable($node)
                     ) {
@@ -301,28 +301,28 @@ class FileReflector extends ReflectionAbstract implements PHPParser_NodeVisitor
      * - Constant, both const and define
      * - Function
      *
-     * @param PHPParser_Node $node
+     * @param Node $node
      *
      * @return bool
      */
-    protected function isNodeDocumentable(PHPParser_Node $node)
+    protected function isNodeDocumentable(Node $node)
     {
-        return ($node instanceof PHPParser_Node_Stmt_Class)
-            || ($node instanceof PHPParser_Node_Stmt_Interface)
-            || ($node instanceof PHPParser_Node_Stmt_ClassConst)
-            || ($node instanceof PHPParser_Node_Stmt_ClassMethod)
-            || ($node instanceof PHPParser_Node_Stmt_Const)
-            || ($node instanceof PHPParser_Node_Stmt_Function)
-            || ($node instanceof PHPParser_Node_Stmt_Property)
-            || ($node instanceof PHPParser_Node_Stmt_PropertyProperty)
-            || ($node instanceof PHPParser_Node_Stmt_Trait)
-            || ($node instanceof PHPParser_Node_Expr_Include)
-            || ($node instanceof PHPParser_Node_Expr_FuncCall
-            && ($node->name instanceof PHPParser_Node_Name)
+        return ($node instanceof Class_)
+            || ($node instanceof Interface_)
+            || ($node instanceof ClassConst)
+            || ($node instanceof ClassMethod)
+            || ($node instanceof ConstStmt)
+            || ($node instanceof Function_)
+            || ($node instanceof Property)
+            || ($node instanceof PropertyProperty)
+            || ($node instanceof Trait_)
+            || ($node instanceof Include_)
+            || ($node instanceof FuncCall
+            && ($node->name instanceof Name)
             && $node->name == 'define');
     }
 
-    public function enterNode(PHPParser_Node $node)
+    public function enterNode(Node $node)
     {
     }
 
@@ -418,7 +418,7 @@ class FileReflector extends ReflectionAbstract implements PHPParser_NodeVisitor
      * contains the comments. This method should be replaced by a piece of
      * code that interprets the comments in the AST.
      * This has not been done since that may be an extensive refactoring (each
-     * PHPParser_Node* contains a 'comments' attribute and must thus recursively
+     * PhpParser\Node* contains a 'comments' attribute and must thus recursively
      * be discovered)
      *
      * @return void
@@ -479,13 +479,13 @@ class FileReflector extends ReflectionAbstract implements PHPParser_NodeVisitor
         $this->filename = $filename;
     }
 
-    public function leaveNode(PHPParser_Node $node)
+    public function leaveNode(Node $node)
     {
         $prettyPrinter = new PrettyPrinter;
 
         switch (get_class($node)) {
-            case 'PHPParser_Node_Stmt_Use':
-                /** @var PHPParser_Node_Stmt_UseUse $use */
+            case 'PhpParser\Node\Stmt\Use_':
+                /** @var \PhpParser\Node\Stmt\UseUse $use */
                 foreach ($node->uses as $use) {
                     $this->context->setNamespaceAlias(
                         $use->alias,
@@ -493,31 +493,31 @@ class FileReflector extends ReflectionAbstract implements PHPParser_NodeVisitor
                     );
                 }
                 break;
-            case 'PHPParser_Node_Stmt_Namespace':
+            case 'PhpParser\Node\Stmt\Namespace_':
                 $this->context->setNamespace(
                     isset($node->name) && ($node->name) ? implode('\\', $node->name->parts) : ''
                 );
                 break;
-            case 'PHPParser_Node_Stmt_Class':
+            case 'PhpParser\Node\Stmt\Class_':
                 $class = new ClassReflector($node, $this->context);
                 $class->parseSubElements();
                 $this->classes[] = $class;
                 break;
-            case 'PHPParser_Node_Stmt_Trait':
+            case 'PhpParser\Node\Stmt\Trait_':
                 $trait = new TraitReflector($node, $this->context);
                 $trait->parseSubElements();
                 $this->traits[] = $trait;
                 break;
-            case 'PHPParser_Node_Stmt_Interface':
+            case 'PhpParser\Node\Stmt\Interface_':
                 $interface = new InterfaceReflector($node, $this->context);
                 $interface->parseSubElements();
                 $this->interfaces[] = $interface;
                 break;
-            case 'PHPParser_Node_Stmt_Function':
+            case 'PhpParser\Node\Stmt\Function_':
                 $function = new FunctionReflector($node, $this->context);
                 $this->functions[] = $function;
                 break;
-            case 'PHPParser_Node_Stmt_Const':
+            case 'PhpParser\Node\Stmt\Const_':
                 foreach ($node->consts as $constant) {
                     $reflector = new ConstantReflector(
                         $node,
@@ -527,8 +527,8 @@ class FileReflector extends ReflectionAbstract implements PHPParser_NodeVisitor
                     $this->constants[] = $reflector;
                 }
                 break;
-            case 'PHPParser_Node_Expr_FuncCall':
-                if (($node->name instanceof PHPParser_Node_Name)
+            case 'PhpParser\Node\Expr\FuncCall':
+                if (($node->name instanceof Name)
                     && ($node->name == 'define')
                     && isset($node->args[0])
                     && isset($node->args[1])
@@ -542,15 +542,15 @@ class FileReflector extends ReflectionAbstract implements PHPParser_NodeVisitor
                     $nameParts = explode('\\', $name);
                     $shortName = end($nameParts);
 
-                    $constant = new PHPParser_Node_Const($shortName, $node->args[1]->value, $node->getAttributes());
-                    $constant->namespacedName = new PHPParser_Node_Name($name);
+                    $constant = new Const_($shortName, $node->args[1]->value, $node->getAttributes());
+                    $constant->namespacedName = new Name($name);
 
-                    $constant_statement = new \PHPParser_Node_Stmt_Const(array($constant));
+                    $constant_statement = new ConstStmt(array($constant));
                     $constant_statement->setAttribute('comments', array($node->getDocComment()));
                     $this->constants[] = new ConstantReflector($constant_statement, $this->context, $constant);
                 }
                 break;
-            case 'PHPParser_Node_Expr_Include':
+            case 'PhpParser\Node\Expr\Include_':
                 $include = new IncludeReflector($node, $this->context);
                 $this->includes[] = $include;
                 break;

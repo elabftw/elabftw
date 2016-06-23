@@ -32,12 +32,15 @@ abstract class PatternFactory
      */
     public static function factory($patternName, $options = [])
     {
+        if ($options instanceof Pattern\PatternOptions) {
+            $options = $options->toArray();
+        }
+
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
         }
-        if (is_array($options)) {
-            $options = new Pattern\PatternOptions($options);
-        } elseif (!$options instanceof Pattern\PatternOptions) {
+
+        if (! is_array($options)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s expects an array, Traversable object, or %s\Pattern\PatternOptions object; received "%s"',
                 __METHOD__,
@@ -47,13 +50,11 @@ abstract class PatternFactory
         }
 
         if ($patternName instanceof Pattern\PatternInterface) {
-            $patternName->setOptions($options);
+            $patternName->setOptions(new Pattern\PatternOptions($options));
             return $patternName;
         }
 
-        $pattern = static::getPluginManager()->get($patternName);
-        $pattern->setOptions($options);
-        return $pattern;
+        return static::getPluginManager()->get($patternName, $options);
     }
 
     /**

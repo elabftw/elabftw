@@ -14,6 +14,6 @@ namespace phpDocumentor\Reflection;
 
 class TraitReflector extends ClassReflector
 {
-    /** @var \PHPParser_Node_Stmt_Trait */
+    /** @var \PhpParser\Node\Stmt\Trait_ */
     protected $node;
 }

@@ -11,12 +11,12 @@
  */
 namespace phpDocumentor\Reflection;
 
-use PHPParser_Node_Expr;
+use PhpParser\Node\Expr;
 
 /**
- * Class for testing PHPParser_Node_Expr.
+ * Class for testing PhpParser_Node_Expr.
  *
- * Extends the PHPParser_Node_Expr so properties and abstract methods can be mocked,
+ * Extends the PhpParser_Node_Expr so properties and abstract methods can be mocked,
  * and therefore tested.
  *
  * @author    Vasil Rangelov <boen.robot@gmail.com>
@@ -24,6 +24,6 @@ use PHPParser_Node_Expr;
  * @license   http://www.opensource.org/licenses/mit-license.php MIT
  * @link      http://phpdoc.org
  */
-class NodeExprMock extends PHPParser_Node_Expr
+class NodeExprMock extends Expr
 {
 }

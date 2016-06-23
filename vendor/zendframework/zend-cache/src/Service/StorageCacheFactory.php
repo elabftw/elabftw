@@ -9,10 +9,10 @@
 
 namespace Zend\Cache\Service;
 
+use Interop\Container\ContainerInterface;
 use Zend\Cache\Storage\StorageInterface;
 use Zend\Cache\StorageFactory;
 use Zend\ServiceManager\FactoryInterface;
-use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
@@ -20,8 +20,12 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  */
 class StorageCacheFactory implements FactoryInterface
 {
+    use PluginManagerLookupTrait;
+
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
+        $this->prepareStorageFactory($container);
+
         $config = $container->get('config');
         $cacheConfig = isset($config['cache']) ? $config['cache'] : [];
         return StorageFactory::factory($cacheConfig);

@@ -61,7 +61,7 @@ abstract class Glob
                 self::GLOB_NOSORT   => GLOB_NOSORT,
                 self::GLOB_NOCHECK  => GLOB_NOCHECK,
                 self::GLOB_NOESCAPE => GLOB_NOESCAPE,
-                self::GLOB_BRACE    => GLOB_BRACE,
+                self::GLOB_BRACE    => defined('GLOB_BRACE') ? GLOB_BRACE : 0,
                 self::GLOB_ONLYDIR  => GLOB_ONLYDIR,
                 self::GLOB_ERR      => GLOB_ERR,
             ];

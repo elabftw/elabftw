@@ -131,10 +131,10 @@ class FirefoxProfile {
       $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($extension_datas, RecursiveDirectoryIterator::SKIP_DOTS), RecursiveIteratorIterator::SELF_FIRST);
       foreach ($iterator as $item) {
         if ($item->isDir()) {
-	  mkdir($temp_dir . DIRECTORY_SEPARATOR . $dirname . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
-	} else {
-	  copy($item, $temp_dir . DIRECTORY_SEPARATOR . $dirname . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
-	}
+          mkdir($temp_dir . DIRECTORY_SEPARATOR . $dirname . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+        } else {
+          copy($item, $temp_dir . DIRECTORY_SEPARATOR . $dirname . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+        }
       }
     }
 
@@ -150,15 +150,18 @@ class FirefoxProfile {
 
     $dir = new RecursiveDirectoryIterator($temp_dir);
     $files = new RecursiveIteratorIterator($dir);
+
+    $dir_prefix = preg_replace(
+        '#\\\\#',
+        '\\\\\\\\',
+        $temp_dir.DIRECTORY_SEPARATOR
+    );
+
     foreach ($files as $name => $object) {
       if (is_dir($name)) {
         continue;
       }
-      $dir_prefix = preg_replace(
-        '#\\\\#',
-        '\\\\\\\\',
-        $temp_dir.DIRECTORY_SEPARATOR
-      );
+
       $path = preg_replace("#^{$dir_prefix}#", "", $name);
       $zip->addFile($name, $path);
     }
@@ -246,11 +249,15 @@ class FirefoxProfile {
    */
   private function extractTo($xpi, $target_dir) {
     $zip = new ZipArchive();
-    if ($zip->open($xpi)) {
-      $zip->extractTo($target_dir);
-      $zip->close();
+    if (file_exists($xpi)) {
+      if ($zip->open($xpi)) {
+        $zip->extractTo($target_dir);
+        $zip->close();
+      } else {
+        throw new \Exception("Failed to open the firefox extension. '$xpi'");
+      }
     } else {
-      throw new \Exception("Failed to open the firefox extension. '$xpi'");
+      throw new \Exception("Firefox extension doesn't exist. '$xpi'");
     }
     return $this;
   }

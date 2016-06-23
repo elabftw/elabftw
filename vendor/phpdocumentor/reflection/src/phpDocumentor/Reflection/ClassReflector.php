@@ -12,9 +12,9 @@
 
 namespace phpDocumentor\Reflection;
 
-use PHPParser_Node_Name;
-use PHPParser_Node_Stmt_Class;
-use PHPParser_Node_Stmt_TraitUse;
+use PhpParser\Node\Name;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\TraitUse;
 
 /**
  * Provides static reflection for a class.
@@ -25,7 +25,7 @@ use PHPParser_Node_Stmt_TraitUse;
  */
 class ClassReflector extends InterfaceReflector
 {
-    /** @var \PHPParser_Node_Stmt_Class */
+    /** @var Class_ */
     protected $node;
 
     /** @var string[] */
@@ -33,9 +33,9 @@ class ClassReflector extends InterfaceReflector
 
     public function parseSubElements()
     {
-        /** @var \PHPParser_Node_Stmt_TraitUse $stmt  */
+        /** @var TraitUse $stmt  */
         foreach ($this->node->stmts as $stmt) {
-            if ($stmt instanceof \PHPParser_Node_Stmt_TraitUse) {
+            if ($stmt instanceof TraitUse) {
                 foreach ($stmt->traits as $trait) {
                     $this->traits[] = '\\' . (string) $trait;
                 }
@@ -52,7 +52,7 @@ class ClassReflector extends InterfaceReflector
      */
     public function isAbstract()
     {
-        return (bool) ($this->node->type & PHPParser_Node_Stmt_Class::MODIFIER_ABSTRACT);
+        return (bool) ($this->node->type & Class_::MODIFIER_ABSTRACT);
     }
 
     /**
@@ -62,7 +62,7 @@ class ClassReflector extends InterfaceReflector
      */
     public function isFinal()
     {
-        return (bool) ($this->node->type & PHPParser_Node_Stmt_Class::MODIFIER_FINAL);
+        return (bool) ($this->node->type & Class_::MODIFIER_FINAL);
     }
 
     /**
@@ -77,7 +77,7 @@ class ClassReflector extends InterfaceReflector
 
     public function getParentClass()
     {
-        return $this->node->extends ? '\\'.(string) $this->node->extends : '';
+        return isset($this->node->extends) ? '\\'.(string) $this->node->extends : '';
     }
 
     /**
@@ -88,8 +88,8 @@ class ClassReflector extends InterfaceReflector
     public function getInterfaces()
     {
         $names = array();
-        if ($this->node->implements) {
-            /** @var PHPParser_Node_Name */
+        if (isset($this->node->implements)) {
+            /** @var Name */
             foreach ($this->node->implements as $node) {
                 $names[] = '\\'.(string) $node;
             }

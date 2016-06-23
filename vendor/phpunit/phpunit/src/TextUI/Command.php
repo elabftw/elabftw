@@ -86,8 +86,11 @@ class PHPUnit_TextUI_Command
         'tap'                     => null,
         'teamcity'                => null,
         'testdox'                 => null,
+        'testdox-group='          => null,
+        'testdox-exclude-group='  => null,
         'testdox-html='           => null,
         'testdox-text='           => null,
+        'testdox-xml='            => null,
         'test-suffix='            => null,
         'testsuite='              => null,
         'verbose'                 => null,
@@ -177,7 +180,7 @@ class PHPUnit_TextUI_Command
      *
      * @return PHPUnit_TextUI_TestRunner
      *
-     * @since  Method available since Release 3.6.0
+     * @since Method available since Release 3.6.0
      */
     protected function createRunner()
     {
@@ -340,13 +343,13 @@ class PHPUnit_TextUI_Command
                         getcwd()
                     );
 
-                    print "Bootstrap script (relative to path shown above; default: vendor/autoload.php): ";
+                    print 'Bootstrap script (relative to path shown above; default: vendor/autoload.php): ';
                     $bootstrapScript = trim(fgets(STDIN));
 
-                    print "Tests directory (relative to path shown above; default: tests): ";
+                    print 'Tests directory (relative to path shown above; default: tests): ';
                     $testsDirectory = trim(fgets(STDIN));
 
-                    print "Source directory (relative to path shown above; default: src): ";
+                    print 'Source directory (relative to path shown above; default: src): ';
                     $src = trim(fgets(STDIN));
 
                     if ($bootstrapScript == '') {
@@ -361,7 +364,7 @@ class PHPUnit_TextUI_Command
                         $src = 'src';
                     }
 
-                    $generator = new ConfigurationGenerator;
+                    $generator = new PHPUnit_Util_ConfigurationGenerator;
 
                     file_put_contents(
                         'phpunit.xml',
@@ -487,12 +490,30 @@ class PHPUnit_TextUI_Command
                     $this->arguments['printer'] = 'PHPUnit_Util_TestDox_ResultPrinter_Text';
                     break;
 
+                case '--testdox-group':
+                    $this->arguments['testdoxGroups'] = explode(
+                        ',',
+                        $option[1]
+                    );
+                    break;
+
+                case '--testdox-exclude-group':
+                    $this->arguments['testdoxExcludeGroups'] = explode(
+                        ',',
+                        $option[1]
+                    );
+                    break;
+
                 case '--testdox-html':
                     $this->arguments['testdoxHTMLFile'] = $option[1];
                     break;
 
                 case '--testdox-text':
                     $this->arguments['testdoxTextFile'] = $option[1];
+                    break;
+
+                case '--testdox-xml':
+                    $this->arguments['testdoxXMLFile'] = $option[1];
                     break;
 
                 case '--no-configuration':
@@ -993,6 +1014,7 @@ Logging Options:
   --log-json <file>         Log test execution in JSON format.
   --testdox-html <file>     Write agile documentation in HTML format to file.
   --testdox-text <file>     Write agile documentation in Text format to file.
+  --testdox-xml <file>      Write agile documentation in XML format to file.
   --reverse-list            Print defects in reverse order
 
 Test Selection Options:
@@ -1039,6 +1061,8 @@ Test Execution Options:
   --tap                     Report test execution progress in TAP format.
   --teamcity                Report test execution progress in TeamCity format.
   --testdox                 Report test execution progress in TestDox format.
+  --testdox-group           Only include tests from the specified group(s).
+  --testdox-exclude-group   Exclude tests from the specified group(s).
   --printer <printer>       TestListener implementation to use.
 
 Configuration Options:

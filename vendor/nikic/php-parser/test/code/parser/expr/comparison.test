@@ -9,11 +9,12 @@ $a == $b;
 $a === $b;
 $a != $b;
 $a !== $b;
+$a <=> $b;
 $a instanceof B;
 $a instanceof $b;
 -----
 array(
-    0: Expr_Smaller(
+    0: Expr_BinaryOp_Smaller(
         left: Expr_Variable(
             name: a
         )
@@ -21,7 +22,7 @@ array(
             name: b
         )
     )
-    1: Expr_SmallerOrEqual(
+    1: Expr_BinaryOp_SmallerOrEqual(
         left: Expr_Variable(
             name: a
         )
@@ -29,7 +30,7 @@ array(
             name: b
         )
     )
-    2: Expr_Greater(
+    2: Expr_BinaryOp_Greater(
         left: Expr_Variable(
             name: a
         )
@@ -37,7 +38,7 @@ array(
             name: b
         )
     )
-    3: Expr_GreaterOrEqual(
+    3: Expr_BinaryOp_GreaterOrEqual(
         left: Expr_Variable(
             name: a
         )
@@ -45,7 +46,7 @@ array(
             name: b
         )
     )
-    4: Expr_Equal(
+    4: Expr_BinaryOp_Equal(
         left: Expr_Variable(
             name: a
         )
@@ -53,7 +54,7 @@ array(
             name: b
         )
     )
-    5: Expr_Identical(
+    5: Expr_BinaryOp_Identical(
         left: Expr_Variable(
             name: a
         )
@@ -61,7 +62,7 @@ array(
             name: b
         )
     )
-    6: Expr_NotEqual(
+    6: Expr_BinaryOp_NotEqual(
         left: Expr_Variable(
             name: a
         )
@@ -69,7 +70,7 @@ array(
             name: b
         )
     )
-    7: Expr_NotIdentical(
+    7: Expr_BinaryOp_NotIdentical(
         left: Expr_Variable(
             name: a
         )
@@ -77,7 +78,15 @@ array(
             name: b
         )
     )
-    8: Expr_Instanceof(
+    8: Expr_BinaryOp_Spaceship(
+        left: Expr_Variable(
+            name: a
+        )
+        right: Expr_Variable(
+            name: b
+        )
+    )
+    9: Expr_Instanceof(
         expr: Expr_Variable(
             name: a
         )
@@ -87,7 +96,7 @@ array(
             )
         )
     )
-    9: Expr_Instanceof(
+    10: Expr_Instanceof(
         expr: Expr_Variable(
             name: a
         )

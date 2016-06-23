@@ -6,11 +6,10 @@ $_SERVER['argv'][1] = '--no-configuration';
 $_SERVER['argv'][2] = '--testdox-html';
 $_SERVER['argv'][3] = 'php://stdout';
 $_SERVER['argv'][4] = 'BankAccountTest';
-$_SERVER['argv'][5] = dirname(__FILE__) . '/../_files/BankAccountTest.php';
+$_SERVER['argv'][5] = __DIR__ . '/../_files/BankAccountTest.php';
 
 require __DIR__ . '/../bootstrap.php';
 PHPUnit_TextUI_Command::main();
-?>
 --EXPECTF--
 PHPUnit %s by Sebastian Bergmann and contributors.
 <!doctype html>
@@ -23,23 +22,17 @@ PHPUnit %s by Sebastian Bergmann and contributors.
                 text-rendering: optimizeLegibility;
                 font-variant-ligatures: common-ligatures;
                 font-kerning: normal;
-                margin-left: 1vw;
-            }
-
-            body > ul {
-                max-width: 60vw;
+                margin-left: 2em;
             }
 
             body > ul > li {
                 font-family: Source Serif Pro, PT Sans, Trebuchet MS, Helvetica, Arial;
-                font-weight: 400;
-                font-size: 1vw;
-                line-height: 1.5vw;
+                font-size: 2em;
             }
 
             h2 {
                 font-family: Tahoma, Helvetica, Arial;
-                font-size: 1.5vw;
+                font-size: 3em;
             }
 
             ul {
@@ -58,6 +51,6 @@ PHPUnit %s by Sebastian Bergmann and contributors.
     </body>
 </html>
 
-Time: %s, Memory: %sMb
+Time: %s, Memory: %s
 
 OK (3 tests, 3 assertions)

@@ -12,8 +12,8 @@
 
 namespace phpDocumentor\Reflection;
 
-use PHPParser_Lexer;
-use PHPParser_Parser;
+use PhpParser\Lexer as BaseLexer;
+use PhpParser\Parser;
 
 /**
  * Custom lexer for phpDocumentor.
@@ -28,7 +28,7 @@ use PHPParser_Parser;
  * @license http://www.opensource.org/licenses/mit-license.php MIT
  * @link    http://phpdoc.org
  */
-class Lexer extends PHPParser_Lexer
+class Lexer extends BaseLexer
 {
     /**
      * Retrieves the next token and determines the associated attributes and
@@ -60,15 +60,15 @@ class Lexer extends PHPParser_Lexer
      * Returns whether the given token id is a scalar that will be interpreted
      * by PHP-Parser.
      *
-     * @param int $tokenId The id to check, must match a \PHPParser_Parser::T_*
+     * @param int $tokenId The id to check, must match a \PhpParser_Parser::T_*
      *     constant.
      *
      * @return bool
      */
     protected function isTokenScalar($tokenId)
     {
-        return $tokenId == PHPParser_Parser::T_CONSTANT_ENCAPSED_STRING
-            || $tokenId == PHPParser_Parser::T_LNUMBER
-            || $tokenId == PHPParser_Parser::T_DNUMBER;
+        return $tokenId == Parser::T_CONSTANT_ENCAPSED_STRING
+            || $tokenId == Parser::T_LNUMBER
+            || $tokenId == Parser::T_DNUMBER;
     }
 }

@@ -36,9 +36,6 @@ class Build extends Command
 
     protected function configure()
     {
-        $this->setDefinition([
-            new InputOption('config', 'c', InputOption::VALUE_OPTIONAL, 'Use custom path for config'),
-        ]);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -59,8 +56,8 @@ class Build extends Command
 
         $file = $this->buildPath(
             Configuration::supportDir(),
-            $settings['class_name']) . $this->getClassName($settings['class_name']
-        );
+            $settings['class_name']
+        ) . $this->getClassName($settings['class_name']);
         $file .=  '.php';
         return $this->save($file, $content);
     }

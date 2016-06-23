@@ -10,8 +10,8 @@ class A extends B implements C, D {
     private $f;
 
     public function a() {}
-    public static function b() {}
-    public final function c() {}
+    public static function b($a) {}
+    public final function c() : B {}
     protected function d() {}
     private function e() {}
 }
@@ -19,6 +19,7 @@ class A extends B implements C, D {
 array(
     0: Stmt_Class(
         type: 0
+        name: A
         extends: Name(
             parts: array(
                 0: B
@@ -91,49 +92,64 @@ array(
             4: Stmt_ClassMethod(
                 type: 1
                 byRef: false
+                name: a
                 params: array(
                 )
+                returnType: null
                 stmts: array(
                 )
-                name: a
             )
             5: Stmt_ClassMethod(
                 type: 9
                 byRef: false
+                name: b
                 params: array(
+                    0: Param(
+                        type: null
+                        byRef: false
+                        variadic: false
+                        name: a
+                        default: null
+                    )
                 )
+                returnType: null
                 stmts: array(
                 )
-                name: b
             )
             6: Stmt_ClassMethod(
                 type: 33
                 byRef: false
+                name: c
                 params: array(
+                )
+                returnType: Name(
+                    parts: array(
+                        0: B
+                    )
                 )
                 stmts: array(
                 )
-                name: c
             )
             7: Stmt_ClassMethod(
                 type: 2
                 byRef: false
+                name: d
                 params: array(
                 )
+                returnType: null
                 stmts: array(
                 )
-                name: d
             )
             8: Stmt_ClassMethod(
                 type: 4
                 byRef: false
+                name: e
                 params: array(
                 )
+                returnType: null
                 stmts: array(
                 )
-                name: e
             )
         )
-        name: A
     )
 )

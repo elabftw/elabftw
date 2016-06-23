@@ -11,7 +11,7 @@
  */
 namespace phpDocumentor\Reflection;
 
-use PHPParser_Node_Scalar_String;
+use PhpParser\Node\Scalar\String_;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -35,7 +35,7 @@ class PrettyPrinterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(
             'Another value',
             $object->pScalar_String(
-                new PHPParser_Node_Scalar_String(
+                new String_(
                     'Value',
                     array('originalValue' => 'Another value')
                 )

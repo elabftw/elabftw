@@ -8,7 +8,11 @@
  * file that was distributed with this source code.
  */
 
-use SebastianBergmann\Comparator\Comparator;
+use SebastianBergmann\CodeCoverage\CodeCoverage;
+use SebastianBergmann\CodeCoverage\Exception as CodeCoverageException;
+use SebastianBergmann\CodeCoverage\CoveredCodeNotExecutedException;
+use SebastianBergmann\CodeCoverage\MissingCoversAnnotationException;
+use SebastianBergmann\CodeCoverage\UnintentionallyCoveredCodeException;
 use SebastianBergmann\ResourceOperations\ResourceOperations;
 
 /**
@@ -76,7 +80,7 @@ class PHPUnit_Framework_TestResult implements Countable
     /**
      * Code Coverage information.
      *
-     * @var PHP_CodeCoverage
+     * @var CodeCoverage
      */
     protected $codeCoverage;
 
@@ -166,6 +170,11 @@ class PHPUnit_Framework_TestResult implements Countable
     protected $lastTestFailed = false;
 
     /**
+     * @var bool
+     */
+    private $registerMockObjectsFromTestArgumentsRecursively = false;
+
+    /**
      * Registers a TestListener.
      *
      * @param  PHPUnit_Framework_TestListener
@@ -192,7 +201,7 @@ class PHPUnit_Framework_TestResult implements Countable
     /**
      * Flushes all flushable TestListeners.
      *
-     * @since  Method available since Release 3.0.0
+     * @since Method available since Release 3.0.0
      */
     public function flushListeners()
     {
@@ -338,7 +347,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @param PHPUnit_Framework_TestSuite $suite
      *
-     * @since  Method available since Release 2.2.0
+     * @since Method available since Release 2.2.0
      */
     public function startTestSuite(PHPUnit_Framework_TestSuite $suite)
     {
@@ -356,7 +365,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @param PHPUnit_Framework_TestSuite $suite
      *
-     * @since  Method available since Release 2.2.0
+     * @since Method available since Release 2.2.0
      */
     public function endTestSuite(PHPUnit_Framework_TestSuite $suite)
     {
@@ -413,7 +422,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @return bool
      *
-     * @since  Method available since Release 4.0.0
+     * @since Method available since Release 4.0.0
      */
     public function allHarmless()
     {
@@ -425,7 +434,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @return int
      *
-     * @since  Method available since Release 4.0.0
+     * @since Method available since Release 4.0.0
      */
     public function riskyCount()
     {
@@ -457,7 +466,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @return array
      *
-     * @since  Method available since Release 4.0.0
+     * @since Method available since Release 4.0.0
      */
     public function risky()
     {
@@ -479,7 +488,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @return bool
      *
-     * @since  Method available since Release 3.0.0
+     * @since Method available since Release 3.0.0
      */
     public function noneSkipped()
     {
@@ -491,7 +500,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @return int
      *
-     * @since  Method available since Release 3.0.0
+     * @since Method available since Release 3.0.0
      */
     public function skippedCount()
     {
@@ -503,7 +512,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @return array
      *
-     * @since  Method available since Release 3.0.0
+     * @since Method available since Release 3.0.0
      */
     public function skipped()
     {
@@ -555,7 +564,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @return int
      *
-     * @since  Method available since Release 5.1.0
+     * @since Method available since Release 5.1.0
      */
     public function warningCount()
     {
@@ -567,7 +576,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @return array
      *
-     * @since  Method available since Release 5.1.0
+     * @since Method available since Release 5.1.0
      */
     public function warnings()
     {
@@ -579,7 +588,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @return array
      *
-     * @since  Method available since Release 3.4.0
+     * @since Method available since Release 3.4.0
      */
     public function passed()
     {
@@ -591,7 +600,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @return PHPUnit_Framework_TestSuite
      *
-     * @since  Method available since Release 3.0.0
+     * @since Method available since Release 3.0.0
      */
     public function topTestSuite()
     {
@@ -603,7 +612,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @return bool If code coverage should be collected
      *
-     * @since  Method available since Release 3.2.0
+     * @since Method available since Release 3.2.0
      */
     public function getCollectCodeCoverageInformation()
     {
@@ -618,6 +627,12 @@ class PHPUnit_Framework_TestResult implements Countable
     public function run(PHPUnit_Framework_Test $test)
     {
         PHPUnit_Framework_Assert::resetCount();
+
+        if ($test instanceof PHPUnit_Framework_TestCase) {
+            $test->setRegisterMockObjectsFromTestArgumentsRecursively(
+                $this->registerMockObjectsFromTestArgumentsRecursively
+            );
+        }
 
         $error      = false;
         $failure    = false;
@@ -777,16 +792,18 @@ class PHPUnit_Framework_TestResult implements Countable
                     $linesToBeCovered,
                     $linesToBeUsed
                 );
-            } catch (PHP_CodeCoverage_UnintentionallyCoveredCodeException $cce) {
-                $this->addFailure(
-                    $test,
-                    new PHPUnit_Framework_UnintentionallyCoveredCodeError(
-                        'This test executed code that is not listed as code to be covered or used:' .
-                        PHP_EOL . $cce->getMessage()
-                    ),
-                    $time
-                );
-            } catch (PHP_CodeCoverage_CoveredCodeNotExecutedException $cce) {
+            } catch (UnintentionallyCoveredCodeException $cce) {
+                if (!$test->isMedium() && !$test->isLarge()) {
+                    $this->addFailure(
+                        $test,
+                        new PHPUnit_Framework_UnintentionallyCoveredCodeError(
+                            'This test executed code that is not listed as code to be covered or used:' .
+                            PHP_EOL . $cce->getMessage()
+                        ),
+                        $time
+                    );
+                }
+            } catch (CoveredCodeNotExecutedException $cce) {
                 $this->addFailure(
                     $test,
                     new PHPUnit_Framework_CoveredCodeNotExecutedException(
@@ -795,7 +812,7 @@ class PHPUnit_Framework_TestResult implements Countable
                     ),
                     $time
                 );
-            } catch (PHP_CodeCoverage_MissingCoversAnnotationException $cce) {
+            } catch (MissingCoversAnnotationException $cce) {
                 $this->addFailure(
                     $test,
                     new PHPUnit_Framework_MissingCoversAnnotationException(
@@ -803,7 +820,7 @@ class PHPUnit_Framework_TestResult implements Countable
                     ),
                     $time
                 );
-            } catch (PHP_CodeCoverage_Exception $cce) {
+            } catch (CodeCoverageException $cce) {
                 $error = true;
 
                 if (!isset($e)) {
@@ -888,11 +905,11 @@ class PHPUnit_Framework_TestResult implements Countable
     }
 
     /**
-     * Returns the PHP_CodeCoverage object.
+     * Returns the code coverage object.
      *
-     * @return PHP_CodeCoverage
+     * @return CodeCoverage
      *
-     * @since  Method available since Release 3.5.0
+     * @since Method available since Release 3.5.0
      */
     public function getCodeCoverage()
     {
@@ -900,13 +917,13 @@ class PHPUnit_Framework_TestResult implements Countable
     }
 
     /**
-     * Sets the PHP_CodeCoverage object.
+     * Sets the code coverage object.
      *
-     * @param PHP_CodeCoverage $codeCoverage
+     * @param CodeCoverage $codeCoverage
      *
      * @since Method available since Release 3.6.0
      */
-    public function setCodeCoverage(PHP_CodeCoverage $codeCoverage)
+    public function setCodeCoverage(CodeCoverage $codeCoverage)
     {
         $this->codeCoverage = $codeCoverage;
     }
@@ -918,7 +935,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @throws PHPUnit_Framework_Exception
      *
-     * @since  Method available since Release 3.2.14
+     * @since Method available since Release 3.2.14
      */
     public function convertErrorsToExceptions($flag)
     {
@@ -934,7 +951,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @return bool
      *
-     * @since  Method available since Release 3.4.0
+     * @since Method available since Release 3.4.0
      */
     public function getConvertErrorsToExceptions()
     {
@@ -948,7 +965,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @throws PHPUnit_Framework_Exception
      *
-     * @since  Method available since Release 3.5.0
+     * @since Method available since Release 3.5.0
      */
     public function stopOnError($flag)
     {
@@ -966,7 +983,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @throws PHPUnit_Framework_Exception
      *
-     * @since  Method available since Release 3.1.0
+     * @since Method available since Release 3.1.0
      */
     public function stopOnFailure($flag)
     {
@@ -984,7 +1001,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @throws PHPUnit_Framework_Exception
      *
-     * @since  Method available since Release 5.1.0
+     * @since Method available since Release 5.1.0
      */
     public function stopOnWarning($flag)
     {
@@ -1000,7 +1017,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @throws PHPUnit_Framework_Exception
      *
-     * @since  Method available since Release 4.0.0
+     * @since Method available since Release 4.0.0
      */
     public function beStrictAboutTestsThatDoNotTestAnything($flag)
     {
@@ -1014,7 +1031,7 @@ class PHPUnit_Framework_TestResult implements Countable
     /**
      * @return bool
      *
-     * @since  Method available since Release 4.0.0
+     * @since Method available since Release 4.0.0
      */
     public function isStrictAboutTestsThatDoNotTestAnything()
     {
@@ -1026,7 +1043,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @throws PHPUnit_Framework_Exception
      *
-     * @since  Method available since Release 4.0.0
+     * @since Method available since Release 4.0.0
      */
     public function beStrictAboutOutputDuringTests($flag)
     {
@@ -1040,7 +1057,7 @@ class PHPUnit_Framework_TestResult implements Countable
     /**
      * @return bool
      *
-     * @since  Method available since Release 4.0.0
+     * @since Method available since Release 4.0.0
      */
     public function isStrictAboutOutputDuringTests()
     {
@@ -1052,7 +1069,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @throws PHPUnit_Framework_Exception
      *
-     * @since  Method available since Release 5.0.0
+     * @since Method available since Release 5.0.0
      */
     public function beStrictAboutResourceUsageDuringSmallTests($flag)
     {
@@ -1066,7 +1083,7 @@ class PHPUnit_Framework_TestResult implements Countable
     /**
      * @return bool
      *
-     * @since  Method available since Release 5.0.0
+     * @since Method available since Release 5.0.0
      */
     public function isStrictAboutResourceUsageDuringSmallTests()
     {
@@ -1078,7 +1095,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @throws PHPUnit_Framework_Exception
      *
-     * @since  Method available since Release 5.0.0
+     * @since Method available since Release 5.0.0
      */
     public function enforceTimeLimit($flag)
     {
@@ -1092,7 +1109,7 @@ class PHPUnit_Framework_TestResult implements Countable
     /**
      * @return bool
      *
-     * @since  Method available since Release 5.0.0
+     * @since Method available since Release 5.0.0
      */
     public function enforcesTimeLimit()
     {
@@ -1104,7 +1121,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @throws PHPUnit_Framework_Exception
      *
-     * @since  Method available since Release 4.2.0
+     * @since Method available since Release 4.2.0
      */
     public function beStrictAboutTodoAnnotatedTests($flag)
     {
@@ -1118,7 +1135,7 @@ class PHPUnit_Framework_TestResult implements Countable
     /**
      * @return bool
      *
-     * @since  Method available since Release 4.2.0
+     * @since Method available since Release 4.2.0
      */
     public function isStrictAboutTodoAnnotatedTests()
     {
@@ -1132,7 +1149,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @throws PHPUnit_Framework_Exception
      *
-     * @since  Method available since Release 4.0.0
+     * @since Method available since Release 4.0.0
      */
     public function stopOnRisky($flag)
     {
@@ -1150,7 +1167,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @throws PHPUnit_Framework_Exception
      *
-     * @since  Method available since Release 3.5.0
+     * @since Method available since Release 3.5.0
      */
     public function stopOnIncomplete($flag)
     {
@@ -1168,7 +1185,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @throws PHPUnit_Framework_Exception
      *
-     * @since  Method available since Release 3.1.0
+     * @since Method available since Release 3.1.0
      */
     public function stopOnSkipped($flag)
     {
@@ -1206,7 +1223,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @throws PHPUnit_Framework_Exception
      *
-     * @since  Method available since Release 3.6.0
+     * @since Method available since Release 3.6.0
      */
     public function setTimeoutForSmallTests($timeout)
     {
@@ -1224,7 +1241,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @throws PHPUnit_Framework_Exception
      *
-     * @since  Method available since Release 3.6.0
+     * @since Method available since Release 3.6.0
      */
     public function setTimeoutForMediumTests($timeout)
     {
@@ -1242,7 +1259,7 @@ class PHPUnit_Framework_TestResult implements Countable
      *
      * @throws PHPUnit_Framework_Exception
      *
-     * @since  Method available since Release 3.6.0
+     * @since Method available since Release 3.6.0
      */
     public function setTimeoutForLargeTests($timeout)
     {
@@ -1251,6 +1268,30 @@ class PHPUnit_Framework_TestResult implements Countable
         }
 
         $this->timeoutForLargeTests = $timeout;
+    }
+
+    /**
+     * Returns the set timeout for large tests.
+     *
+     * @return int
+     */
+    public function getTimeoutForLargeTests()
+    {
+        return $this->timeoutForLargeTests;
+    }
+
+    /**
+     * @param bool $flag
+     *
+     * @since Method available since Release 5.4.0
+     */
+    public function setRegisterMockObjectsFromTestArgumentsRecursively($flag)
+    {
+        if (!is_bool($flag)) {
+            throw PHPUnit_Util_InvalidArgumentHelper::factory(1, 'boolean');
+        }
+
+        $this->registerMockObjectsFromTestArgumentsRecursively = $flag;
     }
 
     /**

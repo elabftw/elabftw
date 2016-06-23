@@ -1,9 +1,7 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @link      http://github.com/zendframework/zend-json for the canonical source repository
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -70,7 +68,7 @@ class Decoder
     protected $decodeType;
 
     /**
-     * @var $_tokenValue
+     * @var mixed
      */
     protected $tokenValue;
 
@@ -99,7 +97,7 @@ class Decoder
                     // single, escaped unicode character
                     $utf16 = chr(hexdec(substr($chrs, ($i + 2), 2)))
                            . chr(hexdec(substr($chrs, ($i + 4), 2)));
-                    $utf8char = self::_utf162utf8($utf16);
+                    $utf8char = self::utf162utf8($utf16);
                     $search  = ['\\', "\n", "\t", "\r", chr(0x08), chr(0x0C), '"', '\'', '/'];
                     if (in_array($utf8char, $search)) {
                         $replace = ['\\\\', '\\n', '\\t', '\\r', '\\b', '\\f', '\\"', '\\\'', '\\/'];
@@ -152,8 +150,8 @@ class Decoder
      *
      * @param string $source     String source to decode
      * @param int    $decodeType How objects should be decoded -- see
-     * {@link Zend\Json\Json::TYPE_ARRAY} and {@link Zend\Json\Json::TYPE_OBJECT} for
-     * valid values
+     *     {@link Json::TYPE_ARRAY} and {@link Json::TYPE_OBJECT} for * valid
+     *     values
      * @throws InvalidArgumentException
      */
     protected function __construct($source, $decodeType)
@@ -170,72 +168,73 @@ class Decoder
                 $this->decodeType = $decodeType;
                 break;
             default:
-                throw new InvalidArgumentException("Unknown decode type '{$decodeType}', please use one of the constants Json::TYPE_*");
+                throw new InvalidArgumentException(sprintf(
+                    'Unknown decode type "%s", please use one of the Json::TYPE_* constants',
+                    $decodeType
+                ));
         }
 
         // Set pointer at first token
-        $this->_getNextToken();
+        $this->getNextToken();
     }
 
     /**
-     * Decode a JSON source string
+     * Decode a JSON source string.
      *
-     * Decodes a JSON encoded string. The value returned will be one of the
+     * Decodes a JSON encoded string; the value returned will be one of the
      * following:
-     *        - integer
-     *        - float
-     *        - boolean
-     *        - null
-     *      - stdClass
-     *      - array
-     *         - array of one or more of the above types
+     *
+     * - integer
+     * - float
+     * - boolean
+     * - null
+     * - stdClass
+     * - array
+     * - array of one or more of the above types
      *
      * By default, decoded objects will be returned as associative arrays; to
-     * return a stdClass object instead, pass {@link Zend\Json\Json::TYPE_OBJECT} to
+     * return a stdClass object instead, pass {@link Json::TYPE_OBJECT} to
      * the $objectDecodeType parameter.
      *
-     * @static
-     * @access public
-     * @param string $source String to be decoded
+     * @param string $source String to be decoded.
      * @param int $objectDecodeType How objects should be decoded; should be
-     * either or {@link Zend\Json\Json::TYPE_ARRAY} or
-     * {@link Zend\Json\Json::TYPE_OBJECT}; defaults to TYPE_ARRAY
+     *     either or {@link Json::TYPE_ARRAY} or {@link Json::TYPE_OBJECT};
+     *     defaults to Json::TYPE_OBJECT.
      * @return mixed
      */
     public static function decode($source, $objectDecodeType = Json::TYPE_OBJECT)
     {
         $decoder = new static($source, $objectDecodeType);
-        return $decoder->_decodeValue();
+        return $decoder->decodeValue();
     }
 
     /**
-     * Recursive driving routine for supported toplevel tops
+     * Recursive routine for supported toplevel types.
      *
      * @return mixed
      */
-    protected function _decodeValue()
+    protected function decodeValue()
     {
         switch ($this->token) {
             case self::DATUM:
                 $result  = $this->tokenValue;
-                $this->_getNextToken();
+                $this->getNextToken();
                 return($result);
             case self::LBRACE:
-                return($this->_decodeObject());
+                return($this->decodeObject());
             case self::LBRACKET:
-                return($this->_decodeArray());
+                return($this->decodeArray());
             default:
                 return;
         }
     }
 
     /**
-     * Decodes an object of the form:
-     *  { "attribute: value, "attribute2" : value,...}
+     * Decodes an object of the form { "attribute: value, "attribute2" : value, ... }
      *
-     * If Zend\Json\Encoder was used to encode the original object then
-     * a special attribute called __className which specifies a class
-     * name that should wrap the data contained within the encoded source.
+     * If Zend\Json\Encoder was used to encode the original object, then
+     * a special attribute called __className will specify a class
+     * name with which to wrap the data contained within the encoded source.
      *
      * Decodes to either an array or stdClass object, based on the value of
      * {@link $decodeType}. If invalid $decodeType present, returns as an
@@ -244,36 +243,36 @@ class Decoder
      * @return array|stdClass
      * @throws RuntimeException
      */
-    protected function _decodeObject()
+    protected function decodeObject()
     {
         $members = [];
-        $tok = $this->_getNextToken();
+        $tok     = $this->getNextToken();
 
-        while ($tok && $tok != self::RBRACE) {
-            if ($tok != self::DATUM || ! is_string($this->tokenValue)) {
-                throw new RuntimeException('Missing key in object encoding: ' . $this->source);
+        while ($tok && $tok !== self::RBRACE) {
+            if ($tok !== self::DATUM || ! is_string($this->tokenValue)) {
+                throw new RuntimeException(sprintf('Missing key in object encoding: %s', $this->source));
             }
 
             $key = $this->tokenValue;
-            $tok = $this->_getNextToken();
+            $tok = $this->getNextToken();
 
-            if ($tok != self::COLON) {
-                throw new RuntimeException('Missing ":" in object encoding: ' . $this->source);
+            if ($tok !== self::COLON) {
+                throw new RuntimeException(sprintf('Missing ":" in object encoding: %s', $this->source));
             }
 
-            $this->_getNextToken();
-            $members[$key] = $this->_decodeValue();
+            $this->getNextToken();
+            $members[$key] = $this->decodeValue();
             $tok = $this->token;
 
-            if ($tok == self::RBRACE) {
+            if ($tok === self::RBRACE) {
                 break;
             }
 
-            if ($tok != self::COMMA) {
-                throw new RuntimeException('Missing "," in object encoding: ' . $this->source);
+            if ($tok !== self::COMMA) {
+                throw new RuntimeException(sprintf('Missing "," in object encoding: %s', $this->source));
             }
 
-            $tok = $this->_getNextToken();
+            $tok = $this->getNextToken();
         }
 
         switch ($this->decodeType) {
@@ -288,70 +287,71 @@ class Decoder
                 }
                 break;
             case Json::TYPE_ARRAY:
+                // intentionally fall-through
             default:
                 $result = $members;
                 break;
         }
 
-        $this->_getNextToken();
+        $this->getNextToken();
         return $result;
     }
 
     /**
-     * Decodes a JSON array format:
-     *    [element, element2,...,elementN]
+     * Decodes the JSON array format [element, element2, ..., elementN]
      *
      * @return array
      * @throws RuntimeException
      */
-    protected function _decodeArray()
+    protected function decodeArray()
     {
         $result = [];
-        $tok = $this->_getNextToken(); // Move past the '['
+        $tok    = $this->getNextToken(); // Move past the '['
         $index  = 0;
 
-        while ($tok && $tok != self::RBRACKET) {
-            $result[$index++] = $this->_decodeValue();
+        while ($tok && $tok !== self::RBRACKET) {
+            $result[$index++] = $this->decodeValue();
 
             $tok = $this->token;
 
-            if ($tok == self::RBRACKET || !$tok) {
+            if ($tok == self::RBRACKET || ! $tok) {
                 break;
             }
 
-            if ($tok != self::COMMA) {
-                throw new RuntimeException('Missing "," in array encoding: ' . $this->source);
+            if ($tok !== self::COMMA) {
+                throw new RuntimeException(sprintf('Missing "," in array encoding: %s', $this->source));
             }
 
-            $tok = $this->_getNextToken();
+            $tok = $this->getNextToken();
         }
 
-        $this->_getNextToken();
+        $this->getNextToken();
         return $result;
     }
 
     /**
-     * Removes whitespace characters from the source input
+     * Removes whitespace characters from the source input.
      */
-    protected function _eatWhitespace()
+    protected function eatWhitespace()
     {
         if (preg_match('/([\t\b\f\n\r ])*/s', $this->source, $matches, PREG_OFFSET_CAPTURE, $this->offset)
-            && $matches[0][1] == $this->offset) {
+            && $matches[0][1] == $this->offset
+        ) {
             $this->offset += strlen($matches[0][0]);
         }
     }
 
     /**
-     * Retrieves the next token from the source stream
+     * Retrieves the next token from the source stream.
      *
-     * @return int Token constant value specified in class definition
+     * @return int Token constant value specified in class definition.
      * @throws RuntimeException
      */
-    protected function _getNextToken()
+    protected function getNextToken()
     {
         $this->token      = self::EOF;
         $this->tokenValue = null;
-        $this->_eatWhitespace();
+        $this->eatWhitespace();
 
         if ($this->offset >= $this->sourceLength) {
             return(self::EOF);
@@ -391,70 +391,74 @@ class Decoder
 
                     $chr = $str{$i};
 
-                    if ($chr == '\\') {
-                        $i++;
-                        if ($i >= $strLength) {
-                            break;
-                        }
-                        $chr = $str{$i};
-                        switch ($chr) {
-                            case '"':
-                                $result .= '"';
-                                break;
-                            case '\\':
-                                $result .= '\\';
-                                break;
-                            case '/':
-                                $result .= '/';
-                                break;
-                            case 'b':
-                                $result .= "\x08";
-                                break;
-                            case 'f':
-                                $result .= "\x0c";
-                                break;
-                            case 'n':
-                                $result .= "\x0a";
-                                break;
-                            case 'r':
-                                $result .= "\x0d";
-                                break;
-                            case 't':
-                                $result .= "\x09";
-                                break;
-                            case '\'':
-                                $result .= '\'';
-                                break;
-                            default:
-                                throw new RuntimeException("Illegal escape sequence '{$chr}'");
-                        }
-                    } elseif ($chr == '"') {
+                    if ($chr === '"') {
                         break;
-                    } else {
+                    }
+
+                    if ($chr !== '\\') {
                         $result .= $chr;
+                        continue;
+                    }
+
+                    $i++;
+
+                    if ($i >= $strLength) {
+                        break;
+                    }
+
+                    $chr = $str{$i};
+                    switch ($chr) {
+                        case '"':
+                            $result .= '"';
+                            break;
+                        case '\\':
+                            $result .= '\\';
+                            break;
+                        case '/':
+                            $result .= '/';
+                            break;
+                        case 'b':
+                            $result .= "\x08";
+                            break;
+                        case 'f':
+                            $result .= "\x0c";
+                            break;
+                        case 'n':
+                            $result .= "\x0a";
+                            break;
+                        case 'r':
+                            $result .= "\x0d";
+                            break;
+                        case 't':
+                            $result .= "\x09";
+                            break;
+                        case '\'':
+                            $result .= '\'';
+                            break;
+                        default:
+                            throw new RuntimeException(sprintf('Illegal escape sequence "%s"', $chr));
                     }
                 } while ($i < $strLength);
 
                 $this->token = self::DATUM;
-                //$this->tokenValue = substr($str, $start + 1, $i - $start - 1);
                 $this->tokenValue = $result;
                 break;
             case 't':
-                if (($i+ 3) < $strLength && substr($str, $start, 4) == "true") {
+                if (($i + 3) < $strLength && substr($str, $start, 4) === "true") {
                     $this->token = self::DATUM;
                 }
                 $this->tokenValue = true;
                 $i += 3;
                 break;
             case 'f':
-                if (($i+ 4) < $strLength && substr($str, $start, 5) == "false") {
+                if (($i + 4) < $strLength && substr($str, $start, 5) === "false") {
                     $this->token = self::DATUM;
                 }
                 $this->tokenValue = false;
                 $i += 4;
                 break;
             case 'n':
-                if (($i+ 3) < $strLength && substr($str, $start, 4) == "null") {
+                if (($i + 3) < $strLength && substr($str, $start, 4) === "null") {
                     $this->token = self::DATUM;
                 }
                 $this->tokenValue = null;
@@ -462,33 +466,36 @@ class Decoder
                 break;
         }
 
-        if ($this->token != self::EOF) {
+        if ($this->token !== self::EOF) {
             $this->offset = $i + 1; // Consume the last token character
-            return($this->token);
+            return ($this->token);
         }
 
         $chr = $str{$i};
-        if ($chr == '-' || $chr == '.' || ($chr >= '0' && $chr <= '9')) {
-            if (preg_match('/-?([0-9])*(\.[0-9]*)?((e|E)((-|\+)?)[0-9]+)?/s', $str, $matches, PREG_OFFSET_CAPTURE, $start) && $matches[0][1] == $start) {
-                $datum = $matches[0][0];
 
-                if (is_numeric($datum)) {
-                    if (preg_match('/^0\d+$/', $datum)) {
-                        throw new RuntimeException("Octal notation not supported by JSON (value: {$datum})");
-                    } else {
-                        $val  = intval($datum);
-                        $fVal = floatval($datum);
-                        $this->tokenValue = ($val == $fVal ? $val : $fVal);
-                    }
-                } else {
-                    throw new RuntimeException("Illegal number format: {$datum}");
-                }
-
-                $this->token = self::DATUM;
-                $this->offset = $start + strlen($datum);
-            }
-        } else {
+        if ($chr !== '-' && $chr !== '.' && ($chr < '0' || $chr > '9')) {
             throw new RuntimeException('Illegal Token');
+        }
+
+        if (preg_match('/-?([0-9])*(\.[0-9]*)?((e|E)((-|\+)?)[0-9]+)?/s', $str, $matches, PREG_OFFSET_CAPTURE, $start)
+            && $matches[0][1] == $start
+        ) {
+            $datum = $matches[0][0];
+
+            if (! is_numeric($datum)) {
+                throw new RuntimeException(sprintf('Illegal number format: %s', $datum));
+            }
+
+            if (preg_match('/^0\d+$/', $datum)) {
+                throw new RuntimeException(sprintf('Octal notation not supported by JSON (value: %o)', $datum));
+            }
+
+            $val  = intval($datum);
+            $fVal = floatval($datum);
+            $this->tokenValue = ($val == $fVal ? $val : $fVal);
+
+            $this->token = self::DATUM;
+            $this->offset = $start + strlen($datum);
         }
 
         return $this->token;
@@ -497,17 +504,17 @@ class Decoder
     /**
      * Convert a string from one UTF-16 char to one UTF-8 char.
      *
-     * Normally should be handled by mb_convert_encoding, but
-     * provides a slower PHP-only method for installations
-     * that lack the multibyte string extension.
+     * Normally should be handled by mb_convert_encoding, but provides a slower
+     * PHP-only method for installations that lack the multibyte string
+     * extension.
      *
-     * This method is from the Solar Framework by Paul M. Jones
+     * This method is from the Solar Framework by Paul M. Jones.
      *
      * @link   http://solarphp.com
      * @param  string $utf16 UTF-16 character
      * @return string UTF-8 character
      */
-    protected static function _utf162utf8($utf16)
+    protected static function utf162utf8($utf16)
     {
         // Check for mb extension otherwise do by hand.
         if (function_exists('mb_convert_encoding')) {
@@ -518,22 +525,22 @@ class Decoder
 
         switch (true) {
             case ((0x7F & $bytes) == $bytes):
-                // this case should never be reached, because we are in ASCII range
+                // This case should never be reached, because we are in ASCII range;
                 // see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
                 return chr(0x7F & $bytes);
 
             case (0x07FF & $bytes) == $bytes:
-                // return a 2-byte UTF-8 character
+                // Return a 2-byte UTF-8 character;
                 // see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
                 return chr(0xC0 | (($bytes >> 6) & 0x1F))
-                     . chr(0x80 | ($bytes & 0x3F));
+                    . chr(0x80 | ($bytes & 0x3F));
 
             case (0xFFFF & $bytes) == $bytes:
-                // return a 3-byte UTF-8 character
+                // Return a 3-byte UTF-8 character;
                 // see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
                 return chr(0xE0 | (($bytes >> 12) & 0x0F))
-                     . chr(0x80 | (($bytes >> 6) & 0x3F))
-                     . chr(0x80 | ($bytes & 0x3F));
+                    . chr(0x80 | (($bytes >> 6) & 0x3F))
+                    . chr(0x80 | ($bytes & 0x3F));
         }
 
         // ignoring UTF-32 for now, sorry

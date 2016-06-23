@@ -203,11 +203,10 @@ abstract class StorageFactory
             $plugin = static::getPluginManager()->get($pluginName);
         }
 
-        if (!$options instanceof Storage\Plugin\PluginOptions) {
-            $options = new Storage\Plugin\PluginOptions($options);
-        }
-
         if ($options) {
+            if (!$options instanceof Storage\Plugin\PluginOptions) {
+                $options = new Storage\Plugin\PluginOptions($options);
+            }
             $plugin->setOptions($options);
         }
 

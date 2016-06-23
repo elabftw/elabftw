@@ -3,16 +3,16 @@ namespace Codeception\Subscriber;
 
 use Codeception\Event\SuiteEvent;
 use Codeception\Events;
-use Codeception\TestCase;
+use Codeception\TestInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class BeforeAfterTest implements EventSubscriberInterface
 {
     use Shared\StaticEvents;
 
-    static $events = [
+    public static $events = [
         Events::SUITE_BEFORE => 'beforeClass',
-        Events::SUITE_AFTER  => 'afterClass',
+        Events::SUITE_AFTER  => ['afterClass', 100]
     ];
 
     protected $hooks = [];
@@ -23,6 +23,11 @@ class BeforeAfterTest implements EventSubscriberInterface
     {
         foreach ($e->getSuite()->tests() as $test) {
             /** @var $test \PHPUnit_Framework_Test  * */
+            if ($test instanceof \PHPUnit_Framework_TestSuite_DataProvider) {
+                $potentialTestClass = strstr($test->getName(), '::', true);
+                $this->hooks[$potentialTestClass] = \PHPUnit_Util_Test::getHookMethods($potentialTestClass);
+            }
+
             $testClass = get_class($test);
             $this->hooks[$testClass] = \PHPUnit_Util_Test::getHookMethods($testClass);
         }

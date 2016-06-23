@@ -70,6 +70,38 @@ class PatternPluginManager extends AbstractPluginManager
     protected $instanceOf = Pattern\PatternInterface::class;
 
     /**
+     * Override get to inject options as PatternOptions instance.
+     *
+     * {@inheritDoc}
+     */
+    public function get($plugin, array $options = [], $usePeeringServiceManagers = true)
+    {
+        if (empty($options)) {
+            return parent::get($plugin, [], $usePeeringServiceManagers);
+        }
+
+        $plugin = parent::get($plugin, [], $usePeeringServiceManagers);
+        $plugin->setOptions(new Pattern\PatternOptions($options));
+        return $plugin;
+    }
+
+    /**
+     * Override build to inject options as PatternOptions instance.
+     *
+     * {@inheritDoc}
+     */
+    public function build($plugin, array $options = null)
+    {
+        if (empty($options)) {
+            return parent::build($plugin);
+        }
+
+        $plugin = parent::build($plugin);
+        $plugin->setOptions(new Pattern\PatternOptions($options));
+        return $plugin;
+    }
+
+    /**
      * Validate the plugin is of the expected type (v3).
      *
      * Validates against `$instanceOf`.

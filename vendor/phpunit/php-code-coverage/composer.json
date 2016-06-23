@@ -30,12 +30,12 @@
         "sebastian/version": "~1.0|~2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~5",
+        "phpunit/phpunit": "^5.4",
         "ext-xdebug": ">=2.1.4"
     },
     "suggest": {
         "ext-dom": "*",
-        "ext-xdebug": ">=2.2.1",
+        "ext-xdebug": ">=2.4.0",
         "ext-xmlwriter": "*"
     },
     "autoload": {
@@ -45,7 +45,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.3.x-dev"
+            "dev-master": "4.0.x-dev"
         }
     }
 }

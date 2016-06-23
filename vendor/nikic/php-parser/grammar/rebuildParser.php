@@ -4,8 +4,7 @@ $grammarFile           = __DIR__ . '/zend_language_parser.phpy';
 $skeletonFile          = __DIR__ . '/kmyacc.php.parser';
 $tmpGrammarFile        = __DIR__ . '/tmp_parser.phpy';
 $tmpResultFile         = __DIR__ . '/tmp_parser.php';
-$parserResultFile      = __DIR__ . '/../lib/PHPParser/Parser.php';
-$debugParserResultFile = __DIR__ . '/../lib/PHPParser/Parser/Debug.php';
+$parserResultFile      = __DIR__ . '/../lib/PhpParser/Parser.php';
 
 // check for kmyacc.exe binary in this directory, otherwise fall back to global name
 $kmyacc = __DIR__ . '/kmyacc.exe';
@@ -40,26 +39,25 @@ echo 'Building temporary preproprocessed grammar file.', "\n";
 
 $grammarCode = file_get_contents($grammarFile);
 
-$grammarCode = resolveConstants($grammarCode);
 $grammarCode = resolveNodes($grammarCode);
 $grammarCode = resolveMacros($grammarCode);
 $grammarCode = resolveArrays($grammarCode);
+$grammarCode = resolveStackAccess($grammarCode);
 
 file_put_contents($tmpGrammarFile, $grammarCode);
 
+$additionalArgs = $optionDebug ? '-t -v' : '';
+
 echo "Building parser.\n";
-$output = trim(shell_exec("$kmyacc -l -m $skeletonFile -p PHPParser_Parser $tmpGrammarFile 2>&1"));
+$output = trim(shell_exec("$kmyacc $additionalArgs -l -m $skeletonFile $tmpGrammarFile 2>&1"));
 echo "Output: \"$output\"\n";
 
-moveFileWithDirCheck($tmpResultFile, $parserResultFile);
+$resultCode = file_get_contents($tmpResultFile);
+$resultCode = removeTrailingWhitespace($resultCode);
 
-if ($optionDebug) {
-    echo "Building debug parser.\n";
-    $output = trim(shell_exec("$kmyacc -t -v -l -m $skeletonFile -p PHPParser_Parser $tmpGrammarFile 2>&1"));
-    echo "Output: \"$output\"\n";
-
-    moveFileWithDirCheck($tmpResultFile, $debugParserResultFile);
-}
+ensureDirExists(dirname($parserResultFile));
+file_put_contents($parserResultFile, $resultCode);
+unlink($tmpResultFile);
 
 if (!$optionKeepTmpGrammar) {
     unlink($tmpGrammarFile);
@@ -69,13 +67,9 @@ if (!$optionKeepTmpGrammar) {
 /// Preprocessing functions ///
 ///////////////////////////////
 
-function resolveConstants($code) {
-    return preg_replace('~[A-Z][a-zA-Z_]++::~', 'PHPParser_Node_$0', $code);
-}
-
 function resolveNodes($code) {
     return preg_replace_callback(
-        '~(?<name>[A-Z][a-zA-Z_]++)\s*' . PARAMS . '~',
+        '~(?<name>[A-Z][a-zA-Z_\\\\]++)\s*' . PARAMS . '~',
         function($matches) {
             // recurse
             $matches['params'] = resolveNodes($matches['params']);
@@ -90,7 +84,7 @@ function resolveNodes($code) {
                 $paramCode .= $param . ', ';
             }
 
-            return 'new PHPParser_Node_' . $matches['name'] . '(' . $paramCode . '$attributes)';
+            return 'new ' . $matches['name'] . '(' . $paramCode . 'attributes())';
         },
         $code
     );
@@ -109,10 +103,9 @@ function resolveMacros($code) {
                 $matches['args']
             );
 
-            if ('error' == $name) {
-                assertArgs(1, $args, $name);
-
-                return 'throw new PHPParser_Error(' . $args[0] . ')';
+            if ('attributes' == $name) {
+                assertArgs(0, $args, $name);
+                return '$this->startAttributeStack[#1] + $this->endAttributes';
             }
 
             if ('init' == $name) {
@@ -146,16 +139,16 @@ function resolveMacros($code) {
             if ('parseEncapsed' == $name) {
                 assertArgs(2, $args, $name);
 
-                return 'foreach (' . $args[0] . ' as &$s) { if (is_string($s)) { $s = PHPParser_Node_Scalar_String::parseEscapeSequences($s, ' . $args[1] . '); } }';
+                return 'foreach (' . $args[0] . ' as &$s) { if (is_string($s)) { $s = Node\Scalar\String_::parseEscapeSequences($s, ' . $args[1] . '); } }';
             }
 
             if ('parseEncapsedDoc' == $name) {
                 assertArgs(1, $args, $name);
 
-                return 'foreach (' . $args[0] . ' as &$s) { if (is_string($s)) { $s = PHPParser_Node_Scalar_String::parseEscapeSequences($s, null); } } $s = preg_replace(\'~(\r\n|\n|\r)$~\', \'\', $s); if (\'\' === $s) array_pop(' . $args[0] . ');';
+                return 'foreach (' . $args[0] . ' as &$s) { if (is_string($s)) { $s = Node\Scalar\String_::parseEscapeSequences($s, null); } } $s = preg_replace(\'~(\r\n|\n|\r)\z~\', \'\', $s); if (\'\' === $s) array_pop(' . $args[0] . ');';
             }
 
-            throw new Exception(sprintf('Unknown macro "%s"', $name));
+            return $matches[0];
         },
         $code
     );
@@ -198,12 +191,22 @@ function resolveArrays($code) {
     );
 }
 
-function moveFileWithDirCheck($fromPath, $toPath) {
-    $dir = dirname($toPath);
+function resolveStackAccess($code) {
+    $code = preg_replace('/\$\d+/', '$this->semStack[$0]', $code);
+    $code = preg_replace('/#(\d+)/', '$$1', $code);
+    return $code;
+}
+
+function removeTrailingWhitespace($code) {
+    $lines = explode("\n", $code);
+    $lines = array_map('rtrim', $lines);
+    return implode("\n", $lines);
+}
+
+function ensureDirExists($dir) {
     if (!is_dir($dir)) {
         mkdir($dir, 0777, true);
     }
-    rename($fromPath, $toPath);
 }
 
 //////////////////////////////

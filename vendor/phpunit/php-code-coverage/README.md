@@ -7,7 +7,7 @@
 
 ## Requirements
 
-PHP 5.6 is required but using the latest version of PHP is highly recommended
+PHP 5.6 is required but using the latest version of PHP is highly recommended.
 
 ### PHP 5
 
@@ -15,7 +15,7 @@ PHP 5.6 is required but using the latest version of PHP is highly recommended
 
 ### PHP 7
 
-[phpdbg](http://phpdbg.com/docs) is currently the only source of raw code coverage data supported for PHP 7. Once Xdebug has been updated for PHP 7 it, too, will be supported.
+Version 2.4.0 (or later) of [Xdebug](http://xdebug.org/) as well as [phpdbg](http://phpdbg.com/docs) are supported sources of raw code coverage data for PHP 7.
 
 ### HHVM
 
@@ -27,7 +27,7 @@ To add PHP_CodeCoverage as a local, per-project dependency to your project, simp
 
     {
         "require": {
-            "phpunit/php-code-coverage": "^3"
+            "phpunit/php-code-coverage": "^4"
         }
     }
 

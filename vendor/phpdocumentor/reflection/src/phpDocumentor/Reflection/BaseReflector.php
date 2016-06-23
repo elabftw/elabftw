@@ -19,11 +19,11 @@ use phpDocumentor\Reflection\DocBlock;
 use phpDocumentor\Reflection\DocBlock\Context;
 use phpDocumentor\Reflection\DocBlock\Location;
 use phpDocumentor\Reflection\Event\PostDocBlockExtractionEvent;
+use PhpParser\NodeAbstract;
 use Psr\Log\LogLevel;
-use PHPParser_Node_Expr;
-use PHPParser_Node_Stmt;
-use PHPParser_NodeAbstract;
-use PHPParser_PrettyPrinterAbstract;
+use PhpParser\Node\Expr;
+use PhpParser\Node\Stmt;
+use PhpParser\PrettyPrinterAbstract;
 
 /**
  * Basic reflection providing support for events and basic properties as a
@@ -35,7 +35,7 @@ use PHPParser_PrettyPrinterAbstract;
  */
 abstract class BaseReflector extends ReflectionAbstract
 {
-    /** @var PHPParser_Node_Stmt */
+    /** @var \PhpParser\Node\Stmt */
     protected $node;
 
     /**
@@ -51,7 +51,7 @@ abstract class BaseReflector extends ReflectionAbstract
     /**
      * PHP AST pretty printer used to get representations of values.
      *
-     * @var PHPParser_PrettyPrinterAbstract
+     * @var \PhpParser\PrettyPrinterAbstract
      */
     protected static $prettyPrinter = null;
 
@@ -59,12 +59,12 @@ abstract class BaseReflector extends ReflectionAbstract
      * Initializes this reflector with the correct node as produced by
      * PHP-Parser.
      *
-     * @param PHPParser_NodeAbstract $node
+     * @param NodeAbstract $node
      * @param Context                $context
      *
      * @link http://github.com/nikic/PHP-Parser
      */
-    public function __construct(PHPParser_NodeAbstract $node, Context $context)
+    public function __construct(NodeAbstract $node, Context $context)
     {
         $this->node = $node;
         $context->setLSEN($this->getLSEN());
@@ -74,7 +74,7 @@ abstract class BaseReflector extends ReflectionAbstract
     /**
      * Returns the current PHP-Parser node that holds more detailed information
      * about the reflected object. e.g. position in the file and further attributes.
-     * @return PHPParser_Node_Stmt|PHPParser_NodeAbstract
+     * @return \PhpParser\Node\Stmt|\PhpParser\NodeAbstract
      */
     public function getNode()
     {
@@ -198,7 +198,7 @@ abstract class BaseReflector extends ReflectionAbstract
      */
     public function getNamespace()
     {
-        if (!$this->node->namespacedName) {
+        if (!isset($this->node->namespacedName)) {
             return $this->context->getNamespace();
         }
 
@@ -291,13 +291,13 @@ abstract class BaseReflector extends ReflectionAbstract
     /**
      * Returns a simple human readable output for a value.
      *
-     * @param PHPParser_Node_Expr $value The value node as provided by
+     * @param \PhpParser\Node\Expr $value The value node as provided by
      *     PHP-Parser.
      *
      * @return string
      */
     protected function getRepresentationOfValue(
-        PHPParser_Node_Expr $value = null
+        \PhpParser\Node\Expr $value = null
     ) {
         if (null === $value) {
             return '';

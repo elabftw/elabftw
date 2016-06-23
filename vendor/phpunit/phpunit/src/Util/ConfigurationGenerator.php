@@ -11,7 +11,7 @@
 /**
  * @since Class available since Release 5.3.0
  */
-class ConfigurationGenerator
+class PHPUnit_Util_ConfigurationGenerator
 {
     /**
      * @var string
@@ -41,10 +41,11 @@ class ConfigurationGenerator
 EOT;
 
     /**
-     * @param  string $phpunitVersion
-     * @param  string $bootstrapScript
-     * @param  string $testsDirectory
-     * @param  string $srcDirectory
+     * @param string $phpunitVersion
+     * @param string $bootstrapScript
+     * @param string $testsDirectory
+     * @param string $srcDirectory
+     *
      * @return string
      */
     public function generateDefaultConfiguration($phpunitVersion, $bootstrapScript, $testsDirectory, $srcDirectory)

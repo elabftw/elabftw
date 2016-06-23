@@ -13,11 +13,11 @@
 namespace phpDocumentor\Reflection;
 
 use Exception;
-use PHPParser_Node_Expr_Include;
+use PhpParser\Node\Expr\Include_;
 
 class IncludeReflector extends BaseReflector
 {
-    /** @var PHPParser_Node_Expr_Include */
+    /** @var Include_ */
     protected $node;
 
     /**
@@ -36,13 +36,13 @@ class IncludeReflector extends BaseReflector
     public function getType()
     {
         switch ($this->node->type) {
-            case PHPParser_Node_Expr_Include::TYPE_INCLUDE:
+            case Include_::TYPE_INCLUDE:
                 return 'Include';
-            case PHPParser_Node_Expr_Include::TYPE_INCLUDE_ONCE:
+            case Include_::TYPE_INCLUDE_ONCE:
                 return 'Include Once';
-            case PHPParser_Node_Expr_Include::TYPE_REQUIRE:
+            case Include_::TYPE_REQUIRE:
                 return 'Require';
-            case PHPParser_Node_Expr_Include::TYPE_REQUIRE_ONCE:
+            case Include_::TYPE_REQUIRE_ONCE:
                 return 'Require Once';
             default:
                 throw new Exception(

@@ -95,7 +95,7 @@ $stream = Psr7\stream_for();
 // Start dropping data when the stream has more than 10 bytes
 $dropping = new Psr7\DroppingStream($stream, 10);
 
-$stream->write('01234567890123456789');
+$dropping->write('01234567890123456789');
 echo $stream; // 0123456789
 ```
 

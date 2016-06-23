@@ -300,6 +300,31 @@ EOF;
         );
     }
 
+    /**
+     * @requires extension mbstring
+     */
+    public function testShortenedExportForMultibyteCharacters()
+    {
+        $oldMbLanguage = mb_language();
+        mb_language('Japanese');
+        $oldMbInternalEncoding = mb_internal_encoding();
+        mb_internal_encoding('UTF-8');
+
+        try {
+            $this->assertSame(
+              "'いろはにほへとちりぬるをわかよたれそつねならむうゐのおくや...しゑひもせす'",
+              $this->trimNewline($this->exporter->shortenedExport('いろはにほへとちりぬるをわかよたれそつねならむうゐのおくやまけふこえてあさきゆめみしゑひもせす'))
+            );
+        } catch (\Exception $e) {
+            mb_internal_encoding($oldMbInternalEncoding);
+            mb_language($oldMbLanguage);
+            throw $e;
+        }
+
+        mb_internal_encoding($oldMbInternalEncoding);
+        mb_language($oldMbLanguage);
+    }
+
     public function provideNonBinaryMultibyteStrings()
     {
         return array(

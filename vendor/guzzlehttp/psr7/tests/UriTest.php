@@ -278,4 +278,19 @@ class UriTest extends \PHPUnit_Framework_TestCase
         $input = 'urn://example:animal:ferret:nose';
         $uri = new Uri($input);
     }
+
+    public function testExtendingClassesInstantiates()
+    {
+        // The non-standard port triggers a cascade of private methods which
+        //  should not use late static binding to access private static members.
+        // If they do, this will fatal.
+        $this->assertInstanceOf(
+            '\GuzzleHttp\Tests\Psr7\ExtendingClassTest',
+            new ExtendingClassTest('http://h:9/')
+        );
+    }
+}
+
+class ExtendingClassTest extends \GuzzleHttp\Psr7\Uri
+{
 }

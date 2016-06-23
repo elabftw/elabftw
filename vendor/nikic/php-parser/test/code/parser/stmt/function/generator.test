@@ -1,4 +1,4 @@
-Generators (yield expression
+Generators (yield expression)
 -----
 <?php
 
@@ -25,13 +25,19 @@ function gen() {
     func(yield $foo);
     $foo->func(yield $foo);
     new Foo(yield $foo);
+
+    yield from $foo;
+    yield from $foo and yield from $bar;
+    yield from $foo + $bar;
 }
 -----
 array(
     0: Stmt_Function(
         byRef: false
+        name: gen
         params: array(
         )
+        returnType: null
         stmts: array(
             0: Expr_Yield(
                 key: null
@@ -85,6 +91,12 @@ array(
                 )
             )
             6: Stmt_If(
+                cond: Expr_Yield(
+                    key: null
+                    value: Expr_Variable(
+                        name: foo
+                    )
+                )
                 stmts: array(
                 )
                 elseifs: array(
@@ -100,14 +112,14 @@ array(
                     )
                 )
                 else: null
-                cond: Expr_Yield(
-                    key: null
-                    value: Expr_Variable(
-                        name: foo
-                    )
-                )
             )
             7: Stmt_If(
+                cond: Expr_Yield(
+                    key: null
+                    value: Expr_Variable(
+                        name: foo
+                    )
+                )
                 stmts: array(
                 )
                 elseifs: array(
@@ -123,12 +135,6 @@ array(
                     )
                 )
                 else: null
-                cond: Expr_Yield(
-                    key: null
-                    value: Expr_Variable(
-                        name: foo
-                    )
-                )
             )
             8: Stmt_While(
                 cond: Expr_Yield(
@@ -183,6 +189,7 @@ array(
                             )
                         )
                         byRef: false
+                        unpack: false
                     )
                 )
             )
@@ -200,6 +207,7 @@ array(
                             )
                         )
                         byRef: false
+                        unpack: false
                     )
                 )
             )
@@ -218,10 +226,37 @@ array(
                             )
                         )
                         byRef: false
+                        unpack: false
+                    )
+                )
+            )
+            15: Expr_YieldFrom(
+                expr: Expr_Variable(
+                    name: foo
+                )
+            )
+            16: Expr_BinaryOp_LogicalAnd(
+                left: Expr_YieldFrom(
+                    expr: Expr_Variable(
+                        name: foo
+                    )
+                )
+                right: Expr_YieldFrom(
+                    expr: Expr_Variable(
+                        name: bar
+                    )
+                )
+            )
+            17: Expr_YieldFrom(
+                expr: Expr_BinaryOp_Plus(
+                    left: Expr_Variable(
+                        name: foo
+                    )
+                    right: Expr_Variable(
+                        name: bar
                     )
                 )
             )
         )
-        name: gen
     )
 )

@@ -14,9 +14,9 @@ namespace phpDocumentor\Reflection;
 
 use phpDocumentor\Reflection\BaseReflector;
 use phpDocumentor\Reflection\DocBlock\Context;
-use PHPParser_Node_Param;
-use PHPParser_Node_Stmt;
-use PHPParser_Node_Stmt_Function;
+use PhpParser\Node\Param;
+use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Function_;
 
 /**
  * Provides Static Reflection for functions.
@@ -27,7 +27,7 @@ use PHPParser_Node_Stmt_Function;
  */
 class FunctionReflector extends BaseReflector
 {
-    /** @var PHPParser_Node_Stmt_Function */
+    /** @var \PhpParser\Node\Stmt\Function_ */
     protected $node;
 
     /** @var FunctionReflector\ArgumentReflector[] */
@@ -37,14 +37,14 @@ class FunctionReflector extends BaseReflector
      * Initializes the reflector using the function statement object of
      * PHP-Parser.
      *
-     * @param PHPParser_Node_Stmt $node    Function object coming from PHP-Parser.
+     * @param \PhpParser\Node\Stmt $node    Function object coming from PHP-Parser.
      * @param Context             $context The context in which the node occurs.
      */
-    public function __construct(PHPParser_Node_Stmt $node, Context $context)
+    public function __construct(\PhpParser\Node\Stmt $node, Context $context)
     {
         parent::__construct($node, $context);
 
-        /** @var PHPParser_Node_Param $param  */
+        /** @var \PhpParser\Node\Param $param  */
         foreach ($node->params as $param) {
             $reflector = new FunctionReflector\ArgumentReflector(
                 $param,

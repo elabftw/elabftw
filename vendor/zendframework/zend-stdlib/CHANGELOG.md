@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.7 - 2016-04-12
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#59](https://github.com/zendframework/zend-stdlib/pull/59) fixes a notice
+  when defining the Zend\Json\Json::GLOB_BRACE constant on systems using non-gcc
+  glob implementations.
+
 ## 2.7.6 - 2016-02-19
 
 ### Added

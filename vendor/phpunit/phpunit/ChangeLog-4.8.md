@@ -2,11 +2,18 @@
 
 All notable changes of the PHPUnit 4.8 release series are documented in this file using the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
-## [4.8.25] - 2016-MM-DD
+## [4.8.26] - 2016-05-17
+
+### Fixed
+
+* Fixed [phpunit-mock-objects/#301](https://github.com/sebastianbergmann/phpunit-mock-objects/issues/301): `PHPUnit_Framework_MockObject_MockBuilder::getMock()` calls `PHPUnit_Framework_TestCase::getMock()` with more arguments than accepted
+
+## [4.8.25] - 2016-05-10
 
 ### Fixed
 
 * Fixed [#2112](https://github.com/sebastianbergmann/phpunit/issues/2112): Output is html entity encoded when ran through `phpdbg`
+* Fixed [#2158](https://github.com/sebastianbergmann/phpunit/issues/2158): Failure to run tests in separate processes if a file included into main process contains constant definition
 
 ## [4.8.24] - 2016-03-14
 
@@ -183,6 +190,7 @@ New PHAR release due to updated dependencies
 * Made the argument check of `assertContains()` and `assertNotContains()` more strict to prevent undefined behavior such as [#1808](https://github.com/sebastianbergmann/phpunit/issues/1808)
 * Changed the name of the default group from `__nogroup__` to `default`
 
+[4.8.26]: https://github.com/sebastianbergmann/phpunit/compare/4.8.25...4.8.26
 [4.8.25]: https://github.com/sebastianbergmann/phpunit/compare/4.8.24...4.8.25
 [4.8.24]: https://github.com/sebastianbergmann/phpunit/compare/4.8.23...4.8.24
 [4.8.23]: https://github.com/sebastianbergmann/phpunit/compare/4.8.22...4.8.23

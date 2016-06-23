@@ -1,20 +1,26 @@
 <?php
+
+/**
+ * Class TestLoaderTest
+ * @group load
+ */
 class TestLoaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Codeception\Lib\TestLoader
+     * @var \Codeception\Test\Loader
      */
     protected $testLoader;
 
     protected function setUp()
     {
-        $this->testLoader = new \Codeception\Lib\TestLoader(\Codeception\Configuration::dataDir());
+        $this->testLoader = new \Codeception\Test\Loader(['path' => \Codeception\Configuration::dataDir()]);
     }
 
     /**
      * @group core
      */
-    public function testAddCept() {
+    public function testAddCept()
+    {
         $this->testLoader->loadTest('SimpleCept.php');
         $this->assertEquals(1, count($this->testLoader->getTests()));
     }
@@ -23,7 +29,6 @@ class TestLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $this->testLoader->loadTest('SimpleTest.php');
         $this->assertEquals(1, count($this->testLoader->getTests()));
-
     }
 
     public function testAddCeptAbsolutePath()
@@ -52,28 +57,30 @@ class TestLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadAllTests()
     {
-        Codeception\Util\Autoload::addNamespace('Math', codecept_data_dir().'claypit/tests/_support/Math'); // to autoload dependencies
+        // to autoload dependencies
+        Codeception\Util\Autoload::addNamespace(
+            'Math',
+            codecept_data_dir().'claypit/tests/_support/Math'
+        );
         Codeception\Util\Autoload::addNamespace('Codeception\Module', codecept_data_dir().'claypit/tests/_support');
 
-        $this->testLoader = new \Codeception\Lib\TestLoader(codecept_data_dir().'claypit/tests');
+        $this->testLoader = new \Codeception\Test\Loader(['path' => codecept_data_dir().'claypit/tests']);
         $this->testLoader->loadTests();
 
         $testNames = $this->getTestNames($this->testLoader->getTests());
 
-        $this->assertContainsTestName('order/AnotherCept', $testNames);
-        $this->assertContainsTestName('MageGuildCest::darkPower', $testNames);
-        $this->assertContainsTestName('FailingTest::testMe', $testNames);
-        $this->assertContainsTestName('MathCest::testAddition', $testNames);
-        $this->assertContainsTestName('MathTest::testAll', $testNames);
+        $this->assertContainsTestName('AnotherCept', $testNames);
+        $this->assertContainsTestName('MageGuildCest:darkPower', $testNames);
+        $this->assertContainsTestName('FailingTest:testMe', $testNames);
+        $this->assertContainsTestName('MathCest:testAddition', $testNames);
+        $this->assertContainsTestName('MathTest:testAll', $testNames);
     }
 
     protected function getTestNames($tests)
     {
         $testNames = [];
         foreach ($tests as $test) {
-            if ($test instanceof \PHPUnit_Framework_TestCase) {
-                $testNames[] = \Codeception\TestCase::getTestSignature($test);
-            }
+            $testNames[] = \Codeception\Test\Descriptor::getTestSignature($test);
         }
         return $testNames;
     }
@@ -82,5 +89,4 @@ class TestLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertNotSame(false, array_search($name, $testNames), "$name not found in tests");
     }
-
 }

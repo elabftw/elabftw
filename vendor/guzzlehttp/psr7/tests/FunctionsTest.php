@@ -282,6 +282,13 @@ class FunctionsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('https://www.google.com/search?q=foobar', (string) $request->getUri());
     }
 
+    public function testParsesRequestMessagesWithCustomMethod()
+    {
+        $req = "GET_DATA / HTTP/1.1\r\nFoo: Bar\r\nHost: foo.com\r\n\r\n";
+        $request = Psr7\parse_request($req);
+        $this->assertEquals('GET_DATA', $request->getMethod());
+    }
+
     /**
      * @expectedException \InvalidArgumentException
      */

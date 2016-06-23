@@ -2,7 +2,7 @@
 namespace Codeception\Util;
 
 
-class JsonArrayTest extends \Codeception\TestCase\Test
+class JsonArrayTest extends \Codeception\Test\Unit
 {
 
     /**
@@ -12,7 +12,9 @@ class JsonArrayTest extends \Codeception\TestCase\Test
 
     protected function _before()
     {
-        $this->jsonArray = new JsonArray('{"ticket": {"title": "Bug should be fixed", "user": {"name": "Davert"}, "labels": null}}');
+        $this->jsonArray = new JsonArray(
+            '{"ticket": {"title": "Bug should be fixed", "user": {"name": "Davert"}, "labels": null}}'
+        );
     }
 
     // tests
@@ -27,13 +29,18 @@ class JsonArrayTest extends \Codeception\TestCase\Test
 
     public function testXmlConversion()
     {
-        $this->assertContains('<ticket><title>Bug should be fixed</title><user><name>Davert</name></user><labels></labels></ticket>',
-            $this->jsonArray->toXml()->saveXML());
+        $this->assertContains(
+            '<ticket><title>Bug should be fixed</title><user><name>Davert</name></user><labels></labels></ticket>',
+            $this->jsonArray->toXml()->saveXML()
+        );
     }
 
     public function testXmlArrayConversion2()
     {
-        $jsonArray = new JsonArray('[{"user":"Blacknoir","age":27,"tags":["wed-dev","php"]},{"user":"John Doe","age":27,"tags":["web-dev","java"]}]');
+        $jsonArray = new JsonArray(
+            '[{"user":"Blacknoir","age":27,"tags":["wed-dev","php"]},'
+            . '{"user":"John Doe","age":27,"tags":["web-dev","java"]}]'
+        );
         $this->assertContains('<tags>wed-dev</tags>', $jsonArray->toXml()->saveXML());
         $this->assertEquals(2, $jsonArray->filterByXPath('//user')->length);
     }
@@ -138,9 +145,11 @@ class JsonArrayTest extends \Codeception\TestCase\Test
 
     /**
      * @issue https://github.com/Codeception/Codeception/issues/2630
+     * @codingStandardsIgnoreStart
      */
     public function testContainsArrayComparesNestedSequentialArraysCorrectlyWhenSecondValueIsTheSameButOrderOfItemsIsDifferent()
     {
+        // @codingStandardsIgnoreEnd
         $jsonArray = new JsonArray('[
             [
                 "2015-09-10",
@@ -285,9 +294,11 @@ class JsonArrayTest extends \Codeception\TestCase\Test
             ]
         ];
 
-        $this->assertTrue($jsonArray->containsArray($expectedArray),
+        $this->assertTrue(
+            $jsonArray->containsArray($expectedArray),
             "- <info>" . var_export($expectedArray, true) . "</info>\n"
-            . "+ " . var_export($jsonArray->toArray(), true));
+            . "+ " . var_export($jsonArray->toArray(), true)
+        );
     }
 
     /**
@@ -297,8 +308,21 @@ class JsonArrayTest extends \Codeception\TestCase\Test
     {
         $jsonArray = new JsonArray('[[1],[1]]');
         $expectedArray = [[1],[1]];
-        $this->assertTrue($jsonArray->containsArray($expectedArray),
+        $this->assertTrue(
+            $jsonArray->containsArray($expectedArray),
             "- <info>" . var_export($expectedArray, true) . "</info>\n"
-            . "+ " . var_export($jsonArray->toArray(), true));
+            . "+ " . var_export($jsonArray->toArray(), true)
+        );
+    }
+
+    /**
+     * @Issue https://github.com/Codeception/Codeception/issues/2899
+     */
+    public function testInvalidXmlTag()
+    {
+        $jsonArray = new JsonArray('{"a":{"foo/bar":1,"":2},"b":{"foo/bar":1,"":2},"baz":2}');
+        $expectedXml = '<a><invalidTag1>1</invalidTag1><invalidTag2>2</invalidTag2></a>'
+            . '<b><invalidTag1>1</invalidTag1><invalidTag2>2</invalidTag2></b><baz>2</baz>';
+        $this->assertContains($expectedXml, $jsonArray->toXml()->saveXML());
     }
 }

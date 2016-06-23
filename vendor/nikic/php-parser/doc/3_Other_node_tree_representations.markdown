@@ -1,7 +1,7 @@
 Other node tree representations
 ===============================
 
-It is possible to convert the AST in several textual representations, which serve different uses.
+It is possible to convert the AST into several textual representations, which serve different uses.
 
 Simple serialization
 --------------------
@@ -13,33 +13,34 @@ but PHP, but it is compact and generates fast. The main application thus is in c
 Human readable dumping
 ----------------------
 
-Furthermore it is possible to dump nodes into a human readable form using the `dump` method of
-`PHPParser_NodeDumper`. This can be used for debugging.
+Furthermore it is possible to dump nodes into a human readable format using the `dump` method of
+`PhpParser\NodeDumper`. This can be used for debugging.
 
 ```php
 <?php
 $code = <<<'CODE'
 <?php
-    function printLine($msg) {
-        echo $msg, "\n";
-    }
 
-    printLine('Hallo World!!!');
+function printLine($msg) {
+    echo $msg, "\n";
+}
+
+printLine('Hello World!!!');
 CODE;
 
-$parser     = new PHPParser_Parser(new PHPParser_Lexer);
-$nodeDumper = new PHPParser_NodeDumper;
+$parser = new PhpParser\Parser(new PhpParser\Lexer);
+$nodeDumper = new PhpParser\NodeDumper;
 
 try {
     $stmts = $parser->parse($code);
 
-    echo '<pre>' . htmlspecialchars($nodeDumper->dump($stmts)) . '</pre>';
-} catch (PHPParser_Error $e) {
+    echo $nodeDumper->dump($stmts), "\n";
+} catch (PhpParser\Error $e) {
     echo 'Parse Error: ', $e->getMessage();
 }
 ```
 
-The above output will have an output looking roughly like this:
+The above script will have an output looking roughly like this:
 
 ```
 array(
@@ -77,7 +78,7 @@ array(
         args: array(
             0: Arg(
                 value: Scalar_String(
-                    value: Hallo World!!!
+                    value: Hello World!!!
                 )
                 byRef: false
             )
@@ -89,29 +90,30 @@ array(
 Serialization to XML
 --------------------
 
-It is also possible to serialize the node tree to XML using `PHPParser_Serializer_XML->serialize()`
-and to unserialize it using `PHPParser_Unserializer_XML->unserialize()`. This is useful for
+It is also possible to serialize the node tree to XML using `PhpParser\Serializer\XML->serialize()`
+and to unserialize it using `PhpParser\Unserializer\XML->unserialize()`. This is useful for
 interfacing with other languages and applications or for doing transformation using XSLT.
 
 ```php
 <?php
 $code = <<<'CODE'
 <?php
-    function printLine($msg) {
-        echo $msg, "\n";
-    }
 
-    printLine('Hallo World!!!');
+function printLine($msg) {
+    echo $msg, "\n";
+}
+
+printLine('Hello World!!!');
 CODE;
 
-$parser     = new PHPParser_Parser(new PHPParser_Lexer);
-$serializer = new PHPParser_Serializer_XML;
+$parser = new PhpParser\Parser(new PhpParser\Lexer);
+$serializer = new PhpParser\Serializer\XML;
 
 try {
     $stmts = $parser->parse($code);
 
-    echo '<pre>' . htmlspecialchars($serializer->serialize($stmts)) . '</pre>';
-} catch (PHPParser_Error $e) {
+    echo $serializer->serialize($stmts);
+} catch (PhpParser\Error $e) {
     echo 'Parse Error: ', $e->getMessage();
 }
 ```
@@ -185,7 +187,7 @@ Produces:
       <subNode:value>
        <node:Scalar_String line="6">
         <subNode:value>
-         <scalar:string>Hallo World!!!</scalar:string>
+         <scalar:string>Hello World!!!</scalar:string>
         </subNode:value>
        </node:Scalar_String>
       </subNode:value>

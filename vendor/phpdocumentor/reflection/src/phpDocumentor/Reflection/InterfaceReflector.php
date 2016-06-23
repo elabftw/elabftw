@@ -12,13 +12,13 @@
 
 namespace phpDocumentor\Reflection;
 
-use PHPParser_Node_Name;
-use PHPParser_Node_Stmt_Class;
-use PHPParser_Node_Stmt_Interface;
+use PhpParser\Node\Name;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\Interface_;
 
 class InterfaceReflector extends BaseReflector
 {
-    /** @var PHPParser_Node_Stmt_Interface|PHPParser_Node_Stmt_Class */
+    /** @var Interface_|\PhpParser\Node\Stmt\Class_ */
     protected $node;
 
     /**
@@ -38,7 +38,7 @@ class InterfaceReflector extends BaseReflector
     {
         foreach ($this->node->stmts as $stmt) {
             switch (get_class($stmt)) {
-                case 'PHPParser_Node_Stmt_Property':
+                case 'PhpParser\Node\Stmt\Property':
                     foreach ($stmt->props as $property) {
                         $this->properties[] = new ClassReflector\PropertyReflector(
                             $stmt,
@@ -47,13 +47,13 @@ class InterfaceReflector extends BaseReflector
                         );
                     }
                     break;
-                case 'PHPParser_Node_Stmt_ClassMethod':
+                case 'PhpParser\Node\Stmt\ClassMethod':
                     $this->methods[strtolower($stmt->name)] = new ClassReflector\MethodReflector(
                         $stmt,
                         $this->context
                     );
                     break;
-                case 'PHPParser_Node_Stmt_ClassConst':
+                case 'PhpParser\Node\Stmt\ClassConst':
                     foreach ($stmt->consts as $constant) {
                         $this->constants[] = new ClassReflector\ConstantReflector(
                             $stmt,
@@ -69,10 +69,10 @@ class InterfaceReflector extends BaseReflector
     public function getParentInterfaces()
     {
         $names = array();
-        if ($this->node instanceof PHPParser_Node_Stmt_Interface
+        if ($this->node instanceof Interface_
             && $this->node->extends
         ) {
-            /** @var PHPParser_Node_Name */
+            /** @var Name */
             foreach ($this->node->extends as $node) {
                 $names[] = '\\'.(string) $node;
             }

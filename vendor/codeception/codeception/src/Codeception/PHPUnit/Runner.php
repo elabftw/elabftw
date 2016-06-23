@@ -41,26 +41,9 @@ class Runner extends \PHPUnit_TextUI_TestRunner
         return $this->printer;
     }
 
-    public function doEnhancedRun(
-        \PHPUnit_Framework_Test $suite,
-        \PHPUnit_Framework_TestResult $result,
-        array $arguments = []
-    ) {
-        unset($GLOBALS['app']); // hook for not to serialize globals
-
+    public function prepareSuite(\PHPUnit_Framework_Test $suite, array &$arguments)
+    {
         $this->handleConfiguration($arguments);
-        $result->convertErrorsToExceptions(false);
-
-        if (empty(self::$persistentListeners)) {
-            $this->applyReporters($result, $arguments);
-        }
-
-        $arguments['listeners'][] = $this->printer;
-
-        // clean up listeners between suites
-        foreach ($arguments['listeners'] as $listener) {
-            $result->addListener($listener);
-        }
 
         $filterFactory = new \PHPUnit_Runner_Filter_Factory();
         if ($arguments['groups']) {
@@ -79,12 +62,38 @@ class Runner extends \PHPUnit_TextUI_TestRunner
 
         if ($arguments['filter']) {
             $filterFactory->addFilter(
-                new \ReflectionClass('PHPUnit_Runner_Filter_Test'),
+                new \ReflectionClass('Codeception\PHPUnit\FilterTest'),
                 $arguments['filter']
             );
         }
 
         $suite->injectFilter($filterFactory);
+    }
+
+    public function doEnhancedRun(
+        \PHPUnit_Framework_Test $suite,
+        \PHPUnit_Framework_TestResult $result,
+        array $arguments = []
+    ) {
+        unset($GLOBALS['app']); // hook for not to serialize globals
+
+        $result->convertErrorsToExceptions(false);
+
+        if (empty(self::$persistentListeners)) {
+            $this->applyReporters($result, $arguments);
+        }
+
+        if (class_exists('\Symfony\Bridge\PhpUnit\SymfonyTestsListener')) {
+            $arguments['listeners'] = isset($arguments['listeners']) ? $arguments['listeners'] : array();
+            $arguments['listeners'][] = new \Symfony\Bridge\PhpUnit\SymfonyTestsListener();
+        }
+
+        $arguments['listeners'][] = $this->printer;
+
+        // clean up listeners between suites
+        foreach ($arguments['listeners'] as $listener) {
+            $result->addListener($listener);
+        }
 
         $suite->run($result);
         unset($suite);
@@ -116,11 +125,17 @@ class Runner extends \PHPUnit_TextUI_TestRunner
 
         if ($arguments['html']) {
             codecept_debug('Printing HTML report into ' . $arguments['html']);
-            self::$persistentListeners[] = $this->instantiateReporter('html', [$this->absolutePath($arguments['html'])]);
+            self::$persistentListeners[] = $this->instantiateReporter(
+                'html',
+                [$this->absolutePath($arguments['html'])]
+            );
         }
         if ($arguments['xml']) {
             codecept_debug('Printing JUNIT report into ' . $arguments['xml']);
-            self::$persistentListeners[] = $this->instantiateReporter('xml', [$this->absolutePath($arguments['xml']), false]);
+            self::$persistentListeners[] = $this->instantiateReporter(
+                'xml',
+                [$this->absolutePath($arguments['xml']), false]
+            );
         }
         if ($arguments['tap']) {
             codecept_debug('Printing TAP report into ' . $arguments['tap']);
@@ -128,7 +143,10 @@ class Runner extends \PHPUnit_TextUI_TestRunner
         }
         if ($arguments['json']) {
             codecept_debug('Printing JSON report into ' . $arguments['json']);
-            self::$persistentListeners[] = $this->instantiateReporter('json', [$this->absolutePath($arguments['json'])]);
+            self::$persistentListeners[] = $this->instantiateReporter(
+                'json',
+                [$this->absolutePath($arguments['json'])]
+            );
         }
         
         foreach (self::$persistentListeners as $listener) {
@@ -146,7 +164,6 @@ class Runner extends \PHPUnit_TextUI_TestRunner
             throw new ConfigurationException("Reporter $name not defined");
         }
         return (new \ReflectionClass($this->config['reporters'][$name]))->newInstanceArgs($args);
-
     }
 
     private function absolutePath($path)

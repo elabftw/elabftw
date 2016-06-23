@@ -1,0 +1,35 @@
+#!/usr/bin/env php
+<?php
+
+$json  = file_get_contents('https://raw.github.com/cucumber/gherkin/master/lib/gherkin/i18n.json');
+$array = json_decode($json, true);
+
+foreach ($array as $lang => $keywords) {
+    foreach (array('given', 'when', 'then', 'and', 'but') as $type) {
+        $stepTypes = explode('|', $keywords[$type]);
+
+        if ('*' === $stepTypes[0]) {
+            array_shift($stepTypes);
+        }
+
+        // the lexer does not expect spaces to be part of the keyword, but some locales (ta for instance) have them, causing failures.
+        $stepTypes = array_map('trim', $stepTypes);
+
+        usort($stepTypes, function($type1, $type2) {
+            return mb_strlen($type2, 'utf8') - mb_strlen($type1, 'utf8');
+        });
+
+        $array[$lang][$type] = implode('|', $stepTypes);
+    }
+
+    // ensure that the order of keys is consistent between updates
+    ksort($array[$lang]);
+}
+
+// ensure that the languages are sorted to avoid useless diffs between updates. We keep the English first though as it is the reference.
+$enData = $array['en'];
+unset($array['en']);
+ksort($array);
+$array = array_merge(array('en' => $enData), $array);
+
+file_put_contents(__DIR__.'/../i18n.php', '<?php return '.var_export($array, true).';');

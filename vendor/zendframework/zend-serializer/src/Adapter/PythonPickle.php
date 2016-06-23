@@ -681,7 +681,7 @@ class PythonPickle extends AbstractAdapter
                 $this->loadDict();
                 break;
             case self::OP_EMPTY_DICT:
-                $this->_loadEmptyDict();
+                $this->loadEmptyDict();
                 break;
             case self::OP_SETITEM:
                 $this->loadSetItem();
@@ -1006,7 +1006,7 @@ class PythonPickle extends AbstractAdapter
     {
         $data    = $this->readline();
         $pattern = '/\\\\u([a-fA-F0-9]{4})/u'; // \uXXXX
-        $data    = preg_replace_callback($pattern, [$this, '_convertMatchingUnicodeSequence2Utf8'], $data);
+        $data    = preg_replace_callback($pattern, [$this, 'convertMatchingUnicodeSequence2Utf8'], $data);
 
         $this->stack[] = $data;
     }
@@ -1017,7 +1017,7 @@ class PythonPickle extends AbstractAdapter
      * @param  array $match
      * @return string
      */
-    protected function _convertMatchingUnicodeSequence2Utf8(array $match)
+    protected function convertMatchingUnicodeSequence2Utf8(array $match)
     {
         return $this->hex2Utf8($match[1]);
     }
@@ -1156,7 +1156,7 @@ class PythonPickle extends AbstractAdapter
     /**
      * Load an empty dictionary
      */
-    protected function _loadEmptyDict()
+    protected function loadEmptyDict()
     {
         $this->stack[] = [];
     }

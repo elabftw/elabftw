@@ -12,8 +12,8 @@
 
 namespace phpDocumentor\Reflection;
 
-use PHPParser_Node_Scalar_String;
-use PHPParser_PrettyPrinter_Zend;
+use PhpParser\Node\Scalar\String_;
+use PhpParser\PrettyPrinter\Standard;
 
 /**
  * Custom PrettyPrinter for phpDocumentor.
@@ -28,7 +28,7 @@ use PHPParser_PrettyPrinter_Zend;
  * @license http://www.opensource.org/licenses/mit-license.php MIT
  * @link    http://phpdoc.org
  */
-class PrettyPrinter extends PHPParser_PrettyPrinter_Zend
+class PrettyPrinter extends Standard
 {
     /**
      * Converts the string into it's original representation without converting
@@ -39,14 +39,14 @@ class PrettyPrinter extends PHPParser_PrettyPrinter_Zend
      * Since we do not want such conversions we take the original that is
      * injected by our own custom Lexer.
      *
-     * @param PHPParser_Node_Scalar_String $node The node to return a string
+     * @param String $node The node to return a string
      *     representation of.
      *
      * @see Lexer where the originalValue is injected.
      *
      * @return string
      */
-    public function pScalar_String(PHPParser_Node_Scalar_String $node)
+    public function pScalar_String(String_ $node)
     {
         if (method_exists($this, 'pSafe')) {
             return $this->pSafe($node->getAttribute('originalValue'));

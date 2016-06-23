@@ -14,7 +14,7 @@ Once you pull the new version and visit a page, the config file will be updated 
 
 1. Use `docker ps` to check the ID of the container (or use its name)
 
-2. Copy it from inside to your config file:
+2. Replace $ID from the below command with your container ID (or name). This command will extract the new key and place it at the end of your config file.
 
 .. code-block:: bash
 

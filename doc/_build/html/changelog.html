@@ -222,7 +222,7 @@
 <p>Once you pull the new version and visit a page, the config file will be updated with a new secret key. You need to copy it from inside the container to your docker-compose.yml file!</p>
 <ol class="arabic simple">
 <li>Use <cite>docker ps</cite> to check the ID of the container (or use its name)</li>
-<li>Copy it from inside to your config file:</li>
+<li>Replace $ID from the below command with your container ID (or name). This command will extract the new key and place it at the end of your config file.</li>
 </ol>
 <div class="highlight-bash"><div class="highlight"><pre>docker <span class="nb">exec</span> -it <span class="nv">$ID</span> grep SECRET /elabftw/config.php<span class="p">|</span> awk -F <span class="se">\&#39;</span> <span class="s1">&#39;{print $4}&#39;</span> &gt;&gt; docker-compose.yml
 </pre></div>

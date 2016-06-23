@@ -447,7 +447,6 @@ define('SECRET_KEY', '" . Crypto::binTohex($new_secret_key) . "');
                 throw new Exception('Wrong key or modified ciphertext error.');
             }
             // now encrypt it with the new method
-            // TODO update it in generator in install/
             $new_ciphertext = Crypto::encrypt($plaintext, $new_key);
             update_config(array('smtp_password' => $new_ciphertext));
         }

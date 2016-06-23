@@ -184,7 +184,10 @@ class Update
      */
     public function runUpdateScript()
     {
+        $msg_arr = array();
+
         $current_schema = get_config('schema');
+
         if ($current_schema < 2) {
             // 20150727
             $this->schema2();
@@ -224,11 +227,11 @@ class Update
             // 20160623
             $this->schema9();
             $this->updateSchema(9);
+            $msg_arr[] = "[WARNING] The config file has been changed! If you are running Docker, make sure to copy your secret key to the yml file. Check the release notes!";
         }
 
         // place new schema functions above this comment
         $this->cleanTmp();
-        $msg_arr = array();
         $msg_arr[] = "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)";
         return $msg_arr;
     }

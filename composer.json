@@ -12,7 +12,7 @@
         "ext-openssl":"*",
         "codeception/codeception": "*",
         "phpdocumentor/phpdocumentor": "2.*",
-        "defuse/php-encryption": "dev-master"
+        "defuse/php-encryption": "2.0.1"
 
     },
     "autoload": {

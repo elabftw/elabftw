@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "59656f8b15e2c67258334b4ed0c2817a",
-    "content-hash": "135a5a4657622678465b254935e306fa",
+    "hash": "78d0dd1f008d3c01cf4b5f80f96d8369",
+    "content-hash": "c903f76775dfff1add10290b7207250c",
     "packages": [
         {
             "name": "behat/gherkin",
@@ -301,7 +301,7 @@
         },
         {
             "name": "defuse/php-encryption",
-            "version": "dev-master",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/defuse/php-encryption.git",
@@ -4593,8 +4593,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "swiftmailer/swiftmailer": 0,
-        "mpdf/mpdf": 0,
-        "defuse/php-encryption": 20
+        "mpdf/mpdf": 0
     },
     "prefer-stable": false,
     "prefer-lowest": false,

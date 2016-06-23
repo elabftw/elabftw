@@ -3,6 +3,38 @@
 Changelog
 =========
 
+Version 1.2.1
+-------------
+
+* update the crypto lib to 2.0
+
+  WARNING DOCKER USERS !!!!! IMPORTANT READ BELOW:
+
+  Once you pull the new version and visit a page, the config file will be updated with a new secret key. You need to copy it from inside the container to your docker-compose.yml file!
+
+  1. Use `docker ps` to check the ID of the container
+
+  2. Use `docker exec -it $ID grep SECRET /elabftw/config.php| awk -F \\' '{print $4}' >> docker-compose.yml` to copy the key to the end of the yml file
+
+  3. Edit `docker-compose.yml` to replace the old SECRET_KEY value by the new one at the end of the file.
+
+  For normal users (no docker):
+
+  If you have a message asking you to make your config file readable, use this: `chmod 777 config.php`. Execute this command from inside the `elabftw` folder.
+  Refresh the page to retry. You can put back restrictive permissions after the update is done.
+
+  This update is a major update from the php-encryption project. So we need to change how the key is. This key is used to encrypt the SMTP and timestamping passwords.
+
+* update a lot of composer components
+* update JS components
+* fix bug leading to new users being always validated
+* add in-depth documentation for docker install
+
+Version 1.2.0-p3
+----------------
+
+* fix bug leading to first user on fresh install not being sysadmin + admin
+
 Version 1.2.0-p2
 ----------------
 

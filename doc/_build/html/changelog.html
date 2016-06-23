@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Changelog &mdash; elabftw 1.2.0-p3 documentation</title>
+  <title>Changelog &mdash; elabftw 1.2.1 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="elabftw 1.2.0-p3 documentation" href="index.html"/>
+    <link rel="top" title="elabftw 1.2.1 documentation" href="index.html"/>
         <link rel="next" title="License" href="license.html"/>
         <link rel="prev" title="Thanks" href="thanks.html"/> 
 
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.2.0-p3
+                1.2.1
               </div>
             
           
@@ -104,6 +104,8 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="thanks.html">Thanks</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-2-1">Version 1.2.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-2-0-p3">Version 1.2.0-p3</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-2-0-p2">Version 1.2.0-p2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-2-0-p1">Version 1.2.0-p1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">Version 1.2.0</a></li>
@@ -211,6 +213,38 @@
             
   <div class="section" id="changelog">
 <span id="id1"></span><h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="version-1-2-1">
+<h2>Version 1.2.1<a class="headerlink" href="#version-1-2-1" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">update the crypto lib to 2.0</p>
+<p>WARNING DOCKER USERS !!!!! IMPORTANT READ BELOW:</p>
+<p>Once you pull the new version and visit a page, the config file will be updated with a new secret key. You need to copy it from inside the container to your docker-compose.yml file!</p>
+<ol class="arabic simple">
+<li>Use <cite>docker ps</cite> to check the ID of the container</li>
+<li>Use <cite>docker exec -it $ID grep SECRET /elabftw/config.php| awk -F \&#8217; &#8216;{print $4}&#8217; &gt;&gt; docker-compose.yml</cite> to copy the key to the end of the yml file</li>
+<li>Edit <cite>docker-compose.yml</cite> to replace the old SECRET_KEY value by the new one at the end of the file.</li>
+</ol>
+<p>For normal users (no docker):</p>
+<p>If you have a message asking you to make your config file readable, use this: <cite>chmod 777 config.php</cite>. Execute this command from inside the <cite>elabftw</cite> folder.
+Refresh the page to retry. You can put back restrictive permissions after the update is done.</p>
+<p>This update is a major update from the php-encryption project. So we need to change how the key is. This key is used to encrypt the SMTP and timestamping passwords.</p>
+</li>
+<li><p class="first">update a lot of composer components</p>
+</li>
+<li><p class="first">update JS components</p>
+</li>
+<li><p class="first">fix bug leading to new users being always validated</p>
+</li>
+<li><p class="first">add in-depth documentation for docker install</p>
+</li>
+</ul>
+</div>
+<div class="section" id="version-1-2-0-p3">
+<h2>Version 1.2.0-p3<a class="headerlink" href="#version-1-2-0-p3" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>fix bug leading to first user on fresh install not being sysadmin + admin</li>
+</ul>
+</div>
 <div class="section" id="version-1-2-0-p2">
 <h2>Version 1.2.0-p2<a class="headerlink" href="#version-1-2-0-p2" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -994,7 +1028,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.2.0-p3',
+            VERSION:'1.2.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

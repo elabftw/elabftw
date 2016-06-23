@@ -10,4 +10,5 @@ Session.vim
 tests/_output/*
 tests/_data/*
 vendor/defuse/php-encryption/.git
+vendor/mpdf/mpdf/ttfontdata/*
 node_modules/*

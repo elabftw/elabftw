@@ -15,7 +15,8 @@ namespace Elabftw\Elabftw;
 use \DateTime;
 use \Exception;
 use \Elabftw\Elabftw\Update;
-use \Elabftw\Elabftw\CryptoWrapper as Crypto;
+use Defuse\Crypto\Crypto as Crypto;
+use Defuse\Crypto\Key as Key;
 
 /**
  * Timestamp an experiment with RFC 3161
@@ -107,7 +108,6 @@ class TrustedTimestamps extends Entity
      */
     public function getTimestampParameters()
     {
-        $crypto = new Crypto();
         $hash_algorithms = array('sha256', 'sha384', 'sha512');
 
         // if there is a config in the team, use that
@@ -124,7 +124,7 @@ class TrustedTimestamps extends Entity
 
 
         if (strlen($config['stamppass']) > 0) {
-            $password = $crypto->decrypt($config['stamppass']);
+            $password = Crypto::decrypt($config['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
         } else {
             $password = '';
         }

@@ -15,6 +15,8 @@ use \Swift_Mailer;
 use \Swift_SmtpTransport;
 use \Swift_MailTransport;
 use \Swift_SendmailTransport;
+use \Defuse\Crypto\Crypto as Crypto;
+use \Defuse\Crypto\Key as Key;
 
 /**
  * This file holds global functions available everywhere.
@@ -30,8 +32,6 @@ use \Swift_SendmailTransport;
  */
 function processTimestampPost()
 {
-    $crypto = new CryptoWrapper();
-
     if (isset($_POST['stampprovider'])) {
         $stampprovider = filter_var($_POST['stampprovider'], FILTER_VALIDATE_URL);
     } else {
@@ -59,9 +59,9 @@ function processTimestampPost()
         $stamplogin = '';
     }
     if (isset($_POST['stamppass']) && !empty($_POST['stamppass'])) {
-        $stamppass = $crypto->encrypt($_POST['stamppass']);
+        $stamppass = Crypto::encrypt($_POST['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
     } else {
-        $stamppass = '';
+        $stamppass = get_team_config('stamppass');
     }
 
     return array('stampprovider' => $stampprovider,
@@ -262,8 +262,6 @@ function getMailer()
     // Choose mail transport method; either smtp or sendmail
     $mail_method = get_config('mail_method');
 
-    $crypto = new CryptoWrapper();
-
     switch ($mail_method) {
 
         // Use SMTP Server
@@ -274,7 +272,7 @@ function getMailer()
                 get_config('smtp_encryption')
             )
             ->setUsername(get_config('smtp_username'))
-            ->setPassword($crypto->decrypt(get_config('smtp_password')));
+            ->setPassword(Crypto::decrypt(get_config('smtp_password'), Key::loadFromAsciiSafeString(SECRET_KEY)));
             break;
 
         // Use php mail function

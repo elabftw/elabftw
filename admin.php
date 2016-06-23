@@ -27,7 +27,6 @@ try {
     }
 
     $formKey = new FormKey();
-    $crypto = new CryptoWrapper();
     $status = new Status();
     $statusView = new StatusView();
     $itemsTypesView = new ItemsTypesView(new ItemsTypes($_SESSION['team_id']));
@@ -77,15 +76,6 @@ try {
     <!-- TAB 1 TEAM CONFIG -->
     <?php
     $team = get_team_config();
-
-    $stamppass = '';
-    if (!empty($team['stamppass'])) {
-        try {
-            $stamppass = $crypto->decrypt($team['stamppass']);
-        } catch (Exception $e) {
-            $stamppass = '';
-        }
-    }
     ?>
 
     <div class='divhandle' id='tab1div'>
@@ -130,7 +120,7 @@ try {
             </p>
             <p>
             <label for='stamppass'><?= _('Password for external timestamping service:') ?></label>
-            <input type='password' value='<?= $stamppass ?>' name='stamppass' id='stamppass' />
+            <input type='password' name='stamppass' id='stamppass' />
             <span class='smallgray'><?= _('Your timestamping service provider password') ?></span>
             </p>
             <div class='submitButtonDiv'>

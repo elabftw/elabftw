@@ -68,7 +68,7 @@ class Users extends Auth
 
         // WILL NEW USER BE VALIDATED ?
         // here an admin or sysadmin won't need validation
-        if (get_config('admin_validate') === 1 && $group === 4) { // validation is required for normal user
+        if (get_config('admin_validate') === "1" && $group === 4) { // validation is required for normal user
             $validated = 0; // so new user will need validation
         } else {
             $validated = 1;

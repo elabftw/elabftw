@@ -29,18 +29,7 @@ try {
     require_once 'inc/head.php';
 
     $formKey = new FormKey();
-    $crypto = new CryptoWrapper();
     $SysconfigView = new SysconfigView(new Update(), new Logs(), new TeamsView());
-
-    $stamppass = get_config('stamppass');
-    $smtppass = get_config('smtp_password');
-
-    if (strlen($stamppass) > 0) {
-        $stamppass = $crypto->decrypt($stamppass);
-    }
-    if (strlen($smtppass) > 0) {
-        $smtppass = $crypto->decrypt($smtppass);
-    }
 
     try {
         // we put another try here because an exception here would end the page
@@ -166,7 +155,7 @@ try {
             <label for='stamplogin'><?php echo _('Login for external timestamping service:'); ?></label>
             <input type='text' value='<?php echo get_config('stamplogin'); ?>' name='stamplogin' id='stamplogin' /><br>
             <label for='stamppass'><?php echo _('Password for external timestamping service:'); ?></label>
-            <input type='password' value='<?php echo $stamppass; ?>' name='stamppass' id='stamppass' />
+            <input type='password' name='stamppass' id='stamppass' />
             <div class='submitButtonDiv'>
             <button type='submit' name='submit_config' class='button'><?php echo _('Save'); ?></button>
             </div>
@@ -282,7 +271,7 @@ try {
                 </p>
                 <p>
                 <label for='smtp_password'><?php echo _('SMTP password'); ?></label>
-                <input type='password' value='<?php echo $smtppass; ?>' name='smtp_password' id='smtp_password' />
+                <input type='password' name='smtp_password' id='smtp_password' />
                 </p>
                 </div>
                 <div class='submitButtonDiv'>

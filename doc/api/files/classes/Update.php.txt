@@ -15,6 +15,7 @@ use \RecursiveDirectoryIterator;
 use \RecursiveIteratorIterator;
 use \FilesystemIterator;
 use \Defuse\Crypto\Crypto as Crypto;
+use \Defuse\Crypto\Key as Key;
 
 /**
  * Use this to check for latest version or update the database schema
@@ -46,7 +47,7 @@ class Update
      * AND package.json
      * ///////////////////////////
      */
-    const INSTALLED_VERSION = '1.2.0-p3';
+    const INSTALLED_VERSION = '1.2.1';
 
     /**
      * /////////////////////////////////////////////////////
@@ -54,7 +55,7 @@ class Update
      * UPDATE IT ALSO IN INSTALL/ELABFTW.SQL (last line)
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '8';
+    const REQUIRED_SCHEMA = '9';
 
     /**
      * Create the pdo object
@@ -218,6 +219,11 @@ class Update
             // 20160420
             $this->schema8();
             $this->updateSchema(8);
+        }
+        if ($current_schema < 9) {
+            // 20160623
+            $this->schema9();
+            $this->updateSchema(9);
         }
 
         // place new schema functions above this comment
@@ -412,6 +418,81 @@ define('SECRET_KEY', '" . Crypto::binTohex($new_secret_key) . "');
         $sql = "ALTER TABLE `users` DROP `username`";
         if (!$this->pdo->q($sql)) {
             throw new Exception('Error removing username column');
+        }
+    }
+
+    /**
+     * Update the crypto lib to the latest version
+     *
+     * @throws Exception
+     */
+    private function schema9()
+    {
+        if (!is_writable(ELAB_ROOT . 'config.php')) {
+            throw new Exception('Please make your config file writable by server for this update.');
+        }
+        // grab old key
+        $legacy_key = hex2bin(SECRET_KEY);
+        // make a new one too
+        $new_key = Key::createNewRandomKey();
+
+        // update smtp_password first
+        if (get_config('smtp_password')) {
+            try {
+                $plaintext = Crypto::legacyDecrypt(hex2bin(get_config('smtp_password')), $legacy_key);
+            } catch (Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException $ex) {
+                throw new Exception('Wrong key or modified ciphertext error.');
+            }
+            // now encrypt it with the new method
+            // TODO update it in generator in install/
+            $new_ciphertext = Crypto::encrypt($plaintext, $new_key);
+            update_config(array('smtp_password' => $new_ciphertext));
+        }
+
+        // now update the stamppass from the teams
+        $sql = 'SELECT team_id, stamppass FROM teams';
+        $req = $this->pdo->prepare($sql);
+        $req->execute();
+        while ($teams = $req->fetch()) {
+            if ($teams['stamppass']) {
+                try {
+                    $plaintext = Crypto::legacyDecrypt(hex2bin($teams['stamppass']), $legacy_key);
+                } catch (Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException $ex) {
+                    throw new Exception('Wrong key or modified ciphertext error.');
+                }
+                $new_ciphertext = Crypto::encrypt($plaintext, $new_key);
+                $sql = 'UPDATE teams SET stamppass = :stamppass WHERE team_id = :team_id';
+                $update = $this->pdo->prepare($sql);
+                $update->bindParam(':stamppass', $new_ciphertext);
+                $update->bindParam(':team_id', $teams['team_id']);
+                $update->execute();
+            }
+        }
+
+        // update the main stamppass
+        if (get_config('stamppass')) {
+            try {
+                $plaintext = Crypto::legacyDecrypt(hex2bin(get_config('stamppass')), $legacy_key);
+            } catch (Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException $ex) {
+                throw new Exception('Wrong key or modified ciphertext error.');
+            }
+            // now encrypt it with the new method
+            $new_ciphertext = Crypto::encrypt($plaintext, $new_key);
+            update_config(array('stamppass' => $new_ciphertext));
+        }
+
+            // rewrite the config file with the new key
+            $contents = "<?php
+define('DB_HOST', '" . DB_HOST . "');
+define('DB_NAME', '" . DB_NAME . "');
+define('DB_USER', '" . DB_USER . "');
+define('DB_PASSWORD', '" . DB_PASSWORD . "');
+define('ELAB_ROOT', '" . ELAB_ROOT . "');
+define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
+";
+
+        if (file_put_contents(ELAB_ROOT . 'config.php', $contents) == 'false') {
+            throw new Exception('There was a problem writing the file!');
         }
     }
 }

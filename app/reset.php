@@ -27,12 +27,13 @@ namespace Elabftw\Elabftw;
 
 use Swift_Message;
 use Exception;
+use Defuse\Crypto\Crypto as Crypto;
+use Defuse\Crypto\Key as Key;
 
 require_once '../inc/common.php';
 
 $Users = new Users();
 $Logs = new Logs();
-$Crypto = new CryptoWrapper();
 
 $errflag = false;
 
@@ -71,7 +72,7 @@ if (isset($_POST['email'])) {
             // Get info to build the URL
 
             // the key is the encrypted user's mail address
-            $key = $Crypto->encrypt($email);
+            $key = Crypto::encrypt($email, Key::loadFromAsciiSafeString(SECRET_KEY));
 
             $protocol = 'https://';
             $reset_url = $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];
@@ -139,7 +140,7 @@ if (isset($_POST['password']) &&
         $userArr = $Users->read($_POST['userid']);
 
         // Validate key
-        if ($userArr['email'] != $Crypto->decrypt($_POST['key'])) {
+        if ($userArr['email'] != Crypto::decrypt($_POST['key']), Key::loadFromAsciiSafeString(SECRET_KEY)) {
             throw new Exception('Wrong key for resetting password');
         }
 

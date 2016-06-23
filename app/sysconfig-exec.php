@@ -11,6 +11,8 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use Defuse\Crypto\Crypto as Crypto;
+use Defuse\Crypto\Key as Key;
 
 /**
  * Deal with requests from sysconfig.php
@@ -23,7 +25,6 @@ try {
         throw new Exception(_('This section is out of your reach.'));
     }
 
-    $crypto = new CryptoWrapper();
 
     $tab = '1';
 
@@ -149,9 +150,9 @@ try {
         }
         if (isset($_POST['smtp_password']) && !empty($_POST['smtp_password'])) {
             // the password is stored encrypted in the database
-            $smtp_password = $crypto->encrypt($_POST['smtp_password']);
+            $smtp_password = Crypto::encrypt($_POST['smtp_password'], Key::loadFromAsciiSafeString(SECRET_KEY));
         } else {
-            $smtp_password = '';
+            $smtp_password = get_config('smtp_password');
         }
 
         $updates = array(

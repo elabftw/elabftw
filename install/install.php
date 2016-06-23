@@ -27,6 +27,7 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 use PDO;
+use \Defuse\Crypto\Key as Key;
 
 /* install/index.php to get an installation up and running */
 session_start();
@@ -93,11 +94,7 @@ try {
 $config_file = '../config.php';
 $elab_root = substr(realpath(__FILE__), 0, -20) . '/';
 // make a new secret key
-try {
-    $new_secret_key = \Defuse\Crypto\Crypto::CreateNewRandomKey();
-} catch (Exception $e) {
-    die($e->getMessage());
-}
+$new_key = Key::createNewRandomKey();
 
 // what we will write in the file
 $config = "<?php
@@ -106,7 +103,7 @@ define('DB_NAME', '" . $db_name . "');
 define('DB_USER', '" . $db_user . "');
 define('DB_PASSWORD', '" . $db_password . "');
 define('ELAB_ROOT', '" . $elab_root . "');
-define('SECRET_KEY', '" . \Defuse\Crypto\Crypto::binToHex($new_secret_key) . "');
+define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
 ";
 
 // we try to write content to file and propose the file for download if we can't write to it

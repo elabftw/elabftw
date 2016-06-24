@@ -705,7 +705,7 @@ class ExperimentsView extends EntityView
                 $html .= "<div class='expcomment_box'>
                     <img class='align_right' src='img/small-trash.png' ";
                 $html .= "title='delete' alt='delete' onClick=\"commentsDestroy(" .
-                    $comment['id'] . ", " . $this->Experiments->id . ", '" .  _('Delete this?') . "')\" />";
+                    $comment['id'] . ", " . $this->Experiments->id . ", '" . _('Delete this?') . "')\" />";
                 $html .= "<span class='smallgray'>On " . $comment['datetime'] . " " . $comment['firstname'] . " " .
                     $comment['lastname'] . " wrote :</span><br />";
                 $html .= "<p class='editable' id='" . $comment['id'] . "'>" . $comment['comment'] . "</p></div>";

@@ -3,6 +3,11 @@
 Changelog
 =========
 
+Version 1.2.2
+-------------
+
+* fix a bug preventing users from resetting their password
+
 Version 1.2.1
 -------------
 

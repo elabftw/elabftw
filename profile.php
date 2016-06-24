@@ -38,7 +38,10 @@ try {
     echo "</div>";
     echo "</section>";
     require_once 'inc/statistics.php';
-    require_once 'inc/tagcloud.php';
+
+    // TAGCLOUD
+    $TagCloud = new TagCloud($_SESSION['userid']);
+    echo $TagCloud->show();
 
 } catch (Exception $e) {
     $Logs = new Logs();

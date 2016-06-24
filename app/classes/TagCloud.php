@@ -52,6 +52,18 @@ class TagCloud
     }
 
     /**
+     * Get the CSS class for a given ratio
+     * Classes are in css/tagcloud.css
+     *
+     * @param int $ratio between 0 and 100
+     * @return string
+     */
+    private function getClassFromRatio($ratio)
+    {
+        return 'cloud-' . round($ratio, -1);
+    }
+
+    /**
      * Show the tag cloud or a message if not enough tags
      *
      * @return string $html
@@ -64,6 +76,7 @@ class TagCloud
         $html .= "<img src='img/cloud.png' alt='' class='bot5px' /> <h4 style='display:inline'>" . _('Tag cloud') . "</h4>";
         $html .= "<div class='center'>";
 
+        // handle minimum tag count
         if (count($tags) <= 10) {
             $html .= _('Not enough tags to make a tagcloud.');
             $html .= "</div></section>";
@@ -82,34 +95,14 @@ class TagCloud
         shuffle($tags);
 
         foreach ($tags as $tag) {
-            // Calculate ratio
+            // calculate ratio
             $ratio = floor((($tag['total'] - $last['total']) / $spread) * 100);
-
-            if ($ratio < 10) {
-                $class = 'c1';
-            } elseif ($ratio >= 10 && $ratio < 20) {
-                $class = 'c2';
-            } elseif ($ratio >= 20 && $ratio < 30) {
-                $class = 'c3';
-            } elseif ($ratio >= 30 && $ratio < 40) {
-                $class = 'c4';
-            } elseif ($ratio >= 40 && $ratio < 50) {
-                $class = 'c5';
-            } elseif ($ratio >= 50 && $ratio < 60) {
-                $class = 'c6';
-            } elseif ($ratio >= 60 && $ratio < 70) {
-                $class = 'c7';
-            } elseif ($ratio >= 70 && $ratio < 80) {
-                $class = 'c8';
-            } elseif ($ratio >= 80 && $ratio < 90) {
-                $class = 'c9';
-            } else {
-                $class = 'c10';
-            }
+            // assign a class: font size will be different depending on ratio
+            $class = $this->getClassFromRatio($ratio);
 
             $html .= "<a href='experiments.php?mode=show&tag=" . $tag['tag'] . "' class='" . $class . "'>" . stripslashes($tag['tag']) . "</a> ";
         }
-        // TAGCLOUD
+
         $html .= "</div></section>";
 
         return $html;

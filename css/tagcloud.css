@@ -1,59 +1,43 @@
-/* CSS Document */
-/********************************************************************************
-*                                                                               *
-*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
-*   http://www.elabftw.net/                                                     *
-*                                                                               *
-********************************************************************************/
+/**
+ * CSS for the tagcloud
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see http://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 
-/********************************************************************************
-*  This file is part of eLabFTW.                                                *
-*                                                                               *
-*    eLabFTW is free software: you can redistribute it and/or modify            *
-*    it under the terms of the GNU Affero General Public License as             *
-*    published by the Free Software Foundation, either version 3 of             *
-*    the License, or (at your option) any later version.                        *
-*                                                                               *
-*    eLabFTW is distributed in the hope that it will be useful,                 *
-*    but WITHOUT ANY WARRANTY; without even the implied                         *
-*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
-*    PURPOSE.  See the GNU Affero General Public License for more details.      *
-*                                                                               *
-*    You should have received a copy of the GNU Affero General Public           *
-*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
-*                                                                               *
-********************************************************************************/
-#tagcloud a {
-    text-decoration:none
+.cloud-0 {
+    font-size: 10px;
 }
-.c1{
-    font-size:12px;
+.cloud-10 {
+    font-size: 12px;
 }
-.c2{
-    font-size:14px;
+.cloud-20 {
+    font-size: 14px;
 }
-
-.c3{
-    font-size:16px;
+.cloud-30 {
+    font-size: 16px;
 }
-.c4{
-    font-size:18px;
+.cloud-40 {
+    font-size: 18px;
 }
-.c5{
-    font-size:20px;
+.cloud-50 {
+    font-size: 20px;
 }
-.c6{
-    font-size:22px;
+.cloud-60 {
+    font-size: 22px;
 }
-.c7{
-    font-size:24px;
+.cloud-70 {
+    font-size: 24px;
 }
-.c8{
-    font-size:26px;
+.cloud-80 {
+    font-size: 26px;
 }
-.c9{
-    font-size:28px;
+.cloud-90 {
+    font-size: 28px;
 }
-.c10{
-    font-size:30px;
+.cloud-100 {
+    font-size: 30px;
 }

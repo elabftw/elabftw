@@ -246,23 +246,5 @@ class Teams extends Panel
 
         return $req->fetch(\PDO::FETCH_NAMED);
     }
-
-    /**
-     * Toggle archived status for a team
-     *
-     * @param int $team the team id
-     * @return bool
-     */
-    public function archive($team)
-    {
-        /*
-          _______ ____  _____   ____
-         |__   __/ __ \|  __ \ / __ \
-            | | | |  | | |  | | |  | |
-            | | | |  | | |  | | |  | |
-            | | | |__| | |__| | |__| |
-            |_|  \____/|_____/ \____/
-         */
-    }
 }
 

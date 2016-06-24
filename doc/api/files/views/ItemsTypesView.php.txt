@@ -27,7 +27,7 @@ class ItemsTypesView
      *
      * @param ItemsTypes $itemsTypes
      */
-    public function __construct(ItemsTypes  $itemsTypes)
+    public function __construct(ItemsTypes $itemsTypes)
     {
         $this->itemsTypes = $itemsTypes;
         $this->pdo = Db::getConnection();

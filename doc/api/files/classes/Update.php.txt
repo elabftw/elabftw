@@ -15,6 +15,7 @@ use \RecursiveDirectoryIterator;
 use \RecursiveIteratorIterator;
 use \FilesystemIterator;
 use \Defuse\Crypto\Crypto as Crypto;
+use \Defuse\Crypto\Exception as Ex;
 use \Defuse\Crypto\Key as Key;
 
 /**
@@ -47,7 +48,7 @@ class Update
      * AND package.json
      * ///////////////////////////
      */
-    const INSTALLED_VERSION = '1.2.1';
+    const INSTALLED_VERSION = '1.2.2';
 
     /**
      * /////////////////////////////////////////////////////
@@ -310,59 +311,13 @@ class Update
     /**
      * Switch the crypto lib to defuse/php-encryption
      *
+     * EDIT 20160624: this function will not work now because of switch from 1.2 to 2.0
+     * So tell the user to first update to 1.2.0-p3.
      * @throws Exception
      */
     private function schema5()
     {
-        if (!is_writable(ELAB_ROOT . 'config.php')) {
-            throw new Exception('Please make your config file writable by server for this update.');
-        }
-
-        $legacy = new \Elabftw\Elabftw\LegacyCrypto();
-
-        // our new key (raw binary string)
-        try {
-            $new_secret_key = Crypto::CreateNewRandomKey();
-        } catch (Exception $e) {
-            die($e->getMessage());
-        }
-
-        $new_smtp_password = '';
-        $new_stamp_password = '';
-
-        if (strlen(get_config('smtp_password')) > 0) {
-            $old_smtp_password = $legacy->decrypt(get_config('smtp_password'));
-            $new_smtp_password = Crypto::binTohex(Crypto::encrypt($old_smtp_password, $new_secret_key));
-        }
-
-        if (strlen(get_config('stamppass')) > 0) {
-            // get the old passwords
-            $old_stamp_password = $legacy->decrypt(get_config('stamppass'));
-            $new_stamp_password = Crypto::binTohex(Crypto::encrypt($old_stamp_password, $new_secret_key));
-        }
-
-        $updates = array(
-            'smtp_password' => $new_smtp_password,
-            'stamppass' => $new_stamp_password
-        );
-
-        if (!update_config($updates)) {
-            throw new Exception('Error updating config with new passwords!');
-        }
-
-        // we will rewrite the config file with the new key
-        $contents = "<?php
-define('DB_HOST', '" . DB_HOST . "');
-define('DB_NAME', '" . DB_NAME . "');
-define('DB_USER', '" . DB_USER . "');
-define('DB_PASSWORD', '" . DB_PASSWORD . "');
-define('ELAB_ROOT', '" . ELAB_ROOT . "');
-define('SECRET_KEY', '" . Crypto::binTohex($new_secret_key) . "');
-";
-
-        if (file_put_contents('config.php', $contents) == 'false') {
-            throw new Exception('There was a problem writing the file!');
-        }
+        throw new Exception('Please update first to 1.2.0-p3 (git checkout 1.2.0-p3) before updating to the latest version.');
     }
 
     /**
@@ -443,7 +398,7 @@ define('SECRET_KEY', '" . Crypto::binTohex($new_secret_key) . "');
         if (get_config('smtp_password')) {
             try {
                 $plaintext = Crypto::legacyDecrypt(hex2bin(get_config('smtp_password')), $legacy_key);
-            } catch (Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException $ex) {
+            } catch (Ex\WrongKeyOrModifiedCiphertextException $ex) {
                 throw new Exception('Wrong key or modified ciphertext error.');
             }
             // now encrypt it with the new method
@@ -459,7 +414,7 @@ define('SECRET_KEY', '" . Crypto::binTohex($new_secret_key) . "');
             if ($teams['stamppass']) {
                 try {
                     $plaintext = Crypto::legacyDecrypt(hex2bin($teams['stamppass']), $legacy_key);
-                } catch (Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException $ex) {
+                } catch (Ex\WrongKeyOrModifiedCiphertextException $ex) {
                     throw new Exception('Wrong key or modified ciphertext error.');
                 }
                 $new_ciphertext = Crypto::encrypt($plaintext, $new_key);
@@ -475,7 +430,7 @@ define('SECRET_KEY', '" . Crypto::binTohex($new_secret_key) . "');
         if (get_config('stamppass')) {
             try {
                 $plaintext = Crypto::legacyDecrypt(hex2bin(get_config('stamppass')), $legacy_key);
-            } catch (Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException $ex) {
+            } catch (Ex\WrongKeyOrModifiedCiphertextException $ex) {
                 throw new Exception('Wrong key or modified ciphertext error.');
             }
             // now encrypt it with the new method

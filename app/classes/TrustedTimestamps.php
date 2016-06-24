@@ -162,7 +162,7 @@ class TrustedTimestamps extends Entity
      * Run a shell command
      *
      * @param string $cmd
-     * @return array
+     * @return array<string,null|array|integer>
      */
     private function runSh($cmd)
     {
@@ -447,7 +447,7 @@ class TrustedTimestamps extends Entity
      * We need this because of the openssl bug
      *
      * @throws Exception
-     * @return bool|null
+     * @return bool
      */
     private function validateWithJava()
     {

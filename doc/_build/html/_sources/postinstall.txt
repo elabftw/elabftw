@@ -8,7 +8,7 @@ Setting up email
 
 By default, eLabFTW will try to use the local MTA aka Sendmail. However, it is recommended to use an authenticated SMTP account to avoid the emails going to the spam folders of recipients. That is, unless your MTA is perfectly configured (with DKIM and SPF).
 
-Go to the Sysadmin panel (`elabftw/sysconfig.php`) and add the requested infos.
+Go to the Sysadmin panel (`sysconfig.php`) and add the requested infos.
 
 If you don't know what to do, register a new account on `Mailgun <http://www.mailgun.com>`_. This service will give you a free SMTP account that you can use for eLabFTW. :)
 
@@ -25,7 +25,7 @@ See the :ref:`backup <backup>` page.
 Set up the teams :sup:`(optionnal)`
 -----------------------------------
 
-The Sysadmin panel (`elabftw/sysconfig.php`) allows you to add another team to your install. You should also edit your team name.
+The Sysadmin panel (`sysconfig.php`) allows you to add another team to your install. You should also edit your team name.
 
 Set up timestamping :sup:`(optionnal)`
 --------------------------------------

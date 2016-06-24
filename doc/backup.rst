@@ -20,7 +20,7 @@ You'll want to have a little script that do the backup automatically.
 Here is one way to do it. Adapt it to your needs: `see script <https://gist.github.com/NicolasCARPi/5d9e2599857a148a54b0>`_.
 
 
-If you don't remember your SQL user/password, look in the file `elabftw/config.php`!
+If you don't remember your SQL user/password, look in the `config.php` file!
 
 Make sure to synchronize your files to another computer. Because backuping to the same machine is only half useful.
 

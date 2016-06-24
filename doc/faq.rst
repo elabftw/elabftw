@@ -100,7 +100,7 @@ First I'll only speak about the others free and open source lab notebook. Becaus
 
 * Labbook : a perl based software, still stuck in 1999 and virtually impossible to install/use.
 
-* Cynote : project is dead since 2010.
+* Cynote : has some qualities, but UI is terrible and the project is dead since 2010.
 
 What about compliance to standards?
 -----------------------------------

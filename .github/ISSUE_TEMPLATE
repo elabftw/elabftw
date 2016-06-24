@@ -2,9 +2,9 @@
 
 # Informations
 
-* elabftw version (visible in sysconfig.php) :
-* installation method (git/zip archive/docker) :
-* operating system + version :
-* php version :
-* mysql version :
-* webserver (apache/nginx) + version :
+* Elabftw version (visible in sysconfig.php) :
+* Installation method (git, docker or zip archive) :
+* Operating system + version :
+* PHP version :
+* MySQL version :
+* Webserver (apache/nginx) + version :

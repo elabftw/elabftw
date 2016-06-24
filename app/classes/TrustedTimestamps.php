@@ -339,7 +339,7 @@ class TrustedTimestamps extends Entity
     /**
      * Get the hash of a file
      *
-     * @param $file Path to the file
+     * @param string $file Path to the file
      * @throws Exception if file is not readable
      * @return string Hash of the file
      */

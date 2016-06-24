@@ -140,7 +140,7 @@ if (isset($_POST['password']) &&
         $userArr = $Users->read($_POST['userid']);
 
         // Validate key
-        if ($userArr['email'] != Crypto::decrypt($_POST['key']), Key::loadFromAsciiSafeString(SECRET_KEY)) {
+        if ($userArr['email'] != Crypto::decrypt($_POST['key'], Key::loadFromAsciiSafeString(SECRET_KEY))) {
             throw new Exception('Wrong key for resetting password');
         }
 

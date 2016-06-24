@@ -43,7 +43,6 @@ function processTimestampPost()
             $stampcert = $cert_chain;
         } else {
             throw new Exception('Cannot read provided certificate file.');
-            $stampcert = '';
         }
     } else {
         $stampcert = '';

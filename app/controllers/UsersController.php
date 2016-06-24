@@ -34,7 +34,7 @@ try {
         $tab = 2;
 
         if ($Users->update($_POST)) {
-            $_SESSION['ok'][] =  _('Configuration updated successfully.');
+            $_SESSION['ok'][] = _('Configuration updated successfully.');
         }
     }
 

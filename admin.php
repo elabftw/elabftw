@@ -46,7 +46,7 @@ try {
         $message .= "<input type='hidden' name='usersValidate' value='true' />";
         $message .= $formKey->getFormkey();
         $message .= "<ul>";
-        foreach($unvalidatedUsersArr as $user) {
+        foreach ($unvalidatedUsersArr as $user) {
             $message .= "<li><label>
                 <input type='checkbox' name='usersValidateIdArr[]'
                 value='".$user['userid'] . "'> " . $user['firstname'] . " " . $user['lastname'] . " (" . $user['email'] . ")
@@ -139,7 +139,7 @@ try {
         <?php
         // get all validated users
         $usersArr = $Users->readAll();
-        foreach($usersArr as $user) {
+        foreach ($usersArr as $user) {
             ?>
                 <li class='list-group-item'>
                     <form method='post' action='app/controllers/UsersController.php'>
@@ -292,7 +292,7 @@ try {
             }
             echo "<option value='' disabled>Import experiments</option>";
 
-            foreach($usersArr as $user) {
+            foreach ($usersArr as $user) {
                 echo "<option value='" . $user['userid'] . "' name='type' ";
                 echo ">" . $user['firstname'] . " " . $user['lastname'] . "</option>";
             }

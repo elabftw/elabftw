@@ -414,7 +414,7 @@ class Update
             if ($teams['stamppass']) {
                 try {
                     $plaintext = Crypto::legacyDecrypt(hex2bin($teams['stamppass']), $legacy_key);
-                } catch (Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException $ex) {
+                } catch (Ex\WrongKeyOrModifiedCiphertextException $ex) {
                     throw new Exception('Wrong key or modified ciphertext error.');
                 }
                 $new_ciphertext = Crypto::encrypt($plaintext, $new_key);
@@ -430,7 +430,7 @@ class Update
         if (get_config('stamppass')) {
             try {
                 $plaintext = Crypto::legacyDecrypt(hex2bin(get_config('stamppass')), $legacy_key);
-            } catch (Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException $ex) {
+            } catch (Ex\WrongKeyOrModifiedCiphertextException $ex) {
                 throw new Exception('Wrong key or modified ciphertext error.');
             }
             // now encrypt it with the new method

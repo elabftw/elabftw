@@ -11,12 +11,19 @@
 namespace Elabftw\Elabftw;
 
 /**
- * Show tag cloud
+ * Generate and display a tag cloud for a given user
  */
 class TagCloud
 {
+
+    /** id of our user */
+    private $userid;
+
+    /** pdo object */
+    private $pdo;
+
     /**
-     * Need userid
+     * Init the object with a userid
      *
      * @param string $userid
      */
@@ -44,6 +51,11 @@ class TagCloud
         return $req->fetchAll();
     }
 
+    /**
+     * Show the tag cloud or a message if not enough tags
+     *
+     * @return string $html
+     */
     public function show()
     {
         $tags = $this->readAll();

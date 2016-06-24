@@ -429,7 +429,7 @@ class MakePdf extends Make
                         <h1>' . $this->data['title'] . '</h1>
                         <p style="float:left; width:90%;">
                             <strong>Date:</strong> ' . $date_str . '<br />
-                            <strong>Tags:</strong> <em>' . $this->tags .'</em> <br />
+                            <strong>Tags:</strong> <em>' . $this->tags . '</em> <br />
                             <strong>Created by:</strong> ' . $this->author . '
                         </p>
                         <p style="float:right; width:10%;"><br /><br />

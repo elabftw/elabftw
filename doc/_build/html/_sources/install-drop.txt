@@ -66,8 +66,6 @@ Install everything
 
 .. danger:: Don't get into the habit of executing unknown scripts as root without reading them first!
 
-.. hint:: To follow the install progress, open a new pane with Ctrl-b, release and press %. Then enter ``tail -f elabftw.log``
-
-* Read what is displayed at the end.
+* Don't forget to read :ref:`the post install page <postinstall>`, setup :ref:`backup <backup>`, and subscribe to `the newsletter <http://elabftw.us12.list-manage1.com/subscribe?u=61950c0fcc7a849dbb4ef1b89&id=04086ba197>`_!
 
 ENJOY! :D

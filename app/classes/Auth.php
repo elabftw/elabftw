@@ -137,7 +137,6 @@ class Auth
      */
     private function setToken()
     {
-        // setcookie( $name, $value, $expire, $path, $domain, $secure, $httponly )
         setcookie('token', $this->token, time() + 2592000, '/', null, true, true);
         // Update the token in SQL
         $sql = "UPDATE users SET token = :token WHERE userid = :userid";
@@ -145,7 +144,6 @@ class Auth
         $req->bindParam(':token', $this->token);
         $req->bindParam(':userid', $this->userData['userid']);
         $req->execute();
-
     }
 
     /**

@@ -7,9 +7,7 @@ Install on Mac OS X
     :align: center
     :alt: apple
 
-I am very sad that you have to `use malware <https://www.gnu.org/proprietary/malware-apple.html>`_ for your computing needs. You should try your best to convince whoever is stopping you from using a free operating system that they are wrong, whatever reasons they invoke.
-
-That being said, we're here to install eLabFTW on Mac. So let's get to it. The steps below describe an installation of a web server (XAMPP) directly on your Mac. It is quite complicated to install eLabFTW in a docker container on the Mac OS X platform, you will run into permissions issues that are hard to solve, so I do not recommend it. Hence this guide.
+The steps below describe an installation of a web server (XAMPP) directly on your Mac. When Docker for Mac will work, we'll use that.
 
 Install XAMPP
 -------------

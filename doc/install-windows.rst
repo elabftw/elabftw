@@ -7,18 +7,24 @@ Install on Windows (in Docker)
     :align: center
     :alt: windows
 
-I am very sad that you have to `use malware <https://www.gnu.org/philosophy/malware-microsoft.html>`_ for your computing needs. You should try your best to convince whoever is stopping you from using a free operating system that they are wrong, whatever reasons they invoke.
+Installing eLabFTW on Windows is not your typical Setup.exe > Next > Next > Finish install. Because it is a server software, we will run it on a server. And this server will be inside a container, run by `Docker <https://www.docker.com>`_, which is itself run by GNU/Linux in a virtual machine. It might look complicated at first, but be not afraid, everything is explained.
 
-That being said, we're here to install eLabFTW on Windows. So let's get to it.
+Follow the steps below to install eLabFTW on your system:
 
-Follow the two steps below to install eLabFTW on your system:
+#. Read the documentation and install `Docker Toolbox for Windows <https://docs.docker.com/toolbox/toolbox_install_windows/>`_
+#. `Download this configuration file template <https://raw.githubusercontent.com/elabftw/docker-elabftw/master/src/docker-compose.yml-EXAMPLE>`_
+#. Save it as docker-compose.yml
+#. Edit it with `Notepad++ <https://notepad-plus-plus.org/>`_ or any editor you like but not plain old Notepad.
+#. Check out the :ref:`in-depth documentation <install-docker>` if you feel lost.
+#. Save it as docker-compose.yml (make sure there is no .txt extension)
+#. Open Docker Quickstart Terminal
+#. Enter these commands:
 
-#. Read the documentation and install `Docker on Windows <https://docs.docker.com/windows/>`_
-#. Install :doc:`eLabFTW in Docker <install-docker>`
+.. code-block:: bash
 
-Once the containers are running, you can start Kitematic to check what IP address you need to use to access eLabFTW.
+    cd Desktop #(or wherever you saved docker-compose.yml)
+    docker-compose.exe up -d
 
-.. image:: img/kitematic.png
-    :align: center
-    :alt: kitematic
+**Final step** wait that the previous command finishes and click here: https://192.168.99.100/install
 
+.. note:: Remember to keep your installation :doc:`backuped <backup>` and :doc:`updated <how-to-update>` ;)

@@ -89,7 +89,6 @@
 <li class="toctree-l1"><a class="reference internal" href="install-mac.html">Install on Mac OS X</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-windows.html">Install on Windows (in Docker)</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Common errors</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#add-the-secret-key">Add the secret key</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#failed-creating-uploads-directory">Failed creating <em>uploads/</em> directory</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#extension-is-not-loaded">Extension is not loaded</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#i-can-t-upload-a-file-bigger-than-2-mb">I can&#8217;t upload a file bigger than 2 Mb</a></li>
@@ -159,18 +158,6 @@
             
   <div class="section" id="common-errors">
 <span id="id1"></span><h1>Common errors<a class="headerlink" href="#common-errors" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="add-the-secret-key">
-<h2>Add the secret key<a class="headerlink" href="#add-the-secret-key" title="Permalink to this headline">¶</a></h2>
-<p>Starting from version 1.1.2 there is a secret key present in the config file. If you have restrictive permissions on it, the webserver won&#8217;t be able to add it when you run the update.php script. To fix this issue, the simplest way is to:</p>
-<div class="highlight-bash"><div class="highlight"><pre>chmod a+w config.php
-</pre></div>
-</div>
-<p>Then run the /update.php script again. And bring back good permissions afterwards:</p>
-<div class="highlight-bash"><div class="highlight"><pre>chmod <span class="m">400</span> config.php
-</pre></div>
-</div>
-<p>You might need to use <code class="docutils literal"><span class="pre">sudo</span></code> to achieve these commands.</p>
-</div>
 <div class="section" id="failed-creating-uploads-directory">
 <h2>Failed creating <em>uploads/</em> directory<a class="headerlink" href="#failed-creating-uploads-directory" title="Permalink to this headline">¶</a></h2>
 <p>If eLabFTW couldn&#8217;t create an <em>uploads/</em> folder, that&#8217;s because the httpd user (www-data on Debian/Ubuntu) didn&#8217;t have the necessary rights. To fix it you need to:</p>

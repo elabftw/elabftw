@@ -7,6 +7,8 @@ Version 1.2.2
 -------------
 
 * fix a bug preventing users from resetting their password
+* improve the install experience of installing in the cloud (use dialog)
+* improve the documentation and code syntax
 
 Version 1.2.1
 -------------

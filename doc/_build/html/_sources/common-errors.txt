@@ -4,24 +4,6 @@ Common errors
 =============
 
 
-Add the secret key
-------------------
-
-Starting from version 1.1.2 there is a secret key present in the config file. If you have restrictive permissions on it, the webserver won't be able to add it when you run the update.php script. To fix this issue, the simplest way is to:
-
-.. code-block:: bash
-
-
-    chmod a+w config.php
-
-Then run the /update.php script again. And bring back good permissions afterwards:
-
-.. code-block:: bash
-
-    chmod 400 config.php
-
-You might need to use ``sudo`` to achieve these commands.
-
 Failed creating *uploads/* directory
 ------------------------------------
 

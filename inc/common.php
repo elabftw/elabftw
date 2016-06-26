@@ -9,7 +9,7 @@
  */
 namespace Elabftw\Elabftw;
 
-use \Exception;
+use Exception;
 
 /**
  * This must be included on top of every page.
@@ -66,25 +66,14 @@ textdomain($domain);
 // END i18n
 
 // run the update script if we have the wrong schema version
-try {
-    $update = new Update();
-} catch (Exception $e) {
-    die($e->getMessage());
-}
-
-// don't run it if we didn't run the update.php script yet
-if (!is_null((get_config('schema')))) {
-
-    if (get_config('schema') < $update::REQUIRED_SCHEMA) {
-        try {
-            $_SESSION['ok'] = $update->runUpdateScript();
-        } catch (Exception $e) {
-            $msg_arr[] = 'Error updating the database: ' . $e->getMessage();
-            $_SESSION['ko'] = $msg_arr;
-        }
+$Update = new Update();
+if (get_config('schema') < $Update::REQUIRED_SCHEMA) {
+    try {
+        $_SESSION['ok'] = $Update->runUpdateScript();
+    } catch (Exception $e) {
+        $_SESSION['ko'][] = 'Error updating: ' . $e->getMessage();
     }
 }
-
 
 // pages where you don't need to be logged in
 // reset.php is in fact app/reset.php but we use basename so...

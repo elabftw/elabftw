@@ -200,7 +200,7 @@ docker-compose up -d
 <div class="section" id="editing-the-docker-compose-yml-file">
 <h3>Editing the docker-compose.yml file<a class="headerlink" href="#editing-the-docker-compose-yml-file" title="Permalink to this headline">¶</a></h3>
 <p>If you&#8217;ve never done that before, it can look scary, hence this extended documentation ;)</p>
-<p>The first thing you need to change is the value of DB_PASSWORD. It is advised to use a very long and complex password, as you won&#8217;t have to remember it. Make sure to put the same in MYSQL_PASSWORD. Change also MYSQL_ROOT_PASSWORD.</p>
+<p>The first thing you need to change is the value of DB_PASSWORD. It is advised to use a very long and complex password, as you won&#8217;t have to remember it. Use can use <a class="reference external" href="https://www.grc.com/passwords.htm">this page</a> to get a password. Make sure to put the same in MYSQL_PASSWORD. Change also MYSQL_ROOT_PASSWORD.</p>
 <p>Then get a secret key from the <a class="reference external" href="https://demo.elabftw.net/install/generateSecretKey.php">provided url</a> and paste it in SECRET_KEY
 (this key is used to encrypt the smtp password).</p>
 <p>In Docker, the containers are not persistant, this means that changes made will vanish when the container is removed.</p>

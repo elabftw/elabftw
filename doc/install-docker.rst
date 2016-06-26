@@ -49,7 +49,7 @@ Editing the docker-compose.yml file
 ```````````````````````````````````
 If you've never done that before, it can look scary, hence this extended documentation ;)
 
-The first thing you need to change is the value of DB_PASSWORD. It is advised to use a very long and complex password, as you won't have to remember it. Make sure to put the same in MYSQL_PASSWORD. Change also MYSQL_ROOT_PASSWORD.
+The first thing you need to change is the value of DB_PASSWORD. It is advised to use a very long and complex password, as you won't have to remember it. Use can use `this page <https://www.grc.com/passwords.htm>`_ to get a password. Make sure to put the same in MYSQL_PASSWORD. Change also MYSQL_ROOT_PASSWORD.
 
 Then get a secret key from the `provided url <https://demo.elabftw.net/install/generateSecretKey.php>`_ and paste it in SECRET_KEY
 (this key is used to encrypt the smtp password).

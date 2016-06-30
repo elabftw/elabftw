@@ -302,10 +302,10 @@ class MakePdf extends Make
     }
 
     /**
-    * Return the url of the item or experiment
-    *
-    * @return string url to the item/experiment
-    */
+     * Return the url of the item or experiment
+     *
+     * @return string url to the item/experiment
+     */
     private function getUrl()
     {
         // This is a workaround for PHP sometimes returning "localhost" in a LAN
@@ -400,8 +400,8 @@ class MakePdf extends Make
     }
 
     /**
-    * Build info box containing elabid and permalink
-    */
+     * Build info box containing elabid and permalink
+     */
     private function buildInfoBlock()
     {
         $this->content .= "<table id='infoblock'><tr><td class='noborder'>
@@ -411,8 +411,8 @@ class MakePdf extends Make
     }
 
     /**
-    * Build the header of the HTML code that will be used to build the PDF.
-    */
+     * Build the header of the HTML code that will be used to build the PDF.
+     */
     private function buildHeader()
     {
 
@@ -429,7 +429,7 @@ class MakePdf extends Make
                         <h1>' . $this->data['title'] . '</h1>
                         <p style="float:left; width:90%;">
                             <strong>Date:</strong> ' . $date_str . '<br />
-                            <strong>Tags:</strong> <em>'. $this->tags .'</em> <br />
+                            <strong>Tags:</strong> <em>' . $this->tags . '</em> <br />
                             <strong>Created by:</strong> ' . $this->author . '
                         </p>
                         <p style="float:right; width:10%;"><br /><br />

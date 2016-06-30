@@ -303,7 +303,7 @@ class ExperimentsView extends EntityView
         $html .= "<input id='title_input' name='title' rows='1' value='" . stripslashes($this->experiment['title']) . "' required />";
 
         // BODY
-        $html .= "<h4>". ngettext('Experiment', 'Experiments', 1) . "</h4>";
+        $html .= "<h4>" . ngettext('Experiment', 'Experiments', 1) . "</h4>";
         $html .= "<textarea id='body_area' class='mceditable' name='body' rows='15' cols='80'>";
         $html .= stripslashes($this->experiment['body']) . "</textarea>";
 
@@ -439,7 +439,7 @@ class ExperimentsView extends EntityView
         $html .= "<section class='item' style='padding:15px;border-left: 6px solid #" . $this->experiment['color'] . "'>";
         $html .= "<span class='top_right_status'><img src='img/status.png'>" . $this->experiment['name'] .
             "<img src='img/eye.png' alt='eye' />" . $this->getVisibility() . "</span>";
-        $html .=  "<div><img src='img/calendar.png' class='bot5px' title='date' alt='Date :' /> " .
+        $html .= "<div><img src='img/calendar.png' class='bot5px' title='date' alt='Date :' /> " .
             Tools::formatDate($this->experiment['date']) . "</div>
         <a href='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a>
     <a href='app/controllers/ExperimentsController.php?duplicateId=" . $this->experiment['id'] . "'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a>
@@ -458,12 +458,12 @@ class ExperimentsView extends EntityView
 
         $html .= $this->showTags('experiments', 'view', $this->Experiments->id);
         // TITLE : click on it to go to edit mode only if we are not in read only mode
-        $html .=  "<div ";
+        $html .= "<div ";
         if (!$this->ro && !$this->experiment['locked']) {
-            $html .=  "OnClick=\"document.location='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'\"";
+            $html .= "OnClick=\"document.location='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'\"";
         }
-        $html .=  " class='title_view'>";
-        $html .=  stripslashes($this->experiment['title']) . "</div>";
+        $html .= " class='title_view'>";
+        $html .= stripslashes($this->experiment['title']) . "</div>";
         // BODY (show only if not empty, click on it to edit
         if ($this->experiment['body'] != '') {
             $html .= "<div id='body_view' ";
@@ -704,8 +704,8 @@ class ExperimentsView extends EntityView
                 }
                 $html .= "<div class='expcomment_box'>
                     <img class='align_right' src='img/small-trash.png' ";
-                $html .= "title='delete' alt='delete' onClick=\"commentsDestroy(".
-                    $comment['id'] . ", " . $this->Experiments->id . ", '" .  _('Delete this?') . "')\" />";
+                $html .= "title='delete' alt='delete' onClick=\"commentsDestroy(" .
+                    $comment['id'] . ", " . $this->Experiments->id . ", '" . _('Delete this?') . "')\" />";
                 $html .= "<span class='smallgray'>On " . $comment['datetime'] . " " . $comment['firstname'] . " " .
                     $comment['lastname'] . " wrote :</span><br />";
                 $html .= "<p class='editable' id='" . $comment['id'] . "'>" . $comment['comment'] . "</p></div>";

@@ -103,11 +103,10 @@ class ImportCsv extends Import
                 'userid' => $_SESSION['userid'],
                 'type' => $this->itemType
             ));
-            if ($result) {
-                $this->inserted++;
-            } else {
+            if (!$result) {
                 throw new Exception('Error in SQL query!');
             }
+            $this->inserted++;
         }
     }
 

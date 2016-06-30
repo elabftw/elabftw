@@ -6,7 +6,8 @@ Changelog
 Version 1.2.2
 -------------
 
-* fix a bug preventing users from resetting their password
+* fix a typo preventing users from resetting their password
+* prevent duplicate tags from showing (#270)
 * improve the install experience of installing in the cloud (use dialog)
 * improve the documentation and code syntax
 

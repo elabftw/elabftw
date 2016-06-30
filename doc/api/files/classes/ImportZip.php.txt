@@ -85,11 +85,8 @@ class ImportZip extends Import
     protected function openFile()
     {
         $zip = new ZipArchive;
-        if ($zip->open($this->getFilePath()) && $zip->extractTo($this->tmpPath)) {
-            return true;
-        } else {
-            throw new Exception('Cannot open zip file!');
-        }
+        return $zip->open($this->getFilePath()) && $zip->extractTo($this->tmpPath);
+        throw new Exception('Cannot open zip file!');
     }
 
     /**

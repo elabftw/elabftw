@@ -41,7 +41,7 @@ Connect to your server with SSH:
 
     $ ssh user@12.34.56.78
 
-`cd` to the public directory where you want `eLabFTW` to be installed (can be /var/www/html, ~/public\_html, or any folder you'd like, as long as the webserver is configured properly, in doubt use /var/www)
+`cd` to the public directory where you want `eLabFTW` to be installed (can be /var/www/html, ~/public\_html, or any folder you'd like, as long as the webserver is configured properly, in doubt use /var/www/html)
 
 .. code-block:: bash
 

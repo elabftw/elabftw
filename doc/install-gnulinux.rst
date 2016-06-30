@@ -41,11 +41,11 @@ Connect to your server with SSH:
 
     $ ssh user@12.34.56.78
 
-`cd` to the public directory where you want `eLabFTW` to be installed (can be /var/www, ~/public\_html, or any folder you'd like, as long as the webserver is configured properly, in doubt use /var/www)
+`cd` to the public directory where you want `eLabFTW` to be installed (can be /var/www/html, ~/public\_html, or any folder you'd like, as long as the webserver is configured properly, in doubt use /var/www)
 
 .. code-block:: bash
 
-    $ cd /var/www
+    $ cd /var/www/html
     # make the directory writable by your user (if it's not already the case)
     $ sudo chown `whoami`:`whoami` .
 

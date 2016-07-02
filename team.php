@@ -22,7 +22,7 @@ $selected_menu = 'Team';
 require_once 'inc/head.php';
 
 $Users = new Users();
-$Teams = new Teams();
+$TeamsView = new TeamsView();
 ?>
 
 <menu>
@@ -83,17 +83,7 @@ foreach ($Users->readAll() as $user) {
 
 <!-- TAB 2 STATISTICS -->
 <div class='divhandle' id='tab2div'>
-    <p>
-    <?php
-    $countArr = $Teams->getStats($_SESSION['team_id']);
-    echo sprintf(ngettext('There is a total of %d experiment', 'There is a total of %d experiments', $countArr['totxp']), $countArr['totxp']);
-    echo " (" . $countArr['totxpts'] . " timestamped) ";
-    echo ' ' . sprintf(ngettext('by %d different user.', 'by %d different users', $countArr['totusers']), $countArr['totusers']);
-    ?>
-    </p>
-    <p>
-    <?php echo sprintf(ngettext('There is a total of %d item in the database.', 'There is a total of %d items in the database.', $countArr['totdb']), $countArr['totdb']); ?>
-    </p>
+    <p><?= $TeamsView->showStats($_SESSION['team_id']) ?></p>
 </div>
 
 <!-- TAB 3 TOOLS -->

@@ -69,20 +69,25 @@ class TeamsView extends Teams
     }
 
     /**
-     * Output HTML with stats
+     * Output a line of stats for a team or for all
      *
+     * @param int|null team
+     * @return string stats
      */
-    public function showStats()
+    public function showStats($team = null)
     {
-        $count = $this->getStats();
+        $stats = "";
 
-        $html = "<div class='box'><h3>" . _('Usage statistics') . "</h3>";
-        $html .= "<p>" .
-            _('Teams') . ": " . $count['totteams'] . " − " .
-            _('Total members') . ": " . $count['totusers'] . " − " .
-            ngettext('Total experiment', 'Total experiments', $count['totxp']) . ": " . $count['totxp'] . " (" . $count['totxpts'] . " timestamped) − " .
-            _('Total items') . ": " . $count['totdb'] . "<p></div>";
+        if ($team === null) {
+            $count = $this->getAllStats();
+            $stats .= _('Teams') . ": " . $count['totteams'] . " − ";
+        } else {
+            $count = $this->getStats($team);
+        }
+            $stats .= _('Members') . ": " . $count['totusers'] . " − " .
+            ngettext('Experiment', 'Experiments', $count['totxp']) . ": " . $count['totxp'] . " (" . $count['totxpts'] . " timestamped) − " .
+            _('Items') . ": " . $count['totdb'];
 
-        return $html;
+        return $stats;
     }
 }

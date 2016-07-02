@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2015-03-04 14:57+0100\n"
-"PO-Revision-Date: 2016-04-27 12:13+0200\n"
+"PO-Revision-Date: 2016-07-02 02:51+0200\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -1260,27 +1260,6 @@ msgstr "Site web"
 #: elabftw/team.php:50 elabftw/ucp.php:111
 msgid "Skype"
 msgstr "Skype"
-
-#: elabftw/team.php:100
-#, php-format
-msgid "There is a total of %d experiment"
-msgid_plural "There is a total of %d experiments"
-msgstr[0] "Il y a un total de %d expérience"
-msgstr[1] "Il y a un total de %d expériences"
-
-#: elabftw/team.php:101
-#, php-format
-msgid "by %d different user."
-msgid_plural "by %d different users"
-msgstr[0] "par %d utilisateur."
-msgstr[1] "par %d utilisateurs différents."
-
-#: elabftw/team.php:102
-#, php-format
-msgid "There is a total of %d item in the database."
-msgid_plural "There is a total of %d items in the database."
-msgstr[0] "Il y a un total de %d item dans la base de données."
-msgstr[1] "Il y a un total de %d items dans la base de données."
 
 #: elabftw/team.php:109
 msgid "You can use a TODOlist by pressing 't'."

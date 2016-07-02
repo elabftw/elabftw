@@ -217,33 +217,42 @@ class Teams extends Panel
     }
 
     /**
-     * Get statistics from a team or from the whole install
+     * Get statistics for the whole install
      *
-     * @param int|null $team Id of the team, leave empty to get full stats
      * @return array
      */
-    public function getStats($team = null)
+    public function getAllStats()
     {
         if (!$this->isSysAdmin()) {
             throw new Exception('Only admin can access this!');
         }
-        if (!is_null($team)) {
-            $sql = "SELECT
-            (SELECT COUNT(users.userid) FROM users WHERE users.team = :team) AS totusers,
-            (SELECT COUNT(items.id) FROM items WHERE items.team = :team) AS totdb,
-            (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.team = :team) AS totxp,
-            (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.team = :team AND experiments.timestamped = 1) AS totxpts";
-            $req = $this->pdo->prepare($sql);
-            $req->bindParam(':team', $team, \PDO::PARAM_INT);
-        } else {
-            $sql = "SELECT
-            (SELECT COUNT(users.userid) FROM users) AS totusers,
-            (SELECT COUNT(items.id) FROM items) AS totdb,
-            (SELECT COUNT(teams.team_id) FROM teams) AS totteams,
-            (SELECT COUNT(experiments.id) FROM experiments) AS totxp,
-            (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.timestamped = 1) AS totxpts";
-            $req = $this->pdo->prepare($sql);
-        }
+        $sql = "SELECT
+        (SELECT COUNT(users.userid) FROM users) AS totusers,
+        (SELECT COUNT(items.id) FROM items) AS totdb,
+        (SELECT COUNT(teams.team_id) FROM teams) AS totteams,
+        (SELECT COUNT(experiments.id) FROM experiments) AS totxp,
+        (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.timestamped = 1) AS totxpts";
+        $req = $this->pdo->prepare($sql);
+        $req->execute();
+
+        return $req->fetch(\PDO::FETCH_NAMED);
+    }
+
+    /**
+     * Get statistics for a team
+     *
+     * @param int $team Id of the team
+     * @return array
+     */
+    public function getStats($team)
+    {
+        $sql = "SELECT
+        (SELECT COUNT(users.userid) FROM users WHERE users.team = :team) AS totusers,
+        (SELECT COUNT(items.id) FROM items WHERE items.team = :team) AS totdb,
+        (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.team = :team) AS totxp,
+        (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.team = :team AND experiments.timestamped = 1) AS totxpts";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':team', $team, \PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetch(\PDO::FETCH_NAMED);

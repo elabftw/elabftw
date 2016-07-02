@@ -77,13 +77,15 @@ try {
     <!-- TAB 1 TEAMS -->
     <div class='divhandle' id='tab1div'>
     <div id='teamsDiv'>
-        <?php
-        echo $SysconfigView->TeamsView->showStats();
-        echo $SysconfigView->TeamsView->showPromoteSysadmin();
-        echo $SysconfigView->TeamsView->showCreate();
-        echo $SysconfigView->TeamsView->show();
-        ?>
-    </div>
+        <div class='box'>
+            <h3><?= _('Usage statistics') ?></h3>
+            <p><?= $SysconfigView->TeamsView->showStats() ?></p>
+            <?php
+            echo $SysconfigView->TeamsView->showPromoteSysadmin();
+            echo $SysconfigView->TeamsView->showCreate();
+            echo $SysconfigView->TeamsView->show();
+            ?>
+        </div>
     </div>
 
     <!-- TAB 2 -->

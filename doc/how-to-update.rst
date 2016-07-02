@@ -12,12 +12,6 @@ To update, cd in the `elabftw` folder and do:
 
     $ git pull
 
-If you installed it from a .zip or .tar.gz archive
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-1. Get the `latest archive <https://github.com/elabftw/elabftw/releases/latest>`_
-2. Unpack it on your server, overwriting all the files.
-
 If you are using Docker
 ^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -28,3 +22,9 @@ In the directory where you have the `docker-compose.yml` file:
     $ docker-compose pull
     $ docker-compose down
     $ docker-compose up -d
+
+If you installed it from a .zip or .tar.gz archive
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+1. Get the `latest archive <https://github.com/elabftw/elabftw/releases/latest>`_
+2. Unpack it on your server, overwriting all the files.

@@ -22,6 +22,7 @@ $selected_menu = 'Team';
 require_once 'inc/head.php';
 
 $Users = new Users();
+$Teams = new Teams();
 ?>
 
 <menu>
@@ -82,19 +83,17 @@ foreach ($Users->readAll() as $user) {
 
 <!-- TAB 2 STATISTICS -->
 <div class='divhandle' id='tab2div'>
-<?php
-$count_sql = "SELECT
-(SELECT COUNT(users.userid) FROM users WHERE users.team = :team) AS totusers,
-(SELECT COUNT(items.id) FROM items WHERE items.team = :team) AS totdb,
-(SELECT COUNT(experiments.id) FROM experiments WHERE experiments.team = :team) AS totxp";
-$count_req = $pdo->prepare($count_sql);
-$count_req->bindParam(':team', $_SESSION['team_id']);
-$count_req->execute();
-$totals = $count_req->fetch(PDO::FETCH_ASSOC);
-?>
-    <p><?php echo sprintf(ngettext('There is a total of %d experiment', 'There is a total of %d experiments', $totals['totxp']), $totals['totxp']);
-                echo ' ' . sprintf(ngettext('by %d different user.', 'by %d different users', $totals['totusers']), $totals['totusers']); ?></p>
-    <p><?php echo sprintf(ngettext('There is a total of %d item in the database.', 'There is a total of %d items in the database.', $totals['totdb']), $totals['totdb']); ?></p>
+    <p>
+    <?php
+    $countArr = $Teams->getStats($_SESSION['team_id']);
+    echo sprintf(ngettext('There is a total of %d experiment', 'There is a total of %d experiments', $countArr['totxp']), $countArr['totxp']);
+    echo " (" . $countArr['totxpts'] . " timestamped) ";
+    echo ' ' . sprintf(ngettext('by %d different user.', 'by %d different users', $countArr['totusers']), $countArr['totusers']);
+    ?>
+    </p>
+    <p>
+    <?php echo sprintf(ngettext('There is a total of %d item in the database.', 'There is a total of %d items in the database.', $countArr['totdb']), $countArr['totdb']); ?>
+    </p>
 </div>
 
 <!-- TAB 3 TOOLS -->

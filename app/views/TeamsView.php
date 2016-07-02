@@ -62,7 +62,7 @@ class TeamsView extends Teams
             } else {
                 $html .= " <button id='teamsArchiveButton_" . $team['team_id'] . "' onClick='teamsArchive(" . $team['team_id'] . ")' class='button'>" . ('Archive') . "</button>";
             }
-            $html .= "<p>" . _('Members') . ": " . $count['totusers'] . " − " . ngettext('Experiment', 'Experiments', $count['totxp']) . ": " . $count['totxp'] . " − " . _('Items') . ": " . $count['totdb'] . " − " . _('Created') . ": " . $team['datetime'] . "<p>";
+            $html .= "<p>" . _('Members') . ": " . $count['totusers'] . " − " . ngettext('Experiment', 'Experiments', $count['totxp']) . ": " . $count['totxp'] . " (" . $count['totxpts'] . " timestamped) − " . _('Items') . ": " . $count['totdb'] . " − " . _('Created') . ": " . $team['datetime'] . "<p>";
         }
         $html .= "</div>";
         return $html;
@@ -80,7 +80,7 @@ class TeamsView extends Teams
         $html .= "<p>" .
             _('Teams') . ": " . $count['totteams'] . " − " .
             _('Total members') . ": " . $count['totusers'] . " − " .
-            ngettext('Total experiment', 'Total experiments', $count['totxp']) . ": " . $count['totxp'] . " − " .
+            ngettext('Total experiment', 'Total experiments', $count['totxp']) . ": " . $count['totxp'] . " (" . $count['totxpts'] . " timestamped) − " .
             _('Total items') . ": " . $count['totdb'] . "<p></div>";
 
         return $html;

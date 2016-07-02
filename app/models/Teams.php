@@ -231,7 +231,8 @@ class Teams extends Panel
             $sql = "SELECT
             (SELECT COUNT(users.userid) FROM users WHERE users.team = :team) AS totusers,
             (SELECT COUNT(items.id) FROM items WHERE items.team = :team) AS totdb,
-            (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.team = :team) AS totxp";
+            (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.team = :team) AS totxp,
+            (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.team = :team AND experiments.timestamped = 1) AS totxpts";
             $req = $this->pdo->prepare($sql);
             $req->bindParam(':team', $team, \PDO::PARAM_INT);
         } else {
@@ -239,7 +240,8 @@ class Teams extends Panel
             (SELECT COUNT(users.userid) FROM users) AS totusers,
             (SELECT COUNT(items.id) FROM items) AS totdb,
             (SELECT COUNT(teams.team_id) FROM teams) AS totteams,
-            (SELECT COUNT(experiments.id) FROM experiments) AS totxp";
+            (SELECT COUNT(experiments.id) FROM experiments) AS totxp,
+            (SELECT COUNT(experiments.id) FROM experiments WHERE experiments.timestamped = 1) AS totxpts";
             $req = $this->pdo->prepare($sql);
         }
         $req->execute();

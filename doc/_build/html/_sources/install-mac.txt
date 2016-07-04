@@ -21,6 +21,8 @@ Once it's installed, you let it start XAMPP. On the application manager (/Applic
 * Go to the tab '''Manage Servers'''
 * Select MySQL Database
 * Click Start
+* Select Apache Webserver
+* Click Start
 
 Test that everything is working by going to https://localhost. You should see a warning that the certificate is not signed and cannot be trusted, which is normal. If it doesn't work, try telling your browser to avoid proxy for local addresses.
 

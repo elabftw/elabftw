@@ -193,8 +193,17 @@ docker-compose up -d
 <h3>About the docker image<a class="headerlink" href="#about-the-docker-image" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>The elabftw docker image is using <a class="reference external" href="https://alpinelinux.org/">Alpine Linux</a> as a base OS, so we get a lightweight and secure base.</li>
-<li>PHP 7 is used so we get an up to date and fast PHP.</li>
-<li>Nginx is used so we get the best webserver out there running our app, with a secure configuration.</li>
+<li><a class="reference external" href="https://secure.php.net/">PHP 7</a> is used so we get an up to date and fast PHP.</li>
+<li><a class="reference external" href="http://nginx.org">Nginx</a> is used so we get the best webserver out there running our app with <a class="reference external" href="https://en.wikipedia.org/wiki/HTTP/2">HTTP/2</a> capabilities.</li>
+</ul>
+<p>Using Docker, you&#8217;ll also automatically benefit from some additional security features:</p>
+<ul class="simple">
+<li>header X-Frame-Option</li>
+<li>header X-XSS-Protection</li>
+<li>header X-Content-Type-Options</li>
+<li>header Strict-Transport-Security</li>
+<li>use Diffie-Hellman for key exchange with 2048 bits parameter</li>
+<li>use modern cipher suite and protocols for SSL. This will result in an A rating on <a class="reference external" href="https://www.ssllabs.com/ssltest/">SSLLabs</a>.</li>
 </ul>
 </div>
 <div class="section" id="editing-the-docker-compose-yml-file">

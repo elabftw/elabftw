@@ -42,8 +42,17 @@ Running eLabFTW with Docker means you'll have two containers running. One will b
 About the docker image
 ``````````````````````
 - The elabftw docker image is using `Alpine Linux <https://alpinelinux.org/>`_ as a base OS, so we get a lightweight and secure base.
-- PHP 7 is used so we get an up to date and fast PHP.
-- Nginx is used so we get the best webserver out there running our app, with a secure configuration.
+- `PHP 7 <https://secure.php.net/>`_ is used so we get an up to date and fast PHP.
+- `Nginx <http://nginx.org>`_ is used so we get the best webserver out there running our app with `HTTP/2 <https://en.wikipedia.org/wiki/HTTP/2>`_ capabilities.
+
+Using Docker, you'll also automatically benefit from some additional security features:
+
+- header X-Frame-Option
+- header X-XSS-Protection
+- header X-Content-Type-Options
+- header Strict-Transport-Security
+- use Diffie-Hellman for key exchange with 2048 bits parameter
+- use modern cipher suite and protocols for SSL. This will result in an A rating on `SSLLabs <https://www.ssllabs.com/ssltest/>`_.
 
 Editing the docker-compose.yml file
 ```````````````````````````````````

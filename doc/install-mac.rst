@@ -12,7 +12,7 @@ The steps below describe an installation of a web server (XAMPP) directly on you
 Install XAMPP
 -------------
 
-Download `XAMPP for OS X <https://www.apachefriends.org/download.html>`_. Take the greatest version number.
+Download `XAMPP for OS X <https://www.apachefriends.org/download.html>`_. Take the greatest version number. Versions below 5.6 will **NOT** work.
 
 Now that it's downloaded, double click it and open the installer. You can untick the XAMPP Developer Files and Learn more about Bitnami checkboxes.
 

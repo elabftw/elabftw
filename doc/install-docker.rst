@@ -32,6 +32,8 @@ Now visit https://YOUR.IP.ADDRESS/install. You will be redirected to the registe
 
 That's all folks! The documentation below is a bonus, read it if you want to understand more how it works or if you didn't manage to configure the app.
 
+.. _docker-doc:
+
 In-depth documentation
 ----------------------
 

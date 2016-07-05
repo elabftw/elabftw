@@ -7,11 +7,14 @@ Some people make you pay to have a 'cloud service'. What I'm providing here is a
 
 This way you get to keep total control over your data. It will cost you less than 5$ a month. No setup fee, no annual licence, no overpriced features, welcome to open source software ;)
 
-Your eLabFTW installation will run in a `Docker <https://www.docker.com>`_ container. Privacy over the wire (HTTPS) will be provided by `Let's Encrypt <https://letsencrypt.org>`_. The webserver will be `nginx <http://nginx.org>`_. Operating systems will be `Ubuntu <http://www.ubuntu.com>`_ (`GNU <https://www.gnu.org>`_/`Linux <https://kernel.org>`_) and `Alpine Linux <https://alpinelinux.org/>`_.
+One other advantage is that you'll get your own server. With it, you can run whatever you want, not just eLabFTW! A `Wiki <https://www.mediawiki.org/wiki/MediaWiki>`_, a bug tracker, `GitLab <https://about.gitlab.com/>`_, etc…
+
+Your eLabFTW installation will run in a `Docker <https://www.docker.com>`_ container. Learn more about eLabFTW in Docker :ref:`here <docker-doc>`.
 
 Everything will be configured properly and automagically.
 
 If you don't have a (sub)domain already, you can get one from `OVH <https://www.ovh.com>`_, `Gandi <https://www.gandi.net>`_, `1&1 <https://www.1and1.com>`_ or any other domain name registrar. It's about 5$ a year.
+
 
 Create your drop
 ----------------

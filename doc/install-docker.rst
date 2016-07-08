@@ -39,7 +39,7 @@ In-depth documentation
 
 How does it work?
 `````````````````
-Running eLabFTW with Docker means you'll have two containers running. One will be from the official MySQL image, running a MySQL server. The other will be the elabftw image, with a webserver and the elabftw files. In order to facilitate the whole process, we will be using `docker-compose <https://docs.docker.com/compose/install/>`_. This tool will allow us to do the configuration in a YAML file, easy to modify and copy around, and also permit easy start/stop of the containers.
+Running eLabFTW with Docker means everything needed will be provided. You'll have the correct version of every library and the webserver will be properly setup with a secure configuration. Because eLabFTW will run in a container. In fact you'll have two containers running. One will be from the official MySQL image, running a MySQL server. The other will be the eLabFTW image, with a webserver + PHP and the eLabFTW files. In order to facilitate the whole process, we will use `docker-compose <https://docs.docker.com/compose/install/>`_. This tool will allow us to do the configuration in a YAML file, easy to modify and copy around, and also permit easy start/stop of the containers.
 
 About the docker image
 ``````````````````````

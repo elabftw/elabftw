@@ -79,7 +79,7 @@ class Tags extends Entity
      */
     public function read()
     {
-        $sql = "SELECT DISTINCT * FROM " . $this->type . "_tags WHERE item_id = :item_id GROUP BY tag";
+        $sql = "SELECT DISTINCT * FROM " . $this->type . "_tags WHERE item_id = :item_id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':item_id', $this->id);
         $req->execute();
@@ -133,11 +133,11 @@ class Tags extends Entity
     public function generateTagList()
     {
         if ($this->type === 'experiments') {
-            $sql = "SELECT DISTINCT tag, id FROM experiments_tags
+            $sql = "SELECT DISTINCT tag FROM experiments_tags
                 INNER JOIN users ON (experiments_tags.userid = users.userid)
                 WHERE users.team = :team GROUP BY tag ORDER BY id DESC";
         } else {
-            $sql = "SELECT DISTINCT tag, id FROM items_tags WHERE team_id = :team GROUP BY tag ORDER BY id DESC";
+            $sql = "SELECT DISTINCT tag FROM items_tags WHERE team_id = :team GROUP BY tag ORDER BY id DESC";
         }
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $_SESSION['team_id']);

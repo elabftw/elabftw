@@ -135,9 +135,9 @@ class Tags extends Entity
         if ($this->type === 'experiments') {
             $sql = "SELECT DISTINCT tag FROM experiments_tags
                 INNER JOIN users ON (experiments_tags.userid = users.userid)
-                WHERE users.team = :team GROUP BY tag ORDER BY id DESC";
+                WHERE users.team = :team GROUP BY tag ORDER BY tag DESC";
         } else {
-            $sql = "SELECT DISTINCT tag FROM items_tags WHERE team_id = :team GROUP BY tag ORDER BY id DESC";
+            $sql = "SELECT DISTINCT tag FROM items_tags WHERE team_id = :team GROUP BY tag ORDER BY tag DESC";
         }
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $_SESSION['team_id']);

@@ -62,28 +62,33 @@ class TeamsView extends Teams
             } else {
                 $html .= " <button id='teamsArchiveButton_" . $team['team_id'] . "' onClick='teamsArchive(" . $team['team_id'] . ")' class='button'>" . ('Archive') . "</button>";
             }
-            $html .= "<p>" . _('Members') . ": " . $count['totusers'] . " − " . ngettext('Experiment', 'Experiments', $count['totxp']) . ": " . $count['totxp'] . " − " . _('Items') . ": " . $count['totdb'] . " − " . _('Created') . ": " . $team['datetime'] . "<p>";
+            $html .= "<p>" . _('Members') . ": " . $count['totusers'] . " − " . ngettext('Experiment', 'Experiments', $count['totxp']) . ": " . $count['totxp'] . " (" . $count['totxpts'] . " timestamped) − " . _('Items') . ": " . $count['totdb'] . " − " . _('Created') . ": " . $team['datetime'] . "<p>";
         }
         $html .= "</div>";
         return $html;
     }
 
     /**
-     * Output HTML with stats
+     * Output a line of stats for a team or for all
      *
+     * @param int|null team
+     * @return string stats
      */
-    public function showStats()
+    public function showStats($team = null)
     {
-        $count = $this->getStats();
+        $stats = "";
 
-        $html = "<div class='box'><h3>" . _('Usage statistics') . "</h3>";
-        $html .= "<p>" .
-            _('Teams') . ": " . $count['totteams'] . " − " .
-            _('Total members') . ": " . $count['totusers'] . " − " .
-            ngettext('Total experiment', 'Total experiments', $count['totxp']) . ": " . $count['totxp'] . " − " .
-            _('Total items') . ": " . $count['totdb'] . "<p></div>";
+        if ($team === null) {
+            $count = $this->getAllStats();
+            $stats .= _('Teams') . ": " . $count['totteams'] . " − ";
+        } else {
+            $count = $this->getStats($team);
+        }
+            $stats .= _('Members') . ": " . $count['totusers'] . " − " .
+            ngettext('Experiment', 'Experiments', $count['totxp']) . ": " . $count['totxp'] . " (" . $count['totxpts'] . " timestamped) − " .
+            _('Items') . ": " . $count['totdb'];
 
-        return $html;
+        return $stats;
     }
 }
 

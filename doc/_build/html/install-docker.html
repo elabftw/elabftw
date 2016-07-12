@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Install in a Docker container &mdash; elabftw 1.2.2 documentation</title>
+  <title>Install in a Docker container &mdash; elabftw 1.2.3 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="elabftw 1.2.2 documentation" href="index.html"/>
+    <link rel="top" title="elabftw 1.2.3 documentation" href="index.html"/>
         <link rel="next" title="Install on Mac OS X" href="install-mac.html"/>
         <link rel="prev" title="Install in the cloud" href="install-drop.html"/> 
 
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.2.2
+                1.2.3
               </div>
             
           
@@ -187,7 +187,7 @@ docker-compose up -d
 <span id="docker-doc"></span><h2>In-depth documentation<a class="headerlink" href="#in-depth-documentation" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="how-does-it-work">
 <h3>How does it work?<a class="headerlink" href="#how-does-it-work" title="Permalink to this headline">¶</a></h3>
-<p>Running eLabFTW with Docker means you&#8217;ll have two containers running. One will be from the official MySQL image, running a MySQL server. The other will be the elabftw image, with a webserver and the elabftw files. In order to facilitate the whole process, we will be using <a class="reference external" href="https://docs.docker.com/compose/install/">docker-compose</a>. This tool will allow us to do the configuration in a YAML file, easy to modify and copy around, and also permit easy start/stop of the containers.</p>
+<p>Running eLabFTW with Docker means everything needed will be provided. You&#8217;ll have the correct version of every library and the webserver will be properly setup with a secure configuration. Because eLabFTW will run in a container. In fact you&#8217;ll have two containers running. One will be from the official MySQL image, running a MySQL server. The other will be the eLabFTW image, with a webserver + PHP and the eLabFTW files. In order to facilitate the whole process, we will use <a class="reference external" href="https://docs.docker.com/compose/install/">docker-compose</a>. This tool will allow us to do the configuration in a YAML file, easy to modify and copy around, and also permit easy start/stop of the containers.</p>
 </div>
 <div class="section" id="about-the-docker-image">
 <h3>About the docker image<a class="headerlink" href="#about-the-docker-image" title="Permalink to this headline">¶</a></h3>
@@ -292,7 +292,7 @@ docker-compose up -d
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.2.2',
+            VERSION:'1.2.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

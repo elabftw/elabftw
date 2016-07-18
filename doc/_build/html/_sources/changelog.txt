@@ -3,6 +3,17 @@
 Changelog
 =========
 
+Version 1.2.4
+-------------
+
+* fix a missing `<div>` element from the sysconfig page preventing correct navigation through tabs
+
+Version 1.2.3
+-------------
+
+* fix for MySQL 5.7.5+ (see #273)
+* documentation improvements
+
 Version 1.2.2
 -------------
 

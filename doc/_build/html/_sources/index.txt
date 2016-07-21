@@ -37,6 +37,7 @@ There are multiple ways to install elabftw, see the left menu to choose which on
     features
     manual
     contributing
+    upgrade-to-docker
 
 .. toctree::
     :caption: Misc

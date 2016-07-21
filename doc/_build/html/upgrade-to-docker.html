@@ -30,7 +30,9 @@
   
 
   
-    <link rel="top" title="elabftw 1.2.4 documentation" href="index.html"/> 
+    <link rel="top" title="elabftw 1.2.4 documentation" href="index.html"/>
+        <link rel="next" title="Thanks" href="thanks.html"/>
+        <link rel="prev" title="Contributing" href="contributing.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -92,11 +94,28 @@
 <li class="toctree-l1"><a class="reference internal" href="how-to-update.html">How to update</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Documentation</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="features.html">Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="manual.html">Manual</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Upgrade a normal install to a Docker install</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#preparation">Preparation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#install-docker">Install Docker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-docker-compose">Install Docker-compose</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#export-current-install">Export current install</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#get-the-config-file">Get the config file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fill-the-config-file">Fill the config file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#about-https-ssl-tls">About HTTPS (SSL/TLS)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#starting-the-containers">Starting the containers</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">Misc</span></p>
 <ul>
@@ -192,14 +211,15 @@ If you are not familiar with Docker, take the time to read the documentation on 
 <div class="section" id="fill-the-config-file">
 <h3>Fill the config file<a class="headerlink" href="#fill-the-config-file" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>Change the value of DB_PASSWORD to a new generated long password. You can get one <a class="reference external" href="https://www.grc.com/passwords.htm">here</a>.</li>
-<li>Open the <cite>config.php</cite> file located in the <cite>elabftw</cite> folder.</li>
-<li>Copy the SECRET_KEY value from the <cite>config.php</cite> file to the <cite>docker-compose.yml</cite> file.</li>
-<li>Change the SERVER_NAME to the name of your server (elabftw.example.edu or the IP address).</li>
-<li>Volumes: copy the <cite>uploads</cite> folder to <cite>/dok/</cite> or wherever you want it.</li>
-<li>Change the MYSQL_ROOT_PASSWORD to something complicated.</li>
-<li>Change the MYSQL_PASSWORD to the same value as DB_PASSWORD.</li>
-<li>You can optionally edit where the MySQL database will be stored persistently.</li>
+<li>Change the value of DB_PASSWORD to a new generated long password. You can get one <a class="reference external" href="https://www.grc.com/passwords.htm">here</a></li>
+<li>Open the <cite>config.php</cite> file located in your <cite>elabftw</cite> folder of the current install</li>
+<li>Copy the SECRET_KEY value from the <cite>config.php</cite> file to the <cite>docker-compose.yml</cite> file</li>
+<li>Change the SERVER_NAME to the name of your server (elabftw.example.edu or the IP address)</li>
+<li>Port: change &#8220;443:443&#8221; to &#8220;8080:443&#8221; or &#8220;444:443&#8221; or &#8220;9000:443&#8221; because Apache is already using port 443.</li>
+<li>Volumes: copy the <cite>uploads</cite> folder to <cite>/dok/</cite> or wherever you want it</li>
+<li>Change the MYSQL_ROOT_PASSWORD to something complicated</li>
+<li>Change the MYSQL_PASSWORD to the same value as DB_PASSWORD</li>
+<li>You can optionally edit where the MySQL database will be stored persistently</li>
 <li>If you are running MySQL&nbsp;5.5 or 5.6, edit the 5.7 in the <cite>image: mysql:5.7</cite> line to the appropriate version. You can upgrade later.</li>
 </ul>
 </div>
@@ -228,7 +248,7 @@ cp /path/to/your/current-key.pem /etc/letsencrypt/live/elabftw.example.com/privk
 </pre></div>
 </div>
 <p>This will create an empty database in <cite>/dok/mysql</cite> or wherever you chose to have it. But of course, what we want is to have our old database in there! To do that we will copy our <cite>dump.sql</cite> file to the <cite>mysql</cite> container and import it in place of the freshly created database (which is empty!).</p>
-<div class="highlight-sql"><div class="highlight"><pre><span class="n">docker</span> <span class="k">copy</span> <span class="n">dump</span><span class="p">.</span><span class="k">sql</span> <span class="n">mysql</span><span class="p">:</span><span class="o">/</span>
+<div class="highlight-sql"><div class="highlight"><pre><span class="n">docker</span> <span class="n">cp</span> <span class="n">dump</span><span class="p">.</span><span class="k">sql</span> <span class="n">mysql</span><span class="p">:</span><span class="o">/</span>
 <span class="n">docker</span> <span class="k">exec</span> <span class="o">-</span><span class="n">it</span> <span class="n">mysql</span> <span class="n">bash</span>
 <span class="n">mysql</span> <span class="o">-</span><span class="n">uroot</span> <span class="o">-</span><span class="n">p</span>
 <span class="o">#</span> <span class="n">here</span> <span class="n">you</span> <span class="k">type</span> <span class="n">the</span> <span class="n">password</span> <span class="n">you</span> <span class="n">put</span> <span class="k">in</span> <span class="n">MYSQL_ROOT_PASSWORD</span> <span class="k">in</span> <span class="n">the</span> <span class="n">docker</span><span class="o">-</span><span class="n">compose</span><span class="p">.</span><span class="n">yml</span> <span class="n">file</span>
@@ -250,6 +270,15 @@ cp /path/to/your/current-key.pem /etc/letsencrypt/live/elabftw.example.com/privk
            </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="thanks.html" class="btn btn-neutral float-right" title="Thanks" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="contributing.html" class="btn btn-neutral" title="Contributing" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

@@ -64,6 +64,7 @@ Fill the config file
 * Open the `config.php` file located in your `elabftw` folder of the current install
 * Copy the SECRET_KEY value from the `config.php` file to the `docker-compose.yml` file
 * Change the SERVER_NAME to the name of your server (elabftw.example.edu or the IP address)
+* Port: change "443:443" to "8080:443" or "444:443" or "9000:443" because Apache is already using port 443.
 * Volumes: copy the `uploads` folder to `/dok/` or wherever you want it
 * Change the MYSQL_ROOT_PASSWORD to something complicated
 * Change the MYSQL_PASSWORD to the same value as DB_PASSWORD
@@ -104,7 +105,7 @@ This will create an empty database in `/dok/mysql` or wherever you chose to have
 
 .. code-block:: sql
 
-    docker copy dump.sql mysql:/
+    docker cp dump.sql mysql:/
     docker exec -it mysql bash
     mysql -uroot -p
     # here you type the password you put in MYSQL_ROOT_PASSWORD in the docker-compose.yml file

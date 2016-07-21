@@ -23,16 +23,31 @@ require_once 'inc/head.php';
 
 $Users = new Users();
 $TeamsView = new TeamsView();
+$Database = new Database($_SESSION['team_id']);
 ?>
 
 <menu>
 <ul>
+<li class='tabhandle' id='tab0'><?= _('Booking') ?></li>
 <li class='tabhandle' id='tab1'><?= _('Members') ?></li>
 <li class='tabhandle' id='tab2'><?= _('Statistics')?></li>
 <li class='tabhandle' id='tab3'><?= _('Tools') ?></li>
 <li class='tabhandle' id='tab4'><?= _('Help') ?></li>
 </ul>
 </menu>
+
+<!-- TAB 0 BOOKING -->
+<div class='divhandle' id='tab0div'>
+<p>Equipment:</p>
+<select>
+<?php
+$items = $Database->readAll();
+foreach ($items as $item) {
+    echo "<option value='" . $item['id'] . "'>" . $item['title'] . "</option>";
+}
+?>
+</select>
+</div>
 
 <!-- TAB 1 MEMBERS -->
 <div class='divhandle' id='tab1div'>
@@ -127,7 +142,7 @@ $(document).ready(function() {
     var params = getGetParameters();
     var tab = parseInt(params['tab']);
     if (!isInt(tab)) {
-        var tab = 1;
+        var tab = 0;
     }
     var initdiv = '#tab' + tab + 'div';
     var inittab = '#tab' + tab;

@@ -33,6 +33,7 @@ eLabFTW uses open source code from others. A big thanks to them for making their
 * `ChemDoodle <https://web.chemdoodle.com/>`_
 * `FileSaver.js <https://github.com/eligrey/FileSaver.js/>`_
 * `tinymce-mention <https://github.com/CogniStreamer/tinyMCE-mention>`_
+* `fullcalendar <http://fullcalendar.io>`_
 
 Other resources
 

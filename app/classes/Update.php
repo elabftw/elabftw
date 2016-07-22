@@ -56,7 +56,7 @@ class Update
      * UPDATE IT ALSO IN INSTALL/ELABFTW.SQL (last line)
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '9';
+    const REQUIRED_SCHEMA = '10';
 
     /**
      * Create the pdo object
@@ -229,6 +229,11 @@ class Update
             $this->schema9();
             $this->updateSchema(9);
             $msg_arr[] = "[WARNING] The config file has been changed! If you are running Docker, make sure to copy your secret key to the yml file. Check the release notes!";
+        }
+        if ($current_schema < 10) {
+            // 20160722
+            $this->schema10();
+            $this->updateSchema(10);
         }
 
         // place new schema functions above this comment
@@ -450,6 +455,18 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
 
         if (file_put_contents(ELAB_ROOT . 'config.php', $contents) == 'false') {
             throw new Exception('There was a problem writing the file!');
+        }
+    }
+
+    /**
+     * Add team calendar
+     *
+     */
+    private function schema10()
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS `team_events` ( `id` INT UNSIGNED NOT NULL AUTO_INCREMENT , `team` INT UNSIGNED NOT NULL , `item` INT UNSIGNED NOT NULL, `start` VARCHAR(255) NOT NULL, `end` VARCHAR(255),  `allday` BOOLEAN DEFAULT FALSE, PRIMARY KEY (`id`));";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Problem updating to schema 10!');
         }
     }
 }

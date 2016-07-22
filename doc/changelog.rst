@@ -3,6 +3,11 @@
 Changelog
 =========
 
+Version 1.3.0
+-------------
+
+* add a scheduler to allow booking (bookable) items from the database, on Team page
+
 Version 1.2.4
 -------------
 

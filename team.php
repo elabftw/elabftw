@@ -24,7 +24,12 @@ require_once 'inc/head.php';
 $Users = new Users();
 $TeamsView = new TeamsView();
 $Database = new Database($_SESSION['team_id']);
+$Scheduler = new Scheduler($_SESSION['team_id']);
 ?>
+
+<script src='js/moment/moment.js'></script>
+<script src='js/fullcalendar/dist/fullcalendar.js'></script>
+<link rel='stylesheet' media='all' href='js/fullcalendar/dist/fullcalendar.min.css'>
 
 <menu>
 <ul>
@@ -36,17 +41,27 @@ $Database = new Database($_SESSION['team_id']);
 </ul>
 </menu>
 
-<!-- TAB 0 BOOKING -->
+<!-- TAB 0 SCHEDULER -->
 <div class='divhandle' id='tab0div'>
-<p>Equipment:</p>
-<select>
+<select id='scheduler-select' onChange="insertParamAndReload('item', this.value)">
+<option selected disabled><?= _("Select an equipment") ?></option>
 <?php
 $items = $Database->readAll();
 foreach ($items as $item) {
-    echo "<option value='" . $item['id'] . "'>" . $item['title'] . "</option>";
+    echo "<option ";
+    if ($_GET['item'] == $item['id']) {
+        echo "selected ";
+    }
+    echo "value='" . $item['id'] . "'>" . $item['title'] . "</option>";
 }
 ?>
 </select>
+<?php
+if (isset($_GET['item'])) {
+    $Scheduler->setId($_GET['item']);
+    echo "<div id='scheduler'></div>";
+}
+?>
 </div>
 
 <!-- TAB 1 MEMBERS -->
@@ -160,7 +175,44 @@ $(document).ready(function() {
         $(tabhandle).addClass('selected');
     });
     // END TABS
+	$('#scheduler').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay'
+			},
+            defaultView: 'agendaWeek',
+			selectable: true,
+			selectHelper: true,
+			select: function(start, end) {
+				var title = prompt('Event Title:');
+				var eventData;
+				if (title) {
+					eventData = {
+						title: title,
+						start: start,
+						end: end
+					};
+					$('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+				}
+				$('#calendar').fullCalendar('unselect');
+			},
+			editable: true,
+			eventLimit: true, // allow "more" link when too many events
+            events: <?= $Scheduler->read() ?>,
+            dayClick: function(date, jsEvent, view) {
+                schedulerCreate(date.format());
+            }
+		});
 });
+
+function schedulerCreate(date) {
+    $.post('app/controllers/SchedulerController.php', {
+        create: true,
+        item: $('#scheduler-select').val(),
+        date: date
+    });
+}
 </script>
 
 <?php require_once('inc/footer.php');

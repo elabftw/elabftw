@@ -318,6 +318,7 @@ class Tools
     /**
      * Return a lang to use with fullcalendar from the pref
      *
+     * @param string $lang 'pt_BR' or 'fr_FR'
      * @return string
      */
     public static function getCalendarLang($lang)

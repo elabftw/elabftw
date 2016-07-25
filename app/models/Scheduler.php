@@ -39,6 +39,8 @@ class Scheduler extends Entity
      * Add an event for an item in the team
      *
      * @param string $start 2016-07-22T13:37:00
+     * @param string $end 2016-07-22T19:42:00
+     * @param string $title the comment entered by user
      * @return bool
      */
     public function create($start, $end, $title)

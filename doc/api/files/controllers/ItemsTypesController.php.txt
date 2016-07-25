@@ -22,21 +22,31 @@ try {
 
     // CREATE ITEMS TYPES
     if (isset($_POST['itemsTypesCreate'])) {
-        $itemsTypes->create(
+        if ($itemsTypes->create(
             $_POST['itemsTypesName'],
             $_POST['itemsTypesColor'],
+            $_POST['itemsTypesBookable'],
             $_POST['itemsTypesTemplate']
-        );
+        )) {
+            echo '1';
+        } else {
+            echo '0';
+        }
     }
 
     // UPDATE ITEM TYPE
     if (isset($_POST['itemsTypesUpdate'])) {
-        $itemsTypes->update(
+        if ($itemsTypes->update(
             $_POST['itemsTypesId'],
             $_POST['itemsTypesName'],
             $_POST['itemsTypesColor'],
+            $_POST['itemsTypesBookable'],
             $_POST['itemsTypesTemplate']
-        );
+        )) {
+            echo '1';
+        } else {
+            echo '0';
+        }
     }
 
     // DESTROY ITEM TYPE

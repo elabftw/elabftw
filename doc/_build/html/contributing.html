@@ -261,6 +261,9 @@ Grunt can also be used to build the documentation or run the tests.</p>
 <li>convert .xwd to gif:</li>
 </ul>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>convert -define registry:temporary-path<span class="o">=</span>/path/tmp -limit memory 2G <span class="se">\*</span>.xwd out.gif
+<span class="c"># or another way to do it, this will force to write all to disk</span>
+<span class="nv">$ </span><span class="nb">export </span><span class="nv">MAGICK_TMPDIR</span><span class="o">=</span>/path/to/disk/with/space
+<span class="nv">$ </span>convert -limit memory <span class="m">0</span> -limit map <span class="m">0</span> <span class="se">\*</span>.xwd out.gif
 </pre></div>
 </div>
 <ul class="simple">

@@ -41,10 +41,11 @@ class ItemsTypes extends Panel
      *
      * @param string $name New name
      * @param string $color hexadecimal color code
+     * @param int $bookable
      * @param string $template html for new body
      * @return bool true if sql success
      */
-    public function create($name, $color, $template)
+    public function create($name, $color, $bookable, $template)
     {
         if (!$this->isAdmin()) {
             throw new Exception('This section is out of your reach!');
@@ -57,10 +58,11 @@ class ItemsTypes extends Panel
         // we remove the # of the hexacode and sanitize string
         $color = filter_var(substr($color, 0, 6), FILTER_SANITIZE_STRING);
         $template = Tools::checkBody($template);
-        $sql = "INSERT INTO items_types(name, bgcolor, template, team) VALUES(:name, :bgcolor, :template, :team)";
+        $sql = "INSERT INTO items_types(name, bgcolor, bookable, template, team) VALUES(:name, :bgcolor, :bookable, :template, :team)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':bgcolor', $color);
+        $req->bindParam(':bookable', $bookable, PDO::PARAM_INT);
         $req->bindParam(':template', $template);
         $req->bindParam(':team', $this->team);
 
@@ -93,7 +95,7 @@ class ItemsTypes extends Panel
     {
         $sql = "SELECT * from items_types WHERE team = :team ORDER BY ordering ASC";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $this->team, \PDO::PARAM_INT);
+        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchAll();
@@ -105,10 +107,11 @@ class ItemsTypes extends Panel
      * @param int $id The ID of the item type
      * @param string $name name
      * @param string $color hexadecimal color
+     * @param int $bookable
      * @param string $template html for the body
      * @return bool true if sql success
      */
-    public function update($id, $name, $color, $template)
+    public function update($id, $name, $color, $bookable, $template)
     {
         if (!$this->isAdmin()) {
             throw new Exception('This section is out of your reach!');
@@ -120,11 +123,13 @@ class ItemsTypes extends Panel
             name = :name,
             team = :team,
             bgcolor = :bgcolor,
+            bookable = :bookable,
             template = :template
             WHERE id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':bgcolor', $color);
+        $req->bindParam(':bookable', $bookable, PDO::PARAM_INT);
         $req->bindParam(':template', $template);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $req->bindParam(':id', $id, PDO::PARAM_INT);

@@ -86,7 +86,6 @@ class ImportZip extends Import
     {
         $zip = new ZipArchive;
         return $zip->open($this->getFilePath()) && $zip->extractTo($this->tmpPath);
-        throw new Exception('Cannot open zip file!');
     }
 
     /**

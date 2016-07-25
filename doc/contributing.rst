@@ -119,6 +119,9 @@ Make a gif
 .. code-block:: bash
 
     $ convert -define registry:temporary-path=/path/tmp -limit memory 2G \*.xwd out.gif
+    # or another way to do it, this will force to write all to disk
+    $ export MAGICK_TMPDIR=/path/to/disk/with/space
+    $ convert -limit memory 0 -limit map 0 \*.xwd out.gif
 
 * generate a palette with ffmpeg:
 

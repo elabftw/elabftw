@@ -24,6 +24,9 @@ class Database extends Entity
     /** id of the team */
     public $team;
 
+    /** inserted in sql */
+    public $bookableFilter = '';
+
     /**
      * Give me the team on init
      *
@@ -134,6 +137,7 @@ class Database extends Entity
         LEFT JOIN items_types ON (items.type = items_types.id)
         LEFT JOIN items_tags ON (items.id = items_tags.item_id)
         WHERE items.team = :teamid
+        " . $this->bookableFilter . "
         " . $this->categoryFilter . "
         " . $this->tagFilter . "
         " . $this->queryFilter . "

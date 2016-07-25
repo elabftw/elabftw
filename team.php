@@ -27,6 +27,7 @@ $Scheduler = new Scheduler($_SESSION['team_id']);
 
 <script src='js/moment/moment.js'></script>
 <script src='js/fullcalendar/dist/fullcalendar.js'></script>
+<script src='js/fullcalendar/dist/lang-all.js'></script>
 <link rel='stylesheet' media='all' href='js/fullcalendar/dist/fullcalendar.css'>
 
 <menu>
@@ -195,6 +196,8 @@ $(document).ready(function() {
             // draw an event while selecting
 			selectHelper: true,
             editable: true,
+            // i18n
+            lang: '<?= Tools::getCalendarLang($_SESSION['prefs']['lang']) ?>',
             // allow "more" link when too many events
 			eventLimit: true,
             // load the events as JSON
@@ -205,22 +208,21 @@ $(document).ready(function() {
             allDaySlot: false,
             // day start at 6 am
             minTime: "06:00:00",
-            // FIXME
             eventBackgroundColor: "rgb(41,174,185)",
-            dayClick: function(date, jsEvent, view) {
-                schedulerCreate(date.format());
+            dayClick: function(start) {
+                schedulerCreate(start.format());
                 // because all the rerender methods fail, reload the page
                 // this is because upon creation the event has not all the correct attributes
                 // and trying to manipulate it fails
                 window.location.replace('team.php?tab=0&item=<?= $_GET['item'] ?>');
             },
             // selection
-            select: function(start, end, jsEvent, view) {
+            select: function(start, end) {
                 schedulerCreate(start.format(), end.format());
                 window.location.replace('team.php?tab=0&item=<?= $_GET['item'] ?>');
             },
             // delete by clicking it
-            eventClick: function(calEvent, jsEvent, view) {
+            eventClick: function(calEvent) {
                 if (confirm('Delete this event?')) {
                     $('#scheduler').fullCalendar('removeEvents', calEvent.id);
                     $.post('app/controllers/SchedulerController.php', {
@@ -232,7 +234,7 @@ $(document).ready(function() {
                 }
             },
             // a drop means we change start date
-            eventDrop: function(calEvent, delta, revertFunc) {
+            eventDrop: function(calEvent) {
                 $.post('app/controllers/SchedulerController.php', {
                     updateStart: true,
                     start: calEvent.start.format(),
@@ -242,7 +244,7 @@ $(document).ready(function() {
                 });
             },
             // a resize means we change end date
-            eventResize: function(calEvent, delta, revertFunc, jsEvent, ui, view) {
+            eventResize: function(calEvent) {
                 $.post('app/controllers/SchedulerController.php', {
                     updateEnd: true,
                     end: calEvent.end.format(),

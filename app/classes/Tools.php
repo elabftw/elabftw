@@ -314,4 +314,23 @@ class Tools
 
         return $ftwArr[0];
     }
+
+    /**
+     * Return a lang to use with fullcalendar from the pref
+     *
+     * @return string
+     */
+    public static function getCalendarLang($lang)
+    {
+        $map = array(
+            'ca_ES' => 'ca',
+            'de_DE' => 'de',
+            'es_ES' => 'es',
+            'fr_FR' => 'fr',
+            'it_IT' => 'it',
+            'pt_BR' => 'pt-br',
+            'zh_CN' => 'zh-cn'
+        );
+        return $map[$lang];
+    }
 }

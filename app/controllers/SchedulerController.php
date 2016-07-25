@@ -57,7 +57,6 @@ try {
         }
     }
 
-
 } catch (Exception $e) {
     $Logs = new Logs();
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());

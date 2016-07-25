@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2015-03-04 14:57+0100\n"
-"PO-Revision-Date: 2016-07-26 00:11+0200\n"
+"PO-Revision-Date: 2016-07-26 00:33+0200\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -1510,6 +1510,9 @@ msgstr "Le tag est trop court!"
 
 msgid "Promote someone to sysadmin"
 msgstr "Ajouter un sysadmin"
+
+msgid "Scheduler"
+msgstr "Planificateur"
 
 msgid "No bookable items."
 msgstr "Pas d'équipement réservable."

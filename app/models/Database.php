@@ -24,6 +24,9 @@ class Database extends Entity
     /** id of the team */
     public $team;
 
+    /** inserted in sql */
+    public $bookableFilter = '';
+
     /**
      * Give me the team on init
      *

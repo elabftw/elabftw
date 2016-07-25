@@ -32,16 +32,15 @@ $Scheduler = new Scheduler($_SESSION['team_id']);
 
 <menu>
 <ul>
-<li class='tabhandle' id='tab0'><?= _('Scheduler') ?></li>
-<li class='tabhandle' id='tab1'><?= _('Members') ?></li>
-<li class='tabhandle' id='tab2'><?= _('Statistics')?></li>
+<li class='tabhandle' id='tab1'><?= _('Scheduler') ?></li>
+<li class='tabhandle' id='tab2'><?= _('Infos') ?></li>
 <li class='tabhandle' id='tab3'><?= _('Tools') ?></li>
 <li class='tabhandle' id='tab4'><?= _('Help') ?></li>
 </ul>
 </menu>
 
-<!-- TAB 0 SCHEDULER -->
-<div class='divhandle' id='tab0div'>
+<!-- TAB 1 SCHEDULER -->
+<div class='divhandle' id='tab1div'>
 <?php
 // we only want the bookable type of items
 $Database->bookableFilter = "AND bookable = 1";
@@ -71,9 +70,15 @@ if (isset($_GET['item'])) {
 ?>
 </div>
 
-<!-- TAB 1 MEMBERS -->
-<div class='divhandle' id='tab1div'>
-<?php display_message('ok_nocross', sprintf(_('You belong to the %s team.'), get_team_config('team_name'))) ?>
+<!-- TAB 2 INFOS -->
+<div class='divhandle' id='tab2div'>
+<?php
+display_message('ok_nocross', sprintf(
+    _('You belong to the %s team. %s'),
+    get_team_config('team_name'),
+    $TeamsView->showStats($_SESSION['team_id'])
+))
+?>
 
 <table id='teamtable' class='table'>
     <tr>
@@ -116,11 +121,7 @@ foreach ($Users->readAll() as $user) {
 }
 ?>
 </table>
-</div>
 
-<!-- TAB 2 STATISTICS -->
-<div class='divhandle' id='tab2div'>
-    <p><?= $TeamsView->showStats($_SESSION['team_id']) ?></p>
 </div>
 
 <!-- TAB 3 TOOLS -->
@@ -164,7 +165,7 @@ $(document).ready(function() {
     var params = getGetParameters();
     var tab = parseInt(params['tab']);
     if (!isInt(tab)) {
-        var tab = 0;
+        var tab = 1;
     }
     var initdiv = '#tab' + tab + 'div';
     var inittab = '#tab' + tab;
@@ -214,12 +215,12 @@ $(document).ready(function() {
                 // because all the rerender methods fail, reload the page
                 // this is because upon creation the event has not all the correct attributes
                 // and trying to manipulate it fails
-                window.location.replace('team.php?tab=0&item=<?= $_GET['item'] ?>');
+                window.location.replace('team.php?tab=1&item=<?= $_GET['item'] ?>');
             },
             // selection
             select: function(start, end) {
                 schedulerCreate(start.format(), end.format());
-                window.location.replace('team.php?tab=0&item=<?= $_GET['item'] ?>');
+                window.location.replace('team.php?tab=1&item=<?= $_GET['item'] ?>');
             },
             // delete by clicking it
             eventClick: function(calEvent) {

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "POT-Creation-Date: 2015-03-04 14:57+0100\n"
-"PO-Revision-Date: 2016-07-26 00:33+0200\n"
+"PO-Revision-Date: 2016-07-26 01:32+0200\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -645,10 +645,6 @@ msgstr "Date"
 msgid "Title"
 msgstr "Titre"
 
-#: elabftw/inc/editDB.php:106 elabftw/profile.php:46
-msgid "Infos"
-msgstr "Infos"
-
 #: elabftw/inc/editDB.php:112 elabftw/inc/editXP.php:171
 msgid "Save and go back"
 msgstr "Enregistrer et revenir en arrière"
@@ -1113,8 +1109,8 @@ msgid "Edit existing teams"
 msgstr "Éditer les équipes existantes"
 
 #: elabftw/sysconfig.php:105 elabftw/team.php:35
-msgid "Members"
-msgstr "Membres"
+msgid "Infos"
+msgstr "Infos"
 
 #: elabftw/sysconfig.php:105
 msgid "Items"

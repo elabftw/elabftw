@@ -466,7 +466,7 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
     {
         $sql = "CREATE TABLE IF NOT EXISTS `team_events` ( `id` INT UNSIGNED NOT NULL AUTO_INCREMENT , `team` INT UNSIGNED NOT NULL , `item` INT UNSIGNED NOT NULL, `start` VARCHAR(255) NOT NULL, `end` VARCHAR(255), `title` VARCHAR(255) NULL DEFAULT NULL, `userid` INT UNSIGNED NOT NULL, PRIMARY KEY (`id`));";
         $sql2 = "ALTER TABLE `items_types` ADD `bookable` BOOL NULL DEFAULT FALSE";
-        if (!$this->pdo->q($sql) || !$this->pdo->q($sql)) {
+        if (!$this->pdo->q($sql) || !$this->pdo->q($sql2)) {
             throw new Exception('Problem updating to schema 10!');
         }
     }

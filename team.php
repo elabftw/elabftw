@@ -198,14 +198,13 @@ $(document).ready(function() {
             eventBackgroundColor: "rgb(41,174,185)",
             dayClick: function(date, jsEvent, view) {
                 schedulerCreate(date.format());
+                // because all the rerender methods fail, reload the page
+                // this is because upon creation the event has not all the correct attributes
+                // and trying to manipulate it fails
+                window.location.replace('team.php?tab=0&item=<?= $_GET['item'] ?>');
             },
             // delete by clicking it
             eventClick: function(calEvent, jsEvent, view) {
-                // for some reason a newly created event doesn't have an id here
-                // so just do nothing until page has been reloaded
-                if (!calEvent.id) {
-                    return false;
-                }
                 if (confirm('Delete this event?')) {
                     $('#scheduler').fullCalendar('removeEvents', calEvent.id);
                     $.post('app/controllers/SchedulerController.php', {
@@ -241,7 +240,7 @@ $(document).ready(function() {
 });
 
 function schedulerCreate(date) {
-    var title = prompt('Event Title:');
+    var title = prompt('Comment:');
     if (title) {
         // add it to SQL
         $.post('app/controllers/SchedulerController.php', {
@@ -256,6 +255,8 @@ function schedulerCreate(date) {
             start: date,
         };
         $('#scheduler').fullCalendar('renderEvent', eventData, true);
+    } else {
+        alert('Not creating event with empty comment.');
     }
 }
 </script>

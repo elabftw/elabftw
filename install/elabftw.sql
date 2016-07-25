@@ -203,6 +203,7 @@ CREATE TABLE `items_types` (
   `bgcolor` varchar(6) DEFAULT '000000',
   `template` text,
   `ordering` int(10) unsigned DEFAULT NULL,
+  `bookable` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -337,6 +338,24 @@ CREATE TABLE IF NOT EXISTS `users2team_groups` (
   `userid` int(10) unsigned NOT NULL,
   `groupid` int(10) unsigned NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `team_events`
+--
+
+CREATE TABLE IF NOT EXISTS `team_events` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `team` int(10) UNSIGNED NOT NULL,
+  `item` int(10) UNSIGNED NOT NULL,
+  `start` varchar(255) NOT NULL,
+  `end` varchar(255) DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `userid` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
 
 -- ELABFTW
 /* the default item_types */

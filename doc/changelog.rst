@@ -8,6 +8,8 @@ Version 1.3.0
 
 * add a scheduler to allow booking (bookable) items from the database, on Team page
 
+  Head to the admin panel to create a bookable type of item. You can then book it from the Team page.
+
 Version 1.2.4
 -------------
 

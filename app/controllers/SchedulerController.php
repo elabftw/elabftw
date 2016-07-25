@@ -23,12 +23,40 @@ try {
     // CREATE
     if (isset($_POST['create'])) {
         $Scheduler->setId($_POST['item']);
-        if ($Scheduler->create($_POST['date'])) {
+        if ($Scheduler->create($_POST['date'], $_POST['title'])) {
             echo '1';
         } else {
             echo '0';
         }
     }
+
+    // UPDATE START
+    if (isset($_POST['updateStart'])) {
+        $Scheduler->setId($_POST['id']);
+        if ($Scheduler->updateStart($_POST['start'])) {
+            echo '1';
+        } else {
+            echo '0';
+        }
+    }
+    // UPDATE END
+    if (isset($_POST['updateEnd'])) {
+        $Scheduler->setId($_POST['id']);
+        if ($Scheduler->updateEnd($_POST['end'])) {
+            echo '1';
+        } else {
+            echo '0';
+        }
+    }
+    // DESTROY
+    if (isset($_POST['destroy'])) {
+        if ($Scheduler->destroy($_POST['id'])) {
+            echo '1';
+        } else {
+            echo '0';
+        }
+    }
+
 
 } catch (Exception $e) {
     $Logs = new Logs();

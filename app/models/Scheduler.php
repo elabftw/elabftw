@@ -44,12 +44,16 @@ class Scheduler extends Entity
      * @param string $start 2016-07-22T13:37:00
      * @return bool
      */
-    public function create($start) {
-        $sql = "INSERT INTO team_events(team, item, start) VALUES(:team, :item, :start)";
+    public function create($start, $title)
+    {
+        $sql = "INSERT INTO team_events(team, item, start, userid, title)
+            VALUES(:team, :item, :start, :userid, :title)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $this->team);
         $req->bindParam(':item', $this->id);
         $req->bindParam(':start', $start);
+        $req->bindParam(':userid', $_SESSION['userid']);
+        $req->bindParam(':title', $title);
 
         return $req->execute();
     }
@@ -59,13 +63,68 @@ class Scheduler extends Entity
      *
      * @return string JSON
      */
-    public function read() {
-        $sql = "SELECT * FROM team_events WHERE team = :team AND item = :item";
+    public function read()
+    {
+        // the title of the event is Firstname + Lastname of the user who booked it
+        $sql = "SELECT team_events.*,
+            CONCAT(team_events.title, ' (', u.firstname, ' ', u.lastname, ')') AS title
+            FROM team_events
+            LEFT JOIN users AS u ON team_events.userid = u.userid
+            WHERE team_events.team = :team AND team_events.item = :item";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $this->team);
         $req->bindParam(':item', $this->id);
         $req->execute();
 
-        return json_encode($req->fetchAll());
+        return json_encode($req->fetchall());
+    }
+
+    /**
+     * Update the start of an event (when you drag and drop it)
+     *
+     * @param string $start 2016-07-22T13:37:00
+     * @return bool
+     */
+    public function updateStart($start)
+    {
+        $sql = "UPDATE team_events SET start = :start WHERE team = :team AND id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':start', $start);
+        $req->bindParam(':team', $this->team);
+        $req->bindParam(':id', $this->id);
+
+        return $req->execute();
+    }
+
+    /**
+     * Update the end of an event (when you resize it)
+     *
+     * @param string $end 2016-07-22T13:37:00
+     * @return bool
+     */
+    public function updateEnd($end)
+    {
+        $sql = "UPDATE team_events SET end = :end WHERE team = :team AND id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':end', $end);
+        $req->bindParam(':team', $this->team);
+        $req->bindParam(':id', $this->id);
+
+        return $req->execute();
+    }
+
+    /**
+     * Remove an event
+     *
+     * @param int $id ID of the event
+     * @return bool
+     */
+    public function destroy($id)
+    {
+        $sql = "DELETE FROM team_events WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $id);
+
+        return $req->execute();
     }
 }

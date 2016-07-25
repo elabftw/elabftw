@@ -183,9 +183,9 @@ $(document).ready(function() {
 			},
             defaultView: 'agendaWeek',
 			selectable: true,
-			selectHelper: true,
+			selectHelper: false,
+            /*
 			select: function(start, end) {
-				var title = prompt('Event Title:');
 				var eventData;
 				if (title) {
 					eventData = {
@@ -197,21 +197,72 @@ $(document).ready(function() {
 				}
 				$('#calendar').fullCalendar('unselect');
 			},
+             */
 			editable: true,
 			eventLimit: true, // allow "more" link when too many events
             events: <?= $Scheduler->read() ?>,
+            // first day is monday
+            firstDay: 1,
+            // remove possibility to book whole day, might add it later
+            allDaySlot: false,
+            // day start at 6 am
+            minTime: "06:00:00",
+            eventBackgroundColor: "rgb(41,174,185)",
             dayClick: function(date, jsEvent, view) {
                 schedulerCreate(date.format());
+            },
+            // delete by clicking it
+            eventClick: function(calEvent, jsEvent, view) {
+                if (confirm('Delete this event?')) {
+                    $('#scheduler').fullCalendar('removeEvents', calEvent.id);
+                    $.post('app/controllers/SchedulerController.php', {
+                        destroy: true,
+                        id: calEvent.id
+                    }).done(function() {
+                        notif('Deleted', 'ok');
+                    });
+                }
+            },
+            // a drop means we change start date
+            eventDrop: function(calEvent, delta, revertFunc) {
+                $.post('app/controllers/SchedulerController.php', {
+                    updateStart: true,
+                    start: calEvent.start.format(),
+                    id: calEvent.id
+                }).done(function() {
+                    notif('Saved', 'ok');
+                });
+            },
+            // a resize means we change end date
+            eventResize: function(calEvent, delta, revertFunc, jsEvent, ui, view) {
+                $.post('app/controllers/SchedulerController.php', {
+                    updateEnd: true,
+                    end: calEvent.end.format(),
+                    id: calEvent.id
+                }).done(function() {
+                    notif('Saved', 'ok');
+                });
             }
+
 		});
 });
 
 function schedulerCreate(date) {
-    $.post('app/controllers/SchedulerController.php', {
-        create: true,
-        item: $('#scheduler-select').val(),
-        date: date
-    });
+    var title = prompt('Event Title:');
+    if (title) {
+        $.post('app/controllers/SchedulerController.php', {
+            create: true,
+            item: $('#scheduler-select').val(),
+            date: date,
+            title: title
+        });
+        eventData = {
+            title: title,
+            start: date,
+        };
+        $('#scheduler').fullCalendar('renderEvent', eventData, true);
+        $('#scheduler').fullCalendar('unselect');
+    }
 }
 </script>
 

@@ -391,7 +391,8 @@ function itemsTypesCreate() {
     }).done(function(ret) {
         if (ret) {
             notif('Saved', 'ok');
-            window.location.replace('admin.php?tab=4');
+            // reload because rerender fails
+            $("#scheduler").load("admin.php?tab=4 #scheduler");
         } else {
             notif('An error occured', 'ko');
         }

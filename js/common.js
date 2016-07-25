@@ -375,15 +375,26 @@ function statusUpdate(id) {
 function itemsTypesCreate() {
     name = $('#itemsTypesName').val();
     color = $('#itemsTypesColor').val();
+    checkbox = $('#itemsTypesBookable').is(":checked");
+    if (checkbox) {
+        bookable = 1;
+    } else {
+        bookable = 0;
+    }
     template = tinymce.get('itemsTypesTemplate').getContent();
     $.post('app/controllers/ItemsTypesController.php', {
         itemsTypesCreate: true,
         itemsTypesName: name,
         itemsTypesColor: color,
+        itemsTypesBookable: bookable,
         itemsTypesTemplate: template
-    }).done(function() {
-        notif('Saved', 'ok');
-        window.location.replace('admin.php?tab=4');
+    }).done(function(ret) {
+        if (ret) {
+            notif('Saved', 'ok');
+            window.location.replace('admin.php?tab=4');
+        } else {
+            notif('An error occured', 'ko');
+        }
     });
 }
 
@@ -394,15 +405,26 @@ function itemsTypesShowEditor(id) {
 function itemsTypesUpdate(id) {
     name = $('#itemsTypesName_' + id).val();
     color = $('#itemsTypesColor_' + id).val();
+    checkbox = $('#itemsTypesBookable_' + id).is(":checked");
+    if (checkbox) {
+        bookable = 1;
+    } else {
+        bookable = 0;
+    }
     template = tinymce.get('itemsTypesTemplate_' + id).getContent();
     $.post('app/controllers/ItemsTypesController.php', {
         itemsTypesUpdate: true,
         itemsTypesId: id,
         itemsTypesName: name,
         itemsTypesColor: color,
+        itemsTypesBookable: bookable,
         itemsTypesTemplate: template
-    }).done(function() {
-        notif('Saved', 'ok');
+    }).done(function(ret) {
+        if (ret) {
+            notif('Saved', 'ok');
+        } else {
+            notif('An error occured', 'ko');
+        }
     });
 }
 

@@ -33,7 +33,7 @@ $Scheduler = new Scheduler($_SESSION['team_id']);
 
 <menu>
 <ul>
-<li class='tabhandle' id='tab0'><?= _('Booking') ?></li>
+<li class='tabhandle' id='tab0'><?= _('Scheduler') ?></li>
 <li class='tabhandle' id='tab1'><?= _('Members') ?></li>
 <li class='tabhandle' id='tab2'><?= _('Statistics')?></li>
 <li class='tabhandle' id='tab3'><?= _('Tools') ?></li>
@@ -46,20 +46,22 @@ $Scheduler = new Scheduler($_SESSION['team_id']);
 <select id='scheduler-select' onChange="insertParamAndReload('item', this.value)">
 <option selected disabled><?= _("Select an equipment") ?></option>
 <?php
+// we only want the bookable type of items
+$Database->bookableFilter = "AND bookable = 1";
 $items = $Database->readAll();
 foreach ($items as $item) {
     echo "<option ";
-    if ($_GET['item'] == $item['id']) {
+    if (isset($_GET['item']) && ($_GET['item'] == $item['id'])) {
         echo "selected ";
     }
-    echo "value='" . $item['id'] . "'>" . $item['title'] . "</option>";
+    echo "value='" . $item['itemid'] . "'>[" . $item['name'] . "] " . $item['title'] . "</option>";
 }
 ?>
 </select>
 <?php
 if (isset($_GET['item'])) {
     $Scheduler->setId($_GET['item']);
-    echo "<div id='scheduler'></div>";
+    echo "<div id='scheduler' style='overflow:hidden'></div>";
 }
 ?>
 </div>
@@ -179,25 +181,11 @@ $(document).ready(function() {
 			header: {
 				left: 'prev,next today',
 				center: 'title',
-				right: 'month,agendaWeek,agendaDay'
+				right: 'agendaWeek,agendaDay'
 			},
             defaultView: 'agendaWeek',
 			selectable: true,
 			selectHelper: false,
-            /*
-			select: function(start, end) {
-				var eventData;
-				if (title) {
-					eventData = {
-						title: title,
-						start: start,
-						end: end
-					};
-					$('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
-				}
-				$('#calendar').fullCalendar('unselect');
-			},
-             */
 			editable: true,
 			eventLimit: true, // allow "more" link when too many events
             events: <?= $Scheduler->read() ?>,
@@ -213,6 +201,11 @@ $(document).ready(function() {
             },
             // delete by clicking it
             eventClick: function(calEvent, jsEvent, view) {
+                // for some reason a newly created event doesn't have an id here
+                // so just do nothing until page has been reloaded
+                if (!calEvent.id) {
+                    return false;
+                }
                 if (confirm('Delete this event?')) {
                     $('#scheduler').fullCalendar('removeEvents', calEvent.id);
                     $.post('app/controllers/SchedulerController.php', {
@@ -250,18 +243,19 @@ $(document).ready(function() {
 function schedulerCreate(date) {
     var title = prompt('Event Title:');
     if (title) {
+        // add it to SQL
         $.post('app/controllers/SchedulerController.php', {
             create: true,
             item: $('#scheduler-select').val(),
             date: date,
             title: title
         });
+        // now add it to the calendar
         eventData = {
             title: title,
             start: date,
         };
         $('#scheduler').fullCalendar('renderEvent', eventData, true);
-        $('#scheduler').fullCalendar('unselect');
     }
 }
 </script>

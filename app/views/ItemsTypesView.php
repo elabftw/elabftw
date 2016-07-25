@@ -44,7 +44,9 @@ class ItemsTypesView
         $html .= "<ul class='list-group'><li class='list-group-item'>";
         $html .= "<ul class='list-inline'>";
         $html .= "<li>" . _('Name') . " <input type='text' id='itemsTypesName' /></li>";
-        $html .= "<li>" . _('Color') . " <input class='colorpicker' type='text' id='itemsTypesColor' value='29AEB9' /></li></ul>";
+        $html .= "<li>" . _('Color') . " <input class='colorpicker' type='text' id='itemsTypesColor' value='29AEB9' /></li>";
+        $html .= "<li>" . _('Bookable') . " <input type='checkbox' id='itemsTypesBookable'><span class='smallgray'>" . sprintf(_("Will be selectable in the %sscheduler%s"), "<a href='team.php'>", "</a>") . "</span></li></ul>";
+
         $html .= "<textarea class='mceditable' id='itemsTypesTemplate' /></textarea>";
         $html .= "<div class='submitButtonDiv'><button onClick='itemsTypesCreate()' class='button'>" . _('Save') . "</button></div>";
         $html .= "</li></ul>";
@@ -82,6 +84,11 @@ class ItemsTypesView
 
             $html .= "<li>" . _('Name') . " <input type='text' id='itemsTypesName_" . $itemType['id'] . "' value='" . $itemType['name'] . "' /></li>";
             $html .= "<li style='color:#" . $itemType['bgcolor'] . "'>" . _('Color') . " <input class='colorpicker' type='text' style='display:inline' id='itemsTypesColor_" . $itemType['id'] . "' value='" . $itemType['bgcolor'] . "' /></li>";
+            $html .= "<li>" . _('Bookable') . " <input id='itemsTypesBookable_" . $itemType['id'] . "' type='checkbox' ";
+            if ($itemType['bookable']) {
+                $html .= 'checked ';
+            }
+            $html .= "></li>";
             $html .= "<li><button onClick='itemsTypesShowEditor(" . $itemType['id'] . ")' class='button'>" . _('Edit the template') . "</button></li>";
             $html .= "<li><button onClick='itemsTypesUpdate(" . $itemType['id'] . ")' class='button'>" . _('Save') . "</button></li>";
             $html .= "<li><button class='button' ";

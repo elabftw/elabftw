@@ -134,6 +134,7 @@ class Database extends Entity
         LEFT JOIN items_types ON (items.type = items_types.id)
         LEFT JOIN items_tags ON (items.id = items_tags.item_id)
         WHERE items.team = :teamid
+        " . $this->bookableFilter . "
         " . $this->categoryFilter . "
         " . $this->tagFilter . "
         " . $this->queryFilter . "

@@ -34,6 +34,9 @@ class Entity
     public $queryFilter = '';
 
     /** inserted in sql */
+    public $bookableFilter = '';
+
+    /** inserted in sql */
     public $order = 'id';
 
     /** inserted in sql */

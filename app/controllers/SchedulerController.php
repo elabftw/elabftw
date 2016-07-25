@@ -23,7 +23,7 @@ try {
     // CREATE
     if (isset($_POST['create'])) {
         $Scheduler->setId($_POST['item']);
-        if ($Scheduler->create($_POST['date'], $_POST['title'])) {
+        if ($Scheduler->create($_POST['start'], $_POST['end'], $_POST['title'])) {
             echo '1';
         } else {
             echo '0';

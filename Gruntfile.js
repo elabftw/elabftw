@@ -26,7 +26,7 @@ module.exports = function(grunt) {
     cssmin: {
       target: {
         files: {
-          'css/main.min.css': ['css/tagcloud.css', 'css/jquery.rating.css', 'css/autocomplete.css', 'js/dropzone/dist/min/dropzone.min.css', 'css/main.css'],
+          'css/main.min.css': ['css/tagcloud.css', 'css/jquery.rating.css', 'css/autocomplete.css', 'js/dropzone/dist/min/dropzone.min.css', 'js/fullcalendar/dist/fullcalendar.css', 'css/main.css'],
           'css/pdf.min.css': ['css/pdf.css']
         }
       }

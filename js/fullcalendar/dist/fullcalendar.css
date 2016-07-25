@@ -533,7 +533,8 @@ temporary rendered events).
 
 .fc-event .fc-bg { /* the generic .fc-bg already does position */
 	z-index: 1;
-	background: #fff;
+    /* elabftw fix
+	background: #fff;*/
 	opacity: .25;
 	filter: alpha(opacity=25); /* for IE */
 }

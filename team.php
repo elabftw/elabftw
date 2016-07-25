@@ -27,7 +27,7 @@ $Scheduler = new Scheduler($_SESSION['team_id']);
 
 <script src='js/moment/moment.js'></script>
 <script src='js/fullcalendar/dist/fullcalendar.js'></script>
-<link rel='stylesheet' media='all' href='js/fullcalendar/dist/fullcalendar.min.css'>
+<link rel='stylesheet' media='all' href='js/fullcalendar/dist/fullcalendar.css'>
 
 <menu>
 <ul>
@@ -41,25 +41,31 @@ $Scheduler = new Scheduler($_SESSION['team_id']);
 
 <!-- TAB 0 SCHEDULER -->
 <div class='divhandle' id='tab0div'>
-<select id='scheduler-select' onChange="insertParamAndReload('item', this.value)">
-<option selected disabled><?= _("Select an equipment") ?></option>
 <?php
 // we only want the bookable type of items
 $Database->bookableFilter = "AND bookable = 1";
 $items = $Database->readAll();
-foreach ($items as $item) {
-    echo "<option ";
-    if (isset($_GET['item']) && ($_GET['item'] == $item['id'])) {
-        echo "selected ";
+if (count($items) === 0) {
+    display_message('warning_nocross', _("No bookable items."));
+} else {
+    ?>
+    <select id='scheduler-select' onChange="insertParamAndReload('item', this.value)">
+    <option selected disabled><?= _("Select an equipment") ?></option>
+    <?php
+    foreach ($items as $item) {
+        echo "<option ";
+        if (isset($_GET['item']) && ($_GET['item'] == $item['id'])) {
+            echo "selected ";
+        }
+        echo "value='" . $item['itemid'] . "'>[" . $item['name'] . "] " . $item['title'] . "</option>";
     }
-    echo "value='" . $item['itemid'] . "'>[" . $item['name'] . "] " . $item['title'] . "</option>";
+    ?>
+    </select>
+    <?php
 }
-?>
-</select>
-<?php
 if (isset($_GET['item'])) {
     $Scheduler->setId($_GET['item']);
-    echo "<div id='scheduler' style='overflow:hidden'></div>";
+    echo "<div id='scheduler'></div>";
 }
 ?>
 </div>
@@ -175,17 +181,23 @@ $(document).ready(function() {
         $(tabhandle).addClass('selected');
     });
     // END TABS
+
+    // SCHEDULER
 	$('#scheduler').fullCalendar({
 			header: {
 				left: 'prev,next today',
 				center: 'title',
-				right: 'agendaWeek,agendaDay'
+				right: 'agendaWeek'
 			},
             defaultView: 'agendaWeek',
+            // allow selection of range
 			selectable: true,
-			selectHelper: false,
-			editable: true,
-			eventLimit: true, // allow "more" link when too many events
+            // draw an event while selecting
+			selectHelper: true,
+            editable: true,
+            // allow "more" link when too many events
+			eventLimit: true,
+            // load the events as JSON
             events: <?= $Scheduler->read() ?>,
             // first day is monday
             firstDay: 1,
@@ -193,12 +205,18 @@ $(document).ready(function() {
             allDaySlot: false,
             // day start at 6 am
             minTime: "06:00:00",
+            // FIXME
             eventBackgroundColor: "rgb(41,174,185)",
             dayClick: function(date, jsEvent, view) {
                 schedulerCreate(date.format());
                 // because all the rerender methods fail, reload the page
                 // this is because upon creation the event has not all the correct attributes
                 // and trying to manipulate it fails
+                window.location.replace('team.php?tab=0&item=<?= $_GET['item'] ?>');
+            },
+            // selection
+            select: function(start, end, jsEvent, view) {
+                schedulerCreate(start.format(), end.format());
                 window.location.replace('team.php?tab=0&item=<?= $_GET['item'] ?>');
             },
             // delete by clicking it
@@ -237,24 +255,23 @@ $(document).ready(function() {
 		});
 });
 
-function schedulerCreate(date) {
+function schedulerCreate(start, end = null) {
     var title = prompt('Comment:');
     if (title) {
         // add it to SQL
         $.post('app/controllers/SchedulerController.php', {
             create: true,
             item: $('#scheduler-select').val(),
-            date: date,
+            start: start,
+            end: end,
             title: title
         });
         // now add it to the calendar
         eventData = {
             title: title,
-            start: date,
+            start: start,
         };
         $('#scheduler').fullCalendar('renderEvent', eventData, true);
-    } else {
-        alert('Not creating event with empty comment.');
     }
 }
 </script>

@@ -95,6 +95,8 @@ function display_message($type, $message)
 
     } elseif ($type === 'warning') {
         echo "<div class='alert alert-warning'><span class='glyphicon glyphicon-chevron-right' aria-hidden='true'></span><a href='#' class='close' data-dismiss='alert'>&times</a> $message</div>";
+    } elseif ($type === 'warning_nocross') {
+        echo "<div class='alert alert-warning'><span class='glyphicon glyphicon-chevron-right' aria-hidden='true'></span> $message</div>";
     }
 
     return false;

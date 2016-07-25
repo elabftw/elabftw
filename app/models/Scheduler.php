@@ -41,14 +41,15 @@ class Scheduler extends Entity
      * @param string $start 2016-07-22T13:37:00
      * @return bool
      */
-    public function create($start, $title)
+    public function create($start, $end, $title)
     {
-        $sql = "INSERT INTO team_events(team, item, start, userid, title)
-            VALUES(:team, :item, :start, :userid, :title)";
+        $sql = "INSERT INTO team_events(team, item, start, end, userid, title)
+            VALUES(:team, :item, :start, :end, :userid, :title)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $this->team);
         $req->bindParam(':item', $this->id);
         $req->bindParam(':start', $start);
+        $req->bindParam(':end', $end);
         $req->bindParam(':userid', $_SESSION['userid']);
         $req->bindParam(':title', $title);
 

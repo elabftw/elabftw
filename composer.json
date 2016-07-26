@@ -4,7 +4,6 @@
     "homepage": "http://www.elabftw.net",
     "require": {
         "swiftmailer/swiftmailer":"@stable",
-        "mpdf/mpdf":"@stable",
         "ext-gd":"*",
         "ext-gettext":"*",
         "ext-mcrypt":"*",
@@ -12,7 +11,8 @@
         "ext-openssl":"*",
         "codeception/codeception": "*",
         "phpdocumentor/phpdocumentor": "2.*",
-        "defuse/php-encryption": "2.0.1"
+        "defuse/php-encryption": "2.0.1",
+        "mpdf/mpdf": "^6.1"
 
     },
     "autoload": {

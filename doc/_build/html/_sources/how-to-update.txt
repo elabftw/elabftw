@@ -3,6 +3,8 @@
 How to update
 =============
 
+.. warning:: Be sure to read the release notes, they might contain important information. And have a :ref:`backup <backup>`.
+
 If you installed it with git
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

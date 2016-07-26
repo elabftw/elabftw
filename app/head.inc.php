@@ -24,7 +24,7 @@ echo "<title>" . (isset($page_title) ? $page_title : "Lab manager") . " - eLab "
 <!-- CSS -->
 <!-- Bootstrap -->
 <link rel="stylesheet" media="all" href="js/bootstrap/dist/css/bootstrap.min.css">
-<link rel="stylesheet" media="all" href="css/main.min.css" />
+<link rel="stylesheet" media="all" href="app/css/main.min.css" />
 <link rel="stylesheet" media="all" href="js/colorpicker/jquery.colorpicker.css" />
 <link rel="stylesheet" media="all" href="js/fancybox/source/jquery.fancybox.css" />
 

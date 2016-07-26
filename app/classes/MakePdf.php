@@ -234,11 +234,11 @@ class MakePdf extends Make
     }
 
     /**
-     * Load the contents of css/pdf.min.css and add to the content.
+     * Load the contents of app/css/pdf.min.css and add to the content.
      */
     private function addCss()
     {
-        return file_get_contents(ELAB_ROOT . '/css/pdf.min.css');
+        return file_get_contents(ELAB_ROOT . 'app/css/pdf.min.css');
     }
 
     /**

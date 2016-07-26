@@ -210,7 +210,7 @@ nav a:hover {
     text-align:right;
 }
 #big_search input {
-    background:#555 url(../img/search.png) no-repeat scroll right 10px center;
+    background:#555 url(images/search.png) no-repeat scroll right 10px center;
     border: none;
     border-radius: 20px;
     width:50%;

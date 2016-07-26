@@ -20,7 +20,7 @@ use \Exception;
 require_once 'inc/common.php';
 $page_title = ngettext('Experiment', 'Experiments', 2);
 $selected_menu = 'Experiments';
-require_once 'inc/head.php';
+require_once 'app/head.inc.php';
 
 // add the chemdoodle stuff if we want it
 echo addChemdoodle();

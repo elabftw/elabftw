@@ -20,7 +20,7 @@ require_once 'inc/common.php';
 $page_title = _('Revisions');
 $selected_menu = null;
 $errflag = false;
-require_once 'inc/head.php';
+require_once 'app/head.inc.php';
 
 
 try {

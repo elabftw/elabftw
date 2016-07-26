@@ -20,7 +20,7 @@ use \Exception;
 require_once 'inc/common.php';
 $page_title = _('Database');
 $selected_menu = 'Database';
-require_once 'inc/head.php';
+require_once 'app/head.inc.php';
 
 // add the chemdoodle stuff if we want it
 echo addChemdoodle();

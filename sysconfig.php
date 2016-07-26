@@ -26,7 +26,7 @@ try {
 
     $page_title = _('eLabFTW configuration');
     $selected_menu = null;
-    require_once 'inc/head.php';
+    require_once 'app/head.inc.php';
 
     $formKey = new FormKey();
     $SysconfigView = new SysconfigView(new Update(), new Logs(), new TeamsView());

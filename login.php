@@ -26,7 +26,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     exit;
 }
 
-require_once 'inc/head.php';
+require_once 'app/head.inc.php';
 
 $formKey = new FormKey();
 $BannedUsers = new BannedUsers();

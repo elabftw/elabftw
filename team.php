@@ -17,7 +17,7 @@ namespace Elabftw\Elabftw;
 require_once 'inc/common.php';
 $page_title = _('Team');
 $selected_menu = 'Team';
-require_once 'inc/head.php';
+require_once 'app/head.inc.php';
 
 $Users = new Users();
 $TeamsView = new TeamsView();

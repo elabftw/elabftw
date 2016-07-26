@@ -41,7 +41,7 @@ try {
 
     // the pdf is shown directly, but for csv or zip we want a download page
     if ($_GET['what'] === 'csv' || $_GET['what'] === 'zip') {
-        require_once 'inc/head.php';
+        require_once 'app/head.inc.php';
 
         echo "<div class='well' style='margin-top:20px'>";
         echo "<p>" . _('Your file is ready:') . "<br>
@@ -52,7 +52,7 @@ try {
     }
 
 } catch (Exception $e) {
-    require_once 'inc/head.php';
+    require_once 'app/head.inc.php';
     display_message('ko', $e->getMessage());
 
 } finally {

@@ -17,7 +17,7 @@ namespace Elabftw\Elabftw;
 require_once 'inc/common.php';
 $page_title = _('User Control Panel');
 $selected_menu = null;
-require_once('inc/head.php');
+require_once('app/head.inc.php');
 
 $Users = new Users();
 $user = $Users->read($_SESSION['userid']);

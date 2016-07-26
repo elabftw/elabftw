@@ -19,7 +19,7 @@ use PDO;
 require_once 'inc/common.php';
 $page_title = _('Search');
 $selected_menu = 'Search';
-require_once 'inc/head.php';
+require_once 'app/head.inc.php';
 
 // make array of results id
 $results_arr = array();

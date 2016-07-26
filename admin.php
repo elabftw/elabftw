@@ -19,7 +19,7 @@ use Exception;
 require_once 'inc/common.php';
 $page_title = _('Admin panel');
 $selected_menu = null;
-require_once 'inc/head.php';
+require_once 'app/head.inc.php';
 
 try {
     if (!$_SESSION['is_admin']) {

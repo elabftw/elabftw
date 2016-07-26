@@ -62,7 +62,7 @@ try {
     if (isset($_POST['teamsUpdateFull'])) {
         $redirect = true;
         if ($Teams->update($_POST)) {
-            $_SESSION['ok'][] = _('Configuration updated successfully!');
+            $_SESSION['ok'][] = _('Configuration updated successfully.');
         } else {
             $_SESSION['ko'][] = _('An error occurred!');
         }

@@ -50,7 +50,7 @@ try {
 // END SQL CONNECT
 
 // require common stuff
-require_once ELAB_ROOT . 'inc/functions.php';
+require_once ELAB_ROOT . 'app/functions.inc.php';
 
 // i18n (gettext)
 if (isset($_SESSION['prefs']['lang'])) {

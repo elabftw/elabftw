@@ -30,7 +30,7 @@ use Exception;
 /* install/index.php to get an installation up and running */
 session_start();
 require_once '../vendor/autoload.php';
-require_once '../inc/functions.php';
+require_once '../app/functions.inc.php';
 $errflag = false;
 ?>
 

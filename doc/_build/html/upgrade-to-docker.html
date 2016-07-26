@@ -248,15 +248,15 @@ cp /path/to/your/current-key.pem /etc/letsencrypt/live/elabftw.example.com/privk
 </pre></div>
 </div>
 <p>This will create an empty database in <cite>/dok/mysql</cite> or wherever you chose to have it. But of course, what we want is to have our old database in there! To do that we will copy our <cite>dump.sql</cite> file to the <cite>mysql</cite> container and import it in place of the freshly created database (which is empty!).</p>
-<div class="highlight-sql"><div class="highlight"><pre><span class="n">docker</span> <span class="n">cp</span> <span class="n">dump</span><span class="p">.</span><span class="k">sql</span> <span class="n">mysql</span><span class="p">:</span><span class="o">/</span>
-<span class="n">docker</span> <span class="k">exec</span> <span class="o">-</span><span class="n">it</span> <span class="n">mysql</span> <span class="n">bash</span>
-<span class="n">mysql</span> <span class="o">-</span><span class="n">uroot</span> <span class="o">-</span><span class="n">p</span>
-<span class="o">#</span> <span class="n">here</span> <span class="n">you</span> <span class="k">type</span> <span class="n">the</span> <span class="n">password</span> <span class="n">you</span> <span class="n">put</span> <span class="k">in</span> <span class="n">MYSQL_ROOT_PASSWORD</span> <span class="k">in</span> <span class="n">the</span> <span class="n">docker</span><span class="o">-</span><span class="n">compose</span><span class="p">.</span><span class="n">yml</span> <span class="n">file</span>
-<span class="n">Mysql</span><span class="o">&gt;</span> <span class="k">drop</span> <span class="k">database</span> <span class="n">elabftw</span><span class="p">;</span>
-<span class="n">Mysql</span><span class="o">&gt;</span> <span class="k">create</span> <span class="k">database</span> <span class="n">elabftw</span><span class="p">;</span>
-<span class="n">Mysql</span><span class="o">&gt;</span> <span class="n">use</span> <span class="n">elabftw</span><span class="p">;</span>
-<span class="n">Mysql</span><span class="o">&gt;</span> <span class="k">source</span> <span class="n">dump</span><span class="p">.</span><span class="k">sql</span><span class="p">;</span>
-<span class="n">Mysql</span><span class="o">&gt;</span> <span class="n">exit</span><span class="p">;</span>
+<div class="highlight-bash"><div class="highlight"><pre>docker cp dump.sql mysql:/
+docker <span class="nb">exec</span> -it mysql bash
+mysql -uroot -p
+<span class="c"># here you type the password you put in MYSQL_ROOT_PASSWORD in the docker-compose.yml file</span>
+Mysql&gt; drop database elabftw<span class="p">;</span>
+Mysql&gt; create database elabftw<span class="p">;</span>
+Mysql&gt; use elabftw<span class="p">;</span>
+Mysql&gt; <span class="nb">source </span>dump.sql<span class="p">;</span>
+Mysql&gt; <span class="nb">exit</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>You should now have your old database running. If you were upgrading from an old version, make sure to read the release note of each version. Specifically the 1.2.1 one where there is a manual step to copy the new SECRET_KEY to the docker-compose.yml.</p>

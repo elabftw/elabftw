@@ -103,7 +103,7 @@ We now have a complete `docker-compose.yml` config file and we can start `elabft
 
 This will create an empty database in `/dok/mysql` or wherever you chose to have it. But of course, what we want is to have our old database in there! To do that we will copy our `dump.sql` file to the `mysql` container and import it in place of the freshly created database (which is empty!).
 
-.. code-block:: sql
+.. code-block:: bash
 
     docker cp dump.sql mysql:/
     docker exec -it mysql bash

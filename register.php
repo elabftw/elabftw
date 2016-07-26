@@ -14,7 +14,7 @@ namespace Elabftw\Elabftw;
  * Create an account
  *
  */
-require_once 'inc/common.php';
+require_once 'app/common.inc.php';
 $page_title = _('Register');
 $selected_menu = null;
 require_once 'app/head.inc.php';

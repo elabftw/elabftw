@@ -16,7 +16,7 @@ use \Exception;
  * Show history of body of experiment or db item
  *
  */
-require_once 'inc/common.php';
+require_once 'app/common.inc.php';
 $page_title = _('Revisions');
 $selected_menu = null;
 $errflag = false;

@@ -16,7 +16,7 @@ use Exception;
  * Users
  */
 try {
-    require_once '../../inc/common.php';
+    require_once '../../app/common.inc.php';
     $FormKey = new FormKey();
     $Users = new Users();
 

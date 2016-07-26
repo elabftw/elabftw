@@ -17,7 +17,7 @@ use \Exception;
  * Entry point for all experiment stuff
  *
  */
-require_once 'inc/common.php';
+require_once 'app/common.inc.php';
 $page_title = ngettext('Experiment', 'Experiments', 2);
 $selected_menu = 'Experiments';
 require_once 'app/head.inc.php';

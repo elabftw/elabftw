@@ -18,7 +18,7 @@ use Defuse\Crypto\Key as Key;
  * Deal with requests from sysconfig.php
  */
 try {
-    require_once '../inc/common.php';
+    require_once '../app/common.inc.php';
 
     // only sysadmin can use this
     if ($_SESSION['is_sysadmin'] != 1 || $_SERVER['REQUEST_METHOD'] != 'POST') {

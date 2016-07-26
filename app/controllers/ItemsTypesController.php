@@ -17,7 +17,7 @@ use Exception;
  *
  */
 try {
-    require_once '../../inc/common.php';
+    require_once '../../app/common.inc.php';
     $itemsTypes = new ItemsTypes($_SESSION['team_id']);
 
     // CREATE ITEMS TYPES

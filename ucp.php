@@ -14,7 +14,7 @@ namespace Elabftw\Elabftw;
  * User Control Panel
  *
  */
-require_once 'inc/common.php';
+require_once 'app/common.inc.php';
 $page_title = _('User Control Panel');
 $selected_menu = null;
 require_once('app/head.inc.php');

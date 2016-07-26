@@ -17,7 +17,7 @@ use Exception;
  *
  */
 try {
-    require_once '../../inc/common.php';
+    require_once '../../app/common.inc.php';
     $TeamGroups = new TeamGroups();
     // CREATE TEAM GROUP
     if (isset($_POST['teamGroupCreate'])) {

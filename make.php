@@ -17,7 +17,7 @@ use \Exception;
  *
  */
 
-require_once 'inc/common.php';
+require_once 'app/common.inc.php';
 $page_title = _('Export');
 $selected_menu = null;
 

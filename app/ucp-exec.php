@@ -16,7 +16,7 @@ use Exception;
  * Deal with post requests coming from ucp.php
  *
  */
-require_once '../inc/common.php';
+require_once '../app/common.inc.php';
 
 $tab = '1';
 

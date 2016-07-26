@@ -16,7 +16,7 @@ use Exception;
  * Login page
  *
  */
-require_once 'inc/common.php';
+require_once 'app/common.inc.php';
 $page_title = _('Login');
 $selected_menu = null;
 

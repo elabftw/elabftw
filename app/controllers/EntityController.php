@@ -16,7 +16,7 @@ use Exception;
  * Deal with things common to experiments and items like tags and uploads
  *
  */
-require_once '../../inc/common.php';
+require_once '../../app/common.inc.php';
 
 try {
     // CREATE TAG

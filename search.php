@@ -16,7 +16,7 @@ use PDO;
  * The search page
  *
  */
-require_once 'inc/common.php';
+require_once 'app/common.inc.php';
 $page_title = _('Search');
 $selected_menu = 'Search';
 require_once 'app/head.inc.php';

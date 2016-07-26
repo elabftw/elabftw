@@ -17,7 +17,7 @@ use Exception;
  *
  */
 try {
-    require_once '../../inc/common.php';
+    require_once '../../app/common.inc.php';
     $Comments = new Comments(new Experiments($_SESSION['userid']), $_POST['id']);
 
     // CREATE

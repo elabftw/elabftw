@@ -91,6 +91,11 @@ class TeamsView extends Teams
         return $stats;
     }
 
+    /**
+     * Generate HTML for sending a mass email
+     *
+     * @return string
+     */
     public function showMassEmail()
     {
         $html = "<div class='box'><h3>" . _('Send a mass email') . "</h3>";

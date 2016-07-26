@@ -17,7 +17,7 @@ use Exception;
  *
  */
 try {
-    require_once '../../inc/common.php';
+    require_once '../../app/common.inc.php';
     $Teams = new Teams();
     $redirect = false;
 
@@ -62,7 +62,7 @@ try {
     if (isset($_POST['teamsUpdateFull'])) {
         $redirect = true;
         if ($Teams->update($_POST)) {
-            $_SESSION['ok'][] = _('Configuration updated successfully!');
+            $_SESSION['ok'][] = _('Configuration updated successfully.');
         } else {
             $_SESSION['ko'][] = _('An error occurred!');
         }
@@ -78,6 +78,16 @@ try {
     if (isset($_POST['testemailSend'])) {
         $Sysconfig = new Sysconfig();
         if ($Sysconfig->testemailSend($_POST['testemailEmail'])) {
+            echo '1';
+        } else {
+            echo '0';
+        }
+    }
+
+    // SEND MASS EMAIL
+    if (isset($_POST['massEmail'])) {
+        $Sysconfig = new Sysconfig();
+        if ($Sysconfig->massEmail($_POST['subject'], $_POST['body'])) {
             echo '1';
         } else {
             echo '0';

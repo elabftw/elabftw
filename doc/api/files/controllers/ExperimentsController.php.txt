@@ -17,7 +17,7 @@ use Exception;
  * Experiments
  *
  */
-require_once '../../inc/common.php';
+require_once '../../app/common.inc.php';
 
 try {
 

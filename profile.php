@@ -39,8 +39,15 @@ try {
     echo "</div>";
     echo "</section>";
 
-    // STATUS CHART
-    require_once 'inc/statistics.php';
+    // STATUS STATS
+    echo "<section class='box'>";
+    if ($count === 0) {
+        echo _('No statistics available yet.'); // fix division by zero
+    } else {
+        $UserStats = new UserStats($_SESSION['userid'], $count);
+        echo $UserStats->show();
+    }
+    echo "</section>";
 
     // TAGCLOUD
     $TagCloud = new TagCloud($_SESSION['userid']);

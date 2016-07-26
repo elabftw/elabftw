@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\Yaml\Tests;
 
+use Symfony\Bridge\PhpUnit\ErrorAssert;
 use Symfony\Component\Yaml\Inline;
 use Symfony\Component\Yaml\Yaml;
 
@@ -258,23 +259,9 @@ class InlineTest extends \PHPUnit_Framework_TestCase
      */
     public function testParseUnquotedScalarStartingWithPercentCharacter()
     {
-        $deprecations = array();
-        set_error_handler(function ($type, $msg) use (&$deprecations) {
-            if (E_USER_DEPRECATED !== $type) {
-                restore_error_handler();
-
-                return call_user_func_array('PHPUnit_Util_ErrorHandler::handleError', func_get_args());
-            }
-
-            $deprecations[] = $msg;
+        ErrorAssert::assertDeprecationsAreTriggered('Not quoting a scalar starting with the "%" indicator character is deprecated since Symfony 3.1 and will throw a ParseException in 4.0.', function () {
+            Inline::parse('{ foo: %foo }');
         });
-
-        Inline::parse('{ foo: %foo }');
-
-        restore_error_handler();
-
-        $this->assertCount(1, $deprecations);
-        $this->assertContains('Not quoting a scalar starting with the "%" indicator character is deprecated since Symfony 3.1 and will throw a ParseException in 4.0.', $deprecations[0]);
     }
 
     /**
@@ -535,6 +522,22 @@ class InlineTest extends \PHPUnit_Framework_TestCase
             'spaced' => array('2001-12-15 21:59:43.10 -5', 2001, 12, 16, 2, 59, 43),
             'date' => array('2001-12-15', 2001, 12, 15, 0, 0, 0),
         );
+    }
+
+    /**
+     * @dataProvider getTimestampTests
+     */
+    public function testParseNestedTimestampListAsDateTimeObject($yaml, $year, $month, $day, $hour, $minute, $second)
+    {
+        $expected = new \DateTime($yaml);
+        $expected->setTimeZone(new \DateTimeZone('UTC'));
+        $expected->setDate($year, $month, $day);
+        $expected->setTime($hour, $minute, $second);
+
+        $expectedNested = array('nested' => array($expected));
+        $yamlNested = "{nested: [$yaml]}";
+
+        $this->assertEquals($expectedNested, Inline::parse($yamlNested, Yaml::PARSE_DATETIME));
     }
 
     /**

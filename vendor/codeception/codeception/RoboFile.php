@@ -15,15 +15,14 @@ class RoboFile extends \Robo\Tasks
         $this->update();
         $this->buildDocs();
         $this->publishDocs();
-        $this->installDependenciesForPhp54();
+
         $this->buildPhar54();
-        $this->installDependenciesForPhp56();
         $this->buildPhar();
         $this->revertComposerJsonChanges();
         $this->publishPhar();
         $this->publishGit();
-        $this->versionBump();
         $this->publishBase();
+        $this->versionBump();
     }
 
     public function versionBump($version = '')
@@ -194,7 +193,9 @@ class RoboFile extends \Robo\Tasks
         if (!file_exists('package/php54')) {
             mkdir('package/php54');
         }
+        $this->installDependenciesForPhp54();
         $this->packPhar('package/php54/codecept.phar');
+        $this->installDependenciesForPhp56();
     }
 
     private function packPhar($pharFileName)
@@ -240,11 +241,13 @@ class RoboFile extends \Robo\Tasks
             ->name('*.tpl.dist')
             ->name('*.html.dist')
             ->exclude('videlalvaro')
+            ->exclude('php-amqplib')
             ->exclude('pheanstalk')
             ->exclude('phpseclib')
             ->exclude('codegyre')
             ->exclude('monolog')
             ->exclude('phpspec')
+            ->exclude('squizlabs')
             ->exclude('Tests')
             ->exclude('tests')
             ->exclude('benchmark')
@@ -345,7 +348,7 @@ class RoboFile extends \Robo\Tasks
     public function buildDocsUtils()
     {
         $this->say("Util Classes");
-        $utils = ['Autoload', 'Fixtures', 'Stub', 'Locator', 'XmlBuilder', 'JsonType'];
+        $utils = ['Autoload', 'Fixtures', 'Stub', 'Locator', 'XmlBuilder', 'JsonType', 'HttpCode'];
 
         foreach ($utils as $utilName) {
             $className = '\Codeception\Util\\' . $utilName;
@@ -812,7 +815,7 @@ class RoboFile extends \Robo\Tasks
 
         $this->taskComposerUpdate()->run();
         $this->taskGitStack()
-            ->add('composer*')
+            ->add('composer.json')
             ->commit('auto-update')
             ->exec("push -f base $tempBranch:$branch")
             ->run();
@@ -827,6 +830,7 @@ class RoboFile extends \Robo\Tasks
         }
 
         $this->taskGitStack()
+            ->checkout('-- composer.json')
             ->checkout($branch)
             ->exec("branch -D $tempBranch")
             ->run();

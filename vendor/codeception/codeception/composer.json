@@ -1,5 +1,5 @@
 {
-    "name":"codeception/codeception",
+    "name":"codeception/base",
     "description":"BDD-style testing framework",
     "keywords":["BDD", "acceptance testing", "functional testing", "unit testing", "tdd"],
     "homepage":"http://codeception.com/",
@@ -30,7 +30,9 @@
         "symfony/browser-kit": ">=2.7 <4.0",
         "symfony/css-selector": ">=2.7 <4.0",
         "symfony/dom-crawler": ">=2.7 <4.0",
-        "behat/gherkin": "~4.4.0"
+        "behat/gherkin": "~4.4.0",
+        "sebastian/comparator": "~1.1",
+        "sebastian/diff": "^1.4"
 
     },
     "require-dev": {

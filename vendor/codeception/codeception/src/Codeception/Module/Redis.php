@@ -2,6 +2,7 @@
 
 namespace Codeception\Module;
 
+use Codeception\Lib\Interfaces\RequiresPackage;
 use Codeception\Module as CodeceptionModule;
 use Codeception\TestCase;
 use Codeception\Exception\ModuleException;
@@ -31,7 +32,7 @@ use Predis\Client as RedisDriver;
  *
  * @author Marc Verney <marc@marcverney.net>
  */
-class Redis extends CodeceptionModule
+class Redis extends CodeceptionModule implements RequiresPackage
 {
     /**
      * {@inheritdoc}
@@ -58,6 +59,11 @@ class Redis extends CodeceptionModule
      * @var RedisDriver
      */
     public $driver;
+
+    public function _requires()
+    {
+        return ['Predis\Client' => '"predis/predis": "^1.0"'];
+    }
 
     /**
      * Instructions to run after configuration is loaded

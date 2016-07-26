@@ -104,7 +104,7 @@ class Client implements ClientInterface
         return $this->sendAsync($request, $options)->wait();
     }
 
-    public function requestAsync($method, $uri = null, array $options = [])
+    public function requestAsync($method, $uri = '', array $options = [])
     {
         $options = $this->prepareDefaults($options);
         // Remove request modifying parameter because it can be done up-front.
@@ -123,7 +123,7 @@ class Client implements ClientInterface
         return $this->transfer($request, $options);
     }
 
-    public function request($method, $uri = null, array $options = [])
+    public function request($method, $uri = '', array $options = [])
     {
         $options[RequestOptions::SYNCHRONOUS] = true;
         return $this->requestAsync($method, $uri, $options)->wait();
@@ -138,11 +138,14 @@ class Client implements ClientInterface
 
     private function buildUri($uri, array $config)
     {
-        if (!isset($config['base_uri'])) {
-            return $uri instanceof UriInterface ? $uri : new Psr7\Uri($uri);
+        // for BC we accept null which would otherwise fail in uri_for
+        $uri = Psr7\uri_for($uri === null ? '' : $uri);
+
+        if (isset($config['base_uri'])) {
+            $uri = Psr7\Uri::resolve(Psr7\uri_for($config['base_uri']), $uri);
         }
 
-        return Psr7\Uri::resolve(Psr7\uri_for($config['base_uri']), $uri);
+        return $uri->getScheme() === '' ? $uri->withScheme('http') : $uri;
     }
 
     /**
@@ -160,9 +163,13 @@ class Client implements ClientInterface
             'cookies'         => false
         ];
 
-        // Use the standard Linux HTTP_PROXY and HTTPS_PROXY if set
-        if ($proxy = getenv('HTTP_PROXY')) {
-            $defaults['proxy']['http'] = $proxy;
+        // Use the standard Linux HTTP_PROXY and HTTPS_PROXY if set.
+
+        // We can only trust the HTTP_PROXY environment variable in a CLI
+        // process due to the fact that PHP has no reliable mechanism to
+        // get environment variables that start with "HTTP_".
+        if (php_sapi_name() == 'cli' && getenv('HTTP_PROXY')) {
+            $defaults['proxy']['http'] = getenv('HTTP_PROXY');
         }
 
         if ($proxy = getenv('HTTPS_PROXY')) {
@@ -255,7 +262,7 @@ class Client implements ClientInterface
             unset($options['save_to']);
         }
 
-        // exceptions -> http_error
+        // exceptions -> http_errors
         if (isset($options['exceptions'])) {
             $options['http_errors'] = $options['exceptions'];
             unset($options['exceptions']);
@@ -297,9 +304,14 @@ class Client implements ClientInterface
         }
 
         if (isset($options['multipart'])) {
-            $elements = $options['multipart'];
+            $options['body'] = new Psr7\MultipartStream($options['multipart']);
             unset($options['multipart']);
-            $options['body'] = new Psr7\MultipartStream($elements);
+        }
+
+        if (isset($options['json'])) {
+            $options['body'] = \GuzzleHttp\json_encode($options['json']);
+            unset($options['json']);
+            $options['_conditional']['Content-Type'] = 'application/json';
         }
 
         if (!empty($options['decode_content'])
@@ -325,13 +337,10 @@ class Client implements ClientInterface
             unset($options['body']);
         }
 
-        if (!empty($options['auth'])) {
+        if (!empty($options['auth']) && is_array($options['auth'])) {
             $value = $options['auth'];
-            $type = is_array($value)
-                ? (isset($value[2]) ? strtolower($value[2]) : 'basic')
-                : $value;
-            $config['auth'] = $value;
-            switch (strtolower($type)) {
+            $type = isset($value[2]) ? strtolower($value[2]) : 'basic';
+            switch ($type) {
                 case 'basic':
                     $modify['set_headers']['Authorization'] = 'Basic '
                         . base64_encode("$value[0]:$value[1]");
@@ -356,11 +365,12 @@ class Client implements ClientInterface
             unset($options['query']);
         }
 
-        if (isset($options['json'])) {
-            $jsonStr = \GuzzleHttp\json_encode($options['json']);
-            $modify['body'] = Psr7\stream_for($jsonStr);
-            $options['_conditional']['Content-Type'] = 'application/json';
-            unset($options['json']);
+        // Ensure that sink is not an invalid value.
+        if (isset($options['sink'])) {
+            // TODO: Add more sink validation?
+            if (is_bool($options['sink'])) {
+                throw new \InvalidArgumentException('sink must not be a boolean');
+            }
         }
 
         $request = Psr7\modify_request($request, $modify);

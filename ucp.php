@@ -293,8 +293,6 @@ echo "</ul>";
     </div>
 <!-- *********************** -->
 
-<?php require_once('inc/footer.php'); ?>
-
 <!-- to export templates -->
 <script src='js/file-saver.js/FileSaver.js'></script>
 <script>
@@ -383,3 +381,6 @@ $(document).ready(function() {
     });
 });
 </script>
+
+<?php require_once('app/footer.inc.php'); ?>
+

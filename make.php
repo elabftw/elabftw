@@ -57,5 +57,5 @@ try {
 
 } finally {
     // this won't show up if it's a pdf
-    require_once 'inc/footer.php';
+    require_once 'app/footer.inc.php';
 }

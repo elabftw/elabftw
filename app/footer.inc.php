@@ -1,6 +1,6 @@
 <?php
 /**
- * inc/footer.php
+ * app/footer.inc.php
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi

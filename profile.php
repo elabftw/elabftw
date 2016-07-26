@@ -50,5 +50,5 @@ try {
     $Logs = new Logs();
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
 } finally {
-    require_once 'inc/footer.php';
+    require_once 'app/footer.inc.php';
 }

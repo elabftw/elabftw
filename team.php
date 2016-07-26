@@ -279,4 +279,4 @@ function schedulerCreate(start, end = null) {
 }
 </script>
 
-<?php require_once('inc/footer.php');
+<?php require_once('app/footer.inc.php');

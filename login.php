@@ -65,7 +65,7 @@ try {
 
 } catch (Exception $e) {
     display_message('ko', $e->getMessage());
-    require_once 'inc/footer.php';
+    require_once 'app/footer.inc.php';
     exit;
 }
 ?>
@@ -129,4 +129,4 @@ $(document).ready(function(){
 });
 </script>
 
-<?php require_once 'inc/footer.php';
+<?php require_once 'app/footer.inc.php';

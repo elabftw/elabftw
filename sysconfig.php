@@ -337,5 +337,5 @@ try {
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
     display_message('ko', $e->getMessage());
 } finally {
-    require_once 'inc/footer.php';
+    require_once 'app/footer.inc.php';
 }

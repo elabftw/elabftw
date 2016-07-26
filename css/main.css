@@ -91,7 +91,7 @@ li.inline {
 }
 
 /* input and select */
-input, select {
+input, select, textarea {
     padding:7px;
     background-color:#F2F2F2;
     color:#797979;

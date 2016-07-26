@@ -84,6 +84,16 @@ try {
         }
     }
 
+    // SEND MASS EMAIL
+    if (isset($_POST['massEmail'])) {
+        $Sysconfig = new Sysconfig();
+        if ($Sysconfig->massEmail($_POST['subject'], $_POST['body'])) {
+            echo '1';
+        } else {
+            echo '0';
+        }
+    }
+
     // DESTROY LOGS
     if (isset($_POST['logsDestroy'])) {
         $Logs = new Logs();

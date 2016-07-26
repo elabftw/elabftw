@@ -85,6 +85,7 @@ try {
             echo $SysconfigView->TeamsView->showPromoteSysadmin();
             echo $SysconfigView->TeamsView->showCreate();
             echo $SysconfigView->TeamsView->show();
+            echo $SysconfigView->TeamsView->showMassEmail();
             ?>
         </div>
     </div>

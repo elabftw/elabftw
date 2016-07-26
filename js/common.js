@@ -600,6 +600,21 @@ function teamsArchive(id) {
     });
 }
 
+// send a mass email to all users
+function massSend() {
+    $.post("app/controllers/ConfigController.php", {
+        massEmail: true,
+        subject: $('#massSubject').val(),
+        body: $('#massBody').val()
+    }).done(function(data) {
+        if (data) {
+            notif('Mass email sent', 'ok');
+        } else {
+            notif('An error occured', 'ko');
+        }
+    });
+}
+
 // called when mail_method selector is changed; enables/disables the config for the selected/unselected method
 function toggleMailMethod(value) {
     if (value == 'sendmail') {

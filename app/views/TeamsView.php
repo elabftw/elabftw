@@ -90,4 +90,15 @@ class TeamsView extends Teams
 
         return $stats;
     }
+
+    public function showMassEmail()
+    {
+        $html = "<div class='box'><h3>" . _('Send a mass email') . "</h3>";
+        $html .= "<p>" . _('Email subject') . "<br><input type='text' id='massSubject' size='45' /><br>";
+        $html .= _('Email body') . "<br><textarea id='massBody'></textarea><br>";
+        $html .= "<button id='massSend' onClick='massSend()' class='button'>" . ('Send') . "</button>";
+        $html .= "</p></div>";
+
+        return $html;
+    }
 }

@@ -70,8 +70,8 @@ class MakePdf extends Make
         $this->setTags();
         $this->buildContent();
         // create the pdf
-        define("_MPDF_TEMP_PATH", ELAB_ROOT . 'uploads/tmp');
-        define("_MPDF_TTFONTDATAPATH", ELAB_ROOT . 'uploads/tmp');
+        define("_MPDF_TEMP_PATH", ELAB_ROOT . 'uploads/tmp/');
+        define("_MPDF_TTFONTDATAPATH", ELAB_ROOT . 'uploads/tmp/');
         $mpdf = new \mPDF('utf-8', 'A4');
         // make sure header and footer are not overlapping the body text
         $mpdf->setAutoTopMargin = 'stretch';

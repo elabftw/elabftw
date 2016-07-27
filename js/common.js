@@ -756,3 +756,19 @@ function exportTpl(name, id) {
     var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
     saveAs(blob, name + ".elabftw.tpl");
 }
+
+// parse the query from url
+// from  http://stackoverflow.com/a/1099670
+function getQueryParams(qs) {
+    qs = qs.split('+').join(' ');
+
+    var params = {},
+    tokens,
+    re = /[?&]?([^=]+)=([^&]*)/g;
+
+    while (tokens = re.exec(qs)) {
+        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+    }
+
+    return params;
+}

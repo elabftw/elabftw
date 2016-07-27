@@ -321,8 +321,7 @@ function addChemdoodle()
 {
     if (isset($_SESSION['prefs']['chem_editor']) && $_SESSION['prefs']['chem_editor']) {
         $html = "<link rel='stylesheet' href='app/css/chemdoodle.css' type='text/css'>";
-        $html .= "<script src='js/chemdoodle.js'></script>";
-        $html .= "<script src='js/chemdoodle-uis.js'></script>";
+        $html .= "<script src='js/chemdoodle/chemdoodle.min.js'></script>";
         $html .= "<script>ChemDoodle.iChemLabs.useHTTPS();</script>";
         return $html;
     }

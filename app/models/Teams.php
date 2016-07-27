@@ -52,7 +52,7 @@ class Teams extends Panel
         $req->bindValue(':link_href', 'doc/_build/html/');
         $result1 = $req->execute();
         // grab the team ID
-        $new_team_id = $this->pdo->lastInsertId();
+        $newId = $this->pdo->lastInsertId();
 
         // now we need to insert a new default set of status for the newly created team
         $sql = "INSERT INTO status (team, name, color, is_default) VALUES
@@ -61,14 +61,14 @@ class Teams extends Panel
         (:team, 'Need to be redone', 'c0c0c0', 0),
         (:team, 'Fail', 'ff0000', 0);";
         $req = $this->pdo->prepare($sql);
-        $req->bindValue(':team', $new_team_id);
+        $req->bindValue(':team', $newId);
         $result2 = $req->execute();
 
         // insert only one item type with editme name
         $sql = "INSERT INTO `items_types` (`team`, `name`, `bgcolor`, `template`)
             VALUES (:team, 'Edit me', '32a100', '<p>Go to the admin panel to edit/add more items types!</p>');";
         $req = $this->pdo->prepare($sql);
-        $req->bindValue(':team', $new_team_id);
+        $req->bindValue(':team', $newId);
         $result3 = $req->execute();
 
         // now we need to insert a new default experiment template for the newly created team
@@ -79,7 +79,7 @@ class Teams extends Panel
         <p>&nbsp;</p>
         <p><span style=\"font-size: 14pt;\"><strong>Results :</strong></span></p><p>&nbsp;</p>', 'default', 0);";
         $req = $this->pdo->prepare($sql);
-        $req->bindValue(':team', $new_team_id);
+        $req->bindValue(':team', $newId);
         $result4 = $req->execute();
 
         return $result1 && $result2 && $result3 && $result4;
@@ -110,23 +110,22 @@ class Teams extends Panel
      */
     public function update($params)
     {
-        $post_stamp = processTimestampPost();
+        $stampPost = processTimestampPost();
 
         // CHECKS
+        $deletableXp = 0;
         if ($params['deletable_xp'] == 1) {
-            $deletable_xp = 1;
-        } else {
-            $deletable_xp = 0;
+            $deletableXp = 1;
         }
+
+        $linkName = 'Documentation';
         if (isset($params['link_name'])) {
-            $link_name = filter_var($_POST['link_name'], FILTER_SANITIZE_STRING);
-        } else {
-            $link_name = 'Documentation';
+            $linkName = filter_var($_POST['link_name'], FILTER_SANITIZE_STRING);
         }
+
+        $linkHref = 'doc/_build/html/';
         if (isset($params['link_href'])) {
-            $link_href = filter_var($params['link_href'], FILTER_SANITIZE_STRING);
-        } else {
-            $link_href = 'doc/_build/html/';
+            $linkHref = filter_var($params['link_href'], FILTER_SANITIZE_STRING);
         }
 
         $sql = "UPDATE teams SET
@@ -139,13 +138,13 @@ class Teams extends Panel
             stampcert = :stampcert
             WHERE team_id = :team_id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':deletable_xp', $deletable_xp);
-        $req->bindParam(':link_name', $link_name);
-        $req->bindParam(':link_href', $link_href);
-        $req->bindParam(':stamplogin', $post_stamp['stamplogin']);
-        $req->bindParam(':stamppass', $post_stamp['stamppass']);
-        $req->bindParam(':stampprovider', $post_stamp['stampprovider']);
-        $req->bindParam(':stampcert', $post_stamp['stampcert']);
+        $req->bindParam(':deletable_xp', $deletableXp);
+        $req->bindParam(':link_name', $linkName);
+        $req->bindParam(':link_href', $linkHref);
+        $req->bindParam(':stamplogin', $stampPost['stamplogin']);
+        $req->bindParam(':stamppass', $stampPost['stamppass']);
+        $req->bindParam(':stampprovider', $stampPost['stampprovider']);
+        $req->bindParam(':stampcert', $stampPost['stampcert']);
         $req->bindParam(':team_id', $_SESSION['team_id']);
 
         return $req->execute();

@@ -35,6 +35,9 @@ class UserStats
     /** array with colors for status */
     private $statusColors = array();
 
+    /** array with percentage and status name */
+    private $percentArr = array();
+
     /**
      * Init the object with a userid and the total count of experiments
      *

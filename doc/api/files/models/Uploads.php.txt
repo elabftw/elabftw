@@ -94,6 +94,25 @@ class Uploads extends Entity
     }
 
     /**
+     * Upload a mol file from Chemdoodle
+     *
+     * @param string $mol
+     * @return bool
+     */
+    public function createFromMol($mol)
+    {
+        $realName = 'Mol-file.mol';
+        $longName = $this->getCleanName() . ".mol";
+        $fullPath = ELAB_ROOT . 'uploads/' . $longName;
+
+        if (!empty($mol) && !file_put_contents($fullPath, $mol)) {
+            throw new Exception("Could not write mol to file");
+        }
+
+        return $this->dbInsert($realName, $longName, $this->getHash($fullPath));
+    }
+
+    /**
      * Can we upload to that experiment?
      * Make sure we own it.
      *
@@ -123,8 +142,8 @@ class Uploads extends Entity
     /**
      * Place a file somewhere
      *
-     * @param $string orig from
-     * @param string dest to
+     * @param string $orig from
+     * @param string $dest to
      * @throws Exception if cannot move the file
      */
     private function moveFile($orig, $dest)

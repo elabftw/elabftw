@@ -142,8 +142,8 @@ class Uploads extends Entity
     /**
      * Place a file somewhere
      *
-     * @param $string orig from
-     * @param string dest to
+     * @param string $orig from
+     * @param string $dest to
      * @throws Exception if cannot move the file
      */
     private function moveFile($orig, $dest)

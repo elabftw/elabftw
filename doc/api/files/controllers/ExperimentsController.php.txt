@@ -60,6 +60,12 @@ try {
         echo $Experiments->updateStatus($_POST['status']);
     }
 
+    // ADD MOL FILE
+    if (isset($_POST['addMol'])) {
+        $Uploads = new Uploads('experiments', $_POST['item']);
+        echo $Uploads->createFromMol($_POST['mol']);
+    }
+
     // UPDATE VISIBILITY
     if (isset($_POST['updateVisibility'])) {
         $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);

@@ -21,9 +21,6 @@ class Auth
     /** Used to store the PDO object */
     protected $pdo;
 
-    /** The salt of the user */
-    private $salt;
-
     /** Everything about the user */
     private $userData;
 
@@ -44,13 +41,13 @@ class Auth
      *
      * @param string $email
      */
-    private function setSalt($email)
+    private function getSalt($email)
     {
         $sql = "SELECT salt FROM users WHERE email = :email";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':email', $email);
         $req->execute();
-        $this->salt = $req->fetchColumn();
+        return $req->fetchColumn();
     }
 
     /**
@@ -62,9 +59,7 @@ class Auth
      */
     public function checkCredentials($email, $password)
     {
-        $this->setSalt($email);
-
-        $passwordHash = hash('sha512', $this->salt . $password);
+        $passwordHash = hash('sha512', $this->getSalt($email) . $password);
 
         $sql = "SELECT * FROM users WHERE email = :email AND password = :passwordHash AND validated = 1";
         $req = $this->pdo->prepare($sql);

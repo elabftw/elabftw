@@ -1,5 +1,5 @@
 <?php
-use Elabftw\Elabftw\Tools as Tools;
+namespace Elabftw\Elabftw;
 
 class ToolsTest extends \PHPUnit_Framework_TestCase
 {

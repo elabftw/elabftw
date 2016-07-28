@@ -40,7 +40,8 @@ module.exports = function(grunt) {
         command: 'phpdoc run -d app/classes -d app/models -d app/controllers -d app/views -t doc/api'
       },
       runtests: {
-        command: '~/.bin/selenium-server.sh; php vendor/bin/codecept --debug run'
+        command: 'php vendor/bin/codecept run --skip acceptance'
+        //command: '~/.bin/selenium-server.sh; php vendor/bin/codecept --debug run'
       }
     }
   });

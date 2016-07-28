@@ -48,8 +48,8 @@ How to backup a Docker installation
 -----------------------------------
 
 * Copy the docker-compose.yml somewhere safe.
-
-Execute these commands to backup the MySQL database:
+* Copy the `uploads` folder somewhere safe (make a zip or tar archive).
+* Backup the MySQL database:
 
 .. code-block:: bash
 
@@ -57,7 +57,9 @@ Execute these commands to backup the MySQL database:
     docker cp mysql:dump.sql elabftw-$(date --iso-8601).sql
     gzip --best elabftw-$(date --iso-8601).sql
 
-* Copy the `uploads` folder somewhere safe (make a zip or tar archive).
+
+* A script doing all of the above is available `here <https://gist.github.com/NicolasCARPi/711bdd8b9dca2aaa69457d71583c0fae>`_.
+* Make sure to run it periodically.
 
 
 How to restore a backup

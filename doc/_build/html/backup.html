@@ -192,15 +192,17 @@ Here is one way to do it. Adapt it to your needs: <a class="reference external" 
 <h2>How to backup a Docker installation<a class="headerlink" href="#how-to-backup-a-docker-installation" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>Copy the docker-compose.yml somewhere safe.</li>
+<li>Copy the <cite>uploads</cite> folder somewhere safe (make a zip or tar archive).</li>
+<li>Backup the MySQL database:</li>
 </ul>
-<p>Execute these commands to backup the MySQL database:</p>
 <div class="highlight-bash"><div class="highlight"><pre>docker <span class="nb">exec</span> -it mysql bash -c <span class="s1">&#39;mysqldump -u$MYSQL_USER -p$MYSQL_PASSWORD -r dump.sql $MYSQL_DATABASE&#39;</span>
 docker cp mysql:dump.sql elabftw-<span class="k">$(</span>date --iso-8601<span class="k">)</span>.sql
 gzip --best elabftw-<span class="k">$(</span>date --iso-8601<span class="k">)</span>.sql
 </pre></div>
 </div>
 <ul class="simple">
-<li>Copy the <cite>uploads</cite> folder somewhere safe (make a zip or tar archive).</li>
+<li>A script doing all of the above is available <a class="reference external" href="https://gist.github.com/NicolasCARPi/711bdd8b9dca2aaa69457d71583c0fae">here</a>.</li>
+<li>Make sure to run it periodically.</li>
 </ul>
 </div>
 <div class="section" id="how-to-restore-a-backup">

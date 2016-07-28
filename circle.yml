@@ -6,7 +6,6 @@ dependencies:
     pre:
         - sudo apt-get update
         - sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server
-        - sudo service mysql start
 
 database:
     override:

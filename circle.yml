@@ -2,6 +2,10 @@ machine:
     php:
         version: 5.6.5
 
+database:
+    override:
+        - mysql -u ubuntu circle_test < tests/unit/phpunit.sql
+
 test:
     override:
         - php vendor/codeception/codeception/codecept run --skip acceptance

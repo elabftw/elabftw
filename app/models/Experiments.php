@@ -45,7 +45,9 @@ class Experiments extends Entity
 
         $this->userid = $userid;
 
-        $this->team = $_SESSION['team_id'];
+        $Users = new Users();
+        $user = $Users->read($this->userid);
+        $this->team = $user['team'];
 
         if (!is_null($id)) {
             $this->setId($id);
@@ -311,7 +313,7 @@ class Experiments extends Entity
         // all the others are made not default
         $sql = 'SELECT id FROM status WHERE is_default = true AND team = :team LIMIT 1';
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $_SESSION['team_id']);
+        $req->bindParam(':team', $this->team);
         $req->execute();
         $status = $req->fetchColumn();
 
@@ -320,7 +322,7 @@ class Experiments extends Entity
         if (!$status) {
             $sql = 'SELECT id FROM status WHERE team = :team LIMIT 1';
             $req = $this->pdo->prepare($sql);
-            $req->bindParam(':team', $_SESSION['team_id']);
+            $req->bindParam(':team', $this->team);
             $req->execute();
             $status = $req->fetchColumn();
         }
@@ -356,14 +358,14 @@ class Experiments extends Entity
             VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
         $req = $this->pdo->prepare($sql);
         $req->execute(array(
-            'team' => $_SESSION['team_id'],
+            'team' => $this->team,
             'title' => $title,
             'date' => Tools::kdate(),
             'body' => $experiment['body'],
             'status' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
             'visibility' => $experiment['visibility'],
-            'userid' => $_SESSION['userid']));
+            'userid' => $this->userid));
         $newId = $this->pdo->lastInsertId();
 
         $tags = new Tags('experiments', $this->id);
@@ -385,11 +387,6 @@ class Experiments extends Entity
             throw new Exception(_('This section is out of your reach.'));
         }
 
-        if (((get_team_config('deletable_xp') == '0') &&
-            !$_SESSION['is_admin']) ||
-            !is_owned_by_user($this->id, 'experiments', $_SESSION['userid'])) {
-            throw new Exception(_("You don't have the rights to delete this experiment."));
-        }
         // delete the experiment
         $sql = "DELETE FROM experiments WHERE id = :id";
         $req = $this->pdo->prepare($sql);
@@ -438,7 +435,7 @@ class Experiments extends Entity
         $locked = (int) $expArr['locked'];
 
         // if we try to unlock something we didn't lock
-        if ($locked === 1 && ($expArr['lockedby'] != $_SESSION['userid'])) {
+        if ($locked === 1 && ($expArr['lockedby'] != $this->userid)) {
             // Get the first name of the locker to show in error message
             $sql = "SELECT firstname FROM users WHERE userid = :userid";
             $req = $this->pdo->prepare($sql);

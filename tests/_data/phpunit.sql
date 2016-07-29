@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 28, 2016 at 11:37 PM
+-- Generation Time: Jul 29, 2016 at 11:21 PM
 -- Server version: 10.1.14-MariaDB
 -- PHP Version: 7.0.9
 
@@ -99,6 +99,13 @@ CREATE TABLE `experiments` (
   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `experiments`
+--
+
+INSERT INTO `experiments` (`id`, `team`, `title`, `date`, `body`, `status`, `links`, `userid`, `elabid`, `locked`, `lockedby`, `lockedwhen`, `timestamped`, `timestampedby`, `timestamptoken`, `timestampedwhen`, `visibility`, `datetime`) VALUES
+(1, 1, 'Untitled', 20160729, '<p><span style="font-size: 14pt;"><strong>Goal :</strong></span></p>\r\n<p>&nbsp;</p>\r\n<p><span style="font-size: 14pt;"><strong>Procedure :</strong></span></p>\r\n<p>&nbsp;</p>\r\n<p><span style="font-size: 14pt;"><strong>Results :</strong></span></p>\r\n<p>&nbsp;</p>', '1', NULL, 1, '20160729-01079f04e939ad08f44bda36c39faff65a83ef56', 0, NULL, NULL, 0, NULL, NULL, NULL, 'team', '2016-07-29 21:20:59');
+
 -- --------------------------------------------------------
 
 --
@@ -138,6 +145,13 @@ CREATE TABLE `experiments_revisions` (
   `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `userid` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `experiments_revisions`
+--
+
+INSERT INTO `experiments_revisions` (`id`, `item_id`, `body`, `savedate`, `userid`) VALUES
+(1, 1, '<p><span style="font-size: 14pt;"><strong>Goal :</strong></span></p>\r\n<p>&nbsp;</p>\r\n<p><span style="font-size: 14pt;"><strong>Procedure :</strong></span></p>\r\n<p>&nbsp;</p>\r\n<p><span style="font-size: 14pt;"><strong>Results :</strong></span></p>\r\n<p>&nbsp;</p>', '2016-07-29 21:21:11', 1);
 
 -- --------------------------------------------------------
 
@@ -216,6 +230,13 @@ CREATE TABLE `items` (
   `userid` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `items`
+--
+
+INSERT INTO `items` (`id`, `team`, `title`, `date`, `body`, `rating`, `type`, `locked`, `userid`) VALUES
+(1, 1, 'Database item 1', 20160729, '<p>Go to the admin panel to edit/add more items types!</p>', 0, 1, NULL, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -229,6 +250,13 @@ CREATE TABLE `items_revisions` (
   `savedate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `userid` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `items_revisions`
+--
+
+INSERT INTO `items_revisions` (`id`, `item_id`, `body`, `savedate`, `userid`) VALUES
+(1, 1, '<p>Go to the admin panel to edit/add more items types!</p>', '2016-07-29 21:21:22', 1);
 
 -- --------------------------------------------------------
 
@@ -570,7 +598,7 @@ ALTER TABLE `banned_users`
 -- AUTO_INCREMENT for table `experiments`
 --
 ALTER TABLE `experiments`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `experiments_comments`
 --
@@ -585,7 +613,7 @@ ALTER TABLE `experiments_links`
 -- AUTO_INCREMENT for table `experiments_revisions`
 --
 ALTER TABLE `experiments_revisions`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `experiments_tags`
 --
@@ -605,12 +633,12 @@ ALTER TABLE `groups`
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `items_revisions`
 --
 ALTER TABLE `items_revisions`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `items_tags`
 --

@@ -35,12 +35,13 @@ try {
     $teamGroupsView = new TeamGroupsView();
     $Auth = new Auth();
     $Users = new Users();
+    $Config = new Config();
 
     // VALIDATE USERS BLOCK
     $unvalidatedUsersArr = $Users->readAll(0);
 
     // only show the frame if there is some users to validate and there is an email config
-    if (count($unvalidatedUsersArr) != 0 && get_config('mail_from') != 'notconfigured@example.com') {
+    if (count($unvalidatedUsersArr) != 0 && $Config->read('mail_from') != 'notconfigured@example.com') {
         $message = _('There are users waiting for validation of their account:');
         $message .= "<form method='post' action='app/controllers/UsersController.php'>";
         $message .= "<input type='hidden' name='usersValidate' value='true' />";
@@ -104,6 +105,7 @@ try {
             <label for='link_href'><?= _('Address where this link should point:') ?></label>
             <input type='text' value='<?= $team['link_href'] ?>' name='link_href' id='link_href' />
             </p>
+            <br>
             <span class='button' onClick='toggleTimestampInputs()'><?= _('Override general timestamping config') ?></span>
             <br><br>
             <div class='timestampInputs'>

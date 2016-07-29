@@ -50,7 +50,9 @@ class BannedUsers
      */
     public function readAll()
     {
-        $banTime = date("Y-m-d H:i:s", strtotime('-' . get_config('ban_time') . ' minutes'));
+        $Config = new Config();
+        $banConfig = $Config->read('ban_time');
+        $banTime = date("Y-m-d H:i:s", strtotime('-' . $banConfig . ' minutes'));
 
         $sql = "SELECT user_infos FROM banned_users WHERE time > :ban_time";
         $req = $this->pdo->prepare($sql);

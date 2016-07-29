@@ -15,7 +15,7 @@ use Exception;
 /**
  * All about the teams
  */
-class Logs extends Panel
+class Logs
 {
     /** pdo object */
     protected $pdo;

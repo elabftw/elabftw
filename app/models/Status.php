@@ -16,7 +16,7 @@ use Exception;
 /**
  * Things related to status in admin panel
  */
-class Status extends Panel
+class Status
 {
     /** The PDO object */
     private $pdo;
@@ -40,9 +40,6 @@ class Status extends Panel
      */
     public function create($name, $color, $team)
     {
-        if (!$this->isAdmin()) {
-            throw new Exception('Only admin can access this!');
-        }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         // we remove the # of the hexacode and sanitize string
         $color = filter_var(substr($color, 0, 6), FILTER_SANITIZE_STRING);
@@ -101,11 +98,8 @@ class Status extends Panel
      * @param int $team Team ID
      * @return bool true if sql success
      */
-    public function setDefaultFalse($team)
+    private function setDefaultFalse($team)
     {
-        if (!$this->isAdmin()) {
-            throw new Exception('Only admin can access this!');
-        }
         $sql = "UPDATE status SET is_default = 0 WHERE team = :team";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $team, PDO::PARAM_INT);
@@ -125,9 +119,6 @@ class Status extends Panel
      */
     public function update($id, $name, $color, $defaultBox, $team)
     {
-        if (!$this->isAdmin()) {
-            throw new Exception('Only admin can access this!');
-        }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $color = filter_var($color, FILTER_SANITIZE_STRING);
 

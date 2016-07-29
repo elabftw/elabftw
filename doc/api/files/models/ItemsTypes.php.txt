@@ -16,7 +16,7 @@ use Exception;
 /**
  * The kind of items you can have in the database for a team
  */
-class ItemsTypes extends Panel
+class ItemsTypes
 {
     /** The PDO object */
     private $pdo;
@@ -47,9 +47,6 @@ class ItemsTypes extends Panel
      */
     public function create($name, $color, $bookable, $template)
     {
-        if (!$this->isAdmin()) {
-            throw new Exception('This section is out of your reach!');
-        }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         if (strlen($name) < 1) {
             $name = 'Unnamed';
@@ -113,9 +110,6 @@ class ItemsTypes extends Panel
      */
     public function update($id, $name, $color, $bookable, $template)
     {
-        if (!$this->isAdmin()) {
-            throw new Exception('This section is out of your reach!');
-        }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $color = filter_var($color, FILTER_SANITIZE_STRING);
         $template = Tools::checkBody($template);
@@ -145,10 +139,6 @@ class ItemsTypes extends Panel
      */
     public function destroy($id)
     {
-        if (!$this->isAdmin()) {
-            throw new Exception('This section is out of your reach!');
-        }
-
         $sql = "DELETE FROM items_types WHERE id = :id AND team = :team";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);

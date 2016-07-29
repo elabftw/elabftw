@@ -18,7 +18,7 @@ use \Defuse\Crypto\Key as Key;
 /**
  * All about the teams
  */
-class Teams extends Panel
+class Teams
 {
     /** pdo object */
     protected $pdo;
@@ -166,9 +166,6 @@ class Teams extends Panel
      */
     public function updateName($id, $name)
     {
-        if (!$this->isSysAdmin()) {
-            throw new Exception('Only admin can access this!');
-        }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $sql = "UPDATE teams
             SET team_name = :name
@@ -188,9 +185,6 @@ class Teams extends Panel
      */
     public function destroy($team)
     {
-        if (!$this->isSysAdmin()) {
-            throw new Exception('Only admin can access this!');
-        }
         // check for stats, should be 0
         $count = $this->getStats($team);
 
@@ -229,9 +223,6 @@ class Teams extends Panel
      */
     public function getAllStats()
     {
-        if (!$this->isSysAdmin()) {
-            throw new Exception('Only admin can access this!');
-        }
         $sql = "SELECT
         (SELECT COUNT(users.userid) FROM users) AS totusers,
         (SELECT COUNT(items.id) FROM items) AS totdb,

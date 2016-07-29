@@ -95,7 +95,7 @@ try {
         }
     }
 
-    // TAB 2, 3, 4 AND 5
+    // TAB 2 to 5
     if (isset($_POST['updateConfig'])) {
         $redirect = true;
 

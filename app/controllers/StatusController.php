@@ -20,6 +20,10 @@ try {
     require_once '../../app/common.inc.php';
     $Status = new Status();
 
+    if (!$_SESSION['is_admin']) {
+        throw new Exception('Non admin user tried to access admin panel.');
+    }
+
     // CREATE STATUS
     if (isset($_POST['statusCreate'])) {
         if ($Status->create(

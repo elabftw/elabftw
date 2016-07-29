@@ -16,7 +16,7 @@ use \Exception;
 /**
  * Everything related to the team groups
  */
-class TeamGroups extends Panel
+class TeamGroups
 {
     /** The PDO object */
     private $pdo;
@@ -40,9 +40,6 @@ class TeamGroups extends Panel
      */
     public function create($name, $team)
     {
-        if (!$this->isAdmin()) {
-            throw new Exception('Only admin can access this!');
-        }
         $sql = "INSERT INTO team_groups(name, team) VALUES(:name, :team)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
@@ -115,9 +112,6 @@ class TeamGroups extends Panel
      */
     public function update($name, $id, $team)
     {
-        if (!$this->isAdmin()) {
-            throw new Exception('Only admin can access this!');
-        }
         $idArr = explode('_', $id);
         if ($idArr[0] === 'teamgroup' && Tools::checkId($idArr[1])) {
             $sql = "UPDATE team_groups SET name = :name WHERE id = :id AND team = :team";
@@ -146,9 +140,6 @@ class TeamGroups extends Panel
      */
     public function updateMember($userId, $groupId, $action)
     {
-        if (!$this->isAdmin()) {
-            throw new Exception('Only admin can access this!');
-        }
         if ($action === 'add') {
             $sql = "INSERT INTO users2team_groups(userid, groupid) VALUES(:userid, :groupid)";
         } elseif ($action === 'rm') {
@@ -171,9 +162,6 @@ class TeamGroups extends Panel
      */
     public function destroy($groupId)
     {
-        if (!$this->isAdmin()) {
-            throw new Exception('Only admin can access this!');
-        }
         $success = array();
 
         $sql = "DELETE FROM team_groups WHERE id = :id";

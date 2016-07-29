@@ -19,6 +19,11 @@ use Exception;
 try {
     require_once '../../app/common.inc.php';
     $TeamGroups = new TeamGroups();
+
+    if (!$_SESSION['is_admin']) {
+        throw new Exception('Non admin user tried to access admin panel.');
+    }
+
     // CREATE TEAM GROUP
     if (isset($_POST['teamGroupCreate'])) {
         $TeamGroups->create(filter_var($_POST['teamGroupCreate'], FILTER_SANITIZE_STRING), $_SESSION['team_id']);

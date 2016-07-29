@@ -20,6 +20,10 @@ try {
     require_once '../../app/common.inc.php';
     $itemsTypes = new ItemsTypes($_SESSION['team_id']);
 
+    if (!$_SESSION['is_admin']) {
+        throw new Exception('Non admin user tried to access admin panel.');
+    }
+
     // CREATE ITEMS TYPES
     if (isset($_POST['itemsTypesCreate'])) {
         if ($itemsTypes->create(

@@ -39,8 +39,13 @@ module.exports = function(grunt) {
       buildapi: {
         command: 'phpdoc run -d app/classes -d app/models -d app/controllers -d app/views -t doc/api'
       },
+      // xdebug must be DISABLED
       runtests: {
-        command: 'php vendor/bin/codecept run'
+        command: 'php vendor/bin/codecept run --skip functionnal'
+      },
+      // xdebug must be ENABLED
+      runcoverage: {
+        command: 'php vendor/bin/codecept run --skip acceptance --skip functionnal --coverage --coverage-html'
       }
     }
   });
@@ -54,5 +59,6 @@ module.exports = function(grunt) {
   grunt.registerTask('doc', 'shell:builddoc');
   grunt.registerTask('api', 'shell:buildapi');
   grunt.registerTask('test', 'shell:runtests');
+  grunt.registerTask('cov', 'shell:runcoverage');
 
 };

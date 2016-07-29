@@ -1,3 +1,7 @@
 <?php
 session_start();
-require_once 'tests/config.php';
+if (getenv('CIRCLECI')) {
+    require_once 'tests/config.php';
+} else {
+    require_once 'config.php';
+}

@@ -31,7 +31,7 @@ class Config
     /**
      * Read the configuration values
      *
-     * @param string $confName optionnal param to get only one value
+     * @param string|null $confName optionnal param to get only one value
      * @return array|string
      */
     public function read($confName = null)

@@ -6,8 +6,9 @@ dependencies:
     pre:
         - sudo apt-get update
         - sudo DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server
-        - npm install phantomjs
-        - node_modules/phantomjs/bin/phantomjs --webdriver=4444
+        - sudo phantomjs --webdriver=4444 &
+          #- npm install phantomjs
+          #- node_modules/phantomjs/bin/phantomjs --webdriver=4444
           #- wget -O p.tar.bz2 https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
           #- tar xjf p.tar.bz2
           #- ./phantomjs-1.9.8-linux-x86_64/bin/phantomjs --webdriver=4444 &

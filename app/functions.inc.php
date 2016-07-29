@@ -148,9 +148,9 @@ function update_config($post)
     }
 
     if (isset($post['stamppass']) && !empty($post['stamppass'])) {
-        $stamppass = Crypto::encrypt($post['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
+        $post['stamppass'] = Crypto::encrypt($post['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
     } else {
-        $stamppass = $Teams->getConfig('stamppass');
+        $post['stamppass'] = $Teams->getConfig('stamppass');
     }
 
     if (isset($post['login_tries']) && Tools::checkId($post['login_tries']) === false) {

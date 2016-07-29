@@ -150,8 +150,8 @@ class Teams extends Panel
         $req->bindParam(':stamplogin', $post['stamplogin']);
         $req->bindParam(':stamppass', $post['stamppass']);
         $req->bindParam(':deletable_xp', $deletableXp);
-        $req->bindParam(':link_name', $post['link_name']);
-        $req->bindParam(':link_href', $post['link_href']);
+        $req->bindParam(':link_name', $linkName);
+        $req->bindParam(':link_href', $linkHref);
         $req->bindParam(':team_id', $team);
 
         return $req->execute();

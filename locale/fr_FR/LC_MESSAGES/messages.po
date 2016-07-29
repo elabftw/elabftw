@@ -1197,8 +1197,8 @@ msgid "Address of the SMTP server:"
 msgstr "Adresse du serveur SMTP :"
 
 #: elabftw/sysconfig.php:242
-msgid "SMTP encryption (can be TLS or STARTSSL):"
-msgstr "Encryption SMTP (TLS ou STARTSSL) :"
+msgid "SMTP encryption:"
+msgstr "Encryption :"
 
 #: elabftw/sysconfig.php:246
 msgid "Probably TLS"

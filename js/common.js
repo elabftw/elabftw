@@ -442,7 +442,7 @@ function itemsTypesDestroy(id) {
 // COMMON TEMPLATE
 function commonTplUpdate() {
     template = tinymce.get('commonTplTemplate').getContent();
-    $.post('app/controllers/ConfigController.php', {
+    $.post('app/controllers/AdminController.php', {
         commonTplUpdate: template
     }).done(function() {
         notif('Saved', 'ok');
@@ -511,7 +511,7 @@ function promoteSysadmin() {
     // disable button on click
     document.getElementById('promoteSysadminButton').disabled = true;
     email = $('#promoteSysadmin').val();
-    $.post('app/controllers/ConfigController.php', {
+    $.post('app/controllers/SysconfigController.php', {
         promoteSysadmin: true,
         email: email
     }).done(function(data) {
@@ -529,7 +529,7 @@ function teamsCreate() {
     // disable button on click
     document.getElementById('teamsCreateButton').disabled = true;
     name = $('#teamsName').val();
-    $.post('app/controllers/ConfigController.php', {
+    $.post('app/controllers/SysconfigController.php', {
         teamsCreate: true,
         teamsName: name
     }).done(function(data) {
@@ -545,7 +545,7 @@ function teamsCreate() {
 function teamsUpdate(id) {
     document.getElementById('teamsUpdateButton_' + id).disabled = true;
     name = $('#team_' + id).val();
-    $.post("app/controllers/ConfigController.php", {
+    $.post("app/controllers/SysconfigController.php", {
         teamsUpdate: true,
         teamsUpdateId : id,
         teamsUpdateName : name
@@ -562,7 +562,7 @@ function teamsUpdate(id) {
 function teamsDestroy(id) {
     // disable button on click
     document.getElementById('teamsDestroyButton_' + id).disabled = true;
-    $.post("app/controllers/ConfigController.php", {
+    $.post("app/controllers/SysconfigController.php", {
         teamsDestroy: true,
         teamsDestroyId: id
     }).done(function(data) {
@@ -582,7 +582,7 @@ function teamsUpdateButtonEnable(id) {
 function teamsArchive(id) {
     // disable button on click
     document.getElementById('teamsArchiveButton_' + id).disabled = true;
-    $.post("app/controllers/ConfigController.php", {
+    $.post("app/controllers/SysconfigController.php", {
         teamsArchive: true,
         teamsArchiveId: id
     }).done(function(data) {
@@ -601,7 +601,7 @@ function teamsArchive(id) {
 
 // send a mass email to all users
 function massSend() {
-    $.post("app/controllers/ConfigController.php", {
+    $.post("app/controllers/SysconfigController.php", {
         massEmail: true,
         subject: $('#massSubject').val(),
         body: $('#massBody').val()
@@ -639,7 +639,7 @@ function testemailSend() {
     // check the email loosely
     if (/\S+@\S+\.\S+/.test(email)) {
         document.getElementById('testemailButton').disabled = true;
-        $.post('app/controllers/ConfigController.php', {
+        $.post('app/controllers/SysconfigController.php', {
             testemailSend: true,
             testemailEmail: email
         }).done(function(data) {
@@ -659,7 +659,7 @@ function testemailSend() {
 function logsDestroy() {
     // disable button on click
     document.getElementById('logsDestroyButton').disabled = true;
-    $.post('app/controllers/ConfigController.php', {
+    $.post('app/controllers/SysconfigController.php', {
         logsDestroy: true
     }).done(function(data) {
         if (data == 1) {

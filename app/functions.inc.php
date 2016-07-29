@@ -25,52 +25,6 @@ use \Defuse\Crypto\Key as Key;
  */
 
 /**
- * Validate POST variables containing login/validation data for the TSP;
- * Substitute missing values with empty strings and return as array
- *
- * @return array
- */
-function processTimestampPost()
-{
-    if (isset($_POST['stampprovider'])) {
-        $stampprovider = filter_var($_POST['stampprovider'], FILTER_VALIDATE_URL);
-    } else {
-        $stampprovider = '';
-    }
-    if (isset($_POST['stampcert'])) {
-        $cert_chain = filter_var($_POST['stampcert'], FILTER_SANITIZE_STRING);
-        if (is_readable(realpath(ELAB_ROOT . $cert_chain)) || realpath($cert_chain)) {
-            $stampcert = $cert_chain;
-        } else {
-            throw new Exception('Cannot read provided certificate file.');
-        }
-    } else {
-        $stampcert = '';
-    }
-    if (isset($_POST['stampshare'])) {
-        $stampshare = $_POST['stampshare'];
-    } else {
-        $stampshare = 0;
-    }
-    if (isset($_POST['stamplogin'])) {
-        $stamplogin = filter_var($_POST['stamplogin'], FILTER_SANITIZE_STRING);
-    } else {
-        $stamplogin = '';
-    }
-    if (isset($_POST['stamppass']) && !empty($_POST['stamppass'])) {
-        $stamppass = Crypto::encrypt($_POST['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
-    } else {
-        $stamppass = get_team_config('stamppass');
-    }
-
-    return array('stampprovider' => $stampprovider,
-                    'stampcert' => $stampcert,
-                    'stampshare' => $stampshare,
-                    'stamplogin' => $stamplogin,
-                    'stamppass' => $stamppass);
-}
-
-/**
  * For displaying messages using jquery ui highlight/error messages
  *
  * @param string $type Can be 'ok', 'ko' or 'warning', with or without _nocross
@@ -176,20 +130,49 @@ function get_team_config($column = null)
 /**
  * Used in sysconfig.php to update config values
  *
- * @param array $array (conf_name => conf_value)
+ * @param array $post (conf_name => conf_value)
  * @return bool the return value of execute queries
  */
-function update_config($array)
+function update_config($post)
 {
     global $pdo;
     $result = array();
-    foreach ($array as $name => $value) {
+
+    // do some data validation for some values
+    if (isset($post['stampcert'])) {
+        $cert_chain = filter_var($post['stampcert'], FILTER_SANITIZE_STRING);
+        if (!is_readable(realpath(ELAB_ROOT . $cert_chain)) || !realpath($cert_chain)) {
+            throw new Exception('Cannot read provided certificate file.');
+        }
+    }
+
+    if (isset($post['stamppass']) && !empty($post['stamppass'])) {
+        $stamppass = Crypto::encrypt($post['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
+    } else {
+        $stamppass = $Teams->getConfig('stamppass');
+    }
+
+    if (isset($post['login_tries']) && Tools::checkId($post['login_tries']) === false) {
+        throw new Exception('Bad value for number of login attempts!');
+    }
+    if (isset($post['ban_time']) && Tools::checkId($post['ban_time']) === false) {
+        throw new Exception('Bad value for number of login attempts!');
+    }
+
+    // encrypt password
+    if (isset($post['smtp_password']) && !empty($post['smtp_password'])) {
+        $post['smtp_password'] = Crypto::encrypt($post['smtp_password'], Key::loadFromAsciiSafeString(SECRET_KEY));
+    }
+
+    // loop the array and update config
+    foreach ($post as $name => $value) {
         $sql = "UPDATE config SET conf_value = :value WHERE conf_name = :name";
         $req = $pdo->prepare($sql);
         $req->bindParam(':value', $value);
         $req->bindParam(':name', $name);
         $result[] = $req->execute();
     }
+
     return !in_array(0, $result);
 }
 

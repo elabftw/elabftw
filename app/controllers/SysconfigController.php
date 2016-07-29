@@ -1,6 +1,6 @@
 <?php
 /**
- * app/controllers/ConfigController.php
+ * app/controllers/SysconfigController.php
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -13,13 +13,20 @@ namespace Elabftw\Elabftw;
 use Exception;
 
 /**
- * Deal with ajax requests sent from the sysconfig page
+ * Deal with ajax requests sent from the sysconfig page or full form from sysconfig.php
  *
  */
 try {
     require_once '../../app/common.inc.php';
-    $Teams = new Teams();
+
+    if (!$_SESSION['is_sysadmin']) {
+        throw new Exception('Non sysadmin user tried to access sysadmin panel.');
+    }
+
+    $tab = '1';
     $redirect = false;
+
+    $Teams = new Teams();
 
     // PROMOTE SYSADMIN
     if (isset($_POST['promoteSysadmin'])) {
@@ -58,22 +65,6 @@ try {
         }
     }
 
-    // UPDATE TEAM
-    if (isset($_POST['teamsUpdateFull'])) {
-        $redirect = true;
-        if ($Teams->update($_POST)) {
-            $_SESSION['ok'][] = _('Configuration updated successfully.');
-        } else {
-            $_SESSION['ko'][] = _('An error occurred!');
-        }
-    }
-
-    // UPDATE COMMON TEMPLATE
-    if (isset($_POST['commonTplUpdate'])) {
-        $Templates = new Templates($_SESSION['team_id']);
-        $Templates->update($_POST['commonTplUpdate']);
-    }
-
     // SEND TEST EMAIL
     if (isset($_POST['testemailSend'])) {
         $Sysconfig = new Sysconfig();
@@ -104,12 +95,41 @@ try {
         }
     }
 
+    // TAB 2, 3, 4 AND 5
+    if (isset($_POST['updateConfig'])) {
+        $redirect = true;
+
+        if (isset($_POST['lang'])) {
+            $tab = '2';
+        }
+
+        if (isset($_POST['stampshare'])) {
+            $tab = '3';
+        }
+
+        if (isset($_POST['admin_validate'])) {
+            $tab = '4';
+        }
+
+        if (isset($_POST['mail_method'])) {
+            $tab = '5';
+        }
+
+        if (!update_config($_POST)) {
+            throw new Exception('Error updating config');
+        }
+
+    }
+
+    $_SESSION['ok'][] = _('Configuration updated successfully.');
+
 } catch (Exception $e) {
     $Logs = new Logs();
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
-    $_SESSION['ko'][] = Tools::error();
+    // we can show error message to sysadmin
+    $_SESSION['ko'][] = $e->getMessage();
 } finally {
     if ($redirect) {
-        header('Location: ../../admin.php?tab=1');
+        header('Location: ../../sysconfig.php?tab=' . $tab);
     }
 }

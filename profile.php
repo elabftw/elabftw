@@ -44,7 +44,7 @@ try {
     if ($count === 0) {
         echo _('No statistics available yet.'); // fix division by zero
     } else {
-        $UserStats = new UserStats($_SESSION['userid'], $count);
+        $UserStats = new UserStats($_SESSION['team_id'], $_SESSION['userid'], $count);
         echo $UserStats->show();
     }
     echo "</section>";

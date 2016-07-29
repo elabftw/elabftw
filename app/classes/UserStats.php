@@ -11,11 +11,15 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+
 /**
  * Generate and display experiments statistics for a user
  */
 class UserStats
 {
+
+    /** our team */
+    private $team;
 
     /** id of our user */
     private $userid;
@@ -44,8 +48,9 @@ class UserStats
      * @param string $userid
      * @param int $count total count of experiments
      */
-    public function __construct($userid, $count)
+    public function __construct($team, $userid, $count)
     {
+        $this->team = $team;
         $this->userid = $userid;
         $this->count = $count;
         $this->pdo = Db::getConnection();
@@ -61,7 +66,7 @@ class UserStats
     {
         // get all status name and id
         $Status = new Status();
-        $statusAll = $Status->read($_SESSION['team_id']);
+        $statusAll = $Status->read($this->team);
 
         // populate arrays
         foreach ($statusAll as $status) {

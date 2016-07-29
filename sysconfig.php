@@ -92,8 +92,9 @@ try {
 
     <!-- TAB 2 -->
     <div class='divhandle' id='tab2div'>
-        <form class='box' method='post' action='app/sysconfig-exec.php'>
+        <form class='box' method='post' action='app/controllers/SysconfigController.php'>
             <h3><?= _('Under the hood') ?></h3>
+            <input type='hidden' name='updateConfig' value='true' />
             <label for='lang'><?= _('Language') ?></label>
             <select id='lang' name="lang">
     <?php
@@ -115,7 +116,7 @@ try {
             <p class='smallgray'><?= _('If you are behind a firewall/proxy, enter the address here. Example : http://proxy.example.com:3128') ?></p>
 
             <div class='submitButtonDiv'>
-                <button type='submit' name='submit_config' class='button'><?= _('Save') ?></button>
+                <button type='submit' class='button'><?= _('Save') ?></button>
             </div>
         </form>
 
@@ -134,8 +135,9 @@ try {
 
     <!-- TAB 3 TIMESTAMP -->
     <div class='divhandle' id='tab3div'>
-        <form class='box' method='post' action='app/sysconfig-exec.php'>
+        <form class='box' method='post' action='app/controllers/SysconfigController.php'>
             <h3><?php echo _('Timestamping configuration'); ?></h3>
+            <input type='hidden' name='updateConfig' value='true' />
             <label for='stampshare'><?php echo _('The teams can use the credentials below to timestamp:'); ?></label>
             <select name='stampshare' id='stampshare'>
                 <option value='1'
@@ -161,7 +163,7 @@ try {
             <label for='stamppass'><?= _('Password for external timestamping service:') ?></label>
             <input type='password' name='stamppass' id='stamppass' />
             <div class='submitButtonDiv'>
-                <button type='submit' name='submit_config' class='button'><?= _('Save') ?></button>
+                <button type='submit' class='button'><?= _('Save') ?></button>
             </div>
         </form>
     </div>
@@ -170,8 +172,10 @@ try {
     <div class='divhandle' id='tab4div'>
         <div class='box'>
             <h3><?= _('Security settings') ?></h3>
-            <form method='post' action='app/sysconfig-exec.php'>
-            <label for='admin_validate'><?= _('Users need validation by admin after registration:') ?></label>
+            <form method='post' action='app/controllers/SysconfigController.php'>
+                <input type='hidden' name='updateConfig' value='true' />
+
+                <label for='admin_validate'><?= _('Users need validation by admin after registration:') ?></label>
                 <select name='admin_validate' id='admin_validate'>
                     <option value='1'
                         <?= get_config('admin_validate') ? " selected='selected'" : "" ?>
@@ -182,15 +186,15 @@ try {
                 </select>
                 <p class='smallgray'><?= _('Set to yes for added security.') ?></p>
                 <label for='login_tries'><?= _('Number of allowed login attempts:') ?></label>
-                <input type='text' value='<?= get_config('login_tries') ?>' name='login_tries' id='login_tries' />
+                <input type='number' value='<?= get_config('login_tries') ?>' name='login_tries' id='login_tries' />
                 <p class='smallgray'><?= _('3 might be too few. See for yourself :)') ?></p>
                 <label for='ban_time'><?= _('Time of the ban after failed login attempts (in minutes:') ?></label>
-                <input type='text' value='<?= get_config('ban_time') ?>' name='ban_time' id='ban_time' />
+                <input type='number' value='<?= get_config('ban_time') ?>' name='ban_time' id='ban_time' />
                 <p class='smallgray'>
                     <?= _('To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems.'); ?>
                 </p>
                 <div class='submitButtonDiv'>
-                    <button type='submit' name='submit_config' class='button'><?= _('Save') ?></button>
+                    <button type='submit' class='button'><?= _('Save') ?></button>
                 </div>
             </form>
         </div>
@@ -223,7 +227,9 @@ try {
             $disable_smtp = true;
             $disable_php = true;
     } ?>
-        <form method='post' action='app/sysconfig-exec.php'>
+        <form method='post' action='app/controllers/SysconfigController.php'>
+            <input type='hidden' name='updateConfig' value='true' />
+
 
             <p><?= _("Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mailgun.com (or gmail account and add the infos here.") ?></p>
             <p>
@@ -262,8 +268,16 @@ try {
                 </p>
                 <p>
                 <span class='smallgray'>smtp.mailgun.com</span>
-                <label for='smtp_encryption'><?= _('SMTP encryption (can be TLS or STARTSSL):') ?></label>
-                <input type='text' value='<?= get_config('smtp_encryption') ?>' name='smtp_encryption' id='smtp_encryption' />
+                <label for='smtp_encryption'><?= _('SMTP encryption:') ?></label>
+                <?php $smtp_encryption = get_config('smtp_encryption') ?>
+                <select name='smtp_encryption'>
+                <option value='tls'
+                <?= $smtp_encryption === 'tls' ? ' selected>' : '>' ?>
+                TLS</option>
+                <option value='startssl'
+                <?= $smtp_encryption === 'startssl' ? ' selected>' : '>' ?>
+                STARTSSL</option>
+                </select>
                 </p>
                 <p>
                 <span class='smallgray'><?= _('Probably TLS') ?></span>
@@ -281,7 +295,7 @@ try {
                 </p>
                 </div>
                 <div class='submitButtonDiv'>
-                    <button type='submit' name='submit_config' class='button'><?= _('Save') ?></button>
+                    <button type='submit' class='button'><?= _('Save') ?></button>
                 </div>
             </form>
         </div>

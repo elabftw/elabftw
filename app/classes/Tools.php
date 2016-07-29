@@ -12,6 +12,9 @@ namespace Elabftw\Elabftw;
 
 use \RecursiveIteratorIterator;
 use \RecursiveDirectoryIterator;
+use Exception;
+use \Defuse\Crypto\Crypto as Crypto;
+use \Defuse\Crypto\Key as Key;
 
 /**
  * Toolbelt full of useful functions

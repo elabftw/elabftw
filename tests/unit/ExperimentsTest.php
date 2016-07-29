@@ -27,7 +27,7 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
         $experiment = $this->Experiments->read();
         $this->assertTrue(is_array($experiment));
         $this->assertEquals('Untitled', $experiment['title']);
-        $this->assertEquals(Tools::kdate(), $experiment['date']);
+        $this->assertEquals('20160729', $experiment['date']);
     }
 
     public function testReadAll()

@@ -40,6 +40,7 @@ class Auth
      * Get the salt for the user so we can generate a correct hash
      *
      * @param string $email
+     * @return string
      */
     private function getSalt($email)
     {

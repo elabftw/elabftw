@@ -109,7 +109,7 @@ class Teams extends Panel
         // CHECKS
         if (isset($post['stampcert'])) {
             $cert_chain = filter_var($post['stampcert'], FILTER_SANITIZE_STRING);
-            if (!is_readable(realpath(ELAB_ROOT . $cert_chain)) || !realpath($cert_chain)) {
+            if (!is_readable(realpath(ELAB_ROOT . $cert_chain))) {
                 throw new Exception('Cannot read provided certificate file.');
             }
         }

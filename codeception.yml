@@ -12,10 +12,3 @@ settings:
 extensions:
     enabled:
         - Codeception\Extension\RunFailed
-modules:
-    config:
-        Db:
-            dsn: 'mysql:host=localhost;dbname=elabftw-tests'
-            user: 'root'
-            password: 'toto'
-            dump: tests/_data/dump.sql

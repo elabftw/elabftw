@@ -22,7 +22,7 @@ try {
 
     // CREATE
     if (isset($_POST['create'])) {
-        if ($Scheduler->create($_POST['item'], $_POST['start'], $_POST['end'], $_POST['title'], $_POST['userid'])) {
+        if ($Scheduler->create($_POST['item'], $_POST['start'], $_POST['end'], $_POST['title'], $_SESSION['userid'])) {
             echo '1';
         } else {
             echo '0';

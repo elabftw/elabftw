@@ -11,8 +11,29 @@ class CommentsTest extends \PHPUnit_Framework_TestCase
         $this->Comments = new Comments($this->Experiments);
     }
 
+    public function testCreate()
+    {
+        $this->assertTrue($this->Comments->create('Ohai'));
+    }
+
     public function testRead()
     {
-        $this->assertFalse($this->Comments->read());
+        $this->assertTrue(is_array($this->Comments->read()));
+    }
+
+    public function testUpdate()
+    {
+        $this->assertTrue($this->Comments->Update('Udpated'));
+        $this->assertFalse($this->Comments->Update('a'));
+    }
+
+    public function testDestroy()
+    {
+        $this->assertTrue($this->Comments->destroy());
+    }
+
+    public function testDestroyAll()
+    {
+        $this->assertTrue($this->Comments->destroyAll());
     }
 }

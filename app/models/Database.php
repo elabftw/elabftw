@@ -218,7 +218,7 @@ class Database extends Entity
      *
      * @return int $newId The id of the newly created item
      */
-    public function duplicate()
+    public function duplicate($userid)
     {
         $item = $this->read();
 
@@ -230,7 +230,7 @@ class Database extends Entity
             'title' => $item['title'],
             'date' => Tools::kdate(),
             'body' => $item['body'],
-            'userid' => $_SESSION['userid'],
+            'userid' => $userid,
             'type' => $item['type']
         ));
         $newId = $this->pdo->lastInsertId();

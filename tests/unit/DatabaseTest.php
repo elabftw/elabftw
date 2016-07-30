@@ -10,9 +10,12 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
         $this->Database= new Database(1);
     }
 
-    public function testCreate()
+    public function testCreateAndDestroy()
     {
-        $this->assertTrue((bool) Tools::checkId($this->Database->create(1, 1)));
+        $new = $this->Database->create(1, 1);
+        $this->assertTrue((bool) Tools::checkId($new));
+        $this->Database->setId($new);
+        $this->assertTrue($this->Database->destroy());
     }
 
     public function testSetId()
@@ -33,5 +36,38 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
     public function testReadAll()
     {
         $this->assertTrue(is_array($this->Database->readAll()));
+    }
+
+    public function testUpdate()
+    {
+        $this->Database->setId(1);
+        $this->assertTrue($this->Database->update('Database item 1', '20160729', 'body', 1));
+    }
+
+    public function testUpdateRating()
+    {
+        $this->Database->setId(1);
+        $this->assertTrue($this->Database->updateRating(1));
+    }
+
+    public function testDuplicate()
+    {
+        $this->Database->setId(1);
+        $this->assertTrue((bool) Tools::checkId($this->Database->duplicate(1)));
+    }
+
+    public function testToggleLock()
+    {
+        $this->Database->setId(1);
+
+        // lock
+        $this->assertTrue($this->Database->toggleLock());
+        $item = $this->Database->read();
+        $this->assertTrue((bool) $item['locked']);
+
+        // unlock
+        $this->assertTrue($this->Database->toggleLock());
+        $item = $this->Database->read();
+        $this->assertFalse((bool) $item['locked']);
     }
 }

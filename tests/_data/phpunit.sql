@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 29, 2016 at 11:21 PM
+-- Generation Time: Jul 30, 2016 at 05:40 PM
 -- Server version: 10.1.14-MariaDB
 -- PHP Version: 7.0.9
 
@@ -55,16 +55,16 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('debug', '0'),
 ('lang', 'en_GB'),
 ('login_tries', '3'),
-('mail_from', 'notconfigured@example.com'),
-('mail_method', 'sendmail'),
+('mail_from', 'phpunit@mailgun.org'),
+('mail_method', 'smtp'),
 ('proxy', ''),
 ('schema', '10'),
 ('sendmail_path', '/usr/sbin/sendmail'),
 ('smtp_address', 'smtp.mailgun.org'),
 ('smtp_encryption', 'tls'),
-('smtp_password', ''),
+('smtp_password', 'def502005d96345a0fd512ad0ebad66b0c6b227c6ae2d9804ca6dc16c0f50832de54c12c2b56ca5e429145396b7e5fd71e1232bd5e7d84bb336809c7c6b50ee892fe03240ae9622c6d59cc537ef18d69eaaa7eb04bf1bd3d79ea074430a4'),
 ('smtp_port', '587'),
-('smtp_username', ''),
+('smtp_username', 'phpunit@sandboxf6e3e991ad7f40eb830e6d1f35180d2b.mailgun.org'),
 ('stampcert', 'vendor/pki.dfn.pem'),
 ('stamphash', 'sha256'),
 ('stamplogin', ''),
@@ -307,6 +307,13 @@ CREATE TABLE `logs` (
   `user` text COLLATE utf8_unicode_ci,
   `body` text COLLATE utf8_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `logs`
+--
+
+INSERT INTO `logs` (`id`, `type`, `datetime`, `user`, `body`) VALUES
+(1, 'Warning', '2016-07-30 15:36:31', '127.0.0.1', 'Failed login attempt');
 
 -- --------------------------------------------------------
 
@@ -633,7 +640,7 @@ ALTER TABLE `groups`
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `items_revisions`
 --
@@ -653,7 +660,7 @@ ALTER TABLE `items_types`
 -- AUTO_INCREMENT for table `logs`
 --
 ALTER TABLE `logs`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `status`
 --

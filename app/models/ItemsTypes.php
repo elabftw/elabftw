@@ -52,7 +52,6 @@ class ItemsTypes
             $name = 'Unnamed';
         }
 
-        $color = filter_var($color, FILTER_SANITIZE_STRING);
         $template = Tools::checkBody($template);
         $sql = "INSERT INTO items_types(name, bgcolor, bookable, template, team) VALUES(:name, :bgcolor, :bookable, :template, :team)";
         $req = $this->pdo->prepare($sql);

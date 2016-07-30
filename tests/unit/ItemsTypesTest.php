@@ -12,7 +12,7 @@ class ItemsTypesTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateUpdateDestroy()
     {
-        $this->assertTrue($this->ItemsTypes->create('new', '#fffccc', 0, 'body'));
+        $this->assertTrue($this->ItemsTypes->create('new', 'fffccc', 0, 'body'));
         $itemsTypes = $this->ItemsTypes->readAll();
         $last = array_pop($itemsTypes);
         $this->assertTrue($this->ItemsTypes->update($last['id'], 'newname', '#fffccc', 1, 'newbody'));

@@ -370,6 +370,7 @@ function statusCreate() {
 }
 
 function statusUpdate(id) {
+    document.getElementById('statusUpdate_' + id).disabled = true;
     name = $('#statusName_' + id).val();
     color = $('#statusColor_' + id).val();
     isDefault = $('#statusDefault_' + id).is(':checked');
@@ -381,9 +382,9 @@ function statusUpdate(id) {
         color: color,
         isDefault: isDefault
     }).done(function(data) {
-        if (data) {
+        if (data == '1') {
             notif('Saved', 'ok');
-            window.location.replace('admin.php?tab=3');
+            document.getElementById('statusUpdate_' + id).disabled = false;
         } else {
             notif('Error', 'ko');
         }

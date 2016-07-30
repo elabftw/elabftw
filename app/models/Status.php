@@ -116,15 +116,15 @@ class Status
      * @param int $id ID of the status
      * @param string $name New name
      * @param string $color New color
-     * @param string $defaultBox
+     * @param bool $isDefault
      * @return bool true if sql success
      */
-    public function update($id, $name, $color, $defaultBox)
+    public function update($id, $name, $color, $isDefault)
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $color = filter_var($color, FILTER_SANITIZE_STRING);
 
-        if ($defaultBox && $this->setDefaultFalse($this->team)) {
+        if (($isDefault != 'false') && $this->setDefaultFalse($this->team)) {
             $default = 1;
         } else {
             $default = 0;
@@ -139,8 +139,8 @@ class Status
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':color', $color);
-        $req->bindParam(':is_default', $default, \PDO::PARAM_INT);
-        $req->bindParam(':id', $id, \PDO::PARAM_INT);
+        $req->bindParam(':is_default', $default);
+        $req->bindParam(':id', $id);
         $req->bindParam(':team', $this->team);
 
         return $req->execute();

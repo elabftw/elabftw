@@ -74,7 +74,7 @@ class StatusView
             $html .= "<li>" . _('Name') . " <input required type='text' id='statusName_" . $status['id'] . "' value='" . $status['name'] . "' /></li>";
             $html .= "<li style='color:#" . $status['color'] . "'>" . _('Color') . " <input class='colorpicker' type='text' maxlength='6' id='statusColor_" . $status['id'] . "' value='" . $status['color'] . "' />";
             $html .= "</li>";
-            $html .= "<li>" . _('Default status') . " <input type='checkbox' id='statusDefault_" . $status['id'] . "'";
+            $html .= "<li>" . _('Default status') . " <input type='radio' name='defaultRadio' id='statusDefault_" . $status['id'] . "'";
             // check the box if the status is already default
             if ($status['is_default'] == 1) {
                 $html .= " checked";
@@ -82,7 +82,7 @@ class StatusView
             $html .= "></li>";
 
 
-            $html .= "<li><button onClick='statusUpdate(" . $status['id'] . ")' class='button'>" . _('Save') . "</button></li>";
+            $html .= "<li><button id='statusUpdate_" . $status['id'] . "' onClick='statusUpdate(" . $status['id'] . ")' class='button'>" . _('Save') . "</button></li>";
 
             $html .= "<li><button class='button' onClick=\"statusDestroy(" . $status['id'] . ")\">";
             $html .= _('Delete') . "</button></li>";

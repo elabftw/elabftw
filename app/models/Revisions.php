@@ -118,7 +118,7 @@ class Revisions
         $sql = "SELECT * FROM " . $this->type . "_revisions WHERE item_id = :item_id AND userid = :userid ORDER BY savedate DESC";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':item_id', $this->id);
-        $req->bindParam(':userid', $_SESSION['userid']);
+        $req->bindParam(':userid', $this->userid);
         $req->execute();
 
         return $req->fetchAll();
@@ -135,7 +135,7 @@ class Revisions
         $sql = "SELECT body FROM " . $this->type . "_revisions WHERE id = :rev_id AND userid = :userid";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':rev_id', $revId);
-        $req->bindParam(':userid', $userid);
+        $req->bindParam(':userid', $this->userid);
         $req->execute();
 
         return $req->fetchColumn();

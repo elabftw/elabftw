@@ -28,7 +28,7 @@ echo addChemdoodle();
 try {
 
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
-        $DatabaseView = new DatabaseView(new Database($_SESSION['team_id']));
+        $DatabaseView = new DatabaseView(new Database($_SESSION['team_id']), $_SESSION['userid']);
         $DatabaseView->display = $_SESSION['prefs']['display'];
 
         // CATEGORY FILTER
@@ -77,13 +77,13 @@ try {
     // VIEW
     } elseif ($_GET['mode'] === 'view') {
 
-        $DatabaseView = new DatabaseView(new Database($_SESSION['team_id'], $_GET['id']));
+        $DatabaseView = new DatabaseView(new Database($_SESSION['team_id'], $_GET['id']), $_SESSION['userid']);
         echo $DatabaseView->view();
 
     // EDIT
     } elseif ($_GET['mode'] === 'edit') {
 
-        $DatabaseView = new DatabaseView(new Database($_SESSION['team_id'], $_GET['id']));
+        $DatabaseView = new DatabaseView(new Database($_SESSION['team_id'], $_GET['id']), $_SESSION['userid']);
         echo $DatabaseView->edit();
     }
 } catch (Exception $e) {

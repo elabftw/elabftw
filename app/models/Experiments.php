@@ -261,9 +261,10 @@ class Experiments extends Entity
      * Update the status for an experiment
      *
      * @param int $status Id of the status
+     * @param int $team needed to have the color of the status via the status class
      * @return string 0 on fail and color of new status on success
      */
-    public function updateStatus($status)
+    public function updateStatus($status, $team)
     {
         if (!$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
             throw new Exception(_('This section is out of your reach.'));
@@ -277,11 +278,11 @@ class Experiments extends Entity
 
         if ($req->execute()) {
             // get the color of the status to return and update the css
-            $statusClass = new \Elabftw\Elabftw\Status();
-            return $statusClass->readColor($status);
-        } else {
-            return '0';
+            $Status = new Status($this->team);
+            return $Status->readColor($status);
         }
+
+        return '0';
     }
 
     /**

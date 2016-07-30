@@ -543,7 +543,7 @@ if (isset($_GET)) {
             if ($search_type === 'experiments') {
                 $EntityView = new ExperimentsView(new Experiments($_SESSION['userid']));
             } else {
-                $EntityView = new DatabaseView(new Database($_SESSION['team_id']));
+                $EntityView = new DatabaseView(new Database($_SESSION['team_id']), $_SESSION['userid']);
             }
 
             foreach ($results_arr as $id) {

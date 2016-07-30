@@ -124,7 +124,7 @@ class Status
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $color = filter_var($color, FILTER_SANITIZE_STRING);
 
-        if (($isDefault != 'false') && $this->setDefaultFalse($this->team)) {
+        if (($isDefault != 'false') && $this->setDefaultFalse()) {
             $default = 1;
         } else {
             $default = 0;
@@ -179,7 +179,6 @@ class Status
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);
 
-        return true;
         return $req->execute();
     }
 }

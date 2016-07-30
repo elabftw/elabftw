@@ -33,13 +33,13 @@ class DatabaseView extends EntityView
      * @param Database $database
      * @throws Exception
      */
-    public function __construct(Database $database)
+    public function __construct(Database $database, $userid)
     {
         $this->Database = $database;
         $this->limit = $_SESSION['prefs']['limit'];
 
         $this->UploadsView = new UploadsView(new Uploads('items', $this->Database->id));
-        $this->Revisions = new Revisions('items', $this->Database->id);
+        $this->Revisions = new Revisions('items', $this->Database->id, $userid);
     }
 
     /**

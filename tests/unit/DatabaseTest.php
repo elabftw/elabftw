@@ -26,11 +26,14 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
 
     public function testRead()
     {
-        $this->Database->setId(1);
+        $this->Database = new Database(1, 1);
         $item = $this->Database->read();
         $this->assertTrue(is_array($item));
         $this->assertEquals('Database item 1', $item['title']);
         $this->assertEquals('20160729', $item['date']);
+        $this->Database = new Database(1, 9999);
+        $this->setExpectedException('Exception');
+        $this->Database->read();
     }
 
     public function testReadAll()

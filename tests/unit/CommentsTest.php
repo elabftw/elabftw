@@ -23,6 +23,7 @@ class CommentsTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdate()
     {
+        $this->Comments = new Comments($this->Experiments, 1);
         $this->assertTrue($this->Comments->Update('Udpated'));
         $this->assertFalse($this->Comments->Update('a'));
     }
@@ -35,5 +36,6 @@ class CommentsTest extends \PHPUnit_Framework_TestCase
     public function testDestroyAll()
     {
         $this->assertTrue($this->Comments->destroyAll());
+        $this->assertFalse(is_array($this->Comments->read()));
     }
 }

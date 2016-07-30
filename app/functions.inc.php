@@ -64,6 +64,7 @@ function display_message($type, $message)
  * @param string $table Can be 'experiments' or experiments_templates'
  * @param int $userid The ID of the user to test
  * @return bool Will return true if it is owned by user
+ * @deprecated use Entity->isOwnedByUser() instead
  */
 function is_owned_by_user($id, $table, $userid)
 {
@@ -81,6 +82,7 @@ function is_owned_by_user($id, $table, $userid)
  *
  * @param string|null $conf_name The configuration we want to read
  * @return string The config value
+ * @deprecated use Config->read() instead
  */
 function get_config($conf_name = null)
 {

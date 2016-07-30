@@ -49,9 +49,10 @@ class Database extends Entity
      * Create an item
      *
      * @param int $itemType What kind of item we want to create.
+     * @param int $userid
      * @return int the new id of the item
      */
-    public function create($itemType)
+    public function create($itemType, $userid)
     {
         $itemsTypes = new ItemsTypes($this->team);
 
@@ -64,7 +65,7 @@ class Database extends Entity
             'title' => _('Untitled'),
             'date' => Tools::kdate(),
             'body' => $itemsTypes->read($itemType),
-            'userid' => $_SESSION['userid'],
+            'userid' => $userid,
             'type' => $itemType
         ));
 

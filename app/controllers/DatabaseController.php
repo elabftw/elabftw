@@ -29,7 +29,7 @@ try {
 
     // CREATE
     if (isset($_GET['databaseCreateId'])) {
-        $id = $Database->create($_GET['databaseCreateId']);
+        $id = $Database->create($_GET['databaseCreateId'], $_SESSION['userid']);
         $mode = 'edit';
         $redirect = true;
     }

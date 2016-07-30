@@ -21,7 +21,7 @@ class Scheduler extends Entity
     /** our current team */
     private $team;
 
-    /** our item */
+    /** id of the event */
     public $id;
 
     /**
@@ -38,22 +38,24 @@ class Scheduler extends Entity
     /**
      * Add an event for an item in the team
      *
+     * @param int $item our selected item
      * @param string $start 2016-07-22T13:37:00
      * @param string $end 2016-07-22T19:42:00
      * @param string $title the comment entered by user
+     * @param int $userid
      * @return bool
      */
-    public function create($start, $end, $title)
+    public function create($item, $start, $end, $title, $userid)
     {
         $sql = "INSERT INTO team_events(team, item, start, end, userid, title)
             VALUES(:team, :item, :start, :end, :userid, :title)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $this->team);
-        $req->bindParam(':item', $this->id);
+        $req->bindParam(':item', $item);
         $req->bindParam(':start', $start);
         $req->bindParam(':end', $end);
-        $req->bindParam(':userid', $_SESSION['userid']);
         $req->bindParam(':title', $title);
+        $req->bindParam(':userid', $userid);
 
         return $req->execute();
     }
@@ -116,14 +118,13 @@ class Scheduler extends Entity
     /**
      * Remove an event
      *
-     * @param int $id ID of the event
      * @return bool
      */
-    public function destroy($id)
+    public function destroy()
     {
         $sql = "DELETE FROM team_events WHERE id = :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $id);
+        $req->bindParam(':id', $this->id);
 
         return $req->execute();
     }

@@ -18,7 +18,7 @@ use Exception;
  */
 try {
     require_once '../../app/common.inc.php';
-    $Status = new Status();
+    $Status = new Status($_SESSION['team_id']);
 
     if (!$_SESSION['is_admin']) {
         throw new Exception('Non admin user tried to access admin panel.');
@@ -27,9 +27,8 @@ try {
     // CREATE STATUS
     if (isset($_POST['statusCreate'])) {
         if ($Status->create(
-            $_POST['statusName'],
-            $_POST['statusColor'],
-            $_SESSION['team_id']
+            $_POST['name'],
+            $_POST['color']
         )) {
             echo '1';
         } else {
@@ -40,15 +39,24 @@ try {
     // UPDATE STATUS
     if (isset($_POST['statusUpdate'])) {
         if ($Status->update(
-            $_POST['statusId'],
-            $_POST['statusName'],
-            $_POST['statusColor'],
-            $_POST['statusDefault'],
-            $_SESSION['team_id']
+            $_POST['id'],
+            $_POST['name'],
+            $_POST['color'],
+            $_POST['isDefault']
         )) {
             echo '1';
         } else {
             echo '0';
+        }
+    }
+
+    // DESTROY STATUS
+    if (isset($_POST['statusDestroy'])) {
+        try {
+            $Status->destroy($_POST['id']);
+            echo '1';
+        } catch (Exception $e) {
+            echo $e->getMessage();
         }
     }
 

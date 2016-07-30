@@ -51,17 +51,6 @@ try {
                 }
                 break;
 
-            case 'status':
-                // normally there is no experiments left with this status
-                $delete_sql = "DELETE FROM status WHERE id = :id";
-                $delete_req = $pdo->prepare($delete_sql);
-                $delete_req->execute(array(
-                    'id' => $id
-                ));
-                $_SESSION['ok'][] = _('Status was deleted successfully.');
-                break;
-
-            // END
             default:
                 throw new Exception('who cares, this code will disappear');
         }

@@ -101,8 +101,8 @@ class EntityView
 
         if ($type === 'experiments') {
 
-            $Status = new Status();
-            $categoryArr = $Status->read($_SESSION['team_id']);
+            $Status = new Status($_SESSION['team_id']);
+            $categoryArr = $Status->readAll();
             $createItem .= "<li class='dropdown-item'><a href='app/controllers/ExperimentsController.php?create=true'>";
             $createItem .= ngettext('Experiment', 'Experiments', 1) . "</a></li>";
             $createItem .= "<li role='separator' class='divider'></li>";

@@ -357,8 +357,8 @@ function statusCreate() {
     color = $('#statusColor').val();
     $.post('app/controllers/StatusController.php', {
         statusCreate: true,
-        statusName: name,
-        statusColor: color
+        name: name,
+        color: color
     }).done(function(data) {
         if (data) {
             notif('Saved', 'ok');
@@ -372,14 +372,14 @@ function statusCreate() {
 function statusUpdate(id) {
     name = $('#statusName_' + id).val();
     color = $('#statusColor_' + id).val();
-    defaultBox = $('#statusDefault_' + id).val(); // 'on' if checked
+    isDefault = $('#statusDefault_' + id).is(':checked');
 
     $.post('app/controllers/StatusController.php', {
         statusUpdate: true,
-        statusId: id,
-        statusName: name,
-        statusColor: color,
-        statusDefault: defaultBox
+        id: id,
+        name: name,
+        color: color,
+        isDefault: isDefault
     }).done(function(data) {
         if (data) {
             notif('Saved', 'ok');
@@ -389,6 +389,21 @@ function statusUpdate(id) {
         }
     });
 }
+
+function statusDestroy(id) {
+    $.post('app/controllers/StatusController.php', {
+        statusDestroy: true,
+        id: id
+    }).done(function(data) {
+        if (data == '1') {
+            notif('Status deleted', 'ok');
+            $('#status_' + id).hide();
+        } else {
+            notif('Error: ' + data, 'ko');
+        }
+    });
+}
+
 
 // ITEMS TYPES
 function itemsTypesCreate() {

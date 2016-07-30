@@ -21,12 +21,16 @@ class Status
     /** The PDO object */
     private $pdo;
 
+    /** our current team */
+    private $team;
+
     /**
      * Constructor
      *
      */
-    public function __construct()
+    public function __construct($team)
     {
+        $this->team = $team;
         $this->pdo = Db::getConnection();
     }
 
@@ -35,10 +39,9 @@ class Status
      *
      * @param string $name
      * @param string $color
-     * @param int $team
-     * @return bool true if sql success
+     * @return int id of the new item
      */
-    public function create($name, $color, $team)
+    public function create($name, $color)
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         // we remove the # of the hexacode and sanitize string
@@ -52,23 +55,24 @@ class Status
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':color', $color);
-        $req->bindParam(':team', $team, \PDO::PARAM_INT);
+        $req->bindParam(':team', $this->team);
         $req->bindValue(':is_default', 0);
 
-        return $req->execute();
+        $req->execute();
+
+        return $this->pdo->lastInsertId();
     }
 
     /**
      * SQL to get all status from team
      *
-     * @param int team id
      * @return array All status from the team
      */
-    public function read($team)
+    public function readAll()
     {
         $sql = "SELECT * FROM status WHERE team = :team ORDER BY ordering ASC";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $team, \PDO::PARAM_INT);
+        $req->bindParam(':team', $this->team);
         $req->execute();
 
         return $req->fetchAll();
@@ -84,7 +88,7 @@ class Status
     {
         $sql = "SELECT color FROM status WHERE id = :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $status, \PDO::PARAM_INT);
+        $req->bindParam(':id', $status, PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchColumn();
@@ -95,14 +99,13 @@ class Status
      * If we set true to is_default somewhere, it's best to remove all other default
      * in the team so we won't have two default status
      *
-     * @param int $team Team ID
      * @return bool true if sql success
      */
-    private function setDefaultFalse($team)
+    private function setDefaultFalse()
     {
         $sql = "UPDATE status SET is_default = 0 WHERE team = :team";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $team, PDO::PARAM_INT);
+        $req->bindParam(':team', $this->team);
 
         return $req->execute();
     }
@@ -114,15 +117,14 @@ class Status
      * @param string $name New name
      * @param string $color New color
      * @param string $defaultBox
-     * @param int $team
      * @return bool true if sql success
      */
-    public function update($id, $name, $color, $defaultBox, $team)
+    public function update($id, $name, $color, $defaultBox)
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $color = filter_var($color, FILTER_SANITIZE_STRING);
 
-        if ($defaultBox && $this->setDefaultFalse($team)) {
+        if ($defaultBox && $this->setDefaultFalse($this->team)) {
             $default = 1;
         } else {
             $default = 0;
@@ -139,8 +141,45 @@ class Status
         $req->bindParam(':color', $color);
         $req->bindParam(':is_default', $default, \PDO::PARAM_INT);
         $req->bindParam(':id', $id, \PDO::PARAM_INT);
-        $req->bindParam(':team', $team, \PDO::PARAM_INT);
+        $req->bindParam(':team', $this->team);
 
+        return $req->execute();
+    }
+
+    /**
+     * Count all experiments with this status
+     *
+     * @param int $id
+     * @return int
+     */
+    private function countExperiments($id)
+    {
+        $sql = "SELECT COUNT(*) FROM experiments WHERE status = :status";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':status', $id, PDO::PARAM_INT);
+        $req->execute();
+
+        return (int) $req->fetchColumn();
+    }
+
+    /**
+     * Destroy a status
+     *
+     * @param int $id id of the status
+     * @return bool
+     */
+    public function destroy($id)
+    {
+        // don't allow deletion of a status with experiments
+        if ($this->countExperiments($id) > 0) {
+            throw new Exception(_("Remove all experiments with this status before deleting this status."));
+        }
+
+        $sql = "DELETE FROM status WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $id);
+
+        return true;
         return $req->execute();
     }
 }

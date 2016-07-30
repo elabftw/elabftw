@@ -27,9 +27,8 @@ try {
     }
 
     $formKey = new FormKey();
-    $status = new Status();
-    $statusView = new StatusView();
-    $itemsTypesView = new ItemsTypesView(new ItemsTypes($_SESSION['team_id']));
+    $StatusView = new StatusView(new Status($_SESSION['team_id']));
+    $ItemsTypesView = new ItemsTypesView(new ItemsTypes($_SESSION['team_id']));
     $templates = new Templates($_SESSION['team_id']);
     $teamGroups = new TeamGroups();
     $teamGroupsView = new TeamGroupsView();
@@ -225,16 +224,16 @@ try {
     <!-- TAB 3 STATUS -->
     <div class='divhandle' id='tab3div'>
         <?php
-        echo $statusView->showCreate();
-        echo $statusView->show($status->read($_SESSION['team_id']), $_SESSION['team_id']);
+        echo $StatusView->showCreate();
+        echo $StatusView->show();
         ?>
     </div>
 
     <!-- TAB 4 ITEMS TYPES-->
     <div class='divhandle' id='tab4div'>
         <?php
-        echo $itemsTypesView->showCreate();
-        echo $itemsTypesView->show();
+        echo $ItemsTypesView->showCreate();
+        echo $ItemsTypesView->show();
         ?>
     </div>
 
@@ -254,7 +253,7 @@ try {
     </div>
 
     <!-- TAB 6 IMPORT CSV -->
-    <?php $itemsTypesArr = $itemsTypesView->itemsTypes->readAll() ?>
+    <?php $itemsTypesArr = $ItemsTypesView->itemsTypes->readAll() ?>
     <div class='divhandle' id='tab6div'>
         <h3><?= _('Import a CSV file') ?></h3>
         <p style='text-align:justify'><?= _("This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file.") ?>

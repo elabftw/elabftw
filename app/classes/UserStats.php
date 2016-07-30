@@ -65,8 +65,8 @@ class UserStats
     private function countStatus()
     {
         // get all status name and id
-        $Status = new Status();
-        $statusAll = $Status->read($this->team);
+        $Status = new Status($this->team);
+        $statusAll = $Status->readAll();
 
         // populate arrays
         foreach ($statusAll as $status) {

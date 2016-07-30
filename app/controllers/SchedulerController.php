@@ -22,8 +22,7 @@ try {
 
     // CREATE
     if (isset($_POST['create'])) {
-        $Scheduler->setId($_POST['item']);
-        if ($Scheduler->create($_POST['start'], $_POST['end'], $_POST['title'])) {
+        if ($Scheduler->create($_POST['item'], $_POST['start'], $_POST['end'], $_POST['title'], $_POST['userid'])) {
             echo '1';
         } else {
             echo '0';
@@ -50,7 +49,8 @@ try {
     }
     // DESTROY
     if (isset($_POST['destroy'])) {
-        if ($Scheduler->destroy($_POST['id'])) {
+        $Scheduler->setId($_POST['id']);
+        if ($Scheduler->destroy()) {
             echo '1';
         } else {
             echo '0';

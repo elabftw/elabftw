@@ -286,8 +286,8 @@ class ExperimentsView extends EntityView
         $html .= "<label for='status_select'>" . ngettext('Status', 'Status', 1) . "</label>";
         $html .= " <select id='status_select' name='status' onchange='updateStatus(" . $this->Experiments->id . ", this.value)'>";
 
-        $Status = new Status();
-        $statusArr = $Status->read($_SESSION['team_id']);
+        $Status = new Status($_SESSION['team_id']);
+        $statusArr = $Status->readAll();
 
         foreach ($statusArr as $status) {
             $html .= "<option ";
@@ -312,7 +312,7 @@ class ExperimentsView extends EntityView
             </div></form>";
 
         // REVISIONS
-        $Revisions = new Revisions('experiments', $this->experiment['id']);
+        $Revisions = new Revisions('experiments', $this->experiment['id'], $_SESSION['userid']);
         $html .= $Revisions->showCount();
 
         // LINKS

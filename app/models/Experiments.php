@@ -201,8 +201,8 @@ class Experiments extends Entity
         $req->bindParam(':id', $this->id);
 
         // add a revision
-        $revisions = new Revisions('experiments', $this->id);
-        if (!$revisions->create($body, $this->userid)) {
+        $Revisions = new Revisions('experiments', $this->id, $this->userid);
+        if (!$Revisions->create($body)) {
             throw new Exception(_('Error inserting revision.'));
         }
 
@@ -411,7 +411,7 @@ class Experiments extends Entity
         $can_lock = (int) $req->fetchColumn(); // can be 0 or 1
 
         // We don't have can_lock, but maybe it's our XP, so we can lock it
-        if ($can_lock === 0 && !$this->isWritable()) {
+        if ($can_lock === 0 && !$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
             throw new Exception(_("You don't have the rights to lock/unlock this."));
         }
 

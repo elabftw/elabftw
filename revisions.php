@@ -45,12 +45,16 @@ try {
         throw new Exception('Bad type!');
     }
 
-    $Revisions = new Revisions($_GET['type'], $_GET['item_id']);
+    $Revisions = new Revisions($_GET['type'], $_GET['item_id'], $_SESSION['userid']);
 
     // THE RESTORE ACTION
     if (isset($_GET['action']) && $_GET['action'] === 'restore') {
+        $revId = Tools::checkId($_GET['revId']);
+        if ($revId === false) {
+            throw new Exception(_('The id parameter is not valid!'));
+        }
 
-        $Revisions->restore($_GET['rev_id']);
+        $Revisions->restore($revId);
 
         header("Location: " . $location . ".php?mode=view&id=" . $_GET['item_id'] . "");
         exit;

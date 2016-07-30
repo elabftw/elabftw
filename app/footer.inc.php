@@ -56,7 +56,9 @@ if (isset($_SESSION['auth']) && $_SESSION['is_admin']) {
 echo "</span></p><div class='footer_right'>";
 echo _('Powered by') . " <a href='http://www.elabftw.net'>eLabFTW</a><br>";
 echo _('Page generated in') . ' '; ?>
-<span class='strong'><?php echo round((microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]), 5); ?> seconds</span></div>
+<span class='strong'><?= round((microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]), 5) ?> seconds</span>
+(<?= $pdo->getNumberOfQueries() ?> SQL)
+</div>
 </footer>
 
 <!-- advanced search div -->

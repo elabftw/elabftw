@@ -672,6 +672,11 @@ ALTER TABLE `status`
 ALTER TABLE `teams`
   MODIFY `team_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
+-- AUTO_INCREMENT for table `team_events`
+--
+ALTER TABLE `team_events`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table `team_groups`
 --
 ALTER TABLE `team_groups`

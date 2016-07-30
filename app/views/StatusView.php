@@ -20,12 +20,17 @@ class StatusView
     /** The PDO object */
     private $pdo;
 
+    /** and instance of Status */
+    private $Status;
+
     /**
      * Constructor
      *
+     * @param Status $status
      */
-    public function __construct()
+    public function __construct(Status $status)
     {
+        $this->Status = $status;
         $this->pdo = Db::getConnection();
     }
 
@@ -50,27 +55,18 @@ class StatusView
     /**
      * Output HTML with all the status
      *
-     * @param array $statusArr The output of the read() function
-     * @param int $team
      * @return string $html
      */
-    public function show($statusArr, $team)
+    public function show()
     {
+        $statusArr = $this->Status->readAll();
+
         $html = "<h3>" . _('Edit an existing status') . "</h3>";
         $html .= "<ul class='draggable sortable_status list-group'>";
 
         foreach ($statusArr as $status) {
-            // count the experiments with this status
-            // don't allow deletion if experiments with this status exist
-            // but instead display a message to explain
-            $count_exp_sql = "SELECT COUNT(*) FROM experiments WHERE status = :status AND team = :team";
-            $count_exp_req = $this->pdo->prepare($count_exp_sql);
-            $count_exp_req->bindParam(':status', $status['id'], PDO::PARAM_INT);
-            $count_exp_req->bindParam(':team', $team, PDO::PARAM_INT);
-            $count_exp_req->execute();
-            $count = $count_exp_req->fetchColumn();
 
-            $html .= "<li id='" . $status['id'] . "' class='list-group-item center'>";
+            $html .= "<li id='status_" . $status['id'] . "' class='list-group-item center'>";
 
 
             $html .= "<ul class='list-inline'>";
@@ -88,13 +84,8 @@ class StatusView
 
             $html .= "<li><button onClick='statusUpdate(" . $status['id'] . ")' class='button'>" . _('Save') . "</button></li>";
 
-            $html .= "<li><button class='button' ";
-            if ($count == 0) {
-                $html .= "onClick=\"deleteThis('" . $status['id'] . "','status', 'admin.php?tab=3')\"";
-            } else {
-                $html .= "onClick=\"alert('" . _('Remove all experiments with this status before deleting this status.') . "')\"";
-            }
-            $html .= ">" . _('Delete') . "</button></li>";
+            $html .= "<li><button class='button' onClick=\"statusDestroy(" . $status['id'] . ")\">";
+            $html .= _('Delete') . "</button></li>";
 
             $html .= "</ul></li>";
         }

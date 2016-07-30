@@ -344,7 +344,7 @@ CREATE TABLE IF NOT EXISTS `users2team_groups` (
 --
 
 CREATE TABLE IF NOT EXISTS `team_events` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `team` int(10) UNSIGNED NOT NULL,
   `item` int(10) UNSIGNED NOT NULL,
   `start` varchar(255) NOT NULL,

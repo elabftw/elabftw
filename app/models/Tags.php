@@ -53,7 +53,7 @@ class Tags extends Entity
             throw new Exception(_('Tag is too short!'));
         }
 
-        if ($this->type === 'experiments' && !is_owned_by_user($this->id, $this->type, $_SESSION['userid'])) {
+        if ($this->type === 'experiments' && !$this->isOwnedByUser($_SESSION['userid'], $this->type, $this->id)) {
             throw new Exception(_('This section is out of your reach!'));
         }
 

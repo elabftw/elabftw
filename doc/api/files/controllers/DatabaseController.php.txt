@@ -29,7 +29,7 @@ try {
 
     // CREATE
     if (isset($_GET['databaseCreateId'])) {
-        $id = $Database->create($_GET['databaseCreateId']);
+        $id = $Database->create($_GET['databaseCreateId'], $_SESSION['userid']);
         $mode = 'edit';
         $redirect = true;
     }
@@ -54,7 +54,7 @@ try {
     // DUPLICATE
     if (isset($_GET['databaseDuplicateId'])) {
         $Database->setId($_GET['databaseDuplicateId']);
-        $id = $Database->duplicate();
+        $id = $Database->duplicate($_SESSION['userid']);
         $mode = 'edit';
         $redirect = true;
     }

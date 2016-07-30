@@ -83,5 +83,22 @@ class Entity
     {
         $this->limit = 'LIMIT ' . (int) $num;
     }
+
+    /**
+     * Check if an experiment/item/whatever is owned by an user
+     *
+     * @param int $userid
+     * @param string $table experiments, experiments_templates, items, etc…
+     * @param int $id id of the item to check
+     * @return bool
+     */
+    public function isOwnedByUser($userid, $table, $id)
+    {
+        $sql = "SELECT userid FROM $table WHERE id = $id";
+        $req = $this->pdo->prepare($sql);
+        $req->execute();
+
+        return $req->fetchColumn() == $userid;
+    }
 }
 

@@ -101,7 +101,7 @@ try {
         $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
         if (((get_team_config('deletable_xp') == '0') &&
             !$_SESSION['is_admin']) ||
-            !is_owned_by_user($Experiments->id, 'experiments', $_SESSION['userid'])) {
+            !$Experiments->isOwnedByUser($Experiments->id, 'experiments', $_SESSION['userid'])) {
             throw new Exception(_("You don't have the rights to delete this experiment."));
         }
         if ($Experiments->destroy()) {

@@ -188,7 +188,7 @@ class ExperimentsView extends EntityView
         // we show the abstract of the experiment on mouse hover with the title attribute
         // we check if it is our experiment. It would be best to check if we have visibility rights on it
         // but atm there is no such function. So we limit this feature to experiments we own, for simplicity.
-        if (is_owned_by_user($item['id'], 'experiments', $_SESSION['userid'])) {
+        if ($this->Experiments->isOwnedByUser($_SESSION['userid'], 'experiments', $item['id'])) {
             $bodyAbstract = str_replace("'", "", substr(strip_tags($item['body']), 0, 100));
         } else {
             $bodyAbstract = '';

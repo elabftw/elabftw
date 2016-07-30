@@ -121,7 +121,7 @@ class Uploads extends Entity
     private function checkPermission()
     {
         if ($this->type === 'experiments') {
-            if (!is_owned_by_user($this->itemId, 'experiments', $_SESSION['userid'])) {
+            if (!$this->isOwnedByUser($_SESSION['userid'], 'experiments', $this->itemId)) {
                 throw new Exception('Not your experiment!');
             }
         }

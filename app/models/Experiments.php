@@ -59,22 +59,6 @@ class Experiments extends Entity
     }
 
     /**
-     * Check if we own the experiment
-     *
-     * @return bool
-     */
-    private function isWritable()
-    {
-        $sql = "SELECT userid FROM experiments WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id);
-        $req->execute();
-
-        return $req->fetchColumn() === $this->userid;
-    }
-
-
-    /**
      * Create an experiment
      *
      * @param int|null $tpl the template on which to base the experiment
@@ -195,7 +179,7 @@ class Experiments extends Entity
      */
     public function update($title, $date, $body)
     {
-        if (!$this->isWritable()) {
+        if (!$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
             throw new Exception(_('This section is out of your reach.'));
         }
 
@@ -256,7 +240,7 @@ class Experiments extends Entity
      */
     public function updateVisibility($visibility)
     {
-        if (!$this->isWritable()) {
+        if (!$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
             throw new Exception(_('This section is out of your reach.'));
         }
 
@@ -281,7 +265,7 @@ class Experiments extends Entity
      */
     public function updateStatus($status)
     {
-        if (!$this->isWritable()) {
+        if (!$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
             throw new Exception(_('This section is out of your reach.'));
         }
 
@@ -383,7 +367,7 @@ class Experiments extends Entity
      */
     public function destroy()
     {
-        if (!$this->isWritable()) {
+        if (!$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
             throw new Exception(_('This section is out of your reach.'));
         }
 

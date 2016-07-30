@@ -1,4 +1,6 @@
 <?php
+copy('config.php', 'config.php.bak');
+copy('tests/config-home.php', 'config.php');
 // Here you can initialize variables that will be available to your tests
 function testLogin($I)
 {

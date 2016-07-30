@@ -314,22 +314,6 @@ class DatabaseView extends EntityView
         $tags = new Tags('items', $this->Database->id);
 
         $html = "<script>
-        // DELETE TAG
-        function delete_tag(tag_id,item_id){
-            var you_sure = confirm('" . _('Delete this?') . "');
-            if (you_sure == true) {
-                $.post('app/delete.php', {
-                    id:tag_id,
-                    item_id:item_id,
-                    type:'itemtag'
-                })
-                .success(function() {
-                    $('#tags_div').load('database.php?mode=edit&id=' + item_id + ' #tags_div');
-                })
-            }
-            return false;
-        }
-
         // READY ? GO !
         $(document).ready(function() {
             // ADD TAG JS
@@ -354,7 +338,7 @@ class DatabaseView extends EntityView
             tinymce.init({
                 mode : 'specific_textareas',
                 editor_selector : 'mceditable',
-                content_css : 'css/tinymce.css',
+                content_css : 'app/css/tinymce.css',
                 plugins : 'table textcolor searchreplace code fullscreen insertdatetime paste charmap save image link pagebreak mention',
                 pagebreak_separator: '<pagebreak>',
                 toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | image link | save',

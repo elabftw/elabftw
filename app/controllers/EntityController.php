@@ -24,12 +24,23 @@ try {
         if ($_POST['createTagType'] === 'experiments') {
             $Entity = new Experiments($_SESSION['userid'], $_POST['createTagId']);
         } else {
-            $Entity = new Database($_SESSION['team_id']);
-            $Entity->setId($_POST['createTagId']);
+            $Entity = new Database($_SESSION['team_id'], $_POST['createTagId']);
         }
         $Tags = new Tags($_POST['createTagType'], $Entity->id);
         $Tags->create($_POST['createTagTag']);
     }
+
+    // DELETE TAG
+    if (isset($_POST['destroyTag'])) {
+        if ($_POST['type'] === 'experiments') {
+            $Entity = new Experiments($_SESSION['userid'], $_POST['item']);
+        } else {
+            $Entity = new Database($_SESSION['team_id'], $_POST['item']);
+        }
+        $Tags = new Tags($_POST['type'], $Entity->id);
+        $Tags->destroy($_SESSION['userid'], $_POST['id']);
+    }
+
 
     // CREATE UPLOAD
     if (isset($_POST['upload'])) {

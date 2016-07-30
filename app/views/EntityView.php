@@ -245,12 +245,12 @@ class EntityView
      *
      * @param string $type experiments or items
      * @param string $mode edit or view
-     * @param int $itemId The ID of the item for which we want the tags
+     * @param int $item The ID of the item for which we want the tags
      * @return string Will show the HTML for tags
      */
-    protected function showTags($type, $mode, $itemId)
+    protected function showTags($type, $mode, $item)
     {
-        $Tags = new Tags($type, $itemId);
+        $Tags = new Tags($type, $item);
         $tagList = $Tags->read();
 
         $html = '';
@@ -279,7 +279,7 @@ class EntityView
         $html .= "<div class='tags'><span id='tags_div'>";
 
         foreach ($tagList as $tag) {
-            $html .= "<span class='tag'><a onclick='delete_tag(" . $tag['id'] . "," . $itemId . ")'>" . stripslashes($tag['tag']) . "</a></span>";
+            $html .= "<span class='tag'><a onclick=\"destroyTag('" . $type . "', " . $item . ", " . $tag['id'] . ")\">" . stripslashes($tag['tag']) . "</a></span>";
         }
         $html .= "</span><input type='text' id='createTagInput' placeholder='" . _('Add a tag') . "' /></div>";
 

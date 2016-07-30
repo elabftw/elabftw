@@ -187,6 +187,25 @@ function createTag(e, item_id, type) { // the argument here is the event (needed
         });
     } // end if key is enter
 }
+// DESTROY TAG
+function destroyTag(type, item, tag){
+    var you_sure = confirm('Delete this?');
+    if (you_sure) {
+        $.post('app/controllers/EntityController.php', {
+            destroyTag: true,
+            type:type,
+            item:item,
+            id:tag,
+        })
+        .success(function() {
+            if (type === 'items') {
+                type = 'database';
+            }
+            $('#tags_div').load(type + '.php?mode=edit&id=' + item + ' #tags_div');
+        });
+    }
+    return false;
+}
 
 // CREATE LINK
 function experimentsCreateLink(e, item) { // the argument here is the event (needed to detect which key is pressed)
@@ -766,7 +785,7 @@ function getQueryParams(qs) {
     tokens,
     re = /[?&]?([^=]+)=([^&]*)/g;
 
-    while (tokens = re.exec(qs)) {
+    while ((tokens = re.exec(qs)) !== null) {
         params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
     }
 

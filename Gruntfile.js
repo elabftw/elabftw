@@ -41,7 +41,7 @@ module.exports = function(grunt) {
       },
       // xdebug must be DISABLED
       runtests: {
-        command: 'php vendor/bin/codecept run --skip functionnal'
+        command: 'php vendor/bin/codecept run --skip functionnal; cp -f config.php.dev config.php'
       },
       // xdebug must be ENABLED
       runcoverage: {

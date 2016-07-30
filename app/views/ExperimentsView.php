@@ -494,110 +494,97 @@ class ExperimentsView extends EntityView
         $tags = new Tags('experiments', $this->Experiments->id);
 
         $html = "<script>
-            function delete_tag(tag_id, item_id) {
-                var you_sure = confirm('" . _('Delete this?') . "');
-                if (you_sure == true) {
-                    $.post('app/delete.php', {
-                        id: tag_id,
-                        item_id: item_id,
-                        type: 'exptag'
-                    }).done(function () {
-                        $('#tags_div').load('experiments.php?mode=edit&id=' + item_id + ' #tags_div');
-                    })
+        // READY ? GO !!
+        $(document).ready(function() {
+            // KEYBOARD SHORTCUTS
+            key('" . $_SESSION['prefs']['shortcuts']['create'] . "', function(){location.href = 'app/controllers/ExperimentsController?create=true'});
+            key('" . $_SESSION['prefs']['shortcuts']['submit'] . "', function(){document.forms['editXP'].submit()});
+
+            // autocomplete the tags
+            $('#createTagInput').autocomplete({
+                source: [" . $tags->generateTagList() . "]
+            });
+
+            // autocomplete the links
+            $( '#linkinput' ).autocomplete({
+                source: [" . getDbList('default') . "]
+            });
+
+            // CREATE TAG
+            // listen keypress, add tag when it's enter
+            $('#createTagInput').keypress(function (e) {
+                createTag(e, " . $this->Experiments->id . ", 'experiments');
+            });
+            // CREATE LINK
+            // listen keypress, add link when it's enter
+            $('#linkinput').keypress(function (e) {
+                experimentsCreateLink(e, " . $this->Experiments->id . ");
+            });
+
+            // DATEPICKER
+            $( '#datepicker' ).datepicker({dateFormat: 'yymmdd'});
+            // If the title is 'Untitled', clear it on focus
+            $('#title_input').focus(function(){
+                if ($(this).val() === 'Untitled') {
+                    $('#title_input').val('');
                 }
-                return false;
-            }
-
-    // READY ? GO !!
-    $(document).ready(function() {
-        // KEYBOARD SHORTCUTS
-        key('" . $_SESSION['prefs']['shortcuts']['create'] . "', function(){location.href = 'app/controllers/ExperimentsController?create=true'});
-        key('" . $_SESSION['prefs']['shortcuts']['submit'] . "', function(){document.forms['editXP'].submit()});
-
-        // autocomplete the tags
-        $('#createTagInput').autocomplete({
-            source: [" . $tags->generateTagList() . "]
-        });
-
-        // autocomplete the links
-        $( '#linkinput' ).autocomplete({
-            source: [" . getDbList('default') . "]
-        });
-
-        // CREATE TAG
-        // listen keypress, add tag when it's enter
-        $('#createTagInput').keypress(function (e) {
-            createTag(e, " . $this->Experiments->id . ", 'experiments');
-        });
-        // CREATE LINK
-        // listen keypress, add link when it's enter
-        $('#linkinput').keypress(function (e) {
-            experimentsCreateLink(e, " . $this->Experiments->id . ");
-        });
-
-        // DATEPICKER
-        $( '#datepicker' ).datepicker({dateFormat: 'yymmdd'});
-        // If the title is 'Untitled', clear it on focus
-        $('#title_input').focus(function(){
-            if ($(this).val() === 'Untitled') {
-                $('#title_input').val('');
-            }
-        });
-        // EDITOR
-        tinymce.init({
-            mode : 'specific_textareas',
-            editor_selector : 'mceditable',
-            content_css : 'css/tinymce.css',
-            plugins : 'table textcolor searchreplace code fullscreen insertdatetime paste charmap save image link pagebreak mention',
-            pagebreak_separator: '<pagebreak>',
-            toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | image link | save',
-            removed_menuitems : 'newdocument',
-            // save button :
-            save_onsavecallback: function() {
-                $.post('app/quicksave.php', {
-                    id : " . $this->Experiments->id . ",
-                    type : 'experiments',
-                    // we need this to get the updated content
-                    title : document.getElementById('title_input').value,
-                    date : document.getElementById('datepicker').value,
-                    body : tinymce.activeEditor.getContent()
-                }).done(function(data) {
-                    if (data == 1) {
-                        notif('" . _('Saved') . "', 'ok');
-                    } else {
-                        notif('" . _('Something went wrong! :(') . "', 'ko');
-                    }
-                });
-            },
-            // keyboard shortcut to insert today's date at cursor in editor
-            setup : function(editor) {
-                editor.addShortcut('ctrl+shift+d', 'add date at cursor', function() { addDateOnCursor(); });
-            },
-            mentions: {
-                source: [" . getDbList('mention') . "],
-                delimiter: '#'
-            },
-            language : '" . $_SESSION['prefs']['lang'] . "',
-            style_formats_merge: true,
-            style_formats: [
-                {
-                    title: 'Image Left',
-                    selector: 'img',
-                    styles: {
-                        'float': 'left',
-                        'margin': '0 10px 0 10px'
-                    }
-                 },
-                 {
-                     title: 'Image Right',
-                     selector: 'img',
-                     styles: {
-                         'float': 'right',
-                         'margin': '0 0 10px 10px'
+            });
+            // EDITOR
+            tinymce.init({
+                mode : 'specific_textareas',
+                editor_selector : 'mceditable',
+                content_css : 'app/css/tinymce.css',
+                plugins : 'table textcolor searchreplace code fullscreen insertdatetime paste charmap save image link pagebreak mention',
+                pagebreak_separator: '<pagebreak>',
+                toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | image link | save',
+                removed_menuitems : 'newdocument',
+                // save button :
+                save_onsavecallback: function() {
+                    $.post('app/quicksave.php', {
+                        id : " . $this->Experiments->id . ",
+                        type : 'experiments',
+                        // we need this to get the updated content
+                        title : document.getElementById('title_input').value,
+                        date : document.getElementById('datepicker').value,
+                        body : tinymce.activeEditor.getContent()
+                    }).done(function(data) {
+                        if (data == 1) {
+                            notif('" . _('Saved') . "', 'ok');
+                        } else {
+                            notif('" . _('Something went wrong! :(') . "', 'ko');
+                        }
+                    });
+                },
+                // keyboard shortcut to insert today's date at cursor in editor
+                setup : function(editor) {
+                    editor.addShortcut('ctrl+shift+d', 'add date at cursor', function() { addDateOnCursor(); });
+                },
+                mentions: {
+                    source: [" . getDbList('mention') . "],
+                    delimiter: '#'
+                },
+                language : '" . $_SESSION['prefs']['lang'] . "',
+                style_formats_merge: true,
+                style_formats: [
+                    {
+                        title: 'Image Left',
+                        selector: 'img',
+                        styles: {
+                            'float': 'left',
+                            'margin': '0 10px 0 10px'
+                        }
+                     },
+                     {
+                         title: 'Image Right',
+                         selector: 'img',
+                         styles: {
+                             'float': 'right',
+                             'margin': '0 0 10px 10px'
+                         }
                      }
-                 }
-            ]
-        });";
+                ]
+            });
+        }";
 
         $html .= $this->injectCloseWarning();
         $html .= "});</script>";

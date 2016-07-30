@@ -51,30 +51,6 @@ try {
                 }
                 break;
 
-            // DELETE TAGS
-            case 'exptag':
-                if (Tools::checkId($_POST['item_id']) === false) {
-                    throw new Exception(_('The id parameter is invalid.'));
-                }
-
-                if (is_owned_by_user($_POST['item_id'], 'experiments', $_SESSION['userid'])) {
-
-                    $delete_sql = "DELETE FROM experiments_tags WHERE id = :id";
-                    $delete_req = $pdo->prepare($delete_sql);
-                    $delete_req->execute(array(
-                        'id' => $id
-                    ));
-                }
-                break;
-
-            case 'itemtag':
-                $delete_sql = "DELETE FROM items_tags WHERE id = :id";
-                $delete_req = $pdo->prepare($delete_sql);
-                $delete_req->execute(array(
-                    'id' => $id
-                ));
-                break;
-
             case 'status':
                 // normally there is no experiments left with this status
                 $delete_sql = "DELETE FROM status WHERE id = :id";

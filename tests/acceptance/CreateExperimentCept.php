@@ -1,8 +1,5 @@
 <?php
 $I = new AcceptanceTester($scenario);
-function _before($I) {
-    require_once 'tests/config.php';
-}
 $I->wantTo('Test creating an experiment');
 testLogin($I);
 $I->amOnPage('/experiments.php');

@@ -2,7 +2,8 @@
 *.swp
 uploads/
 test.php
-/config.php
+config.php
+config.php.*
 *.bak
 Session.vim
 /nbproject/private/

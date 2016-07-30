@@ -30,8 +30,59 @@ class TeamsTest extends \PHPUnit_Framework_TestCase
             'stampprovider' => 'http://zeitstempel.dfn.de/',
             'stampcert' => 'vendor/pki.dfn.pem',
             'stamplogin' => '',
+            'stamppass' => 'something'
+        );
+        $this->assertTrue($this->Teams->update($post, 1));
+
+        // test without stamppass
+        $post = array(
+            'teamsUpdateFull' => 'true',
+            'deletable_xp' => 1,
+            'link_name' => 'Taggle',
+            'link_href' => 'http://www.elabftw.net',
+            'stampprovider' => 'http://zeitstempel.dfn.de/',
+            'stampcert' => 'vendor/pki.dfn.pem',
+            'stamplogin' => '',
             'stamppass' => ''
         );
         $this->assertTrue($this->Teams->update($post, 1));
+
+        // trigger Exception with bad file path
+        $this->setExpectedException('Exception');
+        $post = array(
+            'teamsUpdateFull' => 'true',
+            'deletable_xp' => 1,
+            'link_name' => 'Taggle',
+            'link_href' => 'http://www.elabftw.net',
+            'stampprovider' => 'http://zeitstempel.dfn.de/',
+            'stampcert' => 'blah',
+            'stamplogin' => '',
+            'stamppass' => ''
+        );
+        $this->Teams->update($post, 1);
+    }
+
+    public function testUpdateName()
+    {
+        $this->assertTrue($this->Teams->updateName(1, 'New name'));
+    }
+
+    public function testDestroy()
+    {
+        $this->assertTrue($this->Teams->destroy(2));
+        // try to destroy a team with data
+        $this->assertFalse($this->Teams->destroy(1));
+    }
+
+    public function testGetAllStats()
+    {
+        $stats = $this->Teams->getAllStats();
+        $this->assertTrue(is_array($stats));
+        $this->assertEquals(1, $stats['totusers']);
+    }
+
+    public function testGetConfig()
+    {
+        $this->assertTrue(is_array($this->Teams->getConfig(1)));
     }
 }

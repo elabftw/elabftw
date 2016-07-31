@@ -275,7 +275,7 @@ echo "</ul>";
         echo "<img class='align_right' src='img/download.png' title='export template' alt='export' ";
         echo "onClick=\"exportTpl('" . $template['name'] . "', " . $template['id'] . ")\" />";
         echo "<img class='align_right' src='img/small-trash.png' title='delete' alt='delete' ";
-        echo "onClick=\"deleteThis(" . $template['id'] . ",'tpl', 'ucp.php')\" />";
+        echo "onClick=\"templatesDestroy(" . $template['id'] . ")\" />";
         echo "<form action='app/ucp-exec.php' method='post'>";
         echo "<input type='hidden' name='tpl_form' />";
         echo "<input type='hidden' name='tpl_id[]' value='" . $template['id'] . "' />";

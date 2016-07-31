@@ -108,18 +108,15 @@ class Templates
      * Delete template
      *
      * @param int $id ID of the template
+     * @param int $userid
      * @return bool
      */
-    public function destroy($id)
+    public function destroy($id, $userid)
     {
-        if (Tools::checkId($id) === false) {
-            throw new Exception('The id parameter is invalid!');
-        }
-
         $sql = "DELETE FROM experiments_templates WHERE id = :id AND userid = :userid";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);
-        $req->bindParam(':userid', $_SESSION['userid']);
+        $req->bindParam(':userid', $userid);
 
         return $req->execute();
     }

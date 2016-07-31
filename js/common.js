@@ -3,23 +3,6 @@
  * http://www.elabftw.net
  */
 
-// The main function to delete stuff
-// id of the item you want to delete, its type, the message info you want to say, the url you want to redirect to
-function deleteThis(id, type, redirect) {
-    var you_sure = confirm('Delete this ?');
-    if (you_sure === true) {
-        $.post('app/delete.php', {
-            id:id,
-            type:type
-        })
-        .done(function() {
-            window.location = redirect;
-        });
-    } else {
-        return false;
-    }
-}
-
 // for editXP/DB, ctrl-shift-D will add the date
 function addDateOnCursor() {
     var todayDate = new Date();
@@ -785,6 +768,27 @@ function insertParamAndReload(key, value) {
 }
 
 // UCP
+
+// TEMPLATES DESTROY
+function templatesDestroy(id) {
+    var you_sure = confirm('Delete this ?');
+    if (you_sure === true) {
+        $.post('app/controllers/UcpController.php', {
+            templatesDestroy: true,
+            id: id
+        }).done(function(data) {
+            var json = JSON.parse(data);
+            if (json.res) {
+                notif(json.msg, 'ok');
+                window.location.replace('ucp.php?tab=3');
+            } else {
+                notif(json.msg, 'ko');
+            }
+        });
+    } else {
+        return false;
+    }
+}
 
 // for importing user template
 function readFile(file, onLoadCallback){

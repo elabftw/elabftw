@@ -31,6 +31,7 @@ class DatabaseView extends EntityView
      * Need an ID of an item
      *
      * @param Database $database
+     * @param int $userid
      * @throws Exception
      */
     public function __construct(Database $database, $userid)

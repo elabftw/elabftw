@@ -18,7 +18,7 @@ use Exception;
  */
 try {
     require_once '../../app/common.inc.php';
-    $itemsTypes = new ItemsTypes($_SESSION['team_id']);
+    $ItemsTypes = new ItemsTypes($_SESSION['team_id']);
 
     if (!$_SESSION['is_admin']) {
         throw new Exception('Non admin user tried to access admin panel.');
@@ -26,11 +26,11 @@ try {
 
     // CREATE ITEMS TYPES
     if (isset($_POST['itemsTypesCreate'])) {
-        if ($itemsTypes->create(
-            $_POST['itemsTypesName'],
-            $_POST['itemsTypesColor'],
-            $_POST['itemsTypesBookable'],
-            $_POST['itemsTypesTemplate']
+        if ($ItemsTypes->create(
+            $_POST['name'],
+            $_POST['color'],
+            $_POST['bookable'],
+            $_POST['template']
         )) {
             echo '1';
         } else {
@@ -40,12 +40,12 @@ try {
 
     // UPDATE ITEM TYPE
     if (isset($_POST['itemsTypesUpdate'])) {
-        if ($itemsTypes->update(
-            $_POST['itemsTypesId'],
-            $_POST['itemsTypesName'],
-            $_POST['itemsTypesColor'],
-            $_POST['itemsTypesBookable'],
-            $_POST['itemsTypesTemplate']
+        if ($ItemsTypes->update(
+            $_POST['id'],
+            $_POST['name'],
+            $_POST['color'],
+            $_POST['bookable'],
+            $_POST['template']
         )) {
             echo '1';
         } else {
@@ -55,7 +55,12 @@ try {
 
     // DESTROY ITEM TYPE
     if (isset($_POST['itemsTypesDestroy'])) {
-        $itemsTypes->destroy($_POST['itemsTypesId']);
+        try {
+            $ItemsTypes->destroy($_POST['id']);
+            echo '1';
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
     }
 
 } catch (Exception $e) {

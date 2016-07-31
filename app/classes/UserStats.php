@@ -43,7 +43,8 @@ class UserStats
     /**
      * Init the object with a userid and the total count of experiments
      *
-     * @param string $userid
+     * @param int $team
+     * @param int $userid
      * @param int $count total count of experiments
      */
     public function __construct($team, $userid, $count)

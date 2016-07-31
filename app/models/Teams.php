@@ -102,6 +102,7 @@ class Teams
      * Update team
      *
      * @param array $post POST
+     * @param int $team
      * @return bool
      */
     public function update($post, $team)

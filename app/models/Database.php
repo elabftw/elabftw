@@ -216,6 +216,7 @@ class Database extends Entity
     /**
      * Duplicate an item
      *
+     * @param int $userid
      * @return int $newId The id of the newly created item
      */
     public function duplicate($userid)

@@ -27,6 +27,7 @@ class Status
     /**
      * Constructor
      *
+     * @param int $team
      */
     public function __construct($team)
     {

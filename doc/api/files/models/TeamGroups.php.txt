@@ -21,13 +21,17 @@ class TeamGroups
     /** The PDO object */
     private $pdo;
 
+    /** our team */
+    private $team;
+
     /**
      * Constructor
      *
-     * @throws Exception if user is not admin
+     * @param int $team
      */
-    public function __construct()
+    public function __construct($team)
     {
+        $this->team = $team;
         $this->pdo = Db::getConnection();
     }
 
@@ -35,15 +39,14 @@ class TeamGroups
      * Create a team group
      *
      * @param string $name Name of the group
-     * @param string $team Team ID
      * @return bool true if sql is successful
      */
-    public function create($name, $team)
+    public function create($name)
     {
         $sql = "INSERT INTO team_groups(name, team) VALUES(:name, :team)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
-        $req->bindParam(':team', $team);
+        $req->bindParam(':team', $this->team);
 
         return $req->execute();
     }
@@ -51,14 +54,13 @@ class TeamGroups
     /**
      * Read team groups
      *
-     * @param int $team
      * @return array all team groups
      */
-    public function read($team)
+    public function readAll()
     {
-        $sql = "SELECT * FROM team_groups WHERE team = :team";
+        $sql = "SELECT id, name FROM team_groups WHERE team = :team";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $team, \PDO::PARAM_INT);
+        $req->bindParam(':team', $this->team);
         $req->execute();
 
         return $req->fetchAll();
@@ -106,18 +108,17 @@ class TeamGroups
      *
      * @param string $name Name of the group
      * @param string $id Id of the group
-     * @param int $team
      * @throws Exception if sql fail
      * @return string|null $name Name of the group if success
      */
-    public function update($name, $id, $team)
+    public function update($name, $id)
     {
         $idArr = explode('_', $id);
         if ($idArr[0] === 'teamgroup' && Tools::checkId($idArr[1])) {
             $sql = "UPDATE team_groups SET name = :name WHERE id = :id AND team = :team";
             $req = $this->pdo->prepare($sql);
             $req->bindParam(':name', $name);
-            $req->bindParam(':team', $team, \PDO::PARAM_INT);
+            $req->bindParam(':team', $this->team, \PDO::PARAM_INT);
             $req->bindParam(':id', $idArr[1], \PDO::PARAM_INT);
 
             if ($req->execute()) {
@@ -163,6 +164,11 @@ class TeamGroups
     public function destroy($groupId)
     {
         $success = array();
+
+        $sql = "UPDATE experiments SET visibility = 'team' WHERE visibility = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $groupId);
+        $success[] = $req->execute();
 
         $sql = "DELETE FROM team_groups WHERE id = :id";
         $req = $this->pdo->prepare($sql);

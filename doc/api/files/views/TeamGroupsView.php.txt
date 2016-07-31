@@ -18,12 +18,17 @@ class TeamGroupsView
     /** The PDO object */
     private $pdo;
 
+    /** instance of TeamGroups */
+    public $TeamGroups;
+
     /**
      * Constructor
      *
+     * @param TeamGroups $teamGroups
      */
-    public function __construct()
+    public function __construct(TeamGroups $teamGroups)
     {
+        $this->TeamGroups = $teamGroups;
         $this->pdo = Db::getConnection();
     }
 
@@ -35,7 +40,7 @@ class TeamGroupsView
      */
     public function show($teamGroupsArr)
     {
-        $sql = "SELECT DISTINCT users.firstname, users.lastname
+        $sql = "SELECT DISTINCT CONCAT(users.firstname, ' ', users.lastname) AS name
             FROM users CROSS JOIN users2team_groups
             ON (users2team_groups.userid = users.userid AND users2team_groups.groupid = :groupid)";
 
@@ -47,7 +52,7 @@ class TeamGroupsView
             $req->bindParam(':groupid', $teamGroup['id']);
             $req->execute();
             while ($user = $req->fetch()) {
-                $html .= "<li>" . $user['firstname'] . " " . $user['lastname'] . "</li>";
+                $html .= "<li>" . $user['name'] . "</li>";
             }
             $html .= "</ul></div>";
         }

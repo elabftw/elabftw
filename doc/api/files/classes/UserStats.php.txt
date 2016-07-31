@@ -10,8 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use Exception;
-
 /**
  * Generate and display experiments statistics for a user
  */
@@ -45,7 +43,8 @@ class UserStats
     /**
      * Init the object with a userid and the total count of experiments
      *
-     * @param string $userid
+     * @param int $team
+     * @param int $userid
      * @param int $count total count of experiments
      */
     public function __construct($team, $userid, $count)
@@ -65,8 +64,8 @@ class UserStats
     private function countStatus()
     {
         // get all status name and id
-        $Status = new Status();
-        $statusAll = $Status->read($this->team);
+        $Status = new Status($this->team);
+        $statusAll = $Status->readAll();
 
         // populate arrays
         foreach ($statusAll as $status) {

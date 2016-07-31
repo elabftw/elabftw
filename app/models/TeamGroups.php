@@ -27,6 +27,7 @@ class TeamGroups
     /**
      * Constructor
      *
+     * @param int $team
      */
     public function __construct($team)
     {

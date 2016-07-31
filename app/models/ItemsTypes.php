@@ -131,6 +131,21 @@ class ItemsTypes
     }
 
     /**
+     * Count all items of this type
+     *
+     * @param int $id of the type
+     * @return int
+     */
+    private function countItems($id)
+    {
+        $sql = "SELECT COUNT(*) FROM items WHERE type = :type";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':type', $id);
+        $req->execute();
+        return (int) $req->fetchColumn();
+    }
+
+    /**
      * Destroy an item type
      *
      * @param int $id
@@ -138,6 +153,10 @@ class ItemsTypes
      */
     public function destroy($id)
     {
+        // don't allow deletion of an item type with items
+        if ($this->countItems($id) > 0) {
+            throw new Exception(_("Remove all database items with this type before deleting this type."));
+        }
         $sql = "DELETE FROM items_types WHERE id = :id AND team = :team";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);

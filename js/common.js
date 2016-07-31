@@ -419,10 +419,10 @@ function itemsTypesCreate() {
     template = tinymce.get('itemsTypesTemplate').getContent();
     $.post('app/controllers/ItemsTypesController.php', {
         itemsTypesCreate: true,
-        itemsTypesName: name,
-        itemsTypesColor: color,
-        itemsTypesBookable: bookable,
-        itemsTypesTemplate: template
+        name: name,
+        color: color,
+        bookable: bookable,
+        template: template
     }).done(function(ret) {
         if (ret) {
             notif('Saved', 'ok');
@@ -449,11 +449,11 @@ function itemsTypesUpdate(id) {
     template = tinymce.get('itemsTypesTemplate_' + id).getContent();
     $.post('app/controllers/ItemsTypesController.php', {
         itemsTypesUpdate: true,
-        itemsTypesId: id,
-        itemsTypesName: name,
-        itemsTypesColor: color,
-        itemsTypesBookable: bookable,
-        itemsTypesTemplate: template
+        id: id,
+        name: name,
+        color: color,
+        bookable: bookable,
+        template: template
     }).done(function(ret) {
         if (ret) {
             notif('Saved', 'ok');
@@ -466,10 +466,14 @@ function itemsTypesUpdate(id) {
 function itemsTypesDestroy(id) {
     $.post('app/controllers/ItemsTypesController.php', {
         itemsTypesDestroy: true,
-        itemsTypesId: id
-    }).done(function() {
-        notif('Deleted', 'ok');
-        $('#itemstypes_' + id).hide();
+        id: id
+    }).done(function(data) {
+        if (data == '1') {
+            notif('Item type deleted', 'ok');
+            $('#itemstypes_' + id).hide();
+        } else {
+            notif('Error: ' + data, 'ko');
+        }
     });
 }
 

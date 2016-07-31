@@ -49,7 +49,7 @@ try {
 
     // THE RESTORE ACTION
     if (isset($_GET['action']) && $_GET['action'] === 'restore') {
-        $revId = Tools::checkId($_GET['revId']);
+        $revId = Tools::checkId($_GET['rev_id']);
         if ($revId === false) {
             throw new Exception(_('The id parameter is not valid!'));
         }

@@ -10,16 +10,11 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
-
 /**
  * HTML for the status
  */
 class StatusView
 {
-    /** The PDO object */
-    private $pdo;
-
     /** and instance of Status */
     private $Status;
 
@@ -31,7 +26,6 @@ class StatusView
     public function __construct(Status $status)
     {
         $this->Status = $status;
-        $this->pdo = Db::getConnection();
     }
 
     /**

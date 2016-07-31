@@ -10,18 +10,14 @@
  */
 namespace Elabftw\Elabftw;
 
-use \PDO;
-
 /**
  * The kind of items you can have in the database for a team
  */
 class ItemsTypesView
 {
-    /** The PDO object */
-    private $pdo;
-
     /** instance of ItemsTypes */
     public $itemsTypes;
+
     /**
      * Constructor
      *
@@ -30,7 +26,6 @@ class ItemsTypesView
     public function __construct(ItemsTypes $itemsTypes)
     {
         $this->itemsTypes = $itemsTypes;
-        $this->pdo = Db::getConnection();
     }
 
     /**

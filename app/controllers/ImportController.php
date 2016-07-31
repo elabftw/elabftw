@@ -1,6 +1,6 @@
 <?php
 /**
- * app/import.php
+ * app/controllers/ImportController.php
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
@@ -17,7 +17,7 @@ use Exception;
  *
  */
 try {
-    require_once '../app/init.inc.php';
+    require_once '../../init.inc.php';
     // it might take some time and we don't want to be cut in the middle, so set time_limit to ∞
     set_time_limit(0);
 
@@ -34,10 +34,9 @@ try {
     $_SESSION['ok'][] = $msg;
 
 } catch (Exception $e) {
-    $_SESSION['ko'][] = Tools::error();
     $Logs = new Logs();
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
-
+    $_SESSION['ko'][] = Tools::error();
 } finally {
-    header('Location: ../admin.php');
+    header('Location: ../../admin.php');
 }

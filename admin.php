@@ -270,7 +270,7 @@ try {
         ?>
         </select>
         <div class='import_block'>
-            <form enctype="multipart/form-data" action="app/import.php" method="POST">
+            <form enctype="multipart/form-data" action="app/controllers/ImportController.php" method="POST">
             <label for='uploader'><?= _('2. Select a CSV file to import:') ?></label>
                 <input id='uploader' name="file" type="file" accept='.csv' />
                 <input name='type' type='hidden' value='csv' />
@@ -306,7 +306,7 @@ try {
             ?>
             </select><br>
             <div class='import_block'>
-            <form enctype="multipart/form-data" action="app/import.php" method="POST">
+            <form enctype="multipart/form-data" action="app/controllers/ImportController.php" method="POST">
             <label for='uploader'><?= _('2. Select a ZIP file to import:') ?></label>
                 <input id='uploader' name="file" type="file" accept='.elabftw.zip' />
                 <input name='type' type='hidden' value='zip' />

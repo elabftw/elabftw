@@ -346,18 +346,19 @@ class DatabaseView extends EntityView
                 removed_menuitems : 'newdocument',
                 // save button :
                 save_onsavecallback: function() {
-                    $.post('app/quicksave.php', {
+                    $.post('app/controllers/EntityController.php', {
                         id : " . $this->Database->id . ",
                         type : 'items',
-                        // we need this to get the updated content
                         title : document.getElementById('title_input').value,
                         date : document.getElementById('datepicker').value,
+                        // we need this to get the updated content
                         body : tinymce.activeEditor.getContent()
-                    }).success(function(data) {
-                        if (data == 1) {
-                            notif('" . _('Saved') . "', 'ok');
+                    }).done(function(data) {
+                        var json = JSON.parse(data);
+                        if (json.res) {
+                            notif(json.msg, 'ok');
                         } else {
-                            notif('" . _('Something went wrong! :(') . "', 'ko');
+                            notif(json.msg, 'ko');
                         }
                     });
                 },

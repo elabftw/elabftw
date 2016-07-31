@@ -19,6 +19,39 @@ use Exception;
 require_once '../../app/common.inc.php';
 
 try {
+
+    // QUICKSAVE
+    if (isset($_POST['quickSave'])) {
+        $title = Tools::checkTitle($_POST['title']);
+
+        $body = Tools::checkBody($_POST['body']);
+
+        $date = Tools::kdate($_POST['date']);
+
+        if ($_POST['type'] == 'experiments') {
+
+            $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
+            $result = $Experiments->update($title, $date, $body);
+
+        } elseif ($_POST['type'] == 'items') {
+
+            $Database = new Database($_SESSION['team_id'], $_POST['id']);
+            $result = $Database->update($title, $date, $body, $_SESSION['userid']);
+        }
+
+        if ($result) {
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
+        } else {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
+    }
+
     // CREATE TAG
     if (isset($_POST['createTag'])) {
         if ($_POST['createTagType'] === 'experiments') {
@@ -51,9 +84,15 @@ try {
     if (isset($_POST['uploadsDestroy'])) {
         $Uploads = new Uploads($_POST['type'], $_POST['item_id'], $_POST['id']);
         if ($Uploads->destroy()) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('File deleted successfully')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 } catch (Exception $e) {

@@ -26,7 +26,7 @@ try {
     $redirect = false;
     $Teams = new Teams();
 
-    // UPDATE TEAM
+    // UPDATE TEAM SETTINGS
     if (isset($_POST['teamsUpdateFull'])) {
         $redirect = true;
         if ($Teams->update($_POST, $_SESSION['team_id'])) {
@@ -45,7 +45,6 @@ try {
 } catch (Exception $e) {
     $Logs = new Logs();
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
-    $_SESSION['ko'][] = Tools::error();
 } finally {
     if ($redirect) {
         header('Location: ../../admin.php?tab=1');

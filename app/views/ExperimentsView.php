@@ -540,7 +540,7 @@ class ExperimentsView extends EntityView
                 removed_menuitems : 'newdocument',
                 // save button :
                 save_onsavecallback: function() {
-                    $.post('app/quicksave.php', {
+                    $.post('app/controllers/EntityController.php', {
                         id : " . $this->Experiments->id . ",
                         type : 'experiments',
                         // we need this to get the updated content
@@ -548,10 +548,11 @@ class ExperimentsView extends EntityView
                         date : document.getElementById('datepicker').value,
                         body : tinymce.activeEditor.getContent()
                     }).done(function(data) {
-                        if (data == 1) {
-                            notif('" . _('Saved') . "', 'ok');
+                        var json = JSON.parse(data);
+                        if (json.res) {
+                            notif(json.msg, 'ok');
                         } else {
-                            notif('" . _('Something went wrong! :(') . "', 'ko');
+                            notif(json.msg, 'ko');
                         }
                     });
                 },

@@ -13,7 +13,7 @@ namespace Elabftw\Elabftw;
 use Exception;
 
 /**
- * Users
+ * Users infos from admin page
  */
 try {
     require_once '../../app/common.inc.php';

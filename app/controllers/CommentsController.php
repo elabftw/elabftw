@@ -24,27 +24,45 @@ try {
     if (isset($_POST['commentsCreate'])) {
         $Comments->Experiments->setId($_POST['id']);
         if ($Comments->create($_POST['comment'])) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => 'Create failed'
+            ));
         }
     }
 
     // UPDATE
     if (isset($_POST['commentsUpdateComment'])) {
         if ($Comments->update($_POST['commentsUpdateComment'])) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => 'Update failed'
+            ));
         }
     }
 
     // DESTROY
     if (isset($_POST['commentsDestroy'])) {
         if ($Comments->destroy()) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Comment successfully deleted')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => 'Destroy failed'
+            ));
         }
     }
 

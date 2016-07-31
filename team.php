@@ -128,9 +128,8 @@ foreach ($Users->readAll() as $user) {
 <div class='divhandle chemdoodle' id='tab3div'>
     <h3><?php echo _('Molecule drawer'); ?></h3>
     <div class='box'>
-        <link rel="stylesheet" href="css/chemdoodle.css" type="text/css">
-        <script src="js/chemdoodle.js"></script>
-        <script src="js/chemdoodle-uis.js"></script>
+        <link rel="stylesheet" href="app/css/chemdoodle.css" type="text/css">
+        <script src="js/chemdoodle/chemdoodle.min.js"></script>
         <div class='center'>
             <script>
                 var sketcher = new ChemDoodle.SketcherCanvas('sketcher', 550, 300, {oneMolecule:true});
@@ -215,12 +214,12 @@ $(document).ready(function() {
                 // because all the rerender methods fail, reload the page
                 // this is because upon creation the event has not all the correct attributes
                 // and trying to manipulate it fails
-                window.location.replace('team.php?tab=1&item=<?= $_GET['item'] ?>');
+                window.location.replace('team.php?tab=1&item=<?= isset($_GET['item']) ? $_GET['item'] : '' ?>');
             },
             // selection
             select: function(start, end) {
                 schedulerCreate(start.format(), end.format());
-                window.location.replace('team.php?tab=1&item=<?= $_GET['item'] ?>');
+                window.location.replace('team.php?tab=1&item=<?= isset($_GET['item']) ? $_GET['item'] : '' ?>');
             },
             // delete by clicking it
             eventClick: function(calEvent) {

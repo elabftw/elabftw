@@ -121,8 +121,8 @@ function go_url(x) {
     window.location = x;
 }
 
-// EXPERIMENTS.PHP
-// ===============
+// EXPERIMENTS
+// ===========
 
 // VISIBILITY
 function updateVisibility(item, visibility) {
@@ -131,10 +131,11 @@ function updateVisibility(item, visibility) {
         id: item,
         visibility: visibility
     }).done(function(data) {
-        if (data === '0') {
-            notif('There was an error!', 'ko');
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
         } else {
-            notif('Visibility updated', 'ok');
+            notif(json.msg, 'ko');
         }
     });
 }
@@ -146,17 +147,18 @@ function updateStatus(item, status) {
         id: item,
         status : status
     }).done(function(data) {
-        if (data === '0') {
-            notif('There was an error!');
-        } else { // it returns the color
-            notif('Status updated', 'ok');
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
             // change the color of the item border
             // we first remove any status class
             $("#main_section").css('border', null);
             // and we add our new border color
             // first : get what is the color of the new status
-            css = '6px solid #' + data;
+            css = '6px solid #' + json.color;
             $("#main_section").css('border-left', css);
+        } else {
+            notif(json.msg, 'ko');
         }
     });
 }
@@ -220,8 +222,8 @@ function experimentsCreateLink(e, item) { // the argument here is the event (nee
         if (link.length > 0) {
             // parseint will get the id, and not the rest (in case there is number in title)
             link = parseInt(link, 10);
-            if (isNaN(link) !== true) {
-                // POST request
+            if (!isNaN(link)) {
+
                 $.post('app/controllers/ExperimentsController.php', {
                     createLink: true,
                     id: item,
@@ -248,11 +250,12 @@ function experimentsDestroyLink(link, item, confirmText) {
             id: item,
             linkId: link
         }).done(function (data) {
-            if (data === '1') {
-                notif('Link removed', 'ok');
+            var json = JSON.parse(data);
+            if (json.res) {
+                notif(json.msg, 'ok');
                 $("#links_div").load("experiments.php?mode=edit&id=" + item + " #links_div");
             } else {
-                notif('Something went wrong! :(', 'ko');
+                notif(json.msg, 'ko');
             }
         });
     }
@@ -280,12 +283,12 @@ function commentsCreate(id) {
         comment: comment,
         id: id
     }).done(function(data) {
-        if (data) {
-            notif('Comment added', 'ok');
-            // now we reload the comments part to show the comment we just submitted
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
             $('#expcomment_container').load("experiments.php?mode=view&id=" + id + " #expcomment");
         } else {
-            notif('There was an error!');
+            notif(json.msg, 'ko');
         }
     });
 }
@@ -298,12 +301,13 @@ function commentsDestroy(id, expId, confirmText) {
             commentsDestroy: true,
             id: id
         }).done(function(data) {
-             if (data == 1) {
-                 notif('Comment deleted', 'ok');
+            var json = JSON.parse(data);
+            if (json.res) {
+                notif(json.msg, 'ok');
                  $('#expcomment_container').load("experiments.php?mode=view&id=" + expId + " #expcomment");
-             } else {
-                 notif('Error while deleting comment', 'ko');
-             }
+            } else {
+                notif(json.msg, 'ko');
+            }
         });
     } else {
         return false;
@@ -320,12 +324,13 @@ function experimentsDestroy(id, confirmText) {
         destroy: true,
         id: id
     }).done(function(data) {
-         if (data == 1) {
-             notif('Experiment deleted', 'ok');
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
             window.location.replace('experiments.php');
-         } else {
-             notif('Error while deleting experiment', 'ko');
-         }
+        } else {
+            notif(json.msg, 'ko');
+        }
     });
 }
 
@@ -339,12 +344,13 @@ function databaseDestroy(id, confirmText) {
         destroy: true,
         id: id
     }).done(function(data) {
-         if (data == 1) {
-             notif('Item deleted', 'ok');
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
             window.location.replace('database.php');
-         } else {
-             notif('Error while deleting item', 'ko');
-         }
+        } else {
+            notif(json.msg, 'ko');
+        }
     });
 }
 
@@ -360,17 +366,17 @@ function statusCreate() {
         name: name,
         color: color
     }).done(function(data) {
-        if (data) {
-            notif('Saved', 'ok');
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
             window.location.replace('admin.php?tab=3');
         } else {
-            notif('Error', 'ko');
+            notif(json.msg, 'ko');
         }
     });
 }
 
 function statusUpdate(id) {
-    document.getElementById('statusUpdate_' + id).disabled = true;
     name = $('#statusName_' + id).val();
     color = $('#statusColor_' + id).val();
     isDefault = $('#statusDefault_' + id).is(':checked');
@@ -382,11 +388,11 @@ function statusUpdate(id) {
         color: color,
         isDefault: isDefault
     }).done(function(data) {
-        if (data == '1') {
-            notif('Saved', 'ok');
-            document.getElementById('statusUpdate_' + id).disabled = false;
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
         } else {
-            notif('Error', 'ko');
+            notif(json.msg, 'ko');
         }
     });
 }
@@ -396,11 +402,12 @@ function statusDestroy(id) {
         statusDestroy: true,
         id: id
     }).done(function(data) {
-        if (data == '1') {
-            notif('Status deleted', 'ok');
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
             $('#status_' + id).hide();
         } else {
-            notif('Error: ' + data, 'ko');
+            notif(json.msg, 'ko');
         }
     });
 }
@@ -423,12 +430,13 @@ function itemsTypesCreate() {
         color: color,
         bookable: bookable,
         template: template
-    }).done(function(ret) {
-        if (ret) {
-            notif('Saved', 'ok');
+    }).done(function(data) {
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
             window.location.replace('admin.php?tab=4');
         } else {
-            notif('An error occured', 'ko');
+            notif(json.msg, 'ko');
         }
     });
 }
@@ -454,11 +462,12 @@ function itemsTypesUpdate(id) {
         color: color,
         bookable: bookable,
         template: template
-    }).done(function(ret) {
-        if (ret) {
-            notif('Saved', 'ok');
+    }).done(function(data) {
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
         } else {
-            notif('An error occured', 'ko');
+            notif(json.msg, 'ko');
         }
     });
 }
@@ -468,11 +477,12 @@ function itemsTypesDestroy(id) {
         itemsTypesDestroy: true,
         id: id
     }).done(function(data) {
-        if (data == '1') {
-            notif('Item type deleted', 'ok');
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
             $('#itemstypes_' + id).hide();
         } else {
-            notif('Error: ' + data, 'ko');
+            notif(json.msg, 'ko');
         }
     });
 }
@@ -554,11 +564,12 @@ function promoteSysadmin() {
         promoteSysadmin: true,
         email: email
     }).done(function(data) {
-        if (data) {
-            notif('User promoted', 'ok');
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
             $('#teamsDiv').load('sysconfig.php #teamsDiv');
         } else {
-            notif('There was an error!');
+            notif(json.msg, 'ko');
         }
     });
 }
@@ -572,11 +583,12 @@ function teamsCreate() {
         teamsCreate: true,
         teamsName: name
     }).done(function(data) {
-        if (data) {
-            notif('Team created', 'ok');
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
             $('#teamsDiv').load('sysconfig.php #teamsDiv');
         } else {
-            notif('There was an error!');
+            notif(json.msg, 'ko');
         }
     });
 }
@@ -589,11 +601,12 @@ function teamsUpdate(id) {
         teamsUpdateId : id,
         teamsUpdateName : name
     }).done(function(data) {
-        if (data) {
-            notif('Name updated', 'ok');
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
             $('#teamsDiv').load('sysconfig.php #teamsDiv');
         } else {
-            notif('Error', 'ko');
+            notif(json.msg, 'ko');
         }
     });
 }
@@ -605,11 +618,12 @@ function teamsDestroy(id) {
         teamsDestroy: true,
         teamsDestroyId: id
     }).done(function(data) {
-        if (data) {
-            notif('Team removed', 'ok');
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
             $('#teamsDiv').load('sysconfig.php #teamsDiv');
         } else {
-            notif('Team not removed because not empty!', 'ko');
+            notif(json.msg, 'ko');
         }
     });
 }
@@ -625,16 +639,8 @@ function teamsArchive(id) {
         teamsArchive: true,
         teamsArchiveId: id
     }).done(function(data) {
-        notif('Feature not yet implemented :)');
-    document.getElementById('teamsArchiveButton_' + id).disabled = false;
-        /*
-        if (data) {
-            notif('Team archived', 'ok');
-            $('#teamsDiv').load('sysconfig.php #teamsDiv');
-        } else {
-            notif('Team not archived', 'ko');
-        }
-        */
+        notif('Feature not yet implemented :)', 'ok');
+        document.getElementById('teamsArchiveButton_' + id).disabled = false;
     });
 }
 
@@ -645,10 +651,11 @@ function massSend() {
         subject: $('#massSubject').val(),
         body: $('#massBody').val()
     }).done(function(data) {
-        if (data) {
-            notif('Mass email sent', 'ok');
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
         } else {
-            notif('An error occured', 'ko');
+            notif(json.msg, 'ko');
         }
     });
 }
@@ -682,11 +689,12 @@ function testemailSend() {
             testemailSend: true,
             testemailEmail: email
         }).done(function(data) {
-            if (data === '1') {
-                notif('Email sent!', 'ok');
+            var json = JSON.parse(data);
+            if (json.res) {
+                notif(json.msg, 'ok');
                 document.getElementById('testemailButton').disabled = false;
             } else {
-                notif('Something went wrong! :(', 'ko');
+                notif(json.msg, 'ko');
             }
         });
     } else {
@@ -701,12 +709,13 @@ function logsDestroy() {
     $.post('app/controllers/SysconfigController.php', {
         logsDestroy: true
     }).done(function(data) {
-        if (data == 1) {
-            notif('All logs cleared', 'ok');
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
+            $('#logsDiv').load('sysconfig.php #logsDiv');
         } else {
-            notif('Something went wrong! :(', 'ko');
+            notif(json.msg, 'ko');
         }
-        $('#logsDiv').load('sysconfig.php #logsDiv');
     });
 }
 
@@ -720,14 +729,15 @@ function uploadsDestroy(id, type, item_id, confirmText) {
             item_id: item_id,
             type: type
         }).done(function(data) {
-            if (data === '1') {
-                notif('File removed', 'ok');
+            var json = JSON.parse(data);
+            if (json.res) {
+                notif(json.msg, 'ok');
                 if (type === 'items') {
                     type = 'database';
                 }
                 $("#filesdiv").load(type + ".php?mode=edit&id=" + item_id + " #filesdiv");
             } else {
-                notif('Something went wrong! :(<br>' + data, 'ko');
+                notif(json.msg, 'ko');
             }
         });
     }
@@ -739,10 +749,11 @@ function updateRating(rating, id) {
         rating: rating,
         id: id
     }).done(function(data) {
-        if (data === '1') {
-            notif('Rating updated', 'ok');
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
         } else {
-            notif('Something went wrong! :(', 'ko');
+            notif(json.msg, 'ko');
         }
     });
 }

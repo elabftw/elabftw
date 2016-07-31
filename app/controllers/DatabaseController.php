@@ -63,9 +63,15 @@ try {
     if (isset($_POST['rating'])) {
         $Database->setId($_POST['id']);
         if ($Database->updateRating($_POST['rating'])) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
@@ -73,9 +79,15 @@ try {
     if (isset($_POST['destroy'])) {
         $Database->setId($_POST['id']);
         if ($Database->destroy()) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Item deleted successfully')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 

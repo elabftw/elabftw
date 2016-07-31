@@ -30,9 +30,15 @@ try {
             $_POST['name'],
             $_POST['color']
         )) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
@@ -44,9 +50,15 @@ try {
             $_POST['color'],
             $_POST['isDefault']
         )) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
@@ -54,9 +66,16 @@ try {
     if (isset($_POST['statusDestroy'])) {
         try {
             $Status->destroy($_POST['id']);
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Status deleted successfully')
+            ));
+
         } catch (Exception $e) {
-            echo $e->getMessage();
+            echo json_encode(array(
+                'res' => false,
+                'msg' => $e->getMessage()
+            ));
         }
     }
 

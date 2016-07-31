@@ -31,7 +31,7 @@ class ExperimentsView extends EntityView
     private $UploadsView;
 
     /** instance of TeamGroups */
-    private $teamGroups;
+    private $TeamGroups;
 
     /** can be tag, query or filter */
     public $searchType = '';
@@ -50,7 +50,7 @@ class ExperimentsView extends EntityView
         $this->Experiments = $experiments;
         $this->limit = $_SESSION['prefs']['limit'];
 
-        $this->teamGroups = new TeamGroups();
+        $this->TeamGroups = new TeamGroups($_SESSION['team_id']);
     }
 
     /**
@@ -270,7 +270,7 @@ class ExperimentsView extends EntityView
         $html .= ">" . _('Only me') . "</option>";
 
         // Teamgroups
-        $teamGroupsArr = $this->teamGroups->read($_SESSION['team_id']);
+        $teamGroupsArr = $this->TeamGroups->readAll();
         foreach ($teamGroupsArr as $teamGroup) {
             $html .= "<option value='" . $teamGroup['id'] . "' ";
             if ($this->experiment['visibility'] === $teamGroup['id']) {
@@ -352,7 +352,7 @@ class ExperimentsView extends EntityView
     private function getVisibility()
     {
         if (Tools::checkId($this->experiment['visibility'])) {
-            return $this->teamGroups->readName($this->experiment['visibility']);
+            return $this->TeamGroups->readName($this->experiment['visibility']);
         }
         return $this->experiment['visibility'];
     }
@@ -374,7 +374,7 @@ class ExperimentsView extends EntityView
             } elseif (Tools::checkId($this->experiment['visibility'])) {
                 // the visibility of this experiment is set to a group
                 // we must check if current user is in this group
-                if (!$this->teamGroups->isInTeamGroup($_SESSION['userid'], $this->experiment['visibility'])) {
+                if (!$this->TeamGroups->isInTeamGroup($_SESSION['userid'], $this->experiment['visibility'])) {
                     throw new Exception(_("<strong>Access forbidden:</strong> you don't have the rights to access this."));
                 }
 

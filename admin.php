@@ -27,11 +27,12 @@ try {
     }
 
     $formKey = new FormKey();
+
     $StatusView = new StatusView(new Status($_SESSION['team_id']));
     $ItemsTypesView = new ItemsTypesView(new ItemsTypes($_SESSION['team_id']));
+    $TeamGroupsView = new TeamGroupsView(new TeamGroups($_SESSION['team_id']));
+
     $templates = new Templates($_SESSION['team_id']);
-    $teamGroups = new TeamGroups();
-    $teamGroupsView = new TeamGroupsView();
     $Auth = new Auth();
     $Users = new Users();
     $Config = new Config();
@@ -317,7 +318,7 @@ try {
     </div>
 
     <!-- TAB 8 TEAM GROUPS -->
-    <?php $teamGroupsArr = $teamGroups->read($_SESSION['team_id']); ?>
+    <?php $teamGroupsArr = $TeamGroupsView->TeamGroups->readAll(); ?>
 
     <div class='divhandle' id='tab8div'>
         <h3><?= _('Manage groups of users') ?></h3>
@@ -380,7 +381,7 @@ try {
 
         <!-- SHOW -->
         <h3><?= _('Existing groups') ?></h3>
-        <?= $teamGroupsView->show($teamGroupsArr) ?>
+        <?= $TeamGroupsView->show($teamGroupsArr) ?>
 
         </div>
     </div>

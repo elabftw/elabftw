@@ -57,7 +57,7 @@ try {
     // UPDATE STATUS
     if (isset($_POST['updateStatus'])) {
         $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
-        echo $Experiments->updateStatus($_POST['status'], $_SESSION['team_id']);
+        echo $Experiments->updateStatus($_POST['status']);
     }
 
     // ADD MOL FILE

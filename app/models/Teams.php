@@ -148,7 +148,7 @@ class Teams
         $req->bindParam(':stampprovider', $post['stampprovider']);
         $req->bindParam(':stampcert', $post['stampcert']);
         $req->bindParam(':stamplogin', $post['stamplogin']);
-        $req->bindParam(':stamppass', $post['stamppass']);
+        $req->bindParam(':stamppass', $stamppass);
         $req->bindParam(':deletable_xp', $deletableXp);
         $req->bindParam(':link_name', $linkName);
         $req->bindParam(':link_href', $linkHref);

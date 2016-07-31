@@ -583,8 +583,7 @@ class ExperimentsView extends EntityView
                          }
                      }
                 ]
-            });
-        }";
+        });";
 
         $html .= $this->injectCloseWarning();
         $html .= "});</script>";

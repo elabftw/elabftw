@@ -16,7 +16,7 @@ use Exception;
  * Form to reset the password
  *
  */
-require_once 'app/common.inc.php';
+require_once 'app/init.inc.php';
 $page_title = _('Reset password');
 $selected_menu = null;
 require_once 'app/head.inc.php';

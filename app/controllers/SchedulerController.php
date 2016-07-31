@@ -17,7 +17,7 @@ use Exception;
  *
  */
 try {
-    require_once '../../app/common.inc.php';
+    require_once '../../app/init.inc.php';
     $Scheduler = new Scheduler($_SESSION['team_id']);
 
     // CREATE

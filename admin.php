@@ -16,7 +16,7 @@ use Exception;
  * Administration of a team
  *
  */
-require_once 'app/common.inc.php';
+require_once 'app/init.inc.php';
 $page_title = _('Admin panel');
 $selected_menu = null;
 require_once 'app/head.inc.php';

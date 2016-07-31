@@ -17,7 +17,7 @@ use \Exception;
  * Entry point for database things
  *
  */
-require_once 'app/common.inc.php';
+require_once 'app/init.inc.php';
 $page_title = _('Database');
 $selected_menu = 'Database';
 require_once 'app/head.inc.php';

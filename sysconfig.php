@@ -17,7 +17,7 @@ use Exception;
  * Administrate elabftw install
  *
  */
-require_once 'app/common.inc.php';
+require_once 'app/init.inc.php';
 
 try {
     if ($_SESSION['is_sysadmin'] != 1) {

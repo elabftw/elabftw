@@ -17,7 +17,7 @@ use Exception;
  *
  */
 try {
-    require_once '../../app/common.inc.php';
+    require_once '../../app/init.inc.php';
 
     if (!$_SESSION['is_admin']) {
         throw new Exception('Non admin user tried to access admin panel.');

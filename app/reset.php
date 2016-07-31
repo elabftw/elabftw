@@ -30,7 +30,7 @@ use Exception;
 use Defuse\Crypto\Crypto as Crypto;
 use Defuse\Crypto\Key as Key;
 
-require_once '../app/common.inc.php';
+require_once '../app/init.inc.php';
 
 $Users = new Users();
 $Logs = new Logs();

@@ -17,7 +17,7 @@ use Exception;
  *
  */
 try {
-    require_once '../app/common.inc.php';
+    require_once '../app/init.inc.php';
     // it might take some time and we don't want to be cut in the middle, so set time_limit to ∞
     set_time_limit(0);
 

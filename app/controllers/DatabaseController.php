@@ -17,7 +17,7 @@ use \Exception;
  * Database
  *
  */
-require_once '../../app/common.inc.php';
+require_once '../../app/init.inc.php';
 
 $mode = 'show';
 $id = '1';

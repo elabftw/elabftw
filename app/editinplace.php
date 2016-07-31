@@ -25,7 +25,7 @@
 ********************************************************************************/
 namespace Elabftw\Elabftw;
 
-require_once '../app/common.inc.php';
+require_once '../app/init.inc.php';
 
 if (isset($_POST['filecomment'])) {
     // we are editing a comment for a file

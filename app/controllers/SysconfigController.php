@@ -17,7 +17,7 @@ use Exception;
  *
  */
 try {
-    require_once '../../app/common.inc.php';
+    require_once '../../app/init.inc.php';
 
     if (!$_SESSION['is_sysadmin']) {
         throw new Exception('Non sysadmin user tried to access sysadmin panel.');

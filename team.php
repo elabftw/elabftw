@@ -14,7 +14,7 @@ namespace Elabftw\Elabftw;
  * The team page
  *
  */
-require_once 'app/common.inc.php';
+require_once 'app/init.inc.php';
 $page_title = _('Team');
 $selected_menu = 'Team';
 require_once 'app/head.inc.php';

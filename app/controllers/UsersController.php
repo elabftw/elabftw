@@ -16,7 +16,7 @@ use Exception;
  * Users infos from admin page
  */
 try {
-    require_once '../../app/common.inc.php';
+    require_once '../../app/init.inc.php';
     $FormKey = new FormKey();
     $Users = new Users();
 

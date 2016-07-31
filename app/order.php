@@ -23,7 +23,7 @@
 *    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
 *                                                                               *
 ********************************************************************************/
-require_once '../app/common.inc.php';
+require_once '../app/init.inc.php';
 
 // track the sql request results
 $success = array();

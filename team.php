@@ -71,6 +71,7 @@ try {
         foreach ($items as $item) {
             if ($item['itemid'] == $_GET['item']) {
                 $itemName = $item['name'] . ' - ' . $item['title'];
+                $itemId = $item['itemid'];
             }
             if (strlen($itemName === 0)) {
                 throw new Exception(_('Nothing to show with this id'));
@@ -261,7 +262,7 @@ function schedulerCreate(start, end = null) {
         // add it to SQL
         $.post('app/controllers/SchedulerController.php', {
             create: true,
-            item: $('#scheduler-select').val(),
+                item: <?= $itemId ?>,
             start: start,
             end: end,
             title: title

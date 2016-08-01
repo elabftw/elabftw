@@ -115,7 +115,6 @@ if (isset($_SESSION['auth'])) {
         <li class='tip'><?= sprintf(_('Custom shortcuts are available (%sControl Panel%s).'), "<a href='ucp.php?tab=1'>", "</a>") ?></li>
         <li class='tip'><?= _('You can duplicate experiments in one click.') ?></li>
         <li class='tip'><?= _('Click a tag to list all items with this tag.') ?></li>
-        <li class='tip'><?= _('Only a locked experiment can be timestamped.') ?></li>
         <li class='tip'><?= _('Once timestamped an experiment cannot be unlocked or modified. Only comments can be added.') ?></li>
         </ul>
     </p>

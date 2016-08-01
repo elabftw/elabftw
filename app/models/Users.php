@@ -275,11 +275,6 @@ class Users extends Auth
             throw new Exception(_('The id parameter is not valid!'));
         }
 
-        // permission check
-        if (!isset($_SESSION['is_admin'])) {
-            throw new Exception(_('This section is out of your reach.'));
-        }
-
         // Put everything lowercase and first letter uppercase
         $firstname = ucwords(strtolower(filter_var($params['firstname'], FILTER_SANITIZE_STRING)));
         // Lastname in uppercase
@@ -386,11 +381,6 @@ class Users extends Auth
         $userid = Tools::checkId($userid);
         if ($userid === false) {
             throw new Exception('The id parameter is not valid!');
-        }
-
-        // permission check
-        if (!isset($_SESSION['is_admin'])) {
-            throw new Exception(_('This section is out of your reach.'));
         }
 
         $sql = "UPDATE users SET validated = 1 WHERE userid = :userid";

@@ -10,6 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
+use Exception;
+
 /**
  * The team page
  *
@@ -47,28 +49,44 @@ $items = $Database->readAll();
 if (count($items) === 0) {
     display_message('warning_nocross', _("No bookable items."));
 } else {
-    ?>
-    <select id='scheduler-select' onChange="insertParamAndReload('item', this.value)">
-    <option selected disabled><?= _("Select an equipment") ?></option>
-    <?php
+    $dropdown = "<div class='row'>";
+    $dropdown .= "<div class='col-md-2'>";
+    $dropdown .= "<div class='dropdown'>";
+    $dropdown .= "<button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>";
+    $dropdown .= _('Select an equipment');
+    $dropdown .= " <span class='caret'></span>";
+    $dropdown .= "</button>";
+    $dropdown .= "<ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>";
     foreach ($items as $item) {
-        echo "<option ";
-        if (isset($_GET['item']) && ($_GET['item'] == $item['id'])) {
-            echo "selected ";
-        }
-        echo "value='" . $item['itemid'] . "'>[" . $item['name'] . "] " . $item['title'] . "</option>";
+        $dropdown .= "<li class='dropdown-item'><a data-value='" . $item['title'] . "' href='team.php?item=" . $item['itemid'] . "'><span style='color:#" . $item['bgcolor'] . "'>"
+            . $item['name'] . "</span> - " . $item['title'] . "</a></li>";
     }
-    ?>
-    </select>
-    <?php
+    $dropdown .= "</ul>";
+    $dropdown .= "</div></div>";
 }
-if (isset($_GET['item'])) {
-    $Scheduler->setId($_GET['item']);
-    echo "<div id='scheduler'></div>";
+try {
+    if (isset($_GET['item']) && Tools::checkId($_GET['item'])) {
+        $Scheduler->setId($_GET['item']);
+        $itemName = '';
+        foreach ($items as $item) {
+            if ($item['itemid'] == $_GET['item']) {
+                $itemName = $item['name'] . ' - ' . $item['title'];
+            }
+            if (strlen($itemName === 0)) {
+                throw new Exception(_('Nothing to show with this id'));
+            }
+        }
+        echo "<a href='#' onClick=\"insertParamAndReload('item', '')\">" . _('Change item') . "</a>";
+        echo "<h4>" . $itemName . "</h4>";
+        echo "<div id='scheduler'></div>";
+    } else {
+        echo $dropdown;
+    }
+} catch (Exception $e) {
+    echo display_message('ko_nocross', $e->getMessage());
 }
 ?>
 </div>
-
 <!-- TAB 2 INFOS -->
 <div class='divhandle' id='tab2div'>
 <?php

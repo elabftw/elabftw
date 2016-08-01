@@ -76,6 +76,10 @@ class ItemsTypes extends Entity
         $req->bindParam(':team', $this->team);
         $req->execute();
 
+        if ($req->rowCount() === 0) {
+            throw new Exception(_('Nothing to show with this id'));
+        }
+
         return $req->fetchColumn();
     }
 

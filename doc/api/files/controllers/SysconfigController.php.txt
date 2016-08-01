@@ -17,7 +17,7 @@ use Exception;
  *
  */
 try {
-    require_once '../../app/common.inc.php';
+    require_once '../../app/init.inc.php';
 
     if (!$_SESSION['is_sysadmin']) {
         throw new Exception('Non sysadmin user tried to access sysadmin panel.');
@@ -32,36 +32,60 @@ try {
     if (isset($_POST['promoteSysadmin'])) {
         $Users = new Users();
         if ($Users->promoteSysadmin($_POST['email'])) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('User promoted')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
     // CREATE TEAM
     if (isset($_POST['teamsCreate'])) {
         if ($Teams->create($_POST['teamsName'])) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
     // UPDATE TEAM NAME
     if (isset($_POST['teamsUpdate'])) {
         if ($Teams->updateName($_POST['teamsUpdateId'], $_POST['teamsUpdateName'])) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
     // DESTROY TEAM
     if (isset($_POST['teamsDestroy'])) {
         if ($Teams->destroy($_POST['teamsDestroyId'])) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
@@ -69,9 +93,15 @@ try {
     if (isset($_POST['testemailSend'])) {
         $Sysconfig = new Sysconfig();
         if ($Sysconfig->testemailSend($_POST['testemailEmail'])) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Email sent')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
@@ -79,9 +109,15 @@ try {
     if (isset($_POST['massEmail'])) {
         $Sysconfig = new Sysconfig();
         if ($Sysconfig->massEmail($_POST['subject'], $_POST['body'])) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Email sent')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
@@ -89,9 +125,15 @@ try {
     if (isset($_POST['logsDestroy'])) {
         $Logs = new Logs();
         if ($Logs->destroy()) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Logs cleared')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 

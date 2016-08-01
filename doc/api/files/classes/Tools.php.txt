@@ -261,11 +261,7 @@ class Tools
      */
     public static function error()
     {
-        return sprintf(
-            _("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."),
-            "<a href='https://github.com/elabftw/elabftw/issues/'>",
-            "</a>"
-        );
+        return _("An error occured.");
     }
 
     /**
@@ -325,6 +321,7 @@ class Tools
     public static function getCalendarLang($lang)
     {
         $map = array(
+            'en_GB' => 'en',
             'ca_ES' => 'ca',
             'de_DE' => 'de',
             'es_ES' => 'es',

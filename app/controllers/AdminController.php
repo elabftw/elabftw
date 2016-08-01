@@ -38,7 +38,7 @@ try {
             $Entity = new Templates($_SESSION['team_id']);
         }
 
-        if ($Entity->updateOrdering($_SESSION['userid'], $_POST)) {
+        if ($Entity->updateOrdering($_POST)) {
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Saved')

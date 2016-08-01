@@ -20,9 +20,6 @@ class Templates extends Entity
     /** pdo object */
     protected $pdo;
 
-    /** our team */
-    protected $team;
-
     /**
      * Give me the team on init
      *

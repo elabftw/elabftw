@@ -17,7 +17,7 @@ use Exception;
  * Experiments
  *
  */
-require_once '../../app/common.inc.php';
+require_once '../../app/init.inc.php';
 
 try {
 
@@ -57,7 +57,20 @@ try {
     // UPDATE STATUS
     if (isset($_POST['updateStatus'])) {
         $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
-        echo $Experiments->updateStatus($_POST['status']);
+        if ($Experiments->updateStatus($_POST['status'])) {
+            // get the color of the status for updating the css
+            $Status = new Status($_SESSION['team_id']);
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved'),
+                'color' => $Status->readColor($_POST['status'])
+            ));
+        } else {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
     }
 
     // ADD MOL FILE
@@ -70,9 +83,15 @@ try {
     if (isset($_POST['updateVisibility'])) {
         $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
         if ($Experiments->updateVisibility($_POST['visibility'])) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
@@ -80,9 +99,15 @@ try {
     if (isset($_POST['createLink'])) {
         $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
         if ($Experiments->Links->create($_POST['linkId'])) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
@@ -90,9 +115,15 @@ try {
     if (isset($_POST['destroyLink'])) {
         $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
         if ($Experiments->Links->destroy($_POST['linkId'])) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Link deleted successfully')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
@@ -105,9 +136,15 @@ try {
             throw new Exception(_("You don't have the rights to delete this experiment."));
         }
         if ($Experiments->destroy()) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Experiment successfully deleted')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 

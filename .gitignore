@@ -4,6 +4,7 @@ uploads/
 test.php
 config.php
 config.php.*
+doc/api/phpdoc-cache*
 *.bak
 Session.vim
 /nbproject/private/

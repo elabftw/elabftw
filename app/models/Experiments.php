@@ -24,9 +24,6 @@ class Experiments extends Entity
     /** current user */
     public $userid;
 
-    /** our team */
-    public $team;
-
     /** instance of Links */
     public $Links;
 

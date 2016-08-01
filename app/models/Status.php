@@ -18,9 +18,6 @@ use Exception;
  */
 class Status extends Entity
 {
-    /** our current team */
-    protected $team;
-
     /**
      * Constructor
      *

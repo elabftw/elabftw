@@ -189,10 +189,13 @@ class DatabaseView extends EntityView
         <a href='experiments.php?mode=show&related=".$itemArr['itemid'] . "'><img src='img/link.png' alt='Linked experiments' title='Linked experiments' /></a> ";
         // lock
         if ($itemArr['locked'] == 0) {
-            $html .= "<a href='app/lock.php?id=" . $itemArr['itemid'] . "&type=database'><img src='img/unlock.png' title='lock item' alt='lock' /></a>";
+            $imgSrc = 'unlock.png';
+            $alt = 'Lock item';
         } else { // item is locked
-            $html .= "<a href='app/lock.php?id=" . $itemArr['itemid'] . "&type=database'><img src='img/lock-gray.png' title='unlock item' alt='unlock' /></a>";
+            $imgSrc = 'lock-gray.png';
+            $alt = 'Unlock item';
         }
+        $html .= "<img id='lock' onClick=\"toggleLock('database', " . $itemArr['itemid'] . ")\" src='img/" . $imgSrc . "' title='" . $alt . "' alt='" . $alt . "' /></a>";
         // TAGS
         $html .= " " . $this->showTags('items', 'view', $this->Database->id);
 
@@ -226,8 +229,7 @@ class DatabaseView extends EntityView
     {
         $html = '';
         if ($_SESSION['prefs']['chem_editor']) {
-            $html .= "<script src='js/chemdoodle.js'></script>
-            <script src='js/chemdoodle-uis.js'></script>
+            $html .= "<script src='js/chemdoodle/chemdoodle.min.js'></script>
                     <script>
                         ChemDoodle.iChemLabs.useHTTPS();
                     </script>";
@@ -346,18 +348,19 @@ class DatabaseView extends EntityView
                 removed_menuitems : 'newdocument',
                 // save button :
                 save_onsavecallback: function() {
-                    $.post('app/quicksave.php', {
+                    $.post('app/controllers/EntityController.php', {
                         id : " . $this->Database->id . ",
                         type : 'items',
-                        // we need this to get the updated content
                         title : document.getElementById('title_input').value,
                         date : document.getElementById('datepicker').value,
+                        // we need this to get the updated content
                         body : tinymce.activeEditor.getContent()
-                    }).success(function(data) {
-                        if (data == 1) {
-                            notif('" . _('Saved') . "', 'ok');
+                    }).done(function(data) {
+                        var json = JSON.parse(data);
+                        if (json.res) {
+                            notif(json.msg, 'ok');
                         } else {
-                            notif('" . _('Something went wrong! :(') . "', 'ko');
+                            notif(json.msg, 'ko');
                         }
                     });
                 },

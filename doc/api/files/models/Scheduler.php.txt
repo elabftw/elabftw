@@ -18,9 +18,6 @@ class Scheduler extends Entity
     /** pdo object */
     protected $pdo;
 
-    /** our current team */
-    private $team;
-
     /** id of the event */
     public $id;
 

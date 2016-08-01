@@ -17,7 +17,7 @@ use Exception;
  *
  */
 try {
-    require_once '../../app/common.inc.php';
+    require_once '../../app/init.inc.php';
     $ItemsTypes = new ItemsTypes($_SESSION['team_id']);
 
     if (!$_SESSION['is_admin']) {
@@ -32,9 +32,15 @@ try {
             $_POST['bookable'],
             $_POST['template']
         )) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
@@ -47,9 +53,15 @@ try {
             $_POST['bookable'],
             $_POST['template']
         )) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
@@ -57,9 +69,16 @@ try {
     if (isset($_POST['itemsTypesDestroy'])) {
         try {
             $ItemsTypes->destroy($_POST['id']);
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Item type deleted successfully')
+            ));
+
         } catch (Exception $e) {
-            echo $e->getMessage();
+            echo json_encode(array(
+                'res' => false,
+                'msg' => $e->getMessage()
+            ));
         }
     }
 

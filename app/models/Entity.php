@@ -18,12 +18,14 @@ use PDO;
  */
 class Entity
 {
+    /** pdo object */
+    protected $pdo;
+
+    /** our team */
+    public $team;
 
     /** id of our entity */
     public $id;
-
-    /** pdo object */
-    protected $pdo;
 
     /** inserted in sql */
     public $categoryFilter = '';
@@ -105,12 +107,13 @@ class Entity
     /**
      * Update ordering for status, experiment templates or items types
      *
-     * @param int $userid
      * @param array $post POST
      * @return bool
      */
-    public function updateOrdering($userid, $post)
+    public function updateOrdering($post)
     {
+        $success = array();
+
         foreach ($post['ordering'] as $ordering => $id) {
             $id = explode('_', $id);
             $id = $id[1];
@@ -122,9 +125,7 @@ class Entity
             $req->bindParam(':id', $id, PDO::PARAM_INT);
             $success[] = $req->execute();
         }
-        if (in_array(false, $success)) {
-            return false;
-        }
-        return true;
+
+        return !in_array(false, $success);
     }
 }

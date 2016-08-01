@@ -24,9 +24,6 @@ class Experiments extends Entity
     /** current user */
     public $userid;
 
-    /** our team */
-    public $team;
-
     /** instance of Links */
     public $Links;
 
@@ -261,7 +258,7 @@ class Experiments extends Entity
      * Update the status for an experiment
      *
      * @param int $status Id of the status
-     * @return string 0 on fail and color of new status on success
+     * @return bool
      */
     public function updateStatus($status)
     {
@@ -275,13 +272,7 @@ class Experiments extends Entity
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        if ($req->execute()) {
-            // get the color of the status to return and update the css
-            $Status = new Status($this->team);
-            return $Status->readColor($status);
-        }
-
-        return '0';
+        return $req->execute();
     }
 
     /**

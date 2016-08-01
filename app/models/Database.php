@@ -21,9 +21,6 @@ class Database extends Entity
     /** pdo object */
     protected $pdo;
 
-    /** id of the team */
-    public $team;
-
     /** inserted in sql */
     public $bookableFilter = '';
 

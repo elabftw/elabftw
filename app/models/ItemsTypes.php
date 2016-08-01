@@ -21,9 +21,6 @@ class ItemsTypes extends Entity
     /** The PDO object */
     protected $pdo;
 
-    /** our team passed to constructor from session */
-    protected $team;
-
     /**
      * Constructor
      *

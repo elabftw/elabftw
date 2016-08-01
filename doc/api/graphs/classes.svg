@@ -23,18 +23,18 @@
 </g>
 <!-- \\Elabftw\\Elabftw\\Database -->
 <g id="node1" class="node"><title>\\Elabftw\\Elabftw\\Database</title>
-<polygon fill="none" stroke="black" points="289,-932 218,-932 218,-896 289,-896 289,-932"/>
-<text text-anchor="middle" x="253.5" y="-911.2" font-family="Courier,monospace" font-size="11.00">Database</text>
+<polygon fill="none" stroke="black" points="289,-1742 218,-1742 218,-1706 289,-1706 289,-1742"/>
+<text text-anchor="middle" x="253.5" y="-1721.2" font-family="Courier,monospace" font-size="11.00">Database</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\Entity -->
 <g id="node13" class="node"><title>\\Elabftw\\Elabftw\\Entity</title>
-<polygon fill="none" stroke="black" points="102.5,-797 45.5,-797 45.5,-761 102.5,-761 102.5,-797"/>
-<text text-anchor="middle" x="74" y="-776.2" font-family="Courier,monospace" font-size="11.00">Entity</text>
+<polygon fill="none" stroke="black" points="102.5,-932 45.5,-932 45.5,-896 102.5,-896 102.5,-932"/>
+<text text-anchor="middle" x="74" y="-911.2" font-family="Courier,monospace" font-size="11.00">Entity</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\Database&#45;&gt;\\Elabftw\\Elabftw\\Entity -->
 <g id="edge1" class="edge"><title>\\Elabftw\\Elabftw\\Database&#45;&gt;\\Elabftw\\Elabftw\\Entity</title>
-<path fill="none" stroke="black" d="M217.841,-902.213C207.827,-898.097 197.141,-892.984 188,-887 152.506,-863.765 118.223,-828.634 96.9083,-804.8"/>
-<polygon fill="none" stroke="black" points="99.4324,-802.37 90.1939,-797.184 94.1815,-806.999 99.4324,-802.37"/>
+<path fill="none" stroke="black" d="M217.779,-1716.71C206.67,-1712.69 195.357,-1706.5 188,-1697 93.9331,-1575.51 77.977,-1068.26 75.4496,-942.369"/>
+<polygon fill="none" stroke="black" points="78.9428,-941.966 75.2557,-932.034 71.944,-942.098 78.9428,-941.966"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\MolViewer -->
 <g id="node2" class="node"><title>\\Elabftw\\Elabftw\\MolViewer</title>
@@ -43,8 +43,13 @@
 </g>
 <!-- \\Elabftw\\Elabftw\\Status -->
 <g id="node3" class="node"><title>\\Elabftw\\Elabftw\\Status</title>
-<polygon fill="none" stroke="black" points="282,-1958 225,-1958 225,-1922 282,-1922 282,-1958"/>
-<text text-anchor="middle" x="253.5" y="-1937.2" font-family="Courier,monospace" font-size="11.00">Status</text>
+<polygon fill="none" stroke="black" points="282,-1094 225,-1094 225,-1058 282,-1058 282,-1094"/>
+<text text-anchor="middle" x="253.5" y="-1073.2" font-family="Courier,monospace" font-size="11.00">Status</text>
+</g>
+<!-- \\Elabftw\\Elabftw\\Status&#45;&gt;\\Elabftw\\Elabftw\\Entity -->
+<g id="edge2" class="edge"><title>\\Elabftw\\Elabftw\\Status&#45;&gt;\\Elabftw\\Elabftw\\Entity</title>
+<path fill="none" stroke="black" d="M224.944,-1067.76C212.904,-1063.35 199.042,-1057.14 188,-1049 146.973,-1018.76 111.45,-970.638 91.6673,-940.759"/>
+<polygon fill="none" stroke="black" points="94.4301,-938.587 86.0446,-932.111 88.5617,-942.403 94.4301,-938.587"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\Users -->
 <g id="node4" class="node"><title>\\Elabftw\\Elabftw\\Users</title>
@@ -57,34 +62,34 @@
 <text text-anchor="middle" x="74" y="-2045.2" font-family="Courier,monospace" font-size="11.00">Auth</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\Users&#45;&gt;\\Elabftw\\Elabftw\\Auth -->
-<g id="edge2" class="edge"><title>\\Elabftw\\Elabftw\\Users&#45;&gt;\\Elabftw\\Elabftw\\Auth</title>
+<g id="edge3" class="edge"><title>\\Elabftw\\Elabftw\\Users&#45;&gt;\\Elabftw\\Elabftw\\Auth</title>
 <path fill="none" stroke="black" d="M226.309,-2048C195.809,-2048 145.251,-2048 111.056,-2048"/>
 <polygon fill="none" stroke="black" points="111.009,-2044.5 101.009,-2048 111.009,-2051.5 111.009,-2044.5"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\Links -->
 <g id="node5" class="node"><title>\\Elabftw\\Elabftw\\Links</title>
-<polygon fill="none" stroke="black" points="280.5,-770 226.5,-770 226.5,-734 280.5,-734 280.5,-770"/>
-<text text-anchor="middle" x="253.5" y="-749.2" font-family="Courier,monospace" font-size="11.00">Links</text>
+<polygon fill="none" stroke="black" points="280.5,-932 226.5,-932 226.5,-896 280.5,-896 280.5,-932"/>
+<text text-anchor="middle" x="253.5" y="-911.2" font-family="Courier,monospace" font-size="11.00">Links</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\Links&#45;&gt;\\Elabftw\\Elabftw\\Entity -->
-<g id="edge3" class="edge"><title>\\Elabftw\\Elabftw\\Links&#45;&gt;\\Elabftw\\Elabftw\\Entity</title>
-<path fill="none" stroke="black" d="M226.309,-755.984C196.333,-760.544 146.984,-768.05 112.834,-773.245"/>
-<polygon fill="none" stroke="black" points="112.122,-769.813 102.762,-774.777 113.174,-776.733 112.122,-769.813"/>
+<g id="edge4" class="edge"><title>\\Elabftw\\Elabftw\\Links&#45;&gt;\\Elabftw\\Elabftw\\Entity</title>
+<path fill="none" stroke="black" d="M226.309,-914C196.333,-914 146.984,-914 112.834,-914"/>
+<polygon fill="none" stroke="black" points="112.762,-910.5 102.762,-914 112.762,-917.5 112.762,-910.5"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\Comments -->
 <g id="node7" class="node"><title>\\Elabftw\\Elabftw\\Comments</title>
-<polygon fill="none" stroke="black" points="289,-662 218,-662 218,-626 289,-626 289,-662"/>
-<text text-anchor="middle" x="253.5" y="-641.2" font-family="Courier,monospace" font-size="11.00">Comments</text>
+<polygon fill="none" stroke="black" points="289,-878 218,-878 218,-842 289,-842 289,-878"/>
+<text text-anchor="middle" x="253.5" y="-857.2" font-family="Courier,monospace" font-size="11.00">Comments</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\Comments&#45;&gt;\\Elabftw\\Elabftw\\Entity -->
-<g id="edge4" class="edge"><title>\\Elabftw\\Elabftw\\Comments&#45;&gt;\\Elabftw\\Elabftw\\Entity</title>
-<path fill="none" stroke="black" d="M217.841,-655.787C207.827,-659.903 197.141,-665.016 188,-671 152.506,-694.235 118.223,-729.366 96.9083,-753.2"/>
-<polygon fill="none" stroke="black" points="94.1815,-751.001 90.1939,-760.816 99.4324,-755.63 94.1815,-751.001"/>
+<g id="edge5" class="edge"><title>\\Elabftw\\Elabftw\\Comments&#45;&gt;\\Elabftw\\Elabftw\\Entity</title>
+<path fill="none" stroke="black" d="M217.855,-870.54C187.448,-879.79 143.34,-893.209 112.197,-902.684"/>
+<polygon fill="none" stroke="black" points="111.123,-899.352 102.575,-905.611 113.16,-906.049 111.123,-899.352"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\Teams -->
 <g id="node8" class="node"><title>\\Elabftw\\Elabftw\\Teams</title>
-<polygon fill="none" stroke="black" points="101,-1742 47,-1742 47,-1706 101,-1706 101,-1742"/>
-<text text-anchor="middle" x="74" y="-1721.2" font-family="Courier,monospace" font-size="11.00">Teams</text>
+<polygon fill="none" stroke="black" points="101,-500 47,-500 47,-464 101,-464 101,-500"/>
+<text text-anchor="middle" x="74" y="-479.2" font-family="Courier,monospace" font-size="11.00">Teams</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\Import -->
 <g id="node9" class="node"><title>\\Elabftw\\Elabftw\\Import</title>
@@ -94,18 +99,18 @@
 </g>
 <!-- \\Elabftw\\Elabftw\\ExperimentsView -->
 <g id="node10" class="node"><title>\\Elabftw\\Elabftw\\ExperimentsView</title>
-<polygon fill="none" stroke="black" points="312.5,-1796 194.5,-1796 194.5,-1760 312.5,-1760 312.5,-1796"/>
-<text text-anchor="middle" x="253.5" y="-1775.2" font-family="Courier,monospace" font-size="11.00">ExperimentsView</text>
+<polygon fill="none" stroke="black" points="312.5,-1850 194.5,-1850 194.5,-1814 312.5,-1814 312.5,-1850"/>
+<text text-anchor="middle" x="253.5" y="-1829.2" font-family="Courier,monospace" font-size="11.00">ExperimentsView</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\EntityView -->
 <g id="node44" class="node"><title>\\Elabftw\\Elabftw\\EntityView</title>
-<polygon fill="none" stroke="black" points="116,-1850 32,-1850 32,-1814 116,-1814 116,-1850"/>
-<text text-anchor="middle" x="74" y="-1829.2" font-family="Courier,monospace" font-size="11.00">EntityView</text>
+<polygon fill="none" stroke="black" points="116,-1904 32,-1904 32,-1868 116,-1868 116,-1904"/>
+<text text-anchor="middle" x="74" y="-1883.2" font-family="Courier,monospace" font-size="11.00">EntityView</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\ExperimentsView&#45;&gt;\\Elabftw\\Elabftw\\EntityView -->
-<g id="edge5" class="edge"><title>\\Elabftw\\Elabftw\\ExperimentsView&#45;&gt;\\Elabftw\\Elabftw\\EntityView</title>
-<path fill="none" stroke="black" d="M194.38,-1795.68C172.197,-1802.43 147.105,-1810.06 125.67,-1816.59"/>
-<polygon fill="none" stroke="black" points="124.65,-1813.24 116.102,-1819.5 126.688,-1819.93 124.65,-1813.24"/>
+<g id="edge6" class="edge"><title>\\Elabftw\\Elabftw\\ExperimentsView&#45;&gt;\\Elabftw\\Elabftw\\EntityView</title>
+<path fill="none" stroke="black" d="M194.38,-1849.68C172.197,-1856.43 147.105,-1864.06 125.67,-1870.59"/>
+<polygon fill="none" stroke="black" points="124.65,-1867.24 116.102,-1873.5 126.688,-1873.93 124.65,-1867.24"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\Make -->
 <g id="node11" class="node"><title>\\Elabftw\\Elabftw\\Make</title>
@@ -120,8 +125,13 @@
 </g>
 <!-- \\Elabftw\\Elabftw\\Templates -->
 <g id="node14" class="node"><title>\\Elabftw\\Elabftw\\Templates</title>
-<polygon fill="none" stroke="black" points="292,-1634 215,-1634 215,-1598 292,-1598 292,-1634"/>
-<text text-anchor="middle" x="253.5" y="-1613.2" font-family="Courier,monospace" font-size="11.00">Templates</text>
+<polygon fill="none" stroke="black" points="292,-824 215,-824 215,-788 292,-788 292,-824"/>
+<text text-anchor="middle" x="253.5" y="-803.2" font-family="Courier,monospace" font-size="11.00">Templates</text>
+</g>
+<!-- \\Elabftw\\Elabftw\\Templates&#45;&gt;\\Elabftw\\Elabftw\\Entity -->
+<g id="edge7" class="edge"><title>\\Elabftw\\Elabftw\\Templates&#45;&gt;\\Elabftw\\Elabftw\\Entity</title>
+<path fill="none" stroke="black" d="M214.983,-820.025C205.958,-823.854 196.48,-828.266 188,-833 158.286,-849.589 127.027,-872.474 104.938,-889.688"/>
+<polygon fill="none" stroke="black" points="102.634,-887.047 96.9428,-895.983 106.965,-892.547 102.634,-887.047"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\Config -->
 <g id="node15" class="node"><title>\\Elabftw\\Elabftw\\Config</title>
@@ -150,13 +160,13 @@
 </g>
 <!-- \\Elabftw\\Elabftw\\UploadsView -->
 <g id="node20" class="node"><title>\\Elabftw\\Elabftw\\UploadsView</title>
-<polygon fill="none" stroke="black" points="299,-1904 208,-1904 208,-1868 299,-1868 299,-1904"/>
-<text text-anchor="middle" x="253.5" y="-1883.2" font-family="Courier,monospace" font-size="11.00">UploadsView</text>
+<polygon fill="none" stroke="black" points="299,-1958 208,-1958 208,-1922 299,-1922 299,-1958"/>
+<text text-anchor="middle" x="253.5" y="-1937.2" font-family="Courier,monospace" font-size="11.00">UploadsView</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\UploadsView&#45;&gt;\\Elabftw\\Elabftw\\EntityView -->
-<g id="edge6" class="edge"><title>\\Elabftw\\Elabftw\\UploadsView&#45;&gt;\\Elabftw\\Elabftw\\EntityView</title>
-<path fill="none" stroke="black" d="M207.709,-1872.37C182.757,-1864.78 151.602,-1855.3 125.751,-1847.44"/>
-<polygon fill="none" stroke="black" points="126.712,-1844.07 116.126,-1844.51 124.675,-1850.77 126.712,-1844.07"/>
+<g id="edge8" class="edge"><title>\\Elabftw\\Elabftw\\UploadsView&#45;&gt;\\Elabftw\\Elabftw\\EntityView</title>
+<path fill="none" stroke="black" d="M207.709,-1926.37C182.757,-1918.78 151.602,-1909.3 125.751,-1901.44"/>
+<polygon fill="none" stroke="black" points="126.712,-1898.07 116.126,-1898.51 124.675,-1904.77 126.712,-1898.07"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\SysconfigView -->
 <g id="node21" class="node"><title>\\Elabftw\\Elabftw\\SysconfigView</title>
@@ -175,8 +185,13 @@
 </g>
 <!-- \\Elabftw\\Elabftw\\ItemsTypes -->
 <g id="node24" class="node"><title>\\Elabftw\\Elabftw\\ItemsTypes</title>
-<polygon fill="none" stroke="black" points="295.5,-1094 211.5,-1094 211.5,-1058 295.5,-1058 295.5,-1094"/>
-<text text-anchor="middle" x="253.5" y="-1073.2" font-family="Courier,monospace" font-size="11.00">ItemsTypes</text>
+<polygon fill="none" stroke="black" points="295.5,-662 211.5,-662 211.5,-626 295.5,-626 295.5,-662"/>
+<text text-anchor="middle" x="253.5" y="-641.2" font-family="Courier,monospace" font-size="11.00">ItemsTypes</text>
+</g>
+<!-- \\Elabftw\\Elabftw\\ItemsTypes&#45;&gt;\\Elabftw\\Elabftw\\Entity -->
+<g id="edge9" class="edge"><title>\\Elabftw\\Elabftw\\ItemsTypes&#45;&gt;\\Elabftw\\Elabftw\\Entity</title>
+<path fill="none" stroke="black" d="M211.205,-655.94C202.815,-659.757 194.562,-664.688 188,-671 124.428,-732.15 93.0406,-836.003 81.0337,-885.77"/>
+<polygon fill="none" stroke="black" points="77.5542,-885.281 78.6987,-895.814 84.3724,-886.866 77.5542,-885.281"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\Tools -->
 <g id="node25" class="node"><title>\\Elabftw\\Elabftw\\Tools</title>
@@ -190,23 +205,23 @@
 </g>
 <!-- \\Elabftw\\Elabftw\\TeamsView -->
 <g id="node27" class="node"><title>\\Elabftw\\Elabftw\\TeamsView</title>
-<polygon fill="none" stroke="black" points="292,-1742 215,-1742 215,-1706 292,-1706 292,-1742"/>
-<text text-anchor="middle" x="253.5" y="-1721.2" font-family="Courier,monospace" font-size="11.00">TeamsView</text>
+<polygon fill="none" stroke="black" points="292,-500 215,-500 215,-464 292,-464 292,-500"/>
+<text text-anchor="middle" x="253.5" y="-479.2" font-family="Courier,monospace" font-size="11.00">TeamsView</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\TeamsView&#45;&gt;\\Elabftw\\Elabftw\\Teams -->
-<g id="edge7" class="edge"><title>\\Elabftw\\Elabftw\\TeamsView&#45;&gt;\\Elabftw\\Elabftw\\Teams</title>
-<path fill="none" stroke="black" d="M214.857,-1724C184.27,-1724 141.398,-1724 111.205,-1724"/>
-<polygon fill="none" stroke="black" points="111.095,-1720.5 101.095,-1724 111.095,-1727.5 111.095,-1720.5"/>
+<g id="edge10" class="edge"><title>\\Elabftw\\Elabftw\\TeamsView&#45;&gt;\\Elabftw\\Elabftw\\Teams</title>
+<path fill="none" stroke="black" d="M214.857,-482C184.27,-482 141.398,-482 111.205,-482"/>
+<polygon fill="none" stroke="black" points="111.095,-478.5 101.095,-482 111.095,-485.5 111.095,-478.5"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\Experiments -->
 <g id="node28" class="node"><title>\\Elabftw\\Elabftw\\Experiments</title>
-<polygon fill="none" stroke="black" points="299,-1310 208,-1310 208,-1274 299,-1274 299,-1310"/>
-<text text-anchor="middle" x="253.5" y="-1289.2" font-family="Courier,monospace" font-size="11.00">Experiments</text>
+<polygon fill="none" stroke="black" points="299,-554 208,-554 208,-518 299,-518 299,-554"/>
+<text text-anchor="middle" x="253.5" y="-533.2" font-family="Courier,monospace" font-size="11.00">Experiments</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\Experiments&#45;&gt;\\Elabftw\\Elabftw\\Entity -->
-<g id="edge8" class="edge"><title>\\Elabftw\\Elabftw\\Experiments&#45;&gt;\\Elabftw\\Elabftw\\Entity</title>
-<path fill="none" stroke="black" d="M207.853,-1279.91C200.375,-1276.17 193.327,-1271.31 188,-1265 127.98,-1193.94 89.1403,-900.111 78.1815,-807.257"/>
-<polygon fill="none" stroke="black" points="81.6436,-806.728 77.0113,-797.2 74.6905,-807.537 81.6436,-806.728"/>
+<g id="edge11" class="edge"><title>\\Elabftw\\Elabftw\\Experiments&#45;&gt;\\Elabftw\\Elabftw\\Entity</title>
+<path fill="none" stroke="black" d="M207.938,-548.625C200.542,-552.306 193.502,-557.01 188,-563 101.012,-657.713 80.963,-819.907 76.3619,-885.362"/>
+<polygon fill="none" stroke="black" points="72.8452,-885.519 75.7085,-895.719 79.8313,-885.959 72.8452,-885.519"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\ImportZip -->
 <g id="node29" class="node"><title>\\Elabftw\\Elabftw\\ImportZip</title>
@@ -214,7 +229,7 @@
 <text text-anchor="middle" x="253.5" y="-317.2" font-family="Courier,monospace" font-size="11.00">ImportZip</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\ImportZip&#45;&gt;\\Elabftw\\Elabftw\\Import -->
-<g id="edge9" class="edge"><title>\\Elabftw\\Elabftw\\ImportZip&#45;&gt;\\Elabftw\\Elabftw\\Import</title>
+<g id="edge12" class="edge"><title>\\Elabftw\\Elabftw\\ImportZip&#45;&gt;\\Elabftw\\Elabftw\\Import</title>
 <path fill="none" stroke="black" d="M214.857,-331.452C189.004,-339.317 154.374,-349.852 126.042,-358.472"/>
 <polygon fill="none" stroke="black" points="124.856,-355.174 116.308,-361.433 126.894,-361.871 124.856,-355.174"/>
 </g>
@@ -224,7 +239,7 @@
 <text text-anchor="middle" x="253.5" y="-101.2" font-family="Courier,monospace" font-size="11.00">MakeCsv</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\MakeCsv&#45;&gt;\\Elabftw\\Elabftw\\Make -->
-<g id="edge10" class="edge"><title>\\Elabftw\\Elabftw\\MakeCsv&#45;&gt;\\Elabftw\\Elabftw\\Make</title>
+<g id="edge13" class="edge"><title>\\Elabftw\\Elabftw\\MakeCsv&#45;&gt;\\Elabftw\\Elabftw\\Make</title>
 <path fill="none" stroke="black" d="M221.175,-113.53C194.772,-121.562 156.486,-133.21 125.72,-142.57"/>
 <polygon fill="none" stroke="black" points="124.568,-139.262 116.02,-145.521 126.606,-145.959 124.568,-139.262"/>
 </g>
@@ -235,13 +250,13 @@
 </g>
 <!-- \\Elabftw\\Elabftw\\Uploads -->
 <g id="node32" class="node"><title>\\Elabftw\\Elabftw\\Uploads</title>
-<polygon fill="none" stroke="black" points="285.5,-878 221.5,-878 221.5,-842 285.5,-842 285.5,-878"/>
-<text text-anchor="middle" x="253.5" y="-857.2" font-family="Courier,monospace" font-size="11.00">Uploads</text>
+<polygon fill="none" stroke="black" points="285.5,-1796 221.5,-1796 221.5,-1760 285.5,-1760 285.5,-1796"/>
+<text text-anchor="middle" x="253.5" y="-1775.2" font-family="Courier,monospace" font-size="11.00">Uploads</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\Uploads&#45;&gt;\\Elabftw\\Elabftw\\Entity -->
-<g id="edge11" class="edge"><title>\\Elabftw\\Elabftw\\Uploads&#45;&gt;\\Elabftw\\Elabftw\\Entity</title>
-<path fill="none" stroke="black" d="M221.2,-847.262C210.609,-842.856 198.746,-837.813 188,-833 162.303,-821.49 133.688,-807.807 111.683,-797.094"/>
-<polygon fill="none" stroke="black" points="113.206,-793.943 102.685,-792.7 110.135,-800.233 113.206,-793.943"/>
+<g id="edge14" class="edge"><title>\\Elabftw\\Elabftw\\Uploads&#45;&gt;\\Elabftw\\Elabftw\\Entity</title>
+<path fill="none" stroke="black" d="M221.422,-1772.01C209.178,-1768.07 196.127,-1761.6 188,-1751 87.6409,-1620.15 76.4039,-1073.09 75.1546,-942.218"/>
+<polygon fill="none" stroke="black" points="78.6543,-942.156 75.0711,-932.185 71.6545,-942.214 78.6543,-942.156"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\TeamGroups -->
 <g id="node33" class="node"><title>\\Elabftw\\Elabftw\\TeamGroups</title>
@@ -254,19 +269,19 @@
 <text text-anchor="middle" x="253.5" y="-155.2" font-family="Courier,monospace" font-size="11.00">MakeZip</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\MakeZip&#45;&gt;\\Elabftw\\Elabftw\\Make -->
-<g id="edge12" class="edge"><title>\\Elabftw\\Elabftw\\MakeZip&#45;&gt;\\Elabftw\\Elabftw\\Make</title>
+<g id="edge15" class="edge"><title>\\Elabftw\\Elabftw\\MakeZip&#45;&gt;\\Elabftw\\Elabftw\\Make</title>
 <path fill="none" stroke="black" d="M221.175,-158C194.887,-158 156.818,-158 126.12,-158"/>
 <polygon fill="none" stroke="black" points="126.02,-154.5 116.02,-158 126.02,-161.5 126.02,-154.5"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\DatabaseView -->
 <g id="node35" class="node"><title>\\Elabftw\\Elabftw\\DatabaseView</title>
-<polygon fill="none" stroke="black" points="302.5,-1850 204.5,-1850 204.5,-1814 302.5,-1814 302.5,-1850"/>
-<text text-anchor="middle" x="253.5" y="-1829.2" font-family="Courier,monospace" font-size="11.00">DatabaseView</text>
+<polygon fill="none" stroke="black" points="302.5,-1904 204.5,-1904 204.5,-1868 302.5,-1868 302.5,-1904"/>
+<text text-anchor="middle" x="253.5" y="-1883.2" font-family="Courier,monospace" font-size="11.00">DatabaseView</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\DatabaseView&#45;&gt;\\Elabftw\\Elabftw\\EntityView -->
-<g id="edge13" class="edge"><title>\\Elabftw\\Elabftw\\DatabaseView&#45;&gt;\\Elabftw\\Elabftw\\EntityView</title>
-<path fill="none" stroke="black" d="M204.466,-1832C180.3,-1832 150.992,-1832 126.376,-1832"/>
-<polygon fill="none" stroke="black" points="126.143,-1828.5 116.143,-1832 126.143,-1835.5 126.143,-1828.5"/>
+<g id="edge16" class="edge"><title>\\Elabftw\\Elabftw\\DatabaseView&#45;&gt;\\Elabftw\\Elabftw\\EntityView</title>
+<path fill="none" stroke="black" d="M204.466,-1886C180.3,-1886 150.992,-1886 126.376,-1886"/>
+<polygon fill="none" stroke="black" points="126.143,-1882.5 116.143,-1886 126.143,-1889.5 126.143,-1882.5"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\ImportCsv -->
 <g id="node36" class="node"><title>\\Elabftw\\Elabftw\\ImportCsv</title>
@@ -274,7 +289,7 @@
 <text text-anchor="middle" x="253.5" y="-425.2" font-family="Courier,monospace" font-size="11.00">ImportCsv</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\ImportCsv&#45;&gt;\\Elabftw\\Elabftw\\Import -->
-<g id="edge14" class="edge"><title>\\Elabftw\\Elabftw\\ImportCsv&#45;&gt;\\Elabftw\\Elabftw\\Import</title>
+<g id="edge17" class="edge"><title>\\Elabftw\\Elabftw\\ImportCsv&#45;&gt;\\Elabftw\\Elabftw\\Import</title>
 <path fill="none" stroke="black" d="M214.857,-416.548C189.004,-408.683 154.374,-398.148 126.042,-389.528"/>
 <polygon fill="none" stroke="black" points="126.894,-386.129 116.308,-386.567 124.856,-392.826 126.894,-386.129"/>
 </g>
@@ -285,13 +300,13 @@
 </g>
 <!-- \\Elabftw\\Elabftw\\Tags -->
 <g id="node38" class="node"><title>\\Elabftw\\Elabftw\\Tags</title>
-<polygon fill="none" stroke="black" points="280.5,-554 226.5,-554 226.5,-518 280.5,-518 280.5,-554"/>
-<text text-anchor="middle" x="253.5" y="-533.2" font-family="Courier,monospace" font-size="11.00">Tags</text>
+<polygon fill="none" stroke="black" points="280.5,-1310 226.5,-1310 226.5,-1274 280.5,-1274 280.5,-1310"/>
+<text text-anchor="middle" x="253.5" y="-1289.2" font-family="Courier,monospace" font-size="11.00">Tags</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\Tags&#45;&gt;\\Elabftw\\Elabftw\\Entity -->
-<g id="edge15" class="edge"><title>\\Elabftw\\Elabftw\\Tags&#45;&gt;\\Elabftw\\Elabftw\\Entity</title>
-<path fill="none" stroke="black" d="M226.317,-542.424C213.575,-546.601 198.732,-553.149 188,-563 130.15,-616.101 96.7967,-705.698 82.8202,-750.991"/>
-<polygon fill="none" stroke="black" points="79.4195,-750.147 79.9045,-760.731 86.1254,-752.155 79.4195,-750.147"/>
+<g id="edge18" class="edge"><title>\\Elabftw\\Elabftw\\Tags&#45;&gt;\\Elabftw\\Elabftw\\Entity</title>
+<path fill="none" stroke="black" d="M226.219,-1286.52C213.136,-1282.55 198.018,-1275.91 188,-1265 101.012,-1170.29 80.963,-1008.09 76.3619,-942.638"/>
+<polygon fill="none" stroke="black" points="79.8313,-942.041 75.7085,-932.281 72.8452,-942.481 79.8313,-942.041"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\MakePdf -->
 <g id="node39" class="node"><title>\\Elabftw\\Elabftw\\MakePdf</title>
@@ -299,7 +314,7 @@
 <text text-anchor="middle" x="253.5" y="-263.2" font-family="Courier,monospace" font-size="11.00">MakePdf</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\MakePdf&#45;&gt;\\Elabftw\\Elabftw\\Make -->
-<g id="edge16" class="edge"><title>\\Elabftw\\Elabftw\\MakePdf&#45;&gt;\\Elabftw\\Elabftw\\Make</title>
+<g id="edge19" class="edge"><title>\\Elabftw\\Elabftw\\MakePdf&#45;&gt;\\Elabftw\\Elabftw\\Make</title>
 <path fill="none" stroke="black" d="M221.318,-254.601C210.517,-250.224 198.493,-244.858 188,-239 158.286,-222.411 127.027,-199.526 104.938,-182.312"/>
 <polygon fill="none" stroke="black" points="106.965,-179.453 96.9428,-176.017 102.634,-184.953 106.965,-179.453"/>
 </g>
@@ -310,23 +325,23 @@
 </g>
 <!-- \\Elabftw\\Elabftw\\TrustedTimestamps -->
 <g id="node41" class="node"><title>\\Elabftw\\Elabftw\\TrustedTimestamps</title>
-<polygon fill="none" stroke="black" points="319,-500 188,-500 188,-464 319,-464 319,-500"/>
-<text text-anchor="middle" x="253.5" y="-479.2" font-family="Courier,monospace" font-size="11.00">TrustedTimestamps</text>
+<polygon fill="none" stroke="black" points="319,-770 188,-770 188,-734 319,-734 319,-770"/>
+<text text-anchor="middle" x="253.5" y="-749.2" font-family="Courier,monospace" font-size="11.00">TrustedTimestamps</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\TrustedTimestamps&#45;&gt;\\Elabftw\\Elabftw\\Entity -->
-<g id="edge17" class="edge"><title>\\Elabftw\\Elabftw\\TrustedTimestamps&#45;&gt;\\Elabftw\\Elabftw\\Entity</title>
-<path fill="none" stroke="black" d="M199.251,-500.095C195.172,-502.698 191.348,-505.652 188,-509 118.442,-578.564 89.4648,-697.322 79.4707,-751.089"/>
-<polygon fill="none" stroke="black" points="76.0235,-750.484 77.7186,-760.942 82.9154,-751.71 76.0235,-750.484"/>
+<g id="edge20" class="edge"><title>\\Elabftw\\Elabftw\\TrustedTimestamps&#45;&gt;\\Elabftw\\Elabftw\\Entity</title>
+<path fill="none" stroke="black" d="M202.574,-770.01C197.457,-772.693 192.495,-775.687 188,-779 146.973,-809.239 111.45,-857.362 91.6673,-887.241"/>
+<polygon fill="none" stroke="black" points="88.5617,-885.597 86.0446,-895.889 94.4301,-889.413 88.5617,-885.597"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\Scheduler -->
 <g id="node42" class="node"><title>\\Elabftw\\Elabftw\\Scheduler</title>
-<polygon fill="none" stroke="black" points="292,-824 215,-824 215,-788 292,-788 292,-824"/>
-<text text-anchor="middle" x="253.5" y="-803.2" font-family="Courier,monospace" font-size="11.00">Scheduler</text>
+<polygon fill="none" stroke="black" points="292,-1634 215,-1634 215,-1598 292,-1598 292,-1634"/>
+<text text-anchor="middle" x="253.5" y="-1613.2" font-family="Courier,monospace" font-size="11.00">Scheduler</text>
 </g>
 <!-- \\Elabftw\\Elabftw\\Scheduler&#45;&gt;\\Elabftw\\Elabftw\\Entity -->
-<g id="edge18" class="edge"><title>\\Elabftw\\Elabftw\\Scheduler&#45;&gt;\\Elabftw\\Elabftw\\Entity</title>
-<path fill="none" stroke="black" d="M214.857,-800.274C184.816,-795.704 142.925,-789.332 112.835,-784.755"/>
-<polygon fill="none" stroke="black" points="113.135,-781.261 102.722,-783.217 112.082,-788.181 113.135,-781.261"/>
+<g id="edge21" class="edge"><title>\\Elabftw\\Elabftw\\Scheduler&#45;&gt;\\Elabftw\\Elabftw\\Entity</title>
+<path fill="none" stroke="black" d="M214.87,-1607.47C204.772,-1603.44 194.786,-1597.56 188,-1589 106.324,-1485.93 81.4082,-1056.42 76.1607,-942.072"/>
+<polygon fill="none" stroke="black" points="79.6542,-941.845 75.713,-932.011 72.6611,-942.156 79.6542,-941.845"/>
 </g>
 <!-- \\Elabftw\\Elabftw\\Logs -->
 <g id="node43" class="node"><title>\\Elabftw\\Elabftw\\Logs</title>

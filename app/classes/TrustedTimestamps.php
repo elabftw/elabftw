@@ -71,7 +71,7 @@ class TrustedTimestamps extends Entity
     public function __construct(Config $config, Teams $teams, $id)
     {
         $this->configArr = $config->read();
-        $this->teamsConfigArr = $teams->read();
+        $this->teamConfigArr = $teams->read();
 
         $this->pdo = Db::getConnection();
 

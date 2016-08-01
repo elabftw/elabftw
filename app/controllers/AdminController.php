@@ -24,7 +24,6 @@ try {
     }
 
     $redirect = false;
-    $Teams = new Teams();
 
     // UPDATE ORDERING
     if (isset($_POST['updateOrdering'])) {
@@ -54,7 +53,8 @@ try {
     // UPDATE TEAM SETTINGS
     if (isset($_POST['teamsUpdateFull'])) {
         $redirect = true;
-        if ($Teams->update($_POST, $_SESSION['team_id'])) {
+        $Teams = new Teams($_SESSION['team_id']);
+        if ($Teams->update($_POST)) {
             $_SESSION['ok'][] = _('Configuration updated successfully.');
         } else {
             $_SESSION['ko'][] = _('An error occurred!');

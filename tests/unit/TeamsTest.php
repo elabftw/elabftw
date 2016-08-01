@@ -32,7 +32,7 @@ class TeamsTest extends \PHPUnit_Framework_TestCase
             'stamplogin' => '',
             'stamppass' => 'something'
         );
-        $this->assertTrue($this->Teams->update($post, 1));
+        $this->assertTrue($this->Teams->update($post));
 
         // test without stamppass
         $post = array(
@@ -45,7 +45,7 @@ class TeamsTest extends \PHPUnit_Framework_TestCase
             'stamplogin' => '',
             'stamppass' => ''
         );
-        $this->assertTrue($this->Teams->update($post, 1));
+        $this->assertTrue($this->Teams->update($post));
 
         // trigger Exception with bad file path
         $this->setExpectedException('Exception');
@@ -59,7 +59,7 @@ class TeamsTest extends \PHPUnit_Framework_TestCase
             'stamplogin' => '',
             'stamppass' => ''
         );
-        $this->Teams->update($post, 1);
+        $this->Teams->update($post);
     }
 
     public function testUpdateName()

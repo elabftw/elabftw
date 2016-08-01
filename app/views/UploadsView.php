@@ -72,20 +72,13 @@ class UploadsView extends EntityView
                     if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
                         $('#filesdiv').load(type + '.php?mode=edit&id=' + item_id + ' #filesdiv', function() {
                             // make the comment zone editable (fix issue #54)
-                            $('.thumbnail p.editable').editable('app/editinplace.php', {
-                             indicator : 'Saving...',
-                             id   : 'id',
-                             name : 'filecomment',
-                             submit : 'Save',
-                             cancel : 'Cancel',
-                             style : 'display:inline'
-                            });
+                            makeEditableFileComment();
                         });
                     }
                 });
             }
-        };
-        </script>";
+        }
+            </script>";
         return $html;
     }
 
@@ -194,25 +187,17 @@ class UploadsView extends EntityView
         } // end foreach
         $html .= "</div></div></div>";
 
-        // add fancy stuff in edit mode
-        if ($mode === 'edit') {
-            $html .= "<script>
-                $('.thumbnail').on('mouseover', '.editable', function(){
-                $('.thumbnail p.editable').editable('app/editinplace.php', {
-                 tooltip : 'Click to edit',
-                 indicator : 'Saving...',
-                 name : 'filecomment',
-                 submit : 'Save',
-                 cancel : 'Cancel',
-                 style : 'display:inline'
-                });
-            });</script>";
-        }
         $html .= "<script>$(document).ready(function() {
                 // we use fancybox to display thumbnails
-                $('a.fancybox').fancybox();
-            });
-            </script>";
+                $('a.fancybox').fancybox();";
+
+        // add editable comments in edit mode
+        if ($mode === 'edit') {
+            $html .= "$('.thumbnail').on('mouseover', '.editable', function(){
+                    makeEditableFileComment();
+                });";
+        }
+        $html .= "});</script>";
         return $html;
     }
 }

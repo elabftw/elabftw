@@ -724,6 +724,32 @@ function logsDestroy() {
         }
     });
 }
+// EDIT COMMENT ON UPLOAD
+function makeEditableFileComment() {
+    $('.thumbnail p.editable').editable(function(value, settings) {
+        $.post('app/controllers/EntityController.php', {
+            updateFileComment : true,
+            comment : value,
+            id : $(this).attr('id')
+        }).done(function(data) {
+            var json = JSON.parse(data);
+            if (json.res) {
+                notif(json.msg, 'ok');
+            } else {
+                notif(json.msg, 'ko');
+            }
+        });
+
+        return(value);
+        }, {
+     tooltip : 'Click to edit',
+     indicator : 'Saving...',
+     name : 'fileComment',
+     submit : 'Save',
+     cancel : 'Cancel',
+     style : 'display:inline'
+    });
+}
 
 // UPLOADS DESTROY
 function uploadsDestroy(id, type, item_id, confirmText) {

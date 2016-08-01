@@ -93,6 +93,41 @@ try {
         $Tags->destroy($_SESSION['userid'], $_POST['id']);
     }
 
+    // UPDATE FILE COMMENT
+    if (isset($_POST['updateFileComment'])) {
+        try {
+            $comment = filter_var($_POST['comment'], FILTER_SANITIZE_STRING);
+
+            if (strlen($comment) === 0 || $comment === ' ') {
+                throw new Exception (_('Comment is too short'));
+            }
+
+
+            $id_arr = explode('_', $_POST['id']);
+            if (Tools::checkId($id_arr[1] === false)) {
+                throw new Exception(_('The id parameter is invalid'));
+            }
+            $id = $id_arr[1];
+
+            $Upload = new Uploads($_POST['type']);
+            if ($Upload->updateComment($id, $comment)) {
+                echo json_encode(array(
+                    'res' => true,
+                    'msg' => _('Saved')
+                ));
+            } else {
+                echo json_encode(array(
+                    'res' => false,
+                    'msg' => Tools::error()
+                ));
+            }
+        } catch (Exception $e) {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => $e->getMessage()
+            ));
+        }
+    }
 
     // CREATE UPLOAD
     if (isset($_POST['upload'])) {

@@ -257,6 +257,23 @@ class Uploads extends Entity
         return $req->fetchAll();
     }
 
+    /**
+     * Update the comment of a file
+     *
+     * @param int $id id of the file
+     * @param string $comment
+     * @return bool
+     */
+    public function updateComment($id, $comment)
+    {
+        // SQL to update single file comment
+        $sql = "UPDATE uploads SET comment = :comment WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $id);
+        $req->bindParam(':comment', $comment);
+
+        return $req->execute();
+    }
 
     /**
      * Create a jpg thumbnail from images of type jpg, png or gif.

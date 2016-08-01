@@ -127,6 +127,24 @@ try {
         }
     }
 
+    // TIMESTAMP
+    if (isset($_POST['timestamp'])) {
+        try {
+            $ts = new TrustedTimestamps(new Config(), new Teams($_SESSION['team_id']), $_POST['id']);
+            if ($ts->timeStamp()) {
+                echo json_encode(array(
+                    'res' => true
+                ));
+            }
+        } catch (Exception $e) {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => $e->getMessage()
+            ));
+        }
+
+    }
+
     // DESTROY
     if (isset($_POST['destroy'])) {
         $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);

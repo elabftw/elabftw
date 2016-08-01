@@ -31,7 +31,7 @@ try {
         } else {
             echo json_encode(array(
                 'res' => false,
-                'msg' => 'Create failed'
+                'msg' => Tools::error()
             ));
         }
     }
@@ -46,7 +46,7 @@ try {
         } else {
             echo json_encode(array(
                 'res' => false,
-                'msg' => 'Update failed'
+                'msg' => Tools::error()
             ));
         }
     }
@@ -61,7 +61,7 @@ try {
         } else {
             echo json_encode(array(
                 'res' => false,
-                'msg' => 'Destroy failed'
+                'msg' => Tools::error()
             ));
         }
     }

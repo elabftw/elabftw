@@ -35,7 +35,7 @@ class UploadsView extends EntityView
     public function buildUploadForm()
     {
         $html = "<section class='box'>";
-        $html .= "<img src='img/attached.png' class='bot5px'> ";
+        $html .= "<img src='img/attached.png' /> ";
         $html .= "<h3 style='display:inline'>" . _('Attach a file') . "</h3>";
         $html .= "<form action='app/controllers/EntityController.php' class='dropzone' id='elabftw-dropzone'></form>";
         $html .= "</section>";
@@ -106,7 +106,7 @@ class UploadsView extends EntityView
         // begin HTML build
         $html = "<div id='filesdiv'>";
         $html .= "<div class='box'>";
-        $html .= "<img src='img/attached.png' class='bot5px'> <h3 style='display:inline'>" .
+        $html .= "<img src='img/attached.png' /> <h3 style='display:inline'>" .
             ngettext('Attached file', 'Attached files', $count) . "</h3>";
         $html .= "<div class='row'>";
         foreach ($uploadsArr as $upload) {
@@ -168,7 +168,7 @@ class UploadsView extends EntityView
             }
 
             // now display the name + comment with icons
-            $html .= "<div class='caption'><img src='img/attached.png' class='bot5px' alt='attached' /> ";
+            $html .= "<div class='caption'><img src='img/attached.png' alt='attached' /> ";
             $html .= "<a href='app/download.php?f=" . $upload['long_name'] .
                 "&name=" . $upload['real_name'] . "' target='_blank'>" . $upload['real_name'] . "</a>";
             $html .= "<span class='smallgray' style='display:inline'> " .
@@ -178,7 +178,7 @@ class UploadsView extends EntityView
             // your are in view mode
 
             if ($mode === 'edit' || ($upload['comment'] != 'Click to add a comment')) {
-                $comment = "<img src='img/comment.png' class='bot5px' alt='comment' />
+                $comment = "<img src='img/comment.png' alt='comment' />
                             <p class='editable inline' id='filecomment_" . $upload['id'] . "'>" .
                 stripslashes($upload['comment']) . "</p>";
                 $html .= $comment;

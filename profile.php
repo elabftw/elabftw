@@ -31,7 +31,7 @@ try {
 
     // USER INFOS
     echo "<section class='box'>";
-    echo "<img src='img/user.png' alt='user' class='bot5px' /> <h4 style='display:inline'>" . _('Infos') . "</h4>";
+    echo "<img src='img/user.png' alt='user' /> <h4 style='display:inline'>" . _('Infos') . "</h4>";
     echo "<div class='center'>
         <p>".$user['firstname'] . " " . $user['lastname'] . " (" . $user['email'] . ")</p>
         <p>". $count . " " . _('experiments done since') . " " . date("l jS \of F Y", $user['register_date'])

@@ -265,7 +265,7 @@ class DatabaseView extends EntityView
         // date
         $html .= "<div class='row'>";
         $html .= "<div class='col-md-4'>";
-        $html .= "<img src='img/calendar.png' class='bot5px' title='date' alt='Date :' />";
+        $html .= "<img src='img/calendar.png' title='date' alt='Date :' />";
         $html .= "<label for='datepicker'>" . _('Date') . "</label>";
         // if one day firefox has support for it: type = date
         $html .= "<input name='date' id='datepicker' size='8' type='text' value='" . $itemArr['date'] . "' />";

@@ -109,9 +109,7 @@ input, select, textarea {
 img {
     vertical-align: -3px;
 }
-.bot5px {
-    margin-bottom: 5px;
-}
+
 .inline {
     display: inline;
 }
@@ -486,7 +484,7 @@ a[class*='trigger_']:hover {
     float:right;
 }
 .top_right_status img {
-    margin: 0 5px 5px 25px;
+    margin: 0 5px 0 25px;
 }
 
 /* EXPERIMENTS/DATABASE - FILTER & ORDER */

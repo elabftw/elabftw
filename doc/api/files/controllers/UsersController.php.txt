@@ -17,8 +17,14 @@ use Exception;
  */
 try {
     require_once '../../app/init.inc.php';
+
+    if (!$_SESSION['is_admin']) {
+        throw new Exception('Non admin user tried to access admin panel.');
+    }
+
     $FormKey = new FormKey();
     $Users = new Users();
+
 
     // VALIDATE
     if (isset($_POST['usersValidate'])) {
@@ -56,7 +62,7 @@ try {
 } catch (Exception $e) {
     $Logs = new Logs();
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
-    $_SESSION['ko'][] = $e->getMessage();
+    $_SESSION['ko'][] = Tools::error();
 
 } finally {
     header('Location: ../../admin.php?tab=' . $tab);

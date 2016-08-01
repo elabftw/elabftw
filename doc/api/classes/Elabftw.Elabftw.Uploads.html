@@ -144,28 +144,28 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1436438661"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1693109153"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1436438661" class="accordion-body collapse in">
+            <div id="namespace-1693109153" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-374392946"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1393197746"></a>
                                 <a href="../namespaces/Elabftw.html" style="margin-left: 30px; padding-left: 0">Elabftw</a>
             </div>
-            <div id="namespace-374392946" class="accordion-body collapse ">
+            <div id="namespace-1393197746" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1089188514"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-627160501"></a>
                                 <a href="../namespaces/Elabftw.Elabftw.html" style="margin-left: 30px; padding-left: 0">Elabftw</a>
             </div>
-            <div id="namespace-1089188514" class="accordion-body collapse ">
+            <div id="namespace-627160501" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                     
@@ -277,6 +277,7 @@
                                                                     <a href="../classes/Elabftw.Elabftw.Uploads.html#method_createFromLocalFile" class="">createFromLocalFile()</a><br />
                                                                     <a href="../classes/Elabftw.Elabftw.Uploads.html#method_createFromMol" class="">createFromMol()</a><br />
                                                                     <a href="../classes/Elabftw.Elabftw.Uploads.html#method_readAll" class="">readAll()</a><br />
+                                                                    <a href="../classes/Elabftw.Elabftw.Uploads.html#method_updateComment" class="">updateComment()</a><br />
                                                                     <a href="../classes/Elabftw.Elabftw.Uploads.html#method_makeThumb" class="">makeThumb()</a><br />
                                                                     <a href="../classes/Elabftw.Elabftw.Uploads.html#method_destroy" class="">destroy()</a><br />
                                                                     <a href="../classes/Elabftw.Elabftw.Uploads.html#method_destroyAll" class="">destroyAll()</a><br />
@@ -878,19 +879,19 @@
             <article class="method">
                 <h3 class="public ">__construct()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">__construct(string  <span class="argument">$type</span>, integer  <span class="argument">$itemId</span>, integer|null  <span class="argument">$id = null</span>) </pre>
+                <pre class="signature" style="margin-right: 54px;">__construct(string|null  <span class="argument">$type = null</span>, integer|null  <span class="argument">$itemId = null</span>, integer|null  <span class="argument">$id = null</span>) </pre>
                 <p><em>Constructor</em></p>
                 
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td>string</td>
+                                <td>string|null</td>
                                 <td>$type </td>
                                 <td><p>experiment or items</p></td>
                             </tr>
                                                     <tr>
-                                <td>integer</td>
+                                <td>integer|null</td>
                                 <td>$itemId </td>
                                 <td></td>
                             </tr>
@@ -1038,6 +1039,47 @@
                 
                                     <h4>Returns</h4>
                     array
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_updateComment" name="method_updateComment" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">updateComment()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">updateComment(integer  <span class="argument">$id</span>, string  <span class="argument">$comment</span>) : boolean</pre>
+                <p><em>Update the comment of a file</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>integer</td>
+                                <td>$id </td>
+                                <td><p>id of the file</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$comment </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
                                     				
                             </article>
         </div>
@@ -1468,7 +1510,7 @@ Remplace all non letters/numbers by &#039;.&#039; (this way we don&#039;t lose t
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on August 1st, 2016 at 05:01.
+                    on August 2nd, 2016 at 00:10.
                 </section>
             </section>
         </section>

@@ -275,7 +275,7 @@ class EntityView
         }
 
 
-        $html = "<img src='img/tags.png' class='bot5px' alt='tags' /><label for='addtaginput'>" . _('Tags') . "</label>";
+        $html = "<img src='img/tags.png' alt='tags' /><label for='addtaginput'>" . _('Tags') . "</label>";
         $html .= "<div class='tags'><span id='tags_div'>";
 
         foreach ($tagList as $tag) {

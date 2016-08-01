@@ -262,7 +262,7 @@ function schedulerCreate(start, end = null) {
         // add it to SQL
         $.post('app/controllers/SchedulerController.php', {
             create: true,
-                item: <?= $itemId ?>,
+                item: <?= $itemId ? $itemId : 1 ?>,
             start: start,
             end: end,
             title: title

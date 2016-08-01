@@ -62,7 +62,7 @@ if (count($items) === 0) {
             . $item['name'] . "</span> - " . $item['title'] . "</a></li>";
     }
     $dropdown .= "</ul>";
-    $dropdown .= "</div></div>";
+    $dropdown .= "</div></div></div>";
 }
 try {
     if (isset($_GET['item']) && Tools::checkId($_GET['item'])) {
@@ -262,7 +262,7 @@ function schedulerCreate(start, end = null) {
         // add it to SQL
         $.post('app/controllers/SchedulerController.php', {
             create: true,
-                item: <?= $itemId ? $itemId : 1 ?>,
+            item: <?= isset($itemId) ? $itemId : 1 ?>,
             start: start,
             end: end,
             title: title

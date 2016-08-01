@@ -25,9 +25,9 @@ require_once 'app/head.inc.php';
 
 try {
     if ($_GET['type'] === 'experiments') {
-
         // only experiment owner can change or see revisions
-        if (!is_owned_by_user($_GET['item_id'], 'experiments', $_SESSION['userid'])) {
+        $Experiments = new Experiments($_SESSION['userid'], $_GET['item_id']);
+        if (!$Experiments->isOwnedByUser($Experiments->userid, 'experiments', $Experiments->id)) {
             throw new Exception(_('This section is out of your reach.'));
         }
         $location = 'experiments';

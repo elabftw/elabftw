@@ -57,27 +57,6 @@ function display_message($type, $message)
 }
 
 /**
- * To check if something is owned by a user before we add/delete/edit.
- * There is a check only for experiments and experiments templates.
- *
- * @param int $id ID of the item to check
- * @param string $table Can be 'experiments' or experiments_templates'
- * @param int $userid The ID of the user to test
- * @return bool Will return true if it is owned by user
- * @deprecated use Entity->isOwnedByUser() instead
- */
-function is_owned_by_user($id, $table, $userid)
-{
-    global $pdo;
-    // type can be experiments or experiments_templates
-    $sql = "SELECT userid FROM $table WHERE id = $id";
-    $req = $pdo->prepare($sql);
-    $req->execute();
-    $result = $req->fetchColumn();
-    return $result === $userid;
-}
-
-/**
  * Return conf_value of asked conf_name or the whole config as an associative array.
  *
  * @param string|null $conf_name The configuration we want to read

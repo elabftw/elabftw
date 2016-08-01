@@ -36,6 +36,9 @@ class Update
     /** this is used to check if we managed to get a version or not */
     public $success = false;
 
+    /** array with config */
+    private $configArr;
+
     /** where to get info from */
     const URL = 'https://get.elabftw.net/updates.ini';
     /** if we can't connect in https for some reason, use http */
@@ -62,8 +65,9 @@ class Update
      * Create the pdo object
      *
      */
-    public function __construct()
+    public function __construct(Config $config)
     {
+        $this->configArr = $config->read();
         $this->pdo = Db::getConnection();
     }
 
@@ -95,8 +99,8 @@ class Update
         // this is to get content
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         // add proxy if there is one
-        if (strlen(get_config('proxy')) > 0) {
-            curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
+        if (strlen($this->configArr['proxy']) > 0) {
+            curl_setopt($ch, CURLOPT_PROXY, $this->configArr['proxy']);
         }
         // disable certificate check
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
@@ -187,7 +191,7 @@ class Update
     {
         $msg_arr = array();
 
-        $current_schema = get_config('schema');
+        $current_schema = $this->configArr['schema'];
 
         if ($current_schema < 2) {
             // 20150727
@@ -400,9 +404,9 @@ class Update
         $new_key = Key::createNewRandomKey();
 
         // update smtp_password first
-        if (get_config('smtp_password')) {
+        if ($this->configArr['smtp_password']) {
             try {
-                $plaintext = Crypto::legacyDecrypt(hex2bin(get_config('smtp_password')), $legacy_key);
+                $plaintext = Crypto::legacyDecrypt(hex2bin($this->configArr['smtp_password']), $legacy_key);
             } catch (Ex\WrongKeyOrModifiedCiphertextException $ex) {
                 throw new Exception('Wrong key or modified ciphertext error.');
             }
@@ -432,9 +436,9 @@ class Update
         }
 
         // update the main stamppass
-        if (get_config('stamppass')) {
+        if ($this->configArr['stamppass']) {
             try {
-                $plaintext = Crypto::legacyDecrypt(hex2bin(get_config('stamppass')), $legacy_key);
+                $plaintext = Crypto::legacyDecrypt(hex2bin($this->configArr['stamppass']), $legacy_key);
             } catch (Ex\WrongKeyOrModifiedCiphertextException $ex) {
                 throw new Exception('Wrong key or modified ciphertext error.');
             }

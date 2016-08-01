@@ -7,7 +7,7 @@ class TeamsTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->Teams= new Teams();
+        $this->Teams= new Teams(1);
     }
 
     public function testCreate()
@@ -79,10 +79,5 @@ class TeamsTest extends \PHPUnit_Framework_TestCase
         $stats = $this->Teams->getAllStats();
         $this->assertTrue(is_array($stats));
         $this->assertEquals(1, $stats['totusers']);
-    }
-
-    public function testGetConfig()
-    {
-        $this->assertTrue(is_array($this->Teams->getConfig(1)));
     }
 }

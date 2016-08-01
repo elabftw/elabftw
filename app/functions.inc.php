@@ -83,32 +83,6 @@ function get_config($conf_name = null)
 }
 
 /**
- * Return the config for the team, or just the value of the column asked
- *
- * @param string|null $column
- * @return string|string[]
- */
-function get_team_config($column = null)
-{
-    global $pdo;
-
-    // remove notice when not logged in
-    if (isset($_SESSION['team_id'])) {
-        $sql = "SELECT * FROM `teams` WHERE team_id = :team_id";
-        $req = $pdo->prepare($sql);
-        $req->execute(array(
-            'team_id' => $_SESSION['team_id']
-        ));
-        $team_config = $req->fetch();
-        if (is_null($column)) {
-            return $team_config;
-        }
-        return $team_config[$column];
-    }
-    return "";
-}
-
-/**
  * Used in sysconfig.php to update config values
  *
  * @param array $post (conf_name => conf_value)
@@ -118,7 +92,7 @@ function update_config($post)
 {
     global $pdo;
     $result = array();
-    $Teams = new Teams();
+    $Teams = new Teams($_SESSION['team_id']);
 
     // do some data validation for some values
     if (isset($post['stampcert'])) {
@@ -131,7 +105,7 @@ function update_config($post)
     if (isset($post['stamppass']) && !empty($post['stamppass'])) {
         $post['stamppass'] = Crypto::encrypt($post['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
     } else {
-        $post['stamppass'] = $Teams->getConfig('stamppass');
+        $post['stamppass'] = $Teams->read('stamppass');
     }
 
     if (isset($post['login_tries']) && Tools::checkId($post['login_tries']) === false) {

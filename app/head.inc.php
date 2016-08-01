@@ -45,6 +45,8 @@ echo "<title>" . (isset($page_title) ? $page_title : "Lab manager") . " - eLab "
 
 <?php
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
+    $Teams = new Teams($_SESSION['team_id']);
+    $teamConfigArr = $Teams->read();
     echo "<nav>";
     // to redirect to the right page
     if ($selected_menu === 'Database') {
@@ -85,7 +87,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     }
     echo ">" . _('Search') . "</a> ";
 
-    echo "<a href='" . get_team_config('link_href') . "' target='_blank'>" . get_team_config('link_name') . "</a>";
+    echo "<a href='" . $teamConfigArr['link_href'] . "' target='_blank'>" . $teamConfigArr['link_name'] . "</a>";
 
     echo "</nav>";
 } else { // not logged in, show only logo, no menu

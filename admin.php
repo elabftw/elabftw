@@ -36,6 +36,7 @@ try {
     $Auth = new Auth();
     $Users = new Users();
     $Config = new Config();
+    $Teams = new Teams($_SESSION['team_id']);
 
     // VALIDATE USERS BLOCK
     $unvalidatedUsersArr = $Users->readAll(0);
@@ -76,7 +77,7 @@ try {
 
     <!-- TAB 1 TEAM CONFIG -->
     <?php
-    $team = get_team_config();
+    $teamConfigArr = $Teams->read();
     ?>
 
     <div class='divhandle' id='tab1div'>
@@ -89,21 +90,21 @@ try {
             <label for='deletable_xp'><?= _('Users can delete experiments:') ?></label>
             <select name='deletable_xp' id='deletable_xp'>
                 <option value='1'<?php
-                if ($team['deletable_xp']) { echo " selected='selected'"; } ?>
+                if ($teamConfigArr['deletable_xp']) { echo " selected='selected'"; } ?>
                 ><?= _('Yes') ?></option>
                 <option value='0'<?php
-                if (!$team['deletable_xp']) { echo " selected='selected'"; } ?>
+                if (!$teamConfigArr['deletable_xp']) { echo " selected='selected'"; } ?>
                 ><?= _('No') ?></option>
             </select>
             <span class='smallgray'><?= _('An admin account will always be able to delete experiments.') ?></span>
             </p>
             <p>
             <label for='link_name'><?= _('Name of the link in the top menu:') ?></label>
-            <input type='text' value='<?= $team['link_name'] ?>' name='link_name' id='link_name' />
+            <input type='text' value='<?= $teamConfigArr['link_name'] ?>' name='link_name' id='link_name' />
             </p>
             <p>
             <label for='link_href'><?= _('Address where this link should point:') ?></label>
-            <input type='text' value='<?= $team['link_href'] ?>' name='link_href' id='link_href' />
+            <input type='text' value='<?= $teamConfigArr['link_href'] ?>' name='link_href' id='link_href' />
             </p>
             <br>
             <span class='button' onClick='toggleTimestampInputs()'><?= _('Override general timestamping config') ?></span>
@@ -111,16 +112,16 @@ try {
             <div class='timestampInputs'>
                 <p>
                 <label for='stampprovider'><?= _('URL for external timestamping service:') ?></label>
-                <input type='url' placeholder='http://zeitstempel.dfn.de/' value='<?= $team['stampprovider'] ?>' name='stampprovider' id='stampprovider' />
+                <input type='url' placeholder='http://zeitstempel.dfn.de/' value='<?= $teamConfigArr['stampprovider'] ?>' name='stampprovider' id='stampprovider' />
                 <span class='smallgray'><?= _('This should be the URL used for <a href="https://tools.ietf.org/html/rfc3161">RFC 3161</a>-compliant timestamping requests.') ?></span>
                 </p>
                 <p>
                 <label for='stampcert'><?= _('Chain of certificates of the external timestamping service:') ?></label>
-                <input type='text' placeholder='vendor/pki.dfn.pem' value='<?= $team['stampcert'] ?>' name='stampcert' id='stampcert' />
+                <input type='text' placeholder='vendor/pki.dfn.pem' value='<?= $teamConfigArr['stampcert'] ?>' name='stampcert' id='stampcert' />
                 <span class='smallgray'><?= _('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.<br /> Local path relative to eLabFTW installation directory. The file needs to be in <a href="https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail">PEM-encoded (ASCII)</a> format!') ?></span>
                 </p>
                 <label for='stamplogin'><?= _('Login for external timestamping service:') ?></label>
-                <input type='text' value='<?= $team['stamplogin'] ?>' name='stamplogin' id='stamplogin' />
+                <input type='text' value='<?= $teamConfigArr['stamplogin'] ?>' name='stamplogin' id='stamplogin' />
                 <span class='smallgray'><?= _('This should be the login associated with your timestamping service provider') ?></span>
                 </p>
                 <p>

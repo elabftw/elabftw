@@ -23,14 +23,20 @@ class Teams
     /** pdo object */
     protected $pdo;
 
+    /** our team id */
+    private $team;
+
     /**
      * Constructor
      *
      * @throws Exception if user is not admin
      */
-    public function __construct()
+    public function __construct($team = null)
     {
         $this->pdo = Db::getConnection();
+        if (!is_null($team)) {
+            $this->team = $team;
+        }
     }
 
     /**
@@ -89,7 +95,7 @@ class Teams
      *
      * @return array
      */
-    public function read()
+    public function readAll()
     {
         $sql = "SELECT * FROM teams ORDER BY datetime DESC";
         $req = $this->pdo->prepare($sql);
@@ -99,13 +105,31 @@ class Teams
     }
 
     /**
+     * Read from a team
+     *
+     * @param string|null $column
+     * @return array|string
+     */
+    public function read($column = null)
+    {
+        $sql = "SELECT * FROM `teams` WHERE team_id = :team_id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':team_id', $this->team);
+        $req->execute();
+        $teamConfig = $req->fetch();
+        if (is_null($column)) {
+            return $teamConfig;
+        }
+        return $teamConfig[$column];
+    }
+
+    /**
      * Update team
      *
      * @param array $post POST
-     * @param int $team
      * @return bool
      */
-    public function update($post, $team)
+    public function update($post)
     {
         // CHECKS
         if (isset($post['stampcert'])) {
@@ -118,7 +142,7 @@ class Teams
         if (isset($post['stamppass']) && !empty($post['stamppass'])) {
             $stamppass = Crypto::encrypt($post['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
         } else {
-            $stamppass = $this->getConfig($team, 'stamppass');
+            $stamppass = $this->read('stamppass');
         }
 
         $deletableXp = 0;
@@ -153,7 +177,7 @@ class Teams
         $req->bindParam(':deletable_xp', $deletableXp);
         $req->bindParam(':link_name', $linkName);
         $req->bindParam(':link_href', $linkHref);
-        $req->bindParam(':team_id', $team);
+        $req->bindParam(':team_id', $this->team);
 
         return $req->execute();
     }
@@ -181,7 +205,6 @@ class Teams
     /**
      * Delete a team on if all the stats are at zero
      *
-     * @param int $team ID of the team to delete
      * @return bool true if success, false if the team is not brand new
      */
     public function destroy($team)
@@ -239,7 +262,7 @@ class Teams
     /**
      * Get statistics for a team
      *
-     * @param int $team Id of the team
+     * @param int $team
      * @return array
      */
     public function getStats($team)
@@ -254,25 +277,5 @@ class Teams
         $req->execute();
 
         return $req->fetch(\PDO::FETCH_NAMED);
-    }
-
-    /**
-     * Get the team config
-     *
-     * @param int $team
-     * @param string|null $column
-     * @return array|string
-     */
-    public function getConfig($team, $column = null)
-    {
-        $sql = "SELECT * FROM `teams` WHERE team_id = :team_id";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team_id', $team);
-        $req->execute();
-        $teamConfig = $req->fetch();
-        if (is_null($column)) {
-            return $teamConfig;
-        }
-        return $teamConfig[$column];
     }
 }

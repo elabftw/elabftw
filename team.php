@@ -20,7 +20,7 @@ $selected_menu = 'Team';
 require_once 'app/head.inc.php';
 
 $Users = new Users();
-$TeamsView = new TeamsView();
+$TeamsView = new TeamsView(new Teams($_SESSION['team_id']));
 $Database = new Database($_SESSION['team_id']);
 $Scheduler = new Scheduler($_SESSION['team_id']);
 ?>
@@ -75,7 +75,7 @@ if (isset($_GET['item'])) {
 <?php
 display_message('ok_nocross', sprintf(
     _('You belong to the %s team. %s'),
-    get_team_config('team_name'),
+    $TeamsView->Teams->read('team_name'),
     $TeamsView->showStats($_SESSION['team_id'])
 ))
 ?>

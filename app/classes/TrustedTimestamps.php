@@ -28,6 +28,9 @@ class TrustedTimestamps extends Entity
     /** array with config */
     private $configArr;
 
+    /** array with config of the team */
+    private $teamConfigArr;
+
     /** our database connection */
     protected $pdo;
 
@@ -65,9 +68,10 @@ class TrustedTimestamps extends Entity
      * @param Config $config
      * @param $id The id of the experiment
      */
-    public function __construct(Config $config, $id)
+    public function __construct(Config $config, Teams $teams, $id)
     {
         $this->configArr = $config->read();
+        $this->teamsConfigArr = $teams->read();
 
         $this->pdo = Db::getConnection();
 
@@ -118,8 +122,8 @@ class TrustedTimestamps extends Entity
 
         // if there is a config in the team, use that
         // otherwise use the general config if we can
-        if (strlen(get_team_config('stampprovider')) > 2) {
-            $config = get_team_config();
+        if (strlen($this->teamConfigArr['stampprovider']) > 2) {
+            $config = $this->teamConfigArr;
         } elseif ($this->configArr['stampshare']) {
             $config = $this->configArr;
         } else {

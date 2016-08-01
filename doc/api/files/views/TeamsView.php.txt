@@ -13,8 +13,21 @@ namespace Elabftw\Elabftw;
 /**
  * HTML for the teams
  */
-class TeamsView extends Teams
+class TeamsView
 {
+    /** Teams instance */
+    public $Teams;
+
+    /**
+     * Constructor
+     *
+     * @param Teams $teams
+     */
+    public function __construct(Teams $teams)
+    {
+        $this->Teams = $teams;
+    }
+
     /**
      * Output HTML for creating a team
      *
@@ -49,12 +62,12 @@ class TeamsView extends Teams
      */
     public function show()
     {
-        $teamsArr = $this->read();
+        $teamsArr = $this->Teams->readAll();
 
         $html = "<div class='box'><h3>" . _('Edit existing teams') . "</h3>";
 
         foreach ($teamsArr as $team) {
-            $count = $this->getStats($team['team_id']);
+            $count = $this->Teams->getStats($team);
             $html .= " <input onKeyPress='teamsUpdateButtonEnable(" . $team['team_id'] . ")' type='text' value='" . $team['team_name'] . "' id='team_" . $team['team_id'] . "' />";
             $html .= " <button disabled id='teamsUpdateButton_" . $team['team_id'] . "' onClick='teamsUpdate(" . $team['team_id'] . ")' class='button'>" . ('Save') . "</button>";
             if ($count['totusers'] == 0) {
@@ -79,10 +92,10 @@ class TeamsView extends Teams
         $stats = "";
 
         if ($team === null) {
-            $count = $this->getAllStats();
+            $count = $this->Teams->getAllStats();
             $stats .= _('Teams') . ": " . $count['totteams'] . " − ";
         } else {
-            $count = $this->getStats($team);
+            $count = $this->Teams->getStats($team);
         }
             $stats .= _('Members') . ": " . $count['totusers'] . " − " .
             ngettext('Experiment', 'Experiments', $count['totxp']) . ": " . $count['totxp'] . " (" . $count['totxpts'] . " timestamped) − " .

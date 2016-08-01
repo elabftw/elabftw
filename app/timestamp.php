@@ -19,7 +19,7 @@ use Exception;
 try {
     require_once '../app/init.inc.php';
 
-    $ts = new TrustedTimestamps(new Config, $_GET['id']);
+    $ts = new TrustedTimestamps(new Config(), new Teams($_SESSION['team_id']), $_GET['id']);
     $ts->timeStamp();
 
 } catch (Exception $e) {

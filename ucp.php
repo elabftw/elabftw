@@ -321,8 +321,17 @@ $(document).ready(function() {
             // send the orders as an array
             var ordering = $(".nav-pills").sortable("toArray");
 
-            $.post("app/order.php", {
-                'ordering_templates' : ordering
+            $.post("app/controllers/AdminController.php", {
+                'updateOrdering': true,
+                'table': 'experiments_templates',
+                'ordering': ordering
+            }).done(function(data) {
+                var json = JSON.parse(data);
+                if (json.res) {
+                    notif(json.msg, 'ok');
+                } else {
+                    notif(json.msg, 'ko');
+                }
             });
         }
     });

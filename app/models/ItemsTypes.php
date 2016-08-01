@@ -16,13 +16,13 @@ use Exception;
 /**
  * The kind of items you can have in the database for a team
  */
-class ItemsTypes
+class ItemsTypes extends Entity
 {
     /** The PDO object */
-    private $pdo;
+    protected $pdo;
 
     /** our team passed to constructor from session */
-    private $team;
+    protected $team;
 
     /**
      * Constructor

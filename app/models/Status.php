@@ -16,13 +16,10 @@ use Exception;
 /**
  * Things related to status in admin panel
  */
-class Status
+class Status extends Entity
 {
-    /** The PDO object */
-    private $pdo;
-
     /** our current team */
-    private $team;
+    protected $team;
 
     /**
      * Constructor

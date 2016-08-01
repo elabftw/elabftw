@@ -423,15 +423,17 @@ try {
             update: function(event, ui) {
                 // send the orders as an array
                 var ordering = $(".sortable_status").sortable("toArray");
-                console.log(ordering);
 
-                $.post("app/order.php", {
-                    'ordering_status' : ordering
-                }).success(function(data) {
-                    if (data == 1) {
-                        notif("<?= _('Saved') ?>", "ok");
+                $.post("app/controllers/AdminController.php", {
+                    'updateOrdering': true,
+                    'table': 'status',
+                    'ordering': ordering
+                }).done(function(data) {
+                    var json = JSON.parse(data);
+                    if (json.res) {
+                        notif(json.msg, 'ok');
                     } else {
-                        notif("<?= _('Something went wrong! :(') ?>", "ko");
+                        notif(json.msg, 'ko');
                     }
                 });
             }
@@ -449,13 +451,16 @@ try {
                 // send the orders as an array
                 var ordering = $(".sortable_itemstypes").sortable("toArray");
 
-                $.post("app/order.php", {
-                    'ordering_itemstypes' : ordering
-                }).success(function(data) {
-                    if (data == 1) {
-                        notif("<?= _('Saved') ?>", "ok");
+                $.post("app/controllers/AdminController.php", {
+                    'updateOrdering': true,
+                    'table': 'items_types',
+                    'ordering': ordering
+                }).done(function(data) {
+                    var json = JSON.parse(data);
+                    if (json.res) {
+                        notif(json.msg, 'ok');
                     } else {
-                        notif("<?= _('Something went wrong! :(') ?>", "ko");
+                        notif(json.msg, 'ko');
                     }
                 });
             }

@@ -11,6 +11,7 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use PDO;
 
 /**
  * The mother class of Experiments and Database
@@ -99,5 +100,31 @@ class Entity
         $req->execute();
 
         return $req->fetchColumn() == $userid;
+    }
+
+    /**
+     * Update ordering for status, experiment templates or items types
+     *
+     * @param int $userid
+     * @param array $post POST
+     * @return bool
+     */
+    public function updateOrdering($userid, $post)
+    {
+        foreach ($post['ordering'] as $ordering => $id) {
+            $id = explode('_', $id);
+            $id = $id[1];
+            // update the ordering
+            $sql = "UPDATE " . $post['table'] . " SET ordering = :ordering WHERE id = :id AND team = :team";
+            $req = $this->pdo->prepare($sql);
+            $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
+            $req->bindParam(':team', $this->team);
+            $req->bindParam(':id', $id, PDO::PARAM_INT);
+            $success[] = $req->execute();
+        }
+        if (in_array(false, $success)) {
+            return false;
+        }
+        return true;
     }
 }

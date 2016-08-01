@@ -182,8 +182,7 @@ class TeamGroups
 
         if (in_array(false, $success)) {
             throw new Exception('Error removing group');
-        } else {
-            return true;
         }
+        return true;
     }
 }

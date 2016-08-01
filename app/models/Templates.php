@@ -15,13 +15,13 @@ use Exception;
 /**
  * All about the templates
  */
-class Templates
+class Templates extends Entity
 {
     /** pdo object */
-    private $pdo;
+    protected $pdo;
 
     /** our team */
-    private $team;
+    protected $team;
 
     /**
      * Give me the team on init

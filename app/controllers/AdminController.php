@@ -26,6 +26,31 @@ try {
     $redirect = false;
     $Teams = new Teams();
 
+    // UPDATE ORDERING
+    if (isset($_POST['updateOrdering'])) {
+        if ($_POST['table'] === 'status') {
+            $Entity = new Status($_SESSION['team_id']);
+        } elseif ($_POST['table'] === 'items_types') {
+            $Entity = new ItemsTypes($_SESSION['team_id']);
+        } elseif ($_POST['table'] === 'experiments_templates') {
+            // remove the create new entry
+            unset($_POST['ordering'][0]);
+            $Entity = new Templates($_SESSION['team_id']);
+        }
+
+        if ($Entity->updateOrdering($_SESSION['userid'], $_POST)) {
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
+        } else {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
+    }
+
     // UPDATE TEAM SETTINGS
     if (isset($_POST['teamsUpdateFull'])) {
         $redirect = true;

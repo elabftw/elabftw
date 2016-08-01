@@ -10,5 +10,5 @@
  */
 session_start();
 session_destroy();
-setcookie('token', '', time() - 3600, '/');
+setcookie('token', '', time() - 3600, '/', null, true, true);
 header('Location: ../login.php');

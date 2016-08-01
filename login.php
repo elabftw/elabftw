@@ -104,8 +104,8 @@ if (!checkCookiesEnabled()) {
             <!-- form key -->
             <?= $formKey->getFormkey() ?>
         <br>
-        <label for='rememberme'><?= _('Remember me') ?></label>
         <input type='checkbox' name='rememberme' id='rememberme' />
+        <label for='rememberme'><?= _('Remember me') ?></label>
         </p>
         <div id='loginButtonDiv'>
         <button type="submit" class='button' name="Submit"><?= _('Login') ?></button>

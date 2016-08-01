@@ -99,13 +99,38 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 if (isset($_SESSION['auth'])) {
     ?>
     <div>
-        <?php echo _('Howdy,') . ' '; ?><a href='profile.php' title='<?php echo _('Profile'); ?>'><?php echo $_SESSION['firstname']; ?></a><br>
-        <a href='ucp.php'><img src='img/settings.png' alt='<?php echo _('Settings'); ?>' title='<?php echo _('Settings'); ?>' /></a> |
-        <a href='app/logout.php'><img src='img/logout.png' alt='<?php echo _('Logout'); ?>' title='<?php echo _('Logout'); ?>' /></a>
+        <?= _('Howdy,') . ' ' ?><a href='profile.php' title='<?= _('Profile') ?>'><?= $_SESSION['firstname'] ?></a><br>
+        <a href='ucp.php'><img src='img/settings.png' alt='<?= _('Settings') ?>' title='<?= _('Settings') ?>' /></a> |
+        <strong id='help'>?</strong> |
+        <a href='app/logout.php'><img src='img/logout.png' alt='<?= _('Logout') ?>' title='<?= _('Logout') ?>' /></a>
+    </div>
+    <div id='help_container' class='well help-container'>
+    <p><a href='#' class='close' onClick="$('#help_container').hide();">&times</a>
+        <ul>
+        <li class='tip'><?= sprintf(_('There is a manual available %shere%s.'), "<a href='doc/_build/html/manual.html'>", "</a>") ?></li>
+        <li class='tip'><?= _("You can use a TODOlist by pressing 't'.") ?></li>
+        <li class='tip'><?= sprintf(_('You can have experiments templates (%sControl Panel%s).'), "<a href='ucp.php?tab=3'>", "</a>") ?></li>
+        <li class='tip'><?= sprintf(_('The admin of a team can edit the status and the types of items available (%sAdmin Panel%s).'), "<a href='admin.php?tab=4'>", "</a>") ?></li>
+        <li class='tip'><?= _('If you press Ctrl Shift D in the editor, the date will appear under the cursor.') ?></li>
+        <li class='tip'><?= sprintf(_('Custom shortcuts are available (%sControl Panel%s).'), "<a href='ucp.php?tab=1'>", "</a>") ?></li>
+        <li class='tip'><?= _('You can duplicate experiments in one click.') ?></li>
+        <li class='tip'><?= _('Click a tag to list all items with this tag.') ?></li>
+        <li class='tip'><?= _('Only a locked experiment can be timestamped.') ?></li>
+        <li class='tip'><?= _('Once timestamped an experiment cannot be unlocked or modified. Only comments can be added.') ?></li>
+        </ul>
+    </p>
     </div>
     <?php
 }
 ?>
+
+<script>
+$('#help_container').hide();
+$('#help').click(function() {
+    $('#help_container').toggle();
+});
+</script>
+
 <noscript><!-- show warning if javascript is disabled -->
 <div class='alert alert-danger'>
     <p><strong>Javascript is disabled.</strong> Please enable Javascript to view this site in all its glory. Thank You.</p>

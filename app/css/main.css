@@ -106,6 +106,9 @@ input, select, textarea {
 }
 
 /* GENERAL */
+img {
+    vertical-align: -3px;
+}
 .bot5px {
     margin-bottom: 5px;
 }
@@ -172,6 +175,16 @@ label {
 }
 
 /* HEAD */
+.help-container {
+    display:hidden;
+    padding: 5px;
+    margin: 15px 0;
+}
+
+#help {
+    cursor: pointer;
+}
+
 nav {
     background-color:#343434;
     line-height: 3;

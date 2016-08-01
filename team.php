@@ -35,7 +35,6 @@ $Scheduler = new Scheduler($_SESSION['team_id']);
 <li class='tabhandle' id='tab1'><?= _('Scheduler') ?></li>
 <li class='tabhandle' id='tab2'><?= _('Infos') ?></li>
 <li class='tabhandle' id='tab3'><?= _('Tools') ?></li>
-<li class='tabhandle' id='tab4'><?= _('Help') ?></li>
 </ul>
 </menu>
 
@@ -137,25 +136,6 @@ foreach ($Users->readAll() as $user) {
         </div>
     </div>
 </div>
-
-<!-- TAB 4 HELP -->
-<div class='divhandle' id='tab4div'>
-    <p>
-        <ul>
-        <li class='tip'><?= sprintf(_('There is a manual available %shere%s.'), "<a href='doc/_build/html/manual.html'>", "</a>") ?></li>
-        <li class='tip'><?= _("You can use a TODOlist by pressing 't'.") ?></li>
-        <li class='tip'><?= sprintf(_('You can have experiments templates (%sControl Panel%s).'), "<a href='ucp.php?tab=3'>", "</a>") ?></li>
-        <li class='tip'><?= sprintf(_('The admin of a team can edit the status and the types of items available (%sAdmin Panel%s).'), "<a href='admin.php?tab=4'>", "</a>") ?></li>
-        <li class='tip'><?= _('If you press Ctrl Shift D in the editor, the date will appear under the cursor.') ?></li>
-        <li class='tip'><?= sprintf(_('Custom shortcuts are available (%sControl Panel%s).'), "<a href='ucp.php?tab=1'>", "</a>") ?></li>
-        <li class='tip'><?= _('You can duplicate experiments in one click.') ?></li>
-        <li class='tip'><?= _('Click a tag to list all items with this tag.') ?></li>
-        <li class='tip'><?= _('Only a locked experiment can be timestamped.') ?></li>
-        <li class='tip'><?= _('Once timestamped an experiment cannot be unlocked or modified. Only comments can be added.') ?></li>
-        </ul>
-    </p>
-</div>
-<!-- *********************** -->
 
 <script>
 $(document).ready(function() {

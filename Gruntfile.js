@@ -56,6 +56,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-shell');
 
   grunt.registerTask('default', ['uglify', 'cssmin']);
+  grunt.registerTask('css', 'cssmin');
   grunt.registerTask('doc', 'shell:builddoc');
   grunt.registerTask('api', 'shell:buildapi');
   grunt.registerTask('test', 'shell:runtests');

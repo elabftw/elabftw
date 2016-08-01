@@ -32,16 +32,19 @@ class Uploads extends Entity
     /**
      * Constructor
      *
-     * @param string $type experiment or items
-     * @param int $itemId
+     * @param string|null $type experiment or items
+     * @param int|null $itemId
      * @param int|null $id ID of a single file
      */
-    public function __construct($type, $itemId, $id = null)
+    public function __construct($type = null, $itemId = null, $id = null)
     {
         $this->pdo = Db::getConnection();
-        $this->type = $type;
-        $this->itemId = $itemId;
-
+        if (!is_null($type)) {
+            $this->type = $type;
+        }
+        if (!is_null($itemId)) {
+            $this->itemId = $itemId;
+        }
         if (!is_null($id)) {
             $this->setId($id);
         }

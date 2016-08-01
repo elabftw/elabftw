@@ -109,7 +109,7 @@ try {
             }
             $id = $id_arr[1];
 
-            $Upload = new Uploads($_POST['type']);
+            $Upload = new Uploads();
             if ($Upload->updateComment($id, $comment)) {
                 echo json_encode(array(
                     'res' => true,

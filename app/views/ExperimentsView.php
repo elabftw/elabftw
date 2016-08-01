@@ -460,8 +460,11 @@ class ExperimentsView extends EntityView
             }
         }
         $html .= "<img id='lock'" . $onClick . " src='img/" . $imgSrc . "' title='" . $alt . "' alt='" . $alt . "' /></a> ";
+        // show timestamp button if not timestamped already
         if (!$this->experiment['timestamped']) {
-            $html .= "<a onClick=\"return confirm('" . _('Once timestamped an experiment cannot be edited anymore ! Are you sure you want to do this ?') . "')\" href='app/timestamp.php?id=" . $this->experiment['id'] . "'><img src='img/stamp.png' title='timestamp experiment' alt='timestamp' /></a>";
+            $onClick = " onClick=\"timestamp(" . $this->experiment['id'] . ", '" . _('Once timestamped an experiment cannot be edited anymore ! Are you sure you want to do this ?') . "')\"";
+
+            $html .= "<img" . $onClick . " src='img/stamp.png' title='timestamp experiment' alt='timestamp' /></a>";
         }
 
         $html .= $this->showTags('experiments', 'view', $this->Experiments->id);

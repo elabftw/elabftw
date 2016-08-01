@@ -13,12 +13,31 @@ namespace Elabftw\Elabftw;
 use Exception;
 
 /**
- * Deal with things common to experiments and items like tags and uploads
+ * Deal with things common to experiments and items like tags, uploads, quicksave and lock
  *
  */
-require_once '../../app/init.inc.php';
-
 try {
+    require_once '../../app/init.inc.php';
+
+    // LOCK
+    if (isset($_POST['lock'])) {
+        if ($_POST['type'] === 'experiments') {
+            $Entity = new Experiments($_SESSION['userid'], $_POST['id']);
+        } else {
+            $Entity = new Database($_SESSION['team_id'], $_POST['id']);
+        }
+        if ($Entity->toggleLock()) {
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
+        } else {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
+    }
 
     // QUICKSAVE
     if (isset($_POST['quickSave'])) {

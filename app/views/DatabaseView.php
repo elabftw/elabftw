@@ -189,10 +189,13 @@ class DatabaseView extends EntityView
         <a href='experiments.php?mode=show&related=".$itemArr['itemid'] . "'><img src='img/link.png' alt='Linked experiments' title='Linked experiments' /></a> ";
         // lock
         if ($itemArr['locked'] == 0) {
-            $html .= "<a href='app/lock.php?id=" . $itemArr['itemid'] . "&type=database'><img src='img/unlock.png' title='lock item' alt='lock' /></a>";
+            $imgSrc = 'unlock.png';
+            $alt = 'Lock item';
         } else { // item is locked
-            $html .= "<a href='app/lock.php?id=" . $itemArr['itemid'] . "&type=database'><img src='img/lock-gray.png' title='unlock item' alt='unlock' /></a>";
+            $imgSrc = 'lock-gray.png';
+            $alt = 'Unlock item';
         }
+        $html .= "<img onClick=\"toggleLock('database', " . $itemArr['itemid'] . ")\" src='img/" . $imgSrc . "' title='" . $alt . "' alt='" . $alt . "' /></a>";
         // TAGS
         $html .= " " . $this->showTags('items', 'view', $this->Database->id);
 
@@ -226,8 +229,7 @@ class DatabaseView extends EntityView
     {
         $html = '';
         if ($_SESSION['prefs']['chem_editor']) {
-            $html .= "<script src='js/chemdoodle.js'></script>
-            <script src='js/chemdoodle-uis.js'></script>
+            $html .= "<script src='js/chemdoodle/chemdoodle.min.js'></script>
                     <script>
                         ChemDoodle.iChemLabs.useHTTPS();
                     </script>";

@@ -104,6 +104,29 @@ function go_url(x) {
     window.location = x;
 }
 
+// ENTITY
+function toggleLock(type, id) {
+    $.post("app/controllers/EntityController.php", {
+        lock: true,
+        type: type,
+        id: id
+    }).done(function(data) {
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
+            // change the lock icon
+            current = $('#lock').attr('src');
+            if (current === 'img/lock-gray.png') {
+                $('#lock').attr('src', 'img/unlock.png');
+            } else {
+                $('#lock').attr('src', 'img/lock-gray.png');
+            }
+        } else {
+            notif(json.msg, 'ko');
+        }
+    });
+}
+
 // EXPERIMENTS
 // ===========
 

@@ -446,14 +446,22 @@ class ExperimentsView extends EntityView
     <a href='make.php?what=pdf&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a>
     <a href='make.php?what=zip&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a> ";
 
+        // lock
+        $onClick = " onClick=\"toggleLock('experiments', " . $this->experiment['id'] . ")\"";
         if ($this->experiment['locked'] == 0) {
-            $html .= "<a href='app/lock.php?id=" . $this->experiment['id'] . "&type=experiments'><img src='img/unlock.png' title='lock experiment' alt='lock' /></a>";
-        } else { // experiment is locked
-            $html .= "<a href='app/lock.php?id=" . $this->experiment['id'] . "&type=experiments'><img src='img/lock-gray.png' title='unlock experiment' alt='unlock' /></a>";
-            // show timestamp button if it's not timestamped already
-            if (!$this->experiment['timestamped']) {
-                $html .= "<a onClick=\"return confirm('" . _('Once timestamped an experiment cannot be edited anymore ! Are you sure you want to do this ?') . "')\" href='app/timestamp.php?id=" . $this->experiment['id'] . "'><img src='img/stamp.png' title='timestamp experiment' alt='timestamp' /></a>";
+            $imgSrc = 'unlock.png';
+            $alt = 'Lock item';
+        } else { // item is locked
+            $imgSrc = 'lock-gray.png';
+            $alt = 'Unlock item';
+            // don't allow clicking lock if experiment is timestamped
+            if ($this->experiment['timestamped']) {
+                $onClick = '';
             }
+        }
+        $html .= "<img id='lock'" . $onClick . " src='img/" . $imgSrc . "' title='" . $alt . "' alt='" . $alt . "' /></a> ";
+        if (!$this->experiment['timestamped']) {
+            $html .= "<a onClick=\"return confirm('" . _('Once timestamped an experiment cannot be edited anymore ! Are you sure you want to do this ?') . "')\" href='app/timestamp.php?id=" . $this->experiment['id'] . "'><img src='img/stamp.png' title='timestamp experiment' alt='timestamp' /></a>";
         }
 
         $html .= $this->showTags('experiments', 'view', $this->Experiments->id);

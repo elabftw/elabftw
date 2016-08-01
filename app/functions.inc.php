@@ -225,20 +225,21 @@ function import_sql_structure()
  */
 function getMailer()
 {
-    // Choose mail transport method; either smtp or sendmail
-    $mail_method = get_config('mail_method');
+    $Config = new Config();
+    $configArr = $Config->read();
 
-    switch ($mail_method) {
+    // Choose mail transport method; either smtp or sendmail
+    switch ($configArr['mail_method']) {
 
         // Use SMTP Server
         case 'smtp':
             $transport = Swift_SmtpTransport::newInstance(
-                get_config('smtp_address'),
-                get_config('smtp_port'),
-                get_config('smtp_encryption')
+                $configArr['smtp_address'],
+                $configArr['smtp_port'],
+                $configArr['smtp_encryption']
             )
-            ->setUsername(get_config('smtp_username'))
-            ->setPassword(Crypto::decrypt(get_config('smtp_password'), Key::loadFromAsciiSafeString(SECRET_KEY)));
+            ->setUsername($configArr['smtp_username'])
+            ->setPassword(Crypto::decrypt($configArr['smtp_password'], Key::loadFromAsciiSafeString(SECRET_KEY)));
             break;
 
         // Use php mail function
@@ -248,7 +249,7 @@ function getMailer()
 
         // Use locally installed MTA (aka sendmail); Default
         default:
-            $transport = Swift_SendmailTransport::newInstance(get_config('sendmail_path') . ' -bs');
+            $transport = Swift_SendmailTransport::newInstance($configArr['sendmail_path'] . ' -bs');
             break;
     }
 

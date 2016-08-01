@@ -66,7 +66,7 @@ textdomain($domain);
 // END i18n
 
 // run the update script if we have the wrong schema version
-$Update = new Update();
+$Update = new Update(new Config);
 if (get_config('schema') < $Update::REQUIRED_SCHEMA) {
     try {
         $_SESSION['ok'] = $Update->runUpdateScript();

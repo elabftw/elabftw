@@ -18,6 +18,19 @@ use Swift_Message;
  */
 class Sysconfig
 {
+    /** array with config */
+    private $configArr;
+
+    /**
+     * Constructor
+     *
+     * @param Config $config
+     */
+    public function __construct(Config $config)
+    {
+        $this->configArr = $config->read();
+    }
+
     /**
      * Send a test email
      *
@@ -35,7 +48,7 @@ class Sysconfig
         // Give the message a subject
         ->setSubject(_('[eLabFTW] Test email'))
         // Set the From address with an associative array
-        ->setFrom(array(get_config('mail_from') => 'eLabFTW'))
+        ->setFrom(array($this->configArr['mail_from'] => 'eLabFTW'))
         // Set the To addresses with an associative array
         ->setTo(array($email => 'Admin eLabFTW'))
         // Give it a body
@@ -72,7 +85,7 @@ class Sysconfig
         // Give the message a subject
         ->setSubject($subject)
         // Set the From address with an associative array
-        ->setFrom(array(get_config('mail_from') => 'eLabFTW'))
+        ->setFrom(array($this->configArr['mail_from'] => 'eLabFTW'))
         // Set the To addresses with an associative array
         ->setTo($to)
         // Give it a body

@@ -74,6 +74,9 @@ class Comments extends Entity
      */
     private function alertOwner()
     {
+        $Config = new Config();
+        $configArr = $Config->read();
+
         // get the first and lastname of the commenter
         $sql = "SELECT firstname, lastname FROM users WHERE userid = :userid";
         $req = $this->pdo->prepare($sql);
@@ -105,7 +108,7 @@ class Comments extends Entity
         // Give the message a subject
         ->setSubject(_('[eLabFTW] New comment posted'))
         // Set the From address with an associative array
-        ->setFrom(array(get_config('mail_from') => 'eLabFTW'))
+        ->setFrom(array($configArr['mail_from'] => 'eLabFTW'))
         // Set the To addresses with an associative array
         ->setTo(array($users['email'] => $users['firstname'] . $users['lastname']))
         // Give it a body

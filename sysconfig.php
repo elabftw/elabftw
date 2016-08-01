@@ -29,7 +29,7 @@ try {
     require_once 'app/head.inc.php';
 
     $formKey = new FormKey();
-    $SysconfigView = new SysconfigView(new Update(), new Logs(), new TeamsView());
+    $SysconfigView = new SysconfigView(new Update(new Config()), new Logs(), new TeamsView());
 
     try {
         // we put another try here because an exception here would end the page

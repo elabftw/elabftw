@@ -25,6 +25,9 @@ use Defuse\Crypto\Key as Key;
  */
 class TrustedTimestamps extends Entity
 {
+    /** array with config */
+    private $configArr;
+
     /** our database connection */
     protected $pdo;
 
@@ -59,10 +62,13 @@ class TrustedTimestamps extends Entity
     /**
      * Give me an experiment id and a db and I make good pdf for you
      *
+     * @param Config $config
      * @param $id The id of the experiment
      */
-    public function __construct($id)
+    public function __construct(Config $config, $id)
     {
+        $this->configArr = $config->read();
+
         $this->pdo = Db::getConnection();
 
         // will be used in sqlUpdate()
@@ -114,8 +120,8 @@ class TrustedTimestamps extends Entity
         // otherwise use the general config if we can
         if (strlen(get_team_config('stampprovider')) > 2) {
             $config = get_team_config();
-        } elseif (get_config('stampshare')) {
-            $config = get_config();
+        } elseif ($this->configArr['stampshare']) {
+            $config = $this->configArr;
         } else {
             throw new Exception(_('Please configure Timestamping in the admin panel.'));
         }
@@ -313,8 +319,8 @@ class TrustedTimestamps extends Entity
             curl_setopt($ch, CURLOPT_USERPWD, $this->stampParams['stamplogin'] . ":" . $this->stampParams['stamppassword']);
         }
         // add proxy if there is one
-        if (strlen(get_config('proxy')) > 0) {
-            curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
+        if (strlen($this->configArr['proxy']) > 0) {
+            curl_setopt($ch, CURLOPT_PROXY, $this->configArr['proxy']);
         }
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);

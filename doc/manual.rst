@@ -138,11 +138,11 @@ A zip archive will contain the generated pdf of the experiment + any attached fi
 
 Lock
 ````
-Once locked, an experiment cannot be modified anymore. Unless you unlock it. If it is locked by someone with locking powers (the PI), you will not be able to unlock it. Once locked, a new action appears :
+Once locked, an experiment cannot be modified anymore. Unless you unlock it. If it is locked by someone with locking powers (the PI), you will not be able to unlock it.
 
 Timestamp
 `````````
-A locked experiment can be timestamped. Once timestamped it cannot be edited anymore.
+An experiment can be timestamped. Once timestamped it cannot be edited anymore.
 
 What happens when you timestamp an experiment :
 

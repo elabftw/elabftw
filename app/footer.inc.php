@@ -42,12 +42,8 @@ if (isset($_SESSION['auth']) && $_SESSION['is_sysadmin']) {
 }
 if (isset($_SESSION['auth']) && $_SESSION['is_admin']) {
     echo "<a href='admin.php'>" . _('Admin panel');
-    // show counter of unvalidated users
-    $sql = "SELECT count(validated) FROM users WHERE validated = 0 AND team = :team";
-    $req = $pdo->prepare($sql);
-    $req->bindValue(':team', $_SESSION['team_id']);
-    $req->execute();
-    $unvalidated = $req->fetchColumn();
+    $Users = new \Elabftw\Elabftw\Users();
+    $unvalidated = count($Users->readAll(0));
     if ($unvalidated > 0) {
         echo " <span class='badge'>" . $unvalidated . "</span>";
     }

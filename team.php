@@ -46,6 +46,7 @@ $Scheduler = new Scheduler($_SESSION['team_id']);
 // we only want the bookable type of items
 $Database->bookableFilter = "AND bookable = 1";
 $items = $Database->readAll();
+$dropdown = '';
 if (count($items) === 0) {
     display_message('warning_nocross', _("No bookable items."));
 } else {

@@ -32,6 +32,28 @@ class Templates extends Entity
     }
 
     /**
+     * Create a template
+     *
+     * @param string $name
+     * @param string $body
+     * @return bool
+     */
+    public function create($name, $body, $userid)
+    {
+        $name = filter_var($name, FILTER_SANITIZE_STRING);
+        $body = Tools::checkBody($body);
+
+        $sql = "INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':team', $this->team);
+        $req->bindParam(':name', $name);
+        $req->bindParam('body', $body);
+        $req->bindParam('userid', $userid);
+
+        return $req->execute();
+    }
+
+    /**
      * Read a template
      *
      * @param int $id

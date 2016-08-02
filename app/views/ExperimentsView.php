@@ -171,7 +171,7 @@ class ExperimentsView extends EntityView
     /**
      * Show an experiment
      *
-     * @param int $item ID of the experiment to show
+     * @param array $item a unique experiment data
      * @return string
      */
     public function showUnique($item)
@@ -180,9 +180,7 @@ class ExperimentsView extends EntityView
         $html .= "<a href='experiments.php?mode=view&id=" . $item['id'] . "'>";
 
         // show attached if there is a file attached
-        // we need an id to look for attachment
-        $this->Experiments->id = $item['id'];
-        if ($this->Experiments->hasAttachment('experiments')) {
+        if ($item['attachment']) {
             $html .= "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
         }
         // we show the abstract of the experiment on mouse hover with the title attribute

@@ -142,9 +142,7 @@ class DatabaseView extends EntityView
         $html .= "<a href='database.php?mode=view&id=" . $item['itemid'] . "'>";
 
         // show attached if there is a file attached
-        // we need an id to look for attachment
-        $this->Database->id = $item['itemid'];
-        if ($this->Database->hasAttachment('items')) {
+        if ($item['attachment']) {
             $html .= "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
         }
         // STARS

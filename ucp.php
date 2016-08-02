@@ -25,7 +25,6 @@ $user = $Users->read($_SESSION['userid']);
 // BEGIN UCP PAGE
 ?>
 <script src="js/tinymce/tinymce.min.js"></script>
-<script src="js/bootstrap/js/tab.js"></script>
 
 <menu>
     <ul>

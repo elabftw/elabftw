@@ -86,6 +86,9 @@ ul, li {
     font-size:120%;
     color: #29AEB9;
 }
+.tip::before, a, a:hover {
+    color: #343434;
+}
 li.inline {
     display: inline;
 }
@@ -108,6 +111,7 @@ input, select, textarea {
 /* GENERAL */
 img {
     vertical-align: -3px;
+    margin-right: 3px;
 }
 
 .inline {
@@ -262,7 +266,8 @@ menu ul li.selected {
 
 .alert-success {
     background-color: #C4F9FF;
-    color: green;
+    color: #36b1c0;
+    border-color: #36b1c0;
 }
 
 .alert-danger {
@@ -299,6 +304,7 @@ menu ul li.selected {
     text-transform: uppercase;
     background-color: #29AEB9;
     margin: 0 5px;
+    letter-spacing: 1px;
 }
 
 .button:hover {
@@ -663,7 +669,7 @@ a[class*='trigger_']:hover {
 
 /* title on editXP */
 #title_input {
-    width:95%;
+    width:100%;
 }
 
 /* elabid */

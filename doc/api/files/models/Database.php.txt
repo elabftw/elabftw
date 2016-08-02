@@ -130,10 +130,11 @@ class Database extends Entity
      */
     public function readAll()
     {
-        $sql = "SELECT DISTINCT items.id AS itemid, items.*, items_types.name, items_types.bgcolor
+        $sql = "SELECT DISTINCT items.id AS itemid, items.*, items_types.name, items_types.bgcolor, uploads.*
         FROM items
         LEFT JOIN items_types ON (items.type = items_types.id)
         LEFT JOIN items_tags ON (items.id = items_tags.item_id)
+        LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads ON (uploads.attachment = items.id AND uploads.type = 'items')
         WHERE items.team = :teamid
         " . $this->bookableFilter . "
         " . $this->categoryFilter . "

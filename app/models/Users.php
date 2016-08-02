@@ -262,6 +262,20 @@ class Users extends Auth
     }
 
     /**
+     * Get email for every single user
+     *
+     * @return array
+     */
+    public function getEmails()
+    {
+        $sql = "SELECT email FROM users WHERE validated = 1";
+        $req = $this->pdo->prepare($sql);
+        $req->execute();
+
+        return $req->fetchAll();
+    }
+
+    /**
      * Update user
      *
      * @param array $params POST

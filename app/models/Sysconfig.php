@@ -18,17 +18,17 @@ use Swift_Message;
  */
 class Sysconfig
 {
-    /** array with config */
-    private $configArr;
+    /** instance of Email */
+    private $Email;
 
     /**
      * Constructor
      *
-     * @param Config $config
+     * @param Email $email
      */
-    public function __construct(Config $config)
+    public function __construct(Email $email)
     {
-        $this->configArr = $config->read();
+        $this->Email = $email;
     }
 
     /**
@@ -48,15 +48,15 @@ class Sysconfig
         // Give the message a subject
         ->setSubject(_('[eLabFTW] Test email'))
         // Set the From address with an associative array
-        ->setFrom(array($this->configArr['mail_from'] => 'eLabFTW'))
+        ->setFrom(array($this->Email->configArr['mail_from'] => 'eLabFTW'))
         // Set the To addresses with an associative array
         ->setTo(array($email => 'Admin eLabFTW'))
         // Give it a body
         ->setBody(_('Congratulations, you correctly configured eLabFTW to send emails :)') . $footer);
         // generate Swift_Mailer instance
-        $mailer = getMailer();
+        $mailer = $this->Email->getMailer();
 
-        return $mailer->send($message);
+        return (bool) $mailer->send($message);
     }
 
     /**
@@ -74,7 +74,7 @@ class Sysconfig
 
         // get all email adresses
         $Users = new Users();
-        $UsersArr = $Users->readAll();
+        $UsersArr = $Users->getEmails();
         $to = array();
         foreach ($UsersArr as $user) {
             $to[] = $user['email'];
@@ -85,14 +85,14 @@ class Sysconfig
         // Give the message a subject
         ->setSubject($subject)
         // Set the From address with an associative array
-        ->setFrom(array($this->configArr['mail_from'] => 'eLabFTW'))
+        ->setFrom(array($this->Email->configArr['mail_from'] => 'eLabFTW'))
         // Set the To addresses with an associative array
         ->setTo($to)
         // Give it a body
         ->setBody($body . $footer);
         // generate Swift_Mailer instance
-        $mailer = getMailer();
+        $mailer = $this->Email->getMailer();
         // SEND EMAIL
-        return $mailer->send($message);
+        return (bool) $mailer->send($message);
     }
 }

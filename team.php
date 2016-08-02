@@ -73,9 +73,9 @@ try {
                 $itemName = $item['name'] . ' - ' . $item['title'];
                 $itemId = $item['itemid'];
             }
-            if (strlen($itemName === 0)) {
-                throw new Exception(_('Nothing to show with this id'));
-            }
+        }
+        if (strlen($itemName) === 0) {
+            throw new Exception(_('Nothing to show with this id'));
         }
         echo "<a href='#' onClick=\"insertParamAndReload('item', '')\">" . _('Change item') . "</a>";
         echo "<h4>" . $itemName . "</h4>";

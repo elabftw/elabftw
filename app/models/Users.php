@@ -266,7 +266,7 @@ class Users extends Auth
      *
      * @return array
      */
-    public function getEmails()
+    public function getAllEmails()
     {
         $sql = "SELECT email FROM users WHERE validated = 1";
         $req = $this->pdo->prepare($sql);

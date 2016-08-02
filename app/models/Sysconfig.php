@@ -64,7 +64,7 @@ class Sysconfig
      *
      * @param string $subject
      * @param string $body
-     * @return bool
+     * @return int number of emails sent
      */
     public function massEmail($subject, $body)
     {
@@ -82,17 +82,12 @@ class Sysconfig
 
         $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
         $message = Swift_Message::newInstance()
-        // Give the message a subject
         ->setSubject($subject)
-        // Set the From address with an associative array
         ->setFrom(array($this->Email->configArr['mail_from'] => 'eLabFTW'))
-        // Set the To addresses with an associative array
         ->setTo($to)
-        // Give it a body
         ->setBody($body . $footer);
-        // generate Swift_Mailer instance
         $mailer = $this->Email->getMailer();
-        // SEND EMAIL
-        return (bool) $mailer->send($message);
+
+        return $mailer->send($message);
     }
 }

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Post install &mdash; elabftw 1.2.4 documentation</title>
+  <title>Post install &mdash; elabftw 1.2.5 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="elabftw 1.2.4 documentation" href="index.html"/>
+    <link rel="top" title="elabftw 1.2.5 documentation" href="index.html"/>
         <link rel="next" title="How to backup" href="backup.html"/>
         <link rel="prev" title="Common errors" href="common-errors.html"/> 
 
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.2.4
+                1.2.5
               </div>
             
           
@@ -162,7 +162,8 @@
 <span id="postinstall"></span><h1>Post install<a class="headerlink" href="#post-install" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="setting-up-email">
 <h2>Setting up email<a class="headerlink" href="#setting-up-email" title="Permalink to this headline">¶</a></h2>
-<p>By default, eLabFTW will try to use the local MTA aka Sendmail. However, it is recommended to use an authenticated SMTP account to avoid the emails going to the spam folders of recipients. That is, unless your MTA is perfectly configured (with DKIM and SPF).</p>
+<p>If there is only one thing to do after an install, it&#8217;s setting up email. Otherwise users will not be able to reset their password!</p>
+<p>If a mail server is present, it will work out of the box. However, it is recommended to use an authenticated SMTP account to avoid the emails going to the spam folders of recipients. That is, unless your mail server is perfectly configured (with DKIM and SPF).</p>
 <p>Go to the Sysadmin panel (<cite>sysconfig.php</cite>) and add the requested infos.</p>
 <p>If you don&#8217;t know what to do, register a new account on <a class="reference external" href="http://www.mailgun.com">Mailgun</a>. This service will give you a free SMTP account that you can use for eLabFTW. :)</p>
 </div>
@@ -234,7 +235,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.2.4',
+            VERSION:'1.2.5',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -223,8 +223,7 @@ class ExperimentsView extends EntityView
     {
         // load tinymce
         $html = "<script src='js/tinymce/tinymce.min.js'></script>";
-        $html .= "<menu class='border'><a href='experiments.php?mode=show'>";
-        $html .= "<img src='img/arrow-left-blue.png' alt='' /> " . _('Back to experiments listing') . "</a></menu>";
+        $html .= $this->backToLink('experiments');
 
         $html .= "<section class='box' id='main_section' style='border-left: 6px solid #" . $this->experiment['color'] . "'>";
         $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"experimentsDestroy(" . $this->Experiments->id . ", '" . _('Delete this?') . "')\" />";
@@ -352,7 +351,7 @@ class ExperimentsView extends EntityView
         if (Tools::checkId($this->experiment['visibility'])) {
             return $this->TeamGroups->readName($this->experiment['visibility']);
         }
-        return $this->experiment['visibility'];
+        return ucfirst($this->experiment['visibility']);
     }
 
     /**
@@ -428,6 +427,7 @@ class ExperimentsView extends EntityView
     private function buildView()
     {
         $html = '';
+        $html .= $this->backToLink('experiments');
 
         if ($this->ro) {
             $message = _('Read-only mode.');
@@ -439,10 +439,10 @@ class ExperimentsView extends EntityView
             "<img src='img/eye.png' alt='eye' />" . $this->getVisibility() . "</span>";
         $html .= "<div><img src='img/calendar.png' title='date' alt='Date :' /> " .
             Tools::formatDate($this->experiment['date']) . "</div>
-        <a href='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a>
-    <a href='app/controllers/ExperimentsController.php?duplicateId=" . $this->experiment['id'] . "'><img src='img/duplicate.png' title='duplicate experiment' alt='duplicate' /></a>
-    <a href='make.php?what=pdf&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a>
-    <a href='make.php?what=zip&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a> ";
+        <a href='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'><img src='img/pen-blue.png' title='Edit' alt='Edit' /></a>
+    <a href='app/controllers/ExperimentsController.php?duplicateId=" . $this->experiment['id'] . "'><img src='img/duplicate.png' title='Duplicate Experiment' alt='Duplicate' /></a>
+    <a href='make.php?what=pdf&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/pdf.png' title='Make a PDF' alt='PDF' /></a>
+    <a href='make.php?what=zip&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/zip.png' title='Make a ZIP Archive' alt='ZIP' /></a> ";
 
         // lock
         $onClick = " onClick=\"toggleLock('experiments', " . $this->experiment['id'] . ")\"";
@@ -462,7 +462,7 @@ class ExperimentsView extends EntityView
         if (!$this->experiment['timestamped']) {
             $onClick = " onClick=\"timestamp(" . $this->experiment['id'] . ", '" . _('Once timestamped an experiment cannot be edited anymore ! Are you sure you want to do this ?') . "')\"";
 
-            $html .= "<img" . $onClick . " src='img/stamp.png' title='timestamp experiment' alt='timestamp' /></a>";
+            $html .= "<img" . $onClick . " src='img/stamp.png' title='Timestamp Experiment' alt='Timestamp' /></a>";
         }
 
         $html .= $this->showTags('experiments', 'view', $this->Experiments->id);

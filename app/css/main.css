@@ -86,6 +86,11 @@ ul, li {
     font-size:120%;
     color: #29AEB9;
 }
+
+.tip::before a, .tip::before a:hover {
+    color: #343434;
+}
+
 li.inline {
     display: inline;
 }
@@ -99,6 +104,16 @@ input, select, textarea {
     border: 1px #e3e3e3 solid;
     margin:5px 0;
 }
+select{
+    -moz-appearance:none;
+    background: #f2f2f2 url("images/ico-arrow.png") no-repeat 93% 56%;
+    padding-right: 31px;
+}
+.form-control{
+    -moz-appearance:none;
+    background: #ffffff url("images/ico-arrow.png") no-repeat 93% 56%;
+    padding-right: 31px;
+}
 
 .form-control:focus{
     border-color:#29AEB9;
@@ -108,6 +123,7 @@ input, select, textarea {
 /* GENERAL */
 img {
     vertical-align: -3px;
+    margin-right: 3px;
 }
 
 .inline {
@@ -134,7 +150,7 @@ img {
 }
 
 hr {
-    margin: 10px 0 10px 0;
+    margin: 10px 0 20px 0;
     color: #dcdddc;
 }
 
@@ -143,6 +159,7 @@ h2 {
     font-weight:normal;
     color: #797979;
     font-size: 30px;
+    margin-top: 0;
 }
 
 h3 {
@@ -155,6 +172,7 @@ h4 {
     font-size: 150%;
     font-weight:normal;
     color: #797979;
+    margin: 0 auto 10px auto;
 }
 
 /* paragraphs */
@@ -181,6 +199,7 @@ label {
 
 #help {
     cursor: pointer;
+    color: #797979;
 }
 
 nav {
@@ -236,7 +255,7 @@ nav a:hover {
 /*  MENU is below main nav */
 menu {
     line-height:200%;
-    margin: 30px 0 40px;
+    margin: 30px 0 20px;
     padding: 0;
 }
 menu ul {
@@ -254,20 +273,35 @@ menu ul li.selected {
     border-bottom:6px #29AEB9 solid;
     padding-bottom:4px;
 }
+/* USER PROFIL */
+.user-nav {
+    text-align: right;
+}
 
 /* ALERT */
 .alert {
     margin-top:20px;
 }
+.alert a, .alert a:hover {
+    color: #343434;
+}
 
 .alert-success {
     background-color: #C4F9FF;
-    color: green;
+    color: #36b1c0;
+    border-color: #36b1c0;
 }
 
 .alert-danger {
+    color: #e6614c;
     background-color: #ffc1b7;
-    border-color: #dd1e00;
+    border-color: #e6614c;
+}
+.alert-danger a.close{
+    color: #e6614c;
+}
+.alert-sucess a.close{
+    color: #36b1c0;
 }
 
 /* BADGE */
@@ -295,10 +329,10 @@ menu ul li.selected {
     text-align: center;
     color: #FFFFFF;
     font-size: 11px;
-    font-weight: bold;
     text-transform: uppercase;
     background-color: #29AEB9;
     margin: 0 5px;
+    letter-spacing: 1px;
 }
 
 .button:hover {
@@ -320,13 +354,22 @@ menu ul li.selected {
     margin: 5px 0 0;
 }
 
-.center input, .center select {
-    text-align:center;
-}
 #loginButtonDiv {
     border-top: 1px solid #e3e3e3;
     padding-top:30px;
     margin: 30px 0 20px 0;
+}
+.login-area{
+    width: 33%;
+    margin: 0 auto;
+    text-align: left;
+}
+.login-area-input{
+    width: 100%;
+    margin: 0 0 15px;
+}
+.login-area label{
+    margin: 0;
 }
 
 /* REGISTER */
@@ -372,7 +415,10 @@ div.txt table, div.txt table td {
 }
 
 table td {
-    padding: 5px;
+    padding: 5px 15px;
+}
+table td input{
+    width: 100%;
 }
 
 table th {
@@ -380,7 +426,7 @@ table th {
     color: #797979;
     text-transform: uppercase;
     font-size: 90%;
-    padding: 5px;
+    padding: 5px 15px;
     text-align:left;
 }
 
@@ -459,6 +505,27 @@ tr:nth-child(odd) {
 
 .box section {
     margin-bottom:15px;
+}
+
+.box label{
+    margin: 0 10px 0 0;
+}
+input[type='checkbox']{
+    position: relative;
+    top: -2px;
+}
+
+.col-md-6 input{
+    width: 95%;
+    margin: 0px 0 15px;
+}
+.col-md-6 label{
+    margin: 0;
+}
+/* NEW Template Settings */
+.new-tpl-box input{
+    width: 100%;
+    margin: 0px 0 15px;
 }
 
 /* on admin.php for items types
@@ -664,7 +731,7 @@ a[class*='trigger_']:hover {
 
 /* title on editXP */
 #title_input {
-    width:95%;
+    width:100%;
 }
 
 /* elabid */
@@ -679,6 +746,7 @@ footer {
     border-top:solid 1px #dcdddc;
     font-size: 11px;
     margin: 60px 0 5px 0;
+    padding: 10px 0 0 0;
 }
 footer div, footer div a, footer p, footer p a {
     color: #797979;
@@ -691,9 +759,13 @@ footer div a:hover {
 .footer_left {
     text-transform:uppercase;
     text-align: left;
+    float: left;
 }
 .footer_right {
     text-align: right;
+    float: right;
+    margin: 0 0 20px 0;
+
 }
 
 .footer_left a {

@@ -27,7 +27,6 @@ $search_type = '';
 ?>
 
 <!-- Search page begin -->
-<menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' alt='' /> <?php echo _('Back to experiments listing'); ?></a></menu>
 <section class='searchform box'>
     <form name="search" method="get" action="search.php">
         <div class='row'>

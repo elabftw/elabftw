@@ -86,24 +86,24 @@ if (!checkCookiesEnabled()) {
 }
 </script>
 
-<menu class='border' style='color:#29AEB9'><?= _('Note: you need cookies enabled to log in.') ?></menu>
+<menu class='border' style='color:#29AEB9'><?= _('Note: You need cookies enabled to log in.') ?></menu>
 <section class='center'>
     <!-- Login form , the id is for an acceptance test -->
     <form method="post" id='login' action="app/login-exec.php" autocomplete="off">
         <h2><?= _('Sign in to your account') ?></h2>
-        <p>
+        <br/>
+        <p class="login-area">
         <label class='block' for="email"><?= _('Email') ?></label>
-        <input name="email" type="email" value='<?php
+        <input class="login-area-input" name="email" type="email" value='<?php
             // put the email in the field if we just registered
             if (isset($_SESSION['email'])) {
                 echo $_SESSION['email'];
             }
             ?>' required /><br>
             <label class='block' for="password"><?= _('Password') ?></label>
-            <input name="password" type="password" required /><br>
+            <input class="login-area-input" name="password" type="password" required /><br>
             <!-- form key -->
             <?= $formKey->getFormkey() ?>
-        <br>
         <input type='checkbox' name='rememberme' id='rememberme' />
         <label for='rememberme'><?= _('Remember me') ?></label>
         </p>

@@ -11,10 +11,6 @@ namespace Elabftw\Elabftw;
 
 use \Exception;
 use \PDO;
-use \Swift_Mailer;
-use \Swift_SmtpTransport;
-use \Swift_MailTransport;
-use \Swift_SendmailTransport;
 use \Defuse\Crypto\Crypto as Crypto;
 use \Defuse\Crypto\Key as Key;
 
@@ -191,44 +187,6 @@ function import_sql_structure()
             $queryline = '';
         }
     }
-}
-
-/*
- * Returns Swift_Mailer instance and chooses between sendmail and smtp
- * @return Swift_Mailer return Swift_Mailer instance
- */
-function getMailer()
-{
-    $Config = new Config();
-    $configArr = $Config->read();
-
-    // Choose mail transport method; either smtp or sendmail
-    switch ($configArr['mail_method']) {
-
-        // Use SMTP Server
-        case 'smtp':
-            $transport = Swift_SmtpTransport::newInstance(
-                $configArr['smtp_address'],
-                $configArr['smtp_port'],
-                $configArr['smtp_encryption']
-            )
-            ->setUsername($configArr['smtp_username'])
-            ->setPassword(Crypto::decrypt($configArr['smtp_password'], Key::loadFromAsciiSafeString(SECRET_KEY)));
-            break;
-
-        // Use php mail function
-        case 'php':
-            $transport = Swift_MailTransport::newInstance();
-            break;
-
-        // Use locally installed MTA (aka sendmail); Default
-        default:
-            $transport = Swift_SendmailTransport::newInstance($configArr['sendmail_path'] . ' -bs');
-            break;
-    }
-
-    $mailer = Swift_Mailer::newInstance($transport);
-    return $mailer;
 }
 
 /**

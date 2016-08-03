@@ -32,7 +32,7 @@
     <img src='img/github.png' alt='github' title='eLabFTW on GitHub'>
     </a>
     <span>
-        <span class='strong'>
+        <span>
 <?php
 if (isset($_SESSION['auth']) && $_SESSION['is_sysadmin']) {
     ?>

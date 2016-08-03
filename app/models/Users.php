@@ -170,7 +170,7 @@ class Users extends Auth
         $req->execute();
         $test = $req->fetch();
 
-        return (int) $test['usernb'] === 0;
+        return $test['usernb'] === '0';
     }
 
     /**
@@ -187,7 +187,7 @@ class Users extends Auth
         $req->execute();
         $test = $req->fetch();
 
-        return $test['usernb'] === 0;
+        return $test['usernb'] === '0';
     }
 
     /**
@@ -256,6 +256,20 @@ class Users extends Auth
         $req = $this->pdo->prepare($sql);
         $req->bindValue(':validated', $validated);
         $req->bindValue(':team', $_SESSION['team_id']);
+        $req->execute();
+
+        return $req->fetchAll();
+    }
+
+    /**
+     * Get email for every single user
+     *
+     * @return array
+     */
+    public function getAllEmails()
+    {
+        $sql = "SELECT email FROM users WHERE validated = 1";
+        $req = $this->pdo->prepare($sql);
         $req->execute();
 
         return $req->fetchAll();

@@ -251,15 +251,9 @@ try {
 
         $tpl_name = filter_var($_POST['new_tpl_name'], FILTER_SANITIZE_STRING);
         $tpl_body = Tools::checkBody($_POST['new_tpl_body']);
-        $sql = "INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)";
-        $req = $pdo->prepare($sql);
-        $result = $req->execute(array(
-            'team' => $_SESSION['team_id'],
-            'name' => $tpl_name,
-            'body' => $tpl_body,
-            'userid' => $_SESSION['userid']
-        ));
-        if (!$result) {
+
+        $Templates = new Templates($_SESSION['team_id']);
+        if (!$Templates->create($tpl_name, $tpl_body, $_SESSION['userid'])) {
             throw new Exception(_('Error updating database'));
         }
         $_SESSION['ok'][] = _('Experiment template successfully added.');

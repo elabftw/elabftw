@@ -24,7 +24,7 @@ try {
         throw new Exception(_('This section is out of your reach.'));
     }
 
-    $page_title = _('eLabFTW configuration');
+    $page_title = _('eLabFTW Configuration');
     $selected_menu = null;
     require_once 'app/head.inc.php';
 
@@ -78,7 +78,7 @@ try {
     <div class='divhandle' id='tab1div'>
         <div id='teamsDiv'>
             <div class='box'>
-                <h3><?= _('Usage statistics') ?></h3>
+                <h3><?= _('Usage Statistics') ?></h3>
                 <p><?= $SysconfigView->TeamsView->showStats() ?></p>
             </div>
             <?php
@@ -98,15 +98,15 @@ try {
             <label for='lang'><?= _('Language') ?></label>
             <select id='lang' name="lang">
     <?php
-    $lang_array = array('en_GB', 'ca_ES', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pt_BR', 'zh_CN');
+    $langsArr = Tools::getLangsArr();
     $current_lang = get_config('lang');
 
-    foreach ($lang_array as $lang) {
+    foreach ($langsArr as $lang => $text) {
         echo "<option ";
         if ($current_lang === $lang) {
             echo ' selected ';
         }
-        echo "value='" . $lang . "'>" . $lang . "</option>";
+        echo "value='" . $lang . "'>" . $text . "</option>";
     }
     ?>
             </select><br>

@@ -81,9 +81,9 @@ class EntityView
             $html .= "<a name='anchor'></a>";
             $html .= "<p class='inline'>" . _('Export this result:') . " </p>";
             $html .= "<a href='make.php?what=zip&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";
-            $html .= " <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>";
+            $html .= " <img src='img/zip.png' title='Make a ZIP Archive' alt='zip' /></a>";
             $html .= "<a href='make.php?what=csv&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";
-            $html .= " <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' /></a></div>";
+            $html .= " <img src='img/spreadsheet.png' title='Export in Spreadsheet File' alt='Export CSV' /></a></div>";
 
             return $html;
     }
@@ -282,6 +282,28 @@ class EntityView
             $html .= "<span class='tag'><a onclick=\"destroyTag('" . $type . "', " . $item . ", " . $tag['id'] . ")\">" . stripslashes($tag['tag']) . "</a></span>";
         }
         $html .= "</span><input type='text' id='createTagInput' placeholder='" . _('Add a tag') . "' /></div>";
+
+        return $html;
+    }
+
+    /**
+     * HTML for back to something link
+     *
+     * @param string $type experiments or database
+     * @return string
+     */
+    protected function backToLink($type)
+    {
+        if ($type === 'experiments') {
+            $text = _('Back to experiments listing');
+        } elseif ($type === 'database') {
+            $text = _('Back to database listing');
+        } else {
+            return false;
+        }
+
+        $html = "<a href='" . $type . ".php?mode=show'>";
+        $html .= "<img src='img/arrow-left-blue.png' alt='' /> " . $text . "</a>";
 
         return $html;
     }

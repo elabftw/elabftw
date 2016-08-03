@@ -16,17 +16,15 @@ class StatusTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue((bool) Tools::checkId($new));
     }
 
-    public function testReadAllAndUpdate()
+    public function testReadAll()
     {
         $all = $this->Status->readAll();
         $this->assertTrue(is_array($all));
-        $last = array_pop($all);
-        $this->assertEquals('fffccc', $this->Status->readColor($last['id']));
     }
 
     public function testUpdate()
     {
-        $this->assertTrue($this->Status->update($this->Status->create('Yep', 'fffaaa'), 'New name', 'aaabbb', 'on'));
-        $this->assertTrue($this->Status->update($this->Status->create('Yep2', 'fffaaa'), 'New name', 'aaabbb', false));
+        $this->assertTrue($this->Status->update($this->Status->create('Yep', 'fffaaa'), 'New name', 'fffccc', 'on'));
+        $this->assertTrue($this->Status->update($this->Status->create('Yep2', 'fffaaa'), 'New name', 'fffccc', false));
     }
 }

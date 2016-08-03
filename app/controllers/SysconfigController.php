@@ -91,7 +91,7 @@ try {
 
     // SEND TEST EMAIL
     if (isset($_POST['testemailSend'])) {
-        $Sysconfig = new Sysconfig(new Config());
+        $Sysconfig = new Sysconfig(new Email(new Config));
         if ($Sysconfig->testemailSend($_POST['testemailEmail'])) {
             echo json_encode(array(
                 'res' => true,
@@ -107,7 +107,7 @@ try {
 
     // SEND MASS EMAIL
     if (isset($_POST['massEmail'])) {
-        $Sysconfig = new Sysconfig(new Config());
+        $Sysconfig = new Sysconfig(new Email(new Config));
         if ($Sysconfig->massEmail($_POST['subject'], $_POST['body'])) {
             echo json_encode(array(
                 'res' => true,

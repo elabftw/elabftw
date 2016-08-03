@@ -27,28 +27,32 @@ class Revisions
     /** id of the item/exp */
     private $id;
 
+    /** our current user */
+    private $userid;
+
     /**
      * Constructor
      *
      * @param string $type
      * @param int $id
+     * @param int $userid
      */
-    public function __construct($type, $id)
+    public function __construct($type, $id, $userid)
     {
         $this->pdo = Db::getConnection();
 
         $this->type = $type;
         $this->id = $id;
+        $this->userid = $userid;
     }
 
     /**
      * Add a revision
      *
      * @param string $body
-     * @param int $userid
      * @return bool
      */
-    public function create($body, $userid)
+    public function create($body)
     {
         if ($this->type === 'experiments') {
             $sql = "INSERT INTO experiments_revisions (item_id, body, userid) VALUES(:item_id, :body, :userid)";
@@ -59,7 +63,7 @@ class Revisions
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':item_id', $this->id);
         $req->bindParam(':body', $body);
-        $req->bindParam(':userid', $userid);
+        $req->bindParam(':userid', $this->userid);
 
         return $req->execute();
     }
@@ -114,7 +118,7 @@ class Revisions
         $sql = "SELECT * FROM " . $this->type . "_revisions WHERE item_id = :item_id AND userid = :userid ORDER BY savedate DESC";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':item_id', $this->id);
-        $req->bindParam(':userid', $_SESSION['userid']);
+        $req->bindParam(':userid', $this->userid);
         $req->execute();
 
         return $req->fetchAll();
@@ -128,12 +132,13 @@ class Revisions
      */
     private function readRev($revId)
     {
-        $sql = "SELECT body, userid FROM " . $this->type . "_revisions WHERE id = :rev_id AND userid = :userid";
+        $sql = "SELECT body FROM " . $this->type . "_revisions WHERE id = :rev_id AND userid = :userid";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':rev_id', $revId, PDO::PARAM_INT);
-        $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
+        $req->bindParam(':rev_id', $revId);
+        $req->bindParam(':userid', $this->userid);
         $req->execute();
-        return $req->fetch();
+
+        return $req->fetchColumn();
     }
 
     /**
@@ -162,23 +167,16 @@ class Revisions
      */
     public function restore($revId)
     {
-        $revId = Tools::checkId($revId);
-        if ($revId === false) {
-            throw new Exception(_('The id parameter is not valid!'));
-        }
         // check for lock
         if ($this->isLocked()) {
             throw new Exception(_('You cannot restore a revision of a locked item!'));
         }
 
-        $revision = $this->readRev($revId);
-        if ($revision['userid'] != $_SESSION['userid']) {
-            throw new Exception(_('This section is out of your reach.'));
-        }
+        $body = $this->readRev($revId);
 
         $sql = "UPDATE " . $this->type . " SET body = :body WHERE id = :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':body', $revision['body']);
+        $req->bindParam(':body', $body);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();

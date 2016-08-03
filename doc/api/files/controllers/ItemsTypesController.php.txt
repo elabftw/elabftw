@@ -17,31 +17,69 @@ use Exception;
  *
  */
 try {
-    require_once '../../inc/common.php';
-    $itemsTypes = new ItemsTypes($_SESSION['team_id']);
+    require_once '../../app/init.inc.php';
+    $ItemsTypes = new ItemsTypes($_SESSION['team_id']);
+
+    if (!$_SESSION['is_admin']) {
+        throw new Exception('Non admin user tried to access admin panel.');
+    }
 
     // CREATE ITEMS TYPES
     if (isset($_POST['itemsTypesCreate'])) {
-        $itemsTypes->create(
-            $_POST['itemsTypesName'],
-            $_POST['itemsTypesColor'],
-            $_POST['itemsTypesTemplate']
-        );
+        if ($ItemsTypes->create(
+            $_POST['name'],
+            $_POST['color'],
+            $_POST['bookable'],
+            $_POST['template']
+        )) {
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
+        } else {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
     }
 
     // UPDATE ITEM TYPE
     if (isset($_POST['itemsTypesUpdate'])) {
-        $itemsTypes->update(
-            $_POST['itemsTypesId'],
-            $_POST['itemsTypesName'],
-            $_POST['itemsTypesColor'],
-            $_POST['itemsTypesTemplate']
-        );
+        if ($ItemsTypes->update(
+            $_POST['id'],
+            $_POST['name'],
+            $_POST['color'],
+            $_POST['bookable'],
+            $_POST['template']
+        )) {
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
+        } else {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
     }
 
     // DESTROY ITEM TYPE
     if (isset($_POST['itemsTypesDestroy'])) {
-        $itemsTypes->destroy($_POST['itemsTypesId']);
+        try {
+            $ItemsTypes->destroy($_POST['id']);
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Item type deleted successfully')
+            ));
+
+        } catch (Exception $e) {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => $e->getMessage()
+            ));
+        }
     }
 
 } catch (Exception $e) {

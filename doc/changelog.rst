@@ -3,6 +3,16 @@
 Changelog
 =========
 
+Version 1.3.0
+-------------
+
+* add a scheduler to allow booking (bookable) items from the database, on Team page (#238)
+
+  Head to the admin panel to create a bookable type of item. You can then book it from the Team page.
+
+* add possibility to send a mass email to all registered users from Sysconfig panel (#271)
+* Chemdoodle: when clicking the Save button on an experiment, the .mol file is automatically uploaded (#174)
+
 Version 1.2.5
 -------------
 

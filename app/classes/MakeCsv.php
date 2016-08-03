@@ -138,7 +138,7 @@ class MakeCsv extends Make
     private function setUrl($id)
     {
         $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
-        $needle = array('make.php', 'app/timestamp.php');
+        $needle = array('make.php', 'app/controllers/ExperimentsController.php');
 
         if ($this->type === 'experiments') {
             $url = str_replace($needle, 'experiments.php', $url);

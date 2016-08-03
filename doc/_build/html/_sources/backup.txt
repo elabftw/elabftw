@@ -10,7 +10,7 @@ This page shows you how to backup an existing elabftw installation. It is import
 There is basically three things to backup :
 
 * the MySQL database
-* your `config.php` file
+* your `config.php` file (unless you're using Docker and you want the `docker-compose.yml` file)
 * the uploaded files (in `uploads/` folder)
 
 Using a script
@@ -43,6 +43,24 @@ Add this line at the bottom::
     00 04 * * * sh /path/to/backup.sh
 
 This will run the script everyday at 4am.
+
+How to backup a Docker installation
+-----------------------------------
+
+* Copy the docker-compose.yml somewhere safe.
+* Copy the `uploads` folder somewhere safe (make a zip or tar archive).
+* Backup the MySQL database:
+
+.. code-block:: bash
+
+    docker exec -it mysql bash -c 'mysqldump -u$MYSQL_USER -p$MYSQL_PASSWORD -r dump.sql $MYSQL_DATABASE'
+    docker cp mysql:dump.sql elabftw-$(date --iso-8601).sql
+    gzip --best elabftw-$(date --iso-8601).sql
+
+
+* A script doing all of the above is available `here <https://gist.github.com/NicolasCARPi/711bdd8b9dca2aaa69457d71583c0fae>`_.
+* Make sure to run it periodically.
+
 
 How to restore a backup
 -----------------------

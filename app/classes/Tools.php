@@ -12,6 +12,7 @@ namespace Elabftw\Elabftw;
 
 use \RecursiveIteratorIterator;
 use \RecursiveDirectoryIterator;
+use Exception;
 
 /**
  * Toolbelt full of useful functions
@@ -260,11 +261,7 @@ class Tools
      */
     public static function error()
     {
-        return sprintf(
-            _("There was an unexpected problem! Please %sopen an issue on GitHub%s if you think this is a bug."),
-            "<a href='https://github.com/elabftw/elabftw/issues/'>",
-            "</a>"
-        );
+        return _("An error occured.");
     }
 
     /**
@@ -313,5 +310,47 @@ class Tools
         shuffle($ftwArr);
 
         return $ftwArr[0];
+    }
+
+    /**
+     * Return a lang to use with fullcalendar from the pref
+     *
+     * @param string $lang 'pt_BR' or 'fr_FR'
+     * @return string
+     */
+    public static function getCalendarLang($lang)
+    {
+        $map = array(
+            'en_GB' => 'en',
+            'ca_ES' => 'ca',
+            'de_DE' => 'de',
+            'es_ES' => 'es',
+            'fr_FR' => 'fr',
+            'it_IT' => 'it',
+            'pt_BR' => 'pt-br',
+            'zh_CN' => 'zh-cn'
+        );
+        return $map[$lang];
+    }
+
+    /**
+     * Get an associative array for the langs to display in a select
+     *
+     * @return array
+     */
+    public static function getLangsArr()
+    {
+        $langs = array(
+            'en_GB' => 'English (UK)',
+            'ca_ES' => 'Spanish (Catalan)',
+            'de_DE' => 'German',
+            'es_ES' => 'Spanish',
+            'fr_FR' => 'French',
+            'it_IT' => 'Italian',
+            'pt_BR' => 'Portuguese (Brazilian)',
+            'zh_CN' => 'Chinese Simplified'
+        );
+
+        return $langs;
     }
 }

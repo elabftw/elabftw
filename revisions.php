@@ -16,18 +16,18 @@ use \Exception;
  * Show history of body of experiment or db item
  *
  */
-require_once 'inc/common.php';
+require_once 'app/init.inc.php';
 $page_title = _('Revisions');
 $selected_menu = null;
 $errflag = false;
-require_once 'inc/head.php';
+require_once 'app/head.inc.php';
 
 
 try {
     if ($_GET['type'] === 'experiments') {
-
         // only experiment owner can change or see revisions
-        if (!is_owned_by_user($_GET['item_id'], 'experiments', $_SESSION['userid'])) {
+        $Experiments = new Experiments($_SESSION['userid'], $_GET['item_id']);
+        if (!$Experiments->isOwnedByUser($Experiments->userid, 'experiments', $Experiments->id)) {
             throw new Exception(_('This section is out of your reach.'));
         }
         $location = 'experiments';
@@ -45,12 +45,16 @@ try {
         throw new Exception('Bad type!');
     }
 
-    $Revisions = new Revisions($_GET['type'], $_GET['item_id']);
+    $Revisions = new Revisions($_GET['type'], $_GET['item_id'], $_SESSION['userid']);
 
     // THE RESTORE ACTION
     if (isset($_GET['action']) && $_GET['action'] === 'restore') {
+        $revId = Tools::checkId($_GET['rev_id']);
+        if ($revId === false) {
+            throw new Exception(_('The id parameter is not valid!'));
+        }
 
-        $Revisions->restore($_GET['rev_id']);
+        $Revisions->restore($revId);
 
         header("Location: " . $location . ".php?mode=view&id=" . $_GET['item_id'] . "");
         exit;
@@ -69,5 +73,5 @@ try {
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
     display_message('ko', $e->getMessage());
 } finally {
-    require_once 'inc/footer.php';
+    require_once 'app/footer.inc.php';
 }

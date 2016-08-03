@@ -16,7 +16,7 @@ use Exception;
 /**
  * All about the experiments links
  */
-class Links
+class Links extends Entity
 {
     /** pdo object */
     protected $pdo;
@@ -49,7 +49,7 @@ class Links
         if ($link === false) {
             throw new Exception('The id parameter is invalid!');
         }
-        if (!is_owned_by_user($this->Experiments->id, 'experiments', $this->Experiments->userid)) {
+        if (!$this->isOwnedByUser($this->Experiments->userid, 'experiments', $this->Experiments->id)) {
             throw new Exception('This section is out of your reach!');
         }
 
@@ -118,7 +118,7 @@ class Links
     public function destroy($link)
     {
         if (!Tools::checkId($link) ||
-            !is_owned_by_user($this->Experiments->id, 'experiments', $this->Experiments->userid)) {
+            !$this->isOwnedByUser($this->Experiments->userid, 'experiments', $this->Experiments->id)) {
             throw new Exception('Error removing link');
         }
         $sql = "DELETE FROM experiments_links WHERE id= :id";

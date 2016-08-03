@@ -17,34 +17,52 @@ use Exception;
  *
  */
 try {
-    require_once '../../inc/common.php';
+    require_once '../../app/init.inc.php';
     $Comments = new Comments(new Experiments($_SESSION['userid']), $_POST['id']);
 
     // CREATE
     if (isset($_POST['commentsCreate'])) {
         $Comments->Experiments->setId($_POST['id']);
         if ($Comments->create($_POST['comment'])) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
     // UPDATE
     if (isset($_POST['commentsUpdateComment'])) {
         if ($Comments->update($_POST['commentsUpdateComment'])) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
     // DESTROY
     if (isset($_POST['commentsDestroy'])) {
         if ($Comments->destroy()) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Comment successfully deleted')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 

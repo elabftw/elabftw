@@ -31,15 +31,16 @@ class DatabaseView extends EntityView
      * Need an ID of an item
      *
      * @param Database $database
+     * @param int $userid
      * @throws Exception
      */
-    public function __construct(Database $database)
+    public function __construct(Database $database, $userid)
     {
         $this->Database = $database;
         $this->limit = $_SESSION['prefs']['limit'];
 
         $this->UploadsView = new UploadsView(new Uploads('items', $this->Database->id));
-        $this->Revisions = new Revisions('items', $this->Database->id);
+        $this->Revisions = new Revisions('items', $this->Database->id, $userid);
     }
 
     /**
@@ -141,9 +142,7 @@ class DatabaseView extends EntityView
         $html .= "<a href='database.php?mode=view&id=" . $item['itemid'] . "'>";
 
         // show attached if there is a file attached
-        // we need an id to look for attachment
-        $this->Database->id = $item['itemid'];
-        if ($this->Database->hasAttachment('items')) {
+        if ($item['attachment']) {
             $html .= "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
         }
         // STARS
@@ -175,23 +174,29 @@ class DatabaseView extends EntityView
     private function buildView()
     {
         $itemArr = $this->Database->read();
+        $html = '';
 
-        $html = "<section class='box'>";
+        $html .= $this->backToLink('database');
+
+        $html .= "<section class='box'>";
         $html .= "<div><img src='img/calendar.png' title='date' alt='Date :' /> ";
         $html .= Tools::formatDate($itemArr['date']) . "</div>";
         $html .= $this->showStars($itemArr['rating']);
         // buttons
-        $html .= "<a href='database.php?mode=edit&id=" . $itemArr['itemid'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a> 
-        <a href='app/controllers/DatabaseController.php?databaseDuplicateId=" . $itemArr['itemid'] . "'><img src='img/duplicate.png' title='duplicate item' alt='duplicate' /></a> 
-        <a href='make.php?what=pdf&id=" . $itemArr['itemid'] . "&type=items'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a> 
-        <a href='make.php?what=zip&id=" . $itemArr['itemid'] . "&type=items'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a>
-        <a href='experiments.php?mode=show&related=".$itemArr['itemid'] . "'><img src='img/link.png' alt='Linked experiments' title='Linked experiments' /></a> ";
+        $html .= "<a class='elab-tooltip' href='database.php?mode=edit&id=" . $itemArr['itemid'] . "'><span>Edit</span><img src='img/pen-blue.png' alt='Edit' /></a> 
+        <a class='elab-tooltip' href='app/controllers/DatabaseController.php?databaseDuplicateId=" . $itemArr['itemid'] . "'><span>Duplicate Item</span><img src='img/duplicate.png' alt='Duplicate' /></a> 
+        <a class='elab-tooltip' href='make.php?what=pdf&id=" . $itemArr['itemid'] . "&type=items'><span>Make a PDF</span><img src='img/pdf.png' alt='PDF' /></a> 
+        <a class='elab-tooltip' href='make.php?what=zip&id=" . $itemArr['itemid'] . "&type=items'><span>Make a ZIP Archive</span><img src='img/zip.png' alt='ZIP' /></a>
+        <a class='elab-tooltip' href='experiments.php?mode=show&related=".$itemArr['itemid'] . "'><span>Linked Experiments</span><img src='img/link.png' alt='Linked Experiments' /></a> ";
         // lock
         if ($itemArr['locked'] == 0) {
-            $html .= "<a href='app/lock.php?id=" . $itemArr['itemid'] . "&type=database'><img src='img/unlock.png' title='lock item' alt='lock' /></a>";
+            $imgSrc = 'unlock.png';
+            $alt = 'Lock item';
         } else { // item is locked
-            $html .= "<a href='app/lock.php?id=" . $itemArr['itemid'] . "&type=database'><img src='img/lock-gray.png' title='unlock item' alt='unlock' /></a>";
+            $imgSrc = 'lock-gray.png';
+            $alt = 'Unlock item';
         }
+        $html .= "<a class='elab-tooltip'><span>" . $alt . "</span><img id='lock' onClick=\"toggleLock('database', " . $itemArr['itemid'] . ")\" src='img/" . $imgSrc . "'alt='" . $alt . "' /></a>";
         // TAGS
         $html .= " " . $this->showTags('items', 'view', $this->Database->id);
 
@@ -225,8 +230,7 @@ class DatabaseView extends EntityView
     {
         $html = '';
         if ($_SESSION['prefs']['chem_editor']) {
-            $html .= "<script src='js/chemdoodle.js'></script>
-            <script src='js/chemdoodle-uis.js'></script>
+            $html .= "<script src='js/chemdoodle/chemdoodle.min.js'></script>
                     <script>
                         ChemDoodle.iChemLabs.useHTTPS();
                     </script>";
@@ -243,10 +247,13 @@ class DatabaseView extends EntityView
     private function buildEdit()
     {
         $itemArr = $this->Database->read();
+        $html = '';
+
 
         // load tinymce
-        $html = "<script src='js/tinymce/tinymce.min.js'></script>";
+        $html .= "<script src='js/tinymce/tinymce.min.js'></script>";
 
+        $html .= $this->backToLink('database');
         // begin page
         $html .= "<section class='box' style='border-left: 6px solid #" . $itemArr['bgcolor'] . "'>";
         $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"databaseDestroy(" . $this->Database->id . ", '" . _('Delete this?') . "')\" />";
@@ -262,7 +269,7 @@ class DatabaseView extends EntityView
         // date
         $html .= "<div class='row'>";
         $html .= "<div class='col-md-4'>";
-        $html .= "<img src='img/calendar.png' class='bot5px' title='date' alt='Date :' />";
+        $html .= "<img src='img/calendar.png' title='date' alt='Date :' />";
         $html .= "<label for='datepicker'>" . _('Date') . "</label>";
         // if one day firefox has support for it: type = date
         $html .= "<input name='date' id='datepicker' size='8' type='text' value='" . $itemArr['date'] . "' />";
@@ -314,22 +321,6 @@ class DatabaseView extends EntityView
         $tags = new Tags('items', $this->Database->id);
 
         $html = "<script>
-        // DELETE TAG
-        function delete_tag(tag_id,item_id){
-            var you_sure = confirm('" . _('Delete this?') . "');
-            if (you_sure == true) {
-                $.post('app/delete.php', {
-                    id:tag_id,
-                    item_id:item_id,
-                    type:'itemtag'
-                })
-                .success(function() {
-                    $('#tags_div').load('database.php?mode=edit&id=' + item_id + ' #tags_div');
-                })
-            }
-            return false;
-        }
-
         // READY ? GO !
         $(document).ready(function() {
             // ADD TAG JS
@@ -354,25 +345,26 @@ class DatabaseView extends EntityView
             tinymce.init({
                 mode : 'specific_textareas',
                 editor_selector : 'mceditable',
-                content_css : 'css/tinymce.css',
+                content_css : 'app/css/tinymce.css',
                 plugins : 'table textcolor searchreplace code fullscreen insertdatetime paste charmap save image link pagebreak mention',
                 pagebreak_separator: '<pagebreak>',
                 toolbar1: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | image link | save',
                 removed_menuitems : 'newdocument',
                 // save button :
                 save_onsavecallback: function() {
-                    $.post('app/quicksave.php', {
+                    $.post('app/controllers/EntityController.php', {
                         id : " . $this->Database->id . ",
                         type : 'items',
-                        // we need this to get the updated content
                         title : document.getElementById('title_input').value,
                         date : document.getElementById('datepicker').value,
+                        // we need this to get the updated content
                         body : tinymce.activeEditor.getContent()
-                    }).success(function(data) {
-                        if (data == 1) {
-                            notif('" . _('Saved') . "', 'ok');
+                    }).done(function(data) {
+                        var json = JSON.parse(data);
+                        if (json.res) {
+                            notif(json.msg, 'ok');
                         } else {
-                            notif('" . _('Something went wrong! :(') . "', 'ko');
+                            notif(json.msg, 'ko');
                         }
                     });
                 },

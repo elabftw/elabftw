@@ -30,7 +30,7 @@ use Exception;
 /* install/index.php to get an installation up and running */
 session_start();
 require_once '../vendor/autoload.php';
-require_once '../inc/functions.php';
+require_once '../app/functions.inc.php';
 $errflag = false;
 ?>
 
@@ -47,7 +47,7 @@ $errflag = false;
 <!-- CSS -->
 <!-- Bootstrap -->
 <link rel="stylesheet" media="all" href="../js/bootstrap/dist/css/bootstrap.min.css">
-<link rel="stylesheet" media="all" href="../css/main.min.css" />
+<link rel="stylesheet" media="all" href="../app/css/main.min.css" />
 <link rel="stylesheet" media="all" href="../js/jquery-ui/themes/smoothness/jquery-ui.min.css" />
 
 <!-- JAVASCRIPT -->

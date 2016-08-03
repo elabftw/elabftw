@@ -80,10 +80,10 @@ class EntityView
             $html = "<div class='align_right'>";
             $html .= "<a name='anchor'></a>";
             $html .= "<p class='inline'>" . _('Export this result:') . " </p>";
-            $html .= "<a href='make.php?what=zip&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";
-            $html .= " <img src='img/zip.png' title='make a zip archive' alt='zip' /></a>";
-            $html .= "<a href='make.php?what=csv&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";
-            $html .= " <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' /></a></div>";
+            $html .= "<a class='elab-tooltip' href='make.php?what=zip&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";
+            $html .= " <span>Make a ZIP Archive</span><img src='img/zip.png' alt='ZIP' /></a>";
+            $html .= "<a class='elab-tooltip' href='make.php?what=csv&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";
+            $html .= " <span>Export in Spreadsheet File</span><img src='img/spreadsheet.png' alt='Export CSV' /></a></div>";
 
             return $html;
     }
@@ -101,8 +101,8 @@ class EntityView
 
         if ($type === 'experiments') {
 
-            $Status = new Status();
-            $categoryArr = $Status->read($_SESSION['team_id']);
+            $Status = new Status($_SESSION['team_id']);
+            $categoryArr = $Status->readAll();
             $createItem .= "<li class='dropdown-item'><a href='app/controllers/ExperimentsController.php?create=true'>";
             $createItem .= ngettext('Experiment', 'Experiments', 1) . "</a></li>";
             $createItem .= "<li role='separator' class='divider'></li>";
@@ -245,12 +245,12 @@ class EntityView
      *
      * @param string $type experiments or items
      * @param string $mode edit or view
-     * @param int $itemId The ID of the item for which we want the tags
+     * @param int $item The ID of the item for which we want the tags
      * @return string Will show the HTML for tags
      */
-    protected function showTags($type, $mode, $itemId)
+    protected function showTags($type, $mode, $item)
     {
-        $Tags = new Tags($type, $itemId);
+        $Tags = new Tags($type, $item);
         $tagList = $Tags->read();
 
         $html = '';
@@ -275,13 +275,35 @@ class EntityView
         }
 
 
-        $html = "<img src='img/tags.png' class='bot5px' alt='tags' /><label for='addtaginput'>" . _('Tags') . "</label>";
+        $html = "<img src='img/tags.png' alt='tags' /><label for='addtaginput'>" . _('Tags') . "</label>";
         $html .= "<div class='tags'><span id='tags_div'>";
 
         foreach ($tagList as $tag) {
-            $html .= "<span class='tag'><a onclick='delete_tag(" . $tag['id'] . "," . $itemId . ")'>" . stripslashes($tag['tag']) . "</a></span>";
+            $html .= "<span class='tag'><a onclick=\"destroyTag('" . $type . "', " . $item . ", " . $tag['id'] . ")\">" . stripslashes($tag['tag']) . "</a></span>";
         }
         $html .= "</span><input type='text' id='createTagInput' placeholder='" . _('Add a tag') . "' /></div>";
+
+        return $html;
+    }
+
+    /**
+     * HTML for back to something link
+     *
+     * @param string $type experiments or database
+     * @return string
+     */
+    protected function backToLink($type)
+    {
+        if ($type === 'experiments') {
+            $text = _('Back to experiments listing');
+        } elseif ($type === 'database') {
+            $text = _('Back to database listing');
+        } else {
+            return false;
+        }
+
+        $html = "<a href='" . $type . ".php?mode=show'>";
+        $html .= "<img src='img/arrow-left-blue.png' alt='' /> " . $text . "</a>";
 
         return $html;
     }

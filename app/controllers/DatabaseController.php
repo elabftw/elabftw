@@ -17,10 +17,10 @@ use \Exception;
  * Database
  *
  */
-require_once '../../inc/common.php';
+require_once '../../app/init.inc.php';
 
 $mode = 'show';
-$id = '1';
+$id = '';
 $redirect = false;
 
 try {
@@ -29,9 +29,10 @@ try {
 
     // CREATE
     if (isset($_GET['databaseCreateId'])) {
-        $id = $Database->create($_GET['databaseCreateId']);
-        $mode = 'edit';
         $redirect = true;
+        // can raise an exception
+        $id = $Database->create($_GET['databaseCreateId'], $_SESSION['userid']);
+        $mode = 'edit';
     }
 
     // UPDATE
@@ -54,7 +55,7 @@ try {
     // DUPLICATE
     if (isset($_GET['databaseDuplicateId'])) {
         $Database->setId($_GET['databaseDuplicateId']);
-        $id = $Database->duplicate();
+        $id = $Database->duplicate($_SESSION['userid']);
         $mode = 'edit';
         $redirect = true;
     }
@@ -63,9 +64,15 @@ try {
     if (isset($_POST['rating'])) {
         $Database->setId($_POST['id']);
         if ($Database->updateRating($_POST['rating'])) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
@@ -73,9 +80,15 @@ try {
     if (isset($_POST['destroy'])) {
         $Database->setId($_POST['id']);
         if ($Database->destroy()) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Item deleted successfully')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 

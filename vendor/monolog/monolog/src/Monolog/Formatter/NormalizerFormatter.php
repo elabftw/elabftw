@@ -131,6 +131,9 @@ class NormalizerFormatter implements FormatterInterface
         foreach ($trace as $frame) {
             if (isset($frame['file'])) {
                 $data['trace'][] = $frame['file'].':'.$frame['line'];
+            } elseif (isset($frame['function']) && $frame['function'] === '{closure}') {
+                // We should again normalize the frames, because it might contain invalid items
+                $data['trace'][] = $frame['function'];
             } else {
                 // We should again normalize the frames, because it might contain invalid items
                 $data['trace'][] = $this->toJson($this->normalize($frame), true);
@@ -185,7 +188,7 @@ class NormalizerFormatter implements FormatterInterface
      * Handle a json_encode failure.
      *
      * If the failure is due to invalid string encoding, try to clean the
-     * input and encode again. If the second encoding iattempt fails, the
+     * input and encode again. If the second encoding attempt fails, the
      * inital error is not encoding related or the input can't be cleaned then
      * raise a descriptive exception.
      *

@@ -38,7 +38,7 @@ class ConstraintViolationList implements \IteratorAggregate, ConstraintViolation
     /**
      * Converts the violation into a string for debugging purposes.
      *
-     * @return string The violation as string.
+     * @return string The violation as string
      */
     public function __toString()
     {
@@ -107,6 +107,8 @@ class ConstraintViolationList implements \IteratorAggregate, ConstraintViolation
 
     /**
      * {@inheritdoc}
+     *
+     * @return \ArrayIterator|ConstraintViolationInterface[]
      */
     public function getIterator()
     {

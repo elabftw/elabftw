@@ -16,10 +16,10 @@ use Exception;
  * Administration of a team
  *
  */
-require_once 'inc/common.php';
+require_once 'app/init.inc.php';
 $page_title = _('Admin panel');
 $selected_menu = null;
-require_once 'inc/head.php';
+require_once 'app/head.inc.php';
 
 try {
     if (!$_SESSION['is_admin']) {
@@ -27,20 +27,22 @@ try {
     }
 
     $formKey = new FormKey();
-    $status = new Status();
-    $statusView = new StatusView();
-    $itemsTypesView = new ItemsTypesView(new ItemsTypes($_SESSION['team_id']));
+
+    $StatusView = new StatusView(new Status($_SESSION['team_id']));
+    $ItemsTypesView = new ItemsTypesView(new ItemsTypes($_SESSION['team_id']));
+    $TeamGroupsView = new TeamGroupsView(new TeamGroups($_SESSION['team_id']));
+
     $templates = new Templates($_SESSION['team_id']);
-    $teamGroups = new TeamGroups();
-    $teamGroupsView = new TeamGroupsView();
     $Auth = new Auth();
     $Users = new Users();
+    $Config = new Config();
+    $Teams = new Teams($_SESSION['team_id']);
 
     // VALIDATE USERS BLOCK
     $unvalidatedUsersArr = $Users->readAll(0);
 
     // only show the frame if there is some users to validate and there is an email config
-    if (count($unvalidatedUsersArr) != 0 && get_config('mail_from') != 'notconfigured@example.com') {
+    if (count($unvalidatedUsersArr) != 0 && $Config->read('mail_from') != 'notconfigured@example.com') {
         $message = _('There are users waiting for validation of their account:');
         $message .= "<form method='post' action='app/controllers/UsersController.php'>";
         $message .= "<input type='hidden' name='usersValidate' value='true' />";
@@ -75,56 +77,62 @@ try {
 
     <!-- TAB 1 TEAM CONFIG -->
     <?php
-    $team = get_team_config();
+    $teamConfigArr = $Teams->read();
     ?>
 
     <div class='divhandle' id='tab1div'>
 
     <h3><?= _('Configure your team') ?></h3>
     <div class='box'>
-        <form method='post' action='app/controllers/ConfigController.php' autocomplete='off'>
+        <form method='post' action='app/controllers/AdminController.php' autocomplete='off'>
             <input type='hidden' value='true' name='teamsUpdateFull' />
             <p>
             <label for='deletable_xp'><?= _('Users can delete experiments:') ?></label>
             <select name='deletable_xp' id='deletable_xp'>
                 <option value='1'<?php
-                    if ($team['deletable_xp']) { echo " selected='selected'"; } ?>
-                        ><?= _('Yes') ?></option>
+                if ($teamConfigArr['deletable_xp']) { echo " selected='selected'"; } ?>
+                ><?= _('Yes') ?></option>
                 <option value='0'<?php
-                        if (!$team['deletable_xp']) { echo " selected='selected'"; } ?>
-                            ><?= _('No') ?></option>
+                if (!$teamConfigArr['deletable_xp']) { echo " selected='selected'"; } ?>
+                ><?= _('No') ?></option>
             </select>
             <span class='smallgray'><?= _('An admin account will always be able to delete experiments.') ?></span>
             </p>
             <p>
             <label for='link_name'><?= _('Name of the link in the top menu:') ?></label>
-            <input type='text' value='<?= $team['link_name'] ?>' name='link_name' id='link_name' />
+            <input type='text' value='<?= $teamConfigArr['link_name'] ?>' name='link_name' id='link_name' />
             </p>
             <p>
             <label for='link_href'><?= _('Address where this link should point:') ?></label>
-            <input type='text' value='<?= $team['link_href'] ?>' name='link_href' id='link_href' />
+            <input type='text' value='<?= $teamConfigArr['link_href'] ?>' name='link_href' id='link_href' />
             </p>
-            <p>
-            <label for='stampprovider'><?= _('URL for external timestamping service:') ?></label>
-            <input type='url' value='<?= $team['stampprovider'] ?>' name='stampprovider' id='stampprovider' />
-            <span class='smallgray'><?= _('This should be the URL used for <a href="https://tools.ietf.org/html/rfc3161">RFC 3161</a>-compliant timestamping requests.') ?></span>
-            </p>
-            <p>
-            <label for='stampcert'><?= _('Chain of certificates of the external timestamping service:') ?></label>
-            <input type='text' placeholder='vendor/pki.dfn.pem' value='<?= $team['stampcert'] ?>' name='stampcert' id='stampcert' />
-            <span class='smallgray'><?= _('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.<br /> Local path relative to eLabFTW installation directory. The file needs to be in <a href="https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail">PEM-encoded (ASCII)</a> format!') ?></span>
-            </p>
-            <label for='stamplogin'><?= _('Login for external timestamping service:') ?></label>
-            <input type='text' value='<?= $team['stamplogin'] ?>' name='stamplogin' id='stamplogin' />
-            <span class='smallgray'><?= _('This should be the login associated with your timestamping service provider') ?></span>
-            </p>
-            <p>
-            <label for='stamppass'><?= _('Password for external timestamping service:') ?></label>
-            <input type='password' name='stamppass' id='stamppass' />
-            <span class='smallgray'><?= _('Your timestamping service provider password') ?></span>
-            </p>
+            <br>
+            <span class='button' onClick='toggleTimestampInputs()'><?= _('Override general timestamping config') ?></span>
+            <br><br>
+            <div class='timestampInputs'>
+                <p>
+                <label for='stampprovider'><?= _('URL for external timestamping service:') ?></label>
+                <input type='url' placeholder='http://zeitstempel.dfn.de/' value='<?= $teamConfigArr['stampprovider'] ?>' name='stampprovider' id='stampprovider' />
+                <span class='smallgray'><?= _('This should be the URL used for <a href="https://tools.ietf.org/html/rfc3161">RFC 3161</a>-compliant timestamping requests.') ?></span>
+                </p>
+                <p>
+                <label for='stampcert'><?= _('Chain of certificates of the external timestamping service:') ?></label>
+                <input type='text' placeholder='vendor/pki.dfn.pem' value='<?= $teamConfigArr['stampcert'] ?>' name='stampcert' id='stampcert' />
+                <span class='smallgray'><?= _('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.<br /> Local path relative to eLabFTW installation directory. The file needs to be in <a href="https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail">PEM-encoded (ASCII)</a> format!') ?></span>
+                </p>
+                <label for='stamplogin'><?= _('Login for external timestamping service:') ?></label>
+                <input type='text' value='<?= $teamConfigArr['stamplogin'] ?>' name='stamplogin' id='stamplogin' />
+                <span class='smallgray'><?= _('This should be the login associated with your timestamping service provider') ?></span>
+                </p>
+                <p>
+                <label for='stamppass'><?= _('Password for external timestamping service:') ?></label>
+                <input type='password' name='stamppass' id='stamppass' />
+                <span class='smallgray'><?= _('Your timestamping service provider password') ?></span>
+                </p>
+            </div>
+
             <div class='submitButtonDiv'>
-                <button type='submit' name='submit_config' class='button'>Save</button>
+                <button type='submit' class='button'>Save</button>
             </div>
         </form>
 
@@ -218,16 +226,16 @@ try {
     <!-- TAB 3 STATUS -->
     <div class='divhandle' id='tab3div'>
         <?php
-        echo $statusView->showCreate();
-        echo $statusView->show($status->read($_SESSION['team_id']), $_SESSION['team_id']);
+        echo $StatusView->showCreate();
+        echo $StatusView->show();
         ?>
     </div>
 
     <!-- TAB 4 ITEMS TYPES-->
     <div class='divhandle' id='tab4div'>
         <?php
-        echo $itemsTypesView->showCreate();
-        echo $itemsTypesView->show();
+        echo $ItemsTypesView->showCreate();
+        echo $ItemsTypesView->show();
         ?>
     </div>
 
@@ -247,7 +255,7 @@ try {
     </div>
 
     <!-- TAB 6 IMPORT CSV -->
-    <?php $itemsTypesArr = $itemsTypesView->itemsTypes->readAll() ?>
+    <?php $itemsTypesArr = $ItemsTypesView->itemsTypes->readAll() ?>
     <div class='divhandle' id='tab6div'>
         <h3><?= _('Import a CSV file') ?></h3>
         <p style='text-align:justify'><?= _("This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file.") ?>
@@ -263,7 +271,7 @@ try {
         ?>
         </select>
         <div class='import_block'>
-            <form enctype="multipart/form-data" action="app/import.php" method="POST">
+            <form enctype="multipart/form-data" action="app/controllers/ImportController.php" method="POST">
             <label for='uploader'><?= _('2. Select a CSV file to import:') ?></label>
                 <input id='uploader' name="file" type="file" accept='.csv' />
                 <input name='type' type='hidden' value='csv' />
@@ -299,7 +307,7 @@ try {
             ?>
             </select><br>
             <div class='import_block'>
-            <form enctype="multipart/form-data" action="app/import.php" method="POST">
+            <form enctype="multipart/form-data" action="app/controllers/ImportController.php" method="POST">
             <label for='uploader'><?= _('2. Select a ZIP file to import:') ?></label>
                 <input id='uploader' name="file" type="file" accept='.elabftw.zip' />
                 <input name='type' type='hidden' value='zip' />
@@ -311,7 +319,7 @@ try {
     </div>
 
     <!-- TAB 8 TEAM GROUPS -->
-    <?php $teamGroupsArr = $teamGroups->read($_SESSION['team_id']); ?>
+    <?php $teamGroupsArr = $TeamGroupsView->TeamGroups->readAll(); ?>
 
     <div class='divhandle' id='tab8div'>
         <h3><?= _('Manage groups of users') ?></h3>
@@ -374,7 +382,7 @@ try {
 
         <!-- SHOW -->
         <h3><?= _('Existing groups') ?></h3>
-        <?= $teamGroupsView->show($teamGroupsArr) ?>
+        <?= $TeamGroupsView->show($teamGroupsArr) ?>
 
         </div>
     </div>
@@ -382,7 +390,11 @@ try {
 
     <script src="js/tinymce/tinymce.min.js"></script>
     <script>
+    function toggleTimestampInputs() {
+        $('.timestampInputs').toggle();
+    }
     $(document).ready(function() {
+        $('.timestampInputs').hide();
         // validate on enter
         $('#create_teamgroup').keypress(function (e) {
             var keynum;
@@ -412,15 +424,17 @@ try {
             update: function(event, ui) {
                 // send the orders as an array
                 var ordering = $(".sortable_status").sortable("toArray");
-                console.log(ordering);
 
-                $.post("app/order.php", {
-                    'ordering_status' : ordering
-                }).success(function(data) {
-                    if (data == 1) {
-                        notif("<?= _('Saved') ?>", "ok");
+                $.post("app/controllers/AdminController.php", {
+                    'updateOrdering': true,
+                    'table': 'status',
+                    'ordering': ordering
+                }).done(function(data) {
+                    var json = JSON.parse(data);
+                    if (json.res) {
+                        notif(json.msg, 'ok');
                     } else {
-                        notif("<?= _('Something went wrong! :(') ?>", "ko");
+                        notif(json.msg, 'ko');
                     }
                 });
             }
@@ -438,13 +452,16 @@ try {
                 // send the orders as an array
                 var ordering = $(".sortable_itemstypes").sortable("toArray");
 
-                $.post("app/order.php", {
-                    'ordering_itemstypes' : ordering
-                }).success(function(data) {
-                    if (data == 1) {
-                        notif("<?= _('Saved') ?>", "ok");
+                $.post("app/controllers/AdminController.php", {
+                    'updateOrdering': true,
+                    'table': 'items_types',
+                    'ordering': ordering
+                }).done(function(data) {
+                    var json = JSON.parse(data);
+                    if (json.res) {
+                        notif(json.msg, 'ok');
                     } else {
-                        notif("<?= _('Something went wrong! :(') ?>", "ko");
+                        notif(json.msg, 'ko');
                     }
                 });
             }
@@ -485,7 +502,7 @@ try {
         tinymce.init({
             mode : "specific_textareas",
             editor_selector : "mceditable",
-            content_css : "css/tinymce.css",
+            content_css : "app/css/tinymce.css",
             plugins : "table textcolor searchreplace code fullscreen insertdatetime paste charmap save image link",
             toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | link",
             removed_menuitems : "newdocument",
@@ -497,5 +514,5 @@ try {
 } catch (Exception $e) {
     display_message('ko', $e->getMessage());
 } finally {
-    require_once 'inc/footer.php';
+    require_once 'app/footer.inc.php';
 }

@@ -58,7 +58,7 @@ install:
   - composer update $composer_parameters
   - composer_parameters="$composer_parameters --no-dev" # Codeception needs dev dependencies, but frameworks don't
   # Yii2
-  - composer create-project yiisoft/yii2-app-basic frameworks-yii-basic
+  - composer create-project "yiisoft/yii2-app-basic:@dev" frameworks-yii-basic
   # Phalcon
   - '[[ "$TRAVIS_PHP_VERSION" == "hhvm" ]] || [[ "$TRAVIS_PHP_VERSION" == "7.0" ]] || git clone -q --depth=1 https://github.com/phalcon/cphalcon.git'
   - '[[ "$TRAVIS_PHP_VERSION" == "hhvm" ]] || [[ "$TRAVIS_PHP_VERSION" == "7.0" ]] || (cd cphalcon/ext; export CFLAGS="-g0 -O0 -std=gnu90"; phpize &> /dev/null && ./configure --silent --enable-phalcon &> /dev/null && make --silent -j2 &> /dev/null && make --silent install && phpenv config-add ../unit-tests/ci/phalcon.ini &> /dev/null && cd ../..;)'
@@ -75,10 +75,10 @@ install:
   - '[[ -z "$SYMFONY" ]] || composer require -d frameworks-symfony symfony/symfony=~$SYMFONY --no-update'
   - '[[ -z "$SYMFONY" ]] || composer update -d frameworks-symfony $composer_parameters'
   # ZF1
-  - git clone -q -b 2.2 --recursive https://github.com/Naktibalda/codeception-zf1-tests frameworks-zf1
+  - git clone -q -b 2.2-simple-file-upload --recursive https://github.com/Naktibalda/codeception-zf1-tests frameworks-zf1
   - composer update -d frameworks-zf1 $composer_parameters
   # ZF2
-  - git clone -q -b 2.2-doctrine2 --recursive https://github.com/Naktibalda/codeception-zf2-tests frameworks-zf2
+  - git clone -q -b 2.2 --recursive https://github.com/Naktibalda/codeception-zf2-tests frameworks-zf2
   - composer update -d frameworks-zf2 $composer_parameters
   # Zend Expressive
   - '[[ "$TRAVIS_PHP_VERSION" == "5.4" ]] || git clone -q -b 2.2 --recursive https://github.com/Naktibalda/codeception-zend-expressive-tests frameworks-zend-expressive'

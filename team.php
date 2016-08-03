@@ -10,33 +10,94 @@
  */
 namespace Elabftw\Elabftw;
 
-use PDO;
+use Exception;
 
 /**
  * The team page
  *
  */
-require_once 'inc/common.php';
+require_once 'app/init.inc.php';
 $page_title = _('Team');
 $selected_menu = 'Team';
-require_once 'inc/head.php';
+require_once 'app/head.inc.php';
 
 $Users = new Users();
-$TeamsView = new TeamsView();
+$TeamsView = new TeamsView(new Teams($_SESSION['team_id']));
+$Database = new Database($_SESSION['team_id']);
+$Scheduler = new Scheduler($_SESSION['team_id']);
 ?>
+
+<script src='js/moment/moment.js'></script>
+<script src='js/fullcalendar/dist/fullcalendar.js'></script>
+<script src='js/fullcalendar/dist/lang-all.js'></script>
+<link rel='stylesheet' media='all' href='js/fullcalendar/dist/fullcalendar.css'>
 
 <menu>
 <ul>
-<li class='tabhandle' id='tab1'><?= _('Members') ?></li>
-<li class='tabhandle' id='tab2'><?= _('Statistics')?></li>
+<li class='tabhandle' id='tab1'><?= _('Scheduler') ?></li>
+<li class='tabhandle' id='tab2'><?= _('Infos') ?></li>
 <li class='tabhandle' id='tab3'><?= _('Tools') ?></li>
-<li class='tabhandle' id='tab4'><?= _('Help') ?></li>
 </ul>
 </menu>
 
-<!-- TAB 1 MEMBERS -->
+<!-- TAB 1 SCHEDULER -->
 <div class='divhandle' id='tab1div'>
-<?php display_message('ok_nocross', sprintf(_('You belong to the %s team.'), get_team_config('team_name'))) ?>
+<?php
+// we only want the bookable type of items
+$Database->bookableFilter = "AND bookable = 1";
+$items = $Database->readAll();
+$dropdown = '';
+if (count($items) === 0) {
+    display_message('warning_nocross', _("No bookable items."));
+} else {
+    $dropdown = "<div class='row'>";
+    $dropdown .= "<div class='col-md-2'>";
+    $dropdown .= "<div class='dropdown'>";
+    $dropdown .= "<button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>";
+    $dropdown .= _('Select an equipment');
+    $dropdown .= " <span class='caret'></span>";
+    $dropdown .= "</button>";
+    $dropdown .= "<ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>";
+    foreach ($items as $item) {
+        $dropdown .= "<li class='dropdown-item'><a data-value='" . $item['title'] . "' href='team.php?item=" . $item['itemid'] . "'><span style='color:#" . $item['bgcolor'] . "'>"
+            . $item['name'] . "</span> - " . $item['title'] . "</a></li>";
+    }
+    $dropdown .= "</ul>";
+    $dropdown .= "</div></div></div>";
+}
+try {
+    if (isset($_GET['item']) && Tools::checkId($_GET['item'])) {
+        $Scheduler->setId($_GET['item']);
+        $itemName = '';
+        foreach ($items as $item) {
+            if ($item['itemid'] == $_GET['item']) {
+                $itemName = $item['name'] . ' - ' . $item['title'];
+                $itemId = $item['itemid'];
+            }
+        }
+        if (strlen($itemName) === 0) {
+            throw new Exception(_('Nothing to show with this id'));
+        }
+        echo "<a href='#' onClick=\"insertParamAndReload('item', '')\">" . _('Change item') . "</a>";
+        echo "<h4>" . $itemName . "</h4>";
+        echo "<div id='scheduler'></div>";
+    } else {
+        echo $dropdown;
+    }
+} catch (Exception $e) {
+    echo display_message('ko_nocross', $e->getMessage());
+}
+?>
+</div>
+<!-- TAB 2 INFOS -->
+<div class='divhandle' id='tab2div'>
+<?php
+display_message('ok_nocross', sprintf(
+    _('You belong to the %s team. %s'),
+    $TeamsView->Teams->read('team_name'),
+    $TeamsView->showStats($_SESSION['team_id'])
+))
+?>
 
 <table id='teamtable' class='table'>
     <tr>
@@ -79,20 +140,15 @@ foreach ($Users->readAll() as $user) {
 }
 ?>
 </table>
-</div>
 
-<!-- TAB 2 STATISTICS -->
-<div class='divhandle' id='tab2div'>
-    <p><?= $TeamsView->showStats($_SESSION['team_id']) ?></p>
 </div>
 
 <!-- TAB 3 TOOLS -->
 <div class='divhandle chemdoodle' id='tab3div'>
     <h3><?php echo _('Molecule drawer'); ?></h3>
     <div class='box'>
-        <link rel="stylesheet" href="css/chemdoodle.css" type="text/css">
-        <script src="js/chemdoodle.js"></script>
-        <script src="js/chemdoodle-uis.js"></script>
+        <link rel="stylesheet" href="app/css/chemdoodle.css" type="text/css">
+        <script src="js/chemdoodle/chemdoodle.min.js"></script>
         <div class='center'>
             <script>
                 var sketcher = new ChemDoodle.SketcherCanvas('sketcher', 550, 300, {oneMolecule:true});
@@ -100,25 +156,6 @@ foreach ($Users->readAll() as $user) {
         </div>
     </div>
 </div>
-
-<!-- TAB 4 HELP -->
-<div class='divhandle' id='tab4div'>
-    <p>
-        <ul>
-        <li class='tip'><?= sprintf(_('There is a manual available %shere%s.'), "<a href='doc/_build/html/manual.html'>", "</a>") ?></li>
-        <li class='tip'><?= _("You can use a TODOlist by pressing 't'.") ?></li>
-        <li class='tip'><?= sprintf(_('You can have experiments templates (%sControl Panel%s).'), "<a href='ucp.php?tab=3'>", "</a>") ?></li>
-        <li class='tip'><?= sprintf(_('The admin of a team can edit the status and the types of items available (%sAdmin Panel%s).'), "<a href='admin.php?tab=4'>", "</a>") ?></li>
-        <li class='tip'><?= _('If you press Ctrl Shift D in the editor, the date will appear under the cursor.') ?></li>
-        <li class='tip'><?= sprintf(_('Custom shortcuts are available (%sControl Panel%s).'), "<a href='ucp.php?tab=1'>", "</a>") ?></li>
-        <li class='tip'><?= _('You can duplicate experiments in one click.') ?></li>
-        <li class='tip'><?= _('Click a tag to list all items with this tag.') ?></li>
-        <li class='tip'><?= _('Only a locked experiment can be timestamped.') ?></li>
-        <li class='tip'><?= _('Once timestamped an experiment cannot be unlocked or modified. Only comments can be added.') ?></li>
-        </ul>
-    </p>
-</div>
-<!-- *********************** -->
 
 <script>
 $(document).ready(function() {
@@ -145,7 +182,100 @@ $(document).ready(function() {
         $(tabhandle).addClass('selected');
     });
     // END TABS
+
+    // SCHEDULER
+	$('#scheduler').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'agendaWeek'
+			},
+            defaultView: 'agendaWeek',
+            // allow selection of range
+			selectable: true,
+            // draw an event while selecting
+			selectHelper: true,
+            editable: true,
+            // i18n
+            lang: '<?= Tools::getCalendarLang($_SESSION['prefs']['lang']) ?>',
+            // allow "more" link when too many events
+			eventLimit: true,
+            // load the events as JSON
+            events: <?= $Scheduler->read() ?>,
+            // first day is monday
+            firstDay: 1,
+            // remove possibility to book whole day, might add it later
+            allDaySlot: false,
+            // day start at 6 am
+            minTime: "06:00:00",
+            eventBackgroundColor: "rgb(41,174,185)",
+            dayClick: function(start) {
+                schedulerCreate(start.format());
+                // because all the rerender methods fail, reload the page
+                // this is because upon creation the event has not all the correct attributes
+                // and trying to manipulate it fails
+                window.location.replace('team.php?tab=1&item=<?= isset($_GET['item']) ? $_GET['item'] : '' ?>');
+            },
+            // selection
+            select: function(start, end) {
+                schedulerCreate(start.format(), end.format());
+                window.location.replace('team.php?tab=1&item=<?= isset($_GET['item']) ? $_GET['item'] : '' ?>');
+            },
+            // delete by clicking it
+            eventClick: function(calEvent) {
+                if (confirm('Delete this event?')) {
+                    $('#scheduler').fullCalendar('removeEvents', calEvent.id);
+                    $.post('app/controllers/SchedulerController.php', {
+                        destroy: true,
+                        id: calEvent.id
+                    }).done(function() {
+                        notif('Deleted', 'ok');
+                    });
+                }
+            },
+            // a drop means we change start date
+            eventDrop: function(calEvent) {
+                $.post('app/controllers/SchedulerController.php', {
+                    updateStart: true,
+                    start: calEvent.start.format(),
+                    id: calEvent.id
+                }).done(function() {
+                    notif('Saved', 'ok');
+                });
+            },
+            // a resize means we change end date
+            eventResize: function(calEvent) {
+                $.post('app/controllers/SchedulerController.php', {
+                    updateEnd: true,
+                    end: calEvent.end.format(),
+                    id: calEvent.id
+                }).done(function() {
+                    notif('Saved', 'ok');
+                });
+            }
+
+		});
 });
+
+function schedulerCreate(start, end = null) {
+    var title = prompt('Comment:');
+    if (title) {
+        // add it to SQL
+        $.post('app/controllers/SchedulerController.php', {
+            create: true,
+            item: <?= isset($itemId) ? $itemId : 1 ?>,
+            start: start,
+            end: end,
+            title: title
+        });
+        // now add it to the calendar
+        eventData = {
+            title: title,
+            start: start,
+        };
+        $('#scheduler').fullCalendar('renderEvent', eventData, true);
+    }
+}
 </script>
 
-<?php require_once('inc/footer.php');
+<?php require_once('app/footer.inc.php');

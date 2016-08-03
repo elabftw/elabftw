@@ -70,6 +70,8 @@ class MakePdf extends Make
         $this->setTags();
         $this->buildContent();
         // create the pdf
+        define("_MPDF_TEMP_PATH", ELAB_ROOT . 'uploads/tmp/');
+        define("_MPDF_TTFONTDATAPATH", ELAB_ROOT . 'uploads/tmp/');
         $mpdf = new \mPDF('utf-8', 'A4');
         // make sure header and footer are not overlapping the body text
         $mpdf->setAutoTopMargin = 'stretch';
@@ -234,11 +236,11 @@ class MakePdf extends Make
     }
 
     /**
-     * Load the contents of css/pdf.min.css and add to the content.
+     * Load the contents of app/css/pdf.min.css and add to the content.
      */
     private function addCss()
     {
-        return file_get_contents(ELAB_ROOT . '/css/pdf.min.css');
+        return file_get_contents(ELAB_ROOT . 'app/css/pdf.min.css');
     }
 
     /**
@@ -324,7 +326,7 @@ class MakePdf extends Make
             $target = 'database.php';
         }
 
-        $url = str_replace(array('make.php', 'app/timestamp.php'), $target, $url);
+        $url = str_replace(array('make.php', 'app/controllers/ExperimentsController.php'), $target, $url);
         $full_url = $url . "?mode=view&id=" . $this->id;
 
         return $full_url;
@@ -381,7 +383,7 @@ class MakePdf extends Make
                 $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
                 for ($i = 0; $i < $row_cnt; $i++) {
 
-                    $item_url = str_replace(array('make.php', 'app/timestamp.php'), 'database.php', $url);
+                    $item_url = str_replace(array('make.php', 'app/controllers/ExperimentsController.php'), 'database.php', $url);
                     $full_item_url = $item_url . "?mode=view&id=" . $links_id_arr[$i];
 
                     $this->content .= "<li>[" . $links_type_arr[$i] . "] - <a href='" . $full_item_url . "'>" . $links_title_arr[$i] . "</a></li>";

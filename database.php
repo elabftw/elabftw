@@ -17,10 +17,10 @@ use \Exception;
  * Entry point for database things
  *
  */
-require_once 'inc/common.php';
+require_once 'app/init.inc.php';
 $page_title = _('Database');
 $selected_menu = 'Database';
-require_once 'inc/head.php';
+require_once 'app/head.inc.php';
 
 // add the chemdoodle stuff if we want it
 echo addChemdoodle();
@@ -28,7 +28,7 @@ echo addChemdoodle();
 try {
 
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
-        $DatabaseView = new DatabaseView(new Database($_SESSION['team_id']));
+        $DatabaseView = new DatabaseView(new Database($_SESSION['team_id']), $_SESSION['userid']);
         $DatabaseView->display = $_SESSION['prefs']['display'];
 
         // CATEGORY FILTER
@@ -77,17 +77,17 @@ try {
     // VIEW
     } elseif ($_GET['mode'] === 'view') {
 
-        $DatabaseView = new DatabaseView(new Database($_SESSION['team_id'], $_GET['id']));
+        $DatabaseView = new DatabaseView(new Database($_SESSION['team_id'], $_GET['id']), $_SESSION['userid']);
         echo $DatabaseView->view();
 
     // EDIT
     } elseif ($_GET['mode'] === 'edit') {
 
-        $DatabaseView = new DatabaseView(new Database($_SESSION['team_id'], $_GET['id']));
+        $DatabaseView = new DatabaseView(new Database($_SESSION['team_id'], $_GET['id']), $_SESSION['userid']);
         echo $DatabaseView->edit();
     }
 } catch (Exception $e) {
     display_message('ko', $e->getMessage());
 } finally {
-    require_once 'inc/footer.php';
+    require_once 'app/footer.inc.php';
 }

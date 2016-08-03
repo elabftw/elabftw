@@ -59,6 +59,35 @@ New features are added very often and they don't break what exists already. Howe
 
 Being able to do backups is yet another advantage over paper (you can't backup paper !).
 
+Who else is using it?
+---------------------
+
+Here are some places running eLabFTW:
+
+* Cardiff University
+* Hannover Medical School
+* Helmholtz Zentrum Berlin für Materialien und Energie GmbH
+* Indian Institute of Science, Bangalore
+* Indian Institute of Technology, Delhi
+* INRIA
+* Institut Curie
+* Karolinska Institutet
+* Kuwait University
+* Max-Planck-Institute of Quantum Optics
+* MRC Laboratory of Molecular Biology
+* Texas Tech University
+* UMC Utrecht
+* University of Alberta
+* University of California
+* University of Chicago
+* University of Helsinki
+* University of North Dakota
+* University of Tennessee
+* University of Warwick
+* Uppsala University
+* Washington University
+* Weizmann Institute
+
 Is the data encrypted?
 ----------------------
 

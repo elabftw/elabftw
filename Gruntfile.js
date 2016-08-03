@@ -16,6 +16,7 @@ module.exports = function(grunt) {
       dist: {
         files: {
           'js/elabftw.min.js': ['js/common.js', 'js/cornify.js', 'js/jquery.rating.js', 'js/keymaster/keymaster.js', 'js/todolist.js', 'js/fancybox/source/jquery.fancybox.pack.js', 'js/colorpicker/jquery.colorpicker.js', 'js/jeditable/jquery.jeditable.js', 'js/jquery.complexify.js/jquery.complexify.js', 'js/jquery.complexify.js/jquery.complexify.banlist.js', 'js/3Dmol-nojquery.js', 'js/3dmol_helpers.js', 'js/dropzone/dist/min/dropzone.min.js'],
+          'js/chemdoodle/chemdoodle.min.js': ['js/chemdoodle/chemdoodle-unpacked.js', 'js/chemdoodle/chemdoodle-uis-unpacked.js']
         }
       }
     },
@@ -26,8 +27,8 @@ module.exports = function(grunt) {
     cssmin: {
       target: {
         files: {
-          'css/main.min.css': ['css/tagcloud.css', 'css/jquery.rating.css', 'css/autocomplete.css', 'js/dropzone/dist/min/dropzone.min.css', 'css/main.css'],
-          'css/pdf.min.css': ['css/pdf.css']
+          'app/css/main.min.css': ['app/css/tagcloud.css', 'app/css/jquery.rating.css', 'app/css/autocomplete.css', 'js/dropzone/dist/min/dropzone.min.css', 'js/fullcalendar/dist/fullcalendar.css', 'app/css/main.css'],
+          'app/css/pdf.min.css': ['app/css/pdf.css']
         }
       }
     },
@@ -38,8 +39,16 @@ module.exports = function(grunt) {
       buildapi: {
         command: 'phpdoc run -d app/classes -d app/models -d app/controllers -d app/views -t doc/api'
       },
+      rununit: {
+        command: 'php vendor/bin/codecept run unit'
+      },
+      // xdebug must be DISABLED
       runtests: {
-        command: '~/.bin/selenium-server.sh; php vendor/bin/codecept --debug run'
+        command: 'php vendor/bin/codecept run --skip functionnal; cp -f config.php.dev config.php'
+      },
+      // xdebug must be ENABLED
+      runcoverage: {
+        command: 'php vendor/bin/codecept run --skip acceptance --skip functionnal --coverage --coverage-html'
       }
     }
   });
@@ -50,8 +59,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-shell');
 
   grunt.registerTask('default', ['uglify', 'cssmin']);
+  grunt.registerTask('css', 'cssmin');
   grunt.registerTask('doc', 'shell:builddoc');
   grunt.registerTask('api', 'shell:buildapi');
   grunt.registerTask('test', 'shell:runtests');
+  grunt.registerTask('unit', 'shell:rununit');
+  grunt.registerTask('cov', 'shell:runcoverage');
 
 };

@@ -1,2 +1,9 @@
 <?php
-// Here you can initialize variables that will be available to your tests
+session_start();
+if (getenv('CIRCLECI')) {
+    require_once 'tests/config-circleci.php';
+} elseif (getenv('USER') == 'scrutinizer') {
+    require_once 'tests/config-scrutinizer.php';
+} else {
+    require_once 'tests/config-home.php';
+}

@@ -15,7 +15,7 @@ use Exception;
 /**
  * All about the teams
  */
-class Logs extends Panel
+class Logs
 {
     /** pdo object */
     protected $pdo;
@@ -56,10 +56,6 @@ class Logs extends Panel
      */
     public function read()
     {
-        if (!$this->isSysAdmin()) {
-            throw new Exception('Only admin can access this!');
-        }
-
         $sql = "SELECT * FROM logs ORDER BY id DESC LIMIT 100";
         $req = $this->pdo->prepare($sql);
         $req->execute();
@@ -74,10 +70,6 @@ class Logs extends Panel
      */
     public function destroy()
     {
-        if (!$this->isSysAdmin()) {
-            throw new Exception('Only admin can access this!');
-        }
-
         $sql = "DELETE FROM logs";
         $req = $this->pdo->prepare($sql);
 

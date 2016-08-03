@@ -16,10 +16,10 @@ use Exception;
  * Form to reset the password
  *
  */
-require_once 'inc/common.php';
+require_once 'app/init.inc.php';
 $page_title = _('Reset password');
 $selected_menu = null;
-require_once 'inc/head.php';
+require_once 'app/head.inc.php';
 
 $Auth = new Auth();
 
@@ -115,5 +115,5 @@ try {
 } catch (Exception $e) {
     display_message('ko', $e->getMessage());
 } finally {
-    require_once 'inc/footer.php';
+    require_once 'app/footer.inc.php';
 }

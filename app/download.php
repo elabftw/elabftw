@@ -29,7 +29,7 @@ use Exception;
 
 // we disable errors to avoid having notice and warning polluting our file
 error_reporting(E_ERROR);
-require_once '../inc/common.php';
+require_once '../app/init.inc.php';
 
 try {
     // Check for LONG_NAME

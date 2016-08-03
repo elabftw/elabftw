@@ -17,10 +17,10 @@ use \Exception;
  * Entry point for all experiment stuff
  *
  */
-require_once 'inc/common.php';
+require_once 'app/init.inc.php';
 $page_title = ngettext('Experiment', 'Experiments', 2);
 $selected_menu = 'Experiments';
-require_once 'inc/head.php';
+require_once 'app/head.inc.php';
 
 // add the chemdoodle stuff if we want it
 echo addChemdoodle();
@@ -89,5 +89,5 @@ try {
 } catch (Exception $e) {
     display_message('ko', $e->getMessage());
 } finally {
-    require_once 'inc/footer.php';
+    require_once 'app/footer.inc.php';
 }

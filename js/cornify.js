@@ -83,7 +83,7 @@ cornify_add = function() {
 			css.id = '__cornify_css';
 			css.type = 'text/css';
 			css.rel = 'stylesheet';
-			css.href = 'css/cornify.css';
+			css.href = 'app/css/cornify.css';
 			css.media = 'screen';
 			head.appendChild(css);
 		}

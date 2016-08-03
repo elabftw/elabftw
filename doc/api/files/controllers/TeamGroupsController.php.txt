@@ -17,11 +17,16 @@ use Exception;
  *
  */
 try {
-    require_once '../../inc/common.php';
-    $TeamGroups = new TeamGroups();
+    require_once '../../app/init.inc.php';
+    $TeamGroups = new TeamGroups($_SESSION['team_id']);
+
+    if (!$_SESSION['is_admin']) {
+        throw new Exception('Non admin user tried to access admin panel.');
+    }
+
     // CREATE TEAM GROUP
     if (isset($_POST['teamGroupCreate'])) {
-        $TeamGroups->create(filter_var($_POST['teamGroupCreate'], FILTER_SANITIZE_STRING), $_SESSION['team_id']);
+        $TeamGroups->create(filter_var($_POST['teamGroupCreate'], FILTER_SANITIZE_STRING));
     }
 
     // EDIT TEAM GROUP NAME FROM JEDITABLE
@@ -29,8 +34,7 @@ try {
         // the output is echoed so it gets back into jeditable input field
         echo $TeamGroups->update(
             filter_var($_POST['teamGroupUpdateName'], FILTER_SANITIZE_STRING),
-            $_POST['id'],
-            $_SESSION['team_id']
+            $_POST['id']
         );
     }
 

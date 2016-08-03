@@ -16,13 +16,10 @@ use Exception;
 /**
  * The kind of items you can have in the database for a team
  */
-class ItemsTypes extends Panel
+class ItemsTypes extends Entity
 {
     /** The PDO object */
-    private $pdo;
-
-    /** our team passed to constructor from session */
-    private $team;
+    protected $pdo;
 
     /**
      * Constructor
@@ -41,26 +38,24 @@ class ItemsTypes extends Panel
      *
      * @param string $name New name
      * @param string $color hexadecimal color code
+     * @param int $bookable
      * @param string $template html for new body
      * @return bool true if sql success
      */
-    public function create($name, $color, $template)
+    public function create($name, $color, $bookable, $template)
     {
-        if (!$this->isAdmin()) {
-            throw new Exception('This section is out of your reach!');
-        }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         if (strlen($name) < 1) {
             $name = 'Unnamed';
         }
 
-        // we remove the # of the hexacode and sanitize string
         $color = filter_var(substr($color, 0, 6), FILTER_SANITIZE_STRING);
         $template = Tools::checkBody($template);
-        $sql = "INSERT INTO items_types(name, bgcolor, template, team) VALUES(:name, :bgcolor, :template, :team)";
+        $sql = "INSERT INTO items_types(name, bgcolor, bookable, template, team) VALUES(:name, :bgcolor, :bookable, :template, :team)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':bgcolor', $color);
+        $req->bindParam(':bookable', $bookable, PDO::PARAM_INT);
         $req->bindParam(':template', $template);
         $req->bindParam(':team', $this->team);
 
@@ -81,6 +76,10 @@ class ItemsTypes extends Panel
         $req->bindParam(':team', $this->team);
         $req->execute();
 
+        if ($req->rowCount() === 0) {
+            throw new Exception(_('Nothing to show with this id'));
+        }
+
         return $req->fetchColumn();
     }
 
@@ -93,7 +92,7 @@ class ItemsTypes extends Panel
     {
         $sql = "SELECT * from items_types WHERE team = :team ORDER BY ordering ASC";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $this->team, \PDO::PARAM_INT);
+        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $req->execute();
 
         return $req->fetchAll();
@@ -105,14 +104,12 @@ class ItemsTypes extends Panel
      * @param int $id The ID of the item type
      * @param string $name name
      * @param string $color hexadecimal color
+     * @param int $bookable
      * @param string $template html for the body
      * @return bool true if sql success
      */
-    public function update($id, $name, $color, $template)
+    public function update($id, $name, $color, $bookable, $template)
     {
-        if (!$this->isAdmin()) {
-            throw new Exception('This section is out of your reach!');
-        }
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $color = filter_var($color, FILTER_SANITIZE_STRING);
         $template = Tools::checkBody($template);
@@ -120,16 +117,33 @@ class ItemsTypes extends Panel
             name = :name,
             team = :team,
             bgcolor = :bgcolor,
+            bookable = :bookable,
             template = :template
             WHERE id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
         $req->bindParam(':bgcolor', $color);
+        $req->bindParam(':bookable', $bookable, PDO::PARAM_INT);
         $req->bindParam(':template', $template);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
 
         return $req->execute();
+    }
+
+    /**
+     * Count all items of this type
+     *
+     * @param int $id of the type
+     * @return int
+     */
+    private function countItems($id)
+    {
+        $sql = "SELECT COUNT(*) FROM items WHERE type = :type";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':type', $id);
+        $req->execute();
+        return (int) $req->fetchColumn();
     }
 
     /**
@@ -140,10 +154,10 @@ class ItemsTypes extends Panel
      */
     public function destroy($id)
     {
-        if (!$this->isAdmin()) {
-            throw new Exception('This section is out of your reach!');
+        // don't allow deletion of an item type with items
+        if ($this->countItems($id) > 0) {
+            throw new Exception(_("Remove all database items with this type before deleting this type."));
         }
-
         $sql = "DELETE FROM items_types WHERE id = :id AND team = :team";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);

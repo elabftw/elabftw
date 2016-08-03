@@ -93,6 +93,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="">How to backup</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#using-a-script">Using a script</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#making-it-automatic-using-cron">Making it automatic using cron</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-backup-a-docker-installation">How to backup a Docker installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-to-restore-a-backup">How to restore a backup</a></li>
 </ul>
 </li>
@@ -104,6 +105,7 @@
 <li class="toctree-l1"><a class="reference internal" href="features.html">Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="manual.html">Manual</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upgrade-to-docker.html">Upgrade a normal install to a Docker install</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Misc</span></p>
 <ul>
@@ -161,7 +163,7 @@
 <p>There is basically three things to backup :</p>
 <ul class="simple">
 <li>the MySQL database</li>
-<li>your <cite>config.php</cite> file</li>
+<li>your <cite>config.php</cite> file (unless you&#8217;re using Docker and you want the <cite>docker-compose.yml</cite> file)</li>
 <li>the uploaded files (in <cite>uploads/</cite> folder)</li>
 </ul>
 <div class="section" id="using-a-script">
@@ -185,6 +187,23 @@ Here is one way to do it. Adapt it to your needs: <a class="reference external" 
 </pre></div>
 </div>
 <p>This will run the script everyday at 4am.</p>
+</div>
+<div class="section" id="how-to-backup-a-docker-installation">
+<h2>How to backup a Docker installation<a class="headerlink" href="#how-to-backup-a-docker-installation" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Copy the docker-compose.yml somewhere safe.</li>
+<li>Copy the <cite>uploads</cite> folder somewhere safe (make a zip or tar archive).</li>
+<li>Backup the MySQL database:</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre>docker <span class="nb">exec</span> -it mysql bash -c <span class="s1">&#39;mysqldump -u$MYSQL_USER -p$MYSQL_PASSWORD -r dump.sql $MYSQL_DATABASE&#39;</span>
+docker cp mysql:dump.sql elabftw-<span class="k">$(</span>date --iso-8601<span class="k">)</span>.sql
+gzip --best elabftw-<span class="k">$(</span>date --iso-8601<span class="k">)</span>.sql
+</pre></div>
+</div>
+<ul class="simple">
+<li>A script doing all of the above is available <a class="reference external" href="https://gist.github.com/NicolasCARPi/711bdd8b9dca2aaa69457d71583c0fae">here</a>.</li>
+<li>Make sure to run it periodically.</li>
+</ul>
 </div>
 <div class="section" id="how-to-restore-a-backup">
 <h2>How to restore a backup<a class="headerlink" href="#how-to-restore-a-backup" title="Permalink to this headline">¶</a></h2>

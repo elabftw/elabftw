@@ -98,6 +98,7 @@
 <li class="toctree-l1"><a class="reference internal" href="features.html">Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="manual.html">Manual</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upgrade-to-docker.html">Upgrade a normal install to a Docker install</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Misc</span></p>
 <ul>
@@ -219,6 +220,7 @@ Several teams can be hosted on the same install. Check out the <a class="referen
 <li class="toctree-l1"><a class="reference internal" href="backup.html">How to backup</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="backup.html#using-a-script">Using a script</a></li>
 <li class="toctree-l2"><a class="reference internal" href="backup.html#making-it-automatic-using-cron">Making it automatic using cron</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backup.html#how-to-backup-a-docker-installation">How to backup a Docker installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="backup.html#how-to-restore-a-backup">How to restore a backup</a></li>
 </ul>
 </li>
@@ -239,6 +241,7 @@ Several teams can be hosted on the same install. Check out the <a class="referen
 <li class="toctree-l2"><a class="reference internal" href="faq.html#what-about-patents-and-intellectual-property">What about patents and intellectual property?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="faq.html#why-use-elabftw">Why use eLabFTW?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="faq.html#is-this-system-stable-can-i-trust-my-data-with-it">Is this system stable? Can I trust my data with it?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#who-else-is-using-it">Who else is using it?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="faq.html#is-the-data-encrypted">Is the data encrypted?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="faq.html#is-elabftw-still-maintained">Is eLabFTW still maintained?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="faq.html#will-i-be-able-to-import-my-plasmids-antibodies-whatever-in-the-database-from-a-excel-file">Will I be able to import my plasmids/antibodies/whatever in the database from a Excel file?</a></li>
@@ -259,33 +262,48 @@ Several teams can be hosted on the same install. Check out the <a class="referen
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="manual.html">Manual</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="manual.html#creating-an-account">1. Creating an account</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manual.html#creating-an-experiment">2. Creating an experiment</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="manual.html#tags">2.1 Tags</a></li>
-<li class="toctree-l3"><a class="reference internal" href="manual.html#date">2.2 Date</a></li>
-<li class="toctree-l3"><a class="reference internal" href="manual.html#visibility">2.3 Visibility</a></li>
-<li class="toctree-l3"><a class="reference internal" href="manual.html#status">2.4 Status</a></li>
-<li class="toctree-l3"><a class="reference internal" href="manual.html#title">2.5 Title</a></li>
-<li class="toctree-l3"><a class="reference internal" href="manual.html#experiment-body">2.6 Experiment (body)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="manual.html#linked-items">2.7 Linked items</a></li>
-<li class="toctree-l3"><a class="reference internal" href="manual.html#attach-a-file">2.8 Attach a file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manual.html#general-overview">General overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="manual.html#the-principles">The principles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="manual.html#creating-an-account">Creating an account</a></li>
+<li class="toctree-l3"><a class="reference internal" href="manual.html#the-sysadmin">The Sysadmin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="manual.html#the-admin">The Admin</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="manual.html#user-groups">User groups</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="manual.html#view-mode-of-experiment">3. View mode of experiment</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="manual.html#edit">3.1 Edit</a></li>
-<li class="toctree-l3"><a class="reference internal" href="manual.html#duplicate">3.2 Duplicate</a></li>
-<li class="toctree-l3"><a class="reference internal" href="manual.html#make-a-pdf">3.3 Make a pdf</a></li>
-<li class="toctree-l3"><a class="reference internal" href="manual.html#make-a-zip-archive">3.4 Make a zip archive</a></li>
-<li class="toctree-l3"><a class="reference internal" href="manual.html#lock">3.5 Lock</a></li>
-<li class="toctree-l3"><a class="reference internal" href="manual.html#timestamp">3.6 Timestamp</a></li>
-<li class="toctree-l3"><a class="reference internal" href="manual.html#elabid">3.8 elabid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="manual.html#comments">3.8 Comments</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="manual.html#database">4. Database</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manual.html#admin-panel">5. Admin Panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manual.html#sysconfig">6. Sysconfig</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manual.html#miscellaneous">7. Miscellaneous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manual.html#experiments">Experiments</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="manual.html#templates">Templates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="manual.html#edit-mode">Edit mode</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="manual.html#tags">Tags</a></li>
+<li class="toctree-l4"><a class="reference internal" href="manual.html#date">Date</a></li>
+<li class="toctree-l4"><a class="reference internal" href="manual.html#visibility">Visibility</a></li>
+<li class="toctree-l4"><a class="reference internal" href="manual.html#status">Status</a></li>
+<li class="toctree-l4"><a class="reference internal" href="manual.html#title">Title</a></li>
+<li class="toctree-l4"><a class="reference internal" href="manual.html#experiment-body">Experiment (body)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="manual.html#linked-items">Linked items</a></li>
+<li class="toctree-l4"><a class="reference internal" href="manual.html#attach-a-file">Attach a file</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="manual.html#view-mode-of-experiment">View mode of experiment</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="manual.html#edit">Edit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="manual.html#duplicate">Duplicate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="manual.html#make-a-pdf">Make a pdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="manual.html#make-a-zip-archive">Make a zip archive</a></li>
+<li class="toctree-l4"><a class="reference internal" href="manual.html#lock">Lock</a></li>
+<li class="toctree-l4"><a class="reference internal" href="manual.html#timestamp">Timestamp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="manual.html#elabid">elabid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="manual.html#comments">Comments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manual.html#database">Database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manual.html#team">Team</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="manual.html#scheduler">Scheduler</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="manual.html#miscellaneous">Miscellaneous</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
@@ -298,6 +316,23 @@ Several teams can be hosted on the same install. Check out the <a class="referen
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#make-a-gif">Make a gif</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="upgrade-to-docker.html">Upgrade a normal install to a Docker install</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="upgrade-to-docker.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upgrade-to-docker.html#preparation">Preparation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="upgrade-to-docker.html#install-docker">Install Docker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="upgrade-to-docker.html#install-docker-compose">Install Docker-compose</a></li>
+<li class="toctree-l3"><a class="reference internal" href="upgrade-to-docker.html#export-current-install">Export current install</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="upgrade-to-docker.html#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="upgrade-to-docker.html#get-the-config-file">Get the config file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="upgrade-to-docker.html#fill-the-config-file">Fill the config file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="upgrade-to-docker.html#about-https-ssl-tls">About HTTPS (SSL/TLS)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="upgrade-to-docker.html#starting-the-containers">Starting the containers</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="toctree-wrapper compound" id="misc">
@@ -305,6 +340,7 @@ Several teams can be hosted on the same install. Check out the <a class="referen
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="thanks.html">Thanks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#version-1-3-0">Version 1.3.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#version-1-2-5">Version 1.2.5</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#version-1-2-4">Version 1.2.4</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#version-1-2-3">Version 1.2.3</a></li>

@@ -20,8 +20,12 @@ final class Db
 {
     /** our connection */
     private $connection = null;
+
     /** store the single instance of the class */
     private static $instance = null;
+
+    /** total number of queries */
+    private $nq = 0;
 
     /**
      * Construct of a singleton is private
@@ -69,6 +73,7 @@ final class Db
      */
     public function prepare($sql)
     {
+        $this->nq++;
         return $this->connection->prepare($sql);
     }
 
@@ -158,6 +163,16 @@ final class Db
             return $req->execute();
         }
         return false;
+    }
+
+    /**
+     * Get number of SQL queries for the page
+     *
+     * @return int
+     */
+    public function getNumberOfQueries()
+    {
+        return $this->nq;
     }
 
     /**

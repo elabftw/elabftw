@@ -203,6 +203,7 @@ CREATE TABLE `items_types` (
   `bgcolor` varchar(6) DEFAULT '000000',
   `template` text,
   `ordering` int(10) unsigned DEFAULT NULL,
+  `bookable` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -338,6 +339,24 @@ CREATE TABLE IF NOT EXISTS `users2team_groups` (
   `groupid` int(10) unsigned NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Table structure for table `team_events`
+--
+
+CREATE TABLE IF NOT EXISTS `team_events` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `team` int(10) UNSIGNED NOT NULL,
+  `item` int(10) UNSIGNED NOT NULL,
+  `start` varchar(255) NOT NULL,
+  `end` varchar(255) DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `userid` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+
 -- ELABFTW
 /* the default item_types */
 INSERT INTO `items_types` (`team`, `id`, `name`, `bgcolor`, `template`) VALUES
@@ -388,4 +407,4 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('stampprovider', 'http://zeitstempel.dfn.de/'),
 ('stampcert', 'vendor/pki.dfn.pem'),
 ('stamphash', 'sha256'),
-('schema', '9');
+('schema', '10');

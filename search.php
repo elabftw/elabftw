@@ -16,10 +16,10 @@ use PDO;
  * The search page
  *
  */
-require_once 'inc/common.php';
+require_once 'app/init.inc.php';
 $page_title = _('Search');
 $selected_menu = 'Search';
-require_once 'inc/head.php';
+require_once 'app/head.inc.php';
 
 // make array of results id
 $results_arr = array();
@@ -27,7 +27,6 @@ $search_type = '';
 ?>
 
 <!-- Search page begin -->
-<menu class='border'><a href='experiments.php?mode=show'><img src='img/arrow-left-blue.png' class='bot5px' alt='' /> <?php echo _('Back to experiments listing'); ?></a></menu>
 <section class='searchform box'>
     <form name="search" method="get" action="search.php">
         <div class='row'>
@@ -543,7 +542,7 @@ if (isset($_GET)) {
             if ($search_type === 'experiments') {
                 $EntityView = new ExperimentsView(new Experiments($_SESSION['userid']));
             } else {
-                $EntityView = new DatabaseView(new Database($_SESSION['team_id']));
+                $EntityView = new DatabaseView(new Database($_SESSION['team_id']), $_SESSION['userid']);
             }
 
             foreach ($results_arr as $id) {
@@ -597,5 +596,4 @@ if (isset($_GET)) {
 });
 </script>
 
-<?php
-require_once('inc/footer.php');
+<?php require_once('app/footer.inc.php');

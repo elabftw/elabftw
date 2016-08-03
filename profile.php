@@ -16,10 +16,10 @@ use Exception;
  * Display profile of current user
  *
  */
-require_once 'inc/common.php';
+require_once 'app/init.inc.php';
 $page_title = _('Profile');
 $selected_menu = null;
-require_once 'inc/head.php';
+require_once 'app/head.inc.php';
 
 try {
     $Experiments = new Experiments($_SESSION['userid']);
@@ -31,7 +31,7 @@ try {
 
     // USER INFOS
     echo "<section class='box'>";
-    echo "<img src='img/user.png' alt='user' class='bot5px' /> <h4 style='display:inline'>" . _('Infos') . "</h4>";
+    echo "<img src='img/user.png' alt='user' /> <h4 style='display:inline'>" . _('Infos') . "</h4>";
     echo "<div class='center'>
         <p>".$user['firstname'] . " " . $user['lastname'] . " (" . $user['email'] . ")</p>
         <p>". $count . " " . _('experiments done since') . " " . date("l jS \of F Y", $user['register_date'])
@@ -39,8 +39,15 @@ try {
     echo "</div>";
     echo "</section>";
 
-    // STATUS CHART
-    require_once 'inc/statistics.php';
+    // STATUS STATS
+    echo "<section class='box'>";
+    if ($count === 0) {
+        echo _('No statistics available yet.'); // fix division by zero
+    } else {
+        $UserStats = new UserStats($_SESSION['team_id'], $_SESSION['userid'], $count);
+        echo $UserStats->show();
+    }
+    echo "</section>";
 
     // TAGCLOUD
     $TagCloud = new TagCloud($_SESSION['userid']);
@@ -50,5 +57,5 @@ try {
     $Logs = new Logs();
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
 } finally {
-    require_once 'inc/footer.php';
+    require_once 'app/footer.inc.php';
 }

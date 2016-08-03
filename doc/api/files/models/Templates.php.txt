@@ -15,13 +15,10 @@ use Exception;
 /**
  * All about the templates
  */
-class Templates
+class Templates extends Entity
 {
     /** pdo object */
-    private $pdo;
-
-    /** our team */
-    private $team;
+    protected $pdo;
 
     /**
      * Give me the team on init
@@ -32,6 +29,28 @@ class Templates
     {
         $this->pdo = Db::getConnection();
         $this->team = $team;
+    }
+
+    /**
+     * Create a template
+     *
+     * @param string $name
+     * @param string $body
+     * @return bool
+     */
+    public function create($name, $body, $userid)
+    {
+        $name = filter_var($name, FILTER_SANITIZE_STRING);
+        $body = Tools::checkBody($body);
+
+        $sql = "INSERT INTO experiments_templates(team, name, body, userid) VALUES(:team, :name, :body, :userid)";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':team', $this->team);
+        $req->bindParam(':name', $name);
+        $req->bindParam('body', $body);
+        $req->bindParam('userid', $userid);
+
+        return $req->execute();
     }
 
     /**
@@ -84,7 +103,7 @@ class Templates
     }
 
     /**
-     * Update the template
+     * Update the common team template from admin.php
      *
      * @param string $body Content of the template
      * @return bool true if sql success
@@ -108,18 +127,15 @@ class Templates
      * Delete template
      *
      * @param int $id ID of the template
+     * @param int $userid
      * @return bool
      */
-    public function destroy($id)
+    public function destroy($id, $userid)
     {
-        if (Tools::checkId($id) === false) {
-            throw new Exception('The id parameter is invalid!');
-        }
-
         $sql = "DELETE FROM experiments_templates WHERE id = :id AND userid = :userid";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);
-        $req->bindParam(':userid', $_SESSION['userid']);
+        $req->bindParam(':userid', $userid);
 
         return $req->execute();
     }

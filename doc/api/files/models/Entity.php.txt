@@ -11,18 +11,21 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use PDO;
 
 /**
  * The mother class of Experiments and Database
  */
 class Entity
 {
+    /** pdo object */
+    protected $pdo;
+
+    /** our team */
+    public $team;
 
     /** id of our entity */
     public $id;
-
-    /** pdo object */
-    protected $pdo;
 
     /** inserted in sql */
     public $categoryFilter = '';
@@ -82,6 +85,48 @@ class Entity
     public function setLimit($num)
     {
         $this->limit = 'LIMIT ' . (int) $num;
+    }
+
+    /**
+     * Check if an experiment/item/whatever is owned by an user
+     *
+     * @param int $userid
+     * @param string $table experiments, experiments_templates, items, etc…
+     * @param int $id id of the item to check
+     * @return bool
+     */
+    public function isOwnedByUser($userid, $table, $id)
+    {
+        $sql = "SELECT userid FROM $table WHERE id = $id";
+        $req = $this->pdo->prepare($sql);
+        $req->execute();
+
+        return $req->fetchColumn() == $userid;
+    }
+
+    /**
+     * Update ordering for status, experiment templates or items types
+     *
+     * @param array $post POST
+     * @return bool
+     */
+    public function updateOrdering($post)
+    {
+        $success = array();
+
+        foreach ($post['ordering'] as $ordering => $id) {
+            $id = explode('_', $id);
+            $id = $id[1];
+            // update the ordering
+            $sql = "UPDATE " . $post['table'] . " SET ordering = :ordering WHERE id = :id AND team = :team";
+            $req = $this->pdo->prepare($sql);
+            $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
+            $req->bindParam(':team', $this->team);
+            $req->bindParam(':id', $id, PDO::PARAM_INT);
+            $success[] = $req->execute();
+        }
+
+        return !in_array(false, $success);
     }
 }
 

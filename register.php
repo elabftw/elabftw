@@ -14,15 +14,15 @@ namespace Elabftw\Elabftw;
  * Create an account
  *
  */
-require_once 'inc/common.php';
+require_once 'app/init.inc.php';
 $page_title = _('Register');
 $selected_menu = null;
-require_once 'inc/head.php';
+require_once 'app/head.inc.php';
 
 // Check if we're logged in
 if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
     display_message('ko', sprintf(_('Please %slogout%s before you register another account.'), "<a style='alert-link' href='app/logout.php'>", "</a>"));
-    require_once 'inc/footer.php';
+    require_once 'app/footer.inc.php';
     exit;
 }
 ?>
@@ -129,4 +129,4 @@ $(document).ready(function() {
     });
 });
 </script>
-<?php require_once 'inc/footer.php';
+<?php require_once 'app/footer.inc.php';

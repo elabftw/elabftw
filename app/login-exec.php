@@ -13,7 +13,7 @@ namespace Elabftw\Elabftw;
 use Exception;
 
 try {
-    require_once '../inc/common.php';
+    require_once '../app/init.inc.php';
 
     // default location for redirect
     $location = '../login.php';

@@ -17,34 +17,65 @@ use Exception;
  *
  */
 try {
-    require_once '../../inc/common.php';
-    $Status = new Status();
+    require_once '../../app/init.inc.php';
+    $Status = new Status($_SESSION['team_id']);
+
+    if (!$_SESSION['is_admin']) {
+        throw new Exception('Non admin user tried to access admin panel.');
+    }
 
     // CREATE STATUS
     if (isset($_POST['statusCreate'])) {
         if ($Status->create(
-            $_POST['statusName'],
-            $_POST['statusColor'],
-            $_SESSION['team_id']
+            $_POST['name'],
+            $_POST['color']
         )) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
     // UPDATE STATUS
     if (isset($_POST['statusUpdate'])) {
         if ($Status->update(
-            $_POST['statusId'],
-            $_POST['statusName'],
-            $_POST['statusColor'],
-            $_POST['statusDefault'],
-            $_SESSION['team_id']
+            $_POST['id'],
+            $_POST['name'],
+            $_POST['color'],
+            $_POST['isDefault']
         )) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
+    }
+
+    // DESTROY STATUS
+    if (isset($_POST['statusDestroy'])) {
+        try {
+            $Status->destroy($_POST['id']);
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Status deleted successfully')
+            ));
+
+        } catch (Exception $e) {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => $e->getMessage()
+            ));
         }
     }
 

@@ -13,4 +13,11 @@ modules:
             capabilities:
                phantomjs.cli.args: ['--ignore-ssl-errors=true']
         - \Helper\Acceptance
-        - Db
+        - Db:
+            dsn: 'mysql:host=localhost;dbname=phpunit'
+            user: 'root'
+            password: ''
+            dump: 'tests/_data/phpunit.sql'
+            populate: true
+            cleanup: true
+            reconnect: true

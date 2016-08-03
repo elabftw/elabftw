@@ -73,7 +73,7 @@ In the example configuration file, there is a /dok folder at the root with a sub
 
 .. code-block:: bash
 
-    mkdir -pvm 777 /dok/{uploads,mysql}
+    mkdir -pvm 700 /dok/{uploads,mysql}
 
 
 Using docker-compose

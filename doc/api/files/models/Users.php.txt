@@ -262,6 +262,20 @@ class Users extends Auth
     }
 
     /**
+     * Get email for every single user
+     *
+     * @return array
+     */
+    public function getEmails()
+    {
+        $sql = "SELECT email FROM users WHERE validated = 1";
+        $req = $this->pdo->prepare($sql);
+        $req->execute();
+
+        return $req->fetchAll();
+    }
+
+    /**
      * Update user
      *
      * @param array $params POST
@@ -273,11 +287,6 @@ class Users extends Auth
         $userid = Tools::checkId($params['userid']);
         if ($userid === false) {
             throw new Exception(_('The id parameter is not valid!'));
-        }
-
-        // permission check
-        if (!isset($_SESSION['is_admin'])) {
-            throw new Exception(_('This section is out of your reach.'));
         }
 
         // Put everything lowercase and first letter uppercase
@@ -386,11 +395,6 @@ class Users extends Auth
         $userid = Tools::checkId($userid);
         if ($userid === false) {
             throw new Exception('The id parameter is not valid!');
-        }
-
-        // permission check
-        if (!isset($_SESSION['is_admin'])) {
-            throw new Exception(_('This section is out of your reach.'));
         }
 
         $sql = "UPDATE users SET validated = 1 WHERE userid = :userid";

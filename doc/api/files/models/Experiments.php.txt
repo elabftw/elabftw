@@ -24,9 +24,6 @@ class Experiments extends Entity
     /** current user */
     public $userid;
 
-    /** our team */
-    public $team;
-
     /** instance of Links */
     public $Links;
 
@@ -45,7 +42,9 @@ class Experiments extends Entity
 
         $this->userid = $userid;
 
-        $this->team = $_SESSION['team_id'];
+        $Users = new Users();
+        $user = $Users->read($this->userid);
+        $this->team = $user['team'];
 
         if (!is_null($id)) {
             $this->setId($id);
@@ -55,22 +54,6 @@ class Experiments extends Entity
         $this->Comments = new Comments($this);
 
     }
-
-    /**
-     * Check if we own the experiment
-     *
-     * @return bool
-     */
-    private function isWritable()
-    {
-        $sql = "SELECT userid FROM experiments WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id);
-        $req->execute();
-
-        return $req->fetchColumn() === $this->userid;
-    }
-
 
     /**
      * Create an experiment
@@ -142,10 +125,11 @@ class Experiments extends Entity
      */
     public function readAll()
     {
-        $sql = "SELECT DISTINCT experiments.*, status.color, status.name
+        $sql = "SELECT DISTINCT experiments.*, status.color, status.name, uploads.*
             FROM experiments
             LEFT JOIN status ON (status.team = experiments.team)
             LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
+            LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
             WHERE experiments.userid = :userid
             AND experiments.status = status.id
             " . $this->categoryFilter . "
@@ -193,7 +177,7 @@ class Experiments extends Entity
      */
     public function update($title, $date, $body)
     {
-        if (!$this->isWritable()) {
+        if (!$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
             throw new Exception(_('This section is out of your reach.'));
         }
 
@@ -215,8 +199,8 @@ class Experiments extends Entity
         $req->bindParam(':id', $this->id);
 
         // add a revision
-        $revisions = new Revisions('experiments', $this->id);
-        if (!$revisions->create($body, $this->userid)) {
+        $Revisions = new Revisions('experiments', $this->id, $this->userid);
+        if (!$Revisions->create($body)) {
             throw new Exception(_('Error inserting revision.'));
         }
 
@@ -254,7 +238,7 @@ class Experiments extends Entity
      */
     public function updateVisibility($visibility)
     {
-        if (!$this->isWritable()) {
+        if (!$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
             throw new Exception(_('This section is out of your reach.'));
         }
 
@@ -275,11 +259,11 @@ class Experiments extends Entity
      * Update the status for an experiment
      *
      * @param int $status Id of the status
-     * @return string 0 on fail and color of new status on success
+     * @return bool
      */
     public function updateStatus($status)
     {
-        if (!$this->isWritable()) {
+        if (!$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
             throw new Exception(_('This section is out of your reach.'));
         }
 
@@ -289,13 +273,7 @@ class Experiments extends Entity
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
-        if ($req->execute()) {
-            // get the color of the status to return and update the css
-            $statusClass = new \Elabftw\Elabftw\Status();
-            return $statusClass->readColor($status);
-        } else {
-            return '0';
-        }
+        return $req->execute();
     }
 
     /**
@@ -311,7 +289,7 @@ class Experiments extends Entity
         // all the others are made not default
         $sql = 'SELECT id FROM status WHERE is_default = true AND team = :team LIMIT 1';
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $_SESSION['team_id']);
+        $req->bindParam(':team', $this->team);
         $req->execute();
         $status = $req->fetchColumn();
 
@@ -320,7 +298,7 @@ class Experiments extends Entity
         if (!$status) {
             $sql = 'SELECT id FROM status WHERE team = :team LIMIT 1';
             $req = $this->pdo->prepare($sql);
-            $req->bindParam(':team', $_SESSION['team_id']);
+            $req->bindParam(':team', $this->team);
             $req->execute();
             $status = $req->fetchColumn();
         }
@@ -356,14 +334,14 @@ class Experiments extends Entity
             VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
         $req = $this->pdo->prepare($sql);
         $req->execute(array(
-            'team' => $_SESSION['team_id'],
+            'team' => $this->team,
             'title' => $title,
             'date' => Tools::kdate(),
             'body' => $experiment['body'],
             'status' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
             'visibility' => $experiment['visibility'],
-            'userid' => $_SESSION['userid']));
+            'userid' => $this->userid));
         $newId = $this->pdo->lastInsertId();
 
         $tags = new Tags('experiments', $this->id);
@@ -381,15 +359,10 @@ class Experiments extends Entity
      */
     public function destroy()
     {
-        if (!$this->isWritable()) {
+        if (!$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
             throw new Exception(_('This section is out of your reach.'));
         }
 
-        if (((get_team_config('deletable_xp') == '0') &&
-            !$_SESSION['is_admin']) ||
-            !is_owned_by_user($this->id, 'experiments', $_SESSION['userid'])) {
-            throw new Exception(_("You don't have the rights to delete this experiment."));
-        }
         // delete the experiment
         $sql = "DELETE FROM experiments WHERE id = :id";
         $req = $this->pdo->prepare($sql);
@@ -430,7 +403,7 @@ class Experiments extends Entity
         $can_lock = (int) $req->fetchColumn(); // can be 0 or 1
 
         // We don't have can_lock, but maybe it's our XP, so we can lock it
-        if ($can_lock === 0 && !$this->isWritable()) {
+        if ($can_lock === 0 && !$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
             throw new Exception(_("You don't have the rights to lock/unlock this."));
         }
 
@@ -438,7 +411,7 @@ class Experiments extends Entity
         $locked = (int) $expArr['locked'];
 
         // if we try to unlock something we didn't lock
-        if ($locked === 1 && ($expArr['lockedby'] != $_SESSION['userid'])) {
+        if ($locked === 1 && ($expArr['lockedby'] != $this->userid)) {
             // Get the first name of the locker to show in error message
             $sql = "SELECT firstname FROM users WHERE userid = :userid";
             $req = $this->pdo->prepare($sql);

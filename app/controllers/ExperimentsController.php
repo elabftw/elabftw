@@ -17,7 +17,7 @@ use Exception;
  * Experiments
  *
  */
-require_once '../../inc/common.php';
+require_once '../../app/init.inc.php';
 
 try {
 
@@ -57,16 +57,41 @@ try {
     // UPDATE STATUS
     if (isset($_POST['updateStatus'])) {
         $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
-        echo $Experiments->updateStatus($_POST['status']);
+        if ($Experiments->updateStatus($_POST['status'])) {
+            // get the color of the status for updating the css
+            $Status = new Status($_SESSION['team_id']);
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved'),
+                'color' => $Status->readColor($_POST['status'])
+            ));
+        } else {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
+    }
+
+    // ADD MOL FILE
+    if (isset($_POST['addMol'])) {
+        $Uploads = new Uploads('experiments', $_POST['item']);
+        echo $Uploads->createFromMol($_POST['mol']);
     }
 
     // UPDATE VISIBILITY
     if (isset($_POST['updateVisibility'])) {
         $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
         if ($Experiments->updateVisibility($_POST['visibility'])) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
@@ -74,9 +99,15 @@ try {
     if (isset($_POST['createLink'])) {
         $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
         if ($Experiments->Links->create($_POST['linkId'])) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 
@@ -84,19 +115,55 @@ try {
     if (isset($_POST['destroyLink'])) {
         $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
         if ($Experiments->Links->destroy($_POST['linkId'])) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Link deleted successfully')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
+    }
+
+    // TIMESTAMP
+    if (isset($_POST['timestamp'])) {
+        try {
+            $ts = new TrustedTimestamps(new Config(), new Teams($_SESSION['team_id']), $_POST['id']);
+            if ($ts->timeStamp()) {
+                echo json_encode(array(
+                    'res' => true
+                ));
+            }
+        } catch (Exception $e) {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => $e->getMessage()
+            ));
+        }
+
     }
 
     // DESTROY
     if (isset($_POST['destroy'])) {
         $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
+        $Teams = new Teams($_SESSION['team_id']);
+        if ((($Teams->read('deletable_xp') == '0') &&
+            !$_SESSION['is_admin']) ||
+            !$Experiments->isOwnedByUser($Experiments->id, 'experiments', $_SESSION['userid'])) {
+            throw new Exception(_("You don't have the rights to delete this experiment."));
+        }
         if ($Experiments->destroy()) {
-            echo '1';
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Experiment successfully deleted')
+            ));
         } else {
-            echo '0';
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
         }
     }
 

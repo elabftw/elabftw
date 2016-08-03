@@ -60,7 +60,7 @@ Contributing to the code
 * if you change a string in gettext _('they look like this'), change it also in a .po file (generally the french one) and generate a .mo file (with poedit)
 * same if you add a string shown to the user, it needs to be gettexted
 * if you make a change to the SQL stucture, you need to put add an update function in `app/classes/Update.php` and also modify `install/elabftw.sql` accordingly
-* instead of adding your functions to `inc/functions.php`, create a proper class
+* instead of adding your functions to `app/functions.inc.php`, create a proper class
 * you can use the constant ELAB_ROOT (which ends with a /) to have a full path
 * comment your code wisely
 * your code must follow `the PSR standards <https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md>`_
@@ -119,6 +119,9 @@ Make a gif
 .. code-block:: bash
 
     $ convert -define registry:temporary-path=/path/tmp -limit memory 2G \*.xwd out.gif
+    # or another way to do it, this will force to write all to disk
+    $ export MAGICK_TMPDIR=/path/to/disk/with/space
+    $ convert -limit memory 0 -limit map 0 \*.xwd out.gif
 
 * generate a palette with ffmpeg:
 

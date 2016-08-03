@@ -25,6 +25,12 @@ use Defuse\Crypto\Key as Key;
  */
 class TrustedTimestamps extends Entity
 {
+    /** array with config */
+    private $configArr;
+
+    /** array with config of the team */
+    private $teamConfigArr;
+
     /** our database connection */
     protected $pdo;
 
@@ -59,10 +65,14 @@ class TrustedTimestamps extends Entity
     /**
      * Give me an experiment id and a db and I make good pdf for you
      *
+     * @param Config $config
      * @param $id The id of the experiment
      */
-    public function __construct($id)
+    public function __construct(Config $config, Teams $teams, $id)
     {
+        $this->configArr = $config->read();
+        $this->teamConfigArr = $teams->read();
+
         $this->pdo = Db::getConnection();
 
         // will be used in sqlUpdate()
@@ -112,10 +122,10 @@ class TrustedTimestamps extends Entity
 
         // if there is a config in the team, use that
         // otherwise use the general config if we can
-        if (strlen(get_team_config('stampprovider')) > 2) {
-            $config = get_team_config();
-        } elseif (get_config('stampshare')) {
-            $config = get_config();
+        if (strlen($this->teamConfigArr['stampprovider']) > 2) {
+            $config = $this->teamConfigArr;
+        } elseif ($this->configArr['stampshare']) {
+            $config = $this->configArr;
         } else {
             throw new Exception(_('Please configure Timestamping in the admin panel.'));
         }
@@ -313,8 +323,8 @@ class TrustedTimestamps extends Entity
             curl_setopt($ch, CURLOPT_USERPWD, $this->stampParams['stamplogin'] . ":" . $this->stampParams['stamppassword']);
         }
         // add proxy if there is one
-        if (strlen(get_config('proxy')) > 0) {
-            curl_setopt($ch, CURLOPT_PROXY, get_config('proxy'));
+        if (strlen($this->configArr['proxy']) > 0) {
+            curl_setopt($ch, CURLOPT_PROXY, $this->configArr['proxy']);
         }
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
@@ -455,7 +465,7 @@ class TrustedTimestamps extends Entity
             throw new Exception("Could not validate the timestamp due to a bug in OpenSSL library. See <a href='https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182'>issue #242</a>. Tried to validate with failsafe method but Java is not installed.");
         }
 
-        chdir("../vendor/dfn-cert/timestampverifier/");
+        chdir("../../vendor/dfn-cert/timestampverifier/");
         $cmd = "./verify.sh " . $this->requestfilePath . " " . $this->responsefilePath;
         $javaRes = $this->runSh($cmd);
         if (stripos($javaRes['retarray'][0], 'matches')) {
@@ -470,9 +480,17 @@ class TrustedTimestamps extends Entity
      */
     private function sqlUpdateExperiment()
     {
-        $sql = "UPDATE experiments SET timestamped = 1, timestampedby = :userid, timestampedwhen = :timestampedwhen, timestamptoken = :longname WHERE id = :id;";
+        $sql = "UPDATE experiments SET
+            locked = 1,
+            lockedby = :userid,
+            lockedwhen = :when,
+            timestamped = 1,
+            timestampedby = :userid,
+            timestampedwhen = :when,
+            timestamptoken = :longname
+            WHERE id = :id;";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':timestampedwhen', $this->responseTime);
+        $req->bindParam(':when', $this->responseTime);
         // the date recorded in the db has to match the creation time of the timestamp token
         $req->bindParam(':longname', $this->responsefilePath);
         $req->bindParam(':userid', $_SESSION['userid']);

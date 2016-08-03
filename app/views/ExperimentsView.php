@@ -441,8 +441,8 @@ class ExperimentsView extends EntityView
             Tools::formatDate($this->experiment['date']) . "</div>
         <a href='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'><img src='img/pen-blue.png' title='Edit' alt='Edit' /></a>
     <a href='app/controllers/ExperimentsController.php?duplicateId=" . $this->experiment['id'] . "'><img src='img/duplicate.png' title='Duplicate Experiment' alt='Duplicate' /></a>
-    <a href='make.php?what=pdf&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/pdf.png' title='Make a PDF' alt='pdf' /></a>
-    <a href='make.php?what=zip&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/zip.png' title='Make a ZIP Archive' alt='zip' /></a> ";
+    <a href='make.php?what=pdf&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/pdf.png' title='Make a PDF' alt='PDF' /></a>
+    <a href='make.php?what=zip&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/zip.png' title='Make a ZIP Archive' alt='ZIP' /></a> ";
 
         // lock
         $onClick = " onClick=\"toggleLock('experiments', " . $this->experiment['id'] . ")\"";

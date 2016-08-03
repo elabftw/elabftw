@@ -281,7 +281,7 @@ echo "</ul>";
         echo "<form action='app/ucp-exec.php' method='post'>";
         echo "<input type='hidden' name='tpl_form' />";
         echo "<input type='hidden' name='tpl_id[]' value='" . $template['id'] . "' />";
-        echo "<input name='tpl_name[]' value='" . stripslashes($template['name']) . "' /><br />";
+        echo "<input name='tpl_name[]' value='" . stripslashes($template['name']) . "' style='width:90%' /><br />";
         echo "<textarea id='" . $template['id'] . "' name='tpl_body[]' class='mceditable' style='height:500px;'>" .
             stripslashes($template['body']) . "</textarea><br />";
         echo "<div class='center'>";

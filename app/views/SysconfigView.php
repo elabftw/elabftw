@@ -74,7 +74,7 @@ class SysconfigView
         }
         $html .= "</ul></div>";
         $html .= "<div class='submitButtonDiv'>";
-        $html .= "<button id='logsDestroyButton' onClick='logsDestroy()' class='button'>" .
+        $html .= "<button id='logsDestroyButton' onClick='logsDestroy()' class='button button-delete'>" .
             ('Clear all logs') . "</button></div></div>";
 
         return $html;

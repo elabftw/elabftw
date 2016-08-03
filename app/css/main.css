@@ -106,6 +106,7 @@ input, select, textarea {
 }
 select{
     -moz-appearance:none;
+    -webkit-appearance:none;
     background: #f2f2f2 url("images/ico-arrow.png") no-repeat 93% 56%;
     padding-right: 31px;
 }
@@ -259,7 +260,7 @@ menu {
     padding: 0;
 }
 menu ul {
-    padding:0 0 2px;
+    padding:0;
     border-bottom: 1px solid #dcdddc;
 }
 menu ul li {
@@ -270,8 +271,8 @@ menu ul li {
     cursor: pointer;
 }
 menu ul li.selected {
-    border-bottom:6px #29AEB9 solid;
-    padding-bottom:4px;
+    border-bottom:5px #29AEB9 solid;
+    padding-bottom:0;
 }
 /* USER PROFIL */
 .user-nav {
@@ -303,6 +304,7 @@ menu ul li.selected {
 .alert-sucess a.close{
     color: #36b1c0;
 }
+
 
 /* BADGE */
 .badge {
@@ -346,6 +348,14 @@ menu ul li.selected {
 .submitButtonDiv {
     margin-top: 30px;
     text-align:center;
+}
+
+.button-delete {
+    background-color: #e6614c;
+}
+
+.button-delete:hover {
+    background-color: #c24f3d;
 }
 
 /* LOGIN.PHP */
@@ -511,7 +521,6 @@ tr:nth-child(odd) {
 }
 input[type='checkbox']{
     position: relative;
-    top: -2px;
 }
 
 .col-md-6 input{
@@ -552,6 +561,16 @@ a[class*='trigger_']:hover {
 }
 .top_right_status img {
     margin: 0 5px 0 25px;
+}
+
+.danger-zone-area{
+    border-color: #e6614c;
+    background-color: #ffc1b7;
+    color: #e6614c;
+    margin: 10px 0 0;
+}
+.danger-zone-area h3, .danger-zone-area h4, .danger-zone-area label{
+    color: #e6614c;
 }
 
 /* EXPERIMENTS/DATABASE - FILTER & ORDER */
@@ -731,6 +750,8 @@ a[class*='trigger_']:hover {
 /* title on editXP */
 #title_input {
     width:100%;
+    margin: 0px 0 15px;
+
 }
 
 /* elabid */

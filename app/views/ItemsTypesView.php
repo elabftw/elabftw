@@ -59,7 +59,7 @@ class ItemsTypesView
     {
         $itemsTypesArr = $this->itemsTypes->readAll();
 
-        $html = "<h3>" . _('Database items types') . "</h3>";
+        $html = "<h3>" . _('Database Items Types') . "</h3>";
         $html .= "<ul class='draggable sortable_itemstypes list-group'>";
 
         foreach ($itemsTypesArr as $itemType) {
@@ -77,7 +77,7 @@ class ItemsTypesView
             $html .= "></li>";
             $html .= "<li><button onClick='itemsTypesShowEditor(" . $itemType['id'] . ")' class='button'>" . _('Edit the template') . "</button></li>";
             $html .= "<li><button onClick='itemsTypesUpdate(" . $itemType['id'] . ")' class='button'>" . _('Save') . "</button></li>";
-            $html .= "<li><button class='button' onClick=\"itemsTypesDestroy(" . $itemType['id'] . ")\">";
+            $html .= "<li><button class='button button-delete' onClick=\"itemsTypesDestroy(" . $itemType['id'] . ")\">";
             $html .= _('Delete') . "</button></li>";
 
             $html .= "</li>";

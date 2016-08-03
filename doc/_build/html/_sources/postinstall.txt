@@ -6,7 +6,9 @@ Post install
 Setting up email
 ----------------
 
-By default, eLabFTW will try to use the local MTA aka Sendmail. However, it is recommended to use an authenticated SMTP account to avoid the emails going to the spam folders of recipients. That is, unless your MTA is perfectly configured (with DKIM and SPF).
+If there is only one thing to do after an install, it's setting up email. Otherwise users will not be able to reset their password!
+
+If a mail server is present, it will work out of the box. However, it is recommended to use an authenticated SMTP account to avoid the emails going to the spam folders of recipients. That is, unless your mail server is perfectly configured (with DKIM and SPF).
 
 Go to the Sysadmin panel (`sysconfig.php`) and add the requested infos.
 

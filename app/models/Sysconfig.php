@@ -74,7 +74,7 @@ class Sysconfig
 
         // get all email adresses
         $Users = new Users();
-        $UsersArr = $Users->getEmails();
+        $UsersArr = $Users->getAllEmails();
         $to = array();
         foreach ($UsersArr as $user) {
             $to[] = $user['email'];

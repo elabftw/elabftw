@@ -58,7 +58,7 @@ foreach ($lang_array as $lang) {
         </section>
         <section class='box'>
 
-            <h3><?php echo _('DISPLAY'); ?></h3>
+            <h3><?php echo _('Display'); ?></h3>
             <hr>
             <p>
             <input id='radio_view_default' type='radio' name='display' value='default' 
@@ -113,7 +113,7 @@ foreach ($lang_array as $lang) {
         </section>
 
         <section class='box'>
-            <h3><?php echo _('KEYBOARD SHORTCUTS'); ?></h3>
+            <h3><?php echo _('Keyboard Shortcuts'); ?></h3>
             <hr>
             <p>
                 <table>
@@ -241,8 +241,9 @@ foreach ($lang_array as $lang) {
 $Templates = new Templates($_SESSION['team_id']);
 $templatesArr = $Templates->readFromUserid($_SESSION['userid']);
 
-echo "<h3>" . _('Experiments templates') . "</h3>";
+
 echo "<div class='box'>";
+echo "<h3>" . _('Experiments templates') . "</h3>";
 echo "<ul class='nav nav-pills' role='tablist'>";
 // tabs titles
 echo "<li class='subtabhandle badge badgetab badgetabactive' id='subtab_1'>" . _('Create new') . "</li>";

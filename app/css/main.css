@@ -159,7 +159,7 @@ h2 {
     font-weight:normal;
     color: #797979;
     font-size: 30px;
-    margin-top: 0px;
+    margin-top: 0;
 }
 
 h3 {
@@ -291,9 +291,6 @@ menu ul li.selected {
     color: #36b1c0;
     border-color: #36b1c0;
 }
-.alert-success a{
-    color: #343434;
-}
 
 .alert-danger {
     color: #e6614c;
@@ -356,9 +353,6 @@ menu ul li.selected {
     display:block;
 }
 
-.center input, .center select {
-    text-align:left;
-}
 #loginButtonDiv {
     border-top: 1px solid #e3e3e3;
     padding-top:30px;
@@ -371,7 +365,7 @@ menu ul li.selected {
 }
 .login-area-input{
     width: 100%;
-    margin: 0px 0 15px;
+    margin: 0 0 15px;
 }
 .login-area label{
     margin: 0;

@@ -3,6 +3,11 @@
 Changelog
 =========
 
+Version 1.2.5
+-------------
+
+* fix bug leading to first user in a new team not having correct permissions (was not admin)
+
 Version 1.2.4
 -------------
 

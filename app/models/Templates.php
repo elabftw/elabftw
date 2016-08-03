@@ -103,7 +103,7 @@ class Templates extends Entity
     }
 
     /**
-     * Update the template
+     * Update the common team template from admin.php
      *
      * @param string $body Content of the template
      * @return bool true if sql success

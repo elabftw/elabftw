@@ -82,33 +82,12 @@ class TeamGroups
     }
 
     /**
-     * Check if user is in a team group
-     *
-     * @param int $userid
-     * @param int $groupid
-     * @return bool
-     */
-    public function isInTeamGroup($userid, $groupid)
-    {
-        $sql = "SELECT DISTINCT userid FROM users2team_groups WHERE groupid = :groupid";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':groupid', $groupid);
-        $req->execute();
-        $authUsersArr = array();
-        while ($authUsers = $req->fetch()) {
-            $authUsersArr[] = $authUsers['userid'];
-        }
-
-        return in_array($userid, $authUsersArr);
-    }
-
-    /**
      * Update the name of the group
      * The request comes from jeditable
      *
      * @param string $name Name of the group
-     * @param string $id Id of the group
-     * @throws Exception if sql fail
+     * @param string $id teamgroup_1
+     * @throws Exception
      * @return string|null $name Name of the group if success
      */
     public function update($name, $id)
@@ -118,16 +97,15 @@ class TeamGroups
             $sql = "UPDATE team_groups SET name = :name WHERE id = :id AND team = :team";
             $req = $this->pdo->prepare($sql);
             $req->bindParam(':name', $name);
-            $req->bindParam(':team', $this->team, \PDO::PARAM_INT);
-            $req->bindParam(':id', $idArr[1], \PDO::PARAM_INT);
+            $req->bindParam(':team', $this->team, PDO::PARAM_INT);
+            $req->bindParam(':id', $idArr[1], PDO::PARAM_INT);
 
             if ($req->execute()) {
                 // the group name is returned so it gets back into jeditable input field
                 return $name;
-            } else {
-                throw new Exception('Cannot update team group!');
             }
         }
+        throw new Exception('Cannot update team group!');
     }
 
     /**
@@ -185,4 +163,26 @@ class TeamGroups
         }
         return true;
     }
+
+    /**
+     * Check if user is in a team group
+     *
+     * @param int $userid
+     * @param int $groupid
+     * @return bool
+     */
+    public function isInTeamGroup($userid, $groupid)
+    {
+        $sql = "SELECT DISTINCT userid FROM users2team_groups WHERE groupid = :groupid";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':groupid', $groupid);
+        $req->execute();
+        $authUsersArr = array();
+        while ($authUsers = $req->fetch()) {
+            $authUsersArr[] = $authUsers['userid'];
+        }
+
+        return in_array($userid, $authUsersArr);
+    }
+
 }

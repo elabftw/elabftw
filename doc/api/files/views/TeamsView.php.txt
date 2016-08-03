@@ -67,7 +67,7 @@ class TeamsView
         $html = "<div class='box'><h3>" . _('Edit existing teams') . "</h3>";
 
         foreach ($teamsArr as $team) {
-            $count = $this->Teams->getStats($team);
+            $count = $this->Teams->getStats($team['team_id']);
             $html .= " <input onKeyPress='teamsUpdateButtonEnable(" . $team['team_id'] . ")' type='text' value='" . $team['team_name'] . "' id='team_" . $team['team_id'] . "' />";
             $html .= " <button disabled id='teamsUpdateButton_" . $team['team_id'] . "' onClick='teamsUpdate(" . $team['team_id'] . ")' class='button'>" . ('Save') . "</button>";
             if ($count['totusers'] == 0) {

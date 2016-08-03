@@ -174,8 +174,11 @@ class DatabaseView extends EntityView
     private function buildView()
     {
         $itemArr = $this->Database->read();
+        $html = '';
 
-        $html = "<section class='box'>";
+        $html .= $this->backToLink('database');
+
+        $html .= "<section class='box'>";
         $html .= "<div><img src='img/calendar.png' title='date' alt='Date :' /> ";
         $html .= Tools::formatDate($itemArr['date']) . "</div>";
         $html .= $this->showStars($itemArr['rating']);
@@ -244,10 +247,13 @@ class DatabaseView extends EntityView
     private function buildEdit()
     {
         $itemArr = $this->Database->read();
+        $html = '';
+
 
         // load tinymce
-        $html = "<script src='js/tinymce/tinymce.min.js'></script>";
+        $html .= "<script src='js/tinymce/tinymce.min.js'></script>";
 
+        $html .= $this->backToLink('database');
         // begin page
         $html .= "<section class='box' style='border-left: 6px solid #" . $itemArr['bgcolor'] . "'>";
         $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"databaseDestroy(" . $this->Database->id . ", '" . _('Delete this?') . "')\" />";

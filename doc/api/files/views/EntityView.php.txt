@@ -285,5 +285,27 @@ class EntityView
 
         return $html;
     }
+
+    /**
+     * HTML for back to something link
+     *
+     * @param string $type experiments or database
+     * @return string
+     */
+    protected function backToLink($type)
+    {
+        if ($type === 'experiments') {
+            $text = _('Back to experiments listing');
+        } elseif ($type === 'database') {
+            $text = _('Back to database listing');
+        } else {
+            return false;
+        }
+
+        $html = "<a href='" . $type . ".php?mode=show'>";
+        $html .= "<img src='img/arrow-left-blue.png' alt='' /> " . $text . "</a>";
+
+        return $html;
+    }
 }
 

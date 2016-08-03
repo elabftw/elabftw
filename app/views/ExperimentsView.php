@@ -223,8 +223,7 @@ class ExperimentsView extends EntityView
     {
         // load tinymce
         $html = "<script src='js/tinymce/tinymce.min.js'></script>";
-        $html .= "<menu class='border'><a href='experiments.php?mode=show'>";
-        $html .= "<img src='img/arrow-left-blue.png' alt='' /> " . _('Back to experiments listing') . "</a></menu>";
+        $html .= $this->backToLink('experiments');
 
         $html .= "<section class='box' id='main_section' style='border-left: 6px solid #" . $this->experiment['color'] . "'>";
         $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"experimentsDestroy(" . $this->Experiments->id . ", '" . _('Delete this?') . "')\" />";
@@ -428,6 +427,7 @@ class ExperimentsView extends EntityView
     private function buildView()
     {
         $html = '';
+        $html .= $this->backToLink('experiments');
 
         if ($this->ro) {
             $message = _('Read-only mode.');

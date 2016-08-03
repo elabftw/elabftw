@@ -125,10 +125,11 @@ class Experiments extends Entity
      */
     public function readAll()
     {
-        $sql = "SELECT DISTINCT experiments.*, status.color, status.name
+        $sql = "SELECT DISTINCT experiments.*, status.color, status.name, uploads.*
             FROM experiments
             LEFT JOIN status ON (status.team = experiments.team)
             LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
+            LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
             WHERE experiments.userid = :userid
             AND experiments.status = status.id
             " . $this->categoryFilter . "

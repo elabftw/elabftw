@@ -142,9 +142,7 @@ class DatabaseView extends EntityView
         $html .= "<a href='database.php?mode=view&id=" . $item['itemid'] . "'>";
 
         // show attached if there is a file attached
-        // we need an id to look for attachment
-        $this->Database->id = $item['itemid'];
-        if ($this->Database->hasAttachment('items')) {
+        if ($item['attachment']) {
             $html .= "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
         }
         // STARS
@@ -176,8 +174,11 @@ class DatabaseView extends EntityView
     private function buildView()
     {
         $itemArr = $this->Database->read();
+        $html = '';
 
-        $html = "<section class='box'>";
+        $html .= $this->backToLink('database');
+
+        $html .= "<section class='box'>";
         $html .= "<div><img src='img/calendar.png' title='date' alt='Date :' /> ";
         $html .= Tools::formatDate($itemArr['date']) . "</div>";
         $html .= $this->showStars($itemArr['rating']);
@@ -246,10 +247,13 @@ class DatabaseView extends EntityView
     private function buildEdit()
     {
         $itemArr = $this->Database->read();
+        $html = '';
+
 
         // load tinymce
-        $html = "<script src='js/tinymce/tinymce.min.js'></script>";
+        $html .= "<script src='js/tinymce/tinymce.min.js'></script>";
 
+        $html .= $this->backToLink('database');
         // begin page
         $html .= "<section class='box' style='border-left: 6px solid #" . $itemArr['bgcolor'] . "'>";
         $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"databaseDestroy(" . $this->Database->id . ", '" . _('Delete this?') . "')\" />";

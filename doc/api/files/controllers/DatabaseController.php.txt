@@ -20,7 +20,7 @@ use \Exception;
 require_once '../../app/init.inc.php';
 
 $mode = 'show';
-$id = '1';
+$id = '';
 $redirect = false;
 
 try {
@@ -29,9 +29,10 @@ try {
 
     // CREATE
     if (isset($_GET['databaseCreateId'])) {
+        $redirect = true;
+        // can raise an exception
         $id = $Database->create($_GET['databaseCreateId'], $_SESSION['userid']);
         $mode = 'edit';
-        $redirect = true;
     }
 
     // UPDATE

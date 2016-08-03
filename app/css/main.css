@@ -87,6 +87,10 @@ ul, li {
     color: #29AEB9;
 }
 
+.tip::before a, .tip::before a:hover {
+    color: #343434;
+}
+
 li.inline {
     display: inline;
 }
@@ -266,6 +270,9 @@ menu ul li.selected {
 /* ALERT */
 .alert {
     margin-top:20px;
+}
+.alert a, .alert a:hover {
+    color: #343434;
 }
 
 .alert-success {

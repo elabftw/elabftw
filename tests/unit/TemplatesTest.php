@@ -23,4 +23,12 @@ class TemplatesTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertTrue(is_array($this->Templates->readFromUserid(1)));
     }
+    public function testUpdate()
+    {
+        $this->assertTrue($this->Templates->update('Plop'));
+    }
+    public function testDestroy()
+    {
+        $this->assertTrue($this->Templates->destroy(1, 1));
+    }
 }

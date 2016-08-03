@@ -98,7 +98,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 <?php
 if (isset($_SESSION['auth'])) {
     ?>
-    <div>
+    <div class="user-nav">
         <?= _('Howdy,') . ' ' ?><a href='profile.php' title='<?= _('Profile') ?>'><?= $_SESSION['firstname'] ?></a><br>
         <a href='ucp.php'><img src='img/settings.png' alt='<?= _('Settings') ?>' title='<?= _('Settings') ?>' /></a> |
         <strong id='help'>?</strong> |

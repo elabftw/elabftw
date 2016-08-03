@@ -57,7 +57,7 @@ foreach ($lang_array as $lang) {
         </section>
         <section class='box'>
 
-            <h3><?php echo _('DISPLAY'); ?></h3>
+            <h3><?php echo _('Display'); ?></h3>
             <hr>
             <p>
             <input id='radio_view_default' type='radio' name='display' value='default' 
@@ -97,12 +97,12 @@ foreach ($lang_array as $lang) {
                 <?php
                 if ($_SESSION['prefs']['sort'] === 'desc') {
                     echo ' selected ';
-                }?>value="desc"><?php echo _('newer first'); ?></option>
+                }?>value="desc"><?php echo _('Newer First'); ?></option>
                 <option
                 <?php
                 if ($_SESSION['prefs']['sort'] === 'asc') {
                     echo ' selected ';
-                }?>value="asc"><?php echo _('older first'); ?></option>
+                }?>value="asc"><?php echo _('Older First'); ?></option>
             </select>
 
             <p style='margin-top:20px;'>
@@ -112,7 +112,7 @@ foreach ($lang_array as $lang) {
         </section>
 
         <section class='box'>
-            <h3><?php echo _('KEYBOARD SHORTCUTS'); ?></h3>
+            <h3><?php echo _('Keyboard Shortcuts'); ?></h3>
             <hr>
             <p>
                 <table>
@@ -183,6 +183,8 @@ foreach ($lang_array as $lang) {
             </div>
         </div>
 
+        <hr><br>
+
         <h4><?php echo _('Modify your identity'); ?></h4>
 
         <div class='row'>
@@ -203,7 +205,7 @@ foreach ($lang_array as $lang) {
             </div>
         </div>
 
-<br>
+        <hr><br>
         <h4><?php echo _('Modify your contact information'); ?></h4>
         <div class='row'>
             <div class='col-md-6'>
@@ -240,11 +242,12 @@ foreach ($lang_array as $lang) {
 $Templates = new Templates($_SESSION['team_id']);
 $templatesArr = $Templates->readFromUserid($_SESSION['userid']);
 
+
+echo "<div class='box new-tpl-box'>";
 echo "<h3>" . _('Experiments templates') . "</h3>";
-echo "<div class='box'>";
 echo "<ul class='nav nav-pills' role='tablist'>";
 // tabs titles
-echo "<li class='subtabhandle badge badgetab badgetabactive' id='subtab_1'>" . _('Create new') . "</li>";
+echo "<li class='subtabhandle badge badgetab badgetabactive' id='subtab_1'>" . _('Create New') . "</li>";
 foreach ($templatesArr as $template) {
     echo "<li class='sortable subtabhandle badge badgetab' id='subtab_" . $template['id'] . "'>" . stripslashes($template['name']) . "</li>";
 }
@@ -252,11 +255,11 @@ echo "</ul>";
 ?>
     <!-- CREATE NEW TPL TAB -->
     <div class='subdivhandle' id='subtab_1div'>
-    <p onClick="$('#import_tpl').toggle()"><img src='img/add.png' title='import template' alt='import' /><?php echo _('Import from file'); ?></p>
+    <p onClick="$('#import_tpl').toggle()"><img src='img/add.png' title='import template' alt='import' /><?php echo _('Import from File'); ?></p>
         <form action='app/ucp-exec.php' method='post'>
             <input type='hidden' name='new_tpl_form' />
             <input type='file' accept='.elabftw.tpl' id='import_tpl'>
-            <input required type='text' name='new_tpl_name' id='new_tpl_name' pattern='.{3,}' placeholder='<?php echo _('Name of the template'); ?>' />
+            <input required type='text' name='new_tpl_name' id='new_tpl_name' pattern='.{3,}' placeholder='<?php echo _('Name of the Template'); ?>' />
             <br>
             <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='mceditable' rows='50' cols='60'></textarea>
             <br>
@@ -278,7 +281,7 @@ echo "</ul>";
         echo "<form action='app/ucp-exec.php' method='post'>";
         echo "<input type='hidden' name='tpl_form' />";
         echo "<input type='hidden' name='tpl_id[]' value='" . $template['id'] . "' />";
-        echo "<input name='tpl_name[]' value='" . stripslashes($template['name']) . "' /><br />";
+        echo "<input name='tpl_name[]' value='" . stripslashes($template['name']) . "' style='width:90%' /><br />";
         echo "<textarea id='" . $template['id'] . "' name='tpl_body[]' class='mceditable' style='height:500px;'>" .
             stripslashes($template['body']) . "</textarea><br />";
         echo "<div class='center'>";

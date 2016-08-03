@@ -24,7 +24,7 @@ try {
         throw new Exception(_('This section is out of your reach.'));
     }
 
-    $page_title = _('eLabFTW configuration');
+    $page_title = _('eLabFTW Configuration');
     $selected_menu = null;
     require_once 'app/head.inc.php';
 
@@ -78,7 +78,7 @@ try {
     <div class='divhandle' id='tab1div'>
         <div id='teamsDiv'>
             <div class='box'>
-                <h3><?= _('Usage statistics') ?></h3>
+                <h3><?= _('Usage Statistics') ?></h3>
                 <p><?= $SysconfigView->TeamsView->showStats() ?></p>
             </div>
             <?php

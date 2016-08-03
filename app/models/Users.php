@@ -170,7 +170,7 @@ class Users extends Auth
         $req->execute();
         $test = $req->fetch();
 
-        return (int) $test['usernb'] === 0;
+        return $test['usernb'] === '0';
     }
 
     /**
@@ -187,7 +187,7 @@ class Users extends Auth
         $req->execute();
         $test = $req->fetch();
 
-        return $test['usernb'] === 0;
+        return $test['usernb'] === '0';
     }
 
     /**

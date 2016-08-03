@@ -304,6 +304,45 @@ menu ul li.selected {
     color: #36b1c0;
 }
 
+/* TOOLTIP */
+
+a.elab-tooltip {outline:none; }
+a.elab-tooltip:hover {text-decoration:none;} 
+a.elab-tooltip span {
+    z-index:10;
+    display:none; 
+    padding:5px 10px;
+    margin:25px auto 0;
+    width:auto; 
+    line-height:16px;
+    font-weight: normal;
+    border-radius:2px;        
+    box-shadow: 1px 1px 2px #666;
+    position: relative;
+    text-align: center;
+}
+a.elab-tooltip:hover span{
+    display:inline; 
+    position:absolute; 
+    color:#ffffff;
+    background:#343434;
+}
+
+a.elab-tooltip span:after {
+    bottom: 100%;
+    left: 10px;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-bottom-color: #343434;
+    border-width: 4px;
+    margin-left: -4px;
+}
+
+
 /* BADGE */
 .badge {
     margin-right: 5px;

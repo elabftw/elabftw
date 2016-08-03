@@ -260,7 +260,7 @@ menu {
     padding: 0;
 }
 menu ul {
-    padding:0 0 2px;
+    padding:0;
     border-bottom: 1px solid #dcdddc;
 }
 menu ul li {
@@ -271,8 +271,8 @@ menu ul li {
     cursor: pointer;
 }
 menu ul li.selected {
-    border-bottom:6px #29AEB9 solid;
-    padding-bottom:4px;
+    border-bottom:5px #29AEB9 solid;
+    padding-bottom:0;
 }
 /* USER PROFIL */
 .user-nav {

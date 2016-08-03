@@ -104,6 +104,16 @@ input, select, textarea {
     border: 1px #e3e3e3 solid;
     margin:5px 0;
 }
+select{
+    -moz-appearance:none;
+    background: #f2f2f2 url("images/ico-arrow.png") no-repeat 93% 56%;
+    padding-right: 31px;
+}
+.form-control{
+    -moz-appearance:none;
+    background: #ffffff url("images/ico-arrow.png") no-repeat 93% 56%;
+    padding-right: 31px;
+}
 
 .form-control:focus{
     border-color:#29AEB9;
@@ -140,7 +150,7 @@ img {
 }
 
 hr {
-    margin: 10px 0 10px 0;
+    margin: 10px 0 20px 0;
     color: #dcdddc;
 }
 
@@ -189,6 +199,7 @@ label {
 
 #help {
     cursor: pointer;
+    color: #797979;
 }
 
 nav {
@@ -244,7 +255,7 @@ nav a:hover {
 /*  MENU is below main nav */
 menu {
     line-height:200%;
-    margin: 30px 0 40px;
+    margin: 30px 0 20px;
     padding: 0;
 }
 menu ul {
@@ -285,8 +296,15 @@ menu ul li.selected {
 }
 
 .alert-danger {
+    color: #e6614c;
     background-color: #ffc1b7;
-    border-color: #dd1e00;
+    border-color: #e6614c;
+}
+.alert-danger a.close{
+    color: #e6614c;
+}
+.alert-sucess a.close{
+    color: #36b1c0;
 }
 
 /* BADGE */
@@ -314,7 +332,6 @@ menu ul li.selected {
     text-align: center;
     color: #FFFFFF;
     font-size: 11px;
-    font-weight: bold;
     text-transform: uppercase;
     background-color: #29AEB9;
     margin: 0 5px;
@@ -340,12 +357,24 @@ menu ul li.selected {
 }
 
 .center input, .center select {
-    text-align:center;
+    text-align:left;
 }
 #loginButtonDiv {
     border-top: 1px solid #e3e3e3;
     padding-top:30px;
     margin: 30px 0 20px 0;
+}
+.login-area{
+    width: 33%;
+    margin: 0 auto;
+    text-align: left;
+}
+.login-area-input{
+    width: 100%;
+    margin: 0px 0 15px;
+}
+.login-area label{
+    margin: 0;
 }
 
 /* REGISTER */
@@ -391,7 +420,10 @@ div.txt table, div.txt table td {
 }
 
 table td {
-    padding: 5px;
+    padding: 5px 15px;
+}
+table td input{
+    width: 100%;
 }
 
 table th {
@@ -399,7 +431,7 @@ table th {
     color: #797979;
     text-transform: uppercase;
     font-size: 90%;
-    padding: 5px;
+    padding: 5px 15px;
     text-align:left;
 }
 
@@ -478,6 +510,27 @@ tr:nth-child(odd) {
 
 .box section {
     margin-bottom:15px;
+}
+
+.box label{
+    margin: 0 10px 0 0;
+}
+input[type='checkbox']{
+    position: relative;
+    top: -2px;
+}
+
+.col-md-6 input{
+    width: 95%;
+    margin: 0px 0 15px;
+}
+.col-md-6 label{
+    margin: 0;
+}
+/* NEW Template Settings */
+.new-tpl-box input{
+    width: 100%;
+    margin: 0px 0 15px;
 }
 
 /* on admin.php for items types
@@ -711,9 +764,13 @@ footer div a:hover {
 .footer_left {
     text-transform:uppercase;
     text-align: left;
+    float: left;
 }
 .footer_right {
     text-align: right;
+    float: right;
+    margin: 0 0 20px 0;
+
 }
 
 .footer_left a {

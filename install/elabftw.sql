@@ -364,10 +364,10 @@ INSERT INTO `items_types` (`team`, `id`, `name`, `bgcolor`, `template`) VALUES
 
 /* the default status */
 INSERT INTO `status` (`team`, `id`, `name`, `color`, `is_default`) VALUES
-(1, 1, 'Running', '0096ff', 1),
-(1, 2, 'Success', '00ac00', 0),
+(1, 1, 'Running', '29AEB9', 1),
+(1, 2, 'Success', '54aa08', 0),
 (1, 3, 'Need to be redone', 'c0c0c0', 0),
-(1, 4, 'Fail', 'ff0000', 0);
+(1, 4, 'Fail', 'c24f3d', 0);
 
 /* the default experiment template */
 INSERT INTO `experiments_templates` (`team`, `body`, `name`, `userid`) VALUES

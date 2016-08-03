@@ -201,7 +201,7 @@ try {
 
         <!-- DELETE USER -->
         <ul class='list-group'>
-            <li class='list-group-item' style='border-color:red;background-color:#FFC1B7;'>
+            <li class='list-group-item danger-zone-area'>
                 <h3><?= _('DANGER ZONE') ?></h3>
                 <h4><strong><?= _('Delete an account') ?></strong></h4>
                 <form action='app/controllers/UsersController.php' method='post'>
@@ -209,13 +209,15 @@ try {
                     <?= $formKey->getFormkey() ?>
                     <input type='hidden' name='usersDestroy' value='true'/>
                     <label for='usersDestroyEmail'><?= _('Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:') ?></label>
+                    <br>
                     <input type='email' name='usersDestroyEmail' id='usersDestroyEmail' required />
                     <br>
                     <br>
                     <label for='usersDestroyPassword'><?= _('Type your password:') ?></label>
+                    <br>
                     <input type='password' name='usersDestroyPassword' id='usersDestroyPassword' required />
                     <div class='center'>
-                        <button type='submitButtonDiv' class='button'><?= _('Delete this user!') ?></button>
+                        <button type='submitButtonDiv' class='button-delete'><?= _('Delete this user!') ?></button>
                     </div>
                 </form>
             </li>

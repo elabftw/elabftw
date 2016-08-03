@@ -78,7 +78,7 @@ class StatusView
 
             $html .= "<li><button id='statusUpdate_" . $status['id'] . "' onClick='statusUpdate(" . $status['id'] . ")' class='button'>" . _('Save') . "</button></li>";
 
-            $html .= "<li><button class='button-delete' onClick=\"statusDestroy(" . $status['id'] . ")\">";
+            $html .= "<li><button class='button button-delete' onClick=\"statusDestroy(" . $status['id'] . ")\">";
             $html .= _('Delete') . "</button></li>";
 
             $html .= "</ul></li>";

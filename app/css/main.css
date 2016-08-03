@@ -351,16 +351,7 @@ menu ul li.selected {
 }
 
 .button-delete {
-    border: none;
-    border-radius: 25px;
-    padding: 10px 20px;
-    text-align: center;
-    color: #FFFFFF;
-    font-size: 11px;
-    text-transform: uppercase;
     background-color: #e6614c;
-    margin: 0 5px;
-    letter-spacing: 1px;
 }
 
 .button-delete:hover {

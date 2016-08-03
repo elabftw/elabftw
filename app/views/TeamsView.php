@@ -71,7 +71,7 @@ class TeamsView
             $html .= " <input onKeyPress='teamsUpdateButtonEnable(" . $team['team_id'] . ")' type='text' value='" . $team['team_name'] . "' id='team_" . $team['team_id'] . "' />";
             $html .= " <button disabled id='teamsUpdateButton_" . $team['team_id'] . "' onClick='teamsUpdate(" . $team['team_id'] . ")' class='button'>" . ('Save') . "</button>";
             if ($count['totusers'] == 0) {
-                $html .= " <button id='teamsDestroyButton_" . $team['team_id'] . "' onClick='teamsDestroy(" . $team['team_id'] . ")' class='button'>" . ('Delete') . "</button>";
+                $html .= " <button id='teamsDestroyButton_" . $team['team_id'] . "' onClick='teamsDestroy(" . $team['team_id'] . ")' class='button button-delete'>" . ('Delete') . "</button>";
             } else {
                 $html .= " <button id='teamsArchiveButton_" . $team['team_id'] . "' onClick='teamsArchive(" . $team['team_id'] . ")' class='button'>" . ('Archive') . "</button>";
             }

@@ -217,7 +217,7 @@ try {
                     <br>
                     <input type='password' name='usersDestroyPassword' id='usersDestroyPassword' required />
                     <div class='center'>
-                        <button type='submitButtonDiv' class='button-delete'><?= _('Delete this user!') ?></button>
+                        <button type='submitButtonDiv' class='button button-delete'><?= _('Delete this user!') ?></button>
                     </div>
                 </form>
             </li>

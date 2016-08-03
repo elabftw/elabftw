@@ -332,4 +332,25 @@ class Tools
         );
         return $map[$lang];
     }
+
+    /**
+     * Get an associative array for the langs to display in a select
+     *
+     * @return array
+     */
+    public static function getLangsArr()
+    {
+        $langs = array(
+            'en_GB' => 'English (UK)',
+            'ca_ES' => 'Spanish (Catalan)',
+            'de_DE' => 'German',
+            'es_ES' => 'Spanish',
+            'fr_FR' => 'French',
+            'it_IT' => 'Italian',
+            'pt_BR' => 'Portuguese (Brazilian)',
+            'zh_CN' => 'Chinese Simplified'
+        );
+
+        return $langs;
+    }
 }

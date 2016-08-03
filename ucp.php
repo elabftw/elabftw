@@ -44,13 +44,13 @@ $user = $Users->read($_SESSION['userid']);
             <p>
             <select id='lang' name="lang">
 <?php
-$lang_array = array('en_GB', 'ca_ES', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pt_BR', 'zh_CN');
-foreach ($lang_array as $lang) {
+$langsArr = Tools::getLangsArr();
+foreach ($langsArr as $lang => $text) {
     echo "<option ";
     if ($_SESSION['prefs']['lang'] === $lang) {
         echo ' selected ';
     }
-    echo "value='" . $lang . "'>" . $lang . "</option>";
+    echo "value='" . $lang . "'>" . $text . "</option>";
 }
 ?>
             </select>

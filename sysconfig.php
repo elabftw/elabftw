@@ -98,15 +98,15 @@ try {
             <label for='lang'><?= _('Language') ?></label>
             <select id='lang' name="lang">
     <?php
-    $lang_array = array('en_GB', 'ca_ES', 'de_DE', 'es_ES', 'fr_FR', 'it_IT', 'pt_BR', 'zh_CN');
+    $langsArr = Tools::getLangsArr();
     $current_lang = get_config('lang');
 
-    foreach ($lang_array as $lang) {
+    foreach ($langsArr as $lang => $text) {
         echo "<option ";
         if ($current_lang === $lang) {
             echo ' selected ';
         }
-        echo "value='" . $lang . "'>" . $lang . "</option>";
+        echo "value='" . $lang . "'>" . $text . "</option>";
     }
     ?>
             </select><br>

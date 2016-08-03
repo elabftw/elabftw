@@ -351,7 +351,7 @@ class ExperimentsView extends EntityView
         if (Tools::checkId($this->experiment['visibility'])) {
             return $this->TeamGroups->readName($this->experiment['visibility']);
         }
-        return $this->experiment['visibility'];
+        return ucfirst($this->experiment['visibility']);
     }
 
     /**

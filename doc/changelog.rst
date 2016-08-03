@@ -13,6 +13,11 @@ Version 1.3.0
 * add possibility to send a mass email to all registered users from Sysconfig panel (#271)
 * Chemdoodle: when clicking the Save button on an experiment, the .mol file is automatically uploaded (#174)
 
+Version 1.2.5
+-------------
+
+* fix bug leading to first user in a new team not having correct permissions (was not admin)
+
 Version 1.2.4
 -------------
 

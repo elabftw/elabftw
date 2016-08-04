@@ -80,10 +80,10 @@ class EntityView
             $html = "<div class='align_right'>";
             $html .= "<a name='anchor'></a>";
             $html .= "<p class='inline'>" . _('Export this result:') . " </p>";
-            $html .= "<a href='make.php?what=zip&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";
-            $html .= " <img src='img/zip.png' title='Make a ZIP Archive' alt='zip' /></a>";
-            $html .= "<a href='make.php?what=csv&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";
-            $html .= " <img src='img/spreadsheet.png' title='Export in Spreadsheet File' alt='Export CSV' /></a></div>";
+            $html .= "<a class='elab-tooltip' href='make.php?what=zip&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";
+            $html .= " <span>Make a ZIP</span><img src='img/zip.png' alt='ZIP' /></a>";
+            $html .= "<a class='elab-tooltip' href='make.php?what=csv&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";
+            $html .= " <span>Export in CSV</span><img src='img/spreadsheet.png' alt='Export CSV' /></a></div>";
 
             return $html;
     }

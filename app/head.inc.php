@@ -99,10 +99,10 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 if (isset($_SESSION['auth'])) {
     ?>
     <div class="user-nav">
-        <?= _('Howdy,') . ' ' ?><a href='profile.php' title='<?= _('Profile') ?>'><?= $_SESSION['firstname'] ?></a><br>
-        <a href='ucp.php'><img src='img/settings.png' alt='<?= _('Settings') ?>' title='<?= _('Settings') ?>' /></a> |
-        <strong id='help'>?</strong> |
-        <a href='app/logout.php'><img src='img/logout.png' alt='<?= _('Logout') ?>' title='<?= _('Logout') ?>' /></a>
+        <?= _('Howdy,') . ' ' ?><a class="elab-tooltip" href='profile.php' ><span>My Profile</span><?= $_SESSION['firstname'] ?></a><br>
+        <a class="elab-tooltip" href='ucp.php'><span>Settings</span><img src='img/settings.png' alt='<?= _('Settings') ?>'  /></a> |
+        <a class="elab-tooltip"><strong class="elab-tooltip" id='help'><span>Help</span>?</strong></a> |
+        <a class="elab-tooltip" href='app/logout.php'><span>Logout</span><img src='img/logout.png' alt='<?= _('Logout') ?>'  /></a>
     </div>
     <div id='help_container' class='well help-container'>
     <p><a href='#' class='close' onClick="$('#help_container').hide();">&times</a>

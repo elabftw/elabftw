@@ -305,6 +305,55 @@ menu ul li.selected {
     color: #36b1c0;
 }
 
+/* TOOLTIP */
+
+a.elab-tooltip {
+    outline:none;
+    position: relative; }
+a.elab-tooltip:hover {text-decoration:none;} 
+a.elab-tooltip span {
+    z-index:10;
+    display:none; 
+    padding:5px 10px 8px;
+    margin:25px auto 0;
+    width:auto; 
+    line-height:16px;
+    font-weight: normal;
+    border-radius:2px;        
+    box-shadow: 1px 1px 2px #666;
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+}
+a.elab-tooltip:hover span{
+    display:inline; 
+    position:absolute; 
+    color:#ffffff;
+    background:#343434;
+    top: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    white-space: nowrap;
+}
+
+a.elab-tooltip span:after {
+    bottom: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-bottom-color: #343434;
+    border-width: 4px;
+    margin-left: -4px;
+}
+/* fix tooltip larger than parent div */
+section.item {
+    overflow:visible;
+}
 
 /* BADGE */
 .badge {
@@ -361,6 +410,7 @@ menu ul li.selected {
 /* LOGIN.PHP */
 .block {
     display:block;
+    margin: 5px 0 0;
 }
 
 #loginButtonDiv {

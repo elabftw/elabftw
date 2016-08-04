@@ -549,21 +549,7 @@ class ExperimentsView extends EntityView
                 removed_menuitems : 'newdocument',
                 // save button :
                 save_onsavecallback: function() {
-                    $.post('app/controllers/EntityController.php', {
-                        id : " . $this->Experiments->id . ",
-                        type : 'experiments',
-                        // we need this to get the updated content
-                        title : document.getElementById('title_input').value,
-                        date : document.getElementById('datepicker').value,
-                        body : tinymce.activeEditor.getContent()
-                    }).done(function(data) {
-                        var json = JSON.parse(data);
-                        if (json.res) {
-                            notif(json.msg, 'ok');
-                        } else {
-                            notif(json.msg, 'ko');
-                        }
-                    });
+                    quickSave('experiments', " . $this->Experiments->id . ");
                 },
                 // keyboard shortcut to insert today's date at cursor in editor
                 setup : function(editor) {

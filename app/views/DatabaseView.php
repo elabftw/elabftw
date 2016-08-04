@@ -352,21 +352,7 @@ class DatabaseView extends EntityView
                 removed_menuitems : 'newdocument',
                 // save button :
                 save_onsavecallback: function() {
-                    $.post('app/controllers/EntityController.php', {
-                        id : " . $this->Database->id . ",
-                        type : 'items',
-                        title : document.getElementById('title_input').value,
-                        date : document.getElementById('datepicker').value,
-                        // we need this to get the updated content
-                        body : tinymce.activeEditor.getContent()
-                    }).done(function(data) {
-                        var json = JSON.parse(data);
-                        if (json.res) {
-                            notif(json.msg, 'ok');
-                        } else {
-                            notif(json.msg, 'ko');
-                        }
-                    });
+                    quickSave('items', " . $this->Database->id . ");
                 },
                 // keyboard shortcut to insert today's date at cursor in editor
                 setup : function(editor) {

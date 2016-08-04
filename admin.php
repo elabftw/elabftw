@@ -55,7 +55,7 @@ try {
                 </label></li>";
         }
         $message .= "</ul><div class='submitButtonDiv'>
-        <button class='button' type='submit'>"._('Submit') . "</button></div>";
+        <button class='button' type='submit'>". _('Validate') . "</button></div>";
         display_message('ko', $message);
         echo "</form>";
     }

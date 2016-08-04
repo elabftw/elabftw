@@ -23,7 +23,7 @@ class Tools
      * Return the date as YYYYMMDD format if no input
      * return input if it is valid
      *
-     * @param string 20160521
+     * @param string $input 20160521
      * @return string
      */
     public static function kdate($input = null)

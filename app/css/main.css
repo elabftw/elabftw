@@ -354,6 +354,7 @@ a.elab-tooltip span:after {
 section.item {
     overflow:visible;
 }
+/* TAG Design */
 
 /* BADGE */
 .badge {
@@ -405,6 +406,13 @@ section.item {
 
 .button-delete:hover {
     background-color: #c24f3d;
+}
+
+.button-neutral{
+     background-color: #989898;
+}
+.button-neutral:hover{
+     background-color: #727272;
 }
 
 /* LOGIN.PHP */

@@ -75,7 +75,7 @@ class ItemsTypesView
                 $html .= 'checked ';
             }
             $html .= "></li>";
-            $html .= "<li><button onClick='itemsTypesShowEditor(" . $itemType['id'] . ")' class='button'>" . _('Edit the template') . "</button></li>";
+            $html .= "<li><button onClick='itemsTypesShowEditor(" . $itemType['id'] . ")' class='button button-neutral'>" . _('Edit the template') . "</button></li>";
             $html .= "<li><button onClick='itemsTypesUpdate(" . $itemType['id'] . ")' class='button'>" . _('Save') . "</button></li>";
             $html .= "<li><button class='button button-delete' onClick=\"itemsTypesDestroy(" . $itemType['id'] . ")\">";
             $html .= _('Delete') . "</button></li>";

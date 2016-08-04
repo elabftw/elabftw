@@ -439,10 +439,10 @@ class ExperimentsView extends EntityView
             "<img src='img/eye.png' alt='eye' />" . $this->getVisibility() . "</span>";
         $html .= "<div><img src='img/calendar.png' title='date' alt='Date :' /> " .
             Tools::formatDate($this->experiment['date']) . "</div>
-        <a href='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'><img src='img/pen-blue.png' title='Edit' alt='Edit' /></a>
-    <a href='app/controllers/ExperimentsController.php?duplicateId=" . $this->experiment['id'] . "'><img src='img/duplicate.png' title='Duplicate Experiment' alt='Duplicate' /></a>
-    <a href='make.php?what=pdf&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/pdf.png' title='Make a PDF' alt='PDF' /></a>
-    <a href='make.php?what=zip&id=" . $this->experiment['id'] . "&type=experiments'><img src='img/zip.png' title='Make a ZIP Archive' alt='ZIP' /></a> ";
+        <a class='elab-tooltip' href='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'><span>Edit</span><img src='img/pen-blue.png' alt='Edit' /></a>
+    <a class='elab-tooltip' href='app/controllers/ExperimentsController.php?duplicateId=" . $this->experiment['id'] . "'><span>Duplicate Experiment</span><img src='img/duplicate.png' alt='Duplicate' /></a>
+    <a class='elab-tooltip' href='make.php?what=pdf&id=" . $this->experiment['id'] . "&type=experiments'><span>Make a PDF</span><img src='img/pdf.png' alt='PDF' /></a>
+    <a class='elab-tooltip' href='make.php?what=zip&id=" . $this->experiment['id'] . "&type=experiments'><span>Make a ZIP</span><img src='img/zip.png' alt='ZIP' /></a> ";
 
         // lock
         $onClick = " onClick=\"toggleLock('experiments', " . $this->experiment['id'] . ")\"";
@@ -457,12 +457,12 @@ class ExperimentsView extends EntityView
                 $onClick = '';
             }
         }
-        $html .= "<img id='lock'" . $onClick . " src='img/" . $imgSrc . "' title='" . $alt . "' alt='" . $alt . "' /></a> ";
+        $html .= "<a class='elab-tooltip'><span>" . $alt . "</span><img id='lock'" . $onClick . " src='img/" . $imgSrc . "' alt='" . $alt . "' /></a> ";
         // show timestamp button if not timestamped already
         if (!$this->experiment['timestamped']) {
             $onClick = " onClick=\"timestamp(" . $this->experiment['id'] . ", '" . _('Once timestamped an experiment cannot be edited anymore ! Are you sure you want to do this ?') . "')\"";
 
-            $html .= "<img" . $onClick . " src='img/stamp.png' title='Timestamp Experiment' alt='Timestamp' /></a>";
+            $html .= "<a class='elab-tooltip'><span>Timestamp Experiment</span><img" . $onClick . " src='img/stamp.png' alt='Timestamp' /></a>";
         }
 
         $html .= $this->showTags('experiments', 'view', $this->Experiments->id);

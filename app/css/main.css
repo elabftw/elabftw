@@ -309,25 +309,28 @@ menu ul li.selected {
 
 a.elab-tooltip {
     outline:none;
-    position: relative; }
-a.elab-tooltip:hover {text-decoration:none;} 
+    position: relative;
+}
+a.elab-tooltip:hover {
+    text-decoration:none;
+}
 a.elab-tooltip span {
     z-index:10;
-    display:none; 
+    display:none;
     padding:5px 10px 8px;
     margin:25px auto 0;
-    width:auto; 
+    width:auto;
     line-height:16px;
     font-weight: normal;
-    border-radius:2px;        
+    border-radius:2px;
     box-shadow: 1px 1px 2px #666;
     position: relative;
     text-align: center;
     white-space: nowrap;
 }
 a.elab-tooltip:hover span{
-    display:inline; 
-    position:absolute; 
+    display:inline;
+    position:absolute;
     color:#ffffff;
     background:#343434;
     top: 0px;

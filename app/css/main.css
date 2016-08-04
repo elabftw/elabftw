@@ -569,7 +569,12 @@ a[class*='trigger_']:hover {
     color: #e6614c;
     margin: 10px 0 0;
 }
-.danger-zone-area h3, .danger-zone-area h4, .danger-zone-area label{
+.danger-zone-area p, .danger-zone-area p {
+    font-size: 120%;
+    color: #e6614c;
+}
+
+.danger-zone-area label{
     color: #e6614c;
 }
 

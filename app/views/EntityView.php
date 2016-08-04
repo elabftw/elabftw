@@ -295,9 +295,9 @@ class EntityView
     protected function backToLink($type)
     {
         if ($type === 'experiments') {
-            $text = _('Back to experiments listing');
+            $text = _('Back to Experiments Listing');
         } elseif ($type === 'database') {
-            $text = _('Back to database listing');
+            $text = _('Back to Database Listing');
         } else {
             return false;
         }

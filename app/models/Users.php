@@ -131,7 +131,8 @@ class Users extends Auth
         // Give it a body
         ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account.') . $footer);
         // generate Swift_Mailer instance
-        $mailer = getMailer();
+        $Email = new Email(new Config);
+        $mailer = $Email->getMailer();
         // SEND EMAIL
         try {
             $mailer->send($message);
@@ -428,7 +429,8 @@ class Users extends Auth
         // Give it a body
         ->setBody('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login : ' . $url . $footer);
         // generate Swift_Mailer instance
-        $mailer = getMailer();
+        $Email = new Email(new Config);
+        $mailer = $Email->getMailer();
         // now we try to send the email
         try {
             $mailer->send($message);

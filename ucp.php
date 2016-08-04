@@ -244,7 +244,7 @@ $templatesArr = $Templates->readFromUserid($_SESSION['userid']);
 
 
 echo "<div class='box new-tpl-box'>";
-echo "<h3>" . _('Experiments templates') . "</h3>";
+echo "<h3>" . _('Experiments Templates') . "</h3>";
 echo "<ul class='nav nav-pills' role='tablist'>";
 // tabs titles
 echo "<li class='subtabhandle badge badgetab badgetabactive' id='subtab_1'>" . _('Create New') . "</li>";
@@ -274,9 +274,9 @@ echo "</ul>";
 
     foreach ($templatesArr as $template) {
         echo "<div class='subdivhandle' id='subtab_" . $template['id'] . "div'>";
-        echo "<img class='align_right' src='img/download.png' title='export template' alt='export' ";
+        echo "<img class='align_right' src='img/download.png' title='Export Template' alt='Export' ";
         echo "onClick=\"exportTpl('" . $template['name'] . "', " . $template['id'] . ")\" />";
-        echo "<img class='align_right' src='img/small-trash.png' title='delete' alt='delete' ";
+        echo "<img class='align_right' src='img/small-trash.png' title='Delete' alt='Delete' ";
         echo "onClick=\"templatesDestroy(" . $template['id'] . ")\" />";
         echo "<form action='app/ucp-exec.php' method='post'>";
         echo "<input type='hidden' name='tpl_form' />";

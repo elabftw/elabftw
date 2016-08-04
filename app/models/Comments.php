@@ -118,7 +118,8 @@ class Comments extends Entity
             $commenter['lastname'],
             $full_url
         ) . $footer);
-        $mailer = getMailer();
+        $Email = new Email(new Config);
+        $mailer = $Email->getMailer();
 
         return $mailer->send($message);
     }

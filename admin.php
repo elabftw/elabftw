@@ -55,7 +55,7 @@ try {
                 </label></li>";
         }
         $message .= "</ul><div class='submitButtonDiv'>
-        <button class='button' type='submit'>"._('Submit') . "</button></div>";
+        <button class='button' type='submit'>". _('Validate') . "</button></div>";
         display_message('ko', $message);
         echo "</form>";
     }
@@ -201,21 +201,23 @@ try {
 
         <!-- DELETE USER -->
         <ul class='list-group'>
-            <li class='list-group-item' style='border-color:red;background-color:#FFC1B7;'>
-                <h3><?= _('DANGER ZONE') ?></h3>
-                <h4><strong><?= _('Delete an account') ?></strong></h4>
+            <li class='list-group-item danger-zone-area'>
+                <p><?= _('DANGER ZONE') ?></p>
+                <p><strong><?= _('Delete an account') ?></strong></p>
                 <form action='app/controllers/UsersController.php' method='post'>
                     <!-- form key -->
                     <?= $formKey->getFormkey() ?>
                     <input type='hidden' name='usersDestroy' value='true'/>
                     <label for='usersDestroyEmail'><?= _('Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:') ?></label>
-                    <input type='email' name='usersDestroyEmail' id='usersDestroyEmail' required />
+                    <br>
+                    <input type='email' placeholder='Email address' name='usersDestroyEmail' id='usersDestroyEmail' required />
                     <br>
                     <br>
                     <label for='usersDestroyPassword'><?= _('Type your password:') ?></label>
-                    <input type='password' name='usersDestroyPassword' id='usersDestroyPassword' required />
+                    <br>
+                    <input type='password' placeholder='Your password' name='usersDestroyPassword' id='usersDestroyPassword' required />
                     <div class='center'>
-                        <button type='submitButtonDiv' class='button'><?= _('Delete this user!') ?></button>
+                        <button type='submitButtonDiv' class='button button-delete'><?= _('Delete this user!') ?></button>
                     </div>
                 </form>
             </li>

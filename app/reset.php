@@ -90,7 +90,8 @@ if (isset($_POST['email'])) {
             // Give it a body
             ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $u_agent, $reset_link) . $footer);
             // generate Swift_Mailer instance
-            $mailer = getMailer();
+            $Email = new Email(new Config);
+            $mailer = $Email->getMailer();
             // now we try to send the email
             try {
                 $mailer->send($message);

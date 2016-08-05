@@ -14,6 +14,7 @@ use PDO;
 
 /**
  * The search page
+ * Here be dragons!
  *
  */
 require_once 'app/init.inc.php';
@@ -21,9 +22,68 @@ $page_title = _('Search');
 $selected_menu = 'Search';
 require_once 'app/head.inc.php';
 
+$ItemsTypes = new ItemsTypes($_SESSION['team_id']);
+$Status = new Status($_SESSION['team_id']);
+
 // make array of results id
 $results_arr = array();
 $search_type = '';
+
+// TYPE
+if (isset($_GET['type']) && $_GET['type'] === 'database') {
+    $seldb = " selected='selected'";
+} else {
+    $seldb = "";
+}
+
+// FROM
+if (isset($_GET['from']) && !empty($_GET['from'])) {
+    $from = Tools::kdate($_GET['from']);
+} else {
+    $from = '';
+}
+
+// TO
+if (isset($_GET['to']) && !empty($_GET['to'])) {
+    $to = Tools::kdate($_GET['to']);
+} else {
+    $to = '';
+}
+
+$title = '';
+// TITLE
+if (isset($_GET['title']) && !empty($_GET['title'])) {
+    // check if there is a space in the query
+    if (strrpos(trim($_GET['title']), " ") !== false) {
+        $title_arr = explode(' ', trim($_GET['title']));
+        $titleWithSpace = true;
+    }
+    $title = filter_var(trim($_GET['title']), FILTER_SANITIZE_STRING);
+}
+
+// BODY
+$body = '';
+if (isset($_GET['body']) && !empty($_GET['body'])) {
+    if (strrpos(trim($_GET['body']), " ") !== false) {
+        $body_arr = explode(' ', trim($_GET['body']));
+        $bodyWithSpace = true;
+    }
+    $body = filter_var(Tools::checkBody(trim($_GET['body'])), FILTER_SANITIZE_STRING);
+}
+
+// ANDOR
+$andor = ' AND ';
+if (isset($_GET['andor']) && ($_GET['andor'] === 'and')) {
+    $andSel = " selected='selected'";
+} else {
+    $andSel = '';
+}
+if (isset($_GET['andor']) && ($_GET['andor'] === 'or')) {
+    $orSel = " selected='selected'";
+    $andor = ' OR ';
+} else {
+    $orSel = '';
+}
 ?>
 
 <!-- Search page begin -->
@@ -31,78 +91,77 @@ $search_type = '';
     <form name="search" method="get" action="search.php">
         <div class='row'>
             <!-- SEARCH IN-->
-            <?php
-            if (isset($_GET['type']) && $_GET['type'] === 'database') {
-                $seldb = " selected='selected'";
-            } else {
-                $seldb = "";
-            }
-            ?>
             <div class='col-md-3'>
-                <label for='searchin'><?php echo _('Search in'); ?></label>
+                <label for='searchin'><?= _('Search in') ?></label>
                 <select name='type' id='searchin'>
-                    <option value='experiments'><?php echo ngettext('Experiment', 'Experiments', 2); ?></option>
+                    <option value='experiments'><?= ngettext('Experiment', 'Experiments', 2) ?></option>
                     <option disabled>----------------</option>
-                    <option value='database'<?php echo $seldb; ?>><?php echo _('Database'); ?></option>
-                    <?php // Database items types
-                    $sql = "SELECT * FROM items_types WHERE team = :team ORDER BY name ASC";
-                    $req = $pdo->prepare($sql);
-                    $req->execute(array(
-                        'team' => $_SESSION['team_id']
-                    ));
-                    while ($items_types = $req->fetch()) {
-                        echo "<option value='" . $items_types['id'] . "'";
-                        // item get selected if it is in the search url
-                        if (isset($_GET['type']) && $items_types['id'] == $_GET['type']) {
-                            echo " selected='selected'";
-                        }
-                        echo ">- " . $items_types['name'] . "</option>";
-                    }
-                    ?>
+                    <option value='database'<?= $seldb ?>><?= _('Database') ?></option>
+<?php // Database items types
+$itemsTypesArr = $ItemsTypes->readAll();
+foreach ($itemsTypesArr as $items_types) {
+    echo "<option value='" . $items_types['id'] . "'";
+    // item get selected if it is in the search url
+    if (isset($_GET['type']) && $items_types['id'] == $_GET['type']) {
+        echo " selected='selected'";
+    }
+    echo ">- " . $items_types['name'] . "</option>";
+}
+?>
                 </select>
             </div>
             <!-- END SEARCH IN -->
             <!-- SEARCH WITH TAG -->
-                <?php
-                // get the list of tags to display
+<?php
+// get the list of tags to display
 
-                // we want the tags of everyone in the team if we search for the whole team's experiments
-                if (isset($_GET['owner']) && $_GET['owner'] === '0') {
+// we want the tags of everyone in the team if we search for the whole team's experiments
+if (isset($_GET['owner']) && ($_GET['owner'] === '0')) {
 
-                    $sql = "SELECT tag, COUNT(*) as nbtag FROM experiments_tags INNER JOIN users ON (experiments_tags.userid = users.userid) WHERE users.team = :team  GROUP BY tag ORDER BY tag ASC";
-                    $req = $pdo->prepare($sql);
-                    $req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
-                    $req->execute();
+    $sql = "SELECT tag, COUNT(*) as nbtag
+        FROM experiments_tags
+        INNER JOIN users ON (experiments_tags.userid = users.userid)
+        WHERE users.team = :team
+        GROUP BY tag ORDER BY tag ASC";
+    $req = $pdo->prepare($sql);
+    $req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
+    $req->execute();
 
-                } else {
+} else {
 
-                    $sql = "SELECT tag, COUNT(*) as nbtag FROM experiments_tags WHERE userid = :userid GROUP BY tag ORDER BY tag ASC";
-                    $req = $pdo->prepare($sql);
-                    // we want to show the tags of the selected person in 'search in' dropdown
-                    // so if there is a owner parameter, use it to select tags
-                    if (isset($_GET['owner']) && Tools::checkId($_GET['owner'])) {
-                        $userid = $_GET['owner'];
-                    } else {
-                        $userid = $_SESSION['userid'];
-                    }
-                    $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-                    $req->execute();
-                }
-            ?>
+    $sql = "SELECT tag, COUNT(*) as nbtag
+        FROM experiments_tags
+        WHERE userid = :userid
+        GROUP BY tag ORDER BY tag ASC";
+    $req = $pdo->prepare($sql);
+    // we want to show the tags of the selected person in 'search in' dropdown
+    // so if there is a owner parameter, use it to select tags
+    if (isset($_GET['owner']) && Tools::checkId($_GET['owner'])) {
+        $userid = $_GET['owner'];
+    } else {
+        $userid = $_SESSION['userid'];
+    }
+    $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+    $req->execute();
+}
+?>
+
             <div class='col-md-3' id='tag_exp'>
                 <label for='tag_exp'><?php echo _('With the tag'); ?></label>
                 <select name='tag_exp' style='max-width:80%'>
                     <option value=''><?php echo _('Select a Tag'); ?></option>
-                    <?php
-                    while ($exp_tags = $req->fetch()) {
-                        echo "<option value='" . $exp_tags['tag'] . "'";
-                        // item get selected if it is in the search url
-                        if (isset($_GET['tag_exp']) && ($exp_tags['tag'] == $_GET['tag_exp'])) {
-                            echo " selected='selected'";
-                        }
-                        echo ">" . $exp_tags['tag'] . " (" . $exp_tags['nbtag'] . ")</option>";
-                    }
-                    ?>
+
+<?php
+while ($exp_tags = $req->fetch()) {
+    echo "<option value='" . $exp_tags['tag'] . "'";
+    // item get selected if it is in the search url
+    if (isset($_GET['tag_exp']) && ($exp_tags['tag'] == $_GET['tag_exp'])) {
+        echo " selected='selected'";
+    }
+    echo ">" . $exp_tags['tag'] . " (" . $exp_tags['nbtag'] . ")</option>";
+}
+?>
+
                 </select>
             </div>
 
@@ -110,22 +169,23 @@ $search_type = '';
                 <label for='tag_db'><?php echo _('With the tag'); ?></label>
                 <select name='tag_db'>
                     <option value=''><?php echo _('Select a tag'); ?></option>
-                    <?php // Database items types
-                    // TODO here we should show only the tags linked with the type of item selected in the 'searchin' select
-                    $sql = "SELECT tag, COUNT(*) as nbtag FROM items_tags WHERE team_id = :team GROUP BY tag ORDER BY tag ASC";
-                    $req = $pdo->prepare($sql);
-                    $req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
-                    $req->execute();
 
-                    while ($items_types = $req->fetch()) {
-                        echo "<option value='" . $items_types['tag'] . "'";
-                        // item get selected if it is in the search url
-                        if (isset($_GET['tag_db']) && ($items_types['tag'] == $_GET['tag_db'])) {
-                            echo " selected='selected'";
-                        }
-                        echo ">" . $items_types['tag'] . " (" . $items_types['nbtag'] . ")</option>";
-                    }
-                    ?>
+<?php // Database items types
+// TODO here we should show only the tags linked with the type of item selected in the 'searchin' select
+$sql = "SELECT tag, COUNT(*) as nbtag FROM items_tags WHERE team_id = :team GROUP BY tag ORDER BY tag ASC";
+$req = $pdo->prepare($sql);
+$req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
+$req->execute();
+
+while ($items_types = $req->fetch()) {
+    echo "<option value='" . $items_types['tag'] . "'";
+    // item get selected if it is in the search url
+    if (isset($_GET['tag_db']) && ($items_types['tag'] == $_GET['tag_db'])) {
+        echo " selected='selected'";
+    }
+    echo ">" . $items_types['tag'] . " (" . $items_types['nbtag'] . ")</option>";
+}
+?>
                 </select>
             </div>
             <!-- END SEARCH WITH TAG -->
@@ -138,142 +198,105 @@ $search_type = '';
                     <option value=''><?php echo _('Yourself'); ?></option>
                     <!-- add an option to search in the whole team (owner = 0) -->
                     <option value='0'
-                    <?php if (isset($_GET['owner']) && $_GET['owner'] === '0') {
-                        echo " selected='selected'";
-                    }
-                    echo ">" . _("All the team"); ?></option>
-                    <option disabled>----------------</option>
-                    <?php
-                    $users_sql = "SELECT userid, firstname, lastname FROM users WHERE team = :team ORDER BY firstname ASC";
-                    $users_req = $pdo->prepare($users_sql);
-                    $users_req->execute(array(
-                        'team' => $_SESSION['team_id']
-                    ));
-                    while ($users = $users_req->fetch()) {
-                        echo "<option value='" . $users['userid'] . "'";
-                        // item get selected if it is in the search url
-                        if (isset($_GET['owner']) && ($users['userid'] == $_GET['owner'])) {
-                            echo " selected='selected'";
-                        }
-                        echo ">" . $users['firstname'] . " " . $users['lastname'] . "</option>";
-                    }
-                    ?>
+<?php
+if (isset($_GET['owner']) && ($_GET['owner'] === '0')) {
+    echo " selected='selected'";
+}
+echo ">" . _("All the team"); ?></option>
+<option disabled>----------------</option>
+<?php
+    $users_sql = "SELECT userid, CONCAT (firstname, ' ', lastname) AS name
+    FROM users WHERE team = :team ORDER BY firstname ASC";
+$users_req = $pdo->prepare($users_sql);
+$users_req->execute(array(
+    'team' => $_SESSION['team_id']
+));
+while ($users = $users_req->fetch()) {
+    echo "<option value='" . $users['userid'] . "'";
+    // item get selected if it is in the search url
+    if (isset($_GET['owner']) && ($users['userid'] == $_GET['owner'])) {
+        echo " selected='selected'";
+    }
+    echo ">" . $users['name'] . "</option>";
+}
+?>
                 </select><br>
             </div>
             <!-- END SEARCH ONLY -->
         </div>
 
+        <!-- SEARCH DATE -->
         <div class='row'>
-            <!-- SEARCH DATE -->
             <div class='col-md-8'>
-                <label for='from'><?php echo _('Where date is between'); ?></label>
-                <input id='from' name='from' type='text' size='8' class='datepicker' value='<?php
-                if (isset($_GET['from']) && !empty($_GET['from'])) {
-                    echo Tools::kdate($_GET['from']);
-                }
-                ?>'/>
+                <label for='from'><?= _('Where date is between') ?></label>
+                <input id='from' name='from' type='text' size='8' class='datepicker' value='<?= $from ?>'/>
                 <label span style='margin:0 10px;' for='to'> <?php echo _('and'); ?> </label>
-                <input id='to' name='to' type='text' size='8' class='datepicker' value='<?php
-                    if (isset($_GET['to']) && !empty($_GET['to'])) {
-                        echo Tools::kdate($_GET['to']);
-                    }
-                ?>'/>
+                <input id='to' name='to' type='text' size='8' class='datepicker' value='<?= $to ?>'/>
             </div>
-            <!-- END SEARCH DATE -->
         </div>
+        <!-- END SEARCH DATE -->
 
+        <!-- TITLE -->
         <div class='row'>
-            <!-- TITLE -->
             <div class='col-md-6'>
             <label for='title'><?php echo _('And title contains'); ?></label>
-            <input id='title' name='title' type='text' value='<?php
-                if (isset($_GET['title']) && !empty($_GET['title'])) {
-                    echo Tools::checkTitle($_GET['title']);
-                }
-                ?>'/>
+            <input id='title' name='title' type='text' value='<?= $title ?>'/>
             </div>
             <!-- STATUS -->
             <div class='col-md-4'>
-                <label for='status'><?php echo _('And status is'); ?></label>
+                <label for='status'><?= _('And status is') ?></label>
                 <select id='status' name="status">
-                    <option value=''><?php echo _('select status'); ?></option>
-                    <?php
-                    // put all available status in array
-                    $status_arr = array();
-                    // SQL TO GET ALL STATUS INFO
-                    $sql = "SELECT id, name, color FROM status WHERE team = :team_id ORDER BY name ASC";
-                    $req = $pdo->prepare($sql);
-                    $req->execute(array(
-                        'team_id' => $_SESSION['team_id']
-                    ));
-
-                    while ($status = $req->fetch()) {
-                        $status_arr[$status['id']] = $status['name'];
-                    }
-                    ?>
-                        <?php
-                        // now display all possible values of status in select menu
-                        foreach ($status_arr as $key => $value) {
-                            echo "<option ";
-                            if (isset($_GET['status']) && $_GET['status'] == $key) {
-                                echo "selected ";
-                            }
-                            echo "value='$key'>$value</option>";
-                        }
-                        ?>
-                    </select>
+                    <option value=''><?= _('select status') ?></option>
+<?php
+$statusArr = $Status->readAll();
+foreach ($statusArr as $status) {
+    echo "<option ";
+    if (isset($_GET['status']) && ($_GET['status'] == $status['id'])) {
+        echo "selected ";
+    }
+    echo "value='" . $status['id'] . "'>" . $status['name'] . "</option>";
+}
+?>
+                </select>
             </div>
 
         </div>
-
         <div class='row'>
             <div class='col-md-6'>
-            <label for='body'><?php echo _('And body contains'); ?></label>
-            <input id='body' name='body' type='text' value='<?php
-                if (isset($_GET['body']) && !empty($_GET['body'])) {
-                    echo Tools::checkBody($_GET['body']);
-                }
-                ?>'/>
+            <label for='body'><?= _('And body contains') ?></label>
+            <input id='body' name='body' type='text' value='<?= $body ?>'/>
             <!-- AND / OR -->
                 <select id='andor' name='andor'>
-                <option value='' disabled selected><?php echo _('Space means'); ?></option>
-                <option value='and'
-                <?php if (isset($_GET['andor']) && $_GET['andor'] === 'and') {
-                    echo " selected='selected'";
-                }; ?>
-                ><?php echo _('and'); ?></option>
+                <option value='' disabled selected><?= _('Space means') ?></option>
+                <option value='and' <?= $andSel ?>><?= _('and') ?></option>
 
-                <option value='or'
-                <?php if (isset($_GET['andor']) && $_GET['andor'] === 'or') {
-                    echo " selected='selected'";
-                }; ?>
-                ><?php echo _('or'); ?></option>
+                <option value='or' <?= $orSel ?>><?= _('or') ?></option>
                 </select>
             </div>
             <!-- END TITLE/BODY block -->
 
             <!-- RATING -->
             <div class='col-md-4'>
-                <label for='rating'><?php echo _('And rating is'); ?></label>
+                <label for='rating'><?= _('And rating is') ?></label>
                 <select id='rating' name='rating'>
-                    <option value=''><?php echo _('select number of stars'); ?></option>
-                    <option value='no'><?php echo _('Unrated'); ?></option>
-                    <?php
-                    for ($i = 1; $i <= 5; $i++) {
-                        echo "<option value='" . $i . "'";
-                        // item get selected if it is in the search url
-                        if (isset($_GET['rating']) && ($_GET['rating'] == $i)) {
-                        echo " selected='selected'";
-                        }
-                        echo ">" . $i . "</option>";
-                    }?>
+                    <option value=''><?= _('select number of stars') ?></option>
+                    <option value='no'><?= _('Unrated') ?></option>
+<?php
+for ($i = 1; $i <= 5; $i++) {
+    echo "<option value='" . $i . "'";
+    // item get selected if it is in the search url
+    if (isset($_GET['rating']) && ($_GET['rating'] == $i)) {
+        echo " selected='selected'";
+    }
+    echo ">" . $i . "</option>";
+}?>
                 </select>
             </div>
             <!-- END RATING -->
         </div>
 
         <div style='margin:30px;' class='center'>
-            <button id='searchButton' class='button' value='Submit' type='submit'><?php echo _('Launch search'); ?></button>
+            <button id='searchButton' class='button' value='Submit' type='submit'><?= _('Launch search') ?></button>
         </div>
     </form>
 </section>
@@ -286,44 +309,6 @@ $search_type = '';
  */
 if (isset($_GET)) {
     // assign variables from get
-    // TITLE
-    if (isset($_GET['title']) && !empty($_GET['title'])) {
-        // check if there is a space in the query
-        if (strrpos(trim($_GET['title']), " ") !== false) {
-            $title_arr = explode(' ', trim($_GET['title']));
-            $title = '';
-        } else {
-            $title = filter_var(trim($_GET['title']), FILTER_SANITIZE_STRING);
-        }
-    } else { // no title input
-        $title = '';
-    }
-
-    // BODY
-    if (isset($_GET['body']) && !empty($_GET['body'])) {
-        if (strrpos(trim($_GET['body']), " ") !== false) {
-            $body_arr = explode(' ', trim($_GET['body']));
-            $body = '';
-        } else {
-            $body = filter_var(Tools::checkBody(trim($_GET['body'])), FILTER_SANITIZE_STRING);
-        }
-    } else { // no body input
-        $body = '';
-    }
-
-    // FROM
-    if (isset($_GET['from']) && !empty($_GET['from'])) {
-        $from = Tools::kdate($_GET['from']);
-    } else {
-        $from = '';
-    }
-
-    // TO
-    if (isset($_GET['to']) && !empty($_GET['to'])) {
-        $to = Tools::kdate($_GET['to']);
-    } else {
-        $to = '';
-    }
 
     // TAGS
     if (isset($_GET['tag_exp']) && !empty($_GET['tag_exp']) && isset($_GET['type']) && $_GET['type'] === 'experiments') {
@@ -372,17 +357,8 @@ if (isset($_GET)) {
 
     $sqlGroup = " GROUP BY $tb.id";
 
-    // Space in the query means AND or OR ?
-    if (isset($_GET['andor']) && ($_GET['andor'] === 'and' || $_GET['andor'] === 'or')) {
-        $andor = " " . $_GET['andor'] . " ";
-    } else {
-        $andor = ' AND ';
-    }
-
     // Title search
-    if (!empty($title)) {
-        $sqlTitle = " AND $tb.title LIKE '%$title%'";
-    } elseif (isset($title_arr)) {
+    if ($titleWithSpace) {
         $sqlTitle = " AND (";
         foreach ($title_arr as $key => $value) {
             if ($key != 0) {
@@ -391,14 +367,14 @@ if (isset($_GET)) {
             $sqlTitle .= "$tb.title LIKE '%$value%'";
         }
         $sqlTitle .= ")";
+    } elseif (!empty($title)) {
+        $sqlTitle = " AND $tb.title LIKE '%$title%'";
     } else {
         $sqlTitle = "";
     }
 
     // Body search
-    if (!empty($body)) {
-        $sqlBody = " AND $tb.body LIKE '%$body%'";
-    } elseif (isset($body_arr)) {
+    if ($bodyWithSpace) {
         $sqlBody = " AND (";
         foreach ($body_arr as $key => $value) {
             if ($key != 0) {
@@ -407,6 +383,8 @@ if (isset($_GET)) {
             $sqlBody .= "$tb.body LIKE '%$value%'";
         }
         $sqlBody .= ")";
+    } elseif (!empty($body)) {
+        $sqlBody = " AND $tb.body LIKE '%$body%'";
     } else {
         $sqlBody = "";
     }
@@ -526,12 +504,12 @@ if (isset($_GET)) {
             <!-- Export CSV/ZIP -->
             <div class='align_right'>
                 <a name='anchor'></a>
-                <p class='inline'><?php echo _('Export this result:'); ?> </p>
-                <a href='make.php?what=zip&id=<?php echo Tools::buildStringFromArray($results_arr); ?>&type=<?php echo $search_type; ?>'>
+                <p class='inline'><?= _('Export this result:') ?> </p>
+                <a href='make.php?what=zip&id=<?= Tools::buildStringFromArray($results_arr) ?>&type=<?= $search_type ?>'>
                     <img src='img/zip.png' title='make a zip archive' alt='zip' />
                 </a>
 
-                <a href='make.php?what=csv&id=<?php echo Tools::buildStringFromArray($results_arr); ?>&type=<?php echo $search_type; ?>'>
+                <a href='make.php?what=csv&id=<?= Tools::buildStringFromArray($results_arr) ?>&type=<?= $search_type ?>'>
                     <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' />
                 </a>
             </div>

@@ -80,6 +80,10 @@ a:hover {
 ul, li {
     list-style: none;
 }
+ul.clean-list {
+    padding: 0;
+    margin: 0;
+}
 
 .tip:before {
     content: "☺ ";
@@ -419,6 +423,15 @@ section.item {
 .block {
     display:block;
     margin: 5px 0 0;
+}
+.clean-form{
+    margin: 0 0 15px;
+}
+.col-3-form{
+    width: 30%;
+}
+.col-textarea-form{
+    width: 60%;
 }
 
 #loginButtonDiv {
@@ -788,8 +801,15 @@ a[class*='trigger_']:hover {
 
 .smallgray{
     display:block;
-    color:gray;
+    color:#a2a2a2;
     font-size: 80%;
+    margin: 0 0 20px;
+}
+.smalltip-gray{
+    display:block;
+    color:#a2a2a2;
+    font-size: 80%;
+    margin: -15px 0 20px;
 }
 
 /* ucp.php */

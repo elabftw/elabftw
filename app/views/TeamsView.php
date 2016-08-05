@@ -35,8 +35,8 @@ class TeamsView
      */
     public function showCreate()
     {
-        $html = "<div class='box'><h3>" . _('Add a new team') . "</h3>";
-        $html .= "<input required type='text' placeholder='Enter new team name' id='teamsName' />";
+        $html = "<div class='box'><h3>" . _('Add a New Team') . "</h3><hr>";
+        $html .= "<input class='clean-form col-3-form' required type='text' placeholder='Enter New Team Name' id='teamsName' />";
         $html .= "<button id='teamsCreateButton' onClick='teamsCreate()' class='button'>" . ('Save') . "</button></div>";
 
         return $html;
@@ -48,8 +48,8 @@ class TeamsView
      */
     public function showPromoteSysadmin()
     {
-        $html = "<div class='box'><h3>" . _('Promote someone to sysadmin') . "</h3>";
-        $html .= "<input required type='text' placeholder='Enter email address of user' id='promoteSysadmin' />";
+        $html = "<div class='box'><h3>" . _('Promote Someone to Sysadmin') . "</h3><hr>";
+        $html .= "<input class='clean-form col-3-form' required type='text' placeholder='Enter Email Address of User' id='promoteSysadmin' />";
         $html .= "<button id='promoteSysadminButton' onClick='promoteSysadmin()' class='button'>" . ('Save') . "</button></div>";
 
         return $html;
@@ -64,18 +64,18 @@ class TeamsView
     {
         $teamsArr = $this->Teams->readAll();
 
-        $html = "<div class='box'><h3>" . _('Edit existing teams') . "</h3>";
+        $html = "<div class='box'><h3>" . _('Edit Existing Teams') . "</h3><hr>";
 
         foreach ($teamsArr as $team) {
             $count = $this->Teams->getStats($team['team_id']);
-            $html .= " <input onKeyPress='teamsUpdateButtonEnable(" . $team['team_id'] . ")' type='text' value='" . $team['team_name'] . "' id='team_" . $team['team_id'] . "' />";
+            $html .= " <input class='clean-form col-3-form' onKeyPress='teamsUpdateButtonEnable(" . $team['team_id'] . ")' type='text' value='" . $team['team_name'] . "' id='team_" . $team['team_id'] . "' />";
             $html .= " <button disabled id='teamsUpdateButton_" . $team['team_id'] . "' onClick='teamsUpdate(" . $team['team_id'] . ")' class='button'>" . ('Save') . "</button>";
             if ($count['totusers'] == 0) {
                 $html .= " <button id='teamsDestroyButton_" . $team['team_id'] . "' onClick='teamsDestroy(" . $team['team_id'] . ")' class='button button-delete'>" . ('Delete') . "</button>";
             } else {
                 $html .= " <button id='teamsArchiveButton_" . $team['team_id'] . "' onClick='teamsArchive(" . $team['team_id'] . ")' class='button button-neutral'>" . ('Archive') . "</button>";
             }
-            $html .= "<p>" . _('Members') . ": " . $count['totusers'] . " − " . ngettext('Experiment', 'Experiments', $count['totxp']) . ": " . $count['totxp'] . " (" . $count['totxpts'] . " timestamped) − " . _('Items') . ": " . $count['totdb'] . " − " . _('Created') . ": " . $team['datetime'] . "<p>";
+            $html .= "<p class='smalltip-gray'>" . _('Members') . ": " . $count['totusers'] . " − " . ngettext('Experiment', 'Experiments', $count['totxp']) . ": " . $count['totxp'] . " (" . $count['totxpts'] . " timestamped) − " . _('Items') . ": " . $count['totdb'] . " − " . _('Created') . ": " . $team['datetime'] . "<p>";
         }
         $html .= "</div>";
         return $html;
@@ -111,9 +111,9 @@ class TeamsView
      */
     public function showMassEmail()
     {
-        $html = "<div class='box'><h3>" . _('Send a mass email') . "</h3>";
-        $html .= "<p>" . _('Email subject') . "<br><input type='text' id='massSubject' size='45' /><br>";
-        $html .= _('Email body') . "<br><textarea id='massBody'></textarea><br>";
+        $html = "<div class='box'><h3>" . _('Send a Mass Email') . "</h3><hr>";
+        $html .= "<p>" . _('Email Subject') . "<br><input class='clean-form col-3-form' type='text' id='massSubject' size='45' /><br>";
+        $html .= _('Email Body') . "<br><textarea class='clean-form col-textarea-form' id='massBody'></textarea><br>";
         $html .= "<button id='massSend' onClick='massSend()' class='button'>" . ('Send') . "</button>";
         $html .= "</p></div>";
 

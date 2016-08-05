@@ -120,7 +120,7 @@ class DatabaseView extends EntityView
         }
         $load_more_button = "<div class='center'>
             <button class='button' id='loadButton'>" . sprintf(_('Show %s more'), $this->limit) . "</button>
-            <button class='button' id='loadAllButton'>". _('Show all') . "</button>
+            <button class='button button-neutral' id='loadAllButton'>". _('Show all') . "</button>
             </div>";
         // show load more button if there are more results than the default display number
         if ($count > $this->limit) {

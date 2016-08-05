@@ -45,7 +45,7 @@ class Comments extends Entity
      * Create a comment
      *
      * @param string $comment Content for the comment
-     * @return bool
+     * @return int number of email sent
      */
     public function create($comment)
     {
@@ -70,7 +70,7 @@ class Comments extends Entity
      * Send an email to the experiment owner to alert a comment was posted
      * (issue #160)
      *
-     * @return bool
+     * @return int number of email sent
      */
     private function alertOwner()
     {

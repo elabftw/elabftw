@@ -127,6 +127,27 @@ function toggleLock(type, id) {
     });
 }
 
+// called when you click the save button of tinymce
+function quickSave(type, id) {
+    $.post('app/controllers/EntityController.php', {
+        quickSave: true,
+        type : type,
+        id : id,
+        // we need this to get the updated content
+        title : document.getElementById('title_input').value,
+        date : document.getElementById('datepicker').value,
+        body : tinymce.activeEditor.getContent()
+    }).done(function(data) {
+        var json = JSON.parse(data);
+        if (json.res) {
+            notif(json.msg, 'ok');
+        } else {
+            notif(json.msg, 'ko');
+        }
+    });
+}
+
+
 // EXPERIMENTS
 // ===========
 

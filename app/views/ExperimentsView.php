@@ -457,10 +457,10 @@ class ExperimentsView extends EntityView
                 $onClick = '';
             }
         }
-        $html .= "<a class='elab-tooltip'><span>" . $alt . "</span><img id='lock'" . $onClick . " src='img/" . $imgSrc . "' alt='" . $alt . "' /></a> ";
+        $html .= "<a class='elab-tooltip' href='#'><span>" . $alt . "</span><img id='lock'" . $onClick . " src='img/" . $imgSrc . "' alt='" . $alt . "' /></a> ";
         // show timestamp button if not timestamped already
         if (!$this->experiment['timestamped']) {
-            $onClick = " onClick=\"timestamp(" . $this->experiment['id'] . ", '" . _('Once timestamped an experiment cannot be edited anymore ! Are you sure you want to do this ?') . "')\"";
+            $onClick = " onClick=\"timestamp(" . $this->experiment['id'] . ", '" . _('Once timestamped an experiment cannot be edited anymore! Are you sure you want to do this?') . "')\"";
 
             $html .= "<a class='elab-tooltip'><span>Timestamp Experiment</span><img" . $onClick . " src='img/stamp.png' alt='Timestamp' /></a>";
         }
@@ -549,21 +549,7 @@ class ExperimentsView extends EntityView
                 removed_menuitems : 'newdocument',
                 // save button :
                 save_onsavecallback: function() {
-                    $.post('app/controllers/EntityController.php', {
-                        id : " . $this->Experiments->id . ",
-                        type : 'experiments',
-                        // we need this to get the updated content
-                        title : document.getElementById('title_input').value,
-                        date : document.getElementById('datepicker').value,
-                        body : tinymce.activeEditor.getContent()
-                    }).done(function(data) {
-                        var json = JSON.parse(data);
-                        if (json.res) {
-                            notif(json.msg, 'ok');
-                        } else {
-                            notif(json.msg, 'ko');
-                        }
-                    });
+                    quickSave('experiments', " . $this->Experiments->id . ");
                 },
                 // keyboard shortcut to insert today's date at cursor in editor
                 setup : function(editor) {

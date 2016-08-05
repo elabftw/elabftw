@@ -80,11 +80,13 @@ a:hover {
 ul, li {
     list-style: none;
 }
-ul.clean-list {
+.clean-list {
     padding: 0;
     margin: 0;
 }
-
+ul.group-list {
+    margin: 0;
+}
 .tip:before {
     content: "☺ ";
     font-size:120%;
@@ -107,6 +109,10 @@ input, select, textarea {
     border-radius: 4px;
     border: 1px #e3e3e3 solid;
     margin:5px 0;
+}
+.disabled-input{
+    color:#989898;
+
 }
 select{
     -moz-appearance:none;
@@ -157,6 +163,12 @@ img {
 hr {
     margin: 10px 0 20px 0;
     color: #dcdddc;
+}
+
+.danger-zone-area hr {
+    margin: 10px 0 20px 0;
+    color: #e6614c;
+    border-top: 1px solid;
 }
 
 /* TITLES */
@@ -384,7 +396,7 @@ a.elab-tooltip-top:hover span{
     position:absolute;
     color:#ffffff;
     background:#343434;
-    bottom: 0px;
+    bottom: 0;
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
@@ -631,6 +643,9 @@ tr:nth-child(odd) {
     padding: 20px;
     overflow: hidden;
 }
+.tooltip-box {
+    overflow: visible;
+}
 
 .box section {
     margin-bottom:15px;
@@ -777,21 +792,27 @@ a[class*='trigger_']:hover {
 }
 /* EDITABLE */
 .editable:hover {
-    background-color:#fff;
+     cursor: pointer;
 }
 .editable button {
-    background-color:#29AEB9;
     border: none;
-    border-radius: 20px;
-    color:white;
-    font-weight:bold;
+    border-radius: 25px;
+    padding: 10px 20px;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 11px;
     text-transform: uppercase;
-    margin: 6px;
+    background-color: #29AEB9;
+    margin: 0 5px;
+    letter-spacing: 1px;
 }
 .editable button:hover {
     background-color: #1F8591;
 }
 
+.editable input{
+    margin: 0 0 15px;
+}
 #commentsCreateArea {
     border: 1px solid #ccc;
     width: 100%;

@@ -189,10 +189,9 @@ class DatabaseView extends EntityView
         <a class='elab-tooltip' href='make.php?what=zip&id=" . $itemArr['itemid'] . "&type=items'><span>Make a ZIP</span><img src='img/zip.png' alt='ZIP' /></a>
         <a class='elab-tooltip' href='experiments.php?mode=show&related=".$itemArr['itemid'] . "'><span>Linked Experiments</span><img src='img/link.png' alt='Linked Experiments' /></a> ";
         // lock
-        if ($itemArr['locked'] == 0) {
-            $imgSrc = 'unlock.png';
-            $alt = 'Lock item';
-        } else { // item is locked
+        $imgSrc = 'unlock.png';
+        $alt = 'Lock item';
+        if ($itemArr['locked'] != 0) {
             $imgSrc = 'lock-gray.png';
             $alt = 'Unlock item';
         }

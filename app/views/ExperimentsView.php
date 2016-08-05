@@ -446,10 +446,9 @@ class ExperimentsView extends EntityView
 
         // lock
         $onClick = " onClick=\"toggleLock('experiments', " . $this->experiment['id'] . ")\"";
-        if ($this->experiment['locked'] == 0) {
-            $imgSrc = 'unlock.png';
-            $alt = 'Lock item';
-        } else { // item is locked
+        $imgSrc = 'unlock.png';
+        $alt = 'Lock item';
+        if ($this->experiment['locked'] != 0) {
             $imgSrc = 'lock-gray.png';
             $alt = 'Unlock item';
             // don't allow clicking lock if experiment is timestamped

@@ -25,11 +25,13 @@
 <footer>
 
     <p class='footer_left'>
-    <a href='https://twitter.com/elabftw'>
-    <img src='img/twitter.png' alt='twitter' title='Follow eLabFTW on Twitter !'>
+    <a class='elab-tooltip-top' href='https://twitter.com/elabftw'>
+        <span>Follow eLabFTW on Twitter !</span>
+    <img src='img/twitter.png' alt='twitter'>
     </a>
-     <a href='https://github.com/elabftw/elabftw'>
-    <img src='img/github.png' alt='github' title='eLabFTW on GitHub'>
+     <a class='elab-tooltip-top' href='https://github.com/elabftw/elabftw'>
+        <span>eLabFTW on GitHub</span>
+    <img src='img/github.png' alt='github'>
     </a>
     <span>
         <span>

@@ -80,6 +80,10 @@ a:hover {
 ul, li {
     list-style: none;
 }
+ul.clean-list {
+    padding: 0;
+    margin: 0;
+}
 
 .tip:before {
     content: "☺ ";
@@ -353,10 +357,57 @@ a.elab-tooltip span:after {
     border-width: 4px;
     margin-left: -4px;
 }
+a.elab-tooltip-top {
+    outline:none;
+    position: relative;
+}
+a.elab-tooltip-top:hover {
+    text-decoration:none;
+}
+a.elab-tooltip-top span {
+    text-transform: none;
+    z-index:10;
+    display:none;
+    padding:5px 10px 8px;
+    margin:0 auto 25px;
+    width:auto;
+    line-height:16px;
+    font-weight: normal;
+    border-radius:2px;
+    box-shadow: 1px 1px 2px #666;
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+}
+a.elab-tooltip-top:hover span{
+    display:inline;
+    position:absolute;
+    color:#ffffff;
+    background:#343434;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    white-space: nowrap;
+}
+a.elab-tooltip-top span:after {
+    top: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-top-color: #343434;
+    border-width: 4px;
+    margin-left: -4px;
+}
 /* fix tooltip larger than parent div */
 section.item {
     overflow:visible;
 }
+/* TAG Design */
 
 /* BADGE */
 .badge {
@@ -410,10 +461,26 @@ section.item {
     background-color: #c24f3d;
 }
 
+.button-neutral{
+     background-color: #989898;
+}
+.button-neutral:hover{
+     background-color: #727272;
+}
+
 /* LOGIN.PHP */
 .block {
     display:block;
     margin: 5px 0 0;
+}
+.clean-form{
+    margin: 0 0 15px;
+}
+.col-3-form{
+    width: 30%;
+}
+.col-textarea-form{
+    width: 60%;
 }
 
 #loginButtonDiv {
@@ -783,8 +850,15 @@ a[class*='trigger_']:hover {
 
 .smallgray{
     display:block;
-    color:gray;
+    color:#a2a2a2;
     font-size: 80%;
+    margin: 0 0 20px;
+}
+.smalltip-gray{
+    display:block;
+    color:#a2a2a2;
+    font-size: 80%;
+    margin: -15px 0 20px;
 }
 
 /* ucp.php */

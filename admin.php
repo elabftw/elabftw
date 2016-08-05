@@ -107,7 +107,7 @@ try {
             <input type='text' value='<?= $teamConfigArr['link_href'] ?>' name='link_href' id='link_href' />
             </p>
             <br>
-            <span class='button' onClick='toggleTimestampInputs()'><?= _('Override general timestamping config') ?></span>
+            <span class='button button-neutral' onClick='toggleTimestampInputs()'><?= _('Override general timestamping config') ?></span>
             <br><br>
             <div class='timestampInputs'>
                 <p>

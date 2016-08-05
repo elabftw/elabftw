@@ -29,7 +29,7 @@ Create your drop
 
 * Create a droplet with Docker (from the One-click Apps tab), select a size and a region.
 
-.. image:: img/do-create.png
+.. image:: img/image-selection.png
     :align: center
     :alt: digitalocean
 

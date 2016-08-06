@@ -81,14 +81,14 @@ try {
     ?>
 
     <div class='divhandle' id='tab1div'>
-
-    <h3><?= _('Configure your team') ?></h3>
     <div class='box'>
+    <h3><?= _('Configure your Team') ?></h3>
+    <hr>
         <form method='post' action='app/controllers/AdminController.php' autocomplete='off'>
             <input type='hidden' value='true' name='teamsUpdateFull' />
             <p>
             <label for='deletable_xp'><?= _('Users can delete experiments:') ?></label>
-            <select name='deletable_xp' id='deletable_xp'>
+            <select class="clean-form" name='deletable_xp' id='deletable_xp'>
                 <option value='1'<?php
                 if ($teamConfigArr['deletable_xp']) { echo " selected='selected'"; } ?>
                 ><?= _('Yes') ?></option>
@@ -99,34 +99,35 @@ try {
             <span class='smallgray'><?= _('An admin account will always be able to delete experiments.') ?></span>
             </p>
             <p>
-            <label for='link_name'><?= _('Name of the link in the top menu:') ?></label>
-            <input type='text' value='<?= $teamConfigArr['link_name'] ?>' name='link_name' id='link_name' />
+            <label class="block" for='link_name'><?= _('Name of the link in the top menu:') ?></label>
+            <input class="clean-form col-3-form" type='text' value='<?= $teamConfigArr['link_name'] ?>' name='link_name' id='link_name' />
             </p>
             <p>
-            <label for='link_href'><?= _('Address where this link should point:') ?></label>
-            <input type='text' value='<?= $teamConfigArr['link_href'] ?>' name='link_href' id='link_href' />
+            <label class="block" for='link_href'><?= _('Address where this link should point:') ?></label>
+            <input class="clean-form col-3-form" type='text' value='<?= $teamConfigArr['link_href'] ?>' name='link_href' id='link_href' />
             </p>
             <br>
             <span class='button button-neutral' onClick='toggleTimestampInputs()'><?= _('Override general timestamping config') ?></span>
             <br><br>
             <div class='timestampInputs'>
                 <p>
-                <label for='stampprovider'><?= _('URL for external timestamping service:') ?></label>
-                <input type='url' placeholder='http://zeitstempel.dfn.de/' value='<?= $teamConfigArr['stampprovider'] ?>' name='stampprovider' id='stampprovider' />
+                    <br>
+                <label class="block" for='stampprovider'><?= _('URL for external timestamping service:') ?></label>
+                <input class="clean-form col-3-form" type='url' placeholder='http://zeitstempel.dfn.de/' value='<?= $teamConfigArr['stampprovider'] ?>' name='stampprovider' id='stampprovider' />
                 <span class='smallgray'><?= _('This should be the URL used for <a href="https://tools.ietf.org/html/rfc3161">RFC 3161</a>-compliant timestamping requests.') ?></span>
                 </p>
                 <p>
-                <label for='stampcert'><?= _('Chain of certificates of the external timestamping service:') ?></label>
-                <input type='text' placeholder='vendor/pki.dfn.pem' value='<?= $teamConfigArr['stampcert'] ?>' name='stampcert' id='stampcert' />
+                <label class="block" for='stampcert'><?= _('Chain of certificates of the external timestamping service:') ?></label>
+                <input class="clean-form col-3-form" type='text' placeholder='vendor/pki.dfn.pem' value='<?= $teamConfigArr['stampcert'] ?>' name='stampcert' id='stampcert' />
                 <span class='smallgray'><?= _('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.<br /> Local path relative to eLabFTW installation directory. The file needs to be in <a href="https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail">PEM-encoded (ASCII)</a> format!') ?></span>
                 </p>
-                <label for='stamplogin'><?= _('Login for external timestamping service:') ?></label>
-                <input type='text' value='<?= $teamConfigArr['stamplogin'] ?>' name='stamplogin' id='stamplogin' />
+                <label class="block" for='stamplogin'><?= _('Login for external timestamping service:') ?></label>
+                <input class="clean-form col-3-form" type='text' value='<?= $teamConfigArr['stamplogin'] ?>' name='stamplogin' id='stamplogin' />
                 <span class='smallgray'><?= _('This should be the login associated with your timestamping service provider') ?></span>
                 </p>
                 <p>
-                <label for='stamppass'><?= _('Password for external timestamping service:') ?></label>
-                <input type='password' name='stamppass' id='stamppass' />
+                <label class="block" for='stamppass'><?= _('Password for external timestamping service:') ?></label>
+                <input class="clean-form col-3-form" type='password' name='stamppass' id='stamppass' />
                 <span class='smallgray'><?= _('Your timestamping service provider password') ?></span>
                 </p>
             </div>
@@ -141,34 +142,34 @@ try {
 
     <!-- TAB 2 USERS -->
     <div class='divhandle' id='tab2div'>
-
-        <h3><?= _('Edit users') ?></h3>
+        <div class="box">
+        <h3><?= _('Edit Users') ?></h3><hr>
         <ul class='list-group'>
         <?php
         // get all validated users
         $usersArr = $Users->readAll();
         foreach ($usersArr as $user) {
             ?>
-                <li class='list-group-item'>
+                <li>
                     <form method='post' action='app/controllers/UsersController.php'>
                         <input type='hidden' value='true' name='usersUpdate' />
                         <input type='hidden' value='<?= $user['userid'] ?>' name='userid' />
                         <ul class='list-inline'>
                         <li><label class='block' for='usersUpdateFirstname'><?= _('Firstname') ?></label>
-                        <input  id='usersUpdateFirstname' type='text' value='<?= $user['firstname'] ?>' name='firstname' /></li>
+                        <input class="clean-form" id='usersUpdateFirstname' type='text' value='<?= $user['firstname'] ?>' name='firstname' /></li>
                         <li><label class='block' for='usersUpdateLastname'><?= _('Lastname') ?></label>
-                        <input  id='usersUpdateLastname' type='text' value='<?= $user['lastname'] ?>' name='lastname' /></li>
+                        <input class="clean-form" id='usersUpdateLastname' type='text' value='<?= $user['lastname'] ?>' name='lastname' /></li>
                         <li><label class='block' for='usersUpdateEmail'><?= _('Email') ?></label>
-                        <input id='usersUpdateEmail' type='email' value='<?= $user['email'] ?>' name='email' /></li>
+                        <input class="clean-form" id='usersUpdateEmail' type='email' value='<?= $user['email'] ?>' name='email' /></li>
                         <li>
                         <label class='block' for='usersUpdateValidated'><?= _('Has an active account?') ?></label>
-                        <select name='validated' id='usersUpdateValidated'>
+                        <select class="clean-form" name='validated' id='usersUpdateValidated'>
                             <option value='1' selected='selected'><?= _('Yes') ?></option>
                             <option value='0'><?= _('No') ?></option>
                         </select>
                         </li>
                         <li><label class='block' for='usersUpdateUsergroup'><?= _('Group') ?></label>
-                        <select name='usergroup' id='usersUpdateUsergroup'>
+                        <select class="clean-form" name='usergroup' id='usersUpdateUsergroup'>
                 <?php
                             if ($_SESSION['is_sysadmin']) {
                 ?>
@@ -188,41 +189,38 @@ try {
                                     if ($user['usergroup'] == 4) { echo " selected='selected'"; } ?>
                             >Users</option>
                         </select></li>
-                        <li><label class='block' for='usersUpdatePassword'><?= _('Reset user password') .
-                            " <span class='smallgray'>" . $Auth::MIN_PASSWORD_LENGTH . " " . _('characters minimum') ?></span></label>
-                        <input id='usersUpdatePassword' type='password' pattern='.{0}|.{<?= $Auth::MIN_PASSWORD_LENGTH ?>,}' value='' name='password' /></li>
-                        <li><button type='submit' class='button'><?= _('Save') ?></button></li>
+                        <li><label class='block' for='usersUpdatePassword'><?= _('Reset user password') ?></label>
+                        <input class="clean-form" id='usersUpdatePassword' type='password' pattern='.{0}|.{<?= $Auth::MIN_PASSWORD_LENGTH ?>,}' value='' name='password' />
+                         <span class='smallgray'><?= $Auth::MIN_PASSWORD_LENGTH . " " . _('characters minimum') ?></span></li>
                     </ul>
+                        <button type='submit' class='button'><?= _('Save') ?></button>
                 </form>
             </li>
+            <hr>
             <?php
         }
         ?>
+         </div>
 
         <!-- DELETE USER -->
         <ul class='list-group'>
             <li class='list-group-item danger-zone-area'>
-                <p><?= _('DANGER ZONE') ?></p>
+                <p><?= _('DANGER ZONE') ?></p><hr>
                 <p><strong><?= _('Delete an account') ?></strong></p>
                 <form action='app/controllers/UsersController.php' method='post'>
                     <!-- form key -->
                     <?= $formKey->getFormkey() ?>
                     <input type='hidden' name='usersDestroy' value='true'/>
-                    <label for='usersDestroyEmail'><?= _('Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:') ?></label>
-                    <br>
-                    <input type='email' placeholder='Email address' name='usersDestroyEmail' id='usersDestroyEmail' required />
-                    <br>
-                    <br>
-                    <label for='usersDestroyPassword'><?= _('Type your password:') ?></label>
-                    <br>
-                    <input type='password' placeholder='Your password' name='usersDestroyPassword' id='usersDestroyPassword' required />
+                    <label class="block" for='usersDestroyEmail'><?= _('Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:') ?></label>
+                    <input class="clean-form col-3-form" type='email' placeholder='Email Address' name='usersDestroyEmail' id='usersDestroyEmail' required />
+                    <label class="block" for='usersDestroyPassword'><?= _('Type your password:') ?></label>
+                    <input class="clean-form col-3-form" type='password' placeholder='Your Password' name='usersDestroyPassword' id='usersDestroyPassword' required />
                     <div class='center'>
                         <button type='submitButtonDiv' class='button button-delete'><?= _('Delete this user!') ?></button>
                     </div>
                 </form>
             </li>
         </ul>
-
     </div>
 
     <!-- TAB 3 STATUS -->
@@ -243,80 +241,86 @@ try {
 
     <!-- TAB 5 COMMON EXPERIMENT TEMPLATE -->
     <div class='divhandle' id='tab5div'>
-        <h3><?= _('Common experiment template') ?></h3>
-        <p><?= _('This is the default text when someone creates an experiment.') ?></p>
-        <textarea style='height:400px' class='mceditable' id='commonTplTemplate' />
-    <?php
-        $templatesArr = $templates->readCommon();
-        echo $templatesArr['body']
-    ?>
-        </textarea>
-        <div class='submitButtonDiv'>
-            <button type='submit' class='button' onClick='commonTplUpdate()'><?= _('Save') ?></button>
+        <div class='box'>
+            <h3><?= _('Common Experiment Template') ?></h3><hr>
+            <p><?= _('This is the default text when someone creates an experiment.') ?></p>
+            <textarea style='height:400px' class='mceditable' id='commonTplTemplate' />
+        <?php
+            $templatesArr = $templates->readCommon();
+            echo $templatesArr['body']
+        ?>
+            </textarea>
+            <div class='submitButtonDiv'>
+                <button type='submit' class='button' onClick='commonTplUpdate()'><?= _('Save') ?></button>
+            </div>
         </div>
     </div>
 
     <!-- TAB 6 IMPORT CSV -->
     <?php $itemsTypesArr = $ItemsTypesView->itemsTypes->readAll() ?>
     <div class='divhandle' id='tab6div'>
-        <h3><?= _('Import a CSV file') ?></h3>
-        <p style='text-align:justify'><?= _("This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file.") ?>
-        <span class='strong'><?= _('You should make a backup of your database before importing thousands of items!') ?></span></p>
+        <div class='box'>
+            <h3><?= _('Import a CSV File') ?></h3>
+            <hr>
+            <p style='text-align:justify'><?= _("This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file.") ?>
+            <span class='strong'><?= _('You should make a backup of your database before importing thousands of items!') ?></span></p>
 
-        <label for='item_selector'><?= _('1. Select a type of item to import to:') ?></label>
-        <select id='item_selector' onchange='goNext(this.value)'><option value=''>--------</option>
-        <?php
-        foreach ($itemsTypesArr as $items_types) {
-            echo "<option value='" . $items_types['id'] . "' name='type' ";
-            echo ">" . $items_types['name'] . "</option>";
-        }
-        ?>
-        </select>
-        <div class='import_block'>
-            <form enctype="multipart/form-data" action="app/controllers/ImportController.php" method="POST">
-            <label for='uploader'><?= _('2. Select a CSV file to import:') ?></label>
-                <input id='uploader' name="file" type="file" accept='.csv' />
-                <input name='type' type='hidden' value='csv' />
-                <div class='submitButtonDiv'>
-                    <button type="submit" class='button' value="Upload"><?= _('Import CSV') ?></button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- TAB 7 IMPORT ZIP -->
-    <div class='divhandle' id='tab7div'>
-
-        <h3><?= _('Import a ZIP file') ?></h3>
-        <p><?= _("This page will allow you to import a .elabftw.zip archive.") ?>
-    <br><span class='strong'><?= _('You should make a backup of your database before importing thousands of items!') ?></span></p>
-
-            <label for='item_selector'><?= _('1. Select where to import:') ?></label>
-            <select id='item_selector' onchange='goNext(this.value)'>
-                <option value='' selected>-------</option>
-                <option value='' disabled>Import items</option>
+            <label class="block" for='item_selector'><?= _('1. Select a type of item to import to:') ?></label>
+            <select class="clean-form col-3-form" id='item_selector' onchange='goNext(this.value)'><option value=''>--------</option>
             <?php
             foreach ($itemsTypesArr as $items_types) {
                 echo "<option value='" . $items_types['id'] . "' name='type' ";
                 echo ">" . $items_types['name'] . "</option>";
             }
-            echo "<option value='' disabled>Import experiments</option>";
-
-            foreach ($usersArr as $user) {
-                echo "<option value='" . $user['userid'] . "' name='type' ";
-                echo ">" . $user['firstname'] . " " . $user['lastname'] . "</option>";
-            }
             ?>
-            </select><br>
+            </select>
             <div class='import_block'>
-            <form enctype="multipart/form-data" action="app/controllers/ImportController.php" method="POST">
-            <label for='uploader'><?= _('2. Select a ZIP file to import:') ?></label>
-                <input id='uploader' name="file" type="file" accept='.elabftw.zip' />
-                <input name='type' type='hidden' value='zip' />
-                <div class='submitButtonDiv'>
-                    <button type="submit" class='button' value="Upload"><?= _('Import ZIP') ?></button>
-                </div>
-            </form>
+                <form enctype="multipart/form-data" action="app/controllers/ImportController.php" method="POST">
+                <label class="block" for='uploader'><?= _('2. Select a CSV file to import:') ?></label>
+                    <input id='uploader' name="file" type="file" accept='.csv' />
+                    <input name='type' type='hidden' value='csv' />
+                    <div class='submitButtonDiv'>
+                        <button type="submit" class='button' value="Upload"><?= _('Import CSV') ?></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 7 IMPORT ZIP -->
+    <div class='divhandle' id='tab7div'>
+        <div class='box'>
+            <h3><?= _('Import a ZIP File') ?></h3><hr>
+            <p><?= _("This page will allow you to import a .elabftw.zip archive.") ?>
+        <br><span class='strong'><?= _('You should make a backup of your database before importing thousands of items!') ?></span></p>
+
+                <label class="block" for='item_selector'><?= _('1. Select where to import:') ?></label>
+                <select class="clean-form col-3-form" id='item_selector' onchange='goNext(this.value)'>
+                    <option value='' selected>-------</option>
+                    <option class='disabled-input' value='' disabled>Import items</option>
+                <?php
+                foreach ($itemsTypesArr as $items_types) {
+                    echo "<option value='" . $items_types['id'] . "' name='type' ";
+                    echo ">" . $items_types['name'] . "</option>";
+                }
+                echo "<option class='disabled-input' value='' disabled>Import experiments</option>";
+
+                foreach ($usersArr as $user) {
+                    echo "<option value='" . $user['userid'] . "' name='type' ";
+                    echo ">" . $user['firstname'] . " " . $user['lastname'] . "</option>";
+                }
+                ?>
+                </select><br>
+                <div class='import_block'>
+                <form enctype="multipart/form-data" action="app/controllers/ImportController.php" method="POST">
+                <label class="block" for='uploader'><?= _('2. Select a ZIP file to import:') ?></label>
+                    <input id='uploader' name="file" type="file" accept='.elabftw.zip' />
+                    <input name='type' type='hidden' value='zip' />
+                    <div class='submitButtonDiv'>
+                        <button type="submit" class='button' value="Upload"><?= _('Import ZIP') ?></button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -324,68 +328,73 @@ try {
     <?php $teamGroupsArr = $TeamGroupsView->TeamGroups->readAll(); ?>
 
     <div class='divhandle' id='tab8div'>
-        <h3><?= _('Manage groups of users') ?></h3>
-    <!-- CREATE A GROUP -->
-    <label for='teamGroupCreate'><?= _('Create a group') ?></label>
-        <input id='teamGroupCreate' type="text" />
-        <button type='submit' onclick='teamGroupCreate()' class='button'><?= _('Create') ?></button>
-    <!-- END CREATE GROUP -->
+        <div class='box tooltip-box'>
+            <h3><?= _('Manage Groups of Users') ?></h3><hr>
+        <!-- CREATE A GROUP -->
+        <label class="block" for='teamGroupCreate'><?= _('Create a group') ?></label>
+            <input class="clean-form col-3-form" id='teamGroupCreate' type="text" />
+            <button type='submit' onclick='teamGroupCreate()' class='button'><?= _('Create') ?></button>
+        <!-- END CREATE GROUP -->
 
-    <div id='team_groups_div'>
-        <div class='well'>
-        <section>
-        <!-- ADD USER TO GROUP -->
-            <label for='teamGroupUserAdd'><?= _('Add this user') ?></label>
-            <select id='teamGroupUserAdd'>
-            <?php
-            foreach ($usersArr as $users) {
-                echo "<option value='" . $users['userid'] . "'>";
-                echo $users['firstname'] . " " . $users['lastname'] . "</option>";
-            }
-            ?>
-            </select>
+        <div id='team_groups_div'>
+            <div>
+                <hr>
+            <section>
+            <!-- ADD USER TO GROUP -->
+                <label class="block" for='teamGroupUserAdd'><?= _('Add this user') ?></label>
+                <select class="clean-form col-3-form" id='teamGroupUserAdd'>
+                <?php
+                foreach ($usersArr as $users) {
+                    echo "<option value='" . $users['userid'] . "'>";
+                    echo $users['firstname'] . " " . $users['lastname'] . "</option>";
+                }
+                ?>
+                </select>
 
-            <label for='teamGroupGroupAdd'><?= _('to this group') ?></label>
-            <select id='teamGroupGroupAdd'>
-            <?php
-            foreach ($teamGroupsArr as $team_groups) {
-                echo "<option value='" . $team_groups['id'] . "'>";
-                echo $team_groups['name'] . "</option>";
-            }
-            ?>
-            </select>
-            <button type="submit" onclick="teamGroupUpdate('add')" class='button'><?= _('Go') ?></button>
+                <label class="block" for='teamGroupGroupAdd'><?= _('to this group') ?></label>
+                <select class="clean-form col-3-form" id='teamGroupGroupAdd'>
+                <?php
+                foreach ($teamGroupsArr as $team_groups) {
+                    echo "<option value='" . $team_groups['id'] . "'>";
+                    echo $team_groups['name'] . "</option>";
+                }
+                ?>
+                </select>
+                <button type="submit" onclick="teamGroupUpdate('add')" class='button'><?= _('Add') ?></button>
 
-        </section>
-        <section>
-        <!-- RM USER FROM GROUP -->
-            <label for='teamGroupUserRm'><?= _('Remove this user') ?></label>
-            <select id='teamGroupUserRm'>
-            <?php
-            foreach ($usersArr as $users) {
-                echo "<option value='" . $users['userid'] . "'>";
-                echo $users['firstname'] . " " . $users['lastname'] . "</option>";
-            }
-            ?>
-            </select>
+            </section>
+            <section>
+                <hr>
+            <!-- RM USER FROM GROUP -->
+                <label class="block" for='teamGroupUserRm'><?= _('Remove this user') ?></label>
+                <select class="clean-form col-3-form" id='teamGroupUserRm'>
+                <?php
+                foreach ($usersArr as $users) {
+                    echo "<option value='" . $users['userid'] . "'>";
+                    echo $users['firstname'] . " " . $users['lastname'] . "</option>";
+                }
+                ?>
+                </select>
 
-            <label for='teamGroupGroupRm'><?= _('from this group') ?></label>
-            <select id='teamGroupGroupRm'>
-            <?php
-            foreach ($teamGroupsArr as $team_groups) {
-                echo "<option value='" . $team_groups['id'] . "'>";
-                echo $team_groups['name'] . "</option>";
-            }
-            ?>
-            </select>
-            <button type="submit" onclick="teamGroupUpdate('rm')" class='button'><?= _('Go') ?></button>
-        </section>
-        </div>
+                <label class="block" for='teamGroupGroupRm'><?= _('from this group') ?></label>
+                <select class="clean-form col-3-form" id='teamGroupGroupRm'>
+                <?php
+                foreach ($teamGroupsArr as $team_groups) {
+                    echo "<option value='" . $team_groups['id'] . "'>";
+                    echo $team_groups['name'] . "</option>";
+                }
+                ?>
+                </select>
+                <button type="submit" onclick="teamGroupUpdate('rm')" class='button button-delete'><?= _('Remove') ?></button>
+            </section>
+            </div>
 
-        <!-- SHOW -->
-        <h3><?= _('Existing groups') ?></h3>
-        <?= $TeamGroupsView->show($teamGroupsArr) ?>
+            <!-- SHOW -->
+            <hr>
+            <h3><?= _('Existing groups') ?></h3>
+            <?= $TeamGroupsView->show($teamGroupsArr) ?>
 
+            </div>
         </div>
     </div>
     <!-- END TEAM GROUPS -->
@@ -409,12 +418,11 @@ try {
         });
         // edit the team group name
         $('h3.teamgroup_name').editable('app/controllers/TeamGroupsController.php', {
-         tooltip : 'Click to edit',
-         indicator : 'Saving...',
-         name : 'teamGroupUpdateName',
-         submit : 'Save',
-         cancel : 'Cancel',
-         style : 'display:inline'
+            indicator : 'Saving...',
+            name : 'teamGroupUpdateName',
+            submit : 'Save',
+            cancel : 'Cancel',
+            style : 'display:inline'
 
         });
         // SORTABLE for STATUS

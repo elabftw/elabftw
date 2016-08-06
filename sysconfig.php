@@ -115,7 +115,7 @@ try {
 
             <label class="block" for='proxy'><?= _('Address of the Proxy:') ?></label>
             <input class="clean-form col-3-form" type='text' value='<?= get_config('proxy') ?>' name='proxy' id='proxy' />
-            <p class='smalltip-gray'><?= _('If you are behind a firewall/proxy, enter the address here. Example : http://proxy.example.com:3128') ?></p>
+            <p class='smallgray'><?= _('If you are behind a firewall/proxy, enter the address here. Example : http://proxy.example.com:3128') ?></p>
 
             <div class='submitButtonDiv'>
                 <button type='submit' class='button'><?= _('Save') ?></button>
@@ -151,16 +151,16 @@ try {
                     <?= !get_config('stampshare') ? " selected='selected'" : "" ?>
                 ><?= _('No'); ?></option>
             </select>
-            <p class='smalltip-gray'><?= _('You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login infos in the admin panel.') ?></p>
+            <p class='smallgray'><?= _('You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login infos in the admin panel.') ?></p>
             <p>
             <label class="block" for='stampprovider'><?= _('URL for external timestamping service:') ?></label>
             <input class="clean-form col-3-form" type='url' placeholder='http://zeitstempel.dfn.de/' value='<?= get_config('stampprovider') ?>' name='stampprovider' id='stampprovider' />
-            <span class='smalltip-gray'><?php printf(_('This should be the URL used for %sRFC 3161%s-compliant timestamping requests.'), "<a href='https://tools.ietf.org/html/rfc3161'>", "</a>"); ?></span>
+            <span class='smallgray'><?php printf(_('This should be the URL used for %sRFC 3161%s-compliant timestamping requests.'), "<a href='https://tools.ietf.org/html/rfc3161'>", "</a>"); ?></span>
             </p>
             <p>
             <label class="block" for='stampcert'><?= _('Chain of certificates of the external timestamping service:'); ?></label>
             <input class="clean-form col-3-form" type='text' placeholder='vendor/pki.dfn.pem' value='<?= get_config('stampcert') ?>' name='stampcert' id='stampcert' />
-            <span class='smalltip-gray'><?php printf(_('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. The file needs to be in %sPEM-encoded (ASCII)%s format!'), "<br>", "<a href='https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail'>", "</a>"); ?></span>
+            <span class='smallgray'><?php printf(_('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. The file needs to be in %sPEM-encoded (ASCII)%s format!'), "<br>", "<a href='https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail'>", "</a>"); ?></span>
             </p>
             <label class="block" for='stamplogin'><?= _('Login for external timestamping service:') ?></label>
             <input class="clean-form col-3-form" type='text' value='<?= get_config('stamplogin'); ?>' name='stamplogin' id='stamplogin' /><br>
@@ -189,13 +189,13 @@ try {
                         <?= !get_config('admin_validate') ? " selected='selected'" : "" ?>
                     ><?= _('No'); ?></option>
                 </select>
-                <p class='smalltip-gray'><?= _('Set to yes for added security.') ?></p>
+                <p class='smallgray'><?= _('Set to yes for added security.') ?></p>
                 <label class="block" for='login_tries'><?= _('Number of allowed login attempts:') ?></label>
                 <input class="clean-form col-3-form" type='number' value='<?= get_config('login_tries') ?>' name='login_tries' id='login_tries' />
-                <p class='smalltip-gray'><?= _('3 might be too few. See for yourself :)') ?></p>
+                <p class='smallgray'><?= _('3 might be too few. See for yourself :)') ?></p>
                 <label class="block" for='ban_time'><?= _('Time of the ban after failed login attempts (in minutes):') ?></label>
                 <input class="clean-form col-3-form" type='number' value='<?= get_config('ban_time') ?>' name='ban_time' id='ban_time' />
-                <p class='smalltip-gray'>
+                <p class='smallgray'>
                     <?= _('To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems.'); ?>
                 </p>
                 <div class='submitButtonDiv'>
@@ -271,7 +271,7 @@ try {
                 <p>
                 <label class="block" for='smtp_address'><?= _('Address of the SMTP server:') ?></label>
                 <input class="clean-form col-3-form" type='text' value='<?= get_config('smtp_address') ?>' name='smtp_address' id='smtp_address' />
-                <span class='smalltip-gray'>smtp.mailgun.com</span>
+                <span class='smallgray'>smtp.mailgun.com</span>
                 <label class="block" for='smtp_encryption'><?= _('SMTP encryption:') ?></label>
                 <?php $smtp_encryption = get_config('smtp_encryption') ?>
                 <select class="clean-form col-3-form" name='smtp_encryption'>
@@ -282,10 +282,10 @@ try {
                 <?= $smtp_encryption === 'startssl' ? ' selected>' : '>' ?>
                 STARTSSL</option>
                 </select>
-                <span class='smalltip-gray'><?= _('Probably TLS') ?></span>
+                <span class='smallgray'><?= _('Probably TLS') ?></span>
                 <label class="block" for='smtp_port'><?= _('SMTP Port:') ?></label>
                 <input class="clean-form col-3-form" type='text' value='<?= get_config('smtp_port') ?>' name='smtp_port' id='smtp_port' />
-                <span class='smalltip-gray'><?= _('Default is 587.') ?></span>
+                <span class='smallgray'><?= _('Default is 587.') ?></span>
                 <label class="block" for='smtp_username'><?= _('SMTP username:') ?></label>
                 <input class="clean-form col-3-form" type='text' value='<?= get_config('smtp_username') ?>' name='smtp_username' id='smtp_username' />
                 <label class="block" for='smtp_password'><?= _('SMTP password') ?></label>

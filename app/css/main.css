@@ -80,8 +80,12 @@ a:hover {
 ul, li {
     list-style: none;
 }
-ul.clean-list {
+
+.clean-list {
     padding: 0;
+    margin: 0;
+}
+.group-list {
     margin: 0;
 }
 
@@ -107,6 +111,10 @@ input, select, textarea {
     border-radius: 4px;
     border: 1px #e3e3e3 solid;
     margin:5px 0;
+}
+.disabled-input{
+    color:#989898;
+
 }
 select{
     -moz-appearance:none;
@@ -157,6 +165,12 @@ img {
 hr {
     margin: 10px 0 20px 0;
     color: #dcdddc;
+}
+
+.danger-zone-area hr {
+    margin: 10px 0 20px 0;
+    color: #e6614c;
+    border-top: 1px solid;
 }
 
 /* TITLES */
@@ -384,7 +398,7 @@ a.elab-tooltip-top:hover span{
     position:absolute;
     color:#ffffff;
     background:#343434;
-    bottom: 0px;
+    bottom: 0;
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
@@ -462,10 +476,10 @@ section.item {
     background-color: #c24f3d;
 }
 
-.button-neutral{
+.button-neutral {
      background-color: #989898;
 }
-.button-neutral:hover{
+.button-neutral:hover {
      background-color: #727272;
 }
 
@@ -474,13 +488,13 @@ section.item {
     display:block;
     margin: 5px 0 0;
 }
-.clean-form{
+.clean-form {
     margin: 0 0 15px;
 }
-.col-3-form{
+.col-3-form {
     width: 30%;
 }
-.col-textarea-form{
+.col-textarea-form {
     width: 60%;
 }
 
@@ -489,16 +503,16 @@ section.item {
     padding-top:30px;
     margin: 30px 0 20px 0;
 }
-.login-area{
+.login-area {
     width: 33%;
     margin: 0 auto;
     text-align: left;
 }
-.login-area-input{
+.login-area-input {
     width: 100%;
     margin: 0 0 15px;
 }
-.login-area label{
+.login-area label {
     margin: 0;
 }
 
@@ -631,6 +645,9 @@ tr:nth-child(odd) {
     border-radius: 5px;
     padding: 20px;
     overflow: hidden;
+}
+.tooltip-box {
+    overflow: visible;
 }
 
 .box section {
@@ -778,21 +795,27 @@ a[class*='trigger_']:hover {
 }
 /* EDITABLE */
 .editable:hover {
-    background-color:#fff;
+     cursor: pointer;
 }
 .editable button {
-    background-color:#29AEB9;
     border: none;
-    border-radius: 20px;
-    color:white;
-    font-weight:bold;
+    border-radius: 25px;
+    padding: 10px 20px;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 11px;
     text-transform: uppercase;
-    margin: 6px;
+    background-color: #29AEB9;
+    margin: 0 5px;
+    letter-spacing: 1px;
 }
 .editable button:hover {
     background-color: #1F8591;
 }
 
+.editable input{
+    margin: 0 0 15px;
+}
 #commentsCreateArea {
     border: 1px solid #ccc;
     width: 100%;
@@ -853,15 +876,8 @@ a[class*='trigger_']:hover {
     display:block;
     color:#a2a2a2;
     font-size: 80%;
-    margin: 0 0 20px;
-}
-.smalltip-gray{
-    display:block;
-    color:#a2a2a2;
-    font-size: 80%;
     margin: -15px 0 20px;
 }
-
 /* ucp.php */
 
 /* on ucp.php */

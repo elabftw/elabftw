@@ -438,6 +438,7 @@ section.item {
     background-color: #29AEB9;
     margin: 0 5px;
     letter-spacing: 1px;
+    cursor: pointer;
 }
 
 .button:hover {

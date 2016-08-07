@@ -21,7 +21,7 @@ Create your drop
 
 .. warning:: This script will work for a fresh drop. If you already have a server running, you should consider a :ref:`normal install <install-gnulinux>` instead.
 
-* Create an account on `DigitalOcean <https://cloud.digitalocean.com/registrations/new>`_
+* Create an account on `DigitalOcean <https://m.do.co/c/c2ce8f861e0e>`_
 
 .. image:: img/digitalocean.png
     :align: center

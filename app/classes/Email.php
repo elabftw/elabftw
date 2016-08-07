@@ -28,6 +28,7 @@ class Email
     /**
      * Constructor
      *
+     * @param Config $config
      */
     public function __construct(Config $config)
     {

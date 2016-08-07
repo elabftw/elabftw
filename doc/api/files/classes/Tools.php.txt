@@ -23,7 +23,7 @@ class Tools
      * Return the date as YYYYMMDD format if no input
      * return input if it is valid
      *
-     * @param string 20160521
+     * @param string $input 20160521
      * @return string
      */
     public static function kdate($input = null)
@@ -331,6 +331,27 @@ class Tools
             'zh_CN' => 'zh-cn'
         );
         return $map[$lang];
+    }
+
+    /**
+     * Get an associative array for the langs to display in a select
+     *
+     * @return array
+     */
+    public static function getLangsArr()
+    {
+        $langs = array(
+            'en_GB' => 'English (UK)',
+            'ca_ES' => 'Spanish (Catalan)',
+            'de_DE' => 'German',
+            'es_ES' => 'Spanish',
+            'fr_FR' => 'French',
+            'it_IT' => 'Italian',
+            'pt_BR' => 'Portuguese (Brazilian)',
+            'zh_CN' => 'Chinese Simplified'
+        );
+
+        return $langs;
     }
 }
 

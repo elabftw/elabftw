@@ -120,7 +120,7 @@ class DatabaseView extends EntityView
         }
         $load_more_button = "<div class='center'>
             <button class='button' id='loadButton'>" . sprintf(_('Show %s more'), $this->limit) . "</button>
-            <button class='button' id='loadAllButton'>". _('Show all') . "</button>
+            <button class='button button-neutral' id='loadAllButton'>". _('Show all') . "</button>
             </div>";
         // show load more button if there are more results than the default display number
         if ($count > $this->limit) {
@@ -183,20 +183,19 @@ class DatabaseView extends EntityView
         $html .= Tools::formatDate($itemArr['date']) . "</div>";
         $html .= $this->showStars($itemArr['rating']);
         // buttons
-        $html .= "<a href='database.php?mode=edit&id=" . $itemArr['itemid'] . "'><img src='img/pen-blue.png' title='edit' alt='edit' /></a> 
-        <a href='app/controllers/DatabaseController.php?databaseDuplicateId=" . $itemArr['itemid'] . "'><img src='img/duplicate.png' title='duplicate item' alt='duplicate' /></a> 
-        <a href='make.php?what=pdf&id=" . $itemArr['itemid'] . "&type=items'><img src='img/pdf.png' title='make a pdf' alt='pdf' /></a> 
-        <a href='make.php?what=zip&id=" . $itemArr['itemid'] . "&type=items'><img src='img/zip.png' title='make a zip archive' alt='zip' /></a>
-        <a href='experiments.php?mode=show&related=".$itemArr['itemid'] . "'><img src='img/link.png' alt='Linked experiments' title='Linked experiments' /></a> ";
+        $html .= "<a class='elab-tooltip' href='database.php?mode=edit&id=" . $itemArr['itemid'] . "'><span>Edit</span><img src='img/pen-blue.png' alt='Edit' /></a> 
+        <a class='elab-tooltip' href='app/controllers/DatabaseController.php?databaseDuplicateId=" . $itemArr['itemid'] . "'><span>Duplicate Item</span><img src='img/duplicate.png' alt='Duplicate' /></a> 
+        <a class='elab-tooltip' href='make.php?what=pdf&id=" . $itemArr['itemid'] . "&type=items'><span>Make a PDF</span><img src='img/pdf.png' alt='PDF' /></a> 
+        <a class='elab-tooltip' href='make.php?what=zip&id=" . $itemArr['itemid'] . "&type=items'><span>Make a ZIP</span><img src='img/zip.png' alt='ZIP' /></a>
+        <a class='elab-tooltip' href='experiments.php?mode=show&related=".$itemArr['itemid'] . "'><span>Linked Experiments</span><img src='img/link.png' alt='Linked Experiments' /></a> ";
         // lock
-        if ($itemArr['locked'] == 0) {
-            $imgSrc = 'unlock.png';
-            $alt = 'Lock item';
-        } else { // item is locked
+        $imgSrc = 'unlock.png';
+        $alt = 'Lock item';
+        if ($itemArr['locked'] != 0) {
             $imgSrc = 'lock-gray.png';
             $alt = 'Unlock item';
         }
-        $html .= "<img id='lock' onClick=\"toggleLock('database', " . $itemArr['itemid'] . ")\" src='img/" . $imgSrc . "' title='" . $alt . "' alt='" . $alt . "' /></a>";
+        $html .= "<a class='elab-tooltip' href='#'><span>" . $alt . "</span><img id='lock' onClick=\"toggleLock('database', " . $itemArr['itemid'] . ")\" src='img/" . $imgSrc . "'alt='" . $alt . "' /></a>";
         // TAGS
         $html .= " " . $this->showTags('items', 'view', $this->Database->id);
 
@@ -352,21 +351,7 @@ class DatabaseView extends EntityView
                 removed_menuitems : 'newdocument',
                 // save button :
                 save_onsavecallback: function() {
-                    $.post('app/controllers/EntityController.php', {
-                        id : " . $this->Database->id . ",
-                        type : 'items',
-                        title : document.getElementById('title_input').value,
-                        date : document.getElementById('datepicker').value,
-                        // we need this to get the updated content
-                        body : tinymce.activeEditor.getContent()
-                    }).done(function(data) {
-                        var json = JSON.parse(data);
-                        if (json.res) {
-                            notif(json.msg, 'ok');
-                        } else {
-                            notif(json.msg, 'ko');
-                        }
-                    });
+                    quickSave('items', " . $this->Database->id . ");
                 },
                 // keyboard shortcut to insert today's date at cursor in editor
                 setup : function(editor) {

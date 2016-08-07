@@ -64,6 +64,7 @@ class Update
     /**
      * Create the pdo object
      *
+     * @param Config $config
      */
     public function __construct(Config $config)
     {

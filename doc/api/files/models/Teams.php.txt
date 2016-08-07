@@ -29,7 +29,7 @@ class Teams
     /**
      * Constructor
      *
-     * @throws Exception if user is not admin
+     * @param int|null $team
      */
     public function __construct($team = null)
     {
@@ -61,10 +61,10 @@ class Teams
 
         // now we need to insert a new default set of status for the newly created team
         $sql = "INSERT INTO status (team, name, color, is_default) VALUES
-        (:team, 'Running', '0096ff', 1),
-        (:team, 'Success', '00ac00', 0),
+        (:team, 'Running', '29AEB9', 1),
+        (:team, 'Success', '54aa08', 0),
         (:team, 'Need to be redone', 'c0c0c0', 0),
-        (:team, 'Fail', 'ff0000', 0);";
+        (:team, 'Fail', 'c24f3d', 0);";
         $req = $this->pdo->prepare($sql);
         $req->bindValue(':team', $newId);
         $result2 = $req->execute();
@@ -205,6 +205,7 @@ class Teams
     /**
      * Delete a team on if all the stats are at zero
      *
+     * @param int $team
      * @return bool true if success, false if the team is not brand new
      */
     public function destroy($team)

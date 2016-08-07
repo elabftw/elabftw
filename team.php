@@ -33,10 +33,10 @@ $Scheduler = new Scheduler($_SESSION['team_id']);
 <link rel='stylesheet' media='all' href='js/fullcalendar/dist/fullcalendar.css'>
 
 <menu>
-<ul>
-<li class='tabhandle' id='tab1'><?= _('Scheduler') ?></li>
-<li class='tabhandle' id='tab2'><?= _('Infos') ?></li>
-</ul>
+    <ul>
+        <li class='tabhandle' id='tab1'><?= _('Scheduler') ?></li>
+        <li class='tabhandle' id='tab2'><?= _('Infos') ?></li>
+    </ul>
 </menu>
 
 <!-- TAB 1 SCHEDULER -->
@@ -88,6 +88,7 @@ try {
 }
 ?>
 </div>
+
 <!-- TAB 2 INFOS -->
 <div class='divhandle' id='tab2div'>
 <?php

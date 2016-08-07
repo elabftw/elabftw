@@ -35,13 +35,14 @@ class StatusView
      */
     public function showCreate()
     {
-        $html = "<h3>" . _('Add a new status') . "</h3>";
-        $html .= "<ul class='list-group'><li class='list-group-item center'>";
+        $html = "<div class='box'>";
+        $html .= "<h3>" . _('Add a New Status') . "</h3><hr>";
+        $html .= "<ul class='list-group'><li>";
         $html .= "<ul class='list-inline'>";
         $html .= "<li>" . _('Name') . " <input type='text' id='statusName' /></li>";
         $html .= "<li>" . _('Color') . " <input class='colorpicker' type='text' id='statusColor' value='000000' /></li>";
         $html .= "<li><button onClick='statusCreate()' class='button'>" . _('Save') . "</button></li>";
-        $html .= "</ul></li></ul>";
+        $html .= "</ul></li></ul></div>";
 
         return $html;
     }
@@ -54,13 +55,13 @@ class StatusView
     public function show()
     {
         $statusArr = $this->Status->readAll();
-
-        $html = "<h3>" . _('Edit an existing status') . "</h3>";
+        $html = "<div class='box'>";
+        $html .= "<h3>" . _('Edit an Existing Status') . "</h3><hr>";
         $html .= "<ul class='draggable sortable_status list-group'>";
 
         foreach ($statusArr as $status) {
 
-            $html .= "<li id='status_" . $status['id'] . "' class='list-group-item center'>";
+            $html .= "<li id='status_" . $status['id'] . "' class='list-group-item'>";
 
 
             $html .= "<ul class='list-inline'>";
@@ -68,22 +69,22 @@ class StatusView
             $html .= "<li>" . _('Name') . " <input required type='text' id='statusName_" . $status['id'] . "' value='" . $status['name'] . "' /></li>";
             $html .= "<li style='color:#" . $status['color'] . "'>" . _('Color') . " <input class='colorpicker' type='text' maxlength='6' id='statusColor_" . $status['id'] . "' value='" . $status['color'] . "' />";
             $html .= "</li>";
-            $html .= "<li>" . _('Default status') . " <input type='radio' name='defaultRadio' id='statusDefault_" . $status['id'] . "'";
+            $html .= "<li><input type='radio' name='defaultRadio' id='statusDefault_" . $status['id'] . "'";
             // check the box if the status is already default
             if ($status['is_default'] == 1) {
                 $html .= " checked";
             }
-            $html .= "></li>";
+            $html .= "> " . _('Default status') . " </li>";
 
 
             $html .= "<li><button id='statusUpdate_" . $status['id'] . "' onClick='statusUpdate(" . $status['id'] . ")' class='button'>" . _('Save') . "</button></li>";
 
-            $html .= "<li><button class='button' onClick=\"statusDestroy(" . $status['id'] . ")\">";
+            $html .= "<li><button class='button button-delete' onClick=\"statusDestroy(" . $status['id'] . ")\">";
             $html .= _('Delete') . "</button></li>";
 
             $html .= "</ul></li>";
         }
-        $html .= "</ul>";
+        $html .= "</ul></div>";
 
         return $html;
     }

@@ -36,6 +36,7 @@ class Templates extends Entity
      *
      * @param string $name
      * @param string $body
+     * @param int $userid
      * @return bool
      */
     public function create($name, $body, $userid)

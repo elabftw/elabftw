@@ -51,7 +51,7 @@ class Update
      * AND package.json
      * ///////////////////////////
      */
-    const INSTALLED_VERSION = '1.2.4';
+    const INSTALLED_VERSION = '1.2.5';
 
     /**
      * /////////////////////////////////////////////////////
@@ -64,6 +64,7 @@ class Update
     /**
      * Create the pdo object
      *
+     * @param Config $config
      */
     public function __construct(Config $config)
     {

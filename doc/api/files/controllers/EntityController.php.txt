@@ -99,7 +99,7 @@ try {
             $comment = filter_var($_POST['comment'], FILTER_SANITIZE_STRING);
 
             if (strlen($comment) === 0 || $comment === ' ') {
-                throw new Exception (_('Comment is too short'));
+                throw new Exception(_('Comment is too short'));
             }
 
 

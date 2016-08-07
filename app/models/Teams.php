@@ -29,7 +29,7 @@ class Teams
     /**
      * Constructor
      *
-     * @throws Exception if user is not admin
+     * @param int|null $team
      */
     public function __construct($team = null)
     {
@@ -205,6 +205,7 @@ class Teams
     /**
      * Delete a team on if all the stats are at zero
      *
+     * @param int $team
      * @return bool true if success, false if the team is not brand new
      */
     public function destroy($team)

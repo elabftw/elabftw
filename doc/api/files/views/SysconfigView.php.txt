@@ -46,8 +46,8 @@ class SysconfigView
     public function testemailShow()
     {
         $html = "<div class='box'>";
-        $html .= "<label for='testemailEmail'>" . _('Send a test email') . "</label>";
-        $html .= " <input type='email' placeholder='you@email.com' id='testemailEmail' />";
+        $html .= "<label class='block' for='testemailEmail'>" . _('Send a test email') . "</label>";
+        $html .= " <input class='clean-form col-3-form' type='email' placeholder='you@email.com' id='testemailEmail' />";
         $html .= "<button id='testemailButton' onClick='testemailSend()' class='button'>" . _('Send') . "</button>";
         $html .= "</div>";
 
@@ -63,7 +63,7 @@ class SysconfigView
     {
         $logsArr = $this->Logs->read();
         $html = "<div id='logsDiv'>";
-        $html .= "<div class='well'><ul>";
+        $html .= "<div class='well'><ul class='clean-list'>";
         if (empty($logsArr)) {
             $html .= "<li>" . _('Nothing to display') . ".</li>";
         } else {
@@ -74,7 +74,7 @@ class SysconfigView
         }
         $html .= "</ul></div>";
         $html .= "<div class='submitButtonDiv'>";
-        $html .= "<button id='logsDestroyButton' onClick='logsDestroy()' class='button'>" .
+        $html .= "<button id='logsDestroyButton' onClick='logsDestroy()' class='button button-delete'>" .
             ('Clear all logs') . "</button></div></div>";
 
         return $html;

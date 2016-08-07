@@ -36,7 +36,6 @@ $Scheduler = new Scheduler($_SESSION['team_id']);
 <ul>
 <li class='tabhandle' id='tab1'><?= _('Scheduler') ?></li>
 <li class='tabhandle' id='tab2'><?= _('Infos') ?></li>
-<li class='tabhandle' id='tab3'><?= _('Tools') ?></li>
 </ul>
 </menu>
 
@@ -141,20 +140,6 @@ foreach ($Users->readAll() as $user) {
 ?>
 </table>
 
-</div>
-
-<!-- TAB 3 TOOLS -->
-<div class='divhandle chemdoodle' id='tab3div'>
-    <h3><?php echo _('Molecule drawer'); ?></h3>
-    <div class='box'>
-        <link rel="stylesheet" href="app/css/chemdoodle.css" type="text/css">
-        <script src="js/chemdoodle/chemdoodle.min.js"></script>
-        <div class='center'>
-            <script>
-                var sketcher = new ChemDoodle.SketcherCanvas('sketcher', 550, 300, {oneMolecule:true});
-            </script>
-        </div>
-    </div>
 </div>
 
 <script>

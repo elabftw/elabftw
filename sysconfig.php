@@ -128,8 +128,6 @@ try {
             <ul class="clean-list">
                 <li><p><?= _('Operating System') . ': ' . PHP_OS ?></p></li>
                 <li><p><?= _('PHP Version') . ': ' . PHP_VERSION ?></p></li>
-                <li><p><?= _('Size of the uploads folder') . ': ' . Tools::formatBytes(Tools::dirSize(ELAB_ROOT . 'uploads')) .
-                    ' (' . Tools::dirNum(ELAB_ROOT . 'uploads') . ' files)' ?></p></li>
                 <li><p><?= _('Largest integer supported') . ': ' . PHP_INT_MAX ?></p></li>
                 <li><p><?= _('PHP configuration directory') . ': ' . PHP_SYSCONFDIR ?></p></li>
             </ul>

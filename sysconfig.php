@@ -123,8 +123,6 @@ try {
             <ul>
                 <li><p><?php echo _('Operating System') . ': ' . PHP_OS; ?></p></li>
                 <li><p><?php echo _('PHP Version') . ': ' . PHP_VERSION; ?></p></li>
-                <li><p><?php echo _('Size of the uploads folder') . ': ' . Tools::formatBytes(Tools::dirSize(ELAB_ROOT . 'uploads')) .
-                    ' (' . Tools::dirNum(ELAB_ROOT . 'uploads') . ' files)'; ?></p></li>
                 <li><p><?php echo _('Largest integer supported') . ': ' . PHP_INT_MAX; ?></p></li>
                 <li><p><?php echo _('PHP configuration directory') . ': ' . PHP_SYSCONFDIR; ?></p></li>
             </ul>

@@ -48,7 +48,7 @@ class Update
      * AND package.json
      * ///////////////////////////
      */
-    const INSTALLED_VERSION = '1.2.5';
+    const INSTALLED_VERSION = '1.2.6';
 
     /**
      * /////////////////////////////////////////////////////

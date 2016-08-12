@@ -447,7 +447,7 @@ class ExperimentsView extends EntityView
             $Users = new Users();
             $userArr = $Users->read($this->experiment['userid']);
             $ownerName = $userArr['firstname'] . ' ' . $userArr['lastname'];
-            $message = sprintf(_('Read-only mode. Experiment of %s'), $ownerName);
+            $message = sprintf(_('Read-only mode. Experiment of %s.'), $ownerName);
             $html .= display_message('ok', $message);
         }
 

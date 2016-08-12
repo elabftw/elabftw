@@ -518,7 +518,7 @@ if (isset($_GET)) {
             // Display results
             echo "<hr>";
             if ($search_type === 'experiments') {
-                $EntityView = new ExperimentsView(new Experiments($_SESSION['userid']));
+                $EntityView = new ExperimentsView(new Experiments($_SESSION['team_id'], $_SESSION['userid']));
             } else {
                 $EntityView = new DatabaseView(new Database($_SESSION['team_id']), $_SESSION['userid']);
             }

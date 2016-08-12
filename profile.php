@@ -22,8 +22,8 @@ $selected_menu = null;
 require_once 'app/head.inc.php';
 
 try {
-    $Experiments = new Experiments($_SESSION['userid']);
-    $expArr = $Experiments->readAll();
+    $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid']);
+    $expArr = $Experiments->readAllFromUser();
     $count = count($expArr);
 
     $Users = new Users();

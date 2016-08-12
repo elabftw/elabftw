@@ -13,7 +13,7 @@ Your eLabFTW installation will run in a `Docker <https://www.docker.com>`_ conta
 
 Everything will be configured properly and automagically.
 
-If you don't have a (sub)domain already, you can get one from `OVH <https://www.ovh.com>`_, `Gandi <https://www.gandi.net>`_, `1&1 <https://www.1and1.com>`_ or any other domain name registrar. It's about 5$ a year.
+If you don't have a (sub)domain already, you can get one from `OVH <https://www.ovh.com>`_, `Gandi <https://www.gandi.net>`_, `1&1 <https://www.1and1.com>`_ or any other domain name registrar. You can get one for half a dollar per year.
 
 
 Create your drop

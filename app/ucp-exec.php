@@ -65,6 +65,13 @@ try {
         $new_sc_submit = substr($_POST['submit'], 0, 1);
         $new_sc_todo = substr($_POST['todo'], 0, 1);
 
+        // SHOW TEAM
+        if (isset($_POST['show_team']) && $_POST['show_team'] === 'on') {
+            $new_show_team = 1;
+        } else {
+            $new_show_team = 0;
+        }
+
         // CLOSE WARNING
         if (isset($_POST['close_warning']) && $_POST['close_warning'] === 'on') {
             $new_close_warning = 1;
@@ -97,6 +104,7 @@ try {
             sc_edit = :new_sc_edit,
             sc_submit = :new_sc_submit,
             sc_todo = :new_sc_todo,
+            show_team = :new_show_team,
             close_warning = :new_close_warning,
             chem_editor = :new_chem_editor,
             lang = :new_lang
@@ -111,6 +119,7 @@ try {
             'new_sc_edit' => $new_sc_edit,
             'new_sc_submit' => $new_sc_submit,
             'new_sc_todo' => $new_sc_todo,
+            'new_show_team' => $new_show_team,
             'new_close_warning' => $new_close_warning,
             'new_chem_editor' => $new_chem_editor,
             'new_lang' => $new_lang,
@@ -125,6 +134,7 @@ try {
         $_SESSION['prefs']['shortcuts']['edit'] = $new_sc_edit;
         $_SESSION['prefs']['shortcuts']['submit'] = $new_sc_submit;
         $_SESSION['prefs']['shortcuts']['todo'] = $new_sc_todo;
+        $_SESSION['prefs']['show_team'] = $new_show_team;
         $_SESSION['prefs']['close_warning'] = $new_close_warning;
         $_SESSION['prefs']['chem_editor'] = $new_chem_editor;
         $_SESSION['prefs']['lang'] = $new_lang;

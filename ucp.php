@@ -142,16 +142,28 @@ foreach ($langsArr as $lang => $text) {
             <h3><?php echo _('Miscellaneous'); ?></h3>
             <hr>
             <p>
-            <input id='close_warning' type='checkbox' name='close_warning' <?php
-            if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
-                echo "checked='checked'  ";
-            };?> />
-            <label for='close_warning'><?php echo _('Display a warning before closing an edit window/tab ?'); ?></label>
+            <input id='show_team' type='checkbox' name='show_team'
+<?php
+if (isset($_SESSION['prefs']['show_team']) && $_SESSION['prefs']['show_team'] === 1) {
+    echo "checked='checked'  ";
+};?>
+            />
+            <label for='show_team'><?= _('Show experiments from the team on the Experiments page?'); ?></label>
             <br>
-            <input id='chem_editor' type='checkbox' name='chem_editor' <?php
-            if (isset($_SESSION['prefs']['chem_editor']) && $_SESSION['prefs']['chem_editor'] === 1) {
-                echo "checked='checked'  ";
-            };?> />
+            <input id='close_warning' type='checkbox' name='close_warning'
+<?php
+if (isset($_SESSION['prefs']['close_warning']) && $_SESSION['prefs']['close_warning'] === 1) {
+    echo "checked='checked'  ";
+};?>
+            />
+            <label for='close_warning'><?php echo _('Display a warning before closing an edit window/tab?'); ?></label>
+            <br>
+            <input id='chem_editor' type='checkbox' name='chem_editor'
+<?php
+if (isset($_SESSION['prefs']['chem_editor']) && $_SESSION['prefs']['chem_editor'] === 1) {
+    echo "checked='checked'  ";
+};?>
+            />
             <label for='chem_editor'><?php echo _('Display the molecule drawer in edit mode?'); ?></label>
             </p>
         </section>

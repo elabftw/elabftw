@@ -7,14 +7,14 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->Experiments= new Experiments(1);
+        $this->Experiments= new Experiments(1, 1);
     }
 
     public function testCreateAndDestroy()
     {
         $new = $this->Experiments->create();
         $this->assertTrue((bool) Tools::checkId($new));
-        $this->Experiments = new Experiments(1, $new);
+        $this->Experiments = new Experiments(1, 1, $new);
         $this->assertTrue($this->Experiments->destroy());
     }
 
@@ -35,7 +35,7 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
 
     public function testReadAll()
     {
-        $this->assertTrue(is_array($this->Experiments->readAll()));
+        $this->assertTrue(is_array($this->Experiments->readAllFromUser()));
     }
 
     public function testReadRelated()

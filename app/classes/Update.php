@@ -59,7 +59,7 @@ class Update
      * UPDATE IT ALSO IN INSTALL/ELABFTW.SQL (last line)
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '10';
+    const REQUIRED_SCHEMA = '11';
 
     /**
      * Create the pdo object
@@ -239,6 +239,11 @@ class Update
             // 20160722
             $this->schema10();
             $this->updateSchema(10);
+        }
+        if ($current_schema < 11) {
+            // 20160812
+            $this->schema11();
+            $this->updateSchema(11);
         }
 
         // place new schema functions above this comment
@@ -473,6 +478,18 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
         $sql2 = "ALTER TABLE `items_types` ADD `bookable` BOOL NULL DEFAULT FALSE";
         if (!$this->pdo->q($sql) || !$this->pdo->q($sql2)) {
             throw new Exception('Problem updating to schema 10!');
+        }
+    }
+
+    /**
+     * Add show_team in user prefs
+     *
+     */
+    private function schema11()
+    {
+        $sql = "ALTER TABLE `users` ADD `show_team` TINYINT NOT NULL DEFAULT '0'";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Problem updating to schema 11!');
         }
     }
 }

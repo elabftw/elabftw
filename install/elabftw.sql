@@ -304,6 +304,7 @@ CREATE TABLE `users` (
   `sc_edit` varchar(1) NOT NULL DEFAULT 'e',
   `sc_submit` varchar(1) NOT NULL DEFAULT 's',
   `sc_todo` varchar(1) NOT NULL DEFAULT 't',
+  `show_team` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `close_warning` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `chem_editor` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `validated` tinyint(1) NOT NULL DEFAULT '0',
@@ -407,4 +408,4 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('stampprovider', 'http://zeitstempel.dfn.de/'),
 ('stampcert', 'vendor/pki.dfn.pem'),
 ('stamphash', 'sha256'),
-('schema', '10');
+('schema', '11');

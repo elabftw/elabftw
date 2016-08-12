@@ -21,6 +21,9 @@ class Experiments extends Entity
     /** pdo object */
     public $pdo;
 
+    /** our team */
+    public $team;
+
     /** current user */
     public $userid;
 
@@ -33,13 +36,15 @@ class Experiments extends Entity
     /**
      * Constructor
      *
+     * @param int $team
      * @param int $userid
      * @param int|null $id
      */
-    public function __construct($userid, $id = null)
+    public function __construct($team, $userid, $id = null)
     {
         $this->pdo = Db::getConnection();
 
+        $this->team = $team;
         $this->userid = $userid;
 
         $Users = new Users();
@@ -123,7 +128,7 @@ class Experiments extends Entity
      *
      * @return array
      */
-    public function readAll()
+    public function readAllFromUser()
     {
         $sql = "SELECT DISTINCT experiments.*, status.color, status.name, uploads.*
             FROM experiments
@@ -138,6 +143,30 @@ class Experiments extends Entity
             ORDER BY " . $this->order . " " . $this->sort;
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $req->execute();
+
+        return $req->fetchAll();
+    }
+
+    /**
+     * Read all experiments from the team
+     *
+     * @return array
+     */
+    public function readAllFromTeam()
+    {
+        $sql = "SELECT DISTINCT experiments.*, status.color, status.name, uploads.*
+            FROM experiments
+            LEFT JOIN status ON (status.team = experiments.team)
+            LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
+            LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
+            WHERE experiments.team = " . $this->team . "
+            AND experiments.status = status.id
+            " . $this->categoryFilter . "
+            " . $this->tagFilter . "
+            " . $this->queryFilter . "
+            ORDER BY " . $this->order . " " . $this->sort;
+        $req = $this->pdo->prepare($sql);
         $req->execute();
 
         return $req->fetchAll();

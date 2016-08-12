@@ -7,7 +7,7 @@ class CommentsTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->Experiments = new Experiments(1, 1);
+        $this->Experiments = new Experiments(1, 1, 1);
         $this->Comments = new Comments($this->Experiments);
     }
 

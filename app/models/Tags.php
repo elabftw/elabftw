@@ -149,7 +149,7 @@ class Tags extends Entity
 
         $tagList = "";
         while ($tag = $req->fetch()) {
-            $tagList .= "'" . $tag['tag'] . "',";
+            $tagList .= "'" . addslashes(html_entity_decode($tag['tag'], ENT_QUOTES)) . "',";
         }
 
         return $tagList;

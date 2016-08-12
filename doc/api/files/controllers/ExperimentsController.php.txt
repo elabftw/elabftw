@@ -23,7 +23,7 @@ try {
 
     // CREATE
     if (isset($_GET['create'])) {
-        $Experiments = new Experiments($_SESSION['userid']);
+        $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid']);
         if (isset($_GET['tpl']) && !empty($_GET['tpl'])) {
             $id = $Experiments->create($_GET['tpl']);
         } else {
@@ -34,7 +34,7 @@ try {
 
     // UPDATE
     if (isset($_POST['update'])) {
-        $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
+        $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
         if ($Experiments->update(
             $_POST['title'],
             $_POST['date'],
@@ -48,7 +48,7 @@ try {
 
     // DUPLICATE
     if (isset($_GET['duplicateId'])) {
-        $Experiments = new Experiments($_SESSION['userid'], $_GET['duplicateId']);
+        $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_GET['duplicateId']);
         $id = $Experiments->duplicate();
         $mode = 'edit';
         header("location: ../../experiments.php?mode=" . $mode . "&id=" . $id);
@@ -56,7 +56,7 @@ try {
 
     // UPDATE STATUS
     if (isset($_POST['updateStatus'])) {
-        $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
+        $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
         if ($Experiments->updateStatus($_POST['status'])) {
             // get the color of the status for updating the css
             $Status = new Status($_SESSION['team_id']);
@@ -81,7 +81,7 @@ try {
 
     // UPDATE VISIBILITY
     if (isset($_POST['updateVisibility'])) {
-        $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
+        $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
         if ($Experiments->updateVisibility($_POST['visibility'])) {
             echo json_encode(array(
                 'res' => true,
@@ -97,7 +97,7 @@ try {
 
     // CREATE LINK
     if (isset($_POST['createLink'])) {
-        $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
+        $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
         if ($Experiments->Links->create($_POST['linkId'])) {
             echo json_encode(array(
                 'res' => true,
@@ -113,7 +113,7 @@ try {
 
     // DESTROY LINK
     if (isset($_POST['destroyLink'])) {
-        $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
+        $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
         if ($Experiments->Links->destroy($_POST['linkId'])) {
             echo json_encode(array(
                 'res' => true,
@@ -147,7 +147,7 @@ try {
 
     // DESTROY
     if (isset($_POST['destroy'])) {
-        $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
+        $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
         $Teams = new Teams($_SESSION['team_id']);
         if ((($Teams->read('deletable_xp') == '0') &&
             !$_SESSION['is_admin']) ||

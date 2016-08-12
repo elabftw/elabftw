@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Changelog &mdash; elabftw 1.2.5 documentation</title>
+  <title>Changelog &mdash; elabftw 1.2.6 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="elabftw 1.2.5 documentation" href="index.html"/>
+    <link rel="top" title="elabftw 1.2.6 documentation" href="index.html"/>
         <link rel="next" title="License" href="license.html"/>
         <link rel="prev" title="Thanks" href="thanks.html"/> 
 
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.2.5
+                1.2.6
               </div>
             
           
@@ -106,6 +106,7 @@
 <li class="toctree-l1"><a class="reference internal" href="thanks.html">Thanks</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Changelog</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-3-0">Version 1.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-2-6">Version 1.2.6</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-2-5">Version 1.2.5</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-2-4">Version 1.2.4</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-2-3">Version 1.2.3</a></li>
@@ -221,14 +222,41 @@
 <span id="id1"></span><h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="version-1-3-0">
 <h2>Version 1.3.0<a class="headerlink" href="#version-1-3-0" title="Permalink to this headline">¶</a></h2>
-<ul>
-<li><p class="first">add a scheduler to allow booking (bookable) items from the database, on Team page (#238)</p>
-<p>Head to the admin panel to create a bookable type of item. You can then book it from the Team page.</p>
+<ul class="simple">
+<li>New features:<ul>
+<li>add a scheduler to allow booking (bookable) items from the database, on Team page (#238). Head to the admin panel to create a bookable type of item. You can then book it from the Team page.</li>
+<li>add possbility to show experiments from others from the team. Go to the User Control Panel to set the option.</li>
+<li>add possibility to send a mass email to all registered users from Sysconfig panel (#271)</li>
+<li>Chemdoodle: when clicking the Save button on an experiment, the .mol file is automatically uploaded (#174)</li>
+</ul>
 </li>
-<li><p class="first">add possibility to send a mass email to all registered users from Sysconfig panel (#271)</p>
+<li>User interface (contributions by &#64;manonstripes):<ul>
+<li>tooltips appear on icons to display their action</li>
+<li>better colors for buttons depending on their purpose</li>
+<li>language select is now displaying language in a user friendly way</li>
+<li>homogeneization of some pages</li>
+<li>prettier user interface</li>
+<li>better user experience</li>
+</ul>
 </li>
-<li><p class="first">Chemdoodle: when clicking the Save button on an experiment, the .mol file is automatically uploaded (#174)</p>
+<li>Documentation:<ul>
+<li>the documentation has improved</li>
+</ul>
 </li>
+<li>Dev corner:<ul>
+<li>a whole lot more unit tests</li>
+<li>code coverage has been enabled</li>
+<li>acceptance tests are working properly. The config file is swapped for the test DB.</li>
+<li>files in app/ were deleted and code was moved to classes</li>
+<li>the inc/ folder is no more! files are in app/</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="version-1-2-6">
+<h2>Version 1.2.6<a class="headerlink" href="#version-1-2-6" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>remove the counting of uploaded files (sysconfig page) because it may crash the php process for large number of files</li>
 </ul>
 </div>
 <div class="section" id="version-1-2-5">
@@ -1078,7 +1106,7 @@ Refresh the page to retry. You can put back restrictive permissions after the up
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.2.5',
+            VERSION:'1.2.6',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

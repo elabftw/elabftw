@@ -14,7 +14,7 @@ One eLabFTW installation can host several teams. So ideally it is installed at a
 
 By default, experiments and database items are restricted to a team. But users can choose to extend this to all registered users.
 
-Experiments showed on the Experiments tab (the main tab) are yours only. To see experiments from other people in the team use the Search page.
+Experiments showed on the Experiments tab (the main tab) are yours only. To see experiments from other people in the team use the Search page or enable it from your User Control Panel.
 
 Database items are common to the team and can be edited by anyone from the team.
 

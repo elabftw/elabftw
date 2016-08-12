@@ -27,6 +27,9 @@ class ExperimentsView extends EntityView
     /** Read only switch */
     private $ro = false;
 
+    /** show experiments from others in the team? */
+    private $showTeam = false;
+
     /** the UploadsView object */
     private $UploadsView;
 
@@ -49,8 +52,9 @@ class ExperimentsView extends EntityView
     {
         $this->Experiments = $experiments;
         $this->limit = $_SESSION['prefs']['limit'];
+        $this->showTeam = $_SESSION['prefs']['show_team'];
 
-        $this->TeamGroups = new TeamGroups($_SESSION['team_id']);
+        $this->TeamGroups = new TeamGroups($this->Experiments->team);
     }
 
     /**
@@ -127,8 +131,13 @@ class ExperimentsView extends EntityView
 
         } else {
 
-            // get all XP items for the user
-            $itemsArr = $this->Experiments->readAll();
+            if ($this->showTeam) {
+                // get all XP from team
+                $itemsArr = $this->Experiments->readAllFromTeam();
+            } else {
+                // get all XP items for the user
+                $itemsArr = $this->Experiments->readAllFromUser();
+            }
 
         }
 
@@ -176,7 +185,12 @@ class ExperimentsView extends EntityView
      */
     public function showUnique($item)
     {
-        $html = "<section class='item " . $this->display . "' style='border-left: 6px solid #" . $item['color'] . "'>";
+        // dim the experiment a bit if it's not yours
+        $opacity = '1';
+        if ($this->Experiments->userid != $item['userid']) {
+            $opacity = '0.7';
+        }
+        $html = "<section class='item " . $this->display . "' style='opacity:" . $opacity . "; border-left: 6px solid #" . $item['color'] . "'>";
         $html .= "<a href='experiments.php?mode=view&id=" . $item['id'] . "'>";
 
         // show attached if there is a file attached
@@ -186,7 +200,7 @@ class ExperimentsView extends EntityView
         // we show the abstract of the experiment on mouse hover with the title attribute
         // we check if it is our experiment. It would be best to check if we have visibility rights on it
         // but atm there is no such function. So we limit this feature to experiments we own, for simplicity.
-        if ($this->Experiments->isOwnedByUser($_SESSION['userid'], 'experiments', $item['id'])) {
+        if ($this->Experiments->isOwnedByUser($this->Experiments->userid, 'experiments', $item['id'])) {
             $bodyAbstract = str_replace("'", "", substr(strip_tags($item['body']), 0, 100));
         } else {
             $bodyAbstract = '';
@@ -283,7 +297,7 @@ class ExperimentsView extends EntityView
         $html .= "<label for='status_select'>" . ngettext('Status', 'Status', 1) . "</label>";
         $html .= " <select id='status_select' name='status' onchange='updateStatus(" . $this->Experiments->id . ", this.value)'>";
 
-        $Status = new Status($_SESSION['team_id']);
+        $Status = new Status($this->Experiments->team);
         $statusArr = $Status->readAll();
 
         foreach ($statusArr as $status) {
@@ -379,7 +393,7 @@ class ExperimentsView extends EntityView
                 $users = new Users();
                 $owner = $users->read($this->experiment['userid']);
 
-                if ($owner['team'] != $_SESSION['team_id']) {
+                if ($owner['team'] != $this->Experiments->team) {
                     // the experiment needs to be organization for us to see it as we are not in the team of the owner
                     if ($this->experiment['visibility'] != 'organization') {
                         throw new Exception(_("<strong>Access forbidden:</strong> you don't have the rights to access this."));
@@ -430,7 +444,10 @@ class ExperimentsView extends EntityView
         $html .= $this->backToLink('experiments');
 
         if ($this->ro) {
-            $message = _('Read-only mode.');
+            $Users = new Users();
+            $userArr = $Users->read($this->experiment['userid']);
+            $ownerName = $userArr['firstname'] . ' ' . $userArr['lastname'];
+            $message = sprintf(_('Read-only mode. Experiment of %s'), $ownerName);
             $html .= display_message('ok', $message);
         }
 

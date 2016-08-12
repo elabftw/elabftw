@@ -22,7 +22,7 @@ try {
     // LOCK
     if (isset($_POST['lock'])) {
         if ($_POST['type'] === 'experiments') {
-            $Entity = new Experiments($_SESSION['userid'], $_POST['id']);
+            $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
         } else {
             $Entity = new Database($_SESSION['team_id'], $_POST['id']);
         }
@@ -49,7 +49,7 @@ try {
 
         if ($_POST['type'] == 'experiments') {
 
-            $Experiments = new Experiments($_SESSION['userid'], $_POST['id']);
+            $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
             $result = $Experiments->update($title, $date, $body);
 
         } elseif ($_POST['type'] == 'items') {
@@ -74,7 +74,7 @@ try {
     // CREATE TAG
     if (isset($_POST['createTag'])) {
         if ($_POST['createTagType'] === 'experiments') {
-            $Entity = new Experiments($_SESSION['userid'], $_POST['createTagId']);
+            $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['createTagId']);
         } else {
             $Entity = new Database($_SESSION['team_id'], $_POST['createTagId']);
         }
@@ -85,7 +85,7 @@ try {
     // DELETE TAG
     if (isset($_POST['destroyTag'])) {
         if ($_POST['type'] === 'experiments') {
-            $Entity = new Experiments($_SESSION['userid'], $_POST['item']);
+            $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['item']);
         } else {
             $Entity = new Database($_SESSION['team_id'], $_POST['item']);
         }

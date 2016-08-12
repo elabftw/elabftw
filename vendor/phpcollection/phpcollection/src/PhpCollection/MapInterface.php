@@ -40,6 +40,13 @@ interface MapInterface extends CollectionInterface
      * @return Option on array<K,V>
      */
     public function last();
+    
+    /**
+     * Returns all elements in this collection.
+     *
+     * @return array
+     */
+    public function all();
 
     /**
      * Searches the collection for an element.

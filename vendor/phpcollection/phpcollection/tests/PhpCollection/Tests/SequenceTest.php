@@ -27,6 +27,13 @@ class SequenceTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(-1, $this->seq->indexOf(1));
     }
 
+    public function testReverse()
+    {
+        $seq = new Sequence(array(1, 2, 3));
+        $this->assertEquals(array(1, 2, 3), $seq->all());
+        $this->assertEquals(array(3, 2, 1), $seq->reverse()->all());
+    }
+
     public function testLastIndexOf()
     {
         $this->assertSame(3, $this->seq->lastIndexOf(0));

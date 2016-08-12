@@ -20,10 +20,10 @@ Supported Collections:
   - Classes: ``Map``, ``ObjectMap`` (not yet implemented)
 
 
-- Sets (not yet implemented)
+- Sets
 
   - Keys: not meaningful
-  - Values: anything, each value must be unique (===)
+  - Values: objects, or scalars, each value is guaranteed to be unique (see Set usage below for details)
   - Classes: ``Set``
 
 General Characteristics:
@@ -47,6 +47,40 @@ or add it to your ``composer.json`` file.
 Usage
 -----
 Collection classes provide a rich API.
+
+Sets
+~~~~
+In a Set each value is guaranteed to be unique. The ``Set`` class supports objects, and scalars as value. Equality
+is determined via the following steps.
+
+**Equality of Objects**
+
+    1. If an object implements ``ObjectBasics``, equality is determined by the ``equals()`` method.
+    2. If an object has an external handler like the ``DateTime`` that was registered via ``ObjectBasicsHandlerRegistry::registerHandlerFor``,
+       equality is determined by that handler's ``equals()`` method.
+    3. If none of the above is applicable, equality is determined by identity ``$a === $b``.
+
+**Equality of Scalars**
+
+    Scalar are considered equal if ``$a === $b`` is true.
+
+
+.. code-block :: php
+
+    $set = new Set();
+    $set->add(new \DateTime('today'));
+    $set->add(new \DateTime('today'));
+
+    var_dump(count($set)); // int(1) -> the same date is not added twice
+
+    foreach ($set as $date) {
+        var_dump($date);
+    }
+
+    $set->all();
+    $set->addSet($otherSet);
+    $set->addAll($someElements);
+
 
 Sequences
 ~~~~~~~~~

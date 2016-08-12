@@ -33,6 +33,12 @@ class MapTest extends \PHPUnit_Framework_TestCase
         $this->map->setAll(array('foo' => 'asdf', 'bar' => array('foo')));
         $this->assertEquals(array('foo' => 'asdf', 'bar' => array('foo'), 'baz' => 'boo'), iterator_to_array($this->map));
     }
+    
+    public function testAll()
+    {
+        $this->map->setAll(array('foo' => 'asdf', 'bar' => array('foo')));
+        $this->assertEquals(array('foo' => 'asdf', 'bar' => array('foo'), 'baz' => 'boo'), $this->map->all());
+    }
 
     public function testAddMap()
     {

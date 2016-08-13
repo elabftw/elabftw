@@ -61,13 +61,19 @@ Install everything
 
     tmux
 
-* Enter the following magical command:
+* Install `elabctl`:
 
 .. code-block:: bash
 
-    wget -qO- https://get.elabftw.net > drop-elabftw.sh && bash drop-elabftw.sh
+    wget -qO- https://get.elabftw.net > /usr/bin/elabctl && chmod +x /usr/bin/elabctl
 
-.. danger:: Don't get into the habit of executing unknown scripts as root without reading them first!
+* Install and start elabftw in Docker:
+
+.. code-block:: bash
+
+    elabctl install
+
+* Use `elabctl` without arguments to see what you can do with it.
 
 * Don't forget to read :ref:`the post install page <postinstall>`, setup :ref:`backup <backup>`, and subscribe to `the newsletter <http://elabftw.us12.list-manage1.com/subscribe?u=61950c0fcc7a849dbb4ef1b89&id=04086ba197>`_!
 

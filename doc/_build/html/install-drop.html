@@ -161,7 +161,7 @@
 <p>One other advantage is that you&#8217;ll get your own server. With it, you can run whatever you want, not just eLabFTW! A <a class="reference external" href="https://www.mediawiki.org/wiki/MediaWiki">Wiki</a>, a bug tracker, <a class="reference external" href="https://about.gitlab.com/">GitLab</a>, etc…</p>
 <p>Your eLabFTW installation will run in a <a class="reference external" href="https://www.docker.com">Docker</a> container. Learn more about eLabFTW&nbsp;in Docker <a class="reference internal" href="install-docker.html#docker-doc"><span>here</span></a>.</p>
 <p>Everything will be configured properly and automagically.</p>
-<p>If you don&#8217;t have a (sub)domain already, you can get one from <a class="reference external" href="https://www.ovh.com">OVH</a>, <a class="reference external" href="https://www.gandi.net">Gandi</a>, <a class="reference external" href="https://www.1and1.com">1&amp;1</a> or any other domain name registrar. It&#8217;s about 5$ a year.</p>
+<p>If you don&#8217;t have a (sub)domain already, you can get one from <a class="reference external" href="https://www.ovh.com">OVH</a>, <a class="reference external" href="https://www.gandi.net">Gandi</a>, <a class="reference external" href="https://www.1and1.com">1&amp;1</a> or any other domain name registrar. You can get one for half a dollar per year.</p>
 <div class="section" id="create-your-drop">
 <h2>Create your drop<a class="headerlink" href="#create-your-drop" title="Permalink to this headline">¶</a></h2>
 <div class="admonition warning">
@@ -203,16 +203,19 @@
 </pre></div>
 </div>
 <ul class="simple">
-<li>Enter the following magical command:</li>
+<li>Install <cite>elabctl</cite>:</li>
 </ul>
-<div class="highlight-bash"><div class="highlight"><pre>wget -qO- https://get.elabftw.net &gt; drop-elabftw.sh <span class="o">&amp;&amp;</span> bash drop-elabftw.sh
+<div class="highlight-bash"><div class="highlight"><pre>wget -qO- https://get.elabftw.net &gt; /usr/bin/elabctl <span class="o">&amp;&amp;</span> chmod +x /usr/bin/elabctl
 </pre></div>
 </div>
-<div class="admonition danger">
-<p class="first admonition-title">Danger</p>
-<p class="last">Don&#8217;t get into the habit of executing unknown scripts as root without reading them first!</p>
+<ul class="simple">
+<li>Install and start elabftw in Docker:</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre>elabctl install
+</pre></div>
 </div>
 <ul class="simple">
+<li>Use <cite>elabctl</cite> without arguments to see what you can do with it.</li>
 <li>Don&#8217;t forget to read <a class="reference internal" href="postinstall.html#postinstall"><span>the post install page</span></a>, setup <a class="reference internal" href="backup.html#backup"><span>backup</span></a>, and subscribe to <a class="reference external" href="http://elabftw.us12.list-manage1.com/subscribe?u=61950c0fcc7a849dbb4ef1b89&amp;id=04086ba197">the newsletter</a>!</li>
 </ul>
 <p>ENJOY! :D</p>

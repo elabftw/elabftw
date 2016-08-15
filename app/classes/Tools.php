@@ -257,11 +257,15 @@ class Tools
     /**
      * Display a generic error message
      *
+     * @param bool $permission show the out of reach message for permission message
      * @return string
      */
-    public static function error()
+    public static function error($permission = false)
     {
-        return _("An error occured.");
+        if ($permission) {
+            return _("This section is out of your reach!");
+        }
+        return _("An error occured!");
     }
 
     /**

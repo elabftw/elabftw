@@ -114,12 +114,12 @@ try {
                     <br>
                 <label class="block" for='stampprovider'><?= _('URL for external timestamping service:') ?></label>
                 <input class="clean-form col-3-form" type='url' placeholder='http://zeitstempel.dfn.de/' value='<?= $teamConfigArr['stampprovider'] ?>' name='stampprovider' id='stampprovider' />
-                <span class='smallgray'><?= _('This should be the URL used for <a href="https://tools.ietf.org/html/rfc3161">RFC 3161</a>-compliant timestamping requests.') ?></span>
+                <span class='smallgray'><?= sprintf(_('This should be the URL used for %sRFC 3161%s-compliant timestamping requests.'), "<a href='https://tools.ietf.org/html/rfc3161'>", "</a>") ?></span>
                 </p>
                 <p>
                 <label class="block" for='stampcert'><?= _('Chain of certificates of the external timestamping service:') ?></label>
                 <input class="clean-form col-3-form" type='text' placeholder='vendor/pki.dfn.pem' value='<?= $teamConfigArr['stampcert'] ?>' name='stampcert' id='stampcert' />
-                <span class='smallgray'><?= _('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.<br /> Local path relative to eLabFTW installation directory. The file needs to be in <a href="https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail">PEM-encoded (ASCII)</a> format!') ?></span>
+                <span class='smallgray'><?= sprintf(_('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. The file needs to be in %sPEM-encoded (ASCII)%s format!'), "<br>", "<a href='https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail'>", "</a>") ?></span>
                 </p>
                 <label class="block" for='stamplogin'><?= _('Login for external timestamping service:') ?></label>
                 <input class="clean-form col-3-form" type='text' value='<?= $teamConfigArr['stamplogin'] ?>' name='stamplogin' id='stamplogin' />

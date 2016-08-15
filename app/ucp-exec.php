@@ -238,7 +238,7 @@ try {
             'website' => $website,
             'userid' => $_SESSION['userid']));
         if (!$result) {
-            throw new Exception(_('Error updating database'));
+            throw new Exception(Tools::error());
         }
 
         $_SESSION['ok'][] = _('Profile updated.');
@@ -264,7 +264,7 @@ try {
 
         $Templates = new Templates($_SESSION['team_id']);
         if (!$Templates->create($tpl_name, $tpl_body, $_SESSION['userid'])) {
-            throw new Exception(_('Error updating database'));
+            throw new Exception(Tools::error());
         }
         $_SESSION['ok'][] = _('Experiment template successfully added.');
     }

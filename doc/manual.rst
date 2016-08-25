@@ -156,6 +156,10 @@ More info here : https://en.wikipedia.org/wiki/Trusted_timestamping
 
 eLabFTW uses :rfc:`3161` for timestamping. So any TSA providing a :rfc:`3161` compatible way of timestamping will work.
 
+By default, eLabFTW is configured to use the timestamping server of `pki.dfn.de <https://www.pki.dfn.de/zeitstempeldienst/>`_. It allows you to timestamp your experiments for free if you are doing research.
+
+You can also use a different timestamping provider. For instance `SafeCreative <https://tsa.safecreative.org/>`_ is known to work. Download their `certificate <https://tsa.safecreative.org/certificate>`_ in the elabftw folder and configure your timestamping settings to use that file. The URL is `http://tsa.safecreative.org <http://tsa.safecreative.org>`_. You are limited to 5 timestamps by day and IP address.
+
 elabid
 ``````
 In the bottom right part of the experiment, you can see something like : «Unique elabid : 20150526-e72646c3ecf59b4f72147a52707629150bca0f91». This number is unique to each experiment. You can use it to reference an experiment with an external database.

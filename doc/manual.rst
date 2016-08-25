@@ -158,7 +158,7 @@ eLabFTW uses :rfc:`3161` for timestamping. So any TSA providing a :rfc:`3161` co
 
 By default, eLabFTW is configured to use the timestamping server of `pki.dfn.de <https://www.pki.dfn.de/zeitstempeldienst/>`_. It allows you to timestamp your experiments for free if you are doing research.
 
-You can also use a different timestamping provider. For instance `SafeCreative <https://tsa.safecreative.org/>`_ is known to work. Download their `certificate <https://tsa.safecreative.org/certificate>`_ in the elabftw folder and configure your timestamping settings to use that file. The URL is `http://tsa.safecreative.org <http://tsa.safecreative.org>`_. You are limited to 5 timestamps by day and IP address.
+You can also use a different timestamping provider. For instance `SafeCreative <https://tsa.safecreative.org/>`_ is known to work. Download their `certificate <https://tsa.safecreative.org/certificate>`_ in the elabftw folder and configure your timestamping settings to use that file. The URL is `https://tsa.safecreative.org <https://tsa.safecreative.org>`_. You are limited to 5 timestamps by day and IP address.
 
 elabid
 ``````

@@ -185,7 +185,7 @@ class Database extends Entity
         // add a revision
         $Revisions = new Revisions('items', $this->id, $userid);
         if (!$Revisions->create($body)) {
-            throw new Exception(_('Error inserting revision.'));
+            throw new Exception(Tools::error());
         }
 
         return $req->execute();

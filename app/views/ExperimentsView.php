@@ -380,13 +380,13 @@ class ExperimentsView extends EntityView
             // Can the user see this experiment which is not his ?
             if ($this->experiment['visibility'] === 'user') {
 
-                throw new Exception(_("<strong>Access forbidden:</strong> the visibility setting of this experiment is set to 'owner only'."));
+                throw new Exception(Tools::error(true));
 
             } elseif (Tools::checkId($this->experiment['visibility'])) {
                 // the visibility of this experiment is set to a group
                 // we must check if current user is in this group
                 if (!$this->TeamGroups->isInTeamGroup($_SESSION['userid'], $this->experiment['visibility'])) {
-                    throw new Exception(_("<strong>Access forbidden:</strong> you don't have the rights to access this."));
+                    throw new Exception(Tools::error(true));
                 }
 
             } else {
@@ -396,7 +396,7 @@ class ExperimentsView extends EntityView
                 if ($owner['team'] != $this->Experiments->team) {
                     // the experiment needs to be organization for us to see it as we are not in the team of the owner
                     if ($this->experiment['visibility'] != 'organization') {
-                        throw new Exception(_("<strong>Access forbidden:</strong> you don't have the rights to access this."));
+                        throw new Exception(Tools::error(true));
                     }
                 }
                 // read only

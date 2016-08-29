@@ -410,7 +410,7 @@ class Users extends Auth
         if ($req->execute()) {
             $msg = _('Validated user with ID :') . ' ' . $userid;
         } else {
-            $msg = _('Error validating user!');
+            $msg = Tools::error();
         }
         // now let's get the URL so we can have a nice link in the email
         $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];

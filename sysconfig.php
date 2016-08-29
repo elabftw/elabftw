@@ -235,7 +235,7 @@ try {
             <input type='hidden' name='updateConfig' value='true' />
 
 
-            <p><?= _("Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mailgun.com (or gmail account and add the infos here.") ?></p>
+            <p><?= _("Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mailgun.com account and add the infos here.") ?></p>
             <p>
             <label class="block" for='mail_method'><?= _('Send e-mails via:') ?></label>
             <select class="clean-form col-3-form" onchange='toggleMailMethod($("#toggle_main_method").val())' name='mail_method' id='toggle_main_method'>

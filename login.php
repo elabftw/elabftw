@@ -81,7 +81,8 @@ function checkCookiesEnabled() {
 return (cookieEnabled);
 }
 if (!checkCookiesEnabled()) {
-    var cookie_alert = "<div class='errorbox messagebox<p><?= _('Please enable cookies in your navigator to continue.') ?></p></div>";
+    var cookie_alert =
+        "<div class='alert alert-danger'><p><?= _('Please enable cookies in your navigator to continue.') ?></p></div>";
     document.write(cookie_alert);
 }
 </script>
@@ -94,12 +95,14 @@ if (!checkCookiesEnabled()) {
         <br/>
         <p class="login-area">
         <label class='block' for="email"><?= _('Email') ?></label>
-        <input class="login-area-input" name="email" type="email" value='<?php
-            // put the email in the field if we just registered
-            if (isset($_SESSION['email'])) {
-                echo $_SESSION['email'];
-            }
-            ?>' required /><br>
+        <input class="login-area-input" name="email" type="email" value='
+<?php
+// put the email in the field if we just registered
+if (isset($_SESSION['email'])) {
+    echo $_SESSION['email'];
+}
+?>
+            ' required /><br>
             <label class='block' for="password"><?= _('Password') ?></label>
             <input class="login-area-input" name="password" type="password" required /><br>
             <!-- form key -->
@@ -111,7 +114,17 @@ if (!checkCookiesEnabled()) {
         <button type="submit" class='button' name="Submit"><?= _('Login') ?></button>
         </div>
     </form>
-    <p><?php printf(_("Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"), "<a href='register.php'>", "</a>", "<a href='#' class='trigger'>", "</a>"); ?></p>
+    <p>
+<?php
+printf(
+    _("Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"),
+    "<a href='register.php'>",
+    "</a>",
+    "<a href='#' class='trigger'>",
+    "</a>"
+);
+?>
+    </p>
     <div class='toggle_container'>
     <form name='resetPass' method='post' action='app/reset.php'>
     <input placeholder='<?= _('Enter your email address') ?>' name='email' type='email' required />

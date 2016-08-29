@@ -195,7 +195,7 @@ class DatabaseView extends EntityView
             $imgSrc = 'lock-gray.png';
             $alt = 'Unlock item';
         }
-        $html .= "<a class='elab-tooltip' href='#'><span>" . $alt . "</span><img id='lock' onClick=\"toggleLock('database', " . $itemArr['itemid'] . ")\" src='img/" . $imgSrc . "'alt='" . $alt . "' /></a>";
+        $html .= "<a class='elab-tooltip' href='#'><span>" . $alt . "</span><img id='lock' onClick=\"toggleLock('database', " . $itemArr['itemid'] . ")\" src='img/" . $imgSrc . "' alt='" . $alt . "' /></a>";
         // TAGS
         $html .= " " . $this->showTags('items', 'view', $this->Database->id);
 

@@ -123,20 +123,13 @@ if (isset($_SESSION['auth'])) {
 }
 ?>
 
-<script>
-$('#help_container').hide();
-$('#help').click(function() {
-    $('#help_container').toggle();
-});
-</script>
-
 <noscript><!-- show warning if javascript is disabled -->
-<div class='alert alert-danger'>
-    <p><strong>Javascript is disabled.</strong> Please enable Javascript to view this site in all its glory. Thank You.</p>
-</div>
+    <div class='alert alert-danger'>
+        <p><strong>Javascript is disabled.</strong> Please enable Javascript to view eLabFTW in all its glory.</p>
+    </div>
 </noscript>
 <!-- TITLE -->
-<h2><?php echo $page_title; ?></h2>
+<h2><?= $page_title ?></h2>
 
 <?php
 // INFO BOX

@@ -27,11 +27,11 @@
     <p class='footer_left'>
     <a class='elab-tooltip-top' href='https://twitter.com/elabftw'>
         <span>Follow eLabFTW on Twitter !</span>
-    <img src='img/twitter.png' alt='twitter'>
+    <img src='img/twitter.png' alt='twitter' />
     </a>
      <a class='elab-tooltip-top' href='https://github.com/elabftw/elabftw'>
         <span>eLabFTW on GitHub</span>
-    <img src='img/github.png' alt='github'>
+    <img src='img/github.png' alt='github' />
     </a>
     <span>
         <span>
@@ -39,7 +39,7 @@
 if (isset($_SESSION['auth']) && $_SESSION['is_sysadmin']) {
     ?>
         <!-- SYSADMIN MENU -->
-        <a href='sysconfig.php'><?php echo _('Sysadmin panel'); ?></a>
+        <a href='sysconfig.php'><?= _('Sysadmin panel') ?></a>
     <?php
 }
 if (isset($_SESSION['auth']) && $_SESSION['is_admin']) {
@@ -64,6 +64,10 @@ echo _('Page generated in') . ' '; ?>
 $('#adv_search').hide();
 $('#big_search_input').click(function() {
     $('#adv_search').show();
+});
+$('#help_container').hide();
+$('#help').click(function() {
+    $('#help_container').toggle();
 });
 </script>
 <?php

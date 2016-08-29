@@ -229,11 +229,8 @@ class Experiments extends Entity
 
         // add a revision
         $Revisions = new Revisions('experiments', $this->id, $this->userid);
-        if (!$Revisions->create($body)) {
-            throw new Exception(Tools::error());
-        }
 
-        return $req->execute();
+        return $req->execute() && $Revisions->create($body);
     }
 
     /**

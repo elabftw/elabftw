@@ -201,7 +201,7 @@ class DatabaseView extends EntityView
 
         // TITLE : click on it to go to edit mode
         $html .= "<div ";
-        if ($itemArr['locked'] == 0) {
+        if ($itemArr['locked'] === '0') {
             $html .= " onClick=\"document.location='database.php?mode=edit&id=" . $itemArr['itemid'] . "'\" ";
         }
         $html .= "class='title_view'>";
@@ -210,7 +210,10 @@ class DatabaseView extends EntityView
         $html .= "</div>";
         // BODY (show only if not empty)
         if ($itemArr['body'] != '') {
-            $html .= "<div onClick='go_url(\"database.php?mode=edit&id=" . $itemArr['itemid'] . "\")'";
+            $html .= "<div ";
+            if ($itemArr['locked'] === '0') {
+                $html .= "onClick='go_url(\"database.php?mode=edit&id=" . $itemArr['itemid'] . "\")'";
+            }
             $html .= " id='body_view' class='txt'>" . stripslashes($itemArr['body']) . "</div>";
         }
         // SHOW USER

@@ -378,7 +378,7 @@ class Experiments extends Entity
 
         $this->Links->duplicate($this->id, $newId);
 
-        return $newId;
+        return (int) $newId;
     }
 
     /**

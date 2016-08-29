@@ -50,7 +50,7 @@ class Links extends Entity
             throw new Exception('The id parameter is invalid!');
         }
         if (!$this->isOwnedByUser($this->Experiments->userid, 'experiments', $this->Experiments->id)) {
-            throw new Exception('This section is out of your reach!');
+            throw new Exception(Tools::error(true));
         }
 
         $sql = "INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)";

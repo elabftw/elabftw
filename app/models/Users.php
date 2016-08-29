@@ -529,7 +529,7 @@ class Users extends Auth
     {
         // only sysadmin can do that
         if (!$_SESSION['is_sysadmin']) {
-            throw new Exception('This section is out of your reach.');
+            throw new Exception(Tools::error(true));
         }
 
         // check we have a valid email

@@ -334,13 +334,13 @@ class Uploads extends Entity
         if ($this->type === 'experiments') {
             // Check file id is owned by connected user
             if ($uploadArr['userid'] != $_SESSION['userid']) {
-                throw new Exception(_('This section is out of your reach!'));
+                throw new Exception(Tools::error(true));
             }
         } else {
             $User = new Users();
             $userArr = $User->read($_SESSION['userid']);
             if ($userArr['team'] != $_SESSION['team_id']) {
-                throw new Exception(_('This section is out of your reach!'));
+                throw new Exception(Tools::error(true));
             }
         }
 

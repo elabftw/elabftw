@@ -96,7 +96,7 @@ class Database extends Entity
         // permission check
         // you can only see items from your team
         if (!$this->isInTeam()) {
-            throw new Exception(_('This section is out of your reach.'));
+            throw new Exception(Tools::error(true));
         }
 
         $sql = "SELECT DISTINCT items.id AS itemid,
@@ -114,10 +114,6 @@ class Database extends Entity
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->execute();
-
-        if ($req->rowCount() === 0) {
-            throw new Exception('Nothing to show with this id.');
-        }
 
         return $req->fetch();
     }
@@ -163,7 +159,7 @@ class Database extends Entity
         // permission check
         // you can only see items from your team
         if (!$this->isInTeam()) {
-            throw new Exception(_('This section is out of your reach.'));
+            throw new Exception(Tools::error(true));
         }
         $title = Tools::checkTitle($title);
         $date = Tools::kdate($date);
@@ -200,7 +196,7 @@ class Database extends Entity
     public function updateRating($rating)
     {
         if (!$this->isInTeam()) {
-            throw new Exception(_('This section is out of your reach.'));
+            throw new Exception(Tools::error(true));
         }
 
         $sql = 'UPDATE items SET rating = :rating WHERE id = :id';
@@ -250,7 +246,7 @@ class Database extends Entity
     {
         // we can only delete items from our team
         if (!$this->isInTeam()) {
-            throw new Exception(_('This section is out of your reach.'));
+            throw new Exception(Tools::error(true));
         }
 
         // to store the outcome of sql
@@ -298,7 +294,7 @@ class Database extends Entity
     public function toggleLock()
     {
         if (!$this->isInTeam()) {
-            throw new Exception(_('This section is out of your reach.'));
+            throw new Exception(Tools::error(true));
         }
 
         // get what is the current state

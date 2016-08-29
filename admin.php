@@ -23,7 +23,7 @@ require_once 'app/head.inc.php';
 
 try {
     if (!$_SESSION['is_admin']) {
-        throw new Exception(_('This section is out of your reach.'));
+        throw new Exception(Tools::error(true));
     }
 
     $formKey = new FormKey();

@@ -207,7 +207,7 @@ class Experiments extends Entity
     public function update($title, $date, $body)
     {
         if (!$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
-            throw new Exception(_('This section is out of your reach.'));
+            throw new Exception(Tools::error(true));
         }
 
         $title = Tools::checkTitle($title);
@@ -268,7 +268,7 @@ class Experiments extends Entity
     public function updateVisibility($visibility)
     {
         if (!$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
-            throw new Exception(_('This section is out of your reach.'));
+            throw new Exception(Tools::error(true));
         }
 
         if (!$this->checkVisibility($visibility)) {
@@ -293,7 +293,7 @@ class Experiments extends Entity
     public function updateStatus($status)
     {
         if (!$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
-            throw new Exception(_('This section is out of your reach.'));
+            throw new Exception(Tools::error(true));
         }
 
         $sql = "UPDATE experiments SET status = :status WHERE userid = :userid AND id = :id";
@@ -389,7 +389,7 @@ class Experiments extends Entity
     public function destroy()
     {
         if (!$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
-            throw new Exception(_('This section is out of your reach.'));
+            throw new Exception(Tools::error(true));
         }
 
         // delete the experiment

@@ -58,7 +58,7 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('mail_from', 'phpunit@mailgun.org'),
 ('mail_method', 'smtp'),
 ('proxy', ''),
-('schema', '10'),
+('schema', '11'),
 ('sendmail_path', '/usr/sbin/sendmail'),
 ('smtp_address', 'smtp.mailgun.org'),
 ('smtp_encryption', 'tls'),
@@ -178,7 +178,8 @@ CREATE TABLE `experiments_templates` (
   `body` text,
   `name` varchar(255) NOT NULL,
   `userid` int(10) UNSIGNED DEFAULT NULL,
-  `ordering` int(10) UNSIGNED DEFAULT NULL
+  `ordering` int(10) UNSIGNED DEFAULT NULL,
+  `bookable` tinyint(1) DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --

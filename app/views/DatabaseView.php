@@ -190,10 +190,9 @@ class DatabaseView extends EntityView
         <a class='elab-tooltip' href='experiments.php?mode=show&related=".$itemArr['itemid'] . "'><span>Linked Experiments</span><img src='img/link.png' alt='Linked Experiments' /></a> ";
         // lock
         $imgSrc = 'unlock.png';
-        $alt = 'Lock item';
+        $alt = _('Lock/Unlock item');
         if ($itemArr['locked'] != 0) {
             $imgSrc = 'lock-gray.png';
-            $alt = 'Unlock item';
         }
         $html .= "<a class='elab-tooltip' href='#'><span>" . $alt . "</span><img id='lock' onClick=\"toggleLock('database', " . $itemArr['itemid'] . ")\" src='img/" . $imgSrc . "' alt='" . $alt . "' /></a>";
         // TAGS
@@ -201,8 +200,8 @@ class DatabaseView extends EntityView
 
         // TITLE : click on it to go to edit mode
         $html .= "<div ";
-        if ($itemArr['locked'] === '0') {
-            $html .= " onClick=\"document.location='database.php?mode=edit&id=" . $itemArr['itemid'] . "'\" ";
+        if ($itemArr['locked'] === '0' || $itemArr['locked'] === NULL) {
+            $html .= "onClick=\"document.location='database.php?mode=edit&id=" . $itemArr['itemid'] . "'\" ";
         }
         $html .= "class='title_view'>";
         $html .= "<span style='color:#" . $itemArr['bgcolor'] . "'>" . $itemArr['name'] . " </span>";
@@ -211,7 +210,7 @@ class DatabaseView extends EntityView
         // BODY (show only if not empty)
         if ($itemArr['body'] != '') {
             $html .= "<div ";
-            if ($itemArr['locked'] === '0') {
+            if ($itemArr['locked'] === '0' || $itemArr['locked'] === NULL) {
                 $html .= "onClick='go_url(\"database.php?mode=edit&id=" . $itemArr['itemid'] . "\")'";
             }
             $html .= " id='body_view' class='txt'>" . stripslashes($itemArr['body']) . "</div>";

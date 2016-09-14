@@ -65,8 +65,11 @@ class UploadsView extends EntityView
                 // once it is done
                 this.on('complete', function(answer) {
                     // check the answer we get back from app/uploads.php
-                    if (answer.xhr.responseText != 0) {
-                        alert('Upload failed: ' + answer.xhr.responseText);
+                    var json = JSON.parse(answer.xhr.responseText);
+                    if (json.res) {
+                        notif(json.msg, 'ok');
+                    } else {
+                        notif(json.msg, 'ko');
                     }
                     // reload the #filesdiv once the file is uploaded
                     if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
@@ -132,7 +135,7 @@ class UploadsView extends EntityView
 
             // Make thumbnail only if it isn't done already
             if (!file_exists($thumbpath)) {
-                $this->Uploads->makeThumb($filepath, $ext, $thumbpath, 100);
+                $this->Uploads->makeThumb($filepath, $thumbpath, 100);
             }
 
             // only display the thumbnail if the file is here

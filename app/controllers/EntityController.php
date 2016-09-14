@@ -131,9 +131,27 @@ try {
 
     // CREATE UPLOAD
     if (isset($_POST['upload'])) {
-        $Upload = new Uploads($_POST['type'], $_POST['item_id']);
-        $Upload->create($_FILES);
+        try {
+            $Upload = new Uploads($_POST['type'], $_POST['item_id']);
+            if ($Upload->create($_FILES)) {
+                echo json_encode(array(
+                    'res' => true,
+                    'msg' => _('Saved')
+                ));
+            } else {
+                echo json_encode(array(
+                    'res' => false,
+                    'msg' => Tools::error()
+                ));
+            }
+        } catch (Exception $e) {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => $e->getMessage()
+            ));
+        }
     }
+
     // DESTROY UPLOAD
     if (isset($_POST['uploadsDestroy'])) {
         $Uploads = new Uploads($_POST['type'], $_POST['item_id'], $_POST['id']);

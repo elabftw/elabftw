@@ -246,7 +246,23 @@ class Users extends Auth
     }
 
     /**
-     * Read all users
+     * Select by email
+     *
+     * @param string $email
+     * @return array
+     */
+    public function readFromEmail($email)
+    {
+        $sql = "SELECT userid, CONCAT(firstname, ' ', lastname) AS name FROM users WHERE email = :email";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':email', $email);
+        $req->execute();
+
+        return $req->fetch();
+    }
+
+    /**
+     * Read all users from the team
      *
      * @param int validated
      * @return array

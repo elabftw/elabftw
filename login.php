@@ -126,7 +126,7 @@ printf(
 ?>
     </p>
     <div class='toggle_container'>
-    <form name='resetPass' method='post' action='app/reset.php'>
+    <form name='resetPass' method='post' action='app/controllers/ResetPasswordController.php'>
     <input placeholder='<?= _('Enter your email address') ?>' name='email' type='email' required />
     <button class='button' type="submit" name="Submit"><?= _('Send new password') ?></button>
     </form>

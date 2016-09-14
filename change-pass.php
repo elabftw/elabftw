@@ -11,6 +11,9 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use DateTime;
+use Defuse\Crypto\Crypto as Crypto;
+use Defuse\Crypto\Key as Key;
 
 /**
  * Form to reset the password
@@ -25,24 +28,33 @@ $Auth = new Auth();
 
 try {
 
-    // get the unique key
+    // check URL parameters
     if (!isset($_GET['key']) ||
         !isset($_GET['userid']) ||
+        !isset($_GET['deadline']) ||
         Tools::checkId($_GET['userid']) === false) {
 
         throw new Exception('Bad parameters in url.');
     }
+
+    // check deadline (fix #297)
+    $deadline = Crypto::decrypt($_GET['deadline'], Key::loadFromAsciiSafeString(SECRET_KEY));
+
+    if ($deadline < time()) {
+        throw new Exception(_('Invalid link. Reset links are only valid for one hour.'));
+    }
     ?>
 
     <section class='center'>
-        <form method="post" class='loginform' action="app/reset.php">
+        <form method="post" class='loginform' action="app/controllers/ResetPasswordController.php">
+            <span class='smallgray'><?= $Auth::MIN_PASSWORD_LENGTH . " " . _('characters minimum') ?></span>
             <p>
                 <!-- output the key and userid as hidden fields -->
-                <input type="hidden" name="key" value="<?= filter_var($_GET['key'], FILTER_SANITIZE_STRING) ?>" />
+                <input type="hidden" name="key" value="<?= $_GET['key'] ?>" />
+                <input type="hidden" name="deadline" value="<?= $_GET['deadline'] ?>" />
                 <input type="hidden" name="userid" value="<?= $_GET['userid'] ?>" />
 
                 <label class='block' for='passwordtxt'><?= _('New password') ?></label>
-                <span class='smallgray'><?= $Auth::MIN_PASSWORD_LENGTH . " " . _('characters minimum') ?></span></label>
                 <input id='password' type='password' pattern='.{0}|.{<?= $Auth::MIN_PASSWORD_LENGTH ?>,}' value='' name='password' required />
 
                 <label class='block' for='cpasswordtxt'><?= _('Type it again') ?></label>

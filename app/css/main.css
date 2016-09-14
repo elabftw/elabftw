@@ -297,6 +297,11 @@ menu ul li.selected {
     text-align: right;
 }
 
+/* fix well overflow */
+.well {
+    overflow: auto;
+}
+
 /* ALERT */
 .alert {
     margin-top:20px;

@@ -215,7 +215,7 @@ class ExperimentsView extends EntityView
             $html .= "<img style='padding-bottom:3px;' src='img/lock-blue.png' alt='lock' />";
         }
         // TITLE
-        $html .= stripslashes($item['title']) . "</p></a>";
+        $html .= $item['title'] . "</p></a>";
         // STATUS
         $html .= "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['color'] . "'>" . $item['name'] . " </span>";
         // DATE
@@ -311,12 +311,12 @@ class ExperimentsView extends EntityView
 
         // TITLE
         $html .= "<h4>" . _('Title') . "</h4>";
-        $html .= "<input id='title_input' name='title' rows='1' value='" . stripslashes($this->experiment['title']) . "' required />";
+        $html .= "<input id='title_input' name='title' rows='1' value='" . $this->experiment['title'] . "' required />";
 
         // BODY
         $html .= "<h4>" . ngettext('Experiment', 'Experiments', 1) . "</h4>";
         $html .= "<textarea id='body_area' class='mceditable' name='body' rows='15' cols='80'>";
-        $html .= stripslashes($this->experiment['body']) . "</textarea>";
+        $html .= $this->experiment['body'] . "</textarea>";
 
         $html .= "<div id='saveButton'>
             <button type='submit' name='Submit' class='button'>" ._('Save and go back') . "</button>
@@ -487,7 +487,7 @@ class ExperimentsView extends EntityView
             $html .= "OnClick=\"document.location='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'\"";
         }
         $html .= " class='title_view'>";
-        $html .= stripslashes($this->experiment['title']) . "</div>";
+        $html .= $this->experiment['title'] . "</div>";
         // BODY (show only if not empty, click on it to edit
         if ($this->experiment['body'] != '') {
             $html .= "<div id='body_view' ";
@@ -495,7 +495,7 @@ class ExperimentsView extends EntityView
             if (!$this->ro && !$this->experiment['locked']) {
                 $html .= "OnClick=\"document.location='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'\"";
             }
-            $html .= " class='txt'>" . stripslashes($this->experiment['body']) . "</div>";
+            $html .= " class='txt'>" . $this->experiment['body'] . "</div>";
             $html .= "<br>";
         }
 
@@ -620,12 +620,12 @@ class ExperimentsView extends EntityView
             foreach ($linksArr as $link) {
                 if ($mode === 'edit') {
                     $html .= "<li class='list-group-item'>" . $link['name'] . " - <a href='database.php?mode=view&id=" . $link['itemid'] . "'>" .
-                        stripslashes($link['title']) . "</a>";
+                        $link['title'] . "</a>";
                     $html .= "<a onClick=\"experimentsDestroyLink(" . $link['linkid'] . ", " . $id . ", '" . _('Delete this?') . "')\">
                     <img class='align_right' src='img/small-trash.png' title='delete' alt='delete' /></a></li>";
                 } else {
                     $html .= "<li class='list-group-item'><img src='img/link.png'> " . $link['name'] . " - <a href='database.php?mode=view&id=" . $link['itemid'] . "'>" .
-                    stripslashes($link['title']) . "</a></li>";
+                    $link['title'] . "</a></li>";
                 }
             }
             $html .= "</ul>";

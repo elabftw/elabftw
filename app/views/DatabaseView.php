@@ -153,7 +153,7 @@ class DatabaseView extends EntityView
             $html .= "<img style='padding-bottom:3px;' src='img/lock-blue.png' alt='lock' />";
         }
         // TITLE
-        $html .= stripslashes($item['title']) . "</p></a>";
+        $html .= $item['title'] . "</p></a>";
         // ITEM TYPE
         $html .= "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['bgcolor'] . "'>" . $item['name'] . " </span>";
         // DATE
@@ -205,7 +205,7 @@ class DatabaseView extends EntityView
         }
         $html .= "class='title_view'>";
         $html .= "<span style='color:#" . $itemArr['bgcolor'] . "'>" . $itemArr['name'] . " </span>";
-        $html .= stripslashes($itemArr['title']);
+        $html .= $itemArr['title'];
         $html .= "</div>";
         // BODY (show only if not empty)
         if ($itemArr['body'] != '') {
@@ -213,7 +213,7 @@ class DatabaseView extends EntityView
             if ($itemArr['locked'] === '0' || $itemArr['locked'] === NULL) {
                 $html .= "onClick='go_url(\"database.php?mode=edit&id=" . $itemArr['itemid'] . "\")'";
             }
-            $html .= " id='body_view' class='txt'>" . stripslashes($itemArr['body']) . "</div>";
+            $html .= " id='body_view' class='txt'>" . $itemArr['body'] . "</div>";
         }
         // SHOW USER
         $html .= _('Last modified by') . ' ' . $itemArr['firstname'] . " " . $itemArr['lastname'];
@@ -289,12 +289,12 @@ class DatabaseView extends EntityView
 
         // title
         $html .= "<h4>" . _('Title') . "</h4>";
-        $html .= "<input id='title_input' name='title' rows='1' value='" . stripslashes($itemArr['title']) . "' required />";
+        $html .= "<input id='title_input' name='title' rows='1' value='" . $itemArr['title'] . "' required />";
 
         // body
         $html .= "<h4>" . _('Infos') . "</h4>";
         $html .= "<textarea class='mceditable' name='body' rows='15' cols='80'>";
-        $html .= stripslashes($itemArr['body']);
+        $html .= $itemArr['body'];
         $html .= "</textarea>";
 
         // submit button

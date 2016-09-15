@@ -56,6 +56,8 @@ try {
             $ExperimentsView->searchType = 'related';
         }
         // ORDER
+        // default by date
+        $ExperimentsView->Experiments->order = 'experiments.date';
         if (isset($_GET['order'])) {
             if ($_GET['order'] === 'cat') {
                 $ExperimentsView->Experiments->order = 'status.name';

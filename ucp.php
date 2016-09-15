@@ -72,40 +72,6 @@ foreach ($langsArr as $lang => $text) {
             </p>
 
             <p style='margin-top:20px;'>
-            <label for='order'><?php echo _('Order by:'); ?></label>
-            <select id='order' name="order">
-                <option
-                <?php
-                if ($_SESSION['prefs']['order'] === 'date') {
-                    echo ' selected ';
-                }?>value="date"><?php echo _('Date'); ?></option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['order'] === 'id') {
-                    echo ' selected ';
-                }?>value="id">ID</option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['order'] === 'title') {
-                    echo ' selected ';
-                }?>value="title"><?php echo _('Title'); ?></option>
-            </select>
-
-            <?php echo _('with'); ?>
-            <select name="sort">
-                <option
-                <?php
-                if ($_SESSION['prefs']['sort'] === 'desc') {
-                    echo ' selected ';
-                }?>value="desc"><?php echo _('Newer First'); ?></option>
-                <option
-                <?php
-                if ($_SESSION['prefs']['sort'] === 'asc') {
-                    echo ' selected ';
-                }?>value="asc"><?php echo _('Older First'); ?></option>
-            </select>
-
-            <p style='margin-top:20px;'>
             <label for='limit'><?php echo _('Items per page:'); ?></label>
             <input id='limit' type='text' size='2' maxlength='2' value='<?php echo $_SESSION['prefs']['limit']; ?>' name='limit'>
             </p>

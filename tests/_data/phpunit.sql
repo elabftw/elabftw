@@ -438,8 +438,6 @@ CREATE TABLE `users` (
   `register_date` bigint(20) UNSIGNED NOT NULL,
   `token` varchar(255) DEFAULT NULL,
   `display` varchar(10) NOT NULL DEFAULT 'default',
-  `order_by` varchar(255) NOT NULL DEFAULT 'date',
-  `sort_by` varchar(4) NOT NULL DEFAULT 'desc',
   `limit_nb` tinyint(255) NOT NULL DEFAULT '15',
   `sc_create` varchar(1) NOT NULL DEFAULT 'c',
   `sc_edit` varchar(1) NOT NULL DEFAULT 'e',
@@ -456,8 +454,8 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`userid`, `salt`, `password`, `team`, `usergroup`, `firstname`, `lastname`, `email`, `phone`, `cellphone`, `skype`, `website`, `can_lock`, `register_date`, `token`, `display`, `order_by`, `sort_by`, `limit_nb`, `sc_create`, `sc_edit`, `sc_submit`, `sc_todo`, `close_warning`, `chem_editor`, `validated`, `lang`) VALUES
-(1, 'f84cf883e2c79fd8beceacf17d0b6e9fe98083e49e5f3cf949e30efa14e08a08b9b1b1e1a2e26dfbb7efd6158ffc6f405ed4669626a784ae8d76a8ec7bcf3f1d', 'a3120de3fbce90abd63c2a8ec81ebfe4e00849c56a89e1d3d196290a4b88ed81e8829e79fe50ceae05f52d6422485d29dda2d88b4932dca7bfb8efb7cbdb3745', 1, 1, 'Php', 'UNIT', 'phpunit@yopmail.com', NULL, NULL, NULL, NULL, 0, 1469733882, '8873f66dfae374a3cce82f91621689cf', 'default', 'date', 'desc', 15, 'c', 'e', 's', 't', 0, 0, 1, 'en_GB');
+INSERT INTO `users` (`userid`, `salt`, `password`, `team`, `usergroup`, `firstname`, `lastname`, `email`, `phone`, `cellphone`, `skype`, `website`, `can_lock`, `register_date`, `token`, `display`, `limit_nb`, `sc_create`, `sc_edit`, `sc_submit`, `sc_todo`, `close_warning`, `chem_editor`, `validated`, `lang`) VALUES
+(1, 'f84cf883e2c79fd8beceacf17d0b6e9fe98083e49e5f3cf949e30efa14e08a08b9b1b1e1a2e26dfbb7efd6158ffc6f405ed4669626a784ae8d76a8ec7bcf3f1d', 'a3120de3fbce90abd63c2a8ec81ebfe4e00849c56a89e1d3d196290a4b88ed81e8829e79fe50ceae05f52d6422485d29dda2d88b4932dca7bfb8efb7cbdb3745', 1, 1, 'Php', 'UNIT', 'phpunit@yopmail.com', NULL, NULL, NULL, NULL, 0, 1469733882, '8873f66dfae374a3cce82f91621689cf', 'default', 15, 'c', 'e', 's', 't', 0, 0, 1, 'en_GB');
 
 -- --------------------------------------------------------
 

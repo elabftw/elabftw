@@ -111,8 +111,6 @@ class Auth
         // PREFS
         $_SESSION['prefs'] = array(
             'display' => $this->userData['display'],
-            'order' => $this->userData['order_by'],
-            'sort' => $this->userData['sort_by'],
             'limit' => $this->userData['limit_nb'],
             'shortcuts' => array('create' => $this->userData['sc_create'], 'edit' => $this->userData['sc_edit'], 'submit' => $this->userData['sc_submit'], 'todo' => $this->userData['sc_todo']),
             'lang' => $this->userData['lang'],

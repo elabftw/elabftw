@@ -297,8 +297,6 @@ CREATE TABLE `users` (
   `register_date` bigint(20) unsigned NOT NULL,
   `token` varchar(255) DEFAULT NULL,
   `display` varchar(10) NOT NULL DEFAULT 'default',
-  `order_by` varchar(255) NOT NULL DEFAULT 'date',
-  `sort_by` varchar(4) NOT NULL DEFAULT 'desc',
   `limit_nb` tinyint(255) NOT NULL DEFAULT '15',
   `sc_create` varchar(1) NOT NULL DEFAULT 'c',
   `sc_edit` varchar(1) NOT NULL DEFAULT 'e',

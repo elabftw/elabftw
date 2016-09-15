@@ -34,22 +34,6 @@ try {
             $new_display = 'default';
         }
 
-        // ORDER
-        if ($_POST['order'] === 'date' || $_POST['order'] === 'id' || $_POST['order'] === 'title') {
-            $new_order = $_POST['order'];
-        } else {
-            $new_order = 'id';
-        }
-
-        // SORT
-        if ($_POST['sort'] === 'asc') {
-            $new_sort = $_POST['sort'];
-        } elseif ($_POST['sort'] === 'desc') {
-            $new_sort = $_POST['sort'];
-        } else {
-            $new_sort = 'desc';
-        }
-
         // LIMIT
         $filter_options = array(
             'options' => array(
@@ -97,8 +81,6 @@ try {
         // SQL
         $sql = "UPDATE users SET
             display = :new_display,
-            order_by = :new_order,
-            sort_by = :new_sort,
             limit_nb = :new_limit,
             sc_create = :new_sc_create,
             sc_edit = :new_sc_edit,
@@ -112,8 +94,6 @@ try {
         $req = $pdo->prepare($sql);
         $req->execute(array(
             'new_display' => $new_display,
-            'new_order' => $new_order,
-            'new_sort' => $new_sort,
             'new_limit' => $new_limit,
             'new_sc_create' => $new_sc_create,
             'new_sc_edit' => $new_sc_edit,
@@ -127,8 +107,6 @@ try {
         ));
         // put it in session
         $_SESSION['prefs']['display'] = $new_display;
-        $_SESSION['prefs']['order'] = $new_order;
-        $_SESSION['prefs']['sort'] = $new_sort;
         $_SESSION['prefs']['limit'] = $new_limit;
         $_SESSION['prefs']['shortcuts']['create'] = $new_sc_create;
         $_SESSION['prefs']['shortcuts']['edit'] = $new_sc_edit;

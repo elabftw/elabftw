@@ -606,6 +606,14 @@ function promoteSysadmin() {
     // disable button on click
     document.getElementById('promoteSysadminButton').disabled = true;
     email = $('#promoteSysadmin').val();
+    // check it looks like an email
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!re.test(email)) {
+        notif('Not an email address!', 'ko');
+        document.getElementById('promoteSysadminButton').disabled = false;
+        return false;
+    }
+
     $.post('app/controllers/SysconfigController.php', {
         promoteSysadmin: true,
         email: email

@@ -13,7 +13,7 @@ class CommentsTest extends \PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
-        $this->assertTrue($this->Comments->create('Ohai'));
+        $this->assertEquals($this->Comments->create('Ohai'), 1);
     }
 
     public function testRead()

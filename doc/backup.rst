@@ -47,6 +47,16 @@ This will run the script everyday at 4am.
 How to backup a Docker installation
 -----------------------------------
 
+With elabctl
+````````````
+If you installed eLabFTW with `elabctl <https://github.com/elabftw/elabctl>`_, use:
+
+.. code-block:: bash
+
+    elabctl backup
+
+Without elabctl
+```````````````
 * Copy the docker-compose.yml somewhere safe.
 * Copy the `uploads` folder somewhere safe (make a zip or tar archive).
 * Backup the MySQL database:

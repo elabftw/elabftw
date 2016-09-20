@@ -22,6 +22,10 @@ Version 1.3.0
   * prettier user interface
   * better user experience
 
+* Enhancements:
+
+  * password reset link is now only valid for one hour (#297)
+
 * Documentation:
 
   * the documentation has improved

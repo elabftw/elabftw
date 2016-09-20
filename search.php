@@ -51,6 +51,7 @@ if (isset($_GET['to']) && !empty($_GET['to'])) {
 }
 
 $title = '';
+$titleWithSpace = false;
 // TITLE
 if (isset($_GET['title']) && !empty($_GET['title'])) {
     // check if there is a space in the query
@@ -63,6 +64,7 @@ if (isset($_GET['title']) && !empty($_GET['title'])) {
 
 // BODY
 $body = '';
+$bodyWithSpace = false;
 if (isset($_GET['body']) && !empty($_GET['body'])) {
     if (strrpos(trim($_GET['body']), " ") !== false) {
         $body_arr = explode(' ', trim($_GET['body']));

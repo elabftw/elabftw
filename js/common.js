@@ -290,22 +290,18 @@ function experimentsDestroyLink(link, item, confirmText) {
 }
 
 // TIMESTAMP
-function timestamp(id, confirmText) {
-    var youSure = confirm(confirmText);
-    if (youSure === true) {
-        $.post('app/controllers/ExperimentsController.php', {
-            timestamp: true,
-            id: id
-        }).done(function (data) {
-            var json = JSON.parse(data);
-            if (json.res) {
-                window.location.replace("experiments.php?mode=view&id=" + id);
-            } else {
-                notif(json.msg, 'ko');
-            }
-        });
-    }
-    return false;
+function timestamp(id) {
+    $.post('app/controllers/ExperimentsController.php', {
+        timestamp: true,
+        id: id
+    }).done(function (data) {
+        var json = JSON.parse(data);
+        if (json.res) {
+            window.location.replace("experiments.php?mode=view&id=" + id);
+        } else {
+            notif(json.msg, 'ko');
+        }
+    });
 }
 
 // COMMENTS

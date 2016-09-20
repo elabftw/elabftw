@@ -36,7 +36,7 @@ class TeamsView
     public function showCreate()
     {
         $html = "<div class='box'><h3>" . _('Add a New Team') . "</h3><hr>";
-        $html .= "<input class='clean-form col-3-form' required type='text' placeholder='Enter New Team Name' id='teamsName' />";
+        $html .= "<input class='clean-form col-3-form' required type='text' placeholder='Pasteur lab' id='teamsName' />";
         $html .= "<button id='teamsCreateButton' onClick='teamsCreate()' class='button'>" . ('Save') . "</button></div>";
 
         return $html;
@@ -49,7 +49,7 @@ class TeamsView
     public function showPromoteSysadmin()
     {
         $html = "<div class='box'><h3>" . _('Promote Someone to Sysadmin') . "</h3><hr>";
-        $html .= "<input class='clean-form col-3-form' required type='text' placeholder='Enter Email Address of User' id='promoteSysadmin' />";
+        $html .= "<input class='clean-form col-3-form' required type='email' placeholder='louis@pasteur.fr' id='promoteSysadmin' />";
         $html .= "<button id='promoteSysadminButton' onClick='promoteSysadmin()' class='button'>" . ('Save') . "</button></div>";
 
         return $html;

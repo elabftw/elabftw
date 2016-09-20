@@ -102,7 +102,7 @@ abstract class Make
         }
 
         if ($theUser != $comparator) {
-            throw new Exception(_("You don't have sufficient rights to access this item."));
+            throw new Exception(Tools::error(true));
         }
     }
 }

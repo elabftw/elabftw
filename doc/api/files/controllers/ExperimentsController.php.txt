@@ -149,21 +149,26 @@ try {
     if (isset($_POST['destroy'])) {
         $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
         $Teams = new Teams($_SESSION['team_id']);
+
         if ((($Teams->read('deletable_xp') == '0') &&
             !$_SESSION['is_admin']) ||
-            !$Experiments->isOwnedByUser($Experiments->id, 'experiments', $_SESSION['userid'])) {
-            throw new Exception(_("You don't have the rights to delete this experiment."));
-        }
-        if ($Experiments->destroy()) {
-            echo json_encode(array(
-                'res' => true,
-                'msg' => _('Experiment successfully deleted')
-            ));
-        } else {
+            !$Experiments->isOwnedByUser($_SESSION['userid'], 'experiments', $Experiments->id)) {
             echo json_encode(array(
                 'res' => false,
-                'msg' => Tools::error()
+                'msg' => _("You don't have the rights to delete this experiment.")
             ));
+        } else {
+            if ($Experiments->destroy()) {
+                echo json_encode(array(
+                    'res' => true,
+                    'msg' => _('Experiment successfully deleted')
+                ));
+            } else {
+                echo json_encode(array(
+                    'res' => false,
+                    'msg' => Tools::error()
+                ));
+            }
         }
     }
 

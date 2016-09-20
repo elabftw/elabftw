@@ -111,13 +111,12 @@ class Auth
         // PREFS
         $_SESSION['prefs'] = array(
             'display' => $this->userData['display'],
-            'order' => $this->userData['order_by'],
-            'sort' => $this->userData['sort_by'],
             'limit' => $this->userData['limit_nb'],
             'shortcuts' => array('create' => $this->userData['sc_create'], 'edit' => $this->userData['sc_edit'], 'submit' => $this->userData['sc_submit'], 'todo' => $this->userData['sc_todo']),
             'lang' => $this->userData['lang'],
             'close_warning' => intval($this->userData['close_warning']),
-            'chem_editor' => intval($this->userData['chem_editor']));
+            'chem_editor' => intval($this->userData['chem_editor']),
+            'show_team' => intval($this->userData['show_team']));
         // Make a unique token and store it in sql AND cookie
         $this->token = md5(uniqid(rand(), true));
         // and SESSION

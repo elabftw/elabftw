@@ -70,7 +70,7 @@ class TeamGroups
      * Get the name of a group
      *
      * @param int $id
-     * @return string|false
+     * @return string
      */
     public function readName($id)
     {

@@ -104,7 +104,7 @@ try {
 
 
             $id_arr = explode('_', $_POST['id']);
-            if (Tools::checkId($id_arr[1] === false)) {
+            if (Tools::checkId($id_arr[1]) === false) {
                 throw new Exception(_('The id parameter is invalid'));
             }
             $id = $id_arr[1];

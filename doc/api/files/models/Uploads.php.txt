@@ -53,7 +53,7 @@ class Uploads extends Entity
     /**
      * Main method for normal file upload
      *
-     * @param string|array $file Either pass it the $_FILES array or the string of the local file path
+     * @param array $file $_FILES
      * @return bool
      */
     public function create($file)
@@ -67,6 +67,11 @@ class Uploads extends Entity
         $realName = $this->getSanitizedName($file['file']['name']);
         $longName = $this->getCleanName() . "." . Tools::getExt($realName);
         $fullPath = ELAB_ROOT . 'uploads/' . $longName;
+
+        // disallow upload of php files
+        if (Tools::getExt($realName) === 'php') {
+            throw new Exception('PHP files are forbidden!');
+        }
 
         // Try to move the file to its final place
         $this->moveFile($file['file']['tmp_name'], $fullPath);
@@ -282,12 +287,11 @@ class Uploads extends Entity
      * Create a jpg thumbnail from images of type jpg, png or gif.
      *
      * @param string $src Path to the original file
-     * @param string $ext Extension of the file
      * @param string $dest Path to the place to save the thumbnail
      * @param int $desiredWidth Width of the thumbnail (height is automatic depending on width)
      * @return null|false
      */
-    public function makeThumb($src, $ext, $dest, $desiredWidth)
+    public function makeThumb($src, $dest, $desiredWidth)
     {
         // we don't want to work on too big images
         // put the limit to 5 Mbytes
@@ -295,14 +299,21 @@ class Uploads extends Entity
             return false;
         }
 
+        // get mime type of the file
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = finfo_file($finfo, $src);
         // the used fonction is different depending on extension
-        if (preg_match('/(jpg|jpeg)$/i', $ext)) {
-            $sourceImage = imagecreatefromjpeg($src);
-        } elseif (preg_match('/(png)$/i', $ext)) {
-            $sourceImage = imagecreatefrompng($src);
-        } elseif (preg_match('/(gif)$/i', $ext)) {
-            $sourceImage = imagecreatefromgif($src);
+        if ($mime === 'image/jpeg') {
+            $sourceImage = @imagecreatefromjpeg($src);
+        } elseif ($mime === 'image/png') {
+            $sourceImage = @imagecreatefrompng($src);
+        } elseif ($mime === 'image/gif') {
+            $sourceImage = @imagecreatefromgif($src);
         } else {
+            return false;
+        }
+
+        if ($sourceImage === false) {
             return false;
         }
 
@@ -334,13 +345,13 @@ class Uploads extends Entity
         if ($this->type === 'experiments') {
             // Check file id is owned by connected user
             if ($uploadArr['userid'] != $_SESSION['userid']) {
-                throw new Exception(_('This section is out of your reach!'));
+                throw new Exception(Tools::error(true));
             }
         } else {
             $User = new Users();
             $userArr = $User->read($_SESSION['userid']);
             if ($userArr['team'] != $_SESSION['team_id']) {
-                throw new Exception(_('This section is out of your reach!'));
+                throw new Exception(Tools::error(true));
             }
         }
 

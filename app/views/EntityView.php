@@ -299,7 +299,7 @@ class EntityView
         } elseif ($type === 'database') {
             $text = _('Back to Database Listing');
         } else {
-            return false;
+            return "";
         }
 
         $html = "<a href='" . $type . ".php?mode=show'>";

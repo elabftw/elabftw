@@ -23,7 +23,7 @@ class Tools
      * Return the date as YYYYMMDD format if no input
      * return input if it is valid
      *
-     * @param string $input 20160521
+     * @param string|null $input 20160521
      * @return string
      */
     public static function kdate($input = null)
@@ -257,11 +257,15 @@ class Tools
     /**
      * Display a generic error message
      *
+     * @param bool $permission show the out of reach message for permission message
      * @return string
      */
-    public static function error()
+    public static function error($permission = false)
     {
-        return _("An error occured.");
+        if ($permission) {
+            return _("This section is out of your reach!");
+        }
+        return _("An error occured!");
     }
 
     /**
@@ -336,7 +340,7 @@ class Tools
     /**
      * Get an associative array for the langs to display in a select
      *
-     * @return array
+     * @return array<string,string>
      */
     public static function getLangsArr()
     {

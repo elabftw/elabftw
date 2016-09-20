@@ -104,7 +104,7 @@ try {
 
 
             $id_arr = explode('_', $_POST['id']);
-            if (Tools::checkId($id_arr[1] === false)) {
+            if (Tools::checkId($id_arr[1]) === false) {
                 throw new Exception(_('The id parameter is invalid'));
             }
             $id = $id_arr[1];
@@ -131,9 +131,27 @@ try {
 
     // CREATE UPLOAD
     if (isset($_POST['upload'])) {
-        $Upload = new Uploads($_POST['type'], $_POST['item_id']);
-        $Upload->create($_FILES);
+        try {
+            $Upload = new Uploads($_POST['type'], $_POST['item_id']);
+            if ($Upload->create($_FILES)) {
+                echo json_encode(array(
+                    'res' => true,
+                    'msg' => _('Saved')
+                ));
+            } else {
+                echo json_encode(array(
+                    'res' => false,
+                    'msg' => Tools::error()
+                ));
+            }
+        } catch (Exception $e) {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => $e->getMessage()
+            ));
+        }
     }
+
     // DESTROY UPLOAD
     if (isset($_POST['uploadsDestroy'])) {
         $Uploads = new Uploads($_POST['type'], $_POST['item_id'], $_POST['id']);

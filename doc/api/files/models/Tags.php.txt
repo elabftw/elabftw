@@ -58,7 +58,7 @@ class Tags extends Entity
         }
 
         if ($this->type === 'experiments' && !$this->isOwnedByUser($_SESSION['userid'], $this->type, $this->id)) {
-            throw new Exception(_('This section is out of your reach!'));
+            throw new Exception(Tools::error(true));
         }
 
         if ($this->type === 'experiments') {
@@ -165,7 +165,7 @@ class Tags extends Entity
     public function destroy($userid, $id)
     {
         if ($this->type === 'experiments' && !$this->isOwnedByUser($userid, $this->type, $this->id)) {
-            throw new Exception(_('This section is out of your reach!'));
+            throw new Exception(Tools::error(true));
         }
 
         $sql = "DELETE FROM " . $this->type . "_tags WHERE id = :id";

@@ -94,7 +94,7 @@ class Comments extends Entity
 
         // don't send an email if we are commenting on our own XP
         if ($users['userid'] === $this->Experiments->userid) {
-            return true;
+            return 1;
         }
 
         // Create the message

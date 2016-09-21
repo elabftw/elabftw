@@ -163,6 +163,16 @@ try {
 
     }
 
+    // CLEAR STAMP PASS
+    if (isset($_GET['clearStamppass']) && $_GET['clearStamppass'] === '1') {
+        $redirect = true;
+        $tab = '3';
+        $Config = new Config;
+        if (!$Config->destroyStamppass()) {
+            throw new Exception('Error clearing the timestamp password');
+        }
+    }
+
     $_SESSION['ok'][] = _('Configuration updated successfully.');
 
 } catch (Exception $e) {

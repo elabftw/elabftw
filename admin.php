@@ -127,6 +127,12 @@ try {
                 </p>
                 <p>
                 <label class="block" for='stamppass'><?= _('Password for external timestamping service:') ?></label>
+    <?php
+    if (strlen($teamConfigArr['stamppass']) > 1) {
+        echo "<p>A password is already set. ";
+        echo "<a href='app/controllers/AdminController.php?clearStamppass=1'>Clear it</a> or change it below:</p>";
+    }
+    ?>
                 <input class="clean-form col-3-form" type='password' name='stamppass' id='stamppass' />
                 <span class='smallgray'><?= _('Your timestamping service provider password') ?></span>
                 </p>

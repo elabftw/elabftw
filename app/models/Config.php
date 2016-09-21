@@ -53,6 +53,18 @@ class Config
     }
 
     /**
+     * Reset the timestamp password
+     *
+     * @return bool
+     */
+    public function destroyStamppass()
+    {
+        $sql = "UPDATE config SET conf_value = NULL WHERE conf_name = 'stamppass'";
+        $req = $this->pdo->prepare($sql);
+        return $req->execute();
+    }
+
+    /**
      * Reset the config to default values
      *
      */

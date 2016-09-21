@@ -61,6 +61,15 @@ try {
         }
     }
 
+    // CLEAR STAMP PASS
+    if (isset($_GET['clearStamppass']) && $_GET['clearStamppass'] === '1') {
+        $redirect = true;
+        $Teams = new Teams($_SESSION['team_id']);
+        if (!$Teams->destroyStamppass()) {
+            throw new Exception('Error clearing the timestamp password');
+        }
+    }
+
     // UPDATE COMMON TEMPLATE
     if (isset($_POST['commonTplUpdate'])) {
         $Templates = new Templates($_SESSION['team_id']);

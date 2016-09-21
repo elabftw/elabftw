@@ -31,13 +31,13 @@ echo "<title>" . (isset($page_title) ? $page_title : "Lab manager") . " - eLab "
 <link rel="stylesheet" media="all" href="js/jquery-ui/themes/smoothness/jquery-ui.min.css" />
 <!-- JAVASCRIPT -->
 <script src="js/jquery/dist/jquery.min.js"></script>
-<script src="js/jquery-ui/jquery-ui.min.js"></script>
-<!-- see Gruntfile.js to see what gets inside this -->
-<script src="js/elabftw.min.js"></script>
 <!-- bootstrap JS -->
 <script src="js/bootstrap/js/alert.js"></script>
 <script src="js/bootstrap/js/dropdown.js"></script>
 <script src="js/bootstrap/js/button.js"></script>
+<script src="js/jquery-ui/jquery-ui.min.js"></script>
+<!-- see Gruntfile.js to see what gets inside this -->
+<script src="js/elabftw.min.js"></script>
 </head>
 
 <body>

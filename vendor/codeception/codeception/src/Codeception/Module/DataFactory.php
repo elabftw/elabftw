@@ -169,7 +169,7 @@ EOF;
                 if ($realpath === false) {
                     throw new ModuleException($this, 'The path to one of your factories is not correct. Please specify the directory relative to the codeception.yml file (ie. _support/factories).');
                 }
-                $this->factoryMuffin->loadFactories($realpath);                
+                $this->factoryMuffin->loadFactories($realpath);
             }
         }
     }
@@ -251,6 +251,6 @@ EOF;
      */
     public function haveMultiple($name, $times, array $extraAttrs = [])
     {
-        return $this->factoryMuffin->seed($name, $times, $extraAttrs);
+        return $this->factoryMuffin->seed($times, $name, $extraAttrs);
     }
 }

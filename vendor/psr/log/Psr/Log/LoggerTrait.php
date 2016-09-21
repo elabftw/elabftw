@@ -6,8 +6,8 @@ namespace Psr\Log;
  * This is a simple Logger trait that classes unable to extend AbstractLogger
  * (because they extend another class, etc) can include.
  *
- * It simply delegates all log-level-specific methods to the `log` method to 
- * reduce boilerplate code that a simple Logger that does the same thing with 
+ * It simply delegates all log-level-specific methods to the `log` method to
+ * reduce boilerplate code that a simple Logger that does the same thing with
  * messages regardless of the error level has to implement.
  */
 trait LoggerTrait
@@ -16,7 +16,8 @@ trait LoggerTrait
      * System is unusable.
      *
      * @param string $message
-     * @param array $context
+     * @param array  $context
+     *
      * @return null
      */
     public function emergency($message, array $context = array())
@@ -31,7 +32,8 @@ trait LoggerTrait
      * trigger the SMS alerts and wake you up.
      *
      * @param string $message
-     * @param array $context
+     * @param array  $context
+     *
      * @return null
      */
     public function alert($message, array $context = array())
@@ -45,7 +47,8 @@ trait LoggerTrait
      * Example: Application component unavailable, unexpected exception.
      *
      * @param string $message
-     * @param array $context
+     * @param array  $context
+     *
      * @return null
      */
     public function critical($message, array $context = array())
@@ -58,7 +61,8 @@ trait LoggerTrait
      * be logged and monitored.
      *
      * @param string $message
-     * @param array $context
+     * @param array  $context
+     *
      * @return null
      */
     public function error($message, array $context = array())
@@ -73,7 +77,8 @@ trait LoggerTrait
      * that are not necessarily wrong.
      *
      * @param string $message
-     * @param array $context
+     * @param array  $context
+     *
      * @return null
      */
     public function warning($message, array $context = array())
@@ -85,7 +90,8 @@ trait LoggerTrait
      * Normal but significant events.
      *
      * @param string $message
-     * @param array $context
+     * @param array  $context
+     *
      * @return null
      */
     public function notice($message, array $context = array())
@@ -99,7 +105,8 @@ trait LoggerTrait
      * Example: User logs in, SQL logs.
      *
      * @param string $message
-     * @param array $context
+     * @param array  $context
+     *
      * @return null
      */
     public function info($message, array $context = array())
@@ -111,7 +118,8 @@ trait LoggerTrait
      * Detailed debug information.
      *
      * @param string $message
-     * @param array $context
+     * @param array  $context
+     *
      * @return null
      */
     public function debug($message, array $context = array())
@@ -122,9 +130,10 @@ trait LoggerTrait
     /**
      * Logs with an arbitrary level.
      *
-     * @param mixed $level
+     * @param mixed  $level
      * @param string $message
-     * @param array $context
+     * @param array  $context
+     *
      * @return null
      */
     abstract public function log($level, $message, array $context = array());

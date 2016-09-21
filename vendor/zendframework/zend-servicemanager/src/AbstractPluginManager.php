@@ -325,6 +325,8 @@ abstract class AbstractPluginManager extends ServiceManager implements ServiceLo
             && !empty($this->creationOptions)
         ) {
             $factory->setCreationOptions($this->creationOptions);
+        } elseif ($factory instanceof Factory\InvokableFactory) {
+            $factory->setCreationOptions([]);
         }
 
         return parent::createServiceViaCallback($callable, $cName, $rName);

@@ -43,6 +43,27 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($etalon, $fixture);
     }
 
+    public function testParserResetsTagsBetweenFeatures()
+    {
+        $parser = $this->getGherkinParser();
+
+        $parser->parse(<<<FEATURE
+Feature:
+Scenario:
+Given step
+@skipped
+FEATURE
+        );
+        $feature2 = $parser->parse(<<<FEATURE
+Feature:
+Scenario:
+Given step
+FEATURE
+        );
+
+        $this->assertFalse($feature2->hasTags());
+    }
+
     protected function getGherkinParser()
     {
         if (null === $this->gherkin) {

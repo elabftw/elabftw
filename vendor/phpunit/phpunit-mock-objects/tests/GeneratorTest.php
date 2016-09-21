@@ -180,4 +180,42 @@ class Framework_MockObject_GeneratorTest extends PHPUnit_Framework_TestCase
     {
         $this->generator->getMock(stdClass::class, [], [], '', false, true, true, true, true);
     }
+
+    /**
+     * @covers PHPUnit_Framework_MockObject_Generator::getMock
+     *
+     * @requires PHP 7
+     */
+    public function testCanImplementInterfacesThatHaveMethodsWithReturnTypes()
+    {
+        $this->generator->getMock([AnInterfaceWithReturnType::class, AnInterface::class]);
+    }
+
+    /**
+     * @covers PHPUnit_Framework_MockObject_Generator::getMock
+     *
+     * @ticket https://github.com/sebastianbergmann/phpunit-mock-objects/issues/322
+     */
+    public function testCanConfigureMethodsForDoubleOfNonExistentClass()
+    {
+        $className = 'X' . md5(microtime());
+
+        $mock = $this->generator->getMock($className, ['someMethod']);
+
+        $this->assertInstanceOf($className, $mock);
+    }
+
+    /**
+     * @covers PHPUnit_Framework_MockObject_Generator::getMock
+     */
+    public function testCanInvokeMethodsOfNonExistentClass()
+    {
+        $className = 'X' . md5(microtime());
+
+        $mock = $this->generator->getMock($className, ['someMethod']);
+
+        $mock->expects($this->once())->method('someMethod');
+
+        $mock->someMethod();
+    }
 }

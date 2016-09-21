@@ -271,4 +271,21 @@ GHERKIN;
 
         $this->gherkin->parse($feature);
     }
+
+    /**
+     * @expectedException \Behat\Gherkin\Exception\ParserException
+     */
+    public function testTableWithoutRightBorder()
+    {
+        $feature = <<<GHERKIN
+Feature:
+
+    Scenario:
+        Given something with:
+        | foo | bar
+        | 42  | 42
+GHERKIN;
+
+        $this->gherkin->parse($feature);
+    }
 }

@@ -64,6 +64,7 @@ class Parser
         $this->languageSpecifierLine = null;
         $this->input = $input;
         $this->file = $file;
+        $this->tags = array();
 
         try {
             $this->lexer->analyse($this->input, 'en');

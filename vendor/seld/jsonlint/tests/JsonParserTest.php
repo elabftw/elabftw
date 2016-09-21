@@ -99,7 +99,7 @@ class JsonParserTest extends PHPUnit_Framework_TestCase
             $parser->parse('{"bar": "foo}');
             $this->fail('Invalid unterminated string should be detected');
         } catch (ParsingException $e) {
-            $this->assertContains('Invalid string, it appears you forgot to terminated the string, or attempted to write a multiline string which is invalid', $e->getMessage());
+            $this->assertContains('Invalid string, it appears you forgot to terminate a string, or attempted to write a multiline string which is invalid', $e->getMessage());
         }
     }
 
@@ -111,7 +111,7 @@ class JsonParserTest extends PHPUnit_Framework_TestCase
 bar"}');
             $this->fail('Invalid multi-line string should be detected');
         } catch (ParsingException $e) {
-            $this->assertContains('Invalid string, it appears you forgot to terminated the string, or attempted to write a multiline string which is invalid', $e->getMessage());
+            $this->assertContains('Invalid string, it appears you forgot to terminate a string, or attempted to write a multiline string which is invalid', $e->getMessage());
         }
     }
 

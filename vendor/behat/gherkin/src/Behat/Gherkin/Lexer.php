@@ -324,8 +324,8 @@ class Lexer
                 $padded = array();
                 foreach (explode('|', $keywords) as $keyword) {
                     $padded[] = false !== mb_strpos($keyword, '<', 0, 'utf8')
-                        ? mb_substr($keyword, 0, -1, 'utf8') . '\s*'
-                        : $keyword . '\s+';
+                        ? preg_quote(mb_substr($keyword, 0, -1, 'utf8'), '/') . '\s*'
+                        : preg_quote($keyword, '/') . '\s+';
                 }
 
                 $keywords = implode('|', $padded);
@@ -468,7 +468,7 @@ class Lexer
         }
 
         $line = $this->getTrimmedLine();
-        if (!isset($line[0]) || '|' !== $line[0]) {
+        if (!isset($line[0]) || '|' !== $line[0] || '|' !== substr($line, -1)) {
             return null;
         }
 
@@ -588,6 +588,11 @@ class Lexer
      */
     private function getStepKeywordType($native)
     {
+        // Consider "*" as a AND keyword so that it is normalized to the previous step type
+        if ('*' === $native) {
+            return 'And';
+        }
+
         if (empty($this->stepKeywordTypesCache)) {
             $this->stepKeywordTypesCache = array(
                 'Given' => explode('|', $this->keywords->getGivenKeywords()),

@@ -109,14 +109,14 @@ DESC
                 );
             }
 
-            $dumped = $dumper->dump($lang, false);
+            $dumped = $dumper->dump($lang, false, true);
             $parsed = array();
             try {
                 foreach ($dumped as $num => $dumpedFeature) {
                     $parsed[] = $parser->parse($dumpedFeature, $lang . '_' . ($num + 1) . '.feature');
                 }
             } catch (\Exception $e) {
-                throw new \Exception($e->getMessage() . ":\n" . $dumped, 0, $e);
+                throw new \Exception($e->getMessage() . ":\n" . json_encode($dumped), 0, $e);
             }
 
             $data[] = array($lang, $features, $parsed);

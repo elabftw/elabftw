@@ -21,6 +21,10 @@ class CachedArrayKeywordsTest extends KeywordsTest
     {
         $steps = array();
         foreach (explode('|', $keywords) as $keyword) {
+            if ('*' === $keyword) {
+                continue;
+            }
+
             if (false !== mb_strpos($keyword, '<')) {
                 $keyword = mb_substr($keyword, 0, -1);
             }

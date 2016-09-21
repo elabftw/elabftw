@@ -12,6 +12,7 @@ namespace Behat\Gherkin\Cache;
 
 use Behat\Gherkin\Exception\CacheException;
 use Behat\Gherkin\Node\FeatureNode;
+use Behat\Gherkin\Gherkin;
 
 /**
  * File cache.
@@ -27,13 +28,19 @@ class FileCache implements CacheInterface
      * Initializes file cache.
      *
      * @param string $path Path to the folder where to store caches.
+     *
+     * @throws CacheException
      */
     public function __construct($path)
     {
-        $this->path = rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.'412';
+        $this->path = rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.'v'.Gherkin::VERSION;
 
         if (!is_dir($this->path)) {
-            mkdir($this->path, 0777, true);
+            @mkdir($this->path, 0777, true);
+        }
+
+        if (!is_writeable($this->path)) {
+            throw new CacheException(sprintf('Cache path "%s" is not writeable. Check your filesystem permissions or disable Gherkin file cache.', $this->path));
         }
     }
 

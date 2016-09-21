@@ -1,3 +1,18 @@
+4.4.4 / 2016-09-18
+==================
+
+  * Provide clearer exception for non-writeable cache directories
+
+4.4.3 / 2016-09-18
+==================
+
+  * Ensure we reset tags between features
+
+4.4.2 / 2016-09-03
+==================
+
+  * Sync 18n with gherkin 3
+
 4.4.1 / 2015-12-30
 ==================
 

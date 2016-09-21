@@ -65,10 +65,11 @@ class KeywordsDumper
      *
      * @param string  $language Keywords language
      * @param Boolean $short    Dump short version
+     * @param bool    $excludeAsterisk
      *
      * @return string|array String for short version and array of features for extended
      */
-    public function dump($language, $short = true)
+    public function dump($language, $short = true, $excludeAsterisk = false)
     {
         $this->keywords->setLanguage($language);
         $languageComment = '';
@@ -81,13 +82,13 @@ class KeywordsDumper
         if ($short) {
             $keywords = call_user_func($this->keywordsDumper, $keywords, $short);
 
-            return trim($languageComment . $this->dumpFeature($keywords, $short));
+            return trim($languageComment . $this->dumpFeature($keywords, $short, $excludeAsterisk));
         }
 
         $features = array();
         foreach ($keywords as $keyword) {
             $keyword = call_user_func($this->keywordsDumper, array($keyword), $short);
-            $features[] = trim($languageComment . $this->dumpFeature($keyword, $short));
+            $features[] = trim($languageComment . $this->dumpFeature($keyword, $short, $excludeAsterisk));
         }
 
         return $features;
@@ -101,7 +102,7 @@ class KeywordsDumper
      *
      * @return string
      */
-    protected function dumpFeature($keyword, $short = true)
+    protected function dumpFeature($keyword, $short = true, $excludeAsterisk = false)
     {
         $dump = <<<GHERKIN
 {$keyword}: Internal operations
@@ -116,21 +117,21 @@ GHERKIN;
         $keywords = explode('|', $this->keywords->getBackgroundKeywords());
         if ($short) {
             $keywords = call_user_func($this->keywordsDumper, $keywords, $short);
-            $dump .= $this->dumpBackground($keywords, $short);
+            $dump .= $this->dumpBackground($keywords, $short, $excludeAsterisk);
         } else {
             $keyword = call_user_func($this->keywordsDumper, array($keywords[0]), $short);
-            $dump .= $this->dumpBackground($keyword, $short);
+            $dump .= $this->dumpBackground($keyword, $short, $excludeAsterisk);
         }
 
         // Scenario
         $keywords = explode('|', $this->keywords->getScenarioKeywords());
         if ($short) {
             $keywords = call_user_func($this->keywordsDumper, $keywords, $short);
-            $dump .= $this->dumpScenario($keywords, $short);
+            $dump .= $this->dumpScenario($keywords, $short, $excludeAsterisk);
         } else {
             foreach ($keywords as $keyword) {
                 $keyword = call_user_func($this->keywordsDumper, array($keyword), $short);
-                $dump .= $this->dumpScenario($keyword, $short);
+                $dump .= $this->dumpScenario($keyword, $short, $excludeAsterisk);
             }
         }
 
@@ -138,11 +139,11 @@ GHERKIN;
         $keywords = explode('|', $this->keywords->getOutlineKeywords());
         if ($short) {
             $keywords = call_user_func($this->keywordsDumper, $keywords, $short);
-            $dump .= $this->dumpOutline($keywords, $short);
+            $dump .= $this->dumpOutline($keywords, $short, $excludeAsterisk);
         } else {
             foreach ($keywords as $keyword) {
                 $keyword = call_user_func($this->keywordsDumper, array($keyword), $short);
-                $dump .= $this->dumpOutline($keyword, $short);
+                $dump .= $this->dumpOutline($keyword, $short, $excludeAsterisk);
             }
         }
 
@@ -157,7 +158,7 @@ GHERKIN;
      *
      * @return string
      */
-    protected function dumpBackground($keyword, $short = true)
+    protected function dumpBackground($keyword, $short = true, $excludeAsterisk = false)
     {
         $dump = <<<GHERKIN
   {$keyword}:
@@ -168,14 +169,16 @@ GHERKIN;
         $dump .= $this->dumpStep(
             $this->keywords->getGivenKeywords(),
             'there is agent A',
-            $short
+            $short,
+            $excludeAsterisk
         );
 
         // And
         $dump .= $this->dumpStep(
             $this->keywords->getAndKeywords(),
             'there is agent B',
-            $short
+            $short,
+            $excludeAsterisk
         );
 
         return $dump . "\n";
@@ -189,7 +192,7 @@ GHERKIN;
      *
      * @return string
      */
-    protected function dumpScenario($keyword, $short = true)
+    protected function dumpScenario($keyword, $short = true, $excludeAsterisk = false)
     {
         $dump = <<<GHERKIN
   {$keyword}: Erasing agent memory
@@ -200,35 +203,40 @@ GHERKIN;
         $dump .= $this->dumpStep(
             $this->keywords->getGivenKeywords(),
             'there is agent J',
-            $short
+            $short,
+            $excludeAsterisk
         );
 
         // And
         $dump .= $this->dumpStep(
             $this->keywords->getAndKeywords(),
             'there is agent K',
-            $short
+            $short,
+            $excludeAsterisk
         );
 
         // When
         $dump .= $this->dumpStep(
             $this->keywords->getWhenKeywords(),
             'I erase agent K\'s memory',
-            $short
+            $short,
+            $excludeAsterisk
         );
 
         // Then
         $dump .= $this->dumpStep(
             $this->keywords->getThenKeywords(),
             'there should be agent J',
-            $short
+            $short,
+            $excludeAsterisk
         );
 
         // But
         $dump .= $this->dumpStep(
             $this->keywords->getButKeywords(),
             'there should not be agent K',
-            $short
+            $short,
+            $excludeAsterisk
         );
 
         return $dump . "\n";
@@ -242,7 +250,7 @@ GHERKIN;
      *
      * @return string
      */
-    protected function dumpOutline($keyword, $short = true)
+    protected function dumpOutline($keyword, $short = true, $excludeAsterisk = false)
     {
         $dump = <<<GHERKIN
   {$keyword}: Erasing other agents' memory
@@ -253,35 +261,40 @@ GHERKIN;
         $dump .= $this->dumpStep(
             $this->keywords->getGivenKeywords(),
             'there is agent <agent1>',
-            $short
+            $short,
+            $excludeAsterisk
         );
 
         // And
         $dump .= $this->dumpStep(
             $this->keywords->getAndKeywords(),
             'there is agent <agent2>',
-            $short
+            $short,
+            $excludeAsterisk
         );
 
         // When
         $dump .= $this->dumpStep(
             $this->keywords->getWhenKeywords(),
             'I erase agent <agent2>\'s memory',
-            $short
+            $short,
+            $excludeAsterisk
         );
 
         // Then
         $dump .= $this->dumpStep(
             $this->keywords->getThenKeywords(),
             'there should be agent <agent1>',
-            $short
+            $short,
+            $excludeAsterisk
         );
 
         // But
         $dump .= $this->dumpStep(
             $this->keywords->getButKeywords(),
             'there should not be agent <agent2>',
-            $short
+            $short,
+            $excludeAsterisk
         );
 
         $keywords = explode('|', $this->keywords->getExamplesKeywords());
@@ -311,7 +324,7 @@ GHERKIN;
      *
      * @return string
      */
-    protected function dumpStep($keywords, $text, $short = true)
+    protected function dumpStep($keywords, $text, $short = true, $excludeAsterisk = false)
     {
         $dump = '';
 
@@ -330,6 +343,10 @@ GHERKIN;
 GHERKIN;
         } else {
             foreach ($keywords as $keyword) {
+                if ($excludeAsterisk && '*' === $keyword) {
+                    continue;
+                }
+
                 $indent = ' ';
                 if (false !== mb_strpos($keyword, '<', 0, 'utf8')) {
                     $keyword = mb_substr($keyword, 0, -1, 'utf8');

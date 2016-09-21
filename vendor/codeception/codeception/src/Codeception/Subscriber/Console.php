@@ -374,7 +374,7 @@ class Console implements EventSubscriberInterface
         if ($e instanceof \PHPUnit_Framework_ExpectationFailedException) {
             $comparisonFailure = $e->getComparisonFailure();
             if ($comparisonFailure) {
-                $message = $this->messageFactory->prepareComparisonFailureMessage($comparisonFailure);
+                $message->append($this->messageFactory->prepareComparisonFailureMessage($comparisonFailure));
             }
         }
 
@@ -611,7 +611,7 @@ class Console implements EventSubscriberInterface
         $time = $event->getTime();
         if ($time) {
             $this
-                ->message(number_format(round($time, 2),2))
+                ->message(number_format(round($time, 2), 2))
                 ->prepend('(')
                 ->append('s)')
                 ->style('info')

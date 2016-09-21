@@ -1,6 +1,6 @@
 {
   "name": "colorpicker",
-  "version": "1.2.1",
+  "version": "1.2.4",
   "homepage": "https://github.com/vanderlee/colorpicker",
   "authors": [
     "Martijn van der Lee <martijn@vanderlee.com>"
@@ -23,14 +23,13 @@
     "jquery": ">=1.5",
     "jquery-ui": ">=1.7"
   },
-  "_release": "1.2.1",
+  "_release": "1.2.4",
   "_resolution": {
     "type": "version",
-    "tag": "1.2.1",
-    "commit": "fe0bbc979eb1f870d86375d30c35f0d772042148"
+    "tag": "1.2.4",
+    "commit": "1683770a83b4e4d36a82ed33810134d27776ed9c"
   },
   "_source": "https://github.com/vanderlee/colorpicker.git",
   "_target": "^1.2.1",
-  "_originalSource": "colorpicker",
-  "_direct": true
+  "_originalSource": "colorpicker"
 }

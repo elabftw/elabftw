@@ -1,7 +1,7 @@
 /*!
- * FullCalendar v2.9.0 Stylesheet
- * Docs & License: http://fullcalendar.io/
- * (c) 2016 Adam Shaw
+ * <%= meta.title %> v<%= meta.version %> Stylesheet
+ * Docs & License: <%= meta.homepage %>
+ * (c) <%= meta.copyright %>
  */
 
 
@@ -533,8 +533,7 @@ temporary rendered events).
 
 .fc-event .fc-bg { /* the generic .fc-bg already does position */
 	z-index: 1;
-    /* elabftw fix
-	background: #fff;*/
+	background: #fff;
 	opacity: .25;
 	filter: alpha(opacity=25); /* for IE */
 }

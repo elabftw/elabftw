@@ -43,7 +43,7 @@
 }
 
 .rte-autocomplete > li.loading {
-	background: url(../img/ajax-loader.gif) center no-repeat;
+	background: url(images/ajax-loader.gif) center no-repeat;
 	height: 16px;
 }
 

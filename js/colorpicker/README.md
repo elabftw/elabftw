@@ -1,6 +1,6 @@
 jQuery.colorpicker
 ==================
-Version 1.2.1
+Version 1.2.4
 
 Copyright &copy; 2011-2016 Martijn W. van der Lee.
 Licensed under the MIT.
@@ -66,11 +66,11 @@ Browser support
 ---------------
 Tested various versions of this plugin with the following browsers:
 
--	Chrome 31-47
--	FireFox 25-43
--	Opera 17-34
+-	Chrome 31-52
+-	FireFox 25-48
+-	Opera 17-39
 -	Internet Explorer 10-11
--	Edge 20
+-	Edge 20-25
 
 Documentation
 =============

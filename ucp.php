@@ -14,6 +14,9 @@ namespace Elabftw\Elabftw;
  * User Control Panel
  *
  */
+?>
+<script src="js/tinymce/tinymce.js"></script>
+<?php
 require_once 'app/init.inc.php';
 $page_title = _('User Control Panel');
 $selected_menu = null;
@@ -24,7 +27,6 @@ $user = $Users->read($_SESSION['userid']);
 
 // BEGIN UCP PAGE
 ?>
-<script src="js/tinymce/tinymce.min.js"></script>
 
 <menu>
     <ul>

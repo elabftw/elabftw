@@ -47,15 +47,14 @@
     "!/CHANGELOG.*",
     "!/CONTRIBUTING.*"
   ],
-  "version": "2.9.0",
-  "_release": "2.9.0",
+  "version": "2.9.1",
+  "_release": "2.9.1",
   "_resolution": {
     "type": "version",
-    "tag": "v2.9.0",
-    "commit": "de60899f7e4083e0a0fde85cfe761e4fd77cc9b2"
+    "tag": "v2.9.1",
+    "commit": "386c88a694e5fa3c0eb4e03b6fceb1d9651944f7"
   },
   "_source": "https://github.com/fullcalendar/fullcalendar.git",
   "_target": "^2.9.0",
-  "_originalSource": "fullcalendar",
-  "_direct": true
+  "_originalSource": "fullcalendar"
 }

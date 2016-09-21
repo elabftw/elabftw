@@ -39,24 +39,21 @@
 			}
 			return result.toLowerCase();
 		},
-
-        _parseHex = function(color) {
-            var c,
-                m;
-
-            // {#}rrggbb
-            m = /^#?([a-fA-F0-9]{1,6})$/.exec(color);
-            if (m) {
-                c = parseInt(m[1], 16);
-                return new $.colorpicker.Color(
-					((c >> 16) & 0xFF) / 255,
-                    ((c >>  8) & 0xFF) / 255,
-                    (c & 0xFF) / 255
-				);
-            }
-
-            return new $.colorpicker.Color();
-        },
+		
+		_keycode = {
+			isPrint: function(keycode) {
+				return keycode == 32						// spacebar
+					|| (keycode >= 48 && keycode <= 57)		// number keys
+					|| (keycode >= 65 && keycode <= 90)		// letter keys
+					|| (keycode >= 96 && keycode <= 111)	// numpad keys
+					|| (keycode >= 186 && keycode < 192)	// ;=,-./` (in order)
+					|| (keycode >= 219 && keycode < 222);	// [\]' (in order)
+			},			
+			isHex: function(keycode) {
+				return (keycode >= 48 && keycode <= 57)		// number keys
+					|| (keycode >= 65 && keycode <= 70);	// a-f
+			}
+		},
 
 		_layoutTable = function(layout, callback) {
 			var bitmap,
@@ -1402,28 +1399,58 @@
 				var that = this,
 					part = null,
 					inputs = {},
-					_html;
+					parseHex = function(color) {
+						var c,
+							m;
 
-				_html = function () {
-					var html = '';
+						// {#}rgb
+						m = /^#?([a-fA-F0-9]{1,3})$/.exec(color);
+						if (m) {
+							c = parseInt(m[1], 16);
+							return new $.colorpicker.Color(
+								((c >> 8) & 0xF) / 15,
+								((c >> 4) & 0xF) / 15,
+								(c & 0xF) / 15
+							);
+						}
 
-					if (inst.options.alpha) {
-						html += '<input class="ui-colorpicker-hex-alpha" type="text" maxlength="2" size="2"/>';
-					}
+						// {#}rrggbb
+						m = /^#?([a-fA-F0-9]{1,6})$/.exec(color);
+						if (m) {
+							c = parseInt(m[1], 16);
+							return new $.colorpicker.Color(
+								((c >> 16) & 0xFF) / 255,
+								((c >>  8) & 0xFF) / 255,
+								(c & 0xFF) / 255
+							);
+						}
+						
+						return new $.colorpicker.Color();
+					},
+					html = function () {
+						var html = '';
 
-					html += '<input class="ui-colorpicker-hex-input" type="text" maxlength="6" size="6"/>';
+						if (inst.options.alpha) {
+							html += '<input class="ui-colorpicker-hex-alpha" type="text" maxlength="2" size="2"/>';
+						}
 
-					return '<div class="ui-colorpicker-hex"><label>#</label>' + html + '</div>';
-				};
+						html += '<input class="ui-colorpicker-hex-input" type="text" maxlength="6" size="6"/>';
+
+						return '<div class="ui-colorpicker-hex"><label>#</label>' + html + '</div>';
+					};
 
 				this.init = function () {
-					part = $(_html()).appendTo($('.ui-colorpicker-hex-container', inst.dialog));
+					part = $(html()).appendTo($('.ui-colorpicker-hex-container', inst.dialog));
 
 					inputs.color = $('.ui-colorpicker-hex-input', part);
 					inputs.alpha = $('.ui-colorpicker-hex-alpha', part);
 
+					inputs.color.bind('keydown keyup', function(e) {	
+						return e.ctrlKey || _keycode.isHex(e.which) || !_keycode.isPrint(e.which);
+					});
+
 					// repeat here makes the invalid input disappear faster
-					inputs.color.bind('change keydown keyup', function (a, b, c) {
+					inputs.color.bind('change', function () {
 						if (/[^a-fA-F0-9]/.test(inputs.color.val())) {
 							inputs.color.val(inputs.color.val().replace(/[^a-fA-F0-9]/, ''));
 						}
@@ -1431,11 +1458,15 @@
 
 					inputs.color.bind('change keyup', function () {
 						// repeat here makes sure that the invalid input doesn't get parsed
-						inst.color = _parseHex(inputs.color.val()).setAlpha(inst.color.getAlpha());
+						inst.color = parseHex(inputs.color.val()).setAlpha(inst.color.getAlpha());
 						inst._change();
 					});
 
-					inputs.alpha.bind('change keydown keyup', function () {
+					inputs.alpha.bind('keydown keyup', function(e) {
+						return e.ctrlKey || _keycode.isHex(e.which) || !_keycode.isPrint(e.which);
+					});
+					
+					inputs.alpha.bind('change', function () {
 						if (/[^a-fA-F0-9]/.test(inputs.alpha)) {
 							inputs.alpha.val(inputs.alpha.val().replace(/[^a-fA-F0-9]/, ''));
 						}
@@ -1537,8 +1568,7 @@
 						inst.close(true);   //cancel
 					});
 
-					//inst._getRegional('transparent')
-					$('.ui-colorpicker-buttonset', part).buttonset();
+					$('.ui-colorpicker-buttonset', part)[$.fn.controlgroup ? 'controlgroup' : 'buttonset']();
 
 					$('.ui-colorpicker-special-color', part).click(function () {
 						inst._change();
@@ -2435,53 +2465,53 @@
 			// Close on clicking outside window and controls
 			if (that.events.document_click_html === null) {
 				$(document).delegate('html', 'touchstart click', that.events.document_click_html = function (event) {
-				if (!that.opened || event.target === that.element[0] || that.overlay) {
-					return;
-				}
-
-				// Check if clicked on any part of dialog
-				if (that.dialog.is(event.target) || that.dialog.has(event.target).length > 0) {
-					that.element.blur();	// inside window!
-					return;
-				}
-
-				// Check if clicked on known external elements
-				var p,
-					parents = $(event.target).parents();
-				// add the event.target in case of buttonImageOnly and closeOnOutside both are set to true
-				parents.push(event.target);
-				for (p = 0; p <= parents.length; ++p) {
-					// button
-					if (that.button !== null && parents[p] === that.button[0]) {
+					if (!that.opened || event.target === that.element[0] || that.overlay) {
 						return;
 					}
-					// showOn alt
-					if (/\balt|all|both\b/.test(that.options.showOn) && $(that.options.altField).is(parents[p])) {
+
+					// Check if clicked on any part of dialog
+					if (that.dialog.is(event.target) || that.dialog.has(event.target).length > 0) {
+						that.element.blur();	// inside window!
 						return;
 					}
-				}
 
-				// no closeOnOutside
-				if (!that.options.closeOnOutside) {
-					return;
-				}
+					// Check if clicked on known external elements
+					var p,
+						parents = $(event.target).parents();
+					// add the event.target in case of buttonImageOnly and closeOnOutside both are set to true
+					parents.push(event.target);
+					for (p = 0; p <= parents.length; ++p) {
+						// button
+						if (that.button !== null && parents[p] === that.button[0]) {
+							return;
+						}
+						// showOn alt
+						if (/\balt|all|both\b/.test(that.options.showOn) && $(that.options.altField).is(parents[p])) {
+							return;
+						}
+					}
 
-				that.close(that.options.revert);
-			});
+					// no closeOnOutside
+					if (!that.options.closeOnOutside) {
+						return;
+					}
+
+					that.close(that.options.revert);
+				});
 			}
 
 			if (that.events.document_keydown === null) {
 				$(document).bind('keydown', that.events.document_keydown = function (event) {
-				// close on ESC key
-				if (that.opened && event.keyCode === 27 && that.options.closeOnEscape) {
-					that.close(that.options.revert);
-				}
+					// close on ESC key
+					if (that.opened && event.keyCode === 27 && that.options.closeOnEscape) {
+						that.close(that.options.revert);
+					}
 
-				// OK on Enter key
-				if (that.opened && event.keyCode === 13 && that.options.okOnEnter) {
-					that.close();
-				}
-			});
+					// OK on Enter key
+					if (that.opened && event.keyCode === 13 && that.options.okOnEnter) {
+						that.close();
+					}
+				});
 			}
 
 			// Close (with OK) on tab key in element

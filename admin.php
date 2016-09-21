@@ -522,7 +522,7 @@ try {
             plugins : "table textcolor searchreplace code fullscreen insertdatetime paste charmap save image link",
             toolbar1: "undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | superscript subscript | bullist numlist outdent indent | forecolor backcolor | charmap | link",
             removed_menuitems : "newdocument",
-            language : '<?php echo $_SESSION['prefs']['lang']; ?>'
+            language : '<?= $_SESSION['prefs']['lang'] ?>'
         });
     });
     </script>

@@ -2,15 +2,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-15 04:19+0200\n"
-"PO-Revision-Date: 2016-08-15 04:13+0200\n"
+"POT-Creation-Date: 2016-09-21 16:06+0200\n"
+"PO-Revision-Date: 2016-09-21 16:11+0200\n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.8\n"
+"X-Generator: Poedit 1.8.9\n"
 "X-Poedit-Basepath: .\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -27,6 +27,7 @@ msgstr ""
 #: app/controllers/EntityController.php:32
 #: app/controllers/EntityController.php:64
 #: app/controllers/EntityController.php:116
+#: app/controllers/EntityController.php:139
 #: app/controllers/ExperimentsController.php:65
 #: app/controllers/ExperimentsController.php:88
 #: app/controllers/ExperimentsController.php:104
@@ -58,7 +59,7 @@ msgstr "Email envoyé"
 msgid "Logs cleared"
 msgstr "Logs nettoyés"
 
-#: app/controllers/SysconfigController.php:166
+#: app/controllers/SysconfigController.php:176
 #: app/controllers/AdminController.php:58
 #: app/controllers/UsersController.php:43
 msgid "Configuration updated successfully."
@@ -76,7 +77,7 @@ msgstr "Le commentaire est trop court"
 msgid "The id parameter is invalid"
 msgstr "Le paramètre id n'est pas valide !"
 
-#: app/controllers/EntityController.php:143
+#: app/controllers/EntityController.php:161
 msgid "File deleted successfully"
 msgstr "Le fichier a été supprimé avec succès"
 
@@ -84,17 +85,50 @@ msgstr "Le fichier a été supprimé avec succès"
 msgid "Link deleted successfully"
 msgstr "Lien supprimé avec succès"
 
-#: app/controllers/ExperimentsController.php:155
+#: app/controllers/ExperimentsController.php:160
 msgid "You don't have the rights to delete this experiment."
 msgstr "Vous n'avez pas les droits suffisants pour supprimer cette expérience."
 
-#: app/controllers/ExperimentsController.php:160
+#: app/controllers/ExperimentsController.php:166
 msgid "Experiment successfully deleted"
 msgstr "Expérience supprimée avec succès"
 
 #: app/controllers/ItemsTypesController.php:74
 msgid "Item type deleted successfully"
 msgstr "La catégorie d'item a été supprimée avec succès"
+
+#: app/controllers/ResetPasswordController.php:36
+msgid "Email not found in database!"
+msgstr "Cette adresse email n'est pas dans la base de données !"
+
+#: app/controllers/ResetPasswordController.php:78
+#, php-format
+msgid ""
+"Hi. Someone (probably you) with the IP address: %s and user agent %s "
+"requested a new password on eLabFTW. Please follow this link to reset your "
+"password : %s"
+msgstr ""
+"Bonjour. Quelqu'un (probablement vous) avec l'adresse IP : %s et le "
+"navigateur %s a demandé un nouveau mot de passe sur eLabFTW. Suivez ce lien "
+"pour réinitialiser votre mot de passe : %s"
+
+#: app/controllers/ResetPasswordController.php:84 app/models/Users.php:454
+msgid "There was a problem sending the email! Error was logged."
+msgstr ""
+"Il y a eu un problème lors de l'envoi de l'email ! L'erreur a été logguée."
+
+#: app/controllers/ResetPasswordController.php:87
+msgid "Email sent. Check your INBOX."
+msgstr "Email envoyé. Consultez votre boîte de réception."
+
+#: app/controllers/ResetPasswordController.php:112 change-pass.php:44
+msgid "Invalid link. Reset links are only valid for one hour."
+msgstr ""
+"Lien périmé. Les liens de réinitialisation ne sont valides que pour 1 heure."
+
+#: app/controllers/ResetPasswordController.php:121
+msgid "New password inserted. You can now login."
+msgstr "Nouveau mot de passe mis à jour. Vous pouvez vous connecter désormais."
 
 #: app/controllers/AdminController.php:60
 msgid "An error occurred!"
@@ -122,7 +156,7 @@ msgstr "Événement supprimé avec succès"
 msgid "Everything was purged successfully."
 msgstr "Tout a été supprimé avec succès."
 
-#: app/register-exec.php:39 app/ucp-exec.php:163 app/ucp-exec.php:196
+#: app/register-exec.php:39 app/ucp-exec.php:141 app/ucp-exec.php:174
 #: app/login-exec.php:31 app/login-exec.php:36
 msgid "A mandatory field is missing!"
 msgstr "Un champs obligatoire est manquant."
@@ -144,7 +178,7 @@ msgid "<strong>This item is locked.</strong> You cannot edit it."
 msgstr "<strong>Cet item est vérouillé.</strong> Vous ne pouvez pas l'éditer."
 
 #: app/views/DatabaseView.php:111 app/views/ExperimentsView.php:157
-#: search.php:495
+#: search.php:497
 msgid "Sorry. I couldn't find anything :("
 msgstr "Désolé, aucun résultat pour ces critères."
 
@@ -157,7 +191,7 @@ msgstr ""
 "pour créer un nouveau type d'item."
 
 #: app/views/DatabaseView.php:118 app/views/ExperimentsView.php:165
-#: search.php:517
+#: search.php:519
 msgid "result found"
 msgid_plural "results found"
 msgstr[0] "résultat trouvé"
@@ -172,31 +206,35 @@ msgstr "Voir %s de plus"
 msgid "Show all"
 msgstr "Montrer tout"
 
-#: app/views/DatabaseView.php:217
+#: app/views/DatabaseView.php:193 app/views/ExperimentsView.php:467
+msgid "Lock/Unlock item"
+msgstr "Vérouiller/Déverouiller"
+
+#: app/views/DatabaseView.php:219
 msgid "Last modified by"
 msgstr "Dernière modification par"
 
-#: app/views/DatabaseView.php:258 app/views/ExperimentsView.php:243
-#: app/views/ExperimentsView.php:625 app/views/ExperimentsView.php:706
-#: app/views/UploadsView.php:118 app/views/TeamGroupsView.php:53
+#: app/views/DatabaseView.php:260 app/views/ExperimentsView.php:243
+#: app/views/ExperimentsView.php:629 app/views/ExperimentsView.php:728
+#: app/views/UploadsView.php:121 app/views/TeamGroupsView.php:53
 msgid "Delete this?"
 msgstr "Supprimer ça ?"
 
-#: app/views/DatabaseView.php:272 app/views/ExperimentsView.php:256
-#: app/views/EntityView.php:179 ucp.php:81
+#: app/views/DatabaseView.php:274 app/views/ExperimentsView.php:256
+#: app/views/EntityView.php:179
 msgid "Date"
 msgstr "Date"
 
-#: app/views/DatabaseView.php:289 app/views/ExperimentsView.php:313
-#: app/views/EntityView.php:183 ucp.php:91
+#: app/views/DatabaseView.php:291 app/views/ExperimentsView.php:313
+#: app/views/EntityView.php:183
 msgid "Title"
 msgstr "Titre"
 
-#: app/views/DatabaseView.php:293 profile.php:34 team.php:38
+#: app/views/DatabaseView.php:295 profile.php:34 team.php:38
 msgid "Infos"
 msgstr "Infos"
 
-#: app/views/DatabaseView.php:301 app/views/ExperimentsView.php:322
+#: app/views/DatabaseView.php:303 app/views/ExperimentsView.php:322
 msgid "Save and go back"
 msgstr "Enregistrer et revenir en arrière"
 
@@ -237,7 +275,7 @@ msgstr[1] "Statuts"
 #: app/views/ExperimentsView.php:317 app/views/EntityView.php:107
 #: app/views/TeamsView.php:78 app/views/TeamsView.php:101
 #: app/classes/UserStats.php:146 app/head.inc.php:71 experiments.php:21
-#: search.php:97
+#: search.php:99
 msgid "Experiment"
 msgid_plural "Experiments"
 msgstr[0] "Expérience"
@@ -280,7 +318,11 @@ msgstr "Télécharger le jeton d'horodatage"
 msgid "Read-only mode. Experiment of %s."
 msgstr "Mode lecture seule. Expérience appartenant à %s."
 
-#: app/views/ExperimentsView.php:479
+#: app/views/ExperimentsView.php:481
+msgid "Timestamp this experiment?"
+msgstr "Horodater cette expérience ?"
+
+#: app/views/ExperimentsView.php:483
 msgid ""
 "Once timestamped an experiment cannot be edited anymore! Are you sure you "
 "want to do this?"
@@ -288,31 +330,31 @@ msgstr ""
 "Une expérience horodatée ne peut plus être éditée ! Êtes-vous sûr(e) de "
 "vouloir faire ça ?"
 
-#: app/views/ExperimentsView.php:506
+#: app/views/ExperimentsView.php:509
 msgid "Unique eLabID:"
 msgstr "eLabID unique :"
 
-#: app/views/ExperimentsView.php:651
+#: app/views/ExperimentsView.php:655
 msgid "Saving"
 msgstr "Enregistrement…"
 
-#: app/views/ExperimentsView.php:653 app/views/ExperimentsView.php:724
+#: app/views/ExperimentsView.php:657 app/views/ExperimentsView.php:746
 #: app/views/StatusView.php:44 app/views/StatusView.php:80
-#: app/views/ItemsTypesView.php:48 app/views/ItemsTypesView.php:82 ucp.php:172
-#: admin.php:196 admin.php:254 sysconfig.php:121 sysconfig.php:168
-#: sysconfig.php:200 sysconfig.php:294
+#: app/views/ItemsTypesView.php:48 app/views/ItemsTypesView.php:82 ucp.php:138
+#: admin.php:202 admin.php:260 sysconfig.php:121 sysconfig.php:174
+#: sysconfig.php:206 sysconfig.php:300
 msgid "Save"
 msgstr "Enregistrer"
 
-#: app/views/ExperimentsView.php:654
+#: app/views/ExperimentsView.php:658
 msgid "Cancel"
 msgstr "Annuler"
 
-#: app/views/ExperimentsView.php:695
+#: app/views/ExperimentsView.php:717
 msgid "Comments"
 msgstr "Commentaires"
 
-#: app/views/ExperimentsView.php:721
+#: app/views/ExperimentsView.php:743
 msgid "Add a comment"
 msgstr "Ajouter un commentaire"
 
@@ -339,7 +381,7 @@ msgstr ""
 "Êtes vous sûr de vouloir quitter cette page ? Tout changement non sauvegardé "
 "sera perdu !"
 
-#: app/views/EntityView.php:82 search.php:507
+#: app/views/EntityView.php:82 search.php:509
 msgid "Export this result:"
 msgstr "Exporter ce résultat :"
 
@@ -445,7 +487,7 @@ msgstr "Joindre un fichier"
 msgid "Drop files here to upload"
 msgstr "Déposez ici les fichiers à uploader"
 
-#: app/views/UploadsView.php:110
+#: app/views/UploadsView.php:113
 msgid "Attached file"
 msgid_plural "Attached files"
 msgstr[0] "Fichier attaché"
@@ -512,73 +554,41 @@ msgstr "Sujet de l'email"
 msgid "Email Body"
 msgstr "Corps de l'email"
 
-#: app/ucp-exec.php:141
+#: app/ucp-exec.php:119
 msgid "Preferences updated."
 msgstr "Vos préférences on été mises à jour."
 
-#: app/ucp-exec.php:152
+#: app/ucp-exec.php:130
 msgid "Please input your current password!"
 msgstr "Entrez votre mot de passe!"
 
-#: app/ucp-exec.php:170 app/models/Users.php:36
+#: app/ucp-exec.php:148 app/models/Users.php:36
 msgid "Someone is already using that email address!"
 msgstr "Cette adresse email est déjà enregistrée !"
 
-#: app/ucp-exec.php:213 change-pass.php:52 change-pass.php:63
+#: app/ucp-exec.php:191 change-pass.php:64 change-pass.php:75
 msgid "The passwords do not match!"
 msgstr "Les mots de passe entrés diffèrent !"
 
-#: app/ucp-exec.php:244
+#: app/ucp-exec.php:222
 msgid "Profile updated."
 msgstr "Profil mis à jour."
 
-#: app/ucp-exec.php:255
+#: app/ucp-exec.php:233
 msgid "You must specify a name for the template!"
 msgstr "Il faut spécifier un nom pour le modèle !"
 
-#: app/ucp-exec.php:259
+#: app/ucp-exec.php:237
 msgid "The template name must be 3 characters long."
 msgstr "Le nom du modèle doit être long d'au moins 3 caractères."
 
-#: app/ucp-exec.php:269
+#: app/ucp-exec.php:247
 msgid "Experiment template successfully added."
 msgstr "Modèle d'expérience ajouté avec succès."
 
-#: app/ucp-exec.php:304
+#: app/ucp-exec.php:282
 msgid "Template successfully edited."
 msgstr "Modèle d'expérience édité avec succès."
-
-#: app/reset.php:91
-#, php-format
-msgid ""
-"Hi. Someone (probably you) with the IP address: %s and user agent %s "
-"requested a new password on eLabFTW. Please follow this link to reset your "
-"password : %s"
-msgstr ""
-"Bonjour. Quelqu'un (probablement vous) avec l'adresse IP : %s et le "
-"navigateur %s a demandé un nouveau mot de passe sur eLabFTW. Suivez ce lien "
-"pour réinitialiser votre mot de passe : %s"
-
-#: app/reset.php:106 app/models/Users.php:438
-msgid "There was a problem sending the email! Error was logged."
-msgstr ""
-"Il y a eu un problème lors de l'envoi de l'email ! L'erreur a été logguée."
-
-#: app/reset.php:109
-msgid "Email sent. Check your INBOX."
-msgstr "Email envoyé. Consultez votre boîte de réception."
-
-#: app/reset.php:113
-msgid "Email not found in database!"
-msgstr "Cette adresse email n'est pas dans la base de données !"
-
-#: app/reset.php:117
-msgid "The email is not valid."
-msgstr "L'email n'est pas valide."
-
-#: app/reset.php:154
-msgid "New password inserted. You can now login."
-msgstr "Nouveau mot de passe mis à jour. Vous pouvez vous connecter désormais."
 
 #: app/classes/TrustedTimestamps.php:131
 msgid "Please configure Timestamping in the admin panel."
@@ -622,8 +632,7 @@ msgstr "Une erreur s'est produite durant la génération de l'archive zip !"
 msgid "Statistics"
 msgstr "Statistiques"
 
-#: app/classes/Tools.php:266 app/models/Tags.php:61 app/models/Tags.php:168
-#: app/models/Uploads.php:337 app/models/Uploads.php:343
+#: app/classes/Tools.php:266
 msgid "This section is out of your reach!"
 msgstr "Cette section est hors de votre portée !"
 
@@ -663,7 +672,7 @@ msgstr "Style"
 msgid "Remove Surfaces"
 msgstr "Retirer les surfaces"
 
-#: app/head.inc.php:76 database.php:21 search.php:99
+#: app/head.inc.php:76 database.php:21 search.php:101
 msgid "Database"
 msgstr "Base de données"
 
@@ -743,7 +752,7 @@ msgstr ""
 "Une fois vérouillée, une expérience ne peut plus être dévérouillée ou "
 "modifiée, seuls des commentaires peuvent être ajoutés."
 
-#: app/models/Users.php:40 app/models/Users.php:352
+#: app/models/Users.php:40 app/models/Users.php:368
 #, php-format
 msgid "Password must contain at least %s characters."
 msgstr "Le mot de passe doit contenir au moins %s charactères."
@@ -769,24 +778,24 @@ msgstr ""
 "enregistrée. Contactez un administrateur directement pour valider votre "
 "compte."
 
-#: app/models/Users.php:290 app/models/Users.php:306 app/models/Entity.php:56
+#: app/models/Users.php:306 app/models/Users.php:322 app/models/Entity.php:56
 #: revisions.php:54
 msgid "The id parameter is not valid!"
 msgstr "Le paramètre id n'est pas valide !"
 
-#: app/models/Users.php:311
+#: app/models/Users.php:327
 msgid "Only a sysadmin can put someone sysadmin."
 msgstr "Seul un sysadmin peut nommer un autre sysadmin."
 
-#: app/models/Users.php:411
+#: app/models/Users.php:427
 msgid "Validated user with ID :"
 msgstr "Utilisateur validé avec l'ID :"
 
-#: app/models/Users.php:456
+#: app/models/Users.php:472
 msgid "Wrong password!"
 msgstr "Mauvais mot de passe !"
 
-#: app/models/Users.php:463
+#: app/models/Users.php:479
 msgid "No user with this email or user not in your team"
 msgstr ""
 "Pas d'utilisateur avec cet email ou l'utilisateur n'est pas dans votre "
@@ -796,24 +805,15 @@ msgstr ""
 msgid "Tag is too short!"
 msgstr "Le tag est trop court!"
 
-#: app/models/Experiments.php:210 app/models/Experiments.php:271
-#: app/models/Experiments.php:296 app/models/Experiments.php:392
-#: app/models/Database.php:99 app/models/Database.php:166
-#: app/models/Database.php:203 app/models/Database.php:253
-#: app/models/Database.php:301 revisions.php:31 revisions.php:40 admin.php:26
-#: sysconfig.php:24
-msgid "This section is out of your reach."
-msgstr "Cette section est hors de votre portée."
-
-#: app/models/Experiments.php:436 app/models/Experiments.php:449
+#: app/models/Experiments.php:433 app/models/Experiments.php:446
 msgid "You don't have the rights to lock/unlock this."
 msgstr "Vous n'avez pas les droits suffisants pour vérouiller/déverouiller."
 
-#: app/models/Experiments.php:449
+#: app/models/Experiments.php:446
 msgid "This experiment was locked by"
 msgstr "Cette expérience a été vérouillée par"
 
-#: app/models/Experiments.php:454
+#: app/models/Experiments.php:451
 msgid "You cannot unlock or edit in any way a timestamped experiment."
 msgstr ""
 "Vous ne pouvez pas dévérouiller ou éditer de quelque façon que ce soit une "
@@ -918,7 +918,7 @@ msgstr "Aller au panneau utilisateur"
 msgid "No statistics available yet."
 msgstr "Pas de statistiques disponibles."
 
-#: login.php:20 login.php:111
+#: login.php:20 login.php:114
 msgid "Login"
 msgstr "Connexion"
 
@@ -936,31 +936,31 @@ msgstr "Nombre d'essais avant d'être banni pour"
 msgid "minutes:"
 msgstr "minutes :"
 
-#: login.php:84
+#: login.php:85
 msgid "Please enable cookies in your navigator to continue."
 msgstr "Merci d'autoriser les cookies dans votre navigateur pour continuer."
 
-#: login.php:89
+#: login.php:90
 msgid "Note: You need cookies enabled to log in."
 msgstr "Note : il vous faut accepter les cookies pour vous connecter."
 
-#: login.php:93
+#: login.php:94
 msgid "Sign in to your account"
 msgstr "Connectez-vous à votre compte"
 
-#: login.php:96 register.php:54 ucp.php:215 admin.php:162 sysconfig.php:72
+#: login.php:97 register.php:54 ucp.php:181 admin.php:168 sysconfig.php:72
 msgid "Email"
 msgstr "Email"
 
-#: login.php:103 register.php:58
+#: login.php:106 register.php:58
 msgid "Password"
 msgstr "Mot de passe"
 
-#: login.php:108
+#: login.php:111
 msgid "Remember me"
 msgstr "Rester connecté"
 
-#: login.php:114
+#: login.php:120
 #, php-format
 msgid ""
 "Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"
@@ -968,17 +968,21 @@ msgstr ""
 "Pas de compte ? %sCréez un compte%s maintenant !<br>Mot de passe oublié ? "
 "%sRéinitialisez-le%s !"
 
-#: login.php:117
+#: login.php:130
 msgid "Enter your email address"
 msgstr "Entrez votre adresse email"
 
-#: login.php:118
+#: login.php:131
 msgid "Send new password"
 msgstr "Envoyer le lien de réinitialisation"
 
 #: revisions.php:20
 msgid "Revisions"
 msgstr "Révisions"
+
+#: revisions.php:31 revisions.php:40 sysconfig.php:24
+msgid "This section is out of your reach."
+msgstr "Cette section est hors de votre portée."
 
 #: revisions.php:64
 msgid "Go back"
@@ -1013,19 +1017,19 @@ msgstr "Changer d'item"
 msgid "You belong to the %s team. %s"
 msgstr "Vous appartenez à l'équipe %s. %s"
 
-#: team.php:105 ucp.php:224
+#: team.php:105 ucp.php:190
 msgid "Phone"
 msgstr "Téléphone"
 
-#: team.php:106 ucp.php:228
+#: team.php:106 ucp.php:194
 msgid "Mobile"
 msgstr "Mobile"
 
-#: team.php:107 ucp.php:238
+#: team.php:107 ucp.php:204
 msgid "Website"
 msgstr "Site web"
 
-#: team.php:108 ucp.php:234
+#: team.php:108 ucp.php:200
 msgid "Skype"
 msgstr "Skype"
 
@@ -1050,11 +1054,11 @@ msgstr "Créez votre compte"
 msgid "------ Select a team ------"
 msgstr "Choisissez une équipe"
 
-#: register.php:65 ucp.php:204 admin.php:158
+#: register.php:65 ucp.php:170 admin.php:164
 msgid "Firstname"
 msgstr "Prénom"
 
-#: register.php:70 ucp.php:211 admin.php:160
+#: register.php:70 ucp.php:177 admin.php:166
 msgid "Lastname"
 msgstr "Nom"
 
@@ -1066,23 +1070,23 @@ msgstr "Complexité du mot de passe"
 msgid "create"
 msgstr "créer"
 
-#: register.php:96 change-pass.php:78
+#: register.php:96 change-pass.php:90
 msgid "Weak password"
 msgstr "Mot de passe faible"
 
-#: register.php:103 change-pass.php:85
+#: register.php:103 change-pass.php:97
 msgid "Average password"
 msgstr "Mot de passe passable"
 
-#: register.php:109 change-pass.php:91
+#: register.php:109 change-pass.php:103
 msgid "Good password"
 msgstr "Bon mot de passe"
 
-#: register.php:116 change-pass.php:98
+#: register.php:116 change-pass.php:110
 msgid "Strong password"
 msgstr "Mot de passe fort"
 
-#: register.php:123 change-pass.php:105
+#: register.php:123 change-pass.php:117
 msgid "No way that is your real password!"
 msgstr "Pas moyen que ce soit votre vrai mot de passe !"
 
@@ -1119,198 +1123,182 @@ msgid "Compact"
 msgstr "Compact"
 
 #: ucp.php:75
-msgid "Order by:"
-msgstr "Ordre basé sur :"
-
-#: ucp.php:94
-msgid "with"
-msgstr "avec"
-
-#: ucp.php:100
-msgid "Newer First"
-msgstr "Les plus récents d'abord"
-
-#: ucp.php:105
-msgid "Older First"
-msgstr "Les plus anciens d'abord"
-
-#: ucp.php:109
 msgid "Items per page:"
 msgstr "Items par page :"
 
-#: ucp.php:115
+#: ucp.php:81
 msgid "Keyboard Shortcuts"
 msgstr "Raccourcis clavier"
 
-#: ucp.php:119
+#: ucp.php:85
 msgid "Action"
 msgstr "Action"
 
-#: ucp.php:120
+#: ucp.php:86
 msgid "Shortcut"
 msgstr "Raccourci"
 
-#: ucp.php:122 admin.php:336
+#: ucp.php:88 admin.php:342
 msgid "Create"
 msgstr "Créer"
 
-#: ucp.php:126
+#: ucp.php:92
 msgid "Edit"
 msgstr "Editer"
 
-#: ucp.php:130
+#: ucp.php:96
 msgid "Submit"
 msgstr "Valider"
 
-#: ucp.php:134
+#: ucp.php:100
 msgid "TODO list"
 msgstr "TODO liste"
 
-#: ucp.php:142
+#: ucp.php:108
 msgid "Miscellaneous"
 msgstr "Divers"
 
-#: ucp.php:151
+#: ucp.php:117
 msgid "Show experiments from the team on the Experiments page?"
 msgstr "Montrer les expériences de l'équipe sur la page d'Expériences ?"
 
-#: ucp.php:159
+#: ucp.php:125
 msgid "Display a warning before closing an edit window/tab?"
 msgstr "Afficher un avertissement avant de fermer un onglet d'édition ?"
 
-#: ucp.php:167
+#: ucp.php:133
 msgid "Display the molecule drawer in edit mode?"
 msgstr "Afficher l'éditeur de molécule en mode édition ?"
 
-#: ucp.php:185
+#: ucp.php:151
 msgid "Modify your personal informations"
 msgstr "Modifier vos informations personnelles."
 
-#: ucp.php:186
+#: ucp.php:152
 msgid "Enter your password to edit infos."
 msgstr "Entrez votre mot de passe pour éditer ces informations."
 
-#: ucp.php:190
+#: ucp.php:156
 msgid "Modify your password"
 msgstr "Modifier votre mot de passe "
 
-#: ucp.php:191 change-pass.php:44
+#: ucp.php:157 change-pass.php:57
 msgid "New password"
 msgstr "Nouveau mot de passe"
 
-#: ucp.php:193
+#: ucp.php:159
 msgid "Confirm new password"
 msgstr "Confirmer le nouveau mot de passe"
 
-#: ucp.php:200
+#: ucp.php:166
 msgid "Modify your identity"
 msgstr "Modifier votre identité"
 
-#: ucp.php:221
+#: ucp.php:187
 msgid "Modify your contact information"
 msgstr "Modifier vos informations de contact"
 
-#: ucp.php:245
+#: ucp.php:211
 msgid "Update profile"
 msgstr "Mettre à jour le profil"
 
-#: ucp.php:259
+#: ucp.php:225
 msgid "Experiments Templates"
 msgstr "Modèles d'expériences"
 
-#: ucp.php:262
+#: ucp.php:228
 msgid "Create New"
 msgstr "Créer un nouveau"
 
-#: ucp.php:270
+#: ucp.php:236
 msgid "Import from File"
 msgstr "Importer un fichier"
 
-#: ucp.php:274
+#: ucp.php:240
 msgid "Name of the Template"
 msgstr "Nom du modèle"
 
-#: ucp.php:279
+#: ucp.php:245
 msgid "Add template"
 msgstr "Ajouter un modèle"
 
-#: ucp.php:300
+#: ucp.php:266
 msgid "Edit template"
 msgstr "Éditer un modèle"
 
-#: search.php:95
+#: search.php:97
 msgid "Search in"
 msgstr "Chercher dans"
 
-#: search.php:150 search.php:169
+#: search.php:152 search.php:171
 msgid "With the tag"
 msgstr "Avec le tag"
 
-#: search.php:152
+#: search.php:154
 msgid "Select a Tag"
 msgstr "Choisir un tag"
 
-#: search.php:171
+#: search.php:173
 msgid "Select a tag"
 msgstr "Choisir un tag"
 
-#: search.php:195
+#: search.php:197
 msgid "Search only in experiments owned by:"
 msgstr "Rechercher uniquement dans les expériences de :"
 
-#: search.php:198
+#: search.php:200
 msgid "Yourself"
 msgstr "Vous-même"
 
-#: search.php:205
+#: search.php:207
 msgid "All the team"
 msgstr "Toute l'équipe"
 
-#: search.php:231
+#: search.php:233
 msgid "Where date is between"
 msgstr "Où la date est entre"
 
-#: search.php:233 search.php:271
+#: search.php:235 search.php:273
 msgid "and"
 msgstr "et"
 
-#: search.php:242
+#: search.php:244
 msgid "And title contains"
 msgstr "Et le titre contient"
 
-#: search.php:247
+#: search.php:249
 msgid "And status is"
 msgstr "Et le statut est"
 
-#: search.php:249
+#: search.php:251
 msgid "select status"
 msgstr "choisir un statut"
 
-#: search.php:266
+#: search.php:268
 msgid "And body contains"
 msgstr "Et le corps contient"
 
-#: search.php:270
+#: search.php:272
 msgid "Space means"
 msgstr "Espace signifie"
 
-#: search.php:273
+#: search.php:275
 msgid "or"
 msgstr "ou"
 
-#: search.php:280
+#: search.php:282
 msgid "And rating is"
 msgstr "Et l'évaluation est"
 
-#: search.php:282
+#: search.php:284
 msgid "select number of stars"
 msgstr "choisir le nombre d'étoiles"
 
-#: search.php:283
+#: search.php:285
 msgid "Unrated"
 msgstr "Pas d'étoiles"
 
-#: search.php:299
+#: search.php:301
 msgid "Launch search"
 msgstr "Lancer la recherche"
 
@@ -1334,11 +1322,11 @@ msgstr "Catégories d'items"
 msgid "Experiments template"
 msgstr "Modèle d'expériences"
 
-#: admin.php:72 admin.php:283
+#: admin.php:72 admin.php:289
 msgid "Import CSV"
 msgstr "Importer un CSV"
 
-#: admin.php:73 admin.php:320
+#: admin.php:73 admin.php:326
 msgid "Import ZIP"
 msgstr "Importer un ZIP"
 
@@ -1354,11 +1342,11 @@ msgstr "Configurez votre équipe"
 msgid "Users can delete experiments:"
 msgstr "Les utilisateurs peuvent supprimer leurs expériences :"
 
-#: admin.php:94 admin.php:167 sysconfig.php:147 sysconfig.php:185
+#: admin.php:94 admin.php:173 sysconfig.php:147 sysconfig.php:191
 msgid "Yes"
 msgstr "Oui"
 
-#: admin.php:97 admin.php:168 sysconfig.php:150 sysconfig.php:188
+#: admin.php:97 admin.php:174 sysconfig.php:150 sysconfig.php:194
 msgid "No"
 msgstr "Non"
 
@@ -1417,39 +1405,39 @@ msgstr "Votre login pour le service d'horodatage"
 msgid "Password for external timestamping service:"
 msgstr "Mot de passe pour le service externe d'horodatage :"
 
-#: admin.php:131
+#: admin.php:137
 msgid "Your timestamping service provider password"
 msgstr "Votre mot de passe pour le service d'horodatage"
 
-#: admin.php:146
+#: admin.php:152
 msgid "Edit Users"
 msgstr "Éditer les utilisateurs"
 
-#: admin.php:165
+#: admin.php:171
 msgid "Has an active account?"
 msgstr "Compte activé ?"
 
-#: admin.php:171
+#: admin.php:177
 msgid "Group"
 msgstr "Groupe"
 
-#: admin.php:192
+#: admin.php:198
 msgid "Reset user password"
 msgstr "Réinitialiser le mot de passe utilisateur"
 
-#: admin.php:194 change-pass.php:45
+#: admin.php:200 change-pass.php:50
 msgid "characters minimum"
 msgstr "caractères au minimum"
 
-#: admin.php:208
+#: admin.php:214
 msgid "DANGER ZONE"
 msgstr "ZONE DE DANGER"
 
-#: admin.php:209
+#: admin.php:215
 msgid "Delete an account"
 msgstr "Supprimer un compte"
 
-#: admin.php:214
+#: admin.php:220
 msgid ""
 "Type EMAIL ADDRESS of a member to delete this user and all his experiments/"
 "files forever:"
@@ -1457,27 +1445,27 @@ msgstr ""
 "Taper l'ADRESSE Email d'un membre pour le supprimer ainsi que toutes ses "
 "expériences pour toujours :"
 
-#: admin.php:216
+#: admin.php:222
 msgid "Type your password:"
 msgstr "Tapez votre mot de passe :"
 
-#: admin.php:219
+#: admin.php:225
 msgid "Delete this user!"
 msgstr "Supprimer cet utilisateur !"
 
-#: admin.php:245
+#: admin.php:251
 msgid "Common Experiment Template"
 msgstr "Modèle d'expérience commun"
 
-#: admin.php:246
+#: admin.php:252
 msgid "This is the default text when someone creates an experiment."
 msgstr "Ceci est le texte par défaut affiché lorsqu'une expérience est créée."
 
-#: admin.php:263
+#: admin.php:269
 msgid "Import a CSV File"
 msgstr "Importer un fichier CSV"
 
-#: admin.php:265
+#: admin.php:271
 msgid ""
 "This page will allow you to import a .csv (Excel spreadsheet) file into the "
 "database.<br>First you need to open your .xls/.xlsx file in Excel or "
@@ -1490,7 +1478,7 @@ msgstr ""
 "Excel ou Libreoffice et l'enregistrer en .csv.<br>Pour que l'importation se "
 "passe "
 
-#: admin.php:266 admin.php:295
+#: admin.php:272 admin.php:301
 msgid ""
 "You should make a backup of your database before importing thousands of "
 "items!"
@@ -1498,63 +1486,63 @@ msgstr ""
 "Faîtes une sauvegarde de votre base de données (SQL) avant d'importer des "
 "milliers d'items !"
 
-#: admin.php:268
+#: admin.php:274
 msgid "1. Select a type of item to import to:"
 msgstr "1. Choisissez une catégorie d'item dans laquelle importer :"
 
-#: admin.php:279
+#: admin.php:285
 msgid "2. Select a CSV file to import:"
 msgstr "2. Choisissez un fichier CSV :"
 
-#: admin.php:293
+#: admin.php:299
 msgid "Import a ZIP File"
 msgstr "Importer un fichier ZIP"
 
-#: admin.php:294
+#: admin.php:300
 msgid "This page will allow you to import a .elabftw.zip archive."
 msgstr "Cette page permet l'import d'archive .elabftw.zip."
 
-#: admin.php:297
+#: admin.php:303
 msgid "1. Select where to import:"
 msgstr "2. Choisissez où importer :"
 
-#: admin.php:316
+#: admin.php:322
 msgid "2. Select a ZIP file to import:"
 msgstr "2. Choisissez un fichier ZIP :"
 
-#: admin.php:332
+#: admin.php:338
 msgid "Manage Groups of Users"
 msgstr "Gérez des groupes d'utilisateurs"
 
-#: admin.php:334
+#: admin.php:340
 msgid "Create a group"
 msgstr "Créer un groupe"
 
-#: admin.php:344
+#: admin.php:350
 msgid "Add this user"
 msgstr "Ajouter cet utilisateur"
 
-#: admin.php:354
+#: admin.php:360
 msgid "to this group"
 msgstr "à ce groupe"
 
-#: admin.php:363
+#: admin.php:369
 msgid "Add"
 msgstr "Ajouter"
 
-#: admin.php:369
+#: admin.php:375
 msgid "Remove this user"
 msgstr "Retirer cet utilisateur"
 
-#: admin.php:379
+#: admin.php:385
 msgid "from this group"
 msgstr "de ce groupe"
 
-#: admin.php:388
+#: admin.php:394
 msgid "Remove"
 msgstr "Retirer"
 
-#: admin.php:394
+#: admin.php:400
 msgid "Existing groups"
 msgstr "Groupes existants"
 
@@ -1665,31 +1653,31 @@ msgstr ""
 "l'équipe devra renseigner ses informations de connexion dans le panneau "
 "d'administration."
 
-#: sysconfig.php:176
+#: sysconfig.php:182
 msgid "Security Settings"
 msgstr "Paramètres de sécurité"
 
-#: sysconfig.php:181
+#: sysconfig.php:187
 msgid "Users need validation by admin after registration:"
 msgstr "Les nouveaux inscrits nécessitent une validation par l'admin :"
 
-#: sysconfig.php:190
+#: sysconfig.php:196
 msgid "Set to yes for added security."
 msgstr "Mettez oui pour plus de sécurité."
 
-#: sysconfig.php:191
+#: sysconfig.php:197
 msgid "Number of allowed login attempts:"
 msgstr "Nombre d'essais de connexion autorisés :"
 
-#: sysconfig.php:193
+#: sysconfig.php:199
 msgid "3 might be too few. See for yourself :)"
 msgstr "3 n'est peut-être pas assez. À vous de voir :)"
 
-#: sysconfig.php:194
+#: sysconfig.php:200
 msgid "Time of the ban after failed login attempts (in minutes):"
 msgstr "Temps de bannissement (en minutes) :"
 
-#: sysconfig.php:197
+#: sysconfig.php:203
 msgid ""
 "To identify an user we use an md5 of user agent + IP. Because doing it only "
 "based on IP address would surely cause problems."
@@ -1698,11 +1686,11 @@ msgstr ""
 "utilisé. Car se baser seulement sur l'adresse IP pourrait causer des "
 "problèmes."
 
-#: sysconfig.php:209
+#: sysconfig.php:215
 msgid "E-mail Settings"
 msgstr "Paramètres email"
 
-#: sysconfig.php:238
+#: sysconfig.php:244
 msgid ""
 "Without a valid way to send emails users won't be able to reset their "
 "password. It is recommended to create a specific Mailgun.com account and add "
@@ -1712,77 +1700,92 @@ msgstr ""
 "réinitialiser leurs mots de passe. Il est recommandé d'utiliser un compte "
 "spécifique Mailgun.com."
 
-#: sysconfig.php:240
+#: sysconfig.php:246
 msgid "Send e-mails via:"
 msgstr "Envoyer les emails via :"
 
-#: sysconfig.php:242
+#: sysconfig.php:248
 msgid "Select mailing method..."
 msgstr "Choisir une méthode d'envoi…"
 
-#: sysconfig.php:245
+#: sysconfig.php:251
 msgid "Local MTA (default)"
 msgstr "MTA local (defaut)"
 
-#: sysconfig.php:248
+#: sysconfig.php:254
 msgid "SMTP"
 msgstr "SMTP"
 
-#: sysconfig.php:251
+#: sysconfig.php:257
 msgid "PHP"
 msgstr "PHP"
 
-#: sysconfig.php:258
+#: sysconfig.php:264
 msgid "Sender address:"
 msgstr "Adresse de l'expéditeur:"
 
-#: sysconfig.php:264
+#: sysconfig.php:270
 msgid "Path to sendmail:"
 msgstr "Chemin du binaire sendmail :"
 
-#: sysconfig.php:270
+#: sysconfig.php:276
 msgid "Address of the SMTP server:"
 msgstr "Adresse du serveur SMTP :"
 
-#: sysconfig.php:273
+#: sysconfig.php:279
 msgid "SMTP encryption:"
 msgstr "Encryption :"
 
-#: sysconfig.php:283
+#: sysconfig.php:289
 msgid "Probably TLS"
 msgstr "Probablement TLS."
 
-#: sysconfig.php:284
+#: sysconfig.php:290
 msgid "SMTP Port:"
 msgstr "Port SMTP :"
 
-#: sysconfig.php:286
+#: sysconfig.php:292
 msgid "Default is 587."
 msgstr "Le port par défaut est 587."
 
-#: sysconfig.php:287
+#: sysconfig.php:293
 msgid "SMTP username:"
 msgstr "Nom d'utilisateur SMTP :"
 
-#: sysconfig.php:289
+#: sysconfig.php:295
 msgid "SMTP password"
 msgstr "Mot de passe SMTP :"
 
-#: change-pass.php:20
+#: change-pass.php:23
 msgid "Reset password"
 msgstr "Réinitialiser le mot de passe"
 
-#: change-pass.php:48
+#: change-pass.php:60
 msgid "Type it again"
 msgstr "Tapez-le encore"
 
-#: change-pass.php:50
+#: change-pass.php:62
 msgid "Complexity"
 msgstr "Complexité"
 
-#: change-pass.php:65
+#: change-pass.php:77
 msgid "Save new password"
 msgstr "Enregistrer le nouveau mot de passe"
+
+#~ msgid "The email is not valid."
+#~ msgstr "L'email n'est pas valide."
+
+#~ msgid "Order by:"
+#~ msgstr "Ordre basé sur :"
+
+#~ msgid "with"
+#~ msgstr "avec"
+
+#~ msgid "Newer First"
+#~ msgstr "Les plus récents d'abord"
+
+#~ msgid "Older First"
+#~ msgstr "Les plus anciens d'abord"
 
 #, fuzzy
 #~ msgid ""
@@ -1892,9 +1895,6 @@ msgstr "Enregistrer le nouveau mot de passe"
 
 #~ msgid "Load more"
 #~ msgstr "Afficher plus"
-
-#~ msgid "Create experiment"
-#~ msgstr "Créer une expérience"
 
 #~ msgid "Create from template"
 #~ msgstr "Créer depuis un modèle"

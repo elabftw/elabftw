@@ -25,18 +25,6 @@ Translating
 
 Do you know several languages? Are you willing to help localize eLabFTW? You're in the right place.
 
-Languages 100% translated:
-
-* British English : en_GB.UTF-8
-* Catalan : ca_ES.UTF-8
-* German : de_DE.UTF-8
-* French : fr_FR.UTF-8
-* Italian : it_IT.UTF-8
-* Spanish : es_ES.UTF-8
-* Brazilian Portuguese : pt_BR.UTF-8
-* Simplified Chinese : zh_CN.UTF-8
-
-
 How to translate ?
 
 * `Join the project on poeditor.com <https://poeditor.com/join/project?hash=aeeef61cdad663825bfe49bb7cbccb30>`_
@@ -46,7 +34,6 @@ How to translate ?
 * Ignore things like `<strong>, <br>, %s, %d` and keep the ponctuation like it was!
 
 Then email me the result, or send a pull request.
-
 
 Contributing to the code
 ------------------------

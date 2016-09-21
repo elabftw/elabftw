@@ -49,7 +49,7 @@ How to backup a Docker installation
 
 With elabctl
 ````````````
-* If you installed eLabFTW with `elabctl <https://github.com/elabftw/elabctl>`_, use:
+If you installed eLabFTW with `elabctl <https://github.com/elabftw/elabctl>`_, use:
 
 .. code-block:: bash
 

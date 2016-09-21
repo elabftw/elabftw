@@ -137,6 +137,8 @@ try {
                 ));
             }
         } catch (Exception $e) {
+            $Logs = new Logs();
+            $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
             echo json_encode(array(
                 'res' => false,
                 'msg' => $e->getMessage()

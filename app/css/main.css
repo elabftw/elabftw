@@ -533,6 +533,7 @@ section.item {
     color: #fff;
     font-size: 10px;
     padding: 4px;
+    border-radius: 5px;
     font-family: sans-serif;
     font-weight: bold;
     text-transform: uppercase;

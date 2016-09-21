@@ -1,8 +1,6 @@
 <?php
 namespace Elabftw\Elabftw;
 
-use PDO;
-
 class RevisionsTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
@@ -29,12 +27,11 @@ class RevisionsTest extends \PHPUnit_Framework_TestCase
 
     public function testRestore()
     {
-        $this->assertTrue($this->Revisions->restore(1));
-        /*
         $this->Experiment = new Experiments(1, 1);
-        $this->Experiment->toggleLock();
-        $this->setExpectedException('Exception');
-        $this->Revisions->restore(1);
-         */
+        $new = $this->Experiment->create();
+        $this->Experiment->setId($new);
+        $this->Revisions = new Revisions('experiments', $new, 1);
+        $this->assertTrue($this->Revisions->create('Ohai', $new));
+        $this->assertTrue($this->Revisions->restore($new));
     }
 }

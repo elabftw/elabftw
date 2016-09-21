@@ -521,6 +521,24 @@ section.item {
     margin: 0;
 }
 
+/* beta ribbon*/
+.beta {
+    position: relative;
+    top: -12px;
+    left: -33PX;
+    display:inline-block;
+    transform: rotate(35deg);
+    line-height: 80%;
+    background: #29AEB9;
+    color: #fff;
+    font-size: 10px;
+    padding: 4px;
+    font-family: sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+}
+
 /* REGISTER */
 /* the team name can be long and destroy the view */
 #regform select {

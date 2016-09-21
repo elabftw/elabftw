@@ -34,7 +34,7 @@ $Scheduler = new Scheduler($_SESSION['team_id']);
 
 <menu>
     <ul>
-        <li class='tabhandle' id='tab1'><?= _('Scheduler') ?></li>
+        <li class='tabhandle' id='tab1'><?= _('Scheduler') ?></li><span class='beta'>beta</span>
         <li class='tabhandle' id='tab2'><?= _('Infos') ?></li>
     </ul>
 </menu>

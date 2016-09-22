@@ -87,6 +87,15 @@ if (!checkCookiesEnabled()) {
 }
 </script>
 
+<?php
+// put the email in the field if we just registered
+if (isset($_SESSION['email'])) {
+    $email = $_SESSION['email'];
+} else {
+    $email = '';
+}
+?>
+
 <menu class='border' style='color:#29AEB9'><?= _('Note: You need cookies enabled to log in.') ?></menu>
 <section class='center'>
     <!-- Login form , the id is for an acceptance test -->
@@ -95,14 +104,7 @@ if (!checkCookiesEnabled()) {
         <br/>
         <p class="login-area">
         <label class='block' for="email"><?= _('Email') ?></label>
-        <input class="login-area-input" name="email" type="email" value='
-<?php
-// put the email in the field if we just registered
-if (isset($_SESSION['email'])) {
-    echo $_SESSION['email'];
-}
-?>
-            ' required /><br>
+        <input class="login-area-input" name="email" type="email" value='<?= $email ?>' required /><br>
             <label class='block' for="password"><?= _('Password') ?></label>
             <input class="login-area-input" name="password" type="password" required /><br>
             <!-- form key -->

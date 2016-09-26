@@ -47,14 +47,35 @@ About the docker image
 - `PHP 7 <https://secure.php.net/>`_ is used so we get an up to date and fast PHP.
 - `Nginx <http://nginx.org>`_ is used so we get the best webserver out there running our app with `HTTP/2 <https://en.wikipedia.org/wiki/HTTP/2>`_ capabilities.
 
-Using Docker, you'll also automatically benefit from some additional security features:
+Using the provided Docker image adds security features automatically:
 
 - header X-Frame-Option
 - header X-XSS-Protection
 - header X-Content-Type-Options
 - header Strict-Transport-Security
+- header Content-Security-Policy to prevent XSS
 - use Diffie-Hellman for key exchange with 2048 bits parameter
-- use modern cipher suite and protocols for SSL. This will result in an A rating on `SSLLabs <https://www.ssllabs.com/ssltest/>`_.
+- use modern cipher suite and protocols for SSL. This will result in an A rating on `SSLLabs <https://www.ssllabs.com/ssltest/>`_, as you can see below.
+- custom secure php configuration
+- custom secure nginx configuration
+
+Test scan of an eLabFTW install at `SecurityHeaders.io <https://securityheaders.io>`_:
+
+.. image:: img/securityheaders.io.png
+    :align: center
+    :alt: security headers result
+
+(there is no public key pin because this needs to be done by the server admin)
+
+Test scan of an eLabFTW install at `Qualys SSL labs <https://www.ssllabs.com/ssltest/>`_:
+
+.. image:: img/qualys-ssl-report.png
+    :align: center
+    :alt: SSL labs report
+
+Just for fun, try to use these two websites to scan the sites of other services you might use or consider using. You'll see a lot of F marks… I'll let you draw your own conclusions from that ;)
+
+You don't have to be a specialist in web security to see that some services are completely insecure and should be avoided. Full security can never be completely achieved when it comes to web and computers, but with eLabFTW at least you have the best possible setup to mitigate or stop the most commons attacks.
 
 Editing the docker-compose.yml file
 ```````````````````````````````````

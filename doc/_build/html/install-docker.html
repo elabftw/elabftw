@@ -197,15 +197,25 @@ docker-compose up -d
 <li><a class="reference external" href="https://secure.php.net/">PHP 7</a> is used so we get an up to date and fast PHP.</li>
 <li><a class="reference external" href="http://nginx.org">Nginx</a> is used so we get the best webserver out there running our app with <a class="reference external" href="https://en.wikipedia.org/wiki/HTTP/2">HTTP/2</a> capabilities.</li>
 </ul>
-<p>Using Docker, you&#8217;ll also automatically benefit from some additional security features:</p>
+<p>Using the provided Docker image adds security features automatically:</p>
 <ul class="simple">
 <li>header X-Frame-Option</li>
 <li>header X-XSS-Protection</li>
 <li>header X-Content-Type-Options</li>
 <li>header Strict-Transport-Security</li>
+<li>header Content-Security-Policy to prevent XSS</li>
 <li>use Diffie-Hellman for key exchange with 2048 bits parameter</li>
-<li>use modern cipher suite and protocols for SSL. This will result in an A rating on <a class="reference external" href="https://www.ssllabs.com/ssltest/">SSLLabs</a>.</li>
+<li>use modern cipher suite and protocols for SSL. This will result in an A rating on <a class="reference external" href="https://www.ssllabs.com/ssltest/">SSLLabs</a>, as you can see below.</li>
+<li>custom secure php configuration</li>
+<li>custom secure nginx configuration</li>
 </ul>
+<p>Test scan of an eLabFTW install at <a class="reference external" href="https://securityheaders.io">SecurityHeaders.io</a>:</p>
+<img alt="security headers result" class="align-center" src="_images/securityheaders.io.png" />
+<p>(there is no public key pin because this needs to be done by the server admin)</p>
+<p>Test scan of an eLabFTW install at <a class="reference external" href="https://www.ssllabs.com/ssltest/">Qualys SSL labs</a>:</p>
+<img alt="SSL labs report" class="align-center" src="_images/qualys-ssl-report.png" />
+<p>Just for fun, try to use these two websites to scan the sites of other services you might use or consider using. You&#8217;ll see a lot of F marks… I&#8217;ll let you draw your own conclusions from that ;)</p>
+<p>You don&#8217;t have to be a specialist in web security to see that some services are completely insecure and should be avoided. Full security can never be completely achieved when it comes to web and computers, but with eLabFTW at least you have the best possible setup to mitigate or stop the most commons attacks.</p>
 </div>
 <div class="section" id="editing-the-docker-compose-yml-file">
 <h3>Editing the docker-compose.yml file<a class="headerlink" href="#editing-the-docker-compose-yml-file" title="Permalink to this headline">¶</a></h3>

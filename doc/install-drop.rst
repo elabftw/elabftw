@@ -19,8 +19,6 @@ If you don't have a (sub)domain already, you can get one from `OVH <https://www.
 Create your drop
 ----------------
 
-.. warning:: This script will work for a fresh drop. If you already have a server running, you should consider a :ref:`normal install <install-gnulinux>` instead.
-
 * Create an account on `DigitalOcean <https://m.do.co/c/c2ce8f861e0e>`_
 
 .. image:: img/digitalocean.png
@@ -67,11 +65,17 @@ Install everything
 
     wget -qO- https://get.elabftw.net > /usr/bin/elabctl && chmod +x /usr/bin/elabctl
 
-* Install and start elabftw in Docker:
+* Install elabftw in Docker:
 
 .. code-block:: bash
 
     elabctl install
+
+* Start eLabFTW:
+
+.. code-block:: bash
+
+    elabctl start
 
 * Use `elabctl` without arguments to see what you can do with it.
 

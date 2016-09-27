@@ -1,7 +1,7 @@
 .. _install-windows:
 
-Install on Windows (in Docker)
-==============================
+Install on Windows
+==================
 
 .. image:: img/windows.png
     :align: center

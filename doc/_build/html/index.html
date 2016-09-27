@@ -31,7 +31,7 @@
 
   
     <link rel="top" title="elabftw 1.3.0 documentation" href="#"/>
-        <link rel="next" title="Install on GNU/Linux" href="install-gnulinux.html"/> 
+        <link rel="next" title="Install on a GNU/Linux server" href="install.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -82,11 +82,11 @@
             
                 <p class="caption"><span class="caption-text">Installing</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="install-gnulinux.html">Install on GNU/Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install on a GNU/Linux server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-drop.html">Install in the cloud</a></li>
-<li class="toctree-l1"><a class="reference internal" href="install-docker.html">Install in a Docker container</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-mac.html">Install on Mac OS X</a></li>
-<li class="toctree-l1"><a class="reference internal" href="install-windows.html">Install on Windows (in Docker)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-windows.html">Install on Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-oldschool.html">Install on GNU/Linux (without Docker)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common-errors.html">Common errors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="postinstall.html">Post install</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backup.html">How to backup</a></li>
@@ -94,6 +94,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Documentation</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="docker-doc.html">About Docker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="features.html">Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="manual.html">Manual</a></li>
@@ -149,7 +150,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <img alt="_images/elabftw-logo.png" src="_images/elabftw-logo.png" />
+  <img alt="elabftw logo" class="align-center" src="_images/elabftw-logo.png" />
 <div class="section" id="welcome-to-elabftw-s-documentation">
 <h1>Welcome to elabftw&#8217;s documentation!<a class="headerlink" href="#welcome-to-elabftw-s-documentation" title="Permalink to this headline">¶</a></h1>
 <p>eLabFTW is a PHP application using MySQL to store data persistently. Once installed on a server, users can register an account and start using their electronic lab notebook.
@@ -160,37 +161,14 @@ Several teams can be hosted on the same install. Check out the <a class="referen
 <div class="toctree-wrapper compound" id="installing">
 <p class="caption"><span class="caption-text">Installing</span><a class="headerlink" href="#installing" title="Permalink to this toctree">¶</a></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="install-gnulinux.html">Install on GNU/Linux</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="install-gnulinux.html#prerequisites">Prerequisites</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install-gnulinux.html#getting-the-files">Getting the files</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="install-gnulinux.html#option-1-using-git">Option 1 : Using git</a></li>
-<li class="toctree-l3"><a class="reference internal" href="install-gnulinux.html#option-2-download-archive">Option 2 :&nbsp;Download archive</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="install-gnulinux.html#sql-part">SQL part</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="install-gnulinux.html#option-1-command-line-way">Option 1 : Command line way</a></li>
-<li class="toctree-l3"><a class="reference internal" href="install-gnulinux.html#option-2-graphical-way-with-phpmyadmin">Option 2 : Graphical way with phpmyadmin</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="install-gnulinux.html#final-step">Final step</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install on a GNU/Linux server</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#install-elabftw">Install eLabFTW</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install-drop.html">Install in the cloud</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="install-drop.html#create-your-drop">Create your drop</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install-drop.html#install-everything">Install everything</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="install-docker.html">Install in a Docker container</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="install-docker.html#description">Description</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install-docker.html#install">Install</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install-docker.html#in-depth-documentation">In-depth documentation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="install-docker.html#how-does-it-work">How does it work?</a></li>
-<li class="toctree-l3"><a class="reference internal" href="install-docker.html#about-the-docker-image">About the docker image</a></li>
-<li class="toctree-l3"><a class="reference internal" href="install-docker.html#editing-the-docker-compose-yml-file">Editing the docker-compose.yml file</a></li>
-<li class="toctree-l3"><a class="reference internal" href="install-docker.html#using-docker-compose">Using docker-compose</a></li>
-<li class="toctree-l3"><a class="reference internal" href="install-docker.html#using-the-let-s-encrypt-certificates">Using the Let&#8217;s Encrypt certificates</a></li>
-</ul>
-</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="install-mac.html">Install on Mac OS X</a><ul>
@@ -199,7 +177,22 @@ Several teams can be hosted on the same install. Check out the <a class="referen
 <li class="toctree-l2"><a class="reference internal" href="install-mac.html#final-step">Final step</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="install-windows.html">Install on Windows (in Docker)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-windows.html">Install on Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-oldschool.html">Install on GNU/Linux (without Docker)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install-oldschool.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install-oldschool.html#getting-the-files">Getting the files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="install-oldschool.html#option-1-using-git">Option 1 : Using git</a></li>
+<li class="toctree-l3"><a class="reference internal" href="install-oldschool.html#option-2-download-archive">Option 2 :&nbsp;Download archive</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="install-oldschool.html#sql-part">SQL part</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="install-oldschool.html#option-1-command-line-way">Option 1: Command line way</a></li>
+<li class="toctree-l3"><a class="reference internal" href="install-oldschool.html#option-2-graphical-way-with-phpmyadmin">Option 2: Graphical way with phpmyadmin</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="install-oldschool.html#final-step">Final step</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="common-errors.html">Common errors</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="common-errors.html#failed-creating-uploads-directory">Failed creating <em>uploads/</em> directory</a></li>
 <li class="toctree-l2"><a class="reference internal" href="common-errors.html#extension-is-not-loaded">Extension is not loaded</a></li>
@@ -229,6 +222,7 @@ Several teams can be hosted on the same install. Check out the <a class="referen
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="how-to-update.html">How to update</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="how-to-update.html#if-you-installed-it-with-elabctl">If you installed it with elabctl</a></li>
 <li class="toctree-l2"><a class="reference internal" href="how-to-update.html#if-you-installed-it-with-git">If you installed it with git</a></li>
 <li class="toctree-l2"><a class="reference internal" href="how-to-update.html#if-you-are-using-docker">If you are using Docker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="how-to-update.html#if-you-installed-it-from-a-zip-or-tar-gz-archive">If you installed it from a .zip or .tar.gz archive</a></li>
@@ -239,6 +233,14 @@ Several teams can be hosted on the same install. Check out the <a class="referen
 <div class="toctree-wrapper compound" id="documentation">
 <p class="caption"><span class="caption-text">Documentation</span><a class="headerlink" href="#documentation" title="Permalink to this toctree">¶</a></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="docker-doc.html">About Docker</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="docker-doc.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docker-doc.html#how-does-it-work">How does it work?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docker-doc.html#about-the-docker-image">About the docker image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docker-doc.html#editing-the-docker-compose-yml-file">Editing the docker-compose.yml file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docker-doc.html#using-the-let-s-encrypt-certificates">Using the Let&#8217;s Encrypt certificates</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="faq.html#is-it-totally-free">Is it totally free?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="faq.html#but-how-is-it-better-than-something-i-can-buy">But how is it better than something I can buy?</a></li>
@@ -424,7 +426,7 @@ Several teams can be hosted on the same install. Check out the <a class="referen
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="install-gnulinux.html" class="btn btn-neutral float-right" title="Install on GNU/Linux" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="install.html" class="btn btn-neutral float-right" title="Install on a GNU/Linux server" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>

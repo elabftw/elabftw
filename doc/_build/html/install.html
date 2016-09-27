@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Install in the cloud &mdash; elabftw 1.3.0 documentation</title>
+  <title>Install on a GNU/Linux server &mdash; elabftw 1.3.0 documentation</title>
   
 
   
@@ -31,8 +31,8 @@
 
   
     <link rel="top" title="elabftw 1.3.0 documentation" href="index.html"/>
-        <link rel="next" title="Install on Mac OS X" href="install-mac.html"/>
-        <link rel="prev" title="Install on a GNU/Linux server" href="install.html"/> 
+        <link rel="next" title="Install in the cloud" href="install-drop.html"/>
+        <link rel="prev" title="Welcome to elabftw’s documentation!" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -83,12 +83,12 @@
             
                 <p class="caption"><span class="caption-text">Installing</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="install.html">Install on a GNU/Linux server</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Install in the cloud</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#create-your-drop">Create your drop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#install-everything">Install everything</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Install on a GNU/Linux server</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-elabftw">Install eLabFTW</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="install-drop.html">Install in the cloud</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-mac.html">Install on Mac OS X</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-windows.html">Install on Windows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install-oldschool.html">Install on GNU/Linux (without Docker)</a></li>
@@ -141,11 +141,11 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Install in the cloud</li>
+    <li>Install on a GNU/Linux server</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/install-drop.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/install.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -155,48 +155,40 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="install-in-the-cloud">
-<span id="install-drop"></span><h1>Install in the cloud<a class="headerlink" href="#install-in-the-cloud" title="Permalink to this headline">¶</a></h1>
-<p>Some people make you pay to have a &#8216;cloud service&#8217;. What I&#8217;m providing here is a very simple way to install eLabFTW on your own server (drop), cutting the middleman.</p>
-<p>This way you get to keep total control over your data. It will cost you less than 5$ a month. No setup fee, no annual licence, no overpriced features, welcome to open source software ;)</p>
-<p>One other advantage is that you&#8217;ll get your own server. With it, you can run whatever you want, not just eLabFTW! A <a class="reference external" href="https://www.mediawiki.org/wiki/MediaWiki">Wiki</a>, a bug tracker, <a class="reference external" href="https://about.gitlab.com/">GitLab</a>, etc…</p>
-<p>Your eLabFTW installation will run in a <a class="reference external" href="https://www.docker.com">Docker</a> container. Learn more about eLabFTW&nbsp;in Docker <a class="reference internal" href="docker-doc.html#docker-doc"><span>here</span></a>.</p>
-<p>Everything will be configured properly and automagically.</p>
-<p>If you don&#8217;t have a (sub)domain already, you can get one from <a class="reference external" href="https://www.ovh.com">OVH</a>, <a class="reference external" href="https://www.gandi.net">Gandi</a>, <a class="reference external" href="https://www.1and1.com">1&amp;1</a> or any other domain name registrar. You can get one for half a dollar per year.</p>
-<div class="section" id="create-your-drop">
-<h2>Create your drop<a class="headerlink" href="#create-your-drop" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="install-on-a-gnu-linux-server">
+<span id="install"></span><h1>Install on a GNU/Linux server<a class="headerlink" href="#install-on-a-gnu-linux-server" title="Permalink to this headline">¶</a></h1>
+<img alt="gnulinux" class="align-center" src="_images/gnulinux.png" />
+<img alt="docker" class="align-right" src="_images/docker.png" />
+<div class="section" id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<p>eLabFTW uses <a class="reference external" href="https://www.docker.com/what-docker">Docker containers</a>. So you need to install:</p>
 <ul class="simple">
-<li>Create an account on <a class="reference external" href="https://m.do.co/c/c2ce8f861e0e">DigitalOcean</a></li>
-</ul>
-<img alt="digitalocean" class="align-center" src="_images/digitalocean.png" />
-<ul class="simple">
-<li>Create a droplet with Docker (from the One-click Apps tab), select a size and a region.</li>
-</ul>
-<img alt="digitalocean" class="align-center" src="_images/image-selection.png" />
-<ul class="simple">
-<li>Optional: enable backups (might be a good idea)</li>
-<li>Optional: add your SSH key (<a class="reference external" href="https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets">documentation</a>)</li>
-<li>Create the drop (it takes a minute)</li>
-<li>Copy the IP address</li>
-<li>Optional: go to the control panel of your domain name provider. Point your domain (or subdomain) to the IP address of your drop. It might take a bit of time for the DNS to propagate (a few hours).</li>
+<li><a class="reference external" href="https://docs.docker.com/engine/installation/linux/">Docker</a>, the container engine</li>
+<li>and that&#8217;s it!</li>
 </ul>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Without a domain pointing to the drop, you will have a self signed certificate (so users will have a warning), whereas if you have a domain name, you will get a proper SSL certificate from Let&#8217;s Encrypt.</p>
+<p class="last">If you don&#8217;t want to use Docker or cannot install it, have a look at <a class="reference internal" href="install-oldschool.html#install-oldschool"><span>installing eLabFTW old school</span></a>.</p>
 </div>
 </div>
-<div class="section" id="install-everything">
-<h2>Install everything<a class="headerlink" href="#install-everything" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="install-elabftw">
+<h2>Install eLabFTW<a class="headerlink" href="#install-elabftw" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Open a terminal and connect to your new server:</li>
+<li>Open a terminal and connect to your server:</li>
 </ul>
-<div class="highlight-bash"><div class="highlight"><pre>ssh root@12.34.56.78
+<div class="highlight-bash"><div class="highlight"><pre>ssh you@your-server
 </pre></div>
 </div>
 <ul class="simple">
-<li>Use a terminal multiplexer:</li>
+<li>(optional) Use a terminal multiplexer:</li>
 </ul>
 <div class="highlight-bash"><div class="highlight"><pre>tmux
+</pre></div>
+</div>
+<ul class="simple">
+<li>Become root:</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre>sudo su
 </pre></div>
 </div>
 <ul class="simple">
@@ -206,20 +198,27 @@
 </pre></div>
 </div>
 <ul class="simple">
-<li>Install elabftw in Docker:</li>
+<li>Install eLabFTW in Docker:</li>
 </ul>
 <div class="highlight-bash"><div class="highlight"><pre>elabctl install
 </pre></div>
 </div>
-<ul class="simple">
-<li>Start eLabFTW:</li>
+<ul>
+<li><p class="first">(optional) Edit the configuration:</p>
+<blockquote>
+<div><p>You might want to edit the configuration here to suit your server setup. For instance, you might want to edit <cite>/etc/elabftw.yml</cite> to change the port binding (default is 443 but it might be already used). The best here is to have a load balancer (HAProxy) or reverse proxy (nginx).</p>
+</div></blockquote>
+</li>
+<li><p class="first">Start eLabFTW:</p>
+</li>
 </ul>
 <div class="highlight-bash"><div class="highlight"><pre>elabctl start
 </pre></div>
 </div>
 <ul class="simple">
-<li>Use <cite>elabctl</cite> without arguments to see what you can do with it.</li>
+<li>Use <cite>elabctl</cite> without arguments to see what you can do with it. Or <cite>man elabctl</cite>.</li>
 <li>Don&#8217;t forget to read <a class="reference internal" href="postinstall.html#postinstall"><span>the post install page</span></a>, setup <a class="reference internal" href="backup.html#backup"><span>backup</span></a>, and subscribe to <a class="reference external" href="http://elabftw.us12.list-manage1.com/subscribe?u=61950c0fcc7a849dbb4ef1b89&amp;id=04086ba197">the newsletter</a>!</li>
+<li>The config file is <cite>/etc/elabftw.yml</cite> if you wish to adjust configuration to your setup.</li>
 </ul>
 <p>ENJOY! :D</p>
 </div>
@@ -232,10 +231,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="install-mac.html" class="btn btn-neutral float-right" title="Install on Mac OS X" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="install-drop.html" class="btn btn-neutral float-right" title="Install in the cloud" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="install.html" class="btn btn-neutral" title="Install on a GNU/Linux server" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="Welcome to elabftw’s documentation!" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -1,41 +1,15 @@
-.. _install-docker:
+.. _docker-doc:
 
-Install in a Docker container
-=============================
+About Docker
+------------
 
 .. image:: img/docker.png
     :align: center
     :alt: docker
 
-Description
------------
-
-Using Docker allows you to run elabftw without touching the configuration of your server or computer. By using this docker image you don't have to worry about missing php extensions or misconfigurations of the server because all was done for you beforehand.
-
-Install
--------
-
-Step 1 : install `docker <https://docs.docker.com/engine/installation/>`_ and `docker-compose <https://docs.docker.com/compose/install/>`_
-
-Step 2 : enter the following three commands:
-
-.. code-block:: bash
-
-    # get the config file
-    wget https://raw.githubusercontent.com/elabftw/docker-elabftw/master/src/docker-compose.yml-EXAMPLE -O docker-compose.yml
-    # edit it and add the secret key, change default passwords, change mount points for volumes, change ports mapping
-    $EDITOR docker-compose.yml
-    # fire up everything
-    docker-compose up -d
-
-Now visit https://YOUR.IP.ADDRESS/install. You will be redirected to the register page to create the sysadmin account.
-
-That's all folks! The documentation below is a bonus, read it if you want to understand more how it works or if you didn't manage to configure the app.
-
-.. _docker-doc:
-
-In-depth documentation
-----------------------
+Introduction
+````````````
+Using Docker allows you to run elabftw without touching the configuration of your server or computer. By using this docker image you don't have to worry about missing php extensions or misconfigurations of the server because all was done for you beforehand. It's also easier to upgrade and keep your installation up to date.
 
 How does it work?
 `````````````````
@@ -94,39 +68,7 @@ In the example configuration file, there is a /dok folder at the root with a sub
 
 .. code-block:: bash
 
-    mkdir -pvm 700 /dok/{uploads,mysql}
-
-
-Using docker-compose
-````````````````````
-
-Commands below must be executed in the directory containing the docker-compose.yml file.
-
-
-Start the containers:
-
-.. code-block:: bash
-
-    docker-compose up -d
-
-Check what is currently running:
-
-.. code-block:: bash
-
-    docker-compose ps
-
-Stop everything:
-
-.. code-block:: bash
-
-    docker-compose down
-
-Update the images (update elabftw):
-
-.. code-block:: bash
-
-    docker-compose pull
-
+    mkdir -pvm 700 /var/elabftw/{web,mysql}
 
 Using the Let's Encrypt certificates
 ````````````````````````````````````

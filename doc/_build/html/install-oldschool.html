@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Install on GNU/Linux &mdash; elabftw 1.3.0 documentation</title>
+  <title>Install on GNU/Linux (without Docker) &mdash; elabftw 1.3.0 documentation</title>
   
 
   
@@ -31,8 +31,8 @@
 
   
     <link rel="top" title="elabftw 1.3.0 documentation" href="index.html"/>
-        <link rel="next" title="Install in the cloud" href="install-drop.html"/>
-        <link rel="prev" title="Welcome to elabftw’s documentation!" href="index.html"/> 
+        <link rel="next" title="Common errors" href="common-errors.html"/>
+        <link rel="prev" title="Install on Windows" href="install-windows.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -83,7 +83,11 @@
             
                 <p class="caption"><span class="caption-text">Installing</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="">Install on GNU/Linux</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install on a GNU/Linux server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-drop.html">Install in the cloud</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-mac.html">Install on Mac OS X</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-windows.html">Install on Windows</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Install on GNU/Linux (without Docker)</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#getting-the-files">Getting the files</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#option-1-using-git">Option 1 : Using git</a></li>
@@ -91,17 +95,13 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#sql-part">SQL part</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#option-1-command-line-way">Option 1 : Command line way</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#option-2-graphical-way-with-phpmyadmin">Option 2 : Graphical way with phpmyadmin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#option-1-command-line-way">Option 1: Command line way</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#option-2-graphical-way-with-phpmyadmin">Option 2: Graphical way with phpmyadmin</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#final-step">Final step</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="install-drop.html">Install in the cloud</a></li>
-<li class="toctree-l1"><a class="reference internal" href="install-docker.html">Install in a Docker container</a></li>
-<li class="toctree-l1"><a class="reference internal" href="install-mac.html">Install on Mac OS X</a></li>
-<li class="toctree-l1"><a class="reference internal" href="install-windows.html">Install on Windows (in Docker)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="common-errors.html">Common errors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="postinstall.html">Post install</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backup.html">How to backup</a></li>
@@ -109,6 +109,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Documentation</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="docker-doc.html">About Docker</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="features.html">Features</a></li>
 <li class="toctree-l1"><a class="reference internal" href="manual.html">Manual</a></li>
@@ -150,11 +151,11 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Install on GNU/Linux</li>
+    <li>Install on GNU/Linux (without Docker)</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/install-gnulinux.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/install-oldschool.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -164,31 +165,35 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="install-on-gnu-linux">
-<span id="install-gnulinux"></span><h1>Install on GNU/Linux<a class="headerlink" href="#install-on-gnu-linux" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="install-on-gnu-linux-without-docker">
+<span id="install-oldschool"></span><h1>Install on GNU/Linux (without Docker)<a class="headerlink" href="#install-on-gnu-linux-without-docker" title="Permalink to this headline">¶</a></h1>
 <img alt="gnulinux" class="align-center" src="_images/gnulinux.png" />
 <img alt="beastie" class="align-right" src="_images/beastie.png" />
 <div class="section" id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This method is deprecated. Only use it if you cannot install Docker!</p>
+</div>
 <p>Please refer to your distribution&#8217;s documentation to install :</p>
 <ul class="simple">
-<li>A webserver (like nginx, Apache, lighttpd or cherokee)</li>
+<li>A webserver (like nginx, Apache, lighttpd, cherokee or caddy)</li>
 <li>PHP version &gt; 5.6</li>
 <li>MySQL version &gt; 5.5</li>
-<li>Git (optional)</li>
+<li>Git (optional but recommended)</li>
 </ul>
 <div class="admonition tip">
 <p class="first admonition-title">Tip</p>
-<p class="last">If you don&#8217;t know how to do that, or can&#8217;t update php, have a look at <a class="reference internal" href="install-drop.html#install-drop"><span>installing eLabFTW on a drop</span></a> or <a class="reference internal" href="install-docker.html#install-docker"><span>in a docker container</span></a>.</p>
+<p class="last">If you don&#8217;t know how to do that, or can&#8217;t update php, have a look at <a class="reference internal" href="install-drop.html#install-drop"><span>installing eLabFTW on a drop</span></a> or <span class="xref std std-ref">in a docker container</span>.</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">I wouldn&#8217;t recommend HHVM because Gettext support is not here yet (see <a class="reference external" href="https://github.com/facebook/hhvm/issues/1228">this issue</a>).</p>
+<p class="last">I wouldn&#8217;t recommend HHVM because Gettext support is not here yet (see <a class="reference external" href="https://github.com/facebook/hhvm/issues/1228">this issue</a>). Also, PHP 7 is here and is fast.</p>
 </div>
 </div>
 <div class="section" id="getting-the-files">
 <h2>Getting the files<a class="headerlink" href="#getting-the-files" title="Permalink to this headline">¶</a></h2>
-<p>The first part is to get the files composing <cite>eLabFTW</cite> on your server.</p>
+<p>The first part is to get the <cite>eLabFTW</cite> files on your server.</p>
 <div class="section" id="option-1-using-git">
 <h3>Option 1 : Using git<a class="headerlink" href="#option-1-using-git" title="Permalink to this headline">¶</a></h3>
 <p>This is the preferred method as it allows easier updating.</p>
@@ -228,7 +233,7 @@ The <cite>&#8211;depth 1</cite> option is to avoid downloading the whole history
 <h2>SQL part<a class="headerlink" href="#sql-part" title="Permalink to this headline">¶</a></h2>
 <p>The second part is putting the database in place.</p>
 <div class="section" id="option-1-command-line-way">
-<h3>Option 1 : Command line way<a class="headerlink" href="#option-1-command-line-way" title="Permalink to this headline">¶</a></h3>
+<h3>Option 1: Command line way<a class="headerlink" href="#option-1-command-line-way" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-bash"><div class="highlight"><pre><span class="c"># first we connect to mysql</span>
 <span class="nv">$ </span>mysql -u root -p
 <span class="c"># we create the database (note the ; at the end !)</span>
@@ -243,7 +248,7 @@ mysql&gt; <span class="nb">exit</span>
 <p>You will be asked for the password you put after <cite>identified by</cite> three lines above.</p>
 </div>
 <div class="section" id="option-2-graphical-way-with-phpmyadmin">
-<h3>Option 2 : Graphical way with phpmyadmin<a class="headerlink" href="#option-2-graphical-way-with-phpmyadmin" title="Permalink to this headline">¶</a></h3>
+<h3>Option 2: Graphical way with phpmyadmin<a class="headerlink" href="#option-2-graphical-way-with-phpmyadmin" title="Permalink to this headline">¶</a></h3>
 <p>You need to install the package <cite>phpmyadmin</cite> if it&#8217;s not already done.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -267,6 +272,7 @@ mysql&gt; <span class="nb">exit</span>
 <p>Finally, point your browser to the install folder (install/) and read onscreen instructions.</p>
 <p>For example: <a class="reference external" href="https://12.34.56.78/elabftw/install">https://12.34.56.78/elabftw/install</a></p>
 <p>Please report bugs on <a class="reference external" href="https://github.com/elabftw/elabftw/issues">github</a>.</p>
+<p>It&#8217;s a good idea to subscribe to <a class="reference external" href="http://elabftw.us12.list-manage1.com/subscribe?u=61950c0fcc7a849dbb4ef1b89&amp;id=04086ba197">the newsletter</a>, to know when new releases are out (you can also see that from the Sysadmin panel).</p>
 <p>~Thank you for using <a class="reference external" href="http://www.elabftw.net">eLabFTW</a> :)</p>
 </div>
 </div>
@@ -278,10 +284,10 @@ mysql&gt; <span class="nb">exit</span>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="install-drop.html" class="btn btn-neutral float-right" title="Install in the cloud" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="common-errors.html" class="btn btn-neutral float-right" title="Common errors" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="Welcome to elabftw’s documentation!" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="install-windows.html" class="btn btn-neutral" title="Install on Windows" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -1,7 +1,7 @@
-.. _install-gnulinux:
+.. _install-oldschool:
 
-Install on GNU/Linux
-====================
+Install on GNU/Linux (without Docker)
+=====================================
 
 .. image:: img/gnulinux.png
     :align: center
@@ -10,25 +10,27 @@ Install on GNU/Linux
     :align: right
     :alt: beastie
 
+
 Prerequisites
 -------------
 
+.. warning:: This method is deprecated. Only use it if you cannot install Docker!
+
 Please refer to your distribution's documentation to install :
 
-* A webserver (like nginx, Apache, lighttpd or cherokee)
+* A webserver (like nginx, Apache, lighttpd, cherokee or caddy)
 * PHP version > 5.6
 * MySQL version > 5.5
-* Git (optional)
+* Git (optional but recommended)
 
 .. tip:: If you don't know how to do that, or can't update php, have a look at :ref:`installing eLabFTW on a drop <install-drop>` or :ref:`in a docker container <install-docker>`.
 
-.. note:: I wouldn't recommend HHVM because Gettext support is not here yet (see `this issue <https://github.com/facebook/hhvm/issues/1228>`_).
+.. note:: I wouldn't recommend HHVM because Gettext support is not here yet (see `this issue <https://github.com/facebook/hhvm/issues/1228>`_). Also, PHP 7 is here and is fast.
 
 Getting the files
 -----------------
 
-The first part is to get the files composing `eLabFTW` on your server.
-
+The first part is to get the `eLabFTW` files on your server.
 
 Option 1 : Using git
 ^^^^^^^^^^^^^^^^^^^^
@@ -80,8 +82,8 @@ SQL part
 
 The second part is putting the database in place.
 
-Option 1 : Command line way
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Option 1: Command line way
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: bash
 
@@ -98,8 +100,8 @@ Option 1 : Command line way
 You will be asked for the password you put after `identified by` three lines above.
 
 
-Option 2 : Graphical way with phpmyadmin
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Option 2: Graphical way with phpmyadmin
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 You need to install the package `phpmyadmin` if it's not already done.
 
@@ -133,5 +135,7 @@ Finally, point your browser to the install folder (install/) and read onscreen i
 For example: https://12.34.56.78/elabftw/install
 
 Please report bugs on `github <https://github.com/elabftw/elabftw/issues>`_.
+
+It's a good idea to subscribe to `the newsletter <http://elabftw.us12.list-manage1.com/subscribe?u=61950c0fcc7a849dbb4ef1b89&id=04086ba197>`_, to know when new releases are out (you can also see that from the Sysadmin panel).
 
 ~Thank you for using `eLabFTW <http://www.elabftw.net>`_ :)

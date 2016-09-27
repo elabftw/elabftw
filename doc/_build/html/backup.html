@@ -91,6 +91,7 @@
 <li class="toctree-l1"><a class="reference internal" href="common-errors.html">Common errors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="postinstall.html">Post install</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">How to backup</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#using-elabctl">Using elabctl</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#using-a-script">Using a script</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#making-it-automatic-using-cron">Making it automatic using cron</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-to-backup-a-docker-installation">How to backup a Docker installation</a><ul>
@@ -171,6 +172,13 @@
 <li>your <cite>config.php</cite> file (unless you&#8217;re using Docker and you want the <cite>docker-compose.yml</cite> file)</li>
 <li>the uploaded files (in <cite>uploads/</cite> folder)</li>
 </ul>
+<div class="section" id="using-elabctl">
+<h2>Using elabctl<a class="headerlink" href="#using-elabctl" title="Permalink to this headline">¶</a></h2>
+<p>If you installed eLabFTW with elabctl, making a backup becomes very easy. Issue this command as root:</p>
+<div class="highlight-bash"><div class="highlight"><pre>elabctl backup
+</pre></div>
+</div>
+</div>
 <div class="section" id="using-a-script">
 <h2>Using a script<a class="headerlink" href="#using-a-script" title="Permalink to this headline">¶</a></h2>
 <p>You&#8217;ll want to have a little script that do the backup automatically.
@@ -188,7 +196,9 @@ Here is one way to do it. Adapt it to your needs: <a class="reference external" 
 <p>This will open a file:</p>
 <img alt="_images/crontab.png" src="_images/crontab.png" />
 <p>Add this line at the bottom:</p>
-<div class="highlight-python"><div class="highlight"><pre>00 04 * * * sh /path/to/backup.sh
+<div class="highlight-python"><div class="highlight"><pre>00 04 * * * bash /path/to/backup.sh
+or
+00 04 * * * elabctl backup
 </pre></div>
 </div>
 <p>This will run the script everyday at 4am.</p>

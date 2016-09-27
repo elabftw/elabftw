@@ -13,17 +13,24 @@ There is basically three things to backup :
 * your `config.php` file (unless you're using Docker and you want the `docker-compose.yml` file)
 * the uploaded files (in `uploads/` folder)
 
+Using elabctl
+-------------
+
+If you installed eLabFTW with elabctl, making a backup becomes very easy. Issue this command as root:
+
+.. code-block:: bash
+
+    elabctl backup
+
 Using a script
 --------------
 
 You'll want to have a little script that do the backup automatically.
 Here is one way to do it. Adapt it to your needs: `see script <https://gist.github.com/NicolasCARPi/5d9e2599857a148a54b0>`_.
 
-
 If you don't remember your SQL user/password, look in the `config.php` file!
 
 Make sure to synchronize your files to another computer. Because backuping to the same machine is only half useful.
-
 
 Making it automatic using cron
 ------------------------------
@@ -40,7 +47,9 @@ This will open a file:
 
 Add this line at the bottom::
 
-    00 04 * * * sh /path/to/backup.sh
+    00 04 * * * bash /path/to/backup.sh
+    or
+    00 04 * * * elabctl backup
 
 This will run the script everyday at 4am.
 

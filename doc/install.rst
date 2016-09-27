@@ -11,6 +11,10 @@ Install on a GNU/Linux server
     :align: right
     :alt: docker
 
+
+.. warning:: This will only work on Ubuntu at the moment. I'll improve elabctl to support other distributions very rapidly.
+
+
 Prerequisites
 -------------
 
@@ -23,18 +27,6 @@ eLabFTW uses `Docker containers <https://www.docker.com/what-docker>`_. So you n
 
 Install eLabFTW
 ---------------
-
-* Open a terminal and connect to your server:
-
-.. code-block:: bash
-
-    ssh you@your-server
-
-* (optional) Use a terminal multiplexer:
-
-.. code-block:: bash
-
-    tmux
 
 * Become root:
 
@@ -56,7 +48,7 @@ Install eLabFTW
 
 * (optional) Edit the configuration:
 
-    You might want to edit the configuration here to suit your server setup. For instance, you might want to edit `/etc/elabftw.yml` to change the port binding (default is 443 but it might be already used). The best here is to have a load balancer (HAProxy) or reverse proxy (nginx).
+    You might want to edit the configuration here to suit your server setup. For instance, you might want to edit `/etc/elabftw.yml` to change the port binding (default is 443 but it might be already used by a traditional webserver). This is also where you can define where the data will be stored (default is /var/elabftw).
 
 * Start eLabFTW:
 

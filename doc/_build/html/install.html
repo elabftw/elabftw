@@ -159,6 +159,10 @@
 <span id="install"></span><h1>Install on a GNU/Linux server<a class="headerlink" href="#install-on-a-gnu-linux-server" title="Permalink to this headline">¶</a></h1>
 <img alt="gnulinux" class="align-center" src="_images/gnulinux.png" />
 <img alt="docker" class="align-right" src="_images/docker.png" />
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This will only work on Ubuntu at the moment. I&#8217;ll improve elabctl to support other distributions very rapidly.</p>
+</div>
 <div class="section" id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
 <p>eLabFTW uses <a class="reference external" href="https://www.docker.com/what-docker">Docker containers</a>. So you need to install:</p>
@@ -173,18 +177,6 @@
 </div>
 <div class="section" id="install-elabftw">
 <h2>Install eLabFTW<a class="headerlink" href="#install-elabftw" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>Open a terminal and connect to your server:</li>
-</ul>
-<div class="highlight-bash"><div class="highlight"><pre>ssh you@your-server
-</pre></div>
-</div>
-<ul class="simple">
-<li>(optional) Use a terminal multiplexer:</li>
-</ul>
-<div class="highlight-bash"><div class="highlight"><pre>tmux
-</pre></div>
-</div>
 <ul class="simple">
 <li>Become root:</li>
 </ul>
@@ -206,7 +198,7 @@
 <ul>
 <li><p class="first">(optional) Edit the configuration:</p>
 <blockquote>
-<div><p>You might want to edit the configuration here to suit your server setup. For instance, you might want to edit <cite>/etc/elabftw.yml</cite> to change the port binding (default is 443 but it might be already used). The best here is to have a load balancer (HAProxy) or reverse proxy (nginx).</p>
+<div><p>You might want to edit the configuration here to suit your server setup. For instance, you might want to edit <cite>/etc/elabftw.yml</cite> to change the port binding (default is 443 but it might be already used by a traditional webserver). This is also where you can define where the data will be stored (default is /var/elabftw).</p>
 </div></blockquote>
 </li>
 <li><p class="first">Start eLabFTW:</p>

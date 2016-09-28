@@ -240,12 +240,26 @@
 <li>better user experience</li>
 </ul>
 </li>
+<li>Bug fixes:<ul>
+<li>fix display of experiments by date (fix #296)</li>
+<li>fix long lines overflowing on wells</li>
+<li>fix locked item not editable onclick (thx Arti)</li>
+</ul>
+</li>
 <li>Enhancements:<ul>
 <li>password reset link is now only valid for one hour (#297)</li>
+<li>allow \ in title and body (#300)</li>
+</ul>
+</li>
+<li>Internationalization:<ul>
+<li>updated terms</li>
+<li>French is now 100% translated</li>
 </ul>
 </li>
 <li>Documentation:<ul>
 <li>the documentation has improved</li>
+<li>Docker install is now default with elabctl</li>
+<li>add SafeCreative in the timestamping manual (thx &#64;gebauer)</li>
 </ul>
 </li>
 <li>Dev corner:<ul>
@@ -254,6 +268,14 @@
 <li>acceptance tests are working properly. The config file is swapped for the test DB.</li>
 <li>files in app/ were deleted and code was moved to classes</li>
 <li>the inc/ folder is no more! files are in app/</li>
+<li>updated bower components</li>
+<li>updated composer components</li>
+</ul>
+</li>
+<li>Security:<ul>
+<li>activate security switches in php config in docker image</li>
+<li>add Content-Security-Policy header to docker image</li>
+<li>add Strict-Transport-Security header to docker image</li>
 </ul>
 </li>
 </ul>

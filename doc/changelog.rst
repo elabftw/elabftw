@@ -22,13 +22,27 @@ Version 1.3.0
   * prettier user interface
   * better user experience
 
+* Bug fixes:
+
+  * fix display of experiments by date (fix #296)
+  * fix long lines overflowing on wells
+  * fix locked item not editable onclick (thx Arti)
+
 * Enhancements:
 
   * password reset link is now only valid for one hour (#297)
+  * allow \\ in title and body (#300)
+
+* Internationalization:
+
+  * updated terms
+  * French is now 100% translated
 
 * Documentation:
 
   * the documentation has improved
+  * Docker install is now default with elabctl
+  * add SafeCreative in the timestamping manual (thx @gebauer)
 
 * Dev corner:
 
@@ -37,6 +51,14 @@ Version 1.3.0
   * acceptance tests are working properly. The config file is swapped for the test DB.
   * files in app/ were deleted and code was moved to classes
   * the inc/ folder is no more! files are in app/
+  * updated bower components
+  * updated composer components
+
+* Security:
+
+  * activate security switches in php config in docker image
+  * add Content-Security-Policy header to docker image
+  * add Strict-Transport-Security header to docker image
 
 Version 1.2.6
 -------------

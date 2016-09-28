@@ -11,10 +11,6 @@ Install on a GNU/Linux server
     :align: right
     :alt: docker
 
-
-.. warning:: This will only work on Ubuntu at the moment. I'll improve elabctl to support other distributions very rapidly.
-
-
 Prerequisites
 -------------
 

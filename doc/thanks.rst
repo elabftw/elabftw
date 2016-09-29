@@ -6,13 +6,7 @@ Thanks
 A big thanks to early alpha testers and everyone who contributed through their ideas or
 suggestions to this project.
 
-The people that helped with internationalization:
-
-* pt-BR : Carlos Kikuti
-* zh-CN : Suyoung Wang
-* it-IT : Maddalena Nano, Paolo Maiuri
-* es-ES : Elena, Arnau Montagud, Amaya Blesa Siemann, Jesus
-* de-DE : @Athemis, Marko Storch, Timo Betz, Christian Wunder, Doug Morse
+Special thanks for the contributors on internationalization. There are more than 40 translators for the project :)
 
 eLabFTW uses open source code from others. A big thanks to them for making their code available !
 
@@ -39,4 +33,5 @@ Other resources
 
 * `Icons <https://icons8.com>`_
 * `LeDjamRadio <http://www.ledjamradio.com>`_ for non stop music during the coding sessions
+* `SomaFM <https://somafm.com/>`_ especially DEF CON Radio
 * `Vim <http://www.vim.org>`_

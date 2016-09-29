@@ -65,7 +65,7 @@ Fill the config file
 * Copy the SECRET_KEY value from the `config.php` file to the `docker-compose.yml` file
 * Change the SERVER_NAME to the name of your server (elabftw.example.edu or the IP address)
 * Port: change "443:443" to "8080:443" or "444:443" or "9000:443" because Apache is already using port 443.
-* Volumes: copy the `uploads` folder to `/dok/` or wherever you want it
+* Volumes: rename the `uploads` folder to `/var/elabftw/web`
 * Change the MYSQL_ROOT_PASSWORD to something complicated
 * Change the MYSQL_PASSWORD to the same value as DB_PASSWORD
 * You can optionally edit where the MySQL database will be stored persistently
@@ -101,7 +101,7 @@ We now have a complete `docker-compose.yml` config file and we can start `elabft
 
     docker-compose up -d
 
-This will create an empty database in `/dok/mysql` or wherever you chose to have it. But of course, what we want is to have our old database in there! To do that we will copy our `dump.sql` file to the `mysql` container and import it in place of the freshly created database (which is empty!).
+This will create an empty database in `/var/elabftw/mysql` or wherever you chose to have it. But of course, what we want is to have our old database in there! To do that we will copy our `dump.sql` file to the `mysql` container and import it in place of the freshly created database (which is empty!).
 
 .. code-block:: bash
 

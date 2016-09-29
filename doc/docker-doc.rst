@@ -64,7 +64,7 @@ In Docker, the containers are not persistant, this means that changes made will 
 
 But we need to have persistant data of course, so what we will do is tell Docker that some directories will in reality be on the host. We need the uploads folder, and the MySQL database. You can have those folders anywhere, just make sure the permissions are not too restrictive.
 
-In the example configuration file, there is a /dok folder at the root with a subfolder for the uploaded files, and another one for the SQL database. So in order to use this, one would need to run this command (as root):
+In the example configuration file, there is a /var/elabftw folder at the root with a subfolder for the uploaded files, and another one for the SQL database. So in order to use this, one would need to run this command (as root):
 
 .. code-block:: bash
 
@@ -72,7 +72,6 @@ In the example configuration file, there is a /dok folder at the root with a sub
 
 Using the Let's Encrypt certificates
 ````````````````````````````````````
-
 If your server has a domain name pointing to it, you can ask Let's Encrypt to give you SSL certificates. It is highly recommended to do that. Also, self-signed certificates will show a warning on the browser, which is an annoyance.
 
 Change ENABLE_LETSENCRYPT to true, and uncomment the letsencrypt volume line. Because certificates are on the host, we need a volume to use them from the container.

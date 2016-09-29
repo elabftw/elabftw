@@ -51,6 +51,9 @@ Security
 ^^^^^^^^
 * HTTPS
 * formkeys
+* secure headers
+* secure base image
+* secure php config
 * anti bruteforce system
 * log system
 * secure storage of password (salted sha512)
@@ -67,7 +70,7 @@ Intellectual property
 
 User experience
 ^^^^^^^^^^^^^^^
-* lovely design (by Manon Potier)
+* lovely design (by @manonstripes)
 * internationalization (several languages available)
 * optimized code/assets for speed and correctness
 * customizable keyboard shortcuts

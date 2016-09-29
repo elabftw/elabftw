@@ -1,7 +1,7 @@
 .. _install-oldschool:
 
-Install on GNU/Linux (without Docker)
-=====================================
+Install without Docker
+======================
 
 .. image:: img/gnulinux.png
     :align: center
@@ -9,7 +9,6 @@ Install on GNU/Linux (without Docker)
 .. image:: img/beastie.png
     :align: right
     :alt: beastie
-
 
 Prerequisites
 -------------

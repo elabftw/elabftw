@@ -28,10 +28,9 @@ Once this is done try a:
 
 If everything works, you should see a little message explaining what Docker did to print this message.
 
-Install Docker-compose
-``````````````````````
-
-We need `docker-compose` to orchestrate our containers. `Install docker-compose <https://docs.docker.com/compose/install/>`_.
+Install elabftw normally
+````````````````````````
+Follow the steps described :ref:`here <install>`, except the last one. Do not start the containers.
 
 Export current install
 ``````````````````````
@@ -42,34 +41,18 @@ You should have a `dump.sql` file of the elabftw database. And your `uploads` fo
 Installation
 ------------
 
-Get the config file
-```````````````````
-The `docker-compose.yml` file is our only configuration file for Docker. Get it:
+You now have a configuration file `/etc/elabftw.yml`. Edit it with your favorite editor.
 
-.. code-block:: bash
-
-    wget https://raw.githubusercontent.com/elabftw/docker-elabftw/master/src/docker-compose.yml-EXAMPLE -O docker-compose.yml
-
-Edit it with your favorite text editor:
-
-.. code-block:: bash
-
-    $EDITOR docker-compose.yml
-
-
-Fill the config file
-````````````````````
-
-* Change the value of DB_PASSWORD to a new generated long password. You can get one `here <https://www.grc.com/passwords.htm>`_
+Editing the config file
+```````````````````````
 * Open the `config.php` file located in your `elabftw` folder of the current install
 * Copy the SECRET_KEY value from the `config.php` file to the `docker-compose.yml` file
-* Change the SERVER_NAME to the name of your server (elabftw.example.edu or the IP address)
-* Port: change "443:443" to "8080:443" or "444:443" or "9000:443" because Apache is already using port 443.
-* Volumes: copy the `uploads` folder to `/dok/` or wherever you want it
-* Change the MYSQL_ROOT_PASSWORD to something complicated
-* Change the MYSQL_PASSWORD to the same value as DB_PASSWORD
-* You can optionally edit where the MySQL database will be stored persistently
+* Port: change "443:443" to "8080:443" or "444:443" or "9000:443" because your current server is already using port 443
 * If you are running MySQL 5.5 or 5.6, edit the 5.7 in the `image: mysql:5.7` line to the appropriate version. You can upgrade later.
+
+Copy the uploaded files
+```````````````````````
+* Copy your `uploads` folder to `/var/elabftw/web`
 
 About HTTPS (SSL/TLS)
 `````````````````````
@@ -79,7 +62,7 @@ One solution to this is to request a certificate from `Let's Encrypt <https://le
 
 Another solution is to use the certificate you already have.
 
-* Change the value of ENABLE_LETSENCRYPT to true.
+* Change the value of ENABLE_LETSENCRYPT to true in `/etc/elabftw.yml`
 * Uncomment the line `#- /etc/letsencrypt:/ssl` (remove the leading #)
 * If your domain is `elabftw.example.com`, do this:
 
@@ -94,14 +77,11 @@ Another way to do this is to `git clone` the `docker-elabftw` repo and edit the 
 
 Starting the containers
 ```````````````````````
-
-We now have a complete `docker-compose.yml` config file and we can start `elabftw` with this command:
-
 .. code-block:: bash
 
-    docker-compose up -d
+    elabctl start
 
-This will create an empty database in `/dok/mysql` or wherever you chose to have it. But of course, what we want is to have our old database in there! To do that we will copy our `dump.sql` file to the `mysql` container and import it in place of the freshly created database (which is empty!).
+This will create an empty database in `/var/elabftw/mysql`. But of course, what we want is to have our old database in there! To do that we will copy our `dump.sql` file to the `mysql` container and import it in place of the freshly created database (which is empty!).
 
 .. code-block:: bash
 

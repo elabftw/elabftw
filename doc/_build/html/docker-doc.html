@@ -204,7 +204,7 @@
 (this key is used to encrypt the smtp password).</p>
 <p>In Docker, the containers are not persistant, this means that changes made will vanish when the container is removed.</p>
 <p>But we need to have persistant data of course, so what we will do is tell Docker that some directories will in reality be on the host. We need the uploads folder, and the MySQL database. You can have those folders anywhere, just make sure the permissions are not too restrictive.</p>
-<p>In the example configuration file, there is a /dok folder at the root with a subfolder for the uploaded files, and another one for the SQL database. So in order to use this, one would need to run this command (as root):</p>
+<p>In the example configuration file, there is a /var/elabftw folder at the root with a subfolder for the uploaded files, and another one for the SQL database. So in order to use this, one would need to run this command (as root):</p>
 <div class="highlight-bash"><div class="highlight"><pre>mkdir -pvm <span class="m">700</span> /var/elabftw/<span class="o">{</span>web,mysql<span class="o">}</span>
 </pre></div>
 </div>

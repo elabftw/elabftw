@@ -31,12 +31,6 @@ Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM 
 
 # Installation
 
-## The legendary three steps installation instructions (for advanced users)
-* `git clone --depth 1 https://github.com/elabftw/elabftw`
-* Create a MySQL database and a MySQL user for elabftw
-* Go to https://your-address.org/elabftw/install
-
-## The legendary documentation (for everyone else)
 [Read the documentation, it's very complete](https://elabftw.readthedocs.io).
 
 # Support

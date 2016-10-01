@@ -42,8 +42,8 @@ Create your droplet
 
 .. note:: Without a domain pointing to the drop, you will have a self signed certificate (so users will have a warning), whereas if you have a domain name, you will get a proper SSL certificate from Let's Encrypt.
 
-Install everything
-------------------
+Install eLabFTW
+---------------
 
 * Open a terminal and connect to your new server:
 
@@ -57,7 +57,7 @@ Install everything
 
     wget -qO- https://get.elabftw.net > /usr/bin/elabctl && chmod +x /usr/bin/elabctl
 
-* Install elabftw in Docker:
+* Configure eLabFTW:
 
 .. code-block:: bash
 

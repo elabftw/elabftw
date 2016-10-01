@@ -85,7 +85,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install.html">Install on a GNU/Linux server</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Install in the cloud</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#create-your-drop">Create your drop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-your-droplet">Create your droplet</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#install-everything">Install everything</a></li>
 </ul>
 </li>
@@ -163,8 +163,8 @@
 <p>Your eLabFTW installation will run in a <a class="reference external" href="https://www.docker.com">Docker</a> container. Learn more about eLabFTW&nbsp;in Docker <a class="reference internal" href="docker-doc.html#docker-doc"><span>here</span></a>.</p>
 <p>Everything will be configured properly and automagically.</p>
 <p>If you don&#8217;t have a (sub)domain already, you can get one from <a class="reference external" href="https://www.ovh.com">OVH</a>, <a class="reference external" href="https://www.gandi.net">Gandi</a>, <a class="reference external" href="https://www.1and1.com">1&amp;1</a> or any other domain name registrar. You can get one for half a dollar per year.</p>
-<div class="section" id="create-your-drop">
-<h2>Create your drop<a class="headerlink" href="#create-your-drop" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="create-your-droplet">
+<h2>Create your droplet<a class="headerlink" href="#create-your-droplet" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>Create an account on <a class="reference external" href="https://m.do.co/c/c2ce8f861e0e">DigitalOcean</a></li>
 </ul>
@@ -176,7 +176,7 @@
 <ul class="simple">
 <li>Optional: enable backups (might be a good idea)</li>
 <li>Optional: add your SSH key (<a class="reference external" href="https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets">documentation</a>)</li>
-<li>Create the drop (it takes a minute)</li>
+<li>Create the droplet (it takes a minute)</li>
 <li>Copy the IP address</li>
 <li>Optional: go to the control panel of your domain name provider. Point your domain (or subdomain) to the IP address of your drop. It might take a bit of time for the DNS to propagate (a few hours).</li>
 </ul>
@@ -191,12 +191,6 @@
 <li>Open a terminal and connect to your new server:</li>
 </ul>
 <div class="highlight-bash"><div class="highlight"><pre>ssh root@12.34.56.78
-</pre></div>
-</div>
-<ul class="simple">
-<li>Use a terminal multiplexer:</li>
-</ul>
-<div class="highlight-bash"><div class="highlight"><pre>tmux
 </pre></div>
 </div>
 <ul class="simple">
@@ -218,7 +212,6 @@
 </pre></div>
 </div>
 <ul class="simple">
-<li>Use <cite>elabctl</cite> without arguments to see what you can do with it.</li>
 <li>Don&#8217;t forget to read <a class="reference internal" href="postinstall.html#postinstall"><span>the post install page</span></a>, setup <a class="reference internal" href="backup.html#backup"><span>backup</span></a>, and subscribe to <a class="reference external" href="http://elabftw.us12.list-manage1.com/subscribe?u=61950c0fcc7a849dbb4ef1b89&amp;id=04086ba197">the newsletter</a>!</li>
 </ul>
 <p>ENJOY! :D</p>

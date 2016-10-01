@@ -15,9 +15,8 @@ Everything will be configured properly and automagically.
 
 If you don't have a (sub)domain already, you can get one from `OVH <https://www.ovh.com>`_, `Gandi <https://www.gandi.net>`_, `1&1 <https://www.1and1.com>`_ or any other domain name registrar. You can get one for half a dollar per year.
 
-
-Create your drop
-----------------
+Create your droplet
+-------------------
 
 * Create an account on `DigitalOcean <https://m.do.co/c/c2ce8f861e0e>`_
 
@@ -35,14 +34,13 @@ Create your drop
 
 * Optional: add your SSH key (`documentation <https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets>`_)
 
-* Create the drop (it takes a minute)
+* Create the droplet (it takes a minute)
 
 * Copy the IP address
 
 * Optional: go to the control panel of your domain name provider. Point your domain (or subdomain) to the IP address of your drop. It might take a bit of time for the DNS to propagate (a few hours).
 
 .. note:: Without a domain pointing to the drop, you will have a self signed certificate (so users will have a warning), whereas if you have a domain name, you will get a proper SSL certificate from Let's Encrypt.
-
 
 Install everything
 ------------------
@@ -52,12 +50,6 @@ Install everything
 .. code-block:: bash
 
     ssh root@12.34.56.78
-
-* Use a terminal multiplexer:
-
-.. code-block:: bash
-
-    tmux
 
 * Install `elabctl`:
 
@@ -76,8 +68,6 @@ Install everything
 .. code-block:: bash
 
     elabctl start
-
-* Use `elabctl` without arguments to see what you can do with it.
 
 * Don't forget to read :ref:`the post install page <postinstall>`, setup :ref:`backup <backup>`, and subscribe to `the newsletter <http://elabftw.us12.list-manage1.com/subscribe?u=61950c0fcc7a849dbb4ef1b89&id=04086ba197>`_!
 

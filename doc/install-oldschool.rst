@@ -22,7 +22,7 @@ Please refer to your distribution's documentation to install :
 * MySQL version > 5.5
 * Git (optional but recommended)
 
-.. tip:: If you don't know how to do that, or can't update php, have a look at :ref:`installing eLabFTW on a drop <install-drop>` or :ref:`in a docker container <install-docker>`.
+.. tip:: If you don't know how to do that, or can't update php, have a look at :ref:`installing eLabFTW on a drop <install-drop>` or :ref:`in a docker container <install>`.
 
 .. note:: I wouldn't recommend HHVM because Gettext support is not here yet (see `this issue <https://github.com/facebook/hhvm/issues/1228>`_). Also, PHP 7 is here and is fast.
 

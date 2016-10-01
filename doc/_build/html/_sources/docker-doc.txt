@@ -50,30 +50,3 @@ Test scan of an eLabFTW install at `Qualys SSL labs <https://www.ssllabs.com/ssl
 Just for fun, try to use these two websites to scan the sites of other services you might use or consider using. You'll see a lot of F marks… I'll let you draw your own conclusions from that ;)
 
 You don't have to be a specialist in web security to see that some services are completely insecure and should be avoided. Full security can never be completely achieved when it comes to web and computers, but with eLabFTW at least you have the best possible setup to mitigate or stop the most commons attacks.
-
-Editing the docker-compose.yml file
-```````````````````````````````````
-If you've never done that before, it can look scary, hence this extended documentation ;)
-
-The first thing you need to change is the value of DB_PASSWORD. It is advised to use a very long and complex password, as you won't have to remember it. Use can use `this page <https://www.grc.com/passwords.htm>`_ to get a password. Make sure to put the same in MYSQL_PASSWORD. Change also MYSQL_ROOT_PASSWORD.
-
-Then get a secret key from the `provided url <https://demo.elabftw.net/install/generateSecretKey.php>`_ and paste it in SECRET_KEY
-(this key is used to encrypt the smtp password).
-
-In Docker, the containers are not persistant, this means that changes made will vanish when the container is removed.
-
-But we need to have persistant data of course, so what we will do is tell Docker that some directories will in reality be on the host. We need the uploads folder, and the MySQL database. You can have those folders anywhere, just make sure the permissions are not too restrictive.
-
-In the example configuration file, there is a /var/elabftw folder at the root with a subfolder for the uploaded files, and another one for the SQL database. So in order to use this, one would need to run this command (as root):
-
-.. code-block:: bash
-
-    mkdir -pvm 700 /var/elabftw/{web,mysql}
-
-Using the Let's Encrypt certificates
-````````````````````````````````````
-If your server has a domain name pointing to it, you can ask Let's Encrypt to give you SSL certificates. It is highly recommended to do that. Also, self-signed certificates will show a warning on the browser, which is an annoyance.
-
-Change ENABLE_LETSENCRYPT to true, and uncomment the letsencrypt volume line. Because certificates are on the host, we need a volume to use them from the container.
-
-.. note:: If you use the install on a drop, letsencrypt certificates will be configured automatically for you

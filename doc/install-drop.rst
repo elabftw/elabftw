@@ -49,26 +49,6 @@ Install eLabFTW
 
 .. code-block:: bash
 
-    ssh root@12.34.56.78
+    ssh root@<DROPLET_IP_ADDRESS>
 
-* Install `elabctl`:
-
-.. code-block:: bash
-
-    wget -qO- https://get.elabftw.net > /usr/bin/elabctl && chmod +x /usr/bin/elabctl
-
-* Configure eLabFTW:
-
-.. code-block:: bash
-
-    elabctl install
-
-* Start eLabFTW:
-
-.. code-block:: bash
-
-    elabctl start
-
-* Don't forget to read :ref:`the post install page <postinstall>`, setup :ref:`backup <backup>`, and subscribe to `the newsletter <http://elabftw.us12.list-manage1.com/subscribe?u=61950c0fcc7a849dbb4ef1b89&id=04086ba197>`_!
-
-ENJOY! :D
+* Follow the :ref:`steps for a normal install <normal-install>`.

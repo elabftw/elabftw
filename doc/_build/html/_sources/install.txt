@@ -14,9 +14,9 @@ Install on a GNU/Linux server
 Prerequisites
 -------------
 
-eLabFTW uses `Docker containers <https://www.docker.com/what-docker>`_. So you need to install:
+eLabFTW uses `Docker containers <https://www.docker.com/what-docker>`_. So you need to:
 
-* `Docker <https://docs.docker.com/engine/installation/linux/>`_, the container engine
+* install `Docker <https://docs.docker.com/engine/installation/linux/>`_, the container engine
 * and that's it!
 
 .. note:: If you don't want to use Docker or cannot install it, have a look at :ref:`installing eLabFTW old school<install-oldschool>`.
@@ -30,13 +30,15 @@ Install eLabFTW
 
     sudo su
 
+.. _normal-install:
+
 * Install `elabctl`:
 
 .. code-block:: bash
 
     wget -qO- https://get.elabftw.net > /usr/bin/elabctl && chmod +x /usr/bin/elabctl
 
-* Install eLabFTW in Docker:
+* Configure eLabFTW:
 
 .. code-block:: bash
 
@@ -52,6 +54,21 @@ Install eLabFTW
 
     elabctl start
 
-* Don't forget to read :ref:`the post install page <postinstall>`, setup :ref:`backup <backup>`, and subscribe to `the newsletter <http://elabftw.us12.list-manage1.com/subscribe?u=61950c0fcc7a849dbb4ef1b89&id=04086ba197>`_!
+This step can take up to 3 minutes to complete because it'll generate strong Diffie-Hellman parameters. You can follow the output with:
+
+.. code-block:: bash
+
+    docker logs -f elabftw
+
+Once started, you will see something like: nginx entered RUNNING state, you can now head to the last step.
+
+* Register a Sysadmin account:
+
+    Open \https://your-elabftw-site.org/**install** in your browser.
+
+Post install
+------------
+
+Don't forget to read :ref:`the post install page <postinstall>`, setup :ref:`backup <backup>`, and subscribe to `the newsletter <http://elabftw.us12.list-manage1.com/subscribe?u=61950c0fcc7a849dbb4ef1b89&id=04086ba197>`_!
 
 ENJOY! :D

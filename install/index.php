@@ -88,6 +88,7 @@ try {
         if ($res['tablesCount'] < 2) {
             import_sql_structure();
             header('Location: ../register.php');
+            exit;
         }
 
         $sql = "SELECT * FROM users";
@@ -96,6 +97,7 @@ try {
         // redirect to register page if no users are in the database
         if ($req->rowCount() === 0) {
             header('Location: ../register.php');
+            exit;
         } else {
             $message = 'It looks like eLabFTW is already installed. Delete the config file if you wish to reinstall it.';
             throw new Exception($message);

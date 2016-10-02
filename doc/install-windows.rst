@@ -17,7 +17,7 @@ Follow the steps below to install eLabFTW on your system:
 #. `Download this configuration file template <https://raw.githubusercontent.com/elabftw/docker-elabftw/master/src/docker-compose.yml-EXAMPLE>`_
 #. Save it as docker-compose.yml
 #. Edit it with `Notepad++ <https://notepad-plus-plus.org/>`_ or any editor you like but not plain old Notepad.
-#. Check out the :ref:`in-depth documentation <install-docker>` if you feel lost.
+#. Read carefully the comments and edit what is needed
 #. Save it as docker-compose.yml (make sure there is no .txt extension)
 #. Open Docker Quickstart Terminal
 #. Enter these commands:

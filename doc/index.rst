@@ -19,14 +19,17 @@ There are multiple ways to install elabftw, see the left menu to choose which on
 
 
 .. toctree::
-    :caption: Installing
+    :caption: Installation
 
     install
     install-drop
     install-mac
     install-windows
     install-oldschool
-    common-errors
+
+.. toctree::
+    :caption: Usage
+
     postinstall
     backup
     how-to-update
@@ -34,15 +37,15 @@ There are multiple ways to install elabftw, see the left menu to choose which on
 .. toctree::
     :caption: Documentation
 
-    docker-doc
-    faq
-    features
     manual
     contributing
+    faq
+    features
+    docker-doc
     upgrade-to-docker
 
 .. toctree::
-    :caption: Misc
+    :caption: Miscellaneous
 
     thanks
     changelog

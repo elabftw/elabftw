@@ -60,17 +60,19 @@ This step can take up to 3 minutes to complete because it'll generate strong Dif
 
     docker logs -f elabftw
 
-Once started, you will see something like: nginx entered RUNNING state, you can now head to the last step.
-
-* Fix the permissions on the web folder
-
-.. code-block:: bash
-
-    chown 100:101 /var/elabftw/web
+Once started, you will see something like: nginx entered RUNNING state.
 
 * Register a Sysadmin account:
 
     Open \https://your-elabftw-site.org/**install** in your browser.
+
+* (optional) Fix the permissions on the web folder
+
+If you have troubles uploading files, issue this command.
+
+.. code-block:: bash
+
+    chown 100:101 /var/elabftw/web
 
 Post install
 ------------

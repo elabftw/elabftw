@@ -38,14 +38,47 @@ Then email me the result, or send a pull request.
 Contributing to the code
 ------------------------
 
-* before doing a pull request, open an issue so we can discuss about it
-* base your PR on the **hypernext** branch, which is the development branch; **master** being the *release* branch
-* most of the code is procedural, but a progressive transition to object oriented code is on the way
-* classes should be in `app/{models, views, classes}` with namespace Elabftw\\Elabftw
-* a new class will be loaded automagically thanks to the use of PSR-4 with composer
-* for i18n, we use gettext
-* if you change a string in gettext _('they look like this'), change it also in a .po file (generally the french one) and generate a .mo file (with poedit)
-* same if you add a string shown to the user, it needs to be gettexted
+Environment installation
+````````````````````````
+#. Fork `the repository <https://github.com/elabftw/elabftw>`_ on GitHub
+#. Clone it on your machine (let's say it's in ~/dev/elabftw)
+#. Install eLabFTW normally (with **elabctl**) but don't start it
+#. Edit the docker-compose configuration file `/etc/elabftw.yml`
+#. Change the `volumes:` line so it points to the `elabftw` folder, not `elabftw/uploads`. So the line should look like : /home/user/dev/elabftw:/elabftw
+#. `elabctl start`
+#. You now should have a running local eLabFTW, and changes made to the code will be immediatly visible
+
+Making a pull request
+`````````````````````
+#. Before working on a feature, it's a good idea to open an issue first to discuss its implementation
+#. Create a branch from **hypernext**
+#. Work on a feature
+#. Make a pull request on GitHub to include it in hypernext
+
+Code organization
+`````````````````
+* Real accessible pages are in the root directory (experiments.php, database.php, login.php, etc…)
+* The rest is in app/
+* app/models will contain classes with CRUD (Create, Read, Update, Destroy)
+* app/views will contain classes to generate and display HTML
+* app/classes will contain services or utility classes
+* a new class will be loaded automagically thanks to the use of PSR-4 with composer (namespace Elabftw\Elabftw)
+* app/controllers will contain pages that send actions to models (like destroy something), and generally output json for an ajax request, or redirect the user.
+
+Ðependencies
+````````````
+* PHP dependencies are managed through `Composer <https://getcomposer.org/>`_
+* JavaScript dependencies are managed through `Bower <https://bower.io/>`_
+
+i18n
+````
+* for internationalization, we use gettext
+* i18n related things are in the `locale` folder
+* the script `locale/genpo.sh` is used to merge the french .po file from extracted strings
+* if you add a string shown to the user, it needs to be gettexted _('like this')
+
+Miscellaneous
+`````````````
 * if you make a change to the SQL stucture, you need to put add an update function in `app/classes/Update.php` and also modify `install/elabftw.sql` accordingly
 * instead of adding your functions to `app/functions.inc.php`, create a proper class
 * you can use the constant ELAB_ROOT (which ends with a /) to have a full path
@@ -64,7 +97,7 @@ Contributing to the code
 
 
 API Documentation
------------------
+`````````````````
 
 You can find a PHP Docblock generated documentation on classes `here <../../../doc/api/namespaces/Elabftw.Elabftw.html>`_ (local link).
 
@@ -73,7 +106,7 @@ Have a look at the errors report to check that you commented all functions prope
 To generate it: `grunt api`
 
 Automation
-----------
+``````````
 
 Since version 1.1.7, elabftw uses `grunt <http://gruntjs.com/>`_ to minify and concatenate files (JS and CSS). Have a look at Gruntfile.js to see what it does. Install grunt-cli and run it if you make changes to any of those files.
 Grunt can also be used to build the documentation or run the tests.
@@ -89,15 +122,12 @@ Grunt can also be used to build the documentation or run the tests.
 
 
 Reminders
----------
+`````````
 
-* update of SwiftMailer and mPDF is done with `composer update`
-* update of the js components is done with `bower update`
-* after update of tinymce, lang files need to be downloaded again, and the mention plugin, too
 * for a new version, one needs to edit app/classes/Update.php, package.json and doc/conf.py
 
 Make a gif
-----------
+``````````
 
 * make a capture with xvidcap, it outputs .xwd
 

@@ -33,6 +33,10 @@ Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM 
 
 [Read the documentation, it's very complete](https://elabftw.readthedocs.io).
 
+# Contributing
+
+**eLabFTW** is a collaborative project. See the [contributing page](https://elabftw.readthedocs.io/en/hypernext/contributing.html)
+
 # Support
 
 Please [open a GitHub issue](https://github.com/elabftw/elabftw/issues/new) if you have a problem, want to make a suggestion, ask a question or discuss a feature.

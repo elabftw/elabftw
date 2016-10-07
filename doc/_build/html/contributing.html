@@ -201,15 +201,30 @@
 <h2>Contributing to the code<a class="headerlink" href="#contributing-to-the-code" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="environment-installation">
 <h3>Environment installation<a class="headerlink" href="#environment-installation" title="Permalink to this headline">¶</a></h3>
-<ol class="arabic simple">
+<ul class="simple">
 <li>Fork <a class="reference external" href="https://github.com/elabftw/elabftw">the repository</a> on GitHub</li>
-<li>Clone it on your machine (let&#8217;s say it&#8217;s in ~/dev/elabftw)</li>
-<li>Install eLabFTW normally (with <strong>elabctl</strong>) but don&#8217;t start it</li>
+<li>From your fork page, clone it on your machine (let&#8217;s say it&#8217;s in <cite>/home/user/elabftw</cite>)</li>
+<li><a class="reference internal" href="install.html#install"><span>Install eLabFTW</span></a> normally (with <strong>elabctl</strong>) but don&#8217;t start it</li>
+<li>Git clone the docker-elabftw repo and build a dev image:</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre>git clone -b dev https://github.com/elabftw/docker-elabftw
+<span class="nb">cd </span>docker-elabftw
+docker build -t elabftw/dev .
+</pre></div>
+</div>
+<ul class="simple">
 <li>Edit the docker-compose configuration file <cite>/etc/elabftw.yml</cite></li>
-<li>Change the <cite>volumes:</cite> line so it points to the <cite>elabftw</cite> folder, not <cite>elabftw/uploads</cite>. So the line should look like : /home/user/dev/elabftw:/elabftw</li>
-<li><cite>elabctl start</cite></li>
+<li>Change the <cite>volumes:</cite> line so it points to the <cite>elabftw</cite> folder, not <cite>elabftw/uploads</cite>. So the line should look like : /home/user/elabftw:/elabftw</li>
+<li>Change the line <cite>image:</cite> and replace it with <cite>elabftw/dev</cite></li>
+<li>Optionaly change the port binding from 443 to something else (example: 9999:443)</li>
+<li>Start the containers:</li>
+</ul>
+<div class="highlight-bash"><div class="highlight"><pre>sudo elabctl start
+</pre></div>
+</div>
+<ul class="simple">
 <li>You now should have a running local eLabFTW, and changes made to the code will be immediatly visible</li>
-</ol>
+</ul>
 </div>
 <div class="section" id="making-a-pull-request">
 <h3>Making a pull request<a class="headerlink" href="#making-a-pull-request" title="Permalink to this headline">¶</a></h3>

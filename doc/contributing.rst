@@ -40,13 +40,28 @@ Contributing to the code
 
 Environment installation
 ````````````````````````
-#. Fork `the repository <https://github.com/elabftw/elabftw>`_ on GitHub
-#. Clone it on your machine (let's say it's in ~/dev/elabftw)
-#. Install eLabFTW normally (with **elabctl**) but don't start it
-#. Edit the docker-compose configuration file `/etc/elabftw.yml`
-#. Change the `volumes:` line so it points to the `elabftw` folder, not `elabftw/uploads`. So the line should look like : /home/user/dev/elabftw:/elabftw
-#. `elabctl start`
-#. You now should have a running local eLabFTW, and changes made to the code will be immediatly visible
+* Fork `the repository <https://github.com/elabftw/elabftw>`_ on GitHub
+* From your fork page, clone it on your machine (let's say it's in `/home/user/elabftw`)
+* :ref:`Install eLabFTW <install>` normally (with **elabctl**) but don't start it
+* Git clone the docker-elabftw repo and build a dev image:
+
+.. code-block:: bash
+
+    git clone -b dev https://github.com/elabftw/docker-elabftw
+    cd docker-elabftw
+    docker build -t elabftw/dev .
+
+* Edit the docker-compose configuration file `/etc/elabftw.yml`
+* Change the `volumes:` line so it points to the `elabftw` folder, not `elabftw/uploads`. So the line should look like : /home/user/elabftw:/elabftw
+* Change the line `image:` and replace it with `elabftw/dev`
+* Optionaly change the port binding from 443 to something else (example: 9999:443)
+* Start the containers:
+
+.. code-block:: bash
+
+   sudo elabctl start
+
+* You now should have a running local eLabFTW, and changes made to the code will be immediatly visible
 
 Making a pull request
 `````````````````````

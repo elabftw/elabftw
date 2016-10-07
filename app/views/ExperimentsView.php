@@ -194,7 +194,7 @@ class ExperimentsView extends EntityView
         $html .= "<a href='experiments.php?mode=view&id=" . $item['id'] . "'>";
 
         // show attached if there is a file attached
-        if ($item['attachment']) {
+        if (isset($item['attachment'])) {
             $html .= "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
         }
         // we show the abstract of the experiment on mouse hover with the title attribute

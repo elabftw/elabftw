@@ -31,13 +31,13 @@ There are multiple ways to install elabftw, see the left menu to choose which on
     :caption: Usage
 
     postinstall
+    manual
     backup
     how-to-update
 
 .. toctree::
     :caption: Documentation
 
-    manual
     contributing
     faq
     features

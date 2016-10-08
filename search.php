@@ -516,7 +516,7 @@ if (isset($_GET)) {
                 </a>
             </div>
             <?php
-            echo "<p class='smallgray'>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time['time'] . " " . $total_time['unit'] . ")</p>";
+            echo "<p>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time['time'] . " " . $total_time['unit'] . ")</p>";
             // Display results
             echo "<hr>";
             if ($search_type === 'experiments') {

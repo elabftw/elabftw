@@ -77,7 +77,7 @@ Code organization
 * app/models will contain classes with CRUD (Create, Read, Update, Destroy)
 * app/views will contain classes to generate and display HTML
 * app/classes will contain services or utility classes
-* a new class will be loaded automagically thanks to the use of PSR-4 with composer (namespace Elabftw\Elabftw)
+* a new class will be loaded automagically thanks to the use of PSR-4 with composer (namespace Elabftw\\Elabftw)
 * app/controllers will contain pages that send actions to models (like destroy something), and generally output json for an ajax request, or redirect the user.
 
 Ðependencies

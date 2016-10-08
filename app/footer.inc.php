@@ -26,7 +26,7 @@
 
     <p class='footer_left'>
     <a class='elab-tooltip-top' href='https://twitter.com/elabftw'>
-        <span>Follow eLabFTW on Twitter !</span>
+        <span>Follow eLabFTW on Twitter!</span>
     <img src='img/twitter.png' alt='twitter' />
     </a>
      <a class='elab-tooltip-top' href='https://github.com/elabftw/elabftw'>

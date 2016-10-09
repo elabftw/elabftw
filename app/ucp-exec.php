@@ -44,10 +44,24 @@ try {
         $new_limit = filter_var($_POST['limit'], FILTER_VALIDATE_INT, $filter_options);
 
         // KEYBOARD SHORTCUTS
-        $new_sc_create = substr($_POST['create'], 0, 1);
-        $new_sc_edit = substr($_POST['edit'], 0, 1);
-        $new_sc_submit = substr($_POST['submit'], 0, 1);
-        $new_sc_todo = substr($_POST['todo'], 0, 1);
+        $new_sc_create = 'c';
+        $new_sc_edit = 'e';
+        $new_sc_submit = 's';
+        $new_sc_todo = 't';
+
+        // only take it if it's lowercase letter, and only take first char
+        if (preg_match('[a-z]', $_POST['key_create'])) {
+            $new_sc_create = substr($_POST['key_create'], 0, 1);
+        }
+        if (preg_match('[a-z]', $_POST['key_edit'])) {
+            $new_sc_edit = substr($_POST['key_edit'], 0, 1);
+        }
+        if (preg_match('[a-z]', $_POST['key_submit'])) {
+            $new_sc_submit = substr($_POST['key_submit'], 0, 1);
+        }
+        if (preg_match('[a-z]', $_POST['key_todo'])) {
+            $new_sc_todo = substr($_POST['key_todo'], 0, 1);
+        }
 
         // SHOW TEAM
         if (isset($_POST['show_team']) && $_POST['show_team'] === 'on') {

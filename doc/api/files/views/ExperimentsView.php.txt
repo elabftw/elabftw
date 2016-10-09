@@ -194,7 +194,7 @@ class ExperimentsView extends EntityView
         $html .= "<a href='experiments.php?mode=view&id=" . $item['id'] . "'>";
 
         // show attached if there is a file attached
-        if ($item['attachment']) {
+        if (isset($item['attachment'])) {
             $html .= "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
         }
         // we show the abstract of the experiment on mouse hover with the title attribute
@@ -475,9 +475,13 @@ class ExperimentsView extends EntityView
         $html .= "<a class='elab-tooltip' href='#'><span>" . $alt . "</span><img id='lock'" . $onClick . " src='img/" . $imgSrc . "' alt='" . $alt . "' /></a> ";
         // show timestamp button if not timestamped already
         if (!$this->experiment['timestamped']) {
-            $onClick = " onClick=\"timestamp(" . $this->experiment['id'] . ", '" . _('Once timestamped an experiment cannot be edited anymore! Are you sure you want to do this?') . "')\"";
+            //$onClick = " onClick=\"timestamp(" . $this->experiment['id'] . ")\"";
 
-            $html .= "<a class='elab-tooltip'><span>Timestamp Experiment</span><img" . $onClick . " src='img/stamp.png' alt='Timestamp' /></a>";
+            $html .= "<a class='elab-tooltip'><span>Timestamp Experiment</span><img onClick='confirmTimestamp()' src='img/stamp.png' alt='Timestamp' /></a>";
+            $html .= "<div id='confirm-timestamp' title='" . _('Timestamp this experiment?') . "'>";
+            $html .= "<p><span class='ui-icon ui-icon-alert' style='float:left; margin:12px 12px 20px 0;'></span>";
+            $html .= _('Once timestamped an experiment cannot be edited anymore! Are you sure you want to do this?');
+            $html .= "</p></div>";
         }
 
         $html .= $this->showTags('experiments', 'view', $this->Experiments->id);
@@ -553,6 +557,7 @@ class ExperimentsView extends EntityView
                     $('#title_input').val('');
                 }
             });
+
             // EDITOR
             tinymce.init({
                 mode : 'specific_textareas',
@@ -662,9 +667,27 @@ class ExperimentsView extends EntityView
                     })
                 });
             }
+            // TIMESTAMP
+            function confirmTimestamp() {
+                $('#confirm-timestamp').dialog({
+                    resizable: false,
+                    height: 'auto',
+                    width: 400,
+                    modal: true,
+                    buttons: {
+                        'Timestamp it': function() {
+                            timestamp(" . $this->Experiments->id . ");
+                        },
+                        Cancel: function() {
+                            $(this).dialog('close');
+                        }
+                    }
+                });
+            }
 
             // READY ? GO !!
             $(document).ready(function() {
+                $('#confirm-timestamp').hide();
                 $('#commentsCreateButtonDiv').hide();
 
                 // Keyboard shortcuts

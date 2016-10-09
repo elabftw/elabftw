@@ -447,10 +447,7 @@ class TrustedTimestamps extends Entity
     private function isJavaInstalled()
     {
         $res = $this->runSh("java");
-        if (stripos($res['retarray'][0], 'class')) {
-            return true;
-        }
-        return false;
+        return (bool) stripos($res['retarray'][0], 'class');
     }
 
     /**

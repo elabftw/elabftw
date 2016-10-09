@@ -242,6 +242,20 @@ class Teams
     }
 
     /**
+     * Clear the timestamp password
+     *
+     * @return bool
+     */
+    public function destroyStamppass()
+    {
+        $sql = "UPDATE teams SET stamppass = NULL WHERE team_id = :team_id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':team_id', $this->team);
+
+        return $req->execute();
+    }
+
+    /**
      * Get statistics for the whole install
      *
      * @return array

@@ -107,10 +107,11 @@ class Experiments extends Entity
      */
     public function read()
     {
-        $sql = "SELECT DISTINCT experiments.*, status.color, status.name
+        $sql = "SELECT DISTINCT experiments.*, status.color, status.name, uploads.*
             FROM experiments
             LEFT JOIN status ON experiments.status = status.id
             LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
+            LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
             WHERE experiments.id = :id ";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

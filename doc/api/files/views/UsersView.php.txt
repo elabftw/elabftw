@@ -20,36 +20,36 @@ class UsersView
     /* Users instance */
     private $Users;
 
+    /* Auth instance */
+    private $Auth;
+
     /**
      * Constructor
      *
      * @param Users $users
      */
-    public function __construct(Users $users)
+    public function __construct(Users $users, Auth $auth)
     {
         $this->Users = $users;
+        $this->Auth = $auth;
     }
     /**
-     * Display users edit form. Show all users if $team is null
+     * Display users edit form
      *
-     * @param int|null $team
      * @return string
      */
-    public function showEditUsers($team = null)
+    public function showEditUsers($team = null, $fromSysconfig = false)
     {
         $Auth = new Auth();
-
-        if ($team === null) {
+        if ($fromSysconfig) {
             $usersArr = $this->Users->readAll();
         } else {
             $usersArr = $this->Users->readAllFromTeam($team);
         }
-
         $html = "<ul class='list-group'>";
-
         foreach ($usersArr as $user) {
             $html .= "<li><form method='post' action='app/controllers/UsersController.php'>";
-            if ($team === null) {
+            if ($fromSysconfig) {
                 $html .= "<input type='hidden' value='1' name='fromSysconfig' />";
             }
             $html .= "<input type='hidden' value='true' name='usersUpdate' />";
@@ -128,3 +128,4 @@ class UsersView
         return $html;
     }
 }
+

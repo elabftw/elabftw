@@ -316,7 +316,7 @@ try {
 
     <!-- TAB 7 USERS -->
     <div class='divhandle' id='tab7div'>
-        <?= $UsersView->showEditUsers(null, true) ?>
+        <?= $UsersView->showEditUsers() ?>
     </div>
 
     <script>

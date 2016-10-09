@@ -30,6 +30,7 @@ try {
 
     $formKey = new FormKey();
     $SysconfigView = new SysconfigView(new Update(new Config()), new Logs(), new TeamsView(new Teams()));
+    $UsersView = new UsersView(new Users(), new Auth());
 
     try {
         // we put another try here because an exception here would end the page
@@ -71,6 +72,7 @@ try {
             <li class='tabhandle' id='tab4'><?= _('Security') ?></li>
             <li class='tabhandle' id='tab5'><?= _('Email') ?></li>
             <li class='tabhandle' id='tab6'><?= _('Logs') ?></li>
+            <li class='tabhandle' id='tab7'><?= _('Users') ?></li>
         </ul>
     </menu>
 
@@ -310,6 +312,11 @@ try {
     <!-- TAB 6 LOGS -->
     <div class='divhandle' id='tab6div'>
         <?= $SysconfigView->logsShow() ?>
+    </div>
+
+    <!-- TAB 7 USERS -->
+    <div class='divhandle' id='tab7div'>
+        <?= $UsersView->showEditUsers(null, true) ?>
     </div>
 
     <script>

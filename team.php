@@ -108,7 +108,7 @@ display_message('ok_nocross', sprintf(
         <th><?= _('Skype') ?></th>
     </tr>
 <?php
-foreach ($Users->readAll() as $user) {
+foreach ($Users->readAllFromTeam($_SESSION['team_id']) as $user) {
     echo "<tr>";
     echo "<td><a href='mailto:" . $user['email'] . "'><span";
     // put sysadmin, admin and chiefs in bold

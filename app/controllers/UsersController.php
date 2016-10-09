@@ -25,6 +25,8 @@ try {
     $FormKey = new FormKey();
     $Users = new Users();
 
+    $tab = 1;
+    $location = '../../admin.php?tab=' . $tab;
 
     // VALIDATE
     if (isset($_POST['usersValidate'])) {
@@ -37,7 +39,13 @@ try {
 
     // UPDATE USERS
     if (isset($_POST['usersUpdate'])) {
-        $tab = 2;
+        if (isset($_POST['fromSysconfig'])) {
+            $tab = 7;
+            $location = "../../sysconfig.php?tab=$tab";
+        } else {
+            $tab = 2;
+            $location = "../../admin.php?tab=$tab";
+        }
 
         if ($Users->update($_POST)) {
             $_SESSION['ok'][] = _('Configuration updated successfully.');
@@ -65,5 +73,5 @@ try {
     $_SESSION['ko'][] = Tools::error();
 
 } finally {
-    header('Location: ../../admin.php?tab=' . $tab);
+    header("Location: $location");
 }

@@ -31,15 +31,16 @@ try {
     $StatusView = new StatusView(new Status($_SESSION['team_id']));
     $ItemsTypesView = new ItemsTypesView(new ItemsTypes($_SESSION['team_id']));
     $TeamGroupsView = new TeamGroupsView(new TeamGroups($_SESSION['team_id']));
-
-    $templates = new Templates($_SESSION['team_id']);
     $Auth = new Auth();
     $Users = new Users();
+    $UsersView = new UsersView($Users, $Auth);
+
+    $templates = new Templates($_SESSION['team_id']);
     $Config = new Config();
     $Teams = new Teams($_SESSION['team_id']);
 
     // VALIDATE USERS BLOCK
-    $unvalidatedUsersArr = $Users->readAll(0);
+    $unvalidatedUsersArr = $Users->readAllFromTeam($_SESSION['team_id'], 0);
 
     // only show the frame if there is some users to validate and there is an email config
     if (count($unvalidatedUsersArr) != 0 && $Config->read('mail_from') != 'notconfigured@example.com') {
@@ -150,63 +151,8 @@ try {
     <div class='divhandle' id='tab2div'>
         <div class="box">
         <h3><?= _('Edit Users') ?></h3><hr>
-        <ul class='list-group'>
-        <?php
-        // get all validated users
-        $usersArr = $Users->readAll();
-        foreach ($usersArr as $user) {
-            ?>
-                <li>
-                    <form method='post' action='app/controllers/UsersController.php'>
-                        <input type='hidden' value='true' name='usersUpdate' />
-                        <input type='hidden' value='<?= $user['userid'] ?>' name='userid' />
-                        <ul class='list-inline'>
-                        <li><label class='block' for='usersUpdateFirstname'><?= _('Firstname') ?></label>
-                        <input class="clean-form" id='usersUpdateFirstname' type='text' value='<?= $user['firstname'] ?>' name='firstname' /></li>
-                        <li><label class='block' for='usersUpdateLastname'><?= _('Lastname') ?></label>
-                        <input class="clean-form" id='usersUpdateLastname' type='text' value='<?= $user['lastname'] ?>' name='lastname' /></li>
-                        <li><label class='block' for='usersUpdateEmail'><?= _('Email') ?></label>
-                        <input class="clean-form" id='usersUpdateEmail' type='email' value='<?= $user['email'] ?>' name='email' /></li>
-                        <li>
-                        <label class='block' for='usersUpdateValidated'><?= _('Has an active account?') ?></label>
-                        <select class="clean-form" name='validated' id='usersUpdateValidated'>
-                            <option value='1' selected='selected'><?= _('Yes') ?></option>
-                            <option value='0'><?= _('No') ?></option>
-                        </select>
-                        </li>
-                        <li><label class='block' for='usersUpdateUsergroup'><?= _('Group') ?></label>
-                        <select class="clean-form" name='usergroup' id='usersUpdateUsergroup'>
-                <?php
-                            if ($_SESSION['is_sysadmin']) {
-                ?>
-                                <option value='1'<?php
-                                        if ($user['usergroup'] == 1) { echo " selected='selected'"; } ?>
-                                >Sysadmins</option>
-                <?php
-                            }
-                ?>
-                            <option value='2'<?php
-                                    if ($user['usergroup'] == 2) { echo " selected='selected'"; } ?>
-                            >Admins</option>
-                            <option value='3'<?php
-                                    if ($user['usergroup'] == 3) { echo " selected='selected'"; } ?>
-                            >Admin + Lock power</option>
-                            <option value='4'<?php
-                                    if ($user['usergroup'] == 4) { echo " selected='selected'"; } ?>
-                            >Users</option>
-                        </select></li>
-                        <li><label class='block' for='usersUpdatePassword'><?= _('Reset user password') ?></label>
-                        <input class="clean-form" id='usersUpdatePassword' type='password' pattern='.{0}|.{<?= $Auth::MIN_PASSWORD_LENGTH ?>,}' value='' name='password' />
-                         <span class='smallgray'><?= $Auth::MIN_PASSWORD_LENGTH . " " . _('characters minimum') ?></span></li>
-                    </ul>
-                        <button type='submit' class='button'><?= _('Save') ?></button>
-                </form>
-            </li>
-            <hr>
-            <?php
-        }
-        ?>
-         </div>
+        <?= $UsersView->showEditUsers($_SESSION['team_id']) ?>
+    </div>
 
         <!-- DELETE USER -->
         <ul class='list-group'>

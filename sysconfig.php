@@ -30,7 +30,7 @@ try {
 
     $formKey = new FormKey();
     $SysconfigView = new SysconfigView(new Update(new Config()), new Logs(), new TeamsView(new Teams()));
-    $UsersView = new UsersView(new Users(), new Auth());
+    $UsersView = new UsersView(new Users());
 
     try {
         // we put another try here because an exception here would end the page

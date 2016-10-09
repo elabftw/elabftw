@@ -33,7 +33,7 @@ try {
     $TeamGroupsView = new TeamGroupsView(new TeamGroups($_SESSION['team_id']));
     $Auth = new Auth();
     $Users = new Users();
-    $UsersView = new UsersView($Users, $Auth);
+    $UsersView = new UsersView($Users);
 
     $templates = new Templates($_SESSION['team_id']);
     $Config = new Config();

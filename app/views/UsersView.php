@@ -113,6 +113,7 @@ class UsersView
             // because autocomplete doesn't work
             // from http://stackoverflow.com/questions/17781077/autocomplete-off-is-not-working-on-firefox
             $html .= "<input type='text' style='display:none'>";
+            $html .= "<input type='password' style='display:none'>";
             $html .= "<input autocomplete='new-password' class='clean-form' id='usersUpdatePassword' type='password' pattern='.{0}|.{" .
                 $Auth::MIN_PASSWORD_LENGTH . ",}' value='' name='password' />";
             $html .= "<span class='smallgray'>" .

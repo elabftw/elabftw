@@ -7,6 +7,8 @@ Install on a GNU/Linux server
     :align: center
     :alt: gnulinux
 
+Tested distributions: Debian, Ubuntu, Fedora, CentOS, Arch Linux, OpenSUSE.
+
 .. image:: img/docker.png
     :align: right
     :alt: docker

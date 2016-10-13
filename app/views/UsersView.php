@@ -48,9 +48,11 @@ class UsersView
         $html = "<ul class='list-group'>";
 
         foreach ($usersArr as $user) {
-            $html .= "<li><form method='post' action='app/controllers/UsersController.php'>";
+            $html .= "<li>";
+            $html .= "<form method='post' action='app/controllers/UsersController.php'>";
             if ($team === null) {
                 $html .= "<input type='hidden' value='1' name='fromSysconfig' />";
+                $html .= "<p>" . _('Team') . ": " . $user['teamname'] . "</p>";
             }
             $html .= "<input type='hidden' value='true' name='usersUpdate' />";
             $html .= "<input type='hidden' value='" . $user['userid'] . "' name='userid' />";

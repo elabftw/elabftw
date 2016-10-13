@@ -286,7 +286,10 @@ class Users extends Auth
      */
     public function readAll()
     {
-        $sql = "SELECT * FROM users ORDER BY lastname";
+        $sql = "SELECT users.*, teams.team_name AS teamname
+            FROM users
+            LEFT JOIN teams ON (users.team = teams.team_id)
+            ORDER BY users.team ASC, users.usergroup ASC, users.lastname ASC";
         $req = $this->pdo->prepare($sql);
         $req->execute();
 

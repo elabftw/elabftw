@@ -137,24 +137,24 @@ try {
         }
     }
 
-    // TAB 2 to 5
+    // TAB 3 to 6
     if (isset($_POST['updateConfig'])) {
         $redirect = true;
 
         if (isset($_POST['lang'])) {
-            $tab = '2';
-        }
-
-        if (isset($_POST['stampshare'])) {
             $tab = '3';
         }
 
-        if (isset($_POST['admin_validate'])) {
+        if (isset($_POST['stampshare'])) {
             $tab = '4';
         }
 
-        if (isset($_POST['mail_method'])) {
+        if (isset($_POST['admin_validate'])) {
             $tab = '5';
+        }
+
+        if (isset($_POST['mail_method'])) {
+            $tab = '6';
         }
 
         if (!update_config($_POST)) {

@@ -39,11 +39,10 @@ try {
 
     // UPDATE USERS
     if (isset($_POST['usersUpdate'])) {
+        $tab = 2;
         if (isset($_POST['fromSysconfig'])) {
-            $tab = 7;
             $location = "../../sysconfig.php?tab=$tab";
         } else {
-            $tab = 2;
             $location = "../../admin.php?tab=$tab";
         }
 

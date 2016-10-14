@@ -33,7 +33,7 @@ How to translate ?
 * Start translating
 * Ignore things like `<strong>, <br>, %s, %d` and keep the ponctuation like it was!
 
-Then email me the result, or send a pull request.
+Translations are updated before a release.
 
 Contributing to the code
 ------------------------

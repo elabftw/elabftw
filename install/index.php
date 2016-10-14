@@ -139,7 +139,7 @@ try {
             display_message('ok_nocross', $message);
         } else { // failed at creating the folder
             $message = "Failed creating <em>uploads/</em> directory. You need to do it manually. 
-                <a href='../doc/_build/html/common-errors.html#failed-creating-uploads-directory'>Click here to discover how.</a>";
+                <a href='../doc/_build/html/faq.html#failed-creating-uploads-directory'>Click here to discover how.</a>";
             $errflag = true;
         }
     }
@@ -149,7 +149,7 @@ try {
     foreach ($extensionArr as $ext) {
         if (!extension_loaded($ext)) {
             $message = "The <em>" . $ext . "</em> extension is <strong>NOT</strong> loaded.
-                    <a href='../doc/_build/html/common-errors.html#extension-is-not-loaded'>Click here to read how to fix this.</a>";
+                    <a href='../doc/_build/html/faq.html#extension-is-not-loaded'>Click here to read how to fix this.</a>";
             $errflag = true;
         }
     }

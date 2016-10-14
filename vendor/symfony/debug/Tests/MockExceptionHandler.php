@@ -9,8 +9,16 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Component\Validator\Tests\Fixtures;
+namespace Symfony\Component\Debug\Tests;
 
-interface EntityInterface
+use Symfony\Component\Debug\ExceptionHandler;
+
+class MockExceptionHandler extends ExceptionHandler
 {
+    public $e;
+
+    public function handle(\Exception $e)
+    {
+        $this->e = $e;
+    }
 }

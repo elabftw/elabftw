@@ -1052,10 +1052,17 @@ class PHPUnit_Framework_MockObject_Generator
         if ($static) {
             $templateFile = 'mocked_static_method.tpl';
         } else {
-            $templateFile = sprintf(
-                '%s_method.tpl',
-                $callOriginalMethods ? 'proxied' : 'mocked'
-            );
+            if ($return_type === 'void') {
+                $templateFile = sprintf(
+                    '%s_method_void.tpl',
+                    $callOriginalMethods ? 'proxied' : 'mocked'
+                );
+            } else {
+                $templateFile = sprintf(
+                    '%s_method.tpl',
+                    $callOriginalMethods ? 'proxied' : 'mocked'
+                );
+            }
         }
 
         // Mocked interfaces returning 'self' must explicitly declare the
@@ -1172,12 +1179,17 @@ class PHPUnit_Framework_MockObject_Generator
                 }
             }
 
+            $nullable        = '';
             $default         = '';
             $reference       = '';
             $typeDeclaration = '';
 
             if (!$forCall) {
                 if ($this->hasType($parameter) && (string) $parameter->getType() !== 'self') {
+                    if (version_compare(PHP_VERSION, '7.1', '>=') && $parameter->allowsNull() && !$parameter->isVariadic()) {
+                        $nullable = '?';
+                    }
+
                     $typeDeclaration = (string) $parameter->getType() . ' ';
                 } elseif ($parameter->isArray()) {
                     $typeDeclaration = 'array ';
@@ -1218,7 +1230,7 @@ class PHPUnit_Framework_MockObject_Generator
                 $reference = '&';
             }
 
-            $parameters[] = $typeDeclaration . $reference . $name . $default;
+            $parameters[] = $nullable . $typeDeclaration . $reference . $name . $default;
         }
 
         return implode(', ', $parameters);

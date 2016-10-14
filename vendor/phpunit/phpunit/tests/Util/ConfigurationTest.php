@@ -238,6 +238,7 @@ class Util_ConfigurationTest extends PHPUnit_Framework_TestCase
             'json'                 => '/tmp/logfile.json',
             'plain'                => '/tmp/logfile.txt',
             'tap'                  => '/tmp/logfile.tap',
+            'logIncompleteSkipped' => false,
             'junit'                => '/tmp/logfile.xml',
             'testdox-html'         => '/tmp/testdox.html',
             'testdox-text'         => '/tmp/testdox.txt',
@@ -459,5 +460,19 @@ class Util_ConfigurationTest extends PHPUnit_Framework_TestCase
             $expectedConfiguration->getTestSuiteConfiguration(),
             $actualConfiguration->getTestSuiteConfiguration()
         );
+    }
+
+    /**
+     * @covers PHPUnit_Util_Configuration::getTestSuiteNames
+     */
+    public function testGetTestSuiteNamesReturnsTheNamesIfDefined()
+    {
+        $configuration = PHPUnit_Util_Configuration::getInstance(
+            dirname(__DIR__) . DIRECTORY_SEPARATOR . '_files' . DIRECTORY_SEPARATOR . 'configuration.suites.xml'
+        );
+
+        $names = $configuration->getTestSuiteNames();
+
+        $this->assertEquals(['Suite One', 'Suite Two'], $names);
     }
 }

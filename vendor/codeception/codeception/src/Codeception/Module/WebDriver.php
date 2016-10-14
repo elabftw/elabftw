@@ -734,7 +734,11 @@ class WebDriver extends CodeceptionModule implements
         }
         $el = $this->findClickable($page, $link);
         if (!$el) {
-            $els = $this->match($page, $link);
+            try {
+                $els = $this->match($page, $link);
+            } catch (MalformedLocatorException $e) {
+                throw new ElementNotFound("name=$link", "'$link' is invalid CSS and XPath selector and Link or Button");
+            }
             $el = reset($els);
         }
         if (!$el) {
@@ -2296,7 +2300,7 @@ class WebDriver extends CodeceptionModule implements
      * ```
      *
      * @param $element
-     * @param $char Can be char or array with modifier. You can provide several chars.
+     * @param $char string|array Can be char or array with modifier. You can provide several chars.
      * @throws \Codeception\Exception\ElementNotFound
      */
     public function pressKey($element, $char)

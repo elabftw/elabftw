@@ -17,40 +17,42 @@ namespace Elabftw\Elabftw;
 class UsersView
 {
 
-    /* Users instance */
+    /** Users instance */
     private $Users;
-
-    /* Auth instance */
-    private $Auth;
 
     /**
      * Constructor
      *
      * @param Users $users
      */
-    public function __construct(Users $users, Auth $auth)
+    public function __construct(Users $users)
     {
         $this->Users = $users;
-        $this->Auth = $auth;
     }
     /**
-     * Display users edit form
+     * Display users edit form. Show all users if $team is null
      *
+     * @param int|null $team
      * @return string
      */
-    public function showEditUsers($team = null, $fromSysconfig = false)
+    public function showEditUsers($team = null)
     {
         $Auth = new Auth();
-        if ($fromSysconfig) {
+
+        if ($team === null) {
             $usersArr = $this->Users->readAll();
         } else {
             $usersArr = $this->Users->readAllFromTeam($team);
         }
+
         $html = "<ul class='list-group'>";
+
         foreach ($usersArr as $user) {
-            $html .= "<li><form method='post' action='app/controllers/UsersController.php'>";
-            if ($fromSysconfig) {
+            $html .= "<li>";
+            $html .= "<form method='post' action='app/controllers/UsersController.php'>";
+            if ($team === null) {
                 $html .= "<input type='hidden' value='1' name='fromSysconfig' />";
+                $html .= "<p>" . _('Team') . ": " . $user['teamname'] . "</p>";
             }
             $html .= "<input type='hidden' value='true' name='usersUpdate' />";
             $html .= "<input type='hidden' value='" . $user['userid'] . "' name='userid' />";
@@ -113,6 +115,7 @@ class UsersView
             // because autocomplete doesn't work
             // from http://stackoverflow.com/questions/17781077/autocomplete-off-is-not-working-on-firefox
             $html .= "<input type='text' style='display:none'>";
+            $html .= "<input type='password' style='display:none'>";
             $html .= "<input autocomplete='new-password' class='clean-form' id='usersUpdatePassword' type='password' pattern='.{0}|.{" .
                 $Auth::MIN_PASSWORD_LENGTH . ",}' value='' name='password' />";
             $html .= "<span class='smallgray'>" .

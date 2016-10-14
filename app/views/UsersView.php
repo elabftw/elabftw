@@ -17,7 +17,7 @@ namespace Elabftw\Elabftw;
 class UsersView
 {
 
-    /* Users instance */
+    /** Users instance */
     private $Users;
 
     /**

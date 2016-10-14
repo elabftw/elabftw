@@ -81,7 +81,7 @@ var defineGlobal = function (id, ref) {
   define(id, [], function () { return ref; });
 };
 /*jsc
-["tinymce/imagetoolsplugin/Plugin","global!tinymce.PluginManager","global!tinymce.Env","global!tinymce.util.Promise","global!tinymce.util.URI","global!tinymce.util.Tools","global!tinymce.util.Delay","ephox/imagetools/api/ImageTransformations","ephox/imagetools/api/BlobConversions","tinymce/imagetoolsplugin/Dialog","tinymce/imagetoolsplugin/ImageSize","tinymce/imagetoolsplugin/Proxy","ephox/imagetools/transformations/Filters","ephox/imagetools/transformations/ImageTools","ephox/imagetools/util/Conversions","global!tinymce.dom.DOMUtils","global!tinymce.ui.Factory","global!tinymce.ui.Form","global!tinymce.ui.Container","tinymce/imagetoolsplugin/ImagePanel","tinymce/imagetoolsplugin/UndoStack","tinymce/imagetoolsplugin/Utils","ephox/imagetools/util/Canvas","ephox/imagetools/util/ImageSize","ephox/imagetools/util/Promise","ephox/imagetools/util/Mime","ephox/imagetools/transformations/ColorMatrix","global!tinymce.ui.Control","global!tinymce.ui.DragHelper","global!tinymce.geom.Rect","tinymce/imagetoolsplugin/CropRect","global!tinymce.dom.DomQuery","global!tinymce.util.Observable","global!tinymce.util.VK"]
+["tinymce/imagetoolsplugin/Plugin","global!tinymce.PluginManager","global!tinymce.Env","global!tinymce.util.Promise","global!tinymce.util.URI","global!tinymce.util.Tools","global!tinymce.util.Delay","ephox/imagetools/api/ImageTransformations","ephox/imagetools/api/BlobConversions","tinymce/imagetoolsplugin/Dialog","tinymce/imagetoolsplugin/ImageSize","tinymce/imagetoolsplugin/Proxy","ephox/imagetools/transformations/Filters","ephox/imagetools/transformations/ImageTools","ephox/imagetools/util/Conversions","global!tinymce.dom.DOMUtils","global!tinymce.ui.Factory","global!tinymce.ui.Form","global!tinymce.ui.Container","tinymce/imagetoolsplugin/ImagePanel","tinymce/imagetoolsplugin/UndoStack","tinymce/imagetoolsplugin/Utils","ephox/imagetools/util/Canvas","ephox/imagetools/util/ImageSize","ephox/imagetools/util/Promise","ephox/imagetools/util/Mime","ephox/imagetools/transformations/ColorMatrix","ephox/imagetools/transformations/ImageResizerCanvas","global!tinymce.ui.Control","global!tinymce.ui.DragHelper","global!tinymce.geom.Rect","tinymce/imagetoolsplugin/CropRect","global!tinymce.dom.DomQuery","global!tinymce.util.Observable","global!tinymce.util.VK"]
 jsc*/
 defineGlobal("global!tinymce.PluginManager", tinymce.PluginManager);
 defineGlobal("global!tinymce.Env", tinymce.Env);
@@ -111,6 +111,19 @@ define("ephox/imagetools/util/Canvas", [], function() {
     return canvas.getContext("2d");
   }
 
+  function get3dContext(canvas) {
+      var gl = null;
+      try {
+        gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+      }
+      catch(e) {}
+
+      if (!gl) { // it seems that sometimes it doesn't throw exception, but still fails to get context
+        gl = null;
+      }
+      return gl;
+  }
+
   function resize(canvas, width, height) {
     canvas.width = width;
     canvas.height = height;
@@ -121,7 +134,8 @@ define("ephox/imagetools/util/Canvas", [], function() {
   return {
     create: create,
     resize: resize,
-    get2dContext: get2dContext
+    get2dContext: get2dContext,
+    get3dContext: get3dContext
   };
 });
 /**
@@ -1036,6 +1050,79 @@ define("ephox/imagetools/transformations/Filters", [
   };
 });
 /**
+ * ImageResizerCanvas.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2015 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
+
+/**
+ * Resizes image/canvas using canvas
+ */
+define("ephox/imagetools/transformations/ImageResizerCanvas", [
+    "ephox/imagetools/util/Promise",
+    "ephox/imagetools/util/Conversions",
+    "ephox/imagetools/util/Canvas",
+    "ephox/imagetools/util/ImageSize"
+], function(Promise, Conversions, Canvas, ImageSize) {
+
+    /**
+     * @method scale
+     * @static
+     * @param image {Image|Canvas}
+     * @param dW {Number} Width that the image should be scaled to
+     * @param dH {Number} Height that the image should be scaled to
+     * @returns {Promise}
+     */
+    function scale(image, dW, dH) {
+        var sW = ImageSize.getWidth(image);
+        var sH = ImageSize.getHeight(image);
+        var wRatio = dW / sW;
+        var hRatio = dH / sH;
+        var scaleCapped = false;
+
+        if (wRatio < 0.5 || wRatio > 2) {
+            wRatio = wRatio < 0.5 ? 0.5 : 2;
+            scaleCapped = true;
+        }
+        if (hRatio < 0.5 || hRatio > 2) {
+            hRatio = hRatio < 0.5 ? 0.5 : 2;
+            scaleCapped = true;
+        }
+
+        var scaled = _scale(image, wRatio, hRatio);
+
+        return !scaleCapped ? scaled : scaled.then(function (tCanvas) {
+            return scale(tCanvas, dW, dH);
+        });
+    }
+
+
+    function _scale(image, wRatio, hRatio) {
+        return new Promise(function(resolve) {
+            var sW = ImageSize.getWidth(image);
+            var sH = ImageSize.getHeight(image);
+            var dW = Math.floor(sW * wRatio);
+            var dH = Math.floor(sH * hRatio);
+            var canvas = Canvas.create(dW, dH);
+            var context = Canvas.get2dContext(canvas);
+
+            context.drawImage(image, 0, 0, sW, sH, 0, 0, dW, dH);
+
+            resolve(canvas);
+        });
+    }
+
+    return {
+        scale: scale
+    };
+
+});
+
+/**
  * ImageTools.js
  *
  * Released under LGPL License.
@@ -1051,8 +1138,9 @@ define("ephox/imagetools/transformations/Filters", [
 define("ephox/imagetools/transformations/ImageTools", [
   "ephox/imagetools/util/Conversions",
   "ephox/imagetools/util/Canvas",
-  "ephox/imagetools/util/ImageSize"
-], function(Conversions, Canvas, ImageSize) {
+  "ephox/imagetools/util/ImageSize",
+  "ephox/imagetools/transformations/ImageResizerCanvas"
+], function(Conversions, Canvas, ImageSize, ImageResizerCanvas) {
   var revokeImageUrl = Conversions.revokeImageUrl;
 
   function rotate(blob, angle) {
@@ -1115,15 +1203,25 @@ define("ephox/imagetools/transformations/ImageTools", [
     });
   }
 
+  var revokeImage = function (image) {
+    return function (result) {
+      revokeImageUrl(image);
+      return result;
+    };
+  };
+
   function resize(blob, w, h) {
     return Conversions.blobToImage(blob).then(function(image) {
-      var canvas = Canvas.create(w, h),
-        context = Canvas.get2dContext(canvas);
+      var result;
 
-      context.drawImage(image, 0, 0, w, h);
-      revokeImageUrl(image);
+      result = ImageResizerCanvas.scale(image, w, h)
+        .then(function(canvas) {
+          return Conversions.canvasToBlob(canvas, blob.type);
+        })
+        .then(revokeImage(image))
+        .catch(revokeImage(image));
 
-      return Conversions.canvasToBlob(canvas, blob.type);
+      return result;
     });
   }
 

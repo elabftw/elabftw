@@ -118,9 +118,25 @@
 define("tinymce/tableplugin/Utils", [
 	"tinymce/Env"
 ], function(Env) {
-	function getSpanVal(td, name) {
-		return parseInt(td.getAttribute(name) || 1, 10);
-	}
+	var setSpanVal = function (name) {
+		return function (td, val) {
+			if (td) {
+				val = parseInt(val, 10);
+
+				if (val === 1 || val === 0) {
+					td.removeAttribute(name, 1);
+				} else {
+					td.setAttribute(name, val, 1);
+				}
+			}
+		};
+	};
+
+	var getSpanVal = function (name) {
+		return function (td) {
+			return parseInt(td.getAttribute(name) || 1, 10);
+		};
+	};
 
 	function paddCell(cell) {
 		if (!Env.ie || Env.ie > 9) {
@@ -131,8 +147,160 @@ define("tinymce/tableplugin/Utils", [
 	}
 
 	return {
-		getSpanVal: getSpanVal,
+		setColSpan: setSpanVal('colSpan'),
+		setRowSpan: setSpanVal('rowspan'),
+		getColSpan: getSpanVal('colSpan'),
+		getRowSpan: getSpanVal('rowSpan'),
+		setSpanVal: function (td, name, value) {
+			setSpanVal(name)(td, value);
+		},
+		getSpanVal: function (td, name) {
+			return getSpanVal(name)(td);
+		},
 		paddCell: paddCell
+	};
+});
+
+// Included from: js/tinymce/plugins/table/classes/SplitCols.js
+
+/**
+ * SplitCols.js
+ *
+ * Released under LGPL License.
+ * Copyright (c) 1999-2016 Ephox Corp. All rights reserved
+ *
+ * License: http://www.tinymce.com/license
+ * Contributing: http://www.tinymce.com/contributing
+ */
+
+/**
+ * Contains logic for handling splitting of merged rows.
+ *
+ * @class tinymce.tableplugin.SplitCols
+ * @private
+ */
+define("tinymce/tableplugin/SplitCols", [
+	"tinymce/util/Tools",
+	"tinymce/tableplugin/Utils"
+], function(Tools, Utils) {
+	var getCellAt = function (grid, x, y) {
+		return grid[y] ? grid[y][x] : null;
+	};
+
+	var getCellElmAt = function (grid, x, y) {
+		var cell = getCellAt(grid, x, y);
+		return cell ? cell.elm : null;
+	};
+
+	var countHoles = function (grid, x, y, delta) {
+		var y2, cell, count = 0, elm = getCellElmAt(grid, x, y);
+
+		for (y2 = y; delta > 0 ? y2 < grid.length : y2 >= 0; y2 += delta) {
+			cell = getCellAt(grid, x, y2);
+			if (elm !== cell.elm) {
+				break;
+			}
+
+			count++;
+		}
+
+		return count;
+	};
+
+	var findRealElm = function (grid, x, y) {
+		var cell, row = grid[y];
+
+		for (var x2 = x; x2 < row.length; x2++) {
+			cell = row[x2];
+			if (cell.real) {
+				return cell.elm;
+			}
+		}
+
+		return null;
+	};
+
+	var getRowSplitInfo = function (grid, y) {
+		var cell, result = [], row = grid[y];
+
+		for (var x = 0; x < row.length; x++) {
+			cell = row[x];
+			result.push({
+				elm: cell.elm,
+				above: countHoles(grid, x, y, -1) - 1,
+				below: countHoles(grid, x, y, 1) - 1
+			});
+
+			x += Utils.getColSpan(cell.elm) - 1;
+		}
+
+		return result;
+	};
+
+	var createCell = function (info, rowSpan) {
+		var doc = info.elm.ownerDocument;
+		var newCell = doc.createElement('td');
+
+		Utils.setColSpan(newCell, Utils.getColSpan(info.elm));
+		Utils.setRowSpan(newCell, rowSpan);
+		Utils.paddCell(newCell);
+
+		return newCell;
+	};
+
+	var insertOrAppendCell = function (grid, newCell, x, y) {
+		var realCellElm = findRealElm(grid, x + 1, y);
+
+		if (!realCellElm) {
+			realCellElm = findRealElm(grid, 0, y);
+			realCellElm.parentNode.appendChild(newCell);
+		} else {
+			realCellElm.parentNode.insertBefore(newCell, realCellElm);
+		}
+	};
+
+	var splitAbove = function (grid, info, x, y) {
+		if (info.above !== 0) {
+			Utils.setRowSpan(info.elm, info.above);
+			var cell = createCell(info, info.below + 1);
+			insertOrAppendCell(grid, cell, x, y);
+			return cell;
+		}
+
+		return null;
+	};
+
+	var splitBelow = function (grid, info, x, y) {
+		if (info.below !== 0) {
+			Utils.setRowSpan(info.elm, info.above + 1);
+			var cell = createCell(info, info.below);
+			insertOrAppendCell(grid, cell, x, y + 1);
+			return cell;
+		}
+
+		return null;
+	};
+
+	var splitAt = function (grid, x, y, before) {
+		var rowInfos = getRowSplitInfo(grid, y);
+		var rowElm = getCellElmAt(grid, x, y).parentNode;
+		var cells = [];
+
+		Tools.each(rowInfos, function (info, x) {
+			var cell = before ? splitAbove(grid, info, x, y) : splitBelow(grid, info, x, y);
+			if (cell !== null) {
+				cells.push(cells);
+			}
+		});
+
+		return {
+			cells: cells,
+			row: rowElm
+		};
+	};
+
+	return {
+		splitAt: splitAt
 	};
 });
 
@@ -159,9 +327,10 @@ define("tinymce/tableplugin/Utils", [
 define("tinymce/tableplugin/TableGrid", [
 	"tinymce/util/Tools",
 	"tinymce/Env",
-	"tinymce/tableplugin/Utils"
-], function(Tools, Env, Utils) {
-	var each = Tools.each, getSpanVal = Utils.getSpanVal;
+	"tinymce/tableplugin/Utils",
+	"tinymce/tableplugin/SplitCols"
+], function(Tools, Env, Utils, SplitCols) {
+	var each = Tools.each, getSpanVal = Utils.getSpanVal, setSpanVal = Utils.setSpanVal;
 
 	return function(editor, table, selectedCell) {
 		var grid, gridWidth, startPos, endPos, selection = editor.selection, dom = selection.dom;
@@ -272,16 +441,18 @@ define("tinymce/tableplugin/TableGrid", [
 			}
 		}
 
-		function setSpanVal(td, name, val) {
-			if (td) {
-				val = parseInt(val, 10);
+		function getRow(grid, y) {
+			return grid[y] ? grid[y] : null;
+		}
 
-				if (val === 1) {
-					td.removeAttribute(name, 1);
-				} else {
-					td.setAttribute(name, val, 1);
-				}
+		function getColumn(grid, x) {
+			var out = [];
+
+			for (var y = 0; y < grid.length; y++) {
+				out.push(getCell(x, y));
 			}
+
+			return out;
 		}
 
 		function isCellSelected(cell) {
@@ -471,8 +642,77 @@ define("tinymce/tableplugin/TableGrid", [
 			});
 		}
 
+		function findItemsOutsideOfRange(items, start, end) {
+			var out = [];
+
+			for (var i = 0; i < items.length; i++) {
+				if (i < start || i > end) {
+					out.push(items[i]);
+				}
+			}
+
+			return out;
+		}
+
+		function getFakeCells(cells) {
+			return Tools.grep(cells, function (cell) {
+				return cell.real === false;
+			});
+		}
+
+		function getUniqueElms(cells) {
+			var elms = [];
+
+			for (var i = 0; i < cells.length; i++) {
+				var elm = cells[i].elm;
+				if (elms[elms.length - 1] !== elm) {
+					elms.push(elm);
+				}
+			}
+
+			return elms;
+		}
+
+		function reduceRowSpans(grid, startX, startY, endX, endY) {
+			var count = 0;
+
+			for (var y = startY; y <= endY; y++) {
+				var allCells = findItemsOutsideOfRange(getRow(grid, y), startX, endX);
+				var fakeCells = getFakeCells(allCells);
+
+				if (allCells.length === fakeCells.length) {
+					Tools.each(getUniqueElms(fakeCells), function (elm) {
+						Utils.setRowSpan(elm, Utils.getRowSpan(elm) - 1);
+					});
+
+					count++;
+				}
+			}
+
+			return count;
+		}
+
+		function reduceColSpans(grid, startX, startY, endX, endY) {
+			var count = 0;
+
+			for (var x = startX; x <= endX; x++) {
+				var allCells = findItemsOutsideOfRange(getColumn(grid, x), startY, endY);
+				var fakeCells = getFakeCells(allCells);
+
+				if (allCells.length === fakeCells.length) {
+					Tools.each(getUniqueElms(fakeCells), function (elm) {
+						Utils.setColSpan(elm, Utils.getColSpan(elm) - 1);
+					});
+
+					count++;
+				}
+			}
+
+			return count;
+		}
+
 		function merge(cell, cols, rows) {
-			var pos, startX, startY, endX, endY, x, y, startCell, endCell, children, count;
+			var pos, startX, startY, endX, endY, x, y, startCell, endCell, children, count, reducedRows, reducedCols;
 
 			// Use specified cell and cols/rows
 			if (cell) {
@@ -516,10 +756,27 @@ define("tinymce/tableplugin/TableGrid", [
 				split();
 				buildGrid();
 
+				reducedRows = reduceRowSpans(grid, startX, startY, endX, endY);
+				reducedCols = reduceColSpans(grid, startX, startY, endX, endY);
+
 				// Set row/col span to start cell
 				startCell = getCell(startX, startY).elm;
-				setSpanVal(startCell, 'colSpan', (endX - startX) + 1);
-				setSpanVal(startCell, 'rowSpan', (endY - startY) + 1);
+				var colSpan = (endX - startX - reducedCols) + 1;
+				var rowSpan = (endY - startY - reducedRows) + 1;
+
+				// All cells in table selected then just make it a table with one cell
+				if (colSpan === gridWidth && rowSpan === grid.length) {
+					colSpan = 1;
+					rowSpan = 1;
+				}
+
+				// Multiple whole rows selected then just make it one rowSpan
+				if (colSpan === gridWidth && rowSpan > 1) {
+					rowSpan = 1;
+				}
+
+				setSpanVal(startCell, 'colSpan', colSpan);
+				setSpanVal(startCell, 'rowSpan', rowSpan);
 
 				// Remove other cells and add it's contents to the start cell
 				for (y = startY; y <= endY; y++) {
@@ -814,40 +1071,26 @@ define("tinymce/tableplugin/TableGrid", [
 		}
 
 		function pasteRows(rows, before) {
-			var selectedRows = getSelectedRows(),
-				targetRow = selectedRows[before ? 0 : selectedRows.length - 1],
-				targetCellCount = targetRow.cells.length;
+			var splitResult, targetRow, newRows;
 
 			// Nothing to paste
 			if (!rows) {
 				return;
 			}
 
-			// Calc target cell count
-			each(grid, function(row) {
-				var match;
+			splitResult = SplitCols.splitAt(grid, startPos.x, startPos.y, before);
+			targetRow = splitResult.row;
+			Tools.each(splitResult.cells, fireNewCell);
 
-				targetCellCount = 0;
-				each(row, function(cell) {
-					if (cell.real) {
-						targetCellCount += cell.colspan;
-					}
-
-					if (cell.elm.parentNode == targetRow) {
-						match = 1;
-					}
-				});
-
-				if (match) {
-					return false;
-				}
+			newRows = Tools.map(rows, function (row) {
+				return row.cloneNode(true);
 			});
 
 			if (!before) {
-				rows.reverse();
+				newRows.reverse();
 			}
 
-			each(rows, function(row) {
+			each(newRows, function(row) {
 				var i, cellCount = row.cells.length, cell;
 
 				fireNewRow(row);
@@ -862,12 +1105,12 @@ define("tinymce/tableplugin/TableGrid", [
 				}
 
 				// Needs more cells
-				for (i = cellCount; i < targetCellCount; i++) {
+				for (i = cellCount; i < gridWidth; i++) {
 					row.appendChild(fireNewCell(cloneCell(row.cells[cellCount - 1])));
 				}
 
 				// Needs less cells
-				for (i = targetCellCount; i < cellCount; i++) {
+				for (i = gridWidth; i < cellCount; i++) {
 					dom.remove(row.cells[i]);
 				}
 
@@ -1052,6 +1295,13 @@ define("tinymce/tableplugin/TableGrid", [
 			return false;
 		}
 
+		function splitCols(before) {
+			if (startPos) {
+				var splitResult = SplitCols.splitAt(grid, startPos.x, startPos.y, before);
+				Tools.each(splitResult.cells, fireNewCell);
+			}
+		}
+
 		table = table || dom.getParent(selection.getStart(true), 'table');
 
 		buildGrid();
@@ -1070,6 +1320,7 @@ define("tinymce/tableplugin/TableGrid", [
 			merge: merge,
 			insertRow: insertRow,
 			insertCol: insertCol,
+			splitCols: splitCols,
 			deleteCols: deleteCols,
 			deleteRows: deleteRows,
 			cutRows: cutRows,
@@ -1512,7 +1763,7 @@ define("tinymce/tableplugin/CellSelection", [
 	"tinymce/util/Tools"
 ], function(TableGrid, TreeWalker, Tools) {
 	return function(editor, selectionChange) {
-		var dom = editor.dom, tableGrid, startCell, startTable, lastMouseOverTarget, hasCellSelection = true, resizing;
+		var dom = editor.dom, tableGrid, startCell, startTable, lastMouseOverTarget, hasCellSelection = true, resizing, dragging;
 
 		function clear(force) {
 			// Restore selection possibilities
@@ -1540,7 +1791,7 @@ define("tinymce/tableplugin/CellSelection", [
 		function cellSelectionHandler(e) {
 			var sel, target = e.target, currentCell;
 
-			if (resizing) {
+			if (resizing || dragging) {
 				return;
 			}
 
@@ -1600,7 +1851,7 @@ define("tinymce/tableplugin/CellSelection", [
 
 		// Add cell selection logic
 		editor.on('MouseDown', function(e) {
-			if (e.button != 2 && !resizing) {
+			if (e.button != 2 && !resizing && !dragging) {
 				clear();
 
 				startCell = dom.getParent(e.target, 'td,th');
@@ -1691,6 +1942,14 @@ define("tinymce/tableplugin/CellSelection", [
 
 		editor.on('ObjectResizeStart ObjectResized', function(e) {
 			resizing = e.type != 'objectresized';
+		});
+
+		editor.on('dragstart', function () {
+			dragging = true;
+		});
+
+		editor.on('drop dragend', function () {
+			dragging = false;
 		});
 
 		return {
@@ -3944,6 +4203,14 @@ define("tinymce/tableplugin/Plugin", [
 				grid.pasteRows(clipboardRows);
 			},
 
+			mceSplitColsBefore: function(grid) {
+				grid.splitCols(true);
+			},
+
+			mceSplitColsAfter: function(grid) {
+				grid.splitCols(false);
+			},
+
 			mceTableDelete: function(grid) {
 				if (resizeBars) {
 					resizeBars.clearBars();
@@ -4086,6 +4353,14 @@ define("tinymce/tableplugin/Plugin", [
 			);
 		}
 
+		function getClipboardRows() {
+			return clipboardRows;
+		}
+
+		function setClipboardRows(rows) {
+			clipboardRows = rows;
+		}
+
 		addButtons();
 		addToolbars();
 
@@ -4116,6 +4391,8 @@ define("tinymce/tableplugin/Plugin", [
 		}
 
 		self.insertTable = insertTable;
+		self.setClipboardRows = setClipboardRows;
+		self.getClipboardRows = getClipboardRows;
 	}
 
 	PluginManager.add('table', Plugin);

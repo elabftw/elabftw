@@ -29,8 +29,7 @@ $Scheduler = new Scheduler($_SESSION['team_id']);
 
 <script src='js/moment/moment.js'></script>
 <script src='js/fullcalendar/dist/fullcalendar.js'></script>
-<script src='js/fullcalendar/dist/lang-all.js'></script>
-<link rel='stylesheet' media='all' href='js/fullcalendar/dist/fullcalendar.css'>
+<script src='js/fullcalendar/dist/locale-all.js'></script>
 
 <menu>
     <ul>

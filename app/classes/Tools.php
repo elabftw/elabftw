@@ -331,10 +331,11 @@ class Tools
             'es_ES' => 'es',
             'fr_FR' => 'fr',
             'it_IT' => 'it',
-            'sl_SI' => 'sl',
+            'pl_PL' => 'pl',
             'pt_BR' => 'pt-br',
             'pt_PT' => 'pt',
             'ru_RU' => 'ru',
+            'sl_SI' => 'sl',
             'zh_CN' => 'zh-cn'
         );
         return $map[$lang];
@@ -354,10 +355,11 @@ class Tools
             'es_ES' => 'Spanish',
             'fr_FR' => 'French',
             'it_IT' => 'Italian',
-            'sl_SI' => 'Slovenian',
+            'pl_PL' => 'Polish',
             'pt_BR' => 'Portuguese (Brazilian)',
             'pt_PT' => 'Portuguese',
             'ru_RU' => 'Russian',
+            'sl_SI' => 'Slovenian',
             'zh_CN' => 'Chinese Simplified'
         );
 

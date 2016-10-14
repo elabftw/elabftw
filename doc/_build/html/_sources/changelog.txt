@@ -37,8 +37,19 @@ Version 1.3.0
 
 * Internationalization:
 
-  * updated terms
-  * French is now 100% translated
+  * Catalan is 71% translated
+  * Chinese is 68% translated
+  * French is 100% translated
+  * German is 98% translated
+  * Italian is 83% translated
+  * Polish is 25% translated
+  * Portuguese is 64% translated
+  * Portuguese (Brazilian) is 79% translated
+  * Russian is 23% translated
+  * Slovenian is 91% translated
+  * Spanish is 100% translated
+
+  Check the contributing page to help translate.
 
 * Documentation:
 

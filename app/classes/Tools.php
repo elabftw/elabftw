@@ -325,13 +325,16 @@ class Tools
     public static function getCalendarLang($lang)
     {
         $map = array(
-            'en_GB' => 'en',
             'ca_ES' => 'ca',
             'de_DE' => 'de',
+            'en_GB' => 'en',
             'es_ES' => 'es',
             'fr_FR' => 'fr',
             'it_IT' => 'it',
+            'sl_SL' => 'sl',
             'pt_BR' => 'pt-br',
+            'pt_PT' => 'pt',
+            'ru_RU' => 'ru',
             'zh_CN' => 'zh-cn'
         );
         return $map[$lang];
@@ -345,13 +348,16 @@ class Tools
     public static function getLangsArr()
     {
         $langs = array(
-            'en_GB' => 'English (UK)',
             'ca_ES' => 'Spanish (Catalan)',
             'de_DE' => 'German',
+            'en_GB' => 'English (UK)',
             'es_ES' => 'Spanish',
             'fr_FR' => 'French',
             'it_IT' => 'Italian',
+            'sl_SL' => 'Slovenian',
             'pt_BR' => 'Portuguese (Brazilian)',
+            'pt_PT' => 'Portuguese',
+            'ru_RU' => 'Russian',
             'zh_CN' => 'Chinese Simplified'
         );
 

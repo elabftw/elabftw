@@ -404,6 +404,6 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('stamppass', ''),
 ('stampshare', '1'),
 ('stampprovider', 'http://zeitstempel.dfn.de/'),
-('stampcert', 'vendor/pki.dfn.pem'),
+('stampcert', 'app/dfn-cert/pki.dfn.pem'),
 ('stamphash', 'sha256'),
-('schema', '11');
+('schema', '12');

@@ -28,7 +28,7 @@ class TeamsTest extends \PHPUnit_Framework_TestCase
             'link_name' => 'Taggle',
             'link_href' => 'http://www.elabftw.net',
             'stampprovider' => 'http://zeitstempel.dfn.de/',
-            'stampcert' => 'vendor/pki.dfn.pem',
+            'stampcert' => 'app/dfn-cert/pki.dfn.pem',
             'stamplogin' => '',
             'stamppass' => 'something'
         );
@@ -41,7 +41,7 @@ class TeamsTest extends \PHPUnit_Framework_TestCase
             'link_name' => 'Taggle',
             'link_href' => 'http://www.elabftw.net',
             'stampprovider' => 'http://zeitstempel.dfn.de/',
-            'stampcert' => 'vendor/pki.dfn.pem',
+            'stampcert' => 'app/dfn-cert/pki.dfn.pem',
             'stamplogin' => '',
             'stamppass' => ''
         );

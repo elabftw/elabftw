@@ -59,7 +59,7 @@ class Update
      * UPDATE IT ALSO IN INSTALL/ELABFTW.SQL (last line)
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '11';
+    const REQUIRED_SCHEMA = '12';
 
     /**
      * Create the pdo object
@@ -244,6 +244,11 @@ class Update
             // 20160812
             $this->schema11();
             $this->updateSchema(11);
+        }
+        if ($current_schema < 12) {
+            // 20161016
+            $this->schema12();
+            $this->updateSchema(12);
         }
 
         // place new schema functions above this comment
@@ -490,6 +495,18 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
         $sql = "ALTER TABLE `users` ADD `show_team` TINYINT NOT NULL DEFAULT '0'";
         if (!$this->pdo->q($sql)) {
             throw new Exception('Problem updating to schema 11!');
+        }
+    }
+    /**
+     * Change path to pki cert
+     *
+     */
+    private function schema12()
+    {
+        if (get_config('stampcert') == 'vendor/pki.dfn.pem') {
+            if (!update_config(array('stampcert' => 'app/dfn-cert/pki.dfn.pem'))) {
+                throw new Exception('Error changing path to timestamping cert. (updating to schema 12)');
+            }
         }
     }
 }

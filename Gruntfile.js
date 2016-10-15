@@ -34,7 +34,7 @@ module.exports = function(grunt) {
     },
     shell: {
       buildapi: {
-        command: 'phpdoc run -d app/classes -d app/models -d app/controllers -d app/views -t api'
+        command: 'phpdoc run -d app/classes -d app/models -d app/controllers -d app/views -t _api'
       },
       rununit: {
         command: 'php vendor/bin/codecept run unit'

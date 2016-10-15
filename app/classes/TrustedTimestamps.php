@@ -463,7 +463,7 @@ class TrustedTimestamps extends Entity
             throw new Exception("Could not validate the timestamp due to a bug in OpenSSL library. See <a href='https://github.com/elabftw/elabftw/issues/242#issuecomment-212382182'>issue #242</a>. Tried to validate with failsafe method but Java is not installed.");
         }
 
-        chdir("../../vendor/dfn-cert/timestampverifier/");
+        chdir("../../app/dfn-cert/timestampverifier/");
         $cmd = "./verify.sh " . $this->requestfilePath . " " . $this->responsefilePath;
         $javaRes = $this->runSh($cmd);
         if (stripos($javaRes['retarray'][0], 'matches')) {

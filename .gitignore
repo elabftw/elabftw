@@ -4,12 +4,8 @@ uploads/
 test.php
 config.php
 config.php.*
-doc/api/phpdoc-cache*
 *.bak
-Session.vim
-/nbproject/private/
-.DS_Store
 tests/_output/*
-vendor/mpdf/mpdf/ttfondata/*
 node_modules/*
 api/*
+vendor/

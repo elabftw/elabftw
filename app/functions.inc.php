@@ -100,7 +100,7 @@ function update_config($post)
 
     if (isset($post['stamppass']) && !empty($post['stamppass'])) {
         $post['stamppass'] = Crypto::encrypt($post['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
-    } else {
+    } elseif (isset($post['stamppass'])) {
         $post['stamppass'] = $Teams->read('stamppass');
     }
 

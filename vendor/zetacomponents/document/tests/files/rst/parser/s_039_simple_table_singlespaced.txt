@@ -1,9 +1,0 @@
-Simple tables
-=============
-
-A simple table with a singl separation space:
-
-===== ===
-Hello world
-===== ===
-

@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<article xmlns="http://docbook.org/ns/docbook">
-  <section ID="complex_footnotes">
-    <sectioninfo/>
-    <title>Complex footnotes</title>
-    <para><footnote><para>This footnote is labeled manually, so its number is fixed.</para></footnote> will be "2" (manually numbered), <footnote><para>This footnote will be labeled "3".  It is the second auto-numbered footnote, but footnote label "2" is already used.</para></footnote> will be "3" (anonymous auto-numbered), and <footnote><para>This autonumber-labeled footnote will be labeled "1". It is the first auto-numbered footnote and no other footnote with label "1" exists.  The order of the footnotes is used to determine numbering, not the order of the footnote references.</para></footnote> will be "1" (labeled auto-numbered).</para>
-  </section>
-</article>

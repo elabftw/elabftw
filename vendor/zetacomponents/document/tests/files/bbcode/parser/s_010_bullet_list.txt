@@ -1,7 +1,0 @@
-For example to list your favourite colours you could use:
-
-[list]
-[*]Red
-[*]Blue
-[*]Yellow
-[/list]

@@ -1,4 +1,0 @@
-^           Table with alignment           ^^^
-|         right|    center    |left          |
-|left          |         right|    center    |
-| xxxxxxxxxxxx | xxxxxxxxxxxx | xxxxxxxxxxxx |

@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<article xmlns="http://docbook.org/ns/docbook">
-  <section>
-    <sectioninfo/>
-    <para>This is one single short paragraph, which should render a single line on the second page, causing a one line widow, handled by the renderer.</para>
-  </section>
-</article>

@@ -1,4 +1,0 @@
-To let the parser ignore an area completely (ie. do no formatting on it),
-enclose the area either with ''nowiki'' tags or even simpler, with double
-percent signs ''<nowiki>%%</nowiki>'', like %%<nowiki>%%.
-

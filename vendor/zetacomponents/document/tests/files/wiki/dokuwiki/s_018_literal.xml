@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<article xmlns="http://docbook.org/ns/docbook">
-  <para>To let the parser ignore an area completely (ie. do no formatting on it), enclose the area either with <literal>nowiki</literal> tags or even simpler, with double percent signs <literal><literal>%%</literal></literal>, like &lt;nowiki&gt;.</para>
-</article>

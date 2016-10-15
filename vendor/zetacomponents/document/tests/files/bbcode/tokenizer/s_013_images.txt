@@ -1,3 +1,0 @@
-[img]http://www.google.com/intl/en_ALL/images/logo.gif[/img]
-
-[url=http://www.google.com/][img]http://www.google.com/intl/en_ALL/images/logo.gif[/img][/url]

@@ -1,4 +1,0 @@
-A. Einstein was a really
-smart dude.
-
-\A. Einstein was a really smart dude.

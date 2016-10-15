@@ -1,3 +1,0 @@
-An empty line after some text will produce a paragraph.
-
-This is second paragraph, with an line break\\inside.

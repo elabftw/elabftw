@@ -12,3 +12,4 @@ Session.vim
 tests/_output/*
 vendor/mpdf/mpdf/ttfondata/*
 node_modules/*
+api/*

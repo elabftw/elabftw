@@ -33,11 +33,8 @@ module.exports = function(grunt) {
       }
     },
     shell: {
-      builddoc: {
-        command: 'cd doc; make html'
-      },
       buildapi: {
-        command: 'phpdoc run -d app/classes -d app/models -d app/controllers -d app/views -t doc/api'
+        command: 'phpdoc run -d app/classes -d app/models -d app/controllers -d app/views -t api'
       },
       rununit: {
         command: 'php vendor/bin/codecept run unit'
@@ -60,7 +57,6 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['uglify', 'cssmin']);
   grunt.registerTask('css', 'cssmin');
-  grunt.registerTask('doc', 'shell:builddoc');
   grunt.registerTask('api', 'shell:buildapi');
   grunt.registerTask('test', 'shell:runtests');
   grunt.registerTask('unit', 'shell:rununit');

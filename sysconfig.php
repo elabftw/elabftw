@@ -52,14 +52,14 @@ try {
 
         // if we don't have the latest version, show button redirecting to wiki
         if ($SysconfigView->Update->updateIsAvailable()) {
-            $message = _('A new version is available!') . " <a href='doc/_build/html/how-to-update.html'>
+            $message = _('A new version is available!') . " <a href='https://elabftw.readthedocs.io/en/stable/how-to-update.html'>
                 <button class='button'>Update elabftw</button></a>";
             display_message('warning', $message);
         }
     }
 
     if (get_config('mail_from') === 'notconfigured@example.com') {
-        $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='doc/_build/html/postinstall.html#setting-up-email'>", "</a>");
+        $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://elabftw.readthedocs.io/en/stable/postinstall.html#setting-up-email'>", "</a>");
         display_message('ko', $message);
     }
     ?>

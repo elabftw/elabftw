@@ -54,7 +54,7 @@ class Teams
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team_name', $name);
         $req->bindValue(':link_name', 'Documentation');
-        $req->bindValue(':link_href', 'doc/_build/html/');
+        $req->bindValue(':link_href', 'https://elabftw.readthedocs.io');
         $result1 = $req->execute();
         // grab the team ID
         $newId = $this->pdo->lastInsertId();
@@ -155,7 +155,7 @@ class Teams
             $linkName = filter_var($post['link_name'], FILTER_SANITIZE_STRING);
         }
 
-        $linkHref = 'doc/_build/html/';
+        $linkHref = 'https://elabftw.readthedocs.io';
         if (isset($post['link_href'])) {
             $linkHref = filter_var($post['link_href'], FILTER_SANITIZE_STRING);
         }

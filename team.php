@@ -196,15 +196,10 @@ $(document).ready(function() {
             eventBackgroundColor: "rgb(41,174,185)",
             dayClick: function(start) {
                 schedulerCreate(start.format());
-                // because all the rerender methods fail, reload the page
-                // this is because upon creation the event has not all the correct attributes
-                // and trying to manipulate it fails
-                window.location.replace('team.php?tab=1&item=<?= isset($_GET['item']) ? $_GET['item'] : '' ?>');
             },
             // selection
             select: function(start, end) {
                 schedulerCreate(start.format(), end.format());
-                window.location.replace('team.php?tab=1&item=<?= isset($_GET['item']) ? $_GET['item'] : '' ?>');
             },
             // delete by clicking it
             eventClick: function(calEvent) {
@@ -252,13 +247,9 @@ function schedulerCreate(start, end = null) {
             start: start,
             end: end,
             title: title
+        }).done(function() {
+            window.location.replace('team.php?tab=1&item=<?= isset($_GET['item']) ? $_GET['item'] : '' ?>');
         });
-        // now add it to the calendar
-        eventData = {
-            title: title,
-            start: start,
-        };
-        $('#scheduler').fullCalendar('renderEvent', eventData, true);
     }
 }
 </script>

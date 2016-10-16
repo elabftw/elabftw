@@ -7,5 +7,5 @@ config.php.*
 *.bak
 tests/_output/*
 node_modules/*
-api/*
+_api/
 vendor/

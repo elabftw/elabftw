@@ -7,7 +7,6 @@
         "swiftmailer/swiftmailer":"@stable",
         "ext-gd":"*",
         "ext-gettext":"*",
-        "ext-mcrypt":"*",
         "ext-curl":"*",
         "ext-openssl":"*",
         "defuse/php-encryption": "2.0.1",

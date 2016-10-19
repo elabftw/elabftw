@@ -35,7 +35,7 @@ Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM 
 
 # Contributing
 
-**eLabFTW** is a collaborative project. See the [contributing page](https://elabftw.readthedocs.io/en/hypernext/contributing.html).
+**eLabFTW** is a collaborative project. See the [contributing page](https://elabftw.readthedocs.io/en/latest/contributing.html).
 
 # Support
 

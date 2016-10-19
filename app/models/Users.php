@@ -103,7 +103,7 @@ class Users extends Auth
             throw new Exception('Error inserting user in SQL!');
         }
 
-        if ($validated === '0') {
+        if ($validated == '0') {
             $this->alertAdmin($team);
             $this->needValidation = true;
         }

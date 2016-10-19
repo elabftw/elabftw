@@ -4,7 +4,7 @@
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
- * @see http://www.elabftw.net Official website
+ * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
@@ -441,7 +441,7 @@ class MakePdf extends Make
                 </htmlpageheader>
                 <htmlpagefooter name="footer">
                     <div id="footer">
-                        PDF generated with <a href="http://www.elabftw.net">elabftw</a>, a free and open source lab notebook
+                        PDF generated with <a href="https://www.elabftw.net">elabftw</a>, a free and open source lab notebook
                         <p style="font-size:6pt;">File generated on {DATE j-m-Y H:m}</p>
                     </div>
                 </htmlpagefooter>';

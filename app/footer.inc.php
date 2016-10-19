@@ -4,7 +4,7 @@
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
- * @see http://www.elabftw.net Official website
+ * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  */
 ?>
@@ -52,7 +52,7 @@ if (isset($_SESSION['auth']) && $_SESSION['is_admin']) {
     echo "</a>";
 }
 echo "</span></p><div class='footer_right'>";
-echo _('Powered by') . " <a href='http://www.elabftw.net'>eLabFTW</a><br>";
+echo _('Powered by') . " <a href='https://www.elabftw.net'>eLabFTW</a><br>";
 echo _('Page generated in') . ' '; ?>
 <span class='strong'><?= round((microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]), 5) ?> seconds</span>
 (<?= $pdo->getNumberOfQueries() ?> SQL)

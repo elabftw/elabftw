@@ -5,7 +5,7 @@
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @author Alexander Minges <alexander.minges@gmail.com>
  * @copyright 2015 Nicolas CARPi, Alexander Minges
- * @see http://www.elabftw.net Official website
+ * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */

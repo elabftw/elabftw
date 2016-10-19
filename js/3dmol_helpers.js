@@ -1,6 +1,6 @@
 /*
  * Helper functions for 3Dmol.js
- * http://www.elabftw.net
+ * https://www.elabftw.net
  */
 
 // Remove all surfaces from div with given id and re-render

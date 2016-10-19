@@ -4,7 +4,7 @@
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
- * @see http://www.elabftw.net Official website
+ * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
@@ -102,7 +102,7 @@ class Comments extends Entity
         $url = str_replace('app/controllers/CommentsController.php', 'experiments.php', $url);
         $full_url = $url . "?mode=view&id=" . $this->Experiments->id;
 
-        $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
+        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
 
         $message = Swift_Message::newInstance()
         // Give the message a subject

@@ -1,6 +1,6 @@
 /*
  * Common functions used by eLabFTW
- * http://www.elabftw.net
+ * https://www.elabftw.net
  */
 
 // for editXP/DB, ctrl-shift-D will add the date

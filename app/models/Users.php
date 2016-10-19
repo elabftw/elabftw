@@ -4,7 +4,7 @@
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
- * @see http://www.elabftw.net Official website
+ * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
@@ -153,7 +153,7 @@ class Users extends Auth
     private function alertAdmin($team)
     {
         // Create the message
-        $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
+        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
         $message = Swift_Message::newInstance()
         // Give the message a subject
         ->setSubject(_('[eLabFTW] New user registered'))
@@ -483,7 +483,7 @@ class Users extends Auth
         $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
         $url = str_replace('app/controllers/UsersController.php', 'login.php', $url);
         // we send an email to each validated new user
-        $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
+        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
         // Create the message
         $message = Swift_Message::newInstance()
         // Give the message a subject

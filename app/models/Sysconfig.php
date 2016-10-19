@@ -4,7 +4,7 @@
  *
  * @author Nicolas CARPi <nicolas.carpi@curie.fr>
  * @copyright 2012 Nicolas CARPi
- * @see http://www.elabftw.net Official website
+ * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  * @package elabftw
  */
@@ -43,7 +43,7 @@ class Sysconfig
             throw new Exception('Bad email!');
         }
 
-        $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
+        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
         $message = \Swift_Message::newInstance()
         // Give the message a subject
         ->setSubject(_('[eLabFTW] Test email'))
@@ -80,7 +80,7 @@ class Sysconfig
             $to[] = $user['email'];
         }
 
-        $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";
+        $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
         $message = Swift_Message::newInstance()
         ->setSubject($subject)
         ->setFrom(array($this->Email->configArr['mail_from'] => 'eLabFTW'))

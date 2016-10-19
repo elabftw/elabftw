@@ -19,6 +19,10 @@ use Swift_Message;
  */
 class Users extends Auth
 {
+
+    /** flag to check if we need validation or not */
+    public $needValidation = false;
+
     /**
      * Create a new user
      *
@@ -54,25 +58,11 @@ class Users extends Auth
         // Registration date is stored in epoch
         $registerDate = time();
 
-        // what group do we set for this user ?
-        // 1 = sysadmin if it's the first user ever
-        // 2 = admin for first user in a team
-        // 4 = normal user
-        if ($this->isFirstUser()) {
-            $group = 1;
-        } elseif ($this->isFirstUserInTeam($team)) {
-            $group = 2;
-        } else {
-            $group = 4;
-        }
+        // get the group for the new user
+        $group = $this->getGroup($team);
 
-        // WILL NEW USER BE VALIDATED ?
-        // here an admin or sysadmin won't need validation
-        if (get_config('admin_validate') === "1" && $group === 4) { // validation is required for normal user
-            $validated = 0; // so new user will need validation
-        } else {
-            $validated = 1;
-        }
+        // will new user be validated?
+        $validated = $this->getValidated($group);
 
         $sql = "INSERT INTO users (
             `email`,
@@ -97,27 +87,70 @@ class Users extends Auth
             :validated,
             :lang);";
         $req = $this->pdo->prepare($sql);
+
         $req->bindParam(':email', $email);
+        $req->bindParam(':team', $team);
+        $req->bindParam(':salt', $salt);
         $req->bindParam(':password', $passwordHash);
         $req->bindParam(':firstname', $firstname);
         $req->bindParam(':lastname', $lastname);
-        $req->bindParam(':team', $team);
-        $req->bindParam(':usergroup', $group);
-        $req->bindParam(':salt', $salt);
         $req->bindParam(':register_date', $registerDate);
         $req->bindParam(':validated', $validated);
+        $req->bindParam(':usergroup', $group);
         $req->bindValue(':lang', get_config('lang'));
 
-        return $req->execute();
+        if (!$req->execute()) {
+            throw new Exception('Error inserting user in SQL!');
+        }
+
+        if ($validated === '0') {
+            $this->alertAdmin($team);
+            $this->needValidation = true;
+        }
+
+        return true;
     }
 
     /**
-     * Send an email to the admin if user is not validated
+     * Get what will be the value of the validated column in users table
+     *
+     * @param int $group
+     * @return int
+     */
+    private function getValidated($group)
+    {
+        if (get_config('admin_validate') === "1" && $group === 4) { // validation is required for normal user
+            return 0; // so new user will need validation
+        }
+        return 1;
+    }
+
+    /**
+     * Return the group int that will be assigned to a new user in a team
+     * 1 = sysadmin if it's the first user ever
+     * 2 = admin for first user in a team
+     * 4 = normal user
+     *
+     * @param int $team
+     * @return int
+     */
+    private function getGroup($team)
+    {
+        if ($this->isFirstUser()) {
+            return 1;
+        } elseif ($this->isFirstUserInTeam($team)) {
+            return 2;
+        }
+        return 4;
+    }
+
+    /**
+     * Send an email to the admin of a team
      *
      * @param int $team
      * @throws Exception
      */
-    public function alertAdmin($team)
+    private function alertAdmin($team)
     {
         // Create the message
         $footer = "\n\n~~~\nSent from eLabFTW http://www.elabftw.net\n";

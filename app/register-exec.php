@@ -40,18 +40,17 @@ try {
     }
 
     //Check whether the query was successful or not
-    if ($Users->create($_POST['email'], $_POST['password'], $_POST['team'], $_POST['firstname'], $_POST['lastname'])) {
-        if (get_config('admin_validate') === 1 && $group === 4) { // validation is required for normal user
-            $Users->alertAdmin($_POST['team']);
-            $_SESSION['ok'][] = _('Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done.');
-        } else {
-            $_SESSION['ok'][] = _('Registration successful :)<br>Welcome to eLabFTW o/');
-        }
-        // store the email here so we can put it in the login field
-        $_SESSION['email'] = $_POST['email'];
-    } else {
-        $_SESSION['ko'][] = Tools::error();
+    if (!$Users->create($_POST['email'], $_POST['password'], $_POST['team'], $_POST['firstname'], $_POST['lastname'])) {
+        throw new Exception('Failed inserting new account in SQL!');
     }
+
+    if ($Users->needValidation) {
+        $_SESSION['ok'][] = _('Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done.');
+    } else {
+        $_SESSION['ok'][] = _('Registration successful :)<br>Welcome to eLabFTW o/');
+    }
+    // store the email here so we can put it in the login field
+    $_SESSION['email'] = $_POST['email'];
 
 } catch (Exception $e) {
     $_SESSION['ko'][] = $e->getMessage();

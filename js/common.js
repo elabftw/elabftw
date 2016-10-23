@@ -116,10 +116,10 @@ function toggleLock(type, id) {
             notif(json.msg, 'ok');
             // change the lock icon
             current = $('#lock').attr('src');
-            if (current === 'img/lock-gray.png') {
-                $('#lock').attr('src', 'img/unlock.png');
+            if (current === 'app/img/lock-gray.png') {
+                $('#lock').attr('src', 'app/img/unlock.png');
             } else {
-                $('#lock').attr('src', 'img/lock-gray.png');
+                $('#lock').attr('src', 'app/img/lock-gray.png');
             }
         } else {
             notif(json.msg, 'ko');

@@ -27,7 +27,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] == 1) {
 }
 ?>
 
-<menu class='border'><a href='login.php'><img src='img/arrow-left-blue.png' alt='' /> <?php echo _('go back to login page'); ?></a></menu>
+<menu class='border'><a href='login.php'><img src='app/img/arrow-left-blue.png' alt='' /> <?php echo _('go back to login page'); ?></a></menu>
 <section class='center'>
     <h2><?php echo _('Create your account'); ?></h2><br><br>
     <!-- Register form -->

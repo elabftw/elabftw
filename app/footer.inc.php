@@ -27,11 +27,11 @@
     <p class='footer_left'>
     <a class='elab-tooltip-top' href='https://twitter.com/elabftw'>
         <span>Follow eLabFTW on Twitter!</span>
-    <img src='img/twitter.png' alt='twitter' />
+    <img src='app/img/twitter.png' alt='twitter' />
     </a>
      <a class='elab-tooltip-top' href='https://github.com/elabftw/elabftw'>
         <span>eLabFTW on GitHub</span>
-    <img src='img/github.png' alt='github' />
+    <img src='app/img/github.png' alt='github' />
     </a>
     <span>
         <span>

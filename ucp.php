@@ -236,7 +236,7 @@ echo "</ul>";
 ?>
     <!-- CREATE NEW TPL TAB -->
     <div class='subdivhandle' id='subtab_1div'>
-    <p onClick="$('#import_tpl').toggle()" style='cursor:pointer'><img src='img/add.png' title='import template' alt='import' /><?= _('Import from File') ?></p>
+    <p onClick="$('#import_tpl').toggle()" style='cursor:pointer'><img src='app/img/add.png' title='import template' alt='import' /><?= _('Import from File') ?></p>
         <form action='app/ucp-exec.php' method='post'>
             <input type='hidden' name='new_tpl_form' />
             <input type='file' accept='.elabftw.tpl' id='import_tpl'>
@@ -255,9 +255,9 @@ echo "</ul>";
 
     foreach ($templatesArr as $template) {
         echo "<div class='subdivhandle' id='subtab_" . $template['id'] . "div'>";
-        echo "<img class='align_right' src='img/download.png' title='Export Template' alt='Export' ";
+        echo "<img class='align_right' src='app/img/download.png' title='Export Template' alt='Export' ";
         echo "onClick=\"exportTpl('" . $template['name'] . "', " . $template['id'] . ")\" />";
-        echo "<img class='align_right' src='img/small-trash.png' title='Delete' alt='Delete' ";
+        echo "<img class='align_right' src='app/img/small-trash.png' title='Delete' alt='Delete' ";
         echo "onClick=\"templatesDestroy(" . $template['id'] . ")\" />";
         echo "<form action='app/ucp-exec.php' method='post'>";
         echo "<input type='hidden' name='tpl_form' />";

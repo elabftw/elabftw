@@ -17,7 +17,7 @@ namespace Elabftw\Elabftw;
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name='referrer' content='origin'>
-<link rel="icon" type="image/ico" href="img/favicon.ico" />
+<link rel="icon" type="image/ico" href="app/img/favicon.ico" />
 <?php
 echo "<title>" . (isset($page_title) ? $page_title : "Lab manager") . " - eLab " . Tools::getFtw() . "</title>";
 ?>
@@ -100,9 +100,9 @@ if (isset($_SESSION['auth'])) {
     ?>
     <div class="user-nav">
         <?= _('Howdy,') . ' ' ?><a class="elab-tooltip" href='profile.php' ><span>My Profile</span><?= $_SESSION['firstname'] ?></a><br>
-        <a class="elab-tooltip" href='ucp.php'><span>Settings</span><img src='img/settings.png' alt='<?= _('Settings') ?>'  /></a> |
+        <a class="elab-tooltip" href='ucp.php'><span>Settings</span><img src='app/img/settings.png' alt='<?= _('Settings') ?>'  /></a> |
         <a class="elab-tooltip" href='#'><strong class="elab-tooltip" id='help'><span>Help</span>?</strong></a> |
-        <a class="elab-tooltip" href='app/logout.php'><span>Logout</span><img src='img/logout.png' alt='<?= _('Logout') ?>'  /></a>
+        <a class="elab-tooltip" href='app/logout.php'><span>Logout</span><img src='app/img/logout.png' alt='<?= _('Logout') ?>'  /></a>
     </div>
     <div id='help_container' class='well help-container'>
     <p><a href='#' class='close' onClick="$('#help_container').hide();">&times</a>

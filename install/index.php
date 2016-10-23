@@ -42,7 +42,7 @@ $errflag = false;
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="author" content="Nicolas CARPi" />
 <meta name='referrer' content='origin'>
-<link rel="icon" type="image/ico" href="../img/favicon.ico" />
+<link rel="icon" type="image/ico" href="../app/img/favicon.ico" />
 <title>eLabFTW - INSTALL</title>
 <!-- CSS -->
 <!-- Bootstrap -->
@@ -58,7 +58,7 @@ $errflag = false;
 <body>
 <section id="container" class='container'>
 <section id='real_container'>
-<center><img src='../img/logo.png' alt='elabftw' title='elabftw' /></center>
+<center><img src='../app/img/logo.png' alt='elabftw' title='elabftw' /></center>
 <h2>Welcome to the install of eLabFTW</h2>
 
 <?php

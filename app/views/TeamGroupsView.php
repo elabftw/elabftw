@@ -50,7 +50,7 @@ class TeamGroupsView
             $html .= "<div class='well'>";
             $html .= "<a class='elab-tooltip' style='float:right;' href='#'>";
             $html .= "<span>Remove this Group</span>";
-            $html .= "<img onclick=\"teamGroupDestroy(" . $teamGroup['id'] . ", '" . str_replace(array("\"", "'"), '', _('Delete this?')) . "')\" src='img/small-trash.png' style='float:right' alt='trash' /></a>";
+            $html .= "<img onclick=\"teamGroupDestroy(" . $teamGroup['id'] . ", '" . str_replace(array("\"", "'"), '', _('Delete this?')) . "')\" src='app/img/small-trash.png' style='float:right' alt='trash' /></a>";
             $html .= "<h3 title='Click to Edit' class='inline editable teamgroup_name' id='teamgroup_" . $teamGroup['id'] . "'>" . $teamGroup['name'] . "</h3>";
             $html .= "<ul class='group-list'>";
             $req = $this->pdo->prepare($sql);

@@ -508,11 +508,11 @@ if (isset($_GET)) {
                 <a name='anchor'></a>
                 <p class='inline'><?= _('Export this result:') ?> </p>
                 <a href='make.php?what=zip&id=<?= Tools::buildStringFromArray($results_arr) ?>&type=<?= $search_type ?>'>
-                    <img src='img/zip.png' title='make a zip archive' alt='zip' />
+                    <img src='app/img/zip.png' title='make a zip archive' alt='zip' />
                 </a>
 
                 <a href='make.php?what=csv&id=<?= Tools::buildStringFromArray($results_arr) ?>&type=<?= $search_type ?>'>
-                    <img src='img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' />
+                    <img src='app/img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' />
                 </a>
             </div>
             <?php

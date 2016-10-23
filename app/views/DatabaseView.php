@@ -143,21 +143,21 @@ class DatabaseView extends EntityView
 
         // show attached if there is a file attached
         if ($item['attachment']) {
-            $html .= "<img style='clear:both' class='align_right' src='img/attached.png' alt='file attached' />";
+            $html .= "<img style='clear:both' class='align_right' src='app/img/attached.png' alt='file attached' />";
         }
         // STARS
         $html .= $this->showStars($item['rating']);
         $html .= "<p class='title'>";
         // LOCK
         if ($item['locked']) {
-            $html .= "<img style='padding-bottom:3px;' src='img/lock-blue.png' alt='lock' />";
+            $html .= "<img style='padding-bottom:3px;' src='app/img/lock-blue.png' alt='lock' />";
         }
         // TITLE
         $html .= $item['title'] . "</p></a>";
         // ITEM TYPE
         $html .= "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['bgcolor'] . "'>" . $item['name'] . " </span>";
         // DATE
-        $html .= "<span class='date'><img class='image' src='img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
+        $html .= "<span class='date'><img class='image' src='app/img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
         // TAGS
         $html .= $this->showTags('items', 'view', $item['itemid']);
 
@@ -179,22 +179,22 @@ class DatabaseView extends EntityView
         $html .= $this->backToLink('database');
 
         $html .= "<section class='box'>";
-        $html .= "<div><img src='img/calendar.png' title='date' alt='Date :' /> ";
+        $html .= "<div><img src='app/img/calendar.png' title='date' alt='Date :' /> ";
         $html .= Tools::formatDate($itemArr['date']) . "</div>";
         $html .= $this->showStars($itemArr['rating']);
         // buttons
-        $html .= "<a class='elab-tooltip' href='database.php?mode=edit&id=" . $itemArr['itemid'] . "'><span>Edit</span><img src='img/pen-blue.png' alt='Edit' /></a> 
-        <a class='elab-tooltip' href='app/controllers/DatabaseController.php?databaseDuplicateId=" . $itemArr['itemid'] . "'><span>Duplicate Item</span><img src='img/duplicate.png' alt='Duplicate' /></a> 
-        <a class='elab-tooltip' href='make.php?what=pdf&id=" . $itemArr['itemid'] . "&type=items'><span>Make a PDF</span><img src='img/pdf.png' alt='PDF' /></a> 
-        <a class='elab-tooltip' href='make.php?what=zip&id=" . $itemArr['itemid'] . "&type=items'><span>Make a ZIP</span><img src='img/zip.png' alt='ZIP' /></a>
-        <a class='elab-tooltip' href='experiments.php?mode=show&related=".$itemArr['itemid'] . "'><span>Linked Experiments</span><img src='img/link.png' alt='Linked Experiments' /></a> ";
+        $html .= "<a class='elab-tooltip' href='database.php?mode=edit&id=" . $itemArr['itemid'] . "'><span>Edit</span><img src='app/img/pen-blue.png' alt='Edit' /></a> 
+        <a class='elab-tooltip' href='app/controllers/DatabaseController.php?databaseDuplicateId=" . $itemArr['itemid'] . "'><span>Duplicate Item</span><img src='app/img/duplicate.png' alt='Duplicate' /></a> 
+        <a class='elab-tooltip' href='make.php?what=pdf&id=" . $itemArr['itemid'] . "&type=items'><span>Make a PDF</span><img src='app/img/pdf.png' alt='PDF' /></a> 
+        <a class='elab-tooltip' href='make.php?what=zip&id=" . $itemArr['itemid'] . "&type=items'><span>Make a ZIP</span><img src='app/img/zip.png' alt='ZIP' /></a>
+        <a class='elab-tooltip' href='experiments.php?mode=show&related=".$itemArr['itemid'] . "'><span>Linked Experiments</span><img src='app/img/link.png' alt='Linked Experiments' /></a> ";
         // lock
         $imgSrc = 'unlock.png';
         $alt = _('Lock/Unlock item');
         if ($itemArr['locked'] != 0) {
             $imgSrc = 'lock-gray.png';
         }
-        $html .= "<a class='elab-tooltip' href='#'><span>" . $alt . "</span><img id='lock' onClick=\"toggleLock('database', " . $itemArr['itemid'] . ")\" src='img/" . $imgSrc . "' alt='" . $alt . "' /></a>";
+        $html .= "<a class='elab-tooltip' href='#'><span>" . $alt . "</span><img id='lock' onClick=\"toggleLock('database', " . $itemArr['itemid'] . ")\" src='app/img/" . $imgSrc . "' alt='" . $alt . "' /></a>";
         // TAGS
         $html .= " " . $this->showTags('items', 'view', $this->Database->id);
 
@@ -257,7 +257,7 @@ class DatabaseView extends EntityView
         $html .= $this->backToLink('database');
         // begin page
         $html .= "<section class='box' style='border-left: 6px solid #" . $itemArr['bgcolor'] . "'>";
-        $html .= "<img class='align_right' src='img/big-trash.png' title='delete' alt='delete' onClick=\"databaseDestroy(" . $this->Database->id . ", '" . _('Delete this?') . "')\" />";
+        $html .= "<img class='align_right' src='app/img/big-trash.png' title='delete' alt='delete' onClick=\"databaseDestroy(" . $this->Database->id . ", '" . _('Delete this?') . "')\" />";
 
         // tags
         $html .= $this->showTags('items', 'edit', $this->Database->id);
@@ -270,7 +270,7 @@ class DatabaseView extends EntityView
         // date
         $html .= "<div class='row'>";
         $html .= "<div class='col-md-4'>";
-        $html .= "<img src='img/calendar.png' title='date' alt='Date :' />";
+        $html .= "<img src='app/img/calendar.png' title='date' alt='Date :' />";
         $html .= "<label for='datepicker'>" . _('Date') . "</label>";
         // if one day firefox has support for it: type = date
         $html .= "<input name='date' id='datepicker' size='8' type='text' value='" . $itemArr['date'] . "' />";
@@ -412,8 +412,8 @@ class DatabaseView extends EntityView
     {
         $html = "<span class='align_right'>";
 
-        $green = "<img src='img/star-green.png' alt='☻' />";
-        $gray = "<img src='img/star-gray.png' alt='☺' />";
+        $green = "<img src='app/img/star-green.png' alt='☻' />";
+        $gray = "<img src='app/img/star-gray.png' alt='☺' />";
 
         $html .= str_repeat($green, $rating);
         $html .= str_repeat($gray, (5 - $rating));

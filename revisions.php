@@ -61,7 +61,7 @@ try {
     }
 
     // BEGIN PAGE
-    echo "<a href='" . $location . ".php?mode=view&id=" . $_GET['item_id'] . "'><h4><img src='img/undo.png' alt='<--' /> " . _('Go back') . "</h4></a>";
+    echo "<a href='" . $location . ".php?mode=view&id=" . $_GET['item_id'] . "'><h4><img src='app/img/undo.png' alt='<--' /> " . _('Go back') . "</h4></a>";
     $revisionArr = $Revisions->read();
     foreach ($revisionArr as $revision) {
         echo "<div class='item'>" . _('Saved on:') . " " . $revision['savedate'] . " <a href='revisions.php?item_id=" . $_GET['item_id'] . "&type=" . $_GET['type'] . "&action=restore&rev_id=" . $revision['id'] . "'>" . _('Restore') . "</a><br>";

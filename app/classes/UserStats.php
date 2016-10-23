@@ -123,7 +123,7 @@ class UserStats
      */
     public function show()
     {
-        $html = "<img src='img/statistics.png' alt='' /> <h4 style='display:inline'>" . _('Statistics') . "</h4>";
+        $html = "<img src='app/img/statistics.png' alt='' /> <h4 style='display:inline'>" . _('Statistics') . "</h4>";
         $html .= "<hr>";
         $html .= "<script src='https://www.google.com/jsapi'></script>";
         $html .= "<script>

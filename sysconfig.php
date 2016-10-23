@@ -45,7 +45,7 @@ try {
         echo "<br><p>" . _('Installed version:') . " " . $SysconfigView->Update->getInstalledVersion() . " ";
         // show a little green check if we have latest version
         if (!$SysconfigView->Update->updateIsAvailable()) {
-            echo "<img src='img/check.png' width='16px' length='16px' title='latest' style='position:relative;bottom:2px' alt='OK' />";
+            echo "<img src='app/img/check.png' width='16px' length='16px' title='latest' style='position:relative;bottom:2px' alt='OK' />";
         }
         // display latest version
         echo "<br>" . _('Latest version:') . " " . $SysconfigView->Update->getLatestVersion() . "</p>";

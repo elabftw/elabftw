@@ -81,9 +81,9 @@ class EntityView
             $html .= "<a name='anchor'></a>";
             $html .= "<p class='inline'>" . _('Export this result:') . " </p>";
             $html .= "<a class='elab-tooltip' href='make.php?what=zip&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";
-            $html .= " <span>Make a ZIP</span><img src='img/zip.png' alt='ZIP' /></a>";
+            $html .= " <span>Make a ZIP</span><img src='app/img/zip.png' alt='ZIP' /></a>";
             $html .= "<a class='elab-tooltip' href='make.php?what=csv&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";
-            $html .= " <span>Export in CSV</span><img src='img/spreadsheet.png' alt='Export CSV' /></a></div>";
+            $html .= " <span>Export in CSV</span><img src='app/img/spreadsheet.png' alt='Export CSV' /></a></div>";
 
             return $html;
     }
@@ -261,7 +261,7 @@ class EntityView
 
         if ($mode === 'view') {
 
-            $html = "<span class='tags'><img src='img/tags.png' alt='tags' /> ";
+            $html = "<span class='tags'><img src='app/img/tags.png' alt='tags' /> ";
             foreach ($tagList as $tag) {
                 if ($type === 'experiments') {
                     $html .= "<a href='experiments.php?mode=show&tag=" . urlencode(stripslashes($tag['tag'])) . "'>" . stripslashes($tag['tag']) . "</a> ";
@@ -275,7 +275,7 @@ class EntityView
         }
 
 
-        $html = "<img src='img/tags.png' alt='tags' /><label for='addtaginput'>" . _('Tags') . "</label>";
+        $html = "<img src='app/img/tags.png' alt='tags' /><label for='addtaginput'>" . _('Tags') . "</label>";
         $html .= "<div class='tags'><span id='tags_div'>";
 
         foreach ($tagList as $tag) {
@@ -303,7 +303,7 @@ class EntityView
         }
 
         $html = "<a href='" . $type . ".php?mode=show'>";
-        $html .= "<img src='img/arrow-left-blue.png' alt='' /> " . $text . "</a>";
+        $html .= "<img src='app/img/arrow-left-blue.png' alt='' /> " . $text . "</a>";
 
         return $html;
     }

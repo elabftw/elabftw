@@ -35,7 +35,7 @@ class UploadsView extends EntityView
     public function buildUploadForm()
     {
         $html = "<section class='box'>";
-        $html .= "<img src='img/attached.png' /> ";
+        $html .= "<img src='app/img/attached.png' /> ";
         $html .= "<h3 style='display:inline'>" . _('Attach a file') . "</h3>";
         $html .= "<form action='app/controllers/EntityController.php' class='dropzone' id='elabftw-dropzone'></form>";
         $html .= "</section>";
@@ -109,7 +109,7 @@ class UploadsView extends EntityView
         // begin HTML build
         $html = "<div id='filesdiv'>";
         $html .= "<div class='box'>";
-        $html .= "<img src='img/attached.png' /> <h3 style='display:inline'>" .
+        $html .= "<img src='app/img/attached.png' /> <h3 style='display:inline'>" .
             ngettext('Attached file', 'Attached files', $count) . "</h3>";
         $html .= "<div class='row'>";
         foreach ($uploadsArr as $upload) {
@@ -119,7 +119,7 @@ class UploadsView extends EntityView
             if ($mode === 'edit') {
                 $html .= "<a class='align_right' onClick=\"uploadsDestroy(" . $upload['id'] . "
                     , '" . $upload['type'] . "', " . $upload['item_id'] . ", '" . _('Delete this?') . "')\">";
-                $html .= "<img src='img/small-trash.png' title='delete' alt='delete' /></a>";
+                $html .= "<img src='app/img/small-trash.png' title='delete' alt='delete' /></a>";
             } // end if it is in edit mode
 
             // get file extension
@@ -127,7 +127,7 @@ class UploadsView extends EntityView
             $filepath = 'uploads/' . $upload['long_name'];
             $thumbpath = $filepath . '_th.jpg';
 
-            // list of extensions with a corresponding img/thumb-*.png image
+            // list of extensions with a corresponding app/img/thumb-*.png image
             $commonExtensions = array('avi', 'csv', 'doc', 'docx', 'mov', 'pdf', 'ppt', 'rar', 'xls', 'xlsx', 'zip');
 
             // list of extensions understood by 3Dmol.js
@@ -150,7 +150,7 @@ class UploadsView extends EntityView
 
             // not an image
             } elseif (in_array($ext, $commonExtensions)) {
-                $html .= "<img class='thumb' src='img/thumb-" . $ext . ".png' alt='' />";
+                $html .= "<img class='thumb' src='app/img/thumb-" . $ext . ".png' alt='' />";
 
             // special case for mol files, only in view mode
             } elseif ($ext === 'mol' && $_SESSION['prefs']['chem_editor'] && $mode === 'view') {
@@ -167,11 +167,11 @@ class UploadsView extends EntityView
 
             } else {
                 // uncommon extension without a nice image to display
-                $html .= "<img class='thumb' src='img/thumb.png' alt='' />";
+                $html .= "<img class='thumb' src='app/img/thumb.png' alt='' />";
             }
 
             // now display the name + comment with icons
-            $html .= "<div class='caption'><img src='img/attached.png' alt='attached' /> ";
+            $html .= "<div class='caption'><img src='app/img/attached.png' alt='attached' /> ";
             $html .= "<a href='app/download.php?f=" . $upload['long_name'] .
                 "&name=" . $upload['real_name'] . "' target='_blank'>" . $upload['real_name'] . "</a>";
             $html .= "<span class='smallgray' style='display:inline'> " .
@@ -181,7 +181,7 @@ class UploadsView extends EntityView
             // your are in view mode
 
             if ($mode === 'edit' || ($upload['comment'] != 'Click to add a comment')) {
-                $comment = "<img src='img/comment.png' alt='comment' />
+                $comment = "<img src='app/img/comment.png' alt='comment' />
                             <p class='editable inline' id='filecomment_" . $upload['id'] . "'>" .
                 stripslashes($upload['comment']) . "</p>";
                 $html .= $comment;

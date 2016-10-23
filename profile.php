@@ -31,7 +31,7 @@ try {
 
     // USER INFOS
     echo "<section class='box'>";
-    echo "<img src='img/user.png' alt='user' /> <h4 style='display:inline'>" . _('Infos') . "</h4>";
+    echo "<img src='app/img/user.png' alt='user' /> <h4 style='display:inline'>" . _('Infos') . "</h4>";
     echo "<hr>";
     echo "<div>
         <p>".$user['firstname'] . " " . $user['lastname'] . " (" . $user['email'] . ")</p>

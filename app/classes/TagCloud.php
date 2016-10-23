@@ -73,7 +73,7 @@ class TagCloud
         $tags = $this->readAll();
 
         $html = "<section class='box'>";
-        $html .= "<img src='img/cloud.png' alt='' /> <h4 style='display:inline'>" . _('Tag cloud') . "</h4>";
+        $html .= "<img src='app/img/cloud.png' alt='' /> <h4 style='display:inline'>" . _('Tag cloud') . "</h4>";
         $html .= "<hr>";
         $html .= "<div>";
 

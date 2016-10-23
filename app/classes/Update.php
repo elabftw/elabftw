@@ -25,10 +25,8 @@ class Update
 {
     /** 1.1.4 */
     private $version;
-    /** the url line from the updates.ini file with link to archive */
-    protected $url;
-    /** sha512sum of the archive we should expect */
-    protected $sha512;
+    /** release date of the version */
+    protected $releaseDate;
 
     /** our favorite pdo object */
     private $pdo;
@@ -142,10 +140,9 @@ class Update
         }
         // convert ini into array. The `true` is for process_sections: to get multidimensionnal array.
         $versions = parse_ini_string($ini, true);
-        // get the latest version (first item in array, an array itself with url and checksum)
+        // get the latest version
         $this->version = array_keys($versions)[0];
-        $this->sha512 = substr($versions[$this->version]['sha512'], 0, 128);
-        $this->url = $versions[$this->version]['url'];
+        $this->releaseDate = $versions[$this->version]['date'];
 
         if (!$this->validateVersion()) {
             throw new Exception('Error getting latest version information from server!');
@@ -181,6 +178,16 @@ class Update
     public function getLatestVersion()
     {
         return $this->version;
+    }
+
+    /**
+     * Get when the latest version was released
+     *
+     * @return string
+     */
+    public function getReleaseDate()
+    {
+        return $this->releaseDate;
     }
 
     /**

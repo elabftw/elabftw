@@ -52,7 +52,8 @@ try {
 
         // if we don't have the latest version, show button redirecting to wiki
         if ($SysconfigView->Update->updateIsAvailable()) {
-            $message = _('A new version is available!') . " <a href='https://elabftw.readthedocs.io/en/stable/how-to-update.html'>
+            $message = $SysconfigView->Update->getReleaseDate() . " - " .
+                _('A new version is available!') . " <a href='https://elabftw.readthedocs.io/en/stable/how-to-update.html'>
                 <button class='button'>Update elabftw</button></a>";
             display_message('warning', $message);
         }

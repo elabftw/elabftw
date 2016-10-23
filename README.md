@@ -31,7 +31,9 @@ Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM 
 
 # Installation
 
-[Read the documentation, it's very complete](https://elabftw.readthedocs.io).
+**eLabFTW** can easily be installed on any GNU/Linux server. The documentation explains everything:
+
+## [eLabFTW Documentation](https://elabftw.readthedocs.io).
 
 # Contributing
 

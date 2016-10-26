@@ -38,9 +38,9 @@ class Update
     private $configArr;
 
     /** where to get info from */
-    const URL = 'https://get.iielabftw.net/updates.ini';
+    const URL = 'https://get.elabftw.net/updates.ini';
     /** if we can't connect in https for some reason, use http */
-    const URL_HTTP = 'http://giet.elabftw.net/updates.ini';
+    const URL_HTTP = 'http://get.elabftw.net/updates.ini';
 
     /**
      * ////////////////////////////
@@ -137,6 +137,10 @@ class Update
         // try with http if https failed (see #176)
         if (!$ini) {
             $ini = $this->get(self::URL_HTTP);
+        }
+        if (!$ini) {
+            $this->success = false;
+            throw new Exception('Error getting latest version information from server! Check the proxy setting.');
         }
         // convert ini into array. The `true` is for process_sections: to get multidimensionnal array.
         $versions = parse_ini_string($ini, true);

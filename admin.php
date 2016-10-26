@@ -33,6 +33,7 @@ try {
     $TeamGroupsView = new TeamGroupsView(new TeamGroups($_SESSION['team_id']));
     $Auth = new Auth();
     $Users = new Users();
+    $usersArr = $Users->readAllFromTeam($_SESSION['team_id']);
     $UsersView = new UsersView($Users);
 
     $templates = new Templates($_SESSION['team_id']);
@@ -65,14 +66,14 @@ try {
 
     <menu>
         <ul>
-        <li class='tabhandle' id='tab1'><?= _('Team') ?></li>
+            <li class='tabhandle' id='tab1'><?= _('Team') ?></li>
             <li class='tabhandle' id='tab2'><?= _('Users') ?></li>
-            <li class='tabhandle' id='tab3'><?= ngettext('Status', 'Status', 2) ?></li>
-            <li class='tabhandle' id='tab4'><?= _('Types of items') ?></li>
-            <li class='tabhandle' id='tab5'><?= _('Experiments template') ?></li>
-            <li class='tabhandle' id='tab6'><?= _('Import CSV') ?></li>
-            <li class='tabhandle' id='tab7'><?= _('Import ZIP') ?></li>
-            <li class='tabhandle' id='tab8'><?= _('Groups') ?></li>
+            <li class='tabhandle' id='tab3'><?= _('Groups') ?></li>
+            <li class='tabhandle' id='tab4'><?= ngettext('Status', 'Status', 2) ?></li>
+            <li class='tabhandle' id='tab5'><?= _('Types of items') ?></li>
+            <li class='tabhandle' id='tab6'><?= _('Experiments template') ?></li>
+            <li class='tabhandle' id='tab7'><?= _('Import CSV') ?></li>
+            <li class='tabhandle' id='tab8'><?= _('Import ZIP') ?></li>
         </ul>
     </menu>
 
@@ -175,112 +176,10 @@ try {
         </ul>
     </div>
 
-    <!-- TAB 3 STATUS -->
-    <div class='divhandle' id='tab3div'>
-        <?php
-        echo $StatusView->showCreate();
-        echo $StatusView->show();
-        ?>
-    </div>
-
-    <!-- TAB 4 ITEMS TYPES-->
-    <div class='divhandle' id='tab4div'>
-        <?php
-        echo $ItemsTypesView->showCreate();
-        echo $ItemsTypesView->show();
-        ?>
-    </div>
-
-    <!-- TAB 5 COMMON EXPERIMENT TEMPLATE -->
-    <div class='divhandle' id='tab5div'>
-        <div class='box'>
-            <h3><?= _('Common Experiment Template') ?></h3><hr>
-            <p><?= _('This is the default text when someone creates an experiment.') ?></p>
-            <textarea style='height:400px' class='mceditable' id='commonTplTemplate' />
-        <?php
-            $templatesArr = $templates->readCommon();
-            echo $templatesArr['body']
-        ?>
-            </textarea>
-            <div class='submitButtonDiv'>
-                <button type='submit' class='button' onClick='commonTplUpdate()'><?= _('Save') ?></button>
-            </div>
-        </div>
-    </div>
-
-    <!-- TAB 6 IMPORT CSV -->
-    <?php $itemsTypesArr = $ItemsTypesView->itemsTypes->readAll() ?>
-    <div class='divhandle' id='tab6div'>
-        <div class='box'>
-            <h3><?= _('Import a CSV File') ?></h3>
-            <hr>
-            <p style='text-align:justify'><?= _("This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file.") ?>
-            <span class='strong'><?= _('You should make a backup of your database before importing thousands of items!') ?></span></p>
-
-            <label class="block" for='item_selector'><?= _('1. Select a type of item to import to:') ?></label>
-            <select class="clean-form col-3-form" id='item_selector' onchange='goNext(this.value)'><option value=''>--------</option>
-            <?php
-            foreach ($itemsTypesArr as $items_types) {
-                echo "<option value='" . $items_types['id'] . "' name='type' ";
-                echo ">" . $items_types['name'] . "</option>";
-            }
-            ?>
-            </select>
-            <div class='import_block'>
-                <form enctype="multipart/form-data" action="app/controllers/ImportController.php" method="POST">
-                <label class="block" for='uploader'><?= _('2. Select a CSV file to import:') ?></label>
-                    <input id='uploader' name="file" type="file" accept='.csv' />
-                    <input name='type' type='hidden' value='csv' />
-                    <div class='submitButtonDiv'>
-                        <button type="submit" class='button' value="Upload"><?= _('Import CSV') ?></button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- TAB 7 IMPORT ZIP -->
-    <div class='divhandle' id='tab7div'>
-        <div class='box'>
-            <h3><?= _('Import a ZIP File') ?></h3><hr>
-            <p><?= _("This page will allow you to import a .elabftw.zip archive.") ?>
-        <br><span class='strong'><?= _('You should make a backup of your database before importing thousands of items!') ?></span></p>
-
-                <label class="block" for='item_selector'><?= _('1. Select where to import:') ?></label>
-                <select class="clean-form col-3-form" id='item_selector' onchange='goNext(this.value)'>
-                    <option value='' selected>-------</option>
-                    <option class='disabled-input' value='' disabled>Import items</option>
-    <?php
-    foreach ($itemsTypesArr as $items_types) {
-        echo "<option value='" . $items_types['id'] . "' name='type' ";
-        echo ">" . $items_types['name'] . "</option>";
-    }
-    echo "<option class='disabled-input' value='' disabled>Import experiments</option>";
-
-    $usersArr = $Users->readAllFromTeam($_SESSION['team_id']);
-    foreach ($usersArr as $user) {
-        echo "<option value='" . $user['userid'] . "' name='type' ";
-        echo ">" . $user['firstname'] . " " . $user['lastname'] . "</option>";
-    }
-    ?>
-                </select><br>
-                <div class='import_block'>
-                <form enctype="multipart/form-data" action="app/controllers/ImportController.php" method="POST">
-                <label class="block" for='uploader'><?= _('2. Select a ZIP file to import:') ?></label>
-                    <input id='uploader' name="file" type="file" accept='.elabftw.zip' />
-                    <input name='type' type='hidden' value='zip' />
-                    <div class='submitButtonDiv'>
-                        <button type="submit" class='button' value="Upload"><?= _('Import ZIP') ?></button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- TAB 8 TEAM GROUPS -->
+    <!-- TAB 3 TEAM GROUPS -->
     <?php $teamGroupsArr = $TeamGroupsView->TeamGroups->readAll(); ?>
 
-    <div class='divhandle' id='tab8div'>
+    <div class='divhandle' id='tab3div'>
         <div class='box tooltip-box'>
             <h3><?= _('Manage Groups of Users') ?></h3><hr>
         <!-- CREATE A GROUP -->
@@ -351,6 +250,107 @@ try {
         </div>
     </div>
     <!-- END TEAM GROUPS -->
+
+    <!-- TAB 4 STATUS -->
+    <div class='divhandle' id='tab4div'>
+        <?php
+        echo $StatusView->showCreate();
+        echo $StatusView->show();
+        ?>
+    </div>
+
+    <!-- TAB 5 ITEMS TYPES-->
+    <div class='divhandle' id='tab5div'>
+        <?php
+        echo $ItemsTypesView->showCreate();
+        echo $ItemsTypesView->show();
+        ?>
+    </div>
+
+    <!-- TAB 6 COMMON EXPERIMENT TEMPLATE -->
+    <div class='divhandle' id='tab6div'>
+        <div class='box'>
+            <h3><?= _('Common Experiment Template') ?></h3><hr>
+            <p><?= _('This is the default text when someone creates an experiment.') ?></p>
+            <textarea style='height:400px' class='mceditable' id='commonTplTemplate' />
+        <?php
+            $templatesArr = $templates->readCommon();
+            echo $templatesArr['body']
+        ?>
+            </textarea>
+            <div class='submitButtonDiv'>
+                <button type='submit' class='button' onClick='commonTplUpdate()'><?= _('Save') ?></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 7 IMPORT CSV -->
+    <?php $itemsTypesArr = $ItemsTypesView->itemsTypes->readAll() ?>
+    <div class='divhandle' id='tab7div'>
+        <div class='box'>
+            <h3><?= _('Import a CSV File') ?></h3>
+            <hr>
+            <p style='text-align:justify'><?= _("This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file.") ?>
+            <span class='strong'><?= _('You should make a backup of your database before importing thousands of items!') ?></span></p>
+
+            <label class="block" for='item_selector'><?= _('1. Select a type of item to import to:') ?></label>
+            <select class="clean-form col-3-form" id='item_selector' onchange='goNext(this.value)'><option value=''>--------</option>
+            <?php
+            foreach ($itemsTypesArr as $items_types) {
+                echo "<option value='" . $items_types['id'] . "' name='type' ";
+                echo ">" . $items_types['name'] . "</option>";
+            }
+            ?>
+            </select>
+            <div class='import_block'>
+                <form enctype="multipart/form-data" action="app/controllers/ImportController.php" method="POST">
+                <label class="block" for='uploader'><?= _('2. Select a CSV file to import:') ?></label>
+                    <input id='uploader' name="file" type="file" accept='.csv' />
+                    <input name='type' type='hidden' value='csv' />
+                    <div class='submitButtonDiv'>
+                        <button type="submit" class='button' value="Upload"><?= _('Import CSV') ?></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 8 IMPORT ZIP -->
+    <div class='divhandle' id='tab8div'>
+        <div class='box'>
+            <h3><?= _('Import a ZIP File') ?></h3><hr>
+            <p><?= _("This page will allow you to import a .elabftw.zip archive.") ?>
+        <br><span class='strong'><?= _('You should make a backup of your database before importing thousands of items!') ?></span></p>
+
+                <label class="block" for='item_selector'><?= _('1. Select where to import:') ?></label>
+                <select class="clean-form col-3-form" id='item_selector' onchange='goNext(this.value)'>
+                    <option value='' selected>-------</option>
+                    <option class='disabled-input' value='' disabled>Import items</option>
+    <?php
+    foreach ($itemsTypesArr as $items_types) {
+        echo "<option value='" . $items_types['id'] . "' name='type' ";
+        echo ">" . $items_types['name'] . "</option>";
+    }
+    echo "<option class='disabled-input' value='' disabled>Import experiments</option>";
+
+    foreach ($usersArr as $user) {
+        echo "<option value='" . $user['userid'] . "' name='type' ";
+        echo ">" . $user['firstname'] . " " . $user['lastname'] . "</option>";
+    }
+    ?>
+                </select><br>
+                <div class='import_block'>
+                <form enctype="multipart/form-data" action="app/controllers/ImportController.php" method="POST">
+                <label class="block" for='uploader'><?= _('2. Select a ZIP file to import:') ?></label>
+                    <input id='uploader' name="file" type="file" accept='.elabftw.zip' />
+                    <input name='type' type='hidden' value='zip' />
+                    <div class='submitButtonDiv'>
+                        <button type="submit" class='button' value="Upload"><?= _('Import ZIP') ?></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <script src="js/tinymce/tinymce.min.js"></script>
     <script>

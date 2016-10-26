@@ -140,7 +140,7 @@ class EntityView
         $html = "<div class='row'>";
 
         // LEFT MENU - CREATE NEW
-        $html .= "<div class='col-md-2'>";
+        $html .= "<div class='col-md-2 col-xs-2'>";
         $html .= "<div class='dropdown'>";
         $html .= "<button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>";
         $html .= _('Create new');
@@ -153,7 +153,7 @@ class EntityView
 
         // RIGHT MENU
         // padding 0 is necessary to get the menu fully to the right
-        $html .= "<div class='col-md-10' style='padding:0'>";
+        $html .= "<div class='col-md-10 col-xs-12' style='padding:0'>";
 
         // FILTERS
         $html .= "<div class='col-md-10 align_right'>";

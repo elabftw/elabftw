@@ -40,9 +40,9 @@ try {
         display_message('ko_nocross', $e->getMessage());
     }
 
+    // display current and latest version
+    echo "<p>" . _('Installed version:') . " " . $SysconfigView->Update->getInstalledVersion() . " ";
     if ($SysconfigView->Update->success === true) {
-        // display current and latest version
-        echo "<br><p>" . _('Installed version:') . " " . $SysconfigView->Update->getInstalledVersion() . " ";
         // show a little green check if we have latest version
         if (!$SysconfigView->Update->updateIsAvailable()) {
             echo "<img src='app/img/check.png' width='16px' length='16px' title='latest' style='position:relative;bottom:2px' alt='OK' />";
@@ -50,13 +50,15 @@ try {
         // display latest version
         echo "<br>" . _('Latest version:') . " " . $SysconfigView->Update->getLatestVersion() . "</p>";
 
-        // if we don't have the latest version, show button redirecting to wiki
+        // if we don't have the latest version, show button redirecting to doc
         if ($SysconfigView->Update->updateIsAvailable()) {
             $message = $SysconfigView->Update->getReleaseDate() . " - " .
                 _('A new version is available!') . " <a href='https://elabftw.readthedocs.io/en/stable/how-to-update.html'>
                 <button class='button'>Update elabftw</button></a>";
             display_message('warning', $message);
         }
+    } else {
+        echo "</p>";
     }
 
     if (get_config('mail_from') === 'notconfigured@example.com') {

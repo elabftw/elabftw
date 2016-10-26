@@ -38,9 +38,9 @@ class Update
     private $configArr;
 
     /** where to get info from */
-    const URL = 'https://get.elabftw.net/updates.ini';
+    const URL = 'https://get.iielabftw.net/updates.ini';
     /** if we can't connect in https for some reason, use http */
-    const URL_HTTP = 'http://get.elabftw.net/updates.ini';
+    const URL_HTTP = 'http://giet.elabftw.net/updates.ini';
 
     /**
      * ////////////////////////////
@@ -145,7 +145,7 @@ class Update
         $this->releaseDate = $versions[$this->version]['date'];
 
         if (!$this->validateVersion()) {
-            throw new Exception('Error getting latest version information from server!');
+            throw new Exception('Error getting latest version information from server! Check the proxy setting.');
         }
         $this->success = true;
     }

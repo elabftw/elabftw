@@ -324,6 +324,14 @@ class DatabaseView extends EntityView
         $html = "<script>
         // READY ? GO !
         $(document).ready(function() {
+            // AUTOSAVE
+            var typingTimer;                // timer identifier
+            var doneTypingInterval = 7000;  // time in ms between end of typing and save
+
+            // user finished typing, save work
+            function doneTyping () {
+                quickSave('items', " . $this->Database->id . ");
+            }
             // ADD TAG JS
             // listen keypress, add tag when it's enter
             $('#createTagInput').keypress(function (e) {
@@ -358,6 +366,13 @@ class DatabaseView extends EntityView
                 // keyboard shortcut to insert today's date at cursor in editor
                 setup : function(editor) {
                     editor.addShortcut('ctrl+shift+d', 'add date at cursor', function() { addDateOnCursor(); });
+                    editor.on('keydown', function(event) {
+                        clearTimeout(typingTimer);
+                    });
+                    editor.on('keyup', function(event) {
+                        clearTimeout(typingTimer);
+                        typingTimer = setTimeout(doneTyping, doneTypingInterval);
+                    });
                 },
                 language : '" . $_SESSION['prefs']['lang'] . "',
                 mentions: {

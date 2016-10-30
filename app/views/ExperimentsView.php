@@ -524,6 +524,14 @@ class ExperimentsView extends EntityView
         $html = "<script>
         // READY ? GO !!
         $(document).ready(function() {
+            // AUTOSAVE
+            var typingTimer;                // timer identifier
+            var doneTypingInterval = 7000;  // time in ms between end of typing and save
+
+            // user finished typing, save work
+            function doneTyping () {
+                quickSave('experiments', " . $this->Experiments->id . ");
+            }
             // KEYBOARD SHORTCUTS
             key('" . $_SESSION['prefs']['shortcuts']['create'] . "', function(){location.href = 'app/controllers/ExperimentsController?create=true'});
             key('" . $_SESSION['prefs']['shortcuts']['submit'] . "', function(){document.forms['editXP'].submit()});
@@ -574,6 +582,13 @@ class ExperimentsView extends EntityView
                 // keyboard shortcut to insert today's date at cursor in editor
                 setup : function(editor) {
                     editor.addShortcut('ctrl+shift+d', 'add date at cursor', function() { addDateOnCursor(); });
+                    editor.on('keydown', function(event) {
+                        clearTimeout(typingTimer);
+                    });
+                    editor.on('keyup', function(event) {
+                        clearTimeout(typingTimer);
+                        typingTimer = setTimeout(doneTyping, doneTypingInterval);
+                    });
                 },
                 mentions: {
                     source: [" . getDbList('mention') . "],

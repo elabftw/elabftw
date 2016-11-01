@@ -369,7 +369,7 @@ class ExperimentsView extends EntityView
     }
 
     /**
-     * Check if we have writing rights
+     * Check if we experiment is read only
      *
      * @return bool
      */
@@ -378,7 +378,7 @@ class ExperimentsView extends EntityView
         // Check id is owned by connected user to show read only message if not
         if ($this->experiment['userid'] != $_SESSION['userid']) {
             // Can the user see this experiment which is not his ?
-            if ($this->experiment['visibility'] === 'user') {
+            if ($this->experiment['visibility'] === 'user' && !$_SESSION['is_admin']) {
 
                 throw new Exception(Tools::error(true));
 

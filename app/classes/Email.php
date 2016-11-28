@@ -46,12 +46,20 @@ class Email
 
             // Use SMTP Server
             case 'smtp':
-                $transport = Swift_SmtpTransport::newInstance(
-                    $this->configArr['smtp_address'],
-                    $this->configArr['smtp_port'],
-                    $this->configArr['smtp_encryption']
-                )
-                ->setUsername($this->configArr['smtp_username'])
+                if ($this->configArr['smtp_encryption'] === 'none') {
+                    $transport = Swift_SmtpTransport::newInstance(
+                        $this->configArr['smtp_address'],
+                        $this->configArr['smtp_port']
+                    );
+                } else {
+                    $transport = Swift_SmtpTransport::newInstance(
+                        $this->configArr['smtp_address'],
+                        $this->configArr['smtp_port'],
+                        $this->configArr['smtp_encryption']
+                    );
+                }
+
+                $transport->setUsername($this->configArr['smtp_username'])
                 ->setPassword(Crypto::decrypt(
                     $this->configArr['smtp_password'],
                     Key::loadFromAsciiSafeString(SECRET_KEY)

@@ -289,6 +289,9 @@ try {
                 <label class="block" for='smtp_encryption'><?= _('SMTP encryption:') ?></label>
                 <?php $smtp_encryption = get_config('smtp_encryption') ?>
                 <select class="clean-form col-3-form" name='smtp_encryption'>
+                <option value='none'
+                <?= $smtp_encryption === 'none' ? ' selected>' : '>' ?>
+                None</option>
                 <option value='tls'
                 <?= $smtp_encryption === 'tls' ? ' selected>' : '>' ?>
                 TLS</option>

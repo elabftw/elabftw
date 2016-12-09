@@ -3,10 +3,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 1.8.11\n"
 "Project-Id-Version: elabftw\n"
 "Language: sl\n"
-"Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0);\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
@@ -28,11 +28,13 @@ msgstr "Nastavitve uspešno posodobljene."
 
 #: app/models/Users.php:472
 msgid "Wrong password!"
-msgstr "Nepravilno geslo!"
+msgstr "Napačno geslo!"
 
 #: app/models/Users.php:479
 msgid "No user with this email or user not in your team"
-msgstr "Ni uporabnika/ice z ujemajočim eletronskim naslovom ali pa ni član/ica vaše ekipe"
+msgstr ""
+"Uporabnik s tem eletronskim naslovom ne obstaja ali pa ni član\n"
+"vaše ekipe"
 
 #: app/ucp-exec.php:191 change-pass.php:64 change-pass.php:75
 msgid "The passwords do not match!"
@@ -41,11 +43,11 @@ msgstr "Vtipkani gesli se ne ujemata!"
 #: app/register-exec.php:39 app/ucp-exec.php:141 app/ucp-exec.php:174
 #: app/login-exec.php:31 app/login-exec.php:36
 msgid "A mandatory field is missing!"
-msgstr "Polje, ki vsebuje obvezen podatek, je prazno."
+msgstr "Polje, ki vsebuje obvezen podatek, je prazno!"
 
 #: revisions.php:31 revisions.php:40 sysconfig.php:24
 msgid "This section is out of your reach."
-msgstr "Nimate dovoljenja."
+msgstr "Do te sekcije nimate dostopa."
 
 #: login.php:106 register.php:58
 msgid "Password"
@@ -154,7 +156,7 @@ msgstr "Shranjujem"
 
 #: app/views/DatabaseView.php:303 app/views/ExperimentsView.php:322
 msgid "Save and go back"
-msgstr "Shrani in pojdi nazaj."
+msgstr "Shrani in pojdi nazaj"
 
 #: ucp.php:85
 msgid "Action"
@@ -199,11 +201,11 @@ msgstr "Skype"
 
 #: app/models/Users.php:126
 msgid "[eLabFTW] New user registered"
-msgstr "[eLabFTW] Registriran/a nov/a uporabnik/ica"
+msgstr "[eLabFTW] Nov uporabnik registriran"
 
 #: app/controllers/ResetPasswordController.php:84 app/models/Users.php:454
 msgid "There was a problem sending the email! Error was logged."
-msgstr "Prišlo je do napake pri pošiljanju elektronskega sporočila. Napaka je bila zabeležena v dnevnik."
+msgstr "Prišlo je do napake pri pošiljanju elektronskega sporočila. Napaka je bila zabeležena."
 
 #: app/controllers/ResetPasswordController.php:87
 msgid "Email sent. Check your INBOX."
@@ -211,7 +213,7 @@ msgstr "Elektronsko sporočilo je bilo poslano na vaš naslov. Preverite vaš na
 
 #: admin.php:46
 msgid "There are users waiting for validation of their account:"
-msgstr "Naslednji/e uporabniki/ice čakajo na potrditev njihovih računov:"
+msgstr "Naslednji uporabniki čakajo na potrditev njihovih računov:"
 
 #: admin.php:68
 msgid "Users"
@@ -219,7 +221,7 @@ msgstr "Uporabniki"
 
 #: admin.php:70
 msgid "Types of items"
-msgstr "Vrste objektov"
+msgstr "Tipi predmetov"
 
 #: admin.php:71
 msgid "Experiments template"
@@ -227,11 +229,11 @@ msgstr "Predloge eksperimentov"
 
 #: admin.php:90
 msgid "Users can delete experiments:"
-msgstr "Uporabniki, ki lahko izbrišejo eksperimente:"
+msgstr "Uporabniki lahko izbrišejo naslednje eksperimente:"
 
 #: admin.php:102
 msgid "Name of the link in the top menu:"
-msgstr "Ime internetne povezave v zgornjem meniju:"
+msgstr "Ime povezave v zgornjem meniju:"
 
 #: admin.php:106
 msgid "Address where this link should point:"
@@ -243,7 +245,7 @@ msgstr "Ali ima aktiven uporabniški račun?"
 
 #: admin.php:214
 msgid "DANGER ZONE"
-msgstr "Območje nevarnosti"
+msgstr "OBMOČJE NEVARNOSTI"
 
 #: admin.php:215
 msgid "Delete an account"
@@ -251,11 +253,11 @@ msgstr "Izbriši račun"
 
 #: admin.php:220
 msgid "Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:"
-msgstr "Vnesite uporabnikov elektronski naslov, da izbrišete uporabnika in vse njegove poskuse in datoteke (popoln izbris):"
+msgstr "Vnesite uporabnikov elektronski naslov, da izbrišete uporabnika in vse njegove eksperimente in datoteke (popoln izbris):"
 
 #: admin.php:222
 msgid "Type your password:"
-msgstr "Vaše geslo:"
+msgstr "Vnesite vaše geslo:"
 
 #: admin.php:225
 msgid "Delete this user!"
@@ -263,7 +265,7 @@ msgstr "Izbriši tega uporabnika!"
 
 #: app/models/Status.php:170
 msgid "Remove all experiments with this status before deleting this status."
-msgstr "Odstrani vse poskuse s tem stanjem preden izbrišeš ta status iz zbirke."
+msgstr "Odstranite vse eksperimente s tem stanjem preden dokončno izbrišete to stanje."
 
 #: app/views/StatusView.php:77
 msgid "Default status"
@@ -271,7 +273,7 @@ msgstr "Privzeto stanje"
 
 #: app/models/ItemsTypes.php:159
 msgid "Remove all database items with this type before deleting this type."
-msgstr "Odstrani vse vnose v podatkovni zbirki, ki vsebujejo to vrsto objekta, preden izbrišeš to vrsto objekta."
+msgstr "Odstranite vse vnose v podatkovni zbirki, ki vsebujejo ta tip predmeta, preden izbrišete ta tip predmeta."
 
 #: admin.php:252
 msgid "This is the default text when someone creates an experiment."
@@ -279,11 +281,11 @@ msgstr "To je privzeto besedilo, ko nekdo ustvari nov eksperiment."
 
 #: admin.php:272 admin.php:301
 msgid "You should make a backup of your database before importing thousands of items!"
-msgstr "Priporočljivo je izvesti varnostno kopiranje podatkovne baze preden uvozite veliko količino objektov."
+msgstr "Priporočljivo je izvesti varnostno kopiranje podatkovne zbirke preden uvozite veliko količino predmetov."
 
 #: admin.php:274
 msgid "1. Select a type of item to import to:"
-msgstr "Izberite pripadajočo vrsto objekta:"
+msgstr "Izberite tip predmeta, ki ga želite uvoziti:"
 
 #: admin.php:285
 msgid "2. Select a CSV file to import:"
@@ -299,7 +301,7 @@ msgstr "Samo sistemski administrator lahko doda novega sistemskega administrator
 
 #: app/controllers/UsersController.php:58
 msgid "Everything was purged successfully."
-msgstr "Vsi podatki so bili uspešno izbrisani."
+msgstr "Vse je bilo uspešno odstranjeno."
 
 #: change-pass.php:23
 msgid "Reset password"
@@ -311,7 +313,7 @@ msgstr "Ponovno vnesite"
 
 #: change-pass.php:62
 msgid "Complexity"
-msgstr "Komplesnost"
+msgstr "Kompleksnost"
 
 #: change-pass.php:77
 msgid "Save new password"
@@ -345,7 +347,7 @@ msgstr "Brez naslova"
 
 #: app/controllers/ExperimentsController.php:160
 msgid "You don't have the rights to delete this experiment."
-msgstr "Nimate pravic za izbris tega poskusa."
+msgstr "Nimate pravic za izbris tega eksperimenta."
 
 #: app/models/Experiments.php:433 app/models/Experiments.php:446
 msgid "You don't have the rights to lock/unlock this."
@@ -353,7 +355,7 @@ msgstr "Nimate pravic za zaklep/odklep."
 
 #: app/models/Experiments.php:446
 msgid "This experiment was locked by"
-msgstr "Poskus je zaklenil:"
+msgstr "Eksperiment je zaklenil:"
 
 #: app/login-exec.php:58
 msgid "Login failed. Either you mistyped your password or your account isn't activated yet."
@@ -361,15 +363,15 @@ msgstr "Prijava neuspešna. Mogoče ste se zmotili pri geslu ali pa uporabniški
 
 #: login.php:20 login.php:114
 msgid "Login"
-msgstr "Vpis"
+msgstr "Prijava"
 
 #: login.php:45 login.php:63
 msgid "You cannot login now because of too many failed login attempts."
-msgstr "Ne morete se vpisati zaradi prevelikega števila neuspešnih poskusov vpisa."
+msgstr "Ne morete se prijaviti zaradi prevelikega števila neuspešnih poskusov prijave."
 
 #: login.php:51
 msgid "Number of login attempt left before being banned for"
-msgstr "Število preostalih poskusov vstopa pred prepovedjo vpisa za"
+msgstr "Število preostalih poskusov prijave pred prepovedjo prijave"
 
 #: login.php:51
 msgid "minutes:"
@@ -401,15 +403,15 @@ msgstr "Profil"
 
 #: profile.php:38
 msgid "experiments done since"
-msgstr "izvedeni poskusi od"
+msgstr "eksperimenti izvedeni od"
 
 #: app/ucp-exec.php:148 app/models/Users.php:36
 msgid "Someone is already using that email address!"
-msgstr "Nekdo že uporablja ta elektronski naslov."
+msgstr "Nekdo že uporablja ta elektronski naslov!"
 
 #: app/models/Users.php:132
 msgid "Hi. A new user registered on elabftw. Head to the admin panel to validate the account."
-msgstr "Živjo. Nov uporabnik se je prijavil na elabftw. Pojdite v administratorjevo ploščo, da potrdite račun."
+msgstr "Živjo. Nov uporabnik se je registriral na elabftw. Pojdite v administratorjevo ploščo, da potrdite račun."
 
 #: app/models/Users.php:142
 msgid "Could not send email to inform admin. Error was logged. Contact an admin directly to validate your account."
@@ -421,7 +423,7 @@ msgstr "Prijava je bila uspešna :) <br> Dobrodošli v eLabFTW o/"
 
 #: register.php:24
 msgid "Please %slogout%s before you register another account."
-msgstr "Prosim %slogout%s preden se prijavite z drugim računom."
+msgstr "Prosim %sodjavite se%s preden registrirate drug račun."
 
 #: register.php:30
 msgid "go back to login page"
@@ -449,7 +451,7 @@ msgstr "Pozdravljeni. Nekdo (verjetno vi) z IP naslovom: %s in uporabniškim age
 
 #: app/controllers/ResetPasswordController.php:36
 msgid "Email not found in database!"
-msgstr "Elektronskega naslova ni bilo mogoče najti v bazi podatkov!"
+msgstr "Elektronskega naslova ni bilo mogoče najti v podatkovni zbirki!"
 
 #: revisions.php:20
 msgid "Revisions"
@@ -497,11 +499,11 @@ msgstr "In besedilo vsebuje"
 
 #: search.php:249
 msgid "And status is"
-msgstr "In status je"
+msgstr "In stanje je"
 
 #: search.php:251
 msgid "select status"
-msgstr "Izberi status"
+msgstr "Izberi stanje"
 
 #: search.php:282
 msgid "And rating is"
@@ -566,7 +568,7 @@ msgstr "Če ste za požarnim zidom ali proxy strežnikom, vnesite naslov tukaj. 
 
 #: sysconfig.php:143
 msgid "The teams can use the credentials below to timestamp:"
-msgstr "Skupine lahko za časovno žigosanje uporabijo spodnje poverilnice:"
+msgstr "Ekipe lahko za časovno žigosanje uporabijo spodnje poverilnice:"
 
 #: admin.php:124 sysconfig.php:163
 msgid "Login for external timestamping service:"
@@ -578,7 +580,7 @@ msgstr "Geslo za postopek zunanjega časovnega žigosanja:"
 
 #: sysconfig.php:187
 msgid "Users need validation by admin after registration:"
-msgstr "Uporabniki po prijavi potrebujejo administratorjevo potrditev:"
+msgstr "Uporabniki po registraciji potrebujejo administratorjevo potrditev:"
 
 #: sysconfig.php:196
 msgid "Set to yes for added security."
@@ -622,15 +624,15 @@ msgstr "SMTP geslo"
 
 #: app/head.inc.php:111
 msgid "You can use a TODOlist by pressing 't'."
-msgstr "Seznam opravil lahko uporabite s pritiskom 't'."
+msgstr "Seznam opravkov lahko uporabite s pritiskom 't'."
 
 #: app/head.inc.php:113
 msgid "The admin of a team can edit the status and the types of items available (%sAdmin Panel%s)."
-msgstr ""
+msgstr "Administrator ekipe lahko ureja stanje in tip razpoložljivih predmetov (%sAdministratorjeva plošča%s)."
 
 #: app/head.inc.php:115
 msgid "Custom shortcuts are available (%sControl Panel%s)."
-msgstr "Bližnjice po meri so na voljo  (%sControl Panel%s)."
+msgstr "Bližnjice po meri so na voljo  (%sKontrolna plošča%s)."
 
 #: app/head.inc.php:116
 msgid "You can duplicate experiments in one click."
@@ -650,7 +652,7 @@ msgstr "Uporabnikova nadzorna plošča"
 
 #: app/ucp-exec.php:222
 msgid "Profile updated."
-msgstr "Uporabniški račun posodobljen."
+msgstr "Profil posodobljen."
 
 #: app/ucp-exec.php:119
 msgid "Preferences updated."
@@ -674,7 +676,7 @@ msgstr "Predloga uspešno popravljena."
 
 #: ucp.php:32
 msgid "Account"
-msgstr "Uporabniški račun"
+msgstr "Račun"
 
 #: ucp.php:31
 msgid "Preferences"
@@ -742,11 +744,11 @@ msgstr "Jezik"
 
 #: app/views/DatabaseView.php:219
 msgid "Last modified by"
-msgstr "Nazadnje je spremenil/a:"
+msgstr "Nazadnje je spremenil"
 
 #: app/views/ExperimentsView.php:432
 msgid "Experiment was timestamped by"
-msgstr "Eksperiment je časovno žigosal:"
+msgstr "Eksperiment je časovno žigosal"
 
 #: app/views/ExperimentsView.php:509
 msgid "Unique eLabID:"
@@ -780,11 +782,11 @@ msgstr "Statistika"
 
 #: profile.php:46
 msgid "No statistics available yet."
-msgstr "Zaenkrat statistik še ni na voljo."
+msgstr "Statistik zaenkrat še ni na voljo."
 
 #: app/views/EntityView.php:122
 msgid "Filter status"
-msgstr "Status filtra"
+msgstr "Stanje filtra"
 
 #: app/views/DatabaseView.php:71 app/views/ExperimentsView.php:105
 msgid "<strong>This item is locked.</strong> You cannot edit it."
@@ -808,7 +810,7 @@ msgstr "Dodaj oznako"
 
 #: app/views/ExperimentsView.php:276
 msgid "Only the team"
-msgstr "Samo skupina"
+msgstr "Samo ekipa"
 
 #: app/views/ExperimentsView.php:281
 msgid "Only me"
@@ -868,7 +870,7 @@ msgstr "Stran ustvarjena v"
 
 #: app/head.inc.php:112
 msgid "You can have experiments templates (%sControl Panel%s)."
-msgstr "IMate lahko predloge eksperimentov (%sControl Panel%s)."
+msgstr "Imate lahko predloge eksperimentov (%sKontrolna plošča%s)."
 
 #: app/head.inc.php:114
 msgid "If you press Ctrl Shift D in the editor, the date will appear under the cursor."
@@ -880,15 +882,15 @@ msgstr "Pojdi na uporabnikovo nadzorno ploščo"
 
 #: sysconfig.php:61
 msgid "Please finalize install : %slink to documentation%s."
-msgstr "Prosim, dokončajte namestitev: %slink to documentation%s. "
+msgstr "Prosim, dokončajte namestitev: %spovezava do dokumentacije%s."
 
 #: app/views/TeamsView.php:96 sysconfig.php:68
 msgid "Teams"
-msgstr "Skupine"
+msgstr "Ekipe"
 
 #: admin.php:115 sysconfig.php:154
 msgid "URL for external timestamping service:"
-msgstr "URL za zunanje "
+msgstr "URL za zunanjega ponudnika storitev časovnega žigosanja:"
 
 #: admin.php:120 sysconfig.php:159
 msgid "Chain of certificates of the external timestamping service:"
@@ -896,7 +898,7 @@ msgstr "Veriga certifikatov zunanjega ponudnika storitev časovnega žigosanja:"
 
 #: admin.php:126
 msgid "This should be the login associated with your timestamping service provider"
-msgstr "To naj bi bila prijava povezana z vašim ponudnikom storitev časovnega žigosanja"
+msgstr "To naj bi bila prijava, povezana z vašim ponudnikom storitev časovnega žigosanja"
 
 #: admin.php:137
 msgid "Your timestamping service provider password"
@@ -904,7 +906,7 @@ msgstr "Geslo ponudnika storitev časovnega žigosanja:"
 
 #: admin.php:271
 msgid "This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file."
-msgstr ""
+msgstr "Ta stran vam bo omogočila uvoz .csv datotek (Excelovi delovni listi) v podatkovno zbirko. <br> Najprej odprite vašo .xls/.xlsx datoteko v Excelu ali Libreoffice-u in jo shranite kot .csv. <br>Za dober uvoz naj bodo v prvi vrstici imena stolpcev. Za poizkušnjo lahko naredite majhen uvoz, npr. 3 vrstice, da preverite, če gre vse v redu in šele potem uvozite veliko datoteko."
 
 #: app/models/Users.php:427
 msgid "Validated user with ID :"
@@ -913,11 +915,11 @@ msgstr "Potrjen uporabnik z ID:"
 #: app/models/Users.php:306 app/models/Users.php:322 app/models/Entity.php:56
 #: revisions.php:54
 msgid "The id parameter is not valid!"
-msgstr ""
+msgstr "Identifikacijski parameter ni veljaven!"
 
 #: app/models/Experiments.php:451
 msgid "You cannot unlock or edit in any way a timestamped experiment."
-msgstr ""
+msgstr "Časovno žigosanega eksperimenta ne morete odkleniti ali urejati na noben način."
 
 #: app/login-exec.php:26
 msgid "Your session expired. Please retry."
@@ -925,7 +927,7 @@ msgstr "Vaša seja je potekla. Poskusite ponovno."
 
 #: app/register-exec.php:46
 msgid "Registration successful :)<br>Your account must now be validated by an admin.<br>You will receive an email when it is done."
-msgstr "Registracija je uspela.<br>Vaš račun mora potrditi še upravljavec strani.<br>Potrditev boste prejeli na vaš elektronski naslov."
+msgstr "Registracija je uspela :)<br>Vaš račun mora potrditi še upravljalec strani.<br>Potrditev boste prejeli na vaš elektronski naslov."
 
 #: app/views/UploadsView.php:113
 msgid "Attached file"
@@ -933,7 +935,7 @@ msgid_plural "Attached files"
 msgstr[0] "Pripeta datoteka"
 msgstr[1] "Pripeti datoteki"
 msgstr[2] "Pripete datoteke"
-msgstr[3] ""
+msgstr[3] "Pripetih datotek"
 
 #: app/views/UploadsView.php:39
 msgid "Attach a file"
@@ -947,18 +949,18 @@ msgstr "Za nalaganje povlecite datoteko sem."
 #: search.php:519
 msgid "result found"
 msgid_plural "results found"
-msgstr[0] "rezultat najden"
-msgstr[1] "rezultata najdena"
-msgstr[2] "rezultati najdeni"
-msgstr[3] "rezultatov najdenih"
+msgstr[0] "najden rezultat"
+msgstr[1] "najdena rezultata"
+msgstr[2] "najdeni rezultati"
+msgstr[3] "najdenih rezultatov"
 
 #: register.php:18
 msgid "Register"
-msgstr "Prijavite se "
+msgstr "Registrirajte se"
 
 #: app/models/Revisions.php:172
 msgid "You cannot restore a revision of a locked item!"
-msgstr ""
+msgstr "Revizije zaklenjenega predmeta ne morete obnoviti!"
 
 #: sysconfig.php:73
 msgid "Logs"
@@ -966,7 +968,7 @@ msgstr "Dnevniki"
 
 #: sysconfig.php:152
 msgid "You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login infos in the admin panel."
-msgstr ""
+msgstr "Preverjate lahko, če ekipe uporabljajo globalni račun za časovno žigosanje. Če je nastavljeno na <em>no</em>, mora administrator ekipe dodati podatke za prijavo v administratorjevi plošči."
 
 #: app/views/EntityView.php:43
 msgid "Molecule drawer"
@@ -974,7 +976,7 @@ msgstr "Risalnik molekul"
 
 #: ucp.php:152
 msgid "Enter your password to edit infos."
-msgstr "Za urejanje podatkov vnesite vaše geslo."
+msgstr "Za urejanje informacij vnesite vaše geslo."
 
 #: search.php:173
 msgid "Select a tag"
@@ -986,11 +988,11 @@ msgstr "Z oznako"
 
 #: admin.php:117 sysconfig.php:156
 msgid "This should be the URL used for %sRFC 3161%s-compliant timestamping requests."
-msgstr ""
+msgstr "To naj bi bil URL do %sRFC 3161%s-skladnih zahtev za časovno žigosanje."
 
 #: admin.php:122 sysconfig.php:161
 msgid "This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. The file needs to be in %sPEM-encoded (ASCII)%s format!"
-msgstr ""
+msgstr "To naj bi bil kazalec na verigo certifikatov, ki jih uporablja vaš zunanji ponudnik časovnega žigosanja za podpis časovnih žigov. %sLokalna pot relativno na eLabFTW namestitveni direktorij. Datoteka mora biti v %sPEM-kodiranem (ASCII)%s formatu!"
 
 #: app/views/ExperimentsView.php:433
 msgid "Download timestamped pdf"
@@ -1003,10 +1005,10 @@ msgstr "Ta stran vam omogoča uvoz .elabftw.zip arhiva."
 #: app/controllers/ImportController.php:33
 msgid "item imported successfully."
 msgid_plural "items imported successfully."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "predmet uspešno uvožen."
+msgstr[1] "predmeta uspešno uvožena."
+msgstr[2] "predmeti uspešno uvoženi."
+msgstr[3] "predmetov uspešno uvoženih."
 
 #: sysconfig.php:44
 msgid "Installed version:"
@@ -1042,7 +1044,7 @@ msgstr "Administratorjev račun bo vedno omogočal izbris eksperimenta."
 
 #: app/head.inc.php:110
 msgid "There is a manual available %shere%s."
-msgstr "Priročnik je na voljo tukaj %shere%s. "
+msgstr "Priročnik je na voljo %stukaj%s."
 
 #: app/views/EntityView.php:177
 msgid "Order by"
@@ -1062,11 +1064,11 @@ msgstr "Vaša datoteka je pripravljena"
 
 #: app/views/ExperimentsView.php:433
 msgid "Download token"
-msgstr ""
+msgstr "Prenesi žeton"
 
 #: app/classes/TrustedTimestamps.php:131
 msgid "Please configure Timestamping in the admin panel."
-msgstr ""
+msgstr "Prosim, skonfigurirajte časovno žigosanje v administratorjevi plošči."
 
 #: app/classes/MakeZip.php:298
 msgid "Error making the zip archive!"
@@ -1074,7 +1076,7 @@ msgstr "Napaka pri ustvarjanju zip arhiva!"
 
 #: app/classes/MakeZip.php:66
 msgid "You are missing the ZipArchive class in php. Uncomment the line extension=zip.so in php.ini file."
-msgstr ""
+msgstr "V php manjka razred ZipArchive. Odkomentirajte vrstico extension=zip.so v datoteki php.ini."
 
 #: app/classes/MakeZip.php:123
 msgid "You are trying to download an experiment you don't own!"
@@ -1086,11 +1088,11 @@ msgstr "Spomni me"
 
 #: app/classes/Import.php:80
 msgid "This doesn't look like the right kind of file. Import aborted."
-msgstr "Izgleda, da datoteka ni pravilnega tipa. Uvoz prekinjen. "
+msgstr "Izgleda, da datoteka ni ustreznega tipa. Uvoz prekinjen."
 
 #: search.php:207
 msgid "All the team"
-msgstr "Celotna skupina"
+msgstr "Celotna ekipa"
 
 #: search.php:272
 msgid "Space means"
@@ -1102,7 +1104,7 @@ msgstr "Predmet uspešno izbrisan"
 
 #: app/controllers/SysconfigController.php:37
 msgid "User promoted"
-msgstr ""
+msgstr "Uporabnik napredovan"
 
 #: app/controllers/SysconfigController.php:98
 #: app/controllers/SysconfigController.php:114
@@ -1115,7 +1117,7 @@ msgstr "Dnevniki izpraznjeni"
 
 #: app/controllers/StatusController.php:71
 msgid "Status deleted successfully"
-msgstr "Status uspešno izbrisan"
+msgstr "Stanje uspešno izbrisano"
 
 #: app/controllers/EntityController.php:102
 msgid "Comment is too short"
@@ -1123,7 +1125,7 @@ msgstr "Komentar je prekratek"
 
 #: app/controllers/EntityController.php:108
 msgid "The id parameter is invalid"
-msgstr ""
+msgstr "Identifikacijski parameter je neveljaven"
 
 #: app/controllers/EntityController.php:161
 msgid "File deleted successfully"
@@ -1139,7 +1141,7 @@ msgstr "Eksperiment je bil uspešno izbrisan"
 
 #: app/controllers/ItemsTypesController.php:74
 msgid "Item type deleted successfully"
-msgstr "Tip predmeta uspešno izbrisan!"
+msgstr "Tip predmeta uspešno izbrisan"
 
 #: app/controllers/ResetPasswordController.php:112 change-pass.php:44
 msgid "Invalid link. Reset links are only valid for one hour."
@@ -1167,7 +1169,7 @@ msgstr "Dogodek je bil uspešno izbrisan"
 
 #: app/views/DatabaseView.php:113
 msgid "Welcome to eLabFTW. Head to the %sAdmin Panel%s to create a new type of item."
-msgstr ""
+msgstr "Dobrodošli v eLabFTW. Pojdite v %sAdministratorjevo ploščo%s , da ustvarite nov tip predmeta."
 
 #: app/views/DatabaseView.php:122 app/views/ExperimentsView.php:169
 msgid "Show %s more"
@@ -1183,7 +1185,7 @@ msgstr "Zakleni/odkleni predmet"
 
 #: app/views/ExperimentsView.php:159
 msgid "Welcome to eLabFTW. %sClick here%s to create your first experiment."
-msgstr "Dobrodošli v eLabFTW. Kliknite tukaj %sClick here%, da ustvarite vaš prvi eksperiment."
+msgstr "Dobrodošli v eLabFTW. %sKliknite tukaj%s, da ustvarite vaš prvi eksperiment."
 
 #: app/views/ExperimentsView.php:271
 msgid "Everyone with an account"
@@ -1199,7 +1201,7 @@ msgstr "Časovno žigosam ta eksperiment?"
 
 #: app/views/ExperimentsView.php:483
 msgid "Once timestamped an experiment cannot be edited anymore! Are you sure you want to do this?"
-msgstr "Ko je eksperiment časovno žigosan, ge ne morete več urejati! Ali ste prepričani, da želite to storiti? "
+msgstr "Ko je eksperiment časovno žigosan, ge ne morete več urejati! Ali ste prepričani, da želite to storiti?"
 
 #: app/views/SysconfigView.php:49
 msgid "Send a test email"
@@ -1243,7 +1245,7 @@ msgstr "Naraščajoče"
 
 #: app/views/EntityView.php:192
 msgid "Order"
-msgstr ""
+msgstr "Uredi"
 
 #: app/views/EntityView.php:298
 msgid "Back to Experiments Listing"
@@ -1255,7 +1257,7 @@ msgstr "Nazaj na seznam podatkovnih zbirk"
 
 #: app/views/StatusView.php:39
 msgid "Add a New Status"
-msgstr "Dodaj nov status"
+msgstr "Dodaj novo stanje"
 
 #: app/views/StatusView.php:43 app/views/StatusView.php:70
 #: app/views/ItemsTypesView.php:42 app/views/ItemsTypesView.php:75
@@ -1264,7 +1266,7 @@ msgstr "Barva"
 
 #: app/views/StatusView.php:59
 msgid "Edit an Existing Status"
-msgstr "Uredi obstoječ status"
+msgstr "Uredi obstoječe stanje"
 
 #: app/views/StatusView.php:83 app/views/ItemsTypesView.php:84
 msgid "Delete"
@@ -1276,15 +1278,15 @@ msgstr "Dodaj nov tip predmeta"
 
 #: app/views/ItemsTypesView.php:43 app/views/ItemsTypesView.php:80
 msgid "Bookable"
-msgstr ""
+msgstr "Možno rezervirati"
 
 #: app/views/ItemsTypesView.php:44
 msgid "in the %sscheduler%s"
-msgstr ""
+msgstr "v %sNačrtovalec opravil%s"
 
 #: app/views/ItemsTypesView.php:65
 msgid "Database Items Types"
-msgstr ""
+msgstr "Tipi predmetov v podatkovni zbirki"
 
 #: app/views/ItemsTypesView.php:81
 msgid "Edit the template"
@@ -1292,15 +1294,15 @@ msgstr "Uredi predlogo"
 
 #: app/views/TeamsView.php:38
 msgid "Add a New Team"
-msgstr "Dodaj novo skupino"
+msgstr "Dodaj novo ekipo"
 
 #: app/views/TeamsView.php:51
 msgid "Promote Someone to Sysadmin"
-msgstr ""
+msgstr "Napredujte nekoga v sistemskega administratorja"
 
 #: app/views/TeamsView.php:67
 msgid "Edit Existing Teams"
-msgstr "Dodaj obstoječo skupino"
+msgstr "Uredi obstoječe ekipe"
 
 #: app/views/TeamsView.php:114
 msgid "Send a Mass Email"
@@ -1308,11 +1310,11 @@ msgstr "Pošlji masovno elektronsko sporočilo"
 
 #: app/views/TeamsView.php:115
 msgid "Email Subject"
-msgstr ""
+msgstr "Naslov elektronskega sporočila"
 
 #: app/views/TeamsView.php:116
 msgid "Email Body"
-msgstr ""
+msgstr "Telo elektronskega sporočila"
 
 #: app/ucp-exec.php:130
 msgid "Please input your current password!"
@@ -1320,7 +1322,7 @@ msgstr "Prosim vnesite vaše trenutno geslo!"
 
 #: app/classes/MakeZip.php:137
 msgid "You are trying to download an item you don't own!"
-msgstr "Poškusate prenesti predmet, ki ne pripada vam!"
+msgstr "Poskušate prenesti predmet, ki ne pripada vam!"
 
 #: app/classes/Tools.php:266
 msgid "This section is out of your reach!"
@@ -1344,7 +1346,7 @@ msgstr "Prilepi"
 
 #: app/classes/MolViewer.php:109
 msgid "Solid Surface"
-msgstr ""
+msgstr "Trda površina"
 
 #: app/classes/MolViewer.php:110
 msgid "Transparent Surface"
@@ -1380,11 +1382,11 @@ msgstr "[eLabFTW] Poskusno elektronsko sporočilo"
 
 #: app/models/Sysconfig.php:55
 msgid "Congratulations, you correctly configured eLabFTW to send emails :)"
-msgstr "Čestitke, pravilno ste nastavili pošiljanje elektronskih sporočil v eLabFTW :) "
+msgstr "Čestitke, pravilno ste nastavili pošiljanje elektronskih sporočil v eLabFTW :)"
 
 #: app/models/ItemsTypes.php:80 team.php:78
 msgid "Nothing to show with this id"
-msgstr ""
+msgstr "Ničesar za prikaz s to identifikacijo"
 
 #: login.php:90
 msgid "Note: You need cookies enabled to log in."
@@ -1400,7 +1402,7 @@ msgstr "Načrtovalec opravil"
 
 #: team.php:50
 msgid "No bookable items."
-msgstr ""
+msgstr "Ni predmetov, ki jih lahko rezervirate."
 
 #: team.php:56
 msgid "Select an equipment"
@@ -1412,7 +1414,7 @@ msgstr "Spremeni predmet"
 
 #: team.php:96
 msgid "You belong to the %s team. %s"
-msgstr "Pripadate %s skupini. %s"
+msgstr "Pripadate %s ekipi. %s"
 
 #: ucp.php:60
 msgid "Display"
@@ -1424,11 +1426,11 @@ msgstr "Bližnjice na tipkovnici"
 
 #: ucp.php:117
 msgid "Show experiments from the team on the Experiments page?"
-msgstr ""
+msgstr "Prikažem eksperimente ekipe na strani eksperimentov?"
 
 #: ucp.php:125
 msgid "Display a warning before closing an edit window/tab?"
-msgstr ""
+msgstr "Prikažem opozorilo pred zaprtjem urejevalnega okna ali zavihka?"
 
 #: ucp.php:225
 msgid "Experiments Templates"
@@ -1464,11 +1466,11 @@ msgstr "Skupine"
 
 #: admin.php:85
 msgid "Configure your Team"
-msgstr ""
+msgstr "Konfiguriraj svojo ekipo"
 
 #: admin.php:110
 msgid "Override general timestamping config"
-msgstr ""
+msgstr "Povozi splošne nastavitve časovnega žigosanja"
 
 #: admin.php:152
 msgid "Edit Users"
@@ -1548,7 +1550,7 @@ msgstr "Izvozi"
 
 #: make.php:39
 msgid "Bad type!"
-msgstr ""
+msgstr "Napačen tip!"
 
 #: sysconfig.php:27
 msgid "eLabFTW Configuration"
@@ -1584,11 +1586,11 @@ msgstr "Različica PHP"
 
 #: sysconfig.php:131
 msgid "Largest integer supported"
-msgstr ""
+msgstr "Največje podprto celo število"
 
 #: sysconfig.php:132
 msgid "PHP configuration directory"
-msgstr "Konfiguracijska datoteka PHP-ja"
+msgstr "PHP konfiguracijski direktorij"
 
 #: sysconfig.php:140
 msgid "Timestamping Configuration"
@@ -1600,7 +1602,7 @@ msgstr "Varnostne nastavitve"
 
 #: sysconfig.php:200
 msgid "Time of the ban after failed login attempts (in minutes):"
-msgstr ""
+msgstr "Čas prepovedi po neuspelih prijavah (v minutah):"
 
 #: sysconfig.php:215
 msgid "E-mail Settings"
@@ -1608,7 +1610,7 @@ msgstr "Nastavitve elektroske pošte"
 
 #: sysconfig.php:244
 msgid "Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mailgun.com account and add the infos here."
-msgstr ""
+msgstr "Brez ustreznega načina pošiljanja elektronske pošte uporabniki ne bodo mogli ponastaviti svojega gesla. Priporočeno je, da ustvarite Mailgun.com račun in tukaj dodate informacije."
 
 #: sysconfig.php:246
 msgid "Send e-mails via:"
@@ -1616,7 +1618,7 @@ msgstr "Pošlji elektrosko pošto preko:"
 
 #: sysconfig.php:248
 msgid "Select mailing method..."
-msgstr ""
+msgstr "Izberi metodo pošiljanja..."
 
 #: sysconfig.php:251
 msgid "Local MTA (default)"
@@ -1636,7 +1638,7 @@ msgstr "Naslov pošiljatelja:"
 
 #: sysconfig.php:270
 msgid "Path to sendmail:"
-msgstr ""
+msgstr "Pot do sendmail-a:"
 
 #: sysconfig.php:279
 msgid "SMTP encryption:"

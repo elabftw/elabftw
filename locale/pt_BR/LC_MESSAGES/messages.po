@@ -3,10 +3,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 1.8.11\n"
 "Project-Id-Version: elabftw\n"
 "Language: pt_BR\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
 "Last-Translator: Nicolas CARPi <nicolas.carpi@gmail.com>\n"
@@ -36,7 +36,7 @@ msgstr "Não há usuário com este e-mail na sua equipe"
 
 #: app/ucp-exec.php:191 change-pass.php:64 change-pass.php:75
 msgid "The passwords do not match!"
-msgstr "Senhas não conferem!"
+msgstr "As senhas não conferem!"
 
 #: app/register-exec.php:39 app/ucp-exec.php:141 app/ucp-exec.php:174
 #: app/login-exec.php:31 app/login-exec.php:36
@@ -102,7 +102,7 @@ msgstr "Visibilidade"
 msgid "Status"
 msgid_plural "Status"
 msgstr[0] "Situação"
-msgstr[1] ""
+msgstr[1] "Situações"
 
 #: ucp.php:92
 msgid "Edit"
@@ -138,7 +138,7 @@ msgstr "Salvar"
 #: app/controllers/SchedulerController.php:44
 #: app/controllers/SchedulerController.php:59
 msgid "Saved"
-msgstr "Salvo!"
+msgstr "Alterações salvas !"
 
 #: app/views/ExperimentsView.php:658
 msgid "Cancel"
@@ -380,7 +380,7 @@ msgstr "Conecte-se à sua conta"
 
 #: login.php:120
 msgid "Don't have an account? %sRegister%s now!<br>Lost your password? %sReset%s it!"
-msgstr "Não tem uma conta ? %sRegistre-se%s agora!<br>Esqueceu a senha? %sModificar%s a senha !"
+msgstr "Não tem uma conta ? %sRegistre-se%s agora!<br>Esqueceu a senha? %sModifiquer%s a senha !"
 
 #: login.php:130
 msgid "Enter your email address"
@@ -557,7 +557,7 @@ msgstr "Criação"
 
 #: sysconfig.php:118
 msgid "If you are behind a firewall/proxy, enter the address here. Example : http://proxy.example.com:3128"
-msgstr "Se você está atrás de uma fireway ou de um proxy digite o endereço. Exemplo : http://proxy.exemplo.com.br:3128"
+msgstr "Se você está protegido(a) por uma fireway ou de um proxy digite o endereço. Exemplo : http://proxy.exemplo.com.br:3128"
 
 #: sysconfig.php:143
 msgid "The teams can use the credentials below to timestamp:"
@@ -589,7 +589,7 @@ msgstr "3 pode ser pouco demais. Cuidado :)"
 
 #: sysconfig.php:203
 msgid "To identify an user we use an md5 of user agent + IP. Because doing it only based on IP address would surely cause problems."
-msgstr "Para poder identificar um usuário usamos um md5 do agente de usuário e também seu IP. Porque se fizéssemos isso apenas baseado em IP certamente causaríamos problemas."
+msgstr "Para poder identificar um usuário usamos um md5 do agente de usuário e também seu IP. Porque se fizéssemos isso apenas baseado em IP com certeza teríamos problemas."
 
 #: sysconfig.php:276
 msgid "Address of the SMTP server:"
@@ -833,7 +833,7 @@ msgstr[1] "revisões disponíveis."
 
 #: app/head.inc.php:102
 msgid "Howdy,"
-msgstr "Oi,"
+msgstr "Falaê,"
 
 #: app/head.inc.php:103
 msgid "Settings"
@@ -881,27 +881,27 @@ msgstr "Equipes"
 
 #: admin.php:115 sysconfig.php:154
 msgid "URL for external timestamping service:"
-msgstr ""
+msgstr "Endereço do serviço de timestamping:"
 
 #: admin.php:120 sysconfig.php:159
 msgid "Chain of certificates of the external timestamping service:"
-msgstr ""
+msgstr "Cadeia de certificados do serviço de timestamping:"
 
 #: admin.php:126
 msgid "This should be the login associated with your timestamping service provider"
-msgstr ""
+msgstr "Este tem que ser o login associado ao seu provedor de serviço de timestamping  "
 
 #: admin.php:137
 msgid "Your timestamping service provider password"
-msgstr ""
+msgstr "A senha do seu servidor de timestamping "
 
 #: admin.php:271
 msgid "This page will allow you to import a .csv (Excel spreadsheet) file into the database.<br>First you need to open your .xls/.xlsx file in Excel or Libreoffice and save it as .csv.<br>In order to have a good import, the first row should be the column's field names. You can make a tiny import of 3 lines to see if everything works before you import a big file."
-msgstr ""
+msgstr "Aqui você poderá importar um arquivo .csv (exportado do Excel por exemplo) no banco de dados.<br>É preciso usar o Excel ou o Libreoffice para exportar o arquivo como .csv.<br>Também é necessário colocar os nomes dos campos como primeira linha desse arquivo. Teste com um arquivo de 2 ou 3 linhas antes de mandar ver com o arquivo grande."
 
 #: app/models/Users.php:427
 msgid "Validated user with ID :"
-msgstr ""
+msgstr "Usuário validado com a identificação:"
 
 #: app/models/Users.php:306 app/models/Users.php:322 app/models/Entity.php:56
 #: revisions.php:54
@@ -910,7 +910,7 @@ msgstr "O parâmetro de identificação não é válido!"
 
 #: app/models/Experiments.php:451
 msgid "You cannot unlock or edit in any way a timestamped experiment."
-msgstr ""
+msgstr "O experimento com timestamp não pode ser desbloqueado nem modificado."
 
 #: app/login-exec.php:26
 msgid "Your session expired. Please retry."
@@ -932,7 +932,7 @@ msgstr "Anexar um arquivo"
 
 #: app/views/UploadsView.php:54
 msgid "Drop files here to upload"
-msgstr "Arraste os arquivos aqui para enviá-los"
+msgstr "Arraste aqui os arquivos que quiser anexar ao experimento."
 
 #: app/views/DatabaseView.php:118 app/views/ExperimentsView.php:165
 #: search.php:519
@@ -947,19 +947,19 @@ msgstr "Registrar"
 
 #: app/models/Revisions.php:172
 msgid "You cannot restore a revision of a locked item!"
-msgstr ""
+msgstr "O item está bloqueado, não é possível restaurar versões antigas!"
 
 #: sysconfig.php:73
 msgid "Logs"
-msgstr ""
+msgstr "Registros"
 
 #: sysconfig.php:152
 msgid "You can control if the teams can use the global timestamping account. If set to <em>no</em> the team admin must add login infos in the admin panel."
-msgstr ""
+msgstr "Controle o uso da conta global de timestamping pelas equipes. Se deixado em <em>não</em>, o administrador da equipe vai precisar informar o login no painel de administração."
 
 #: app/views/EntityView.php:43
 msgid "Molecule drawer"
-msgstr ""
+msgstr "Desenhe uma molécula"
 
 #: ucp.php:152
 msgid "Enter your password to edit infos."
@@ -967,23 +967,23 @@ msgstr "Coloque sua senha para editar as informações"
 
 #: search.php:173
 msgid "Select a tag"
-msgstr ""
+msgstr "Selecione uma etiqueta"
 
 #: search.php:152 search.php:171
 msgid "With the tag"
-msgstr ""
+msgstr "Com a etiqueta"
 
 #: admin.php:117 sysconfig.php:156
 msgid "This should be the URL used for %sRFC 3161%s-compliant timestamping requests."
-msgstr ""
+msgstr "Insira o endereço para pedidos de timestamp com norma %sRFC 3161%s ."
 
 #: admin.php:122 sysconfig.php:161
 msgid "This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. The file needs to be in %sPEM-encoded (ASCII)%s format!"
-msgstr ""
+msgstr "Link para a cadeia de certificados usada pelo seu fornecedor de timestamping para que ele possa assinar os timestamps. %s Diretório de instalação do eLabFTW. O arquivo precisa estar no formato %sPEM-encoded (ASCII)%s !"
 
 #: app/views/ExperimentsView.php:433
 msgid "Download timestamped pdf"
-msgstr ""
+msgstr "Baixar o pdf com timestamp."
 
 #: admin.php:300
 msgid "This page will allow you to import a .elabftw.zip archive."
@@ -1005,11 +1005,11 @@ msgstr "Uma nova versão está disponível!"
 
 #: ucp.php:108
 msgid "Miscellaneous"
-msgstr ""
+msgstr "Diversos"
 
 #: ucp.php:133
 msgid "Display the molecule drawer in edit mode?"
-msgstr ""
+msgstr "Mostrar o editor de moléculas no modo de edição?"
 
 #: admin.php:73 admin.php:326
 msgid "Import ZIP"
@@ -1025,7 +1025,7 @@ msgstr "segundos"
 
 #: admin.php:99
 msgid "An admin account will always be able to delete experiments."
-msgstr ""
+msgstr "O administrador sempre poderá apagar experimentos."
 
 #: app/head.inc.php:110
 msgid "There is a manual available %shere%s."
@@ -1033,11 +1033,11 @@ msgstr "Há um manual disponível %aqui%s"
 
 #: app/views/EntityView.php:177
 msgid "Order by"
-msgstr "Encomendado por"
+msgstr "Listando por"
 
 #: app/views/EntityView.php:188
 msgid "Sort"
-msgstr ""
+msgstr "Organisar"
 
 #: app/views/EntityView.php:194
 msgid "Reset"
@@ -1049,23 +1049,23 @@ msgstr "Seu arquivo está pronto:"
 
 #: app/views/ExperimentsView.php:433
 msgid "Download token"
-msgstr ""
+msgstr "Baixar o token"
 
 #: app/classes/TrustedTimestamps.php:131
 msgid "Please configure Timestamping in the admin panel."
-msgstr ""
+msgstr "Favor configurar o timestamping no painel de administração."
 
 #: app/classes/MakeZip.php:298
 msgid "Error making the zip archive!"
-msgstr ""
+msgstr "Houve um erro quando tentei fazer o zip!"
 
 #: app/classes/MakeZip.php:66
 msgid "You are missing the ZipArchive class in php. Uncomment the line extension=zip.so in php.ini file."
-msgstr ""
+msgstr "Sua instalação php não possui a classe ZipArchive. Remova o sinal de comentário da linha extension=zip.so no arquivo php.ini."
 
 #: app/classes/MakeZip.php:123
 msgid "You are trying to download an experiment you don't own!"
-msgstr ""
+msgstr "Você está tentando baixar um experimento que não lhe pertence!"
 
 #: login.php:111
 msgid "Remember me"
@@ -1073,7 +1073,7 @@ msgstr "Lembre-se de mim"
 
 #: app/classes/Import.php:80
 msgid "This doesn't look like the right kind of file. Import aborted."
-msgstr ""
+msgstr "Este arquivo não parece estar no formato necessário. Abortando a importação. "
 
 #: search.php:207
 msgid "All the team"
@@ -1089,7 +1089,7 @@ msgstr "Item deletado com sucesso"
 
 #: app/controllers/SysconfigController.php:37
 msgid "User promoted"
-msgstr ""
+msgstr "O usuário foi promovido."
 
 #: app/controllers/SysconfigController.php:98
 #: app/controllers/SysconfigController.php:114
@@ -1098,11 +1098,11 @@ msgstr "E-mail enviado"
 
 #: app/controllers/SysconfigController.php:130
 msgid "Logs cleared"
-msgstr ""
+msgstr "Os registros foram apagados. "
 
 #: app/controllers/StatusController.php:71
 msgid "Status deleted successfully"
-msgstr ""
+msgstr "Apaguei a situação."
 
 #: app/controllers/EntityController.php:102
 msgid "Comment is too short"
@@ -1126,7 +1126,7 @@ msgstr "Experimento deletado com sucesso"
 
 #: app/controllers/ItemsTypesController.php:74
 msgid "Item type deleted successfully"
-msgstr ""
+msgstr "Apaguei o tipo de item."
 
 #: app/controllers/ResetPasswordController.php:112 change-pass.php:44
 msgid "Invalid link. Reset links are only valid for one hour."
@@ -1142,7 +1142,7 @@ msgstr "Ocorreu um erro!"
 
 #: app/controllers/UcpController.php:33
 msgid "Template deleted successfully"
-msgstr ""
+msgstr "Apaguei o modelo."
 
 #: app/controllers/CommentsController.php:59
 msgid "Comment successfully deleted"
@@ -1154,7 +1154,7 @@ msgstr "Evento deletado com sucesso"
 
 #: app/views/DatabaseView.php:113
 msgid "Welcome to eLabFTW. Head to the %sAdmin Panel%s to create a new type of item."
-msgstr ""
+msgstr "Bem-vindo ao eLabFTW! Dirija-se ao %Admin Panel% para criar um novo tipo de item."
 
 #: app/views/DatabaseView.php:122 app/views/ExperimentsView.php:169
 msgid "Show %s more"
@@ -1162,7 +1162,6 @@ msgstr "Mostrar mais %s"
 
 #. Mostrar todos
 #: app/views/DatabaseView.php:123 app/views/ExperimentsView.php:170
-#, fuzzy
 msgid "Show all"
 msgstr "Mostrar todos"
 
@@ -1181,15 +1180,15 @@ msgstr "Todos que possuem uma conta"
 
 #: app/views/ExperimentsView.php:450
 msgid "Read-only mode. Experiment of %s."
-msgstr ""
+msgstr "Modo somente leitura. O experimento pertence a %s."
 
 #: app/views/ExperimentsView.php:481
 msgid "Timestamp this experiment?"
-msgstr ""
+msgstr "Inserir timestamp neste experimento?"
 
 #: app/views/ExperimentsView.php:483
 msgid "Once timestamped an experiment cannot be edited anymore! Are you sure you want to do this?"
-msgstr ""
+msgstr "Uma vez inserido o timestamp, o experimento nunca mais poderá ser modificado! Tem certeza de que quer fazer isso?"
 
 #: app/views/SysconfigView.php:49
 msgid "Send a test email"
@@ -1201,7 +1200,7 @@ msgstr "Enviar"
 
 #: app/views/SysconfigView.php:68
 msgid "Nothing to display"
-msgstr ""
+msgstr "Nada pra mostrar."
 
 #: app/views/EntityView.php:118
 msgid "No templates found"
@@ -1209,7 +1208,7 @@ msgstr "Nenhum modelo encontrado "
 
 #: app/views/EntityView.php:135
 msgid "Filter by type"
-msgstr ""
+msgstr "Filtrar por tipo."
 
 #: app/views/EntityView.php:173
 msgid "Filter"
@@ -1221,32 +1220,32 @@ msgstr "Categoria"
 
 #: app/views/EntityView.php:181
 msgid "Rating"
-msgstr ""
+msgstr "Nota"
 
 #: app/views/EntityView.php:189
 msgid "DESC"
-msgstr ""
+msgstr "Descendente"
 
 #: app/views/EntityView.php:190
 msgid "ASC"
-msgstr ""
+msgstr "Ascendente"
 
 #. Is this a verb or a noun?
 #: app/views/EntityView.php:192
 msgid "Order"
-msgstr "Encomenda"
+msgstr "Listar"
 
 #: app/views/EntityView.php:298
 msgid "Back to Experiments Listing"
-msgstr ""
+msgstr "Voltar para a lista de experimentos"
 
 #: app/views/EntityView.php:300
 msgid "Back to Database Listing"
-msgstr ""
+msgstr "Voltar para a lista do banco de dados"
 
 #: app/views/StatusView.php:39
 msgid "Add a New Status"
-msgstr ""
+msgstr "Nova situação"
 
 #: app/views/StatusView.php:43 app/views/StatusView.php:70
 #: app/views/ItemsTypesView.php:42 app/views/ItemsTypesView.php:75
@@ -1255,7 +1254,7 @@ msgstr "Cor"
 
 #: app/views/StatusView.php:59
 msgid "Edit an Existing Status"
-msgstr ""
+msgstr "Modificar uma situação existente"
 
 #: app/views/StatusView.php:83 app/views/ItemsTypesView.php:84
 msgid "Delete"
@@ -1271,11 +1270,11 @@ msgstr "Reservável"
 
 #: app/views/ItemsTypesView.php:44
 msgid "in the %sscheduler%s"
-msgstr ""
+msgstr "No %sscheduler%s"
 
 #: app/views/ItemsTypesView.php:65
 msgid "Database Items Types"
-msgstr ""
+msgstr "Tipos de item no banco de dados"
 
 #: app/views/ItemsTypesView.php:81
 msgid "Edit the template"
@@ -1287,7 +1286,7 @@ msgstr "Adicionar nova equipe"
 
 #: app/views/TeamsView.php:51
 msgid "Promote Someone to Sysadmin"
-msgstr ""
+msgstr "Promover alguém a administrador do sistema"
 
 #: app/views/TeamsView.php:67
 msgid "Edit Existing Teams"
@@ -1295,7 +1294,7 @@ msgstr "Editar equipes existentes"
 
 #: app/views/TeamsView.php:114
 msgid "Send a Mass Email"
-msgstr ""
+msgstr "Enviar um e-mail coletivo"
 
 #: app/views/TeamsView.php:115
 msgid "Email Subject"
@@ -1307,11 +1306,11 @@ msgstr "Corpo de texto do email"
 
 #: app/ucp-exec.php:130
 msgid "Please input your current password!"
-msgstr ""
+msgstr "Favor digitar sua senha atual!"
 
 #: app/classes/MakeZip.php:137
 msgid "You are trying to download an item you don't own!"
-msgstr ""
+msgstr "Este item não lhe pertence, não é possível baixá-lo!"
 
 #: app/classes/Tools.php:266
 msgid "This section is out of your reach!"
@@ -1327,11 +1326,11 @@ msgstr "Impossível de abrir o arquivo"
 
 #: app/classes/MolViewer.php:107
 msgid "Cartoon"
-msgstr ""
+msgstr "Cartoon"
 
 #: app/classes/MolViewer.php:108
 msgid "Stick"
-msgstr ""
+msgstr "Bastões"
 
 #: app/classes/MolViewer.php:109
 msgid "Solid Surface"
@@ -1351,19 +1350,19 @@ msgstr "Remover superfícies"
 
 #: app/models/Users.php:40 app/models/Users.php:368
 msgid "Password must contain at least %s characters."
-msgstr ""
+msgstr "A senha precisa conter pelo menos %s caracteres."
 
 #: app/models/Tags.php:57
 msgid "Tag is too short!"
-msgstr ""
+msgstr "Essa etiqueta é curta demais!"
 
 #: app/models/Comments.php:109
 msgid "[eLabFTW] New comment posted"
-msgstr ""
+msgstr "[eLabFTW] há um novo cometário"
 
 #: app/models/Comments.php:116
 msgid "Hi. %s %s left a comment on your experiment. Have a look: %s"
-msgstr ""
+msgstr "Ôpa! %s %s comentou o seu experimento. Dê uma olhada: %s"
 
 #: app/models/Sysconfig.php:49
 msgid "[eLabFTW] Test email"
@@ -1371,15 +1370,15 @@ msgstr "[eLabFTW] E-mail teste"
 
 #: app/models/Sysconfig.php:55
 msgid "Congratulations, you correctly configured eLabFTW to send emails :)"
-msgstr ""
+msgstr "Parabéns, você acabou de configurar o eLabFTW para enviar e-mails!"
 
 #: app/models/ItemsTypes.php:80 team.php:78
 msgid "Nothing to show with this id"
-msgstr ""
+msgstr "Nada pra mostrar com esse id"
 
 #: login.php:90
 msgid "Note: You need cookies enabled to log in."
-msgstr ""
+msgstr "Observação: é preciso ativar cookies para poder se conectar."
 
 #: revisions.php:64
 msgid "Go back"
@@ -1415,11 +1414,11 @@ msgstr "Atalhos do teclado"
 
 #: ucp.php:117
 msgid "Show experiments from the team on the Experiments page?"
-msgstr ""
+msgstr "Mostrar os experimentos da equipe na página Experimentos?"
 
 #: ucp.php:125
 msgid "Display a warning before closing an edit window/tab?"
-msgstr ""
+msgstr "Avisar antes de fechar uma janela de edição?"
 
 #: ucp.php:225
 msgid "Experiments Templates"
@@ -1439,7 +1438,7 @@ msgstr "Nome do Modelo"
 
 #: search.php:154
 msgid "Select a Tag"
-msgstr ""
+msgstr "Selecione uma etiqueta"
 
 #: search.php:275
 msgid "or"
@@ -1459,7 +1458,7 @@ msgstr "Configure sua equipe"
 
 #: admin.php:110
 msgid "Override general timestamping config"
-msgstr ""
+msgstr "Ignorar a configuração geral de timestamping"
 
 #: admin.php:152
 msgid "Edit Users"
@@ -1475,19 +1474,19 @@ msgstr "Reiniciar senha do usuário"
 
 #: admin.php:200 change-pass.php:50
 msgid "characters minimum"
-msgstr ""
+msgstr "mínimo de caracteres"
 
 #: admin.php:251
 msgid "Common Experiment Template"
-msgstr ""
+msgstr "Modelo de Experimentos Comum"
 
 #: admin.php:269
 msgid "Import a CSV File"
-msgstr ""
+msgstr "Importar arquivo CSV"
 
 #: admin.php:299
 msgid "Import a ZIP File"
-msgstr ""
+msgstr "Importar arquivo ZIP"
 
 #: admin.php:303
 msgid "1. Select where to import:"
@@ -1539,7 +1538,7 @@ msgstr "Exportar"
 
 #: make.php:39
 msgid "Bad type!"
-msgstr ""
+msgstr "Tipo errado!"
 
 #: sysconfig.php:27
 msgid "eLabFTW Configuration"
@@ -1551,11 +1550,11 @@ msgstr "Última versão"
 
 #: sysconfig.php:81
 msgid "Usage Statistics"
-msgstr ""
+msgstr "Estatísticas de uso"
 
 #: sysconfig.php:97
 msgid "Under the Hood"
-msgstr ""
+msgstr "Configurações secretas"
 
 #: sysconfig.php:116
 msgid "Address of the Proxy:"
@@ -1575,15 +1574,15 @@ msgstr "Versão PHP"
 
 #: sysconfig.php:131
 msgid "Largest integer supported"
-msgstr ""
+msgstr "Maior número inteiro possível"
 
 #: sysconfig.php:132
 msgid "PHP configuration directory"
-msgstr ""
+msgstr "Diretório de configuração PHP"
 
 #: sysconfig.php:140
 msgid "Timestamping Configuration"
-msgstr ""
+msgstr "Configuração de Timestamping"
 
 #: sysconfig.php:182
 msgid "Security Settings"
@@ -1591,7 +1590,7 @@ msgstr "Configurações de Segurança"
 
 #: sysconfig.php:200
 msgid "Time of the ban after failed login attempts (in minutes):"
-msgstr ""
+msgstr "Quanto tempo banir após tentativas de login sem sucesso (em minutos):"
 
 #: sysconfig.php:215
 msgid "E-mail Settings"
@@ -1599,7 +1598,7 @@ msgstr "Configurações de e-mail"
 
 #: sysconfig.php:244
 msgid "Without a valid way to send emails users won't be able to reset their password. It is recommended to create a specific Mailgun.com account and add the infos here."
-msgstr ""
+msgstr "Se não houver uma maneira de enviar e-mails, os usuários não poderão reiniciar as próprias senhas. É melhor criar uma conta Mailgun.com e adicionar as informações aqui."
 
 #: sysconfig.php:246
 msgid "Send e-mails via:"
@@ -1607,19 +1606,19 @@ msgstr "Enviar e-mail via"
 
 #: sysconfig.php:248
 msgid "Select mailing method..."
-msgstr ""
+msgstr "Selecione uma maneira de enviar e-mails..."
 
 #: sysconfig.php:251
 msgid "Local MTA (default)"
-msgstr ""
+msgstr "MTA local (default)"
 
 #: sysconfig.php:254
 msgid "SMTP"
-msgstr ""
+msgstr "SMTP"
 
 #: sysconfig.php:257
 msgid "PHP"
-msgstr ""
+msgstr "PHP"
 
 #: sysconfig.php:264
 msgid "Sender address:"
@@ -1627,8 +1626,8 @@ msgstr "Endereço do remetente"
 
 #: sysconfig.php:270
 msgid "Path to sendmail:"
-msgstr ""
+msgstr "Caminho para o sendmail:"
 
 #: sysconfig.php:279
 msgid "SMTP encryption:"
-msgstr ""
+msgstr "Codificação SMTP:"

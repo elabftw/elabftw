@@ -284,7 +284,7 @@ class Uploads extends Entity
     }
 
     /**
-     * Create a jpg thumbnail from images of type jpg, png or gif.
+     * Create a jpg thumbnail from images of type jpeg, png, gif, tiff, eps and pdf.
      *
      * @param string $src Path to the original file
      * @param string $dest Path to the place to save the thumbnail
@@ -293,62 +293,18 @@ class Uploads extends Entity
      */
     public function makeThumb($src, $dest, $desiredWidth)
     {
-        // we don't want to work on too big images
-        // put the limit to 5 Mbytes
-        if (filesize($src) > 5000000) {
-            return false;
-        }
+      // we don't want to work on too big images
+      // put the limit to 5 Mbytes
+      if (filesize($src) > 5000000) {
+          return false;
+      }
 
-        // get mime type of the file
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mime = finfo_file($finfo, $src);
-        // the used function is different depending on extension
-        if ($mime === 'image/jpeg') {
-            $sourceImage = @imagecreatefromjpeg($src);
-        } elseif ($mime === 'image/png') {
-            $sourceImage = @imagecreatefrompng($src);
-        } elseif ($mime === 'image/gif') {
-            $sourceImage = @imagecreatefromgif($src);
-        } else {
-            if (!$this->makeGmagickThumb($src, $dest, $desiredWidth, $mime)) {
-              return false;
-            }
-            // if gmagick succeeds, no need to continue
-            return null;
-        }
+      // get mime type of the file
+      $finfo = finfo_open(FILEINFO_MIME_TYPE);
+      $mime = finfo_file($finfo, $src);
 
-        if ($sourceImage === false) {
-            return false;
-        }
-
-        $width = imagesx($sourceImage);
-        $height = imagesy($sourceImage);
-
-        // find the "desired height" of this thumbnail, relative to the desired width
-        $desiredHeight = floor($height * ($desiredWidth / $width));
-
-        // create a new, "virtual" image
-        $virtualImage = imagecreatetruecolor($desiredWidth, $desiredHeight);
-
-        // copy source image at a resized size
-        imagecopyresized($virtualImage, $sourceImage, 0, 0, 0, 0, $desiredWidth, $desiredHeight, $width, $height);
-
-        // create the physical thumbnail image to its destination (85% quality)
-        imagejpeg($virtualImage, $dest, 85);
-    }
-
-    /**
-     * Create a jpg thumbnail from images of type tiff and pdf.
-     *
-     * @param string $src Path to the original file
-     * @param string $dest Path to the place to save the thumbnail
-     * @param int $desiredWidth Width of the thumbnail (height is automatic depending on width)
-     * @param string $mime MIME Type of the image (used for white listing)
-     * @return null|false
-     */
-    public function makeGmagickThumb($src, $dest, $desiredWidth, $mime)
-    {
       // check if gmagick extension is loaded
+      // TODO: Remove check as requirements are handled by composer
       if (!extension_loaded('gmagick')) {
         // if not, try to load at runtime
         if (!dl('gmagick')) {
@@ -359,11 +315,20 @@ class Uploads extends Entity
       // do some sane whitelisting; in theory gmagick handles almost all
       // image formats, but the processing of rarely used formats may be
       // less tested/stable or may have security issues
-      $allowed_mime = array('image/tiff', 'application/pdf');
+      $allowed_mime = array('image/png',
+                            'image/jpeg',
+                            'image/gif',
+                            'image/tiff',
+                            'image/x-eps',
+                            'application/pdf',
+                            'application/postscript');
 
       if (in_array($mime, $allowed_mime)) {
         // if pdf, generate image using the first page (index 0)
-        if ($mime === 'application/pdf') {
+        // do the same for postscript files; sometimes eps images will be
+        // identified as application/postscript as well, but thumbnail
+        // generation still works in those cases
+        if ($mime === 'application/pdf' || $mime === 'application/postscript') {
           $src = $src . '[0]';
         }
         $image = new \Gmagick($src);
@@ -376,6 +341,7 @@ class Uploads extends Entity
       // create the physical thumbnail image to its destination (85% quality)
       $image->setCompressionQuality(85);
       $image->write($dest);
+      $image->clear();
     }
 
     /**

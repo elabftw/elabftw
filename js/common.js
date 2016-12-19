@@ -71,6 +71,8 @@ function isInt(n) {
     return n % 1 === 0;
 }
 
+// TODOLIST
+
 // show/hide the todolist
 function toggleTodoList() {
     todoList = $('#todoList');
@@ -80,6 +82,38 @@ function toggleTodoList() {
         todoList.css('display', 'none');
     }
 }
+
+function destroyTodolist(id) {
+    $.post("app/controllers/TodolistController.php", {
+        destroy: true,
+        id: id
+    }).done(function(data) {
+        var json = JSON.parse(data);
+        if (json.res) {
+            // hide item
+            $('#todoItem_' + id).css('background', '#29AEB9');
+            $('#todoItem_' + id).toggle('blind');
+        } else {
+            notif(json.msg, 'ko');
+        }
+    });
+}
+
+function destroyAllTodolist() {
+    $.post("app/controllers/TodolistController.php", {
+        destroyAll: true
+    }).done(function(data) {
+        var json = JSON.parse(data);
+        if (json.res) {
+            // hide all items
+            $('#todoItems-list').children().toggle('blind');
+        } else {
+            notif(json.msg, 'ko');
+        }
+    });
+}
+
+// END TODOLIST
 
 // display mol files
 function showMol(molFileContent) {

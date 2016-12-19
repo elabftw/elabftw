@@ -7,11 +7,11 @@
  */
 
 $(function() {
-
     /*
      * FUNCTIONS
      */
 
+    /*
     function remove($this) {
         var parentId = $this.parent().attr('id');
         // Remove todo list from localStorage based on the id of the clicked parent element
@@ -41,6 +41,7 @@ $(function() {
             'todo-orders', order.join(',')
         );
     }
+    /*
     function clearAll() {
         var $todoListLi = $('#show-items li');
 
@@ -67,12 +68,15 @@ $(function() {
     /*
      * START
      */
+        /*
 
     // Initial loading of todo items
     orderList = localStorage.getItem('todo-orders');
 
     orderList = orderList ? orderList.split(',') : [];
 
+
+    /*
     // display items
     for( j = 0, k = orderList.length; j < k; j++) {
         $itemList.append(
@@ -81,12 +85,39 @@ $(function() {
             + " <a href='#'>X</a></li>"
         );
     }
+    */
 
 
-    // Add a todo item
+    // Create
     $form.submit(function(e) {
         e.preventDefault();
-        if ($newTodo.val() !== "") {
+        var body = $newTodo.val();
+        var currentdate = new Date();
+        var datetime = currentdate.getFullYear() + "-" +
+            (currentdate.getMonth()+1)  + "-" +
+            currentdate.getDate() + " " +
+            currentdate.getHours() + ":" +
+            currentdate.getMinutes() + ":" +
+            currentdate.getSeconds();
+        if (body !== "") {
+            $.post("app/controllers/TodolistController.php", {
+                create: true,
+                body: body
+            }).done(function(data) {
+                var json = JSON.parse(data);
+                if (json.res) {
+                    $('#todoItems-list').append("<li class='todoItem' id='todoItem_" +
+                            json.id +
+                            "'><a href='#' onClick='destroyTodolist(" +
+                            json.id +
+                            ")'>X</a><span style='font-size:60%;display:block;'>" +
+                            datetime + "</span>" + body +
+                            '</li>');
+                } else {
+                    notif(json.msg, 'ko');
+                }
+            });
+            /*
             // Take the value of the input field and save it to localStorage
             localStorage.setItem(
                 "todo-" + i, $newTodo.val()
@@ -109,6 +140,7 @@ $(function() {
             $("#todo-" + i)
                 .css('display', 'none')
                 .fadeIn();
+            */
 
             // Empty the input field
             $newTodo.val("");
@@ -117,6 +149,7 @@ $(function() {
         }
     });
 
+    /*
     // Remove todo
     $itemList.delegate('a', 'click', function(e) {
         var $this = $(this);
@@ -125,12 +158,15 @@ $(function() {
         remove($this);
     });
 
+    /*
     // Clear all
     $clearAll.click(function(e) {
         e.preventDefault();
         clearAll();
     });
+    */
 
+    /*
     // Fade In and Fade Out the Remove link on hover
     $itemList.delegate('li', 'mouseover mouseout', function(event) {
         var $this = $(this).find('a');
@@ -141,4 +177,5 @@ $(function() {
             $this.stop(true, true).fadeOut();
         }
     });
+    */
 });

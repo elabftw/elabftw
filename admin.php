@@ -380,7 +380,7 @@ try {
         });
         // SORTABLE for STATUS
         $('.sortable_status').sortable({
-            // limit to horizontal dragging
+            // limit to vertical dragging
             axis : 'y',
             helper : 'clone',
             // do ajax request to update db with new order

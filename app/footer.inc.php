@@ -7,18 +7,29 @@
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  */
+// TODOLIST
+$Todolist = new \Elabftw\Elabftw\Todolist($_SESSION['userid']);
+$todoItems = $Todolist->readAll();
 ?>
-<!-- TODOLIST -->
 <div id='todoList'>
     <form id="todo-form">
         <input id="todo" type="text" />
         <input id="submit" type="submit" class='button' value="TODOfy">
     </form>
-   <ul id="show-items"></ul>
+<p>
+   <ul id='todoItems-list'>
+<?php
+foreach ($todoItems as $todoItem) {
+    echo "<li id='todoItem_" . $todoItem['id'] . "'><a href='#' onClick='destroyTodolist(" . $todoItem['id'] .
+        ")'>X</a><span style='font-size:60%;display:block;'>" . $todoItem['creation_time'] .
+        "</span>" . $todoItem['body'] . "</li>";
+}
+?>
+    </ul>
     <br><br>
     <a class='button' href="#" onClick='toggleTodoList()'>Close</a>
-    <br><br>
-    <a href="#" style='float:left' id="clear-all">Clear All</a>
+</p>
+    <a href="#" style='float:left' onClick='destroyAllTodolist()'>Clear All</a>
 </div>
 <!-- END TODOLIST -->
 
@@ -69,6 +80,30 @@ $('#help_container').hide();
 $('#help').click(function() {
     $('#help_container').toggle();
 });
+// SORTABLE for TODOLIST items
+$('#todoItems-list').sortable({
+    // limit to vertical dragging
+    axis : 'y',
+    helper : 'clone',
+    // do ajax request to update db with new order
+    update: function(event, ui) {
+        // send the orders as an array
+        var ordering = $("#todoItems-list").sortable("toArray");
+
+        $.post("app/controllers/TodolistController.php", {
+            'updateOrdering': true,
+            'ordering': ordering
+        }).done(function(data) {
+            var json = JSON.parse(data);
+            if (json.res) {
+                notif(json.msg, 'ok');
+            } else {
+                notif(json.msg, 'ko');
+            }
+        });
+    }
+});
+
 </script>
 <?php
 if (isset($_SESSION['auth'])) {

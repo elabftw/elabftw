@@ -1014,6 +1014,7 @@ code {
     margin:10px;
     border: 1px solid #fff;
 }
+/*
 #todoList a, a:link {
     outline: none;
 }
@@ -1022,6 +1023,7 @@ code {
     margin-top:30px;
     width: 80%;
 }
+*/
 #todoList ul li {
     list-style-type: none;
     font-size: 18px;
@@ -1037,9 +1039,14 @@ code {
 #todoList ul li a,
 #todoList ul li a:link {
     float: right;
+    font-size: 60%;
     display: none;
     text-decoration: none;
     color: #303030;
+}
+
+#todoList ul li:hover a {
+    display: inline;
 }
 #todoList ul li a:hover {
     color:red;

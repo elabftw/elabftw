@@ -304,17 +304,18 @@ class Uploads extends Entity
       $mime = finfo_file($finfo, $src);
 
       // check if gmagick extension is loaded
-      // TODO: Remove check as requirements are handled by composer
       if (!extension_loaded('gmagick')) {
-        // if not, try to load at runtime
-        if (!dl('gmagick')) {
-          return false;
-        }
+        // if not, throw exception; thumbnails won't be generated, but no need to crash here;
+        // there may be valid reasons to (temporarily) disable this particular extension (e.g. security reasons)
+        throw new Exception('Thumbnail creation failed: gmagick extension not loaded!');
       }
 
       // do some sane whitelisting; in theory gmagick handles almost all
       // image formats, but the processing of rarely used formats may be
-      // less tested/stable or may have security issues
+      // less tested/stable or may have security issues;
+      // when adding new mime types take care of ambiguities:
+      // e.g. image/eps may be a valid application/postscript;
+      // image/bmp may also be image/x-bmp or image/x-ms-bmp
       $allowed_mime = array('image/png',
                             'image/jpeg',
                             'image/gif',
@@ -324,7 +325,7 @@ class Uploads extends Entity
                             'application/postscript');
 
       if (in_array($mime, $allowed_mime)) {
-        // if pdf, generate image using the first page (index 0)
+        // if pdf or postscript, generate image using the first page (index 0)
         // do the same for postscript files; sometimes eps images will be
         // identified as application/postscript as well, but thumbnail
         // generation still works in those cases
@@ -336,7 +337,7 @@ class Uploads extends Entity
         return false;
       }
       // create thumbnail of width 100px; height is calculated automatically
-      // to keep aspect ratio
+      // to keep the aspect ratio
       $image->thumbnailimage(100, 0);
       // create the physical thumbnail image to its destination (85% quality)
       $image->setCompressionQuality(85);

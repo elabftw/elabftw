@@ -56,7 +56,7 @@ class MolViewer
         // Check for proper use:
         // We always want either is_pdb to be true or a valid filepath!
         if ($filePath === "" && !$isPdb) {
-            throw new Exception('If $id is not a PDB ID ($isPdb=False) then a valid file path must be passed!');
+            throw new Exception('If $id is not a PDB ID ($isPdb=false) then a valid file path must be passed!');
         }
         $this->id = $id;
         $this->isPdb = $isPdb;
@@ -102,7 +102,7 @@ class MolViewer
     {
         // Array holding list of styles for the dropdown list.
         // Each item consists of its label als translatable string and a corresponding javascript function
-        // that is executet if the item is clicked.
+        // that is executed if the item is clicked.
         $styles = array(
             'cartoon' => array(_('Cartoon'), 'show_cartoon(\'' . $this->divId . '\');'),
             'stick' => array(_('Stick'), 'show_stick(\'' . $this->divId . '\');'),

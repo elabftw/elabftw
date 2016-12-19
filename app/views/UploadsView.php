@@ -162,7 +162,13 @@ class UploadsView extends EntityView
 
             // if this is something 3Dmol.js can handle
             } elseif (in_array($ext, $molExtensions)) {
-                $molviewer = new MolViewer($upload['id'], $filepath);
+                // try to be clever and choose stick representation for
+                // all files that are not in pdb format
+                $style = 'stick';
+                if ($ext === 'pdb') {
+                  $style = 'cartoon:color=spectrum';
+                }
+                $molviewer = new MolViewer($upload['id'], $filepath, false, $style);
                 $html .= $molviewer->getViewerDiv();
 
             } else {

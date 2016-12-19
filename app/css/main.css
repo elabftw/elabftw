@@ -570,7 +570,7 @@ div.txt li {
 
 /* fix for big images uploaded in the text */
 section.item div.txt {
-    overflow:hidden;
+    overflow:scroll;
 }
 
 /* size of the editable box in edit mode */

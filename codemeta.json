@@ -1,0 +1,30 @@
+{
+  "@context": "https://raw.githubusercontent.com/mbjones/codemeta/master/codemeta.jsonld",
+  "@type": "Code",
+  "author": [
+    {
+      "@id": "http://orcid.org/0000-0002-7494-5555",
+      "@type": "Person",
+      "email": "nicolas.carpi@curie.fr",
+      "name": "Nicolas CARPi",
+      "affiliation": "Institut Curie UMR144/CNRS, Paris, France"
+    },
+    {
+      "@id": "http://orcid.org/0000-0001-7760-2753",
+      "@type": "Person",
+      "email": "alexander.minges@hhu.de",
+      "name": "Alexander Minges",
+      "affiliation": "Institute of Biochemical Plant Physiology, Düsseldorf, Germany"
+    }
+  ],
+  "identifier": "",
+  "codeRepository": "https://github.com/elabftw/elabftw",
+  "datePublished": "2016-12-15",
+  "dateModified": "2016-12-15",
+  "dateCreated": "2016-12-15",
+  "description": "A free and open source electronic laboratory notebook for research labs.",
+  "keywords": "eln, notebook, research, free, php/mysql, timestamp",
+  "license": "AGPLv3",
+  "title": "eLabFTW",
+  "version": "1.4.0"
+}

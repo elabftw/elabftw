@@ -2,10 +2,13 @@
 
 # Informations
 
-* Elabftw version (visible in sysconfig.php) :
+* Elabftw version (visible in Sysadmin panel) :
 * Installation method (git, docker or zip archive) :
 * Operating system + version :
-* PHP version :
-* MySQL version :
-* Webserver (apache/nginx) + version :
 * Browser used (firefox/chrome) :
+
+For git/zip installation method:
+
+* PHP version:
+* MySQL version:
+* Webserver (apache/nginx) + version :

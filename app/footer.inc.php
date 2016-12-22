@@ -22,7 +22,7 @@ $todoItems = $Todolist->readAll();
 foreach ($todoItems as $todoItem) {
     echo "<li id='todoItem_" . $todoItem['id'] . "'><a href='#' onClick='destroyTodolist(" . $todoItem['id'] .
         ")'>X</a><span style='font-size:60%;display:block;'>" . $todoItem['creation_time'] .
-        "</span>" . $todoItem['body'] . "</li>";
+        "</span><span id='todoItem_" . $todoItem['id'] . "' class='editable'>" . $todoItem['body'] . "</span></li>";
 }
 ?>
     </ul>
@@ -103,16 +103,58 @@ $('#todoItems-list').sortable({
         });
     }
 });
+$('#todoItems-list').on('mouseover', '.editable', function(){
+    makeEditableTodoitem();
+});
 
 </script>
 <?php
 if (isset($_SESSION['auth'])) {
+?>
+<script>
+    // Create
+    $('#todo-form').submit(function(e) {
+        e.preventDefault();
+        var body = $('#todo').val();
+        var currentdate = new Date();
+        var datetime = currentdate.getFullYear() + "-" +
+            (currentdate.getMonth()+1)  + "-" +
+            currentdate.getDate() + " " +
+            currentdate.getHours() + ":" +
+            currentdate.getMinutes() + ":" +
+            currentdate.getSeconds();
+        if (body !== "") {
+            $.post("app/controllers/TodolistController.php", {
+                create: true,
+                body: body
+            }).done(function(data) {
+                var json = JSON.parse(data);
+                if (json.res) {
+                    // add the todoitem
+                    $('#todoItems-list').prepend("<li class='todoItem' id='todoItem_" +
+                            json.id +
+                            "'><a href='#' onClick='destroyTodolist(" +
+                            json.id +
+                            ")'>X</a><span style='font-size:60%;display:block;'>" +
+                            datetime + "</span><span id='todoItem_" + json.id + "' class='editable'>" + body +
+                            '</li>');
+                    
+                    // make it editable right away
+                    makeEditableTodoitem();
+                    // and clear the input
+                    $('#todo').val("");
+                } else {
+                    notif(json.msg, 'ko');
+                }
+            });
+        }
+    });
     // show TODOlist
-    echo "<script>
-    key('" . $_SESSION['prefs']['shortcuts']['todo'] . "', function(){
+    key('<?= $_SESSION['prefs']['shortcuts']['todo'] ?>', function(){
         toggleTodoList();
     });
-    </script>";
+    </script>
+<?php
 }
 ?>
 </body>

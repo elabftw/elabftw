@@ -82,6 +82,32 @@ function toggleTodoList() {
         todoList.css('display', 'none');
     }
 }
+// EDIT todoitem
+function makeEditableTodoitem() {
+    $('.editable').editable(function(value, settings) {
+        $.post('app/controllers/TodolistController.php', {
+            update: true,
+            body: value,
+            id: $(this).attr('id')
+        }).done(function(data) {
+            var json = JSON.parse(data);
+            if (json.res) {
+                notif(json.msg, 'ok');
+            } else {
+                notif(json.msg, 'ko');
+            }
+        });
+
+        return(value);
+        }, {
+     tooltip : 'Click to edit',
+     indicator : 'Saving...',
+     name : 'fileComment',
+     submit : 'Save',
+     cancel : 'Cancel',
+     style : 'display:inline'
+    });
+}
 
 function destroyTodolist(id) {
     $.post("app/controllers/TodolistController.php", {

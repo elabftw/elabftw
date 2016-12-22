@@ -50,6 +50,40 @@ try {
         }
     }
 
+
+    if (isset($_POST['update'])) {
+        try {
+            $body = filter_var($_POST['body'], FILTER_SANITIZE_STRING);
+
+            if (strlen($body) === 0 || $body === ' ') {
+                throw new Exception(_('Comment is too short'));
+            }
+
+            $id_arr = explode('_', $_POST['id']);
+            if (Tools::checkId($id_arr[1]) === false) {
+                throw new Exception(_('The id parameter is invalid'));
+            }
+            $id = $id_arr[1];
+
+            if ($Todolist->update($id, $body)) {
+                echo json_encode(array(
+                    'res' => true,
+                    'msg' => _('Saved')
+                ));
+            } else {
+                echo json_encode(array(
+                    'res' => false,
+                    'msg' => Tools::error()
+                ));
+            }
+        } catch (Exception $e) {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => $e->getMessage()
+            ));
+        }
+    }
+
     if (isset($_POST['updateOrdering'])) {
         if ($Todolist->updateOrdering($_POST)) {
             echo json_encode(array(

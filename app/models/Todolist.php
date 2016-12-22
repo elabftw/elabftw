@@ -24,12 +24,23 @@ class Todolist
     /** our user */
     private $userid;
 
+    /**
+     * Gimme a userid
+     *
+     * @param int $userid
+     */
     public function __construct($userid)
     {
         $this->pdo = Db::getConnection();
         $this->userid = $userid;
     }
 
+    /**
+     * Create a todoitem
+     *
+     * @param string $body
+     * @return int the id of the created todoitem
+     */
     public function create($body)
     {
         $sql = "INSERT INTO todolist(body, userid)
@@ -45,6 +56,11 @@ class Todolist
         return $this->pdo->lastInsertId();
     }
 
+    /**
+     * Select all the todoitems for a user
+     *
+     * @return array
+     */
     public function readAll()
     {
         $sql = "SELECT id, body, creation_time FROM todolist WHERE userid = :userid ORDER BY ordering ASC";
@@ -55,6 +71,29 @@ class Todolist
         return $req->fetchAll();
     }
 
+    /**
+     * Update the body of a todoitem with jeditable
+     *
+     * @param int $id Id of the todoitem
+     * @param string $body
+     * @return bool
+     */
+    public function update($id, $body)
+    {
+        $sql = "UPDATE todolist SET body = :body WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $id);
+        $req->bindParam(':body', $body);
+
+        return $req->execute();
+    }
+
+    /**
+     * Update the order of the todoitems
+     *
+     * @param array $post
+     * @return bool
+     */
     public function updateOrdering($post)
     {
         $success = array();
@@ -74,6 +113,12 @@ class Todolist
         return !in_array(false, $success);
     }
 
+    /**
+     * Remove a todoitem
+     *
+     * @param int $id
+     * @return bool
+     */
     public function destroy($id)
     {
         $sql = "DELETE FROM todolist WHERE id = :id AND userid = :userid";
@@ -84,6 +129,11 @@ class Todolist
         return $req->execute();
     }
 
+    /**
+     * Clear all todoitems from the todolist
+     *
+     * @return bool
+     */
     public function destroyAll()
     {
         $sql = "DELETE FROM todolist WHERE userid = :userid";

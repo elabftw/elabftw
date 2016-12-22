@@ -353,6 +353,18 @@ CREATE TABLE IF NOT EXISTS `team_events` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- todolist
+--
+
+CREATE TABLE IF NOT EXISTS `todolist` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `body` text NOT NULL,
+  `creation_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ordering` int(10) UNSIGNED DEFAULT NULL,
+  `userid` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 -- --------------------------------------------------------
 
 
@@ -406,4 +418,4 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('stampprovider', 'http://zeitstempel.dfn.de/'),
 ('stampcert', 'app/dfn-cert/pki.dfn.pem'),
 ('stamphash', 'sha256'),
-('schema', '12');
+('schema', '13');

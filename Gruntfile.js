@@ -15,7 +15,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'js/elabftw.min.js': ['js/common.js', 'js/cornify.js', 'js/jquery.rating.js', 'js/keymaster/keymaster.js', 'js/todolist.js', 'js/fancybox/source/jquery.fancybox.pack.js', 'js/colorpicker/jquery.colorpicker.js', 'js/jeditable/jquery.jeditable.js', 'js/jquery.complexify.js/jquery.complexify.js', 'js/jquery.complexify.js/jquery.complexify.banlist.js', 'js/3Dmol-nojquery.js', 'js/3dmol_helpers.js', 'js/dropzone/dist/min/dropzone.min.js'],
+          'js/elabftw.min.js': ['js/common.js', 'js/cornify.js', 'js/jquery.rating.js', 'js/keymaster/keymaster.js', 'js/fancybox/source/jquery.fancybox.pack.js', 'js/colorpicker/jquery.colorpicker.js', 'js/jeditable/jquery.jeditable.js', 'js/jquery.complexify.js/jquery.complexify.js', 'js/jquery.complexify.js/jquery.complexify.banlist.js', 'js/3Dmol-nojquery.js', 'js/3dmol_helpers.js', 'js/dropzone/dist/min/dropzone.min.js'],
           'js/chemdoodle/chemdoodle.min.js': ['js/chemdoodle/chemdoodle-unpacked.js', 'js/chemdoodle/chemdoodle-uis-unpacked.js']
         }
       }

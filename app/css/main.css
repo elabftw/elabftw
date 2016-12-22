@@ -1014,14 +1014,7 @@ code {
     margin:10px;
     border: 1px solid #fff;
 }
-#todoList a, a:link {
-    outline: none;
-}
 
-#todoList ul {
-    margin-top:30px;
-    width: 80%;
-}
 #todoList ul li {
     list-style-type: none;
     font-size: 18px;
@@ -1030,17 +1023,22 @@ code {
     margin-bottom: 5px;
     padding: 10px;
     text-align: left;
-}
-#todoList ul li {
     cursor: auto;
 }
 #todoList ul li a,
 #todoList ul li a:link {
     float: right;
+    font-size: 60%;
     display: none;
     text-decoration: none;
     color: #303030;
 }
+
+/* fix the padding for sortable list */
+ul#todoItems-list.ui-sortable {
+    padding-left: 0;
+}
+
 #todoList ul li a:hover {
     color:red;
 }

@@ -1025,6 +1025,10 @@ code {
     text-align: left;
     cursor: auto;
 }
+
+#todoList ul li:hover a:link {
+    display: inline;
+}
 #todoList ul li a,
 #todoList ul li a:link {
     float: right;

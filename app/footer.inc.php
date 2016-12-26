@@ -12,6 +12,19 @@ $Todolist = new \Elabftw\Elabftw\Todolist($_SESSION['userid']);
 $todoItems = $Todolist->readAll();
 ?>
 <div id='todoList'>
+<script>
+// check for old style items and add them to SQL
+var orderList = localStorage.getItem('todo-orders');
+orderList = orderList ? orderList.split(',') : [];
+for( j = 0, k = orderList.length; j < k; j++) {
+    $.post("app/controllers/TodolistController.php", {
+        create: true,
+        body: localStorage.getItem(orderList[j])
+    });
+}
+// delete old style storage
+localStorage.clear();
+</script>
     <form id="todo-form">
         <input id="todo" type="text" />
         <input id="submit" type="submit" class='button' value="TODOfy">

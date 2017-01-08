@@ -527,7 +527,7 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
     }
 
     /**
-     * Add todolist table
+     * Add todolist table and update any old documentation link (local one)
      *
      */
     private function schema13()
@@ -540,6 +540,14 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
           `userid` int(10) UNSIGNED NOT NULL,
           PRIMARY KEY (`id`));";
 
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Problem updating to schema 13!');
+        }
+
+        // update the links. Use % because we might have index.html at the end
+        $sql = "UPDATE teams
+            SET link_href = 'https://elabftw.readthedocs.io'
+            WHERE link_href LIKE 'doc/_build/html%'";
         if (!$this->pdo->q($sql)) {
             throw new Exception('Problem updating to schema 13!');
         }

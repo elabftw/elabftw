@@ -8,42 +8,46 @@
  * @license AGPL-3.0
  */
 // TODOLIST
-$Todolist = new \Elabftw\Elabftw\Todolist($_SESSION['userid']);
-$todoItems = $Todolist->readAll();
-?>
-<div id='todoList'>
-<script>
-// check for old style items and add them to SQL
-var orderList = localStorage.getItem('todo-orders');
-orderList = orderList ? orderList.split(',') : [];
-for( j = 0, k = orderList.length; j < k; j++) {
-    $.post("app/controllers/TodolistController.php", {
-        create: true,
-        body: localStorage.getItem(orderList[j])
-    });
+if (isset($_SESSION['auth'])) {
+    $Todolist = new \Elabftw\Elabftw\Todolist($_SESSION['userid']);
+    $todoItems = $Todolist->readAll();
+    ?>
+    <div id='todoList'>
+    <script>
+    // check for old style items and add them to SQL
+    var orderList = localStorage.getItem('todo-orders');
+    orderList = orderList ? orderList.split(',') : [];
+    for( j = 0, k = orderList.length; j < k; j++) {
+        $.post("app/controllers/TodolistController.php", {
+            create: true,
+            body: localStorage.getItem(orderList[j])
+        });
+    }
+    // delete old style storage
+    localStorage.clear();
+    </script>
+        <form id="todo-form">
+            <input id="todo" type="text" />
+            <input id="submit" type="submit" class='button' value="TODOfy">
+        </form>
+    <p>
+       <ul id='todoItems-list'>
+    <?php
+    foreach ($todoItems as $todoItem) {
+        echo "<li id='todoItem_" . $todoItem['id'] . "'><a href='#' onClick='destroyTodolist(" . $todoItem['id'] .
+            ")'>X</a><span style='font-size:60%;display:block;'>" . $todoItem['creation_time'] .
+            "</span><span id='todoItem_" . $todoItem['id'] . "' class='editable'>" . $todoItem['body'] . "</span></li>";
+    }
+    ?>
+        </ul>
+        <br><br>
+        <a class='button' href="#" onClick='toggleTodoList()'>Close</a>
+    </p>
+        <a href="#" style='float:left' onClick='destroyAllTodolist()'>Clear All</a>
+    </div>
+    <?php
 }
-// delete old style storage
-localStorage.clear();
-</script>
-    <form id="todo-form">
-        <input id="todo" type="text" />
-        <input id="submit" type="submit" class='button' value="TODOfy">
-    </form>
-<p>
-   <ul id='todoItems-list'>
-<?php
-foreach ($todoItems as $todoItem) {
-    echo "<li id='todoItem_" . $todoItem['id'] . "'><a href='#' onClick='destroyTodolist(" . $todoItem['id'] .
-        ")'>X</a><span style='font-size:60%;display:block;'>" . $todoItem['creation_time'] .
-        "</span><span id='todoItem_" . $todoItem['id'] . "' class='editable'>" . $todoItem['body'] . "</span></li>";
-}
 ?>
-    </ul>
-    <br><br>
-    <a class='button' href="#" onClick='toggleTodoList()'>Close</a>
-</p>
-    <a href="#" style='float:left' onClick='destroyAllTodolist()'>Clear All</a>
-</div>
 <!-- END TODOLIST -->
 
 <footer>

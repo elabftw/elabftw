@@ -15,6 +15,13 @@
       "email": "alexander.minges@hhu.de",
       "name": "Alexander Minges",
       "affiliation": "Institute of Biochemical Plant Physiology, Düsseldorf, Germany"
+    },
+    {
+      "@id": "http://orcid.org/0000-0002-2848-177X",
+      "@type": "Person",
+      "email": "matthieu.piel@curie.fr",
+      "name": "Matthieu Piel",
+      "affiliation": "Institut Curie UMR144/CNRS, Paris, France"
     }
   ],
   "identifier": "",

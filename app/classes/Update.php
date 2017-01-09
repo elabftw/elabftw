@@ -45,11 +45,10 @@ class Update
     /**
      * ////////////////////////////
      * UPDATE THIS AFTER RELEASING
-     * UPDATE IT ALSO IN doc/conf.py
-     * AND package.json
+     * UPDATE IT ALSO IN package.json
      * ///////////////////////////
      */
-    const INSTALLED_VERSION = '1.4.0';
+    const INSTALLED_VERSION = '1.4.1';
 
     /**
      * /////////////////////////////////////////////////////
@@ -57,7 +56,7 @@ class Update
      * UPDATE IT ALSO IN INSTALL/ELABFTW.SQL (last line)
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '12';
+    const REQUIRED_SCHEMA = '13';
 
     /**
      * Create the pdo object
@@ -260,6 +259,11 @@ class Update
             // 20161016
             $this->schema12();
             $this->updateSchema(12);
+        }
+        if ($current_schema < 13) {
+            // 20161219
+            $this->schema13();
+            $this->updateSchema(13);
         }
 
         // place new schema functions above this comment
@@ -518,6 +522,33 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
             if (!update_config(array('stampcert' => 'app/dfn-cert/pki.dfn.pem'))) {
                 throw new Exception('Error changing path to timestamping cert. (updating to schema 12)');
             }
+        }
+    }
+
+    /**
+     * Add todolist table and update any old documentation link (local one)
+     *
+     */
+    private function schema13()
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS `todolist` (
+          `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+          `body` text NOT NULL,
+          `creation_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          `ordering` int(10) UNSIGNED DEFAULT NULL,
+          `userid` int(10) UNSIGNED NOT NULL,
+          PRIMARY KEY (`id`));";
+
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Problem updating to schema 13!');
+        }
+
+        // update the links. Use % because we might have index.html at the end
+        $sql = "UPDATE teams
+            SET link_href = 'https://elabftw.readthedocs.io'
+            WHERE link_href LIKE 'doc/_build/html%'";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Problem updating to schema 13!');
         }
     }
 }

@@ -442,7 +442,7 @@ class MakePdf extends Make
                 <htmlpagefooter name="footer">
                     <div id="footer">
                         PDF generated with <a href="https://www.elabftw.net">elabftw</a>, a free and open source lab notebook
-                        <p style="font-size:6pt;">File generated on {DATE j-m-Y H:m}</p>
+                        <p style="font-size:6pt;">File generated on {DATE d-m-Y} at {DATE H:m}</p>
                     </div>
                 </htmlpagefooter>';
 

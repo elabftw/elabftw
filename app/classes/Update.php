@@ -45,11 +45,10 @@ class Update
     /**
      * ////////////////////////////
      * UPDATE THIS AFTER RELEASING
-     * UPDATE IT ALSO IN doc/conf.py
-     * AND package.json
+     * UPDATE IT ALSO IN package.json
      * ///////////////////////////
      */
-    const INSTALLED_VERSION = '1.3.1';
+    const INSTALLED_VERSION = '1.4.1';
 
     /**
      * /////////////////////////////////////////////////////

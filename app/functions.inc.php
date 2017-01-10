@@ -114,7 +114,11 @@ function update_config($post)
     // encrypt password
     if (isset($post['smtp_password']) && !empty($post['smtp_password'])) {
         $post['smtp_password'] = Crypto::encrypt($post['smtp_password'], Key::loadFromAsciiSafeString(SECRET_KEY));
+    // we might receive a set but empty smtp_password, so ignore it
+    } elseif (empty($post['smtp_password'])) {
+        unset($post['smtp_password']);
     }
+
 
     // loop the array and update config
     foreach ($post as $name => $value) {

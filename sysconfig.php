@@ -53,7 +53,7 @@ try {
         // if we don't have the latest version, show button redirecting to doc
         if ($SysconfigView->Update->updateIsAvailable()) {
             $message = $SysconfigView->Update->getReleaseDate() . " - " .
-                _('A new version is available!') . " <a href='https://elabftw.readthedocs.io/en/stable/how-to-update.html'>
+                _('A new version is available!') . " <a href='https://elabftw.readthedocs.io/en/latest/how-to-update.html'>
                 <button class='button'>Update elabftw</button></a>";
             display_message('warning', $message);
         }
@@ -62,7 +62,7 @@ try {
     }
 
     if (get_config('mail_from') === 'notconfigured@example.com') {
-        $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://elabftw.readthedocs.io/en/stable/postinstall.html#setting-up-email'>", "</a>");
+        $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://elabftw.readthedocs.io/en/latest/postinstall.html#setting-up-email'>", "</a>");
         display_message('ko', $message);
     }
     ?>
@@ -219,7 +219,7 @@ try {
         </div>
     </div>
 
-    <!-- TAB 6 -->
+    <!-- TAB 6 EMAIL -->
     <div class='divhandle' id='tab6div'>
         <div class='box'>
             <h3><?= _('E-mail Settings') ?></h3>
@@ -306,7 +306,16 @@ try {
                 <label class="block" for='smtp_username'><?= _('SMTP username:') ?></label>
                 <input class="clean-form col-3-form" type='text' value='<?= get_config('smtp_username') ?>' name='smtp_username' id='smtp_username' />
                 <label class="block" for='smtp_password'><?= _('SMTP password') ?></label>
-                <input class="clean-form col-3-form" type='password' name='smtp_password' id='smtp_password' />
+                <?php
+if (strlen(get_config('smtp_password')) === 0) {
+                echo "<input class='clean-form col-3-form' type='password' name='smtp_password' id='smtp_password' />";
+} else {
+    echo _('A password is set.');
+    echo "<span class='button' id='editSmtpPassword'>" . _('Edit') . "</span>";
+    echo "<input class='clean-form col-3-form' type='password' name='smtp_password' style='display:none' id='hidden_smtp_password' />";
+
+}
+?>
                 </p>
                 </div>
                 <div class='submitButtonDiv'>
@@ -327,6 +336,10 @@ try {
 
     <script>
     $(document).ready(function() {
+        $('#editSmtpPassword').click(function() {
+            var newInput = "<input class='clean-form col-3-form' type='password' name='smtp_password' id='smtp_password' />";
+            $('#hidden_smtp_password').toggle();
+        });
         // we need to add this otherwise the button will stay disabled with the browser's cache (Firefox)
         var input_list = document.getElementsByTagName('input');
         for (var i=0; i < input_list.length; i++) {

@@ -48,7 +48,7 @@ class Update
      * UPDATE IT ALSO IN package.json
      * ///////////////////////////
      */
-    const INSTALLED_VERSION = '1.4.1';
+    const INSTALLED_VERSION = '1.4.2';
 
     /**
      * /////////////////////////////////////////////////////
@@ -534,7 +534,7 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
         $sql = "CREATE TABLE IF NOT EXISTS `todolist` (
           `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
           `body` text NOT NULL,
-          `creation_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          `creation_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
           `ordering` int(10) UNSIGNED DEFAULT NULL,
           `userid` int(10) UNSIGNED NOT NULL,
           PRIMARY KEY (`id`));";

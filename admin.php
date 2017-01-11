@@ -124,7 +124,7 @@ try {
                 <span class='smallgray'><?= sprintf(_('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. The file needs to be in %sPEM-encoded (ASCII)%s format!'), "<br>", "<a href='https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail'>", "</a>") ?></span>
                 </p>
                 <label class="block" for='stamplogin'><?= _('Login for external timestamping service:') ?></label>
-                <input class="clean-form col-3-form" type='text' value='<?= $teamConfigArr['stamplogin'] ?>' name='stamplogin' id='stamplogin' />
+                <input class="clean-form col-3-form" autocomplete='off' type='text' value='<?= $teamConfigArr['stamplogin'] ?>' name='stamplogin' id='stamplogin' />
                 <span class='smallgray'><?= _('This should be the login associated with your timestamping service provider') ?></span>
                 </p>
                 <p>
@@ -135,7 +135,7 @@ try {
         echo "<a href='app/controllers/AdminController.php?clearStamppass=1'>Clear it</a> or change it below:</p>";
     }
     ?>
-                <input class="clean-form col-3-form" type='password' name='stamppass' id='stamppass' />
+                <input class="clean-form col-3-form" autocomplete='off' type='password' name='stamppass' id='stamppass' />
                 <span class='smallgray'><?= _('Your timestamping service provider password') ?></span>
                 </p>
             </div>

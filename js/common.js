@@ -979,3 +979,14 @@ function getQueryParams(qs) {
 
     return params;
 }
+
+// decode asn1token
+function decodeAsn1(path, expId) {
+    $.post('app/controllers/ExperimentsController.php', {
+        asn1: path,
+        exp_id: expId
+    }).done(function(data) {
+        var json = JSON.parse(data);
+        $('#decodedDiv').html(json.msg);
+    });
+}

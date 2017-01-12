@@ -545,15 +545,64 @@ class TrustedTimestamps extends Entity
      */
     public function decodeAsn1($token)
     {
-        $cmd = "asn1parse -inform DER -strparse 87 -in " . escapeshellarg(ELAB_ROOT . "uploads/" . $token);
+        $cmd = "asn1parse -inform DER -in " . escapeshellarg(ELAB_ROOT . "uploads/" . $token);
 
         $opensslResult = $this->runOpenSSL($cmd);
         $retarray = $opensslResult['retarray'];
         $retcode = $opensslResult['retcode'];
 
         // now let's parse this
-        // TODO
-        return $retarray;
+        $out = "<br><hr>";
+
+        $statusArr = explode(":", $retarray[4]);
+        $status = $statusArr[3];
+
+        $versionArr = explode(":", $retarray[111]);
+        $version = $versionArr[3];
+
+        $oidArr = explode(":", $retarray[81]);
+        $oid = $oidArr[3];
+
+        $hashArr = explode(":", $retarray[12]);
+        $hash = $hashArr[3];
+
+        $messageArr = explode(":", $retarray[17]);
+        $message = $messageArr[3];
+
+        $timestampArr = explode(":", $retarray[142]);
+        // for some reason the DateTime::createFromFormat didn't work
+        // so we do it manually
+        $timestamp = rtrim($timestampArr[3], 'Z');
+        $year = "20" . substr($timestamp, 0, 2);
+        $month = substr($timestamp, 2, 2);
+        $day = substr($timestamp, 4, 2);
+        $hour = substr($timestamp, 6, 2);
+        $minute = substr($timestamp, 8, 2);
+        $second = substr($timestamp, 10, 2);
+
+        $countryArr = explode(":", $retarray[31]);
+        $country = $countryArr[3];
+
+        $tsaArr = explode(":", $retarray[121]);
+        $tsa = $tsaArr[3];
+
+        $tsaArr = explode(":", $retarray[39]);
+        $tsa .= ", " . $tsaArr[3];
+        $tsaArr = explode(":", $retarray[43]);
+        $tsa .= ", " . $tsaArr[3];
+
+        $out .= "Status: " . $status;
+        $out .= "<br>Version: " . $version;
+        $out .= "<br>OID: " . $oid;
+        $out .= "<br>Hash algorithm: " . $hash;
+        $out .= "<br>Message data: 0x" . $message;
+        $out .= "<br>Timestamp: " . $year . "-" . $month . "-" . $day . " at " . $hour . ":" . $minute . ":" . $second;
+
+        $out .= "<br><br>TSA info:";
+        $out .= "<br>TSA: ". $tsa;
+        $out .= "<br>Country: " . $country;
+
+        return $out;
     }
 
     /**

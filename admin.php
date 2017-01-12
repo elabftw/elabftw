@@ -165,9 +165,9 @@ try {
                     <?= $formKey->getFormkey() ?>
                     <input type='hidden' name='usersDestroy' value='true'/>
                     <label class="block" for='usersDestroyEmail'><?= _('Type EMAIL ADDRESS of a member to delete this user and all his experiments/files forever:') ?></label>
-                    <input class="clean-form col-3-form" type='email' placeholder='Email Address' name='usersDestroyEmail' id='usersDestroyEmail' required />
+                    <input class="clean-form col-3-form" autocomplete='off' type='email' placeholder='Email Address' name='usersDestroyEmail' id='usersDestroyEmail' required />
                     <label class="block" for='usersDestroyPassword'><?= _('Type your password:') ?></label>
-                    <input class="clean-form col-3-form" type='password' placeholder='Your Password' name='usersDestroyPassword' id='usersDestroyPassword' required />
+                    <input class="clean-form col-3-form" autocomplete='off' type='password' placeholder='Your Password' name='usersDestroyPassword' id='usersDestroyPassword' required />
                     <div class='center'>
                         <button type='submitButtonDiv' class='button button-delete'><?= _('Delete this user!') ?></button>
                     </div>

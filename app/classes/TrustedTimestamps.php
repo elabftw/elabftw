@@ -538,6 +538,25 @@ class TrustedTimestamps extends Entity
     }
 
     /**
+     * Decode asn1 encoded token
+     *
+     * @param string $token
+     * @return string
+     */
+    public function decodeAsn1($token)
+    {
+        $cmd = "asn1parse -inform DER -strparse 87 -in " . escapeshellarg(ELAB_ROOT . "uploads/" . $token);
+
+        $opensslResult = $this->runOpenSSL($cmd);
+        $retarray = $opensslResult['retarray'];
+        $retcode = $opensslResult['retcode'];
+
+        // now let's parse this
+        // TODO
+        return $retarray;
+    }
+
+    /**
      * The main function.
      * Request a timestamp and parse the response.
      *

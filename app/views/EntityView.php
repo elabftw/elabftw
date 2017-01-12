@@ -310,4 +310,16 @@ class EntityView
 
         return $html;
     }
+
+    /**
+     * This is used to include the title in the page name (see #324)
+     * It removes #, ' and " and appends "- eLabFTW"
+     *
+     * @param $title string
+     * @return string
+     */
+    protected function getCleanTitle($title)
+    {
+        return str_replace(array('#', "&39;", "&34;"), '', $title) . " - eLabFTW";
+    }
 }

@@ -181,6 +181,9 @@ class EntityView
             $html .= "<option value='rating'" . checkSelectOrder('rating') . ">" . _('Rating') . "</option>";
         }
         $html .= "<option value='title'" . checkSelectOrder('title') . ">" . _('Title') . "</option>";
+        if ($type === 'experiments') {
+            $html .= "<option value='comment'" . checkSelectOrder('comment') . ">" . _('Comment') . "</option>";
+        }
         $html .= "</select>";
 
         // SORT

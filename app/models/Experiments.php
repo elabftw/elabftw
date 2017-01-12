@@ -127,15 +127,17 @@ class Experiments extends Entity
     /**
      * Read all experiments for current user
      *
+            *LEFT JOIN (SELECT experiments_comments.exp_id FROM experiments_comments) AS recentComment ON (1=1)
      * @return array
      */
     public function readAllFromUser()
     {
-        $sql = "SELECT DISTINCT experiments.*, status.color, status.name, uploads.*
+        $sql = "SELECT DISTINCT experiments.*, status.color, status.name, uploads.*, experiments_comments.datetime
             FROM experiments
             LEFT JOIN status ON (status.team = experiments.team)
             LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
             LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
+            LEFT JOIN experiments_comments ON (experiments_comments.exp_id = experiments.id)
             WHERE experiments.userid = :userid
             AND experiments.status = status.id
             " . $this->categoryFilter . "
@@ -156,11 +158,12 @@ class Experiments extends Entity
      */
     public function readAllFromTeam()
     {
-        $sql = "SELECT DISTINCT experiments.*, status.color, status.name, uploads.*
+        $sql = "SELECT DISTINCT experiments.*, status.color, status.name, uploads.*, experiments_comments.datetime
             FROM experiments
             LEFT JOIN status ON (status.team = experiments.team)
             LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
             LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
+            LEFT JOIN experiments_comments ON (experiments_comments.exp_id = experiments.id)
             WHERE experiments.team = " . $this->team . "
             AND experiments.status = status.id
             " . $this->categoryFilter . "

@@ -63,6 +63,8 @@ try {
                 $ExperimentsView->Experiments->order = 'status.name';
             } elseif ($_GET['order'] === 'date' || $_GET['order'] === 'rating' || $_GET['order'] === 'title') {
                 $ExperimentsView->Experiments->order = 'experiments.' . $_GET['order'];
+            } elseif ($_GET['order'] === 'comment') {
+                $ExperimentsView->Experiments->order = 'experiments_comments.datetime';
             }
         }
         // SORT

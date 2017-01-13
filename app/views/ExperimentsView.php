@@ -24,6 +24,9 @@ class ExperimentsView extends EntityView
     /** the experiment array with data */
     private $experiment;
 
+    /** the html output */
+    private $html = '';
+
     /** Read only switch */
     private $ro = false;
 
@@ -58,31 +61,41 @@ class ExperimentsView extends EntityView
     }
 
     /**
+     * Common stuff for view and edit (but not show)
+     *
+     */
+    private function initViewEdit()
+    {
+        // get data of experiment
+        $this->experiment = $this->Experiments->read();
+
+        $this->html .= "<script>document.title = '" . $this->getCleanTitle($this->experiment['title']) . "';</script>";
+
+        // get the UploadsView object
+        $this->UploadsView = new UploadsView(new Uploads('experiments', $this->experiment['id']));
+    }
+
+    /**
      * View experiment
      *
      * @return string HTML for viewXP
      */
     public function view()
     {
-        // get data of experiment
-        $this->experiment = $this->Experiments->read();
-        $this->UploadsView = new UploadsView(new Uploads('experiments', $this->experiment['id']));
-
-        $html = '';
-
+        $this->initViewEdit();
         $this->ro = $this->isReadOnly();
 
         if ($this->experiment['timestamped']) {
-            $html .= $this->showTimestamp();
+            $this->html .= $this->showTimestamp();
         }
 
-        $html .= $this->buildView();
-        $html .= $this->UploadsView->buildUploads('view');
-        $html .= $this->buildComments();
-        $html .= $this->buildCommentsCreate();
-        $html .= $this->buildViewJs();
+        $this->html .= $this->buildView();
+        $this->html .= $this->UploadsView->buildUploads('view');
+        $this->html .= $this->buildComments();
+        $this->html .= $this->buildCommentsCreate();
+        $this->html .= $this->buildViewJs();
 
-        return $html;
+        return $this->html;
     }
     /**
      * Edit experiment
@@ -91,10 +104,7 @@ class ExperimentsView extends EntityView
      */
     public function edit()
     {
-        // get data of experiment
-        $this->experiment = $this->Experiments->read();
-        $this->UploadsView = new UploadsView(new Uploads('experiments', $this->experiment['id']));
-
+        $this->initViewEdit();
         // only owner can edit an experiment
         if (!$this->isOwner()) {
             throw new Exception(_('<strong>Cannot edit:</strong> this experiment is not yours!'));
@@ -104,12 +114,13 @@ class ExperimentsView extends EntityView
         if ($this->experiment['locked']) {
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
-        $html = $this->buildEdit();
-        $html .= $this->UploadsView->buildUploadForm();
-        $html .= $this->UploadsView->buildUploads('edit');
-        $html .= $this->buildEditJs();
 
-        return $html;
+        $this->html .= $this->buildEdit();
+        $this->html .= $this->UploadsView->buildUploadForm();
+        $this->html .= $this->UploadsView->buildUploads('edit');
+        $this->html .= $this->buildEditJs();
+
+        return $this->html;
     }
 
     /**
@@ -237,6 +248,7 @@ class ExperimentsView extends EntityView
     {
         // load tinymce
         $html = "<script src='js/tinymce/tinymce.min.js'></script>";
+
         $html .= $this->backToLink('experiments');
 
         $html .= "<section class='box' id='main_section' style='border-left: 6px solid #" . $this->experiment['color'] . "'>";
@@ -430,7 +442,7 @@ class ExperimentsView extends EntityView
         return display_message(
             'ok_nocross',
             _('Experiment was timestamped by') . " " . $timestamper['firstname'] . " " . $timestamper['lastname'] . " " . _('on') . " " . $date->format('Y-m-d') . " " . _('at') . " " . $date->format('H:i:s') . " "
-            . $date->getTimezone()->getName() . " <a href='uploads/" . $pdf[0]['long_name'] . "'><img src='app/img/pdf.png' title='" . _('Download timestamped pdf') . "' alt='pdf' /></a> <a href='uploads/" . $token[0]['long_name'] . "'><img src='app/img/download.png' title=\"" . _('Download token') . "\" alt='download token' /></a> <a href='app/controllers/ExperimentsController.php?asn1=" . $token[0]['long_name'] . "&exp_id=" . $this->Experiments->id . "'><img src='app/img/decode.png' title=\"" . _('Decode token') . "\" alt='decode token' /></a>"
+            . $date->getTimezone()->getName() . " <a href='uploads/" . $pdf[0]['long_name'] . "'><img src='app/img/pdf.png' title='" . _('Download timestamped pdf') . "' alt='pdf' /></a> <a href='uploads/" . $token[0]['long_name'] . "'><img src='app/img/download.png' title=\"" . _('Download token') . "\" alt='download token' /></a> <a href='#'><img onClick=\"decodeAsn1('" . $token[0]['long_name'] . "', '" . $this->experiment['id'] . "')\" src='app/img/info.png' title=\"" . _('Decode token') . "\" alt='decode token' /></a><div style='color:black;overflow:auto;display:hidden' id='decodedDiv'></div>"
         );
     }
 
@@ -441,6 +453,7 @@ class ExperimentsView extends EntityView
     private function buildView()
     {
         $html = '';
+
         $html .= $this->backToLink('experiments');
 
         if ($this->ro) {

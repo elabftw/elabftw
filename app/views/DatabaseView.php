@@ -20,8 +20,11 @@ class DatabaseView extends EntityView
     /** the UploadsView class */
     private $UploadsView;
 
-    /** Revisions class */
-    private $Revisions;
+    /** the array with all data for an item */
+    private $item;
+
+    /** html output */
+    private $html = '';
 
     /** can be tag, query or filter */
     public $searchType = '';
@@ -39,8 +42,18 @@ class DatabaseView extends EntityView
         $this->Database = $database;
         $this->limit = $_SESSION['prefs']['limit'];
 
+    }
+
+    /**
+     * Common stuff for view and edit (but not show)
+     *
+     */
+    private function initViewEdit()
+    {
+        // get data of item
+        $this->item = $this->Database->read();
+        $this->html .= "<script>document.title = '" . $this->getCleanTitle($this->item['title']) . "';</script>";
         $this->UploadsView = new UploadsView(new Uploads('items', $this->Database->id));
-        $this->Revisions = new Revisions('items', $this->Database->id, $userid);
     }
 
     /**
@@ -50,13 +63,13 @@ class DatabaseView extends EntityView
      */
     public function view()
     {
-        $html = '';
+        $this->initViewEdit();
 
-        $html .= $this->buildView();
-        $html .= $this->UploadsView->buildUploads('view');
-        $html .= $this->buildViewJs();
+        $this->html .= $this->buildView();
+        $this->html .= $this->UploadsView->buildUploads('view');
+        $this->html .= $this->buildViewJs();
 
-        return $html;
+        return $this->html;
     }
     /**
      * Edit item
@@ -65,17 +78,18 @@ class DatabaseView extends EntityView
      */
     public function edit()
     {
-        $itemArr = $this->Database->read();
+        $this->initViewEdit();
+
         // a locked item cannot be edited
-        if ($itemArr['locked']) {
+        if ($this->item['locked']) {
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
-        $html = $this->buildEdit();
-        $html .= $this->UploadsView->buildUploadForm();
-        $html .= $this->UploadsView->buildUploads('edit');
-        $html .= $this->buildEditJs();
+        $this->html .= $this->buildEdit();
+        $this->html .= $this->UploadsView->buildUploadForm();
+        $this->html .= $this->UploadsView->buildUploads('edit');
+        $this->html .= $this->buildEditJs();
 
-        return $html;
+        return $this->html;
     }
 
     /**
@@ -176,6 +190,11 @@ class DatabaseView extends EntityView
         $itemArr = $this->Database->read();
         $html = '';
 
+        // add the title in the page name (see #324)
+        $cleantitle = str_replace(array('#', "&39;", "&34;"), '', $itemArr['title']);
+        $html .= "<script>document.title = '" . $cleantitle . "';</script>";
+
+
         $html .= $this->backToLink('database');
 
         $html .= "<section class='box'>";
@@ -200,7 +219,7 @@ class DatabaseView extends EntityView
 
         // TITLE : click on it to go to edit mode
         $html .= "<div ";
-        if ($itemArr['locked'] === '0' || $itemArr['locked'] === NULL) {
+        if ($itemArr['locked'] === '0' || $itemArr['locked'] === null) {
             $html .= "onClick=\"document.location='database.php?mode=edit&id=" . $itemArr['itemid'] . "'\" ";
         }
         $html .= "class='title_view'>";
@@ -210,7 +229,7 @@ class DatabaseView extends EntityView
         // BODY (show only if not empty)
         if ($itemArr['body'] != '') {
             $html .= "<div ";
-            if ($itemArr['locked'] === '0' || $itemArr['locked'] === NULL) {
+            if ($itemArr['locked'] === '0' || $itemArr['locked'] === null) {
                 $html .= "onClick='go_url(\"database.php?mode=edit&id=" . $itemArr['itemid'] . "\")'";
             }
             $html .= " id='body_view' class='txt'>" . $itemArr['body'] . "</div>";
@@ -247,69 +266,66 @@ class DatabaseView extends EntityView
      */
     private function buildEdit()
     {
-        $itemArr = $this->Database->read();
-        $html = '';
-
-
         // load tinymce
-        $html .= "<script src='js/tinymce/tinymce.min.js'></script>";
+        $this->html .= "<script src='js/tinymce/tinymce.min.js'></script>";
 
-        $html .= $this->backToLink('database');
+        $this->html .= $this->backToLink('database');
         // begin page
-        $html .= "<section class='box' style='border-left: 6px solid #" . $itemArr['bgcolor'] . "'>";
-        $html .= "<img class='align_right' src='app/img/big-trash.png' title='delete' alt='delete' onClick=\"databaseDestroy(" . $this->Database->id . ", '" . _('Delete this?') . "')\" />";
+        $this->html .= "<section class='box' style='border-left: 6px solid #" . $this->item['bgcolor'] . "'>";
+        $this->html .= "<img class='align_right' src='app/img/big-trash.png' title='delete' alt='delete' onClick=\"databaseDestroy(" . $this->Database->id . ", '" . _('Delete this?') . "')\" />";
 
         // tags
-        $html .= $this->showTags('items', 'edit', $this->Database->id);
+        $this->html .= $this->showTags('items', 'edit', $this->Database->id);
 
         // main form
-        $html .= "<form method='post' action='app/controllers/DatabaseController.php' enctype='multipart/form-data'>";
-        $html .= "<input name='update' type='hidden' value='true' />";
-        $html .= "<input name='id' type='hidden' value='" . $this->Database->id . "' />";
+        $this->html .= "<form method='post' action='app/controllers/DatabaseController.php' enctype='multipart/form-data'>";
+        $this->html .= "<input name='update' type='hidden' value='true' />";
+        $this->html .= "<input name='id' type='hidden' value='" . $this->Database->id . "' />";
 
         // date
-        $html .= "<div class='row'>";
-        $html .= "<div class='col-md-4'>";
-        $html .= "<img src='app/img/calendar.png' title='date' alt='Date :' />";
-        $html .= "<label for='datepicker'>" . _('Date') . "</label>";
+        $this->html .= "<div class='row'>";
+        $this->html .= "<div class='col-md-4'>";
+        $this->html .= "<img src='app/img/calendar.png' title='date' alt='Date :' />";
+        $this->html .= "<label for='datepicker'>" . _('Date') . "</label>";
         // if one day firefox has support for it: type = date
-        $html .= "<input name='date' id='datepicker' size='8' type='text' value='" . $itemArr['date'] . "' />";
-        $html .= "</div></div>";
+        $this->html .= "<input name='date' id='datepicker' size='8' type='text' value='" . $this->item['date'] . "' />";
+        $this->html .= "</div></div>";
 
         // star rating
-        $html .= "<div class='align_right'>";
+        $this->html .= "<div class='align_right'>";
         for ($i = 1; $i < 6; $i++) {
-            $html .= "<input id='star" . $i . "' name='star' type='radio' class='star' value='" . $i . "'";
-            if ($itemArr['rating'] == $i) {
-                $html .= 'checked=checked';
+            $this->html .= "<input id='star" . $i . "' name='star' type='radio' class='star' value='" . $i . "'";
+            if ($this->item['rating'] == $i) {
+                $this->html .= 'checked=checked';
             }
-            $html .= "/>";
+            $this->html .= "/>";
         }
-        $html .= "</div>";
+        $this->html .= "</div>";
 
         // title
-        $html .= "<h4>" . _('Title') . "</h4>";
-        $html .= "<input id='title_input' name='title' rows='1' value='" . $itemArr['title'] . "' required />";
+        $this->html .= "<h4>" . _('Title') . "</h4>";
+        $this->html .= "<input id='title_input' name='title' rows='1' value='" . $this->item['title'] . "' required />";
 
         // body
-        $html .= "<h4>" . _('Infos') . "</h4>";
-        $html .= "<textarea class='mceditable' name='body' rows='15' cols='80'>";
-        $html .= $itemArr['body'];
-        $html .= "</textarea>";
+        $this->html .= "<h4>" . _('Infos') . "</h4>";
+        $this->html .= "<textarea class='mceditable' name='body' rows='15' cols='80'>";
+        $this->html .= $this->item['body'];
+        $this->html .= "</textarea>";
 
         // submit button
-        $html .= "<div class='center' id='saveButton'>";
-        $html .= "<button type='submit' name='Submit' class='button'>";
-        $html .= _('Save and go back') . "</button></div></form>";
+        $this->html .= "<div class='center' id='saveButton'>";
+        $this->html .= "<button type='submit' name='Submit' class='button'>";
+        $this->html .= _('Save and go back') . "</button></div></form>";
 
         // revisions
-        $html .= $this->Revisions->showCount();
+        $Revisions = new Revisions('items', $this->Database->id, $userid);
+        $this->html .= $Revisions->showCount();
 
-        $html .= "</section>";
+        $this->html .= "</section>";
 
-        $html .= $this->injectChemEditor();
+        $this->html .= $this->injectChemEditor();
 
-        return $html;
+        return $this->html;
     }
 
     /**

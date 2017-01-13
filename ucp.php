@@ -239,7 +239,7 @@ echo "</ul>";
     <p onClick="$('#import_tpl').toggle()" style='cursor:pointer'><img src='app/img/add.png' title='import template' alt='import' /><?= _('Import from File') ?></p>
         <form action='app/ucp-exec.php' method='post'>
             <input type='hidden' name='new_tpl_form' />
-            <input type='file' accept='.elabftw.tpl' id='import_tpl'>
+            <input type='file' accept='.tpl' id='import_tpl'>
             <input required type='text' name='new_tpl_name' id='new_tpl_name' pattern='.{3,}' placeholder='<?= _('Name of the Template') ?>' />
             <br>
             <textarea name='new_tpl_body' id='new_tpl_txt' style='height:500px;' class='mceditable' rows='50' cols='60'></textarea>

@@ -168,7 +168,7 @@ try {
             <p>
             <label class="block" for='stampcert'><?= _('Chain of certificates of the external timestamping service:'); ?></label>
             <input class="clean-form col-3-form" type='text' placeholder='app/dfn-cert/pki.dfn.pem' value='<?= get_config('stampcert') ?>' name='stampcert' id='stampcert' />
-            <span class='smallgray'><?php printf(_('This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. The file needs to be in %sPEM-encoded (ASCII)%s format!'), "<br>", "<a href='https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail'>", "</a>"); ?></span>
+            <span class='smallgray'><?php printf(_("This should point to the chain of certificates used by your external timestamping provider to sign the timestamps.%sLocal path relative to eLabFTW installation directory. You should add it in the 'uploads' folder. The file needs to be in %sPEM-encoded (ASCII)%s format!"), "<br>", "<a href='https://en.wikipedia.org/wiki/Privacy-enhanced_Electronic_Mail'>", "</a>"); ?></span>
             </p>
             <label class="block" for='stamplogin'><?= _('Login for external timestamping service:') ?></label>
             <input class="clean-form col-3-form" autocomplete='off' type='text' value='<?= get_config('stamplogin'); ?>' name='stamplogin' id='stamplogin' /><br>

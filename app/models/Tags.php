@@ -18,6 +18,8 @@ use \Exception;
  */
 class Tags extends Entity
 {
+    public $Entity;
+
     /**
      * Constructor
      *
@@ -152,7 +154,7 @@ class Tags extends Entity
      * @param int $id id of the tag
      * @return bool
      */
-    public function destroy($userid, $id)
+    public function destroy($id)
     {
         $sql = "DELETE FROM " . $this->Entity->type . "_tags WHERE id = :id";
         $req = $this->pdo->prepare($sql);

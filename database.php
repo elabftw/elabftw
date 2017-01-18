@@ -77,13 +77,13 @@ try {
     // VIEW
     } elseif ($_GET['mode'] === 'view') {
 
-        $DatabaseView->Entity->setId($_GET['id'], 'items');
+        $DatabaseView->Entity->setId($_GET['id']);
         echo $DatabaseView->view();
 
     // EDIT
     } elseif ($_GET['mode'] === 'edit') {
 
-        $DatabaseView->Entity->setId($_GET['id'], 'items');
+        $DatabaseView->Entity->setId($_GET['id']);
         echo $DatabaseView->edit();
     }
 } catch (Exception $e) {

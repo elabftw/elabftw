@@ -65,15 +65,15 @@ try {
 
     // CREATE TAG
     if (isset($_POST['createTag'])) {
-        $Tags = new Tags($_POST['type'], $Entity->id);
+        $Tags = new Tags($Entity);
         $Tags->create($_POST['tag']);
     }
 
     // DELETE TAG
     if (isset($_POST['destroyTag'])) {
-        $Tags = new Tags($_POST['type'], $Entity->id);
+        $Tags = new Tags($Entity);
         if ($Entity->canWrite) {
-            $Tags->destroy($_SESSION['userid'], $_POST['tag_id']);
+            $Tags->destroy($_POST['tag_id']);
         }
     }
 

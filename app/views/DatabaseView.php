@@ -17,17 +17,8 @@ use Exception;
  */
 class DatabaseView extends EntityView
 {
-    /** the UploadsView class */
-    public $UploadsView;
-
-    /** html output */
-    public $html = '';
-
     /** can be tag, query or filter */
     public $searchType = '';
-
-    /** instance of Experiments or Database */
-    public $Entity;
 
     /**
      * Need a Database object

@@ -18,9 +18,6 @@ use Exception;
  */
 class Database extends Entity
 {
-    /** our current user */
-    public $userid;
-
     /** inserted in sql */
     public $bookableFilter = '';
 
@@ -181,7 +178,7 @@ class Database extends Entity
         $req->bindParam(':id', $this->id);
 
         // add a revision
-        $Revisions = new Revisions('items', $this->id, $this->userid);
+        $Revisions = new Revisions($this->Entity);
         if (!$Revisions->create($body)) {
             throw new Exception(Tools::error());
         }
@@ -231,7 +228,7 @@ class Database extends Entity
         ));
         $newId = $this->pdo->lastInsertId();
 
-        $tags = new Tags('items', $this->id);
+        $tags = new Tags($this);
         $tags->copyTags($newId);
 
         return $newId;
@@ -259,7 +256,7 @@ class Database extends Entity
         $req->bindParam(':id', $this->id);
         $result[] = $req->execute();
 
-        $tags = new Tags('items', $this->id);
+        $tags = new Tags($this);
         $result[] = $tags->destroyAll();
 
         $uploads = new Uploads($this);

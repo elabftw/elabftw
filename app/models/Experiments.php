@@ -24,9 +24,6 @@ class Experiments extends Entity
     /** our team */
     public $team;
 
-    /** current user */
-    public $userid;
-
     /** instance of Links */
     public $Links;
 
@@ -227,7 +224,7 @@ class Experiments extends Entity
         $req->bindParam(':id', $this->id);
 
         // add a revision
-        $Revisions = new Revisions('experiments', $this->id, $this->userid);
+        $Revisions = new Revisions($this->Entity);
 
         return $req->execute() && $Revisions->create($body);
     }
@@ -369,7 +366,7 @@ class Experiments extends Entity
             'userid' => $this->userid));
         $newId = $this->pdo->lastInsertId();
 
-        $tags = new Tags('experiments', $this->id);
+        $tags = new Tags($this);
         $tags->copyTags($newId);
 
         $this->Links->duplicate($this->id, $newId);
@@ -394,7 +391,7 @@ class Experiments extends Entity
         $req->bindParam(':id', $this->id);
         $req->execute();
 
-        $tags = new Tags('experiments', $this->id);
+        $tags = new Tags($this);
         $tags->destroyAll();
 
         $uploads = new Uploads('experiments', $this->id);

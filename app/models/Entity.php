@@ -24,6 +24,9 @@ class Entity
     /** experiments or items */
     public $type;
 
+    /** current user */
+    public $userid;
+
     /** our team */
     public $team;
 

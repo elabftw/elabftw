@@ -21,14 +21,7 @@ class Revisions
     /** pdo object */
     private $pdo;
 
-    /** experiments or items */
-    private $type;
-
-    /** id of the item/exp */
-    private $id;
-
-    /** our current user */
-    private $userid;
+    private $Entity;
 
     /**
      * Constructor
@@ -37,13 +30,11 @@ class Revisions
      * @param int $id
      * @param int $userid
      */
-    public function __construct($type, $id, $userid)
+    public function __construct(Entity $entity)
     {
         $this->pdo = Db::getConnection();
 
-        $this->type = $type;
-        $this->id = $id;
-        $this->userid = $userid;
+        $this->Entity = $entity;
     }
 
     /**
@@ -54,16 +45,16 @@ class Revisions
      */
     public function create($body)
     {
-        if ($this->type === 'experiments') {
+        if ($this->Entity->type === 'experiments') {
             $sql = "INSERT INTO experiments_revisions (item_id, body, userid) VALUES(:item_id, :body, :userid)";
         } else {
             $sql = "INSERT INTO items_revisions (item_id, body, userid) VALUES(:item_id, :body, :userid)";
         }
 
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':item_id', $this->id);
+        $req->bindParam(':item_id', $this->Entity->id);
         $req->bindParam(':body', $body);
-        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':userid', $this->Entity->userid);
 
         return $req->execute();
     }
@@ -74,7 +65,7 @@ class Revisions
      */
     public function readCount()
     {
-        if ($this->type === 'experiments') {
+        if ($this->Entity->type === 'experiments') {
             $sql = "SELECT COUNT(*) FROM experiments_revisions
                 WHERE item_id = :item_id ORDER BY savedate DESC";
         } else {
@@ -82,7 +73,7 @@ class Revisions
                 WHERE item_id = :item_id ORDER BY savedate DESC";
         }
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':item_id', $this->id);
+        $req->bindParam(':item_id', $this->Entity->id);
         $req->execute();
 
         return (int) $req->fetchColumn();
@@ -101,7 +92,7 @@ class Revisions
         if ($count > 0) {
             $html .= "<span class='align_right'>";
             $html .= $count . " " . ngettext('revision available.', 'revisions available.', $count);
-            $html .= " <a href='revisions.php?type=" . $this->type . "&item_id=" . $this->id . "'>" . _('Show history') . "</a>";
+            $html .= " <a href='revisions.php?type=" . $this->Entity->type . "&item_id=" . $this->Entity->id . "'>" . _('Show history') . "</a>";
             $html .= "</span>";
         }
 
@@ -115,10 +106,10 @@ class Revisions
      */
     public function read()
     {
-        $sql = "SELECT * FROM " . $this->type . "_revisions WHERE item_id = :item_id AND userid = :userid ORDER BY savedate DESC";
+        $sql = "SELECT * FROM " . $this->Entity->type . "_revisions WHERE item_id = :item_id AND userid = :userid ORDER BY savedate DESC";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':item_id', $this->id);
-        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':item_id', $this->Entity->id);
+        $req->bindParam(':userid', $this->Entity->userid);
         $req->execute();
 
         return $req->fetchAll();
@@ -132,10 +123,10 @@ class Revisions
      */
     private function readRev($revId)
     {
-        $sql = "SELECT body FROM " . $this->type . "_revisions WHERE id = :rev_id AND userid = :userid";
+        $sql = "SELECT body FROM " . $this->Entity->type . "_revisions WHERE id = :rev_id AND userid = :userid";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':rev_id', $revId);
-        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':userid', $this->Entity->userid);
         $req->execute();
 
         return $req->fetchColumn();
@@ -149,9 +140,9 @@ class Revisions
      */
     private function isLocked()
     {
-        $sql = "SELECT locked FROM " . $this->type . " WHERE id = :id";
+        $sql = "SELECT locked FROM " . $this->Entity->type . " WHERE id = :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
         $req->execute();
         $locked = $req->fetch();
 
@@ -174,10 +165,10 @@ class Revisions
 
         $body = $this->readRev($revId);
 
-        $sql = "UPDATE " . $this->type . " SET body = :body WHERE id = :id";
+        $sql = "UPDATE " . $this->Entity->type . " SET body = :body WHERE id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':body', $body);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
 
         return $req->execute();
     }

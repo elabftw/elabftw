@@ -18,17 +18,11 @@ use Datetime;
  */
 class ExperimentsView extends EntityView
 {
-    /** the html output */
-    public $html = '';
-
     /** Read only switch */
     private $ro = false;
 
     /** show experiments from others in the team? */
     private $showTeam = false;
-
-    /** the UploadsView object */
-    public $UploadsView;
 
     /** instance of TeamGroups */
     public $TeamGroups;
@@ -484,7 +478,7 @@ class ExperimentsView extends EntityView
      */
     private function buildEditJs()
     {
-        $tags = new Tags('experiments', $this->Entity->id);
+        $Tags = new Tags($this->Entity);
 
         $html = "<script>
         // READY ? GO !!
@@ -503,7 +497,7 @@ class ExperimentsView extends EntityView
 
             // autocomplete the tags
             $('#createTagInput').autocomplete({
-                source: [" . $tags->generateTagList() . "]
+                source: [" . $Tags->generateTagList() . "]
             });
 
             // autocomplete the links

@@ -30,7 +30,14 @@ class EntityView
     /** the query entered */
     public $query = '';
 
+    /** what you get after you ->read() */
     public $entityData;
+
+    /** our html output */
+    protected $html;
+
+    /** instance of UploadsView */
+    protected $UploadsView;
 
     /**
      * Common stuff for view and edit (but not show)

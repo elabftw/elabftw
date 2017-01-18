@@ -63,7 +63,12 @@ class MakeZip extends Make
     {
         $this->pdo = Db::getConnection();
 
-        $this->Entity = new Entity();
+        $this->type = $this->checkType($type);
+        if ($this->type === 'experiments') {
+            $this->Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid']);
+        } else {
+            $this->Entity = new Database($_SESSION['team_id'], $_SESSION['userid']);
+        }
 
         // we check first if the zip extension is here
         if (!class_exists('ZipArchive')) {
@@ -71,7 +76,6 @@ class MakeZip extends Make
         }
 
         $this->idList = $idList;
-        $this->type = $this->checkType($type);
 
         $this->fileName = $this->getFileName();
         $this->filePath = $this->getTempFilePath($this->fileName);

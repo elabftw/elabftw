@@ -37,7 +37,10 @@ try {
 
     // UPDATE
     if (isset($_POST['update'])) {
-        $Database->setId($_POST['id'], 'items');
+        $Database->setId($_POST['id'], true);
+        if (!$Database->canWrite) {
+            throw new Exception(Tools::error(true));
+        }
         if ($Database->update(
             $_POST['title'],
             $_POST['date'],
@@ -53,7 +56,10 @@ try {
 
     // DUPLICATE
     if (isset($_GET['databaseDuplicateId'])) {
-        $Database->setId($_GET['databaseDuplicateId'], 'items');
+        $Database->setId($_GET['databaseDuplicateId'], true);
+        if (!$Database->canRead) {
+            throw new Exception(Tools::error(true));
+        }
         $id = $Database->duplicate();
         $mode = 'edit';
         $redirect = true;
@@ -61,7 +67,10 @@ try {
 
     // UPDATE RATING
     if (isset($_POST['rating'])) {
-        $Database->setId($_POST['id'], 'items');
+        $Database->setId($_POST['id'], true);
+        if (!$Database->canWrite) {
+            throw new Exception(Tools::error(true));
+        }
         if ($Database->updateRating($_POST['rating'])) {
             echo json_encode(array(
                 'res' => true,

@@ -37,7 +37,7 @@ try {
 
     // UPDATE START
     if (isset($_POST['updateStart'])) {
-        $Scheduler->setId($_POST['id'], 'items');
+        $Scheduler->setId($_POST['id']);
         if ($Scheduler->updateStart($_POST['start'])) {
             echo json_encode(array(
                 'res' => true,
@@ -52,7 +52,7 @@ try {
     }
     // UPDATE END
     if (isset($_POST['updateEnd'])) {
-        $Scheduler->setId($_POST['id'], 'items');
+        $Scheduler->setId($_POST['id']);
         if ($Scheduler->updateEnd($_POST['end'])) {
             echo json_encode(array(
                 'res' => true,

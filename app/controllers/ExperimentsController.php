@@ -35,7 +35,7 @@ try {
 
     // UPDATE
     if (isset($_POST['update'])) {
-        $Experiments->setId($_POST['id'], 'experiments');
+        $Experiments->setId($_POST['id'], true);
 
         if (!$Experiments->canWrite) {
             throw new Exception(Tools::error(true));
@@ -54,7 +54,7 @@ try {
 
     // DUPLICATE
     if (isset($_GET['duplicateId'])) {
-        $Experiments->setId($_GET['duplicateId'], 'experiments');
+        $Experiments->setId($_GET['duplicateId'], true);
 
         if (!$Experiments->canRead) {
             throw new Exception(Tools::error(true));
@@ -66,7 +66,7 @@ try {
 
     // UPDATE STATUS
     if (isset($_POST['updateStatus'])) {
-        $Experiments->setId($_POST['id'], 'experiments');
+        $Experiments->setId($_POST['id'], true);
 
         if (!$Experiments->canWrite) {
             throw new Exception(Tools::error(true));
@@ -96,7 +96,10 @@ try {
 
     // UPDATE VISIBILITY
     if (isset($_POST['updateVisibility'])) {
-        $Experiments->setId($_POST['id'], 'experiments');
+        $Experiments->setId($_POST['id'], true);
+        if (!$Experiments->canWrite) {
+            throw new Exception(Tools::error(true));
+        }
         if ($Experiments->updateVisibility($_POST['visibility'])) {
             echo json_encode(array(
                 'res' => true,
@@ -112,7 +115,10 @@ try {
 
     // CREATE LINK
     if (isset($_POST['createLink'])) {
-        $Experiments->setId($_POST['id'], 'experiments');
+        $Experiments->setId($_POST['id'], true);
+        if (!$Experiments->canWrite) {
+            throw new Exception(Tools::error(true));
+        }
         if ($Experiments->Links->create($_POST['linkId'])) {
             echo json_encode(array(
                 'res' => true,
@@ -128,7 +134,10 @@ try {
 
     // DESTROY LINK
     if (isset($_POST['destroyLink'])) {
-        $Experiments->setId($_POST['id'], 'experiments');
+        $Experiments->setId($_POST['id'], true);
+        if (!$Experiments->canWrite) {
+            throw new Exception(Tools::error(true));
+        }
         if ($Experiments->Links->destroy($_POST['linkId'])) {
             echo json_encode(array(
                 'res' => true,
@@ -164,8 +173,11 @@ try {
 
     // DESTROY
     if (isset($_POST['destroy'])) {
-        $Experiments->setId($_POST['id'], 'experiments');
-        $Teams = new Teams($_SESSION['team_id']);
+        $Experiments->setId($_POST['id'], true);
+        if (!$Experiments->canWrite) {
+            throw new Exception(Tools::error(true));
+        }
+        $Teams = new Teams($Experiments->team);
 
         if ((($Teams->read('deletable_xp') == '0') &&
             !$_SESSION['is_admin']) ||

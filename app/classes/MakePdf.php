@@ -23,8 +23,6 @@ class MakePdf extends Make
     /** Entity instance */
     private $Entity;
 
-    /** the id of the item we want */
-    private $id;
     /** 'experiments' or 'items' */
     protected $type;
     /** everything about the item */
@@ -57,14 +55,14 @@ class MakePdf extends Make
     public function __construct($id, $type, $toFile = false)
     {
         $this->pdo = Db::getConnection();
-
-        $this->Entity = new Entity();
-
-        $this->id = $id;
-        $this->validateId();
-
         // assign and check type
         $this->type = $this->checkType($type);
+        if ($this->type === 'experiments') {
+            $this->Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $id);
+        } else {
+            $this->Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $id);
+        }
+
         if (!$this->Entity->canRead) {
             throw new Exception(Tools::error(true));
         }
@@ -101,18 +99,6 @@ class MakePdf extends Make
     }
 
     /**
-     * Validate the id we get.
-     *
-     * @throws Exception if id is bad
-     */
-    private function validateId()
-    {
-        if (!Tools::checkId($this->id)) {
-            throw new Exception('Bad id!');
-        }
-    }
-
-    /**
      * Cleantitle.pdf
      *
      * @return string The file name of the pdf
@@ -131,7 +117,7 @@ class MakePdf extends Make
         // one cannot use placeholders as table or column identifiers in a prepared statement
         $sql = "SELECT * FROM " . $this->type . " WHERE id = :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id, \PDO::PARAM_INT);
+        $req->bindParam(':id', $this->Entity->id);
         $req->execute();
         $this->data = $req->fetch();
     }
@@ -168,7 +154,7 @@ class MakePdf extends Make
         // SQL to get tags
         $sql = "SELECT tag FROM " . $this->type . "_tags WHERE item_id = :item_id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':item_id', $this->id, \PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id);
         $req->execute();
         $this->tags = null;
         while ($data = $req->fetch()) {
@@ -218,7 +204,7 @@ class MakePdf extends Make
             WHERE exp_id = :id
             ORDER BY experiments_comments.datetime DESC";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':id', $this->Entity->id);
         $req->execute();
         // if we have comments
         if ($req->rowCount() > 0) {
@@ -258,7 +244,7 @@ class MakePdf extends Make
         // SQL to get attached files
         $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':id', $this->Entity->id);
         $req->bindParam(':type', $this->type);
         $req->execute();
 
@@ -333,7 +319,7 @@ class MakePdf extends Make
         }
 
         $url = str_replace(array('make.php', 'app/controllers/ExperimentsController.php'), $target, $url);
-        $full_url = $url . "?mode=view&id=" . $this->id;
+        $full_url = $url . "?mode=view&id=" . $this->Entity->id;
 
         return $full_url;
     }
@@ -363,7 +349,7 @@ class MakePdf extends Make
                 LEFT JOIN items_types ON (items.type = items_types.id)
                 WHERE item_id = :item_id";
             $req = $this->pdo->prepare($sql);
-            $req->bindParam(':item_id', $this->id);
+            $req->bindParam(':item_id', $this->Entity->id);
             $req->execute();
             $links_id_arr = array();
             $links_title_arr = array();

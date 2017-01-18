@@ -48,10 +48,6 @@ class Experiments extends Entity
         $this->team = $team;
         $this->userid = $userid;
 
-        $Users = new Users();
-        $user = $Users->read($this->userid);
-        $this->team = $user['team'];
-
         if (!is_null($id)) {
             $this->setId($id);
         }
@@ -108,10 +104,6 @@ class Experiments extends Entity
      */
     public function read()
     {
-        if (!$this->canRead) {
-            throw new Exception(Tools::error(true));
-        }
-
         $sql = "SELECT DISTINCT experiments.*, status.color, status.name, uploads.*
             FROM experiments
             LEFT JOIN status ON experiments.status = status.id
@@ -198,8 +190,10 @@ class Experiments extends Entity
         $req->bindParam(':link_id', $itemId);
         $req->execute();
         while ($data = $req->fetch()) {
-            $this->setId($data['item_id'], 'experiments');
-            $itemsArr[] = $this->read();
+            $this->setId($data['item_id']);
+            if ($this->canRead) {
+                $itemsArr[] = $this->read();
+            }
         }
 
         return $itemsArr;
@@ -421,15 +415,14 @@ class Experiments extends Entity
      */
     public function toggleLock()
     {
-        // Is the user in a group with can_lock set to 1 ?
-        // 1. get what is the group of the user
+        // get info for user
         $Users = new Users();
-        $userArr = $Users->read($this->userid);
+        $user = $Users->read($this->userid);
 
-        // 2. check if this group has locking rights
+        // check if this group has locking rights
         $sql = "SELECT can_lock FROM groups WHERE group_id = :usergroup";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':usergroup', $userArr['usergroup']);
+        $req->bindParam(':usergroup', $user['usergroup']);
         $req->execute();
         $can_lock = (int) $req->fetchColumn(); // can be 0 or 1
 

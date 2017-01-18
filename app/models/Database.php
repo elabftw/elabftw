@@ -19,7 +19,7 @@ use Exception;
 class Database extends Entity
 {
     /** our current user */
-    private $userid;
+    public $userid;
 
     /** inserted in sql */
     public $bookableFilter = '';
@@ -262,7 +262,7 @@ class Database extends Entity
         $tags = new Tags('items', $this->id);
         $result[] = $tags->destroyAll();
 
-        $uploads = new Uploads(new Database($this->team, $this->userid, $this->id));
+        $uploads = new Uploads($this);
         $result[] = $uploads->destroyAll();
 
         // delete links of this item in experiments with this item linked

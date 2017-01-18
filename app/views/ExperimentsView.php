@@ -157,7 +157,7 @@ class ExperimentsView extends EntityView
         foreach ($itemsArr as $item) {
 
             // fill an array with the ID of each item to use in the csv/zip export menu
-            $this->Experiments->setId($item['id'], 'experiments');
+            $this->Experiments->setId($item['id']);
             if ($this->Experiments->canRead) {
                 $idArr[] = $this->Experiments->id;
                 $html2 .= $this->showUnique($item);
@@ -654,7 +654,7 @@ class ExperimentsView extends EntityView
                         name: 'commentsUpdateComment',
                         tooltip : 'Click to edit',
                         indicator : '" ._('Saving') . "',
-                        commentsUpdate: true,
+                        update: true,
                         submit : '" . _('Save') . "',
                         cancel : '" . _('Cancel') . "',
                         style : 'display:inline',

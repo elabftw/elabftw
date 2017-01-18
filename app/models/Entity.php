@@ -54,6 +54,8 @@ class Entity
     /** write rights */
     public $canWrite = false;
 
+    public $entityData;
+
     /**
      * Check and set id
      *
@@ -65,7 +67,8 @@ class Entity
             throw new Exception(_('The id parameter is not valid!'));
         }
         $this->id = $id;
-        $this->setPermissions($this->id);
+        $this->entityData = $this->read();
+        $this->setPermissions();
     }
 
     /**
@@ -99,10 +102,9 @@ class Entity
     /**
      * Verify we can read/write an item
      *
-     * @param int $id
      * @throws Exception
      */
-    private function setPermissions($id)
+    private function setPermissions()
     {
         $this->pdo = Db::getConnection();
 
@@ -110,49 +112,38 @@ class Entity
         $this->canRead = false;
         $this->canWrite = false;
 
-        $sql = "SELECT userid FROM " . $this->type . " WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $id, \PDO::PARAM_INT);
-        $req->execute();
-        $theUser = $req->fetchColumn();
-
         if ($this->type === 'experiments') {
             // if we own the experiment, we have read/write rights on it for sure
-            if ($theUser === $_SESSION['userid']) {
+            if ($this->user['userid'] === $_SESSION['userid']) {
                 $this->canRead = true;
                 $this->canWrite = true;
 
             // admin can view any experiment
-            } elseif (($theUser != $_SESSION['userid']) && $_SESSION['is_admin']) {
+            } elseif (($this->user['userid'] != $_SESSION['userid']) && $_SESSION['is_admin']) {
                 $this->canRead = true;
 
             // if we don't own the experiment (and we are not admin), we need to check the visibility
-            } elseif (($theUser != $_SESSION['userid']) && !$_SESSION['is_admin']) {
-                $sql = "SELECT visibility, team FROM experiments WHERE id = :id";
-                $req = $this->pdo->prepare($sql);
-                $req->bindParam(':id', $id, \PDO::PARAM_INT);
-                $req->execute();
-                $experiment = $req->fetch();
-
+            } elseif (($this->user['userid'] != $_SESSION['userid']) && !$_SESSION['is_admin']) {
                 $validArr = array(
                     'public',
                     'organization'
                 );
 
                 // if the vis. setting is public or organization, we can see it for sure
-                if (in_array($experiment['visibility'], $validArr)) {
+                if (in_array($this->entityData['visibility'], $validArr)) {
                     $this->canRead = true;
                 }
 
                 // if the vis. setting is team, check we are in the same team than the item
-                if (($experiment['visibility'] === 'team') && ($experiment['team'] == $_SESSION['team_id'])) {
+                if (($this->entityData['visibility'] === 'team') &&
+                    ($this->entityData['team'] == $_SESSION['team_id'])) {
                     $this->canRead = true;
                 }
 
                 // if the vis. setting is a team group, check we are in the group
-                if (Tools::checkId($experiment['visibility'])) {
+                if (Tools::checkId($this->entityData['visibility'])) {
                     $TeamGroups = new $TeamGroups($_SESSION['team_id']);
-                    if ($TeamGroups->isInTeamGroup($theUser, $visibility)) {
+                    if ($TeamGroups->isInTeamGroup($this->entityData['userid'], $visibility)) {
                         $this->canRead = true;
                     }
                 }
@@ -164,11 +155,10 @@ class Entity
             // get the team of the userid of the item
             $sql = "SELECT team FROM users WHERE userid = :userid";
             $req = $this->pdo->prepare($sql);
-            $req->bindParam(':userid', $theUser, \PDO::PARAM_INT);
+            $req->bindParam(':userid', $this->entityData['userid']);
             $req->execute();
-            $theUserTeam = $req->fetchColumn();
-            // we will compare the teams for DB items
-            if ($theUserTeam == $_SESSION['team_id']) {
+
+            if ($req->fetchColumn() === $_SESSION['team_id']) {
                 $this->canRead = true;
                 $this->canWrite = true;
             }

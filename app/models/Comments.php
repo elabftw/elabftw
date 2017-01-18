@@ -28,14 +28,10 @@ class Comments extends Entity
      * @param Experiments
      * @param int|null $id
      */
-    public function __construct(Experiments $experiments, $id = null)
+    public function __construct(Experiments $experiments)
     {
         $this->pdo = Db::getConnection();
         $this->Experiments = $experiments;
-
-        if (!is_null($id)) {
-            $this->setId($id);
-        }
     }
 
     /**
@@ -145,9 +141,10 @@ class Comments extends Entity
      * Update a comment
      *
      * @param string $comment New content for the comment
+     * @param int $id id of the comment
      * @return bool
      */
-    public function update($comment)
+    public function update($comment, $id)
     {
         $comment = filter_var($comment, FILTER_SANITIZE_STRING);
         // check length
@@ -155,12 +152,16 @@ class Comments extends Entity
             return false;
         }
 
+        if (!$this->Experiment->canRead) {
+            throw new Exception(Tools::error(true));
+        }
+
         $sql = "UPDATE experiments_comments SET
             comment = :comment
             WHERE id = :id AND userid = :userid";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':comment', $comment);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Experiments->userid, PDO::PARAM_INT);
 
         return $req->execute();
@@ -171,11 +172,11 @@ class Comments extends Entity
      *
      * @return bool
      */
-    public function destroy()
+    public function destroy($id)
     {
         $sql = "DELETE FROM experiments_comments WHERE id = :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':id', $id, PDO::PARAM_INT);
 
         return $req->execute();
     }

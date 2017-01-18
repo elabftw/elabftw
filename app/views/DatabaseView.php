@@ -36,9 +36,9 @@ class DatabaseView extends EntityView
      * @param Database $database
      * @throws Exception
      */
-    public function __construct(Database $database)
+    public function __construct(Entity $entity)
     {
-        $this->Database = $database;
+        $this->Entity = $entity;
         $this->limit = $_SESSION['prefs']['limit'];
 
     }
@@ -50,9 +50,9 @@ class DatabaseView extends EntityView
     private function initViewEdit()
     {
         // get data of item
-        $this->item = $this->Database->read();
+        $this->item = $this->Entity->read();
         $this->html .= "<script>document.title = '" . $this->getCleanTitle($this->item['title']) . "';</script>";
-        $this->UploadsView = new UploadsView(new Uploads($this->Database), 'items');
+        $this->UploadsView = new UploadsView(new Uploads($this->Entity));
     }
 
     /**
@@ -104,17 +104,15 @@ class DatabaseView extends EntityView
         $html2 = '';
 
         // get all DB items for the team
-        $itemsArr = $this->Database->readAll();
+        $itemsArr = $this->Entity->readAll();
 
         $total_time = get_total_time();
 
         // loop the results array and display results
         $idArr = array();
         foreach ($itemsArr as $item) {
-
             // fill an array with the ID of each item to use in the csv/zip export menu
-            $idArr[] = $item['itemid'];
-
+            $idArr[] = $items['id'];
             $html2 .= $this->showUnique($item);
         }
 
@@ -186,7 +184,7 @@ class DatabaseView extends EntityView
      */
     private function buildView()
     {
-        $itemArr = $this->Database->read();
+        $itemArr = $this->Entity->read();
         $html = '';
 
         // add the title in the page name (see #324)
@@ -214,7 +212,7 @@ class DatabaseView extends EntityView
         }
         $html .= "<a class='elab-tooltip' href='#'><span>" . $alt . "</span><img id='lock' onClick=\"toggleLock('database', " . $itemArr['itemid'] . ")\" src='app/img/" . $imgSrc . "' alt='" . $alt . "' /></a>";
         // TAGS
-        $html .= " " . $this->showTags('items', 'view', $this->Database->id);
+        $html .= " " . $this->showTags('items', 'view', $this->Entity->id);
 
         // TITLE : click on it to go to edit mode
         $html .= "<div ";
@@ -272,15 +270,15 @@ class DatabaseView extends EntityView
         $html .= $this->backToLink('database');
         // begin page
         $html .= "<section class='box' style='border-left: 6px solid #" . $this->item['bgcolor'] . "'>";
-        $html .= "<img class='align_right' src='app/img/big-trash.png' title='delete' alt='delete' onClick=\"databaseDestroy(" . $this->Database->id . ", '" . _('Delete this?') . "')\" />";
+        $html .= "<img class='align_right' src='app/img/big-trash.png' title='delete' alt='delete' onClick=\"databaseDestroy(" . $this->Entity->id . ", '" . _('Delete this?') . "')\" />";
 
         // tags
-        $html .= $this->showTags('items', 'edit', $this->Database->id);
+        $html .= $this->showTags('items', 'edit', $this->Entity->id);
 
         // main form
         $html .= "<form method='post' action='app/controllers/DatabaseController.php' enctype='multipart/form-data'>";
         $html .= "<input name='update' type='hidden' value='true' />";
-        $html .= "<input name='id' type='hidden' value='" . $this->Database->id . "' />";
+        $html .= "<input name='id' type='hidden' value='" . $this->Entity->id . "' />";
 
         // date
         $html .= "<div class='row'>";
@@ -318,7 +316,7 @@ class DatabaseView extends EntityView
         $html .= _('Save and go back') . "</button></div></form>";
 
         // revisions
-        $Revisions = new Revisions('items', $this->Database->id, $this->Database->userid);
+        $Revisions = new Revisions('items', $this->Entity->id, $this->Entity->userid);
         $html .= $Revisions->showCount();
 
         $html .= "</section>";
@@ -335,7 +333,7 @@ class DatabaseView extends EntityView
      */
     private function buildEditJs()
     {
-        $tags = new Tags('items', $this->Database->id);
+        $tags = new Tags('items', $this->Entity->id);
 
         $html = "<script>
         // READY ? GO !
@@ -346,12 +344,12 @@ class DatabaseView extends EntityView
 
             // user finished typing, save work
             function doneTyping () {
-                quickSave('items', " . $this->Database->id . ");
+                quickSave('items', " . $this->Entity->id . ");
             }
             // ADD TAG JS
             // listen keypress, add tag when it's enter
             $('#createTagInput').keypress(function (e) {
-                createTag(e, 'items', " . $this->Database->id . ");
+                createTag(e, 'items', " . $this->Entity->id . ");
             });
 
             // autocomplete the tags
@@ -377,7 +375,7 @@ class DatabaseView extends EntityView
                 removed_menuitems : 'newdocument',
                 // save button :
                 save_onsavecallback: function() {
-                    quickSave('items', " . $this->Database->id . ");
+                    quickSave('items', " . $this->Entity->id . ");
                 },
                 // keyboard shortcut to insert today's date at cursor in editor
                 setup : function(editor) {
@@ -422,7 +420,7 @@ class DatabaseView extends EntityView
         $('input.star').rating();";
         for ($i = 1; $i < 6; $i++) {
             $html .= "$('#star" . $i . "').click(function() {
-            updateRating(" . $i . ", " . $this->Database->id . ");
+            updateRating(" . $i . ", " . $this->Entity->id . ");
         });";
         }
 

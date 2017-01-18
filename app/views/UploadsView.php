@@ -41,13 +41,6 @@ class UploadsView extends EntityView
         $html .= "</section>";
 
         $html .= "<script>
-        // we need this to reload the #filesdiv (div displaying uploaded files)
-        var type = '" . $this->Uploads->Entity->type . "';
-        if (type == 'items') {
-            type = 'database';
-        }
-        var item_id = '" . $this->Uploads->Entity->id . "';
-
         // config for dropzone, id is camelCased.
         Dropzone.options.elabftwDropzone = {
             // i18n message to user
@@ -74,7 +67,7 @@ class UploadsView extends EntityView
                     // reload the #filesdiv once the file is uploaded
                     if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
                         $('#filesdiv').load('" . $this->Uploads->Entity->type .
-                            ".php?mode=edit&id=' + item_id + ' #filesdiv', function() {
+                            ".php?mode=edit&id=" . $this->Uploads->Entity->id . " #filesdiv', function() {
                             // make the comment zone editable (fix issue #54)
                             makeEditableFileComment('" . $this->Uploads->Entity->type . "');
                         });

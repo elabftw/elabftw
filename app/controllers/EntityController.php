@@ -115,11 +115,6 @@ try {
     // CREATE UPLOAD
     if (isset($_POST['upload'])) {
         try {
-            if ($_POST['type'] === 'experiments') {
-                $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['item_id']);
-            } else {
-                $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['item_id']);
-            }
             $Uploads = new Uploads($Entity);
             if ($Uploads->create($_FILES)) {
                 echo json_encode(array(
@@ -142,13 +137,8 @@ try {
 
     // DESTROY UPLOAD
     if (isset($_POST['uploadsDestroy'])) {
-        if ($_POST['type'] === 'experiments') {
-            $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['item_id']);
-        } else {
-            $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['item_id']);
-        }
         $Uploads = new Uploads($Entity);
-        if ($Uploads->destroy($_POST['id'])) {
+        if ($Uploads->destroy($_POST['upload_id'])) {
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('File deleted successfully')

@@ -398,7 +398,7 @@ function commentsDestroy(id, expId, confirmText) {
     var you_sure = confirm(confirmText);
     if (you_sure === true) {
         $.post('app/controllers/CommentsController.php', {
-            commentsDestroy: true,
+            destroy: true,
             id: id
         }).done(function(data) {
             var json = JSON.parse(data);
@@ -860,8 +860,8 @@ function uploadsDestroy(id, type, item_id, confirmText) {
     if (youSure === true) {
         $.post('app/controllers/EntityController.php', {
             uploadsDestroy: true,
-            id: id,
-            item_id: item_id,
+            upload_id: id,
+            id: item_id,
             type: type
         }).done(function(data) {
             var json = JSON.parse(data);

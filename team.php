@@ -23,7 +23,7 @@ require_once 'app/head.inc.php';
 
 $Users = new Users();
 $TeamsView = new TeamsView(new Teams($_SESSION['team_id']));
-$Database = new Database($_SESSION['team_id']);
+$Database = new Database($_SESSION['team_id'], $_SESSION['userid']);
 $Scheduler = new Scheduler($_SESSION['team_id']);
 ?>
 

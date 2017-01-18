@@ -309,7 +309,7 @@ class ExperimentsView extends EntityView
             </div></form>";
 
         // REVISIONS
-        $Revisions = new Revisions('experiments', $this->entityData['id'], $_SESSION['userid']);
+        $Revisions = new Revisions($this->Entity);
         $html .= $Revisions->showCount();
 
         // LINKS

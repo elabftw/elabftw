@@ -26,7 +26,7 @@ require_once 'app/head.inc.php';
 try {
     if ($_GET['type'] === 'experiments') {
         // only experiment owner can change or see revisions
-        $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_GET['item_id']);
+        $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_GET['item_id']);
         if (!$Experiments->canWrite) {
             throw new Exception(Tools::error(true));
         }
@@ -35,7 +35,7 @@ try {
     } elseif ($_GET['type'] === 'items') {
 
         // check if item is in team
-        $Database = new Database($_SESSION['team_id'], $_SESSION['userid'], $_GET['item_id']);
+        $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_GET['item_id']);
         if (!$Database->isInTeam()) {
             throw new Exception(Tools::error(true));
         }
@@ -45,7 +45,7 @@ try {
         throw new Exception('Bad type!');
     }
 
-    $Revisions = new Revisions($_GET['type'], $_GET['item_id'], $_SESSION['userid']);
+    $Revisions = new Revisions($Entity);
 
     // THE RESTORE ACTION
     if (isset($_GET['action']) && $_GET['action'] === 'restore') {

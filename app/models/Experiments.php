@@ -224,7 +224,7 @@ class Experiments extends Entity
         $req->bindParam(':id', $this->id);
 
         // add a revision
-        $Revisions = new Revisions($this->Entity);
+        $Revisions = new Revisions($this);
 
         return $req->execute() && $Revisions->create($body);
     }

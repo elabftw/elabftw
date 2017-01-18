@@ -292,7 +292,7 @@ class DatabaseView extends EntityView
         $html .= _('Save and go back') . "</button></div></form>";
 
         // revisions
-        $Revisions = new Revisions('items', $this->Entity->id, $this->Entity->userid);
+        $Revisions = new Revisions($this->Entity);
         $html .= $Revisions->showCount();
 
         $html .= "</section>";

@@ -178,7 +178,7 @@ class Database extends Entity
         $req->bindParam(':id', $this->id);
 
         // add a revision
-        $Revisions = new Revisions($this->Entity);
+        $Revisions = new Revisions($this);
         if (!$Revisions->create($body)) {
             throw new Exception(Tools::error());
         }

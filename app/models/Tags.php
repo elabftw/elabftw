@@ -150,7 +150,6 @@ class Tags extends Entity
     /**
      * Destroy a tag
      *
-     * @param int $userid
      * @param int $id id of the tag
      * @return bool
      */

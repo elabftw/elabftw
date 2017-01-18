@@ -26,9 +26,7 @@ class Revisions
     /**
      * Constructor
      *
-     * @param string $type
-     * @param int $id
-     * @param int $userid
+     * @param Entity $entity
      */
     public function __construct(Entity $entity)
     {

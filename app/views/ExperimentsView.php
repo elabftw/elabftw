@@ -434,8 +434,6 @@ class ExperimentsView extends EntityView
         $html .= "<a class='elab-tooltip' href='#'><span>" . $alt . "</span><img id='lock'" . $onClick . " src='app/img/" . $imgSrc . "' alt='" . $alt . "' /></a> ";
         // show timestamp button if not timestamped already
         if (!$this->entityData['timestamped']) {
-            //$onClick = " onClick=\"timestamp(" . $this->entityData['id'] . ")\"";
-
             $html .= "<a class='elab-tooltip'><span>Timestamp Experiment</span><img onClick='confirmTimestamp()' src='app/img/stamp.png' alt='Timestamp' /></a>";
             $html .= "<div id='confirm-timestamp' title='" . _('Timestamp this experiment?') . "'>";
             $html .= "<p><span class='ui-icon ui-icon-alert' style='float:left; margin:12px 12px 20px 0;'></span>";

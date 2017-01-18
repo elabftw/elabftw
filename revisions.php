@@ -27,17 +27,17 @@ try {
     if ($_GET['type'] === 'experiments') {
         // only experiment owner can change or see revisions
         $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_GET['item_id']);
-        if (!$Experiments->isOwnedByUser($Experiments->userid, 'experiments', $Experiments->id)) {
-            throw new Exception(_('This section is out of your reach.'));
+        if (!$Experiments->canWrite) {
+            throw new Exception(Tools::error(true));
         }
         $location = 'experiments';
 
     } elseif ($_GET['type'] === 'items') {
 
         // check if item is in team
-        $Database = new Database($_SESSION['team_id'], $_GET['item_id']);
+        $Database = new Database($_SESSION['team_id'], $_SESSION['userid'], $_GET['item_id']);
         if (!$Database->isInTeam()) {
-            throw new Exception(_('This section is out of your reach.'));
+            throw new Exception(Tools::error(true));
         }
         $location = 'database';
 

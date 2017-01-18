@@ -242,7 +242,7 @@ function getDbList($format = 'default')
     $link_list = "";
     $tinymce_list = "";
 
-    $Database = new Database($_SESSION['team_id']);
+    $Database = new Database($_SESSION['team_id'], $_SESSION['userid']);
     $itemsArr = $Database->readAll();
 
     foreach ($itemsArr as $item) {

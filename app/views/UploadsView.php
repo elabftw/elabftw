@@ -46,7 +46,7 @@ class UploadsView extends EntityView
         if (type == 'items') {
             type = 'database';
         }
-        var item_id = '" . $this->Uploads->itemId . "';
+        var item_id = '" . $this->Uploads->Entity->id . "';
 
         // config for dropzone, id is camelCased.
         Dropzone.options.elabftwDropzone = {
@@ -58,13 +58,13 @@ class UploadsView extends EntityView
                 // add additionnal parameters (id and type)
                 this.on('sending', function(file, xhr, formData) {
                     formData.append('upload', true);
-                    formData.append('item_id', '" . $this->Uploads->itemId . "');
+                    formData.append('item_id', '" . $this->Uploads->Entity->id . "');
                     formData.append('type', '" . $this->Uploads->type . "');
                 });
 
                 // once it is done
                 this.on('complete', function(answer) {
-                    // check the answer we get back from app/uploads.php
+                    // check the answer we get back from app/controllers/EntityController.php
                     var json = JSON.parse(answer.xhr.responseText);
                     if (json.res) {
                         notif(json.msg, 'ok');
@@ -73,9 +73,10 @@ class UploadsView extends EntityView
                     }
                     // reload the #filesdiv once the file is uploaded
                     if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-                        $('#filesdiv').load(type + '.php?mode=edit&id=' + item_id + ' #filesdiv', function() {
+                        $('#filesdiv').load('" . $this->Uploads->type .
+                            ".php?mode=edit&id=' + item_id + ' #filesdiv', function() {
                             // make the comment zone editable (fix issue #54)
-                            makeEditableFileComment();
+                            makeEditableFileComment('" . $this->Uploads->type . "');
                         });
                     }
                 });
@@ -166,7 +167,7 @@ class UploadsView extends EntityView
                 // all files that are not in pdb format
                 $style = 'stick';
                 if ($ext === 'pdb') {
-                  $style = 'cartoon:color=spectrum';
+                    $style = 'cartoon:color=spectrum';
                 }
                 $molviewer = new MolViewer($upload['id'], $filepath, false, $style);
                 $html .= $molviewer->getViewerDiv();
@@ -203,7 +204,7 @@ class UploadsView extends EntityView
         // add editable comments in edit mode
         if ($mode === 'edit') {
             $html .= "$('.thumbnail').on('mouseover', '.editable', function(){
-                    makeEditableFileComment();
+                    makeEditableFileComment('" . $this->Uploads->type . "');
                 });";
         }
         $html .= "});</script>";

@@ -257,7 +257,9 @@ class MakeZip extends Make
      */
     private function addToZip($id)
     {
-        $this->Entity->checkViewPermission($id, $this->type);
+        if (!$this->Entity->canRead) {
+            throw new Exception(Tools::error(true));
+        }
         // populate $this->zipped
         $this->getInfoFromId($id);
         $this->nameFolder();

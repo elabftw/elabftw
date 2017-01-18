@@ -25,19 +25,19 @@ $redirect = false;
 
 try {
 
-    $Database = new Database($_SESSION['team_id']);
+    $Database = new Database($_SESSION['team_id'], $_SESSION['userid']);
 
     // CREATE
     if (isset($_GET['databaseCreateId'])) {
         $redirect = true;
         // can raise an exception
-        $id = $Database->create($_GET['databaseCreateId'], $_SESSION['userid']);
+        $id = $Database->create($_GET['databaseCreateId']);
         $mode = 'edit';
     }
 
     // UPDATE
     if (isset($_POST['update'])) {
-        $Database->setId($_POST['id']);
+        $Database->setId($_POST['id'], 'items');
         if ($Database->update(
             $_POST['title'],
             $_POST['date'],

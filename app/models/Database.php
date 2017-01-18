@@ -24,20 +24,25 @@ class Database extends Entity
     /** inserted in sql */
     public $bookableFilter = '';
 
+    public $userid;
+
     /**
      * Give me the team on init
      *
      * @param int $team
      * @param int|null $id
      */
-    public function __construct($team, $id = null)
+    public function __construct($team, $userid = null, $id = null)
     {
         $this->pdo = Db::getConnection();
 
         $this->team = $team;
 
+        if (!is_null($userid)) {
+            $this->userid = $userid;
+        }
         if (!is_null($id)) {
-            $this->setId($id);
+            $this->setId($id, 'items');
         }
 
     }
@@ -46,10 +51,9 @@ class Database extends Entity
      * Create an item
      *
      * @param int $itemType What kind of item we want to create.
-     * @param int $userid
      * @return int the new id of the item
      */
-    public function create($itemType, $userid)
+    public function create($itemType)
     {
         $itemsTypes = new ItemsTypes($this->team);
 
@@ -62,7 +66,7 @@ class Database extends Entity
             'title' => _('Untitled'),
             'date' => Tools::kdate(),
             'body' => $itemsTypes->read($itemType),
-            'userid' => $userid,
+            'userid' => $this->userid,
             'type' => $itemType
         ));
 
@@ -151,10 +155,9 @@ class Database extends Entity
      * @param string $title
      * @param string $date
      * @param string $body
-     * @param int $userid
      * @return bool
      */
-    public function update($title, $date, $body, $userid)
+    public function update($title, $date, $body)
     {
         // permission check
         // you can only see items from your team
@@ -175,11 +178,11 @@ class Database extends Entity
         $req->bindParam(':title', $title);
         $req->bindParam(':date', $date);
         $req->bindParam(':body', $body);
-        $req->bindParam(':userid', $userid);
+        $req->bindParam(':userid', $this->userid);
         $req->bindParam(':id', $this->id);
 
         // add a revision
-        $Revisions = new Revisions('items', $this->id, $userid);
+        $Revisions = new Revisions('items', $this->id, $this->userid);
         if (!$Revisions->create($body)) {
             throw new Exception(Tools::error());
         }
@@ -210,10 +213,9 @@ class Database extends Entity
     /**
      * Duplicate an item
      *
-     * @param int $userid
      * @return int $newId The id of the newly created item
      */
-    public function duplicate($userid)
+    public function duplicate()
     {
         $item = $this->read();
 
@@ -225,7 +227,7 @@ class Database extends Entity
             'title' => $item['title'],
             'date' => Tools::kdate(),
             'body' => $item['body'],
-            'userid' => $userid,
+            'userid' => $this->userid,
             'type' => $item['type']
         ));
         $newId = $this->pdo->lastInsertId();

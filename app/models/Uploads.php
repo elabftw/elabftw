@@ -23,30 +23,22 @@ class Uploads extends Entity
     /** experiments or items */
     public $type;
 
-    /** our item */
-    public $itemId;
-
     /** what algo for hashing */
     private $hashAlgorithm = 'sha256';
+    public $Entity;
 
     /**
      * Constructor
      *
+     * @param Entity $entity instance of Experiments or Database
      * @param string|null $type experiment or items
-     * @param int|null $itemId
-     * @param int|null $id ID of a single file
      */
-    public function __construct($type = null, $itemId = null, $id = null)
+    public function __construct(Entity $entity, $type = null)
     {
+        $this->Entity = $entity;
         $this->pdo = Db::getConnection();
         if (!is_null($type)) {
             $this->type = $type;
-        }
-        if (!is_null($itemId)) {
-            $this->itemId = $itemId;
-        }
-        if (!is_null($id)) {
-            $this->setId($id);
         }
     }
 
@@ -58,11 +50,12 @@ class Uploads extends Entity
      */
     public function create($file)
     {
+        if (!$this->Entity->canWrite) {
+            throw new Exception(Tools::error(true));
+        }
         if (!is_array($file) || count($file) === 0) {
             throw new Exception('No files received');
         }
-        // check we own the experiment we upload to
-        $this->checkPermission();
 
         $realName = $this->getSanitizedName($file['file']['name']);
         $longName = $this->getCleanName() . "." . Tools::getExt($realName);
@@ -118,21 +111,6 @@ class Uploads extends Entity
         }
 
         return $this->dbInsert($realName, $longName, $this->getHash($fullPath));
-    }
-
-    /**
-     * Can we upload to that experiment?
-     * Make sure we own it.
-     *
-     * @throws Exception if we cannot upload file to this experiment
-     */
-    private function checkPermission()
-    {
-        if ($this->type === 'experiments') {
-            if (!$this->isOwnedByUser($_SESSION['userid'], 'experiments', $this->itemId)) {
-                throw new Exception('Not your experiment!');
-            }
-        }
     }
 
     /**
@@ -223,8 +201,8 @@ class Uploads extends Entity
         // comment can be edited after upload
         // not i18n friendly because it is used somewhere else (not a valid reason, but for the moment that will do)
         $req->bindValue(':comment', 'Click to add a comment');
-        $req->bindParam(':item_id', $this->itemId);
-        $req->bindParam(':userid', $_SESSION['userid']);
+        $req->bindParam(':item_id', $this->Entity->id);
+        $req->bindParam(':userid', $this->Entity->userid);
         $req->bindParam(':type', $this->type);
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
@@ -242,7 +220,7 @@ class Uploads extends Entity
         // Check that the item we view has attached files
         $sql = "SELECT * FROM uploads WHERE id = :id AND type = :type";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':id', $this->Entity->id);
         $req->bindParam(':type', $this->type);
         $req->execute();
 
@@ -258,7 +236,7 @@ class Uploads extends Entity
     {
         $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->itemId);
+        $req->bindParam(':id', $this->Entity->id);
         $req->bindParam(':type', $this->type);
         $req->execute();
 
@@ -336,23 +314,15 @@ class Uploads extends Entity
     /**
      * Destroy an upload
      *
+     * @param int $id id of the upload
      * @return bool
      */
-    public function destroy()
+    public function destroy($id)
     {
         $uploadArr = $this->read();
 
-        if ($this->type === 'experiments') {
-            // Check file id is owned by connected user
-            if ($uploadArr['userid'] != $_SESSION['userid']) {
-                throw new Exception(Tools::error(true));
-            }
-        } else {
-            $User = new Users();
-            $userArr = $User->read($_SESSION['userid']);
-            if ($userArr['team'] != $_SESSION['team_id']) {
-                throw new Exception(Tools::error(true));
-            }
+        if (!$this->Entity->canWrite) {
+            throw new Exception(Tools::error(true));
         }
 
         // remove thumbnail
@@ -368,7 +338,7 @@ class Uploads extends Entity
         // to avoid someone deleting files saying it's DB whereas it's exp
         $sql = "DELETE FROM uploads WHERE id = :id AND type = :type";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':id', $id);
         $req->bindParam(':type', $this->type);
 
         return $req->execute();

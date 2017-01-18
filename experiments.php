@@ -26,9 +26,9 @@ require_once 'app/head.inc.php';
 echo addChemdoodle();
 
 try {
+    $ExperimentsView = new ExperimentsView(new Experiments($_SESSION['team_id'], $_SESSION['userid']));
 
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
-        $ExperimentsView = new ExperimentsView(new Experiments($_SESSION['team_id'], $_SESSION['userid']));
         $ExperimentsView->display = $_SESSION['prefs']['display'];
 
         // CATEGORY FILTER
@@ -80,13 +80,13 @@ try {
     // VIEW
     } elseif ($_GET['mode'] === 'view') {
 
-        $ExperimentsView = new ExperimentsView(new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_GET['id']));
+        $ExperimentsView->Experiments->setId($_GET['id'], 'experiments');
         echo $ExperimentsView->view();
 
     // EDIT
     } elseif ($_GET['mode'] === 'edit') {
 
-        $ExperimentsView = new ExperimentsView(new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_GET['id']));
+        $ExperimentsView->Experiments->setId($_GET['id'], 'experiments');
         echo $ExperimentsView->edit();
     }
 

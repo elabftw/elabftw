@@ -49,7 +49,7 @@ class Links extends Entity
         if ($link === false) {
             throw new Exception('The id parameter is invalid!');
         }
-        if (!$this->isOwnedByUser($this->Experiments->userid, 'experiments', $this->Experiments->id)) {
+        if (!$this->Experiments->canWrite) {
             throw new Exception(Tools::error(true));
         }
 
@@ -118,7 +118,7 @@ class Links extends Entity
     public function destroy($link)
     {
         if (!Tools::checkId($link) ||
-            !$this->isOwnedByUser($this->Experiments->userid, 'experiments', $this->Experiments->id)) {
+            !$this->Experiments->canWrite) {
             throw new Exception('Error removing link');
         }
         $sql = "DELETE FROM experiments_links WHERE id= :id";

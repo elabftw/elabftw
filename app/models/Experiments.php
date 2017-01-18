@@ -33,6 +33,7 @@ class Experiments extends Entity
     /** instance of Comments */
     public $Comments;
 
+
     /**
      * Constructor
      *
@@ -52,7 +53,7 @@ class Experiments extends Entity
         $this->team = $user['team'];
 
         if (!is_null($id)) {
-            $this->setId($id);
+            $this->setId($id, 'experiments');
         }
 
         $this->Links = new Links($this);
@@ -107,7 +108,9 @@ class Experiments extends Entity
      */
     public function read()
     {
-        $this->checkViewPermission($this->id, 'experiments');
+        if (!$this->canRead) {
+            throw new Exception(Tools::error(true));
+        }
 
         $sql = "SELECT DISTINCT experiments.*, status.color, status.name, uploads.*
             FROM experiments
@@ -212,10 +215,6 @@ class Experiments extends Entity
      */
     public function update($title, $date, $body)
     {
-        if (!$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
-            throw new Exception(Tools::error(true));
-        }
-
         $title = Tools::checkTitle($title);
         $date = Tools::kdate($date);
         $body = Tools::checkBody($body);
@@ -270,7 +269,7 @@ class Experiments extends Entity
      */
     public function updateVisibility($visibility)
     {
-        if (!$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
+        if (!$this->canWrite) {
             throw new Exception(Tools::error(true));
         }
 
@@ -295,7 +294,7 @@ class Experiments extends Entity
      */
     public function updateStatus($status)
     {
-        if (!$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
+        if (!$this->canWrite) {
             throw new Exception(Tools::error(true));
         }
 
@@ -391,7 +390,7 @@ class Experiments extends Entity
      */
     public function destroy()
     {
-        if (!$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
+        if (!$this->canWrite) {
             throw new Exception(Tools::error(true));
         }
 
@@ -435,7 +434,7 @@ class Experiments extends Entity
         $can_lock = (int) $req->fetchColumn(); // can be 0 or 1
 
         // We don't have can_lock, but maybe it's our XP, so we can lock it
-        if ($can_lock === 0 && !$this->isOwnedByUser($this->userid, 'experiments', $this->id)) {
+        if ($can_lock === 0 && !$this->canWrite) {
             throw new Exception(_("You don't have the rights to lock/unlock this."));
         }
 

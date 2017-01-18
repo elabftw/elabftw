@@ -38,7 +38,7 @@ class Tags extends Entity
         } else {
             throw new Exception('Invalid type');
         }
-        $this->setId($id);
+        $this->setId($id, $this->type);
     }
 
     /**
@@ -57,7 +57,7 @@ class Tags extends Entity
             throw new Exception(_('Tag is too short!'));
         }
 
-        if ($this->type === 'experiments' && !$this->isOwnedByUser($_SESSION['userid'], $this->type, $this->id)) {
+        if (!$this->canWrite) {
             throw new Exception(Tools::error(true));
         }
 
@@ -164,10 +164,6 @@ class Tags extends Entity
      */
     public function destroy($userid, $id)
     {
-        if ($this->type === 'experiments' && !$this->isOwnedByUser($userid, $this->type, $this->id)) {
-            throw new Exception(Tools::error(true));
-        }
-
         $sql = "DELETE FROM " . $this->type . "_tags WHERE id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);

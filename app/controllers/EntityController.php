@@ -24,7 +24,7 @@ try {
         if ($_POST['type'] === 'experiments') {
             $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
         } else {
-            $Entity = new Database($_SESSION['team_id'], $_POST['id']);
+            $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
         }
         if ($Entity->toggleLock()) {
             echo json_encode(array(
@@ -54,7 +54,7 @@ try {
 
         } elseif ($_POST['type'] == 'items') {
 
-            $Database = new Database($_SESSION['team_id'], $_POST['id']);
+            $Database = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
             $result = $Database->update($title, $date, $body, $_SESSION['userid']);
         }
 
@@ -73,13 +73,13 @@ try {
 
     // CREATE TAG
     if (isset($_POST['createTag'])) {
-        if ($_POST['createTagType'] === 'experiments') {
-            $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['createTagId']);
+        if ($_POST['type'] === 'experiments') {
+            $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['item']);
         } else {
-            $Entity = new Database($_SESSION['team_id'], $_POST['createTagId']);
+            $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['item']);
         }
-        $Tags = new Tags($_POST['createTagType'], $Entity->id);
-        $Tags->create($_POST['createTagTag']);
+        $Tags = new Tags($_POST['type'], $Entity->id);
+        $Tags->create($_POST['tag']);
     }
 
     // DELETE TAG
@@ -87,10 +87,12 @@ try {
         if ($_POST['type'] === 'experiments') {
             $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['item']);
         } else {
-            $Entity = new Database($_SESSION['team_id'], $_POST['item']);
+            $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['item']);
         }
         $Tags = new Tags($_POST['type'], $Entity->id);
-        $Tags->destroy($_SESSION['userid'], $_POST['id']);
+        if ($Entity->canWrite) {
+            $Tags->destroy($_SESSION['userid'], $_POST['id']);
+        }
     }
 
     // UPDATE FILE COMMENT
@@ -109,7 +111,12 @@ try {
             }
             $id = $id_arr[1];
 
-            $Upload = new Uploads();
+            if ($_POST['type'] === 'experiments') {
+                $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['item_id']);
+            } else {
+                $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['item_id']);
+            }
+            $Upload = new Uploads($Entity, $_POST['type']);
             if ($Upload->updateComment($id, $comment)) {
                 echo json_encode(array(
                     'res' => true,
@@ -132,7 +139,12 @@ try {
     // CREATE UPLOAD
     if (isset($_POST['upload'])) {
         try {
-            $Upload = new Uploads($_POST['type'], $_POST['item_id']);
+            if ($_POST['type'] === 'experiments') {
+                $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['item_id']);
+            } else {
+                $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['item_id']);
+            }
+            $Upload = new Uploads($Entity, $_POST['type']);
             if ($Upload->create($_FILES)) {
                 echo json_encode(array(
                     'res' => true,
@@ -154,8 +166,13 @@ try {
 
     // DESTROY UPLOAD
     if (isset($_POST['uploadsDestroy'])) {
-        $Uploads = new Uploads($_POST['type'], $_POST['item_id'], $_POST['id']);
-        if ($Uploads->destroy()) {
+        if ($_POST['type'] === 'experiments') {
+            $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['item_id']);
+        } else {
+            $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['item_id']);
+        }
+        $Uploads = new Uploads($Entity, $_POST['type']);
+        if ($Uploads->destroy($_POST['id'])) {
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('File deleted successfully')

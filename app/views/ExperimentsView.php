@@ -72,7 +72,7 @@ class ExperimentsView extends EntityView
         $this->html .= "<script>document.title = '" . $this->getCleanTitle($this->experiment['title']) . "';</script>";
 
         // get the UploadsView object
-        $this->UploadsView = new UploadsView(new Uploads('experiments', $this->experiment['id']));
+        $this->UploadsView = new UploadsView(new Uploads($this->Experiments, 'experiments'));
     }
 
     /**
@@ -157,8 +157,11 @@ class ExperimentsView extends EntityView
         foreach ($itemsArr as $item) {
 
             // fill an array with the ID of each item to use in the csv/zip export menu
-            $idArr[] = $item['id'];
-            $html2 .= $this->showUnique($item);
+            $this->Experiments->setId($item['id'], 'experiments');
+            if ($this->Experiments->canRead) {
+                $idArr[] = $this->Experiments->id;
+                $html2 .= $this->showUnique($item);
+            }
 
         }
 
@@ -209,9 +212,7 @@ class ExperimentsView extends EntityView
             $html .= "<img style='clear:both' class='align_right' src='app/img/attached.png' alt='file attached' />";
         }
         // we show the abstract of the experiment on mouse hover with the title attribute
-        // we check if it is our experiment. It would be best to check if we have visibility rights on it
-        // but atm there is no such function. So we limit this feature to experiments we own, for simplicity.
-        if ($this->Experiments->isOwnedByUser($this->Experiments->userid, 'experiments', $item['id'])) {
+        if ($this->Experiments->canRead) {
             $bodyAbstract = str_replace("'", "", substr(strip_tags($item['body']), 0, 100));
         } else {
             $bodyAbstract = '';
@@ -387,11 +388,7 @@ class ExperimentsView extends EntityView
      */
     private function isReadOnly()
     {
-        // first check viewing rights. This function will throw a permission error if we cannot see.
-        $this->Experiments->checkViewPermission($this->experiment['id'], 'experiments');
-
-        // ok we can view it, but if we don't own it, it has to be read only!
-        return $this->experiment['userid'] != $_SESSION['userid'];
+        return $this->Experiments->canRead && !$this->Experiments->canWrite;
     }
 
     /**
@@ -538,7 +535,7 @@ class ExperimentsView extends EntityView
             // CREATE TAG
             // listen keypress, add tag when it's enter
             $('#createTagInput').keypress(function (e) {
-                createTag(e, " . $this->Experiments->id . ", 'experiments');
+                createTag(e, 'experiments', " . $this->Experiments->id . ");
             });
             // CREATE LINK
             // listen keypress, add link when it's enter

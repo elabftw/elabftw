@@ -45,17 +45,22 @@ class Entity
     /** limit for sql */
     public $limit = '';
 
+    public $canRead = false;
+    public $canWrite = false;
+
     /**
      * Check and set id
      *
      * @param int $id
+     * @param string $type experiments or items
      */
-    public function setId($id)
+    public function setId($id, $type)
     {
         if (Tools::checkId($id) === false) {
             throw new Exception(_('The id parameter is not valid!'));
         }
         $this->id = $id;
+        $this->setPermissions($this->id, $type);
     }
 
     /**
@@ -88,33 +93,19 @@ class Entity
     }
 
     /**
-     * Check if an experiment/item/whatever is owned by an user
-     *
-     * @param int $userid
-     * @param string $table experiments, experiments_templates, items, etc…
-     * @param int $id id of the item to check
-     * @return bool
-     */
-    public function isOwnedByUser($userid, $table, $id)
-    {
-        $sql = "SELECT userid FROM $table WHERE id = $id";
-        $req = $this->pdo->prepare($sql);
-        $req->execute();
-
-        return $req->fetchColumn() == $userid;
-    }
-
-    /**
-     * Verify we can see the id of an item
+     * Verify we can read/write an item
      *
      * @param int $id
      * @param string $type 'experiments' or 'items'
      * @throws Exception
-     * @return bool|null True if user has reading rights
      */
-    public function checkViewPermission($id, $type)
+    private function setPermissions($id, $type)
     {
         $this->pdo = Db::getConnection();
+
+        // reset values
+        $this->canRead = false;
+        $this->canWrite = false;
 
         $sql = "SELECT userid FROM " . $type . " WHERE id = :id";
         $req = $this->pdo->prepare($sql);
@@ -123,8 +114,17 @@ class Entity
         $theUser = $req->fetchColumn();
 
         if ($type === 'experiments') {
-            // if we don't own the experiment, look at the visibility setting
-            if (($theUser != $_SESSION['userid']) && !$_SESSION['is_admin']) {
+            // if we own the experiment, we have read/write rights on it for sure
+            if ($theUser === $_SESSION['userid']) {
+                $this->canRead = true;
+                $this->canWrite = true;
+
+            // admin can view any experiment
+            } elseif (($theUser != $_SESSION['userid']) && $_SESSION['is_admin']) {
+                $this->canRead = true;
+
+            // if we don't own the experiment (and we are not admin), we need to check the visibility
+            } elseif (($theUser != $_SESSION['userid']) && !$_SESSION['is_admin']) {
                 $sql = "SELECT visibility, team FROM experiments WHERE id = :id";
                 $req = $this->pdo->prepare($sql);
                 $req->bindParam(':id', $id, \PDO::PARAM_INT);
@@ -138,29 +138,33 @@ class Entity
 
                 // if the vis. setting is public or organization, we can see it for sure
                 if (in_array($experiment['visibility'], $validArr)) {
-                    return true;
+                    $this->canRead = true;
                 }
 
                 // if the vis. setting is team, check we are in the same team than the item
-                if (($experiment['visibility'] === 'team') && ($experiment['team'] != $_SESSION['team_id'])) {
-                    throw new Exception(Tools::error(true));
+                if (($experiment['visibility'] === 'team') && ($experiment['team'] == $_SESSION['team_id'])) {
+                    $this->canRead = true;
                 }
 
-                if (($experiment['visibility'] === 'user') && (!$_SESSION['is_admin'])) {
-                    throw new Exception(Tools::error(true));
+                // if the vis. setting is user and we are not admin, we cannot see it
+                /*
+                if (($experiment['visibility'] === 'user') && !$_SESSION['is_admin']) {
+                    $this->canRead = false;
                 }
+                 */
 
+                // if the vis. setting is a team group, check we are in the group
                 if (Tools::checkId($experiment['visibility'])) {
-                    // we have an int as visibility, so a team group. Check we are in this group
                     $TeamGroups = new $TeamGroups($_SESSION['team_id']);
-                    if (!$TeamGroups->isInTeamGroup($theUser, $visibility)) {
-                        throw new Exception(Tools::error(true));
+                    if ($TeamGroups->isInTeamGroup($theUser, $visibility)) {
+                        $this->canRead = true;
                     }
                 }
             }
 
-
         } else {
+            // for DB items, we only need to be in the same team
+
             // get the team of the userid of the item
             $sql = "SELECT team FROM users WHERE userid = :userid";
             $req = $this->pdo->prepare($sql);
@@ -168,8 +172,9 @@ class Entity
             $req->execute();
             $theUserTeam = $req->fetchColumn();
             // we will compare the teams for DB items
-            if ($theUserTeam != $_SESSION['team_id']) {
-                throw new Exception(Tools::error(true));
+            if ($theUserTeam == $_SESSION['team_id']) {
+                $this->canRead = true;
+                $this->canWrite = true;
             }
         }
     }

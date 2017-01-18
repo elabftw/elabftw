@@ -251,7 +251,7 @@ function updateStatus(item, status) {
 }
 
 // CREATE TAG
-function createTag(e, item_id, type) { // the argument here is the event (needed to detect which key is pressed)
+function createTag(e, type, item) { // the argument here is the event (needed to detect which key is pressed)
     var keynum;
     if (e.which) {
         keynum = e.which;
@@ -262,15 +262,14 @@ function createTag(e, item_id, type) { // the argument here is the event (needed
         // POST request
         $.post('app/controllers/EntityController.php', {
             createTag: true,
-            createTagTag: tag,
-            createTagId: item_id,
-            createTagType: type
+            tag: tag,
+            item: item,
+            type: type
         }).done(function () {
-            if (type === 'experiments') {
-                $('#tags_div').load('experiments.php?mode=edit&id=' + item_id + ' #tags_div');
-            } else {
-                $('#tags_div').load('database.php?mode=edit&id=' + item_id + ' #tags_div');
+            if (type === 'items') {
+                type = 'database';
             }
+            $('#tags_div').load(type + '.php?mode=edit&id=' + item + ' #tags_div');
             // clear input field
             $('#createTagInput').val('');
         });
@@ -285,8 +284,7 @@ function destroyTag(type, item, tag){
             type:type,
             item:item,
             id:tag,
-        })
-        .success(function() {
+        }).done(function() {
             if (type === 'items') {
                 type = 'database';
             }
@@ -829,10 +827,11 @@ function logsDestroy() {
     });
 }
 // EDIT COMMENT ON UPLOAD
-function makeEditableFileComment() {
+function makeEditableFileComment(type) {
     $('.thumbnail p.editable').editable(function(value, settings) {
         $.post('app/controllers/EntityController.php', {
             updateFileComment : true,
+            type: type,
             comment : value,
             id : $(this).attr('id')
         }).done(function(data) {

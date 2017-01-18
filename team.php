@@ -65,7 +65,7 @@ if (count($items) === 0) {
 }
 try {
     if (isset($_GET['item']) && Tools::checkId($_GET['item'])) {
-        $Scheduler->setId($_GET['item']);
+        $Scheduler->setId($_GET['item'], 'items');
         $itemName = '';
         foreach ($items as $item) {
             if ($item['itemid'] == $_GET['item']) {

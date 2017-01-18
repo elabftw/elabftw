@@ -8,6 +8,8 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->Experiments= new Experiments(1, 1);
+        $_SESSION['userid'] = 1;
+        $_SESSION['is_admin'] = 0;
     }
 
     public function testCreateAndDestroy()

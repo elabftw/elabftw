@@ -37,7 +37,7 @@ class Comments extends Entity
         $this->Experiments = $experiments;
 
         if (!is_null($id)) {
-            $this->setId($id);
+            $this->setId($id, 'experiments');
         }
     }
 

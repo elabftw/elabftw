@@ -36,6 +36,7 @@ class Database extends Entity
     {
         $this->pdo = Db::getConnection();
 
+        $this->type = 'items';
         $this->team = $team;
 
         if (!is_null($userid)) {
@@ -134,7 +135,8 @@ class Database extends Entity
         FROM items
         LEFT JOIN items_types ON (items.type = items_types.id)
         LEFT JOIN items_tags ON (items.id = items_tags.item_id)
-        LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads ON (uploads.attachment = items.id AND uploads.type = 'items')
+        LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads
+        ON (uploads.attachment = items.id AND uploads.type = 'items')
         WHERE items.team = :teamid
         " . $this->bookableFilter . "
         " . $this->categoryFilter . "
@@ -263,7 +265,7 @@ class Database extends Entity
         $tags = new Tags('items', $this->id);
         $result[] = $tags->destroyAll();
 
-        $uploads = new Uploads('items', $this->id);
+        $uploads = new Uploads($self);
         $result[] = $uploads->destroyAll();
 
         // delete links of this item in experiments with this item linked

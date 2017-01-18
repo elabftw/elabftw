@@ -33,7 +33,6 @@ class Experiments extends Entity
     /** instance of Comments */
     public $Comments;
 
-
     /**
      * Constructor
      *
@@ -45,6 +44,7 @@ class Experiments extends Entity
     {
         $this->pdo = Db::getConnection();
 
+        $this->type = 'experiments';
         $this->team = $team;
         $this->userid = $userid;
 
@@ -198,7 +198,7 @@ class Experiments extends Entity
         $req->bindParam(':link_id', $itemId);
         $req->execute();
         while ($data = $req->fetch()) {
-            $this->setId($data['item_id']);
+            $this->setId($data['item_id'], 'experiments');
             $itemsArr[] = $this->read();
         }
 

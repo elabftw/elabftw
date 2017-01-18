@@ -55,7 +55,7 @@ try {
         } elseif ($_POST['type'] == 'items') {
 
             $Database = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
-            $result = $Database->update($title, $date, $body, $_SESSION['userid']);
+            $result = $Database->update($title, $date, $body);
         }
 
         if ($result) {
@@ -116,7 +116,7 @@ try {
             } else {
                 $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['item_id']);
             }
-            $Upload = new Uploads($Entity, $_POST['type']);
+            $Upload = new Uploads($Entity);
             if ($Upload->updateComment($id, $comment)) {
                 echo json_encode(array(
                     'res' => true,
@@ -144,7 +144,7 @@ try {
             } else {
                 $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['item_id']);
             }
-            $Upload = new Uploads($Entity, $_POST['type']);
+            $Upload = new Uploads($Entity);
             if ($Upload->create($_FILES)) {
                 echo json_encode(array(
                     'res' => true,
@@ -171,7 +171,7 @@ try {
         } else {
             $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['item_id']);
         }
-        $Uploads = new Uploads($Entity, $_POST['type']);
+        $Uploads = new Uploads($Entity);
         if ($Uploads->destroy($_POST['id'])) {
             echo json_encode(array(
                 'res' => true,

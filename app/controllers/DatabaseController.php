@@ -41,8 +41,7 @@ try {
         if ($Database->update(
             $_POST['title'],
             $_POST['date'],
-            $_POST['body'],
-            $_SESSION['userid']
+            $_POST['body']
         )) {
             $id = $Database->id;
             $mode = 'view';
@@ -54,15 +53,15 @@ try {
 
     // DUPLICATE
     if (isset($_GET['databaseDuplicateId'])) {
-        $Database->setId($_GET['databaseDuplicateId']);
-        $id = $Database->duplicate($_SESSION['userid']);
+        $Database->setId($_GET['databaseDuplicateId'], 'items');
+        $id = $Database->duplicate();
         $mode = 'edit';
         $redirect = true;
     }
 
     // UPDATE RATING
     if (isset($_POST['rating'])) {
-        $Database->setId($_POST['id']);
+        $Database->setId($_POST['id'], 'items');
         if ($Database->updateRating($_POST['rating'])) {
             echo json_encode(array(
                 'res' => true,

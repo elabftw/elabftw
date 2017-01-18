@@ -18,12 +18,6 @@ use \Exception;
  */
 class Tags extends Entity
 {
-    /** pdo object */
-    protected $pdo;
-
-    /** experiments or items */
-    private $type;
-
     /**
      * Constructor
      *
@@ -38,7 +32,7 @@ class Tags extends Entity
         } else {
             throw new Exception('Invalid type');
         }
-        $this->setId($id, $this->type);
+        $this->setId($id);
     }
 
     /**

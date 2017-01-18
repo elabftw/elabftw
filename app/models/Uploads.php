@@ -20,9 +20,6 @@ class Uploads extends Entity
     /** pdo object */
     protected $pdo;
 
-    /** experiments or items */
-    public $type;
-
     /** what algo for hashing */
     private $hashAlgorithm = 'sha256';
     public $Entity;
@@ -31,15 +28,12 @@ class Uploads extends Entity
      * Constructor
      *
      * @param Entity $entity instance of Experiments or Database
-     * @param string|null $type experiment or items
      */
-    public function __construct(Entity $entity, $type = null)
+    public function __construct(Entity $entity)
     {
-        $this->Entity = $entity;
         $this->pdo = Db::getConnection();
-        if (!is_null($type)) {
-            $this->type = $type;
-        }
+
+        $this->Entity = $entity;
     }
 
     /**
@@ -203,7 +197,7 @@ class Uploads extends Entity
         $req->bindValue(':comment', 'Click to add a comment');
         $req->bindParam(':item_id', $this->Entity->id);
         $req->bindParam(':userid', $this->Entity->userid);
-        $req->bindParam(':type', $this->type);
+        $req->bindParam(':type', $this->Entity->type);
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
 
@@ -221,7 +215,7 @@ class Uploads extends Entity
         $sql = "SELECT * FROM uploads WHERE id = :id AND type = :type";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $this->Entity->id);
-        $req->bindParam(':type', $this->type);
+        $req->bindParam(':type', $this->Entity->type);
         $req->execute();
 
         return $req->fetch();
@@ -237,7 +231,7 @@ class Uploads extends Entity
         $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $this->Entity->id);
-        $req->bindParam(':type', $this->type);
+        $req->bindParam(':type', $this->Entity->type);
         $req->execute();
 
         return $req->fetchAll();
@@ -339,7 +333,7 @@ class Uploads extends Entity
         $sql = "DELETE FROM uploads WHERE id = :id AND type = :type";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);
-        $req->bindParam(':type', $this->type);
+        $req->bindParam(':type', $this->Entity->type);
 
         return $req->execute();
     }

@@ -48,34 +48,35 @@ class Entity
     public $canRead = false;
     public $canWrite = false;
 
+    /** experiments or items */
+    public $type;
+
     /**
      * Check and set id
      *
      * @param int $id
-     * @param string $type experiments or items
      */
-    public function setId($id, $type)
+    public function setId($id)
     {
         if (Tools::checkId($id) === false) {
             throw new Exception(_('The id parameter is not valid!'));
         }
         $this->id = $id;
-        $this->setPermissions($this->id, $type);
+        $this->setPermissions($this->id);
     }
 
     /**
      * Check if an item has a file attached.
      *
-     * @param string type of item
      * @return bool Return false if there is now file attached
      */
-    public function hasAttachment($type)
+    public function hasAttachment()
     {
         $sql = "SELECT COUNT(*) FROM uploads
             WHERE item_id = :item_id AND type = :type LIMIT 1";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':item_id', $this->id);
-        $req->bindParam(':type', $type);
+        $req->bindParam(':type', $this->type);
         $req->execute();
 
         return $req->fetchColumn() != 0;
@@ -96,10 +97,9 @@ class Entity
      * Verify we can read/write an item
      *
      * @param int $id
-     * @param string $type 'experiments' or 'items'
      * @throws Exception
      */
-    private function setPermissions($id, $type)
+    private function setPermissions($id)
     {
         $this->pdo = Db::getConnection();
 
@@ -107,13 +107,13 @@ class Entity
         $this->canRead = false;
         $this->canWrite = false;
 
-        $sql = "SELECT userid FROM " . $type . " WHERE id = :id";
+        $sql = "SELECT userid FROM " . $this->type . " WHERE id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id, \PDO::PARAM_INT);
         $req->execute();
         $theUser = $req->fetchColumn();
 
-        if ($type === 'experiments') {
+        if ($this->type === 'experiments') {
             // if we own the experiment, we have read/write rights on it for sure
             if ($theUser === $_SESSION['userid']) {
                 $this->canRead = true;
@@ -145,13 +145,6 @@ class Entity
                 if (($experiment['visibility'] === 'team') && ($experiment['team'] == $_SESSION['team_id'])) {
                     $this->canRead = true;
                 }
-
-                // if the vis. setting is user and we are not admin, we cannot see it
-                /*
-                if (($experiment['visibility'] === 'user') && !$_SESSION['is_admin']) {
-                    $this->canRead = false;
-                }
-                 */
 
                 // if the vis. setting is a team group, check we are in the group
                 if (Tools::checkId($experiment['visibility'])) {

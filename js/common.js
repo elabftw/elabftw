@@ -827,13 +827,14 @@ function logsDestroy() {
     });
 }
 // EDIT COMMENT ON UPLOAD
-function makeEditableFileComment(type) {
+function makeEditableFileComment(type, item_id) {
     $('.thumbnail p.editable').editable(function(value, settings) {
         $.post('app/controllers/EntityController.php', {
             updateFileComment : true,
             type: type,
             comment : value,
-            id : $(this).attr('id')
+            comment_id : $(this).attr('id'),
+            id: item_id
         }).done(function(data) {
             var json = JSON.parse(data);
             if (json.res) {

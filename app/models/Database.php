@@ -37,7 +37,7 @@ class Database extends Entity
         $this->userid = $userid;
 
         if (!is_null($id)) {
-            $this->setId($id);
+            $this->setId($id, true);
         }
 
     }

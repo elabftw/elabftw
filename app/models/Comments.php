@@ -165,6 +165,7 @@ class Comments extends Entity
     /**
      * Destroy a comment
      *
+     * @param int $id id of the comment
      * @return bool
      */
     public function destroy($id)

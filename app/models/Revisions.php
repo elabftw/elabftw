@@ -21,6 +21,7 @@ class Revisions
     /** pdo object */
     private $pdo;
 
+    /** an instance of Experiments or Database */
     private $Entity;
 
     /**

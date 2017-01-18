@@ -57,19 +57,33 @@ class Entity
     /** write rights */
     public $canWrite = false;
 
+    /** what you get when you ->read() */
     public $entityData;
 
     /**
      * Check and set id
      *
      * @param int $id
+     * @param bool $populate set to true to load data and set permissions
      */
-    public function setId($id)
+    public function setId($id, $populate = false)
     {
         if (Tools::checkId($id) === false) {
             throw new Exception(_('The id parameter is not valid!'));
         }
         $this->id = $id;
+
+        if ($populate) {
+            $this->populate();
+        }
+    }
+
+    /**
+     * Now that we have an id, we can read the data and set the permissions
+     *
+     */
+    public function populate()
+    {
         if ($this instanceof Experiments || $this instanceof Database) {
             $this->entityData = $this->read();
             $this->setPermissions();

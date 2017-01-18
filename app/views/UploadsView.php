@@ -69,7 +69,8 @@ class UploadsView extends EntityView
                         $('#filesdiv').load('" . $this->Uploads->Entity->type .
                             ".php?mode=edit&id=" . $this->Uploads->Entity->id . " #filesdiv', function() {
                             // make the comment zone editable (fix issue #54)
-                            makeEditableFileComment('" . $this->Uploads->Entity->type . "');
+                            makeEditableFileComment('" . $this->Uploads->Entity->type . "', " .
+                                $this->Uploads->Entity->id . ");
                         });
                     }
                 });
@@ -197,7 +198,7 @@ class UploadsView extends EntityView
         // add editable comments in edit mode
         if ($mode === 'edit') {
             $html .= "$('.thumbnail').on('mouseover', '.editable', function(){
-                    makeEditableFileComment('" . $this->Uploads->Entity->type . "');
+                    makeEditableFileComment('" . $this->Uploads->Entity->type . "', " . $this->Uploads->Entity->id . ");
                 });";
         }
         $html .= "});</script>";

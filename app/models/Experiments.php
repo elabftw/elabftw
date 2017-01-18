@@ -46,7 +46,7 @@ class Experiments extends Entity
         $this->userid = $userid;
 
         if (!is_null($id)) {
-            $this->setId($id);
+            $this->setId($id, true);
         }
 
         $this->Links = new Links($this);
@@ -187,7 +187,7 @@ class Experiments extends Entity
         $req->bindParam(':link_id', $itemId);
         $req->execute();
         while ($data = $req->fetch()) {
-            $this->setId($data['item_id']);
+            $this->setId($data['item_id'], true);
             if ($this->canRead) {
                 $itemsArr[] = $this->read();
             }

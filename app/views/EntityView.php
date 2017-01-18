@@ -287,7 +287,7 @@ class EntityView
 
         if ($mode === 'view') {
 
-            $html = "<span class='tags'><img src='app/img/tags.png' alt='tags' /> ";
+            $html .= "<span class='tags'><img src='app/img/tags.png' alt='tags' /> ";
 
             foreach ($tagList as $tag) {
                 if ($this->Entity->type === 'experiments') {

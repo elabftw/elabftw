@@ -18,6 +18,7 @@ use \Exception;
  */
 class Tags extends Entity
 {
+    /** an instance of Experiments or Database */
     public $Entity;
 
     /**

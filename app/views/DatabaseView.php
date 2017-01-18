@@ -88,6 +88,7 @@ class DatabaseView extends EntityView
         // loop the results array and display results
         $idArr = array();
         foreach ($itemsArr as $item) {
+            $this->Entity->setId($item['id']);
             // fill an array with the ID of each item to use in the csv/zip export menu
             $idArr[] = $item['id'];
             $html2 .= $this->showUnique($item);

@@ -20,6 +20,8 @@ class MakePdf extends Make
 {
     /** our favorite pdo object */
     protected $pdo;
+    /** Entity instance */
+    private $Entity;
 
     /** the id of the item we want */
     private $id;
@@ -56,12 +58,14 @@ class MakePdf extends Make
     {
         $this->pdo = Db::getConnection();
 
+        $this->Entity = new Entity();
+
         $this->id = $id;
         $this->validateId();
 
         // assign and check type
         $this->type = $this->checkType($type);
-        $this->checkViewPermission($this->id);
+        $this->Entity->checkViewPermission($this->id, $this->type);
 
         // build the pdf content
         $this->initData();

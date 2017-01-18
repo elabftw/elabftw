@@ -105,6 +105,75 @@ class Entity
     }
 
     /**
+     * Verify we can see the id of an item
+     *
+     * @param int $id
+     * @param string $type 'experiments' or 'items'
+     * @throws Exception
+     * @return bool|null True if user has reading rights
+     */
+    public function checkViewPermission($id, $type)
+    {
+        $this->pdo = Db::getConnection();
+
+        $sql = "SELECT userid FROM " . $type . " WHERE id = :id";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':id', $id, \PDO::PARAM_INT);
+        $req->execute();
+        $theUser = $req->fetchColumn();
+
+        if ($type === 'experiments') {
+            // if we don't own the experiment, look at the visibility setting
+            if (($theUser != $_SESSION['userid']) && !$_SESSION['is_admin']) {
+                $sql = "SELECT visibility, team FROM experiments WHERE id = :id";
+                $req = $this->pdo->prepare($sql);
+                $req->bindParam(':id', $id, \PDO::PARAM_INT);
+                $req->execute();
+                $experiment = $req->fetch();
+
+                $validArr = array(
+                    'public',
+                    'organization'
+                );
+
+                // if the vis. setting is public or organization, we can see it for sure
+                if (in_array($experiment['visibility'], $validArr)) {
+                    return true;
+                }
+
+                // if the vis. setting is team, check we are in the same team than the item
+                if (($experiment['visibility'] === 'team') && ($experiment['team'] != $_SESSION['team_id'])) {
+                    throw new Exception(Tools::error(true));
+                }
+
+                if (($experiment['visibility'] === 'user') && (!$_SESSION['is_admin'])) {
+                    throw new Exception(Tools::error(true));
+                }
+
+                if (Tools::checkId($experiment['visibility'])) {
+                    // we have an int as visibility, so a team group. Check we are in this group
+                    $TeamGroups = new $TeamGroups($_SESSION['team_id']);
+                    if (!$TeamGroups->isInTeamGroup($theUser, $visibility)) {
+                        throw new Exception(Tools::error(true));
+                    }
+                }
+            }
+
+
+        } else {
+            // get the team of the userid of the item
+            $sql = "SELECT team FROM users WHERE userid = :userid";
+            $req = $this->pdo->prepare($sql);
+            $req->bindParam(':userid', $theUser, \PDO::PARAM_INT);
+            $req->execute();
+            $theUserTeam = $req->fetchColumn();
+            // we will compare the teams for DB items
+            if ($theUserTeam != $_SESSION['team_id']) {
+                throw new Exception(Tools::error(true));
+            }
+        }
+    }
+    /**
      * Update ordering for status, experiment templates or items types
      *
      * @param array $post POST

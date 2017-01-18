@@ -24,6 +24,8 @@ class MakeZip extends Make
     protected $pdo;
     /** the zip object */
     private $zip;
+    /** Entity instance */
+    private $Entity;
 
     /** the input ids */
     private $idList;
@@ -60,6 +62,8 @@ class MakeZip extends Make
     public function __construct($idList, $type)
     {
         $this->pdo = Db::getConnection();
+
+        $this->Entity = new Entity();
 
         // we check first if the zip extension is here
         if (!class_exists('ZipArchive')) {
@@ -253,7 +257,7 @@ class MakeZip extends Make
      */
     private function addToZip($id)
     {
-        $this->checkViewPermission($id);
+        $this->Entity->checkViewPermission($id, $this->type);
         // populate $this->zipped
         $this->getInfoFromId($id);
         $this->nameFolder();

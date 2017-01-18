@@ -37,6 +37,8 @@ class MakeCsv extends Make
     private $data;
     /** the url of the item */
     private $url;
+    /** Entity instance */
+    private $Entity;
 
     /**
      * Give me a list of id+id+id and a type, I make good csv for you
@@ -52,6 +54,8 @@ class MakeCsv extends Make
         $this->filePath = $this->getTempFilePath($this->fileName);
 
         $this->idList = $idList;
+
+        $this->Entity = new Entity();
 
         // assign and check type
         $this->type = $this->checkType($type);
@@ -95,7 +99,7 @@ class MakeCsv extends Make
             if (!Tools::checkId($id)) {
                 throw new Exception('Bad id.');
             }
-            $this->checkViewPermission($id);
+            $this->Entity->checkViewPermission($id, $this->type);
             $this->initData($id);
             $this->setUrl($id);
             $this->addLine();

@@ -107,6 +107,8 @@ class Experiments extends Entity
      */
     public function read()
     {
+        $this->checkViewPermission($this->id, 'experiments');
+
         $sql = "SELECT DISTINCT experiments.*, status.color, status.name, uploads.*
             FROM experiments
             LEFT JOIN status ON experiments.status = status.id

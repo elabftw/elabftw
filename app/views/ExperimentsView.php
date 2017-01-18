@@ -381,41 +381,17 @@ class ExperimentsView extends EntityView
     }
 
     /**
-     * Check if we experiment is read only
+     * Check if the experiment is read only
      *
      * @return bool
      */
     private function isReadOnly()
     {
-        // Check id is owned by connected user to show read only message if not
-        if ($this->experiment['userid'] != $_SESSION['userid']) {
-            // Can the user see this experiment which is not his ?
-            if ($this->experiment['visibility'] === 'user' && !$_SESSION['is_admin']) {
+        // first check viewing rights. This function will throw a permission error if we cannot see.
+        $this->Experiments->checkViewPermission($this->experiment['id'], 'experiments');
 
-                throw new Exception(Tools::error(true));
-
-            } elseif (Tools::checkId($this->experiment['visibility'])) {
-                // the visibility of this experiment is set to a group
-                // we must check if current user is in this group
-                if (!$this->TeamGroups->isInTeamGroup($_SESSION['userid'], $this->experiment['visibility'])) {
-                    throw new Exception(Tools::error(true));
-                }
-
-            } else {
-                $users = new Users();
-                $owner = $users->read($this->experiment['userid']);
-
-                if ($owner['team'] != $this->Experiments->team) {
-                    // the experiment needs to be organization for us to see it as we are not in the team of the owner
-                    if ($this->experiment['visibility'] != 'organization') {
-                        throw new Exception(Tools::error(true));
-                    }
-                }
-                // read only
-                return true;
-            }
-        }
-        return false;
+        // ok we can view it, but if we don't own it, it has to be read only!
+        return $this->experiment['userid'] != $_SESSION['userid'];
     }
 
     /**

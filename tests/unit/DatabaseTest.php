@@ -7,12 +7,14 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->Database= new Database(1);
+        $_SESSION['team_id'] = 1;
+        $_SESSION['userid'] = 1;
+        $this->Database= new Database(1, 1);
     }
 
     public function testCreateAndDestroy()
     {
-        $new = $this->Database->create(1, 1);
+        $new = $this->Database->create(1);
         $this->assertTrue((bool) Tools::checkId($new));
         $this->Database->setId($new);
         $this->assertTrue($this->Database->destroy());
@@ -26,11 +28,11 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
 
     public function testRead()
     {
-        $this->Database = new Database(1, 1);
-        $item = $this->Database->read();
-        $this->assertTrue(is_array($item));
-        $this->assertEquals('Database item 1', $item['title']);
-        $this->assertEquals('20160729', $item['date']);
+        $new = $this->Database->create(1);
+        $this->Database->setId($new, true);
+        $this->assertTrue(is_array($this->Database->entityData));
+        $this->assertEquals('Untitled', $this->Database->entityData['title']);
+        $this->assertEquals(Tools::kdate(), $this->Database->entityData['date']);
         $this->Database = new Database(1, 9999);
         $this->setExpectedException('Exception');
         $this->Database->read();

@@ -394,7 +394,7 @@ class Experiments extends Entity
         $tags = new Tags($this);
         $tags->destroyAll();
 
-        $uploads = new Uploads('experiments', $this->id);
+        $uploads = new Uploads($this);
         $uploads->destroyAll();
 
         $this->Links->destroyAll();
@@ -428,21 +428,20 @@ class Experiments extends Entity
             throw new Exception(_("You don't have the rights to lock/unlock this."));
         }
 
-        $expArr = $this->read();
-        $locked = (int) $expArr['locked'];
+        $locked = (int) $this->entityData['locked'];
 
         // if we try to unlock something we didn't lock
-        if ($locked === 1 && ($expArr['lockedby'] != $this->userid)) {
+        if ($locked === 1 && ($this->entityData['lockedby'] != $this->userid)) {
             // Get the first name of the locker to show in error message
             $sql = "SELECT firstname FROM users WHERE userid = :userid";
             $req = $this->pdo->prepare($sql);
-            $req->bindParam(':userid', $expArr['lockedby']);
+            $req->bindParam(':userid', $this->entityData['lockedby']);
             $req->execute();
             throw new Exception(_('This experiment was locked by') . ' ' . $req->fetchColumn() . '. ' . _("You don't have the rights to lock/unlock this."));
         }
 
         // check if the experiment is timestamped. Disallow unlock in this case.
-        if ($locked === 1 && $expArr['timestamped']) {
+        if ($locked === 1 && $this->entityData['timestamped']) {
             throw new Exception(_('You cannot unlock or edit in any way a timestamped experiment.'));
         }
 

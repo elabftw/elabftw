@@ -86,7 +86,7 @@ try {
                 throw new Exception(_('Comment is too short'));
             }
 
-            $id_arr = explode('_', $_POST['id']);
+            $id_arr = explode('_', $_POST['comment_id']);
             if (Tools::checkId($id_arr[1]) === false) {
                 throw new Exception(_('The id parameter is invalid'));
             }

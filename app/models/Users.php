@@ -152,19 +152,20 @@ class Users extends Auth
      */
     private function alertAdmin($team)
     {
+        $Email = new Email(new Config);
+
         // Create the message
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
         $message = Swift_Message::newInstance()
         // Give the message a subject
         ->setSubject(_('[eLabFTW] New user registered'))
         // Set the From address with an associative array
-        ->setFrom(array(get_config('mail_from') => 'eLabFTW'))
-        // Set the To addresses with an associative array
-        ->setTo(array($this->getAdminEmail($team) => 'Admin eLabFTW'))
+        ->setFrom(array($Email->configArr['mail_from'] => 'eLabFTW'))
+        // Set the To
+        ->setTo($this->getAdminEmail($team))
         // Give it a body
         ->setBody(_('Hi. A new user registered on elabftw. Head to the admin panel to validate the account.') . $footer);
         // generate Swift_Mailer instance
-        $Email = new Email(new Config);
         $mailer = $Email->getMailer();
         // SEND EMAIL
         try {
@@ -225,19 +226,31 @@ class Users extends Auth
     }
 
     /**
-     * Fetch the email of the admin for a team
+     * Fetch the email(s) of the admin(s) for a team
      *
      * @param int $team
-     * @return string
+     * @return array
      */
     private function getAdminEmail($team)
     {
-        $sql = "SELECT email FROM users WHERE (`usergroup` = 1 OR `usergroup` = 2) AND `team` = :team LIMIT 1";
+        // array for storing email adresses of admin(s)
+        $arr = array();
+
+        $sql = "SELECT email FROM users WHERE (`usergroup` = 1 OR `usergroup` = 2) AND `team` = :team";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $team);
         $req->execute();
 
-        return $req->fetchColumn();
+        while ($email = $req->fetchColumn()) {
+            $arr[] = $email;
+        }
+
+        // if we have only one admin, we need to have an associative array
+        if (count($arr) === 1) {
+            return array($arr[0] => 'Admin eLabFTW');
+        }
+
+        return $arr;
     }
 
     /**

@@ -19,13 +19,14 @@ use Exception;
 try {
     require_once '../../app/init.inc.php';
 
+    if ($_POST['type'] === 'experiments') {
+        $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
+    } else {
+        $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
+    }
+
     // LOCK
     if (isset($_POST['lock'])) {
-        if ($_POST['type'] === 'experiments') {
-            $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
-        } else {
-            $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
-        }
         if ($Entity->toggleLock()) {
             echo json_encode(array(
                 'res' => true,
@@ -47,16 +48,7 @@ try {
 
         $date = Tools::kdate($_POST['date']);
 
-        if ($_POST['type'] == 'experiments') {
-
-            $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
-            $result = $Experiments->update($title, $date, $body);
-
-        } elseif ($_POST['type'] == 'items') {
-
-            $Database = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
-            $result = $Database->update($title, $date, $body);
-        }
+        $result = $Entity->update($title, $date, $body);
 
         if ($result) {
             echo json_encode(array(
@@ -73,25 +65,15 @@ try {
 
     // CREATE TAG
     if (isset($_POST['createTag'])) {
-        if ($_POST['type'] === 'experiments') {
-            $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['item']);
-        } else {
-            $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['item']);
-        }
         $Tags = new Tags($_POST['type'], $Entity->id);
         $Tags->create($_POST['tag']);
     }
 
     // DELETE TAG
     if (isset($_POST['destroyTag'])) {
-        if ($_POST['type'] === 'experiments') {
-            $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['item']);
-        } else {
-            $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['item']);
-        }
         $Tags = new Tags($_POST['type'], $Entity->id);
         if ($Entity->canWrite) {
-            $Tags->destroy($_SESSION['userid'], $_POST['id']);
+            $Tags->destroy($_SESSION['userid'], $_POST['tag_id']);
         }
     }
 
@@ -104,18 +86,12 @@ try {
                 throw new Exception(_('Comment is too short'));
             }
 
-
             $id_arr = explode('_', $_POST['id']);
             if (Tools::checkId($id_arr[1]) === false) {
                 throw new Exception(_('The id parameter is invalid'));
             }
             $id = $id_arr[1];
 
-            if ($_POST['type'] === 'experiments') {
-                $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['item_id']);
-            } else {
-                $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['item_id']);
-            }
             $Upload = new Uploads($Entity);
             if ($Upload->updateComment($id, $comment)) {
                 echo json_encode(array(
@@ -144,8 +120,8 @@ try {
             } else {
                 $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['item_id']);
             }
-            $Upload = new Uploads($Entity);
-            if ($Upload->create($_FILES)) {
+            $Uploads = new Uploads($Entity);
+            if ($Uploads->create($_FILES)) {
                 echo json_encode(array(
                     'res' => true,
                     'msg' => _('Saved')

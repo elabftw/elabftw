@@ -90,7 +90,7 @@ try {
 
     // ADD MOL FILE
     if (isset($_POST['addMol'])) {
-        $Uploads = new Uploads($Experiments, 'experiments');
+        $Uploads = new Uploads($Experiments);
         echo $Uploads->createFromMol($_POST['mol']);
     }
 

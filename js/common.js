@@ -263,7 +263,7 @@ function createTag(e, type, item) { // the argument here is the event (needed to
         $.post('app/controllers/EntityController.php', {
             createTag: true,
             tag: tag,
-            item: item,
+            id: item,
             type: type
         }).done(function () {
             if (type === 'items') {
@@ -282,8 +282,8 @@ function destroyTag(type, item, tag){
         $.post('app/controllers/EntityController.php', {
             destroyTag: true,
             type:type,
-            item:item,
-            id:tag,
+            id:item,
+            tag_id:tag,
         }).done(function() {
             if (type === 'items') {
                 type = 'database';

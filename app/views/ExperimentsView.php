@@ -72,7 +72,7 @@ class ExperimentsView extends EntityView
         $this->html .= "<script>document.title = '" . $this->getCleanTitle($this->experiment['title']) . "';</script>";
 
         // get the UploadsView object
-        $this->UploadsView = new UploadsView(new Uploads($this->Experiments, 'experiments'));
+        $this->UploadsView = new UploadsView(new Uploads($this->Experiments));
     }
 
     /**

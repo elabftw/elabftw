@@ -42,7 +42,7 @@ class UploadsView extends EntityView
 
         $html .= "<script>
         // we need this to reload the #filesdiv (div displaying uploaded files)
-        var type = '" . $this->Uploads->type . "';
+        var type = '" . $this->Uploads->Entity->type . "';
         if (type == 'items') {
             type = 'database';
         }
@@ -58,8 +58,8 @@ class UploadsView extends EntityView
                 // add additionnal parameters (id and type)
                 this.on('sending', function(file, xhr, formData) {
                     formData.append('upload', true);
-                    formData.append('item_id', '" . $this->Uploads->Entity->id . "');
-                    formData.append('type', '" . $this->Uploads->type . "');
+                    formData.append('id', '" . $this->Uploads->Entity->id . "');
+                    formData.append('type', '" . $this->Uploads->Entity->type . "');
                 });
 
                 // once it is done
@@ -73,10 +73,10 @@ class UploadsView extends EntityView
                     }
                     // reload the #filesdiv once the file is uploaded
                     if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-                        $('#filesdiv').load('" . $this->Uploads->type .
+                        $('#filesdiv').load('" . $this->Uploads->Entity->type .
                             ".php?mode=edit&id=' + item_id + ' #filesdiv', function() {
                             // make the comment zone editable (fix issue #54)
-                            makeEditableFileComment('" . $this->Uploads->type . "');
+                            makeEditableFileComment('" . $this->Uploads->Entity->type . "');
                         });
                     }
                 });
@@ -204,7 +204,7 @@ class UploadsView extends EntityView
         // add editable comments in edit mode
         if ($mode === 'edit') {
             $html .= "$('.thumbnail').on('mouseover', '.editable', function(){
-                    makeEditableFileComment('" . $this->Uploads->type . "');
+                    makeEditableFileComment('" . $this->Uploads->Entity->type . "');
                 });";
         }
         $html .= "});</script>";

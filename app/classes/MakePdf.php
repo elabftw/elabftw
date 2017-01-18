@@ -61,7 +61,7 @@ class MakePdf extends Make
 
         // assign and check type
         $this->type = $this->checkType($type);
-        $this->checkVisibility($this->id);
+        $this->checkViewPermission($this->id);
 
         // build the pdf content
         $this->initData();

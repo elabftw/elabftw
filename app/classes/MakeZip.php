@@ -119,9 +119,6 @@ class MakeZip extends Make
             $req->bindParam(':id', $id, \PDO::PARAM_INT);
             $req->execute();
             $this->zipped = $req->fetch();
-            if ($this->zipped['userid'] != $_SESSION['userid']) {
-                throw new Exception(_("You are trying to download an experiment you don't own!"));
-            }
 
         } else {
             $sql = "SELECT items.*,
@@ -256,7 +253,7 @@ class MakeZip extends Make
      */
     private function addToZip($id)
     {
-        $this->checkVisibility($id);
+        $this->checkViewPermission($id);
         // populate $this->zipped
         $this->getInfoFromId($id);
         $this->nameFolder();

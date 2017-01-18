@@ -95,7 +95,7 @@ class MakeCsv extends Make
             if (!Tools::checkId($id)) {
                 throw new Exception('Bad id.');
             }
-            $this->checkVisibility($id);
+            $this->checkViewPermission($id);
             $this->initData($id);
             $this->setUrl($id);
             $this->addLine();

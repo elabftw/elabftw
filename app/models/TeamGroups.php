@@ -184,5 +184,4 @@ class TeamGroups
 
         return in_array($userid, $authUsersArr);
     }
-
 }

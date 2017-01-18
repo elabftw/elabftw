@@ -80,7 +80,7 @@ abstract class Make
      * @param int $id
      * @return bool|null True if user has reading rights
      */
-    protected function checkVisibility($id)
+    protected function checkViewPermission($id)
     {
         $sql = "SELECT userid FROM " . $this->type . " WHERE id = :id";
         $req = $this->pdo->prepare($sql);
@@ -89,20 +89,50 @@ abstract class Make
         $theUser = $req->fetchColumn();
 
         if ($this->type === 'experiments') {
-            $comparator = $_SESSION['userid'];
+            // if we don't own the experiment, look at the visibility setting
+            if ($theUser != $_SESSION['userid']) {
+                $sql = "SELECT visibility, team FROM experiments WHERE id = :id";
+                $req = $this->pdo->prepare($sql);
+                $req->bindParam(':id', $id, \PDO::PARAM_INT);
+                $req->execute();
+                $experiment = $req->fetch();
+
+                $validArr = array(
+                    'public',
+                    'organization'
+                );
+
+                // if the vis. setting is public or organization, we can see it for sure
+                if (in_array($experiment['visibility'], $validArr)) {
+                    return true;
+                }
+
+                // if the vis. setting is team, check we are in the same team than the item
+                if (($experiment['visibility'] === 'team') && ($experiment['team'] != $_SESSION['team_id'])) {
+                    throw new Exception(Tools::error(true));
+                }
+
+                if (Tools::checkId($experiment['visibility'])) {
+                    // we have an int as visibility, so a team group. Check we are in this group
+                    $TeamGroups = new $TeamGroups($_SESSION['team_id']);
+                    if (!$TeamGroups->isInTeamGroup($theUser, $visibility)) {
+                        throw new Exception(Tools::error(true));
+                    }
+                }
+            }
+
+
         } else {
             // get the team of the userid of the item
             $sql = "SELECT team FROM users WHERE userid = :userid";
             $req = $this->pdo->prepare($sql);
             $req->bindParam(':userid', $theUser, \PDO::PARAM_INT);
             $req->execute();
-            $theUser = $req->fetchColumn();
+            $theUserTeam = $req->fetchColumn();
             // we will compare the teams for DB items
-            $comparator = $_SESSION['team_id'];
-        }
-
-        if ($theUser != $comparator) {
-            throw new Exception(Tools::error(true));
+            if ($theUserTeam != $_SESSION['team_id']) {
+                throw new Exception(Tools::error(true));
+            }
         }
     }
 }

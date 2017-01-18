@@ -67,8 +67,10 @@ class Entity
             throw new Exception(_('The id parameter is not valid!'));
         }
         $this->id = $id;
-        $this->entityData = $this->read();
-        $this->setPermissions();
+        if ($this instanceof Experiments || $this instanceof Database) {
+            $this->entityData = $this->read();
+            $this->setPermissions();
+        }
     }
 
     /**
@@ -114,16 +116,16 @@ class Entity
 
         if ($this->type === 'experiments') {
             // if we own the experiment, we have read/write rights on it for sure
-            if ($this->user['userid'] === $_SESSION['userid']) {
+            if ($this->entityData['userid'] === $_SESSION['userid']) {
                 $this->canRead = true;
                 $this->canWrite = true;
 
             // admin can view any experiment
-            } elseif (($this->user['userid'] != $_SESSION['userid']) && $_SESSION['is_admin']) {
+            } elseif (($this->entityData['userid'] != $_SESSION['userid']) && $_SESSION['is_admin']) {
                 $this->canRead = true;
 
             // if we don't own the experiment (and we are not admin), we need to check the visibility
-            } elseif (($this->user['userid'] != $_SESSION['userid']) && !$_SESSION['is_admin']) {
+            } elseif (($this->entityData['userid'] != $_SESSION['userid']) && !$_SESSION['is_admin']) {
                 $validArr = array(
                     'public',
                     'organization'

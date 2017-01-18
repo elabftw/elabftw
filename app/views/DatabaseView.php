@@ -18,41 +18,27 @@ use Exception;
 class DatabaseView extends EntityView
 {
     /** the UploadsView class */
-    private $UploadsView;
-
-    /** the array with all data for an item */
-    private $item;
+    public $UploadsView;
 
     /** html output */
-    private $html = '';
+    public $html = '';
 
     /** can be tag, query or filter */
     public $searchType = '';
 
+    /** instance of Experiments or Database */
+    public $Entity;
 
     /**
      * Need a Database object
      *
-     * @param Database $database
-     * @throws Exception
+     * @param Entity $entity
      */
     public function __construct(Entity $entity)
     {
         $this->Entity = $entity;
         $this->limit = $_SESSION['prefs']['limit'];
 
-    }
-
-    /**
-     * Common stuff for view and edit (but not show)
-     *
-     */
-    private function initViewEdit()
-    {
-        // get data of item
-        $this->item = $this->Entity->read();
-        $this->html .= "<script>document.title = '" . $this->getCleanTitle($this->item['title']) . "';</script>";
-        $this->UploadsView = new UploadsView(new Uploads($this->Entity));
     }
 
     /**
@@ -80,7 +66,7 @@ class DatabaseView extends EntityView
         $this->initViewEdit();
 
         // a locked item cannot be edited
-        if ($this->item['locked']) {
+        if ($this->entityData['locked']) {
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
         $this->html .= $this->buildEdit();
@@ -112,7 +98,7 @@ class DatabaseView extends EntityView
         $idArr = array();
         foreach ($itemsArr as $item) {
             // fill an array with the ID of each item to use in the csv/zip export menu
-            $idArr[] = $items['id'];
+            $idArr[] = $item['id'];
             $html2 .= $this->showUnique($item);
         }
 
@@ -170,7 +156,7 @@ class DatabaseView extends EntityView
         // DATE
         $html .= "<span class='date'><img class='image' src='app/img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
         // TAGS
-        $html .= $this->showTags('items', 'view', $item['itemid']);
+        $html .= $this->showTags('view');
 
         $html .= "</section>";
 
@@ -184,11 +170,10 @@ class DatabaseView extends EntityView
      */
     private function buildView()
     {
-        $itemArr = $this->Entity->read();
         $html = '';
 
         // add the title in the page name (see #324)
-        $cleantitle = str_replace(array('#', "&39;", "&34;"), '', $itemArr['title']);
+        $cleantitle = str_replace(array('#', "&39;", "&34;"), '', $this->entityData['title']);
         $html .= "<script>document.title = '" . $cleantitle . "';</script>";
 
 
@@ -196,43 +181,43 @@ class DatabaseView extends EntityView
 
         $html .= "<section class='box'>";
         $html .= "<div><img src='app/img/calendar.png' title='date' alt='Date :' /> ";
-        $html .= Tools::formatDate($itemArr['date']) . "</div>";
-        $html .= $this->showStars($itemArr['rating']);
+        $html .= Tools::formatDate($this->entityData['date']) . "</div>";
+        $html .= $this->showStars($this->entityData['rating']);
         // buttons
-        $html .= "<a class='elab-tooltip' href='database.php?mode=edit&id=" . $itemArr['itemid'] . "'><span>Edit</span><img src='app/img/pen-blue.png' alt='Edit' /></a> 
-        <a class='elab-tooltip' href='app/controllers/DatabaseController.php?databaseDuplicateId=" . $itemArr['itemid'] . "'><span>Duplicate Item</span><img src='app/img/duplicate.png' alt='Duplicate' /></a> 
-        <a class='elab-tooltip' href='make.php?what=pdf&id=" . $itemArr['itemid'] . "&type=items'><span>Make a PDF</span><img src='app/img/pdf.png' alt='PDF' /></a> 
-        <a class='elab-tooltip' href='make.php?what=zip&id=" . $itemArr['itemid'] . "&type=items'><span>Make a ZIP</span><img src='app/img/zip.png' alt='ZIP' /></a>
-        <a class='elab-tooltip' href='experiments.php?mode=show&related=".$itemArr['itemid'] . "'><span>Linked Experiments</span><img src='app/img/link.png' alt='Linked Experiments' /></a> ";
+        $html .= "<a class='elab-tooltip' href='database.php?mode=edit&id=" . $this->entityData['itemid'] . "'><span>Edit</span><img src='app/img/pen-blue.png' alt='Edit' /></a> 
+        <a class='elab-tooltip' href='app/controllers/DatabaseController.php?databaseDuplicateId=" . $this->entityData['itemid'] . "'><span>Duplicate Item</span><img src='app/img/duplicate.png' alt='Duplicate' /></a> 
+        <a class='elab-tooltip' href='make.php?what=pdf&id=" . $this->entityData['itemid'] . "&type=items'><span>Make a PDF</span><img src='app/img/pdf.png' alt='PDF' /></a> 
+        <a class='elab-tooltip' href='make.php?what=zip&id=" . $this->entityData['itemid'] . "&type=items'><span>Make a ZIP</span><img src='app/img/zip.png' alt='ZIP' /></a>
+        <a class='elab-tooltip' href='experiments.php?mode=show&related=".$this->entityData['itemid'] . "'><span>Linked Experiments</span><img src='app/img/link.png' alt='Linked Experiments' /></a> ";
         // lock
         $imgSrc = 'unlock.png';
         $alt = _('Lock/Unlock item');
-        if ($itemArr['locked'] != 0) {
+        if ($this->entityData['locked'] != 0) {
             $imgSrc = 'lock-gray.png';
         }
-        $html .= "<a class='elab-tooltip' href='#'><span>" . $alt . "</span><img id='lock' onClick=\"toggleLock('database', " . $itemArr['itemid'] . ")\" src='app/img/" . $imgSrc . "' alt='" . $alt . "' /></a>";
+        $html .= "<a class='elab-tooltip' href='#'><span>" . $alt . "</span><img id='lock' onClick=\"toggleLock('database', " . $this->entityData['itemid'] . ")\" src='app/img/" . $imgSrc . "' alt='" . $alt . "' /></a>";
         // TAGS
-        $html .= " " . $this->showTags('items', 'view', $this->Entity->id);
+        $html .= " " . $this->showTags('view');
 
         // TITLE : click on it to go to edit mode
         $html .= "<div ";
-        if ($itemArr['locked'] === '0' || $itemArr['locked'] === null) {
-            $html .= "onClick=\"document.location='database.php?mode=edit&id=" . $itemArr['itemid'] . "'\" ";
+        if ($this->entityData['locked'] === '0' || $this->entityData['locked'] === null) {
+            $html .= "onClick=\"document.location='database.php?mode=edit&id=" . $this->entityData['itemid'] . "'\" ";
         }
         $html .= "class='title_view'>";
-        $html .= "<span style='color:#" . $itemArr['bgcolor'] . "'>" . $itemArr['name'] . " </span>";
-        $html .= $itemArr['title'];
+        $html .= "<span style='color:#" . $this->entityData['bgcolor'] . "'>" . $this->entityData['name'] . " </span>";
+        $html .= $this->entityData['title'];
         $html .= "</div>";
         // BODY (show only if not empty)
-        if ($itemArr['body'] != '') {
+        if ($this->entityData['body'] != '') {
             $html .= "<div ";
-            if ($itemArr['locked'] === '0' || $itemArr['locked'] === null) {
-                $html .= "onClick='go_url(\"database.php?mode=edit&id=" . $itemArr['itemid'] . "\")'";
+            if ($this->entityData['locked'] === '0' || $this->entityData['locked'] === null) {
+                $html .= "onClick='go_url(\"database.php?mode=edit&id=" . $this->entityData['itemid'] . "\")'";
             }
-            $html .= " id='body_view' class='txt'>" . $itemArr['body'] . "</div>";
+            $html .= " id='body_view' class='txt'>" . $this->entityData['body'] . "</div>";
         }
         // SHOW USER
-        $html .= _('Last modified by') . ' ' . $itemArr['firstname'] . " " . $itemArr['lastname'];
+        $html .= _('Last modified by') . ' ' . $this->entityData['firstname'] . " " . $this->entityData['lastname'];
         $html .= "</section>";
 
         return $html;
@@ -269,11 +254,11 @@ class DatabaseView extends EntityView
 
         $html .= $this->backToLink('database');
         // begin page
-        $html .= "<section class='box' style='border-left: 6px solid #" . $this->item['bgcolor'] . "'>";
+        $html .= "<section class='box' style='border-left: 6px solid #" . $this->entityData['bgcolor'] . "'>";
         $html .= "<img class='align_right' src='app/img/big-trash.png' title='delete' alt='delete' onClick=\"databaseDestroy(" . $this->Entity->id . ", '" . _('Delete this?') . "')\" />";
 
         // tags
-        $html .= $this->showTags('items', 'edit', $this->Entity->id);
+        $html .= $this->showTags('edit');
 
         // main form
         $html .= "<form method='post' action='app/controllers/DatabaseController.php' enctype='multipart/form-data'>";
@@ -286,14 +271,14 @@ class DatabaseView extends EntityView
         $html .= "<img src='app/img/calendar.png' title='date' alt='Date :' />";
         $html .= "<label for='datepicker'>" . _('Date') . "</label>";
         // if one day firefox has support for it: type = date
-        $html .= "<input name='date' id='datepicker' size='8' type='text' value='" . $this->item['date'] . "' />";
+        $html .= "<input name='date' id='datepicker' size='8' type='text' value='" . $this->entityData['date'] . "' />";
         $html .= "</div></div>";
 
         // star rating
         $html .= "<div class='align_right'>";
         for ($i = 1; $i < 6; $i++) {
             $html .= "<input id='star" . $i . "' name='star' type='radio' class='star' value='" . $i . "'";
-            if ($this->item['rating'] == $i) {
+            if ($this->entityData['rating'] == $i) {
                 $html .= 'checked=checked';
             }
             $html .= "/>";
@@ -302,12 +287,12 @@ class DatabaseView extends EntityView
 
         // title
         $html .= "<h4>" . _('Title') . "</h4>";
-        $html .= "<input id='title_input' name='title' rows='1' value='" . $this->item['title'] . "' required />";
+        $html .= "<input id='title_input' name='title' rows='1' value='" . $this->entityData['title'] . "' required />";
 
         // body
         $html .= "<h4>" . _('Infos') . "</h4>";
         $html .= "<textarea class='mceditable' name='body' rows='15' cols='80'>";
-        $html .= $this->item['body'];
+        $html .= $this->entityData['body'];
         $html .= "</textarea>";
 
         // submit button
@@ -333,7 +318,7 @@ class DatabaseView extends EntityView
      */
     private function buildEditJs()
     {
-        $tags = new Tags('items', $this->Entity->id);
+        $Tags = new Tags($this->Entity);
 
         $html = "<script>
         // READY ? GO !
@@ -354,7 +339,7 @@ class DatabaseView extends EntityView
 
             // autocomplete the tags
             $('#createTagInput').autocomplete({
-                source: [" . $tags->generateTagList() . "]
+                source: [" . $Tags->generateTagList() . "]
             });
 
             // If the title is 'Untitled', clear it on focus

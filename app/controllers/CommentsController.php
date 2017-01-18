@@ -37,8 +37,8 @@ try {
     }
 
     // UPDATE
-    if (isset($_POST['update'])) {
-        if ($Comments->update($_POST['id'], $_POST['comment'])) {
+    if (isset($_POST['commentsUpdate'])) {
+        if ($Comments->update($_POST['commentsUpdate'], $_POST['id'])) {
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Saved')

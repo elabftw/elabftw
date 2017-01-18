@@ -15,8 +15,8 @@ namespace Elabftw\Elabftw;
  */
 class EntityView
 {
-    /** our Database instance */
-    public $Database;
+    /** our Database or Experiments instance */
+    public $Entity;
 
     /** number of items to display per page */
     public $limit = 15;
@@ -29,6 +29,24 @@ class EntityView
 
     /** the query entered */
     public $query = '';
+
+    public $entityData;
+
+    /**
+     * Common stuff for view and edit (but not show)
+     *
+     */
+    protected function initViewEdit()
+    {
+        // get data of entity
+        $this->entityData = $this->Entity->read();
+
+        $this->html .= "<script>document.title = '" . $this->getCleanTitle($this->entityData['title']) . "';</script>";
+
+        // get the UploadsView object
+        $this->UploadsView = new UploadsView(new Uploads($this->Entity));
+    }
+
 
     /**
      * Add chemdoodle JS
@@ -124,7 +142,7 @@ class EntityView
         } else {
 
             // filter by type list
-            $itemsTypes = new ItemsTypes($this->Database->team);
+            $itemsTypes = new ItemsTypes($this->Entity->team);
             $categoryArr = $itemsTypes->readAll();
             foreach ($categoryArr as $category) {
                 $templates .= "<li class='dropdown-item'><a style='color:#" . $category['bgcolor'] . "' href='app/controllers/DatabaseController.php?databaseCreateId=" . $category['id'] . "'>"
@@ -246,14 +264,12 @@ class EntityView
     /**
      * Display the tags
      *
-     * @param string $type experiments or items
      * @param string $mode edit or view
-     * @param int $item The ID of the item for which we want the tags
      * @return string Will show the HTML for tags
      */
-    protected function showTags($type, $mode, $item)
+    protected function showTags($mode)
     {
-        $Tags = new Tags($type, $item);
+        $Tags = new Tags($this->Entity);
         $tagList = $Tags->read();
 
         $html = '';
@@ -265,13 +281,19 @@ class EntityView
         if ($mode === 'view') {
 
             $html = "<span class='tags'><img src='app/img/tags.png' alt='tags' /> ";
+
             foreach ($tagList as $tag) {
-                if ($type === 'experiments') {
-                    $html .= "<a href='experiments.php?mode=show&tag=" . urlencode(stripslashes($tag['tag'])) . "'>" . stripslashes($tag['tag']) . "</a> ";
+                if ($this->Entity->type === 'experiments') {
+                    $html .= "<a href='experiments.php?mode=show&tag=" .
+                        urlencode(stripslashes($tag['tag'])) . "'>" .
+                        stripslashes($tag['tag']) . "</a> ";
                 } else { // type is items
-                    $html .= "<a href='database.php?mode=show&tag=" . urlencode(stripslashes($tag['tag'])) . "'>" . stripslashes($tag['tag']) . "</a> ";
+                    $html .= "<a href='database.php?mode=show&tag=" .
+                        urlencode(stripslashes($tag['tag'])) . "'>" .
+                        stripslashes($tag['tag']) . "</a> ";
                 }
             }
+
             $html .= "</span>";
 
             return $html;
@@ -282,7 +304,7 @@ class EntityView
         $html .= "<div class='tags'><span id='tags_div'>";
 
         foreach ($tagList as $tag) {
-            $html .= "<span class='tag'><a onclick=\"destroyTag('" . $type . "', " . $item . ", " . $tag['id'] . ")\">" . stripslashes($tag['tag']) . "</a></span>";
+            $html .= "<span class='tag'><a onclick=\"destroyTag('" . $this->Entity->type . "', " . $this->Entity->id . ", " . $tag['id'] . ")\">" . stripslashes($tag['tag']) . "</a></span>";
         }
         $html .= "</span><input type='text' id='createTagInput' placeholder='" . _('Add a tag') . "' /></div>";
 

@@ -18,14 +18,8 @@ use Datetime;
  */
 class ExperimentsView extends EntityView
 {
-    /** our Experiments instance */
-    public $Experiments;
-
-    /** the experiment array with data */
-    private $experiment;
-
     /** the html output */
-    private $html = '';
+    public $html = '';
 
     /** Read only switch */
     private $ro = false;
@@ -34,10 +28,10 @@ class ExperimentsView extends EntityView
     private $showTeam = false;
 
     /** the UploadsView object */
-    private $UploadsView;
+    public $UploadsView;
 
     /** instance of TeamGroups */
-    private $TeamGroups;
+    public $TeamGroups;
 
     /** can be tag, query or filter */
     public $searchType = '';
@@ -46,33 +40,18 @@ class ExperimentsView extends EntityView
     public $related = 0;
 
     /**
-     * Need an ID of an experiment
+     * Need an instance of Experiments
      *
-     * @param Experiments $experiments
+     * @param Entity $entity
      * @throws Exception
      */
-    public function __construct(Experiments $experiments)
+    public function __construct(Entity $entity)
     {
-        $this->Experiments = $experiments;
+        $this->Entity = $entity;
         $this->limit = $_SESSION['prefs']['limit'];
         $this->showTeam = $_SESSION['prefs']['show_team'];
 
-        $this->TeamGroups = new TeamGroups($this->Experiments->team);
-    }
-
-    /**
-     * Common stuff for view and edit (but not show)
-     *
-     */
-    private function initViewEdit()
-    {
-        // get data of experiment
-        $this->experiment = $this->Experiments->read();
-
-        $this->html .= "<script>document.title = '" . $this->getCleanTitle($this->experiment['title']) . "';</script>";
-
-        // get the UploadsView object
-        $this->UploadsView = new UploadsView(new Uploads($this->Experiments));
+        $this->TeamGroups = new TeamGroups($this->Entity->team);
     }
 
     /**
@@ -85,7 +64,7 @@ class ExperimentsView extends EntityView
         $this->initViewEdit();
         $this->ro = $this->isReadOnly();
 
-        if ($this->experiment['timestamped']) {
+        if ($this->entityData['timestamped']) {
             $this->html .= $this->showTimestamp();
         }
 
@@ -111,7 +90,7 @@ class ExperimentsView extends EntityView
         }
 
         // a locked experiment cannot be edited
-        if ($this->experiment['locked']) {
+        if ($this->entityData['locked']) {
             throw new Exception(_('<strong>This item is locked.</strong> You cannot edit it.'));
         }
 
@@ -138,16 +117,16 @@ class ExperimentsView extends EntityView
         // RELATED SEARCH (links)
         if ($this->related) {
 
-            $itemsArr = $this->Experiments->readRelated($this->related);
+            $itemsArr = $this->Entity->readRelated($this->related);
 
         } else {
 
             if ($this->showTeam) {
                 // get all XP from team
-                $itemsArr = $this->Experiments->readAllFromTeam();
+                $itemsArr = $this->Entity->readAllFromTeam();
             } else {
                 // get all XP items for the user
-                $itemsArr = $this->Experiments->readAllFromUser();
+                $itemsArr = $this->Entity->readAllFromUser();
             }
 
         }
@@ -157,9 +136,9 @@ class ExperimentsView extends EntityView
         foreach ($itemsArr as $item) {
 
             // fill an array with the ID of each item to use in the csv/zip export menu
-            $this->Experiments->setId($item['id']);
-            if ($this->Experiments->canRead) {
-                $idArr[] = $this->Experiments->id;
+            $this->Entity->setId($item['id']);
+            if ($this->Entity->canRead) {
+                $idArr[] = $this->Entity->id;
                 $html2 .= $this->showUnique($item);
             }
 
@@ -201,7 +180,7 @@ class ExperimentsView extends EntityView
     {
         // dim the experiment a bit if it's not yours
         $opacity = '1';
-        if ($this->Experiments->userid != $item['userid']) {
+        if ($this->Entity->userid != $item['userid']) {
             $opacity = '0.7';
         }
         $html = "<section class='item " . $this->display . "' style='opacity:" . $opacity . "; border-left: 6px solid #" . $item['color'] . "'>";
@@ -212,7 +191,7 @@ class ExperimentsView extends EntityView
             $html .= "<img style='clear:both' class='align_right' src='app/img/attached.png' alt='file attached' />";
         }
         // we show the abstract of the experiment on mouse hover with the title attribute
-        if ($this->Experiments->canRead) {
+        if ($this->Entity->canRead) {
             $bodyAbstract = str_replace("'", "", substr(strip_tags($item['body']), 0, 100));
         } else {
             $bodyAbstract = '';
@@ -233,7 +212,7 @@ class ExperimentsView extends EntityView
         // DATE
         $html .= "<span class='date'><img class='image' src='app/img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
         // TAGS
-        $html .= $this->showTags('experiments', 'view', $item['id']);
+        $html .= $this->showTags('view');
 
         $html .= "</section>";
 
@@ -252,16 +231,16 @@ class ExperimentsView extends EntityView
 
         $html .= $this->backToLink('experiments');
 
-        $html .= "<section class='box' id='main_section' style='border-left: 6px solid #" . $this->experiment['color'] . "'>";
-        $html .= "<img class='align_right' src='app/img/big-trash.png' title='delete' alt='delete' onClick=\"experimentsDestroy(" . $this->Experiments->id . ", '" . _('Delete this?') . "')\" />";
+        $html .= "<section class='box' id='main_section' style='border-left: 6px solid #" . $this->entityData['color'] . "'>";
+        $html .= "<img class='align_right' src='app/img/big-trash.png' title='delete' alt='delete' onClick=\"experimentsDestroy(" . $this->Entity->id . ", '" . _('Delete this?') . "')\" />";
 
         // tags
-        $html .= $this->showTags('experiments', 'edit', $this->Experiments->id);
+        $html .= $this->showTags('edit');
 
         // main form
         $html .= "<form method='post' action='app/controllers/ExperimentsController.php' enctype='multipart/form-data'>";
         $html .= "<input name='update' type='hidden' value='true' />";
-        $html .= "<input name='id' type='hidden' value='" . $this->Experiments->id . "' />";
+        $html .= "<input name='id' type='hidden' value='" . $this->Entity->id . "' />";
 
         // DATE
         $html .= "<div class='row'><div class='col-md-4'>";
@@ -269,26 +248,26 @@ class ExperimentsView extends EntityView
         $html .= "<label for='datepicker'>" . _('Date') . "</label>";
         // if firefox has support for it: type = date
         // https://bugzilla.mozilla.org/show_bug.cgi?id=825294
-        $html .= " <input name='date' id='datepicker' size='8' type='text' value='" . $this->experiment['date'] . "' />";
+        $html .= " <input name='date' id='datepicker' size='8' type='text' value='" . $this->entityData['date'] . "' />";
         $html .= "</div>";
 
         // VISIBILITY
         $html .= "<div class='col-md-4'>";
         $html .= "<img src='app/img/eye.png' alt='visibility' />";
         $html .= "<label for='visibility_select'>" . _('Visibility') . "</label>";
-        $html .= " <select id='visibility_select' onchange='updateVisibility(" . $this->Experiments->id . ", this.value)'>";
+        $html .= " <select id='visibility_select' onchange='updateVisibility(" . $this->Entity->id . ", this.value)'>";
         $html .= "<option value='organization' ";
-        if ($this->experiment['visibility'] === 'organization') {
+        if ($this->entityData['visibility'] === 'organization') {
             $html .= "selected";
         }
         $html .= ">" . _('Everyone with an account') . "</option>";
         $html .= "<option value='team' ";
-        if ($this->experiment['visibility'] === 'team') {
+        if ($this->entityData['visibility'] === 'team') {
             $html .= "selected";
         }
         $html .= ">" . _('Only the team') . "</option>";
         $html .= "<option value='user' ";
-        if ($this->experiment['visibility'] === 'user') {
+        if ($this->entityData['visibility'] === 'user') {
             $html .= "selected";
         }
         $html .= ">" . _('Only me') . "</option>";
@@ -297,7 +276,7 @@ class ExperimentsView extends EntityView
         $teamGroupsArr = $this->TeamGroups->readAll();
         foreach ($teamGroupsArr as $teamGroup) {
             $html .= "<option value='" . $teamGroup['id'] . "' ";
-            if ($this->experiment['visibility'] === $teamGroup['id']) {
+            if ($this->entityData['visibility'] === $teamGroup['id']) {
                 $html .= "selected";
             }
             $html .= ">Only " . $teamGroup['name'] . "</option>";
@@ -308,14 +287,14 @@ class ExperimentsView extends EntityView
         $html .= "<div class='col-md-4'>";
         $html .= "<img src='app/img/status.png' alt='status' />";
         $html .= "<label for='status_select'>" . ngettext('Status', 'Status', 1) . "</label>";
-        $html .= " <select id='status_select' name='status' onchange='updateStatus(" . $this->Experiments->id . ", this.value)'>";
+        $html .= " <select id='status_select' name='status' onchange='updateStatus(" . $this->Entity->id . ", this.value)'>";
 
-        $Status = new Status($this->Experiments->team);
+        $Status = new Status($this->Entity->team);
         $statusArr = $Status->readAll();
 
         foreach ($statusArr as $status) {
             $html .= "<option ";
-            if ($this->experiment['status'] === $status['id']) {
+            if ($this->entityData['status'] === $status['id']) {
                 $html .= "selected ";
             }
             $html .= "value='" . $status['id'] . "'>" . $status['name'] . "</option>";
@@ -324,26 +303,26 @@ class ExperimentsView extends EntityView
 
         // TITLE
         $html .= "<h4>" . _('Title') . "</h4>";
-        $html .= "<input id='title_input' name='title' rows='1' value='" . $this->experiment['title'] . "' required />";
+        $html .= "<input id='title_input' name='title' rows='1' value='" . $this->entityData['title'] . "' required />";
 
         // BODY
         $html .= "<h4>" . ngettext('Experiment', 'Experiments', 1) . "</h4>";
         $html .= "<textarea id='body_area' class='mceditable' name='body' rows='15' cols='80'>";
-        $html .= $this->experiment['body'] . "</textarea>";
+        $html .= $this->entityData['body'] . "</textarea>";
 
         $html .= "<div id='saveButton'>
             <button type='submit' name='Submit' class='button'>" ._('Save and go back') . "</button>
             </div></form>";
 
         // REVISIONS
-        $Revisions = new Revisions('experiments', $this->experiment['id'], $_SESSION['userid']);
+        $Revisions = new Revisions('experiments', $this->entityData['id'], $_SESSION['userid']);
         $html .= $Revisions->showCount();
 
         // LINKS
         $html .= "<section>
                 <img src='app/img/link.png' alt='link' /> <h4 style='display:inline'>" . _('Linked items') . "</h4><br>";
         $html .= "<span id='links_div'>";
-        $html .= $this->showLinks($this->Experiments->id, 'edit');
+        $html .= $this->showLinks($this->Entity->id, 'edit');
         $html .= "</span>";
         $html .= "<p class='inline'>" . _('Add a link') . "</p> ";
         $html .= "<input id='linkinput' size='60' type='text' name='link' placeholder='" . _('from the database') . "' />";
@@ -364,7 +343,7 @@ class ExperimentsView extends EntityView
      */
     private function isOwner()
     {
-        return $this->experiment['userid'] == $_SESSION['userid'];
+        return $this->entityData['userid'] == $_SESSION['userid'];
     }
 
 
@@ -375,10 +354,10 @@ class ExperimentsView extends EntityView
      */
     private function getVisibility()
     {
-        if (Tools::checkId($this->experiment['visibility'])) {
-            return $this->TeamGroups->readName($this->experiment['visibility']);
+        if (Tools::checkId($this->entityData['visibility'])) {
+            return $this->TeamGroups->readName($this->entityData['visibility']);
         }
-        return ucfirst($this->experiment['visibility']);
+        return ucfirst($this->entityData['visibility']);
     }
 
     /**
@@ -388,7 +367,7 @@ class ExperimentsView extends EntityView
      */
     private function isReadOnly()
     {
-        return $this->Experiments->canRead && !$this->Experiments->canWrite;
+        return $this->Entity->canRead && !$this->Entity->canWrite;
     }
 
     /**
@@ -399,7 +378,7 @@ class ExperimentsView extends EntityView
     private function showTimestamp()
     {
         $Users = new Users();
-        $timestamper = $Users->read($this->experiment['timestampedby']);
+        $timestamper = $Users->read($this->entityData['timestampedby']);
 
         // we clone the object so we don't mess with the type
         $ClonedUploads = clone $this->UploadsView->Uploads;
@@ -410,12 +389,12 @@ class ExperimentsView extends EntityView
         $ClonedUploads->type = 'timestamp-token';
         $token = $ClonedUploads->readAll();
 
-        $date = new DateTime($this->experiment['timestampedwhen']);
+        $date = new DateTime($this->entityData['timestampedwhen']);
 
         return display_message(
             'ok_nocross',
             _('Experiment was timestamped by') . " " . $timestamper['firstname'] . " " . $timestamper['lastname'] . " " . _('on') . " " . $date->format('Y-m-d') . " " . _('at') . " " . $date->format('H:i:s') . " "
-            . $date->getTimezone()->getName() . " <a href='uploads/" . $pdf[0]['long_name'] . "'><img src='app/img/pdf.png' title='" . _('Download timestamped pdf') . "' alt='pdf' /></a> <a href='uploads/" . $token[0]['long_name'] . "'><img src='app/img/download.png' title=\"" . _('Download token') . "\" alt='download token' /></a> <a href='#'><img onClick=\"decodeAsn1('" . $token[0]['long_name'] . "', '" . $this->experiment['id'] . "')\" src='app/img/info.png' title=\"" . _('Decode token') . "\" alt='decode token' /></a><div style='color:black;overflow:auto;display:hidden' id='decodedDiv'></div>"
+            . $date->getTimezone()->getName() . " <a href='uploads/" . $pdf[0]['long_name'] . "'><img src='app/img/pdf.png' title='" . _('Download timestamped pdf') . "' alt='pdf' /></a> <a href='uploads/" . $token[0]['long_name'] . "'><img src='app/img/download.png' title=\"" . _('Download token') . "\" alt='download token' /></a> <a href='#'><img onClick=\"decodeAsn1('" . $token[0]['long_name'] . "', '" . $this->entityData['id'] . "')\" src='app/img/info.png' title=\"" . _('Decode token') . "\" alt='decode token' /></a><div style='color:black;overflow:auto;display:hidden' id='decodedDiv'></div>"
         );
     }
 
@@ -431,37 +410,37 @@ class ExperimentsView extends EntityView
 
         if ($this->ro) {
             $Users = new Users();
-            $userArr = $Users->read($this->experiment['userid']);
+            $userArr = $Users->read($this->entityData['userid']);
             $ownerName = $userArr['firstname'] . ' ' . $userArr['lastname'];
             $message = sprintf(_('Read-only mode. Experiment of %s.'), $ownerName);
             $html .= display_message('ok', $message);
         }
 
-        $html .= "<section class='item' style='padding:15px;border-left: 6px solid #" . $this->experiment['color'] . "'>";
-        $html .= "<span class='top_right_status'><img src='app/img/status.png'>" . $this->experiment['name'] .
+        $html .= "<section class='item' style='padding:15px;border-left: 6px solid #" . $this->entityData['color'] . "'>";
+        $html .= "<span class='top_right_status'><img src='app/img/status.png'>" . $this->entityData['name'] .
             "<img src='app/img/eye.png' alt='eye' />" . $this->getVisibility() . "</span>";
         $html .= "<div><img src='app/img/calendar.png' title='date' alt='Date :' /> " .
-            Tools::formatDate($this->experiment['date']) . "</div>
-        <a class='elab-tooltip' href='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'><span>Edit</span><img src='app/img/pen-blue.png' alt='Edit' /></a>
-    <a class='elab-tooltip' href='app/controllers/ExperimentsController.php?duplicateId=" . $this->experiment['id'] . "'><span>Duplicate Experiment</span><img src='app/img/duplicate.png' alt='Duplicate' /></a>
-    <a class='elab-tooltip' href='make.php?what=pdf&id=" . $this->experiment['id'] . "&type=experiments'><span>Make a PDF</span><img src='app/img/pdf.png' alt='PDF' /></a>
-    <a class='elab-tooltip' href='make.php?what=zip&id=" . $this->experiment['id'] . "&type=experiments'><span>Make a ZIP</span><img src='app/img/zip.png' alt='ZIP' /></a> ";
+            Tools::formatDate($this->entityData['date']) . "</div>
+        <a class='elab-tooltip' href='experiments.php?mode=edit&id=" . $this->entityData['id'] . "'><span>Edit</span><img src='app/img/pen-blue.png' alt='Edit' /></a>
+    <a class='elab-tooltip' href='app/controllers/ExperimentsController.php?duplicateId=" . $this->entityData['id'] . "'><span>Duplicate Experiment</span><img src='app/img/duplicate.png' alt='Duplicate' /></a>
+    <a class='elab-tooltip' href='make.php?what=pdf&id=" . $this->entityData['id'] . "&type=experiments'><span>Make a PDF</span><img src='app/img/pdf.png' alt='PDF' /></a>
+    <a class='elab-tooltip' href='make.php?what=zip&id=" . $this->entityData['id'] . "&type=experiments'><span>Make a ZIP</span><img src='app/img/zip.png' alt='ZIP' /></a> ";
 
         // lock
-        $onClick = " onClick=\"toggleLock('experiments', " . $this->experiment['id'] . ")\"";
+        $onClick = " onClick=\"toggleLock('experiments', " . $this->entityData['id'] . ")\"";
         $imgSrc = 'unlock.png';
         $alt = _('Lock/Unlock item');
-        if ($this->experiment['locked'] != 0) {
+        if ($this->entityData['locked'] != 0) {
             $imgSrc = 'lock-gray.png';
             // don't allow clicking lock if experiment is timestamped
-            if ($this->experiment['timestamped']) {
+            if ($this->entityData['timestamped']) {
                 $onClick = '';
             }
         }
         $html .= "<a class='elab-tooltip' href='#'><span>" . $alt . "</span><img id='lock'" . $onClick . " src='app/img/" . $imgSrc . "' alt='" . $alt . "' /></a> ";
         // show timestamp button if not timestamped already
-        if (!$this->experiment['timestamped']) {
-            //$onClick = " onClick=\"timestamp(" . $this->experiment['id'] . ")\"";
+        if (!$this->entityData['timestamped']) {
+            //$onClick = " onClick=\"timestamp(" . $this->entityData['id'] . ")\"";
 
             $html .= "<a class='elab-tooltip'><span>Timestamp Experiment</span><img onClick='confirmTimestamp()' src='app/img/stamp.png' alt='Timestamp' /></a>";
             $html .= "<div id='confirm-timestamp' title='" . _('Timestamp this experiment?') . "'>";
@@ -470,29 +449,29 @@ class ExperimentsView extends EntityView
             $html .= "</p></div>";
         }
 
-        $html .= $this->showTags('experiments', 'view', $this->Experiments->id);
+        $html .= $this->showTags('view');
         // TITLE : click on it to go to edit mode only if we are not in read only mode
         $html .= "<div ";
-        if (!$this->ro && !$this->experiment['locked']) {
-            $html .= "OnClick=\"document.location='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'\"";
+        if (!$this->ro && !$this->entityData['locked']) {
+            $html .= "OnClick=\"document.location='experiments.php?mode=edit&id=" . $this->entityData['id'] . "'\"";
         }
         $html .= " class='title_view'>";
-        $html .= $this->experiment['title'] . "</div>";
+        $html .= $this->entityData['title'] . "</div>";
         // BODY (show only if not empty, click on it to edit
-        if ($this->experiment['body'] != '') {
+        if ($this->entityData['body'] != '') {
             $html .= "<div id='body_view' ";
             // make the body clickable only if we are not in read only
-            if (!$this->ro && !$this->experiment['locked']) {
-                $html .= "OnClick=\"document.location='experiments.php?mode=edit&id=" . $this->experiment['id'] . "'\"";
+            if (!$this->ro && !$this->entityData['locked']) {
+                $html .= "OnClick=\"document.location='experiments.php?mode=edit&id=" . $this->entityData['id'] . "'\"";
             }
-            $html .= " class='txt'>" . $this->experiment['body'] . "</div>";
+            $html .= " class='txt'>" . $this->entityData['body'] . "</div>";
             $html .= "<br>";
         }
 
-        $html .= $this->showLinks($this->Experiments->id, 'view');
+        $html .= $this->showLinks($this->Entity->id, 'view');
 
         // DISPLAY eLabID
-        $html .= "<p class='elabid'>" . _('Unique eLabID:') . " " . $this->experiment['elabid'];
+        $html .= "<p class='elabid'>" . _('Unique eLabID:') . " " . $this->entityData['elabid'];
         $html .= "</section>";
 
         return $html;
@@ -505,7 +484,7 @@ class ExperimentsView extends EntityView
      */
     private function buildEditJs()
     {
-        $tags = new Tags('experiments', $this->Experiments->id);
+        $tags = new Tags('experiments', $this->Entity->id);
 
         $html = "<script>
         // READY ? GO !!
@@ -516,7 +495,7 @@ class ExperimentsView extends EntityView
 
             // user finished typing, save work
             function doneTyping () {
-                quickSave('experiments', " . $this->Experiments->id . ");
+                quickSave('experiments', " . $this->Entity->id . ");
             }
             // KEYBOARD SHORTCUTS
             key('" . $_SESSION['prefs']['shortcuts']['create'] . "', function(){location.href = 'app/controllers/ExperimentsController?create=true'});
@@ -535,12 +514,12 @@ class ExperimentsView extends EntityView
             // CREATE TAG
             // listen keypress, add tag when it's enter
             $('#createTagInput').keypress(function (e) {
-                createTag(e, 'experiments', " . $this->Experiments->id . ");
+                createTag(e, 'experiments', " . $this->Entity->id . ");
             });
             // CREATE LINK
             // listen keypress, add link when it's enter
             $('#linkinput').keypress(function (e) {
-                experimentsCreateLink(e, " . $this->Experiments->id . ");
+                experimentsCreateLink(e, " . $this->Entity->id . ");
             });
 
             // DATEPICKER
@@ -563,7 +542,7 @@ class ExperimentsView extends EntityView
                 removed_menuitems : 'newdocument',
                 // save button :
                 save_onsavecallback: function() {
-                    quickSave('experiments', " . $this->Experiments->id . ");
+                    quickSave('experiments', " . $this->Entity->id . ");
                 },
                 // keyboard shortcut to insert today's date at cursor in editor
                 setup : function(editor) {
@@ -617,7 +596,7 @@ class ExperimentsView extends EntityView
      */
     public function showLinks($id, $mode)
     {
-        $linksArr = $this->Experiments->Links->read();
+        $linksArr = $this->Entity->Links->read();
         $html = '';
 
         // Check there is at least one link to display
@@ -651,17 +630,16 @@ class ExperimentsView extends EntityView
                 // Experiment comment is editable
                 $('div#expcomment').on('mouseover', '.editable', function(){
                     $('div#expcomment p.editable').editable('app/controllers/CommentsController.php', {
-                        name: 'commentsUpdateComment',
+                        name: 'commentsUpdate',
                         tooltip : 'Click to edit',
                         indicator : '" ._('Saving') . "',
-                        update: true,
                         submit : '" . _('Save') . "',
                         cancel : '" . _('Cancel') . "',
                         style : 'display:inline',
                         callback : function() {
                             // now we reload the comments part to show the comment we just submitted
                             $('#expcomment_container').load('experiments.php?mode=view&id=" .
-                            $this->Experiments->id . " #expcomment');
+                            $this->Entity->id . " #expcomment');
                             // we reload the function so editable zones are editable again
                             commentsUpdate();
                         }
@@ -677,7 +655,7 @@ class ExperimentsView extends EntityView
                     modal: true,
                     buttons: {
                         'Timestamp it': function() {
-                            timestamp(" . $this->Experiments->id . ");
+                            timestamp(" . $this->Entity->id . ");
                         },
                         Cancel: function() {
                             $(this).dialog('close');
@@ -695,7 +673,7 @@ class ExperimentsView extends EntityView
                 key('" . $_SESSION['prefs']['shortcuts']['create'] .
                     "', function(){location.href = 'app/controllers/ExperimentsController?create=true'});
                 key('" . $_SESSION['prefs']['shortcuts']['edit'] .
-                    "', function(){location.href = 'experiments.php?mode=edit&id=" . $this->Experiments->id . "'});
+                    "', function(){location.href = 'experiments.php?mode=edit&id=" . $this->Entity->id . "'});
                 // make editable
                 setInterval(commentsUpdate, 50);
             });
@@ -709,7 +687,7 @@ class ExperimentsView extends EntityView
      */
     private function buildComments()
     {
-        $Comments = new Comments($this->Experiments);
+        $Comments = new Comments($this->Entity);
         $commentsArr = $Comments->read();
 
         //  we need to add a container here so the reload function in the callback of .editable() doesn't mess things up
@@ -726,7 +704,7 @@ class ExperimentsView extends EntityView
                 $html .= "<div class='expcomment_box'>
                     <img class='align_right' src='app/img/small-trash.png' ";
                 $html .= "title='delete' alt='delete' onClick=\"commentsDestroy(" .
-                    $comment['id'] . ", " . $this->Experiments->id . ", '" . _('Delete this?') . "')\" />";
+                    $comment['id'] . ", " . $this->Entity->id . ", '" . _('Delete this?') . "')\" />";
                 $html .= "<span>On " . $comment['datetime'] . " " . $comment['firstname'] . " " .
                     $comment['lastname'] . " wrote :</span><br />";
                 $html .= "<p class='editable' id='" . $comment['id'] . "'>" . $comment['comment'] . "</p></div>";
@@ -744,7 +722,7 @@ class ExperimentsView extends EntityView
             _('Add a comment') . "'></textarea>";
         $html .= "<div id='commentsCreateButtonDiv' class='submitButtonDiv'>";
         $html .= "<button class='button' id='commentsCreateButton' onClick='commentsCreate(" .
-            $this->Experiments->id . ")'>" . _('Save') . "</button></div></div></section>";
+            $this->Entity->id . ")'>" . _('Save') . "</button></div></div></section>";
 
         return $html;
     }

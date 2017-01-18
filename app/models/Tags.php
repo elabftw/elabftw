@@ -21,18 +21,12 @@ class Tags extends Entity
     /**
      * Constructor
      *
-     * @param string $type experiments or items
-     * @param int $id id of our entity
+     * @param Entity $entity
      */
-    public function __construct($type, $id)
+    public function __construct(Entity $entity)
     {
         $this->pdo = Db::getConnection();
-        if ($type === 'experiments' || $type === 'items') {
-            $this->type = $type;
-        } else {
-            throw new Exception('Invalid type');
-        }
-        $this->setId($id);
+        $this->Entity = $entity;
     }
 
     /**
@@ -55,17 +49,19 @@ class Tags extends Entity
             throw new Exception(Tools::error(true));
         }
 
-        if ($this->type === 'experiments') {
-            $sql = "INSERT INTO " . $this->type . "_tags (tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
+        if ($this->Entity->type === 'experiments') {
+            $sql = "INSERT INTO " . $this->Entity->type . "_tags (tag, item_id, userid)
+                VALUES(:tag, :item_id, :userid)";
             $req = $this->pdo->prepare($sql);
             $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
         } else {
-            $sql = "INSERT INTO " . $this->type . "_tags (tag, item_id, team_id) VALUES(:tag, :item_id, :team_id)";
+            $sql = "INSERT INTO " . $this->Entity->type . "_tags (tag, item_id, team_id)
+                VALUES(:tag, :item_id, :team_id)";
             $req = $this->pdo->prepare($sql);
             $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
         }
         $req->bindParam(':tag', $tag, PDO::PARAM_STR);
-        $req->bindParam(':item_id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
 
         return $req->execute();
     }
@@ -77,9 +73,9 @@ class Tags extends Entity
      */
     public function read()
     {
-        $sql = "SELECT DISTINCT * FROM " . $this->type . "_tags WHERE item_id = :item_id";
+        $sql = "SELECT DISTINCT * FROM " . $this->Entity->type . "_tags WHERE item_id = :item_id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':item_id', $this->id);
+        $req->bindParam(':item_id', $this->Entity->id);
         $req->execute();
 
         return $req->fetchAll();
@@ -94,18 +90,18 @@ class Tags extends Entity
     public function copyTags($newId)
     {
         // TAGS
-        if ($this->type === 'experiments') {
+        if ($this->Entity->type === 'experiments') {
             $sql = "SELECT tag FROM experiments_tags WHERE item_id = :id";
         } else {
             $sql = "SELECT tag FROM items_tags WHERE item_id = :id";
         }
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':id', $this->Entity->id);
         $req->execute();
         if ($req->rowCount() > 0) {
             while ($tags = $req->fetch()) {
                 // Put them in the new one. here $newId is the new exp created
-                if ($this->type === 'experiments') {
+                if ($this->Entity->type === 'experiments') {
                     $sql = "INSERT INTO experiments_tags(tag, item_id, userid) VALUES(:tag, :item_id, :userid)";
                     $reqtag = $this->pdo->prepare($sql);
                     $reqtag->bindParam(':tag', $tags['tag']);
@@ -130,7 +126,7 @@ class Tags extends Entity
      */
     public function generateTagList()
     {
-        if ($this->type === 'experiments') {
+        if ($this->Entity->type === 'experiments') {
             $sql = "SELECT DISTINCT tag FROM experiments_tags
                 INNER JOIN users ON (experiments_tags.userid = users.userid)
                 WHERE users.team = :team GROUP BY tag ORDER BY tag DESC";
@@ -158,7 +154,7 @@ class Tags extends Entity
      */
     public function destroy($userid, $id)
     {
-        $sql = "DELETE FROM " . $this->type . "_tags WHERE id = :id";
+        $sql = "DELETE FROM " . $this->Entity->type . "_tags WHERE id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);
 
@@ -172,14 +168,14 @@ class Tags extends Entity
      */
     public function destroyAll()
     {
-        if ($this->type === 'experiments') {
+        if ($this->Entity->type === 'experiments') {
             $sql = "DELETE FROM experiments_tags WHERE item_id = :id";
         } else {
             $sql = "DELETE FROM items_tags WHERE item_id = :id";
         }
 
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':id', $this->Entity->id);
 
         return $req->execute();
     }

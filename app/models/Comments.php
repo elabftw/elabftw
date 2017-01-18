@@ -26,7 +26,6 @@ class Comments extends Entity
      * Constructor
      *
      * @param Experiments
-     * @param int|null $id
      */
     public function __construct(Experiments $experiments)
     {
@@ -150,10 +149,6 @@ class Comments extends Entity
         // check length
         if (strlen($comment) < 2) {
             return false;
-        }
-
-        if (!$this->Experiment->canRead) {
-            throw new Exception(Tools::error(true));
         }
 
         $sql = "UPDATE experiments_comments SET

@@ -33,21 +33,21 @@ try {
 
         // CATEGORY FILTER
         if (isset($_GET['filter']) && !empty($_GET['filter']) && Tools::checkId($_GET['filter'])) {
-            $ExperimentsView->Experiments->categoryFilter = "AND status.id = " . $_GET['filter'];
+            $ExperimentsView->Entity->categoryFilter = "AND status.id = " . $_GET['filter'];
             $ExperimentsView->searchType = 'filter';
         }
         // TAG FILTER
         if (isset($_GET['tag']) && $_GET['tag'] != '') {
             $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
             $ExperimentsView->tag = $tag;
-            $ExperimentsView->Experiments->tagFilter = "AND experiments_tags.tag LIKE '" . $tag . "'";
+            $ExperimentsView->Entity->tagFilter = "AND experiments_tags.tag LIKE '" . $tag . "'";
             $ExperimentsView->searchType = 'tag';
         }
         // QUERY FILTER
         if (isset($_GET['q']) && !empty($_GET['q'])) {
             $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
             $ExperimentsView->query = $query;
-            $ExperimentsView->Experiments->queryFilter = "AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%' OR elabid LIKE '%$query%')";
+            $ExperimentsView->Entity->queryFilter = "AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%' OR elabid LIKE '%$query%')";
             $ExperimentsView->searchType = 'query';
         }
         // RELATED FILTER
@@ -57,20 +57,20 @@ try {
         }
         // ORDER
         // default by date
-        $ExperimentsView->Experiments->order = 'experiments.date';
+        $ExperimentsView->Entity->order = 'experiments.date';
         if (isset($_GET['order'])) {
             if ($_GET['order'] === 'cat') {
-                $ExperimentsView->Experiments->order = 'status.name';
+                $ExperimentsView->Entity->order = 'status.name';
             } elseif ($_GET['order'] === 'date' || $_GET['order'] === 'rating' || $_GET['order'] === 'title') {
-                $ExperimentsView->Experiments->order = 'experiments.' . $_GET['order'];
+                $ExperimentsView->Entity->order = 'experiments.' . $_GET['order'];
             } elseif ($_GET['order'] === 'comment') {
-                $ExperimentsView->Experiments->order = 'experiments_comments.datetime';
+                $ExperimentsView->Entity->order = 'experiments_comments.datetime';
             }
         }
         // SORT
         if (isset($_GET['sort'])) {
             if ($_GET['sort'] === 'asc' || $_GET['sort'] === 'desc') {
-                $ExperimentsView->Experiments->sort = $_GET['sort'];
+                $ExperimentsView->Entity->sort = $_GET['sort'];
             }
         }
 
@@ -80,13 +80,13 @@ try {
     // VIEW
     } elseif ($_GET['mode'] === 'view') {
 
-        $ExperimentsView->Experiments->setId($_GET['id'], 'experiments');
+        $ExperimentsView->Entity->setId($_GET['id']);
         echo $ExperimentsView->view();
 
     // EDIT
     } elseif ($_GET['mode'] === 'edit') {
 
-        $ExperimentsView->Experiments->setId($_GET['id'], 'experiments');
+        $ExperimentsView->Entity->setId($_GET['id']);
         echo $ExperimentsView->edit();
     }
 

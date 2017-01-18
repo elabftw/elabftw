@@ -18,32 +18,29 @@ use Exception;
  */
 class Database extends Entity
 {
-    /** pdo object */
-    protected $pdo;
+    /** our current user */
+    private $userid;
 
     /** inserted in sql */
     public $bookableFilter = '';
 
-    public $userid;
-
     /**
      * Give me the team on init
      *
-     * @param int $team
-     * @param int|null $id
+     * @param int $team current team
+     * @param int $userid current user
+     * @param int|null $id id of the item
      */
-    public function __construct($team, $userid = null, $id = null)
+    public function __construct($team, $userid, $id = null)
     {
         $this->pdo = Db::getConnection();
 
         $this->type = 'items';
         $this->team = $team;
+        $this->userid = $userid;
 
-        if (!is_null($userid)) {
-            $this->userid = $userid;
-        }
         if (!is_null($id)) {
-            $this->setId($id, 'items');
+            $this->setId($id);
         }
 
     }
@@ -265,7 +262,7 @@ class Database extends Entity
         $tags = new Tags('items', $this->id);
         $result[] = $tags->destroyAll();
 
-        $uploads = new Uploads($self);
+        $uploads = new Uploads(new Database($this->team, $this->userid, $this->id));
         $result[] = $uploads->destroyAll();
 
         // delete links of this item in experiments with this item linked

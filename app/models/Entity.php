@@ -21,6 +21,9 @@ class Entity
     /** pdo object */
     protected $pdo;
 
+    /** experiments or items */
+    public $type;
+
     /** our team */
     public $team;
 
@@ -45,11 +48,11 @@ class Entity
     /** limit for sql */
     public $limit = '';
 
+    /** read rights */
     public $canRead = false;
-    public $canWrite = false;
 
-    /** experiments or items */
-    public $type;
+    /** write rights */
+    public $canWrite = false;
 
     /**
      * Check and set id

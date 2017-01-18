@@ -53,7 +53,7 @@ class Experiments extends Entity
         $this->team = $user['team'];
 
         if (!is_null($id)) {
-            $this->setId($id, 'experiments');
+            $this->setId($id);
         }
 
         $this->Links = new Links($this);

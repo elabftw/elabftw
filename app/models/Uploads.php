@@ -22,6 +22,8 @@ class Uploads extends Entity
 
     /** what algo for hashing */
     private $hashAlgorithm = 'sha256';
+
+    /** instance of Experiments or Database */
     public $Entity;
 
     /**

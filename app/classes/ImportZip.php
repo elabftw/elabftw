@@ -97,7 +97,7 @@ class ImportZip extends Import
         $file = $this->tmpPath . "/.elabftw.json";
         $content = file_get_contents($file);
         $this->json = json_decode($content, true);
-        $this->type = $this->checkCategory($this->json[0]['type']);
+        $this->type = $this->checkType($this->json[0]['type']);
     }
 
     /**
@@ -109,7 +109,7 @@ class ImportZip extends Import
     private function checkType($type)
     {
         $validArr = array('experiments', 'items');
-        if (!in_array($type, $valid)) {
+        if (!in_array($type, $validArr)) {
             throw new Exception('Bad type!');
         }
         return $type;
@@ -178,7 +178,7 @@ class ImportZip extends Import
         } else {
             $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $this->newItemId);
         }
-        $Upload = new Uploads($Entity, $this->type, $this->newItemId);
+        $Upload = new Uploads($Entity);
         $Upload->createFromLocalFile($this->tmpPath . '/' . $file);
     }
 

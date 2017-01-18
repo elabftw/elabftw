@@ -19,9 +19,6 @@ use Swift_Message;
  */
 class Comments extends Entity
 {
-    /** pdo object */
-    protected $pdo;
-
     /** instance of Experiments */
     public $Experiments;
 
@@ -37,7 +34,7 @@ class Comments extends Entity
         $this->Experiments = $experiments;
 
         if (!is_null($id)) {
-            $this->setId($id, 'experiments');
+            $this->setId($id);
         }
     }
 

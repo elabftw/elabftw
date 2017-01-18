@@ -36,7 +36,7 @@ try {
 
         // check if item is in team
         $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_GET['item_id']);
-        if (!$Database->isInTeam()) {
+        if (!$Database->canRead) {
             throw new Exception(Tools::error(true));
         }
         $location = 'database';

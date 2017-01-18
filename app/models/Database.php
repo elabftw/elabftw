@@ -68,35 +68,21 @@ class Database extends Entity
         return $this->pdo->lastInsertId();
     }
 
-
-    /**
-     * Check if the item we want to view is in the team
-     *
-     * @return bool
-     */
-    public function isInTeam()
-    {
-        $sql = "SELECT team FROM items WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->execute();
-
-        return $req->fetchColumn() == $this->team;
-    }
-
     /**
      * Read an item
      *
-     * @throws Exception if empty results
+     * @throws Exception if don't have read rights
      * @return array
      */
     public function read()
     {
+        /*
         // permission check
         // you can only see items from your team
-        if (!$this->isInTeam()) {
+        if (!$this->canRead) {
             throw new Exception(Tools::error(true));
         }
+         */
 
         $sql = "SELECT DISTINCT items.id AS itemid,
             experiments_links.id AS linkid,
@@ -114,7 +100,13 @@ class Database extends Entity
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->execute();
 
-        return $req->fetch();
+        $res = $req->fetch();
+
+        if (count($res['id']) === 0) {
+            throw new Exception(_('Nothing to see with this id!'));
+        }
+
+        return $res;
     }
 
     /**
@@ -155,11 +147,6 @@ class Database extends Entity
      */
     public function update($title, $date, $body)
     {
-        // permission check
-        // you can only see items from your team
-        if (!$this->isInTeam()) {
-            throw new Exception(Tools::error(true));
-        }
         $title = Tools::checkTitle($title);
         $date = Tools::kdate($date);
         $body = Tools::checkBody($body);
@@ -194,10 +181,6 @@ class Database extends Entity
      */
     public function updateRating($rating)
     {
-        if (!$this->isInTeam()) {
-            throw new Exception(Tools::error(true));
-        }
-
         $sql = 'UPDATE items SET rating = :rating WHERE id = :id';
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':rating', $rating, PDO::PARAM_INT);
@@ -242,11 +225,6 @@ class Database extends Entity
      */
     public function destroy()
     {
-        // we can only delete items from our team
-        if (!$this->isInTeam()) {
-            throw new Exception(Tools::error(true));
-        }
-
         // to store the outcome of sql
         $result = array();
 
@@ -291,10 +269,6 @@ class Database extends Entity
      */
     public function toggleLock()
     {
-        if (!$this->isInTeam()) {
-            throw new Exception(Tools::error(true));
-        }
-
         // get what is the current state
         $sql = "SELECT locked FROM items WHERE id = :id";
         $req = $this->pdo->prepare($sql);

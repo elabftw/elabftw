@@ -26,11 +26,16 @@ class Api
     /** the model (experiments/items) */
     private $endpoint;
 
-    /** optional arguments */
+    /** optional arguments, like the id */
     public $args = array();
 
+    /** our user */
     private $user;
 
+    /**
+     * Get data for user from the API key
+     *
+     */
     public function __construct()
     {
         header("Access-Control-Allow-Origin: *");
@@ -42,12 +47,20 @@ class Api
         $this->method = $_SERVER['REQUEST_METHOD'];
         $Users = new Users();
         if (empty($_SERVER['HTTP_AUTHORIZATION'])) {
-            throw new Exception('No token received.');
+            throw new Exception('No API key received.');
         }
         $this->user = $Users->readFromApiKey($_SERVER['HTTP_AUTHORIZATION']);
+        if (empty($this->user)) {
+            throw new Exception('Invalid API key.');
+        }
     }
 
-    public function getEntity($id) {
+    /**
+     * Read an entity
+     *
+     * @param int|null $id id of the entity
+     */
+    public function getEntity($id = null) {
         if ($this->endpoint === 'experiments') {
             $Entity = new Experiments($this->user['team'], $this->user['userid'], $id);
         } elseif ($this->endpoint === 'items') {

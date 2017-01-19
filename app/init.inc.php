@@ -34,6 +34,8 @@ if (is_readable('config.php')) {
     require_once '../config.php';
 } elseif (is_readable('../../config.php')) {
     require_once '../../config.php';
+} elseif (is_readable('../../../config.php')) {
+    require_once '../../../config.php';
 } else {
     header('Location: install');
     exit;

@@ -11,6 +11,8 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
+use \Defuse\Crypto\Crypto as Crypto;
+use \Defuse\Crypto\Key as Key;
 
 /**
  * Display profile of current user
@@ -29,6 +31,8 @@ try {
     $Users = new Users();
     $user = $Users->read($_SESSION['userid']);
 
+    $apiKey = Crypto::encrypt($user['password'], Key::loadFromAsciiSafeString(SECRET_KEY));
+
     // USER INFOS
     echo "<section class='box'>";
     echo "<img src='app/img/user.png' alt='user' /> <h4 style='display:inline'>" . _('Infos') . "</h4>";
@@ -37,6 +41,7 @@ try {
         <p>".$user['firstname'] . " " . $user['lastname'] . " (" . $user['email'] . ")</p>
         <p>". $count . " " . _('experiments done since') . " " . date("l jS \of F Y", $user['register_date'])
         ."<p><a href='ucp.php'>" . _('Go to user control panel') . "</a>";
+    echo "<p>API Key: " . $apiKey;
     echo "</div>";
     echo "</section>";
 

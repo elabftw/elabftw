@@ -45,9 +45,6 @@ class EntityView
      */
     protected function initViewEdit()
     {
-        // get data of entity
-        $this->entityData = $this->Entity->read();
-
         $this->html .= "<script>document.title = '" . $this->getCleanTitle($this->entityData['title']) . "';</script>";
 
         // get the UploadsView object

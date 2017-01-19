@@ -13,6 +13,8 @@ namespace Elabftw\Elabftw;
 use PDO;
 use Exception;
 use Swift_Message;
+use \Defuse\Crypto\Crypto as Crypto;
+use \Defuse\Crypto\Key as Key;
 
 /**
  * Users
@@ -302,6 +304,27 @@ class Users extends Auth
         $sql = "SELECT userid, CONCAT(firstname, ' ', lastname) AS name FROM users WHERE email = :email";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':email', $email);
+        $req->execute();
+
+        return $req->fetch();
+    }
+
+    /**
+     * Get a user from his API key
+     * first we decrypt the key, which is the hash of the password
+     * even if two users have the same password, the hash will be different because of the salt
+     * so it's unique and we can select a user with that
+     * the good thing also is that if a user changes his password, the api key will change, too.
+     *
+     * @param string $apiKey a very long string encrypted with our SECRET_KEY
+     * @return array
+     */
+    public function readFromApiKey($apiKey)
+    {
+        $hash = Crypto::decrypt($apiKey, Key::loadFromAsciiSafeString(SECRET_KEY));
+        $sql = "SELECT * FROM users WHERE password = :hash";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':hash', $hash);
         $req->execute();
 
         return $req->fetch();

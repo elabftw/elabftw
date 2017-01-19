@@ -127,22 +127,26 @@ class Entity
     {
         $this->pdo = Db::getConnection();
 
+        $isAdmin = false;
+        if (isset($_SESSION['is_admin']) && ($_SESSION['is_admin'] === '1')) {
+            $isAdmin = true;
+        }
         // reset values
         $this->canRead = false;
         $this->canWrite = false;
 
         if ($this->type === 'experiments') {
             // if we own the experiment, we have read/write rights on it for sure
-            if ($this->entityData['userid'] === $_SESSION['userid']) {
+            if ($this->entityData['userid'] === $this->userid) {
                 $this->canRead = true;
                 $this->canWrite = true;
 
             // admin can view any experiment
-            } elseif (($this->entityData['userid'] != $_SESSION['userid']) && $_SESSION['is_admin']) {
+            } elseif (($this->entityData['userid'] != $this->userid) && $isAdmin) {
                 $this->canRead = true;
 
             // if we don't own the experiment (and we are not admin), we need to check the visibility
-            } elseif (($this->entityData['userid'] != $_SESSION['userid']) && !$_SESSION['is_admin']) {
+            } elseif (($this->entityData['userid'] != $this->userid) && $isAdmin) {
                 $validArr = array(
                     'public',
                     'organization'
@@ -155,13 +159,13 @@ class Entity
 
                 // if the vis. setting is team, check we are in the same team than the item
                 if (($this->entityData['visibility'] === 'team') &&
-                    ($this->entityData['team'] == $_SESSION['team_id'])) {
+                    ($this->entityData['team'] == $this->team)) {
                     $this->canRead = true;
                 }
 
                 // if the vis. setting is a team group, check we are in the group
                 if (Tools::checkId($this->entityData['visibility'])) {
-                    $TeamGroups = new $TeamGroups($_SESSION['team_id']);
+                    $TeamGroups = new TeamGroups($this->team);
                     if ($TeamGroups->isInTeamGroup($this->entityData['userid'], $visibility)) {
                         $this->canRead = true;
                     }
@@ -177,7 +181,7 @@ class Entity
             $req->bindParam(':userid', $this->entityData['userid']);
             $req->execute();
 
-            if ($req->fetchColumn() === $_SESSION['team_id']) {
+            if ($req->fetchColumn() === $this->team) {
                 $this->canRead = true;
                 $this->canWrite = true;
             }

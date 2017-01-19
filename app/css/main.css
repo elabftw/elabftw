@@ -669,7 +669,7 @@ tr:nth-child(odd) {
     margin-top: 10px;
     border-radius: 5px;
     padding: 20px;
-    overflow: hidden;
+    overflow: auto;
 }
 .tooltip-box {
     overflow: visible;

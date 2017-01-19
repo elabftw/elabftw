@@ -80,13 +80,13 @@ try {
     // VIEW
     } elseif ($_GET['mode'] === 'view') {
 
-        $ExperimentsView->Entity->setId($_GET['id']);
+        $ExperimentsView->Entity->setId($_GET['id'], true);
         echo $ExperimentsView->view();
 
     // EDIT
     } elseif ($_GET['mode'] === 'edit') {
 
-        $ExperimentsView->Entity->setId($_GET['id']);
+        $ExperimentsView->Entity->setId($_GET['id'], true);
         echo $ExperimentsView->edit();
     }
 

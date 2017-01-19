@@ -3,7 +3,7 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 
-require_once '../../config.php';
+require_once '../config.php';
 require_once ELAB_ROOT . 'vendor/autoload.php';
 
 try {

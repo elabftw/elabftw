@@ -15,7 +15,8 @@ use Exception;
 /**
  * An API for elab
  * Get your api key from your profile page.
- *
+ * Send it in an Authorization header like so:
+ * curl -kL -X GET -H "Authorization: $API_KEY" "https://elabftw.example.org/app/api/v1/items/7"
  */
 class Api
 {
@@ -40,22 +41,10 @@ class Api
         $this->endpoint = array_shift($this->args);
         $this->method = $_SERVER['REQUEST_METHOD'];
         $Users = new Users();
+        if (empty($_SERVER['HTTP_AUTHORIZATION'])) {
+            throw new Exception('No token received.');
+        }
         $this->user = $Users->readFromApiKey($_SERVER['HTTP_AUTHORIZATION']);
-    }
-
-    public function getMethod()
-    {
-        return json_encode(array('method', $this->method));
-    }
-
-    public function getEndpoint()
-    {
-        return json_encode(array('endpoint', $this->endpoint));
-    }
-
-    public function getArgs()
-    {
-        return json_encode(array('args', $this->args));
     }
 
     public function getEntity($id) {

@@ -401,9 +401,6 @@ class ExperimentsView extends EntityView
         $html = '';
 
         $html .= $this->backToLink('experiments');
-        var_dump($this->Entity->canRead);
-        var_dump($this->Entity->canWrite);
-        var_dump($this->ro);
 
         if ($this->ro) {
             $Users = new Users();

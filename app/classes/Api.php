@@ -14,6 +14,7 @@ use Exception;
 
 /**
  * An API for elab
+ * Get your api key from your profile page.
  *
  */
 class Api
@@ -22,7 +23,7 @@ class Api
     public $method;
 
     /** the model (experiments/items) */
-    public $endpoint;
+    private $endpoint;
 
     /** optional arguments */
     public $args = array();
@@ -57,11 +58,19 @@ class Api
         return json_encode(array('args', $this->args));
     }
 
-    public function getExperiment($id) {
-        $Experiments = new Experiments($this->user['team'], $this->user['userid'], $id);
-        if (!$Experiments->canRead) {
+    public function getEntity($id) {
+        if ($this->endpoint === 'experiments') {
+            $Entity = new Experiments($this->user['team'], $this->user['userid'], $id);
+        } elseif ($this->endpoint === 'items') {
+            $Entity = new Database($this->user['team'], $this->user['userid'], $id);
+        } else {
+            return json_encode(array('error', 'Bad endpoint.'));
+        }
+
+        if (!$Entity->canRead) {
             throw new Exception(Tools::error(true));
         }
-        return json_encode($Experiments->entityData);
+
+        return json_encode($Entity->entityData);
     }
 }

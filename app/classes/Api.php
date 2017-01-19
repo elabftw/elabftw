@@ -32,6 +32,8 @@ class Api
     /** our user */
     private $user;
 
+    public $id = null;
+
     /**
      * Get data for user from the API key
      *
@@ -43,8 +45,12 @@ class Api
         header("Content-Type: application/json");
 
         $this->args = explode('/', rtrim($_GET['req'], '/'));
+        if (Tools::checkId(end($this->args))) {
+            $this->id = end($this->args);
+        }
         $this->endpoint = array_shift($this->args);
         $this->method = $_SERVER['REQUEST_METHOD'];
+
         $Users = new Users();
         if (empty($_SERVER['HTTP_AUTHORIZATION'])) {
             throw new Exception('No API key received.');
@@ -58,21 +64,25 @@ class Api
     /**
      * Read an entity
      *
-     * @param int|null $id id of the entity
      */
-    public function getEntity($id = null) {
+    public function getEntity() {
         if ($this->endpoint === 'experiments') {
-            $Entity = new Experiments($this->user['team'], $this->user['userid'], $id);
+            $Entity = new Experiments($this->user['team'], $this->user['userid'], $this->id);
         } elseif ($this->endpoint === 'items') {
-            $Entity = new Database($this->user['team'], $this->user['userid'], $id);
+            $Entity = new Database($this->user['team'], $this->user['userid'], $this->id);
         } else {
             return json_encode(array('error', 'Bad endpoint.'));
         }
 
-        if (!$Entity->canRead) {
-            throw new Exception(Tools::error(true));
+        if (is_null($this->id)) {
+            $data = $Entity->readAll();
+        } else {
+            if (!$Entity->canRead) {
+                throw new Exception(Tools::error(true));
+            }
+            $data = $Entity->entityData;
         }
 
-        return json_encode($Entity->entityData);
+        return json_encode($data);
     }
 }

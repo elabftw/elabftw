@@ -10,7 +10,7 @@ try {
     $Api = new Api();
 
     if ($Api->method === 'GET') {
-        echo $Api->getEntity($Api->args[0]);
+        echo $Api->getEntity();
     }
 } catch (Exception $e) {
     echo json_encode(array('error', $e->getMessage()));

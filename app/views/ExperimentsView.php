@@ -117,7 +117,7 @@ class ExperimentsView extends EntityView
 
             if ($this->showTeam) {
                 // get all XP from team
-                $itemsArr = $this->Entity->readAllFromTeam();
+                $itemsArr = $this->Entity->readAll();
             } else {
                 // get all XP items for the user
                 $itemsArr = $this->Entity->readAllFromUser();

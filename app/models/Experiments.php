@@ -121,7 +121,6 @@ class Experiments extends Entity
     /**
      * Read all experiments for current user
      *
-            *LEFT JOIN (SELECT experiments_comments.exp_id FROM experiments_comments) AS recentComment ON (1=1)
      * @return array
      */
     public function readAllFromUser()
@@ -150,7 +149,7 @@ class Experiments extends Entity
      *
      * @return array
      */
-    public function readAllFromTeam()
+    public function readAll()
     {
         $sql = "SELECT DISTINCT experiments.*, status.color, status.name, uploads.*, experiments_comments.datetime
             FROM experiments

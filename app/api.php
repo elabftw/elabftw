@@ -10,12 +10,17 @@ try {
     $Api = new Api($_SERVER['REQUEST_METHOD'], $_REQUEST['req']);
 
     if ($Api->method === 'GET') {
-        echo $Api->getEntity();
+        $output = $Api->getEntity();
+    } else {
+
+        if (count($_FILES) >= 1) {
+            $output = $Api->uploadFile();
+        } else {
+            $output = $Api->updateEntity();
+        }
     }
 
-    if ($Api->method === 'POST') {
-        echo $Api->updateEntity();
-    }
+    echo json_encode($output);
 
 } catch (Exception $e) {
     echo json_encode(array('error', $e->getMessage()));

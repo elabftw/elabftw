@@ -44,7 +44,7 @@ class Api
      */
     public function __construct($method, $request)
     {
-        $availMethods = array('GET', 'POST');
+        $availMethods = array('GET', 'POST', 'PUT');
         if (!in_array($method, $availMethods)) {
             throw new Exception('Incorrect HTTP verb!');
         }
@@ -94,15 +94,14 @@ class Api
     public function getEntity()
     {
         if (is_null($this->id)) {
-            $data = $this->Entity->readAll();
-        } else {
-            if (!$this->Entity->canRead) {
-                throw new Exception(Tools::error(true));
-            }
-            $data = $this->Entity->entityData;
+            return $this->Entity->readAll();
         }
 
-        return json_encode($data);
+        if (!$this->Entity->canRead) {
+            throw new Exception(Tools::error(true));
+        }
+
+        return $this->Entity->entityData;
     }
 
     /**
@@ -114,12 +113,31 @@ class Api
         if (is_null($this->id)) {
             throw new Exception('You need an id to update something!');
         }
+
         if (empty($_POST['title']) || empty($_POST['date']) || empty($_POST['body'])) {
             throw new Exception('Empty title, date or body sent.');
         }
+
         if ($this->Entity->update($_POST['title'], $_POST['date'], $_POST['body'])) {
             return json_encode(array('result', 'success'));
         }
-        throw new Exception(Tools::error());
+
+        return array('Result', Tools::error());
+    }
+
+    /**
+     * Add a file to an entity
+     *
+     * @return array
+     */
+    public function uploadFile()
+    {
+        $Uploads = new Uploads($this->Entity);
+
+        if ($Uploads->create($_FILES)) {
+            return array('Result', 'Success');
+        }
+
+        return array('Result', Tools::error());
     }
 }

@@ -41,6 +41,8 @@ class Api
     /**
      * Get data for user from the API key
      *
+     * @param string $method
+     * @param string $request
      */
     public function __construct($method, $request)
     {
@@ -90,6 +92,7 @@ class Api
     /**
      * Read an entity
      *
+     * @return array
      */
     public function getEntity()
     {
@@ -107,6 +110,7 @@ class Api
     /**
      * Update an entity
      *
+     * @return array
      */
     public function updateEntity()
     {

@@ -41,7 +41,7 @@ try {
         <p>".$user['firstname'] . " " . $user['lastname'] . " (" . $user['email'] . ")</p>
         <p>". $count . " " . _('experiments done since') . " " . date("l jS \of F Y", $user['register_date'])
         ."<p><a href='ucp.php'>" . _('Go to user control panel') . "</a>";
-    echo "<p>API Key: " . $apiKey;
+    echo "<p>API Key: <input onClick='this.select()' value='" . $apiKey . "'></input></p>";
     echo "</div>";
     echo "</section>";
 

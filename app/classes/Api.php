@@ -16,7 +16,7 @@ use Exception;
  * An API for elab
  * Get your api key from your profile page.
  * Send it in an Authorization header like so:
- * curl -kL -X GET -H "Authorization: $API_KEY" "https://elabftw.example.org/app/api/v1/items/7"
+ * curl -kL -X GET -H "Authorization: $API_KEY" "https://elabftw.example.org/api/v1/items/7"
  */
 class Api
 {
@@ -32,33 +32,46 @@ class Api
     /** our user */
     private $user;
 
+    /** the id of the entity */
     public $id = null;
 
+    /** our entity object */
     private $Entity;
 
     /**
      * Get data for user from the API key
      *
      */
-    public function __construct()
+    public function __construct($request)
     {
+        // reply in JSON
         header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Methods: *");
         header("Content-Type: application/json");
 
-        $this->args = explode('/', rtrim($_GET['req'], '/'));
+        // parse args
+        $this->args = explode('/', rtrim($request, '/'));
+
+        // assign the id if there is one
         if (Tools::checkId(end($this->args))) {
             $this->id = end($this->args);
         }
+
+        // assign the endpoint
         $this->endpoint = array_shift($this->args);
-        $Users = new Users();
+
+        // do we have an API key?
         if (empty($_SERVER['HTTP_AUTHORIZATION'])) {
             throw new Exception('No API key received.');
         }
+        // get info about user
+        $Users = new Users();
         $this->user = $Users->readFromApiKey($_SERVER['HTTP_AUTHORIZATION']);
         if (empty($this->user)) {
             throw new Exception('Invalid API key.');
         }
+
+        // load Entity
         if ($this->endpoint === 'experiments') {
             $this->Entity = new Experiments($this->user['team'], $this->user['userid'], $this->id);
         } elseif ($this->endpoint === 'items') {
@@ -66,8 +79,6 @@ class Api
         } else {
             throw new Exception('Bad endpoint.');
         }
-        $this->method = $_SERVER['REQUEST_METHOD'];
-
     }
 
     /**
@@ -79,7 +90,7 @@ class Api
         if (is_null($this->id)) {
             $data = $this->Entity->readAll();
         } else {
-            if (!$Entity->canRead) {
+            if (!$this->Entity->canRead) {
                 throw new Exception(Tools::error(true));
             }
             $data = $this->Entity->entityData;
@@ -100,6 +111,9 @@ class Api
         if (empty($_POST['title']) || empty($_POST['date']) || empty($_POST['body'])) {
             throw new Exception('Empty title, date or body sent.');
         }
-        $this->Entity->update($_POST['title'], $_POST['date'], $_POST['body']);
+        if ($this->Entity->update($_POST['title'], $_POST['date'], $_POST['body'])) {
+            return json_encode(array('result', 'success'));
+        }
+        throw new Exception(Tools::error());
     }
 }

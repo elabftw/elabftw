@@ -34,6 +34,8 @@ class Api
 
     public $id = null;
 
+    private $Entity;
+
     /**
      * Get data for user from the API key
      *
@@ -49,8 +51,6 @@ class Api
             $this->id = end($this->args);
         }
         $this->endpoint = array_shift($this->args);
-        $this->method = $_SERVER['REQUEST_METHOD'];
-
         $Users = new Users();
         if (empty($_SERVER['HTTP_AUTHORIZATION'])) {
             throw new Exception('No API key received.');
@@ -59,30 +59,47 @@ class Api
         if (empty($this->user)) {
             throw new Exception('Invalid API key.');
         }
+        if ($this->endpoint === 'experiments') {
+            $this->Entity = new Experiments($this->user['team'], $this->user['userid'], $this->id);
+        } elseif ($this->endpoint === 'items') {
+            $this->Entity = new Database($this->user['team'], $this->user['userid'], $this->id);
+        } else {
+            throw new Exception('Bad endpoint.');
+        }
+        $this->method = $_SERVER['REQUEST_METHOD'];
+
     }
 
     /**
      * Read an entity
      *
      */
-    public function getEntity() {
-        if ($this->endpoint === 'experiments') {
-            $Entity = new Experiments($this->user['team'], $this->user['userid'], $this->id);
-        } elseif ($this->endpoint === 'items') {
-            $Entity = new Database($this->user['team'], $this->user['userid'], $this->id);
-        } else {
-            return json_encode(array('error', 'Bad endpoint.'));
-        }
-
+    public function getEntity()
+    {
         if (is_null($this->id)) {
-            $data = $Entity->readAll();
+            $data = $this->Entity->readAll();
         } else {
             if (!$Entity->canRead) {
                 throw new Exception(Tools::error(true));
             }
-            $data = $Entity->entityData;
+            $data = $this->Entity->entityData;
         }
 
         return json_encode($data);
+    }
+
+    /**
+     * Update an entity
+     *
+     */
+    public function updateEntity()
+    {
+        if (is_null($this->id)) {
+            throw new Exception('You need an id to update something!');
+        }
+        if (empty($_POST['title']) || empty($_POST['date']) || empty($_POST['body'])) {
+            throw new Exception('Empty title, date or body sent.');
+        }
+        $this->Entity->update($_POST['title'], $_POST['date'], $_POST['body']);
     }
 }

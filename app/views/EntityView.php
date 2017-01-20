@@ -34,7 +34,7 @@ class EntityView
     public $entityData;
 
     /** our html output */
-    protected $html;
+    protected $html = '';
 
     /** instance of UploadsView */
     protected $UploadsView;
@@ -45,6 +45,7 @@ class EntityView
      */
     protected function initViewEdit()
     {
+        // add the title in the page name (see #324)
         $this->html .= "<script>document.title = '" . $this->getCleanTitle($this->entityData['title']) . "';</script>";
 
         // get the UploadsView object

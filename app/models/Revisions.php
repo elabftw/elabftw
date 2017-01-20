@@ -44,11 +44,7 @@ class Revisions
      */
     public function create($body)
     {
-        if ($this->Entity->type === 'experiments') {
-            $sql = "INSERT INTO experiments_revisions (item_id, body, userid) VALUES(:item_id, :body, :userid)";
-        } else {
-            $sql = "INSERT INTO items_revisions (item_id, body, userid) VALUES(:item_id, :body, :userid)";
-        }
+        $sql = "INSERT INTO " . $this->Entity->type . "_revisions (item_id, body, userid) VALUES(:item_id, :body, :userid)";
 
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id);
@@ -64,13 +60,8 @@ class Revisions
      */
     public function readCount()
     {
-        if ($this->Entity->type === 'experiments') {
-            $sql = "SELECT COUNT(*) FROM experiments_revisions
-                WHERE item_id = :item_id ORDER BY savedate DESC";
-        } else {
-            $sql = "SELECT COUNT(*) FROM items_revisions
-                WHERE item_id = :item_id ORDER BY savedate DESC";
-        }
+        $sql = "SELECT COUNT(*) FROM " . $this->Entity->type . "_revisions
+             WHERE item_id = :item_id ORDER BY savedate DESC";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id);
         $req->execute();

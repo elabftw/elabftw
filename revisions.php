@@ -27,7 +27,7 @@ try {
     if ($_GET['type'] === 'experiments') {
         // only experiment owner can change or see revisions
         $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_GET['item_id']);
-        if (!$Experiments->canWrite) {
+        if (!$Entity->canWrite) {
             throw new Exception(Tools::error(true));
         }
         $location = 'experiments';
@@ -36,7 +36,7 @@ try {
 
         // check if item is in team
         $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_GET['item_id']);
-        if (!$Database->canRead) {
+        if (!$Entity->canRead) {
             throw new Exception(Tools::error(true));
         }
         $location = 'database';

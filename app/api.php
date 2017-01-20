@@ -12,6 +12,10 @@ try {
     if ($Api->method === 'GET') {
         echo $Api->getEntity();
     }
+
+    if ($Api->method === 'POST') {
+        echo $Api->updateEntity();
+    }
 } catch (Exception $e) {
     echo json_encode(array('error', $e->getMessage()));
 }

@@ -146,7 +146,7 @@ class Entity
                 $this->canRead = true;
 
             // if we don't own the experiment (and we are not admin), we need to check the visibility
-            } elseif (($this->entityData['userid'] != $this->userid) && $isAdmin) {
+            } elseif (($this->entityData['userid'] != $this->userid) && !$isAdmin) {
                 $validArr = array(
                     'public',
                     'organization'

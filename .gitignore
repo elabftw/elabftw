@@ -6,6 +6,7 @@ config.php
 config.php.*
 *.bak
 tests/_output/*
+tests/_support/_generated*
 node_modules/*
 _api/
 vendor/

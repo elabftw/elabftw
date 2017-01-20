@@ -42,8 +42,14 @@ class Api
      * Get data for user from the API key
      *
      */
-    public function __construct($request)
+    public function __construct($method, $request)
     {
+        $availMethods = array('GET', 'POST');
+        if (!in_array($method, $availMethods)) {
+            throw new Exception('Incorrect HTTP verb!');
+        }
+        $this->method = $method;
+
         // reply in JSON
         header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Methods: *");

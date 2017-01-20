@@ -7,8 +7,7 @@ require_once '../config.php';
 require_once ELAB_ROOT . 'vendor/autoload.php';
 
 try {
-    $Api = new Api($_REQUEST['req']);
-    $Api->method = $_SERVER['REQUEST_METHOD'];
+    $Api = new Api($_SERVER['REQUEST_METHOD'], $_REQUEST['req']);
 
     if ($Api->method === 'GET') {
         echo $Api->getEntity();

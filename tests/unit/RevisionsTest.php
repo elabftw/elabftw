@@ -25,16 +25,16 @@ class RevisionsTest extends \PHPUnit_Framework_TestCase
     public function testReadCount()
     {
         $this->assertInternalType('int', $this->Revisions->readCount());
-        $this->Revisions = new Revisions(new Database(1, 1, 1));
+        $this->Revisions = new Revisions(new Database('1', '1', '1'));
         $this->assertInternalType('int', $this->Revisions->readCount());
     }
 
     public function testRestore()
     {
-        $this->Experiment = new Experiments(1, 1);
+        $this->Experiment = new Experiments('1', '1');
         $new = $this->Experiment->create();
         $this->Experiment->setId($new);
-        $this->Revisions = new Revisions(new Experiments(1, 1, 1));
+        $this->Revisions = new Revisions($this->Experiment);
         $this->assertTrue($this->Revisions->create('Ohai', $new));
         $this->assertTrue($this->Revisions->restore($new));
     }

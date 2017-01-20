@@ -48,7 +48,7 @@ class Tags extends Entity
             throw new Exception(_('Tag is too short!'));
         }
 
-        if (!$this->canWrite) {
+        if (!$this->Entity->canWrite) {
             throw new Exception(Tools::error(true));
         }
 

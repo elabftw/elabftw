@@ -49,7 +49,6 @@ CREATE TABLE `experiments` (
   `date` int(10) unsigned NOT NULL,
   `body` mediumtext,
   `status` varchar(255) NOT NULL,
-  `links` varchar(255) DEFAULT NULL,
   `userid` int(10) unsigned NOT NULL,
   `elabid` varchar(255) NOT NULL,
   `locked` tinyint(1) unsigned NOT NULL DEFAULT '0',
@@ -418,4 +417,4 @@ INSERT INTO `config` (`conf_name`, `conf_value`) VALUES
 ('stampprovider', 'http://zeitstempel.dfn.de/'),
 ('stampcert', 'app/dfn-cert/pki.dfn.pem'),
 ('stamphash', 'sha256'),
-('schema', '13');
+('schema', '14');

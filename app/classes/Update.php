@@ -56,7 +56,7 @@ class Update
      * UPDATE IT ALSO IN INSTALL/ELABFTW.SQL (last line)
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '13';
+    const REQUIRED_SCHEMA = '14';
 
     /**
      * Create the pdo object
@@ -266,9 +266,18 @@ class Update
             $this->updateSchema(13);
         }
 
+        if ($current_schema < 14) {
+            // 20170121
+            $this->schema14();
+            $this->updateSchema(14);
+        }
         // place new schema functions above this comment
+
+        // remove files in uploads/tmp
         $this->cleanTmp();
+
         $msg_arr[] = "[SUCCESS] You are now running the latest version of eLabFTW. Have a great day! :)";
+
         return $msg_arr;
     }
 
@@ -549,6 +558,20 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
             WHERE link_href LIKE 'doc/_build/html%'";
         if (!$this->pdo->q($sql)) {
             throw new Exception('Problem updating to schema 13!');
+        }
+    }
+
+    /**
+     * Remove unused columns
+     *
+     */
+    private function schema14()
+    {
+        $sql = "ALTER TABLE `experiments` DROP `links`";
+        $sql2 = "ALTER TABLE `users` DROP `order_by`";
+        $sql3 = "ALTER TABLE `users` DROP `sort_by`";
+        if (!$this->pdo->q($sql) || !$this->pdo->q($sql2) || !$this->pdo->q($sql3)) {
+            throw new Exception('Error updating to schema14');
         }
     }
 }

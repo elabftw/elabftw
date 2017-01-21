@@ -85,7 +85,6 @@ CREATE TABLE `experiments` (
   `date` int(10) UNSIGNED NOT NULL,
   `body` mediumtext,
   `status` varchar(255) NOT NULL,
-  `links` varchar(255) DEFAULT NULL,
   `userid` int(10) UNSIGNED NOT NULL,
   `elabid` varchar(255) NOT NULL,
   `locked` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',

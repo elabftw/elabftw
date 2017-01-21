@@ -77,7 +77,8 @@ class Experiments extends Entity
         }
 
         // SQL for create experiments
-        $sql = "INSERT INTO experiments(team, title, date, body, status, elabid, visibility, userid) VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
+        $sql = "INSERT INTO experiments(team, title, date, body, status, elabid, visibility, userid)
+            VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
         $req = $this->pdo->prepare($sql);
         $req->execute(array(
             'team' => $this->team,
@@ -105,7 +106,8 @@ class Experiments extends Entity
             FROM experiments
             LEFT JOIN status ON experiments.status = status.id
             LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
-            LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
+            LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads)
+            AS uploads ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
             WHERE experiments.id = :id ";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);

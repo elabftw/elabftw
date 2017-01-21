@@ -123,7 +123,7 @@ class Api
         }
 
         if ($this->Entity->update($_POST['title'], $_POST['date'], $_POST['body'])) {
-            return array('result', 'success');
+            return array('Result', 'Success');
         }
 
         return array('Result', Tools::error());

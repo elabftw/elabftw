@@ -59,33 +59,22 @@ class Teams
         // grab the team ID
         $newId = $this->pdo->lastInsertId();
 
-        // now we need to insert a new default set of status for the newly created team
-        $sql = "INSERT INTO status (team, name, color, is_default) VALUES
-        (:team, 'Running', '29AEB9', 1),
-        (:team, 'Success', '54aa08', 0),
-        (:team, 'Need to be redone', 'c0c0c0', 0),
-        (:team, 'Fail', 'c24f3d', 0);";
-        $req = $this->pdo->prepare($sql);
-        $req->bindValue(':team', $newId);
-        $result2 = $req->execute();
+        // create default status
+        $Status = new Status($newId);
+        $result2 = $Status->createDefault();
 
-        // insert only one item type with editme name
-        $sql = "INSERT INTO `items_types` (`team`, `name`, `color`, `template`)
-            VALUES (:team, 'Edit me', '32a100', '<p>Go to the admin panel to edit/add more items types!</p>');";
-        $req = $this->pdo->prepare($sql);
-        $req->bindValue(':team', $newId);
-        $result3 = $req->execute();
+        // create default item type
+        $ItemsTypes = new ItemsTypes($newId);
+        $result3 = $ItemsTypes->create(
+            'Edit me',
+            '32a100',
+            0,
+            '<p>Go to the admin panel to edit/add more items types!</p>'
+        );
 
-        // now we need to insert a new default experiment template for the newly created team
-        $sql = "INSERT INTO `experiments_templates` (`team`, `body`, `name`, `userid`) VALUES
-        (:team, '<p><span style=\"font-size: 14pt;\"><strong>Goal :</strong></span></p>
-        <p>&nbsp;</p>
-        <p><span style=\"font-size: 14pt;\"><strong>Procedure :</strong></span></p>
-        <p>&nbsp;</p>
-        <p><span style=\"font-size: 14pt;\"><strong>Results :</strong></span></p><p>&nbsp;</p>', 'default', 0);";
-        $req = $this->pdo->prepare($sql);
-        $req->bindValue(':team', $newId);
-        $result4 = $req->execute();
+        // create default experiment template
+        $Templates = new Templates($newId);
+        $result4 = $Templates->createDefault();
 
         return $result1 && $result2 && $result3 && $result4;
     }

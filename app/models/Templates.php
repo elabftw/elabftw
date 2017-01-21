@@ -55,6 +55,22 @@ class Templates extends Entity
     }
 
     /**
+     * Create a default template for a new team
+     *
+     * @return bool
+     */
+    public function createDefault()
+    {
+        $defaultBody = "<p><span style='font-size: 14pt;'><strong>Goal :</strong></span></p>
+        <p>&nbsp;</p>
+        <p><span style='font-size: 14pt;'><strong>Procedure :</strong></span></p>
+        <p>&nbsp;</p>
+        <p><span style='font-size: 14pt;'><strong>Results :</strong></span></p><p>&nbsp;</p>";
+
+        return $this->create('default', $defaultBody, 0);
+    }
+
+    /**
      * Read a template
      *
      * @param int $id

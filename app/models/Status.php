@@ -34,9 +34,10 @@ class Status extends Entity
      *
      * @param string $name
      * @param string $color
+     * @param int $default
      * @return int id of the new item
      */
-    public function create($name, $color)
+    public function create($name, $color, $default = 0)
     {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         // we remove the # of the hexacode and sanitize string
@@ -51,11 +52,24 @@ class Status extends Entity
         $req->bindParam(':name', $name);
         $req->bindParam(':color', $color);
         $req->bindParam(':team', $this->team);
-        $req->bindValue(':is_default', 0);
+        $req->bindValue(':is_default', $default);
 
         $req->execute();
 
         return $this->pdo->lastInsertId();
+    }
+
+    /**
+     * Create a default set of status for a new team
+     *
+     * @return bool
+     */
+    public function createDefault()
+    {
+        return $this->create('Running', '29AEB9', 1) &&
+            $this->create('Success', '54AA08', 0) &&
+            $this->create('Need to be redone', 'C0C0C0', 0) &&
+            $this->create('Fail', 'C24F3D', 0);
     }
 
     /**

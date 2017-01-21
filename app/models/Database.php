@@ -117,7 +117,7 @@ class Database extends Entity
      */
     public function readAll()
     {
-        $sql = "SELECT DISTINCT items.id AS itemid, items.*, items_types.name, items_types.bgcolor, uploads.*
+        $sql = "SELECT DISTINCT items.id AS itemid, items.*, items_types.name, items_types.color, uploads.*
         FROM items
         LEFT JOIN items_types ON (items.type = items_types.id)
         LEFT JOIN items_tags ON (items.id = items_tags.item_id)

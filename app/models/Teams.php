@@ -70,7 +70,7 @@ class Teams
         $result2 = $req->execute();
 
         // insert only one item type with editme name
-        $sql = "INSERT INTO `items_types` (`team`, `name`, `bgcolor`, `template`)
+        $sql = "INSERT INTO `items_types` (`team`, `name`, `color`, `template`)
             VALUES (:team, 'Edit me', '32a100', '<p>Go to the admin panel to edit/add more items types!</p>');";
         $req = $this->pdo->prepare($sql);
         $req->bindValue(':team', $newId);

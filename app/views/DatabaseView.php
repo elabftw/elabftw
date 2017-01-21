@@ -127,7 +127,7 @@ class DatabaseView extends EntityView
      */
     public function showUnique($item)
     {
-        $html = "<section class='item " . $this->display . "' style='border-left: 6px solid #" . $item['bgcolor'] . "'>";
+        $html = "<section class='item " . $this->display . "' style='border-left: 6px solid #" . $item['color'] . "'>";
         $html .= "<a href='database.php?mode=view&id=" . $item['itemid'] . "'>";
 
         // show attached if there is a file attached
@@ -144,7 +144,7 @@ class DatabaseView extends EntityView
         // TITLE
         $html .= $item['title'] . "</p></a>";
         // ITEM TYPE
-        $html .= "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['bgcolor'] . "'>" . $item['name'] . " </span>";
+        $html .= "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['color'] . "'>" . $item['name'] . " </span>";
         // DATE
         $html .= "<span class='date'><img class='image' src='app/img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
         // TAGS
@@ -192,7 +192,7 @@ class DatabaseView extends EntityView
             $html .= "onClick=\"document.location='database.php?mode=edit&id=" . $this->Entity->entityData['itemid'] . "'\" ";
         }
         $html .= "class='title_view'>";
-        $html .= "<span style='color:#" . $this->Entity->entityData['bgcolor'] . "'>" . $this->Entity->entityData['name'] . " </span>";
+        $html .= "<span style='color:#" . $this->Entity->entityData['color'] . "'>" . $this->Entity->entityData['name'] . " </span>";
         $html .= $this->Entity->entityData['title'];
         $html .= "</div>";
         // BODY (show only if not empty)
@@ -241,7 +241,7 @@ class DatabaseView extends EntityView
 
         $html .= $this->backToLink('database');
         // begin page
-        $html .= "<section class='box' style='border-left: 6px solid #" . $this->Entity->entityData['bgcolor'] . "'>";
+        $html .= "<section class='box' style='border-left: 6px solid #" . $this->Entity->entityData['color'] . "'>";
         $html .= "<img class='align_right' src='app/img/big-trash.png' title='delete' alt='delete' onClick=\"databaseDestroy(" . $this->Entity->id . ", '" . _('Delete this?') . "')\" />";
 
         // tags

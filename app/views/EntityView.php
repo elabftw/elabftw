@@ -150,7 +150,7 @@ class EntityView
             $itemsTypes = new ItemsTypes($this->Entity->team);
             $categoryArr = $itemsTypes->readAll();
             foreach ($categoryArr as $category) {
-                $templates .= "<li class='dropdown-item'><a style='color:#" . $category['bgcolor'] . "' href='app/controllers/DatabaseController.php?databaseCreateId=" . $category['id'] . "'>"
+                $templates .= "<li class='dropdown-item'><a style='color:#" . $category['color'] . "' href='app/controllers/DatabaseController.php?databaseCreateId=" . $category['id'] . "'>"
                     . $category['name'] . "</a></li>";
             }
 

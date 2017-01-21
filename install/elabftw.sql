@@ -199,7 +199,7 @@ CREATE TABLE `items_types` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `team` int(10) unsigned NOT NULL,
   `name` text NOT NULL,
-  `bgcolor` varchar(6) DEFAULT '000000',
+  `color` varchar(6) DEFAULT '000000',
   `template` text,
   `ordering` int(10) unsigned DEFAULT NULL,
   `bookable` tinyint(1) DEFAULT '0',
@@ -369,7 +369,7 @@ CREATE TABLE IF NOT EXISTS `todolist` (
 
 -- ELABFTW
 /* the default item_types */
-INSERT INTO `items_types` (`team`, `id`, `name`, `bgcolor`, `template`) VALUES
+INSERT INTO `items_types` (`team`, `id`, `name`, `color`, `template`) VALUES
 (1, 1, 'Edit me', '32a100', '<p>Go to the admin panel to edit/add more items types!</p>');
 
 /* the default status */

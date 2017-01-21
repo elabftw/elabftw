@@ -72,7 +72,7 @@ class ItemsTypesView
             $html .= "<ul class='list-inline'>";
 
             $html .= "<li>" . _('Name') . " <input type='text' id='itemsTypesName_" . $itemType['id'] . "' value='" . $itemType['name'] . "' /></li>";
-            $html .= "<li style='color:#" . $itemType['bgcolor'] . "'>" . _('Color') . " <input class='colorpicker' type='text' style='display:inline' id='itemsTypesColor_" . $itemType['id'] . "' value='" . $itemType['bgcolor'] . "' /></li>";
+            $html .= "<li style='color:#" . $itemType['color'] . "'>" . _('Color') . " <input class='colorpicker' type='text' style='display:inline' id='itemsTypesColor_" . $itemType['id'] . "' value='" . $itemType['color'] . "' /></li>";
             $html .= "<li><input id='itemsTypesBookable_" . $itemType['id'] . "' type='checkbox' ";
             if ($itemType['bookable']) {
                 $html .= 'checked ';

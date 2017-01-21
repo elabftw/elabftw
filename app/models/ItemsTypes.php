@@ -51,10 +51,10 @@ class ItemsTypes extends Entity
 
         $color = filter_var(substr($color, 0, 6), FILTER_SANITIZE_STRING);
         $template = Tools::checkBody($template);
-        $sql = "INSERT INTO items_types(name, bgcolor, bookable, template, team) VALUES(:name, :bgcolor, :bookable, :template, :team)";
+        $sql = "INSERT INTO items_types(name, color, bookable, template, team) VALUES(:name, :color, :bookable, :template, :team)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
-        $req->bindParam(':bgcolor', $color);
+        $req->bindParam(':color', $color);
         $req->bindParam(':bookable', $bookable, PDO::PARAM_INT);
         $req->bindParam(':template', $template);
         $req->bindParam(':team', $this->team);
@@ -116,13 +116,13 @@ class ItemsTypes extends Entity
         $sql = "UPDATE items_types SET
             name = :name,
             team = :team,
-            bgcolor = :bgcolor,
+            color = :color,
             bookable = :bookable,
             template = :template
             WHERE id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':name', $name);
-        $req->bindParam(':bgcolor', $color);
+        $req->bindParam(':color', $color);
         $req->bindParam(':bookable', $bookable, PDO::PARAM_INT);
         $req->bindParam(':template', $template);
         $req->bindParam(':team', $this->team, PDO::PARAM_INT);

@@ -281,7 +281,7 @@ CREATE TABLE `items_types` (
   `id` int(10) UNSIGNED NOT NULL,
   `team` int(10) UNSIGNED NOT NULL,
   `name` text NOT NULL,
-  `bgcolor` varchar(6) DEFAULT '000000',
+  `color` varchar(6) DEFAULT '000000',
   `template` text,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `bookable` tinyint(1) DEFAULT '0'
@@ -291,7 +291,7 @@ CREATE TABLE `items_types` (
 -- Dumping data for table `items_types`
 --
 
-INSERT INTO `items_types` (`id`, `team`, `name`, `bgcolor`, `template`, `ordering`, `bookable`) VALUES
+INSERT INTO `items_types` (`id`, `team`, `name`, `color`, `template`, `ordering`, `bookable`) VALUES
 (1, 1, 'Edit me', '32a100', '<p>Go to the admin panel to edit/add more items types!</p>', NULL, 0);
 
 -- --------------------------------------------------------

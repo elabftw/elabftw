@@ -102,8 +102,8 @@ CREATE TABLE `experiments` (
 -- Dumping data for table `experiments`
 --
 
-INSERT INTO `experiments` (`id`, `team`, `title`, `date`, `body`, `status`, `links`, `userid`, `elabid`, `locked`, `lockedby`, `lockedwhen`, `timestamped`, `timestampedby`, `timestamptoken`, `timestampedwhen`, `visibility`, `datetime`) VALUES
-(1, 1, 'Untitled', 20160729, '<p><span style="font-size: 14pt;"><strong>Goal :</strong></span></p>\r\n<p>&nbsp;</p>\r\n<p><span style="font-size: 14pt;"><strong>Procedure :</strong></span></p>\r\n<p>&nbsp;</p>\r\n<p><span style="font-size: 14pt;"><strong>Results :</strong></span></p>\r\n<p>&nbsp;</p>', '1', NULL, 1, '20160729-01079f04e939ad08f44bda36c39faff65a83ef56', 0, NULL, NULL, 0, NULL, NULL, NULL, 'team', '2016-07-29 21:20:59');
+INSERT INTO `experiments` (`id`, `team`, `title`, `date`, `body`, `status`, `userid`, `elabid`, `locked`, `lockedby`, `lockedwhen`, `timestamped`, `timestampedby`, `timestamptoken`, `timestampedwhen`, `visibility`, `datetime`) VALUES
+(1, 1, 'Untitled', 20160729, '<p><span style="font-size: 14pt;"><strong>Goal :</strong></span></p>\r\n<p>&nbsp;</p>\r\n<p><span style="font-size: 14pt;"><strong>Procedure :</strong></span></p>\r\n<p>&nbsp;</p>\r\n<p><span style="font-size: 14pt;"><strong>Results :</strong></span></p>\r\n<p>&nbsp;</p>', '1', 1, '20160729-01079f04e939ad08f44bda36c39faff65a83ef56', 0, NULL, NULL, 0, NULL, NULL, NULL, 'team', '2016-07-29 21:20:59');
 
 -- --------------------------------------------------------
 

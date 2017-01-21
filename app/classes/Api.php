@@ -110,7 +110,7 @@ class Api
     /**
      * Update an entity
      *
-     * @return array
+     * @return string[]
      */
     public function updateEntity()
     {
@@ -132,7 +132,7 @@ class Api
     /**
      * Add a file to an entity
      *
-     * @return array
+     * @return string[]
      */
     public function uploadFile()
     {

@@ -527,11 +527,11 @@ if (isset($_GET)) {
 
             foreach ($results_arr as $id) {
                 if ($search_type === 'experiments') {
-                    $EntityView->Experiments->id = $id;
-                    $item = $EntityView->Experiments->read();
+                    $EntityView->Entity->id = $id;
+                    $item = $EntityView->Entity->read();
                 } else {
-                    $EntityView->Database->id = $id;
-                    $item = $EntityView->Database->read();
+                    $EntityView->Entity->id = $id;
+                    $item = $EntityView->Entity->read();
                 }
 
                 echo $EntityView->showUnique($item);

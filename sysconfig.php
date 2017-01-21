@@ -54,7 +54,8 @@ try {
         if ($SysconfigView->Update->updateIsAvailable()) {
             $message = $SysconfigView->Update->getReleaseDate() . " - " .
                 _('A new version is available!') . " <a href='https://elabftw.readthedocs.io/en/latest/how-to-update.html'>
-                <button class='button'>Update elabftw</button></a>";
+                <button class='button'>Update elabftw</button></a>
+                <a href='" . $SysconfigView->Update->getChangelogLink() . "'><button class='button'>Read changelog</button></a>";
             display_message('warning', $message);
         }
     } else {

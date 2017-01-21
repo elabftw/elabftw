@@ -194,6 +194,19 @@ class Update
     }
 
     /**
+     * Get the documentation link for the changelog button
+     *
+     * @return string URL for changelog
+     */
+    public function getChangelogLink()
+    {
+        $base = "https://elabftw.readthedocs.io/en/latest/changelog.html#version-";
+        $dashedVersion = str_replace(".", "-", $this->version);
+
+        return $base . $dashedVersion;
+    }
+
+    /**
      * Update the database schema if needed.
      *
      * @return string[] $msg_arr

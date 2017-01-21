@@ -217,17 +217,19 @@ function get_total_time()
 /**
  * Inject the script/css for chemdoodle
  *
- * @return string|null
+ * @return string
  */
 function addChemdoodle()
 {
+    $html = '';
+
     if (isset($_SESSION['prefs']['chem_editor']) && $_SESSION['prefs']['chem_editor']) {
-        $html = "<link rel='stylesheet' href='app/css/chemdoodle.css' type='text/css'>";
-        $html .= "<script src='js/chemdoodle/chemdoodle.min.js'></script>";
+        $html .= "<link rel='stylesheet' href='app/css/chemdoodle.css' type='text/css'>";
+        $html .= "<script src='app/js/chemdoodle/chemdoodle.min.js'></script>";
         $html .= "<script>ChemDoodle.iChemLabs.useHTTPS();</script>";
-        return $html;
     }
-    return null;
+
+    return $html;
 }
 
 /**

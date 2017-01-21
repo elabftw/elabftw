@@ -352,7 +352,7 @@ try {
         </div>
     </div>
 
-    <script src="js/tinymce/tinymce.min.js"></script>
+    <script src="app/js/edit.mode.min.js"></script>
     <script>
     function toggleTimestampInputs() {
         $('.timestampInputs').toggle();

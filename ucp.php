@@ -15,7 +15,7 @@ namespace Elabftw\Elabftw;
  *
  */
 ?>
-<script src="js/tinymce/tinymce.js"></script>
+<script src="app/js/edit.mode.min.js"></script>
 <?php
 require_once 'app/init.inc.php';
 $page_title = _('User Control Panel');
@@ -277,7 +277,7 @@ echo "</ul>";
 <!-- *********************** -->
 
 <!-- to export templates -->
-<script src='js/file-saver.js/FileSaver.js'></script>
+<script src='app/js/file-saver.min.js'></script>
 <script>
 // READY ? GO !!
 $(document).ready(function() {

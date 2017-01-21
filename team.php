@@ -27,9 +27,7 @@ $Database = new Database($_SESSION['team_id'], $_SESSION['userid']);
 $Scheduler = new Scheduler($_SESSION['team_id']);
 ?>
 
-<script src='js/moment/moment.js'></script>
-<script src='js/fullcalendar/dist/fullcalendar.js'></script>
-<script src='js/fullcalendar/dist/locale-all.js'></script>
+<script src='app/js/scheduler.min.js'></script>
 
 <menu>
     <ul>

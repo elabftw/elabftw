@@ -51,8 +51,7 @@ $errflag = false;
 <link rel="stylesheet" media="all" href="../js/jquery-ui/themes/smoothness/jquery-ui.min.css" />
 
 <!-- JAVASCRIPT -->
-<script src="../js/jquery/dist/jquery.min.js"></script>
-<script src="../js/jquery-ui/jquery-ui.min.js"></script>
+<script src="../app/js/elabftw.min.js"></script>
 </head>
 
 <body>

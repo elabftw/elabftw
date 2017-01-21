@@ -23,21 +23,9 @@ echo "<title>" . (isset($page_title) ? $page_title : "Lab manager") . " - eLab "
 ?>
 <!-- CSS -->
 <!-- Bootstrap -->
-<link rel="stylesheet" media="all" href="js/bootstrap/dist/css/bootstrap.min.css">
-<link rel="stylesheet" media="all" href="app/css/main.min.css" />
-<link rel="stylesheet" media="all" href="js/colorpicker/jquery.colorpicker.css" />
-<link rel="stylesheet" media="all" href="js/fancybox/source/jquery.fancybox.css" />
-
-<link rel="stylesheet" media="all" href="js/jquery-ui/themes/smoothness/jquery-ui.min.css" />
-<!-- JAVASCRIPT -->
-<script src="js/jquery/dist/jquery.min.js"></script>
-<!-- bootstrap JS -->
-<script src="js/bootstrap/js/alert.js"></script>
-<script src="js/bootstrap/js/dropdown.js"></script>
-<script src="js/bootstrap/js/button.js"></script>
-<script src="js/jquery-ui/jquery-ui.min.js"></script>
+<link rel="stylesheet" media="all" href="app/css/elabftw.min.css" />
 <!-- see Gruntfile.js to see what gets inside this -->
-<script src="js/elabftw.min.js"></script>
+<script src="app/js/elabftw.min.js"></script>
 </head>
 
 <body>

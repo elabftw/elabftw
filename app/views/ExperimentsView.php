@@ -220,8 +220,9 @@ class ExperimentsView extends EntityView
      */
     private function buildEdit()
     {
+        $html = '';
         // load tinymce
-        $html = "<script src='js/tinymce/tinymce.min.js'></script>";
+        $html .= "<script src='app/js/edit.mode.min.js'></script>";
 
         $html .= $this->backToLink('experiments');
 

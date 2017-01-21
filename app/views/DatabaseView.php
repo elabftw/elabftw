@@ -43,7 +43,6 @@ class DatabaseView extends EntityView
 
         $this->html .= $this->buildView();
         $this->html .= $this->UploadsView->buildUploads('view');
-        $this->html .= $this->buildViewJs();
 
         return $this->html;
     }
@@ -211,24 +210,6 @@ class DatabaseView extends EntityView
     }
 
     /**
-     * Generate JS code for view DB
-     *
-     * @return string
-     */
-    private function buildViewJs()
-    {
-        $html = '';
-        if ($_SESSION['prefs']['chem_editor']) {
-            $html .= "<script src='js/chemdoodle/chemdoodle.min.js'></script>
-                    <script>
-                        ChemDoodle.iChemLabs.useHTTPS();
-                    </script>";
-        }
-
-        return $html;
-    }
-
-    /**
      * Generate HTML for edit DB
      *
      * @return string
@@ -237,7 +218,7 @@ class DatabaseView extends EntityView
     {
         $html = '';
         // load tinymce
-        $html .= "<script src='js/tinymce/tinymce.min.js'></script>";
+        $html .= "<script src='app/js/edit.mode.min.js'></script>";
 
         $html .= $this->backToLink('database');
         // begin page

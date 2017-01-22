@@ -53,7 +53,7 @@ try {
 
     // DESTROY
     if (isset($_POST['destroy'])) {
-        if ($Comments->destroy('id')) {
+        if ($Comments->destroy($_POST['id'])) {
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Comment successfully deleted')

@@ -27,17 +27,17 @@ try {
     }
 
     $formKey = new FormKey();
+    $Config = new Config();
 
     $StatusView = new StatusView(new Status($_SESSION['team_id']));
     $ItemsTypesView = new ItemsTypesView(new ItemsTypes($_SESSION['team_id']));
     $TeamGroupsView = new TeamGroupsView(new TeamGroups($_SESSION['team_id']));
     $Auth = new Auth();
-    $Users = new Users();
+    $Users = new Users($Config);
     $usersArr = $Users->readAllFromTeam($_SESSION['team_id']);
     $UsersView = new UsersView($Users);
 
     $templates = new Templates($_SESSION['team_id']);
-    $Config = new Config();
     $Teams = new Teams($_SESSION['team_id']);
 
     // VALIDATE USERS BLOCK

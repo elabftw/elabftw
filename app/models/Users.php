@@ -31,10 +31,14 @@ class Users extends Auth
     /**
      * Assign the config object
      *
+     * @param Config $config
      */
-    public function __construct(Config $config)
+    public function __construct(Config $config = null)
     {
-        $this->Config = $config;
+        $this->pdo = Db::getConnection();
+        if (!is_null($config)) {
+            $this->Config = $config;
+        }
     }
 
     /**

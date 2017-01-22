@@ -17,8 +17,9 @@ use Defuse\Crypto\Key as Key;
 
 try {
     require_once '../../app/init.inc.php';
-    $Email = new Email(new Config);
-    $Users = new Users();
+    $Config = new Config();
+    $Email = new Email($Config);
+    $Users = new Users($Config);
     $Logs = new Logs();
 
     if (isset($_POST['email'])) {

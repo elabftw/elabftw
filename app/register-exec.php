@@ -15,7 +15,7 @@ use Exception;
 try {
     require_once '../app/init.inc.php';
 
-    $Users = new Users();
+    $Users = new Users(new Config);
 
     // default location to redirect to
     $location = '../login.php';

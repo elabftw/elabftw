@@ -23,7 +23,7 @@ try {
     }
 
     $FormKey = new FormKey();
-    $Users = new Users();
+    $Users = new Users(new Config);
 
     $tab = 1;
     $location = '../../admin.php?tab=' . $tab;

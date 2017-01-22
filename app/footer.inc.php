@@ -7,9 +7,11 @@
  * @see https://www.elabftw.net Official website
  * @license AGPL-3.0
  */
+namespace Elabftw\Elabftw;
+
 // TODOLIST
 if (isset($_SESSION['auth'])) {
-    $Todolist = new \Elabftw\Elabftw\Todolist($_SESSION['userid']);
+    $Todolist = new Todolist($_SESSION['userid']);
     $todoItems = $Todolist->readAll();
     ?>
     <div id='todoList'>
@@ -72,7 +74,7 @@ if (isset($_SESSION['auth']) && $_SESSION['is_sysadmin']) {
 }
 if (isset($_SESSION['auth']) && $_SESSION['is_admin']) {
     echo "<a href='admin.php'>" . _('Admin panel');
-    $Users = new \Elabftw\Elabftw\Users();
+    $Users = new Users();
     $unvalidated = count($Users->readAllFromTeam($_SESSION['team_id'], 0));
     if ($unvalidated > 0) {
         echo " <span class='badge'>" . $unvalidated . "</span>";
@@ -127,8 +129,8 @@ $('#todoItems-list').on('mouseover', '.editable', function(){
 </script>
 <?php
 if (isset($_SESSION['auth'])) {
-?>
-<script>
+    ?>
+    <script>
     // Create
     $('#todo-form').submit(function(e) {
         e.preventDefault();
@@ -155,7 +157,6 @@ if (isset($_SESSION['auth'])) {
                             ")'>X</a><span style='font-size:60%;display:block;'>" +
                             datetime + "</span><span id='todoItem_" + json.id + "' class='editable'>" + body +
                             '</li>');
-                    
                     // make it editable right away
                     makeEditableTodoitem();
                     // and clear the input
@@ -171,7 +172,7 @@ if (isset($_SESSION['auth'])) {
         toggleTodoList();
     });
     </script>
-<?php
+    <?php
 }
 ?>
 </body>

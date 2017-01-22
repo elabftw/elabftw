@@ -93,6 +93,7 @@ class ExperimentsView extends EntityView
      */
     public function showUnique($item)
     {
+        $this->Entity->id = $item['id'];
         // dim the experiment a bit if it's not yours
         $opacity = '1';
         if ($this->Entity->userid != $item['userid']) {
@@ -124,7 +125,7 @@ class ExperimentsView extends EntityView
         // DATE
         $html .= "<span class='date'><img class='image' src='app/img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
         // TAGS
-        $html .= $this->showTags('view');
+        $html .= $this->showTags('show');
 
         $html .= "</section>";
 

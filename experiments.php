@@ -33,21 +33,25 @@ try {
 
         // CATEGORY FILTER
         if (isset($_GET['filter']) && !empty($_GET['filter']) && Tools::checkId($_GET['filter'])) {
-            $EntityView->Entity->categoryFilter = "AND status.id = " . $_GET['filter'];
+            $EntityView->Entity->categoryFilter = " AND status.id = " . $_GET['filter'];
             $EntityView->searchType = 'filter';
         }
         // TAG FILTER
         if (isset($_GET['tag']) && $_GET['tag'] != '') {
             $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
-            $EntityView->tag = $tag;
-            $EntityView->Entity->tagFilter = "AND experiments_tags.tag LIKE '" . $tag . "'";
+            $EntityView->Entity->tagFilter = " AND experiments_tags.tag LIKE '" . $tag . "'";
             $EntityView->searchType = 'tag';
         }
         // QUERY FILTER
         if (isset($_GET['q']) && !empty($_GET['q'])) {
             $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
             $EntityView->query = $query;
-            $EntityView->Entity->queryFilter = "AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%' OR elabid LIKE '%$query%')";
+            $EntityView->Entity->queryFilter = " AND (
+                title LIKE '%$query%' OR
+                date LIKE '%$query%' OR
+                body LIKE '%$query%' OR
+                elabid LIKE '%$query%'
+            )";
             $EntityView->searchType = 'query';
         }
         // RELATED FILTER
@@ -91,7 +95,12 @@ try {
     }
 
 } catch (Exception $e) {
-    display_message('ko', $e->getMessage());
+    $debug = false;
+    $message = $e->getMessage();
+    if ($debug) {
+        $message .= ' ' . $e->getFile() . '(' . $e->getLine() . ')';
+    }
+    display_message('ko', $message);
 } finally {
     require_once 'app/footer.inc.php';
 }

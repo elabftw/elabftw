@@ -362,28 +362,37 @@ class EntityView
      */
     protected function showTags($mode)
     {
-        $Tags = new Tags($this->Entity);
-        $tagList = $Tags->read();
-
+        $tagList = explode(',', $this->Entity->entityData['tags']);
+        if ($mode === 'show') {
+            $Tags = new Tags($this->Entity);
+            $tagList = $Tags->read();
+        }
         $html = '';
 
-        if (count($tagList) === 0 && $mode != 'edit') {
+        if (count($tagList) === 0 && ($mode === 'view' || $mode === 'edit')) {
             return $html;
         }
 
-        if ($mode === 'view') {
+        $page = 'database';
+        if ($this->Entity->type === 'experiments') {
+            $page = 'experiments';
+        }
+
+        if (($mode === 'view') || ($mode === 'show')) {
 
             $html .= "<span class='tags'><img src='app/img/tags.png' alt='tags' /> ";
 
-            foreach ($tagList as $tag) {
-                if ($this->Entity->type === 'experiments') {
-                    $html .= "<a href='experiments.php?mode=show&tag=" .
-                        urlencode(stripslashes($tag['tag'])) . "'>" .
-                        stripslashes($tag['tag']) . "</a> ";
-                } else { // type is items
-                    $html .= "<a href='database.php?mode=show&tag=" .
-                        urlencode(stripslashes($tag['tag'])) . "'>" .
-                        stripslashes($tag['tag']) . "</a> ";
+            if ($mode === 'show') {
+                foreach ($tagList as $tag) {
+                        $html .= "<a href='" . $page . ".php?mode=show&tag=" .
+                            urlencode(stripslashes($tag['tag'])) . "'>" .
+                            stripslashes($tag['tag']) . "</a> ";
+                }
+            } else {
+                foreach ($tagList as $tag) {
+                        $html .= "<a href='" . $page . ".php?mode=show&tag=" .
+                            urlencode(stripslashes($tag)) . "'>" .
+                            stripslashes($tag) . "</a> ";
                 }
             }
 

@@ -118,14 +118,33 @@ class Entity
 
         if ($this instanceof Experiments) {
 
-            $sql = "SELECT DISTINCT experiments.*, status.color, status.name, uploads.*, experiments_comments.datetime
+            if (empty($this->idFilter)) {
+            $sql = "SELECT DISTINCT experiments.*,
+                status.color, status.name, uploads.*, experiments_comments.datetime
+
                 FROM experiments
+
                 LEFT JOIN status ON (status.id = experiments.status)
-                LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
+
+                LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads
+                ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
+
+                LEFT JOIN experiments_comments ON (experiments_comments.exp_id = experiments.id)
+
+                WHERE experiments.team = :team";
+            } else {
+            $sql = "SELECT DISTINCT experiments.*,
+                status.color, status.name, uploads.*, experiments_comments.datetime,
+                GROUP_CONCAT(DISTINCT et.tag) as tags
+
+                FROM experiments
+                JOIN experiments_tags et on (experiments.id = et.item_id)
+                LEFT JOIN status ON (status.id = experiments.status)
                 LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads
                 ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
                 LEFT JOIN experiments_comments ON (experiments_comments.exp_id = experiments.id)
                 WHERE experiments.team = :team";
+            }
 
         } elseif ($this instanceof Database) {
 
@@ -156,6 +175,10 @@ class Entity
             $this->queryFilter .
             " ORDER BY " . $this->order . " " . $this->sort . " " . $this->limit;
 
+        /*
+        var_dump($sql);
+        die;
+         */
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $this->team);
         $req->execute();

@@ -67,7 +67,7 @@ class TrustedTimestamps extends Entity
      *
      * @param Config $config
      * @param Teams $teams
-     * @param int $id The id of the experiment
+     * @param Entity $entity
      */
     public function __construct(Config $config, Teams $teams, Entity $entity)
     {

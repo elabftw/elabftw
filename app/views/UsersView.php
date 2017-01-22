@@ -121,7 +121,7 @@ class UsersView
             $html .= "<span class='smallgray'>" .
                 $Auth::MIN_PASSWORD_LENGTH . " " . _('characters minimum') . "</span></li>";
             $html .= "</ul>";
-            $html .= "<button type='submit' class='button'>" .  _('Save') . "</button>";
+            $html .= "<button type='submit' class='button'>" . _('Save') . "</button>";
             $html .= "</form>";
             $html .= "</li>";
             $html .= "<hr>";

@@ -150,7 +150,7 @@ class Tags extends Entity
             } else {
                 $tagList .= "<option value='" . $tag['tag'] . "'";
                 if ($tag['tag'] === $selected) {
-                    $tagList .=  " selected='selected'";
+                    $tagList .= " selected='selected'";
                 }
                 $tagList .= ">" . $tag['tag'] . " (" . $tag['nbtag'] . ")</option>";
             }

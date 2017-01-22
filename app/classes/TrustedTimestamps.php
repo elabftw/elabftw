@@ -602,7 +602,7 @@ class TrustedTimestamps extends Entity
         $out .= "<br>Timestamp: " . $year . "-" . $month . "-" . $day . " at " . $hour . ":" . $minute . ":" . $second;
 
         $out .= "<br><br>TSA info:";
-        $out .= "<br>TSA: ". $tsa;
+        $out .= "<br>TSA: " . $tsa;
         $out .= "<br>Country: " . $country;
 
         return $out;

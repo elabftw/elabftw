@@ -25,7 +25,7 @@ require_once 'app/head.inc.php';
 
 try {
     $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid']);
-    $expArr = $Experiments->readAllFromUser();
+    $expArr = $Experiments->readAll();
     $count = count($expArr);
 
     $Users = new Users();

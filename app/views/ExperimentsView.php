@@ -115,13 +115,11 @@ class ExperimentsView extends EntityView
 
         } else {
 
-            if ($this->showTeam) {
-                // get all XP from team
-                $itemsArr = $this->Entity->readAll();
-            } else {
-                // get all XP items for the user
-                $itemsArr = $this->Entity->readAllFromUser();
+            if (!$this->showTeam) {
+                // filter by user
+                $this->Entity->useridFilter = " AND experiments.userid = " . $this->Entity->userid;
             }
+            $itemsArr = $this->Entity->readAll();
 
         }
 
@@ -130,11 +128,11 @@ class ExperimentsView extends EntityView
         foreach ($itemsArr as $item) {
 
             // fill an array with the ID of each item to use in the csv/zip export menu
-            $this->Entity->setId($item['id'], true);
-            if ($this->Entity->canRead) {
-                $idArr[] = $this->Entity->id;
+            //$this->Entity->setId($item['id'], true);
+            //if ($this->Entity->canRead) {
+             //   $idArr[] = $this->Entity->id;
                 $html2 .= $this->showUnique($item);
-            }
+            //}
 
         }
 
@@ -496,7 +494,7 @@ class ExperimentsView extends EntityView
 
             // autocomplete the tags
             $('#createTagInput').autocomplete({
-                source: [" . $Tags->generateTagList() . "]
+                source: [" . $Tags->generateTagList('autocomplete') . "]
             });
 
             // autocomplete the links

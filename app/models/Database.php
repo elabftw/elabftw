@@ -21,6 +21,8 @@ class Database extends Entity
     /** inserted in sql */
     public $bookableFilter = '';
 
+    public $ratingFilter = '';
+
     /**
      * Give me the team on init
      *
@@ -124,7 +126,11 @@ class Database extends Entity
         LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads
         ON (uploads.attachment = items.id AND uploads.type = 'items')
         WHERE items.team = :teamid
+        " . $this->titleFilter . "
+        " . $this->dateFilter . "
+        " . $this->bodyFilter . "
         " . $this->bookableFilter . "
+        " . $this->ratingFilter . "
         " . $this->categoryFilter . "
         " . $this->tagFilter . "
         " . $this->queryFilter . "

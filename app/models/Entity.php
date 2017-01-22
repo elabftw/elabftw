@@ -33,6 +33,17 @@ class Entity
     /** id of our entity */
     public $id;
 
+    public $useridFilter = '';
+
+    /** inserted in sql */
+    public $titleFilter = '';
+
+    /** inserted in sql */
+    public $dateFilter = '';
+
+    /** inserted in sql */
+    public $bodyFilter = '';
+
     /** inserted in sql */
     public $categoryFilter = '';
 

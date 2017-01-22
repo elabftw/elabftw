@@ -45,11 +45,6 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
 
     public function testReadAll()
     {
-        $this->assertTrue(is_array($this->Experiments->readAllFromUser()));
-    }
-
-    public function testReadAllFromTeam()
-    {
         $this->assertTrue(is_array($this->Experiments->readAll()));
     }
 

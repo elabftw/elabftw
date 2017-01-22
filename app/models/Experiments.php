@@ -30,6 +30,8 @@ class Experiments extends Entity
     /** instance of Comments */
     public $Comments;
 
+    public $teamFilter = '';
+
     /**
      * Constructor
      *
@@ -121,32 +123,6 @@ class Experiments extends Entity
     }
 
     /**
-     * Read all experiments for current user
-     *
-     * @return array
-     */
-    public function readAllFromUser()
-    {
-        $sql = "SELECT DISTINCT experiments.*, status.color, status.name, uploads.*, experiments_comments.datetime
-            FROM experiments
-            LEFT JOIN status ON (status.team = experiments.team)
-            LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
-            LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
-            LEFT JOIN experiments_comments ON (experiments_comments.exp_id = experiments.id)
-            WHERE experiments.userid = :userid
-            AND experiments.status = status.id
-            " . $this->categoryFilter . "
-            " . $this->tagFilter . "
-            " . $this->queryFilter . "
-            ORDER BY " . $this->order . " " . $this->sort;
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
-        $req->execute();
-
-        return $req->fetchAll();
-    }
-
-    /**
      * Read all experiments from the team
      *
      * @return array
@@ -155,12 +131,16 @@ class Experiments extends Entity
     {
         $sql = "SELECT DISTINCT experiments.*, status.color, status.name, uploads.*, experiments_comments.datetime
             FROM experiments
-            LEFT JOIN status ON (status.team = experiments.team)
+            LEFT JOIN status ON (status.id = experiments.status)
             LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
-            LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
+            LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads
+            ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
             LEFT JOIN experiments_comments ON (experiments_comments.exp_id = experiments.id)
             WHERE experiments.team = " . $this->team . "
-            AND experiments.status = status.id
+            " . $this->useridFilter . "
+            " . $this->titleFilter . "
+            " . $this->dateFilter . "
+            " . $this->bodyFilter . "
             " . $this->categoryFilter . "
             " . $this->tagFilter . "
             " . $this->queryFilter . "

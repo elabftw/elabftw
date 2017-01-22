@@ -67,7 +67,7 @@ class UsersView
             $html .= "<input class='clean-form' id='usersUpdateEmail' type='email' value='" .
                 $user['email'] . "' name='email' /></li>";
             $html .= "<li>";
-            $html .= "<label class='block' for='usersUpdateValidated'>". _('Has an active account?') . "</label>";
+            $html .= "<label class='block' for='usersUpdateValidated'>" . _('Has an active account?') . "</label>";
             $html .= "<select class='clean-form' name='validated' id='usersUpdateValidated'>";
             $html .= "<option value='1'";
             if ($user['validated'] == '1') {
@@ -121,7 +121,7 @@ class UsersView
             $html .= "<span class='smallgray'>" .
                 $Auth::MIN_PASSWORD_LENGTH . " " . _('characters minimum') . "</span></li>";
             $html .= "</ul>";
-            $html .= "<button type='submit' class='button'>".  _('Save') . "</button>";
+            $html .= "<button type='submit' class='button'>" .  _('Save') . "</button>";
             $html .= "</form>";
             $html .= "</li>";
             $html .= "<hr>";

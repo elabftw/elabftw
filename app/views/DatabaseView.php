@@ -307,7 +307,7 @@ class DatabaseView extends EntityView
 
             // autocomplete the tags
             $('#createTagInput').autocomplete({
-                source: [" . $Tags->generateTagList() . "]
+                source: [" . $Tags->generateTagList('autocomplete') . "]
             });
 
             // If the title is 'Untitled', clear it on focus

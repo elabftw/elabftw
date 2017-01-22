@@ -47,7 +47,8 @@ module.exports = function(grunt) {
               'app/js/tinymce-langs/*',
               'bower_components/dropzone/dist/dropzone.js'],
 
-          'app/js/file-saver.min.js': 'bower_components/file-saver.js/FileSaver.js'
+          'app/js/file-saver.min.js': 'bower_components/file-saver.js/FileSaver.js',
+          'app/js/plugins/mention/plugin.min.js': 'app/js/plugins/mention/plugin.js'
         }
       }
     },

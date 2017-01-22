@@ -22,8 +22,11 @@ $page_title = _('Search');
 $selected_menu = 'Search';
 require_once 'app/head.inc.php';
 
+$Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid']);
+$Database = new Database($_SESSION['team_id'], $_SESSION['userid']);
 $ItemsTypes = new ItemsTypes($_SESSION['team_id']);
 $Status = new Status($_SESSION['team_id']);
+$Users = new Users();
 
 // make array of results id
 $results_arr = array();
@@ -114,54 +117,22 @@ foreach ($itemsTypesArr as $items_types) {
             </div>
             <!-- END SEARCH IN -->
             <!-- SEARCH WITH TAG -->
-<?php
-// get the list of tags to display
-
-// we want the tags of everyone in the team if we search for the whole team's experiments
-if (isset($_GET['owner']) && ($_GET['owner'] === '0')) {
-
-    $sql = "SELECT tag, COUNT(*) as nbtag
-        FROM experiments_tags
-        INNER JOIN users ON (experiments_tags.userid = users.userid)
-        WHERE users.team = :team
-        GROUP BY tag ORDER BY tag ASC";
-    $req = $pdo->prepare($sql);
-    $req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
-    $req->execute();
-
-} else {
-
-    $sql = "SELECT tag, COUNT(*) as nbtag
-        FROM experiments_tags
-        WHERE userid = :userid
-        GROUP BY tag ORDER BY tag ASC";
-    $req = $pdo->prepare($sql);
-    // we want to show the tags of the selected person in 'search in' dropdown
-    // so if there is a owner parameter, use it to select tags
-    if (isset($_GET['owner']) && Tools::checkId($_GET['owner'])) {
-        $userid = $_GET['owner'];
-    } else {
-        $userid = $_SESSION['userid'];
-    }
-    $req->bindParam(':userid', $userid, PDO::PARAM_INT);
-    $req->execute();
-}
-?>
-
             <div class='col-md-3' id='tag_exp'>
                 <label for='tag_exp'><?php echo _('With the tag'); ?></label>
                 <select name='tag_exp' style='max-width:80%'>
                     <option value=''><?php echo _('Select a Tag'); ?></option>
 
 <?php
-while ($exp_tags = $req->fetch()) {
-    echo "<option value='" . $exp_tags['tag'] . "'";
-    // item get selected if it is in the search url
-    if (isset($_GET['tag_exp']) && ($exp_tags['tag'] == $_GET['tag_exp'])) {
-        echo " selected='selected'";
-    }
-    echo ">" . $exp_tags['tag'] . " (" . $exp_tags['nbtag'] . ")</option>";
+$tag_in_url = null;
+if (isset($_GET['tag_exp'])) {
+    $tag_in_url = $_GET['tag_exp'];
 }
+if (isset($_GET['tag_db'])) {
+    $tag_in_url = $_GET['tag_db'];
+}
+
+$Tags = new Tags($Experiments);
+echo $Tags->generateTagList('options', $tag_in_url);
 ?>
 
                 </select>
@@ -173,20 +144,8 @@ while ($exp_tags = $req->fetch()) {
                     <option value=''><?php echo _('Select a tag'); ?></option>
 
 <?php // Database items types
-// TODO here we should show only the tags linked with the type of item selected in the 'searchin' select
-$sql = "SELECT tag, COUNT(*) as nbtag FROM items_tags WHERE team_id = :team GROUP BY tag ORDER BY tag ASC";
-$req = $pdo->prepare($sql);
-$req->bindParam(':team', $_SESSION['team_id'], PDO::PARAM_INT);
-$req->execute();
-
-while ($items_types = $req->fetch()) {
-    echo "<option value='" . $items_types['tag'] . "'";
-    // item get selected if it is in the search url
-    if (isset($_GET['tag_db']) && ($items_types['tag'] == $_GET['tag_db'])) {
-        echo " selected='selected'";
-    }
-    echo ">" . $items_types['tag'] . " (" . $items_types['nbtag'] . ")</option>";
-}
+$Tags = new Tags($Database);
+echo $Tags->generateTagList('options', $tag_in_url);
 ?>
                 </select>
             </div>
@@ -207,19 +166,14 @@ if (isset($_GET['owner']) && ($_GET['owner'] === '0')) {
 echo ">" . _("All the team"); ?></option>
 <option disabled>----------------</option>
 <?php
-    $users_sql = "SELECT userid, CONCAT (firstname, ' ', lastname) AS name
-    FROM users WHERE team = :team ORDER BY firstname ASC";
-$users_req = $pdo->prepare($users_sql);
-$users_req->execute(array(
-    'team' => $_SESSION['team_id']
-));
-while ($users = $users_req->fetch()) {
-    echo "<option value='" . $users['userid'] . "'";
+$usersArr = $Users->readAllFromTeam($_SESSION['team_id']);
+foreach ($usersArr as $user) {
+    echo "<option value='" . $user['userid'] . "'";
     // item get selected if it is in the search url
-    if (isset($_GET['owner']) && ($users['userid'] == $_GET['owner'])) {
+    if (isset($_GET['owner']) && ($user['userid'] == $_GET['owner'])) {
         echo " selected='selected'";
     }
-    echo ">" . $users['name'] . "</option>";
+    echo ">" . $user['fullname'] . "</option>";
 }
 ?>
                 </select><br>
@@ -312,20 +266,26 @@ for ($i = 1; $i <= 5; $i++) {
 if (isset($_GET)) {
     // assign variables from get
 
+    $table = 'items';
+    $status = '';
+    $rating = '';
+    $tags = '';
+
+    // TABLE
+    if (isset($_GET['type']) && $_GET['type'] === 'experiments') {
+        $table = 'experiments';
+    }
+
     // TAGS
     if (isset($_GET['tag_exp']) && !empty($_GET['tag_exp']) && isset($_GET['type']) && $_GET['type'] === 'experiments') {
         $tags = filter_var($_GET['tag_exp'], FILTER_SANITIZE_STRING);
     } elseif (isset($_GET['tag_db']) && !empty($_GET['tag_db']) && isset($_GET['type']) && !empty($_GET['type']) && $_GET['type'] !== 'experiments') {
         $tags = filter_var($_GET['tag_db'], FILTER_SANITIZE_STRING);
-    } else {
-        $tags = '';
     }
 
     // STATUS
     if (isset($_GET['status']) && !empty($_GET['status']) && Tools::checkId($_GET['status'])) {
         $status = $_GET['status'];
-    } else {
-        $status = '';
     }
 
     // RATING
@@ -335,29 +295,16 @@ if (isset($_GET)) {
         } else {
             $rating = intval($_GET['rating']);
         }
-    } else {
-        $rating = '';
-    }
-
-    // OWNER
-    if (isset($_GET['owner']) && !empty($_GET['owner']) && Tools::checkId($_GET['owner'])) {
-        $owner_search = true;
-        $owner = $_GET['owner'];
-    } else {
-        $owner_search = false;
-        $owner = '';
     }
 
     // PREPARE SQL query
-    if (isset($_GET['type']) && $_GET['type'] === 'experiments') {
-        $tb = 'exp';
-        $tbt = 'exptag';
-    } else {
-        $tb = 'i';
-        $tbt = 'itag';
-    }
-
-    $sqlGroup = " GROUP BY $tb.id";
+    $sqlUserid = '';
+    $sqlDate = '';
+    $sqlTitle = '';
+    $sqlBody = '';
+    $sqlTag = '';
+    $sqlStatus = '';
+    $sqlRating = '';
 
     // Title search
     if ($titleWithSpace) {
@@ -366,13 +313,11 @@ if (isset($_GET)) {
             if ($key != 0) {
                 $sqlTitle .= $andor;
             }
-            $sqlTitle .= "$tb.title LIKE '%$value%'";
+            $sqlTitle .= $table . ".title LIKE '%$value%'";
         }
         $sqlTitle .= ")";
     } elseif (!empty($title)) {
-        $sqlTitle = " AND $tb.title LIKE '%$title%'";
-    } else {
-        $sqlTitle = "";
+        $sqlTitle = " AND " . $table . ".title LIKE '%$title%'";
     }
 
     // Body search
@@ -382,161 +327,86 @@ if (isset($_GET)) {
             if ($key != 0) {
                 $sqlBody .= $andor;
             }
-            $sqlBody .= "$tb.body LIKE '%$value%'";
+            $sqlBody .= "$table.body LIKE '%$value%'";
         }
         $sqlBody .= ")";
     } elseif (!empty($body)) {
-        $sqlBody = " AND $tb.body LIKE '%$body%'";
-    } else {
-        $sqlBody = "";
+        $sqlBody = " AND $table.body LIKE '%$body%'";
     }
 
     // Tag search
     if (!empty($tags)) {
-        $sqlTag = " AND $tb.id = $tbt.item_id AND $tbt.tag = '$tags'";
-    } else {
-        $sqlTag = "";
+        $sqlTag = " AND $table.id = " . $table . "_tag.item_id AND " . $table . "_tag.tag = '$tags'";
     }
 
     // Status search
     if (!empty($status)) {
-        $sqlStatus = " AND $tb.status LIKE '$status'";
-    } else {
-        $sqlStatus = "";
+        $sqlStatus = " AND $table.status = '$status'";
     }
 
     // Rating search
     if (!empty($rating)) {
-        $sqlRating = " AND $tb.rating LIKE '$rating'";
-    } else {
-        $sqlRating = "";
+        $sqlRating = " AND $table.rating LIKE '$rating'";
     }
 
     // Date search
     if (!empty($from) && !empty($to)) {
-        $sqlDate = " AND $tb.date BETWEEN '$from' AND '$to'";
+        $sqlDate = " AND $table.date BETWEEN '$from' AND '$to'";
     } elseif (!empty($from) && empty($to)) {
-        $sqlDate = " AND $tb.date BETWEEN '$from' AND '99991212'";
+        $sqlDate = " AND $table.date BETWEEN '$from' AND '99991212'";
     } elseif (empty($from) && !empty($to)) {
-        $sqlDate = " AND $tb.date BETWEEN '00000101' AND '$to'";
-    } else {
-        $sqlDate = "";
+        $sqlDate = " AND $table.date BETWEEN '00000101' AND '$to'";
     }
 
-    // EXPERIMENT SEARCH
+    /////////////////////////////////////////////////////////////////
     if (isset($_GET['type'])) {
         if ($_GET['type'] === 'experiments') {
+            // EXPERIMENTS SEARCH
+            $EntityView = new ExperimentsView($Experiments);
 
-            if (isset($_GET['owner']) && $_GET['owner'] === '0') {
-                $sqlFirst = " $tb.team = " . $_SESSION['team_id'];
-            } else {
-                $sqlFirst = " $tb.userid = :userid";
-            }
-
-            // if you select from two tables but one is empty, as it makes a cross join, no results will be returned
-            // on a fresh install, if there is no tags, it will not find anything
-            // so we make a left join
-            // https://stackoverflow.com/questions/3171276/select-multiple-tables-when-one-table-is-empty-in-mysql
-            $sql = "SELECT exp.* FROM experiments as exp LEFT JOIN experiments_tags as exptag ON 1=1 WHERE" . $sqlFirst . $sqlTitle . $sqlBody . $sqlTag . $sqlStatus . $sqlDate . $sqlGroup;
-            $req = $pdo->prepare($sql);
-            // if there is a selection on 'owned by', we use the owner id as parameter
-            if ($owner_search) {
-                $req->execute(array(
-                    'userid' => $owner
-                ));
-            } else {
-                $req->execute(array(
-                    'userid' => $_SESSION['userid']
-                ));
-            }
-
-            $search_type = 'experiments';
-
-        // DATABASE SEARCH
-        } elseif (Tools::checkId($_GET['type']) || $_GET['type'] === 'database') {
-            // we want only stuff from our team
-            $sqlTeam = " AND i.team = " . $_SESSION['team_id'];
-
-            // display entire team database
-            if ($_GET['type'] === 'database' &&
-                empty($title) &&
-                empty($body) &&
-                empty($tags) &&
-                empty($status) &&
-                empty($rating) &&
-                empty($from) &&
-                empty($to)) {
-
-                $sqlFirst = "SELECT i.* FROM items as i LEFT JOIN items_tags as itag ON 1=1 WHERE i.id > 0";
-
-            } elseif ($_GET['type'] === 'database') {
-
-                $sqlFirst = "SELECT i.* FROM items as i LEFT JOIN items_tags as itag ON 1=1 WHERE i.id > 0";
-
-            } else {
-
-                $sqlFirst = "SELECT i.* FROM items as i LEFT JOIN  items_tags as itag ON 1=1 WHERE type = :type";
-            }
-
-            $sql = $sqlFirst . $sqlTeam . $sqlTitle . $sqlBody . $sqlTag . $sqlRating . $sqlDate . $sqlGroup;
-            $req = $pdo->prepare($sql);
-            if ($_GET['type'] === 'database') {
-                $req->execute();
-            } else {
-                $req->execute(array(
-                    'type' => $_GET['type']
-                ));
-            }
-
-            $search_type = 'items';
-        }
-
-        // BEGIN DISPLAY RESULTS
-
-        if ($req->rowCount() === 0) {
-                display_message('ko_nocross', _("Sorry. I couldn't find anything :("));
-        } else {
-            while ($get_id = $req->fetch()) {
-                $results_arr[] = $get_id['id'];
-            }
-            // sort by id, biggest (newer item) comes first
-            $results_arr = array_reverse($results_arr);
-            $total_time = get_total_time();
-            ?>
-            <!-- Export CSV/ZIP -->
-            <div class='align_right'>
-                <a name='anchor'></a>
-                <p class='inline'><?= _('Export this result:') ?> </p>
-                <a href='make.php?what=zip&id=<?= Tools::buildStringFromArray($results_arr) ?>&type=<?= $search_type ?>'>
-                    <img src='app/img/zip.png' title='make a zip archive' alt='zip' />
-                </a>
-
-                <a href='make.php?what=csv&id=<?= Tools::buildStringFromArray($results_arr) ?>&type=<?= $search_type ?>'>
-                    <img src='app/img/spreadsheet.png' title='Export in spreadsheet file' alt='Export CSV' />
-                </a>
-            </div>
-            <?php
-            echo "<p>" . count($results_arr) . " " . ngettext("result found", "results found", count($results_arr)) . " (" . $total_time['time'] . " " . $total_time['unit'] . ")</p>";
-            // Display results
-            echo "<hr>";
-            if ($search_type === 'experiments') {
-                $EntityView = new ExperimentsView(new Experiments($_SESSION['team_id'], $_SESSION['userid']));
-            } else {
-                $EntityView = new DatabaseView(new Database($_SESSION['team_id'], $_SESSION['userid']));
-            }
-
-            foreach ($results_arr as $id) {
-                if ($search_type === 'experiments') {
-                    $EntityView->Entity->id = $id;
-                    $item = $EntityView->Entity->read();
-                } else {
-                    $EntityView->Entity->id = $id;
-                    $item = $EntityView->Entity->read();
+            // USERID FILTER
+            if (isset($_GET['owner'])) {
+                $EntityView->searchType = 'userid';
+                if (Tools::checkId($_GET['owner'])) {
+                    $owner = $_GET['owner'];
+                    $sqlUserid = " AND experiments.userid = " . $owner;
+                } elseif (empty($_GET['owner'])) {
+                    $owner = $EntityView->Entity->userid;
+                    $sqlUserid = " AND experiments.userid = " . $owner;
+                } elseif ($_GET['owner'] === '0') {
+                    // read all experiments from team
+                    $EntityView->Entity->showTeam = true;
                 }
+            }
 
-                echo $EntityView->showUnique($item);
+            // STATUS
+            $EntityView->Entity->categoryFilter = $sqlStatus;
+
+        } else {
+            // DATABASE SEARCH
+            $EntityView = new DatabaseView($Database);
+
+            // RATING
+            $EntityView->Entity->ratingFilter = $sqlRating;
+            if (Tools::checkId($_GET['type'])) {
+                // filter on database items types
+                $EntityView->Entity->categoryFilter = "AND items_types.id = " . $_GET['type'];
+                $EntityView->searchType = 'filter';
             }
         }
+
+        // adjust display
+        $EntityView->display = $_SESSION['prefs']['display'];
+        // we are on the search page, so we don't want any "click here to create your first..."
+        $EntityView->searchType = 'something';
+
+        $EntityView->Entity->useridFilter = $sqlUserid;
+        $EntityView->Entity->titleFilter = $sqlTitle;
+        $EntityView->Entity->dateFilter = $sqlDate;
+        $EntityView->Entity->bodyFilter = $sqlBody;
+
+        // DISPLAY RESULTS
+        echo $EntityView->buildShow();
     }
 }
 ?>

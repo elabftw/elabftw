@@ -267,7 +267,7 @@ function getDbList($format = 'default')
     // complete the list with experiments (only for tinymce)
     // fix #191
     $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid']);
-    $expArr = $Experiments->readAllFromUser();
+    $expArr = $Experiments->readAll();
 
     foreach ($expArr as $exp) {
 

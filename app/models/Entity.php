@@ -87,7 +87,7 @@ class Entity
     {
         if (Tools::checkId($id) === false) {
             // TODO this is failing when callend from the timestamp thing controller
-            //throw new Exception(_('The id parameter is not valid!'));
+            throw new Exception(_('The id parameter is not valid!'));
         }
         $this->id = $id;
         // prevent reusing of old data from previous id
@@ -235,10 +235,10 @@ class Entity
     {
         $permissions = array('read' => false, 'write' => false);
 
-        if (is_null($this->entityData) && is_null($item)) {
+        if (!isset($this->entityData) && !isset($item)) {
             $this->populate();
         }
-        if (is_null($item)) {
+        if (!isset($item)) {
             $item = $this->entityData;
         }
 

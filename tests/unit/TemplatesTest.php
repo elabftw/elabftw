@@ -17,6 +17,7 @@ class TemplatesTest extends \PHPUnit_Framework_TestCase
 
     public function testRead()
     {
+        $this->Templates->setId(1);
         $this->assertTrue(is_array($this->Templates->read(1)));
     }
     public function testReadFromUserid()

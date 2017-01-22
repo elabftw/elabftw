@@ -62,17 +62,17 @@ class Experiments extends Entity
      */
     public function create($tpl = null)
     {
-        $templates = new Templates($this->team);
+        $Templates = new Templates($this->team);
 
         // do we want template ?
-        if (Tools::checkId($tpl)) {
-
-            $templatesArr = $templates->read($tpl);
+        if (!is_null($tpl)) {
+            $Templates->setId($tpl);
+            $templatesArr = $Templates->read();
             $title = $templatesArr['name'];
 
         } else {
 
-            $templatesArr = $templates->readCommon();
+            $templatesArr = $Templates->readCommon();
             $title = _('Untitled');
         }
 

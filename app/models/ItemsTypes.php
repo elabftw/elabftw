@@ -25,12 +25,16 @@ class ItemsTypes extends Entity
      * Constructor
      *
      * @param int $team
+     * @param int|null $id
      * @throws Exception if user is not admin
      */
-    public function __construct($team)
+    public function __construct($team, $id = null)
     {
         $this->pdo = Db::getConnection();
         $this->team = $team;
+        if (!is_null($id)) {
+            $this->setId($id);
+        }
     }
 
     /**
@@ -65,14 +69,13 @@ class ItemsTypes extends Entity
     /**
      * Read from an id
      *
-     * @param int $id
      * @return array
      */
-    public function read($id)
+    public function read()
     {
         $sql = "SELECT template FROM items_types WHERE id = :id AND team = :team";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $id);
+        $req->bindParam(':id', $this->id);
         $req->bindParam(':team', $this->team);
         $req->execute();
 

@@ -47,7 +47,7 @@ class Database extends Entity
      */
     public function create($itemType)
     {
-        $itemsTypes = new ItemsTypes($this->team);
+        $itemsTypes = new ItemsTypes($this->team, $itemType);
 
         // SQL for create DB item
         $sql = "INSERT INTO items(team, title, date, body, userid, type)
@@ -57,7 +57,7 @@ class Database extends Entity
             'team' => $this->team,
             'title' => _('Untitled'),
             'date' => Tools::kdate(),
-            'body' => $itemsTypes->read($itemType),
+            'body' => $itemsTypes->read(),
             'userid' => $this->userid,
             'type' => $itemType
         ));

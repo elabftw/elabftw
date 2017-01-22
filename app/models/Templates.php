@@ -24,11 +24,15 @@ class Templates extends Entity
      * Give me the team on init
      *
      * @param int $team
+     * @param int|null $id
      */
-    public function __construct($team)
+    public function __construct($team, $id = null)
     {
         $this->pdo = Db::getConnection();
         $this->team = $team;
+        if (!is_null($id)) {
+            $this->setId($id);
+        }
     }
 
     /**
@@ -73,14 +77,13 @@ class Templates extends Entity
     /**
      * Read a template
      *
-     * @param int $id
      * @return array
      */
-    public function read($id)
+    public function read()
     {
         $sql = "SELECT name, body FROM experiments_templates WHERE id = :id AND team = :team";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $id);
+        $req->bindParam(':id', $this->id);
         $req->bindParam(':team', $this->team);
         $req->execute();
 

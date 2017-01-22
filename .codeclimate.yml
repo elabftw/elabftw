@@ -23,7 +23,7 @@ ratings:
   - "**.py"
   - "**.rb"
 exclude_paths:
-- js/*
+- app/js/*
 - vendor/*
 - tests/*
 - doc/*

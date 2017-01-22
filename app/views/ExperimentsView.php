@@ -128,11 +128,11 @@ class ExperimentsView extends EntityView
         foreach ($itemsArr as $item) {
 
             // fill an array with the ID of each item to use in the csv/zip export menu
-            //$this->Entity->setId($item['id'], true);
-            //if ($this->Entity->canRead) {
-             //   $idArr[] = $this->Entity->id;
+            $this->Entity->setId($item['id'], true);
+            if ($this->Entity->canRead) {
+                $idArr[] = $this->Entity->id;
                 $html2 .= $this->showUnique($item);
-            //}
+            }
 
         }
 

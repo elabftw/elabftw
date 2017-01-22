@@ -148,7 +148,9 @@ try {
     // TIMESTAMP
     if (isset($_POST['timestamp'])) {
         try {
-            $ts = new TrustedTimestamps(new Config(), new Teams($_SESSION['team_id']), $_POST['id']);
+            $Entity->setId($_POST['id']);
+            $Entity->canOrExplode('write');
+            $ts = new TrustedTimestamps(new Config(), new Teams($_SESSION['team_id']), $Entity);
             if ($ts->timeStamp()) {
                 echo json_encode(array(
                     'res' => true
@@ -194,7 +196,7 @@ try {
 
     // DECODE ASN1 TOKEN
     if (isset($_POST['asn1']) && is_readable(ELAB_ROOT . "uploads/" . $_POST['asn1'])) {
-        $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($_SESSION['team_id']), $_POST['exp_id']);
+        $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($_SESSION['team_id']), $Entity);
 
         echo json_encode(array(
             'res' => true,

@@ -10,10 +10,8 @@
  */
 namespace Elabftw\Elabftw;
 
-use \Elabftw\Elabftw\MakePdf;
-use \Elabftw\Elabftw\MakeCsv;
-use \ZipArchive;
-use \Exception;
+use ZipArchive;
+use Exception;
 
 /**
  * Make a zip archive from experiment or db item
@@ -193,7 +191,7 @@ class MakeZip extends Make
      */
     private function addPdf($id)
     {
-        $pdf = new MakePdf($id, $this->type, true);
+        $pdf = new MakePdf($this->Entity, true);
         $this->zip->addFile($pdf->filePath, $this->folder . '/' . $pdf->getCleanName());
         $this->filesToDelete[] = $pdf->filePath;
     }

@@ -108,11 +108,8 @@ class ExperimentsView extends EntityView
             $html .= "<img style='clear:both' class='align_right' src='app/img/attached.png' alt='file attached' />";
         }
         // we show the abstract of the experiment on mouse hover with the title attribute
-        if ($this->Entity->canRead) {
-            $bodyAbstract = str_replace("'", "", substr(strip_tags($item['body']), 0, 100));
-        } else {
-            $bodyAbstract = '';
-        }
+        $bodyAbstract = str_replace("'", "", substr(strip_tags($item['body']), 0, 100));
+
         $html .= "<a title='" . $bodyAbstract . "' href='experiments.php?mode=view&id=" . $item['id'] . "'>";
         $html .= "<p class='title'>";
         if ($item['timestamped']) {

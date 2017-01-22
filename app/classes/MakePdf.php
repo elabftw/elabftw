@@ -48,25 +48,16 @@ class MakePdf extends Make
     /**
      * Everything is done in the constructor
      *
-     * @param int $id The id of the item we want
-     * @param string $type 'experiments' or 'items'
+     * @param Entity $entity Experiments or Database
      * @param bool|null $toFile Do we want to write it to a file ?
      */
-    public function __construct($id, $type, $toFile = false)
+    public function __construct(Entity $entity, $toFile = false)
     {
         $this->pdo = Db::getConnection();
-        // assign and check type
-        $this->type = $this->checkType($type);
-        if ($this->type === 'experiments') {
-            $this->Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $id);
-        } else {
-            $this->Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $id);
-        }
-
+        $this->Entity = $entity;
         $this->Entity->canOrExplode('read');
 
         // build the pdf content
-        $this->initData();
         $this->setAuthor();
         $this->setCleanTitle();
         $this->setTags();
@@ -107,21 +98,6 @@ class MakePdf extends Make
     }
 
     /**
-     * Get data about the item we are pdf'ing
-     *
-     * @deprecated to remove
-     */
-    private function initData()
-    {
-        // one cannot use placeholders as table or column identifiers in a prepared statement
-        $sql = "SELECT * FROM " . $this->type . " WHERE id = :id";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id);
-        $req->execute();
-        $this->data = $req->fetch();
-    }
-
-    /**
      * Get firstname and lastname to put in pdf
      */
     private function setAuthor()
@@ -129,7 +105,7 @@ class MakePdf extends Make
         // SQL to get firstname + lastname
         $sql = "SELECT firstname,lastname FROM users WHERE userid = :userid";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':userid', $this->data['userid'], \PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Entity->entityData['userid'], \PDO::PARAM_INT);
         $req->execute();
         $data = $req->fetch();
 
@@ -141,8 +117,8 @@ class MakePdf extends Make
      */
     private function setCleanTitle()
     {
-        $this->title = stripslashes($this->data['title']);
-        $this->cleanTitle = $this->data['date'] . "-" . preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($this->data['title']));
+        $this->title = stripslashes($this->Entity->entityData['title']);
+        $this->cleanTitle = $this->Entity->entityData['date'] . "-" . preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($this->Entity->entityData['title']));
     }
 
     /**
@@ -151,7 +127,7 @@ class MakePdf extends Make
     private function setTags()
     {
         // SQL to get tags
-        $sql = "SELECT tag FROM " . $this->type . "_tags WHERE item_id = :item_id";
+        $sql = "SELECT tag FROM " . $this->Entity->type . "_tags WHERE item_id = :item_id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id);
         $req->execute();
@@ -167,8 +143,8 @@ class MakePdf extends Make
      */
     private function addElabid()
     {
-        if ($this->type === 'experiments') {
-            return "<p class='elabid'>elabid : " . $this->data['elabid'] . "</p>";
+        if ($this->Entity->type === 'experiments') {
+            return "<p class='elabid'>elabid : " . $this->Entity->entityData['elabid'] . "</p>";
         }
     }
 
@@ -177,16 +153,16 @@ class MakePdf extends Make
      */
     private function addLockinfo()
     {
-        if ($this->data['locked'] == '1' && $this->type == 'experiments') {
+        if ($this->Entity->entityData['locked'] == '1' && $this->Entity->type == 'experiments') {
             // get info about the locker
             $sql = "SELECT firstname,lastname FROM users WHERE userid = :userid LIMIT 1";
             $reqlock = $this->pdo->prepare($sql);
-            $reqlock->bindParam(':userid', $this->data['lockedby']);
+            $reqlock->bindParam(':userid', $this->Entity->entityData['lockedby']);
             $reqlock->execute();
             $lockuser = $reqlock->fetch();
 
             // separate the date and time
-            $lockdate = explode(' ', $this->data['lockedwhen']);
+            $lockdate = explode(' ', $this->Entity->entityData['lockedwhen']);
             return "<p class='elabid'>locked by " . $lockuser['firstname'] . " " . $lockuser['lastname'] . " on " . $lockdate[0] . " at " . $lockdate[1] . ".</p>";
         }
     }
@@ -244,7 +220,7 @@ class MakePdf extends Make
         $sql = "SELECT * FROM uploads WHERE item_id = :id AND type = :type";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $this->Entity->id);
-        $req->bindParam(':type', $this->type);
+        $req->bindParam(':type', $this->Entity->type);
         $req->execute();
 
         $real_name = array();
@@ -311,8 +287,8 @@ class MakePdf extends Make
         }
 
         $url = 'https://' . $server_address . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
-        if ($this->type === 'experiments') {
-            $target = $this->type . '.php';
+        if ($this->Entity->type === 'experiments') {
+            $target = $this->Entity->type . '.php';
         } else {
             $target = 'database.php';
         }
@@ -337,7 +313,7 @@ class MakePdf extends Make
      */
     private function addLinkedItems()
     {
-        if ($this->type === 'experiments') {
+        if ($this->Entity->type === 'experiments') {
             // SQL to get linked items
             $sql = "SELECT experiments_links.*,
                 experiments_links.link_id AS item_id,
@@ -389,7 +365,7 @@ class MakePdf extends Make
      */
     private function buildBody()
     {
-        $this->content .= str_replace("src=\"app/download.php?f=", "src=\"" . ELAB_ROOT . "uploads/", $this->data['body']);
+        $this->content .= str_replace("src=\"app/download.php?f=", "src=\"" . ELAB_ROOT . "uploads/", $this->Entity->entityData['body']);
     }
 
     /**
@@ -409,7 +385,7 @@ class MakePdf extends Make
     private function buildHeader()
     {
 
-        $date = date_create($this->data['date']);
+        $date = date_create($this->Entity->entityData['date']);
         $date_str = date_format($date, 'Y-m-d');
         $header = '
                 <html>
@@ -419,7 +395,7 @@ class MakePdf extends Make
                 <body>
                 <htmlpageheader name="header">
                     <div id="header">
-                        <h1>' . $this->data['title'] . '</h1>
+                        <h1>' . $this->Entity->entityData['title'] . '</h1>
                         <p style="float:left; width:90%;">
                             <strong>Date:</strong> ' . $date_str . '<br />
                             <strong>Tags:</strong> <em>' . $this->tags . '</em> <br />

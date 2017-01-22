@@ -40,8 +40,8 @@ $Scheduler = new Scheduler($_SESSION['team_id']);
 <div class='divhandle' id='tab1div'>
 <?php
 // we only want the bookable type of items
-$Database->bookableFilter = "AND bookable = 1";
-$items = $Database->readAll();
+$Database->bookableFilter = " AND bookable = 1";
+$items = $Database->read();
 $dropdown = '';
 if (count($items) === 0) {
     display_message('warning_nocross', _("No bookable items."));
@@ -55,7 +55,7 @@ if (count($items) === 0) {
     $dropdown .= "</button>";
     $dropdown .= "<ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>";
     foreach ($items as $item) {
-        $dropdown .= "<li class='dropdown-item'><a data-value='" . $item['title'] . "' href='team.php?item=" . $item['itemid'] . "'><span style='color:#" . $item['bgcolor'] . "'>"
+        $dropdown .= "<li class='dropdown-item'><a data-value='" . $item['title'] . "' href='team.php?item=" . $item['itemid'] . "'><span style='color:#" . $item['color'] . "'>"
             . $item['name'] . "</span> - " . $item['title'] . "</a></li>";
     }
     $dropdown .= "</ul>";

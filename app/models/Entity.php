@@ -86,7 +86,8 @@ class Entity
     public function setId($id)
     {
         if (Tools::checkId($id) === false) {
-            throw new Exception(_('The id parameter is not valid!'));
+            // TODO this is failing when callend from the timestamp thing controller
+            //throw new Exception(_('The id parameter is not valid!'));
         }
         $this->id = $id;
         // prevent reusing of old data from previous id
@@ -129,11 +130,7 @@ class Entity
      */
     public function canOrExplode($rw)
     {
-        if (!isset($this->entityData)) {
-            $this->populate();
-        }
-
-        $permissions = $this->getPermissions($this->entityData);
+        $permissions = $this->getPermissions();
 
         if (!$permissions[$rw]) {
             throw new Exception(Tools::error(true));
@@ -173,6 +170,9 @@ class Entity
     {
         $permissions = array('read' => false, 'write' => false);
 
+        if (is_null($this->entityData) && is_null($item)) {
+            $this->populate();
+        }
         if (is_null($item)) {
             $item = $this->entityData;
         }

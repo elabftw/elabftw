@@ -46,9 +46,6 @@ class Uploads extends Entity
      */
     public function create($file)
     {
-        if (!$this->Entity->canWrite) {
-            throw new Exception(Tools::error(true));
-        }
         if (!is_array($file) || count($file) === 0) {
             throw new Exception('No files received');
         }
@@ -316,10 +313,6 @@ class Uploads extends Entity
     public function destroy($id)
     {
         $uploadArr = $this->read();
-
-        if (!$this->Entity->canWrite) {
-            throw new Exception(Tools::error(true));
-        }
 
         // remove thumbnail
         $thumbPath = ELAB_ROOT . 'uploads/' . $uploadArr['long_name'] . '_th.jpg';

@@ -34,8 +34,8 @@ class TrustedTimestamps extends Entity
     /** our database connection */
     protected $pdo;
 
-    /** the id of the experiment */
-    public $id;
+    /** instance of Entity */
+    public $Entity;
 
     /** ELAB_ROOT . uploads/ . $pdfFileName */
     private $pdfPath;
@@ -69,9 +69,10 @@ class TrustedTimestamps extends Entity
      * @param Teams $teams
      * @param int $id The id of the experiment
      */
-    public function __construct(Config $config, Teams $teams, $id)
+    public function __construct(Config $config, Teams $teams, Entity $entity)
     {
         $this->Config = $config;
+        $this->Entity = $entity;
         $this->teamConfigArr = $teams->read();
 
         $this->pdo = Db::getConnection();
@@ -105,7 +106,7 @@ class TrustedTimestamps extends Entity
     private function generatePdf()
     {
         try {
-            $pdf = new MakePdf($this->id, 'experiments', true);
+            $pdf = new MakePdf($this->Entity, true);
             $this->pdfPath = $pdf->filePath;
             $this->pdfLongName = $pdf->fileName;
         } catch (Exception $e) {
@@ -384,8 +385,8 @@ class TrustedTimestamps extends Entity
         $req->bindParam(':real_name', $real_name);
         $req->bindParam(':long_name', $long_name);
         $req->bindValue(':comment', "Timestamp token");
-        $req->bindParam(':item_id', $this->id);
-        $req->bindParam(':userid', $_SESSION['userid']);
+        $req->bindParam(':item_id', $this->Entity->id);
+        $req->bindParam(':userid', $this->Entity->userid);
         $req->bindValue(':type', 'timestamp-token');
         $req->bindParam(':hash', $this->getHash($this->responsefilePath));
         $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
@@ -492,8 +493,8 @@ class TrustedTimestamps extends Entity
         $req->bindParam(':when', $this->responseTime);
         // the date recorded in the db has to match the creation time of the timestamp token
         $req->bindParam(':longname', $this->responsefilePath);
-        $req->bindParam(':userid', $_SESSION['userid']);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':userid', $this->Entity->userid);
+        $req->bindParam(':id', $this->Entity->id);
         if (!$req->execute()) {
             throw new Exception('Cannot update SQL!');
         }
@@ -507,7 +508,7 @@ class TrustedTimestamps extends Entity
     {
         $sql = "SELECT elabid FROM experiments WHERE id = :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id);
+        $req->bindParam(':id', $this->Entity->id);
         if (!$req->execute()) {
             throw new Exception('Cannot get elabid!');
         }
@@ -526,8 +527,8 @@ class TrustedTimestamps extends Entity
         $req->bindParam(':real_name', $this->pdfRealName);
         $req->bindParam(':long_name', $this->pdfLongName);
         $req->bindValue(':comment', "Timestamped PDF");
-        $req->bindParam(':item_id', $this->id);
-        $req->bindParam(':userid', $_SESSION['userid']);
+        $req->bindParam(':item_id', $this->Entity->id);
+        $req->bindParam(':userid', $this->Entity->userid);
         $req->bindValue(':type', 'exp-pdf-timestamp');
         $req->bindParam(':hash', $this->getHash($this->pdfPath));
         $req->bindParam(':hash_algorithm', $this->hashAlgorithm);

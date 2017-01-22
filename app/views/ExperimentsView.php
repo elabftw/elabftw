@@ -285,20 +285,20 @@ class ExperimentsView extends EntityView
         $Users = new Users();
         $timestamper = $Users->read($this->Entity->entityData['timestampedby']);
 
-        // we clone the object so we don't mess with the type
-        $ClonedUploads = clone $this->UploadsView->Uploads;
+        $this->UploadsView->Uploads->Entity->type = 'exp-pdf-timestamp';
+        $pdf = $this->UploadsView->Uploads->readAll();
 
-        $ClonedUploads->type = 'exp-pdf-timestamp';
-        $pdf = $ClonedUploads->readAll();
+        $this->UploadsView->Uploads->Entity->type = 'timestamp-token';
+        $token = $this->UploadsView->Uploads->readAll();
 
-        $ClonedUploads->type = 'timestamp-token';
-        $token = $ClonedUploads->readAll();
+        // set correct type back
+        $this->UploadsView->Uploads->Entity->type = 'experiments';
 
         $date = new DateTime($this->Entity->entityData['timestampedwhen']);
 
         return display_message(
             'ok_nocross',
-            _('Experiment was timestamped by') . " " . $timestamper['firstname'] . " " . $timestamper['lastname'] . " " . _('on') . " " . $date->format('Y-m-d') . " " . _('at') . " " . $date->format('H:i:s') . " "
+            _('Experiment was timestamped by') . " " . $timestamper['fullname'] . " " . _('on') . " " . $date->format('Y-m-d') . " " . _('at') . " " . $date->format('H:i:s') . " "
             . $date->getTimezone()->getName() . " <a href='uploads/" . $pdf[0]['long_name'] . "'><img src='app/img/pdf.png' title='" . _('Download timestamped pdf') . "' alt='pdf' /></a> <a href='uploads/" . $token[0]['long_name'] . "'><img src='app/img/download.png' title=\"" . _('Download token') . "\" alt='download token' /></a> <a href='#'><img onClick=\"decodeAsn1('" . $token[0]['long_name'] . "', '" . $this->Entity->entityData['id'] . "')\" src='app/img/info.png' title=\"" . _('Decode token') . "\" alt='decode token' /></a><div style='color:black;overflow:auto;display:hidden' id='decodedDiv'></div>"
         );
     }

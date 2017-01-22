@@ -204,13 +204,13 @@ class Uploads extends Entity
     }
 
     /**
-     * Read infos from an upload ID
+     * Read infos from an upload ID and type
+     * Type can be experiments, timestamp-pdf, items, timestamp-token
      *
      * @return array
      */
     public function read()
     {
-        // Check that the item we view has attached files
         $sql = "SELECT * FROM uploads WHERE id = :id AND type = :type";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $this->Entity->id);

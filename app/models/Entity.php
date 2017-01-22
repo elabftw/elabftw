@@ -86,7 +86,6 @@ class Entity
     public function setId($id)
     {
         if (Tools::checkId($id) === false) {
-            // TODO this is failing when callend from the timestamp thing controller
             throw new Exception(_('The id parameter is not valid!'));
         }
         $this->id = $id;

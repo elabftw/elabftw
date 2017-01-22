@@ -196,6 +196,7 @@ try {
 
     // DECODE ASN1 TOKEN
     if (isset($_POST['asn1']) && is_readable(ELAB_ROOT . "uploads/" . $_POST['asn1'])) {
+        $Entity->setId($_POST['exp_id']);
         $TrustedTimestamps = new TrustedTimestamps(new Config(), new Teams($_SESSION['team_id']), $Entity);
 
         echo json_encode(array(

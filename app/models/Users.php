@@ -301,9 +301,9 @@ class Users extends Auth
      */
     public function read($userid)
     {
-        $sql = 'SELECT users.*, groups.can_lock FROM users
+        $sql = "SELECT users.*, CONCAT(users.firstname, ' ', users.lastname) AS fullname, groups.can_lock FROM users
             LEFT JOIN groups ON groups.group_id = users.usergroup
-            WHERE users.userid = :userid';
+            WHERE users.userid = :userid";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':userid', $userid);
         $req->execute();

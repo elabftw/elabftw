@@ -21,6 +21,7 @@ class Database extends Entity
     /** inserted in sql */
     public $bookableFilter = '';
 
+    /** inserted in sql */
     public $ratingFilter = '';
 
     /**

@@ -30,6 +30,7 @@ class Experiments extends Entity
     /** instance of Comments */
     public $Comments;
 
+    /** inserted in sql */
     public $teamFilter = '';
 
     /**
@@ -123,7 +124,7 @@ class Experiments extends Entity
     }
 
     /**
-     * Read all experiments from the team
+     * Read all experiments from the team, with optional filters
      *
      * @return array
      */

@@ -369,9 +369,11 @@ if (isset($_GET)) {
                 } elseif (empty($_GET['owner'])) {
                     $owner = $EntityView->Entity->userid;
                     $sqlUserid = " AND experiments.userid = " . $owner;
-                } elseif ($_GET['owner'] === '0') {
+                }
+                if ($_GET['owner'] === '0') {
+                    $sqlUserid = '';
                     // read all experiments from team
-                    $EntityView->Entity->showTeam = true;
+                    $EntityView->showTeam = true;
                 }
             }
 
@@ -402,7 +404,9 @@ if (isset($_GET)) {
         $EntityView->Entity->bodyFilter = $sqlBody;
 
         // DISPLAY RESULTS
+        echo "<section style='margin-top:20px'>";
         echo $EntityView->buildShow();
+        echo "</section>";
     }
 }
 ?>

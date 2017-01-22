@@ -22,7 +22,7 @@ class ExperimentsView extends EntityView
     private $ro = false;
 
     /** show experiments from others in the team? */
-    private $showTeam = false;
+    public $showTeam = false;
 
     /** instance of TeamGroups */
     public $TeamGroups;

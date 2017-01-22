@@ -33,6 +33,7 @@ class Entity
     /** id of our entity */
     public $id;
 
+    /** inserted in sql */
     public $useridFilter = '';
 
     /** inserted in sql */

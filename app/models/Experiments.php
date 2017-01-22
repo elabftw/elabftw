@@ -136,7 +136,7 @@ class Experiments extends Entity
             LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads
             ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
             LEFT JOIN experiments_comments ON (experiments_comments.exp_id = experiments.id)
-            WHERE experiments.team = " . $this->team . "
+            WHERE experiments.team = :team
             " . $this->useridFilter . "
             " . $this->titleFilter . "
             " . $this->dateFilter . "
@@ -146,6 +146,7 @@ class Experiments extends Entity
             " . $this->queryFilter . "
             ORDER BY " . $this->order . " " . $this->sort;
         $req = $this->pdo->prepare($sql);
+        $req->bindParam(':team', $this->team);
         $req->execute();
 
         return $req->fetchAll();

@@ -28,10 +28,6 @@ $ItemsTypes = new ItemsTypes($_SESSION['team_id']);
 $Status = new Status($_SESSION['team_id']);
 $Users = new Users();
 
-// make array of results id
-$results_arr = array();
-$search_type = '';
-
 // TYPE
 if (isset($_GET['type']) && $_GET['type'] === 'database') {
     $seldb = " selected='selected'";

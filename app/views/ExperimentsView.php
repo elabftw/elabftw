@@ -276,17 +276,6 @@ class ExperimentsView extends EntityView
     }
 
     /**
-     * Check if the experiment is read only
-     *
-     * @return bool
-     */
-    private function isReadOnly()
-    {
-        $permissions = $this->Entity->getPermissions();
-        return $permissions['read'] && !$permissions['write'];
-    }
-
-    /**
      * Show info on timestamp
      *
      * @return string

@@ -62,6 +62,17 @@ class EntityView
         $this->UploadsView = new UploadsView(new Uploads($this->Entity));
     }
 
+    /**
+     * Check if the entity is read only
+     *
+     * @return bool
+     */
+    protected function isReadOnly()
+    {
+        $permissions = $this->Entity->getPermissions();
+        return $permissions['read'] && !$permissions['write'];
+    }
+
 
     /**
      * Add chemdoodle JS

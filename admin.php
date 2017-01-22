@@ -44,7 +44,7 @@ try {
     $unvalidatedUsersArr = $Users->readAllFromTeam($_SESSION['team_id'], 0);
 
     // only show the frame if there is some users to validate and there is an email config
-    if (count($unvalidatedUsersArr) != 0 && $Config->read('mail_from') != 'notconfigured@example.com') {
+    if (count($unvalidatedUsersArr) != 0 && $Config->configArr['mail_from'] != 'notconfigured@example.com') {
         $message = _('There are users waiting for validation of their account:');
         $message .= "<form method='post' action='app/controllers/UsersController.php'>";
         $message .= "<input type='hidden' name='usersValidate' value='true' />";

@@ -12,7 +12,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
     public function testRead()
     {
-        $this->assertTrue(is_array($this->Config->read()));
-        $this->assertEquals('sha256', $this->Config->read('stamphash'));
+        $this->assertTrue(is_array($this->Config->configArr));
+        $this->assertEquals('sha256', $this->Config->configArr['stamphash']);
     }
 }

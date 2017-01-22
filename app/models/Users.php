@@ -31,7 +31,7 @@ class Users extends Auth
     /**
      * Assign the config object
      *
-     * @param Config $config
+     * @param Config|null $config
      */
     public function __construct(Config $config = null)
     {

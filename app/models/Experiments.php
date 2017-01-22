@@ -46,7 +46,7 @@ class Experiments extends Entity
         $this->userid = $userid;
 
         if (!is_null($id)) {
-            $this->setId($id, true);
+            $this->setId($id);
         }
 
         $this->Links = new Links($this);
@@ -92,47 +92,6 @@ class Experiments extends Entity
         ));
 
         return $this->pdo->lastInsertId();
-    }
-
-    /**
-     * Read all experiments from the team, with optional filters
-     *
-     * @return array
-     */
-    public function read()
-    {
-        if (!is_null($this->id)) {
-            $this->idFilter = ' AND experiments.id = ' . $this->id;
-        }
-
-        $sql = "SELECT DISTINCT experiments.*, status.color, status.name, uploads.*, experiments_comments.datetime
-            FROM experiments
-            LEFT JOIN status ON (status.id = experiments.status)
-            LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
-            LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads
-            ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
-            LEFT JOIN experiments_comments ON (experiments_comments.exp_id = experiments.id)
-            WHERE experiments.team = :team
-            " . $this->idFilter . "
-            " . $this->useridFilter . "
-            " . $this->titleFilter . "
-            " . $this->dateFilter . "
-            " . $this->bodyFilter . "
-            " . $this->categoryFilter . "
-            " . $this->tagFilter . "
-            " . $this->queryFilter . "
-            ORDER BY " . $this->order . " " . $this->sort;
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $this->team);
-        $req->execute();
-
-        $itemsArr = $req->fetchAll();
-
-        // reduce the dimension of the array if we have only one item (idFilter set)
-        if (count($itemsArr) === 1) {
-            return $itemsArr[0];
-        }
-        return $itemsArr;
     }
 
     /**

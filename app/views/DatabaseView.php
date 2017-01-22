@@ -149,7 +149,7 @@ class DatabaseView extends EntityView
             $html .= " id='body_view' class='txt'>" . $this->Entity->entityData['body'] . "</div>";
         }
         // SHOW USER
-        $html .= _('Last modified by') . ' ' . $this->Entity->entityData['firstname'] . " " . $this->Entity->entityData['lastname'];
+        $html .= _('Last modified by') . ' ' . $this->Entity->entityData['fullname'];
         $html .= "</section>";
 
         return $html;

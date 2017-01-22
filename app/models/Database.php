@@ -34,7 +34,7 @@ class Database extends Entity
         $this->userid = $userid;
 
         if (!is_null($id)) {
-            $this->setId($id, true);
+            $this->setId($id);
         }
 
     }
@@ -63,49 +63,6 @@ class Database extends Entity
         ));
 
         return $this->pdo->lastInsertId();
-    }
-
-    /**
-     * Read all items for a team
-     * Optionally with filters
-     *
-     * @return array
-     */
-    public function read()
-    {
-        if (!is_null($this->id)) {
-            $this->idFilter = ' AND items.id = ' . $this->id;
-        }
-
-        $sql = "SELECT DISTINCT items.id AS itemid, items.*, items_types.name, items_types.color, items_types.id AS itemstype, uploads.*
-        FROM items
-        LEFT JOIN items_types ON (items.type = items_types.id)
-        LEFT JOIN items_tags ON (items.id = items_tags.item_id)
-        LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads
-        ON (uploads.attachment = items.id AND uploads.type = 'items')
-        WHERE items.team = :teamid
-        " . $this->idFilter . "
-        " . $this->titleFilter . "
-        " . $this->dateFilter . "
-        " . $this->bodyFilter . "
-        " . $this->bookableFilter . "
-        " . $this->ratingFilter . "
-        " . $this->categoryFilter . "
-        " . $this->tagFilter . "
-        " . $this->queryFilter . "
-        ORDER BY $this->order $this->sort $this->limit";
-
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':teamid', $this->team);
-        $req->execute();
-
-        $itemsArr = $req->fetchAll();
-
-        // reduce the dimension of the array if we have only one item (idFilter set)
-        if (count($itemsArr) === 1) {
-            return $itemsArr[0];
-        }
-        return $itemsArr;
     }
 
     /**

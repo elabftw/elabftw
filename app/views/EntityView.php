@@ -122,7 +122,7 @@ class EntityView
         $html = '';
 
         // RELATED SEARCH (links) for experiments
-        if ($this->related) {
+        if ($this->related && $this->Entity instanceof Experiments) {
 
             $itemsArr = $this->Entity->readRelated($this->related);
 

@@ -208,7 +208,7 @@ class Uploads extends Entity
      *
      * @return array
      */
-    private function read()
+    public function read()
     {
         // Check that the item we view has attached files
         $sql = "SELECT * FROM uploads WHERE id = :id AND type = :type";

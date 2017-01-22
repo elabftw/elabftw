@@ -319,7 +319,7 @@ class Users extends Auth
      */
     public function readFromEmail($email)
     {
-        $sql = "SELECT userid, CONCAT(firstname, ' ', lastname) AS name FROM users WHERE email = :email";
+        $sql = "SELECT userid, CONCAT(firstname, ' ', lastname) AS fullname FROM users WHERE email = :email";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':email', $email);
         $req->execute();

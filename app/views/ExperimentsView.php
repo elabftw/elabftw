@@ -70,9 +70,7 @@ class ExperimentsView extends EntityView
     {
         $this->initViewEdit();
         // only owner can edit an experiment
-        if (!$this->isOwner()) {
-            throw new Exception(_('<strong>Cannot edit:</strong> this experiment is not yours!'));
-        }
+        $this->Entity->canOrExplode('write');
 
         // a locked experiment cannot be edited
         if ($this->Entity->entityData['locked']) {
@@ -250,17 +248,6 @@ class ExperimentsView extends EntityView
 
         return $html;
     }
-
-    /**
-     * Check we own the experiment
-     *
-     * @return bool
-     */
-    private function isOwner()
-    {
-        return $this->Entity->entityData['userid'] == $_SESSION['userid'];
-    }
-
 
     /**
      * If int, get the name of the team group instead of a number

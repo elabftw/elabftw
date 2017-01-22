@@ -90,9 +90,8 @@ try {
         echo $EntityView->edit();
     }
 
-    throw new Exception('eteet');
 } catch (Exception $e) {
-    display_message('ko', $e->getMessage() . ' in file: ' . $e->getFile() . '(' . $e->getLine() . ')');
+    display_message('ko', $e->getMessage());
 } finally {
     require_once 'app/footer.inc.php';
 }

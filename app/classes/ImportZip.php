@@ -137,10 +137,12 @@ class ImportZip extends Import
      */
     private function dbInsert()
     {
+        $sql = "INSERT INTO items(team, title, date, body, userid, type)
+            VALUES(:team, :title, :date, :body, :userid, :type)";
+
         if ($this->type === 'experiments') {
-            $sql = "INSERT into experiments(team, title, date, body, userid, visibility, status, elabid) VALUES(:team, :title, :date, :body, :userid, :visibility, :status, :elabid)";
-        } else {
-            $sql = "INSERT INTO items(team, title, date, body, userid, type) VALUES(:team, :title, :date, :body, :userid, :type)";
+            $sql = "INSERT into experiments(team, title, date, body, userid, visibility, status, elabid)
+                VALUES(:team, :title, :date, :body, :userid, :visibility, :status, :elabid)";
         }
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $_SESSION['team_id'], \PDO::PARAM_INT);

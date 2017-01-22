@@ -34,8 +34,8 @@ class Update
     /** this is used to check if we managed to get a version or not */
     public $success = false;
 
-    /** array with config */
-    private $configArr;
+    /** instance of Config */
+    public $Config;
 
     /** where to get info from */
     const URL = 'https://get.elabftw.net/updates.ini';
@@ -65,7 +65,7 @@ class Update
      */
     public function __construct(Config $config)
     {
-        $this->configArr = $config->read();
+        $this->Config = $config;
         $this->pdo = Db::getConnection();
     }
 
@@ -97,8 +97,8 @@ class Update
         // this is to get content
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         // add proxy if there is one
-        if (strlen($this->configArr['proxy']) > 0) {
-            curl_setopt($ch, CURLOPT_PROXY, $this->configArr['proxy']);
+        if (strlen($this->Config->configArr['proxy']) > 0) {
+            curl_setopt($ch, CURLOPT_PROXY, $this->Config->configArr['proxy']);
         }
         // disable certificate check
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
@@ -215,7 +215,7 @@ class Update
     {
         $msg_arr = array();
 
-        $current_schema = $this->configArr['schema'];
+        $current_schema = $this->Config->configArr['schema'];
 
         if ($current_schema < 2) {
             // 20150727
@@ -452,9 +452,9 @@ class Update
         $new_key = Key::createNewRandomKey();
 
         // update smtp_password first
-        if ($this->configArr['smtp_password']) {
+        if ($this->Config->configArr['smtp_password']) {
             try {
-                $plaintext = Crypto::legacyDecrypt(hex2bin($this->configArr['smtp_password']), $legacy_key);
+                $plaintext = Crypto::legacyDecrypt(hex2bin($this->Config->configArr['smtp_password']), $legacy_key);
             } catch (Ex\WrongKeyOrModifiedCiphertextException $ex) {
                 throw new Exception('Wrong key or modified ciphertext error.');
             }
@@ -484,9 +484,9 @@ class Update
         }
 
         // update the main stamppass
-        if ($this->configArr['stamppass']) {
+        if ($this->Config->configArr['stamppass']) {
             try {
-                $plaintext = Crypto::legacyDecrypt(hex2bin($this->configArr['stamppass']), $legacy_key);
+                $plaintext = Crypto::legacyDecrypt(hex2bin($this->Config->configArr['stamppass']), $legacy_key);
             } catch (Ex\WrongKeyOrModifiedCiphertextException $ex) {
                 throw new Exception('Wrong key or modified ciphertext error.');
             }
@@ -540,7 +540,7 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
      */
     private function schema12()
     {
-        if (get_config('stampcert') == 'vendor/pki.dfn.pem') {
+        if ($this->Config->configArr['stampcert'] === 'vendor/pki.dfn.pem') {
             if (!update_config(array('stampcert' => 'app/dfn-cert/pki.dfn.pem'))) {
                 throw new Exception('Error changing path to timestamping cert. (updating to schema 12)');
             }

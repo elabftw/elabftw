@@ -28,6 +28,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
 
 require_once 'app/head.inc.php';
 
+$Config = new Config();
 $formKey = new FormKey();
 $BannedUsers = new BannedUsers();
 
@@ -46,14 +47,14 @@ try {
     }
 
     // show message if there is a failed_attempt
-    if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] < get_config('login_tries')) {
-        $number_of_tries_left = get_config('login_tries') - $_SESSION['failed_attempt'];
-        $message = _('Number of login attempt left before being banned for') . ' ' . get_config('ban_time') . ' ' . _('minutes:') . ' ' . $number_of_tries_left;
+    if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] < $Config->configArr['login_tries']) {
+        $number_of_tries_left = $Config->configArr['login_tries'] - $_SESSION['failed_attempt'];
+        $message = _('Number of login attempt left before being banned for') . ' ' . $Config->configArr['ban_time'] . ' ' . _('minutes:') . ' ' . $number_of_tries_left;
         display_message('ko', $message);
     }
 
     // disable login if too much failed_attempts
-    if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] >= get_config('login_tries')) {
+    if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] >= $Config->configArr['login_tries']) {
         // get user infos
         $fingerprint = md5($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']);
         // add the user to the banned list

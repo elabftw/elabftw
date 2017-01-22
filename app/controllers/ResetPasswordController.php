@@ -17,6 +17,7 @@ use Defuse\Crypto\Key as Key;
 
 try {
     require_once '../../app/init.inc.php';
+    $Email = new Email(new Config);
     $Users = new Users();
     $Logs = new Logs();
 
@@ -71,13 +72,12 @@ try {
         // Give the message a subject
         ->setSubject('[eLabFTW] Password reset for ' . $user['name'])
         // Set the From address with an associative array
-        ->setFrom(array(get_config('mail_from') => 'eLabFTW'))
+        ->setFrom(array($Email->Config->configArr['mail_from'] => 'eLabFTW'))
         // Set the To addresses with an associative array
         ->setTo(array($email => $user['name']))
         // Give it a body
         ->setBody(sprintf(_('Hi. Someone (probably you) with the IP address: %s and user agent %s requested a new password on eLabFTW. Please follow this link to reset your password : %s'), $ip, $u_agent, $reset_link) . $footer);
         // generate Swift_Mailer instance
-        $Email = new Email(new Config);
         $mailer = $Email->getMailer();
         // now we try to send the email
         if (!$mailer->send($message)) {

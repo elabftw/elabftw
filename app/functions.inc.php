@@ -53,32 +53,6 @@ function display_message($type, $message)
 }
 
 /**
- * Return conf_value of asked conf_name or the whole config as an associative array.
- *
- * @param string|null $conf_name The configuration we want to read
- * @return string The config value
- * @deprecated use Config->read() instead
- */
-function get_config($conf_name = null)
-{
-    global $pdo;
-    $final = array();
-
-    $sql = "SELECT * FROM config";
-    $req = $pdo->prepare($sql);
-    $req->execute();
-    $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
-    if ($conf_name !== null) {
-        return $config[$conf_name][0];
-    }
-    // return all the things!
-    foreach ($config as $name => $value) {
-        $final[$name] = $value[0];
-    }
-    return $final;
-}
-
-/**
  * Used in sysconfig.php to update config values
  *
  * @param array $post (conf_name => conf_value)

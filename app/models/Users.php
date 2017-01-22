@@ -22,8 +22,20 @@ use \Defuse\Crypto\Key as Key;
 class Users extends Auth
 {
 
+    /** instance of Config */
+    public $Config;
+
     /** flag to check if we need validation or not */
     public $needValidation = false;
+
+    /**
+     * Assign the config object
+     *
+     */
+    public function __construct(Config $config)
+    {
+        $this->Config = $config;
+    }
 
     /**
      * Create a new user
@@ -99,7 +111,7 @@ class Users extends Auth
         $req->bindParam(':register_date', $registerDate);
         $req->bindParam(':validated', $validated);
         $req->bindParam(':usergroup', $group);
-        $req->bindValue(':lang', get_config('lang'));
+        $req->bindValue(':lang', $this->Config->configArr['lang']);
 
         if (!$req->execute()) {
             throw new Exception('Error inserting user in SQL!');
@@ -121,7 +133,7 @@ class Users extends Auth
      */
     private function getValidated($group)
     {
-        if (get_config('admin_validate') === "1" && $group === 4) { // validation is required for normal user
+        if ($this->Config->configArr['admin_validate'] === "1" && $group === 4) { // validation is required for normal user
             return 0; // so new user will need validation
         }
         return 1;
@@ -154,7 +166,7 @@ class Users extends Auth
      */
     private function alertAdmin($team)
     {
-        $Email = new Email(new Config);
+        $Email = new Email($this->Config);
 
         // Create the message
         $footer = "\n\n~~~\nSent from eLabFTW https://www.elabftw.net\n";
@@ -162,7 +174,7 @@ class Users extends Auth
         // Give the message a subject
         ->setSubject(_('[eLabFTW] New user registered'))
         // Set the From address with an associative array
-        ->setFrom(array($Email->configArr['mail_from'] => 'eLabFTW'))
+        ->setFrom(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
         // Set the To
         ->setTo($this->getAdminEmail($team))
         // Give it a body
@@ -516,6 +528,9 @@ class Users extends Auth
         } else {
             $msg = Tools::error();
         }
+
+        $Email = new Email($this->Config);
+
         // now let's get the URL so we can have a nice link in the email
         $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
         $url = str_replace('app/controllers/UsersController.php', 'login.php', $url);
@@ -527,13 +542,12 @@ class Users extends Auth
         // no i18n here
         ->setSubject('[eLabFTW] Account validated')
         // Set the From address with an associative array
-        ->setFrom(array(get_config('mail_from') => 'eLabFTW'))
+        ->setFrom(array($this->Config->configArr['mail_from'] => 'eLabFTW'))
         // Set the To addresses with an associative array
         ->setTo(array($userArr['email'] => 'eLabFTW'))
         // Give it a body
         ->setBody('Hello. Your account on eLabFTW was validated by an admin. Follow this link to login : ' . $url . $footer);
         // generate Swift_Mailer instance
-        $Email = new Email(new Config);
         $mailer = $Email->getMailer();
         // now we try to send the email
         try {

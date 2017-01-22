@@ -22,8 +22,8 @@ use \Defuse\Crypto\Key as Key;
  */
 class Email
 {
-    /** the main config */
-    public $configArr;
+    /** instance of Config */
+    public $Config;
 
     /**
      * Constructor
@@ -32,7 +32,7 @@ class Email
      */
     public function __construct(Config $config)
     {
-        $this->configArr = $config->read();
+        $this->Config = $config;
     }
     /**
      * Returns Swift_Mailer instance and chooses between sendmail and smtp
@@ -42,26 +42,26 @@ class Email
     {
 
         // Choose mail transport method; either smtp or sendmail
-        switch ($this->configArr['mail_method']) {
+        switch ($this->Config->configArr['mail_method']) {
 
             // Use SMTP Server
             case 'smtp':
-                if ($this->configArr['smtp_encryption'] === 'none') {
+                if ($this->Config->configArr['smtp_encryption'] === 'none') {
                     $transport = Swift_SmtpTransport::newInstance(
-                        $this->configArr['smtp_address'],
-                        $this->configArr['smtp_port']
+                        $this->Config->configArr['smtp_address'],
+                        $this->Config->configArr['smtp_port']
                     );
                 } else {
                     $transport = Swift_SmtpTransport::newInstance(
-                        $this->configArr['smtp_address'],
-                        $this->configArr['smtp_port'],
-                        $this->configArr['smtp_encryption']
+                        $this->Config->configArr['smtp_address'],
+                        $this->Config->configArr['smtp_port'],
+                        $this->Config->configArr['smtp_encryption']
                     );
                 }
 
-                $transport->setUsername($this->configArr['smtp_username'])
+                $transport->setUsername($this->Config->configArr['smtp_username'])
                 ->setPassword(Crypto::decrypt(
-                    $this->configArr['smtp_password'],
+                    $this->Config->configArr['smtp_password'],
                     Key::loadFromAsciiSafeString(SECRET_KEY)
                 ));
                 break;
@@ -73,7 +73,7 @@ class Email
 
             // Use locally installed MTA (aka sendmail); Default
             default:
-                $transport = Swift_SendmailTransport::newInstance($this->configArr['sendmail_path'] . ' -bs');
+                $transport = Swift_SendmailTransport::newInstance($this->Config->configArr['sendmail_path'] . ' -bs');
                 break;
         }
 

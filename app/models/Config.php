@@ -20,21 +20,25 @@ class Config
     /** db connection */
     protected $pdo;
 
+    /** the array with all config */
+    public $configArr;
+
     /**
-     * get pdo
+     * Get pdo and load the configArr
+     *
      */
     public function __construct()
     {
         $this->pdo = Db::getConnection();
+        $this->configArr = $this->read();
     }
 
     /**
      * Read the configuration values
      *
-     * @param string|null $confName optionnal param to get only one value
-     * @return array|string
+     * @return array
      */
-    public function read($confName = null)
+    public function read()
     {
         $final = array();
 
@@ -42,10 +46,6 @@ class Config
         $req = $this->pdo->prepare($sql);
         $req->execute();
         $config = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
-        if ($confName !== null) {
-            return $config[$confName][0];
-        }
-        // return all the things!
         foreach ($config as $name => $value) {
             $final[$name] = $value[0];
         }

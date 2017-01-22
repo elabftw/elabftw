@@ -54,6 +54,8 @@ try {
 // require common stuff
 require_once ELAB_ROOT . 'app/functions.inc.php';
 
+$Update = new Update(new Config);
+
 // i18n (gettext)
 if (isset($_SESSION['prefs']['lang'])) {
     $locale = $_SESSION['prefs']['lang'] . '.utf8';
@@ -61,7 +63,7 @@ if (isset($_SESSION['prefs']['lang'])) {
     // this will throw an exception if the SQL structure is not imported yet
     // so we redirect to the install folder
     try {
-        $locale = get_config('lang') . '.utf8';
+        $locale = $Update->Config->configArr['lang'] . '.utf8';
     } catch (Exception $e) {
         header('Location: install');
         exit;
@@ -75,8 +77,7 @@ textdomain($domain);
 // END i18n
 
 // run the update script if we have the wrong schema version
-$Update = new Update(new Config);
-if (get_config('schema') < $Update::REQUIRED_SCHEMA) {
+if ($Update->Config->configArr['schema'] < $Update::REQUIRED_SCHEMA) {
     try {
         $_SESSION['ok'] = $Update->runUpdateScript();
     } catch (Exception $e) {

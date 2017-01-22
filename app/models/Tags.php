@@ -40,31 +40,19 @@ class Tags extends Entity
      */
     public function create($tag)
     {
-        // Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
-        $tag = strtr(filter_var($tag, FILTER_SANITIZE_STRING), '\\', '');
-
-        // check for string length and if user owns the experiment
-        if (strlen($tag) < 1) {
-            throw new Exception(_('Tag is too short!'));
-        }
-
-        if (!$this->Entity->canWrite) {
-            throw new Exception(Tools::error(true));
-        }
-
         if ($this->Entity->type === 'experiments') {
-            $sql = "INSERT INTO " . $this->Entity->type . "_tags (tag, item_id, userid)
-                VALUES(:tag, :item_id, :userid)";
-            $req = $this->pdo->prepare($sql);
-            $req->bindParam(':userid', $_SESSION['userid'], PDO::PARAM_INT);
+            $userOrTeam = 'userid';
+            $userOrTeamValue = $this->Entity->userid;
         } else {
-            $sql = "INSERT INTO " . $this->Entity->type . "_tags (tag, item_id, team_id)
-                VALUES(:tag, :item_id, :team_id)";
-            $req = $this->pdo->prepare($sql);
-            $req->bindParam(':team_id', $_SESSION['team_id'], PDO::PARAM_INT);
+            $userOrTeam = 'team_id';
+            $userOrTeamValue = $this->Entity->team;
         }
+        $sql = "INSERT INTO " . $this->Entity->type . "_tags (tag, item_id, " . $userOrTeam . ")
+            VALUES(:tag, :item_id, :userOrTeam)";
+        $req = $this->pdo->prepare($sql);
         $req->bindParam(':tag', $tag, PDO::PARAM_STR);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':userOrTeam', $userOrTeamValue);
 
         return $req->execute();
     }
@@ -118,11 +106,7 @@ class Tags extends Entity
     public function copyTags($newId)
     {
         // TAGS
-        if ($this->Entity->type === 'experiments') {
-            $sql = "SELECT tag FROM experiments_tags WHERE item_id = :id";
-        } else {
-            $sql = "SELECT tag FROM items_tags WHERE item_id = :id";
-        }
+        $sql = "SELECT tag FROM " . $this->Entity->type . "_tags WHERE item_id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $this->Entity->id);
         $req->execute();

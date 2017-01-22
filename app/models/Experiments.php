@@ -30,9 +30,6 @@ class Experiments extends Entity
     /** instance of Comments */
     public $Comments;
 
-    /** inserted in sql */
-    public $teamFilter = '';
-
     /**
      * Constructor
      *
@@ -98,38 +95,16 @@ class Experiments extends Entity
     }
 
     /**
-     * Read an experiment
-     *
-     * @throws Exception if empty results
-     * @return array
-     */
-    public function read()
-    {
-        $sql = "SELECT DISTINCT experiments.*, status.color, status.name, uploads.*
-            FROM experiments
-            LEFT JOIN status ON experiments.status = status.id
-            LEFT JOIN experiments_tags ON (experiments_tags.item_id = experiments.id)
-            LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads)
-            AS uploads ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
-            WHERE experiments.id = :id ";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->execute();
-
-        if ($req->rowCount() === 0) {
-            throw new Exception('Nothing to show with this id.');
-        }
-
-        return $req->fetch();
-    }
-
-    /**
      * Read all experiments from the team, with optional filters
      *
      * @return array
      */
-    public function readAll()
+    public function read()
     {
+        if (!is_null($this->id)) {
+            $this->idFilter = ' AND experiments.id = ' . $this->id;
+        }
+
         $sql = "SELECT DISTINCT experiments.*, status.color, status.name, uploads.*, experiments_comments.datetime
             FROM experiments
             LEFT JOIN status ON (status.id = experiments.status)
@@ -138,6 +113,7 @@ class Experiments extends Entity
             ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
             LEFT JOIN experiments_comments ON (experiments_comments.exp_id = experiments.id)
             WHERE experiments.team = :team
+            " . $this->idFilter . "
             " . $this->useridFilter . "
             " . $this->titleFilter . "
             " . $this->dateFilter . "
@@ -150,7 +126,13 @@ class Experiments extends Entity
         $req->bindParam(':team', $this->team);
         $req->execute();
 
-        return $req->fetchAll();
+        $itemsArr = $req->fetchAll();
+
+        // reduce the dimension of the array if we have only one item (idFilter set)
+        if (count($itemsArr) === 1) {
+            return $itemsArr[0];
+        }
+        return $itemsArr;
     }
 
     /**
@@ -170,10 +152,9 @@ class Experiments extends Entity
         $req->bindParam(':link_id', $itemId);
         $req->execute();
         while ($data = $req->fetch()) {
-            $this->setId($data['item_id'], true);
-            if ($this->canRead) {
-                $itemsArr[] = $this->read();
-            }
+            $this->setId($data['item_id']);
+            $this->canOrExplode('read');
+            $itemsArr[] = $this->read();
         }
 
         return $itemsArr;
@@ -218,7 +199,7 @@ class Experiments extends Entity
      * @param string $visibility
      * @return bool
      */
-    private function checkVisibility($visibility)
+    public function checkVisibility($visibility)
     {
         $validArr = array(
             'public',
@@ -243,14 +224,6 @@ class Experiments extends Entity
      */
     public function updateVisibility($visibility)
     {
-        if (!$this->canWrite) {
-            throw new Exception(Tools::error(true));
-        }
-
-        if (!$this->checkVisibility($visibility)) {
-            throw new Exception('Bad visibility argument');
-        }
-
         $sql = "UPDATE experiments SET visibility = :visibility WHERE userid = :userid AND id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':visibility', $visibility);
@@ -268,10 +241,6 @@ class Experiments extends Entity
      */
     public function updateStatus($status)
     {
-        if (!$this->canWrite) {
-            throw new Exception(Tools::error(true));
-        }
-
         $sql = "UPDATE experiments SET status = :status WHERE userid = :userid AND id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':status', $status, PDO::PARAM_INT);
@@ -364,10 +333,6 @@ class Experiments extends Entity
      */
     public function destroy()
     {
-        if (!$this->canWrite) {
-            throw new Exception(Tools::error(true));
-        }
-
         // delete the experiment
         $sql = "DELETE FROM experiments WHERE id = :id";
         $req = $this->pdo->prepare($sql);
@@ -395,22 +360,6 @@ class Experiments extends Entity
      */
     public function toggleLock()
     {
-        // get info for user
-        $Users = new Users();
-        $user = $Users->read($this->userid);
-
-        // check if this group has locking rights
-        $sql = "SELECT can_lock FROM groups WHERE group_id = :usergroup";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':usergroup', $user['usergroup']);
-        $req->execute();
-        $can_lock = (int) $req->fetchColumn(); // can be 0 or 1
-
-        // We don't have can_lock, but maybe it's our XP, so we can lock it
-        if ($can_lock === 0 && !$this->canWrite) {
-            throw new Exception(_("You don't have the rights to lock/unlock this."));
-        }
-
         $locked = (int) $this->entityData['locked'];
 
         // if we try to unlock something we didn't lock

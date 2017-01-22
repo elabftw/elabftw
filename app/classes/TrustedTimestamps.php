@@ -77,10 +77,8 @@ class TrustedTimestamps extends Entity
         $this->pdo = Db::getConnection();
 
         // will be used in sqlUpdate()
-        $this->setId($id, true);
-        if (!$this->canWrite) {
-            throw new Exception(Tools::error(true));
-        }
+        $this->setId($id);
+        $this->canOrExplode('write');
 
         $this->generatePdf();
 

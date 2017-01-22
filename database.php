@@ -26,65 +26,65 @@ require_once 'app/head.inc.php';
 echo addChemdoodle();
 
 try {
-    $DatabaseView = new DatabaseView(new Database($_SESSION['team_id'], $_SESSION['userid']));
+    $EntityView = new DatabaseView(new Database($_SESSION['team_id'], $_SESSION['userid']));
 
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
-        $DatabaseView->display = $_SESSION['prefs']['display'];
+        $EntityView->display = $_SESSION['prefs']['display'];
 
         // CATEGORY FILTER
         if (isset($_GET['filter']) && !empty($_GET['filter']) && Tools::checkId($_GET['filter'])) {
-            $DatabaseView->Entity->categoryFilter = "AND items_types.id = " . $_GET['filter'];
-            $DatabaseView->searchType = 'filter';
+            $EntityView->Entity->categoryFilter = "AND items_types.id = " . $_GET['filter'];
+            $EntityView->searchType = 'filter';
         }
         // TAG FILTER
         if (isset($_GET['tag']) && $_GET['tag'] != '') {
             $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
-            $DatabaseView->tag = $tag;
-            $DatabaseView->Entity->tagFilter = "AND items_tags.tag LIKE '" . $tag . "'";
-            $DatabaseView->searchType = 'tag';
+            $EntityView->tag = $tag;
+            $EntityView->Entity->tagFilter = "AND items_tags.tag LIKE '" . $tag . "'";
+            $EntityView->searchType = 'tag';
         }
         // QUERY FILTER
         if (isset($_GET['q']) && !empty($_GET['q'])) {
             $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
-            $DatabaseView->query = $query;
-            $DatabaseView->Entity->queryFilter = "AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%')";
-            $DatabaseView->searchType = 'query';
+            $EntityView->query = $query;
+            $EntityView->Entity->queryFilter = "AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%')";
+            $EntityView->searchType = 'query';
         }
         // ORDER
         if (isset($_GET['order'])) {
             if ($_GET['order'] === 'cat') {
-                $DatabaseView->Entity->order = 'items_types.name';
+                $EntityView->Entity->order = 'items_types.name';
             } elseif ($_GET['order'] === 'date' || $_GET['order'] === 'rating' || $_GET['order'] === 'title') {
-                $DatabaseView->Entity->order = 'items.' . $_GET['order'];
+                $EntityView->Entity->order = 'items.' . $_GET['order'];
             }
         }
         // SORT
         if (isset($_GET['sort'])) {
             if ($_GET['sort'] === 'asc' || $_GET['sort'] === 'desc') {
-                $DatabaseView->Entity->sort = $_GET['sort'];
+                $EntityView->Entity->sort = $_GET['sort'];
             }
         }
 
-        echo $DatabaseView->buildShowMenu('database');
+        echo $EntityView->buildShowMenu('database');
 
         // limit the number of items to show if there is no search parameters
         // because with a big database this can be expensive
         if (!isset($_GET['q']) && !isset($_GET['tag']) && !isset($_GET['filter'])) {
-            $DatabaseView->Entity->setLimit(50);
+            $EntityView->Entity->setLimit(50);
         }
-        echo $DatabaseView->buildShow();
+        echo $EntityView->buildShow();
 
     // VIEW
     } elseif ($_GET['mode'] === 'view') {
 
-        $DatabaseView->Entity->setId($_GET['id'], true);
-        echo $DatabaseView->view();
+        $EntityView->Entity->setId($_GET['id']);
+        echo $EntityView->view();
 
     // EDIT
     } elseif ($_GET['mode'] === 'edit') {
 
-        $DatabaseView->Entity->setId($_GET['id'], true);
-        echo $DatabaseView->edit();
+        $EntityView->Entity->setId($_GET['id']);
+        echo $EntityView->edit();
     }
 } catch (Exception $e) {
     display_message('ko', $e->getMessage());

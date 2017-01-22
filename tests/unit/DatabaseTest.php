@@ -29,18 +29,13 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
     public function testRead()
     {
         $new = $this->Database->create(1);
-        $this->Database->setId($new, true);
+        $this->Database->setId($new);
+        $this->Database->populate();
         $this->assertTrue(is_array($this->Database->entityData));
         $this->assertEquals('Untitled', $this->Database->entityData['title']);
         $this->assertEquals(Tools::kdate(), $this->Database->entityData['date']);
-        $this->Database = new Database(1, 9999);
         $this->setExpectedException('Exception');
-        $this->Database->read();
-    }
-
-    public function testReadAll()
-    {
-        $this->assertTrue(is_array($this->Database->readAll()));
+        $this->Database = new Database(1, 9999, 'yep');
     }
 
     public function testUpdate()
@@ -58,6 +53,7 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
     public function testDuplicate()
     {
         $this->Database->setId(1);
+        $this->Database->populate();
         $this->assertTrue((bool) Tools::checkId($this->Database->duplicate(1)));
     }
 

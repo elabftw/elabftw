@@ -27,6 +27,18 @@ try {
 
     // LOCK
     if (isset($_POST['lock'])) {
+
+        // get info for user
+        $Users = new Users();
+        $user = $Users->read($_SESSION['userid']);
+
+        $permissions = $Entity->getPermissions();
+
+        // We don't have can_lock, but maybe it's our XP, so we can lock it
+        if (!$user['can_lock'] && !$permissions['write']) {
+            throw new Exception(_("You don't have the rights to lock/unlock this."));
+        }
+
         if ($Entity->toggleLock()) {
             echo json_encode(array(
                 'res' => true,
@@ -65,16 +77,26 @@ try {
 
     // CREATE TAG
     if (isset($_POST['createTag'])) {
+        // Sanitize tag, we remove '\' because it fucks up the javascript if you have this in the tags
+        $tag = strtr(filter_var($_POST['tag'], FILTER_SANITIZE_STRING), '\\', '');
+        // check for string length and if user owns the experiment
+        if (strlen($tag) < 1) {
+            throw new Exception(_('Tag is too short!'));
+        }
+        $Entity->canOrExplode('write');
+
         $Tags = new Tags($Entity);
-        $Tags->create($_POST['tag']);
+        $Tags->create($tag);
     }
 
     // DELETE TAG
     if (isset($_POST['destroyTag'])) {
-        $Tags = new Tags($Entity);
-        if ($Entity->canWrite) {
-            $Tags->destroy($_POST['tag_id']);
+        if (Tools::checkId($_POST['tag_id']) === false) {
+            throw new Exception('Bad id value');
         }
+        $Entity->canOrExplode('write');
+        $Tags = new Tags($Entity);
+        $Tags->destroy($_POST['tag_id']);
     }
 
     // UPDATE FILE COMMENT

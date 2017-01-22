@@ -63,9 +63,7 @@ class MakePdf extends Make
             $this->Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $id);
         }
 
-        if (!$this->Entity->canRead) {
-            throw new Exception(Tools::error(true));
-        }
+        $this->Entity->canOrExplode('read');
 
         // build the pdf content
         $this->initData();
@@ -111,6 +109,7 @@ class MakePdf extends Make
     /**
      * Get data about the item we are pdf'ing
      *
+     * @deprecated to remove
      */
     private function initData()
     {

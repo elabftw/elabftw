@@ -21,6 +21,15 @@ class EntityView
     /** number of items to display per page */
     public $limit = 15;
 
+    /** show entities from others in the team? */
+    public $showTeam = false;
+
+    /** can be tag, query or filter */
+    public $searchType = '';
+
+    /** are we looking for exp related to an item ? */
+    public $related = 0;
+
     /** can be compact */
     public $display = '';
 
@@ -45,8 +54,9 @@ class EntityView
      */
     protected function initViewEdit()
     {
+        $this->Entity->populate();
         // add the title in the page name (see #324)
-        $this->html .= "<script>document.title = '" . $this->getCleanTitle($this->entityData['title']) . "';</script>";
+        $this->html .= "<script>document.title = '" . $this->getCleanTitle($this->Entity->entityData['title']) . "';</script>";
 
         // get the UploadsView object
         $this->UploadsView = new UploadsView(new Uploads($this->Entity));
@@ -92,23 +102,91 @@ class EntityView
     }
 
     /**
-     * Generate html for zip/csv export buttons
+     * Generate HTML for show mode
      *
-     * @param array $idArr
-     * @param string $type items or experiments
      * @return string
      */
-    public function buildExportMenu($idArr, $type)
+    public function buildShow()
     {
-            $html = "<div class='align_right'>";
-            $html .= "<a name='anchor'></a>";
-            $html .= "<p class='inline'>" . _('Export this result:') . " </p>";
-            $html .= "<a class='elab-tooltip' href='make.php?what=zip&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";
-            $html .= " <span>Make a ZIP</span><img src='app/img/zip.png' alt='ZIP' /></a>";
-            $html .= "<a class='elab-tooltip' href='make.php?what=csv&id=" . Tools::buildStringFromArray($idArr) . "&type=" . $type . "'>";
-            $html .= " <span>Export in CSV</span><img src='app/img/spreadsheet.png' alt='Export CSV' /></a></div>";
+        $html = '';
 
-            return $html;
+        // RELATED SEARCH (links) for experiments
+        if ($this->related) {
+
+            $itemsArr = $this->Entity->readRelated($this->related);
+
+        } else {
+
+            if (!$this->showTeam) {
+                // filter by user
+                $this->Entity->setUseridFilter();
+            }
+            $itemsArr = $this->Entity->read();
+
+        }
+
+        // show number of results found
+        $count = count($itemsArr);
+        if ($count === 0 && $this->searchType != '') {
+            return display_message('ko_nocross', _("Sorry. I couldn't find anything :("));
+        } elseif ($count === 0 && $this->searchType === '') {
+            return display_message(
+                'ok_nocross',
+                _("Welcome to eLabFTW. Use the 'Create new' button to get started!")
+            );
+        } else {
+            $html .= $this->buildExportMenu($itemsArr);
+
+            $total_time = get_total_time();
+            $html .= "<p class='smallgray'>" . $count . " " .
+                ngettext("result found", "results found", $count) . " (" .
+                $total_time['time'] . " " . $total_time['unit'] . ")</p>";
+        }
+        $load_more_button = "<div class='center'>
+            <button class='button' id='loadButton'>" . sprintf(_('Show %s more'), $this->limit) . "</button>
+            <button class='button button-neutral' id='loadAllButton'>". _('Show all') . "</button>
+            </div>";
+
+        foreach ($itemsArr as $item) {
+            $permissions = $this->Entity->getPermissions($item);
+            if ($permissions['read']) {
+                $html .= $this->showUnique($item);
+            }
+        }
+
+        // show load more button if there are more results than the default display number
+        if ($count > $this->limit) {
+            $html .= $load_more_button;
+        }
+        $html .= $this->buildShowJs();
+
+        return $html;
+    }
+
+    /**
+     * Generate html for zip/csv export buttons
+     *
+     * @param array $itemArr a whole bunch of items
+     * @return string
+     */
+    public function buildExportMenu($itemArr)
+    {
+        $idArr = array();
+
+        foreach ($itemArr as $item) {
+            $idArr[] = $item['id'];
+        }
+        $html = "<div class='align_right'>";
+        $html .= "<a name='anchor'></a>";
+        $html .= "<p class='inline'>" . _('Export this result:') . " </p>";
+        $html .= "<a class='elab-tooltip' href='make.php?what=zip&id=" .
+            Tools::buildStringFromArray($idArr) . "&type=" . $this->Entity->type . "'>";
+        $html .= " <span>Make a ZIP</span><img src='app/img/zip.png' alt='ZIP' /></a>";
+        $html .= "<a class='elab-tooltip' href='make.php?what=csv&id=" .
+            Tools::buildStringFromArray($idArr) . "&type=" . $this->Entity->type . "'>";
+        $html .= " <span>Export in CSV</span><img src='app/img/spreadsheet.png' alt='Export CSV' /></a></div>";
+
+        return $html;
     }
 
     /**
@@ -227,12 +305,11 @@ class EntityView
     /**
      * JS for show
      *
-     * @param string $type experiments or items
      * @return string
      */
-    protected function buildShowJs($type)
+    protected function buildShowJs()
     {
-        if ($type === 'experiments') {
+        if ($this->Entity->type === 'experiments') {
             $shortcut = "
             // KEYBOARD SHORTCUTS
             key('" . $_SESSION['prefs']['shortcuts']['create'] . "', function(){

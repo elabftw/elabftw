@@ -96,13 +96,7 @@ class Api
      */
     public function getEntity()
     {
-        if (is_null($this->id)) {
-            return $this->Entity->readAll();
-        }
-
-        if (!$this->Entity->canRead) {
-            throw new Exception(Tools::error(true));
-        }
+        $this->Entity->canOrExplode('read');
 
         return $this->Entity->entityData;
     }
@@ -117,6 +111,8 @@ class Api
         if (is_null($this->id)) {
             throw new Exception('You need an id to update something!');
         }
+
+        $this->Entity->canOrExplode('write');
 
         if (empty($_POST['title']) || empty($_POST['date']) || empty($_POST['body'])) {
             throw new Exception('Empty title, date or body sent.');
@@ -136,6 +132,8 @@ class Api
      */
     public function uploadFile()
     {
+        $this->Entity->canOrExplode('write');
+
         $Uploads = new Uploads($this->Entity);
 
         if ($Uploads->create($_FILES)) {

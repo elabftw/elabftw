@@ -24,9 +24,11 @@ $selected_menu = null;
 require_once 'app/head.inc.php';
 
 try {
-    $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid']);
-    $expArr = $Experiments->readAll();
-    $count = count($expArr);
+    // get total number of experiments
+    $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid']);
+    $Entity->setUseridFilter();
+    $itemsArr = $Entity->read();
+    $count = count($itemsArr);
 
     $Users = new Users();
     $user = $Users->read($_SESSION['userid']);

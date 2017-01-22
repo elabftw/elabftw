@@ -21,17 +21,8 @@ class ExperimentsView extends EntityView
     /** Read only switch */
     private $ro = false;
 
-    /** show experiments from others in the team? */
-    public $showTeam = false;
-
     /** instance of TeamGroups */
     public $TeamGroups;
-
-    /** can be tag, query or filter */
-    public $searchType = '';
-
-    /** are we looking for exp related to an item ? */
-    public $related = 0;
 
     /**
      * Need an instance of Experiments
@@ -94,72 +85,6 @@ class ExperimentsView extends EntityView
         $this->html .= $this->buildEditJs();
 
         return $this->html;
-    }
-
-    /**
-     * Generate HTML for show XP
-     * we have html and html2 because to build html we need the idArr
-     * from html2
-     *
-     * @return string
-     */
-    public function buildShow()
-    {
-        $html = '';
-        $html2 = '';
-
-        // RELATED SEARCH (links)
-        if ($this->related) {
-
-            $itemsArr = $this->Entity->readRelated($this->related);
-
-        } else {
-
-            if (!$this->showTeam) {
-                // filter by user
-                $this->Entity->useridFilter = " AND experiments.userid = " . $this->Entity->userid;
-            }
-            $itemsArr = $this->Entity->readAll();
-
-        }
-
-        // loop the results array and display results
-        $idArr = array();
-        foreach ($itemsArr as $item) {
-
-            // fill an array with the ID of each item to use in the csv/zip export menu
-            $this->Entity->setId($item['id'], true);
-            if ($this->Entity->canRead) {
-                $idArr[] = $this->Entity->id;
-                $html2 .= $this->showUnique($item);
-            }
-
-        }
-
-        // show number of results found
-        $count = count($itemsArr);
-        if ($count === 0 && $this->searchType != '') {
-            return display_message('ko_nocross', _("Sorry. I couldn't find anything :("));
-        } elseif ($count === 0 && $this->searchType === '') {
-            return display_message('ok_nocross', sprintf(_("Welcome to eLabFTW. %sClick here%s to create your first experiment."), "<a href='app/controllers/ExperimentsController.php?create=true'>", "</a>"));
-        } else {
-            $html .= $this->buildExportMenu($idArr, 'experiments');
-
-            $total_time = get_total_time();
-            $html .= "<p class='smallgray'>" . $count . " " .
-                ngettext("result found", "results found", $count) . " (" .
-                $total_time['time'] . " " . $total_time['unit'] . ")</p>";
-        }
-        $load_more_button = "<div class='center'>
-            <button class='button' id='loadButton'>" . sprintf(_('Show %s more'), $this->limit) . "</button>
-            <button class='button button-neutral' id='loadAllButton'>". _('Show all') . "</button>
-            </div>";
-        // show load more button if there are more results than the default display number
-        if ($count > $this->limit) {
-            $html2 .= $load_more_button;
-        }
-        $html .= $this->buildShowJs('experiments');
-        return $html . $html2;
     }
 
     /**
@@ -360,7 +285,8 @@ class ExperimentsView extends EntityView
      */
     private function isReadOnly()
     {
-        return $this->Entity->canRead && !$this->Entity->canWrite;
+        $permissions = $this->Entity->getPermissions();
+        return $permissions['read'] && !$permissions['write'];
     }
 
     /**

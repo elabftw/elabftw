@@ -26,68 +26,68 @@ require_once 'app/head.inc.php';
 echo addChemdoodle();
 
 try {
-    $ExperimentsView = new ExperimentsView(new Experiments($_SESSION['team_id'], $_SESSION['userid']));
+    $EntityView = new ExperimentsView(new Experiments($_SESSION['team_id'], $_SESSION['userid']));
 
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
-        $ExperimentsView->display = $_SESSION['prefs']['display'];
+        $EntityView->display = $_SESSION['prefs']['display'];
 
         // CATEGORY FILTER
         if (isset($_GET['filter']) && !empty($_GET['filter']) && Tools::checkId($_GET['filter'])) {
-            $ExperimentsView->Entity->categoryFilter = "AND status.id = " . $_GET['filter'];
-            $ExperimentsView->searchType = 'filter';
+            $EntityView->Entity->categoryFilter = "AND status.id = " . $_GET['filter'];
+            $EntityView->searchType = 'filter';
         }
         // TAG FILTER
         if (isset($_GET['tag']) && $_GET['tag'] != '') {
             $tag = filter_var($_GET['tag'], FILTER_SANITIZE_STRING);
-            $ExperimentsView->tag = $tag;
-            $ExperimentsView->Entity->tagFilter = "AND experiments_tags.tag LIKE '" . $tag . "'";
-            $ExperimentsView->searchType = 'tag';
+            $EntityView->tag = $tag;
+            $EntityView->Entity->tagFilter = "AND experiments_tags.tag LIKE '" . $tag . "'";
+            $EntityView->searchType = 'tag';
         }
         // QUERY FILTER
         if (isset($_GET['q']) && !empty($_GET['q'])) {
             $query = filter_var($_GET['q'], FILTER_SANITIZE_STRING);
-            $ExperimentsView->query = $query;
-            $ExperimentsView->Entity->queryFilter = "AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%' OR elabid LIKE '%$query%')";
-            $ExperimentsView->searchType = 'query';
+            $EntityView->query = $query;
+            $EntityView->Entity->queryFilter = "AND (title LIKE '%$query%' OR date LIKE '%$query%' OR body LIKE '%$query%' OR elabid LIKE '%$query%')";
+            $EntityView->searchType = 'query';
         }
         // RELATED FILTER
         if (isset($_GET['related']) && Tools::checkId($_GET['related'])) {
-            $ExperimentsView->related = $_GET['related'];
-            $ExperimentsView->searchType = 'related';
+            $EntityView->related = $_GET['related'];
+            $EntityView->searchType = 'related';
         }
         // ORDER
         // default by date
-        $ExperimentsView->Entity->order = 'experiments.date';
+        $EntityView->Entity->order = 'experiments.date';
         if (isset($_GET['order'])) {
             if ($_GET['order'] === 'cat') {
-                $ExperimentsView->Entity->order = 'status.name';
+                $EntityView->Entity->order = 'status.name';
             } elseif ($_GET['order'] === 'date' || $_GET['order'] === 'rating' || $_GET['order'] === 'title') {
-                $ExperimentsView->Entity->order = 'experiments.' . $_GET['order'];
+                $EntityView->Entity->order = 'experiments.' . $_GET['order'];
             } elseif ($_GET['order'] === 'comment') {
-                $ExperimentsView->Entity->order = 'experiments_comments.datetime';
+                $EntityView->Entity->order = 'experiments_comments.datetime';
             }
         }
         // SORT
         if (isset($_GET['sort'])) {
             if ($_GET['sort'] === 'asc' || $_GET['sort'] === 'desc') {
-                $ExperimentsView->Entity->sort = $_GET['sort'];
+                $EntityView->Entity->sort = $_GET['sort'];
             }
         }
 
-        echo $ExperimentsView->buildShowMenu('experiments');
-        echo $ExperimentsView->buildShow();
+        echo $EntityView->buildShowMenu('experiments');
+        echo $EntityView->buildShow();
 
     // VIEW
     } elseif ($_GET['mode'] === 'view') {
 
-        $ExperimentsView->Entity->setId($_GET['id'], true);
-        echo $ExperimentsView->view();
+        $EntityView->Entity->setId($_GET['id']);
+        echo $EntityView->view();
 
     // EDIT
     } elseif ($_GET['mode'] === 'edit') {
 
-        $ExperimentsView->Entity->setId($_GET['id'], true);
-        echo $ExperimentsView->edit();
+        $EntityView->Entity->setId($_GET['id']);
+        echo $EntityView->edit();
     }
 
 } catch (Exception $e) {

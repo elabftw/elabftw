@@ -36,8 +36,6 @@ class MakeZip extends Make
     protected $type;
     /** files to be deleted by destructor */
     private $filesToDelete = array();
-    /** the data for the current id */
-    private $zipped;
     /** a formatted title */
     private $cleanTitle;
     /** a sha512 sum */
@@ -95,7 +93,7 @@ class MakeZip extends Make
         $ext = '.elabftw.zip';
 
         if (count($this->idArr) === 1) {
-            return $this->zipped['date'] . "-" . $this->cleanTitle . $ext;
+            return $this->Entity->entityData['date'] . "-" . $this->cleanTitle . $ext;
         }
         return Tools::kdate() . $ext;
     }
@@ -114,39 +112,13 @@ class MakeZip extends Make
     }
 
     /**
-     * Populate $this->zipped
-     * SQL to get info on the item we are zipping
+     * Make a title without special char for folder inside .zip
      *
-     * @param int $id The id of the item we are zipping
+     * @return null
      */
-    private function getInfoFromId($id)
+    private function setCleanTitle()
     {
-        if ($this->type === 'experiments') {
-            $sql = "SELECT * FROM experiments WHERE id = :id LIMIT 1";
-            $req = $this->pdo->prepare($sql);
-            $req->bindParam(':id', $id, \PDO::PARAM_INT);
-            $req->execute();
-            $this->zipped = $req->fetch();
-
-        } else {
-            $sql = "SELECT items.*,
-                items_types.name AS items_typesname
-                FROM items
-                LEFT JOIN items_types ON (items.type = items_types.id)
-                WHERE items.id = :id LIMIT 1";
-            $req = $this->pdo->prepare($sql);
-            $req->bindParam(':id', $id, \PDO::PARAM_INT);
-            $req->execute();
-            $this->zipped = $req->fetch();
-            if ($this->zipped['team'] != $_SESSION['team_id']) {
-                throw new Exception(_("You are trying to download an item you don't own!"));
-            }
-            // fill the elabid for items
-            $this->zipped['elabid'] = 'placeholder';
-        }
-
-        // make a title without special char for folder inside .zip
-        $this->cleanTitle = preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($this->zipped['title']));
+        $this->cleanTitle = preg_replace('/[^A-Za-z0-9]/', '_', stripslashes($this->Entity->entityData['title']));
     }
 
     /**
@@ -156,7 +128,7 @@ class MakeZip extends Make
      */
     private function addAsn1Token($id)
     {
-        if ($this->type === 'experiments' && $this->zipped['timestamped'] == 1) {
+        if ($this->type === 'experiments' && $this->Entity->entityData['timestamped'] === '1') {
             // SQL to get the path of the token
             $sql = "SELECT real_name, long_name FROM uploads WHERE item_id = :id AND type = 'timestamp-token' LIMIT 1";
             $req = $this->pdo->prepare($sql);
@@ -175,9 +147,9 @@ class MakeZip extends Make
     private function nameFolder()
     {
         if ($this->type === 'experiments') {
-            $this->folder = $this->zipped['date'] . "-" . $this->cleanTitle;
+            $this->folder = $this->Entity->entityData['date'] . "-" . $this->cleanTitle;
         } else { // items
-            $this->folder = $this->zipped['items_typesname'] . " - " . $this->cleanTitle;
+            $this->folder = $this->Entity->entityData['name'] . " - " . $this->cleanTitle;
         }
     }
 
@@ -261,26 +233,31 @@ class MakeZip extends Make
      */
     private function addToZip($id)
     {
-        if (!$this->Entity->canRead) {
-            throw new Exception(Tools::error(true));
+        $this->Entity->setId($id);
+        $this->Entity->populate();
+        $this->setCleanTitle();
+        $permissions = $this->Entity->getPermissions();
+        if ($permissions['read']) {
+            $this->nameFolder();
+            $this->addAsn1Token($id);
+            $this->addAttachedFiles($id);
+            $this->addCsv($id);
+            $this->addPdf($id);
+            // add an entry to the json file
+            $elabid = 'None';
+            if ($this->type === 'experiments') {
+                $elabid = $this->Entity->entityData['elabid'];
+            }
+            $this->jsonArr[] = array(
+                'type' => $this->type,
+                'title' => stripslashes($this->Entity->entityData['title']),
+                'body' => stripslashes($this->Entity->entityData['body']),
+                'date' => $this->Entity->entityData['date'],
+                'elabid' => $elabid,
+                'files' => $this->fileArr
+            );
+            unset($this->fileArr);
         }
-        // populate $this->zipped
-        $this->getInfoFromId($id);
-        $this->nameFolder();
-        $this->addAsn1Token($id);
-        $this->addAttachedFiles($id);
-        $this->addCsv($id);
-        $this->addPdf($id);
-        // add an entry to the json file
-        $this->jsonArr[] = array(
-            'type' => $this->type,
-            'title' => stripslashes($this->zipped['title']),
-            'body' => stripslashes($this->zipped['body']),
-            'date' => $this->zipped['date'],
-            'elabid' => $this->zipped['elabid'],
-            'files' => $this->fileArr
-        );
-        unset($this->fileArr);
     }
 
     /**
@@ -293,9 +270,6 @@ class MakeZip extends Make
     {
         $this->idArr = explode(" ", $this->idList);
         foreach ($this->idArr as $id) {
-            if (!Tools::checkId($id)) {
-                throw new Exception('The id parameter is invalid!');
-            }
             $this->addToZip($id);
         }
         $this->addJson();

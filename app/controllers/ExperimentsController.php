@@ -21,27 +21,24 @@ require_once '../../app/init.inc.php';
 
 try {
 
-    $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid']);
+    $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid']);
 
     // CREATE
     if (isset($_GET['create'])) {
         if (isset($_GET['tpl']) && !empty($_GET['tpl'])) {
-            $id = $Experiments->create($_GET['tpl']);
+            $id = $Entity->create($_GET['tpl']);
         } else {
-            $id = $Experiments->create();
+            $id = $Entity->create();
         }
         header("location: ../../experiments.php?mode=edit&id=" . $id);
     }
 
     // UPDATE
     if (isset($_POST['update'])) {
-        $Experiments->setId($_POST['id'], true);
+        $Entity->setId($_POST['id']);
+        $Entity->canOrExplode('write');
 
-        if (!$Experiments->canWrite) {
-            throw new Exception(Tools::error(true));
-        }
-
-        if ($Experiments->update(
+        if ($Entity->update(
             $_POST['title'],
             $_POST['date'],
             $_POST['body']
@@ -54,25 +51,21 @@ try {
 
     // DUPLICATE
     if (isset($_GET['duplicateId'])) {
-        $Experiments->setId($_GET['duplicateId'], true);
+        $Entity->setId($_GET['duplicateId']);
+        $Entity->canOrExplode('read');
 
-        if (!$Experiments->canRead) {
-            throw new Exception(Tools::error(true));
-        }
-        $id = $Experiments->duplicate();
+        $id = $Entity->duplicate();
         $mode = 'edit';
         header("location: ../../experiments.php?mode=" . $mode . "&id=" . $id);
     }
 
     // UPDATE STATUS
     if (isset($_POST['updateStatus'])) {
-        $Experiments->setId($_POST['id'], true);
+        $Entity->setId($_POST['id']);
+        $Entity->canOrExplode('write');
 
-        if (!$Experiments->canWrite) {
-            throw new Exception(Tools::error(true));
-        }
 
-        if ($Experiments->updateStatus($_POST['status'])) {
+        if ($Entity->updateStatus($_POST['status'])) {
             // get the color of the status for updating the css
             $Status = new Status($_SESSION['team_id']);
             echo json_encode(array(
@@ -96,11 +89,14 @@ try {
 
     // UPDATE VISIBILITY
     if (isset($_POST['updateVisibility'])) {
-        $Experiments->setId($_POST['id'], true);
-        if (!$Experiments->canWrite) {
-            throw new Exception(Tools::error(true));
+        $Entity->setId($_POST['id']);
+        $Entity->canOrExplode('write');
+
+        if (!$Entity->checkVisibility($_POST['visibility'])) {
+            throw new Exception('Bad visibility argument');
         }
-        if ($Experiments->updateVisibility($_POST['visibility'])) {
+
+        if ($Entity->updateVisibility($_POST['visibility'])) {
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Saved')
@@ -115,11 +111,10 @@ try {
 
     // CREATE LINK
     if (isset($_POST['createLink'])) {
-        $Experiments->setId($_POST['id'], true);
-        if (!$Experiments->canWrite) {
-            throw new Exception(Tools::error(true));
-        }
-        if ($Experiments->Links->create($_POST['linkId'])) {
+        $Entity->setId($_POST['id']);
+        $Entity->canOrExplode('write');
+
+        if ($Entity->Links->create($_POST['linkId'])) {
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Saved')
@@ -134,11 +129,10 @@ try {
 
     // DESTROY LINK
     if (isset($_POST['destroyLink'])) {
-        $Experiments->setId($_POST['id'], true);
-        if (!$Experiments->canWrite) {
-            throw new Exception(Tools::error(true));
-        }
-        if ($Experiments->Links->destroy($_POST['linkId'])) {
+        $Entity->setId($_POST['id']);
+        $Entity->canOrExplode('write');
+
+        if ($Entity->Links->destroy($_POST['linkId'])) {
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Link deleted successfully')
@@ -173,21 +167,18 @@ try {
 
     // DESTROY
     if (isset($_POST['destroy'])) {
-        $Experiments->setId($_POST['id'], true);
-        if (!$Experiments->canWrite) {
-            throw new Exception(Tools::error(true));
-        }
-        $Teams = new Teams($Experiments->team);
+        $Entity->setId($_POST['id']);
+        $Entity->canOrExplode('write');
 
-        if ((($Teams->read('deletable_xp') == '0') &&
-            !$_SESSION['is_admin']) ||
-            (!$Experiments->canWrite)) {
+        $Teams = new Teams($Entity->team);
+
+        if (($Teams->read('deletable_xp') == '0') && !$_SESSION['is_admin']) {
             echo json_encode(array(
                 'res' => false,
                 'msg' => _("You don't have the rights to delete this experiment.")
             ));
         } else {
-            if ($Experiments->destroy()) {
+            if ($Entity->destroy()) {
                 echo json_encode(array(
                     'res' => true,
                     'msg' => _('Experiment successfully deleted')

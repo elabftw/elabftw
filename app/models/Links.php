@@ -44,15 +44,6 @@ class Links extends Entity
      */
     public function create($link)
     {
-        // check link is int and experiment is owned by user
-        $link = Tools::checkId($link);
-        if ($link === false) {
-            throw new Exception('The id parameter is invalid!');
-        }
-        if (!$this->Experiments->canWrite) {
-            throw new Exception(Tools::error(true));
-        }
-
         $sql = "INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':item_id', $this->Experiments->id, PDO::PARAM_INT);
@@ -117,10 +108,6 @@ class Links extends Entity
      */
     public function destroy($link)
     {
-        if (!Tools::checkId($link) ||
-            !$this->Experiments->canWrite) {
-            throw new Exception('Error removing link');
-        }
         $sql = "DELETE FROM experiments_links WHERE id= :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $link, PDO::PARAM_INT);

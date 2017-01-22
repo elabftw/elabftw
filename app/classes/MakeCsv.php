@@ -97,11 +97,12 @@ class MakeCsv extends Make
     {
         $this->idArr = explode(" ", $this->idList);
         foreach ($this->idArr as $id) {
-            $this->Entity->setId($id, true);
-            if (!$this->Entity->canRead) {
-                throw new Exception(Tools::error(true));
+            $this->Entity->setId($id);
+            $this->Entity->populate();
+            $permissions = $this->Entity->getPermissions();
+            if ($permissions['read']) {
+                $this->addLine();
             }
-            $this->addLine();
         }
         $this->writeCsv();
     }
@@ -143,7 +144,7 @@ class MakeCsv extends Make
             html_entity_decode(strip_tags(htmlspecialchars_decode($this->Entity->entityData['body'], ENT_QUOTES | ENT_COMPAT))),
             htmlspecialchars_decode($this->Entity->entityData['name'], ENT_QUOTES | ENT_COMPAT),
             $elabidOrRating,
-            $this->getUrl()
+            $this->getUrl($this->Entity->entityData['id'])
         );
     }
 

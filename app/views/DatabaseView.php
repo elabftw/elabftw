@@ -17,9 +17,6 @@ use Exception;
  */
 class DatabaseView extends EntityView
 {
-    /** can be tag, query or filter */
-    public $searchType = '';
-
     /**
      * Need a Database object
      *
@@ -65,57 +62,6 @@ class DatabaseView extends EntityView
         $this->html .= $this->buildEditJs();
 
         return $this->html;
-    }
-
-    /**
-     * Generate HTML for show DB
-     * we have html and html2 because to build html we need the idArr
-     * from html2
-     *
-     * @return string
-     */
-    public function buildShow()
-    {
-        $html = '';
-        $html2 = '';
-
-        // get all DB items for the team
-        $itemsArr = $this->Entity->readAll();
-
-        $total_time = get_total_time();
-
-        // loop the results array and display results
-        $idArr = array();
-        foreach ($itemsArr as $item) {
-            $this->Entity->setId($item['id']);
-            // fill an array with the ID of each item to use in the csv/zip export menu
-            $idArr[] = $item['id'];
-            $html2 .= $this->showUnique($item);
-        }
-
-        // show number of results found
-        $count = count($itemsArr);
-        if ($count === 0 && $this->searchType != '') {
-            return display_message('ko_nocross', _("Sorry. I couldn't find anything :("));
-        } elseif ($count === 0 && $this->searchType === '') {
-            return display_message('ok_nocross', sprintf(_('Welcome to eLabFTW. Head to the %sAdmin Panel%s to create a new type of item.'), "<a href='admin.php?tab=4'>", "</a>"));
-        } else {
-            $html .= $this->buildExportMenu($idArr, 'items');
-
-            $html .= "<p class='smallgray'>" . $count . " " .
-                ngettext("result found", "results found", $count) . " (" .
-                $total_time['time'] . " " . $total_time['unit'] . ")</p>";
-        }
-        $load_more_button = "<div class='center'>
-            <button class='button' id='loadButton'>" . sprintf(_('Show %s more'), $this->limit) . "</button>
-            <button class='button button-neutral' id='loadAllButton'>". _('Show all') . "</button>
-            </div>";
-        // show load more button if there are more results than the default display number
-        if ($count > $this->limit) {
-            $html2 .= $load_more_button;
-        }
-        $html .= $this->buildShowJs('database');
-        return $html . $html2;
     }
 
     /**

@@ -18,12 +18,6 @@ use Exception;
  */
 class Database extends Entity
 {
-    /** inserted in sql */
-    public $bookableFilter = '';
-
-    /** inserted in sql */
-    public $ratingFilter = '';
-
     /**
      * Give me the team on init
      *
@@ -72,61 +66,25 @@ class Database extends Entity
     }
 
     /**
-     * Read an item
-     *
-     * @throws Exception if don't have read rights
-     * @return array
-     */
-    public function read()
-    {
-        /*
-        // permission check
-        // you can only see items from your team
-        if (!$this->canRead) {
-            throw new Exception(Tools::error(true));
-        }
-         */
-
-        $sql = "SELECT DISTINCT items.id AS itemid,
-            experiments_links.id AS linkid,
-            experiments_links.*,
-            items.*,
-            items_types.*,
-            users.lastname,
-            users.firstname
-            FROM items
-            LEFT JOIN experiments_links ON (experiments_links.link_id = items.id)
-            LEFT JOIN items_types ON (items.type = items_types.id)
-            LEFT JOIN users ON (items.userid = users.userid)
-            WHERE items.id = :id";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->execute();
-
-        $res = $req->fetch();
-
-        if (count($res['id']) === 0) {
-            throw new Exception(_('Nothing to see with this id!'));
-        }
-
-        return $res;
-    }
-
-    /**
      * Read all items for a team
      * Optionally with filters
      *
      * @return array
      */
-    public function readAll()
+    public function read()
     {
-        $sql = "SELECT DISTINCT items.id AS itemid, items.*, items_types.name, items_types.color, uploads.*
+        if (!is_null($this->id)) {
+            $this->idFilter = ' AND items.id = ' . $this->id;
+        }
+
+        $sql = "SELECT DISTINCT items.id AS itemid, items.*, items_types.name, items_types.color, items_types.id AS itemstype, uploads.*
         FROM items
         LEFT JOIN items_types ON (items.type = items_types.id)
         LEFT JOIN items_tags ON (items.id = items_tags.item_id)
         LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads
         ON (uploads.attachment = items.id AND uploads.type = 'items')
         WHERE items.team = :teamid
+        " . $this->idFilter . "
         " . $this->titleFilter . "
         " . $this->dateFilter . "
         " . $this->bodyFilter . "
@@ -141,7 +99,13 @@ class Database extends Entity
         $req->bindParam(':teamid', $this->team);
         $req->execute();
 
-        return $req->fetchAll();
+        $itemsArr = $req->fetchAll();
+
+        // reduce the dimension of the array if we have only one item (idFilter set)
+        if (count($itemsArr) === 1) {
+            return $itemsArr[0];
+        }
+        return $itemsArr;
     }
 
     /**
@@ -203,18 +167,16 @@ class Database extends Entity
      */
     public function duplicate()
     {
-        $item = $this->read();
-
         $sql = "INSERT INTO items(team, title, date, body, userid, type)
             VALUES(:team, :title, :date, :body, :userid, :type)";
         $req = $this->pdo->prepare($sql);
         $req->execute(array(
-            'team' => $item['team'],
-            'title' => $item['title'],
+            'team' => $this->team,
+            'title' => $this->entityData['title'],
             'date' => Tools::kdate(),
-            'body' => $item['body'],
+            'body' => $this->entityData['body'],
             'userid' => $this->userid,
-            'type' => $item['type']
+            'type' => $this->entityData['itemstype']
         ));
         $newId = $this->pdo->lastInsertId();
 

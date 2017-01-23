@@ -378,7 +378,7 @@ class Tools
         if (is_array($arr)) {
             foreach ($arr as $key => $val) {
                 if (is_array($val)) {
-                    $html .= '<li><span style="color:red;">' . $key . '</span><b> => </b><span style="color:blue;">' . Tools::printArr($val) . '</span></li>';
+                    $html .= '<li><span style="color:red;">' . $key . '</span><b> => </b><span style="color:blue;">' . self::printArr($val) . '</span></li>';
                 } else {
                     $html .= '<li><span style="color:red;">' . $key . '</span><b> => </b><span style="color:blue;">' . $val . '</span></li>';
                 }

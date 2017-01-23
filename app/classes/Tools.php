@@ -365,4 +365,26 @@ class Tools
 
         return $langs;
     }
+
+    /**
+     * A better print_r()
+     *
+     * @param array $arr
+     * @return string
+     */
+    public static function printArr($arr)
+    {
+        $html = '<ul>';
+        if (is_array($arr)) {
+            foreach ($arr as $key => $val) {
+                if (is_array($val)) {
+                    $html .= '<li><span style="color:red;">' . $key . '</span><b> => </b><span style="color:blue;">' . Tools::printArr($val) . '</span></li>';
+                } else {
+                    $html .= '<li><span style="color:red;">' . $key . '</span><b> => </b><span style="color:blue;">' . $val . '</span></li>';
+                }
+            }
+        }
+        $html .= '</ul>';
+        return $html;
+    }
 }

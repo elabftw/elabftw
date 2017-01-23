@@ -357,21 +357,22 @@ class EntityView
     /**
      * Display the tags
      *
-     * @param string $mode edit or view
+     * @param string $mode show/view/edit
      * @return string Will show the HTML for tags
      */
     protected function showTags($mode)
     {
-        $tagList = explode(',', $this->Entity->entityData['tags']);
+        $html = '';
+        $tagList = array();
+
         if ($mode === 'show') {
             $Tags = new Tags($this->Entity);
             $tagList = $Tags->read();
+            if (count($tagList) === 0) {
+                return $html;
+            }
         }
-        $html = '';
 
-        if (count($tagList) === 0 && ($mode === 'view' || $mode === 'edit')) {
-            return $html;
-        }
 
         $page = 'database';
         if ($this->Entity->type === 'experiments') {
@@ -389,7 +390,7 @@ class EntityView
                             stripslashes($tag['tag']) . "</a> ";
                 }
             } else {
-                foreach ($tagList as $tag) {
+                foreach ($this->Entity->entityData['tagsArr'] as $tagId => $tag) {
                         $html .= "<a href='" . $page . ".php?mode=show&tag=" .
                             urlencode(stripslashes($tag)) . "'>" .
                             stripslashes($tag) . "</a> ";
@@ -405,8 +406,14 @@ class EntityView
         $html = "<img src='app/img/tags.png' alt='tags' /><label for='addtaginput'>" . _('Tags') . "</label>";
         $html .= "<div class='tags'><span id='tags_div'>";
 
-        foreach ($tagList as $tag) {
-            $html .= "<span class='tag'><a onclick=\"destroyTag('" . $this->Entity->type . "', " . $this->Entity->id . ", " . $tag['id'] . ")\">" . stripslashes($tag['tag']) . "</a></span>";
+
+        // display tags for edit mode
+        foreach ($this->Entity->entityData['tagsArr'] as $tagId => $tag) {
+            $html .= "<span class='tag'><a onclick=\"destroyTag('" .
+                $this->Entity->type . "', " .
+                $this->Entity->id . ", " .
+                $tagId . ")\">" .
+                stripslashes($tag) . "</a></span>";
         }
         $html .= "</span><input type='text' id='createTagInput' placeholder='" . _('Add a tag') . "' /></div>";
 

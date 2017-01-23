@@ -72,6 +72,7 @@ class DatabaseView extends EntityView
      */
     public function showUnique($item)
     {
+        $this->Entity->id = $item['id'];
         $html = "<section class='item " . $this->display . "' style='border-left: 6px solid #" . $item['color'] . "'>";
         $html .= "<a href='database.php?mode=view&id=" . $item['itemid'] . "'>";
 
@@ -93,7 +94,7 @@ class DatabaseView extends EntityView
         // DATE
         $html .= "<span class='date'><img class='image' src='app/img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
         // TAGS
-        $html .= $this->showTags('view');
+        $html .= $this->showTags('show');
 
         $html .= "</section>";
 

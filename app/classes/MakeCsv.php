@@ -31,8 +31,6 @@ class MakeCsv extends Make
     private $idList;
     /** the input ids but in an array */
     private $idArr = array();
-    /** 'experiment' or 'items' */
-    protected $type;
     /** Entity instance */
     private $Entity;
 
@@ -51,15 +49,13 @@ class MakeCsv extends Make
 
         $this->idList = $idList;
 
-        $this->type = $this->checkType($type);
-        if ($this->type === 'experiments') {
-            $this->Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $id);
+        if ($type === 'experiments') {
+            $this->Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid']);
+        } elseif ($type === 'items') {
+            $this->Entity = new Database($_SESSION['team_id'], $_SESSION['userid']);
         } else {
-            $this->Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $id);
+            throw new Exception('Bad type!');
         }
-
-        // assign and check type
-        $this->type = $this->checkType($type);
 
         // set the column names
         $this->list[] = $this->populateFirstLine();
@@ -83,7 +79,7 @@ class MakeCsv extends Make
      */
     private function populateFirstLine()
     {
-        if ($this->type === 'experiments') {
+        if ($this->Entity->type === 'experiments') {
             return array('id', 'date', 'title', 'content', 'status', 'elabid', 'url');
         }
         return  array('title', 'description', 'id', 'date', 'type', 'rating', 'url');
@@ -118,7 +114,7 @@ class MakeCsv extends Make
         $url = 'https://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['PHP_SELF'];
         $needle = array('make.php', 'app/controllers/ExperimentsController.php');
 
-        if ($this->type === 'experiments') {
+        if ($this->Entity->type === 'experiments') {
             $url = str_replace($needle, 'experiments.php', $url);
         } else { //item
             $url = str_replace($needle, 'database.php', $url);
@@ -131,7 +127,7 @@ class MakeCsv extends Make
      */
     private function addLine()
     {
-        if ($this->type === 'experiments') {
+        if ($this->Entity->type === 'experiments') {
             $elabidOrRating = $this->Entity->entityData['elabid'];
         } else {
             $elabidOrRating = $this->Entity->entityData['rating'];

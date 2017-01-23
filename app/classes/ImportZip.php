@@ -54,7 +54,7 @@ class ImportZip extends Import
     private $newItemId;
 
     /**
-     * Need the path to zip tmp_name, the type and the db object
+     * Constructor
      *
      */
     public function __construct()
@@ -98,21 +98,6 @@ class ImportZip extends Import
         $content = file_get_contents($file);
         $this->json = json_decode($content, true);
         $this->type = $this->checkType($this->json[0]['type']);
-    }
-
-    /**
-     * Validate the type we have.
-     *
-     * @param string $type experiments or items
-     * @return string The valid type
-     */
-    private function checkType($type)
-    {
-        $validArr = array('experiments', 'items');
-        if (!in_array($type, $validArr)) {
-            throw new Exception('Bad type!');
-        }
-        return $type;
     }
 
     /**

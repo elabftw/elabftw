@@ -10,7 +10,7 @@
  */
 namespace Elabftw\Elabftw;
 
-use \Exception;
+use Exception;
 
 /**
  * Mother class of MakeCsv, MakePdf and MakeZip

@@ -29,9 +29,6 @@ class MakeZip extends Make
     private $idList;
     /** the input ids but in an array */
     private $idArr = array();
-
-    /** 'experiments' or 'items' */
-    protected $type;
     /** files to be deleted by destructor */
     private $filesToDelete = array();
     /** a formatted title */
@@ -59,11 +56,12 @@ class MakeZip extends Make
     {
         $this->pdo = Db::getConnection();
 
-        $this->type = $this->checkType($type);
-        if ($this->type === 'experiments') {
+        if ($type === 'experiments') {
             $this->Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid']);
-        } else {
+        } elseif ($type === 'items') {
             $this->Entity = new Database($_SESSION['team_id'], $_SESSION['userid']);
+        } else {
+            throw new Exception('Bad type!');
         }
 
         // we check first if the zip extension is here
@@ -126,7 +124,7 @@ class MakeZip extends Make
      */
     private function addAsn1Token($id)
     {
-        if ($this->type === 'experiments' && $this->Entity->entityData['timestamped'] === '1') {
+        if ($this->Entity->type === 'experiments' && $this->Entity->entityData['timestamped'] === '1') {
             // SQL to get the path of the token
             $sql = "SELECT real_name, long_name FROM uploads WHERE item_id = :id AND type = 'timestamp-token' LIMIT 1";
             $req = $this->pdo->prepare($sql);
@@ -144,7 +142,7 @@ class MakeZip extends Make
      */
     private function nameFolder()
     {
-        if ($this->type === 'experiments') {
+        if ($this->Entity->type === 'experiments') {
             $this->folder = $this->Entity->entityData['date'] . "-" . $this->cleanTitle;
         } else { // items
             $this->folder = $this->Entity->entityData['name'] . " - " . $this->cleanTitle;
@@ -165,7 +163,7 @@ class MakeZip extends Make
         $sql = "SELECT * FROM uploads WHERE item_id = :id AND (type = :type OR type = 'exp-pdf-timestamp')";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':id', $id);
-        $req->bindParam(':type', $this->type);
+        $req->bindParam(':type', $this->Entity->type);
         $req->execute();
         while ($uploads = $req->fetch()) {
             $real_name[] = $uploads['real_name'];
@@ -204,7 +202,7 @@ class MakeZip extends Make
     private function addCsv($id)
     {
         // add CSV file to archive
-        $csv = new MakeCsv($id, $this->type);
+        $csv = new MakeCsv($id, $this->Entity->type);
         $this->zip->addFile($csv->filePath, $this->folder . "/" . $this->cleanTitle . ".csv");
         $this->filesToDelete[] = $csv->filePath;
     }
@@ -243,11 +241,11 @@ class MakeZip extends Make
             $this->addPdf($id);
             // add an entry to the json file
             $elabid = 'None';
-            if ($this->type === 'experiments') {
+            if ($this->Entity->type === 'experiments') {
                 $elabid = $this->Entity->entityData['elabid'];
             }
             $this->jsonArr[] = array(
-                'type' => $this->type,
+                'type' => $this->Entity->type,
                 'title' => stripslashes($this->Entity->entityData['title']),
                 'body' => stripslashes($this->Entity->entityData['body']),
                 'date' => $this->Entity->entityData['date'],

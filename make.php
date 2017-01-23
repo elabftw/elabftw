@@ -22,11 +22,6 @@ $page_title = _('Export');
 $selected_menu = null;
 
 try {
-    if ($_GET['type'] === 'experiments') {
-        $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_GET['id']);
-    } else {
-        $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_GET['id']);
-    }
 
     switch ($_GET['what']) {
         case 'csv':
@@ -38,6 +33,11 @@ try {
             break;
 
         case 'pdf':
+            if ($_GET['type'] === 'experiments') {
+                $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_GET['id']);
+            } else {
+                $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_GET['id']);
+            }
             $make = new MakePdf($Entity);
             break;
 

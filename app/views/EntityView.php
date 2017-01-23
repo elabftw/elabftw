@@ -252,7 +252,7 @@ class EntityView
         $html = "<div class='row'>";
 
         // LEFT MENU - CREATE NEW
-        $html .= "<div class='col-md-2 col-xs-2'>";
+        $html .= "<div class='col-md-2'>";
         $html .= "<div class='dropdown'>";
         $html .= "<button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>";
         $html .= _('Create new');
@@ -264,11 +264,10 @@ class EntityView
         $html .= "</div></div>";
 
         // RIGHT MENU
-        // padding 0 is necessary to get the menu fully to the right
-        $html .= "<div class='col-md-10 col-xs-12' style='padding:0'>";
+        // we hide this menu for small devices
+        $html .= "<div class='col-md-10 hidden-xs'>";
 
         // FILTERS
-        $html .= "<div class='col-md-10 align_right'>";
         $html .= "<form class='form-inline align_right'>";
         $html .= "<div class='form-group'>";
         $html .= "<input type='hidden' name='tag' value='" . $this->tag . "' />";
@@ -306,7 +305,7 @@ class EntityView
         $html .= "</select>";
         $html .= "<button class='btn btn-elab submit-order'>" . _('Order') . "</button>";
         $html .= "<button type='reset' class='btn btn-danger submit-reset' onClick=\"javascript:location.href='" . $type . ".php?mode=show'\">";
-        $html .= _('Reset') . "</button></div></form></div>";
+        $html .= _('Reset') . "</button></div></form>";
 
         $html .= "</div></div><hr>";
 

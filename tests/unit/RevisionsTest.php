@@ -5,10 +5,8 @@ class RevisionsTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $_SESSION['userid'] = '1';
-        $_SESSION['team_id'] = '1';
-        $_SESSION['is_admin'] = '0';
-        $this->Experiments = new Experiments(1, 1, 1);
+        $this->Users = new Users(1);
+        $this->Experiments = new Experiments($this->Users, 1);
         $this->Revisions = new Revisions($this->Experiments);
     }
 
@@ -25,13 +23,13 @@ class RevisionsTest extends \PHPUnit_Framework_TestCase
     public function testReadCount()
     {
         $this->assertInternalType('int', $this->Revisions->readCount());
-        $this->Revisions = new Revisions(new Database('1', '1', '1'));
+        $this->Revisions = new Revisions(new Database($this->Users, '1'));
         $this->assertInternalType('int', $this->Revisions->readCount());
     }
 
     public function testRestore()
     {
-        $this->Experiment = new Experiments('1', '1');
+        $this->Experiment = new Experiments($this->Users, '1');
         $new = $this->Experiment->create();
         $this->Experiment->setId($new);
         $this->Revisions = new Revisions($this->Experiment);

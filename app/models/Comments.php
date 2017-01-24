@@ -49,7 +49,7 @@ class Comments extends Entity
         $req->bindValue(':datetime', date("Y-m-d H:i:s"));
         $req->bindParam(':exp_id', $this->Experiments->id);
         $req->bindParam(':comment', $comment);
-        $req->bindParam(':userid', $this->Experiments->userid);
+        $req->bindParam(':userid', $this->Experiments->Users->userid);
 
         if (!$req->execute()) {
             throw new Exception('Error inserting comment!');
@@ -71,7 +71,7 @@ class Comments extends Entity
         // get the first and lastname of the commenter
         $sql = "SELECT firstname, lastname FROM users WHERE userid = :userid";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':userid', $this->Experiments->userid);
+        $req->bindParam(':userid', $this->Experiments->Users->userid);
         $req->execute();
         $commenter = $req->fetch();
 
@@ -84,7 +84,7 @@ class Comments extends Entity
         $users = $req->fetch();
 
         // don't send an email if we are commenting on our own XP
-        if ($users['userid'] === $this->Experiments->userid) {
+        if ($users['userid'] === $this->Experiments->Users->userid) {
             return 1;
         }
 
@@ -156,7 +156,7 @@ class Comments extends Entity
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':comment', $comment);
         $req->bindParam(':id', $id, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->Experiments->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Experiments->Users->userid, PDO::PARAM_INT);
 
         return $req->execute();
     }

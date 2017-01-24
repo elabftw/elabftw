@@ -226,21 +226,6 @@ class Entity
     }
 
     /**
-     * Check if we have the permission to read/write or throw an exception
-     *
-     * @param string $rw read or write
-     * @throws Exception
-     */
-    public function canOrExplode($rw)
-    {
-        $permissions = $this->getPermissions();
-
-        if (!$permissions[$rw]) {
-            throw new Exception(Tools::error(true));
-        }
-    }
-
-    /**
      * Set a limit for sql read
      *
      * @param int $num
@@ -261,6 +246,20 @@ class Entity
         $this->useridFilter = ' AND ' . $this->type . '.userid = ' . $this->Users->userid;
     }
 
+    /**
+     * Check if we have the permission to read/write or throw an exception
+     *
+     * @param string $rw read or write
+     * @throws Exception
+     */
+    public function canOrExplode($rw)
+    {
+        $permissions = $this->getPermissions();
+
+        if (!$permissions[$rw]) {
+            throw new Exception(Tools::error(true));
+        }
+    }
 
     /**
      * Verify we can read/write an item
@@ -287,7 +286,7 @@ class Entity
 
         if ($this->type === 'experiments') {
             // if we own the experiment, we have read/write rights on it for sure
-            if ($item['userid'] === $this->Users->userid) {
+            if ($item['userid'] == $this->Users->userid) {
                 $permissions['read'] = true;
                 $permissions['write'] = true;
 

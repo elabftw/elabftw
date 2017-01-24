@@ -10,7 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use PDO;
 use Exception;
 
 /**
@@ -46,8 +45,8 @@ class Links extends Entity
     {
         $sql = "INSERT INTO experiments_links (item_id, link_id) VALUES(:item_id, :link_id)";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':item_id', $this->Experiments->id, PDO::PARAM_INT);
-        $req->bindParam(':link_id', $link, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Experiments->id);
+        $req->bindParam(':link_id', $link);
 
         return $req->execute();
     }
@@ -69,7 +68,7 @@ class Links extends Entity
             LEFT JOIN items_types ON (items.type = items_types.id)
             WHERE experiments_links.item_id = :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->Experiments->id, PDO::PARAM_INT);
+        $req->bindParam(':id', $this->Experiments->id);
         $req->execute();
 
         return $req->fetchAll();
@@ -110,7 +109,7 @@ class Links extends Entity
     {
         $sql = "DELETE FROM experiments_links WHERE id= :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $link, PDO::PARAM_INT);
+        $req->bindParam(':id', $link);
 
         return $req->execute();
     }

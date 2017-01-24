@@ -1,13 +1,12 @@
 <?php
 namespace Elabftw\Elabftw;
 
-use PDO;
-
 class ExperimentsTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->Experiments = new Experiments('1', '1');
+        $this->Users = new Users(1);
+        $this->Experiments = new Experiments($this->Users);
     }
 
     public function testCreateAndDestroy()
@@ -22,7 +21,7 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
         $this->Templates->create('my template', 'is so cool', '1');
         $new = $this->Experiments->create('1');
         $this->assertTrue((bool) Tools::checkId($new));
-        $this->Experiments = new Experiments('1', '1', $new);
+        $this->Experiments = new Experiments($this->Users, $new);
         $this->assertTrue($this->Experiments->destroy());
     }
 
@@ -47,7 +46,6 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
     public function testReadRelated()
     {
         $this->Experiments->setId(1);
-        $this->Experiments->populate();
         $Links = new Links($this->Experiments);
         $Links->create(1);
         $this->assertTrue(is_array($this->Experiments->readRelated(1)));
@@ -58,7 +56,7 @@ class ExperimentsTest extends \PHPUnit_Framework_TestCase
         $this->Experiments->setId(1);
         $this->Experiments->populate();
         $this->assertEquals(1, $this->Experiments->id);
-        $this->assertEquals(1, $this->Experiments->userid);
+        $this->assertEquals(1, $this->Experiments->Users->userid);
         $this->assertTrue($this->Experiments->update('Untitled', '20160729', '<p>Body</p>'));
     }
 

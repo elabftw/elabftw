@@ -1,15 +1,12 @@
 <?php
 namespace Elabftw\Elabftw;
 
-use PDO;
-
 class DatabaseTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $_SESSION['team_id'] = 1;
-        $_SESSION['userid'] = 1;
-        $this->Database= new Database(1, 1);
+        $this->Users = new Users(1);
+        $this->Database= new Database($this->Users);
     }
 
     public function testCreateAndDestroy()
@@ -35,7 +32,7 @@ class DatabaseTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Untitled', $this->Database->entityData['title']);
         $this->assertEquals(Tools::kdate(), $this->Database->entityData['date']);
         $this->setExpectedException('Exception');
-        $this->Database = new Database(1, 9999, 'yep');
+        $this->Database = new Database($this->Users, 'yep');
     }
 
     public function testUpdate()

@@ -21,7 +21,7 @@ require_once '../../app/init.inc.php';
 
 try {
 
-    $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid']);
+    $Entity = new Experiments(new Users($_SESSION['userid']));
 
     // CREATE
     if (isset($_GET['create'])) {

@@ -26,7 +26,7 @@ require_once 'app/head.inc.php';
 echo addChemdoodle();
 
 try {
-    $EntityView = new ExperimentsView(new Experiments($_SESSION['team_id'], $_SESSION['userid']));
+    $EntityView = new ExperimentsView(new Experiments(new Users($_SESSION['userid'])));
 
     if (!isset($_GET['mode']) || empty($_GET['mode']) || $_GET['mode'] === 'show') {
         $EntityView->display = $_SESSION['prefs']['display'];

@@ -13,8 +13,6 @@ namespace Elabftw\Elabftw;
 use PDO;
 use Exception;
 use Swift_Message;
-use \Defuse\Crypto\Crypto as Crypto;
-use \Defuse\Crypto\Key as Key;
 
 /**
  * Users

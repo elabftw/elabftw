@@ -218,7 +218,8 @@ function getDbList($format = 'default')
     $link_list = "";
     $tinymce_list = "";
 
-    $Database = new Database($_SESSION['team_id'], $_SESSION['userid']);
+    $Users = new Users($_SESSION['userid']);
+    $Database = new Database($Users);
     $itemsArr = $Database->read();
 
     foreach ($itemsArr as $item) {
@@ -240,7 +241,7 @@ function getDbList($format = 'default')
 
     // complete the list with experiments (only for tinymce)
     // fix #191
-    $Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid']);
+    $Experiments = new Experiments($Users);
     $expArr = $Experiments->read();
 
     foreach ($expArr as $exp) {

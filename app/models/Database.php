@@ -19,19 +19,17 @@ use Exception;
 class Database extends Entity
 {
     /**
-     * Give me the team on init
+     * Constructor
      *
-     * @param int $team current team
-     * @param int $userid current user
+     * @param Users $users
      * @param int|null $id id of the item
      */
-    public function __construct($team, $userid, $id = null)
+    public function __construct(Users $users, $id = null)
     {
         $this->pdo = Db::getConnection();
 
         $this->type = 'items';
-        $this->team = $team;
-        $this->userid = $userid;
+        $this->Users = $users;
 
         if (!is_null($id)) {
             $this->setId($id);
@@ -47,18 +45,18 @@ class Database extends Entity
      */
     public function create($itemType)
     {
-        $itemsTypes = new ItemsTypes($this->team, $itemType);
+        $itemsTypes = new ItemsTypes($this->Users->userData['team'], $itemType);
 
         // SQL for create DB item
         $sql = "INSERT INTO items(team, title, date, body, userid, type)
             VALUES(:team, :title, :date, :body, :userid, :type)";
         $req = $this->pdo->prepare($sql);
         $req->execute(array(
-            'team' => $this->team,
+            'team' => $this->Users->userData['team'],
             'title' => _('Untitled'),
             'date' => Tools::kdate(),
             'body' => $itemsTypes->read(),
-            'userid' => $this->userid,
+            'userid' => $this->Users->userid,
             'type' => $itemType
         ));
 
@@ -89,7 +87,7 @@ class Database extends Entity
         $req->bindParam(':title', $title);
         $req->bindParam(':date', $date);
         $req->bindParam(':body', $body);
-        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':userid', $this->Users->userid);
         $req->bindParam(':id', $this->id);
 
         // add a revision
@@ -128,11 +126,11 @@ class Database extends Entity
             VALUES(:team, :title, :date, :body, :userid, :type)";
         $req = $this->pdo->prepare($sql);
         $req->execute(array(
-            'team' => $this->team,
+            'team' => $this->Users->userData['team'],
             'title' => $this->entityData['title'],
             'date' => Tools::kdate(),
             'body' => $this->entityData['body'],
-            'userid' => $this->userid,
+            'userid' => $this->Users->userid,
             'type' => $this->entityData['itemstype']
         ));
         $newId = $this->pdo->lastInsertId();

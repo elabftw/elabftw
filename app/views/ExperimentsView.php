@@ -96,7 +96,7 @@ class ExperimentsView extends EntityView
         $this->Entity->id = $item['id'];
         // dim the experiment a bit if it's not yours
         $opacity = '1';
-        if ($this->Entity->userid != $item['userid']) {
+        if ($this->Entity->Users->userid != $item['userid']) {
             $opacity = '0.7';
         }
         $html = "<section class='item " . $this->display . "' style='opacity:" . $opacity . "; border-left: 6px solid #" . $item['color'] . "'>";
@@ -302,9 +302,7 @@ class ExperimentsView extends EntityView
         $html .= $this->backToLink('experiments');
 
         if ($this->ro) {
-            $Users = new Users();
-            $userArr = $Users->read($this->Entity->entityData['userid']);
-            $ownerName = $userArr['firstname'] . ' ' . $userArr['lastname'];
+            $ownerName = $this->Entity->Users->userData['fullname'];
             $message = sprintf(_('Read-only mode. Experiment of %s.'), $ownerName);
             $html .= display_message('ok', $message);
         }

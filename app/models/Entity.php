@@ -24,11 +24,8 @@ class Entity
     /** experiments or items */
     public $type;
 
-    /** current user */
-    public $userid;
-
-    /** our team */
-    public $team;
+    /** instance of Users */
+    public $Users;
 
     /** id of our entity */
     public $id;
@@ -191,12 +188,8 @@ class Entity
             $this->queryFilter .
             " ORDER BY " . $this->order . " " . $this->sort . " " . $this->limit;
 
-        /*
-        var_dump($sql);
-        die;
-         */
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $this->team);
+        $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
 
         $itemsArr = $req->fetchAll();
@@ -265,7 +258,7 @@ class Entity
      */
     public function setUseridFilter()
     {
-        $this->useridFilter = ' AND ' . $this->type . '.userid = ' . $this->userid;
+        $this->useridFilter = ' AND ' . $this->type . '.userid = ' . $this->Users->userid;
     }
 
 
@@ -294,16 +287,16 @@ class Entity
 
         if ($this->type === 'experiments') {
             // if we own the experiment, we have read/write rights on it for sure
-            if ($item['userid'] === $this->userid) {
+            if ($item['userid'] === $this->Users->userid) {
                 $permissions['read'] = true;
                 $permissions['write'] = true;
 
             // admin can view any experiment
-            } elseif (($item['userid'] != $this->userid) && $isAdmin) {
+            } elseif (($item['userid'] != $this->Users->userid) && $isAdmin) {
                 $permissions['read'] = true;
 
             // if we don't own the experiment (and we are not admin), we need to check the visibility
-            } elseif (($item['userid'] != $this->userid) && !$isAdmin) {
+            } elseif (($item['userid'] != $this->Users->userid) && !$isAdmin) {
                 $validArr = array(
                     'public',
                     'organization'
@@ -316,13 +309,13 @@ class Entity
 
                 // if the vis. setting is team, check we are in the same team than the item
                 if (($item['visibility'] === 'team') &&
-                    ($item['team'] == $this->team)) {
+                    ($item['team'] == $this->Users->userData['team'])) {
                     $permissions['read'] = true;
                 }
 
                 // if the vis. setting is a team group, check we are in the group
                 if (Tools::checkId($item['visibility'])) {
-                    $TeamGroups = new TeamGroups($this->team);
+                    $TeamGroups = new TeamGroups($this->Users->userData['team']);
                     if ($TeamGroups->isInTeamGroup($item['userid'], $visibility)) {
                         $permissions['read'] = true;
                     }
@@ -331,7 +324,7 @@ class Entity
 
         } else {
             // for DB items, we only need to be in the same team
-            if ($item['team'] === $this->team) {
+            if ($item['team'] === $this->Users->userData['team']) {
                 $permissions['read'] = true;
                 $permissions['write'] = true;
             }
@@ -356,7 +349,7 @@ class Entity
             $sql = "UPDATE " . $post['table'] . " SET ordering = :ordering WHERE id = :id AND team = :team";
             $req = $this->pdo->prepare($sql);
             $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
-            $req->bindParam(':team', $this->team);
+            $req->bindParam(':team', $this->Users->userData['team']);
             $req->bindParam(':id', $id, PDO::PARAM_INT);
             $success[] = $req->execute();
         }

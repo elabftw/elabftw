@@ -24,7 +24,7 @@ class Teams
     protected $pdo;
 
     /** our team id */
-    private $team;
+    public $team;
 
     /**
      * Constructor

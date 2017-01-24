@@ -34,16 +34,15 @@ class Experiments extends Entity
      * Constructor
      *
      * @param int $team
-     * @param int $userid
+     * @param Users $users
      * @param int|null $id
      */
-    public function __construct($team, $userid, $id = null)
+    public function __construct(Users $users, $id = null)
     {
         $this->pdo = Db::getConnection();
 
         $this->type = 'experiments';
-        $this->team = $team;
-        $this->userid = $userid;
+        $this->Users = $users;
 
         if (!is_null($id)) {
             $this->setId($id);
@@ -62,7 +61,7 @@ class Experiments extends Entity
      */
     public function create($tpl = null)
     {
-        $Templates = new Templates($this->team);
+        $Templates = new Templates($this->Users->userData['team']);
 
         // do we want template ?
         if (!is_null($tpl)) {
@@ -81,14 +80,14 @@ class Experiments extends Entity
             VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
         $req = $this->pdo->prepare($sql);
         $req->execute(array(
-            'team' => $this->team,
+            'team' => $this->Users->userData['team'],
             'title' => $title,
             'date' => Tools::kdate(),
             'body' => $templatesArr['body'],
             'status' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
             'visibility' => 'team',
-            'userid' => $this->userid
+            'userid' => $this->Users->userid
         ));
 
         return $this->pdo->lastInsertId();
@@ -143,7 +142,7 @@ class Experiments extends Entity
         $req->bindParam(':title', $title);
         $req->bindParam(':date', $date);
         $req->bindParam(':body', $body);
-        $req->bindParam(':userid', $this->userid);
+        $req->bindParam(':userid', $this->Users->userid);
         $req->bindParam(':id', $this->id);
 
         // add a revision
@@ -186,7 +185,7 @@ class Experiments extends Entity
         $sql = "UPDATE experiments SET visibility = :visibility WHERE userid = :userid AND id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':visibility', $visibility);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Users->userid);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();
@@ -202,8 +201,8 @@ class Experiments extends Entity
     {
         $sql = "UPDATE experiments SET status = :status WHERE userid = :userid AND id = :id";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':status', $status, PDO::PARAM_INT);
-        $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
+        $req->bindParam(':status', $status);
+        $req->bindParam(':userid', $this->Users->userid);
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
 
         return $req->execute();
@@ -222,7 +221,7 @@ class Experiments extends Entity
         // all the others are made not default
         $sql = 'SELECT id FROM status WHERE is_default = true AND team = :team LIMIT 1';
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $this->team);
+        $req->bindParam(':team', $this->Users->userData['team']);
         $req->execute();
         $status = $req->fetchColumn();
 
@@ -231,7 +230,7 @@ class Experiments extends Entity
         if (!$status) {
             $sql = 'SELECT id FROM status WHERE team = :team LIMIT 1';
             $req = $this->pdo->prepare($sql);
-            $req->bindParam(':team', $this->team);
+            $req->bindParam(':team', $this->Users->userData['team']);
             $req->execute();
             $status = $req->fetchColumn();
         }
@@ -267,14 +266,14 @@ class Experiments extends Entity
             VALUES(:team, :title, :date, :body, :status, :elabid, :visibility, :userid)";
         $req = $this->pdo->prepare($sql);
         $req->execute(array(
-            'team' => $this->team,
+            'team' => $this->Users->userData['team'],
             'title' => $title,
             'date' => Tools::kdate(),
             'body' => $experiment['body'],
             'status' => $this->getStatus(),
             'elabid' => $this->generateElabid(),
             'visibility' => $experiment['visibility'],
-            'userid' => $this->userid));
+            'userid' => $this->Users->userid));
         $newId = $this->pdo->lastInsertId();
 
         $tags = new Tags($this);
@@ -322,13 +321,17 @@ class Experiments extends Entity
         $locked = (int) $this->entityData['locked'];
 
         // if we try to unlock something we didn't lock
-        if ($locked === 1 && ($this->entityData['lockedby'] != $this->userid)) {
+        if ($locked === 1 && ($this->entityData['lockedby'] != $this->Users->userid)) {
             // Get the first name of the locker to show in error message
             $sql = "SELECT firstname FROM users WHERE userid = :userid";
             $req = $this->pdo->prepare($sql);
             $req->bindParam(':userid', $this->entityData['lockedby']);
             $req->execute();
-            throw new Exception(_('This experiment was locked by') . ' ' . $req->fetchColumn() . '. ' . _("You don't have the rights to lock/unlock this."));
+            throw new Exception(
+                _('This experiment was locked by') .
+                ' ' . $req->fetchColumn() . '. ' .
+                _("You don't have the rights to lock/unlock this.")
+            );
         }
 
         // check if the experiment is timestamped. Disallow unlock in this case.
@@ -346,7 +349,7 @@ class Experiments extends Entity
             SET locked = :locked, lockedby = :lockedby, lockedwhen = CURRENT_TIMESTAMP WHERE id = :id";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':locked', $locked);
-        $req->bindParam(':lockedby', $this->userid);
+        $req->bindParam(':lockedby', $this->Users->userid);
         $req->bindParam(':id', $this->id);
 
         return $req->execute();

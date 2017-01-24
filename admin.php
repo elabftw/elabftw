@@ -33,7 +33,7 @@ try {
     $ItemsTypesView = new ItemsTypesView(new ItemsTypes($_SESSION['team_id']));
     $TeamGroupsView = new TeamGroupsView(new TeamGroups($_SESSION['team_id']));
     $Auth = new Auth();
-    $Users = new Users($Config);
+    $Users = new Users(null, $Config);
     $usersArr = $Users->readAllFromTeam($_SESSION['team_id']);
     $UsersView = new UsersView($Users);
 

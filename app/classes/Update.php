@@ -56,7 +56,7 @@ class Update
      * UPDATE IT ALSO IN INSTALL/ELABFTW.SQL (last line)
      * /////////////////////////////////////////////////////
      */
-    const REQUIRED_SCHEMA = '14';
+    const REQUIRED_SCHEMA = '15';
 
     /**
      * Create the pdo object
@@ -283,6 +283,12 @@ class Update
             // 20170121
             $this->schema14();
             $this->updateSchema(14);
+        }
+
+        if ($current_schema < 15) {
+            // 20170124
+            $this->schema15();
+            $this->updateSchema(15);
         }
         // place new schema functions above this comment
 
@@ -586,6 +592,18 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
         $sql4 = "ALTER TABLE `items_types` CHANGE `bgcolor` `color` VARCHAR(6)";
         if (!$this->pdo->q($sql) || !$this->pdo->q($sql2) || !$this->pdo->q($sql3) || !$this->pdo->q($sql4)) {
             throw new Exception('Error updating to schema14');
+        }
+    }
+
+    /**
+     * Add api key to users
+     *
+     */
+    private function schema15()
+    {
+        $sql = "ALTER TABLE `users` ADD `api_key` VARCHAR(255) NULL DEFAULT NULL AFTER `show_team`;";
+        if (!$this->pdo->q($sql)) {
+            throw new Exception('Error updating to schema15');
         }
     }
 }

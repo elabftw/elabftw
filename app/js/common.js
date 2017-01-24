@@ -990,3 +990,12 @@ function decodeAsn1(path, expId) {
         $('#decodedDiv').html(json.msg);
     });
 }
+
+function generateApiKey() {
+    $.post('app/controllers/UsersController.php', {
+        generateApiKey: true
+    }).done(function(data) {
+        var json = JSON.parse(data);
+        $("#api_div").load("profile.php #api_div");
+    });
+}

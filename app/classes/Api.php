@@ -29,9 +29,6 @@ class Api
     /** optional arguments, like the id */
     public $args = array();
 
-    /** our user */
-    private $user;
-
     /** the id of the entity */
     public $id = null;
 
@@ -74,16 +71,13 @@ class Api
         }
         // get info about user
         $Users = new Users();
-        $this->user = $Users->readFromApiKey($_SERVER['HTTP_AUTHORIZATION']);
-        if (empty($this->user)) {
-            throw new Exception('Invalid API key.');
-        }
+        $Users->readFromApiKey($_SERVER['HTTP_AUTHORIZATION']);
 
         // load Entity
         if ($this->endpoint === 'experiments') {
-            $this->Entity = new Experiments($this->user['team'], $this->user['userid'], $this->id);
+            $this->Entity = new Experiments($Users->userData['team'], $Users->userData['userid'], $this->id);
         } elseif ($this->endpoint === 'items') {
-            $this->Entity = new Database($this->user['team'], $this->user['userid'], $this->id);
+            $this->Entity = new Database($Users->userData['team'], $Users->userData['userid'], $this->id);
         } else {
             throw new Exception('Bad endpoint.');
         }

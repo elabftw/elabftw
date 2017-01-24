@@ -11,8 +11,6 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
-use \Defuse\Crypto\Crypto as Crypto;
-use \Defuse\Crypto\Key as Key;
 
 /**
  * Display profile of current user
@@ -30,21 +28,21 @@ try {
     $itemsArr = $Entity->read();
     $count = count($itemsArr);
 
-    $Users = new Users();
-    $user = $Users->read($_SESSION['userid']);
-
-    $apiKey = Crypto::encrypt($user['password'], Key::loadFromAsciiSafeString(SECRET_KEY));
+    $Users = new Users($_SESSION['userid']);
 
     // USER INFOS
     echo "<section class='box'>";
     echo "<img src='app/img/user.png' alt='user' /> <h4 style='display:inline'>" . _('Infos') . "</h4>";
     echo "<hr>";
     echo "<div>
-        <p>".$user['firstname'] . " " . $user['lastname'] . " (" . $user['email'] . ")</p>
-        <p>". $count . " " . _('experiments done since') . " " . date("l jS \of F Y", $user['register_date'])
+        <p>" . $Users->userData['firstname'] . " " . $Users->userData['lastname'] . " (" . $Users->userData['email'] . ")</p>
+        <p>". $count . " " . _('experiments done since') . " " . date("l jS \of F Y", $Users->userData['register_date'])
         ."<p><a href='ucp.php'>" . _('Go to user control panel') . "</a>";
-    echo "<p>API Key: <input onClick='this.select()' value='" . $apiKey . "'></input></p>";
-    echo "</div>";
+    echo "<div id='api_div'><h4>" . _("API key") . ":</h4>";
+    echo "<input value='" . $Users->userData['api_key'] . "'></input>";
+    echo "<button class='button' onClick='generateApiKey()'>" . _("Generate an API Key") . "</button></p>";
+
+    echo "</div></div>";
     echo "</section>";
 
     // STATUS STATS

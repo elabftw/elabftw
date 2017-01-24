@@ -28,17 +28,48 @@ class Users extends Auth
     /** flag to check if we need validation or not */
     public $needValidation = false;
 
+    public $userData;
+
+    public $userid;
+
     /**
      * Assign the config object
      *
+     * @param int $userid
      * @param Config|null $config
      */
-    public function __construct(Config $config = null)
+    public function __construct($userid = null, Config $config = null)
     {
         $this->pdo = Db::getConnection();
+        if (!is_null($userid)) {
+            $this->setId($userid);
+        }
         if (!is_null($config)) {
             $this->Config = $config;
         }
+    }
+
+    /**
+     * Assign an id and populate userData
+     *
+     * @param int $userid
+     */
+    public function setId($userid)
+    {
+        if (Tools::checkId($userid) === false) {
+            throw new Exception('Bad userid');
+        }
+        $this->userid = $userid;
+        $this->populate();
+    }
+
+    /**
+     * Populate userData with read()
+     *
+     */
+    public function populate()
+    {
+        $this->userData = $this->read($this->userid);
     }
 
     /**
@@ -339,13 +370,18 @@ class Users extends Auth
      */
     public function readFromApiKey($apiKey)
     {
-        $hash = Crypto::decrypt($apiKey, Key::loadFromAsciiSafeString(SECRET_KEY));
-        $sql = "SELECT * FROM users WHERE password = :hash";
+        $sql = "SELECT userid FROM users WHERE api_key = :key";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':hash', $hash);
+        $req->bindParam(':key', $apiKey);
         $req->execute();
 
-        return $req->fetch();
+        $userid = $req->fetchColumn();
+
+        if (empty($userid)) {
+            throw new Exception('Invalid API key.');
+        }
+
+        $this->userData = $this->read($userid);
     }
 
     /**
@@ -664,6 +700,23 @@ class Users extends Auth
         $sql = "UPDATE users SET usergroup = 1 WHERE email = :email";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':email', $email);
+
+        return $req->execute();
+    }
+
+    /**
+     * Generate an API key
+     *
+     * @return bool
+     */
+    public function generateApiKey()
+    {
+        $apiKey = bin2hex(openssl_random_pseudo_bytes(42));
+
+        $sql = "UPDATE users SET api_key = :api_key WHERE userid = :userid";
+        $req = $this->pdo->prepare($sql);
+        $req->bindParam(':api_key', $apiKey);
+        $req->bindParam(':userid', $this->userid);
 
         return $req->execute();
     }

@@ -23,9 +23,10 @@ try {
     }
 
     $FormKey = new FormKey();
-    $Users = new Users(new Config);
+    $Users = new Users(null, new Config);
 
     $tab = 1;
+    $redirect = true;
     $location = '../../admin.php?tab=' . $tab;
 
     // VALIDATE
@@ -66,11 +67,31 @@ try {
         }
     }
 
+    // (RE)GENERATE AN API KEY
+    if (isset($_POST['generateApiKey'])) {
+        $redirect = false;
+        $Users->setId($_SESSION['userid']);
+        if ($Users->generateApiKey()) {
+            echo json_encode(array(
+                'res' => true,
+                'msg' => _('Saved')
+            ));
+        } else {
+            echo json_encode(array(
+                'res' => false,
+                'msg' => Tools::error()
+            ));
+        }
+    }
+
+
 } catch (Exception $e) {
     $Logs = new Logs();
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
     $_SESSION['ko'][] = Tools::error();
 
 } finally {
-    header("Location: $location");
+    if ($redirect) {
+        header("Location: $location");
+    }
 }

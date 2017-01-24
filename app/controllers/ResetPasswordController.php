@@ -19,7 +19,7 @@ try {
     require_once '../../app/init.inc.php';
     $Config = new Config();
     $Email = new Email($Config);
-    $Users = new Users($Config);
+    $Users = new Users(null, $Config);
     $Logs = new Logs();
 
     if (isset($_POST['email'])) {

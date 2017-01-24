@@ -134,7 +134,7 @@ class Entity
                     WHERE experiments.team = :team";
             } else {
                 $sql = "SELECT DISTINCT experiments.*,
-                    status.color, status.name, uploads.*, experiments_comments.datetime,
+                    status.color, status.name, uploads.*,
                     GROUP_CONCAT(et.tag SEPARATOR '!----!') as tags, GROUP_CONCAT(et.id) as tags_id
 
                     FROM experiments
@@ -142,7 +142,6 @@ class Entity
                     LEFT JOIN status ON (status.id = experiments.status)
                     LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads
                     ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
-                    LEFT JOIN experiments_comments ON (experiments_comments.exp_id = experiments.id)
                     WHERE experiments.team = :team";
             }
 

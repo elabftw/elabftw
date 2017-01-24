@@ -15,6 +15,8 @@ use Exception;
 /**
  * Users infos from admin page
  */
+$redirect = true;
+
 try {
     require_once '../../app/init.inc.php';
 
@@ -26,7 +28,6 @@ try {
     $Users = new Users(null, new Config);
 
     $tab = 1;
-    $redirect = true;
     $location = '../../admin.php?tab=' . $tab;
 
     // VALIDATE

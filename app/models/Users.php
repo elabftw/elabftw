@@ -28,14 +28,16 @@ class Users extends Auth
     /** flag to check if we need validation or not */
     public $needValidation = false;
 
+    /** what you get when you read() */
     public $userData;
 
+    /** our userid */
     public $userid;
 
     /**
      * Assign the config object
      *
-     * @param int $userid
+     * @param int|null $userid
      * @param Config|null $config
      */
     public function __construct($userid = null, Config $config = null)
@@ -366,7 +368,6 @@ class Users extends Auth
      * the good thing also is that if a user changes his password, the api key will change, too.
      *
      * @param string $apiKey a very long string encrypted with our SECRET_KEY
-     * @return array
      */
     public function readFromApiKey($apiKey)
     {

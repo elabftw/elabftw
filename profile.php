@@ -39,7 +39,9 @@ try {
         <p>". $count . " " . _('experiments done since') . " " . date("l jS \of F Y", $Users->userData['register_date'])
         ."<p><a href='ucp.php'>" . _('Go to user control panel') . "</a>";
     echo "<div id='api_div'><h4>" . _("API key") . ":</h4>";
-    echo "<input value='" . $Users->userData['api_key'] . "'></input>";
+    if (!is_null($Users->userData['api_key'])) {
+        echo "<input value='" . $Users->userData['api_key'] . "'></input>";
+    }
     echo "<button class='button' onClick='generateApiKey()'>" . _("Generate an API Key") . "</button></p>";
 
     echo "</div></div>";

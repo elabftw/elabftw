@@ -10,8 +10,7 @@
  */
 namespace Elabftw\Elabftw;
 
-use \mPDF;
-use \Exception;
+use mPDF;
 
 /**
  * Create a pdf given an id and a type
@@ -25,8 +24,7 @@ class MakePdf extends Make
 
     /** 'experiments' or 'items' */
     protected $type;
-    /** everything about the item */
-    private $data;
+
     /** a formatted title for our pdf */
     private $cleanTitle;
 

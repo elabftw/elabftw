@@ -22,6 +22,7 @@ $page_title = _('Export');
 $selected_menu = null;
 
 try {
+    $Users = new Users($_SESSION['userid']);
 
     switch ($_GET['what']) {
         case 'csv':
@@ -34,9 +35,9 @@ try {
 
         case 'pdf':
             if ($_GET['type'] === 'experiments') {
-                $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_GET['id']);
+                $Entity = new Experiments($Users, $_GET['id']);
             } else {
-                $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_GET['id']);
+                $Entity = new Database($Users, $_GET['id']);
             }
             $make = new MakePdf($Entity);
             break;

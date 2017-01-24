@@ -553,6 +553,10 @@ class TrustedTimestamps extends Entity
         $retarray = $opensslResult['retarray'];
         $retcode = $opensslResult['retcode'];
 
+        if ($retcode !== 0) {
+            throw new Exception("Error decoding ASN1 file: " . implode(", ", $retarray));
+        }
+
         // now let's parse this
         $out = "<br><hr>";
 

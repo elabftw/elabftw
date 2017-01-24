@@ -10,8 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use PDO;
-
 /**
  * The search page
  * Here be dragons!

@@ -1,6 +1,5 @@
 *~
 *.bak
-*.swp
 _api/
 bower_components
 config.php

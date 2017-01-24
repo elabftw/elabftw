@@ -12,12 +12,8 @@ namespace Elabftw\Elabftw;
 
 use Exception;
 
-/** 
+/**
  * This file is called without any auth, so we don't load init.inc.php but only what we need
- * Nginx config
- * location ~ ^/api/v1/(.*)/?$ {
- *      rewrite /api/v1/(.*)$ /app/controllers/ApiController.php?req=$1? last;
- *  }
  */
 require_once '../../config.php';
 require_once ELAB_ROOT . 'vendor/autoload.php';

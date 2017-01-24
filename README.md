@@ -27,6 +27,9 @@ Click the image below to see it in bigger size:
 [![Demo gif](https://i.imgur.com/SRHsIEM.gif)](https://gfycat.com/ImpressivePoliteAsiaticmouflon)
 
 **eLabFTW** is designed to be installed on a server, and people from the team would just log into it from their browser.
+
+![server client](https://i.imgur.com/BcfFgQS.gif)
+
 Don't have a server ? That's okay, you can use an old computer with 1 Go of RAM and an old CPU, it's more than enough. Just install a recent GNU/Linux distribution on it and plug it to the intranet.
 
 # Installation

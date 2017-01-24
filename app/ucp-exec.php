@@ -155,8 +155,8 @@ try {
             throw new Exception(_('A mandatory field is missing!'));
         }
 
-        $firstname = $Users->purifyFirstname($_POST['firstname']);
-        $lastname = $Users->purifyLastname($_POST['lastname']);
+        $firstname = Tools::purifyFirstname($_POST['firstname']);
+        $lastname = Tools::purifyLastname($_POST['lastname']);
         $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
         if ($Users->isDuplicateEmail($email) && ($email != $me['email'])) {
             throw new Exception(_('Someone is already using that email address!'));

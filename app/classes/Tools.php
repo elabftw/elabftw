@@ -10,8 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use \RecursiveIteratorIterator;
-use \RecursiveDirectoryIterator;
 use Exception;
 
 /**
@@ -155,6 +153,28 @@ class Tools
     }
 
     /**
+     * Put firstname lowercase and first letter uppercase
+     *
+     * @param string $firstname
+     * @return string
+     */
+    public static function purifyFirstname($firstname)
+    {
+        return ucwords(strtolower(filter_var($firstname, FILTER_SANITIZE_STRING)));
+    }
+
+    /**
+     * Put lastname in capital letters
+     *
+     * @param string $lastname
+     * @return string
+     */
+    public static function purifyLastname($lastname)
+    {
+        return strtoupper(filter_var($lastname, FILTER_SANITIZE_STRING));
+    }
+
+    /**
      * Get the extension of a file.
      *
      * @param string $filename path of the file
@@ -225,36 +245,6 @@ class Tools
     }
 
     /**
-     * Get the size of a dir
-     *
-     * @param string $directory
-     * @return integer
-     */
-    public static function dirSize($directory)
-    {
-        $size = 0;
-        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
-            $size += $file->getSize();
-        }
-        return $size;
-    }
-
-    /**
-     * Get the number of files in a dir
-     *
-     * @param string $directory
-     * @return int number of files in dir
-     */
-    public static function dirNum($directory)
-    {
-        $num = 0;
-        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
-            $num++;
-        }
-        return $num;
-    }
-
-    /**
      * Display a generic error message
      *
      * @param bool $permission show the out of reach message for permission message
@@ -309,7 +299,7 @@ class Tools
         $ftwArr[] = 'Full Time Workers';
         $ftwArr[] = 'Fabricated To Win';
         $ftwArr[] = 'Furiously Taunted Wookies';
-        $ftwArr[] = 'Flash The Watch';
+        $ftwArr[] = 'Find The Wally';
 
         shuffle($ftwArr);
 

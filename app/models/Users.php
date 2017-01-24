@@ -97,9 +97,9 @@ class Users extends Auth
         }
 
         // Put firstname lowercase and first letter uppercase
-        $firstname = $this->purifyFirstname($firstname);
+        $firstname = Tools::purifyFirstname($firstname);
         // lastname is uppercase
-        $lastname = $this->purifyLastname($lastname);
+        $lastname = Tools::purifyLastname($lastname);
 
         // Create salt
         $salt = hash("sha512", uniqid(rand(), true));
@@ -305,28 +305,6 @@ class Users extends Auth
     }
 
     /**
-     * Put firstname lowercase and first letter uppercase
-     *
-     * @param string $firstname
-     * @return string
-     */
-    public function purifyFirstname($firstname)
-    {
-        return ucwords(strtolower(filter_var($firstname, FILTER_SANITIZE_STRING)));
-    }
-
-    /**
-     * Put lastname in capital letters
-     *
-     * @param string $lastname
-     * @return string
-     */
-    public function purifyLastname($lastname)
-    {
-        return strtoupper(filter_var($lastname, FILTER_SANITIZE_STRING));
-    }
-
-    /**
      * Get info about a user
      *
      * @param int $userid
@@ -362,12 +340,8 @@ class Users extends Auth
 
     /**
      * Get a user from his API key
-     * first we decrypt the key, which is the hash of the password
-     * even if two users have the same password, the hash will be different because of the salt
-     * so it's unique and we can select a user with that
-     * the good thing also is that if a user changes his password, the api key will change, too.
      *
-     * @param string $apiKey a very long string encrypted with our SECRET_KEY
+     * @param string $apiKey
      */
     public function readFromApiKey($apiKey)
     {
@@ -445,14 +419,16 @@ class Users extends Auth
     public function update($params)
     {
         $userid = Tools::checkId($params['userid']);
+
         if ($userid === false) {
             throw new Exception(_('The id parameter is not valid!'));
         }
 
         // Put everything lowercase and first letter uppercase
-        $firstname = ucwords(strtolower(filter_var($params['firstname'], FILTER_SANITIZE_STRING)));
+        $firstname = Tools::purifyFirstname($params['firstname']);
         // Lastname in uppercase
-        $lastname = strtoupper(filter_var($params['lastname'], FILTER_SANITIZE_STRING));
+        $lastname = Tools::purifyLastname($params['lastname']);
+
         $email = filter_var($params['email'], FILTER_SANITIZE_EMAIL);
 
         if ($params['validated'] == 1) {
@@ -706,7 +682,7 @@ class Users extends Auth
     }
 
     /**
-     * Generate an API key
+     * Generate an API key and store it
      *
      * @return bool
      */

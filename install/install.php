@@ -26,7 +26,6 @@
 namespace Elabftw\Elabftw;
 
 use Exception;
-use PDO;
 use \Defuse\Crypto\Key as Key;
 
 try {

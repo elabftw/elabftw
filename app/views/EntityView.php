@@ -281,9 +281,16 @@ class EntityView
         // CATEGORY
         $html .= "<select name='filter' style='-moz-appearance:none' class='form-control select-filter-status'>";
         $html .= "<option value=''>" . $filterTitle . "</option>";
-        foreach ($categoryArr as $category) {
-            $html .= "<option value='" . $category['id'] . "'" . checkSelectFilter($category['id']) . ">" . $category['name'] . "</option>";
+        if ($type === 'database') {
+            foreach ($categoryArr as $category) {
+                $html .= "<option value='" . $category['id'] . "'" . checkSelectFilter($category['id']) . ">" . $category['name'] . "</option>";
+            }
+        } else {
+            foreach ($categoryArr as $category) {
+                $html .= "<option value='" . $category['status_id'] . "'" . checkSelectFilter($category['status_id']) . ">" . $category['status'] . "</option>";
+            }
         }
+
         $html .= "</select>";
         $html .= "<input type='hidden' name='mode' value='show' />";
         $html .= "<button class='btn btn-elab submit-filter'>" . _('Filter') . "</button>";

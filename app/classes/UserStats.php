@@ -69,7 +69,7 @@ class UserStats
 
         // populate arrays
         foreach ($statusAll as $status) {
-            $this->statusArr[$status['id']] = $status['name'];
+            $this->statusArr[$status['status_id']] = $status['status'];
             $this->statusColors[] = $status['color'];
         }
 

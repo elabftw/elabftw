@@ -35,7 +35,8 @@ try {
     echo "<img src='app/img/user.png' alt='user' /> <h4 style='display:inline'>" . _('Infos') . "</h4>";
     echo "<hr>";
     echo "<div>
-        <p>" . $Users->userData['firstname'] . " " . $Users->userData['lastname'] . " (" . $Users->userData['email'] . ")</p>
+        <p>" . $Users->userData['firstname'] . " " . $Users->userData['lastname'] .
+        " (" . $Users->userData['email'] . ")</p>
         <p>". $count . " " . _('experiments done since') . " " . date("l jS \of F Y", $Users->userData['register_date'])
         ."<p><a href='ucp.php'>" . _('Go to user control panel') . "</a>";
     echo "<div id='api_div'><h4>" . _("API key") . ":</h4>";

@@ -4,6 +4,7 @@ var clickY = new Array();
 var clickDrag = new Array();
 var paint;
 context = document.getElementById('doodleCanvas').getContext("2d");
+
 $('#doodleCanvas').mousedown(function(e){
   paint = true;
   addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);

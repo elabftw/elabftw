@@ -36,11 +36,12 @@ class DoodleView
     {
         $html = "<section class='box'>";
         $html .= "<img src='app/img/pencil.png' /> ";
-        $html .= "<h3 style='display:inline'>" . _('Draw something') . "</h3><br><br>";
-        $html .= "<canvas id='doodleCanvas'></canvas>";
+        $html .= "<h3 style='display:inline' class='clickable' onclick=\"$('.canvasDiv').toggle();\">" . _('Draw something') . "</h3><br><br>";
+        $html .= "<div class='canvasDiv' style='display:none'>";
+        $html .= "<canvas id='doodleCanvas' width='700px' height='600px'></canvas>";
         $html .= "<button class='button button-delete' onClick='clearCanvas()'>" . _('Clear') . "</button>";
         $html .= "<button class='button' onClick='saveCanvas(" . $this->Entity->id . ")'>" . _('Save') . "</button>";
-        $html .= "</section>";
+        $html .= "</div></section>";
         $html .= "<script src='app/js/doodle.js'></script>";
 
         return $html;

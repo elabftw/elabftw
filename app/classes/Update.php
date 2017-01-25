@@ -325,7 +325,7 @@ class Update
             $schema = self::REQUIRED_SCHEMA;
         }
         $config_arr = array('schema' => $schema);
-        if (!update_config($config_arr)) {
+        if (!$this->Config->Update($config_arr)) {
             throw new Exception('Failed at updating the schema!');
         }
     }
@@ -466,7 +466,7 @@ class Update
             }
             // now encrypt it with the new method
             $new_ciphertext = Crypto::encrypt($plaintext, $new_key);
-            update_config(array('smtp_password' => $new_ciphertext));
+            $this->Config->update(array('smtp_password' => $new_ciphertext));
         }
 
         // now update the stamppass from the teams
@@ -498,7 +498,7 @@ class Update
             }
             // now encrypt it with the new method
             $new_ciphertext = Crypto::encrypt($plaintext, $new_key);
-            update_config(array('stamppass' => $new_ciphertext));
+            $this->Config->update(array('stamppass' => $new_ciphertext));
         }
 
             // rewrite the config file with the new key
@@ -547,7 +547,7 @@ define('SECRET_KEY', '" . $new_key->saveToAsciiSafeString() . "');
     private function schema12()
     {
         if ($this->Config->configArr['stampcert'] === 'vendor/pki.dfn.pem') {
-            if (!update_config(array('stampcert' => 'app/dfn-cert/pki.dfn.pem'))) {
+            if (!$this->Config->update(array('stampcert' => 'app/dfn-cert/pki.dfn.pem'))) {
                 throw new Exception('Error changing path to timestamping cert. (updating to schema 12)');
             }
         }

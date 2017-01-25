@@ -27,6 +27,7 @@ try {
     $redirect = false;
 
     $Teams = new Teams();
+    $Config = new Config();
 
     // PROMOTE SYSADMIN
     if (isset($_POST['promoteSysadmin'])) {
@@ -91,7 +92,7 @@ try {
 
     // SEND TEST EMAIL
     if (isset($_POST['testemailSend'])) {
-        $Sysconfig = new Sysconfig(new Email(new Config));
+        $Sysconfig = new Sysconfig(new Email($Config));
         if ($Sysconfig->testemailSend($_POST['testemailEmail'])) {
             echo json_encode(array(
                 'res' => true,
@@ -107,7 +108,7 @@ try {
 
     // SEND MASS EMAIL
     if (isset($_POST['massEmail'])) {
-        $Sysconfig = new Sysconfig(new Email(new Config));
+        $Sysconfig = new Sysconfig(new Email($Config));
         if ($Sysconfig->massEmail($_POST['subject'], $_POST['body'])) {
             echo json_encode(array(
                 'res' => true,
@@ -157,7 +158,7 @@ try {
             $tab = '6';
         }
 
-        if (!update_config($_POST)) {
+        if (!$Config->update($_POST)) {
             throw new Exception('Error updating config');
         }
 
@@ -167,7 +168,6 @@ try {
     if (isset($_GET['clearStamppass']) && $_GET['clearStamppass'] === '1') {
         $redirect = true;
         $tab = '3';
-        $Config = new Config;
         if (!$Config->destroyStamppass()) {
             throw new Exception('Error clearing the timestamp password');
         }

@@ -19,60 +19,6 @@ use Defuse\Crypto\Key as Key;
  * @deprecated
  */
 
-/**
- * Used in sysconfig.php to update config values
- *
- * @param array $post (conf_name => conf_value)
- * @return bool the return value of execute queries
- */
-function update_config($post)
-{
-    global $pdo;
-    $result = array();
-    $Teams = new Teams($_SESSION['team_id']);
-
-    // do some data validation for some values
-    if (isset($post['stampcert'])) {
-        $cert_chain = filter_var($post['stampcert'], FILTER_SANITIZE_STRING);
-        if (!is_readable(realpath(ELAB_ROOT . $cert_chain))) {
-            throw new Exception('Cannot read provided certificate file.');
-        }
-    }
-
-    if (isset($post['stamppass']) && !empty($post['stamppass'])) {
-        $post['stamppass'] = Crypto::encrypt($post['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
-    } elseif (isset($post['stamppass'])) {
-        $post['stamppass'] = $Teams->read('stamppass');
-    }
-
-    if (isset($post['login_tries']) && Tools::checkId($post['login_tries']) === false) {
-        throw new Exception('Bad value for number of login attempts!');
-    }
-    if (isset($post['ban_time']) && Tools::checkId($post['ban_time']) === false) {
-        throw new Exception('Bad value for number of login attempts!');
-    }
-
-    // encrypt password
-    if (isset($post['smtp_password']) && !empty($post['smtp_password'])) {
-        $post['smtp_password'] = Crypto::encrypt($post['smtp_password'], Key::loadFromAsciiSafeString(SECRET_KEY));
-    // we might receive a set but empty smtp_password, so ignore it
-    } elseif (empty($post['smtp_password'])) {
-        unset($post['smtp_password']);
-    }
-
-
-    // loop the array and update config
-    foreach ($post as $name => $value) {
-        $sql = "UPDATE config SET conf_value = :value WHERE conf_name = :name";
-        $req = $pdo->prepare($sql);
-        $req->bindParam(':value', $value);
-        $req->bindParam(':name', $name);
-        $result[] = $req->execute();
-    }
-
-    return !in_array(0, $result);
-}
-
 /*
  * Functions to keep current order/filter selection in dropdown
  *

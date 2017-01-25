@@ -64,7 +64,6 @@ class Config
     public function update($post)
     {
         $result = array();
-        $Teams = new Teams($_SESSION['team_id']);
 
         // do some data validation for some values
         if (isset($post['stampcert'])) {
@@ -77,7 +76,7 @@ class Config
         if (isset($post['stamppass']) && !empty($post['stamppass'])) {
             $post['stamppass'] = Crypto::encrypt($post['stamppass'], Key::loadFromAsciiSafeString(SECRET_KEY));
         } elseif (isset($post['stamppass'])) {
-            $post['stamppass'] = $Teams->read('stamppass');
+            unset($post['stamppass']);
         }
 
         if (isset($post['login_tries']) && Tools::checkId($post['login_tries']) === false) {

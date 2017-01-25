@@ -339,7 +339,6 @@ try {
     <script>
     $(document).ready(function() {
         $('#editSmtpPassword').click(function() {
-            var newInput = "<input class='clean-form col-3-form' type='password' name='smtp_password' id='smtp_password' />";
             $('#hidden_smtp_password').toggle();
         });
         // we need to add this otherwise the button will stay disabled with the browser's cache (Firefox)

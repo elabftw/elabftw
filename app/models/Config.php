@@ -98,7 +98,7 @@ class Config
         // loop the array and update config
         foreach ($post as $name => $value) {
             $sql = "UPDATE config SET conf_value = :value WHERE conf_name = :name";
-            $req = $pdo->prepare($sql);
+            $req = $this->pdo->prepare($sql);
             $req->bindParam(':value', $value);
             $req->bindParam(':name', $name);
             $result[] = $req->execute();

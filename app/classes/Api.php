@@ -75,9 +75,9 @@ class Api
 
         // load Entity
         if ($this->endpoint === 'experiments') {
-            $this->Entity = new Experiments($Users->userData['team'], $Users->userData['userid'], $this->id);
+            $this->Entity = new Experiments($Users, $this->id);
         } elseif ($this->endpoint === 'items') {
-            $this->Entity = new Database($Users->userData['team'], $Users->userData['userid'], $this->id);
+            $this->Entity = new Database($Users, $this->id);
         } else {
             throw new Exception('Bad endpoint.');
         }

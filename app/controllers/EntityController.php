@@ -19,23 +19,21 @@ use Exception;
 try {
     require_once '../../app/init.inc.php';
 
+    $Users = new Users($_SESSION['userid']);
+
     if ($_POST['type'] === 'experiments') {
-        $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
+        $Entity = new Experiments($Users, $_POST['id']);
     } else {
-        $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $_POST['id']);
+        $Entity = new Database($Users, $_POST['id']);
     }
 
     // LOCK
     if (isset($_POST['lock'])) {
 
-        // get info for user
-        $Users = new Users();
-        $user = $Users->read($_SESSION['userid']);
-
         $permissions = $Entity->getPermissions();
 
         // We don't have can_lock, but maybe it's our XP, so we can lock it
-        if (!$user['can_lock'] && !$permissions['write']) {
+        if (!$User->userData['can_lock'] && !$permissions['write']) {
             throw new Exception(_("You don't have the rights to lock/unlock this."));
         }
 

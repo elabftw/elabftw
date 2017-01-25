@@ -386,7 +386,7 @@ class TrustedTimestamps extends Entity
         $req->bindParam(':long_name', $long_name);
         $req->bindValue(':comment', "Timestamp token");
         $req->bindParam(':item_id', $this->Entity->id);
-        $req->bindParam(':userid', $this->Entity->userid);
+        $req->bindParam(':userid', $this->Entity->Users->userid);
         $req->bindValue(':type', 'timestamp-token');
         $req->bindParam(':hash', $this->getHash($this->responsefilePath));
         $req->bindParam(':hash_algorithm', $this->hashAlgorithm);
@@ -493,7 +493,7 @@ class TrustedTimestamps extends Entity
         $req->bindParam(':when', $this->responseTime);
         // the date recorded in the db has to match the creation time of the timestamp token
         $req->bindParam(':longname', $this->responsefilePath);
-        $req->bindParam(':userid', $this->Entity->userid);
+        $req->bindParam(':userid', $this->Entity->Users->userid);
         $req->bindParam(':id', $this->Entity->id);
         if (!$req->execute()) {
             throw new Exception('Cannot update SQL!');
@@ -528,7 +528,7 @@ class TrustedTimestamps extends Entity
         $req->bindParam(':long_name', $this->pdfLongName);
         $req->bindValue(':comment', "Timestamped PDF");
         $req->bindParam(':item_id', $this->Entity->id);
-        $req->bindParam(':userid', $this->Entity->userid);
+        $req->bindParam(':userid', $this->Entity->Users->userid);
         $req->bindValue(':type', 'exp-pdf-timestamp');
         $req->bindParam(':hash', $this->getHash($this->pdfPath));
         $req->bindParam(':hash_algorithm', $this->hashAlgorithm);

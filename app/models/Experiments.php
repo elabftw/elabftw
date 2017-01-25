@@ -33,7 +33,6 @@ class Experiments extends Entity
     /**
      * Constructor
      *
-     * @param int $team
      * @param Users $users
      * @param int|null $id
      */

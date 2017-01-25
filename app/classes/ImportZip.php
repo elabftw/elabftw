@@ -160,10 +160,11 @@ class ImportZip extends Import
      */
     private function importFile($file)
     {
+        $Users = new Users($_SESSION['userid']);
         if ($this->type === 'experiments') {
-            $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid'], $this->newItemId);
+            $Entity = new Experiments($Users, $this->newItemId);
         } else {
-            $Entity = new Database($_SESSION['team_id'], $_SESSION['userid'], $this->newItemId);
+            $Entity = new Database($Users, $this->newItemId);
         }
         $Upload = new Uploads($Entity);
         $Upload->createFromLocalFile($this->tmpPath . '/' . $file);

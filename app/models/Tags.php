@@ -41,10 +41,10 @@ class Tags extends Entity
     {
         if ($this->Entity->type === 'experiments') {
             $userOrTeam = 'userid';
-            $userOrTeamValue = $this->Entity->userid;
+            $userOrTeamValue = $this->Entity->Users->userid;
         } else {
             $userOrTeam = 'team_id';
-            $userOrTeamValue = $this->Entity->team;
+            $userOrTeamValue = $this->Entity->Users->team;
         }
         $sql = "INSERT INTO " . $this->Entity->type . "_tags (tag, item_id, " . $userOrTeam . ")
             VALUES(:tag, :item_id, :userOrTeam)";
@@ -90,7 +90,7 @@ class Tags extends Entity
                 GROUP BY tag ORDER BY tag ASC";
         }
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':team', $this->Entity->team);
+        $req->bindParam(':team', $this->Entity->Users->team);
         $req->execute();
 
         return $req->fetchAll();
@@ -117,7 +117,7 @@ class Tags extends Entity
                     $reqtag = $this->pdo->prepare($sql);
                     $reqtag->bindParam(':tag', $tags['tag']);
                     $reqtag->bindParam(':item_id', $newId);
-                    $reqtag->bindParam(':userid', $_SESSION['userid']);
+                    $reqtag->bindParam(':userid', $this->Entity->Users->userid);
                 } else {
                     $sql = "INSERT INTO items_tags(tag, item_id) VALUES(:tag, :item_id)";
                     $reqtag = $this->pdo->prepare($sql);

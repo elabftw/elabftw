@@ -18,6 +18,9 @@ use Exception;
  */
 class Status extends Entity
 {
+    /** our team */
+    private $team;
+
     /**
      * Constructor
      *

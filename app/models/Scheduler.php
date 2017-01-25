@@ -21,6 +21,9 @@ class Scheduler extends Entity
     /** id of the event */
     public $id;
 
+    /** our team */
+    private $team;
+
     /**
      * Constructor
      *

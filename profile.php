@@ -23,12 +23,12 @@ require_once 'app/head.inc.php';
 
 try {
     // get total number of experiments
-    $Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid']);
+    $Users = new Users($_SESSION['userid']);
+    $Entity = new Experiments($Users);
     $Entity->setUseridFilter();
     $itemsArr = $Entity->read();
     $count = count($itemsArr);
 
-    $Users = new Users($_SESSION['userid']);
 
     // USER INFOS
     echo "<section class='box'>";

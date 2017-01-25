@@ -1,8 +1,10 @@
+// code from http://www.williammalone.com/articles/create-html5-canvas-javascript-drawing-app/
+var clickX = new Array();
+var clickY = new Array();
+var clickDrag = new Array();
+var paint;
 context = document.getElementById('doodleCanvas').getContext("2d");
 $('#doodleCanvas').mousedown(function(e){
-  var mouseX = e.pageX - this.offsetLeft;
-  var mouseY = e.pageY - this.offsetTop;
-		
   paint = true;
   addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
   redraw();
@@ -13,17 +15,12 @@ $('#doodleCanvas').mousemove(function(e){
               redraw();
             }
 });
-$('#doodleCanvas').mouseup(function(e){
+$('#doodleCanvas').mouseup(function(){
       paint = false;
 });
-$('#doodleCanvas').mouseleave(function(e){
+$('#doodleCanvas').mouseleave(function(){
       paint = false;
 });
-
-var clickX = new Array();
-var clickY = new Array();
-var clickDrag = new Array();
-var paint;
 
 function addClick(x, y, dragging)
 {

@@ -22,7 +22,6 @@ namespace Elabftw\Elabftw;
 echo "<title>" . (isset($page_title) ? $page_title : "Lab manager") . " - eLab " . Tools::getFtw() . "</title>";
 ?>
 <!-- CSS -->
-<!-- Bootstrap -->
 <link rel="stylesheet" media="all" href="app/css/elabftw.min.css" />
 <!-- see Gruntfile.js to see what gets inside this -->
 <script src="app/js/elabftw.min.js"></script>

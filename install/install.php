@@ -74,12 +74,6 @@ try {
     if (isset($_POST['db_password']) && !empty($_POST['db_password'])) {
         $db_password = $_POST['db_password'];
     }
-    // connect to DB
-    $pdo_options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-    $pdo = new PDO('mysql:host=' . $db_host . ';dbname=' . $db_name, $db_user, $db_password, $pdo_options);
-
-    // now import the structure
-    import_sql_structure();
 
     // BUILD CONFIG FILE
 
@@ -110,7 +104,8 @@ try {
         $infos_arr[] = 'Congratulations, you successfully installed eLabFTW, 
         now you need to <strong>register</strong> your account (you will have full admin rights).';
         $_SESSION['ok'] = $infos_arr;
-        header('Location: ../register.php');
+        // redirect to install/index.php to import SQL structure
+        header('Location: index.php');
 
     } else {
         header('Content-Type: text/x-delimtext; name="config.php"');

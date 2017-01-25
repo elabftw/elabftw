@@ -78,17 +78,6 @@ final class Db
     }
 
     /**
-     * Temporary workaround for #256
-     *
-     * @param string $sql The SQL query
-     * @return \PDOStatement
-     */
-    public function query($sql)
-    {
-        return $this->connection->query($sql);
-    }
-
-    /**
      * Make a simple query
      *
      * @param string $sql The SQL query
@@ -107,62 +96,6 @@ final class Db
     public function lastInsertId()
     {
         return $this->connection->lastInsertId();
-    }
-
-    /**
-     * Test is a field is present in a table
-     *
-     * @param string $table
-     * @param string $field
-     * @return bool True if field is here already
-     */
-    public function fieldIsHere($table, $field)
-    {
-        $here = false;
-        $sql = "SHOW COLUMNS FROM " . $table;
-        $req = $this->connection->prepare($sql);
-        $req->execute();
-        while ($show = $req->fetch()) {
-            if (in_array($field, $show)) {
-                $here = true;
-            }
-        }
-        return $here;
-    }
-
-    /**
-     * Add a field to a table
-     *
-     * @param string $table
-     * @param string $field
-     * @param string $params
-     * @return bool
-     */
-    public function addField($table, $field, $params)
-    {
-        if (!$this->fieldIsHere($table, $field)) {
-            $sql = "ALTER TABLE $table ADD $field $params";
-            $req = $this->connection->prepare($sql);
-            return $req->execute();
-        }
-        return false;
-    }
-
-    /**
-     * Remove a field from a table
-     *
-     * @param string $table
-     * @param string $field
-     * @return bool
-     */
-    public function rmField($table, $field)
-    {
-        if ($this->fieldIsHere($table, $field)) {
-            $sql = "ALTER TABLE $table DROP $field";
-            $req = $this->connection->prepare($sql);
-            return $req->execute();
-        }
-        return false;
     }
 
     /**

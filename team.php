@@ -21,9 +21,9 @@ $page_title = _('Team');
 $selected_menu = 'Team';
 require_once 'app/head.inc.php';
 
-$Users = new Users();
+$Users = new Users($_SESSION['userid']);
 $TeamsView = new TeamsView(new Teams($_SESSION['team_id']));
-$Database = new Database($_SESSION['team_id'], $_SESSION['userid']);
+$Database = new Database($Users);
 $Scheduler = new Scheduler($_SESSION['team_id']);
 ?>
 

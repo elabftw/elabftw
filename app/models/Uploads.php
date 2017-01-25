@@ -88,23 +88,42 @@ class Uploads extends Entity
     }
 
     /**
-     * Upload a mol file from Chemdoodle
+     * Create an upload from a string, from Chemdoodle or Doodle
      *
-     * @param string $mol
+     * @param string $type 'mol' or 'png'
+     * @param string $string
      * @return bool
      */
-    public function createFromMol($mol)
+    public function createFromString($type, $string)
     {
-        $realName = 'Mol-file.mol';
-        $longName = $this->getCleanName() . ".mol";
+        if ($type === 'png') {
+            $realName = 'Doodle.png';
+            // get the image in binary
+            $string = str_replace('data:image/png;base64,', '', $string);
+            $string = str_replace(' ', '+', $string);
+            $string = base64_decode($string);
+        } elseif ($type === 'mol') {
+            $realName = 'Mol-file.mol';
+        } else {
+            throw new Exception('Bad type!');
+        }
+
+        $longName = $this->getCleanName() . "." . $type;
         $fullPath = ELAB_ROOT . 'uploads/' . $longName;
 
-        if (!empty($mol) && !file_put_contents($fullPath, $mol)) {
-            throw new Exception("Could not write mol to file");
+        if (!empty($string) && !file_put_contents($fullPath, $string)) {
+            throw new Exception("Could not write to file");
         }
 
         return $this->dbInsert($realName, $longName, $this->getHash($fullPath));
     }
+
+    /**
+     * Upload a png image from Doodle canvas
+     *
+     * @param string $png
+     * @return bool
+     */
 
     /**
      * Create a clean filename
@@ -195,7 +214,7 @@ class Uploads extends Entity
         // not i18n friendly because it is used somewhere else (not a valid reason, but for the moment that will do)
         $req->bindValue(':comment', 'Click to add a comment');
         $req->bindParam(':item_id', $this->Entity->id);
-        $req->bindParam(':userid', $this->Entity->userid);
+        $req->bindParam(':userid', $this->Entity->Users->userid);
         $req->bindParam(':type', $this->Entity->type);
         $req->bindParam(':hash', $hash);
         $req->bindParam(':hash_algorithm', $this->hashAlgorithm);

@@ -1061,3 +1061,11 @@ ul#todoItems-list.ui-sortable {
     border: 1px solid #29AEB9;
     border-radius: 5px;
 }
+
+/* doodle canvas */
+canvas {
+    border: 1px solid #dcdddc;
+    border-radius: 5px;
+    display: block;
+    margin-top: 20px;
+}

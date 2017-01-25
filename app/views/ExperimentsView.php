@@ -80,6 +80,7 @@ class ExperimentsView extends EntityView
         $this->html .= $this->buildEdit();
         $this->html .= $this->UploadsView->buildUploadForm();
         $this->html .= $this->UploadsView->buildUploads('edit');
+        $this->html .= $this->DoodleView->buildDoodle();
         $this->html .= $this->buildEditJs();
 
         return $this->html;

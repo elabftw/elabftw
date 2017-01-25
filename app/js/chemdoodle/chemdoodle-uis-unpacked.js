@@ -13755,9 +13755,10 @@ ChemDoodle.uis.gui.imageDepot = (function() {
             // only if we are editing an experiment, not from team page
             if (item % 1 === 0) {
                 $.post('app/controllers/ExperimentsController.php', {
-                    addMol: true,
-                    item: item,
-                    mol: c.writeMOL(sketcher.molecules[0])
+                    addFromString: true,
+                    type: 'mol',
+                    id: item,
+                    string: c.writeMOL(sketcher.molecules[0])
                 }).done(function() {
                     $("#filesdiv").load("experiments.php?mode=edit&id=" + item + " #filesdiv");
                 });

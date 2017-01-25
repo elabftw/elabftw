@@ -14,9 +14,7 @@ use Exception;
 
 /**
  * An API for elab
- * Get your api key from your profile page.
- * Send it in an Authorization header like so:
- * curl -kL -X GET -H "Authorization: $API_KEY" "https://elabftw.example.org/api/v1/items/7"
+ *
  */
 class Api
 {

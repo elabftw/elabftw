@@ -113,6 +113,11 @@ class Entity
             $this->idFilter = ' AND ' . $this->type . '.id = ' . $this->id;
         }
 
+        $uploadsJoin = "LEFT JOIN (
+            SELECT uploads.item_id AS up_item_id, (uploads.item_id IS NOT NULL) AS attachment, uploads.type FROM uploads)
+            AS uploads
+            ON (uploads.up_item_id = " . $this->type . ".id AND uploads.type = '" . $this->type . "')";
+
         if ($this instanceof Experiments) {
 
             if (empty($this->idFilter)) {
@@ -136,9 +141,7 @@ class Entity
 
                     FROM experiments
                     JOIN experiments_tags et on (experiments.id = et.item_id)
-                    LEFT JOIN status ON (status.id = experiments.status)
-                    LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads
-                    ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
+                    LEFT JOIN status ON (status.id = experiments.status)" . $uploadsJoin . "
                     WHERE experiments.team = :team";
             }
 
@@ -152,9 +155,7 @@ class Entity
                     FROM items
                     LEFT JOIN items_types ON (items.type = items_types.id)
                     LEFT JOIN users ON (users.userid = items.userid)
-                    LEFT JOIN items_tags ON (items.id = items_tags.item_id)
-                    LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads
-                    ON (uploads.attachment = items.id AND uploads.type = 'items')
+                    LEFT JOIN items_tags ON (items.id = items_tags.item_id)" . $uploadsJoin . "
                     WHERE items.team = :team";
             } else {
                 $sql = "SELECT DISTINCT items.id
@@ -167,9 +168,7 @@ class Entity
                     LEFT JOIN items_types ON (items.type = items_types.id)
                     JOIN items_tags it on (items.id = it.item_id)
                     LEFT JOIN users ON (users.userid = items.userid)
-                    LEFT JOIN items_tags ON (items.id = items_tags.item_id)
-                    LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads
-                    ON (uploads.attachment = items.id AND uploads.type = 'items')
+                    LEFT JOIN items_tags ON (items.id = items_tags.item_id)" . $uploadsJoin . "
                     WHERE items.team = :team";
             }
 

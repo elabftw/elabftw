@@ -185,9 +185,8 @@ class MakeZip extends Make
     /**
      * Add PDF to archive
      *
-     * @param int $id The id of the item we are zipping
      */
-    private function addPdf($id)
+    private function addPdf()
     {
         $pdf = new MakePdf($this->Entity, true);
         $this->zip->addFile($pdf->filePath, $this->folder . '/' . $pdf->getCleanName());

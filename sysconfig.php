@@ -38,7 +38,7 @@ try {
         // and not getting the latest version is not a big deal
         $SysconfigView->Update->getUpdatesIni();
     } catch (Exception $e) {
-        display_message('ko_nocross', $e->getMessage());
+        echo Tools::displayMessage($e->getMessage(), 'ko');
     }
 
     // display current and latest version
@@ -57,7 +57,7 @@ try {
                 _('A new version is available!') . " <a href='https://elabftw.readthedocs.io/en/latest/how-to-update.html'>
                 <button class='button'>Update elabftw</button></a>
                 <a href='" . $SysconfigView->Update->getChangelogLink() . "'><button class='button'>Read changelog</button></a>";
-            display_message('warning', $message);
+            echo Tools::displayMessage($message, 'warning');
         }
     } else {
         echo "</p>";
@@ -65,7 +65,7 @@ try {
 
     if ($Config->configArr['mail_from'] === 'notconfigured@example.com') {
         $message = sprintf(_('Please finalize install : %slink to documentation%s.'), "<a href='https://elabftw.readthedocs.io/en/latest/postinstall.html#setting-up-email'>", "</a>");
-        display_message('ko', $message);
+        echo Tools::displayMessage($message, 'ko');
     }
     ?>
 
@@ -379,7 +379,7 @@ try {
 } catch (Exception $e) {
     $Logs = new Logs();
     $Logs->create('Error', $_SESSION['userid'], $e->getMessage());
-    display_message('ko', $e->getMessage());
+    echo Tools::displayMessage($e->getMessage(), 'ko');
 } finally {
     require_once 'app/footer.inc.php';
 }

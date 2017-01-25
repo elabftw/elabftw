@@ -139,11 +139,12 @@ class EntityView
         // show number of results found
         $count = count($itemsArr);
         if ($count === 0 && $this->searchType != '') {
-            return display_message('ko_nocross', _("Sorry. I couldn't find anything :("));
+            return Tools::displayMessage(_("Sorry. I couldn't find anything :("), 'ko', false);
         } elseif ($count === 0 && $this->searchType === '') {
-            return display_message(
-                'ok_nocross',
-                _("Welcome to eLabFTW. Use the 'Create new' button to get started!")
+            return Tools::displayMessage(
+                _("Welcome to eLabFTW. Use the 'Create new' button to get started!"),
+                'ok',
+                false
             );
         } else {
             $html .= $this->buildExportMenu($itemsArr);

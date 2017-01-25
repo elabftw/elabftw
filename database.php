@@ -87,7 +87,7 @@ try {
         echo $EntityView->edit();
     }
 } catch (Exception $e) {
-    display_message('ko', $e->getMessage());
+    echo Tools::displayMessage($e->getMessage(), 'ko');
 } finally {
     require_once 'app/footer.inc.php';
 }

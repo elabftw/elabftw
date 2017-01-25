@@ -100,7 +100,7 @@ try {
     if ($debug) {
         $message .= ' ' . $e->getFile() . '(' . $e->getLine() . ')';
     }
-    display_message('ko', $message);
+    echo Tools::displayMessage($message, 'ko');
 } finally {
     require_once 'app/footer.inc.php';
 }

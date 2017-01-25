@@ -44,7 +44,7 @@ $Database->bookableFilter = " AND bookable = 1";
 $items = $Database->read();
 $dropdown = '';
 if (count($items) === 0) {
-    display_message('warning_nocross', _("No bookable items."));
+    echo Tools::displayMessage(_("No bookable items."), 'warning', false);
 } else {
     $dropdown = "<div class='row'>";
     $dropdown .= "<div class='col-md-2'>";
@@ -81,7 +81,7 @@ try {
         echo $dropdown;
     }
 } catch (Exception $e) {
-    echo display_message('ko_nocross', $e->getMessage());
+    echo Tools::displayMessage($e->getMessage(), 'ko');
 }
 ?>
 </div>
@@ -89,11 +89,15 @@ try {
 <!-- TAB 2 INFOS -->
 <div class='divhandle' id='tab2div'>
 <?php
-display_message('ok_nocross', sprintf(
-    _('You belong to the %s team. %s'),
-    $TeamsView->Teams->read('team_name'),
-    $TeamsView->showStats($_SESSION['team_id'])
-))
+echo Tools::displayMessage(
+    sprintf(
+        _('You belong to the %s team. %s'),
+        $TeamsView->Teams->read('team_name'),
+        $TeamsView->showStats($_SESSION['team_id'])
+    ),
+    'ok',
+    false
+);
 ?>
 
 <table id='teamtable' class='table'>

@@ -284,10 +284,19 @@ class ExperimentsView extends EntityView
 
         $date = new DateTime($this->Entity->entityData['timestampedwhen']);
 
-        return display_message(
-            'ok_nocross',
-            _('Experiment was timestamped by') . " " . $timestamper['fullname'] . " " . _('on') . " " . $date->format('Y-m-d') . " " . _('at') . " " . $date->format('H:i:s') . " "
-            . $date->getTimezone()->getName() . " <a href='uploads/" . $pdf[0]['long_name'] . "'><img src='app/img/pdf.png' title='" . _('Download timestamped pdf') . "' alt='pdf' /></a> <a href='uploads/" . $token[0]['long_name'] . "'><img src='app/img/download.png' title=\"" . _('Download token') . "\" alt='download token' /></a> <a href='#'><img onClick=\"decodeAsn1('" . $token[0]['long_name'] . "', '" . $this->Entity->entityData['id'] . "')\" src='app/img/info.png' title=\"" . _('Decode token') . "\" alt='decode token' /></a><div style='color:black;overflow:auto;display:hidden' id='decodedDiv'></div>"
+        return Tools::displayMessage(
+            _('Experiment was timestamped by') . " " . $timestamper['fullname'] . " " . _('on') .
+            " " . $date->format('Y-m-d') . " " . _('at') . " " .
+            $date->format('H:i:s') . " ".
+            $date->getTimezone()->getName() . " <a href='uploads/" .
+            $pdf[0]['long_name'] . "'><img src='app/img/pdf.png' title='" .
+            _('Download timestamped pdf') . "' alt='pdf' /></a> <a href='uploads/" . $token[0]['long_name'] .
+            "'><img src='app/img/download.png' title=\"" . _('Download token') .
+            "\" alt='download token' /></a> <a href='#'><img onClick=\"decodeAsn1('" . $token[0]['long_name'] .
+            "', '" . $this->Entity->entityData['id'] . "')\" src='app/img/info.png' title=\"" . _('Decode token') .
+            "\" alt='decode token' /></a><div style='color:black;overflow:auto;display:hidden' id='decodedDiv'></div>",
+            'ok',
+            false
         );
     }
 
@@ -299,13 +308,14 @@ class ExperimentsView extends EntityView
     {
         $html = '';
 
-        $html .= $this->backToLink('experiments');
 
         if ($this->ro) {
             $ownerName = $this->Entity->Users->userData['fullname'];
             $message = sprintf(_('Read-only mode. Experiment of %s.'), $ownerName);
-            $html .= display_message('ok', $message);
+            $html .= Tools::displayMessage($message, 'ok', false);
         }
+
+        $html .= $this->backToLink('experiments');
 
         $html .= "<section class='item' style='padding:15px;border-left: 6px solid #" . $this->Entity->entityData['color'] . "'>";
         $html .= "<span class='top_right_status'><img src='app/img/status.png'>" . $this->Entity->entityData['name'] .

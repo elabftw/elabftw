@@ -58,7 +58,7 @@ try {
         }
         $message .= "</ul><div class='submitButtonDiv'>
         <button class='button' type='submit'>". _('Validate') . "</button></div>";
-        display_message('ko', $message);
+        echo Tools::displayMessage($message, 'ko');
         echo "</form>";
     }
     // END VALIDATE USERS BLOCK
@@ -475,7 +475,7 @@ try {
     </script>
     <?php
 } catch (Exception $e) {
-    display_message('ko', $e->getMessage());
+    echo Tools::displayMessage($e->getMessage(), 'ko');
 } finally {
     require_once 'app/footer.inc.php';
 }

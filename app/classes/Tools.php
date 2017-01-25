@@ -46,6 +46,41 @@ class Tools
 
 
     /**
+     * For displaying messages using jquery ui highlight/error messages
+     *
+     * @param string $message The message to display
+     * @param string $type Can be 'ok', 'ko' or 'warning', with or without _nocross
+     * @param bool $cross do we display a cross or not?
+     * @return string the HTML of the message
+     */
+    public static function displayMessage($message, $type, $cross = true)
+    {
+        $glyphicon = 'info-sign';
+        $alert = 'success';
+
+        if ($type === 'ko') {
+            $glyphicon = 'exclamation-sign';
+            $alert = 'danger';
+        } elseif ($type === 'warning') {
+            $glyphicon = 'chevron-right';
+            $alert = $type;
+        }
+
+        $crossLink = '';
+
+        if ($cross) {
+            $crossLink = "<a href='#' class='close' data-dismiss='alert'>&times</a>";
+        }
+
+        $begin = "<div class='alert alert-" . $alert .
+            "'><span class='glyphicon glyphicon-" . $glyphicon .
+            "' aria-hidden='true'></span>";
+        $end = "</div>";
+
+        return $begin . $crossLink . ' ' . $message . $end;
+    }
+
+    /**
      * Sanitize title with a filter_var and remove the line breaks.
      *
      * @param string $input The title to sanitize

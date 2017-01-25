@@ -118,5 +118,5 @@ try {
         echo $config;
     }
 } catch (Exception $e) {
-    display_message('ko', 'Error: ' . $e->getMessage());
+    echo displayMessage('Error: ' . $e->getMessage(), 'ko');
 }

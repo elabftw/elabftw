@@ -124,14 +124,14 @@ if (isset($_SESSION['auth'])) {
 // INFO BOX
 if (isset($_SESSION['ko']) && is_array($_SESSION['ko']) && count($_SESSION['ko']) > 0) {
     foreach ($_SESSION['ko'] as $msg) {
-        display_message('ko', $msg);
+        echo Tools::displayMessage($msg, 'ko');
     }
     unset($_SESSION['ko']);
 }
 
 if (isset($_SESSION['ok']) && is_array($_SESSION['ok']) && count($_SESSION['ok']) > 0) {
     foreach ($_SESSION['ok'] as $msg) {
-        display_message('ok', $msg);
+        echo Tools::displayMessage($msg, 'ok');
     }
     unset($_SESSION['ok']);
 }

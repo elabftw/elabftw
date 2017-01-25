@@ -50,7 +50,7 @@ try {
     if (isset($_SESSION['failed_attempt']) && $_SESSION['failed_attempt'] < $Config->configArr['login_tries']) {
         $number_of_tries_left = $Config->configArr['login_tries'] - $_SESSION['failed_attempt'];
         $message = _('Number of login attempt left before being banned for') . ' ' . $Config->configArr['ban_time'] . ' ' . _('minutes:') . ' ' . $number_of_tries_left;
-        display_message('ko', $message);
+        echo Tools::displayMessage($message, 'ko');
     }
 
     // disable login if too much failed_attempts
@@ -65,7 +65,7 @@ try {
     }
 
 } catch (Exception $e) {
-    display_message('ko', $e->getMessage());
+    echo Tools::displayMessage($e->getMessage(), 'ko');
     require_once 'app/footer.inc.php';
     exit;
 }

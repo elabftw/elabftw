@@ -20,11 +20,11 @@ $page_title = _('Search');
 $selected_menu = 'Search';
 require_once 'app/head.inc.php';
 
-$Experiments = new Experiments($_SESSION['team_id'], $_SESSION['userid']);
-$Database = new Database($_SESSION['team_id'], $_SESSION['userid']);
+$Users = new Users($_SESSION['userid']);
+$Experiments = new Experiments($Users);
+$Database = new Database($Users);
 $ItemsTypes = new ItemsTypes($_SESSION['team_id']);
 $Status = new Status($_SESSION['team_id']);
-$Users = new Users();
 
 // TYPE
 if (isset($_GET['type']) && $_GET['type'] === 'database') {
@@ -160,7 +160,7 @@ if (isset($_GET['owner']) && ($_GET['owner'] === '0')) {
 echo ">" . _("All the team"); ?></option>
 <option disabled>----------------</option>
 <?php
-$usersArr = $Users->readAllFromTeam($_SESSION['team_id']);
+$usersArr = $Users->readAllFromTeam($Users->userData['team']);
 foreach ($usersArr as $user) {
     echo "<option value='" . $user['userid'] . "'";
     // item get selected if it is in the search url
@@ -365,7 +365,7 @@ if (isset($_GET)) {
                     $owner = $_GET['owner'];
                     $sqlUserid = " AND experiments.userid = " . $owner;
                 } elseif (empty($_GET['owner'])) {
-                    $owner = $EntityView->Entity->userid;
+                    $owner = $EntityView->Entity->Users->userid;
                     $sqlUserid = " AND experiments.userid = " . $owner;
                 }
                 if ($_GET['owner'] === '0') {

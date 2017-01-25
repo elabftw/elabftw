@@ -117,7 +117,7 @@ try {
     // CHECK PHP version
     if (!function_exists('version_compare') || version_compare(PHP_VERSION, '5.6', '<')) {
         $message = "Your version of PHP isn't recent enough. Please update your php version to at least 5.6";
-        display_message('ko_nocross', $message);
+        echo Tools::displayMessage($message, 'ko', false);
         $errflag = true;
     }
 
@@ -135,7 +135,7 @@ try {
         // check the folders
         if (is_writable('../uploads') && is_writable('../uploads/tmp')) {
             $message = "The <em>uploads/</em> folder and its subdirectory were created successfully.";
-            display_message('ok_nocross', $message);
+            echo Tools::displayMessage($message, 'ok', false);
         } else { // failed at creating the folder
             $message = "Failed creating <em>uploads/</em> directory. You need to do it manually. 
                 <a href='https://elabftw.readthedocs.io/en/stable/faq.html#failed-creating-uploads-directory'>Click here to discover how.</a>";
@@ -158,7 +158,7 @@ try {
     }
 
     $message = 'Everything is good on your server. You can install eLabFTW :)';
-    display_message('ok_nocross', $message);
+    echo Tools::displayMessage($message, 'ok', false);
     ?>
     <h3>Configuration</h3>
 
@@ -260,7 +260,7 @@ try {
     </script>
     <?php
 } catch (Exception $e) {
-    display_message('ko_nocross', $e->getMessage());
+    echo Tools::displayMessage($e->getMessage(), 'ko');
     echo "</section></section>";
 } finally {
     echo "</body></html>";

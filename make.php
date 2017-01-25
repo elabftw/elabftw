@@ -60,7 +60,7 @@ try {
 
 } catch (Exception $e) {
     require_once 'app/head.inc.php';
-    display_message('ko', $e->getMessage());
+    echo Tools::displayMessage($e->getMessage(), 'ko');
 
 } finally {
     // this won't show up if it's a pdf

@@ -20,38 +20,6 @@ use Defuse\Crypto\Key as Key;
  */
 
 /**
- * For displaying messages using jquery ui highlight/error messages
- *
- * @param string $type Can be 'ok', 'ko' or 'warning', with or without _nocross
- * @param string $message The message to display
- * @return boolean Will echo the HTML of the message
- */
-function display_message($type, $message)
-{
-    if ($type === 'ok') {
-
-        echo "<div class='alert alert-success'><span class='glyphicon glyphicon-ok-circle' aria-hidden='true'></span><a href='#' class='close' data-dismiss='alert'>&times</a> $message</div>";
-
-    } elseif ($type === 'ok_nocross') {
-        echo "<div class='alert alert-success'><span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span> $message</div>";
-
-    } elseif ($type === 'ko') {
-
-        echo "<div class='alert alert-danger'><span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span><a href='#' class='close' data-dismiss='alert'>&times</a> $message</div>";
-
-    } elseif ($type === 'ko_nocross') {
-        echo "<div class='alert alert-danger'><span class='glyphicon glyphicon-remove-circle' aria-hidden='true'></span> $message</div>";
-
-    } elseif ($type === 'warning') {
-        echo "<div class='alert alert-warning'><span class='glyphicon glyphicon-chevron-right' aria-hidden='true'></span><a href='#' class='close' data-dismiss='alert'>&times</a> $message</div>";
-    } elseif ($type === 'warning_nocross') {
-        echo "<div class='alert alert-warning'><span class='glyphicon glyphicon-chevron-right' aria-hidden='true'></span> $message</div>";
-    }
-
-    return false;
-}
-
-/**
  * Used in sysconfig.php to update config values
  *
  * @param array $post (conf_name => conf_value)

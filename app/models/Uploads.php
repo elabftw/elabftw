@@ -332,7 +332,7 @@ class Uploads extends Entity
      */
     public function destroy($id)
     {
-        $uploadArr = $this->read($id);
+        $uploadArr = $this->readFromId($id);
 
         // remove thumbnail
         $thumbPath = ELAB_ROOT . 'uploads/' . $uploadArr['long_name'] . '_th.jpg';

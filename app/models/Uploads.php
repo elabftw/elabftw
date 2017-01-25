@@ -226,13 +226,14 @@ class Uploads extends Entity
      * Read infos from an upload ID and type
      * Type can be experiments, timestamp-pdf, items, timestamp-token
      *
+     * @param int $id id of the uploaded item
      * @return array
      */
-    public function read()
+    public function readFromId($id)
     {
         $sql = "SELECT * FROM uploads WHERE id = :id AND type = :type";
         $req = $this->pdo->prepare($sql);
-        $req->bindParam(':id', $this->Entity->id);
+        $req->bindParam(':id', $id);
         $req->bindParam(':type', $this->Entity->type);
         $req->execute();
 
@@ -331,7 +332,7 @@ class Uploads extends Entity
      */
     public function destroy($id)
     {
-        $uploadArr = $this->read();
+        $uploadArr = $this->read($id);
 
         // remove thumbnail
         $thumbPath = ELAB_ROOT . 'uploads/' . $uploadArr['long_name'] . '_th.jpg';

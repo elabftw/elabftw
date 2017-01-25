@@ -204,7 +204,7 @@ class ExperimentsView extends EntityView
         $html .= "<label for='status_select'>" . ngettext('Status', 'Status', 1) . "</label>";
         $html .= " <select id='status_select' name='status' onchange='updateStatus(" . $this->Entity->id . ", this.value)'>";
 
-        $Status = new Status($this->Entity->team);
+        $Status = new Status($this->Entity->Users->userData['team']);
         $statusArr = $Status->readAll();
 
         foreach ($statusArr as $status) {

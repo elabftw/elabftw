@@ -156,14 +156,6 @@ function showMol(molFileContent) {
     viewer.loadMolecule(mol);
 }
 
-// go to url
-function go_url(x) {
-    if (x === '') {
-        return;
-    }
-    window.location = x;
-}
-
 // ENTITY
 function toggleLock(type, id) {
     $.post("app/controllers/EntityController.php", {

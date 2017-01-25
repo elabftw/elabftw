@@ -133,21 +133,17 @@ class DatabaseView extends EntityView
         $html .= " " . $this->showTags('view');
 
         // TITLE : click on it to go to edit mode
-        $html .= "<div ";
+        $onClick = '';
         if ($this->Entity->entityData['locked'] === '0' || $this->Entity->entityData['locked'] === null) {
-            $html .= "onClick=\"document.location='database.php?mode=edit&id=" . $this->Entity->entityData['itemid'] . "'\" ";
+            $onClick .= "onClick=\"document.location='database.php?mode=edit&id=" . $this->Entity->entityData['itemid'] . "'\" ";
         }
-        $html .= "class='title_view'>";
+        $html .= "<div " . $onClick . " class='title_view'>";
         $html .= "<span style='color:#" . $this->Entity->entityData['color'] . "'>" . $this->Entity->entityData['name'] . " </span>";
         $html .= $this->Entity->entityData['title'];
         $html .= "</div>";
         // BODY (show only if not empty)
         if ($this->Entity->entityData['body'] != '') {
-            $html .= "<div ";
-            if ($this->Entity->entityData['locked'] === '0' || $this->Entity->entityData['locked'] === null) {
-                $html .= "onClick='go_url(\"database.php?mode=edit&id=" . $this->Entity->entityData['itemid'] . "\")'";
-            }
-            $html .= " id='body_view' class='txt'>" . $this->Entity->entityData['body'] . "</div>";
+            $html .= "<div " . $onClick . " id='body_view' class='txt'>" . $this->Entity->entityData['body'] . "</div>";
         }
         // SHOW USER
         $html .= _('Last modified by') . ' ' . $this->Entity->entityData['fullname'];

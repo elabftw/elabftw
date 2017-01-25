@@ -9,10 +9,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use \Exception;
-use Defuse\Crypto\Crypto as Crypto;
-use Defuse\Crypto\Key as Key;
-
 /**
  * This file holds global functions available everywhere.
  *

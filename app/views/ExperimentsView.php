@@ -122,7 +122,7 @@ class ExperimentsView extends EntityView
         // TITLE
         $html .= $item['title'] . "</p></a>";
         // STATUS
-        $html .= "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['color'] . "'>" . $item['name'] . " </span>";
+        $html .= "<span style='text-transform:uppercase;font-size:80%;padding-left:20px;color:#" . $item['color'] . "'>" . $item['status'] . " </span>";
         // DATE
         $html .= "<span class='date'><img class='image' src='app/img/calendar.png' /> " . Tools::formatDate($item['date']) . "</span> ";
         // TAGS
@@ -209,10 +209,10 @@ class ExperimentsView extends EntityView
 
         foreach ($statusArr as $status) {
             $html .= "<option ";
-            if ($this->Entity->entityData['status'] === $status['id']) {
+            if ($this->Entity->entityData['status_id'] === $status['status_id']) {
                 $html .= "selected ";
             }
-            $html .= "value='" . $status['id'] . "'>" . $status['name'] . "</option>";
+            $html .= "value='" . $status['status_id'] . "'>" . $status['status'] . "</option>";
         }
         $html .= "</select></div></div>";
 
@@ -319,7 +319,7 @@ class ExperimentsView extends EntityView
         $html .= $this->backToLink('experiments');
 
         $html .= "<section class='item' style='padding:15px;border-left: 6px solid #" . $this->Entity->entityData['color'] . "'>";
-        $html .= "<span class='top_right_status'><img src='app/img/status.png'>" . $this->Entity->entityData['name'] .
+        $html .= "<span class='top_right_status'><img src='app/img/status.png'>" . $this->Entity->entityData['status'] .
             "<img src='app/img/eye.png' alt='eye' />" . $this->getVisibility() . "</span>";
         $html .= "<div><img src='app/img/calendar.png' title='date' alt='Date :' /> " .
             Tools::formatDate($this->Entity->entityData['date']) . "</div>

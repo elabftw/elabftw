@@ -113,16 +113,17 @@ class Entity
             $this->idFilter = ' AND ' . $this->type . '.id = ' . $this->id;
         }
 
+        $select = "SELECT DISTINCT " . $this->type . ".*,
+            status.color, status.name AS status, status.id AS status_id, uploads.up_item_id, uploads.has_attachment";
+
         $uploadsJoin = "LEFT JOIN (
-            SELECT uploads.item_id AS up_item_id, (uploads.item_id IS NOT NULL) AS has_attachment, uploads.type FROM uploads)
+            SELECT uploads.item_id AS up_item_id,
+                (uploads.item_id IS NOT NULL) AS has_attachment, uploads.type FROM uploads)
             AS uploads
             ON (uploads.up_item_id = " . $this->type . ".id AND uploads.type = '" . $this->type . "')";
         $tagsSelect = ", GROUP_CONCAT(tagt.tag SEPARATOR '!----!') as tags, GROUP_CONCAT(tagt.id) as tags_id";
 
         if ($this instanceof Experiments) {
-                $select = "SELECT DISTINCT experiments.*,
-                    status.color, status.name, uploads.up_item_id, uploads.has_attachment";
-
                 $expCommentsSelect = ", experiments_comments.datetime";
                 $from = "FROM experiments";
 
@@ -157,7 +158,7 @@ class Entity
                     FROM items
                     LEFT JOIN items_types ON (items.type = items_types.id)
                     LEFT JOIN users ON (users.userid = items.userid)
-                    LEFT JOIN items_tags ON (items.id = items_tags.item_id)" . $uploadsJoin . "
+                    LEFT JOIN items_tags ON (items.id = items_tags.item_id) " . $uploadsJoin . "
                     WHERE items.team = :team";
             } else {
                 $sql = "SELECT DISTINCT items.id
@@ -170,7 +171,7 @@ class Entity
                     LEFT JOIN items_types ON (items.type = items_types.id)
                     JOIN items_tags it on (items.id = it.item_id)
                     LEFT JOIN users ON (users.userid = items.userid)
-                    LEFT JOIN items_tags AS tagt ON (items.id = tagt.item_id)" . $uploadsJoin . "
+                    LEFT JOIN items_tags AS tagt ON (items.id = tagt.item_id) " . $uploadsJoin . "
                     WHERE items.team = :team";
             }
 

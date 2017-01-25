@@ -82,7 +82,8 @@ class Status extends Entity
      */
     public function readAll()
     {
-        $sql = "SELECT * FROM status WHERE team = :team ORDER BY ordering ASC";
+        $sql = "SELECT status.id AS status_id, status.name AS status
+            FROM status WHERE team = :team ORDER BY ordering ASC";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $this->team);
         $req->execute();

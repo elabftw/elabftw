@@ -114,43 +114,45 @@ class Entity
         }
 
         $uploadsJoin = "LEFT JOIN (
-            SELECT uploads.item_id AS up_item_id, (uploads.item_id IS NOT NULL) AS attachment, uploads.type FROM uploads)
+            SELECT uploads.item_id AS up_item_id, (uploads.item_id IS NOT NULL) AS has_attachment, uploads.type FROM uploads)
             AS uploads
             ON (uploads.up_item_id = " . $this->type . ".id AND uploads.type = '" . $this->type . "')";
+        $tagsSelect = ", GROUP_CONCAT(tagt.tag SEPARATOR '!----!') as tags, GROUP_CONCAT(tagt.id) as tags_id";
 
         if ($this instanceof Experiments) {
+                $select = "SELECT DISTINCT experiments.*,
+                    status.color, status.name, uploads.up_item_id, uploads.has_attachment";
+
+                $expCommentsSelect = ", experiments_comments.datetime";
+                $from = "FROM experiments";
+
+                $tagsJoin = "LEFT JOIN experiments_tags AS tagt ON (experiments.id = tagt.item_id)";
+                $statusJoin = "LEFT JOIN status ON (status.id = experiments.status)";
+                $commentsJoin = "LEFT JOIN experiments_comments ON (experiments_comments.exp_id = experiments.id)";
+                $where = "WHERE experiments.team = :team";
 
             if (empty($this->idFilter)) {
-                $sql = "SELECT DISTINCT experiments.*,
-                    status.color, status.name, uploads.*, experiments_comments.datetime
-
-                    FROM experiments
-
-                    LEFT JOIN status ON (status.id = experiments.status)
-
-                    LEFT JOIN (SELECT uploads.item_id AS attachment, uploads.type FROM uploads) AS uploads
-                    ON (uploads.attachment = experiments.id AND uploads.type = 'experiments')
-
-                    LEFT JOIN experiments_comments ON (experiments_comments.exp_id = experiments.id)
-
-                    WHERE experiments.team = :team";
+                $sql = $select . ' ' .
+                    $expCommentsSelect . ' ' .
+                    $from . ' ';
             } else {
-                $sql = "SELECT DISTINCT experiments.*,
-                    status.color, status.name, uploads.*,
-                    GROUP_CONCAT(et.tag SEPARATOR '!----!') as tags, GROUP_CONCAT(et.id) as tags_id
-
-                    FROM experiments
-                    JOIN experiments_tags et on (experiments.id = et.item_id)
-                    LEFT JOIN status ON (status.id = experiments.status)" . $uploadsJoin . "
-                    WHERE experiments.team = :team";
+                $sql = $select . ' ' .
+                    $tagsSelect . ' ' .
+                    $from . ' ' .
+                    $tagsJoin . ' ';
             }
+
+            $sql .= $statusJoin . ' ' .
+                $uploadsJoin . ' ' .
+                $commentsJoin . ' ' .
+                $where;
 
         } elseif ($this instanceof Database) {
 
             if (empty($this->idFilter)) {
                 $sql = "SELECT DISTINCT items.id
                     AS itemid, items.*, items_types.name, items_types.color, items_types.id
-                    AS itemstype, uploads.*,
+                    AS itemstype, uploads.up_item_id, uploads.has_attachment,
                     CONCAT(users.firstname, ' ', users.lastname) AS fullname
                     FROM items
                     LEFT JOIN items_types ON (items.type = items_types.id)
@@ -160,15 +162,15 @@ class Entity
             } else {
                 $sql = "SELECT DISTINCT items.id
                     AS itemid, items.*, items_types.name, items_types.color, items_types.id
-                    AS itemstype, uploads.*,
+                    AS itemstype, uploads.up_item_id, uploads.has_attachment,
                     CONCAT(users.firstname, ' ', users.lastname) AS fullname,
-                    GROUP_CONCAT(it.tag SEPARATOR '!----!') as tags, GROUP_CONCAT(it.id) as tags_id
+                    GROUP_CONCAT(tagt.tag SEPARATOR '!----!') as tags, GROUP_CONCAT(tagt.id) as tags_id
 
                     FROM items
                     LEFT JOIN items_types ON (items.type = items_types.id)
                     JOIN items_tags it on (items.id = it.item_id)
                     LEFT JOIN users ON (users.userid = items.userid)
-                    LEFT JOIN items_tags ON (items.id = items_tags.item_id)" . $uploadsJoin . "
+                    LEFT JOIN items_tags AS tagt ON (items.id = tagt.item_id)" . $uploadsJoin . "
                     WHERE items.team = :team";
             }
 
@@ -205,23 +207,6 @@ class Entity
             return $item;
         }
         return $itemsArr;
-    }
-
-    /**
-     * Check if an item has a file attached.
-     *
-     * @return bool Return false if there is now file attached
-     */
-    public function hasAttachment()
-    {
-        $sql = "SELECT COUNT(*) FROM uploads
-            WHERE item_id = :item_id AND type = :type LIMIT 1";
-        $req = $this->pdo->prepare($sql);
-        $req->bindParam(':item_id', $this->id);
-        $req->bindParam(':type', $this->type);
-        $req->execute();
-
-        return $req->fetchColumn() != 0;
     }
 
     /**

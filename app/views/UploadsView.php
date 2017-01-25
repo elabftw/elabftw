@@ -34,6 +34,10 @@ class UploadsView extends EntityView
      */
     public function buildUploadForm()
     {
+        $page = 'experiments';
+        if ($this->Uploads->Entity->type === 'items') {
+            $page = 'database';
+        }
         $html = "<section class='box'>";
         $html .= "<img src='app/img/attached.png' /> ";
         $html .= "<h3 style='display:inline'>" . _('Attach a file') . "</h3>";
@@ -66,7 +70,7 @@ class UploadsView extends EntityView
                     }
                     // reload the #filesdiv once the file is uploaded
                     if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-                        $('#filesdiv').load('" . $this->Uploads->Entity->type .
+                        $('#filesdiv').load('" . $page .
                             ".php?mode=edit&id=" . $this->Uploads->Entity->id . " #filesdiv', function() {
                             // make the comment zone editable (fix issue #54)
                             makeEditableFileComment('" . $this->Uploads->Entity->type . "', " .

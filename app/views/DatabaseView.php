@@ -77,7 +77,7 @@ class DatabaseView extends EntityView
         $html .= "<a href='database.php?mode=view&id=" . $item['itemid'] . "'>";
 
         // show attached if there is a file attached
-        if ($item['attachment']) {
+        if ($item['has_attachment']) {
             $html .= "<img style='clear:both' class='align_right' src='app/img/attached.png' alt='file attached' />";
         }
         // STARS

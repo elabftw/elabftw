@@ -25,7 +25,8 @@ $redirect = false;
 
 try {
 
-    $Entity = new Database($_SESSION['team_id'], $_SESSION['userid']);
+    $Users = new Users($_SESSION['userid']);
+    $Entity = new Database($Users);
 
     // CREATE
     if (isset($_GET['databaseCreateId'])) {

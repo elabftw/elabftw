@@ -84,7 +84,7 @@ class TeamsView
     /**
      * Output a line of stats for a team or for all
      *
-     * @param int|null team
+     * @param bool|null team set to true to get stats from the team
      * @return string stats
      */
     public function showStats($team = null)
@@ -95,7 +95,7 @@ class TeamsView
             $count = $this->Teams->getAllStats();
             $stats .= _('Teams') . ": " . $count['totteams'] . " − ";
         } else {
-            $count = $this->Teams->getStats($team);
+            $count = $this->Teams->getStats($this->Teams->team);
         }
             $stats .= _('Members') . ": " . $count['totusers'] . " − " .
             ngettext('Experiment', 'Experiments', $count['totxp']) . ": " . $count['totxp'] . " (" . $count['totxpts'] . " timestamped) − " .

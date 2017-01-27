@@ -18,11 +18,14 @@ use Exception;
  */
 try {
     require_once '../../app/init.inc.php';
-    $Scheduler = new Scheduler($_SESSION['team_id']);
+    $Users = new Users($_SESSION['userid']);
+    $Database = new Database($Users);
+    $Scheduler = new Scheduler($Database);
 
     // CREATE
     if (isset($_POST['create'])) {
-        if ($Scheduler->create($_POST['item'], $_POST['start'], $_POST['end'], $_POST['title'], $_SESSION['userid'])) {
+        $Database->setId($_POST['item']);
+        if ($Scheduler->create($_POST['start'], $_POST['end'], $_POST['title'])) {
             echo json_encode(array(
                 'res' => true,
                 'msg' => _('Saved')

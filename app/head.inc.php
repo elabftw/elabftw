@@ -18,7 +18,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {
     $teamConfigArr = $Teams->read();
 
     // to redirect to the right page
-    if ($selected_menu === 'Database') {
+    if ($selectedMenu === 'Database') {
         $actionTarget = 'database.php';
     } else {
         $actionTarget = 'experiments.php';

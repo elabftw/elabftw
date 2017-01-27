@@ -84,6 +84,9 @@ $twig = new \Twig_Environment($loader, array(
     'cache' => ELAB_ROOT . 'uploads/tmp')
 );
  */
+$filterOptions = array('is_safe' => array('html'));
+$msgFilter = new \Twig_SimpleFilter('msg', '\Elabftw\Elabftw\Tools::displayMessage', $filterOptions);
+$twig->addFilter($msgFilter);
 $twig->addExtension(new \Twig_Extensions_Extension_I18n());
 
 // run the update script if we have the wrong schema version

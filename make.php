@@ -24,38 +24,41 @@ $selected_menu = null;
 try {
     $Users = new Users($_SESSION['userid']);
 
+    if ($_GET['type'] === 'experiments') {
+        $Entity = new Experiments($Users);
+    } else {
+        $Entity = new Database($Users);
+    }
+
     switch ($_GET['what']) {
         case 'csv':
-            $make = new MakeCsv($_GET['id'], $_GET['type']);
+            $Make = new MakeCsv($Entity, $_GET['id']);
             break;
 
         case 'zip':
-            $make = new MakeZip($_GET['id'], $_GET['type']);
+            $Make = new MakeZip($Entity, $_GET['id']);
             break;
 
         case 'pdf':
-            if ($_GET['type'] === 'experiments') {
-                $Entity = new Experiments($Users, $_GET['id']);
-            } else {
-                $Entity = new Database($Users, $_GET['id']);
-            }
-            $make = new MakePdf($Entity);
+            $Entity->setId($_GET['id']);
+            $Make = new MakePdf($Entity);
             break;
 
         default:
-            throw new Exception(_('Bad type!'));
+            throw new Exception(Tools::error());
     }
 
     // the pdf is shown directly, but for csv or zip we want a download page
     if ($_GET['what'] === 'csv' || $_GET['what'] === 'zip') {
+
+        $filesize = Tools::formatBytes(filesize($Make->filePath));
         require_once 'app/head.inc.php';
 
-        echo "<div class='well' style='margin-top:20px'>";
-        echo "<p>" . _('Your file is ready:') . "<br>
-                <a href='app/download.php?type=" . $_GET['what'] . "&f=" . $make->fileName . "&name=" . $make->getCleanName() . "' target='_blank'>
-                <img src='app/img/download.png' alt='download' /> " . $make->getCleanName() . "</a>
-                <span class='filesize'>(" . Tools::formatBytes(filesize($make->filePath)) . ")</span></p>";
-        echo "</div>";
+        echo $twig->render('make.html', array(
+            'what' => $_GET['what'],
+            'Make' => $Make,
+            'filesize' => $filesize
+        ));
     }
 
 } catch (Exception $e) {

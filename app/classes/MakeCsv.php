@@ -37,25 +37,18 @@ class MakeCsv extends Make
     /**
      * Give me a list of id+id+id and a type, I make good csv for you
      *
+     * @param Entity $entity
      * @param string $idList 1+4+5+2
-     * @param string $type 'experiments' or 'items'
      */
-    public function __construct($idList, $type)
+    public function __construct(Entity $entity, $idList)
     {
         $this->pdo = Db::getConnection();
+        $this->Entity = $entity;
 
         $this->fileName = $this->getFileName();
         $this->filePath = $this->getTempFilePath($this->fileName);
 
         $this->idList = $idList;
-
-        if ($type === 'experiments') {
-            $this->Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid']);
-        } elseif ($type === 'items') {
-            $this->Entity = new Database($_SESSION['team_id'], $_SESSION['userid']);
-        } else {
-            throw new Exception('Bad type!');
-        }
 
         // set the column names
         $this->list[] = $this->populateFirstLine();
@@ -138,7 +131,7 @@ class MakeCsv extends Make
             $this->Entity->entityData['date'],
             htmlspecialchars_decode($this->Entity->entityData['title'], ENT_QUOTES | ENT_COMPAT),
             html_entity_decode(strip_tags(htmlspecialchars_decode($this->Entity->entityData['body'], ENT_QUOTES | ENT_COMPAT))),
-            htmlspecialchars_decode($this->Entity->entityData['name'], ENT_QUOTES | ENT_COMPAT),
+            htmlspecialchars_decode($this->Entity->entityData['category'], ENT_QUOTES | ENT_COMPAT),
             $elabidOrRating,
             $this->getUrl($this->Entity->entityData['id'])
         );

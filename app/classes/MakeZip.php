@@ -48,21 +48,14 @@ class MakeZip extends Make
     /**
      * Give me an id list and a type, I make good zip for you
      *
+     * @param Entity $entity
      * @param string $idList 1+3+5+8
-     * @param string $type 'experiments' or 'items'
      * @throws Exception if we don't have ZipArchive extension
      */
-    public function __construct($idList, $type)
+    public function __construct(Entity $entity, $idList)
     {
         $this->pdo = Db::getConnection();
-
-        if ($type === 'experiments') {
-            $this->Entity = new Experiments($_SESSION['team_id'], $_SESSION['userid']);
-        } elseif ($type === 'items') {
-            $this->Entity = new Database($_SESSION['team_id'], $_SESSION['userid']);
-        } else {
-            throw new Exception('Bad type!');
-        }
+        $this->Entity = $entity;
 
         // we check first if the zip extension is here
         if (!class_exists('ZipArchive')) {
@@ -201,7 +194,7 @@ class MakeZip extends Make
     private function addCsv($id)
     {
         // add CSV file to archive
-        $csv = new MakeCsv($id, $this->Entity->type);
+        $csv = new MakeCsv($this->Entity, $id);
         $this->zip->addFile($csv->filePath, $this->folder . "/" . $this->cleanTitle . ".csv");
         $this->filesToDelete[] = $csv->filePath;
     }

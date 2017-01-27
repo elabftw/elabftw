@@ -114,7 +114,7 @@ class Entity
         }
 
         $select = "SELECT DISTINCT " . $this->type . ".*,
-            status.color, status.name AS status, status.id AS status_id, uploads.up_item_id, uploads.has_attachment";
+            status.color, status.name AS category, status.id AS category_id, uploads.up_item_id, uploads.has_attachment";
 
         $uploadsJoin = "LEFT JOIN (
             SELECT uploads.item_id AS up_item_id,

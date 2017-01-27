@@ -1,37 +1,22 @@
 <?php
-/********************************************************************************
-*                                                                               *
-*   Copyright 2012 Nicolas CARPi (nicolas.carpi@gmail.com)                      *
-*   https://www.elabftw.net/                                                     *
-*                                                                               *
-********************************************************************************/
-
-/********************************************************************************
-*  This file is part of eLabFTW.                                                *
-*                                                                               *
-*    eLabFTW is free software: you can redistribute it and/or modify            *
-*    it under the terms of the GNU Affero General Public License as             *
-*    published by the Free Software Foundation, either version 3 of             *
-*    the License, or (at your option) any later version.                        *
-*                                                                               *
-*    eLabFTW is distributed in the hope that it will be useful,                 *
-*    but WITHOUT ANY WARRANTY; without even the implied                         *
-*    warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR                    *
-*    PURPOSE.  See the GNU Affero General Public License for more details.      *
-*                                                                               *
-*    You should have received a copy of the GNU Affero General Public           *
-*    License along with eLabFTW.  If not, see <http://www.gnu.org/licenses/>.   *
-*                                                                               *
-********************************************************************************/
+/**
+ * app/download.php
+ *
+ * @author Nicolas CARPi <nicolas.carpi@curie.fr>
+ * @copyright 2012 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
 namespace Elabftw\Elabftw;
 
 use Exception;
 
-// we disable errors to avoid having notice and warning polluting our file
-error_reporting(E_ERROR);
-require_once '../app/init.inc.php';
-
 try {
+    // we disable errors to avoid having notice and warning polluting our file
+    error_reporting(E_ERROR);
+    require_once '../app/init.inc.php';
+
     // Check for LONG_NAME
     if (!isset($_GET['f']) || empty($_GET['f'])) {
         throw new Exception('Missing parameter for download');
@@ -64,8 +49,6 @@ try {
     } else {
         $file_path = ELAB_ROOT . 'uploads/' . $long_filename;
     }
-
-
 
     // MIME
     $mtype = "application/force-download";

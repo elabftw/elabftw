@@ -1,0 +1,6 @@
+<div class='well' style='margin-top:20px'>
+    <p>{{ 'Your file is ready:'|trans }}<br>
+    <a href='app/download.php?type={{ what }}&f={{ Make.fileName }}&name={{ Make.getCleanName() }}' target='_blank'>
+        <img src='app/img/download.png' alt='download' />{{ Make.getCleanName() }}</a>
+    <span class='filesize'>( {{ filesize }} )</span></p>
+</div>

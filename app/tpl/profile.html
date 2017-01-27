@@ -38,8 +38,7 @@
             data.addColumn('number', 'Experiments number');
             data.addRows([
                 {% for name, percent in UserStats.percentArr %}
-
-                ['{{name|raw}}', {{percent}}],
+                    ['{{name|raw}}', {{percent}}],
                 {% endfor %}
             ]);
             var options = {
@@ -76,7 +75,7 @@
             {% endtrans %}
         {% else %}
         {% for tag, class in TagCloud.cloudArr %}
-            <a href='experiments.php?mode=show&tag={{ tag }}' class='{{ class }}'>{{ tag }}</a> 
+            <a href='experiments.php?mode=show&tag={{ tag }}' class='{{ class }}'>{{ tag }}</a>
         {% endfor %}
 
         {% endif %}

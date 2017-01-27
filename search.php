@@ -204,7 +204,7 @@ foreach ($statusArr as $status) {
     if (isset($_GET['status']) && ($_GET['status'] == $status['id'])) {
         echo "selected ";
     }
-    echo "value='" . $status['id'] . "'>" . $status['name'] . "</option>";
+    echo "value='" . $status['category_id'] . "'>" . $status['category'] . "</option>";
 }
 ?>
                 </select>

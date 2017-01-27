@@ -45,7 +45,7 @@ require_once ELAB_ROOT . 'vendor/autoload.php';
 
 // SQL CONNECT
 try {
-    //$pdo = Db::getConnection();
+    $pdo = Db::getConnection();
 } catch (Exception $e) {
     die('Error connecting to the database : ' . $e->getMessage());
 }

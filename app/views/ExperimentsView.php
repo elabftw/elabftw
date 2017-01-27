@@ -288,7 +288,7 @@ class ExperimentsView extends EntityView
         return Tools::displayMessage(
             _('Experiment was timestamped by') . " " . $timestamper['fullname'] . " " . _('on') .
             " " . $date->format('Y-m-d') . " " . _('at') . " " .
-            $date->format('H:i:s') . " ".
+            $date->format('H:i:s') . " " .
             $date->getTimezone()->getName() . " <a href='uploads/" .
             $pdf[0]['long_name'] . "'><img src='app/img/pdf.png' title='" .
             _('Download timestamped pdf') . "' alt='pdf' /></a> <a href='uploads/" . $token[0]['long_name'] .

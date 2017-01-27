@@ -21,7 +21,7 @@ class TagCloud
     /** pdo object */
     private $pdo;
 
-    /* tag + class */
+    /** tag + class */
     public $cloudArr = array();
 
     /**

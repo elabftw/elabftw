@@ -21,6 +21,7 @@ class DoodleView
     /**
      * Constructor
      *
+     * @param Entity $entity
      */
     public function __construct(Entity $entity)
     {

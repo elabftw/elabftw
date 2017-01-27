@@ -35,6 +35,10 @@ class Scheduler extends Entity
         $this->Database = $database;
     }
 
+    /**
+     * Read the db items and store it in itemData
+     *
+     */
     public function populate()
     {
         $this->itemData = $this->Database->read();

@@ -54,7 +54,7 @@
 <div id='real_container'>
     {% if session['auth'] == 1 %}
     <div class="user-nav">
-        {% trans %}Howdy,{% endtrans %}<a class="elab-tooltip" href='profile.php'><span>My Profile</span>{{ session['firstname'] }}</a><br>
+        {{ 'Howdy,'|trans }}<a class="elab-tooltip" href='profile.php'><span>My Profile</span> {{ session['firstname'] }}</a><br>
         <a class="elab-tooltip" href='ucp.php'><span>{% trans %}Settings{% endtrans %}</span><img src='app/img/settings.png' alt='{% trans %}Settings{% endtrans %}' /></a> |
         <a class="elab-tooltip" href='#'><strong class="elab-tooltip" id='help'><span>{% trans %}Help{% endtrans %}</span>?</strong></a> |
         <a class="elab-tooltip" href='app/logout.php'><span>{% trans %}Logout{% endtrans %}</span><img src='app/img/logout.png' alt='{% trans %}Logout{% endtrans %}' /></a>

@@ -1,0 +1,52 @@
+<footer>
+    <p class='footer_left'>
+        <a class='elab-tooltip-top' href='https://twitter.com/elabftw'>
+            <span>Follow eLabFTW on Twitter!</span>
+            <img src='app/img/twitter.png' alt='twitter' />
+        </a>
+
+        <a class='elab-tooltip-top' href='https://github.com/elabftw/elabftw'>
+            <span>eLabFTW on GitHub</span>
+            <img src='app/img/github.png' alt='github' />
+        </a>
+        <span>
+            {% if session['auth'] and session['is_sysadmin'] %}
+            <a href='sysconfig.php'>
+                {% trans %}Sysadmin panel{% endtrans %}
+            </a>
+            {% endif %}
+
+            {% if session['auth'] and session['is_admin'] %}
+            <a href='admin.php'>
+                {% trans %}Admin panel{% endtrans %}
+
+                {% if Users.readAllFromTeam(session['team_id'], 0)|length > 0 %}
+                    <span class='badge'>{{ Users.readAllFromTeam(session['team_id'], 0)|length }}</span>
+                {% endif %}
+            </a>
+            {% endif %}
+        </span>
+    </p>
+
+    <p class='footer_right'>
+        {% trans %}Powered by{% endtrans %}
+        <a href='https://www.elabftw.net'>eLabFTW</a><br>
+        {% trans %}Page generated in{% endtrans %}
+        <span class='strong'>{{ generationTime }} seconds</span>
+        ({{ sqlNb }} SQL)
+    </p>
+</footer>
+
+<!-- advanced search div -->
+<script>
+    $('#adv_search').hide();
+    $('#big_search_input').click(function() {
+        $('#adv_search').show();
+    });
+    $('#help_container').hide();
+    $('#help').click(function() {
+        $('#help_container').toggle();
+    });
+</script>
+</body>
+</html>

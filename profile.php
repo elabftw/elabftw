@@ -31,14 +31,12 @@ try {
     $UserStats = new UserStats($_SESSION['team_id'], $_SESSION['userid'], $count);
     $TagCloud = new TagCloud($_SESSION['userid']);
 
-    $template = $twig->render('profile.html', array(
+    echo $twig->render('profile.html', array(
         'Users' => $Users,
         'UserStats' => $UserStats,
         'TagCloud' => $TagCloud,
         'count' => $count
     ));
-
-    echo $template;
 
 } catch (Exception $e) {
     $Logs = new Logs();

@@ -34,7 +34,8 @@ echo $twig->render('head.html', array(
     'session' => $_SESSION,
     'pageTitle' => $pageTitle,
     'selectedMenu' => $selectedMenu,
-    'actionTarget' => $actionTarget
+    'actionTarget' => $actionTarget,
+    'teamConfigArr' => $teamConfigArr
 ));
 
 // INFO BOX

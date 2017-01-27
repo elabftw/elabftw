@@ -165,10 +165,18 @@ class MakeZip extends Make
 
         // files attached ?
         $fileNb = count($real_name);
+        $real_names_so_far = array();
         if ($fileNb > 0) {
             for ($i = 0; $i < $fileNb; $i++) {
+                $realName = $real_name[$i];
+
+                // if we have a file with the same name, it shouldn't overwrite the previous one
+                if (in_array($realName, $real_names_so_far)) {
+                    $realName = $i . '_' . $real_name[$i];
+                }
+                $real_names_so_far[] = $realName;
                 // add files to archive
-                $this->zip->addFile(ELAB_ROOT . 'uploads/' . $long_name[$i], $this->folder . "/" . $real_name[$i]);
+                $this->zip->addFile(ELAB_ROOT . 'uploads/' . $long_name[$i], $this->folder . "/" . $realName);
                 // reference them in the json file
                 $this->fileArr[] = $this->folder . "/" . $real_name[$i];
             }

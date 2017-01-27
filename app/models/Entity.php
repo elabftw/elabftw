@@ -118,9 +118,10 @@ class Entity
 
         $uploadsJoin = "LEFT JOIN (
             SELECT uploads.item_id AS up_item_id,
-                (uploads.item_id IS NOT NULL) AS has_attachment, uploads.type FROM uploads)
+                (uploads.item_id IS NOT NULL) AS has_attachment, uploads.type FROM uploads GROUP BY uploads.item_id)
             AS uploads
-            ON (uploads.up_item_id = " . $this->type . ".id AND uploads.type = '" . $this->type . "')";
+            ON (uploads.up_item_id = " . $this->type . ".id AND uploads.type = '" . $this->type . "')
+            ";
         $tagsSelect = ", GROUP_CONCAT(tagt.tag SEPARATOR '!----!') as tags, GROUP_CONCAT(tagt.id) as tags_id";
 
         if ($this instanceof Experiments) {
@@ -179,15 +180,15 @@ class Entity
             throw new Exception('Nope.');
         }
 
-        $sql .= $this->idFilter .
-            $this->useridFilter .
-            $this->titleFilter .
-            $this->dateFilter .
-            $this->bodyFilter .
-            $this->bookableFilter .
-            $this->categoryFilter .
-            $this->tagFilter .
-            $this->queryFilter .
+        $sql .= $this->idFilter . ' ' .
+            $this->useridFilter . ' ' .
+            $this->titleFilter . ' ' .
+            $this->dateFilter . ' ' .
+            $this->bodyFilter . ' ' .
+            $this->bookableFilter . ' ' .
+            $this->categoryFilter . ' ' .
+            $this->tagFilter . ' ' .
+            $this->queryFilter . ' ' .
             " ORDER BY " . $this->order . " " . $this->sort . " " . $this->limit;
 
         $req = $this->pdo->prepare($sql);

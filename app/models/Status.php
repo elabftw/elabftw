@@ -82,8 +82,8 @@ class Status extends Entity
      */
     public function readAll()
     {
-        $sql = "SELECT status.id AS status_id,
-            status.name AS status,
+        $sql = "SELECT status.id AS category_id,
+            status.name AS category,
             status.color,
             status.is_default
             FROM status WHERE team = :team ORDER BY ordering ASC";

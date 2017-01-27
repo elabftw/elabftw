@@ -287,7 +287,7 @@ class EntityView
             }
         } else {
             foreach ($categoryArr as $category) {
-                $html .= "<option value='" . $category['status_id'] . "'" . checkSelectFilter($category['status_id']) . ">" . $category['status'] . "</option>";
+                $html .= "<option value='" . $category['category_id'] . "'" . checkSelectFilter($category['category_id']) . ">" . $category['category'] . "</option>";
             }
         }
 

@@ -17,8 +17,8 @@ use Exception;
  *
  */
 require_once 'app/init.inc.php';
-$page_title = _('Login');
-$selected_menu = null;
+$pageTitle = _('Login');
+$selectedMenu = null;
 
 // Check if already logged in
 if (isset($_SESSION['auth']) && $_SESSION['auth'] === 1) {

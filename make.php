@@ -18,8 +18,8 @@ use \Exception;
  */
 
 require_once 'app/init.inc.php';
-$page_title = _('Export');
-$selected_menu = null;
+$pageTitle = _('Export');
+$selectedMenu = null;
 
 try {
     $Users = new Users($_SESSION['userid']);

@@ -18,8 +18,8 @@ namespace Elabftw\Elabftw;
 <script src="app/js/edit.mode.min.js"></script>
 <?php
 require_once 'app/init.inc.php';
-$page_title = _('User Control Panel');
-$selected_menu = null;
+$pageTitle = _('User Control Panel');
+$selectedMenu = null;
 require_once('app/head.inc.php');
 
 $Users = new Users();

@@ -15,8 +15,8 @@ namespace Elabftw\Elabftw;
  *
  */
 require_once 'app/init.inc.php';
-$page_title = _('Register');
-$selected_menu = null;
+$pageTitle = _('Register');
+$selectedMenu = null;
 require_once 'app/head.inc.php';
 
 // Check if we're logged in

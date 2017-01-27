@@ -17,8 +17,8 @@ use Exception;
  *
  */
 require_once 'app/init.inc.php';
-$page_title = _('Profile');
-$selected_menu = null;
+$pageTitle = _('Profile');
+$selectedMenu = null;
 require_once 'app/head.inc.php';
 
 try {

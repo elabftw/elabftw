@@ -16,12 +16,12 @@ use Exception;
  * Administration of a team
  *
  */
-require_once 'app/init.inc.php';
-$page_title = _('Admin panel');
-$selected_menu = null;
-require_once 'app/head.inc.php';
-
 try {
+    require_once 'app/init.inc.php';
+    $pageTitle = _('Admin panel');
+    $selectedMenu = null;
+    require_once 'app/head.inc.php';
+
     if (!$_SESSION['is_admin']) {
         throw new Exception(Tools::error(true));
     }
@@ -36,8 +36,7 @@ try {
     $Users = new Users(null, $Config);
     $usersArr = $Users->readAllFromTeam($_SESSION['team_id']);
     $UsersView = new UsersView($Users);
-
-    $templates = new Templates($_SESSION['team_id']);
+    $Templates = new Templates($_SESSION['team_id']);
     $Teams = new Teams($_SESSION['team_id']);
 
     // VALIDATE USERS BLOCK
@@ -274,7 +273,7 @@ try {
             <p><?= _('This is the default text when someone creates an experiment.') ?></p>
             <textarea style='height:400px' class='mceditable' id='commonTplTemplate' />
         <?php
-            $templatesArr = $templates->readCommon();
+            $templatesArr = $Templates->readCommon();
             echo $templatesArr['body']
         ?>
             </textarea>

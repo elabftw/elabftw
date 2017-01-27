@@ -17,8 +17,8 @@ use \Exception;
  *
  */
 require_once 'app/init.inc.php';
-$page_title = _('Revisions');
-$selected_menu = null;
+$pageTitle = _('Revisions');
+$selectedMenu = null;
 $errflag = false;
 require_once 'app/head.inc.php';
 

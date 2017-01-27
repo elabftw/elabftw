@@ -84,7 +84,8 @@ class Status extends Entity
     {
         $sql = "SELECT status.id AS status_id,
             status.name AS status,
-            status.color
+            status.color,
+            status.is_default
             FROM status WHERE team = :team ORDER BY ordering ASC";
         $req = $this->pdo->prepare($sql);
         $req->bindParam(':team', $this->team);

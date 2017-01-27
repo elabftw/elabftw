@@ -45,7 +45,7 @@ require_once ELAB_ROOT . 'vendor/autoload.php';
 
 // SQL CONNECT
 try {
-    $pdo = Db::getConnection();
+    //$pdo = Db::getConnection();
 } catch (Exception $e) {
     die('Error connecting to the database : ' . $e->getMessage());
 }
@@ -75,6 +75,11 @@ $res = setlocale(LC_ALL, $locale);
 bindtextdomain($domain, ELAB_ROOT . "app/locale");
 textdomain($domain);
 // END i18n
+
+// TWIG
+$loader = new \Twig_Loader_Filesystem(ELAB_ROOT . 'app/tpl');
+$twig = new \Twig_Environment($loader);
+$twig->addExtension(new \Twig_Extensions_Extension_I18n());
 
 // run the update script if we have the wrong schema version
 if ($Update->Config->configArr['schema'] < $Update::REQUIRED_SCHEMA) {

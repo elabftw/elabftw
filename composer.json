@@ -10,7 +10,8 @@
         "ext-curl":"*",
         "ext-openssl":"*",
         "defuse/php-encryption": "2.0.1",
-        "mpdf/mpdf": "^6.1"
+        "mpdf/mpdf": "^6.1",
+        "twig/extensions": "^1.4"
 
     },
     "require-dev": {

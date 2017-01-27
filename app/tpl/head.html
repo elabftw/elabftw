@@ -63,36 +63,34 @@
         <p><a href='#' class='close' onClick="$('#help_container').hide();">&times</a>
             <ul>
                 <li class='tip'>
-                    {% trans %}There is a manual available %shere%s{% endtrans %}|format("<a href='https://elabftw.readthedocs.io/en/stable/manual.html'>", "</a>")
+                    {{ 'There is a manual available %shere%s.'|trans|format("<a href='https://elabftw.readthedocs.io/en/stable/manual.html'>", "</a>")|raw }}
                 </li>
                 <li class='tip'>
-                    {% trans %}You can use a TODOlist by pressing 't'.{% endtrans %}
+                    {{ "You can use a TODOlist by pressing 't'."|trans }}
                 </li>
                 <li class='tip'>
-                    {% trans %}You can have experiments templates (%sControl Panel%s).{% endtrans %}|format("<a href='ucp.php?tab=3'>", "</a>")
+                    {{ 'You can have experiments templates (%sControl Panel%s).'|trans|format("<a href='ucp.php?tab=3'>", "</a>")|raw }}
                 </li>
                 <li class='tip'>
-                    {% trans %}You can make links inside the text by typing # and an autocomplete menu will spawn with a list of Experiments/Items.{% endtrans %}
+                    {{ 'You can make links inside the text by typing # and an autocomplete menu will spawn with a list of Experiments/Items.'|trans }}
                 </li>
                 <li class='tip'>
-                    {% trans %}
-                        The admin of a team can edit the status and the types of items available (%sAdmin Panel%s).
-                    {% endtrans %}|format("<a href='admin.php?tab=4'>", "</a>")
+                    {{ 'The admin of a team can edit the status and the types of items available (%sAdmin Panel%s).'|trans|format("<a href='admin.php?tab=4'>", "</a>")|raw }}
                 </li>
                 <li class='tip'>
-                    {% trans %}If you press Ctrl Shift D in the editor, the date will appear under the cursor.{% endtrans %}
+                    {{ 'If you press Ctrl Shift D in the editor, the date will appear under the cursor.'|trans }}
                 </li>
                 <li class='tip'>
-                    {% trans %}Custom shortcuts are available (%sControl Panel%s).{% endtrans %}|format("<a href='ucp.php?tab=1'>", "</a>")
+                    {{ 'Custom shortcuts are available (%sControl Panel%s).'|trans|format("<a href='ucp.php?tab=1'>", "</a>")|raw }}
                 </li>
                 <li class='tip'>
-                    {% trans %}You can duplicate experiments in one click.{% endtrans %}
+                    {{ 'You can duplicate experiments in one click.'|trans }}
                 </li>
                 <li class='tip'>
-                    {% trans %}Click a tag to list all items with this tag.{% endtrans %}
+                    {{ 'Click a tag to list all items with this tag.'|trans }}
                 </li>
                 <li class='tip'>
-                    {% trans %}Once timestamped an experiment cannot be unlocked or modified. Only comments can be added.{% endtrans %}
+                    {{ 'Once timestamped an experiment cannot be unlocked or modified. Only comments can be added.'|trans }}
                 </li>
             </ul>
         </p>

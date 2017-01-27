@@ -118,7 +118,7 @@ class Entity
 
         $uploadsJoin = "LEFT JOIN (
             SELECT uploads.item_id AS up_item_id,
-                (uploads.item_id IS NOT NULL) AS has_attachment, uploads.type FROM uploads GROUP BY uploads.item_id)
+                (uploads.item_id IS NOT NULL) AS has_attachment, uploads.type FROM uploads GROUP BY uploads.item_id, uploads.type)
             AS uploads
             ON (uploads.up_item_id = " . $this->type . ".id AND uploads.type = '" . $this->type . "')
             ";

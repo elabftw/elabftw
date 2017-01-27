@@ -18,8 +18,8 @@ use \Exception;
  *
  */
 require_once 'app/init.inc.php';
-$page_title = _('Database');
-$selected_menu = 'Database';
+$pageTitle = _('Database');
+$selectedMenu = 'Database';
 require_once 'app/head.inc.php';
 
 // add the chemdoodle stuff if we want it

@@ -16,8 +16,8 @@ namespace Elabftw\Elabftw;
  *
  */
 require_once 'app/init.inc.php';
-$page_title = _('Search');
-$selected_menu = 'Search';
+$pageTitle = _('Search');
+$selectedMenu = 'Search';
 require_once 'app/head.inc.php';
 
 $Users = new Users($_SESSION['userid']);

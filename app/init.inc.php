@@ -79,6 +79,11 @@ textdomain($domain);
 // TWIG
 $loader = new \Twig_Loader_Filesystem(ELAB_ROOT . 'app/tpl');
 $twig = new \Twig_Environment($loader);
+/*
+$twig = new \Twig_Environment($loader, array(
+    'cache' => ELAB_ROOT . 'uploads/tmp')
+);
+ */
 $twig->addExtension(new \Twig_Extensions_Extension_I18n());
 
 // run the update script if we have the wrong schema version

@@ -17,8 +17,8 @@ use Exception;
  *
  */
 require_once 'app/init.inc.php';
-$page_title = _('Team');
-$selected_menu = 'Team';
+$pageTitle = _('Team');
+$selectedMenu = 'Team';
 require_once 'app/head.inc.php';
 
 $Users = new Users($_SESSION['userid']);

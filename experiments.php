@@ -18,8 +18,8 @@ use \Exception;
  *
  */
 require_once 'app/init.inc.php';
-$page_title = ngettext('Experiment', 'Experiments', 2);
-$selected_menu = 'Experiments';
+$pageTitle = ngettext('Experiment', 'Experiments', 2);
+$selectedMenu = 'Experiments';
 require_once 'app/head.inc.php';
 
 // add the chemdoodle stuff if we want it

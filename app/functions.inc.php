@@ -118,6 +118,9 @@ function getDbList($format = 'default')
     // complete the list with experiments (only for tinymce)
     // fix #191
     $Experiments = new Experiments($Users);
+    if ($format === 'mention-user') {
+        $Experiments->setUseridFilter();
+    }
     $expArr = $Experiments->read();
 
     foreach ($expArr as $exp) {

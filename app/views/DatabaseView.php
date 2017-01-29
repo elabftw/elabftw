@@ -251,8 +251,15 @@ class DatabaseView extends EntityView
                 },
                 language : '" . $_SESSION['prefs']['lang'] . "',
                 mentions: {
-                    source: [" . getDbList('mention') . "],
-                    delimiter: '#'
+                    delimiter: ['#', '$'],
+                    source: function (query, process, delimiter) {
+                                if (delimiter === '#') {
+                                    process([" . getDbList('mention') . "]);
+                                }
+                                if (delimiter === '$') {
+                                    process([" . getDbList('mention-user') . "]);
+                                }
+                            }
                 },
                 style_formats_merge: true,
                 style_formats: [

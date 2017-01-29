@@ -409,8 +409,15 @@ class ExperimentsView extends EntityView
                     });
                 },
                 mentions: {
-                    source: [" . getDbList('mention') . "],
-                    delimiter: '#'
+                    delimiter: ['#', '$'],
+                    source: function (query, process, delimiter) {
+                                if (delimiter === '#') {
+                                    process([" . getDbList('mention') . "]);
+                                }
+                                if (delimiter === '$') {
+                                    process([" . getDbList('mention-user') . "]);
+                                }
+                            }
                 },
                 language : '" . $_SESSION['prefs']['lang'] . "',
                 style_formats_merge: true,

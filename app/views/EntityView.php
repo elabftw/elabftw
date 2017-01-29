@@ -133,7 +133,7 @@ class EntityView
 
         } else {
 
-            if (!$this->showTeam) {
+            if (!$this->showTeam && $this->Entity instanceof Experiments) {
                 // filter by user
                 $this->Entity->setUseridFilter();
             }

@@ -73,6 +73,10 @@ try {
             $EntityView->Entity->setLimit(50);
         }
         echo $EntityView->buildShow();
+        echo $twig->render('show.html', array(
+            'session' => $_SESSION,
+            'EntityView' => $EntityView
+        ));
 
     // VIEW
     } elseif ($_GET['mode'] === 'view') {

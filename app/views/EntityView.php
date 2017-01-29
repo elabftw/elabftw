@@ -180,7 +180,6 @@ class EntityView
         if ($count > $this->limit) {
             $html .= $load_more_button;
         }
-        $html .= $this->buildShowJs();
 
         return $html;
     }
@@ -320,47 +319,6 @@ class EntityView
         $html .= _('Reset') . "</button></div></form>";
 
         $html .= "</div></div><hr>";
-
-        return $html;
-    }
-
-    /**
-     * JS for show
-     *
-     * @return string
-     */
-    protected function buildShowJs()
-    {
-        if ($this->Entity->type === 'experiments') {
-            $shortcut = "
-            // KEYBOARD SHORTCUTS
-            key('" . $_SESSION['prefs']['shortcuts']['create'] . "', function(){
-                location.href = 'app/controllers/ExperimentsController.php?create=true'
-                });";
-        } else {
-            $shortcut = '';
-        }
-        $html = "<script>
-        $(document).ready(function(){
-
-            // SHOW MORE BUTTON
-            $('section.item').hide(); // hide everyone
-            $('section.item').slice(0, " . $this->limit . ").show(); // show only the default at the beginning
-            $('#loadButton').click(function(e){ // click to load more
-                e.preventDefault();
-                $('section.item:hidden').slice(0, " . $this->limit . ").show();
-                if ($('section.item:hidden').length == 0) { // check if there are more exp to show
-                    $('#loadButton').hide(); // hide load button when there is nothing more to show
-                    $('#loadAllButton').hide(); // hide load button when there is nothing more to show
-                }
-            });
-            $('#loadAllButton').click(function(e){ // click to load more
-                e.preventDefault();
-                $('section.item:hidden').show();
-                $('#loadAllButton').hide(); // hide load button when there is nothing more to show
-                $('#loadButton').hide(); // hide load button when there is nothing more to show
-            });" . $shortcut . "});
-        </script>";
 
         return $html;
     }

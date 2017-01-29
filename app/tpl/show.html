@@ -1,0 +1,28 @@
+<script>
+    $(document).ready(function(){
+
+        {% if EntityView.Entity.type == 'experiments' %}
+        key('{{ session['prefs']['shortcuts']['create'] }}', function(){
+            location.href = 'app/controllers/ExperimentsController.php?create=true'
+        });
+        {% endif %}
+
+        // SHOW MORE BUTTON
+        $('section.item').hide(); // hide everyone
+        $('section.item').slice(0, {{ EntityView.limit }} ).show(); // show only the default at the beginning
+        $('#loadButton').click(function(e){ // click to load more
+            e.preventDefault();
+            $('section.item:hidden').slice(0, {{ EntityView.limit }} ).show();
+            if ($('section.item:hidden').length == 0) { // check if there are more exp to show
+                $('#loadButton').hide(); // hide load button when there is nothing more to show
+                $('#loadAllButton').hide(); // hide load button when there is nothing more to show
+            }
+        });
+        $('#loadAllButton').click(function(e){ // click to load more
+            e.preventDefault();
+            $('section.item:hidden').show();
+            $('#loadAllButton').hide(); // hide load button when there is nothing more to show
+            $('#loadButton').hide(); // hide load button when there is nothing more to show
+        });
+    });
+</script>

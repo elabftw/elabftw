@@ -80,6 +80,10 @@ try {
 
         echo $EntityView->buildShowMenu('experiments');
         echo $EntityView->buildShow();
+        echo $twig->render('show.html', array(
+            'session' => $_SESSION,
+            'EntityView' => $EntityView
+        ));
 
     // VIEW
     } elseif ($_GET['mode'] === 'view') {

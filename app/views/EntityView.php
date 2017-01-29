@@ -164,12 +164,6 @@ class EntityView
             </div>";
 
         foreach ($itemsArr as $item) {
-            /*
-            echo "<br><hr>";
-            var_dump($item['itemid']);
-            echo "<br><hr>";
-            var_dump($itemsArr);
-             */
             $permissions = $this->Entity->getPermissions($item);
             if ($permissions['read']) {
                 $html .= $this->showUnique($item);

@@ -150,7 +150,7 @@ class Entity
                 $where;
 
         } elseif ($this instanceof Database) {
-            $select = "SELECT DISTINCT items.id AS itemid,
+            $sql = "SELECT DISTINCT items.id AS itemid,
                 items.*, items_types.name AS category,
                 items_types.color,
                 items_types.id AS category_id,
@@ -163,13 +163,11 @@ class Entity
                     LEFT JOIN items_tags AS tagt ON (items.id = tagt.item_id)";
                 $where = "WHERE items.team = :team";
 
-            if (empty($this->idFilter)) {
-                $sql = $select . ' ' . $from . ' ' . $tagsJoin;
-            } else {
-                $sql = $select . ' ' . $tagsSelect . ' ' . $from . ' ' . $tagsJoin;
+            if (!empty($this->idFilter)) {
+                $sql .= $tagsSelect;
             }
 
-            $sql .= ' ' . $uploadsJoin . ' ' . $where;
+            $sql .= ' ' . $from . ' ' . $uploadsJoin . ' ' . $where;
 
         } else {
             throw new Exception('Nope.');

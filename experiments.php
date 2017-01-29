@@ -32,8 +32,8 @@ try {
         $EntityView->display = $_SESSION['prefs']['display'];
 
         // CATEGORY FILTER
-        if (isset($_GET['filter']) && !empty($_GET['filter']) && Tools::checkId($_GET['filter'])) {
-            $EntityView->Entity->categoryFilter = " AND status.id = " . $_GET['filter'];
+        if (isset($_GET['cat']) && !empty($_GET['cat']) && Tools::checkId($_GET['cat'])) {
+            $EntityView->Entity->categoryFilter = " AND status.id = " . $_GET['cat'];
             $EntityView->searchType = 'filter';
         }
         // TAG FILTER

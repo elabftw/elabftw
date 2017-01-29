@@ -283,44 +283,25 @@ class EntityView
     /**
      * Display the tags
      *
-     * @param string $mode show/view/edit
+     * @param string $mode view/edit
      * @return string Will show the HTML for tags
      */
-    protected function showTags($mode, $id = null)
+    protected function showTags($mode)
     {
         $html = '';
-        $tagList = array();
-
-        if ($mode === 'show') {
-            $Tags = new Tags($this->Entity);
-            $tagList = $Tags->readFromId($id);
-            if (count($tagList) === 0) {
-                return $html;
-            }
-        }
-
-
         $page = 'database';
         if ($this->Entity->type === 'experiments') {
             $page = 'experiments';
         }
 
-        if (($mode === 'view') || ($mode === 'show')) {
+        if ($mode === 'view') {
 
             $html .= "<span class='tags'><img src='app/img/tags.png' alt='tags' /> ";
 
-            if ($mode === 'show') {
-                foreach ($tagList as $tag) {
-                        $html .= "<a href='" . $page . ".php?mode=show&tag=" .
-                            urlencode(stripslashes($tag['tag'])) . "'>" .
-                            stripslashes($tag['tag']) . "</a> ";
-                }
-            } else {
-                foreach ($this->Entity->entityData['tagsArr'] as $tagId => $tag) {
-                        $html .= "<a href='" . $page . ".php?mode=show&tag=" .
-                            urlencode(stripslashes($tag)) . "'>" .
-                            stripslashes($tag) . "</a> ";
-                }
+            foreach ($this->Entity->entityData['tagsArr'] as $tagId => $tag) {
+                    $html .= "<a href='" . $page . ".php?mode=show&tag=" .
+                        urlencode(stripslashes($tag)) . "'>" .
+                        stripslashes($tag) . "</a> ";
             }
 
             $html .= "</span>";
@@ -331,7 +312,6 @@ class EntityView
 
         $html = "<img src='app/img/tags.png' alt='tags' /><label for='addtaginput'>" . _('Tags') . "</label>";
         $html .= "<div class='tags'><span id='tags_div'>";
-
 
         // display tags for edit mode
         foreach ($this->Entity->entityData['tagsArr'] as $tagId => $tag) {

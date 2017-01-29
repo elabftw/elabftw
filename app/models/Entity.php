@@ -121,16 +121,6 @@ class Entity
             ";
         $tagsSelect = ", GROUP_CONCAT(tagt.tag SEPARATOR '!----!') as tags, GROUP_CONCAT(tagt.id) as tags_id";
 
-/*
-$newTagsJoin = "LEFT JOIN (
-            SELECT tagt.id, tagt.item_id AS tag_item_id, tagt.tag
-            FROM experiments_tags AS tagt GROUP BY tagt.item_id
-            )
-            AS tagt
-            ON (tagt.tag_item_id = " . $this->type . ".id)";
- */
-
-
         if ($this instanceof Experiments) {
                 $select = "SELECT DISTINCT " . $this->type . ".*,
                     status.color, status.name AS category, status.id AS category_id, uploads.up_item_id, uploads.has_attachment";
@@ -145,7 +135,7 @@ $newTagsJoin = "LEFT JOIN (
             if (empty($this->idFilter)) {
                 $sql = $select . ' ' .
                     $expCommentsSelect . ' ' .
-                    $from . ' ' ;
+                    $from . ' ';
             } else {
                 $tagsJoin = "LEFT JOIN experiments_tags AS tagt ON (experiments.id = tagt.item_id)";
                 $sql = $select . ' ' .

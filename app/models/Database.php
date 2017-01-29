@@ -131,7 +131,7 @@ class Database extends Entity
             'date' => Tools::kdate(),
             'body' => $this->entityData['body'],
             'userid' => $this->Users->userid,
-            'type' => $this->entityData['itemstype']
+            'type' => $this->entityData['category']
         ));
         $newId = $this->pdo->lastInsertId();
 

@@ -10,8 +10,6 @@
  */
 namespace Elabftw\Elabftw;
 
-use \Exception;
-
 /**
  * Make a CSV file from a list of id and a type
  */

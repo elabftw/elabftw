@@ -132,13 +132,15 @@ class DatabaseView extends EntityView
         // TAGS
         $html .= " " . $this->showTags('view');
 
+        // CATEGORY
+
         // TITLE : click on it to go to edit mode
         $onClick = '';
         if ($this->Entity->entityData['locked'] === '0' || $this->Entity->entityData['locked'] === null) {
             $onClick .= "onClick=\"document.location='database.php?mode=edit&id=" . $this->Entity->entityData['itemid'] . "'\" ";
         }
         $html .= "<div " . $onClick . " class='title_view'>";
-        $html .= "<span style='color:#" . $this->Entity->entityData['color'] . "'>" . $this->Entity->entityData['name'] . " </span>";
+        $html .= "<span style='color:#" . $this->Entity->entityData['color'] . "'>" . $this->Entity->entityData['category'] . " </span>";
         $html .= $this->Entity->entityData['title'];
         $html .= "</div>";
         // BODY (show only if not empty)

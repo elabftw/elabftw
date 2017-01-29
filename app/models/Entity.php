@@ -46,6 +46,9 @@ class Entity
     public $teamFilter = '';
 
     /** inserted in sql */
+    public $visibilityFilter = '';
+
+    /** inserted in sql */
     public $titleFilter = '';
 
     /** inserted in sql */
@@ -182,6 +185,7 @@ class Entity
             $this->categoryFilter . ' ' .
             $this->tagFilter . ' ' .
             $this->queryFilter . ' ' .
+            $this->visibilityFilter . ' ' .
             " ORDER BY " . $this->order . " " . $this->sort . " " . $this->limit;
 
         $req = $this->pdo->prepare($sql);

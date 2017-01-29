@@ -83,6 +83,13 @@ if (isset($_GET['andor']) && ($_GET['andor'] === 'or')) {
 } else {
     $orSel = '';
 }
+
+$vis = '';
+if (isset($_GET['vis']) && !empty($_GET['vis'])) {
+    if ($Experiments->checkVisibility($_GET['vis'])) {
+        $vis = $_GET['vis'];
+    }
+}
 ?>
 
 <!-- Search page begin -->
@@ -145,6 +152,29 @@ echo $Tags->generateTagList('options', $tag_in_url);
             </div>
             <!-- END SEARCH WITH TAG -->
 
+            <!-- VISIBILITY SEARCH -->
+            <div class='col-md-6'>
+                <label for'visibility'><?= _('And visibility is:'); ?> </label><br>
+                <select id='visibility' name='vis'>
+                    <option value=''><?= _('Select visibility') ?></option>
+                    <option value='organization'><?= _('Organization') ?></option>
+                    <option value='team'><?= _('Team') ?></option>
+                    <option value='user'><?= _('Only me') ?></option>
+<?php
+$TeamGroups = new TeamGroups($Users->userData['team']);
+$teamGroupsArr = $TeamGroups->readAll();
+foreach ($teamGroupsArr as $teamGroup) {
+    echo "<option value='" . $teamGroup['id'] . "' ";
+    if ($teamGroup['id'] === $vis) {
+        echo " selected='selected'";
+    }
+    echo ">" . _('Group') . " " . $teamGroup['name'] . "</option>";
+}
+
+
+?>
+</select><br></div>
+
             <!-- SEARCH ONLY -->
             <div class='col-md-6'>
                 <label for'searchonly'><?php echo _('Search only in experiments owned by:'); ?> </label><br>
@@ -160,6 +190,7 @@ if (isset($_GET['owner']) && ($_GET['owner'] === '0')) {
 echo ">" . _("All the team"); ?></option>
 <option disabled>----------------</option>
 <?php
+
 $usersArr = $Users->readAllFromTeam($Users->userData['team']);
 foreach ($usersArr as $user) {
     echo "<option value='" . $user['userid'] . "'";
@@ -201,7 +232,7 @@ foreach ($usersArr as $user) {
 $statusArr = $Status->readAll();
 foreach ($statusArr as $status) {
     echo "<option ";
-    if (isset($_GET['status']) && ($_GET['status'] == $status['id'])) {
+    if (isset($_GET['status']) && ($_GET['status'] == $status['category_id'])) {
         echo "selected ";
     }
     echo "value='" . $status['category_id'] . "'>" . $status['category'] . "</option>";
@@ -299,6 +330,7 @@ if (isset($_GET)) {
     $sqlTag = '';
     $sqlStatus = '';
     $sqlRating = '';
+    $sqlVisibility = '';
 
     // Title search
     if ($titleWithSpace) {
@@ -343,6 +375,11 @@ if (isset($_GET)) {
         $sqlRating = " AND $table.rating LIKE '$rating'";
     }
 
+    // Visibility search
+    if (!empty($vis)) {
+        $sqlVisibility = " AND $table.visibility = '$vis'";
+    }
+
     // Date search
     if (!empty($from) && !empty($to)) {
         $sqlDate = " AND $table.date BETWEEN '$from' AND '$to'";
@@ -377,6 +414,8 @@ if (isset($_GET)) {
 
             // STATUS
             $EntityView->Entity->categoryFilter = $sqlStatus;
+            // VISIBILITY FILTER
+            $EntityView->Entity->visibilityFilter = $sqlVisibility;
 
         } else {
             // DATABASE SEARCH
@@ -404,6 +443,12 @@ if (isset($_GET)) {
         // DISPLAY RESULTS
         echo "<section style='margin-top:20px'>";
         echo $EntityView->buildShow();
+        $totalTime = get_total_time();
+        echo $twig->render('show.html', array(
+            'SESSION' => $_SESSION,
+            'EntityView' => $EntityView,
+            'totalTime' => $totalTime
+        ));
         echo "</section>";
     }
 }

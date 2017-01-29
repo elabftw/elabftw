@@ -23,6 +23,18 @@ CREATE DATABASE IF NOT EXISTS `phpunit` DEFAULT CHARACTER SET utf8 COLLATE utf8_
 USE `phpunit`;
 
 -- --------------------------------------------------------
+--
+-- Table structure for table `todolist`
+--
+
+CREATE TABLE `todolist` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `body` text NOT NULL,
+  `creation_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ordering` int(10) UNSIGNED DEFAULT NULL,
+  `userid` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 --
 -- Table structure for table `banned_users`
@@ -690,6 +702,14 @@ ALTER TABLE `uploads`
 --
 ALTER TABLE `users`
   MODIFY `userid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+--
+-- Indexes for table `todolist`
+--
+ALTER TABLE `todolist`
+  ADD PRIMARY KEY (`id`);
+ALTER TABLE `todolist`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -122,8 +122,33 @@ class Config
     /**
      * Reset the config to default values
      *
+     * @return bool
      */
     public function reset()
     {
+        $defaultConf = array(
+            "admin_validate" => '1',
+            "ban_time" => '60',
+            "debug" => '0',
+            "lang" => 'en_GB',
+            "login_tries" => '3',
+            "mail_from" => 'notconfigured@example.com',
+            "mail_method" => 'sendmail',
+            "proxy" => '',
+            "sendmail_path" => '/usr/sbin/sendmail',
+            "smtp_address" => 'mail.smtp2go.com',
+            "smtp_encryption" => 'tls',
+            "smtp_password" => '',
+            "smtp_port" => '2525',
+            "smtp_username" => '',
+            "stamplogin" => '',
+            "stamppass" => '',
+            "stampshare" => '1',
+            "stampprovider" => 'http://zeitstempel.dfn.de/',
+            "stampcert" => 'app/dfn-cert/pki.dfn.pem',
+            "stamphash" => 'sha256',
+            "schema" => '14');
+
+        return $this->Update($defaultConf);
     }
 }

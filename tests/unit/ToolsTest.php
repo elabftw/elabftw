@@ -33,6 +33,7 @@ class ToolsTest extends \PHPUnit_Framework_TestCase
 
     public function testFormatBytes()
     {
+        $this->assertEquals('1000 B', Tools::formatBytes(1000));
         $this->assertEquals('5.08 MiB', Tools::formatBytes(5323423));
         $this->assertEquals('21.4 TiB', Tools::formatBytes(23534909234464));
     }
@@ -66,5 +67,33 @@ class ToolsTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse(Tools::checkId(0));
         $this->assertFalse(Tools::checkId(3.1415926535));
         $this->assertEquals(42, Tools::checkId(42));
+    }
+
+    public function testPurifyFirstname()
+    {
+        $this->assertEquals(Tools::purifyFirstname('rick'), 'Rick');
+    }
+
+    public function testPurifyLastname()
+    {
+        $this->assertEquals(Tools::purifyLastname('sanchez'), 'SANCHEZ');
+    }
+
+    public function testError()
+    {
+        $this->assertEquals(Tools::error(), "An error occured!");
+        $this->assertEquals(Tools::error(true), "This section is out of your reach!");
+    }
+
+    public function testGetCalendarLang()
+    {
+        $this->assertEquals('ca', Tools::getCalendarLang('ca_ES'));
+    }
+
+    public function testgetLangsArr()
+    {
+        $langsArr = Tools::getLangsArr();
+        $this->assertTrue(is_array($langsArr));
+        $this->assertEquals('German', $langsArr['de_DE']);
     }
 }

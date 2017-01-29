@@ -30,7 +30,7 @@ USE `phpunit`;
 CREATE TABLE `todolist` (
   `id` int(10) UNSIGNED NOT NULL,
   `body` text NOT NULL,
-  `creation_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `creation_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `ordering` int(10) UNSIGNED DEFAULT NULL,
   `userid` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
